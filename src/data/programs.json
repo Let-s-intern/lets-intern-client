@@ -1,0 +1,26 @@
+[
+  {
+    "id": 1,
+    "category": "챌린지",
+    "title": "인턴 지원 챌린지 11기",
+    "startDate": "2023년 11월 30일",
+    "endDate": "2023년 12월 1일",
+    "imageUrl": "/images/placeholder1.png"
+  },
+  {
+    "id": 2,
+    "category": "렛츠-챗 세션",
+    "title": "인턴 선배가 들려주는 Tip",
+    "startDate": "2023년 11월 30일",
+    "endDate": "2023년 12월 1일",
+    "imageUrl": "/images/placeholder2.png"
+  },
+  {
+    "id": 3,
+    "category": "부트캠프",
+    "title": "7일 속성 부트캠프",
+    "startDate": "2023년 11월 30일",
+    "endDate": "2023년 12월 1일",
+    "imageUrl": "/images/placeholder3.png"
+  }
+]

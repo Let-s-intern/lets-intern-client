@@ -67,7 +67,7 @@ const Card = ({
   );
 };
 
-const Home = () => {
+const Program = () => {
   return (
     <main className="container mx-auto p-4">
       <div className="flex gap-2 sm:gap-3">
@@ -118,4 +118,4 @@ const Home = () => {
   );
 };
 
-export default Home;
+export default Program;
