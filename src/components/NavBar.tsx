@@ -80,28 +80,28 @@ const NavBar = () => {
                 </li>
               </ul>
             </nav>
-          </div>
-          <div className="mt-5 flex justify-between">
-            <Link
-              to="/login"
-              className="w-24 rounded-full border border-gray-300 px-4 py-1 text-center text-black hover:text-gray-600"
-              onClick={closeMenu}
-            >
-              로그인
-            </Link>
-            <div className="flex gap-4">
-              <button
-                type="button"
-                className="rounded-md text-gray-500 hover:text-gray-600"
+            <div className="mt-16 flex justify-between">
+              <Link
+                to="/login"
+                className="w-24 rounded-full border border-gray-300 px-4 py-1 text-center text-black hover:text-gray-600"
+                onClick={closeMenu}
               >
-                <HiOutlineChatAlt2 className="h-6 w-6" />
-              </button>
-              <button
-                type="button"
-                className="rounded-md text-gray-500 hover:text-gray-600"
-              >
-                <FaUserCircle className="h-6 w-6" />
-              </button>
+                로그인
+              </Link>
+              <div className="flex gap-4">
+                <button
+                  type="button"
+                  className="rounded-md text-gray-500 hover:text-gray-600"
+                >
+                  <HiOutlineChatAlt2 className="h-6 w-6" />
+                </button>
+                <button
+                  type="button"
+                  className="rounded-md text-gray-500 hover:text-gray-600"
+                >
+                  <FaUserCircle className="h-6 w-6" />
+                </button>
+              </div>
             </div>
           </div>
         </SideNavBar>
