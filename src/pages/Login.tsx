@@ -50,7 +50,7 @@ const Button = ({ color, children }: ButtonProps) => {
 const Login = () => {
   return (
     <div className="container mx-auto flex flex-col items-center justify-center p-4">
-      <div className="mt-32 w-full sm:max-w-[500px]">
+      <div className="mt-8 w-full sm:mt-32 sm:max-w-[500px]">
         <h2 className="mb-5 text-center text-2xl font-semibold">로그인</h2>
         <div>
           <Label id="이메일" text="이메일" />
