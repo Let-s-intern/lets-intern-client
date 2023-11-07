@@ -57,15 +57,6 @@ const NavBar = () => {
                     className="block text-xl font-medium text-gray-900 hover:text-gray-600"
                     onClick={closeMenu}
                   >
-                    홈
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    to="/program"
-                    className="block text-xl font-medium text-gray-900 hover:text-gray-600"
-                    onClick={closeMenu}
-                  >
                     프로그램
                   </Link>
                 </li>
