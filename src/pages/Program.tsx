@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 
 import programs from '../data/programs.json';
+import BadgeButton from '../components/BadgeButton';
 
 interface CardProps {
   id: number;
@@ -10,27 +11,6 @@ interface CardProps {
   endDate: string;
   imageUrl: string;
 }
-
-interface BadgeButtonProps {
-  category: string;
-  disabled?: boolean;
-  onClick?: () => void;
-}
-
-const BadgeButton = ({ category, disabled, onClick }: BadgeButtonProps) => {
-  return (
-    <button
-      className={`rounded-full px-3 py-1 font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-indigo-700 focus:ring-offset-2 sm:px-5 sm:text-lg ${
-        disabled
-          ? 'bg-gray-200 text-gray-400 hover:bg-gray-300'
-          : 'bg-indigo-500 text-white hover:bg-indigo-700'
-      }`}
-      onClick={onClick}
-    >
-      {category}
-    </button>
-  );
-};
 
 const Card = ({
   id,
@@ -43,7 +23,7 @@ const Card = ({
   return (
     <Link
       to={`/program/${id}`}
-      className="mx-auto w-full overflow-hidden rounded-xl shadow-lg transition-all hover:-translate-y-1 hover:shadow-xl"
+      className="mx-auto w-full overflow-hidden rounded-xl shadow-lg transition-all sm:hover:-translate-y-1 sm:hover:shadow-xl"
     >
       <div className="aspect-video w-full rounded-xl bg-white">
         <img
@@ -69,7 +49,7 @@ const Card = ({
 
 const Program = () => {
   return (
-    <main className="container mx-auto p-4">
+    <main className="container mx-auto p-5">
       <div className="flex gap-2 sm:gap-3">
         <BadgeButton category="All" />
         <BadgeButton category="챌린지" disabled />
