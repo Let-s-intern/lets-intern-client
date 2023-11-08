@@ -62,7 +62,7 @@ const NavBar = () => {
                 </li>
                 <li>
                   <Link
-                    to="/mypage"
+                    to="/mypage/application"
                     className="block text-xl font-medium text-gray-900 hover:text-gray-600"
                     onClick={closeMenu}
                   >
