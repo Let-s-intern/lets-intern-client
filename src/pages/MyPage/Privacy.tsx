@@ -1,7 +1,6 @@
 import { useState } from 'react';
 
-import BadgeButton from '../components/BadgeButton';
-import Button from '../components/Button';
+import Button from '../../components/Button';
 
 const UserProfile = () => {
   return (
@@ -146,19 +145,13 @@ const PasswordChangeForm = () => {
   );
 };
 
-const MyPage = () => {
+const Privacy = () => {
   return (
-    <div className="container mx-auto w-full p-5 sm:max-w-xl">
-      <div className="mb-5 flex gap-2 sm:gap-3">
-        <BadgeButton category="All" />
-        <BadgeButton category="챌린지" disabled />
-        <BadgeButton category="부트캠프" disabled />
-        <BadgeButton category="렛츠-챗 세션" disabled />
-      </div>
+    <div>
       <UserProfile />
       <PasswordChangeForm />
     </div>
   );
 };
 
-export default MyPage;
+export default Privacy;
