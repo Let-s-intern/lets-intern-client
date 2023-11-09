@@ -7,13 +7,13 @@ import TabItem from '../components/TabItem';
 const Programs = () => {
   return (
     <main className="container mx-auto p-5">
-      <TabBar>
+      <TabBar itemCount={4}>
         <TabItem active>모든 프로그램</TabItem>
         <TabItem>챌린지</TabItem>
         <TabItem>부트캠프</TabItem>
         <TabItem>렛츠-챗</TabItem>
       </TabBar>
-      <section className="mt-7">
+      <section className="mt-10">
         <SectionTitle fontWeight="bold">현재 모집중이에요</SectionTitle>
         <p className="text-gray-500">
           아래에서 모집중인 프로그램을 확인해보세요!

@@ -11,7 +11,7 @@ const MyPage = () => {
   return (
     <div className="container mx-auto w-full p-5">
       <div className="mb-5">
-        <TabBar>
+        <TabBar itemCount={3}>
           <TabItem
             to="/mypage/application"
             {...(location.pathname === '/mypage/application' && {
@@ -38,7 +38,9 @@ const MyPage = () => {
           </TabItem>
         </TabBar>
       </div>
-      <Outlet />
+      <div className="mt-10">
+        <Outlet />
+      </div>
     </div>
   );
 };
