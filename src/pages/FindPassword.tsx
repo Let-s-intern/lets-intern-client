@@ -1,21 +1,43 @@
+import { useEffect, useState } from 'react';
+
 import Button from '../components/Button';
-import FormTitle from '../components/FormTitle';
 import Input from '../components/Input';
-import Label from '../components/Label';
 
 const FindPassword = () => {
+  const [email, setEmail] = useState('');
+  const [buttonDisabled, setButtonDisabled] = useState(true);
+
   const handleOnSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
   };
 
+  useEffect(() => {
+    if (email === '') {
+      setButtonDisabled(true);
+    } else {
+      setButtonDisabled(false);
+    }
+  }, [email]);
+
   return (
     <div className="container mx-auto mt-8 p-5 sm:mt-32">
       <div className="mx-auto w-full sm:max-w-md">
-        <FormTitle className="mb-3">비밀번호 찾기</FormTitle>
+        <h1 className="mb-5 text-2xl">비밀번호 찾기</h1>
         <form onSubmit={handleOnSubmit}>
-          <Label id="email" text="이메일" />
-          <Input placeholder="가입하신 이메일을 입력해주세요." />
-          <Button type="submit" className="mt-5">
+          <Input
+            label="이메일"
+            placeholder="가입하신 이메일을 입력해주세요."
+            fullWidth
+            value={email}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              setEmail(e.target.value)
+            }
+          />
+          <Button
+            type="submit"
+            className="mt-5 w-full"
+            {...(buttonDisabled && { disabled: true })}
+          >
             비밀번호 찾기
           </Button>
         </form>

@@ -8,10 +8,13 @@ import Program from '../interfaces/program';
 interface SliderButtonProps {
   scrollContainer: React.RefObject<HTMLDivElement>;
   direction: 'prev' | 'next';
+  className?: string;
 }
 
 interface ProgramListSliderProps {
   programs: Program[];
+  style?: 'active' | 'normal';
+  cardType?: '신청 완료' | '참여 중' | '참여 완료' | '';
 }
 
 const SlideContent = styled.div`
@@ -20,10 +23,14 @@ const SlideContent = styled.div`
   }
 `;
 
-const SlideButton = ({ scrollContainer, direction }: SliderButtonProps) => {
+const SlideButton = ({
+  scrollContainer,
+  direction,
+  className,
+}: SliderButtonProps) => {
   return (
     <button
-      className="text-2xl"
+      className={`hidden text-2xl sm:block${className ? ` ${className}` : ''}`}
       onClick={() => {
         if (scrollContainer.current === null) return;
         const offsetWidth = scrollContainer.current.offsetWidth;
@@ -38,7 +45,11 @@ const SlideButton = ({ scrollContainer, direction }: SliderButtonProps) => {
   );
 };
 
-const ProgramListSlider = ({ programs }: ProgramListSliderProps) => {
+const ProgramListSlider = ({
+  programs,
+  style = 'normal',
+  cardType = '',
+}: ProgramListSliderProps) => {
   const scrollContainer = useRef<HTMLDivElement>(null);
 
   return (
@@ -46,12 +57,14 @@ const ProgramListSlider = ({ programs }: ProgramListSliderProps) => {
       <SlideButton scrollContainer={scrollContainer} direction="prev" />
       <SlideContent
         ref={scrollContainer}
-        className="flex overflow-x-scroll scroll-smooth py-5"
+        className="flex grow overflow-x-scroll scroll-smooth py-5"
       >
         <div className="flex gap-5">
-          {programs.map((program) => (
-            <Card key={program.id} program={program} className="w-72" />
-          ))}
+          {programs.map((program, index) => {
+            return (
+              <Card key={program.id} program={program} cardType={cardType} />
+            );
+          })}
         </div>
       </SlideContent>
       <SlideButton scrollContainer={scrollContainer} direction="next" />

@@ -147,7 +147,7 @@ const PasswordChangeForm = () => {
 
 const Privacy = () => {
   return (
-    <div>
+    <div className="mt-7">
       <UserProfile />
       <PasswordChangeForm />
     </div>

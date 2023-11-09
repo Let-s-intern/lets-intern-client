@@ -4,37 +4,53 @@ import Program from '../interfaces/program';
 
 interface CardProps {
   program: Program;
+  cardType?: '신청 완료' | '참여 중' | '참여 완료' | '';
   className?: string;
 }
 
-const Card = ({ program, className }: CardProps) => {
+const subtextColor: Record<string, string> = {
+  '신청 완료': 'text-shade-2',
+  '참여 중': 'text-primary',
+  '참여 완료': 'text-shade-4',
+  '': 'text-primary',
+};
+
+const badgeColor: Record<string, string> = {
+  '신청 완료': 'bg-shade-2 text-neutral-white',
+  '참여 중': 'bg-primary text-neutral-white',
+  '참여 완료': 'bg-shade-4 text-neutral-white',
+};
+
+const Card = ({ program, cardType = '', className }: CardProps) => {
   return (
     <Link
       to={`/program/${program.id}`}
-      className={`mx-auto overflow-hidden rounded-xl shadow-lg transition-all sm:hover:-translate-y-1 sm:hover:shadow-xl${
-        className ? ` ${className}` : ''
-      }`}
+      className="group mx-auto flex aspect-[3/4] w-60 flex-col justify-between overflow-hidden rounded-md bg-neutral-silver px-6 py-6 text-neutral-grey transition-all hover:bg-shade-2 hover:text-white active:bg-shade-2 active:text-white"
     >
-      <div className="aspect-video w-full rounded-xl bg-white">
-        <img
-          className="h-full w-full overflow-hidden object-cover"
-          src={program.imageUrl}
-          alt="Random"
-        />
-      </div>
-      <div className="flex flex-col justify-between px-6 py-4">
+      <div>
         <div>
-          <span className="font-semibold text-indigo-500">
+          <span
+            className={`text-sm font-medium group-hover:text-white${
+              cardType ? ` ${subtextColor[cardType]}` : ' text-primary'
+            }`}
+          >
             {program.category}
           </span>
-          <h2 className="mb-2 text-xl font-bold">{program.title}</h2>
+          {cardType && (
+            <span
+              className={`ml-2 inline-block w-16 rounded py-[2px] text-center text-xs font-medium ${badgeColor[cardType]}`}
+            >
+              {cardType}
+            </span>
+          )}
         </div>
-        <p className="text-gray-400">
-          {program.startDate}
-          <br />
-          {program.endDate}
-        </p>
+        <h2 className="mt-2 text-2xl font-medium">{program.title}</h2>
       </div>
+      <p className="">
+        {program.startDate}
+        <br />
+        {program.endDate}
+      </p>
     </Link>
   );
 };
