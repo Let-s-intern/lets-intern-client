@@ -1,7 +1,8 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 
 import NavBar from './components/NavBar';
-import Program from './pages/Program';
+import Programs from './pages/Programs';
+import ProgramDetail from './pages/ProgramDetail';
 import Login from './pages/Login';
 import MyPage from './pages/MyPage';
 import SignUp from './pages/SignUp';
@@ -14,9 +15,10 @@ const Router = () => {
   return (
     <BrowserRouter>
       <NavBar />
-      <div className="mx-auto max-w-5xl">
+      <div className="font-notosans mx-auto max-w-5xl">
         <Routes>
-          <Route path="/" element={<Program />} />
+          <Route path="/" element={<Programs />} />
+          <Route path="/program/:id" element={<ProgramDetail />} />
           <Route path="/login" element={<Login />} />
           <Route path="/mypage" element={<MyPage />}>
             <Route path="privacy" element={<Privacy />} />

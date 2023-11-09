@@ -1,81 +1,21 @@
-import styled from 'styled-components';
-import { MdArrowBackIosNew, MdArrowForwardIos } from 'react-icons/md';
-
-import { useRef } from 'react';
-
-import Card from '../../components/Card';
 import SectionTitle from '../../components/SectionTitle';
+import ProgramListSlider from '../../components/ProgramListSlider';
 import programs from '../../data/programs.json';
-import Program from '../../interfaces/program';
-
-interface SliderButtonProps {
-  scrollContainer: React.RefObject<HTMLDivElement>;
-  direction: 'prev' | 'next';
-}
-
-interface ProgramListSliderProps {
-  programs: Program[];
-}
-
-const SlideContent = styled.div`
-  &::-webkit-scrollbar {
-    display: none;
-  }
-`;
-
-const SlideButton = ({ scrollContainer, direction }: SliderButtonProps) => {
-  return (
-    <button
-      className="text-2xl"
-      onClick={() => {
-        if (scrollContainer.current === null) return;
-        const offsetWidth = scrollContainer.current.offsetWidth;
-        scrollContainer.current.scrollLeft +=
-          direction === 'prev' ? -offsetWidth : offsetWidth;
-      }}
-    >
-      <i>
-        {direction === 'prev' ? <MdArrowBackIosNew /> : <MdArrowForwardIos />}
-      </i>
-    </button>
-  );
-};
-
-const ProgramListSlider = ({ programs }: ProgramListSliderProps) => {
-  const scrollContainer = useRef<HTMLDivElement>(null);
-
-  return (
-    <div className="flex items-center gap-3">
-      <SlideButton scrollContainer={scrollContainer} direction="prev" />
-      <SlideContent
-        ref={scrollContainer}
-        className="flex overflow-x-scroll scroll-smooth py-5"
-      >
-        <div className="flex gap-5">
-          {programs.map((program) => (
-            <Card key={program.id} program={program} className="w-72" />
-          ))}
-        </div>
-      </SlideContent>
-      <SlideButton scrollContainer={scrollContainer} direction="next" />
-    </div>
-  );
-};
 
 const Application = () => {
   return (
-    <div>
+    <div className="mt-7">
       <section>
         <SectionTitle>신청완료</SectionTitle>
-        <ProgramListSlider programs={programs} />
+        <ProgramListSlider programs={programs} cardType="신청 완료" />
       </section>
       <section>
         <SectionTitle className="mt-10">참여중</SectionTitle>
-        <ProgramListSlider programs={programs} />
+        <ProgramListSlider programs={programs} cardType="참여 중" />
       </section>
       <section>
         <SectionTitle className="mt-10">참여완료</SectionTitle>
-        <ProgramListSlider programs={programs} />
+        <ProgramListSlider programs={programs} cardType="참여 완료" />
       </section>
     </div>
   );

@@ -5,7 +5,8 @@
     "title": "인턴 지원 챌린지 11기",
     "startDate": "2023년 11월 30일",
     "endDate": "2023년 12월 1일",
-    "imageUrl": "/images/placeholder1.png"
+    "imageUrl": "/images/placeholder1.png",
+    "detail": "## This is the program 1 detail\nthis is paragraph"
   },
   {
     "id": 2,
@@ -13,7 +14,8 @@
     "title": "인턴 선배가 들려주는 Tip",
     "startDate": "2023년 11월 30일",
     "endDate": "2023년 12월 1일",
-    "imageUrl": "/images/placeholder2.png"
+    "imageUrl": "/images/placeholder2.png",
+    "detail": "## 인턴 선배가 들려주는 Tip\nthis is paragraph"
   },
   {
     "id": 3,
@@ -21,6 +23,7 @@
     "title": "7일 속성 부트캠프",
     "startDate": "2023년 11월 30일",
     "endDate": "2023년 12월 1일",
-    "imageUrl": "/images/placeholder3.png"
+    "imageUrl": "/images/placeholder3.png",
+    "detail": "## This is the program 3 detail\nthis is paragraph"
   }
 ]

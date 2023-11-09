@@ -1,20 +1,22 @@
 import { Link } from 'react-router-dom';
 
-import Label from '../components/Label';
-import Input from '../components/Input';
-import FormTitle from '../components/FormTitle';
 import Button from '../components/Button';
+import Input from '../components/Input';
 
-interface ButtonLinkProps {
+interface TextLinkProps {
   to: string;
+  className?: string;
+  dark?: boolean;
   children: React.ReactNode;
 }
 
-const ButtonLink = ({ to, children }: ButtonLinkProps) => {
+const TextLink = ({ to, dark, className, children }: TextLinkProps) => {
   return (
     <Link
       to={to}
-      className="w-full rounded-full border border-gray-300 bg-white py-2 text-center font-semibold text-black"
+      className={`text-sm underline${
+        dark ? ' text-neutral-grey' : ' text-primary'
+      }${className ? ` ${className}` : ''}`}
     >
       {children}
     </Link>
@@ -24,21 +26,46 @@ const ButtonLink = ({ to, children }: ButtonLinkProps) => {
 const Login = () => {
   return (
     <div className="container mx-auto flex flex-col items-center justify-center p-5">
-      <div className="mt-8 flex w-full flex-col space-y-5 sm:mt-32 sm:max-w-md">
-        <FormTitle textAlign="center">로그인</FormTitle>
+      <div className="mt-12 flex w-full flex-col sm:max-w-md">
+        <h1 className="mb-12 text-center text-xl font-bold">반갑습니다!</h1>
         <div>
-          <Label id="이메일" text="이메일" />
-          <Input placeholder="이메일" />
+          <Input label="이메일" autoComplete="off" fullWidth className="mt-5" />
         </div>
-        <div>
-          <Label id="비밀번호" text="비밀번호" />
-          <Input placeholder="비밀번호" type="password" />
+        <div className="mt-5">
+          <Input
+            type="password"
+            label="비밀번호"
+            autoComplete="off"
+            fullWidth
+          />
         </div>
-        <div>
-          <Button type="submit">로그인</Button>
-          <div className="mt-3 grid grid-cols-2 gap-3">
-            <ButtonLink to="/signup">회원가입</ButtonLink>
-            <ButtonLink to="/find-password">비밀번호 찾기</ButtonLink>
+        <Button type="submit" className="mt-5 w-full">
+          로그인
+        </Button>
+        <span className="text-neutral-dark-grey mt-10 block text-center text-sm">
+          또는
+        </span>
+        <span className="mt-10 block text-center font-medium text-neutral-grey">
+          SNS 계정으로 로그인하기
+        </span>
+        <div className="mx-auto mt-5 flex gap-5">
+          <button>
+            <i>
+              <img src="/icons/google-icon.svg" alt="구글 아이콘" />
+            </i>
+          </button>
+          <button>
+            <i>
+              <img src="/icons/kakao-icon.svg" alt="카카오톡 아이콘" />
+            </i>
+          </button>
+        </div>
+        <div className="mb-20 mt-10 flex justify-center">
+          <div className="flex gap-16">
+            <TextLink to="/signup">회원가입</TextLink>
+            <TextLink to="/find-password" dark>
+              비밀번호 찾기
+            </TextLink>
           </div>
         </div>
       </div>
