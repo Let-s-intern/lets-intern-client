@@ -44,7 +44,9 @@ const Card = ({ program, cardType = '', className }: CardProps) => {
             </span>
           )}
         </div>
-        <h2 className="mt-2 text-2xl font-medium">{program.title}</h2>
+        <h2 className="mt-2 break-keep text-2xl font-medium">
+          {program.title}
+        </h2>
       </div>
       <p className="">
         {program.startDate}

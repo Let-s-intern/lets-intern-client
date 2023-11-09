@@ -4,7 +4,7 @@ import programs from '../../data/programs.json';
 
 const Application = () => {
   return (
-    <div className="mt-7">
+    <>
       <section>
         <SectionTitle>신청완료</SectionTitle>
         <ProgramListSlider programs={programs} cardType="신청 완료" />
@@ -17,7 +17,7 @@ const Application = () => {
         <SectionTitle className="mt-10">참여완료</SectionTitle>
         <ProgramListSlider programs={programs} cardType="참여 완료" />
       </section>
-    </div>
+    </>
   );
 };
 
