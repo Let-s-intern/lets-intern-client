@@ -13,8 +13,8 @@ interface SliderButtonProps {
 
 interface ProgramListSliderProps {
   programs: Program[];
-  style?: 'active' | 'normal';
   cardType?: '신청 완료' | '참여 중' | '참여 완료' | '';
+  loading?: boolean;
 }
 
 const SlideContent = styled.div`
@@ -47,8 +47,8 @@ const SlideButton = ({
 
 const ProgramListSlider = ({
   programs,
-  style = 'normal',
   cardType = '',
+  loading,
 }: ProgramListSliderProps) => {
   const scrollContainer = useRef<HTMLDivElement>(null);
 
@@ -59,13 +59,22 @@ const ProgramListSlider = ({
         ref={scrollContainer}
         className="flex grow overflow-x-scroll scroll-smooth py-5"
       >
-        <div className="flex gap-5">
-          {programs.map((program, index) => {
-            return (
-              <Card key={program.id} program={program} cardType={cardType} />
-            );
-          })}
-        </div>
+        {loading || programs.length === 0 ? (
+          <div className="h-[320px] w-full"></div>
+        ) : (
+          <div className="flex gap-5">
+            {programs.map((program) => {
+              return (
+                <Card
+                  key={program.id}
+                  program={program}
+                  cardType={cardType}
+                  loading={loading}
+                />
+              );
+            })}
+          </div>
+        )}
       </SlideContent>
       <SlideButton scrollContainer={scrollContainer} direction="next" />
     </div>

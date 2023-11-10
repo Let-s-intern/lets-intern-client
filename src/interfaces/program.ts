@@ -1,10 +1,9 @@
 interface Program {
   id: number;
-  category: string;
-  title: string;
+  type: string;
+  th: number;
   startDate: string;
-  endDate: string;
-  imageUrl: string;
+  dueDate: string;
 }
 
 export default Program;

@@ -10,15 +10,18 @@ import FindPassword from './pages/FindPassword';
 import Privacy from './pages/MyPage/Privacy';
 import Review from './pages/MyPage/Review';
 import Application from './pages/MyPage/Application';
+import ProgramApply from './pages/ProgramApply';
 
 const Router = () => {
   return (
     <BrowserRouter>
       <NavBar />
-      <div className="font-notosans mx-auto max-w-5xl">
+      <div className="mx-auto max-w-5xl font-notosans">
         <Routes>
           <Route path="/" element={<Programs />} />
-          <Route path="/program/:id" element={<ProgramDetail />} />
+          <Route path="/program/:id" element={<ProgramDetail />}>
+            <Route path="apply" element={<ProgramApply />} />
+          </Route>
           <Route path="/login" element={<Login />} />
           <Route path="/mypage" element={<MyPage />}>
             <Route path="privacy" element={<Privacy />} />
