@@ -1,7 +1,5 @@
-import { useState } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
 
-import BadgeButton from '../../components/BadgeButton';
 import TabBar from '../../components/TabBar';
 import TabItem from '../../components/TabItem';
 

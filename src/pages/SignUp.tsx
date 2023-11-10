@@ -53,14 +53,17 @@ const SignUp = () => {
 
   return (
     <div className="container mx-auto mt-8 p-5">
-      <div className="mx-auto w-full sm:max-w-md">
+      <div className="mx-auto mb-16 w-full sm:max-w-md">
+        {/* 제목 섹션 */}
         <span className="mb-2 block font-bold">회원가입</span>
         <h1 className="mb-10 text-2xl">
           기본 정보를
           <br />
           입력하세요
         </h1>
+        {/* 회원가입 입력 폼 */}
         <form onSubmit={handleOnSubmit} className="flex flex-col space-y-3">
+          {/* 이메일 입력 */}
           <div>
             <Input
               label="이메일"
@@ -73,6 +76,7 @@ const SignUp = () => {
               }
             />
           </div>
+          {/* 이름 입력 */}
           <div>
             <Input
               label="이름"
@@ -84,6 +88,7 @@ const SignUp = () => {
               }
             />
           </div>
+          {/* 휴대폰 번호 입력 */}
           <div>
             <Input
               label="휴대폰 번호"
@@ -96,6 +101,7 @@ const SignUp = () => {
               }
             />
           </div>
+          {/* 비밀번호 입력 */}
           <div>
             <Input
               type="password"
@@ -108,6 +114,7 @@ const SignUp = () => {
               }
             />
           </div>
+          {/* 비밀번호 확인 입력 */}
           <div>
             <Input
               type="password"
@@ -121,7 +128,9 @@ const SignUp = () => {
             />
           </div>
           <hr />
+          {/* 약관 동의 체크박스 */}
           <div className="flex flex-col space-y-2">
+            {/* 서비스이용약관 체크박스 */}
             <div className="flex items-center">
               <CheckBox
                 checked={value.agreeToTerms}
@@ -140,6 +149,7 @@ const SignUp = () => {
                 동의합니다.
               </label>
             </div>
+            {/* 개인정보처리방침 체크박스 */}
             <div className="flex items-center">
               <CheckBox
                 checked={value.agreeToPrivacy}
@@ -159,9 +169,10 @@ const SignUp = () => {
               </label>
             </div>
           </div>
+          {/* 회원가입 버튼 */}
           <Button
             type="submit"
-            className="mb-10 mt-5"
+            className="mt-5"
             {...(buttonDisabled && { disabled: true })}
           >
             회원가입
