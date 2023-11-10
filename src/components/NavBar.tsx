@@ -56,10 +56,12 @@ const NavBar = () => {
 
   return (
     <>
+      {/* 네비게이션 바 */}
       <div className="relative">
+        {/* 상단 네비게이션 바 */}
         <div className="fixed left-0 top-0 z-40 flex h-16 w-full items-center justify-between bg-white px-5">
-          <Link to="/">
-            <img src="/logo/logo.svg" alt="Logo" />
+          <Link to="/" className="h-10 w-10">
+            <img src="/logo/logo.png" alt="Logo" className="w-full" />
           </Link>
           <button
             type="button"
@@ -71,6 +73,7 @@ const NavBar = () => {
             </i>
           </button>
         </div>
+        {/* 투명한 검정색 배경 */}
         <div
           className={`fixed inset-0 z-50 bg-black transition-opacity duration-300 ${
             isOpen
@@ -79,6 +82,7 @@ const NavBar = () => {
           }`}
           onClick={toggleMenu}
         ></div>
+        {/* 사이드 네비게이션 바 */}
         <div
           className={`fixed right-0 top-0 z-50 h-screen w-full bg-white p-5 shadow-md transition-all sm:w-80 duration-300${
             isOpen ? ' translate-x-0' : ' translate-x-full'
@@ -114,7 +118,8 @@ const NavBar = () => {
           </div>
         </div>
       </div>
-      <div className="spacer h-16"></div>
+      {/* 네비게이션 바 공간 차지 */}
+      <div className="h-16"></div>
     </>
   );
 };
