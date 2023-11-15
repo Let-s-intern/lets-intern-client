@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { Outlet, useNavigate, useParams } from 'react-router-dom';
 import Markdown from 'react-markdown';
 import styled from 'styled-components';

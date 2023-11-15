@@ -1099,3 +1099,11 @@
 .markdown-body .markdown-alert.markdown-alert-warning {
   border-left-color: #9a6700;
 }
+
+.markdown-body ul {
+  list-style: disc;
+}
+
+.markdown-body ol {
+  list-style: decimal;
+}
