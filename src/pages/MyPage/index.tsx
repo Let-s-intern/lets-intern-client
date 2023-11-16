@@ -7,8 +7,8 @@ const MyPage = () => {
   const location = useLocation();
 
   return (
-    <div className="container mx-auto w-full p-5">
-      <div className="mb-5">
+    <div className="container mx-auto w-full px-5 pb-5">
+      <div className="h-9">
         <TabBar itemCount={3}>
           <TabItem
             to="/mypage/application"
