@@ -5,7 +5,7 @@ import Program from '../../interfaces/program';
 import useAxios from '../../hooks/useAxios';
 
 const Application = () => {
-  const { data, loading, error } = useAxios('get', '/program/list', {
+  const { data, loading, error } = useAxios('get', '/program', {
     page: 1,
     size: 3,
     sort: 'string',
@@ -14,7 +14,7 @@ const Application = () => {
 
   useEffect(() => {
     if (!loading && !error) {
-      setPrograms(data.openProgramList);
+      setPrograms(data.programList);
     }
   }, [data, loading, error]);
 

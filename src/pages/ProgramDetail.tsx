@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { Outlet, useNavigate, useParams } from 'react-router-dom';
 import Markdown from 'react-markdown';
 import styled from 'styled-components';
@@ -43,7 +42,7 @@ const ProgramDetail = () => {
         </div>
       </div>
       {/* 하단 섹션 */}
-      <div className="fixed left-0 top-0 -z-10 h-screen w-screen">
+      <div className="fixed left-0 top-0 z-30">
         {/* 신청하기 플로팅 액션 버튼 */}
         <div className="fixed bottom-5 flex w-full justify-start px-5 sm:justify-center">
           <FloatingActionButton

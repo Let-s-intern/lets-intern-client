@@ -5,8 +5,8 @@ import Program from '../../interfaces/program';
 import useAxios from '../../hooks/useAxios';
 
 const Review = () => {
-  const { data, loading, error } = useAxios('get', '/program/list', {
-    page: 1,
+  const { data, loading, error } = useAxios('get', '/program', {
+    page: 0,
     size: 3,
     sort: 'string',
   });
@@ -14,7 +14,7 @@ const Review = () => {
 
   useEffect(() => {
     if (!loading && !error) {
-      setPrograms(data.openProgramList);
+      setPrograms(data.programList);
     }
   }, [data, loading, error]);
 

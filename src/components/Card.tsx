@@ -12,6 +12,7 @@ interface CardProps {
 
 const typeToCategory: Record<string, string> = {
   BOOTCAMP: '부트캠프',
+  CHALLENGE_FULL: '챌린지',
   CHALLENGE_HALF: '챌린지',
   LETS_CHAT: '렛츠챗',
 };
@@ -45,7 +46,7 @@ const Card = ({
       >
         <span>{!loading ? typeToCategory[program.type] : ' '}</span>
         <h2 className="mt-2 text-2xl font-medium">
-          {/* {program.title} */}
+          {program.title}
           <br />
           모집 마감
         </h2>
@@ -78,7 +79,7 @@ const Card = ({
           )}
         </div>
         <h2 className="mt-2 break-keep text-2xl font-medium">
-          {/* {program.title} */}
+          {program.title}
         </h2>
       </div>
       <p className="">
