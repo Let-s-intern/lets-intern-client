@@ -6,35 +6,39 @@ import TabBar from '../components/TabBar';
 import TabItem from '../components/TabItem';
 import Card from '../components/Card';
 
-import Program from '../interfaces/program';
 import { useSearchParams } from 'react-router-dom';
 import axios from 'axios';
 
 const Programs = () => {
   const [searchParams] = useSearchParams();
-  const [programs, setPrograms] = useState<Program[]>([]);
-  const [closedPrograms, setClosedPrograms] = useState<Program[]>([]);
+  const [programs, setPrograms] = useState<any>(null);
+  const [closedPrograms, setClosedPrograms] = useState<any>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<unknown>(null);
   const category = searchParams.get('category') || 'ALL';
 
   useEffect(() => {
-    const url =
-      !category || category === 'ALL'
-        ? `${process.env.REACT_APP_SERVER_API}/program`
-        : `${process.env.REACT_APP_SERVER_API}/program/${category}`;
+    const params = !category || category === 'ALL' ? {} : { type: category };
+    console.log(params);
+    // const url =
+    //   !category || category === 'ALL'
+    //     ? `${process.env.REACT_APP_SERVER_API}/program`
+    //     : `${process.env.REACT_APP_SERVER_API}/program/${category}`;
     setLoading(true);
     axios
-      .get(url, {
-        params: {
-          page: 0,
-          size: 3,
-          sort: 'string',
-        },
+      .get(`${process.env.REACT_APP_SERVER_API}/program`, {
+        params,
       })
       .then((res) => {
-        setPrograms(res.data.programList);
-        setClosedPrograms(res.data.programList);
+        return res.data.programList;
+      })
+      .then((programs) => {
+        setPrograms(
+          programs.filter((program: any) => program.status === 'OPEN'),
+        );
+        setClosedPrograms(
+          programs.filter((program: any) => program.status === 'CLOSED'),
+        );
       })
       .catch((err) => {
         console.log(err);
@@ -57,8 +61,8 @@ const Programs = () => {
             모든 프로그램
           </TabItem>
           <TabItem
-            to="/?category=CHALLENGE_FULL"
-            {...(category === 'CHALLENGE_FULL' && { active: true })}
+            to="/?category=CHALLENGE"
+            {...(category === 'CHALLENGE' && { active: true })}
           >
             챌린지
           </TabItem>
@@ -99,7 +103,7 @@ const Programs = () => {
             <div className="h-[175px] w-full"></div>
           ) : (
             <div className="mt-5 grid grid-cols-1 gap-2 sm:grid-cols-2">
-              {closedPrograms.map((program) => (
+              {closedPrograms.map((program: any) => (
                 <Card
                   key={program.id}
                   program={program}

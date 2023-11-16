@@ -28,7 +28,7 @@ const TabBar = ({ itemCount, children }: TabBarProps) => {
   }, [itemCount]);
 
   return (
-    <div className="fixed left-0 top-16 z-40 h-9 w-full bg-neutral-white">
+    <div className="fixed left-0 top-16 z-30 h-9 w-full bg-neutral-white">
       <div className="mx-auto max-w-5xl">
         <div
           className={` container mx-auto flex justify-between px-5 pb-[2px]${justifyBetweenStyle}`}
