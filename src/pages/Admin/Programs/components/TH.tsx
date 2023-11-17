@@ -1,4 +1,4 @@
-import { THProps } from '../interface';
+import { THProps } from '../interfaces';
 
 const TH = ({ children }: THProps) => {
   return (

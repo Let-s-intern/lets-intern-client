@@ -8,7 +8,7 @@ export interface TDProps {
 }
 
 export interface ActionButtonProps {
-  style: 'edit' | 'delete';
+  styleType: 'edit' | 'delete';
   children: React.ReactNode;
   onClick?: () => void;
   to?: string;

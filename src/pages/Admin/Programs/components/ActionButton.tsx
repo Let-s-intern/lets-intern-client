@@ -1,9 +1,9 @@
 import { useNavigate } from 'react-router-dom';
 
-import { ActionButtonProps } from '../interface';
+import { ActionButtonProps } from '../interfaces';
 
 const ActionButton = ({
-  style = 'edit',
+  styleType = 'edit',
   onClick,
   to,
   children,
@@ -17,7 +17,7 @@ const ActionButton = ({
 
   return (
     <button
-      className={`flex items-center justify-center rounded px-3 py-1 text-white ${buttonStyle[style]}`}
+      className={`flex items-center justify-center rounded px-3 py-1 text-white ${buttonStyle[styleType]}`}
       onClick={() => {
         onClick && onClick();
         to && navigate(to);
