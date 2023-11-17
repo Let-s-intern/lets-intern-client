@@ -23,6 +23,7 @@ const Review = () => {
       <section>
         <SectionTitle>후기를 기다리고 있어요</SectionTitle>
         <ProgramListSlider
+          page="review-create"
           programs={programs}
           cardType="참여 완료"
           loading={loading}
@@ -31,6 +32,7 @@ const Review = () => {
       <section>
         <SectionTitle className="mt-10">작성한 후기 확인하기</SectionTitle>
         <ProgramListSlider
+          page="review"
           programs={programs}
           cardType="참여 완료"
           loading={loading}

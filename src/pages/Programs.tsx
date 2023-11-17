@@ -19,11 +19,6 @@ const Programs = () => {
 
   useEffect(() => {
     const params = !category || category === 'ALL' ? {} : { type: category };
-    console.log(params);
-    // const url =
-    //   !category || category === 'ALL'
-    //     ? `${process.env.REACT_APP_SERVER_API}/program`
-    //     : `${process.env.REACT_APP_SERVER_API}/program/${category}`;
     setLoading(true);
     axios
       .get(`${process.env.REACT_APP_SERVER_API}/program`, {
