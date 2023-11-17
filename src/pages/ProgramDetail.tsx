@@ -7,6 +7,7 @@ import Button from '../components/Button';
 import '../styles/github-markdown-light.css';
 
 import programs from '../data/programs.json';
+import { useEffect, useState } from 'react';
 
 const FloatingActionButton = styled(Button)`
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.25);
@@ -14,11 +15,16 @@ const FloatingActionButton = styled(Button)`
 
 const ProgramDetail = () => {
   const navigate = useNavigate();
-  const { id = '' } = useParams<{ id: string }>();
+  const { id } = useParams<{ id: string }>();
+  const [program, setProgram] = useState<any>(null);
 
-  const program = programs.find(
-    (program: { id: number }) => program.id === parseInt(id),
-  );
+  useEffect(() => {
+    if (!program || !id) return;
+    const newProgram: any = programs.find(
+      (program: { id: number }) => program.id === parseInt(id),
+    );
+    setProgram(newProgram);
+  }, [id]);
 
   return (
     <div className="container mx-auto p-5">

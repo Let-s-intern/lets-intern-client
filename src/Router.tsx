@@ -10,7 +10,7 @@ import FindPassword from './pages/FindPassword';
 import Privacy from './pages/MyPage/Privacy';
 import Review from './pages/MyPage/Review';
 import Application from './pages/MyPage/Application';
-import ProgramApply from './pages/ProgramApply';
+import ProgramApply from './pages/ProgamApply';
 import Layout from './components/Layout';
 import AdminLayout from './components/AdminLayout';
 import Admin from './pages/Admin';
