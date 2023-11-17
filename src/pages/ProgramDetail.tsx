@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { Outlet, useNavigate, useParams } from 'react-router-dom';
 import Markdown from 'react-markdown';
 import styled from 'styled-components';
@@ -8,6 +7,7 @@ import Button from '../components/Button';
 import '../styles/github-markdown-light.css';
 
 import programs from '../data/programs.json';
+import { useEffect, useState } from 'react';
 
 const FloatingActionButton = styled(Button)`
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.25);
@@ -15,11 +15,16 @@ const FloatingActionButton = styled(Button)`
 
 const ProgramDetail = () => {
   const navigate = useNavigate();
-  const { id = '' } = useParams<{ id: string }>();
+  const { id } = useParams<{ id: string }>();
+  const [program, setProgram] = useState<any>(null);
 
-  const program = programs.find(
-    (program: { id: number }) => program.id === parseInt(id),
-  );
+  useEffect(() => {
+    if (!program || !id) return;
+    const newProgram: any = programs.find(
+      (program: { id: number }) => program.id === parseInt(id),
+    );
+    setProgram(newProgram);
+  }, [id]);
 
   return (
     <div className="container mx-auto p-5">
@@ -43,7 +48,7 @@ const ProgramDetail = () => {
         </div>
       </div>
       {/* 하단 섹션 */}
-      <div className="fixed left-0 top-0 -z-10 h-screen w-screen">
+      <div className="fixed left-0 top-0 z-30">
         {/* 신청하기 플로팅 액션 버튼 */}
         <div className="fixed bottom-5 flex w-full justify-start px-5 sm:justify-center">
           <FloatingActionButton

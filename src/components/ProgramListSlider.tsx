@@ -15,6 +15,7 @@ interface ProgramListSliderProps {
   programs: Program[];
   cardType?: '신청 완료' | '참여 중' | '참여 완료' | '';
   loading?: boolean;
+  page?: 'main' | 'review' | 'review-create' | 'application';
 }
 
 const SlideContent = styled.div`
@@ -49,6 +50,7 @@ const ProgramListSlider = ({
   programs,
   cardType = '',
   loading,
+  page = 'main',
 }: ProgramListSliderProps) => {
   const scrollContainer = useRef<HTMLDivElement>(null);
 
@@ -68,8 +70,10 @@ const ProgramListSlider = ({
                 <Card
                   key={program.id}
                   program={program}
+                  reviewId={10}
                   cardType={cardType}
                   loading={loading}
+                  page={page}
                 />
               );
             })}
