@@ -59,7 +59,7 @@ const NavBar = () => {
       {/* 네비게이션 바 */}
       <div className="relative">
         {/* 상단 네비게이션 바 */}
-        <div className="fixed left-0 top-0 z-40 flex h-16 w-full items-center justify-between bg-white px-5">
+        <div className="fixed top-0 z-30 flex h-16 w-full items-center justify-between bg-white px-5">
           <Link to="/" className="h-10 w-10">
             <img src="/logo/logo.png" alt="Logo" className="w-full" />
           </Link>
@@ -75,7 +75,7 @@ const NavBar = () => {
         </div>
         {/* 투명한 검정색 배경 */}
         <div
-          className={`fixed inset-0 z-50 bg-black transition-opacity duration-300 ${
+          className={`fixed inset-0 z-40 bg-black transition-opacity duration-300 ${
             isOpen
               ? 'opacity-50 ease-out'
               : 'pointer-events-none opacity-0 ease-in'
@@ -114,6 +114,9 @@ const NavBar = () => {
             </SideNavItem>
             <SideNavItem to="/mypage/application" onClick={closeMenu}>
               마이페이지
+            </SideNavItem>
+            <SideNavItem to="/admin" onClick={closeMenu}>
+              관리자 페이지
             </SideNavItem>
           </div>
         </div>

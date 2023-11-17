@@ -9,24 +9,21 @@ const useAxios = (method: string, path: string, parameter: object) => {
   const SERVER_API = process.env.REACT_APP_SERVER_API;
 
   useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
-      axios({
-        method: method,
-        url: `${SERVER_API}${path}`,
-        data: parameter,
+    setLoading(true);
+    axios({
+      method: method,
+      url: `${SERVER_API}${path}`,
+      data: parameter,
+    })
+      .then((res) => {
+        setData(res.data);
       })
-        .then((res) => {
-          setData(res.data);
-        })
-        .catch((err) => {
-          setError(err);
-        })
-        .finally(() => {
-          setLoading(false);
-        });
-    };
-    fetchData();
+      .catch((err) => {
+        setError(err);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
   }, []);
 
   return { data, loading, error };
