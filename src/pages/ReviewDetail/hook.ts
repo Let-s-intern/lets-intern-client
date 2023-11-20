@@ -10,7 +10,7 @@ const useReviewDetail = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  useEffect(() => {
+  const fetchProgram = () => {
     if (!params.programId) return;
     setLoading(true);
     axios({
@@ -29,6 +29,11 @@ const useReviewDetail = () => {
       .finally(() => {
         setLoading(false);
       });
+  };
+
+  useEffect(() => {
+    fetchProgram();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [params]);
 
   return { loading, error, program };
