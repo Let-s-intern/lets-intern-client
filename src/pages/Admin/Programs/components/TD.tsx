@@ -1,4 +1,4 @@
-import { TDProps } from '../interfaces';
+import { TDProps } from '../interface';
 
 const TD = ({ children, className }: TDProps) => {
   return (

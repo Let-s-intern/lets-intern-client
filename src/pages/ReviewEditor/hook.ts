@@ -10,7 +10,7 @@ const useReviewEditor = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  useEffect(() => {
+  const fetchProgram = () => {
     if (!params.programId) return;
     setLoading(true);
     axios({
@@ -21,7 +21,11 @@ const useReviewEditor = () => {
       },
     })
       .then((res) => {
-        setProgram({ ...res.data, type: convertToTypeText[res.data.type] });
+        console.log(res);
+        setProgram({
+          ...res.data.programDetailVo,
+          type: convertToTypeText[res.data.type],
+        });
       })
       .catch((err) => {
         setError(err);
@@ -29,6 +33,11 @@ const useReviewEditor = () => {
       .finally(() => {
         setLoading(false);
       });
+  };
+
+  useEffect(() => {
+    fetchProgram();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [params]);
 
   return { loading, error, program };

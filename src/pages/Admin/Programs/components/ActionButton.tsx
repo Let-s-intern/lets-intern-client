@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 
-import { ActionButtonProps } from '../interfaces';
+import { ActionButtonProps } from '../interface';
 
 const ActionButton = ({
   styleType = 'edit',

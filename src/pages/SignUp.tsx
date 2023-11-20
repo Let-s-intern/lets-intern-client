@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import Input from '../components/Input';
 import Button from '../components/Button';
+import axios from '../libs/axios';
+import { useNavigate } from 'react-router-dom';
 
 interface CheckBoxProps {
   checked: boolean;
@@ -20,6 +22,7 @@ const CheckBox = ({ checked, onClick }: CheckBoxProps) => {
 };
 
 const SignUp = () => {
+  const navigate = useNavigate();
   const [buttonDisabled, setButtonDisabled] = useState(false);
   const [value, setValue] = useState({
     email: '',
@@ -33,6 +36,16 @@ const SignUp = () => {
 
   const handleOnSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    const fetchSignUp = async () => {
+      try {
+        const res = await axios.post('/user/signup', value);
+        console.log(res);
+        navigate('/login');
+      } catch (err) {
+        console.error(err);
+      }
+    };
+    fetchSignUp();
   };
 
   useEffect(() => {
@@ -49,6 +62,7 @@ const SignUp = () => {
     } else {
       setButtonDisabled(false);
     }
+    console.log('value', value);
   }, [value]);
 
   return (

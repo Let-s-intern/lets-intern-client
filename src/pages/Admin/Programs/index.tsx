@@ -1,19 +1,79 @@
 import Checkbox from '@mui/material/Checkbox';
+import { useEffect, useState } from 'react';
+import axios from 'axios';
 
-import usePrograms from './usePrograms';
 import Header from './components/Header';
 import TH from './components/TH';
 import TD from './components/TD';
 import ActionButton from './components/ActionButton';
 
 const Programs = () => {
-  const {
-    programList,
-    handleDelete,
-    handleEditProgramVisible,
-    loading,
-    error,
-  } = usePrograms();
+  const [programList, setProgramList] = useState([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState(null);
+
+  const fetchEditProgramVisible = (programId: number, visible: boolean) => {
+    axios({
+      method: 'PATCH',
+      url: `${process.env.REACT_APP_SERVER_API}/program/${programId}`,
+      data: {
+        isVisible: !visible,
+        isApproved: !visible,
+      },
+    })
+      .then(() => {
+        const newProgramList: any = programList.map((program: any) => {
+          if (program.id === programId) {
+            return {
+              ...program,
+              isVisible: !visible,
+              isApproved: !visible,
+            };
+          }
+          return program;
+        });
+        console.log(newProgramList);
+        setProgramList(newProgramList);
+      })
+      .catch((err) => {
+        setError(err);
+      });
+  };
+
+  const fetchDelete = (programId: number) => {
+    axios({
+      url: process.env.REACT_APP_SERVER_API + '/program/' + programId,
+      method: 'DELETE',
+    })
+      .then((res) => {
+        console.log(res);
+        setProgramList(programList.filter((p: any) => p.id !== programId));
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  useEffect(() => {
+    setLoading(true);
+    axios({
+      url: `${process.env.REACT_APP_SERVER_API}/program/admin`,
+      method: 'GET',
+      params: {
+        isAdmin: true,
+      },
+    })
+      .then((res) => {
+        const data = res.data.programList;
+        setProgramList(data);
+      })
+      .catch((err) => {
+        setError(err);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  }, []);
 
   if (error) {
     return <div>에러 발생</div>;
@@ -62,7 +122,7 @@ const Programs = () => {
                 </ActionButton>
                 <ActionButton
                   styleType="delete"
-                  onClick={() => handleDelete(program.id)}
+                  onClick={() => fetchDelete(program.id)}
                 >
                   삭제
                 </ActionButton>
@@ -71,7 +131,7 @@ const Programs = () => {
                 <Checkbox
                   checked={program.isVisible && program.isApproved}
                   onChange={() => {
-                    handleEditProgramVisible(
+                    fetchEditProgramVisible(
                       program.id,
                       program.isVisible && program.isApproved,
                     );

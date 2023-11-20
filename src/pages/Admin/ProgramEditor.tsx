@@ -1,15 +1,15 @@
 import { FormControl, InputLabel, MenuItem, Select } from '@mui/material';
 import Input from '../../components/Input';
 import { SetStateAction, useEffect, useState } from 'react';
-import axios from 'axios';
 import { useNavigate, useParams } from 'react-router-dom';
 import ReactQuill from 'react-quill';
 import * as React from 'react';
-import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
-import dayjs from 'dayjs';
+import axios from 'axios';
+// import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
+// import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+// import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+// import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
+// import dayjs from 'dayjs';
 
 interface ProgramEditorProps {
   mode: 'create' | 'edit';
@@ -19,43 +19,36 @@ const ProgramEditor = ({ mode = 'create' }: ProgramEditorProps) => {
   const navigate = useNavigate();
   const params = useParams();
   const [values, setValues] = useState<any>({
-    type: '',
-    th: '',
-    title: '',
-    dueDate: '2023-12-27',
-    announcementDate: '2023-12-30',
-    startDate: '2023-12-30T19:30:00',
-    contents: '',
-    way: '',
-    link: 'https://www.google.com',
-    // faqDTOList: [
-    //   {
-    //     question: '첫번째 질문입니까?',
-    //     answer: '첫번째 대답입니다!',
-    //   },
-    //   {
-    //     question: '두번째 질문입니까?',
-    //     answer: '두번째 대답입니다!',
-    //   },
-    // ],
+    // type: '',
+    // th: 1,
+    // title: '',
+    // maxHeadcount: 30,
+    // dueDate: '',
+    // announcementDate: '2023-12-20T19:30:00',
+    // startDate: '2023-12-20T19:30:00',
+    // contents: '공채 부트캠프 모집합니다',
+    // way: 'OFFLINE',
+    // location: '강남역',
+    // link: '',
   });
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<unknown>(null);
 
+  // form submit 이벤트 핸들러입니다.
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    // 새로고침을 막습니다.
     e.preventDefault();
-    const data = { ...values, th: Number(values.th) };
-    console.log('send', data);
+    // values에서 headcount, status, isApproved, isVisible, faqList를 제외한 나머지 데이터를 data에 담습니다.
+    const { headcount, status, isApproved, isVisible, faqList, ...data } =
+      values;
+    console.log('send submit', data);
+    // axios 수정 or 생성 요청을 보내는 부분입니다.
     axios({
       method: mode === 'edit' ? 'patch' : 'post',
-      url:
-        mode === 'edit'
-          ? `${process.env.REACT_APP_SERVER_API}/program/${params.id}`
-          : `${process.env.REACT_APP_SERVER_API}/program`,
+      url: mode === 'edit' ? `/program/${params.id}` : `/program`,
       data,
     })
       .then((res) => {
-        console.log('send', values);
         console.log(res);
         navigate(-1);
       })
@@ -64,28 +57,31 @@ const ProgramEditor = ({ mode = 'create' }: ProgramEditorProps) => {
       });
   };
 
-  useEffect(() => {
-    console.log('values', values);
-  }, [values]);
+  // values가 변경될 때마다 콘솔에 출력합니다.
+  // useEffect(() => {
+  //   console.log('values', values);
+  // }, [values]);
 
-  useEffect(() => {
-    console.log('mode', mode);
-    console.log('params', params);
-  }, [mode]);
+  // mode가 변경될 때마다 콘솔에 출력합니다.
+  // useEffect(() => {
+  //   console.log('mode', mode);
+  //   console.log('params', params);
+  // }, [mode]);
 
+  // mode가 변경될 때마다 서버에서 데이터를 가져옵니다.
   useEffect(() => {
     setLoading(true);
     if (mode === 'edit') {
       axios({
-        method: 'get',
-        url: `${process.env.REACT_APP_SERVER_API}/program/${params.id}`,
-        params: {
-          isAdmin: true,
+        headers: {
+          Authorization: localStorage.getItem('access-token'),
         },
+        method: 'get',
+        url: `/program/${params.id}`,
       })
         .then((res) => {
-          console.log('data', res.data);
-          const { faqList, ...rest } = res.data;
+          console.log('res data', res.data);
+          const { ...rest } = res.data;
           setValues({ ...rest, th: String(rest.th) });
         })
         .catch((err) => {
@@ -99,6 +95,7 @@ const ProgramEditor = ({ mode = 'create' }: ProgramEditorProps) => {
     }
   }, [params, mode]);
 
+  // quill editor 옵션입니다.
   const modules = {
     toolbar: [
       ['bold', 'italic', 'underline', 'strike'], // 표시할 스타일링 옵션
@@ -122,14 +119,17 @@ const ProgramEditor = ({ mode = 'create' }: ProgramEditorProps) => {
     ],
   };
 
+  // 로딩 중이면 로딩중을 출력합니다.
   if (loading) {
     return <div className="mx-auto max-w-xl font-notosans">로딩중</div>;
   }
 
+  // 에러가 발생하면 에러 발생을 출력합니다.
   if (error) {
     return <div className="mx-auto max-w-xl font-notosans">에러 발생</div>;
   }
 
+  // 폼을 출력합니다.
   return (
     <div className="mx-auto max-w-xl font-notosans">
       <header className="my-5 text-2xl font-bold">프로그램 개설</header>
@@ -183,7 +183,7 @@ const ProgramEditor = ({ mode = 'create' }: ProgramEditorProps) => {
             <MenuItem value="ONLINE">온라인</MenuItem>
           </Select>
         </FormControl>
-        <LocalizationProvider dateAdapter={AdapterDayjs}>
+        {/* <LocalizationProvider dateAdapter={AdapterDayjs}>
           <DemoContainer components={['DateTimePicker']}>
             <DateTimePicker
               label="Basic date time picker"
@@ -193,20 +193,20 @@ const ProgramEditor = ({ mode = 'create' }: ProgramEditorProps) => {
               }
             />
           </DemoContainer>
-        </LocalizationProvider>
+        </LocalizationProvider> */}
         {/* <input
           type="datetime-local"
           value={values.startDate}
           onChange={(e) => setValues({ ...values, startDate: e.target.value })}
         /> */}
-        {/* <Input
+        <Input
           label="시작 기한"
           value={values.startDate}
           onChange={(e) => setValues({ ...values, startDate: e.target.value })}
           placeholder="예) 2023년 9월 30일 01:30"
           autoComplete="off"
           fullWidth
-        /> */}
+        />
         <Input
           label="마감 기한"
           value={values.dueDate}
