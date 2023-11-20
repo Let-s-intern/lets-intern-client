@@ -4,6 +4,10 @@ export interface Pages {
   nextButtonText?: string;
 }
 
+export interface GetPageDefault {
+  (cautionChecked: boolean, handleCautionChecked: () => void): Pages[];
+}
+
 export interface ListItemProps {
   checked?: boolean;
   children: React.ReactNode;
