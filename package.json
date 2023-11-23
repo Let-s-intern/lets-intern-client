@@ -54,6 +54,7 @@
       "last 1 safari version"
     ]
   },
+  "proxy": "https://api.letsintern.co.kr",
   "devDependencies": {
     "@types/quill": "^2.0.14",
     "prettier": "^3.0.3",

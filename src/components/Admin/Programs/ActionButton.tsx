@@ -1,6 +1,11 @@
 import { useNavigate } from 'react-router-dom';
 
-import { ActionButtonProps } from '../interface';
+interface ActionButtonProps {
+  styleType: 'edit' | 'delete';
+  children: React.ReactNode;
+  onClick?: () => void;
+  to?: string;
+}
 
 const ActionButton = ({
   styleType = 'edit',

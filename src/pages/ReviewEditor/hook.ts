@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
 
-import { convertToTypeText } from '../../utils/convertToTypeText';
+import { convertToTypeText } from '../../libs/converToTypeText';
 
 const useReviewEditor = () => {
   const params = useParams();

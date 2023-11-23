@@ -1,4 +1,7 @@
-import { TDProps } from '../interface';
+interface TDProps {
+  children: React.ReactNode;
+  className?: string;
+}
 
 const TD = ({ children, className }: TDProps) => {
   return (

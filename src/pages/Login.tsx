@@ -40,8 +40,8 @@ const Login = () => {
       })
       .then((res) => {
         console.log(res);
-        localStorage.setItem('accessToken', res.data.accessToken);
-        localStorage.setItem('refreshToken', res.data.refreshToken);
+        localStorage.setItem('access-token', res.data.accessToken);
+        localStorage.setItem('refresh-token', res.data.refreshToken);
         navigate('/');
       })
       .catch((err) => {
@@ -56,24 +56,19 @@ const Login = () => {
         <h1 className="mb-12 text-center text-xl font-bold">반갑습니다!</h1>
         {/* 로그인 폼 */}
         <form onSubmit={handleLogin}>
-          <div>
+          <div className="mt-5">
             <Input
               label="이메일"
-              autoComplete="off"
-              fullWidth
-              className="mt-5"
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={(e: any) => setEmail(e.target.value)}
             />
           </div>
           <div className="mt-5">
             <Input
               type="password"
               label="비밀번호"
-              autoComplete="off"
-              fullWidth
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={(e: any) => setPassword(e.target.value)}
             />
           </div>
           <Button type="submit" className="mt-5 w-full">
