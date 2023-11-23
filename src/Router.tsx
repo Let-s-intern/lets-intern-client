@@ -1,7 +1,7 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 
 import Programs from './pages/Programs';
-import AdminPrograms from './pages/Admin/Programs/index';
+import AdminPrograms from './pages/Admin/Programs';
 import ProgramDetail from './pages/ProgramDetail';
 import Login from './pages/Login';
 import MyPage from './pages/MyPage';
@@ -14,9 +14,10 @@ import ProgramApply from './pages/ProgamApply';
 import Layout from './components/Layout';
 import AdminLayout from './components/AdminLayout';
 import Admin from './pages/Admin';
-import ProgramEditor from './pages/Admin/ProgramEditor';
+import ProgramCreate from './pages/Admin/ProgramCreate';
 import ReviewEditor from './pages/ReviewEditor';
 import ReviewDetail from './pages/ReviewDetail';
+import ProgramEdit from './pages/Admin/ProgramEdit';
 
 const Router = () => {
   return (
@@ -44,14 +45,8 @@ const Router = () => {
         <Route path="/admin" element={<AdminLayout />}>
           <Route path="" element={<Admin />} />
           <Route path="programs" element={<AdminPrograms />} />
-          <Route
-            path="programs/create"
-            element={<ProgramEditor mode="create" />}
-          />
-          <Route
-            path="programs/:id/edit"
-            element={<ProgramEditor mode="edit" />}
-          />
+          <Route path="programs/create" element={<ProgramCreate />} />
+          <Route path="programs/:programId/edit" element={<ProgramEdit />} />
         </Route>
       </Routes>
     </BrowserRouter>

@@ -1,11 +1,11 @@
 import Checkbox from '@mui/material/Checkbox';
 import { useEffect, useState } from 'react';
-import axios from 'axios';
 
-import Header from './components/Header';
-import TH from './components/TH';
-import TD from './components/TD';
-import ActionButton from './components/ActionButton';
+import Header from '../../components/Admin/Programs/Header';
+import TH from '../../components/Admin/Programs/TH';
+import TD from '../../components/Admin/Programs/TD';
+import ActionButton from '../../components/Admin/Programs/ActionButton';
+import axios from '../../libs/axios';
 
 const Programs = () => {
   const [programList, setProgramList] = useState([]);
@@ -15,7 +15,7 @@ const Programs = () => {
   const fetchEditProgramVisible = (programId: number, visible: boolean) => {
     axios({
       method: 'PATCH',
-      url: `${process.env.REACT_APP_SERVER_API}/program/${programId}`,
+      url: `/program/${programId}`,
       data: {
         isVisible: !visible,
         isApproved: !visible,
@@ -42,8 +42,8 @@ const Programs = () => {
 
   const fetchDelete = (programId: number) => {
     axios({
-      url: process.env.REACT_APP_SERVER_API + '/program/' + programId,
       method: 'DELETE',
+      url: `/program/${programId}`,
     })
       .then((res) => {
         console.log(res);
@@ -59,9 +59,6 @@ const Programs = () => {
     axios({
       url: `${process.env.REACT_APP_SERVER_API}/program/admin`,
       method: 'GET',
-      params: {
-        isAdmin: true,
-      },
     })
       .then((res) => {
         const data = res.data.programList;
