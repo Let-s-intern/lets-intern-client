@@ -25,6 +25,7 @@ const Programs = () => {
         params,
       })
       .then((res) => {
+        console.log(res.data.programList);
         return res.data.programList;
       })
       .then((programs) => {
