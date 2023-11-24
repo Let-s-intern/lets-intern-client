@@ -61,14 +61,14 @@ const ProgramListSlider = ({
         ref={scrollContainer}
         className="flex grow overflow-x-scroll scroll-smooth py-5"
       >
-        {loading || programs.length === 0 ? (
+        {loading || programs?.length === 0 ? (
           <div className="h-[320px] w-full"></div>
         ) : (
           <div className="flex gap-5">
-            {programs.map((program) => {
+            {programs?.map((program) => {
               return (
                 <Card
-                  key={program.id}
+                  key={program?.id}
                   program={program}
                   reviewId={10}
                   cardType={cardType}
