@@ -23,19 +23,19 @@ const TableBody = ({
 }: ProgramTableBodyProps) => {
   return (
     <tbody>
-      {programList?.map((program: any) => (
-        <tr key={program?.id}>
-          <TD>{program?.status}</TD>
-          <TD>{program?.title}</TD>
-          <TD>{program?.th}</TD>
-          <TD>{program?.type}</TD>
-          <TD>{program?.startDate}</TD>
-          <TD>{program?.dueDate}</TD>
+      {programList.map((program: any) => (
+        <tr key={program.id}>
+          <TD>{program.status}</TD>
+          <TD>{program.title}</TD>
+          <TD>{program.th}</TD>
+          <TD>{program.type}</TD>
+          <TD>{program.startDate}</TD>
+          <TD>{program.dueDate}</TD>
           <TD>
             <ActionButtonGroup>
               <ActionButton
                 bgColor="green"
-                to={`/admin/programs/${program?.id}/edit`}
+                to={`/admin/programs/${program.id}/edit`}
               >
                 수정
               </ActionButton>
@@ -44,7 +44,7 @@ const TableBody = ({
               </ActionButton>
               <ActionButton
                 bgColor="red"
-                onClick={() => fetchDelete(program?.id)}
+                onClick={() => fetchDelete(program.id)}
               >
                 삭제
               </ActionButton>
@@ -52,11 +52,11 @@ const TableBody = ({
           </TD>
           <TD>
             <Checkbox
-              checked={program?.isVisible && program?.isApproved}
+              checked={program.isVisible && program.isApproved}
               onChange={() => {
                 fetchEditProgramVisible(
-                  program?.id,
-                  program?.isVisible && program?.isApproved,
+                  program.id,
+                  program.isVisible && program.isApproved,
                 );
               }}
             />
