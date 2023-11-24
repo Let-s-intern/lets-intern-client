@@ -25,15 +25,14 @@ const Programs = () => {
         params,
       })
       .then((res) => {
-        console.log(res.data.programList);
         return res.data.programList;
       })
       .then((programs) => {
         setPrograms(
-          programs.filter((program: any) => program.status === 'OPEN'),
+          programs?.filter((program: any) => program.status === 'OPEN'),
         );
         setClosedPrograms(
-          programs.filter((program: any) => program.status === 'CLOSED'),
+          programs?.filter((program: any) => program.status === 'CLOSED'),
         );
       })
       .catch((err) => {
