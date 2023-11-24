@@ -7,7 +7,7 @@ import TabItem from '../components/TabItem';
 import Card from '../components/Card';
 
 import { useSearchParams } from 'react-router-dom';
-import axios from 'axios';
+import axios from '../libs/axios';
 
 const Programs = () => {
   const [searchParams] = useSearchParams();
