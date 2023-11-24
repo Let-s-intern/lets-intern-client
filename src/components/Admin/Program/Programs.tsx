@@ -18,10 +18,6 @@ const Programs = ({
   fetchDelete,
   fetchEditProgramVisible,
 }: ProgramsProps) => {
-  if (error) {
-    return <div>에러 발생</div>;
-  }
-
   if (loading) {
     return (
       <>
@@ -29,6 +25,10 @@ const Programs = ({
         <div>로딩 중...</div>
       </>
     );
+  }
+
+  if (error) {
+    return <div>에러 발생</div>;
   }
 
   return (

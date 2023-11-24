@@ -25,14 +25,14 @@ const Programs = () => {
         params,
       })
       .then((res) => {
-        return res.data.programList;
+        return res.data?.programList;
       })
       .then((programs) => {
         setPrograms(
-          programs.filter((program: any) => program.status === 'OPEN'),
+          programs?.filter((program: any) => program?.status === 'OPEN'),
         );
         setClosedPrograms(
-          programs.filter((program: any) => program.status === 'CLOSED'),
+          programs?.filter((program: any) => program?.status === 'CLOSED'),
         );
       })
       .catch((err) => {
@@ -94,13 +94,13 @@ const Programs = () => {
           <p className="text-gray-500">
             더 많은 프로그램들이 준비되어 있으니 걱정마세요!
           </p>
-          {loading || closedPrograms.length === 0 ? (
+          {loading || closedPrograms?.length === 0 ? (
             <div className="h-[175px] w-full"></div>
           ) : (
             <div className="mt-5 grid grid-cols-1 gap-2 sm:grid-cols-2">
-              {closedPrograms.map((program: any) => (
+              {closedPrograms?.map((program: any) => (
                 <Card
-                  key={program.id}
+                  key={program?.id}
                   program={program}
                   loading={loading}
                   closed
@@ -114,4 +114,4 @@ const Programs = () => {
   );
 };
 
-export default memo(Programs);
+export default Programs;
