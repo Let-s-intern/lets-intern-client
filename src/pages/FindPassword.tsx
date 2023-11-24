@@ -27,7 +27,6 @@ const FindPassword = () => {
           <Input
             label="이메일"
             placeholder="가입하신 이메일을 입력해주세요."
-            fullWidth
             value={email}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
               setEmail(e.target.value)

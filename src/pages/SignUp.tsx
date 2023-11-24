@@ -27,7 +27,7 @@ const SignUp = () => {
   const [value, setValue] = useState({
     email: '',
     name: '',
-    phone: '',
+    phoneNum: '',
     password: '',
     passwordConfirm: '',
     agreeToTerms: false,
@@ -37,8 +37,10 @@ const SignUp = () => {
   const handleOnSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const fetchSignUp = async () => {
+      const { passwordConfirm, agreeToTerms, agreeToPrivacy, ...data } = value;
+      console.log(data);
       try {
-        const res = await axios.post('/user/signup', value);
+        const res = await axios.post('/user/signup', data);
         console.log(res);
         navigate('/login');
       } catch (err) {
@@ -52,7 +54,7 @@ const SignUp = () => {
     if (
       value.email === '' ||
       value.name === '' ||
-      value.phone === '' ||
+      value.phoneNum === '' ||
       value.password === '' ||
       value.passwordConfirm === '' ||
       value.agreeToTerms === false ||
@@ -82,8 +84,6 @@ const SignUp = () => {
             <Input
               label="이메일"
               placeholder="example@example.com"
-              autoComplete="off"
-              fullWidth
               value={value.email}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                 setValue({ ...value, email: e.target.value })
@@ -94,8 +94,6 @@ const SignUp = () => {
           <div>
             <Input
               label="이름"
-              autoComplete="off"
-              fullWidth
               value={value.name}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                 setValue({ ...value, name: e.target.value })
@@ -107,11 +105,9 @@ const SignUp = () => {
             <Input
               label="휴대폰 번호"
               placeholder="-를 제외한 전화번호"
-              autoComplete="off"
-              fullWidth
-              value={value.phone}
+              value={value.phoneNum}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                setValue({ ...value, phone: e.target.value })
+                setValue({ ...value, phoneNum: e.target.value })
               }
             />
           </div>
@@ -120,8 +116,6 @@ const SignUp = () => {
             <Input
               type="password"
               label="비밀번호"
-              autoComplete="off"
-              fullWidth
               value={value.password}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                 setValue({ ...value, password: e.target.value })
@@ -133,8 +127,6 @@ const SignUp = () => {
             <Input
               type="password"
               label="비밀번호 확인"
-              autoComplete="off"
-              fullWidth
               value={value.passwordConfirm}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                 setValue({ ...value, passwordConfirm: e.target.value })
