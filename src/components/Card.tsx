@@ -42,9 +42,9 @@ const Card = ({
   page = 'main',
 }: CardProps) => {
   const link: Record<string, string> = {
-    main: `/program/${program.id}`,
-    'review-create': `/program/${program.id}/review/create`,
-    review: `/program/${program.id}/review/${reviewId}`,
+    main: `/program/${program?.id}`,
+    'review-create': `/program/${program?.id}/review/create`,
+    review: `/program/${program?.id}/review/${reviewId}`,
   };
 
   if (loading) {
@@ -71,9 +71,9 @@ const Card = ({
           className ? ` ${className}` : ''
         }`}
       >
-        <span>{!loading ? typeToCategory[program.type] : ' '}</span>
+        <span>{!loading ? typeToCategory[program?.type] : ' '}</span>
         <h2 className="mt-2 text-2xl font-medium">
-          {program.title}
+          {program?.title}
           <br />
           모집 마감
         </h2>
@@ -95,7 +95,7 @@ const Card = ({
               cardType ? ` ${subtextColor[cardType]}` : ' text-primary'
             }`}
           >
-            {!loading ? typeToCategory[program.type] : 'Loading...'}
+            {!loading ? typeToCategory[program?.type] : 'Loading...'}
           </span>
           {cardType && (
             <span
@@ -106,13 +106,13 @@ const Card = ({
           )}
         </div>
         <h2 className="mt-2 break-keep text-2xl font-medium">
-          {program.title}
+          {program?.title}
         </h2>
       </div>
       <p>
-        {!loading ? program.startDate : ' '}
+        {!loading ? program?.startDate : ' '}
         <br />
-        {!loading ? program.dueDate : ' '}
+        {!loading ? program?.dueDate : ' '}
       </p>
     </Link>
   );
