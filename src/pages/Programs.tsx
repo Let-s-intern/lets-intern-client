@@ -21,7 +21,7 @@ const Programs = () => {
     const params = !category || category === 'ALL' ? {} : { type: category };
     setLoading(true);
     axios
-      .get(`${process.env.REACT_APP_SERVER_API}/program`, {
+      .get('/program', {
         params,
       })
       .then((res) => {
@@ -114,4 +114,4 @@ const Programs = () => {
   );
 };
 
-export default memo(Programs);
+export default Programs;

@@ -39,10 +39,10 @@ const Login = () => {
         password,
       })
       .then((res) => {
-        console.log(res);
         localStorage.setItem('access-token', res.data.accessToken);
         localStorage.setItem('refresh-token', res.data.refreshToken);
         navigate('/');
+        window.location.reload();
       })
       .catch((err) => {
         console.log(err);

@@ -9,11 +9,10 @@ const ProgramsContainer = () => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
+    console.log('useEffect');
     setLoading(true);
-    axios({
-      url: `${process.env.REACT_APP_SERVER_API}/program/admin`,
-      method: 'GET',
-    })
+    axios
+      .get('/program/admin')
       .then((res) => {
         const data = res.data.programList;
         setProgramList(data);
@@ -27,14 +26,11 @@ const ProgramsContainer = () => {
   }, []);
 
   const fetchEditProgramVisible = (programId: number, visible: boolean) => {
-    axios({
-      method: 'PATCH',
-      url: `/program/${programId}`,
-      data: {
+    axios
+      .patch(`/program/${programId}`, {
         isVisible: !visible,
         isApproved: !visible,
-      },
-    })
+      })
       .then(() => {
         const newProgramList: any = programList.map((program: any) => {
           if (program.id === programId) {
@@ -55,10 +51,8 @@ const ProgramsContainer = () => {
   };
 
   const fetchDelete = (programId: number) => {
-    axios({
-      method: 'DELETE',
-      url: `/program/${programId}`,
-    })
+    axios
+      .delete(`/program/${programId}`)
       .then((res) => {
         console.log(res);
         setProgramList(programList.filter((p: any) => p.id !== programId));
