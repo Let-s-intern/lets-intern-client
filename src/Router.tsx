@@ -1,7 +1,7 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 
 import Programs from './pages/Programs';
-import AdminPrograms from './pages/Admin/Programs';
+import AdminPrograms from './pages/Admin/Program/Programs';
 import ProgramDetail from './pages/ProgramDetail';
 import Login from './pages/Login';
 import MyPage from './pages/MyPage';
@@ -14,10 +14,17 @@ import ProgramApply from './pages/ProgamApply';
 import Layout from './components/Layout';
 import AdminLayout from './components/AdminLayout';
 import Admin from './pages/Admin';
-import ProgramCreate from './pages/Admin/ProgramCreate';
+import AdminProgramCreate from './pages/Admin/Program/ProgramCreate';
 import ReviewEditor from './pages/ReviewEditor';
 import ReviewDetail from './pages/ReviewDetail';
-import ProgramEdit from './pages/Admin/ProgramEdit';
+import AdminProgramEdit from './pages/Admin/Program/ProgramEdit';
+import AdminReviews from './pages/Admin/Review/Reviews';
+import AdminReviewsDetail from './pages/Admin/Review/ReviewsDetail';
+import AdminUsers from './pages/Admin/User/Users';
+import AdminUserDetail from './pages/Admin/User/UserDetail';
+import AdminUserMemo from './pages/Admin/User/UserMemo';
+import AdminProgramUsers from './pages/Admin/Program/ProgramUsers';
+import AttendCheck from './components/Admin/Program/AttendCheck';
 
 const Router = () => {
   return (
@@ -44,9 +51,26 @@ const Router = () => {
         </Route>
         <Route path="/admin" element={<AdminLayout />}>
           <Route path="" element={<Admin />} />
-          <Route path="programs" element={<AdminPrograms />} />
-          <Route path="programs/create" element={<ProgramCreate />} />
-          <Route path="programs/:programId/edit" element={<ProgramEdit />} />
+          <Route path="programs">
+            <Route path="" element={<AdminPrograms />} />
+            <Route path="create" element={<AdminProgramCreate />} />
+            <Route path=":programId">
+              <Route path="edit" element={<AdminProgramEdit />} />
+              <Route path="users" element={<AdminProgramUsers />} />
+              <Route path="check-attendance" element={<AttendCheck />} />
+            </Route>
+          </Route>
+          <Route path="reviews">
+            <Route path="" element={<AdminReviews />} />
+            <Route path=":programId" element={<AdminReviewsDetail />} />
+          </Route>
+          <Route path="users">
+            <Route path="" element={<AdminUsers />} />
+            <Route path=":userId">
+              <Route path="" element={<AdminUserDetail />} />
+              <Route path="memo" element={<AdminUserMemo />} />
+            </Route>
+          </Route>
         </Route>
       </Routes>
     </BrowserRouter>

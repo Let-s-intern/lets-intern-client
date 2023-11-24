@@ -2,9 +2,9 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import * as React from 'react';
 
-import axios from '../../libs/axios';
-import ProgramEditor from '../../components/ProgramEditor';
-import { convertFormToRequest } from '../../libs/program-admin';
+import axios from '../../../libs/axios';
+import ProgramEditor from '../../../components/ProgramEditor';
+import { convertFormToRequest } from '../../../libs/program-admin';
 
 const ProgramCreate = () => {
   const navigate = useNavigate();

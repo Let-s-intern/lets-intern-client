@@ -4,28 +4,6 @@ import { ImExit } from 'react-icons/im';
 const AdminLayout = () => {
   const navData = [
     {
-      title: '페이지 관리',
-      itemList: [
-        {
-          name: '배너',
-          url: '#',
-        },
-        {
-          name: '매니저 등록',
-          url: '#',
-        },
-      ],
-    },
-    {
-      title: '사용자 관리',
-      itemList: [
-        {
-          name: '회원 DB',
-          url: '#',
-        },
-      ],
-    },
-    {
       title: '프로그램 관리',
       itemList: [
         {
@@ -34,7 +12,16 @@ const AdminLayout = () => {
         },
         {
           name: '후기 관리',
-          url: '#',
+          url: '/admin/reviews',
+        },
+      ],
+    },
+    {
+      title: '사용자 관리',
+      itemList: [
+        {
+          name: '회원 DB',
+          url: '/admin/users',
         },
       ],
     },

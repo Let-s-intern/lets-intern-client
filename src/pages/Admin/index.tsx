@@ -1,7 +1,7 @@
-import Programs from './Programs';
+import ProgramsContainer from '../../containers/Admin/ProgramsContainer';
 
 const Admin = () => {
-  return <Programs />;
+  return <ProgramsContainer />;
 };
 
 export default Admin;
