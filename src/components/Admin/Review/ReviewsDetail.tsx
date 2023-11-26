@@ -1,12 +1,15 @@
 import Table from '../Table';
-import ListHeader from '../ListHeader';
 import DetailTableHead from './DetailTableHead';
 import DetailTableBody from './DetailTableBody';
+import Heading from '../Heading';
+import styled from 'styled-components';
 
 const ReviewsDetail = () => {
   return (
     <>
-      <ListHeader>챌린지 1기 후기 상세</ListHeader>
+      <Header>
+        <Heading>챌린지 1기 후기 상세</Heading>
+      </Header>
       <Table>
         <DetailTableHead />
         <DetailTableBody />
@@ -16,3 +19,7 @@ const ReviewsDetail = () => {
 };
 
 export default ReviewsDetail;
+
+const Header = styled.header`
+  margin-bottom: 1rem;
+`;

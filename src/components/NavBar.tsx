@@ -1,12 +1,6 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-
-interface SmallLinkProps {
-  to: string;
-  active?: boolean;
-  onClick?: () => void;
-  children: React.ReactNode;
-}
+import styled from 'styled-components';
 
 interface SideNavItemProps {
   to: string;
@@ -14,37 +8,9 @@ interface SideNavItemProps {
   children: string;
 }
 
-const SmallLink = ({ to, active, onClick, children }: SmallLinkProps) => {
-  return (
-    <Link
-      to={to}
-      className={`px-4 text-sm${
-        active ? ' text-primary' : ' text-neutral-grey'
-      }`}
-      onClick={onClick}
-    >
-      {children}
-    </Link>
-  );
-};
-
-const SideNavItem = ({ to, onClick, children }: SideNavItemProps) => {
-  return (
-    <Link
-      to={to}
-      className="flex w-full cursor-pointer justify-between rounded-md bg-gray-100 px-7 py-5 text-neutral-grey"
-      onClick={onClick}
-    >
-      <span>{children}</span>
-      <i>
-        <img src="/icons/arrow-right.svg" alt="오른쪽 화살표" />
-      </i>
-    </Link>
-  );
-};
-
 const NavBar = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   const toggleMenu = () => {
     setIsOpen(!isOpen);
@@ -52,6 +18,24 @@ const NavBar = () => {
 
   const closeMenu = () => {
     setIsOpen(false);
+  };
+
+  useEffect(() => {
+    const token = localStorage.getItem('access-token');
+    if (token) {
+      setIsLoggedIn(true);
+    }
+  }, []);
+
+  const handleLogout = async () => {
+    try {
+      localStorage.removeItem('access-token');
+      localStorage.removeItem('refresh-token');
+      setIsLoggedIn(false);
+      window.location.href = '/';
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   return (
@@ -94,19 +78,23 @@ const NavBar = () => {
             </i>
           </div>
           <div className="mt-4 flex justify-between">
-            <div>
-              <SmallLink to="/login" onClick={closeMenu}>
-                로그인
-              </SmallLink>
-              <SmallLink to="/signup" onClick={closeMenu} active>
-                회원가입
-              </SmallLink>
-            </div>
-            <Link to="/mypage/privacy" onClick={closeMenu}>
-              <i>
-                <img src="/icons/user.svg" alt="마이 페이지 아이콘" />
-              </i>
-            </Link>
+            {isLoggedIn ? (
+              <MyInfoSpan>
+                <span>
+                  환영합니다, <b>OOO</b>님
+                </span>
+                <button onClick={handleLogout}>로그아웃</button>
+              </MyInfoSpan>
+            ) : (
+              <LoginLinkGroup>
+                <Link to="/login" onClick={closeMenu}>
+                  로그인
+                </Link>
+                <Link to="/signup" onClick={closeMenu}>
+                  회원가입
+                </Link>
+              </LoginLinkGroup>
+            )}
           </div>
           <div className="mt-5 flex flex-col gap-2">
             <SideNavItem to="/" onClick={closeMenu}>
@@ -128,3 +116,51 @@ const NavBar = () => {
 };
 
 export default NavBar;
+
+const SideNavItem = ({ to, onClick, children }: SideNavItemProps) => {
+  return (
+    <Link
+      to={to}
+      className="flex w-full cursor-pointer justify-between rounded-md bg-gray-100 px-7 py-5 text-neutral-grey"
+      onClick={onClick}
+    >
+      <span>{children}</span>
+      <i>
+        <img src="/icons/arrow-right.svg" alt="오른쪽 화살표" />
+      </i>
+    </Link>
+  );
+};
+
+const MyInfoSpan = styled.span`
+  color: #505050;
+  font-size: 0.875rem;
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  padding: 0 1rem;
+
+  span {
+    b {
+      color: #6963f6;
+      font-weight: 400;
+    }
+  }
+
+  button {
+    color: #6963f6;
+  }
+`;
+
+const LoginLinkGroup = styled.div`
+  margin-left: 1rem;
+  font-size: 0.875rem;
+  display: flex;
+  gap: 1.5rem;
+
+  a {
+    &:nth-child(1) {
+      color: #6963f6;
+    }
+  }
+`;
