@@ -14,17 +14,19 @@ import ProgramApply from './pages/ProgamApply';
 import Layout from './components/Layout';
 import AdminLayout from './components/AdminLayout';
 import Admin from './pages/Admin';
-import AdminProgramCreate from './pages/Admin/Program/ProgramCreate';
+import ProgramCreate from './pages/Admin/Program/ProgramCreate';
 import ReviewEditor from './pages/ReviewEditor';
 import ReviewDetail from './pages/ReviewDetail';
-import AdminProgramEdit from './pages/Admin/Program/ProgramEdit';
+import ProgramEdit from './pages/Admin/Program/ProgramEdit';
 import AdminReviews from './pages/Admin/Review/Reviews';
 import AdminReviewsDetail from './pages/Admin/Review/ReviewsDetail';
-import AdminUsers from './pages/Admin/User/Users';
-import AdminUserDetail from './pages/Admin/User/UserDetail';
-import AdminUserMemo from './pages/Admin/User/UserMemo';
-import AdminProgramUsers from './pages/Admin/Program/ProgramUsers';
+import Users from './pages/Admin/User/Users';
+import UserDetail from './pages/Admin/User/UserDetail';
+import UserMemo from './pages/Admin/User/UserMemo';
+import ProgramUsers from './pages/Admin/Program/ProgramUsers';
 import AttendCheck from './components/Admin/Program/AttendCheck';
+import UserCreate from './pages/Admin/User/UserCreate';
+import UserEdit from './pages/Admin/User/UserEdit';
 
 const Router = () => {
   return (
@@ -37,7 +39,7 @@ const Router = () => {
             <Route path="review/create" element={<ReviewEditor />} />
             <Route path="review/:reviewId" element={<ReviewDetail />} />
           </Route>
-          <Route path="program/:id" element={<ProgramDetail />}>
+          <Route path="program/:programId" element={<ProgramDetail />}>
             <Route path="apply" element={<ProgramApply />} />
           </Route>
           <Route path="mypage" element={<MyPage />}>
@@ -53,10 +55,10 @@ const Router = () => {
           <Route path="" element={<Admin />} />
           <Route path="programs">
             <Route path="" element={<AdminPrograms />} />
-            <Route path="create" element={<AdminProgramCreate />} />
+            <Route path="create" element={<ProgramCreate />} />
             <Route path=":programId">
-              <Route path="edit" element={<AdminProgramEdit />} />
-              <Route path="users" element={<AdminProgramUsers />} />
+              <Route path="edit" element={<ProgramEdit />} />
+              <Route path="users" element={<ProgramUsers />} />
               <Route path="check-attendance" element={<AttendCheck />} />
             </Route>
           </Route>
@@ -65,10 +67,12 @@ const Router = () => {
             <Route path=":programId" element={<AdminReviewsDetail />} />
           </Route>
           <Route path="users">
-            <Route path="" element={<AdminUsers />} />
+            <Route path="" element={<Users />} />
+            <Route path="create" element={<UserCreate />} />
             <Route path=":userId">
-              <Route path="" element={<AdminUserDetail />} />
-              <Route path="memo" element={<AdminUserMemo />} />
+              <Route path="" element={<UserDetail />} />
+              <Route path="memo" element={<UserMemo />} />
+              <Route path="edit" element={<UserEdit />} />
             </Route>
           </Route>
         </Route>

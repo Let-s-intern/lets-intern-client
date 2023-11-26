@@ -23,6 +23,9 @@ const Programs = () => {
     axios
       .get('/program', {
         params,
+        headers: {
+          Authorization: '',
+        },
       })
       .then((res) => {
         return res.data.programList;
