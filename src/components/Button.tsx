@@ -34,7 +34,7 @@ const Button = ({
       onClick={() => {
         if (disabled) return;
         onClick && onClick();
-        navigate(to);
+        to !== '' && navigate(to);
       }}
     >
       {children}

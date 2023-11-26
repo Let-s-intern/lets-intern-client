@@ -13,12 +13,14 @@ const ProgramDetailContainer = () => {
   const [error, setError] = useState<unknown>(null);
   const [tab, setTab] = useState<string>('DETAIL');
   const [toggleOpenList, setToggleOpenList] = useState<number[]>([]);
+  const [isApplyModalOpen, setIsApplyModalOpen] = useState<boolean>(false);
+  const [applyPageIndex, setApplyPageIndex] = useState<number>(0);
+  const [user, setUser] = useState<any>(null);
 
   useEffect(() => {
     const fetchProgram = async () => {
       try {
         const res = await axios.get(`/program/${params.programId}`);
-        console.log(res.data);
         setProgram(res.data.programDetailVo);
         setReviewList(res.data.reviewList);
         setFaqList(res.data.faqList);
@@ -55,20 +57,69 @@ const ProgramDetailContainer = () => {
     return toggleOpenList.includes(faqId);
   };
 
+  const handleApplyButtonClick = async () => {
+    try {
+      const { data: hasDetailInfo } = await axios.get('/user/detail-info');
+      const res = await axios.get(`/user`);
+      setUser({
+        ...res.data,
+        major: hasDetailInfo ? res.data.major : '',
+        school: hasDetailInfo ? res.data.school : '',
+        university: hasDetailInfo ? res.data.university : '',
+        grade: '',
+        wishCompany: '',
+        wishJob: '',
+        applyMotive: '',
+        preQuestions: '',
+      });
+      setIsApplyModalOpen(true);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const handleApplyInput = (e: any) => {
+    const { name, value } = e.target;
+    setUser({
+      ...user,
+      [name]: value,
+    });
+  };
+
+  const handleApplyModalClose = () => {
+    setApplyPageIndex(0);
+    setIsApplyModalOpen(false);
+  };
+
+  const handleApplyNextButton = () => {
+    if (applyPageIndex === 3) {
+      setIsApplyModalOpen(false);
+      setApplyPageIndex(0);
+    } else {
+      setApplyPageIndex(applyPageIndex + 1);
+    }
+  };
+
   return (
     <ProgramDetail
       loading={loading}
       error={error}
-      handleBackButtonClick={handleBackButtonClick}
       tab={tab}
-      handleTabChange={handleTabChange}
       program={program}
       reviewList={reviewList}
       faqList={faqList}
       toggleOpenList={toggleOpenList}
-      programId={Number(params.programId)}
+      isApplyModalOpen={isApplyModalOpen}
+      applyPageIndex={applyPageIndex}
+      user={user}
+      handleBackButtonClick={handleBackButtonClick}
+      handleTabChange={handleTabChange}
       handleToggleOpenList={handleToggleOpenList}
       getToggleOpened={getToggleOpened}
+      handleApplyButtonClick={handleApplyButtonClick}
+      handleApplyModalClose={handleApplyModalClose}
+      handleApplyNextButton={handleApplyNextButton}
+      handleApplyInput={handleApplyInput}
     />
   );
 };

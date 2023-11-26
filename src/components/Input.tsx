@@ -4,6 +4,7 @@ import { styled } from '@mui/material/styles';
 interface InputProps {
   type?: string;
   placeholder?: string;
+  name?: string;
   label?: string;
   value?: string;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
@@ -23,6 +24,7 @@ const InputBlock = styled(TextField)({
 
 const Input = ({
   type = 'text',
+  name,
   placeholder,
   value,
   label,
@@ -33,6 +35,7 @@ const Input = ({
       type={type}
       label={label}
       placeholder={placeholder}
+      name={name}
       value={value}
       onChange={onChange}
       autoComplete="off"

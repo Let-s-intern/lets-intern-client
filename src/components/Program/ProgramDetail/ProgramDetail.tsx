@@ -7,35 +7,48 @@ import TabBar from './TabBar';
 import DetailTab from './DetailTab';
 import ReviewTab from './ReviewTab';
 import FAQTab from './FAQTab';
+import ProgramApply from '../../../pages/ProgamApply';
 
 interface ProgramDetailProps {
   loading: boolean;
   error: unknown;
-  handleBackButtonClick: () => void;
   tab: string;
-  handleTabChange: (tab: string) => void;
   program: any;
   faqList: any;
   reviewList: any;
   toggleOpenList: number[];
-  programId: number;
+  isApplyModalOpen: boolean;
+  applyPageIndex: number;
+  user: any;
+  handleBackButtonClick: () => void;
+  handleTabChange: (tab: string) => void;
   handleToggleOpenList: (id: number) => void;
   getToggleOpened: (faqId: number) => boolean;
+  handleApplyButtonClick: () => void;
+  handleApplyModalClose: () => void;
+  handleApplyNextButton: () => void;
+  handleApplyInput: (e: any) => void;
 }
 
 const ProgramDetail = ({
   loading,
   error,
-  handleBackButtonClick,
   tab,
-  handleTabChange,
   program,
   faqList,
   reviewList,
   toggleOpenList,
-  programId,
+  isApplyModalOpen,
+  applyPageIndex,
+  user,
+  handleBackButtonClick,
+  handleTabChange,
   handleToggleOpenList,
   getToggleOpened,
+  handleApplyButtonClick,
+  handleApplyModalClose,
+  handleApplyNextButton,
+  handleApplyInput,
 }: ProgramDetailProps) => {
   if (loading) {
     return <ProgramDetailBlock>로딩 중...</ProgramDetailBlock>;
@@ -65,7 +78,16 @@ const ProgramDetail = ({
           ''
         )}
       </TabContent>
-      <ApplySection programId={programId} />
+      <ApplySection handleApplyButtonClick={handleApplyButtonClick} />
+      {isApplyModalOpen && (
+        <ProgramApply
+          applyPageIndex={applyPageIndex}
+          user={user}
+          handleApplyModalClose={handleApplyModalClose}
+          handleApplyNextButton={handleApplyNextButton}
+          handleApplyInput={handleApplyInput}
+        />
+      )}
     </ProgramDetailBlock>
   );
 };

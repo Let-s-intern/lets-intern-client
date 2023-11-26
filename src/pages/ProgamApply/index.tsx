@@ -1,86 +1,96 @@
-import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import styled from 'styled-components';
 
 import CautionContent from './components/CautionContent';
 import Modal from './components/Modal';
 import ResultContent from './components/ResultContent';
 import MemberTypeContent from './components/MemberTypeContent';
 import MemberInfoInputContent from './components/MemberInfoInputContent';
-import { Pages } from './interface';
 
-const ProgramApply = () => {
-  const navigate = useNavigate();
-  const [cautionChecked, setCautionChecked] = useState(false);
-  const [pageIndex, setPageIndex] = useState(0);
-  const [pages, setPages] = useState<Pages[]>([
-    { position: 'bottom', content: <MemberTypeContent /> },
-    { position: 'bottom', content: <MemberInfoInputContent /> },
-    {
-      position: 'center',
-      content: <div />,
-      nextButtonText: '신청하기',
-    },
-    {
-      position: 'center',
-      content: <ResultContent />,
-      nextButtonText: '닫기',
-    },
-  ]);
+interface ProgramApplyProps {
+  applyPageIndex: number;
+  user: any;
+  handleApplyModalClose: () => void;
+  handleApplyNextButton: () => void;
+  handleApplyInput: (e: any) => void;
+}
 
-  const handleCautionChecked = () => {
-    setCautionChecked(!cautionChecked);
-  };
+interface BlackBackgroundProps {
+  $position: 'bottom' | 'center';
+}
 
-  const handleNextButtonClick = () => {
-    if (pageIndex === pages.length - 1) {
-      navigate(-1);
-    } else {
-      setPageIndex(pageIndex + 1);
-    }
-  };
-
-  useEffect(() => {
-    const newPages = [...pages];
-    newPages[2].content = (
-      <CautionContent
-        cautionChecked={cautionChecked}
-        onCautionChecked={handleCautionChecked}
-      />
-    );
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  useEffect(() => {
-    if (pageIndex !== 2) return;
-    const newPages = [...pages];
-    newPages[2].content = (
-      <CautionContent
-        cautionChecked={cautionChecked}
-        onCautionChecked={handleCautionChecked}
-      />
-    );
-    setPages(newPages);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [cautionChecked]);
-
-  return (
-    <div
-      className={`fixed left-0 top-0 z-[100] flex h-screen w-screen cursor-pointer bg-black bg-opacity-50${
-        pages[pageIndex].position === 'bottom'
-          ? ' items-end'
-          : ' items-center justify-center'
-      }`}
-      onClick={() => navigate(-1)}
-    >
+const ProgramApply = ({
+  applyPageIndex,
+  user,
+  handleApplyModalClose,
+  handleApplyNextButton,
+  handleApplyInput,
+}: ProgramApplyProps) => {
+  return applyPageIndex === 0 ? (
+    <BlackBackground $position="bottom" onClick={handleApplyModalClose}>
       <Modal
-        nextButtonText={pages[pageIndex].nextButtonText}
-        position={pages[pageIndex].position}
-        onNextButtonClick={handleNextButtonClick}
+        nextButtonText="다음"
+        position="bottom"
+        onNextButtonClick={handleApplyNextButton}
       >
-        {pages[pageIndex].content}
+        <MemberTypeContent />
       </Modal>
-    </div>
-  );
+    </BlackBackground>
+  ) : applyPageIndex === 1 ? (
+    <BlackBackground $position="bottom" onClick={handleApplyModalClose}>
+      <Modal
+        nextButtonText="다음"
+        position="bottom"
+        onNextButtonClick={handleApplyNextButton}
+      >
+        <MemberInfoInputContent
+          user={user}
+          handleApplyInput={handleApplyInput}
+        />
+      </Modal>
+    </BlackBackground>
+  ) : applyPageIndex === 2 ? (
+    <BlackBackground $position="center" onClick={handleApplyModalClose}>
+      <Modal
+        nextButtonText="다음"
+        position="center"
+        onNextButtonClick={handleApplyNextButton}
+      >
+        <CautionContent
+          cautionChecked={false}
+          onCautionChecked={function (): void {
+            throw new Error('Function not implemented.');
+          }}
+        />
+      </Modal>
+    </BlackBackground>
+  ) : applyPageIndex === 3 ? (
+    <BlackBackground $position="center" onClick={handleApplyModalClose}>
+      <Modal
+        nextButtonText="신청하기"
+        position="center"
+        onNextButtonClick={handleApplyNextButton}
+      >
+        <ResultContent />
+      </Modal>
+    </BlackBackground>
+  ) : null;
 };
 
 export default ProgramApply;
+
+const BlackBackground = styled.div<BlackBackgroundProps>`
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 100;
+  display: flex;
+  width: 100vw;
+  height: 100vh;
+  cursor: pointer;
+  background-color: rgba(0, 0, 0, 0.5);
+
+  ${({ $position }) =>
+    $position === 'bottom'
+      ? `align-items: flex-end;`
+      : `align-items: center; justify-content: center;`}
+`;
