@@ -1,21 +1,17 @@
-import { Outlet } from 'react-router-dom';
 import styled from 'styled-components';
 
 import Button from '../../Button';
 
 interface ApplySectionProps {
-  programId: number;
+  handleApplyButtonClick: () => void;
 }
 
-const ApplySection = ({ programId }: ApplySectionProps) => {
+const ApplySection = ({ handleApplyButtonClick }: ApplySectionProps) => {
   return (
     <ApplySectionBlock>
       <ApplyButtonWrapper>
-        <ApplyButton to={`/program/${programId}/apply`}>신청하기</ApplyButton>
+        <ApplyButton onClick={handleApplyButtonClick}>신청하기</ApplyButton>
       </ApplyButtonWrapper>
-      <ApplyFormArea>
-        <Outlet />
-      </ApplyFormArea>
     </ApplySectionBlock>
   );
 };
@@ -52,5 +48,3 @@ const ApplyButton = styled(Button)`
     width: auto;
   }
 `;
-
-const ApplyFormArea = styled.div``;

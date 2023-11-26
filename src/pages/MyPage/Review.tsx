@@ -1,45 +1,7 @@
-import SectionTitle from '../../components/SectionTitle';
-import ProgramListSlider from '../../components/ProgramListSlider';
-import { useEffect, useState } from 'react';
-import Program from '../../interfaces/program';
-import useAxios from '../../hooks/useAxios';
+import ReviewContainer from '../../containers/ReviewContainer';
 
 const Review = () => {
-  const { data, loading, error } = useAxios('get', '/program', {
-    page: 0,
-    size: 3,
-    sort: 'string',
-  });
-  const [programs, setPrograms] = useState<Program[]>([]);
-
-  useEffect(() => {
-    if (!loading && !error) {
-      setPrograms(data.programList);
-    }
-  }, [data, loading, error]);
-
-  return (
-    <>
-      <section>
-        <SectionTitle>후기를 기다리고 있어요</SectionTitle>
-        <ProgramListSlider
-          page="review-create"
-          programs={programs}
-          cardType="참여 완료"
-          loading={loading}
-        />
-      </section>
-      <section>
-        <SectionTitle className="mt-10">작성한 후기 확인하기</SectionTitle>
-        <ProgramListSlider
-          page="review"
-          programs={programs}
-          cardType="참여 완료"
-          loading={loading}
-        />
-      </section>
-    </>
-  );
+  return <ReviewContainer />;
 };
 
 export default Review;

@@ -9,8 +9,6 @@ import SignUp from './pages/SignUp';
 import FindPassword from './pages/FindPassword';
 import Privacy from './pages/MyPage/Privacy';
 import Review from './pages/MyPage/Review';
-import Application from './pages/MyPage/Application';
-import ProgramApply from './pages/ProgamApply';
 import Layout from './components/Layout';
 import AdminLayout from './components/AdminLayout';
 import Admin from './pages/Admin';
@@ -27,6 +25,7 @@ import ProgramUsers from './pages/Admin/Program/ProgramUsers';
 import AttendCheck from './components/Admin/Program/AttendCheck';
 import UserCreate from './pages/Admin/User/UserCreate';
 import UserEdit from './pages/Admin/User/UserEdit';
+import Application from './pages/MyPage/Appllication';
 
 const Router = () => {
   return (
@@ -38,9 +37,6 @@ const Router = () => {
             <Route path="" element={<ProgramDetail />} />
             <Route path="review/create" element={<ReviewEditor />} />
             <Route path="review/:reviewId" element={<ReviewDetail />} />
-          </Route>
-          <Route path="program/:programId" element={<ProgramDetail />}>
-            <Route path="apply" element={<ProgramApply />} />
           </Route>
           <Route path="mypage" element={<MyPage />}>
             <Route path="privacy" element={<Privacy />} />

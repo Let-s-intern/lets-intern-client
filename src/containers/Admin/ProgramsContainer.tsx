@@ -9,7 +9,6 @@ const ProgramsContainer = () => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    console.log('useEffect');
     setLoading(true);
     axios
       .get('/program/admin')
