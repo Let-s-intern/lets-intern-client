@@ -37,6 +37,7 @@ const Input = ({
       onChange={onChange}
       autoComplete="off"
       fullWidth
+      sx={{ backgroundColor: 'white' }}
     />
   );
 };
