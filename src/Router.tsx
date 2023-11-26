@@ -9,7 +9,6 @@ import SignUp from './pages/SignUp';
 import FindPassword from './pages/FindPassword';
 import Privacy from './pages/MyPage/Privacy';
 import Review from './pages/MyPage/Review';
-import Application from './pages/MyPage/Application';
 import Layout from './components/Layout';
 import AdminLayout from './components/AdminLayout';
 import Admin from './pages/Admin';
@@ -26,6 +25,7 @@ import ProgramUsers from './pages/Admin/Program/ProgramUsers';
 import AttendCheck from './components/Admin/Program/AttendCheck';
 import UserCreate from './pages/Admin/User/UserCreate';
 import UserEdit from './pages/Admin/User/UserEdit';
+import Application from './pages/MyPage/Appllication';
 
 const Router = () => {
   return (
