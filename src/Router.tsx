@@ -39,7 +39,7 @@ const Router = () => {
             <Route path="review/create" element={<ReviewEditor />} />
             <Route path="review/:reviewId" element={<ReviewDetail />} />
           </Route>
-          <Route path="program/:id" element={<ProgramDetail />}>
+          <Route path="program/:programId" element={<ProgramDetail />}>
             <Route path="apply" element={<ProgramApply />} />
           </Route>
           <Route path="mypage" element={<MyPage />}>
