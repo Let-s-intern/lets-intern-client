@@ -9,15 +9,28 @@ import {
   CardTop,
 } from '../Card';
 
-const ApplicationCard = () => {
+interface ApplicationCardProps {
+  application?: any;
+  statusToLabel?: any;
+}
+
+const ApplicationCard = ({
+  application,
+  statusToLabel,
+}: ApplicationCardProps) => {
   return (
-    <CardBlock to="#">
+    <CardBlock to={`/program/${application.id}`}>
       <CardTop>
-        <CardSubSpan>챌린지</CardSubSpan>
-        <CardBadge>신청완료</CardBadge>
+        {/* <CardSubSpan>챌린지</CardSubSpan> */}
+        <CardBadge
+          $bgColor={statusToLabel[application.status].bgColor}
+          $color={statusToLabel[application.status].color}
+        >
+          {statusToLabel[application.status].label}
+        </CardBadge>
       </CardTop>
       <CardMiddle>
-        <CardTitle>챌린지 2기</CardTitle>
+        <CardTitle>{application.programTitle}</CardTitle>
       </CardMiddle>
       <CardBottom>
         <CardBottomLink>취소하기</CardBottomLink>
