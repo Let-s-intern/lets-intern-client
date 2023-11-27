@@ -13,10 +13,10 @@ const DetailTableBody = () => {
         <TD>2023-11-24</TD>
         <TD>
           <FormControl sx={{ width: 100 }}>
-            <InputLabel id="type">공개 여부</InputLabel>
-            <Select labelId="type" id="type" label="공개 여부">
-              <MenuItem value="PUBLIC">공개</MenuItem>
-              <MenuItem value="PRIVATE">비공개</MenuItem>
+            <InputLabel id="type">노출</InputLabel>
+            <Select labelId="type" id="type" label="노출">
+              <MenuItem value="PUBLIC">노출</MenuItem>
+              <MenuItem value="PRIVATE">비노출</MenuItem>
             </Select>
           </FormControl>
         </TD>

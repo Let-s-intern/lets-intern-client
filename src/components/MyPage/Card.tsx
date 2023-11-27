@@ -1,6 +1,11 @@
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 
+interface CardBadgeProps {
+  $bgColor?: string;
+  $color?: string;
+}
+
 export const CardBlock = styled(Link)`
   display: flex;
   flex-direction: column;
@@ -24,12 +29,15 @@ export const CardSubSpan = styled.span`
   font-weight: 500;
 `;
 
-export const CardBadge = styled.div`
+export const CardBadge = styled.div<CardBadgeProps>`
   border-radius: 4px;
   background-color: #36337f;
   color: #ffffff;
   font-size: 0.75rem;
   padding: 0.125rem 0.5rem;
+
+  background-color: ${({ $bgColor }) => $bgColor};
+  color: ${({ $color }) => $color};
 `;
 
 export const CardMiddle = styled.div`

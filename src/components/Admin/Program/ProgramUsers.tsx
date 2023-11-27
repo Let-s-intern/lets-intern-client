@@ -28,7 +28,6 @@ const ProgramUsers = () => {
       <Top>
         <Heading>참여자 보기 - 챌린지 1기</Heading>
         <ActionButtonGroup>
-          <ActionButton bgColor="blue">등록</ActionButton>
           <ActionButton to="/admin/programs/1/check-attendance" bgColor="blue">
             출석체크
           </ActionButton>

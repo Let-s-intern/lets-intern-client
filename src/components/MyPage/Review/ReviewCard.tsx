@@ -9,18 +9,37 @@ import {
   CardTop,
 } from '../Card';
 
-const ReviewCard = () => {
+interface ReviewCardProps {
+  to: string;
+  application: any;
+  status: 'WAITING' | 'DONE';
+  statusToLabel: any;
+  bottomText?: string;
+}
+
+const ReviewCard = ({
+  to,
+  application,
+  status,
+  statusToLabel,
+  bottomText,
+}: ReviewCardProps) => {
   return (
-    <CardBlock to="#">
+    <CardBlock to={to}>
       <CardTop>
-        <CardSubSpan>챌린지</CardSubSpan>
-        <CardBadge>신청완료</CardBadge>
+        {/* <CardSubSpan>챌린지</CardSubSpan> */}
+        <CardBadge
+          $bgColor={statusToLabel[status].bgColor}
+          $color={statusToLabel[status].color}
+        >
+          {statusToLabel[status].label}
+        </CardBadge>
       </CardTop>
       <CardMiddle>
-        <CardTitle>챌린지 2기</CardTitle>
+        <CardTitle>{application.programTitle}</CardTitle>
       </CardMiddle>
       <CardBottom>
-        <CardBottomLink>취소하기</CardBottomLink>
+        <CardBottomLink>{bottomText}</CardBottomLink>
       </CardBottom>
     </CardBlock>
   );

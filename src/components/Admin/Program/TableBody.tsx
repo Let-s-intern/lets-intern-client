@@ -1,13 +1,21 @@
 import styled from 'styled-components';
-import { Checkbox } from '@mui/material';
+import {
+  Checkbox,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
+} from '@mui/material';
 
 import ActionButton from '../ActionButton';
 import TD from '../TD';
+import { convertTypeToText } from '../../../libs/converToTypeText';
 
 interface ProgramTableBodyProps {
   programList: any;
   fetchDelete: (programId: number) => void;
   fetchEditProgramVisible: (programId: number, visible: boolean) => void;
+  fetchEditProgramStatus: (programId: number, newStatus: string) => void;
 }
 
 const ActionButtonGroup = styled.div`
@@ -20,17 +28,32 @@ const TableBody = ({
   programList,
   fetchDelete,
   fetchEditProgramVisible,
+  fetchEditProgramStatus,
 }: ProgramTableBodyProps) => {
   return (
     <tbody>
       {programList.map((program: any) => (
         <tr key={program.id}>
-          <TD>{program.status}</TD>
-          <TD>{program.title}</TD>
+          <TD>{convertTypeToText(program.type, true)}</TD>
           <TD>{program.th}</TD>
-          <TD>{program.type}</TD>
+          <TD>{program.title}</TD>
           <TD>{program.startDate}</TD>
-          <TD>{program.dueDate}</TD>
+          <FormControl fullWidth sx={{ padding: 1 }}>
+            <Select
+              labelId="status"
+              id="status"
+              label=""
+              value={program.status}
+              onChange={(e) =>
+                fetchEditProgramStatus(program.id, e.target.value)
+              }
+            >
+              <MenuItem value="OPEN">모집중</MenuItem>
+              <MenuItem value="CLOSED">모집완료</MenuItem>
+            </Select>
+          </FormControl>
+          <TD>{program.headcount}</TD>
+          <TD>{program.announcementDate}</TD>
           <TD>
             <ActionButtonGroup>
               <ActionButton

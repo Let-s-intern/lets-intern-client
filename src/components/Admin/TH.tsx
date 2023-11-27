@@ -9,6 +9,8 @@ const THBlock = styled.th`
   background-color: #edf2f7;
   padding: 0.5rem 1rem;
   font-weight: 500;
+  font-size: 0.75rem;
+  white-space: nowrap;
 `;
 
 const TH = ({ children }: THProps) => {
