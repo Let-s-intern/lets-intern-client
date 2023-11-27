@@ -5,6 +5,7 @@ import * as React from 'react';
 import axios from '../../../libs/axios';
 import ProgramEditor from '../../../components/ProgramEditor';
 import { convertFormToRequest } from '../../../libs/program-admin';
+import dayjs from 'dayjs';
 
 const ProgramCreate = () => {
   const navigate = useNavigate();
@@ -15,14 +16,22 @@ const ProgramCreate = () => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const data = convertFormToRequest(values, content);
-    console.log(data);
+    console.log({
+      ...values,
+      contents: content,
+      th: Number(values.th),
+      headcount: Number(values.headcount),
+      faqIdList: [11, 12, 13],
+    });
+    setValues({
+      ...values,
+      contents: content,
+      th: Number(values.th),
+      headcount: Number(values.headcount),
+      faqIdList: [11, 12, 13],
+    });
     try {
-      await axios({
-        method: 'POST',
-        url: `/program`,
-        data,
-      });
+      await axios.post('/program', values);
       navigate('/admin/programs');
     } catch (err) {
       setError(err);

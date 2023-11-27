@@ -2,10 +2,6 @@ import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import ProgramEditor from '../../../components/ProgramEditor';
-import {
-  convertFormToRequest,
-  convertResponseToForm,
-} from '../../../libs/program-admin';
 import axios from '../../../libs/axios';
 
 const ProgramEdit = () => {
@@ -16,6 +12,11 @@ const ProgramEdit = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<unknown>(null);
 
+  const toLocalISOString = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toISOString().slice(0, 16);
+  };
+
   useEffect(() => {
     const fetchProgram = async () => {
       try {
@@ -24,7 +25,16 @@ const ProgramEdit = () => {
           url: `/program/admin/${params.programId}`,
         });
         setContent(res.data.contents);
-        const newValues = convertResponseToForm(res.data);
+        const newValues = {
+          ...res.data,
+          startDate: toLocalISOString(res.data.startDate),
+          endDate: toLocalISOString(res.data.endDate),
+          announcementDate: toLocalISOString(res.data.announcementDate),
+          dueDate: toLocalISOString(res.data.dueDate),
+        };
+        delete newValues.id;
+        delete newValues.isVisible;
+        delete newValues.contents;
         setValues(newValues);
       } catch (err) {
         setError(err);
@@ -37,14 +47,14 @@ const ProgramEdit = () => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const data = convertFormToRequest(values, content);
-    console.log(data);
+    const newValues = {
+      ...values,
+      contents: content,
+      th: Number(values.th),
+      headcount: Number(values.headcount),
+    };
     try {
-      await axios({
-        method: 'PATCH',
-        url: `/program/${params.programId}`,
-        data,
-      });
+      await axios.patch(`/program/${params.programId}`, newValues);
       navigate('/admin/programs');
     } catch (err) {
       setError(err);

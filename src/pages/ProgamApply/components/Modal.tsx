@@ -1,9 +1,15 @@
+import styled from 'styled-components';
 import { ModalProps } from '../interface';
 import ScrollBox from './Scrollbox';
+
+interface NextButtonProps {
+  $disabled: boolean;
+}
 
 const Modal = ({
   position,
   nextButtonText = '다음',
+  isNextButtonDisabled = false,
   onNextButtonClick,
   children,
 }: ModalProps) => {
@@ -26,16 +32,28 @@ const Modal = ({
         <ScrollBox className="max-h-[400px] overflow-y-scroll px-6 py-8">
           {children}
         </ScrollBox>
-        <button
+        <NextButton
           type="submit"
-          className={`w-full bg-primary py-3 font-medium text-white`}
-          onClick={onNextButtonClick}
+          $disabled={isNextButtonDisabled}
+          onClick={() => {
+            if (!isNextButtonDisabled) {
+              onNextButtonClick();
+            }
+          }}
         >
           {nextButtonText}
-        </button>
+        </NextButton>
       </div>
     </div>
   );
 };
 
 export default Modal;
+
+const NextButton = styled.button<NextButtonProps>`
+  width: 100%;
+  background-color: ${({ $disabled }) => ($disabled ? `#A5A1FA;` : `#6963f6;`)};
+  padding: 0.75rem 0;
+  font-weight: 500;
+  color: white;
+`;
