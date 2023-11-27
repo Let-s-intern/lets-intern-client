@@ -13,7 +13,7 @@ import { convertTypeToText } from '../../../libs/converToTypeText';
 
 interface ProgramTableBodyProps {
   programList: any;
-  fetchDelete: (programId: number) => void;
+  fetchDelete: (programId: number, status: string) => void;
   fetchEditProgramVisible: (programId: number, visible: boolean) => void;
   fetchEditProgramStatus: (programId: number, newStatus: string) => void;
 }
@@ -38,20 +38,6 @@ const TableBody = ({
           <TD>{program.th}</TD>
           <TD>{program.title}</TD>
           <TD>{program.startDate}</TD>
-          <FormControl fullWidth sx={{ padding: 1 }}>
-            <Select
-              labelId="status"
-              id="status"
-              label=""
-              value={program.status}
-              onChange={(e) =>
-                fetchEditProgramStatus(program.id, e.target.value)
-              }
-            >
-              <MenuItem value="OPEN">모집중</MenuItem>
-              <MenuItem value="CLOSED">모집완료</MenuItem>
-            </Select>
-          </FormControl>
           <TD>{program.headcount}</TD>
           <TD>{program.announcementDate}</TD>
           <TD>
@@ -67,7 +53,7 @@ const TableBody = ({
               </ActionButton>
               <ActionButton
                 bgColor="red"
-                onClick={() => fetchDelete(program.id)}
+                onClick={() => fetchDelete(program.id, program.status)}
               >
                 삭제
               </ActionButton>
@@ -75,12 +61,9 @@ const TableBody = ({
           </TD>
           <TD>
             <Checkbox
-              checked={program.isVisible && program.isApproved}
+              checked={program.isVisible}
               onChange={() => {
-                fetchEditProgramVisible(
-                  program.id,
-                  program.isVisible && program.isApproved,
-                );
+                fetchEditProgramVisible(program.id, program.isVisible);
               }}
             />
           </TD>

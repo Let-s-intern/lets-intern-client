@@ -6,7 +6,7 @@ interface CardBadgeProps {
   $color?: string;
 }
 
-export const CardBlock = styled(Link)`
+export const CardBlock = styled.button`
   display: flex;
   flex-direction: column;
   background-color: #f1f4f9;
@@ -53,6 +53,7 @@ export const CardTitle = styled.h2`
 export const CardBottom = styled.div`
   display: flex;
   justify-content: end;
+  width: 100%;
 `;
 
 export const CardBottomLink = styled.span`

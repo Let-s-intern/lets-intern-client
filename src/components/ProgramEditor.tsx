@@ -6,6 +6,7 @@ import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
 import dayjs from 'dayjs';
 import ReactQuill from 'react-quill';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import styled from 'styled-components';
 
 interface ProgramEditorProps {
   values: any;
@@ -64,6 +65,15 @@ const ProgramEditor = ({
           placeholder="프로그램 기수를 입력하세요"
           onChange={(e: any) => setValues({ ...values, th: e.target.value })}
         />
+        <Input
+          label="인원수"
+          type="number"
+          value={values.headcount ? values.headcount : ''}
+          placeholder="총 인원 수를 입력하세요"
+          onChange={(e: any) =>
+            setValues({ ...values, headcount: e.target.value })
+          }
+        />
         <FormControl fullWidth>
           <InputLabel id="type">유형</InputLabel>
           <Select
@@ -94,30 +104,65 @@ const ProgramEditor = ({
           >
             <MenuItem value="OFFLINE">오프라인</MenuItem>
             <MenuItem value="ONLINE">온라인</MenuItem>
+            <MenuItem value="ALL">온오프라인 병행</MenuItem>
           </Select>
         </FormControl>
-        <LocalizationProvider dateAdapter={AdapterDayjs}>
-          <DemoContainer components={['DateTimePicker']}>
-            <DateTimePicker
-              label="시작 날짜"
-              value={dayjs(values.startDate) ? dayjs(values.startDate) : ''}
-              onChange={(value) =>
-                setValues({ ...values, startDate: dayjs(value) })
-              }
-            />
-          </DemoContainer>
-        </LocalizationProvider>
-        <LocalizationProvider dateAdapter={AdapterDayjs}>
-          <DemoContainer components={['DateTimePicker']}>
-            <DateTimePicker
-              label="마감 날짜"
-              value={dayjs(values.dueDate) ? dayjs(values.dueDate) : ''}
-              onChange={(value) =>
-                setValues({ ...values, dueDate: dayjs(value) })
-              }
-            />
-          </DemoContainer>
-        </LocalizationProvider>
+        <Input
+          label="장소"
+          value={values.location ? values.location : ''}
+          placeholder="장소를 입력하세요"
+          onChange={(e: any) =>
+            setValues({ ...values, location: e.target.value })
+          }
+        />
+        <DateTimeControl>
+          <DateTimeLabel htmlFor="startDate">시작 일자</DateTimeLabel>
+          <input
+            id="startDate"
+            type="datetime-local"
+            value={values.startDate}
+            onChange={(e) =>
+              setValues({ ...values, startDate: e.target.value })
+            }
+          />
+        </DateTimeControl>
+        <DateTimeControl>
+          <DateTimeLabel htmlFor="endDate">종료 일자</DateTimeLabel>
+          <input
+            id="endDate"
+            type="datetime-local"
+            value={values.endDate}
+            onChange={(e) => setValues({ ...values, endDate: e.target.value })}
+          />
+        </DateTimeControl>
+        <DateTimeControl>
+          <DateTimeLabel htmlFor="dueDate">기한 일자</DateTimeLabel>
+          <input
+            id="dueDate"
+            type="datetime-local"
+            value={values.dueDate}
+            onChange={(e) => setValues({ ...values, dueDate: e.target.value })}
+          />
+        </DateTimeControl>
+        <DateTimeControl>
+          <DateTimeLabel htmlFor="announcementDate">공개 일자</DateTimeLabel>
+          <input
+            id="announcementDate"
+            type="datetime-local"
+            value={values.announcementDate}
+            onChange={(e) =>
+              setValues({ ...values, announcementDate: e.target.value })
+            }
+          />
+        </DateTimeControl>
+        <Input
+          label="필독사항"
+          value={values.notice ? values.notice : ''}
+          placeholder="필독사항을 입력하세요"
+          onChange={(e: any) =>
+            setValues({ ...values, notice: e.target.value })
+          }
+        />
         <ReactQuill
           modules={modules}
           value={content ? content : ''}
@@ -146,3 +191,13 @@ const ProgramEditor = ({
 };
 
 export default ProgramEditor;
+
+const DateTimeControl = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+`;
+
+const DateTimeLabel = styled.label`
+  font-weight: 500;
+`;

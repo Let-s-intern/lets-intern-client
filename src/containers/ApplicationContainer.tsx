@@ -46,6 +46,28 @@ const ApplicationContainer = () => {
     fetchApplication();
   }, []);
 
+  const fetchApplicationDelete = async (
+    e: React.MouseEvent<HTMLSpanElement, MouseEvent>,
+    applicationId: number,
+    status: string,
+  ) => {
+    e.stopPropagation();
+    try {
+      await axios.delete(`/application/${applicationId}`);
+      if (status === 'APPLIED') {
+        setAppliedList(appliedList.filter((a: any) => a.id !== applicationId));
+      } else if (status === 'IN_PROGRESS') {
+        setInProgressList(
+          inProgressList.filter((a: any) => a.id !== applicationId),
+        );
+      } else if (status === 'DONE') {
+        setDoneList(doneList.filter((a: any) => a.id !== applicationId));
+      }
+    } catch (err) {
+      setError(err);
+    }
+  };
+
   return (
     <Application
       loading={loading}
@@ -54,6 +76,7 @@ const ApplicationContainer = () => {
       inProgressList={inProgressList}
       doneList={doneList}
       statusToLabel={statusToLabel.current}
+      fetchApplicationDelete={fetchApplicationDelete}
     />
   );
 };

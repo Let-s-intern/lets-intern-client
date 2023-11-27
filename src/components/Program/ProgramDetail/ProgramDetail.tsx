@@ -20,6 +20,10 @@ interface ProgramDetailProps {
   isApplyModalOpen: boolean;
   applyPageIndex: number;
   user: any;
+  hasDetailInfo: boolean;
+  isLoggedIn: boolean;
+  isNextButtonDisabled: boolean;
+  participated: boolean;
   handleBackButtonClick: () => void;
   handleTabChange: (tab: string) => void;
   handleToggleOpenList: (id: number) => void;
@@ -41,6 +45,10 @@ const ProgramDetail = ({
   isApplyModalOpen,
   applyPageIndex,
   user,
+  hasDetailInfo,
+  isLoggedIn,
+  isNextButtonDisabled,
+  participated,
   handleBackButtonClick,
   handleTabChange,
   handleToggleOpenList,
@@ -78,11 +86,17 @@ const ProgramDetail = ({
           ''
         )}
       </TabContent>
-      <ApplySection handleApplyButtonClick={handleApplyButtonClick} />
+      <ApplySection
+        handleApplyButtonClick={handleApplyButtonClick}
+        participated={participated}
+      />
       {isApplyModalOpen && (
         <ProgramApply
           applyPageIndex={applyPageIndex}
           user={user}
+          hasDetailInfo={hasDetailInfo}
+          isLoggedIn={isLoggedIn}
+          isNextButtonDisabled={isNextButtonDisabled}
           handleApplyModalClose={handleApplyModalClose}
           handleApplyNextButton={handleApplyNextButton}
           handleApplyInput={handleApplyInput}

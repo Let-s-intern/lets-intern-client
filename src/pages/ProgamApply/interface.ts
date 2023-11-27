@@ -16,6 +16,7 @@ export interface ListItemProps {
 export interface ModalProps {
   position: 'bottom' | 'center';
   nextButtonText?: string;
+  isNextButtonDisabled?: boolean;
   onNextButtonClick: () => void;
   children: React.ReactNode;
 }

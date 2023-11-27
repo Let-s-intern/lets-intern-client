@@ -1,3 +1,4 @@
+import { useNavigate } from 'react-router-dom';
 import {
   CardBadge,
   CardBlock,
@@ -24,8 +25,10 @@ const ReviewCard = ({
   statusToLabel,
   bottomText,
 }: ReviewCardProps) => {
+  const navigate = useNavigate();
+
   return (
-    <CardBlock to={to}>
+    <CardBlock onClick={() => navigate(to)}>
       <CardTop>
         {/* <CardSubSpan>챌린지</CardSubSpan> */}
         <CardBadge

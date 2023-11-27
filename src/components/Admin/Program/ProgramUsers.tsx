@@ -5,6 +5,36 @@ import Table from '../Table';
 import UserTableHead from './UserTableHead';
 import UserTableBody from './UserTableBody';
 
+interface ProgramUsersProps {
+  isLetsChat?: boolean;
+}
+
+const ProgramUsers = ({ isLetsChat }: ProgramUsersProps) => {
+  return (
+    <>
+      <Top>
+        <Heading>참여자 보기 - 챌린지 1기</Heading>
+        <ActionButtonGroup>
+          {isLetsChat && (
+            <ActionButton
+              to="/admin/programs/1/check-attendance"
+              bgColor="blue"
+            >
+              출석체크
+            </ActionButton>
+          )}
+        </ActionButtonGroup>
+      </Top>
+      <Table>
+        <UserTableHead />
+        <UserTableBody />
+      </Table>
+    </>
+  );
+};
+
+export default ProgramUsers;
+
 const Top = styled.div`
   display: flex;
   justify-content: space-between;
@@ -21,24 +51,3 @@ const Heading = styled.h1`
   font-size: 1.5rem;
   font-weight: 700;
 `;
-
-const ProgramUsers = () => {
-  return (
-    <>
-      <Top>
-        <Heading>참여자 보기 - 챌린지 1기</Heading>
-        <ActionButtonGroup>
-          <ActionButton to="/admin/programs/1/check-attendance" bgColor="blue">
-            출석체크
-          </ActionButton>
-        </ActionButtonGroup>
-      </Top>
-      <Table>
-        <UserTableHead />
-        <UserTableBody />
-      </Table>
-    </>
-  );
-};
-
-export default ProgramUsers;

@@ -16,6 +16,7 @@ const UserTableHead = () => {
         <TH>신청자 답변</TH>
         <TH>참가확정</TH>
         <TH>신청일자</TH>
+        <TH>사전질문</TH>
       </tr>
     </thead>
   );

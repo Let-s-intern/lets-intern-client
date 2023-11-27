@@ -10,7 +10,7 @@ interface ProgramsProps {
   loading: boolean;
   error: any;
   programList: any;
-  fetchDelete: (programId: number) => void;
+  fetchDelete: (programId: number, status: string) => void;
   fetchEditProgramVisible: (programId: number, visible: boolean) => void;
   fetchEditProgramStatus: (programId: number, newStatus: string) => void;
 }

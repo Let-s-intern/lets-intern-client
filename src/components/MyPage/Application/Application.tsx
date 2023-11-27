@@ -12,6 +12,11 @@ interface ApplicationProps {
   inProgressList: any;
   doneList: any;
   statusToLabel: any;
+  fetchApplicationDelete: (
+    e: React.MouseEvent<HTMLSpanElement, MouseEvent>,
+    applicationId: number,
+    status: string,
+  ) => void;
 }
 
 const Application = ({
@@ -21,6 +26,7 @@ const Application = ({
   inProgressList,
   doneList,
   statusToLabel,
+  fetchApplicationDelete,
 }: ApplicationProps) => {
   if (loading) {
     return <ApplicationBlock>로딩중...</ApplicationBlock>;
@@ -43,6 +49,7 @@ const Application = ({
                 key={application.id}
                 application={application}
                 statusToLabel={statusToLabel}
+                fetchApplicationDelete={fetchApplicationDelete}
               />
             ))
           )}
@@ -59,6 +66,7 @@ const Application = ({
                 key={application.id}
                 application={application}
                 statusToLabel={statusToLabel}
+                fetchApplicationDelete={fetchApplicationDelete}
               />
             ))
           )}
@@ -75,6 +83,7 @@ const Application = ({
                 key={application.id}
                 application={application}
                 statusToLabel={statusToLabel}
+                fetchApplicationDelete={fetchApplicationDelete}
               />
             ))
           )}
