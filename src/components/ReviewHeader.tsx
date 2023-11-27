@@ -10,11 +10,8 @@ const ReviewHeader = ({ program }: ReviewHeaderProps) => {
         <h1 className="mt-3 text-xl font-bold text-neutral-grey">
           {program.title}
         </h1>
-        <span className="text-stone-300">
-          {program.startDate} ~ <br className="sm:hidden" /> {program.dueDate}
-        </span>
       </header>
-      <hr />
+      <hr className="mt-3" />
     </>
   );
 };

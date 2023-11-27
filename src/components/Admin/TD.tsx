@@ -12,6 +12,7 @@ interface TDBlockProps {
 const TDBlock = styled.td<TDBlockProps>`
   border: 1px solid #cbd5e0;
   padding: 0.5rem 1rem;
+  font-size: 0.75rem;
 
   ${(props) => props.textalign && `text-align: ${props.textalign};`}
 `;

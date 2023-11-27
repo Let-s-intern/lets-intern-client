@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
 
-import { convertToTypeText } from '../../libs/converToTypeText';
+import { typeToText } from '../../libs/converToTypeText';
 
 const useReviewDetail = () => {
   const params = useParams();
@@ -21,7 +21,7 @@ const useReviewDetail = () => {
       },
     })
       .then((res) => {
-        setProgram({ ...res.data, type: convertToTypeText[res.data.type] });
+        setProgram({ ...res.data, type: typeToText[res.data.type] });
       })
       .catch((err) => {
         setError(err);

@@ -4,14 +4,15 @@ const TableHead = () => {
   return (
     <thead>
       <tr>
-        <TH>상태</TH>
-        <TH>이름</TH>
+        <TH>분류</TH>
         <TH>기수</TH>
-        <TH>유형</TH>
-        <TH>시작기한</TH>
-        <TH>마감기한</TH>
-        <TH>액션</TH>
-        <TH>공개</TH>
+        <TH>이름</TH>
+        <TH>시작일자</TH>
+        <TH>상태</TH>
+        <TH>신청인</TH>
+        <TH>등록일자</TH>
+        <TH>관리</TH>
+        <TH>노출여부</TH>
       </tr>
     </thead>
   );

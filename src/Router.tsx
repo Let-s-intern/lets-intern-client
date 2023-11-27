@@ -39,9 +39,9 @@ const Router = () => {
             <Route path="review/:reviewId" element={<ReviewDetail />} />
           </Route>
           <Route path="mypage" element={<MyPage />}>
-            <Route path="privacy" element={<Privacy />} />
-            <Route path="review" element={<Review />} />
             <Route path="application" element={<Application />} />
+            <Route path="review" element={<Review />} />
+            <Route path="privacy" element={<Privacy />} />
           </Route>
           <Route path="login" element={<Login />} />
           <Route path="signup" element={<SignUp />} />

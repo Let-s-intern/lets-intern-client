@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
+import axios from '../libs/axios';
 
 interface SideNavItemProps {
   to: string;
@@ -11,6 +12,7 @@ interface SideNavItemProps {
 const NavBar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [user, setUser] = useState<any>(null);
 
   const toggleMenu = () => {
     setIsOpen(!isOpen);
@@ -25,6 +27,7 @@ const NavBar = () => {
     if (token) {
       setIsLoggedIn(true);
     }
+    fetchAndSetUser();
   }, []);
 
   const handleLogout = async () => {
@@ -33,6 +36,15 @@ const NavBar = () => {
       localStorage.removeItem('refresh-token');
       setIsLoggedIn(false);
       window.location.href = '/';
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const fetchAndSetUser = async () => {
+    try {
+      const res = await axios.get('/user');
+      setUser(res.data);
     } catch (error) {
       console.error(error);
     }
@@ -81,7 +93,7 @@ const NavBar = () => {
             {isLoggedIn ? (
               <MyInfoSpan>
                 <span>
-                  환영합니다, <b>OOO</b>님
+                  환영합니다, <b>{user?.name}</b>님
                 </span>
                 <button onClick={handleLogout}>로그아웃</button>
               </MyInfoSpan>

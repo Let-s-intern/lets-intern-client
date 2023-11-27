@@ -10,8 +10,8 @@ const AttendTableBody = () => {
         <TD>홍민서</TD>
         <TD>
           <FormControl sx={{ width: 100 }}>
-            <InputLabel id="type">참여 확정</InputLabel>
-            <Select labelId="type" id="type" label="참여 확정">
+            <InputLabel id="type">출석상태</InputLabel>
+            <Select labelId="type" id="type" label="출석상태">
               <MenuItem value="ATTENDANCE">출석</MenuItem>
               <MenuItem value="LATE">지각</MenuItem>
               <MenuItem value="ABSENT">결석</MenuItem>

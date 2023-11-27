@@ -2,8 +2,6 @@ import { useRef } from 'react';
 import styled from 'styled-components';
 import { MdArrowBackIosNew, MdArrowForwardIos } from 'react-icons/md';
 
-import Card from './Application/ApplicationCard';
-
 interface CardListSliderProps {
   children: React.ReactNode;
 }
@@ -32,13 +30,7 @@ const CardListSlider = ({ children }: CardListSliderProps) => {
           </i>
         </SliderPrevButton>
         <CardListContent ref={scrollContainer}>
-          <CardList>
-            {children}
-            <Card />
-            <Card />
-            <Card />
-            <Card />
-          </CardList>
+          <CardList>{children}</CardList>
         </CardListContent>
         <SliderNextButton onClick={handleNextButtonClick}>
           <i>
@@ -58,9 +50,12 @@ const CardListSliderBlock = styled.div`
 `;
 
 const CardListContent = styled.div`
-  display: flex;
+  display: block;
   overflow-x: scroll;
   scroll-behavior: smooth;
+  width: 100%;
+  height: 300px;
+  flex-grow: 1;
 
   &::-webkit-scrollbar {
     display: none;
@@ -70,6 +65,7 @@ const CardListContent = styled.div`
 const CardList = styled.div`
   display: flex;
   gap: 1rem;
+  height: 100%;
 `;
 
 const SliderPrevButton = styled.button`
