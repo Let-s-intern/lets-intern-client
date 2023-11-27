@@ -1,3 +1,4 @@
+import { useNavigate } from 'react-router-dom';
 import {
   CardBadge,
   CardBlock,
@@ -10,16 +11,23 @@ import {
 } from '../Card';
 
 interface ApplicationCardProps {
-  application?: any;
-  statusToLabel?: any;
+  application: any;
+  statusToLabel: any;
+  fetchApplicationDelete: (
+    e: React.MouseEvent<HTMLSpanElement, MouseEvent>,
+    applicationId: number,
+    status: string,
+  ) => void;
 }
 
 const ApplicationCard = ({
   application,
   statusToLabel,
+  fetchApplicationDelete,
 }: ApplicationCardProps) => {
+  const navigate = useNavigate();
   return (
-    <CardBlock to={`/program/${application.id}`}>
+    <CardBlock onClick={() => navigate(`/program/${application.programId}`)}>
       <CardTop>
         {/* <CardSubSpan>챌린지</CardSubSpan> */}
         <CardBadge
@@ -33,7 +41,13 @@ const ApplicationCard = ({
         <CardTitle>{application.programTitle}</CardTitle>
       </CardMiddle>
       <CardBottom>
-        <CardBottomLink>취소하기</CardBottomLink>
+        <CardBottomLink
+          onClick={(e) =>
+            fetchApplicationDelete(e, application.id, application.status)
+          }
+        >
+          취소하기
+        </CardBottomLink>
       </CardBottom>
     </CardBlock>
   );

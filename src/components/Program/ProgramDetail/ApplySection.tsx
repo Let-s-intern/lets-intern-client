@@ -4,13 +4,26 @@ import Button from '../../Button';
 
 interface ApplySectionProps {
   handleApplyButtonClick: () => void;
+  participated: boolean;
 }
 
-const ApplySection = ({ handleApplyButtonClick }: ApplySectionProps) => {
+const ApplySection = ({
+  handleApplyButtonClick,
+  participated,
+}: ApplySectionProps) => {
   return (
     <ApplySectionBlock>
       <ApplyButtonWrapper>
-        <ApplyButton onClick={handleApplyButtonClick}>신청하기</ApplyButton>
+        <ApplyButton
+          disabled={participated}
+          onClick={() => {
+            if (!participated) {
+              handleApplyButtonClick();
+            }
+          }}
+        >
+          {participated ? '신청 완료' : '신청하기'}
+        </ApplyButton>
       </ApplyButtonWrapper>
     </ApplySectionBlock>
   );

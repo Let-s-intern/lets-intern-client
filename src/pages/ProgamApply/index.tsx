@@ -9,6 +9,9 @@ import MemberInfoInputContent from './components/MemberInfoInputContent';
 interface ProgramApplyProps {
   applyPageIndex: number;
   user: any;
+  hasDetailInfo: boolean;
+  isLoggedIn: boolean;
+  isNextButtonDisabled: boolean;
   handleApplyModalClose: () => void;
   handleApplyNextButton: () => void;
   handleApplyInput: (e: any) => void;
@@ -21,6 +24,9 @@ interface BlackBackgroundProps {
 const ProgramApply = ({
   applyPageIndex,
   user,
+  hasDetailInfo,
+  isLoggedIn,
+  isNextButtonDisabled,
   handleApplyModalClose,
   handleApplyNextButton,
   handleApplyInput,
@@ -41,9 +47,12 @@ const ProgramApply = ({
         nextButtonText="다음"
         position="bottom"
         onNextButtonClick={handleApplyNextButton}
+        isNextButtonDisabled={isNextButtonDisabled}
       >
         <MemberInfoInputContent
           user={user}
+          hasDetailInfo={hasDetailInfo}
+          isLoggedIn={isLoggedIn}
           handleApplyInput={handleApplyInput}
         />
       </Modal>
@@ -66,7 +75,7 @@ const ProgramApply = ({
   ) : applyPageIndex === 3 ? (
     <BlackBackground $position="center" onClick={handleApplyModalClose}>
       <Modal
-        nextButtonText="신청하기"
+        nextButtonText="신청서 확인하기"
         position="center"
         onNextButtonClick={handleApplyNextButton}
       >

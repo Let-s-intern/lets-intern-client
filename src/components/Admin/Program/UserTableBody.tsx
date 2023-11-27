@@ -17,14 +17,16 @@ const UserTableBody = () => {
         <TD>좋아요</TD>
         <TD>
           <FormControl sx={{ width: 100 }}>
-            <InputLabel id="type">참여 확정</InputLabel>
-            <Select labelId="type" id="type" label="참여 확정">
-              <MenuItem value="PUBLIC">승인</MenuItem>
-              <MenuItem value="PRIVATE">거절</MenuItem>
+            <InputLabel id="type">참가 확정</InputLabel>
+            <Select labelId="type" id="type" label="참가 확정">
+              <MenuItem value="PUBLIC">대기</MenuItem>
+              <MenuItem value="PRIVATE">참가확정</MenuItem>
+              <MenuItem value="NOT">미선발</MenuItem>
             </Select>
           </FormControl>
         </TD>
         <TD>2023-05-05</TD>
+        <TD>질문입니다.</TD>
       </tr>
     </tbody>
   );

@@ -4,6 +4,7 @@ import styled from 'styled-components';
 type BackgroundColor = 'red' | 'green' | 'blue' | 'lightBlue' | 'gray';
 
 interface ActionButtonProps {
+  width?: string;
   bgColor?: BackgroundColor;
   children: React.ReactNode;
   onClick?: () => void;
@@ -12,9 +13,11 @@ interface ActionButtonProps {
 
 interface ActionButtonBlockProps {
   $bgColor?: BackgroundColor;
+  $width?: string;
 }
 
 const ActionButton = ({
+  width = '5rem',
   bgColor = 'blue',
   onClick,
   to,
@@ -25,6 +28,7 @@ const ActionButton = ({
   return (
     <ActionButtonBlock
       $bgColor={bgColor}
+      $width={width}
       onClick={() => {
         onClick && onClick();
         to && navigate(to);
@@ -44,7 +48,7 @@ const ActionButtonBlock = styled.button<ActionButtonBlockProps>`
   border-radius: 0.25rem;
   padding-top: 0.5rem;
   padding-bottom: 0.5rem;
-  width: 5rem;
+  width: ${(props) => props.$width};
   color: white;
 
   ${(props) =>

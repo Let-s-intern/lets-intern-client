@@ -28,7 +28,7 @@ const Button = ({
         color === 'white'
           ? ' border border-gray-300 bg-white text-black'
           : ' text-white'
-      }${disabled ? ' bg-tint-2' : ' bg-primary'}${
+      }${disabled ? ' cursor-auto bg-tint-2' : ' bg-primary'}${
         className ? ` ${className}` : ''
       }`}
       onClick={() => {
