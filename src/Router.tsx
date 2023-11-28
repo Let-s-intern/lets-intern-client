@@ -13,7 +13,6 @@ import Layout from './components/Layout';
 import AdminLayout from './components/AdminLayout';
 import Admin from './pages/Admin';
 import ProgramCreate from './pages/Admin/Program/ProgramCreate';
-import ReviewEditor from './pages/ReviewEditor';
 import ReviewDetail from './pages/ReviewDetail';
 import ProgramEdit from './pages/Admin/Program/ProgramEdit';
 import AdminReviews from './pages/Admin/Review/Reviews';
@@ -26,48 +25,72 @@ import AttendCheck from './components/Admin/Program/AttendCheck';
 import UserCreate from './pages/Admin/User/UserCreate';
 import UserEdit from './pages/Admin/User/UserEdit';
 import Application from './pages/MyPage/Appllication';
+import ReviewCreate from './pages/ReviewCreate';
 
 const Router = () => {
   return (
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Layout />}>
+          {/* / */}
           <Route path="" element={<Programs />} />
           <Route path="program/:programId">
+            {/* /program/:programId */}
             <Route path="" element={<ProgramDetail />} />
-            <Route path="review/create" element={<ReviewEditor />} />
+            {/* /program/:programId/review/create */}
+            <Route path="review/create" element={<ReviewCreate />} />
+            {/* /program/:programId/review/:reviewId */}
             <Route path="review/:reviewId" element={<ReviewDetail />} />
           </Route>
           <Route path="mypage" element={<MyPage />}>
+            {/* /mypage/application */}
             <Route path="application" element={<Application />} />
+            {/* /mypage/review */}
             <Route path="review" element={<Review />} />
+            {/* /mypage/privacy */}
             <Route path="privacy" element={<Privacy />} />
           </Route>
+          {/* /login */}
           <Route path="login" element={<Login />} />
+          {/* /signup */}
           <Route path="signup" element={<SignUp />} />
+          {/* /find-password */}
           <Route path="find-password" element={<FindPassword />} />
         </Route>
         <Route path="/admin" element={<AdminLayout />}>
+          {/* /admin */}
           <Route path="" element={<Admin />} />
           <Route path="programs">
+            {/* /admin/programs */}
             <Route path="" element={<AdminPrograms />} />
+            {/* /admin/programs/create */}
             <Route path="create" element={<ProgramCreate />} />
             <Route path=":programId">
+              {/* /admin/programs/:programId/edit */}
               <Route path="edit" element={<ProgramEdit />} />
+              {/* /admin/programs/:programId/users */}
               <Route path="users" element={<ProgramUsers />} />
+              {/* /admin/programs/:programId/check-attendance */}
               <Route path="check-attendance" element={<AttendCheck />} />
             </Route>
           </Route>
           <Route path="reviews">
+            {/* /admin/reviews */}
             <Route path="" element={<AdminReviews />} />
+            {/* /admin/reviews/:programId */}
             <Route path=":programId" element={<AdminReviewsDetail />} />
           </Route>
           <Route path="users">
+            {/* /admin/users */}
             <Route path="" element={<Users />} />
+            {/* /admin/users/create */}
             <Route path="create" element={<UserCreate />} />
             <Route path=":userId">
+              {/* /admin/users/:userId */}
               <Route path="" element={<UserDetail />} />
+              {/* /admin/users/:userId/memo */}
               <Route path="memo" element={<UserMemo />} />
+              {/* /admin/users/:userId/edit */}
               <Route path="edit" element={<UserEdit />} />
             </Route>
           </Route>

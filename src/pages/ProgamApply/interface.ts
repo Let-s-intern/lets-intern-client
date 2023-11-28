@@ -23,5 +23,6 @@ export interface ModalProps {
 
 export interface CautionContentProps {
   cautionChecked: boolean;
+  notice: string;
   onCautionChecked: () => void;
 }

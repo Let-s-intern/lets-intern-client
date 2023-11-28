@@ -2,7 +2,7 @@ import styled from 'styled-components';
 
 interface TDProps {
   textAlign?: 'left' | 'center';
-  children: React.ReactNode;
+  children?: React.ReactNode;
 }
 
 interface TDBlockProps {

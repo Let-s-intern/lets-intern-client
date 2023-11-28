@@ -1,8 +1,10 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import UserEditor from '../../components/Admin/User/UserEditor';
 
 const UserCreateContainer = () => {
+  const navigate = useNavigate();
   const [values, setValues] = useState({
     name: '',
     email: '',
@@ -14,8 +16,21 @@ const UserCreateContainer = () => {
     major: '',
     wishJob: '',
     wishCompany: '',
-    programs: '',
   });
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<unknown>(null);
+
+  const handleCancelButtonClick = () => {
+    navigate(-1);
+  };
+
+  const handleInputChanged = (e: any) => {
+    const { name, value } = e.target;
+    setValues({
+      ...values,
+      [name]: value,
+    });
+  };
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -23,10 +38,13 @@ const UserCreateContainer = () => {
 
   return (
     <UserEditor
+      loading={loading}
+      error={error}
       title="회원 등록"
       values={values}
-      setValues={setValues}
       handleSubmit={handleSubmit}
+      handleInputChanged={handleInputChanged}
+      handleCancelButtonClick={handleCancelButtonClick}
     />
   );
 };

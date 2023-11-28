@@ -8,10 +8,20 @@ import TableBody from './TableBody';
 import TableHead from './TableHead';
 
 interface UsersProps {
+  loading: boolean;
+  error: unknown;
   users: any[];
 }
 
-const Users = ({ users }: UsersProps) => {
+const Users = ({ loading, error, users }: UsersProps) => {
+  if (loading) {
+    return <></>;
+  }
+
+  if (error) {
+    return <>에러 발생</>;
+  }
+
   return (
     <>
       <Header>

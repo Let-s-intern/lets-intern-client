@@ -23,15 +23,17 @@ const ReviewContainer = () => {
         setWaitingReviewList(
           applicationList.filter(
             (application: any) =>
-              // application.status === 'DONE' && !application.review,
+              (application.status === 'DONE' ||
+                application.status === 'IN_PROGRESS') &&
               !application.review,
           ),
         );
         setMyReviewList(
           applicationList.filter(
             (application: any) =>
-              // application.status === 'DONE' && application.review,
-              application.review,
+              (application.status === 'DONE' ||
+                application.status === 'IN_PROGRESS') &&
+              !application.review,
           ),
         );
       } catch (err) {

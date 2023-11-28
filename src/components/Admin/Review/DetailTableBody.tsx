@@ -1,26 +1,44 @@
 import { FormControl, InputLabel, MenuItem, Select } from '@mui/material';
+
 import TD from '../TD';
 
-const DetailTableBody = () => {
+interface DetailTableBodyProps {
+  reviewList: any;
+  handleVisibleChanged: (reviewId: number, status: string) => void;
+}
+
+const DetailTableBody = ({
+  reviewList,
+  handleVisibleChanged,
+}: DetailTableBodyProps) => {
   return (
     <tbody>
-      <tr>
-        <TD>1기</TD>
-        <TD>홍민서</TD>
-        <TD>5</TD>
-        <TD>배고파요. 근데 냉장고에 뭐가 없어요.</TD>
-        <TD>누가 사다 주세요</TD>
-        <TD>2023-11-24</TD>
-        <TD>
-          <FormControl sx={{ width: 100 }}>
-            <InputLabel id="type">노출</InputLabel>
-            <Select labelId="type" id="type" label="노출">
-              <MenuItem value="PUBLIC">노출</MenuItem>
-              <MenuItem value="PRIVATE">비노출</MenuItem>
-            </Select>
-          </FormControl>
-        </TD>
-      </tr>
+      {reviewList.map((review: any) => (
+        <tr>
+          <TD></TD>
+          <TD>{review.username ? review.username : '익명'}</TD>
+          <TD></TD>
+          <TD>{review.reviewContents}</TD>
+          <TD>{review.suggestContents}</TD>
+          <TD>{review.createdAt}</TD>
+          <TD>
+            <FormControl sx={{ width: 100 }}>
+              <Select
+                labelId="status"
+                id="status"
+                name="status"
+                value={review.status}
+                onChange={(e) =>
+                  handleVisibleChanged(review.id, e.target.value)
+                }
+              >
+                <MenuItem value="VISIBLE">노출</MenuItem>
+                <MenuItem value="INVISIBLE">비노출</MenuItem>
+              </Select>
+            </FormControl>
+          </TD>
+        </tr>
+      ))}
     </tbody>
   );
 };

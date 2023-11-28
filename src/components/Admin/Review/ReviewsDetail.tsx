@@ -4,7 +4,27 @@ import DetailTableBody from './DetailTableBody';
 import Heading from '../Heading';
 import styled from 'styled-components';
 
-const ReviewsDetail = () => {
+interface ReviewsDetailProps {
+  loading: boolean;
+  error: unknown;
+  reviewList: any;
+  handleVisibleChanged: (reviewId: number, status: string) => void;
+}
+
+const ReviewsDetail = ({
+  loading,
+  error,
+  reviewList,
+  handleVisibleChanged,
+}: ReviewsDetailProps) => {
+  if (loading) {
+    return <></>;
+  }
+
+  if (error) {
+    return <>에러 발생</>;
+  }
+
   return (
     <>
       <Header>
@@ -12,7 +32,10 @@ const ReviewsDetail = () => {
       </Header>
       <Table>
         <DetailTableHead />
-        <DetailTableBody />
+        <DetailTableBody
+          reviewList={reviewList}
+          handleVisibleChanged={handleVisibleChanged}
+        />
       </Table>
     </>
   );

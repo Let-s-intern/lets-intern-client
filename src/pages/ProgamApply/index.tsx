@@ -12,9 +12,12 @@ interface ProgramApplyProps {
   hasDetailInfo: boolean;
   isLoggedIn: boolean;
   isNextButtonDisabled: boolean;
+  cautionChecked: boolean;
+  notice: string;
   handleApplyModalClose: () => void;
   handleApplyNextButton: () => void;
   handleApplyInput: (e: any) => void;
+  handleCautionChecked: () => void;
 }
 
 interface BlackBackgroundProps {
@@ -27,9 +30,12 @@ const ProgramApply = ({
   hasDetailInfo,
   isLoggedIn,
   isNextButtonDisabled,
+  cautionChecked,
+  notice,
   handleApplyModalClose,
   handleApplyNextButton,
   handleApplyInput,
+  handleCautionChecked,
 }: ProgramApplyProps) => {
   return applyPageIndex === 0 ? (
     <BlackBackground $position="bottom" onClick={handleApplyModalClose}>
@@ -38,7 +44,7 @@ const ProgramApply = ({
         position="bottom"
         onNextButtonClick={handleApplyNextButton}
       >
-        <MemberTypeContent />
+        <MemberTypeContent isLoggedIn={isLoggedIn} />
       </Modal>
     </BlackBackground>
   ) : applyPageIndex === 1 ? (
@@ -63,19 +69,19 @@ const ProgramApply = ({
         nextButtonText="다음"
         position="center"
         onNextButtonClick={handleApplyNextButton}
+        isNextButtonDisabled={isNextButtonDisabled}
       >
         <CautionContent
-          cautionChecked={false}
-          onCautionChecked={function (): void {
-            throw new Error('Function not implemented.');
-          }}
+          cautionChecked={cautionChecked}
+          onCautionChecked={handleCautionChecked}
+          notice={notice}
         />
       </Modal>
     </BlackBackground>
   ) : applyPageIndex === 3 ? (
     <BlackBackground $position="center" onClick={handleApplyModalClose}>
       <Modal
-        nextButtonText="신청서 확인하기"
+        nextButtonText={isLoggedIn ? '신청서 확인하기' : '닫기'}
         position="center"
         onNextButtonClick={handleApplyNextButton}
       >

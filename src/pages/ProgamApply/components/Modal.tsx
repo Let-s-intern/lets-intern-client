@@ -56,4 +56,5 @@ const NextButton = styled.button<NextButtonProps>`
   padding: 0.75rem 0;
   font-weight: 500;
   color: white;
+  cursor: ${({ $disabled }) => ($disabled ? `auto` : `pointer`)};
 `;

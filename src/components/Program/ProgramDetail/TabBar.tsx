@@ -1,7 +1,6 @@
 import styled from 'styled-components';
 
 interface TabBarProps {
-  program: any;
   tab: string;
   onTabChange: (tab: string) => void;
 }
@@ -10,7 +9,7 @@ interface TabItemProps {
   $active?: boolean;
 }
 
-const TabBar = ({ program, tab, onTabChange }: TabBarProps) => {
+const TabBar = ({ tab, onTabChange }: TabBarProps) => {
   return (
     <TabBarBlock>
       <TabItem
@@ -38,6 +37,10 @@ const TabBar = ({ program, tab, onTabChange }: TabBarProps) => {
 export default TabBar;
 
 const TabBarBlock = styled.div`
+  position: sticky;
+  top: 4rem;
+  z-index: 30;
+  background-color: #ffffff;
   height: 4rem;
   display: flex;
   justify-content: space-between;

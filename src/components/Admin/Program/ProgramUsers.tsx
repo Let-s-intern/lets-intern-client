@@ -6,28 +6,44 @@ import UserTableHead from './UserTableHead';
 import UserTableBody from './UserTableBody';
 
 interface ProgramUsersProps {
-  isLetsChat?: boolean;
+  loading: boolean;
+  error: unknown;
+  program: any;
+  applications: any;
 }
 
-const ProgramUsers = ({ isLetsChat }: ProgramUsersProps) => {
+const ProgramUsers = ({
+  loading,
+  error,
+  program,
+  applications,
+}: ProgramUsersProps) => {
+  if (loading) {
+    return <></>;
+  }
+
+  if (error) {
+    return <>에러 발생</>;
+  }
+
   return (
     <>
       <Top>
-        <Heading>참여자 보기 - 챌린지 1기</Heading>
-        <ActionButtonGroup>
-          {isLetsChat && (
+        <Heading>참여자 보기 - {[program.title]}</Heading>
+        {program.type === 'LETS_CHAT' && (
+          <ActionButtonGroup>
             <ActionButton
               to="/admin/programs/1/check-attendance"
               bgColor="blue"
             >
               출석체크
             </ActionButton>
-          )}
-        </ActionButtonGroup>
+          </ActionButtonGroup>
+        )}
       </Top>
       <Table>
         <UserTableHead />
-        <UserTableBody />
+        <UserTableBody applications={applications} />
       </Table>
     </>
   );
