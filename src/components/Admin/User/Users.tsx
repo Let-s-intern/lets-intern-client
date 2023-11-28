@@ -11,9 +11,19 @@ interface UsersProps {
   loading: boolean;
   error: unknown;
   users: any[];
+  managers: any[];
+  searchValues: any;
+  handleChangeSearchValues: (e: any) => void;
 }
 
-const Users = ({ loading, error, users }: UsersProps) => {
+const Users = ({
+  loading,
+  error,
+  users,
+  managers,
+  searchValues,
+  handleChangeSearchValues,
+}: UsersProps) => {
   if (loading) {
     return <></>;
   }
@@ -31,7 +41,11 @@ const Users = ({ loading, error, users }: UsersProps) => {
         </ActionButton>
       </Header>
       <FilterWrapper>
-        <Filter />
+        <Filter
+          searchValues={searchValues}
+          managers={managers}
+          onChangeSearchValues={handleChangeSearchValues}
+        />
       </FilterWrapper>
       <Table>
         <TableHead />

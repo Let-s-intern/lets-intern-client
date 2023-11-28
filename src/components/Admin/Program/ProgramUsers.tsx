@@ -10,6 +10,7 @@ interface ProgramUsersProps {
   error: unknown;
   program: any;
   applications: any;
+  handleApplicationStatusChange: (e: any, applicationId: number) => void;
 }
 
 const ProgramUsers = ({
@@ -17,6 +18,7 @@ const ProgramUsers = ({
   error,
   program,
   applications,
+  handleApplicationStatusChange,
 }: ProgramUsersProps) => {
   if (loading) {
     return <></>;
@@ -43,7 +45,10 @@ const ProgramUsers = ({
       </Top>
       <Table>
         <UserTableHead />
-        <UserTableBody applications={applications} />
+        <UserTableBody
+          applications={applications}
+          handleApplicationStatusChange={handleApplicationStatusChange}
+        />
       </Table>
     </>
   );
