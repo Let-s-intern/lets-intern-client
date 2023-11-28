@@ -1,4 +1,6 @@
-import { InputTitleProps } from '../interface';
+interface InputTitleProps {
+  children: React.ReactNode;
+}
 
 const InputTitle = ({ children }: InputTitleProps) => {
   return (

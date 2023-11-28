@@ -4,6 +4,7 @@ import styled from 'styled-components';
 type BackgroundColor = 'red' | 'green' | 'blue' | 'lightBlue' | 'gray';
 
 interface ActionButtonProps {
+  type?: 'button' | 'submit' | 'reset';
   width?: string;
   bgColor?: BackgroundColor;
   children: React.ReactNode;
@@ -17,6 +18,7 @@ interface ActionButtonBlockProps {
 }
 
 const ActionButton = ({
+  type = 'submit',
   width = '5rem',
   bgColor = 'blue',
   onClick,
@@ -27,6 +29,7 @@ const ActionButton = ({
 
   return (
     <ActionButtonBlock
+      type={type}
       $bgColor={bgColor}
       $width={width}
       onClick={() => {

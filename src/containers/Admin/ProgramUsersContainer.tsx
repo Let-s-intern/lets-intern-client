@@ -8,17 +8,25 @@ const ProgramUsersContainer = () => {
   const params = useParams();
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<unknown>(null);
-  const [isLetsChat, setIsLetsChat] = useState<boolean>(false);
+  const [program, setProgram] = useState<any>({});
+  const [applications, setApplications] = useState<any>([]);
 
   useEffect(() => {
     const fetchProgram = async () => {
       try {
-        const {
-          data: { type },
-        } = await axios.get(`/program/admin/${params.programId}`);
-        if (type === 'LETS_CHAT') {
-          setIsLetsChat(true);
-        }
+        const res = await axios.get(`/program/admin/${params.programId}`);
+        setProgram(res.data);
+      } catch (err) {
+        setError(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    const fetchProgramUsers = async () => {
+      try {
+        const res = await axios.get(`/application/admin/${params.programId}`);
+        console.log(res.data);
+        setApplications(res.data);
       } catch (err) {
         setError(err);
       } finally {
@@ -26,17 +34,17 @@ const ProgramUsersContainer = () => {
       }
     };
     fetchProgram();
+    fetchProgramUsers();
   }, [params]);
 
-  if (loading) {
-    return <div className="mx-auto max-w-xl"></div>;
-  }
-
-  if (error) {
-    return <div></div>;
-  }
-
-  return <ProgramUsers isLetsChat={isLetsChat} />;
+  return (
+    <ProgramUsers
+      loading={loading}
+      error={error}
+      program={program}
+      applications={applications}
+    />
+  );
 };
 
 export default ProgramUsersContainer;

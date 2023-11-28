@@ -21,6 +21,7 @@ const ProgramDetailContainer = () => {
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
   const [isNextButtonDisabled, setIsNextButtonDisabled] =
     useState<boolean>(false);
+  const [cautionChecked, setCautionChecked] = useState<boolean>(false);
 
   useEffect(() => {
     const checkLoggedIn = () => {
@@ -31,7 +32,13 @@ const ProgramDetailContainer = () => {
     };
     const fetchProgram = async () => {
       try {
-        const res = await axios.get(`/program/${params.programId}`);
+        const res = await axios.get(`/program/${params.programId}`, {
+          headers: {
+            Authorization: isLoggedIn
+              ? `Bearer ${localStorage.getItem('access-token')}`
+              : '',
+          },
+        });
         setParticipated(res.data.participated);
         setProgram(res.data.programDetailVo);
         setReviewList(res.data.reviewList);
@@ -94,19 +101,35 @@ const ProgramDetailContainer = () => {
 
   const handleApplyButtonClick = async () => {
     try {
-      const { data: hasDetailInfoData } = await axios.get('/user/detail-info');
-      const res = await axios.get(`/user`);
-      setUser({
-        ...res.data,
-        major: hasDetailInfoData ? res.data.major : '',
-        university: hasDetailInfoData ? res.data.university : '',
-        grade: '',
-        wishCompany: '',
-        wishJob: '',
-        applyMotive: '',
-        preQuestions: '',
-      });
-      setHasDetailInfo(hasDetailInfoData);
+      if (isLoggedIn) {
+        const { data: hasDetailInfoData } =
+          await axios.get('/user/detail-info');
+        const res = await axios.get(`/user`);
+        setUser({
+          ...res.data,
+          major: hasDetailInfoData ? res.data.major : '',
+          university: hasDetailInfoData ? res.data.university : '',
+          grade: '',
+          wishCompany: '',
+          wishJob: '',
+          applyMotive: '',
+          preQuestions: '',
+        });
+        setHasDetailInfo(hasDetailInfoData);
+      } else {
+        setUser({
+          name: '',
+          email: '',
+          phoneNum: '',
+          major: '',
+          university: '',
+          grade: '',
+          wishCompany: '',
+          wishJob: '',
+          applyMotive: '',
+          preQuestions: '',
+        });
+      }
       setIsApplyModalOpen(true);
     } catch (error) {
       console.error(error);
@@ -125,13 +148,22 @@ const ProgramDetailContainer = () => {
     setApplyPageIndex(0);
     setIsNextButtonDisabled(false);
     setIsApplyModalOpen(false);
+    setParticipated(false);
   };
 
   const handleApplyNextButton = () => {
-    if (applyPageIndex === 2) {
+    if (applyPageIndex === 1) {
+      setApplyPageIndex(applyPageIndex + 1);
+      setCautionChecked(false);
+      setIsNextButtonDisabled(true);
+    } else if (applyPageIndex === 2) {
       handleApplySubmit();
     } else if (applyPageIndex === 3) {
-      navigate('/mypage/application');
+      if (isLoggedIn) {
+        navigate('/mypage/application');
+      } else {
+        handleApplyModalClose();
+      }
     } else {
       setApplyPageIndex(applyPageIndex + 1);
     }
@@ -139,16 +171,39 @@ const ProgramDetailContainer = () => {
 
   const handleApplySubmit = async () => {
     try {
-      const newUser = {
-        ...user,
-        grade: Number(user.grade),
-      };
-      const res = await axios.post(`/application/${params.programId}`, newUser);
+      let newUser = { ...user, grade: Number(user.grade) };
+      if (!isLoggedIn) {
+        delete newUser.name;
+        delete newUser.email;
+        delete newUser.phoneNum;
+        newUser = {
+          ...newUser,
+          guestName: user.name,
+          guestEmail: user.email,
+          guestPhoneNum: user.phoneNum,
+        };
+      }
+      const res = await axios.post(
+        `/application/${params.programId}`,
+        newUser,
+        {
+          headers: {
+            Authorization: isLoggedIn
+              ? `Bearer ${localStorage.getItem('access-token')}`
+              : '',
+          },
+        },
+      );
       console.log(res);
       setApplyPageIndex(applyPageIndex + 1);
     } catch (error) {
       console.error(error);
     }
+  };
+
+  const handleCautionChecked = () => {
+    setIsNextButtonDisabled(cautionChecked);
+    setCautionChecked(!cautionChecked);
   };
 
   return (
@@ -167,6 +222,7 @@ const ProgramDetailContainer = () => {
       isLoggedIn={isLoggedIn}
       isNextButtonDisabled={isNextButtonDisabled}
       participated={participated}
+      cautionChecked={cautionChecked}
       handleBackButtonClick={handleBackButtonClick}
       handleTabChange={handleTabChange}
       handleToggleOpenList={handleToggleOpenList}
@@ -175,6 +231,7 @@ const ProgramDetailContainer = () => {
       handleApplyModalClose={handleApplyModalClose}
       handleApplyNextButton={handleApplyNextButton}
       handleApplyInput={handleApplyInput}
+      handleCautionChecked={handleCautionChecked}
     />
   );
 };

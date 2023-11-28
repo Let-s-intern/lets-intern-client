@@ -22,7 +22,7 @@ const UsersContainer = () => {
     fetchUsers();
   }, []);
 
-  return <Users users={users} />;
+  return <Users loading={loading} error={error} users={users} />;
 };
 
 export default UsersContainer;

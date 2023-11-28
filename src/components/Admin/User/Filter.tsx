@@ -42,8 +42,12 @@ const Filter = () => {
         <Input label="담당 매니저" placeholder="담당 매니저" />
       </DropdownWrapper>
       <ActionButtonGroup>
-        <ActionButton bgColor="blue">전체 보기</ActionButton>
-        <ActionButton bgColor="blue">회원 목록 보기</ActionButton>
+        <ActionButton bgColor="blue" width="8rem">
+          필터 검색
+        </ActionButton>
+        <ActionButton bgColor="lightBlue" width="8rem">
+          전체 보기
+        </ActionButton>
       </ActionButtonGroup>
     </FilterBlock>
   );

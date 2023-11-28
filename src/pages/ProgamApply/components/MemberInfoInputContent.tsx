@@ -38,6 +38,7 @@ const MemberInfoInputContent = ({
             type="tel"
             label="전화번호"
             name="phoneNum"
+            placeholder="-를 제외한 01012345678"
             value={user.phoneNum}
             onChange={(e) => handleApplyInput(e)}
             disabled={isLoggedIn}

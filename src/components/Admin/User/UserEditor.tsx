@@ -4,18 +4,32 @@ import Heading from '../Heading';
 import ActionButton from '../ActionButton';
 
 interface UserEditorProps {
+  loading: boolean;
+  error: unknown;
   values: any;
-  setValues: React.Dispatch<React.SetStateAction<any>>;
-  handleSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
   title: string;
+  handleCancelButtonClick: () => void;
+  handleSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
+  handleInputChanged: (e: any) => void;
 }
 
 const UserEditor = ({
+  loading,
+  error,
   title,
   values,
-  setValues,
+  handleCancelButtonClick,
   handleSubmit,
+  handleInputChanged,
 }: UserEditorProps) => {
+  if (loading) {
+    return <div>로딩중</div>;
+  }
+
+  if (error) {
+    return <div>에러 발생</div>;
+  }
+
   return (
     <UserEditorBlock>
       <Header>
@@ -24,87 +38,80 @@ const UserEditor = ({
       <Form onSubmit={handleSubmit}>
         <Input
           label="이름"
-          value={values.name}
-          onChange={(e: any) => setValues({ ...values, name: e.target.value })}
+          name="name"
+          value={values.name ? values.name : ''}
+          onChange={handleInputChanged}
           placeholder="이름을 입력하세요"
         />
         <Input
           label="이메일"
-          value={values.email}
-          onChange={(e: any) => setValues({ ...values, email: e.target.value })}
+          name="email"
+          value={values.email ? values.email : ''}
+          onChange={handleInputChanged}
           placeholder="이메일을 입력하세요"
         />
         <Input
           label="휴대폰 번호"
-          value={values.tel}
-          onChange={(e: any) => setValues({ ...values, tel: e.target.value })}
+          name="phoneNum"
+          value={values.phoneNum ? values.phoneNum : ''}
+          onChange={handleInputChanged}
           placeholder="휴대폰 번호를 입력하세요"
         />
-        <Input
+        {/* <Input
           label="비밀번호"
-          value={values.password}
-          onChange={(e: any) =>
-            setValues({ ...values, password: e.target.value })
-          }
+          value={values.password ? values.password : ''}
+          onChange={handleInputChanged}
           placeholder="비밀번호를 입력하세요"
-        />
-        <Input
+        /> */}
+        {/* <Input
           label="비밀번호 확인"
-          value={values.passwordConfirm}
-          onChange={(e: any) =>
-            setValues({ ...values, passwordConfirm: e.target.value })
-          }
+          value={values.passwordConfirm ? values.passwordConfirm : ''}
+          onChange={handleInputChanged}
           placeholder="비밀번호를 다시 입력하세요"
-        />
+        /> */}
         <Input
           label="학교"
-          value={values.school}
-          onChange={(e: any) =>
-            setValues({ ...values, school: e.target.value })
-          }
+          name="university"
+          value={values.university ? values.university : ''}
+          onChange={handleInputChanged}
           placeholder="학교를 입력하세요"
         />
-        <Input
+        {/* <Input
           label="학년"
-          value={values.grade}
-          onChange={(e: any) => setValues({ ...values, grade: e.target.value })}
+          value={values.grade ? values.grade : ''}
+          onChange={handleInputChanged}
           placeholder="학년을 입력하세요"
-        />
+        /> */}
         <Input
           label="전공"
-          value={values.major}
-          onChange={(e: any) => setValues({ ...values, major: e.target.value })}
+          name="major"
+          value={values.major ? values.major : ''}
+          onChange={handleInputChanged}
           placeholder="전공을 입력하세요"
         />
-        <Input
+        {/* <Input
           label="관심직군"
-          value={values.wishJob}
-          onChange={(e: any) =>
-            setValues({ ...values, wishJob: e.target.value })
-          }
+          value={values.wishJob ? values.wishJob : ''}
+          onChange={handleInputChanged}
           placeholder="관심직군을 입력하세요"
-        />
-        <Input
+        /> */}
+        {/* <Input
           label="희망기업"
-          value={values.wishCompany}
-          onChange={(e: any) =>
-            setValues({ ...values, wishCompany: e.target.value })
-          }
+          value={values.wishCompany ? values.wishCompany : ''}
+          onChange={handleInputChanged}
           placeholder="희망기업을 입력하세요"
-        />
-        <Input
-          label="참여 프로그램 내역"
-          value={values.programs}
-          onChange={(e: any) =>
-            setValues({ ...values, programs: e.target.value })
-          }
-          placeholder="희망기업을 입력하세요"
-        />
+        /> */}
         <ActionButtonGroup>
           <ActionButton to="/admin/users" bgColor="blue">
             등록
           </ActionButton>
-          <ActionButton bgColor="gray">취소</ActionButton>
+          <ActionButton
+            type="button"
+            bgColor="gray"
+            onClick={handleCancelButtonClick}
+          >
+            취소
+          </ActionButton>
         </ActionButtonGroup>
       </Form>
     </UserEditorBlock>

@@ -1,11 +1,15 @@
 import ListItem from './ListItem';
 
-const MemberTypeContent = () => {
+interface MemberTypeContentProps {
+  isLoggedIn: boolean;
+}
+
+const MemberTypeContent = ({ isLoggedIn }: MemberTypeContentProps) => {
   return (
     <>
       <ul>
-        <ListItem checked>회원 신청</ListItem>
-        <ListItem>비회원 신청</ListItem>
+        <ListItem checked={isLoggedIn}>회원 신청</ListItem>
+        <ListItem checked={!isLoggedIn}>비회원 신청</ListItem>
       </ul>
     </>
   );
