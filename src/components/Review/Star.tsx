@@ -2,12 +2,12 @@ import { FaStar } from 'react-icons/fa';
 import styled from 'styled-components';
 
 interface StarProps {
-  onClick: () => void;
-  isActive: boolean;
+  onClick?: () => void;
+  isActive?: boolean;
 }
 
 interface StarIconProps {
-  isActive: boolean;
+  isActive?: boolean;
 }
 
 const Star = ({ onClick, isActive }: StarProps) => {
@@ -30,6 +30,6 @@ const StarBlock = styled.div`
 
 const StarIcon = styled.i<StarIconProps>`
   font-size: 1.5rem;
-  color: ${({ isActive }) => (isActive ? '#ffd700' : '#d1d1d1')};
+  color: ${({ isActive }) => (isActive ? '#6963F6' : '#d1d1d1')};
   cursor: pointer;
 `;

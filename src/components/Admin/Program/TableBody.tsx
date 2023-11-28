@@ -9,7 +9,7 @@ import {
 
 import ActionButton from '../ActionButton';
 import TD from '../TD';
-import { convertTypeToText } from '../../../libs/converToTypeText';
+import { convertTypeToText } from '../../../libs/converTypeToText';
 
 interface ProgramTableBodyProps {
   programList: any;
