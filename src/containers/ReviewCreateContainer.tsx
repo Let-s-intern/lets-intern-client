@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import axios from '../libs/axios';
-import { typeToText } from '../libs/converToTypeText';
+import { typeToText } from '../libs/converTypeToText';
 import ReviewEditor from '../components/Review/ReviewEditor';
 
 const ReviewCreateContainer = () => {

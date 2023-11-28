@@ -50,6 +50,11 @@ const ProgramUsers = ({
           handleApplicationStatusChange={handleApplicationStatusChange}
         />
       </Table>
+      <EmailActionArea>
+        <EmailActionButton>저장</EmailActionButton>
+        <EmailActionButton>참가확정 이메일 보내기</EmailActionButton>
+        <EmailActionButton>미선발 이메일 보내기</EmailActionButton>
+      </EmailActionArea>
     </>
   );
 };
@@ -72,3 +77,14 @@ const Heading = styled.h1`
   font-size: 1.5rem;
   font-weight: 700;
 `;
+
+const EmailActionArea = styled.div`
+  width: 100%;
+  position: fixed;
+  bottom: 5rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
+const EmailActionButton = styled.button``;
