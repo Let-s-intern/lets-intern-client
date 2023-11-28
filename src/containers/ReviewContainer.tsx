@@ -20,12 +20,13 @@ const ReviewContainer = () => {
         const {
           data: { userApplicationList: applicationList },
         } = await axios.get('/application');
+        console.log(applicationList);
         setWaitingReviewList(
           applicationList.filter(
             (application: any) =>
               (application.status === 'DONE' ||
                 application.status === 'IN_PROGRESS') &&
-              !application.review,
+              application.review === null,
           ),
         );
         setMyReviewList(
@@ -33,7 +34,7 @@ const ReviewContainer = () => {
             (application: any) =>
               (application.status === 'DONE' ||
                 application.status === 'IN_PROGRESS') &&
-              !application.review,
+              application.review !== null,
           ),
         );
       } catch (err) {
