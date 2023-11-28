@@ -18,24 +18,47 @@ const ProgramUsersContainer = () => {
         setProgram(res.data);
       } catch (err) {
         setError(err);
-      } finally {
-        setLoading(false);
       }
     };
     const fetchProgramUsers = async () => {
       try {
         const res = await axios.get(`/application/admin/${params.programId}`);
-        console.log(res.data);
-        setApplications(res.data);
+        console.log(res.data.applicationList);
+        setApplications(res.data.applicationList);
       } catch (err) {
         setError(err);
-      } finally {
-        setLoading(false);
       }
     };
     fetchProgram();
     fetchProgramUsers();
+    setLoading(false);
   }, [params]);
+
+  const handleApplicationStatusChange = async (
+    e: any,
+    applicationId: number,
+  ) => {
+    try {
+      await axios.patch(`/application/${applicationId}`, {
+        status: e.target.value,
+        isApproved: e.target.value === 'IN_PROGRESS',
+      });
+      setApplications(
+        applications.map((application: any) => {
+          if (application.id === applicationId) {
+            return {
+              ...application,
+              status: e.target.value,
+              isApproved: e.target.value === 'IN_PROGRESS',
+            };
+          }
+          return application;
+        }),
+      );
+    } catch (err) {
+      alert('참여 상태 변경에 실패했습니다.');
+    }
+  };
 
   return (
     <ProgramUsers
@@ -43,6 +66,7 @@ const ProgramUsersContainer = () => {
       error={error}
       program={program}
       applications={applications}
+      handleApplicationStatusChange={handleApplicationStatusChange}
     />
   );
 };

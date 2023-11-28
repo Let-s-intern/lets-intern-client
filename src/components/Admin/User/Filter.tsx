@@ -4,7 +4,17 @@ import { FormControl, InputLabel, MenuItem, Select } from '@mui/material';
 import Input from '../../Input';
 import ActionButton from '../ActionButton';
 
-const Filter = () => {
+interface FilterProps {
+  searchValues: any;
+  managers: any[];
+  onChangeSearchValues: (e: any) => void;
+}
+
+const Filter = ({
+  searchValues,
+  managers,
+  onChangeSearchValues,
+}: FilterProps) => {
   return (
     <FilterBlock>
       <SearchWrapper>
@@ -12,6 +22,9 @@ const Filter = () => {
           <SearchInput
             type="text"
             placeholder="이름, 이메일 주소, 휴대폰 번호"
+            name="keyword"
+            value={searchValues.keyword ? searchValues.keyword : ''}
+            onChange={onChangeSearchValues}
           />
           <SearchIcon>
             <IoIosSearch />
@@ -27,10 +40,9 @@ const Filter = () => {
             id="type"
             label="프로그램 유형"
             sx={{ backgroundColor: 'white' }}
-            // value={values.type ? values.type : ''}
-            // onChange={(e) => {
-            //   setValues({ ...values, type: e.target.value });
-            // }}
+            name="type"
+            value={searchValues.type ? searchValues.type : ''}
+            onChange={onChangeSearchValues}
           >
             <MenuItem value="CHALLENGE_FULL">챌린지(전체)</MenuItem>
             <MenuItem value="CHALLENGE_HALF">챌린지(일부)</MenuItem>
@@ -38,8 +50,39 @@ const Filter = () => {
             <MenuItem value="LETS_CHAT">렛츠챗</MenuItem>
           </Select>
         </FormControl>
-        <Input label="기수" placeholder="기수" type="number" />
-        <Input label="담당 매니저" placeholder="담당 매니저" />
+        <Input
+          label="기수"
+          placeholder="기수"
+          type="number"
+          name="th"
+          value={searchValues.th ? searchValues.th : ''}
+          onChange={onChangeSearchValues}
+        />
+        <FormControl fullWidth>
+          <InputLabel id="manager">담당 매니저</InputLabel>
+          <Select
+            labelId="manager"
+            id="manager"
+            label="프로그램 유형"
+            sx={{ backgroundColor: 'white' }}
+            name="manager"
+            value={searchValues.manager ? searchValues.manager : ''}
+            onChange={onChangeSearchValues}
+          >
+            {managers.map((manager: any) => (
+              <MenuItem key={manager.id} value={manager.name}>
+                {manager.name}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+        {/* <Input
+          label="담당 매니저"
+          placeholder="담당 매니저"
+          name="manager"
+          value={searchValues.manager ? searchValues.manager : ''}
+          onChange={onChangeSearchValues}
+        /> */}
       </DropdownWrapper>
       <ActionButtonGroup>
         <ActionButton bgColor="blue" width="8rem">
