@@ -48,7 +48,10 @@ const TableBody = ({
               >
                 수정
               </ActionButton>
-              <ActionButton to="/admin/programs/1/users" bgColor="blue">
+              <ActionButton
+                to={`/admin/programs/${program.id}/users`}
+                bgColor="blue"
+              >
                 참여자
               </ActionButton>
               <ActionButton

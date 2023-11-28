@@ -26,8 +26,8 @@ const NavBar = () => {
     const token = localStorage.getItem('access-token');
     if (token) {
       setIsLoggedIn(true);
+      fetchAndSetUser();
     }
-    fetchAndSetUser();
   }, []);
 
   const handleLogout = async () => {

@@ -24,6 +24,7 @@ interface ProgramDetailProps {
   isLoggedIn: boolean;
   isNextButtonDisabled: boolean;
   participated: boolean;
+  cautionChecked: boolean;
   handleBackButtonClick: () => void;
   handleTabChange: (tab: string) => void;
   handleToggleOpenList: (id: number) => void;
@@ -32,6 +33,7 @@ interface ProgramDetailProps {
   handleApplyModalClose: () => void;
   handleApplyNextButton: () => void;
   handleApplyInput: (e: any) => void;
+  handleCautionChecked: () => void;
 }
 
 const ProgramDetail = ({
@@ -49,6 +51,7 @@ const ProgramDetail = ({
   isLoggedIn,
   isNextButtonDisabled,
   participated,
+  cautionChecked,
   handleBackButtonClick,
   handleTabChange,
   handleToggleOpenList,
@@ -57,9 +60,10 @@ const ProgramDetail = ({
   handleApplyModalClose,
   handleApplyNextButton,
   handleApplyInput,
+  handleCautionChecked,
 }: ProgramDetailProps) => {
   if (loading) {
-    return <ProgramDetailBlock>로딩 중...</ProgramDetailBlock>;
+    return <ProgramDetailBlock />;
   }
 
   if (error) {
@@ -69,7 +73,7 @@ const ProgramDetail = ({
   return (
     <ProgramDetailBlock>
       <Header title={program.title} onBackButtonClick={handleBackButtonClick} />
-      <TabBar program={undefined} tab={tab} onTabChange={handleTabChange} />
+      <TabBar tab={tab} onTabChange={handleTabChange} />
       <TabContent>
         {tab === 'DETAIL' ? (
           <DetailTab content={program.contents} />
@@ -97,9 +101,12 @@ const ProgramDetail = ({
           hasDetailInfo={hasDetailInfo}
           isLoggedIn={isLoggedIn}
           isNextButtonDisabled={isNextButtonDisabled}
+          cautionChecked={cautionChecked}
+          notice={program.notice}
           handleApplyModalClose={handleApplyModalClose}
           handleApplyNextButton={handleApplyNextButton}
           handleApplyInput={handleApplyInput}
+          handleCautionChecked={handleCautionChecked}
         />
       )}
     </ProgramDetailBlock>
@@ -118,6 +125,4 @@ const ProgramDetailBlock = styled.div`
   }
 `;
 
-const TabContent = styled.div`
-  padding: 1rem;
-`;
+const TabContent = styled.div``;

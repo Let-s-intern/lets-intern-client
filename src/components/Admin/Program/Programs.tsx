@@ -24,16 +24,11 @@ const Programs = ({
   fetchEditProgramStatus,
 }: ProgramsProps) => {
   if (loading) {
-    return (
-      <>
-        <ListHeader>프로그램 등록</ListHeader>
-        <div>로딩 중...</div>
-      </>
-    );
+    return <>로딩 중...</>;
   }
 
   if (error) {
-    return <div>에러 발생</div>;
+    return <>에러 발생</>;
   }
 
   return (
