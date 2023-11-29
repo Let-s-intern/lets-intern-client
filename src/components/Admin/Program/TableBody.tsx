@@ -41,7 +41,7 @@ const TableBody = ({
           <TD>
             {program.status === 'OPEN'
               ? '모집 중'
-              : program.status === 'CLOSE'
+              : program.status === 'CLOSED'
               ? '모집완료'
               : program.status === 'DONE' && '진행완료'}
           </TD>

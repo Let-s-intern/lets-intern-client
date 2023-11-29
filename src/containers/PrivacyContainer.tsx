@@ -131,11 +131,11 @@ const PrivacyContainer = () => {
 
   const handleDeleteAccount = async () => {
     try {
-      axios.delete('/user/withdraw');
+      axios.get('/user/withdraw');
       alert('회원 탈퇴가 완료되었습니다.');
-      localStorage.removeItem('accessToken');
-      localStorage.removeItem('refreshToken');
-      navigate('/');
+      localStorage.removeItem('access-token');
+      localStorage.removeItem('refresh-token');
+      window.location.href = '/';
     } catch (err) {
       alert('회원 탈퇴에 실패했습니다.');
     }

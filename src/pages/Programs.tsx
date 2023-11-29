@@ -78,7 +78,7 @@ const Programs = () => {
           </TabItem>
         </TabBar>
         <div className="h-9"></div>
-        <header className="absolute left-0 flex h-32 w-screen items-center justify-center bg-primary text-center text-white">
+        <header className="absolute left-0 flex h-32 w-full items-center justify-center bg-primary text-center text-white">
           <div>
             <span className="text-2xl font-bold">렛츠인턴</span>
             <p className="mt-2">인턴/신입, 첫 시작을 함께 하는 커리어 플랫폼</p>

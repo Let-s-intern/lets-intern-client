@@ -31,7 +31,7 @@ const FindPassword = () => {
         { name, email },
         { headers: { Authorization: '' } },
       );
-      setMessage('비밀번호 재설정 이메일을 전송을 완료하였습니다.');
+      setMessage('비밀번호 재설정 이메일을 전송하였습니다.');
       alert('입력하신 이메일로 임시 비밀번호가 전송되었습니다.');
     } catch (error) {
       if ((error as any).response?.status === 404) {
