@@ -7,32 +7,36 @@ import ActionButton from '../ActionButton';
 interface UserMemoModalProps {
   isModalOpen: boolean;
   onClose: () => void;
+  handleMemoChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
+  handleMemoCreate: (e: any) => void;
 }
 
-const UserMemoModal = ({ isModalOpen, onClose }: UserMemoModalProps) => {
+const UserMemoModal = (props: UserMemoModalProps) => {
   return (
     <Modal
-      open={isModalOpen}
-      onClose={onClose}
+      open={props.isModalOpen}
+      onClose={props.onClose}
       aria-labelledby="modal-modal-title"
       aria-describedby="modal-modal-description"
     >
       <ModalContent>
         <ModalHeader>
           <ModalTitle>메모</ModalTitle>
-          <ModalCloseButton onClick={onClose}>
+          <ModalCloseButton onClick={props.onClose}>
             <i>
               <IoIosCloseCircleOutline />
             </i>
           </ModalCloseButton>
         </ModalHeader>
-        <MemoForm>
+        <MemoForm onSubmit={props.handleMemoCreate}>
           <MemoLabel htmlFor="content">내용</MemoLabel>
-          <MemoInput id="content" placeholder="메모를 입력하세요."></MemoInput>
+          <MemoInput
+            id="content"
+            placeholder="메모를 입력하세요."
+            onChange={props.handleMemoChange}
+          ></MemoInput>
           <ButtonWrapper>
-            <ActionButton bgColor="green" onClick={onClose}>
-              등록
-            </ActionButton>
+            <ActionButton bgColor="green">등록</ActionButton>
           </ButtonWrapper>
         </MemoForm>
       </ModalContent>

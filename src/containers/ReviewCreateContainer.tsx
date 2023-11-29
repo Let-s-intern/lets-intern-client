@@ -44,10 +44,8 @@ const ReviewCreateContainer = () => {
       if (!params.programId) return;
       setLoading(true);
       try {
-        const res = await axios.get(
-          `${process.env.REACT_APP_SERVER_API}/program/${params.programId}`,
-        );
-        console.log(res);
+        const res = await axios.get(`/program/${params.programId}`);
+        console.log(res.data.programDetailVo);
         setProgram({
           ...res.data.programDetailVo,
           type: typeToText[res.data.type],

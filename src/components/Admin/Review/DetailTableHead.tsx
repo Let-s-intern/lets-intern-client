@@ -4,7 +4,6 @@ const DetailTableHead = () => {
   return (
     <thead>
       <tr>
-        <TH>기수</TH>
         <TH>이름</TH>
         <TH>만족도</TH>
         <TH>후기</TH>

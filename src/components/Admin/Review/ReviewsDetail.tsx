@@ -9,6 +9,7 @@ interface ReviewsDetailProps {
   error: unknown;
   reviewList: any;
   handleVisibleChanged: (reviewId: number, status: string) => void;
+  program: any;
 }
 
 const ReviewsDetail = ({
@@ -16,6 +17,7 @@ const ReviewsDetail = ({
   error,
   reviewList,
   handleVisibleChanged,
+  program,
 }: ReviewsDetailProps) => {
   if (loading) {
     return <></>;
@@ -28,7 +30,7 @@ const ReviewsDetail = ({
   return (
     <>
       <Header>
-        <Heading>챌린지 1기 후기 상세</Heading>
+        <Heading>후기 목록 - {program.title}</Heading>
       </Header>
       <Table>
         <DetailTableHead />

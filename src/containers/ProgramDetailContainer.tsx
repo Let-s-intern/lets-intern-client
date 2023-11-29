@@ -39,6 +39,7 @@ const ProgramDetailContainer = () => {
               : '',
           },
         });
+        console.log(res.data);
         setParticipated(res.data.participated);
         setProgram(res.data.programDetailVo);
         setReviewList(res.data.reviewList);
@@ -148,7 +149,6 @@ const ProgramDetailContainer = () => {
     setApplyPageIndex(0);
     setIsNextButtonDisabled(false);
     setIsApplyModalOpen(false);
-    setParticipated(false);
   };
 
   const handleApplyNextButton = () => {

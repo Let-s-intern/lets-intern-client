@@ -26,7 +26,7 @@ const ReviewContainer = () => {
             (application: any) =>
               (application.status === 'DONE' ||
                 application.status === 'IN_PROGRESS') &&
-              application.review === null,
+              application.reviewId === null,
           ),
         );
         setMyReviewList(
@@ -34,7 +34,7 @@ const ReviewContainer = () => {
             (application: any) =>
               (application.status === 'DONE' ||
                 application.status === 'IN_PROGRESS') &&
-              application.review !== null,
+              application.reviewId !== null,
           ),
         );
       } catch (err) {
