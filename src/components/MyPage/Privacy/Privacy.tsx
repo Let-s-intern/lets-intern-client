@@ -49,15 +49,15 @@ const Privacy = ({
         onSubmitMainInfo={handleSaveMainInfo}
         onDeleteAccount={handleDeleteAccount}
       />
-      <SubInfo
-        subInfoValues={subInfoValues}
-        onChangeSubInfo={handleChangeSubInfo}
-        onSubmitSubInfo={handleSaveSubInfo}
-      />
       <PasswordChange
         passwordValues={passwordValues}
         onChangePassword={handleChangePassword}
         onSubmitPassword={handleSavePassword}
+      />
+      <SubInfo
+        subInfoValues={subInfoValues}
+        onChangeSubInfo={handleChangeSubInfo}
+        onSubmitSubInfo={handleSaveSubInfo}
       />
     </PrivacyBlock>
   );

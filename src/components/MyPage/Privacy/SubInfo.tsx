@@ -30,6 +30,7 @@ const SubInfo = ({
             value={subInfoValues.university}
             onChange={onChangeSubInfo}
             autoComplete="off"
+            disabled
           />
         </InputControl>
         <InputControl>
@@ -40,6 +41,7 @@ const SubInfo = ({
             value={subInfoValues.major}
             onChange={onChangeSubInfo}
             autoComplete="off"
+            disabled
           />
         </InputControl>
         <ButtonGroup>

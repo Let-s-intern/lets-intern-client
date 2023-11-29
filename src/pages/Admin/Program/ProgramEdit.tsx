@@ -37,7 +37,6 @@ const ProgramEdit = () => {
         delete newValues.id;
         delete newValues.isVisible;
         delete newValues.contents;
-        console.log(newValues.faqListStr.split(',') || []);
         setFaqIdList(newValues.faqListStr.split(',').map(Number) || []);
         delete newValues.faqListStr;
         setValues(newValues);
@@ -76,7 +75,7 @@ const ProgramEdit = () => {
       contents: content,
       th: Number(values.th),
       headcount: Number(values.headcount),
-      faqIdList: faqIdList,
+      faqIdList: faqIdList.sort(),
     };
     try {
       await axios.patch(`/program/${params.programId}`, newValues);
@@ -117,12 +116,11 @@ const ProgramEdit = () => {
       return;
     }
     try {
-      await axios.post(`/faq/${values.type}`, {
+      const res = await axios.post(`/faq/${values.type}`, {
         question: '',
         answer: '',
       });
-      const res = await axios.get(`/faq/${values.type}`);
-      setFaqList(res.data.faqList);
+      setFaqList([...faqList, res.data]);
     } catch (err) {
       setError(err);
     }
@@ -135,8 +133,7 @@ const ProgramEdit = () => {
     }
     try {
       await axios.delete(`/faq/${faqId}`);
-      const res = await axios.get(`/faq/${values.type}`);
-      setFaqList(res.data.faqList);
+      setFaqList(faqList.filter((faq: any) => faq.id !== faqId));
       setFaqIdList(faqIdList.filter((id: number) => id !== faqId));
     } catch (err) {
       setError(err);

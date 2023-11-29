@@ -76,20 +76,13 @@ const Filter = ({
             ))}
           </Select>
         </FormControl>
-        {/* <Input
-          label="담당 매니저"
-          placeholder="담당 매니저"
-          name="manager"
-          value={searchValues.manager ? searchValues.manager : ''}
-          onChange={onChangeSearchValues}
-        /> */}
       </DropdownWrapper>
       <ActionButtonGroup>
-        <ActionButton bgColor="blue" width="8rem">
-          필터 검색
-        </ActionButton>
         <ActionButton bgColor="lightBlue" width="8rem">
           전체 보기
+        </ActionButton>
+        <ActionButton bgColor="blue" width="8rem">
+          회원 목록 보기
         </ActionButton>
       </ActionButtonGroup>
     </FilterBlock>

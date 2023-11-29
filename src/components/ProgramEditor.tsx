@@ -63,34 +63,12 @@ const ProgramEditor = ({
     <div className="mx-auto max-w-xl font-notosans">
       <header className="my-5 text-2xl font-bold">프로그램 개설</header>
       <form className="space-y-5" onSubmit={handleSubmit}>
-        <Input
-          label="이름"
-          placeholder="프로그램 이름을 입력하세요"
-          value={values.title ? values.title : ''}
-          onChange={(e: any) => setValues({ ...values, title: e.target.value })}
-        />
-        <Input
-          label="기수"
-          type="number"
-          value={values.th ? values.th : ''}
-          placeholder="프로그램 기수를 입력하세요"
-          onChange={(e: any) => setValues({ ...values, th: e.target.value })}
-        />
-        <Input
-          label="인원수"
-          type="number"
-          value={values.headcount ? values.headcount : ''}
-          placeholder="총 인원 수를 입력하세요"
-          onChange={(e: any) =>
-            setValues({ ...values, headcount: e.target.value })
-          }
-        />
         <FormControl fullWidth>
-          <InputLabel id="type">유형</InputLabel>
+          <InputLabel id="type">프로그램 분류</InputLabel>
           <Select
             labelId="type"
             id="type"
-            label="유형"
+            label="프로그램 분류"
             value={values.type ? values.type : ''}
             onChange={(e) => {
               setValues({ ...values, type: e.target.value });
@@ -103,12 +81,34 @@ const ProgramEditor = ({
             <MenuItem value="LETS_CHAT">렛츠챗</MenuItem>
           </Select>
         </FormControl>
+        <Input
+          label="기수"
+          type="number"
+          value={values.th ? values.th : ''}
+          placeholder="프로그램 기수를 입력하세요"
+          onChange={(e: any) => setValues({ ...values, th: e.target.value })}
+        />
+        <Input
+          label="제목"
+          placeholder="프로그램 제목을 입력하세요"
+          value={values.title ? values.title : ''}
+          onChange={(e: any) => setValues({ ...values, title: e.target.value })}
+        />
+        <Input
+          label="정원"
+          type="number"
+          value={values.headcount ? values.headcount : ''}
+          placeholder="총 정원 수를 입력하세요"
+          onChange={(e: any) =>
+            setValues({ ...values, headcount: e.target.value })
+          }
+        />
         <FormControl fullWidth>
-          <InputLabel id="way">방식</InputLabel>
+          <InputLabel id="way">온/오프라인 여부</InputLabel>
           <Select
             labelId="way"
             id="way"
-            label="방식"
+            label="온/오프라인 여부"
             value={values.way ? values.way : ''}
             onChange={(e) => {
               setValues({ ...values, way: e.target.value });
@@ -175,6 +175,16 @@ const ProgramEditor = ({
             setContent(value);
           }}
         />
+        {faqList && faqList.length > 0 && (
+          <FAQEditor
+            faqList={faqList}
+            faqIdList={faqIdList}
+            onFAQAdd={handleFAQAdd}
+            onFAQDelete={handleFAQDelete}
+            onFAQChange={handleFAQChange}
+            onFAQCheckChange={handleFAQCheckChange}
+          />
+        )}
         <Input
           label="필독사항"
           value={values.notice ? values.notice : ''}
@@ -186,16 +196,6 @@ const ProgramEditor = ({
           multiline
           rows={5}
         />
-        {faqList && faqList.length > 0 && (
-          <FAQEditor
-            faqList={faqList}
-            faqIdList={faqIdList}
-            onFAQAdd={handleFAQAdd}
-            onFAQDelete={handleFAQDelete}
-            onFAQChange={handleFAQChange}
-            onFAQCheckChange={handleFAQCheckChange}
-          />
-        )}
         <div className="flex justify-end gap-2">
           <button
             type="submit"

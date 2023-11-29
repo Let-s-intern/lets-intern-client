@@ -5,9 +5,9 @@ const UserTableHead = () => {
     <thead>
       <tr>
         <TH>구분</TH>
-        <TH>이름</TH>
         <TH>유입경로</TH>
         <TH>이메일 주소</TH>
+        <TH>이름</TH>
         <TH>휴대폰 번호</TH>
         <TH>학교</TH>
         <TH>학년</TH>

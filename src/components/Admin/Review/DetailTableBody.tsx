@@ -1,13 +1,16 @@
 import { FormControl, InputLabel, MenuItem, Select } from '@mui/material';
 
 import TD from '../TD';
+import { typeToText } from '../../../libs/converTypeToText';
 
 interface DetailTableBodyProps {
+  program: any;
   reviewList: any;
   handleVisibleChanged: (reviewId: number, status: string) => void;
 }
 
 const DetailTableBody = ({
+  program,
   reviewList,
   handleVisibleChanged,
 }: DetailTableBodyProps) => {
@@ -15,6 +18,9 @@ const DetailTableBody = ({
     <tbody>
       {reviewList.map((review: any) => (
         <tr>
+          <TD></TD>
+          <TD>{typeToText[program.type]}</TD>
+          <TD>{program.th}</TD>
           <TD>{review.username ? review.username : '익명'}</TD>
           <TD>{review.grade}</TD>
           <TD>{review.reviewContents}</TD>

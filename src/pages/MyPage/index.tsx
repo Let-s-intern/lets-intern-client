@@ -1,10 +1,21 @@
-import { Outlet, useLocation } from 'react-router-dom';
+import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 
 import TabBar from '../../components/TabBar';
 import TabItem from '../../components/TabItem';
+import { useEffect } from 'react';
 
 const MyPage = () => {
   const location = useLocation();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const accessToken = localStorage.getItem('access-token');
+    const refreshToken = localStorage.getItem('refresh-token');
+
+    if (!accessToken || !refreshToken) {
+      navigate('/login');
+    }
+  }, []);
 
   return (
     <div className="container mx-auto w-full px-5 pb-5">

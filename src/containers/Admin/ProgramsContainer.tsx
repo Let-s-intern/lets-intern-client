@@ -70,10 +70,6 @@ const ProgramsContainer = () => {
   };
 
   const fetchDelete = (programId: number, status: string) => {
-    if (status === 'OPEN') {
-      alert('진행중인 프로그램은 삭제할 수 없습니다.');
-      return;
-    }
     axios
       .delete(`/program/${programId}`)
       .then((res) => {
