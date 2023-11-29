@@ -10,6 +10,8 @@ const FindPassword = () => {
   const [email, setEmail] = useState('');
   const [name, setName] = useState('');
   const [buttonDisabled, setButtonDisabled] = useState(true);
+  const [message, setMessage] = useState('');
+  const [isError, setIsError] = useState(false);
 
   useEffect(() => {
     const accessToken = localStorage.getItem('access-token');
@@ -22,22 +24,28 @@ const FindPassword = () => {
   const handleOnSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
+      setIsError(false);
+      setMessage('이메일을 전송 중입니다. 잠시만 기다려주세요.');
       await axios.post(
         '/user/password',
         { name, email },
         { headers: { Authorization: '' } },
       );
-      alert('입력하신 이메일로 비밀번호 재설정 링크가 전송되었습니다.');
+      setMessage('비밀번호 재설정 이메일을 전송을 완료하였습니다.');
+      alert('입력하신 이메일로 임시 비밀번호가 전송되었습니다.');
     } catch (error) {
-      console.log(error);
       if ((error as any).response?.status === 404) {
-        alert('입력하신 정보로 가입된 계정 정보를 찾을 수 없습니다.');
+        setIsError(true);
+        setMessage('입력하신 정보로 가입된 계정 정보를 찾을 수 없습니다.');
+        return;
       }
+      setIsError(true);
+      setMessage('비밀번호 재설정 링크 전송에 실패했습니다.');
     }
   };
 
   useEffect(() => {
-    if (email === '') {
+    if (!email || !name) {
       setButtonDisabled(true);
     } else {
       setButtonDisabled(false);
@@ -48,7 +56,7 @@ const FindPassword = () => {
     <div className="container mx-auto mt-8 p-5 sm:mt-32">
       <div className="mx-auto w-full sm:max-w-md">
         <h1 className="mb-5 text-2xl">비밀번호 찾기</h1>
-        <form onSubmit={handleOnSubmit} className="flex flex-col gap-5">
+        <form onSubmit={handleOnSubmit} className="flex flex-col gap-3">
           <div className="flex flex-col gap-3">
             <Input
               label="이름"
@@ -67,13 +75,24 @@ const FindPassword = () => {
               }
             />
           </div>
-          <Button
-            type="submit"
-            className="w-full"
-            {...(buttonDisabled && { disabled: true })}
-          >
-            비밀번호 찾기
-          </Button>
+          <div className="space-y-3">
+            {message && (
+              <span
+                className={`block text-center text-sm ${
+                  isError ? 'text-red-500' : 'text-gray-500'
+                }`}
+              >
+                {message}
+              </span>
+            )}
+            <Button
+              type="submit"
+              className="w-full"
+              {...(buttonDisabled && { disabled: true })}
+            >
+              비밀번호 찾기
+            </Button>
+          </div>
         </form>
       </div>
     </div>
