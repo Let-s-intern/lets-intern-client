@@ -34,13 +34,22 @@ const SignUp = () => {
     agreeToPrivacy: false,
   });
 
+  useEffect(() => {
+    const accessToken = localStorage.getItem('access-token');
+    const refreshToken = localStorage.getItem('refresh-token');
+    if (accessToken && refreshToken) {
+      navigate('/');
+    }
+  }, []);
+
   const handleOnSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const fetchSignUp = async () => {
       const { passwordConfirm, agreeToTerms, agreeToPrivacy, ...data } = value;
-      console.log(data);
       try {
-        const res = await axios.post('/user/signup', data);
+        const res = await axios.post('/user/signup', data, {
+          headers: { Authorization: '' },
+        });
         console.log(res);
         navigate('/login');
       } catch (err) {
@@ -64,7 +73,6 @@ const SignUp = () => {
     } else {
       setButtonDisabled(false);
     }
-    console.log('value', value);
   }, [value]);
 
   return (
@@ -82,6 +90,7 @@ const SignUp = () => {
           {/* 이메일 입력 */}
           <div>
             <Input
+              type="email"
               label="이메일"
               placeholder="example@example.com"
               value={value.email}

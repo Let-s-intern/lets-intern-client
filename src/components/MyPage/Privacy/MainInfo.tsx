@@ -32,6 +32,7 @@ const MainInfo = ({
             value={mainInfoValues.name}
             onChange={onChangeMainInfo}
             autoComplete="off"
+            disabled
           />
         </InputControl>
         <InputControl>

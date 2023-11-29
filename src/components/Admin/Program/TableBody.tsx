@@ -38,6 +38,13 @@ const TableBody = ({
           <TD>{program.th}</TD>
           <TD>{program.title}</TD>
           <TD>{program.startDate}</TD>
+          <TD>
+            {program.status === 'OPEN'
+              ? '모집 중'
+              : program.status === 'CLOSE'
+              ? '모집완료'
+              : program.status === 'DONE' && '진행완료'}
+          </TD>
           <TD>{program.headcount}</TD>
           <TD>{program.announcementDate}</TD>
           <TD>

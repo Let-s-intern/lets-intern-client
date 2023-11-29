@@ -1,7 +1,33 @@
-import { Link, Outlet } from 'react-router-dom';
+import { Link, Outlet, useNavigate } from 'react-router-dom';
 import { ImExit } from 'react-icons/im';
+import { useEffect } from 'react';
+
+import axios from '../libs/axios';
 
 const AdminLayout = () => {
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const accessToken = localStorage.getItem('access-token');
+    const refreshToken = localStorage.getItem('refresh-token');
+
+    if (!accessToken || !refreshToken) {
+      navigate('/login');
+    }
+
+    const fetchIsAdmin = async () => {
+      try {
+        const res = await axios.get('/user/isAdmin');
+        if (!res.data) {
+          navigate('/');
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    fetchIsAdmin();
+  }, []);
+
   const navData = [
     {
       title: '프로그램 관리',

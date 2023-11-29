@@ -51,12 +51,11 @@ const ProgramCreate = () => {
       return;
     }
     try {
-      await axios.post(`/faq/${values.type}`, {
+      const res = await axios.post(`/faq/${values.type}`, {
         question: '',
         answer: '',
       });
-      const res = await axios.get(`/faq/${values.type}`);
-      setFaqList(res.data.faqList);
+      setFaqList([...faqList, res.data]);
     } catch (err) {
       setError(err);
     }
@@ -69,8 +68,7 @@ const ProgramCreate = () => {
     }
     try {
       await axios.delete(`/faq/${faqId}`);
-      const res = await axios.get(`/faq/${values.type}`);
-      setFaqList(res.data.faqList);
+      setFaqList(faqList.filter((faq: any) => faq.id !== faqId));
       setFaqIdList(faqIdList.filter((id: number) => id !== faqId));
     } catch (err) {
       setError(err);
@@ -96,7 +94,7 @@ const ProgramCreate = () => {
       contents: content,
       th: Number(values.th),
       headcount: Number(values.headcount),
-      faqIdList: faqIdList,
+      faqIdList: faqIdList.sort(),
     });
     try {
       await axios.post('/program', values);

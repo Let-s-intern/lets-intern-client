@@ -35,6 +35,7 @@ const ReviewsDetail = ({
       <Table>
         <DetailTableHead />
         <DetailTableBody
+          program={program}
           reviewList={reviewList}
           handleVisibleChanged={handleVisibleChanged}
         />
