@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import axios from '../libs/axios';
 
@@ -10,9 +10,11 @@ interface SideNavItemProps {
 }
 
 const NavBar = () => {
+  const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [user, setUser] = useState<any>(null);
+  const [isAdmin, setIsAdmin] = useState(false);
 
   const toggleMenu = () => {
     setIsOpen(!isOpen);
@@ -23,11 +25,26 @@ const NavBar = () => {
   };
 
   useEffect(() => {
-    const token = localStorage.getItem('access-token');
-    if (token) {
+    const accessToken = localStorage.getItem('access-token');
+    const refreshToken = localStorage.getItem('refresh-token');
+    if (accessToken && refreshToken) {
       setIsLoggedIn(true);
       fetchAndSetUser();
     }
+    if (!accessToken || !refreshToken) {
+      return;
+    }
+    const fetchIsAdmin = async () => {
+      try {
+        const res = await axios.get('/user/isAdmin');
+        if (res.data) {
+          setIsAdmin(true);
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    fetchIsAdmin();
   }, []);
 
   const handleLogout = async () => {
@@ -115,9 +132,11 @@ const NavBar = () => {
             <SideNavItem to="/mypage/application" onClick={closeMenu}>
               마이페이지
             </SideNavItem>
-            <SideNavItem to="/admin" onClick={closeMenu}>
-              관리자 페이지
-            </SideNavItem>
+            {isAdmin && (
+              <SideNavItem to="/admin" onClick={closeMenu}>
+                관리자 페이지
+              </SideNavItem>
+            )}
           </div>
         </div>
       </div>

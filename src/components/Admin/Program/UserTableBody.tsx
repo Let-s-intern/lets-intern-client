@@ -18,10 +18,14 @@ const UserTableBody = ({
     <tbody>
       {applications.map((application: any) => (
         <tr>
-          <TD>{application.application.type}</TD>
-          <TD>{application.application.name}</TD>
+          <TD>
+            {application.application.type === 'USER'
+              ? '회원'
+              : application.application.type === 'GUEST' && '비회원'}
+          </TD>
           <TD>{parseInflowPath(application.application.inflowPath)}</TD>
           <TD>{application.application.email}</TD>
+          <TD>{application.application.name}</TD>
           <TD>{parsePhoneNum(application.application.phoneNum, true)}</TD>
           <TD>
             {application.optionalInfo

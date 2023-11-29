@@ -104,7 +104,7 @@ const PrivacyContainer = () => {
   const handleSavePassword = async (e: any) => {
     e.preventDefault();
     if (passwordValues.newPassword !== passwordValues.newPasswordConfirm) {
-      alert('비밀번호가 일치하지 않습니다.');
+      alert('기존 비밀번호와 일치하지 않습니다.');
       return;
     }
 

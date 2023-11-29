@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
 import Button from '../components/Button';
@@ -31,6 +31,14 @@ const Login = () => {
   const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
 
+  useEffect(() => {
+    const accessToken = localStorage.getItem('access-token');
+    const refreshToken = localStorage.getItem('refresh-token');
+    if (accessToken && refreshToken) {
+      navigate('/');
+    }
+  }, []);
+
   const handleLogin = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     axios
@@ -58,6 +66,7 @@ const Login = () => {
         <form onSubmit={handleLogin}>
           <div className="mt-5">
             <Input
+              type="email"
               label="이메일"
               value={email}
               onChange={(e: any) => setEmail(e.target.value)}

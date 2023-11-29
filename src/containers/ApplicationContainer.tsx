@@ -65,6 +65,8 @@ const ApplicationContainer = () => {
       }
     } catch (err) {
       setError(err);
+    } finally {
+      alert('프로그램 신청이 취소되었습니다.');
     }
   };
 
