@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
 
 import Reviews from '../../components/Admin/Review/Reviews';
 import axios from '../../libs/axios';
@@ -7,18 +8,17 @@ const ReviewsContainer = () => {
   const [programList, setProgramList] = useState([]);
 
   useEffect(() => {
-    const fetchPrograms = async () => {
+    const fetchData = async () => {
       try {
-        const {
-          data: { programList },
-        } = await axios.get('/program/admin');
-        console.log(programList);
-        setProgramList(programList);
+        let res;
+        res = await axios.get('/program/admin');
+        console.log(res.data.programList);
+        setProgramList(res.data.programList);
       } catch (err) {
         console.log(err);
       }
     };
-    fetchPrograms();
+    fetchData();
   }, []);
 
   const copyReviewCreateLink = (programId: number) => {

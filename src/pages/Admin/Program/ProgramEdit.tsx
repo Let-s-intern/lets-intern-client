@@ -11,6 +11,8 @@ const ProgramEdit = () => {
   const [content, setContent] = useState<any>('');
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<unknown>(null);
+  const [faqList, setFaqList] = useState<any>([]);
+  const [faqIdList, setFaqIdList] = useState<any>([]);
 
   const toLocalISOString = (dateString: string) => {
     const date = new Date(dateString);
@@ -35,6 +37,9 @@ const ProgramEdit = () => {
         delete newValues.id;
         delete newValues.isVisible;
         delete newValues.contents;
+        console.log(newValues.faqListStr.split(',') || []);
+        setFaqIdList(newValues.faqListStr.split(',').map(Number) || []);
+        delete newValues.faqListStr;
         setValues(newValues);
       } catch (err) {
         setError(err);
@@ -45,22 +50,109 @@ const ProgramEdit = () => {
     fetchProgram();
   }, []);
 
+  useEffect(() => {
+    if (!values.type) return;
+    const fetchFaqList = async () => {
+      try {
+        const res = await axios.get(`/faq/${values.type}`);
+        setFaqList(res.data.faqList);
+      } catch (err) {
+        setError(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchFaqList();
+  }, [values.type]);
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    if (!values.type) {
+      alert('프로그램 유형을 선택해주세요.');
+      return;
+    }
     const newValues = {
       ...values,
       contents: content,
       th: Number(values.th),
       headcount: Number(values.headcount),
+      faqIdList: faqIdList,
     };
     try {
       await axios.patch(`/program/${params.programId}`, newValues);
+      for (let faq of faqList) {
+        await axios.patch(`/faq/${faq.id}`, {
+          programType: values.type,
+          question: faq.question,
+          answer: faq.answer,
+        });
+      }
       navigate('/admin/programs');
     } catch (err) {
       setError(err);
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleFAQChange = (e: any, faqId: number) => {
+    const { name, value } = e.target;
+    console.log(name, value);
+    setFaqList(
+      faqList.map((faq: any) => {
+        if (faq.id === faqId) {
+          return {
+            ...faq,
+            [name]: value,
+          };
+        }
+        return faq;
+      }),
+    );
+  };
+
+  const handleFAQAdd = async () => {
+    if (!values.type) {
+      alert('프로그램 유형을 선택해주세요.');
+      return;
+    }
+    try {
+      await axios.post(`/faq/${values.type}`, {
+        question: '',
+        answer: '',
+      });
+      const res = await axios.get(`/faq/${values.type}`);
+      setFaqList(res.data.faqList);
+    } catch (err) {
+      setError(err);
+    }
+  };
+
+  const handleFAQDelete = async (faqId: number) => {
+    if (!values.type) {
+      alert('프로그램 유형을 선택해주세요.');
+      return;
+    }
+    try {
+      await axios.delete(`/faq/${faqId}`);
+      const res = await axios.get(`/faq/${values.type}`);
+      setFaqList(res.data.faqList);
+      setFaqIdList(faqIdList.filter((id: number) => id !== faqId));
+    } catch (err) {
+      setError(err);
+    }
+  };
+
+  const handleFAQCheckChange = (e: any, faqId: number) => {
+    if (e.target.checked) {
+      setFaqIdList([...faqIdList, faqId]);
+    } else {
+      setFaqIdList(faqIdList.filter((id: number) => id !== faqId));
+    }
+  };
+
+  const handleFAQIdListReset = () => {
+    setFaqIdList([]);
   };
 
   if (loading) {
@@ -78,6 +170,13 @@ const ProgramEdit = () => {
       handleSubmit={handleSubmit}
       content={content}
       setContent={setContent}
+      faqList={faqList}
+      faqIdList={faqIdList}
+      handleFAQAdd={handleFAQAdd}
+      handleFAQDelete={handleFAQDelete}
+      handleFAQChange={handleFAQChange}
+      handleFAQCheckChange={handleFAQCheckChange}
+      handleFAQIdListReset={handleFAQIdListReset}
     />
   );
 };

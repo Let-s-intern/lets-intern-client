@@ -4,16 +4,18 @@ import styled from 'styled-components';
 interface StarProps {
   onClick?: () => void;
   isActive?: boolean;
+  size?: string;
 }
 
 interface StarIconProps {
-  isActive?: boolean;
+  $isActive?: boolean;
+  $size?: string;
 }
 
-const Star = ({ onClick, isActive }: StarProps) => {
+const Star = ({ onClick, isActive, size = '1.5rem' }: StarProps) => {
   return (
     <StarBlock onClick={onClick}>
-      <StarIcon isActive={isActive}>
+      <StarIcon $isActive={isActive} $size={size}>
         <FaStar />
       </StarIcon>
     </StarBlock>
@@ -23,13 +25,11 @@ const Star = ({ onClick, isActive }: StarProps) => {
 export default Star;
 
 const StarBlock = styled.div`
-  height: 1.75rem;
-  width: 1.75rem;
   cursor: pointer;
 `;
 
 const StarIcon = styled.i<StarIconProps>`
-  font-size: 1.5rem;
-  color: ${({ isActive }) => (isActive ? '#6963F6' : '#d1d1d1')};
+  font-size: ${({ $size }) => $size};
+  color: ${({ $isActive }) => ($isActive ? '#6963F6' : '#d1d1d1')};
   cursor: pointer;
 `;

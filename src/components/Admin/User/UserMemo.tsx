@@ -8,31 +8,46 @@ import ActionButton from '../ActionButton';
 import UserMemoModal from './UserMemoModal';
 
 interface UserMemoProps {
+  loading: boolean;
+  error: unknown;
+  memoList: any[];
   isModalOpen: boolean;
   handleModalOpen: () => void;
   handleModalClose: () => void;
+  handleMemoChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
+  handleMemoCreate: (e: any) => void;
 }
 
-const UserMemo = ({
-  isModalOpen,
-  handleModalOpen,
-  handleModalClose,
-}: UserMemoProps) => {
+const UserMemo = (props: UserMemoProps) => {
+  if (props.loading) {
+    return <div></div>;
+  }
+
+  if (props.error) {
+    return <div></div>;
+  }
+
   return (
     <>
       <Header>
         <Heading>메모 - 홍민서</Heading>
-        <ActionButton onClick={handleModalOpen}>등록</ActionButton>
+        <ActionButton onClick={props.handleModalOpen}>등록</ActionButton>
       </Header>
-      <UserMemoModal isModalOpen={isModalOpen} onClose={handleModalClose} />
       <Table>
         <MemoTableHead />
         <MemoTableBody
-          isModalOpen={isModalOpen}
-          handleModalOpen={handleModalOpen}
-          handleModalClose={handleModalClose}
+          memoList={props.memoList}
+          isModalOpen={props.isModalOpen}
+          handleModalOpen={props.handleModalOpen}
+          handleModalClose={props.handleModalClose}
         />
       </Table>
+      <UserMemoModal
+        isModalOpen={props.isModalOpen}
+        onClose={props.handleModalClose}
+        handleMemoChange={props.handleMemoChange}
+        handleMemoCreate={props.handleMemoCreate}
+      />
     </>
   );
 };

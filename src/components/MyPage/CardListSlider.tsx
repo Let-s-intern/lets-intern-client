@@ -50,7 +50,7 @@ const CardListSliderBlock = styled.div`
 `;
 
 const CardListContent = styled.div`
-  display: block;
+  display: flex;
   overflow-x: scroll;
   scroll-behavior: smooth;
   width: 100%;

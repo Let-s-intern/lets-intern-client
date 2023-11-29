@@ -6,7 +6,7 @@ interface TDProps {
 }
 
 interface TDBlockProps {
-  textalign?: 'left' | 'center';
+  $textAlign?: 'left' | 'center';
 }
 
 const TDBlock = styled.td<TDBlockProps>`
@@ -14,11 +14,11 @@ const TDBlock = styled.td<TDBlockProps>`
   padding: 0.5rem 1rem;
   font-size: 0.75rem;
 
-  ${(props) => props.textalign && `text-align: ${props.textalign};`}
+  ${({ $textAlign }) => $textAlign && `text-align: ${$textAlign};`}
 `;
 
 const TD = ({ textAlign = 'center', children }: TDProps) => {
-  return <TDBlock textalign={textAlign}>{children}</TDBlock>;
+  return <TDBlock $textAlign={textAlign}>{children}</TDBlock>;
 };
 
 export default TD;
