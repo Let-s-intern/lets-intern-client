@@ -21,11 +21,11 @@ import Users from './pages/Admin/User/Users';
 import UserDetail from './pages/Admin/User/UserDetail';
 import UserMemo from './pages/Admin/User/UserMemo';
 import ProgramUsers from './pages/Admin/Program/ProgramUsers';
-import AttendCheck from './components/Admin/Program/AttendCheck';
 import UserCreate from './pages/Admin/User/UserCreate';
 import UserEdit from './pages/Admin/User/UserEdit';
 import Application from './pages/MyPage/Appllication';
 import ReviewCreate from './pages/ReviewCreate';
+import AttendCheck from './pages/Admin/Program/AttendCheck';
 
 const Router = () => {
   return (

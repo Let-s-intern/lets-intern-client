@@ -3,6 +3,7 @@ import { FormControl, InputLabel, MenuItem, Select } from '@mui/material';
 import TD from '../TD';
 import parseInflowPath from '../../../libs/parseInflowPath';
 import parseGrade from '../../../libs/parseGrade';
+import parsePhoneNum from '../../../libs/parsePhoneNum';
 
 interface UserTableBodyProps {
   applications: any[];
@@ -17,16 +18,23 @@ const UserTableBody = ({
     <tbody>
       {applications.map((application: any) => (
         <tr>
-          <TD></TD>
-          <TD>{parseInflowPath(application.inflowPath)}</TD>
-          <TD></TD>
-          <TD></TD>
-          <TD></TD>
-          <TD>{parseGrade(application.grade)}</TD>
-          <TD></TD>
-          <TD>{application.wishJob}</TD>
-          <TD>{application.wishCompany}</TD>
-          <TD>{application.applyMotive}</TD>
+          <TD>{application.application.type}</TD>
+          <TD>{application.application.name}</TD>
+          <TD>{parseInflowPath(application.application.inflowPath)}</TD>
+          <TD>{application.application.email}</TD>
+          <TD>{parsePhoneNum(application.application.phoneNum, true)}</TD>
+          <TD>
+            {application.optionalInfo
+              ? application.optionalInfo.university
+              : ''}
+          </TD>
+          <TD>{parseGrade(application.application.grade)}</TD>
+          <TD>
+            {application.optionalInfo ? application.optionalInfo.major : ''}
+          </TD>
+          <TD>{application.application.wishJob}</TD>
+          <TD>{application.application.wishCompany}</TD>
+          <TD>{application.application.applyMotive}</TD>
           <TD>
             <FormControl>
               <InputLabel id="status">참가 확정</InputLabel>
@@ -35,9 +43,9 @@ const UserTableBody = ({
                 id="status"
                 label="참가 확정"
                 name="status"
-                value={application.status}
+                value={application.application.status}
                 onChange={(e) =>
-                  handleApplicationStatusChange(e, application.id)
+                  handleApplicationStatusChange(e, application.application.id)
                 }
               >
                 <MenuItem value="APPLIED">대기</MenuItem>
@@ -46,8 +54,8 @@ const UserTableBody = ({
               </Select>
             </FormControl>
           </TD>
-          <TD></TD>
-          <TD>{application.preQuestions}</TD>
+          <TD>{application.application.createdAt}</TD>
+          <TD>{application.application.preQuestions}</TD>
         </tr>
       ))}
     </tbody>

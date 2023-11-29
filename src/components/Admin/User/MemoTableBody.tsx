@@ -4,43 +4,41 @@ import ActionButton from '../ActionButton';
 import TD from '../TD';
 import UserMemoModal from './UserMemoModal';
 
-const ActionButtonGroup = styled.div`
-  display: flex;
-  gap: 0.5rem;
-  justify-content: center;
-`;
-
 interface MemoTableBodyProps {
+  memoList: any[];
   isModalOpen: boolean;
   handleModalOpen: () => void;
   handleModalClose: () => void;
 }
 
-const MemoTableBody = ({
-  isModalOpen,
-  handleModalOpen,
-  handleModalClose,
-}: MemoTableBodyProps) => {
+const MemoTableBody = (props: MemoTableBodyProps) => {
   return (
     <>
       <tbody>
-        <tr>
-          <TD>홍민서</TD>
-          <TD>배고파요 배고파요 배고파요 배고파요 배고파요 배고파요</TD>
-          <TD>2023-05-05</TD>
-          <TD>
-            <ActionButtonGroup>
-              <ActionButton bgColor="green" onClick={handleModalOpen}>
-                수정
-              </ActionButton>
-              <ActionButton bgColor="red">삭제</ActionButton>
-            </ActionButtonGroup>
-          </TD>
-        </tr>
+        {props.memoList.map((memo: any) => (
+          <tr>
+            <TD>{memo.creator}</TD>
+            <TD>{memo.contents}</TD>
+            <TD>{memo.createdAt}</TD>
+            <TD>
+              <ActionButtonGroup>
+                <ActionButton bgColor="green" onClick={props.handleModalOpen}>
+                  수정
+                </ActionButton>
+                <ActionButton bgColor="red">삭제</ActionButton>
+              </ActionButtonGroup>
+            </TD>
+          </tr>
+        ))}
       </tbody>
-      <UserMemoModal isModalOpen={isModalOpen} onClose={handleModalClose} />
     </>
   );
 };
 
 export default MemoTableBody;
+
+const ActionButtonGroup = styled.div`
+  display: flex;
+  gap: 0.5rem;
+  justify-content: center;
+`;

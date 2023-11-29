@@ -43,20 +43,32 @@ const ProgramUsersContainer = () => {
         status: e.target.value,
         isApproved: e.target.value === 'IN_PROGRESS',
       });
-      setApplications(
-        applications.map((application: any) => {
-          if (application.id === applicationId) {
-            return {
-              ...application,
-              status: e.target.value,
-              isApproved: e.target.value === 'IN_PROGRESS',
-            };
-          }
-          return application;
-        }),
-      );
+      const res = await axios.get(`/application/admin/${params.programId}`);
+      console.log(res.data.applicationList);
+      setApplications(res.data.applicationList);
     } catch (err) {
       alert('참여 상태 변경에 실패했습니다.');
+    }
+  };
+
+  const handleEmailSend = async (isApproved: boolean) => {
+    try {
+      const res = await axios.get(
+        `/application/admin/email/${params.programId}`,
+      );
+      const emailList = isApproved
+        ? res.data.approvedEmailList
+        : res.data.notApprovedEmailList;
+      const emailSubject = isApproved ? '참가확정 이메일' : '미선발 이메일';
+      const emailBody = isApproved
+        ? '참가확정되셨습니다.'
+        : '미선발되셨습니다.';
+      const emailString =
+        emailList.join(',') + `?subject=${emailSubject}&body=${emailBody}`;
+      const url = `mailto:${emailString}`;
+      window.open(url);
+    } catch (err) {
+      alert('이메일 전송에 실패했습니다.');
     }
   };
 
@@ -67,6 +79,7 @@ const ProgramUsersContainer = () => {
       program={program}
       applications={applications}
       handleApplicationStatusChange={handleApplicationStatusChange}
+      onEmailSend={handleEmailSend}
     />
   );
 };

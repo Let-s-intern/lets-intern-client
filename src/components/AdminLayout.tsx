@@ -39,7 +39,7 @@ const AdminLayout = () => {
 
   return (
     <div className="flex font-notosans">
-      <aside className="h-screen w-60 bg-indigo-100 px-10 py-8">
+      <aside className="min-w-60 h-screen min-w-[250px] bg-indigo-100 px-10 py-8">
         <nav className="flex flex-col gap-7">
           {navData.map((navSection, index) => (
             <section key={index}>
@@ -63,7 +63,7 @@ const AdminLayout = () => {
           ))}
         </nav>
       </aside>
-      <main className="container flex-1 px-8 py-8">
+      <main className="container relative flex-1 px-8 py-8">
         <Outlet />
       </main>
     </div>

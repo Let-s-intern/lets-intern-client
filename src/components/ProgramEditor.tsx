@@ -1,12 +1,9 @@
 import { FormControl, InputLabel, MenuItem, Select } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import Input from './Input';
-import { DateTimePicker, LocalizationProvider } from '@mui/x-date-pickers';
-import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
-import dayjs from 'dayjs';
 import ReactQuill from 'react-quill';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import styled from 'styled-components';
+import FAQEditor from './FAQEditor';
 
 interface ProgramEditorProps {
   values: any;
@@ -14,6 +11,13 @@ interface ProgramEditorProps {
   handleSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
   content: string;
   setContent: React.Dispatch<React.SetStateAction<string>>;
+  faqList: any;
+  faqIdList: any;
+  handleFAQAdd: () => void;
+  handleFAQDelete: (faqId: number) => void;
+  handleFAQChange: (e: any, faqId: number) => void;
+  handleFAQCheckChange: (e: any, faqId: number) => void;
+  handleFAQIdListReset: () => void;
 }
 
 const ProgramEditor = ({
@@ -22,6 +26,13 @@ const ProgramEditor = ({
   handleSubmit,
   content,
   setContent,
+  faqList,
+  faqIdList,
+  handleFAQAdd,
+  handleFAQDelete,
+  handleFAQChange,
+  handleFAQCheckChange,
+  handleFAQIdListReset,
 }: ProgramEditorProps) => {
   const navigate = useNavigate();
 
@@ -83,6 +94,7 @@ const ProgramEditor = ({
             value={values.type ? values.type : ''}
             onChange={(e) => {
               setValues({ ...values, type: e.target.value });
+              handleFAQIdListReset();
             }}
           >
             <MenuItem value="CHALLENGE_FULL">챌린지(전체)</MenuItem>
@@ -155,21 +167,35 @@ const ProgramEditor = ({
             }
           />
         </DateTimeControl>
-        <Input
-          label="필독사항"
-          value={values.notice ? values.notice : ''}
-          placeholder="필독사항을 입력하세요"
-          onChange={(e: any) =>
-            setValues({ ...values, notice: e.target.value })
-          }
-        />
         <ReactQuill
           modules={modules}
+          placeholder="상세 내용을 입력해주세요."
           value={content ? content : ''}
           onChange={(value) => {
             setContent(value);
           }}
         />
+        <Input
+          label="필독사항"
+          value={values.notice ? values.notice : ''}
+          name="notice"
+          placeholder="필독사항을 입력하세요"
+          onChange={(e: any) =>
+            setValues({ ...values, notice: e.target.value })
+          }
+          multiline
+          rows={5}
+        />
+        {faqList && faqList.length > 0 && (
+          <FAQEditor
+            faqList={faqList}
+            faqIdList={faqIdList}
+            onFAQAdd={handleFAQAdd}
+            onFAQDelete={handleFAQDelete}
+            onFAQChange={handleFAQChange}
+            onFAQCheckChange={handleFAQCheckChange}
+          />
+        )}
         <div className="flex justify-end gap-2">
           <button
             type="submit"

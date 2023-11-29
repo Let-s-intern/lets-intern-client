@@ -8,7 +8,10 @@ interface InputProps {
   label?: string;
   value?: string;
   disabled?: boolean;
+  multiline?: boolean;
+  rows?: number;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  className?: string;
 }
 
 const InputBlock = styled(TextField)({
@@ -30,7 +33,10 @@ const Input = ({
   value,
   label,
   disabled,
+  multiline,
+  rows,
   onChange,
+  className,
 }: InputProps) => {
   return (
     <InputBlock
@@ -40,10 +46,13 @@ const Input = ({
       name={name}
       value={value}
       disabled={disabled}
+      multiline={multiline}
+      rows={rows}
       onChange={onChange}
       autoComplete="off"
       fullWidth
       sx={{ backgroundColor: 'white' }}
+      className={className}
     />
   );
 };

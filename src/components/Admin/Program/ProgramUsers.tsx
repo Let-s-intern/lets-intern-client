@@ -11,6 +11,7 @@ interface ProgramUsersProps {
   program: any;
   applications: any;
   handleApplicationStatusChange: (e: any, applicationId: number) => void;
+  onEmailSend: (isApproved: boolean) => void;
 }
 
 const ProgramUsers = ({
@@ -19,6 +20,7 @@ const ProgramUsers = ({
   program,
   applications,
   handleApplicationStatusChange,
+  onEmailSend,
 }: ProgramUsersProps) => {
   if (loading) {
     return <></>;
@@ -35,7 +37,7 @@ const ProgramUsers = ({
         {program.type === 'LETS_CHAT' && (
           <ActionButtonGroup>
             <ActionButton
-              to="/admin/programs/1/check-attendance"
+              to={`/admin/programs/${program.id}/check-attendance`}
               bgColor="blue"
             >
               출석체크
@@ -51,9 +53,20 @@ const ProgramUsers = ({
         />
       </Table>
       <EmailActionArea>
-        <EmailActionButton>저장</EmailActionButton>
-        <EmailActionButton>참가확정 이메일 보내기</EmailActionButton>
-        <EmailActionButton>미선발 이메일 보내기</EmailActionButton>
+        <EmailActionButton
+          width="13rem"
+          bgColor="green"
+          onClick={() => onEmailSend(true)}
+        >
+          참가확정 이메일 보내기
+        </EmailActionButton>
+        <EmailActionButton
+          width="13rem"
+          bgColor="red"
+          onClick={() => onEmailSend(false)}
+        >
+          미선발 이메일 보내기
+        </EmailActionButton>
       </EmailActionArea>
     </>
   );
@@ -79,12 +92,14 @@ const Heading = styled.h1`
 `;
 
 const EmailActionArea = styled.div`
-  width: 100%;
+  width: calc(100vw - 250px);
   position: fixed;
-  bottom: 5rem;
+  bottom: 3rem;
+  left: 250px;
   display: flex;
   justify-content: center;
   align-items: center;
+  gap: 1rem;
 `;
 
-const EmailActionButton = styled.button``;
+const EmailActionButton = styled(ActionButton)``;

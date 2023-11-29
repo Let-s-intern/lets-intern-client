@@ -6,16 +6,23 @@ import { useParams } from 'react-router-dom';
 
 const ReviewsDetailContainer = () => {
   const params = useParams();
-  const [reviewList, setReviewList] = useState<any>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<unknown>(null);
+  const [reviewList, setReviewList] = useState<any>([]);
+  const [program, setProgram] = useState<any>({});
 
   useEffect(() => {
     const fetchReviews = async () => {
       try {
-        const res = await axios.get(`/review/${params.programId}`);
+        let res;
+        res = await axios.get(`/review/admin/${params.programId}`);
         setReviewList(res.data.reviewList);
-        console.log(res.data.reviewList);
+        res = await axios.get(`/program/admin`);
+        console.log(res.data.programList);
+        const foundedProgram = res.data.programList.find(
+          (program: any) => program.id === Number(params.programId),
+        );
+        setProgram(foundedProgram);
       } catch (err) {
         setError(err);
       } finally {
@@ -49,6 +56,7 @@ const ReviewsDetailContainer = () => {
       error={error}
       reviewList={reviewList}
       handleVisibleChanged={handleVisibleChanged}
+      program={program}
     />
   );
 };
