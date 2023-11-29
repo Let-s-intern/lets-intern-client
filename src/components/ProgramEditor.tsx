@@ -148,7 +148,7 @@ const ProgramEditor = ({
           />
         </DateTimeControl>
         <DateTimeControl>
-          <DateTimeLabel htmlFor="dueDate">기한 일자</DateTimeLabel>
+          <DateTimeLabel htmlFor="dueDate">모집 마감 일자</DateTimeLabel>
           <input
             id="dueDate"
             type="datetime-local"
@@ -157,7 +157,9 @@ const ProgramEditor = ({
           />
         </DateTimeControl>
         <DateTimeControl>
-          <DateTimeLabel htmlFor="announcementDate">공개 일자</DateTimeLabel>
+          <DateTimeLabel htmlFor="announcementDate">
+            합격자 발표 일자
+          </DateTimeLabel>
           <input
             id="announcementDate"
             type="datetime-local"

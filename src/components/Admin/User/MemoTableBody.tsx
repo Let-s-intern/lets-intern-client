@@ -9,6 +9,8 @@ interface MemoTableBodyProps {
   isModalOpen: boolean;
   handleModalOpen: () => void;
   handleModalClose: () => void;
+  onModalEditOpen: (memoId: number) => void;
+  onDeleteMemo: (memoId: number) => void;
 }
 
 const MemoTableBody = (props: MemoTableBodyProps) => {
@@ -16,16 +18,24 @@ const MemoTableBody = (props: MemoTableBodyProps) => {
     <>
       <tbody>
         {props.memoList.map((memo: any) => (
-          <tr>
+          <tr key={memo.id}>
             <TD>{memo.creator}</TD>
             <TD>{memo.contents}</TD>
             <TD>{memo.createdAt}</TD>
             <TD>
               <ActionButtonGroup>
-                <ActionButton bgColor="green" onClick={props.handleModalOpen}>
+                <ActionButton
+                  bgColor="green"
+                  onClick={() => props.onModalEditOpen(memo.id)}
+                >
                   수정
                 </ActionButton>
-                <ActionButton bgColor="red">삭제</ActionButton>
+                <ActionButton
+                  bgColor="red"
+                  onClick={() => props.onDeleteMemo(memo.id)}
+                >
+                  삭제
+                </ActionButton>
               </ActionButtonGroup>
             </TD>
           </tr>

@@ -14,13 +14,17 @@ const TableBody = ({ users }: TableBodyProps) => {
         <tr>
           <TD>{user.name}</TD>
           <TD>{user.email}</TD>
-          <TD>{parsePhoneNum(user.phoneNum, true)}</TD>
+          <TD>
+            {user.phoneNum.includes('-')
+              ? user.phoneNum
+              : parsePhoneNum(user.phoneNum, true)}
+          </TD>
           <TD></TD>
           <TD>{user.signedUpAt}</TD>
           <TD></TD>
           <TD>
             <ActionButtonGroup>
-              <ActionButton to="/admin/users/1/memo" bgColor="blue">
+              <ActionButton to={`/admin/users/${user.id}/memo`} bgColor="blue">
                 메모
               </ActionButton>
               <ActionButton to={`/admin/users/${user.id}`} bgColor="lightBlue">

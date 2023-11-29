@@ -11,7 +11,7 @@ interface CheckBoxProps {
 
 const CheckBox = ({ checked, onClick }: CheckBoxProps) => {
   return (
-    <div className="flex items-center" onClick={onClick}>
+    <div className="flex cursor-pointer items-center" onClick={onClick}>
       {checked ? (
         <img src="/icons/checkbox-checked.svg" alt="체크됨" />
       ) : (
@@ -33,6 +33,8 @@ const SignUp = () => {
     agreeToTerms: false,
     agreeToPrivacy: false,
   });
+  const [error, setError] = useState<unknown>(null);
+  const [errorMessage, setErrorMessage] = useState('');
 
   useEffect(() => {
     const accessToken = localStorage.getItem('access-token');
@@ -54,6 +56,8 @@ const SignUp = () => {
         navigate('/login');
       } catch (err) {
         console.error(err);
+        setError(err);
+        setErrorMessage((err as any).response?.data.reason);
       }
     };
     fetchSignUp();
@@ -113,7 +117,7 @@ const SignUp = () => {
           <div>
             <Input
               label="휴대폰 번호"
-              placeholder="-를 제외한 전화번호"
+              placeholder="-를 포함한 전화번호"
               value={value.phoneNum}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                 setValue({ ...value, phoneNum: e.target.value })
@@ -126,9 +130,9 @@ const SignUp = () => {
               type="password"
               label="비밀번호"
               value={value.password}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                setValue({ ...value, password: e.target.value })
-              }
+              onChange={(e: any) => {
+                setValue({ ...value, password: e.target.value });
+              }}
             />
           </div>
           {/* 비밀번호 확인 입력 */}
@@ -160,8 +164,19 @@ const SignUp = () => {
                   setValue({ ...value, agreeToTerms: !value.agreeToTerms })
                 }
               >
-                <b className="font-medium">(필수)서비스이용약관</b>에
-                동의합니다.
+                <b
+                  className="font-medium text-primary underline"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    window.open(
+                      'https://ddayeah.notion.site/e3dff22b6bb6428bb841008cd1740759?pvs=4',
+                      '_blank',
+                    );
+                  }}
+                >
+                  (필수)서비스이용약관
+                </b>
+                에 동의합니다.
               </label>
             </div>
             {/* 개인정보처리방침 체크박스 */}
@@ -179,12 +194,27 @@ const SignUp = () => {
                   setValue({ ...value, agreeToPrivacy: !value.agreeToPrivacy })
                 }
               >
-                <b className="font-medium">(필수)개인정보처리방침</b>에
-                동의합니다.
+                <b
+                  className="font-medium text-primary underline"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    window.open(
+                      'https://ddayeah.notion.site/22c0a812e31c4eb5afcd64e077d447be?pvs=4',
+                      '_blank',
+                    );
+                  }}
+                >
+                  (필수)개인정보처리방침
+                </b>
+                에 동의합니다.
               </label>
             </div>
           </div>
-          {/* 회원가입 버튼 */}
+          {error ? (
+            <span className="block text-center text-sm text-red-500">
+              {errorMessage ? errorMessage : ''}
+            </span>
+          ) : null}
           <Button
             type="submit"
             className="mt-5"

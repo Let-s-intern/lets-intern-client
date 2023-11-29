@@ -12,30 +12,44 @@ const UserMemoContainer = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [memoList, setMemoList] = useState([]);
   const [memoValue, setMemoValue] = useState('');
+  const [memoId, setMemoId] = useState(-1);
+  const [user, setUser] = useState<any>({});
 
   useEffect(() => {
-    const fetchMemo = async () => {
+    const fetchData = async () => {
       try {
-        const res = await axios.get(`/memo/${params.userId}`);
-        console.log(res.data.memoList);
+        let res = await axios.get(`/memo/${params.userId}`);
         setMemoList(res.data.memoList);
+        res = await axios.get(`/user/admin/${params.userId}`);
+        setUser(res.data);
       } catch (error) {
         setError(error);
       } finally {
         setLoading(false);
       }
     };
-    fetchMemo();
+    fetchData();
   }, []);
 
   const handleModalOpen = () => {
+    setMemoId(-1);
     setIsModalOpen(true);
+  };
+
+  const handleModalEditOpen = (memoId: number) => {
+    setMemoId(memoId);
+    const memo = memoList.find((memo: any) => memo.id === memoId);
+    if (!memo) return;
+    if ((memo as any).contents) {
+      setMemoValue((memo as any).contents);
+      setIsModalOpen(true);
+    }
   };
 
   const handleModalClose = () => {
     setIsModalOpen(false);
     setMemoValue('');
-    setIsModalOpen(false);
+    setMemoId(-1);
   };
 
   const handleMemoChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -45,17 +59,31 @@ const UserMemoContainer = () => {
   const handleMemoCreate = async (e: any) => {
     e.preventDefault();
     try {
-      await axios.post(`/memo/${params.userId}`, {
-        contents: memoValue,
-      });
+      if (memoId === -1) {
+        await axios.post(`/memo/${params.userId}`, {
+          contents: memoValue,
+        });
+      } else {
+        await axios.patch(`/memo/${memoId}`, {
+          contents: memoValue,
+        });
+      }
       const res = await axios.get(`/memo/${params.userId}`);
       setMemoList(res.data.memoList);
-      setMemoValue('');
-      setIsModalOpen(false);
+      handleModalClose();
     } catch (error) {
       setError(error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleDeleteMemo = async (memoId: number) => {
+    try {
+      await axios.delete(`/memo/${memoId}`);
+      setMemoList(memoList.filter((memo: any) => memo.id !== memoId));
+    } catch (error) {
+      alert('메모 삭제에 실패했습니다.');
     }
   };
 
@@ -65,10 +93,14 @@ const UserMemoContainer = () => {
       error={error}
       memoList={memoList}
       isModalOpen={isModalOpen}
+      memoValue={memoValue}
+      user={user}
       handleModalOpen={handleModalOpen}
       handleModalClose={handleModalClose}
       handleMemoCreate={handleMemoCreate}
       handleMemoChange={handleMemoChange}
+      handleModalEditOpen={handleModalEditOpen}
+      handleDeleteMemo={handleDeleteMemo}
     />
   );
 };
