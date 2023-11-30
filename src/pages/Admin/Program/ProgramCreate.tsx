@@ -29,6 +29,18 @@ const ProgramCreate = () => {
     fetchFaqList();
   }, [values.type]);
 
+  useEffect(() => {
+    if (!faqList) return;
+    const newFaqIdList: number[] = [];
+    const originFaqIdList = faqList.map((faq: any) => faq.id);
+    for (let faqId of faqIdList) {
+      if (originFaqIdList.includes(faqId)) {
+        newFaqIdList.push(faqId);
+      }
+    }
+    newFaqIdList.sort();
+  }, [faqList]);
+
   const handleFAQChange = (e: any, faqId: number) => {
     const { name, value } = e.target;
     console.log(name, value);
@@ -94,7 +106,7 @@ const ProgramCreate = () => {
       contents: content,
       th: Number(values.th),
       headcount: Number(values.headcount),
-      faqIdList: faqIdList.sort(),
+      faqIdList: faqIdList,
     });
     try {
       await axios.post('/program', values);

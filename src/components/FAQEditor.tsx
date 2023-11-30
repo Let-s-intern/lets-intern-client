@@ -13,36 +13,43 @@ const FAQEditor = (props: FAQEditorProps) => {
   return (
     <FAQEditorBlock>
       <Title>FAQ</Title>
-      {props.faqList.map((faq: any) => (
-        <InputControl key={faq.id}>
-          <input
-            type="checkbox"
-            checked={props.faqIdList.includes(faq.id)}
-            onChange={(e) => props.onFAQCheckChange(e, faq.id)}
-          />
-          <InputGroup>
-            <Input
-              type="text"
-              name="question"
-              placeholder="질문을 입력하세요."
-              value={faq.question}
-              onChange={(e) => props.onFAQChange(e, faq.id)}
-              autoComplete="off"
+      {props.faqList.length === 0 || !props.faqList ? (
+        <Placeholder>등록된 FAQ가 없습니다.</Placeholder>
+      ) : (
+        props.faqList.map((faq: any) => (
+          <InputControl key={faq.id}>
+            <input
+              type="checkbox"
+              checked={props.faqIdList.includes(faq.id)}
+              onChange={(e) => props.onFAQCheckChange(e, faq.id)}
             />
-            <Input
-              type="text"
-              name="answer"
-              placeholder="답변을 입력하세요."
-              value={faq.answer}
-              onChange={(e) => props.onFAQChange(e, faq.id)}
-              autoComplete="off"
-            />
-          </InputGroup>
-          <DeleteButton type="button" onClick={() => props.onFAQDelete(faq.id)}>
-            삭제
-          </DeleteButton>
-        </InputControl>
-      ))}
+            <InputGroup>
+              <Input
+                type="text"
+                name="question"
+                placeholder="질문을 입력하세요."
+                value={faq.question}
+                onChange={(e) => props.onFAQChange(e, faq.id)}
+                autoComplete="off"
+              />
+              <Input
+                type="text"
+                name="answer"
+                placeholder="답변을 입력하세요."
+                value={faq.answer}
+                onChange={(e) => props.onFAQChange(e, faq.id)}
+                autoComplete="off"
+              />
+            </InputGroup>
+            <DeleteButton
+              type="button"
+              onClick={() => props.onFAQDelete(faq.id)}
+            >
+              삭제
+            </DeleteButton>
+          </InputControl>
+        ))
+      )}
       <BottomButtonGroup>
         <AddButton type="button" onClick={props.onFAQAdd}>
           추가
@@ -73,6 +80,10 @@ const Title = styled.h3`
   font-weight: 500;
   margin-bottom: 1rem;
   font-size: 1.25rem;
+`;
+
+const Placeholder = styled.p`
+  text-align: center;
 `;
 
 const InputControl = styled.div`
