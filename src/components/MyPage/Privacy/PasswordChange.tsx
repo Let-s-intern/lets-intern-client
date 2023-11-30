@@ -36,7 +36,7 @@ const PasswordChange = ({
             type="password"
             placeholder="새로운 비밀번호를 입력하세요."
             name="newPassword"
-            value={passwordValues.newPaassword}
+            value={passwordValues.newPassword}
             onChange={onChangePassword}
             autoComplete="off"
           />
