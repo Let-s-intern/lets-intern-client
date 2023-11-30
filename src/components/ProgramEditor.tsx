@@ -177,16 +177,16 @@ const ProgramEditor = ({
             setContent(value);
           }}
         />
-        {faqList && faqList.length > 0 && (
-          <FAQEditor
-            faqList={faqList}
-            faqIdList={faqIdList}
-            onFAQAdd={handleFAQAdd}
-            onFAQDelete={handleFAQDelete}
-            onFAQChange={handleFAQChange}
-            onFAQCheckChange={handleFAQCheckChange}
-          />
-        )}
+        {/* {faqList && faqList.length > 0 && ( */}
+        <FAQEditor
+          faqList={faqList}
+          faqIdList={faqIdList}
+          onFAQAdd={handleFAQAdd}
+          onFAQDelete={handleFAQDelete}
+          onFAQChange={handleFAQChange}
+          onFAQCheckChange={handleFAQCheckChange}
+        />
+        {/* )} */}
         <Input
           label="필독사항"
           value={values.notice ? values.notice : ''}

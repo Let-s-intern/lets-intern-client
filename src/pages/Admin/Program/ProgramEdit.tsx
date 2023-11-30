@@ -37,8 +37,10 @@ const ProgramEdit = () => {
         delete newValues.id;
         delete newValues.isVisible;
         delete newValues.contents;
+
         setFaqIdList(newValues.faqListStr.split(',').map(Number) || []);
         delete newValues.faqListStr;
+
         setValues(newValues);
       } catch (err) {
         setError(err);
@@ -48,6 +50,19 @@ const ProgramEdit = () => {
     };
     fetchProgram();
   }, []);
+
+  useEffect(() => {
+    if (!faqList) return;
+    const newFaqIdList: number[] = [];
+    const originFaqIdList = faqList.map((faq: any) => faq.id);
+    for (let faqId of faqIdList) {
+      if (originFaqIdList.includes(faqId)) {
+        newFaqIdList.push(faqId);
+      }
+    }
+    newFaqIdList.sort();
+    setFaqIdList(newFaqIdList);
+  }, [faqList]);
 
   useEffect(() => {
     if (!values.type) return;
