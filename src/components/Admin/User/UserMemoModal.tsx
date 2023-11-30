@@ -5,6 +5,7 @@ import { Modal } from '@mui/material';
 import ActionButton from '../ActionButton';
 
 interface UserMemoModalProps {
+  memoValue: string;
   isModalOpen: boolean;
   onClose: () => void;
   handleMemoChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
@@ -33,6 +34,7 @@ const UserMemoModal = (props: UserMemoModalProps) => {
           <MemoInput
             id="content"
             placeholder="메모를 입력하세요."
+            value={props.memoValue}
             onChange={props.handleMemoChange}
           ></MemoInput>
           <ButtonWrapper>
