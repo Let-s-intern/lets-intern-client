@@ -62,7 +62,7 @@ const ProgramListSlider = ({
         className="flex grow overflow-x-scroll scroll-smooth py-5"
       >
         {loading || programs.length === 0 ? (
-          <div className="h-[320px] w-full"></div>
+          <div className="h-[20rem] w-full"></div>
         ) : (
           <div className="flex gap-5">
             {programs.map((program) => {

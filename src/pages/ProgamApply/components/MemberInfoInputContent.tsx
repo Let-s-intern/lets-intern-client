@@ -14,6 +14,20 @@ const MemberInfoInputContent = ({
   isLoggedIn,
   handleApplyInput,
 }: MemberInfoInputContentProps) => {
+  const dropdownStyle = {
+    '& .MuiOutlinedInput-root': {
+      '&:hover fieldset': {
+        borderColor: '#6963f6',
+      },
+      '&.Mui-focused fieldset': {
+        borderColor: '#6963f6',
+      },
+    },
+    '& label.Mui-focused': {
+      color: '#6963F6',
+    },
+  };
+
   return (
     <>
       <h1 className="text-center text-xl">신청 정보</h1>
@@ -57,7 +71,7 @@ const MemberInfoInputContent = ({
             onChange={(e) => handleApplyInput(e)}
             disabled={hasDetailInfo}
           />
-          <FormControl fullWidth>
+          <FormControl fullWidth sx={dropdownStyle}>
             <InputLabel id="grade">학년</InputLabel>
             <Select
               labelId="grade"
@@ -92,14 +106,18 @@ const MemberInfoInputContent = ({
             name="applyMotive"
             value={user.applyMotive}
             onChange={(e) => handleApplyInput(e)}
+            multiline
+            rows={4}
           />
           <Input
-            label="사전 질문"
+            label="사전 질문 (선택)"
             name="preQuestions"
             value={user.preQuestion}
             onChange={(e) => handleApplyInput(e)}
+            multiline
+            rows={4}
           />
-          <FormControl fullWidth>
+          <FormControl fullWidth sx={dropdownStyle}>
             <InputLabel id="inflowPath">유입 경로</InputLabel>
             <Select
               labelId="inflowPath"

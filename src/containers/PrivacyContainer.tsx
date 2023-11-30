@@ -3,16 +3,16 @@ import { useEffect, useState } from 'react';
 import Privacy from '../components/MyPage/Privacy/Privacy';
 import axios from '../libs/axios';
 import parsePhoneNum from '../libs/parsePhoneNum';
-import { useNavigate } from 'react-router-dom';
+import { isValidEmail, isValidPassword } from '../libs/valid';
 
 const PrivacyContainer = () => {
-  const navigate = useNavigate();
   const [mainInfoValues, setMainInfoValues] = useState<any>({});
   const [subInfoValues, setSubInfoValues] = useState<any>({});
   const [passwordValues, setPasswordValues] = useState<any>({});
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<unknown>(null);
 
+  // 유저 정보 가져오기
   useEffect(() => {
     const fetchUserInfo = async () => {
       try {
@@ -20,7 +20,7 @@ const PrivacyContainer = () => {
         setMainInfoValues({
           name: res.data.name,
           email: res.data.email,
-          phoneNum: parsePhoneNum(res.data.phoneNum, false),
+          phoneNum: res.data.phoneNum,
         });
         setSubInfoValues({
           major: res.data.major,
@@ -35,6 +35,7 @@ const PrivacyContainer = () => {
     fetchUserInfo();
   }, []);
 
+  // 이름, 이메일, 휴대폰 번호 변경 입력 폼의 값이 변경될 때마다 실행되는 함수
   const handleChangeMainInfo = (e: any) => {
     const { name, value } = e.target;
     setMainInfoValues({
@@ -43,6 +44,7 @@ const PrivacyContainer = () => {
     });
   };
 
+  // 이름, 이메일, 휴대폰 번호 변경 버튼 클릭 시 실행되는 함수
   const handleSaveMainInfo = async (e: any) => {
     e.preventDefault();
     if (
@@ -51,6 +53,14 @@ const PrivacyContainer = () => {
       !mainInfoValues.phoneNum
     ) {
       alert('모든 항목을 입력해주세요.');
+      return;
+    }
+    if (!isValidEmail(mainInfoValues.email)) {
+      alert('이메일 형식이 올바르지 않습니다.');
+      return;
+    }
+    if (!isValidPassword(mainInfoValues.phoneNum)) {
+      alert('휴대폰 번호 형식이 올바르지 않습니다.');
       return;
     }
     try {
@@ -66,6 +76,7 @@ const PrivacyContainer = () => {
     }
   };
 
+  // 학과, 학교 정보 변경 입력 폼의 값이 변경될 때마다 실행되는 함수
   const handleChangeSubInfo = (e: any) => {
     const { name, value } = e.target;
     setSubInfoValues({
@@ -74,13 +85,13 @@ const PrivacyContainer = () => {
     });
   };
 
+  // 학과, 학교 정보 변경 버튼 클릭 시 실행되는 함수
   const handleSaveSubInfo = async (e: any) => {
     e.preventDefault();
     if (!subInfoValues.major || !subInfoValues.university) {
       alert('모든 항목을 입력해주세요.');
       return;
     }
-
     try {
       const reqData = {
         major: subInfoValues.major,
@@ -93,6 +104,7 @@ const PrivacyContainer = () => {
     }
   };
 
+  // 비밀번호 변경 입력 폼의 값이 변경될 때마다 실행되는 함수
   const handleChangePassword = (e: any) => {
     const { name, value } = e.target;
     setPasswordValues({
@@ -101,13 +113,9 @@ const PrivacyContainer = () => {
     });
   };
 
+  // 비밀번호 변경 버튼 클릭 시 실행되는 함수
   const handleSavePassword = async (e: any) => {
     e.preventDefault();
-    if (passwordValues.newPassword !== passwordValues.newPasswordConfirm) {
-      alert('기존 비밀번호와 일치하지 않습니다.');
-      return;
-    }
-
     if (
       !passwordValues.currentPassword ||
       !passwordValues.newPassword ||
@@ -116,7 +124,18 @@ const PrivacyContainer = () => {
       alert('모든 항목을 입력해주세요.');
       return;
     }
-
+    if (passwordValues.newPassword === passwordValues.currentPassword) {
+      alert('기존 비밀번호와 동일한 비밀번호입니다.');
+      return;
+    }
+    if (passwordValues.newPassword !== passwordValues.newPasswordConfirm) {
+      alert('새로운 비밀번호가 비밀번호 확인과 일치하지 않습니다.');
+      return;
+    }
+    if (!isValidPassword(passwordValues.newPassword)) {
+      alert('새로운 비밀번호의 형식이 올바르지 않습니다.');
+      return;
+    }
     try {
       const reqData = {
         currentPassword: passwordValues.currentPassword,
@@ -129,6 +148,7 @@ const PrivacyContainer = () => {
     }
   };
 
+  // 회원 탈퇴 버튼 클릭 시 실행되는 함수
   const handleDeleteAccount = async () => {
     try {
       axios.get('/user/withdraw');
@@ -141,6 +161,7 @@ const PrivacyContainer = () => {
     }
   };
 
+  // 컴포넌트 렌더링
   return (
     <Privacy
       loading={loading}

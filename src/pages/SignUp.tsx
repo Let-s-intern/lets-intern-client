@@ -1,25 +1,17 @@
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+
 import Input from '../components/Input';
 import Button from '../components/Button';
 import axios from '../libs/axios';
-import { useNavigate } from 'react-router-dom';
-
-interface CheckBoxProps {
-  checked: boolean;
-  onClick: () => void;
-}
-
-const CheckBox = ({ checked, onClick }: CheckBoxProps) => {
-  return (
-    <div className="flex cursor-pointer items-center" onClick={onClick}>
-      {checked ? (
-        <img src="/icons/checkbox-checked.svg" alt="체크됨" />
-      ) : (
-        <img src="/icons/checkbox-unchecked.svg" alt="체크되지 않음" />
-      )}
-    </div>
-  );
-};
+import PrivacyPolicyModal from '../components/SignUp/PrivacyPolicyModal';
+import CheckBox from '../components/SignUp/CheckBox';
+import PrivacyLink from '../components/SignUp/PrivacyLink';
+import {
+  isValidEmail,
+  isValidPassword,
+  isValidPhoneNumber,
+} from '../libs/valid';
 
 const SignUp = () => {
   const navigate = useNavigate();
@@ -35,7 +27,9 @@ const SignUp = () => {
   });
   const [error, setError] = useState<unknown>(null);
   const [errorMessage, setErrorMessage] = useState('');
+  const [showModal, setShowModal] = useState<boolean>(false);
 
+  // 로그인 상태에서 회원가입 페이지에 접근하면 메인 페이지로 이동
   useEffect(() => {
     const accessToken = localStorage.getItem('access-token');
     const refreshToken = localStorage.getItem('refresh-token');
@@ -44,15 +38,36 @@ const SignUp = () => {
     }
   }, []);
 
-  const handleOnSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  // 회원가입 버튼 클릭 시 실행되는 함수
+  const handleOnSubmit = (e: any) => {
+    if (buttonDisabled) return;
     e.preventDefault();
+    if (!isValidEmail(value.email)) {
+      setError(true);
+      setErrorMessage('이메일 형식이 올바르지 않습니다.');
+      return;
+    }
+    if (!isValidPhoneNumber(value.phoneNum)) {
+      setError(true);
+      setErrorMessage('휴대폰 번호 형식이 올바르지 않습니다.');
+      return;
+    }
+    if (!isValidPassword(value.password)) {
+      setError(true);
+      setErrorMessage('비밀번호 형식이 올바르지 않습니다.');
+      return;
+    }
+    if (value.password !== value.passwordConfirm) {
+      setError(true);
+      setErrorMessage('비밀번호가 일치하지 않습니다.');
+      return;
+    }
     const fetchSignUp = async () => {
       const { passwordConfirm, agreeToTerms, agreeToPrivacy, ...data } = value;
       try {
         const res = await axios.post('/user/signup', data, {
           headers: { Authorization: '' },
         });
-        console.log(res);
         navigate('/login');
       } catch (err) {
         console.error(err);
@@ -63,6 +78,7 @@ const SignUp = () => {
     fetchSignUp();
   };
 
+  // 회원가입 입력 폼의 값이 하나라도 비어있으면 회원가입 버튼 비활성화
   useEffect(() => {
     if (
       value.email === '' ||
@@ -79,6 +95,7 @@ const SignUp = () => {
     }
   }, [value]);
 
+  // 컴포넌트 렌더링
   return (
     <div className="container mx-auto mt-8 p-5">
       <div className="mx-auto mb-16 w-full sm:max-w-md">
@@ -94,7 +111,6 @@ const SignUp = () => {
           {/* 이메일 입력 */}
           <div>
             <Input
-              type="email"
               label="이메일"
               placeholder="example@example.com"
               value={value.email}
@@ -164,8 +180,7 @@ const SignUp = () => {
                   setValue({ ...value, agreeToTerms: !value.agreeToTerms })
                 }
               >
-                <b
-                  className="font-medium text-primary underline"
+                <PrivacyLink
                   onClick={(e) => {
                     e.stopPropagation();
                     window.open(
@@ -174,8 +189,8 @@ const SignUp = () => {
                     );
                   }}
                 >
-                  (필수)서비스이용약관
-                </b>
+                  (필수)서비스 이용약관
+                </PrivacyLink>
                 에 동의합니다.
               </label>
             </div>
@@ -194,20 +209,20 @@ const SignUp = () => {
                   setValue({ ...value, agreeToPrivacy: !value.agreeToPrivacy })
                 }
               >
-                <b
-                  className="font-medium text-primary underline"
+                <PrivacyLink
                   onClick={(e) => {
                     e.stopPropagation();
-                    window.open(
-                      'https://ddayeah.notion.site/22c0a812e31c4eb5afcd64e077d447be?pvs=4',
-                      '_blank',
-                    );
+                    setShowModal(true);
                   }}
                 >
-                  (필수)개인정보처리방침
-                </b>
+                  (필수)개인정보 수집 및 이용 동의서
+                </PrivacyLink>
                 에 동의합니다.
               </label>
+              <PrivacyPolicyModal
+                showModal={showModal}
+                setShowModal={setShowModal}
+              />
             </div>
           </div>
           {error ? (
