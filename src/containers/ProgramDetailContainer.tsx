@@ -39,7 +39,6 @@ const ProgramDetailContainer = () => {
               : '',
           },
         });
-        console.log(res.data);
         setParticipated(res.data.participated);
         setProgram(res.data.programDetailVo);
         setReviewList(res.data.reviewList);
@@ -67,7 +66,6 @@ const ProgramDetailContainer = () => {
       user.name &&
       user.email &&
       user.phoneNum &&
-      user.preQuestions &&
       user.major &&
       user.university &&
       user.inflowPath
@@ -132,6 +130,9 @@ const ProgramDetailContainer = () => {
         });
       }
       setIsApplyModalOpen(true);
+      if (isLoggedIn) {
+        setApplyPageIndex(1);
+      }
     } catch (error) {
       console.error(error);
     }

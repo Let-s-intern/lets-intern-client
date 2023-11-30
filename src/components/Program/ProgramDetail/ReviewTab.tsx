@@ -1,11 +1,16 @@
 import styled from 'styled-components';
 import Star from '../../Review/Star';
+import { useEffect } from 'react';
 
 interface ReviewTabProps {
   reviewList: any;
 }
 
 const ReviewTab = ({ reviewList }: ReviewTabProps) => {
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   return (
     <ReviewTabBlock>
       {reviewList.length === 0 ? (

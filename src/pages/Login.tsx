@@ -30,7 +30,9 @@ const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
+  const [buttonDisabled, setButtonDisabled] = useState(false);
 
+  // 로그인 상태에서 로그인 페이지에 접근하면 메인 페이지로 이동
   useEffect(() => {
     const accessToken = localStorage.getItem('access-token');
     const refreshToken = localStorage.getItem('refresh-token');
@@ -39,8 +41,19 @@ const Login = () => {
     }
   }, []);
 
+  // 로그인 버튼 비활성화 여부
+  useEffect(() => {
+    if (!email || !password) {
+      setButtonDisabled(true);
+    } else {
+      setButtonDisabled(false);
+    }
+  }, [email, password]);
+
+  // 로그인 버튼 클릭 시 실행되는 함수
   const handleLogin = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    if (buttonDisabled) return;
     axios
       .post(`${process.env.REACT_APP_SERVER_API}/user/signin`, {
         email,
@@ -80,19 +93,20 @@ const Login = () => {
               onChange={(e: any) => setPassword(e.target.value)}
             />
           </div>
-          <Button type="submit" className="mt-5 w-full">
+          {errorMessage && (
+            <div className="mt-3 text-center text-sm font-medium text-red-600">
+              {errorMessage}
+            </div>
+          )}
+          <Button
+            type="submit"
+            className="mt-5 w-full"
+            disabled={buttonDisabled}
+          >
             로그인
           </Button>
-          <div className="mt-3 h-[20px] w-full">
-            {errorMessage && (
-              <div className="mt-3 text-center text-sm font-medium text-red-600">
-                {errorMessage}
-              </div>
-            )}
-          </div>
         </form>
-        {/* 소셜 로그인 */}
-        <span className="mt-10 block text-center text-sm text-neutral-dark-grey">
+        {/* <span className="mt-10 block text-center text-sm text-neutral-dark-grey">
           또는
         </span>
         <span className="mt-10 block text-center font-medium text-neutral-grey">
@@ -109,9 +123,9 @@ const Login = () => {
               <img src="/icons/kakao-icon.svg" alt="카카오톡 아이콘" />
             </i>
           </button>
-        </div>
+        </div> */}
         {/* 회원가입 및 비밀번호 찾기 */}
-        <div className="mb-20 mt-10 flex justify-center">
+        <div className="mt-5 flex justify-center">
           <div className="flex gap-16">
             <TextLink to="/signup">회원가입</TextLink>
             <TextLink to="/find-password" dark>

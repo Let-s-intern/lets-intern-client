@@ -26,10 +26,12 @@ import UserEdit from './pages/Admin/User/UserEdit';
 import Application from './pages/MyPage/Appllication';
 import ReviewCreate from './pages/ReviewCreate';
 import AttendCheck from './pages/Admin/Program/AttendCheck';
+import ScrollToTop from './ScrollToTop';
 
 const Router = () => {
   return (
     <BrowserRouter>
+      <ScrollToTop />
       <Routes>
         <Route path="/" element={<Layout />}>
           {/* / */}

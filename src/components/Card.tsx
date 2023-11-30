@@ -1,9 +1,7 @@
 import { Link } from 'react-router-dom';
 
-import Program from '../interfaces/program';
-
 interface CardProps {
-  program: Program;
+  program: any;
   reviewId?: number;
   cardType?: '신청 완료' | '참여 중' | '참여 완료' | '';
   className?: string;
@@ -112,7 +110,7 @@ const Card = ({
       <p>
         {!loading ? program.startDate : ' '}
         <br />
-        {!loading ? program.dueDate : ' '}
+        {!loading ? program.endDate : ' '}
       </p>
     </Link>
   );
