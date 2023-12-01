@@ -13,6 +13,7 @@ const FindPassword = () => {
   const [message, setMessage] = useState('');
   const [isError, setIsError] = useState(false);
 
+  // 로그인 상태에서 비밀번호 찾기 페이지에 접근하면 메인 페이지로 이동
   useEffect(() => {
     const accessToken = localStorage.getItem('access-token');
     const refreshToken = localStorage.getItem('refresh-token');
@@ -21,8 +22,10 @@ const FindPassword = () => {
     }
   }, []);
 
+  // 비밀번호 찾기 버튼 클릭 시 실행되는 함수
   const handleOnSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    if (buttonDisabled) return;
     try {
       setIsError(false);
       setMessage('이메일을 전송 중입니다. 잠시만 기다려주세요.');
@@ -44,6 +47,7 @@ const FindPassword = () => {
     }
   };
 
+  // 이메일 입력 폼의 값이 변경될 때마다 실행되는 함수
   useEffect(() => {
     if (!email || !name) {
       setButtonDisabled(true);
@@ -52,6 +56,7 @@ const FindPassword = () => {
     }
   }, [email]);
 
+  // 컴포넌트 렌더링
   return (
     <div className="container mx-auto mt-8 p-5 sm:mt-32">
       <div className="mx-auto w-full sm:max-w-md">

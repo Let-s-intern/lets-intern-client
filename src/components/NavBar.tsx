@@ -61,7 +61,6 @@ const NavBar = () => {
   const fetchAndSetUser = async () => {
     try {
       const res = await axios.get('/user');
-      console.log(res.data);
       setUser(res.data);
     } catch (error) {
       console.error(error);

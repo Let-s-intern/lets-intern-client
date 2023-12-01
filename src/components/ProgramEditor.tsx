@@ -126,6 +126,7 @@ const ProgramEditor = ({
           onChange={(e: any) =>
             setValues({ ...values, location: e.target.value })
           }
+          disabled={!values.way || values.way === 'ONLINE'}
         />
         <DateTimeControl>
           <DateTimeLabel htmlFor="startDate">시작 일자</DateTimeLabel>
@@ -136,6 +137,7 @@ const ProgramEditor = ({
             onChange={(e) =>
               setValues({ ...values, startDate: e.target.value })
             }
+            step={600}
           />
         </DateTimeControl>
         <DateTimeControl>
@@ -177,16 +179,16 @@ const ProgramEditor = ({
             setContent(value);
           }}
         />
-        {faqList && faqList.length > 0 && (
-          <FAQEditor
-            faqList={faqList}
-            faqIdList={faqIdList}
-            onFAQAdd={handleFAQAdd}
-            onFAQDelete={handleFAQDelete}
-            onFAQChange={handleFAQChange}
-            onFAQCheckChange={handleFAQCheckChange}
-          />
-        )}
+        {/* {faqList && faqList.length > 0 && ( */}
+        <FAQEditor
+          faqList={faqList}
+          faqIdList={faqIdList}
+          onFAQAdd={handleFAQAdd}
+          onFAQDelete={handleFAQDelete}
+          onFAQChange={handleFAQChange}
+          onFAQCheckChange={handleFAQCheckChange}
+        />
+        {/* )} */}
         <Input
           label="필독사항"
           value={values.notice ? values.notice : ''}
@@ -228,4 +230,5 @@ const DateTimeControl = styled.div`
 
 const DateTimeLabel = styled.label`
   font-weight: 500;
+  width: 8rem;
 `;
