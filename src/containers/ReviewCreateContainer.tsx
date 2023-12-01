@@ -20,6 +20,7 @@ const ReviewCreateContainer = () => {
       const token = localStorage.getItem('access-token');
       if (!token) {
         setIsLoggedIn(false);
+        return;
       }
       try {
         await axios.get('/user');
@@ -44,7 +45,13 @@ const ReviewCreateContainer = () => {
       if (!params.programId) return;
       setLoading(true);
       try {
-        const res = await axios.get(`/program/${params.programId}`);
+        const res = await axios.get(`/program/${params.programId}`, {
+          headers: {
+            Authorization: isLoggedIn
+              ? `Bearer ${localStorage.getItem('access-token')}`
+              : '',
+          },
+        });
         console.log(res.data.programDetailVo);
         setProgram({
           ...res.data.programDetailVo,
@@ -71,15 +78,15 @@ const ReviewCreateContainer = () => {
   const handleSubmitButton = async () => {
     const reqData = values;
     try {
-      const res = await axios.post(`/review/${params.programId}`, reqData, {
-        headers: {
-          Authorization: isLoggedIn
-            ? `Bearer ${localStorage.getItem('access-token')}`
-            : '',
-        },
-      });
-      console.log(res);
-      navigate('/mypage/review');
+      if (isLoggedIn && params.applicationId) {
+        await axios.post(`/review/${params.applicationId}`, reqData);
+        navigate('/mypage/review');
+      } else {
+        await axios.post(`/review?programId=${params.programId}`, reqData, {
+          headers: { Authorization: '' },
+        });
+        navigate(`/program/${params.programId}`);
+      }
     } catch (err) {
       console.error(err);
     }

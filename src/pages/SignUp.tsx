@@ -65,7 +65,7 @@ const SignUp = () => {
     const fetchSignUp = async () => {
       const { passwordConfirm, agreeToTerms, agreeToPrivacy, ...data } = value;
       try {
-        const res = await axios.post('/user/signup', data, {
+        await axios.post('/user/signup', data, {
           headers: { Authorization: '' },
         });
         navigate('/login');

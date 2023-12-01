@@ -47,11 +47,9 @@ const ApplicationContainer = () => {
   }, []);
 
   const fetchApplicationDelete = async (
-    e: React.MouseEvent<HTMLSpanElement, MouseEvent>,
     applicationId: number,
     status: string,
   ) => {
-    e.stopPropagation();
     try {
       await axios.delete(`/application/${applicationId}`);
       if (status === 'APPLIED') {

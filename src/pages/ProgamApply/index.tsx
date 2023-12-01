@@ -14,6 +14,8 @@ interface ProgramApplyProps {
   isNextButtonDisabled: boolean;
   cautionChecked: boolean;
   notice: string;
+  program: any;
+  announcementDate: string;
   handleApplyModalClose: () => void;
   handleApplyNextButton: () => void;
   handleApplyInput: (e: any) => void;
@@ -32,6 +34,8 @@ const ProgramApply = ({
   isNextButtonDisabled,
   cautionChecked,
   notice,
+  program,
+  announcementDate,
   handleApplyModalClose,
   handleApplyNextButton,
   handleApplyInput,
@@ -60,6 +64,7 @@ const ProgramApply = ({
           hasDetailInfo={hasDetailInfo}
           isLoggedIn={isLoggedIn}
           handleApplyInput={handleApplyInput}
+          program={program}
         />
       </Modal>
     </BlackBackground>
@@ -85,7 +90,7 @@ const ProgramApply = ({
         position="center"
         onNextButtonClick={handleApplyNextButton}
       >
-        <ResultContent />
+        <ResultContent announcementDate={announcementDate} />
       </Modal>
     </BlackBackground>
   ) : null;

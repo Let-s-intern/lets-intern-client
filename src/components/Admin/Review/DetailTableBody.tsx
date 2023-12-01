@@ -18,10 +18,10 @@ const DetailTableBody = ({
     <tbody>
       {reviewList.map((review: any) => (
         <tr>
-          <TD></TD>
+          <TD>{review.userName ? '회원' : '비회원'}</TD>
           <TD>{typeToText[program.type]}</TD>
           <TD>{program.th}</TD>
-          <TD>{review.username ? review.username : '익명'}</TD>
+          <TD>{review.userName ? review.userName : '익명'}</TD>
           <TD>{review.grade}</TD>
           <TD>{review.reviewContents}</TD>
           <TD>{review.suggestContents}</TD>

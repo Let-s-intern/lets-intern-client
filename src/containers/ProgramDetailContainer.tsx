@@ -2,6 +2,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import ProgramDetail from '../components/Program/ProgramDetail/ProgramDetail';
 import { useEffect, useState } from 'react';
 import axios from '../libs/axios';
+import { isValidEmail, isValidPhoneNumber } from '../libs/valid';
 
 const ProgramDetailContainer = () => {
   const navigate = useNavigate();
@@ -22,19 +23,20 @@ const ProgramDetailContainer = () => {
   const [isNextButtonDisabled, setIsNextButtonDisabled] =
     useState<boolean>(false);
   const [cautionChecked, setCautionChecked] = useState<boolean>(false);
+  const [announcementDate, setAnnouncementDate] = useState<string>('');
 
   useEffect(() => {
-    const checkLoggedIn = () => {
+    const fetchProgram = async () => {
       const token = localStorage.getItem('access-token');
       if (token) {
         setIsLoggedIn(true);
+      } else {
+        setIsLoggedIn(false);
       }
-    };
-    const fetchProgram = async () => {
       try {
         const res = await axios.get(`/program/${params.programId}`, {
           headers: {
-            Authorization: isLoggedIn
+            Authorization: token
               ? `Bearer ${localStorage.getItem('access-token')}`
               : '',
           },
@@ -49,7 +51,6 @@ const ProgramDetailContainer = () => {
         setLoading(false);
       }
     };
-    checkLoggedIn();
     fetchProgram();
   }, []);
 
@@ -73,10 +74,6 @@ const ProgramDetailContainer = () => {
       setIsNextButtonDisabled(false);
     }
   }, [applyPageIndex, user]);
-
-  const handleBackButtonClick = () => {
-    navigate(-1);
-  };
 
   const handleTabChange = (tab: string) => {
     setTab(tab);
@@ -154,6 +151,13 @@ const ProgramDetailContainer = () => {
 
   const handleApplyNextButton = () => {
     if (applyPageIndex === 1) {
+      if (!isValidEmail(user.email)) {
+        alert('이메일 형식이 올바르지 않습니다.');
+        return;
+      } else if (!isValidPhoneNumber(user.phoneNum)) {
+        alert('휴대폰 번호 형식이 올바르지 않습니다.');
+        return;
+      }
       setApplyPageIndex(applyPageIndex + 1);
       setCautionChecked(false);
       setIsNextButtonDisabled(true);
@@ -195,9 +199,12 @@ const ProgramDetailContainer = () => {
           },
         },
       );
-      console.log(res);
+      setAnnouncementDate(res.data.announcementDate);
       setApplyPageIndex(applyPageIndex + 1);
     } catch (error) {
+      if ((error as any).response.status === 400) {
+        alert((error as any).response.data.reason);
+      }
       console.error(error);
     }
   };
@@ -224,7 +231,7 @@ const ProgramDetailContainer = () => {
       isNextButtonDisabled={isNextButtonDisabled}
       participated={participated}
       cautionChecked={cautionChecked}
-      handleBackButtonClick={handleBackButtonClick}
+      announcementDate={announcementDate}
       handleTabChange={handleTabChange}
       handleToggleOpenList={handleToggleOpenList}
       getToggleOpened={getToggleOpened}

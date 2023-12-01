@@ -11,6 +11,7 @@ export interface GetPageDefault {
 export interface ListItemProps {
   checked?: boolean;
   children: React.ReactNode;
+  onClick?: () => void;
 }
 
 export interface ModalProps {

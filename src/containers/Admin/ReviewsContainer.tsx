@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
 
 import Reviews from '../../components/Admin/Review/Reviews';
 import axios from '../../libs/axios';
@@ -22,7 +21,7 @@ const ReviewsContainer = () => {
   }, []);
 
   const copyReviewCreateLink = (programId: number) => {
-    const url = `https://www.letsintern.co.kr/program/${programId}/review/create`; // 복사하고자 하는 링크
+    const url = `${window.location.protocol}//${window.location.hostname}:${window.location.port}/program/${programId}/review/create`; // 복사하고자 하는 링크
     navigator.clipboard
       .writeText(url)
       .then(() => {

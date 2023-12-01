@@ -6,15 +6,9 @@ interface ReviewDetailProps {
   loading: boolean;
   error: unknown;
   review: any;
-  program: any;
 }
 
-const ReviewDetail = ({
-  loading,
-  error,
-  review,
-  program,
-}: ReviewDetailProps) => {
+const ReviewDetail = ({ loading, error, review }: ReviewDetailProps) => {
   if (loading) {
     return <div></div>;
   }
@@ -26,9 +20,11 @@ const ReviewDetail = ({
   return (
     <ReviewDetailBlock>
       <Header>
-        <ProgramType>{convertTypeToText(program.type, false)}</ProgramType>
-        <ProgramTitle>{program.title}</ProgramTitle>
-        <ProgramDate>{program.startDate} ~</ProgramDate>
+        <ProgramType>
+          {convertTypeToText(review.programType, false)}
+        </ProgramType>
+        <ProgramTitle>{review.programTitle}</ProgramTitle>
+        <ProgramDate>{review.startDate} ~</ProgramDate>
         <StarRating>
           {Array.from({ length: 5 }, (_, i) => (
             <Star key={i} isActive={review.grade > i} />

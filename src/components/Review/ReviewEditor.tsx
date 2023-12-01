@@ -95,6 +95,7 @@ const SubmitButton = styled.button<SubmitButtonProps>`
   width: 100%;
   background-color: ${({ $disabled }) => ($disabled ? '#a5a1fa' : '#6963F6')};
   color: #ffffff;
+  cursor: ${({ $disabled }) => ($disabled ? 'auto' : 'pointer')};
 
   @media (min-width: 640px) {
     max-width: 36rem;

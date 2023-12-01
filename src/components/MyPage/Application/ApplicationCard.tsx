@@ -9,15 +9,13 @@ import {
   CardTitle,
   CardTop,
 } from '../Card';
+import { useState } from 'react';
+import AlertModal from '../../AlertModal';
 
 interface ApplicationCardProps {
   application: any;
   statusToLabel: any;
-  fetchApplicationDelete: (
-    e: React.MouseEvent<HTMLSpanElement, MouseEvent>,
-    applicationId: number,
-    status: string,
-  ) => void;
+  fetchApplicationDelete: (applicationId: number, status: string) => void;
 }
 
 const ApplicationCard = ({
@@ -25,31 +23,60 @@ const ApplicationCard = ({
   statusToLabel,
   fetchApplicationDelete,
 }: ApplicationCardProps) => {
+  const [isDeleteMoal, setIsDeleteModal] = useState(false);
   const navigate = useNavigate();
+
+  const onCancel = () => {
+    setIsDeleteModal(false);
+  };
+
+  const onConfirm = () => {
+    fetchApplicationDelete(application.id, application.status);
+    setIsDeleteModal(false);
+  };
+
   return (
-    <CardBlock onClick={() => navigate(`/program/${application.programId}`)}>
-      <CardTop>
-        {/* <CardSubSpan>챌린지</CardSubSpan> */}
-        <CardBadge
-          $bgColor={statusToLabel[application.status].bgColor}
-          $color={statusToLabel[application.status].color}
+    <>
+      <CardBlock onClick={() => navigate(`/program/${application.programId}`)}>
+        <CardTop>
+          {/* <CardSubSpan>챌린지</CardSubSpan> */}
+          <CardBadge
+            $bgColor={statusToLabel[application.status].bgColor}
+            $color={statusToLabel[application.status].color}
+          >
+            {statusToLabel[application.status].label}
+          </CardBadge>
+        </CardTop>
+        <CardMiddle>
+          <CardTitle>{application.programTitle}</CardTitle>
+        </CardMiddle>
+        <CardBottom>
+          <CardBottomLink
+            onClick={(e) => {
+              e.stopPropagation();
+              setIsDeleteModal(true);
+            }}
+          >
+            취소하기
+          </CardBottomLink>
+        </CardBottom>
+      </CardBlock>
+      {isDeleteMoal && (
+        <AlertModal
+          onConfirm={onConfirm}
+          onCancel={onCancel}
+          title="프로그램 신청 취소"
+          confirmText="예"
+          cancelText="아니오"
         >
-          {statusToLabel[application.status].label}
-        </CardBadge>
-      </CardTop>
-      <CardMiddle>
-        <CardTitle>{application.programTitle}</CardTitle>
-      </CardMiddle>
-      <CardBottom>
-        <CardBottomLink
-          onClick={(e) =>
-            fetchApplicationDelete(e, application.id, application.status)
-          }
-        >
-          취소하기
-        </CardBottomLink>
-      </CardBottom>
-    </CardBlock>
+          신청한 프로그램을 취소하시면,
+          <br />
+          신청 시에 작성했던 정보가 모두 삭제됩니다.
+          <br />
+          그래도 취소하시겠습니까?
+        </AlertModal>
+      )}
+    </>
   );
 };
 
