@@ -24,6 +24,8 @@ const FAQTab = ({
     <div className="text-center">FAQ가 없습니다.</div>
   ) : (
     faqList.map((faq: any) => {
+      if (!faq) return null;
+
       const open = getToggleOpened(faq.id);
 
       return (

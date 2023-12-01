@@ -67,11 +67,13 @@ const ModalBackdrop = styled.div`
 
 const ModalContainer = styled.div`
   background-color: white;
-  padding: 20px;
+  padding: 1.5rem;
   border-radius: 10px;
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.25);
   display: flex;
   flex-direction: column;
+  min-width: 350px;
+  min-height: 250px;
 `;
 
 const ModalHeader = styled.h3`
