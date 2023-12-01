@@ -16,10 +16,13 @@ interface ProgramApplyProps {
   notice: string;
   program: any;
   announcementDate: string;
+  programType: string;
   handleApplyModalClose: () => void;
   handleApplyNextButton: () => void;
   handleApplyInput: (e: any) => void;
   handleCautionChecked: () => void;
+  memberChecked: 'USER' | 'GUEST' | '';
+  setMemberChecked: (memberChecked: 'USER' | 'GUEST' | '') => void;
 }
 
 interface BlackBackgroundProps {
@@ -36,10 +39,13 @@ const ProgramApply = ({
   notice,
   program,
   announcementDate,
+  programType,
   handleApplyModalClose,
   handleApplyNextButton,
   handleApplyInput,
   handleCautionChecked,
+  memberChecked,
+  setMemberChecked,
 }: ProgramApplyProps) => {
   return applyPageIndex === 0 ? (
     <BlackBackground $position="bottom" onClick={handleApplyModalClose}>
@@ -48,7 +54,11 @@ const ProgramApply = ({
         position="bottom"
         onNextButtonClick={handleApplyNextButton}
       >
-        <MemberTypeContent isLoggedIn={isLoggedIn} />
+        <MemberTypeContent
+          isLoggedIn={isLoggedIn}
+          memberChecked={memberChecked}
+          setMemberChecked={setMemberChecked}
+        />
       </Modal>
     </BlackBackground>
   ) : applyPageIndex === 1 ? (
@@ -64,7 +74,7 @@ const ProgramApply = ({
           hasDetailInfo={hasDetailInfo}
           isLoggedIn={isLoggedIn}
           handleApplyInput={handleApplyInput}
-          program={program}
+          programType={programType}
         />
       </Modal>
     </BlackBackground>

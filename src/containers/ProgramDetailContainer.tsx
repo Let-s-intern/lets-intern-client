@@ -24,6 +24,8 @@ const ProgramDetailContainer = () => {
     useState<boolean>(false);
   const [cautionChecked, setCautionChecked] = useState<boolean>(false);
   const [announcementDate, setAnnouncementDate] = useState<string>('');
+  const [memberChecked, setMemberChecked] = useState<'USER' | 'GUEST' | ''>('');
+  const [programType, setProgramType] = useState<string>('');
 
   useEffect(() => {
     const fetchProgram = async () => {
@@ -43,6 +45,7 @@ const ProgramDetailContainer = () => {
         });
         setParticipated(res.data.participated);
         setProgram(res.data.programDetailVo);
+        setProgramType(res.data.programDetailVo.type);
         setReviewList(res.data.reviewList);
         setFaqList(res.data.faqList);
       } catch (error) {
@@ -112,6 +115,7 @@ const ProgramDetailContainer = () => {
           preQuestions: '',
         });
         setHasDetailInfo(hasDetailInfoData);
+        setMemberChecked('USER');
       } else {
         setUser({
           name: '',
@@ -125,6 +129,7 @@ const ProgramDetailContainer = () => {
           applyMotive: '',
           preQuestions: '',
         });
+        setMemberChecked('');
       }
       setIsApplyModalOpen(true);
       if (isLoggedIn) {
@@ -232,6 +237,7 @@ const ProgramDetailContainer = () => {
       participated={participated}
       cautionChecked={cautionChecked}
       announcementDate={announcementDate}
+      programType={programType}
       handleTabChange={handleTabChange}
       handleToggleOpenList={handleToggleOpenList}
       getToggleOpened={getToggleOpened}
@@ -240,6 +246,8 @@ const ProgramDetailContainer = () => {
       handleApplyNextButton={handleApplyNextButton}
       handleApplyInput={handleApplyInput}
       handleCautionChecked={handleCautionChecked}
+      memberChecked={memberChecked}
+      setMemberChecked={setMemberChecked}
     />
   );
 };

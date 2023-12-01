@@ -8,7 +8,7 @@ interface MemberInfoInputContentProps {
   user: any;
   hasDetailInfo: boolean;
   isLoggedIn: boolean;
-  program: any;
+  programType: string;
   handleApplyInput: (e: any) => void;
 }
 
@@ -16,12 +16,9 @@ const MemberInfoInputContent = ({
   user,
   hasDetailInfo,
   isLoggedIn,
-  program,
+  programType,
   handleApplyInput,
 }: MemberInfoInputContentProps) => {
-  const params = useParams();
-  const [isLetsChat, setIsLetsChat] = useState<boolean>(false);
-
   const dropdownStyle = {
     '& .MuiOutlinedInput-root': {
       '&:hover fieldset': {
@@ -35,20 +32,6 @@ const MemberInfoInputContent = ({
       color: '#6963F6',
     },
   };
-
-  useEffect(() => {
-    const fetchProgram = async () => {
-      try {
-        const res = await axios.get(`/program/admin/${params.programId}`);
-        if (res.data.type === 'LETS_CHAT') {
-          setIsLetsChat(true);
-        }
-      } catch (error) {
-        setIsLetsChat(false);
-      }
-    };
-    fetchProgram();
-  }, []);
 
   return (
     <>
@@ -131,7 +114,7 @@ const MemberInfoInputContent = ({
             multiline
             rows={4}
           />
-          {isLetsChat && (
+          {programType === 'LETS_CHAT' && (
             <Input
               label="사전 질문 (선택)"
               name="preQuestions"

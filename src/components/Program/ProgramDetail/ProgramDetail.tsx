@@ -26,6 +26,7 @@ interface ProgramDetailProps {
   participated: boolean;
   cautionChecked: boolean;
   announcementDate: string;
+  programType: string;
   handleTabChange: (tab: string) => void;
   handleToggleOpenList: (id: number) => void;
   getToggleOpened: (faqId: number) => boolean;
@@ -34,6 +35,8 @@ interface ProgramDetailProps {
   handleApplyNextButton: () => void;
   handleApplyInput: (e: any) => void;
   handleCautionChecked: () => void;
+  memberChecked: 'USER' | 'GUEST' | '';
+  setMemberChecked: (memberChecked: 'USER' | 'GUEST' | '') => void;
 }
 
 const ProgramDetail = ({
@@ -53,6 +56,7 @@ const ProgramDetail = ({
   participated,
   cautionChecked,
   announcementDate,
+  programType,
   handleTabChange,
   handleToggleOpenList,
   getToggleOpened,
@@ -61,6 +65,8 @@ const ProgramDetail = ({
   handleApplyNextButton,
   handleApplyInput,
   handleCautionChecked,
+  memberChecked,
+  setMemberChecked,
 }: ProgramDetailProps) => {
   if (loading) {
     return <ProgramDetailBlock />;
@@ -104,11 +110,14 @@ const ProgramDetail = ({
           cautionChecked={cautionChecked}
           notice={program.notice}
           program={program}
+          programType={programType}
           announcementDate={announcementDate}
           handleApplyModalClose={handleApplyModalClose}
           handleApplyNextButton={handleApplyNextButton}
           handleApplyInput={handleApplyInput}
           handleCautionChecked={handleCautionChecked}
+          memberChecked={memberChecked}
+          setMemberChecked={setMemberChecked}
         />
       )}
     </ProgramDetailBlock>
