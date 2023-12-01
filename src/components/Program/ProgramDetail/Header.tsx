@@ -1,14 +1,16 @@
+import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 
 interface HeaderProps {
   title: string;
-  onBackButtonClick: () => void;
 }
 
-const Header = ({ title, onBackButtonClick }: HeaderProps) => {
+const Header = ({ title }: HeaderProps) => {
+  const navigate = useNavigate();
+
   return (
     <HeaderBlock>
-      <BackButton onClick={onBackButtonClick}>
+      <BackButton onClick={() => navigate(-1)}>
         <i>
           <img src="/icons/back-icon.svg" alt="이전 버튼" className="w-full" />
         </i>

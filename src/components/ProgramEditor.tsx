@@ -179,7 +179,6 @@ const ProgramEditor = ({
             setContent(value);
           }}
         />
-        {/* {faqList && faqList.length > 0 && ( */}
         <FAQEditor
           faqList={faqList}
           faqIdList={faqIdList}
@@ -188,7 +187,6 @@ const ProgramEditor = ({
           onFAQChange={handleFAQChange}
           onFAQCheckChange={handleFAQCheckChange}
         />
-        {/* )} */}
         <Input
           label="필독사항"
           value={values.notice ? values.notice : ''}

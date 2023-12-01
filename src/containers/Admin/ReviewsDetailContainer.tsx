@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 
 import ReviewsDetail from '../../components/Admin/Review/ReviewsDetail';
 import axios from '../../libs/axios';
-import { useParams } from 'react-router-dom';
+import { useLocation, useParams } from 'react-router-dom';
 
 const ReviewsDetailContainer = () => {
   const params = useParams();
@@ -16,6 +16,7 @@ const ReviewsDetailContainer = () => {
       try {
         let res;
         res = await axios.get(`/review/admin/${params.programId}`);
+        console.log(res.data.reviewList);
         setReviewList(res.data.reviewList);
         res = await axios.get(`/program/admin`);
         console.log(res.data.programList);

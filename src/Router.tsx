@@ -26,7 +26,7 @@ import UserEdit from './pages/Admin/User/UserEdit';
 import Application from './pages/MyPage/Appllication';
 import ReviewCreate from './pages/ReviewCreate';
 import AttendCheck from './pages/Admin/Program/AttendCheck';
-import ScrollToTop from './ScrollToTop';
+import ScrollToTop from './components/ScrollToTop';
 
 const Router = () => {
   return (
@@ -39,6 +39,11 @@ const Router = () => {
           <Route path="program/:programId">
             {/* /program/:programId */}
             <Route path="" element={<ProgramDetail />} />
+            {/* /program/:programId/application/:applicationId/review/create */}
+            <Route
+              path="application/:applicationId/review/create"
+              element={<ReviewCreate />}
+            />
             {/* /program/:programId/review/create */}
             <Route path="review/create" element={<ReviewCreate />} />
             {/* /program/:programId/review/:reviewId */}
