@@ -126,6 +126,7 @@ const ProgramEditor = ({
           onChange={(e: any) =>
             setValues({ ...values, location: e.target.value })
           }
+          disabled={!values.way || values.way === 'ONLINE'}
         />
         <DateTimeControl>
           <DateTimeLabel htmlFor="startDate">시작 일자</DateTimeLabel>
@@ -136,6 +137,7 @@ const ProgramEditor = ({
             onChange={(e) =>
               setValues({ ...values, startDate: e.target.value })
             }
+            step={600}
           />
         </DateTimeControl>
         <DateTimeControl>
@@ -228,4 +230,5 @@ const DateTimeControl = styled.div`
 
 const DateTimeLabel = styled.label`
   font-weight: 500;
+  width: 8rem;
 `;

@@ -143,6 +143,11 @@ const PrivacyContainer = () => {
       };
       await axios.patch('/user/password', reqData);
       alert('비밀번호가 변경되었습니다.');
+      setPasswordValues({
+        currentPassword: '',
+        newPassword: '',
+        newPasswordConfirm: '',
+      });
     } catch (err) {
       alert('비밀번호 변경에 실패했습니다.');
     }
