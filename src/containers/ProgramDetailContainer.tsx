@@ -26,6 +26,7 @@ const ProgramDetailContainer = () => {
   const [announcementDate, setAnnouncementDate] = useState<string>('');
   const [memberChecked, setMemberChecked] = useState<'USER' | 'GUEST' | ''>('');
   const [programType, setProgramType] = useState<string>('');
+  const [isFirstOpen, setIsFirstOpen] = useState<boolean>(true);
 
   useEffect(() => {
     const fetchProgram = async () => {
@@ -99,6 +100,10 @@ const ProgramDetailContainer = () => {
   };
 
   const handleApplyButtonClick = async () => {
+    if (!isFirstOpen) {
+      setIsApplyModalOpen(true);
+      return;
+    }
     try {
       if (isLoggedIn) {
         const { data: hasDetailInfoData } =
@@ -135,6 +140,7 @@ const ProgramDetailContainer = () => {
       if (isLoggedIn) {
         setApplyPageIndex(1);
       }
+      setIsFirstOpen(false);
     } catch (error) {
       console.error(error);
     }
@@ -149,9 +155,25 @@ const ProgramDetailContainer = () => {
   };
 
   const handleApplyModalClose = () => {
-    setApplyPageIndex(0);
-    setIsNextButtonDisabled(false);
-    setIsApplyModalOpen(false);
+    if (applyPageIndex === 3) {
+      setApplyPageIndex(0);
+      setUser({
+        name: '',
+        email: '',
+        phoneNum: '',
+        major: '',
+        university: '',
+        grade: '',
+        wishCompany: '',
+        wishJob: '',
+        applyMotive: '',
+        preQuestions: '',
+      });
+      setParticipated(true);
+      setIsApplyModalOpen(false);
+    } else {
+      setIsApplyModalOpen(false);
+    }
   };
 
   const handleApplyNextButton = () => {
@@ -238,6 +260,7 @@ const ProgramDetailContainer = () => {
       cautionChecked={cautionChecked}
       announcementDate={announcementDate}
       programType={programType}
+      isFirstOpen={isFirstOpen}
       handleTabChange={handleTabChange}
       handleToggleOpenList={handleToggleOpenList}
       getToggleOpened={getToggleOpened}

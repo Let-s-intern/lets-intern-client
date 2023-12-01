@@ -27,6 +27,7 @@ interface ProgramDetailProps {
   cautionChecked: boolean;
   announcementDate: string;
   programType: string;
+  isFirstOpen: boolean;
   handleTabChange: (tab: string) => void;
   handleToggleOpenList: (id: number) => void;
   getToggleOpened: (faqId: number) => boolean;
@@ -57,6 +58,7 @@ const ProgramDetail = ({
   cautionChecked,
   announcementDate,
   programType,
+  isFirstOpen,
   handleTabChange,
   handleToggleOpenList,
   getToggleOpened,
@@ -99,6 +101,7 @@ const ProgramDetail = ({
       <ApplySection
         handleApplyButtonClick={handleApplyButtonClick}
         participated={participated}
+        isFirstOpen={isFirstOpen}
       />
       {isApplyModalOpen && (
         <ProgramApply
