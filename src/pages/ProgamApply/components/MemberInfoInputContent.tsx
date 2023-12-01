@@ -1,10 +1,14 @@
 import { FormControl, InputLabel, MenuItem, Select } from '@mui/material';
 import Input from '../../../components/Input';
+import { useEffect, useState } from 'react';
+import axios from '../../../libs/axios';
+import { useParams } from 'react-router-dom';
 
 interface MemberInfoInputContentProps {
   user: any;
   hasDetailInfo: boolean;
   isLoggedIn: boolean;
+  program: any;
   handleApplyInput: (e: any) => void;
 }
 
@@ -12,8 +16,12 @@ const MemberInfoInputContent = ({
   user,
   hasDetailInfo,
   isLoggedIn,
+  program,
   handleApplyInput,
 }: MemberInfoInputContentProps) => {
+  const params = useParams();
+  const [isLetsChat, setIsLetsChat] = useState<boolean>(false);
+
   const dropdownStyle = {
     '& .MuiOutlinedInput-root': {
       '&:hover fieldset': {
@@ -27,6 +35,20 @@ const MemberInfoInputContent = ({
       color: '#6963F6',
     },
   };
+
+  useEffect(() => {
+    const fetchProgram = async () => {
+      try {
+        const res = await axios.get(`/program/admin/${params.programId}`);
+        if (res.data.type === 'LETS_CHAT') {
+          setIsLetsChat(true);
+        }
+      } catch (error) {
+        setIsLetsChat(false);
+      }
+    };
+    fetchProgram();
+  }, []);
 
   return (
     <>
@@ -52,7 +74,7 @@ const MemberInfoInputContent = ({
             type="tel"
             label="전화번호"
             name="phoneNum"
-            placeholder="-를 제외한 01012345678"
+            placeholder="-를 포함한 전화번호"
             value={user.phoneNum}
             onChange={(e) => handleApplyInput(e)}
             disabled={isLoggedIn}
@@ -109,14 +131,16 @@ const MemberInfoInputContent = ({
             multiline
             rows={4}
           />
-          <Input
-            label="사전 질문 (선택)"
-            name="preQuestions"
-            value={user.preQuestion}
-            onChange={(e) => handleApplyInput(e)}
-            multiline
-            rows={4}
-          />
+          {isLetsChat && (
+            <Input
+              label="사전 질문 (선택)"
+              name="preQuestions"
+              value={user.preQuestion}
+              onChange={(e) => handleApplyInput(e)}
+              multiline
+              rows={4}
+            />
+          )}
           <FormControl fullWidth sx={dropdownStyle}>
             <InputLabel id="inflowPath">유입 경로</InputLabel>
             <Select

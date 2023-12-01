@@ -5,9 +5,26 @@ const Footer = () => {
     <FooterBlock>
       <CopyRight>©Let’s Intern. All rights reserved.</CopyRight>
       <IconList>
-        <MailIcon src="/icons/mail.svg" alt="메일 아이콘" />
-        <InstagramIcon src="/icons/instagram.svg" alt="인스타그램 아이콘" />
-        <BlogIcon src="/icons/blog.png" alt="네이버 블로그 아이콘" />
+        <InstagramIcon
+          src="/icons/instagram.svg"
+          alt="인스타그램 아이콘"
+          onClick={() => {
+            window.open(
+              'https://www.instagram.com/letsintern.official/',
+              '_blank',
+            );
+          }}
+        />
+        <BlogIcon
+          src="/icons/blog.png"
+          alt="네이버 블로그 아이콘"
+          onClick={() => {
+            window.open(
+              'https://blog.naver.com/PostList.naver?blogId=letsintern',
+              '_blank',
+            );
+          }}
+        />
       </IconList>
     </FooterBlock>
   );
@@ -22,8 +39,6 @@ const iconStyle = css`
 `;
 
 const FooterBlock = styled.footer`
-  /* position: absolute; */
-  /* bottom: 0; */
   width: 100%;
   margin-top: 5rem;
   display: flex;
@@ -53,4 +68,5 @@ const BlogIcon = styled.img`
 const InstagramIcon = styled.img`
   width: 1.25rem;
   height: 1.25rem;
+  cursor: pointer;
 `;

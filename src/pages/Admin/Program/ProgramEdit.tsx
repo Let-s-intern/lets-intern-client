@@ -85,6 +85,10 @@ const ProgramEdit = () => {
       alert('프로그램 유형을 선택해주세요.');
       return;
     }
+    if (faqIdList.length === 0 || !faqIdList) {
+      alert('FAQ를 하나 이상 선택해주세요.');
+      return;
+    }
     const newValues = {
       ...values,
       contents: content,

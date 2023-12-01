@@ -101,15 +101,19 @@ const ProgramCreate = () => {
       alert('프로그램 유형을 선택해주세요.');
       return;
     }
-    setValues({
+    if (faqIdList.length === 0 || !faqIdList) {
+      alert('FAQ를 하나 이상 선택해주세요.');
+      return;
+    }
+    const reqData = {
       ...values,
       contents: content,
       th: Number(values.th),
       headcount: Number(values.headcount),
       faqIdList: faqIdList,
-    });
+    };
     try {
-      await axios.post('/program', values);
+      await axios.post('/program', reqData);
       for (let faq of faqList) {
         await axios.patch(`/faq/${faq.id}`, {
           programType: values.type,

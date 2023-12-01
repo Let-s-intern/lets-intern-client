@@ -23,6 +23,7 @@ const ProgramDetailContainer = () => {
   const [isNextButtonDisabled, setIsNextButtonDisabled] =
     useState<boolean>(false);
   const [cautionChecked, setCautionChecked] = useState<boolean>(false);
+  const [announcementDate, setAnnouncementDate] = useState<string>('');
 
   useEffect(() => {
     const fetchProgram = async () => {
@@ -198,9 +199,12 @@ const ProgramDetailContainer = () => {
           },
         },
       );
-      console.log(res);
+      setAnnouncementDate(res.data.announcementDate);
       setApplyPageIndex(applyPageIndex + 1);
     } catch (error) {
+      if ((error as any).response.status === 400) {
+        alert((error as any).response.data.reason);
+      }
       console.error(error);
     }
   };
@@ -227,6 +231,7 @@ const ProgramDetailContainer = () => {
       isNextButtonDisabled={isNextButtonDisabled}
       participated={participated}
       cautionChecked={cautionChecked}
+      announcementDate={announcementDate}
       handleTabChange={handleTabChange}
       handleToggleOpenList={handleToggleOpenList}
       getToggleOpened={getToggleOpened}

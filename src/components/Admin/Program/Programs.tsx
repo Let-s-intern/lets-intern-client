@@ -10,9 +10,8 @@ interface ProgramsProps {
   loading: boolean;
   error: any;
   programList: any;
-  fetchDelete: (programId: number, status: string) => void;
+  fetchDelete: (programId: number) => void;
   fetchEditProgramVisible: (programId: number, visible: boolean) => void;
-  fetchEditProgramStatus: (programId: number, newStatus: string) => void;
 }
 
 const Programs = ({
@@ -21,7 +20,6 @@ const Programs = ({
   programList,
   fetchDelete,
   fetchEditProgramVisible,
-  fetchEditProgramStatus,
 }: ProgramsProps) => {
   if (loading) {
     return <>로딩 중...</>;
@@ -45,7 +43,6 @@ const Programs = ({
           programList={programList}
           fetchDelete={fetchDelete}
           fetchEditProgramVisible={fetchEditProgramVisible}
-          fetchEditProgramStatus={fetchEditProgramStatus}
         />
       </Table>
     </>

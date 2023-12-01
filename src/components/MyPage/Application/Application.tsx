@@ -12,11 +12,7 @@ interface ApplicationProps {
   inProgressList: any;
   doneList: any;
   statusToLabel: any;
-  fetchApplicationDelete: (
-    e: React.MouseEvent<HTMLSpanElement, MouseEvent>,
-    applicationId: number,
-    status: string,
-  ) => void;
+  fetchApplicationDelete: (applicationId: number, status: string) => void;
 }
 
 const Application = ({

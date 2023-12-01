@@ -3,7 +3,11 @@ import { useEffect, useState } from 'react';
 import Privacy from '../components/MyPage/Privacy/Privacy';
 import axios from '../libs/axios';
 import parsePhoneNum from '../libs/parsePhoneNum';
-import { isValidEmail, isValidPassword } from '../libs/valid';
+import {
+  isValidEmail,
+  isValidPassword,
+  isValidPhoneNumber,
+} from '../libs/valid';
 
 const PrivacyContainer = () => {
   const [mainInfoValues, setMainInfoValues] = useState<any>({});
@@ -59,7 +63,7 @@ const PrivacyContainer = () => {
       alert('이메일 형식이 올바르지 않습니다.');
       return;
     }
-    if (!isValidPassword(mainInfoValues.phoneNum)) {
+    if (!isValidPhoneNumber(mainInfoValues.phoneNum)) {
       alert('휴대폰 번호 형식이 올바르지 않습니다.');
       return;
     }
@@ -67,11 +71,15 @@ const PrivacyContainer = () => {
       const reqData = {
         name: mainInfoValues.name,
         email: mainInfoValues.email,
-        phoneNum: parsePhoneNum(mainInfoValues.phoneNum, true),
+        phoneNum: mainInfoValues.phoneNum,
       };
       await axios.patch('/user', reqData);
       alert('유저 정보가 변경되었습니다.');
     } catch (error) {
+      if ((error as any).response.status === 400) {
+        alert('이미 존재하는 이메일입니다.');
+        return;
+      }
       alert('유저 정보 변경에 실패했습니다.');
     }
   };
