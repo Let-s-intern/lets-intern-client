@@ -6,9 +6,15 @@ import { useNavigate } from 'react-router-dom';
 
 interface MemberTypeContentProps {
   isLoggedIn: boolean;
+  memberChecked: 'USER' | 'GUEST' | '';
+  setMemberChecked: (memberChecked: 'USER' | 'GUEST' | '') => void;
 }
 
-const MemberTypeContent = ({ isLoggedIn }: MemberTypeContentProps) => {
+const MemberTypeContent = ({
+  isLoggedIn,
+  memberChecked,
+  setMemberChecked,
+}: MemberTypeContentProps) => {
   const navigate = useNavigate();
   const [isLoginModal, setIsLoginModal] = useState(false);
 
@@ -19,20 +25,29 @@ const MemberTypeContent = ({ isLoggedIn }: MemberTypeContentProps) => {
 
   const onCancel = () => {
     setIsLoginModal(false);
+    setMemberChecked('GUEST');
   };
 
   return (
     <>
       <ul>
         <ListItem
-          checked={isLoggedIn}
+          checked={memberChecked === 'USER'}
           onClick={() => {
+            setMemberChecked('USER');
             setIsLoginModal(true);
           }}
         >
           회원 신청
         </ListItem>
-        <ListItem checked={!isLoggedIn}>비회원 신청</ListItem>
+        <ListItem
+          checked={memberChecked === 'GUEST'}
+          onClick={() => {
+            setMemberChecked('GUEST');
+          }}
+        >
+          비회원 신청
+        </ListItem>
       </ul>
       {isLoginModal && (
         <AlertModal

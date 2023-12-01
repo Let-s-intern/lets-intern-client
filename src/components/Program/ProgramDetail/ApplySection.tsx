@@ -5,11 +5,13 @@ import Button from '../../Button';
 interface ApplySectionProps {
   handleApplyButtonClick: () => void;
   participated: boolean;
+  isFirstOpen: boolean;
 }
 
 const ApplySection = ({
   handleApplyButtonClick,
   participated,
+  isFirstOpen,
 }: ApplySectionProps) => {
   return (
     <ApplySectionBlock>
@@ -22,7 +24,11 @@ const ApplySection = ({
             }
           }}
         >
-          {participated ? '신청 완료' : '신청하기'}
+          {participated
+            ? '신청 완료'
+            : isFirstOpen
+            ? '신청하기'
+            : '이어서 신청하기'}
         </ApplyButton>
       </ApplyButtonWrapper>
     </ApplySectionBlock>
