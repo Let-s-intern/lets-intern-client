@@ -9,41 +9,22 @@ const ReviewDetailContainer = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<unknown>(null);
   const [review, setReview] = useState<any>({});
-  const [program, setProgram] = useState<any>({});
 
   useEffect(() => {
     const fetchReview = async () => {
       try {
         const res = await axios.get(`/review/${params.reviewId}`);
+        console.log(res.data);
         setReview(res.data);
       } catch (error) {
         setError(error);
       }
     };
-    const fetchProgram = async () => {
-      try {
-        const res = await axios.get('/program');
-        const foundedProgram = res.data.programList.find(
-          (program: any) => program.id === Number(params.programId),
-        );
-        setProgram(foundedProgram);
-      } catch (error) {
-        setError(error);
-      }
-    };
     fetchReview();
-    fetchProgram();
     setLoading(false);
   }, []);
 
-  return (
-    <ReviewDetail
-      loading={loading}
-      error={error}
-      review={review}
-      program={program}
-    />
-  );
+  return <ReviewDetail loading={loading} error={error} review={review} />;
 };
 
 export default ReviewDetailContainer;

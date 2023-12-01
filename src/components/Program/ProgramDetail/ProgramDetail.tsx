@@ -25,7 +25,7 @@ interface ProgramDetailProps {
   isNextButtonDisabled: boolean;
   participated: boolean;
   cautionChecked: boolean;
-  handleBackButtonClick: () => void;
+  announcementDate: string;
   handleTabChange: (tab: string) => void;
   handleToggleOpenList: (id: number) => void;
   getToggleOpened: (faqId: number) => boolean;
@@ -52,7 +52,7 @@ const ProgramDetail = ({
   isNextButtonDisabled,
   participated,
   cautionChecked,
-  handleBackButtonClick,
+  announcementDate,
   handleTabChange,
   handleToggleOpenList,
   getToggleOpened,
@@ -72,7 +72,7 @@ const ProgramDetail = ({
 
   return (
     <ProgramDetailBlock>
-      <Header title={program.title} onBackButtonClick={handleBackButtonClick} />
+      <Header title={program.title} />
       <TabBar tab={tab} onTabChange={handleTabChange} />
       <TabContent>
         {tab === 'DETAIL' ? (
@@ -103,6 +103,8 @@ const ProgramDetail = ({
           isNextButtonDisabled={isNextButtonDisabled}
           cautionChecked={cautionChecked}
           notice={program.notice}
+          program={program}
+          announcementDate={announcementDate}
           handleApplyModalClose={handleApplyModalClose}
           handleApplyNextButton={handleApplyNextButton}
           handleApplyInput={handleApplyInput}

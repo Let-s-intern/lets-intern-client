@@ -39,7 +39,7 @@ const Review = ({
             waitingReviewList.map((application: any) => (
               <ReviewCard
                 key={application.id}
-                to={`/program/${application.programId}/review/create`}
+                to={`/program/${application.programId}/application/${application.id}/review/create`}
                 application={application}
                 status="WAITING"
                 statusToLabel={statusToLabel}

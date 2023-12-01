@@ -47,29 +47,7 @@ const ProgramsContainer = () => {
       });
   };
 
-  const fetchEditProgramStatus = (programId: number, newStatus: string) => {
-    try {
-      axios.patch(`/program/${programId}`, {
-        status: newStatus,
-      });
-      const newProgramList: any = programList.map((program: any) => {
-        if (program.id === programId) {
-          return {
-            ...program,
-            status: newStatus,
-          };
-        }
-        return program;
-      });
-      setProgramList(newProgramList);
-    } catch (err) {
-      setError(err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const fetchDelete = (programId: number, status: string) => {
+  const fetchDelete = (programId: number) => {
     axios
       .delete(`/program/${programId}`)
       .then((res) => {
@@ -88,7 +66,6 @@ const ProgramsContainer = () => {
       programList={programList}
       fetchDelete={fetchDelete}
       fetchEditProgramVisible={fetchEditProgramVisible}
-      fetchEditProgramStatus={fetchEditProgramStatus}
     />
   );
 };

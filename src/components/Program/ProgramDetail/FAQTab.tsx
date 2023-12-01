@@ -20,7 +20,7 @@ const FAQTab = ({
   onToggleOpenList,
   getToggleOpened,
 }: FAQTabProps) => {
-  return faqList.length === 0 ? (
+  return faqList.length === 0 || !faqList ? (
     <div className="text-center">FAQ가 없습니다.</div>
   ) : (
     faqList.map((faq: any) => {

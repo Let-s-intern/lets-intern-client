@@ -6,6 +6,9 @@ import FormButton from './FormButton';
 import Label from './Label';
 import ButtonGroup from './ButtonGroup';
 import InputControl from './InputControl';
+import { useState } from 'react';
+import AlertModal from '../../AlertModal';
+import WithDrawAlertModal from './WithDrawAlertModal';
 
 interface MainInfoProps {
   mainInfoValues: any;
@@ -20,6 +23,8 @@ const MainInfo = ({
   onSubmitMainInfo,
   onDeleteAccount,
 }: MainInfoProps) => {
+  const [isWithdrawModal, setIsWithdrawModal] = useState(false);
+
   return (
     <MainInfoBlock onSubmit={onSubmitMainInfo}>
       <SectionTitle>개인정보</SectionTitle>
@@ -57,11 +62,17 @@ const MainInfo = ({
         </InputControl>
         <ButtonGroup>
           <FormButton type="submit">정보 수정</FormButton>
-          <FormButton type="button" onClick={onDeleteAccount}>
+          <FormButton type="button" onClick={() => setIsWithdrawModal(true)}>
             회원 탈퇴
           </FormButton>
         </ButtonGroup>
       </Form>
+      {isWithdrawModal && (
+        <WithDrawAlertModal
+          onDeleteAccount={onDeleteAccount}
+          setIsWithdrawModal={setIsWithdrawModal}
+        />
+      )}
     </MainInfoBlock>
   );
 };
