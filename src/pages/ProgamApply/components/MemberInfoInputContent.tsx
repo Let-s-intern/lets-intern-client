@@ -51,6 +51,7 @@ const MemberInfoInputContent = ({
             type="email"
             label="이메일"
             name="email"
+            placeholder="example@example.com"
             value={user.email}
             onChange={(e) => handleApplyInput(e)}
             disabled={isLoggedIn}
@@ -59,7 +60,7 @@ const MemberInfoInputContent = ({
             type="tel"
             label="전화번호"
             name="phoneNum"
-            placeholder="-를 포함한 전화번호"
+            placeholder="010-1234-5678"
             value={user.phoneNum}
             onChange={(e) => handleApplyInput(e)}
             disabled={isLoggedIn}
@@ -67,6 +68,7 @@ const MemberInfoInputContent = ({
           <Input
             label="학교"
             name="university"
+            placeholder="렛츠대학교"
             value={user.university}
             onChange={(e) => handleApplyInput(e)}
             disabled={hasDetailInfo}
@@ -74,6 +76,7 @@ const MemberInfoInputContent = ({
           <Input
             label="전공"
             name="major"
+            placeholder="컴퓨터공학과"
             value={user.major}
             onChange={(e) => handleApplyInput(e)}
             disabled={hasDetailInfo}

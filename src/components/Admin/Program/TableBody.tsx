@@ -6,6 +6,7 @@ import TD from '../TD';
 import { convertTypeToText } from '../../../libs/converTypeToText';
 import { useState } from 'react';
 import AlertModal from '../../AlertModal';
+import formatDateString from '../../../libs/formatDateString';
 
 interface ProgramTableBodyProps {
   programList: any;
@@ -45,7 +46,7 @@ const TableBody = ({
             <TD>{convertTypeToText(program.type, true)}</TD>
             <TD>{program.th}</TD>
             <TD>{program.title}</TD>
-            <TD>{program.startDate}</TD>
+            <TD>{formatDateString(program.dueDate)}</TD>
             <TD>
               {program.status === 'OPEN'
                 ? '모집 중'
@@ -53,8 +54,10 @@ const TableBody = ({
                 ? '모집완료'
                 : program.status === 'DONE' && '진행완료'}
             </TD>
-            <TD>{program.headcount}</TD>
-            <TD>{program.announcementDate}</TD>
+            <TD>
+              {program.applicationCount} / {program.headcount}
+            </TD>
+            <TD>{formatDateString(program.startDate)}</TD>
             <TD>
               <ActionButtonGroup>
                 <ActionButton

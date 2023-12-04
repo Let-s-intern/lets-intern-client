@@ -4,6 +4,7 @@ import styled, { css } from 'styled-components';
 const Footer = () => {
   return (
     <FooterBlock>
+      <hr />
       <TopArea>
         <DocumentLinkGroup>
           <DocumentLink
@@ -45,7 +46,7 @@ const Footer = () => {
         </IconList>
       </TopArea>
       <InfoTextSection className="space-y-[0.5rem] text-gray-400">
-        <InfoText>턴업컴퍼니 사용자 정보</InfoText>
+        <InfoText>턴업컴퍼니 사업자 정보</InfoText>
         <InfoText>대표자: 송다예 | 사업자 등록번호: 369-16-01796</InfoText>
         <InfoText>
           주소: 서울특별시 성동구 상원길 63 | 이메일:
@@ -67,7 +68,6 @@ const iconStyle = css`
 
 const FooterBlock = styled.footer`
   width: 100%;
-  margin-top: 5rem;
   padding: 1rem 1.25rem;
 `;
 
@@ -75,6 +75,7 @@ const TopArea = styled.div`
   display: flex;
   justify-content: space-between;
   width: 100%;
+  margin-top: 1rem;
 `;
 
 const DocumentLinkGroup = styled.div`

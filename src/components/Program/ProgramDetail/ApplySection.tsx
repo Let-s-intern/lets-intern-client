@@ -38,15 +38,14 @@ const ApplySection = ({
 export default ApplySection;
 
 const ApplySectionBlock = styled.section`
-  position: fixed;
-  bottom: 0;
+  position: sticky;
+  bottom: 1rem;
   left: 0;
   z-index: 30;
+  margin-top: 5rem;
 `;
 
 const ApplyButtonWrapper = styled.div`
-  position: fixed;
-  bottom: 1rem;
   display: flex;
   width: 100%;
   justify-content: start;

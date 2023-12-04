@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import formatDateString from '../libs/formatDateString';
 
 interface CardProps {
   program: any;
@@ -107,10 +108,14 @@ const Card = ({
           {program.title}
         </h2>
       </div>
-      <p>
-        {!loading ? program.startDate : ' '}
+      <p className="text-[13px]">
+        <span className="font-medium">모집 마감</span>
         <br />
-        {!loading ? program.endDate : ' '}
+        <span>{formatDateString(program.dueDate)}</span>
+        <br />
+        <span className="mt-1 inline-block font-medium">시작 일시</span>
+        <br />
+        <span>{formatDateString(program.startDate)}</span>
       </p>
     </Link>
   );
