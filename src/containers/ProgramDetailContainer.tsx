@@ -210,6 +210,9 @@ const ProgramDetailContainer = () => {
   const handleApplySubmit = async () => {
     try {
       let newUser = { ...user, grade: Number(user.grade) };
+      if (program.type !== 'ALL') {
+        delete newUser.way;
+      }
       if (!isLoggedIn) {
         delete newUser.name;
         delete newUser.email;
