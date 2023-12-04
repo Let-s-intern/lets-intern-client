@@ -4,6 +4,14 @@ import Input from './Input';
 import ReactQuill from 'react-quill';
 import styled from 'styled-components';
 import FAQEditor from './FAQEditor';
+import storage from '../Firebase';
+import {
+  getDownloadURL,
+  ref,
+  uploadBytes,
+  uploadBytesResumable,
+} from 'firebase/storage';
+import { useMemo, useRef } from 'react';
 
 interface ProgramEditorProps {
   values: any;
@@ -35,29 +43,144 @@ const ProgramEditor = ({
   handleFAQIdListReset,
 }: ProgramEditorProps) => {
   const navigate = useNavigate();
+  const quillRef = useRef<any>();
 
-  const modules = {
-    toolbar: [
-      ['bold', 'italic', 'underline', 'strike'], // 표시할 스타일링 옵션
-      ['blockquote', 'code-block'],
+  // // 이미지 업로드 함수
+  // const uploadImage = async (file: any) => {
+  //   const uploadTask = storage.ref(`images/${file.name}`).put(file);
+  //   return new Promise((resolve, reject) => {
+  //     uploadTask.on(
+  //       'state_changed',
+  //       (snapshot: any) => {
+  //         // 업로드 진행 상태를 처리할 수 있습니다.
+  //       },
+  //       (error: any) => {
+  //         // 업로드 중 오류 처리
+  //         reject(error);
+  //       },
+  //       async () => {
+  //         // 업로드 완료 후 URL 반환
+  //         const downloadURL = await uploadTask.snapshot.ref.getDownloadURL();
+  //         resolve(downloadURL);
+  //       },
+  //     );
+  //   });
+  // };
 
-      [{ header: 1 }, { header: 2 }], // 커스텀 헤더 옵션
-      [{ list: 'ordered' }, { list: 'bullet' }],
-      [{ script: 'sub' }, { script: 'super' }], // 서브스크립트/수퍼스크립트
-      [{ indent: '-1' }, { indent: '+1' }], // 들여쓰기
-      [{ direction: 'rtl' }], // 텍스트 방향
-
-      [{ size: ['small', false, 'large', 'huge'] }], // 폰트 크기
-      [{ header: [1, 2, 3, 4, 5, 6, false] }],
-
-      [{ color: [] }, { background: [] }], // 글자색, 배경색
-      [{ font: [] }],
-      [{ align: [] }],
-
-      ['clean'], // 포맷 제거
-      ['image'], // 이미지 업로드
-    ],
+  const imageHandler = () => {
+    // console.log('imageHandler');
+    const input = document.createElement('input');
+    input.setAttribute('type', 'file');
+    input.setAttribute('accept', 'image/*');
+    input.click();
+    input.addEventListener('change', async () => {
+      const editor = quillRef.current.getEditor();
+      const file = input.files?.[0];
+      const range = editor.getSelection(true);
+      console.log('editor', editor);
+      console.log('file', file);
+      console.log('range', range);
+      try {
+        // 파일명을 "image/Date.now()"로 저장
+        const storageRef = ref(storage, `image/${Date.now()}`);
+        console.log('storageRef', storageRef);
+        console.log('imageHandler');
+        // Firebase Method : uploadBytes, getDownloadURL
+        await uploadBytes(storageRef, file!).then((snapshot) => {
+          getDownloadURL(snapshot.ref).then((url) => {
+            // 이미지 URL 에디터에 삽입
+            editor.insertEmbed(range.index, 'image', url);
+            // URL 삽입 후 커서를 이미지 뒷 칸으로 이동
+            editor.setSelection(range.index + 1);
+          });
+        });
+      } catch (error) {
+        console.log(error);
+      }
+    });
   };
+
+  // const imageHandler = () => {
+  //   const input = document.createElement('input');
+  //   input.setAttribute('type', 'file');
+  //   input.setAttribute('accept', 'image/*');
+  //   input.click();
+
+  //   input.addEventListener('change', async (e) => {
+  //     if (!input.files) return;
+  //     const file = input.files[0];
+  //     try {
+  //       const storageRef = ref(storage, file.name);
+  //       const uploadTask = uploadBytesResumable(storageRef, file);
+
+  //       uploadTask.on(
+  //         'state_changed',
+  //         (snapshot) => {
+  //           const progress =
+  //             (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+  //           console.log('Upload is ' + progress + '% done');
+  //           switch (snapshot.state) {
+  //             case 'paused':
+  //               console.log('Upload is paused');
+  //               break;
+  //             case 'running':
+  //               console.log('Upload is running');
+  //               break;
+  //           }
+  //         },
+  //         (error) => {
+  //           alert('업로드 실패');
+  //           // toast.error("업로드 실패", {
+  //           //   theme: "colored",
+  //           // });
+  //         },
+  //         () => {
+  //           getDownloadURL(uploadTask.snapshot.ref).then(
+  //             async (downloadURL) => {
+  //               const editor = quillRef.current.getEditor();
+  //               const range = editor.getSelection();
+  //               editor.insertEmbed(range.index, 'image', downloadURL);
+  //               editor.setSelection(range.index + 1);
+  //             },
+  //           );
+  //         },
+  //       );
+  //     } catch (error) {
+  //       console.log(error);
+  //     }
+  //   });
+  // };
+
+  const modules = useMemo(
+    () => ({
+      toolbar: {
+        container: [
+          ['bold', 'italic', 'underline', 'strike'], // 표시할 스타일링 옵션
+          ['blockquote', 'code-block'],
+
+          [{ header: 1 }, { header: 2 }], // 커스텀 헤더 옵션
+          [{ list: 'ordered' }, { list: 'bullet' }],
+          [{ script: 'sub' }, { script: 'super' }], // 서브스크립트/수퍼스크립트
+          [{ indent: '-1' }, { indent: '+1' }], // 들여쓰기
+          [{ direction: 'rtl' }], // 텍스트 방향
+
+          [{ size: ['small', false, 'large', 'huge'] }], // 폰트 크기
+          [{ header: [1, 2, 3, 4, 5, 6, false] }],
+
+          [{ color: [] }, { background: [] }], // 글자색, 배경색
+          [{ font: [] }],
+          [{ align: [] }],
+
+          ['clean'], // 포맷 제거
+          ['image'], // 이미지 업로드
+        ],
+        handlers: {
+          image: imageHandler, // imageHandler는 이미지 업로드 로직을 처리하는 함수입니다.
+        },
+      },
+    }),
+    [],
+  );
 
   return (
     <div className="mx-auto max-w-xl font-notosans">
@@ -174,6 +297,7 @@ const ProgramEditor = ({
         <ReactQuill
           modules={modules}
           placeholder="상세 내용을 입력해주세요."
+          ref={quillRef}
           value={content ? content : ''}
           onChange={(value) => {
             setContent(value);

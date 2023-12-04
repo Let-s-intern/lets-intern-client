@@ -47,6 +47,17 @@ const UsersContainer = () => {
     });
   };
 
+  const handleDeleteUser = async (userId: number) => {
+    if (!window.confirm('정말로 삭제하시겠습니까?')) {
+      alert('삭제가 취소되었습니다.');
+      return;
+    }
+    await axios.delete(`/user/admin/${userId}`);
+    const newUser = users.filter((user: any) => user.id !== userId);
+    setUsers(newUser);
+    alert('삭제되었습니다.');
+  };
+
   return (
     <Users
       loading={loading}
@@ -55,6 +66,7 @@ const UsersContainer = () => {
       managers={managers}
       searchValues={searchValues}
       handleChangeSearchValues={handleChangeSearchValues}
+      handleDeleteUser={handleDeleteUser}
     />
   );
 };

@@ -74,9 +74,7 @@ const ProgramDetailContainer = () => {
       user.major &&
       user.university &&
       user.inflowPath &&
-      program.type === 'ALL'
-        ? user.way
-        : true
+      (program.type === 'ALL' ? user.way : true)
     ) {
       setIsNextButtonDisabled(false);
     }

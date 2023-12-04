@@ -2,12 +2,14 @@ import styled from 'styled-components';
 import TD from '../TD';
 import ActionButton from '../ActionButton';
 import parsePhoneNum from '../../../libs/parsePhoneNum';
+import axios from '../../../libs/axios';
 
 interface TableBodyProps {
   users: any[];
+  onDeleteUser: (userId: number) => void;
 }
 
-const TableBody = ({ users }: TableBodyProps) => {
+const TableBody = ({ users, onDeleteUser }: TableBodyProps) => {
   return (
     <tbody>
       {users.map((user) => (
@@ -33,7 +35,9 @@ const TableBody = ({ users }: TableBodyProps) => {
               <ActionButton to={`/admin/users/${user.id}/edit`} bgColor="green">
                 수정
               </ActionButton>
-              <ActionButton bgColor="red">삭제</ActionButton>
+              <ActionButton bgColor="red" onClick={() => onDeleteUser(user.id)}>
+                삭제
+              </ActionButton>
             </ActionButtonGroup>
           </TD>
         </tr>

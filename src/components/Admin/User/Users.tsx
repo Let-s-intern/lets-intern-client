@@ -14,6 +14,7 @@ interface UsersProps {
   managers: any[];
   searchValues: any;
   handleChangeSearchValues: (e: any) => void;
+  handleDeleteUser: (userId: number) => void;
 }
 
 const Users = ({
@@ -23,6 +24,7 @@ const Users = ({
   managers,
   searchValues,
   handleChangeSearchValues,
+  handleDeleteUser,
 }: UsersProps) => {
   if (loading) {
     return <></>;
@@ -49,7 +51,7 @@ const Users = ({
       </FilterWrapper>
       <Table>
         <TableHead />
-        <TableBody users={users} />
+        <TableBody users={users} onDeleteUser={handleDeleteUser} />
       </Table>
     </>
   );
