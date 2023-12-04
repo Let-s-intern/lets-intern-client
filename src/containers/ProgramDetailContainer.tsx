@@ -73,7 +73,8 @@ const ProgramDetailContainer = () => {
       user.phoneNum &&
       user.major &&
       user.university &&
-      user.inflowPath
+      user.inflowPath &&
+      user.way
     ) {
       setIsNextButtonDisabled(false);
     }
@@ -118,6 +119,7 @@ const ProgramDetailContainer = () => {
           wishJob: '',
           applyMotive: '',
           preQuestions: '',
+          way: '',
         });
         setHasDetailInfo(hasDetailInfoData);
         setMemberChecked('USER');
@@ -133,6 +135,7 @@ const ProgramDetailContainer = () => {
           wishJob: '',
           applyMotive: '',
           preQuestions: '',
+          way: '',
         });
         setMemberChecked('');
       }
@@ -168,6 +171,7 @@ const ProgramDetailContainer = () => {
         wishJob: '',
         applyMotive: '',
         preQuestions: '',
+        way: '',
       });
       setParticipated(true);
       setIsApplyModalOpen(false);

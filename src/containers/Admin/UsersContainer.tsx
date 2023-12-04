@@ -2,8 +2,11 @@ import { useEffect, useState } from 'react';
 
 import Users from '../../components/Admin/User/Users';
 import axios from '../../libs/axios';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 
 const UsersContainer = () => {
+  const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [users, setUsers] = useState([]);
   const [managers, setManagers] = useState<any>([]);
   const [loading, setLoading] = useState(true);
@@ -32,7 +35,6 @@ const UsersContainer = () => {
         setLoading(false);
       }
     };
-
     fetchUsers();
     fetchManagers();
   }, []);

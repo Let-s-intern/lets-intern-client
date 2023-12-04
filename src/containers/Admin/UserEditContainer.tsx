@@ -47,8 +47,8 @@ const UserEditContainer = () => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    // const res = await axios.patch(`/user/${params.userId}`, values);
-    // console.log(res);
+    // const res = await axios.patch(`/user/admin/${params.userId}`, values);
+    // console.log('res', res);
     navigate('/admin/users');
   };
 

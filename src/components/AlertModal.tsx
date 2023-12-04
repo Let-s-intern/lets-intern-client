@@ -30,7 +30,14 @@ const AlertModal = ({
   return (
     <ModalBackdrop>
       <ModalContainer>
-        <ModalHeader>{title}</ModalHeader>
+        <ModalHeader>
+          {title.split('<br />').map((titleEl, index) => (
+            <Fragment key={index}>
+              {titleEl}
+              <br />
+            </Fragment>
+          ))}
+        </ModalHeader>
         <ModalBody>{children}</ModalBody>
         <ModalFooter>
           <Button
