@@ -42,7 +42,7 @@ const MainInfo = ({
         <InputControl>
           <Label>이메일</Label>
           <Input
-            placeholder="이메일을 입력하세요."
+            placeholder="example@example.com"
             name="email"
             value={mainInfoValues.email}
             onChange={onChangeMainInfo}
@@ -52,7 +52,7 @@ const MainInfo = ({
         <InputControl>
           <Label>휴대폰 번호</Label>
           <Input
-            placeholder="휴대폰 번호을 입력하세요."
+            placeholder="010-1234-5678"
             name="phoneNum"
             value={mainInfoValues.phoneNum}
             onChange={onChangeMainInfo}

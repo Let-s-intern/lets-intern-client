@@ -131,6 +131,7 @@ export default ProgramDetail;
 
 const ProgramDetailBlock = styled.div`
   width: 100%;
+  min-height: 100vh;
   padding: 1rem;
   margin: 0 auto;
 
@@ -139,4 +140,6 @@ const ProgramDetailBlock = styled.div`
   }
 `;
 
-const TabContent = styled.div``;
+const TabContent = styled.div`
+  min-height: 100vh;
+`;

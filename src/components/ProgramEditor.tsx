@@ -196,7 +196,7 @@ const ProgramEditor = ({
             setValues({ ...values, notice: e.target.value })
           }
           multiline
-          rows={5}
+          rows={8}
         />
         <div className="flex justify-end gap-2">
           <button

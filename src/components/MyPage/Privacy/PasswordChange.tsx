@@ -34,7 +34,7 @@ const PasswordChange = ({
           <Label>새로운 비밀번호</Label>
           <Input
             type="password"
-            placeholder="새로운 비밀번호를 입력하세요."
+            placeholder="새로운 비밀번호를 입력하세요. (영어, 숫자, 특수문자 포함 8자 이상)"
             name="newPassword"
             value={passwordValues.newPassword}
             onChange={onChangePassword}

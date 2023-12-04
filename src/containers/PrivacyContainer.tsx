@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 
 import Privacy from '../components/MyPage/Privacy/Privacy';
 import axios from '../libs/axios';
-import parsePhoneNum from '../libs/parsePhoneNum';
 import {
   isValidEmail,
   isValidPassword,
@@ -176,7 +175,9 @@ const PrivacyContainer = () => {
       return;
     }
     if (!isValidPassword(passwordValues.newPassword)) {
-      alert('새로운 비밀번호의 형식이 올바르지 않습니다.');
+      alert(
+        '새로운 비밀번호의 형식이 올바르지 않습니다. (영어, 숫자, 특수문자 포함 8자 이상)',
+      );
       return;
     }
     try {
@@ -192,7 +193,11 @@ const PrivacyContainer = () => {
         newPasswordConfirm: '',
       });
     } catch (err) {
-      alert('비밀번호 변경에 실패했습니다.');
+      if ((err as any).response.status === 400) {
+        alert('기존 비밀번호가 일치하지 않습니다.');
+      } else {
+        alert('비밀번호 변경에 실패했습니다.');
+      }
     }
   };
 
