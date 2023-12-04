@@ -63,6 +63,7 @@ const Application = ({
                 application={application}
                 statusToLabel={statusToLabel}
                 fetchApplicationDelete={fetchApplicationDelete}
+                hasCancel={false}
               />
             ))
           )}
@@ -80,6 +81,7 @@ const Application = ({
                 application={application}
                 statusToLabel={statusToLabel}
                 fetchApplicationDelete={fetchApplicationDelete}
+                hasCancel={false}
               />
             ))
           )}
