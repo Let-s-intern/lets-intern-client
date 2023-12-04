@@ -1,9 +1,12 @@
+import { Link } from 'react-router-dom';
 import styled, { css } from 'styled-components';
 
 const Footer = () => {
   return (
     <FooterBlock>
-      <CopyRight>©Let’s Intern. All rights reserved.</CopyRight>
+      <DocumentLink to="#">서비스 이용약관</DocumentLink>
+      <DocumentLink to="#">개인정보처리방침</DocumentLink>
+      {/* <CopyRight>©Let’s Intern. All rights reserved.</CopyRight> */}
       <IconList>
         <InstagramIcon
           src="/icons/instagram.svg"
@@ -45,6 +48,12 @@ const FooterBlock = styled.footer`
   justify-content: space-between;
   align-items: center;
   padding: 0.5rem 1rem;
+`;
+
+const DocumentLink = styled(Link)`
+  color: #7f7f7f;
+  text-decoration: underline;
+  cursor: pointer;
 `;
 
 const CopyRight = styled.span`

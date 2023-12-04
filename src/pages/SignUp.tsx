@@ -40,8 +40,8 @@ const SignUp = () => {
 
   // 회원가입 버튼 클릭 시 실행되는 함수
   const handleOnSubmit = (e: any) => {
-    if (buttonDisabled) return;
     e.preventDefault();
+    if (buttonDisabled) return;
     if (!isValidEmail(value.email)) {
       setError(true);
       setErrorMessage('이메일 형식이 올바르지 않습니다.');
