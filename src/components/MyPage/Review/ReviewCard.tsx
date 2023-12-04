@@ -16,6 +16,7 @@ interface ReviewCardProps {
   status: 'WAITING' | 'DONE';
   statusToLabel: any;
   bottomText?: string;
+  hasCancel?: boolean;
 }
 
 const ReviewCard = ({
@@ -24,6 +25,7 @@ const ReviewCard = ({
   status,
   statusToLabel,
   bottomText,
+  hasCancel = true,
 }: ReviewCardProps) => {
   const navigate = useNavigate();
 
@@ -41,9 +43,11 @@ const ReviewCard = ({
       <CardMiddle>
         <CardTitle>{application.programTitle}</CardTitle>
       </CardMiddle>
-      <CardBottom>
-        <CardBottomLink>{bottomText}</CardBottomLink>
-      </CardBottom>
+      {hasCancel && (
+        <CardBottom>
+          <CardBottomLink>{bottomText}</CardBottomLink>
+        </CardBottom>
+      )}
     </CardBlock>
   );
 };

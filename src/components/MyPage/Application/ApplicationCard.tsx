@@ -16,12 +16,14 @@ interface ApplicationCardProps {
   application: any;
   statusToLabel: any;
   fetchApplicationDelete: (applicationId: number, status: string) => void;
+  hasCancel?: boolean;
 }
 
 const ApplicationCard = ({
   application,
   statusToLabel,
   fetchApplicationDelete,
+  hasCancel = true,
 }: ApplicationCardProps) => {
   const [isDeleteMoal, setIsDeleteModal] = useState(false);
   const navigate = useNavigate();
@@ -50,16 +52,18 @@ const ApplicationCard = ({
         <CardMiddle>
           <CardTitle>{application.programTitle}</CardTitle>
         </CardMiddle>
-        <CardBottom>
-          <CardBottomLink
-            onClick={(e) => {
-              e.stopPropagation();
-              setIsDeleteModal(true);
-            }}
-          >
-            취소하기
-          </CardBottomLink>
-        </CardBottom>
+        {hasCancel && (
+          <CardBottom>
+            <CardBottomLink
+              onClick={(e) => {
+                e.stopPropagation();
+                setIsDeleteModal(true);
+              }}
+            >
+              취소하기
+            </CardBottomLink>
+          </CardBottom>
+        )}
       </CardBlock>
       {isDeleteMoal && (
         <AlertModal
