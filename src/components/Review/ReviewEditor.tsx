@@ -3,6 +3,8 @@ import ReviewHeader from '../ReviewHeader';
 import InputTitle from './InputTitle';
 import Star from './Star';
 import TextArea from './TextArea';
+import AlertModal from '../AlertModal';
+import { useNavigate } from 'react-router-dom';
 
 interface ReviewEditorProps {
   loading: boolean;
@@ -10,9 +12,12 @@ interface ReviewEditorProps {
   program: any;
   values: any;
   isSubmitDisabled: boolean;
+  isLoggedIn: boolean;
   handleRatingChange: (value: number) => void;
   handleInputChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   handleSubmitButton: () => void;
+  successModalOpen: boolean;
+  setSuccessModalOpen: (value: boolean) => void;
 }
 
 interface SubmitButtonProps {
@@ -25,10 +30,15 @@ const ReviewEditor = ({
   program,
   values,
   isSubmitDisabled,
+  isLoggedIn,
   handleRatingChange,
   handleInputChange,
   handleSubmitButton,
+  successModalOpen,
+  setSuccessModalOpen,
 }: ReviewEditorProps) => {
+  const navigate = useNavigate();
+
   if (loading) {
     return <div className="mx-auto w-full max-w-xl px-7">loading</div>;
   }
@@ -84,6 +94,22 @@ const ReviewEditor = ({
           등록하기
         </SubmitButton>
       </div>
+      {successModalOpen && (
+        <AlertModal
+          onConfirm={() => {
+            setSuccessModalOpen(false);
+            navigate('/');
+          }}
+          title="후기 작성 완료"
+          showCancel={false}
+          highlight="confirm"
+          confirmText="확인"
+        >
+          후기가 성공적으로 동록되었습니다.
+          <br />
+          메인 화면으로 이동합니다.
+        </AlertModal>
+      )}
     </div>
   );
 };

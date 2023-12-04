@@ -107,9 +107,7 @@ const ProgramEdit = () => {
       }
       navigate('/admin/programs');
     } catch (err) {
-      setError(err);
-    } finally {
-      setLoading(false);
+      alert('프로그램 수정에 실패했습니다.');
     }
   };
 
@@ -155,7 +153,7 @@ const ProgramEdit = () => {
       setFaqList(faqList.filter((faq: any) => faq.id !== faqId));
       setFaqIdList(faqIdList.filter((id: number) => id !== faqId));
     } catch (err) {
-      setError(err);
+      alert('FAQ를 삭제하는데 실패했습니다.');
     }
   };
 

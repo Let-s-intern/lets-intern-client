@@ -14,6 +14,7 @@ const ProgramsContainer = () => {
       .get('/program/admin')
       .then((res) => {
         const data = res.data.programList;
+        console.log(data);
         setProgramList(data);
       })
       .catch((err) => {
@@ -51,7 +52,6 @@ const ProgramsContainer = () => {
     axios
       .delete(`/program/${programId}`)
       .then((res) => {
-        console.log(res);
         setProgramList(programList.filter((p: any) => p.id !== programId));
       })
       .catch((err) => {

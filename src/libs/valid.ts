@@ -1,6 +1,6 @@
 // 정규식을 이용한 휴대폰 번호 유효성 검사
 const isValidPhoneNumber = (phoneNumber: string) => {
-  const regex = /^01[0-9]-?[0-9]{4}-?[0-9]{4}$/;
+  const regex = /^01[0-9]-[0-9]{4}-[0-9]{4}$/;
 
   return regex.test(phoneNumber);
 };

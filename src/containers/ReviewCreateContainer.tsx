@@ -14,6 +14,7 @@ const ReviewCreateContainer = () => {
   const [values, setValues] = useState<any>({});
   const [isSubmitDisabled, setIsSubmitDisabled] = useState<boolean>(true);
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
+  const [successModalOpen, setSuccessModalOpen] = useState<boolean>(false);
 
   useEffect(() => {
     const checkLoggedIn = async () => {
@@ -80,12 +81,12 @@ const ReviewCreateContainer = () => {
     try {
       if (isLoggedIn && params.applicationId) {
         await axios.post(`/review/${params.applicationId}`, reqData);
-        navigate('/mypage/review');
+        navigate(`/mypage/review`);
       } else {
         await axios.post(`/review?programId=${params.programId}`, reqData, {
           headers: { Authorization: '' },
         });
-        navigate(`/program/${params.programId}`);
+        setSuccessModalOpen(true);
       }
     } catch (err) {
       console.error(err);
@@ -98,10 +99,13 @@ const ReviewCreateContainer = () => {
       error={error}
       program={program}
       values={values}
+      isLoggedIn={isLoggedIn}
       isSubmitDisabled={isSubmitDisabled}
       handleRatingChange={handleRatingChange}
       handleInputChange={handleInputChange}
       handleSubmitButton={handleSubmitButton}
+      successModalOpen={successModalOpen}
+      setSuccessModalOpen={setSuccessModalOpen}
     />
   );
 };

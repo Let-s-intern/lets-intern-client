@@ -54,7 +54,9 @@ const SignUp = () => {
     }
     if (!isValidPassword(value.password)) {
       setError(true);
-      setErrorMessage('비밀번호 형식이 올바르지 않습니다.');
+      setErrorMessage(
+        '비밀번호 형식이 올바르지 않습니다. (영어, 숫자, 특수문자 포함 8자 이상)',
+      );
       return;
     }
     if (value.password !== value.passwordConfirm) {
@@ -133,7 +135,7 @@ const SignUp = () => {
           <div>
             <Input
               label="휴대폰 번호"
-              placeholder="-를 포함한 전화번호"
+              placeholder="010-1234-4567"
               value={value.phoneNum}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                 setValue({ ...value, phoneNum: e.target.value })
@@ -145,6 +147,7 @@ const SignUp = () => {
             <Input
               type="password"
               label="비밀번호"
+              placeholder="영어, 숫자, 특수문자 포함 8자 이상"
               value={value.password}
               onChange={(e: any) => {
                 setValue({ ...value, password: e.target.value });

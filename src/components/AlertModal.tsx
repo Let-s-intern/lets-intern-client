@@ -3,13 +3,14 @@ import styled, { css } from 'styled-components';
 
 interface AlertModalProps {
   onConfirm: () => void;
-  onCancel: () => void;
+  onCancel?: () => void;
   highlight?: 'confirm' | 'cancel';
   title: string;
   confirmText?: string;
   cancelText?: string;
   children: React.ReactNode;
   disabled?: boolean;
+  showCancel?: boolean;
 }
 
 interface ButtonProps {
@@ -26,6 +27,7 @@ const AlertModal = ({
   cancelText = '취소',
   children,
   disabled = false,
+  showCancel = true,
 }: AlertModalProps) => {
   return (
     <ModalBackdrop>
@@ -48,9 +50,11 @@ const AlertModal = ({
           >
             {confirmText}
           </Button>
-          <Button type="button" $highlight={highlight} onClick={onCancel}>
-            {cancelText}
-          </Button>
+          {showCancel && (
+            <Button type="button" $highlight={highlight} onClick={onCancel}>
+              {cancelText}
+            </Button>
+          )}
         </ModalFooter>
       </ModalContainer>
     </ModalBackdrop>
