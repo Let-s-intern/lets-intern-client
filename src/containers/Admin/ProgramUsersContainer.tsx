@@ -51,25 +51,38 @@ const ProgramUsersContainer = () => {
     }
   };
 
+  const handleEmailListDownload = (fileName: string, fileContent: string) => {
+    const blob = new Blob([fileContent], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = fileName;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  };
+
   const handleEmailSend = async (isApproved: boolean) => {
-    try {
-      const res = await axios.get(
-        `/application/admin/email/${params.programId}`,
-      );
-      const emailList = isApproved
-        ? res.data.approvedEmailList
-        : res.data.notApprovedEmailList;
-      const emailSubject = isApproved ? '참가확정 이메일' : '미선발 이메일';
-      const emailBody = isApproved
-        ? '참가확정되셨습니다.'
-        : '미선발되셨습니다.';
-      const emailString =
-        emailList.join(',') + `?subject=${emailSubject}&body=${emailBody}`;
-      const url = `mailto:${emailString}`;
-      window.open(url);
-    } catch (err) {
-      alert('이메일 전송에 실패했습니다.');
-    }
+    const emailList = isApproved
+      ? applications
+          .filter(
+            (application: any) =>
+              application.application.status === 'IN_PROGRESS',
+          )
+          .map((application: any) => application.application.email)
+      : applications
+          .filter(
+            (application: any) =>
+              application.application.status === 'APPLIED_NOT_APPROVED',
+          )
+          .map((application: any) => application.application.email);
+    const subject =
+      (isApproved ? '참가확정 이메일 목록' : '미선발 이메일 목록') +
+      ' - ' +
+      program.title;
+    const emailString = subject + '\n' + emailList.join('\n');
+    handleEmailListDownload(subject + '.txt', emailString);
   };
 
   return (

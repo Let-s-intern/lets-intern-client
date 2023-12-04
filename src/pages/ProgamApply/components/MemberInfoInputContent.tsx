@@ -9,6 +9,7 @@ interface MemberInfoInputContentProps {
   hasDetailInfo: boolean;
   isLoggedIn: boolean;
   programType: string;
+  program: any;
   handleApplyInput: (e: any) => void;
 }
 
@@ -17,6 +18,7 @@ const MemberInfoInputContent = ({
   hasDetailInfo,
   isLoggedIn,
   programType,
+  program,
   handleApplyInput,
 }: MemberInfoInputContentProps) => {
   const dropdownStyle = {
@@ -106,24 +108,6 @@ const MemberInfoInputContent = ({
             value={user.wishCompany}
             onChange={(e) => handleApplyInput(e)}
           />
-          <Input
-            label="지원 동기"
-            name="applyMotive"
-            value={user.applyMotive}
-            onChange={(e) => handleApplyInput(e)}
-            multiline
-            rows={4}
-          />
-          {programType === 'LETS_CHAT' && (
-            <Input
-              label="사전 질문 (선택)"
-              name="preQuestions"
-              value={user.preQuestion}
-              onChange={(e) => handleApplyInput(e)}
-              multiline
-              rows={4}
-            />
-          )}
           <FormControl fullWidth sx={dropdownStyle}>
             <InputLabel id="inflowPath">유입 경로</InputLabel>
             <Select
@@ -147,6 +131,38 @@ const MemberInfoInputContent = ({
               <MenuItem value="ACQUAINTANCE">지인 추천</MenuItem>
             </Select>
           </FormControl>
+          <FormControl fullWidth sx={dropdownStyle}>
+            <InputLabel id="way">온오프라인 참여 여부</InputLabel>
+            <Select
+              labelId="way"
+              id="way"
+              label="온오프라인 참여 여부"
+              name="way"
+              value={user.way}
+              onChange={(e) => handleApplyInput(e)}
+            >
+              <MenuItem value="ONLINE">온라인 (Zoom)</MenuItem>
+              <MenuItem value="OFFLINE">오프라인 ({program.location})</MenuItem>
+            </Select>
+          </FormControl>
+          <Input
+            label="지원 동기"
+            name="applyMotive"
+            value={user.applyMotive}
+            onChange={(e) => handleApplyInput(e)}
+            multiline
+            rows={4}
+          />
+          {programType === 'LETS_CHAT' && (
+            <Input
+              label="사전 질문 (선택)"
+              name="preQuestions"
+              value={user.preQuestion}
+              onChange={(e) => handleApplyInput(e)}
+              multiline
+              rows={4}
+            />
+          )}
         </div>
       </form>
     </>
