@@ -161,7 +161,7 @@ const MemberInfoInputContent = ({
             <Input
               label="사전 질문 (선택)"
               name="preQuestions"
-              value={user.preQuestion}
+              value={user.preQuestions}
               onChange={(e) => handleApplyInput(e)}
               multiline
               rows={4}
