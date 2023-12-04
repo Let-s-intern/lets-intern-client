@@ -131,20 +131,24 @@ const MemberInfoInputContent = ({
               <MenuItem value="ACQUAINTANCE">지인 추천</MenuItem>
             </Select>
           </FormControl>
-          <FormControl fullWidth sx={dropdownStyle}>
-            <InputLabel id="way">온오프라인 참여 여부</InputLabel>
-            <Select
-              labelId="way"
-              id="way"
-              label="온오프라인 참여 여부"
-              name="way"
-              value={user.way}
-              onChange={(e) => handleApplyInput(e)}
-            >
-              <MenuItem value="ONLINE">온라인 (Zoom)</MenuItem>
-              <MenuItem value="OFFLINE">오프라인 ({program.location})</MenuItem>
-            </Select>
-          </FormControl>
+          {program.way === 'ALL' && (
+            <FormControl fullWidth sx={dropdownStyle}>
+              <InputLabel id="way">온오프라인 참여 여부</InputLabel>
+              <Select
+                labelId="way"
+                id="way"
+                label="온오프라인 참여 여부"
+                name="way"
+                value={user.way}
+                onChange={(e) => handleApplyInput(e)}
+              >
+                <MenuItem value="ONLINE">온라인 (Zoom)</MenuItem>
+                <MenuItem value="OFFLINE">
+                  오프라인 ({program.location})
+                </MenuItem>
+              </Select>
+            </FormControl>
+          )}
           <Input
             label="지원 동기"
             name="applyMotive"
