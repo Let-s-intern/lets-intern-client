@@ -102,9 +102,7 @@ const UserEditor = ({
           placeholder="희망기업을 입력하세요"
         /> */}
         <ActionButtonGroup>
-          <ActionButton to="/admin/users" bgColor="blue">
-            등록
-          </ActionButton>
+          <ActionButton bgColor="blue">등록</ActionButton>
           <ActionButton
             type="button"
             bgColor="gray"

@@ -21,11 +21,14 @@ const MemberTypeContent = ({
   const onConfirm = () => {
     setIsLoginModal(false);
     navigate('/login');
+    setMemberChecked('USER');
   };
 
   const onCancel = () => {
     setIsLoginModal(false);
-    setMemberChecked('GUEST');
+    memberChecked === 'GUEST'
+      ? setMemberChecked('GUEST')
+      : setMemberChecked('');
   };
 
   return (
@@ -44,12 +47,13 @@ const MemberTypeContent = ({
           checked={memberChecked === 'GUEST'}
           onClick={() => {
             setMemberChecked('GUEST');
+            setIsLoginModal(true);
           }}
         >
           비회원 신청
         </ListItem>
       </ul>
-      {isLoginModal && (
+      {isLoginModal && memberChecked === 'USER' && (
         <AlertModal
           title="로그인이 필요합니다."
           onConfirm={onConfirm}
@@ -61,6 +65,20 @@ const MemberTypeContent = ({
           로그인이 필요합니다.
           <br />
           로그인 페이지로 이동하시겠습니까?
+        </AlertModal>
+      )}
+      {isLoginModal && memberChecked === 'GUEST' && (
+        <AlertModal
+          title="회원으로 지원하면 마이페이지에서<br />신청현황을 확인하실 수 있습니다."
+          onConfirm={onConfirm}
+          onCancel={onCancel}
+          highlight="confirm"
+          confirmText="회원으로 신청"
+          cancelText="비회원으로 신청"
+        >
+          비회원으로 지원 시 다시 지원하거나
+          <br />
+          취소할 수 없습니다.
         </AlertModal>
       )}
     </>

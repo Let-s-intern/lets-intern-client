@@ -15,6 +15,7 @@ const PrivacyContainer = () => {
   const [passwordValues, setPasswordValues] = useState<any>({});
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<unknown>(null);
+  const [initialValues, setInitialValues] = useState<any>({});
 
   // 유저 정보 가져오기
   useEffect(() => {
@@ -30,6 +31,13 @@ const PrivacyContainer = () => {
           major: res.data.major,
           university: res.data.university,
         });
+        setInitialValues({
+          name: res.data.name,
+          email: res.data.email,
+          phoneNum: res.data.phoneNum,
+          major: res.data.major,
+          university: res.data.university,
+        });
       } catch (err) {
         setError(err);
       } finally {
@@ -38,6 +46,16 @@ const PrivacyContainer = () => {
     };
     fetchUserInfo();
   }, []);
+
+  const resetInitialValues = () => {
+    setInitialValues({
+      name: mainInfoValues.name,
+      email: mainInfoValues.email,
+      phoneNum: mainInfoValues.phoneNum,
+      major: subInfoValues.major,
+      university: subInfoValues.university,
+    });
+  };
 
   // 이름, 이메일, 휴대폰 번호 변경 입력 폼의 값이 변경될 때마다 실행되는 함수
   const handleChangeMainInfo = (e: any) => {
@@ -73,8 +91,18 @@ const PrivacyContainer = () => {
         email: mainInfoValues.email,
         phoneNum: mainInfoValues.phoneNum,
       };
+      if (mainInfoValues.phoneNum === initialValues.phoneNum) {
+        delete reqData.phoneNum;
+      }
+      if (mainInfoValues.email === initialValues.email) {
+        delete reqData.email;
+      }
+      if (mainInfoValues.name === initialValues.name) {
+        delete reqData.name;
+      }
       await axios.patch('/user', reqData);
       alert('유저 정보가 변경되었습니다.');
+      resetInitialValues();
     } catch (error) {
       if ((error as any).response.status === 400) {
         alert('이미 존재하는 이메일입니다.');
@@ -105,8 +133,15 @@ const PrivacyContainer = () => {
         major: subInfoValues.major,
         university: subInfoValues.university,
       };
+      if (subInfoValues.major === initialValues.major) {
+        delete reqData.major;
+      }
+      if (subInfoValues.university === initialValues.university) {
+        delete reqData.university;
+      }
       await axios.patch('/user', reqData);
       alert('유저 정보가 변경되었습니다.');
+      resetInitialValues();
     } catch (error) {
       alert('유저 정보 변경에 실패했습니다.');
     }

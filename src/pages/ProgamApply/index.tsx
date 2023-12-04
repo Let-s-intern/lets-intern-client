@@ -75,6 +75,7 @@ const ProgramApply = ({
           isLoggedIn={isLoggedIn}
           handleApplyInput={handleApplyInput}
           programType={programType}
+          program={program}
         />
       </Modal>
     </BlackBackground>
