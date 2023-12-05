@@ -55,7 +55,6 @@ const ProgramApply = ({
         onNextButtonClick={handleApplyNextButton}
       >
         <MemberTypeContent
-          isLoggedIn={isLoggedIn}
           memberChecked={memberChecked}
           setMemberChecked={setMemberChecked}
         />

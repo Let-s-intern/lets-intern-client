@@ -68,7 +68,14 @@ const iconStyle = css`
 
 const FooterBlock = styled.footer`
   width: 100%;
-  padding: 1rem 1.25rem;
+  padding-top: 1rem;
+  padding-bottom: 5rem;
+  padding-left: 1.25rem;
+  padding-right: 1.25rem;
+
+  @media (min-width: 640px) {
+    padding-bottom: 1.25rem;
+  }
 `;
 
 const TopArea = styled.div`

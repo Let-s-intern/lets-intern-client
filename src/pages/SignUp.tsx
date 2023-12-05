@@ -12,6 +12,7 @@ import {
   isValidPassword,
   isValidPhoneNumber,
 } from '../libs/valid';
+import AlertModal from '../components/AlertModal';
 
 const SignUp = () => {
   const navigate = useNavigate();
@@ -28,6 +29,7 @@ const SignUp = () => {
   const [error, setError] = useState<unknown>(null);
   const [errorMessage, setErrorMessage] = useState('');
   const [showModal, setShowModal] = useState<boolean>(false);
+  const [successModalOpen, setSuccessModalOpen] = useState<boolean>(false);
 
   // 로그인 상태에서 회원가입 페이지에 접근하면 메인 페이지로 이동
   useEffect(() => {
@@ -70,7 +72,7 @@ const SignUp = () => {
         await axios.post('/user/signup', data, {
           headers: { Authorization: '' },
         });
-        navigate('/login');
+        setSuccessModalOpen(true);
       } catch (err) {
         console.error(err);
         setError(err);
@@ -242,6 +244,20 @@ const SignUp = () => {
           </Button>
         </form>
       </div>
+      {successModalOpen && (
+        <AlertModal
+          onConfirm={() => {
+            navigate('/login');
+          }}
+          title="회원가입 완료"
+          showCancel={false}
+          highlight="confirm"
+        >
+          회원가입이 완료되었습니다.
+          <br />
+          로그인 페이지에서 로그인을 진행해주세요.
+        </AlertModal>
+      )}
     </div>
   );
 };
