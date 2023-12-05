@@ -5,8 +5,6 @@ const DetailTableHead = () => {
     <thead>
       <tr>
         <TH>회원분류</TH>
-        <TH>프로그램 분류</TH>
-        <TH>기수</TH>
         <TH>이름</TH>
         <TH>만족도</TH>
         <TH>후기</TH>
