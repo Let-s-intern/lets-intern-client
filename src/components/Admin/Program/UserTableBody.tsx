@@ -26,7 +26,7 @@ const UserTableBody = ({
           <TD>{parseInflowPath(application.application.inflowPath)}</TD>
           <TD>{application.application.email}</TD>
           <TD>{application.application.name}</TD>
-          <TD>{parsePhoneNum(application.application.phoneNum, true)}</TD>
+          <TD>{application.application.phoneNum}</TD>
           <TD>
             {application.optionalInfo
               ? application.optionalInfo.university
@@ -39,6 +39,13 @@ const UserTableBody = ({
           <TD>{application.application.wishJob}</TD>
           <TD>{application.application.wishCompany}</TD>
           <TD>{application.application.applyMotive}</TD>
+          <TD>
+            {application.application.way === 'OFFLINE'
+              ? '오프라인'
+              : application.application.way === 'ONLINE'
+              ? '온라인'
+              : ''}
+          </TD>
           <TD>
             <FormControl>
               <InputLabel id="status">참가 확정</InputLabel>

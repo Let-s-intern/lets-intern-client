@@ -79,7 +79,7 @@ const ProgramDetailContainer = () => {
       user.major &&
       user.university &&
       user.inflowPath &&
-      (program.type === 'ALL' ? user.way : true)
+      (program.way === 'ALL' ? user.way : true)
     ) {
       setIsNextButtonDisabled(false);
     }
@@ -213,7 +213,7 @@ const ProgramDetailContainer = () => {
   const handleApplySubmit = async () => {
     try {
       let newUser = { ...user, grade: Number(user.grade) };
-      if (program.type !== 'ALL') {
+      if (program.way !== 'ALL') {
         delete newUser.way;
       }
       if (!isLoggedIn) {
