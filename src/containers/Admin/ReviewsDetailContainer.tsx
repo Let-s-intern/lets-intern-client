@@ -16,10 +16,8 @@ const ReviewsDetailContainer = () => {
       try {
         let res;
         res = await axios.get(`/review/admin/${params.programId}`);
-        console.log(res.data.reviewList);
         setReviewList(res.data.reviewList);
         res = await axios.get(`/program/admin`);
-        console.log(res.data.programList);
         const foundedProgram = res.data.programList.find(
           (program: any) => program.id === Number(params.programId),
         );

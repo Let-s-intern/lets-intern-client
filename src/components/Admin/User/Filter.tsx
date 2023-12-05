@@ -3,18 +3,24 @@ import { IoIosSearch } from 'react-icons/io';
 import { FormControl, InputLabel, MenuItem, Select } from '@mui/material';
 import Input from '../../Input';
 import ActionButton from '../ActionButton';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 
 interface FilterProps {
   searchValues: any;
   managers: any[];
   onChangeSearchValues: (e: any) => void;
+  setSearchValues: (searchValues: any) => void;
 }
 
 const Filter = ({
   searchValues,
   managers,
   onChangeSearchValues,
+  setSearchValues,
 }: FilterProps) => {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const navigate = useNavigate();
+
   return (
     <FilterBlock>
       <SearchWrapper>
@@ -25,12 +31,12 @@ const Filter = ({
             name="keyword"
             value={searchValues.keyword ? searchValues.keyword : ''}
             onChange={onChangeSearchValues}
+            autoComplete="off"
           />
           <SearchIcon>
             <IoIosSearch />
           </SearchIcon>
         </SearchBar>
-        <SearchButton>검색</SearchButton>
       </SearchWrapper>
       <DropdownWrapper>
         <FormControl fullWidth>
@@ -44,6 +50,7 @@ const Filter = ({
             value={searchValues.type ? searchValues.type : ''}
             onChange={onChangeSearchValues}
           >
+            <MenuItem value="">전체</MenuItem>
             <MenuItem value="CHALLENGE_FULL">챌린지(전체)</MenuItem>
             <MenuItem value="CHALLENGE_HALF">챌린지(일부)</MenuItem>
             <MenuItem value="BOOTCAMP">부트캠프</MenuItem>
@@ -59,18 +66,19 @@ const Filter = ({
           onChange={onChangeSearchValues}
         />
         <FormControl fullWidth>
-          <InputLabel id="manager">담당 매니저</InputLabel>
+          <InputLabel id="managerId">담당 매니저</InputLabel>
           <Select
-            labelId="manager"
-            id="manager"
+            labelId="managerId"
+            id="managerId"
             label="프로그램 유형"
             sx={{ backgroundColor: 'white' }}
-            name="manager"
-            value={searchValues.manager ? searchValues.manager : ''}
+            name="managerId"
+            value={!searchValues.managerId ? 0 : searchValues.managerId}
             onChange={onChangeSearchValues}
           >
+            <MenuItem value={0}>미지정</MenuItem>
             {managers.map((manager: any) => (
-              <MenuItem key={manager.id} value={manager.name}>
+              <MenuItem key={manager.id} value={manager.id}>
                 {manager.name}
               </MenuItem>
             ))}
@@ -78,10 +86,24 @@ const Filter = ({
         </FormControl>
       </DropdownWrapper>
       <ActionButtonGroup>
-        <ActionButton bgColor="lightBlue" width="8rem">
+        <ActionButton
+          bgColor="lightBlue"
+          width="8rem"
+          onClick={() => {
+            setSearchValues({});
+            navigate('/admin/users');
+          }}
+          to="/admin/users"
+        >
           전체 보기
         </ActionButton>
-        <ActionButton bgColor="blue" width="8rem">
+        <ActionButton
+          bgColor="blue"
+          width="8rem"
+          onClick={() => {
+            setSearchParams(searchValues);
+          }}
+        >
           회원 목록 보기
         </ActionButton>
       </ActionButtonGroup>
