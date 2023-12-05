@@ -15,6 +15,7 @@ const UserTableHead = () => {
         <TH>희망직무</TH>
         <TH>희망기업형태</TH>
         <TH>신청자 답변</TH>
+        <TH>온/오프라인 여부</TH>
         <TH>참가확정</TH>
         <TH>신청일자</TH>
         <TH>사전질문</TH>
