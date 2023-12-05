@@ -8,7 +8,14 @@ const CautionContent = ({
   return (
     <div className="text-center">
       <h1 className="text-lg font-medium">필독사항</h1>
-      <p className="mx-auto mt-5 w-1/2 break-keep text-gray-500">{notice}</p>
+      <p className="mx-auto mt-5 flex flex-col gap-2 break-keep text-gray-500">
+        {notice.split('\n').map((line, idx) => (
+          <span key={idx}>
+            {line}
+            <br />
+          </span>
+        ))}
+      </p>
       <div className="mt-5 flex justify-center">
         <div
           className="flex cursor-pointer items-center gap-2"

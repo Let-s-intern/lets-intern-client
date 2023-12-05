@@ -162,6 +162,7 @@ const MemberInfoInputContent = ({
           {programType === 'LETS_CHAT' && (
             <Input
               label="사전 질문 (선택)"
+              placeholder="멘토님께 궁금한 점이 있다면, 사전질문으로 남겨주세요!"
               name="preQuestions"
               value={user.preQuestions}
               onChange={(e) => handleApplyInput(e)}

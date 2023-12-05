@@ -45,30 +45,7 @@ const ProgramEditor = ({
   const navigate = useNavigate();
   const quillRef = useRef<any>();
 
-  // // 이미지 업로드 함수
-  // const uploadImage = async (file: any) => {
-  //   const uploadTask = storage.ref(`images/${file.name}`).put(file);
-  //   return new Promise((resolve, reject) => {
-  //     uploadTask.on(
-  //       'state_changed',
-  //       (snapshot: any) => {
-  //         // 업로드 진행 상태를 처리할 수 있습니다.
-  //       },
-  //       (error: any) => {
-  //         // 업로드 중 오류 처리
-  //         reject(error);
-  //       },
-  //       async () => {
-  //         // 업로드 완료 후 URL 반환
-  //         const downloadURL = await uploadTask.snapshot.ref.getDownloadURL();
-  //         resolve(downloadURL);
-  //       },
-  //     );
-  //   });
-  // };
-
   const imageHandler = () => {
-    // console.log('imageHandler');
     const input = document.createElement('input');
     input.setAttribute('type', 'file');
     input.setAttribute('accept', 'image/*');
@@ -99,57 +76,6 @@ const ProgramEditor = ({
       }
     });
   };
-
-  // const imageHandler = () => {
-  //   const input = document.createElement('input');
-  //   input.setAttribute('type', 'file');
-  //   input.setAttribute('accept', 'image/*');
-  //   input.click();
-
-  //   input.addEventListener('change', async (e) => {
-  //     if (!input.files) return;
-  //     const file = input.files[0];
-  //     try {
-  //       const storageRef = ref(storage, file.name);
-  //       const uploadTask = uploadBytesResumable(storageRef, file);
-
-  //       uploadTask.on(
-  //         'state_changed',
-  //         (snapshot) => {
-  //           const progress =
-  //             (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-  //           console.log('Upload is ' + progress + '% done');
-  //           switch (snapshot.state) {
-  //             case 'paused':
-  //               console.log('Upload is paused');
-  //               break;
-  //             case 'running':
-  //               console.log('Upload is running');
-  //               break;
-  //           }
-  //         },
-  //         (error) => {
-  //           alert('업로드 실패');
-  //           // toast.error("업로드 실패", {
-  //           //   theme: "colored",
-  //           // });
-  //         },
-  //         () => {
-  //           getDownloadURL(uploadTask.snapshot.ref).then(
-  //             async (downloadURL) => {
-  //               const editor = quillRef.current.getEditor();
-  //               const range = editor.getSelection();
-  //               editor.insertEmbed(range.index, 'image', downloadURL);
-  //               editor.setSelection(range.index + 1);
-  //             },
-  //           );
-  //         },
-  //       );
-  //     } catch (error) {
-  //       console.log(error);
-  //     }
-  //   });
-  // };
 
   const modules = useMemo(
     () => ({
