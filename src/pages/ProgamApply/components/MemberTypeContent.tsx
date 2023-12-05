@@ -2,25 +2,24 @@ import { useState } from 'react';
 
 import ListItem from './ListItem';
 import AlertModal from '../../../components/AlertModal';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 interface MemberTypeContentProps {
-  isLoggedIn: boolean;
   memberChecked: 'USER' | 'GUEST' | '';
   setMemberChecked: (memberChecked: 'USER' | 'GUEST' | '') => void;
 }
 
 const MemberTypeContent = ({
-  isLoggedIn,
   memberChecked,
   setMemberChecked,
 }: MemberTypeContentProps) => {
+  const params = useParams();
   const navigate = useNavigate();
   const [isLoginModal, setIsLoginModal] = useState(false);
 
   const onConfirm = () => {
     setIsLoginModal(false);
-    navigate('/login');
+    navigate(`/login?redirect=/program/${params.programId}`);
     setMemberChecked('USER');
   };
 

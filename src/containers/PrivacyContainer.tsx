@@ -68,12 +68,25 @@ const PrivacyContainer = () => {
   // 이름, 이메일, 휴대폰 번호 변경 버튼 클릭 시 실행되는 함수
   const handleSaveMainInfo = async (e: any) => {
     e.preventDefault();
-    if (
-      !mainInfoValues.name ||
-      !mainInfoValues.email ||
-      !mainInfoValues.phoneNum
-    ) {
+    let hasNull: boolean = false;
+    const newValues = { ...mainInfoValues };
+    Object.keys(newValues).forEach((key) => {
+      if (!newValues[key]) {
+        hasNull = true;
+        return;
+      }
+    });
+    if (hasNull) {
       alert('모든 항목을 입력해주세요.');
+      return;
+    }
+    Object.keys(newValues).forEach((key) => {
+      if (newValues[key] === initialValues[key]) {
+        delete newValues[key];
+      }
+    });
+    if (Object.keys(newValues).length === 0) {
+      alert('변경된 내용이 없습니다.');
       return;
     }
     if (!isValidEmail(mainInfoValues.email)) {
@@ -85,21 +98,7 @@ const PrivacyContainer = () => {
       return;
     }
     try {
-      const reqData = {
-        name: mainInfoValues.name,
-        email: mainInfoValues.email,
-        phoneNum: mainInfoValues.phoneNum,
-      };
-      if (mainInfoValues.phoneNum === initialValues.phoneNum) {
-        delete reqData.phoneNum;
-      }
-      if (mainInfoValues.email === initialValues.email) {
-        delete reqData.email;
-      }
-      if (mainInfoValues.name === initialValues.name) {
-        delete reqData.name;
-      }
-      await axios.patch('/user', reqData);
+      await axios.patch('/user', newValues);
       alert('유저 정보가 변경되었습니다.');
       resetInitialValues();
     } catch (error) {
@@ -123,22 +122,29 @@ const PrivacyContainer = () => {
   // 학과, 학교 정보 변경 버튼 클릭 시 실행되는 함수
   const handleSaveSubInfo = async (e: any) => {
     e.preventDefault();
-    if (!subInfoValues.major || !subInfoValues.university) {
+    let hasNull: boolean = false;
+    const newValues = { ...subInfoValues };
+    Object.keys(newValues).forEach((key) => {
+      if (!newValues[key]) {
+        hasNull = true;
+        return;
+      }
+    });
+    if (hasNull) {
       alert('모든 항목을 입력해주세요.');
       return;
     }
+    Object.keys(newValues).forEach((key) => {
+      if (newValues[key] === initialValues[key]) {
+        delete newValues[key];
+      }
+    });
+    if (Object.keys(newValues).length === 0) {
+      alert('변경된 내용이 없습니다.');
+      return;
+    }
     try {
-      const reqData = {
-        major: subInfoValues.major,
-        university: subInfoValues.university,
-      };
-      if (subInfoValues.major === initialValues.major) {
-        delete reqData.major;
-      }
-      if (subInfoValues.university === initialValues.university) {
-        delete reqData.university;
-      }
-      await axios.patch('/user', reqData);
+      await axios.patch('/user', newValues);
       alert('유저 정보가 변경되었습니다.');
       resetInitialValues();
     } catch (error) {

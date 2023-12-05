@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 
 import Button from '../components/Button';
 import Input from '../components/Input';
@@ -27,6 +27,7 @@ const TextLink = ({ to, dark, className, children }: TextLinkProps) => {
 
 const Login = () => {
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
@@ -62,8 +63,11 @@ const Login = () => {
       .then((res) => {
         localStorage.setItem('access-token', res.data.accessToken);
         localStorage.setItem('refresh-token', res.data.refreshToken);
-        navigate('/');
-        window.location.reload();
+        if (searchParams.get('redirect')) {
+          window.location.href = searchParams.get('redirect') as string;
+        } else {
+          window.location.href = '/';
+        }
       })
       .catch((err) => {
         console.log(err);

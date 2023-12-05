@@ -33,9 +33,10 @@ const Modal = ({
           {children}
         </ScrollBox>
         <NextButton
-          type="submit"
+          type="button"
           $disabled={isNextButtonDisabled}
-          onClick={() => {
+          onClick={(e) => {
+            e.preventDefault();
             if (!isNextButtonDisabled) {
               onNextButtonClick();
             }

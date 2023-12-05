@@ -3,21 +3,23 @@ import { useNavigate, useParams } from 'react-router-dom';
 
 import UserEditor from '../../components/Admin/User/UserEditor';
 import axios from '../../libs/axios';
+import { isValidEmail, isValidPhoneNumber } from '../../libs/valid';
 
 const UserEditContainer = () => {
   const params = useParams();
   const navigate = useNavigate();
-  const [values, setValues] = useState({});
+  const [values, setValues] = useState<any>({});
+  const [initialValues, setInitialValues] = useState<any>({});
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<unknown>(null);
 
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const res = await axios.get(`/user/admin`);
-        const user = res.data.userList.find(
-          (user: any) => user.id === Number(params.userId),
-        );
+        const res = await axios.get(`/user/admin/${params.userId}`);
+        const user = res.data;
+        setInitialValues(user);
+        console.log('user', user);
         const newUser = {
           ...user,
         };
@@ -47,9 +49,38 @@ const UserEditContainer = () => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    // const res = await axios.patch(`/user/admin/${params.userId}`, values);
-    // console.log('res', res);
-    navigate('/admin/users');
+    if (!values.name) {
+      alert('이름을 입력해주세요.');
+      return;
+    }
+    if (!isValidEmail(values.email)) {
+      alert('이메일 형식이 올바르지 않습니다.');
+      return;
+    }
+    if (!isValidPhoneNumber(values.phoneNum)) {
+      alert('휴대폰 번호 형식이 올바르지 않습니다.');
+      return;
+    }
+    Object.keys(values).forEach((key) => {
+      if (!values[key]) {
+        delete values[key];
+      } else if (values[key] === initialValues[key]) {
+        delete values[key];
+      }
+    });
+    try {
+      const res = await axios.patch(`/user/admin/${params.userId}`, values);
+      console.log('res', res);
+      navigate('/admin/users');
+    } catch (err) {
+      if ((err as any).response.status === 400) {
+        alert('이미 존재하는 이메일입니다.');
+        return;
+      } else if ((err as any).response.status === 404) {
+        alert('존재하지 않는 회원입니다.');
+        return;
+      }
+    }
   };
 
   return (
