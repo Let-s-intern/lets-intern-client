@@ -3,6 +3,7 @@ import ProgramDetail from '../components/Program/ProgramDetail/ProgramDetail';
 import { useEffect, useState } from 'react';
 import axios from '../libs/axios';
 import { isValidEmail, isValidPhoneNumber } from '../libs/valid';
+import ChannelService from '../ChannelService';
 
 const ProgramDetailContainer = () => {
   const navigate = useNavigate();
@@ -27,6 +28,10 @@ const ProgramDetailContainer = () => {
   const [memberChecked, setMemberChecked] = useState<'USER' | 'GUEST' | ''>('');
   const [programType, setProgramType] = useState<string>('');
   const [isFirstOpen, setIsFirstOpen] = useState<boolean>(true);
+
+  useEffect(() => {
+    ChannelService.hideChannelButton();
+  }, []);
 
   useEffect(() => {
     const fetchProgram = async () => {

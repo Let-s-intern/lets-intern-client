@@ -20,6 +20,8 @@ export interface ModalProps {
   isNextButtonDisabled?: boolean;
   onNextButtonClick: () => void;
   children: React.ReactNode;
+  onFoldButtonClick?: () => void;
+  hasFoldButton?: boolean;
 }
 
 export interface CautionContentProps {
