@@ -53,6 +53,7 @@ const ProgramApply = ({
         nextButtonText="다음"
         position="bottom"
         onNextButtonClick={handleApplyNextButton}
+        onFoldButtonClick={handleApplyModalClose}
       >
         <MemberTypeContent
           memberChecked={memberChecked}
@@ -67,6 +68,7 @@ const ProgramApply = ({
         position="bottom"
         onNextButtonClick={handleApplyNextButton}
         isNextButtonDisabled={isNextButtonDisabled}
+        onFoldButtonClick={handleApplyModalClose}
       >
         <MemberInfoInputContent
           user={user}
@@ -85,6 +87,7 @@ const ProgramApply = ({
         position="center"
         onNextButtonClick={handleApplyNextButton}
         isNextButtonDisabled={isNextButtonDisabled}
+        hasFoldButton={false}
       >
         <CautionContent
           cautionChecked={cautionChecked}
@@ -99,6 +102,7 @@ const ProgramApply = ({
         nextButtonText={isLoggedIn ? '신청서 확인하기' : '닫기'}
         position="center"
         onNextButtonClick={handleApplyNextButton}
+        hasFoldButton={false}
       >
         <ResultContent announcementDate={announcementDate} />
       </Modal>

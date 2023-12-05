@@ -11,7 +11,7 @@ const ResultContent = ({ announcementDate }: ResultContentProps) => {
       <p className="mt-3 text-gray-500">
         <b className="font-medium">합격 발표 일자</b>
         <br />
-        <span>{announcementDate}</span>
+        <span>{formatDateString(announcementDate)}</span>
       </p>
     </div>
   );
