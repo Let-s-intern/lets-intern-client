@@ -1,4 +1,6 @@
 import styled from 'styled-components';
+import { VscTriangleDown } from 'react-icons/vsc';
+
 import { ModalProps } from '../interface';
 import ScrollBox from './Scrollbox';
 
@@ -12,15 +14,17 @@ const Modal = ({
   isNextButtonDisabled = false,
   onNextButtonClick,
   children,
+  onFoldButtonClick,
+  hasFoldButton = true,
 }: ModalProps) => {
   return (
     <div
-      className={`flex w-full cursor-auto justify-center${
+      className={`flex w-full cursor-auto flex-col items-center${
         position === 'bottom' ? ' fixed bottom-0' : ''
       }`}
     >
       <div
-        className={`w-full bg-white shadow${
+        className={`relative w-full bg-white shadow${
           position === 'bottom'
             ? ' fixed bottom-0 max-w-2xl rounded-tl-2xl rounded-tr-2xl'
             : ' mx-5 max-w-md rounded sm:mx-0'
@@ -29,6 +33,15 @@ const Modal = ({
           e.stopPropagation();
         }}
       >
+        {hasFoldButton && (
+          <TopFoldButtonArea>
+            <TopButton type="button" onClick={onFoldButtonClick}>
+              <i>
+                <VscTriangleDown />
+              </i>
+            </TopButton>
+          </TopFoldButtonArea>
+        )}
         <ScrollBox className="max-h-[400px] overflow-y-scroll px-6 py-8">
           {children}
         </ScrollBox>
@@ -58,4 +71,26 @@ const NextButton = styled.button<NextButtonProps>`
   font-weight: 500;
   color: white;
   cursor: ${({ $disabled }) => ($disabled ? `auto` : `pointer`)};
+`;
+
+const TopFoldButtonArea = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  transform: translateY(-100%);
+`;
+
+const TopButton = styled.button`
+  width: 4rem;
+  cursor: pointer;
+  border-top-left-radius: 0.375rem;
+  border-top-right-radius: 0.375rem;
+  background-color: #ffffff;
+  padding: 0.125rem 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 `;
