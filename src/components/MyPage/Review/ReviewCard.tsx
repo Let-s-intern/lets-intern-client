@@ -45,7 +45,9 @@ const ReviewCard = ({
       </CardMiddle>
       {hasCancel && (
         <CardBottom>
-          <CardBottomLink>{bottomText}</CardBottomLink>
+          <CardBottomLink className="ga_create_review">
+            {bottomText}
+          </CardBottomLink>
         </CardBottom>
       )}
     </CardBlock>
