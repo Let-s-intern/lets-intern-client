@@ -55,6 +55,7 @@ const ApplicationCard = ({
         {hasCancel && (
           <CardBottom>
             <CardBottomLink
+              className="ga_cancel_program"
               onClick={(e) => {
                 e.stopPropagation();
                 setIsDeleteModal(true);
