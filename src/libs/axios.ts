@@ -8,6 +8,8 @@ axios.defaults.headers.common.Authorization = `Bearer ${localStorage.getItem(
   'access-token',
 )}`;
 
+const isRefreshing = false;
+
 axios.interceptors.response.use(
   (response) => {
     return response;
@@ -19,19 +21,31 @@ axios.interceptors.response.use(
         const accessToken = localStorage.getItem('access-token');
         const refreshToken = localStorage.getItem('refresh-token');
         try {
-          const res = await axios.post('/user/reissue', {
-            accessToken,
-            refreshToken,
-          });
+          const res = await axios.post(
+            '/user/reissue',
+            {
+              accessToken,
+              refreshToken,
+            },
+            {
+              headers: {
+                Authorization: '',
+              },
+            },
+          );
           localStorage.setItem('access-token', res.data.accessToken);
           localStorage.setItem('refresh-token', res.data.refreshToken);
           axios.defaults.headers.common.Authorization = `Bearer ${res.data.accessToken}`;
           originalRequest.headers.Authorization = `Bearer ${res.data.accessToken}`;
           return axios(originalRequest);
-        } catch (error) {
-          localStorage.removeItem('access-token');
-          localStorage.removeItem('refresh-token');
-          window.location.reload();
+        } catch (err: any) {
+          if (err.response.status === 404) {
+            if (err.response.data.code === 'ADMIN_404_2') {
+              localStorage.removeItem('access-token');
+              localStorage.removeItem('refresh-token');
+              window.location.reload();
+            }
+          }
         }
       }
     }
