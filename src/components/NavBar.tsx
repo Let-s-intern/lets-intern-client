@@ -10,7 +10,6 @@ interface SideNavItemProps {
 }
 
 const NavBar = () => {
-  const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [user, setUser] = useState<any>(null);
