@@ -54,6 +54,7 @@ const ProgramApply = ({
         position="bottom"
         onNextButtonClick={handleApplyNextButton}
         onFoldButtonClick={handleApplyModalClose}
+        nextButtonClass="member-type-next-button"
       >
         <MemberTypeContent
           memberChecked={memberChecked}
@@ -69,6 +70,7 @@ const ProgramApply = ({
         onNextButtonClick={handleApplyNextButton}
         isNextButtonDisabled={isNextButtonDisabled}
         onFoldButtonClick={handleApplyModalClose}
+        nextButtonClass="member-info-input-next-button"
       >
         <MemberInfoInputContent
           user={user}
@@ -88,6 +90,7 @@ const ProgramApply = ({
         onNextButtonClick={handleApplyNextButton}
         isNextButtonDisabled={isNextButtonDisabled}
         hasFoldButton={false}
+        nextButtonClass="caution-next-button"
       >
         <CautionContent
           cautionChecked={cautionChecked}
@@ -103,6 +106,7 @@ const ProgramApply = ({
         position="center"
         onNextButtonClick={handleApplyNextButton}
         hasFoldButton={false}
+        nextButtonClass="complete-button"
       >
         <ResultContent announcementDate={announcementDate} />
       </Modal>
