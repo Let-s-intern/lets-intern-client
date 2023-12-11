@@ -36,9 +36,9 @@ const Router = () => {
         <Route path="/" element={<Layout />}>
           {/* / */}
           <Route path="" element={<Programs />} />
+          {/* /program/detail/:programId */}
+          <Route path="program/detail/:programId" element={<ProgramDetail />} />
           <Route path="program/:programId">
-            {/* /program/:programId */}
-            <Route path="" element={<ProgramDetail />} />
             {/* /program/:programId/application/:applicationId/review/create */}
             <Route
               path="application/:applicationId/review/create"

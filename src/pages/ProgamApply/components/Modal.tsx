@@ -1,8 +1,18 @@
 import styled from 'styled-components';
 import { VscTriangleDown } from 'react-icons/vsc';
 
-import { ModalProps } from '../interface';
 import ScrollBox from './Scrollbox';
+
+interface ModalProps {
+  position: 'bottom' | 'center';
+  nextButtonText?: string;
+  isNextButtonDisabled?: boolean;
+  onNextButtonClick: () => void;
+  children: React.ReactNode;
+  onFoldButtonClick?: () => void;
+  hasFoldButton?: boolean;
+  nextButtonClass?: string;
+}
 
 interface NextButtonProps {
   $disabled: boolean;
@@ -16,6 +26,7 @@ const Modal = ({
   children,
   onFoldButtonClick,
   hasFoldButton = true,
+  nextButtonClass,
 }: ModalProps) => {
   return (
     <div
@@ -54,6 +65,7 @@ const Modal = ({
               onNextButtonClick();
             }
           }}
+          className={nextButtonClass ? nextButtonClass : ''}
         >
           {nextButtonText}
         </NextButton>

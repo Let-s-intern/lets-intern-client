@@ -41,7 +41,7 @@ const Card = ({
   page = 'main',
 }: CardProps) => {
   const link: Record<string, string> = {
-    main: `/program/${program.id}`,
+    main: `/program/detail/${program.id}`,
     'review-create': `/program/${program.id}/review/create`,
     review: `/program/${program.id}/review/${reviewId}`,
   };
