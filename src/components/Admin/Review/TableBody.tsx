@@ -2,6 +2,7 @@ import styled from 'styled-components';
 
 import TD from '../TD';
 import ActionButton from '../ActionButton';
+import formatDateString from '../../../libs/formatDateString';
 
 interface TableBodyProps {
   programList: any;
@@ -13,8 +14,8 @@ const TableBody = ({ programList, copyReviewCreateLink }: TableBodyProps) => {
     <thead>
       {programList.map((program: any) => (
         <tr>
-          <TD>{program.title}</TD>
-          <TD>{program.announcementDate}</TD>
+          <TD whiteSpace="wrap">{program.title}</TD>
+          <TD>{formatDateString(program.announcementDate)}</TD>
           <TD>
             <ButtonGroup>
               <ActionButton to={`/admin/reviews/${program.id}`} bgColor="blue">

@@ -45,7 +45,7 @@ const ProgramUsers = ({
           </ActionButtonGroup>
         )}
       </Top>
-      <Table>
+      <Table minWidth={2000}>
         <UserTableHead />
         <UserTableBody
           applications={applications}

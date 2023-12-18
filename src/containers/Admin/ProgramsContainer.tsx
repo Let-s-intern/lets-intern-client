@@ -13,9 +13,7 @@ const ProgramsContainer = () => {
     axios
       .get('/program/admin')
       .then((res) => {
-        const data = res.data.programList;
-        console.log(data);
-        setProgramList(data);
+        setProgramList(res.data.programList);
       })
       .catch((err) => {
         setError(err);

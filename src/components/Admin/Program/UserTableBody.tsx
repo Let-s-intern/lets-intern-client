@@ -36,9 +36,9 @@ const UserTableBody = ({
           <TD>
             {application.optionalInfo ? application.optionalInfo.major : ''}
           </TD>
-          <TD>{application.application.wishJob}</TD>
-          <TD>{application.application.wishCompany}</TD>
-          <TD>{application.application.applyMotive}</TD>
+          <TD whiteSpace="wrap">{application.application.wishJob}</TD>
+          <TD whiteSpace="wrap">{application.application.wishCompany}</TD>
+          <TD whiteSpace="wrap">{application.application.applyMotive}</TD>
           <TD>
             {application.application.way === 'OFFLINE'
               ? '오프라인'
@@ -66,7 +66,7 @@ const UserTableBody = ({
             </FormControl>
           </TD>
           <TD>{application.application.createdAt}</TD>
-          <TD>{application.application.preQuestions}</TD>
+          <TD whiteSpace="wrap">{application.application.preQuestions}</TD>
         </tr>
       ))}
     </tbody>

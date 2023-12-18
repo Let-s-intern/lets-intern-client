@@ -1,24 +1,42 @@
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
 interface TDProps {
   textAlign?: 'left' | 'center';
+  whiteSpace?: 'wrap' | 'nowrap';
   children?: React.ReactNode;
 }
 
 interface TDBlockProps {
   $textAlign?: 'left' | 'center';
+  $whiteSpace?: 'wrap' | 'nowrap';
 }
+
+const TD = ({
+  textAlign = 'center',
+  whiteSpace = 'nowrap',
+  children,
+}: TDProps) => {
+  return (
+    <TDBlock $textAlign={textAlign} $whiteSpace={whiteSpace}>
+      {children}
+    </TDBlock>
+  );
+};
+
+export default TD;
 
 const TDBlock = styled.td<TDBlockProps>`
   border: 1px solid #cbd5e0;
   padding: 0.5rem 1rem;
   font-size: 0.75rem;
-
-  ${({ $textAlign }) => $textAlign && `text-align: ${$textAlign};`}
+  ${({ $textAlign }) =>
+    $textAlign &&
+    css`
+      text-align: ${$textAlign};
+    `}
+  ${({ $whiteSpace }) =>
+    $whiteSpace === 'nowrap' &&
+    css`
+      white-space: nowrap;
+    `}
 `;
-
-const TD = ({ textAlign = 'center', children }: TDProps) => {
-  return <TDBlock $textAlign={textAlign}>{children}</TDBlock>;
-};
-
-export default TD;
