@@ -39,13 +39,9 @@ axios.interceptors.response.use(
           originalRequest.headers.Authorization = `Bearer ${res.data.accessToken}`;
           return axios(originalRequest);
         } catch (err: any) {
-          if (err.response.status === 404) {
-            if (err.response.data.code === 'ADMIN_404_2') {
-              localStorage.removeItem('access-token');
-              localStorage.removeItem('refresh-token');
-              window.location.reload();
-            }
-          }
+          localStorage.removeItem('access-token');
+          localStorage.removeItem('refresh-token');
+          window.location.reload();
         }
       }
     }

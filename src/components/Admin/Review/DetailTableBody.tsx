@@ -21,8 +21,8 @@ const DetailTableBody = ({
           <TD>{review.userName ? '회원' : '비회원'}</TD>
           <TD>{review.userName ? review.userName : '익명'}</TD>
           <TD>{review.grade}</TD>
-          <TD>{review.reviewContents}</TD>
-          <TD>{review.suggestContents}</TD>
+          <TD whiteSpace="wrap">{review.reviewContents}</TD>
+          <TD whiteSpace="wrap">{review.suggestContents}</TD>
           <TD>{review.createdAt}</TD>
           <TD>
             <FormControl sx={{ width: 100 }}>

@@ -3,12 +3,14 @@ import styled from 'styled-components';
 import Button from '../../Button';
 
 interface ApplySectionProps {
+  program: any;
   handleApplyButtonClick: () => void;
   participated: boolean;
   isFirstOpen: boolean;
 }
 
 const ApplySection = ({
+  program,
   handleApplyButtonClick,
   participated,
   isFirstOpen,
@@ -17,14 +19,16 @@ const ApplySection = ({
     <ApplySectionBlock>
       <ApplyButtonWrapper>
         <ApplyButton
-          disabled={participated}
+          disabled={program.status !== 'OPEN' || participated}
           onClick={() => {
             if (!participated) {
               handleApplyButtonClick();
             }
           }}
         >
-          {participated
+          {program.status !== 'OPEN'
+            ? '신청 마감'
+            : participated
             ? '신청 완료'
             : isFirstOpen
             ? '신청하기'

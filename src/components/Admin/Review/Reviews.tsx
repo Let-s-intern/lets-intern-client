@@ -15,7 +15,7 @@ const Reviews = ({ programList, copyReviewCreateLink }: ReviewsProps) => {
       <Header>
         <Heading>후기 관리</Heading>
       </Header>
-      <Table>
+      <Table minWidth={1000}>
         <TableHead />
         <TableBody
           programList={programList}
