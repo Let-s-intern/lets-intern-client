@@ -35,7 +35,7 @@ const Programs = () => {
           programs.filter((program: any) => program.status === 'OPEN'),
         );
         setClosedPrograms(
-          programs.filter((program: any) => program.status === 'DONE'),
+          programs.filter((program: any) => program.status !== 'OPEN'),
         );
       })
       .catch((err) => {

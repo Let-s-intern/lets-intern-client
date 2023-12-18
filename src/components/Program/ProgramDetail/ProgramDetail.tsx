@@ -99,6 +99,7 @@ const ProgramDetail = ({
         )}
       </TabContent>
       <ApplySection
+        program={program}
         handleApplyButtonClick={handleApplyButtonClick}
         participated={participated}
         isFirstOpen={isFirstOpen}

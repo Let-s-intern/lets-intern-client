@@ -3,6 +3,7 @@ import { ImExit } from 'react-icons/im';
 import { useEffect } from 'react';
 
 import axios from '../libs/axios';
+import styled from 'styled-components';
 
 const AdminLayout = () => {
   const navigate = useNavigate();
@@ -64,36 +65,94 @@ const AdminLayout = () => {
   ];
 
   return (
-    <div className="flex font-notosans">
-      <aside className="min-w-60 h-screen min-w-[250px] bg-indigo-100 px-10 py-8">
-        <nav className="flex flex-col gap-7">
+    <AdminLayoutBlock>
+      <LeftSection>
+        <NavBar>
           {navData.map((navSection, index) => (
-            <section key={index}>
-              <header className="text-xl font-bold">{navSection.title}</header>
-              <ul>
+            <NavSection key={index}>
+              <NavSectionHeading>{navSection.title}</NavSectionHeading>
+              <NavSectionList>
                 {navSection.itemList.map((navItem, index) => (
-                  <li key={index} className="mt-3 flex">
-                    <Link
-                      to={navItem.url}
-                      className="flex flex-1 items-center gap-1"
-                    >
+                  <NavListItem key={index}>
+                    <NavLink to={navItem.url}>
                       {navItem.name}
                       {'isExit' in navItem && (
-                        <ImExit className="translate-y-[1px]" />
+                        <NavIcon>
+                          <ExitIcon />
+                        </NavIcon>
                       )}
-                    </Link>
-                  </li>
+                    </NavLink>
+                  </NavListItem>
                 ))}
-              </ul>
-            </section>
+              </NavSectionList>
+            </NavSection>
           ))}
-        </nav>
-      </aside>
-      <main className="container relative flex-1 px-8 py-8">
+        </NavBar>
+        <NavSpacer />
+      </LeftSection>
+      <RightSection>
         <Outlet />
-      </main>
-    </div>
+      </RightSection>
+    </AdminLayoutBlock>
   );
 };
 
 export default AdminLayout;
+
+const AdminLayoutBlock = styled.div`
+  display: flex;
+  font-family: NotoSansKR, sans-serif;
+`;
+
+const LeftSection = styled.div``;
+
+const NavBar = styled.nav`
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1000;
+  width: 250px;
+  height: 100vh;
+  background-color: #e0e7ff;
+  padding: 2rem 2.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.75rem;
+`;
+
+const NavSection = styled.section``;
+
+const NavSectionHeading = styled.div`
+  font-size: 1.25rem;
+  font-weight: 700;
+`;
+
+const NavSectionList = styled.ul``;
+
+const NavListItem = styled.li`
+  margin-top: 0.75rem;
+`;
+
+const NavLink = styled(Link)`
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+`;
+
+const NavIcon = styled.i``;
+
+const ExitIcon = styled(ImExit)`
+  transform: translateY(1px);
+`;
+
+const NavSpacer = styled.div`
+  width: 250px;
+`;
+
+const RightSection = styled.main`
+  position: relative;
+  flex: 1;
+  padding: 2rem;
+  width: calc(100% - 250px);
+  min-height: 100vh;
+`;
