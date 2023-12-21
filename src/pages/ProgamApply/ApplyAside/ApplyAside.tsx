@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import cn from 'classnames';
 
 import './index.scss';
@@ -28,6 +28,17 @@ const ApplyAside = ({ program }: ApplyAsdieProps) => {
     }
   };
 
+  useEffect(() => {
+    const accessToken = localStorage.getItem('access-token');
+    const refreshToken = localStorage.getItem('refresh-token');
+
+    if (accessToken && refreshToken) {
+      setIsLoggedIn(true);
+    } else {
+      setIsLoggedIn(false);
+    }
+  }, []);
+
   let content;
   let modalContent;
 
@@ -37,6 +48,9 @@ const ApplyAside = ({ program }: ApplyAsdieProps) => {
     );
     modalContent = null;
   } else if (applyPageIndex === 1) {
+    if (isLoggedIn) {
+      setApplyPageIndex(2);
+    }
     content = (
       <StartContent program={program} setApplyPageIndex={setApplyPageIndex} />
     );
@@ -49,7 +63,6 @@ const ApplyAside = ({ program }: ApplyAsdieProps) => {
         isLoggedIn={isLoggedIn}
         setFormData={setFormData}
         setApplyPageIndex={setApplyPageIndex}
-        setIsLoggedIn={setIsLoggedIn}
       />
     );
     modalContent = null;

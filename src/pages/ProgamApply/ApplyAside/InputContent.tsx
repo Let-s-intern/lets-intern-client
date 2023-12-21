@@ -5,6 +5,8 @@ import { FormControl, InputLabel, MenuItem, Select } from '@mui/material';
 import Input from '../../../components/Input';
 import styles from './InputContent.module.scss';
 import axios from '../../../libs/axios';
+import { typeToText } from '../../../libs/converTypeToText';
+import { isValidEmail, isValidPhoneNumber } from '../../../libs/valid';
 
 interface InputContent {
   program: any;
@@ -12,7 +14,6 @@ interface InputContent {
   isLoggedIn: boolean;
   setApplyPageIndex: (applyPageIndex: number) => void;
   setFormData: (formData: any) => void;
-  setIsLoggedIn: (isLoggedIn: boolean) => void;
 }
 
 const InputContent = ({
@@ -21,7 +22,6 @@ const InputContent = ({
   isLoggedIn,
   setApplyPageIndex,
   setFormData,
-  setIsLoggedIn,
 }: InputContent) => {
   const [hasDetailInfo, setHasDetailInfo] = useState<boolean>(false);
   const [isNextButtonDisabled, setIsNextButtonDisabled] =
@@ -39,33 +39,23 @@ const InputContent = ({
   useEffect(() => {
     setLoading(true);
 
-    const accessToken = localStorage.getItem('access-token');
-    const refreshToken = localStorage.getItem('refresh-token');
-
-    if (accessToken && refreshToken) {
-      setIsLoggedIn(true);
-    } else {
-      setIsLoggedIn(false);
-    }
-
     const fetchData = async () => {
-      if (accessToken && refreshToken) {
+      if (isLoggedIn) {
         let res = await axios.get('/user/detail-info');
         const hasDetailInfoData = res.data;
         setHasDetailInfo(hasDetailInfoData);
 
         res = await axios.get(`/user`);
-        console.log(res);
         setFormData({
           ...res.data,
           major: hasDetailInfoData ? res.data.major : '',
           university: hasDetailInfoData ? res.data.university : '',
         });
-        setLoading(false);
       } else {
         setFormData({});
         setHasDetailInfo(false);
       }
+      setLoading(false);
     };
 
     fetchData();
@@ -94,6 +84,13 @@ const InputContent = ({
   const handleSubmit = (e: any) => {
     e.preventDefault();
     if (isNextButtonDisabled) return;
+    if (!isValidEmail(formData.email)) {
+      alert('이메일 형식이 올바르지 않습니다.');
+      return;
+    } else if (!isValidPhoneNumber(formData.phoneNum)) {
+      alert('휴대폰 번호 형식이 올바르지 않습니다.');
+      return;
+    }
     setApplyPageIndex(3);
   };
 
@@ -113,8 +110,10 @@ const InputContent = ({
 
   return (
     <form className={styles.content} onSubmit={handleSubmit}>
-      <h3>챌린지</h3>
-      <h2>테스트용 챌린지</h2>
+      <div>
+        <h3>{typeToText[program.type]}</h3>
+        <h2>{program.title}</h2>
+      </div>
       {!loading && (
         <div className={styles['input-list']}>
           <Input
@@ -125,7 +124,6 @@ const InputContent = ({
             disabled={isLoggedIn}
           />
           <Input
-            type="email"
             label="이메일"
             name="email"
             placeholder="example@example.com"

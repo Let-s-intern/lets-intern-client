@@ -92,8 +92,8 @@ const ProgramDetailBlock = styled.div`
   padding: 1rem;
   margin: 0 auto;
 
-  @media (min-width: 768px) {
-    max-width: 768px;
+  @media (min-width: 640px) {
+    max-width: 640px;
   }
 
   @media (min-width: 1080px) {

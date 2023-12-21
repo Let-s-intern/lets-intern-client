@@ -130,7 +130,7 @@ const ApplyButton = styled(Button)`
   padding-right: 1.5rem;
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.25);
 
-  @media (min-width: 768px) {
+  @media (min-width: 640px) {
     width: auto;
   }
 `;
