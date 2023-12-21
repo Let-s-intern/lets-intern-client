@@ -1,8 +1,9 @@
 import { useParams } from 'react-router-dom';
+import { useQueryClient } from 'react-query';
+
 import axios from '../../../../libs/axios';
 import { typeToText } from '../../../../libs/converTypeToText';
-import styles from './CautionContent.module.scss';
-import { useQueryClient } from 'react-query';
+import classes from './CautionContent.module.scss';
 
 interface CautionContentProps {
   program: any;
@@ -62,7 +63,7 @@ const CautionContent = ({
   };
 
   return (
-    <div className={styles['caution-content']}>
+    <div className={classes['caution-content']}>
       <h3>{typeToText[program.type]}</h3>
       <h2>{program.title}</h2>
       <h4>[필독사항]</h4>

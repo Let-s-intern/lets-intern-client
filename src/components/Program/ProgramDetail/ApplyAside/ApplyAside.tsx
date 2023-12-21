@@ -2,8 +2,7 @@ import { useEffect, useState } from 'react';
 import cn from 'classnames';
 
 import './index.scss';
-
-import styles from './ApplyAside.module.scss';
+import classes from './ApplyAside.module.scss';
 import StartContent from './StartContent';
 import MemberSelect from './MemberSelect';
 import InputContent from './InputContent';
@@ -107,12 +106,12 @@ const ApplyAside = ({ program, participated }: ApplyAsdieProps) => {
   return (
     <>
       {modalContent && (
-        <div className={styles['black-background']} onClick={handleModalClose}>
+        <div className={classes['black-background']} onClick={handleModalClose}>
           <div className="modal">{modalContent}</div>
         </div>
       )}
-      <aside className={styles['apply-aside']}>
-        <div className={cn('apply-aside-content', styles.content)}>
+      <aside className={classes['apply-aside']}>
+        <div className={cn('apply-aside-content', classes.content)}>
           {content}
         </div>
       </aside>
