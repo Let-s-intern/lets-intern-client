@@ -2,14 +2,14 @@ import { useEffect, useRef, useState } from 'react';
 import cn from 'classnames';
 import { FormControl, InputLabel, MenuItem, Select } from '@mui/material';
 
-import Input from '../../../components/Input';
+import Input from '../../../Input';
 import styles from './InputContent.module.scss';
-import axios from '../../../libs/axios';
-import { typeToText } from '../../../libs/converTypeToText';
-import { isValidEmail, isValidPhoneNumber } from '../../../libs/valid';
+import axios from '../../../../libs/axios';
+import { typeToText } from '../../../../libs/converTypeToText';
+import { isValidEmail, isValidPhoneNumber } from '../../../../libs/valid';
 import { useQuery } from 'react-query';
 
-interface InputContent {
+interface InputContentProps {
   program: any;
   formData: any;
   isLoggedIn: boolean;
@@ -27,7 +27,7 @@ const InputContent = ({
   isLoggedIn,
   setApplyPageIndex,
   setFormData,
-}: InputContent) => {
+}: InputContentProps) => {
   const scrollRef = useRef<ScrollableDiv>(null);
 
   const [isNextButtonDisabled, setIsNextButtonDisabled] =
@@ -72,7 +72,7 @@ const InputContent = ({
       setFormData({});
     }
     setLoading(false);
-  }, [isLoggedIn, userData, hasDetailInfo]);
+  }, [isLoggedIn, userData, hasDetailInfo, setFormData]);
 
   useEffect(() => {
     if (loading) return;
@@ -120,7 +120,7 @@ const InputContent = ({
     ) {
       setIsNextButtonDisabled(false);
     }
-  }, [formData]);
+  }, [program, formData]);
 
   const handleSubmit = (e: any) => {
     e.preventDefault();

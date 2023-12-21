@@ -1,7 +1,7 @@
 import cn from 'classnames';
 
 import styles from './ResultContent.module.scss';
-import formatDateString from '../../../libs/formatDateString';
+import formatDateString from '../../../../libs/formatDateString';
 
 interface MemberSelectProps {
   announcementDate: string;

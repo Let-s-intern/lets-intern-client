@@ -1,4 +1,4 @@
-import formatDateString from '../../../libs/formatDateString';
+import formatDateString from '../../../../libs/formatDateString';
 
 interface ResultContentProps {
   announcementDate: string;

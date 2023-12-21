@@ -1,6 +1,6 @@
 import { useParams } from 'react-router-dom';
-import axios from '../../../libs/axios';
-import { typeToText } from '../../../libs/converTypeToText';
+import axios from '../../../../libs/axios';
+import { typeToText } from '../../../../libs/converTypeToText';
 import styles from './CautionContent.module.scss';
 import { useQueryClient } from 'react-query';
 

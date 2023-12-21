@@ -2,13 +2,15 @@ import Axios from 'axios';
 
 const axios = Axios.create();
 
+const accessToken = localStorage.getItem('access-token');
+const refreshToken = localStorage.getItem('refresh-token');
+
 axios.defaults.baseURL = `${process.env.REACT_APP_SERVER_API}`;
 axios.defaults.headers.common['Content-Type'] = 'application/json';
-axios.defaults.headers.common.Authorization = `Bearer ${localStorage.getItem(
-  'access-token',
-)}`;
-
-const isRefreshing = false;
+axios.defaults.headers.common.Authorization =
+  accessToken && refreshToken
+    ? `Bearer ${localStorage.getItem('access-token')}`
+    : '';
 
 axios.interceptors.response.use(
   (response) => {
@@ -39,9 +41,13 @@ axios.interceptors.response.use(
           originalRequest.headers.Authorization = `Bearer ${res.data.accessToken}`;
           return axios(originalRequest);
         } catch (err: any) {
-          localStorage.removeItem('access-token');
-          localStorage.removeItem('refresh-token');
-          window.location.reload();
+          if (err.response.status === 404) {
+            if (err.response.data.code === 'ADMIN_404_2') {
+              localStorage.removeItem('access-token');
+              localStorage.removeItem('refresh-token');
+              window.location.reload();
+            }
+          }
         }
       }
     }

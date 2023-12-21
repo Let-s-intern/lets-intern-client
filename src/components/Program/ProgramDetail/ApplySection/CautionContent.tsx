@@ -1,4 +1,8 @@
-import { CautionContentProps } from '../interface';
+interface CautionContentProps {
+  cautionChecked: boolean;
+  notice: string;
+  onCautionChecked: () => void;
+}
 
 const CautionContent = ({
   cautionChecked,

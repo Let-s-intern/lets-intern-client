@@ -1,9 +1,9 @@
 import styled from 'styled-components';
 
-import Button from '../../Button';
+import Button from '../../../Button';
 import { useState } from 'react';
-import axios from '../../../libs/axios';
-import ProgramApply from '../../../pages/ProgamApply';
+import axios from '../../../../libs/axios';
+import ProgramApply from './ProgramApply';
 
 interface ApplySectionProps {
   program: any;
