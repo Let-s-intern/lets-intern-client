@@ -3,7 +3,7 @@ import cn from 'classnames';
 import { FormControl, InputLabel, MenuItem, Select } from '@mui/material';
 
 import Input from '../../../Input';
-import styles from './InputContent.module.scss';
+import classes from './InputContent.module.scss';
 import axios from '../../../../libs/axios';
 import { typeToText } from '../../../../libs/converTypeToText';
 import { isValidEmail, isValidPhoneNumber } from '../../../../libs/valid';
@@ -150,7 +150,7 @@ const InputContent = ({
   };
 
   return (
-    <form className={styles.content} onSubmit={handleSubmit}>
+    <form className={classes.content} onSubmit={handleSubmit}>
       <div>
         <h3>{typeToText[program.type]}</h3>
         <h2>{program.title}</h2>
@@ -158,7 +158,7 @@ const InputContent = ({
       {!loading && (
         <div
           ref={scrollRef}
-          className={cn(styles['input-list'], 'scrollable-box')}
+          className={cn(classes['input-list'], 'scrollable-box')}
         >
           <Input
             label="이름"

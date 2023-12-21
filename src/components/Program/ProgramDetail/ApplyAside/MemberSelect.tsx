@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import cn from 'classnames';
 
-import styles from './MemberSelect.module.scss';
+import classes from './MemberSelect.module.scss';
 import AlertModal from '../../../AlertModal';
 import { useNavigate, useParams } from 'react-router-dom';
 
@@ -51,12 +51,12 @@ const MemberSelect = ({ setApplyPageIndex }: MemberSelectProps) => {
 
   return (
     <div
-      className={styles.content}
+      className={classes.content}
       onClick={(e) => {
         e.stopPropagation();
       }}
     >
-      <div className={styles.top}>
+      <div className={classes.top}>
         <ul>
           <li onClick={() => handleMemberSelected('USER')}>
             {memberChecked === 'USER' && (
