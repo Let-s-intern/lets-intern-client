@@ -1,21 +1,102 @@
+import { useEffect, useState } from 'react';
+import cn from 'classnames';
 import { FormControl, InputLabel, MenuItem, Select } from '@mui/material';
-import Input from '../../../components/Input';
 
-interface MemberInfoInputContentProps {
-  user: any;
-  hasDetailInfo: boolean;
-  isLoggedIn: boolean;
+import Input from '../../../components/Input';
+import styles from './InputContent.module.scss';
+import axios from '../../../libs/axios';
+
+interface InputContent {
   program: any;
-  handleApplyInput: (e: any) => void;
+  formData: any;
+  isLoggedIn: boolean;
+  setApplyPageIndex: (applyPageIndex: number) => void;
+  setFormData: (formData: any) => void;
+  setIsLoggedIn: (isLoggedIn: boolean) => void;
 }
 
-const MemberInfoInputContent = ({
-  user,
-  hasDetailInfo,
-  isLoggedIn,
+const InputContent = ({
   program,
-  handleApplyInput,
-}: MemberInfoInputContentProps) => {
+  formData,
+  isLoggedIn,
+  setApplyPageIndex,
+  setFormData,
+  setIsLoggedIn,
+}: InputContent) => {
+  const [hasDetailInfo, setHasDetailInfo] = useState<boolean>(false);
+  const [isNextButtonDisabled, setIsNextButtonDisabled] =
+    useState<boolean>(true);
+  const [loading, setLoading] = useState<boolean>(true);
+
+  const handleApplyInput = (e: any) => {
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
+  };
+
+  useEffect(() => {
+    setLoading(true);
+
+    const accessToken = localStorage.getItem('access-token');
+    const refreshToken = localStorage.getItem('refresh-token');
+
+    if (accessToken && refreshToken) {
+      setIsLoggedIn(true);
+    } else {
+      setIsLoggedIn(false);
+    }
+
+    const fetchData = async () => {
+      if (accessToken && refreshToken) {
+        let res = await axios.get('/user/detail-info');
+        const hasDetailInfoData = res.data;
+        setHasDetailInfo(hasDetailInfoData);
+
+        res = await axios.get(`/user`);
+        console.log(res);
+        setFormData({
+          ...res.data,
+          major: hasDetailInfoData ? res.data.major : '',
+          university: hasDetailInfoData ? res.data.university : '',
+        });
+        setLoading(false);
+      } else {
+        setFormData({});
+        setHasDetailInfo(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  useEffect(() => {
+    setIsNextButtonDisabled(true);
+    if (!formData) return;
+    if (
+      formData.grade &&
+      formData.wishCompany &&
+      formData.wishJob &&
+      formData.applyMotive &&
+      formData.name &&
+      formData.email &&
+      formData.phoneNum &&
+      formData.major &&
+      formData.university &&
+      formData.inflowPath &&
+      (program.way === 'ALL' ? formData.way : true)
+    ) {
+      setIsNextButtonDisabled(false);
+    }
+  }, [formData]);
+
+  const handleSubmit = (e: any) => {
+    e.preventDefault();
+    if (isNextButtonDisabled) return;
+    setApplyPageIndex(3);
+  };
+
   const dropdownStyle = {
     '& .MuiOutlinedInput-root': {
       '&:hover fieldset': {
@@ -31,14 +112,15 @@ const MemberInfoInputContent = ({
   };
 
   return (
-    <>
-      <h1 className="text-center text-xl">신청 정보</h1>
-      <form className="mt-5 w-full">
-        <div className="mx-auto max-w-md space-y-3">
+    <form className={styles.content} onSubmit={handleSubmit}>
+      <h3>챌린지</h3>
+      <h2>테스트용 챌린지</h2>
+      {!loading && (
+        <div className={styles['input-list']}>
           <Input
             label="이름"
             name="name"
-            value={user.name}
+            value={formData.name}
             onChange={(e) => handleApplyInput(e)}
             disabled={isLoggedIn}
           />
@@ -47,7 +129,7 @@ const MemberInfoInputContent = ({
             label="이메일"
             name="email"
             placeholder="example@example.com"
-            value={user.email}
+            value={formData.email}
             onChange={(e) => handleApplyInput(e)}
             disabled={isLoggedIn}
           />
@@ -55,7 +137,7 @@ const MemberInfoInputContent = ({
             label="전화번호"
             name="phoneNum"
             placeholder="010-1234-5678"
-            value={user.phoneNum}
+            value={formData.phoneNum}
             onChange={(e) => handleApplyInput(e)}
             disabled={isLoggedIn}
           />
@@ -63,17 +145,17 @@ const MemberInfoInputContent = ({
             label="학교"
             name="university"
             placeholder="렛츠대학교"
-            value={user.university}
+            value={formData.university}
             onChange={(e) => handleApplyInput(e)}
-            disabled={hasDetailInfo}
+            disabled={hasDetailInfo ? true : false}
           />
           <Input
             label="전공"
             name="major"
             placeholder="컴퓨터공학과"
-            value={user.major}
+            value={formData.major}
             onChange={(e) => handleApplyInput(e)}
-            disabled={hasDetailInfo}
+            disabled={hasDetailInfo ? true : false}
           />
           <FormControl fullWidth sx={dropdownStyle}>
             <InputLabel id="grade">학년</InputLabel>
@@ -82,7 +164,7 @@ const MemberInfoInputContent = ({
               id="grade"
               label="학년"
               name="grade"
-              value={user.grade}
+              value={formData.grade}
               onChange={(e) => handleApplyInput(e)}
             >
               <MenuItem value="1">1학년</MenuItem>
@@ -96,13 +178,13 @@ const MemberInfoInputContent = ({
           <Input
             label="관심직군"
             name="wishJob"
-            value={user.wishJob}
+            value={formData.wishJob}
             onChange={(e) => handleApplyInput(e)}
           />
           <Input
             label="희망 기업 형태"
             name="wishCompany"
-            value={user.wishCompany}
+            value={formData.wishCompany}
             onChange={(e) => handleApplyInput(e)}
           />
           <FormControl fullWidth sx={dropdownStyle}>
@@ -112,7 +194,7 @@ const MemberInfoInputContent = ({
               id="inflowPath"
               label="유입 경로"
               name="inflowPath"
-              value={user.inflowPath}
+              value={formData.inflowPath}
               onChange={(e) => handleApplyInput(e)}
             >
               <MenuItem value="EVERYTIME">에브리타임</MenuItem>
@@ -136,7 +218,7 @@ const MemberInfoInputContent = ({
                 id="way"
                 label="온오프라인 참여 여부"
                 name="way"
-                value={user.way}
+                value={formData.way}
                 onChange={(e) => handleApplyInput(e)}
               >
                 <MenuItem value="ONLINE">온라인 (Zoom)</MenuItem>
@@ -149,7 +231,7 @@ const MemberInfoInputContent = ({
           <Input
             label="지원 동기"
             name="applyMotive"
-            value={user.applyMotive}
+            value={formData.applyMotive}
             onChange={(e) => handleApplyInput(e)}
             multiline
             rows={4}
@@ -159,16 +241,24 @@ const MemberInfoInputContent = ({
               label="사전 질문 (선택)"
               placeholder="멘토님께 궁금한 점이 있다면, 사전질문으로 남겨주세요!"
               name="preQuestions"
-              value={user.preQuestions}
+              value={formData.preQuestions}
               onChange={(e) => handleApplyInput(e)}
               multiline
               rows={4}
             />
           )}
         </div>
-      </form>
-    </>
+      )}
+      <button
+        type="submit"
+        className={cn({
+          disabled: isNextButtonDisabled,
+        })}
+      >
+        다음
+      </button>
+    </form>
   );
 };
 
-export default MemberInfoInputContent;
+export default InputContent;

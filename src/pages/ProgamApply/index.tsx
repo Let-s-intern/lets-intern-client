@@ -1,28 +1,27 @@
+import { useEffect, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import styled from 'styled-components';
 
+import axios from '../../libs/axios';
 import CautionContent from './components/CautionContent';
 import Modal from './components/Modal';
 import ResultContent from './components/ResultContent';
 import MemberTypeContent from './components/MemberTypeContent';
 import MemberInfoInputContent from './components/MemberInfoInputContent';
+import { isValidEmail, isValidPhoneNumber } from '../../libs/valid';
 
 interface ProgramApplyProps {
-  applyPageIndex: number;
   user: any;
   hasDetailInfo: boolean;
   isLoggedIn: boolean;
-  isNextButtonDisabled: boolean;
-  cautionChecked: boolean;
-  notice: string;
   program: any;
-  announcementDate: string;
-  programType: string;
-  handleApplyModalClose: () => void;
-  handleApplyNextButton: () => void;
-  handleApplyInput: (e: any) => void;
-  handleCautionChecked: () => void;
   memberChecked: 'USER' | 'GUEST' | '';
+  applyPageIndex: number;
+  setUser: (user: any) => void;
   setMemberChecked: (memberChecked: 'USER' | 'GUEST' | '') => void;
+  setApplyPageIndex: (applyPageIndex: number) => void;
+  setParticipated: (participated: boolean) => void;
+  setIsApplyModalOpen: (isApplyModalOpen: boolean) => void;
 }
 
 interface BlackBackgroundProps {
@@ -30,23 +29,147 @@ interface BlackBackgroundProps {
 }
 
 const ProgramApply = ({
-  applyPageIndex,
   user,
   hasDetailInfo,
   isLoggedIn,
-  isNextButtonDisabled,
-  cautionChecked,
-  notice,
   program,
-  announcementDate,
-  programType,
-  handleApplyModalClose,
-  handleApplyNextButton,
-  handleApplyInput,
-  handleCautionChecked,
   memberChecked,
+  applyPageIndex,
+  setUser,
   setMemberChecked,
+  setApplyPageIndex,
+  setParticipated,
+  setIsApplyModalOpen,
 }: ProgramApplyProps) => {
+  const navigate = useNavigate();
+  const params = useParams();
+
+  const [cautionChecked, setCautionChecked] = useState<boolean>(false);
+  const [isNextButtonDisabled, setIsNextButtonDisabled] =
+    useState<boolean>(false);
+  const [announcementDate, setAnnouncementDate] = useState<string>('');
+
+  useEffect(() => {
+    if (applyPageIndex !== 1) {
+      return;
+    }
+    setIsNextButtonDisabled(true);
+    if (
+      user.grade &&
+      user.wishCompany &&
+      user.wishJob &&
+      user.applyMotive &&
+      user.name &&
+      user.email &&
+      user.phoneNum &&
+      user.major &&
+      user.university &&
+      user.inflowPath &&
+      (program.way === 'ALL' ? user.way : true)
+    ) {
+      setIsNextButtonDisabled(false);
+    }
+  }, [applyPageIndex, user]);
+
+  const handleApplyNextButton = () => {
+    if (applyPageIndex === 1) {
+      if (!isValidEmail(user.email)) {
+        alert('이메일 형식이 올바르지 않습니다.');
+        return;
+      } else if (!isValidPhoneNumber(user.phoneNum)) {
+        alert('휴대폰 번호 형식이 올바르지 않습니다.');
+        return;
+      }
+      setApplyPageIndex(applyPageIndex + 1);
+      setCautionChecked(false);
+      setIsNextButtonDisabled(true);
+    } else if (applyPageIndex === 2) {
+      handleApplySubmit();
+    } else if (applyPageIndex === 3) {
+      if (isLoggedIn) {
+        navigate('/mypage/application');
+      } else {
+        handleApplyModalClose();
+      }
+    } else {
+      setApplyPageIndex(applyPageIndex + 1);
+    }
+  };
+
+  const handleApplyModalClose = () => {
+    if (applyPageIndex === 3) {
+      setApplyPageIndex(0);
+      setUser({
+        name: '',
+        email: '',
+        phoneNum: '',
+        major: '',
+        university: '',
+        grade: '',
+        wishCompany: '',
+        wishJob: '',
+        applyMotive: '',
+        preQuestions: '',
+        way: '',
+      });
+      setParticipated(true);
+      setIsApplyModalOpen(false);
+    } else {
+      setIsApplyModalOpen(false);
+    }
+  };
+
+  const handleApplyInput = (e: any) => {
+    const { name, value } = e.target;
+    setUser({
+      ...user,
+      [name]: value,
+    });
+  };
+
+  const handleApplySubmit = async () => {
+    try {
+      let newUser = { ...user, grade: Number(user.grade) };
+      if (program.way !== 'ALL') {
+        delete newUser.way;
+      }
+      if (!isLoggedIn) {
+        delete newUser.name;
+        delete newUser.email;
+        delete newUser.phoneNum;
+        newUser = {
+          ...newUser,
+          guestName: user.name,
+          guestEmail: user.email,
+          guestPhoneNum: user.phoneNum,
+        };
+      }
+      const res = await axios.post(
+        `/application/${params.programId}`,
+        newUser,
+        {
+          headers: {
+            Authorization: isLoggedIn
+              ? `Bearer ${localStorage.getItem('access-token')}`
+              : '',
+          },
+        },
+      );
+      setAnnouncementDate(res.data.announcementDate);
+      setApplyPageIndex(applyPageIndex + 1);
+    } catch (error) {
+      if ((error as any).response.status === 400) {
+        alert((error as any).response.data.reason);
+      }
+      console.error(error);
+    }
+  };
+
+  const handleCautionChecked = () => {
+    setIsNextButtonDisabled(cautionChecked);
+    setCautionChecked(!cautionChecked);
+  };
+
   return applyPageIndex === 0 ? (
     <BlackBackground $position="bottom" onClick={handleApplyModalClose}>
       <Modal
@@ -77,7 +200,6 @@ const ProgramApply = ({
           hasDetailInfo={hasDetailInfo}
           isLoggedIn={isLoggedIn}
           handleApplyInput={handleApplyInput}
-          programType={programType}
           program={program}
         />
       </Modal>
@@ -95,7 +217,7 @@ const ProgramApply = ({
         <CautionContent
           cautionChecked={cautionChecked}
           onCautionChecked={handleCautionChecked}
-          notice={notice}
+          notice={program.notice}
         />
       </Modal>
     </BlackBackground>

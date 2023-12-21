@@ -12,22 +12,13 @@ interface TabItemProps {
 const TabBar = ({ tab, onTabChange }: TabBarProps) => {
   return (
     <TabBarBlock>
-      <TabItem
-        onClick={() => onTabChange('DETAIL')}
-        {...(tab === 'DETAIL' && { $active: true })}
-      >
+      <TabItem onClick={() => onTabChange('DETAIL')} $active={tab === 'DETAIL'}>
         <span>상세정보</span>
       </TabItem>
-      <TabItem
-        onClick={() => onTabChange('REVIEW')}
-        {...(tab === 'REVIEW' && { $active: true })}
-      >
+      <TabItem onClick={() => onTabChange('REVIEW')} $active={tab === 'REVIEW'}>
         <span>후기</span>
       </TabItem>
-      <TabItem
-        onClick={() => onTabChange('FAQ')}
-        {...(tab === 'FAQ' && { $active: true })}
-      >
+      <TabItem onClick={() => onTabChange('FAQ')} $active={tab === 'FAQ'}>
         <span>FAQ</span>
       </TabItem>
     </TabBarBlock>
