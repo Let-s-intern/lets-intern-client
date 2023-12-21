@@ -61,6 +61,8 @@ const InputContent = ({
   };
 
   useEffect(() => {
+    if (loading) return;
+
     const handleScroll = () => {
       if (scrollRef.current) {
         scrollRef.current.classList.add('scrolling');
@@ -84,7 +86,7 @@ const InputContent = ({
         scrollableElement.removeEventListener('scroll', handleScroll);
       }
     };
-  }, []);
+  }, [loading, scrollRef]);
 
   useEffect(() => {
     setLoading(true);
