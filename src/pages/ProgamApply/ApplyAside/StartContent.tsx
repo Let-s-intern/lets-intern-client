@@ -25,10 +25,10 @@ const StartContent = ({
       <h3>{typeToText[program.type]}</h3>
       <h2>{program.title}</h2>
       <button
-        onClick={handleNextButtonClick}
-        className={cn({
+        className={cn('apply-button', {
           disabled: participated || program.status !== 'OPEN',
         })}
+        onClick={handleNextButtonClick}
       >
         {program.status !== 'OPEN'
           ? '신청 마감'

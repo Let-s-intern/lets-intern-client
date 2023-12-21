@@ -126,7 +126,7 @@ const InputContent = ({
           <Input
             label="이름"
             name="name"
-            value={formData.name}
+            value={formData.name ? formData.name : ''}
             onChange={(e) => handleApplyInput(e)}
             disabled={isLoggedIn}
           />
@@ -134,7 +134,7 @@ const InputContent = ({
             label="이메일"
             name="email"
             placeholder="example@example.com"
-            value={formData.email}
+            value={formData.email ? formData.email : ''}
             onChange={(e) => handleApplyInput(e)}
             disabled={isLoggedIn}
           />
@@ -142,7 +142,7 @@ const InputContent = ({
             label="전화번호"
             name="phoneNum"
             placeholder="010-1234-5678"
-            value={formData.phoneNum}
+            value={formData.phoneNum ? formData.phoneNum : ''}
             onChange={(e) => handleApplyInput(e)}
             disabled={isLoggedIn}
           />
@@ -150,7 +150,7 @@ const InputContent = ({
             label="학교"
             name="university"
             placeholder="렛츠대학교"
-            value={formData.university}
+            value={formData.university ? formData.university : ''}
             onChange={(e) => handleApplyInput(e)}
             disabled={hasDetailInfo ? true : false}
           />
@@ -158,7 +158,7 @@ const InputContent = ({
             label="전공"
             name="major"
             placeholder="컴퓨터공학과"
-            value={formData.major}
+            value={formData.major ? formData.major : ''}
             onChange={(e) => handleApplyInput(e)}
             disabled={hasDetailInfo ? true : false}
           />
@@ -169,7 +169,7 @@ const InputContent = ({
               id="grade"
               label="학년"
               name="grade"
-              value={formData.grade}
+              value={formData.grade ? formData.grade : ''}
               onChange={(e) => handleApplyInput(e)}
             >
               <MenuItem value="1">1학년</MenuItem>
@@ -183,13 +183,13 @@ const InputContent = ({
           <Input
             label="관심직군"
             name="wishJob"
-            value={formData.wishJob}
+            value={formData.wishJob ? formData.wishJob : ''}
             onChange={(e) => handleApplyInput(e)}
           />
           <Input
             label="희망 기업 형태"
             name="wishCompany"
-            value={formData.wishCompany}
+            value={formData.wishCompany ? formData.wishCompany : ''}
             onChange={(e) => handleApplyInput(e)}
           />
           <FormControl fullWidth sx={dropdownStyle}>
@@ -199,7 +199,7 @@ const InputContent = ({
               id="inflowPath"
               label="유입 경로"
               name="inflowPath"
-              value={formData.inflowPath}
+              value={formData.inflowPath ? formData.inflowPath : ''}
               onChange={(e) => handleApplyInput(e)}
             >
               <MenuItem value="EVERYTIME">에브리타임</MenuItem>
@@ -223,7 +223,7 @@ const InputContent = ({
                 id="way"
                 label="온오프라인 참여 여부"
                 name="way"
-                value={formData.way}
+                value={formData.way ? formData.way : ''}
                 onChange={(e) => handleApplyInput(e)}
               >
                 <MenuItem value="ONLINE">온라인 (Zoom)</MenuItem>
@@ -236,7 +236,7 @@ const InputContent = ({
           <Input
             label="지원 동기"
             name="applyMotive"
-            value={formData.applyMotive}
+            value={formData.applyMotive ? formData.applyMotive : ''}
             onChange={(e) => handleApplyInput(e)}
             multiline
             rows={4}
@@ -246,7 +246,7 @@ const InputContent = ({
               label="사전 질문 (선택)"
               placeholder="멘토님께 궁금한 점이 있다면, 사전질문으로 남겨주세요!"
               name="preQuestions"
-              value={formData.preQuestions}
+              value={formData.preQuestions ? formData.preQuestions : ''}
               onChange={(e) => handleApplyInput(e)}
               multiline
               rows={4}
@@ -256,7 +256,7 @@ const InputContent = ({
       )}
       <button
         type="submit"
-        className={cn({
+        className={cn('member-info-input-next-button', {
           disabled: isNextButtonDisabled,
         })}
       >
