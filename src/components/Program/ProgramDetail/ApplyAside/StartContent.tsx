@@ -1,6 +1,6 @@
 import cn from 'classnames';
 
-import styles from './StartContent.module.scss';
+import classes from './StartContent.module.scss';
 import { typeToText } from '../../../../libs/converTypeToText';
 
 interface StartContentProps {
@@ -21,7 +21,7 @@ const StartContent = ({
   };
 
   return (
-    <div className={styles.content}>
+    <div className={classes.content}>
       <h3>{typeToText[program.type]}</h3>
       <h2>{program.title}</h2>
       <button

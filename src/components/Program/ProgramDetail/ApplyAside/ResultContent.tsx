@@ -1,6 +1,6 @@
 import cn from 'classnames';
 
-import styles from './ResultContent.module.scss';
+import classes from './ResultContent.module.scss';
 import formatDateString from '../../../../libs/formatDateString';
 
 interface MemberSelectProps {
@@ -18,12 +18,12 @@ const ResultContent = ({
 
   return (
     <div
-      className={styles.content}
+      className={classes.content}
       onClick={(e) => {
         e.stopPropagation();
       }}
     >
-      <div className={styles.top}>
+      <div className={classes.top}>
         <h3>제출이 완료되었습니다.</h3>
         <p>{formatDateString(announcementDate)}</p>
       </div>
