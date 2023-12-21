@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import cn from 'classnames';
 import { FormControl, InputLabel, MenuItem, Select } from '@mui/material';
 
@@ -17,6 +17,10 @@ interface InputContent {
   setFormData: (formData: any) => void;
 }
 
+interface ScrollableDiv extends HTMLDivElement {
+  scrollTimeout?: number;
+}
+
 const InputContent = ({
   program,
   formData,
@@ -24,6 +28,8 @@ const InputContent = ({
   setApplyPageIndex,
   setFormData,
 }: InputContent) => {
+  const scrollRef = useRef<ScrollableDiv>(null);
+
   const [isNextButtonDisabled, setIsNextButtonDisabled] =
     useState<boolean>(true);
   const [loading, setLoading] = useState<boolean>(true);
@@ -53,6 +59,32 @@ const InputContent = ({
       [name]: value,
     });
   };
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (scrollRef.current) {
+        scrollRef.current.classList.add('scrolling');
+
+        clearTimeout(scrollRef.current.scrollTimeout);
+        scrollRef.current.scrollTimeout = setTimeout(() => {
+          if (scrollRef.current) {
+            scrollRef.current.classList.remove('scrolling');
+          }
+        }, 500) as unknown as number;
+      }
+    };
+
+    const scrollableElement = scrollRef.current;
+    if (scrollableElement) {
+      scrollableElement.addEventListener('scroll', handleScroll);
+    }
+
+    return () => {
+      if (scrollableElement) {
+        scrollableElement.removeEventListener('scroll', handleScroll);
+      }
+    };
+  }, []);
 
   useEffect(() => {
     setLoading(true);
@@ -122,7 +154,10 @@ const InputContent = ({
         <h2>{program.title}</h2>
       </div>
       {!loading && (
-        <div className={styles['input-list']}>
+        <div
+          ref={scrollRef}
+          className={cn(styles['input-list'], 'scrollable-box')}
+        >
           <Input
             label="이름"
             name="name"

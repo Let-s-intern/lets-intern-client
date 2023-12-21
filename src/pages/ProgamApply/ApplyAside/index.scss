@@ -47,3 +47,17 @@
     }
   }
 }
+
+.scrollable-box {
+  padding-right: 4px;
+  overflow-y: auto;
+
+  &::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  &.scrolling::-webkit-scrollbar-thumb {
+    background: #6963f6;
+    border-radius: 16px;
+  }
+}
