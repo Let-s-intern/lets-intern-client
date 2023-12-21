@@ -61,6 +61,22 @@ const InputContent = ({
   };
 
   useEffect(() => {
+    setLoading(true);
+    if (isLoggedIn && userData && hasDetailInfo) {
+      setFormData({
+        ...userData,
+        major: hasDetailInfo ? userData.major : '',
+        university: hasDetailInfo ? userData.university : '',
+      });
+    } else {
+      setFormData({});
+    }
+    setLoading(false);
+  }, [isLoggedIn, userData, hasDetailInfo]);
+
+  useEffect(() => {
+    if (loading) return;
+
     const handleScroll = () => {
       if (scrollRef.current) {
         scrollRef.current.classList.add('scrolling');
@@ -84,21 +100,7 @@ const InputContent = ({
         scrollableElement.removeEventListener('scroll', handleScroll);
       }
     };
-  }, []);
-
-  useEffect(() => {
-    setLoading(true);
-    if (isLoggedIn && userData && hasDetailInfo) {
-      setFormData({
-        ...userData,
-        major: hasDetailInfo ? userData.major : '',
-        university: hasDetailInfo ? userData.university : '',
-      });
-    } else {
-      setFormData({});
-    }
-    setLoading(false);
-  }, [isLoggedIn, userData, hasDetailInfo]);
+  }, [loading, scrollRef]);
 
   useEffect(() => {
     setIsNextButtonDisabled(true);
