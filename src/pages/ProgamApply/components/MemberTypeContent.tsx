@@ -19,7 +19,7 @@ const MemberTypeContent = ({
 
   const onConfirm = () => {
     setIsLoginModal(false);
-    navigate(`/login?redirect=/program/${params.programId}`);
+    navigate(`/login?redirect=/program/detail/${params.programId}`);
     setMemberChecked('USER');
   };
 

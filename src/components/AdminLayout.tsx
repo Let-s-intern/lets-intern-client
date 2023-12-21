@@ -104,7 +104,7 @@ const AdminLayoutBlock = styled.div`
   font-family: NotoSansKR, sans-serif;
 `;
 
-const LeftSection = styled.div``;
+const LeftSection = styled.aside``;
 
 const NavBar = styled.nav`
   position: fixed;
@@ -120,9 +120,9 @@ const NavBar = styled.nav`
   gap: 1.75rem;
 `;
 
-const NavSection = styled.section``;
+const NavSection = styled.div``;
 
-const NavSectionHeading = styled.div`
+const NavSectionHeading = styled.h3`
   font-size: 1.25rem;
   font-weight: 700;
 `;

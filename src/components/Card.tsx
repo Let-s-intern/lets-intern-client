@@ -66,12 +66,12 @@ const Card = ({
   if (closed) {
     return (
       <div
-        className={`w-full cursor-pointer rounded-lg border-[1.5px] border-gray-200 bg-white pb-10 pt-8 text-center text-[#9A99A4]${
+        className={`w-full cursor-pointer rounded-lg border-[1.5px] border-gray-200 bg-white px-4 pb-10 pt-8 text-center text-[#9A99A4]${
           className ? ` ${className}` : ''
         }`}
       >
         <span>{!loading ? typeToCategory[program.type] : ' '}</span>
-        <h2 className="mt-2 text-2xl font-medium">
+        <h2 className="mt-2 break-keep text-2xl font-medium">
           {program.title}
           <br />
           모집 마감
