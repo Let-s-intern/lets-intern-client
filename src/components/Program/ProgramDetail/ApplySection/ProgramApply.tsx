@@ -2,13 +2,14 @@ import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import styled from 'styled-components';
 
-import axios from '../../libs/axios';
-import CautionContent from './components/CautionContent';
-import Modal from './components/Modal';
-import ResultContent from './components/ResultContent';
-import MemberTypeContent from './components/MemberTypeContent';
-import MemberInfoInputContent from './components/MemberInfoInputContent';
-import { isValidEmail, isValidPhoneNumber } from '../../libs/valid';
+import axios from '../../../../libs/axios';
+import CautionContent from './CautionContent';
+import Modal from './Modal';
+import ResultContent from './ResultContent';
+
+import MemberInfoInputContent from './MemberInfoInputContent';
+import { isValidEmail, isValidPhoneNumber } from '../../../../libs/valid';
+import MemberTypeContent from './MemberTypeContent';
 
 interface ProgramApplyProps {
   user: any;
@@ -69,7 +70,7 @@ const ProgramApply = ({
     ) {
       setIsNextButtonDisabled(false);
     }
-  }, [applyPageIndex, user]);
+  }, [applyPageIndex, user, program]);
 
   const handleApplyNextButton = () => {
     if (applyPageIndex === 1) {

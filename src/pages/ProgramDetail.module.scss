@@ -1,17 +1,24 @@
-.main {
-  display: flex;
-  align-items: start;
-  gap: 2rem;
+.program-detail {
+  width: 100%;
+  min-height: 100vh;
+  padding: 1rem;
+  margin: 0 auto;
 
-  article {
-    flex: 1;
+  main {
+    display: flex;
+    align-items: flex-start;
+    gap: 2rem;
+
+    article {
+      flex: 1;
+    }
   }
 
-  // aside {
-  //   width: 300px;
-  //   border-radius: 0.75rem;
-  //   background: #fff;
-  //   box-shadow: 0px 0px 12px 0px rgba(0, 0, 0, 0.08);
-  //   padding: 1.5rem;
-  // }
+  @media (min-width: 640px) {
+    max-width: 640px;
+  }
+
+  @media (min-width: 1080px) {
+    max-width: 1080px;
+  }
 }

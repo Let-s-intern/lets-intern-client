@@ -1,4 +1,8 @@
-import { ListItemProps } from '../interface';
+interface ListItemProps {
+  checked?: boolean;
+  children: React.ReactNode;
+  onClick?: () => void;
+}
 
 const ListItem = ({ checked, children, onClick }: ListItemProps) => {
   return (
