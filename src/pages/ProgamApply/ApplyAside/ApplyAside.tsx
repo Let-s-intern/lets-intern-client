@@ -12,9 +12,10 @@ import ResultContent from './ResultContent';
 
 interface ApplyAsdieProps {
   program: any;
+  participated: boolean;
 }
 
-const ApplyAside = ({ program }: ApplyAsdieProps) => {
+const ApplyAside = ({ program, participated }: ApplyAsdieProps) => {
   const [applyPageIndex, setApplyPageIndex] = useState(0);
   const [formData, setFormData] = useState<any>(null);
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
@@ -44,7 +45,11 @@ const ApplyAside = ({ program }: ApplyAsdieProps) => {
 
   if (applyPageIndex === 0) {
     content = (
-      <StartContent program={program} setApplyPageIndex={setApplyPageIndex} />
+      <StartContent
+        program={program}
+        setApplyPageIndex={setApplyPageIndex}
+        participated={participated}
+      />
     );
     modalContent = null;
   } else if (applyPageIndex === 1) {
@@ -52,7 +57,11 @@ const ApplyAside = ({ program }: ApplyAsdieProps) => {
       setApplyPageIndex(2);
     }
     content = (
-      <StartContent program={program} setApplyPageIndex={setApplyPageIndex} />
+      <StartContent
+        program={program}
+        setApplyPageIndex={setApplyPageIndex}
+        participated={participated}
+      />
     );
     modalContent = <MemberSelect setApplyPageIndex={setApplyPageIndex} />;
   } else if (applyPageIndex === 2) {

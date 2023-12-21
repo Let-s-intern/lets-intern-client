@@ -72,7 +72,7 @@ const ProgramDetail = () => {
             faqList={faqList}
           />
         </article>
-        <ApplyAside program={program} />
+        <ApplyAside program={program} participated={participated} />
       </main>
       <ApplySection
         program={program}

@@ -2,6 +2,7 @@ import { useParams } from 'react-router-dom';
 import axios from '../../../libs/axios';
 import { typeToText } from '../../../libs/converTypeToText';
 import styles from './CautionContent.module.scss';
+import { useQueryClient } from 'react-query';
 
 interface CautionContentProps {
   program: any;
@@ -19,6 +20,7 @@ const CautionContent = ({
   setAnnouncementDate,
 }: CautionContentProps) => {
   const params = useParams();
+  const queryClient = useQueryClient();
 
   const handleApplySubmit = async () => {
     try {
@@ -50,6 +52,7 @@ const CautionContent = ({
       );
       setAnnouncementDate(res.data.announcementDate);
       setApplyPageIndex(4);
+      queryClient.invalidateQueries(['program', params.programId]);
     } catch (error) {
       if ((error as any).response.status === 400) {
         alert((error as any).response.data.reason);

@@ -7,6 +7,7 @@ import styles from './InputContent.module.scss';
 import axios from '../../../libs/axios';
 import { typeToText } from '../../../libs/converTypeToText';
 import { isValidEmail, isValidPhoneNumber } from '../../../libs/valid';
+import { useQuery } from 'react-query';
 
 interface InputContent {
   program: any;
@@ -23,10 +24,27 @@ const InputContent = ({
   setApplyPageIndex,
   setFormData,
 }: InputContent) => {
-  const [hasDetailInfo, setHasDetailInfo] = useState<boolean>(false);
   const [isNextButtonDisabled, setIsNextButtonDisabled] =
     useState<boolean>(true);
   const [loading, setLoading] = useState<boolean>(true);
+
+  const { data: userData } = useQuery({
+    queryKey: ['user'],
+    queryFn: async () => {
+      const res = await axios.get('/user');
+      return res.data;
+    },
+    enabled: isLoggedIn,
+  });
+
+  const { data: hasDetailInfo } = useQuery({
+    queryKey: ['user', 'detail-info'],
+    queryFn: async () => {
+      const res = await axios.get('/user/detail-info');
+      return res.data;
+    },
+    enabled: isLoggedIn,
+  });
 
   const handleApplyInput = (e: any) => {
     const { name, value } = e.target;
@@ -38,28 +56,17 @@ const InputContent = ({
 
   useEffect(() => {
     setLoading(true);
-
-    const fetchData = async () => {
-      if (isLoggedIn) {
-        let res = await axios.get('/user/detail-info');
-        const hasDetailInfoData = res.data;
-        setHasDetailInfo(hasDetailInfoData);
-
-        res = await axios.get(`/user`);
-        setFormData({
-          ...res.data,
-          major: hasDetailInfoData ? res.data.major : '',
-          university: hasDetailInfoData ? res.data.university : '',
-        });
-      } else {
-        setFormData({});
-        setHasDetailInfo(false);
-      }
-      setLoading(false);
-    };
-
-    fetchData();
-  }, []);
+    if (isLoggedIn && userData && hasDetailInfo) {
+      setFormData({
+        ...userData,
+        major: hasDetailInfo ? userData.major : '',
+        university: hasDetailInfo ? userData.university : '',
+      });
+    } else {
+      setFormData({});
+    }
+    setLoading(false);
+  }, [isLoggedIn, userData, hasDetailInfo]);
 
   useEffect(() => {
     setIsNextButtonDisabled(true);
