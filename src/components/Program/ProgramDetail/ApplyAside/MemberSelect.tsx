@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import cn from 'classnames';
 
 import styles from './MemberSelect.module.scss';
-import AlertModal from '../../../components/AlertModal';
+import AlertModal from '../../../AlertModal';
 import { useNavigate, useParams } from 'react-router-dom';
 
 interface MemberSelectProps {
