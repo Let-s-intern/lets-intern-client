@@ -1,14 +1,10 @@
 import { FormControl, InputLabel, MenuItem, Select } from '@mui/material';
 import Input from '../../../components/Input';
-import { useEffect, useState } from 'react';
-import axios from '../../../libs/axios';
-import { useParams } from 'react-router-dom';
 
 interface MemberInfoInputContentProps {
   user: any;
   hasDetailInfo: boolean;
   isLoggedIn: boolean;
-  programType: string;
   program: any;
   handleApplyInput: (e: any) => void;
 }
@@ -17,7 +13,6 @@ const MemberInfoInputContent = ({
   user,
   hasDetailInfo,
   isLoggedIn,
-  programType,
   program,
   handleApplyInput,
 }: MemberInfoInputContentProps) => {
@@ -159,7 +154,7 @@ const MemberInfoInputContent = ({
             multiline
             rows={4}
           />
-          {programType === 'LETS_CHAT' && (
+          {program.type === 'LETS_CHAT' && (
             <Input
               label="사전 질문 (선택)"
               placeholder="멘토님께 궁금한 점이 있다면, 사전질문으로 남겨주세요!"
