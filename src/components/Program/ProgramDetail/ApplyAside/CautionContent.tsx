@@ -3,6 +3,7 @@ import { useQueryClient } from 'react-query';
 
 import axios from '../../../../libs/axios';
 import { typeToText } from '../../../../libs/converTypeToText';
+
 import classes from './CautionContent.module.scss';
 
 interface CautionContentProps {
