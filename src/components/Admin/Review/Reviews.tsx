@@ -1,27 +1,67 @@
+import { useEffect, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import styled from 'styled-components';
 
+import axios from '../../../libs/axios';
 import TableHead from './TableHead';
 import TableBody from './TableBody';
 import Table from '../Table';
+import AdminPagination from '../AdminPagination';
 
-interface ReviewsProps {
-  programList: any;
-  copyReviewCreateLink: any;
-}
+import './Reviews.scss';
 
-const Reviews = ({ programList, copyReviewCreateLink }: ReviewsProps) => {
+const Reviews = () => {
+  const [searchParams, _] = useSearchParams();
+  const [programList, setProgramList] = useState([]);
+
+  const sizePerPage = 10;
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const currentPage = searchParams.get('page');
+      const params = {
+        size: sizePerPage,
+        page: currentPage,
+      };
+      try {
+        const res = await axios.get('/program/admin', { params });
+        setProgramList(res.data.programList);
+      } catch (err) {
+        console.log(err);
+      }
+    };
+    fetchData();
+  }, [searchParams]);
+
+  const copyReviewCreateLink = (programId: number) => {
+    const url = `${window.location.protocol}//${window.location.hostname}:${window.location.port}/program/${programId}/review/create`;
+    navigator.clipboard
+      .writeText(url)
+      .then(() => {
+        alert('링크가 클립보드에 복사되었습니다.');
+      })
+      .catch((err) => {
+        console.error('복사에 실패했습니다:', err);
+      });
+  };
+
   return (
     <>
       <Header>
         <Heading>후기 관리</Heading>
       </Header>
-      <Table minWidth={1000}>
-        <TableHead />
-        <TableBody
-          programList={programList}
-          copyReviewCreateLink={copyReviewCreateLink}
-        />
-      </Table>
+      <main className="reviews-main">
+        <Table minWidth={1000}>
+          <TableHead />
+          <TableBody
+            programList={programList}
+            copyReviewCreateLink={copyReviewCreateLink}
+          />
+        </Table>
+        <div className="bottom">
+          <AdminPagination maxPage={10} />
+        </div>
+      </main>
     </>
   );
 };

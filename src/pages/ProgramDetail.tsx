@@ -8,6 +8,7 @@ import Header from '../components/Program/ProgramDetail/Header';
 import MainContent from '../components/Program/ProgramDetail/MainContent';
 import ApplySection from '../components/Program/ProgramDetail/ApplySection/ApplySection';
 import ApplyAside from '../components/Program/ProgramDetail/ApplyAside/ApplyAside';
+
 import classes from './ProgramDetail.module.scss';
 import '../styles/github-markdown-light.css';
 

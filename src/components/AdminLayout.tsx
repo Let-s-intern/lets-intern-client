@@ -149,7 +149,7 @@ const NavSpacer = styled.div`
   width: 250px;
 `;
 
-const RightSection = styled.main`
+const RightSection = styled.section`
   position: relative;
   flex: 1;
   padding: 2rem;

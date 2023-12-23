@@ -1,7 +1,6 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 
 import Programs from './pages/Programs';
-import AdminPrograms from './pages/Admin/Program/Programs';
 import ProgramDetail from './pages/ProgramDetail';
 import Login from './pages/Login';
 import MyPage from './pages/MyPage';
@@ -11,22 +10,22 @@ import Privacy from './pages/MyPage/Privacy';
 import Review from './pages/MyPage/Review';
 import Layout from './components/Layout';
 import AdminLayout from './components/AdminLayout';
-import Admin from './pages/Admin';
 import ProgramCreate from './pages/Admin/Program/ProgramCreate';
 import ReviewDetail from './pages/ReviewDetail';
 import ProgramEdit from './pages/Admin/Program/ProgramEdit';
-import AdminReviews from './pages/Admin/Review/Reviews';
-import AdminReviewsDetail from './pages/Admin/Review/ReviewsDetail';
-import Users from './pages/Admin/User/Users';
+import AdminReviews from './components/Admin/Review/Reviews';
+import AdminReviewsDetail from './components/Admin/Review/ReviewsDetail';
+import Users from './components/Admin/User/Users';
 import UserDetail from './pages/Admin/User/UserDetail';
-import UserMemo from './pages/Admin/User/UserMemo';
-import ProgramUsers from './pages/Admin/Program/ProgramUsers';
+import UserMemo from './components/Admin/User/UserMemo';
 import UserCreate from './pages/Admin/User/UserCreate';
 import UserEdit from './pages/Admin/User/UserEdit';
 import Application from './pages/MyPage/Appllication';
 import ReviewCreate from './pages/ReviewCreate';
 import AttendCheck from './pages/Admin/Program/AttendCheck';
 import ScrollToTop from './components/ScrollToTop';
+import AdminPrograms from './components/Admin/Program/Programs';
+import ProgramUsers from './components/Admin/Program/ProgramUsers';
 
 const Router = () => {
   return (
@@ -66,7 +65,7 @@ const Router = () => {
         </Route>
         <Route path="/admin" element={<AdminLayout />}>
           {/* /admin */}
-          <Route path="" element={<Admin />} />
+          <Route path="" element={<AdminPrograms />} />
           <Route path="programs">
             {/* /admin/programs */}
             <Route path="" element={<AdminPrograms />} />

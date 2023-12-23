@@ -1,13 +1,14 @@
 import { useEffect, useRef, useState } from 'react';
+import { useQuery } from 'react-query';
 import cn from 'classnames';
 import { FormControl, InputLabel, MenuItem, Select } from '@mui/material';
 
 import Input from '../../../Input';
-import classes from './InputContent.module.scss';
 import axios from '../../../../libs/axios';
 import { typeToText } from '../../../../libs/converTypeToText';
 import { isValidEmail, isValidPhoneNumber } from '../../../../libs/valid';
-import { useQuery } from 'react-query';
+
+import classes from './InputContent.module.scss';
 
 interface InputContentProps {
   program: any;
