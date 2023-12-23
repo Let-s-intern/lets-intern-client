@@ -13,15 +13,9 @@ const UserDetailContainer = () => {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const res = await axios.get('/user/admin');
-        const foundedUser = res.data.userList.find(
-          (user: any) => user.id === Number(params.userId),
-        );
-        if (!foundedUser) {
-          throw new Error('존재하지 않는 유저입니다.');
-        }
-        console.log(foundedUser);
-        setUser(foundedUser);
+        const res = await axios.get(`/user/admin/${params.userId}`);
+        console.log(res.data);
+        setUser(res.data);
       } catch (error) {
         setError(error);
       } finally {
