@@ -17,7 +17,7 @@ import AdminReviews from './components/Admin/Review/Reviews';
 import AdminReviewsDetail from './components/Admin/Review/ReviewsDetail';
 import Users from './components/Admin/User/Users';
 import UserDetail from './pages/Admin/User/UserDetail';
-import UserMemo from './pages/Admin/User/UserMemo';
+import UserMemo from './components/Admin/User/UserMemo';
 import UserCreate from './pages/Admin/User/UserCreate';
 import UserEdit from './pages/Admin/User/UserEdit';
 import Application from './pages/MyPage/Appllication';
