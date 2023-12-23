@@ -13,7 +13,6 @@ import TableHead from './TableHead';
 import AdminPagination from '../AdminPagination';
 
 import './Users.scss';
-import usePagination from '../../../hooks/usePagination';
 
 const Users = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -22,7 +21,51 @@ const Users = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<unknown>(null);
   const [searchValues, setSearchValues] = useState<any>({});
-  const { page, setPage, sizePerPage } = usePagination({ sizePerPage: 10 });
+
+  const sizePerPage = 10;
+
+  useEffect(() => {
+    const fetchUsers = async () => {
+      setLoading(true);
+      setUsers(null);
+      try {
+        const currentPage = searchParams.get('page');
+        const params = {
+          page: currentPage,
+          size: sizePerPage,
+        };
+        const res = await axios.get('/user/admin', {
+          params,
+        });
+        let searchedUsers = [];
+        for (const user of res.data.userList) {
+          const res = await axios.get(`/program/admin/user/${user.id}`);
+          searchedUsers.push({
+            ...user,
+            programs: [...res.data.userProgramList],
+          });
+        }
+        searchedUsers = searchUsersWithQuery(searchedUsers);
+        setUsers(searchedUsers);
+      } catch (err) {
+        setError(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    const fetchManagers = async () => {
+      try {
+        const res = await axios.get('/user/admin/manager');
+        setManagers(res.data.managerList);
+      } catch (err) {
+        setError(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchUsers();
+    fetchManagers();
+  }, [searchParams]);
 
   const searchUsersWithQuery = (users: any) => {
     const keyword = searchParams.get('keyword');
@@ -87,49 +130,6 @@ const Users = () => {
     alert('삭제되었습니다.');
   };
 
-  useEffect(() => {
-    const fetchUsers = async () => {
-      setLoading(true);
-      setUsers(null);
-      try {
-        const currentPage = searchParams.get('page');
-        const params = {
-          page: currentPage,
-          size: sizePerPage,
-        };
-        const res = await axios.get('/user/admin', {
-          params,
-        });
-        let searchedUsers = [];
-        for (const user of res.data.userList) {
-          const res = await axios.get(`/program/admin/user/${user.id}`);
-          searchedUsers.push({
-            ...user,
-            programs: [...res.data.userProgramList],
-          });
-        }
-        searchedUsers = searchUsersWithQuery(searchedUsers);
-        setUsers(searchedUsers);
-      } catch (err) {
-        setError(err);
-      } finally {
-        setLoading(false);
-      }
-    };
-    const fetchManagers = async () => {
-      try {
-        const res = await axios.get('/user/admin/manager');
-        setManagers(res.data.managerList);
-      } catch (err) {
-        setError(err);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchUsers();
-    fetchManagers();
-  }, [searchParams]);
-
   return (
     <>
       <Header>
@@ -167,12 +167,9 @@ const Users = () => {
             )}
           </>
         )}
-        <AdminPagination
-          currentPage={page}
-          maxPage={10}
-          marginTop={1.5}
-          setCurrentPage={setPage}
-        />
+        <div className="bottom">
+          <AdminPagination maxPage={10} />
+        </div>
       </main>
     </>
   );

@@ -8,7 +8,8 @@ import UserTableHead from './UserTableHead';
 import UserTableBody from './UserTableBody';
 import axios from '../../../libs/axios';
 import AdminPagination from '../AdminPagination';
-import usePagination from '../../../hooks/usePagination';
+
+import './ProgramUsers.scss';
 
 const ProgramUsers = () => {
   const params = useParams();
@@ -17,7 +18,8 @@ const ProgramUsers = () => {
   const [error, setError] = useState<unknown>(null);
   const [program, setProgram] = useState<any>({});
   const [applications, setApplications] = useState<any>([]);
-  const { page, setPage, sizePerPage } = usePagination({ sizePerPage: 10 });
+
+  const sizePerPage = 10;
 
   useEffect(() => {
     const fetchProgram = async () => {
@@ -30,7 +32,6 @@ const ProgramUsers = () => {
     };
     const fetchProgramUsers = async () => {
       const currentPage = searchParams.get('page');
-      setPage(currentPage ? Number(currentPage) : 0);
       const pageParams = {
         page: currentPage,
         size: sizePerPage,
@@ -39,7 +40,6 @@ const ProgramUsers = () => {
         const res = await axios.get(`/application/admin/${params.programId}`, {
           params: pageParams,
         });
-        console.log(res.data.applicationList);
         setApplications(res.data.applicationList);
       } catch (err) {
         setError(err);
@@ -124,36 +124,34 @@ const ProgramUsers = () => {
           </ActionButtonGroup>
         )}
       </Top>
-      <Table minWidth={2000}>
-        <UserTableHead />
-        <UserTableBody
-          applications={applications}
-          handleApplicationStatusChange={handleApplicationStatusChange}
-        />
-      </Table>
-      <EmailActionArea>
-        <EmailActionButton
-          width="13rem"
-          bgColor="green"
-          onClick={() => handleEmailSend(true)}
-        >
-          참가확정 이메일 보내기
-        </EmailActionButton>
-        <EmailActionButton
-          width="13rem"
-          bgColor="red"
-          onClick={() => handleEmailSend(false)}
-        >
-          미선발 이메일 보내기
-        </EmailActionButton>
-      </EmailActionArea>
-      <AdminPagination
-        currentPage={page}
-        maxPage={10}
-        setCurrentPage={setPage}
-        marginTop={1.5}
-        marginBottom={5}
-      />
+      <main className="program-users-main">
+        <Table minWidth={2000}>
+          <UserTableHead />
+          <UserTableBody
+            applications={applications}
+            handleApplicationStatusChange={handleApplicationStatusChange}
+          />
+        </Table>
+        <EmailActionArea>
+          <EmailActionButton
+            width="13rem"
+            bgColor="green"
+            onClick={() => handleEmailSend(true)}
+          >
+            참가확정 이메일 보내기
+          </EmailActionButton>
+          <EmailActionButton
+            width="13rem"
+            bgColor="red"
+            onClick={() => handleEmailSend(false)}
+          >
+            미선발 이메일 보내기
+          </EmailActionButton>
+        </EmailActionArea>
+        <div className="bottom">
+          <AdminPagination maxPage={10} />
+        </div>
+      </main>
     </>
   );
 };

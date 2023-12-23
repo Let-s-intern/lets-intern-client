@@ -10,14 +10,16 @@ import Heading from '../Heading';
 import ActionButton from '../ActionButton';
 import AdminPagination from '../AdminPagination';
 import axios from '../../../libs/axios';
-import usePagination from '../../../hooks/usePagination';
+
+import './Programs.scss';
 
 const Programs = () => {
-  const [searchParams, _] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [programList, setProgramList] = useState([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<unknown>(null);
-  const { page, setPage, sizePerPage } = usePagination({ sizePerPage: 10 });
+
+  const sizePerPage = 10;
 
   useEffect(() => {
     setLoading(true);
@@ -89,19 +91,19 @@ const Programs = () => {
           등록
         </ActionButton>
       </Header>
-      <Table>
-        <TableHead />
-        <TableBody
-          programList={programList}
-          fetchDelete={fetchDelete}
-          fetchEditProgramVisible={fetchEditProgramVisible}
-        />
-      </Table>
-      <AdminPagination
-        currentPage={page}
-        maxPage={10}
-        setCurrentPage={setPage}
-      />
+      <main className="programs-main">
+        <Table>
+          <TableHead />
+          <TableBody
+            programList={programList}
+            fetchDelete={fetchDelete}
+            fetchEditProgramVisible={fetchEditProgramVisible}
+          />
+        </Table>
+        <div className="bottom">
+          <AdminPagination maxPage={10} />
+        </div>
+      </main>
     </>
   );
 };

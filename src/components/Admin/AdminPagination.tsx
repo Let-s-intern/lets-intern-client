@@ -1,4 +1,3 @@
-import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import cn from 'classnames';
 import { RiArrowLeftSLine, RiArrowRightSLine } from 'react-icons/ri';
@@ -6,32 +5,21 @@ import { RiArrowLeftSLine, RiArrowRightSLine } from 'react-icons/ri';
 import './AdminPagination.scss';
 
 interface AdminPaginationProps {
-  currentPage: number;
   maxPage: number;
-  marginTop?: number;
-  marginBottom?: number;
-  setCurrentPage: (currentPage: number) => void;
 }
 
-const AdminPagination = ({
-  maxPage,
-  marginTop,
-  currentPage,
-  marginBottom,
-  setCurrentPage,
-}: AdminPaginationProps) => {
-  const handlePageClicked = (page: number) => {
-    setCurrentPage(page);
+const AdminPagination = ({ maxPage }: AdminPaginationProps) => {
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const handlePageButtonClicked = (page: number) => {
+    const newSearchParams = new URLSearchParams(searchParams);
+    newSearchParams.set('page', `${page}`);
+    setSearchParams(newSearchParams);
+    window.scrollTo(0, 0);
   };
 
   return (
-    <div
-      className="admin-pagination"
-      style={{
-        marginTop: `${marginTop}rem`,
-        marginBottom: `${marginBottom}rem`,
-      }}
-    >
+    <div className="admin-pagination">
       <span className="arrow">
         <i>
           <RiArrowLeftSLine />
@@ -42,9 +30,9 @@ const AdminPagination = ({
           <li
             key={page}
             className={cn({
-              ['active']: page === currentPage,
+              ['active']: page === Number(searchParams.get('page')),
             })}
-            onClick={() => handlePageClicked(page)}
+            onClick={() => handlePageButtonClicked(page)}
           >
             {page}
           </li>
