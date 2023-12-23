@@ -1,13 +1,14 @@
 import { useEffect, useState } from 'react';
 import cn from 'classnames';
 
-import './index.scss';
-import classes from './ApplyAside.module.scss';
 import StartContent from './StartContent';
 import MemberSelect from './MemberSelect';
 import InputContent from './InputContent';
 import CautionContent from './CautionContent';
 import ResultContent from './ResultContent';
+
+import classes from './ApplyAside.module.scss';
+import './index.scss';
 
 interface ApplyAsdieProps {
   program: any;

@@ -1,5 +1,8 @@
+import { useEffect, useState } from 'react';
+import { useParams, useSearchParams } from 'react-router-dom';
 import styled from 'styled-components';
 
+import axios from '../../../libs/axios';
 import Table from '../Table';
 import MemoTableBody from './MemoTableBody';
 import MemoTableHead from './MemoTableHead';
@@ -7,54 +10,125 @@ import Heading from '../Heading';
 import ActionButton from '../ActionButton';
 import UserMemoModal from './UserMemoModal';
 
-interface UserMemoProps {
-  loading: boolean;
-  error: unknown;
-  memoList: any[];
-  isModalOpen: boolean;
-  memoValue: string;
-  user: any;
-  handleModalOpen: () => void;
-  handleModalClose: () => void;
-  handleMemoChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
-  handleMemoCreate: (e: any) => void;
-  handleModalEditOpen: (memoId: number) => void;
-  handleDeleteMemo: (memoId: number) => void;
-}
+import './UserMemo.scss';
 
-const UserMemo = (props: UserMemoProps) => {
-  if (props.loading) {
+const UserMemo = () => {
+  const params = useParams();
+  const [searchParams, _] = useSearchParams();
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<unknown>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [memoList, setMemoList] = useState([]);
+  const [memoValue, setMemoValue] = useState('');
+  const [memoId, setMemoId] = useState(-1);
+  const [user, setUser] = useState<any>({});
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        let res = await axios.get(`/memo/${params.userId}`);
+        setMemoList(res.data.memoList);
+        res = await axios.get(`/user/admin/${params.userId}`);
+        setUser(res.data);
+      } catch (error) {
+        setError(error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
+  }, [searchParams]);
+
+  const handleModalOpen = () => {
+    setMemoId(-1);
+    setIsModalOpen(true);
+  };
+
+  const handleModalEditOpen = (memoId: number) => {
+    setMemoId(memoId);
+    const memo = memoList.find((memo: any) => memo.id === memoId);
+    if (!memo) return;
+    if ((memo as any).contents) {
+      setMemoValue((memo as any).contents);
+      setIsModalOpen(true);
+    }
+  };
+
+  const handleModalClose = () => {
+    setIsModalOpen(false);
+    setMemoValue('');
+    setMemoId(-1);
+  };
+
+  const handleMemoChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setMemoValue(e.target.value);
+  };
+
+  const handleMemoCreate = async (e: any) => {
+    e.preventDefault();
+    try {
+      if (memoId === -1) {
+        await axios.post(`/memo/${params.userId}`, {
+          contents: memoValue,
+        });
+      } else {
+        await axios.patch(`/memo/${memoId}`, {
+          contents: memoValue,
+        });
+      }
+      const res = await axios.get(`/memo/${params.userId}`);
+      setMemoList(res.data.memoList);
+      handleModalClose();
+    } catch (error) {
+      setError(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDeleteMemo = async (memoId: number) => {
+    try {
+      await axios.delete(`/memo/${memoId}`);
+      setMemoList(memoList.filter((memo: any) => memo.id !== memoId));
+    } catch (error) {
+      alert('메모 삭제에 실패했습니다.');
+    }
+  };
+
+  if (loading) {
     return <div></div>;
   }
 
-  if (props.error) {
+  if (error) {
     return <div></div>;
   }
 
   return (
     <>
       <Header>
-        <Heading>메모 - {props.user?.name}</Heading>
-        <ActionButton onClick={props.handleModalOpen}>등록</ActionButton>
+        <Heading>메모 - {user?.name}</Heading>
+        <ActionButton onClick={handleModalOpen}>등록</ActionButton>
       </Header>
-      <Table>
-        <MemoTableHead />
-        <MemoTableBody
-          memoList={props.memoList}
-          isModalOpen={props.isModalOpen}
-          handleModalOpen={props.handleModalOpen}
-          handleModalClose={props.handleModalClose}
-          onModalEditOpen={props.handleModalEditOpen}
-          onDeleteMemo={props.handleDeleteMemo}
+      <main className="user-memo-main">
+        <Table>
+          <MemoTableHead />
+          <MemoTableBody
+            memoList={memoList}
+            isModalOpen={isModalOpen}
+            handleModalOpen={handleModalOpen}
+            handleModalClose={handleModalClose}
+            onModalEditOpen={handleModalEditOpen}
+            onDeleteMemo={handleDeleteMemo}
+          />
+        </Table>
+        <UserMemoModal
+          memoValue={memoValue}
+          isModalOpen={isModalOpen}
+          onClose={handleModalClose}
+          handleMemoChange={handleMemoChange}
+          handleMemoCreate={handleMemoCreate}
         />
-      </Table>
-      <UserMemoModal
-        memoValue={props.memoValue}
-        isModalOpen={props.isModalOpen}
-        onClose={props.handleModalClose}
-        handleMemoChange={props.handleMemoChange}
-        handleMemoCreate={props.handleMemoCreate}
-      />
+      </main>
     </>
   );
 };

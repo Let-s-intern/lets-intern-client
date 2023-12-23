@@ -1,24 +1,71 @@
+import { useEffect, useState } from 'react';
+import { useParams, useSearchParams } from 'react-router-dom';
+import styled from 'styled-components';
+
+import axios from '../../../libs/axios';
 import Table from '../Table';
 import DetailTableHead from './DetailTableHead';
 import DetailTableBody from './DetailTableBody';
 import Heading from '../Heading';
-import styled from 'styled-components';
 
-interface ReviewsDetailProps {
-  loading: boolean;
-  error: unknown;
-  reviewList: any;
-  handleVisibleChanged: (reviewId: number, status: string) => void;
-  program: any;
-}
+import './ReviewsDetail.scss';
+import AdminPagination from '../AdminPagination';
 
-const ReviewsDetail = ({
-  loading,
-  error,
-  reviewList,
-  handleVisibleChanged,
-  program,
-}: ReviewsDetailProps) => {
+const ReviewsDetail = () => {
+  const params = useParams();
+  const [searchParams, _] = useSearchParams();
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<unknown>(null);
+  const [reviewList, setReviewList] = useState<any>([]);
+  const [program, setProgram] = useState<any>({});
+
+  const sizePerPage = 10;
+
+  useEffect(() => {
+    const fetchReviews = async () => {
+      const currentPage = searchParams.get('page');
+      const pageParams = {
+        page: currentPage,
+        size: sizePerPage,
+      };
+      try {
+        let res;
+        res = await axios.get(`/review/admin/${params.programId}`, {
+          params: pageParams,
+        });
+        setReviewList(res.data.reviewList);
+        res = await axios.get(`/program/admin`);
+        const foundedProgram = res.data.programList.find(
+          (program: any) => program.id === Number(params.programId),
+        );
+        setProgram(foundedProgram);
+      } catch (err) {
+        setError(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchReviews();
+  }, [searchParams]);
+
+  const handleVisibleChanged = async (reviewId: number, status: string) => {
+    try {
+      await axios.patch(`/review/${reviewId}`, { status });
+      const newReviewList = reviewList.map((review: any) => {
+        if (review.id === reviewId) {
+          return {
+            ...review,
+            status,
+          };
+        }
+        return review;
+      });
+      setReviewList(newReviewList);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   if (loading) {
     return <></>;
   }
@@ -32,14 +79,19 @@ const ReviewsDetail = ({
       <Header>
         <Heading>후기 목록 - {program.title}</Heading>
       </Header>
-      <Table>
-        <DetailTableHead />
-        <DetailTableBody
-          program={program}
-          reviewList={reviewList}
-          handleVisibleChanged={handleVisibleChanged}
-        />
-      </Table>
+      <main className="reviews-detail-main">
+        <Table>
+          <DetailTableHead />
+          <DetailTableBody
+            program={program}
+            reviewList={reviewList}
+            handleVisibleChanged={handleVisibleChanged}
+          />
+        </Table>
+        <div className="bottom">
+          <AdminPagination maxPage={10} />
+        </div>
+      </main>
     </>
   );
 };

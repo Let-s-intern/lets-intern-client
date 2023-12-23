@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import cn from 'classnames';
 
-import classes from './MemberSelect.module.scss';
 import AlertModal from '../../../AlertModal';
-import { useNavigate, useParams } from 'react-router-dom';
+
+import classes from './MemberSelect.module.scss';
 
 interface MemberSelectProps {
   setApplyPageIndex: (applyPageIndex: number) => void;

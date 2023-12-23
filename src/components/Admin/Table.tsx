@@ -5,31 +5,20 @@ interface TableProps {
   children: React.ReactNode;
 }
 
-interface TableContentProps {
+interface TableBlockProps {
   $minWidth?: number;
 }
 
 const Table = ({ minWidth, children }: TableProps) => {
-  return (
-    <TableBlock>
-      <TableContent $minWidth={minWidth}>{children}</TableContent>
-    </TableBlock>
-  );
+  return <TableBlock $minWidth={minWidth}>{children}</TableBlock>;
 };
 
 export default Table;
 
-const TableBlock = styled.div`
-  width: 100%;
-  overflow-x: auto;
-  transform: rotateX(180deg);
-`;
-
-const TableContent = styled.table<TableContentProps>`
+const TableBlock = styled.table<TableBlockProps>`
   width: 100%;
   min-width: ${({ $minWidth }) => css`
     ${$minWidth ? $minWidth : 1300}px
   `};
   border: 1px solid #cbd5e0;
-  transform: rotateX(180deg);
 `;
