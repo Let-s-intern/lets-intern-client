@@ -1,0 +1,28 @@
+.admin-pagination {
+  margin-top: 1rem;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+
+  .arrow {
+    font-size: 1.25rem;
+    cursor: pointer;
+  }
+
+  ul {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+
+    li {
+      cursor: pointer;
+
+      &.active {
+        color: #4f46e5;
+        font-weight: 500;
+      }
+    }
+  }
+}

@@ -17,7 +17,7 @@ import ReviewDetail from './pages/ReviewDetail';
 import ProgramEdit from './pages/Admin/Program/ProgramEdit';
 import AdminReviews from './pages/Admin/Review/Reviews';
 import AdminReviewsDetail from './pages/Admin/Review/ReviewsDetail';
-import Users from './pages/Admin/User/Users';
+import Users from './components/Admin/User/Users';
 import UserDetail from './pages/Admin/User/UserDetail';
 import UserMemo from './pages/Admin/User/UserMemo';
 import ProgramUsers from './pages/Admin/Program/ProgramUsers';
