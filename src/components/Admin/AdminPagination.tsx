@@ -30,7 +30,7 @@ const AdminPagination = ({
         </i>
       </span>
       <ul>
-        {Array.from(Array(maxPage), (_, index) => index + 1).map((page) => (
+        {Array.from(Array(maxPage + 1), (_, index) => index).map((page) => (
           <li
             key={page}
             className={cn({

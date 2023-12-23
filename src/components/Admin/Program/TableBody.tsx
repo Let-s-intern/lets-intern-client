@@ -94,6 +94,7 @@ const TableBody = ({
           </tr>
         ))}
       </tbody>
+
       {isDeleteModal && (
         <AlertModal
           onConfirm={onConfirm}

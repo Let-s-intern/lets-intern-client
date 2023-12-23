@@ -1,26 +1,78 @@
-import ListHeader from '../ListHeader';
+import { useEffect, useState } from 'react';
+
 import Table from '../Table';
 import TableHead from './TableHead';
 import TableBody from './TableBody';
+import { useSearchParams } from 'react-router-dom';
+
 import Header from '../Header';
 import Heading from '../Heading';
 import ActionButton from '../ActionButton';
+import AdminPagination from '../AdminPagination';
+import axios from '../../../libs/axios';
+import usePagination from '../../../hooks/usePagination';
 
-interface ProgramsProps {
-  loading: boolean;
-  error: any;
-  programList: any;
-  fetchDelete: (programId: number) => void;
-  fetchEditProgramVisible: (programId: number, visible: boolean) => void;
-}
+const Programs = () => {
+  const [searchParams, _] = useSearchParams();
+  const [programList, setProgramList] = useState([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<unknown>(null);
+  const { page, setPage, sizePerPage } = usePagination({ sizePerPage: 10 });
 
-const Programs = ({
-  loading,
-  error,
-  programList,
-  fetchDelete,
-  fetchEditProgramVisible,
-}: ProgramsProps) => {
+  useEffect(() => {
+    setLoading(true);
+    const currentPage = searchParams.get('page');
+    const params = {
+      page: currentPage,
+      size: sizePerPage,
+    };
+    axios
+      .get('/program/admin', { params })
+      .then((res) => {
+        setProgramList(res.data.programList);
+      })
+      .catch((err) => {
+        setError(err);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  }, [searchParams]);
+
+  const fetchEditProgramVisible = (programId: number, visible: boolean) => {
+    axios
+      .patch(`/program/${programId}`, {
+        isVisible: !visible,
+      })
+      .then(() => {
+        const newProgramList: any = programList.map((program: any) => {
+          if (program.id === programId) {
+            return {
+              ...program,
+              isVisible: !visible,
+              isApproved: !visible,
+            };
+          }
+          return program;
+        });
+        setProgramList(newProgramList);
+      })
+      .catch((err) => {
+        setError(err);
+      });
+  };
+
+  const fetchDelete = (programId: number) => {
+    axios
+      .delete(`/program/${programId}`)
+      .then(() => {
+        setProgramList(programList.filter((p: any) => p.id !== programId));
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
   if (loading) {
     return <>로딩 중...</>;
   }
@@ -45,6 +97,11 @@ const Programs = ({
           fetchEditProgramVisible={fetchEditProgramVisible}
         />
       </Table>
+      <AdminPagination
+        currentPage={page}
+        maxPage={10}
+        setCurrentPage={setPage}
+      />
     </>
   );
 };

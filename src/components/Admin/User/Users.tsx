@@ -22,7 +22,7 @@ const Users = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<unknown>(null);
   const [searchValues, setSearchValues] = useState<any>({});
-  const [page, setPage] = useState<number>(1);
+  const [page, setPage] = useState<number>(0);
 
   const sizePerPage = 10;
 
@@ -133,15 +133,16 @@ const Users = () => {
   }, [searchParams]);
 
   useEffect(() => {
+    if (loading) return;
     const newSearchParams = new URLSearchParams(searchParams);
-    if (page === 1) {
+    if (page === 0) {
       newSearchParams.delete('page');
     } else {
       newSearchParams.set('page', `${page}`);
     }
     setSearchParams(newSearchParams);
     window.scrollTo(0, 0);
-  }, [page]);
+  }, [loading, page]);
 
   return (
     <>

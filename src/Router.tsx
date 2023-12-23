@@ -1,7 +1,6 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 
 import Programs from './pages/Programs';
-import AdminPrograms from './pages/Admin/Program/Programs';
 import ProgramDetail from './pages/ProgramDetail';
 import Login from './pages/Login';
 import MyPage from './pages/MyPage';
@@ -11,7 +10,6 @@ import Privacy from './pages/MyPage/Privacy';
 import Review from './pages/MyPage/Review';
 import Layout from './components/Layout';
 import AdminLayout from './components/AdminLayout';
-import Admin from './pages/Admin';
 import ProgramCreate from './pages/Admin/Program/ProgramCreate';
 import ReviewDetail from './pages/ReviewDetail';
 import ProgramEdit from './pages/Admin/Program/ProgramEdit';
@@ -27,6 +25,7 @@ import Application from './pages/MyPage/Appllication';
 import ReviewCreate from './pages/ReviewCreate';
 import AttendCheck from './pages/Admin/Program/AttendCheck';
 import ScrollToTop from './components/ScrollToTop';
+import AdminPrograms from './components/Admin/Program/Programs';
 
 const Router = () => {
   return (
@@ -66,7 +65,7 @@ const Router = () => {
         </Route>
         <Route path="/admin" element={<AdminLayout />}>
           {/* /admin */}
-          <Route path="" element={<Admin />} />
+          <Route path="" element={<AdminPrograms />} />
           <Route path="programs">
             {/* /admin/programs */}
             <Route path="" element={<AdminPrograms />} />
