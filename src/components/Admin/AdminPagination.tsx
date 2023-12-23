@@ -9,6 +9,7 @@ interface AdminPaginationProps {
   currentPage: number;
   maxPage: number;
   marginTop?: number;
+  marginBottom?: number;
   setCurrentPage: (currentPage: number) => void;
 }
 
@@ -16,6 +17,7 @@ const AdminPagination = ({
   maxPage,
   marginTop,
   currentPage,
+  marginBottom,
   setCurrentPage,
 }: AdminPaginationProps) => {
   const handlePageClicked = (page: number) => {
@@ -23,7 +25,13 @@ const AdminPagination = ({
   };
 
   return (
-    <div className="admin-pagination" style={{ marginTop: `${marginTop}rem` }}>
+    <div
+      className="admin-pagination"
+      style={{
+        marginTop: `${marginTop}rem`,
+        marginBottom: `${marginBottom}rem`,
+      }}
+    >
       <span className="arrow">
         <i>
           <RiArrowLeftSLine />

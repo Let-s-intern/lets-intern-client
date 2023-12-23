@@ -6,6 +6,11 @@ const usePagination = ({ sizePerPage }: { sizePerPage: number }) => {
   const [page, setPage] = useState(0);
 
   useEffect(() => {
+    const currentPage = searchParams.get('page');
+    setPage(currentPage ? Number(currentPage) : 0);
+  }, [searchParams]);
+
+  useEffect(() => {
     const newSearchParams = new URLSearchParams(searchParams);
     if (page === 0) {
       newSearchParams.delete('page');

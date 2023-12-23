@@ -13,18 +13,16 @@ import TableHead from './TableHead';
 import AdminPagination from '../AdminPagination';
 
 import './Users.scss';
+import usePagination from '../../../hooks/usePagination';
 
 const Users = () => {
   const [searchParams, setSearchParams] = useSearchParams();
-
   const [users, setUsers] = useState<any>(null);
   const [managers, setManagers] = useState<any>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<unknown>(null);
   const [searchValues, setSearchValues] = useState<any>({});
-  const [page, setPage] = useState<number>(0);
-
-  const sizePerPage = 10;
+  const { page, setPage, sizePerPage } = usePagination({ sizePerPage: 10 });
 
   const searchUsersWithQuery = (users: any) => {
     const keyword = searchParams.get('keyword');
@@ -131,18 +129,6 @@ const Users = () => {
     fetchUsers();
     fetchManagers();
   }, [searchParams]);
-
-  useEffect(() => {
-    if (loading) return;
-    const newSearchParams = new URLSearchParams(searchParams);
-    if (page === 0) {
-      newSearchParams.delete('page');
-    } else {
-      newSearchParams.set('page', `${page}`);
-    }
-    setSearchParams(newSearchParams);
-    window.scrollTo(0, 0);
-  }, [loading, page]);
 
   return (
     <>
