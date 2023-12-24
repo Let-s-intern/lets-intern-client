@@ -121,11 +121,13 @@ const Button = styled.button<ButtonProps>`
       ? css`
           &:nth-child(1) {
             color: #6963ed;
+            font-weight: bold;
           }
         `
       : css`
           &:nth-child(2) {
             color: #6963ed;
+            font-weight: bold;
           }
         `}
 

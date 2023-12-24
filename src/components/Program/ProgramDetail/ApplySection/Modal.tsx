@@ -68,7 +68,7 @@ const Modal = ({
             }
           }}
           className={nextButtonClass ? nextButtonClass : ''}
-          id={nextButtonId}
+          {...(nextButtonId && { id: nextButtonId })}
         >
           {nextButtonText}
         </NextButton>

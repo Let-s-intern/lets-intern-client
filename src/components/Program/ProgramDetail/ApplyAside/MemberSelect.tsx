@@ -94,11 +94,11 @@ const MemberSelect = ({ setApplyPageIndex }: MemberSelectProps) => {
       {isLoginModal && memberChecked === 'GUEST' && (
         <AlertModal
           title="회원으로 지원하면 마이페이지에서<br />신청현황을 확인하실 수 있습니다."
-          onConfirm={handleAlertConfirm}
-          onCancel={handleAlertClose}
-          highlight="confirm"
-          confirmText="회원으로 신청"
-          cancelText="비회원으로 신청"
+          onConfirm={handleAlertClose}
+          onCancel={handleAlertConfirm}
+          highlight="cancel"
+          confirmText="비회원으로 신청"
+          cancelText="회원으로 신청"
         >
           비회원으로 지원 시 다시 지원하거나
           <br />
