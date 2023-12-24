@@ -5,6 +5,7 @@ interface ButtonProps {
   type?: 'button' | 'submit' | 'reset';
   color?: string;
   disabled?: boolean;
+  id?: string;
   className?: string;
   onClick?: () => void;
   children: React.ReactNode;
@@ -17,12 +18,14 @@ const Button = ({
   className,
   children,
   disabled,
+  id,
   onClick,
 }: ButtonProps) => {
   const navigate = useNavigate();
 
   return (
     <button
+      id={id}
       type={type}
       className={`rounded px-4 py-3 font-medium${
         color === 'white'

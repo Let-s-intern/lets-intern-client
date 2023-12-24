@@ -12,6 +12,7 @@ interface ModalProps {
   onFoldButtonClick?: () => void;
   hasFoldButton?: boolean;
   nextButtonClass?: string;
+  nextButtonId?: string;
 }
 
 interface NextButtonProps {
@@ -27,6 +28,7 @@ const Modal = ({
   onFoldButtonClick,
   hasFoldButton = true,
   nextButtonClass,
+  nextButtonId,
 }: ModalProps) => {
   return (
     <div
@@ -66,6 +68,7 @@ const Modal = ({
             }
           }}
           className={nextButtonClass ? nextButtonClass : ''}
+          id={nextButtonId}
         >
           {nextButtonText}
         </NextButton>

@@ -179,6 +179,7 @@ const ProgramApply = ({
         onNextButtonClick={handleApplyNextButton}
         onFoldButtonClick={handleApplyModalClose}
         nextButtonClass="member-type-next-button"
+        nextButtonId="member_type_next_button"
       >
         <MemberTypeContent
           memberChecked={memberChecked}
@@ -195,6 +196,7 @@ const ProgramApply = ({
         isNextButtonDisabled={isNextButtonDisabled}
         onFoldButtonClick={handleApplyModalClose}
         nextButtonClass="member-info-input-next-button"
+        nextButtonId="member_info_input_next_button"
       >
         <MemberInfoInputContent
           user={user}
@@ -208,12 +210,13 @@ const ProgramApply = ({
   ) : applyPageIndex === 2 ? (
     <BlackBackground $position="center" onClick={handleApplyModalClose}>
       <Modal
-        nextButtonText="다음"
+        nextButtonText="제출하기"
         position="center"
         onNextButtonClick={handleApplyNextButton}
         isNextButtonDisabled={isNextButtonDisabled}
         hasFoldButton={false}
         nextButtonClass="caution-next-button"
+        nextButtonId="complete_button"
       >
         <CautionContent
           cautionChecked={cautionChecked}
@@ -229,7 +232,8 @@ const ProgramApply = ({
         position="center"
         onNextButtonClick={handleApplyNextButton}
         hasFoldButton={false}
-        nextButtonClass="complete-button"
+        nextButtonClass="close-button"
+        nextButtonId="close_button"
       >
         <ResultContent announcementDate={announcementDate} />
       </Modal>
