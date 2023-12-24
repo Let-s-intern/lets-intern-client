@@ -148,9 +148,7 @@ const ProgramUsers = () => {
             미선발 이메일 보내기
           </EmailActionButton>
         </EmailActionArea>
-        <div className="bottom">
-          <AdminPagination maxPage={10} />
-        </div>
+        <AdminPagination maxPage={10} />
       </main>
     </>
   );
