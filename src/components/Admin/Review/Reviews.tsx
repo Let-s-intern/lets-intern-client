@@ -58,9 +58,7 @@ const Reviews = () => {
             copyReviewCreateLink={copyReviewCreateLink}
           />
         </Table>
-        <div className="bottom">
-          <AdminPagination maxPage={10} />
-        </div>
+        <AdminPagination maxPage={10} />
       </main>
     </>
   );

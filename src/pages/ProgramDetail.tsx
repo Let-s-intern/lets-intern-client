@@ -14,7 +14,6 @@ import '../styles/github-markdown-light.css';
 
 const ProgramDetail = () => {
   const params = useParams();
-
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
   const [program, setProgram] = useState<any>(null);
   const [participated, setParticipated] = useState<boolean>(false);

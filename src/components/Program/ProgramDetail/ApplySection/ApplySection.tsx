@@ -62,6 +62,7 @@ const ApplySection = ({
       <ApplySectionBlock>
         <ApplyButtonWrapper>
           <ApplyButton
+            id="apply_button"
             className="apply-button"
             disabled={program.status !== 'OPEN' || participated}
             onClick={() => {

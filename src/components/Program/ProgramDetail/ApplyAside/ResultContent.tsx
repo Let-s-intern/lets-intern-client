@@ -29,7 +29,8 @@ const ResultContent = ({
         <p>{formatDateString(announcementDate)}</p>
       </div>
       <button
-        className={cn('complete-button', 'next-button')}
+        id="close_button"
+        className={cn('close-button', 'next-button')}
         onClick={handleCloseButtonClicked}
       >
         닫기

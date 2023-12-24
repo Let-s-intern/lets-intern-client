@@ -167,9 +167,7 @@ const Users = () => {
             )}
           </>
         )}
-        <div className="bottom">
-          <AdminPagination maxPage={10} />
-        </div>
+        <AdminPagination maxPage={10} />
       </main>
     </>
   );

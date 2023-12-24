@@ -69,8 +69,12 @@ const CautionContent = ({
       <h2>{program.title}</h2>
       <h4>[필독사항]</h4>
       <p>{program.notice}</p>
-      <button className="caution-next-button" onClick={handleApplySubmit}>
-        신청하기
+      <button
+        id="complete_button"
+        className="caution-next-button"
+        onClick={handleApplySubmit}
+      >
+        제출하기
       </button>
     </div>
   );

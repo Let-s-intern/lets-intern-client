@@ -25,6 +25,7 @@ const StartContent = ({
       <h3>{typeToText[program.type]}</h3>
       <h2>{program.title}</h2>
       <button
+        id="apply_button"
         className={cn('apply-button', {
           disabled: participated || program.status !== 'OPEN',
         })}
