@@ -69,11 +69,11 @@ const MemberTypeContent = ({
       {isLoginModal && memberChecked === 'GUEST' && (
         <AlertModal
           title="회원으로 지원하면 마이페이지에서<br />신청현황을 확인하실 수 있습니다."
-          onConfirm={onConfirm}
-          onCancel={onCancel}
-          highlight="confirm"
-          confirmText="회원으로 신청"
-          cancelText="비회원으로 신청"
+          onConfirm={onCancel}
+          onCancel={onConfirm}
+          highlight="cancel"
+          confirmText="비회원으로 신청"
+          cancelText="회원으로 신청"
         >
           비회원으로 지원 시 다시 지원하거나
           <br />

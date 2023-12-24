@@ -25,7 +25,6 @@ const Button = ({
 
   return (
     <button
-      id={id}
       type={type}
       className={`rounded px-4 py-3 font-medium${
         color === 'white'
@@ -39,6 +38,7 @@ const Button = ({
         onClick && onClick();
         to !== '' && navigate(to);
       }}
+      {...(id && { id })}
     >
       {children}
     </button>

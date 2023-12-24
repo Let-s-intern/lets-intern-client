@@ -293,7 +293,7 @@ const InputContent = ({
         </div>
       )}
       <button
-        id="member-info-input-next-button"
+        id="member_info_input_next_button"
         type="submit"
         className={cn('member-info-input-next-button', {
           disabled: isNextButtonDisabled,
