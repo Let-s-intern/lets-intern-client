@@ -13,6 +13,7 @@ import './Reviews.scss';
 const Reviews = () => {
   const [searchParams, _] = useSearchParams();
   const [programList, setProgramList] = useState([]);
+  const [maxPage, setMaxPage] = useState(1);
 
   const sizePerPage = 10;
 
@@ -26,6 +27,7 @@ const Reviews = () => {
       try {
         const res = await axios.get('/program/admin', { params });
         setProgramList(res.data.programList);
+        setMaxPage(res.data.pageInfo.totalPages);
       } catch (err) {
         console.log(err);
       }
@@ -58,7 +60,7 @@ const Reviews = () => {
             copyReviewCreateLink={copyReviewCreateLink}
           />
         </Table>
-        <AdminPagination maxPage={10} />
+        {programList.length > 0 && <AdminPagination maxPage={maxPage} />}
       </main>
     </>
   );

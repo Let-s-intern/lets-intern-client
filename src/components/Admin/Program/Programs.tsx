@@ -18,6 +18,7 @@ const Programs = () => {
   const [programList, setProgramList] = useState([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<unknown>(null);
+  const [maxPage, setMaxPage] = useState(1);
 
   const sizePerPage = 10;
 
@@ -32,6 +33,8 @@ const Programs = () => {
       .get('/program/admin', { params })
       .then((res) => {
         setProgramList(res.data.programList);
+        setMaxPage(res.data.pageInfo.totalPages);
+        console.log(res);
       })
       .catch((err) => {
         setError(err);
@@ -100,7 +103,7 @@ const Programs = () => {
             fetchEditProgramVisible={fetchEditProgramVisible}
           />
         </Table>
-        <AdminPagination maxPage={10} />
+        {programList.length > 0 && <AdminPagination maxPage={maxPage} />}
       </main>
     </>
   );

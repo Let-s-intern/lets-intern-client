@@ -18,6 +18,7 @@ const ProgramUsers = () => {
   const [error, setError] = useState<unknown>(null);
   const [program, setProgram] = useState<any>({});
   const [applications, setApplications] = useState<any>([]);
+  const [maxPage, setMaxPage] = useState(1);
 
   const sizePerPage = 10;
 
@@ -41,6 +42,7 @@ const ProgramUsers = () => {
           params: pageParams,
         });
         setApplications(res.data.applicationList);
+        setMaxPage(res.data.pageInfo.totalPages);
       } catch (err) {
         setError(err);
       }
@@ -148,7 +150,7 @@ const ProgramUsers = () => {
             미선발 이메일 보내기
           </EmailActionButton>
         </EmailActionArea>
-        <AdminPagination maxPage={10} />
+        {applications.length > 0 && <AdminPagination maxPage={maxPage} />}
       </main>
     </>
   );
