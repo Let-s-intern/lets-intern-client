@@ -89,7 +89,7 @@ const Login = () => {
       });
   };
 
-  const handleKakaoLogin = (type: 'KAKAO' | 'NAVER') => {
+  const handleSocialLogin = (type: 'KAKAO' | 'NAVER') => {
     const redirectPath = `${window.location.protocol}//${
       window.location.hostname
     }:${window.location.port}/login${
@@ -129,9 +129,20 @@ const Login = () => {
       <div className="social-login">
         <h2>SNS 계정으로 로그인하기</h2>
         <div className="button-group">
-          <button onClick={() => handleKakaoLogin('KAKAO')}>
+          <button
+            className="kakao-login-button"
+            onClick={() => handleSocialLogin('KAKAO')}
+          >
             <i>
               <img src="/icons/kakao-icon.svg" alt="카카오톡 아이콘" />
+            </i>
+          </button>
+          <button
+            className="naver-login-button"
+            onClick={() => handleSocialLogin('NAVER')}
+          >
+            <i>
+              <img src="/icons/naver-icon.jpg" alt="카카오톡 아이콘" />
             </i>
           </button>
         </div>

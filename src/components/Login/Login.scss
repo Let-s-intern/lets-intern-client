@@ -56,6 +56,22 @@
       margin-top: 1rem;
       display: flex;
       gap: 1rem;
+
+      .kakao-login-button {
+        width: 43px;
+        height: 43px;
+      }
+
+      .naver-login-button {
+        width: 43px;
+        height: 43px;
+
+        i {
+          img {
+            border-radius: 100%;
+          }
+        }
+      }
     }
   }
 
