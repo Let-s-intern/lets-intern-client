@@ -21,6 +21,7 @@ const Users = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<unknown>(null);
   const [searchValues, setSearchValues] = useState<any>({});
+  const [maxPage, setMaxPage] = useState(1);
 
   const sizePerPage = 10;
 
@@ -47,6 +48,7 @@ const Users = () => {
         }
         searchedUsers = searchUsersWithQuery(searchedUsers);
         setUsers(searchedUsers);
+        setMaxPage(res.data.pageInfo.totalPages);
       } catch (err) {
         setError(err);
       } finally {
@@ -156,18 +158,20 @@ const Users = () => {
             ) : users.length === 0 ? (
               <div className="empty-table">유저 정보가 없습니다.</div>
             ) : (
-              <Table>
-                <TableHead />
-                <TableBody
-                  users={users}
-                  setUsers={setUsers}
-                  onDeleteUser={handleDeleteUser}
-                />
-              </Table>
+              <>
+                <Table>
+                  <TableHead />
+                  <TableBody
+                    users={users}
+                    setUsers={setUsers}
+                    onDeleteUser={handleDeleteUser}
+                  />
+                </Table>
+                <AdminPagination maxPage={maxPage} />
+              </>
             )}
           </>
         )}
-        <AdminPagination maxPage={10} />
       </main>
     </>
   );

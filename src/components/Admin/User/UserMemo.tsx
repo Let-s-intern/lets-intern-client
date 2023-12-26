@@ -11,6 +11,7 @@ import ActionButton from '../ActionButton';
 import UserMemoModal from './UserMemoModal';
 
 import './UserMemo.scss';
+import AdminPagination from '../AdminPagination';
 
 const UserMemo = () => {
   const params = useParams();
@@ -22,12 +23,23 @@ const UserMemo = () => {
   const [memoValue, setMemoValue] = useState('');
   const [memoId, setMemoId] = useState(-1);
   const [user, setUser] = useState<any>({});
+  const [maxPage, setMaxPage] = useState(1);
+
+  const sizePerPage = 10;
 
   useEffect(() => {
     const fetchData = async () => {
+      const currentPage = searchParams.get('page');
+      const reqParams = {
+        page: currentPage,
+        size: sizePerPage,
+      };
       try {
-        let res = await axios.get(`/memo/${params.userId}`);
+        let res = await axios.get(`/memo/${params.userId}`, {
+          params: reqParams,
+        });
         setMemoList(res.data.memoList);
+        setMaxPage(res.data.pageInfo.totalPages);
         res = await axios.get(`/user/admin/${params.userId}`);
         setUser(res.data);
       } catch (error) {
@@ -121,6 +133,7 @@ const UserMemo = () => {
             onDeleteMemo={handleDeleteMemo}
           />
         </Table>
+        {memoList.length > 0 && <AdminPagination maxPage={maxPage} />}
         <UserMemoModal
           memoValue={memoValue}
           isModalOpen={isModalOpen}

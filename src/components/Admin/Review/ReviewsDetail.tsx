@@ -18,6 +18,7 @@ const ReviewsDetail = () => {
   const [error, setError] = useState<unknown>(null);
   const [reviewList, setReviewList] = useState<any>([]);
   const [program, setProgram] = useState<any>({});
+  const [maxPage, setMaxPage] = useState(1);
 
   const sizePerPage = 10;
 
@@ -34,6 +35,7 @@ const ReviewsDetail = () => {
           params: pageParams,
         });
         setReviewList(res.data.reviewList);
+        setMaxPage(res.data.pageInfo.totalPages);
         res = await axios.get(`/program/admin`);
         const foundedProgram = res.data.programList.find(
           (program: any) => program.id === Number(params.programId),
@@ -88,7 +90,7 @@ const ReviewsDetail = () => {
             handleVisibleChanged={handleVisibleChanged}
           />
         </Table>
-        <AdminPagination maxPage={10} />
+        {reviewList.length > 0 && <AdminPagination maxPage={maxPage} />}
       </main>
     </>
   );
