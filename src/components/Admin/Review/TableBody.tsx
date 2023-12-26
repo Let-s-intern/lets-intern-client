@@ -13,7 +13,7 @@ const TableBody = ({ programList, copyReviewCreateLink }: TableBodyProps) => {
   return (
     <thead>
       {programList.map((program: any) => (
-        <tr key={program.id}>
+        <tr>
           <TD whiteSpace="wrap">{program.title}</TD>
           <TD>{formatDateString(program.announcementDate)}</TD>
           <TD>
