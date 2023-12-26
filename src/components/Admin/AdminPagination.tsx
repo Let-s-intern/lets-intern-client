@@ -11,34 +11,54 @@ interface AdminPaginationProps {
 const AdminPagination = ({ maxPage }: AdminPaginationProps) => {
   const [searchParams, setSearchParams] = useSearchParams();
 
-  const handlePageButtonClicked = (page: number) => {
+  const handlePageButtonClick = (page: number) => {
     const newSearchParams = new URLSearchParams(searchParams);
     newSearchParams.set('page', `${page}`);
     setSearchParams(newSearchParams);
     window.scrollTo(0, 0);
   };
 
+  const handleArrowLeftClick = () => {
+    const page = Number(searchParams.get('page')) || 1;
+    if (page - 1 <= 0) return;
+    const newSearchParams = new URLSearchParams(searchParams);
+    newSearchParams.set('page', `${page - 1}`);
+    setSearchParams(newSearchParams);
+    window.scrollTo(0, 0);
+  };
+
+  const handleArrowRightClick = () => {
+    const page = Number(searchParams.get('page')) || 1;
+    if (page + 1 > maxPage) return;
+    const newSearchParams = new URLSearchParams(searchParams);
+    newSearchParams.set('page', `${page + 1}`);
+    setSearchParams(newSearchParams);
+    window.scrollTo(0, 0);
+  };
+
   return (
     <div className="admin-pagination">
-      <span className="arrow">
+      <span className="arrow" onClick={() => handleArrowLeftClick()}>
         <i>
           <RiArrowLeftSLine />
         </i>
       </span>
       <ul>
-        {Array.from(Array(maxPage + 1), (_, index) => index).map((page) => (
+        {Array.from(Array(maxPage), (_, index) => index + 1).map((page) => (
           <li
             key={page}
             className={cn({
-              ['active']: page === Number(searchParams.get('page')),
+              ['active']:
+                page === Number(searchParams.get('page')) ||
+                (searchParams.get('page') === null && page === 1),
             })}
-            onClick={() => handlePageButtonClicked(page)}
+            onClick={() => handlePageButtonClick(page)}
           >
             {page}
           </li>
         ))}
       </ul>
-      <span className="arrow">
+      <span className="arrow" onClick={() => handleArrowRightClick()}>
         <i>
           <RiArrowRightSLine />
         </i>
