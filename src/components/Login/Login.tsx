@@ -34,7 +34,7 @@ const TextLink = ({ to, dark, className, children }: TextLinkProps) => {
 
 const Login = () => {
   const navigate = useNavigate();
-  const [searchParams, _] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
@@ -57,9 +57,21 @@ const Login = () => {
   }, [email, password]);
 
   useEffect(() => {
-    if (!searchParams.get('result')) return;
-    const parsedToken = JSON.parse(searchParams.get('result') || '');
-    handleLoginSuccess(parsedToken);
+    if (searchParams.get('result')) {
+      const parsedToken = JSON.parse(searchParams.get('result') || '');
+      const newSearchParams = new URLSearchParams(searchParams);
+      newSearchParams.delete('result');
+      setSearchParams(newSearchParams);
+      handleLoginSuccess(parsedToken);
+    } else if (searchParams.get('error')) {
+      const errorParam = JSON.parse(searchParams.get('error') || '');
+      const newSearchParams = new URLSearchParams(searchParams);
+      newSearchParams.delete('error');
+      setSearchParams(newSearchParams);
+      if (errorParam.status === 400 && errorParam.code === 'USER_400_4') {
+        setErrorMessage('이미 존재하는 이메일입니다.');
+      }
+    }
   }, [searchParams]);
 
   const handleLoginSuccess = (token: any) => {
@@ -97,9 +109,10 @@ const Login = () => {
         ? `?redirect=${searchParams.get('redirect')}`
         : ''
     }`;
-    window.location.href = `https://letsintern.kr/oauth2/authorize/${
+    const path = `https://letsintern.kr/oauth2/authorize/${
       type === 'KAKAO' ? 'kakao' : type === 'NAVER' && 'naver'
     }?redirect_uri=${redirectPath}`;
+    window.location.href = path;
   };
 
   return (
@@ -142,7 +155,7 @@ const Login = () => {
             onClick={() => handleSocialLogin('NAVER')}
           >
             <i>
-              <img src="/icons/naver-icon.jpg" alt="카카오톡 아이콘" />
+              <img src="/icons/naver-icon.svg" alt="네이버 아이콘" />
             </i>
           </button>
         </div>
