@@ -6,7 +6,6 @@ const formatDateString = (dateString: string) => {
     year: 'numeric',
     month: 'long',
     day: 'numeric',
-    timeZone: 'UTC',
   };
 
   // 시간 부분만 포맷팅
@@ -14,7 +13,6 @@ const formatDateString = (dateString: string) => {
     hour: 'numeric',
     minute: 'numeric',
     hour12: true,
-    timeZone: 'UTC',
   };
 
   // 요일 계산
