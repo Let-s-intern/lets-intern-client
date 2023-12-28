@@ -27,7 +27,7 @@ const SubInfo = ({
           <Input
             placeholder="대학교를 입력하세요."
             name="university"
-            value={subInfoValues.university}
+            value={subInfoValues.university || ''}
             onChange={onChangeSubInfo}
             autoComplete="off"
           />
@@ -37,7 +37,7 @@ const SubInfo = ({
           <Input
             placeholder="전공을 입력하세요."
             name="major"
-            value={subInfoValues.major}
+            value={subInfoValues.major || ''}
             onChange={onChangeSubInfo}
             autoComplete="off"
           />

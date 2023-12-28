@@ -5,12 +5,7 @@ import ReactQuill from 'react-quill';
 import styled from 'styled-components';
 import FAQEditor from './FAQEditor';
 import storage from '../Firebase';
-import {
-  getDownloadURL,
-  ref,
-  uploadBytes,
-  uploadBytesResumable,
-} from 'firebase/storage';
+import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
 import { useMemo, useRef } from 'react';
 
 interface ProgramEditorProps {

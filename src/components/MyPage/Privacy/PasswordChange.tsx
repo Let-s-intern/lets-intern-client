@@ -25,7 +25,7 @@ const PasswordChange = ({
             type="password"
             placeholder="기존 비밀번호를 입력하세요."
             name="currentPassword"
-            value={passwordValues.currentPassword}
+            value={passwordValues.currentPassword || ''}
             onChange={onChangePassword}
             autoComplete="off"
           />
@@ -36,7 +36,7 @@ const PasswordChange = ({
             type="password"
             placeholder="영어, 숫자, 특수문자 포함 8자 이상"
             name="newPassword"
-            value={passwordValues.newPassword}
+            value={passwordValues.newPassword || ''}
             onChange={onChangePassword}
             autoComplete="off"
           />
@@ -47,7 +47,7 @@ const PasswordChange = ({
             type="password"
             placeholder="비밀번호를 다시 입력하세요."
             name="newPasswordConfirm"
-            value={passwordValues.newPasswordConfirm}
+            value={passwordValues.newPasswordConfirm || ''}
             onChange={onChangePassword}
             autoComplete="off"
           />

@@ -19,8 +19,14 @@ interface ProgramListSliderProps {
 }
 
 const SlideContent = styled.div`
+  scrollbar-width: none; /* FireFox */
+
   &::-webkit-scrollbar {
-    display: none;
+    display: none; /* Chrome, Safari, Opera, ... */
+  }
+
+  &::-ms-scrollbar {
+    display: none; /* Internet Explorer, Edge */
   }
 `;
 
@@ -61,8 +67,12 @@ const ProgramListSlider = ({
         ref={scrollContainer}
         className="flex grow overflow-x-scroll scroll-smooth py-5"
       >
-        {loading || programs.length === 0 ? (
+        {loading ? (
           <div className="h-[20rem] w-full"></div>
+        ) : programs.length === 0 ? (
+          <div className="flex h-[20rem] w-full items-center justify-center text-neutral-grey">
+            현재 진행 중인 프로그램이 없습니다.
+          </div>
         ) : (
           <div className="flex gap-5">
             {programs.map((program) => {
