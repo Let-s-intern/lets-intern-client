@@ -6,7 +6,9 @@ interface TabBarProps {
 }
 
 const TabBar = ({ itemCount, children }: TabBarProps) => {
-  const [justifyBetweenStyle, setJustifyBetweenStyle] = useState('');
+  const [justifyBetweenStyle, setJustifyBetweenStyle] = useState(
+    ' min-[350px]:justify-start min-[350px]:gap-10',
+  );
 
   useEffect(() => {
     if (itemCount) {

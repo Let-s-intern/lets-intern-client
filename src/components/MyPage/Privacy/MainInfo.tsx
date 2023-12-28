@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import styled from 'styled-components';
 
 import { SectionTitle } from '../Section';
@@ -6,8 +7,6 @@ import FormButton from './FormButton';
 import Label from './Label';
 import ButtonGroup from './ButtonGroup';
 import InputControl from './InputControl';
-import { useState } from 'react';
-import AlertModal from '../../AlertModal';
 import WithDrawAlertModal from './WithDrawAlertModal';
 
 interface MainInfoProps {
@@ -34,7 +33,7 @@ const MainInfo = ({
           <Input
             placeholder="이름을 입력하세요."
             name="name"
-            value={mainInfoValues.name}
+            value={mainInfoValues.name || ''}
             onChange={onChangeMainInfo}
             autoComplete="off"
           />
@@ -44,7 +43,7 @@ const MainInfo = ({
           <Input
             placeholder="example@example.com"
             name="email"
-            value={mainInfoValues.email}
+            value={mainInfoValues.email || ''}
             onChange={onChangeMainInfo}
             autoComplete="off"
           />
@@ -54,7 +53,7 @@ const MainInfo = ({
           <Input
             placeholder="010-1234-5678"
             name="phoneNum"
-            value={mainInfoValues.phoneNum}
+            value={mainInfoValues.phoneNum || ''}
             onChange={onChangeMainInfo}
             autoComplete="off"
           />

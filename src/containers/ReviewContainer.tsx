@@ -20,7 +20,6 @@ const ReviewContainer = () => {
         const {
           data: { userApplicationList: applicationList },
         } = await axios.get('/application');
-        console.log(applicationList);
         setWaitingReviewList(
           applicationList.filter(
             (application: any) =>

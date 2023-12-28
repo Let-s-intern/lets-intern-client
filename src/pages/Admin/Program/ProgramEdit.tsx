@@ -14,11 +14,6 @@ const ProgramEdit = () => {
   const [faqList, setFaqList] = useState<any>([]);
   const [faqIdList, setFaqIdList] = useState<any>([]);
 
-  const toLocalISOString = (dateString: string) => {
-    const date = new Date(dateString);
-    return date.toISOString().slice(0, 16);
-  };
-
   useEffect(() => {
     const fetchProgram = async () => {
       try {
@@ -29,10 +24,10 @@ const ProgramEdit = () => {
         setContent(res.data.contents);
         const newValues = {
           ...res.data,
-          startDate: toLocalISOString(res.data.startDate),
-          endDate: toLocalISOString(res.data.endDate),
-          announcementDate: toLocalISOString(res.data.announcementDate),
-          dueDate: toLocalISOString(res.data.dueDate),
+          startDate: res.data.startDate,
+          endDate: res.data.endDate,
+          announcementDate: res.data.announcementDate,
+          dueDate: res.data.dueDate,
         };
         delete newValues.id;
         delete newValues.isVisible;
