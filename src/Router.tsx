@@ -26,6 +26,7 @@ import AttendCheck from './pages/Admin/Program/AttendCheck';
 import ScrollToTop from './components/ScrollToTop';
 import AdminPrograms from './components/Admin/Program/Programs';
 import ProgramUsers from './components/Admin/Program/ProgramUsers';
+import Home from './components/Home/Home';
 
 const Router = () => {
   return (
@@ -35,6 +36,8 @@ const Router = () => {
         <Route path="/" element={<Layout />}>
           {/* / */}
           <Route path="" element={<Programs />} />
+          {/* /home */}
+          <Route path="home" element={<Home />} />
           {/* /program/detail/:programId */}
           <Route path="program/detail/:programId" element={<ProgramDetail />} />
           <Route path="program/:programId">

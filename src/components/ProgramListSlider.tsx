@@ -19,8 +19,14 @@ interface ProgramListSliderProps {
 }
 
 const SlideContent = styled.div`
+  scrollbar-width: none; /* FireFox */
+
   &::-webkit-scrollbar {
-    display: none;
+    display: none; /* Chrome, Safari, Opera, ... */
+  }
+
+  &::-ms-scrollbar {
+    display: none; /* Internet Explorer, Edge */
   }
 `;
 

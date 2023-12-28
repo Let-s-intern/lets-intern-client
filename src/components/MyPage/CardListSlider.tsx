@@ -56,9 +56,14 @@ const CardListContent = styled.div`
   width: 100%;
   height: 300px;
   flex-grow: 1;
+  scrollbar-width: none; /* FireFox */
 
   &::-webkit-scrollbar {
-    display: none;
+    display: none; /* Chrome, Safari, Opera, ... */
+  }
+
+  &::-ms-scrollbar {
+    display: none; /* Internet Explorer, Edge */
   }
 `;
 
