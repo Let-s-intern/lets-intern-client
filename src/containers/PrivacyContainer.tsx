@@ -12,11 +12,10 @@ const PrivacyContainer = () => {
   const [mainInfoValues, setMainInfoValues] = useState<any>({});
   const [subInfoValues, setSubInfoValues] = useState<any>({});
   const [passwordValues, setPasswordValues] = useState<any>({});
-  const [loading, setLoading] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<unknown>(null);
   const [initialValues, setInitialValues] = useState<any>({});
 
-  // 유저 정보 가져오기
   useEffect(() => {
     const fetchUserInfo = async () => {
       try {
@@ -56,7 +55,6 @@ const PrivacyContainer = () => {
     });
   };
 
-  // 이름, 이메일, 휴대폰 번호 변경 입력 폼의 값이 변경될 때마다 실행되는 함수
   const handleChangeMainInfo = (e: any) => {
     const { name, value } = e.target;
     setMainInfoValues({
@@ -65,7 +63,6 @@ const PrivacyContainer = () => {
     });
   };
 
-  // 이름, 이메일, 휴대폰 번호 변경 버튼 클릭 시 실행되는 함수
   const handleSaveMainInfo = async (e: any) => {
     e.preventDefault();
     let hasNull: boolean = false;
@@ -110,7 +107,6 @@ const PrivacyContainer = () => {
     }
   };
 
-  // 학과, 학교 정보 변경 입력 폼의 값이 변경될 때마다 실행되는 함수
   const handleChangeSubInfo = (e: any) => {
     const { name, value } = e.target;
     setSubInfoValues({
@@ -119,7 +115,6 @@ const PrivacyContainer = () => {
     });
   };
 
-  // 학과, 학교 정보 변경 버튼 클릭 시 실행되는 함수
   const handleSaveSubInfo = async (e: any) => {
     e.preventDefault();
     let hasNull: boolean = false;
@@ -152,7 +147,6 @@ const PrivacyContainer = () => {
     }
   };
 
-  // 비밀번호 변경 입력 폼의 값이 변경될 때마다 실행되는 함수
   const handleChangePassword = (e: any) => {
     const { name, value } = e.target;
     setPasswordValues({
@@ -161,7 +155,6 @@ const PrivacyContainer = () => {
     });
   };
 
-  // 비밀번호 변경 버튼 클릭 시 실행되는 함수
   const handleSavePassword = async (e: any) => {
     e.preventDefault();
     if (
@@ -207,7 +200,6 @@ const PrivacyContainer = () => {
     }
   };
 
-  // 회원 탈퇴 버튼 클릭 시 실행되는 함수
   const handleDeleteAccount = async () => {
     try {
       axios.get('/user/withdraw');
@@ -220,7 +212,6 @@ const PrivacyContainer = () => {
     }
   };
 
-  // 컴포넌트 렌더링
   return (
     <Privacy
       loading={loading}
