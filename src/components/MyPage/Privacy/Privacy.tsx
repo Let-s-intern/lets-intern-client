@@ -1,8 +1,8 @@
-import styled from 'styled-components';
-
 import MainInfo from './MainInfo';
 import PasswordChange from './PasswordChange';
 import SubInfo from './SubInfo';
+
+import './Privacy.scss';
 
 interface PrivacyProps {
   loading: boolean;
@@ -42,7 +42,7 @@ const Privacy = ({
   }
 
   return (
-    <PrivacyBlock>
+    <main className="privacy-page">
       <MainInfo
         mainInfoValues={mainInfoValues}
         onChangeMainInfo={handleChangeMainInfo}
@@ -59,14 +59,8 @@ const Privacy = ({
         onChangePassword={handleChangePassword}
         onSubmitPassword={handleSavePassword}
       />
-    </PrivacyBlock>
+    </main>
   );
 };
 
 export default Privacy;
-
-const PrivacyBlock = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 3rem;
-`;

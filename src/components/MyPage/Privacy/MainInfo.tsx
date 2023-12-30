@@ -1,12 +1,5 @@
 import { useState } from 'react';
-import styled from 'styled-components';
 
-import { SectionTitle } from '../Section';
-import Input from './Input';
-import FormButton from './FormButton';
-import Label from './Label';
-import ButtonGroup from './ButtonGroup';
-import InputControl from './InputControl';
 import WithDrawAlertModal from './WithDrawAlertModal';
 
 interface MainInfoProps {
@@ -25,58 +18,57 @@ const MainInfo = ({
   const [isWithdrawModal, setIsWithdrawModal] = useState(false);
 
   return (
-    <MainInfoBlock onSubmit={onSubmitMainInfo}>
-      <SectionTitle>개인정보</SectionTitle>
-      <Form>
-        <InputControl>
-          <Label>이름</Label>
-          <Input
+    <section className="main-info-section" onSubmit={onSubmitMainInfo}>
+      <h1>개인정보</h1>
+      <form>
+        <div className="input-control">
+          <label htmlFor="name">이름</label>
+          <input
             placeholder="이름을 입력하세요."
+            id="name"
             name="name"
             value={mainInfoValues.name || ''}
             onChange={onChangeMainInfo}
             autoComplete="off"
           />
-        </InputControl>
-        <InputControl>
-          <Label>이메일</Label>
-          <Input
+        </div>
+        <div className="input-control">
+          <label htmlFor="email">이메일</label>
+          <input
             placeholder="example@example.com"
+            id="email"
             name="email"
             value={mainInfoValues.email || ''}
             onChange={onChangeMainInfo}
             autoComplete="off"
           />
-        </InputControl>
-        <InputControl>
-          <Label>휴대폰 번호</Label>
-          <Input
+        </div>
+        <div className="input-control">
+          <label htmlFor="phone-number">휴대폰 번호</label>
+          <input
             placeholder="010-1234-5678"
+            id="phone-number"
             name="phoneNum"
             value={mainInfoValues.phoneNum || ''}
             onChange={onChangeMainInfo}
             autoComplete="off"
           />
-        </InputControl>
-        <ButtonGroup>
-          <FormButton type="submit">정보 수정</FormButton>
-          <FormButton type="button" onClick={() => setIsWithdrawModal(true)}>
+        </div>
+        <div className="action-group">
+          <button type="submit">정보 수정</button>
+          <button type="button" onClick={() => setIsWithdrawModal(true)}>
             회원 탈퇴
-          </FormButton>
-        </ButtonGroup>
-      </Form>
+          </button>
+        </div>
+      </form>
       {isWithdrawModal && (
         <WithDrawAlertModal
           onDeleteAccount={onDeleteAccount}
           setIsWithdrawModal={setIsWithdrawModal}
         />
       )}
-    </MainInfoBlock>
+    </section>
   );
 };
 
 export default MainInfo;
-
-const MainInfoBlock = styled.section``;
-
-const Form = styled.form``;
