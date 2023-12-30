@@ -1,5 +1,3 @@
-import styled from 'styled-components';
-
 interface PasswordChangeProps {
   passwordValues: any;
   onChangePassword: (e: any) => void;

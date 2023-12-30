@@ -6,7 +6,7 @@ import Login from './components/Login/Login';
 import MyPage from './pages/MyPage';
 import SignUp from './pages/SignUp';
 import FindPassword from './pages/FindPassword';
-import Privacy from './pages/MyPage/Privacy';
+import Privacy from './components/MyPage/Privacy/Privacy';
 import Review from './pages/MyPage/Review';
 import Layout from './components/Layout';
 import AdminLayout from './components/AdminLayout';
