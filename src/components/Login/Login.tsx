@@ -1,10 +1,5 @@
 import { useEffect, useState } from 'react';
-import {
-  Link,
-  useLocation,
-  useNavigate,
-  useSearchParams,
-} from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import axios from 'axios';
 
 import Button from '../Button';

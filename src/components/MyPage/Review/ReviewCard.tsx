@@ -5,7 +5,6 @@ import {
   CardBottom,
   CardBottomLink,
   CardMiddle,
-  CardSubSpan,
   CardTitle,
   CardTop,
 } from '../Card';
@@ -32,7 +31,6 @@ const ReviewCard = ({
   return (
     <CardBlock onClick={() => navigate(to)}>
       <CardTop>
-        {/* <CardSubSpan>챌린지</CardSubSpan> */}
         <CardBadge
           $bgColor={statusToLabel[status].bgColor}
           $color={statusToLabel[status].color}

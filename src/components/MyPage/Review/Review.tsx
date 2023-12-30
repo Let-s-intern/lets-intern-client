@@ -1,9 +1,9 @@
 import styled from 'styled-components';
 
 import CardListSlider from '../CardListSlider';
-import { Section, SectionTitle } from '../Section';
 import ReviewCard from './ReviewCard';
 import Placeholder from '../Placeholder';
+import { Section, SectionTitle } from '../Section';
 
 interface ReviewProps {
   loading: boolean;

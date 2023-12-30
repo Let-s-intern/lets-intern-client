@@ -9,7 +9,7 @@ import MainContent from '../components/Program/ProgramDetail/MainContent';
 import ApplySection from '../components/Program/ProgramDetail/ApplySection/ApplySection';
 import ApplyAside from '../components/Program/ProgramDetail/ApplyAside/ApplyAside';
 
-import classes from './ProgramDetail.module.scss';
+import './ProgramDetail.scss';
 import '../styles/github-markdown-light.css';
 
 const ProgramDetail = () => {
@@ -45,15 +45,15 @@ const ProgramDetail = () => {
   }, []);
 
   if (loading) {
-    return <main className={classes['program-detail']} />;
+    return <main className="program-detail" />;
   }
 
   if (isError) {
-    return <main className={classes['program-detail']}>에러 발생</main>;
+    return <main className="program-detail">에러 발생</main>;
   }
 
   return (
-    <div className={classes['program-detail']}>
+    <div className="program-detail">
       <main>
         <article>
           <Header title={program.title} />
