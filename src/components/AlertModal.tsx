@@ -1,5 +1,6 @@
 import { Fragment } from 'react';
 import styled, { css } from 'styled-components';
+import cn from 'classnames';
 
 interface AlertModalProps {
   onConfirm: () => void;
@@ -11,6 +12,7 @@ interface AlertModalProps {
   children: React.ReactNode;
   disabled?: boolean;
   showCancel?: boolean;
+  className?: string;
 }
 
 interface ButtonProps {
@@ -28,10 +30,11 @@ const AlertModal = ({
   children,
   disabled = false,
   showCancel = true,
+  className,
 }: AlertModalProps) => {
   return (
     <ModalBackdrop>
-      <ModalContainer>
+      <ModalContainer className={cn(className, 'alert-modal')}>
         <ModalHeader>
           {title.split('<br />').map((titleEl, index) => (
             <Fragment key={index}>
@@ -40,7 +43,7 @@ const AlertModal = ({
             </Fragment>
           ))}
         </ModalHeader>
-        <ModalBody>{children}</ModalBody>
+        <ModalBody className="modal-body">{children}</ModalBody>
         <ModalFooter>
           <Button
             type="button"

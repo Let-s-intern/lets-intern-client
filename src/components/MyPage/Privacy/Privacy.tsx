@@ -1,38 +1,59 @@
-import styled from 'styled-components';
+import { useEffect, useState } from 'react';
 
+import axios from '../../../libs/axios';
 import MainInfo from './MainInfo';
 import PasswordChange from './PasswordChange';
 import SubInfo from './SubInfo';
 
-interface PrivacyProps {
-  loading: boolean;
-  error: any;
-  mainInfoValues: any;
-  subInfoValues: any;
-  passwordValues: any;
-  handleChangeMainInfo: (e: any) => void;
-  handleSaveMainInfo: (e: any) => void;
-  handleChangeSubInfo: (e: any) => void;
-  handleSaveSubInfo: (e: any) => void;
-  handleChangePassword: (e: any) => void;
-  handleSavePassword: (e: any) => void;
-  handleDeleteAccount: () => void;
-}
+import './Privacy.scss';
 
-const Privacy = ({
-  loading,
-  error,
-  mainInfoValues,
-  subInfoValues,
-  passwordValues,
-  handleChangeMainInfo,
-  handleSaveMainInfo,
-  handleChangeSubInfo,
-  handleSaveSubInfo,
-  handleChangePassword,
-  handleSavePassword,
-  handleDeleteAccount,
-}: PrivacyProps) => {
+const Privacy = () => {
+  const [mainInfoValues, setMainInfoValues] = useState<any>({});
+  const [subInfoValues, setSubInfoValues] = useState<any>({});
+  const [passwordValues, setPasswordValues] = useState<any>({});
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<unknown>(null);
+  const [initialValues, setInitialValues] = useState<any>({});
+
+  useEffect(() => {
+    const fetchUserInfo = async () => {
+      try {
+        const res = await axios.get('/user');
+        setMainInfoValues({
+          name: res.data.name,
+          email: res.data.email,
+          phoneNum: res.data.phoneNum,
+        });
+        setSubInfoValues({
+          major: res.data.major,
+          university: res.data.university,
+        });
+        setInitialValues({
+          name: res.data.name,
+          email: res.data.email,
+          phoneNum: res.data.phoneNum,
+          major: res.data.major,
+          university: res.data.university,
+        });
+      } catch (err) {
+        setError(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchUserInfo();
+  }, []);
+
+  const resetInitialValues = () => {
+    setInitialValues({
+      name: mainInfoValues.name,
+      email: mainInfoValues.email,
+      phoneNum: mainInfoValues.phoneNum,
+      major: subInfoValues.major,
+      university: subInfoValues.university,
+    });
+  };
+
   if (loading) {
     return <div></div>;
   }
@@ -42,31 +63,25 @@ const Privacy = ({
   }
 
   return (
-    <PrivacyBlock>
+    <main className="privacy-page">
       <MainInfo
         mainInfoValues={mainInfoValues}
-        onChangeMainInfo={handleChangeMainInfo}
-        onSubmitMainInfo={handleSaveMainInfo}
-        onDeleteAccount={handleDeleteAccount}
+        initialValues={initialValues}
+        setMainInfoValues={setMainInfoValues}
+        resetInitialValues={resetInitialValues}
       />
       <SubInfo
         subInfoValues={subInfoValues}
-        onChangeSubInfo={handleChangeSubInfo}
-        onSubmitSubInfo={handleSaveSubInfo}
+        initialValues={initialValues}
+        setSubInfoValues={setSubInfoValues}
+        resetInitialValues={resetInitialValues}
       />
       <PasswordChange
         passwordValues={passwordValues}
-        onChangePassword={handleChangePassword}
-        onSubmitPassword={handleSavePassword}
+        setPasswordValues={setPasswordValues}
       />
-    </PrivacyBlock>
+    </main>
   );
 };
 
 export default Privacy;
-
-const PrivacyBlock = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 3rem;
-`;

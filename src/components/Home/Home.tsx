@@ -4,7 +4,7 @@ import ProgramSection from './ProgramSection';
 import ReviewSection from './ReviewSection';
 import NewsSection from './NewsSection';
 
-import './index.scss';
+import './Home.scss';
 
 const Home = () => {
   return (

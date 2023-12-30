@@ -5,7 +5,6 @@ import {
   CardBottom,
   CardBottomLink,
   CardMiddle,
-  CardSubSpan,
   CardTitle,
   CardTop,
 } from '../Card';
@@ -43,7 +42,6 @@ const ApplicationCard = ({
         onClick={() => navigate(`/program/detail/${application.programId}`)}
       >
         <CardTop>
-          {/* <CardSubSpan>챌린지</CardSubSpan> */}
           <CardBadge
             $bgColor={statusToLabel[application.status].bgColor}
             $color={statusToLabel[application.status].color}
