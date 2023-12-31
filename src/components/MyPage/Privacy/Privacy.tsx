@@ -11,6 +11,7 @@ const Privacy = () => {
   const [mainInfoValues, setMainInfoValues] = useState<any>({});
   const [subInfoValues, setSubInfoValues] = useState<any>({});
   const [passwordValues, setPasswordValues] = useState<any>({});
+  const [socialAuth, setSocialAuth] = useState<'KAKAO' | 'NAVER' | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<unknown>(null);
   const [initialValues, setInitialValues] = useState<any>({});
@@ -35,6 +36,7 @@ const Privacy = () => {
           major: res.data.major,
           university: res.data.university,
         });
+        setSocialAuth(res.data.authProvider);
       } catch (err) {
         setError(err);
       } finally {
@@ -67,6 +69,7 @@ const Privacy = () => {
       <MainInfo
         mainInfoValues={mainInfoValues}
         initialValues={initialValues}
+        socialAuth={socialAuth}
         setMainInfoValues={setMainInfoValues}
         resetInitialValues={resetInitialValues}
       />
