@@ -65,7 +65,7 @@ const Privacy = () => {
   }
 
   return (
-    <main className="privacy-page">
+    <main className="my-page-content privacy-page">
       <MainInfo
         mainInfoValues={mainInfoValues}
         initialValues={initialValues}

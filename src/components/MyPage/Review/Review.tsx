@@ -57,7 +57,7 @@ const Review = () => {
   }
 
   return (
-    <main className="review-page">
+    <main className="my-page-content review-page">
       <section className="waiting-review-section">
         <h1>후기를 기다리고 있어요</h1>
         {!waitingReviewList || waitingReviewList.length === 0 ? (

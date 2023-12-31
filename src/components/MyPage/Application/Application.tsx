@@ -80,7 +80,7 @@ const Application = () => {
   }
 
   return (
-    <main className="application-page">
+    <main className="my-page-content application-page">
       <section className="applied-section">
         <h1>신청완료</h1>
         {!appliedList || appliedList.length === 0 ? (
