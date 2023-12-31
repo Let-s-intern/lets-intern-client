@@ -1,42 +1,74 @@
-import styled from 'styled-components';
+import { useEffect, useState } from 'react';
 
+import axios from '../../../libs/axios';
 import CardListSlider from '../CardListSlider';
 import ReviewCard from './ReviewCard';
-import Placeholder from '../Placeholder';
-import { Section, SectionTitle } from '../Section';
 
-interface ReviewProps {
-  loading: boolean;
-  error: unknown;
-  waitingReviewList: any;
-  myReviewList: any;
-  statusToLabel: any;
-}
+import './Review.scss';
 
-const Review = ({
-  loading,
-  error,
-  waitingReviewList,
-  myReviewList,
-  statusToLabel,
-}: ReviewProps) => {
+const Review = () => {
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<unknown>(null);
+  const [waitingReviewList, setWaitingReviewList] = useState([]);
+  const [myReviewList, setMyReviewList] = useState([]);
+
+  const statusToLabel = {
+    WAITING: { label: '대기중', bgColor: '#4743A8', color: '#FFFFFF' },
+    DONE: { label: '작성완료', bgColor: '#6963F6', color: '#FFFFFF' },
+  };
+
+  useEffect(() => {
+    const fetchReviews = async () => {
+      try {
+        const {
+          data: { userApplicationList: applicationList },
+        } = await axios.get('/application');
+        setWaitingReviewList(
+          applicationList.filter(
+            (application: any) =>
+              (application.status === 'DONE' ||
+                application.status === 'IN_PROGRESS') &&
+              application.reviewId === null,
+          ),
+        );
+        setMyReviewList(
+          applicationList.filter(
+            (application: any) =>
+              (application.status === 'DONE' ||
+                application.status === 'IN_PROGRESS') &&
+              application.reviewId !== null,
+          ),
+        );
+      } catch (err) {
+        setError(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchReviews();
+  }, []);
+
   if (loading) {
-    return <ReviewBlock>로딩중...</ReviewBlock>;
+    return <main className="review-page">로딩중...</main>;
   }
 
   if (error) {
-    return <ReviewBlock>에러 발생</ReviewBlock>;
+    return <main className="review-page">에러 발생</main>;
   }
 
   return (
-    <ReviewBlock>
-      <Section>
-        <SectionTitle>후기를 기다리고 있어요</SectionTitle>
-        <CardListSlider>
-          {!waitingReviewList || waitingReviewList.length === 0 ? (
-            <Placeholder>작성해야 할 후기가 없습니다.</Placeholder>
-          ) : (
-            waitingReviewList.map((application: any) => (
+    <main className="my-page-content review-page">
+      <section className="waiting-review-section">
+        <h1>후기를 기다리고 있어요</h1>
+        {!waitingReviewList || waitingReviewList.length === 0 ? (
+          <CardListSlider isEmpty={true}>
+            <div className="card-list-placeholder">
+              작성해야 할 후기가 없습니다.
+            </div>
+          </CardListSlider>
+        ) : (
+          <CardListSlider>
+            {waitingReviewList.map((application: any) => (
               <ReviewCard
                 key={application.id}
                 to={`/program/${application.programId}/application/${application.id}/review/create`}
@@ -45,17 +77,19 @@ const Review = ({
                 statusToLabel={statusToLabel}
                 bottomText="후기 작성하기"
               />
-            ))
-          )}
-        </CardListSlider>
-      </Section>
-      <Section>
-        <SectionTitle>작성한 후기 확인하기</SectionTitle>
-        <CardListSlider>
-          {!myReviewList || myReviewList.length === 0 ? (
-            <Placeholder>작성한 후기가 없습니다.</Placeholder>
-          ) : (
-            myReviewList.map((application: any) => (
+            ))}
+          </CardListSlider>
+        )}
+      </section>
+      <section className="writed-review-section">
+        <h1>작성한 후기 확인하기</h1>
+        {!myReviewList || myReviewList.length === 0 ? (
+          <CardListSlider isEmpty={true}>
+            <div className="card-list-placeholder">작성한 후기가 없습니다.</div>
+          </CardListSlider>
+        ) : (
+          myReviewList.map((application: any) => (
+            <CardListSlider>
               <ReviewCard
                 key={application.id}
                 to={`/program/${application.id}/review/${application.reviewId}`}
@@ -64,14 +98,12 @@ const Review = ({
                 statusToLabel={statusToLabel}
                 bottomText="후기 확인하기"
               />
-            ))
-          )}
-        </CardListSlider>
-      </Section>
-    </ReviewBlock>
+            </CardListSlider>
+          ))
+        )}
+      </section>
+    </main>
   );
 };
 
 export default Review;
-
-const ReviewBlock = styled.div``;
