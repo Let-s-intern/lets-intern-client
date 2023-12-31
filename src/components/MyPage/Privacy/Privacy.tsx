@@ -44,16 +44,12 @@ const Privacy = () => {
     }));
   };
 
-  // if (loading) {
-  //   return <main className="my-page-content privacy-page" />;
-  // }
-
   if (isError) {
     return <main className="my-page-content privacy-page">에러 발생</main>;
   }
 
   return (
-    <main className="my-page-content privacy-page">
+    <main className="mypage-content privacy-page">
       <MainInfo
         mainInfoValues={userInfo.mainInfoValues}
         initialValues={userInfo.initialValues}

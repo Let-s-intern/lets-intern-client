@@ -18,7 +18,7 @@ const MyPage = () => {
   }, []);
 
   return (
-    <div className="my-page container mx-auto w-full px-5 pb-5">
+    <div className="mypage container mx-auto w-full px-5 pb-5">
       <nav className="h-9">
         <TabBar itemCount={3}>
           <TabItem

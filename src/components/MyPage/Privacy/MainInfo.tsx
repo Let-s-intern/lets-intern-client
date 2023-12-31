@@ -104,10 +104,8 @@ const MainInfo = ({
               onChange={handleChangeMainInfo}
               autoComplete="off"
               disabled={socialAuth !== null}
-              {...(!loading && {
-                placeholder: '이름을 입력하세요.',
-                value: mainInfoValues.name,
-              })}
+              placeholder={!loading ? '이름을 입력하세요.' : ''}
+              value={mainInfoValues.name || ''}
             />
           </div>
           <div className="input-control">
@@ -118,10 +116,8 @@ const MainInfo = ({
               onChange={handleChangeMainInfo}
               autoComplete="off"
               disabled={socialAuth !== null}
-              {...(!loading && {
-                placeholder: 'example@example.com',
-                value: mainInfoValues.email,
-              })}
+              placeholder={!loading ? 'example@example.com' : ''}
+              value={mainInfoValues.email || ''}
             />
           </div>
           <div className="input-control">
@@ -132,10 +128,8 @@ const MainInfo = ({
               onChange={handleChangeMainInfo}
               autoComplete="off"
               disabled={socialAuth !== null}
-              {...(!loading && {
-                placeholder: '010-1234-5678',
-                value: mainInfoValues.phoneNum,
-              })}
+              placeholder={!loading ? '010-1234-5678' : ''}
+              value={mainInfoValues.phoneNum || ''}
             />
           </div>
           {socialAuth && (

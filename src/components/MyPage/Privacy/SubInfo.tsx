@@ -70,10 +70,8 @@ const SubInfo = ({
               name="university"
               onChange={handleChangeSubInfo}
               autoComplete="off"
-              {...(!loading && {
-                placeholder: '대학교를 입력하세요.',
-                value: subInfoValues.university,
-              })}
+              placeholder={!loading ? '대학교를 입력하세요.' : ''}
+              value={subInfoValues.university || ''}
             />
           </div>
           <div className="input-control">
@@ -83,10 +81,8 @@ const SubInfo = ({
               name="major"
               onChange={handleChangeSubInfo}
               autoComplete="off"
-              {...(!loading && {
-                placeholder: '전공을 입력하세요.',
-                value: subInfoValues.major,
-              })}
+              placeholder={!loading ? '전공을 입력하세요.' : ''}
+              value={subInfoValues.major || ''}
             />
           </div>
         </div>

@@ -76,7 +76,7 @@ const Application = () => {
   }
 
   return (
-    <main className="my-page-content application-page">
+    <main className="mypage-content application-page">
       <section className="applied-section">
         <h1>신청완료</h1>
         {loading ? (
@@ -118,7 +118,7 @@ const Application = () => {
                 application={application}
                 statusToLabel={statusToLabel}
                 fetchApplicationDelete={fetchApplicationDelete}
-                hasCancel={false}
+                hasBottomLink={false}
               />
             ))}
           </CardListSlider>
@@ -144,7 +144,7 @@ const Application = () => {
                 application={application}
                 statusToLabel={statusToLabel}
                 fetchApplicationDelete={fetchApplicationDelete}
-                hasCancel={false}
+                hasBottomLink={false}
               />
             ))}
           </CardListSlider>
