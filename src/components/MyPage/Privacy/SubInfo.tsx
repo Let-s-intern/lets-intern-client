@@ -3,22 +3,27 @@ import axios from '../../../libs/axios';
 interface SubInfoProps {
   subInfoValues: any;
   initialValues: any;
-  setSubInfoValues: (subInfoValues: any) => void;
+  loading: boolean;
+  setUserInfo: (userInfo: any) => void;
   resetInitialValues: () => void;
 }
 
 const SubInfo = ({
   subInfoValues,
   initialValues,
-  setSubInfoValues,
+  loading,
+  setUserInfo,
   resetInitialValues,
 }: SubInfoProps) => {
   const handleChangeSubInfo = (e: any) => {
     const { name, value } = e.target;
-    setSubInfoValues({
-      ...subInfoValues,
-      [name]: value,
-    });
+    setUserInfo((prev: any) => ({
+      ...prev,
+      subInfoValues: {
+        ...prev.subInfoValues,
+        [name]: value,
+      },
+    }));
   };
 
   const handleSaveSubInfo = async (e: any) => {
@@ -57,27 +62,29 @@ const SubInfo = ({
     <section className="sub-info-section" onSubmit={handleSaveSubInfo}>
       <h1>학력 정보</h1>
       <form>
-        <div className="input-control">
-          <label htmlFor="university">대학교</label>
-          <input
-            placeholder="대학교를 입력하세요."
-            id="university"
-            name="university"
-            value={subInfoValues.university || ''}
-            onChange={handleChangeSubInfo}
-            autoComplete="off"
-          />
-        </div>
-        <div className="input-control">
-          <label htmlFor="major">전공</label>
-          <input
-            placeholder="전공을 입력하세요."
-            id="major"
-            name="major"
-            value={subInfoValues.major || ''}
-            onChange={handleChangeSubInfo}
-            autoComplete="off"
-          />
+        <div className="input-group">
+          <div className="input-control">
+            <label htmlFor="university">대학교</label>
+            <input
+              id="university"
+              name="university"
+              onChange={handleChangeSubInfo}
+              autoComplete="off"
+              placeholder={!loading ? '대학교를 입력하세요.' : ''}
+              value={subInfoValues.university || ''}
+            />
+          </div>
+          <div className="input-control">
+            <label htmlFor="major">전공</label>
+            <input
+              id="major"
+              name="major"
+              onChange={handleChangeSubInfo}
+              autoComplete="off"
+              placeholder={!loading ? '전공을 입력하세요.' : ''}
+              value={subInfoValues.major || ''}
+            />
+          </div>
         </div>
         <div className="action-group">
           <button type="submit">정보 수정</button>

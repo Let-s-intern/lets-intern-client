@@ -7,28 +7,36 @@ import WithDrawAlertModal from './WithDrawAlertModal';
 interface MainInfoProps {
   mainInfoValues: any;
   initialValues: any;
-  setMainInfoValues: (mainInfoValues: any) => void;
+  socialAuth: 'KAKAO' | 'NAVER' | null;
+  loading: boolean;
+  setUserInfo: (userInfo: any) => void;
   resetInitialValues: () => void;
 }
 
 const MainInfo = ({
   mainInfoValues,
   initialValues,
-  setMainInfoValues,
+  socialAuth,
+  loading,
+  setUserInfo,
   resetInitialValues,
 }: MainInfoProps) => {
   const [isWithdrawModal, setIsWithdrawModal] = useState(false);
 
   const handleChangeMainInfo = (e: any) => {
     const { name, value } = e.target;
-    setMainInfoValues({
-      ...mainInfoValues,
-      [name]: value,
-    });
+    setUserInfo((prev: any) => ({
+      ...prev,
+      mainInfoValues: {
+        ...prev.mainInfoValues,
+        [name]: value,
+      },
+    }));
   };
 
   const handleSaveMainInfo = async (e: any) => {
     e.preventDefault();
+    if (socialAuth) return;
     let hasNull: boolean = false;
     const newValues = { ...mainInfoValues };
     Object.keys(newValues).forEach((key) => {
@@ -84,48 +92,78 @@ const MainInfo = ({
   };
 
   return (
-    <section className="main-info-section" onSubmit={handleSaveMainInfo}>
+    <section className="main-info-section">
       <h1>개인정보</h1>
-      <form>
-        <div className="input-control">
-          <label htmlFor="name">이름</label>
-          <input
-            placeholder="이름을 입력하세요."
-            id="name"
-            name="name"
-            value={mainInfoValues.name || ''}
-            onChange={handleChangeMainInfo}
-            autoComplete="off"
-          />
+      <form onSubmit={handleSaveMainInfo}>
+        <div className="input-group">
+          <div className="input-control">
+            <label htmlFor="name">이름</label>
+            <input
+              id="name"
+              name="name"
+              onChange={handleChangeMainInfo}
+              autoComplete="off"
+              disabled={socialAuth !== null}
+              placeholder={!loading ? '이름을 입력하세요.' : ''}
+              value={mainInfoValues.name || ''}
+            />
+          </div>
+          <div className="input-control">
+            <label htmlFor="email">이메일</label>
+            <input
+              id="email"
+              name="email"
+              onChange={handleChangeMainInfo}
+              autoComplete="off"
+              disabled={socialAuth !== null}
+              placeholder={!loading ? 'example@example.com' : ''}
+              value={mainInfoValues.email || ''}
+            />
+          </div>
+          <div className="input-control">
+            <label htmlFor="phone-number">휴대폰 번호</label>
+            <input
+              id="phone-number"
+              name="phoneNum"
+              onChange={handleChangeMainInfo}
+              autoComplete="off"
+              disabled={socialAuth !== null}
+              placeholder={!loading ? '010-1234-5678' : ''}
+              value={mainInfoValues.phoneNum || ''}
+            />
+          </div>
+          {socialAuth && (
+            <div className="social-login-area">
+              <div className="input-control">
+                <label htmlFor="social-auth">계정연동</label>
+                {socialAuth === 'KAKAO' ? (
+                  <div className="social-login-info kakao">
+                    <span>카카오 로그인</span>
+                  </div>
+                ) : (
+                  socialAuth === 'NAVER' && (
+                    <div className="social-login-info naver">
+                      <span>네이버 로그인</span>
+                    </div>
+                  )
+                )}
+              </div>
+              <div className="action-group">
+                <button type="button" onClick={() => setIsWithdrawModal(true)}>
+                  회원 탈퇴
+                </button>
+              </div>
+            </div>
+          )}
         </div>
-        <div className="input-control">
-          <label htmlFor="email">이메일</label>
-          <input
-            placeholder="example@example.com"
-            id="email"
-            name="email"
-            value={mainInfoValues.email || ''}
-            onChange={handleChangeMainInfo}
-            autoComplete="off"
-          />
-        </div>
-        <div className="input-control">
-          <label htmlFor="phone-number">휴대폰 번호</label>
-          <input
-            placeholder="010-1234-5678"
-            id="phone-number"
-            name="phoneNum"
-            value={mainInfoValues.phoneNum || ''}
-            onChange={handleChangeMainInfo}
-            autoComplete="off"
-          />
-        </div>
-        <div className="action-group">
-          <button type="submit">정보 수정</button>
-          <button type="button" onClick={() => setIsWithdrawModal(true)}>
-            회원 탈퇴
-          </button>
-        </div>
+        {!socialAuth && (
+          <div className="action-group">
+            <button type="submit">정보 수정</button>
+            <button type="button" onClick={() => setIsWithdrawModal(true)}>
+              회원 탈퇴
+            </button>
+          </div>
+        )}
       </form>
       {isWithdrawModal && (
         <WithDrawAlertModal

@@ -1,13 +1,13 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 
 import Programs from './pages/Programs';
-import ProgramDetail from './pages/ProgramDetail';
+import ProgramDetail from './components/Program/ProgramDetail/ProgramDetail';
 import Login from './components/Login/Login';
-import MyPage from './pages/MyPage';
+import MyPage from './components/MyPage/MyPage';
 import SignUp from './pages/SignUp';
 import FindPassword from './pages/FindPassword';
 import Privacy from './components/MyPage/Privacy/Privacy';
-import Review from './pages/MyPage/Review';
+import Review from './components/MyPage/Review/Review';
 import Layout from './components/Layout';
 import AdminLayout from './components/AdminLayout';
 import ProgramCreate from './pages/Admin/Program/ProgramCreate';
@@ -20,7 +20,7 @@ import UserDetail from './pages/Admin/User/UserDetail';
 import UserMemo from './components/Admin/User/UserMemo';
 import UserCreate from './pages/Admin/User/UserCreate';
 import UserEdit from './pages/Admin/User/UserEdit';
-import Application from './pages/MyPage/Appllication';
+import Application from './components/MyPage/Application/Application';
 import ReviewCreate from './pages/ReviewCreate';
 import AttendCheck from './pages/Admin/Program/AttendCheck';
 import ScrollToTop from './components/ScrollToTop';

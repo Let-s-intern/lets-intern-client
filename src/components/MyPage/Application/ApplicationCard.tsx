@@ -1,28 +1,23 @@
-import { useNavigate } from 'react-router-dom';
-import {
-  CardBadge,
-  CardBlock,
-  CardBottom,
-  CardBottomLink,
-  CardMiddle,
-  CardTitle,
-  CardTop,
-} from '../Card';
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+
 import AlertModal from '../../AlertModal';
+import formatDateString from '../../../libs/formatDateString';
+
+import './ApplicationCard.scss';
 
 interface ApplicationCardProps {
   application: any;
   statusToLabel: any;
   fetchApplicationDelete: (applicationId: number, status: string) => void;
-  hasCancel?: boolean;
+  hasBottomLink?: boolean;
 }
 
 const ApplicationCard = ({
   application,
   statusToLabel,
   fetchApplicationDelete,
-  hasCancel = true,
+  hasBottomLink = true,
 }: ApplicationCardProps) => {
   const [isDeleteMoal, setIsDeleteModal] = useState(false);
   const navigate = useNavigate();
@@ -38,34 +33,48 @@ const ApplicationCard = ({
 
   return (
     <>
-      <CardBlock
+      <div
+        className="mypage-card application-card"
         onClick={() => navigate(`/program/detail/${application.programId}`)}
       >
-        <CardTop>
-          <CardBadge
-            $bgColor={statusToLabel[application.status].bgColor}
-            $color={statusToLabel[application.status].color}
+        <div className="card-top">
+          <div
+            className="badge"
+            style={{
+              backgroundColor: statusToLabel[application.status].bgColor,
+              color: statusToLabel[application.status].color,
+            }}
           >
             {statusToLabel[application.status].label}
-          </CardBadge>
-        </CardTop>
-        <CardMiddle>
-          <CardTitle>{application.programTitle}</CardTitle>
-        </CardMiddle>
-        {hasCancel && (
-          <CardBottom>
-            <CardBottomLink
-              className="ga_cancel_program"
+          </div>
+        </div>
+        <div className="card-body">
+          <h2>{application.programTitle}</h2>
+        </div>
+        <div className="card-bottom">
+          <div className="date-group">
+            <div className="date">
+              <h3>시작 날짜</h3>
+              <span>{formatDateString(application.startDate)}</span>
+            </div>
+            <div className="date">
+              <h3>종료 날짜</h3>
+              <span>{formatDateString(application.endDate)}</span>
+            </div>
+          </div>
+          {hasBottomLink && (
+            <span
+              className="link ga_cancel_program"
               onClick={(e) => {
                 e.stopPropagation();
                 setIsDeleteModal(true);
               }}
             >
               취소하기
-            </CardBottomLink>
-          </CardBottom>
-        )}
-      </CardBlock>
+            </span>
+          )}
+        </div>
+      </div>
       {isDeleteMoal && (
         <AlertModal
           onConfirm={onConfirm}

@@ -12,7 +12,7 @@ export const CardBlock = styled.div`
   border-radius: 8px;
   width: 15rem;
   aspect-ratio: 3/4;
-  padding: 2rem;
+  padding: 1.75rem 2rem;
   cursor: pointer;
 `;
 
@@ -46,18 +46,21 @@ export const CardMiddle = styled.div`
 
 export const CardTitle = styled.h2`
   margin-top: 0.5rem;
-  font-size: 1.5rem;
+  font-size: 1.375rem;
   font-weight: 500;
 `;
 
 export const CardBottom = styled.div`
-  display: flex;
-  justify-content: end;
   width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
 `;
 
 export const CardBottomLink = styled.span`
   display: block;
   text-decoration: underline;
   color: #a5a5a5;
+  text-align: end;
+  font-size: 0.875rem;
 `;

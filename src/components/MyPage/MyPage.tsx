@@ -1,7 +1,7 @@
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 
-import TabBar from '../../components/TabBar';
-import TabItem from '../../components/TabItem';
+import TabBar from '../TabBar';
+import TabItem from '../TabItem';
 import { useEffect } from 'react';
 
 const MyPage = () => {
@@ -18,8 +18,8 @@ const MyPage = () => {
   }, []);
 
   return (
-    <div className="container mx-auto w-full px-5 pb-5">
-      <div className="h-9">
+    <div className="mypage container mx-auto w-full px-5 pb-5">
+      <nav className="h-9">
         <TabBar itemCount={3}>
           <TabItem
             to="/mypage/application"
@@ -46,7 +46,7 @@ const MyPage = () => {
             개인정보
           </TabItem>
         </TabBar>
-      </div>
+      </nav>
       <div className="mt-10">
         <Outlet />
       </div>
