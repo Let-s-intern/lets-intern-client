@@ -10,7 +10,7 @@ const Application = () => {
   const [appliedList, setAppliedList] = useState<any>([]);
   const [inProgressList, setInProgressList] = useState<any>([]);
   const [doneList, setDoneList] = useState<any>([]);
-  const [loading, setLoading] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<unknown>(null);
 
   const statusToLabel = {
@@ -71,10 +71,6 @@ const Application = () => {
     }
   };
 
-  if (loading) {
-    return <main className="application-page">로딩중...</main>;
-  }
-
   if (error) {
     return <main className="application-page">에러 발생</main>;
   }
@@ -83,7 +79,11 @@ const Application = () => {
     <main className="my-page-content application-page">
       <section className="applied-section">
         <h1>신청완료</h1>
-        {!appliedList || appliedList.length === 0 ? (
+        {loading ? (
+          <CardListSlider isEmpty={true}>
+            <div className="card-list-placeholder" />
+          </CardListSlider>
+        ) : !appliedList || appliedList.length === 0 ? (
           <CardListSlider isEmpty={true}>
             <div className="card-list-placeholder">신청한 내역이 없습니다.</div>
           </CardListSlider>
@@ -102,7 +102,11 @@ const Application = () => {
       </section>
       <section className="in-progress-section">
         <h1>참여중</h1>
-        {!inProgressList || inProgressList.length === 0 ? (
+        {loading ? (
+          <CardListSlider isEmpty={true}>
+            <div className="card-list-placeholder" />
+          </CardListSlider>
+        ) : !inProgressList || inProgressList.length === 0 ? (
           <CardListSlider isEmpty={true}>
             <div className="card-list-placeholder">참여한 내역이 없습니다.</div>
           </CardListSlider>
@@ -122,7 +126,11 @@ const Application = () => {
       </section>
       <section className="done-section">
         <h1>참여완료</h1>
-        {!doneList || doneList.length === 0 ? (
+        {loading ? (
+          <CardListSlider isEmpty={true}>
+            <div className="card-list-placeholder" />
+          </CardListSlider>
+        ) : !doneList || doneList.length === 0 ? (
           <CardListSlider isEmpty={true}>
             <div className="card-list-placeholder">
               참여 완료한 내역이 없습니다.

@@ -7,7 +7,7 @@ import ReviewCard from './ReviewCard';
 import './Review.scss';
 
 const Review = () => {
-  const [loading, setLoading] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<unknown>(null);
   const [waitingReviewList, setWaitingReviewList] = useState([]);
   const [myReviewList, setMyReviewList] = useState([]);
@@ -48,10 +48,6 @@ const Review = () => {
     fetchReviews();
   }, []);
 
-  if (loading) {
-    return <main className="review-page">로딩중...</main>;
-  }
-
   if (error) {
     return <main className="review-page">에러 발생</main>;
   }
@@ -60,7 +56,11 @@ const Review = () => {
     <main className="my-page-content review-page">
       <section className="waiting-review-section">
         <h1>후기를 기다리고 있어요</h1>
-        {!waitingReviewList || waitingReviewList.length === 0 ? (
+        {loading ? (
+          <CardListSlider isEmpty={true}>
+            <div className="card-list-placeholder" />
+          </CardListSlider>
+        ) : !waitingReviewList || waitingReviewList.length === 0 ? (
           <CardListSlider isEmpty={true}>
             <div className="card-list-placeholder">
               작성해야 할 후기가 없습니다.
@@ -83,7 +83,11 @@ const Review = () => {
       </section>
       <section className="writed-review-section">
         <h1>작성한 후기 확인하기</h1>
-        {!myReviewList || myReviewList.length === 0 ? (
+        {loading ? (
+          <CardListSlider isEmpty={true}>
+            <div className="card-list-placeholder" />
+          </CardListSlider>
+        ) : !myReviewList || myReviewList.length === 0 ? (
           <CardListSlider isEmpty={true}>
             <div className="card-list-placeholder">작성한 후기가 없습니다.</div>
           </CardListSlider>
