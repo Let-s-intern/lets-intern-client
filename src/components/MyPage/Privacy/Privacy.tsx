@@ -18,7 +18,7 @@ const Privacy = () => {
   });
   const [loading, setLoading] = useState(true);
 
-  const { error } = useQuery({
+  const { isError } = useQuery({
     queryKey: ['user'],
     queryFn: async () => await axios.get('/user'),
     onSuccess: ({ data }) => {
@@ -44,11 +44,11 @@ const Privacy = () => {
     }));
   };
 
-  if (loading) {
-    return <main className="my-page-content privacy-page" />;
-  }
+  // if (loading) {
+  //   return <main className="my-page-content privacy-page" />;
+  // }
 
-  if (error) {
+  if (isError) {
     return <main className="my-page-content privacy-page">에러 발생</main>;
   }
 
@@ -58,12 +58,14 @@ const Privacy = () => {
         mainInfoValues={userInfo.mainInfoValues}
         initialValues={userInfo.initialValues}
         socialAuth={userInfo.socialAuth}
+        loading={loading}
         setUserInfo={setUserInfo}
         resetInitialValues={resetInitialValues}
       />
       <SubInfo
         subInfoValues={userInfo.subInfoValues}
         initialValues={userInfo.initialValues}
+        loading={loading}
         setUserInfo={setUserInfo}
         resetInitialValues={resetInitialValues}
       />

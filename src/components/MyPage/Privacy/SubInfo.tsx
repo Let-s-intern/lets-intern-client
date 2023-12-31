@@ -3,6 +3,7 @@ import axios from '../../../libs/axios';
 interface SubInfoProps {
   subInfoValues: any;
   initialValues: any;
+  loading: boolean;
   setUserInfo: (userInfo: any) => void;
   resetInitialValues: () => void;
 }
@@ -10,6 +11,7 @@ interface SubInfoProps {
 const SubInfo = ({
   subInfoValues,
   initialValues,
+  loading,
   setUserInfo,
   resetInitialValues,
 }: SubInfoProps) => {
@@ -64,23 +66,27 @@ const SubInfo = ({
           <div className="input-control">
             <label htmlFor="university">대학교</label>
             <input
-              placeholder="대학교를 입력하세요."
               id="university"
               name="university"
-              value={subInfoValues.university || ''}
               onChange={handleChangeSubInfo}
               autoComplete="off"
+              {...(!loading && {
+                placeholder: '대학교를 입력하세요.',
+                value: subInfoValues.university,
+              })}
             />
           </div>
           <div className="input-control">
             <label htmlFor="major">전공</label>
             <input
-              placeholder="전공을 입력하세요."
               id="major"
               name="major"
-              value={subInfoValues.major || ''}
               onChange={handleChangeSubInfo}
               autoComplete="off"
+              {...(!loading && {
+                placeholder: '전공을 입력하세요.',
+                value: subInfoValues.major,
+              })}
             />
           </div>
         </div>
