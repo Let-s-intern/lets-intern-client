@@ -8,7 +8,7 @@ interface MainInfoProps {
   mainInfoValues: any;
   initialValues: any;
   socialAuth: 'KAKAO' | 'NAVER' | null;
-  setMainInfoValues: (mainInfoValues: any) => void;
+  setUserInfo: (userInfo: any) => void;
   resetInitialValues: () => void;
 }
 
@@ -16,17 +16,20 @@ const MainInfo = ({
   mainInfoValues,
   initialValues,
   socialAuth,
-  setMainInfoValues,
+  setUserInfo,
   resetInitialValues,
 }: MainInfoProps) => {
   const [isWithdrawModal, setIsWithdrawModal] = useState(false);
 
   const handleChangeMainInfo = (e: any) => {
     const { name, value } = e.target;
-    setMainInfoValues({
-      ...mainInfoValues,
-      [name]: value,
-    });
+    setUserInfo((prev: any) => ({
+      ...prev,
+      mainInfoValues: {
+        ...prev.mainInfoValues,
+        [name]: value,
+      },
+    }));
   };
 
   const handleSaveMainInfo = async (e: any) => {

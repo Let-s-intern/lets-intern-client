@@ -3,22 +3,25 @@ import axios from '../../../libs/axios';
 interface SubInfoProps {
   subInfoValues: any;
   initialValues: any;
-  setSubInfoValues: (subInfoValues: any) => void;
+  setUserInfo: (userInfo: any) => void;
   resetInitialValues: () => void;
 }
 
 const SubInfo = ({
   subInfoValues,
   initialValues,
-  setSubInfoValues,
+  setUserInfo,
   resetInitialValues,
 }: SubInfoProps) => {
   const handleChangeSubInfo = (e: any) => {
     const { name, value } = e.target;
-    setSubInfoValues({
-      ...subInfoValues,
-      [name]: value,
-    });
+    setUserInfo((prev: any) => ({
+      ...prev,
+      subInfoValues: {
+        ...prev.subInfoValues,
+        [name]: value,
+      },
+    }));
   };
 
   const handleSaveSubInfo = async (e: any) => {

@@ -3,19 +3,22 @@ import { isValidPassword } from '../../../libs/valid';
 
 interface PasswordChangeProps {
   passwordValues: any;
-  setPasswordValues: (passwordValues: any) => void;
+  setUserInfo: (userInfo: any) => void;
 }
 
 const PasswordChange = ({
   passwordValues,
-  setPasswordValues,
+  setUserInfo,
 }: PasswordChangeProps) => {
   const handleChangePassword = (e: any) => {
     const { name, value } = e.target;
-    setPasswordValues({
-      ...passwordValues,
-      [name]: value,
-    });
+    setUserInfo((prev: any) => ({
+      ...prev,
+      passwordValues: {
+        ...prev.passwordValues,
+        [name]: value,
+      },
+    }));
   };
 
   const handleSavePassword = async (e: any) => {
@@ -49,11 +52,14 @@ const PasswordChange = ({
       };
       await axios.patch('/user/password', reqData);
       alert('비밀번호가 변경되었습니다.');
-      setPasswordValues({
-        currentPassword: '',
-        newPassword: '',
-        newPasswordConfirm: '',
-      });
+      setUserInfo((prev: any) => ({
+        ...prev,
+        passwordValues: {
+          currentPassword: '',
+          newPassword: '',
+          newPasswordConfirm: '',
+        },
+      }));
     } catch (err) {
       if ((err as any).response.status === 400) {
         alert('기존 비밀번호가 일치하지 않습니다.');
@@ -75,7 +81,7 @@ const PasswordChange = ({
               placeholder="기존 비밀번호를 입력하세요."
               id="current-password"
               name="currentPassword"
-              value={passwordValues.currentPassword || ''}
+              value={passwordValues?.currentPassword || ''}
               onChange={handleChangePassword}
               autoComplete="off"
             />
@@ -87,7 +93,7 @@ const PasswordChange = ({
               placeholder="영어, 숫자, 특수문자 포함 8자 이상"
               id="new-password"
               name="newPassword"
-              value={passwordValues.newPassword || ''}
+              value={passwordValues?.newPassword || ''}
               onChange={handleChangePassword}
               autoComplete="off"
             />
@@ -99,7 +105,7 @@ const PasswordChange = ({
               placeholder="비밀번호를 다시 입력하세요."
               id="new-password-confirm"
               name="newPasswordConfirm"
-              value={passwordValues.newPasswordConfirm || ''}
+              value={passwordValues?.newPasswordConfirm || ''}
               onChange={handleChangePassword}
               autoComplete="off"
             />

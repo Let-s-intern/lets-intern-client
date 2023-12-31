@@ -1,4 +1,5 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
+import { useQuery } from 'react-query';
 
 import axios from '../../../libs/axios';
 import MainInfo from './MainInfo';
@@ -8,80 +9,67 @@ import SubInfo from './SubInfo';
 import './Privacy.scss';
 
 const Privacy = () => {
-  const [mainInfoValues, setMainInfoValues] = useState<any>({});
-  const [subInfoValues, setSubInfoValues] = useState<any>({});
-  const [passwordValues, setPasswordValues] = useState<any>({});
-  const [socialAuth, setSocialAuth] = useState<'KAKAO' | 'NAVER' | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<unknown>(null);
-  const [initialValues, setInitialValues] = useState<any>({});
+  const [userInfo, setUserInfo] = useState<any>({
+    mainInfoValues: {},
+    subInfoValues: {},
+    passwordValues: {},
+    socialAuth: null,
+    initialValues: {},
+  });
+  const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const fetchUserInfo = async () => {
-      try {
-        const res = await axios.get('/user');
-        setMainInfoValues({
-          name: res.data.name,
-          email: res.data.email,
-          phoneNum: res.data.phoneNum,
-        });
-        setSubInfoValues({
-          major: res.data.major,
-          university: res.data.university,
-        });
-        setInitialValues({
-          name: res.data.name,
-          email: res.data.email,
-          phoneNum: res.data.phoneNum,
-          major: res.data.major,
-          university: res.data.university,
-        });
-        setSocialAuth(res.data.authProvider);
-      } catch (err) {
-        setError(err);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchUserInfo();
-  }, []);
+  const { error } = useQuery({
+    queryKey: ['user'],
+    queryFn: async () => await axios.get('/user'),
+    onSuccess: ({ data }) => {
+      const { name, email, phoneNum, major, university, authProvider } = data;
+      setUserInfo({
+        mainInfoValues: { name, email, phoneNum },
+        subInfoValues: { major, university },
+        initialValues: { name, email, phoneNum, major, university },
+        socialAuth: authProvider,
+      });
+      setLoading(false);
+    },
+    onError: () => {
+      setLoading(false);
+    },
+    refetchOnWindowFocus: false,
+  });
 
   const resetInitialValues = () => {
-    setInitialValues({
-      name: mainInfoValues.name,
-      email: mainInfoValues.email,
-      phoneNum: mainInfoValues.phoneNum,
-      major: subInfoValues.major,
-      university: subInfoValues.university,
-    });
+    setUserInfo((prev: any) => ({
+      ...prev,
+      initialValues: { ...prev.mainInfoValues, ...prev.subInfoValues },
+    }));
   };
 
   if (loading) {
-    return <div></div>;
+    return <main className="my-page-content privacy-page" />;
   }
 
   if (error) {
-    return <div>에러 발생</div>;
+    return <main className="my-page-content privacy-page">에러 발생</main>;
   }
 
   return (
     <main className="my-page-content privacy-page">
       <MainInfo
-        mainInfoValues={mainInfoValues}
-        initialValues={initialValues}
-        socialAuth={socialAuth}
-        setMainInfoValues={setMainInfoValues}
+        mainInfoValues={userInfo.mainInfoValues}
+        initialValues={userInfo.initialValues}
+        socialAuth={userInfo.socialAuth}
+        setUserInfo={setUserInfo}
         resetInitialValues={resetInitialValues}
       />
       <SubInfo
-        subInfoValues={subInfoValues}
-        initialValues={initialValues}
-        setSubInfoValues={setSubInfoValues}
+        subInfoValues={userInfo.subInfoValues}
+        initialValues={userInfo.initialValues}
+        setUserInfo={setUserInfo}
         resetInitialValues={resetInitialValues}
       />
       <PasswordChange
-        passwordValues={passwordValues}
-        setPasswordValues={setPasswordValues}
+        passwordValues={userInfo.passwordValues}
+        setUserInfo={setUserInfo}
       />
     </main>
   );
