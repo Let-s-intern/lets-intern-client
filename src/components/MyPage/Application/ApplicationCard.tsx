@@ -1,4 +1,6 @@
 import { useNavigate } from 'react-router-dom';
+import { useState } from 'react';
+
 import {
   CardBadge,
   CardBlock,
@@ -8,7 +10,6 @@ import {
   CardTitle,
   CardTop,
 } from '../Card';
-import { useState } from 'react';
 import AlertModal from '../../AlertModal';
 
 interface ApplicationCardProps {

@@ -1,7 +1,7 @@
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 
-import TabBar from '../../components/TabBar';
-import TabItem from '../../components/TabItem';
+import TabBar from '../TabBar';
+import TabItem from '../TabItem';
 import { useEffect } from 'react';
 
 const MyPage = () => {

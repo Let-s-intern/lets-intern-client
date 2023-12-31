@@ -1,12 +1,17 @@
 import { useRef } from 'react';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import { MdArrowBackIosNew, MdArrowForwardIos } from 'react-icons/md';
 
 interface CardListSliderProps {
+  isEmpty?: boolean;
   children: React.ReactNode;
 }
 
-const CardListSlider = ({ children }: CardListSliderProps) => {
+interface CardListContentProps {
+  $isEmpty?: boolean;
+}
+
+const CardListSlider = ({ children, isEmpty = false }: CardListSliderProps) => {
   const scrollContainer = useRef<HTMLDivElement>(null);
 
   const handlePrevButtonClick = () => {
@@ -29,7 +34,7 @@ const CardListSlider = ({ children }: CardListSliderProps) => {
             <MdArrowBackIosNew />
           </i>
         </SliderPrevButton>
-        <CardListContent ref={scrollContainer}>
+        <CardListContent $isEmpty={isEmpty} ref={scrollContainer}>
           <CardList>{children}</CardList>
         </CardListContent>
         <SliderNextButton onClick={handleNextButtonClick}>
@@ -49,8 +54,13 @@ const CardListSliderBlock = styled.div`
   gap: 1rem;
 `;
 
-const CardListContent = styled.div`
+const CardListContent = styled.div<CardListContentProps>`
   display: flex;
+  ${(props) =>
+    props.$isEmpty &&
+    css`
+      justify-content: center;
+    `}
   overflow-x: scroll;
   scroll-behavior: smooth;
   width: 100%;
