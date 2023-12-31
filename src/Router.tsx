@@ -1,7 +1,7 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 
 import Programs from './pages/Programs';
-import ProgramDetail from './pages/ProgramDetail';
+import ProgramDetail from './components/Program/ProgramDetail/ProgramDetail';
 import Login from './components/Login/Login';
 import MyPage from './components/MyPage/MyPage';
 import SignUp from './pages/SignUp';

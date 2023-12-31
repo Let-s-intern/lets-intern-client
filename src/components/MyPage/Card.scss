@@ -1,0 +1,64 @@
+.mypage-card {
+  display: flex;
+  flex-direction: column;
+  background-color: #f1f4f9;
+  border-radius: 0.5rem;
+  width: 15rem;
+  aspect-ratio: 3/4;
+  padding: 1.75rem 2rem;
+  cursor: pointer;
+
+  .card-top {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+
+    .badge {
+      border-radius: 0.25rem;
+      background-color: #36337f;
+      color: #ffffff;
+      font-size: 0.75rem;
+      padding: 0.125rem 0.5rem;
+    }
+  }
+
+  .card-body {
+    flex-grow: 1;
+
+    h2 {
+      margin-top: 0.5rem;
+      font-size: 1.375rem;
+      font-weight: 500;
+    }
+  }
+
+  .card-bottom {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+
+    .date-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+      font-size: 0.75rem;
+
+      .date {
+        color: #4a495c;
+
+        h3 {
+          font-weight: 500;
+        }
+      }
+    }
+
+    .link {
+      display: block;
+      text-decoration: underline;
+      color: #a5a5a5;
+      text-align: end;
+      font-size: 0.875rem;
+    }
+  }
+}

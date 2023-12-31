@@ -8,7 +8,8 @@ interface MainInfoProps {
   mainInfoValues: any;
   initialValues: any;
   socialAuth: 'KAKAO' | 'NAVER' | null;
-  setMainInfoValues: (mainInfoValues: any) => void;
+  loading: boolean;
+  setUserInfo: (userInfo: any) => void;
   resetInitialValues: () => void;
 }
 
@@ -16,17 +17,21 @@ const MainInfo = ({
   mainInfoValues,
   initialValues,
   socialAuth,
-  setMainInfoValues,
+  loading,
+  setUserInfo,
   resetInitialValues,
 }: MainInfoProps) => {
   const [isWithdrawModal, setIsWithdrawModal] = useState(false);
 
   const handleChangeMainInfo = (e: any) => {
     const { name, value } = e.target;
-    setMainInfoValues({
-      ...mainInfoValues,
-      [name]: value,
-    });
+    setUserInfo((prev: any) => ({
+      ...prev,
+      mainInfoValues: {
+        ...prev.mainInfoValues,
+        [name]: value,
+      },
+    }));
   };
 
   const handleSaveMainInfo = async (e: any) => {
@@ -94,37 +99,37 @@ const MainInfo = ({
           <div className="input-control">
             <label htmlFor="name">이름</label>
             <input
-              placeholder="이름을 입력하세요."
               id="name"
               name="name"
-              value={mainInfoValues.name || ''}
               onChange={handleChangeMainInfo}
               autoComplete="off"
               disabled={socialAuth !== null}
+              placeholder={!loading ? '이름을 입력하세요.' : ''}
+              value={mainInfoValues.name || ''}
             />
           </div>
           <div className="input-control">
             <label htmlFor="email">이메일</label>
             <input
-              placeholder="example@example.com"
               id="email"
               name="email"
-              value={mainInfoValues.email || ''}
               onChange={handleChangeMainInfo}
               autoComplete="off"
               disabled={socialAuth !== null}
+              placeholder={!loading ? 'example@example.com' : ''}
+              value={mainInfoValues.email || ''}
             />
           </div>
           <div className="input-control">
             <label htmlFor="phone-number">휴대폰 번호</label>
             <input
-              placeholder="010-1234-5678"
               id="phone-number"
               name="phoneNum"
-              value={mainInfoValues.phoneNum || ''}
               onChange={handleChangeMainInfo}
               autoComplete="off"
               disabled={socialAuth !== null}
+              placeholder={!loading ? '010-1234-5678' : ''}
+              value={mainInfoValues.phoneNum || ''}
             />
           </div>
           {socialAuth && (
