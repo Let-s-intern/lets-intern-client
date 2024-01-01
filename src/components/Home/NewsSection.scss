@@ -1,0 +1,30 @@
+@use './utils.scss';
+
+.news-section {
+  $breakpoint-1080px: 1080px;
+
+  @include utils.responsive;
+  display: flex;
+  gap: 5rem;
+
+  @media (min-width: $breakpoint-1080px) {
+    gap: 2rem;
+  }
+
+  .section-title {
+    width: 200px;
+  }
+
+  .space {
+    width: 5rem;
+    max-width: 5rem;
+  }
+
+  .side-content {
+    flex: 1;
+
+    .news-area {
+      height: 15rem;
+    }
+  }
+}
