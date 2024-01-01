@@ -22,7 +22,16 @@ const ProgramDetail = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    ChannelService.hideChannelButton();
+    const hideChannelButtonWithTimeout = () => {
+      console.log('hide logic start');
+      if (window.ChannelIO) {
+        ChannelService.hideChannelButton();
+      } else {
+        setTimeout(hideChannelButtonWithTimeout, 100);
+      }
+    };
+
+    hideChannelButtonWithTimeout();
   }, []);
 
   const { isError } = useQuery({
