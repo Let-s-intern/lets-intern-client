@@ -9,18 +9,17 @@ const FeatureSection = () => {
       <div className="bottom-content">
         <div className="feature-grid">
           <div className="row">
-            <div className="feature-item gray-box">
-              <h3>프로그램 장점 키워드</h3>
-              <p>장점 설명 두세줄 내외</p>
+            <div className="feature-item">
+              <h3>다른 참여자들과 함께, 동기부여</h3>
+              <p>장점 설명 텍스트</p>
             </div>
-            <div className="feature-item gray-box">
-              <h3>프로그램 장점 키워드</h3>
-              <p>장점 설명 두세줄 내외</p>
+            <div className="feature-item">
+              <h3>장점2</h3>
             </div>
           </div>
           <div className="row">
-            <div className="feature-item gray-box">
-              <h3>프로그램 장점 키워드</h3>
+            <div className="feature-item">
+              <h3>처음부터 차근차근, 단계적 커리큘럼</h3>
             </div>
           </div>
         </div>

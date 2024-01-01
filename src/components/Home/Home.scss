@@ -1,9 +1,10 @@
+@use './Header.scss';
+
 .homepage {
   display: flex;
   flex-direction: column;
   gap: 3rem;
   margin-bottom: 5rem;
-  padding: 0 1.5rem;
 
   .gray-box {
     background-color: #d9d9d9;
@@ -12,7 +13,7 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    border-radius: 0.375rem;
+    border-radius: 0.5rem;
     font-size: 1.25rem;
     width: 100%;
     padding: 1.5rem;
@@ -21,7 +22,7 @@
   section {
     h2.section-title {
       font-size: 1.75rem;
-      font-weight: 500;
+      font-weight: 600;
 
       &.small-text {
         font-size: 1.5rem;
@@ -33,152 +34,9 @@
     }
   }
 
-  header {
-    .banner {
-      height: 12rem;
-      font-size: 1.5rem;
-    }
-
-    .menu-list {
-      margin-top: 1rem;
-      display: flex;
-      justify-content: space-between;
-      gap: 1rem;
-
-      .menu-item {
-        height: 6rem;
-      }
-    }
-  }
-
-  .program-section {
-    .program-list {
-      display: flex;
-      gap: 1rem;
-
-      .program {
-        height: 20rem;
-      }
-    }
-  }
-
-  .feature-section {
-    .feature-grid {
-      display: flex;
-      flex-direction: column;
-      gap: 0.5rem;
-
-      .feature-item {
-        height: 10rem;
-
-        h3 {
-          font-size: 1.5rem;
-        }
-
-        p {
-          margin-top: 0.25rem;
-        }
-      }
-
-      .row:nth-child(1) {
-        display: flex;
-        gap: 0.5rem;
-
-        .feature-item:nth-child(1) {
-          flex: 2;
-        }
-
-        .feature-item:nth-child(2) {
-          flex: 1;
-        }
-      }
-    }
-  }
-
-  .review-section {
-    height: 38rem;
-    overflow: hidden;
-
-    .bottom-content {
-      .review-group {
-        position: relative;
-
-        .review {
-          position: absolute;
-          width: 14rem;
-          height: 14rem;
-          display: flex;
-          flex-direction: column;
-          justify-content: space-between;
-          padding: 2rem;
-
-          figure {
-            width: 100%;
-            text-align: left;
-          }
-
-          &:nth-child(1) {
-            top: 0;
-            left: 0;
-          }
-
-          &:nth-child(2) {
-            top: 0;
-            left: 270px;
-          }
-
-          &:nth-child(3) {
-            top: 0;
-            left: 535px;
-          }
-
-          &:nth-child(4) {
-            top: 0;
-            left: 804px;
-          }
-
-          &:nth-child(5) {
-            top: 261px;
-            left: 137px;
-          }
-
-          &:nth-child(6) {
-            top: 261px;
-            left: 402px;
-          }
-
-          &:nth-child(7) {
-            top: 261px;
-            left: 672px;
-          }
-        }
-      }
-    }
-  }
-
-  .news-section {
-    display: flex;
-    gap: 5rem;
-
-    @media (max-width: 64rem) {
-      gap: 2rem;
-    }
-
-    .section-title {
-      width: 200px;
-    }
-
-    .space {
-      width: 5rem;
-      max-width: 5rem;
-    }
-
-    .side-content {
-      flex: 1;
-
-      .news-area {
-        height: 15rem;
-      }
-    }
-  }
+  @import './Header.scss';
+  @import './ProgramSection.scss';
+  @import './FeatureSection.scss';
+  @import './ReviewSection.scss';
+  @import './NewsSection.scss';
 }
