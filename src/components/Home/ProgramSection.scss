@@ -1,0 +1,33 @@
+@use './utils.scss';
+
+.program-section {
+  @include utils.responsive;
+
+  .program-list {
+    display: flex;
+    gap: 1rem;
+    overflow: hidden;
+    white-space: nowrap;
+
+    .program {
+      min-width: 15rem;
+      width: 100%;
+      height: 20rem;
+      background-color: #f1f4f9;
+      border-radius: 0.5rem;
+      padding: 2.5rem 2rem;
+
+      h2 {
+        color: #6963f6;
+        font-size: 0.875rem;
+        font-weight: 500;
+      }
+
+      h3 {
+        color: #4a495c;
+        font-size: 1.25rem;
+        font-weight: 600;
+      }
+    }
+  }
+}

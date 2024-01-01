@@ -18,7 +18,7 @@ const ReviewTab = ({ reviewList }: ReviewTabProps) => {
       ) : (
         <ReviewList>
           {reviewList.map((review: any) => (
-            <ReviewCard>
+            <ReviewCard key={review.id}>
               <ReviewTop>
                 <ReviewUser>
                   {review.username ? review.username : '익명'}
