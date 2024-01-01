@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useQuery } from 'react-query';
-import { useParams } from 'react-router-dom';
+import { useLocation, useParams } from 'react-router-dom';
 
 import ChannelService from '../../../ChannelService';
 import axios from '../../../libs/axios';
@@ -14,6 +14,7 @@ import '../../../styles/github-markdown-light.css';
 
 const ProgramDetail = () => {
   const params = useParams();
+  const location = useLocation();
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
   const [program, setProgram] = useState<any>(null);
   const [participated, setParticipated] = useState<boolean>(false);
@@ -22,17 +23,12 @@ const ProgramDetail = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const hideChannelButtonWithTimeout = () => {
-      console.log('hide logic start');
-      if (window.ChannelIO) {
-        ChannelService.hideChannelButton();
-      } else {
-        setTimeout(hideChannelButtonWithTimeout, 100);
-      }
-    };
+    ChannelService.hideChannelButton();
 
-    hideChannelButtonWithTimeout();
-  }, []);
+    return () => {
+      ChannelService.showChannelButton();
+    };
+  }, [location]);
 
   const { isError } = useQuery({
     queryKey: ['program', params.programId],

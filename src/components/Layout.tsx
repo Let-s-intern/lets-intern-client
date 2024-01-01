@@ -1,4 +1,4 @@
-import { Outlet, useLocation } from 'react-router-dom';
+import { Outlet } from 'react-router-dom';
 
 import NavBar from './NavBar';
 import Footer from './Footer';
@@ -6,8 +6,6 @@ import { useEffect } from 'react';
 import ChannelService from '../ChannelService';
 
 const Layout = () => {
-  const location = useLocation();
-
   useEffect(() => {
     if (!window.ChannelIO) {
       ChannelService.loadScript();
@@ -16,15 +14,6 @@ const Layout = () => {
       });
     }
   }, []);
-
-  useEffect(() => {
-    const programPathRegex = /\/program\/\d+$/; // /program/:programId
-    if (programPathRegex.test(location.pathname)) {
-      ChannelService.hideChannelButton();
-    } else {
-      ChannelService.showChannelButton();
-    }
-  }, [location]);
 
   return (
     <div className="font-notosans">
