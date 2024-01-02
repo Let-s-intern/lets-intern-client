@@ -27,10 +27,12 @@
       flex: 1;
       margin: 0 auto;
       align-items: center;
+      padding: 0;
     }
 
     .text-content {
       width: 100%;
+      padding: 0 0.75rem;
 
       @media (min-width: $breakpoint-37_75rem) {
         width: 30rem;
@@ -38,6 +40,7 @@
 
       @media (min-width: $breakpoint-768px) {
         width: 20rem;
+        padding: 0;
       }
 
       p {

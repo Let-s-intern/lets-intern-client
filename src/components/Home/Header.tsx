@@ -10,8 +10,8 @@ const Header = () => {
         </div>
       </div>
       <ul className="menu-list">
-        <li>
-          <Link to="/?category=CHALLENGE" className="menu-item">
+        <li className="menu-item">
+          <Link to="/?category=CHALLENGE">
             <div className="left">
               <h3>인턴 지원 챌린지</h3>
               <p>
@@ -26,8 +26,8 @@ const Header = () => {
             </div>
           </Link>
         </li>
-        <li>
-          <Link to="/?category=BOOTCAMP" className="menu-item">
+        <li className="menu-item">
+          <Link to="/?category=BOOTCAMP">
             <div className="left">
               <h3>부트캠프</h3>
               <p>
@@ -42,8 +42,8 @@ const Header = () => {
             </div>
           </Link>
         </li>
-        <li>
-          <Link to="/?category=LETS_CHAT" className="menu-item">
+        <li className="menu-item">
+          <Link to="/?category=LETS_CHAT">
             <div className="left">
               <h3>렛츠챗</h3>
               <p>
@@ -58,12 +58,8 @@ const Header = () => {
             </div>
           </Link>
         </li>
-        <li>
-          <Link
-            to="#"
-            className="menu-item"
-            onClick={() => alert('오픈 예정입니다.')}
-          >
+        <li className="menu-item">
+          <Link to="#" onClick={() => alert('오픈 예정입니다.')}>
             <div className="left">
               <h3>TIL 챌린지</h3>
               <p>
