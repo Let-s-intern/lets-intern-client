@@ -71,8 +71,8 @@ header {
       grid-template-columns: repeat(4, 1fr);
     }
 
-    li {
-      .menu-item {
+    .menu-item {
+      a {
         width: 100%;
         background-color: #f1f4f9;
         border-radius: 0.5rem;
