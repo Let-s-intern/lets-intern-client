@@ -3,7 +3,7 @@
 .review-section {
   background-color: #232233;
   overflow: hidden;
-  padding: 3rem;
+  padding: 3rem 0;
 
   .section-title {
     @include utils.responsive;

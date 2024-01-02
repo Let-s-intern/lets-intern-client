@@ -6,8 +6,17 @@
   .program-list {
     display: flex;
     gap: 1rem;
-    overflow: hidden;
+    overflow: auto;
     white-space: nowrap;
+    scrollbar-width: none; /* FireFox */
+
+    &::-webkit-scrollbar {
+      display: none; /* Chrome, Safari, Opera, ... */
+    }
+
+    &::-ms-scrollbar {
+      display: none; /* Internet Explorer, Edge */
+    }
 
     .program {
       min-width: 15rem;
