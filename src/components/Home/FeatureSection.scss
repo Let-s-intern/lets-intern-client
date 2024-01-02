@@ -1,6 +1,8 @@
 @use './utils.scss';
 
 .feature-section {
+  $breakpoint-587px: 587px;
+
   @include utils.responsive;
 
   .feature-grid {
@@ -9,7 +11,7 @@
     gap: 0.5rem;
 
     .feature-item {
-      height: 10rem;
+      min-height: 10rem;
       color: #ffffff;
       border-radius: 0.5rem;
       padding: 1.5rem 2rem;
@@ -26,7 +28,12 @@
 
     .row:nth-child(1) {
       display: flex;
+      flex-direction: column;
       gap: 0.5rem;
+
+      @media (min-width: $breakpoint-587px) {
+        flex-direction: row;
+      }
 
       .feature-item:nth-child(1) {
         flex: 2;
