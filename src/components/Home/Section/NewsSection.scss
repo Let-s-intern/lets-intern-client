@@ -1,11 +1,11 @@
 @use '../utils.scss';
 
+$breakpoint-37_75rem: 37.75rem;
+$breakpoint-768px: 768px;
+$breakpoint-1080px: 1080px;
+
 @mixin style {
   .news-section {
-    $breakpoint-37_75rem: 37.75rem;
-    $breakpoint-768px: 768px;
-    $breakpoint-1080px: 1080px;
-
     @include utils.responsive;
     display: flex;
     flex-direction: column;

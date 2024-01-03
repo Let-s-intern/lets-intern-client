@@ -1,13 +1,13 @@
 import { useEffect, useState } from 'react';
 
-import SectionTitle from '../components/SectionTitle';
-import ProgramListSlider from '../components/ProgramListSlider';
-import TabBar from '../components/TabBar';
-import TabItem from '../components/TabItem';
-import Card from '../components/Card';
+import SectionTitle from '../SectionTitle';
+import ProgramListSlider from '../ProgramListSlider';
+import TabBar from '../TabBar';
+import TabItem from '../TabItem';
+import Card from '../Card';
 
 import { useSearchParams } from 'react-router-dom';
-import axios from '../libs/axios';
+import axios from '../../libs/axios';
 
 const Programs = () => {
   const [searchParams] = useSearchParams();
@@ -55,39 +55,39 @@ const Programs = () => {
     <>
       <main className="mx-auto max-w-5xl px-5 pb-5">
         <div className="container mx-auto">
-          <TabBar itemCount={4}>
-            <TabItem to="/" {...(category === 'ALL' && { active: true })}>
-              모든 프로그램
-            </TabItem>
-            <TabItem
-              to="/?category=CHALLENGE"
-              {...(category === 'CHALLENGE' && { active: true })}
-            >
-              챌린지
-            </TabItem>
-            <TabItem
-              to="/?category=BOOTCAMP"
-              {...(category === 'BOOTCAMP' && { active: true })}
-            >
-              부트캠프
-            </TabItem>
-            <TabItem
-              to="/?category=LETS_CHAT"
-              {...(category === 'LETS_CHAT' && { active: true })}
-            >
-              렛츠-챗
-            </TabItem>
-          </TabBar>
-          <div className="h-9"></div>
-          <header className="absolute left-0 flex h-32 w-full items-center justify-center bg-primary text-center text-white">
-            <div>
+          <div className="h-9">
+            <TabBar itemCount={4}>
+              <TabItem to="/" {...(category === 'ALL' && { active: true })}>
+                모든 프로그램
+              </TabItem>
+              <TabItem
+                to="/?category=CHALLENGE"
+                {...(category === 'CHALLENGE' && { active: true })}
+              >
+                챌린지
+              </TabItem>
+              <TabItem
+                to="/?category=BOOTCAMP"
+                {...(category === 'BOOTCAMP' && { active: true })}
+              >
+                부트캠프
+              </TabItem>
+              <TabItem
+                to="/?category=LETS_CHAT"
+                {...(category === 'LETS_CHAT' && { active: true })}
+              >
+                렛츠-챗
+              </TabItem>
+            </TabBar>
+          </div>
+          <header className="h-36">
+            <div className="absolute left-0 flex h-36 w-full flex-col items-center justify-center bg-primary text-center text-white">
               <span className="text-2xl font-bold">렛츠인턴</span>
               <p className="mt-2">
                 인턴/신입, 첫 시작을 함께 하는 커리어 플랫폼
               </p>
             </div>
           </header>
-          <div className="h-36"></div>
           <section className="mt-10">
             <SectionTitle fontWeight="bold">현재 모집중이에요</SectionTitle>
             <p className="text-gray-500">

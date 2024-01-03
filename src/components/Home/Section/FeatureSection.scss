@@ -1,9 +1,9 @@
 @use '../utils.scss';
 
+$breakpoint-587px: 587px;
+
 @mixin style {
   .feature-section {
-    $breakpoint-587px: 587px;
-
     @include utils.responsive;
 
     .feature-grid {

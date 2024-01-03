@@ -1,11 +1,11 @@
 @use '../utils.scss';
 
+$breakpoint-516px: 516px;
+$breakpoint-680px: 680px;
+$breakpoint-1080px: 1080px;
+
 @mixin style {
   header {
-    $breakpoint-516px: 516px;
-    $breakpoint-680px: 680px;
-    $breakpoint-1080px: 1080px;
-
     .banner {
       width: 100%;
       height: 12rem;

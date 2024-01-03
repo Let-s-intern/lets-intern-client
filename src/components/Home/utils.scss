@@ -1,6 +1,28 @@
+$breakpoint-640px: 640px;
+$breakpoint-768px: 768px;
+$breakpoint-1024px: 1024px;
+$breakpoint-1280px: 1280px;
+$breakpoint-1536px: 1536px;
+
 @mixin responsive {
   max-width: 1080px;
   width: 100%;
   margin: 0 auto;
   padding: 0 1.5rem;
+
+  @media (min-width: $breakpoint-640px) {
+    max-width: 640px;
+  }
+  @media (min-width: $breakpoint-768px) {
+    max-width: 768px;
+  }
+  @media (min-width: $breakpoint-1024px) {
+    max-width: 1024px;
+  }
+  @media (min-width: $breakpoint-1280px) {
+    max-width: 1280px;
+  }
+  @media (min-width: $breakpoint-1536px) {
+    max-width: 1536px;
+  }
 }
