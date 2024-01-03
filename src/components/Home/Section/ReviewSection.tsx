@@ -1,3 +1,5 @@
+import './ReviewSection.scss';
+
 const ReviewSection = () => {
   return (
     <section className="review-section">
