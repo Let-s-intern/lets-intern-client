@@ -1,45 +1,43 @@
-@use '../utils.scss';
+@use '../../../styles/utils.scss';
 
-@mixin style {
-  .program-section {
-    @include utils.responsive;
+.program-section {
+  @include utils.responsive;
 
-    .program-list {
-      display: flex;
-      gap: 1rem;
-      overflow: auto;
-      white-space: nowrap;
-      scrollbar-width: none; /* FireFox */
+  .program-list {
+    display: flex;
+    gap: 1rem;
+    overflow: auto;
+    white-space: nowrap;
+    scrollbar-width: none; /* FireFox */
 
-      &::-webkit-scrollbar {
-        display: none; /* Chrome, Safari, Opera, ... */
-      }
+    &::-webkit-scrollbar {
+      display: none; /* Chrome, Safari, Opera, ... */
+    }
 
-      &::-ms-scrollbar {
-        display: none; /* Internet Explorer, Edge */
-      }
+    &::-ms-scrollbar {
+      display: none; /* Internet Explorer, Edge */
+    }
 
-      .program {
-        a {
-          display: block;
-          min-width: 15rem;
-          width: 100%;
-          height: 20rem;
-          background-color: #f1f4f9;
-          border-radius: 0.5rem;
-          padding: 2.5rem 2rem;
+    .program {
+      a {
+        display: block;
+        min-width: 15rem;
+        width: 100%;
+        height: 20rem;
+        background-color: #f1f4f9;
+        border-radius: 0.5rem;
+        padding: 2.5rem 2rem;
 
-          h2 {
-            color: #6963f6;
-            font-size: 0.875rem;
-            font-weight: 500;
-          }
+        h2 {
+          color: #6963f6;
+          font-size: 0.875rem;
+          font-weight: 500;
+        }
 
-          h3 {
-            color: #4a495c;
-            font-size: 1.25rem;
-            font-weight: 600;
-          }
+        h3 {
+          color: #4a495c;
+          font-size: 1.25rem;
+          font-weight: 600;
         }
       }
     }

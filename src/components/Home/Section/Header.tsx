@@ -1,8 +1,10 @@
 import { Link } from 'react-router-dom';
 
+import './Header.scss';
+
 const Header = () => {
   return (
-    <header className="homepage-header">
+    <header>
       <div className="banner">
         <div className="banner-content">
           <h1>렛츠인턴</h1>

@@ -2,13 +2,13 @@ import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import styled, { css } from 'styled-components';
 
-import axios from '../../../../libs/axios';
+import axios from '../../../libs/axios';
 import CautionContent from './CautionContent';
 import Modal from './Modal';
 import ResultContent from './ResultContent';
 
 import MemberInfoInputContent from './MemberInfoInputContent';
-import { isValidEmail, isValidPhoneNumber } from '../../../../libs/valid';
+import { isValidEmail, isValidPhoneNumber } from '../../../libs/valid';
 import MemberTypeContent from './MemberTypeContent';
 
 interface ProgramApplyProps {

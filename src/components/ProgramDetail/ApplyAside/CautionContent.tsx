@@ -3,8 +3,8 @@ import { useParams } from 'react-router-dom';
 import { useQueryClient } from 'react-query';
 import cn from 'classnames';
 
-import axios from '../../../../libs/axios';
-import { typeToText } from '../../../../libs/converTypeToText';
+import axios from '../../../libs/axios';
+import { typeToText } from '../../../libs/converTypeToText';
 
 import './CautionContent.scss';
 

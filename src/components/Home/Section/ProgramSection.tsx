@@ -1,5 +1,7 @@
 import { Link } from 'react-router-dom';
 
+import './ProgramSection.scss';
+
 const ProgramSection = () => {
   return (
     <section className="program-section">

@@ -1,3 +1,5 @@
+import './NewsSection.scss';
+
 const NewsSection = () => {
   return (
     <section className="news-section">

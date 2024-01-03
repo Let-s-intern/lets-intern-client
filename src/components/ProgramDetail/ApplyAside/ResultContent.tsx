@@ -1,6 +1,6 @@
 import cn from 'classnames';
 
-import formatDateString from '../../../../libs/formatDateString';
+import formatDateString from '../../../libs/formatDateString';
 
 import classes from './ResultContent.module.scss';
 

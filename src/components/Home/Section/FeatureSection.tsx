@@ -1,3 +1,5 @@
+import './FeatureSection.scss';
+
 const FeatureSection = () => {
   return (
     <section className="feature-section">

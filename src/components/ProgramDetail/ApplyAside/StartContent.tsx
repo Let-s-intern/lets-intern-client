@@ -1,7 +1,7 @@
 import cn from 'classnames';
 
 import classes from './StartContent.module.scss';
-import { typeToText } from '../../../../libs/converTypeToText';
+import { typeToText } from '../../../libs/converTypeToText';
 
 interface StartContentProps {
   program: any;

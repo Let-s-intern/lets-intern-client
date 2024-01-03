@@ -1,58 +1,56 @@
-@use '../utils.scss';
+@use '../../../styles/utils.scss';
 
-@mixin style {
-  .review-section {
-    background-color: #232233;
-    overflow: hidden;
-    padding: 3rem 0;
+.review-section {
+  background-color: #232233;
+  overflow: hidden;
+  padding: 3rem 0;
 
-    .section-title {
-      @include utils.responsive;
-      color: #ffffff;
-    }
+  .section-title {
+    @include utils.responsive;
+    color: #ffffff;
+  }
 
-    .bottom-content {
-      margin-top: 2rem;
+  .bottom-content {
+    margin-top: 2rem;
 
-      .review-group {
+    .review-group {
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+
+      .row {
         display: flex;
-        flex-direction: column;
         gap: 1.25rem;
+        white-space: nowrap;
 
-        .row {
+        &:nth-child(1) {
+          transform: translateX(-240px);
+        }
+
+        &:nth-child(2) {
+          transform: translateX(-120px);
+        }
+
+        .review {
+          background-color: #ffffff;
+          border-radius: 0.5rem;
+          min-width: 14rem;
+          width: 100%;
+          height: 14rem;
           display: flex;
-          gap: 1.25rem;
-          white-space: nowrap;
+          flex-direction: column;
+          justify-content: space-between;
+          padding: 2rem;
 
-          &:nth-child(1) {
-            transform: translateX(-240px);
+          p {
+            font-size: 1.25rem;
+            font-weight: 500;
           }
 
-          &:nth-child(2) {
-            transform: translateX(-120px);
-          }
-
-          .review {
-            background-color: #ffffff;
-            border-radius: 0.5rem;
-            min-width: 14rem;
+          figure {
+            color: #969799;
             width: 100%;
-            height: 14rem;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            padding: 2rem;
-
-            p {
-              font-size: 1.25rem;
-              font-weight: 500;
-            }
-
-            figure {
-              color: #969799;
-              width: 100%;
-              text-align: left;
-            }
+            text-align: left;
           }
         }
       }
