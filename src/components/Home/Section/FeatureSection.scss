@@ -1,0 +1,57 @@
+@use '../utils.scss';
+
+@mixin style {
+  .feature-section {
+    $breakpoint-587px: 587px;
+
+    @include utils.responsive;
+
+    .feature-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+
+      .feature-item {
+        min-height: 10rem;
+        color: #ffffff;
+        border-radius: 0.5rem;
+        padding: 1.5rem 2rem;
+
+        h3 {
+          font-size: 1.25rem;
+          font-weight: 500;
+        }
+
+        p {
+          margin-top: 0.25rem;
+        }
+      }
+
+      .row:nth-child(1) {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+
+        @media (min-width: $breakpoint-587px) {
+          flex-direction: row;
+        }
+
+        .feature-item:nth-child(1) {
+          flex: 2;
+          background-color: #5854d1;
+        }
+
+        .feature-item:nth-child(2) {
+          flex: 1;
+          background-color: #4743a8;
+        }
+      }
+
+      .row:nth-child(2) {
+        .feature-item {
+          background-color: #242357;
+        }
+      }
+    }
+  }
+}

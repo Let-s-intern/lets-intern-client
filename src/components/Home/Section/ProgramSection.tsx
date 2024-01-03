@@ -1,3 +1,5 @@
+import { Link } from 'react-router-dom';
+
 const ProgramSection = () => {
   return (
     <section className="program-section">
@@ -8,24 +10,34 @@ const ProgramSection = () => {
       <div className="bottom-content">
         <div className="program-list">
           <article className="program">
-            <h2>부트캠프</h2>
-            <h3>부트캠프 2기</h3>
+            <Link to="#">
+              <h2>부트캠프</h2>
+              <h3>부트캠프 2기</h3>
+            </Link>
           </article>
           <article className="program">
-            <h2>챌린지</h2>
-            <h3>인턴 지원 챌린지</h3>
+            <Link to="#">
+              <h2>챌린지</h2>
+              <h3>인턴 지원 챌린지</h3>
+            </Link>
           </article>
           <article className="program">
-            <h2>부트캠프</h2>
-            <h3>부트캠프 2기</h3>
+            <Link to="#">
+              <h2>부트캠프</h2>
+              <h3>부트캠프 2기</h3>
+            </Link>
           </article>
           <article className="program">
-            <h2>챌린지</h2>
-            <h3>인턴 지원 챌린지</h3>
+            <Link to="#">
+              <h2>챌린지</h2>
+              <h3>인턴 지원 챌린지</h3>
+            </Link>
           </article>
           <article className="program">
-            <h2>챌린지</h2>
-            <h3>인턴 지원 챌린지</h3>
+            <Link to="#">
+              <h2>부트캠프</h2>
+              <h3>부트캠프 2기</h3>
+            </Link>
           </article>
         </div>
       </div>
