@@ -1,13 +1,13 @@
 import { useEffect, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 
-import SectionTitle from '../SectionTitle';
+import axios from '../../libs/axios';
 import ProgramListSlider from '../ProgramListSlider';
+import ClosedCard from './ClosedCard';
 import TabBar from '../TabBar';
 import TabItem from '../TabItem';
-import Card from '../Card';
 
-import { useSearchParams } from 'react-router-dom';
-import axios from '../../libs/axios';
+import './Programs.scss';
 
 const Programs = () => {
   const [searchParams] = useSearchParams();
@@ -53,70 +53,63 @@ const Programs = () => {
 
   return (
     <>
-      <main className="mx-auto max-w-5xl px-5 pb-5">
-        <div className="container mx-auto">
-          <div className="h-9">
-            <TabBar itemCount={4}>
-              <TabItem to="/" {...(category === 'ALL' && { active: true })}>
-                모든 프로그램
-              </TabItem>
-              <TabItem
-                to="/?category=CHALLENGE"
-                {...(category === 'CHALLENGE' && { active: true })}
-              >
-                챌린지
-              </TabItem>
-              <TabItem
-                to="/?category=BOOTCAMP"
-                {...(category === 'BOOTCAMP' && { active: true })}
-              >
-                부트캠프
-              </TabItem>
-              <TabItem
-                to="/?category=LETS_CHAT"
-                {...(category === 'LETS_CHAT' && { active: true })}
-              >
-                렛츠-챗
-              </TabItem>
-            </TabBar>
+      <div className="program-list-page">
+        <div className="h-9">
+          <TabBar itemCount={4}>
+            <TabItem to="/" {...(category === 'ALL' && { active: true })}>
+              모든 프로그램
+            </TabItem>
+            <TabItem
+              to="/?category=CHALLENGE"
+              {...(category === 'CHALLENGE' && { active: true })}
+            >
+              챌린지
+            </TabItem>
+            <TabItem
+              to="/?category=BOOTCAMP"
+              {...(category === 'BOOTCAMP' && { active: true })}
+            >
+              부트캠프
+            </TabItem>
+            <TabItem
+              to="/?category=LETS_CHAT"
+              {...(category === 'LETS_CHAT' && { active: true })}
+            >
+              렛츠-챗
+            </TabItem>
+          </TabBar>
+        </div>
+        <header>
+          <div className="banner">
+            <h1>렛츠인턴</h1>
+            <h2>인턴/신입, 첫 시작을 함께 하는 커리어 플랫폼</h2>
           </div>
-          <header className="h-36">
-            <div className="absolute left-0 flex h-36 w-full flex-col items-center justify-center bg-primary text-center text-white">
-              <span className="text-2xl font-bold">렛츠인턴</span>
-              <p className="mt-2">
-                인턴/신입, 첫 시작을 함께 하는 커리어 플랫폼
-              </p>
-            </div>
-          </header>
-          <section className="mt-10">
-            <SectionTitle fontWeight="bold">현재 모집중이에요</SectionTitle>
-            <p className="text-gray-500">
-              아래에서 모집중인 프로그램을 확인해보세요!
-            </p>
+        </header>
+        <main>
+          <section className="opened-programs">
+            <h2>현재 모집중이에요</h2>
+            <p>아래에서 모집중인 프로그램을 확인해보세요!</p>
             <ProgramListSlider programs={programs} loading={loading} />
           </section>
-          <section className="mt-5">
-            <SectionTitle fontWeight="bold">아쉽지만 마감되었어요</SectionTitle>
-            <p className="text-gray-500">
-              더 많은 프로그램들이 준비되어 있으니 걱정마세요!
-            </p>
+          <section className="closed-programs">
+            <h2>아쉽지만 마감되었어요</h2>
+            <p>더 많은 프로그램들이 준비되어 있으니 걱정마세요!</p>
             {loading || closedPrograms.length === 0 ? (
-              <div className="h-[175px] w-full"></div>
+              <div className="closed-card-list">
+                <div className="placeholder" />
+              </div>
             ) : (
-              <div className="mt-5 grid grid-cols-1 gap-2 sm:grid-cols-2">
-                {closedPrograms.map((program: any) => (
-                  <Card
-                    key={program.id}
-                    program={program}
-                    loading={loading}
-                    closed
-                  />
-                ))}
+              <div className="closed-card-list">
+                <div className="card-list">
+                  {closedPrograms.map((program: any) => (
+                    <ClosedCard key={program.id} program={program} />
+                  ))}
+                </div>
               </div>
             )}
           </section>
-        </div>
-      </main>
+        </main>
+      </div>
     </>
   );
 };
