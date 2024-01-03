@@ -3,10 +3,10 @@ import { useQuery } from 'react-query';
 import cn from 'classnames';
 import { FormControl, InputLabel, MenuItem, Select } from '@mui/material';
 
-import Input from '../../../Input';
-import axios from '../../../../libs/axios';
-import { typeToText } from '../../../../libs/converTypeToText';
-import { isValidEmail, isValidPhoneNumber } from '../../../../libs/valid';
+import Input from '../../Input';
+import axios from '../../../libs/axios';
+import { typeToText } from '../../../libs/converTypeToText';
+import { isValidEmail, isValidPhoneNumber } from '../../../libs/valid';
 
 import classes from './InputContent.module.scss';
 

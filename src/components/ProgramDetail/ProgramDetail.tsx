@@ -2,15 +2,15 @@ import { useEffect, useState } from 'react';
 import { useQuery } from 'react-query';
 import { useLocation, useParams } from 'react-router-dom';
 
-import ChannelService from '../../../ChannelService';
-import axios from '../../../libs/axios';
+import ChannelService from '../../ChannelService';
+import axios from '../../libs/axios';
 import Header from './Header';
 import MainContent from './MainContent';
 import ApplySection from './ApplySection/ApplySection';
 import ApplyAside from './ApplyAside/ApplyAside';
 
 import './ProgramDetail.scss';
-import '../../../styles/github-markdown-light.css';
+import '../../styles/github-markdown-light.css';
 
 const ProgramDetail = () => {
   const params = useParams();

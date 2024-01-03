@@ -1,6 +1,6 @@
 import styled from 'styled-components';
-import '../../../styles/github-markdown-light.css';
-import { useEffect } from 'react';
+
+import '../../styles/github-markdown-light.css';
 
 interface DetailTabProps {
   content: string;
