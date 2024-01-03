@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
 import axios from '../../../../libs/axios';
 import CautionContent from './CautionContent';
@@ -44,11 +44,12 @@ const ProgramApply = ({
 }: ProgramApplyProps) => {
   const navigate = useNavigate();
   const params = useParams();
-
   const [cautionChecked, setCautionChecked] = useState<boolean>(false);
   const [isNextButtonDisabled, setIsNextButtonDisabled] =
     useState<boolean>(false);
   const [announcementDate, setAnnouncementDate] = useState<string>('');
+  const [bottomMessage, setBottomMessage] = useState<string>('');
+  const [submitError, setSubmitError] = useState<unknown>();
 
   useEffect(() => {
     if (applyPageIndex !== 1) {
@@ -129,6 +130,7 @@ const ProgramApply = ({
   };
 
   const handleApplySubmit = async () => {
+    setBottomMessage('신청 작업을 진행중입니다.');
     try {
       let newUser = { ...user, grade: Number(user.grade) };
       if (program.way !== 'ALL') {
@@ -156,13 +158,16 @@ const ProgramApply = ({
           },
         },
       );
+      setBottomMessage('신청 작업이 완료되었습니다.');
       setAnnouncementDate(res.data.announcementDate);
       setApplyPageIndex(applyPageIndex + 1);
     } catch (error) {
+      setSubmitError(error);
       if ((error as any).response.status === 400) {
-        alert((error as any).response.data.reason);
+        setBottomMessage((error as any).response.data.reason);
+      } else {
+        setBottomMessage('신청 작업 도중 오류가 발생했습니다.');
       }
-      console.error(error);
     }
   };
 
@@ -217,6 +222,8 @@ const ProgramApply = ({
         hasFoldButton={false}
         nextButtonClass="caution-next-button"
         nextButtonId="complete_button"
+        message={bottomMessage}
+        messageError={submitError}
       >
         <CautionContent
           cautionChecked={cautionChecked}
@@ -256,6 +263,11 @@ const BlackBackground = styled.div<BlackBackgroundProps>`
 
   ${({ $position }) =>
     $position === 'bottom'
-      ? `align-items: flex-end;`
-      : `align-items: center; justify-content: center;`}
+      ? css`
+          align-items: flex-end;
+        `
+      : css`
+          align-items: center;
+          justify-content: center;
+        `}
 `;

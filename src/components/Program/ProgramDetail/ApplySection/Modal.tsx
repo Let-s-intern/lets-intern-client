@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import { VscTriangleDown } from 'react-icons/vsc';
 
 import ScrollBox from './Scrollbox';
@@ -13,6 +13,8 @@ interface ModalProps {
   hasFoldButton?: boolean;
   nextButtonClass?: string;
   nextButtonId?: string;
+  message?: string;
+  messageError?: unknown;
 }
 
 interface NextButtonProps {
@@ -29,6 +31,8 @@ const Modal = ({
   hasFoldButton = true,
   nextButtonClass,
   nextButtonId,
+  message,
+  messageError,
 }: ModalProps) => {
   return (
     <div
@@ -58,6 +62,9 @@ const Modal = ({
         <ScrollBox className="max-h-[400px] overflow-y-scroll px-6 py-8">
           {children}
         </ScrollBox>
+        {message && (
+          <BottomMessage $error={messageError}>{message}</BottomMessage>
+        )}
         <NextButton
           type="button"
           $disabled={isNextButtonDisabled}
@@ -108,4 +115,13 @@ const TopButton = styled.button`
   display: flex;
   justify-content: center;
   align-items: center;
+`;
+
+const BottomMessage = styled.span<{ $error: unknown }>`
+  display: block;
+  margin-bottom: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  text-align: center;
+  color: ${(props) => (props.$error ? css`#ef4444` : css`#7f7afc`)};
 `;

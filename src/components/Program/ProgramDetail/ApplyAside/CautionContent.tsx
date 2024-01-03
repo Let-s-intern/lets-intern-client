@@ -1,10 +1,12 @@
+import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useQueryClient } from 'react-query';
+import cn from 'classnames';
 
 import axios from '../../../../libs/axios';
 import { typeToText } from '../../../../libs/converTypeToText';
 
-import classes from './CautionContent.module.scss';
+import './CautionContent.scss';
 
 interface CautionContentProps {
   program: any;
@@ -23,8 +25,11 @@ const CautionContent = ({
 }: CautionContentProps) => {
   const params = useParams();
   const queryClient = useQueryClient();
+  const [error, setError] = useState<unknown>();
+  const [message, setMessage] = useState('');
 
   const handleApplySubmit = async () => {
+    setMessage('신청 작업을 진행 중입니다.');
     try {
       let newUser = { ...formData, grade: Number(formData.grade) };
       if (program.way !== 'ALL') {
@@ -52,23 +57,35 @@ const CautionContent = ({
           },
         },
       );
+      setMessage('신청 작업이 완료되었습니다.');
       setAnnouncementDate(res.data.announcementDate);
       setApplyPageIndex(4);
       queryClient.invalidateQueries(['program', params.programId]);
     } catch (error) {
+      setError(error);
       if ((error as any).response.status === 400) {
-        alert((error as any).response.data.reason);
+        setMessage((error as any).response.data.reason);
+      } else {
+        setMessage('신청 작업 도중 오류가 발생했습니다.');
       }
-      console.error(error);
     }
   };
 
   return (
-    <div className={classes['caution-content']}>
+    <div className="caution-content">
       <h3>{typeToText[program.type]}</h3>
       <h2>{program.title}</h2>
       <h4>[필독사항]</h4>
       <p>{program.notice}</p>
+      {message && (
+        <span
+          className={cn('submit-message', {
+            error: error,
+          })}
+        >
+          {message}
+        </span>
+      )}
       <button
         id="complete_button"
         className="caution-next-button"
