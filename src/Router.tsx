@@ -1,7 +1,7 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 
-import Programs from './pages/Programs';
-import ProgramDetail from './components/Program/ProgramDetail/ProgramDetail';
+import Programs from './components/Programs/Programs';
+import ProgramDetail from './components/ProgramDetail/ProgramDetail';
 import Login from './components/Login/Login';
 import MyPage from './components/MyPage/MyPage';
 import SignUp from './pages/SignUp';
@@ -34,10 +34,10 @@ const Router = () => {
       <ScrollToTop />
       <Routes>
         <Route path="/" element={<Layout />}>
-          {/* / */}
-          <Route path="" element={<Programs />} />
           {/* /home */}
           <Route path="home" element={<Home />} />
+          {/* / */}
+          <Route path="" element={<Programs />} />
           {/* /program/detail/:programId */}
           <Route path="program/detail/:programId" element={<ProgramDetail />} />
           <Route path="program/:programId">

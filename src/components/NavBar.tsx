@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import axios from '../libs/axios';
 
@@ -125,6 +125,11 @@ const NavBar = () => {
             )}
           </div>
           <div className="mt-5 flex flex-col gap-2">
+            {isAdmin && (
+              <SideNavItem to="/home" onClick={closeMenu}>
+                홈
+              </SideNavItem>
+            )}
             <SideNavItem to="/" onClick={closeMenu}>
               프로그램
             </SideNavItem>
