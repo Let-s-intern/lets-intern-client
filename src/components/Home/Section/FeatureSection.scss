@@ -1,9 +1,7 @@
-@use '../../../styles/utils.scss';
-
-$breakpoint-587px: 587px;
+@use '../../../styles/utils.scss' as *;
 
 .feature-section {
-  @include utils.responsive;
+  @include responsive;
 
   .feature-grid {
     display: flex;
@@ -31,7 +29,7 @@ $breakpoint-587px: 587px;
       flex-direction: column;
       gap: 0.5rem;
 
-      @media (min-width: $breakpoint-587px) {
+      @media screen and (min-width: $screen-sm) {
         flex-direction: row;
       }
 

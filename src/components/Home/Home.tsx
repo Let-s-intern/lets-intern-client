@@ -13,7 +13,7 @@ const Home = () => {
       <ProgramSection />
       <FeatureSection />
       <ReviewSection />
-      <NewsSection />
+      {/* <NewsSection /> */}
     </div>
   );
 };

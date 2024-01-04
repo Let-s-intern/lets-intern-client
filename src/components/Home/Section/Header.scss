@@ -1,7 +1,4 @@
-@use '../../../styles/utils.scss';
-
-$breakpoint-640px: 640px;
-$breakpoint-1080px: 1080px;
+@use '../../../styles/utils.scss' as *;
 
 header {
   .banner {
@@ -20,7 +17,7 @@ header {
       h1 {
         font-size: 1.125rem;
 
-        @media (min-width: $breakpoint-640px) {
+        @media screen and (min-width: $screen-sm) {
           font-size: 1.5rem;
         }
       }
@@ -30,7 +27,7 @@ header {
         font-size: 1.25rem;
         font-weight: 600;
 
-        @media (min-width: $breakpoint-640px) {
+        @media screen and (min-width: $screen-sm) {
           font-size: 1.75rem;
         }
       }
@@ -38,7 +35,7 @@ header {
   }
 
   .menu-list {
-    @include utils.responsive;
+    @include responsive;
     margin-top: 1rem;
     display: grid;
     grid-template-columns: repeat(4, 1fr);
@@ -55,11 +52,11 @@ header {
       display: none; /* Internet Explorer, Edge */
     }
 
-    @media (min-width: $breakpoint-640px) {
+    @media screen and (min-width: $screen-sm) {
       grid-template-columns: repeat(2, 1fr);
     }
 
-    @media (min-width: $breakpoint-1080px) {
+    @media screen and (min-width: $screen-lg) {
       grid-template-columns: repeat(4, 1fr);
     }
 
@@ -74,7 +71,7 @@ header {
         align-items: center;
         gap: 0.5rem;
 
-        @media (min-width: $breakpoint-1080px) {
+        @media (min-width: $screen-lg) {
           padding: 1.5rem;
         }
 
@@ -83,7 +80,7 @@ header {
             font-size: 1.25rem;
             font-weight: 600;
 
-            @media (min-width: $breakpoint-1080px) {
+            @media (min-width: $screen-lg) {
               font-size: 1.125rem;
             }
           }
@@ -93,14 +90,14 @@ header {
             font-size: 0.875rem;
             color: #969799;
 
-            @media (min-width: $breakpoint-1080px) {
+            @media (min-width: $screen-lg) {
               font-size: 0.75rem;
             }
 
             br {
               display: none;
 
-              @media (min-width: $breakpoint-1080px) {
+              @media (min-width: $screen-lg) {
                 display: block;
               }
             }
