@@ -41,7 +41,6 @@ axios.interceptors.response.use(
           originalRequest.headers.Authorization = `Bearer ${res.data.accessToken}`;
           return axios(originalRequest);
         } catch (err: any) {
-          console.log('error', err);
           if (err.response.status === 404) {
             if (err.response.data.code === 'ADMIN_404_2') {
               localStorage.removeItem('access-token');

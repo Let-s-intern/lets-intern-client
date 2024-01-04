@@ -130,6 +130,11 @@ const NavBar = () => {
                 홈
               </SideNavItem>
             )}
+            {isAdmin && (
+              <SideNavItem to="/about" onClick={closeMenu}>
+                브랜드 스토리
+              </SideNavItem>
+            )}
             <SideNavItem to="/" onClick={closeMenu}>
               프로그램
             </SideNavItem>
