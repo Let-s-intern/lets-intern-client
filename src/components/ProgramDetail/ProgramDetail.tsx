@@ -3,7 +3,7 @@ import { useQuery } from 'react-query';
 import { useLocation, useParams } from 'react-router-dom';
 
 import ChannelService from '../../ChannelService';
-import axios from '../../libs/axios';
+import axios from '../../utils/axios';
 import Header from './Header';
 import MainContent from './MainContent';
 import ApplySection from './ApplySection/ApplySection';

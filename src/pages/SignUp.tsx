@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 
 import Input from '../components/Input';
 import Button from '../components/Button';
-import axios from '../libs/axios';
+import axios from '../utils/axios';
 import PrivacyPolicyModal from '../components/SignUp/PrivacyPolicyModal';
 import CheckBox from '../components/SignUp/CheckBox';
 import PrivacyLink from '../components/SignUp/PrivacyLink';
@@ -11,7 +11,7 @@ import {
   isValidEmail,
   isValidPassword,
   isValidPhoneNumber,
-} from '../libs/valid';
+} from '../utils/valid';
 import AlertModal from '../components/AlertModal';
 
 const SignUp = () => {

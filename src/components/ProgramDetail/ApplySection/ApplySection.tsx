@@ -2,7 +2,7 @@ import styled from 'styled-components';
 
 import Button from '../../Button';
 import { useState } from 'react';
-import axios from '../../../libs/axios';
+import axios from '../../../utils/axios';
 import ProgramApply from './ProgramApply';
 
 interface ApplySectionProps {

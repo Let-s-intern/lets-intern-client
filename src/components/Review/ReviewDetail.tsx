@@ -1,14 +1,31 @@
+import { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
 import styled from 'styled-components';
+
+import axios from '../../utils/axios';
+import { convertTypeToText } from '../../utils/converTypeToText';
 import Star from './Star';
-import { convertTypeToText } from '../../libs/converTypeToText';
 
-interface ReviewDetailProps {
-  loading: boolean;
-  error: unknown;
-  review: any;
-}
+const ReviewDetail = () => {
+  const params = useParams();
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<unknown>(null);
+  const [review, setReview] = useState<any>({});
 
-const ReviewDetail = ({ loading, error, review }: ReviewDetailProps) => {
+  useEffect(() => {
+    const fetchReview = async () => {
+      try {
+        const res = await axios.get(`/review/${params.reviewId}`);
+        console.log(res.data);
+        setReview(res.data);
+      } catch (error) {
+        setError(error);
+      }
+    };
+    fetchReview();
+    setLoading(false);
+  }, []);
+
   if (loading) {
     return <div></div>;
   }

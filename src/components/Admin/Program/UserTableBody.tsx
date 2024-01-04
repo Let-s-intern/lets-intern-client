@@ -1,9 +1,9 @@
 import { FormControl, InputLabel, MenuItem, Select } from '@mui/material';
 
 import TD from '../TD';
-import parseInflowPath from '../../../libs/parseInflowPath';
-import parseGrade from '../../../libs/parseGrade';
-import parsePhoneNum from '../../../libs/parsePhoneNum';
+import parseInflowPath from '../../../utils/parseInflowPath';
+import parseGrade from '../../../utils/parseGrade';
+import parsePhoneNum from '../../../utils/parsePhoneNum';
 
 interface UserTableBodyProps {
   applications: any[];

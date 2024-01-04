@@ -3,7 +3,6 @@ import styled from 'styled-components';
 import { MdArrowBackIosNew, MdArrowForwardIos } from 'react-icons/md';
 
 import Card from './Card';
-import Program from '../interfaces/program';
 
 interface SliderButtonProps {
   scrollContainer: React.RefObject<HTMLDivElement>;
@@ -12,7 +11,7 @@ interface SliderButtonProps {
 }
 
 interface ProgramListSliderProps {
-  programs: Program[];
+  programs: any;
   cardType?: '신청 완료' | '참여 중' | '참여 완료' | '';
   loading?: boolean;
   page?: 'main' | 'review' | 'review-create' | 'application';
@@ -75,7 +74,7 @@ const ProgramListSlider = ({
           </div>
         ) : (
           <div className="flex gap-5">
-            {programs.map((program) => {
+            {programs.map((program: any) => {
               return (
                 <Card
                   key={program.id}

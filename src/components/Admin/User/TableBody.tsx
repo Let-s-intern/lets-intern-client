@@ -3,8 +3,8 @@ import styled, { css } from 'styled-components';
 
 import TD from '../TD';
 import ActionButton from '../ActionButton';
-import parsePhoneNum from '../../../libs/parsePhoneNum';
-import axios from '../../../libs/axios';
+import parsePhoneNum from '../../../utils/parsePhoneNum';
+import axios from '../../../utils/axios';
 import { FormControl, InputLabel, MenuItem, Select } from '@mui/material';
 import { useSearchParams } from 'react-router-dom';
 
