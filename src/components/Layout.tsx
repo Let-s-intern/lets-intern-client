@@ -1,8 +1,8 @@
+import { useEffect } from 'react';
 import { Outlet } from 'react-router-dom';
 
 import NavBar from './NavBar';
 import Footer from './Footer';
-import { useEffect } from 'react';
 import ChannelService from '../ChannelService';
 
 const Layout = () => {

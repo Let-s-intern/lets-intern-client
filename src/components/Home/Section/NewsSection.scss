@@ -1,15 +1,11 @@
-@use '../../../styles/utils.scss';
-
-$breakpoint-37_75rem: 37.75rem;
-$breakpoint-768px: 768px;
-$breakpoint-1080px: 1080px;
+@use '../../../styles/utils.scss' as *;
 
 .news-section {
-  @include utils.responsive;
+  @include responsive;
   display: flex;
   flex-direction: column;
 
-  @media (min-width: $breakpoint-768px) {
+  @media screen and (min-width: $screen-md) {
     flex-direction: row;
   }
 
@@ -19,11 +15,11 @@ $breakpoint-1080px: 1080px;
     flex-direction: column;
     align-items: stretch;
 
-    @media (min-width: $breakpoint-37_75rem) {
+    @media screen and (min-width: $screen-sm) {
       margin: 0 auto;
     }
 
-    @media (min-width: $breakpoint-768px) {
+    @media screen and (min-width: $screen-md) {
       flex: 1;
       margin: 0 auto;
       align-items: center;
@@ -34,11 +30,11 @@ $breakpoint-1080px: 1080px;
       width: 100%;
       padding: 0 0.75rem;
 
-      @media (min-width: $breakpoint-37_75rem) {
+      @media screen and (min-width: $screen-sm) {
         width: 30rem;
       }
 
-      @media (min-width: $breakpoint-768px) {
+      @media screen and (min-width: $screen-md) {
         width: 20rem;
         padding: 0;
       }
@@ -55,12 +51,12 @@ $breakpoint-1080px: 1080px;
     margin: 0 auto;
     margin-top: 2rem;
 
-    @media (min-width: $breakpoint-37_75rem) {
+    @media screen and (min-width: $screen-sm) {
       margin-top: 2rem;
       width: 30rem;
     }
 
-    @media (min-width: $breakpoint-768px) {
+    @media screen and (min-width: $screen-md) {
       margin-top: 0rem;
       padding-right: 3rem;
     }
