@@ -1,7 +1,7 @@
-@use '../../../styles/utils.scss';
+@use '../../../styles/utils.scss' as *;
 
 .program-section {
-  @include utils.responsive;
+  @include responsive;
 
   .program-list {
     display: flex;

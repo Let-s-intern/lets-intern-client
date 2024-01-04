@@ -1,5 +1,7 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 
+import Home from './components/Home/Home';
+import About from './components/About/About';
 import Programs from './components/Programs/Programs';
 import ProgramDetail from './components/ProgramDetail/ProgramDetail';
 import Login from './components/Login/Login';
@@ -26,7 +28,6 @@ import AttendCheck from './pages/Admin/Program/AttendCheck';
 import ScrollToTop from './components/ScrollToTop';
 import AdminPrograms from './components/Admin/Program/Programs';
 import ProgramUsers from './components/Admin/Program/ProgramUsers';
-import Home from './components/Home/Home';
 
 const Router = () => {
   return (
@@ -36,6 +37,8 @@ const Router = () => {
         <Route path="/" element={<Layout />}>
           {/* /home */}
           <Route path="home" element={<Home />} />
+          {/* /about */}
+          <Route path="about" element={<About />} />
           {/* / */}
           <Route path="" element={<Programs />} />
           {/* /program/detail/:programId */}

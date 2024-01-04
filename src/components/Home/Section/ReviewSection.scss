@@ -1,4 +1,4 @@
-@use '../../../styles/utils.scss';
+@use '../../../styles/utils.scss' as *;
 
 .review-section {
   background-color: #232233;
@@ -6,7 +6,7 @@
   padding: 3rem 0;
 
   .section-title {
-    @include utils.responsive;
+    @include responsive;
     color: #ffffff;
   }
 

@@ -11,8 +11,8 @@ const ReviewSection = () => {
       <div className="bottom-content">
         <div className="review-group">
           <div className="row">
-            {Array.from(Array(10)).map(() => (
-              <article className="review">
+            {Array.from(Array(10)).map((_, index) => (
+              <article key={index} className="review">
                 <p>
                   렛츠인턴,
                   <br />
@@ -25,8 +25,8 @@ const ReviewSection = () => {
             ))}
           </div>
           <div className="row">
-            {Array.from(Array(10)).map(() => (
-              <article className="review">
+            {Array.from(Array(10)).map((_, index) => (
+              <article key={index} className="review">
                 <p>
                   렛츠인턴,
                   <br />
