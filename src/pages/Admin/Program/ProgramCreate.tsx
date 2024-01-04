@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import * as React from 'react';
 
-import axios from '../../../libs/axios';
+import axios from '../../../utils/axios';
 import ProgramEditor from '../../../components/ProgramEditor';
 
 const ProgramCreate = () => {

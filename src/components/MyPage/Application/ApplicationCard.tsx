@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import AlertModal from '../../AlertModal';
-import formatDateString from '../../../libs/formatDateString';
+import formatDateString from '../../../utils/formatDateString';
 
 import './ApplicationCard.scss';
 

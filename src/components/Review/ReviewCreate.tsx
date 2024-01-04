@@ -1,43 +1,106 @@
+import { useEffect, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import styled from 'styled-components';
+
+import axios from '../../utils/axios';
+import { typeToText } from '../../utils/converTypeToText';
 import ReviewHeader from '../ReviewHeader';
 import InputTitle from './InputTitle';
 import Star from './Star';
 import TextArea from './TextArea';
 import AlertModal from '../AlertModal';
-import { useNavigate } from 'react-router-dom';
-
-interface ReviewEditorProps {
-  loading: boolean;
-  error: unknown;
-  program: any;
-  values: any;
-  isSubmitDisabled: boolean;
-  isLoggedIn: boolean;
-  handleRatingChange: (value: number) => void;
-  handleInputChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  handleSubmitButton: () => void;
-  successModalOpen: boolean;
-  setSuccessModalOpen: (value: boolean) => void;
-}
 
 interface SubmitButtonProps {
   $disabled?: boolean;
 }
 
-const ReviewEditor = ({
-  loading,
-  error,
-  program,
-  values,
-  isSubmitDisabled,
-  isLoggedIn,
-  handleRatingChange,
-  handleInputChange,
-  handleSubmitButton,
-  successModalOpen,
-  setSuccessModalOpen,
-}: ReviewEditorProps) => {
+const ReviewCreate = () => {
   const navigate = useNavigate();
+  const params = useParams();
+  const [program, setProgram] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<unknown>(null);
+  const [values, setValues] = useState<any>({});
+  const [isSubmitDisabled, setIsSubmitDisabled] = useState<boolean>(true);
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
+  const [successModalOpen, setSuccessModalOpen] = useState<boolean>(false);
+
+  useEffect(() => {
+    const checkLoggedIn = async () => {
+      const token = localStorage.getItem('access-token');
+      if (!token) {
+        setIsLoggedIn(false);
+        return;
+      }
+      try {
+        await axios.get('/user');
+        setIsLoggedIn(true);
+      } catch (err) {
+        setIsLoggedIn(false);
+      }
+    };
+    checkLoggedIn();
+  }, []);
+
+  useEffect(() => {
+    if (values.grade >= 1 && values.reviewContents) {
+      setIsSubmitDisabled(false);
+    } else {
+      setIsSubmitDisabled(true);
+    }
+  }, [values]);
+
+  useEffect(() => {
+    const fetchProgram = async () => {
+      if (!params.programId) return;
+      setLoading(true);
+      try {
+        const res = await axios.get(`/program/${params.programId}`, {
+          headers: {
+            Authorization: isLoggedIn
+              ? `Bearer ${localStorage.getItem('access-token')}`
+              : '',
+          },
+        });
+        console.log(res.data.programDetailVo);
+        setProgram({
+          ...res.data.programDetailVo,
+          type: typeToText[res.data.type],
+        });
+      } catch (err) {
+        setError(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchProgram();
+  }, [params]);
+
+  const handleRatingChange = (value: number) => {
+    setValues({ ...values, grade: value });
+  };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setValues({ ...values, [name]: value });
+  };
+
+  const handleSubmitButton = async () => {
+    const reqData = values;
+    try {
+      if (isLoggedIn && params.applicationId) {
+        await axios.post(`/review/${params.applicationId}`, reqData);
+        navigate(`/mypage/review`);
+      } else {
+        await axios.post(`/review?programId=${params.programId}`, reqData, {
+          headers: { Authorization: '' },
+        });
+        setSuccessModalOpen(true);
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
   if (loading) {
     return <div className="mx-auto w-full max-w-xl px-7">loading</div>;
@@ -114,7 +177,7 @@ const ReviewEditor = ({
   );
 };
 
-export default ReviewEditor;
+export default ReviewCreate;
 
 const SubmitButton = styled.button<SubmitButtonProps>`
   height: 3.5rem;

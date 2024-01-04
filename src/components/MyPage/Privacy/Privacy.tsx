@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useQuery } from 'react-query';
 
-import axios from '../../../libs/axios';
+import axios from '../../../utils/axios';
 import MainInfo from './MainInfo';
 import PasswordChange from './PasswordChange';
 import SubInfo from './SubInfo';

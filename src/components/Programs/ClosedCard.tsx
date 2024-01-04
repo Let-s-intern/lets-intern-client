@@ -1,4 +1,4 @@
-import { typeToText } from '../../libs/converTypeToText';
+import { typeToText } from '../../utils/converTypeToText';
 
 import './ClosedCard.scss';
 

@@ -1,7 +1,7 @@
 import { FormControl, InputLabel, MenuItem, Select } from '@mui/material';
 
 import TD from '../TD';
-import { typeToText } from '../../../libs/converTypeToText';
+import { typeToText } from '../../../utils/converTypeToText';
 
 interface DetailTableBodyProps {
   program: any;

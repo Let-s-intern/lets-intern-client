@@ -1,13 +1,31 @@
+import { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
 import styled from 'styled-components';
-import parsePhoneNum from '../../../libs/parsePhoneNum';
 
-interface UserDetailProps {
-  loading: boolean;
-  error: unknown;
-  user: any;
-}
+import axios from '../../../../utils/axios';
+import parsePhoneNum from '../../../../utils/parsePhoneNum';
 
-const UserDetail = ({ loading, error, user }: UserDetailProps) => {
+const UserDetail = () => {
+  const params = useParams();
+  const [user, setUser] = useState<any>({});
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<unknown>(null);
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const res = await axios.get(`/user/admin/${params.userId}`);
+        console.log(res.data);
+        setUser(res.data);
+      } catch (error) {
+        setError(error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchUser();
+  }, []);
+
   if (loading) {
     return <UserDetailBlock />;
   }

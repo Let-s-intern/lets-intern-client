@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import UserEditor from '../../components/Admin/User/UserEditor';
+import UserEditor from '../UserEditor';
 
-const UserCreateContainer = () => {
+const UserCreate = () => {
   const navigate = useNavigate();
   const [values, setValues] = useState({
     name: '',
@@ -49,4 +49,4 @@ const UserCreateContainer = () => {
   );
 };
 
-export default UserCreateContainer;
+export default UserCreate;

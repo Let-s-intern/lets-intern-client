@@ -9,7 +9,7 @@ import Header from '../Header';
 import Heading from '../Heading';
 import ActionButton from '../ActionButton';
 import AdminPagination from '../AdminPagination';
-import axios from '../../../libs/axios';
+import axios from '../../../utils/axios';
 
 import './Programs.scss';
 

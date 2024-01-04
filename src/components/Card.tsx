@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
-import formatDateString from '../libs/formatDateString';
+
+import formatDateString from '../utils/formatDateString';
 
 interface CardProps {
   program: any;

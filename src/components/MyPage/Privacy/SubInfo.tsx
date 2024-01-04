@@ -1,4 +1,4 @@
-import axios from '../../../libs/axios';
+import axios from '../../../utils/axios';
 
 interface SubInfoProps {
   subInfoValues: any;

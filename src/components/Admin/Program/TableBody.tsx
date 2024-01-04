@@ -3,10 +3,10 @@ import { Checkbox } from '@mui/material';
 
 import ActionButton from '../ActionButton';
 import TD from '../TD';
-import { convertTypeToText } from '../../../libs/converTypeToText';
+import { convertTypeToText } from '../../../utils/converTypeToText';
 import { useState } from 'react';
 import AlertModal from '../../AlertModal';
-import formatDateString from '../../../libs/formatDateString';
+import formatDateString from '../../../utils/formatDateString';
 
 interface ProgramTableBodyProps {
   programList: any;

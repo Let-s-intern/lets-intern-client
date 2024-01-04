@@ -4,9 +4,9 @@ import cn from 'classnames';
 import { FormControl, InputLabel, MenuItem, Select } from '@mui/material';
 
 import Input from '../../Input';
-import axios from '../../../libs/axios';
-import { typeToText } from '../../../libs/converTypeToText';
-import { isValidEmail, isValidPhoneNumber } from '../../../libs/valid';
+import axios from '../../../utils/axios';
+import { typeToText } from '../../../utils/converTypeToText';
+import { isValidEmail, isValidPhoneNumber } from '../../../utils/valid';
 
 import classes from './InputContent.module.scss';
 
