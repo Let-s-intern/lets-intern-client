@@ -5,9 +5,9 @@ import './BottomSection.scss';
 const BottomSection = () => {
   return (
     <section className="bottom-section">
-      <Link to="/" className="next-link-button">
-        선순환에 동참하기
-      </Link>
+      <div className="next-link-button">
+        <Link to="/">선순환에 동참하기</Link>
+      </div>
     </section>
   );
 };

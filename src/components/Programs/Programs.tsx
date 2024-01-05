@@ -1,11 +1,10 @@
 import { useEffect, useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
+import cn from 'classnames';
 
 import axios from '../../utils/axios';
 import ProgramListSlider from '../ProgramListSlider';
 import ClosedCard from './ClosedCard';
-import TabBar from '../TabBar';
-import TabItem from '../TabItem';
 
 import './Programs.scss';
 
@@ -54,7 +53,7 @@ const Programs = () => {
   return (
     <>
       <div className="program-list-page">
-        <div className="h-9">
+        {/* <div className="h-9">
           <TabBar itemCount={4}>
             <TabItem to="/" {...(category === 'ALL' && { active: true })}>
               모든 프로그램
@@ -78,7 +77,7 @@ const Programs = () => {
               렛츠-챗
             </TabItem>
           </TabBar>
-        </div>
+        </div> */}
         <header>
           <div className="banner">
             <h1>렛츠인턴</h1>
@@ -86,6 +85,38 @@ const Programs = () => {
           </div>
         </header>
         <main>
+          <section className="filter-section">
+            <ul className="category-button-group">
+              <li
+                className={cn('category-button', {
+                  active: category === 'ALL',
+                })}
+              >
+                <Link to="/">전체 프로그램</Link>
+              </li>
+              <li
+                className={cn('category-button', {
+                  active: category === 'CHALLENGE',
+                })}
+              >
+                <Link to="/?category=CHALLENGE">챌린지</Link>
+              </li>
+              <li
+                className={cn('category-button', {
+                  active: category === 'BOOTCAMP',
+                })}
+              >
+                <Link to="/?category=BOOTCAMP">부트캠프</Link>
+              </li>
+              <li
+                className={cn('category-button', {
+                  active: category === 'LETS_CHAT',
+                })}
+              >
+                <Link to="/?category=LETS_CHAT">렛츠챗</Link>
+              </li>
+            </ul>
+          </section>
           <section className="opened-programs">
             <h2>현재 모집중이에요</h2>
             <p>아래에서 모집중인 프로그램을 확인해보세요!</p>

@@ -1,4 +1,4 @@
-@use '../../styles/utils.scss';
+@use '../../styles/utils.scss' as *;
 
 $breakpoint-640px: 640px;
 
@@ -26,8 +26,6 @@ $breakpoint-640px: 640px;
   }
 
   main {
-    @include utils.responsive;
-
     > section {
       > h2 {
         font-size: 1.5rem;
@@ -39,11 +37,48 @@ $breakpoint-640px: 640px;
       }
     }
 
-    section.opened-programs {
-      margin-top: 2.5rem;
+    .filter-section {
+      position: sticky;
+      top: 4rem;
+      background-color: #ffffff;
+      padding: 0.75rem 1.5rem;
+      max-width: $screen-lg;
+      margin: 0 auto;
+
+      .category-button-group {
+        display: flex;
+        gap: 0.5rem;
+
+        .category-button {
+          color: #6963f6;
+          font-size: 0.875rem;
+          border-radius: 5rem;
+          border: 1px solid #6963f6;
+
+          &.active {
+            background-color: #6963f6;
+            color: #ffffff;
+            height: 100%;
+          }
+
+          a {
+            display: block;
+            padding: 0.125rem 0.75rem;
+          }
+        }
+      }
     }
 
-    section.closed-programs {
+    .opened-programs {
+      padding: 0 1.5rem;
+      max-width: $screen-lg;
+      margin: 0 auto;
+    }
+
+    .closed-programs {
+      padding: 0 1.5rem;
+      max-width: $screen-lg;
+      margin: 0 auto;
       margin-top: 1.25rem;
 
       .closed-card-list {
