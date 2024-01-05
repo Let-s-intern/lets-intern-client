@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useParams, useSearchParams } from 'react-router-dom';
 import styled from 'styled-components';
 
-import axios from '../../../libs/axios';
+import axios from '../../../utils/axios';
 import Table from '../Table';
 import DetailTableHead from './DetailTableHead';
 import DetailTableBody from './DetailTableBody';

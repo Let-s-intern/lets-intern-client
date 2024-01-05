@@ -1,7 +1,7 @@
 import { useState } from 'react';
 
-import axios from '../../../libs/axios';
-import { isValidEmail, isValidPhoneNumber } from '../../../libs/valid';
+import axios from '../../../utils/axios';
+import { isValidEmail, isValidPhoneNumber } from '../../../utils/valid';
 import WithDrawAlertModal from './WithDrawAlertModal';
 
 interface MainInfoProps {

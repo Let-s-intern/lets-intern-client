@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 
-import axios from '../../libs/axios';
+import axios from '../../utils/axios';
 import ProgramListSlider from '../ProgramListSlider';
 import ClosedCard from './ClosedCard';
 import TabBar from '../TabBar';

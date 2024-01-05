@@ -2,7 +2,7 @@ import { Link, Outlet, useNavigate } from 'react-router-dom';
 import { ImExit } from 'react-icons/im';
 import { useEffect } from 'react';
 
-import axios from '../libs/axios';
+import axios from '../utils/axios';
 import styled from 'styled-components';
 
 const AdminLayout = () => {

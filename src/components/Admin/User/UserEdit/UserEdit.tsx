@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
-import UserEditor from '../../components/Admin/User/UserEditor';
-import axios from '../../libs/axios';
-import { isValidEmail, isValidPhoneNumber } from '../../libs/valid';
+import UserEditor from '../UserEditor';
+import axios from '../../../../utils/axios';
+import { isValidEmail, isValidPhoneNumber } from '../../../../utils/valid';
 
-const UserEditContainer = () => {
+const UserEdit = () => {
   const params = useParams();
   const navigate = useNavigate();
   const [values, setValues] = useState<any>({});
@@ -96,4 +96,4 @@ const UserEditContainer = () => {
   );
 };
 
-export default UserEditContainer;
+export default UserEdit;

@@ -6,7 +6,7 @@ import ActionButton from '../ActionButton';
 import Table from '../Table';
 import UserTableHead from './UserTableHead';
 import UserTableBody from './UserTableBody';
-import axios from '../../../libs/axios';
+import axios from '../../../utils/axios';
 import AdminPagination from '../AdminPagination';
 
 import './ProgramUsers.scss';

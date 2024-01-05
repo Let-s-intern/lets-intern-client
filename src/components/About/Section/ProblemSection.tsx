@@ -4,15 +4,18 @@ const ProblemSection = () => {
   return (
     <section className="problem-section">
       <h2>
-        대한민국의 많은 청년들은 취업 준비를 앞두고 막막함을 느끼고 있습니다
+        대한민국의 많은 청년들은 취업 준비를 앞두고 <br />
+        막막함을 느끼고 있습니다
       </h2>
       <div className="main-content">
         <div className="statistics-point problem-point">
           <div className="visual-area">
             <div className="chart">
-              {/* 84.5%
-              <br />
-              취업 정보 수집 어려움 */}
+              <div className="chart-bar"></div>
+              <div className="chart-inner">
+                <strong>84.5%</strong>
+                <span>취업 정보 수집 어려움</span>
+              </div>
             </div>
           </div>
           <div className="description">

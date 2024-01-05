@@ -1,0 +1,98 @@
+@use '../../../styles/utils.scss' as *;
+
+.result-section {
+  background-color: #232233;
+  color: #ffffff;
+  padding: 3rem 1.5rem;
+
+  .inner-content {
+    max-width: $screen-md;
+    margin: 0 auto;
+
+    h2 {
+      font-size: 1.5rem;
+      font-weight: 600;
+      text-align: center;
+    }
+
+    .result-area {
+      .score-group {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 1rem;
+        margin-top: 3rem;
+
+        .score {
+          display: flex;
+          flex-direction: column;
+          gap: 0.125rem;
+          flex: 1;
+          padding-top: 1rem;
+          padding-right: 0;
+          border-top: 0.5px solid #ffffff;
+
+          @media screen and (min-width: $screen-sm) {
+            width: 7rem;
+            flex: none;
+          }
+
+          span {
+            font-size: 0.875rem;
+
+            @media screen and (min-width: $screen-sm) {
+              font-size: 1rem;
+            }
+          }
+
+          strong {
+            font-size: 1.5rem;
+            font-weight: 700;
+
+            @media screen and (min-width: $screen-sm) {
+              font-size: 2rem;
+            }
+          }
+        }
+      }
+    }
+
+    .partner-area {
+      margin-top: 5rem;
+
+      .partner-group {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+        margin-top: 3rem;
+
+        .partner {
+          background-color: #ffffff;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          height: 5rem;
+
+          &#impact-career,
+          &#disquiet {
+            img {
+              height: 1.25rem;
+            }
+          }
+
+          &#seongdong-orang {
+            background-color: #01a589;
+          }
+
+          &#triangle-cl {
+            background-color: #000000;
+          }
+
+          img {
+            height: 1.75rem;
+          }
+        }
+      }
+    }
+  }
+}
