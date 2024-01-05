@@ -8,8 +8,12 @@
   .next-link-button {
     color: #ffffff;
     font-size: 0.875rem;
-    border: 1px solid #ffffff;
+    border: 0.5px solid #ffffff;
     border-radius: 0.25rem;
-    padding: 0.125rem 1rem;
+
+    a {
+      display: block;
+      padding: 0.125rem 1rem;
+    }
   }
 }
