@@ -13,7 +13,7 @@ import './ProgramUsers.scss';
 
 const ProgramUsers = () => {
   const params = useParams();
-  const [searchParams, _] = useSearchParams();
+  const [searchParams] = useSearchParams();
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<unknown>(null);
   const [program, setProgram] = useState<any>({});
@@ -62,14 +62,13 @@ const ProgramUsers = () => {
         isApproved: e.target.value === 'IN_PROGRESS',
       });
       const res = await axios.get(`/application/admin/${params.programId}`);
-      console.log(res.data.applicationList);
       setApplications(res.data.applicationList);
     } catch (err) {
       alert('참여 상태 변경에 실패했습니다.');
     }
   };
 
-  const handleEmailListDownload = (fileName: string, fileContent: string) => {
+  const downloadFile = (fileName: string, fileContent: string) => {
     const blob = new Blob([fileContent], { type: 'text/plain' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
@@ -81,26 +80,51 @@ const ProgramUsers = () => {
     URL.revokeObjectURL(url);
   };
 
-  const handleEmailSend = async (isApproved: boolean) => {
+  const handleDownloadList = async (
+    isApproved: boolean,
+    column: 'EMAIL' | 'PHONE',
+  ) => {
+    let allApplications: any[] = [];
+    for (let pageNum = 1; pageNum <= maxPage; pageNum++) {
+      const res = await axios.get(`/application/admin/${params.programId}`, {
+        params: {
+          page: pageNum,
+          size: sizePerPage,
+        },
+      });
+      allApplications = [...allApplications, ...res.data.applicationList];
+    }
     const emailList = isApproved
-      ? applications
+      ? allApplications
           .filter(
             (application: any) =>
               application.application.status === 'IN_PROGRESS',
           )
-          .map((application: any) => application.application.email)
-      : applications
+          .map((application: any) => {
+            if (column === 'EMAIL') {
+              return application.application.email;
+            }
+            return application.application.phoneNum;
+          })
+      : allApplications
           .filter(
             (application: any) =>
               application.application.status === 'APPLIED_NOT_APPROVED',
           )
-          .map((application: any) => application.application.email);
+          .map((application: any) => {
+            if (column === 'EMAIL') {
+              return application.application.email;
+            }
+            return application.application.phoneNum;
+          });
+    const label =
+      column === 'EMAIL' ? '이메일' : column === 'PHONE' && '전화번호';
     const subject =
-      (isApproved ? '참가확정 이메일 목록' : '미선발 이메일 목록') +
+      (isApproved ? `참가확정 ${label} 목록` : `미선발 ${label} 목록`) +
       ' - ' +
       program.title;
     const emailString = subject + '\n' + emailList.join('\n');
-    handleEmailListDownload(subject + '.txt', emailString);
+    downloadFile(subject + '.txt', emailString);
   };
 
   if (loading) {
@@ -134,22 +158,36 @@ const ProgramUsers = () => {
             handleApplicationStatusChange={handleApplicationStatusChange}
           />
         </Table>
-        <EmailActionArea>
-          <EmailActionButton
-            width="13rem"
+        <ActionArea>
+          <ActionButton
+            width="10rem"
             bgColor="green"
-            onClick={() => handleEmailSend(true)}
+            onClick={() => handleDownloadList(true, 'EMAIL')}
           >
-            참가확정 이메일 보내기
-          </EmailActionButton>
-          <EmailActionButton
-            width="13rem"
+            참가확정 이메일
+          </ActionButton>
+          <ActionButton
+            width="10rem"
             bgColor="red"
-            onClick={() => handleEmailSend(false)}
+            onClick={() => handleDownloadList(false, 'EMAIL')}
           >
-            미선발 이메일 보내기
-          </EmailActionButton>
-        </EmailActionArea>
+            미선발 이메일
+          </ActionButton>
+          <ActionButton
+            width="10rem"
+            bgColor="green"
+            onClick={() => handleDownloadList(true, 'PHONE')}
+          >
+            참가확정 전화번호
+          </ActionButton>
+          <ActionButton
+            width="10rem"
+            bgColor="red"
+            onClick={() => handleDownloadList(false, 'PHONE')}
+          >
+            미선발 전화번호
+          </ActionButton>
+        </ActionArea>
         {applications.length > 0 && <AdminPagination maxPage={maxPage} />}
       </main>
     </>
@@ -175,7 +213,7 @@ const Heading = styled.h1`
   font-weight: 700;
 `;
 
-const EmailActionArea = styled.div`
+const ActionArea = styled.div`
   width: calc(100vw - 250px);
   position: fixed;
   bottom: 3rem;
@@ -185,5 +223,3 @@ const EmailActionArea = styled.div`
   align-items: center;
   gap: 1rem;
 `;
-
-const EmailActionButton = styled(ActionButton)``;
