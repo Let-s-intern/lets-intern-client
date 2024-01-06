@@ -53,12 +53,6 @@ const Programs = () => {
   return (
     <>
       <div className="program-list-page">
-        <header>
-          <div className="banner">
-            <h1>렛츠인턴</h1>
-            <h2>인턴/신입, 첫 시작을 함께 하는 커리어 플랫폼</h2>
-          </div>
-        </header>
         <main>
           <section className="filter-section">
             <ul className="category-button-group">
@@ -67,28 +61,28 @@ const Programs = () => {
                   active: category === 'ALL',
                 })}
               >
-                <Link to="/">전체 프로그램</Link>
+                <Link to="/program">전체 프로그램</Link>
               </li>
               <li
                 className={cn('category-button', {
                   active: category === 'CHALLENGE',
                 })}
               >
-                <Link to="/?category=CHALLENGE">챌린지</Link>
+                <Link to="/program?category=CHALLENGE">챌린지</Link>
               </li>
               <li
                 className={cn('category-button', {
                   active: category === 'BOOTCAMP',
                 })}
               >
-                <Link to="/?category=BOOTCAMP">부트캠프</Link>
+                <Link to="/program?category=BOOTCAMP">부트캠프</Link>
               </li>
               <li
                 className={cn('category-button', {
                   active: category === 'LETS_CHAT',
                 })}
               >
-                <Link to="/?category=LETS_CHAT">렛츠챗</Link>
+                <Link to="/program?category=LETS_CHAT">렛츠챗</Link>
               </li>
             </ul>
           </section>

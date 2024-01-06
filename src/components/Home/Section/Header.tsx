@@ -13,7 +13,7 @@ const Header = () => {
       </div>
       <ul className="menu-list">
         <li className="menu-item">
-          <Link to="/?category=CHALLENGE">
+          <Link to="/program?category=CHALLENGE">
             <div className="left">
               <h3>인턴 지원 챌린지</h3>
               <p>
@@ -29,7 +29,7 @@ const Header = () => {
           </Link>
         </li>
         <li className="menu-item">
-          <Link to="/?category=BOOTCAMP">
+          <Link to="/program?category=BOOTCAMP">
             <div className="left">
               <h3>부트캠프</h3>
               <p>
@@ -45,7 +45,7 @@ const Header = () => {
           </Link>
         </li>
         <li className="menu-item">
-          <Link to="/?category=LETS_CHAT">
+          <Link to="/program?category=LETS_CHAT">
             <div className="left">
               <h3>렛츠챗</h3>
               <p>
