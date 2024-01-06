@@ -34,7 +34,8 @@ const NavBar = () => {
     if (
       location.pathname.startsWith('/login') ||
       location.pathname.startsWith('/signup') ||
-      location.pathname.startsWith('/find-password')
+      location.pathname.startsWith('/find-password') ||
+      location.pathname.startsWith('/mypage')
     ) {
       setShowTopTabBar(false);
       return;
