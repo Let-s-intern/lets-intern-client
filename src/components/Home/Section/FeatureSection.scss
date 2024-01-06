@@ -12,15 +12,14 @@
       min-height: 10rem;
       color: #ffffff;
       border-radius: 0.5rem;
-      padding: 1.5rem 2rem;
+      padding: 2rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
 
       h3 {
         font-size: 1.25rem;
         font-weight: 500;
-      }
-
-      p {
-        margin-top: 0.25rem;
       }
     }
 
