@@ -1,11 +1,13 @@
 import { useEffect, useState } from 'react';
+import cn from 'classnames';
 
 interface TabBarProps {
   itemCount?: number;
   children: React.ReactNode;
+  className?: string;
 }
 
-const TabBar = ({ itemCount, children }: TabBarProps) => {
+const TabBar = ({ itemCount, children, className }: TabBarProps) => {
   const [justifyBetweenStyle, setJustifyBetweenStyle] = useState(
     ' min-[350px]:justify-start min-[350px]:gap-10',
   );
@@ -30,7 +32,14 @@ const TabBar = ({ itemCount, children }: TabBarProps) => {
   }, [itemCount]);
 
   return (
-    <div className="fixed left-0 top-16 z-30 h-9 w-full bg-neutral-white px-[1.5rem]">
+    <div
+      className={cn(
+        'fixed left-0 top-16 z-30 h-9 w-full bg-neutral-white px-[1.5rem]',
+        {
+          [className as string]: className,
+        },
+      )}
+    >
       <div className="mx-auto max-w-[1024px]">
         <div className={`mx-auto flex justify-between${justifyBetweenStyle}`}>
           {children}

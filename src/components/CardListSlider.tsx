@@ -1,17 +1,23 @@
 import { useRef } from 'react';
 import styled, { css } from 'styled-components';
 import { MdArrowBackIosNew, MdArrowForwardIos } from 'react-icons/md';
+import cn from 'classnames';
 
 interface CardListSliderProps {
   isEmpty?: boolean;
   children: React.ReactNode;
+  className?: string;
 }
 
 interface CardListContentProps {
   $isEmpty?: boolean;
 }
 
-const CardListSlider = ({ children, isEmpty = false }: CardListSliderProps) => {
+const CardListSlider = ({
+  children,
+  isEmpty = false,
+  className,
+}: CardListSliderProps) => {
   const scrollContainer = useRef<HTMLDivElement>(null);
 
   const handlePrevButtonClick = () => {
@@ -28,7 +34,11 @@ const CardListSlider = ({ children, isEmpty = false }: CardListSliderProps) => {
 
   return (
     <>
-      <CardListSliderBlock>
+      <CardListSliderBlock
+        className={cn('card-list-slider', {
+          [className as string]: className,
+        })}
+      >
         <SliderPrevButton onClick={handlePrevButtonClick}>
           <i>
             <MdArrowBackIosNew />

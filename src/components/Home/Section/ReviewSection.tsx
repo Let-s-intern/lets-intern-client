@@ -14,13 +14,13 @@ const ReviewSection = () => {
             {Array.from(Array(10)).map((_, index) => (
               <article key={index} className="review">
                 <p>
-                  렛츠인턴,
+                  챌린지라서 매일매일
                   <br />
-                  어쩌구 저쩌구 해서
+                  조금씩 취업 준비를
                   <br />
-                  정말 좋아요!
+                  할 수 있어서 좋았어요 <br />
                 </p>
-                <figure>실전코스, 이*연</figure>
+                <figure>챌린지 8기, 이*혜</figure>
               </article>
             ))}
           </div>

@@ -20,6 +20,7 @@ const NavBar = () => {
   const [activeLink, setActiveLink] = useState<
     'HOME' | 'ABOUT' | 'PROGRAM' | 'ADMIN' | ''
   >('');
+  const [showTopTabBar, setShowTopTabBar] = useState(true);
 
   const toggleMenu = () => {
     setIsOpen(!isOpen);
@@ -30,6 +31,17 @@ const NavBar = () => {
   };
 
   useEffect(() => {
+    if (
+      location.pathname.startsWith('/login') ||
+      location.pathname.startsWith('/signup') ||
+      location.pathname.startsWith('/find-password') ||
+      location.pathname.startsWith('/mypage')
+    ) {
+      setShowTopTabBar(false);
+      return;
+    } else {
+      setShowTopTabBar(true);
+    }
     if (location.pathname.startsWith('/home')) {
       setActiveLink('HOME');
     } else if (location.pathname.startsWith('/about')) {
@@ -86,57 +98,57 @@ const NavBar = () => {
 
   return (
     <>
-      {/* 네비게이션 바 */}
-      <div className="relative">
-        {/* 상단 네비게이션 바 */}
-        <div className="fixed top-0 z-30 w-full bg-white pe-[1.5rem] ps-[1.125rem]">
-          <div className="mx-auto flex h-16 items-center justify-between">
-            <Link to="/" className="h-10 w-10">
-              <img src="/logo/logo.png" alt="Logo" className="w-full" />
-            </Link>
-            <div className="hidden sm:block">
-              {isLoggedIn ? (
-                <MyInfoSpan className="gap-2">
-                  <div className="flex gap-2">
-                    <span>
-                      <b>{user?.name}</b>님
-                    </span>
-                    <button onClick={handleLogout} className="text-[0.75rem]">
-                      로그아웃
-                    </button>
-                  </div>
-                  <Link
-                    to="/mypage/application"
-                    className="rounded-sm bg-primary px-2 py-1 text-[0.75rem] text-white"
-                  >
-                    마이페이지
-                  </Link>
-                </MyInfoSpan>
-              ) : (
-                <div className="flex items-center gap-2">
-                  <Link
-                    to="/login"
-                    className="rounded-sm bg-primary px-2 py-1 text-[0.75rem] text-white"
-                  >
-                    로그인
-                  </Link>
-                  <Link to="/signup" className="text-[0.75rem] text-primary">
-                    회원가입
-                  </Link>
+      {/* 상단 네비게이션 바 */}
+      <div className="fixed top-0 z-30 w-full bg-white pe-[1.5rem] ps-[1.125rem]">
+        <div className="mx-auto flex h-16 items-center justify-between">
+          <Link to="/" className="h-10 w-10">
+            <img src="/logo/logo.png" alt="Logo" className="w-full" />
+          </Link>
+          <div className="hidden sm:block">
+            {isLoggedIn ? (
+              <MyInfoSpan className="gap-2">
+                <div className="flex gap-2">
+                  <span>
+                    <b>{user?.name}</b>님
+                  </span>
+                  <button onClick={handleLogout} className="text-[0.75rem]">
+                    로그아웃
+                  </button>
                 </div>
-              )}
-            </div>
-            <button
-              type="button"
-              className="block rounded-md text-gray-500 hover:text-gray-600 sm:hidden"
-              onClick={toggleMenu}
-            >
-              <i>
-                <img src="/icons/nav-icon.svg" alt="네비게이션 아이콘" />
-              </i>
-            </button>
+                <Link
+                  to="/mypage/application"
+                  className="rounded bg-primary px-2 py-1 text-[0.75rem] text-white"
+                >
+                  마이페이지
+                </Link>
+              </MyInfoSpan>
+            ) : (
+              <div className="flex items-center gap-2">
+                <Link
+                  to="/login"
+                  className="rounded bg-primary px-3 py-1 text-[0.75rem] text-white"
+                >
+                  로그인
+                </Link>
+                <Link to="/signup" className="text-[0.75rem] text-primary">
+                  회원가입
+                </Link>
+              </div>
+            )}
           </div>
+          <button
+            type="button"
+            className="block rounded-md text-gray-500 hover:text-gray-600 sm:hidden"
+            onClick={toggleMenu}
+          >
+            <i>
+              <img src="/icons/nav-icon.svg" alt="네비게이션 아이콘" />
+            </i>
+          </button>
         </div>
+      </div>
+      {/* 상단 메뉴 탭 바 */}
+      {showTopTabBar && (
         <div className="hidden h-9 sm:block">
           <TabBar>
             <TabItem to="/home" active={activeLink === 'HOME'}>
@@ -155,68 +167,68 @@ const NavBar = () => {
             )}
           </TabBar>
         </div>
-        {/* 투명한 검정색 배경 */}
-        <div
-          className={`fixed inset-0 z-40 bg-black transition-opacity duration-300 ${
-            isOpen
-              ? 'opacity-50 ease-out'
-              : 'pointer-events-none opacity-0 ease-in'
-          }`}
-          onClick={toggleMenu}
-        ></div>
-        {/* 사이드 네비게이션 바 */}
-        <div
-          className={`fixed right-0 top-0 z-50 h-screen w-full bg-white p-5 shadow-md transition-all sm:w-80 duration-300${
-            isOpen ? ' translate-x-0' : ' translate-x-full'
-          }`}
-        >
-          <div className="flex w-full justify-end">
-            <i className="cursor-pointer" onClick={closeMenu}>
-              <img src="/icons/x.svg" alt="X" />
-            </i>
-          </div>
-          <div className="mt-4 flex justify-between">
-            {isLoggedIn ? (
-              <MyInfoSpan>
-                <span>
-                  환영합니다, <b>{user?.name}</b>님
-                </span>
-                <button onClick={handleLogout}>로그아웃</button>
-              </MyInfoSpan>
-            ) : (
-              <LoginLinkGroup>
-                <Link to="/login" onClick={closeMenu}>
-                  로그인
-                </Link>
-                <Link to="/signup" onClick={closeMenu}>
-                  회원가입
-                </Link>
-              </LoginLinkGroup>
-            )}
-          </div>
-          <div className="mt-5 flex flex-col gap-2">
-            {isAdmin && (
-              <SideNavItem to="/home" onClick={closeMenu}>
-                홈
-              </SideNavItem>
-            )}
-            {isAdmin && (
-              <SideNavItem to="/about" onClick={closeMenu}>
-                브랜드 스토리
-              </SideNavItem>
-            )}
-            <SideNavItem to="/" onClick={closeMenu}>
-              프로그램
+      )}
+      {/* 투명한 검정색 배경 */}
+      <div
+        className={`fixed inset-0 z-40 bg-black transition-opacity duration-300 ${
+          isOpen
+            ? 'opacity-50 ease-out'
+            : 'pointer-events-none opacity-0 ease-in'
+        }`}
+        onClick={toggleMenu}
+      ></div>
+      {/* 사이드 네비게이션 바 */}
+      <div
+        className={`fixed right-0 top-0 z-50 h-screen w-full bg-white p-5 shadow-md transition-all sm:w-80 duration-300${
+          isOpen ? ' translate-x-0' : ' translate-x-full'
+        }`}
+      >
+        <div className="flex w-full justify-end">
+          <i className="cursor-pointer" onClick={closeMenu}>
+            <img src="/icons/x.svg" alt="X" />
+          </i>
+        </div>
+        <div className="mt-4 flex justify-between">
+          {isLoggedIn ? (
+            <MyInfoSpan>
+              <span>
+                환영합니다, <b>{user?.name}</b>님
+              </span>
+              <button onClick={handleLogout}>로그아웃</button>
+            </MyInfoSpan>
+          ) : (
+            <LoginLinkGroup>
+              <Link to="/login" onClick={closeMenu}>
+                로그인
+              </Link>
+              <Link to="/signup" onClick={closeMenu}>
+                회원가입
+              </Link>
+            </LoginLinkGroup>
+          )}
+        </div>
+        <div className="mt-5 flex flex-col gap-2">
+          {isAdmin && (
+            <SideNavItem to="/home" onClick={closeMenu}>
+              홈
             </SideNavItem>
-            <SideNavItem to="/mypage/application" onClick={closeMenu}>
-              마이페이지
+          )}
+          {isAdmin && (
+            <SideNavItem to="/about" onClick={closeMenu}>
+              브랜드 스토리
             </SideNavItem>
-            {isAdmin && (
-              <SideNavItem to="/admin" onClick={closeMenu}>
-                관리자 페이지
-              </SideNavItem>
-            )}
-          </div>
+          )}
+          <SideNavItem to="/" onClick={closeMenu}>
+            프로그램
+          </SideNavItem>
+          <SideNavItem to="/mypage/application" onClick={closeMenu}>
+            마이페이지
+          </SideNavItem>
+          {isAdmin && (
+            <SideNavItem to="/admin" onClick={closeMenu}>
+              관리자 페이지
+            </SideNavItem>
+          )}
         </div>
       </div>
       {/* 네비게이션 바 공간 차지 */}

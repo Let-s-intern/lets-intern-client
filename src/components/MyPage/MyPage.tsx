@@ -15,10 +15,10 @@ const MyPage = () => {
     if (!accessToken || !refreshToken) {
       navigate('/login');
     }
-  }, []);
+  }, [navigate]);
 
   return (
-    <div className="mypage mx-auto w-full  px-5 pb-5">
+    <div className="mypage">
       <nav>
         <TabBar itemCount={3}>
           <TabItem
@@ -47,10 +47,8 @@ const MyPage = () => {
           </TabItem>
         </TabBar>
       </nav>
-      <div className="mx-auto max-w-5xl">
-        <div className="container mx-auto mt-10 px-1 sm:px-5">
-          <Outlet />
-        </div>
+      <div className="mx-auto mt-10 max-w-5xl">
+        <Outlet />
       </div>
     </div>
   );

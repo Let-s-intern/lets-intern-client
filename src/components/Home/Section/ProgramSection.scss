@@ -18,12 +18,17 @@
       display: none; /* Internet Explorer, Edge */
     }
 
+    .placeholder {
+      width: 100%;
+      height: 18.75rem;
+    }
+
     .program {
       a {
         display: block;
         min-width: 15rem;
         width: 100%;
-        height: 20rem;
+        height: 18.75rem;
         background-color: #f1f4f9;
         border-radius: 0.5rem;
         padding: 2.5rem 2rem;
@@ -37,7 +42,7 @@
         h3 {
           color: #4a495c;
           font-size: 1.25rem;
-          font-weight: 600;
+          font-weight: 500;
         }
       }
     }
