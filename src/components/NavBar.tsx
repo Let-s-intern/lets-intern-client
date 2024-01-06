@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 import axios from '../utils/axios';
+import TabBar from './TabBar';
+import TabItem from './TabItem';
 
 interface SideNavItemProps {
   to: string;
@@ -10,10 +12,14 @@ interface SideNavItemProps {
 }
 
 const NavBar = () => {
+  const location = useLocation();
   const [isOpen, setIsOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [user, setUser] = useState<any>(null);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [activeLink, setActiveLink] = useState<
+    'HOME' | 'ABOUT' | 'PROGRAM' | 'ADMIN' | ''
+  >('');
 
   const toggleMenu = () => {
     setIsOpen(!isOpen);
@@ -22,6 +28,18 @@ const NavBar = () => {
   const closeMenu = () => {
     setIsOpen(false);
   };
+
+  useEffect(() => {
+    if (location.pathname.startsWith('/home')) {
+      setActiveLink('HOME');
+    } else if (location.pathname.startsWith('/about')) {
+      setActiveLink('ABOUT');
+    } else if (location.pathname.startsWith('/')) {
+      setActiveLink('PROGRAM');
+    } else if (location.pathname.startsWith('/admin')) {
+      setActiveLink('ADMIN');
+    }
+  }, [location]);
 
   useEffect(() => {
     const accessToken = localStorage.getItem('access-token');
@@ -71,19 +89,71 @@ const NavBar = () => {
       {/* 네비게이션 바 */}
       <div className="relative">
         {/* 상단 네비게이션 바 */}
-        <div className="fixed top-0 z-30 flex h-16 w-full items-center justify-between bg-white px-5">
-          <Link to="/" className="h-10 w-10">
-            <img src="/logo/logo.png" alt="Logo" className="w-full" />
-          </Link>
-          <button
-            type="button"
-            className="rounded-md text-gray-500 hover:text-gray-600"
-            onClick={toggleMenu}
-          >
-            <i>
-              <img src="/icons/nav-icon.svg" alt="네비게이션 아이콘" />
-            </i>
-          </button>
+        <div className="fixed top-0 z-30 w-full bg-white pe-[1.5rem] ps-[1.125rem]">
+          <div className="mx-auto flex h-16 items-center justify-between">
+            <Link to="/" className="h-10 w-10">
+              <img src="/logo/logo.png" alt="Logo" className="w-full" />
+            </Link>
+            <div className="hidden sm:block">
+              {isLoggedIn ? (
+                <MyInfoSpan className="gap-2">
+                  <div className="flex gap-2">
+                    <span>
+                      <b>{user?.name}</b>님
+                    </span>
+                    <button onClick={handleLogout} className="text-[0.75rem]">
+                      로그아웃
+                    </button>
+                  </div>
+                  <Link
+                    to="/mypage/application"
+                    className="rounded-sm bg-primary px-2 py-1 text-[0.75rem] text-white"
+                  >
+                    마이페이지
+                  </Link>
+                </MyInfoSpan>
+              ) : (
+                <div className="flex items-center gap-2">
+                  <Link
+                    to="/login"
+                    className="rounded-sm bg-primary px-2 py-1 text-[0.75rem] text-white"
+                  >
+                    로그인
+                  </Link>
+                  <Link to="/signup" className="text-[0.75rem] text-primary">
+                    회원가입
+                  </Link>
+                </div>
+              )}
+            </div>
+            <button
+              type="button"
+              className="block rounded-md text-gray-500 hover:text-gray-600 sm:hidden"
+              onClick={toggleMenu}
+            >
+              <i>
+                <img src="/icons/nav-icon.svg" alt="네비게이션 아이콘" />
+              </i>
+            </button>
+          </div>
+        </div>
+        <div className="hidden h-9 sm:block">
+          <TabBar>
+            <TabItem to="/home" active={activeLink === 'HOME'}>
+              홈
+            </TabItem>
+            <TabItem to="/about" active={activeLink === 'ABOUT'}>
+              브랜드 스토리
+            </TabItem>
+            <TabItem to="/" active={activeLink === 'PROGRAM'}>
+              프로그램
+            </TabItem>
+            {isAdmin && (
+              <TabItem to="/admin" active={activeLink === 'ADMIN'}>
+                관리자 페이지
+              </TabItem>
+            )}
+          </TabBar>
         </div>
         {/* 투명한 검정색 배경 */}
         <div
@@ -177,8 +247,14 @@ const MyInfoSpan = styled.span`
   font-size: 0.875rem;
   display: flex;
   justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
   width: 100%;
   padding: 0 1rem;
+
+  @media screen and (min-width: 640px) {
+    padding: 0;
+  }
 
   span {
     b {

@@ -36,6 +36,10 @@ const TabBarBlock = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: stretch;
+
+  @media screen and (min-width: 640px) {
+    top: 6.25rem;
+  }
 `;
 
 const TabItem = styled.button<TabItemProps>`
