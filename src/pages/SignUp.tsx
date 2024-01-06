@@ -13,6 +13,7 @@ import {
   isValidPhoneNumber,
 } from '../utils/valid';
 import AlertModal from '../components/AlertModal';
+import SocialLogin from '../components/SocialLogin';
 
 const SignUp = () => {
   const navigate = useNavigate();
@@ -243,6 +244,7 @@ const SignUp = () => {
             회원가입
           </Button>
         </form>
+        <SocialLogin type="SIGN_UP" />
       </div>
       {successModalOpen && (
         <AlertModal

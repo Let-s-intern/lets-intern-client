@@ -3,28 +3,6 @@
 $breakpoint-640px: 640px;
 
 .program-list-page {
-  header {
-    .banner {
-      height: 144px;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      background-color: #6963f6;
-      color: #ffffff;
-
-      h1 {
-        font-size: 1.5rem;
-        font-weight: 700;
-      }
-
-      h2 {
-        font-size: 1rem;
-        margin-top: 0.5rem;
-      }
-    }
-  }
-
   main {
     > section {
       > .content {
@@ -46,7 +24,7 @@ $breakpoint-640px: 640px;
       padding: 0.75rem 1.5rem;
 
       @media screen and (min-width: $screen-sm) {
-        top: 6.25rem;
+        top: 6rem;
       }
 
       .category-button-group {

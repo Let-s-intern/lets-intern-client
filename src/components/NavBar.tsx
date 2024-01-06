@@ -42,14 +42,14 @@ const NavBar = () => {
     } else {
       setShowTopTabBar(true);
     }
-    if (location.pathname.startsWith('/home')) {
-      setActiveLink('HOME');
-    } else if (location.pathname.startsWith('/about')) {
+    if (location.pathname.startsWith('/about')) {
       setActiveLink('ABOUT');
-    } else if (location.pathname.startsWith('/')) {
+    } else if (location.pathname.startsWith('/program')) {
       setActiveLink('PROGRAM');
     } else if (location.pathname.startsWith('/admin')) {
       setActiveLink('ADMIN');
+    } else if (location.pathname.startsWith('/')) {
+      setActiveLink('HOME');
     }
   }, [location]);
 
@@ -151,13 +151,13 @@ const NavBar = () => {
       {showTopTabBar && (
         <div className="hidden h-9 sm:block">
           <TabBar>
-            <TabItem to="/home" active={activeLink === 'HOME'}>
+            <TabItem to="/" active={activeLink === 'HOME'}>
               홈
             </TabItem>
             <TabItem to="/about" active={activeLink === 'ABOUT'}>
               브랜드 스토리
             </TabItem>
-            <TabItem to="/" active={activeLink === 'PROGRAM'}>
+            <TabItem to="/program" active={activeLink === 'PROGRAM'}>
               프로그램
             </TabItem>
             {isAdmin && (
@@ -208,17 +208,13 @@ const NavBar = () => {
           )}
         </div>
         <div className="mt-5 flex flex-col gap-2">
-          {isAdmin && (
-            <SideNavItem to="/home" onClick={closeMenu}>
-              홈
-            </SideNavItem>
-          )}
-          {isAdmin && (
-            <SideNavItem to="/about" onClick={closeMenu}>
-              브랜드 스토리
-            </SideNavItem>
-          )}
           <SideNavItem to="/" onClick={closeMenu}>
+            홈
+          </SideNavItem>
+          <SideNavItem to="/about" onClick={closeMenu}>
+            브랜드 스토리
+          </SideNavItem>
+          <SideNavItem to="/program" onClick={closeMenu}>
             프로그램
           </SideNavItem>
           <SideNavItem to="/mypage/application" onClick={closeMenu}>
@@ -232,7 +228,7 @@ const NavBar = () => {
         </div>
       </div>
       {/* 네비게이션 바 공간 차지 */}
-      <div className="h-16"></div>
+      <div className="h-[3.75rem]"></div>
     </>
   );
 };

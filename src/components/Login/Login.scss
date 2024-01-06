@@ -33,48 +33,6 @@
     }
   }
 
-  .gray-label {
-    margin: 2rem 0;
-    display: block;
-    text-align: center;
-    font-size: 0.875rem;
-    color: #7f7f7f;
-  }
-
-  .social-login {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-
-    h2 {
-      text-align: center;
-      font-weight: 500;
-      color: #6c6c6c;
-    }
-
-    .button-group {
-      margin-top: 1rem;
-      display: flex;
-      gap: 1rem;
-
-      .kakao-login-button {
-        width: 43px;
-        height: 43px;
-      }
-
-      .naver-login-button {
-        width: 43px;
-        height: 43px;
-
-        i {
-          img {
-            border-radius: 100%;
-          }
-        }
-      }
-    }
-  }
-
   .bottom {
     margin-top: 2rem;
     display: flex;

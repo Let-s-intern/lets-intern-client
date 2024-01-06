@@ -15,7 +15,7 @@ const ProgramMenuSection = () => {
         </h3>
         <ul className="menu-list">
           <li className="menu-item">
-            <Link to="/?category=CHALLENGE">
+            <Link to="/program?category=CHALLENGE">
               <div className="text-content">
                 <h4>인턴 지원 챌린지</h4>
                 <p>
@@ -32,7 +32,7 @@ const ProgramMenuSection = () => {
             </Link>
           </li>
           <li className="menu-item">
-            <Link to="/?category=BOOTCAMP">
+            <Link to="/program?category=BOOTCAMP">
               <div className="text-content">
                 <h4>부트캠프</h4>
                 <p>
@@ -49,7 +49,7 @@ const ProgramMenuSection = () => {
             </Link>
           </li>
           <li className="menu-item">
-            <Link to="/?category=LETS_CHAT">
+            <Link to="/program?category=LETS_CHAT">
               <div className="text-content">
                 <h4>렛츠챗</h4>
                 <p>

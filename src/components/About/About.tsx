@@ -18,7 +18,7 @@ const About = () => {
         <ProgramMenuSection />
         <ResultSection />
         <EndSection />
-        <BottomSection />
+        {/* <BottomSection /> */}
       </main>
     </div>
   );
