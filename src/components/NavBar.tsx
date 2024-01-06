@@ -116,7 +116,7 @@ const NavBar = () => {
                 <div className="flex items-center gap-2">
                   <Link
                     to="/login"
-                    className="rounded-sm bg-primary px-2 py-1 text-[0.75rem] text-white"
+                    className="rounded-sm bg-primary px-3 py-1 text-[0.75rem] text-white"
                   >
                     로그인
                   </Link>
