@@ -25,25 +25,51 @@
 
         &:nth-child(1) {
           transform: translateX(-240px);
+
+          .review {
+            animation: slide-right 20s linear infinite;
+
+            @keyframes slide-right {
+              0% {
+                transform: translateX(100%);
+              }
+              100% {
+                transform: translateX(-100%);
+              }
+            }
+          }
         }
 
         &:nth-child(2) {
-          transform: translateX(-120px);
+          transform: translateX(-150px);
+
+          .review {
+            animation: slide-left 20s linear infinite;
+
+            @keyframes slide-left {
+              0% {
+                transform: translateX(-100%);
+              }
+              100% {
+                transform: translateX(100%);
+              }
+            }
+          }
         }
 
         .review {
           background-color: #ffffff;
           border-radius: 0.5rem;
-          min-width: 14rem;
+          min-width: 12rem;
           width: 100%;
-          height: 14rem;
+          height: 12rem;
           display: flex;
           flex-direction: column;
           justify-content: space-between;
-          padding: 2rem;
+          padding: 1.5rem;
 
           p {
-            font-size: 1.25rem;
+            font-size: 1rem;
             font-weight: 500;
           }
 
