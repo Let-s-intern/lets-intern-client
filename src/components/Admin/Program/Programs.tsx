@@ -32,6 +32,7 @@ const Programs = () => {
     axios
       .get('/program/admin', { params })
       .then((res) => {
+        console.log(res.data.programList);
         setProgramList(res.data.programList);
         setMaxPage(res.data.pageInfo.totalPages);
       })

@@ -13,6 +13,8 @@ const TableHead = () => {
         <TH>시작일자</TH>
         <TH>관리</TH>
         <TH>노출여부</TH>
+        <TH>ZOOM</TH>
+        <TH>ZOOM PW</TH>
       </tr>
     </thead>
   );

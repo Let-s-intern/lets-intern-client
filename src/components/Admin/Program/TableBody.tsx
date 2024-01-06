@@ -91,6 +91,29 @@ const TableBody = ({
                 }}
               />
             </TD>
+            <TD>
+              <button
+                className="rounded border border-gray-300 bg-white px-2 py-1"
+                onClick={() => {
+                  if (program.way === 'OFFLINE' || !program.link) return;
+                  navigator.clipboard
+                    .writeText(program.link)
+                    .then(() => {
+                      alert('링크가 클립보드에 복사되었습니다.');
+                    })
+                    .catch(() => {
+                      alert('복사에 실패했습니다');
+                    });
+                }}
+              >
+                {program.way === 'OFFLINE'
+                  ? '오프라인'
+                  : program.link
+                  ? '복사'
+                  : '없음'}
+              </button>
+            </TD>
+            <TD>{program.linkPassword || '없음'}</TD>
           </tr>
         ))}
       </tbody>

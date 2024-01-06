@@ -41,7 +41,6 @@ const ProgramUsers = () => {
         const res = await axios.get(`/application/admin/${params.programId}`, {
           params: pageParams,
         });
-        console.log(res.data);
         setApplications(res.data.applicationList);
         setMaxPage(res.data.pageInfo.totalPages);
       } catch (err) {
