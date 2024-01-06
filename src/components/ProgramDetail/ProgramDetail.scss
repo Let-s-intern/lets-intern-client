@@ -1,24 +1,23 @@
+@use '../../styles/utils.scss' as *;
+
 .program-detail {
   width: 100%;
   min-height: 100vh;
-  padding: 1rem;
-  margin: 0 auto;
+  padding: 0 1.5rem;
 
-  main {
-    display: flex;
-    align-items: flex-start;
-    gap: 2rem;
+  .content {
+    max-width: $screen-lg;
+    margin: 0 auto;
 
-    article {
-      flex: 1;
+    main {
+      display: flex;
+      align-items: flex-start;
+      gap: 2rem;
+      padding-top: 1rem;
+
+      article {
+        flex: 1;
+      }
     }
-  }
-
-  @media (min-width: 640px) {
-    max-width: 640px;
-  }
-
-  @media (min-width: 1080px) {
-    max-width: 1080px;
   }
 }

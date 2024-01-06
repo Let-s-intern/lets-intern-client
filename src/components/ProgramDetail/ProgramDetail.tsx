@@ -59,23 +59,25 @@ const ProgramDetail = () => {
 
   return (
     <div className="program-detail">
-      <main>
-        <article>
-          <Header title={program.title} />
-          <MainContent
-            program={program}
-            reviewList={reviewList}
-            faqList={faqList}
-          />
-        </article>
-        <ApplyAside program={program} participated={participated} />
-      </main>
-      <ApplySection
-        program={program}
-        participated={participated}
-        isLoggedIn={isLoggedIn}
-        setParticipated={setParticipated}
-      />
+      <div className="content">
+        <main>
+          <article>
+            <Header title={program.title} />
+            <MainContent
+              program={program}
+              reviewList={reviewList}
+              faqList={faqList}
+            />
+          </article>
+          <ApplyAside program={program} participated={participated} />
+        </main>
+        <ApplySection
+          program={program}
+          participated={participated}
+          isLoggedIn={isLoggedIn}
+          setParticipated={setParticipated}
+        />
+      </div>
     </div>
   );
 };
