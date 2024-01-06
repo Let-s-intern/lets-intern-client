@@ -19,7 +19,7 @@ const MyPage = () => {
 
   return (
     <div className="mypage mx-auto w-full  px-5 pb-5">
-      <nav className="h-9">
+      <nav>
         <TabBar itemCount={3}>
           <TabItem
             to="/mypage/application"
