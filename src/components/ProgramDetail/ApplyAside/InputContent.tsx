@@ -63,15 +63,24 @@ const InputContent = ({
 
   useEffect(() => {
     setLoading(true);
-    if (isLoggedIn && userData && hasDetailInfo) {
-      setFormData({
-        ...userData,
-        major: hasDetailInfo ? userData.major : '',
-        university: hasDetailInfo ? userData.university : '',
-      });
-    } else {
+
+    if (!isLoggedIn) {
       setFormData({});
+      setLoading(false);
+      return;
     }
+
+    if (!hasDetailInfo) {
+      setFormData({ ...userData });
+      setLoading(false);
+      return;
+    }
+
+    setFormData({
+      ...userData,
+      major: hasDetailInfo ? userData.major : '',
+      university: hasDetailInfo ? userData.university : '',
+    });
     setLoading(false);
   }, [isLoggedIn, userData, hasDetailInfo, setFormData]);
 

@@ -36,11 +36,11 @@ const Router = () => {
       <Routes>
         <Route path="/" element={<Layout />}>
           {/* /home */}
-          <Route path="home" element={<Home />} />
+          <Route path="" element={<Home />} />
           {/* /about */}
           <Route path="about" element={<About />} />
           {/* / */}
-          <Route path="" element={<Programs />} />
+          <Route path="program" element={<Programs />} />
           {/* /program/detail/:programId */}
           <Route path="program/detail/:programId" element={<ProgramDetail />} />
           <Route path="program/:programId">
