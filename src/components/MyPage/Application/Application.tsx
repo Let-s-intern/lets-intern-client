@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 
 import axios from '../../../utils/axios';
-import CardListSlider from '../CardListSlider';
+import CardListSlider from '../../CardListSlider';
 import ApplicationCard from './ApplicationCard';
 
 import './Application.scss';
