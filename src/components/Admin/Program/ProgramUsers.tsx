@@ -13,7 +13,7 @@ import './ProgramUsers.scss';
 
 const ProgramUsers = () => {
   const params = useParams();
-  const [searchParams, _] = useSearchParams();
+  const [searchParams] = useSearchParams();
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<unknown>(null);
   const [program, setProgram] = useState<any>({});
@@ -62,7 +62,6 @@ const ProgramUsers = () => {
         isApproved: e.target.value === 'IN_PROGRESS',
       });
       const res = await axios.get(`/application/admin/${params.programId}`);
-      console.log(res.data.applicationList);
       setApplications(res.data.applicationList);
     } catch (err) {
       alert('참여 상태 변경에 실패했습니다.');
@@ -104,9 +103,8 @@ const ProgramUsers = () => {
           .map((application: any) => {
             if (column === 'EMAIL') {
               return application.application.email;
-            } else if (column === 'PHONE') {
-              return application.application.phoneNum;
             }
+            return application.application.phoneNum;
           })
       : allApplications
           .filter(
@@ -116,9 +114,8 @@ const ProgramUsers = () => {
           .map((application: any) => {
             if (column === 'EMAIL') {
               return application.application.email;
-            } else if (column === 'PHONE') {
-              return application.application.phoneNum;
             }
+            return application.application.phoneNum;
           });
     const label =
       column === 'EMAIL' ? '이메일' : column === 'PHONE' && '전화번호';

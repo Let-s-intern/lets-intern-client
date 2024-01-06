@@ -14,7 +14,7 @@ import axios from '../../../utils/axios';
 import './Programs.scss';
 
 const Programs = () => {
-  const [searchParams, _] = useSearchParams();
+  const [searchParams] = useSearchParams();
   const [programList, setProgramList] = useState([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<unknown>(null);
@@ -32,7 +32,6 @@ const Programs = () => {
     axios
       .get('/program/admin', { params })
       .then((res) => {
-        console.log(res.data.programList);
         setProgramList(res.data.programList);
         setMaxPage(res.data.pageInfo.totalPages);
       })
