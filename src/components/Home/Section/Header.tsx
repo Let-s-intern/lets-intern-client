@@ -1,8 +1,12 @@
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 
 import './Header.scss';
+import AlertModal from '../../AlertModal';
 
 const Header = () => {
+  const [showTILAlert, setShowTILAlert] = useState(false);
+
   return (
     <header>
       <div className="banner">
@@ -61,7 +65,7 @@ const Header = () => {
           </Link>
         </li>
         <li className="menu-item">
-          <Link to="#" onClick={() => alert('오픈 예정입니다.')}>
+          <Link to="#" onClick={() => setShowTILAlert(true)}>
             <div className="left">
               <h3>TIL 챌린지</h3>
               <p>
@@ -77,6 +81,16 @@ const Header = () => {
           </Link>
         </li>
       </ul>
+      {showTILAlert && (
+        <AlertModal
+          onConfirm={() => setShowTILAlert(false)}
+          title="TIL 챌린지"
+          showCancel={false}
+          highlight="confirm"
+        >
+          <p className="font-medium">오픈 예정입니다.</p>
+        </AlertModal>
+      )}
     </header>
   );
 };
