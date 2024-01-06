@@ -4,6 +4,7 @@ import axios from 'axios';
 
 import Button from '../Button';
 import Input from '../Input';
+import SocialLogin from '../SocialLogin';
 
 import './Login.scss';
 
@@ -96,20 +97,6 @@ const Login = () => {
       });
   };
 
-  const handleSocialLogin = (type: 'KAKAO' | 'NAVER') => {
-    const redirectPath = `${window.location.protocol}//${
-      window.location.hostname
-    }:${window.location.port}/login${
-      searchParams.get('redirect')
-        ? `?redirect=${searchParams.get('redirect')}`
-        : ''
-    }`;
-    const path = `https://letsintern.kr/oauth2/authorize/${
-      type === 'KAKAO' ? 'kakao' : type === 'NAVER' && 'naver'
-    }?redirect_uri=${redirectPath}`;
-    window.location.href = path;
-  };
-
   return (
     <main className="login-page">
       <header>
@@ -133,28 +120,7 @@ const Login = () => {
           로그인
         </Button>
       </form>
-      <span className="gray-label">또는</span>
-      <div className="social-login">
-        <h2>SNS 계정으로 로그인하기</h2>
-        <div className="button-group">
-          <button
-            className="kakao-login-button"
-            onClick={() => handleSocialLogin('KAKAO')}
-          >
-            <i>
-              <img src="/icons/kakao-icon.svg" alt="카카오톡 아이콘" />
-            </i>
-          </button>
-          <button
-            className="naver-login-button"
-            onClick={() => handleSocialLogin('NAVER')}
-          >
-            <i>
-              <img src="/icons/naver-icon.svg" alt="네이버 아이콘" />
-            </i>
-          </button>
-        </div>
-      </div>
+      <SocialLogin type="LOGIN" />
       <div className="bottom">
         <TextLink to="/signup">회원가입</TextLink>
         <TextLink to="/find-password" dark>
