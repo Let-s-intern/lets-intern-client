@@ -60,6 +60,10 @@ $breakpoint-640px: 640px;
       .content {
         max-width: $screen-lg;
         margin: 0 auto;
+
+        .program-list {
+          margin-top: 1.25rem;
+        }
       }
     }
 

@@ -23,6 +23,30 @@
         gap: 1.25rem;
         white-space: nowrap;
 
+        .review {
+          background-color: #ffffff;
+          border-radius: 0.5rem;
+          min-width: 12rem;
+          width: 100%;
+          height: 12rem;
+          display: flex;
+          flex-direction: column;
+          justify-content: space-between;
+          padding: 1.5rem;
+
+          p {
+            font-size: 0.875rem;
+            font-weight: 500;
+            line-height: 1.8;
+          }
+
+          figure {
+            color: #969799;
+            width: 100%;
+            text-align: left;
+          }
+        }
+
         &:nth-child(1) {
           transform: translateX(-240px);
 
@@ -54,29 +78,6 @@
                 transform: translateX(100%);
               }
             }
-          }
-        }
-
-        .review {
-          background-color: #ffffff;
-          border-radius: 0.5rem;
-          min-width: 12rem;
-          width: 100%;
-          height: 12rem;
-          display: flex;
-          flex-direction: column;
-          justify-content: space-between;
-          padding: 1.5rem;
-
-          p {
-            font-size: 1rem;
-            font-weight: 500;
-          }
-
-          figure {
-            color: #969799;
-            width: 100%;
-            text-align: left;
           }
         }
       }

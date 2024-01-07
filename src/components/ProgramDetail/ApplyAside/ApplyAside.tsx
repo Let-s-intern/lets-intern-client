@@ -43,24 +43,25 @@ const ApplyAside = ({ program, participated }: ApplyAsdieProps) => {
   let content;
   let modalContent;
 
+  useEffect(() => {}, [applyPageIndex, program]);
+
   if (applyPageIndex === 0) {
     content = (
       <StartContent
         program={program}
-        setApplyPageIndex={setApplyPageIndex}
         participated={participated}
+        isLoggedIn={isLoggedIn}
+        setApplyPageIndex={setApplyPageIndex}
       />
     );
     modalContent = null;
   } else if (applyPageIndex === 1) {
-    if (isLoggedIn) {
-      setApplyPageIndex(2);
-    }
     content = (
       <StartContent
         program={program}
-        setApplyPageIndex={setApplyPageIndex}
         participated={participated}
+        isLoggedIn={isLoggedIn}
+        setApplyPageIndex={setApplyPageIndex}
       />
     );
     modalContent = <MemberSelect setApplyPageIndex={setApplyPageIndex} />;

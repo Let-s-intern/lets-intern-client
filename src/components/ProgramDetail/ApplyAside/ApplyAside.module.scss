@@ -1,3 +1,5 @@
+@use '../../../styles/utils.scss' as *;
+
 .black-background {
   position: fixed;
   z-index: 1000;
@@ -13,8 +15,7 @@
 }
 
 .apply-aside-content {
-  position: sticky;
-  top: 5rem;
+  position: fixed;
   display: none;
   width: 350px;
 
@@ -26,7 +27,7 @@
     color: #4a495c;
   }
 
-  @media (min-width: 1080px) {
+  @media (min-width: $screen-lg) {
     display: block;
   }
 }

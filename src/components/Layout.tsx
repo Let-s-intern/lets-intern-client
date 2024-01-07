@@ -18,7 +18,7 @@ const Layout = () => {
   return (
     <div className="font-notosans">
       <NavBar />
-      <div className="mx-auto min-h-screen">
+      <div className="min-h-screen w-full">
         <Outlet />
       </div>
       <Footer />

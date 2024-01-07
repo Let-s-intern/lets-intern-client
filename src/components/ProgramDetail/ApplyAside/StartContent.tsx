@@ -1,3 +1,4 @@
+import { useNavigate } from 'react-router-dom';
 import cn from 'classnames';
 
 import classes from './StartContent.module.scss';
@@ -6,17 +7,30 @@ import { typeToText } from '../../../utils/converTypeToText';
 interface StartContentProps {
   program: any;
   participated: boolean;
+  isLoggedIn: boolean;
   setApplyPageIndex: (applyPageIndex: number) => void;
 }
 
 const StartContent = ({
   program,
   participated,
+  isLoggedIn,
   setApplyPageIndex,
 }: StartContentProps) => {
+  const navigate = useNavigate();
+
   const handleNextButtonClick = () => {
-    if (!participated && program.status === 'OPEN') {
-      setApplyPageIndex(1);
+    if (
+      !isLoggedIn &&
+      (program.type === 'CHALLENGE_FULL' || program.type === 'CHALLENGE_HALF')
+    ) {
+      navigate('/login');
+    } else if (!participated && program.status === 'OPEN') {
+      if (isLoggedIn) {
+        setApplyPageIndex(2);
+      } else {
+        setApplyPageIndex(1);
+      }
     }
   };
 
