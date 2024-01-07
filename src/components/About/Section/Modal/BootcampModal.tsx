@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import cn from 'classnames';
 
 import { ModalContentType } from './ProgramInfoModalGroup';
@@ -51,6 +52,9 @@ const BootcampModal = ({ setShowModalContent }: BootcampModalProps) => {
         >
           &times;
         </button>
+        <Link to="/program?category=BOOTCAMP" className="apply-link-button">
+          신청하기
+        </Link>
       </div>
     </div>
   );

@@ -121,6 +121,17 @@
         color: #1e1e1e;
         font-size: 1.25rem;
       }
+
+      .apply-link-button {
+        position: absolute;
+        bottom: 2rem;
+        right: 2.25rem;
+        background-color: #6963f6;
+        color: #ffffff;
+        font-size: 0.875rem;
+        padding: 0.25rem 0.5rem;
+        border-radius: 0.25rem;
+      }
     }
   }
 }
