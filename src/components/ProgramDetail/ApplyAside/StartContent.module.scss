@@ -4,4 +4,35 @@
   button {
     margin-top: 3rem;
   }
+
+  .date-info-list {
+    margin-top: 1.5rem;
+
+    .date-info-item {
+      font-size: 0.8125rem;
+      display: flex;
+      justify-content: space-between;
+
+      strong {
+        font-weight: 500;
+      }
+
+      &.timespan {
+        flex-direction: column;
+        justify-content: start;
+      }
+    }
+
+    .date-info-item + .date-info-item {
+      margin-top: 0.25rem;
+
+      &.timespan {
+        margin-top: 0.375rem;
+      }
+    }
+  }
+
+  .apply-start-button {
+    margin-top: 1.5rem;
+  }
 }
