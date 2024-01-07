@@ -1,4 +1,14 @@
+@use '../../../styles/utils.scss' as *;
+
 .apply-aside {
+  display: none;
+  width: 0px;
+
+  @media screen and (min-width: $screen-lg) {
+    display: block;
+    width: 350px;
+  }
+
   .modal {
     width: 500px;
     background-color: white;
