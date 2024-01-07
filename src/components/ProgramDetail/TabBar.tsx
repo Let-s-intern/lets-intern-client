@@ -38,7 +38,7 @@ const TabBarBlock = styled.div`
   align-items: stretch;
 
   @media screen and (min-width: 640px) {
-    top: 6.25rem;
+    top: 6rem;
   }
 `;
 
