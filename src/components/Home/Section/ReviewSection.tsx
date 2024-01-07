@@ -1,3 +1,7 @@
+import { Fragment } from 'react';
+
+import reviews from '../../../data/home-reviews.json';
+
 import './ReviewSection.scss';
 
 const ReviewSection = () => {
@@ -11,30 +15,36 @@ const ReviewSection = () => {
       <div className="bottom-content">
         <div className="review-group">
           <div className="row">
-            {Array.from(Array(10)).map((_, index) => (
-              <article key={index} className="review">
+            {reviews.slice(0, 10).map((review) => (
+              <article key={review.id} className="review">
                 <p>
-                  챌린지라서 매일매일
-                  <br />
-                  조금씩 취업 준비를
-                  <br />
-                  할 수 있어서 좋았어요 <br />
+                  {review.content.split('\n').map((line, index) => (
+                    <Fragment key={index}>
+                      {line}
+                      <br />
+                    </Fragment>
+                  ))}
                 </p>
-                <figure>챌린지 8기, 이*혜</figure>
+                <figure>
+                  {review.program}, {review.user}
+                </figure>
               </article>
             ))}
           </div>
           <div className="row">
-            {Array.from(Array(10)).map((_, index) => (
-              <article key={index} className="review">
+            {reviews.slice(10).map((review) => (
+              <article key={review.id} className="review">
                 <p>
-                  렛츠인턴,
-                  <br />
-                  어쩌구 저쩌구 해서
-                  <br />
-                  정말 좋아요!
+                  {review.content.split('\n').map((line, index) => (
+                    <Fragment key={index}>
+                      {line}
+                      <br />
+                    </Fragment>
+                  ))}
                 </p>
-                <figure>실전코스, 이*연</figure>
+                <figure>
+                  {review.program}, {review.user}
+                </figure>
               </article>
             ))}
           </div>
