@@ -9,9 +9,12 @@ interface TabItemProps {
 const TabItem = ({ to, active, children }: TabItemProps) => {
   if (active) {
     return (
-      <div className="cursor-pointer border-b-2 border-b-primary pb-1 font-medium text-primary">
+      <Link
+        to={to || '#'}
+        className="cursor-pointer border-b-2 border-b-primary pb-1 font-medium text-primary"
+      >
         {children}
-      </div>
+      </Link>
     );
   }
 
