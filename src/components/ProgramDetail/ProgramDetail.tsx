@@ -14,21 +14,12 @@ import '../../styles/github-markdown-light.css';
 
 const ProgramDetail = () => {
   const params = useParams();
-  const location = useLocation();
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
   const [program, setProgram] = useState<any>(null);
   const [participated, setParticipated] = useState<boolean>(false);
   const [reviewList, setReviewList] = useState<any>(null);
   const [faqList, setFaqList] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    ChannelService.hideChannelButton();
-
-    return () => {
-      ChannelService.showChannelButton();
-    };
-  }, [location]);
 
   const { isError } = useQuery({
     queryKey: ['program', params.programId],
