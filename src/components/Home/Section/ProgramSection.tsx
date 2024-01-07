@@ -43,7 +43,10 @@ const ProgramSection = () => {
             {programList
               .filter((program: any) => program.status === 'OPEN')
               .map((program: any) => (
-                <ProgramCard to={`/program/detail/${program.id}`}>
+                <ProgramCard
+                  key={program.id}
+                  to={`/program/detail/${program.id}`}
+                >
                   <div className="card-top">
                     <h2>{typeToText[program.type]}</h2>
                     <h3>{program.title}</h3>

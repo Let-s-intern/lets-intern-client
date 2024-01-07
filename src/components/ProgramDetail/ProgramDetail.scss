@@ -1,6 +1,7 @@
 @use '../../styles/utils.scss' as *;
 
 .program-detail {
+  width: 100%;
   min-height: 100vh;
   padding: 0 1.5rem;
 
@@ -13,8 +14,7 @@
       align-items: flex-start;
       gap: 2rem;
       padding-top: 1rem;
-
-      article {
+      개 article {
         flex: 1;
       }
     }
