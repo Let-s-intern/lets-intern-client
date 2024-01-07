@@ -105,18 +105,18 @@ const ApplyAside = ({ program, participated }: ApplyAsdieProps) => {
   }
 
   return (
-    <>
+    <div className="apply-aside">
       {modalContent && (
         <div className={classes['black-background']} onClick={handleModalClose}>
           <div className="modal">{modalContent}</div>
         </div>
       )}
-      <aside className={classes['apply-aside']}>
-        <div className={cn('apply-aside-content', classes.content)}>
+      <aside className={classes['apply-aside-content']}>
+        <div className={cn('aside-inner-content', classes.content)}>
           {content}
         </div>
       </aside>
-    </>
+    </div>
   );
 };
 

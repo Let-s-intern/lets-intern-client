@@ -1,4 +1,42 @@
-.apply-aside-content {
+.apply-aside {
+  .modal {
+    width: 500px;
+    background-color: white;
+    border-radius: 0.75rem;
+    overflow: hidden;
+    cursor: auto;
+
+    .top {
+      padding: 2rem;
+    }
+
+    .next-button {
+      width: 100%;
+      color: white;
+      background-color: #6963f6;
+      padding: 0.75rem 0;
+
+      &.disabled {
+        background-color: #a5a1fa;
+        cursor: auto;
+      }
+    }
+  }
+
+  .scrollable-box {
+    padding-right: 4px;
+    overflow-y: auto;
+
+    &::-webkit-scrollbar {
+      width: 4px;
+    }
+
+    &.scrolling::-webkit-scrollbar-thumb {
+      background: #a5a1fa;
+      border-radius: 16px;
+    }
+  }
+
   h3 {
     font-size: 0.875rem;
   }
@@ -21,43 +59,5 @@
       background-color: #a5a1fa;
       cursor: auto;
     }
-  }
-}
-
-.modal {
-  width: 500px;
-  background-color: white;
-  border-radius: 0.75rem;
-  overflow: hidden;
-  cursor: auto;
-
-  .top {
-    padding: 2rem;
-  }
-
-  .next-button {
-    width: 100%;
-    color: white;
-    background-color: #6963f6;
-    padding: 0.75rem 0;
-
-    &.disabled {
-      background-color: #a5a1fa;
-      cursor: auto;
-    }
-  }
-}
-
-.scrollable-box {
-  padding-right: 4px;
-  overflow-y: auto;
-
-  &::-webkit-scrollbar {
-    width: 4px;
-  }
-
-  &.scrolling::-webkit-scrollbar-thumb {
-    background: #a5a1fa;
-    border-radius: 16px;
   }
 }
