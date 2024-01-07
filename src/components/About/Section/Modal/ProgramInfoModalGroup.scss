@@ -1,0 +1,126 @@
+@use '../../../../styles/utils.scss' as *;
+
+.program-info-modal-group {
+  .modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    background-color: rgba(0, 0, 0, 0.4);
+    width: 100%;
+    height: 100%;
+    z-index: 9999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0 1.5rem;
+
+    .modal-content {
+      position: relative;
+      width: $screen-sm;
+      max-height: 80vh;
+      background-color: #ffffff;
+      color: #4a495c;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      padding: 4rem 3rem;
+
+      .bottom {
+        overflow-y: auto;
+        padding-right: 4px;
+        scrollbar-width: thin;
+        scrollbar-color: #a5a1fa #00000000;
+
+        &::-webkit-scrollbar {
+          width: 4px;
+        }
+
+        &::-ms-scrollbar {
+          width: 4px;
+        }
+
+        &::-webkit-scrollbar-thumb {
+          background: #a5a1fa;
+          border-radius: 16px;
+        }
+
+        &::-ms-scrollbar-thumb {
+          background: #a5a1fa;
+          border-radius: 16px;
+        }
+
+        // &.top-shadow {
+        //   box-shadow: inset 0 20px 15px -15px rgba(0, 0, 0, 0.3);
+        // }
+
+        // &.bottom-shadow {
+        //   box-shadow: inset 0 -20px 15px -15px rgba(0, 0, 0, 0.3);
+        // }
+
+        // &.top-shadow.bottom-shadow {
+        //   box-shadow:
+        //     inset 0 20px 15px -15px rgba(0, 0, 0, 0.3),
+        //     inset 0 -20px 15px -15px rgba(0, 0, 0, 0.3);
+        // }
+      }
+
+      h1 {
+        font-weight: 700;
+        font-size: 1.5rem;
+        margin-bottom: 1rem;
+        color: #1e1e1e;
+      }
+
+      h2 {
+        font-size: 1.25rem;
+        font-weight: 600;
+        margin-top: 1rem;
+        margin-bottom: 0.5rem;
+        color: #1e1e1e;
+      }
+
+      h3 {
+        margin: 1rem 0;
+        font-weight: 600;
+
+        .normal-text {
+          font-weight: 400;
+        }
+      }
+
+      br {
+        display: none;
+
+        @media screen and (min-width: $screen-sm) {
+          display: block;
+        }
+      }
+
+      hr {
+        margin-top: 1.5rem;
+      }
+
+      ul {
+        list-style: none;
+        margin-left: 1.25rem;
+
+        li::before {
+          content: '\2022';
+          font-size: 0.875rem;
+          font-weight: bold;
+          display: inline-block;
+          width: 1em;
+          margin-left: -1em;
+        }
+      }
+
+      .close-button {
+        position: absolute;
+        top: 1.25rem;
+        right: 1.75rem;
+        color: #1e1e1e;
+        font-size: 1.25rem;
+      }
+    }
+  }
+}

@@ -36,33 +36,31 @@
       .menu-item {
         background-color: #f1f4f9;
         border-radius: 0.625rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+        padding: 2.5rem;
+        cursor: pointer;
 
-        a {
-          display: flex;
-          justify-content: space-between;
-          align-items: flex-end;
-          padding: 2.5rem;
+        .text-content {
+          color: #4a495c;
 
-          .text-content {
-            color: #4a495c;
-
-            h4 {
-              font-size: 1.5rem;
-              font-weight: 600;
-            }
-
-            p {
-              margin-top: 1.25rem;
-              word-break: keep-all;
-            }
+          h4 {
+            font-size: 1.5rem;
+            font-weight: 600;
           }
 
-          .arrow-right {
-            i {
-              img {
-                width: 1.75rem;
-                height: 1.75rem;
-              }
+          p {
+            margin-top: 1.25rem;
+            word-break: keep-all;
+          }
+        }
+
+        .arrow-right {
+          i {
+            img {
+              width: 1.75rem;
+              height: 1.75rem;
             }
           }
         }
