@@ -1,4 +1,7 @@
-const formatDateString = (dateString: string) => {
+const formatDateString = (
+  dateString: string,
+  format?: { date: boolean; weekday: boolean; time: boolean },
+) => {
   const date = new Date(dateString);
 
   // 날짜 부분만 포맷팅
@@ -27,7 +30,25 @@ const formatDateString = (dateString: string) => {
     date,
   );
 
-  return `${formattedDate} (${weekdayShort}) ${formattedTime}`;
+  if (!format) {
+    return `${formattedDate} (${weekdayShort}) ${formattedTime}`;
+  }
+
+  let resultFormatList = [];
+
+  if (format?.date === true) {
+    resultFormatList.push(`${formattedDate}`);
+  }
+
+  if (format?.weekday === true) {
+    resultFormatList.push(`(${weekdayShort})`);
+  }
+
+  if (format?.time === true) {
+    resultFormatList.push(`${formattedTime}`);
+  }
+
+  return resultFormatList.join(' ');
 };
 
 export default formatDateString;
