@@ -1,3 +1,5 @@
+import { Link } from 'react-router-dom';
+
 import { ModalContentType } from './ProgramInfoModalGroup';
 
 import './LetsChatModal.scss';
@@ -22,6 +24,9 @@ const LetsChatModal = ({ setShowModalContent }: BootcampModalProps) => {
         >
           &times;
         </button>
+        <Link to="/program?category=LETS_CHAT" className="apply-link-button">
+          신청하기
+        </Link>
       </div>
     </div>
   );

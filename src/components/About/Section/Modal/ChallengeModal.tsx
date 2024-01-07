@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import cn from 'classnames';
 
 import useScrollShadow from '../../../../hooks/useScrollShadow';
@@ -84,6 +85,9 @@ const ChallengeModal = ({ setShowModalContent }: ChallengeModalProps) => {
         >
           &times;
         </button>
+        <Link to="/program?category=CHALLENGE" className="apply-link-button">
+          신청하기
+        </Link>
       </div>
     </div>
   );
