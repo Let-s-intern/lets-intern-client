@@ -9,19 +9,19 @@ const ResultSection = () => {
           <div className="score-group">
             <div className="score">
               <span>프로그램 수</span>
-              <strong>00개</strong>
+              <strong>48개</strong>
             </div>
             <div className="score">
               <span>함께한 멘토</span>
-              <strong>50명</strong>
+              <strong>32명</strong>
             </div>
             <div className="score">
               <span>누적 참여자</span>
-              <strong>00개</strong>
+              <strong>938명</strong>
             </div>
             <div className="score">
               <span>만족도</span>
-              <strong>4.8</strong>
+              <strong>4.8점</strong>
             </div>
           </div>
         </div>
