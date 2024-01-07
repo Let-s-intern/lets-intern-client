@@ -148,7 +148,7 @@ const NavBar = () => {
         </div>
       </div>
       {/* 상단 메뉴 탭 바 */}
-      {showTopTabBar && (
+      {showTopTabBar ? (
         <div className="hidden h-9 sm:block">
           <TabBar>
             <TabItem to="/" active={activeLink === 'HOME'}>
@@ -167,6 +167,8 @@ const NavBar = () => {
             )}
           </TabBar>
         </div>
+      ) : (
+        <div className="hidden h-9 sm:block" />
       )}
       {/* 투명한 검정색 배경 */}
       <div
