@@ -1,0 +1,46 @@
+.program-card {
+  a {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 15rem;
+    height: 18.75rem;
+    background-color: #f1f4f9;
+    border-radius: 0.5rem;
+    padding: 1.75rem;
+    word-break: keep-all;
+
+    .card-top {
+      h2 {
+        color: #6963f6;
+        font-size: 0.875rem;
+        font-weight: 500;
+      }
+
+      h3 {
+        color: #4a495c;
+        font-size: 1.25rem;
+        font-size: 1.5rem;
+        font-weight: 500;
+        margin-top: 0.5rem;
+      }
+    }
+
+    .card-bottom {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+      font-size: 0.8125rem;
+      color: #4a495c;
+
+      .card-bottom-item {
+        display: flex;
+        flex-direction: column;
+
+        strong {
+          font-weight: 600;
+        }
+      }
+    }
+  }
+}

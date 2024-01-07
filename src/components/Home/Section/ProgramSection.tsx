@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
 import { useQuery } from 'react-query';
 
 import axios from '../../../utils/axios';
@@ -7,9 +6,12 @@ import { typeToText } from '../../../utils/converTypeToText';
 import CardListSlider from '../../CardListSlider';
 
 import './ProgramSection.scss';
+import formatDateString from '../../../utils/formatDateString';
+import ProgramCard from '../../ProgramCard';
+import CardListPlaceholder from '../../CardListPlaceholder';
 
 const ProgramSection = () => {
-  const [programList, setProgramList] = useState();
+  const [programList, setProgramList] = useState<any>();
   const [loading, setLoading] = useState(true);
 
   const { isError } = useQuery({
@@ -30,23 +32,36 @@ const ProgramSection = () => {
       <div className="bottom-content">
         {isError ? (
           <CardListSlider className="program-list">
-            <div className="placeholder">에러 발생</div>
+            <CardListPlaceholder>에러 발생</CardListPlaceholder>
           </CardListSlider>
         ) : loading && !programList ? (
           <CardListSlider className="program-list">
-            <div className="placeholder" />
+            <CardListPlaceholder />
           </CardListSlider>
         ) : (
           <CardListSlider className="program-list">
-            {(programList as any)
+            {programList
               .filter((program: any) => program.status === 'OPEN')
               .map((program: any) => (
-                <article className="program" key={program.id}>
-                  <Link to={`/program/detail/${program.id}`}>
+                <ProgramCard
+                  key={program.id}
+                  to={`/program/detail/${program.id}`}
+                >
+                  <div className="card-top">
                     <h2>{typeToText[program.type]}</h2>
                     <h3>{program.title}</h3>
-                  </Link>
-                </article>
+                  </div>
+                  <div className="card-bottom">
+                    <div className="card-bottom-item">
+                      <strong>모집 마감</strong>
+                      <span>{formatDateString(program.dueDate)}</span>
+                    </div>
+                    <div className="card-bottom-item">
+                      <strong>시작 일자</strong>
+                      <span>{formatDateString(program.startDate)}</span>
+                    </div>
+                  </div>
+                </ProgramCard>
               ))}
           </CardListSlider>
         )}

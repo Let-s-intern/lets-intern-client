@@ -109,7 +109,7 @@ const ApplySectionBlock = styled.section`
   z-index: 30;
   margin-top: 5rem;
 
-  @media (min-width: 1080px) {
+  @media (min-width: 1024px) {
     display: none;
   }
 `;

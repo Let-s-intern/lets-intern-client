@@ -7,6 +7,11 @@ import ProgramListSlider from '../ProgramListSlider';
 import ClosedCard from './ClosedCard';
 
 import './Programs.scss';
+import CardListSlider from '../CardListSlider';
+import CardListPlaceholder from '../CardListPlaceholder';
+import ProgramCard from '../ProgramCard';
+import { typeToText } from '../../utils/converTypeToText';
+import formatDateString from '../../utils/formatDateString';
 
 const Programs = () => {
   const [searchParams] = useSearchParams();
@@ -90,7 +95,37 @@ const Programs = () => {
             <div className="content">
               <h2>현재 모집중이에요</h2>
               <p>아래에서 모집중인 프로그램을 확인해보세요!</p>
-              <ProgramListSlider programs={programs} loading={loading} />
+              {loading ? (
+                <CardListSlider>
+                  <CardListPlaceholder />
+                </CardListSlider>
+              ) : (
+                <CardListSlider className="program-list">
+                  {programs
+                    .filter((program: any) => program.status === 'OPEN')
+                    .map((program: any) => (
+                      <ProgramCard
+                        key={program.id}
+                        to={`/program/detail/${program.id}`}
+                      >
+                        <div className="card-top">
+                          <h2>{typeToText[program.type]}</h2>
+                          <h3>{program.title}</h3>
+                        </div>
+                        <div className="card-bottom">
+                          <div className="card-bottom-item">
+                            <strong>모집 마감</strong>
+                            <span>{formatDateString(program.dueDate)}</span>
+                          </div>
+                          <div className="card-bottom-item">
+                            <strong>시작 일자</strong>
+                            <span>{formatDateString(program.startDate)}</span>
+                          </div>
+                        </div>
+                      </ProgramCard>
+                    ))}
+                </CardListSlider>
+              )}
             </div>
           </section>
           <section className="closed-programs">
