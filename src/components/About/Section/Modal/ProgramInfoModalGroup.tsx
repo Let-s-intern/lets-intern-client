@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useQuery } from 'react-query';
 
 import axios from '../../../../utils/axios';
@@ -49,6 +49,29 @@ const ProgramInfoModalGroup = ({
       console.log();
     },
   });
+
+  useEffect(() => {
+    const deactivateScroll = () => {
+      document.body.style.overflow = 'hidden';
+      document.body.style.paddingRight = '1rem';
+    };
+
+    const activateScroll = () => {
+      document.body.style.overflow = '';
+      document.body.style.paddingRight = '';
+    };
+
+    if (showModalContent === '') {
+      activateScroll();
+      return;
+    }
+
+    deactivateScroll();
+
+    return () => {
+      activateScroll();
+    };
+  }, [showModalContent]);
 
   return (
     <div className="program-info-modal-group">

@@ -7,13 +7,13 @@ section.solution-section {
     #9762f5 29.68%,
     #6963f6 100%
   );
-  padding-top: 4rem;
   overflow: hidden;
+  padding: 0 1.5rem;
+  padding-top: 4rem;
 
   .inner-content {
     max-width: $screen-lg;
     margin: 0 auto;
-    padding: 0 1.5rem;
     color: white;
 
     h2 {
