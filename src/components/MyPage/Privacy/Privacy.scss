@@ -28,6 +28,14 @@
               margin-left: 0.5rem;
               width: 8rem;
             }
+
+            &.social-auth {
+              margin: 0;
+
+              @media (min-width: 640px) {
+                margin-left: 0.5rem;
+              }
+            }
           }
 
           input {
@@ -46,15 +54,34 @@
           align-items: center;
 
           .input-control {
-            .social-login-info {
+            flex-direction: row;
+            align-items: center;
+            gap: 1rem;
+
+            // label {
+            //   margin: 0;
+
+            //   @media (min-width: 640px) {
+            //     margin-left: 0.5rem;
+            //   }
+            // }
+
+            .social-login-box {
               font-size: 0.75rem;
               font-weight: 700;
               padding: 0.75rem 1.25rem;
               border-radius: 0.375rem;
+              display: flex;
+              align-items: center;
+              gap: 0.5rem;
 
               &.kakao {
                 background-color: #fada5d;
                 color: #372109;
+
+                i {
+                  transform: translateY(1px);
+                }
               }
 
               &.naver {
