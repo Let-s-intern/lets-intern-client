@@ -1,5 +1,6 @@
 import { Fragment } from 'react';
 
+import Review from './Review';
 import reviews from '../../../data/home-reviews.json';
 
 import './ReviewSection.scss';
@@ -15,38 +16,28 @@ const ReviewSection = () => {
       <div className="bottom-content">
         <div className="review-group">
           <div className="row">
-            {reviews.slice(0, 10).map((review) => (
-              <article key={review.id} className="review">
-                <p>
-                  {review.content.split('\n').map((line, index) => (
-                    <Fragment key={index}>
-                      {line}
-                      <br />
-                    </Fragment>
-                  ))}
-                </p>
-                <figure>
-                  {review.program}, {review.user}
-                </figure>
-              </article>
-            ))}
+            <div className="row-item">
+              {reviews.slice(0, 9).map((review) => (
+                <Review review={review} />
+              ))}
+            </div>
+            <div className="row-item">
+              {reviews.slice(0, 9).map((review) => (
+                <Review review={review} />
+              ))}
+            </div>
           </div>
           <div className="row">
-            {reviews.slice(10).map((review) => (
-              <article key={review.id} className="review">
-                <p>
-                  {review.content.split('\n').map((line, index) => (
-                    <Fragment key={index}>
-                      {line}
-                      <br />
-                    </Fragment>
-                  ))}
-                </p>
-                <figure>
-                  {review.program}, {review.user}
-                </figure>
-              </article>
-            ))}
+            <div className="row-item">
+              {reviews.slice(9).map((review) => (
+                <Review review={review} />
+              ))}
+            </div>
+            <div className="row-item">
+              {reviews.slice(9).map((review) => (
+                <Review review={review} />
+              ))}
+            </div>
           </div>
         </div>
       </div>

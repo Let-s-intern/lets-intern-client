@@ -20,62 +20,62 @@
 
       .row {
         display: flex;
-        gap: 1.25rem;
-        white-space: nowrap;
+        gap: 1rem;
 
-        .review {
-          background-color: #ffffff;
-          border-radius: 0.5rem;
-          min-width: 12rem;
-          width: 100%;
-          height: 12rem;
+        .row-item {
           display: flex;
-          flex-direction: column;
-          justify-content: space-between;
-          padding: 1.5rem;
+          gap: 1rem;
 
-          p {
-            font-size: 0.875rem;
-            font-weight: 500;
-            line-height: 1.8;
-          }
-
-          figure {
-            color: #969799;
+          .review {
+            background-color: #ffffff;
+            border-radius: 0.5rem;
+            min-width: 12rem;
             width: 100%;
-            text-align: left;
+            height: 12rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 1.5rem;
+
+            p {
+              font-size: 0.875rem;
+              font-weight: 500;
+              line-height: 1.8;
+            }
+
+            figure {
+              color: #969799;
+              width: 100%;
+              text-align: left;
+            }
           }
         }
 
         &:nth-child(1) {
-          transform: translateX(-240px);
-
-          .review {
-            animation: slide-right 20s linear infinite;
+          .row-item {
+            animation: 30s slide-right linear infinite;
 
             @keyframes slide-right {
-              0% {
-                transform: translateX(100%);
-              }
-              100% {
+              from {
                 transform: translateX(-100%);
+              }
+              to {
+                transform: translateX(1rem);
               }
             }
           }
         }
 
         &:nth-child(2) {
-          transform: translateX(-150px);
-
-          .review {
-            animation: slide-left 20s linear infinite;
+          .row-item {
+            animation: 30s slide-left linear infinite;
 
             @keyframes slide-left {
-              0% {
-                transform: translateX(-100%);
+              from {
+                transform: translateX(1rem);
               }
-              100% {
-                transform: translateX(100%);
+              to {
+                transform: translateX(-100%);
               }
             }
           }
