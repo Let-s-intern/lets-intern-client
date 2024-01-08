@@ -154,6 +154,7 @@ const ProgramUsers = () => {
         <Table minWidth={2000}>
           <UserTableHead />
           <UserTableBody
+            program={program}
             applications={applications}
             handleApplicationStatusChange={handleApplicationStatusChange}
           />

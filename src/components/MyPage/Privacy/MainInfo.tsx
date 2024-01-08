@@ -135,14 +135,25 @@ const MainInfo = ({
           {socialAuth && (
             <div className="social-login-area">
               <div className="input-control">
-                <label htmlFor="social-auth">계정연동</label>
+                <label htmlFor="social-auth" className="social-auth">
+                  계정연동
+                </label>
                 {socialAuth === 'KAKAO' ? (
-                  <div className="social-login-info kakao">
+                  <div className="social-login-box kakao">
+                    <i>
+                      <img
+                        src="/icons/kakao-dark-icon.svg"
+                        alt="카카오 아이콘"
+                      />
+                    </i>
                     <span>카카오 로그인</span>
                   </div>
                 ) : (
                   socialAuth === 'NAVER' && (
-                    <div className="social-login-info naver">
+                    <div className="social-login-box naver">
+                      <i>
+                        <img src="/icons/naver-icon.svg" alt="네이버 아이콘" />
+                      </i>
                       <span>네이버 로그인</span>
                     </div>
                   )

@@ -5,11 +5,13 @@ import parseInflowPath from '../../../utils/parseInflowPath';
 import parseGrade from '../../../utils/parseGrade';
 
 interface UserTableBodyProps {
+  program: any;
   applications: any[];
   handleApplicationStatusChange: (e: any, applicationId: number) => void;
 }
 
 const UserTableBody = ({
+  program,
   applications,
   handleApplicationStatusChange,
 }: UserTableBodyProps) => {
@@ -57,6 +59,7 @@ const UserTableBody = ({
                 onChange={(e) =>
                   handleApplicationStatusChange(e, application.application.id)
                 }
+                disabled={program.status === 'DONE'}
               >
                 <MenuItem value="APPLIED">대기</MenuItem>
                 <MenuItem value="IN_PROGRESS">참가확정</MenuItem>

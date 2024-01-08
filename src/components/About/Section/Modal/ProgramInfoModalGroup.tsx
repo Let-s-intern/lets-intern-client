@@ -52,13 +52,11 @@ const ProgramInfoModalGroup = ({
 
   useEffect(() => {
     const deactivateScroll = () => {
-      document.body.style.overflow = 'hidden';
-      document.body.style.paddingRight = '1rem';
+      document.body.classList.add('non-scroll');
     };
 
     const activateScroll = () => {
-      document.body.style.overflow = '';
-      document.body.style.paddingRight = '';
+      document.body.classList.remove('non-scroll');
     };
 
     if (showModalContent === '') {
