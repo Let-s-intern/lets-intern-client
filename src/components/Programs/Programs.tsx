@@ -98,6 +98,12 @@ const Programs = () => {
                 <CardListSlider>
                   <CardListPlaceholder />
                 </CardListSlider>
+              ) : !programs || programs.length === 0 ? (
+                <CardListSlider isEmpty={true}>
+                  <CardListPlaceholder>
+                    현재 진행 중인 프로그램이 없습니다.
+                  </CardListPlaceholder>
+                </CardListSlider>
               ) : (
                 <CardListSlider className="program-list">
                   {programs

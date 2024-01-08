@@ -32,12 +32,18 @@ const ProgramSection = () => {
         </p>
         <div className="bottom-content">
           {isError ? (
-            <CardListSlider className="program-list">
+            <CardListSlider className="program-list" isEmpty={true}>
               <CardListPlaceholder>에러 발생</CardListPlaceholder>
             </CardListSlider>
-          ) : loading && !programList ? (
+          ) : loading ? (
             <CardListSlider className="program-list">
               <CardListPlaceholder />
+            </CardListSlider>
+          ) : !programList || programList.length === 0 ? (
+            <CardListSlider className="program-list" isEmpty={true}>
+              <CardListPlaceholder>
+                현재 진행 중인 프로그램이 없습니다.
+              </CardListPlaceholder>
             </CardListSlider>
           ) : (
             <CardListSlider className="program-list">
