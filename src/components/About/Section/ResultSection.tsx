@@ -1,6 +1,33 @@
+import { useQuery } from 'react-query';
+
 import './ResultSection.scss';
+import axios from '../../../utils/axios';
 
 const ResultSection = () => {
+  const {
+    data: userCount,
+    isLoading: isUserLoading,
+    isError: isUserError,
+  } = useQuery({
+    queryKey: ['users', 'count'],
+    queryFn: async () => {
+      const response = await axios.get('/user/count');
+      return response.data;
+    },
+  });
+
+  const {
+    data: programCount,
+    isLoading: isProgramLoading,
+    isError: isProgramError,
+  } = useQuery({
+    queryKey: ['programs', 'count'],
+    queryFn: async () => {
+      const response = await axios.get('/program/count');
+      return response.data;
+    },
+  });
+
   return (
     <section className="result-section">
       <div className="inner-content">
@@ -9,7 +36,12 @@ const ResultSection = () => {
           <div className="score-group">
             <div className="score">
               <span>프로그램 수</span>
-              <strong>48개</strong>
+              <strong>
+                {isProgramLoading || isProgramError
+                  ? '- '
+                  : `${48 + programCount}`}
+                개
+              </strong>
             </div>
             <div className="score">
               <span>함께한 멘토</span>
@@ -17,7 +49,9 @@ const ResultSection = () => {
             </div>
             <div className="score">
               <span>누적 참여자</span>
-              <strong>938명</strong>
+              <strong>
+                {isUserLoading || isUserError ? '- ' : `${938 + userCount}`}명
+              </strong>
             </div>
             <div className="score">
               <span>만족도</span>

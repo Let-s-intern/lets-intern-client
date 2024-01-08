@@ -7,23 +7,39 @@ import useScrollShadow from '../../../../hooks/useScrollShadow';
 import './BootcampModal.scss';
 
 interface BootcampModalProps {
+  applyAvailable: boolean;
   setShowModalContent: (showModalContent: ModalContentType) => void;
 }
 
-const BootcampModal = ({ setShowModalContent }: BootcampModalProps) => {
+const BootcampModal = ({
+  applyAvailable,
+  setShowModalContent,
+}: BootcampModalProps) => {
   const { scrollRef, isScrollTop, isScrollEnd } = useScrollShadow();
 
   return (
     <div id="bootcamp-modal" className="modal">
-      <div className="modal-content">
-        <div className="top">
+      <div
+        className={cn('modal-content', {
+          'apply-available': applyAvailable,
+        })}
+      >
+        <div className="modal-header">
+          <div className="top-button-area">
+            <button
+              className="close-button"
+              onClick={() => setShowModalContent('')}
+            >
+              &times;
+            </button>
+          </div>
           <h1>부트캠프</h1>
         </div>
         <div
           ref={scrollRef}
-          className={cn('bottom', {
-            ['top-shadow']: !isScrollTop,
-            ['bottom-shadow']: !isScrollEnd,
+          className={cn('modal-body', {
+            'top-shadow': !isScrollTop,
+            'bottom-shadow': !isScrollEnd,
           })}
         >
           <p>
@@ -46,15 +62,13 @@ const BootcampModal = ({ setShowModalContent }: BootcampModalProps) => {
             <li>데일리 밀착 케어</li>
           </ul>
         </div>
-        <button
-          className="close-button"
-          onClick={() => setShowModalContent('')}
-        >
-          &times;
-        </button>
-        <Link to="/program?category=BOOTCAMP" className="apply-link-button">
-          신청하기
-        </Link>
+        {applyAvailable && (
+          <div className="modal-footer">
+            <Link to="/program?category=BOOTCAMP" className="apply-link-button">
+              신청하기
+            </Link>
+          </div>
+        )}
       </div>
     </div>
   );
