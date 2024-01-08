@@ -56,7 +56,7 @@
 
         &:nth-child(1) {
           .row-item {
-            animation: 30s slide-right linear infinite;
+            animation: 60s slide-right linear infinite;
 
             @keyframes slide-right {
               from {
@@ -71,7 +71,7 @@
 
         &:nth-child(2) {
           .row-item {
-            animation: 30s slide-left linear infinite;
+            animation: 60s slide-left linear infinite;
 
             @keyframes slide-left {
               from {
