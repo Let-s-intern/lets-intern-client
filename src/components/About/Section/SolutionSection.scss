@@ -7,13 +7,13 @@ section.solution-section {
     #9762f5 29.68%,
     #6963f6 100%
   );
-  padding-top: 4rem;
   overflow: hidden;
+  padding: 0 1.5rem;
+  padding-top: 4rem;
 
   .inner-content {
     max-width: $screen-lg;
     margin: 0 auto;
-    padding: 0 1.5rem;
     color: white;
 
     h2 {
@@ -24,7 +24,19 @@ section.solution-section {
     p {
       font-size: 0.875rem;
       margin-top: 0.75rem;
-      word-break: keep-all;
+      word-break: break-all;
+
+      @media screen and (min-width: $screen-xs) {
+        word-break: keep-all;
+      }
+
+      br {
+        display: none;
+
+        @media screen and (min-width: $screen-sm) {
+          display: block;
+        }
+      }
     }
 
     .core-value-group {

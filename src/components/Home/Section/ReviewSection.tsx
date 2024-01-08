@@ -13,7 +13,7 @@ const ReviewSection = () => {
         <br />
         증명합니다.
       </h2>
-      <div className="bottom-content">
+      <div className="bottom-content review-container">
         <div className="review-group">
           <div className="row">
             <div className="row-item">

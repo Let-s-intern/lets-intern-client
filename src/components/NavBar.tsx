@@ -99,7 +99,7 @@ const NavBar = () => {
   return (
     <>
       {/* 상단 네비게이션 바 */}
-      <div className="fixed top-0 z-30 w-full bg-white pe-[1.5rem] ps-[1.125rem]">
+      <div className="fixed top-0 z-30 w-screen bg-white pe-[1.5rem] ps-[1.125rem] md:pe-[2.5rem]">
         <div className="mx-auto flex h-16 items-center justify-between">
           <Link to="/" className="h-10 w-10">
             <img src="/logo/logo.png" alt="Logo" className="w-full" />

@@ -6,7 +6,7 @@
   padding: 3rem 1.5rem;
 
   .inner-content {
-    max-width: $screen-md;
+    max-width: $screen-sm;
     margin: 0 auto;
 
     h2 {
@@ -20,12 +20,17 @@
         display: flex;
         justify-content: space-between;
         align-items: center;
-        gap: 1rem;
+        gap: 1.25rem;
         margin-top: 3rem;
+
+        @media screen and (min-width: $screen-xs) {
+          gap: 1.375rem;
+        }
 
         .score {
           display: flex;
           flex-direction: column;
+          align-items: center;
           gap: 0.125rem;
           flex: 1;
           padding-top: 1rem;
@@ -34,11 +39,16 @@
 
           @media screen and (min-width: $screen-sm) {
             width: 7rem;
+            align-items: start;
             flex: none;
           }
 
           span {
-            font-size: 0.875rem;
+            font-size: 0.75rem;
+
+            @media screen and (min-width: $screen-xs) {
+              font-size: 0.875rem;
+            }
 
             @media screen and (min-width: $screen-sm) {
               font-size: 1rem;
@@ -46,8 +56,12 @@
           }
 
           strong {
-            font-size: 1.5rem;
+            font-size: 1.125rem;
             font-weight: 700;
+
+            @media screen and (min-width: $screen-xs) {
+              font-size: 1.375rem;
+            }
 
             @media screen and (min-width: $screen-sm) {
               font-size: 2rem;

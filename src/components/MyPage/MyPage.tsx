@@ -47,7 +47,8 @@ const MyPage = () => {
           </TabItem>
         </TabBar>
       </nav>
-      <div className="mx-auto mt-10 max-w-5xl">
+      <div className="block h-8 w-full sm:hidden"></div>
+      <div className="mx-auto mt-5 max-w-5xl">
         <Outlet />
       </div>
     </div>
