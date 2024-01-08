@@ -4,7 +4,6 @@ import SolutionSection from './Section/SolutionSection';
 import ProgramMenuSection from './Section/ProgramMenuSection';
 import ResultSection from './Section/ResultSection';
 import EndSection from './Section/EndSection';
-import BottomSection from './Section/BottomSection';
 
 import './About.scss';
 

@@ -7,15 +7,25 @@ import { ModalContentType } from './ProgramInfoModalGroup';
 import './ChallengeModal.scss';
 
 interface ChallengeModalProps {
+  applyAvailable: boolean;
+  challenge: any;
   setShowModalContent: (showModalContent: ModalContentType) => void;
 }
 
-const ChallengeModal = ({ setShowModalContent }: ChallengeModalProps) => {
+const ChallengeModal = ({
+  applyAvailable,
+  challenge,
+  setShowModalContent,
+}: ChallengeModalProps) => {
   const { scrollRef, isScrollTop, isScrollEnd } = useScrollShadow();
 
   return (
     <div id="challenge-modal" className="modal">
-      <div className="modal-content">
+      <div
+        className={cn('modal-content', {
+          'apply-available': applyAvailable,
+        })}
+      >
         <div className="modal-header">
           <div className="top-button-area">
             <button
@@ -30,8 +40,8 @@ const ChallengeModal = ({ setShowModalContent }: ChallengeModalProps) => {
         <div
           ref={scrollRef}
           className={cn('modal-body', {
-            ['top-shadow']: !isScrollTop,
-            ['bottom-shadow']: !isScrollEnd,
+            'top-shadow': !isScrollTop,
+            'bottom-shadow': !isScrollEnd,
           })}
         >
           <p>
@@ -87,11 +97,16 @@ const ChallengeModal = ({ setShowModalContent }: ChallengeModalProps) => {
             <li>데일리 밀착 케어</li>
           </ul>
         </div>
-        <div className="modal-footer">
-          <Link to="/program?category=CHALLENGE" className="apply-link-button">
-            신청하기
-          </Link>
-        </div>
+        {applyAvailable && (
+          <div className="modal-footer">
+            <Link
+              to={`/program/detail/${challenge.id}`}
+              className="apply-link-button"
+            >
+              신청하기
+            </Link>
+          </div>
+        )}
       </div>
     </div>
   );

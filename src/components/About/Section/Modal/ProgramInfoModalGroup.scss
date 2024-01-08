@@ -22,8 +22,14 @@
       color: #4a495c;
       display: flex;
       flex-direction: column;
-      padding: 3rem 3rem;
       padding-top: 2rem;
+      padding-bottom: 4rem;
+      padding-left: 3rem;
+      padding-right: 3rem;
+
+      &.apply-available {
+        padding-bottom: 2.5rem;
+      }
 
       .modal-header {
         h1 {
@@ -127,7 +133,7 @@
 
       .modal-footer {
         text-align: end;
-        padding-top: 2rem;
+        margin-top: 2rem;
 
         .apply-link-button {
           display: inline-block;
