@@ -34,7 +34,7 @@ const TabBar = ({ itemCount, children, className }: TabBarProps) => {
   return (
     <div
       className={cn(
-        'fixed left-0 top-16 z-30 h-8 w-full bg-neutral-white px-[1.5rem]',
+        'fixed left-0 top-16 z-30 h-8 w-full bg-neutral-white px-[1.5rem] md:pr-[2.5rem]',
         {
           [className as string]: className,
         },

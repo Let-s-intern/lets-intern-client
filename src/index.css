@@ -1,3 +1,14 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+body .non-scroll {
+  overflow: hidden;
+  padding-right: 1rem;
+}
+
+@media (hover: none) and (pointer: coarse) {
+  body .non-scroll {
+    padding-right: unset;
+  }
+}
