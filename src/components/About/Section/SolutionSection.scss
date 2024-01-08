@@ -24,7 +24,19 @@ section.solution-section {
     p {
       font-size: 0.875rem;
       margin-top: 0.75rem;
-      word-break: keep-all;
+      word-break: break-all;
+
+      @media screen and (min-width: $screen-xs) {
+        word-break: keep-all;
+      }
+
+      br {
+        display: none;
+
+        @media screen and (min-width: $screen-sm) {
+          display: block;
+        }
+      }
     }
 
     .core-value-group {

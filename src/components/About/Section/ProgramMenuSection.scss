@@ -12,6 +12,14 @@
         display: block;
         text-align: center;
         font-weight: 500;
+
+        br {
+          display: block;
+
+          @media screen and (min-width: $screen-xs) {
+            display: none;
+          }
+        }
       }
 
       strong {
@@ -53,6 +61,18 @@
           p {
             margin-top: 1.25rem;
             word-break: keep-all;
+
+            br {
+              display: none;
+
+              @media screen and (min-width: $screen-xs) {
+                display: block;
+              }
+
+              &.fix {
+                display: block;
+              }
+            }
           }
         }
 
