@@ -16,12 +16,20 @@ const ChallengeModal = ({ setShowModalContent }: ChallengeModalProps) => {
   return (
     <div id="challenge-modal" className="modal">
       <div className="modal-content">
-        <div className="top">
+        <div className="modal-header">
+          <div className="top-button-area">
+            <button
+              className="close-button"
+              onClick={() => setShowModalContent('')}
+            >
+              &times;
+            </button>
+          </div>
           <h1>인턴 지원 챌린지</h1>
         </div>
         <div
           ref={scrollRef}
-          className={cn('bottom', {
+          className={cn('modal-body', {
             ['top-shadow']: !isScrollTop,
             ['bottom-shadow']: !isScrollEnd,
           })}
@@ -79,15 +87,11 @@ const ChallengeModal = ({ setShowModalContent }: ChallengeModalProps) => {
             <li>데일리 밀착 케어</li>
           </ul>
         </div>
-        <button
-          className="close-button"
-          onClick={() => setShowModalContent('')}
-        >
-          &times;
-        </button>
-        <Link to="/program?category=CHALLENGE" className="apply-link-button">
-          신청하기
-        </Link>
+        <div className="modal-footer">
+          <Link to="/program?category=CHALLENGE" className="apply-link-button">
+            신청하기
+          </Link>
+        </div>
       </div>
     </div>
   );
