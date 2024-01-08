@@ -3,15 +3,18 @@
 .review-section {
   background-color: #232233;
   overflow: hidden;
-  padding: 3rem 0;
+  padding: 1.5rem 1.5rem;
 
   .section-title {
-    @include responsive;
+    max-width: $screen-lg;
+    margin: 0 auto;
     color: #ffffff;
   }
 
   .bottom-content {
-    margin-top: 2rem;
+    &.review-container {
+      margin-top: 1.5rem;
+    }
 
     .review-group {
       display: flex;

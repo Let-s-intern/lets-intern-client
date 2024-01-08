@@ -22,7 +22,7 @@ header {
         }
       }
 
-      p {
+      h2 {
         margin-top: 0.25rem;
         font-size: 1.25rem;
         font-weight: 600;
@@ -30,89 +30,102 @@ header {
         @media screen and (min-width: $screen-sm) {
           font-size: 1.75rem;
         }
+
+        br {
+          display: block;
+
+          @media screen and (min-width: $screen-xs) {
+            display: none;
+          }
+        }
       }
     }
   }
 
-  .menu-list {
-    @include responsive;
-    margin-top: 1rem;
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 1rem;
-    overflow-x: auto;
-    white-space: nowrap;
-    scrollbar-width: none; /* FireFox */
+  .menu-wrapper {
+    padding: 0 1.5rem;
 
-    &::-webkit-scrollbar {
-      display: none; /* Chrome, Safari, Opera, ... */
-    }
-
-    &::-ms-scrollbar {
-      display: none; /* Internet Explorer, Edge */
-    }
-
-    @media screen and (min-width: $screen-sm) {
-      grid-template-columns: repeat(2, 1fr);
-    }
-
-    @media screen and (min-width: $screen-lg) {
+    .menu-list {
+      max-width: $screen-lg;
+      margin: 0 auto;
+      margin-top: 1rem;
+      display: grid;
       grid-template-columns: repeat(4, 1fr);
-    }
+      gap: 1rem;
+      overflow-x: auto;
+      white-space: nowrap;
+      scrollbar-width: none; /* FireFox */
 
-    .menu-item {
-      a {
-        width: 100%;
-        background-color: #f1f4f9;
-        border-radius: 0.5rem;
-        padding: 1.5rem 2rem;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        gap: 0.5rem;
+      &::-webkit-scrollbar {
+        display: none; /* Chrome, Safari, Opera, ... */
+      }
 
-        @media (min-width: $screen-lg) {
-          padding: 1.5rem;
-        }
+      &::-ms-scrollbar {
+        display: none; /* Internet Explorer, Edge */
+      }
 
-        .left {
-          h3 {
-            font-size: 1.25rem;
-            font-weight: 600;
+      @media screen and (min-width: $screen-sm) {
+        grid-template-columns: repeat(2, 1fr);
+      }
 
-            @media (min-width: $screen-lg) {
-              font-size: 1.125rem;
-            }
+      @media screen and (min-width: $screen-lg) {
+        grid-template-columns: repeat(4, 1fr);
+      }
+
+      .menu-item {
+        a {
+          width: 100%;
+          background-color: #f1f4f9;
+          border-radius: 0.5rem;
+          padding: 1.5rem 2rem;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          gap: 0.5rem;
+
+          @media (min-width: $screen-lg) {
+            padding: 1.5rem;
           }
 
-          p {
-            margin-top: 0.25rem;
-            font-size: 0.875rem;
-            color: #969799;
-
-            @media (min-width: $screen-lg) {
-              font-size: 0.75rem;
-            }
-
-            br {
-              display: none;
+          .left {
+            h3 {
+              font-size: 1.25rem;
+              font-weight: 600;
 
               @media (min-width: $screen-lg) {
-                display: block;
+                font-size: 1.125rem;
+              }
+            }
+
+            p {
+              margin-top: 0.25rem;
+              font-size: 0.875rem;
+              color: #969799;
+
+              @media (min-width: $screen-lg) {
+                font-size: 0.75rem;
+              }
+
+              br {
+                display: none;
+
+                @media (min-width: $screen-lg) {
+                  display: block;
+                }
               }
             }
           }
-        }
 
-        .right {
-          i {
-            width: 48px;
-            height: 48px;
-            display: flex;
-            align-items: center;
+          .right {
+            i {
+              width: 48px;
+              height: 48px;
+              display: flex;
+              align-items: center;
 
-            img {
-              width: 100%;
+              img {
+                width: 100%;
+              }
             }
           }
         }

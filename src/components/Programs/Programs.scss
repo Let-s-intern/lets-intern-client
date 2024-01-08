@@ -34,10 +34,14 @@ $breakpoint-640px: 640px;
         margin: 0 auto;
 
         .category-button {
+          font-size: 0.75rem;
           color: #6963f6;
-          font-size: 0.875rem;
           border-radius: 5rem;
           border: 1px solid #6963f6;
+
+          @media screen and (min-width: $screen-xs) {
+            font-size: 0.875rem;
+          }
 
           &.active {
             background-color: #6963f6;
