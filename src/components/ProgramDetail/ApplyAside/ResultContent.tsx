@@ -30,7 +30,7 @@ const ResultContent = ({
       </div>
       <button
         id="close_button"
-        className={cn('close-button', 'next-button')}
+        className={cn('close-button', 'next-bottom-button')}
         onClick={handleCloseButtonClicked}
       >
         닫기

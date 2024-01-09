@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import cn from 'classnames';
 
 import StartContent from './StartContent';
 import MemberSelect from './MemberSelect';
@@ -8,7 +7,6 @@ import CautionContent from './CautionContent';
 import ResultContent from './ResultContent';
 
 import './ApplyAside.scss';
-import './index.scss';
 
 interface ApplyAsdieProps {
   program: any;
@@ -106,8 +104,8 @@ const ApplyAside = ({ program, participated }: ApplyAsdieProps) => {
   return (
     <>
       {modalContent && (
-        <div className="black-background" onClick={handleModalClose}>
-          <div className="modal">{modalContent}</div>
+        <div className="apply-black-background" onClick={handleModalClose}>
+          <div className="apply-modal">{modalContent}</div>
         </div>
       )}
       <div className="apply-aside">

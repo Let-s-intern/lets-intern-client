@@ -176,8 +176,8 @@ const InputContent = ({
   return (
     <form className={classes.content} onSubmit={handleSubmit}>
       <div>
-        <h3>{typeToText[program.type]}</h3>
-        <h2>{program.title}</h2>
+        <h3 className="program-type">{typeToText[program.type]}</h3>
+        <h2 className="program-title">{program.title}</h2>
       </div>
       {!loading && (
         <div
@@ -318,7 +318,7 @@ const InputContent = ({
       <button
         id="member_info_input_next_button"
         type="submit"
-        className={cn('member-info-input-next-button', {
+        className={cn('member-info-input-next-button', 'next-button', {
           disabled: isNextButtonDisabled,
         })}
       >
