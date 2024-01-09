@@ -1,36 +1,51 @@
 import { useState } from 'react';
 
+import axios from '../../../utils/axios';
 import AlertModal from '../../AlertModal';
 
 import './WithDrawAlertModal.scss';
 
 interface WithDrawAlertModalProps {
-  onDeleteAccount: () => void;
   setIsWithdrawModal: (isWithdrawModal: boolean) => void;
 }
 
 const WithDrawAlertModal = ({
-  onDeleteAccount,
   setIsWithdrawModal,
 }: WithDrawAlertModalProps) => {
   const [withdrawDisabled, setWithdrawDisabled] = useState(true);
+  const [alertIndex, setAlertIndex] = useState(0);
+  const [resultAlertInfo, setResultAlertInfo] = useState({
+    title: '',
+    message: '',
+  });
 
-  const onConfirm = () => {
-    onDeleteAccount();
-    setIsWithdrawModal(false);
+  const handleDeleteAccount = async () => {
+    try {
+      await axios.get('/user/withdraw');
+      localStorage.removeItem('access-token');
+      localStorage.removeItem('refresh-token');
+      setResultAlertInfo({
+        title: '회원 탈퇴 성공',
+        message: '회원 탈퇴가 완료되었습니다.',
+      });
+    } catch (err) {
+      setResultAlertInfo({
+        title: '회원 탈퇴 실패',
+        message: '회원 탈퇴에 실패했습니다.',
+      });
+    }
   };
 
-  const onCancel = () => {
-    setIsWithdrawModal(false);
-  };
-
-  return (
+  return alertIndex === 0 ? (
     <AlertModal
       title="회원 탈퇴"
       confirmText="탈퇴"
       cancelText="취소"
-      onConfirm={onConfirm}
-      onCancel={onCancel}
+      onConfirm={() => {
+        handleDeleteAccount();
+        setAlertIndex(1);
+      }}
+      onCancel={() => setIsWithdrawModal(false)}
       disabled={withdrawDisabled}
       className="withdraw-alert-modal"
     >
@@ -61,6 +76,20 @@ const WithDrawAlertModal = ({
           안내사항을 모두 확인하였으며, 이에 동의합니다.
         </label>
       </div>
+    </AlertModal>
+  ) : (
+    <AlertModal
+      title={resultAlertInfo.title}
+      confirmText="확인"
+      onConfirm={() => {
+        setIsWithdrawModal(false);
+        window.location.href = '/';
+      }}
+      disabled={withdrawDisabled}
+      showCancel={false}
+      className="withdraw-alert-modal"
+    >
+      <p>{resultAlertInfo.message}</p>
     </AlertModal>
   );
 };
