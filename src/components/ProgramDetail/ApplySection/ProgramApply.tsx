@@ -10,6 +10,7 @@ import ResultContent from './ResultContent';
 import MemberInfoInputContent from './MemberInfoInputContent';
 import { isValidEmail, isValidPhoneNumber } from '../../../utils/valid';
 import MemberTypeContent from './MemberTypeContent';
+import AlertModal from '../../AlertModal';
 
 interface ProgramApplyProps {
   user: any;
@@ -50,6 +51,11 @@ const ProgramApply = ({
   const [announcementDate, setAnnouncementDate] = useState<string>('');
   const [bottomMessage, setBottomMessage] = useState<string>('');
   const [submitError, setSubmitError] = useState<unknown>();
+  const [showAlert, setShowAlert] = useState(false);
+  const [alertInfo, setAlertInfo] = useState({
+    title: '',
+    message: '',
+  });
 
   useEffect(() => {
     if (applyPageIndex !== 1) {
@@ -76,10 +82,18 @@ const ProgramApply = ({
   const handleApplyNextButton = () => {
     if (applyPageIndex === 1) {
       if (!isValidEmail(user.email)) {
-        alert('이메일 형식이 올바르지 않습니다.');
+        setAlertInfo({
+          title: '신청 정보 오류',
+          message: '이메일 형식이 올바르지 않습니다.',
+        });
+        setShowAlert(true);
         return;
       } else if (!isValidPhoneNumber(user.phoneNum)) {
-        alert('휴대폰 번호 형식이 올바르지 않습니다.');
+        setAlertInfo({
+          title: '신청 정보 오류',
+          message: '휴대폰 번호 형식이 올바르지 않습니다.',
+        });
+        setShowAlert(true);
         return;
       }
       setApplyPageIndex(applyPageIndex + 1);
@@ -203,6 +217,16 @@ const ProgramApply = ({
         nextButtonClass="member-info-input-next-button"
         nextButtonId="member_info_input_next_button"
       >
+        {showAlert && (
+          <AlertModal
+            onConfirm={() => setShowAlert(false)}
+            title={alertInfo.title}
+            showCancel={false}
+            highlight="confirm"
+          >
+            <p>{alertInfo.message}</p>
+          </AlertModal>
+        )}
         <MemberInfoInputContent
           user={user}
           hasDetailInfo={hasDetailInfo}
