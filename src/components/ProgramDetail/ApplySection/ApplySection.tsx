@@ -1,7 +1,8 @@
+import { useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import styled from 'styled-components';
 
 import Button from '../../Button';
-import { useState } from 'react';
 import axios from '../../../utils/axios';
 import ProgramApply from './ProgramApply';
 
@@ -18,6 +19,8 @@ const ApplySection = ({
   isLoggedIn,
   setParticipated,
 }: ApplySectionProps) => {
+  const params = useParams();
+  const navigate = useNavigate();
   const [user, setUser] = useState<any>(null);
   const [hasDetailInfo, setHasDetailInfo] = useState(false);
   const [isFirstOpen, setIsFirstOpen] = useState<boolean>(true);
@@ -26,6 +29,14 @@ const ApplySection = ({
   const [applyPageIndex, setApplyPageIndex] = useState<number>(0);
 
   const handleApplyButtonClick = async () => {
+    if (
+      (program.type === 'CHALLENGE_FULL' ||
+        program.type === 'CHALLENGE_HALF') &&
+      !isLoggedIn
+    ) {
+      navigate(`/login?redirect_url=/program/detail/${params.programId}`);
+      return;
+    }
     if (!isFirstOpen) {
       setIsApplyModalOpen(true);
       return;
