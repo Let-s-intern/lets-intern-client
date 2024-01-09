@@ -1,15 +1,16 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
 
 import ProgramInfoModalGroup, {
   ModalContentType,
 } from './Modal/ProgramInfoModalGroup';
 
 import './ProgramMenuSection.scss';
+import AlertModal from '../../AlertModal';
 
 const ProgramMenuSection = () => {
   const [showModalContent, setShowModalContent] =
     useState<ModalContentType>('');
+  const [showTILAlert, setShowTILAlert] = useState(false);
 
   return (
     <section className="program-menu-section">
@@ -77,7 +78,7 @@ const ProgramMenuSection = () => {
               </i>
             </div>
           </li>
-          <li className="menu-item" onClick={() => alert('오픈 예정입니다.')}>
+          <li className="menu-item" onClick={() => setShowTILAlert(true)}>
             <div className="text-content">
               <h4>TIL 챌린지</h4>
               <p>
@@ -97,6 +98,16 @@ const ProgramMenuSection = () => {
         showModalContent={showModalContent}
         setShowModalContent={setShowModalContent}
       />
+      {showTILAlert && (
+        <AlertModal
+          onConfirm={() => setShowTILAlert(false)}
+          title="TIL 챌린지"
+          showCancel={false}
+          highlight="confirm"
+        >
+          <p>오픈 예정입니다.</p>
+        </AlertModal>
+      )}
     </section>
   );
 };

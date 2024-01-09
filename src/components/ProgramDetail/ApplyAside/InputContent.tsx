@@ -9,6 +9,7 @@ import { typeToText } from '../../../utils/converTypeToText';
 import { isValidEmail, isValidPhoneNumber } from '../../../utils/valid';
 
 import classes from './InputContent.module.scss';
+import AlertModal from '../../AlertModal';
 
 interface InputContentProps {
   program: any;
@@ -34,6 +35,11 @@ const InputContent = ({
   const [isNextButtonDisabled, setIsNextButtonDisabled] =
     useState<boolean>(true);
   const [loading, setLoading] = useState<boolean>(true);
+  const [showAlert, setShowAlert] = useState(false);
+  const [alertInfo, setAlertInfo] = useState({
+    title: '',
+    message: '',
+  });
 
   const { data: userData } = useQuery({
     queryKey: ['user'],
@@ -136,10 +142,18 @@ const InputContent = ({
     e.preventDefault();
     if (isNextButtonDisabled) return;
     if (!isValidEmail(formData.email)) {
-      alert('이메일 형식이 올바르지 않습니다.');
+      setAlertInfo({
+        title: '신청 정보 오류',
+        message: '이메일 형식이 올바르지 않습니다.',
+      });
+      setShowAlert(true);
       return;
     } else if (!isValidPhoneNumber(formData.phoneNum)) {
-      alert('휴대폰 번호 형식이 올바르지 않습니다.');
+      setAlertInfo({
+        title: '신청 정보 오류',
+        message: '휴대폰 번호 형식이 올바르지 않습니다.',
+      });
+      setShowAlert(true);
       return;
     }
     setApplyPageIndex(3);
@@ -310,6 +324,16 @@ const InputContent = ({
       >
         다음
       </button>
+      {showAlert && (
+        <AlertModal
+          onConfirm={() => setShowAlert(false)}
+          title={alertInfo.title}
+          showCancel={false}
+          highlight="confirm"
+        >
+          <p>{alertInfo.message}</p>
+        </AlertModal>
+      )}
     </form>
   );
 };

@@ -1,6 +1,7 @@
 import { Fragment } from 'react';
-import styled, { css } from 'styled-components';
 import cn from 'classnames';
+
+import './AlertModal.scss';
 
 interface AlertModalProps {
   onConfirm: () => void;
@@ -13,11 +14,6 @@ interface AlertModalProps {
   disabled?: boolean;
   showCancel?: boolean;
   className?: string;
-}
-
-interface ButtonProps {
-  $highlight: 'confirm' | 'cancel';
-  $disabled?: boolean;
 }
 
 const AlertModal = ({
@@ -33,113 +29,43 @@ const AlertModal = ({
   className,
 }: AlertModalProps) => {
   return (
-    <ModalBackdrop>
-      <ModalContainer className={cn(className, 'alert-modal')}>
-        <ModalHeader>
+    <div className="alert-modal">
+      <div className={cn(className, 'alert-modal-box')}>
+        <h3 className="modal-header">
           {title.split('<br />').map((titleEl, index) => (
             <Fragment key={index}>
               {titleEl}
               <br />
             </Fragment>
           ))}
-        </ModalHeader>
-        <ModalBody className="modal-body">{children}</ModalBody>
-        <ModalFooter>
-          <Button
+        </h3>
+        <div className="modal-body">{children}</div>
+        <div className="modal-footer">
+          <button
             type="button"
-            $highlight={highlight}
-            $disabled={disabled}
+            className={cn('confirm-button', 'button', {
+              highlight: highlight === 'confirm',
+              disabled: disabled,
+            })}
             onClick={() => !disabled && onConfirm()}
           >
             {confirmText}
-          </Button>
+          </button>
           {showCancel && (
-            <Button type="button" $highlight={highlight} onClick={onCancel}>
+            <button
+              type="button"
+              className={cn('confirm-button', 'button', {
+                highlight: highlight === 'cancel',
+              })}
+              onClick={onCancel}
+            >
               {cancelText}
-            </Button>
+            </button>
           )}
-        </ModalFooter>
-      </ModalContainer>
-    </ModalBackdrop>
+        </div>
+      </div>
+    </div>
   );
 };
 
 export default AlertModal;
-
-const ModalBackdrop = styled.div`
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 10000;
-`;
-
-const ModalContainer = styled.div`
-  background-color: white;
-  padding: 1.5rem;
-  border-radius: 10px;
-  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.25);
-  display: flex;
-  flex-direction: column;
-  min-width: 350px;
-  min-height: 250px;
-`;
-
-const ModalHeader = styled.h3`
-  margin: 0;
-  font-weight: 500;
-  text-align: center;
-`;
-
-const ModalBody = styled.div`
-  margin-top: 1.25rem;
-  text-align: center;
-  flex: 1;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  white-space: pre-line;
-`;
-
-const ModalFooter = styled.div`
-  display: flex;
-  justify-content: flex-end;
-  margin-top: 20px;
-`;
-
-const Button = styled.button<ButtonProps>`
-  margin: 0 5px;
-  padding: 5px 10px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-
-  ${({ $highlight }) =>
-    $highlight === 'confirm'
-      ? css`
-          &:nth-child(1) {
-            color: #6963ed;
-            font-weight: bold;
-          }
-        `
-      : css`
-          &:nth-child(2) {
-            color: #6963ed;
-            font-weight: bold;
-          }
-        `}
-
-  ${({ $disabled }) =>
-    $disabled &&
-    css`
-      &:nth-child(1) {
-        color: #bcbcbc;
-        cursor: auto;
-      }
-    `}
-`;
