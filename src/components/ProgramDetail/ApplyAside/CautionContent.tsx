@@ -73,8 +73,8 @@ const CautionContent = ({
 
   return (
     <div className="caution-content">
-      <h3>{typeToText[program.type]}</h3>
-      <h2>{program.title}</h2>
+      <h3 className="program-type">{typeToText[program.type]}</h3>
+      <h2 className="program-title">{program.title}</h2>
       <h4>[필독사항]</h4>
       <p>{program.notice}</p>
       {message && (
@@ -88,7 +88,7 @@ const CautionContent = ({
       )}
       <button
         id="complete_button"
-        className="caution-next-button"
+        className="caution-next-button next-button"
         onClick={handleApplySubmit}
       >
         제출하기

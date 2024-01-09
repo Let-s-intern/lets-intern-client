@@ -3,7 +3,6 @@ import { useState } from 'react';
 import axios from '../../../utils/axios';
 import { isValidEmail, isValidPhoneNumber } from '../../../utils/valid';
 import WithDrawAlertModal from './WithDrawAlertModal';
-import AlertModal from '../../AlertModal';
 
 interface MainInfoProps {
   mainInfoValues: any;
@@ -12,6 +11,8 @@ interface MainInfoProps {
   loading: boolean;
   setUserInfo: (userInfo: any) => void;
   resetInitialValues: () => void;
+  setShowAlert: (showAlert: boolean) => void;
+  setAlertInfo: (alertInfo: { title: string; message: string }) => void;
 }
 
 const MainInfo = ({
@@ -21,13 +22,10 @@ const MainInfo = ({
   loading,
   setUserInfo,
   resetInitialValues,
+  setShowAlert,
+  setAlertInfo,
 }: MainInfoProps) => {
   const [isWithdrawModal, setIsWithdrawModal] = useState(false);
-  const [showAlert, setShowAlert] = useState(false);
-  const [alertInfo, setAlertInfo] = useState({
-    title: '',
-    message: '',
-  });
 
   const handleChangeMainInfo = (e: any) => {
     const { name, value } = e.target;
@@ -110,18 +108,6 @@ const MainInfo = ({
         message: '유저 정보 변경에 실패했습니다.',
       });
       setShowAlert(true);
-    }
-  };
-
-  const handleDeleteAccount = async () => {
-    try {
-      axios.get('/user/withdraw');
-      alert('회원 탈퇴가 완료되었습니다.');
-      localStorage.removeItem('access-token');
-      localStorage.removeItem('refresh-token');
-      window.location.href = '/';
-    } catch (err) {
-      alert('회원 탈퇴에 실패했습니다.');
     }
   };
 
@@ -210,21 +196,8 @@ const MainInfo = ({
           </div>
         )}
       </form>
-      {showAlert && (
-        <AlertModal
-          onConfirm={() => setShowAlert(false)}
-          title={alertInfo.title}
-          showCancel={false}
-          highlight="confirm"
-        >
-          <p>{alertInfo.message}</p>
-        </AlertModal>
-      )}
       {isWithdrawModal && (
-        <WithDrawAlertModal
-          onDeleteAccount={handleDeleteAccount}
-          setIsWithdrawModal={setIsWithdrawModal}
-        />
+        <WithDrawAlertModal setIsWithdrawModal={setIsWithdrawModal} />
       )}
     </section>
   );

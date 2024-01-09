@@ -5,6 +5,7 @@ import CardListSlider from '../../CardListSlider';
 import ApplicationCard from './ApplicationCard';
 
 import './Application.scss';
+import AlertModal from '../../AlertModal';
 
 const Application = () => {
   const [appliedList, setAppliedList] = useState<any>([]);
@@ -12,6 +13,10 @@ const Application = () => {
   const [doneList, setDoneList] = useState<any>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<unknown>(null);
+  const [isDeleteMoal, setIsDeleteModal] = useState(false);
+  const [alertIndex, setAlertIndex] = useState(0);
+  const [cancelSuccess, setCancelSuccess] = useState(false);
+  const [cancelApplication, setCancelApplication] = useState<any>();
 
   const statusToLabel = {
     APPLIED: { label: '신청완료', bgColor: '#4743A8', color: '#FFFFFF' },
@@ -49,25 +54,26 @@ const Application = () => {
     fetchApplication();
   }, []);
 
-  const fetchApplicationDelete = async (
-    applicationId: number,
-    status: string,
-  ) => {
+  const fetchApplicationDelete = async () => {
     try {
-      await axios.delete(`/application/${applicationId}`);
-      if (status === 'APPLIED') {
-        setAppliedList(appliedList.filter((a: any) => a.id !== applicationId));
-      } else if (status === 'IN_PROGRESS') {
-        setInProgressList(
-          inProgressList.filter((a: any) => a.id !== applicationId),
+      await axios.delete(`/application/${cancelApplication.id}`);
+      if (cancelApplication.status === 'APPLIED') {
+        setAppliedList(
+          appliedList.filter((a: any) => a.id !== cancelApplication.id),
         );
-      } else if (status === 'DONE') {
-        setDoneList(doneList.filter((a: any) => a.id !== applicationId));
+      } else if (cancelApplication.status === 'IN_PROGRESS') {
+        setInProgressList(
+          inProgressList.filter((a: any) => a.id !== cancelApplication.id),
+        );
+      } else if (cancelApplication.status === 'DONE') {
+        setDoneList(doneList.filter((a: any) => a.id !== cancelApplication.id));
       }
+      setCancelSuccess(true);
+      setAlertIndex(1);
     } catch (err) {
       setError(err);
-    } finally {
-      alert('프로그램 신청이 취소되었습니다.');
+      setCancelSuccess(false);
+      setAlertIndex(1);
     }
   };
 
@@ -94,7 +100,8 @@ const Application = () => {
                 key={application.id}
                 application={application}
                 statusToLabel={statusToLabel}
-                fetchApplicationDelete={fetchApplicationDelete}
+                setIsDeleteModal={setIsDeleteModal}
+                setCancelApplication={setCancelApplication}
               />
             ))}
           </CardListSlider>
@@ -117,8 +124,9 @@ const Application = () => {
                 key={application.id}
                 application={application}
                 statusToLabel={statusToLabel}
-                fetchApplicationDelete={fetchApplicationDelete}
                 hasBottomLink={false}
+                setIsDeleteModal={setIsDeleteModal}
+                setCancelApplication={setCancelApplication}
               />
             ))}
           </CardListSlider>
@@ -143,13 +151,53 @@ const Application = () => {
                 key={application.id}
                 application={application}
                 statusToLabel={statusToLabel}
-                fetchApplicationDelete={fetchApplicationDelete}
                 hasBottomLink={false}
+                setIsDeleteModal={setIsDeleteModal}
+                setCancelApplication={setCancelApplication}
               />
             ))}
           </CardListSlider>
         )}
       </section>
+      {isDeleteMoal &&
+        (alertIndex === 0 ? (
+          <AlertModal
+            onConfirm={() => {
+              fetchApplicationDelete();
+            }}
+            onCancel={() => setIsDeleteModal(false)}
+            title="프로그램 신청 취소"
+            confirmText="예"
+            cancelText="아니오"
+          >
+            신청한 프로그램을 취소하시면,
+            <br />
+            신청 시에 작성했던 정보가 모두 삭제됩니다.
+            <br />
+            그래도 취소하시겠습니까?
+          </AlertModal>
+        ) : (
+          alertIndex === 1 && (
+            <AlertModal
+              onConfirm={() => {
+                setIsDeleteModal(false);
+                setAlertIndex(0);
+              }}
+              title={
+                cancelSuccess ? '프로그램 신청 취소' : '프로그램 신청 취소 실패'
+              }
+              confirmText="확인"
+              highlight="confirm"
+              showCancel={false}
+            >
+              <p>
+                {cancelSuccess
+                  ? '프로그램 신청이 취소되었습니다.'
+                  : '프로그램 신청 취소를 실패하였습니다.'}
+              </p>
+            </AlertModal>
+          )
+        ))}
     </main>
   );
 };

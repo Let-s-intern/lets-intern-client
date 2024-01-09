@@ -1,14 +1,13 @@
 import { useEffect, useState } from 'react';
-import cn from 'classnames';
 
 import StartContent from './StartContent';
 import MemberSelect from './MemberSelect';
 import InputContent from './InputContent';
 import CautionContent from './CautionContent';
 import ResultContent from './ResultContent';
+import AlertModal from '../../AlertModal';
 
-import classes from './ApplyAside.module.scss';
-import './index.scss';
+import './ApplyAside.scss';
 
 interface ApplyAsdieProps {
   program: any;
@@ -20,6 +19,11 @@ const ApplyAside = ({ program, participated }: ApplyAsdieProps) => {
   const [formData, setFormData] = useState<any>(null);
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
   const [announcementDate, setAnnouncementDate] = useState<string>('');
+  const [showAlert, setShowAlert] = useState(false);
+  const [alertInfo, setAlertInfo] = useState({
+    title: '',
+    message: '',
+  });
 
   const handleModalClose = () => {
     if (applyPageIndex === 3) {
@@ -42,8 +46,6 @@ const ApplyAside = ({ program, participated }: ApplyAsdieProps) => {
 
   let content;
   let modalContent;
-
-  useEffect(() => {}, [applyPageIndex, program]);
 
   if (applyPageIndex === 0) {
     content = (
@@ -73,6 +75,8 @@ const ApplyAside = ({ program, participated }: ApplyAsdieProps) => {
         isLoggedIn={isLoggedIn}
         setFormData={setFormData}
         setApplyPageIndex={setApplyPageIndex}
+        setShowAlert={setShowAlert}
+        setAlertInfo={setAlertInfo}
       />
     );
     modalContent = null;
@@ -106,18 +110,28 @@ const ApplyAside = ({ program, participated }: ApplyAsdieProps) => {
   }
 
   return (
-    <div className="apply-aside">
+    <>
+      {showAlert && (
+        <AlertModal
+          onConfirm={() => setShowAlert(false)}
+          title={alertInfo.title}
+          showCancel={false}
+          highlight="confirm"
+        >
+          <p>{alertInfo.message}</p>
+        </AlertModal>
+      )}
       {modalContent && (
-        <div className={classes['black-background']} onClick={handleModalClose}>
-          <div className="modal">{modalContent}</div>
+        <div className="apply-black-background" onClick={handleModalClose}>
+          <div className="apply-modal">{modalContent}</div>
         </div>
       )}
-      <aside className={classes['apply-aside-content']}>
-        <div className={cn('aside-inner-content', classes.content)}>
-          {content}
-        </div>
-      </aside>
-    </div>
+      <div className="apply-aside">
+        <aside className="apply-aside-content">
+          <div className="aside-inner-content content">{content}</div>
+        </aside>
+      </div>
+    </>
   );
 };
 

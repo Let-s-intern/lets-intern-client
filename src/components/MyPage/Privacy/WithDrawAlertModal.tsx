@@ -1,36 +1,41 @@
 import { useState } from 'react';
 
+import axios from '../../../utils/axios';
 import AlertModal from '../../AlertModal';
 
 import './WithDrawAlertModal.scss';
 
 interface WithDrawAlertModalProps {
-  onDeleteAccount: () => void;
   setIsWithdrawModal: (isWithdrawModal: boolean) => void;
 }
 
 const WithDrawAlertModal = ({
-  onDeleteAccount,
   setIsWithdrawModal,
 }: WithDrawAlertModalProps) => {
   const [withdrawDisabled, setWithdrawDisabled] = useState(true);
+  const [alertIndex, setAlertIndex] = useState(0);
+  const [isSuccess, setIsSuccess] = useState(false);
 
-  const onConfirm = () => {
-    onDeleteAccount();
-    setIsWithdrawModal(false);
+  const handleDeleteAccount = async () => {
+    try {
+      await axios.get('/user/withdraw');
+      localStorage.removeItem('access-token');
+      localStorage.removeItem('refresh-token');
+      setIsSuccess(true);
+      setAlertIndex(1);
+    } catch (err) {
+      setIsSuccess(false);
+      setAlertIndex(1);
+    }
   };
 
-  const onCancel = () => {
-    setIsWithdrawModal(false);
-  };
-
-  return (
+  return alertIndex === 0 ? (
     <AlertModal
       title="회원 탈퇴"
       confirmText="탈퇴"
       cancelText="취소"
-      onConfirm={onConfirm}
-      onCancel={onCancel}
+      onConfirm={() => handleDeleteAccount()}
+      onCancel={() => setIsWithdrawModal(false)}
       disabled={withdrawDisabled}
       className="withdraw-alert-modal"
     >
@@ -61,6 +66,27 @@ const WithDrawAlertModal = ({
           안내사항을 모두 확인하였으며, 이에 동의합니다.
         </label>
       </div>
+    </AlertModal>
+  ) : (
+    <AlertModal
+      title={isSuccess ? '회원 탈퇴 성공' : '회원 탈퇴 실패'}
+      confirmText="확인"
+      onConfirm={() => {
+        setIsWithdrawModal(false);
+        if (isSuccess) {
+          window.location.href = '/';
+        } else {
+          setAlertIndex(0);
+        }
+      }}
+      showCancel={false}
+      className="withdraw-alert-modal"
+    >
+      <p>
+        {isSuccess
+          ? '회원 탈퇴가 완료되었습니다.'
+          : '회원 탈퇴를 실패하였습니다.'}
+      </p>
     </AlertModal>
   );
 };

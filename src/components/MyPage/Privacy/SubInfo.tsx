@@ -6,6 +6,8 @@ interface SubInfoProps {
   loading: boolean;
   setUserInfo: (userInfo: any) => void;
   resetInitialValues: () => void;
+  setShowAlert: (showAlert: boolean) => void;
+  setAlertInfo: (alertInfo: { title: string; message: string }) => void;
 }
 
 const SubInfo = ({
@@ -14,6 +16,8 @@ const SubInfo = ({
   loading,
   setUserInfo,
   resetInitialValues,
+  setShowAlert,
+  setAlertInfo,
 }: SubInfoProps) => {
   const handleChangeSubInfo = (e: any) => {
     const { name, value } = e.target;
@@ -37,7 +41,11 @@ const SubInfo = ({
       }
     });
     if (hasNull) {
-      alert('모든 항목을 입력해주세요.');
+      setAlertInfo({
+        title: '정보 수정 실패',
+        message: '모든 항목을 입력해주세요.',
+      });
+      setShowAlert(true);
       return;
     }
     Object.keys(newValues).forEach((key) => {
@@ -46,15 +54,27 @@ const SubInfo = ({
       }
     });
     if (Object.keys(newValues).length === 0) {
-      alert('변경된 내용이 없습니다.');
+      setAlertInfo({
+        title: '정보 수정 실패',
+        message: '변경된 내용이 없습니다.',
+      });
+      setShowAlert(true);
       return;
     }
     try {
       await axios.patch('/user', newValues);
-      alert('유저 정보가 변경되었습니다.');
+      setAlertInfo({
+        title: '정보 수정 성공',
+        message: '유저 정보가 변경되었습니다.',
+      });
+      setShowAlert(true);
       resetInitialValues();
     } catch (error) {
-      alert('유저 정보 변경에 실패했습니다.');
+      setAlertInfo({
+        title: '정보 수정 실패',
+        message: '유저 정보 변경에 실패했습니다.',
+      });
+      setShowAlert(true);
     }
   };
 

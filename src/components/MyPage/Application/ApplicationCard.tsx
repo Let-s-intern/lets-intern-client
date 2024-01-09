@@ -9,27 +9,19 @@ import './ApplicationCard.scss';
 interface ApplicationCardProps {
   application: any;
   statusToLabel: any;
-  fetchApplicationDelete: (applicationId: number, status: string) => void;
   hasBottomLink?: boolean;
+  setIsDeleteModal: (isDeleteModal: boolean) => void;
+  setCancelApplication: (cancelApplication: any) => void;
 }
 
 const ApplicationCard = ({
   application,
   statusToLabel,
-  fetchApplicationDelete,
   hasBottomLink = true,
+  setIsDeleteModal,
+  setCancelApplication,
 }: ApplicationCardProps) => {
-  const [isDeleteMoal, setIsDeleteModal] = useState(false);
   const navigate = useNavigate();
-
-  const onCancel = () => {
-    setIsDeleteModal(false);
-  };
-
-  const onConfirm = () => {
-    fetchApplicationDelete(application.id, application.status);
-    setIsDeleteModal(false);
-  };
 
   return (
     <>
@@ -67,6 +59,7 @@ const ApplicationCard = ({
               className="link ga_cancel_program"
               onClick={(e) => {
                 e.stopPropagation();
+                setCancelApplication(application);
                 setIsDeleteModal(true);
               }}
             >
@@ -75,21 +68,6 @@ const ApplicationCard = ({
           )}
         </div>
       </div>
-      {isDeleteMoal && (
-        <AlertModal
-          onConfirm={onConfirm}
-          onCancel={onCancel}
-          title="프로그램 신청 취소"
-          confirmText="예"
-          cancelText="아니오"
-        >
-          신청한 프로그램을 취소하시면,
-          <br />
-          신청 시에 작성했던 정보가 모두 삭제됩니다.
-          <br />
-          그래도 취소하시겠습니까?
-        </AlertModal>
-      )}
     </>
   );
 };
