@@ -9,7 +9,6 @@ import { typeToText } from '../../../utils/converTypeToText';
 import { isValidEmail, isValidPhoneNumber } from '../../../utils/valid';
 
 import classes from './InputContent.module.scss';
-import AlertModal from '../../AlertModal';
 
 interface InputContentProps {
   program: any;
@@ -17,6 +16,8 @@ interface InputContentProps {
   isLoggedIn: boolean;
   setApplyPageIndex: (applyPageIndex: number) => void;
   setFormData: (formData: any) => void;
+  setShowAlert: (showAlert: boolean) => void;
+  setAlertInfo: (alertInfo: { title: string; message: string }) => void;
 }
 
 interface ScrollableDiv extends HTMLDivElement {
@@ -29,17 +30,14 @@ const InputContent = ({
   isLoggedIn,
   setApplyPageIndex,
   setFormData,
+  setShowAlert,
+  setAlertInfo,
 }: InputContentProps) => {
   const scrollRef = useRef<ScrollableDiv>(null);
 
   const [isNextButtonDisabled, setIsNextButtonDisabled] =
     useState<boolean>(true);
   const [loading, setLoading] = useState<boolean>(true);
-  const [showAlert, setShowAlert] = useState(false);
-  const [alertInfo, setAlertInfo] = useState({
-    title: '',
-    message: '',
-  });
 
   const { data: userData } = useQuery({
     queryKey: ['user'],
@@ -324,16 +322,6 @@ const InputContent = ({
       >
         다음
       </button>
-      {showAlert && (
-        <AlertModal
-          onConfirm={() => setShowAlert(false)}
-          title={alertInfo.title}
-          showCancel={false}
-          highlight="confirm"
-        >
-          <p>{alertInfo.message}</p>
-        </AlertModal>
-      )}
     </form>
   );
 };

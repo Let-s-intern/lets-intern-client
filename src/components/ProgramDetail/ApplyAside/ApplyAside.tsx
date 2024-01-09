@@ -5,6 +5,7 @@ import MemberSelect from './MemberSelect';
 import InputContent from './InputContent';
 import CautionContent from './CautionContent';
 import ResultContent from './ResultContent';
+import AlertModal from '../../AlertModal';
 
 import './ApplyAside.scss';
 
@@ -18,6 +19,11 @@ const ApplyAside = ({ program, participated }: ApplyAsdieProps) => {
   const [formData, setFormData] = useState<any>(null);
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
   const [announcementDate, setAnnouncementDate] = useState<string>('');
+  const [showAlert, setShowAlert] = useState(false);
+  const [alertInfo, setAlertInfo] = useState({
+    title: '',
+    message: '',
+  });
 
   const handleModalClose = () => {
     if (applyPageIndex === 3) {
@@ -69,6 +75,8 @@ const ApplyAside = ({ program, participated }: ApplyAsdieProps) => {
         isLoggedIn={isLoggedIn}
         setFormData={setFormData}
         setApplyPageIndex={setApplyPageIndex}
+        setShowAlert={setShowAlert}
+        setAlertInfo={setAlertInfo}
       />
     );
     modalContent = null;
@@ -103,6 +111,16 @@ const ApplyAside = ({ program, participated }: ApplyAsdieProps) => {
 
   return (
     <>
+      {showAlert && (
+        <AlertModal
+          onConfirm={() => setShowAlert(false)}
+          title={alertInfo.title}
+          showCancel={false}
+          highlight="confirm"
+        >
+          <p>{alertInfo.message}</p>
+        </AlertModal>
+      )}
       {modalContent && (
         <div className="apply-black-background" onClick={handleModalClose}>
           <div className="apply-modal">{modalContent}</div>
