@@ -14,25 +14,18 @@ const WithDrawAlertModal = ({
 }: WithDrawAlertModalProps) => {
   const [withdrawDisabled, setWithdrawDisabled] = useState(true);
   const [alertIndex, setAlertIndex] = useState(0);
-  const [resultAlertInfo, setResultAlertInfo] = useState({
-    title: '',
-    message: '',
-  });
+  const [isSuccess, setIsSuccess] = useState(false);
 
   const handleDeleteAccount = async () => {
     try {
       await axios.get('/user/withdraw');
       localStorage.removeItem('access-token');
       localStorage.removeItem('refresh-token');
-      setResultAlertInfo({
-        title: '회원 탈퇴 성공',
-        message: '회원 탈퇴가 완료되었습니다.',
-      });
+      setIsSuccess(true);
+      setAlertIndex(1);
     } catch (err) {
-      setResultAlertInfo({
-        title: '회원 탈퇴 실패',
-        message: '회원 탈퇴에 실패했습니다.',
-      });
+      setIsSuccess(false);
+      setAlertIndex(1);
     }
   };
 
@@ -41,10 +34,7 @@ const WithDrawAlertModal = ({
       title="회원 탈퇴"
       confirmText="탈퇴"
       cancelText="취소"
-      onConfirm={() => {
-        handleDeleteAccount();
-        setAlertIndex(1);
-      }}
+      onConfirm={() => handleDeleteAccount()}
       onCancel={() => setIsWithdrawModal(false)}
       disabled={withdrawDisabled}
       className="withdraw-alert-modal"
@@ -79,17 +69,24 @@ const WithDrawAlertModal = ({
     </AlertModal>
   ) : (
     <AlertModal
-      title={resultAlertInfo.title}
+      title={isSuccess ? '회원 탈퇴 성공' : '회원 탈퇴 실패'}
       confirmText="확인"
       onConfirm={() => {
         setIsWithdrawModal(false);
-        window.location.href = '/';
+        if (isSuccess) {
+          window.location.href = '/';
+        } else {
+          setAlertIndex(0);
+        }
       }}
-      disabled={withdrawDisabled}
       showCancel={false}
       className="withdraw-alert-modal"
     >
-      <p>{resultAlertInfo.message}</p>
+      <p>
+        {isSuccess
+          ? '회원 탈퇴가 완료되었습니다.'
+          : '회원 탈퇴를 실패하였습니다.'}
+      </p>
     </AlertModal>
   );
 };
