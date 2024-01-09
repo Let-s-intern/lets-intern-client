@@ -3,6 +3,7 @@ import { useState } from 'react';
 import axios from '../../../utils/axios';
 import { isValidEmail, isValidPhoneNumber } from '../../../utils/valid';
 import WithDrawAlertModal from './WithDrawAlertModal';
+import AlertModal from '../../AlertModal';
 
 interface MainInfoProps {
   mainInfoValues: any;
@@ -22,6 +23,11 @@ const MainInfo = ({
   resetInitialValues,
 }: MainInfoProps) => {
   const [isWithdrawModal, setIsWithdrawModal] = useState(false);
+  const [showAlert, setShowAlert] = useState(false);
+  const [alertInfo, setAlertInfo] = useState({
+    title: '',
+    message: '',
+  });
 
   const handleChangeMainInfo = (e: any) => {
     const { name, value } = e.target;
@@ -46,7 +52,11 @@ const MainInfo = ({
       }
     });
     if (hasNull) {
-      alert('모든 항목을 입력해주세요.');
+      setAlertInfo({
+        title: '정보 수정 실패',
+        message: '모든 항목을 입력해주세요.',
+      });
+      setShowAlert(true);
       return;
     }
     Object.keys(newValues).forEach((key) => {
@@ -55,27 +65,51 @@ const MainInfo = ({
       }
     });
     if (Object.keys(newValues).length === 0) {
-      alert('변경된 내용이 없습니다.');
+      setAlertInfo({
+        title: '정보 수정 실패',
+        message: '변경된 내용이 없습니다.',
+      });
+      setShowAlert(true);
       return;
     }
     if (!isValidEmail(mainInfoValues.email)) {
-      alert('이메일 형식이 올바르지 않습니다.');
+      setAlertInfo({
+        title: '정보 수정 실패',
+        message: '이메일 형식이 올바르지 않습니다.',
+      });
+      setShowAlert(true);
       return;
     }
     if (!isValidPhoneNumber(mainInfoValues.phoneNum)) {
-      alert('휴대폰 번호 형식이 올바르지 않습니다.');
+      setAlertInfo({
+        title: '정보 수정 실패',
+        message: '휴대폰 번호 형식이 올바르지 않습니다.',
+      });
+      setShowAlert(true);
       return;
     }
     try {
       await axios.patch('/user', newValues);
-      alert('유저 정보가 변경되었습니다.');
+      setAlertInfo({
+        title: '정보 수정 성공',
+        message: '유저 정보가 변경되었습니다.',
+      });
+      setShowAlert(true);
       resetInitialValues();
     } catch (error) {
       if ((error as any).response.status === 400) {
-        alert('이미 존재하는 이메일입니다.');
+        setAlertInfo({
+          title: '정보 수정 실패',
+          message: '이미 존재하는 이메일입니다.',
+        });
+        setShowAlert(true);
         return;
       }
-      alert('유저 정보 변경에 실패했습니다.');
+      setAlertInfo({
+        title: '정보 수정 실패',
+        message: '유저 정보 변경에 실패했습니다.',
+      });
+      setShowAlert(true);
     }
   };
 
@@ -176,6 +210,16 @@ const MainInfo = ({
           </div>
         )}
       </form>
+      {showAlert && (
+        <AlertModal
+          onConfirm={() => setShowAlert(false)}
+          title={alertInfo.title}
+          showCancel={false}
+          highlight="confirm"
+        >
+          <p>{alertInfo.message}</p>
+        </AlertModal>
+      )}
       {isWithdrawModal && (
         <WithDrawAlertModal
           onDeleteAccount={handleDeleteAccount}

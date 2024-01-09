@@ -18,6 +18,7 @@
   position: fixed;
   display: none;
   width: 350px;
+  z-index: 100;
 
   .content {
     z-index: 0;

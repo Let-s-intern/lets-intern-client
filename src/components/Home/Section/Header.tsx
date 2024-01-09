@@ -93,7 +93,7 @@ const Header = () => {
           showCancel={false}
           highlight="confirm"
         >
-          <p className="font-medium">오픈 예정입니다.</p>
+          <p>오픈 예정입니다.</p>
         </AlertModal>
       )}
     </header>
