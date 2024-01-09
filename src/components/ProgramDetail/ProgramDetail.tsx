@@ -1,8 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useQuery } from 'react-query';
-import { useLocation, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 
-import ChannelService from '../../ChannelService';
 import axios from '../../utils/axios';
 import Header from './Header';
 import MainContent from './MainContent';
@@ -10,7 +9,7 @@ import ApplySection from './ApplySection/ApplySection';
 import ApplyAside from './ApplyAside/ApplyAside';
 
 import './ProgramDetail.scss';
-import '../../styles/github-markdown-light.css';
+import AlertModal from '../AlertModal';
 
 const ProgramDetail = () => {
   const params = useParams();

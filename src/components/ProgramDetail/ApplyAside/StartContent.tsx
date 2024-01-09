@@ -38,9 +38,8 @@ const StartContent = ({
 
   return (
     <div className={classes.content}>
-      <h3>{typeToText[program.type]}</h3>
-      <h2>{program.title}</h2>
-
+      <h3 className="program-type">{typeToText[program.type]}</h3>
+      <h2 className="program-title">{program.title}</h2>
       {program.type === 'CHALLENGE_FULL' ||
       program.type === 'CHALLENGE_HALF' ? (
         <ul className={classes['date-info-list']}>
@@ -90,9 +89,14 @@ const StartContent = ({
 
       <button
         id="apply_button"
-        className={cn('apply-button', classes['apply-start-button'], {
-          disabled: participated || program.status !== 'OPEN',
-        })}
+        className={cn(
+          'apply-button',
+          'next-button',
+          classes['apply-start-button'],
+          {
+            disabled: participated || program.status !== 'OPEN',
+          },
+        )}
         onClick={handleNextButtonClick}
       >
         {program.status !== 'OPEN'

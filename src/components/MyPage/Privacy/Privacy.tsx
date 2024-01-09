@@ -5,6 +5,7 @@ import axios from '../../../utils/axios';
 import MainInfo from './MainInfo';
 import PasswordChange from './PasswordChange';
 import SubInfo from './SubInfo';
+import AlertModal from '../../AlertModal';
 
 import './Privacy.scss';
 
@@ -17,6 +18,15 @@ const Privacy = () => {
     initialValues: {},
   });
   const [loading, setLoading] = useState(true);
+  const [showAlert, setShowAlert] = useState(false);
+  const [alertInfo, setAlertInfo] = useState<{
+    title: string;
+    message: string;
+    onConfirm?: () => void;
+  }>({
+    title: '',
+    message: '',
+  });
 
   const { isError } = useQuery({
     queryKey: ['user'],
@@ -27,6 +37,7 @@ const Privacy = () => {
         mainInfoValues: { name, email, phoneNum },
         subInfoValues: { major, university },
         initialValues: { name, email, phoneNum, major, university },
+        passwordValues: {},
         socialAuth: authProvider,
       });
       setLoading(false);
@@ -57,6 +68,8 @@ const Privacy = () => {
         loading={loading}
         setUserInfo={setUserInfo}
         resetInitialValues={resetInitialValues}
+        setShowAlert={setShowAlert}
+        setAlertInfo={setAlertInfo}
       />
       <SubInfo
         subInfoValues={userInfo.subInfoValues}
@@ -64,11 +77,38 @@ const Privacy = () => {
         loading={loading}
         setUserInfo={setUserInfo}
         resetInitialValues={resetInitialValues}
+        setShowAlert={setShowAlert}
+        setAlertInfo={setAlertInfo}
       />
       <PasswordChange
         passwordValues={userInfo.passwordValues}
         setUserInfo={setUserInfo}
+        setShowAlert={setShowAlert}
+        setAlertInfo={setAlertInfo}
       />
+      {showAlert && (
+        <AlertModal
+          onConfirm={() => {
+            alertInfo.onConfirm && alertInfo.onConfirm();
+            setShowAlert(false);
+            setAlertInfo({ title: '', message: '' });
+          }}
+          title={alertInfo.title}
+          showCancel={false}
+          highlight="confirm"
+        >
+          <p>
+            {alertInfo.message.includes('\n')
+              ? alertInfo.message.split('\n').map((line) => (
+                  <>
+                    {line}
+                    <br />
+                  </>
+                ))
+              : alertInfo.message}
+          </p>
+        </AlertModal>
+      )}
     </main>
   );
 };

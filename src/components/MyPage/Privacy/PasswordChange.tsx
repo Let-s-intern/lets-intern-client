@@ -4,11 +4,15 @@ import { isValidPassword } from '../../../utils/valid';
 interface PasswordChangeProps {
   passwordValues: any;
   setUserInfo: (userInfo: any) => void;
+  setShowAlert: (showAlert: boolean) => void;
+  setAlertInfo: (alertInfo: { title: string; message: string }) => void;
 }
 
 const PasswordChange = ({
   passwordValues,
   setUserInfo,
+  setShowAlert,
+  setAlertInfo,
 }: PasswordChangeProps) => {
   const handleChangePassword = (e: any) => {
     const { name, value } = e.target;
@@ -28,21 +32,36 @@ const PasswordChange = ({
       !passwordValues.newPassword ||
       !passwordValues.newPasswordConfirm
     ) {
-      alert('모든 항목을 입력해주세요.');
+      setAlertInfo({
+        title: '비밀번호 변경 실패',
+        message: '모든 항목을 입력해주세요.',
+      });
+      setShowAlert(true);
       return;
     }
     if (passwordValues.newPassword === passwordValues.currentPassword) {
-      alert('기존 비밀번호와 동일한 비밀번호입니다.');
+      setAlertInfo({
+        title: '비밀번호 변경 실패',
+        message: '기존 비밀번호와 동일한 비밀번호입니다.',
+      });
+      setShowAlert(true);
       return;
     }
     if (passwordValues.newPassword !== passwordValues.newPasswordConfirm) {
-      alert('새로운 비밀번호가 비밀번호 확인과 일치하지 않습니다.');
+      setAlertInfo({
+        title: '비밀번호 변경 실패',
+        message: '새로운 비밀번호가 비밀번호 확인과 일치하지 않습니다.',
+      });
+      setShowAlert(true);
       return;
     }
     if (!isValidPassword(passwordValues.newPassword)) {
-      alert(
-        '새로운 비밀번호의 형식이 올바르지 않습니다. (영어, 숫자, 특수문자 포함 8자 이상)',
-      );
+      setAlertInfo({
+        title: '비밀번호 변경 실패',
+        message:
+          '새로운 비밀번호의 형식이 올바르지 않습니다.\n(영어, 숫자, 특수문자 포함 8자 이상)',
+      });
+      setShowAlert(true);
       return;
     }
     try {
@@ -51,7 +70,11 @@ const PasswordChange = ({
         newPassword: passwordValues.newPassword,
       };
       await axios.patch('/user/password', reqData);
-      alert('비밀번호가 변경되었습니다.');
+      setAlertInfo({
+        title: '비밀번호 변경 성공',
+        message: '비밀번호가 변경되었습니다.',
+      });
+      setShowAlert(true);
       setUserInfo((prev: any) => ({
         ...prev,
         passwordValues: {
@@ -62,9 +85,17 @@ const PasswordChange = ({
       }));
     } catch (err) {
       if ((err as any).response.status === 400) {
-        alert('기존 비밀번호가 일치하지 않습니다.');
+        setAlertInfo({
+          title: '비밀번호 변경 실패',
+          message: '기존 비밀번호가 일치하지 않습니다.',
+        });
+        setShowAlert(true);
       } else {
-        alert('비밀번호 변경에 실패했습니다.');
+        setAlertInfo({
+          title: '비밀번호 변경 실패',
+          message: '비밀번호 변경에 실패했습니다.',
+        });
+        setShowAlert(true);
       }
     }
   };

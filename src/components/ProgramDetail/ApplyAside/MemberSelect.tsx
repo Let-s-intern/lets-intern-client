@@ -106,7 +106,7 @@ const MemberSelect = ({ setApplyPageIndex }: MemberSelectProps) => {
         </AlertModal>
       )}
       <button
-        className={cn('member-type-next-button', 'next-button', {
+        className={cn('member-type-next-button', 'next-bottom-button', {
           disabled: isNextButtonDisabled,
         })}
         onClick={handleNextButtonClicked}
