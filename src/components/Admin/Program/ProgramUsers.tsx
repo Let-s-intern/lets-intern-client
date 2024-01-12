@@ -10,9 +10,11 @@ import axios from '../../../utils/axios';
 import AdminPagination from '../AdminPagination';
 
 import './ProgramUsers.scss';
+import { useQueryClient, useQuery } from '@tanstack/react-query';
 
 const ProgramUsers = () => {
   const params = useParams();
+  const queryClient = useQueryClient();
   const [searchParams] = useSearchParams();
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<unknown>(null);
@@ -22,35 +24,52 @@ const ProgramUsers = () => {
 
   const sizePerPage = 10;
 
+  const applicationQuery = useQuery({
+    queryKey: [
+      'applications',
+      'programs',
+      params.programId,
+      { page: searchParams.get('page') },
+    ],
+    queryFn: async ({ queryKey }) => {
+      const res = await axios.get(`/application/admin/${queryKey[2]}`, {
+        params: {
+          page: queryKey[3],
+          size: sizePerPage,
+        },
+      });
+      return res.data;
+    },
+  });
+
+  const programQuery = useQuery({
+    queryKey: ['programs', params.programId],
+    queryFn: async ({ queryKey }) => {
+      const res = await axios.get(`/program/admin/${queryKey[1]}`);
+      return res.data;
+    },
+  });
+
   useEffect(() => {
-    const fetchProgram = async () => {
-      try {
-        const res = await axios.get(`/program/admin/${params.programId}`);
-        setProgram(res.data);
-      } catch (err) {
-        setError(err);
-      }
-    };
-    const fetchProgramUsers = async () => {
-      const currentPage = searchParams.get('page');
-      const pageParams = {
-        page: currentPage,
-        size: sizePerPage,
-      };
-      try {
-        const res = await axios.get(`/application/admin/${params.programId}`, {
-          params: pageParams,
-        });
-        setApplications(res.data.applicationList);
-        setMaxPage(res.data.pageInfo.totalPages);
-      } catch (err) {
-        setError(err);
-      }
-    };
-    fetchProgram();
-    fetchProgramUsers();
+    if (!applicationQuery || !programQuery) {
+      return;
+    }
+    if (applicationQuery.isError) {
+      setError(applicationQuery.error);
+      setLoading(false);
+      return;
+    }
+    if (programQuery.isError) {
+      setError(programQuery.error);
+      setLoading(false);
+      return;
+    }
+    const { applicationList, pageInfo } = applicationQuery.data;
+    setApplications(applicationList);
+    setMaxPage(pageInfo.totalPages);
+    setProgram(programQuery);
     setLoading(false);
-  }, [params, searchParams]);
+  }, [applicationQuery]);
 
   const handleApplicationStatusChange = async (
     e: any,
@@ -61,9 +80,9 @@ const ProgramUsers = () => {
         status: e.target.value,
         isApproved: e.target.value === 'IN_PROGRESS',
       });
-      const res = await axios.get(`/application/admin/${params.programId}`);
-      setApplications(res.data.applicationList);
+      queryClient.invalidateQueries({ queryKey: ['applications'] });
     } catch (err) {
+      console.log(err);
       alert('참여 상태 변경에 실패했습니다.');
     }
   };
