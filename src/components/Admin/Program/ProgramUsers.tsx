@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useParams, useSearchParams } from 'react-router-dom';
+import { useQueryClient, useQuery } from '@tanstack/react-query';
 import styled from 'styled-components';
 
 import ActionButton from '../ActionButton';
@@ -10,13 +11,12 @@ import axios from '../../../utils/axios';
 import AdminPagination from '../AdminPagination';
 
 import './ProgramUsers.scss';
-import { useQueryClient, useQuery } from '@tanstack/react-query';
 
 const ProgramUsers = () => {
   const params = useParams();
   const queryClient = useQueryClient();
   const [searchParams] = useSearchParams();
-  const [loading, setLoading] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<unknown>(null);
   const [program, setProgram] = useState<any>({});
   const [applications, setApplications] = useState<any>([]);
@@ -31,6 +31,7 @@ const ProgramUsers = () => {
     queryKey: ['programs', params.programId],
     queryFn: async ({ queryKey }) => {
       const res = await axios.get(`/program/admin/${queryKey[1]}`);
+      setProgram(res.data);
       return res.data;
     },
   });
@@ -46,6 +47,9 @@ const ProgramUsers = () => {
       const res = await axios.get(`/application/admin/${queryKey[2]}`, {
         params: pageParams,
       });
+      const { applicationList, pageInfo } = res.data;
+      setApplications(applicationList);
+      setMaxPage(pageInfo.totalPages);
       return res.data;
     },
   });
@@ -56,21 +60,11 @@ const ProgramUsers = () => {
     }
     if (applicationQuery.isError) {
       setError(applicationQuery.error);
-      setLoading(false);
-      return;
-    }
-    if (programQuery.isError) {
+    } else if (programQuery.isError) {
       setError(programQuery.error);
-      setLoading(false);
-      return;
     }
-    console.log(applicationQuery);
-    const { applicationList, pageInfo } = applicationQuery.data;
-    setApplications(applicationList);
-    setMaxPage(pageInfo.totalPages);
-    setProgram(programQuery.data);
     setLoading(false);
-  }, [applicationQuery]);
+  }, [applicationQuery, programQuery]);
 
   const handleApplicationStatusChange = async (
     e: any,
