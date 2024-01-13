@@ -299,6 +299,7 @@ const InputContent = ({
             onChange={(e) => handleApplyInput(e)}
             multiline
             rows={4}
+            maxLength={500}
           />
           {program.type === 'LETS_CHAT' && (
             <Input
