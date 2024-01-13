@@ -2,7 +2,6 @@ import styled from 'styled-components';
 
 import ActionButton from '../ActionButton';
 import TD from '../TD';
-import UserMemoModal from './UserMemoModal';
 
 interface MemoTableBodyProps {
   memoList: any[];

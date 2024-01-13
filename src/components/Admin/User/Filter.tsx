@@ -1,9 +1,10 @@
+import { useNavigate, useSearchParams } from 'react-router-dom';
+import { FormControl, InputLabel, MenuItem, Select } from '@mui/material';
 import styled from 'styled-components';
 import { IoIosSearch } from 'react-icons/io';
-import { FormControl, InputLabel, MenuItem, Select } from '@mui/material';
+
 import Input from '../../Input';
 import ActionButton from '../ActionButton';
-import { useNavigate, useSearchParams } from 'react-router-dom';
 
 interface FilterProps {
   searchValues: any;

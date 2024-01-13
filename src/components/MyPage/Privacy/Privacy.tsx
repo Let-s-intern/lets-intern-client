@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { useQuery } from 'react-query';
+import { useEffect, useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
 
 import axios from '../../../utils/axios';
 import MainInfo from './MainInfo';
@@ -30,9 +30,10 @@ const Privacy = () => {
 
   const { isError } = useQuery({
     queryKey: ['user'],
-    queryFn: async () => await axios.get('/user'),
-    onSuccess: ({ data }) => {
-      const { name, email, phoneNum, major, university, authProvider } = data;
+    queryFn: async () => {
+      const res = await axios.get('/user');
+      const { name, email, phoneNum, major, university, authProvider } =
+        res.data;
       setUserInfo({
         mainInfoValues: { name, email, phoneNum },
         subInfoValues: { major, university },
@@ -41,12 +42,16 @@ const Privacy = () => {
         socialAuth: authProvider,
       });
       setLoading(false);
-    },
-    onError: () => {
-      setLoading(false);
+      return res.data;
     },
     refetchOnWindowFocus: false,
   });
+
+  useEffect(() => {
+    if (isError) {
+      setLoading(false);
+    }
+  }, [isError]);
 
   const resetInitialValues = () => {
     setUserInfo((prev: any) => ({

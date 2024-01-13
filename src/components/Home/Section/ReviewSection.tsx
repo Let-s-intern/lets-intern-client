@@ -1,5 +1,3 @@
-import { Fragment } from 'react';
-
 import Review from './Review';
 import reviews from '../../../data/home-reviews.json';
 

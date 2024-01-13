@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 import { useParams } from 'react-router-dom';
 
 import axios from '../../utils/axios';
@@ -9,7 +9,6 @@ import ApplySection from './ApplySection/ApplySection';
 import ApplyAside from './ApplyAside/ApplyAside';
 
 import './ProgramDetail.scss';
-import AlertModal from '../AlertModal';
 
 const ProgramDetail = () => {
   const params = useParams();
@@ -22,15 +21,22 @@ const ProgramDetail = () => {
 
   const { isError } = useQuery({
     queryKey: ['program', params.programId],
-    queryFn: async ({ queryKey }) => await axios.get(`/program/${queryKey[1]}`),
-    onSuccess: ({ data }) => {
-      setProgram(data.programDetailVo);
-      setParticipated(data.participated);
-      setReviewList(data.reviewList);
-      setFaqList(data.faqList);
+    queryFn: async ({ queryKey }) => {
+      const res = await axios.get(`/program/${queryKey[1]}`);
+      const { programDetailVo, participated, reviewList, faqList } = res.data;
+      setProgram(programDetailVo);
+      setParticipated(participated);
+      setReviewList(reviewList);
+      setFaqList(faqList);
       setLoading(false);
     },
   });
+
+  useEffect(() => {
+    if (isError) {
+      setLoading(false);
+    }
+  }, [isError]);
 
   useEffect(() => {
     const accessToken = localStorage.getItem('access-token');

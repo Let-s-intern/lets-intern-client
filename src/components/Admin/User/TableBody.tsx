@@ -1,12 +1,10 @@
-import { useEffect, useRef, useState } from 'react';
-import styled, { css } from 'styled-components';
+import { useEffect, useState } from 'react';
+import { FormControl, InputLabel, MenuItem, Select } from '@mui/material';
+import styled from 'styled-components';
 
+import axios from '../../../utils/axios';
 import TD from '../TD';
 import ActionButton from '../ActionButton';
-import parsePhoneNum from '../../../utils/parsePhoneNum';
-import axios from '../../../utils/axios';
-import { FormControl, InputLabel, MenuItem, Select } from '@mui/material';
-import { useSearchParams } from 'react-router-dom';
 
 interface TableBodyProps {
   users: any[];

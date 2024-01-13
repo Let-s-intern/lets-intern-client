@@ -1,14 +1,14 @@
 import { useState } from 'react';
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 
 import axios from '../../../utils/axios';
 import { typeToText } from '../../../utils/converTypeToText';
+import formatDateString from '../../../utils/formatDateString';
 import CardListSlider from '../../CardListSlider';
+import CardListPlaceholder from '../../CardListPlaceholder';
+import ProgramCard from '../../ProgramCard';
 
 import './ProgramSection.scss';
-import formatDateString from '../../../utils/formatDateString';
-import ProgramCard from '../../ProgramCard';
-import CardListPlaceholder from '../../CardListPlaceholder';
 
 const ProgramSection = () => {
   const [programList, setProgramList] = useState<any>();
@@ -16,12 +16,13 @@ const ProgramSection = () => {
 
   const { isError } = useQuery({
     queryKey: ['programs'],
-    queryFn: async () => await axios.get('/program'),
-    onSuccess: (res) => {
+    queryFn: async () => {
+      const res = await axios.get('/program');
       setProgramList(res.data.programList);
       setLoading(false);
+      return res.data;
     },
-  }) as any;
+  });
 
   return (
     <section className="program-section">

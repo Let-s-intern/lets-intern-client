@@ -9,9 +9,9 @@ import UserTableHead from './UserTableHead';
 import UserTableBody from './UserTableBody';
 import axios from '../../../../utils/axios';
 import AdminPagination from '../../AdminPagination';
+import BottomDownload from './BottomDownload';
 
 import './styles.scss';
-import BottomDownload from './BottomDownload';
 
 const ProgramUsers = () => {
   const params = useParams();
@@ -29,7 +29,7 @@ const ProgramUsers = () => {
   };
 
   const programQuery = useQuery({
-    queryKey: ['programs', params.programId],
+    queryKey: ['program', params.programId],
     queryFn: async ({ queryKey }) => {
       const res = await axios.get(`/program/admin/${queryKey[1]}`);
       setProgram(res.data);
@@ -37,10 +37,10 @@ const ProgramUsers = () => {
     },
   });
 
-  const applicationQuery = useQuery({
+  const applicationsQuery = useQuery({
     queryKey: [
       'applications',
-      'programs',
+      'program',
       params.programId,
       { page: pageParams.page },
     ],
@@ -57,16 +57,16 @@ const ProgramUsers = () => {
   });
 
   useEffect(() => {
-    if (applicationQuery.isLoading || programQuery.isLoading) {
+    if (applicationsQuery.isLoading || programQuery.isLoading) {
       return;
     }
-    if (applicationQuery.isError) {
-      setError(applicationQuery.error);
+    if (applicationsQuery.isError) {
+      setError(applicationsQuery.error);
     } else if (programQuery.isError) {
       setError(programQuery.error);
     }
     setLoading(false);
-  }, [applicationQuery, programQuery]);
+  }, [applicationsQuery, programQuery]);
 
   const handleApplicationStatusChange = async (
     e: any,
