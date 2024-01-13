@@ -310,6 +310,7 @@ const InputContent = ({
               onChange={(e) => handleApplyInput(e)}
               multiline
               rows={4}
+              maxLength={500}
             />
           )}
         </div>
