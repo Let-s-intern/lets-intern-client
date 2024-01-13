@@ -3,14 +3,15 @@ import { useParams, useSearchParams } from 'react-router-dom';
 import { useQueryClient, useQuery } from '@tanstack/react-query';
 import styled from 'styled-components';
 
-import ActionButton from '../ActionButton';
-import Table from '../Table';
+import ActionButton from '../../ActionButton';
+import Table from '../../Table';
 import UserTableHead from './UserTableHead';
 import UserTableBody from './UserTableBody';
-import axios from '../../../utils/axios';
-import AdminPagination from '../AdminPagination';
+import axios from '../../../../utils/axios';
+import AdminPagination from '../../AdminPagination';
 
-import './ProgramUsers.scss';
+import './styles.scss';
+import BottomDownload from './BottomDownload';
 
 const ProgramUsers = () => {
   const params = useParams();
@@ -50,6 +51,7 @@ const ProgramUsers = () => {
       const { applicationList, pageInfo } = res.data;
       setApplications(applicationList);
       setMaxPage(pageInfo.totalPages);
+      console.log(applicationList);
       return res.data;
     },
   });
@@ -80,65 +82,6 @@ const ProgramUsers = () => {
       console.log(err);
       alert('참여 상태 변경에 실패했습니다.');
     }
-  };
-
-  const downloadFile = (fileName: string, fileContent: string) => {
-    const blob = new Blob([fileContent], { type: 'text/plain' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = fileName;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    URL.revokeObjectURL(url);
-  };
-
-  const handleDownloadList = async (
-    isApproved: boolean,
-    column: 'EMAIL' | 'PHONE',
-  ) => {
-    let allApplications: any[] = [];
-    for (let pageNum = 1; pageNum <= maxPage; pageNum++) {
-      const res = await axios.get(`/application/admin/${params.programId}`, {
-        params: {
-          page: pageNum,
-          size: pageParams.size,
-        },
-      });
-      allApplications = [...allApplications, ...res.data.applicationList];
-    }
-    const emailList = isApproved
-      ? allApplications
-          .filter(
-            (application: any) =>
-              application.application.status === 'IN_PROGRESS',
-          )
-          .map((application: any) => {
-            if (column === 'EMAIL') {
-              return application.application.email;
-            }
-            return application.application.phoneNum;
-          })
-      : allApplications
-          .filter(
-            (application: any) =>
-              application.application.status === 'APPLIED_NOT_APPROVED',
-          )
-          .map((application: any) => {
-            if (column === 'EMAIL') {
-              return application.application.email;
-            }
-            return application.application.phoneNum;
-          });
-    const label =
-      column === 'EMAIL' ? '이메일' : column === 'PHONE' && '전화번호';
-    const subject =
-      (isApproved ? `참가확정 ${label} 목록` : `미선발 ${label} 목록`) +
-      ' - ' +
-      program.title;
-    const emailString = subject + '\n' + emailList.join('\n');
-    downloadFile(subject + '.txt', emailString);
   };
 
   if (loading) {
@@ -173,36 +116,11 @@ const ProgramUsers = () => {
             handleApplicationStatusChange={handleApplicationStatusChange}
           />
         </Table>
-        <ActionArea>
-          <ActionButton
-            width="10rem"
-            bgColor="green"
-            onClick={() => handleDownloadList(true, 'EMAIL')}
-          >
-            참가확정 이메일
-          </ActionButton>
-          <ActionButton
-            width="10rem"
-            bgColor="red"
-            onClick={() => handleDownloadList(false, 'EMAIL')}
-          >
-            미선발 이메일
-          </ActionButton>
-          <ActionButton
-            width="10rem"
-            bgColor="green"
-            onClick={() => handleDownloadList(true, 'PHONE')}
-          >
-            참가확정 전화번호
-          </ActionButton>
-          <ActionButton
-            width="10rem"
-            bgColor="red"
-            onClick={() => handleDownloadList(false, 'PHONE')}
-          >
-            미선발 전화번호
-          </ActionButton>
-        </ActionArea>
+        <BottomDownload
+          program={program}
+          sizePerPage={pageParams.size}
+          maxPage={maxPage}
+        />
         {applications.length > 0 && <AdminPagination maxPage={maxPage} />}
       </main>
     </>
@@ -226,15 +144,4 @@ const ActionButtonGroup = styled.div`
 const Heading = styled.h1`
   font-size: 1.5rem;
   font-weight: 700;
-`;
-
-const ActionArea = styled.div`
-  width: calc(100vw - 250px);
-  position: fixed;
-  bottom: 3rem;
-  left: 250px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 1rem;
 `;
