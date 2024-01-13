@@ -1,5 +1,7 @@
+import { useState } from 'react';
+import cn from 'classnames';
+
 import TextField from '@mui/material/TextField';
-import { makeStyles, styled } from '@mui/material/styles';
 
 interface InputProps {
   type?: string;
@@ -10,45 +12,10 @@ interface InputProps {
   disabled?: boolean;
   multiline?: boolean;
   rows?: number;
-  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  maxLength?: number;
   className?: string;
+  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
-
-// const InputBlock = styled(TextField)({
-//   '& input:valid:hover + fieldset': {
-//     borderColor: '#6963F6',
-//   },
-//   '& input:valid:focus + fieldset': {
-//     borderColor: '#6963F6',
-//   },
-//   '& label.Mui-focused': {
-//     color: '#6963F6',
-//   },
-//   '& textarea:valid:hover + fieldset': {
-//     borderColor: '#6963F6',
-//   },
-//   '& textarea:valid:focus + fieldset': {
-//     borderColor: '#6963F6',
-//   },
-// });
-
-const InputBlock = styled(TextField)`
-  input:valid:hover + fieldset {
-    border-color: #6963f6;
-  }
-  input:valid:focus + fieldset {
-    border-color: #6963f6;
-  }
-  label.Mui-focused {
-    color: #6963f6;
-  }
-  textarea:hover {
-    border-color: #6963f6;
-  }
-  textarea:focus {
-    border-color: #6963f6;
-  }
-`;
 
 const Input = ({
   type = 'text',
@@ -59,10 +26,34 @@ const Input = ({
   disabled,
   multiline,
   rows,
-  onChange,
+  maxLength,
   className,
+  onChange,
 }: InputProps) => {
-  return (
+  const [focused, setFocused] = useState(false);
+
+  let inputProps = {};
+
+  if (maxLength) {
+    inputProps = { ...inputProps, maxLength };
+  }
+
+  const textFieldStyle = {
+    backgroundColor: 'white',
+    '& .MuiOutlinedInput-root': {
+      '&:hover .MuiOutlinedInput-notchedOutline': {
+        borderColor: '#6963f6',
+      },
+      '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+        borderColor: '#6963f6',
+      },
+    },
+    '& label.Mui-focused': {
+      color: '#6963F6',
+    },
+  };
+
+  const textField = (
     <TextField
       type={type}
       label={label}
@@ -76,21 +67,31 @@ const Input = ({
       autoComplete="off"
       fullWidth
       className={className}
-      sx={{
-        backgroundColor: 'white',
-        '& .MuiOutlinedInput-root': {
-          '&:hover .MuiOutlinedInput-notchedOutline': {
-            borderColor: '#6963f6',
-          },
-          '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-            borderColor: '#6963f6',
-          },
-        },
-        '& label.Mui-focused': {
-          color: '#6963F6',
-        },
-      }}
+      inputProps={inputProps}
+      sx={textFieldStyle}
+      onFocus={() => setFocused(true)}
+      onBlur={() => setFocused(false)}
     />
+  );
+
+  if (!maxLength) {
+    return textField;
+  }
+
+  return (
+    <div>
+      {textField}
+      <div className="mr-2 mt-1 text-right text-xs">
+        <span
+          className={cn({
+            'text-primary': focused,
+            'text-neutral-gray': !focused,
+          })}
+        >
+          {value?.length || 0} / {maxLength}
+        </span>
+      </div>
+    </div>
   );
 };
 
