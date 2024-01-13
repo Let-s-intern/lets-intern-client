@@ -3,6 +3,11 @@ import styled from 'styled-components';
 import Input from '../../Input';
 import Heading from '../Heading';
 import ActionButton from '../ActionButton';
+import { FormControl, InputLabel, MenuItem, Select } from '@mui/material';
+import {
+  convertTypeToBank,
+  typeToBank,
+} from '../../../utils/convertTypeToBank';
 
 interface UserEditorProps {
   loading: boolean;
@@ -102,6 +107,31 @@ const UserEditor = ({
           onChange={handleInputChanged}
           placeholder="희망기업을 입력하세요"
         /> */}
+        <FormControl fullWidth>
+          <InputLabel id="accountType">거래 은행</InputLabel>
+          <Select
+            labelId="accountType"
+            id="accountType"
+            value={values.accountType || ''}
+            label="거래 은행"
+            sx={{ backgroundColor: 'white' }}
+            name="accountType"
+            onChange={handleInputChanged}
+          >
+            {Object.keys(typeToBank).map((type) => (
+              <MenuItem key={type} value={type}>
+                {convertTypeToBank(type)}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+        <Input
+          label="계좌번호"
+          name="accountNumber"
+          value={values.accountNumber || ''}
+          onChange={handleInputChanged}
+          placeholder="계좌번호를 입력하세요"
+        />
         <ActionButtonGroup>
           <ActionButton bgColor="blue">등록</ActionButton>
           <ActionButton

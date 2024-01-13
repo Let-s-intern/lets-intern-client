@@ -68,22 +68,24 @@ const Filter = ({
         />
         <FormControl fullWidth>
           <InputLabel id="managerId">담당 매니저</InputLabel>
-          <Select
-            labelId="managerId"
-            id="managerId"
-            label="프로그램 유형"
-            sx={{ backgroundColor: 'white' }}
-            name="managerId"
-            value={!searchValues.managerId ? 0 : searchValues.managerId}
-            onChange={onChangeSearchValues}
-          >
-            <MenuItem value={0}>미지정</MenuItem>
-            {managers.map((manager: any) => (
-              <MenuItem key={manager.id} value={manager.id}>
-                {manager.name}
-              </MenuItem>
-            ))}
-          </Select>
+          {managers.length > 0 && (
+            <Select
+              labelId="managerId"
+              id="managerId"
+              label="프로그램 유형"
+              sx={{ backgroundColor: 'white' }}
+              name="managerId"
+              value={searchValues.managerId || 0}
+              onChange={onChangeSearchValues}
+            >
+              <MenuItem value={0}>미지정</MenuItem>
+              {managers.map((manager: any) => (
+                <MenuItem key={manager.id} value={manager.id}>
+                  {manager.name}
+                </MenuItem>
+              ))}
+            </Select>
+          )}
         </FormControl>
       </DropdownWrapper>
       <ActionButtonGroup>

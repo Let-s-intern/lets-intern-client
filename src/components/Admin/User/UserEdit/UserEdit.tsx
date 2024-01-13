@@ -19,7 +19,6 @@ const UserEdit = () => {
         const res = await axios.get(`/user/admin/${params.userId}`);
         const user = res.data;
         setInitialValues(user);
-        console.log('user', user);
         const newUser = {
           ...user,
         };
@@ -70,7 +69,6 @@ const UserEdit = () => {
     });
     try {
       const res = await axios.patch(`/user/admin/${params.userId}`, values);
-      console.log('res', res);
       navigate('/admin/users');
     } catch (err) {
       if ((err as any).response.status === 400) {

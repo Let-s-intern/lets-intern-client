@@ -85,6 +85,7 @@ const Privacy = () => {
         setShowAlert={setShowAlert}
         setAlertInfo={setAlertInfo}
       />
+      {/* <AccountInfo /> */}
       <PasswordChange
         passwordValues={userInfo.passwordValues}
         setUserInfo={setUserInfo}
