@@ -22,25 +22,10 @@ const ProgramUsers = () => {
   const [applications, setApplications] = useState<any>([]);
   const [maxPage, setMaxPage] = useState(1);
 
-  const sizePerPage = 10;
-
-  const applicationQuery = useQuery({
-    queryKey: [
-      'applications',
-      'programs',
-      params.programId,
-      { page: searchParams.get('page') },
-    ],
-    queryFn: async ({ queryKey }) => {
-      const res = await axios.get(`/application/admin/${queryKey[2]}`, {
-        params: {
-          page: queryKey[3],
-          size: sizePerPage,
-        },
-      });
-      return res.data;
-    },
-  });
+  const pageParams = {
+    page: Number(searchParams.get('page') || 1),
+    size: 10,
+  };
 
   const programQuery = useQuery({
     queryKey: ['programs', params.programId],
@@ -50,8 +35,23 @@ const ProgramUsers = () => {
     },
   });
 
+  const applicationQuery = useQuery({
+    queryKey: [
+      'applications',
+      'programs',
+      params.programId,
+      { page: pageParams.page },
+    ],
+    queryFn: async ({ queryKey }) => {
+      const res = await axios.get(`/application/admin/${queryKey[2]}`, {
+        params: pageParams,
+      });
+      return res.data;
+    },
+  });
+
   useEffect(() => {
-    if (!applicationQuery || !programQuery) {
+    if (applicationQuery.isLoading || programQuery.isLoading) {
       return;
     }
     if (applicationQuery.isError) {
@@ -64,10 +64,11 @@ const ProgramUsers = () => {
       setLoading(false);
       return;
     }
+    console.log(applicationQuery);
     const { applicationList, pageInfo } = applicationQuery.data;
     setApplications(applicationList);
     setMaxPage(pageInfo.totalPages);
-    setProgram(programQuery);
+    setProgram(programQuery.data);
     setLoading(false);
   }, [applicationQuery]);
 
@@ -108,7 +109,7 @@ const ProgramUsers = () => {
       const res = await axios.get(`/application/admin/${params.programId}`, {
         params: {
           page: pageNum,
-          size: sizePerPage,
+          size: pageParams.size,
         },
       });
       allApplications = [...allApplications, ...res.data.applicationList];
