@@ -51,7 +51,6 @@ const ProgramUsers = () => {
       const { applicationList, pageInfo } = res.data;
       setApplications(applicationList);
       setMaxPage(pageInfo.totalPages);
-      console.log(applicationList);
       return res.data;
     },
   });

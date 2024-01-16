@@ -68,8 +68,8 @@ const UserEdit = () => {
       }
     });
     try {
-      const res = await axios.patch(`/user/admin/${params.userId}`, values);
-      navigate('/admin/users');
+      await axios.patch(`/user/admin/${params.userId}`, values);
+      navigate(-1);
     } catch (err) {
       if ((err as any).response.status === 400) {
         alert('이미 존재하는 이메일입니다.');
