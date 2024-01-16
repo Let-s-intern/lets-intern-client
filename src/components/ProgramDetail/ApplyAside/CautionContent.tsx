@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { useQueryClient } from 'react-query';
+import { useQueryClient } from '@tanstack/react-query';
 import cn from 'classnames';
 
 import axios from '../../../utils/axios';
@@ -60,7 +60,9 @@ const CautionContent = ({
       setMessage('신청 작업이 완료되었습니다.');
       setAnnouncementDate(res.data.announcementDate);
       setApplyPageIndex(4);
-      queryClient.invalidateQueries(['program', params.programId]);
+      queryClient.invalidateQueries({
+        queryKey: ['program', params.programId],
+      });
     } catch (error) {
       setError(error);
       if ((error as any).response.status === 400) {

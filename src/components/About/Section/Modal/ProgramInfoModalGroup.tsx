@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 
 import axios from '../../../../utils/axios';
 import BootcampModal from './BootcampModal';
@@ -29,9 +29,10 @@ const ProgramInfoModalGroup = ({
 
   useQuery({
     queryKey: ['programs'],
-    queryFn: async () => axios.get('/program'),
-    onSuccess: (res) => {
-      res.data.programList
+    queryFn: async () => {
+      const res = await axios.get('/program');
+      const { programList } = res.data;
+      programList
         .filter((program: any) => program.status === 'OPEN')
         .forEach((program: any) => {
           if (
@@ -46,7 +47,7 @@ const ProgramInfoModalGroup = ({
             setApplyAvailableGroup((prev) => ({ ...prev, letsChat: true }));
           }
         });
-      console.log();
+      return res.data;
     },
   });
 

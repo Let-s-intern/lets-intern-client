@@ -10,6 +10,7 @@ interface ActionButtonProps {
   children: React.ReactNode;
   onClick?: () => void;
   to?: string;
+  className?: string;
 }
 
 interface ActionButtonBlockProps {
@@ -24,12 +25,14 @@ const ActionButton = ({
   onClick,
   to,
   children,
+  className,
 }: ActionButtonProps) => {
   const navigate = useNavigate();
 
   return (
     <ActionButtonBlock
       type={type}
+      className={className}
       $bgColor={bgColor}
       $width={width}
       onClick={() => {

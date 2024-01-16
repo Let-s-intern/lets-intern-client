@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
 import styled from 'styled-components';
 
 import axios from '../../../utils/axios';
@@ -41,9 +41,13 @@ const Users = () => {
         let searchedUsers = [];
         for (const user of res.data.userList) {
           const res = await axios.get(`/program/admin/user/${user.id}`);
+          const accountRes = await axios.get(`/user/admin/${user.id}`);
+          const { accountType, accountNumber } = accountRes.data;
           searchedUsers.push({
             ...user,
             programs: [...res.data.userProgramList],
+            accountType,
+            accountNumber,
           });
         }
         searchedUsers = searchUsersWithQuery(searchedUsers);

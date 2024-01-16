@@ -7,9 +7,9 @@ import Table from '../Table';
 import DetailTableHead from './DetailTableHead';
 import DetailTableBody from './DetailTableBody';
 import Heading from '../Heading';
+import AdminPagination from '../AdminPagination';
 
 import './ReviewsDetail.scss';
-import AdminPagination from '../AdminPagination';
 
 const ReviewsDetail = () => {
   const params = useParams();

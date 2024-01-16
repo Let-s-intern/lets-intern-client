@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 import cn from 'classnames';
 import { FormControl, InputLabel, MenuItem, Select } from '@mui/material';
 
@@ -67,19 +67,16 @@ const InputContent = ({
 
   useEffect(() => {
     setLoading(true);
-
     if (!isLoggedIn) {
       setFormData({});
       setLoading(false);
       return;
     }
-
     if (!hasDetailInfo) {
       setFormData({ ...userData });
       setLoading(false);
       return;
     }
-
     setFormData({
       ...userData,
       major: hasDetailInfo ? userData.major : '',

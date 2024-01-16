@@ -6,7 +6,6 @@ import axios from '../../../utils/axios';
 import CautionContent from './CautionContent';
 import Modal from './Modal';
 import ResultContent from './ResultContent';
-
 import MemberInfoInputContent from './MemberInfoInputContent';
 import { isValidEmail, isValidPhoneNumber } from '../../../utils/valid';
 import MemberTypeContent from './MemberTypeContent';

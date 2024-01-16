@@ -1,12 +1,11 @@
-import { useEffect, useRef, useState } from 'react';
-import styled, { css } from 'styled-components';
+import { useEffect, useState } from 'react';
+import { FormControl, InputLabel, MenuItem, Select } from '@mui/material';
+import styled from 'styled-components';
 
+import axios from '../../../utils/axios';
 import TD from '../TD';
 import ActionButton from '../ActionButton';
-import parsePhoneNum from '../../../utils/parsePhoneNum';
-import axios from '../../../utils/axios';
-import { FormControl, InputLabel, MenuItem, Select } from '@mui/material';
-import { useSearchParams } from 'react-router-dom';
+import { convertTypeToBank } from '../../../utils/convertTypeToBank';
 
 interface TableBodyProps {
   users: any[];
@@ -112,24 +111,28 @@ const TableBody = ({ users, setUsers, onDeleteUser }: TableBodyProps) => {
           <TD textAlign="left">
             <FormControl sx={{ minWidth: '8rem' }}>
               <InputLabel id="managerId">담당 매니저</InputLabel>
-              <Select
-                labelId="managerId"
-                id="managerId"
-                label="담당 매니저"
-                value={user.managerId ? user.managerId : 0}
-                onChange={(e) => {
-                  handleManagerChange(e, user.id);
-                }}
-              >
-                <MenuItem value={0}>미지정</MenuItem>
-                {managers.map((manager) => (
-                  <MenuItem key={manager.id} value={manager.id}>
-                    {manager.name}
-                  </MenuItem>
-                ))}
-              </Select>
+              {managers.length > 0 && (
+                <Select
+                  labelId="managerId"
+                  id="managerId"
+                  label="담당 매니저"
+                  value={user.managerId || 0}
+                  onChange={(e) => {
+                    handleManagerChange(e, user.id);
+                  }}
+                >
+                  <MenuItem value={0}>미지정</MenuItem>
+                  {managers.map((manager: any) => (
+                    <MenuItem key={manager.id} value={manager.id}>
+                      {manager.name}
+                    </MenuItem>
+                  ))}
+                </Select>
+              )}
             </FormControl>
           </TD>
+          <TD>{convertTypeToBank(user.accountType) || ''}</TD>
+          <TD>{user.accountNumber || ''}</TD>
           <TD>
             <ActionButtonGroup>
               <ActionButton to={`/admin/users/${user.id}/memo`} bgColor="blue">

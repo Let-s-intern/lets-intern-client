@@ -1,14 +1,14 @@
 import { useState } from 'react';
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 
 import axios from '../../../utils/axios';
 import { typeToText } from '../../../utils/converTypeToText';
+import formatDateString from '../../../utils/formatDateString';
 import CardListSlider from '../../CardListSlider';
+import CardListPlaceholder from '../../CardListPlaceholder';
+import ProgramCard from '../../ProgramCard';
 
 import './ProgramSection.scss';
-import formatDateString from '../../../utils/formatDateString';
-import ProgramCard from '../../ProgramCard';
-import CardListPlaceholder from '../../CardListPlaceholder';
 
 const ProgramSection = () => {
   const [programList, setProgramList] = useState<any>();
@@ -16,12 +16,17 @@ const ProgramSection = () => {
 
   const { isError } = useQuery({
     queryKey: ['programs'],
-    queryFn: async () => await axios.get('/program'),
-    onSuccess: (res) => {
-      setProgramList(res.data.programList);
+    queryFn: async () => {
+      const res = await axios.get('/program');
+      const { programList } = res.data;
+      const newProgramList = programList.filter(
+        (program: any) => program.status === 'OPEN',
+      );
+      setProgramList(newProgramList);
       setLoading(false);
+      return res.data;
     },
-  }) as any;
+  });
 
   return (
     <section className="program-section">
@@ -39,7 +44,7 @@ const ProgramSection = () => {
             <CardListSlider className="program-list">
               <CardListPlaceholder />
             </CardListSlider>
-          ) : !programList || programList.length === 0 ? (
+          ) : programList.length === 0 ? (
             <CardListSlider className="program-list" isEmpty={true}>
               <CardListPlaceholder>
                 현재 진행 중인 프로그램이 없습니다.
@@ -47,29 +52,27 @@ const ProgramSection = () => {
             </CardListSlider>
           ) : (
             <CardListSlider className="program-list">
-              {programList
-                .filter((program: any) => program.status === 'OPEN')
-                .map((program: any) => (
-                  <ProgramCard
-                    key={program.id}
-                    to={`/program/detail/${program.id}`}
-                  >
-                    <div className="card-top">
-                      <h2>{typeToText[program.type]}</h2>
-                      <h3>{program.title}</h3>
+              {programList.map((program: any) => (
+                <ProgramCard
+                  key={program.id}
+                  to={`/program/detail/${program.id}`}
+                >
+                  <div className="card-top">
+                    <h2>{typeToText[program.type]}</h2>
+                    <h3>{program.title}</h3>
+                  </div>
+                  <div className="card-bottom">
+                    <div className="card-bottom-item">
+                      <strong>모집 마감</strong>
+                      <span>{formatDateString(program.dueDate)}</span>
                     </div>
-                    <div className="card-bottom">
-                      <div className="card-bottom-item">
-                        <strong>모집 마감</strong>
-                        <span>{formatDateString(program.dueDate)}</span>
-                      </div>
-                      <div className="card-bottom-item">
-                        <strong>시작 일자</strong>
-                        <span>{formatDateString(program.startDate)}</span>
-                      </div>
+                    <div className="card-bottom-item">
+                      <strong>시작 일자</strong>
+                      <span>{formatDateString(program.startDate)}</span>
                     </div>
-                  </ProgramCard>
-                ))}
+                  </div>
+                </ProgramCard>
+              ))}
             </CardListSlider>
           )}
         </div>
