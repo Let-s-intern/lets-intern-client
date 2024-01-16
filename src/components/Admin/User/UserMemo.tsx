@@ -9,9 +9,9 @@ import MemoTableHead from './MemoTableHead';
 import Heading from '../Heading';
 import ActionButton from '../ActionButton';
 import UserMemoModal from './UserMemoModal';
+import AdminPagination from '../AdminPagination';
 
 import './UserMemo.scss';
-import AdminPagination from '../AdminPagination';
 
 const UserMemo = () => {
   const params = useParams();

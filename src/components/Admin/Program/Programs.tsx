@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 
 import Table from '../Table';
 import TableHead from './TableHead';
 import TableBody from './TableBody';
-import { useSearchParams } from 'react-router-dom';
 
 import Header from '../Header';
 import Heading from '../Heading';

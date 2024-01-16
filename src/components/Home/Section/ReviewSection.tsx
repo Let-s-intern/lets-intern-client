@@ -1,5 +1,3 @@
-import { Fragment } from 'react';
-
 import Review from './Review';
 import reviews from '../../../data/home-reviews.json';
 
@@ -17,25 +15,25 @@ const ReviewSection = () => {
         <div className="review-group">
           <div className="row">
             <div className="row-item">
-              {reviews.slice(0, 9).map((review) => (
-                <Review review={review} />
+              {reviews.slice(0, 9).map((review, index) => (
+                <Review review={review} key={index} />
               ))}
             </div>
             <div className="row-item">
-              {reviews.slice(0, 9).map((review) => (
-                <Review review={review} />
+              {reviews.slice(0, 9).map((review, index) => (
+                <Review review={review} key={index} />
               ))}
             </div>
           </div>
           <div className="row">
             <div className="row-item">
-              {reviews.slice(9).map((review) => (
-                <Review review={review} />
+              {reviews.slice(9).map((review, index) => (
+                <Review review={review} key={index} />
               ))}
             </div>
             <div className="row-item">
-              {reviews.slice(9).map((review) => (
-                <Review review={review} />
+              {reviews.slice(9).map((review, index) => (
+                <Review review={review} key={index} />
               ))}
             </div>
           </div>

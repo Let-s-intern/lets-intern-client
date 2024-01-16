@@ -1,7 +1,6 @@
+import { useEffect } from 'react';
 import styled from 'styled-components';
 import { IoTriangleSharp } from 'react-icons/io5';
-import { useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
 
 interface FAQTabProps {
   faqList: any;

@@ -3,6 +3,7 @@ import { FormControl, InputLabel, MenuItem, Select } from '@mui/material';
 import TD from '../../TD';
 import parseInflowPath from '../../../../utils/parseInflowPath';
 import parseGrade from '../../../../utils/parseGrade';
+import { Link } from 'react-router-dom';
 
 interface UserTableBodyProps {
   program: any;
@@ -26,7 +27,14 @@ const UserTableBody = ({
           </TD>
           <TD>{parseInflowPath(application.application.inflowPath)}</TD>
           <TD>{application.application.email}</TD>
-          <TD>{application.application.name}</TD>
+          <TD>
+            <Link
+              to={`/admin/users/${application.optionalInfo.userId}`}
+              className="cursor-pointer text-neutral-grey underline"
+            >
+              {application.application.name}
+            </Link>
+          </TD>
           <TD>{application.application.phoneNum}</TD>
           <TD>
             {application.optionalInfo

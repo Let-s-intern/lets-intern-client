@@ -1,6 +1,7 @@
 import styled from 'styled-components';
-import Star from '../Review/Star';
 import { useEffect } from 'react';
+
+import Star from '../Review/Star';
 
 interface ReviewTabProps {
   reviewList: any;
