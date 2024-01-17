@@ -29,6 +29,7 @@ const ProgramDetail = () => {
       setReviewList(reviewList);
       setFaqList(faqList);
       setLoading(false);
+      return res.data;
     },
   });
 
