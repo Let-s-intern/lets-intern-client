@@ -2,8 +2,6 @@ import { useSearchParams } from 'react-router-dom';
 import cn from 'classnames';
 import { RiArrowLeftSLine, RiArrowRightSLine } from 'react-icons/ri';
 
-import './AdminPagination.scss';
-
 interface AdminPaginationProps {
   maxPage: number;
 }
@@ -37,18 +35,21 @@ const AdminPagination = ({ maxPage }: AdminPaginationProps) => {
   };
 
   return (
-    <div className="admin-pagination">
-      <span className="arrow" onClick={() => handleArrowLeftClick()}>
+    <div className="admin-pagination flex w-full items-center justify-center gap-4">
+      <span
+        className="cursor-pointer text-xl"
+        onClick={() => handleArrowLeftClick()}
+      >
         <i>
           <RiArrowLeftSLine />
         </i>
       </span>
-      <ul>
+      <ul className="flex items-center gap-4">
         {Array.from(Array(maxPage), (_, index) => index + 1).map((page) => (
           <li
             key={page}
-            className={cn({
-              ['active']:
+            className={cn('cursor-pointer', {
+              'font-medium text-[#4F46E5]':
                 page === Number(searchParams.get('page')) ||
                 (searchParams.get('page') === null && page === 1),
             })}
@@ -58,7 +59,10 @@ const AdminPagination = ({ maxPage }: AdminPaginationProps) => {
           </li>
         ))}
       </ul>
-      <span className="arrow" onClick={() => handleArrowRightClick()}>
+      <span
+        className="cursor-pointer text-xl"
+        onClick={() => handleArrowRightClick()}
+      >
         <i>
           <RiArrowRightSLine />
         </i>
