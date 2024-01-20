@@ -28,12 +28,16 @@ const UserTableBody = ({
           <TD>{parseInflowPath(application.application.inflowPath)}</TD>
           <TD>{application.application.email}</TD>
           <TD>
-            <Link
-              to={`/admin/users/${application.optionalInfo.userId}`}
-              className="cursor-pointer text-neutral-grey underline"
-            >
-              {application.application.name}
-            </Link>
+            {application.optionalInfo ? (
+              <Link
+                to={`/admin/users/${application.optionalInfo.userId}`}
+                className="cursor-pointer text-neutral-grey underline"
+              >
+                {application.application.name}
+              </Link>
+            ) : (
+              <span>{application.application.name}</span>
+            )}
           </TD>
           <TD>{application.application.phoneNum}</TD>
           <TD>
