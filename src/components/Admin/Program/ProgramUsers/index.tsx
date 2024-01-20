@@ -49,6 +49,7 @@ const ProgramUsers = () => {
         params: pageParams,
       });
       const { applicationList, pageInfo } = res.data;
+      console.log(applicationList);
       setApplications(applicationList);
       setMaxPage(pageInfo.totalPages);
       return res.data;
