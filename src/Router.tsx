@@ -1,13 +1,13 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 
-import Home from './components/Home/Home';
+import Home from './components/Home';
 import About from './components/About/About';
 import Programs from './components/Programs/Programs';
 import ProgramDetail from './components/ProgramDetail/ProgramDetail';
-import Login from './components/Login/Login';
+import Login from './components/Auth/Login';
 import MyPage from './components/MyPage/MyPage';
-import SignUp from './pages/SignUp';
-import FindPassword from './pages/FindPassword';
+import SignUp from './components/Auth/SignUp';
+import FindPassword from './components/Auth/FindPassword';
 import Privacy from './components/MyPage/Privacy/Privacy';
 import Review from './components/MyPage/Review/Review';
 import Layout from './components/Layout';

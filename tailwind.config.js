@@ -3,6 +3,9 @@ module.exports = {
   content: ['./src/**/*.{js,jsx,ts,tsx}'],
   theme: {
     extend: {
+      screens: {
+        xs: '426px',
+      },
       fontFamily: {
         notosans: ['NotoSansKR', 'sans-serif'],
       },
