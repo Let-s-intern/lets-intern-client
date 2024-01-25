@@ -1,14 +1,12 @@
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 
-import axios from '../../../utils/axios';
-import { typeToText } from '../../../utils/converTypeToText';
-import formatDateString from '../../../utils/formatDateString';
-import CardListSlider from '../../CardListSlider';
-import CardListPlaceholder from '../../CardListPlaceholder';
-import ProgramCard from '../../ProgramCard';
-
-import './ProgramSection.scss';
+import axios from '../../../../utils/axios';
+import { typeToText } from '../../../../utils/converTypeToText';
+import formatDateString from '../../../../utils/formatDateString';
+import CardListSlider from '../../../CardListSlider';
+import CardListPlaceholder from '../../../CardListPlaceholder';
+import ProgramCard from '../../../ProgramCard';
 
 const ProgramSection = () => {
   const [programList, setProgramList] = useState<any>();
@@ -29,29 +27,27 @@ const ProgramSection = () => {
   });
 
   return (
-    <section className="program-section">
-      <div className="section-content">
-        <h2 className="section-title small-text">모집 중인 프로그램</h2>
-        <p className="section-description">
-          아래에서 모집 중인 프로그램을 확인해 보세요!
-        </p>
-        <div className="bottom-content">
+    <section className="px-6">
+      <div className="mx-auto max-w-5xl">
+        <h2 className="text-2xl font-semibold">모집 중인 프로그램</h2>
+        <p>아래에서 모집 중인 프로그램을 확인해 보세요!</p>
+        <div className="mt-5">
           {isError ? (
-            <CardListSlider className="program-list" isEmpty={true}>
+            <CardListSlider isEmpty={true}>
               <CardListPlaceholder>에러 발생</CardListPlaceholder>
             </CardListSlider>
           ) : loading ? (
-            <CardListSlider className="program-list">
+            <CardListSlider>
               <CardListPlaceholder />
             </CardListSlider>
           ) : programList.length === 0 ? (
-            <CardListSlider className="program-list" isEmpty={true}>
+            <CardListSlider isEmpty={true}>
               <CardListPlaceholder>
                 현재 진행 중인 프로그램이 없습니다.
               </CardListPlaceholder>
             </CardListSlider>
           ) : (
-            <CardListSlider className="program-list">
+            <CardListSlider>
               {programList.map((program: any) => (
                 <ProgramCard
                   key={program.id}

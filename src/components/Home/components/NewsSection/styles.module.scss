@@ -1,0 +1,14 @@
+@use '../../../../styles/utils.scss' as *;
+
+.input {
+  border-bottom: 1px solid #cccbcb;
+  border-radius: 0;
+  outline: none;
+  padding-bottom: 0.75rem;
+  margin: 0 0.75rem;
+
+  &:focus {
+    border-bottom: 1.5px solid #6963f6;
+    margin-bottom: -0.5px;
+  }
+}

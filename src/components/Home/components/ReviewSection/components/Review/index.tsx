@@ -6,8 +6,8 @@ interface ReviewProps {
 
 const Review = ({ review }: ReviewProps) => {
   return (
-    <article key={review.id} className="review">
-      <p>
+    <article className="flex h-48 w-full min-w-[12rem] flex-col justify-between rounded-lg bg-white p-6">
+      <p className="text-sm font-medium leading-[1.8]">
         {review.content.split('\n').map((line: string, index: number) => (
           <Fragment key={index}>
             {line}
@@ -15,7 +15,7 @@ const Review = ({ review }: ReviewProps) => {
           </Fragment>
         ))}
       </p>
-      <figure>
+      <figure className="text-neutral-400">
         {review.program}, {review.user}
       </figure>
     </article>

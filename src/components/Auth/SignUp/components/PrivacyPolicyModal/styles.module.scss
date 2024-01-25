@@ -1,0 +1,48 @@
+.tableItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border-bottom: 1px solid black;
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  @media (min-width: 640px) {
+    &:nth-child(3) {
+      border-bottom: none;
+    }
+
+    &:nth-child(2n) {
+      border-left: 1px solid black;
+    }
+  }
+
+  @media (min-width: 768px) {
+    border-bottom: none;
+
+    & + & {
+      border-left: 1px solid black;
+    }
+  }
+
+  .thead {
+    width: 100%;
+    border-bottom: 1px solid black;
+    text-align: center;
+    font-weight: 700;
+    padding: 0.25rem 0;
+    font-size: 0.875rem;
+
+    @media (min-width: 640px) {
+      &:nth-child(2n) {
+        border-left: 1px solid black;
+      }
+    }
+  }
+
+  .tbody {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.875rem;
+  }
+}

@@ -2,11 +2,9 @@ import { useEffect, useState } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import axios from 'axios';
 
-import Button from '../Button';
-import Input from '../Input';
-import SocialLogin from '../SocialLogin';
-
-import './Login.scss';
+import Button from '../../Button';
+import Input from '../../Input';
+import SocialLogin from '../../SocialLogin';
 
 interface TextLinkProps {
   to: string;
@@ -98,11 +96,13 @@ const Login = () => {
   };
 
   return (
-    <main className="login-page">
+    <main className="mx-auto px-4 sm:max-w-md">
       <header>
-        <h1>반갑습니다!</h1>
+        <h1 className="mb-8 mt-12 text-center text-xl font-semibold">
+          반갑습니다!
+        </h1>
       </header>
-      <form onSubmit={handleLogin}>
+      <form className="flex flex-col gap-2" onSubmit={handleLogin}>
         <Input
           type="email"
           label="이메일"
@@ -115,13 +115,17 @@ const Login = () => {
           value={password}
           onChange={(e: any) => setPassword(e.target.value)}
         />
-        {errorMessage && <span className="error-alert">{errorMessage}</span>}
+        {errorMessage && (
+          <span className="text-center text-sm font-medium text-red-600">
+            {errorMessage}
+          </span>
+        )}
         <Button type="submit" disabled={buttonDisabled}>
           로그인
         </Button>
       </form>
       <SocialLogin type="LOGIN" />
-      <div className="bottom">
+      <div className="mt-8 flex justify-center gap-8">
         <TextLink to="/signup">회원가입</TextLink>
         <TextLink to="/find-password" dark>
           비밀번호 찾기
