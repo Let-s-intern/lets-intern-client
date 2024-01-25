@@ -2,7 +2,7 @@ import styles from './styles.module.scss';
 
 const NewsSection = () => {
   return (
-    <section className="news-section flex w-full flex-col px-5 md:flex-row">
+    <section className="flex w-full flex-col px-5 md:flex-row">
       <div className="flex flex-1 flex-col items-stretch sm:mx-auto md:items-center md:p-0">
         <div className="w-full px-3 sm:w-[30rem] md:w-[20rem] md:p-0">
           <h2 className="text-[1.75rem] font-semibold">
@@ -20,9 +20,9 @@ const NewsSection = () => {
           </p>
         </div>
       </div>
-      <div className="right mx-auto mt-8 w-full sm:mt-8 sm:w-[30rem] md:mt-0 md:pr-12">
+      <div className="mx-auto mt-8 w-full sm:mt-8 sm:w-[30rem] md:mt-0 md:pr-12">
         <form>
-          <div className="input-group mx-auto flex flex-col gap-8">
+          <div className="mx-auto flex flex-col gap-8">
             <input
               className={styles.input}
               type="text"
