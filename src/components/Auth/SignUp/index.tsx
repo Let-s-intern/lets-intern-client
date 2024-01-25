@@ -1,19 +1,19 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import Input from '../components/Input';
-import Button from '../components/Button';
-import axios from '../utils/axios';
-import PrivacyPolicyModal from '../components/SignUp/PrivacyPolicyModal';
-import CheckBox from '../components/SignUp/CheckBox';
-import PrivacyLink from '../components/SignUp/PrivacyLink';
+import Input from '../../Input';
+import Button from '../../Button';
+import axios from '../../../utils/axios';
+import PrivacyPolicyModal from './components/PrivacyPolicyModal';
+import CheckBox from './components/CheckBox';
+import PrivacyLink from './components/PrivacyLink';
 import {
   isValidEmail,
   isValidPassword,
   isValidPhoneNumber,
-} from '../utils/valid';
-import AlertModal from '../components/AlertModal';
-import SocialLogin from '../components/SocialLogin';
+} from '../../../utils/valid';
+import AlertModal from '../../AlertModal';
+import SocialLogin from '../../SocialLogin';
 
 const SignUp = () => {
   const navigate = useNavigate();
@@ -32,7 +32,6 @@ const SignUp = () => {
   const [showModal, setShowModal] = useState<boolean>(false);
   const [successModalOpen, setSuccessModalOpen] = useState<boolean>(false);
 
-  // 로그인 상태에서 회원가입 페이지에 접근하면 메인 페이지로 이동
   useEffect(() => {
     const accessToken = localStorage.getItem('access-token');
     const refreshToken = localStorage.getItem('refresh-token');
@@ -41,7 +40,6 @@ const SignUp = () => {
     }
   }, []);
 
-  // 회원가입 버튼 클릭 시 실행되는 함수
   const handleOnSubmit = (e: any) => {
     e.preventDefault();
     if (buttonDisabled) return;
@@ -83,7 +81,6 @@ const SignUp = () => {
     fetchSignUp();
   };
 
-  // 회원가입 입력 폼의 값이 하나라도 비어있으면 회원가입 버튼 비활성화
   useEffect(() => {
     if (
       value.email === '' ||
@@ -100,20 +97,16 @@ const SignUp = () => {
     }
   }, [value]);
 
-  // 컴포넌트 렌더링
   return (
     <div className="container mx-auto mt-8 p-5">
       <div className="mx-auto mb-16 w-full sm:max-w-md">
-        {/* 제목 섹션 */}
         <span className="mb-2 block font-bold">회원가입</span>
         <h1 className="mb-10 text-2xl">
           기본 정보를
           <br />
           입력하세요
         </h1>
-        {/* 회원가입 입력 폼 */}
         <form onSubmit={handleOnSubmit} className="flex flex-col space-y-3">
-          {/* 이메일 입력 */}
           <div>
             <Input
               label="이메일"
@@ -124,7 +117,6 @@ const SignUp = () => {
               }
             />
           </div>
-          {/* 이름 입력 */}
           <div>
             <Input
               label="이름"
@@ -134,7 +126,6 @@ const SignUp = () => {
               }
             />
           </div>
-          {/* 휴대폰 번호 입력 */}
           <div>
             <Input
               label="휴대폰 번호"
@@ -145,7 +136,6 @@ const SignUp = () => {
               }
             />
           </div>
-          {/* 비밀번호 입력 */}
           <div>
             <Input
               type="password"
@@ -157,7 +147,6 @@ const SignUp = () => {
               }}
             />
           </div>
-          {/* 비밀번호 확인 입력 */}
           <div>
             <Input
               type="password"
@@ -169,9 +158,7 @@ const SignUp = () => {
             />
           </div>
           <hr />
-          {/* 약관 동의 체크박스 */}
           <div className="flex flex-col space-y-2">
-            {/* 서비스이용약관 체크박스 */}
             <div className="flex items-center">
               <CheckBox
                 checked={value.agreeToTerms}
@@ -200,7 +187,6 @@ const SignUp = () => {
                 에 동의합니다.
               </label>
             </div>
-            {/* 개인정보처리방침 체크박스 */}
             <div className="flex items-center">
               <CheckBox
                 checked={value.agreeToPrivacy}
