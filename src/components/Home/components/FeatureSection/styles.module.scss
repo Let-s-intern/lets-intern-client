@@ -1,0 +1,69 @@
+@use '../../../../styles/utils.scss' as *;
+
+.row {
+  .item {
+    color: #ffffff;
+    border-radius: 0.5rem;
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+
+    @media screen and (min-width: $screen-sm) {
+      min-height: 10rem;
+    }
+
+    h3 {
+      font-size: 1.25rem;
+      font-weight: 500;
+    }
+
+    p {
+      font-weight: 300;
+
+      br {
+        display: none;
+
+        @media screen and (min-width: $screen-sm) {
+          display: block;
+        }
+      }
+    }
+  }
+
+  &:nth-child(1) {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+
+    @media screen and (min-width: $screen-sm) {
+      flex-direction: row;
+    }
+
+    .item:nth-child(1) {
+      flex: 2;
+      background-color: #5854d1;
+    }
+
+    .item:nth-child(2) {
+      flex: 1;
+      background-color: #4743a8;
+
+      p {
+        br {
+          display: none;
+
+          @media screen and (min-width: $screen-lg) {
+            display: block;
+          }
+        }
+      }
+    }
+  }
+
+  &:nth-child(2) {
+    .item {
+      background-color: #242357;
+    }
+  }
+}
