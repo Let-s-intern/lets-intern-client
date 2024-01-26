@@ -4,9 +4,10 @@ import { RiArrowLeftSLine, RiArrowRightSLine } from 'react-icons/ri';
 
 interface AdminPaginationProps {
   maxPage: number;
+  className?: string;
 }
 
-const AdminPagination = ({ maxPage }: AdminPaginationProps) => {
+const AdminPagination = ({ maxPage, className }: AdminPaginationProps) => {
   const [searchParams, setSearchParams] = useSearchParams();
 
   const currentPage = Number(searchParams.get('page')) || 1;
@@ -70,7 +71,14 @@ const AdminPagination = ({ maxPage }: AdminPaginationProps) => {
   };
 
   return (
-    <div className="admin-pagination flex w-full items-center justify-center gap-4">
+    <div
+      className={cn(
+        'admin-pagination flex w-full items-center justify-center gap-4',
+        {
+          [className as string]: className,
+        },
+      )}
+    >
       <span
         className="cursor-pointer text-xl"
         onClick={() => handleArrowLeftClick()}

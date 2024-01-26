@@ -5,11 +5,11 @@ import styled from 'styled-components';
 
 import ActionButton from '../../ActionButton';
 import Table from '../../Table';
-import UserTableHead from './UserTableHead';
-import UserTableBody from './UserTableBody';
+import UserTableHead from './components/UserTableHead';
+import UserTableBody from './components/UserTableBody';
 import axios from '../../../../utils/axios';
 import AdminPagination from '../../AdminPagination';
-import BottomDownload from './BottomDownload';
+import BottomDownload from './components/BottomDownload';
 
 import './styles.scss';
 

@@ -1,17 +1,15 @@
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 
-import Table from '../Table';
-import TableHead from './TableHead';
-import TableBody from './TableBody';
+import Table from '../../Table';
+import TableHead from './components/TableHead';
+import TableBody from './components/TableBody';
 
-import Header from '../Header';
-import Heading from '../Heading';
-import ActionButton from '../ActionButton';
-import AdminPagination from '../AdminPagination';
-import axios from '../../../utils/axios';
-
-import './Programs.scss';
+import Header from '../../Header';
+import Heading from '../../Heading';
+import ActionButton from '../../ActionButton';
+import AdminPagination from '../../AdminPagination';
+import axios from '../../../../utils/axios';
 
 const Programs = () => {
   const [searchParams] = useSearchParams();
@@ -102,7 +100,9 @@ const Programs = () => {
             fetchEditProgramVisible={fetchEditProgramVisible}
           />
         </Table>
-        {programList.length > 0 && <AdminPagination maxPage={maxPage} />}
+        {programList.length > 0 && (
+          <AdminPagination className="mt-4" maxPage={maxPage} />
+        )}
       </main>
     </>
   );

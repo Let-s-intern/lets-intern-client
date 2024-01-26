@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
-import Header from '../Header';
-import Heading from '../Heading';
-import Table from '../Table';
-import AttendTableBody from './AttendTableBody';
-import AttendTableHead from './AttendTableHead';
-import axios from '../../../utils/axios';
+import Header from '../../Header';
+import Heading from '../../Heading';
+import Table from '../../Table';
+import AttendTableBody from './components/AttendTableBody';
+import AttendTableHead from './components/AttendTableHead';
+import axios from '../../../../utils/axios';
 
 const AttendCheck = () => {
   const params = useParams();

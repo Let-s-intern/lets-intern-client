@@ -1,8 +1,8 @@
 import { FormControl, InputLabel, MenuItem, Select } from '@mui/material';
 
-import TD from '../../TD';
-import parseInflowPath from '../../../../utils/parseInflowPath';
-import parseGrade from '../../../../utils/parseGrade';
+import TD from '../../../../TD';
+import parseInflowPath from '../../../../../../utils/parseInflowPath';
+import parseGrade from '../../../../../../utils/parseGrade';
 import { Link } from 'react-router-dom';
 
 interface UserTableBodyProps {
