@@ -4,12 +4,12 @@ import styled from 'styled-components';
 
 import axios from '../../../utils/axios';
 import Table from '../Table';
-import DetailTableHead from './DetailTableHead';
-import DetailTableBody from './DetailTableBody';
+import TableHead from '../../../components/admin/table/review-detail/TableHead';
+import TableBody from '../../../components/admin/table/review-detail/TableBody';
 import Heading from '../Heading';
 import AdminPagination from '../AdminPagination';
 
-import './ReviewsDetail.scss';
+import classes from './ReviewsDetail.module.scss';
 
 const ReviewsDetail = () => {
   const params = useParams();
@@ -78,26 +78,26 @@ const ReviewsDetail = () => {
 
   return (
     <>
-      <Header>
+      <header className={classes.header}>
         <Heading>후기 목록 - {program.title}</Heading>
-      </Header>
-      <main className="reviews-detail-main">
+      </header>
+      <main className={classes.main}>
         <Table>
-          <DetailTableHead />
-          <DetailTableBody
+          <TableHead />
+          <TableBody
             program={program}
             reviewList={reviewList}
             handleVisibleChanged={handleVisibleChanged}
           />
         </Table>
-        {reviewList.length > 0 && <AdminPagination maxPage={maxPage} />}
+        {reviewList.length > 0 && (
+          <div className={classes.pagination}>
+            <AdminPagination maxPage={maxPage} />
+          </div>
+        )}
       </main>
     </>
   );
 };
 
 export default ReviewsDetail;
-
-const Header = styled.header`
-  margin-bottom: 1rem;
-`;

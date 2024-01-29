@@ -120,7 +120,9 @@ const ProgramUsers = () => {
           maxPage={maxPage}
         />
         {applications.length > 0 && (
-          <AdminPagination className="mt-4" maxPage={maxPage} />
+          <div className={classes.pagination}>
+            <AdminPagination maxPage={maxPage} />
+          </div>
         )}
       </main>
     </>

@@ -3,12 +3,12 @@ import { useSearchParams } from 'react-router-dom';
 import styled from 'styled-components';
 
 import axios from '../../../utils/axios';
-import TableHead from './TableHead';
-import TableBody from './TableBody';
+import TableHead from '../../../components/admin/table/reviews/TableHead';
+import TableBody from '../../../components/admin/table/reviews/TableBody';
 import Table from '../Table';
 import AdminPagination from '../AdminPagination';
 
-import './Reviews.scss';
+import classes from './Reviews.module.scss';
 
 const Reviews = () => {
   const [searchParams, _] = useSearchParams();
@@ -49,10 +49,10 @@ const Reviews = () => {
 
   return (
     <>
-      <Header>
-        <Heading>후기 관리</Heading>
-      </Header>
-      <main className="reviews-main">
+      <header className={classes.header}>
+        <h1 className={classes.heading}>후기 관리</h1>
+      </header>
+      <main className={classes.main}>
         <Table minWidth={1000}>
           <TableHead />
           <TableBody
@@ -60,19 +60,14 @@ const Reviews = () => {
             copyReviewCreateLink={copyReviewCreateLink}
           />
         </Table>
-        {programList.length > 0 && <AdminPagination maxPage={maxPage} />}
+        {programList.length > 0 && (
+          <div className={classes.pagination}>
+            <AdminPagination maxPage={maxPage} />
+          </div>
+        )}
       </main>
     </>
   );
 };
 
 export default Reviews;
-
-const Header = styled.header`
-  margin-bottom: 1rem;
-`;
-
-const Heading = styled.h1`
-  font-size: 1.5rem;
-  font-weight: 700;
-`;

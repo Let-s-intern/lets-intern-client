@@ -1,8 +1,8 @@
 import styled from 'styled-components';
 
-import TD from '../TD';
-import ActionButton from '../ActionButton';
-import formatDateString from '../../../utils/formatDateString';
+import TD from '../../../../pages/admin/TD';
+import ActionButton from '../../../../pages/admin/ActionButton';
+import formatDateString from '../../../../utils/formatDateString';
 
 interface TableBodyProps {
   programList: any;

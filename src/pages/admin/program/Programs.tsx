@@ -10,6 +10,7 @@ import Heading from '../Heading';
 import ActionButton from '../ActionButton';
 import AdminPagination from '../AdminPagination';
 import axios from '../../../utils/axios';
+import classes from './Programs.module.scss';
 
 const Programs = () => {
   const [searchParams] = useSearchParams();
@@ -91,7 +92,7 @@ const Programs = () => {
           등록
         </ActionButton>
       </Header>
-      <main className="programs-main">
+      <main className={classes.main}>
         <Table>
           <TableHead />
           <TableBody
@@ -101,7 +102,9 @@ const Programs = () => {
           />
         </Table>
         {programList.length > 0 && (
-          <AdminPagination className="mt-4" maxPage={maxPage} />
+          <div className={classes.pagination}>
+            <AdminPagination maxPage={maxPage} />
+          </div>
         )}
       </main>
     </>
