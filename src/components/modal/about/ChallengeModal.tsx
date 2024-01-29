@@ -1,10 +1,9 @@
 import { Link } from 'react-router-dom';
 import cn from 'classnames';
 
-import useScrollShadow from '../../../../hooks/useScrollShadow';
+import useScrollShadow from '../../../hooks/useScrollShadow';
 import { ModalContentType } from './ProgramInfoModalGroup';
-
-import './ChallengeModal.scss';
+import classes from './ChallengeModal.module.scss';
 
 interface ChallengeModalProps {
   applyAvailable: boolean;
@@ -56,7 +55,7 @@ const ChallengeModal = ({
             직접 선정한 채용 공고를 바탕으로 짧고 굵게 나만의 강점과 희망 직무를
             연결할수 있어요.
           </p>
-          <div className="image-box">
+          <div className={classes.image}>
             <img src="/images/challenge-curriculum.svg" alt="챌린지 커리큘럼" />
           </div>
           <h3>
