@@ -1,18 +1,16 @@
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import styled from 'styled-components';
 
 import axios from '../../../utils/axios';
 import ActionButton from '../ActionButton';
 import Header from '../Header';
 import Heading from '../Heading';
 import Table from '../Table';
-import Filter from './Filter';
-import TableBody from './TableBody';
-import TableHead from './TableHead';
+import Filter from '../../../components/admin/filter/Filter';
+import TableBody from '../../../components/admin/table/table-content/users/TableBody';
+import TableHead from '../../../components/admin/table/table-content/users/TableHead';
 import AdminPagination from '../AdminPagination';
-
-import './Users.scss';
+import classes from './Users.module.scss';
 
 const Users = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -144,23 +142,23 @@ const Users = () => {
           등록
         </ActionButton>
       </Header>
-      <main className="users-main">
-        <FilterWrapper>
+      <main className={classes.main}>
+        <div className={classes.filterWrapper}>
           <Filter
             searchValues={searchValues}
             managers={managers}
             onChangeSearchValues={handleChangeSearchValues}
             setSearchValues={setSearchValues}
           />
-        </FilterWrapper>
+        </div>
         {error ? (
           <div>에러 발생</div>
         ) : (
           <>
             {loading || !users ? (
-              <div className="loading-table">로딩 중...</div>
+              <div className={classes.loading}>로딩 중...</div>
             ) : users.length === 0 ? (
-              <div className="empty-table">유저 정보가 없습니다.</div>
+              <div className={classes.empty}>유저 정보가 없습니다.</div>
             ) : (
               <>
                 <Table>
@@ -171,7 +169,9 @@ const Users = () => {
                     onDeleteUser={handleDeleteUser}
                   />
                 </Table>
-                <AdminPagination maxPage={maxPage} />
+                <div className={classes.pagination}>
+                  <AdminPagination maxPage={maxPage} />
+                </div>
               </>
             )}
           </>
@@ -182,7 +182,3 @@ const Users = () => {
 };
 
 export default Users;
-
-const FilterWrapper = styled.div`
-  margin-bottom: 1rem;
-`;

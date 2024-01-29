@@ -4,8 +4,8 @@ import { useParams } from 'react-router-dom';
 import Header from '../Header';
 import Heading from '../Heading';
 import Table from '../Table';
-import TableBody from '../../../components/admin/table/attend-check/TableBody';
-import TableHead from '../../../components/admin/table/attend-check/TableHead';
+import TableBody from '../../../components/admin/table/table-content/attend-check/TableBody';
+import TableHead from '../../../components/admin/table/table-content/attend-check/TableHead';
 import axios from '../../../utils/axios';
 
 const AttendCheck = () => {

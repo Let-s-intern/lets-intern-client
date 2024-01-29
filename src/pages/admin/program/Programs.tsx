@@ -2,8 +2,8 @@ import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 
 import Table from '../Table';
-import TableHead from '../../../components/admin/table/programs/TableHead';
-import TableBody from '../../../components/admin/table/programs/TableBody';
+import TableHead from '../../../components/admin/table/table-content/programs/TableHead';
+import TableBody from '../../../components/admin/table/table-content/programs/TableBody';
 
 import Header from '../Header';
 import Heading from '../Heading';

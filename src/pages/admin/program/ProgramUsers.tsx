@@ -4,8 +4,8 @@ import { useQueryClient, useQuery } from '@tanstack/react-query';
 
 import ActionButton from '../ActionButton';
 import Table from '../Table';
-import TableHead from '../../../components/admin/table/program-users/TableHead';
-import TableBody from '../../../components/admin/table/program-users/TableBody';
+import TableHead from '../../../components/admin/table/table-content/program-users/TableHead';
+import TableBody from '../../../components/admin/table/table-content/program-users/TableBody';
 import axios from '../../../utils/axios';
 import AdminPagination from '../AdminPagination';
 import BottomDownload from '../../../components/admin/bottom-download/BottomDownload';

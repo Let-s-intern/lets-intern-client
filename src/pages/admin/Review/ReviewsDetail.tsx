@@ -4,8 +4,8 @@ import styled from 'styled-components';
 
 import axios from '../../../utils/axios';
 import Table from '../Table';
-import TableHead from '../../../components/admin/table/review-detail/TableHead';
-import TableBody from '../../../components/admin/table/review-detail/TableBody';
+import TableHead from '../../../components/admin/table/table-content/review-detail/TableHead';
+import TableBody from '../../../components/admin/table/table-content/review-detail/TableBody';
 import Heading from '../Heading';
 import AdminPagination from '../AdminPagination';
 

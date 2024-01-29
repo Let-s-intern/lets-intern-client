@@ -1,17 +1,16 @@
 import { useEffect, useState } from 'react';
 import { useParams, useSearchParams } from 'react-router-dom';
-import styled from 'styled-components';
 
 import axios from '../../../utils/axios';
 import Table from '../Table';
-import MemoTableBody from './MemoTableBody';
-import MemoTableHead from './MemoTableHead';
+import MemoTableBody from '../../../components/admin/table/table-content/user-memo/TableBody';
+import MemoTableHead from '../../../components/admin/table/table-content/user-memo/TableHead';
 import Heading from '../Heading';
 import ActionButton from '../ActionButton';
-import UserMemoModal from './UserMemoModal';
+import UserMemoModal from '../../../components/admin/modal/UserMemoModal';
 import AdminPagination from '../AdminPagination';
 
-import './UserMemo.scss';
+import classes from './UserMemo.module.scss';
 
 const UserMemo = () => {
   const params = useParams();
@@ -117,11 +116,11 @@ const UserMemo = () => {
 
   return (
     <>
-      <Header>
+      <header className={classes.header}>
         <Heading>메모 - {user?.name}</Heading>
         <ActionButton onClick={handleModalOpen}>등록</ActionButton>
-      </Header>
-      <main className="user-memo-main">
+      </header>
+      <main className={classes.main}>
         <Table>
           <MemoTableHead />
           <MemoTableBody
@@ -133,7 +132,11 @@ const UserMemo = () => {
             onDeleteMemo={handleDeleteMemo}
           />
         </Table>
-        {memoList.length > 0 && <AdminPagination maxPage={maxPage} />}
+        {memoList.length > 0 && (
+          <div className={classes.pagination}>
+            <AdminPagination maxPage={maxPage} />
+          </div>
+        )}
         <UserMemoModal
           memoValue={memoValue}
           isModalOpen={isModalOpen}
@@ -147,9 +150,3 @@ const UserMemo = () => {
 };
 
 export default UserMemo;
-
-const Header = styled.div`
-  margin-bottom: 1rem;
-  display: flex;
-  justify-content: space-between;
-`;
