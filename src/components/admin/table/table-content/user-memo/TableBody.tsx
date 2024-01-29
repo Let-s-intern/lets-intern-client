@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
-import ActionButton from '../../../../../pages/admin/ActionButton';
-import TD from '../../table-row/TD';
+import ActionButton from '../../../ActionButton';
+import TD from '../../TD';
 
 interface MemoTableBodyProps {
   memoList: any[];

@@ -2,13 +2,13 @@ import { useEffect, useState } from 'react';
 import { useParams, useSearchParams } from 'react-router-dom';
 
 import axios from '../../../utils/axios';
-import Table from '../Table';
+import Table from '../../../components/admin/table/Table';
 import MemoTableBody from '../../../components/admin/table/table-content/user-memo/TableBody';
 import MemoTableHead from '../../../components/admin/table/table-content/user-memo/TableHead';
-import Heading from '../Heading';
-import ActionButton from '../ActionButton';
+import Heading from '../../../components/admin/Heading';
+import ActionButton from '../../../components/admin/ActionButton';
 import UserMemoModal from '../../../components/admin/modal/UserMemoModal';
-import AdminPagination from '../AdminPagination';
+import AdminPagination from '../../../components/admin/AdminPagination';
 
 import classes from './UserMemo.module.scss';
 

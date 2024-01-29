@@ -2,13 +2,13 @@ import { useEffect, useState } from 'react';
 import { useParams, useSearchParams } from 'react-router-dom';
 import { useQueryClient, useQuery } from '@tanstack/react-query';
 
-import ActionButton from '../ActionButton';
-import Table from '../Table';
+import ActionButton from '../../../components/admin/ActionButton';
+import Table from '../../../components/admin/table/Table';
 import TableHead from '../../../components/admin/table/table-content/program-users/TableHead';
 import TableBody from '../../../components/admin/table/table-content/program-users/TableBody';
 import axios from '../../../utils/axios';
-import AdminPagination from '../AdminPagination';
-import BottomDownload from '../../../components/admin/bottom-download/BottomDownload';
+import AdminPagination from '../../../components/admin/AdminPagination';
+import BottomDownload from '../../../components/admin/BottomDownload';
 import classes from './ProgramUsers.module.scss';
 
 const ProgramUsers = () => {

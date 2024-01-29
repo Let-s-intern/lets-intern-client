@@ -1,14 +1,14 @@
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 
-import Table from '../Table';
+import Table from '../../../components/admin/table/Table';
 import TableHead from '../../../components/admin/table/table-content/programs/TableHead';
 import TableBody from '../../../components/admin/table/table-content/programs/TableBody';
 
-import Header from '../Header';
-import Heading from '../Heading';
-import ActionButton from '../ActionButton';
-import AdminPagination from '../AdminPagination';
+import Header from '../../../components/admin/Header';
+import Heading from '../../../components/admin/Heading';
+import ActionButton from '../../../components/admin/ActionButton';
+import AdminPagination from '../../../components/admin/AdminPagination';
 import axios from '../../../utils/axios';
 import classes from './Programs.module.scss';
 

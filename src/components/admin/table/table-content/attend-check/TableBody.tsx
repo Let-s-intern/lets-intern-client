@@ -1,6 +1,6 @@
 import { FormControl, InputLabel, MenuItem, Select } from '@mui/material';
 
-import TD from '../../table-row/TD';
+import TD from '../../TD';
 
 interface AttendTableBodyProps {
   program: any;

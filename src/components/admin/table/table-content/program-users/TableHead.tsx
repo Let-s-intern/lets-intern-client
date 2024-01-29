@@ -1,4 +1,4 @@
-import TH from '../../table-row/TH';
+import TH from '../../TH';
 
 const UserTableHead = () => {
   return (

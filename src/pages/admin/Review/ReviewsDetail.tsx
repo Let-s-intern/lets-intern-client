@@ -3,11 +3,11 @@ import { useParams, useSearchParams } from 'react-router-dom';
 import styled from 'styled-components';
 
 import axios from '../../../utils/axios';
-import Table from '../Table';
+import Table from '../../../components/admin/table/Table';
 import TableHead from '../../../components/admin/table/table-content/review-detail/TableHead';
 import TableBody from '../../../components/admin/table/table-content/review-detail/TableBody';
-import Heading from '../Heading';
-import AdminPagination from '../AdminPagination';
+import Heading from '../../../components/admin/Heading';
+import AdminPagination from '../../../components/admin/AdminPagination';
 
 import classes from './ReviewsDetail.module.scss';
 

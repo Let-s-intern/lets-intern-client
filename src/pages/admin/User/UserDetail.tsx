@@ -4,7 +4,7 @@ import styled from 'styled-components';
 
 import axios from '../../../utils/axios';
 import classes from './UserDetail.module.scss';
-import ActionButton from '../ActionButton';
+import ActionButton from '../../../components/admin/ActionButton';
 import { convertTypeToBank } from '../../../utils/convertTypeToBank';
 
 const UserDetail = () => {

@@ -3,8 +3,8 @@ import { FormControl, InputLabel, MenuItem, Select } from '@mui/material';
 import styled from 'styled-components';
 import { IoIosSearch } from 'react-icons/io';
 
-import Input from '../../../pages/Input';
-import ActionButton from '../../../pages/admin/ActionButton';
+import Input from '../../pages/Input';
+import ActionButton from './ActionButton';
 
 interface FilterProps {
   searchValues: any;

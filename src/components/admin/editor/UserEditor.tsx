@@ -1,8 +1,8 @@
 import styled from 'styled-components';
 
 import Input from '../../../pages/Input';
-import Heading from '../../../pages/admin/Heading';
-import ActionButton from '../../../pages/admin/ActionButton';
+import Heading from '../Heading';
+import ActionButton from '../ActionButton';
 import { FormControl, InputLabel, MenuItem, Select } from '@mui/material';
 import {
   convertTypeToBank,

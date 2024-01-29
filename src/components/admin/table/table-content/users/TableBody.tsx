@@ -3,8 +3,8 @@ import { FormControl, InputLabel, MenuItem, Select } from '@mui/material';
 import styled from 'styled-components';
 
 import axios from '../../../../../utils/axios';
-import TD from '../../table-row/TD';
-import ActionButton from '../../../../../pages/admin/ActionButton';
+import TD from '../../TD';
+import ActionButton from '../../../ActionButton';
 import { convertTypeToBank } from '../../../../../utils/convertTypeToBank';
 
 interface TableBodyProps {

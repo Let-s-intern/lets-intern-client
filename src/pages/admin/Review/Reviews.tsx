@@ -5,8 +5,8 @@ import styled from 'styled-components';
 import axios from '../../../utils/axios';
 import TableHead from '../../../components/admin/table/table-content/reviews/TableHead';
 import TableBody from '../../../components/admin/table/table-content/reviews/TableBody';
-import Table from '../Table';
-import AdminPagination from '../AdminPagination';
+import Table from '../../../components/admin/table/Table';
+import AdminPagination from '../../../components/admin/AdminPagination';
 
 import classes from './Reviews.module.scss';
 
