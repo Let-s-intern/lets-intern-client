@@ -1,9 +1,9 @@
-import './SolutionSection.scss';
+import classes from './SolutionSection.module.scss';
 
 const SolutionSection = () => {
   return (
-    <section className="solution-section">
-      <div className="inner-content">
+    <section className={classes.section}>
+      <div className={classes.content}>
         <h2>
           이에 렛츠인턴은 취업 준비생들의
           <br />
@@ -19,21 +19,21 @@ const SolutionSection = () => {
           참여자들은 성장해 <br />
           다른 이들의 시작을 도와주는 선순환 커뮤니티의 일원이 되어줍니다.
         </p>
-        <div className="core-value-group">
-          <div className="core-value">
+        <div className={classes.coreValueGroup}>
+          <div className={classes.coreValue}>
             <span>힘이 되는</span>
             <strong>Supportive</strong>
-            <div className="circle" />
+            <div className={classes.circle} />
           </div>
-          <div className="core-value">
+          <div className={classes.coreValue}>
             <span>신뢰가 되는</span>
             <strong>Reliable</strong>
-            <div className="circle" />
+            <div className={classes.circle} />
           </div>
-          <div className="core-value">
+          <div className={classes.coreValue}>
             <span>동기부여가 되는</span>
             <strong>Motivative</strong>
-            <div className="circle" />
+            <div className={classes.circle} />
           </div>
         </div>
       </div>

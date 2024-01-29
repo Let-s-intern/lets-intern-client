@@ -1,8 +1,8 @@
-import styles from './styles.module.scss';
+import classes from './EndSection.module.scss';
 
 const EndSection = () => {
   return (
-    <section className={styles.section}>
+    <section className={classes.section}>
       <h2 className="text-center text-2xl font-semibold text-white">
         첫 시작,
         <br />

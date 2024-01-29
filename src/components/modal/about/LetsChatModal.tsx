@@ -3,8 +3,6 @@ import cn from 'classnames';
 
 import { ModalContentType } from './ProgramInfoModalGroup';
 
-import './LetsChatModal.scss';
-
 interface BootcampModalProps {
   applyAvailable: boolean;
   setShowModalContent: (showModalContent: ModalContentType) => void;
