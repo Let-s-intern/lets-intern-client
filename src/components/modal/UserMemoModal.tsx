@@ -2,7 +2,7 @@ import styled from 'styled-components';
 import { IoIosCloseCircleOutline } from 'react-icons/io';
 import { Modal } from '@mui/material';
 
-import ActionButton from '../ActionButton';
+import ActionButton from '../admin/ActionButton';
 
 interface UserMemoModalProps {
   memoValue: string;

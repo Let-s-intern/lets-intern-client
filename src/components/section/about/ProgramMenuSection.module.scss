@@ -1,9 +1,9 @@
 @use '../../../styles/utils.scss' as *;
 
-.program-menu-section {
+.section {
   padding: 3rem 1.5rem;
 
-  .inner-content {
+  .content {
     max-width: $screen-lg;
     margin: 0 auto;
 
@@ -31,7 +31,7 @@
       }
     }
 
-    .menu-list {
+    .menuList {
       margin-top: 3rem;
       display: grid;
       grid-template-columns: repeat(1, 1fr);
@@ -41,7 +41,7 @@
         grid-template-columns: repeat(2, 1fr);
       }
 
-      .menu-item {
+      .menu {
         background-color: #f1f4f9;
         border-radius: 0.625rem;
         display: flex;
@@ -50,7 +50,7 @@
         padding: 2.5rem;
         cursor: pointer;
 
-        .text-content {
+        .text {
           color: #4a495c;
 
           h4 {
@@ -76,7 +76,7 @@
           }
         }
 
-        .arrow-right {
+        .arrow {
           i {
             img {
               width: 1.75rem;

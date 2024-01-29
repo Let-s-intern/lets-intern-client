@@ -7,7 +7,7 @@ import MemoTableBody from '../../../components/admin/table/table-content/user-me
 import MemoTableHead from '../../../components/admin/table/table-content/user-memo/TableHead';
 import Heading from '../../../components/admin/Heading';
 import ActionButton from '../../../components/admin/ActionButton';
-import UserMemoModal from '../../../components/admin/modal/UserMemoModal';
+import UserMemoModal from '../../../components/modal/UserMemoModal';
 import AdminPagination from '../../../components/admin/AdminPagination';
 
 import classes from './UserMemo.module.scss';
