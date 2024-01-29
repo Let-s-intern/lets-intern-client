@@ -6,8 +6,6 @@ import BootcampModal from './BootcampModal';
 import ChallengeModal from './ChallengeModal';
 import LetsChatModal from './LetsChatModal';
 
-import './ProgramInfoModalGroup.scss';
-
 export type ModalContentType = 'CHALLENGE' | 'BOOTCAMP' | 'LETS_CHAT' | '';
 
 interface ProgramInfoModalGroupProps {
