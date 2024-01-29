@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 
-import axios from '../../../../utils/axios';
+import axios from '../../../utils/axios';
 import BootcampModal from './BootcampModal';
 import ChallengeModal from './ChallengeModal';
 import LetsChatModal from './LetsChatModal';
