@@ -1,11 +1,11 @@
-import classes from './AboutHeader.module.scss';
+import './Header.scss';
 
 const TopSection = () => {
   return (
-    <header className={classes.header}>
-      <div className={classes.whiteBoxGroup}>
+    <header className="about-header">
+      <div className="white-box-group">
         {Array.from(Array(8).keys()).map((_, index) => (
-          <div key={index} className={classes.whiteBox}>
+          <div key={index} className="white-box">
             {index === 2
               ? '취업, 어디서부터 준비해야 할 지 모르겠어..'
               : index === 5 && '인턴 어떻게 시작하는 건데?'}
