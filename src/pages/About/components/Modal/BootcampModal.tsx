@@ -2,7 +2,9 @@ import { Link } from 'react-router-dom';
 import cn from 'classnames';
 
 import { ModalContentType } from './ProgramInfoModalGroup';
-import useScrollShadow from '../../../hooks/useScrollShadow';
+import useScrollShadow from '../../../../hooks/useScrollShadow';
+
+import './BootcampModal.scss';
 
 interface BootcampModalProps {
   applyAvailable: boolean;

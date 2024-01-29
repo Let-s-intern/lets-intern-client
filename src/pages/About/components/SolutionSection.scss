@@ -1,6 +1,6 @@
 @use '../../../styles/utils.scss' as *;
 
-.section {
+section.solution-section {
   background: radial-gradient(
     169.55% 102.08% at 19.76% 25.8%,
     #9762f5 0%,
@@ -11,7 +11,7 @@
   padding: 0 1.5rem;
   padding-top: 4rem;
 
-  .content {
+  .inner-content {
     max-width: $screen-lg;
     margin: 0 auto;
     color: white;
@@ -39,7 +39,7 @@
       }
     }
 
-    .coreValueGroup {
+    .core-value-group {
       display: flex;
       justify-content: space-around;
       margin-top: 3rem;
@@ -56,7 +56,7 @@
         margin-top: 8rem;
       }
 
-      .coreValue {
+      .core-value {
         position: relative;
         padding-bottom: 1rem;
 

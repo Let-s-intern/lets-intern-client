@@ -1,11 +1,11 @@
 @use '../../../styles/utils.scss' as *;
 
-.section {
+.result-section {
   background-color: #232233;
   color: #ffffff;
   padding: 3rem 1.5rem;
 
-  .content {
+  .inner-content {
     max-width: $screen-sm;
     margin: 0 auto;
 
@@ -15,8 +15,8 @@
       text-align: center;
     }
 
-    .resultArea {
-      .scoreGroup {
+    .result-area {
+      .score-group {
         display: flex;
         justify-content: space-between;
         align-items: center;
@@ -71,10 +71,10 @@
       }
     }
 
-    .partnerArea {
+    .partner-area {
       margin-top: 5rem;
 
-      .partnerGroup {
+      .partner-group {
         display: grid;
         grid-template-columns: repeat(2, 1fr);
         gap: 1rem;
@@ -87,18 +87,18 @@
           align-items: center;
           height: 5rem;
 
-          &.impactCareer,
-          &.disquiet {
+          &#impact-career,
+          &#disquiet {
             img {
               height: 1.25rem;
             }
           }
 
-          &.seongdongOrang {
+          &#seongdong-orang {
             background-color: #01a589;
           }
 
-          &.triangleCl {
+          &#triangle-cl {
             background-color: #000000;
           }
 
