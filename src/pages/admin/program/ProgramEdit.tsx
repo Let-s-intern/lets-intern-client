@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
-import ProgramEditor from '../../../ProgramEditor';
-import axios from '../../../../utils/axios';
+import ProgramEditor from '../../ProgramEditor';
+import axios from '../../../utils/axios';
 
 const ProgramEdit = () => {
   const params = useParams();

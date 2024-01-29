@@ -2,11 +2,11 @@ import { useState } from 'react';
 import styled from 'styled-components';
 import { Checkbox } from '@mui/material';
 
-import ActionButton from '../../../../ActionButton';
-import TD from '../../../../TD';
-import { convertTypeToText } from '../../../../../../utils/converTypeToText';
-import AlertModal from '../../../../../AlertModal';
-import formatDateString from '../../../../../../utils/formatDateString';
+import ActionButton from '../../../../pages/admin/ActionButton';
+import TD from '../../../../pages/admin/TD';
+import { convertTypeToText } from '../../../../utils/converTypeToText';
+import AlertModal from '../../../../pages/AlertModal';
+import formatDateString from '../../../../utils/formatDateString';
 
 interface ProgramTableBodyProps {
   programList: any;

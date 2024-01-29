@@ -1,17 +1,15 @@
 import { useEffect, useState } from 'react';
 import { useParams, useSearchParams } from 'react-router-dom';
 import { useQueryClient, useQuery } from '@tanstack/react-query';
-import styled from 'styled-components';
 
-import ActionButton from '../../ActionButton';
-import Table from '../../Table';
-import UserTableHead from './components/UserTableHead';
-import UserTableBody from './components/UserTableBody';
-import axios from '../../../../utils/axios';
-import AdminPagination from '../../AdminPagination';
-import BottomDownload from './components/BottomDownload';
-
-import './styles.scss';
+import ActionButton from '../ActionButton';
+import Table from '../Table';
+import TableHead from '../../../components/admin/table/program-users/TableHead';
+import TableBody from '../../../components/admin/table/program-users/TableBody';
+import axios from '../../../utils/axios';
+import AdminPagination from '../AdminPagination';
+import BottomDownload from '../../../components/admin/bottom-download/BottomDownload';
+import classes from './ProgramUsers.module.scss';
 
 const ProgramUsers = () => {
   const params = useParams();
@@ -94,23 +92,23 @@ const ProgramUsers = () => {
 
   return (
     <>
-      <Top>
-        <Heading>참여자 보기 - {[program.title]}</Heading>
+      <div className={classes.top}>
+        <h1 className={classes.heading}>참여자 보기 - {[program.title]}</h1>
         {program.type === 'LETS_CHAT' && (
-          <ActionButtonGroup>
+          <div className={classes.buttonGroup}>
             <ActionButton
               to={`/admin/programs/${program.id}/check-attendance`}
               bgColor="blue"
             >
               출석체크
             </ActionButton>
-          </ActionButtonGroup>
+          </div>
         )}
-      </Top>
-      <main className="program-users-main">
+      </div>
+      <main className={classes.main}>
         <Table minWidth={2000}>
-          <UserTableHead />
-          <UserTableBody
+          <TableHead />
+          <TableBody
             program={program}
             applications={applications}
             handleApplicationStatusChange={handleApplicationStatusChange}
@@ -121,27 +119,12 @@ const ProgramUsers = () => {
           sizePerPage={pageParams.size}
           maxPage={maxPage}
         />
-        {applications.length > 0 && <AdminPagination maxPage={maxPage} />}
+        {applications.length > 0 && (
+          <AdminPagination className="mt-4" maxPage={maxPage} />
+        )}
       </main>
     </>
   );
 };
 
 export default ProgramUsers;
-
-const Top = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 1rem;
-`;
-
-const ActionButtonGroup = styled.div`
-  display: flex;
-  gap: 0.5rem;
-`;
-
-const Heading = styled.h1`
-  font-size: 1.5rem;
-  font-weight: 700;
-`;

@@ -2,8 +2,8 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import * as React from 'react';
 
-import axios from '../../../../utils/axios';
-import ProgramEditor from '../../../ProgramEditor';
+import axios from '../../../utils/axios';
+import ProgramEditor from '../../ProgramEditor';
 
 const ProgramCreate = () => {
   const navigate = useNavigate();

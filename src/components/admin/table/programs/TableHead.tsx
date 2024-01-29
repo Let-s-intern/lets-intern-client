@@ -1,4 +1,4 @@
-import TH from '../../../../TH';
+import TH from '../../../../pages/admin/TH';
 
 const TableHead = () => {
   return (

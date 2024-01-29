@@ -1,15 +1,15 @@
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 
-import Table from '../../Table';
-import TableHead from './components/TableHead';
-import TableBody from './components/TableBody';
+import Table from '../Table';
+import TableHead from '../../../components/admin/table/programs/TableHead';
+import TableBody from '../../../components/admin/table/programs/TableBody';
 
-import Header from '../../Header';
-import Heading from '../../Heading';
-import ActionButton from '../../ActionButton';
-import AdminPagination from '../../AdminPagination';
-import axios from '../../../../utils/axios';
+import Header from '../Header';
+import Heading from '../Heading';
+import ActionButton from '../ActionButton';
+import AdminPagination from '../AdminPagination';
+import axios from '../../../utils/axios';
 
 const Programs = () => {
   const [searchParams] = useSearchParams();

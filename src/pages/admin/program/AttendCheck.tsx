@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
-import Header from '../../Header';
-import Heading from '../../Heading';
-import Table from '../../Table';
-import AttendTableBody from './components/AttendTableBody';
-import AttendTableHead from './components/AttendTableHead';
-import axios from '../../../../utils/axios';
+import Header from '../Header';
+import Heading from '../Heading';
+import Table from '../Table';
+import TableBody from '../../../components/admin/table/attend-check/TableBody';
+import TableHead from '../../../components/admin/table/attend-check/TableHead';
+import axios from '../../../utils/axios';
 
 const AttendCheck = () => {
   const params = useParams();
@@ -41,8 +41,8 @@ const AttendCheck = () => {
         <Heading>출석체크 - {program.title}</Heading>
       </Header>
       <Table>
-        <AttendTableHead />
-        <AttendTableBody
+        <TableHead />
+        <TableBody
           program={program}
           applications={applications}
           onAttendCheckChange={handleAttendCheckChange}
