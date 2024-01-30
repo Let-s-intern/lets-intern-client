@@ -1,11 +1,9 @@
 import { useEffect, useState } from 'react';
 
-import axios from '../../../utils/axios';
-import CardListSlider from '../../CardListSlider';
-import ApplicationCard from './ApplicationCard';
-import AlertModal from '../../AlertModal';
-
-import './Application.scss';
+import axios from '../../utils/axios';
+import CardListSlider from '../CardListSlider';
+import ApplicationCard from '../../components/common/card/ApplicationCard';
+import AlertModal from '../AlertModal';
 
 const Application = () => {
   const [appliedList, setAppliedList] = useState<any>([]);
@@ -78,12 +76,12 @@ const Application = () => {
   };
 
   if (error) {
-    return <main className="application-page">에러 발생</main>;
+    return <main>에러 발생</main>;
   }
 
   return (
-    <main className="mypage-content application-page">
-      <section className="applied-section">
+    <main className="mypage-content">
+      <section>
         <h1>신청완료</h1>
         {loading ? (
           <CardListSlider isEmpty={true}>
@@ -107,7 +105,7 @@ const Application = () => {
           </CardListSlider>
         )}
       </section>
-      <section className="in-progress-section">
+      <section>
         <h1>참여중</h1>
         {loading ? (
           <CardListSlider isEmpty={true}>
@@ -132,7 +130,7 @@ const Application = () => {
           </CardListSlider>
         )}
       </section>
-      <section className="done-section">
+      <section>
         <h1>참여완료</h1>
         {loading ? (
           <CardListSlider isEmpty={true}>

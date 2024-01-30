@@ -1,13 +1,11 @@
 import { useEffect, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 
-import axios from '../../../utils/axios';
-import MainInfo from './MainInfo';
-import PasswordChange from './PasswordChange';
-import SubInfo from './SubInfo';
-import AlertModal from '../../AlertModal';
-
-import './Privacy.scss';
+import axios from '../../utils/axios';
+import MainInfo from '../../components/common/section/mypage/privacy/MainInfo';
+import PasswordChange from '../../components/common/section/mypage/privacy/PasswordChange';
+import SubInfo from '../../components/common/section/mypage/privacy/SubInfo';
+import AlertModal from '../AlertModal';
 
 const Privacy = () => {
   const [userInfo, setUserInfo] = useState<any>({
@@ -61,7 +59,7 @@ const Privacy = () => {
   };
 
   if (isError) {
-    return <main className="my-page-content privacy-page">에러 발생</main>;
+    return <main className="mypage-content privacy-page">에러 발생</main>;
   }
 
   return (

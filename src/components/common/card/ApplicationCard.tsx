@@ -2,8 +2,6 @@ import { useNavigate } from 'react-router-dom';
 
 import formatDateString from '../../../utils/formatDateString';
 
-import './ApplicationCard.scss';
-
 interface ApplicationCardProps {
   application: any;
   statusToLabel: any;
@@ -24,7 +22,7 @@ const ApplicationCard = ({
   return (
     <>
       <div
-        className="mypage-card application-card"
+        className="mypage-card"
         onClick={() => navigate(`/program/detail/${application.programId}`)}
       >
         <div className="card-top">

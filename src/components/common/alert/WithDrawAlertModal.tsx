@@ -1,9 +1,9 @@
 import { useState } from 'react';
+import cn from 'classnames';
 
 import axios from '../../../utils/axios';
-import AlertModal from '../../AlertModal';
-
-import './WithDrawAlertModal.scss';
+import AlertModal from '../../../pages/AlertModal';
+import classes from './WithDrawAlertModal.module.scss';
 
 interface WithDrawAlertModalProps {
   setIsWithdrawModal: (isWithdrawModal: boolean) => void;
@@ -37,23 +37,23 @@ const WithDrawAlertModal = ({
       onConfirm={() => handleDeleteAccount()}
       onCancel={() => setIsWithdrawModal(false)}
       disabled={withdrawDisabled}
-      className="withdraw-alert-modal"
+      className={cn('withdraw-alert-modal', classes.modal)}
     >
       <ul>
         <li>탈퇴하시면 모든 데이터는 복구가 불가능합니다.</li>
         <li>신청현황, 후기를 포함한 모든 정보가 삭제됩니다.</li>
       </ul>
-      <div className="agree-check-area">
+      <div className={classes.checkArea}>
         {!withdrawDisabled ? (
           <img
-            className="checkbox"
+            className={classes.checkbox}
             src="/icons/checkbox-checked.svg"
             alt="check"
             onClick={() => setWithdrawDisabled(!withdrawDisabled)}
           />
         ) : (
           <img
-            className="checkbox"
+            className={classes.checkbox}
             src="/icons/checkbox-unchecked.svg"
             alt="check"
             onClick={() => setWithdrawDisabled(!withdrawDisabled)}
@@ -80,7 +80,7 @@ const WithDrawAlertModal = ({
         }
       }}
       showCancel={false}
-      className="withdraw-alert-modal"
+      className={cn('withdraw-alert-modal', classes.modal)}
     >
       <p>
         {isSuccess

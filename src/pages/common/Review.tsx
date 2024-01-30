@@ -1,10 +1,8 @@
 import { useEffect, useState } from 'react';
 
-import axios from '../../../utils/axios';
-import CardListSlider from '../../CardListSlider';
-import ReviewCard from './ReviewCard';
-
-import './Review.scss';
+import axios from '../../utils/axios';
+import CardListSlider from '../CardListSlider';
+import ReviewCard from '../../components/common/card/ReviewCard';
 
 const Review = () => {
   const [loading, setLoading] = useState<boolean>(true);
@@ -49,12 +47,12 @@ const Review = () => {
   }, []);
 
   if (error) {
-    return <main className="review-page">에러 발생</main>;
+    return <main>에러 발생</main>;
   }
 
   return (
-    <main className="mypage-content review-page">
-      <section className="waiting-review-section">
+    <main className="mypage-content">
+      <section>
         <h1>후기를 기다리고 있어요</h1>
         {loading ? (
           <CardListSlider isEmpty={true}>
@@ -81,7 +79,7 @@ const Review = () => {
           </CardListSlider>
         )}
       </section>
-      <section className="writed-review-section">
+      <section>
         <h1>작성한 후기 확인하기</h1>
         {loading ? (
           <CardListSlider isEmpty={true}>

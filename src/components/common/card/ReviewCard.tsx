@@ -1,7 +1,5 @@
 import { useNavigate } from 'react-router-dom';
 
-import './ReviewCard.scss';
-
 interface ReviewCardProps {
   to: string;
   application: any;
@@ -22,7 +20,7 @@ const ReviewCard = ({
   const navigate = useNavigate();
 
   return (
-    <div className="mypage-card review-card" onClick={() => navigate(to)}>
+    <div className="mypage-card" onClick={() => navigate(to)}>
       <div className="card-top">
         <div
           className="badge"

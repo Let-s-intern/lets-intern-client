@@ -1,11 +1,4 @@
-.alert-modal {
-  .modal-body {
-    display: flex;
-    flex-direction: column;
-  }
-}
-
-.withdraw-alert-modal {
+.modal {
   ul {
     list-style: disc;
     padding-inline-start: 30px;
@@ -13,7 +6,7 @@
     font-size: 0.875rem;
   }
 
-  .agree-check-area {
+  .checkArea {
     margin-top: 1rem;
     font-size: 0.75rem;
     display: flex;
