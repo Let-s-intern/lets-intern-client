@@ -3,9 +3,9 @@ import { Link, useSearchParams } from 'react-router-dom';
 import cn from 'classnames';
 
 import axios from '../../utils/axios';
-import ClosedCard from './ClosedCard';
+import ClosedCard from '../../components/common/card/ClosedCard';
 
-import './Programs.scss';
+import classes from './Programs.module.scss';
 import CardListSlider from '../CardListSlider';
 import CardListPlaceholder from '../CardListPlaceholder';
 import ProgramCard from '../ProgramCard';
@@ -56,44 +56,46 @@ const Programs = () => {
 
   return (
     <>
-      <div className="program-list-page">
-        <main>
-          <section className="filter-section">
-            <ul className="category-button-group">
+      <div className={classes.page}>
+        <main className={classes.main}>
+          <section className={classes.filter}>
+            <ul className={classes.categoryGroup}>
               <li
-                className={cn('category-button', {
-                  active: category === 'ALL',
+                className={cn(classes.category, {
+                  [classes.active]: category === 'ALL',
                 })}
               >
                 <Link to="/program">전체 프로그램</Link>
               </li>
               <li
-                className={cn('category-button', {
-                  active: category === 'CHALLENGE',
+                className={cn(classes.category, {
+                  [classes.active]: category === 'CHALLENGE',
                 })}
               >
                 <Link to="/program?category=CHALLENGE">챌린지</Link>
               </li>
               <li
-                className={cn('category-button', {
-                  active: category === 'BOOTCAMP',
+                className={cn(classes.category, {
+                  [classes.active]: category === 'BOOTCAMP',
                 })}
               >
                 <Link to="/program?category=BOOTCAMP">부트캠프</Link>
               </li>
               <li
-                className={cn('category-button', {
-                  active: category === 'LETS_CHAT',
+                className={cn(classes.category, {
+                  [classes.active]: category === 'LETS_CHAT',
                 })}
               >
                 <Link to="/program?category=LETS_CHAT">렛츠챗</Link>
               </li>
             </ul>
           </section>
-          <section className="opened-programs">
-            <div className="content">
-              <h2>현재 모집중이에요</h2>
-              <p>아래에서 모집중인 프로그램을 확인해보세요!</p>
+          <section className={classes.openedPrograms}>
+            <div className={classes.content}>
+              <h2 className={classes.sectionTitle}>현재 모집중이에요</h2>
+              <p className={classes.sectionDescription}>
+                아래에서 모집중인 프로그램을 확인해보세요!
+              </p>
               {loading ? (
                 <CardListSlider>
                   <CardListPlaceholder />
@@ -105,7 +107,7 @@ const Programs = () => {
                   </CardListPlaceholder>
                 </CardListSlider>
               ) : (
-                <CardListSlider className="program-list">
+                <CardListSlider className={classes.programList}>
                   {programs
                     .filter((program: any) => program.status === 'OPEN')
                     .map((program: any) => (
@@ -133,17 +135,19 @@ const Programs = () => {
               )}
             </div>
           </section>
-          <section className="closed-programs">
-            <div className="content">
-              <h2>아쉽지만 마감되었어요</h2>
-              <p>더 많은 프로그램들이 준비되어 있으니 걱정마세요!</p>
+          <section className={classes.closedPrograms}>
+            <div className={classes.content}>
+              <h2 className={classes.sectionTitle}>아쉽지만 마감되었어요</h2>
+              <p className={classes.sectionDescription}>
+                더 많은 프로그램들이 준비되어 있으니 걱정마세요!
+              </p>
               {loading || closedPrograms.length === 0 ? (
-                <div className="closed-card-list">
-                  <div className="placeholder" />
+                <div className={classes.wrapper}>
+                  <div className={classes.placeholder} />
                 </div>
               ) : (
-                <div className="closed-card-list">
-                  <div className="card-list">
+                <div className={classes.wrapper}>
+                  <div className={classes.cardList}>
                     {closedPrograms.map((program: any) => (
                       <ClosedCard key={program.id} program={program} />
                     ))}

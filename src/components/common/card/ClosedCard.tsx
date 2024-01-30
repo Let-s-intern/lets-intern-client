@@ -1,8 +1,8 @@
 import { Link } from 'react-router-dom';
 
-import { typeToText } from '../../utils/converTypeToText';
+import { typeToText } from '../../../utils/converTypeToText';
 
-import './ClosedCard.scss';
+import classes from './ClosedCard.module.scss';
 
 interface ClosedCardProps {
   program: any;
@@ -10,9 +10,9 @@ interface ClosedCardProps {
 
 const ClosedCard = ({ program }: ClosedCardProps) => {
   return (
-    <Link to={`/program/detail/${program.id}`} className="closed-card">
-      <span className="category">{typeToText[program.type]}</span>
-      <h3>
+    <Link to={`/program/detail/${program.id}`} className={classes.card}>
+      <span>{typeToText[program.type]}</span>
+      <h3 className={classes.title}>
         {program.title}
         <br />
         모집 마감

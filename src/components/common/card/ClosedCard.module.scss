@@ -1,4 +1,4 @@
-.closed-card {
+.card {
   width: 100%;
   border: 1.5px solid #e5e7eb;
   border-radius: 0.5rem;
@@ -8,7 +8,7 @@
   text-align: center;
   cursor: pointer;
 
-  h3 {
+  .title {
     margin-top: 0.5rem;
     word-break: keep-all;
     font-size: 1.5rem;
