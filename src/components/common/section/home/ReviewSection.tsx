@@ -1,4 +1,4 @@
-import ReviewBox from '../../box/ReviewBox';
+import ReviewBox from '../../review/ReviewBox';
 import reviews from '../../../../data/home-reviews.json';
 
 import classes from './ReviewSection.module.scss';
