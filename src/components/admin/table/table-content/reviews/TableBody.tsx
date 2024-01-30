@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
 import TD from '../../TD';
-import ActionButton from '../../../ActionButton';
+import ActionButton from '../../../button/ActionButton';
 import formatDateString from '../../../../../utils/formatDateString';
 
 interface TableBodyProps {

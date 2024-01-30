@@ -1,8 +1,8 @@
 import styled from 'styled-components';
 import { useParams } from 'react-router-dom';
 
-import axios from '../../utils/axios';
-import ActionButton from './ActionButton';
+import axios from '../../../utils/axios';
+import ActionButton from '../button/ActionButton';
 
 interface BottomDownloadProps {
   program: any;

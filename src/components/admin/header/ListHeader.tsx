@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import ActionButton from './ActionButton';
+import ActionButton from '../button/ActionButton';
 
 interface ListHeaderProps {
   children: React.ReactNode;

@@ -6,8 +6,8 @@ import axios from '../../../utils/axios';
 import Table from '../../../components/admin/table/Table';
 import TableHead from '../../../components/admin/table/table-content/review-detail/TableHead';
 import TableBody from '../../../components/admin/table/table-content/review-detail/TableBody';
-import Heading from '../../../components/admin/Heading';
-import AdminPagination from '../../../components/admin/AdminPagination';
+import Heading from '../../../components/admin/heading/Heading';
+import AdminPagination from '../../../components/admin/pagination/AdminPagination';
 
 import classes from './ReviewsDetail.module.scss';
 
