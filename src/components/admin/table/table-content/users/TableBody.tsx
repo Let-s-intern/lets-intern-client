@@ -4,7 +4,7 @@ import styled from 'styled-components';
 
 import axios from '../../../../../utils/axios';
 import TD from '../../TD';
-import ActionButton from '../../../ActionButton';
+import ActionButton from '../../../button/ActionButton';
 import { convertTypeToBank } from '../../../../../utils/convertTypeToBank';
 
 interface TableBodyProps {

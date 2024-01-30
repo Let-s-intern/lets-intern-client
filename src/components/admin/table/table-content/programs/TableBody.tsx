@@ -2,7 +2,7 @@ import { useState } from 'react';
 import styled from 'styled-components';
 import { Checkbox } from '@mui/material';
 
-import ActionButton from '../../../ActionButton';
+import ActionButton from '../../../button/ActionButton';
 import TD from '../../TD';
 import { convertTypeToText } from '../../../../../utils/converTypeToText';
 import AlertModal from '../../../../../pages/AlertModal';
