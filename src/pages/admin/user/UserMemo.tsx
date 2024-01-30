@@ -5,10 +5,10 @@ import axios from '../../../utils/axios';
 import Table from '../../../components/admin/table/Table';
 import MemoTableBody from '../../../components/admin/table/table-content/user-memo/TableBody';
 import MemoTableHead from '../../../components/admin/table/table-content/user-memo/TableHead';
-import Heading from '../../../components/admin/Heading';
-import ActionButton from '../../../components/admin/ActionButton';
-import UserMemoModal from '../../../components/modal/UserMemoModal';
-import AdminPagination from '../../../components/admin/AdminPagination';
+import Heading from '../../../components/admin/heading/Heading';
+import ActionButton from '../../../components/admin/button/ActionButton';
+import UserMemoModal from '../../../components/admin/modal/UserMemoModal';
+import AdminPagination from '../../../components/admin/pagination/AdminPagination';
 
 import classes from './UserMemo.module.scss';
 

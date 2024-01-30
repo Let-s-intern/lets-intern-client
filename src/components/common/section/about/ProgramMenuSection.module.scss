@@ -1,0 +1,90 @@
+@use '../../../../styles/utils.scss' as *;
+
+.section {
+  padding: 3rem 1.5rem;
+
+  .content {
+    max-width: $screen-lg;
+    margin: 0 auto;
+
+    h3 {
+      span {
+        display: block;
+        text-align: center;
+        font-weight: 500;
+
+        br {
+          display: block;
+
+          @media screen and (min-width: $screen-xs) {
+            display: none;
+          }
+        }
+      }
+
+      strong {
+        display: block;
+        font-size: 1.5rem;
+        font-weight: 600;
+        text-align: center;
+        margin-top: 0.375rem;
+      }
+    }
+
+    .menuList {
+      margin-top: 3rem;
+      display: grid;
+      grid-template-columns: repeat(1, 1fr);
+      gap: 0.75rem;
+
+      @media screen and (min-width: $screen-md) {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .menu {
+        background-color: #f1f4f9;
+        border-radius: 0.625rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+        padding: 2.5rem;
+        cursor: pointer;
+
+        .text {
+          color: #4a495c;
+
+          h4 {
+            font-size: 1.5rem;
+            font-weight: 600;
+          }
+
+          p {
+            margin-top: 1.25rem;
+            word-break: keep-all;
+
+            br {
+              display: none;
+
+              @media screen and (min-width: $screen-xs) {
+                display: block;
+              }
+
+              &.fix {
+                display: block;
+              }
+            }
+          }
+        }
+
+        .arrow {
+          i {
+            img {
+              width: 1.75rem;
+              height: 1.75rem;
+            }
+          }
+        }
+      }
+    }
+  }
+}

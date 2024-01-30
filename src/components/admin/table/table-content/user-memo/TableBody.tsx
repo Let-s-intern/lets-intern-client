@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-import ActionButton from '../../../ActionButton';
+import ActionButton from '../../../button/ActionButton';
 import TD from '../../TD';
 
 interface MemoTableBodyProps {
