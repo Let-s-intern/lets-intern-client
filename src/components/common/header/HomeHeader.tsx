@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 
 import AlertModal from '../../../pages/AlertModal';
-import classes from './Header.module.scss';
+import classes from './HomeHeader.module.scss';
 
 const HomeHeader = () => {
   const [showTILAlert, setShowTILAlert] = useState(false);
