@@ -4,7 +4,7 @@ import ProgramInfoModalGroup, {
   ModalContentType,
 } from '../../modal/about/ProgramInfoModalGroup';
 import classes from './ProgramMenuSection.module.scss';
-import AlertModal from '../../../pages/AlertModal';
+import AlertModal from '../../../../pages/AlertModal';
 
 const ProgramMenuSection = () => {
   const [showModalContent, setShowModalContent] =

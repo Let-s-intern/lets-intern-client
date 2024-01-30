@@ -1,4 +1,4 @@
-import styles from './styles.module.scss';
+import classes from './NewsSection.module.scss';
 
 const NewsSection = () => {
   return (
@@ -24,14 +24,14 @@ const NewsSection = () => {
         <form>
           <div className="mx-auto flex flex-col gap-8">
             <input
-              className={styles.input}
+              className={classes.input}
               type="text"
               name="name"
               placeholder="이름"
               autoComplete="off"
             />
             <input
-              className={styles.input}
+              className={classes.input}
               type="text"
               name="email"
               placeholder="이메일"

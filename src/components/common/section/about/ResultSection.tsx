@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 
 import classes from './ResultSection.module.scss';
-import axios from '../../../utils/axios';
+import axios from '../../../../utils/axios';
 import cn from 'classnames';
 
 const ResultSection = () => {

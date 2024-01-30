@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import cn from 'classnames';
 
-import useScrollShadow from '../../../hooks/useScrollShadow';
+import useScrollShadow from '../../../../hooks/useScrollShadow';
 import { ModalContentType } from './ProgramInfoModalGroup';
 import classes from './ChallengeModal.module.scss';
 

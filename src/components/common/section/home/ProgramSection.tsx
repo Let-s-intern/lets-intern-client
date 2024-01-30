@@ -4,9 +4,9 @@ import { useQuery } from '@tanstack/react-query';
 import axios from '../../../../utils/axios';
 import { typeToText } from '../../../../utils/converTypeToText';
 import formatDateString from '../../../../utils/formatDateString';
-import CardListSlider from '../../../CardListSlider';
-import CardListPlaceholder from '../../../CardListPlaceholder';
-import ProgramCard from '../../../ProgramCard';
+import CardListSlider from '../../../../pages/CardListSlider';
+import CardListPlaceholder from '../../../../pages/CardListPlaceholder';
+import ProgramCard from '../../../../pages/ProgramCard';
 
 const ProgramSection = () => {
   const [programList, setProgramList] = useState<any>();

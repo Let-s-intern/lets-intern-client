@@ -1,7 +1,7 @@
-import Review from './components/Review';
+import ReviewBox from '../../box/ReviewBox';
 import reviews from '../../../../data/home-reviews.json';
 
-import styles from './styles.module.scss';
+import classes from './ReviewSection.module.scss';
 
 const ReviewSection = () => {
   return (
@@ -13,27 +13,27 @@ const ReviewSection = () => {
       </h2>
       <div className="mt-6">
         <div className="flex flex-col gap-4">
-          <div className={styles.row}>
-            <div className={styles.item}>
+          <div className={classes.row}>
+            <div className={classes.item}>
               {reviews.slice(0, 9).map((review, index) => (
-                <Review review={review} key={index} />
+                <ReviewBox review={review} key={index} />
               ))}
             </div>
-            <div className={styles.item}>
+            <div className={classes.item}>
               {reviews.slice(0, 9).map((review, index) => (
-                <Review review={review} key={index} />
+                <ReviewBox review={review} key={index} />
               ))}
             </div>
           </div>
-          <div className={styles.row}>
-            <div className={styles.item}>
+          <div className={classes.row}>
+            <div className={classes.item}>
               {reviews.slice(9).map((review, index) => (
-                <Review review={review} key={index} />
+                <ReviewBox review={review} key={index} />
               ))}
             </div>
-            <div className={styles.item}>
+            <div className={classes.item}>
               {reviews.slice(9).map((review, index) => (
-                <Review review={review} key={index} />
+                <ReviewBox review={review} key={index} />
               ))}
             </div>
           </div>

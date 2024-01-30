@@ -1,4 +1,4 @@
-import styles from './styles.module.scss';
+import classes from './FeatureSection.module.scss';
 
 const FeatureSection = () => {
   return (
@@ -11,15 +11,15 @@ const FeatureSection = () => {
         </h2>
         <div className="mt-5">
           <div className="flex flex-col gap-2">
-            <div className={styles.row}>
-              <div className={styles.item}>
+            <div className={classes.row}>
+              <div className={classes.item}>
                 <h3>처음부터 차근차근, 단계적 커리큘럼</h3>
                 <p>
                   인턴 지원의 기초 다지기부터 실제 지원까지. <br />
                   렛츠인턴의 커리큘럼과 함께 단계적으로 준비할 수 있어요.
                 </p>
               </div>
-              <div className={styles.item}>
+              <div className={classes.item}>
                 <h3>함께 동기부여</h3>
                 <p>
                   다른 인턴 준비생들과 소통하며 <br />
@@ -27,8 +27,8 @@ const FeatureSection = () => {
                 </p>
               </div>
             </div>
-            <div className={styles.row}>
-              <div className={styles.item}>
+            <div className={classes.row}>
+              <div className={classes.item}>
                 <h3>다양한 커리어 선배들과의 만남</h3>
                 <p>
                   여러 직무에 종사하는 커리어 선배들과 이야기를 나누며 <br />

@@ -4,7 +4,7 @@ interface ReviewProps {
   review: any;
 }
 
-const Review = ({ review }: ReviewProps) => {
+const ReviewBox = ({ review }: ReviewProps) => {
   return (
     <article className="flex h-48 w-full min-w-[12rem] flex-col justify-between rounded-lg bg-white p-6">
       <p className="text-sm font-medium leading-[1.8]">
@@ -22,4 +22,4 @@ const Review = ({ review }: ReviewProps) => {
   );
 };
 
-export default Review;
+export default ReviewBox;
