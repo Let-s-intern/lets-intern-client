@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import Button from '../../Button';
-import Input from '../../Input';
-import axios from '../../../utils/axios';
+import Button from '../Button';
+import Input from '../Input';
+import axios from '../../utils/axios';
 
 const FindPassword = () => {
   const navigate = useNavigate();

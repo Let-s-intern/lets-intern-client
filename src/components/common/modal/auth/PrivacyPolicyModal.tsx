@@ -1,7 +1,7 @@
 import cn from 'classnames';
 
-import PrivacyLink from '../PrivacyLink';
-import styles from './styles.module.scss';
+import PrivacyLink from '../../auth/PrivacyLink';
+import styles from './PrivacyPolicyModal.module.scss';
 
 interface PrivacyPolicyModalProps {
   showModal: boolean;
