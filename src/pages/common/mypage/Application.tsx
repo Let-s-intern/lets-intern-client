@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 
 import axios from '../../../utils/axios';
 import CardListSlider from '../../CardListSlider';
-import ApplicationCard from '../../../components/common/card/ApplicationCard';
+import ApplicationCard from '../../../components/common/review/card/ApplicationCard';
 import AlertModal from '../../AlertModal';
 
 const Application = () => {

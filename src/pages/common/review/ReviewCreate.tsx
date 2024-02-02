@@ -5,9 +5,9 @@ import styled from 'styled-components';
 import axios from '../../../utils/axios';
 import { typeToText } from '../../../utils/converTypeToText';
 import ReviewHeader from '../../ReviewHeader';
-import InputTitle from '../../../components/common/input-control/review/InputTitle';
-import Star from '../../../components/common/review/Star';
-import TextArea from '../../../components/common/input-control/review/TextArea';
+import InputTitle from '../../../components/common/review/ui/InputTitle';
+import Star from '../../../components/common/review/ui/Star';
+import TextArea from '../../../components/common/review/ui/TextArea';
 import AlertModal from '../../AlertModal';
 
 interface SubmitButtonProps {

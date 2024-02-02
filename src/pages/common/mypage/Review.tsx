@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 
 import axios from '../../../utils/axios';
 import CardListSlider from '../../CardListSlider';
-import ReviewCard from '../../../components/common/card/ReviewCard';
+import ReviewCard from '../../../components/common/review/card/ReviewCard';
 
 const Review = () => {
   const [loading, setLoading] = useState<boolean>(true);

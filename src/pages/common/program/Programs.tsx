@@ -3,7 +3,7 @@ import { Link, useSearchParams } from 'react-router-dom';
 import cn from 'classnames';
 
 import axios from '../../../utils/axios';
-import ClosedCard from '../../../components/common/card/ClosedCard';
+import ClosedCard from '../../../components/common/programs/card/ClosedCard';
 
 import classes from './Programs.module.scss';
 import CardListSlider from '../../CardListSlider';

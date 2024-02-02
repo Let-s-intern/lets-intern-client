@@ -1,7 +1,7 @@
-import FeatureSection from '../../../components/common/section/home/FeatureSection';
-import HomeHeader from '../../../components/common/header/HomeHeader';
-import ProgramSection from '../../../components/common/section/home/ProgramSection';
-import ReviewSection from '../../../components/common/section/home/ReviewSection';
+import FeatureSection from '../../../components/common/home/section/FeatureSection';
+import HomeHeader from '../../../components/common/home/header/HomeHeader';
+import ProgramSection from '../../../components/common/home/section/ProgramSection';
+import ReviewSection from '../../../components/common/home/section/ReviewSection';
 
 const Home = () => {
   return (

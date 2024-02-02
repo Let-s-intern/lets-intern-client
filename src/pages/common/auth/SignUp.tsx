@@ -4,9 +4,9 @@ import { useNavigate } from 'react-router-dom';
 import Input from '../../Input';
 import Button from '../../Button';
 import axios from '../../../utils/axios';
-import PrivacyPolicyModal from '../../../components/common/modal/auth/PrivacyPolicyModal';
-import CheckBox from '../../../components/common/auth/CheckBox';
-import PrivacyLink from '../../../components/common/auth/PrivacyLink';
+import PrivacyPolicyModal from '../../../components/common/auth/modal/PrivacyPolicyModal';
+import CheckBox from '../../../components/common/auth/ui/CheckBox';
+import PrivacyLink from '../../../components/common/auth/ui/PrivacyLink';
 import {
   isValidEmail,
   isValidPassword,
