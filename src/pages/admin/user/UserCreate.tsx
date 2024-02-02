@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import UserEditor from '../../../components/admin/editor/UserEditor';
+import UserEditor from '../../../components/admin/user/ui/editor/UserEditor';
 
 const UserCreate = () => {
   const navigate = useNavigate();

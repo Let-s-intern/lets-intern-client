@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
-import UserEditor from '../../../components/admin/editor/UserEditor';
+import UserEditor from '../../../components/admin/user/ui/editor/UserEditor';
 import axios from '../../../utils/axios';
 import { isValidEmail, isValidPhoneNumber } from '../../../utils/valid';
 

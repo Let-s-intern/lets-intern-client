@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
-import Header from '../../../components/admin/header/Header';
-import Heading from '../../../components/admin/heading/Heading';
-import Table from '../../../components/admin/table/Table';
-import TableBody from '../../../components/admin/table/table-content/attend-check/TableBody';
-import TableHead from '../../../components/admin/table/table-content/attend-check/TableHead';
+import Header from '../../../components/admin/ui/header/Header';
+import Heading from '../../../components/admin/ui/heading/Heading';
+import Table from '../../../components/admin/ui/table/Table';
+import TableBody from '../../../components/admin/program/attend-check/table-content/TableBody';
+import TableHead from '../../../components/admin/program/attend-check/table-content/TableHead';
 import axios from '../../../utils/axios';
 
 const AttendCheck = () => {
