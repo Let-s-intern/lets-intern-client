@@ -2,13 +2,13 @@ import { useEffect, useState } from 'react';
 import { useParams, useSearchParams } from 'react-router-dom';
 
 import axios from '../../../utils/axios';
-import Table from '../../../components/admin/table/Table';
-import MemoTableBody from '../../../components/admin/table/table-content/user-memo/TableBody';
-import MemoTableHead from '../../../components/admin/table/table-content/user-memo/TableHead';
-import Heading from '../../../components/admin/heading/Heading';
-import ActionButton from '../../../components/admin/button/ActionButton';
-import UserMemoModal from '../../../components/admin/modal/UserMemoModal';
-import AdminPagination from '../../../components/admin/pagination/AdminPagination';
+import Table from '../../../components/admin/ui/table/Table';
+import MemoTableBody from '../../../components/admin/user/user-memo/table-content/TableBody';
+import MemoTableHead from '../../../components/admin/user/user-memo/table-content/TableHead';
+import Heading from '../../../components/admin/ui/heading/Heading';
+import ActionButton from '../../../components/admin/ui/button/ActionButton';
+import UserMemoModal from '../../../components/admin/user/user-memo/modal/UserMemoModal';
+import AdminPagination from '../../../components/admin/ui/pagination/AdminPagination';
 
 import classes from './UserMemo.module.scss';
 

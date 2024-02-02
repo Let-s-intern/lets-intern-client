@@ -2,13 +2,13 @@ import { useEffect, useState } from 'react';
 import { useParams, useSearchParams } from 'react-router-dom';
 import { useQueryClient, useQuery } from '@tanstack/react-query';
 
-import ActionButton from '../../../components/admin/button/ActionButton';
-import Table from '../../../components/admin/table/Table';
-import TableHead from '../../../components/admin/table/table-content/program-users/TableHead';
-import TableBody from '../../../components/admin/table/table-content/program-users/TableBody';
+import ActionButton from '../../../components/admin/ui/button/ActionButton';
+import Table from '../../../components/admin/ui/table/Table';
+import TableHead from '../../../components/admin/program/program-user/table-content/TableHead';
+import TableBody from '../../../components/admin/program/program-user/table-content/TableBody';
 import axios from '../../../utils/axios';
-import AdminPagination from '../../../components/admin/pagination/AdminPagination';
-import BottomDownload from '../../../components/admin/download/BottomDownload';
+import AdminPagination from '../../../components/admin/ui/pagination/AdminPagination';
+import BottomDownload from '../../../components/admin/program/program-user/download/BottomDownload';
 import classes from './ProgramUsers.module.scss';
 
 const ProgramUsers = () => {

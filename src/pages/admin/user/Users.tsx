@@ -2,14 +2,14 @@ import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 
 import axios from '../../../utils/axios';
-import ActionButton from '../../../components/admin/button/ActionButton';
-import Header from '../../../components/admin/header/Header';
-import Heading from '../../../components/admin/heading/Heading';
-import Table from '../../../components/admin/table/Table';
-import Filter from '../../../components/admin/filter/Filter';
-import TableBody from '../../../components/admin/table/table-content/users/TableBody';
-import TableHead from '../../../components/admin/table/table-content/users/TableHead';
-import AdminPagination from '../../../components/admin/pagination/AdminPagination';
+import ActionButton from '../../../components/admin/ui/button/ActionButton';
+import Header from '../../../components/admin/ui/header/Header';
+import Heading from '../../../components/admin/ui/heading/Heading';
+import Table from '../../../components/admin/ui/table/Table';
+import Filter from '../../../components/admin/user/users/filter/Filter';
+import TableBody from '../../../components/admin/user/users/table-content/TableBody';
+import TableHead from '../../../components/admin/user/users/table-content/TableHead';
+import AdminPagination from '../../../components/admin/ui/pagination/AdminPagination';
 import classes from './Users.module.scss';
 
 const Users = () => {
