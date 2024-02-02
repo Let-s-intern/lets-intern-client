@@ -11,117 +11,74 @@ import TableBody from '../../../components/admin/user/users/table-content/TableB
 import TableHead from '../../../components/admin/user/users/table-content/TableHead';
 import AdminPagination from '../../../components/admin/ui/pagination/AdminPagination';
 import classes from './Users.module.scss';
+import { useQuery } from '@tanstack/react-query';
 
 const Users = () => {
-  const [searchParams, setSearchParams] = useSearchParams();
-  const [users, setUsers] = useState<any>(null);
-  const [managers, setManagers] = useState<any>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<unknown>(null);
+  const [searchParams] = useSearchParams();
+  const [users, setUsers] = useState<any>();
+  const [isUsersLoading, setIsUsersLoading] = useState(true);
+  const [usersError, setUsersError] = useState<unknown>();
   const [searchValues, setSearchValues] = useState<any>({});
   const [maxPage, setMaxPage] = useState(1);
 
   const sizePerPage = 10;
 
+  // const rawSearchParams = {
+  //   name: searchParams.get('name') || '',
+  //   email: searchParams.get('email') || '',
+  //   phoneNum: searchParams.get('phoneNum') || '',
+  //   programType: searchParams.get('programType') || '',
+  //   programTh: searchParams.get('programTh') || '',
+  // };
+  const params = {
+    page: searchParams.get('page') || '1',
+    size: sizePerPage,
+    ...searchValues,
+  };
+
+  // useEffect(() => {
+  //   setSearchValues({ ...rawSearchParams });
+  // }, [searchParams]);
+
+  const simpleUsersQuery = useQuery({
+    queryKey: ['users', params],
+    queryFn: async () => {
+      const res = await axios.get('/user/admin', {
+        params,
+      });
+      setMaxPage(res.data.pageInfo.totalPages);
+      return res.data.userList;
+    },
+  });
+
   useEffect(() => {
+    if (!simpleUsersQuery.data) {
+      return;
+    }
     const fetchUsers = async () => {
-      setLoading(true);
-      setUsers(null);
+      let newUsers: any = [];
       try {
-        const currentPage = searchParams.get('page');
-        const params = {
-          page: currentPage,
-          size: sizePerPage,
-        };
-        const res = await axios.get('/user/admin', {
-          params,
-        });
-        let searchedUsers = [];
-        for (const user of res.data.userList) {
-          const res = await axios.get(`/program/admin/user/${user.id}`);
+        setIsUsersLoading(true);
+        for (const user of simpleUsersQuery.data) {
+          const programRes = await axios.get(`/program/admin/user/${user.id}`);
           const accountRes = await axios.get(`/user/admin/${user.id}`);
-          const { accountType, accountNumber } = accountRes.data;
-          searchedUsers.push({
+          const newUser = {
             ...user,
-            programs: [...res.data.userProgramList],
-            accountType,
-            accountNumber,
-          });
+            programs: programRes.data.userProgramList,
+            accountType: accountRes.data.accountType,
+            accountNumber: accountRes.data.accountNumber,
+          };
+          newUsers.push(newUser);
         }
-        searchedUsers = searchUsersWithQuery(searchedUsers);
-        setUsers(searchedUsers);
-        setMaxPage(res.data.pageInfo.totalPages);
-      } catch (err) {
-        setError(err);
+        setUsers(newUsers);
+      } catch (error: unknown) {
+        setUsersError(error);
       } finally {
-        setLoading(false);
-      }
-    };
-    const fetchManagers = async () => {
-      try {
-        const res = await axios.get('/user/admin/manager');
-        setManagers(res.data.managerList);
-      } catch (err) {
-        setError(err);
-      } finally {
-        setLoading(false);
+        setIsUsersLoading(false);
       }
     };
     fetchUsers();
-    fetchManagers();
-  }, [searchParams]);
-
-  const searchUsersWithQuery = (users: any) => {
-    const keyword = searchParams.get('keyword');
-    const type = searchParams.get('type');
-    const th = Number(searchParams.get('th'));
-    const managerId = Number(searchParams.get('managerId'));
-    if (keyword) {
-      users = users.filter(
-        (user: any) =>
-          user.name.includes(keyword) ||
-          user.email.includes(keyword) ||
-          user.phoneNum.includes(keyword),
-      );
-    }
-    if (type) {
-      users = users.filter((user: any) => {
-        for (const program of user.programs) {
-          if (program.type === type) {
-            return true;
-          }
-        }
-        return false;
-      });
-    }
-    if (th) {
-      users = users.filter((user: any) => {
-        for (const program of user.programs) {
-          if (program.th === th) {
-            return true;
-          }
-        }
-        return false;
-      });
-    }
-    if (managerId) {
-      if (managerId === 0) {
-        users = users.filter((user: any) => user.managerId === null);
-      } else {
-        users = users.filter((user: any) => user.managerId === managerId);
-      }
-    }
-
-    return users;
-  };
-
-  const handleChangeSearchValues = (e: any) => {
-    const { name, value } = e.target;
-    setSearchValues({
-      ...searchValues,
-      [name]: value,
-    });
-  };
+  }, [simpleUsersQuery.data]);
 
   const handleDeleteUser = async (userId: number) => {
     if (!window.confirm('정말로 삭제하시겠습니까?')) {
@@ -129,8 +86,8 @@ const Users = () => {
       return;
     }
     await axios.delete(`/user/admin/${userId}`);
-    const newUser = users.filter((user: any) => user.id !== userId);
-    setUsers(newUser);
+    const newUsers = users.filter((user: any) => user.id !== userId);
+    setUsers(newUsers);
     alert('삭제되었습니다.');
   };
 
@@ -144,18 +101,13 @@ const Users = () => {
       </Header>
       <main className={classes.main}>
         <div className={classes.filterWrapper}>
-          <Filter
-            searchValues={searchValues}
-            managers={managers}
-            onChangeSearchValues={handleChangeSearchValues}
-            setSearchValues={setSearchValues}
-          />
+          <Filter setSearchValues={setSearchValues} />
         </div>
-        {error ? (
+        {usersError ? (
           <div>에러 발생</div>
         ) : (
           <>
-            {loading || !users ? (
+            {isUsersLoading || !users ? (
               <div className={classes.loading}>로딩 중...</div>
             ) : users.length === 0 ? (
               <div className={classes.empty}>유저 정보가 없습니다.</div>
