@@ -3,7 +3,6 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import './styles/card.scss';
 import './styles/modal.scss';
-import './styles/alert.scss';
 import './styles/mypage.scss';
 import './styles/apply.scss';
 import './styles/github-markdown-light.css';

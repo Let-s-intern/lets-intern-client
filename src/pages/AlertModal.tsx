@@ -1,7 +1,7 @@
 import { Fragment } from 'react';
 import cn from 'classnames';
 
-import './AlertModal.scss';
+import styles from './AlertModal.module.scss';
 
 interface AlertModalProps {
   onConfirm: () => void;
@@ -29,9 +29,9 @@ const AlertModal = ({
   className,
 }: AlertModalProps) => {
   return (
-    <div className="alert-modal">
-      <div className={cn(className, 'alert-modal-box')}>
-        <h3 className="modal-header">
+    <div className={styles.modal}>
+      <div className={cn(styles.content, className)}>
+        <h3 className={styles.header}>
           {title.split('<br />').map((titleEl, index) => (
             <Fragment key={index}>
               {titleEl}
@@ -39,13 +39,13 @@ const AlertModal = ({
             </Fragment>
           ))}
         </h3>
-        <div className="modal-body">{children}</div>
-        <div className="modal-footer">
+        <div className={cn(styles.body)}>{children}</div>
+        <div className={styles.footer}>
           <button
             type="button"
-            className={cn('confirm-button', 'button', {
-              highlight: highlight === 'confirm',
-              disabled: disabled,
+            className={cn(styles.confirm, styles.button, {
+              [styles.highlight]: highlight === 'confirm',
+              [styles.disabled]: disabled,
             })}
             onClick={() => !disabled && onConfirm()}
           >
@@ -54,8 +54,8 @@ const AlertModal = ({
           {showCancel && (
             <button
               type="button"
-              className={cn('confirm-button', 'button', {
-                highlight: highlight === 'cancel',
+              className={cn(styles.confirm, styles.button, {
+                [styles.highlight]: highlight === 'cancel',
               })}
               onClick={onCancel}
             >

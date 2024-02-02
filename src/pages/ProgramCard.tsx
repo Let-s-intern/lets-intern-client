@@ -1,7 +1,5 @@
 import { Link } from 'react-router-dom';
 
-import './ProgramCard.scss';
-
 interface ProgramCardProps {
   to: string;
   children: React.ReactNode;

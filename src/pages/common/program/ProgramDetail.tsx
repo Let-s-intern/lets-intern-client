@@ -4,7 +4,7 @@ import { useParams } from 'react-router-dom';
 
 import axios from '../../../utils/axios';
 import Header from '../../../components/common/program-detail/ui/Header';
-import MainContent from '../../../components/common/program-detail/MainContent';
+import MainContent from '../../../components/common/program-detail/content/MainContent';
 import ApplySection from '../../../components/common/apply/mobile/ApplySection';
 import ApplyAside from '../../../components/common/apply/desktop/ApplyAside';
 

@@ -1,6 +1,6 @@
 import { useSearchParams } from 'react-router-dom';
 
-import './SocialLogin.scss';
+import styles from './SocialLogin.module.scss';
 
 interface SocialLoginProps {
   type: 'LOGIN' | 'SIGN_UP';
@@ -24,13 +24,13 @@ const SocialLogin = ({ type }: SocialLoginProps) => {
   };
 
   return (
-    <div className="social-login">
-      <span className="gray-label">또는</span>
-      <div className="social-login-content">
+    <div className={styles.login}>
+      <span className={styles['gray-text']}>또는</span>
+      <div className={styles.content}>
         <h2>SNS 계정으로 {type === 'LOGIN' ? '로그인' : '회원가입'}하기</h2>
-        <div className="button-group">
+        <div className={styles.buttons}>
           <button
-            className="kakao-login-button"
+            className={styles.kakao}
             onClick={() => handleSocialLogin('KAKAO')}
           >
             <i>
@@ -38,7 +38,7 @@ const SocialLogin = ({ type }: SocialLoginProps) => {
             </i>
           </button>
           <button
-            className="naver-login-button"
+            className={styles.naver}
             onClick={() => handleSocialLogin('NAVER')}
           >
             <i>
