@@ -1,14 +1,14 @@
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 
-import Table from '../../../components/admin/table/Table';
-import TableHead from '../../../components/admin/table/table-content/programs/TableHead';
-import TableBody from '../../../components/admin/table/table-content/programs/TableBody';
+import Table from '../../../components/admin/ui/table/Table';
+import TableHead from '../../../components/admin/program/programs/table-content/TableHead';
+import TableBody from '../../../components/admin/program/programs/table-content/TableBody';
 
-import Header from '../../../components/admin/header/Header';
-import Heading from '../../../components/admin/heading/Heading';
-import ActionButton from '../../../components/admin/button/ActionButton';
-import AdminPagination from '../../../components/admin/pagination/AdminPagination';
+import Header from '../../../components/admin/ui/header/Header';
+import Heading from '../../../components/admin/ui/heading/Heading';
+import ActionButton from '../../../components/admin/ui/button/ActionButton';
+import AdminPagination from '../../../components/admin/ui/pagination/AdminPagination';
 import axios from '../../../utils/axios';
 import classes from './Programs.module.scss';
 
