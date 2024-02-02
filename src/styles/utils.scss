@@ -2,21 +2,3 @@ $screen-xs: 426px;
 $screen-sm: 640px;
 $screen-md: 768px;
 $screen-lg: 1024px;
-
-@mixin responsive {
-  width: 100%;
-  margin: 0 auto;
-  padding: 0 1.5rem;
-
-  @media (min-width: $screen-sm) {
-    max-width: 640px;
-  }
-
-  @media (min-width: $screen-md) {
-    max-width: 768px;
-  }
-
-  @media (min-width: $screen-lg) {
-    max-width: 1024px;
-  }
-}

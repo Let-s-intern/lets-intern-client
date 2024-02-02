@@ -1,6 +1,4 @@
-@use '../../../styles/utils.scss' as *;
-
-$breakpoint-640px: 640px;
+@use '/src/styles/utils.scss' as *;
 
 .page {
   .main {
@@ -87,7 +85,7 @@ $breakpoint-640px: 640px;
             grid-template-columns: repeat(1, 1fr);
             gap: 0.5rem;
 
-            @media (min-width: $breakpoint-640px) {
+            @media (min-width: $screen-sm) {
               grid-template-columns: repeat(2, 1fr);
             }
           }
