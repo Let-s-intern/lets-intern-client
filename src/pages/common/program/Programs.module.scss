@@ -1,0 +1,98 @@
+@use '../../../styles/utils.scss' as *;
+
+$breakpoint-640px: 640px;
+
+.page {
+  .main {
+    .sectionTitle {
+      font-size: 1.5rem;
+      font-weight: 700;
+    }
+
+    .sectionDescription {
+      color: #6b7280;
+    }
+
+    .filter {
+      position: sticky;
+      top: 4rem;
+      background-color: #ffffff;
+      padding: 0.75rem 1.5rem;
+
+      @media screen and (min-width: $screen-sm) {
+        top: 6rem;
+      }
+
+      .categoryGroup {
+        display: flex;
+        gap: 0.5rem;
+        max-width: $screen-lg;
+        margin: 0 auto;
+
+        .category {
+          font-size: 0.75rem;
+          color: #6963f6;
+          border-radius: 5rem;
+          border: 1px solid #6963f6;
+
+          @media screen and (min-width: $screen-xs) {
+            font-size: 0.875rem;
+          }
+
+          &.active {
+            background-color: #6963f6;
+            color: #ffffff;
+            height: 100%;
+          }
+
+          a {
+            display: block;
+            padding: 0.125rem 0.75rem;
+          }
+        }
+      }
+    }
+
+    .openedPrograms {
+      padding: 0 1.5rem;
+      margin-top: 1rem;
+
+      .content {
+        max-width: $screen-lg;
+        margin: 0 auto;
+
+        .programList {
+          margin-top: 1.25rem;
+        }
+      }
+    }
+
+    .closedPrograms {
+      margin-top: 1.25rem;
+      padding: 0 1.5rem;
+
+      .content {
+        max-width: $screen-lg;
+        margin: 0 auto;
+
+        .wrapper {
+          .placeholder {
+            width: 100%;
+            height: 175px;
+          }
+
+          .cardList {
+            margin-top: 1.25rem;
+            display: grid;
+            grid-template-columns: repeat(1, 1fr);
+            gap: 0.5rem;
+
+            @media (min-width: $breakpoint-640px) {
+              grid-template-columns: repeat(2, 1fr);
+            }
+          }
+        }
+      }
+    }
+  }
+}

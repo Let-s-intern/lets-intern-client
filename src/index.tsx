@@ -5,6 +5,8 @@ import './styles/card.scss';
 import './styles/modal.scss';
 import './styles/alert.scss';
 import './styles/mypage.scss';
+import './styles/apply.scss';
+import './styles/github-markdown-light.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 
