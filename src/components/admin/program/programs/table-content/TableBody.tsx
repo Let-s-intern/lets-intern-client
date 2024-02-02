@@ -5,7 +5,7 @@ import { Checkbox } from '@mui/material';
 import ActionButton from '../../../ui/button/ActionButton';
 import TD from '../../../ui/table/TD';
 import { convertTypeToText } from '../../../../../utils/converTypeToText';
-import AlertModal from '../../../../../pages/AlertModal';
+import AlertModal from '../../../../ui/alert/AlertModal';
 import formatDateString from '../../../../../utils/formatDateString';
 
 interface ProgramTableBodyProps {

@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import ListItem from '../ui/ListItem';
-import AlertModal from '../../../../../../../pages/AlertModal';
+import AlertModal from '../../../../../../ui/alert/AlertModal';
 
 interface MemberTypeContentProps {
   memberChecked: 'USER' | 'GUEST' | '';

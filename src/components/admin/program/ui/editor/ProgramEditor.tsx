@@ -1,9 +1,9 @@
 import { FormControl, InputLabel, MenuItem, Select } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import Input from '../../../../../pages/Input';
+import Input from '../../../../ui/input/Input';
 import ReactQuill from 'react-quill';
 import styled from 'styled-components';
-import FAQEditor from '../../../../../pages/FAQEditor';
+import FAQEditor from './FAQEditor';
 import storage from '../../../../../Firebase';
 import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
 import { useMemo, useRef } from 'react';

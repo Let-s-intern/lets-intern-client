@@ -4,11 +4,11 @@ import styled from 'styled-components';
 
 import axios from '../../../utils/axios';
 import { typeToText } from '../../../utils/converTypeToText';
-import ReviewHeader from '../../ReviewHeader';
+import ReviewHeader from '../../../components/common/review/ui/ReviewHeader';
 import InputTitle from '../../../components/common/review/ui/InputTitle';
 import Star from '../../../components/common/review/ui/Star';
 import TextArea from '../../../components/common/review/ui/TextArea';
-import AlertModal from '../../AlertModal';
+import AlertModal from '../../../components/ui/alert/AlertModal';
 
 interface SubmitButtonProps {
   $disabled?: boolean;

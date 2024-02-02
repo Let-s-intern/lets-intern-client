@@ -2,7 +2,7 @@ import { useState } from 'react';
 import cn from 'classnames';
 
 import axios from '../../../../utils/axios';
-import AlertModal from '../../../../pages/AlertModal';
+import AlertModal from '../../../ui/alert/AlertModal';
 import classes from './WithDrawAlertModal.module.scss';
 
 interface WithDrawAlertModalProps {

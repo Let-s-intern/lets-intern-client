@@ -2,17 +2,17 @@ import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import styled, { css } from 'styled-components';
 
-import axios from '../../../../../../utils/axios';
-import CautionContent from './content/CautionContent';
-import Modal from './ui/Modal';
-import ResultContent from './content/ResultContent';
-import MemberInfoInputContent from './content/MemberInfoInputContent';
+import axios from '../../../../../../../utils/axios';
+import CautionContent from '../content/CautionContent';
+import Modal from '../ui/Modal';
+import ResultContent from '../content/ResultContent';
+import MemberInfoInputContent from '../content/MemberInfoInputContent';
 import {
   isValidEmail,
   isValidPhoneNumber,
-} from '../../../../../../utils/valid';
-import MemberTypeContent from './content/MemberTypeContent';
-import AlertModal from '../../../../../../pages/AlertModal';
+} from '../../../../../../../utils/valid';
+import MemberTypeContent from '../content/MemberTypeContent';
+import AlertModal from '../../../../../../ui/alert/AlertModal';
 
 interface ProgramApplyProps {
   user: any;

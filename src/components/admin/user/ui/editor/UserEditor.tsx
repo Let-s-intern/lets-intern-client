@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-import Input from '../../../../../pages/Input';
+import Input from '../../../../ui/input/Input';
 import Heading from '../../../ui/heading/Heading';
 import ActionButton from '../../../ui/button/ActionButton';
 import { FormControl, InputLabel, MenuItem, Select } from '@mui/material';

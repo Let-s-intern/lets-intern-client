@@ -3,7 +3,7 @@ import { Outlet, useLocation } from 'react-router-dom';
 
 import NavBar from './NavBar';
 import Footer from './Footer';
-import ChannelService from '../ChannelService';
+import ChannelService from '../../../../ChannelService';
 
 const Layout = () => {
   const location = useLocation();

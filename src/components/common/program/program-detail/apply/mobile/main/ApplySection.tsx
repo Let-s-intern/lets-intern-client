@@ -2,8 +2,8 @@ import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import styled from 'styled-components';
 
-import axios from '../../../../../../utils/axios';
-import Button from '../../../../../../pages/Button';
+import axios from '../../../../../../../utils/axios';
+import Button from '../../../../../ui/button/Button';
 import ProgramApply from './ProgramApply';
 
 interface ApplySectionProps {

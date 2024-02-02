@@ -1,6 +1,6 @@
 import { FormControl, InputLabel, MenuItem, Select } from '@mui/material';
 
-import Input from '../../../../../../../pages/Input';
+import Input from '../../../../../../ui/input/Input';
 
 interface MemberInfoInputContentProps {
   user: any;

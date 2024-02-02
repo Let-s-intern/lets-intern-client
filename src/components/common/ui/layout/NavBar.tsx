@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
-import axios from '../utils/axios';
-import TabBar from './TabBar';
-import TabItem from './TabItem';
+import axios from '../../../../utils/axios';
+import TabBar from '../tab/TabBar';
+import TabItem from '../tab/TabItem';
 
 interface SideNavItemProps {
   to: string;

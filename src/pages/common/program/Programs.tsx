@@ -6,9 +6,9 @@ import axios from '../../../utils/axios';
 import ClosedCard from '../../../components/common/program/programs/card/ClosedCard';
 
 import classes from './Programs.module.scss';
-import CardListSlider from '../../CardListSlider';
-import CardListPlaceholder from '../../CardListPlaceholder';
-import ProgramCard from '../../ProgramCard';
+import CardListSlider from '../../../components/common/ui/card/wrapper/CardListSlider';
+import CardListPlaceholder from '../../../components/common/ui/card/placeholder/CardListPlaceholder';
+import ProgramCard from '../../../components/common/program/programs/card/ProgramCard';
 import { typeToText } from '../../../utils/converTypeToText';
 import formatDateString from '../../../utils/formatDateString';
 

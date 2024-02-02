@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import styled from 'styled-components';
 
-import TabBar from '../tab/TabBar';
+import TabBar from '../tab/tab-bar/TabBar';
 import DetailTab from '../tab/content/DetailTab';
 import ReviewTab from '../tab/content/ReviewTab';
 import FAQTab from '../tab/content/FAQTab';

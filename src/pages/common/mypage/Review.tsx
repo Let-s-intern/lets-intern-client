@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 
 import axios from '../../../utils/axios';
-import CardListSlider from '../../CardListSlider';
+import CardListSlider from '../../../components/common/ui/card/wrapper/CardListSlider';
 import ReviewCard from '../../../components/common/review/card/ReviewCard';
 
 const Review = () => {

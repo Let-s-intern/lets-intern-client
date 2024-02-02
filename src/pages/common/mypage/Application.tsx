@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
 
 import axios from '../../../utils/axios';
-import CardListSlider from '../../CardListSlider';
+import CardListSlider from '../../../components/common/ui/card/wrapper/CardListSlider';
 import ApplicationCard from '../../../components/common/review/card/ApplicationCard';
-import AlertModal from '../../AlertModal';
+import AlertModal from '../../../components/ui/alert/AlertModal';
 
 const Application = () => {
   const [appliedList, setAppliedList] = useState<any>([]);

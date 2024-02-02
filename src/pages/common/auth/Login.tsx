@@ -2,9 +2,9 @@ import { useEffect, useState } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import axios from 'axios';
 
-import Button from '../../Button';
-import Input from '../../Input';
-import SocialLogin from '../../SocialLogin';
+import Button from '../../../components/common/ui/button/Button';
+import Input from '../../../components/ui/input/Input';
+import SocialLogin from '../../../components/common/auth/ui/SocialLogin';
 
 interface TextLinkProps {
   to: string;

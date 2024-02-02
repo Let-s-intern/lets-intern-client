@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react';
 import cn from 'classnames';
 
-import StartContent from './content/StartContent';
-import MemberSelect from './content/MemberSelect';
-import InputContent from './content/InputContent';
-import CautionContent from './content/CautionContent';
-import ResultContent from './content/ResultContent';
-import AlertModal from '../../../../../../pages/AlertModal';
+import StartContent from '../content/StartContent';
+import MemberSelect from '../content/MemberSelect';
+import InputContent from '../content/InputContent';
+import CautionContent from '../content/CautionContent';
+import ResultContent from '../content/ResultContent';
+import AlertModal from '../../../../../../ui/alert/AlertModal';
 import styles from './ApplyAside.module.scss';
 
 interface ApplyAsdieProps {

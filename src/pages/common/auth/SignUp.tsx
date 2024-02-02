@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import Input from '../../Input';
-import Button from '../../Button';
+import Input from '../../../components/ui/input/Input';
+import Button from '../../../components/common/ui/button/Button';
 import axios from '../../../utils/axios';
 import PrivacyPolicyModal from '../../../components/common/auth/modal/PrivacyPolicyModal';
 import CheckBox from '../../../components/common/auth/ui/CheckBox';
@@ -12,8 +12,8 @@ import {
   isValidPassword,
   isValidPhoneNumber,
 } from '../../../utils/valid';
-import AlertModal from '../../AlertModal';
-import SocialLogin from '../../SocialLogin';
+import AlertModal from '../../../components/ui/alert/AlertModal';
+import SocialLogin from '../../../components/common/auth/ui/SocialLogin';
 
 const SignUp = () => {
   const navigate = useNavigate();
