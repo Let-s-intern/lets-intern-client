@@ -23,24 +23,13 @@ const Users = () => {
 
   const sizePerPage = 10;
 
-  // const rawSearchParams = {
-  //   name: searchParams.get('name') || '',
-  //   email: searchParams.get('email') || '',
-  //   phoneNum: searchParams.get('phoneNum') || '',
-  //   programType: searchParams.get('programType') || '',
-  //   programTh: searchParams.get('programTh') || '',
-  // };
   const params = {
     page: searchParams.get('page') || '1',
     size: sizePerPage,
     ...searchValues,
   };
 
-  // useEffect(() => {
-  //   setSearchValues({ ...rawSearchParams });
-  // }, [searchParams]);
-
-  const simpleUsersQuery = useQuery({
+  const usersQuery = useQuery({
     queryKey: ['users', params],
     queryFn: async () => {
       const res = await axios.get('/user/admin', {
@@ -52,14 +41,14 @@ const Users = () => {
   });
 
   useEffect(() => {
-    if (!simpleUsersQuery.data) {
+    if (!usersQuery.data) {
       return;
     }
     const fetchUsers = async () => {
       let newUsers: any = [];
       try {
         setIsUsersLoading(true);
-        for (const user of simpleUsersQuery.data) {
+        for (const user of usersQuery.data) {
           const programRes = await axios.get(`/program/admin/user/${user.id}`);
           const accountRes = await axios.get(`/user/admin/${user.id}`);
           const newUser = {
@@ -78,7 +67,7 @@ const Users = () => {
       }
     };
     fetchUsers();
-  }, [simpleUsersQuery.data]);
+  }, [usersQuery.data]);
 
   const handleDeleteUser = async (userId: number) => {
     if (!window.confirm('정말로 삭제하시겠습니까?')) {
@@ -92,7 +81,7 @@ const Users = () => {
   };
 
   return (
-    <>
+    <div className="p-8">
       <Header>
         <Heading>회원 관리</Heading>
         <ActionButton to="/admin/users/create" bgColor="blue">
@@ -129,7 +118,7 @@ const Users = () => {
           </>
         )}
       </main>
-    </>
+    </div>
   );
 };
 

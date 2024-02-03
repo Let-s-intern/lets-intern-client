@@ -38,6 +38,10 @@ const AdminLayout = () => {
           url: '/admin/programs',
         },
         {
+          name: '챌린지 관리',
+          url: '/admin/challenge',
+        },
+        {
           name: '후기 관리',
           url: '/admin/reviews',
         },
@@ -152,7 +156,6 @@ const NavSpacer = styled.div`
 const RightSection = styled.section`
   position: relative;
   flex: 1;
-  padding: 2rem;
   width: calc(100% - 250px);
   min-height: 100vh;
 `;

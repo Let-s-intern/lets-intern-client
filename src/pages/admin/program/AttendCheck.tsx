@@ -36,7 +36,7 @@ const AttendCheck = () => {
   };
 
   return (
-    <>
+    <div className="p-8">
       <Header>
         <Heading>출석체크 - {program.title}</Heading>
       </Header>
@@ -48,7 +48,7 @@ const AttendCheck = () => {
           onAttendCheckChange={handleAttendCheckChange}
         />
       </Table>
-    </>
+    </div>
   );
 };
 

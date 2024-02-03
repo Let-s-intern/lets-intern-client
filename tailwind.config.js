@@ -8,6 +8,7 @@ module.exports = {
       },
       fontFamily: {
         notosans: ['NotoSansKR', 'sans-serif'],
+        pretendard: ['Pretendard', 'sans-serif'],
       },
       colors: {
         primary: '#6963F6',
