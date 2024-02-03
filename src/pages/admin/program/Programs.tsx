@@ -85,7 +85,7 @@ const Programs = () => {
   }
 
   return (
-    <>
+    <div className="p-8">
       <Header>
         <Heading>프로그램 관리</Heading>
         <ActionButton to="/admin/programs/create" bgColor="blue">
@@ -107,7 +107,7 @@ const Programs = () => {
           </div>
         )}
       </main>
-    </>
+    </div>
   );
 };
 

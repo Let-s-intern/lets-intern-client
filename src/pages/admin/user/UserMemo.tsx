@@ -115,7 +115,7 @@ const UserMemo = () => {
   }
 
   return (
-    <>
+    <div className="p-8">
       <header className={classes.header}>
         <Heading>메모 - {user?.name}</Heading>
         <ActionButton onClick={handleModalOpen}>등록</ActionButton>
@@ -145,7 +145,7 @@ const UserMemo = () => {
           handleMemoCreate={handleMemoCreate}
         />
       </main>
-    </>
+    </div>
   );
 };
 

@@ -91,7 +91,7 @@ const ProgramUsers = () => {
   }
 
   return (
-    <>
+    <div className="p-8">
       <div className={classes.top}>
         <h1 className={classes.heading}>참여자 보기 - {[program.title]}</h1>
         {program.type === 'LETS_CHAT' && (
@@ -125,7 +125,7 @@ const ProgramUsers = () => {
           </div>
         )}
       </main>
-    </>
+    </div>
   );
 };
 

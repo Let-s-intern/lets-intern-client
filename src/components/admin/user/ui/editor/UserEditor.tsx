@@ -37,7 +37,7 @@ const UserEditor = ({
   }
 
   return (
-    <UserEditorBlock>
+    <UserEditorBlock className="p-8">
       <Header>
         <Heading>{title}</Heading>
       </Header>

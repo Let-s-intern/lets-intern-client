@@ -81,7 +81,7 @@ const Users = () => {
   };
 
   return (
-    <>
+    <div className="p-8">
       <Header>
         <Heading>회원 관리</Heading>
         <ActionButton to="/admin/users/create" bgColor="blue">
@@ -118,7 +118,7 @@ const Users = () => {
           </>
         )}
       </main>
-    </>
+    </div>
   );
 };
 
