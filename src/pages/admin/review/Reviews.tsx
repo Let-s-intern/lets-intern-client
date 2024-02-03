@@ -47,7 +47,7 @@ const Reviews = () => {
   };
 
   return (
-    <>
+    <div className="p-8">
       <header className={classes.header}>
         <h1 className={classes.heading}>후기 관리</h1>
       </header>
@@ -65,7 +65,7 @@ const Reviews = () => {
           </div>
         )}
       </main>
-    </>
+    </div>
   );
 };
 

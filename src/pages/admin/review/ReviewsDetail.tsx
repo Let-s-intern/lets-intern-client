@@ -76,7 +76,7 @@ const ReviewsDetail = () => {
   }
 
   return (
-    <>
+    <div className="p-8">
       <header className={classes.header}>
         <Heading>후기 목록 - {program.title}</Heading>
       </header>
@@ -95,7 +95,7 @@ const ReviewsDetail = () => {
           </div>
         )}
       </main>
-    </>
+    </div>
   );
 };
 
