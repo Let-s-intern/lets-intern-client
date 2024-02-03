@@ -28,6 +28,8 @@ import AttendCheck from './pages/admin/program/AttendCheck';
 import ScrollToTop from './components/ui/scroll-to-top/ScrollToTop';
 import AdminPrograms from './pages/admin/program/Programs';
 import ProgramUsers from './pages/admin/program/ProgramUsers';
+import ChallengeAdminLayout from './components/admin/challenge/ui/layout/ChallengeAdminLayout';
+import ChallengeAdminHome from './pages/admin/challenge/home/ChallengeAdminHome';
 
 const Router = () => {
   return (
@@ -105,6 +107,9 @@ const Router = () => {
               {/* /admin/users/:userId/edit */}
               <Route path="edit" element={<UserEdit />} />
             </Route>
+          </Route>
+          <Route path="challenge" element={<ChallengeAdminLayout />}>
+            <Route path="" element={<ChallengeAdminHome />} />
           </Route>
         </Route>
       </Routes>
