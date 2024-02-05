@@ -29,7 +29,8 @@ import ScrollToTop from './components/ui/scroll-to-top/ScrollToTop';
 import AdminPrograms from './pages/admin/program/Programs';
 import ProgramUsers from './pages/admin/program/ProgramUsers';
 import ChallengeAdminLayout from './components/admin/challenge/ui/layout/ChallengeAdminLayout';
-import ChallengeAdminHome from './pages/admin/challenge/home/ChallengeAdminHome';
+import ChallengeAdminHome from './pages/admin/challenge/ChallengeHome';
+import ChallengeAdminMission from './pages/admin/challenge/ChallengeMission';
 
 const Router = () => {
   return (
@@ -110,6 +111,7 @@ const Router = () => {
           </Route>
           <Route path="challenge" element={<ChallengeAdminLayout />}>
             <Route path="" element={<ChallengeAdminHome />} />
+            <Route path="mission" element={<ChallengeAdminMission />} />
           </Route>
         </Route>
       </Routes>
