@@ -27,7 +27,7 @@ const AdminLayout = () => {
       }
     };
     fetchIsAdmin();
-  }, []);
+  }, [navigate]);
 
   const navData = [
     {

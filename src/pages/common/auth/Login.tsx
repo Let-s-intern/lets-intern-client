@@ -40,7 +40,7 @@ const Login = () => {
     if (accessToken && refreshToken) {
       navigate('/');
     }
-  }, []);
+  }, [navigate]);
 
   useEffect(() => {
     if (!email || !password) {
@@ -66,7 +66,8 @@ const Login = () => {
         setErrorMessage('이미 존재하는 이메일입니다.');
       }
     }
-  }, [searchParams]);
+    // eslint-disable-next-line
+  }, [searchParams, setSearchParams]);
 
   const handleLoginSuccess = (token: any) => {
     localStorage.setItem('access-token', token.accessToken);

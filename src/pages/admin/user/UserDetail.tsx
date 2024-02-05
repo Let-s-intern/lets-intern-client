@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import styled from 'styled-components';
 
 import axios from '../../../utils/axios';
 import classes from './UserDetail.module.scss';
@@ -26,7 +25,7 @@ const UserDetail = () => {
       }
     };
     fetchUser();
-  }, []);
+  }, [params.userId]);
 
   if (loading) {
     return <div className={classes.container} />;
