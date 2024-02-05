@@ -1,8 +1,8 @@
-import TableBodyRow from '../../../components/admin/challenge/challenge-mission/mission-contents/table/table-body/TableBodyRow';
-import TableHead from '../../../components/admin/challenge/challenge-mission/mission-contents/table/table-head/TableHead';
-import Heading from '../../../components/admin/challenge/challenge-mission/ui/heading/Heading';
-import TableBodyBox from '../../../components/admin/challenge/challenge-mission/ui/table/table-body/TableBodyBox';
-import Table from '../../../components/admin/challenge/challenge-mission/ui/table/table-container/Table';
+import TableBodyRow from '../../../components/admin/challenge/mission/mission-contents/table/table-body/TableBodyRow';
+import TableHead from '../../../components/admin/challenge/mission/mission-contents/table/table-head/TableHead';
+import Heading from '../../../components/admin/challenge/ui/heading/Heading';
+import TableBodyBox from '../../../components/admin/challenge/ui/table/table-body/TableBodyBox';
+import Table from '../../../components/admin/challenge/ui/table/table-container/Table';
 
 const ChallengeContents = () => {
   return (

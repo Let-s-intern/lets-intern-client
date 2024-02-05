@@ -1,6 +1,6 @@
-import MissionDateSection from '../../../components/admin/challenge/challenge-home/section/MissionDateSection';
-import MissionResultSection from '../../../components/admin/challenge/challenge-home/section/MissionResultSection';
-import NoticeSection from '../../../components/admin/challenge/challenge-home/section/NoticeSection';
+import MissionDateSection from '../../../components/admin/challenge/home/section/MissionDateSection';
+import MissionResultSection from '../../../components/admin/challenge/home/section/MissionResultSection';
+import NoticeSection from '../../../components/admin/challenge/home/section/NoticeSection';
 
 const ChallengeHome = () => {
   return (

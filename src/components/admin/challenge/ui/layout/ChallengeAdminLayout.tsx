@@ -32,14 +32,22 @@ const ChallengeAdminLayout = () => {
             >
               미션관리
             </TabItem>
-            <TabItem>제출확인</TabItem>
+            <TabItem
+              to="/admin/challenge/submit-check"
+              active={location.pathname.startsWith(
+                '/admin/challenge/submit-check',
+              )}
+            >
+              제출확인
+            </TabItem>
             <TabItem>참여자</TabItem>
           </ul>
         </nav>
       </div>
-      <div className="mt-[6.5rem]">
+      <>
+        <div className="h-[7rem]" />
         <Outlet />
-      </div>
+      </>
     </div>
   );
 };

@@ -1,6 +1,6 @@
 import { missionContentsCellWidthList } from '../../../../../../../utils/tableCellWidthList';
-import TableBodyCell from '../../../ui/table/table-body/TableBodyCell';
-import TableBodyRowBox from '../../../ui/table/table-body/TableBodyRowBox';
+import TableBodyCell from '../../../../ui/table/table-body/TableBodyCell';
+import TableBodyRowBox from '../../../../ui/table/table-body/TableBodyRowBox';
 
 interface Props {
   isRequired: boolean;

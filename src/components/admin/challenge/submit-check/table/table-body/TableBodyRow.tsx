@@ -1,9 +1,9 @@
-import { missionCellWidthList } from '../../../../../../../utils/tableCellWidthList';
+import { missionSubmitCellWidthList } from '../../../../../../utils/tableCellWidthList';
 import TableBodyCell from '../../../ui/table/table-body/TableBodyCell';
 import TableBodyRowBox from '../../../ui/table/table-body/TableBodyRowBox';
 
 interface Props {
-  th: number;
+  th: string;
   name: string;
   releaseDate: string;
   dueDate: string;
@@ -11,7 +11,8 @@ interface Props {
   connectedContents: string;
   submitCount: number;
   totalCount: number;
-  isVisible: boolean;
+  checkStatus: 'DONE' | 'WAITING' | 'NONE';
+  refundStatus: 'DONE' | 'WAITING' | 'NONE';
 }
 
 const TableBodyRow = ({
@@ -23,9 +24,10 @@ const TableBodyRow = ({
   connectedContents,
   submitCount,
   totalCount,
-  isVisible,
+  checkStatus,
+  refundStatus,
 }: Props) => {
-  const cellWidthList = missionCellWidthList;
+  const cellWidthList = missionSubmitCellWidthList;
 
   return (
     <TableBodyRowBox>
@@ -47,12 +49,22 @@ const TableBodyRow = ({
         {submitCount}/{totalCount}
       </TableBodyCell>
       <TableBodyCell className={`${cellWidthList[7]}`}>
-        {isVisible ? '노출' : '비노출'}
-      </TableBodyCell>
-      <TableBodyCell className={`${cellWidthList[8]}`}>
-        <i>
-          <img src="/icons/edit-icon.svg" alt="edit-icon" />
-        </i>
+        <div className="flex gap-3 font-medium">
+          <span>
+            {checkStatus === 'DONE'
+              ? '확인완료'
+              : checkStatus === 'WAITING'
+              ? '확인대기'
+              : checkStatus === 'NONE' && '해당없음'}
+          </span>
+          <span>
+            {checkStatus === 'DONE'
+              ? '환급완료'
+              : checkStatus === 'WAITING'
+              ? '환급대기'
+              : checkStatus === 'NONE' && '해당없음'}
+          </span>
+        </div>
       </TableBodyCell>
     </TableBodyRowBox>
   );

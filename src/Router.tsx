@@ -32,7 +32,8 @@ import ChallengeAdminLayout from './components/admin/challenge/ui/layout/Challen
 import ChallengeAdminHome from './pages/admin/challenge/ChallengeHome';
 import ChallengeAdminMission from './pages/admin/challenge/ChallengeMission';
 import ChallengeAdminContents from './pages/admin/challenge/ChallengeContents';
-import ChallengeAdminMissionLayout from './components/admin/challenge/challenge-mission/ui/layout/ChallengeMissionLayout';
+import ChallengeAdminMissionLayout from './components/admin/challenge/mission/ui/layout/ChallengeMissionLayout';
+import ChallengeAdminSubmitCheck from './pages/admin/challenge/ChallengeSubmitCheck';
 
 const Router = () => {
   return (
@@ -117,6 +118,10 @@ const Router = () => {
               <Route path="" element={<ChallengeAdminMission />} />
               <Route path="contents" element={<ChallengeAdminContents />} />
             </Route>
+            <Route
+              path="submit-check"
+              element={<ChallengeAdminSubmitCheck />}
+            />
           </Route>
         </Route>
       </Routes>

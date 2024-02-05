@@ -1,6 +1,6 @@
 import { missionContentsCellWidthList } from '../../../../../../../utils/tableCellWidthList';
-import TableHeadBox from '../../../ui/table/table-head/TableHeadBox';
-import TableHeadCell from '../../../ui/table/table-head/TableHeadCell';
+import TableHeadBox from '../../../../ui/table/table-head/TableHeadBox';
+import TableHeadCell from '../../../../ui/table/table-head/TableHeadCell';
 
 const TableHead = () => {
   const cellWidthList = missionContentsCellWidthList;
