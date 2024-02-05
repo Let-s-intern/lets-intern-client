@@ -1,7 +1,6 @@
-import clsx from 'clsx';
-
-import { missionCellWidthList } from '../../../../../../utils/tableCellWidthList';
-import TableHeadCell from './TableHeadCell';
+import { missionCellWidthList } from '../../../../../../../utils/tableCellWidthList';
+import TableHeadCell from '../../../ui/table/table-head/TableHeadCell';
+import TableHeadBox from '../../../ui/table/table-head/TableHeadBox';
 
 interface Props {
   className?: string;
@@ -11,7 +10,7 @@ const TableHead = ({ className }: Props) => {
   const cellWidthList = missionCellWidthList;
 
   return (
-    <div className={clsx('flex w-full rounded-md bg-neutral-200', className)}>
+    <TableHeadBox className={className}>
       <TableHeadCell className={`${cellWidthList[0]}`}>번호</TableHeadCell>
       <TableHeadCell className={`${cellWidthList[1]}`}>미션명</TableHeadCell>
       <TableHeadCell className={`${cellWidthList[2]}`}>공개일</TableHeadCell>
@@ -23,7 +22,7 @@ const TableHead = ({ className }: Props) => {
       <TableHeadCell className={`${cellWidthList[6]}`}>제출현황</TableHeadCell>
       <TableHeadCell className={`${cellWidthList[7]}`}>노출</TableHeadCell>
       <TableHeadCell className={`${cellWidthList[8]}`} />
-    </div>
+    </TableHeadBox>
   );
 };
 

@@ -1,11 +1,12 @@
-import { missionCellWidthList } from '../../../../../../utils/tableCellWidthList';
-import TableBodyCell from './TableBodyCell';
+import { missionCellWidthList } from '../../../../../../../utils/tableCellWidthList';
+import TableBodyCell from '../../../ui/table/table-body/TableBodyCell';
+import TableBodyRowBox from '../../../ui/table/table-body/TableBodyRowBox';
 
 interface Props {
   th: number;
   name: string;
-  startDate: string;
-  endDate: string;
+  releaseDate: string;
+  dueDate: string;
   isRefunded: boolean;
   connectedContents: string;
   submitCount: number;
@@ -16,8 +17,8 @@ interface Props {
 const TableBodyRow = ({
   th,
   name,
-  startDate,
-  endDate,
+  releaseDate,
+  dueDate,
   isRefunded,
   connectedContents,
   submitCount,
@@ -27,20 +28,15 @@ const TableBodyRow = ({
   const cellWidthList = missionCellWidthList;
 
   return (
-    <div className="flex cursor-pointer rounded-md border border-neutral-200 font-pretendard">
-      <TableBodyCell className={`${cellWidthList[0]}`} bold>
-        {th}
-      </TableBodyCell>
-      <TableBodyCell
-        className={`${cellWidthList[1]} text-base text-zinc-600`}
-        bold
-      >
+    <TableBodyRowBox>
+      <TableBodyCell className={`${cellWidthList[0]}`}>{th}</TableBodyCell>
+      <TableBodyCell className={`${cellWidthList[1]}`} bold>
         {name}
       </TableBodyCell>
       <TableBodyCell className={`${cellWidthList[2]}`}>
-        {startDate}
+        {releaseDate}
       </TableBodyCell>
-      <TableBodyCell className={`${cellWidthList[3]}`}>{endDate}</TableBodyCell>
+      <TableBodyCell className={`${cellWidthList[3]}`}>{dueDate}</TableBodyCell>
       <TableBodyCell className={`${cellWidthList[4]}`}>
         {isRefunded ? 'O' : 'X'}
       </TableBodyCell>
@@ -54,9 +50,11 @@ const TableBodyRow = ({
         {isVisible ? '노출' : '비노출'}
       </TableBodyCell>
       <TableBodyCell className={`${cellWidthList[8]}`}>
-        <img src="/icons/edit-icon.svg" alt="edit-icon" />
+        <i>
+          <img src="/icons/edit-icon.svg" alt="edit-icon" />
+        </i>
       </TableBodyCell>
-    </div>
+    </TableBodyRowBox>
   );
 };
 
