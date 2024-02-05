@@ -24,7 +24,7 @@ const ReviewDetail = () => {
     };
     fetchReview();
     setLoading(false);
-  }, []);
+  }, [params.reviewId]);
 
   if (loading) {
     return <div></div>;

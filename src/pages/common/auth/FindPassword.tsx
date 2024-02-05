@@ -19,7 +19,7 @@ const FindPassword = () => {
     if (accessToken && refreshToken) {
       navigate('/');
     }
-  }, []);
+  }, [navigate]);
 
   const handleOnSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -51,7 +51,7 @@ const FindPassword = () => {
     } else {
       setButtonDisabled(false);
     }
-  }, [email]);
+  }, [name, email]);
 
   return (
     <div className="container mx-auto mt-8 p-5 sm:mt-12">

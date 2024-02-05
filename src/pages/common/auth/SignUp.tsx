@@ -38,7 +38,7 @@ const SignUp = () => {
     if (accessToken && refreshToken) {
       navigate('/');
     }
-  }, []);
+  }, [navigate]);
 
   const handleOnSubmit = (e: any) => {
     e.preventDefault();

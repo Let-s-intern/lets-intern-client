@@ -12,7 +12,7 @@ import classes from './ReviewsDetail.module.scss';
 
 const ReviewsDetail = () => {
   const params = useParams();
-  const [searchParams, _] = useSearchParams();
+  const [searchParams] = useSearchParams();
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<unknown>(null);
   const [reviewList, setReviewList] = useState<any>([]);
@@ -47,7 +47,7 @@ const ReviewsDetail = () => {
       }
     };
     fetchReviews();
-  }, [searchParams]);
+  }, [searchParams, params.programId]);
 
   const handleVisibleChanged = async (reviewId: number, status: string) => {
     try {

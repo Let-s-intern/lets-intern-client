@@ -37,10 +37,10 @@ const TableBodyRow = ({
       <TableBodyCell className={`${cellWidthList[5]}`}>
         <div className="flex items-center justify-center gap-10">
           <i>
-            <img src="/icons/share-icon.svg" />
+            <img src="/icons/share-icon.svg" alt="share-icon" />
           </i>
           <i>
-            <img src="/icons/edit-icon.svg" />
+            <img src="/icons/edit-icon.svg" alt="edit-icon" />
           </i>
         </div>
       </TableBodyCell>

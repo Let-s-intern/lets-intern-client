@@ -38,7 +38,7 @@ const ProgramCreate = () => {
       }
     }
     newFaqIdList.sort();
-  }, [faqList]);
+  }, [faqList, faqIdList]);
 
   const handleFAQChange = (e: any, faqId: number) => {
     const { name, value } = e.target;

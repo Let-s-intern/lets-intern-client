@@ -10,7 +10,7 @@ import AdminPagination from '../../../components/admin/ui/pagination/AdminPagina
 import classes from './Reviews.module.scss';
 
 const Reviews = () => {
-  const [searchParams, _] = useSearchParams();
+  const [searchParams] = useSearchParams();
   const [programList, setProgramList] = useState([]);
   const [maxPage, setMaxPage] = useState(1);
 

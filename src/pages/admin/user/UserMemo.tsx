@@ -14,7 +14,7 @@ import classes from './UserMemo.module.scss';
 
 const UserMemo = () => {
   const params = useParams();
-  const [searchParams, _] = useSearchParams();
+  const [searchParams] = useSearchParams();
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<unknown>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -48,7 +48,7 @@ const UserMemo = () => {
       }
     };
     fetchData();
-  }, [searchParams]);
+  }, [searchParams, params.userId]);
 
   const handleModalOpen = () => {
     setMemoId(-1);
