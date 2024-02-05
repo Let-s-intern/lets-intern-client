@@ -32,7 +32,7 @@ const UserEdit = () => {
       }
     };
     fetchUser();
-  }, []);
+  }, [params.userId]);
 
   const handleCancelButtonClick = () => {
     navigate(-1);

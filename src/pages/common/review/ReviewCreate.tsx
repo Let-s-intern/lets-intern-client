@@ -74,7 +74,7 @@ const ReviewCreate = () => {
       }
     };
     fetchProgram();
-  }, [params]);
+  }, [params, isLoggedIn]);
 
   const handleRatingChange = (value: number) => {
     setValues({ ...values, grade: value });

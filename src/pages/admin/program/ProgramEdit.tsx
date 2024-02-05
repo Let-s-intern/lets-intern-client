@@ -44,7 +44,7 @@ const ProgramEdit = () => {
       }
     };
     fetchProgram();
-  }, []);
+  }, [params.programId]);
 
   useEffect(() => {
     if (!faqList) return;
@@ -57,6 +57,7 @@ const ProgramEdit = () => {
     }
     newFaqIdList.sort();
     setFaqIdList(newFaqIdList);
+    // eslint-disable-next-line
   }, [faqList]);
 
   useEffect(() => {

@@ -25,7 +25,7 @@ const AttendCheck = () => {
       setApplications(newApplications);
     };
     fetchData();
-  }, []);
+  }, [params.programId]);
 
   const handleAttendCheckChange = async (e: any, applicationId: number) => {
     await axios.patch(`/application/${applicationId}`, {

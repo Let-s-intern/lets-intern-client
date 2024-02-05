@@ -17,8 +17,8 @@ const UserCreate = () => {
     wishJob: '',
     wishCompany: '',
   });
-  const [loading, setLoading] = useState<boolean>(false);
-  const [error, setError] = useState<unknown>(null);
+  const [loading] = useState<boolean>(false);
+  const [error] = useState<unknown>(null);
 
   const handleCancelButtonClick = () => {
     navigate(-1);
