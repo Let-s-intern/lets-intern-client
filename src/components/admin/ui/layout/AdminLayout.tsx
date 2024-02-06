@@ -1,9 +1,9 @@
+import { useEffect } from 'react';
 import { Link, Outlet, useNavigate } from 'react-router-dom';
 import { ImExit } from 'react-icons/im';
-import { useEffect } from 'react';
+import { IoIosArrowDown } from 'react-icons/io';
 
 import axios from '../../../../utils/axios';
-import styled from 'styled-components';
 
 const AdminLayout = () => {
   const navigate = useNavigate();
@@ -38,12 +38,17 @@ const AdminLayout = () => {
           url: '/admin/programs',
         },
         {
-          name: '챌린지 관리',
-          url: '/admin/challenge',
-        },
-        {
           name: '후기 관리',
           url: '/admin/reviews',
+        },
+      ],
+    },
+    {
+      title: '챌린지 관리',
+      itemList: [
+        {
+          name: '챌린지 운영',
+          url: '/admin/challenge',
         },
       ],
     },
@@ -71,13 +76,18 @@ const AdminLayout = () => {
   return (
     <div className="flex font-notosans">
       <aside>
-        <nav className="fixed left-0 top-0 z-[1000] flex h-screen w-64 flex-col gap-7 bg-indigo-100 px-8 py-10">
+        <nav className="fixed left-0 top-0 z-[1000] flex h-screen w-64 flex-col gap-12 bg-[#353535] pt-20 text-white">
           {navData.map((navSection, index) => (
             <div key={index}>
-              <h3 className="text-xl font-bold">{navSection.title}</h3>
+              <div className="flex items-center justify-between border-b border-b-neutral-600 px-8 pb-3">
+                <h3 className="text-lg font-medium">{navSection.title}</h3>
+                <i className="text-xl text-neutral-600">
+                  <IoIosArrowDown />
+                </i>
+              </div>
               <ul>
                 {navSection.itemList.map((navItem, index) => (
-                  <li key={index} className="mt-3">
+                  <li key={index} className="mt-3 px-8">
                     <Link to={navItem.url} className="flex items-center gap-1">
                       {navItem.name}
                       {'isExit' in navItem && (
