@@ -47,7 +47,7 @@ const NoticeSection = () => {
             </i>
           </span>
         </div>
-        <Link to="#" className="w-20 text-sm">
+        <Link to="/admin/challenge/notice" className="w-20 text-sm">
           전체보기
         </Link>
       </div>
