@@ -69,93 +69,36 @@ const AdminLayout = () => {
   ];
 
   return (
-    <AdminLayoutBlock>
-      <LeftSection>
-        <NavBar>
+    <div className="flex font-notosans">
+      <aside>
+        <nav className="fixed left-0 top-0 z-[1000] flex h-screen w-64 flex-col gap-7 bg-indigo-100 px-8 py-10">
           {navData.map((navSection, index) => (
-            <NavSection key={index}>
-              <NavSectionHeading>{navSection.title}</NavSectionHeading>
-              <NavSectionList>
+            <div key={index}>
+              <h3 className="text-xl font-bold">{navSection.title}</h3>
+              <ul>
                 {navSection.itemList.map((navItem, index) => (
-                  <NavListItem key={index}>
-                    <NavLink to={navItem.url}>
+                  <li key={index} className="mt-3">
+                    <Link to={navItem.url} className="flex items-center gap-1">
                       {navItem.name}
                       {'isExit' in navItem && (
-                        <NavIcon>
-                          <ExitIcon />
-                        </NavIcon>
+                        <i>
+                          <ImExit className="translate-y-[1px]" />
+                        </i>
                       )}
-                    </NavLink>
-                  </NavListItem>
+                    </Link>
+                  </li>
                 ))}
-              </NavSectionList>
-            </NavSection>
+              </ul>
+            </div>
           ))}
-        </NavBar>
-        <NavSpacer />
-      </LeftSection>
-      <RightSection>
+        </nav>
+        <div className="w-64" />
+      </aside>
+      <section className="relative min-h-screen w-[calc(100%-16rem)] flex-1">
         <Outlet />
-      </RightSection>
-    </AdminLayoutBlock>
+      </section>
+    </div>
   );
 };
 
 export default AdminLayout;
-
-const AdminLayoutBlock = styled.div`
-  display: flex;
-  font-family: NotoSansKR, sans-serif;
-`;
-
-const LeftSection = styled.aside``;
-
-const NavBar = styled.nav`
-  position: fixed;
-  top: 0;
-  left: 0;
-  z-index: 1000;
-  width: 250px;
-  height: 100vh;
-  background-color: #e0e7ff;
-  padding: 2rem 2.5rem;
-  display: flex;
-  flex-direction: column;
-  gap: 1.75rem;
-`;
-
-const NavSection = styled.div``;
-
-const NavSectionHeading = styled.h3`
-  font-size: 1.25rem;
-  font-weight: 700;
-`;
-
-const NavSectionList = styled.ul``;
-
-const NavListItem = styled.li`
-  margin-top: 0.75rem;
-`;
-
-const NavLink = styled(Link)`
-  display: flex;
-  align-items: center;
-  gap: 0.25rem;
-`;
-
-const NavIcon = styled.i``;
-
-const ExitIcon = styled(ImExit)`
-  transform: translateY(1px);
-`;
-
-const NavSpacer = styled.div`
-  width: 250px;
-`;
-
-const RightSection = styled.section`
-  position: relative;
-  flex: 1;
-  width: calc(100% - 250px);
-  min-height: 100vh;
-`;
