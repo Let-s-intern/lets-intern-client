@@ -1,6 +1,6 @@
 import clsx from 'clsx';
 
-import Button from '../button/Button';
+import Button from '../../ui/button/Button';
 
 interface Props {
   day: number;

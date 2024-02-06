@@ -6,7 +6,7 @@ const ChallengeMissionLayout = () => {
   const location = useLocation();
 
   return (
-    <div className="px-12 pt-8">
+    <div className="px-12 pt-5">
       <div className="flex gap-4">
         <BadgeMenuItem
           to="/admin/challenge/mission"

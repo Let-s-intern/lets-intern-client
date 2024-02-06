@@ -40,7 +40,12 @@ const ChallengeAdminLayout = () => {
             >
               제출확인
             </TabItem>
-            <TabItem>참여자</TabItem>
+            <TabItem
+              to="/admin/challenge/user"
+              active={location.pathname.startsWith('/admin/challenge/user')}
+            >
+              참여자
+            </TabItem>
           </ul>
         </nav>
       </div>

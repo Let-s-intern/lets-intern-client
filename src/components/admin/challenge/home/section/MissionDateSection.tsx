@@ -1,7 +1,7 @@
 import { IoMdArrowDropdown } from 'react-icons/io';
 
 import RoundedBox from '../box/RoundedBox';
-import Button from '../button/Button';
+import Button from '../../ui/button/Button';
 import SectionHeading from '../heading/SectionHeading';
 import MissionDateItem from '../item/MissionDateItem';
 
