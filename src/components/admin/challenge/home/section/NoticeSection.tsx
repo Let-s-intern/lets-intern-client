@@ -4,7 +4,7 @@ import { IoIosArrowForward } from 'react-icons/io';
 import RoundedBox from '../box/RoundedBox';
 import NoticeItem from '../item/NoticeItem';
 import SectionHeading from '../heading/SectionHeading';
-import Button from '../button/Button';
+import Button from '../../ui/button/Button';
 
 const NoticeSection = () => {
   return (

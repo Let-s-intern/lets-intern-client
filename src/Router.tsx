@@ -34,6 +34,7 @@ import ChallengeAdminMission from './pages/admin/challenge/ChallengeMission';
 import ChallengeAdminContents from './pages/admin/challenge/ChallengeContents';
 import ChallengeAdminMissionLayout from './components/admin/challenge/mission/ui/layout/ChallengeMissionLayout';
 import ChallengeAdminSubmitCheck from './pages/admin/challenge/ChallengeSubmitCheck';
+import ChallengeAdminUser from './pages/admin/challenge/ChallengeUser';
 
 const Router = () => {
   return (
@@ -122,6 +123,7 @@ const Router = () => {
               path="submit-check"
               element={<ChallengeAdminSubmitCheck />}
             />
+            <Route path="user" element={<ChallengeAdminUser />} />
           </Route>
         </Route>
       </Routes>
