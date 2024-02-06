@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import { IoMdArrowDropdown } from 'react-icons/io';
 
 import RoundedBox from '../box/RoundedBox';
@@ -10,7 +11,7 @@ const MissionDateSection = () => {
     <RoundedBox as="section" className="flex w-[45%] flex-col gap-2">
       <div className="flex items-center justify-between px-8 py-6 pb-0">
         <SectionHeading>미션 일정</SectionHeading>
-        <Button>미션관리</Button>
+        <Button to="/admin/challenge/mission">미션관리</Button>
       </div>
       <div className="relative flex-1 overflow-hidden">
         <ul className="divide-y divide-neutral-200">
@@ -31,11 +32,14 @@ const MissionDateSection = () => {
           />
         </ul>
         <div className="pointer-events-none absolute bottom-0 flex h-20 w-full items-end bg-gradient-to-b from-transparent to-white">
-          <div className="pointer-events-auto flex w-full cursor-pointer justify-center bg-white pb-2 pt-1">
+          <Link
+            to="/admin/challenge/mission"
+            className="pointer-events-auto flex w-full cursor-pointer justify-center bg-white pb-2 pt-1"
+          >
             <i>
               <IoMdArrowDropdown />
             </i>
-          </div>
+          </Link>
         </div>
       </div>
     </RoundedBox>

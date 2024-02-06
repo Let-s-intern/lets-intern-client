@@ -3,7 +3,7 @@ interface Props {
 }
 
 const Table = ({ children }: Props) => {
-  return <div className="w-full">{children}</div>;
+  return <div className="mt-4">{children}</div>;
 };
 
 export default Table;

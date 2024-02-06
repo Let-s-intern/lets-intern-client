@@ -8,7 +8,7 @@ const MissionResultSection = () => {
     <RoundedBox as="section" className="px-8 py-6">
       <div className="flex items-center justify-between">
         <SectionHeading>미션 제출 현황</SectionHeading>
-        <Button>환급하기</Button>
+        <Button to="/admin/challenge/submit-check">환급하기</Button>
       </div>
       <div className="mt-4 grid grid-cols-7 gap-y-6">
         {Array.from({ length: 3 }, (_, index) => index + 1).map(

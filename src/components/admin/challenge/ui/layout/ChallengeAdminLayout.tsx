@@ -27,6 +27,12 @@ const ChallengeAdminLayout = () => {
               홈
             </TabItem>
             <TabItem
+              to="/admin/challenge/notice"
+              active={location.pathname.startsWith('/admin/challenge/notice')}
+            >
+              공지사항
+            </TabItem>
+            <TabItem
               to="/admin/challenge/mission"
               active={location.pathname.startsWith('/admin/challenge/mission')}
             >

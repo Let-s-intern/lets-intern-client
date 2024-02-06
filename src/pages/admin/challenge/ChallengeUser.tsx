@@ -6,8 +6,10 @@ import TopActionGroup from '../../../components/admin/challenge/user/table/top-a
 const ChallengeUser = () => {
   return (
     <div className="px-12">
-      <Heading>참여자</Heading>
-      <div className="pt-4">
+      <div className="mt-6 px-3">
+        <Heading>참여자</Heading>
+      </div>
+      <div className="pt-2">
         <TopActionGroup />
         <TableHead />
         <TableBody />
