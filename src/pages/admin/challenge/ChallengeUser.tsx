@@ -7,7 +7,7 @@ const ChallengeUser = () => {
   return (
     <div className="px-12">
       <Heading>참여자</Heading>
-      <div className="pl-3 pt-4">
+      <div className="pt-4">
         <TopActionGroup />
         <TableHead />
         <TableBody />
