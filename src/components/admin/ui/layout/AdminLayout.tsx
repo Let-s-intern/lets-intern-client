@@ -79,7 +79,7 @@ const AdminLayout = () => {
         <nav className="fixed left-0 top-0 z-[1000] flex h-screen w-64 flex-col gap-12 bg-[#353535] pt-20 text-white">
           {navData.map((navSection, index) => (
             <div key={index}>
-              <div className="flex items-center justify-between border-b border-b-neutral-600 px-8 pb-3">
+              <div className="flex items-center justify-between border-b border-b-neutral-600 pb-3 pl-12 pr-8">
                 <h3 className="text-lg font-medium">{navSection.title}</h3>
                 <i className="text-xl text-neutral-600">
                   <IoIosArrowDown />
@@ -87,7 +87,7 @@ const AdminLayout = () => {
               </div>
               <ul>
                 {navSection.itemList.map((navItem, index) => (
-                  <li key={index} className="mt-3 px-8">
+                  <li key={index} className="mt-3 pb-3 pl-12">
                     <Link to={navItem.url} className="flex items-center gap-1">
                       {navItem.name}
                       {'isExit' in navItem && (
