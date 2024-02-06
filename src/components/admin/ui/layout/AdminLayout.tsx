@@ -1,9 +1,9 @@
+import { useEffect } from 'react';
 import { Link, Outlet, useNavigate } from 'react-router-dom';
 import { ImExit } from 'react-icons/im';
-import { useEffect } from 'react';
+import { IoIosArrowDown } from 'react-icons/io';
 
 import axios from '../../../../utils/axios';
-import styled from 'styled-components';
 
 const AdminLayout = () => {
   const navigate = useNavigate();
@@ -38,12 +38,17 @@ const AdminLayout = () => {
           url: '/admin/programs',
         },
         {
-          name: '챌린지 관리',
-          url: '/admin/challenge',
-        },
-        {
           name: '후기 관리',
           url: '/admin/reviews',
+        },
+      ],
+    },
+    {
+      title: '챌린지 관리',
+      itemList: [
+        {
+          name: '챌린지 운영',
+          url: '/admin/challenge',
         },
       ],
     },
@@ -69,93 +74,41 @@ const AdminLayout = () => {
   ];
 
   return (
-    <AdminLayoutBlock>
-      <LeftSection>
-        <NavBar>
+    <div className="flex font-notosans">
+      <aside>
+        <nav className="fixed left-0 top-0 z-[1000] flex h-screen w-64 flex-col gap-12 bg-[#353535] pt-20 text-white">
           {navData.map((navSection, index) => (
-            <NavSection key={index}>
-              <NavSectionHeading>{navSection.title}</NavSectionHeading>
-              <NavSectionList>
+            <div key={index}>
+              <div className="flex items-center justify-between border-b border-b-neutral-600 pb-3 pl-12 pr-8">
+                <h3 className="text-lg font-medium">{navSection.title}</h3>
+                <i className="text-xl text-neutral-600">
+                  <IoIosArrowDown />
+                </i>
+              </div>
+              <ul>
                 {navSection.itemList.map((navItem, index) => (
-                  <NavListItem key={index}>
-                    <NavLink to={navItem.url}>
+                  <li key={index} className="mt-3 pb-3 pl-12">
+                    <Link to={navItem.url} className="flex items-center gap-1">
                       {navItem.name}
                       {'isExit' in navItem && (
-                        <NavIcon>
-                          <ExitIcon />
-                        </NavIcon>
+                        <i>
+                          <ImExit className="translate-y-[1px]" />
+                        </i>
                       )}
-                    </NavLink>
-                  </NavListItem>
+                    </Link>
+                  </li>
                 ))}
-              </NavSectionList>
-            </NavSection>
+              </ul>
+            </div>
           ))}
-        </NavBar>
-        <NavSpacer />
-      </LeftSection>
-      <RightSection>
+        </nav>
+        <div className="w-64" />
+      </aside>
+      <section className="relative min-h-screen w-[calc(100%-16rem)] flex-1">
         <Outlet />
-      </RightSection>
-    </AdminLayoutBlock>
+      </section>
+    </div>
   );
 };
 
 export default AdminLayout;
-
-const AdminLayoutBlock = styled.div`
-  display: flex;
-  font-family: NotoSansKR, sans-serif;
-`;
-
-const LeftSection = styled.aside``;
-
-const NavBar = styled.nav`
-  position: fixed;
-  top: 0;
-  left: 0;
-  z-index: 1000;
-  width: 250px;
-  height: 100vh;
-  background-color: #e0e7ff;
-  padding: 2rem 2.5rem;
-  display: flex;
-  flex-direction: column;
-  gap: 1.75rem;
-`;
-
-const NavSection = styled.div``;
-
-const NavSectionHeading = styled.h3`
-  font-size: 1.25rem;
-  font-weight: 700;
-`;
-
-const NavSectionList = styled.ul``;
-
-const NavListItem = styled.li`
-  margin-top: 0.75rem;
-`;
-
-const NavLink = styled(Link)`
-  display: flex;
-  align-items: center;
-  gap: 0.25rem;
-`;
-
-const NavIcon = styled.i``;
-
-const ExitIcon = styled(ImExit)`
-  transform: translateY(1px);
-`;
-
-const NavSpacer = styled.div`
-  width: 250px;
-`;
-
-const RightSection = styled.section`
-  position: relative;
-  flex: 1;
-  width: calc(100% - 250px);
-  min-height: 100vh;
-`;
