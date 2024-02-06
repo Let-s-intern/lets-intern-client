@@ -1,10 +1,10 @@
 import clsx from 'clsx';
 
-import { missionUserCellWidthList } from '../../../../../../utils/tableCellWidthList';
+import { challengeUserCellWidthList } from '../../../../../../utils/tableCellWidthList';
 import TableHeadCell from './TableHeadCell';
 
 const TableHead = () => {
-  const cellWidthList = missionUserCellWidthList;
+  const cellWidthList = challengeUserCellWidthList;
 
   return (
     <div className="flex border-b border-zinc-300 py-4 pl-3 text-sm font-medium text-zinc-500">

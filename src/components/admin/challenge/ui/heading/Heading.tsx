@@ -1,9 +1,12 @@
+import clsx from 'clsx';
+
 interface Props {
   children: React.ReactNode;
+  className?: string;
 }
 
-const Heading = ({ children }: Props) => {
-  return <h2 className="ml-3 mt-6 text-xl font-medium">{children}</h2>;
+const Heading = ({ children, className }: Props) => {
+  return <h2 className={clsx('text-xl font-medium', className)}>{children}</h2>;
 };
 
 export default Heading;

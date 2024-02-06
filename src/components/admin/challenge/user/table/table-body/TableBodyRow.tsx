@@ -1,6 +1,6 @@
 import clsx from 'clsx';
 
-import { missionUserCellWidthList } from '../../../../../../utils/tableCellWidthList';
+import { challengeUserCellWidthList } from '../../../../../../utils/tableCellWidthList';
 import TableBodyCell from './TableBodyCell';
 import { IoMdArrowDropdown } from 'react-icons/io';
 
@@ -23,10 +23,10 @@ const TableBodyRow = ({
   inflowPath,
   account,
 }: Props) => {
-  const cellWidthList = missionUserCellWidthList;
+  const cellWidthList = challengeUserCellWidthList;
 
   return (
-    <div className="flex cursor-pointer items-center border-b border-zinc-300 py-5 pl-3">
+    <div className="flex cursor-pointer items-center border-b border-zinc-300 py-5 pl-3 font-pretendard">
       <TableBodyCell className={clsx(cellWidthList[0])}>
         <i>
           <img src="/icons/admin-checkbox-unchecked.svg" alt="checkbox-icon" />

@@ -6,7 +6,9 @@ import Table from '../../../components/admin/challenge/ui/table/table-container/
 const ChallengeSubmitCheck = () => {
   return (
     <div className="px-12">
-      <Heading>미션 제출</Heading>
+      <div className="mt-6 px-3">
+        <Heading>미션 제출</Heading>
+      </div>
       <Table>
         <TableHead />
         <TableBody />
