@@ -1,3 +1,5 @@
+import clsx from 'clsx';
+
 import { missionContentsCellWidthList } from '../../../../../../../utils/tableCellWidthList';
 import TableBodyCell from '../../../../ui/table/table-body/TableBodyCell';
 import TableBodyRowBox from '../../../../ui/table/table-body/TableBodyRowBox';
@@ -21,20 +23,22 @@ const TableBodyRow = ({
 
   return (
     <TableBodyRowBox>
-      <TableBodyCell className={`${cellWidthList[0]}`}>
+      <TableBodyCell className={clsx(cellWidthList[0])}>
         {isRequired ? '필수' : '선택'}
       </TableBodyCell>
-      <TableBodyCell className={`${cellWidthList[1]}`} bold>
+      <TableBodyCell className={clsx(cellWidthList[1])} bold>
         {name}
       </TableBodyCell>
-      <TableBodyCell className={`${cellWidthList[2]}`}>
+      <TableBodyCell className={clsx(cellWidthList[2])}>
         {releaseDate}
       </TableBodyCell>
-      <TableBodyCell className={`${cellWidthList[3]}`}>{mission}</TableBodyCell>
-      <TableBodyCell className={`${cellWidthList[4]}`}>
+      <TableBodyCell className={clsx(cellWidthList[3])}>
+        {mission}
+      </TableBodyCell>
+      <TableBodyCell className={clsx(cellWidthList[4])}>
         {isVisible ? '노출' : '비노출'}
       </TableBodyCell>
-      <TableBodyCell className={`${cellWidthList[5]}`}>
+      <TableBodyCell className={clsx(cellWidthList[5])}>
         <div className="flex items-center justify-center gap-10">
           <i>
             <img src="/icons/share-icon.svg" alt="share-icon" />

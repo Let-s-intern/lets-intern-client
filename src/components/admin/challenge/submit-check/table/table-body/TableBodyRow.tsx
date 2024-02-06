@@ -1,3 +1,5 @@
+import clsx from 'clsx';
+
 import { missionSubmitCellWidthList } from '../../../../../../utils/tableCellWidthList';
 import TableBodyCell from '../../../ui/table/table-body/TableBodyCell';
 import TableBodyRowBox from '../../../ui/table/table-body/TableBodyRowBox';
@@ -31,24 +33,26 @@ const TableBodyRow = ({
 
   return (
     <TableBodyRowBox>
-      <TableBodyCell className={`${cellWidthList[0]}`}>{th}</TableBodyCell>
-      <TableBodyCell className={`${cellWidthList[1]}`} bold>
+      <TableBodyCell className={clsx(cellWidthList[0])}>{th}</TableBodyCell>
+      <TableBodyCell className={clsx(cellWidthList[1])} bold>
         {name}
       </TableBodyCell>
-      <TableBodyCell className={`${cellWidthList[2]}`}>
+      <TableBodyCell className={clsx(cellWidthList[2])}>
         {releaseDate}
       </TableBodyCell>
-      <TableBodyCell className={`${cellWidthList[3]}`}>{dueDate}</TableBodyCell>
-      <TableBodyCell className={`${cellWidthList[4]}`}>
+      <TableBodyCell className={clsx(cellWidthList[3])}>
+        {dueDate}
+      </TableBodyCell>
+      <TableBodyCell className={clsx(cellWidthList[4])}>
         {isRefunded ? 'O' : 'X'}
       </TableBodyCell>
-      <TableBodyCell className={`${cellWidthList[5]}`}>
+      <TableBodyCell className={clsx(cellWidthList[5])}>
         {connectedContents}
       </TableBodyCell>
-      <TableBodyCell className={`${cellWidthList[6]}`}>
+      <TableBodyCell className={clsx(cellWidthList[6])}>
         {submitCount}/{totalCount}
       </TableBodyCell>
-      <TableBodyCell className={`${cellWidthList[7]}`}>
+      <TableBodyCell className={clsx(cellWidthList[7])}>
         <div className="flex gap-3 font-medium">
           <span>
             {checkStatus === 'DONE'
@@ -58,11 +62,11 @@ const TableBodyRow = ({
               : checkStatus === 'NONE' && '해당없음'}
           </span>
           <span>
-            {checkStatus === 'DONE'
+            {refundStatus === 'DONE'
               ? '환급완료'
-              : checkStatus === 'WAITING'
+              : refundStatus === 'WAITING'
               ? '환급대기'
-              : checkStatus === 'NONE' && '해당없음'}
+              : refundStatus === 'NONE' && '해당없음'}
           </span>
         </div>
       </TableBodyCell>

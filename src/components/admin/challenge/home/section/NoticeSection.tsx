@@ -4,7 +4,7 @@ import { IoIosArrowForward } from 'react-icons/io';
 import RoundedBox from '../box/RoundedBox';
 import NoticeItem from '../item/NoticeItem';
 import SectionHeading from '../heading/SectionHeading';
-import Button from '../button/Button';
+import Button from '../../ui/button/Button';
 
 const NoticeSection = () => {
   return (
@@ -47,7 +47,7 @@ const NoticeSection = () => {
             </i>
           </span>
         </div>
-        <Link to="#" className="w-20 text-sm">
+        <Link to="/admin/challenge/notice" className="w-20 text-sm">
           전체보기
         </Link>
       </div>
