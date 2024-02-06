@@ -36,5 +36,6 @@ export const missionUserCellWidthList = [
   'w-[20%]',
   'w-[15%]',
   'w-[15%]',
-  'w-[30%]',
+  'w-[25%]',
+  'w-[5%]',
 ];

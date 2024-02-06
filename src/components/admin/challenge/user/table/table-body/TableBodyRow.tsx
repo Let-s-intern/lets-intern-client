@@ -2,6 +2,7 @@ import clsx from 'clsx';
 
 import { missionUserCellWidthList } from '../../../../../../utils/tableCellWidthList';
 import TableBodyCell from './TableBodyCell';
+import { IoMdArrowDropdown } from 'react-icons/io';
 
 interface Props {
   name: string;
@@ -47,6 +48,11 @@ const TableBodyRow = ({
       </TableBodyCell>
       <TableBodyCell className={clsx(cellWidthList[5])}>
         {account}
+      </TableBodyCell>
+      <TableBodyCell className={clsx(cellWidthList[6])}>
+        <i className="text-xl">
+          <IoMdArrowDropdown />
+        </i>
       </TableBodyCell>
     </div>
   );

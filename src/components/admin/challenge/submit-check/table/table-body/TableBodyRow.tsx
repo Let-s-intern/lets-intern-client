@@ -58,11 +58,11 @@ const TableBodyRow = ({
               : checkStatus === 'NONE' && '해당없음'}
           </span>
           <span>
-            {checkStatus === 'DONE'
+            {refundStatus === 'DONE'
               ? '환급완료'
-              : checkStatus === 'WAITING'
+              : refundStatus === 'WAITING'
               ? '환급대기'
-              : checkStatus === 'NONE' && '해당없음'}
+              : refundStatus === 'NONE' && '해당없음'}
           </span>
         </div>
       </TableBodyCell>

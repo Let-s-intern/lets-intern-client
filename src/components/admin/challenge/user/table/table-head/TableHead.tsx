@@ -1,4 +1,5 @@
 import clsx from 'clsx';
+
 import { missionUserCellWidthList } from '../../../../../../utils/tableCellWidthList';
 import TableHeadCell from './TableHeadCell';
 
@@ -15,6 +16,7 @@ const TableHead = () => {
       <TableHeadCell className={clsx(cellWidthList[3])}>번호</TableHeadCell>
       <TableHeadCell className={clsx(cellWidthList[4])}>유입경로</TableHeadCell>
       <TableHeadCell className={clsx(cellWidthList[5])}>계좌</TableHeadCell>
+      <TableHeadCell className={clsx(cellWidthList[6])} />
     </div>
   );
 };
