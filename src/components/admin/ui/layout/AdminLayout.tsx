@@ -87,8 +87,11 @@ const AdminLayout = () => {
               </div>
               <ul>
                 {navSection.itemList.map((navItem, index) => (
-                  <li key={index} className="mt-3 pb-3 pl-12">
-                    <Link to={navItem.url} className="flex items-center gap-1">
+                  <li key={index}>
+                    <Link
+                      to={navItem.url}
+                      className="flex items-center gap-1 py-3 pl-12 hover:bg-zinc-800"
+                    >
                       {navItem.name}
                       {'isExit' in navItem && (
                         <i>
