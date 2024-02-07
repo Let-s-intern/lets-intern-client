@@ -10,7 +10,7 @@ interface Props {
 
 const Button = ({ children, className, to, onClick }: Props) => {
   const buttonStyle = clsx(
-    'rounded border border-zinc-600 px-4 py-[2px] text-xs',
+    'rounded border border-zinc-600 px-4 py-[2px] text-xs hover:bg-neutral-700 hover:text-white',
     className,
   );
 

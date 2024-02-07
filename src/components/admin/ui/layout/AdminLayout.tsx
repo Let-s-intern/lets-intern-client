@@ -90,7 +90,7 @@ const AdminLayout = () => {
                   <li key={index}>
                     <Link
                       to={navItem.url}
-                      className="flex items-center gap-1 py-3 pl-12 hover:bg-zinc-800"
+                      className="flex items-center gap-1 py-3 pl-12 hover:bg-[#2A2A2A]"
                     >
                       {navItem.name}
                       {'isExit' in navItem && (
