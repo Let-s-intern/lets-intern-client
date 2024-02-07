@@ -29,6 +29,7 @@ const NoticeEditorModal = ({ setIsModalShown }: Props) => {
               <input
                 type="text"
                 className="flex-1 rounded-md border border-neutral-400 px-4 py-2 text-sm outline-none"
+                placeholder="제목을 입력해주세요."
               />
             </div>
             <div className="flex items-center">
@@ -38,6 +39,7 @@ const NoticeEditorModal = ({ setIsModalShown }: Props) => {
               <input
                 type="text"
                 className="flex-1 rounded-md border border-neutral-400 px-4 py-2 text-sm outline-none"
+                placeholder="링크를 입력해주세요."
               />
             </div>
           </div>
