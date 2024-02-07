@@ -6,7 +6,6 @@ import TableHead from '../../../components/admin/review/reviews/table-content/Ta
 import TableBody from '../../../components/admin/review/reviews/table-content/TableBody';
 import Table from '../../../components/admin/ui/table/Table';
 import AdminPagination from '../../../components/admin/ui/pagination/AdminPagination';
-
 import classes from './Reviews.module.scss';
 
 const Reviews = () => {
