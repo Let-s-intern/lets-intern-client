@@ -77,11 +77,11 @@ const Programs = () => {
   };
 
   if (loading) {
-    return <>로딩 중...</>;
+    return <div className="p-8"></div>;
   }
 
   if (error) {
-    return <>에러 발생</>;
+    return <div className="p-8">에러 발생</div>;
   }
 
   return (
