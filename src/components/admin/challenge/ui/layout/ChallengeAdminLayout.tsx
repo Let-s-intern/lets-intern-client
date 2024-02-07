@@ -1,7 +1,7 @@
 import { Outlet, useLocation } from 'react-router-dom';
-import { IoMdArrowDropdown } from 'react-icons/io';
 
 import TabItem from '../tab/TabItem';
+import TopDropdown from '../dropdown/TopDropdown';
 
 const ChallengeAdminLayout = () => {
   const location = useLocation();
@@ -10,12 +10,7 @@ const ChallengeAdminLayout = () => {
     <div className="text-zinc-600">
       <div className="fixed top-0 z-50 w-full bg-white pt-6">
         <div className="flex items-center gap-4 px-12">
-          <div className="flex cursor-pointer items-center gap-4 rounded border border-neutral-400 py-2 pl-4 pr-2">
-            <span className="font-medium">15기</span>
-            <i className="text-xl">
-              <IoMdArrowDropdown />
-            </i>
-          </div>
+          <TopDropdown />
           <h1 className="text-lg font-semibold">챌린지 대시보드</h1>
         </div>
         <nav className="mt-1">

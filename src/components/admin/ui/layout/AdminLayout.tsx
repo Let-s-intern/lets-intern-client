@@ -76,7 +76,7 @@ const AdminLayout = () => {
   return (
     <div className="flex font-notosans">
       <aside>
-        <nav className="fixed left-0 top-0 z-[1000] flex h-screen w-64 flex-col gap-12 bg-[#353535] pt-20 text-white">
+        <nav className="fixed left-0 top-0 z-50 flex h-screen w-64 flex-col gap-8 bg-[#353535] pt-20 text-white">
           {navData.map((navSection, index) => (
             <div key={index}>
               <div className="flex items-center justify-between border-b border-b-neutral-600 pb-3 pl-12 pr-8">
@@ -87,8 +87,11 @@ const AdminLayout = () => {
               </div>
               <ul>
                 {navSection.itemList.map((navItem, index) => (
-                  <li key={index} className="mt-3 pb-3 pl-12">
-                    <Link to={navItem.url} className="flex items-center gap-1">
+                  <li key={index}>
+                    <Link
+                      to={navItem.url}
+                      className="flex items-center gap-1 py-3 pl-12 hover:bg-[#2A2A2A]"
+                    >
                       {navItem.name}
                       {'isExit' in navItem && (
                         <i>
