@@ -58,11 +58,8 @@ const TableBodyRow = ({
         <TableBodyCell className={clsx(cellWidthList[7])}>
           {isVisible ? '노출' : '비노출'}
         </TableBodyCell>
-        <TableBodyCell
-          className={clsx(cellWidthList[8], 'cursor-pointer')}
-          onClick={() => setIsMenuShown(true)}
-        >
-          <i>
+        <TableBodyCell className={clsx(cellWidthList[8])}>
+          <i className="cursor-pointer" onClick={() => setIsMenuShown(true)}>
             <img src="/icons/edit-icon.svg" alt="edit-icon" />
           </i>
         </TableBodyCell>
