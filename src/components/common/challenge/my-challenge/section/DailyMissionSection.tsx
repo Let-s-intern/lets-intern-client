@@ -45,12 +45,12 @@ const DailyMissionSection = ({ dailyMission }: Props) => {
         <form>
           <h3 className="text-lg font-semibold">미션 제출하기</h3>
           <p className="mt-2">
-            링크 제대로 확인해 주세요. 카톡으로 공유해야 미션 제출 인정됩니다요.
+            링크 제대로 확인해 주세요. 카톡으로 공유해야 미션 제출 인정됩니다.
           </p>
-          <div className="mt-4 flex items-stretch">
+          <div className="mt-4 flex items-stretch gap-4">
             <label
               htmlFor="link"
-              className="mr-6 flex items-center text-lg font-semibold text-[#626262]"
+              className="flex items-center font-semibold text-[#626262]"
             >
               링크
             </label>
@@ -59,11 +59,11 @@ const DailyMissionSection = ({ dailyMission }: Props) => {
               className="flex-1 rounded border border-[#A3A3A3] bg-[#F6F8FB] px-3 py-2 outline-none"
               id="link"
               name="link"
-              placeholder="미션 제출 링크를 입력해주세요."
+              placeholder="제출할 링크를 입력해주세요."
             />
             <button
               type="button"
-              className="ml-4 rounded bg-[#7D7D7D] px-5 font-medium text-white"
+              className="rounded bg-[#7D7D7D] px-5 font-medium text-white"
             >
               링크 확인
             </button>

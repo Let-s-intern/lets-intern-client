@@ -24,7 +24,9 @@ const MyChallenge = () => {
 
   return (
     <main className="mx-auto max-w-[50rem]">
-      <h1 className="text-2xl font-bold">개인 기록장</h1>
+      <header>
+        <h1 className="text-2xl font-bold">개인 기록장</h1>
+      </header>
       <DailyMissionSection dailyMission={dailyMission} />
       <OtherMissionSection />
     </main>

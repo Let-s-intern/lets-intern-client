@@ -39,6 +39,7 @@ import ChallengeAdminNotice from './pages/admin/challenge/ChallengeNotice';
 import ChallengeDashboard from './pages/common/challenge/ChallengeDashboard';
 import ChallengeLayout from './components/common/challenge/ui/layout/ChallengeLayout';
 import MyChallenge from './pages/common/challenge/MyChallenge';
+import OtherChallenges from './pages/common/challenge/OtherChallenges';
 
 const Router = () => {
   return (
@@ -83,6 +84,7 @@ const Router = () => {
         <Route path="/challenge" element={<ChallengeLayout />}>
           <Route path="" element={<ChallengeDashboard />} />
           <Route path="me" element={<MyChallenge />} />
+          <Route path="others" element={<OtherChallenges />} />
         </Route>
         <Route path="/admin" element={<AdminLayout />}>
           {/* /admin */}
