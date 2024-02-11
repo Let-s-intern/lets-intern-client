@@ -56,7 +56,7 @@ const DailyMissionSection = ({ dailyMission }: Props) => {
             </label>
             <input
               type="text"
-              className="flex-1 rounded border border-[#A3A3A3] bg-[#F6F8FB] px-3 py-2 outline-none"
+              className="flex-1 rounded-lg border border-[#A3A3A3] bg-[#F6F8FB] px-3 py-2 text-sm outline-none"
               id="link"
               name="link"
               placeholder="제출할 링크를 입력해주세요."
