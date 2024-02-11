@@ -36,6 +36,9 @@ import ChallengeAdminMissionLayout from './components/admin/challenge/mission/ui
 import ChallengeAdminSubmitCheck from './pages/admin/challenge/ChallengeSubmitCheck';
 import ChallengeAdminUser from './pages/admin/challenge/ChallengeUser';
 import ChallengeAdminNotice from './pages/admin/challenge/ChallengeNotice';
+import ChallengeDashboard from './pages/common/challenge/ChallengeDashboard';
+import ChallengeLayout from './components/common/challenge/ui/layout/ChallengeLayout';
+import MyChallenge from './pages/common/challenge/MyChallenge';
 
 const Router = () => {
   return (
@@ -76,6 +79,10 @@ const Router = () => {
           <Route path="signup" element={<SignUp />} />
           {/* /find-password */}
           <Route path="find-password" element={<FindPassword />} />
+        </Route>
+        <Route path="/challenge" element={<ChallengeLayout />}>
+          <Route path="" element={<ChallengeDashboard />} />
+          <Route path="me" element={<MyChallenge />} />
         </Route>
         <Route path="/admin" element={<AdminLayout />}>
           {/* /admin */}
