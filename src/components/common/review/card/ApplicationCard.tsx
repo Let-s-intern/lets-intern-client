@@ -1,4 +1,5 @@
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { LiaExternalLinkAltSolid } from 'react-icons/lia';
 
 import formatDateString from '../../../../utils/formatDateString';
 
@@ -6,6 +7,7 @@ interface ApplicationCardProps {
   application: any;
   statusToLabel: any;
   hasBottomLink?: boolean;
+  hasChallengeLink?: boolean;
   setIsDeleteModal: (isDeleteModal: boolean) => void;
   setCancelApplication: (cancelApplication: any) => void;
 }
@@ -14,6 +16,7 @@ const ApplicationCard = ({
   application,
   statusToLabel,
   hasBottomLink = true,
+  hasChallengeLink = false,
   setIsDeleteModal,
   setCancelApplication,
 }: ApplicationCardProps) => {
@@ -50,6 +53,20 @@ const ApplicationCard = ({
               <span>{formatDateString(application.endDate)}</span>
             </div>
           </div>
+          {hasChallengeLink && (
+            <div className="mt-2">
+              <Link
+                to="/challenge"
+                className="flex items-center justify-end gap-1 text-primary"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <span className="text-sm font-medium">챌린지로 이동</span>
+                <i className="text-lg">
+                  <LiaExternalLinkAltSolid />
+                </i>
+              </Link>
+            </div>
+          )}
           {hasBottomLink && (
             <span
               className="link ga_cancel_program"
