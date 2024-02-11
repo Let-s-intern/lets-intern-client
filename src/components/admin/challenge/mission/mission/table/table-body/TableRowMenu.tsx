@@ -81,7 +81,9 @@ const TableRowMenu = ({ setIsMenuShown }: Props) => {
           </div>
         </div>
         <div className="mt-6 flex justify-end gap-2">
-          <Button active>수정</Button>
+          <Button active disableHover>
+            수정
+          </Button>
           <Button onClick={() => setIsMenuShown(false)} disableHover>
             닫기
           </Button>

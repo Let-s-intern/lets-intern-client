@@ -52,3 +52,16 @@ const formatDateString = (
 };
 
 export default formatDateString;
+
+export const formatMissionDateString = (dateString: string) => {
+  const endDate = new Date(dateString);
+  const weekdayList = ['월', '화', '수', '목', '금', '토', '일'];
+  const formattedString = `${endDate.getMonth() + 1}/${endDate.getDate()}(${
+    weekdayList[endDate.getDay()]
+  }) ${
+    endDate.getHours() > 9 ? endDate.getHours() : '0' + endDate.getHours()
+  }:${
+    endDate.getMinutes() > 9 ? endDate.getMinutes() : '0' + endDate.getMinutes()
+  }`;
+  return formattedString;
+};
