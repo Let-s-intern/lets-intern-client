@@ -19,11 +19,11 @@ const MyChallenge = () => {
   });
 
   if (isLoading || !dailyMission) {
-    return <main>...</main>;
+    return <main className="px-6" />;
   }
 
   return (
-    <main className="mx-auto max-w-[50rem]">
+    <main className="px-6">
       <header>
         <h1 className="text-2xl font-bold">개인 기록장</h1>
       </header>

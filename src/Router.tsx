@@ -80,11 +80,11 @@ const Router = () => {
           <Route path="signup" element={<SignUp />} />
           {/* /find-password */}
           <Route path="find-password" element={<FindPassword />} />
-        </Route>
-        <Route path="/challenge" element={<ChallengeLayout />}>
-          <Route path="" element={<ChallengeDashboard />} />
-          <Route path="me" element={<MyChallenge />} />
-          <Route path="others" element={<OtherChallenges />} />
+          <Route path="challenge" element={<ChallengeLayout />}>
+            <Route path="" element={<ChallengeDashboard />} />
+            <Route path="me" element={<MyChallenge />} />
+            <Route path="others" element={<OtherChallenges />} />
+          </Route>
         </Route>
         <Route path="/admin" element={<AdminLayout />}>
           {/* /admin */}

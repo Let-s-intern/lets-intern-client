@@ -42,31 +42,40 @@ const ChallengeDashboard = () => {
 
   const isQueryLoading = isDashboardLoading || isUserLoading;
 
+  if (
+    isQueryLoading ||
+    !dailyMission ||
+    !headCount ||
+    !refundInfo ||
+    !noticeList
+  ) {
+    return <main />;
+  }
+
   return (
-    <div className="mx-auto max-w-[67rem] px-6">
-      <main>
-        <header className="mt-4">
-          <h1 className="text-2xl font-semibold">
-            {isQueryLoading || !user ? '...' : user.name}&nbsp;님의 대시보드
-          </h1>
-        </header>
-        <div className="mt-4 flex gap-4">
-          <DailyMissionSection
-            dailyMission={dailyMission}
-            isLoading={isQueryLoading || !dailyMission}
-          />
-          <ScoreSection
-            headCount={headCount}
-            refundInfo={refundInfo}
-            isLoading={isQueryLoading || !headCount || !refundInfo}
-          />
-          <NoticeSection
-            noticeList={noticeList}
-            isLoading={isQueryLoading || !noticeList}
-          />
-        </div>
-      </main>
-    </div>
+    <main className="px-6">
+      <header>
+        <h1 className="text-2xl font-semibold">
+          {isQueryLoading || !user ? <span className="" /> : user.name}님의
+          대시보드
+        </h1>
+      </header>
+      <div className="mt-4 flex gap-4">
+        <DailyMissionSection
+          dailyMission={dailyMission}
+          isLoading={isQueryLoading || !dailyMission}
+        />
+        <ScoreSection
+          headCount={headCount}
+          refundInfo={refundInfo}
+          isLoading={isQueryLoading || !headCount || !refundInfo}
+        />
+        <NoticeSection
+          noticeList={noticeList}
+          isLoading={isQueryLoading || !noticeList}
+        />
+      </div>
+    </main>
   );
 };
 
