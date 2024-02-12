@@ -1,9 +1,13 @@
+import { Outlet, useLocation } from 'react-router-dom';
+
 import TableBody from '../../../components/admin/challenge/submit-check/table/table-body/TableBody';
 import TableHead from '../../../components/admin/challenge/submit-check/table/table-head/TableHead';
 import Heading from '../../../components/admin/challenge/ui/heading/Heading';
 import Table from '../../../components/admin/challenge/ui/table/table-container/Table';
 
 const ChallengeSubmitCheck = () => {
+  const location = useLocation();
+
   return (
     <div className="px-12">
       <div className="mt-6 px-3">
@@ -11,7 +15,11 @@ const ChallengeSubmitCheck = () => {
       </div>
       <Table>
         <TableHead />
-        <TableBody />
+        {location.pathname === '/admin/challenge/submit-check' ? (
+          <TableBody />
+        ) : (
+          <Outlet />
+        )}
       </Table>
     </div>
   );
