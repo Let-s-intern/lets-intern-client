@@ -1,85 +1,98 @@
-import { useState } from 'react';
-import clsx from 'clsx';
+import { useEffect, useState } from 'react';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
-import { missionCellWidthList } from '../../../../../../../utils/tableCellWidthList';
-import TableBodyCell from '../../../../ui/table/table-body/TableBodyCell';
-import TableBodyRowBox from '../../../../ui/table/table-body/TableBodyRowBox';
 import TableRowDetailMenu from './TableRowDetailMenu';
-import TableRowEditMenu from './TableRowEditMenu';
+import TableRowEditorMenu from './TableRowEditorMenu';
+import TableRowContent from './TableRowContent';
+import axios from '../../../../../../../utils/axios';
 
 interface Props {
   th: number;
-  name: string;
-  releaseDate: string;
-  dueDate: string;
-  isRefunded: boolean;
-  connectedContents: string;
-  submitCount: number;
-  totalCount: number;
-  isVisible: boolean;
+  mission: any;
 }
 
-const TableBodyRow = ({
-  th,
-  name,
-  releaseDate,
-  dueDate,
-  isRefunded,
-  connectedContents,
-  submitCount,
-  totalCount,
-  isVisible,
-}: Props) => {
+const TableBodyRow = ({ th, mission }: Props) => {
+  const queryClient = useQueryClient();
+
   const [menuShown, setMenuShown] = useState<'DETAIL' | 'EDIT' | 'NONE'>(
     'NONE',
   );
+  const [missionDetail, setMissionDetail] = useState<any>();
+  const [values, setValues] = useState<any>();
 
-  const cellWidthList = missionCellWidthList;
+  const getMission = useQuery({
+    queryKey: ['mission', 'detail', mission.id],
+    queryFn: async () => {
+      const res = await axios.get(`/mission/detail/${mission.id}`);
+      const data = res.data;
+      setMissionDetail(data);
+      setValues(data);
+      return data;
+    },
+    refetchOnWindowFocus: false,
+    enabled: menuShown !== 'NONE',
+  });
+
+  const editMission = useMutation({
+    mutationFn: async (values) => {
+      const res = await axios.patch(`/mission/${mission.id}`, values);
+      const data = res.data;
+      return data;
+    },
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ['mission'] });
+      setMenuShown('DETAIL');
+    },
+  });
+
+  useEffect(() => {
+    console.log(values);
+  }, [values]);
+
+  useEffect(() => {
+    if (menuShown === 'EDIT') {
+      getMission.refetch();
+    }
+  }, [menuShown]);
+
+  const handleMissionEdit = (e: React.FormEvent) => {
+    e.preventDefault();
+    const newValues = {
+      ...values,
+      th: Number(values.th),
+      isRefunded: Boolean(Number(values.refund)),
+      refund: Number(values.refund),
+    };
+    console.log(newValues);
+    editMission.mutate(newValues);
+  };
+
+  const isLoading = getMission.isLoading || !values || !missionDetail;
 
   return (
     <div>
-      <TableBodyRowBox
-        onClick={() => setMenuShown(menuShown !== 'DETAIL' ? 'DETAIL' : 'NONE')}
-      >
-        <TableBodyCell className={clsx(cellWidthList[0])}>{th}</TableBodyCell>
-        <TableBodyCell className={clsx(cellWidthList[1])} bold>
-          {name}
-        </TableBodyCell>
-        <TableBodyCell className={clsx(cellWidthList[2])}>
-          {releaseDate}
-        </TableBodyCell>
-        <TableBodyCell className={clsx(cellWidthList[3])}>
-          {dueDate}
-        </TableBodyCell>
-        <TableBodyCell className={clsx(cellWidthList[4])}>
-          {isRefunded ? 'O' : 'X'}
-        </TableBodyCell>
-        <TableBodyCell className={clsx(cellWidthList[5])}>
-          {connectedContents}
-        </TableBodyCell>
-        <TableBodyCell className={clsx(cellWidthList[6])}>
-          {submitCount}/{totalCount}
-        </TableBodyCell>
-        <TableBodyCell className={clsx(cellWidthList[7])}>
-          {isVisible ? '노출' : '비노출'}
-        </TableBodyCell>
-        <TableBodyCell className={clsx(cellWidthList[8])}>
-          <i
-            className="cursor-pointer"
-            onClick={(e) => {
-              e.stopPropagation();
-              setMenuShown('EDIT');
-            }}
-          >
-            <img src="/icons/edit-icon.svg" alt="edit-icon" />
-          </i>
-        </TableBodyCell>
-      </TableBodyRowBox>
-      {menuShown === 'DETAIL' ? (
-        <TableRowDetailMenu setMenuShown={setMenuShown} />
-      ) : (
-        menuShown === 'EDIT' && <TableRowEditMenu setMenuShown={setMenuShown} />
-      )}
+      <TableRowContent
+        th={th}
+        mission={mission}
+        menuShown={menuShown}
+        setMenuShown={setMenuShown}
+      />
+      {menuShown === 'DETAIL'
+        ? !isLoading && (
+            <TableRowDetailMenu
+              mission={missionDetail}
+              setMenuShown={setMenuShown}
+            />
+          )
+        : menuShown === 'EDIT' &&
+          !isLoading && (
+            <TableRowEditorMenu
+              values={values}
+              setValues={setValues}
+              setMenuShown={setMenuShown}
+              onSubmit={handleMissionEdit}
+            />
+          )}
     </div>
   );
 };

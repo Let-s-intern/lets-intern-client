@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import clsx from 'clsx';
 
 interface Props {
+  type?: 'button' | 'submit' | 'reset' | undefined;
   children: React.ReactNode;
   className?: string;
   to?: string;
@@ -11,6 +12,7 @@ interface Props {
 }
 
 const Button = ({
+  type = 'button',
   children,
   className,
   to,
@@ -37,7 +39,7 @@ const Button = ({
   }
 
   return (
-    <button className={buttonStyle} onClick={onClick}>
+    <button type={type} className={buttonStyle} onClick={onClick}>
       {children}
     </button>
   );
