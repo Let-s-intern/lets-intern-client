@@ -5,7 +5,7 @@ import DailyMissionSection from '../../../components/common/challenge/my-challen
 import OtherMissionSection from '../../../components/common/challenge/my-challenge/section/OtherMissionSection';
 import axios from '../../../utils/axios';
 
-const MyChallenge = () => {
+const MyChallengeDashboard = () => {
   const [dailyMission, setDailyMission] = useState<any>();
 
   const { isLoading } = useQuery({
@@ -33,4 +33,4 @@ const MyChallenge = () => {
   );
 };
 
-export default MyChallenge;
+export default MyChallengeDashboard;

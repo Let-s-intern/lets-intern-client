@@ -38,8 +38,9 @@ import ChallengeAdminUser from './pages/admin/challenge/ChallengeUser';
 import ChallengeAdminNotice from './pages/admin/challenge/ChallengeNotice';
 import ChallengeDashboard from './pages/common/challenge/ChallengeDashboard';
 import ChallengeLayout from './components/common/challenge/ui/layout/ChallengeLayout';
-import MyChallenge from './pages/common/challenge/MyChallenge';
-import OtherChallenges from './pages/common/challenge/OtherChallenges';
+import MyChallengeDashboard from './pages/common/challenge/MyChallengeDashboard';
+import OtherDashboardList from './pages/common/challenge/OtherDashboardList';
+import OtherDashboardDetail from './pages/common/challenge/OtherDashboardDetail';
 
 const Router = () => {
   return (
@@ -82,8 +83,12 @@ const Router = () => {
           <Route path="find-password" element={<FindPassword />} />
           <Route path="challenge" element={<ChallengeLayout />}>
             <Route path="" element={<ChallengeDashboard />} />
-            <Route path="me" element={<MyChallenge />} />
-            <Route path="others" element={<OtherChallenges />} />
+            <Route path="me" element={<MyChallengeDashboard />} />
+            <Route path="others" element={<OtherDashboardList />} />
+            <Route
+              path="others/:applicationId"
+              element={<OtherDashboardDetail />}
+            />
           </Route>
         </Route>
         <Route path="/admin" element={<AdminLayout />}>

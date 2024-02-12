@@ -3,8 +3,9 @@ import { useQuery } from '@tanstack/react-query';
 
 import OtherDashboardItem from '../../../components/common/challenge/other-challenges/mission/OtherDashboardItem';
 import axios from '../../../utils/axios';
+import { FaArrowLeft } from 'react-icons/fa6';
 
-const OtherChallenges = () => {
+const OtherDashboardList = () => {
   const [dashboardList, setDashboardList] = useState<any>();
 
   const { isLoading } = useQuery({
@@ -25,7 +26,7 @@ const OtherChallenges = () => {
   return (
     <main className="px-6 text-[#1E1E1E]">
       <header>
-        <h1 className="text-2xl font-bold">모두의 기록장</h1>
+        <h1 className="mt-1 text-2xl font-bold">모두의 기록장</h1>
         <p className="mt-2">안내 문구를 작성합니다.</p>
       </header>
       <section className="mt-6">
@@ -45,4 +46,4 @@ const OtherChallenges = () => {
   );
 };
 
-export default OtherChallenges;
+export default OtherDashboardList;

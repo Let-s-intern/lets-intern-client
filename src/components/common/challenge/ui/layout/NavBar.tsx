@@ -11,7 +11,7 @@ const NavBar = () => {
           <Link
             to="/challenge"
             className={clsx('block px-3 py-2', {
-              'rounded bg-[#E6E4FD] font-semibold text-[#3A368A]':
+              'rounded bg-[#E6E4FD] font-semibold text-primary':
                 location.pathname === '/challenge',
               'text-[#4A495C]': location.pathname !== '/challenge',
             })}
@@ -23,7 +23,7 @@ const NavBar = () => {
           <Link
             to="/challenge/me"
             className={clsx('block px-3 py-2', {
-              'rounded bg-[#E6E4FD] font-medium text-[#3A368A]':
+              'rounded bg-[#E6E4FD] font-medium text-primary':
                 location.pathname === '/challenge/me',
               'text-[#4A495C]': location.pathname !== '/challenge/me',
             })}
@@ -35,9 +35,10 @@ const NavBar = () => {
           <Link
             to="/challenge/others"
             className={clsx('block px-3 py-2', {
-              'rounded bg-[#E6E4FD] font-medium text-[#3A368A]':
-                location.pathname === '/challenge/others',
-              'text-[#4A495C]': location.pathname !== '/challenge/others',
+              'rounded bg-[#E6E4FD] font-medium text-primary':
+                location.pathname.startsWith('/challenge/others'),
+              'text-[#4A495C]':
+                location.pathname.startsWith('/challenge/others'),
             })}
           >
             모두의 기록장
