@@ -1,7 +1,23 @@
+import { useQuery } from '@tanstack/react-query';
 import TableBodyBox from '../../../../ui/table/table-body/TableBodyBox';
 import TableBodyRow from './TableBodyRow';
+// import axios from '../../../../../../../utils/axios';
 
 const TableBody = () => {
+  // const { data: missionList, isLoading } = useQuery({
+  //   queryKey: ['mission', 19],
+  //   queryFn: async () => {
+  //     const res = await axios.get(`/mission/19`);
+  //     const data = res.data;
+  //     console.log(data);
+  //     return data;
+  //   },
+  // });
+
+  // if (isLoading) {
+  //   return <></>;
+  // }
+
   return (
     <TableBodyBox>
       {Array.from({ length: 6 }, (_, index) => index + 1).map((th) => (

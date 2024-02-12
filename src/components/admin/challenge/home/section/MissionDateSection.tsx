@@ -8,7 +8,7 @@ import MissionDateItem from '../item/MissionDateItem';
 
 const MissionDateSection = () => {
   return (
-    <RoundedBox as="section" className="flex w-[45%] flex-col gap-2">
+    <RoundedBox as="section" className="flex w-[50%] flex-col gap-2">
       <div className="flex items-center justify-between px-8 py-6 pb-0">
         <SectionHeading>미션 일정</SectionHeading>
         <Button to="/admin/challenge/mission">미션관리</Button>

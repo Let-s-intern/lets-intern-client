@@ -1,16 +1,15 @@
 interface Props {
-  title: string;
-  date: string;
+  notice: any;
 }
 
-const NoticeItem = ({ title, date }: Props) => {
+const NoticeItem = ({ notice }: Props) => {
   return (
     <li className="flex justify-between">
       <span className="w-[60%] overflow-hidden text-ellipsis whitespace-nowrap">
-        {title}
+        {notice.title}
       </span>
       <div className="flex gap-4">
-        <span className="w-24">{date}</span>
+        <span className="w-24">{notice.createdAt}</span>
         <i>
           <img src="/icons/edit-icon.svg" alt="edit-icon" />
         </i>

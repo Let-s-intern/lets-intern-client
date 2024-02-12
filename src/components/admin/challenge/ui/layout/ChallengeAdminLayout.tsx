@@ -1,7 +1,7 @@
 import { Outlet, useLocation } from 'react-router-dom';
 
 import TabItem from '../tab/TabItem';
-import TopDropdown from '../dropdown/TopDropdown';
+import TopDropdown from '../dropdown/home/TopDropdown';
 
 const ChallengeAdminLayout = () => {
   const location = useLocation();

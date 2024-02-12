@@ -1,3 +1,5 @@
+import { Link } from 'react-router-dom';
+
 import { formatMissionDateString } from '../../../../../utils/formatDateString';
 
 interface Props {
@@ -21,9 +23,12 @@ const DailyMissionSection = ({ dailyMission, isLoading }: Props) => {
         </span>
       </div>
       <p className="flex-1">{dailyMission.contents}</p>
-      <button className="w-full rounded bg-primary px-4 py-3 font-semibold text-white">
+      <Link
+        to="/challenge/me"
+        className="w-full rounded bg-primary px-4 py-3 text-center font-semibold text-white"
+      >
         오늘의 미션 수행하기
-      </button>
+      </Link>
     </section>
   );
 };
