@@ -7,7 +7,6 @@ interface Props {
 
 const OtherMissionItem = ({ mission }: Props) => {
   const [isMenuShown, setIsMenuShown] = useState(false);
-  const [recordMap, setRecordMap] = useState<any>();
 
   return (
     <li>

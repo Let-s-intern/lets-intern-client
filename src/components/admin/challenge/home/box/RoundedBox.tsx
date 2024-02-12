@@ -1,7 +1,7 @@
 import clsx from 'clsx';
 
 interface Props {
-  children: React.ReactNode;
+  children?: React.ReactNode;
   className?: string;
   as?: string;
 }

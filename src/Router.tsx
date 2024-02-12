@@ -29,13 +29,13 @@ import ScrollToTop from './components/ui/scroll-to-top/ScrollToTop';
 import AdminPrograms from './pages/admin/program/Programs';
 import ProgramUsers from './pages/admin/program/ProgramUsers';
 import ChallengeAdminLayout from './components/admin/challenge/ui/layout/ChallengeAdminLayout';
-import ChallengeAdminHome from './pages/admin/challenge/ChallengeHome';
-import ChallengeAdminMission from './pages/admin/challenge/ChallengeMission';
-import ChallengeAdminContents from './pages/admin/challenge/ChallengeContents';
-import ChallengeAdminMissionLayout from './components/admin/challenge/mission/ui/layout/ChallengeMissionLayout';
-import ChallengeAdminSubmitCheck from './pages/admin/challenge/ChallengeSubmitCheck';
-import ChallengeAdminUser from './pages/admin/challenge/ChallengeUser';
-import ChallengeAdminNotice from './pages/admin/challenge/ChallengeNotice';
+import ChallengeHome from './pages/admin/challenge/ChallengeHome';
+import ChallengeMission from './pages/admin/challenge/ChallengeMission';
+import ChallengeContents from './pages/admin/challenge/ChallengeContents';
+import ChallengeMissionLayout from './components/admin/challenge/mission/ui/layout/ChallengeMissionLayout';
+import ChallengeSubmitCheck from './pages/admin/challenge/ChallengeSubmitCheck';
+import ChallengeUser from './pages/admin/challenge/ChallengeUser';
+import ChallengeNotice from './pages/admin/challenge/ChallengeNotice';
 import ChallengeDashboard from './pages/common/challenge/ChallengeDashboard';
 import ChallengeLayout from './components/common/challenge/ui/layout/ChallengeLayout';
 import MyChallengeDashboard from './pages/common/challenge/MyChallengeDashboard';
@@ -129,17 +129,14 @@ const Router = () => {
             </Route>
           </Route>
           <Route path="challenge" element={<ChallengeAdminLayout />}>
-            <Route path="" element={<ChallengeAdminHome />} />
-            <Route path="notice" element={<ChallengeAdminNotice />} />
-            <Route path="mission" element={<ChallengeAdminMissionLayout />}>
-              <Route path="" element={<ChallengeAdminMission />} />
-              <Route path="contents" element={<ChallengeAdminContents />} />
+            <Route path="" element={<ChallengeHome />} />
+            <Route path="notice" element={<ChallengeNotice />} />
+            <Route path="mission" element={<ChallengeMissionLayout />}>
+              <Route path="" element={<ChallengeMission />} />
+              <Route path="contents" element={<ChallengeContents />} />
             </Route>
-            <Route
-              path="submit-check"
-              element={<ChallengeAdminSubmitCheck />}
-            />
-            <Route path="user" element={<ChallengeAdminUser />} />
+            <Route path="submit-check" element={<ChallengeSubmitCheck />} />
+            <Route path="user" element={<ChallengeUser />} />
           </Route>
         </Route>
       </Routes>

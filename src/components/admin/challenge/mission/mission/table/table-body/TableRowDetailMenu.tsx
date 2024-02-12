@@ -1,10 +1,10 @@
 import Button from '../../../../ui/button/Button';
 
 interface Props {
-  setIsMenuShown: (isMenuShown: boolean) => void;
+  setMenuShown: (menuShown: 'DETAIL' | 'EDIT' | 'NONE') => void;
 }
 
-const TableRowMenu = ({ setIsMenuShown }: Props) => {
+const TableRowDetailMenu = ({ setMenuShown }: Props) => {
   return (
     <div className="mt-1 rounded bg-neutral-100 px-4 py-8">
       <div className="mx-auto w-[40rem]">
@@ -81,10 +81,10 @@ const TableRowMenu = ({ setIsMenuShown }: Props) => {
           </div>
         </div>
         <div className="mt-6 flex justify-end gap-2">
-          <Button active disableHover>
+          <Button active disableHover onClick={() => setMenuShown('EDIT')}>
             수정
           </Button>
-          <Button onClick={() => setIsMenuShown(false)} disableHover>
+          <Button onClick={() => setMenuShown('NONE')} disableHover>
             닫기
           </Button>
         </div>
@@ -93,4 +93,4 @@ const TableRowMenu = ({ setIsMenuShown }: Props) => {
   );
 };
 
-export default TableRowMenu;
+export default TableRowDetailMenu;

@@ -6,8 +6,8 @@ const ChallengeHome = () => {
   return (
     <main className="px-12 pb-12 pt-5">
       <div className="flex h-64 gap-4">
-        <NoticeSection />
         <MissionDateSection />
+        <NoticeSection />
       </div>
       <div className="mt-4">
         <MissionResultSection />

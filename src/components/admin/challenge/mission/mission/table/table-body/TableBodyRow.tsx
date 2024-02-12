@@ -4,7 +4,8 @@ import clsx from 'clsx';
 import { missionCellWidthList } from '../../../../../../../utils/tableCellWidthList';
 import TableBodyCell from '../../../../ui/table/table-body/TableBodyCell';
 import TableBodyRowBox from '../../../../ui/table/table-body/TableBodyRowBox';
-import TableRowMenu from './TableRowMenu';
+import TableRowDetailMenu from './TableRowDetailMenu';
+import TableRowEditMenu from './TableRowEditMenu';
 
 interface Props {
   th: number;
@@ -29,13 +30,17 @@ const TableBodyRow = ({
   totalCount,
   isVisible,
 }: Props) => {
-  const [isMenuShown, setIsMenuShown] = useState(false);
+  const [menuShown, setMenuShown] = useState<'DETAIL' | 'EDIT' | 'NONE'>(
+    'NONE',
+  );
 
   const cellWidthList = missionCellWidthList;
 
   return (
     <div>
-      <TableBodyRowBox>
+      <TableBodyRowBox
+        onClick={() => setMenuShown(menuShown !== 'DETAIL' ? 'DETAIL' : 'NONE')}
+      >
         <TableBodyCell className={clsx(cellWidthList[0])}>{th}</TableBodyCell>
         <TableBodyCell className={clsx(cellWidthList[1])} bold>
           {name}
@@ -59,12 +64,22 @@ const TableBodyRow = ({
           {isVisible ? '노출' : '비노출'}
         </TableBodyCell>
         <TableBodyCell className={clsx(cellWidthList[8])}>
-          <i className="cursor-pointer" onClick={() => setIsMenuShown(true)}>
+          <i
+            className="cursor-pointer"
+            onClick={(e) => {
+              e.stopPropagation();
+              setMenuShown('EDIT');
+            }}
+          >
             <img src="/icons/edit-icon.svg" alt="edit-icon" />
           </i>
         </TableBodyCell>
       </TableBodyRowBox>
-      {isMenuShown && <TableRowMenu setIsMenuShown={setIsMenuShown} />}
+      {menuShown === 'DETAIL' ? (
+        <TableRowDetailMenu setMenuShown={setMenuShown} />
+      ) : (
+        menuShown === 'EDIT' && <TableRowEditMenu setMenuShown={setMenuShown} />
+      )}
     </div>
   );
 };
