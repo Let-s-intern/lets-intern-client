@@ -20,8 +20,8 @@ const ChallengeNotice = () => {
       const data = res.data;
       return data;
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['notice'] });
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ['notice'] });
       setIsModalShown(false);
     },
   });
