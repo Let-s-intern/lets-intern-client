@@ -8,8 +8,8 @@ const OtherDashboardItem = ({ dashboard }: Props) => {
   return (
     <article>
       <Link
-        to="#"
-        className="block aspect-square rounded-xl bg-white p-8 shadow-lg transition-colors duration-150 hover:bg-[#F8F8F8] hover:ring-1 hover:ring-[#D9D9D9]"
+        to={`/challenge/others/${dashboard.applicationId}`}
+        className="block aspect-square rounded-xl border border-[#D9D9D9] bg-white p-8 transition-colors duration-150 hover:bg-[#F8F8F8]"
       >
         <div className="flex items-center gap-2">
           <h2 className="text-xl font-semibold">{dashboard.name}</h2>
