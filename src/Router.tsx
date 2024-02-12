@@ -41,6 +41,7 @@ import ChallengeLayout from './components/common/challenge/ui/layout/ChallengeLa
 import MyChallengeDashboard from './pages/common/challenge/MyChallengeDashboard';
 import OtherDashboardList from './pages/common/challenge/OtherDashboardList';
 import OtherDashboardDetail from './pages/common/challenge/OtherDashboardDetail';
+import ChallengeSubmitDetail from './pages/admin/challenge/ChallengeSubmitDetail';
 
 const Router = () => {
   return (
@@ -135,7 +136,9 @@ const Router = () => {
               <Route path="" element={<ChallengeMission />} />
               <Route path="contents" element={<ChallengeContents />} />
             </Route>
-            <Route path="submit-check" element={<ChallengeSubmitCheck />} />
+            <Route path="submit-check" element={<ChallengeSubmitCheck />}>
+              <Route path=":missionId" element={<ChallengeSubmitDetail />} />
+            </Route>
             <Route path="user" element={<ChallengeUser />} />
           </Route>
         </Route>
