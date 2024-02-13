@@ -1,3 +1,5 @@
+import clsx from 'clsx';
+import { topicToText } from '../../../../../../../utils/convert';
 import { formatMissionDateString } from '../../../../../../../utils/formatDateString';
 import Button from '../../../../ui/button/Button';
 
@@ -41,24 +43,48 @@ const TableRowDetailMenu = ({ mission, setMenuShown }: Props) => {
               </span>
             </div>
           </div>
-          <div className="flex gap-16">
-            <div className="flex items-center">
-              <label htmlFor="name" className="w-32 font-medium">
-                연결 콘텐츠
-              </label>
-              <div className="w-36 rounded-md border border-neutral-400 p-2 text-sm">
-                경험정리
+          {mission.essentialContentsTopic && (
+            <div className="flex gap-16">
+              <div className="flex items-center">
+                <label htmlFor="name" className="w-32 font-medium">
+                  필수 콘텐츠
+                </label>
+                <div className="w-32 rounded-md border border-neutral-400 p-2 text-sm">
+                  {topicToText[mission.essentialContentsTopic]}
+                </div>
               </div>
             </div>
-            <div className="flex items-center">
-              <label htmlFor="name" className="w-28 font-medium">
-                추가 콘텐츠
-              </label>
-              <div className="w-32 rounded-md border border-neutral-400 p-2 text-sm">
-                추가 콘텐츠 1
-              </div>
+          )}
+          {mission.additionalContentsTopic && mission.limitedContentsTopic && (
+            <div className="flex gap-12">
+              {mission.additionalContentsTopic && (
+                <div className="flex items-center">
+                  <label htmlFor="name" className="w-32 font-medium">
+                    추가 콘텐츠
+                  </label>
+                  <div className="w-32 rounded-md border border-neutral-400 p-2 text-sm">
+                    {topicToText[mission.additionalContentsTopic]}
+                  </div>
+                </div>
+              )}
+              {mission.limitedContentsTopic && (
+                <div className="flex items-center">
+                  <label
+                    htmlFor="name"
+                    className={clsx('w-28 font-medium', {
+                      'w-32': !mission.additionalContentsTopic,
+                      'w-28': mission.additionalContentsTopic,
+                    })}
+                  >
+                    제한 콘텐츠
+                  </label>
+                  <div className="w-32 rounded-md border border-neutral-400 p-2 text-sm">
+                    {topicToText[mission.limitedContentsTopic]}
+                  </div>
+                </div>
+              )}
             </div>
-          </div>
+          )}
           <div className="flex gap-16">
             <div className="flex items-center">
               <label htmlFor="is-refunded" className="w-32 font-medium">

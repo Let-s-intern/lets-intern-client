@@ -1,18 +1,30 @@
+import clsx from 'clsx';
 import { useEffect, useState } from 'react';
+
 import Button from '../../../../ui/button/Button';
+import AdditionalDropdown from '../../dropdown/AdditionalDropdown';
+import EssentialDropdown from '../../dropdown/EssentialDropdown';
+import LimitedDropdown from '../../dropdown/LimitedDropdown';
+import TopicDropdown from '../../dropdown/TopicDropdown';
+import TypeDropdown from '../../dropdown/TypeDropdown';
 
 interface Props {
   values: any;
+  className?: string;
+  mode: 'CREATE' | 'EDIT';
   setValues: (values: any) => void;
-  setMenuShown: (menuShown: 'DETAIL' | 'EDIT' | 'NONE') => void;
+  // setMenuShown?: (menuShown: 'DETAIL' | 'EDIT' | 'NONE') => void;
   onSubmit: (e: React.FormEvent) => void;
+  onCancel: () => void;
 }
 
 const TableRowEditorMenu = ({
   values,
+  className,
+  mode,
   setValues,
-  setMenuShown,
   onSubmit,
+  onCancel,
 }: Props) => {
   const [hasRefund, setHasRefund] = useState(values?.isRefunded || false);
 
@@ -25,9 +37,15 @@ const TableRowEditorMenu = ({
   }, [hasRefund]);
 
   return (
-    <div className="mt-1 rounded bg-neutral-100 px-4 py-8">
+    <div className={clsx('rounded bg-neutral-100 px-4 py-8', className)}>
       <form className="mx-auto w-[40rem]" onSubmit={onSubmit}>
         <div className="flex flex-col gap-4">
+          <div className="flex items-center">
+            <label htmlFor="type" className="w-32 font-medium">
+              유형
+            </label>
+            <TypeDropdown values={values} setValues={setValues} />
+          </div>
           <div className="flex items-center">
             <label htmlFor="title" className="w-32 font-medium">
               미션명
@@ -55,7 +73,7 @@ const TableRowEditorMenu = ({
               onChange={handleInputChange}
             />
           </div>
-          {/* <div className="flex items-start">
+          <div className="flex items-start">
             <label htmlFor="guide" className="mt-2 w-32 font-medium">
               가이드
             </label>
@@ -67,7 +85,7 @@ const TableRowEditorMenu = ({
               defaultValue={values?.guide || ''}
               onChange={handleInputChange}
             />
-          </div> */}
+          </div>
           <div>
             <div className="flex items-center">
               <div className="flex items-center">
@@ -86,37 +104,42 @@ const TableRowEditorMenu = ({
               </div>
             </div>
           </div>
-          <div className="flex items-center">
-            <label htmlFor="start-date" className="w-32 font-medium">
-              시작 일자
-            </label>
-            <input
-              type="datetime-local"
-              className="rounded-lg border border-[#A3A3A3] bg-[#F5F5F5] px-3 py-2 text-sm outline-none"
-              id="start-date"
-              name="startDate"
-              step={1}
-              defaultValue={values?.startDate || ''}
-              onChange={handleInputChange}
-            />
-          </div>
-          <div className="flex items-center">
-            <label htmlFor="end-date" className="w-32 font-medium">
-              마감 일자
-            </label>
-            <input
-              type="datetime-local"
-              className="rounded-lg border border-[#A3A3A3] bg-[#F5F5F5] px-3 py-2 text-sm outline-none"
-              id="end-date"
-              name="endDate"
-              step={1}
-              defaultValue={values?.endDate || ''}
-              onChange={handleInputChange}
-            />
-          </div>
+          {mode === 'EDIT' && (
+            <>
+              <div className="flex items-center">
+                <label htmlFor="start-date" className="w-32 font-medium">
+                  시작 일자
+                </label>
+                <input
+                  type="datetime-local"
+                  className="rounded-lg border border-[#A3A3A3] bg-[#F5F5F5] px-3 py-2 text-sm outline-none"
+                  id="start-date"
+                  name="startDate"
+                  step={1}
+                  defaultValue={values?.startDate || ''}
+                  onChange={handleInputChange}
+                />
+              </div>
+              <div className="flex items-center">
+                <label htmlFor="end-date" className="w-32 font-medium">
+                  마감 일자
+                </label>
+                <input
+                  type="datetime-local"
+                  className="rounded-lg border border-[#A3A3A3] bg-[#F5F5F5] px-3 py-2 text-sm outline-none"
+                  id="end-date"
+                  name="endDate"
+                  step={1}
+                  defaultValue={values?.endDate || ''}
+                  onChange={handleInputChange}
+                />
+              </div>
+            </>
+          )}
+
           <div className="flex items-center">
             <label htmlFor="template" className="w-32 font-medium">
-              미션 템플릿
+              템플릿 링크
             </label>
             <input
               type="text"
@@ -128,34 +151,32 @@ const TableRowEditorMenu = ({
               onChange={handleInputChange}
             />
           </div>
-          {/* <div className="flex items-center">
-            <label htmlFor="link-contents" className="w-32 font-medium">
-              연결 콘텐츠
+          <div className="flex items-center">
+            <label htmlFor="topic" className="w-32 font-medium">
+              주제
             </label>
-            <input
-              type="text"
-              className="flex-1 rounded-lg border border-[#A3A3A3] bg-[#F5F5F5] px-3 py-2 text-sm outline-none"
-              id="link-contents"
-              autoComplete="off"
-            />
-          </div> */}
-          {/* <div>
-            <label htmlFor="name">환급 여부</label>
-            <ul>
-              <li className="bg-white">경험정리</li>
-            </ul>
-          </div> */}
-          {/* <div className="flex items-center">
-            <label htmlFor="comment" className="w-32 font-medium">
-              코멘트
+            <TopicDropdown values={values} setValues={setValues} />
+          </div>
+          <div className="flex items-center">
+            <label htmlFor="essential-contents" className="w-32 font-medium">
+              필수 콘텐츠
             </label>
-            <input
-              type="text"
-              className="flex-1 rounded-lg border border-[#A3A3A3] bg-[#F5F5F5] px-3 py-2 text-sm outline-none"
-              id="comment"
-              autoComplete="off"
-            />
-          </div> */}
+            <EssentialDropdown values={values} setValues={setValues} />
+          </div>
+          <div className="flex gap-8">
+            <div className="flex items-center">
+              <label htmlFor="additional-contents" className="w-32 font-medium">
+                추가 콘텐츠
+              </label>
+              <AdditionalDropdown values={values} setValues={setValues} />
+            </div>
+            <div className="flex items-center">
+              <label htmlFor="limited-contents" className="w-28 font-medium">
+                제한 콘텐츠
+              </label>
+              <LimitedDropdown values={values} setValues={setValues} />
+            </div>
+          </div>
           <div className="flex items-center">
             <label htmlFor="refund" className="w-32 font-medium">
               환급여부
@@ -203,13 +224,9 @@ const TableRowEditorMenu = ({
         </div>
         <div className="mt-6 flex justify-end gap-2">
           <Button type="submit" active disableHover>
-            수정
+            {mode === 'CREATE' ? '생성' : mode === 'EDIT' && '수정'}
           </Button>
-          <Button
-            type="button"
-            onClick={() => setMenuShown('DETAIL')}
-            disableHover
-          >
+          <Button type="button" onClick={onCancel} disableHover>
             취소
           </Button>
         </div>

@@ -46,10 +46,6 @@ const TableBodyRow = ({ th, mission }: Props) => {
   });
 
   useEffect(() => {
-    console.log(values);
-  }, [values]);
-
-  useEffect(() => {
     if (menuShown === 'EDIT') {
       getMission.refetch();
     }
@@ -65,6 +61,10 @@ const TableBodyRow = ({ th, mission }: Props) => {
     };
     console.log(newValues);
     editMission.mutate(newValues);
+  };
+
+  const handleEditorClose = () => {
+    setMenuShown('DETAIL');
   };
 
   const isLoading = getMission.isLoading || !values || !missionDetail;
@@ -88,9 +88,11 @@ const TableBodyRow = ({ th, mission }: Props) => {
           !isLoading && (
             <TableRowEditorMenu
               values={values}
+              mode="EDIT"
               setValues={setValues}
-              setMenuShown={setMenuShown}
               onSubmit={handleMissionEdit}
+              onCancel={handleEditorClose}
+              className="mt-1"
             />
           )}
     </div>
