@@ -4,6 +4,7 @@ import TableBodyCell from '../../../../ui/table/table-body/TableBodyCell';
 import TableBodyRowBox from '../../../../ui/table/table-body/TableBodyRowBox';
 import { formatMissionDateString } from '../../../../../../../utils/formatDateString';
 import { missionCellWidthList } from '../../../../../../../utils/tableCellWidthList';
+import { topicToText } from '../../../../../../../utils/convert';
 
 interface Props {
   th: number;
@@ -14,12 +15,6 @@ interface Props {
 
 const TableRowContent = ({ th, mission, menuShown, setMenuShown }: Props) => {
   const cellWidthList = missionCellWidthList;
-
-  const typeToContents: any = {
-    EXPERIENCE: '경험정리',
-    JOB: '직무탐색',
-    CONCEPT: '컨셉잡기',
-  };
 
   return (
     <TableBodyRowBox
@@ -39,7 +34,7 @@ const TableRowContent = ({ th, mission, menuShown, setMenuShown }: Props) => {
         {mission.isRefunded ? 'O' : 'X'}
       </TableBodyCell>
       <TableBodyCell className={clsx(cellWidthList[5])}>
-        {typeToContents[mission.essentialContentsTopic] || '기타'}
+        {topicToText[mission.essentialContentsTopic] || '없음'}
       </TableBodyCell>
       <TableBodyCell className={clsx(cellWidthList[6])}>
         {mission.attendanceCount}

@@ -47,3 +47,14 @@ export const challengeNoticeCellWidthList = [
   'w-[15%]',
   'w-[15%]',
 ];
+
+export const challengeSubmitDetailCellWidthList = [
+  'w-[5%]',
+  'w-[10%]',
+  'flex-1',
+  'flex-1',
+  'w-[10%]',
+  'w-[10%]',
+  'w-[10%]',
+  'w-[10%]',
+];
