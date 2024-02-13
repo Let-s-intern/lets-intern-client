@@ -4,72 +4,49 @@ import { missionSubmitCellWidthList } from '../../../../../../utils/tableCellWid
 import TableBodyCell from '../../../ui/table/table-body/TableBodyCell';
 import TableBodyRowBox from '../../../ui/table/table-body/TableBodyRowBox';
 import { Link } from 'react-router-dom';
+import { formatMissionDateString } from '../../../../../../utils/formatDateString';
+import { typeToContents } from '../../../../../../utils/convert';
 
 interface Props {
-  th: string;
-  name: string;
-  releaseDate: string;
-  dueDate: string;
-  isRefunded: boolean;
-  connectedContents: string;
-  submitCount: number;
-  totalCount: number;
-  checkStatus: 'DONE' | 'WAITING' | 'NONE';
-  refundStatus: 'DONE' | 'WAITING' | 'NONE';
+  th: number;
+  mission: any;
 }
 
-const TableBodyRow = ({
-  th,
-  name,
-  releaseDate,
-  dueDate,
-  isRefunded,
-  connectedContents,
-  submitCount,
-  totalCount,
-  checkStatus,
-  refundStatus,
-}: Props) => {
+const TableBodyRow = ({ th, mission }: Props) => {
   const cellWidthList = missionSubmitCellWidthList;
 
+  const missionStatusToText: any = {
+    CREATED: '시작 전',
+    IN_PROGRESS: '진행 중',
+    REFUND_WAITING: '환급대기',
+    REFUND_DONE: '환급완료',
+  };
+
   return (
-    <Link to="/admin/challenge/submit-check/1">
+    <Link to={`/admin/challenge/submit-check/${mission.id}`}>
       <TableBodyRowBox>
         <TableBodyCell className={clsx(cellWidthList[0])}>{th}</TableBodyCell>
         <TableBodyCell className={clsx(cellWidthList[1])} bold>
-          {name}
+          {mission.title}
         </TableBodyCell>
         <TableBodyCell className={clsx(cellWidthList[2])}>
-          {releaseDate}
+          {formatMissionDateString(mission.startDate)}
         </TableBodyCell>
         <TableBodyCell className={clsx(cellWidthList[3])}>
-          {dueDate}
+          {formatMissionDateString(mission.endDate)}
         </TableBodyCell>
         <TableBodyCell className={clsx(cellWidthList[4])}>
-          {isRefunded ? 'O' : 'X'}
+          {mission.isRefunded ? 'O' : 'X'}
         </TableBodyCell>
         <TableBodyCell className={clsx(cellWidthList[5])}>
-          {connectedContents}
+          {typeToContents[mission.essentialContentsTopic]}
         </TableBodyCell>
         <TableBodyCell className={clsx(cellWidthList[6])}>
-          {submitCount}/{totalCount}
+          {mission.attendanceCount}
         </TableBodyCell>
         <TableBodyCell className={clsx(cellWidthList[7])}>
           <div className="flex gap-3 font-medium">
-            <span>
-              {checkStatus === 'DONE'
-                ? '확인완료'
-                : checkStatus === 'WAITING'
-                ? '확인대기'
-                : checkStatus === 'NONE' && '해당없음'}
-            </span>
-            <span>
-              {refundStatus === 'DONE'
-                ? '환급완료'
-                : refundStatus === 'WAITING'
-                ? '환급대기'
-                : refundStatus === 'NONE' && '해당없음'}
-            </span>
+            <span>{missionStatusToText[mission.status]}</span>
           </div>
         </TableBodyCell>
       </TableBodyRowBox>
