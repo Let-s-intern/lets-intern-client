@@ -5,7 +5,7 @@ import TableBodyCell from '../../../ui/table/table-body/TableBodyCell';
 import TableBodyRowBox from '../../../ui/table/table-body/TableBodyRowBox';
 import { Link } from 'react-router-dom';
 import { formatMissionDateString } from '../../../../../../utils/formatDateString';
-import { typeToContents } from '../../../../../../utils/convert';
+import { topicToText } from '../../../../../../utils/convert';
 
 interface Props {
   th: number;
@@ -39,7 +39,7 @@ const TableBodyRow = ({ th, mission }: Props) => {
           {mission.isRefunded ? 'O' : 'X'}
         </TableBodyCell>
         <TableBodyCell className={clsx(cellWidthList[5])}>
-          {typeToContents[mission.essentialContentsTopic]}
+          {topicToText[mission.essentialContentsTopic] || '없음'}
         </TableBodyCell>
         <TableBodyCell className={clsx(cellWidthList[6])}>
           {mission.attendanceCount}

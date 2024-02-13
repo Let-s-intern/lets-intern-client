@@ -4,8 +4,14 @@ import { useQuery } from '@tanstack/react-query';
 import TableBodyBox from '../../../../ui/table/table-body/TableBodyBox';
 import TableBodyRow from './TableBodyRow';
 import axios from '../../../../../../../utils/axios';
+import NewTableRowEditor from './NewTableRowEditor';
 
-const TableBody = () => {
+interface Props {
+  isModeAdd: boolean;
+  setIsModeAdd: (isModeAdd: boolean) => void;
+}
+
+const TableBody = ({ isModeAdd, setIsModeAdd }: Props) => {
   const [missionList, setMissionList] = useState<any>();
   const getMissionList = useQuery({
     queryKey: ['mission', 19],
@@ -23,11 +29,14 @@ const TableBody = () => {
   }
 
   return (
-    <TableBodyBox>
-      {missionList.map((mission: any, index: number) => (
-        <TableBodyRow key={mission.id} th={index + 1} mission={mission} />
-      ))}
-    </TableBodyBox>
+    <>
+      {isModeAdd && <NewTableRowEditor setIsModeAdd={setIsModeAdd} />}
+      <TableBodyBox>
+        {missionList.map((mission: any, index: number) => (
+          <TableBodyRow key={mission.id} th={index + 1} mission={mission} />
+        ))}
+      </TableBodyBox>
+    </>
   );
 };
 
