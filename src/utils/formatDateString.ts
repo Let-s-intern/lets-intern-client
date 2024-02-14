@@ -55,7 +55,7 @@ export default formatDateString;
 
 export const formatMissionDateString = (dateString: string) => {
   const endDate = new Date(dateString);
-  const weekdayList = ['월', '화', '수', '목', '금', '토', '일'];
+  const weekdayList = ['', '월', '화', '수', '목', '금', '토', '일'];
   const formattedString = `${endDate.getMonth() + 1}/${endDate.getDate()}(${
     weekdayList[endDate.getDay()]
   }) ${
