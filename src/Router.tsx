@@ -32,7 +32,6 @@ import ChallengeAdminLayout from './components/admin/challenge/ui/layout/Challen
 import ChallengeHome from './pages/admin/challenge/ChallengeHome';
 import ChallengeMission from './pages/admin/challenge/ChallengeMission';
 import ChallengeContents from './pages/admin/challenge/ChallengeContents';
-import ChallengeMissionLayout from './components/admin/challenge/mission/ui/layout/ChallengeMissionLayout';
 import ChallengeSubmitCheck from './pages/admin/challenge/ChallengeSubmitCheck';
 import ChallengeUser from './pages/admin/challenge/ChallengeUser';
 import ChallengeNotice from './pages/admin/challenge/ChallengeNotice';
@@ -81,7 +80,7 @@ const Router = () => {
           <Route path="signup" element={<SignUp />} />
           {/* /find-password */}
           <Route path="find-password" element={<FindPassword />} />
-          <Route path="challenge" element={<ChallengeLayout />}>
+          <Route path="challenge/:programId" element={<ChallengeLayout />}>
             <Route path="" element={<ChallengeDashboard />} />
             <Route path="me" element={<MyChallengeDashboard />} />
             <Route path="others" element={<OtherDashboardList />} />
@@ -128,7 +127,7 @@ const Router = () => {
               <Route path="edit" element={<UserEdit />} />
             </Route>
           </Route>
-          <Route path="challenge" element={<ChallengeAdminLayout />}>
+          <Route path="challenge/:programId" element={<ChallengeAdminLayout />}>
             <Route path="" element={<ChallengeHome />} />
             <Route path="notice" element={<ChallengeNotice />} />
             <Route path="mission" element={<ChallengeMission />} />

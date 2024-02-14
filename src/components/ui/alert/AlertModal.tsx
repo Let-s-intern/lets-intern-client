@@ -5,7 +5,7 @@ import styles from './AlertModal.module.scss';
 
 interface AlertModalProps {
   onConfirm: () => void;
-  onCancel?: () => void;
+  onCancel?: (e?: any) => void;
   highlight?: 'confirm' | 'cancel';
   title: string;
   confirmText?: string;

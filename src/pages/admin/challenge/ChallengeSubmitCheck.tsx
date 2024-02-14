@@ -6,8 +6,6 @@ import Heading from '../../../components/admin/challenge/ui/heading/Heading';
 import Table from '../../../components/admin/challenge/ui/table/table-container/Table';
 
 const ChallengeSubmitCheck = () => {
-  const location = useLocation();
-
   return (
     <div className="px-12">
       <div className="mt-6 px-3">

@@ -1,14 +1,16 @@
-import { Link } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 
 interface Props {
   dashboard: any;
 }
 
 const OtherDashboardItem = ({ dashboard }: Props) => {
+  const params = useParams();
+
   return (
     <article>
       <Link
-        to={`/challenge/others/${dashboard.applicationId}`}
+        to={`/challenge/${params.programId}/others/${dashboard.applicationId}`}
         className="block aspect-square rounded-xl border border-[#D9D9D9] bg-white p-8 transition-colors duration-150 hover:bg-[#F8F8F8]"
       >
         <div className="flex items-center gap-2">

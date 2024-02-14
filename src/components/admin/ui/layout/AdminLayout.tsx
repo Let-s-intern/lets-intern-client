@@ -52,7 +52,7 @@ const AdminLayout = () => {
         },
         {
           name: '챌린지 운영',
-          url: '/admin/challenge',
+          url: '/admin/challenge/19',
         },
       ],
     },

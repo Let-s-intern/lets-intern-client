@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { IoIosArrowForward } from 'react-icons/io';
 
@@ -12,6 +12,7 @@ import axios from '../../../../../utils/axios';
 import clsx from 'clsx';
 
 const NoticeSection = () => {
+  const params = useParams();
   const queryClient = useQueryClient();
 
   const [noticeList, setNoticeList] = useState<any>();
@@ -21,9 +22,9 @@ const NoticeSection = () => {
   const [values, setValues] = useState<any>({});
 
   const getNotice = useQuery({
-    queryKey: ['notice', 19, { page: pageNum, size: 4 }],
+    queryKey: ['notice', params.programId, { page: pageNum, size: 4 }],
     queryFn: async ({ queryKey }) => {
-      const res = await axios.get('/notice/19', {
+      const res = await axios.get(`/notice/${params.programId}`, {
         params: queryKey[2],
       });
       const data = res.data;
@@ -40,7 +41,7 @@ const NoticeSection = () => {
 
   const addNotice = useMutation({
     mutationFn: async (values) => {
-      const res = await axios.post('/notice/19', values);
+      const res = await axios.post(`/notice/${params.programId}`, values);
       const data = res.data;
       return data;
     },
