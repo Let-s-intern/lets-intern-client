@@ -44,7 +44,7 @@ const MissionDateSection = () => {
         </ul>
         <div className="pointer-events-none absolute bottom-0 flex h-20 w-full items-end bg-gradient-to-b from-transparent to-white">
           <Link
-            to="/admin/challenge/mission"
+            to={`/admin/challenge/${params.programId}/mission`}
             className="pointer-events-auto flex w-full cursor-pointer justify-center bg-white pb-2 pt-1"
           >
             <i>
