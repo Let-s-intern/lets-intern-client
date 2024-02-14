@@ -5,8 +5,8 @@ interface THProps {
 }
 
 const THBlock = styled.th`
-  border: 1px solid #cbd5e0;
-  background-color: #edf2f7;
+  border: 1px solid white;
+  /* background-color: #edf2f7; */
   padding: 0.5rem 1rem;
   font-weight: 500;
   font-size: 0.75rem;
@@ -14,7 +14,7 @@ const THBlock = styled.th`
 `;
 
 const TH = ({ children }: THProps) => {
-  return <THBlock>{children}</THBlock>;
+  return <THBlock className="bg-neutral-200">{children}</THBlock>;
 };
 
 export default TH;
