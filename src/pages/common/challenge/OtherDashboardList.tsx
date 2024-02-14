@@ -1,17 +1,21 @@
 import { useState } from 'react';
+import { useParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 
 import OtherDashboardItem from '../../../components/common/challenge/other-challenges/mission/OtherDashboardItem';
 import axios from '../../../utils/axios';
-import { FaArrowLeft } from 'react-icons/fa6';
 
 const OtherDashboardList = () => {
+  const params = useParams();
+
   const [dashboardList, setDashboardList] = useState<any>();
 
   const { isLoading } = useQuery({
-    queryKey: ['programs', 19, 'dashboard', 'entire'],
+    queryKey: ['programs', params.programId, 'dashboard', 'entire'],
     queryFn: async () => {
-      const res = await axios.get('/program/19/dashboard/entire');
+      const res = await axios.get(
+        `/program/${params.programId}/dashboard/entire`,
+      );
       const data = res.data;
       const newDashboardList = [
         { ...data.myDashboard, isMine: true },

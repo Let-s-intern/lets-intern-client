@@ -7,8 +7,10 @@ import Button from '../../../components/admin/challenge/ui/button/Button';
 import Heading from '../../../components/admin/challenge/ui/heading/Heading';
 import NoticeEditorModal from '../../../components/admin/challenge/ui/modal/NoticeEditorModal';
 import axios from '../../../utils/axios';
+import { useParams } from 'react-router-dom';
 
 const ChallengeNotice = () => {
+  const params = useParams();
   const queryClient = useQueryClient();
 
   const [isModalShown, setIsModalShown] = useState(false);
@@ -16,7 +18,7 @@ const ChallengeNotice = () => {
 
   const addNotice = useMutation({
     mutationFn: async (values) => {
-      const res = await axios.post('/notice/19', values);
+      const res = await axios.post(`/notice/${params.programId}`, values);
       const data = res.data;
       return data;
     },

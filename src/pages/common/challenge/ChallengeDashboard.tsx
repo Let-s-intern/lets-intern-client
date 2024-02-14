@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 
 import DailyMissionSection from '../../../components/common/challenge/dashboard/section/DailyMissionSection';
@@ -7,6 +8,8 @@ import ScoreSection from '../../../components/common/challenge/dashboard/section
 import axios from '../../../utils/axios';
 
 const ChallengeDashboard = () => {
+  const params = useParams();
+
   const [dailyMission, setDailyMission] = useState<any>();
   const [headCount, setHeadCount] = useState<any>();
   const [refundInfo, setRefundInfo] = useState<any>();
@@ -14,9 +17,9 @@ const ChallengeDashboard = () => {
   const [user, setUser] = useState<any>();
 
   const { isLoading: isDashboardLoading } = useQuery({
-    queryKey: ['programs', 19, 'dashboard'],
+    queryKey: ['programs', params.programId, 'dashboard'],
     queryFn: async () => {
-      const res = await axios.get('/program/19/dashboard');
+      const res = await axios.get(`/program/${params.programId}/dashboard`);
       const data = res.data;
 
       setDailyMission(data.dailyMission);
@@ -56,8 +59,12 @@ const ChallengeDashboard = () => {
     <main className="px-6">
       <header>
         <h1 className="text-2xl font-semibold">
-          {isQueryLoading || !user ? <span className="" /> : user.name}님의
-          대시보드
+          {isQueryLoading || !user ? (
+            <span className="opacity-0">홍민서</span>
+          ) : (
+            user.name
+          )}
+          님의 대시보드
         </h1>
       </header>
       <div className="mt-4 flex gap-4">
