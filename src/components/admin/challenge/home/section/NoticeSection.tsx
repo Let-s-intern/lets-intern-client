@@ -99,7 +99,10 @@ const NoticeSection = () => {
                 ))}
             </div>
           </div>
-          <Link to="/admin/challenge/notice" className="w-20 text-sm">
+          <Link
+            to={`/admin/challenge/${params.programId}/notice`}
+            className="w-20 text-sm"
+          >
             전체보기
           </Link>
         </div>
