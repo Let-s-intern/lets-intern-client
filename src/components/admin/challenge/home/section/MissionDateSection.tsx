@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { IoMdArrowDropdown } from 'react-icons/io';
 
@@ -5,8 +6,25 @@ import RoundedBox from '../box/RoundedBox';
 import Button from '../../ui/button/Button';
 import SectionHeading from '../heading/SectionHeading';
 import MissionDateItem from '../item/MissionDateItem';
+import { useQuery } from '@tanstack/react-query';
+import axios from '../../../../../utils/axios';
 
 const MissionDateSection = () => {
+  const [missionList, setMissionList] = useState<any>();
+
+  const getMissionList = useQuery({
+    queryKey: ['mission', 19],
+    queryFn: async () => {
+      const res = await axios.get('/mission/19');
+      const data = res.data;
+      console.log(data);
+      setMissionList(data.missionList);
+      return data;
+    },
+  });
+
+  const isLoading = getMissionList.isLoading || !missionList;
+
   return (
     <RoundedBox as="section" className="flex w-[50%] flex-col gap-2">
       <div className="flex items-center justify-between px-8 py-6 pb-0">
@@ -15,21 +33,10 @@ const MissionDateSection = () => {
       </div>
       <div className="relative flex-1 overflow-hidden">
         <ul className="divide-y divide-neutral-200">
-          <MissionDateItem
-            title="OT"
-            date="01.25 11:00 진행"
-            content="미션 요약을 작성해주세요. 미션 요약을 작성해주세요."
-          />
-          <MissionDateItem
-            title="OT"
-            date="01.25 11:00 진행"
-            content="미션 요약을 작성해주세요. 미션 요약을 작성해주세요."
-          />
-          <MissionDateItem
-            title="OT"
-            date="01.25 11:00 진행"
-            content="미션 요약을 작성해주세요. 미션 요약을 작성해주세요."
-          />
+          {!isLoading &&
+            missionList.map((mission: any) => (
+              <MissionDateItem key={mission.id} mission={mission} />
+            ))}
         </ul>
         <div className="pointer-events-none absolute bottom-0 flex h-20 w-full items-end bg-gradient-to-b from-transparent to-white">
           <Link

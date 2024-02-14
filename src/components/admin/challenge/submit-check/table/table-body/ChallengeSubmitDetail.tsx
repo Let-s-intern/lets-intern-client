@@ -1,31 +1,31 @@
 import { useState } from 'react';
-import { useParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 
-import TableHead from '../../../components/admin/challenge/submit-check-detail/table/table-head/TableHead';
-import TableRow from '../../../components/admin/challenge/submit-check-detail/table/table-body/TableRow';
-import axios from '../../../utils/axios';
-import TableBodyRow from '../../../components/admin/challenge/submit-check/table/table-body/TableBodyRow';
+import TableHead from '../../../submit-check-detail/table/table-head/TableHead';
+import TableRow from '../../../submit-check-detail/table/table-body/TableRow';
+import axios from '../../../../../../utils/axios';
 
-const ChallengeSubmitDetail = () => {
-  const params = useParams();
+interface Props {
+  mission: any;
+}
 
-  const [mission, setMission] = useState<any>();
+const ChallengeSubmitDetail = ({ mission }: Props) => {
+  const [missionDetail, setMissionDetail] = useState();
   const [attendanceList, setAttendanceList] = useState<any>();
 
   const getMission = useQuery({
-    queryKey: ['mission', 'detail', params.missionId],
+    queryKey: ['mission', 'detail', mission.id],
     queryFn: async () => {
-      const res = await axios.get(`/mission/detail/${params.missionId}`);
+      const res = await axios.get(`/mission/detail/${mission.id}`);
       const data = res.data;
-      setMission(data);
+      setMissionDetail(data);
       console.log(data);
       return data;
     },
   });
 
   const getAttendanceList = useQuery({
-    queryKey: ['attendance', { missionId: params.missionId, size: 10 }],
+    queryKey: ['attendance', { missionId: mission.id, size: 10 }],
     queryFn: async ({ queryKey }) => {
       const res = await axios.get('/attendance', {
         params: queryKey[1],
@@ -41,14 +41,13 @@ const ChallengeSubmitDetail = () => {
     getAttendanceList.isLoading ||
     getMission.isLoading ||
     !attendanceList ||
-    !mission;
+    !missionDetail;
 
   return (
-    <div className="mt-3 rounded">
+    <>
       {!isLoading && (
-        <>
-          <TableBodyRow th={1} mission={mission} />
-          <div className="mb-24 mt-2 flex flex-col bg-[#F7F7F7]">
+        <div className="rounded">
+          <div className="flex flex-col bg-[#F7F7F7]">
             <TableHead />
             {attendanceList.map((attendance: any, index: number) => (
               <TableRow
@@ -68,9 +67,9 @@ const ChallengeSubmitDetail = () => {
               />
             ))}
           </div>
-        </>
+        </div>
       )}
-    </div>
+    </>
   );
 };
 

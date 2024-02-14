@@ -10,11 +10,15 @@ const TableHead = () => {
   return (
     <TableHeadBox>
       <TableHeadCell className={clsx(cellWidthList[0])}>구분</TableHeadCell>
-      <TableHeadCell className={clsx(cellWidthList[1])}>콘텐츠</TableHeadCell>
-      <TableHeadCell className={clsx(cellWidthList[2])}>공개일</TableHeadCell>
-      <TableHeadCell className={clsx(cellWidthList[3])}>미션</TableHeadCell>
-      <TableHeadCell className={clsx(cellWidthList[4])}>노출</TableHeadCell>
-      <TableHeadCell className={clsx(cellWidthList[5])} />
+      <div
+        className={clsx(
+          cellWidthList[1],
+          'flex-1 py-2 text-left text-sm font-medium text-zinc-500',
+        )}
+      >
+        <span className="ml-16">콘텐츠</span>
+      </div>
+      <TableHeadCell className={clsx(cellWidthList[2])} />
     </TableHeadBox>
   );
 };

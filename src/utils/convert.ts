@@ -12,3 +12,17 @@ export const missionTypeToText: any = {
   ADDITIONAL: '추가 컨텐츠',
   REFUND: '보증금',
 };
+
+export const contentsTypeToText: any = {
+  ESSENTIAL: '필수',
+  ADDITIONAL: '추가',
+  LIMITED: '제한',
+};
+
+export const attendanceStatusToText: any = {
+  CREATED: '대기 중',
+  PASSED: '제출',
+  WRONG: '잘못된 제출',
+  UPDATED: '수정된 제출',
+  LATED: '지각 제출',
+};

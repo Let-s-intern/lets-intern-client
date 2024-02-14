@@ -5,6 +5,7 @@ import { IoMdArrowDropdown } from 'react-icons/io';
 import { challengeSubmitDetailCellWidthList } from '../../../../../../utils/tableCellWidthList';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import axios from '../../../../../../utils/axios';
+import { attendanceStatusToText } from '../../../../../../utils/convert';
 
 interface Props {
   attendance: any;
@@ -16,14 +17,6 @@ const StatusDropdown = ({ attendance }: Props) => {
   const [isMenuShown, setIsMenuShown] = useState(false);
 
   const cellWidthList = challengeSubmitDetailCellWidthList;
-
-  const statusToText: any = {
-    CREATED: '미제출',
-    PASSED: '제출',
-    WRONG: '잘못된 제출',
-    UPDATED: '수정된 제출',
-    LATED: '지각 제출',
-  };
 
   const editAttendanceStatus = useMutation({
     mutationFn: async (status) => {
@@ -52,7 +45,7 @@ const StatusDropdown = ({ attendance }: Props) => {
           onClick={() => setIsMenuShown(!isMenuShown)}
         >
           <div className="flex items-center gap-1">
-            <span>{statusToText[attendance.status]}</span>
+            <span>{attendanceStatusToText[attendance.status]}</span>
             <i>
               <IoMdArrowDropdown />
             </i>
@@ -61,18 +54,20 @@ const StatusDropdown = ({ attendance }: Props) => {
       )}
       {isMenuShown && attendance && (
         <ul className="absolute bottom-0 z-50 w-full translate-y-[100%] rounded-lg border border-[#E5E5E5] bg-white">
-          {Object.keys(statusToText).map((status: any, index: number) => (
-            <li
-              key={index}
-              className={clsx('cursor-pointer px-3 py-2 text-xs', {
-                'border-b border-[#E5E5E5]':
-                  index !== Object.keys(statusToText).length - 1,
-              })}
-              onClick={async () => editAttendanceStatus.mutate(status)}
-            >
-              {statusToText[status]}
-            </li>
-          ))}
+          {Object.keys(attendanceStatusToText).map(
+            (status: any, index: number) => (
+              <li
+                key={index}
+                className={clsx('cursor-pointer px-3 py-2 text-xs', {
+                  'border-b border-[#E5E5E5]':
+                    index !== Object.keys(attendanceStatusToText).length - 1,
+                })}
+                onClick={async () => editAttendanceStatus.mutate(status)}
+              >
+                {attendanceStatusToText[status]}
+              </li>
+            ),
+          )}
         </ul>
       )}
     </div>

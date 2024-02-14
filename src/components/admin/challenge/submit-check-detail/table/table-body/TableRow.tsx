@@ -65,20 +65,13 @@ const TableRow = ({ attendance, th, bgColor }: Props) => {
           <Link
             to={attendance.link}
             target="_blank"
+            rel="noopenner noreferrer"
             className="rounded border border-zinc-600 px-4 py-[2px] text-xs duration-200 hover:bg-neutral-700 hover:text-white"
           >
             확인
           </Link>
         )}
       </div>
-      {/* <div
-        className={clsx(
-          'overflow-hidden text-ellipsis border-r border-[#D9D9D9] py-3 text-center text-sm',
-          cellWidthList[6],
-        )}
-      >
-        {!attendance ? '' : attendance.isRefunded ? '환급완료' : '환급대기'}
-      </div> */}
       <RefundDropdown attendance={attendance} />
       <div
         className={clsx(

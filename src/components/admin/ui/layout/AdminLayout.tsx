@@ -47,6 +47,10 @@ const AdminLayout = () => {
       title: '챌린지 관리',
       itemList: [
         {
+          name: '콘텐츠 관리',
+          url: '/admin/challenge/contents',
+        },
+        {
           name: '챌린지 운영',
           url: '/admin/challenge',
         },

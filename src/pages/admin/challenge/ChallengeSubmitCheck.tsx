@@ -15,11 +15,7 @@ const ChallengeSubmitCheck = () => {
       </div>
       <Table>
         <TableHead />
-        {location.pathname === '/admin/challenge/submit-check' ? (
-          <TableBody />
-        ) : (
-          <Outlet />
-        )}
+        <TableBody />
       </Table>
     </div>
   );
