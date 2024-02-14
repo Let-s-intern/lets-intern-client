@@ -13,13 +13,14 @@ const MyChallengeDashboard = () => {
     queryFn: async () => {
       const res = await axios.get('/program/19/dashboard/my');
       const data = res.data;
+      console.log(data);
       setDailyMission(data.dailyMission);
       return data;
     },
   });
 
   if (isLoading || !dailyMission) {
-    return <main className="px-6" />;
+    return <></>;
   }
 
   return (

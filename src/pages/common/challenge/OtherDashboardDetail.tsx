@@ -47,7 +47,7 @@ const OtherDashboardDetail = () => {
       <div className="mt-6">
         <ul className="flex flex-col gap-4">
           {dashboard.attendanceList.map((mission: any) => (
-            <OtherMissionItem mission={mission} />
+            <OtherMissionItem key={mission.attendanceId} mission={mission} />
           ))}
         </ul>
       </div>

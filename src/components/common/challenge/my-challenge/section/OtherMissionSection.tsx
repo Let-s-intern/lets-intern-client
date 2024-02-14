@@ -4,6 +4,7 @@ import clsx from 'clsx';
 
 import axios from '../../../../../utils/axios';
 import MissionItem from '../mission/MissionItem';
+import MissionStyledItem from '../mission/MissionStyledItem';
 
 const OtherMissionSection = () => {
   const [tabIndex, setTabIndex] = useState(0);
@@ -71,7 +72,18 @@ const OtherMissionSection = () => {
         tabIndex === 1 && (
           <ul className="mt-2 flex flex-col gap-6 bg-[#F6F8FB] p-8">
             {missionList['ABSENT'].map((mission: any) => (
-              <MissionItem key={mission.id} mission={mission} status="YET" />
+              <MissionStyledItem
+                key={mission.id}
+                mission={mission}
+                status="ABSENT"
+              />
+            ))}
+            {missionList['DONE'].map((mission: any) => (
+              <MissionStyledItem
+                key={mission.id}
+                mission={mission}
+                status="DONE"
+              />
             ))}
           </ul>
         )

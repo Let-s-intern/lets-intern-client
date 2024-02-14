@@ -48,7 +48,7 @@ const TableBodyRow = ({ notice, th }: Props) => {
             : notice.type === 'ADDITIONAL' && '선택'}
         </TableBodyCell>
         <TableBodyCell className={clsx(cellWidthList[2])}>
-          <Link to={notice.link} target="_blank" className="underline">
+          <Link to={notice.link} target="_blank" className="hover:underline">
             {notice.title}
           </Link>
         </TableBodyCell>
