@@ -13,6 +13,12 @@ export const missionTypeToText: any = {
   REFUND: '보증금',
 };
 
+export const contentsTypeToText: any = {
+  ESSENTIAL: '필수',
+  ADDITIONAL: '추가',
+  LIMITED: '제한',
+};
+
 export const attendanceStatusToText: any = {
   CREATED: '대기 중',
   PASSED: '제출',

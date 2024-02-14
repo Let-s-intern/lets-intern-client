@@ -34,7 +34,11 @@ const MissionDateItem = ({ mission }: Props) => {
           {formatMissionDateString(mission.startDate)} 진행
         </span>
       </div>
-      {!isLoading && <p className="mt-1 text-sm">{content}</p>}
+      {isLoading ? (
+        <p className="mt-1 text-sm opacity-0">place holder</p>
+      ) : (
+        <p className="mt-1 text-sm">{content}</p>
+      )}
     </li>
   );
 };

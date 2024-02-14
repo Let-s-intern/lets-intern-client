@@ -131,13 +131,14 @@ const Router = () => {
           <Route path="challenge" element={<ChallengeAdminLayout />}>
             <Route path="" element={<ChallengeHome />} />
             <Route path="notice" element={<ChallengeNotice />} />
-            <Route path="mission" element={<ChallengeMissionLayout />}>
-              <Route path="" element={<ChallengeMission />} />
-              <Route path="contents" element={<ChallengeContents />} />
-            </Route>
+            <Route path="mission" element={<ChallengeMission />} />
             <Route path="submit-check" element={<ChallengeSubmitCheck />} />
             <Route path="user" element={<ChallengeUser />} />
           </Route>
+          <Route
+            path="/admin/challenge/contents"
+            element={<ChallengeContents />}
+          />
         </Route>
       </Routes>
     </BrowserRouter>
