@@ -25,7 +25,7 @@ const Filter = ({ setSearchValues }: FilterProps) => {
 
   return (
     <>
-      <div className="flex flex-col gap-4 bg-gray-300 p-6">
+      <div className="flex flex-col gap-4 bg-neutral-300 p-6">
         <div className="flex gap-4">
           <Input
             label="이름"
