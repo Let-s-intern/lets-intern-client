@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import clsx from 'clsx';
 
@@ -7,6 +7,7 @@ import TableBodyCell from './TableBodyCell';
 import NoticeEditorModal from '../../../ui/modal/NoticeEditorModal';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import axios from '../../../../../../utils/axios';
+import DeleteButton from '../../button/DeleteButton';
 
 interface Props {
   notice: any;
@@ -57,13 +58,13 @@ const TableBodyRow = ({ notice, th }: Props) => {
         </TableBodyCell>
         <TableBodyCell className={clsx(cellWidthList[4])}>
           <div className="flex items-center justify-center gap-4">
-            <span
-              className="cursor-pointer font-medium"
+            <button
+              className="font-medium"
               onClick={() => setIsModalShown(true)}
             >
               수정
-            </span>
-            <span className="cursor-pointer font-medium">삭제</span>
+            </button>
+            <DeleteButton notice={notice} />
           </div>
         </TableBodyCell>
       </div>

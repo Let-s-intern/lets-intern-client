@@ -7,7 +7,7 @@ export const missionCellWidthList = [
   'w-20',
   'w-20',
   'w-20',
-  'w-20',
+  'w-28',
 ];
 
 export const missionContentsCellWidthList = ['w-20', 'flex-1', 'w-24'];

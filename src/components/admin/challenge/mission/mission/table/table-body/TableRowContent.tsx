@@ -1,10 +1,12 @@
 import clsx from 'clsx';
+import { CiTrash } from 'react-icons/ci';
 
 import TableBodyCell from '../../../../ui/table/table-body/TableBodyCell';
 import TableBodyRowBox from '../../../../ui/table/table-body/TableBodyRowBox';
 import { formatMissionDateString } from '../../../../../../../utils/formatDateString';
 import { missionCellWidthList } from '../../../../../../../utils/tableCellWidthList';
 import { topicToText } from '../../../../../../../utils/convert';
+import DeleteButton from '../../button/DeleteButton';
 
 interface Props {
   th: number;
@@ -43,15 +45,21 @@ const TableRowContent = ({ th, mission, menuShown, setMenuShown }: Props) => {
         {mission.isVisible ? '노출' : '비노출'}
       </TableBodyCell>
       <TableBodyCell className={clsx(cellWidthList[8])}>
-        <i
-          className="cursor-pointer"
-          onClick={(e) => {
-            e.stopPropagation();
-            setMenuShown('EDIT');
-          }}
+        <div
+          className="flex items-center gap-3"
+          onClick={(e) => e.stopPropagation}
         >
-          <img src="/icons/edit-icon.svg" alt="edit-icon" />
-        </i>
+          <i
+            className="cursor-pointer"
+            onClick={(e) => {
+              e.stopPropagation();
+              setMenuShown('EDIT');
+            }}
+          >
+            <img src="/icons/edit-icon.svg" alt="edit-icon" />
+          </i>
+          <DeleteButton mission={mission} />
+        </div>
       </TableBodyCell>
     </TableBodyRowBox>
   );
