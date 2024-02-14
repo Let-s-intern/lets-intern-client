@@ -10,16 +10,16 @@ const ChallengeMission = () => {
   const [isModeAdd, setIsModeAdd] = useState(false);
 
   return (
-    <>
-      <div className="mt-6 flex items-center justify-between px-3">
-        <Heading>미션</Heading>
+    <div className="px-12 pt-6">
+      <div className="flex items-center justify-between px-3">
+        <Heading>미션 관리</Heading>
         <Button onClick={() => setIsModeAdd(true)}>등록</Button>
       </div>
       <Table>
         <TableHead />
         <TableBody isModeAdd={isModeAdd} setIsModeAdd={setIsModeAdd} />
       </Table>
-    </>
+    </div>
   );
 };
 

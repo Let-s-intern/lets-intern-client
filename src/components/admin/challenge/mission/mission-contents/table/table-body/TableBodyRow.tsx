@@ -1,60 +1,84 @@
-import { useState } from 'react';
-import clsx from 'clsx';
+import { useEffect, useState } from 'react';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
-import { missionContentsCellWidthList } from '../../../../../../../utils/tableCellWidthList';
-import TableBodyCell from '../../../../ui/table/table-body/TableBodyCell';
-import TableBodyRowBox from '../../../../ui/table/table-body/TableBodyRowBox';
-import TableRowMenu from './TableRowMenu';
+import TableRowDetailMenu from './TableRowDetailMenu';
+import TableRowContent from './TableRowContent';
+import TableRowEditorMenu from './TableRowEditorMenu';
+import axios from '../../../../../../../utils/axios';
 
 interface Props {
-  isRequired: boolean;
-  name: string;
-  releaseDate: string;
-  mission: string;
-  isVisible: boolean;
+  contents: any;
 }
 
-const TableBodyRow = ({
-  isRequired,
-  name,
-  releaseDate,
-  mission,
-  isVisible,
-}: Props) => {
-  const [isMenuShown, setIsMenuShown] = useState(false);
+const TableBodyRow = ({ contents }: Props) => {
+  const queryClient = useQueryClient();
 
-  const cellWidthList = missionContentsCellWidthList;
+  const [values, setValues] = useState<any>({ ...contents });
+  const [menuShown, setMenuShown] = useState<'DETAIL' | 'EDIT' | 'NONE'>(
+    'NONE',
+  );
+  const [contentsDetail, setContentsDetail] = useState<any>();
+
+  const getContentsDetail = useQuery({
+    queryKey: ['contents', contents.id],
+    queryFn: async () => {
+      const res = await axios.get(`/contents/${contents.id}`);
+      const data = res.data;
+      setContentsDetail(data);
+      return data;
+    },
+  });
+
+  const addContents = useMutation({
+    mutationFn: async (values: any) => {
+      const res = await axios.patch(`/contents/${contents.id}`, values);
+      const data = res.data;
+      return data;
+    },
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ['contents'] });
+      setMenuShown('DETAIL');
+    },
+  });
+
+  const isLoading = getContentsDetail.isLoading || !contentsDetail;
+
+  const handleContentsSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    addContents.mutate(values);
+  };
+
+  const handleEditorClose = () => {
+    setMenuShown('DETAIL');
+  };
+
+  if (isLoading) {
+    return <></>;
+  }
 
   return (
     <>
-      <TableBodyRowBox>
-        <TableBodyCell className={clsx(cellWidthList[0])}>
-          {isRequired ? '필수' : '선택'}
-        </TableBodyCell>
-        <TableBodyCell className={clsx(cellWidthList[1])} bold>
-          {name}
-        </TableBodyCell>
-        <TableBodyCell className={clsx(cellWidthList[2])}>
-          {releaseDate}
-        </TableBodyCell>
-        <TableBodyCell className={clsx(cellWidthList[3])}>
-          {mission}
-        </TableBodyCell>
-        <TableBodyCell className={clsx(cellWidthList[4])}>
-          {isVisible ? '노출' : '비노출'}
-        </TableBodyCell>
-        <TableBodyCell className={clsx(cellWidthList[5])}>
-          <div className="flex items-center justify-center gap-10">
-            <i>
-              <img src="/icons/share-icon.svg" alt="share-icon" />
-            </i>
-            <i className="cursor-pointer" onClick={() => setIsMenuShown(true)}>
-              <img src="/icons/edit-icon.svg" alt="edit-icon" />
-            </i>
-          </div>
-        </TableBodyCell>
-      </TableBodyRowBox>
-      {isMenuShown && <TableRowMenu setIsMenuShown={setIsMenuShown} />}
+      <TableRowContent
+        contents={contentsDetail}
+        menuShown={menuShown}
+        setMenuShown={setMenuShown}
+      />
+      {menuShown === 'DETAIL' ? (
+        <TableRowDetailMenu
+          contents={contentsDetail}
+          setMenuShown={setMenuShown}
+        />
+      ) : (
+        menuShown === 'EDIT' && (
+          <TableRowEditorMenu
+            values={values}
+            setValues={setValues}
+            mode="EDIT"
+            onSubmit={handleContentsSubmit}
+            onCancel={handleEditorClose}
+          />
+        )
+      )}
     </>
   );
 };
