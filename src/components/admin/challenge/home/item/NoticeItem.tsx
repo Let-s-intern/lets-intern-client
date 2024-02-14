@@ -15,12 +15,7 @@ const NoticeItem = ({ notice }: Props) => {
       >
         {notice.title}
       </Link>
-      <div className="flex gap-4">
-        <span className="w-24">{notice.createdAt}</span>
-        <i>
-          <img src="/icons/edit-icon.svg" alt="edit-icon" />
-        </i>
-      </div>
+      <div className="flex gap-4">{notice.createdAt}</div>
     </li>
   );
 };
