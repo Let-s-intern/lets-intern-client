@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 
 import { formatMissionDateString } from '../../../../../utils/formatDateString';
 
@@ -8,6 +8,8 @@ interface Props {
 }
 
 const DailyMissionSection = ({ dailyMission, isLoading }: Props) => {
+  const params = useParams();
+
   if (isLoading) {
     return <section className="mb-10">로딩 중...</section>;
   }
@@ -24,7 +26,7 @@ const DailyMissionSection = ({ dailyMission, isLoading }: Props) => {
       </div>
       <p className="flex-1">{dailyMission.contents}</p>
       <Link
-        to="/challenge/me"
+        to={`/challenge/${params.programId}/me`}
         className="w-full rounded bg-primary px-4 py-3 text-center font-semibold text-white"
       >
         오늘의 미션 수행하기

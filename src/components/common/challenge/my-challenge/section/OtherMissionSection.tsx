@@ -5,18 +5,24 @@ import clsx from 'clsx';
 import axios from '../../../../../utils/axios';
 import MissionItem from '../mission/MissionItem';
 import MissionStyledItem from '../mission/MissionStyledItem';
+import { useParams } from 'react-router-dom';
 
 const OtherMissionSection = () => {
+  const params = useParams();
+
   const [tabIndex, setTabIndex] = useState(0);
 
   const { data: missionList, isLoading } = useQuery({
-    queryKey: ['mission', 19, 'list'],
+    queryKey: ['mission', params.programId, 'list'],
     queryFn: async () => {
-      const absentMissionsRes = await axios.get('/mission/19/list', {
-        params: {
-          status: 'ABSENT',
+      const absentMissionsRes = await axios.get(
+        `/mission/${params.programId}/list`,
+        {
+          params: {
+            status: 'ABSENT',
+          },
         },
-      });
+      );
       const yetMissionsRes = await axios.get('/mission/19/list', {
         params: {
           status: 'YET',

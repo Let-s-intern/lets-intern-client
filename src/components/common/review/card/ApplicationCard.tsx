@@ -56,7 +56,7 @@ const ApplicationCard = ({
           {hasChallengeLink && (
             <div className="mt-2">
               <Link
-                to="/challenge"
+                to={`/challenge/${application.programId}`}
                 className="flex items-center justify-end gap-1 text-primary"
                 onClick={(e) => e.stopPropagation()}
               >

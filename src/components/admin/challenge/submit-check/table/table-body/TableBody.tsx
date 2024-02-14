@@ -1,17 +1,20 @@
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
+import { useParams } from 'react-router-dom';
 
 import TableBodyBox from '../../../ui/table/table-body/TableBodyBox';
 import TableBodyRow from './TableBodyRow';
 import axios from '../../../../../../utils/axios';
 
 const TableBody = () => {
+  const params = useParams();
+
   const [missionList, setMissionList] = useState<any>();
 
   const getMissionList = useQuery({
-    queryKey: ['mission', 19],
+    queryKey: ['mission', params.programId],
     queryFn: async () => {
-      const res = await axios.get('/mission/19');
+      const res = await axios.get(`/mission/${params.programId}`);
       const data = res.data;
       console.log(data);
       setMissionList(data.missionList);

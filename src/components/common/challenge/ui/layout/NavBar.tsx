@@ -1,8 +1,15 @@
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useParams } from 'react-router-dom';
 import clsx from 'clsx';
 
 const NavBar = () => {
+  const params = useParams();
   const location = useLocation();
+
+  const activeStatus = /^\/challenge\/(\d+)\/others/.test(location.pathname)
+    ? 'OTHERS_DASHBOARD'
+    : /^\/challenge\/(\d+)\/me/.test(location.pathname)
+    ? 'MY_DASHBOARD'
+    : /^\/challenge\/(\d+)$/.test(location.pathname) && 'DASHBOARD';
 
   return (
     <>
@@ -10,11 +17,11 @@ const NavBar = () => {
         <ul className="flex w-40 flex-col gap-1">
           <li>
             <Link
-              to="/challenge"
+              to={`/challenge/${params.programId}`}
               className={clsx('block px-3 py-2', {
                 'rounded bg-[#E6E4FD] font-semibold text-primary':
-                  location.pathname === '/challenge',
-                'text-[#4A495C]': location.pathname !== '/challenge',
+                  activeStatus === 'DASHBOARD',
+                'text-[#4A495C]': activeStatus === 'DASHBOARD',
               })}
             >
               대시보드
@@ -22,11 +29,11 @@ const NavBar = () => {
           </li>
           <li>
             <Link
-              to="/challenge/me"
+              to={`/challenge/${params.programId}/me`}
               className={clsx('block px-3 py-2', {
                 'rounded bg-[#E6E4FD] font-medium text-primary':
-                  location.pathname === '/challenge/me',
-                'text-[#4A495C]': location.pathname !== '/challenge/me',
+                  activeStatus === 'MY_DASHBOARD',
+                'text-[#4A495C]': activeStatus === 'MY_DASHBOARD',
               })}
             >
               나의 기록장
@@ -34,12 +41,11 @@ const NavBar = () => {
           </li>
           <li>
             <Link
-              to="/challenge/others"
+              to={`/challenge/${params.programId}/others`}
               className={clsx('block px-3 py-2', {
                 'rounded bg-[#E6E4FD] font-medium text-primary':
-                  location.pathname.startsWith('/challenge/others'),
-                'text-[#4A495C]':
-                  location.pathname.startsWith('/challenge/others'),
+                  activeStatus === 'OTHERS_DASHBOARD',
+                'text-[#4A495C]': activeStatus === 'OTHERS_DASHBOARD',
               })}
             >
               모두의 기록장

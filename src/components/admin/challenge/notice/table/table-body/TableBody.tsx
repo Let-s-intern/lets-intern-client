@@ -3,14 +3,17 @@ import { useQuery } from '@tanstack/react-query';
 
 import TableBodyRow from './TableBodyRow';
 import axios from '../../../../../../utils/axios';
+import { useParams } from 'react-router-dom';
 
 const TableBody = () => {
+  const params = useParams();
+
   const [noticeList, setNoticeList] = useState<any>();
 
   const { isLoading } = useQuery({
-    queryKey: ['notice', 19],
+    queryKey: ['notice', params.programId],
     queryFn: async () => {
-      const res = await axios.get(`/notice/19`);
+      const res = await axios.get(`/notice/${params.programId}`);
       const data = res.data;
       console.log(data);
       setNoticeList(data.noticeList);

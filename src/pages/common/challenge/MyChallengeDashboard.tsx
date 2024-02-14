@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 
 import DailyMissionSection from '../../../components/common/challenge/my-challenge/section/DailyMissionSection';
@@ -6,12 +7,14 @@ import OtherMissionSection from '../../../components/common/challenge/my-challen
 import axios from '../../../utils/axios';
 
 const MyChallengeDashboard = () => {
+  const params = useParams();
+
   const [dailyMission, setDailyMission] = useState<any>();
 
   const { isLoading } = useQuery({
-    queryKey: ['programs', 19, 'dashboard', 'my'],
+    queryKey: ['programs', params.programId, 'dashboard', 'my'],
     queryFn: async () => {
-      const res = await axios.get('/program/19/dashboard/my');
+      const res = await axios.get(`/program/${params.programId}/dashboard/my`);
       const data = res.data;
       console.log(data);
       setDailyMission(data.dailyMission);
