@@ -4,6 +4,7 @@ import TableBodyCell from '../../../../ui/table/table-body/TableBodyCell';
 import TableBodyRowBox from '../../../../ui/table/table-body/TableBodyRowBox';
 import { missionContentsCellWidthList } from '../../../../../../../utils/tableCellWidthList';
 import { contentsTypeToText } from '../../../../../../../utils/convert';
+import DeleteButton from '../../button/DeleteButton';
 
 interface Props {
   contents: any;
@@ -25,10 +26,10 @@ const TableRowContent = ({ contents, menuShown, setMenuShown }: Props) => {
         <span className="ml-16 flex-1 text-left">{contents.title}</span>
       </TableBodyCell>
       <TableBodyCell className={clsx(cellWidthList[2])}>
-        <div className="flex items-center justify-center gap-10">
-          {/* <i>
-            <img src="/icons/share-icon.svg" alt="share-icon" />
-          </i> */}
+        <div
+          className="flex items-center justify-center gap-4"
+          onClick={(e) => e.stopPropagation()}
+        >
           <i
             className="cursor-pointer"
             onClick={(e) => {
@@ -38,6 +39,7 @@ const TableRowContent = ({ contents, menuShown, setMenuShown }: Props) => {
           >
             <img src="/icons/edit-icon.svg" alt="edit-icon" />
           </i>
+          <DeleteButton contents={contents} />
         </div>
       </TableBodyCell>
     </TableBodyRowBox>

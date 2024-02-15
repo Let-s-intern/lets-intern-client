@@ -4,8 +4,14 @@ import { useQuery } from '@tanstack/react-query';
 import TableBodyBox from '../../../../ui/table/table-body/TableBodyBox';
 import TableBodyRow from './TableBodyRow';
 import axios from '../../../../../../../utils/axios';
+import NewTableRowEditor from './NewTableRowEditor';
 
-const TableBody = () => {
+interface Props {
+  addMenuShown: boolean;
+  setAddMenuShown: (addMenuShown: boolean) => void;
+}
+
+const TableBody = ({ addMenuShown, setAddMenuShown }: Props) => {
   const [contentsList, setContentsList] = useState<any>();
 
   const getContentsList = useQuery({
@@ -27,6 +33,7 @@ const TableBody = () => {
 
   return (
     <TableBodyBox>
+      {addMenuShown && <NewTableRowEditor setAddMenuShown={setAddMenuShown} />}
       {contentsList.map((contents: any) => (
         <TableBodyRow key={contents.id} contents={contents} />
       ))}
