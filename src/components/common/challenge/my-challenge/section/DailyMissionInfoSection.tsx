@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { formatMissionDateString } from '../../../../../utils/formatDateString';
-import TemplateDropdown from '../dropdown/TemplateDropdown';
+import ContentsDropdown from '../dropdown/ContentsDropdown';
 
 interface Props {
   dailyMission: any;
@@ -31,7 +31,7 @@ const DailyMissionInfoSection = ({ dailyMission }: Props) => {
         >
           미션 템플릿
         </Link>
-        <TemplateDropdown dailyMission={dailyMission} />
+        <ContentsDropdown dailyMission={dailyMission} />
       </div>
     </>
   );

@@ -65,6 +65,7 @@ const DailyMissionSubmitSection = ({ dailyMission }: Props) => {
           disabled={dailyMission.attended}
         />
         <button
+          type="button"
           className="rounded bg-[#7D7D7D] px-5 font-medium text-white"
           onClick={() => {
             if (linkValue) {
