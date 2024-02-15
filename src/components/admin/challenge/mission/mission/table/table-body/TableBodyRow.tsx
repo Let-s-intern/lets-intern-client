@@ -70,7 +70,7 @@ const TableBodyRow = ({ th, mission }: Props) => {
   const isLoading = getMission.isLoading || !values || !missionDetail;
 
   return (
-    <div>
+    <>
       <TableRowContent
         th={th}
         mission={mission}
@@ -95,7 +95,7 @@ const TableBodyRow = ({ th, mission }: Props) => {
               className="mt-1"
             />
           )}
-    </div>
+    </>
   );
 };
 

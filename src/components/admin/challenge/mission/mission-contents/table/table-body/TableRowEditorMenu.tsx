@@ -1,5 +1,5 @@
 import clsx from 'clsx';
-import { useEffect, useState } from 'react';
+
 import Button from '../../../../ui/button/Button';
 import TopicDropdown from '../../dropdown/TopicDropdown';
 import TypeDropdown from '../../dropdown/TypeDropdown';
