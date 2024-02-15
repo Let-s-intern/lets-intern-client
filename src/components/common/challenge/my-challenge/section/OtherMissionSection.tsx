@@ -70,12 +70,19 @@ const OtherMissionSection = () => {
       </div>
       {tabIndex === 0 ? (
         <ul className="mt-2 flex flex-col gap-6 bg-[#F6F8FB] p-8">
-          {missionList['YET'].map((mission: any) => (
-            <MissionItem key={mission.id} mission={mission} status="YET" />
-          ))}
+          {missionList['YET'].length === 0 ? (
+            <span className="font-medium">남은 미션이 없습니다.</span>
+          ) : (
+            missionList['YET'].map((mission: any) => (
+              <MissionItem key={mission.id} mission={mission} status="YET" />
+            ))
+          )}
         </ul>
       ) : (
-        tabIndex === 1 && (
+        tabIndex === 1 &&
+        (missionList['ABSENT'].length + missionList['DONE'].length === 0 ? (
+          <span className="font-medium">지난 미션이 없습니다.</span>
+        ) : (
           <ul className="mt-2 flex flex-col gap-6 bg-[#F6F8FB] p-8">
             {missionList['ABSENT'].map((mission: any) => (
               <MissionStyledItem
@@ -92,7 +99,7 @@ const OtherMissionSection = () => {
               />
             ))}
           </ul>
-        )
+        ))
       )}
     </section>
   );

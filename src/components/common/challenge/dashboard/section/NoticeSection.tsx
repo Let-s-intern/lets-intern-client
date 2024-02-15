@@ -12,12 +12,16 @@ const NoticeSection = ({ noticeList, isLoading }: Props) => {
   }
 
   return (
-    <section className="flex flex-col gap-4">
+    <section className="flex w-[13rem] flex-col gap-4">
       <div className="flex flex-1 flex-col gap-2 rounded-xl border border-[#E4E4E7] p-6">
         <h2 className="font-semibold text-[#4A495C]">공지사항</h2>
         <ul className="flex flex-1 flex-col gap-1">
           {noticeList.map((notice: any) => (
-            <Link key={notice.id} to="#" className="text-sm text-[#333333]">
+            <Link
+              key={notice.id}
+              to="#"
+              className="overflow-hidden text-ellipsis whitespace-nowrap text-sm text-[#333333]"
+            >
               {notice.title}
             </Link>
           ))}
