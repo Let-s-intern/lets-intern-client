@@ -1,4 +1,5 @@
 import clsx from 'clsx';
+import { Link, useParams } from 'react-router-dom';
 
 interface Props {
   className?: string;
@@ -6,10 +7,14 @@ interface Props {
 }
 
 const MissionIcon = ({ className, mission }: Props) => {
+  const params = useParams();
+
   return (
-    <div
+    <Link
+      to={`/challenge/${params.programId}/me?scroll_to=other-mission`}
+      replace
       className={clsx(
-        'relative flex aspect-square cursor-pointer flex-col items-center justify-end rounded-md  text-white',
+        'relative flex aspect-square cursor-pointer flex-col items-center justify-center rounded-md text-white',
         className,
         {
           'bg-[#d0cfcf]': !mission.attended,
@@ -30,7 +35,7 @@ const MissionIcon = ({ className, mission }: Props) => {
         )}
       />
       {mission.attended ? (
-        <i className="mb-1 h-[1.375rem] w-[1.375rem]">
+        <i className="mb-1 mt-2 h-[1.75rem] w-[1.75rem]">
           <img
             src="/icons/check-icon.svg"
             alt="check-icon"
@@ -38,18 +43,18 @@ const MissionIcon = ({ className, mission }: Props) => {
           />
         </i>
       ) : (
-        <i className="mb-2 h-[1rem] w-[1rem]">
+        <i className="mb-2 mt-2 h-[1.25rem] w-[1.25rem]">
           <img
             src="/icons/x-icon.svg"
-            alt="check-icon"
+            alt="not-started-icon"
             className="w-full object-cover"
           />
         </i>
       )}
-      <span className="mb-[15%] block font-pretendard text-xs font-semibold">
+      <span className="font-pretendard text-sm font-semibold">
         {mission.missionTh}일차
       </span>
-    </div>
+    </Link>
   );
 };
 

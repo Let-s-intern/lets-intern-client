@@ -3,7 +3,10 @@ import clsx from 'clsx';
 import TableBodyRowBox from '../../../ui/table/table-body/TableBodyRowBox';
 import TableBodyCell from '../../../ui/table/table-body/TableBodyCell';
 import { formatMissionDateString } from '../../../../../../utils/formatDateString';
-import { topicToText } from '../../../../../../utils/convert';
+import {
+  missionStatusToText,
+  topicToText,
+} from '../../../../../../utils/convert';
 import { missionSubmitCellWidthList } from '../../../../../../utils/tableCellWidthList';
 
 interface Props {
@@ -14,13 +17,6 @@ interface Props {
 
 const TableRowContent = ({ th, mission, onClick }: Props) => {
   const cellWidthList = missionSubmitCellWidthList;
-
-  const missionStatusToText: any = {
-    CREATED: '시작 전',
-    IN_PROGRESS: '진행 중',
-    REFUND_WAITING: '환급대기',
-    REFUND_DONE: '환급완료',
-  };
 
   return (
     <TableBodyRowBox onClick={onClick}>
