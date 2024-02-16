@@ -19,6 +19,12 @@ export const contentsTypeToText: any = {
   LIMITED: '제한',
 };
 
+export const missionStatusToText: any = {
+  CREATED: '시작 전',
+  IN_PROGRESS: '진행 중',
+  DONE: '완료',
+};
+
 export const attendanceStatusToText: any = {
   CREATED: '대기 중',
   PASSED: '제출',

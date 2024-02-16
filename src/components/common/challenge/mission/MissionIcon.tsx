@@ -1,4 +1,5 @@
 import clsx from 'clsx';
+import { Link, useParams } from 'react-router-dom';
 
 interface Props {
   className?: string;
@@ -6,10 +7,13 @@ interface Props {
 }
 
 const MissionIcon = ({ className, mission }: Props) => {
+  const params = useParams();
+
   return (
-    <div
+    <Link
+      to={`/challenge/${params.programId}/me?scroll_to=other-mission`}
       className={clsx(
-        'relative flex aspect-square cursor-pointer flex-col items-center justify-end rounded-md  text-white',
+        'relative flex aspect-square cursor-pointer flex-col items-center justify-end rounded-md text-white',
         className,
         {
           'bg-[#d0cfcf]': !mission.attended,
@@ -49,7 +53,7 @@ const MissionIcon = ({ className, mission }: Props) => {
       <span className="mb-[15%] block font-pretendard text-xs font-semibold">
         {mission.missionTh}일차
       </span>
-    </div>
+    </Link>
   );
 };
 
