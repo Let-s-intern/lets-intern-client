@@ -19,8 +19,7 @@ const ContentsDropdown = ({ dailyMission }: Props) => {
       </div>
       {isMenuShown &&
         (dailyMission.essentialContentsLink ||
-          dailyMission.additionalContentsLink ||
-          dailyMission.limitedContentsLink) && (
+          dailyMission.additionalContentsLink) && (
           <ul className="absolute bottom-[-0.25rem] w-full translate-y-[100%] rounded border border-[#DCDCDC] bg-white text-sm">
             {dailyMission.essentialContentsLink && (
               <li>
@@ -46,21 +45,6 @@ const ContentsDropdown = ({ dailyMission }: Props) => {
                   rel="noopenner noreferrer"
                 >
                   <span>추가 콘텐츠</span>
-                  <i>
-                    <IoIosLink />
-                  </i>
-                </Link>
-              </li>
-            )}
-            {dailyMission.limitedContentsLink && (
-              <li>
-                <Link
-                  to={dailyMission.limitedContentsLink}
-                  className="flex w-full items-center justify-between px-4 py-3 text-primary hover:bg-gray-200"
-                  target="_blank"
-                  rel="noopenner noreferrer"
-                >
-                  <span>제한 콘텐츠</span>
                   <i>
                     <IoIosLink />
                   </i>

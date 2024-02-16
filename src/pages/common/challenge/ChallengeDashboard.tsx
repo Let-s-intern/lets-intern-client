@@ -17,6 +17,7 @@ const ChallengeDashboard = () => {
   const [refundInfo, setRefundInfo] = useState<any>();
   const [noticeList, setNoticeList] = useState<any>();
   const [missionList, setMissionList] = useState<any>();
+  const [todayTh, setTodayTh] = useState<number>();
   const [user, setUser] = useState<any>();
 
   const getDashboard = useQuery({
@@ -33,6 +34,7 @@ const ChallengeDashboard = () => {
       });
       setNoticeList(data.noticeList);
       setMissionList(data.missionList);
+      setTodayTh(data.dailyMission.th);
 
       console.log(data);
 
@@ -57,7 +59,8 @@ const ChallengeDashboard = () => {
     !refundInfo ||
     !noticeList ||
     !user ||
-    !missionList;
+    !missionList ||
+    !todayTh;
 
   if (isLoading) {
     return <main />;
@@ -67,11 +70,7 @@ const ChallengeDashboard = () => {
     <main className="mr-[-3rem] px-6">
       <header>
         <h1 className="text-2xl font-semibold">
-          {isLoading || !user ? (
-            <span className="opacity-0">홍민서</span>
-          ) : (
-            user.name
-          )}
+          {isLoading ? <span className="opacity-0">홍민서</span> : user.name}
           님의 대시보드
         </h1>
       </header>
@@ -92,7 +91,7 @@ const ChallengeDashboard = () => {
           />
         </div>
         <div className="flex gap-4">
-          <MissionSection missionList={missionList} />
+          <MissionSection missionList={missionList} todayTh={todayTh} />
           <CurriculumSection />
         </div>
       </div>

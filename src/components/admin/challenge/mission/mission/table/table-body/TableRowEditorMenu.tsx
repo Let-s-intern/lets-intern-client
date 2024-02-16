@@ -104,39 +104,6 @@ const TableRowEditorMenu = ({
               </div>
             </div>
           </div>
-          {mode === 'EDIT' && (
-            <>
-              <div className="flex items-center">
-                <label htmlFor="start-date" className="w-32 font-medium">
-                  시작 일자
-                </label>
-                <input
-                  type="datetime-local"
-                  className="rounded-lg border border-[#A3A3A3] bg-[#F5F5F5] px-3 py-2 text-sm outline-none"
-                  id="start-date"
-                  name="startDate"
-                  step={1}
-                  defaultValue={values?.startDate || ''}
-                  onChange={handleInputChange}
-                />
-              </div>
-              <div className="flex items-center">
-                <label htmlFor="end-date" className="w-32 font-medium">
-                  마감 일자
-                </label>
-                <input
-                  type="datetime-local"
-                  className="rounded-lg border border-[#A3A3A3] bg-[#F5F5F5] px-3 py-2 text-sm outline-none"
-                  id="end-date"
-                  name="endDate"
-                  step={1}
-                  defaultValue={values?.endDate || ''}
-                  onChange={handleInputChange}
-                />
-              </div>
-            </>
-          )}
-
           <div className="flex items-center">
             <label htmlFor="template" className="w-32 font-medium">
               템플릿 링크

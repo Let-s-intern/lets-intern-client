@@ -1,15 +1,22 @@
 import clsx from 'clsx';
-import { useState } from 'react';
 
 interface Props {
   lineTop?: boolean;
+  isOpen: boolean;
   name: string;
   description: string;
+  index: number;
+  setOpennedIndex: (opennedIndex: number | null) => void;
 }
 
-const CurriculumItem = ({ lineTop, name, description }: Props) => {
-  const [descriptionShown, setDescriptionShown] = useState(false);
-
+const CurriculumItem = ({
+  lineTop,
+  isOpen,
+  name,
+  description,
+  index,
+  setOpennedIndex,
+}: Props) => {
   return (
     <li
       className={clsx('border-b border-[#DEDEDE]', {
@@ -17,13 +24,19 @@ const CurriculumItem = ({ lineTop, name, description }: Props) => {
       })}
     >
       <div
-        className="cursor-pointer py-3 text-center"
-        onClick={() => setDescriptionShown(!descriptionShown)}
+        className="cursor-pointer py-3 text-center duration-200 hover:bg-[#F1F1F1]"
+        onClick={() => {
+          if (isOpen) {
+            setOpennedIndex(null);
+          } else {
+            setOpennedIndex(index);
+          }
+        }}
       >
         {name}
       </div>
-      {descriptionShown && (
-        <div className="mb-4 px-2">
+      {isOpen && (
+        <div className="mb-4 mt-2 px-2">
           <p className="text-center text-sm">{description}</p>
         </div>
       )}

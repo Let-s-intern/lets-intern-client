@@ -1,14 +1,17 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import clsx from 'clsx';
 
 import axios from '../../../../../utils/axios';
 import MissionItem from '../mission/MissionItem';
 import MissionStyledItem from '../mission/MissionStyledItem';
-import { useParams } from 'react-router-dom';
+import { useParams, useSearchParams } from 'react-router-dom';
 
 const OtherMissionSection = () => {
   const params = useParams();
+  const [searchParams] = useSearchParams();
+
+  const sectionRef = useRef<HTMLElement>(null);
 
   const [tabIndex, setTabIndex] = useState(0);
 
@@ -42,12 +45,19 @@ const OtherMissionSection = () => {
     },
   });
 
+  useEffect(() => {
+    const scrollTo = searchParams.get('scroll_to');
+    if (scrollTo === 'other-mission') {
+      sectionRef.current?.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [sectionRef, searchParams]);
+
   if (isLoading || !missionList) {
     return <section>로딩 중...</section>;
   }
 
   return (
-    <section className="mb-20 mt-8">
+    <section className="mb-20 mt-8" ref={sectionRef}>
       <div className="flex gap-2">
         <div
           className={clsx('cursor-pointer p-2 font-bold', {
