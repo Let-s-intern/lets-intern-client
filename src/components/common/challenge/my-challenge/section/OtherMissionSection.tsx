@@ -9,7 +9,7 @@ import { useParams, useSearchParams } from 'react-router-dom';
 
 const OtherMissionSection = () => {
   const params = useParams();
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
 
   const sectionRef = useRef<HTMLElement>(null);
 
@@ -47,17 +47,22 @@ const OtherMissionSection = () => {
 
   useEffect(() => {
     const scrollTo = searchParams.get('scroll_to');
+
     if (scrollTo === 'other-mission') {
       sectionRef.current?.scrollIntoView({ behavior: 'smooth' });
+      setSearchParams({}, { replace: true });
     }
-  }, [sectionRef, searchParams]);
+  }, [sectionRef, searchParams, setSearchParams]);
 
   if (isLoading || !missionList) {
     return <section>로딩 중...</section>;
   }
 
   return (
-    <section className="mb-20 mt-8" ref={sectionRef}>
+    <section
+      className="mb-20 mt-8 scroll-mt-[calc(6rem+1rem)]"
+      ref={sectionRef}
+    >
       <div className="flex gap-2">
         <div
           className={clsx('cursor-pointer p-2 font-bold', {

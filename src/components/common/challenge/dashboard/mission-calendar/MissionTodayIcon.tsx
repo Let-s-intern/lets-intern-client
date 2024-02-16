@@ -12,18 +12,18 @@ const MissionTodayIcon = ({ mission, className }: Props) => {
 
   return (
     <Link
-      to={`/challenge/${params.programId}/me`}
+      to={`/challenge/${params.programId}/me?scroll_to=daily-mission`}
       className={clsx(
-        'flex aspect-square cursor-pointer flex-col items-center justify-end rounded-md shadow-[0px_0px_10px_rgba(0,0,0,0.1)]',
+        'flex aspect-square cursor-pointer flex-col items-center justify-center rounded-md shadow-[0px_0px_10px_rgba(0,0,0,0.1)]',
         className,
       )}
     >
-      <div className="mb-[0.25rem] flex h-[2rem] w-[2rem] items-center justify-center rounded-full bg-primary">
+      <div className="mb-[0.175rem] flex h-[2rem] w-[2rem] items-center justify-center rounded-full bg-primary">
         <i className="text-lg text-white">
           <FaPlus />
         </i>
       </div>
-      <span className="mb-[15%] block font-pretendard text-xs font-semibold text-primary">
+      <span className="font-pretendard text-xs font-semibold text-primary">
         {mission.missionTh}일차
       </span>
     </Link>

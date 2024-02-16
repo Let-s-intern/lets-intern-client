@@ -1,4 +1,4 @@
-import MissionGridItem from '../../mission/MissionGridItem';
+import MissionCalendar from '../mission-calendar/MissionCalendar';
 
 interface Props {
   missionList: any;
@@ -11,11 +11,11 @@ const MissionSection = ({ missionList, todayTh }: Props) => {
       <h2 className="text-xl font-semibold text-[#4A495C]">
         일정 및 미션 제출 현황
       </h2>
-      <div className="mt-6 grid grid-cols-7 gap-x-2 gap-y-4">
-        {missionList.map((mission: any, index: number) => (
-          <MissionGridItem key={index} mission={mission} todayTh={todayTh} />
-        ))}
-      </div>
+      <MissionCalendar
+        className="mt-2"
+        missionList={missionList}
+        todayTh={todayTh}
+      />
     </section>
   );
 };

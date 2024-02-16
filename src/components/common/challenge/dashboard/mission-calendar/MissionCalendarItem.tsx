@@ -7,7 +7,7 @@ interface Props {
   todayTh: number;
 }
 
-const MissionGridItem = ({ mission, todayTh }: Props) => {
+const MissionCalendarItem = ({ mission, todayTh }: Props) => {
   return (
     <div>
       {/* <span className="block w-full text-center text-xs">2/4</span> */}
@@ -24,4 +24,4 @@ const MissionGridItem = ({ mission, todayTh }: Props) => {
   );
 };
 
-export default MissionGridItem;
+export default MissionCalendarItem;

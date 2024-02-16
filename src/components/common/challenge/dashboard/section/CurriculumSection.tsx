@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-import CurriculumItem from '../../curriculum/CurriculumItem';
+import CurriculumItem from '../curriculum/CurriculumItem';
 import curriculumList from '../../../../../data/curriculum-info.json';
 
 const CurriculumSection = () => {
