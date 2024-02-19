@@ -32,11 +32,7 @@ const TypeDropdown = ({ values, setValues }: Props) => {
               key={index}
               className="cursor-pointer px-3 py-2 text-sm hover:bg-gray-100"
               onClick={() => {
-                if (type === 'NONE') {
-                  setValues({ ...values, type: null });
-                } else {
-                  setValues({ ...values, type: type });
-                }
+                setValues({ ...values, type: type });
                 setIsMenuShown(false);
               }}
             >
