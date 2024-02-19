@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 
@@ -18,7 +18,9 @@ const ChallengeDashboard = () => {
   const [noticeList, setNoticeList] = useState<any>();
   const [missionList, setMissionList] = useState<any>();
   const [todayTh, setTodayTh] = useState<number>();
-  const [user, setUser] = useState<any>();
+  // const [user, setUser] = useState<any>();
+  const [username, setUsername] = useState('');
+  const [isLoading, setIsLoading] = useState(true);
 
   const getDashboard = useQuery({
     queryKey: ['programs', params.programId, 'dashboard'],
@@ -35,6 +37,9 @@ const ChallengeDashboard = () => {
       setNoticeList(data.noticeList);
       setMissionList(data.missionList);
       setTodayTh(data.dailyMission.th);
+      setUsername(data.userName);
+
+      setIsLoading(false);
 
       console.log(data);
 
@@ -42,25 +47,26 @@ const ChallengeDashboard = () => {
     },
   });
 
-  const getUser = useQuery({
-    queryKey: ['user'],
-    queryFn: async () => {
-      const res = await axios.get('/user');
-      setUser(res.data);
-      return res.data;
-    },
-  });
+  // const getUser = useQuery({
+  //   queryKey: ['user'],
+  //   queryFn: async () => {
+  //     const res = await axios.get('/user');
+  //     setUser(res.data);
+  //     console.log(res.data);
+  //     return res.data;
+  //   },
+  // });
 
-  const isLoading =
-    getDashboard.isLoading ||
-    getUser.isLoading ||
-    !dailyMission ||
-    !headCount ||
-    !refundInfo ||
-    !noticeList ||
-    !user ||
-    !missionList ||
-    !todayTh;
+  // const isLoading =
+  //   getDashboard.isLoading ||
+  //   getUser.isLoading ||
+  //   !dailyMission ||
+  //   !headCount ||
+  //   !refundInfo ||
+  //   !noticeList ||
+  //   !user ||
+  //   !missionList ||
+  //   !todayTh;
 
   if (isLoading) {
     return <main />;
@@ -70,7 +76,7 @@ const ChallengeDashboard = () => {
     <main className="mr-[-3rem] px-6">
       <header>
         <h1 className="text-2xl font-semibold">
-          {isLoading ? <span className="opacity-0">홍민서</span> : user.name}
+          {isLoading ? <span className="opacity-0">홍민서</span> : username}
           님의 대시보드
         </h1>
       </header>
@@ -91,7 +97,7 @@ const ChallengeDashboard = () => {
           />
         </div>
         <div className="flex gap-4">
-          <MissionSection missionList={missionList} todayTh={todayTh} />
+          <MissionSection missionList={missionList} todayTh={todayTh || 0} />
           <CurriculumSection />
         </div>
       </div>
