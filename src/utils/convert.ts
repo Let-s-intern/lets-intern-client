@@ -1,10 +1,14 @@
-export const topicToText: any = {
+export const topicRequiredToText: any = {
   EXPERIENCE: '경험정리',
   JOB: '직무탐색',
   CONCEPT: '컨셉잡기',
   DOCUMENT: '서류작성',
   RECRUITMENT: '공고분석',
   APPLY: '지원하기',
+};
+export const topicToText: any = {
+  ...topicRequiredToText,
+  NULL: '없음',
 };
 
 export const missionTypeToText: any = {
@@ -20,17 +24,22 @@ export const contentsTypeToText: any = {
 };
 
 export const missionStatusToText: any = {
-  CREATED: '시작 전',
-  IN_PROGRESS: '진행 중',
-  DONE: '완료',
+  WAITING: '대기',
+  CHECK_DONE: '확인완료',
+  REFUND_DONE: '환급완료',
 };
 
 export const attendanceStatusToText: any = {
-  CREATED: '대기 중',
-  PASSED: '제출',
-  WRONG: '잘못된 제출',
-  UPDATED: '수정된 제출',
-  LATED: '지각 제출',
+  PRESENT: '정상 제출',
+  UPDATED: '다시 제출',
+  LATE: '지각 제출',
+  ABSENT: '미제출',
+};
+
+export const attendanceResultToText: any = {
+  WAITING: '확인중',
+  PASS: '확인 완료',
+  WRONG: '반려',
 };
 
 export const missionSubmitToBadge = (mission: any) => {

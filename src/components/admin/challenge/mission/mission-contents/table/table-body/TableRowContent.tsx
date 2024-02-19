@@ -15,6 +15,18 @@ interface Props {
 const TableRowContent = ({ contents, menuShown, setMenuShown }: Props) => {
   const cellWidthList = missionContentsCellWidthList;
 
+  const copyContentsLink = () => {
+    const url = contents.link;
+    navigator.clipboard
+      .writeText(url)
+      .then(() => {
+        alert('링크가 클립보드에 복사되었습니다.');
+      })
+      .catch((err) => {
+        console.error('복사에 실패했습니다:', err);
+      });
+  };
+
   return (
     <TableBodyRowBox
       onClick={() => setMenuShown(menuShown !== 'DETAIL' ? 'DETAIL' : 'NONE')}
@@ -30,13 +42,10 @@ const TableRowContent = ({ contents, menuShown, setMenuShown }: Props) => {
           className="flex items-center justify-center gap-4"
           onClick={(e) => e.stopPropagation()}
         >
-          <i
-            className="cursor-pointer"
-            onClick={(e) => {
-              e.stopPropagation();
-              setMenuShown('EDIT');
-            }}
-          >
+          <i className="cursor-pointer" onClick={() => copyContentsLink()}>
+            <img src="/icons/share-icon.svg" alt="share-icon" />
+          </i>
+          <i className="cursor-pointer" onClick={() => setMenuShown('EDIT')}>
             <img src="/icons/edit-icon.svg" alt="edit-icon" />
           </i>
           <DeleteButton contents={contents} />

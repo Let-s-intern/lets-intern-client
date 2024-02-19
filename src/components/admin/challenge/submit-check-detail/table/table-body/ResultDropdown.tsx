@@ -1,16 +1,17 @@
 import clsx from 'clsx';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { IoMdArrowDropdown } from 'react-icons/io';
 
 import { challengeSubmitDetailCellWidthList } from '../../../../../../utils/tableCellWidthList';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import axios from '../../../../../../utils/axios';
+import { attendanceResultToText } from '../../../../../../utils/convert';
 
 interface Props {
   attendance: any;
 }
 
-const RefundDropdown = ({ attendance }: Props) => {
+const ResultDropdown = ({ attendance }: Props) => {
   const queryClient = useQueryClient();
 
   const [isMenuShown, setIsMenuShown] = useState(false);
@@ -18,9 +19,9 @@ const RefundDropdown = ({ attendance }: Props) => {
   const cellWidthList = challengeSubmitDetailCellWidthList;
 
   const editAttendanceStatus = useMutation({
-    mutationFn: async (isRefunded) => {
+    mutationFn: async (result) => {
       const res = await axios.patch(`/attendance/${attendance.id}`, {
-        isRefunded,
+        result,
       });
       const data = res.data;
       return data;
@@ -39,6 +40,7 @@ const RefundDropdown = ({ attendance }: Props) => {
         'relative flex items-center justify-center text-ellipsis border-r border-[#D9D9D9] text-center text-sm',
         cellWidthList[6],
       )}
+      onClick={(e) => e.preventDefault()}
     >
       {attendance && (
         <div
@@ -46,7 +48,7 @@ const RefundDropdown = ({ attendance }: Props) => {
           onClick={() => setIsMenuShown(!isMenuShown)}
         >
           <div className="flex items-center gap-1">
-            <span>{attendance.isRefund ? '환급완료' : '환급대기'}</span>
+            <span>{attendanceResultToText[attendance.result]}</span>
             <i>
               <IoMdArrowDropdown />
             </i>
@@ -55,21 +57,21 @@ const RefundDropdown = ({ attendance }: Props) => {
       )}
       {isMenuShown && attendance && (
         <ul className="absolute bottom-0 z-50 w-full translate-y-[100%] rounded-lg border border-[#E5E5E5] bg-white">
-          {[true, false].map((isRefunded: any, index: number) => (
-            <li
-              key={index}
-              className={clsx('cursor-pointer px-3 py-2 text-xs', {
-                'border-b border-[#E5E5E5]': !isRefunded,
-              })}
-              onClick={() => editAttendanceStatus.mutate(isRefunded)}
-            >
-              {isRefunded ? '환급완료' : '환급대기'}
-            </li>
-          ))}
+          {Object.keys(attendanceResultToText).map(
+            (result: any, index: number) => (
+              <li
+                key={index}
+                className="cursor-pointer border-b border-[#E5E5E5] px-3 py-2 text-xs"
+                onClick={() => editAttendanceStatus.mutate(result)}
+              >
+                {attendanceResultToText[result]}
+              </li>
+            ),
+          )}
         </ul>
       )}
     </div>
   );
 };
 
-export default RefundDropdown;
+export default ResultDropdown;

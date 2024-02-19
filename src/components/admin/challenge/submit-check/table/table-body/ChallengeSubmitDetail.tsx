@@ -4,12 +4,14 @@ import { useQuery } from '@tanstack/react-query';
 import TableHead from '../../../submit-check-detail/table/table-head/TableHead';
 import TableRow from '../../../submit-check-detail/table/table-body/TableRow';
 import axios from '../../../../../../utils/axios';
+import Button from '../../../ui/button/Button';
 
 interface Props {
   mission: any;
+  setIsDetailShown: (isDetailShown: boolean) => void;
 }
 
-const ChallengeSubmitDetail = ({ mission }: Props) => {
+const ChallengeSubmitDetail = ({ mission, setIsDetailShown }: Props) => {
   const [missionDetail, setMissionDetail] = useState();
   const [attendanceList, setAttendanceList] = useState<any>();
 
@@ -46,28 +48,33 @@ const ChallengeSubmitDetail = ({ mission }: Props) => {
   return (
     <>
       {!isLoading && (
-        <div className="rounded">
-          <div className="flex flex-col bg-[#F7F7F7]">
-            <TableHead />
-            {attendanceList.map((attendance: any, index: number) => (
-              <TableRow
-                key={attendance.id}
-                attendance={attendance}
-                th={index + 1}
-                bgColor={(index + 1) % 2 === 1 ? 'DARK' : 'LIGHT'}
-              />
-            ))}
-            {Array.from(
-              { length: 10 - attendanceList.length },
-              (_, index) => index + 1,
-            ).map((index) => (
-              <TableRow
-                key={index}
-                bgColor={(index + 1) % 2 === 1 ? 'DARK' : 'LIGHT'}
-              />
-            ))}
+        <>
+          <div className="rounded">
+            <div className="flex flex-col bg-[#F7F7F7]">
+              <TableHead />
+              {attendanceList.map((attendance: any, index: number) => (
+                <TableRow
+                  key={attendance.id}
+                  attendance={attendance}
+                  th={index + 1}
+                  bgColor={(index + 1) % 2 === 1 ? 'DARK' : 'LIGHT'}
+                />
+              ))}
+              {Array.from(
+                { length: 10 - attendanceList.length },
+                (_, index) => index + 1,
+              ).map((index) => (
+                <TableRow
+                  key={index}
+                  bgColor={(index + 1) % 2 === 1 ? 'DARK' : 'LIGHT'}
+                />
+              ))}
+            </div>
           </div>
-        </div>
+          <div className="flex justify-center">
+            <Button onClick={() => setIsDetailShown(false)}>닫기</Button>
+          </div>
+        </>
       )}
     </>
   );

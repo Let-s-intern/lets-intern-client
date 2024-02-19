@@ -32,11 +32,7 @@ const AdditionalDropdown = ({ values, setValues }: Props) => {
               key={index}
               className="cursor-pointer px-3 py-2 text-sm hover:bg-gray-100"
               onClick={() => {
-                if (topic === 'NONE') {
-                  setValues({ ...values, essentialContentsTopic: null });
-                } else {
-                  setValues({ ...values, essentialContentsTopic: topic });
-                }
+                setValues({ ...values, essentialContentsTopic: topic });
                 setIsMenuShown(false);
               }}
             >
