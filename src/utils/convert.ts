@@ -32,3 +32,38 @@ export const attendanceStatusToText: any = {
   UPDATED: '수정된 제출',
   LATED: '지각 제출',
 };
+
+export const missionSubmitToBadge = (mission: any) => {
+  const {
+    attendanceStatus: status,
+    attendanceResult: result,
+    missionType,
+  } = mission;
+  const isRefundMission = missionType === 'REFUND';
+
+  if (status === 'ABSENT') {
+    return {
+      text: '결석',
+      style: 'bg-[#E3E3E3] text-[#9B9B9B]',
+    };
+  }
+
+  if (result === 'WAITING') {
+    return {
+      text: '확인중',
+      style: 'bg-[#FFFACD] text-[#D3CB00]',
+    };
+  }
+
+  if (result === 'PASS' && status === 'CREATED') {
+    return {
+      text: isRefundMission ? '환급완료' : '확인완료',
+      style: 'text-primary bg-[#E7E6FD]',
+    };
+  }
+
+  return {
+    text: '반려',
+    style: 'bg-[#E3E3E3] text-[#9B9B9B]',
+  };
+};

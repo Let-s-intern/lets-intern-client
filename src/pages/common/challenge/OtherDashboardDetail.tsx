@@ -1,25 +1,30 @@
+import { useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { FaArrowLeft } from 'react-icons/fa6';
 import { useQuery } from '@tanstack/react-query';
 
 import axios from '../../../utils/axios';
 import OtherMissionItem from '../../../components/common/challenge/other-challenge/mission/OtherMissionItem';
+import Introduction from '../../../components/common/challenge/other-challenge/introduction/Introduction';
 
 const OtherDashboardDetail = () => {
   const navigate = useNavigate();
   const params = useParams();
 
-  const { isLoading, data: dashboard } = useQuery({
+  const [dashboard, setDashboard] = useState<any>();
+
+  const getAttendanceList = useQuery({
     queryKey: ['attendance', params.applicationId],
     queryFn: async () => {
       const res = await axios.get(`/attendance/${params.applicationId}`);
       const data = res.data;
+      setDashboard(data);
       console.log(data);
       return data;
     },
   });
 
-  if (isLoading || !dashboard) {
+  if (getAttendanceList.isLoading || !dashboard) {
     return <main />;
   }
 
@@ -42,7 +47,7 @@ const OtherDashboardDetail = () => {
             {dashboard.wishJob}
           </span>
         </div>
-        <p className="mt-3">{dashboard.introduction}</p>
+        <Introduction dashboard={dashboard} />
       </header>
       <div className="mt-6">
         <ul className="flex flex-col gap-4">

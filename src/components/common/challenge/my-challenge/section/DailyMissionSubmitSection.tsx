@@ -36,11 +36,13 @@ const DailyMissionSubmitSection = ({ dailyMission }: Props) => {
   return (
     <form onSubmit={handleMissionLinkSubmit}>
       <h3 className="text-lg font-semibold">미션 제출하기</h3>
-      {!dailyMission.attended && (
-        <p className="mt-1 text-sm">
-          링크 제대로 확인해 주세요. 카톡으로 공유해야 미션 제출 인정됩니다.
-        </p>
-      )}
+
+      <p className="mt-1 text-sm">
+        {!dailyMission.attended
+          ? '링크를 제대로 확인해 주세요. 카톡으로 공유해야 미션 제출이 인정됩니다.'
+          : '미션 제출이 완료되었습니다.'}
+      </p>
+
       <div className="mt-4 flex items-stretch gap-4">
         <label
           htmlFor="link"
@@ -66,7 +68,7 @@ const DailyMissionSubmitSection = ({ dailyMission }: Props) => {
         />
         <button
           type="button"
-          className="rounded bg-[#7D7D7D] px-5 font-medium text-white"
+          className="rounded bg-[#7D7D7D] px-5 font-medium text-white disabled:bg-[#c7c7c7]"
           onClick={() => {
             if (linkValue) {
               Object.assign(document.createElement('a'), {
@@ -76,6 +78,7 @@ const DailyMissionSubmitSection = ({ dailyMission }: Props) => {
               }).click();
             }
           }}
+          disabled={!linkValue && !dailyMission.attended}
         >
           링크 확인
         </button>
@@ -83,8 +86,8 @@ const DailyMissionSubmitSection = ({ dailyMission }: Props) => {
       <div className="mt-6 text-right">
         <button
           type="submit"
-          className="rounded border border-[#DCDCDC] bg-white px-5 py-2 text-center font-semibold"
-          disabled={dailyMission.attended}
+          className="rounded border border-[#DCDCDC] bg-white px-5 py-2 text-center font-semibold disabled:bg-gray-50 disabled:text-gray-600"
+          disabled={dailyMission.attended || !linkValue}
         >
           {dailyMission.attendanceLink ? '제출 완료' : '제출'}
         </button>
