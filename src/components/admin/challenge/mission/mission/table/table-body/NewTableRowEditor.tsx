@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useParams } from 'react-router-dom';
 
 import TableRowEditorMenu from './TableRowEditorMenu';
 import axios from '../../../../../../../utils/axios';
@@ -9,13 +10,14 @@ interface Props {
 }
 
 const NewTableRowEditor = ({ setIsModeAdd }: Props) => {
+  const params = useParams();
   const queryClient = useQueryClient();
 
   const [values, setValues] = useState<any>({});
 
   const addMission = useMutation({
     mutationFn: async (values) => {
-      const res = await axios.post('/mission/19', values);
+      const res = await axios.post(`/mission/${params.programId}`, values);
       const data = res.data;
       return data;
     },
