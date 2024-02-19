@@ -34,7 +34,6 @@ const OtherDashboardList = () => {
         <p className="mt-2">안내 문구를 작성합니다.</p>
       </header>
       <section className="mt-6">
-        {/* <SearchFilter /> */}
         {!isLoading && dashboardList && (
           <div className="grid grid-cols-3 gap-8">
             {dashboardList.map((dashboard: any) => (

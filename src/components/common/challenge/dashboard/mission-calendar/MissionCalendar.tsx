@@ -10,7 +10,7 @@ interface Props {
 
 const MissionCalendar = ({ className, missionList, todayTh }: Props) => {
   return (
-    <div className={clsx('grid grid-cols-7 gap-x-2 gap-y-4', className)}>
+    <div className={clsx('grid grid-cols-7 gap-y-6', className)}>
       {missionList.map((mission: any, index: number) => (
         <MissionCalendarItem key={index} mission={mission} todayTh={todayTh} />
       ))}
