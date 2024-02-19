@@ -12,7 +12,7 @@ const MissionSection = ({ missionList, todayTh }: Props) => {
         일정 및 미션 제출 현황
       </h2>
       <MissionCalendar
-        className="mt-2"
+        className="mt-4"
         missionList={missionList}
         todayTh={todayTh}
       />

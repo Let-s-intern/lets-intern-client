@@ -3,7 +3,8 @@ import { Link } from 'react-router-dom';
 
 import { challengeSubmitDetailCellWidthList } from '../../../../../../utils/tableCellWidthList';
 import StatusDropdown from './StatusDropdown';
-import RefundDropdown from './RefundDropdown';
+import ResultDropdown from './ResultDropdown';
+import CommentCell from './CommentCell';
 
 interface Props {
   attendance?: any;
@@ -72,15 +73,8 @@ const TableRow = ({ attendance, th, bgColor }: Props) => {
           </Link>
         )}
       </div>
-      <RefundDropdown attendance={attendance} />
-      <div
-        className={clsx(
-          'overflow-hidden text-ellipsis py-3 text-center text-sm',
-          cellWidthList[7],
-        )}
-      >
-        {attendance?.comment || ''}
-      </div>
+      <ResultDropdown attendance={attendance} />
+      <CommentCell attendance={attendance} />
     </div>
   );
 };

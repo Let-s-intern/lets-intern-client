@@ -12,8 +12,8 @@ interface Props {
   values: any;
   className?: string;
   mode: 'CREATE' | 'EDIT';
+  errorMessage?: string;
   setValues: (values: any) => void;
-  // setMenuShown?: (menuShown: 'DETAIL' | 'EDIT' | 'NONE') => void;
   onSubmit: (e: React.FormEvent) => void;
   onCancel: () => void;
 }
@@ -22,11 +22,12 @@ const TableRowEditorMenu = ({
   values,
   className,
   mode,
+  errorMessage,
   setValues,
   onSubmit,
   onCancel,
 }: Props) => {
-  const [hasRefund, setHasRefund] = useState(values?.isRefunded || false);
+  const [hasRefund, setHasRefund] = useState(values?.refund || false);
 
   const handleInputChange = (e: any) => {
     setValues({ ...values, [e.target.name]: e.target.value });
@@ -35,6 +36,10 @@ const TableRowEditorMenu = ({
   useEffect(() => {
     setValues({ ...values, isRefunded: hasRefund });
   }, [hasRefund]);
+
+  useEffect(() => {
+    console.log(values);
+  }, [values]);
 
   return (
     <div className={clsx('rounded bg-neutral-100 px-4 py-8', className)}>
@@ -188,7 +193,25 @@ const TableRowEditorMenu = ({
               )}
             </div>
           </div>
+          <div className="flex items-start">
+            <label htmlFor="comments" className="w-32 font-medium">
+              코멘트
+            </label>
+            <textarea
+              className="flex-1 resize-none rounded-lg border border-[#A3A3A3] bg-[#F5F5F5] px-3 py-2 text-sm outline-none"
+              id="comments"
+              rows={3}
+              name="comments"
+              defaultValue={values?.comments || ''}
+              onChange={handleInputChange}
+            />
+          </div>
         </div>
+        {errorMessage && (
+          <div className="mt-2 text-sm font-medium text-red-600">
+            {errorMessage}
+          </div>
+        )}
         <div className="mt-6 flex justify-end gap-2">
           <Button type="submit" active disableHover>
             {mode === 'CREATE' ? '생성' : mode === 'EDIT' && '수정'}

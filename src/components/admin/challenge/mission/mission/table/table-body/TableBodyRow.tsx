@@ -19,6 +19,7 @@ const TableBodyRow = ({ th, mission }: Props) => {
   );
   const [missionDetail, setMissionDetail] = useState<any>();
   const [values, setValues] = useState<any>();
+  const [errorMessage, setErrorMessage] = useState('');
 
   const getMission = useQuery({
     queryKey: ['mission', 'detail', mission.id],
@@ -26,7 +27,20 @@ const TableBodyRow = ({ th, mission }: Props) => {
       const res = await axios.get(`/mission/detail/${mission.id}`);
       const data = res.data;
       setMissionDetail(data);
-      setValues(data);
+      setValues({
+        type: data.type,
+        title: data.title,
+        contents: data.contents,
+        guide: data.guide,
+        th: data.th,
+        template: data.template,
+        topic: data.topic,
+        essentialContentsTopic: data.essentialContentsTopic,
+        additionalContentsTopic: data.additionalContentsTopic,
+        limitedContentsTopic: data.limitedContentsTopic,
+        refund: data.refund,
+        comments: data.comments,
+      });
       return data;
     },
     refetchOnWindowFocus: false,
@@ -43,12 +57,16 @@ const TableBodyRow = ({ th, mission }: Props) => {
       await queryClient.invalidateQueries({ queryKey: ['mission'] });
       setMenuShown('DETAIL');
     },
+    onError: (data: any) => {
+      setErrorMessage(data.response.data.reason);
+    },
   });
 
   useEffect(() => {
     if (menuShown === 'EDIT') {
       getMission.refetch();
     }
+    setErrorMessage('');
   }, [menuShown]);
 
   const handleMissionEdit = (e: React.FormEvent) => {
@@ -56,9 +74,12 @@ const TableBodyRow = ({ th, mission }: Props) => {
     const newValues = {
       ...values,
       th: Number(values.th),
-      isRefunded: Boolean(Number(values.refund)),
-      refund: Number(values.refund),
     };
+    if (values.isRefunded) {
+      newValues.refund = Number(values.refund);
+    } else {
+      delete newValues.refund;
+    }
     console.log(newValues);
     editMission.mutate(newValues);
   };
@@ -93,6 +114,7 @@ const TableBodyRow = ({ th, mission }: Props) => {
               onSubmit={handleMissionEdit}
               onCancel={handleEditorClose}
               className="mt-1"
+              errorMessage={errorMessage}
             />
           )}
     </>

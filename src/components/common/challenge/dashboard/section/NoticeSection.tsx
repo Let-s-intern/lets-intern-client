@@ -54,6 +54,7 @@ const NoticeSection = ({ noticeList, isLoading }: Props) => {
           {Array.from({ length: totalPageCount }, (_, index) => index + 1).map(
             (pageNum) => (
               <div
+                key={pageNum}
                 className={clsx('h-2 w-2 cursor-pointer rounded-full ', {
                   'bg-[#B0B0B0]': pageNum === currentPageNum,
                   'bg-[#D1D1D1]': pageNum !== currentPageNum,

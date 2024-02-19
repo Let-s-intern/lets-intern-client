@@ -88,10 +88,10 @@ const TableRowDetailMenu = ({ mission, setMenuShown }: Props) => {
           <div className="flex gap-16">
             <div className="flex items-center">
               <label htmlFor="is-refunded" className="w-32 font-medium">
-                환급여부
+                환급미션 여부
               </label>
               <span>
-                {mission.isRefunded ? (
+                {mission.refund ? (
                   <i className="cursor-pointer">
                     <img
                       src="/icons/admin-checkbox-checked.svg"
@@ -108,6 +108,12 @@ const TableRowDetailMenu = ({ mission, setMenuShown }: Props) => {
                 )}
               </span>
             </div>
+          </div>
+          <div className="flex items-start">
+            <label htmlFor="comments" className="w-32 font-medium">
+              코멘트
+            </label>
+            <p>{mission.comments}</p>
           </div>
         </div>
         <div className="mt-6 flex justify-end gap-2">

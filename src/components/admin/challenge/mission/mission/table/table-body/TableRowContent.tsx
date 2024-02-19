@@ -33,18 +33,12 @@ const TableRowContent = ({ th, mission, menuShown, setMenuShown }: Props) => {
         {formatMissionDateString(mission.endDate)}
       </TableBodyCell>
       <TableBodyCell className={clsx(cellWidthList[4])}>
-        {mission.isRefunded ? 'O' : 'X'}
-      </TableBodyCell>
-      <TableBodyCell className={clsx(cellWidthList[5])}>
         {topicToText[mission.essentialContentsTopic] || '없음'}
       </TableBodyCell>
-      <TableBodyCell className={clsx(cellWidthList[6])}>
+      <TableBodyCell className={clsx(cellWidthList[5])}>
         {mission.attendanceCount}
       </TableBodyCell>
-      <TableBodyCell className={clsx(cellWidthList[7])}>
-        {mission.isVisible ? '노출' : '비노출'}
-      </TableBodyCell>
-      <TableBodyCell className={clsx(cellWidthList[8])}>
+      <TableBodyCell className={clsx(cellWidthList[6])}>
         <div
           className="flex items-center gap-3"
           onClick={(e) => e.stopPropagation}
