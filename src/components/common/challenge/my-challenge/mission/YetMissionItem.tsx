@@ -2,13 +2,13 @@ import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 
 import axios from '../../../../../utils/axios';
-import MissionStyledDetailMenu from './MissionStyledDetailMenu';
+import YetMissionDetailMenu from './YetMissionDetailMenu';
 
 interface Props {
   mission: any;
 }
 
-const MissionStyledItem = ({ mission }: Props) => {
+const YetMissionItem = ({ mission }: Props) => {
   const [isDetailShown, setIsDetailShown] = useState(false);
 
   const {
@@ -22,7 +22,6 @@ const MissionStyledItem = ({ mission }: Props) => {
         params: { status: mission.status },
       });
       const data = res.data;
-      console.log(data);
       return data;
     },
     enabled: isDetailShown,
@@ -31,9 +30,9 @@ const MissionStyledItem = ({ mission }: Props) => {
   return (
     <li key={mission.id} className="rounded-xl bg-white p-6">
       <div className="flex items-center justify-between px-3">
-        <h3 className="text-lg font-semibold">
+        <h4 className="text-lg font-semibold">
           {mission.th}일차. {mission.title}
-        </h3>
+        </h4>
         <button onClick={() => setIsDetailShown(!isDetailShown)}>
           {!isDetailShown || isDetailLoading ? '미션보기' : '닫기'}
         </button>
@@ -42,10 +41,10 @@ const MissionStyledItem = ({ mission }: Props) => {
         (detailError
           ? '에러 발생'
           : !isDetailLoading && (
-              <MissionStyledDetailMenu missionDetail={missionDetail} />
+              <YetMissionDetailMenu missionDetail={missionDetail} />
             ))}
     </li>
   );
 };
 
-export default MissionStyledItem;
+export default YetMissionItem;

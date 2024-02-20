@@ -12,8 +12,9 @@ const MissionIcon = ({ className, mission }: Props) => {
   const params = useParams();
 
   const isAttended =
-    mission.attendanceResult === 'WAITING' ||
-    mission.attendanceResult === 'PASS';
+    (mission.attendanceResult === 'WAITING' ||
+      mission.attendanceResult === 'PASS') &&
+    mission.attendanceStatus !== 'ABSENT';
 
   return (
     <>
@@ -66,10 +67,20 @@ const MissionIcon = ({ className, mission }: Props) => {
         <span
           className={clsx(
             'rounded-md px-2 py-[0.125rem] text-sm',
-            missionSubmitToBadge(mission).style,
+            missionSubmitToBadge({
+              status: mission.attendanceStatus,
+              result: mission.attendanceResult,
+              isRefunded: mission.attendanceIsRefunded,
+            }).style,
           )}
         >
-          {missionSubmitToBadge(mission)?.text || '기타'}
+          {
+            missionSubmitToBadge({
+              status: mission.attendanceStatus,
+              result: mission.attendanceResult,
+              isRefunded: mission.attendanceIsRefunded,
+            }).text
+          }
         </span>
       </div>
     </>

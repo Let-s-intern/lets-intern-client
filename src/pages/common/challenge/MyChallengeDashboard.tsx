@@ -2,10 +2,10 @@ import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 
-import DailyMissionSection from '../../../components/common/challenge/my-challenge/section/DailyMissionSection';
-import OtherMissionSection from '../../../components/common/challenge/my-challenge/section/OtherMissionSection';
 import axios from '../../../utils/axios';
 import MissionCalendarSection from '../../../components/common/challenge/my-challenge/section/MissionCalendarSection';
+import DailyMissionSection from '../../../components/common/challenge/my-challenge/section/DailyMissionSection';
+import OtherMissionSection from '../../../components/common/challenge/my-challenge/section/OtherMissionSection';
 
 const MyChallengeDashboard = () => {
   const params = useParams();

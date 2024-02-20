@@ -66,10 +66,20 @@ const MissionIcon = ({ className, mission }: Props) => {
         <span
           className={clsx(
             'rounded-md px-2 py-[0.125rem] text-xs ',
-            missionSubmitToBadge(mission).style,
+            missionSubmitToBadge({
+              status: mission.attendanceStatus,
+              result: mission.attendanceResult,
+              isRefunded: mission.attendanceIsRefunded,
+            }).style,
           )}
         >
-          {missionSubmitToBadge(mission)?.text || '기타'}
+          {
+            missionSubmitToBadge({
+              status: mission.attendanceStatus,
+              result: mission.attendanceResult,
+              isRefunded: mission.attendanceIsRefunded,
+            }).text
+          }
         </span>
       </div>
     </>
