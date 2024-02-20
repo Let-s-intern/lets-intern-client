@@ -46,23 +46,9 @@ export const missionSubmitToBadge = (mission: any) => {
   const {
     attendanceStatus: status,
     attendanceResult: result,
-    missionType,
+    attendanceIsRefunded,
   } = mission;
-  const isRefundMission = missionType === 'REFUND';
-
-  if (result === 'WAITING') {
-    return {
-      text: '확인중',
-      style: 'bg-[#FFFACD] text-[#D3CB00]',
-    };
-  }
-
-  if (result === 'WRONG') {
-    return {
-      text: '반려',
-      style: 'bg-red-200 text-red-600',
-    };
-  }
+  const isRefunded = attendanceIsRefunded;
 
   if (status === 'ABSENT') {
     return {
@@ -78,8 +64,29 @@ export const missionSubmitToBadge = (mission: any) => {
     };
   }
 
+  if (result === 'WAITING') {
+    return {
+      text: '확인중',
+      style: 'bg-[#FFFACD] text-[#D3CB00]',
+    };
+  }
+
+  if (result === 'WRONG') {
+    return {
+      text: '반려',
+      style: 'bg-red-200 text-red-600',
+    };
+  }
+
+  if (isRefunded) {
+    return {
+      text: '환급완료',
+      style: 'text-primary bg-[#E7E6FD]',
+    };
+  }
+
   return {
-    text: isRefundMission ? '환급완료' : '확인완료',
+    text: '확인완료',
     style: 'text-primary bg-[#E7E6FD]',
   };
 };
