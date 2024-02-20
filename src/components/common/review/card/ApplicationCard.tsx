@@ -59,6 +59,8 @@ const ApplicationCard = ({
                 to={`/challenge/${application.programId}`}
                 className="flex items-center justify-end gap-1 text-primary"
                 onClick={(e) => e.stopPropagation()}
+                target="_blank"
+                rel="noopenner noreferrer"
               >
                 <span className="text-sm font-medium">챌린지로 이동</span>
                 <i className="text-lg">

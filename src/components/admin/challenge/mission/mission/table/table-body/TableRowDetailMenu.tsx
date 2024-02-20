@@ -109,12 +109,14 @@ const TableRowDetailMenu = ({ mission, setMenuShown }: Props) => {
               </span>
             </div>
           </div>
-          <div className="flex items-start">
-            <label htmlFor="comments" className="w-32 font-medium">
-              코멘트
-            </label>
-            <p>{mission.comments}</p>
-          </div>
+          {mission.comment && (
+            <div className="flex items-start">
+              <label htmlFor="comments" className="w-32 font-medium">
+                코멘트
+              </label>
+              <p>{mission.comments}</p>
+            </div>
+          )}
         </div>
         <div className="mt-6 flex justify-end gap-2">
           <Button active disableHover onClick={() => setMenuShown('EDIT')}>

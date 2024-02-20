@@ -13,14 +13,11 @@ const ChallengeDashboard = () => {
   const params = useParams();
 
   const [dailyMission, setDailyMission] = useState<any>();
-  const [headCount, setHeadCount] = useState<any>();
   const [refundInfo, setRefundInfo] = useState<any>();
   const [noticeList, setNoticeList] = useState<any>();
   const [missionList, setMissionList] = useState<any>();
   const [todayTh, setTodayTh] = useState<number>();
-  // const [user, setUser] = useState<any>();
   const [username, setUsername] = useState('');
-  const [isLoading, setIsLoading] = useState(true);
 
   const getDashboard = useQuery({
     queryKey: ['programs', params.programId, 'dashboard'],
@@ -29,17 +26,15 @@ const ChallengeDashboard = () => {
       const data = res.data;
 
       setDailyMission(data.dailyMission);
-      setHeadCount(data.finalHeadCount);
       setRefundInfo({
         currentRefund: data.currentRefund,
         totalRefund: data.totalRefund,
+        headCount: data.finalHeadCount,
       });
       setNoticeList(data.noticeList);
       setMissionList(data.missionList);
       setTodayTh(data.dailyMission.th);
       setUsername(data.userName);
-
-      setIsLoading(false);
 
       console.log(data);
 
@@ -47,26 +42,13 @@ const ChallengeDashboard = () => {
     },
   });
 
-  // const getUser = useQuery({
-  //   queryKey: ['user'],
-  //   queryFn: async () => {
-  //     const res = await axios.get('/user');
-  //     setUser(res.data);
-  //     console.log(res.data);
-  //     return res.data;
-  //   },
-  // });
-
-  // const isLoading =
-  //   getDashboard.isLoading ||
-  //   getUser.isLoading ||
-  //   !dailyMission ||
-  //   !headCount ||
-  //   !refundInfo ||
-  //   !noticeList ||
-  //   !user ||
-  //   !missionList ||
-  //   !todayTh;
+  const isLoading =
+    getDashboard.isLoading ||
+    !dailyMission ||
+    !refundInfo ||
+    !noticeList ||
+    !missionList ||
+    !todayTh;
 
   if (isLoading) {
     return <main />;
@@ -87,9 +69,8 @@ const ChallengeDashboard = () => {
             isLoading={isLoading || !dailyMission}
           />
           <ScoreSection
-            headCount={headCount}
             refundInfo={refundInfo}
-            isLoading={isLoading || !headCount || !refundInfo}
+            isLoading={isLoading || !refundInfo}
           />
           <NoticeSection
             noticeList={noticeList}

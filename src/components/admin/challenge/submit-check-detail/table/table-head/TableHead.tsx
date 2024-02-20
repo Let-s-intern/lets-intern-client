@@ -70,9 +70,17 @@ const TableHead = ({ className }: Props) => {
           cellWidthList[6],
         )}
       >
-        환급
+        확인여부
       </div>
-      <div className={clsx('py-3 text-center', cellWidthList[7])}>코멘트</div>
+      <div
+        className={clsx(
+          'border-r border-[#D9D9D9] py-3 text-center',
+          cellWidthList[7],
+        )}
+      >
+        환급여부
+      </div>
+      <div className={clsx('py-3 text-center', cellWidthList[8])}>코멘트</div>
     </div>
   );
 };

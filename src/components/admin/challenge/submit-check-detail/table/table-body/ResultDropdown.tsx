@@ -9,9 +9,10 @@ import { attendanceResultToText } from '../../../../../../utils/convert';
 
 interface Props {
   attendance: any;
+  cellWidthListIndex: number;
 }
 
-const ResultDropdown = ({ attendance }: Props) => {
+const ResultDropdown = ({ attendance, cellWidthListIndex }: Props) => {
   const queryClient = useQueryClient();
 
   const [isMenuShown, setIsMenuShown] = useState(false);
@@ -38,7 +39,7 @@ const ResultDropdown = ({ attendance }: Props) => {
     <div
       className={clsx(
         'relative flex items-center justify-center text-ellipsis border-r border-[#D9D9D9] text-center text-sm',
-        cellWidthList[6],
+        cellWidthList[cellWidthListIndex],
       )}
       onClick={(e) => e.preventDefault()}
     >
