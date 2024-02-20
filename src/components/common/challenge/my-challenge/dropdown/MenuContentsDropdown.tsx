@@ -1,12 +1,12 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
 import { IoIosLink } from 'react-icons/io';
+import { Link } from 'react-router-dom';
 
 interface Props {
   missionDetail: any;
 }
 
-const RewardContentsDropdown = ({ missionDetail }: Props) => {
+const MenuContentsDropdown = ({ missionDetail }: Props) => {
   const [isMenuShown, setIsMenuShown] = useState(false);
 
   return (
@@ -15,30 +15,34 @@ const RewardContentsDropdown = ({ missionDetail }: Props) => {
         className="w-full rounded border border-[#BCBCBC] px-4 py-2 font-medium"
         onClick={() => setIsMenuShown(!isMenuShown)}
       >
-        리워드 콘텐츠 확인하기
+        학습 콘텐츠 확인하기
       </button>
       {isMenuShown && (
         <ul className="absolute -bottom-1 w-full translate-y-full rounded border border-[#BCBCBC] bg-white">
-          {missionDetail.additionalContentsId && (
+          {missionDetail.essentialContentsLink && (
             <li>
               <Link
-                to="#"
+                to={missionDetail.essentialContentsLink}
                 className="flex items-center justify-between px-5 py-3 text-center text-primary duration-200 hover:bg-gray-100"
+                target="_blank"
+                rel="noopenner noreferrer"
               >
-                <span>추가 콘텐츠</span>
+                <span>필수 콘텐츠</span>
                 <i>
                   <IoIosLink />
                 </i>
               </Link>
             </li>
           )}
-          {missionDetail.limitedContentsId && (
+          {missionDetail.additionalContentsLink && (
             <li>
               <Link
-                to="#"
+                to={missionDetail.additionalContentsLink}
                 className="flex items-center justify-between px-5 py-3 text-center text-primary duration-200 hover:bg-gray-100"
+                target="_blank"
+                rel="noopenner noreferrer"
               >
-                <span>제한 콘텐츠</span>
+                <span>추가 콘텐츠</span>
                 <i>
                   <IoIosLink />
                 </i>
@@ -51,4 +55,4 @@ const RewardContentsDropdown = ({ missionDetail }: Props) => {
   );
 };
 
-export default RewardContentsDropdown;
+export default MenuContentsDropdown;

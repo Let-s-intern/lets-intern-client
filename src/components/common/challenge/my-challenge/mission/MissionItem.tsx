@@ -2,13 +2,14 @@ import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 
 import axios from '../../../../../utils/axios';
+import MissionDetailMenu from './MissionDetailMenu';
 
 interface Props {
   mission: any;
-  status: 'YET' | 'DONE' | 'ABSENT';
+  todayTh: number;
 }
 
-const MissionItem = ({ mission, status }: Props) => {
+const MissionItem = ({ mission, todayTh }: Props) => {
   const [isDetailShown, setIsDetailShown] = useState(false);
 
   const {
@@ -16,10 +17,10 @@ const MissionItem = ({ mission, status }: Props) => {
     isLoading: isDetailLoading,
     error: detailError,
   } = useQuery({
-    queryKey: ['mission', mission.id, 'list', { type: status }],
+    queryKey: ['mission', mission.id, 'detail', { status: mission.status }],
     queryFn: async () => {
       const res = await axios.get(`/mission/${mission.id}/detail`, {
-        params: { status },
+        params: { status: mission.status },
       });
       const data = res.data;
       return data;
@@ -41,16 +42,10 @@ const MissionItem = ({ mission, status }: Props) => {
         (detailError
           ? '에러 발생'
           : !isDetailLoading && (
-              <>
-                <hr className="my-4 border-[#DEDEDE]" />
-                <div className="px-3">
-                  <p className="text-black">{missionDetail.contents}</p>
-                  <div className="mt-4">
-                    <h4 className="text-sm text-[#898989]">미션 가이드</h4>
-                    <p className="mt-1 text-black">{missionDetail.guide}</p>
-                  </div>
-                </div>
-              </>
+              <MissionDetailMenu
+                missionDetail={missionDetail}
+                todayTh={todayTh}
+              />
             ))}
     </li>
   );
