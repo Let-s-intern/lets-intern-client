@@ -26,16 +26,22 @@ const OtherMissionSection = () => {
           },
         },
       );
-      const yetMissionsRes = await axios.get('/mission/19/list', {
-        params: {
-          status: 'YET',
+      const yetMissionsRes = await axios.get(
+        `/mission/${params.programId}/list`,
+        {
+          params: {
+            status: 'YET',
+          },
         },
-      });
-      const doneMissionsRes = await axios.get('/mission/19/list', {
-        params: {
-          status: 'DONE',
+      );
+      const doneMissionsRes = await axios.get(
+        `/mission/${params.programId}/list`,
+        {
+          params: {
+            status: 'DONE',
+          },
         },
-      });
+      );
       const newMissionList = {
         ABSENT: absentMissionsRes.data.missionList,
         YET: yetMissionsRes.data.missionList,
