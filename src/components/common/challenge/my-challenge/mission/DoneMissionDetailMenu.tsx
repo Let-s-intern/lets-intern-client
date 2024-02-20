@@ -7,7 +7,7 @@ interface Props {
   missionDetail: any;
 }
 
-const MissionStyledDetailMenu = ({ missionDetail }: Props) => {
+const DoneMissionDetailMenu = ({ missionDetail }: Props) => {
   return (
     <>
       <hr className="my-4 border-[#DEDEDE]" />
@@ -55,4 +55,4 @@ const MissionStyledDetailMenu = ({ missionDetail }: Props) => {
   );
 };
 
-export default MissionStyledDetailMenu;
+export default DoneMissionDetailMenu;
