@@ -5,6 +5,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 import axios from '../../../../../../utils/axios';
 import { missionStatusToText } from '../../../../../../utils/convert';
+import AlertModal from '../../../../../ui/alert/AlertModal';
 
 interface Props {
   mission: any;
@@ -14,6 +15,7 @@ const StatusDropdown = ({ mission }: Props) => {
   const queryClient = useQueryClient();
 
   const [isMenuShown, setIsMenuShown] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
 
   const editMissionStatus = useMutation({
     mutationFn: async (status) => {
@@ -26,6 +28,10 @@ const StatusDropdown = ({ mission }: Props) => {
         queryKey: ['mission'],
       });
       setIsMenuShown(false);
+    },
+    onError: (error: any) => {
+      setIsMenuShown(false);
+      setErrorMessage(error.response.data.reason);
     },
   });
 
@@ -62,6 +68,17 @@ const StatusDropdown = ({ mission }: Props) => {
             ),
           )}
         </ul>
+      )}
+      {errorMessage && (
+        <AlertModal
+          onConfirm={() => setErrorMessage('')}
+          title="미션 상태 수정 오류"
+          showCancel={false}
+          highlight="confirm"
+          className="translate-x-[6rem]"
+        >
+          <div className="w-56">{errorMessage}</div>
+        </AlertModal>
       )}
     </div>
   );
