@@ -42,14 +42,15 @@ export const attendanceResultToText: any = {
   WRONG: '반려',
 };
 
-export const missionSubmitToBadge = (mission: any) => {
-  const {
-    attendanceStatus: status,
-    attendanceResult: result,
-    attendanceIsRefunded,
-  } = mission;
-  const isRefunded = attendanceIsRefunded;
-
+export const missionSubmitToBadge = ({
+  status,
+  result,
+  isRefunded,
+}: {
+  status: string;
+  result: string;
+  isRefunded: string;
+}) => {
   if (status === 'ABSENT') {
     return {
       text: '결석',
@@ -74,7 +75,7 @@ export const missionSubmitToBadge = (mission: any) => {
   if (result === 'WRONG') {
     return {
       text: '반려',
-      style: 'bg-red-200 text-red-600',
+      style: 'bg-[#E3E3E3] text-[#9B9B9B]',
     };
   }
 

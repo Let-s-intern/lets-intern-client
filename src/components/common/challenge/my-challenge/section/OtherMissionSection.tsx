@@ -4,8 +4,9 @@ import { useQuery } from '@tanstack/react-query';
 import { useParams, useSearchParams } from 'react-router-dom';
 
 import axios from '../../../../../utils/axios';
-import MissionItem from '../mission/MissionItem';
-import MissionStyledItem from '../mission/MissionStyledItem';
+import YetMissionItem from '../mission/YetMissionItem';
+import DoneMissionItem from '../mission/DoneMissionItem';
+import AbsentMissionItem from '../mission/AbsentMissionItem';
 
 interface Props {
   todayTh: number;
@@ -50,19 +51,13 @@ const OtherMissionSection = ({ todayTh }: Props) => {
     (mission: any) => mission.th < todayTh,
   );
 
-  let remainedMissionList = missionList
-    .filter((mission: any) => mission.th > todayTh)
-    .map((mission: any) => ({ ...mission, status: 'YET' }));
-
-  remainedMissionList = remainedMissionList.concat(
-    lastMissionList
-      .filter(
-        (mission: any) =>
-          mission.attendanceStatus === 'ABSENT' ||
-          mission.missionStatus === 'WRONG',
-      )
-      .map((mission: any) => ({ ...mission, status: 'ABSENT' })),
-  );
+  let absentMissionList = lastMissionList
+    .filter(
+      (mission: any) =>
+        mission.attendanceStatus === 'ABSENT' ||
+        mission.missionStatus === 'WRONG',
+    )
+    .map((mission: any) => ({ ...mission, status: 'ABSENT' }));
 
   lastMissionList = lastMissionList
     .filter(
@@ -71,6 +66,10 @@ const OtherMissionSection = ({ todayTh }: Props) => {
         mission.missionStatus !== 'WRONG',
     )
     .map((mission: any) => ({ ...mission, status: 'DONE' }));
+
+  let remainedMissionList = missionList
+    .filter((mission: any) => mission.th > todayTh)
+    .map((mission: any) => ({ ...mission, status: 'YET' }));
 
   return (
     <section
@@ -98,30 +97,41 @@ const OtherMissionSection = ({ todayTh }: Props) => {
         </div>
       </div>
       {tabIndex === 0 ? (
-        <ul className="mt-2 flex flex-col gap-6 bg-[#F6F8FB] p-8">
-          {remainedMissionList.length === 0 ? (
-            <span className="font-medium">남은 미션이 없습니다.</span>
-          ) : (
-            remainedMissionList.map((mission: any) => (
-              <MissionItem
-                key={mission.id}
-                mission={mission}
-                todayTh={todayTh}
-              />
-            ))
-          )}
-        </ul>
-      ) : (
-        tabIndex === 1 &&
-        (lastMissionList.length === 0 ? (
-          <span className="font-medium">지난 미션이 없습니다.</span>
-        ) : (
-          <ul className="mt-2 flex flex-col gap-6 bg-[#F6F8FB] p-8">
-            {lastMissionList.map((mission: any) => (
-              <MissionStyledItem key={mission.id} mission={mission} />
-            ))}
+        <div className="mt-2 bg-[#F6F8FB] p-8">
+          <ul className="flex flex-col gap-4">
+            {remainedMissionList.length === 0 ? (
+              <span className="font-medium">남은 미션이 없습니다.</span>
+            ) : (
+              remainedMissionList.map((mission: any) => (
+                <YetMissionItem key={mission.id} mission={mission} />
+              ))
+            )}
           </ul>
-        ))
+          {absentMissionList.length !== 0 && (
+            <div className="mt-12">
+              <h3 className="pl-6 font-semibold text-[#868686]">미제출 미션</h3>
+              <ul className="mt-2 flex flex-col gap-4">
+                {absentMissionList.map((mission: any) => (
+                  <AbsentMissionItem key={mission.id} mission={mission} />
+                ))}
+              </ul>
+            </div>
+          )}
+        </div>
+      ) : (
+        tabIndex === 1 && (
+          <div className="mt-2 bg-[#F6F8FB] p-8">
+            {lastMissionList.length === 0 ? (
+              <span className="font-medium">지난 미션이 없습니다.</span>
+            ) : (
+              <ul className="flex flex-col gap-4">
+                {lastMissionList.map((mission: any) => (
+                  <DoneMissionItem key={mission.id} mission={mission} />
+                ))}
+              </ul>
+            )}
+          </div>
+        )
       )}
     </section>
   );
