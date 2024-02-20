@@ -29,6 +29,12 @@ export const missionStatusToText: any = {
   REFUND_DONE: '환급완료',
 };
 
+export const missionStatusToBadge: any = {
+  WAITING: { text: '확인중', style: 'bg-[#FFFACD] text-[#D3CB00]' },
+  CHECK_DONE: { text: '확인완료', style: 'text-primary bg-[#E7E6FD]' },
+  REFUND_DONE: { text: '환급완료', style: 'text-primary bg-[#E7E6FD]' },
+};
+
 export const attendanceStatusToText: any = {
   PRESENT: '정상 제출',
   UPDATED: '다시 제출',
