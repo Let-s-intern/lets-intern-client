@@ -14,12 +14,8 @@ const NewTableRowEditor = ({ setAddMenuShown }: Props) => {
   const [values, setValues] = useState<any>();
 
   const addContents = useMutation({
-    mutationFn: async (formData: FormData) => {
-      const res = await axios.post('/contents', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
+    mutationFn: async () => {
+      const res = await axios.post('/contents', values);
       const data = res.data;
       return data;
     },
@@ -32,15 +28,7 @@ const NewTableRowEditor = ({ setAddMenuShown }: Props) => {
 
   const handleContentsCreate = (e: React.FormEvent) => {
     e.preventDefault();
-
-    const formData = new FormData();
-
-    formData.append(
-      'contentsCreateDTO',
-      new Blob([JSON.stringify(values)], { type: 'application/json' }),
-    );
-
-    addContents.mutate(formData);
+    addContents.mutate();
   };
 
   const handleEditorClose = () => {

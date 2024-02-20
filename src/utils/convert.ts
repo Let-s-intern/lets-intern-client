@@ -50,13 +50,6 @@ export const missionSubmitToBadge = (mission: any) => {
   } = mission;
   const isRefundMission = missionType === 'REFUND';
 
-  if (status === 'ABSENT') {
-    return {
-      text: '결석',
-      style: 'bg-[#E3E3E3] text-[#9B9B9B]',
-    };
-  }
-
   if (result === 'WAITING') {
     return {
       text: '확인중',
@@ -64,15 +57,29 @@ export const missionSubmitToBadge = (mission: any) => {
     };
   }
 
-  if (result === 'PASS' && status === 'CREATED') {
+  if (result === 'WRONG') {
     return {
-      text: isRefundMission ? '환급완료' : '확인완료',
-      style: 'text-primary bg-[#E7E6FD]',
+      text: '반려',
+      style: 'bg-red-200 text-red-600',
+    };
+  }
+
+  if (status === 'ABSENT') {
+    return {
+      text: '결석',
+      style: 'bg-[#E3E3E3] text-[#9B9B9B]',
+    };
+  }
+
+  if (status === 'LATE') {
+    return {
+      text: '지각',
+      style: 'bg-[#E3E3E3] text-[#9B9B9B]',
     };
   }
 
   return {
-    text: '반려',
-    style: 'bg-[#E3E3E3] text-[#9B9B9B]',
+    text: isRefundMission ? '환급완료' : '확인완료',
+    style: 'text-primary bg-[#E7E6FD]',
   };
 };

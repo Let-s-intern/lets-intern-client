@@ -7,9 +7,10 @@ import axios from '../../../../../../utils/axios';
 
 interface Props {
   attendance: any;
+  cellWidthListIndex: number;
 }
 
-const CommentCell = ({ attendance }: Props) => {
+const CommentCell = ({ attendance, cellWidthListIndex }: Props) => {
   const queryClient = useQueryClient();
 
   const [modalShown, setModalShown] = useState(false);
@@ -41,7 +42,7 @@ const CommentCell = ({ attendance }: Props) => {
       <div
         className={clsx(
           'cursor-pointer overflow-hidden text-ellipsis whitespace-nowrap px-2 py-3 text-center text-sm',
-          cellWidthList[7],
+          cellWidthList[cellWidthListIndex],
         )}
         onClick={() => setModalShown(true)}
       >
