@@ -16,7 +16,6 @@ const MissionDateItem = ({ mission }: Props) => {
     queryFn: async () => {
       const res = await axios.get(`/mission/detail/${mission.id}`);
       const data = res.data.contents;
-      console.log(res.data);
       setContent(data);
       return data;
     },
