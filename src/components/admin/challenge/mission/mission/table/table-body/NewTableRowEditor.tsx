@@ -14,6 +14,7 @@ const NewTableRowEditor = ({ setIsModeAdd }: Props) => {
   const queryClient = useQueryClient();
 
   const [values, setValues] = useState<any>({});
+  const [errorMessage, setErrorMessage] = useState('');
 
   const addMission = useMutation({
     mutationFn: async (values) => {
@@ -25,6 +26,9 @@ const NewTableRowEditor = ({ setIsModeAdd }: Props) => {
       await queryClient.invalidateQueries({ queryKey: ['mission'] });
       setIsModeAdd(false);
       setValues({});
+    },
+    onError: (error: any) => {
+      setErrorMessage(error.response.data.reason);
     },
   });
 
@@ -45,6 +49,7 @@ const NewTableRowEditor = ({ setIsModeAdd }: Props) => {
       setValues={setValues}
       onSubmit={handleMissionAdd}
       onCancel={handleEditorClose}
+      errorMessage={errorMessage}
       className="mt-2"
     />
   );

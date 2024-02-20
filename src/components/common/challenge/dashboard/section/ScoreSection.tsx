@@ -1,10 +1,9 @@
 interface Props {
-  headCount: number;
   refundInfo: any;
   isLoading: boolean;
 }
 
-const ScoreSection = ({ headCount, refundInfo, isLoading }: Props) => {
+const ScoreSection = ({ refundInfo, isLoading }: Props) => {
   if (isLoading) {
     return <section className="mb-10">로딩 중...</section>;
   }
@@ -29,7 +28,7 @@ const ScoreSection = ({ headCount, refundInfo, isLoading }: Props) => {
         <h2 className="font-semibold text-[#4A495C]">오늘 함께한 참여자</h2>
         <div className="flex flex-1 items-center justify-start">
           <span className="font-pretendard text-2xl font-semibold text-[#4A495C]">
-            {headCount}명 🔥
+            {refundInfo.headCount}명 🔥
           </span>
         </div>
       </div>

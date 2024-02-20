@@ -5,6 +5,7 @@ import { challengeSubmitDetailCellWidthList } from '../../../../../../utils/tabl
 import StatusDropdown from './StatusDropdown';
 import ResultDropdown from './ResultDropdown';
 import CommentCell from './CommentCell';
+import RefundCheckbox from './RefundCheckbox';
 
 interface Props {
   attendance?: any;
@@ -55,7 +56,7 @@ const TableRow = ({ attendance, th, bgColor }: Props) => {
         {attendance?.userAccountType || ''}{' '}
         {attendance?.userAccountNumber || ''}
       </div>
-      <StatusDropdown attendance={attendance} />
+      <StatusDropdown attendance={attendance} cellWidthListIndex={4} />
       <div
         className={clsx(
           'overflow-hidden text-ellipsis border-r border-[#D9D9D9] py-3 text-center text-sm',
@@ -73,8 +74,9 @@ const TableRow = ({ attendance, th, bgColor }: Props) => {
           </Link>
         )}
       </div>
-      <ResultDropdown attendance={attendance} />
-      <CommentCell attendance={attendance} />
+      <ResultDropdown attendance={attendance} cellWidthListIndex={6} />
+      <RefundCheckbox attendance={attendance} cellWidthListIndex={7} />
+      <CommentCell attendance={attendance} cellWidthListIndex={8} />
     </div>
   );
 };

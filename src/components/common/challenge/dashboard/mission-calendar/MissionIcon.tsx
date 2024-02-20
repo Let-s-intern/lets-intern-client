@@ -12,9 +12,9 @@ const MissionIcon = ({ className, mission }: Props) => {
   const params = useParams();
 
   const isAttended =
-    mission.attendanceResult === 'WAITING' ||
-    (mission.attendanceResult === 'PASS' &&
-      mission.attendanceStatus === 'CREATED');
+    (mission.attendanceResult === 'WAITING' ||
+      mission.attendanceResult === 'PASS') &&
+    mission.attendanceStatus !== 'ABSENT';
 
   return (
     <>

@@ -9,9 +9,10 @@ import { attendanceStatusToText } from '../../../../../../utils/convert';
 
 interface Props {
   attendance: any;
+  cellWidthListIndex: number;
 }
 
-const StatusDropdown = ({ attendance }: Props) => {
+const StatusDropdown = ({ attendance, cellWidthListIndex }: Props) => {
   const queryClient = useQueryClient();
 
   const [isMenuShown, setIsMenuShown] = useState(false);
@@ -36,7 +37,7 @@ const StatusDropdown = ({ attendance }: Props) => {
     <div
       className={clsx(
         'relative flex items-center justify-center text-ellipsis border-r border-[#D9D9D9] text-center text-sm',
-        cellWidthList[4],
+        cellWidthList[cellWidthListIndex],
       )}
     >
       {attendance && (

@@ -8,6 +8,7 @@ import {
   topicToText,
 } from '../../../../../../utils/convert';
 import { missionSubmitCellWidthList } from '../../../../../../utils/tableCellWidthList';
+import StatusDropdown from './StatusDropdown';
 
 interface Props {
   th: number;
@@ -37,9 +38,7 @@ const TableRowContent = ({ th, mission, onClick }: Props) => {
         {mission.attendanceCount}
       </TableBodyCell>
       <TableBodyCell className={clsx(cellWidthList[6])}>
-        <div className="flex gap-3 font-medium">
-          <span>{missionStatusToText[mission.status]}</span>
-        </div>
+        <StatusDropdown mission={mission} />
       </TableBodyCell>
     </TableBodyRowBox>
   );
