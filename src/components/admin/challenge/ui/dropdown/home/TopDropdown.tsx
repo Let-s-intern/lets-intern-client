@@ -4,6 +4,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { IoMdArrowDropdown } from 'react-icons/io';
 
 import axios from '../../../../../../utils/axios';
+import clsx from 'clsx';
 
 const TopDropdown = () => {
   const params = useParams();
@@ -18,17 +19,19 @@ const TopDropdown = () => {
     queryFn: async () => {
       const res = await axios.get('/program/admin');
       const data = res.data;
-      const newChallengeList = data.programList.filter((program: any) => {
-        if (
-          program.type === 'CHALLENGE_FULL' ||
-          program.type === 'CHALLENGE_HALF'
-        ) {
-          if (program.id === Number(params.programId)) {
-            setCurrentChallenge(program);
+      const newChallengeList = data.programList
+        .filter((program: any) => {
+          if (
+            program.type === 'CHALLENGE_FULL' ||
+            program.type === 'CHALLENGE_HALF'
+          ) {
+            if (program.id === Number(params.programId)) {
+              setCurrentChallenge(program);
+            }
+            return true;
           }
-          return true;
-        }
-      });
+        })
+        .sort((a: any, b: any) => b.th - a.th);
       setChallengeList(newChallengeList);
       return data;
     },
@@ -39,6 +42,7 @@ const TopDropdown = () => {
 
   const handleMenuItemClick = async (challengeId: number) => {
     navigate(`/admin/challenge/${challengeId}`);
+    localStorage.setItem('admin-challenge-id', `${challengeId}`);
     setIsMenuShown(false);
   };
 
@@ -48,11 +52,13 @@ const TopDropdown = () => {
         className="flex w-24 cursor-pointer items-center justify-between gap-4 rounded border border-neutral-400 py-2 pl-4 pr-2"
         onClick={() => setIsMenuShown(!isMenuShown)}
       >
-        {!currentChallenge ? (
-          <span className="font-medium opacity-0">없음</span>
-        ) : (
-          <span className="font-medium">{currentChallenge.th}기</span>
-        )}
+        <span
+          className={clsx('font-medium', {
+            'opacity-0': isLoading,
+          })}
+        >
+          {isLoading ? '00기' : `${currentChallenge.th}기`}
+        </span>
         <i className="text-xl">
           <IoMdArrowDropdown />
         </i>
