@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react';
-import { useParams, useSearchParams } from 'react-router-dom';
+import { useState } from 'react';
+import { useParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 
 import DailyMissionSection from '../../../components/common/challenge/my-challenge/section/DailyMissionSection';
@@ -9,13 +9,12 @@ import MissionCalendarSection from '../../../components/common/challenge/my-chal
 
 const MyChallengeDashboard = () => {
   const params = useParams();
-  const [searchParams, setSearchParams] = useSearchParams();
 
   const [missionList, setMissionList] = useState<any>();
   const [dailyMission, setDailyMission] = useState<any>();
   const [todayTh, setTodayTh] = useState<number>();
 
-  const { isLoading } = useQuery({
+  const getDashboard = useQuery({
     queryKey: ['programs', params.programId, 'dashboard', 'my'],
     queryFn: async () => {
       const res = await axios.get(`/program/${params.programId}/dashboard/my`);
@@ -31,9 +30,10 @@ const MyChallengeDashboard = () => {
     },
   });
 
-  useEffect(() => {}, [searchParams, setSearchParams]);
+  const isLoading =
+    getDashboard.isLoading || !dailyMission || !todayTh || !missionList;
 
-  if (isLoading || !dailyMission || !todayTh) {
+  if (isLoading) {
     return <></>;
   }
 
@@ -44,7 +44,7 @@ const MyChallengeDashboard = () => {
       </header>
       <MissionCalendarSection missionList={missionList} todayTh={todayTh} />
       <DailyMissionSection dailyMission={dailyMission} />
-      <OtherMissionSection />
+      <OtherMissionSection todayTh={todayTh} />
     </main>
   );
 };

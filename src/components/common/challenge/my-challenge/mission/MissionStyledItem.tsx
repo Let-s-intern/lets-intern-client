@@ -2,14 +2,13 @@ import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 
 import axios from '../../../../../utils/axios';
-import MissionDetailMenu from './MissionDetailMenu';
+import MissionStyledDetailMenu from './MissionStyledDetailMenu';
 
 interface Props {
   mission: any;
-  status: 'YET' | 'DONE' | 'ABSENT';
 }
 
-const MissionStyledItem = ({ mission, status }: Props) => {
+const MissionStyledItem = ({ mission }: Props) => {
   const [isDetailShown, setIsDetailShown] = useState(false);
 
   const {
@@ -17,10 +16,10 @@ const MissionStyledItem = ({ mission, status }: Props) => {
     isLoading: isDetailLoading,
     error: detailError,
   } = useQuery({
-    queryKey: ['mission', mission.id, 'detail', { status }],
+    queryKey: ['mission', mission.id, 'detail', { status: mission.status }],
     queryFn: async () => {
       const res = await axios.get(`/mission/${mission.id}/detail`, {
-        params: { status },
+        params: { status: mission.status },
       });
       const data = res.data;
       console.log(data);
@@ -43,7 +42,7 @@ const MissionStyledItem = ({ mission, status }: Props) => {
         (detailError
           ? '에러 발생'
           : !isDetailLoading && (
-              <MissionDetailMenu missionDetail={missionDetail} />
+              <MissionStyledDetailMenu missionDetail={missionDetail} />
             ))}
     </li>
   );
