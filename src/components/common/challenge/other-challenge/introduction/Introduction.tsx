@@ -1,21 +1,46 @@
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 import { MdEdit } from 'react-icons/md';
+
+import axios from '../../../../../utils/axios';
+import { useParams } from 'react-router-dom';
 
 interface Props {
   dashboard: any;
 }
 
 const Introduction = ({ dashboard }: Props) => {
+  const params = useParams();
+  const queryClient = useQueryClient();
+
   const [value, setValue] = useState(dashboard.introduction);
   const [isEditMode, setIsEditMode] = useState(false);
 
+  const editIntroduction = useMutation({
+    mutationFn: async () => {
+      const res = await axios.patch(
+        `/application/${params.applicationId}/introduction`,
+        {
+          introduction: value,
+        },
+      );
+      const data = res.data;
+      return data;
+    },
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ['attendance'] });
+      setIsEditMode(false);
+    },
+  });
+
   const handleIntroductionEdit = (e: React.FormEvent) => {
     e.preventDefault();
-    setIsEditMode(false);
+    editIntroduction.mutate();
   };
 
   const handleEditCancel = (e: any) => {
     setIsEditMode(false);
+    setValue('');
   };
 
   return (
@@ -53,12 +78,14 @@ const Introduction = ({ dashboard }: Props) => {
       ) : (
         <div className="flex items-center gap-1">
           <p>{dashboard.introduction}</p>
-          <i
-            className="cursor-pointer text-xl"
-            onClick={() => setIsEditMode(true)}
-          >
-            <MdEdit />
-          </i>
+          {dashboard.mine && (
+            <i
+              className="cursor-pointer text-xl"
+              onClick={() => setIsEditMode(true)}
+            >
+              <MdEdit />
+            </i>
+          )}
         </div>
       )}
     </div>

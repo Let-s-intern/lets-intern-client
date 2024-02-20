@@ -1,53 +1,33 @@
+import clsx from 'clsx';
 import { useEffect, useRef, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import clsx from 'clsx';
+import { useParams, useSearchParams } from 'react-router-dom';
 
 import axios from '../../../../../utils/axios';
 import MissionItem from '../mission/MissionItem';
 import MissionStyledItem from '../mission/MissionStyledItem';
-import { useParams, useSearchParams } from 'react-router-dom';
 
-const OtherMissionSection = () => {
+interface Props {
+  todayTh: number;
+}
+
+const OtherMissionSection = ({ todayTh }: Props) => {
   const params = useParams();
   const [searchParams, setSearchParams] = useSearchParams();
 
   const sectionRef = useRef<HTMLElement>(null);
 
+  const [missionList, setMissionList] = useState<any>();
   const [tabIndex, setTabIndex] = useState(0);
 
-  const { data: missionList, isLoading } = useQuery({
+  const getMissionList = useQuery({
     queryKey: ['mission', params.programId, 'list'],
     queryFn: async () => {
-      const absentMissionsRes = await axios.get(
-        `/mission/${params.programId}/list`,
-        {
-          params: {
-            status: 'ABSENT',
-          },
-        },
-      );
-      const yetMissionsRes = await axios.get(
-        `/mission/${params.programId}/list`,
-        {
-          params: {
-            status: 'YET',
-          },
-        },
-      );
-      const doneMissionsRes = await axios.get(
-        `/mission/${params.programId}/list`,
-        {
-          params: {
-            status: 'DONE',
-          },
-        },
-      );
-      const newMissionList = {
-        ABSENT: absentMissionsRes.data.missionList,
-        YET: yetMissionsRes.data.missionList,
-        DONE: doneMissionsRes.data.missionList,
-      };
-      return newMissionList;
+      const res = await axios.get(`/mission/${params.programId}/list`);
+      const data = res.data;
+      console.log(data);
+      setMissionList(data.missionList);
+      return data;
     },
   });
 
@@ -60,9 +40,37 @@ const OtherMissionSection = () => {
     }
   }, [sectionRef, searchParams, setSearchParams]);
 
-  if (isLoading || !missionList) {
-    return <section>로딩 중...</section>;
+  const isLoading = getMissionList.isLoading || !missionList;
+
+  if (isLoading) {
+    return <></>;
   }
+
+  let lastMissionList = missionList.filter(
+    (mission: any) => mission.th < todayTh,
+  );
+
+  let remainedMissionList = missionList
+    .filter((mission: any) => mission.th > todayTh)
+    .map((mission: any) => ({ ...mission, status: 'YET' }));
+
+  remainedMissionList = remainedMissionList.concat(
+    lastMissionList
+      .filter(
+        (mission: any) =>
+          mission.attendanceStatus === 'ABSENT' ||
+          mission.missionStatus === 'WRONG',
+      )
+      .map((mission: any) => ({ ...mission, status: 'ABSENT' })),
+  );
+
+  lastMissionList = lastMissionList
+    .filter(
+      (mission: any) =>
+        mission.attendanceStatus !== 'ABSENT' &&
+        mission.missionStatus !== 'WRONG',
+    )
+    .map((mission: any) => ({ ...mission, status: 'DONE' }));
 
   return (
     <section
@@ -91,33 +99,26 @@ const OtherMissionSection = () => {
       </div>
       {tabIndex === 0 ? (
         <ul className="mt-2 flex flex-col gap-6 bg-[#F6F8FB] p-8">
-          {missionList['YET'].length === 0 ? (
+          {remainedMissionList.length === 0 ? (
             <span className="font-medium">남은 미션이 없습니다.</span>
           ) : (
-            missionList['YET'].map((mission: any) => (
-              <MissionItem key={mission.id} mission={mission} status="YET" />
+            remainedMissionList.map((mission: any) => (
+              <MissionItem
+                key={mission.id}
+                mission={mission}
+                todayTh={todayTh}
+              />
             ))
           )}
         </ul>
       ) : (
         tabIndex === 1 &&
-        (missionList['ABSENT'].length + missionList['DONE'].length === 0 ? (
+        (lastMissionList.length === 0 ? (
           <span className="font-medium">지난 미션이 없습니다.</span>
         ) : (
           <ul className="mt-2 flex flex-col gap-6 bg-[#F6F8FB] p-8">
-            {missionList['ABSENT'].map((mission: any) => (
-              <MissionStyledItem
-                key={mission.id}
-                mission={mission}
-                status="ABSENT"
-              />
-            ))}
-            {missionList['DONE'].map((mission: any) => (
-              <MissionStyledItem
-                key={mission.id}
-                mission={mission}
-                status="DONE"
-              />
+            {lastMissionList.map((mission: any) => (
+              <MissionStyledItem key={mission.id} mission={mission} />
             ))}
           </ul>
         ))
