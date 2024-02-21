@@ -21,7 +21,7 @@ const ResultDropdown = ({ attendance, cellWidthListIndex }: Props) => {
 
   const editAttendanceStatus = useMutation({
     mutationFn: async (result) => {
-      const res = await axios.patch(`/attendance/${attendance.id}`, {
+      const res = await axios.patch(`/attendance/admin/${attendance.id}`, {
         result,
       });
       const data = res.data;
