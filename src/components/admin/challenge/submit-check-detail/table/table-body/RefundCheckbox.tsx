@@ -17,7 +17,7 @@ const RefundCheckbox = ({ attendance, cellWidthListIndex }: Props) => {
 
   const editIsRefunded = useMutation({
     mutationFn: async (isRefund: boolean) => {
-      const res = await axios.patch(`/attendance/${attendance.id}`, {
+      const res = await axios.patch(`/attendance/admin/${attendance.id}`, {
         isRefunded: isRefund,
       });
       const data = res.data;
