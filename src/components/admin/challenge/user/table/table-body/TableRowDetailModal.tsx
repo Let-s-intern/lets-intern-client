@@ -51,7 +51,7 @@ const TableRowDetailModal = ({ application, setIsMenuShown }: Props) => {
       <hr className="my-5 bg-[#D9D9D9]" />
       <div className="px-3">
         <h3 className="font-semibold">미션 수행</h3>
-        <div className="mt-1 flex gap-8 overflow-x-auto">
+        <div className="mt-1 flex gap-8 overflow-x-auto pb-3">
           <div className="flex flex-col gap-2">
             <div className="opacity-0">일차</div>
             <div className="w-20">미션</div>
@@ -99,7 +99,7 @@ const TableRowDetailModal = ({ application, setIsMenuShown }: Props) => {
           ))}
         </div>
       </div>
-      <div className="mt-6 flex justify-end">
+      <div className="mt-4 flex justify-end">
         <Button onClick={() => setIsMenuShown(false)}>닫기</Button>
       </div>
     </div>
