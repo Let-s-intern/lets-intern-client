@@ -33,7 +33,12 @@ const DoneMissionItem = ({ mission }: Props) => {
   return (
     <li key={mission.id} className="rounded-xl bg-white p-6">
       <div className="flex gap-6 px-3">
-        <div className="h-12 w-[5px] rounded-lg bg-primary" />
+        <div
+          className={clsx('h-12 w-[5px] rounded-lg', {
+            'bg-[#fff961]': mission.attendanceResult === 'WAITING',
+            'bg-primary': mission.attendanceResult === 'PASS',
+          })}
+        />
         <div className="flex flex-1 items-center justify-between">
           <div className="flex items-center gap-3">
             <h4 className="text-lg font-semibold">

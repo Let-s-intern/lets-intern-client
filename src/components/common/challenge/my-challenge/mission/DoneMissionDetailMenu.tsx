@@ -38,12 +38,14 @@ const DoneMissionDetailMenu = ({ missionDetail }: Props) => {
           <hr className="my-4 border-[#DEDEDE]" />
           <div className="px-3">
             <div className="flex items-center gap-4">
-              <h4 className="text-lg font-semibold">제출한 미션</h4>
+              <h4 className="whitespace-nowrap text-lg font-semibold">
+                제출한 미션
+              </h4>
               <Link
                 to={missionDetail.attendanceLink}
                 target="_blank"
                 rel="noopenner noreferrer"
-                className="text-gray-500 hover:underline"
+                className="overflow-hidden text-ellipsis whitespace-nowrap text-gray-500 hover:underline"
               >
                 {missionDetail.attendanceLink}
               </Link>

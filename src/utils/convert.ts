@@ -64,13 +64,6 @@ export const missionSubmitToBadge = ({
     };
   }
 
-  if (status === 'LATE') {
-    return {
-      text: '지각',
-      style: 'bg-[#E3E3E3] text-[#9B9B9B]',
-    };
-  }
-
   if (result === 'WAITING') {
     return {
       text: '확인중',
@@ -81,6 +74,13 @@ export const missionSubmitToBadge = ({
   if (result === 'WRONG') {
     return {
       text: '반려',
+      style: 'bg-[#E3E3E3] text-[#9B9B9B]',
+    };
+  }
+
+  if (status === 'LATE') {
+    return {
+      text: '지각',
       style: 'bg-[#E3E3E3] text-[#9B9B9B]',
     };
   }
