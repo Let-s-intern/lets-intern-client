@@ -22,7 +22,7 @@ const MissionResultItem = ({ mission, todayTh }: Props) => {
       </div>
       <div
         className={clsx('mx-1 mt-1 pb-2', {
-          'rounded bg-neutral-100': mission.missionTh === todayTh,
+          'rounded bg-[#F2F1F1]': mission.missionTh === todayTh,
         })}
       >
         <div className="py-2 text-center text-sm">{mission.missionTh}일차</div>
