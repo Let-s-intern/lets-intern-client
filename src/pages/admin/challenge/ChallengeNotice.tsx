@@ -25,6 +25,7 @@ const ChallengeNotice = () => {
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ['notice'] });
       setIsModalShown(false);
+      setValues({});
     },
   });
 

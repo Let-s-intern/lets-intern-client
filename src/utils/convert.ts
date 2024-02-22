@@ -56,7 +56,7 @@ export const missionStatusToText: any = {
 };
 
 export const missionStatusToBadge: any = {
-  WAITING: { text: '확인중', style: 'bg-[#FFFACD] text-[#D3CB00]' },
+  WAITING: { text: '대기', style: 'bg-[#E3E3E3] text-[#9B9B9B]' },
   CHECK_DONE: { text: '확인완료', style: 'text-primary bg-[#E7E6FD]' },
   REFUND_DONE: { text: '환급완료', style: 'text-primary bg-[#E7E6FD]' },
 };

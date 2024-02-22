@@ -17,6 +17,11 @@ const NoticeEditorModal = ({
     setValues({ ...values, [e.target.name]: e.target.value });
   };
 
+  const handleModalClose = () => {
+    setIsModalShown(false);
+    setValues({});
+  };
+
   return (
     <div className="fixed left-0 top-0 z-[100] flex h-full w-full items-center justify-end bg-black bg-opacity-50">
       <div className="flex w-[calc(100%-16rem)] items-center justify-center">
@@ -67,7 +72,7 @@ const NoticeEditorModal = ({
             </button>
             <button
               className="rounded bg-stone-300 px-5 py-[2px] text-sm"
-              onClick={() => setIsModalShown(false)}
+              onClick={handleModalClose}
             >
               취소
             </button>
