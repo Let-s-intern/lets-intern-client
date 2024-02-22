@@ -4,6 +4,7 @@ import TD from '../../../ui/table/TD';
 import parseInflowPath from '../../../../../utils/parseInflowPath';
 import parseGrade from '../../../../../utils/parseGrade';
 import { Link } from 'react-router-dom';
+import { wishJobToText } from '../../../../../utils/convert';
 
 interface UserTableBodyProps {
   program: any;
@@ -49,7 +50,9 @@ const UserTableBody = ({
           <TD>
             {application.optionalInfo ? application.optionalInfo.major : ''}
           </TD>
-          <TD whiteSpace="wrap">{application.application.wishJob}</TD>
+          <TD whiteSpace="wrap">
+            {wishJobToText[application.application.wishJob]}
+          </TD>
           <TD whiteSpace="wrap">{application.application.wishCompany}</TD>
           <TD whiteSpace="wrap">{application.application.applyMotive}</TD>
           <TD>
