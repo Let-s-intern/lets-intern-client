@@ -1,6 +1,7 @@
 import { FormControl, InputLabel, MenuItem, Select } from '@mui/material';
 
 import Input from '../../../../../../ui/input/Input';
+import { wishJobToText } from '../../../../../../../utils/convert';
 
 interface MemberInfoInputContentProps {
   user: any;
@@ -94,12 +95,23 @@ const MemberInfoInputContent = ({
               <MenuItem value="-1">졸업생</MenuItem>
             </Select>
           </FormControl>
-          <Input
-            label="관심직군"
-            name="wishJob"
-            value={user.wishJob}
-            onChange={(e) => handleApplyInput(e)}
-          />
+          <FormControl fullWidth sx={dropdownStyle}>
+            <InputLabel id="wish-job">희망 직무</InputLabel>
+            <Select
+              labelId="wish-job"
+              id="wish-job"
+              label="희망 직무"
+              name="wishJob"
+              value={user.wishJob}
+              onChange={(e) => handleApplyInput(e)}
+            >
+              {Object.keys(wishJobToText).map((wishJobKey: any) => (
+                <MenuItem value={wishJobKey}>
+                  {wishJobToText[wishJobKey]}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
           <Input
             label="희망 기업 형태"
             name="wishCompany"

@@ -15,7 +15,11 @@ const MissionCalendarItem = ({ mission, todayTh }: Props) => {
     <div>
       <MissionTopStatusBar mission={mission} todayTh={todayTh} />
       <div className="mt-2 px-1">
-        <span className="block w-full text-center text-xs">
+        <span
+          className={clsx('block w-full text-center text-xs', {
+            'font-semibold text-primary': mission.missionTh === todayTh,
+          })}
+        >
           {formatToMonthDate(mission.missionStartDate)}
         </span>
         {mission.missionTh === todayTh ? (
