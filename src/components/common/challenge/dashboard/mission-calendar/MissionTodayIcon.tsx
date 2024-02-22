@@ -28,7 +28,7 @@ const MissionTodayIcon = ({ mission, className }: Props) => {
         <div className="mb-[0.175rem] flex h-[2rem] w-[2rem] items-center justify-center">
           <i>
             <img
-              src="/icons/additional-contents-icon.svg"
+              src="/icons/additional-contents.svg"
               alt="additional contents icon"
             />
           </i>
@@ -36,15 +36,20 @@ const MissionTodayIcon = ({ mission, className }: Props) => {
       ) : mission.missionType === 'REFUND' ? (
         <div className="mb-[0.175rem] flex h-[2rem] w-[2rem] items-center justify-center">
           <i>
-            <img src="/icons/refund-icon.svg" alt="refund icon" />
+            <img src="/icons/refund.svg" alt="refund icon" />
           </i>
         </div>
       ) : (
-        <div className="mb-[0.175rem] flex h-[2rem] w-[2rem] items-center justify-center rounded-full bg-primary">
-          <i className="text-2xl text-white">
-            <FaPlus />
-          </i>
-        </div>
+        mission.missionType === 'GENERAL' && (
+          <div className="mb-[0.175rem] flex h-[2rem] w-[2rem] items-center justify-center">
+            <i>
+              <img
+                src="/icons/general-mission.svg"
+                alt="general mission icon"
+              />
+            </i>
+          </div>
+        )
       )}
       <span className="font-pretendard text-xs font-semibold text-primary">
         {mission.missionTh}일차
