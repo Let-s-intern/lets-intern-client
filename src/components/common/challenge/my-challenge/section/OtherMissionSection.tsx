@@ -52,24 +52,19 @@ const OtherMissionSection = ({ todayTh }: Props) => {
   );
 
   let absentMissionList = lastMissionList
-    .filter(
-      (mission: any) =>
-        mission.attendanceStatus === 'ABSENT' ||
-        mission.missionStatus === 'WRONG',
-    )
-    .map((mission: any) => ({ ...mission, status: 'ABSENT' }));
+    .filter((mission: any) => mission.attendanceStatus === 'ABSENT')
+    .map((mission: any) => ({ ...mission, status: 'ABSENT' }))
+    .sort((a: any, b: any) => a.th - b.th);
 
   lastMissionList = lastMissionList
-    .filter(
-      (mission: any) =>
-        mission.attendanceStatus !== 'ABSENT' &&
-        mission.missionStatus !== 'WRONG',
-    )
-    .map((mission: any) => ({ ...mission, status: 'DONE' }));
+    .filter((mission: any) => mission.attendanceStatus !== 'ABSENT')
+    .map((mission: any) => ({ ...mission, status: 'DONE' }))
+    .sort((a: any, b: any) => a.th - b.th);
 
   let remainedMissionList = missionList
     .filter((mission: any) => mission.th > todayTh)
-    .map((mission: any) => ({ ...mission, status: 'YET' }));
+    .map((mission: any) => ({ ...mission, status: 'YET' }))
+    .sort((a: any, b: any) => a.th - b.th);
 
   return (
     <section
@@ -93,7 +88,7 @@ const OtherMissionSection = ({ todayTh }: Props) => {
           })}
           onClick={() => setTabIndex(1)}
         >
-          지난 미션
+          제출한 미션
         </div>
       </div>
       {tabIndex === 0 ? (
@@ -122,12 +117,20 @@ const OtherMissionSection = ({ todayTh }: Props) => {
         tabIndex === 1 && (
           <div className="mt-2 bg-[#F6F8FB] p-8">
             {lastMissionList.length === 0 ? (
-              <span className="font-medium">지난 미션이 없습니다.</span>
+              <span className="font-medium">제출한 미션이 없습니다.</span>
             ) : (
               <ul className="flex flex-col gap-4">
-                {lastMissionList.map((mission: any) => (
-                  <DoneMissionItem key={mission.id} mission={mission} />
-                ))}
+                {lastMissionList.map((mission: any) => {
+                  if (mission.attendanceResult === 'WRONG') {
+                    return (
+                      <AbsentMissionItem key={mission.id} mission={mission} />
+                    );
+                  } else {
+                    return (
+                      <DoneMissionItem key={mission.id} mission={mission} />
+                    );
+                  }
+                })}
               </ul>
             )}
           </div>
