@@ -1,6 +1,6 @@
 import clsx from 'clsx';
 import { useEffect, useRef, useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useParams, useSearchParams } from 'react-router-dom';
 
 import axios from '../../../../../utils/axios';
@@ -42,6 +42,10 @@ const OtherMissionSection = ({ todayTh }: Props) => {
   }, [sectionRef, searchParams, setSearchParams]);
 
   const isLoading = getMissionList.isLoading || !missionList;
+
+  useEffect(() => {
+    getMissionList.refetch();
+  }, [tabIndex]);
 
   if (isLoading) {
     return <></>;
