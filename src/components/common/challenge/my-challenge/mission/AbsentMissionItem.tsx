@@ -1,6 +1,6 @@
 import clsx from 'clsx';
-import { useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { useEffect, useState } from 'react';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 
 import axios from '../../../../../utils/axios';
 import AbsentMissionDetailMenu from './AbsentMissionDetailMenu';
@@ -11,6 +11,8 @@ interface Props {
 }
 
 const AbsentMissionItem = ({ mission }: Props) => {
+  const queryClient = useQueryClient();
+
   const [isDetailShown, setIsDetailShown] = useState(false);
 
   const {
@@ -28,6 +30,10 @@ const AbsentMissionItem = ({ mission }: Props) => {
     },
     enabled: isDetailShown,
   });
+
+  useEffect(() => {
+    queryClient.invalidateQueries({ queryKey: ['mission'] });
+  }, [isDetailShown]);
 
   return (
     <li key={mission.id} className="rounded-xl bg-white p-6">
