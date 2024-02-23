@@ -1,3 +1,16 @@
+export const bankTypeToText: Record<string, string> = {
+  KB: 'KB국민은행',
+  HANA: '하나은행',
+  WOORI: '우리은행',
+  SHINHAN: '신한은행',
+  NH: 'NH농협은행',
+  SH: 'SH수협은행',
+  IBK: 'IBK기업은행',
+  MG: '새마을금고',
+  KAKAO: '카카오뱅크',
+  TOSS: '토스뱅크',
+};
+
 export const wishJobToText: any = {
   MARKETING_BRAND: '브랜드 마케팅',
   MARKETING_PERFORMANCE: '퍼포먼스 마케팅',

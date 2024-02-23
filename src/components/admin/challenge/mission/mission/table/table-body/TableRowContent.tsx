@@ -35,7 +35,9 @@ const TableRowContent = ({ th, mission, menuShown, setMenuShown }: Props) => {
       <TableBodyCell className={clsx(cellWidthList[4])}>
         {topicToText[mission.essentialContentsTopic] || '없음'}
       </TableBodyCell>
-      <TableBodyCell className={clsx(cellWidthList[5])}>O</TableBodyCell>
+      <TableBodyCell className={clsx(cellWidthList[5])}>
+        {mission.type === 'REFUND' ? 'O' : 'X'}
+      </TableBodyCell>
       <TableBodyCell className={clsx(cellWidthList[6])}>
         {mission.attendanceCount}
       </TableBodyCell>
