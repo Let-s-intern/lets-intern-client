@@ -19,7 +19,7 @@ const Introduction = ({ dashboard }: Props) => {
   const editIntroduction = useMutation({
     mutationFn: async () => {
       const res = await axios.patch(
-        `/application/${params.applicationId}/introduction`,
+        `/application/${params.applicationId}/challenge`,
         {
           introduction: value,
         },

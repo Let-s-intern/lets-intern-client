@@ -4,7 +4,7 @@ import TD from '../../../ui/table/TD';
 import parseInflowPath from '../../../../../utils/parseInflowPath';
 import parseGrade from '../../../../../utils/parseGrade';
 import { Link } from 'react-router-dom';
-import { wishJobToText } from '../../../../../utils/convert';
+import { bankTypeToText, wishJobToText } from '../../../../../utils/convert';
 
 interface UserTableBodyProps {
   program: any;
@@ -49,6 +49,13 @@ const UserTableBody = ({
           <TD>{parseGrade(application.application.grade)}</TD>
           <TD>
             {application.optionalInfo ? application.optionalInfo.major : ''}
+          </TD>
+          <TD>
+            {application.optionalInfo
+              ? `${
+                  bankTypeToText[application.optionalInfo.accountType] || ''
+                } ${application.optionalInfo.accountNumber || ''}`
+              : ''}
           </TD>
           <TD whiteSpace="wrap">
             {wishJobToText[application.application.wishJob]}

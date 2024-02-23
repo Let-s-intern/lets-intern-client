@@ -5,6 +5,7 @@ import TableHead from '../../../submit-check-detail/table/table-head/TableHead';
 import TableRow from '../../../submit-check-detail/table/table-body/TableRow';
 import axios from '../../../../../../utils/axios';
 import Button from '../../../ui/button/Button';
+import Pagination from '../../../../../ui/pagination/Pagination';
 
 interface Props {
   mission: any;
@@ -14,6 +15,8 @@ interface Props {
 const ChallengeSubmitDetail = ({ mission, setIsDetailShown }: Props) => {
   const [missionDetail, setMissionDetail] = useState();
   const [attendanceList, setAttendanceList] = useState<any>();
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageInfo, setPageInfo] = useState<any>();
 
   const getMission = useQuery({
     queryKey: ['mission', 'detail', mission.id],
@@ -27,13 +30,17 @@ const ChallengeSubmitDetail = ({ mission, setIsDetailShown }: Props) => {
   });
 
   const getAttendanceList = useQuery({
-    queryKey: ['attendance', { missionId: mission.id, size: 10 }],
+    queryKey: [
+      'attendance',
+      { missionId: mission.id, size: 10, page: currentPage },
+    ],
     queryFn: async ({ queryKey }) => {
       const res = await axios.get('/attendance', {
         params: queryKey[1],
       });
       const data = res.data;
       setAttendanceList(data.attendanceList);
+      setPageInfo(data.pageInfo);
       console.log(data);
       return data;
     },
@@ -48,7 +55,7 @@ const ChallengeSubmitDetail = ({ mission, setIsDetailShown }: Props) => {
   return (
     <>
       {!isLoading && (
-        <>
+        <div>
           <div className="rounded">
             <div className="flex flex-col bg-[#F7F7F7]">
               <TableHead />
@@ -72,10 +79,16 @@ const ChallengeSubmitDetail = ({ mission, setIsDetailShown }: Props) => {
               ))}
             </div>
           </div>
-          <div className="flex justify-center">
+          <Pagination
+            className="mt-2"
+            currentPage={currentPage}
+            setCurrentPage={setCurrentPage}
+            maxPage={pageInfo.totalPages}
+          />
+          <div className="mb-2 mt-4 flex justify-center">
             <Button onClick={() => setIsDetailShown(false)}>닫기</Button>
           </div>
-        </>
+        </div>
       )}
     </>
   );

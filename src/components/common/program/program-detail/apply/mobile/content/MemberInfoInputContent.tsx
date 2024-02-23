@@ -1,7 +1,10 @@
 import { FormControl, InputLabel, MenuItem, Select } from '@mui/material';
 
 import Input from '../../../../../../ui/input/Input';
-import { wishJobToText } from '../../../../../../../utils/convert';
+import {
+  bankTypeToText,
+  wishJobToText,
+} from '../../../../../../../utils/convert';
 
 interface MemberInfoInputContentProps {
   user: any;
@@ -95,6 +98,28 @@ const MemberInfoInputContent = ({
               <MenuItem value="-1">졸업생</MenuItem>
             </Select>
           </FormControl>
+          <FormControl fullWidth sx={dropdownStyle}>
+            <InputLabel id="acccount-type">환급계좌 은행</InputLabel>
+            <Select
+              labelId="acccount-type"
+              id="acccount-type"
+              label="환급계좌 은행"
+              name="accountType"
+              value={user.accountType}
+              onChange={(e) => handleApplyInput(e)}
+            >
+              {Object.keys(bankTypeToText).map((bankType: any) => (
+                <MenuItem value={bankType}>{bankTypeToText[bankType]}</MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+          <Input
+            label="환급계좌 번호"
+            name="accountNumber"
+            placeholder="- 없이 숫자만 입력"
+            value={user.accountNumber}
+            onChange={(e) => handleApplyInput(e)}
+          />
           <FormControl fullWidth sx={dropdownStyle}>
             <InputLabel id="wish-job">희망 직무</InputLabel>
             <Select
