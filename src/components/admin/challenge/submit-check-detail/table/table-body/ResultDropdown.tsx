@@ -16,6 +16,9 @@ const ResultDropdown = ({ attendance, cellWidthListIndex }: Props) => {
   const queryClient = useQueryClient();
 
   const [isMenuShown, setIsMenuShown] = useState(false);
+  const [attendanceResult, setAttendanceResult] = useState(
+    attendance?.result || '',
+  );
 
   const cellWidthList = challengeSubmitDetailCellWidthList;
 
@@ -27,11 +30,9 @@ const ResultDropdown = ({ attendance, cellWidthListIndex }: Props) => {
       const data = res.data;
       return data;
     },
-    onSuccess: async () => {
-      await queryClient.invalidateQueries({
-        queryKey: ['attendance'],
-      });
+    onSuccess: async (_, result) => {
       setIsMenuShown(false);
+      setAttendanceResult(result);
     },
   });
 
@@ -49,7 +50,7 @@ const ResultDropdown = ({ attendance, cellWidthListIndex }: Props) => {
           onClick={() => setIsMenuShown(!isMenuShown)}
         >
           <div className="flex items-center gap-1">
-            <span>{attendanceResultToText[attendance.result]}</span>
+            <span>{attendanceResultToText[attendanceResult]}</span>
             <i>
               <IoMdArrowDropdown />
             </i>
