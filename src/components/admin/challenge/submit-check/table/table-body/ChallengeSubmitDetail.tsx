@@ -56,6 +56,7 @@ const ChallengeSubmitDetail = ({ mission, setIsDetailShown }: Props) => {
                 <TableRow
                   key={attendance.id}
                   attendance={attendance}
+                  missionDetail={missionDetail}
                   th={index + 1}
                   bgColor={(index + 1) % 2 === 1 ? 'DARK' : 'LIGHT'}
                 />
