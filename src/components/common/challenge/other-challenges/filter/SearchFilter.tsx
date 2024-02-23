@@ -1,19 +1,14 @@
-import { IoMdArrowDropdown } from 'react-icons/io';
+import FilterDropdown from '../dropdown/FilterDropdown';
 
-const SearchFilter = () => {
+interface Props {
+  filter: string;
+  setFilter: (filter: string) => void;
+}
+
+const SearchFilter = ({ filter, setFilter }: Props) => {
   return (
-    <div>
-      <div>
-        <span>직무</span>
-        <i>
-          <IoMdArrowDropdown />
-        </i>
-      </div>
-      <ul>
-        <li>프론트엔드</li>
-        <li>백엔드</li>
-      </ul>
-      <button>구경하기</button>
+    <div className="mt-4 flex items-stretch justify-start gap-4">
+      <FilterDropdown filter={filter} setFilter={setFilter} />
     </div>
   );
 };
