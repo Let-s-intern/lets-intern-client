@@ -151,7 +151,6 @@ const Application = () => {
                 application={application}
                 statusToLabel={statusToLabel}
                 hasBottomLink={false}
-                hasChallengeLink={true}
                 setIsDeleteModal={setIsDeleteModal}
                 setCancelApplication={setCancelApplication}
               />
