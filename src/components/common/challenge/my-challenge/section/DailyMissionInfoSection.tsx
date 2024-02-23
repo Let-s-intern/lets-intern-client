@@ -17,10 +17,14 @@ const DailyMissionInfoSection = ({ dailyMission }: Props) => {
           마감 {formatMissionDateString(dailyMission.endDate)}까지
         </span>
       </div>
-      <p className="mt-2 text-black">{dailyMission.contents}</p>
+      <p className="mt-2 whitespace-pre-line text-black">
+        {dailyMission.contents}
+      </p>
       <div className="mt-3">
         <h4 className="text-sm font-semibold text-[#898989]">미션 가이드</h4>
-        <p className="mt-1 text-black">{dailyMission.guide}</p>
+        <p className="mt-1 whitespace-pre-line text-black">
+          {dailyMission.guide}
+        </p>
       </div>
       <div className="mt-5 flex gap-4">
         <Link

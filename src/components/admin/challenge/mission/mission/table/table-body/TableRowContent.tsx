@@ -35,10 +35,11 @@ const TableRowContent = ({ th, mission, menuShown, setMenuShown }: Props) => {
       <TableBodyCell className={clsx(cellWidthList[4])}>
         {topicToText[mission.essentialContentsTopic] || '없음'}
       </TableBodyCell>
-      <TableBodyCell className={clsx(cellWidthList[5])}>
+      <TableBodyCell className={clsx(cellWidthList[5])}>O</TableBodyCell>
+      <TableBodyCell className={clsx(cellWidthList[6])}>
         {mission.attendanceCount}
       </TableBodyCell>
-      <TableBodyCell className={clsx(cellWidthList[6])}>
+      <TableBodyCell className={clsx(cellWidthList[7])}>
         <div
           className="flex items-center gap-3"
           onClick={(e) => e.stopPropagation}
