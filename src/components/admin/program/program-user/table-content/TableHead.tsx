@@ -12,6 +12,7 @@ const UserTableHead = () => {
         <TH>학교</TH>
         <TH>학년</TH>
         <TH>전공</TH>
+        <TH>환급계좌번호</TH>
         <TH>희망직무</TH>
         <TH>희망기업형태</TH>
         <TH>신청자 답변</TH>

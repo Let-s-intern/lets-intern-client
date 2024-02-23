@@ -6,6 +6,8 @@ import { useQuery } from '@tanstack/react-query';
 import axios from '../../../utils/axios';
 import OtherMissionItem from '../../../components/common/challenge/other-challenge/mission/OtherMissionItem';
 import Introduction from '../../../components/common/challenge/other-challenge/introduction/Introduction';
+import { wishJobToText } from '../../../utils/convert';
+import WishJob from '../../../components/common/challenge/other-challenge/wish-job/WishJob';
 
 const OtherDashboardDetail = () => {
   const navigate = useNavigate();
@@ -42,11 +44,7 @@ const OtherDashboardDetail = () => {
           <span>이전으로</span>
         </Link>
         <h1 className="mt-1 text-2xl font-bold">{dashboard.name}의 기록장</h1>
-        <div className="mt-3 flex items-center">
-          <span className="rounded-lg bg-[#D9D9D9] px-2 py-1 text-xs font-medium text-black">
-            {dashboard.wishJob}
-          </span>
-        </div>
+        <WishJob dashboard={dashboard} />
         <Introduction dashboard={dashboard} />
       </header>
       <div className="mt-6">

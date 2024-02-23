@@ -1,4 +1,5 @@
 import { Link, useParams } from 'react-router-dom';
+import { wishJobToText } from '../../../../../utils/convert';
 
 interface Props {
   dashboard: any;
@@ -23,7 +24,7 @@ const OtherDashboardItem = ({ dashboard }: Props) => {
         </div>
         <div className="mt-2 flex items-center">
           <span className="rounded-lg bg-[#D9D9D9] px-2 py-1 text-xs font-medium text-black">
-            {dashboard.wishJob}
+            {wishJobToText[dashboard.wishJob]}
           </span>
         </div>
         <p className="mt-2 text-black">{dashboard.introduction}</p>

@@ -5,7 +5,7 @@ import { useQuery } from '@tanstack/react-query';
 import OtherDashboardItem from '../../../components/common/challenge/other-challenges/mission/OtherDashboardItem';
 import axios from '../../../utils/axios';
 import SearchFilter from '../../../components/common/challenge/other-challenges/filter/SearchFilter';
-import Pagination from '../../../components/common/challenge/other-challenges/pagination/Pagination';
+import Pagination from '../../../components/ui/pagination/Pagination';
 
 const OtherDashboardList = () => {
   const params = useParams();
@@ -16,7 +16,13 @@ const OtherDashboardList = () => {
   const [pageInfo, setPageInfo] = useState<any>();
 
   const getOtherUserList = useQuery({
-    queryKey: ['programs', params.programId, 'dashboard', 'entire', filter],
+    queryKey: [
+      'programs',
+      params.programId,
+      'dashboard',
+      'entire',
+      { applicationWishJob: filter, page: currentPage, size: 9 },
+    ],
     queryFn: async () => {
       const res = await axios.get(
         `/program/${params.programId}/dashboard/entire`,
@@ -28,7 +34,7 @@ const OtherDashboardList = () => {
       console.log(data);
       setPageInfo(data.pageInfo);
       let newDashboardList =
-        filter === 'ALL'
+        filter === 'ALL' || filter === data.myDashboard.wishJob
           ? [{ ...data.myDashboard, isMine: true }, ...data.dashboardList]
           : data.dashboardList;
       setDashboardList(newDashboardList);
