@@ -9,10 +9,17 @@ import { attendanceResultToText } from '../../../../../../utils/convert';
 
 interface Props {
   attendance: any;
+  attendanceResult: string;
+  setAttendanceResult: (attendanceResult: string) => void;
   cellWidthListIndex: number;
 }
 
-const ResultDropdown = ({ attendance, cellWidthListIndex }: Props) => {
+const ResultDropdown = ({
+  attendance,
+  attendanceResult,
+  setAttendanceResult,
+  cellWidthListIndex,
+}: Props) => {
   const queryClient = useQueryClient();
 
   const [isMenuShown, setIsMenuShown] = useState(false);
@@ -20,18 +27,16 @@ const ResultDropdown = ({ attendance, cellWidthListIndex }: Props) => {
   const cellWidthList = challengeSubmitDetailCellWidthList;
 
   const editAttendanceStatus = useMutation({
-    mutationFn: async (result) => {
+    mutationFn: async (result: string) => {
       const res = await axios.patch(`/attendance/admin/${attendance.id}`, {
         result,
       });
       const data = res.data;
       return data;
     },
-    onSuccess: async () => {
-      await queryClient.invalidateQueries({
-        queryKey: ['attendance'],
-      });
+    onSuccess: async (_, result: string) => {
       setIsMenuShown(false);
+      setAttendanceResult(result);
     },
   });
 
@@ -49,7 +54,7 @@ const ResultDropdown = ({ attendance, cellWidthListIndex }: Props) => {
           onClick={() => setIsMenuShown(!isMenuShown)}
         >
           <div className="flex items-center gap-1">
-            <span>{attendanceResultToText[attendance.result]}</span>
+            <span>{attendanceResultToText[attendanceResult]}</span>
             <i>
               <IoMdArrowDropdown />
             </i>

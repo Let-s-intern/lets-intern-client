@@ -1,4 +1,5 @@
 import clsx from 'clsx';
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 
 import { challengeSubmitDetailCellWidthList } from '../../../../../../utils/tableCellWidthList';
@@ -9,11 +10,16 @@ import RefundCheckbox from './RefundCheckbox';
 
 interface Props {
   attendance?: any;
+  missionDetail?: any;
   th?: number;
   bgColor: 'DARK' | 'LIGHT';
 }
 
-const TableRow = ({ attendance, th, bgColor }: Props) => {
+const TableRow = ({ attendance, missionDetail, th, bgColor }: Props) => {
+  const [attendanceResult, setAttendanceResult] = useState(
+    attendance?.result || '',
+  );
+
   const cellWidthList = challengeSubmitDetailCellWidthList;
 
   return (
@@ -74,8 +80,18 @@ const TableRow = ({ attendance, th, bgColor }: Props) => {
           </Link>
         )}
       </div>
-      <ResultDropdown attendance={attendance} cellWidthListIndex={6} />
-      <RefundCheckbox attendance={attendance} cellWidthListIndex={7} />
+      <ResultDropdown
+        attendance={attendance}
+        attendanceResult={attendanceResult}
+        setAttendanceResult={setAttendanceResult}
+        cellWidthListIndex={6}
+      />
+      <RefundCheckbox
+        attendance={attendance}
+        attendanceResult={attendanceResult}
+        missionDetail={missionDetail}
+        cellWidthListIndex={7}
+      />
       <CommentCell attendance={attendance} cellWidthListIndex={8} />
     </div>
   );
