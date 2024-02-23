@@ -1,4 +1,4 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation } from '@tanstack/react-query';
 import clsx from 'clsx';
 import { useState } from 'react';
 import axios from '../../../../../utils/axios';
@@ -8,8 +8,6 @@ interface Props {
 }
 
 const AbsentMissionSubmitMenu = ({ missionDetail }: Props) => {
-  const queryClient = useQueryClient();
-
   const [isAttended, setIsAttended] = useState(missionDetail.attended);
   const [value, setValue] = useState(missionDetail?.link || '');
   const [isLinkChecked, setIsLinkChecked] = useState(false);

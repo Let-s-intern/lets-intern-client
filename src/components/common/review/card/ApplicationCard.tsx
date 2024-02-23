@@ -53,22 +53,24 @@ const ApplicationCard = ({
               <span>{formatDateString(application.endDate)}</span>
             </div>
           </div>
-          {hasChallengeLink && (
-            <div className="mt-2">
-              <Link
-                to={`/challenge/${application.programId}`}
-                className="flex items-center justify-end gap-1 text-primary"
-                onClick={(e) => e.stopPropagation()}
-                target="_blank"
-                rel="noopenner noreferrer"
-              >
-                <span className="text-sm font-medium">챌린지로 이동</span>
-                <i className="text-lg">
-                  <LiaExternalLinkAltSolid />
-                </i>
-              </Link>
-            </div>
-          )}
+          {hasChallengeLink &&
+            (application.programType === 'CHALLENGE_FULL' ||
+              application.programType === 'CHALLENGE_HALF') && (
+              <div className="mt-2">
+                <Link
+                  to={`/challenge/${application.programId}`}
+                  className="flex items-center justify-end gap-1 text-primary"
+                  onClick={(e) => e.stopPropagation()}
+                  target="_blank"
+                  rel="noopenner noreferrer"
+                >
+                  <span className="text-sm font-medium">챌린지로 이동</span>
+                  <i className="text-lg">
+                    <LiaExternalLinkAltSolid />
+                  </i>
+                </Link>
+              </div>
+            )}
           {hasBottomLink && (
             <span
               className="link ga_cancel_program"

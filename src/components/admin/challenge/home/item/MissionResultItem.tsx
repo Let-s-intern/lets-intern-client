@@ -6,39 +6,50 @@ import { missionStatusToBadge } from '../../../../../utils/convert';
 
 interface Props {
   mission: any;
+  todayTh: number;
 }
 
-const MissionResultItem = ({ mission }: Props) => {
+const MissionResultItem = ({ mission, todayTh }: Props) => {
   return (
     <div className="font-pretendard">
-      <MissionTopStatusBar mission={mission} todayTh={4} />
-      <div className="mt-2 text-center text-sm">
+      <MissionTopStatusBar mission={mission} todayTh={todayTh} />
+      <div
+        className={clsx('mt-2 text-center text-sm', {
+          'font-medium text-primary': mission.missionTh === todayTh,
+        })}
+      >
         {formatToMonthDate(mission.missionStartDate)}
       </div>
-      <div className="py-2 text-center text-sm">{mission.missionTh}일차</div>
       <div
-        className={clsx('flex items-end justify-center text-3xl font-bold', {
-          // invisible: status === 'NOT_STARTED',
+        className={clsx('mx-1 mt-1 pb-2', {
+          'rounded bg-[#F2F1F1]': mission.missionTh === todayTh,
         })}
       >
-        {mission.attendanceCount}
+        <div className="py-2 text-center text-sm">{mission.missionTh}일차</div>
+        <div
+          className={clsx('flex items-end justify-center text-3xl font-bold', {
+            'opacity-0': todayTh < mission.missionTh,
+          })}
+        >
+          {mission.attendanceCount}
+        </div>
+        <div
+          className={clsx('text-center text-sm', {
+            'opacity-0': todayTh < mission.missionTh,
+          })}
+        >
+          지각 {mission.lateAttendanceCount}
+        </div>
       </div>
-      <div
-        className={clsx('text-center text-sm', {
-          // invisible: status === 'NOT_STARTED',
-        })}
-      >
-        지각 {mission.lateAttendanceCount}
-      </div>
-      <div className="mt-1 flex items-center justify-center">
+      <div className="mt-2 flex items-center justify-center">
         <span
           className={clsx(
             'rounded-md px-2 py-[0.125rem] text-xs ',
-            missionStatusToBadge[mission.missionStatus]?.style ||
-              'bg-[#E7E6FD] text-primary',
+            missionStatusToBadge[mission.missionStatus].style,
+            { 'opacity-0': todayTh < mission.missionTh },
           )}
         >
-          {missionStatusToBadge[mission.missionStatus]?.text || '기타'}
+          {missionStatusToBadge[mission.missionStatus].text}
         </span>
       </div>
     </div>

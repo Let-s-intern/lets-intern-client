@@ -14,6 +14,7 @@ const MissionResultSection = () => {
 
   const [missionList, setMissionList] = useState<any>();
   const [headCount, setHeadCount] = useState<number>();
+  const [todayTh, setTodayTh] = useState<number>();
 
   const getMissionResult = useQuery({
     queryKey: ['mission', params.programId, 'simple'],
@@ -23,12 +24,16 @@ const MissionResultSection = () => {
       console.log(data);
       setMissionList(data.missionList);
       setHeadCount(data.finalHeadCount);
+      setTodayTh(data.currentTh);
       return data;
     },
   });
 
   const isLoading =
-    getMissionResult.isLoading || !missionList || headCount === undefined;
+    getMissionResult.isLoading ||
+    !missionList ||
+    headCount === undefined ||
+    todayTh === undefined;
 
   if (isLoading) {
     return <></>;
@@ -45,7 +50,11 @@ const MissionResultSection = () => {
       <div className="mt-4 flex items-center">
         <div className="grid flex-1 grid-cols-7 gap-y-6">
           {missionList.map((mission: any) => (
-            <MissionResultItem key={mission.missionId} mission={mission} />
+            <MissionResultItem
+              key={mission.missionId}
+              mission={mission}
+              todayTh={todayTh}
+            />
           ))}
         </div>
         <div className="px-20 text-center">

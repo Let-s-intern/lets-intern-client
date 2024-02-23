@@ -24,7 +24,7 @@ const DailyMissionSection = ({ dailyMission, isLoading }: Props) => {
           {formatMissionDateString(dailyMission.endDate)}까지
         </span>
       </div>
-      <p className="flex-1">{dailyMission.contents}</p>
+      <p className="flex-1 whitespace-pre-line">{dailyMission.contents}</p>
       <Link
         to={`/challenge/${params.programId}/me`}
         className="w-full rounded bg-primary px-4 py-3 text-center font-semibold text-white"

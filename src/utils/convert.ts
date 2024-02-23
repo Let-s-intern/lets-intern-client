@@ -18,10 +18,22 @@ export const wishJobToText: any = {
 };
 
 export const wishJobToTextForSorting: any = {
-  ...wishJobToText,
   ALL: '전체',
-  MARKETING_ALL: '마케팅 전반',
-  DEVELOPMENT_ALL: '개발 전반',
+
+  MARKETING_BRAND: '브랜드 마케팅',
+  MARKETING_PERFORMANCE: '퍼포먼스 마케팅',
+  MARKETING_CRM: 'CRM 마케팅',
+  MARKETING_CONTENTS: '콘텐츠 마케팅',
+  MARKETING_PR: '홍보 PR',
+  MARKETING_AE: '광고대행사(AE)',
+  MARKETING_ALL: '마케팅 직군 전체',
+
+  DEVELOPMENT_FRONTEND: '프론트엔드',
+  DEVELOPMENT_BACKEND: '백엔드',
+  DEVELOPMENT_APP: '앱개발',
+  DEVELOPMENT_DATA: '데이터 분석',
+  DEVELOPMENT_AI: '인공지능/머신러닝',
+  DEVELOPMENT_ALL: '개발 직군 전체',
 };
 
 export const topicRequiredToText: any = {
@@ -56,7 +68,7 @@ export const missionStatusToText: any = {
 };
 
 export const missionStatusToBadge: any = {
-  WAITING: { text: '확인중', style: 'bg-[#FFFACD] text-[#D3CB00]' },
+  WAITING: { text: '대기', style: 'bg-[#E3E3E3] text-[#9B9B9B]' },
   CHECK_DONE: { text: '확인완료', style: 'text-primary bg-[#E7E6FD]' },
   REFUND_DONE: { text: '환급완료', style: 'text-primary bg-[#E7E6FD]' },
 };
