@@ -5,6 +5,7 @@ export const missionCellWidthList = [
   'w-32',
   'w-20',
   'w-20',
+  'w-20',
   'w-32',
 ];
 

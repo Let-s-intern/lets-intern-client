@@ -20,8 +20,9 @@ const TableHead = ({ className }: Props) => {
       <TableHeadCell className={clsx(cellWidthList[4])}>
         연결콘텐츠
       </TableHeadCell>
-      <TableHeadCell className={clsx(cellWidthList[5])}>제출현황</TableHeadCell>
-      <TableHeadCell className={clsx(cellWidthList[6])} />
+      <TableHeadCell className={clsx(cellWidthList[5])}>환급미션</TableHeadCell>
+      <TableHeadCell className={clsx(cellWidthList[6])}>제출현황</TableHeadCell>
+      <TableHeadCell className={clsx(cellWidthList[7])} />
     </TableHeadBox>
   );
 };
