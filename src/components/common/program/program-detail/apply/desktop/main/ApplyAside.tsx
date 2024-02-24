@@ -12,9 +12,14 @@ import styles from './ApplyAside.module.scss';
 interface ApplyAsdieProps {
   program: any;
   participated: boolean;
+  wishJobList: any;
 }
 
-const ApplyAside = ({ program, participated }: ApplyAsdieProps) => {
+const ApplyAside = ({
+  program,
+  participated,
+  wishJobList,
+}: ApplyAsdieProps) => {
   const [applyPageIndex, setApplyPageIndex] = useState(0);
   const [formData, setFormData] = useState<any>(null);
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
@@ -71,6 +76,7 @@ const ApplyAside = ({ program, participated }: ApplyAsdieProps) => {
     content = (
       <InputContent
         program={program}
+        wishJobList={wishJobList}
         formData={formData}
         isLoggedIn={isLoggedIn}
         setFormData={setFormData}

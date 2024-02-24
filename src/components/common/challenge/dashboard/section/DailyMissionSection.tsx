@@ -26,7 +26,7 @@ const DailyMissionSection = ({ dailyMission, isLoading }: Props) => {
       </div>
       <p className="flex-1 whitespace-pre-line">{dailyMission.contents}</p>
       <Link
-        to={`/challenge/${params.programId}/me`}
+        to={`/challenge/${params.programId}/me?scroll_to=daily-mission`}
         className="w-full rounded bg-primary px-4 py-3 text-center font-semibold text-white"
       >
         오늘의 미션 수행하기

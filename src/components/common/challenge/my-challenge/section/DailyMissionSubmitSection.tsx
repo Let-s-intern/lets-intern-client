@@ -42,10 +42,10 @@ const DailyMissionSubmitSection = ({ dailyMission }: Props) => {
       setIsStartedHttp(false);
       setIsLinkChecked(false);
     }
-    const pattern = new RegExp(
-      '^(https?:\\/\\/)([\\da-z\\.-]+)\\.([a-z\\.]{2,6})([\\/\\w \\.-]*[^-\\.])?$',
-    );
-    if (pattern.test(e.target.value)) {
+    const expression =
+      /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/;
+    const regex = new RegExp(expression);
+    if (regex.test(e.target.value)) {
       setIsValidLinkValue(true);
     } else {
       setIsValidLinkValue(false);

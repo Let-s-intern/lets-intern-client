@@ -44,6 +44,7 @@ const ChallengeSubmitDetail = ({ mission, setIsDetailShown }: Props) => {
       console.log(data);
       return data;
     },
+    refetchOnWindowFocus: false,
   });
 
   const isLoading =

@@ -7,6 +7,7 @@ import TD from '../../../ui/table/TD';
 import { convertTypeToText } from '../../../../../utils/converTypeToText';
 import AlertModal from '../../../../ui/alert/AlertModal';
 import formatDateString from '../../../../../utils/formatDateString';
+import { challengeTopicToText } from '../../../../../utils/convert';
 
 interface ProgramTableBodyProps {
   programList: any;
@@ -43,7 +44,10 @@ const TableBody = ({
       <tbody>
         {programList.map((program: any) => (
           <tr key={program.id}>
-            <TD>{convertTypeToText(program.type, true)}</TD>
+            <TD>
+              {convertTypeToText(program.type, true)}{' '}
+              {program.topic && ` - ${challengeTopicToText[program.topic]}`}
+            </TD>
             <TD>{program.th}</TD>
             <TD>{program.title}</TD>
             <TD>{formatDateString(program.dueDate)}</TD>

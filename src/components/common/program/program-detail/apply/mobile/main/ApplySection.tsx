@@ -10,6 +10,7 @@ interface ApplySectionProps {
   program: any;
   participated: boolean;
   isLoggedIn: boolean;
+  wishJobList: any;
   setParticipated: (participated: boolean) => void;
 }
 
@@ -17,6 +18,7 @@ const ApplySection = ({
   program,
   participated,
   isLoggedIn,
+  wishJobList,
   setParticipated,
 }: ApplySectionProps) => {
   const params = useParams();
@@ -100,6 +102,7 @@ const ApplySection = ({
           program={program}
           memberChecked={memberChecked}
           applyPageIndex={applyPageIndex}
+          wishJobList={wishJobList}
           setMemberChecked={setMemberChecked}
           setApplyPageIndex={setApplyPageIndex}
           setUser={setUser}

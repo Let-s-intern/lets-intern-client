@@ -21,6 +21,7 @@ interface ProgramApplyProps {
   program: any;
   memberChecked: 'USER' | 'GUEST' | '';
   applyPageIndex: number;
+  wishJobList: any;
   setUser: (user: any) => void;
   setMemberChecked: (memberChecked: 'USER' | 'GUEST' | '') => void;
   setApplyPageIndex: (applyPageIndex: number) => void;
@@ -39,6 +40,7 @@ const ProgramApply = ({
   program,
   memberChecked,
   applyPageIndex,
+  wishJobList,
   setUser,
   setMemberChecked,
   setApplyPageIndex,
@@ -75,6 +77,9 @@ const ProgramApply = ({
       user.major &&
       user.university &&
       user.inflowPath &&
+      (program.feeType === 'CHARGE' || program.feeType === 'DEPOSIT'
+        ? user.accountType && user.accountNumber
+        : true) &&
       (program.way === 'ALL' ? user.way : true)
     ) {
       setIsNextButtonDisabled(false);
@@ -233,6 +238,7 @@ const ProgramApply = ({
           user={user}
           hasDetailInfo={hasDetailInfo}
           isLoggedIn={isLoggedIn}
+          wishJobList={wishJobList}
           handleApplyInput={handleApplyInput}
           program={program}
         />
