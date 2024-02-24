@@ -43,10 +43,10 @@ const AbsentMissionSubmitMenu = ({ missionDetail }: Props) => {
       setIsStartedHttp(false);
       setIsLinkChecked(false);
     }
-    const pattern = new RegExp(
-      '^(https?:\\/\\/)([\\da-z\\.-]+)\\.([a-z\\.]{2,6})([\\/\\w \\.-]*[^-\\.])?$',
-    );
-    if (pattern.test(e.target.value)) {
+    const expression =
+      /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/;
+    const regex = new RegExp(expression);
+    if (regex.test(e.target.value)) {
       setIsValidLinkValue(true);
     } else {
       setIsValidLinkValue(false);
@@ -67,7 +67,13 @@ const AbsentMissionSubmitMenu = ({ missionDetail }: Props) => {
           ? '링크를 제대로 확인해 주세요. 카톡으로 공유해야 미션 제출이 인정됩니다.'
           : '미션 제출이 완료되었습니다.'}
       </p>
-
+      {missionDetail.attendanceComments && (
+        <div className="mt-4">
+          <div className="rounded-md bg-[#F2F2F2] px-8 py-6 text-sm">
+            {missionDetail.attendanceComments}
+          </div>
+        </div>
+      )}
       <div className="mt-4 flex items-stretch gap-4">
         <label
           htmlFor="link"

@@ -19,6 +19,7 @@ const TableRow = ({ attendance, missionDetail, th, bgColor }: Props) => {
   const [attendanceResult, setAttendanceResult] = useState(
     attendance?.result || '',
   );
+  const [isRefunded, setIsRefunded] = useState(attendance?.isRefund || false);
 
   const cellWidthList = challengeSubmitDetailCellWidthList;
 
@@ -91,6 +92,8 @@ const TableRow = ({ attendance, missionDetail, th, bgColor }: Props) => {
         attendanceResult={attendanceResult}
         missionDetail={missionDetail}
         cellWidthListIndex={7}
+        isRefunded={isRefunded}
+        setIsRefunded={setIsRefunded}
       />
       <CommentCell attendance={attendance} cellWidthListIndex={8} />
     </div>

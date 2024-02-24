@@ -14,6 +14,7 @@ const OtherDashboardDetail = () => {
   const params = useParams();
 
   const [dashboard, setDashboard] = useState<any>();
+  const [wishJobList, setWishJobList] = useState<any>();
 
   const getAttendanceList = useQuery({
     queryKey: ['attendance', params.applicationId],
@@ -21,6 +22,7 @@ const OtherDashboardDetail = () => {
       const res = await axios.get(`/attendance/${params.applicationId}`);
       const data = res.data;
       setDashboard(data);
+      setWishJobList(data.wishJobList);
       console.log(data);
       return data;
     },

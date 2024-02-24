@@ -20,8 +20,6 @@ const ResultDropdown = ({
   setAttendanceResult,
   cellWidthListIndex,
 }: Props) => {
-  const queryClient = useQueryClient();
-
   const [isMenuShown, setIsMenuShown] = useState(false);
 
   const cellWidthList = challengeSubmitDetailCellWidthList;
