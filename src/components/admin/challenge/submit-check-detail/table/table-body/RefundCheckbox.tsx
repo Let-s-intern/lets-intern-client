@@ -9,6 +9,8 @@ interface Props {
   missionDetail: any;
   cellWidthListIndex: number;
   attendanceResult: string;
+  isRefunded: boolean;
+  setIsRefunded: (isRefunded: boolean) => void;
 }
 
 const RefundCheckbox = ({
@@ -16,9 +18,9 @@ const RefundCheckbox = ({
   missionDetail,
   cellWidthListIndex,
   attendanceResult,
+  isRefunded,
+  setIsRefunded,
 }: Props) => {
-  const queryClient = useQueryClient();
-
   const cellWidthList = challengeSubmitDetailCellWidthList;
 
   const editIsRefunded = useMutation({
@@ -29,8 +31,8 @@ const RefundCheckbox = ({
       const data = res.data;
       return data;
     },
-    onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: ['attendance'] });
+    onSuccess: async (_, isRefund) => {
+      setIsRefunded(isRefund);
     },
   });
 
@@ -46,9 +48,9 @@ const RefundCheckbox = ({
         missionDetail.type === 'REFUND' && (
           <div
             className="cursor-pointer"
-            onClick={() => editIsRefunded.mutate(!attendance.isRefund)}
+            onClick={() => editIsRefunded.mutate(!isRefunded)}
           >
-            {attendance.isRefund ? (
+            {isRefunded ? (
               <i>
                 <img
                   src="/icons/admin-checkbox-checked.svg"

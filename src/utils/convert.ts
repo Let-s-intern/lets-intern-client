@@ -1,3 +1,15 @@
+export const challengeTopicToText: Record<string, string> = {
+  ALL: '전체',
+  MARKETING: '마케팅',
+  DEVELOPMENT: '개발',
+};
+
+export const feeTypeToText: Record<string, string> = {
+  FREE: '무료',
+  CHARGE: '이용료',
+  DEPOSIT: '보증금',
+};
+
 export const bankTypeToText: Record<string, string> = {
   KB: 'KB국민은행',
   HANA: '하나은행',

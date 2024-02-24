@@ -1,19 +1,39 @@
 import { useState } from 'react';
+import { useParams } from 'react-router-dom';
 import { IoMdArrowDropdown } from 'react-icons/io';
+
 import { wishJobToTextForSorting } from '../../../../../utils/convert';
+import { useQuery } from '@tanstack/react-query';
+import axios from '../../../../../utils/axios';
 
 interface Props {
   filter: string;
   setFilter: (filter: string) => void;
+  wishJobList: any;
 }
 
-const FilterDropdown = ({ filter, setFilter }: Props) => {
+const FilterDropdown = ({ filter, setFilter, wishJobList }: Props) => {
+  const params = useParams();
+
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [topic, setTopic] = useState<string>();
+
+  const getProgramDetail = useQuery({
+    queryKey: [],
+    queryFn: async () => {
+      const res = await axios.get(`/program/${params.programId}`);
+      const data = res.data;
+      setTopic(data.programDetailVo.topic);
+      return data;
+    },
+  });
 
   const handleMenuItemClicked = (wishJob: string) => {
     setFilter(wishJob);
     setIsMenuOpen(false);
   };
+
+  const isLoading = getProgramDetail.isLoading || !topic;
 
   return (
     <div className="relative">
@@ -22,7 +42,13 @@ const FilterDropdown = ({ filter, setFilter }: Props) => {
         onClick={() => setIsMenuOpen(!isMenuOpen)}
       >
         <span className="text-sm font-medium">
-          {wishJobToTextForSorting[filter] || '전체'}
+          {isLoading ? (
+            <span className="opacity-0">전체</span>
+          ) : filter === 'DEVELOPMENT_ALL' || filter === 'MARKETING_ALL' ? (
+            '전체'
+          ) : (
+            wishJobToTextForSorting[filter]
+          )}
         </span>
         <i>
           <IoMdArrowDropdown />
@@ -31,13 +57,16 @@ const FilterDropdown = ({ filter, setFilter }: Props) => {
       {isMenuOpen && (
         <div className="absolute left-0 top-10 w-[10rem] rounded border border-[#9D9D9D] bg-white text-sm shadow-lg">
           <ul>
-            {Object.keys(wishJobToTextForSorting).map((wishJob: any) => (
+            {wishJobList.map((wishJob: any) => (
               <li
                 key={wishJob}
                 className="cursor-pointer px-3 py-2 transition-all hover:bg-neutral-200"
                 onClick={() => handleMenuItemClicked(wishJob)}
               >
-                {wishJobToTextForSorting[wishJob]}
+                {topic !== 'ALL' &&
+                (wishJob === 'DEVELOPMENT_ALL' || wishJob === 'MARKETING_ALL')
+                  ? '전체'
+                  : wishJobToTextForSorting[wishJob]}
               </li>
             ))}
           </ul>

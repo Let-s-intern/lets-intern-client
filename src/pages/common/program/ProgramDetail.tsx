@@ -17,17 +17,25 @@ const ProgramDetail = () => {
   const [participated, setParticipated] = useState<boolean>(false);
   const [reviewList, setReviewList] = useState<any>(null);
   const [faqList, setFaqList] = useState<any>(null);
+  const [wishJobList, setWishJobList] = useState<any>();
   const [loading, setLoading] = useState(true);
 
   const { isError } = useQuery({
     queryKey: ['program', params.programId],
     queryFn: async ({ queryKey }) => {
       const res = await axios.get(`/program/${queryKey[1]}`);
-      const { programDetailVo, participated, reviewList, faqList } = res.data;
+      const {
+        programDetailVo,
+        participated,
+        reviewList,
+        faqList,
+        wishJobList,
+      } = res.data;
       setProgram(programDetailVo);
       setParticipated(participated);
       setReviewList(reviewList);
       setFaqList(faqList);
+      setWishJobList(wishJobList);
       setLoading(false);
       return res.data;
     },
@@ -66,12 +74,17 @@ const ProgramDetail = () => {
               faqList={faqList}
             />
           </article>
-          <ApplyAside program={program} participated={participated} />
+          <ApplyAside
+            program={program}
+            participated={participated}
+            wishJobList={wishJobList}
+          />
         </main>
         <ApplySection
           program={program}
           participated={participated}
           isLoggedIn={isLoggedIn}
+          wishJobList={wishJobList}
           setParticipated={setParticipated}
         />
       </div>

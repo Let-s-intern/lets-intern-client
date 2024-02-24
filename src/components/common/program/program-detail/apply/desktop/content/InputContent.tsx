@@ -21,6 +21,7 @@ interface InputContentProps {
   program: any;
   formData: any;
   isLoggedIn: boolean;
+  wishJobList?: any;
   setApplyPageIndex: (applyPageIndex: number) => void;
   setFormData: (formData: any) => void;
   setShowAlert: (showAlert: boolean) => void;
@@ -35,6 +36,7 @@ const InputContent = ({
   program,
   formData,
   isLoggedIn,
+  wishJobList,
   setApplyPageIndex,
   setFormData,
   setShowAlert,
@@ -134,8 +136,9 @@ const InputContent = ({
       formData.major &&
       formData.university &&
       formData.inflowPath &&
-      formData.accountType &&
-      formData.accountNumber &&
+      (program.feeType === 'CHARGE' || program.feeType === 'DEPOSIT'
+        ? formData.accountType && formData.accountNumber
+        : true) &&
       (program.way === 'ALL' ? formData.way : true)
     ) {
       setIsNextButtonDisabled(false);
@@ -245,28 +248,34 @@ const InputContent = ({
               <MenuItem value="-1">졸업생</MenuItem>
             </Select>
           </FormControl>
-          <FormControl fullWidth sx={dropdownStyle}>
-            <InputLabel id="acccount-type">환급계좌 은행</InputLabel>
-            <Select
-              labelId="acccount-type"
-              id="acccount-type"
-              label="환급계좌 은행"
-              name="accountType"
-              value={formData.accountType ? formData.accountType : ''}
-              onChange={(e) => handleApplyInput(e)}
-            >
-              {Object.keys(bankTypeToText).map((bankType: any) => (
-                <MenuItem value={bankType}>{bankTypeToText[bankType]}</MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-          <Input
-            label="환급계좌 번호"
-            name="accountNumber"
-            placeholder="- 없이 숫자만 입력"
-            value={formData.accountNumber ? formData.accountNumber : ''}
-            onChange={(e) => handleApplyInput(e)}
-          />
+          {(program.feeType === 'CHARGE' || program.feeType === 'DEPOSIT') && (
+            <>
+              <FormControl fullWidth sx={dropdownStyle}>
+                <InputLabel id="acccount-type">계좌 은행</InputLabel>
+                <Select
+                  labelId="acccount-type"
+                  id="acccount-type"
+                  label="계좌 은행"
+                  name="accountType"
+                  value={formData.accountType ? formData.accountType : ''}
+                  onChange={(e) => handleApplyInput(e)}
+                >
+                  {Object.keys(bankTypeToText).map((bankType: any) => (
+                    <MenuItem value={bankType}>
+                      {bankTypeToText[bankType]}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+              <Input
+                label="계좌 번호"
+                name="accountNumber"
+                placeholder="- 없이 숫자만 입력"
+                value={formData.accountNumber ? formData.accountNumber : ''}
+                onChange={(e) => handleApplyInput(e)}
+              />
+            </>
+          )}
           <FormControl fullWidth sx={dropdownStyle}>
             <InputLabel id="wish-job">희망 직무</InputLabel>
             <Select
@@ -277,7 +286,7 @@ const InputContent = ({
               value={formData.wishJob ? formData.wishJob : ''}
               onChange={(e) => handleApplyInput(e)}
             >
-              {Object.keys(wishJobToText).map((wishJobKey: any) => (
+              {wishJobList.map((wishJobKey: any) => (
                 <MenuItem value={wishJobKey}>
                   {wishJobToText[wishJobKey]}
                 </MenuItem>

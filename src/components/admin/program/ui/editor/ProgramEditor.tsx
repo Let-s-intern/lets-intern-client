@@ -7,6 +7,8 @@ import FAQEditor from './FAQEditor';
 import storage from '../../../../../Firebase';
 import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
 import { useMemo, useRef } from 'react';
+import ProgramTypeSection from '../editor-section/ProgramTypeSection';
+import FeeSection from '../editor-section/FeeSection';
 
 interface ProgramEditorProps {
   values: any;
@@ -107,24 +109,11 @@ const ProgramEditor = ({
     <div className="mx-auto max-w-xl p-8 font-notosans">
       <header className="my-5 text-2xl font-bold">프로그램 개설</header>
       <form className="space-y-5" onSubmit={handleSubmit}>
-        <FormControl fullWidth>
-          <InputLabel id="type">프로그램 분류</InputLabel>
-          <Select
-            labelId="type"
-            id="type"
-            label="프로그램 분류"
-            value={values.type ? values.type : ''}
-            onChange={(e) => {
-              setValues({ ...values, type: e.target.value });
-              handleFAQIdListReset();
-            }}
-          >
-            <MenuItem value="CHALLENGE_FULL">챌린지(전체)</MenuItem>
-            <MenuItem value="CHALLENGE_HALF">챌린지(일부)</MenuItem>
-            <MenuItem value="BOOTCAMP">부트캠프</MenuItem>
-            <MenuItem value="LETS_CHAT">렛츠챗</MenuItem>
-          </Select>
-        </FormControl>
+        <ProgramTypeSection
+          values={values}
+          setValues={setValues}
+          handleFAQIdListReset={handleFAQIdListReset}
+        />
         <Input
           label="기수"
           type="number"
@@ -163,15 +152,17 @@ const ProgramEditor = ({
             <MenuItem value="ALL">온오프라인 병행</MenuItem>
           </Select>
         </FormControl>
-        <Input
-          label="장소"
-          value={values.location ? values.location : ''}
-          placeholder="장소를 입력하세요"
-          onChange={(e: any) =>
-            setValues({ ...values, location: e.target.value })
-          }
-          disabled={!values.way || values.way === 'ONLINE'}
-        />
+        {(values.way === 'OFFLINE' || values.way === 'ALL') && (
+          <Input
+            label="장소"
+            value={values.location ? values.location : ''}
+            placeholder="장소를 입력하세요"
+            onChange={(e: any) =>
+              setValues({ ...values, location: e.target.value })
+            }
+            disabled={!values.way || values.way === 'ONLINE'}
+          />
+        )}
         <DateTimeControl>
           <DateTimeLabel htmlFor="startDate">시작 일자</DateTimeLabel>
           <input
@@ -243,6 +234,7 @@ const ProgramEditor = ({
           multiline
           rows={8}
         />
+        <FeeSection values={values} setValues={setValues} />
         <div className="flex justify-end gap-2">
           <button
             type="submit"
@@ -265,13 +257,13 @@ const ProgramEditor = ({
 
 export default ProgramEditor;
 
-const DateTimeControl = styled.div`
+export const DateTimeControl = styled.div`
   display: flex;
   align-items: center;
   gap: 1rem;
 `;
 
-const DateTimeLabel = styled.label`
+export const DateTimeLabel = styled.label`
   font-weight: 500;
   width: 8rem;
 `;
