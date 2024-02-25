@@ -29,7 +29,8 @@ const ChallengeDashboard = () => {
       setRefundInfo({
         currentRefund: data.currentRefund,
         totalRefund: data.totalRefund,
-        headCount: data.finalHeadCount,
+        finalHeadCount: data.finalHeadCount,
+        yesterdayHeadCount: data.yesterdayHeadCount,
       });
       setNoticeList(data.noticeList);
       setMissionList(data.missionList);
