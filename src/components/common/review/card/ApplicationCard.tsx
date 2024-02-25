@@ -2,6 +2,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { LiaExternalLinkAltSolid } from 'react-icons/lia';
 
 import formatDateString from '../../../../utils/formatDateString';
+import clsx from 'clsx';
 
 interface ApplicationCardProps {
   application: any;
@@ -38,6 +39,13 @@ const ApplicationCard = ({
           >
             {statusToLabel[application.status].label}
           </div>
+          {(application.programType === 'CHALLENGE_FULL' ||
+            application.programType === 'CHALLENGE_HALF') &&
+            application.status === 'IN_PROGRESS' && (
+              <div className="rounded bg-neutral-500 px-2 py-[0.175rem] text-xs text-white">
+                {application.feeIsConfirmed ? '입금 확인' : '입금 미확인'}
+              </div>
+            )}
         </div>
         <div className="card-body">
           <h2>{application.programTitle}</h2>
@@ -58,8 +66,17 @@ const ApplicationCard = ({
               application.programType === 'CHALLENGE_HALF') && (
               <div className="mt-2">
                 <Link
-                  to={`/challenge/${application.programId}`}
-                  className="flex items-center justify-end gap-1 text-primary"
+                  to={
+                    application.feeIsConfirmed
+                      ? `/challenge/${application.programId}`
+                      : '#'
+                  }
+                  className={clsx(
+                    'flex items-center justify-end gap-1 text-primary',
+                    {
+                      'opacity-0': !application.feeIsConfirmed,
+                    },
+                  )}
                   onClick={(e) => e.stopPropagation()}
                   target="_blank"
                   rel="noopenner noreferrer"
