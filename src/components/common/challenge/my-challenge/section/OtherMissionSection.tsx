@@ -32,43 +32,53 @@ const OtherMissionSection = ({ todayTh }: Props) => {
     },
   });
 
-  useEffect(() => {
-    const scrollTo = searchParams.get('scroll_to');
-
-    if (scrollTo === 'other-mission') {
-      sectionRef.current?.scrollIntoView({ behavior: 'smooth' });
-      setSearchParams({}, { replace: true });
-    }
-  }, [sectionRef, searchParams, setSearchParams]);
-
   const isLoading = getMissionList.isLoading || !missionList;
 
   useEffect(() => {
     getMissionList.refetch();
   }, [tabIndex]);
 
+  let lastMissionList =
+    missionList && missionList.filter((mission: any) => mission.th < todayTh);
+
+  let absentMissionList =
+    lastMissionList &&
+    lastMissionList
+      .filter((mission: any) => mission.attendanceStatus === 'ABSENT')
+      .map((mission: any) => ({ ...mission, status: 'ABSENT' }))
+      .sort((a: any, b: any) => a.th - b.th);
+
+  lastMissionList =
+    lastMissionList &&
+    lastMissionList
+      .filter((mission: any) => mission.attendanceStatus !== 'ABSENT')
+      .map((mission: any) => ({ ...mission, status: 'DONE' }))
+      .sort((a: any, b: any) => a.th - b.th);
+
+  let remainedMissionList =
+    missionList &&
+    missionList
+      .filter((mission: any) => mission.th > todayTh)
+      .map((mission: any) => ({ ...mission, status: 'YET' }))
+      .sort((a: any, b: any) => a.th - b.th);
+
+  useEffect(() => {
+    const scrollToMission = searchParams.get('scroll_to_mission');
+    if (scrollToMission && lastMissionList) {
+      let isExist = false;
+      lastMissionList.forEach((mission: any) => {
+        if (mission.id === Number(scrollToMission)) {
+          isExist = true;
+          return;
+        }
+      });
+      setTabIndex(isExist ? 1 : 0);
+    }
+  }, [searchParams, setSearchParams, lastMissionList]);
+
   if (isLoading) {
     return <></>;
   }
-
-  let lastMissionList = missionList.filter(
-    (mission: any) => mission.th < todayTh,
-  );
-
-  let absentMissionList = lastMissionList
-    .filter((mission: any) => mission.attendanceStatus === 'ABSENT')
-    .map((mission: any) => ({ ...mission, status: 'ABSENT' }))
-    .sort((a: any, b: any) => a.th - b.th);
-
-  lastMissionList = lastMissionList
-    .filter((mission: any) => mission.attendanceStatus !== 'ABSENT')
-    .map((mission: any) => ({ ...mission, status: 'DONE' }))
-    .sort((a: any, b: any) => a.th - b.th);
-
-  let remainedMissionList = missionList
-    .filter((mission: any) => mission.th > todayTh)
-    .map((mission: any) => ({ ...mission, status: 'YET' }))
-    .sort((a: any, b: any) => a.th - b.th);
 
   return (
     <section

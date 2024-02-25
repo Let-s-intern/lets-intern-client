@@ -19,7 +19,7 @@ const MissionIcon = ({ className, mission }: Props) => {
   return (
     <>
       <Link
-        to={`/challenge/${params.programId}/me?scroll_to=other-mission`}
+        to={`/challenge/${params.programId}/me?scroll_to_mission=${mission.missionId}`}
         replace
         className={clsx(
           'relative flex aspect-square cursor-pointer flex-col items-center justify-center rounded-md text-white',
