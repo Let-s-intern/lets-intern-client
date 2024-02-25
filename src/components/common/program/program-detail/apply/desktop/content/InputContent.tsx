@@ -136,7 +136,7 @@ const InputContent = ({
       formData.major &&
       formData.university &&
       formData.inflowPath &&
-      (program.feeType === 'CHARGE' || program.feeType === 'DEPOSIT'
+      (program.feeType === 'CHARGE' || program.feeType === 'REFUND'
         ? formData.accountType && formData.accountNumber
         : true) &&
       (program.way === 'ALL' ? formData.way : true)
@@ -248,7 +248,7 @@ const InputContent = ({
               <MenuItem value="-1">졸업생</MenuItem>
             </Select>
           </FormControl>
-          {(program.feeType === 'CHARGE' || program.feeType === 'DEPOSIT') && (
+          {(program.feeType === 'CHARGE' || program.feeType === 'REFUND') && (
             <>
               <FormControl fullWidth sx={dropdownStyle}>
                 <InputLabel id="acccount-type">계좌 은행</InputLabel>

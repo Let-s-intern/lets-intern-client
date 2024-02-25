@@ -7,7 +7,7 @@ export const challengeTopicToText: Record<string, string> = {
 export const feeTypeToText: Record<string, string> = {
   FREE: '무료',
   CHARGE: '이용료',
-  DEPOSIT: '보증금',
+  REFUND: '보증금',
 };
 
 export const bankTypeToText: Record<string, string> = {

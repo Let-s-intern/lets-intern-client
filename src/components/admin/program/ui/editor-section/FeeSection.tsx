@@ -28,7 +28,7 @@ const FeeSection = ({ values, setValues }: Props) => {
           ))}
         </Select>
       </FormControl>
-      {(values.feeType === 'CHARGE' || values.feeType === 'DEPOSIT') && (
+      {(values.feeType === 'CHARGE' || values.feeType === 'REFUND') && (
         <>
           <Input
             label="금액"
@@ -65,15 +65,13 @@ const FeeSection = ({ values, setValues }: Props) => {
             }
           />
           <DateTimeControl>
-            <DateTimeLabel htmlFor="depositDueDate">
-              입금 마감 기한
-            </DateTimeLabel>
+            <DateTimeLabel htmlFor="feeDueDate">입금 마감 기한</DateTimeLabel>
             <input
-              id="depositDueDate"
+              id="feeDueDate"
               type="datetime-local"
-              value={values.depositDueDate}
+              value={values.feeDueDate}
               onChange={(e) =>
-                setValues({ ...values, depositDueDate: e.target.value })
+                setValues({ ...values, feeDueDate: e.target.value })
               }
             />
           </DateTimeControl>
