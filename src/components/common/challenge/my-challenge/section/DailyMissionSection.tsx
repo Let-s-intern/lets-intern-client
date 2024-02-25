@@ -15,9 +15,9 @@ const DailyMissionSection = ({ dailyMission }: Props) => {
 
   useEffect(() => {
     const scrollTo = searchParams.get('scroll_to');
-    setSearchParams({}, { replace: true });
     if (scrollTo === 'daily-mission') {
       sectionRef.current?.scrollIntoView({ behavior: 'smooth' });
+      setSearchParams({}, { replace: true });
     }
   }, [sectionRef, searchParams, setSearchParams]);
 

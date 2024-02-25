@@ -1,5 +1,6 @@
 import clsx from 'clsx';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 
 import axios from '../../../../../utils/axios';
@@ -11,6 +12,10 @@ interface Props {
 }
 
 const DoneMissionItem = ({ mission }: Props) => {
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const itemRef = useRef<HTMLLIElement>(null);
+
   const [isDetailShown, setIsDetailShown] = useState(false);
 
   const {
@@ -30,8 +35,25 @@ const DoneMissionItem = ({ mission }: Props) => {
     enabled: isDetailShown,
   });
 
+  useEffect(() => {
+    const scrollToMission = searchParams.get('scroll_to_mission');
+    if (scrollToMission) {
+      if (mission.th === Number(scrollToMission)) {
+        setIsDetailShown(true);
+        if (isDetailShown) {
+          itemRef.current?.scrollIntoView({ behavior: 'smooth' });
+          setSearchParams({}, { replace: true });
+        }
+      }
+    }
+  }, [searchParams, setSearchParams, isDetailShown]);
+
   return (
-    <li key={mission.id} className="rounded-xl bg-white p-6">
+    <li
+      key={mission.id}
+      className="scroll-mt-[calc(6rem+1rem)] rounded-xl bg-white p-6"
+      ref={itemRef}
+    >
       <div className="flex gap-6 px-3">
         <div
           className={clsx('h-12 w-[5px] rounded-lg', {

@@ -1,10 +1,11 @@
 import clsx from 'clsx';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 
 import axios from '../../../../../utils/axios';
 import AbsentMissionDetailMenu from './AbsentMissionDetailMenu';
 import { missionSubmitToBadge } from '../../../../../utils/convert';
+import { useSearchParams } from 'react-router-dom';
 
 interface Props {
   mission: any;
@@ -12,6 +13,9 @@ interface Props {
 
 const AbsentMissionItem = ({ mission }: Props) => {
   const queryClient = useQueryClient();
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const itemRef = useRef<HTMLLIElement>(null);
 
   const [isDetailShown, setIsDetailShown] = useState(false);
 
@@ -35,8 +39,25 @@ const AbsentMissionItem = ({ mission }: Props) => {
     queryClient.invalidateQueries({ queryKey: ['mission'] });
   }, [isDetailShown]);
 
+  useEffect(() => {
+    const scrollToMission = searchParams.get('scroll_to_mission');
+    if (scrollToMission) {
+      if (mission.th === Number(scrollToMission)) {
+        setIsDetailShown(true);
+        if (isDetailShown) {
+          itemRef.current?.scrollIntoView({ behavior: 'smooth' });
+          setSearchParams({}, { replace: true });
+        }
+      }
+    }
+  }, [searchParams, setSearchParams, isDetailShown]);
+
   return (
-    <li key={mission.id} className="rounded-xl bg-white p-6">
+    <li
+      key={mission.id}
+      className="scroll-mt-[calc(6rem+1rem)] rounded-xl bg-white p-6"
+      ref={itemRef}
+    >
       <div className="flex gap-6 px-3">
         <div className="h-12 w-[5px] rounded-lg bg-[#CECECE]" />
         <div className="flex flex-1 items-center justify-between">
