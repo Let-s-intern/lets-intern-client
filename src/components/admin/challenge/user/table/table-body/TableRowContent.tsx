@@ -15,15 +15,10 @@ const TableRowContent = ({ application, onClick }: Props) => {
 
   return (
     <div
-      className="flex cursor-pointer items-center border-b border-zinc-300 py-5 pl-3 font-pretendard"
+      className="flex cursor-pointer items-center justify-end border-b border-zinc-300 py-5 pl-3 font-pretendard"
       onClick={onClick}
     >
       <TableBodyCell className={clsx(cellWidthList[0])}>
-        <i>
-          <img src="/icons/admin-checkbox-unchecked.svg" alt="checkbox-icon" />
-        </i>
-      </TableBodyCell>
-      <TableBodyCell className={clsx(cellWidthList[1])}>
         <div className="flex items-center gap-2">
           <span className="text-lg">{application.name}</span>
           <span className="block rounded border border-black px-1 py-[1px] text-xs">
@@ -32,19 +27,19 @@ const TableRowContent = ({ application, onClick }: Props) => {
         </div>
         <div className="text-xs font-light">{application.university}</div>
       </TableBodyCell>
-      <TableBodyCell className={clsx(cellWidthList[2])}>
+      <TableBodyCell className={clsx(cellWidthList[1])}>
         {application.email}
       </TableBodyCell>
-      <TableBodyCell className={clsx(cellWidthList[3])}>
+      <TableBodyCell className={clsx(cellWidthList[2])}>
         {application.phoneNum}
       </TableBodyCell>
-      <TableBodyCell className={clsx(cellWidthList[4])}>
+      <TableBodyCell className={clsx(cellWidthList[3])}>
         {parseInflowPath(application.inflowPath)}
       </TableBodyCell>
-      <TableBodyCell className={clsx(cellWidthList[5])}>
+      <TableBodyCell className={clsx(cellWidthList[4])}>
         {application.accountType} {application.accountNumber}
       </TableBodyCell>
-      <TableBodyCell className={clsx(cellWidthList[6])}>
+      <TableBodyCell className={clsx(cellWidthList[5])}>
         <i className="text-xl">
           <IoMdArrowDropdown />
         </i>

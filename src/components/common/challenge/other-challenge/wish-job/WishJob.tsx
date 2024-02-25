@@ -9,9 +9,10 @@ import { MdEdit } from 'react-icons/md';
 
 interface Props {
   dashboard: any;
+  wishJobList: any;
 }
 
-const WishJob = ({ dashboard }: Props) => {
+const WishJob = ({ dashboard, wishJobList }: Props) => {
   const params = useParams();
   const queryClient = useQueryClient();
 
@@ -70,7 +71,7 @@ const WishJob = ({ dashboard }: Props) => {
             {isMenuOpen && (
               <div className="absolute left-0 top-10 w-[10rem] rounded border border-[#9D9D9D] bg-white text-sm shadow-lg">
                 <ul>
-                  {Object.keys(wishJobToText).map((wishJob: any) => (
+                  {wishJobList.map((wishJob: any) => (
                     <li
                       key={wishJob}
                       className="cursor-pointer px-3 py-2 transition-all hover:bg-neutral-200"

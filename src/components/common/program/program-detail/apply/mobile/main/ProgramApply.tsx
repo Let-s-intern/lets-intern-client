@@ -77,7 +77,7 @@ const ProgramApply = ({
       user.major &&
       user.university &&
       user.inflowPath &&
-      (program.feeType === 'CHARGE' || program.feeType === 'DEPOSIT'
+      (program.feeType === 'CHARGE' || program.feeType === 'REFUND'
         ? user.accountType && user.accountNumber
         : true) &&
       (program.way === 'ALL' ? user.way : true)
