@@ -42,7 +42,7 @@ const AbsentMissionItem = ({ mission }: Props) => {
   useEffect(() => {
     const scrollToMission = searchParams.get('scroll_to_mission');
     if (scrollToMission) {
-      if (mission.th === Number(scrollToMission)) {
+      if (mission.id === Number(scrollToMission)) {
         setIsDetailShown(true);
         if (isDetailShown) {
           itemRef.current?.scrollIntoView({ behavior: 'smooth' });

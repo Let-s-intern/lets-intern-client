@@ -32,14 +32,6 @@ const OtherMissionSection = ({ todayTh }: Props) => {
     },
   });
 
-  useEffect(() => {
-    const scrollTo = searchParams.get('scroll_to');
-    if (scrollTo === 'other-mission') {
-      sectionRef.current?.scrollIntoView({ behavior: 'smooth' });
-      setSearchParams({}, { replace: true });
-    }
-  }, [sectionRef, searchParams, setSearchParams]);
-
   const isLoading = getMissionList.isLoading || !missionList;
 
   useEffect(() => {
@@ -75,7 +67,7 @@ const OtherMissionSection = ({ todayTh }: Props) => {
     if (scrollToMission && lastMissionList) {
       let isExist = false;
       lastMissionList.forEach((mission: any) => {
-        if (mission.th === Number(scrollToMission)) {
+        if (mission.id === Number(scrollToMission)) {
           isExist = true;
           return;
         }
