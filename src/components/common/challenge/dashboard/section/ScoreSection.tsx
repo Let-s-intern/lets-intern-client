@@ -25,10 +25,17 @@ const ScoreSection = ({ refundInfo, isLoading }: Props) => {
       </div>
       <hr className="my-4 border-[#AEADB6]" />
       <div className="flex flex-1 flex-col">
-        <h2 className="font-semibold text-[#4A495C]">오늘 함께한 참여자</h2>
+        <h2 className="font-semibold text-[#4A495C]">
+          {refundInfo.yesterdayHeadCount !== null
+            ? '어제 성공한 참여자'
+            : '오늘 함께한 참여자'}
+        </h2>
         <div className="flex flex-1 items-center justify-start">
           <span className="font-pretendard text-2xl font-semibold text-[#4A495C]">
-            {refundInfo.headCount}명 🔥
+            {refundInfo.yesterdayHeadCount !== null
+              ? refundInfo.yesterdayHeadCount
+              : refundInfo.finalHeadCount}
+            명 🔥
           </span>
         </div>
       </div>
