@@ -46,7 +46,7 @@ const OtherDashboardDetail = () => {
           <span>이전으로</span>
         </Link>
         <h1 className="mt-1 text-2xl font-bold">{dashboard.name}의 기록장</h1>
-        <WishJob dashboard={dashboard} />
+        <WishJob dashboard={dashboard} wishJobList={wishJobList} />
         <Introduction dashboard={dashboard} />
       </header>
       <div className="mt-6">

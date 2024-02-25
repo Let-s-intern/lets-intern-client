@@ -16,7 +16,7 @@ const OtherDashboardItem = ({ dashboard }: Props) => {
       >
         <div className="flex items-center gap-2">
           <h2 className="text-xl font-semibold">{dashboard.name}</h2>
-          {dashboard.isMine && (
+          {dashboard.mine && (
             <span className="rounded-lg bg-primary px-2 py-1 text-xs font-semibold text-white">
               나
             </span>

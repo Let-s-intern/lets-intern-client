@@ -25,31 +25,37 @@ const NoticeSection = ({ noticeList, isLoading }: Props) => {
     <section className="flex w-[13rem] flex-col gap-4">
       <div className="flex flex-1 flex-col gap-2 rounded-xl border border-[#E4E4E7] p-6">
         <h2 className="font-semibold text-[#4A495C]">공지사항</h2>
-        <ul className="flex flex-1 flex-col gap-1">
-          {currentNoticeList.map((notice: any) => (
-            <Link
-              key={notice.id}
-              to={notice.link}
-              target="_blank"
-              rel="noopenner noreferrer"
-              className="overflow-hidden text-ellipsis whitespace-nowrap text-sm text-[#333333] hover:underline"
-            >
-              {notice.title}
-            </Link>
-          ))}
-          {currentNoticeList.length < 4 &&
-            Array.from(
-              { length: 4 - currentNoticeList.length },
-              (_, index) => index,
-            ).map((index) => (
-              <span
-                key={index}
-                className="overflow-hidden text-ellipsis whitespace-nowrap text-sm text-[#333333] opacity-0 hover:underline"
+        {currentNoticeList.length === 0 ? (
+          <div className="flex h-[5.75rem] justify-center">
+            <span className="mt-2">공지사항이 없습니다.</span>
+          </div>
+        ) : (
+          <ul className="flex flex-1 flex-col gap-1">
+            {currentNoticeList.map((notice: any) => (
+              <Link
+                key={notice.id}
+                to={notice.link}
+                target="_blank"
+                rel="noopenner noreferrer"
+                className="overflow-hidden text-ellipsis whitespace-nowrap text-sm text-[#333333] hover:underline"
               >
-                placeholder
-              </span>
+                {notice.title}
+              </Link>
             ))}
-        </ul>
+            {currentNoticeList.length < 4 &&
+              Array.from(
+                { length: 4 - currentNoticeList.length },
+                (_, index) => index,
+              ).map((index) => (
+                <span
+                  key={index}
+                  className="overflow-hidden text-ellipsis whitespace-nowrap text-sm text-[#333333] opacity-0 hover:underline"
+                >
+                  placeholder
+                </span>
+              ))}
+          </ul>
+        )}
         <div className="mt-2 flex justify-center gap-2">
           {Array.from({ length: totalPageCount }, (_, index) => index + 1).map(
             (pageNum) => (

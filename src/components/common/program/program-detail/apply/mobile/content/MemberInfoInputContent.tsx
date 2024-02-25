@@ -100,7 +100,7 @@ const MemberInfoInputContent = ({
               <MenuItem value="-1">졸업생</MenuItem>
             </Select>
           </FormControl>
-          {(program.feeType === 'CHARGE' || program.feeType === 'DEPOSIT') && (
+          {(program.feeType === 'CHARGE' || program.feeType === 'REFUND') && (
             <>
               {' '}
               <FormControl fullWidth sx={dropdownStyle}>

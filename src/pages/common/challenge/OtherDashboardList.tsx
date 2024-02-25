@@ -34,13 +34,25 @@ const OtherDashboardList = () => {
       const data = res.data;
       console.log(data);
       setPageInfo(data.pageInfo);
-      let newDashboardList =
-        filter === 'ALL' ||
-        filter === data.wishJobList[0] ||
-        filter === data.myDashboard.wishJob
-          ? [{ ...data.myDashboard, isMine: true }, ...data.dashboardList]
-          : data.dashboardList;
+      let newDashboardList = data.dashboardList;
       setDashboardList(newDashboardList);
+      return data;
+    },
+  });
+
+  const getWishJobList = useQuery({
+    queryKey: [
+      'programs',
+      params.programId,
+      'dashboard',
+      'entire',
+      { only: 'wishJobList' },
+    ],
+    queryFn: async () => {
+      const res = await axios.get(
+        `/program/${params.programId}/dashboard/entire`,
+      );
+      const data = res.data;
       setWishJobList(data.wishJobList);
       return data;
     },
@@ -48,6 +60,7 @@ const OtherDashboardList = () => {
 
   const isLoading =
     getOtherUserList.isLoading ||
+    getWishJobList.isLoading ||
     !dashboardList ||
     !pageInfo ||
     !filter ||
@@ -59,7 +72,7 @@ const OtherDashboardList = () => {
         <h1 className="text-2xl font-bold">모두의 기록장</h1>
         <p className="mt-2">안내 문구를 작성합니다.</p>
       </header>
-      {!isLoading && (
+      {wishJobList && (
         <SearchFilter
           filter={filter}
           setFilter={setFilter}
