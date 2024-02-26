@@ -75,11 +75,7 @@ const TableBodyRow = ({ th, mission }: Props) => {
       ...values,
       th: Number(values.th),
     };
-    if (values.isRefunded) {
-      newValues.refund = Number(values.refund);
-    } else {
-      delete newValues.refund;
-    }
+    newValues.refund = Number(values.refund);
     console.log(newValues);
     editMission.mutate(newValues);
   };

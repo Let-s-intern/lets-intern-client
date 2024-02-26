@@ -1,5 +1,3 @@
-import { Outlet, useLocation } from 'react-router-dom';
-
 import TableBody from '../../../components/admin/challenge/submit-check/table/table-body/TableBody';
 import TableHead from '../../../components/admin/challenge/submit-check/table/table-head/TableHead';
 import Heading from '../../../components/admin/challenge/ui/heading/Heading';
