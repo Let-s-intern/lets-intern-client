@@ -1,5 +1,5 @@
 import clsx from 'clsx';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 
 import { challengeSubmitDetailCellWidthList } from '../../../../../../utils/tableCellWidthList';
@@ -7,21 +7,33 @@ import StatusDropdown from './StatusDropdown';
 import ResultDropdown from './ResultDropdown';
 import CommentCell from './CommentCell';
 import RefundCheckbox from './RefundCheckbox';
+import ChoiceCheckbox from './ChoiceCheckbox';
 
 interface Props {
   attendance?: any;
   missionDetail?: any;
   th?: number;
   bgColor: 'DARK' | 'LIGHT';
+  isChecked: boolean;
+  setIsCheckedList: (isCheckedList: any) => void;
 }
 
-const TableRow = ({ attendance, missionDetail, th, bgColor }: Props) => {
-  const [attendanceResult, setAttendanceResult] = useState(
-    attendance?.result || '',
-  );
-  const [isRefunded, setIsRefunded] = useState(attendance?.isRefund || false);
+const TableRow = ({
+  attendance,
+  missionDetail,
+  th,
+  bgColor,
+  isChecked,
+  setIsCheckedList,
+}: Props) => {
+  const [attendanceResult, setAttendanceResult] = useState(attendance.result);
+  const [isRefunded, setIsRefunded] = useState(attendance.isRefund);
 
   const cellWidthList = challengeSubmitDetailCellWidthList;
+
+  useEffect(() => {
+    setIsRefunded(attendance.isRefund);
+  }, [attendance]);
 
   return (
     <div
@@ -30,10 +42,16 @@ const TableRow = ({ attendance, missionDetail, th, bgColor }: Props) => {
         'bg-[#F7F7F7]': bgColor === 'LIGHT',
       })}
     >
+      <ChoiceCheckbox
+        attendance={attendance}
+        cellWidthListIndex={0}
+        isChecked={isChecked}
+        setIsCheckedList={setIsCheckedList}
+      />
       <div
         className={clsx(
           'overflow-hidden text-ellipsis border-r border-[#D9D9D9] py-3 text-center text-sm',
-          cellWidthList[0],
+          cellWidthList[1],
         )}
       >
         {th || ''}
@@ -41,7 +59,7 @@ const TableRow = ({ attendance, missionDetail, th, bgColor }: Props) => {
       <div
         className={clsx(
           'overflow-hidden text-ellipsis border-r border-[#D9D9D9] py-3 text-center text-sm',
-          cellWidthList[1],
+          cellWidthList[2],
         )}
       >
         {attendance?.userName || <span className="opacity-0">hello</span>}
@@ -49,7 +67,7 @@ const TableRow = ({ attendance, missionDetail, th, bgColor }: Props) => {
       <div
         className={clsx(
           'overflow-hidden text-ellipsis border-r border-[#D9D9D9] py-3 text-center text-sm',
-          cellWidthList[2],
+          cellWidthList[3],
         )}
       >
         {attendance?.userEmail || ''}
@@ -57,17 +75,17 @@ const TableRow = ({ attendance, missionDetail, th, bgColor }: Props) => {
       <div
         className={clsx(
           'overflow-hidden text-ellipsis whitespace-nowrap border-r border-[#D9D9D9] py-3 text-center text-sm',
-          cellWidthList[3],
+          cellWidthList[4],
         )}
       >
         {attendance?.userAccountType || ''}{' '}
         {attendance?.userAccountNumber || ''}
       </div>
-      <StatusDropdown attendance={attendance} cellWidthListIndex={4} />
+      <StatusDropdown attendance={attendance} cellWidthListIndex={5} />
       <div
         className={clsx(
           'overflow-hidden text-ellipsis border-r border-[#D9D9D9] py-3 text-center text-sm',
-          cellWidthList[5],
+          cellWidthList[6],
         )}
       >
         {attendance && (
@@ -85,13 +103,14 @@ const TableRow = ({ attendance, missionDetail, th, bgColor }: Props) => {
         attendance={attendance}
         attendanceResult={attendanceResult}
         setAttendanceResult={setAttendanceResult}
-        cellWidthListIndex={6}
+        setIsRefunded={setIsRefunded}
+        cellWidthListIndex={7}
       />
       <RefundCheckbox
         attendance={attendance}
         attendanceResult={attendanceResult}
         missionDetail={missionDetail}
-        cellWidthListIndex={7}
+        cellWidthListIndex={8}
         isRefunded={isRefunded}
         setIsRefunded={setIsRefunded}
       />
