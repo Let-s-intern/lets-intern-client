@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 
 import TableHead from '../../../submit-check-detail/table/table-head/TableHead';
@@ -17,6 +17,9 @@ const ChallengeSubmitDetail = ({ mission, setIsDetailShown }: Props) => {
   const [missionDetail, setMissionDetail] = useState();
   const [attendanceList, setAttendanceList] = useState<any>();
   const [isCheckedList, setIsCheckedList] = useState<any>([]);
+  const [originalAttendanceList, setOriginalAttendanceList] = useState<any>();
+  const [resultFilter, setResultFilter] = useState('');
+  const [statusFilter, setStatusFilter] = useState('');
 
   const getMission = useQuery({
     queryKey: ['mission', 'detail', mission.id],
@@ -37,11 +40,29 @@ const ChallengeSubmitDetail = ({ mission, setIsDetailShown }: Props) => {
       });
       const data = res.data;
       setAttendanceList(data.attendanceList);
+      setOriginalAttendanceList(data.attendanceList);
       console.log(data);
       return data;
     },
     refetchOnWindowFocus: false,
   });
+
+  useEffect(() => {
+    if (!attendanceList) return;
+    let filteredList = [...originalAttendanceList];
+    if (resultFilter) {
+      filteredList = filteredList.filter((attendance: any) => {
+        return attendance.result === resultFilter;
+      });
+    }
+    if (statusFilter) {
+      filteredList = filteredList.filter((attendance: any) => {
+        return attendance.status === statusFilter;
+      });
+    }
+    setAttendanceList(filteredList);
+    setIsCheckedList([]);
+  }, [resultFilter, statusFilter]);
 
   const isLoading =
     getAttendanceList.isLoading ||
@@ -66,6 +87,10 @@ const ChallengeSubmitDetail = ({ mission, setIsDetailShown }: Props) => {
                 attendanceList={attendanceList}
                 isCheckedList={isCheckedList}
                 setIsCheckedList={setIsCheckedList}
+                resultFilter={resultFilter}
+                setResultFilter={setResultFilter}
+                statusFilter={statusFilter}
+                setStatusFilter={setStatusFilter}
               />
               {attendanceList.map((attendance: any, index: number) => (
                 <TableRow
