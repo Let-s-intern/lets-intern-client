@@ -12,6 +12,7 @@ interface Props {
   attendanceResult: string;
   setAttendanceResult: (attendanceResult: string) => void;
   cellWidthListIndex: number;
+  setIsRefunded: (isRefunded: boolean) => void;
 }
 
 const ResultDropdown = ({
@@ -19,6 +20,7 @@ const ResultDropdown = ({
   attendanceResult,
   setAttendanceResult,
   cellWidthListIndex,
+  setIsRefunded,
 }: Props) => {
   const [isMenuShown, setIsMenuShown] = useState(false);
 
@@ -28,12 +30,17 @@ const ResultDropdown = ({
     mutationFn: async (result: string) => {
       const res = await axios.patch(`/attendance/admin/${attendance.id}`, {
         result,
+        isRefunded:
+          result === 'PASS' && attendanceResult !== 'PASS' ? false : true,
       });
       const data = res.data;
       return data;
     },
     onSuccess: async (_, result: string) => {
       setIsMenuShown(false);
+      setIsRefunded(
+        result === 'PASS' && attendanceResult !== 'PASS' ? false : true,
+      );
       setAttendanceResult(result);
     },
   });

@@ -1,12 +1,21 @@
 import clsx from 'clsx';
 
 import { challengeSubmitDetailCellWidthList } from '../../../../../../utils/tableCellWidthList';
+import AllChoiceCheckbox from '../table-body/AllChoiceCheckbox';
 
 interface Props {
   className?: string;
+  attendanceList: any;
+  isCheckedList: any;
+  setIsCheckedList: (isCheckedList: any) => void;
 }
 
-const TableHead = ({ className }: Props) => {
+const TableHead = ({
+  className,
+  attendanceList,
+  isCheckedList,
+  setIsCheckedList,
+}: Props) => {
   const cellWidthList = challengeSubmitDetailCellWidthList;
 
   return (
@@ -16,10 +25,16 @@ const TableHead = ({ className }: Props) => {
         className,
       )}
     >
+      <AllChoiceCheckbox
+        cellWidthListIndex={0}
+        attendanceList={attendanceList}
+        isCheckedList={isCheckedList}
+        setIsCheckedList={setIsCheckedList}
+      />
       <div
         className={clsx(
           'border-r border-[#D9D9D9] py-3 text-center',
-          cellWidthList[0],
+          cellWidthList[1],
         )}
       >
         번호
@@ -27,7 +42,7 @@ const TableHead = ({ className }: Props) => {
       <div
         className={clsx(
           'border-r border-[#D9D9D9] py-3 text-center',
-          cellWidthList[1],
+          cellWidthList[2],
         )}
       >
         이름
@@ -35,7 +50,7 @@ const TableHead = ({ className }: Props) => {
       <div
         className={clsx(
           'border-r border-[#D9D9D9] py-3 text-center',
-          cellWidthList[2],
+          cellWidthList[3],
         )}
       >
         메일
@@ -43,7 +58,7 @@ const TableHead = ({ className }: Props) => {
       <div
         className={clsx(
           'border-r border-[#D9D9D9] py-3 text-center',
-          cellWidthList[3],
+          cellWidthList[4],
         )}
       >
         계좌번호
@@ -51,7 +66,7 @@ const TableHead = ({ className }: Props) => {
       <div
         className={clsx(
           'border-r border-[#D9D9D9] py-3 text-center',
-          cellWidthList[4],
+          cellWidthList[5],
         )}
       >
         제출현황
@@ -59,7 +74,7 @@ const TableHead = ({ className }: Props) => {
       <div
         className={clsx(
           'border-r border-[#D9D9D9] py-3 text-center',
-          cellWidthList[5],
+          cellWidthList[6],
         )}
       >
         미션
@@ -67,7 +82,7 @@ const TableHead = ({ className }: Props) => {
       <div
         className={clsx(
           'border-r border-[#D9D9D9] py-3 text-center',
-          cellWidthList[6],
+          cellWidthList[7],
         )}
       >
         확인여부
@@ -75,7 +90,7 @@ const TableHead = ({ className }: Props) => {
       <div
         className={clsx(
           'border-r border-[#D9D9D9] py-3 text-center',
-          cellWidthList[7],
+          cellWidthList[8],
         )}
       >
         환급여부

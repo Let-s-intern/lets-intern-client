@@ -29,12 +29,13 @@ const AccountDownloadButton = ({ mission }: Props) => {
 
   const getCSV = (accountList: any) => {
     const csv: any = [];
-    csv.push('이름,계좌번호');
+    csv.push('이름,계좌은행,계좌번호');
     accountList.forEach((account: any) => {
       const row = [];
       row.push(
         account.name,
-        `${bankTypeToText[account.accountType]} ${account.accountNumber}`,
+        bankTypeToText[account.accountType],
+        account.accountNumber,
       );
       csv.push(row.join(','));
     });
