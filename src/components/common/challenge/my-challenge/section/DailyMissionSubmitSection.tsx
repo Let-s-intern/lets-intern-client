@@ -66,11 +66,6 @@ const DailyMissionSubmitSection = ({ dailyMission }: Props) => {
           ? '링크를 제대로 확인해 주세요. 카톡으로 공유해야 미션 제출이 인정됩니다.'
           : '미션 제출이 완료되었습니다.'}
       </p>
-      {dailyMission.comments && (
-        <div className="mt-4 rounded-md border border-gray-300 bg-[#F2F2F2] px-8 py-6 text-sm">
-          {dailyMission.comments}
-        </div>
-      )}
       <div className="mt-4 flex items-stretch gap-4">
         <label
           htmlFor="link"

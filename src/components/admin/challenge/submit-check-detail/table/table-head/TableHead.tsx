@@ -2,12 +2,18 @@ import clsx from 'clsx';
 
 import { challengeSubmitDetailCellWidthList } from '../../../../../../utils/tableCellWidthList';
 import AllChoiceCheckbox from '../table-body/AllChoiceCheckbox';
+import ResultFilter from '../../filter/ResultFilter';
+import StatusFilter from '../../filter/StatusFilter';
 
 interface Props {
   className?: string;
   attendanceList: any;
   isCheckedList: any;
   setIsCheckedList: (isCheckedList: any) => void;
+  resultFilter: string;
+  setResultFilter: (resultFilter: string) => void;
+  statusFilter: string;
+  setStatusFilter: (statusFilter: string) => void;
 }
 
 const TableHead = ({
@@ -15,6 +21,10 @@ const TableHead = ({
   attendanceList,
   isCheckedList,
   setIsCheckedList,
+  resultFilter,
+  setResultFilter,
+  statusFilter,
+  setStatusFilter,
 }: Props) => {
   const cellWidthList = challengeSubmitDetailCellWidthList;
 
@@ -63,14 +73,11 @@ const TableHead = ({
       >
         계좌번호
       </div>
-      <div
-        className={clsx(
-          'border-r border-[#D9D9D9] py-3 text-center',
-          cellWidthList[5],
-        )}
-      >
-        제출현황
-      </div>
+      <StatusFilter
+        cellWidthListIndex={5}
+        statusFilter={statusFilter}
+        setStatusFilter={setStatusFilter}
+      />
       <div
         className={clsx(
           'border-r border-[#D9D9D9] py-3 text-center',
@@ -79,14 +86,11 @@ const TableHead = ({
       >
         미션
       </div>
-      <div
-        className={clsx(
-          'border-r border-[#D9D9D9] py-3 text-center',
-          cellWidthList[7],
-        )}
-      >
-        확인여부
-      </div>
+      <ResultFilter
+        cellWidthListIndex={7}
+        resultFilter={resultFilter}
+        setResultFilter={setResultFilter}
+      />
       <div
         className={clsx(
           'border-r border-[#D9D9D9] py-3 text-center',

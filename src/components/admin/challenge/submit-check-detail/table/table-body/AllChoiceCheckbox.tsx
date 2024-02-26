@@ -39,7 +39,10 @@ const AllChoiceCheckbox = ({
   };
 
   useEffect(() => {
-    setIsChecked(checkArrayEqual(isCheckedList, allCheckedList));
+    setIsChecked(
+      checkArrayEqual(isCheckedList, allCheckedList) &&
+        attendanceList.length > 0,
+    );
   }, [isChecked, isCheckedList, allCheckedList]);
 
   return (
