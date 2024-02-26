@@ -99,7 +99,7 @@ const TableRow = ({
           : ''}
       </TD>
       <TD>
-        <FormControl>
+        <FormControl className="w-full text-left">
           <InputLabel id="status">참가 확정</InputLabel>
           <Select
             labelId="status"
@@ -115,6 +115,7 @@ const TableRow = ({
             <MenuItem value="APPLIED">대기</MenuItem>
             <MenuItem value="IN_PROGRESS">참가확정</MenuItem>
             <MenuItem value="APPLIED_NOT_APPROVED">미선발</MenuItem>
+            <MenuItem value="FEE_NOT_APPROVED">미입금 미선발</MenuItem>
           </Select>
         </FormControl>
       </TD>

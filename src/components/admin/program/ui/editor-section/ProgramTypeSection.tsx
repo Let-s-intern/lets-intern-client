@@ -58,6 +58,15 @@ const ProgramTypeSection = ({
               setValues({ ...values, openKakaoLink: e.target.value })
             }
           />
+          <Input
+            type="number"
+            label="카카오톡 오픈채팅 비밀번호"
+            value={values.openKakaoPassword ? values.openKakaoPassword : ''}
+            placeholder="카카오톡 오픈채팅 비밀번호를 입력하세요"
+            onChange={(e: any) =>
+              setValues({ ...values, openKakaoPassword: e.target.value })
+            }
+          />
         </>
       )}
     </>
