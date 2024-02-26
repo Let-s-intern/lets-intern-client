@@ -44,13 +44,21 @@ const DoneMissionDetailMenu = ({ missionDetail }: Props) => {
             {missionDetail.attendanceLink}
           </Link>
         </div>
-        {missionDetail.attendanceComments && (
-          <div className="mt-4">
-            <div className="rounded-md bg-[#F2F2F2] px-8 py-6 text-sm">
-              {missionDetail.attendanceComments}
-            </div>
-          </div>
-        )}
+        {missionDetail.missionType === 'GENERAL'
+          ? missionDetail.missionComments && (
+              <div className="mt-4">
+                <div className="rounded-md bg-[#F2F2F2] px-8 py-6 text-sm">
+                  {missionDetail.missionComments}
+                </div>
+              </div>
+            )
+          : missionDetail.attendanceComments && (
+              <div className="mt-4">
+                <div className="rounded-md bg-[#F2F2F2] px-8 py-6 text-sm">
+                  {missionDetail.attendanceComments}
+                </div>
+              </div>
+            )}
       </div>
     </>
   );

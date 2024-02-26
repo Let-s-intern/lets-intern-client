@@ -41,7 +41,8 @@ const ApplicationCard = ({
           </div>
           {(application.programType === 'CHALLENGE_FULL' ||
             application.programType === 'CHALLENGE_HALF') &&
-            application.status === 'IN_PROGRESS' && (
+            application.status === 'IN_PROGRESS' &&
+            application.programFeeType !== 'FREE' && (
               <div className="rounded bg-neutral-500 px-2 py-[0.175rem] text-xs text-white">
                 {application.feeIsConfirmed ? '입금 확인' : '입금 미확인'}
               </div>

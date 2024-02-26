@@ -27,7 +27,7 @@ const NoticeSection = ({ noticeList, isLoading }: Props) => {
         <h2 className="font-semibold text-[#4A495C]">공지사항</h2>
         {currentNoticeList.length === 0 ? (
           <div className="flex h-[5.75rem] justify-center">
-            <span className="mt-2">공지사항이 없습니다.</span>
+            <span className="mt-2 text-sm">공지사항이 없습니다.</span>
           </div>
         ) : (
           <ul className="flex flex-1 flex-col gap-1">
