@@ -3,6 +3,7 @@ import { LiaExternalLinkAltSolid } from 'react-icons/lia';
 
 import formatDateString from '../../../../utils/formatDateString';
 import clsx from 'clsx';
+import TooltipQuestion from '../tooltip-question/TooltipQuestion';
 
 interface ApplicationCardProps {
   application: any;
@@ -29,23 +30,29 @@ const ApplicationCard = ({
         className="mypage-card"
         onClick={() => navigate(`/program/detail/${application.programId}`)}
       >
-        <div className="card-top">
-          <div
-            className="badge"
-            style={{
-              backgroundColor: statusToLabel[application.status].bgColor,
-              color: statusToLabel[application.status].color,
-            }}
-          >
-            {statusToLabel[application.status].label}
+        <div className="card-top justify-between">
+          <div className="flex items-center gap-1">
+            <div
+              className="badge"
+              style={{
+                backgroundColor: statusToLabel[application.status].bgColor,
+                color: statusToLabel[application.status].color,
+              }}
+            >
+              {statusToLabel[application.status].label}
+            </div>
+            {application.status === 'IN_PROGRESS' &&
+              application.programFeeType !== 'FREE' && (
+                <div className="rounded bg-neutral-500 px-2 py-[0.175rem] text-xs text-white">
+                  {application.feeIsConfirmed ? '입금 확인' : '입금 미확인'}
+                </div>
+              )}
           </div>
-          {(application.programType === 'CHALLENGE_FULL' ||
-            application.programType === 'CHALLENGE_HALF') &&
-            application.status === 'IN_PROGRESS' &&
-            application.programFeeType !== 'FREE' && (
-              <div className="rounded bg-neutral-500 px-2 py-[0.175rem] text-xs text-white">
-                {application.feeIsConfirmed ? '입금 확인' : '입금 미확인'}
-              </div>
+          {application.status === 'IN_PROGRESS' &&
+            application.programFeeType === 'REFUND' &&
+            (application.programType === 'CHALLENGE_FULL' ||
+              application.programType === 'CHALLENGE_HALF') && (
+              <TooltipQuestion application={application} />
             )}
         </div>
         <div className="card-body">

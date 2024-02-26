@@ -34,12 +34,8 @@ const TableRowEditorMenu = ({
   };
 
   useEffect(() => {
-    setValues({ ...values, isRefunded: hasRefund });
+    setValues({ ...values, refund: hasRefund ? values?.refund : 0 });
   }, [hasRefund]);
-
-  useEffect(() => {
-    console.log(values);
-  }, [values]);
 
   return (
     <div className={clsx('rounded bg-neutral-100 px-4 py-8', className)}>

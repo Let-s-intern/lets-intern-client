@@ -31,14 +31,25 @@ const FeeSection = ({ values, setValues }: Props) => {
       {(values.feeType === 'CHARGE' || values.feeType === 'REFUND') && (
         <>
           <Input
-            label="금액"
+            label="이용료 금액"
             type="number"
-            value={values.feeTotal ? values.feeTotal : ''}
-            placeholder="금액을 입력하세요"
+            value={values.feeCharge ? values.feeCharge : ''}
+            placeholder="이용료 금액을 입력하세요"
             onChange={(e: any) =>
-              setValues({ ...values, feeTotal: e.target.value })
+              setValues({ ...values, feeCharge: e.target.value })
             }
           />
+          {values.feeType === 'REFUND' && (
+            <Input
+              label="보증금 금액"
+              type="number"
+              value={values.feeRefund ? values.feeRefund : ''}
+              placeholder="보증금 금액을 입력하세요"
+              onChange={(e: any) =>
+                setValues({ ...values, feeRefund: e.target.value })
+              }
+            />
+          )}
           <FormControl fullWidth>
             <InputLabel id="accountType">입금계좌 은행</InputLabel>
             <Select
