@@ -62,13 +62,14 @@ const AbsentMissionSubmitMenu = ({ missionDetail }: Props) => {
   return (
     <form onSubmit={handleMissionLinkSubmit} className="px-3">
       <h3 className="text-lg font-semibold">미션 제출하기</h3>
-      {missionDetail.attendanceResult !== 'WRONG' && isAttended && (
-        <p className="mt-1 text-sm">
-          {isAttended
-            ? '미션 제출이 완료되었습니다.'
-            : missionDetail.attendanceResult === 'WRONG' &&
-              '이전에 제출한 미션이 반려되셨습니다. 다시 제출해주세요.'}
-        </p>
+      {isAttended ? (
+        <p className="mt-1 text-sm">미션 제출이 완료되었습니다.</p>
+      ) : (
+        missionDetail.attendanceResult === 'WRONG' && (
+          <p className="mt-1 text-sm">
+            아래 반려 사유를 확인하여, 다시 제출해주세요!
+          </p>
+        )
       )}
       {missionDetail.attendanceComments && (
         <div className="mt-4">
