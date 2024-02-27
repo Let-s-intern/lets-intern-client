@@ -22,9 +22,9 @@ const TableBodyRow = ({ th, mission }: Props) => {
   const [errorMessage, setErrorMessage] = useState('');
 
   const getMission = useQuery({
-    queryKey: ['mission', 'detail', mission.id],
+    queryKey: ['mission', 'admin', 'detail', mission.id],
     queryFn: async () => {
-      const res = await axios.get(`/mission/detail/${mission.id}`);
+      const res = await axios.get(`/mission/admin/detail/${mission.id}`);
       const data = res.data;
       setMissionDetail(data);
       setValues({
