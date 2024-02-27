@@ -12,9 +12,9 @@ const TableBody = () => {
   const [missionList, setMissionList] = useState<any>();
 
   const getMissionList = useQuery({
-    queryKey: ['mission', params.programId],
+    queryKey: ['mission', 'admin', params.programId],
     queryFn: async () => {
-      const res = await axios.get(`/mission/${params.programId}`);
+      const res = await axios.get(`/mission/admin/${params.programId}`);
       const data = res.data;
       console.log(data);
       setMissionList(data.missionList);

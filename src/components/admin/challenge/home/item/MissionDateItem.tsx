@@ -12,9 +12,9 @@ const MissionDateItem = ({ mission }: Props) => {
   const [content, setContent] = useState('');
 
   const getMissionContent = useQuery({
-    queryKey: ['mission', 'detail', mission.id],
+    queryKey: ['mission', 'admin', 'detail', mission.id],
     queryFn: async () => {
-      const res = await axios.get(`/mission/detail/${mission.id}`);
+      const res = await axios.get(`/mission/admin/detail/${mission.id}`);
       const data = res.data.contents;
       setContent(data);
       return data;

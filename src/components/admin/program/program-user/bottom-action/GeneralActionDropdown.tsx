@@ -1,21 +1,19 @@
-import styled from 'styled-components';
+import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 
-import axios from '../../../../../utils/axios';
 import ActionButton from '../../../ui/button/ActionButton';
+import axios from '../../../../../utils/axios';
 
-interface BottomDownloadProps {
+interface Props {
   program: any;
   sizePerPage: number;
   maxPage: number;
 }
 
-const BottomDownload = ({
-  program,
-  sizePerPage,
-  maxPage,
-}: BottomDownloadProps) => {
+const GeneralActionDropdown = ({ program, sizePerPage, maxPage }: Props) => {
   const params = useParams();
+
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const handleDownloadList = async (
     isApproved: boolean,
@@ -62,6 +60,7 @@ const BottomDownload = ({
       program.title;
     const emailString = subject + '\n' + emailList.join('\n');
     downloadFile(subject + '.txt', emailString);
+    setIsMenuOpen(false);
   };
 
   const downloadFile = (fileName: string, fileContent: string) => {
@@ -77,48 +76,44 @@ const BottomDownload = ({
   };
 
   return (
-    <BottomDownloadBlock>
+    <div className="relative">
       <ActionButton
-        width="10rem"
-        bgColor="green"
-        onClick={() => handleDownloadList(true, 'EMAIL')}
+        width="5rem"
+        bgColor="gray"
+        onClick={() => setIsMenuOpen(!isMenuOpen)}
       >
-        참가확정 이메일
+        일반
       </ActionButton>
-      <ActionButton
-        width="10rem"
-        bgColor="red"
-        onClick={() => handleDownloadList(false, 'EMAIL')}
-      >
-        미선발 이메일
-      </ActionButton>
-      <ActionButton
-        width="10rem"
-        bgColor="green"
-        onClick={() => handleDownloadList(true, 'PHONE')}
-      >
-        참가확정 전화번호
-      </ActionButton>
-      <ActionButton
-        width="10rem"
-        bgColor="red"
-        onClick={() => handleDownloadList(false, 'PHONE')}
-      >
-        미선발 전화번호
-      </ActionButton>
-    </BottomDownloadBlock>
+      {isMenuOpen && (
+        <ul className="absolute -top-2 left-1/2 w-48 -translate-x-1/2 -translate-y-full overflow-hidden rounded border border-neutral-300 bg-white shadow-lg">
+          <li
+            className="cursor-pointer px-3 py-3 text-sm font-medium duration-200 hover:bg-neutral-200"
+            onClick={() => handleDownloadList(true, 'EMAIL')}
+          >
+            참가확정 이메일
+          </li>
+          <li
+            className="cursor-pointer px-3 py-3 text-sm font-medium duration-200 hover:bg-neutral-200"
+            onClick={() => handleDownloadList(true, 'PHONE')}
+          >
+            참가확정 전화번호
+          </li>
+          <li
+            className="cursor-pointer px-3 py-3 text-sm font-medium duration-200 hover:bg-neutral-200"
+            onClick={() => handleDownloadList(false, 'EMAIL')}
+          >
+            미선발 이메일
+          </li>
+          <li
+            className="cursor-pointer px-3 py-3 text-sm font-medium duration-200 hover:bg-neutral-200"
+            onClick={() => handleDownloadList(false, 'PHONE')}
+          >
+            미선발 전화번호
+          </li>
+        </ul>
+      )}
+    </div>
   );
 };
 
-export default BottomDownload;
-
-const BottomDownloadBlock = styled.div`
-  width: calc(100vw - 250px);
-  position: fixed;
-  bottom: 3rem;
-  left: 250px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 1rem;
-`;
+export default GeneralActionDropdown;

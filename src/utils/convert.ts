@@ -76,7 +76,7 @@ export const topicToText: any = {
 
 export const missionTypeToText: any = {
   GENERAL: '일반',
-  ADDITIONAL: '추가 컨텐츠',
+  ADDITIONAL: '제한 컨텐츠',
   REFUND: '보증금',
 };
 

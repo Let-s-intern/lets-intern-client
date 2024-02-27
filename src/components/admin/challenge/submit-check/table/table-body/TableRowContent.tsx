@@ -35,7 +35,7 @@ const TableRowContent = ({ th, mission, onClick }: Props) => {
         {topicToText[mission.essentialContentsTopic] || '없음'}
       </TableBodyCell>
       <TableBodyCell className={clsx(cellWidthList[5])}>
-        {mission.attendanceCount}
+        {mission.attendanceCount} / {mission.finalHeadCount}
       </TableBodyCell>
       <TableBodyCell className={clsx(cellWidthList[6])}>
         <StatusDropdown mission={mission} />

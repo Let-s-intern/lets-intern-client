@@ -22,9 +22,9 @@ const ChallengeSubmitDetail = ({ mission, setIsDetailShown }: Props) => {
   const [statusFilter, setStatusFilter] = useState('');
 
   const getMission = useQuery({
-    queryKey: ['mission', 'detail', mission.id],
+    queryKey: ['mission', 'admin', 'detail', mission.id],
     queryFn: async () => {
-      const res = await axios.get(`/mission/detail/${mission.id}`);
+      const res = await axios.get(`/mission/admin/detail/${mission.id}`);
       const data = res.data;
       setMissionDetail(data);
       console.log(data);
@@ -33,9 +33,9 @@ const ChallengeSubmitDetail = ({ mission, setIsDetailShown }: Props) => {
   });
 
   const getAttendanceList = useQuery({
-    queryKey: ['attendance', { missionId: mission.id }],
+    queryKey: ['attendance', 'admin', { missionId: mission.id }],
     queryFn: async () => {
-      const res = await axios.get(`/attendance`, {
+      const res = await axios.get(`/attendance/admin`, {
         params: { missionId: mission.id },
       });
       const data = res.data;
