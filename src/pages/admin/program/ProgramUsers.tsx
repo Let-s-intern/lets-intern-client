@@ -8,7 +8,7 @@ import TableHead from '../../../components/admin/program/program-user/table-cont
 import TableBody from '../../../components/admin/program/program-user/table-content/TableBody';
 import axios from '../../../utils/axios';
 import AdminPagination from '../../../components/admin/ui/pagination/AdminPagination';
-import BottomDownload from '../../../components/admin/program/program-user/download/BottomDownload';
+import BottomAction from '../../../components/admin/program/program-user/bottom-action/BottomAction';
 import classes from './ProgramUsers.module.scss';
 
 const ProgramUsers = () => {
@@ -114,17 +114,17 @@ const ProgramUsers = () => {
             handleApplicationStatusChange={handleApplicationStatusChange}
           />
         </Table>
-        <BottomDownload
-          program={program}
-          sizePerPage={pageParams.size}
-          maxPage={maxPage}
-        />
         {applications.length > 0 && (
           <div className={classes.pagination}>
             <AdminPagination maxPage={maxPage} />
           </div>
         )}
       </main>
+      <BottomAction
+        program={program}
+        sizePerPage={pageParams.size}
+        maxPage={maxPage}
+      />
     </div>
   );
 };
