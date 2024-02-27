@@ -17,9 +17,9 @@ const MissionResultSection = () => {
   const [todayTh, setTodayTh] = useState<number>();
 
   const getMissionResult = useQuery({
-    queryKey: ['mission', params.programId, 'simple'],
+    queryKey: ['mission', 'admin', params.programId, 'simple'],
     queryFn: async () => {
-      const res = await axios.get(`/mission/${params.programId}/simple`);
+      const res = await axios.get(`/mission/admin/${params.programId}/simple`);
       const data = res.data;
       console.log(data);
       setMissionList(data.missionList);

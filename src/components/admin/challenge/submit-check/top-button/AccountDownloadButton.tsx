@@ -12,9 +12,9 @@ const AccountDownloadButton = ({ mission }: Props) => {
   const [accountList, setAccountList] = useState<any>();
 
   useQuery({
-    queryKey: ['attendance', mission.id, 'refund'],
+    queryKey: ['attendance', 'admin', mission.id, 'refund'],
     queryFn: async () => {
-      const res = await axios.get(`/attendance/${mission.id}/refund`);
+      const res = await axios.get(`/attendance/admin/${mission.id}/refund`);
       const data = res.data;
       console.log(data);
       setAccountList(data.accountVoList);
