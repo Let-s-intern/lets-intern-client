@@ -13,7 +13,7 @@ const MissionSection = ({ missionList, todayTh }: Props) => {
         <h2 className="text-xl font-semibold text-[#4A495C]">
           일정 및 미션 제출 현황
         </h2>
-        {/* <MissionTooltipQuestion /> */}
+        <MissionTooltipQuestion />
       </div>
       <MissionCalendar
         className="mt-4"

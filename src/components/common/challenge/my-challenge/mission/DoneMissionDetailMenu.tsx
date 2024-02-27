@@ -44,7 +44,7 @@ const DoneMissionDetailMenu = ({ missionDetail }: Props) => {
             {missionDetail.attendanceLink}
           </Link>
         </div>
-        {missionDetail.missionType === 'GENERAL'
+        {missionDetail.type === 'GENERAL'
           ? missionDetail.missionComments && (
               <div className="mt-4">
                 <div className="rounded-md bg-[#F2F2F2] px-8 py-6 text-sm">

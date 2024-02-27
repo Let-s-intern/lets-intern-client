@@ -38,12 +38,12 @@ const ProgramUsers = () => {
   const applicationsQuery = useQuery({
     queryKey: [
       'applications',
-      'program',
+      'admin',
       params.programId,
       { page: pageParams.page },
     ],
-    queryFn: async ({ queryKey }) => {
-      const res = await axios.get(`/application/admin/${queryKey[2]}`, {
+    queryFn: async () => {
+      const res = await axios.get(`/application/admin/${params.programId}`, {
         params: pageParams,
       });
       const { applicationList, pageInfo } = res.data;
@@ -71,7 +71,7 @@ const ProgramUsers = () => {
     applicationId: number,
   ) => {
     try {
-      await axios.patch(`/application/${applicationId}`, {
+      await axios.patch(`/application/admin/${applicationId}`, {
         status: e.target.value,
         isApproved: e.target.value === 'IN_PROGRESS',
       });

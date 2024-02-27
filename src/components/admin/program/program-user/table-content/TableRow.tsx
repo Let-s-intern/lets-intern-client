@@ -33,7 +33,7 @@ const TableRow = ({
   const editIsFeeConfirmed = useMutation({
     mutationFn: async () => {
       const res = await axios.patch(
-        `/application/${application.application.id}`,
+        `/application/admin/${application.application.id}`,
         {
           feeIsConfirmed: !isFeeConfirmed,
         },

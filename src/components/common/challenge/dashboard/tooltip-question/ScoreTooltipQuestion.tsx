@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 
-const MissionTooltipQuestion = () => {
+const ScrollTooltipQuestion = () => {
   const tooltipRef = useRef<HTMLDivElement>(null);
 
   const [isTooltipOpen, setIsTooltipOpen] = useState(false);
@@ -30,21 +30,18 @@ const MissionTooltipQuestion = () => {
         <img src="/icons/tooltip-question.svg" alt="tooltip question" />
       </i>
       {isTooltipOpen && (
-        <div className="absolute -right-4 -top-3 z-30 translate-x-full rounded border border-gray-400 bg-white">
+        <div className="absolute -bottom-4 left-1/2 z-30 -translate-x-1/2 translate-y-full rounded border border-gray-400 bg-white">
           <div
-            className="absolute left-0 top-1.5 h-6 w-3 -translate-x-full bg-gray-400"
-            style={{ clipPath: 'polygon(0 50%, 100% 100%, 100% 0)' }}
+            className="absolute left-1/2 top-0 h-3 w-6 -translate-x-1/2 -translate-y-full bg-gray-400"
+            style={{ clipPath: 'polygon(50% 0%, 0% 100%, 100% 100%)' }}
           />
           <div
-            className="absolute left-[1.5px] top-1.5 h-6 w-3 -translate-x-full bg-white"
-            style={{ clipPath: 'polygon(0% 50%, 100% 100%, 100% 0%)' }}
+            className="absolute left-1/2 top-[1.5px] h-3 w-6 -translate-x-1/2 -translate-y-full bg-white"
+            style={{ clipPath: 'polygon(50% 0%, 0% 100%, 100% 100%)' }}
           />
-          <div className="flex h-48 w-[600px] items-center justify-center px-4">
-            <img
-              src="/images/mission-date-question-image.svg"
-              alt="미션 제출 현황 아이콘 설명 이미지"
-              className="h-full object-contain"
-            />
+          <div className="flex w-[300px] items-center justify-center px-4 py-4 text-sm">
+            환급 미션의 ‘정상 제출'이 완료된 미션에 한해 환급이 진행됩니다.
+            자세한 내용은 환급정책을 확인해 주세요.
           </div>
         </div>
       )}
@@ -52,4 +49,4 @@ const MissionTooltipQuestion = () => {
   );
 };
 
-export default MissionTooltipQuestion;
+export default ScrollTooltipQuestion;

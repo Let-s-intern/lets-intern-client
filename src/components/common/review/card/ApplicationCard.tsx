@@ -51,7 +51,8 @@ const ApplicationCard = ({
           {application.status === 'IN_PROGRESS' &&
             application.programFeeType === 'REFUND' &&
             (application.programType === 'CHALLENGE_FULL' ||
-              application.programType === 'CHALLENGE_HALF') && (
+              application.programType === 'CHALLENGE_HALF') &&
+            !application.feeIsConfirmed && (
               <TooltipQuestion application={application} />
             )}
         </div>

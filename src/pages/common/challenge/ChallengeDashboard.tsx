@@ -72,6 +72,7 @@ const ChallengeDashboard = () => {
           <ScoreSection
             refundInfo={refundInfo}
             isLoading={isLoading || !refundInfo}
+            todayTh={todayTh}
           />
           <NoticeSection
             noticeList={noticeList}
