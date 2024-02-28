@@ -6,6 +6,7 @@ import MainInfo from '../../../components/common/mypage/section/privacy/MainInfo
 import PasswordChange from '../../../components/common/mypage/section/privacy/PasswordChange';
 import SubInfo from '../../../components/common/mypage/section/privacy/SubInfo';
 import AlertModal from '../../../components/ui/alert/AlertModal';
+import AccountInfo from '../../../components/common/mypage/section/privacy/AccountInfo';
 
 const Privacy = () => {
   const [userInfo, setUserInfo] = useState<any>({
@@ -74,6 +75,7 @@ const Privacy = () => {
         setShowAlert={setShowAlert}
         setAlertInfo={setAlertInfo}
       />
+      <AccountInfo />
       <SubInfo
         subInfoValues={userInfo.subInfoValues}
         initialValues={userInfo.initialValues}
@@ -83,7 +85,6 @@ const Privacy = () => {
         setShowAlert={setShowAlert}
         setAlertInfo={setAlertInfo}
       />
-      {/* <AccountInfo /> */}
       <PasswordChange
         passwordValues={userInfo.passwordValues}
         setUserInfo={setUserInfo}

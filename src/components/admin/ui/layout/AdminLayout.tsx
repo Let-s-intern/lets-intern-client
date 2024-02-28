@@ -53,7 +53,7 @@ const AdminLayout = () => {
         {
           name: '챌린지 운영',
           url: `/admin/challenge/${
-            localStorage.getItem('admin-challenge-id') || 19
+            localStorage.getItem('admin-challenge-id') || 35
           }`,
         },
       ],
