@@ -15,7 +15,7 @@ const AccountInfo = ({}: AccountInfoProps) => {
   const [values, setValues] = useState<any>();
 
   const getUser = useQuery({
-    queryKey: ['user'],
+    queryKey: ['user', 'account'],
     queryFn: async () => {
       const res = await axios.get('/user');
       const data = res.data;
@@ -74,6 +74,9 @@ const AccountInfo = ({}: AccountInfoProps) => {
                 name="accountNumber"
                 autoComplete="off"
                 value={values.accountNumber}
+                onChange={(e) =>
+                  setValues({ ...values, accountNumber: e.target.value })
+                }
               />
             </div>
           </div>
