@@ -28,7 +28,7 @@ const Privacy = () => {
   });
 
   const { isError } = useQuery({
-    queryKey: ['user'],
+    queryKey: ['user', 'privacy'],
     queryFn: async () => {
       const res = await axios.get('/user');
       const { name, email, phoneNum, major, university, authProvider } =
