@@ -141,7 +141,7 @@ export const missionSubmitToBadge = ({
     };
   }
 
-  if (status === 'LATE') {
+  if (status === 'LATE' || (status === 'UPDATED' && result === 'PASS')) {
     return {
       text: '지각',
       style: 'bg-[#E3E3E3] text-[#9B9B9B]',
