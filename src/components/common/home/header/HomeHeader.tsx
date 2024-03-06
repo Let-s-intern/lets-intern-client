@@ -12,15 +12,18 @@ const HomeHeader = () => {
       <div className="flex h-48 w-full items-center justify-center bg-[#2F3437] py-4 font-pretendard">
         <div className="mx-auto flex w-full max-w-[568px] items-center justify-between px-6">
           <div>
-            <h1 className="mt-1 text-lg font-semibold text-white sm:text-[1.75rem]">
+            <h1 className="mt-1 text-xl font-semibold text-white sm:text-[1.75rem]">
               인턴 지원 챌린지 15기 모집
             </h1>
-            <p className="mt-1 text-xs text-white xs:text-sm sm:text-base">
+            <p className="mt-1 text-sm text-white xs:text-sm sm:text-base">
               매일 미션 수행하고 2주 만에 인턴 지원하자!
             </p>
-            <button className="mt-3 rounded bg-white px-3 py-1 text-sm font-semibold text-[#2F3437]">
+            <Link
+              to="/program?category=CHALLENGE"
+              className="mt-3 inline-block rounded bg-white px-3 py-1 text-sm font-semibold text-[#2F3437]"
+            >
               신청하기
-            </button>
+            </Link>
           </div>
           <div>
             <i>
