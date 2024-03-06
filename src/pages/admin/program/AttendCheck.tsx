@@ -28,7 +28,7 @@ const AttendCheck = () => {
   }, [params.programId]);
 
   const handleAttendCheckChange = async (e: any, applicationId: number) => {
-    await axios.patch(`/application/${applicationId}`, {
+    await axios.patch(`/application/admin/${applicationId}`, {
       attendance: e.target.value,
     });
     const res = await axios.get(`/application/admin/${params.programId}`);
