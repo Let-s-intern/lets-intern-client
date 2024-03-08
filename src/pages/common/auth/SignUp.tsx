@@ -177,7 +177,7 @@ const SignUp = () => {
                   onClick={(e) => {
                     e.stopPropagation();
                     window.open(
-                      'https://ddayeah.notion.site/e3dff22b6bb6428bb841008cd1740759?pvs=4',
+                      'https://letsintern.notion.site/e3dff22b6bb6428bb841008cd1740759?pvs=74',
                       '_blank',
                     );
                   }}
