@@ -37,7 +37,7 @@ const CurriculumItem = ({
       </div>
       {isOpen && (
         <div className="mb-4 mt-2 px-2">
-          <p className="text-center text-sm">{description}</p>
+          <p className="break-keep text-center text-sm">{description}</p>
         </div>
       )}
     </li>
