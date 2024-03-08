@@ -62,7 +62,7 @@ const PrivacyPolicyModal = ({
               onClick={(e) => {
                 e.stopPropagation();
                 window.open(
-                  'https://ddayeah.notion.site/22c0a812e31c4eb5afcd64e077d447be?pvs=4',
+                  'https://letsintern.notion.site/22c0a812e31c4eb5afcd64e077d447be?pvs=74',
                   '_blank',
                 );
               }}
