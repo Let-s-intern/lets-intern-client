@@ -74,7 +74,7 @@ const NoticeSection = ({ noticeList, isLoading }: Props) => {
       <ul className="flex rounded-xl border border-[#E4E4E7]">
         <li className="flex flex-1">
           <Link
-            to="https://www.youtube.com"
+            to="https://letsintern.notion.site/d514a9ba8b3f40e2b2e81a448468b941?pvs=4"
             className="flex h-16 w-16 flex-1 cursor-pointer items-center justify-center rounded-xl text-center text-sm transition-all duration-200 hover:bg-[#F0F0F0]"
             target="_blank"
             rel="noopenner noreferrer"
@@ -86,7 +86,7 @@ const NoticeSection = ({ noticeList, isLoading }: Props) => {
         </li>
         <li className="flex flex-1">
           <Link
-            to="https://www.naver.com"
+            to="https://letsintern.notion.site/0102aa215e1b4bf3b76f999f5cb907f2?pvs=4"
             className="flex h-16 w-16 flex-1 cursor-pointer items-center justify-center rounded-xl text-center text-sm transition-all duration-200 hover:bg-[#F0F0F0]"
             target="_blank"
             rel="noopenner noreferrer"
@@ -98,7 +98,7 @@ const NoticeSection = ({ noticeList, isLoading }: Props) => {
         </li>
         <li className="flex flex-1">
           <Link
-            to="https://www.google.com"
+            to="https://letsintern.notion.site/3fbe143bda6b4613826a78da74b08b65?pvs=4"
             className="flex h-16 w-16 flex-1 cursor-pointer items-center justify-center rounded-xl text-center text-sm transition-all duration-200 hover:bg-[#F0F0F0]"
             target="_blank"
             rel="noopenner noreferrer"
