@@ -14,10 +14,17 @@ const ChallengeUser = () => {
   const [applicationList, setApplicationList] = useState<any>();
 
   const getApplicationList = useQuery({
-    queryKey: ['application', 'admin', 'challenge', params.programId],
+    queryKey: [
+      'application',
+      'admin',
+      'challenge',
+      params.programId,
+      { page: 1, size: 1000 },
+    ],
     queryFn: async () => {
       const res = await axios.get(
         `/application/admin/challenge/${params.programId}`,
+        { params: { page: 1, size: 1000 } },
       );
       const data = res.data;
       setApplicationList(data.applicationList);
