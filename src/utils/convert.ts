@@ -38,8 +38,6 @@ export const wishJobToText: any = {
   MARKETING_PERFORMANCE: '퍼포먼스 마케팅',
   MARKETING_CRM: 'CRM 마케팅',
   MARKETING_CONTENTS: '콘텐츠 마케팅',
-  MARKETING_PR: '홍보 PR',
-  MARKETING_AE: '광고대행사 (AE)',
 
   AD_ALL: '광고 전반',
   AD_PR: '홍보 PR',
