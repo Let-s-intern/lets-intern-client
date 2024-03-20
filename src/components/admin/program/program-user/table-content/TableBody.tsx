@@ -1,18 +1,3 @@
-import {
-  Checkbox,
-  FormControl,
-  InputLabel,
-  MenuItem,
-  Select,
-} from '@mui/material';
-import { Link } from 'react-router-dom';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-
-import TD from '../../../ui/table/TD';
-import parseInflowPath from '../../../../../utils/parseInflowPath';
-import parseGrade from '../../../../../utils/parseGrade';
-import { bankTypeToText, wishJobToText } from '../../../../../utils/convert';
-import axios from '../../../../../utils/axios';
 import TableRow from './TableRow';
 
 interface UserTableBodyProps {

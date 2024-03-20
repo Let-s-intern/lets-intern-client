@@ -6,7 +6,6 @@ import { useQuery } from '@tanstack/react-query';
 import axios from '../../../utils/axios';
 import OtherMissionItem from '../../../components/common/challenge/other-challenge/mission/OtherMissionItem';
 import Introduction from '../../../components/common/challenge/other-challenge/introduction/Introduction';
-import { wishJobToText } from '../../../utils/convert';
 import WishJob from '../../../components/common/challenge/other-challenge/wish-job/WishJob';
 
 const OtherDashboardDetail = () => {
