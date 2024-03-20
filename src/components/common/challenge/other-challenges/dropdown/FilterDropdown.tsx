@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { IoMdArrowDropdown } from 'react-icons/io';
 
-import { wishJobToTextForSorting } from '../../../../../utils/convert';
+import { wishJobToText } from '../../../../../utils/convert';
 import { useQuery } from '@tanstack/react-query';
 import axios from '../../../../../utils/axios';
 
@@ -47,7 +47,7 @@ const FilterDropdown = ({ filter, setFilter, wishJobList }: Props) => {
           ) : filter === 'DEVELOPMENT_ALL' || filter === 'MARKETING_ALL' ? (
             '전체'
           ) : (
-            wishJobToTextForSorting[filter]
+            wishJobToText[filter]
           )}
         </span>
         <i>
@@ -66,7 +66,7 @@ const FilterDropdown = ({ filter, setFilter, wishJobList }: Props) => {
                 {topic !== 'ALL' &&
                 (wishJob === 'DEVELOPMENT_ALL' || wishJob === 'MARKETING_ALL')
                   ? '전체'
-                  : wishJobToTextForSorting[wishJob]}
+                  : wishJobToText[wishJob]}
               </li>
             ))}
           </ul>

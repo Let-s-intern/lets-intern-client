@@ -24,41 +24,66 @@ export const bankTypeToText: Record<string, string> = {
 };
 
 export const wishJobToText: any = {
-  MARKETING_BRAND: '브랜드 마케팅',
-  MARKETING_PERFORMANCE: '퍼포먼스 마케팅',
-  MARKETING_CRM: 'CRM 마케팅',
-  MARKETING_CONTENTS: '콘텐츠 마케팅',
-  MARKETING_PR: '홍보 PR',
-  MARKETING_AE: '광고대행사(AE)',
-  MARKETING_ALL: '마케팅 직군 기타',
-
-  DEVELOPMENT_FRONTEND: '프론트엔드',
-  DEVELOPMENT_BACKEND: '백엔드',
-  DEVELOPMENT_APP: '앱개발',
-  DEVELOPMENT_DATA: '데이터 분석',
-  DEVELOPMENT_AI: '인공지능/머신러닝',
-  DEVELOPMENT_ALL: '개발 직군 기타',
-
-  ALL: '기타',
-};
-
-export const wishJobToTextForSorting: any = {
   ALL: '전체',
 
+  MANAGEMENT_ALL: '경영관리 전반',
+  MANAGEMENT_HR: '인사(HRD, HRM)',
+  MANAGEMENT_GENERAL: '총무',
+  MANAGEMENT_FINANCE: '회계/재무/자금',
+
+  FINANCE_ALL: '금융 전반',
+
+  MARKETING_ALL: '마케팅 전반',
   MARKETING_BRAND: '브랜드 마케팅',
   MARKETING_PERFORMANCE: '퍼포먼스 마케팅',
   MARKETING_CRM: 'CRM 마케팅',
   MARKETING_CONTENTS: '콘텐츠 마케팅',
   MARKETING_PR: '홍보 PR',
-  MARKETING_AE: '광고대행사(AE)',
-  MARKETING_ALL: '마케팅 직군 전체',
+  MARKETING_AE: '광고대행사 (AE)',
 
-  DEVELOPMENT_FRONTEND: '프론트엔드',
-  DEVELOPMENT_BACKEND: '백엔드',
+  AD_ALL: '광고 전반',
+  AD_PR: '홍보 PR',
+  AD_AE: '광고대행사 (AE)',
+
+  DESIGN_ALL: '디자인 전반',
+  DESIGN_GRAPHIC: '그래픽 디자인',
+  DESIGN_UIUX: 'UI/UX 디자인',
+
+  BROADCASTING_ALL: '방송 전반',
+  BROADCASTING_PD: 'PD',
+  BROADCASTING_WRITER: '작가',
+  BROADCASTING_PRESS: '언론(아나운서, 기자)',
+
+  DEVELOPMENT_ALL: '개발 전반',
+  DEVELOPMENT_FRONTEND: '프론트엔드 개발',
+  DEVELOPMENT_BACKEND: '백엔드 개발',
   DEVELOPMENT_APP: '앱개발',
   DEVELOPMENT_DATA: '데이터 분석',
   DEVELOPMENT_AI: '인공지능/머신러닝',
-  DEVELOPMENT_ALL: '개발 직군 전체',
+
+  SALES_ALL: '영업 전반',
+  SALES_MANAGEMENT: '영업관리',
+  SALES_OVERSEA: '해외영업',
+
+  SERVICE_PLANNING_ALL: '서비스 기획 전반',
+  SERVICE_PLANNING_PM: 'PM',
+  SERVICE_PLANNING_PO: 'PO',
+
+  BUSINESS_ALL: '사업/전략 전반',
+  BUSINESS_DEVELOPMENT: '사업개발',
+  BUSINESS_STRATEGY: '전략기획',
+
+  CONSULTING_ALL: '컨설팅 전반',
+
+  DISTRIBUTION_ALL: '유통 전반',
+  DISTRIBUTION_MD: '상품 기획',
+  DISTRIBUTION_MANAGEMENT: '물류관리(구매, 유통)',
+
+  RESEARCH_ALL: '공정 및 연구 전반',
+  RESEARCH_PROCESS: '공정 관리(생산, 품질)',
+  RESEARCH_ELEC: '엔지니어(전기/전자, 반도체)',
+  RESEARCH_MACHINE: '엔지니어(기계)',
+  RESEARCH_BIO: '엔지니어(화학, 바이오)',
 };
 
 export const topicRequiredToText: any = {
@@ -69,6 +94,7 @@ export const topicRequiredToText: any = {
   RECRUITMENT: '공고분석',
   APPLY: '지원하기',
 };
+
 export const topicToText: any = {
   ...topicRequiredToText,
   NULL: '없음',
