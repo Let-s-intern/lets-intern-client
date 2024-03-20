@@ -40,6 +40,8 @@ import ChallengeLayout from './components/common/challenge/ui/layout/ChallengeLa
 import MyChallengeDashboard from './pages/common/challenge/MyChallengeDashboard';
 import OtherDashboardList from './pages/common/challenge/OtherDashboardList';
 import OtherDashboardDetail from './pages/common/challenge/OtherDashboardDetail';
+import MentoNotificationBefore from './pages/common/mento/MentoNotificationBefore';
+import MentoNotificationAfter from './pages/common/mento/MentoNotificationAfter';
 
 const Router = () => {
   return (
@@ -65,6 +67,13 @@ const Router = () => {
             <Route path="review/create" element={<ReviewCreate />} />
             {/* /program/:programId/review/:reviewId */}
             <Route path="review/:reviewId" element={<ReviewDetail />} />
+            {/* /program/:programId/mento/notification */}
+            <Route path="mento/notification">
+              {/* /program/:programId/mento/notification/before */}
+              <Route path="before" element={<MentoNotificationBefore />} />
+              {/* /program/:programId/mento/notification/after */}
+              <Route path="after" element={<MentoNotificationAfter />} />
+            </Route>
           </Route>
           <Route path="mypage" element={<MyPage />}>
             {/* /mypage/application */}
