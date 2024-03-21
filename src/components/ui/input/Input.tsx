@@ -14,6 +14,7 @@ interface InputProps {
   rows?: number;
   maxLength?: number;
   className?: string;
+  error?: boolean;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
@@ -28,6 +29,7 @@ const Input = ({
   rows,
   maxLength,
   className,
+  error,
   onChange,
 }: InputProps) => {
   const [focused, setFocused] = useState(false);
@@ -38,20 +40,22 @@ const Input = ({
     inputProps = { ...inputProps, maxLength };
   }
 
-  const textFieldStyle = {
-    backgroundColor: 'white',
-    '& .MuiOutlinedInput-root': {
-      '&:hover .MuiOutlinedInput-notchedOutline': {
-        borderColor: '#6963f6',
-      },
-      '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-        borderColor: '#6963f6',
-      },
-    },
-    '& label.Mui-focused': {
-      color: '#6963F6',
-    },
-  };
+  const textFieldStyle = !error
+    ? {
+        backgroundColor: 'white',
+        '& .MuiOutlinedInput-root': {
+          '&:hover .MuiOutlinedInput-notchedOutline': {
+            borderColor: '#6963f6',
+          },
+          '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+            borderColor: '#6963f6',
+          },
+        },
+        '& label.Mui-focused': {
+          color: '#6963F6',
+        },
+      }
+    : {};
 
   const textField = (
     <TextField
@@ -71,6 +75,7 @@ const Input = ({
       sx={textFieldStyle}
       onFocus={() => setFocused(true)}
       onBlur={() => setFocused(false)}
+      error={error}
     />
   );
 
