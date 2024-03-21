@@ -8,7 +8,7 @@ const MentoringNotificationBefore = () => {
   return !isAuthenticated ? (
     <PasswordContent setIsAuthenticated={setIsAuthenticated} />
   ) : (
-    <main className="px-6">
+    <main className="min-h-screen px-6">
       <div className="mx-auto max-w-5xl">
         <div className="mx-auto max-w-2xl">
           <h1 className="mt-6 text-center text-xl font-bold">

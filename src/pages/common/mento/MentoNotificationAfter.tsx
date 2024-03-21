@@ -9,7 +9,7 @@ const MentoNotificationAfter = () => {
   return !isAuthenticated ? (
     <PasswordContent setIsAuthenticated={setIsAuthenticated} />
   ) : (
-    <div className="px-6">
+    <div className="min-h-screen px-6">
       <div className="mx-auto max-w-5xl">
         <main className="mx-auto max-w-2xl">
           <h1 className="mt-4 text-center text-xl font-bold">
