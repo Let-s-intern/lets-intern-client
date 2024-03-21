@@ -97,7 +97,7 @@ const Login = () => {
   };
 
   return (
-    <main className="mx-auto px-4 sm:max-w-md">
+    <main className="mx-auto min-h-screen px-4 sm:max-w-md">
       <header>
         <h1 className="mb-8 mt-12 text-center text-xl font-semibold">
           반갑습니다!

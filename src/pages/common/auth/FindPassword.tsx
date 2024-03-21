@@ -54,7 +54,7 @@ const FindPassword = () => {
   }, [name, email]);
 
   return (
-    <div className="container mx-auto mt-8 p-5 sm:mt-12">
+    <div className="mx-auto mt-8 min-h-screen p-5 sm:mt-12">
       <div className="mx-auto w-full sm:max-w-md">
         <h1 className="mb-5 text-2xl">비밀번호 찾기</h1>
         <form onSubmit={handleOnSubmit} className="flex flex-col gap-3">
