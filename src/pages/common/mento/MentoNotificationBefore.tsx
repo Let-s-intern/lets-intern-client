@@ -1,9 +1,17 @@
+import { useState } from 'react';
+
+import PasswordContent from '../../../components/common/mento/PasswordContent';
+
 const MentoringNotificationBefore = () => {
-  return (
-    <div className="px-6">
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  return !isAuthenticated ? (
+    <PasswordContent setIsAuthenticated={setIsAuthenticated} />
+  ) : (
+    <main className="px-6">
       <div className="mx-auto max-w-5xl">
-        <main className="mx-auto max-w-2xl">
-          <h1 className="mt-4 text-center text-xl font-bold">
+        <div className="mx-auto max-w-2xl">
+          <h1 className="mt-6 text-center text-xl font-bold">
             [세션 제목] 사전 안내
           </h1>
           <section className="mt-4">
@@ -39,9 +47,9 @@ const MentoringNotificationBefore = () => {
               </ul>
             </div>
           </section>
-        </main>
+        </div>
       </div>
-    </div>
+    </main>
   );
 };
 
