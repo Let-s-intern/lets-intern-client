@@ -56,7 +56,7 @@ const ChallengeDashboard = () => {
   }
 
   return (
-    <main className="mr-[-3rem] px-6">
+    <main className="mr-[-1rem] pl-6">
       <header>
         <h1 className="text-2xl font-semibold">
           {isLoading ? <span className="opacity-0">홍민서</span> : username}
