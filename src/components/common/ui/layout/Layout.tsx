@@ -29,7 +29,7 @@ const Layout = () => {
   return (
     <div className="font-notosans">
       <NavBar />
-      <div className="min-h-screen w-full">
+      <div className="w-full">
         <Outlet />
       </div>
       <Footer />
