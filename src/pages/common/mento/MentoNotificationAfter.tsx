@@ -1,7 +1,14 @@
 import clsx from 'clsx';
+import { useState } from 'react';
+
+import PasswordContent from '../../../components/common/mento/PasswordContent';
 
 const MentoNotificationAfter = () => {
-  return (
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  return !isAuthenticated ? (
+    <PasswordContent setIsAuthenticated={setIsAuthenticated} />
+  ) : (
     <div className="px-6">
       <div className="mx-auto max-w-5xl">
         <main className="mx-auto max-w-2xl">
