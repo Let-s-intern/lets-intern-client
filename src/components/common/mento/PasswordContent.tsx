@@ -33,7 +33,7 @@ const PasswordContent = ({ setIsAuthenticated }: Props) => {
   }, [password]);
 
   return (
-    <main className="mx-auto mt-6 px-5 py-5">
+    <main className="mx-auto mt-6 min-h-screen px-5 py-5">
       <div className="mx-auto w-full sm:max-w-md">
         <h1 className="mb-5 text-center text-2xl">암호 입력</h1>
         <form className="flex flex-col gap-3" onSubmit={handleSubmit}>
