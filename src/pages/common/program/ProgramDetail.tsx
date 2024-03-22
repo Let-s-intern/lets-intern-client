@@ -55,11 +55,19 @@ const ProgramDetail = () => {
   }, []);
 
   if (loading) {
-    return <main className="program-detail" />;
+    return (
+      <div className={styles.page}>
+        <main className="program-detail" />
+      </div>
+    );
   }
 
   if (isError) {
-    return <main className="program-detail">에러 발생</main>;
+    return (
+      <div className={styles.page}>
+        <main className="program-detail">에러 발생</main>
+      </div>
+    );
   }
 
   return (
