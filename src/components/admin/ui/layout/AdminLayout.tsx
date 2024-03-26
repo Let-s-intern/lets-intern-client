@@ -1,12 +1,37 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, Outlet, useNavigate } from 'react-router-dom';
 import { ImExit } from 'react-icons/im';
 import { IoIosArrowDown } from 'react-icons/io';
 
 import axios from '../../../../utils/axios';
+import { useQuery } from '@tanstack/react-query';
 
 const AdminLayout = () => {
   const navigate = useNavigate();
+
+  const [challengeId, setChallengeId] = useState<number>(0);
+
+  useQuery({
+    queryKey: ['program', 'admin', { type: 'CHALLENGE' }, 'admin_layout'],
+    queryFn: async () => {
+      const res = await axios.get('/program/admin', {
+        params: { type: 'CHALLENGE' },
+      });
+      const challengeId =
+        Number(localStorage.getItem('admin-challenge-id')) || 0;
+      if (challengeId) {
+        res.data.programList
+          .filter((challenge: any) => challenge.th !== 0)
+          .forEach((challenge: any) => {
+            if (challenge.id === challengeId) {
+              setChallengeId(challenge.id);
+              return;
+            }
+          });
+      }
+      return res.data;
+    },
+  });
 
   useEffect(() => {
     const accessToken = localStorage.getItem('access-token');
@@ -52,9 +77,9 @@ const AdminLayout = () => {
         },
         {
           name: '챌린지 운영',
-          url: `/admin/challenge/${
-            localStorage.getItem('admin-challenge-id') || 35
-          }`,
+          url: challengeId
+            ? `/admin/challenge/${challengeId}`
+            : '/admin/challenge',
         },
       ],
     },

@@ -42,6 +42,7 @@ import OtherDashboardList from './pages/common/challenge/OtherDashboardList';
 import OtherDashboardDetail from './pages/common/challenge/OtherDashboardDetail';
 import MentoNotificationBefore from './pages/common/mento/MentoNotificationBefore';
 import MentoNotificationAfter from './pages/common/mento/MentoNotificationAfter';
+import ChallengeOnboarding from './pages/admin/challenge/ChallengeOnboarding';
 
 const Router = () => {
   return (
@@ -136,11 +137,19 @@ const Router = () => {
               <Route path="edit" element={<UserEdit />} />
             </Route>
           </Route>
+          {/* /admin/challenge */}
+          <Route path="challenge" element={<ChallengeOnboarding />} />
+          {/* /admin/challenge/:programId */}
           <Route path="challenge/:programId" element={<ChallengeAdminLayout />}>
+            {/* /admin/challenge/:programId */}
             <Route path="" element={<ChallengeHome />} />
+            {/* /admin/challenge/:programId/notice */}
             <Route path="notice" element={<ChallengeNotice />} />
+            {/* /admin/challenge/:programId/mission */}
             <Route path="mission" element={<ChallengeMission />} />
+            {/* /admin/challenge/:programId/submit-check */}
             <Route path="submit-check" element={<ChallengeSubmitCheck />} />
+            {/* /admin/challenge/:programId/user */}
             <Route path="user" element={<ChallengeUser />} />
           </Route>
           <Route
