@@ -7,7 +7,6 @@ import Button from '../../ui/button/Button';
 import SectionHeading from '../heading/SectionHeading';
 import MissionResultItem from '../item/MissionResultItem';
 import axios from '../../../../../utils/axios';
-import MissionTopStatusBar from '../status-bar/MissionTopStatusBar';
 
 const MissionResultSection = () => {
   const params = useParams();
@@ -21,7 +20,6 @@ const MissionResultSection = () => {
     queryFn: async () => {
       const res = await axios.get(`/mission/admin/${params.programId}/simple`);
       const data = res.data;
-      console.log(data);
       setMissionList(data.missionList);
       setHeadCount(data.finalHeadCount);
       setTodayTh(data.currentTh);
@@ -49,11 +47,12 @@ const MissionResultSection = () => {
       </div>
       <div className="mt-4 flex items-center">
         <div className="grid flex-1 grid-cols-7 gap-y-6">
-          {missionList.map((mission: any) => (
+          {missionList.map((mission: any, index: number) => (
             <MissionResultItem
               key={mission.missionId}
               mission={mission}
               todayTh={todayTh}
+              isLastMission={index === missionList.length - 1}
             />
           ))}
         </div>
