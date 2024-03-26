@@ -4,6 +4,14 @@ export const challengeTopicToText: Record<string, string> = {
   DEVELOPMENT: '개발',
 };
 
+export const applicationStatusToText: Record<string, string> = {
+  APPLIED: '대기',
+  IN_PROGRESS: '참가확정',
+  APPLIED_NOT_APPROVED: '미선발',
+  FEE_NOT_APPROVED: '미입금 미선발',
+  DONE: '참가완료',
+};
+
 export const feeTypeToText: Record<string, string> = {
   FREE: '무료',
   CHARGE: '이용료',
