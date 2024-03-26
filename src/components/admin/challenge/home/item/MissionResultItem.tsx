@@ -7,12 +7,17 @@ import { missionStatusToBadge } from '../../../../../utils/convert';
 interface Props {
   mission: any;
   todayTh: number;
+  isLastMission: boolean;
 }
 
-const MissionResultItem = ({ mission, todayTh }: Props) => {
+const MissionResultItem = ({ mission, todayTh, isLastMission }: Props) => {
   return (
     <div className="font-pretendard">
-      <MissionTopStatusBar mission={mission} todayTh={todayTh} />
+      <MissionTopStatusBar
+        mission={mission}
+        todayTh={todayTh}
+        isLastMission={isLastMission}
+      />
       <div
         className={clsx('mt-2 text-center text-sm', {
           'font-medium text-primary': mission.missionTh === todayTh,
@@ -28,14 +33,14 @@ const MissionResultItem = ({ mission, todayTh }: Props) => {
         <div className="py-2 text-center text-sm">{mission.missionTh}일차</div>
         <div
           className={clsx('flex items-end justify-center text-3xl font-bold', {
-            'opacity-0': todayTh < mission.missionTh,
+            'opacity-0': todayTh < mission.missionTh && todayTh !== 0,
           })}
         >
           {mission.attendanceCount}
         </div>
         <div
           className={clsx('text-center text-sm', {
-            'opacity-0': todayTh < mission.missionTh,
+            'opacity-0': todayTh < mission.missionTh && todayTh !== 0,
           })}
         >
           지각 {mission.lateAttendanceCount}

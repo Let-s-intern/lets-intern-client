@@ -5,14 +5,17 @@ interface Props {
 }
 
 const MentoDropdown = ({ program }: Props) => {
-  const menuRef = useRef<HTMLDivElement>(null);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   useEffect(() => {
     if (isMenuOpen) {
       const handleClick = (e: MouseEvent) => {
-        if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+        if (
+          dropdownRef.current &&
+          !dropdownRef.current.contains(e.target as Node)
+        ) {
           setIsMenuOpen(false);
         }
       };
@@ -41,7 +44,7 @@ const MentoDropdown = ({ program }: Props) => {
   };
 
   return (
-    <div className="relative" ref={menuRef}>
+    <div className="relative" ref={dropdownRef}>
       <button
         className="w-[5rem] rounded bg-[#E4D065] py-2 text-white"
         onClick={() => setIsMenuOpen(!isMenuOpen)}

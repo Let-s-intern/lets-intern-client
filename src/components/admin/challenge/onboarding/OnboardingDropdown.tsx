@@ -1,37 +1,46 @@
-import { useQueryClient } from '@tanstack/react-query';
+import clsx from 'clsx';
+import { useQuery } from '@tanstack/react-query';
 import { useEffect, useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { IoMdArrowDropdown } from 'react-icons/io';
 
-import clsx from 'clsx';
+import axios from '../../../../utils/axios';
 
 interface Props {
-  currentChallenge: any;
-  setCurrentChallenge: (currentChallenge: any) => void;
-  challengeList: any;
+  className?: string;
+  selectedChallenge?: any;
+  setSelectedChallenge: (selectedChallenge: any) => void;
 }
 
-const TopDropdown = ({
-  currentChallenge,
-  setCurrentChallenge,
-  challengeList,
+const OnboardingDropdown = ({
+  className,
+  selectedChallenge,
+  setSelectedChallenge,
 }: Props) => {
-  const navigate = useNavigate();
-  const queryClient = useQueryClient();
+  const [isMenuShown, setIsMenuShown] = useState(false);
+  const [challengeList, setChallengeList] = useState<any>();
 
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  const [isMenuShown, setIsMenuShown] = useState(false);
+  const getProgramList = useQuery({
+    queryKey: ['program', 'admin', { type: 'CHALLENGE' }, 'onboarding'],
+    queryFn: async () => {
+      const res = await axios.get('/program/admin', {
+        params: { type: 'CHALLENGE' },
+      });
+      const data = res.data;
+      setChallengeList(
+        data.programList
+          .filter((challenge: any) => challenge.th !== 0)
+          .sort((a: any, b: any) => b.th - a.th),
+      );
+      return data;
+    },
+  });
 
-  const isLoading = !challengeList || !currentChallenge;
+  const isLoading = getProgramList.isLoading || !challengeList;
 
-  const handleMenuItemClick = (challengeId: number) => {
-    localStorage.setItem('admin-challenge-id', `${challengeId}`);
-    navigate(`/admin/challenge/${challengeId}`);
-    queryClient.invalidateQueries({
-      queryKey: ['program', 'admin', { type: 'CHALLENGE' }, 'admin_layout'],
-    });
-    setCurrentChallenge(
+  const handleMenuItemClick = async (challengeId: number) => {
+    setSelectedChallenge(
       challengeList.find((challenge: any) => challenge.id === challengeId),
     );
     setIsMenuShown(false);
@@ -55,7 +64,7 @@ const TopDropdown = ({
   }, [isMenuShown]);
 
   return (
-    <div className="relative" ref={dropdownRef}>
+    <div className={clsx('relative', className)} ref={dropdownRef}>
       <div
         className="flex w-24 cursor-pointer items-center justify-between gap-4 rounded border border-neutral-400 py-2 pl-4 pr-2"
         onClick={() => setIsMenuShown(!isMenuShown)}
@@ -65,7 +74,7 @@ const TopDropdown = ({
             'opacity-0': isLoading,
           })}
         >
-          {isLoading ? '00기' : `${currentChallenge.th}기`}
+          {selectedChallenge ? `${selectedChallenge.th}기` : '선택'}
         </span>
         <i className="text-xl">
           <IoMdArrowDropdown />
@@ -88,4 +97,4 @@ const TopDropdown = ({
   );
 };
 
-export default TopDropdown;
+export default OnboardingDropdown;
