@@ -1,8 +1,8 @@
 import { useState } from 'react';
 
-import PasswordContent from '../../../components/common/mento/PasswordContent';
+import PasswordContent from '../../../components/common/mentor/PasswordContent';
 
-const MentoringNotificationBefore = () => {
+const MentorNotificationBefore = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   return !isAuthenticated ? (
@@ -53,4 +53,4 @@ const MentoringNotificationBefore = () => {
   );
 };
 
-export default MentoringNotificationBefore;
+export default MentorNotificationBefore;

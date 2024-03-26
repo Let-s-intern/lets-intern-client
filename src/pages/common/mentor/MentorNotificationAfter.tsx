@@ -1,9 +1,9 @@
 import clsx from 'clsx';
 import { useState } from 'react';
 
-import PasswordContent from '../../../components/common/mento/PasswordContent';
+import PasswordContent from '../../../components/common/mentor/PasswordContent';
 
-const MentoNotificationAfter = () => {
+const MentorNotificationAfter = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   return !isAuthenticated ? (
@@ -52,4 +52,4 @@ const MentoNotificationAfter = () => {
   );
 };
 
-export default MentoNotificationAfter;
+export default MentorNotificationAfter;
