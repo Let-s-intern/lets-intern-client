@@ -10,7 +10,11 @@ import {
 
 import axios from '../../../../../utils/axios';
 import TD from '../../../ui/table/TD';
-import { bankTypeToText, wishJobToText } from '../../../../../utils/convert';
+import {
+  applicationStatusToText,
+  bankTypeToText,
+  wishJobToText,
+} from '../../../../../utils/convert';
 import parseInflowPath from '../../../../../utils/parseInflowPath';
 import parseGrade from '../../../../../utils/parseGrade';
 import { useState } from 'react';
@@ -112,10 +116,15 @@ const TableRow = ({
             }
             disabled={program.status === 'DONE'}
           >
-            <MenuItem value="APPLIED">대기</MenuItem>
-            <MenuItem value="IN_PROGRESS">참가확정</MenuItem>
-            <MenuItem value="APPLIED_NOT_APPROVED">미선발</MenuItem>
-            <MenuItem value="FEE_NOT_APPROVED">미입금 미선발</MenuItem>
+            {Object.keys(applicationStatusToText)
+              .filter((status) =>
+                program.status !== 'DONE' ? status !== 'DONE' : true,
+              )
+              .map((status) => (
+                <MenuItem key={status} value={status}>
+                  {applicationStatusToText[status]}
+                </MenuItem>
+              ))}
           </Select>
         </FormControl>
       </TD>

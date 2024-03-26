@@ -1,27 +1,73 @@
 import { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
+import { useMutation } from '@tanstack/react-query';
 
 import Input from '../../ui/input/Input';
 import Button from '../ui/button/Button';
+import axios from '../../../utils/axios';
+import { AxiosError } from 'axios';
 
 interface Props {
+  mode: 'BEFORE' | 'AFTER';
   setIsAuthenticated: (isAuthenticated: boolean) => void;
+  setContentData: any;
 }
 
-const PasswordContent = ({ setIsAuthenticated }: Props) => {
+const PasswordContent = ({
+  mode,
+  setIsAuthenticated,
+  setContentData,
+}: Props) => {
+  const params = useParams();
+
   const [password, setPassword] = useState('');
   const [message, setMessage] = useState('');
   const [isWrong, setIsWrong] = useState(false);
   const [originValue, setOriginValue] = useState('');
 
+  const checkPassword = useMutation({
+    mutationFn: async () => {
+      if (mode === 'BEFORE') {
+        const res = await axios.post(
+          `/program/${params.programId}/mentor/prior`,
+          {
+            mentorPassword: password,
+          },
+        );
+        const data = res.data;
+        return data;
+      } else {
+        const res = await axios.post(
+          `/program/${params.programId}/mentor/after`,
+          {
+            mentorPassword: password,
+          },
+        );
+        const data = res.data;
+        return data;
+      }
+    },
+    onSuccess: (data) => {
+      console.log(data);
+      setContentData(data);
+      setIsAuthenticated(true);
+    },
+    onError: (error: AxiosError<{ code: string }>) => {
+      const errorCode = error.response?.data.code;
+      if (errorCode === 'PROGRAM_400_4') {
+        setOriginValue(password);
+        setMessage('암호가 일치하지 않습니다.');
+        setIsWrong(true);
+      } else {
+        setMessage('오류가 발생하였습니다.');
+        setIsWrong(true);
+      }
+    },
+  });
+
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (password === '1234') {
-      setIsAuthenticated(true);
-    } else {
-      setOriginValue(password);
-      setMessage('암호가 일치하지 않습니다.');
-      setIsWrong(true);
-    }
+    checkPassword.mutate();
   };
 
   useEffect(() => {

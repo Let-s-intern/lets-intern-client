@@ -1,13 +1,30 @@
+import { useQuery } from '@tanstack/react-query';
 import { useEffect, useRef, useState } from 'react';
+import { useParams } from 'react-router-dom';
+
+import axios from '../../../../../utils/axios';
 
 interface Props {
   program: any;
 }
 
-const MentoDropdown = ({ program }: Props) => {
+const MentorDropdown = ({ program }: Props) => {
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const params = useParams();
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [password, setPassword] = useState('0000');
+
+  const getMentorPassword = useQuery({
+    queryKey: ['program', 'admin', params.programId, 'mentor'],
+    queryFn: async () => {
+      const res = await axios.get(`/program/admin/${params.programId}/mentor`);
+      const data = res.data;
+      console.log(data);
+      setPassword(data.mentorPassword);
+      return res.data;
+    },
+  });
 
   useEffect(() => {
     if (isMenuOpen) {
@@ -29,19 +46,31 @@ const MentoDropdown = ({ program }: Props) => {
   const copyLink = (type: 'BEFORE' | 'AFTER') => {
     const url = `${window.location.protocol}//${window.location.hostname}:${
       window.location.port
-    }/program/${program.id}/mento/notification/${
+    }/program/${program.id}/mentor/notification/${
       type === 'BEFORE' ? 'before' : 'after'
     }`;
     navigator.clipboard
       .writeText(url)
       .then(() => {
         alert('링크가 클립보드에 복사되었습니다.');
-        setIsMenuOpen(false);
       })
       .catch(() => {
         alert('복사에 실패했습니다');
       });
   };
+
+  const copyPassword = () => {
+    navigator.clipboard
+      .writeText(password)
+      .then(() => {
+        alert('암호가 클립보드에 복사되었습니다.');
+      })
+      .catch(() => {
+        alert('복사에 실패했습니다');
+      });
+  };
+
+  const isLoading = getMentorPassword.isLoading;
 
   return (
     <div className="relative" ref={dropdownRef}>
@@ -66,7 +95,13 @@ const MentoDropdown = ({ program }: Props) => {
             세션 후 안내사항
           </li>
           <li className="px-4 py-3 text-center text-sm font-medium">
-            암호 : 0000
+            암호 :{' '}
+            <span
+              className="cursor-pointer text-neutral-grey underline"
+              onClick={copyPassword}
+            >
+              {isLoading ? '0000' : password}
+            </span>
           </li>
         </ul>
       )}
@@ -74,4 +109,4 @@ const MentoDropdown = ({ program }: Props) => {
   );
 };
 
-export default MentoDropdown;
+export default MentorDropdown;
