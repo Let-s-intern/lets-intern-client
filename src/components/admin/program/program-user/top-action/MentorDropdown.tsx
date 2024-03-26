@@ -8,7 +8,7 @@ interface Props {
   program: any;
 }
 
-const MentoDropdown = ({ program }: Props) => {
+const MentorDropdown = ({ program }: Props) => {
   const dropdownRef = useRef<HTMLDivElement>(null);
   const params = useParams();
 
@@ -46,7 +46,7 @@ const MentoDropdown = ({ program }: Props) => {
   const copyLink = (type: 'BEFORE' | 'AFTER') => {
     const url = `${window.location.protocol}//${window.location.hostname}:${
       window.location.port
-    }/program/${program.id}/mento/notification/${
+    }/program/${program.id}/mentor/notification/${
       type === 'BEFORE' ? 'before' : 'after'
     }`;
     navigator.clipboard
@@ -109,4 +109,4 @@ const MentoDropdown = ({ program }: Props) => {
   );
 };
 
-export default MentoDropdown;
+export default MentorDropdown;
