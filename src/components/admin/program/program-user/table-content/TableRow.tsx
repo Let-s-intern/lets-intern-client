@@ -116,11 +116,15 @@ const TableRow = ({
             }
             disabled={program.status === 'DONE'}
           >
-            {Object.keys(applicationStatusToText).map((status) => (
-              <MenuItem key={status} value={status}>
-                {applicationStatusToText[status]}
-              </MenuItem>
-            ))}
+            {Object.keys(applicationStatusToText)
+              .filter((status) =>
+                program.status !== 'DONE' ? status !== 'DONE' : true,
+              )
+              .map((status) => (
+                <MenuItem key={status} value={status}>
+                  {applicationStatusToText[status]}
+                </MenuItem>
+              ))}
           </Select>
         </FormControl>
       </TD>
