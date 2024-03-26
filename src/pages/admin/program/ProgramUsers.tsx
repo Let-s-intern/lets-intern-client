@@ -10,7 +10,7 @@ import axios from '../../../utils/axios';
 import AdminPagination from '../../../components/admin/ui/pagination/AdminPagination';
 import BottomAction from '../../../components/admin/program/program-user/bottom-action/BottomAction';
 import classes from './ProgramUsers.module.scss';
-import MentoDropdown from '../../../components/admin/program/program-user/top-action/MentoDropdown';
+import MentorDropdown from '../../../components/admin/program/program-user/top-action/MentorDropdown';
 
 const ProgramUsers = () => {
   const params = useParams();
@@ -97,7 +97,7 @@ const ProgramUsers = () => {
         <h1 className={classes.heading}>참여자 보기 - {[program.title]}</h1>
         {program.type === 'LETS_CHAT' && (
           <div className={classes.buttonGroup}>
-            <MentoDropdown program={program} />
+            <MentorDropdown program={program} />
             <ActionButton
               to={`/admin/programs/${program.id}/check-attendance`}
               bgColor="blue"

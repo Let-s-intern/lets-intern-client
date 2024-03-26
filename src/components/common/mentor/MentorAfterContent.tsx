@@ -1,20 +1,20 @@
 import clsx from 'clsx';
-import { useState } from 'react';
 
-import PasswordContent from '../../../components/common/mento/PasswordContent';
+interface Props {
+  contentData: any;
+  isLoading: boolean;
+}
 
-const MentoNotificationAfter = () => {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+const MentorAfterContent = ({ contentData, isLoading }: Props) => {
+  if (isLoading) return <></>;
 
-  return !isAuthenticated ? (
-    <PasswordContent setIsAuthenticated={setIsAuthenticated} />
-  ) : (
-    <div className="min-h-screen px-6">
+  const reviewList = contentData.reviewList;
+
+  return (
+    <div className="mb-24 min-h-screen px-6">
       <div className="mx-auto max-w-5xl">
         <main className="mx-auto max-w-2xl">
-          <h1 className="mt-4 text-center text-xl font-bold">
-            [세션 제목] 후기 안내
-          </h1>
+          <h1 className="mt-8 text-2xl font-bold">[세션 제목] 후기 안내</h1>
           <section className="mt-4">
             <p>
               안녕하세요, 렛츠인턴입니다.
@@ -29,18 +29,17 @@ const MentoNotificationAfter = () => {
             <h2 className="text-lg font-semibold">😊 세션 후기</h2>
             <div className="mt-3 px-2">
               <ul>
-                {Array.from({ length: 3 }).map((_, index) => (
+                {reviewList.map((review: any, index: number) => (
                   <li
                     key={index}
                     className={clsx(
-                      'border-t-[0.5px] border-neutral-600 px-1 py-3',
+                      'whitespace-pre-wrap border-t-[0.5px] border-neutral-600 px-1 py-3',
                       {
-                        'border-b-[0.5px]': index === 2,
+                        'border-b-[0.5px]': index === reviewList.length - 1,
                       },
                     )}
                   >
-                    가나다라가나다라가나다라가나다라가나다라가나다라가나다라가나다라가나다라
-                    가나다라가나다라가나다라가나다라가나다라가나다라가나다라가나다라가나다라
+                    {review}
                   </li>
                 ))}
               </ul>
@@ -52,4 +51,4 @@ const MentoNotificationAfter = () => {
   );
 };
 
-export default MentoNotificationAfter;
+export default MentorAfterContent;

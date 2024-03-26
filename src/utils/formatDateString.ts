@@ -53,6 +53,24 @@ const formatDateString = (
 
 export default formatDateString;
 
+export const formatMentorDateString = (dateString: string) => {
+  const date = new Date(dateString);
+  const weekdayList = ['일', '월', '화', '수', '목', '금', '토'];
+  const isAm = date.getHours() < 12;
+  let hours = date.getHours();
+  hours = hours % 12;
+  hours = hours ? hours : 12;
+  const hoursStr = hours < 10 ? '0' + hours : hours;
+  const formattedString = `${date.getFullYear()}.${
+    date.getMonth() + 1
+  }.${date.getDate()} (${weekdayList[date.getDay()]}) ${
+    isAm ? '오전' : '오후'
+  } ${hoursStr}:${
+    date.getMinutes() > 9 ? date.getMinutes() : '0' + date.getMinutes()
+  }`;
+  return formattedString;
+};
+
 export const formatMissionDateString = (dateString: string) => {
   const endDate = new Date(dateString);
   const weekdayList = ['일', '월', '화', '수', '목', '금', '토'];
