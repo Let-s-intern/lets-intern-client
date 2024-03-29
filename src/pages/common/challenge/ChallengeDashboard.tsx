@@ -16,14 +16,18 @@ const ChallengeDashboard = () => {
   const [refundInfo, setRefundInfo] = useState<any>();
   const [noticeList, setNoticeList] = useState<any>();
   const [missionList, setMissionList] = useState<any>();
-  const [todayTh, setTodayTh] = useState<number>();
+  const [todayTh, setTodayTh] = useState<number>(0);
   const [username, setUsername] = useState('');
+  const [isDone, setIsDone] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
-  const getDashboard = useQuery({
+  useQuery({
     queryKey: ['programs', params.programId, 'dashboard'],
     queryFn: async () => {
       const res = await axios.get(`/program/${params.programId}/dashboard`);
       const data = res.data;
+
+      console.log(data);
 
       setDailyMission(data.dailyMission);
       setRefundInfo({
@@ -34,22 +38,25 @@ const ChallengeDashboard = () => {
       });
       setNoticeList(data.noticeList);
       setMissionList(data.missionList);
-      setTodayTh(data.dailyMission.th);
+      setTodayTh(
+        data.dailyMission ? data.dailyMission.th : data.missionList.length + 1,
+      );
+      setIsDone(data.isDone);
       setUsername(data.userName);
 
-      console.log(data);
+      setIsLoading(false);
 
       return data;
     },
   });
 
-  const isLoading =
-    getDashboard.isLoading ||
-    !dailyMission ||
-    !refundInfo ||
-    !noticeList ||
-    !missionList ||
-    !todayTh;
+  // const isLoading =
+  //   getDashboard.isLoading ||
+  //   !dailyMission ||
+  //   !refundInfo ||
+  //   !noticeList ||
+  //   !missionList ||
+  //   !todayTh;
 
   if (isLoading) {
     return <main />;
@@ -58,26 +65,21 @@ const ChallengeDashboard = () => {
   return (
     <main className="mr-[-1rem] pl-6">
       <header>
-        <h1 className="text-2xl font-semibold">
-          {isLoading ? <span className="opacity-0">홍민서</span> : username}
-          님의 대시보드
-        </h1>
+        <h1 className="text-2xl font-semibold">{username}님의 대시보드</h1>
       </header>
       <div className="flex flex-col gap-4">
         <div className="mt-4 flex gap-4">
           <DailyMissionSection
             dailyMission={dailyMission}
-            isLoading={isLoading || !dailyMission}
+            isLoading={isLoading}
+            isDone={isDone}
           />
           <ScoreSection
             refundInfo={refundInfo}
-            isLoading={isLoading || !refundInfo}
+            isLoading={isLoading}
             todayTh={todayTh}
           />
-          <NoticeSection
-            noticeList={noticeList}
-            isLoading={isLoading || !noticeList}
-          />
+          <NoticeSection noticeList={noticeList} isLoading={isLoading} />
         </div>
         <div className="flex gap-4">
           <MissionSection missionList={missionList} todayTh={todayTh || 0} />

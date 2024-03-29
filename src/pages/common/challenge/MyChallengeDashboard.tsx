@@ -12,9 +12,11 @@ const MyChallengeDashboard = () => {
 
   const [missionList, setMissionList] = useState<any>();
   const [dailyMission, setDailyMission] = useState<any>();
-  const [todayTh, setTodayTh] = useState<number>();
+  const [todayTh, setTodayTh] = useState<number>(0);
+  const [isDone, setIsDone] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
-  const getDashboard = useQuery({
+  useQuery({
     queryKey: ['programs', params.programId, 'dashboard', 'my'],
     queryFn: async () => {
       const res = await axios.get(`/program/${params.programId}/dashboard/my`);
@@ -24,14 +26,15 @@ const MyChallengeDashboard = () => {
 
       setMissionList(data.missionList);
       setDailyMission(data.dailyMission);
-      setTodayTh(data.dailyMission.th);
+      setTodayTh(
+        data.dailyMission ? data.dailyMission.th : data.missionList.length + 1,
+      );
+      setIsDone(data.isDone);
+      setIsLoading(false);
 
       return data;
     },
   });
-
-  const isLoading =
-    getDashboard.isLoading || !dailyMission || !todayTh || !missionList;
 
   if (isLoading) {
     return <></>;
@@ -42,9 +45,13 @@ const MyChallengeDashboard = () => {
       <header>
         <h1 className="text-2xl font-bold">개인 기록장</h1>
       </header>
-      <MissionCalendarSection missionList={missionList} todayTh={todayTh} />
-      <DailyMissionSection dailyMission={dailyMission} />
-      <OtherMissionSection todayTh={todayTh} />
+      <MissionCalendarSection
+        missionList={missionList}
+        todayTh={todayTh}
+        isDone={isDone}
+      />
+      {dailyMission && <DailyMissionSection dailyMission={dailyMission} />}
+      <OtherMissionSection todayTh={todayTh} isDone={isDone} />
     </main>
   );
 };
