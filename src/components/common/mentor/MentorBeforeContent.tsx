@@ -16,7 +16,9 @@ const MentorBeforeContent = ({ contentData, isLoading }: Props) => {
     <div className="mb-24 min-h-screen px-6">
       <div className="mx-auto max-w-5xl">
         <main className="mx-auto max-w-2xl">
-          <h1 className="mt-8 text-2xl font-bold">[세션 제목] 사전 안내</h1>
+          <h1 className="mt-8 text-2xl font-bold">
+            [{programInfo.title}] 사전 안내
+          </h1>
           <section className="mt-4">
             <ul className="ml-6 flex list-disc flex-col gap-2">
               <li>
@@ -24,10 +26,12 @@ const MentorBeforeContent = ({ contentData, isLoading }: Props) => {
                 {formatMentorDateString(programInfo.startDate)} ~{' '}
                 {formatMentorDateString(programInfo.endDate)}
               </li>
-              <li>
-                <span className="font-semibold">세션 위치</span> :{' '}
-                {programInfo.location}
-              </li>
+              {programInfo.location && (
+                <li>
+                  <span className="font-semibold">세션 위치</span> :{' '}
+                  {programInfo.location}
+                </li>
+              )}
               <li>
                 <span className="font-semibold">신청자 현황</span> :{' '}
                 {programInfo.applicationCount}명
