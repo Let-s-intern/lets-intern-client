@@ -10,16 +10,17 @@ import AbsentMissionItem from '../mission/AbsentMissionItem';
 
 interface Props {
   todayTh: number;
+  isDone: boolean;
 }
 
-const OtherMissionSection = ({ todayTh }: Props) => {
+const OtherMissionSection = ({ todayTh, isDone }: Props) => {
   const params = useParams();
   const [searchParams, setSearchParams] = useSearchParams();
 
   const sectionRef = useRef<HTMLElement>(null);
 
   const [missionList, setMissionList] = useState<any>();
-  const [tabIndex, setTabIndex] = useState(0);
+  const [tabIndex, setTabIndex] = useState(isDone ? 1 : 0);
 
   const getMissionList = useQuery({
     queryKey: ['mission', params.programId, 'list'],

@@ -49,7 +49,7 @@ const ChallengeLayout = () => {
         </div>
       </div>
       <div className="hidden px-6 py-6 lg:block">
-        <div className="mx-auto flex  max-w-[1024px] ">
+        <div className="mx-auto flex max-w-[1024px] ">
           <NavBar />
           <div className="flex-1">
             <Outlet />
