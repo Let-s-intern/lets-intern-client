@@ -87,15 +87,17 @@ const OtherMissionSection = ({ todayTh, isDone }: Props) => {
       ref={sectionRef}
     >
       <div className="flex gap-2">
-        <div
-          className={clsx('cursor-pointer p-2 font-bold', {
-            'border-b-2 border-[#333333] text-[#333333]': tabIndex === 0,
-            'text-[#868686]': tabIndex !== 0,
-          })}
-          onClick={() => setTabIndex(0)}
-        >
-          남은 미션
-        </div>
+        {!isDone && (
+          <div
+            className={clsx('cursor-pointer p-2 font-bold', {
+              'border-b-2 border-[#333333] text-[#333333]': tabIndex === 0,
+              'text-[#868686]': tabIndex !== 0,
+            })}
+            onClick={() => setTabIndex(0)}
+          >
+            남은 미션
+          </div>
+        )}
         <div
           className={clsx('cursor-pointer p-2 font-bold', {
             'border-b-2 border-[#333333] text-[#333333]': tabIndex === 1,
@@ -122,7 +124,11 @@ const OtherMissionSection = ({ todayTh, isDone }: Props) => {
               <h3 className="pl-6 font-semibold text-[#868686]">미제출 미션</h3>
               <ul className="mt-2 flex flex-col gap-4">
                 {absentMissionList.map((mission: any) => (
-                  <AbsentMissionItem key={mission.id} mission={mission} />
+                  <AbsentMissionItem
+                    key={mission.id}
+                    mission={mission}
+                    isDone={isDone}
+                  />
                 ))}
               </ul>
             </div>
@@ -138,7 +144,11 @@ const OtherMissionSection = ({ todayTh, isDone }: Props) => {
                 {lastMissionList.map((mission: any) => {
                   if (mission.attendanceResult === 'WRONG') {
                     return (
-                      <AbsentMissionItem key={mission.id} mission={mission} />
+                      <AbsentMissionItem
+                        key={mission.id}
+                        mission={mission}
+                        isDone={isDone}
+                      />
                     );
                   } else {
                     return (
