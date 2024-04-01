@@ -39,7 +39,7 @@ const DailyMissionSection = ({ dailyMission, isLoading, isDone }: Props) => {
         )}
       </div>
       <p
-        className={clsx('flex-1 whitespace-pre-line', {
+        className={clsx('line-clamp-6 flex-1 whitespace-pre-line', {
           'text-center': isDone,
         })}
       >
@@ -51,7 +51,7 @@ const DailyMissionSection = ({ dailyMission, isLoading, isDone }: Props) => {
         to={`/challenge/${params.programId}/me${
           !isDone ? '?scroll_to=daily-mission' : ''
         }`}
-        className="w-full rounded bg-primary px-4 py-3 text-center font-semibold text-white"
+        className="mt-4 w-full rounded bg-primary px-4 py-3 text-center font-semibold text-white"
       >
         {isDone ? '이전 미션 돌아보기' : '오늘의 미션 수행하기'}
       </Link>
