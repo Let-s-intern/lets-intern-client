@@ -9,10 +9,9 @@ import { useSearchParams } from 'react-router-dom';
 
 interface Props {
   mission: any;
-  isDone: boolean;
 }
 
-const AbsentMissionItem = ({ mission, isDone }: Props) => {
+const AbsentMissionItem = ({ mission }: Props) => {
   const queryClient = useQueryClient();
   const [searchParams, setSearchParams] = useSearchParams();
 
@@ -41,10 +40,6 @@ const AbsentMissionItem = ({ mission, isDone }: Props) => {
   }, [isDetailShown]);
 
   useEffect(() => {
-    if (isDone) {
-      setSearchParams({}, { replace: true });
-      return;
-    }
     const scrollToMission = searchParams.get('scroll_to_mission');
     if (scrollToMission) {
       if (mission.id === Number(scrollToMission)) {
