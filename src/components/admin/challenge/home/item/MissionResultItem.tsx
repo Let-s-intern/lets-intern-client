@@ -51,7 +51,7 @@ const MissionResultItem = ({ mission, todayTh, isLastMission }: Props) => {
           className={clsx(
             'rounded-md px-2 py-[0.125rem] text-xs ',
             missionStatusToBadge[mission.missionStatus].style,
-            // { 'opacity-0': todayTh < mission.missionTh },
+            { 'opacity-0': todayTh < mission.missionTh },
           )}
         >
           {missionStatusToBadge[mission.missionStatus].text}
