@@ -17,7 +17,7 @@ const DailyMissionSection = ({ dailyMission, isLoading, isDone }: Props) => {
   }
 
   return (
-    <section className="flex flex-1 flex-col gap-2 rounded-xl border border-[#E4E4E7] p-6">
+    <section className="flex flex-1 flex-col rounded-xl border border-[#E4E4E7] p-6">
       <div className="flex items-end gap-2">
         <h2
           className={clsx('font-semibold text-[#4A495C]', {
@@ -39,7 +39,7 @@ const DailyMissionSection = ({ dailyMission, isLoading, isDone }: Props) => {
         )}
       </div>
       <p
-        className={clsx('line-clamp-6 flex-1 whitespace-pre-line', {
+        className={clsx('mt-2 line-clamp-6 flex-1 whitespace-pre-line', {
           'text-center': isDone,
         })}
       >
