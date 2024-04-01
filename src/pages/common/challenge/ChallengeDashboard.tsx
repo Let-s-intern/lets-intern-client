@@ -50,14 +50,6 @@ const ChallengeDashboard = () => {
     },
   });
 
-  // const isLoading =
-  //   getDashboard.isLoading ||
-  //   !dailyMission ||
-  //   !refundInfo ||
-  //   !noticeList ||
-  //   !missionList ||
-  //   !todayTh;
-
   if (isLoading) {
     return <main />;
   }
@@ -74,11 +66,13 @@ const ChallengeDashboard = () => {
             isLoading={isLoading}
             isDone={isDone}
           />
-          <ScoreSection
-            refundInfo={refundInfo}
-            isLoading={isLoading}
-            todayTh={todayTh}
-          />
+          {!isDone && (
+            <ScoreSection
+              refundInfo={refundInfo}
+              isLoading={isLoading}
+              todayTh={todayTh}
+            />
+          )}
           <NoticeSection noticeList={noticeList} isLoading={isLoading} />
         </div>
         <div className="flex gap-4">

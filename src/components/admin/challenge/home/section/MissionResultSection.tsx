@@ -22,7 +22,10 @@ const MissionResultSection = () => {
       const data = res.data;
       setMissionList(data.missionList);
       setHeadCount(data.finalHeadCount);
-      setTodayTh(data.currentTh);
+      setTodayTh(
+        data.currentTh === 0 ? data.missionList.length + 1 : data.currentTh,
+      );
+      console.log(data.currentTh);
       return data;
     },
   });
