@@ -43,6 +43,7 @@ import OtherDashboardDetail from './pages/common/challenge/OtherDashboardDetail'
 import MentorNotificationBefore from './pages/common/mentor/MentorNotificationBefore';
 import MentorNotificationAfter from './pages/common/mentor/MentorNotificationAfter';
 import ChallengeOnboarding from './pages/admin/challenge/ChallengeOnboarding';
+import Coupons from './pages/admin/coupon/Coupons';
 
 const Router = () => {
   return (
@@ -137,6 +138,8 @@ const Router = () => {
               <Route path="edit" element={<UserEdit />} />
             </Route>
           </Route>
+          {/* /admin/coupons */}
+          <Route path="coupons" element={<Coupons />} />
           {/* /admin/challenge */}
           <Route path="challenge" element={<ChallengeOnboarding />} />
           {/* /admin/challenge/:programId */}
