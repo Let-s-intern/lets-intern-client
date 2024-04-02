@@ -36,8 +36,13 @@ const StartContent = ({
     }
   };
 
-  const price = 10000;
-  const discountAmount = 4000;
+  const price =
+    program.feeType === 'REFUND'
+      ? program.feeCharge + program.feeRefund
+      : program.feeType === 'CHARGE'
+      ? program.feeCharge
+      : 0;
+  const discountAmount = program.discountValue;
 
   return (
     <div className={classes.content}>
@@ -90,16 +95,24 @@ const StartContent = ({
           <div className="flex items-center justify-between font-pretendard">
             <div className="flex items-center gap-1.5">
               <span className="text-sm font-semibold">결제 금액</span>
-              <span className="text-xs font-semibold text-red-500">
-                {Math.round((discountAmount / price) * 100)}%
-              </span>
+              {program.feeType !== 'FREE' && (
+                <span className="text-xs font-semibold text-red-500">
+                  {Math.round((discountAmount / price) * 100)}%
+                </span>
+              )}
             </div>
             <div className="flex items-center gap-2">
-              <span className="font-semibold text-zinc-400 line-through">
-                {price.toLocaleString()}원
-              </span>
+              {program.feeType !== 'FREE' && (
+                <span className="font-semibold text-zinc-400 line-through">
+                  {price.toLocaleString()}원
+                </span>
+              )}
               <span className="text-lg font-semibold">
-                {(price - discountAmount).toLocaleString()}원
+                {program.feeType === 'FREE' ? (
+                  <>무료</>
+                ) : (
+                  <>{(price - discountAmount).toLocaleString()}원</>
+                )}
               </span>
             </div>
           </div>
