@@ -75,6 +75,15 @@ const FeeSection = ({ values, setValues }: Props) => {
               setValues({ ...values, accountNumber: e.target.value })
             }
           />
+          <Input
+            label="할인 금액"
+            type="number"
+            // value={values.accountNumber ? values.accountNumber : ''}
+            // placeholder="입금계좌 번호를 입력하세요"
+            // onChange={(e: any) =>
+            //   setValues({ ...values, accountNumber: e.target.value })
+            // }
+          />
           <DateTimeControl>
             <DateTimeLabel htmlFor="feeDueDate">입금 마감 기한</DateTimeLabel>
             <input
