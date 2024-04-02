@@ -44,6 +44,7 @@ import MentorNotificationBefore from './pages/common/mentor/MentorNotificationBe
 import MentorNotificationAfter from './pages/common/mentor/MentorNotificationAfter';
 import ChallengeOnboarding from './pages/admin/challenge/ChallengeOnboarding';
 import Coupons from './pages/admin/coupon/Coupons';
+import CouponCreate from './pages/admin/coupon/CouponCreate';
 
 const Router = () => {
   return (
@@ -139,7 +140,12 @@ const Router = () => {
             </Route>
           </Route>
           {/* /admin/coupons */}
-          <Route path="coupons" element={<Coupons />} />
+          <Route path="coupons">
+            {/* /admin/coupons */}
+            <Route path="" element={<Coupons />} />
+            {/* /admin/coupons/new */}
+            <Route path="new" element={<CouponCreate />} />
+          </Route>
           {/* /admin/challenge */}
           <Route path="challenge" element={<ChallengeOnboarding />} />
           {/* /admin/challenge/:programId */}

@@ -3,6 +3,7 @@ import clsx from 'clsx';
 import { CiTrash } from 'react-icons/ci';
 
 import axios from '../../../utils/axios';
+import { Link } from 'react-router-dom';
 
 const Coupons = () => {
   useQuery({
@@ -44,11 +45,17 @@ const Coupons = () => {
   ];
 
   return (
-    <div className="px-12 pt-12">
-      <header className="px-3">
+    <main className="px-12 pt-12">
+      <header className="flex items-center justify-between px-3">
         <h1 className="text-2xl font-semibold">쿠폰 관리</h1>
+        <Link
+          to="/admin/coupons/new"
+          className="rounded border border-zinc-600 bg-white px-4 py-[2px] text-xs duration-200 hover:bg-neutral-700 hover:text-white"
+        >
+          등록
+        </Link>
       </header>
-      <main className="mt-3">
+      <div className="mt-3">
         <div className="flex rounded-lg bg-[#E5E5E5]">
           <div
             className={clsx(
@@ -163,8 +170,8 @@ const Coupons = () => {
             </div>
           ))}
         </div>
-      </main>
-    </div>
+      </div>
+    </main>
   );
 };
 

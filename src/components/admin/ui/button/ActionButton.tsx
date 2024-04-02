@@ -37,7 +37,7 @@ const ActionButton = ({
       $width={width}
       onClick={() => {
         onClick && onClick();
-        to && navigate(to);
+        to && (to === '-1' ? navigate(-1) : navigate(to));
       }}
     >
       {children}
