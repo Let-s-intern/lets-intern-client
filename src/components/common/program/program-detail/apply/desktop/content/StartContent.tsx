@@ -36,6 +36,9 @@ const StartContent = ({
     }
   };
 
+  const price = 10000;
+  const discountAmount = 4000;
+
   return (
     <div className={classes.content}>
       <h3 className="program-type">{typeToText[program.type]}</h3>
@@ -70,23 +73,38 @@ const StartContent = ({
           </li>
         </ul>
       ) : (
-        <ul className={classes['date-info-list']}>
-          <li className={classes['date-info-item']}>
-            <strong>모집 마감 일자</strong> {formatDateString(program.dueDate)}
-          </li>
-          <li className={classes['date-info-item']}>
-            <strong>합격자 발표 일자</strong>{' '}
-            {formatDateString(program.announcementDate)}
-          </li>
-          <li className={classes['date-info-item']}>
-            <strong>시작 일자</strong> {formatDateString(program.startDate)}
-          </li>
-          <li className={classes['date-info-item']}>
-            <strong>종료 일자</strong> {formatDateString(program.endDate)}
-          </li>
-        </ul>
+        <>
+          <ul className={classes['date-info-list']}>
+            <li className={classes['date-info-item']}>
+              <strong>모집 마감 일자</strong>{' '}
+              {formatDateString(program.dueDate)}
+            </li>
+            <li className={classes['date-info-item']}>
+              <strong>시작 일자</strong> {formatDateString(program.startDate)}
+            </li>
+            <li className={classes['date-info-item']}>
+              <strong>종료 일자</strong> {formatDateString(program.endDate)}
+            </li>
+          </ul>
+          <hr className="my-2" />
+          <div className="flex items-center justify-between font-pretendard">
+            <div className="flex items-center gap-1.5">
+              <span className="text-sm font-semibold">결제 금액</span>
+              <span className="text-xs font-semibold text-red-500">
+                {Math.round((discountAmount / price) * 100)}%
+              </span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="font-semibold text-zinc-400 line-through">
+                {price.toLocaleString()}원
+              </span>
+              <span className="text-lg font-semibold">
+                {(price - discountAmount).toLocaleString()}원
+              </span>
+            </div>
+          </div>
+        </>
       )}
-
       <button
         id="apply_button"
         className={cn(
