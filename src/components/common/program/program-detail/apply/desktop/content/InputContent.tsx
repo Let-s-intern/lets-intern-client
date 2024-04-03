@@ -16,6 +16,7 @@ import {
   bankTypeToText,
   wishJobToText,
 } from '../../../../../../../utils/convert';
+import CouponSubmit from './CouponSubmit';
 
 interface InputContentProps {
   program: any;
@@ -47,6 +48,7 @@ const InputContent = ({
   const [isNextButtonDisabled, setIsNextButtonDisabled] =
     useState<boolean>(true);
   const [loading, setLoading] = useState<boolean>(true);
+  const [couponDiscount, setCouponDiscount] = useState<number>(0);
 
   const { data: userData } = useQuery({
     queryKey: ['user'],
@@ -187,7 +189,10 @@ const InputContent = ({
       ? program.feeCharge
       : 0;
   const discountAmount = program.discountValue;
-  const totalPrice = price - discountAmount;
+  const totalPrice =
+    price - discountAmount - couponDiscount < 0
+      ? 0
+      : price - discountAmount - couponDiscount;
 
   return (
     <form className={classes.content} onSubmit={handleSubmit}>
@@ -270,7 +275,7 @@ const InputContent = ({
                   onChange={(e) => handleApplyInput(e)}
                 >
                   {Object.keys(bankTypeToText).map((bankType: any) => (
-                    <MenuItem value={bankType}>
+                    <MenuItem key={bankType} value={bankType}>
                       {bankTypeToText[bankType]}
                     </MenuItem>
                   ))}
@@ -370,6 +375,7 @@ const InputContent = ({
               maxLength={500}
             />
           )}
+          <CouponSubmit setCouponDiscount={setCouponDiscount} />
           <hr className="my-3" />
           <div className="mb-3 font-pretendard">
             <h3 className="text-lg font-semibold">결제 금액</h3>
@@ -394,7 +400,9 @@ const InputContent = ({
                 <div className="w-[5.5rem] rounded-full bg-amber-500 py-1 text-center text-xs font-medium text-white">
                   쿠폰 할인
                 </div>
-                <span className="font-semibold text-primary">-0원</span>
+                <span className="font-semibold text-primary">
+                  -{couponDiscount.toLocaleString()}원
+                </span>
               </div>
             </div>
             <hr className="mb-3 mt-5" />

@@ -9,7 +9,7 @@ import {
   Select,
   SelectChangeEvent,
 } from '@mui/material';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
@@ -51,6 +51,7 @@ interface CouponRequestValue extends CouponCommonValue {
 const CouponEditor = ({ editorMode }: CouponEditorProps) => {
   const navigate = useNavigate();
   const params = useParams();
+  const queryClient = useQueryClient();
 
   const [value, setValue] = useState<CouponInputValue>({
     couponType: '',
@@ -64,15 +65,10 @@ const CouponEditor = ({ editorMode }: CouponEditorProps) => {
   });
   const [isLoading, setIsLoading] = useState(true);
 
-  const getCouponList = useQuery({
-    queryKey: ['coupon'],
+  const getCoupon = useQuery({
+    queryKey: ['coupon', params.couponId],
     queryFn: async () => {
-      const res = await axios.get('/coupon', {
-        params: {
-          page: 1,
-          size: 10000,
-        },
-      });
+      const res = await axios.get(`/coupon/${params.couponId}`);
       return res.data;
     },
     enabled: editorMode === 'edit',
@@ -84,48 +80,46 @@ const CouponEditor = ({ editorMode }: CouponEditorProps) => {
       const data = res.data;
       return data;
     },
-    onSuccess: () => {
-      navigate('/admin/coupon');
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ['coupon'] });
+      navigate('/admin/coupons');
     },
   });
 
   const editCoupon = useMutation({
     mutationFn: async (value: CouponRequestValue) => {
-      const res = await axios.patch('/coupon', value);
+      const res = await axios.patch(`/coupon/${params.couponId}`, value);
       const data = res.data;
       return data;
     },
-    onSuccess: () => {
-      navigate('/admin/coupon');
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ['coupon'] });
+      navigate('/admin/coupons');
     },
   });
 
   useEffect(() => {
-    if (getCouponList.isSuccess) {
-      const couponList = getCouponList.data.couponList;
-      const coupon =
-        params.couponIndex !== undefined && couponList[params.couponIndex];
-      if (coupon) {
-        setValue({
-          couponType:
-            couponTypeEnum[
-              coupon.couponType as keyof typeof couponTypeEnum
-            ].id.toString(),
-          programType:
-            couponProgramTypeEnum[
-              coupon.couponProgramType as keyof typeof couponProgramTypeEnum
-            ].id.toString(),
-          name: coupon.name,
-          code: coupon.code,
-          discount: String(coupon.discount),
-          time: String(coupon.time),
-          startDate: coupon.startDate,
-          endDate: coupon.endDate,
-        });
-      }
+    if (getCoupon.isSuccess) {
+      const coupon = getCoupon.data;
+      setValue({
+        couponType:
+          couponTypeEnum[
+            coupon.couponType as keyof typeof couponTypeEnum
+          ].id.toString(),
+        programType:
+          couponProgramTypeEnum[
+            coupon.couponProgramType as keyof typeof couponProgramTypeEnum
+          ].id.toString(),
+        name: coupon.name,
+        code: coupon.code,
+        discount: String(coupon.discount),
+        time: String(coupon.time),
+        startDate: coupon.startDate,
+        endDate: coupon.endDate,
+      });
     }
     setIsLoading(false);
-  }, [getCouponList.isSuccess]);
+  }, [getCoupon.isSuccess]);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement> | SelectChangeEvent<string>,
@@ -154,7 +148,14 @@ const CouponEditor = ({ editorMode }: CouponEditorProps) => {
   return (
     <main className="mx-auto mt-12 w-[36rem]">
       <header>
-        <h1 className="text-2xl font-semibold">쿠폰 등록</h1>
+        <h1 className="text-2xl font-semibold">
+          쿠폰{' '}
+          {editorMode === 'create' ? (
+            <>등록</>
+          ) : (
+            editorMode === 'edit' && <>수정</>
+          )}
+        </h1>
       </header>
       <form className="mt-4" onSubmit={handleSubmit}>
         <div className="flex flex-col gap-4">
@@ -265,7 +266,13 @@ const CouponEditor = ({ editorMode }: CouponEditorProps) => {
           </div>
         </div>
         <div className="mt-8 flex justify-end gap-2">
-          <ActionButton type="submit">등록</ActionButton>
+          <ActionButton type="submit">
+            {editorMode === 'create' ? (
+              <>등록</>
+            ) : (
+              editorMode === 'edit' && <>확인</>
+            )}
+          </ActionButton>
           <ActionButton to="-1" type="button" bgColor="gray">
             취소
           </ActionButton>

@@ -150,9 +150,9 @@ export const couponTypeToText: Record<string, string> = {
 };
 
 export const couponTypeTextFromId: Record<string, string> = {
-  0: couponTypeToText.PARTNERSHIP,
-  1: couponTypeToText.EVENT,
-  2: couponTypeToText.GRADE,
+  1: couponTypeToText.PARTNERSHIP,
+  2: couponTypeToText.EVENT,
+  3: couponTypeToText.GRADE,
 };
 
 export const couponProgramTypeToText: Record<string, string> = {
@@ -163,42 +163,42 @@ export const couponProgramTypeToText: Record<string, string> = {
 };
 
 export const idTocouponProgramTypeText: Record<string, string> = {
-  0: couponProgramTypeToText.ALL,
-  1: couponProgramTypeToText.CHALLENGE,
-  2: couponProgramTypeToText.BOOTCAMP,
-  3: couponProgramTypeToText.SESSION,
+  1: couponProgramTypeToText.ALL,
+  2: couponProgramTypeToText.CHALLENGE,
+  3: couponProgramTypeToText.BOOTCAMP,
+  4: couponProgramTypeToText.SESSION,
 };
 
 export const couponTypeEnum = {
   PARTNERSHIP: {
-    id: 0,
+    id: 1,
     text: '제휴',
   },
   EVENT: {
-    id: 1,
+    id: 2,
     text: '이벤트',
   },
   GRADE: {
-    id: 2,
+    id: 3,
     text: '등급별 할인',
   },
 };
 
 export const couponProgramTypeEnum = {
   ALL: {
-    id: 0,
+    id: 1,
     text: '전체',
   },
   CHALLENGE: {
-    id: 1,
+    id: 2,
     text: '챌린지',
   },
   BOOTCAMP: {
-    id: 2,
+    id: 3,
     text: '부트캠프',
   },
   SESSION: {
-    id: 3,
+    id: 4,
     text: '렛츠챗',
   },
 };
