@@ -143,6 +143,66 @@ export const attendanceResultToText: any = {
   WRONG: '반려',
 };
 
+export const couponTypeToText: Record<string, string> = {
+  PARTNERSHIP: '제휴',
+  EVENT: '이벤트',
+  GRADE: '등급별 할인',
+};
+
+export const couponTypeTextFromId: Record<string, string> = {
+  0: couponTypeToText.PARTNERSHIP,
+  1: couponTypeToText.EVENT,
+  2: couponTypeToText.GRADE,
+};
+
+export const couponProgramTypeToText: Record<string, string> = {
+  ALL: '전체',
+  CHALLENGE: '챌린지',
+  BOOTCAMP: '부트캠프',
+  SESSION: '렛츠챗',
+};
+
+export const idTocouponProgramTypeText: Record<string, string> = {
+  0: couponProgramTypeToText.ALL,
+  1: couponProgramTypeToText.CHALLENGE,
+  2: couponProgramTypeToText.BOOTCAMP,
+  3: couponProgramTypeToText.SESSION,
+};
+
+export const couponTypeEnum = {
+  PARTNERSHIP: {
+    id: 0,
+    text: '제휴',
+  },
+  EVENT: {
+    id: 1,
+    text: '이벤트',
+  },
+  GRADE: {
+    id: 2,
+    text: '등급별 할인',
+  },
+};
+
+export const couponProgramTypeEnum = {
+  ALL: {
+    id: 0,
+    text: '전체',
+  },
+  CHALLENGE: {
+    id: 1,
+    text: '챌린지',
+  },
+  BOOTCAMP: {
+    id: 2,
+    text: '부트캠프',
+  },
+  SESSION: {
+    id: 3,
+    text: '렛츠챗',
+  },
+};
+
 export const missionSubmitToBadge = ({
   status,
   result,

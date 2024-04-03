@@ -1,48 +1,55 @@
-import { useQuery } from '@tanstack/react-query';
 import clsx from 'clsx';
+import { useQuery } from '@tanstack/react-query';
+import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { CiTrash } from 'react-icons/ci';
 
 import axios from '../../../utils/axios';
-import { Link } from 'react-router-dom';
+import { couponTypeToText } from '../../../utils/convert';
+
+interface Coupon {
+  code: string;
+  couponType: string;
+  createDate: string;
+  startDate: string;
+  endDate: string;
+  name: string;
+}
 
 const Coupons = () => {
+  const [couponList, setCouponList] = useState<Coupon[]>([]);
+
   useQuery({
     queryKey: ['coupon'],
     queryFn: async () => {
-      const res = await axios.get('/coupon');
+      const res = await axios.get('/coupon', {
+        params: {
+          page: 1,
+          size: 10000,
+        },
+      });
       const data = res.data;
       console.log(data);
+      setCouponList(data.couponList);
       return data;
     },
   });
 
   const couponCellWidth = {
-    type: 'w-32',
-    name: 'w-32',
+    couponType: 'w-28',
+    name: 'w-40',
     code: 'flex-1',
-    createdAt: 'w-40',
+    // createdDate: 'w-40',
     validPeriod: 'w-60',
-    management: 'w-40',
+    management: 'w-48',
   };
 
-  const couponList = [
-    {
-      id: 1,
-      type: '제휴',
-      name: '임팩트닷커리어',
-      code: 'rootimpact2024',
-      createdAt: '2024년 3월 23일',
-      validPeriod: '2024년 3월 1일 ~ 2024년 12월 31일',
-    },
-    {
-      id: 2,
-      type: '제휴',
-      name: '임팩트닷커리어1',
-      code: 'rootimpact20241',
-      createdAt: '2024년 3월 22일',
-      validPeriod: '2024년 3월 2일 ~ 2024년 12월 30일',
-    },
-  ];
+  const formateDateString = (dateString: string) => {
+    const date = new Date(dateString);
+    return `${date.getFullYear()}년 ${
+      date.getMonth() + 1
+    }월 ${date.getDate()}일`;
+  };
 
   return (
     <main className="px-12 pt-12">
@@ -60,7 +67,7 @@ const Coupons = () => {
           <div
             className={clsx(
               'flex justify-center py-2 text-sm font-medium text-[#717179]',
-              couponCellWidth.type,
+              couponCellWidth.couponType,
             )}
           >
             유형
@@ -81,14 +88,14 @@ const Coupons = () => {
           >
             쿠폰코드
           </div>
-          <div
-            className={clsx(
-              'flex justify-center py-2 text-sm font-medium text-[#717179]',
-              couponCellWidth.createdAt,
-            )}
-          >
-            발급날짜
-          </div>
+          {/* <div
+        className={clsx(
+          'flex justify-center py-2 text-sm font-medium text-[#717179]',
+          couponCellWidth.createdDate,
+        )}
+      >
+        발급날짜
+      </div> */}
           <div
             className={clsx(
               'flex justify-center py-2 text-sm font-medium text-[#717179]',
@@ -107,18 +114,18 @@ const Coupons = () => {
           </div>
         </div>
         <div className="mb-16 mt-3 flex flex-col gap-2">
-          {couponList.map((coupon) => (
+          {couponList.map((coupon, index) => (
             <div
-              key={coupon.id}
+              key={index}
               className="flex rounded-md border border-neutral-200"
             >
               <div
                 className={clsx(
                   'flex items-center justify-center py-4 text-sm text-zinc-600',
-                  couponCellWidth.type,
+                  couponCellWidth.couponType,
                 )}
               >
-                {coupon.type}
+                {couponTypeToText[coupon.couponType]}
               </div>
               <div
                 className={clsx(
@@ -136,21 +143,22 @@ const Coupons = () => {
               >
                 {coupon.code}
               </div>
-              <div
-                className={clsx(
-                  'flex items-center justify-center py-4 text-sm text-zinc-600',
-                  couponCellWidth.createdAt,
-                )}
-              >
-                {coupon.createdAt}
-              </div>
+              {/* <div
+            className={clsx(
+              'flex items-center justify-center py-4 text-sm text-zinc-600',
+              couponCellWidth.createdDate,
+            )}
+          >
+            {coupon.createDate}
+          </div> */}
               <div
                 className={clsx(
                   'flex items-center justify-center py-4 text-sm text-zinc-600',
                   couponCellWidth.validPeriod,
                 )}
               >
-                {coupon.validPeriod}
+                {formateDateString(coupon.startDate)} ~{' '}
+                {formateDateString(coupon.endDate)}
               </div>
               <div
                 className={clsx(
@@ -159,9 +167,11 @@ const Coupons = () => {
                 )}
               >
                 <div className="flex items-center gap-4">
-                  <i>
-                    <img src="/icons/edit-icon.svg" alt="수정 아이콘" />
-                  </i>
+                  <Link to={`/admin/coupons/${index}/edit`}>
+                    <i>
+                      <img src="/icons/edit-icon.svg" alt="수정 아이콘" />
+                    </i>
+                  </Link>
                   <i className="text-[1.75rem]">
                     <CiTrash />
                   </i>

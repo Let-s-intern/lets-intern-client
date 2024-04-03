@@ -180,6 +180,15 @@ const InputContent = ({
     },
   };
 
+  const price =
+    program.feeType === 'REFUND'
+      ? program.feeCharge + program.feeRefund
+      : program.feeType === 'CHARGE'
+      ? program.feeCharge
+      : 0;
+  const discountAmount = program.discountValue;
+  const totalPrice = price - discountAmount;
+
   return (
     <form className={classes.content} onSubmit={handleSubmit}>
       <div>
@@ -361,6 +370,40 @@ const InputContent = ({
               maxLength={500}
             />
           )}
+          <hr className="my-3" />
+          <div className="mb-3 font-pretendard">
+            <h3 className="text-lg font-semibold">결제 금액</h3>
+            <div className="mt-3 flex flex-col gap-3">
+              <div className="flex items-center justify-between">
+                <div className="w-[5.5rem] rounded-full bg-primary py-1 text-center text-xs font-medium text-white">
+                  참여비용
+                </div>
+                <span className="font-semibold">
+                  {price.toLocaleString()}원
+                </span>
+              </div>
+              <div className="flex items-center justify-between">
+                <div className="w-[5.5rem] rounded-full bg-[#BDBDBD] py-1 text-center text-xs font-medium text-white">
+                  할인금액
+                </div>
+                <span className="font-semibold text-[#BDBDBD]">
+                  -{discountAmount.toLocaleString()}원
+                </span>
+              </div>
+              <div className="flex items-center justify-between">
+                <div className="w-[5.5rem] rounded-full bg-amber-500 py-1 text-center text-xs font-medium text-white">
+                  쿠폰 할인
+                </div>
+                <span className="font-semibold text-primary">-0원</span>
+              </div>
+            </div>
+            <hr className="mb-3 mt-5" />
+            <div className="flex justify-end">
+              <span className="text-xl font-semibold">
+                {totalPrice.toLocaleString()}원
+              </span>
+            </div>
+          </div>
         </div>
       )}
       <button

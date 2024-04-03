@@ -91,31 +91,35 @@ const StartContent = ({
               <strong>종료 일자</strong> {formatDateString(program.endDate)}
             </li>
           </ul>
-          <hr className="my-2" />
-          <div className="flex items-center justify-between font-pretendard">
-            <div className="flex items-center gap-1.5">
-              <span className="text-sm font-semibold">결제 금액</span>
-              {program.feeType !== 'FREE' && (
-                <span className="text-xs font-semibold text-red-500">
-                  {Math.round((discountAmount / price) * 100)}%
-                </span>
-              )}
-            </div>
-            <div className="flex items-center gap-2">
-              {program.feeType !== 'FREE' && (
-                <span className="font-semibold text-zinc-400 line-through">
-                  {price.toLocaleString()}원
-                </span>
-              )}
-              <span className="text-lg font-semibold">
-                {program.feeType === 'FREE' ? (
-                  <>무료</>
-                ) : (
-                  <>{(price - discountAmount).toLocaleString()}원</>
-                )}
-              </span>
-            </div>
-          </div>
+          {program.type === 'LETS_CHAT' && (
+            <>
+              <hr className="my-2" />
+              <div className="flex items-center justify-between font-pretendard">
+                <div className="flex items-center gap-1.5">
+                  <span className="text-sm font-semibold">결제 금액</span>
+                  {program.feeType !== 'FREE' && (
+                    <span className="text-xs font-semibold text-red-500">
+                      {Math.round((discountAmount / price) * 100)}%
+                    </span>
+                  )}
+                </div>
+                <div className="flex items-center gap-2">
+                  {program.feeType !== 'FREE' && (
+                    <span className="font-semibold text-zinc-400 line-through">
+                      {price.toLocaleString()}원
+                    </span>
+                  )}
+                  <span className="text-lg font-semibold">
+                    {program.feeType === 'FREE' ? (
+                      <>무료</>
+                    ) : (
+                      <>{(price - discountAmount).toLocaleString()}원</>
+                    )}
+                  </span>
+                </div>
+              </div>
+            </>
+          )}
         </>
       )}
       <button
