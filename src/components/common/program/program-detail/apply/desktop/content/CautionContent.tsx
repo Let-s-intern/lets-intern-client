@@ -1,12 +1,15 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { useQueryClient } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import cn from 'classnames';
 
 import axios from '../../../../../../../utils/axios';
 import { typeToText } from '../../../../../../../utils/converTypeToText';
 
 import styles from './CautionContent.module.scss';
+import PriceSection from '../section/PriceSection';
+import { calculateProgramPrice } from '../../../../../../../utils/programPrice';
+import clsx from 'clsx';
 
 interface CautionContentProps {
   program: any;
@@ -14,6 +17,7 @@ interface CautionContentProps {
   isLoggedIn: boolean;
   setApplyPageIndex: (applyPageIndex: number) => void;
   setAnnouncementDate: (announcedmentDate: string) => void;
+  couponDiscount: number;
 }
 
 const CautionContent = ({
@@ -22,6 +26,7 @@ const CautionContent = ({
   isLoggedIn,
   setApplyPageIndex,
   setAnnouncementDate,
+  couponDiscount,
 }: CautionContentProps) => {
   const params = useParams();
   const queryClient = useQueryClient();
@@ -73,12 +78,58 @@ const CautionContent = ({
     }
   };
 
+  const { price, discountAmount, totalPrice } = calculateProgramPrice({
+    feeType: program.feeType,
+    feeCharge: program.feeCharge,
+    feeRefund: program.feeRefund,
+    programDiscount: program.discountValue,
+    couponDiscount,
+  });
+
   return (
     <div className={styles.content}>
       <h3 className="program-type">{typeToText[program.type]}</h3>
       <h2 className="program-title">{program.title}</h2>
       <h4>[필독사항]</h4>
       <p>{program.notice}</p>
+      {program.feeType !== 'FREE' && price !== 0 && (
+        <>
+          <hr />
+          <section className="mt-4 font-pretendard">
+            <h3 className="font-semibold text-zinc-600">결제 방법</h3>
+            <div className="mt-3 flex flex-col gap-2">
+              <div className="flex items-center justify-between">
+                <span className="text-sm font-semibold text-zinc-600">
+                  입급 계좌
+                </span>
+                <span className="text-sm text-zinc-600">
+                  토스뱅크 1000-7342-6735
+                </span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-sm font-semibold text-zinc-600">
+                  입금 마감기한
+                </span>
+                <span className="text-sm text-zinc-600">
+                  2024년 3월 23일 오후 10시
+                </span>
+              </div>
+            </div>
+          </section>
+          <hr className="mb-3 mt-4" />
+          <PriceSection
+            as="section"
+            className={clsx('mt-4', {
+              'mb-2': message,
+              'mb-5': !message,
+            })}
+            price={price}
+            discountAmount={discountAmount}
+            couponDiscount={couponDiscount}
+            totalPrice={totalPrice}
+          />
+        </>
+      )}
       {message && (
         <span
           className={cn(styles.message, {

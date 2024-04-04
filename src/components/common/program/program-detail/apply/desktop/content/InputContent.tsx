@@ -17,6 +17,8 @@ import {
   wishJobToText,
 } from '../../../../../../../utils/convert';
 import CouponSubmit from './CouponSubmit';
+import PriceSection from '../section/PriceSection';
+import { calculateProgramPrice } from '../../../../../../../utils/programPrice';
 
 interface InputContentProps {
   program: any;
@@ -27,6 +29,8 @@ interface InputContentProps {
   setFormData: (formData: any) => void;
   setShowAlert: (showAlert: boolean) => void;
   setAlertInfo: (alertInfo: { title: string; message: string }) => void;
+  couponDiscount: number;
+  setCouponDiscount: (couponDiscount: number) => void;
 }
 
 interface ScrollableDiv extends HTMLDivElement {
@@ -42,13 +46,14 @@ const InputContent = ({
   setFormData,
   setShowAlert,
   setAlertInfo,
+  couponDiscount,
+  setCouponDiscount,
 }: InputContentProps) => {
   const scrollRef = useRef<ScrollableDiv>(null);
 
   const [isNextButtonDisabled, setIsNextButtonDisabled] =
     useState<boolean>(true);
   const [loading, setLoading] = useState<boolean>(true);
-  const [couponDiscount, setCouponDiscount] = useState<number>(0);
 
   const { data: userData } = useQuery({
     queryKey: ['user'],
@@ -182,17 +187,13 @@ const InputContent = ({
     },
   };
 
-  const price =
-    program.feeType === 'REFUND'
-      ? program.feeCharge + program.feeRefund
-      : program.feeType === 'CHARGE'
-      ? program.feeCharge
-      : 0;
-  const discountAmount = program.discountValue;
-  const totalPrice =
-    price - discountAmount - couponDiscount < 0
-      ? 0
-      : price - discountAmount - couponDiscount;
+  const { price, discountAmount, totalPrice } = calculateProgramPrice({
+    feeType: program.feeType,
+    feeCharge: program.feeCharge,
+    feeRefund: program.feeRefund,
+    programDiscount: program.discountValue,
+    couponDiscount,
+  });
 
   return (
     <form className={classes.content} onSubmit={handleSubmit}>
@@ -375,43 +376,23 @@ const InputContent = ({
               maxLength={500}
             />
           )}
-          <CouponSubmit setCouponDiscount={setCouponDiscount} />
-          <hr className="my-3" />
-          <div className="mb-3 font-pretendard">
-            <h3 className="text-lg font-semibold">결제 금액</h3>
-            <div className="mt-3 flex flex-col gap-3">
-              <div className="flex items-center justify-between">
-                <div className="w-[5.5rem] rounded-full bg-primary py-1 text-center text-xs font-medium text-white">
-                  참여비용
-                </div>
-                <span className="font-semibold">
-                  {price.toLocaleString()}원
-                </span>
-              </div>
-              <div className="flex items-center justify-between">
-                <div className="w-[5.5rem] rounded-full bg-[#BDBDBD] py-1 text-center text-xs font-medium text-white">
-                  할인금액
-                </div>
-                <span className="font-semibold text-[#BDBDBD]">
-                  -{discountAmount.toLocaleString()}원
-                </span>
-              </div>
-              <div className="flex items-center justify-between">
-                <div className="w-[5.5rem] rounded-full bg-amber-500 py-1 text-center text-xs font-medium text-white">
-                  쿠폰 할인
-                </div>
-                <span className="font-semibold text-primary">
-                  -{couponDiscount.toLocaleString()}원
-                </span>
-              </div>
-            </div>
-            <hr className="mb-3 mt-5" />
-            <div className="flex justify-end">
-              <span className="text-xl font-semibold">
-                {totalPrice.toLocaleString()}원
-              </span>
-            </div>
-          </div>
+          {program.feeType !== 'FREE' && price !== 0 && (
+            <>
+              <CouponSubmit
+                formData={formData}
+                setCouponDiscount={setCouponDiscount}
+                setFormData={setFormData}
+              />
+              <hr className="my-3" />
+              <PriceSection
+                className="mb-5"
+                price={price}
+                discountAmount={discountAmount}
+                couponDiscount={couponDiscount}
+                totalPrice={totalPrice}
+              />
+            </>
+          )}
         </div>
       )}
       <button

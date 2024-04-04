@@ -118,13 +118,13 @@ const Coupons = () => {
               쿠폰코드
             </div>
             {/* <div
-        className={clsx(
-          'flex justify-center py-2 text-sm font-medium text-[#717179]',
-          couponCellWidth.createdDate,
-        )}
-      >
-        발급날짜
-      </div> */}
+                  className={clsx(
+                    'flex justify-center py-2 text-sm font-medium text-[#717179]',
+                    couponCellWidth.createdDate,
+                  )}
+                >
+                  발급날짜
+                </div> */}
             <div
               className={clsx(
                 'flex justify-center py-2 text-sm font-medium text-[#717179]',

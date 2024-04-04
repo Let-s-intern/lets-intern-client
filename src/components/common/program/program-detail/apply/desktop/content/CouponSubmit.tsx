@@ -4,10 +4,16 @@ import axios from '../../../../../../../utils/axios';
 import { AxiosError } from 'axios';
 
 interface CouponSubmitProps {
+  formData: any;
   setCouponDiscount: (discount: number) => void;
+  setFormData: (formData: any) => void;
 }
 
-const CouponSubmit = ({ setCouponDiscount }: CouponSubmitProps) => {
+const CouponSubmit = ({
+  formData,
+  setCouponDiscount,
+  setFormData,
+}: CouponSubmitProps) => {
   const [code, setCode] = useState('');
   const [submittedCode, setSubmittedCode] = useState('');
   const [message, setMessage] = useState('');
@@ -29,6 +35,7 @@ const CouponSubmit = ({ setCouponDiscount }: CouponSubmitProps) => {
         setCouponDiscount(res.data.discount);
         setIsSuccess(true);
         setSubmittedCode(code);
+        setFormData({ ...formData, code });
       }
     } catch (error) {
       const errorData = (error as AxiosError).response?.data;
@@ -53,6 +60,9 @@ const CouponSubmit = ({ setCouponDiscount }: CouponSubmitProps) => {
     setIsSuccess(false);
     setSubmittedCode('');
     setCouponDiscount(0);
+    const newFormData = { ...formData };
+    delete newFormData.code;
+    setFormData(newFormData);
   };
 
   useEffect(() => {

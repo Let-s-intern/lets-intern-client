@@ -7,9 +7,10 @@ import { DateTimeControl, DateTimeLabel } from '../editor/ProgramEditor';
 interface Props {
   values: any;
   setValues: (values: any) => void;
+  editorMode: 'create' | 'edit';
 }
 
-const FeeSection = ({ values, setValues }: Props) => {
+const FeeSection = ({ values, setValues, editorMode }: Props) => {
   return (
     <>
       <FormControl fullWidth>
@@ -33,7 +34,13 @@ const FeeSection = ({ values, setValues }: Props) => {
           <Input
             label="이용료 금액"
             type="number"
-            value={values.feeCharge ? values.feeCharge : ''}
+            value={
+              values.feeCharge !== null
+                ? values.feeCharge
+                : editorMode === 'edit'
+                ? '0'
+                : ''
+            }
             placeholder="이용료 금액을 입력하세요"
             onChange={(e: any) =>
               setValues({ ...values, feeCharge: e.target.value })
@@ -43,7 +50,13 @@ const FeeSection = ({ values, setValues }: Props) => {
             <Input
               label="보증금 금액"
               type="number"
-              value={values.feeRefund ? values.feeRefund : ''}
+              value={
+                values.feeRefund !== null
+                  ? values.feeRefund
+                  : editorMode === 'edit'
+                  ? '0'
+                  : ''
+              }
               placeholder="보증금 금액을 입력하세요"
               onChange={(e: any) =>
                 setValues({ ...values, feeRefund: e.target.value })
@@ -68,7 +81,6 @@ const FeeSection = ({ values, setValues }: Props) => {
           </FormControl>
           <Input
             label="입금계좌 번호"
-            type="number"
             value={values.accountNumber ? values.accountNumber : ''}
             placeholder="입금계좌 번호를 입력하세요"
             onChange={(e: any) =>
@@ -78,7 +90,13 @@ const FeeSection = ({ values, setValues }: Props) => {
           <Input
             label="할인 금액"
             type="number"
-            value={values.discountValue ? values.discountValue : ''}
+            value={
+              values.discountValue !== null
+                ? values.discountValue
+                : editorMode === 'edit'
+                ? '0'
+                : ''
+            }
             onChange={(e: any) =>
               setValues({ ...values, discountValue: e.target.value })
             }

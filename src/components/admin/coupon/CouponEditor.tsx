@@ -64,6 +64,8 @@ const CouponEditor = ({ editorMode }: CouponEditorProps) => {
     endDate: '',
   });
   const [isLoading, setIsLoading] = useState(true);
+  const [isAllDiscount, setIsAllDiscount] = useState(false);
+  const [isUnlimited, setIsUnlimited] = useState(false);
 
   const getCoupon = useQuery({
     queryKey: ['coupon', params.couponId],
@@ -92,8 +94,8 @@ const CouponEditor = ({ editorMode }: CouponEditorProps) => {
       const data = res.data;
       return data;
     },
-    onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: ['coupon'] });
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['coupon'] });
       navigate('/admin/coupons');
     },
   });
@@ -101,6 +103,8 @@ const CouponEditor = ({ editorMode }: CouponEditorProps) => {
   useEffect(() => {
     if (getCoupon.isSuccess) {
       const coupon = getCoupon.data;
+      setIsAllDiscount(coupon.discount === -1);
+      setIsUnlimited(coupon.time === -1);
       setValue({
         couponType:
           couponTypeEnum[
@@ -133,8 +137,8 @@ const CouponEditor = ({ editorMode }: CouponEditorProps) => {
       ...value,
       couponType: Number(value.couponType),
       programType: Number(value.programType),
-      discount: Number(value.discount),
-      time: Number(value.time),
+      discount: isAllDiscount ? -1 : Number(value.discount),
+      time: isUnlimited ? -1 : Number(value.time),
     };
     if (editorMode === 'create') {
       addCoupon.mutate(newValue);
@@ -208,37 +212,45 @@ const CouponEditor = ({ editorMode }: CouponEditorProps) => {
             value={value.code}
             onChange={handleChange}
           />
-          <div className="flex items-center gap-4">
-            <Input
-              type="number"
-              label="쿠폰 금액"
-              fullWidth={false}
-              className="flex-1"
-              name="discount"
-              value={value.discount}
-              onChange={handleChange}
-            />
+          <div className="flex items-center">
             <FormControlLabel
               control={<Checkbox />}
               label="전액"
-              className="w-[6rem]"
+              checked={isAllDiscount}
+              onChange={() => setIsAllDiscount(!isAllDiscount)}
+              className="h-[3.5rem] w-[8rem] pl-4"
             />
+            {!isAllDiscount && (
+              <Input
+                type="number"
+                label="쿠폰 금액"
+                fullWidth={false}
+                className="flex-1"
+                name="discount"
+                value={value.discount === '-1' ? '' : value.discount}
+                onChange={handleChange}
+              />
+            )}
           </div>
-          <div className="flex items-center gap-4">
-            <Input
-              type="number"
-              label="사용 가능 횟수"
-              fullWidth={false}
-              className="flex-1"
-              name="time"
-              value={value.time}
-              onChange={handleChange}
-            />
+          <div className="flex items-center">
             <FormControlLabel
               control={<Checkbox />}
               label="무제한"
-              className="w-[6rem]"
+              checked={isUnlimited}
+              onChange={() => setIsUnlimited(!isUnlimited)}
+              className="h-[3.5rem] w-[8rem] pl-4"
             />
+            {!isUnlimited && (
+              <Input
+                type="number"
+                label="사용 가능 횟수"
+                fullWidth={false}
+                className="flex-1"
+                name="time"
+                value={value.time === '-1' ? '' : value.time}
+                onChange={handleChange}
+              />
+            )}
           </div>
           <div className="ml-4 flex items-center gap-4">
             <label htmlFor="startDate" className="w-[8rem] font-medium">
