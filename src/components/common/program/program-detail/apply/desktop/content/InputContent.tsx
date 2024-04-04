@@ -16,6 +16,9 @@ import {
   bankTypeToText,
   wishJobToText,
 } from '../../../../../../../utils/convert';
+import CouponSubmit from './CouponSubmit';
+import PriceSection from '../section/PriceSection';
+import { calculateProgramPrice } from '../../../../../../../utils/programPrice';
 
 interface InputContentProps {
   program: any;
@@ -26,6 +29,8 @@ interface InputContentProps {
   setFormData: (formData: any) => void;
   setShowAlert: (showAlert: boolean) => void;
   setAlertInfo: (alertInfo: { title: string; message: string }) => void;
+  couponDiscount: number;
+  setCouponDiscount: (couponDiscount: number) => void;
 }
 
 interface ScrollableDiv extends HTMLDivElement {
@@ -41,6 +46,8 @@ const InputContent = ({
   setFormData,
   setShowAlert,
   setAlertInfo,
+  couponDiscount,
+  setCouponDiscount,
 }: InputContentProps) => {
   const scrollRef = useRef<ScrollableDiv>(null);
 
@@ -180,6 +187,14 @@ const InputContent = ({
     },
   };
 
+  const { price, discountAmount, totalPrice } = calculateProgramPrice({
+    feeType: program.feeType,
+    feeCharge: program.feeCharge,
+    feeRefund: program.feeRefund,
+    programDiscount: program.discountValue,
+    couponDiscount,
+  });
+
   return (
     <form className={classes.content} onSubmit={handleSubmit}>
       <div>
@@ -261,7 +276,7 @@ const InputContent = ({
                   onChange={(e) => handleApplyInput(e)}
                 >
                   {Object.keys(bankTypeToText).map((bankType: any) => (
-                    <MenuItem value={bankType}>
+                    <MenuItem key={bankType} value={bankType}>
                       {bankTypeToText[bankType]}
                     </MenuItem>
                   ))}
@@ -360,6 +375,23 @@ const InputContent = ({
               rows={4}
               maxLength={500}
             />
+          )}
+          {program.feeType !== 'FREE' && price !== 0 && (
+            <>
+              <CouponSubmit
+                formData={formData}
+                setCouponDiscount={setCouponDiscount}
+                setFormData={setFormData}
+              />
+              <hr className="my-3" />
+              <PriceSection
+                className="mb-5"
+                price={price}
+                discountAmount={discountAmount}
+                couponDiscount={couponDiscount}
+                totalPrice={totalPrice}
+              />
+            </>
           )}
         </div>
       )}

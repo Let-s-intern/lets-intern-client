@@ -23,6 +23,7 @@ interface ProgramEditorProps {
   handleFAQChange: (e: any, faqId: number) => void;
   handleFAQCheckChange: (e: any, faqId: number) => void;
   handleFAQIdListReset: () => void;
+  editorMode: 'create' | 'edit';
 }
 
 const ProgramEditor = ({
@@ -38,6 +39,7 @@ const ProgramEditor = ({
   handleFAQChange,
   handleFAQCheckChange,
   handleFAQIdListReset,
+  editorMode,
 }: ProgramEditorProps) => {
   const navigate = useNavigate();
   const quillRef = useRef<any>();
@@ -234,7 +236,11 @@ const ProgramEditor = ({
           multiline
           rows={8}
         />
-        <FeeSection values={values} setValues={setValues} />
+        <FeeSection
+          values={values}
+          setValues={setValues}
+          editorMode={editorMode}
+        />
         <div className="flex justify-end gap-2">
           <button
             type="submit"

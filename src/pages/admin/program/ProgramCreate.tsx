@@ -152,6 +152,7 @@ const ProgramCreate = () => {
       handleFAQChange={handleFAQChange}
       handleFAQCheckChange={handleFAQCheckChange}
       handleFAQIdListReset={handleFAQIdListReset}
+      editorMode="create"
     />
   );
 };

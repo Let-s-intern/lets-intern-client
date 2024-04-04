@@ -43,6 +43,9 @@ import OtherDashboardDetail from './pages/common/challenge/OtherDashboardDetail'
 import MentorNotificationBefore from './pages/common/mentor/MentorNotificationBefore';
 import MentorNotificationAfter from './pages/common/mentor/MentorNotificationAfter';
 import ChallengeOnboarding from './pages/admin/challenge/ChallengeOnboarding';
+import Coupons from './pages/admin/coupon/Coupons';
+import CouponCreate from './pages/admin/coupon/CouponCreate';
+import CouponEdit from './pages/admin/coupon/CouponEdit';
 
 const Router = () => {
   return (
@@ -109,18 +112,18 @@ const Router = () => {
             {/* /admin/programs/create */}
             <Route path="create" element={<ProgramCreate />} />
             <Route path=":programId">
-              {/* /admin/programs/:programId/edit */}
+              {/* /admin/programs/1/edit */}
               <Route path="edit" element={<ProgramEdit />} />
-              {/* /admin/programs/:programId/users */}
+              {/* /admin/programs/1/users */}
               <Route path="users" element={<ProgramUsers />} />
-              {/* /admin/programs/:programId/check-attendance */}
+              {/* /admin/programs/1/check-attendance */}
               <Route path="check-attendance" element={<AttendCheck />} />
             </Route>
           </Route>
           <Route path="reviews">
             {/* /admin/reviews */}
             <Route path="" element={<AdminReviews />} />
-            {/* /admin/reviews/:programId */}
+            {/* /admin/reviews/1 */}
             <Route path=":programId" element={<AdminReviewsDetail />} />
           </Route>
           <Route path="users">
@@ -129,29 +132,39 @@ const Router = () => {
             {/* /admin/users/create */}
             <Route path="create" element={<UserCreate />} />
             <Route path=":userId">
-              {/* /admin/users/:userId */}
+              {/* /admin/users/1 */}
               <Route path="" element={<UserDetail />} />
-              {/* /admin/users/:userId/memo */}
+              {/* /admin/users/1/memo */}
               <Route path="memo" element={<UserMemo />} />
-              {/* /admin/users/:userId/edit */}
+              {/* /admin/users/1/edit */}
               <Route path="edit" element={<UserEdit />} />
             </Route>
           </Route>
+          {/* /admin/coupons */}
+          <Route path="coupons">
+            {/* /admin/coupons */}
+            <Route path="" element={<Coupons />} />
+            {/* /admin/coupons/new */}
+            <Route path="new" element={<CouponCreate />} />
+            {/* /admin/coupons/1/edit */}
+            <Route path=":couponId/edit" element={<CouponEdit />} />
+          </Route>
           {/* /admin/challenge */}
           <Route path="challenge" element={<ChallengeOnboarding />} />
-          {/* /admin/challenge/:programId */}
+          {/* /admin/challenge/1 */}
           <Route path="challenge/:programId" element={<ChallengeAdminLayout />}>
-            {/* /admin/challenge/:programId */}
+            {/* /admin/challenge/1 */}
             <Route path="" element={<ChallengeHome />} />
-            {/* /admin/challenge/:programId/notice */}
+            {/* /admin/challenge/1/notice */}
             <Route path="notice" element={<ChallengeNotice />} />
-            {/* /admin/challenge/:programId/mission */}
+            {/* /admin/challenge/1/mission */}
             <Route path="mission" element={<ChallengeMission />} />
-            {/* /admin/challenge/:programId/submit-check */}
+            {/* /admin/challenge/1/submit-check */}
             <Route path="submit-check" element={<ChallengeSubmitCheck />} />
-            {/* /admin/challenge/:programId/user */}
+            {/* /admin/challenge/1/user */}
             <Route path="user" element={<ChallengeUser />} />
           </Route>
+          {/* /admin/challenge/contents */}
           <Route
             path="/admin/challenge/contents"
             element={<ChallengeContents />}

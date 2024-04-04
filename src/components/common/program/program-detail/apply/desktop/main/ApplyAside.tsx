@@ -29,6 +29,7 @@ const ApplyAside = ({
     title: '',
     message: '',
   });
+  const [couponDiscount, setCouponDiscount] = useState<number>(0);
 
   const handleModalClose = () => {
     if (applyPageIndex === 3) {
@@ -83,6 +84,8 @@ const ApplyAside = ({
         setApplyPageIndex={setApplyPageIndex}
         setShowAlert={setShowAlert}
         setAlertInfo={setAlertInfo}
+        couponDiscount={couponDiscount}
+        setCouponDiscount={setCouponDiscount}
       />
     );
     modalContent = null;
@@ -94,6 +97,7 @@ const ApplyAside = ({
         isLoggedIn={isLoggedIn}
         setApplyPageIndex={setApplyPageIndex}
         setAnnouncementDate={setAnnouncementDate}
+        couponDiscount={couponDiscount}
       />
     );
     modalContent = null;
@@ -105,6 +109,7 @@ const ApplyAside = ({
         isLoggedIn={isLoggedIn}
         setApplyPageIndex={setApplyPageIndex}
         setAnnouncementDate={setAnnouncementDate}
+        couponDiscount={couponDiscount}
       />
     );
     modalContent = (

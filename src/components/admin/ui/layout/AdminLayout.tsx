@@ -90,6 +90,10 @@ const AdminLayout = () => {
           name: '회원 DB',
           url: '/admin/users',
         },
+        {
+          name: '쿠폰 관리',
+          url: '/admin/coupons',
+        },
       ],
     },
     {
