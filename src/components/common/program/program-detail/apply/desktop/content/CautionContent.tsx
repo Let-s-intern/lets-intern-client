@@ -10,6 +10,7 @@ import styles from './CautionContent.module.scss';
 import PriceSection from '../section/PriceSection';
 import { calculateProgramPrice } from '../../../../../../../utils/programPrice';
 import clsx from 'clsx';
+import { bankTypeToText } from '../../../../../../../utils/convert';
 
 interface CautionContentProps {
   program: any;
@@ -78,6 +79,20 @@ const CautionContent = ({
     }
   };
 
+  const formatDateString = (dateString: string) => {
+    const date = new Date(dateString);
+    const isAm = date.getHours() < 12;
+    let hours = date.getHours();
+    hours = hours % 12;
+    hours = hours ? hours : 12;
+    const hoursStr = hours < 10 ? '0' + hours : hours;
+    return `${date.getFullYear()}년 ${
+      date.getMonth() + 1
+    }월 ${date.getDate()}일 ${isAm ? '오전' : '오후'} ${hoursStr}시${
+      date.getMinutes() !== 0 && ` ${date.getMinutes()}분`
+    }`;
+  };
+
   const { price, discountAmount, totalPrice } = calculateProgramPrice({
     feeType: program.feeType,
     feeCharge: program.feeCharge,
@@ -103,7 +118,7 @@ const CautionContent = ({
                   입급 계좌
                 </span>
                 <span className="text-sm text-zinc-600">
-                  토스뱅크 1000-7342-6735
+                  {bankTypeToText[program.accountType]} {program.accountNumber}
                 </span>
               </div>
               <div className="flex items-center justify-between">
@@ -111,7 +126,8 @@ const CautionContent = ({
                   입금 마감기한
                 </span>
                 <span className="text-sm text-zinc-600">
-                  2024년 3월 23일 오후 10시
+                  {formatDateString(program.feeDueDate)}
+                  {/* 2024년 3월 23일 오후 10시 */}
                 </span>
               </div>
             </div>
