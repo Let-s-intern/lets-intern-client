@@ -100,9 +100,10 @@ const MemberSelect = ({ setApplyPageIndex }: MemberSelectProps) => {
           confirmText="비회원으로 신청"
           cancelText="회원으로 신청"
         >
-          비회원으로 지원 시 다시 지원하거나
+          비회원으로 지원 시<br />
+          쿠폰 할인을 적용하실 수 없으며
           <br />
-          취소할 수 없습니다.
+          다시 지원하거나 취소하실 수 없습니다.
         </AlertModal>
       )}
       <button
