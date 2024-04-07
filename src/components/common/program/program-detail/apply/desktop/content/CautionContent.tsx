@@ -107,45 +107,48 @@ const CautionContent = ({
       <h2 className="program-title">{program.title}</h2>
       <h4>[필독사항]</h4>
       <p>{program.notice}</p>
-      {program.feeType !== 'FREE' && price !== 0 && (
-        <>
-          <hr />
-          <section className="mt-4 font-pretendard">
-            <h3 className="font-semibold text-zinc-600">결제 방법</h3>
-            <div className="mt-3 flex flex-col gap-2">
-              <div className="flex items-center justify-between">
-                <span className="text-sm font-semibold text-zinc-600">
-                  입급 계좌
-                </span>
-                <span className="text-sm text-zinc-600">
-                  {bankTypeToText[program.accountType]} {program.accountNumber}
-                </span>
+      {program.feeType !== 'FREE' &&
+        price !== 0 &&
+        program.type === 'LETS_CHAT' && (
+          <>
+            <hr />
+            <section className="mt-4 font-pretendard">
+              <h3 className="font-semibold text-zinc-600">결제 방법</h3>
+              <div className="mt-3 flex flex-col gap-2">
+                <div className="flex items-center justify-between">
+                  <span className="text-sm font-semibold text-zinc-600">
+                    입급 계좌
+                  </span>
+                  <span className="text-sm text-zinc-600">
+                    {bankTypeToText[program.accountType]}{' '}
+                    {program.accountNumber}
+                  </span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-sm font-semibold text-zinc-600">
+                    입금 마감기한
+                  </span>
+                  <span className="text-sm text-zinc-600">
+                    {formatDateString(program.feeDueDate)}
+                    {/* 2024년 3월 23일 오후 10시 */}
+                  </span>
+                </div>
               </div>
-              <div className="flex items-center justify-between">
-                <span className="text-sm font-semibold text-zinc-600">
-                  입금 마감기한
-                </span>
-                <span className="text-sm text-zinc-600">
-                  {formatDateString(program.feeDueDate)}
-                  {/* 2024년 3월 23일 오후 10시 */}
-                </span>
-              </div>
-            </div>
-          </section>
-          <hr className="mb-3 mt-4" />
-          <PriceSection
-            as="section"
-            className={clsx('mt-4', {
-              'mb-2': message,
-              'mb-5': !message,
-            })}
-            price={price}
-            discountAmount={discountAmount}
-            couponDiscount={couponDiscount}
-            totalPrice={totalPrice}
-          />
-        </>
-      )}
+            </section>
+            <hr className="mb-3 mt-4" />
+            <PriceSection
+              as="section"
+              className={clsx('mt-4', {
+                'mb-2': message,
+                'mb-5': !message,
+              })}
+              price={price}
+              discountAmount={discountAmount}
+              couponDiscount={couponDiscount}
+              totalPrice={totalPrice}
+            />
+          </>
+        )}
       {message && (
         <span
           className={cn(styles.message, {

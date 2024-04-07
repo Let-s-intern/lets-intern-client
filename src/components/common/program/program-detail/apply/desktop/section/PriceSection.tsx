@@ -27,14 +27,16 @@ const PriceSection = ({
           </div>
           <span className="font-semibold">{price.toLocaleString()}원</span>
         </div>
-        <div className="flex items-center justify-between">
-          <div className="w-[5.5rem] rounded-full bg-[#BDBDBD] py-1 text-center text-xs font-medium text-white">
-            할인금액
+        {discountAmount > 0 && (
+          <div className="flex items-center justify-between">
+            <div className="w-[5.5rem] rounded-full bg-[#BDBDBD] py-1 text-center text-xs font-medium text-white">
+              할인금액
+            </div>
+            <span className="font-semibold text-[#BDBDBD]">
+              -{discountAmount.toLocaleString()}원
+            </span>
           </div>
-          <span className="font-semibold text-[#BDBDBD]">
-            -{discountAmount.toLocaleString()}원
-          </span>
-        </div>
+        )}
         <div className="flex items-center justify-between">
           <div className="w-[5.5rem] rounded-full bg-amber-500 py-1 text-center text-xs font-medium text-white">
             쿠폰 할인
