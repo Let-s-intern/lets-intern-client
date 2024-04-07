@@ -378,12 +378,14 @@ const InputContent = ({
           )}
           {program.feeType !== 'FREE' && price !== 0 && (
             <>
-              <CouponSubmit
-                className="mt-3"
-                formData={formData}
-                setCouponDiscount={setCouponDiscount}
-                setFormData={setFormData}
-              />
+              {isLoggedIn && (
+                <CouponSubmit
+                  className="mt-3"
+                  formData={formData}
+                  setCouponDiscount={setCouponDiscount}
+                  setFormData={setFormData}
+                />
+              )}
               {program.type === 'LETS_CHAT' && (
                 <>
                   <hr className="my-3" />
