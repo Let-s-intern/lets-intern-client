@@ -379,18 +379,23 @@ const InputContent = ({
           {program.feeType !== 'FREE' && price !== 0 && (
             <>
               <CouponSubmit
+                className="mt-3"
                 formData={formData}
                 setCouponDiscount={setCouponDiscount}
                 setFormData={setFormData}
               />
-              <hr className="my-3" />
-              <PriceSection
-                className="mb-5"
-                price={price}
-                discountAmount={discountAmount}
-                couponDiscount={couponDiscount}
-                totalPrice={totalPrice}
-              />
+              {program.type === 'LETS_CHAT' && (
+                <>
+                  <hr className="my-3" />
+                  <PriceSection
+                    className="mb-5"
+                    price={price}
+                    discountAmount={discountAmount}
+                    couponDiscount={couponDiscount}
+                    totalPrice={totalPrice}
+                  />
+                </>
+              )}
             </>
           )}
         </div>

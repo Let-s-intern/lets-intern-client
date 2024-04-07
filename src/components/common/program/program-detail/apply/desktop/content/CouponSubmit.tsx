@@ -7,12 +7,14 @@ interface CouponSubmitProps {
   formData: any;
   setCouponDiscount: (discount: number) => void;
   setFormData: (formData: any) => void;
+  className?: string;
 }
 
 const CouponSubmit = ({
   formData,
   setCouponDiscount,
   setFormData,
+  className,
 }: CouponSubmitProps) => {
   const [code, setCode] = useState('');
   const [submittedCode, setSubmittedCode] = useState('');
@@ -75,7 +77,7 @@ const CouponSubmit = ({
   }, [code]);
 
   return (
-    <div className="mt-6">
+    <div className={className}>
       <div className="flex gap-2">
         <input
           type="text"
