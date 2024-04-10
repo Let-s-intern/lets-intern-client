@@ -86,7 +86,7 @@ const Coupons = () => {
           <h1 className="text-2xl font-semibold">쿠폰 관리</h1>
           <Link
             to="/admin/coupons/new"
-            className="rounded border border-zinc-600 bg-white px-4 py-[2px] text-xs duration-200 hover:bg-neutral-700 hover:text-white"
+            className="rounded-xxs border border-zinc-600 bg-white px-4 py-[2px] text-xs duration-200 hover:bg-neutral-700 hover:text-white"
           >
             등록
           </Link>

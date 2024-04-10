@@ -49,13 +49,13 @@ const DownloadButtonGroup = ({ applicationList }: Props) => {
     <div className="flex items-center gap-4">
       <div className="flex items-center gap-2">
         <button
-          className="rounded border border-zinc-600 px-4 py-[2px] text-xs duration-200 hover:bg-neutral-700 hover:text-white"
+          className="rounded-xxs border border-zinc-600 px-4 py-[2px] text-xs duration-200 hover:bg-neutral-700 hover:text-white"
           onClick={() => handleDownloadCSV('EMAIL')}
         >
           이메일 다운로드
         </button>
         <button
-          className="rounded border border-zinc-600 px-4 py-[2px] text-xs duration-200 hover:bg-neutral-700 hover:text-white"
+          className="rounded-xxs border border-zinc-600 px-4 py-[2px] text-xs duration-200 hover:bg-neutral-700 hover:text-white"
           onClick={() => handleDownloadCSV('PHONE')}
         >
           전화번호 다운로드

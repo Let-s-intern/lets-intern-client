@@ -244,13 +244,13 @@ const ProgramEditor = ({
         <div className="flex justify-end gap-2">
           <button
             type="submit"
-            className="w-20 rounded bg-indigo-600 py-2 text-center font-medium text-white"
+            className="rounded-xxs w-20 bg-indigo-600 py-2 text-center font-medium text-white"
           >
             등록
           </button>
           <button
             type="button"
-            className="w-20 rounded bg-gray-400 py-2 text-center font-medium text-white"
+            className="rounded-xxs w-20 bg-gray-400 py-2 text-center font-medium text-white"
             onClick={() => navigate(-1)}
           >
             취소

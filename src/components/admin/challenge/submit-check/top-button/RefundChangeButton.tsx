@@ -33,7 +33,7 @@ const RefundChangeButton = ({ isCheckedList, setIsCheckedList }: Props) => {
 
   return (
     <button
-      className="rounded border border-zinc-600 px-4 py-[2px] text-xs duration-200 hover:bg-neutral-700 hover:text-white"
+      className="rounded-xxs border border-zinc-600 px-4 py-[2px] text-xs duration-200 hover:bg-neutral-700 hover:text-white"
       onClick={handleRefundChange}
     >
       환급 완료로 변경

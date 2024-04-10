@@ -21,7 +21,7 @@ const TableRowContent = ({ application, onClick }: Props) => {
       <TableBodyCell className={clsx(cellWidthList[0])}>
         <div className="flex items-center gap-2">
           <span className="text-lg">{application.name}</span>
-          <span className="block rounded border border-black px-1 py-[1px] text-xs">
+          <span className="rounded-xxs block border border-black px-1 py-[1px] text-xs">
             {application.type === 'USER' ? '회원' : '비회원'}
           </span>
         </div>

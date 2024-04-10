@@ -21,7 +21,7 @@ const Button = ({
   onClick,
 }: Props) => {
   const buttonStyle = clsx(
-    'rounded border border-zinc-600 px-4 py-[2px] text-xs',
+    'rounded-xxs border border-zinc-600 px-4 py-[2px] text-xs',
     className,
     {
       'bg-neutral-700 text-white': active,

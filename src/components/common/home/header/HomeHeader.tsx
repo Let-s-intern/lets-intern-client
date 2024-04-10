@@ -20,7 +20,7 @@ const HomeHeader = () => {
             </p>
             <Link
               to="/program?category=CHALLENGE"
-              className="mt-3 inline-block rounded bg-white px-3 py-1 text-sm font-semibold text-[#2F3437]"
+              className="rounded-xxs mt-3 inline-block bg-white px-3 py-1 text-sm font-semibold text-[#2F3437]"
             >
               신청하기
             </Link>

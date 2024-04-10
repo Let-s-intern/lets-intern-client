@@ -97,7 +97,7 @@ const TableBody = ({
             </TD>
             <TD>
               <button
-                className="rounded border border-gray-300 bg-white px-2 py-1"
+                className="rounded-xxs border border-gray-300 bg-white px-2 py-1"
                 onClick={() => {
                   if (program.way === 'OFFLINE' || !program.link) return;
                   navigator.clipboard
