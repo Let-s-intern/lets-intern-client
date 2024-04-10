@@ -3,199 +3,199 @@
 @tailwind utilities;
 
 @layer base {
-  .text-xxl-2\.25-semibold {
+  .text-2\.25-semibold {
     font-size: 2.25rem;
     font-weight: 600;
     line-height: 3.375rem;
   }
 
-  .text-xxl-2-bold {
+  .text-2-bold {
     font-size: 2rem;
     font-weight: 500;
     line-height: 2.75rem;
   }
 
-  .text-xl-1\.75-bold {
+  .text-1\.75-bold {
     font-size: 1.75rem;
     font-weight: 700;
     line-height: 2.5rem;
   }
 
-  .text-xl-1\.75-semibold {
+  .text-1\.75-semibold {
     font-size: 1.75rem;
     font-weight: 600;
     line-height: 2.5rem;
   }
 
-  .text-xl-1\.75-medium {
+  .text-1\.75-medium {
     font-size: 1.75rem;
     font-weight: 500;
     line-height: 2.75rem;
   }
 
-  .text-lg-1\.625-semibold {
+  .text-1\.625-semibold {
     font-size: 1.625rem;
     font-weight: 600;
     line-height: 2.25rem;
   }
 
-  .text-lg-1\.625-medium {
+  .text-1\.625-medium {
     font-size: 1.625rem;
     font-weight: 600;
     line-height: 2.25rem;
   }
 
-  .text-lg-1\.625-light {
+  .text-1\.625-light {
     font-size: 1.625rem;
     font-weight: 300;
     line-height: 2.25rem;
   }
 
-  .text-md-1\.5-semibold {
+  .text-1\.5-semibold {
     font-size: 1.5rem;
     font-weight: 600;
     line-height: 2.25rem;
   }
 
-  .text-md-1\.5-medium {
+  .text-1\.5-medium {
     font-size: 1.5rem;
     font-weight: 500;
     line-height: 2.125rem;
   }
 
-  .text-md-1\.5-light {
+  .text-1\.5-light {
     font-size: 1.5rem;
     font-weight: 300;
     line-height: 2.125rem;
   }
 
-  .text-md-1\.375-semibold {
+  .text-1\.375-semibold {
     font-size: 1.375rem;
     font-weight: 600;
     line-height: 2.125rem;
   }
 
-  .text-md-1\.375-medium {
+  .text-1\.375-medium {
     font-size: 1.375rem;
     font-weight: 500;
     line-height: 1.875rem;
   }
 
-  .text-md-1\.375-light {
+  .text-1\.375-light {
     font-size: 1.375rem;
     font-weight: 300;
     line-height: 1.875rem;
   }
 
-  .text-md-1\.375-thin {
+  .text-1\.375-thin {
     font-size: 1.375rem;
     font-weight: 200;
     line-height: 1.875rem;
   }
 
-  .text-sm-1\.25-medium {
+  .text-1\.25-medium {
     font-size: 1.25rem;
     font-weight: 500;
     line-height: 1.875rem;
   }
 
-  .text-sm-1\.25 {
+  .text-1\.25 {
     font-size: 1.25rem;
     font-weight: 400;
     line-height: 1.875rem;
   }
 
-  .text-sm-1\.25-light {
+  .text-1\.25-light {
     font-size: 1.25rem;
     font-weight: 300;
     line-height: 1.875rem;
   }
 
-  .text-sm-1\.125-bold {
+  .text-1\.125-bold {
     font-size: 1.125rem;
     font-weight: 700;
     line-height: 1.75rem;
   }
 
-  .text-sm-1\.125-medium {
+  .text-1\.125-medium {
     font-size: 1.125rem;
     font-weight: 500;
     line-height: 1.75rem;
   }
 
-  .text-sm-1\.125 {
+  .text-1\.125 {
     font-size: 1.125rem;
     font-weight: 400;
     line-height: 1.75rem;
   }
 
-  .text-sm-1\.125-light {
+  .text-1\.125-light {
     font-size: 1.125rem;
     font-weight: 300;
     line-height: 1.75rem;
   }
 
-  .text-xs-1-semibold {
+  .text-1-semibold {
     font-size: 1rem;
     font-weight: 600;
     line-height: 1.625rem;
   }
 
-  .text-xs-1-medium {
+  .text-1-medium {
     font-size: 1rem;
     font-weight: 500;
     line-height: 1.625rem;
   }
 
-  .text-xs-1 {
+  .text-1 {
     font-size: 1rem;
     font-weight: 400;
     line-height: 1.625rem;
   }
 
-  .text-xs-1-light {
+  .text-1-light {
     font-size: 1rem;
     font-weight: 300;
     line-height: 1.625rem;
   }
 
-  .text-xs-0\.875-semibold {
+  .text-0\.875-semibold {
     font-size: 0.875rem;
     font-weight: 600;
     line-height: 1.375rem;
   }
 
-  .text-xs-0\.875-medium {
+  .text-0\.875-medium {
     font-size: 0.875rem;
     font-weight: 500;
     line-height: 1.375rem;
   }
 
-  .text-xs-0\.875 {
+  .text-0\.875 {
     font-size: 0.875rem;
     font-weight: 400;
     line-height: 1.375rem;
   }
 
-  .text-xs-0\.875-light {
+  .text-0\.875-light {
     font-size: 0.875rem;
     font-weight: 400;
     line-height: 1.375rem;
   }
 
-  .text-xxs-0\.75-bold {
+  .text-0\.75-bold {
     font-size: 0.75rem;
     font-weight: 700;
     line-height: 1.125rem;
   }
 
-  .text-xxs-0\.75-medium {
+  .text-0\.75-medium {
     font-size: 0.75rem;
     font-weight: 500;
     line-height: 1.125rem;
   }
 
-  .text-xxs-0\.75 {
+  .text-0\.75 {
     font-size: 0.75rem;
     font-weight: 400;
     line-height: 1.125rem;

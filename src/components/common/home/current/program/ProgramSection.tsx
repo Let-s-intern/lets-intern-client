@@ -37,7 +37,7 @@ const ProgramSection = () => {
 
   return (
     <section>
-      <h1 className="text-sm-1.125-bold lg:text-md-1.375-semibold text-neutral-0">
+      <h1 className="text-1.125-bold lg:text-1.375-semibold text-neutral-0">
         렛츠커리어 프로그램
       </h1>
       <ul className="mt-6 grid grid-cols-2 gap-x-4 gap-y-5 lg:grid-cols-4">

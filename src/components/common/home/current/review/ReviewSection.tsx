@@ -28,7 +28,9 @@ const ReviewSection = () => {
 
   return (
     <section>
-      <h1 className="text-sm-1.125-bold text-neutral-0">생생한 참여 후기</h1>
+      <h1 className="text-1.125-bold lg:text-1.375-semibold text-neutral-0">
+        생생한 참여 후기
+      </h1>
       <div className="mt-6 flex flex-col gap-4 sm:flex-row sm:flex-nowrap sm:overflow-x-auto">
         {reviewList.map((review, index) => (
           <div
@@ -36,10 +38,8 @@ const ReviewSection = () => {
             className="flex h-[15rem] w-full flex-col justify-end rounded-xs bg-primary-xlight bg-cover px-5 py-7 sm:w-[21rem] sm:flex-shrink-0"
             style={{ backgroundImage: `url(${review.imageSrc})` }}
           >
-            <h2 className="text-xs-0.875-medium text-neutral-0">
-              {review.title}
-            </h2>
-            <p className="text-xs-0.875-light mt-2 text-neutral-30">
+            <h2 className="text-0.875-medium text-neutral-0">{review.title}</h2>
+            <p className="text-0.875-light mt-2 text-neutral-30">
               {review.description}
             </p>
           </div>

@@ -33,7 +33,7 @@ const ProgramGridItem = ({
 
   return (
     <li className="flex flex-col items-start gap-2">
-      <div className="rounded-xs h-40 w-full overflow-hidden">
+      <div className="h-40 w-full overflow-hidden rounded-xs">
         <img
           src={clsx({
             '/images/home/program-green.svg': imageColor === 'green',
@@ -60,13 +60,11 @@ const ProgramGridItem = ({
           </Badge>
         )
       )}
-      <h2 className="text-xs-1-semibold text-neutral-0 lg:text-md-1.375-semibold">
+      <h2 className="text-1-semibold lg:text-1.375-semibold text-neutral-0">
         {title}
       </h2>
-      <p className="text-xs-0.875 lg:text-xs-1 text-neutral-30">
-        {description}
-      </p>
-      <p className="text-xxs-0.75-medium lg:text-xs-0.875-medium text-neutral-0">
+      <p className="text-0.875 lg:text-1 text-neutral-30">{description}</p>
+      <p className="text-0.75-medium lg:text-0.875-medium text-neutral-0">
         {allDay
           ? '상시 모집 중'
           : `${formatDateString(startDate)}~${formatDateString(endDate)}`}

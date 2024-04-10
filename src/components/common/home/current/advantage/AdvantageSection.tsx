@@ -24,7 +24,7 @@ const AdvantageSection = () => {
 
   return (
     <section>
-      <h1 className="lg:text-md-1.5-semibold text-sm-1.125-bold text-neutral-0">
+      <h1 className="lg:text-1.5-semibold text-1.125-bold text-neutral-0">
         렛츠커리어와 왜 함께해야 할까요?
       </h1>
       <div className="mt-6 flex flex-col gap-y-6 xs:flex-row xs:flex-nowrap xs:gap-x-4 xs:gap-y-0 xs:overflow-x-auto">

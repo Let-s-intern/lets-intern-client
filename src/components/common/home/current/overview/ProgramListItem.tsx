@@ -26,29 +26,29 @@ const ProgramListItem = ({ status, title, openDate }: ProgramListItemProps) => {
       })}
     >
       <div className="flex items-center gap-2">
-        <h3 className="text-xs-1-semibold">{title}</h3>
+        <h3 className="text-1-semibold">{title}</h3>
         {status === 'IN_PROGRESS' ? (
           <Badge color="primary">모집 중</Badge>
         ) : (
           status === 'BEFORE' && (
-            <span className="text-xxs-0.75 text-neutral-30">
+            <span className="text-0.75 text-neutral-30">
               {formatDateString(openDate)} 오픈 예정
             </span>
           )
         )}
       </div>
       {status === 'IN_PROGRESS' ? (
-        <button className="text-static-100 text-xs-0.875-semibold rounded-sm bg-primary px-4 py-2">
+        <button className="text-0.875-semibold rounded-sm bg-primary px-4 py-2 text-static-100">
           신청하기
         </button>
       ) : (
         status === 'BEFORE' && (
           <Link
             to="#"
-            className="text-neutral-30 text-xs-0.875-medium flex items-center gap-0.5"
+            className="text-0.875-medium flex items-center gap-0.5 text-neutral-30"
           >
             <span>사전알림 신청</span>
-            <i className="text-xxs-0.75 p-1">
+            <i className="text-0.75 p-1">
               <FaChevronRight />
             </i>
           </Link>
