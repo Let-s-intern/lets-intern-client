@@ -7,16 +7,16 @@ const PassReviewSection = () => {
       <p className="text-xs-0.875-light lg:text-xs-1-light text-neutral-30">
         기업 로고를 클릭해 합격 후기를 확인해보세요!
       </p>
-      <ul className="mt-6 flex flex-nowrap gap-x-4 overflow-x-auto">
+      <div className="mt-6 flex flex-nowrap gap-x-4 overflow-x-auto">
         {Array.from({ length: 4 }).map((_, index) => (
-          <li
+          <div
             key={index}
             className="h-[6.25rem] w-[14.5rem] flex-shrink-0 overflow-hidden rounded-xs"
           >
             <div className="h-full w-full bg-neutral-80" />
-          </li>
+          </div>
         ))}
-      </ul>
+      </div>
     </section>
   );
 };

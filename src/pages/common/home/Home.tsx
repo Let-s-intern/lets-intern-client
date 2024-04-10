@@ -2,6 +2,7 @@ import ProgramSection from '../../../components/common/home/current/program/Prog
 import ProgramOverviewSection from '../../../components/common/home/current/overview/ProgramOverviewSection';
 import AdvantageSection from '../../../components/common/home/current/advantage/AdvantageSection';
 import PassReviewSection from '../../../components/common/home/current/pass-review/PassReviewSection';
+import ReviewSection from '../../../components/common/home/current/review/ReviewSection';
 
 const Home = () => {
   return (
@@ -11,6 +12,7 @@ const Home = () => {
         <ProgramOverviewSection />
         <AdvantageSection />
         <PassReviewSection />
+        <ReviewSection />
       </div>
     </div>
   );
