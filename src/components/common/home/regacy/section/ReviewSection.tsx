@@ -1,5 +1,5 @@
 import ReviewBox from '../ui/ReviewBox';
-import reviews from '../../../../data/home-reviews.json';
+import reviews from '../../../../../data/home-reviews.json';
 
 import classes from './ReviewSection.module.scss';
 
