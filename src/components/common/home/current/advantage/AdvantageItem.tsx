@@ -10,11 +10,11 @@ const AdvantageItem = ({
   imageAlt,
 }: AdvantageItemProps) => {
   return (
-    <li className="w-full flex-auto flex-shrink-0 flex-grow-0 xs:w-[23rem]">
-      <div className="rounded-xs w-full overflow-hidden">
+    <li className="w-full flex-shrink-0 xs:w-[23rem]">
+      <div className="w-full overflow-hidden rounded-xs">
         <img src={imageSrc} alt={imageAlt} className="w-full" />
       </div>
-      <p className="text-xs-0.875-medium mt-3">{description}</p>
+      <p className="text-xs-0.875-medium mt-3 text-neutral-0">{description}</p>
     </li>
   );
 };

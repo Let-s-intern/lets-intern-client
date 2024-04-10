@@ -2,13 +2,13 @@ import ProgramOverviewListItem from './ProgramOverviewListItem';
 
 const ProgramOverviewSection = () => {
   return (
-    <section className="mt-20">
-      <h1 className="text-neutral-0 lg:text-md-1.375-semibold text-sm-1.125-bold">
+    <section>
+      <h1 className="lg:text-md-1.375-semibold text-sm-1.125-bold text-neutral-0">
         일정 한눈에 보기
       </h1>
       <nav>
         <ul className="mt-6 flex items-start gap-4">
-          <li className="text-primary-dark text-xs-1-semibold underline underline-offset-[6px]">
+          <li className="text-xs-1-semibold text-primary-dark underline underline-offset-[6px]">
             프로그램별
           </li>
           <li>일정별</li>
