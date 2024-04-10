@@ -14,14 +14,14 @@ const Badge = ({
   return (
     <span
       className={clsx(
-        'rounded-xs text-xxs-0.75-medium border bg-opacity-10 px-2 py-0.5',
+        'text-0.75-medium rounded-xs border bg-opacity-10 px-2 py-0.5',
         {
-          'lg:text-xs-0.875-medium': responsive,
-          'border-secondary text-secondary bg-secondary bg-opacity-10':
+          'lg:text-0.875-medium': responsive,
+          'border-secondary bg-secondary bg-opacity-10 text-secondary':
             color === 'secondary',
           'border-primary bg-primary bg-opacity-10 text-primary':
             color === 'primary',
-          'border-neutral-40 text-neutral-40 bg-neutral-40 bg-opacity-[0.12]':
+          'border-neutral-40 bg-neutral-40 bg-opacity-[0.12] text-neutral-40':
             color === 'gray',
         },
       )}
