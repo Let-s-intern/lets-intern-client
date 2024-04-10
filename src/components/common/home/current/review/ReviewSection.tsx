@@ -33,7 +33,7 @@ const ReviewSection = () => {
         {reviewList.map((review, index) => (
           <div
             key={index}
-            className="flex h-[15rem] w-full flex-col justify-end rounded-xs bg-primary-xlight bg-cover px-5 py-7 sm:w-[18rem] sm:flex-shrink-0"
+            className="flex h-[15rem] w-full flex-col justify-end rounded-xs bg-primary-xlight bg-cover px-5 py-7 sm:w-[21rem] sm:flex-shrink-0"
             style={{ backgroundImage: `url(${review.imageSrc})` }}
           >
             <h2 className="text-xs-0.875-medium text-neutral-0">
