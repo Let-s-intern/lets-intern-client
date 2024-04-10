@@ -53,6 +53,8 @@ module.exports = {
           80: '#E7E7E7',
           85: '#EFEFEF',
           90: '#F3F3F3',
+          95: '#F9F9F8',
+          100: '#FAFAFA',
         },
       },
       boxShadow: {
