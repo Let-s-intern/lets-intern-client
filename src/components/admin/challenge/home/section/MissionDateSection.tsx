@@ -3,11 +3,11 @@ import { Link, useParams } from 'react-router-dom';
 import { IoMdArrowDropdown } from 'react-icons/io';
 
 import RoundedBox from '../box/RoundedBox';
-import Button from '../../../ui/button/Button';
+import Button from '../../ui/button/Button';
 import SectionHeading from '../heading/SectionHeading';
 import MissionDateItem from '../item/MissionDateItem';
 import { useQuery } from '@tanstack/react-query';
-import axios from '../../../../../../utils/axios';
+import axios from '../../../../../utils/axios';
 
 const MissionDateSection = () => {
   const params = useParams();

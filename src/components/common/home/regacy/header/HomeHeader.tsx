@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 
-import AlertModal from '../../../ui/alert/AlertModal';
+import AlertModal from '../../../../ui/alert/AlertModal';
 import classes from './HomeHeader.module.scss';
 
 const HomeHeader = () => {

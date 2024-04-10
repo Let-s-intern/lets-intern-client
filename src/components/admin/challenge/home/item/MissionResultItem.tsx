@@ -1,8 +1,8 @@
 import clsx from 'clsx';
 
-import { formatToMonthDate } from '../../../../../../utils/formatDateString';
+import { formatToMonthDate } from '../../../../../utils/formatDateString';
 import MissionTopStatusBar from '../status-bar/MissionTopStatusBar';
-import { missionStatusToBadge } from '../../../../../../utils/convert';
+import { missionStatusToBadge } from '../../../../../utils/convert';
 
 interface Props {
   mission: any;

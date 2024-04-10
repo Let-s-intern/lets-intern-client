@@ -3,10 +3,10 @@ import { useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
 
 import RoundedBox from '../box/RoundedBox';
-import Button from '../../../ui/button/Button';
+import Button from '../../ui/button/Button';
 import SectionHeading from '../heading/SectionHeading';
 import MissionResultItem from '../item/MissionResultItem';
-import axios from '../../../../../../utils/axios';
+import axios from '../../../../../utils/axios';
 
 const MissionResultSection = () => {
   const params = useParams();

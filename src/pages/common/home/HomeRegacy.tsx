@@ -1,7 +1,7 @@
-import FeatureSection from '../../../components/common/home/section/FeatureSection';
-import HomeHeader from '../../../components/common/home/header/HomeHeader';
-import ProgramSection from '../../../components/common/home/section/ProgramSection';
-import ReviewSection from '../../../components/common/home/section/ReviewSection';
+import FeatureSection from '../../../components/common/home/regacy/section/FeatureSection';
+import HomeHeader from '../../../components/common/home/regacy/header/HomeHeader';
+import ProgramSection from '../../../components/common/home/regacy/section/ProgramSection';
+import ReviewSection from '../../../components/common/home/regacy/section/ReviewSection';
 
 const HomeRegacy = () => {
   return (
