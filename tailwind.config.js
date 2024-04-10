@@ -16,14 +16,14 @@ module.exports = {
         pretendard: ['Pretendard', 'sans-serif'],
       },
       colors: {
-        primary: '#4D55F5',
         primary: {
+          DEFAULT: '#4D55F5',
           dark: '#4138A3',
           light: '#757BFF',
           xlight: '#A9C1FF',
         },
-        secondary: '#1BC47D',
         secondary: {
+          DEFAULT: '#1BC47D',
           dark: '#009C89',
           light: '#43EC91',
         },
