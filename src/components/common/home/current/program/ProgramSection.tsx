@@ -1,43 +1,6 @@
-import ProgramGridItem, { ProgramGridItemProps } from './ProgramGridItem';
+import ProgramGridItem from './ProgramGridItem';
 
 const ProgramSection = () => {
-  const programList = [
-    {
-      status: 'IN_PROGRESS',
-      imgColor: 'blue',
-      title: '인턴 지원 2주 챌린지',
-      description: '2주동안 ~을 통해 경험정리 및 지원까지 한번에 최대글자수는',
-      isAllDay: false,
-      startDate: '2024-04-01T00:00Z',
-      endDate: '2024-04-20T00:00Z',
-    },
-    {
-      status: 'BEFORE',
-      imgColor: 'green',
-      title: '부트캠프',
-      description: '2주동안 ~을 통해 경험정리 및 지원까지 한번에 최대글자수는',
-      isAllDay: false,
-      startDate: '2024-04-01T00:00Z',
-      endDate: '2024-04-20T00:00Z',
-    },
-    {
-      status: 'DONE',
-      imgColor: 'gray',
-      title: '렛츠챗 세션',
-      description: '2주동안 ~을 통해 경험정리 및 지원까지 한번에 최대글자수는',
-      isAllDay: false,
-      startDate: '2024-04-01T00:00Z',
-      endDate: '2024-04-20T00:00Z',
-    },
-    {
-      imgColor: 'yellow',
-      status: 'IN_PROGRESS',
-      title: '상시콘텐츠',
-      description: '2주동안 ~을 통해 경험정리 및 지원까지 한번에 최대글자수는',
-      isAllDay: true,
-    },
-  ];
-
   return (
     <section className="mt-4">
       <h1 className="text-neutral-0 text-sm-1.125-bold lg:text-md-1.375-semibold">
