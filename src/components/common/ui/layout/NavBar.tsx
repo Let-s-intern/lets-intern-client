@@ -99,7 +99,7 @@ const NavBar = () => {
   return (
     <>
       {/* 상단 네비게이션 바 */}
-      <div className="fixed top-0 z-30 w-screen bg-white pe-[1.5rem] ps-[1.125rem] md:pe-[2.5rem]">
+      <div className="bg-static-100 fixed top-0 z-30 w-screen pe-[1.5rem] ps-[1.125rem] md:pe-[2.5rem]">
         <div className="mx-auto flex h-16 items-center justify-between">
           <Link to="/" className="h-10 w-10">
             <img src="/logo/logo.png" alt="Logo" className="w-full" />
@@ -117,7 +117,7 @@ const NavBar = () => {
                 </div>
                 <Link
                   to="/mypage/application"
-                  className="rounded bg-primary px-2 py-1 text-[0.75rem] text-white"
+                  className="text-static-100 rounded-xxs bg-primary px-2 py-1 text-[0.75rem]"
                 >
                   마이페이지
                 </Link>
@@ -126,7 +126,7 @@ const NavBar = () => {
               <div className="flex items-center gap-2">
                 <Link
                   to="/login"
-                  className="rounded bg-primary px-3 py-1 text-[0.75rem] text-white"
+                  className="rounded-xxs bg-primary px-3 py-1 text-[0.75rem] text-white"
                 >
                   로그인
                 </Link>

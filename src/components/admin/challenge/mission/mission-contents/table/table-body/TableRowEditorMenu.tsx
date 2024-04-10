@@ -26,7 +26,7 @@ const TableRowEditorMenu = ({
   };
 
   return (
-    <div className={clsx('rounded bg-neutral-100 px-4 py-8', className)}>
+    <div className={clsx('rounded-xxs bg-neutral-100 px-4 py-8', className)}>
       <form className="mx-auto w-[40rem]" onSubmit={onSubmit}>
         <div className="flex flex-col gap-4">
           <div className="flex items-center">
@@ -47,7 +47,7 @@ const TableRowEditorMenu = ({
             </label>
             <input
               type="text"
-              className="flex-1 rounded-lg border border-[#A3A3A3] bg-[#F5F5F5] px-3 py-2 text-sm outline-none"
+              className="flex-1 rounded-sm border border-[#A3A3A3] bg-[#F5F5F5] px-3 py-2 text-sm outline-none"
               id="title"
               autoComplete="off"
               name="title"
@@ -61,7 +61,7 @@ const TableRowEditorMenu = ({
             </label>
             <input
               type="text"
-              className="flex-1 rounded-lg border border-[#A3A3A3] bg-[#F5F5F5] px-3 py-2 text-sm outline-none"
+              className="flex-1 rounded-sm border border-[#A3A3A3] bg-[#F5F5F5] px-3 py-2 text-sm outline-none"
               id="link"
               autoComplete="off"
               name="link"

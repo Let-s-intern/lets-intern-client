@@ -26,11 +26,11 @@ const Button = ({
   return (
     <button
       type={type}
-      className={`rounded px-4 py-3 font-medium${
+      className={`rounded-xxs px-4 py-3 font-medium${
         color === 'white'
-          ? ' border border-gray-300 bg-white text-black'
-          : ' text-white'
-      }${disabled ? ' cursor-auto bg-tint-2' : ' bg-primary'}${
+          ? ' bg-static-100 text-static-0 border border-gray-300'
+          : ' text-static-100'
+      }${disabled ? ' bg-primary-light cursor-auto' : ' bg-primary'}${
         className ? ` ${className}` : ''
       }`}
       onClick={() => {

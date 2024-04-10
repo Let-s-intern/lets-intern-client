@@ -10,7 +10,7 @@ interface Props {
 
 const TableRowDetailMenu = ({ mission, setMenuShown }: Props) => {
   return (
-    <div className="mt-1 rounded bg-neutral-100 px-4 py-8">
+    <div className="rounded-xxs mt-1 bg-neutral-100 px-4 py-8">
       <div className="mx-auto w-[40rem]">
         <div className="flex flex-col gap-6">
           <div className="flex items-center">
@@ -49,7 +49,7 @@ const TableRowDetailMenu = ({ mission, setMenuShown }: Props) => {
                 <label htmlFor="name" className="w-32 font-medium">
                   필수 콘텐츠
                 </label>
-                <div className="w-32 rounded-md border border-neutral-400 p-2 text-sm">
+                <div className="w-32 rounded-sm border border-neutral-400 p-2 text-sm">
                   {topicToText[mission.essentialContentsTopic]}
                 </div>
               </div>
@@ -60,7 +60,7 @@ const TableRowDetailMenu = ({ mission, setMenuShown }: Props) => {
               <label htmlFor="name" className="w-32 font-medium">
                 추가 콘텐츠
               </label>
-              <div className="w-32 rounded-md border border-neutral-400 p-2 text-sm">
+              <div className="w-32 rounded-sm border border-neutral-400 p-2 text-sm">
                 {mission.additionalContentsTopic
                   ? topicToText[mission.additionalContentsTopic]
                   : '없음'}
@@ -76,7 +76,7 @@ const TableRowDetailMenu = ({ mission, setMenuShown }: Props) => {
               >
                 제한 콘텐츠
               </label>
-              <div className="w-32 rounded-md border border-neutral-400 p-2 text-sm">
+              <div className="w-32 rounded-sm border border-neutral-400 p-2 text-sm">
                 {mission.limitedContentsTopic
                   ? topicToText[mission.limitedContentsTopic]
                   : '없음'}

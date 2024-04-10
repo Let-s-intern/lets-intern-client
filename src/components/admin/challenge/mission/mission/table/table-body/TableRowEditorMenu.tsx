@@ -53,7 +53,7 @@ const TableRowEditorMenu = ({
             </label>
             <input
               type="text"
-              className="flex-1 rounded-lg border border-[#A3A3A3] bg-[#F5F5F5] px-3 py-2 text-sm outline-none"
+              className="flex-1 rounded-sm border border-[#A3A3A3] bg-[#F5F5F5] px-3 py-2 text-sm outline-none"
               id="title"
               autoComplete="off"
               name="title"
@@ -66,7 +66,7 @@ const TableRowEditorMenu = ({
               내용
             </label>
             <textarea
-              className="flex-1 resize-none rounded-lg border border-[#A3A3A3] bg-[#F5F5F5] px-3 py-2 text-sm outline-none"
+              className="flex-1 resize-none rounded-sm border border-[#A3A3A3] bg-[#F5F5F5] px-3 py-2 text-sm outline-none"
               id="content"
               rows={5}
               name="contents"
@@ -79,7 +79,7 @@ const TableRowEditorMenu = ({
               가이드
             </label>
             <textarea
-              className="flex-1 resize-none rounded-lg border border-[#A3A3A3] bg-[#F5F5F5] px-3 py-2 text-sm outline-none"
+              className="flex-1 resize-none rounded-sm border border-[#A3A3A3] bg-[#F5F5F5] px-3 py-2 text-sm outline-none"
               id="guide"
               rows={5}
               name="guide"
@@ -95,7 +95,7 @@ const TableRowEditorMenu = ({
                 </label>
                 <input
                   type="number"
-                  className="rounded-lg border border-[#A3A3A3] bg-[#F5F5F5] px-3 py-2 text-sm outline-none"
+                  className="rounded-sm border border-[#A3A3A3] bg-[#F5F5F5] px-3 py-2 text-sm outline-none"
                   id="day"
                   autoComplete="off"
                   name="th"
@@ -111,7 +111,7 @@ const TableRowEditorMenu = ({
             </label>
             <input
               type="text"
-              className="flex-1 rounded-lg border border-[#A3A3A3] bg-[#F5F5F5] px-3 py-2 text-sm outline-none"
+              className="flex-1 rounded-sm border border-[#A3A3A3] bg-[#F5F5F5] px-3 py-2 text-sm outline-none"
               id="template"
               autoComplete="off"
               name="template"
@@ -173,7 +173,7 @@ const TableRowEditorMenu = ({
               {hasRefund ? (
                 <input
                   type="number"
-                  className="flex-1 rounded-lg border border-[#A3A3A3] bg-[#F5F5F5] px-3 py-2 text-sm outline-none"
+                  className="flex-1 rounded-sm border border-[#A3A3A3] bg-[#F5F5F5] px-3 py-2 text-sm outline-none"
                   id="refund"
                   autoComplete="off"
                   name="refund"
@@ -183,7 +183,7 @@ const TableRowEditorMenu = ({
               ) : (
                 <input
                   type="number"
-                  className="flex-1 rounded-lg border border-[#A3A3A3] bg-[#F5F5F5] px-3 py-2 text-sm opacity-0 outline-none"
+                  className="flex-1 rounded-sm border border-[#A3A3A3] bg-[#F5F5F5] px-3 py-2 text-sm opacity-0 outline-none"
                   defaultValue="None"
                 />
               )}
@@ -194,7 +194,7 @@ const TableRowEditorMenu = ({
               코멘트
             </label>
             <textarea
-              className="flex-1 resize-none rounded-lg border border-[#A3A3A3] bg-[#F5F5F5] px-3 py-2 text-sm outline-none"
+              className="flex-1 resize-none rounded-sm border border-[#A3A3A3] bg-[#F5F5F5] px-3 py-2 text-sm outline-none"
               id="comments"
               rows={3}
               name="comments"

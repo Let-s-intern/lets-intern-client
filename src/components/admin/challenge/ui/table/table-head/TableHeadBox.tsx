@@ -7,7 +7,7 @@ interface Props {
 
 const TableHeadBox = ({ children, className }: Props) => {
   return (
-    <div className={clsx('flex w-full rounded-md bg-neutral-200', className)}>
+    <div className={clsx('flex w-full rounded-sm bg-neutral-200', className)}>
       {children}
     </div>
   );

@@ -6,7 +6,7 @@ interface ReviewProps {
 
 const ReviewBox = ({ review }: ReviewProps) => {
   return (
-    <article className="flex h-48 w-full min-w-[12rem] flex-col justify-between rounded-lg bg-white p-6">
+    <article className="flex h-48 w-full min-w-[12rem] flex-col justify-between rounded-sm bg-white p-6">
       <p className="text-sm font-medium leading-[1.8]">
         {review.content.split('\n').map((line: string, index: number) => (
           <Fragment key={index}>

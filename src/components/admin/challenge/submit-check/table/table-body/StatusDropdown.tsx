@@ -41,7 +41,7 @@ const StatusDropdown = ({ mission }: Props) => {
       onClick={(e) => e.stopPropagation()}
     >
       <div
-        className="w-20 cursor-pointer rounded-md border border-gray-400 px-2 py-1 text-xs"
+        className="w-20 cursor-pointer rounded-sm border border-gray-400 px-2 py-1 text-xs"
         onClick={(e) => setIsMenuShown(!isMenuShown)}
       >
         <div className="flex items-center justify-between gap-1">

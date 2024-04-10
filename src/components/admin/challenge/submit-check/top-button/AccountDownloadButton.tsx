@@ -60,7 +60,7 @@ const AccountDownloadButton = ({ mission }: Props) => {
 
   return (
     <button
-      className="rounded border border-zinc-600 px-4 py-[2px] text-xs duration-200 hover:bg-neutral-700 hover:text-white"
+      className="rounded-xxs border border-zinc-600 px-4 py-[2px] text-xs duration-200 hover:bg-neutral-700 hover:text-white"
       onClick={handleDownloadCSV}
     >
       계좌번호 다운로드
