@@ -4,7 +4,12 @@ module.exports = {
   theme: {
     extend: {
       screens: {
-        xs: '426px',
+        xs: '390px',
+        sm: '640px',
+        md: '768px',
+        lg: '991px',
+        xl: '1280px',
+        '2xl': '1440px',
       },
       fontFamily: {
         notosans: ['NotoSansKR', 'sans-serif'],
