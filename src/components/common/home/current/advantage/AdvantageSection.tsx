@@ -6,7 +6,7 @@ const AdvantageSection = () => {
       <h1 className="lg:text-md-1.5-semibold text-sm-1.125-bold text-neutral-0">
         렛츠커리어와 왜 함께해야 할까요?
       </h1>
-      <ul className="mt-6 flex flex-col gap-y-6 xs:flex-row xs:flex-nowrap xs:gap-x-4 xs:gap-y-0 xs:overflow-x-auto">
+      <div className="mt-6 flex flex-col gap-y-6 xs:flex-row xs:flex-nowrap xs:gap-x-4 xs:gap-y-0 xs:overflow-x-auto">
         <AdvantageItem
           description="합격까지 필요한 모든 커리큘럼을 제공합니다."
           imageSrc="/images/home/advantage1.svg"
@@ -27,7 +27,7 @@ const AdvantageSection = () => {
           imageSrc="/images/home/advantage4.svg"
           imageAlt="장점 4 이미지"
         />
-      </ul>
+      </div>
     </section>
   );
 };
