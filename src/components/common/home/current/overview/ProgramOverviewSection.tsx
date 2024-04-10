@@ -2,7 +2,7 @@ import ProgramOverviewListItem from './ProgramOverviewListItem';
 
 const ProgramOverviewSection = () => {
   return (
-    <section className="mt-16">
+    <section className="mt-20">
       <h1 className="text-neutral-0 lg:text-md-1.375-semibold text-sm-1.125-bold">
         일정 한눈에 보기
       </h1>

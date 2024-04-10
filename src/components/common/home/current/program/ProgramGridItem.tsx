@@ -2,21 +2,21 @@ import clsx from 'clsx';
 import Badge from '../ui/Badge';
 
 export interface ProgramGridItemProps {
-  imgColor: 'blue' | 'green' | 'gray' | 'yellow';
+  imageColor: 'blue' | 'green' | 'gray' | 'yellow';
   status: 'BEFORE' | 'IN_PROGRESS' | 'DONE';
   title: string;
   description: string;
-  isAllDay: boolean;
+  allDay?: boolean;
   startDate?: string;
   endDate?: string;
 }
 
 const ProgramGridItem = ({
-  imgColor,
+  imageColor,
   status,
   title,
   description,
-  isAllDay,
+  allDay,
   startDate,
   endDate,
 }: ProgramGridItemProps) => {
@@ -36,10 +36,10 @@ const ProgramGridItem = ({
       <div className="rounded-xs h-40 w-full overflow-hidden">
         <img
           src={clsx({
-            '/images/home/program-green.svg': imgColor === 'green',
-            '/images/home/program-blue.svg': imgColor === 'blue',
-            '/images/home/program-gray.svg': imgColor === 'gray',
-            '/images/home/program-yellow.svg': imgColor === 'yellow',
+            '/images/home/program-green.svg': imageColor === 'green',
+            '/images/home/program-blue.svg': imageColor === 'blue',
+            '/images/home/program-gray.svg': imageColor === 'gray',
+            '/images/home/program-yellow.svg': imageColor === 'yellow',
           })}
           alt="프로그램 이미지"
           className="h-full w-full object-cover object-top"
@@ -67,8 +67,8 @@ const ProgramGridItem = ({
         {description}
       </p>
       <p className="text-xxs-0.75-medium lg:text-xs-0.875-medium text-neutral-0">
-        {isAllDay
-          ? '상시모집 중'
+        {allDay
+          ? '상시 모집 중'
           : `${formatDateString(startDate)}~${formatDateString(endDate)}`}
       </p>
     </li>
