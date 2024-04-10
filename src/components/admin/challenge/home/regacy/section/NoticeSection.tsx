@@ -6,9 +6,9 @@ import { IoIosArrowForward } from 'react-icons/io';
 import RoundedBox from '../box/RoundedBox';
 import NoticeItem from '../item/NoticeItem';
 import SectionHeading from '../heading/SectionHeading';
-import Button from '../../ui/button/Button';
-import NoticeEditorModal from '../../ui/modal/NoticeEditorModal';
-import axios from '../../../../../utils/axios';
+import Button from '../../../ui/button/Button';
+import NoticeEditorModal from '../../../ui/modal/NoticeEditorModal';
+import axios from '../../../../../../utils/axios';
 import clsx from 'clsx';
 
 const NoticeSection = () => {
