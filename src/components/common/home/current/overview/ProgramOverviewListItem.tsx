@@ -1,10 +1,10 @@
-import ProgramThListItem, { ProgramThListItemProps } from './ProgramThListItem';
+import ProgramListItem, { ProgramListItemProps } from './ProgramListItem';
 
 interface ProgramOverviewListItemProps {
   title: string;
   description: string;
   imageColor?: 'blue' | 'green' | 'purple' | 'yellow';
-  programList: ProgramThListItemProps[];
+  programList: ProgramListItemProps[];
 }
 
 const ProgramOverviewListItem = ({
@@ -16,7 +16,7 @@ const ProgramOverviewListItem = ({
   return (
     <div className="rounded-xs overflow-hidden">
       <div
-        className="bg-cover px-3 py-8"
+        className="bg-cover px-3 py-8 md:px-6"
         style={{
           backgroundImage: `url(/images/home/program-${imageColor}-bar.svg)`,
         }}
@@ -26,7 +26,7 @@ const ProgramOverviewListItem = ({
       </div>
       <ul>
         {programList.map((program, index) => (
-          <ProgramThListItem
+          <ProgramListItem
             key={index}
             status={program.status}
             title={program.title}

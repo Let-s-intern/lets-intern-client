@@ -3,7 +3,9 @@ import ProgramOverviewListItem from './ProgramOverviewListItem';
 const ProgramOverviewSection = () => {
   return (
     <section className="mt-16">
-      <h1 className="text-neutral-0 text-sm-1.125-bold">일정 한눈에 보기</h1>
+      <h1 className="text-neutral-0 lg:text-md-1.375-semibold text-sm-1.125-bold">
+        일정 한눈에 보기
+      </h1>
       <nav>
         <ul className="mt-6 flex items-start gap-4">
           <li className="text-primary-dark text-xs-1-semibold underline underline-offset-[6px]">
@@ -12,7 +14,7 @@ const ProgramOverviewSection = () => {
           <li>일정별</li>
         </ul>
       </nav>
-      <div className="mt-5 flex flex-col gap-5">
+      <div className="mt-5 grid grid-cols-1 gap-5 md:grid-cols-2">
         <ProgramOverviewListItem
           title="인턴 지원 2주 챌린지"
           description="2주동안 ~을 통해 경험정리 및 지원까지 한번에"

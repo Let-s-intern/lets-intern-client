@@ -46,11 +46,19 @@ const ProgramGridItem = ({
         />
       </div>
       {status === 'BEFORE' ? (
-        <Badge color="secondary">사전알림 신청</Badge>
+        <Badge color="secondary" responsive>
+          사전알림 신청
+        </Badge>
       ) : status === 'IN_PROGRESS' ? (
-        <Badge color="primary">모집 중</Badge>
+        <Badge color="primary" responsive>
+          모집 중
+        </Badge>
       ) : (
-        status === 'DONE' && <Badge color="gray">마감</Badge>
+        status === 'DONE' && (
+          <Badge color="gray" responsive>
+            마감
+          </Badge>
+        )
       )}
       <h2 className="text-xs-1-semibold text-neutral-0 lg:text-md-1.375-semibold">
         {title}

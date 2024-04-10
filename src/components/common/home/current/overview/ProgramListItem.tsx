@@ -3,17 +3,13 @@ import Badge from '../ui/Badge';
 import { FaChevronRight } from 'react-icons/fa';
 import clsx from 'clsx';
 
-export interface ProgramThListItemProps {
+export interface ProgramListItemProps {
   status: 'IN_PROGRESS' | 'BEFORE';
   title: string;
   openDate?: string;
 }
 
-const ProgramThListItem = ({
-  status,
-  title,
-  openDate,
-}: ProgramThListItemProps) => {
+const ProgramListItem = ({ status, title, openDate }: ProgramListItemProps) => {
   const formatDateString = (dateString: string | undefined) => {
     if (!dateString) return '';
     const date = new Date(dateString);
@@ -62,4 +58,4 @@ const ProgramThListItem = ({
   );
 };
 
-export default ProgramThListItem;
+export default ProgramListItem;
