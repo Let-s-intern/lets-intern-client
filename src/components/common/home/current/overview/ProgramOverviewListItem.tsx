@@ -1,6 +1,6 @@
 import ProgramListItem, { ProgramListItemProps } from './ProgramListItem';
 
-interface ProgramOverviewListItemProps {
+export interface ProgramOverviewListItemProps {
   title: string;
   description: string;
   imageColor?: 'blue' | 'green' | 'purple' | 'yellow';

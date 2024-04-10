@@ -1,6 +1,63 @@
-import ProgramOverviewListItem from './ProgramOverviewListItem';
+import ProgramOverviewListItem, {
+  ProgramOverviewListItemProps,
+} from './ProgramOverviewListItem';
 
 const ProgramOverviewSection = () => {
+  const programOverviewList: ProgramOverviewListItemProps[] = [
+    {
+      title: '인턴 지원 2주 챌린지',
+      description: '2주동안 ~을 통해 경험정리 및 지원까지 한번에',
+      imageColor: 'blue',
+      programList: [
+        { status: 'IN_PROGRESS', title: '17기' },
+        {
+          status: 'BEFORE',
+          title: '18기',
+          openDate: '2024-05-01T00:00Z',
+        },
+      ],
+    },
+    {
+      title: '부트캠프',
+      description: '2주동안 ~을 통해 경험정리 및 지원까지 한번에',
+      imageColor: 'green',
+      programList: [
+        { status: 'IN_PROGRESS', title: '17기' },
+        {
+          status: 'BEFORE',
+          title: '18기',
+          openDate: '2024-05-01T00:00Z',
+        },
+      ],
+    },
+    {
+      title: '렛츠챗 세션',
+      description: '2주동안 ~을 통해 경험정리 및 지원까지 한번에',
+      imageColor: 'purple',
+      programList: [
+        { status: 'IN_PROGRESS', title: '대학내일' },
+        {
+          status: 'BEFORE',
+          title: '렛츠챗 세션최대',
+          openDate: '2024-05-01T00:00Z',
+        },
+      ],
+    },
+    {
+      title: '상시콘텐츠',
+      description: '2주동안 ~을 통해 경험정리 및 지원까지 한번에',
+      imageColor: 'yellow',
+      programList: [
+        { status: 'IN_PROGRESS', title: '17기' },
+        {
+          status: 'BEFORE',
+          title: '18기',
+          openDate: '2024-05-01T00:00Z',
+        },
+      ],
+    },
+  ];
+
   return (
     <section>
       <h1 className="lg:text-md-1.375-semibold text-sm-1.125-bold text-neutral-0">
@@ -15,58 +72,15 @@ const ProgramOverviewSection = () => {
         </ul>
       </nav>
       <div className="mt-5 grid grid-cols-1 gap-5 md:grid-cols-2">
-        <ProgramOverviewListItem
-          title="인턴 지원 2주 챌린지"
-          description="2주동안 ~을 통해 경험정리 및 지원까지 한번에"
-          imageColor="blue"
-          programList={[
-            { status: 'IN_PROGRESS', title: '17기' },
-            {
-              status: 'BEFORE',
-              title: '18기',
-              openDate: '2024-05-01T00:00Z',
-            },
-          ]}
-        />
-        <ProgramOverviewListItem
-          title="부트캠프"
-          description="2주동안 ~을 통해 경험정리 및 지원까지 한번에"
-          imageColor="green"
-          programList={[
-            { status: 'IN_PROGRESS', title: '17기' },
-            {
-              status: 'BEFORE',
-              title: '18기',
-              openDate: '2024-05-01T00:00Z',
-            },
-          ]}
-        />
-        <ProgramOverviewListItem
-          title="렛츠챗 세션"
-          description="2주동안 ~을 통해 경험정리 및 지원까지 한번에"
-          imageColor="purple"
-          programList={[
-            { status: 'IN_PROGRESS', title: '대학내일' },
-            {
-              status: 'BEFORE',
-              title: '렛츠챗 세션최대',
-              openDate: '2024-05-01T00:00Z',
-            },
-          ]}
-        />
-        <ProgramOverviewListItem
-          title="상시콘텐츠"
-          description="2주동안 ~을 통해 경험정리 및 지원까지 한번에"
-          imageColor="yellow"
-          programList={[
-            { status: 'IN_PROGRESS', title: '17기' },
-            {
-              status: 'BEFORE',
-              title: '18기',
-              openDate: '2024-05-01T00:00Z',
-            },
-          ]}
-        />
+        {programOverviewList.map((programOverview, index) => (
+          <ProgramOverviewListItem
+            key={index}
+            title={programOverview.title}
+            description={programOverview.description}
+            imageColor={programOverview.imageColor}
+            programList={programOverview.programList}
+          />
+        ))}
       </div>
     </section>
   );
