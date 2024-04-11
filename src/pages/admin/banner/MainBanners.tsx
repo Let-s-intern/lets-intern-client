@@ -152,7 +152,7 @@ const MainBanners = () => {
           </TableCell>
           <TableCell cellWidth={columnMetaData.management.cellWidth}>
             <TableManageContent>
-              <Link to={`/admin/coupons/${banner.id}/edit`}>
+              <Link to={`/admin/banners/${banner.id}/edit`}>
                 <i>
                   <img src="/icons/edit-icon.svg" alt="수정 아이콘" />
                 </i>
