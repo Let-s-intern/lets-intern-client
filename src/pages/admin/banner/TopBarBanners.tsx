@@ -12,14 +12,14 @@ import { Link } from 'react-router-dom';
 import { CiTrash } from 'react-icons/ci';
 import TableManageContent from '../../../components/admin/ui/table/new/TableManageContent';
 
-type MainBannersTableKey =
+type TopBarBannersTableKey =
   | 'title'
   | 'link'
   | 'visible'
   | 'visiblePeriod'
   | 'management';
 
-const MainBanners = () => {
+const TopBarBanners = () => {
   const queryClient = useQueryClient();
 
   const [mainBannerList, setMainBannerList] = useState<
@@ -33,7 +33,7 @@ const MainBanners = () => {
     }[]
   >([]);
 
-  const columnMetaData: TableTemplateProps<MainBannersTableKey>['columnMetaData'] =
+  const columnMetaData: TableTemplateProps<TopBarBannersTableKey>['columnMetaData'] =
     {
       title: {
         headLabel: '제목',
@@ -57,12 +57,12 @@ const MainBanners = () => {
       },
     };
 
-  const getMainBannerList = useQuery({
+  const getTopBarBannerList = useQuery({
     queryKey: [
       'banner',
       'admin',
       {
-        type: 'MAIN',
+        type: 'LINE',
         page: 1,
         size: 10000,
       },
@@ -70,7 +70,7 @@ const MainBanners = () => {
     queryFn: async () => {
       const res = await axios('/banner/admin', {
         params: {
-          type: 'MAIN',
+          type: 'LINE',
           page: 1,
           size: 10000,
         },
@@ -80,10 +80,10 @@ const MainBanners = () => {
   });
 
   useEffect(() => {
-    if (getMainBannerList.data) {
-      setMainBannerList(getMainBannerList.data.bannerList);
+    if (getTopBarBannerList.data) {
+      setMainBannerList(getTopBarBannerList.data.bannerList);
     }
-  }, [getMainBannerList]);
+  }, [getTopBarBannerList]);
 
   const formatDateString = (dateString: string) => {
     const date = new Date(dateString);
@@ -92,7 +92,7 @@ const MainBanners = () => {
     }월 ${date.getDate()}일`;
   };
 
-  const editMainBannerVisible = useMutation({
+  const editTopBarBannerVisible = useMutation({
     mutationFn: async (params: { bannerId: number; isVisible: boolean }) => {
       const { bannerId, isVisible } = params;
       const formData = new FormData();
@@ -102,7 +102,7 @@ const MainBanners = () => {
       );
       const res = await axios.patch(`/banner/${bannerId}`, formData, {
         params: {
-          type: 'MAIN',
+          type: 'LINE',
         },
         headers: {
           'Content-Type': 'multipart/form-data',
@@ -119,15 +119,15 @@ const MainBanners = () => {
     bannerId: number,
     isVisible: boolean,
   ) => {
-    editMainBannerVisible.mutate({ bannerId, isVisible });
+    editTopBarBannerVisible.mutate({ bannerId, isVisible });
   };
 
   return (
-    <TableTemplate<MainBannersTableKey>
-      title="메인 배너 관리"
+    <TableTemplate<TopBarBannersTableKey>
+      title="상단 띠 배너 관리"
       headerButton={{
         label: '등록',
-        href: '/admin/banners/main-banners/new',
+        href: '/admin/banners/top-bar-banners/new',
       }}
       columnMetaData={columnMetaData}
       minWidth="60rem"
@@ -154,7 +154,7 @@ const MainBanners = () => {
           </TableCell>
           <TableCell cellWidth={columnMetaData.management.cellWidth}>
             <TableManageContent>
-              <Link to={`/admin/banners/main-banners/${banner.id}/edit`}>
+              <Link to={`/admin/banners/top-bar-banners/${banner.id}/edit`}>
                 <i>
                   <img src="/icons/edit-icon.svg" alt="수정 아이콘" />
                 </i>
@@ -174,4 +174,4 @@ const MainBanners = () => {
   );
 };
 
-export default MainBanners;
+export default TopBarBanners;
