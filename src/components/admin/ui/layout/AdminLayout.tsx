@@ -97,6 +97,15 @@ const AdminLayout = () => {
       ],
     },
     {
+      title: '홈페이지 관리',
+      itemList: [
+        {
+          name: '메인 배너 관리',
+          url: '/admin/banner/main-banners',
+        },
+      ],
+    },
+    {
       title: '나가기',
       itemList: [
         {
@@ -109,9 +118,9 @@ const AdminLayout = () => {
   ];
 
   return (
-    <div className="flex font-notosans">
+    <div className="flex font-pretendard">
       <aside>
-        <nav className="fixed left-0 top-0 z-50 flex h-screen w-64 flex-col gap-8 bg-[#353535] pt-20 text-white">
+        <nav className="fixed left-0 top-0 z-50 flex h-screen w-64 flex-col gap-8 overflow-y-auto bg-[#353535] pt-20 text-white">
           {navData.map((navSection, index) => (
             <div key={index}>
               <div className="flex items-center justify-between border-b border-b-neutral-600 pb-3 pl-12 pr-8">

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 
-import Table from '../../../components/admin/ui/table/Table';
+import Table from '../../../components/admin/ui/table/regacy/Table';
 import TableHead from '../../../components/admin/program/programs/table-content/TableHead';
 import TableBody from '../../../components/admin/program/programs/table-content/TableBody';
 

@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
 import ActionButton from '../../../ui/button/ActionButton';
-import TD from '../../../ui/table/TD';
+import TD from '../../../ui/table/regacy/TD';
 
 interface MemoTableBodyProps {
   memoList: any[];

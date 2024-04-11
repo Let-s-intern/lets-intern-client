@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { Checkbox } from '@mui/material';
 
 import ActionButton from '../../../ui/button/ActionButton';
-import TD from '../../../ui/table/TD';
+import TD from '../../../ui/table/regacy/TD';
 import { convertTypeToText } from '../../../../../utils/converTypeToText';
 import AlertModal from '../../../../ui/alert/AlertModal';
 import formatDateString from '../../../../../utils/formatDateString';

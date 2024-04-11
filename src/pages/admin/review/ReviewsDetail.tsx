@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useParams, useSearchParams } from 'react-router-dom';
 
 import axios from '../../../utils/axios';
-import Table from '../../../components/admin/ui/table/Table';
+import Table from '../../../components/admin/ui/table/regacy/Table';
 import TableHead from '../../../components/admin/review/review-detail/table-content/TableHead';
 import TableBody from '../../../components/admin/review/review-detail/table-content/TableBody';
 import Heading from '../../../components/admin/ui/heading/Heading';

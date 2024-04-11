@@ -3,7 +3,7 @@ import { useParams, useSearchParams } from 'react-router-dom';
 import { useQueryClient, useQuery } from '@tanstack/react-query';
 
 import ActionButton from '../../../components/admin/ui/button/ActionButton';
-import Table from '../../../components/admin/ui/table/Table';
+import Table from '../../../components/admin/ui/table/regacy/Table';
 import TableHead from '../../../components/admin/program/program-user/table-content/TableHead';
 import TableBody from '../../../components/admin/program/program-user/table-content/TableBody';
 import axios from '../../../utils/axios';

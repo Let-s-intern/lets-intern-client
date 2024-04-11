@@ -1,6 +1,6 @@
 import { FormControl, MenuItem, Select } from '@mui/material';
 
-import TD from '../../../ui/table/TD';
+import TD from '../../../ui/table/regacy/TD';
 
 interface DetailTableBodyProps {
   program: any;

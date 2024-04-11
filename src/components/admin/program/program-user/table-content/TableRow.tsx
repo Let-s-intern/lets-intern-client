@@ -9,7 +9,7 @@ import {
 } from '@mui/material';
 
 import axios from '../../../../../utils/axios';
-import TD from '../../../ui/table/TD';
+import TD from '../../../ui/table/regacy/TD';
 import {
   applicationStatusToText,
   bankTypeToText,
@@ -63,7 +63,7 @@ const TableRow = ({
         {application.optionalInfo ? (
           <Link
             to={`/admin/users/${application.optionalInfo.userId}`}
-            className="cursor-pointer text-neutral-grey underline"
+            className="text-neutral-grey cursor-pointer underline"
           >
             {application.application.name}
           </Link>
