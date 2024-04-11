@@ -101,7 +101,7 @@ const AdminLayout = () => {
       itemList: [
         {
           name: '메인 배너 관리',
-          url: '/admin/banner/main-banners',
+          url: '/admin/banners/main-banners',
         },
       ],
     },

@@ -150,7 +150,7 @@ const Router = () => {
             {/* /admin/coupons/1/edit */}
             <Route path=":couponId/edit" element={<CouponEdit />} />
           </Route>
-          <Route path="banner/main-banners" element={<MainBanners />} />
+          <Route path="banners/main-banners" element={<MainBanners />} />
           {/* /admin/challenge */}
           <Route path="challenge" element={<ChallengeOnboarding />} />
           {/* /admin/challenge/1 */}

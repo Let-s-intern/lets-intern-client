@@ -1,28 +1,29 @@
 import clsx from 'clsx';
 import { Link } from 'react-router-dom';
 
-export interface TableTemplateProps {
+export interface TableTemplateProps<T extends string> {
   title: string;
   headerButton: {
     label: string;
     href: string;
   };
-  columnMetaData: Record<
-    string,
-    {
+  columnMetaData: {
+    [name in T]: {
       headLabel: string;
       cellWidth: string;
-    }
-  >;
+    };
+  };
+  minWidth?: string;
   children: React.ReactNode;
 }
 
-const TableTemplate = ({
+const TableTemplate = <T extends string>({
   title,
   headerButton,
   columnMetaData,
+  minWidth,
   children,
-}: TableTemplateProps) => {
+}: TableTemplateProps<T>) => {
   return (
     <div className="px-12 pt-12">
       <header className="flex items-center justify-between px-3">
@@ -35,16 +36,19 @@ const TableTemplate = ({
         </Link>
       </header>
       <main className="mt-4">
-        <div className="flex rounded-sm bg-[#E5E5E5]">
+        <div
+          className="flex w-full rounded-sm bg-[#E5E5E5]"
+          style={{ minWidth: minWidth }}
+        >
           {Object.keys(columnMetaData).map((columnKey) => (
             <div
               key={columnKey}
               className={clsx(
                 'flex justify-center py-2 text-sm font-medium text-[#717179]',
-                columnMetaData[columnKey].cellWidth,
+                columnMetaData[columnKey as T].cellWidth,
               )}
             >
-              {columnMetaData[columnKey].headLabel}
+              {columnMetaData[columnKey as T].headLabel}
             </div>
           ))}
         </div>
@@ -52,35 +56,6 @@ const TableTemplate = ({
       </main>
     </div>
   );
-};
-
-TableTemplate.Row = ({ children }: { children: React.ReactNode }) => {
-  return (
-    <div className="flex rounded-md border border-neutral-200">{children}</div>
-  );
-};
-
-TableTemplate.Cell = ({
-  children,
-  cellWidth,
-}: {
-  cellWidth: string;
-  children: React.ReactNode;
-}) => {
-  return (
-    <div
-      className={clsx(
-        'flex items-center justify-center py-4 text-sm text-zinc-600',
-        cellWidth,
-      )}
-    >
-      {children}
-    </div>
-  );
-};
-
-TableTemplate.ManageContent = ({ children }: { children: React.ReactNode }) => {
-  return <div className="flex items-center gap-2">{children}</div>;
 };
 
 export default TableTemplate;
