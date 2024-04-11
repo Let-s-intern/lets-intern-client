@@ -3,7 +3,7 @@ import { FormControl, InputLabel, MenuItem, Select } from '@mui/material';
 import styled from 'styled-components';
 
 import axios from '../../../../../utils/axios';
-import TD from '../../../ui/table/TD';
+import TD from '../../../ui/table/regacy/TD';
 import ActionButton from '../../../ui/button/ActionButton';
 import { convertTypeToBank } from '../../../../../utils/convertTypeToBank';
 

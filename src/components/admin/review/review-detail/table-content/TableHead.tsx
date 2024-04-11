@@ -1,4 +1,4 @@
-import TH from '../../../ui/table/TH';
+import TH from '../../../ui/table/regacy/TH';
 
 const DetailTableHead = () => {
   return (

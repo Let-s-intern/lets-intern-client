@@ -109,7 +109,7 @@ const AdminLayout = () => {
   ];
 
   return (
-    <div className="flex font-notosans">
+    <div className="flex font-pretendard">
       <aside>
         <nav className="fixed left-0 top-0 z-50 flex h-screen w-64 flex-col gap-8 bg-[#353535] pt-20 text-white">
           {navData.map((navSection, index) => (

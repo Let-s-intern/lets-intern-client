@@ -1,8 +1,8 @@
-import ProgramSection from '../../../components/common/home/current/program/ProgramSection';
-import ProgramOverviewSection from '../../../components/common/home/current/overview/ProgramOverviewSection';
-import AdvantageSection from '../../../components/common/home/current/advantage/AdvantageSection';
-import PassReviewSection from '../../../components/common/home/current/pass-review/PassReviewSection';
-import ReviewSection from '../../../components/common/home/current/review/ReviewSection';
+import ProgramSection from '../../../components/common/home/new/program/ProgramSection';
+import ProgramOverviewSection from '../../../components/common/home/new/overview/ProgramOverviewSection';
+import AdvantageSection from '../../../components/common/home/new/advantage/AdvantageSection';
+import PassReviewSection from '../../../components/common/home/new/pass-review/PassReviewSection';
+import ReviewSection from '../../../components/common/home/new/review/ReviewSection';
 
 const Home = () => {
   return (

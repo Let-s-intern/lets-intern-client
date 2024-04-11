@@ -4,7 +4,7 @@ import { useSearchParams } from 'react-router-dom';
 import axios from '../../../utils/axios';
 import TableHead from '../../../components/admin/review/reviews/table-content/TableHead';
 import TableBody from '../../../components/admin/review/reviews/table-content/TableBody';
-import Table from '../../../components/admin/ui/table/Table';
+import Table from '../../../components/admin/ui/table/regacy/Table';
 import AdminPagination from '../../../components/admin/ui/pagination/AdminPagination';
 import classes from './Reviews.module.scss';
 
