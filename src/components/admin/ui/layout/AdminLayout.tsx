@@ -101,15 +101,19 @@ const AdminLayout = () => {
       itemList: [
         {
           name: '메인 배너 관리',
-          url: '/admin/banners/main-banners',
+          url: '/admin/banner/main-banners',
         },
         {
           name: '상단 띠 배너 관리',
-          url: '/admin/banners/top-bar-banners',
+          url: '/admin/banner/top-bar-banners',
+        },
+        {
+          name: '프로그램 배너 관리',
+          url: '/admin/banner/program-banners',
         },
         {
           name: '팝업 관리',
-          url: '/admin/banners/pop-up',
+          url: '/admin/banner/pop-up',
         },
       ],
     },
