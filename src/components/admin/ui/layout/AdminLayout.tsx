@@ -107,6 +107,10 @@ const AdminLayout = () => {
           name: '상단 띠 배너 관리',
           url: '/admin/banners/top-bar-banners',
         },
+        {
+          name: '팝업 관리',
+          url: '/admin/banners/pop-up',
+        },
       ],
     },
     {
