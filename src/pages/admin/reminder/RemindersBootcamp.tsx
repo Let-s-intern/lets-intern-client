@@ -96,7 +96,7 @@ const RemindersBootcamp = () => {
 
   return (
     <TableTemplate<RemindersBootcampTableKey>
-      title="사전알림신청 - 챌린지"
+      title="사전알림신청 - 부트캠프"
       headerButton={{
         label: '명단 다운로드',
         href: '#',

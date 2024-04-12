@@ -38,7 +38,7 @@ const RemindersLetsChat = () => {
       {
         id: 1,
         type: '회원',
-        programTitle: '면접 지원 부트캠프 3기',
+        programTitle: '자기소개서 작성 강의 세션',
         name: '임호정',
         email: 'hojeong1234@gmail.com',
         phoneNum: '010-1234-5678',
@@ -50,7 +50,7 @@ const RemindersLetsChat = () => {
       {
         id: 2,
         type: '회원',
-        programTitle: '면접 지원 부트캠프 3기',
+        programTitle: '자기소개서 작성 강의 세션',
         name: '임호정',
         email: 'hojeong1234@gmail.com',
         phoneNum: '010-1234-5678',
@@ -62,7 +62,7 @@ const RemindersLetsChat = () => {
       {
         id: 3,
         type: '회원',
-        programTitle: '면접 지원 부트캠프 3기',
+        programTitle: '자기소개서 작성 강의 세션',
         name: '임호정',
         email: 'hojeong1234@gmail.com',
         phoneNum: '010-1234-5678',
