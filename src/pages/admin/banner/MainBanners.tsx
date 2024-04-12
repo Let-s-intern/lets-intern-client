@@ -138,7 +138,14 @@ const MainBanners = () => {
             {banner.title}
           </TableCell>
           <TableCell cellWidth={columnMetaData.link.cellWidth} textEllipsis>
-            {banner.link}
+            <Link
+              to={banner.link}
+              target="_blank"
+              rel="noopenner noreferrer"
+              className="hover:underline"
+            >
+              {banner.link}
+            </Link>
           </TableCell>
           <TableCell cellWidth={columnMetaData.visible.cellWidth}>
             <Checkbox

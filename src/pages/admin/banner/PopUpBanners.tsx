@@ -131,29 +131,36 @@ const PopUpBanners = () => {
       columnMetaData={columnMetaData}
       minWidth="60rem"
     >
-      {popUpList.map((banner) => (
-        <TableRow key={banner.id} minWidth="60rem">
+      {popUpList.map((popUp) => (
+        <TableRow key={popUp.id} minWidth="60rem">
           <TableCell cellWidth={columnMetaData.title.cellWidth}>
-            {banner.title}
+            {popUp.title}
           </TableCell>
           <TableCell cellWidth={columnMetaData.link.cellWidth} textEllipsis>
-            {banner.link}
+            <Link
+              to={popUp.link}
+              target="_blank"
+              rel="noopenner noreferrer"
+              className="hover:underline"
+            >
+              {popUp.link}
+            </Link>
           </TableCell>
           <TableCell cellWidth={columnMetaData.visible.cellWidth}>
             <Checkbox
-              checked={banner.isVisible}
+              checked={popUp.isVisible}
               onChange={() =>
-                handleVisibleCheckboxClicked(banner.id, banner.isVisible)
+                handleVisibleCheckboxClicked(popUp.id, popUp.isVisible)
               }
             />
           </TableCell>
           <TableCell cellWidth={columnMetaData.visiblePeriod.cellWidth}>
-            {formatDateString(banner.startDate)} ~{' '}
-            {formatDateString(banner.endDate)}
+            {formatDateString(popUp.startDate)} ~{' '}
+            {formatDateString(popUp.endDate)}
           </TableCell>
           <TableCell cellWidth={columnMetaData.management.cellWidth}>
             <TableManageContent>
-              <Link to={`/admin/banner/pop-up/${banner.id}/edit`}>
+              <Link to={`/admin/banner/pop-up/${popUp.id}/edit`}>
                 <i>
                   <img src="/icons/edit-icon.svg" alt="수정 아이콘" />
                 </i>
