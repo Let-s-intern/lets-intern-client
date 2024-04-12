@@ -1,6 +1,5 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
-import { Checkbox } from '@mui/material';
 
 import TableTemplate, {
   TableTemplateProps,
@@ -15,16 +14,11 @@ import TableManageContent from '../../../components/admin/ui/table/new/TableMana
 type OnlineContentsTableKey = 'title' | 'link' | 'management';
 
 const OnineContents = () => {
-  const queryClient = useQueryClient();
-
   const [onlineContentsList, setOnlineContentsList] = useState<
     {
       id: number;
       title: string;
       link: string;
-      isVisible: boolean;
-      startDate: string;
-      endDate: string;
     }[]
   >([]);
 
@@ -69,13 +63,6 @@ const OnineContents = () => {
       setOnlineContentsList(getOnlineContentsList.data.onlineProgramList);
     }
   }, [getOnlineContentsList]);
-
-  const formatDateString = (dateString: string) => {
-    const date = new Date(dateString);
-    return `${date.getFullYear()}년 ${
-      date.getMonth() + 1
-    }월 ${date.getDate()}일`;
-  };
 
   return (
     <TableTemplate<OnlineContentsTableKey>
