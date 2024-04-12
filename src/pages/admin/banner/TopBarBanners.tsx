@@ -127,7 +127,7 @@ const TopBarBanners = () => {
       title="상단 띠 배너 관리"
       headerButton={{
         label: '등록',
-        href: '/admin/banners/top-bar-banners/new',
+        href: '/admin/banner/top-bar-banners/new',
       }}
       columnMetaData={columnMetaData}
       minWidth="60rem"
@@ -154,7 +154,7 @@ const TopBarBanners = () => {
           </TableCell>
           <TableCell cellWidth={columnMetaData.management.cellWidth}>
             <TableManageContent>
-              <Link to={`/admin/banners/top-bar-banners/${banner.id}/edit`}>
+              <Link to={`/admin/banner/top-bar-banners/${banner.id}/edit`}>
                 <i>
                   <img src="/icons/edit-icon.svg" alt="수정 아이콘" />
                 </i>

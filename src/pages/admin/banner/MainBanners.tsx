@@ -127,7 +127,7 @@ const MainBanners = () => {
       title="메인 배너 관리"
       headerButton={{
         label: '등록',
-        href: '/admin/banners/main-banners/new',
+        href: '/admin/banner/main-banners/new',
       }}
       columnMetaData={columnMetaData}
       minWidth="60rem"
@@ -154,7 +154,7 @@ const MainBanners = () => {
           </TableCell>
           <TableCell cellWidth={columnMetaData.management.cellWidth}>
             <TableManageContent>
-              <Link to={`/admin/banners/main-banners/${banner.id}/edit`}>
+              <Link to={`/admin/banner/main-banners/${banner.id}/edit`}>
                 <i>
                   <img src="/icons/edit-icon.svg" alt="수정 아이콘" />
                 </i>

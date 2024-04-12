@@ -49,6 +49,7 @@ import CouponEdit from './pages/admin/coupon/CouponEdit';
 import MainBanners from './pages/admin/banner/MainBanners';
 import TopBarBanners from './pages/admin/banner/TopBarBanners';
 import PopUpBanners from './pages/admin/banner/PopUpBanners';
+import ProgramBanners from './pages/admin/banner/ProgramBanners';
 
 const Router = () => {
   return (
@@ -152,10 +153,11 @@ const Router = () => {
             {/* /admin/coupons/1/edit */}
             <Route path=":couponId/edit" element={<CouponEdit />} />
           </Route>
-          <Route path="banners">
+          <Route path="banner">
             <Route path="main-banners" element={<MainBanners />} />
             <Route path="top-bar-banners" element={<TopBarBanners />} />
             <Route path="pop-up" element={<PopUpBanners />} />
+            <Route path="program-banners" element={<ProgramBanners />} />
           </Route>
           {/* /admin/challenge */}
           <Route path="challenge" element={<ChallengeOnboarding />} />
