@@ -70,6 +70,10 @@ const AdminLayout = () => {
           name: '후기 관리',
           url: '/admin/reviews',
         },
+        {
+          name: '알림 신청 관리',
+          url: '/admin/reminders',
+        },
       ],
     },
     {

@@ -51,6 +51,10 @@ import TopBarBanners from './pages/admin/banner/TopBarBanners';
 import PopUpBanners from './pages/admin/banner/PopUpBanners';
 import ProgramBanners from './pages/admin/banner/ProgramBanners';
 import OnlineContents from './pages/admin/online-contents/OnlineContents';
+import Reminders from './pages/admin/reminder/Reminders';
+import RemindersChallenge from './pages/admin/reminder/RemindersChallenge';
+import RemindersBootcamp from './pages/admin/reminder/RemindersBootcamp';
+import RemindersLetsChat from './pages/admin/reminder/RemindersLetsChat';
 
 const Router = () => {
   return (
@@ -125,7 +129,6 @@ const Router = () => {
               <Route path="check-attendance" element={<AttendCheck />} />
             </Route>
           </Route>
-          <Route path="online-contents" element={<OnlineContents />} />
           <Route path="reviews">
             {/* /admin/reviews */}
             <Route path="" element={<AdminReviews />} />
@@ -160,6 +163,13 @@ const Router = () => {
             <Route path="top-bar-banners" element={<TopBarBanners />} />
             <Route path="pop-up" element={<PopUpBanners />} />
             <Route path="program-banners" element={<ProgramBanners />} />
+          </Route>
+          <Route path="online-contents" element={<OnlineContents />} />
+          <Route path="reminders">
+            <Route path="" element={<Reminders />} />
+            <Route path="challenge" element={<RemindersChallenge />} />
+            <Route path="bootcamp" element={<RemindersBootcamp />} />
+            <Route path="lets-chat" element={<RemindersLetsChat />} />
           </Route>
           {/* /admin/challenge */}
           <Route path="challenge" element={<ChallengeOnboarding />} />

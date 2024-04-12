@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 
 export interface TableTemplateProps<T extends string> {
   title: string;
-  headerButton: {
+  headerButton?: {
     label: string;
     href: string;
   };
@@ -28,12 +28,14 @@ const TableTemplate = <T extends string>({
     <div className="px-12 pt-12">
       <header className="flex items-center justify-between px-3">
         <h1 className="text-2xl font-semibold">{title}</h1>
-        <Link
-          to={headerButton.href}
-          className="rounded-xxs border border-zinc-600 bg-white px-4 py-[2px] text-xs duration-200 hover:bg-neutral-700 hover:text-white"
-        >
-          {headerButton.label}
-        </Link>
+        {headerButton && (
+          <Link
+            to={headerButton.href}
+            className="rounded-xxs border border-zinc-600 bg-white px-4 py-[2px] text-xs duration-200 hover:bg-neutral-700 hover:text-white"
+          >
+            {headerButton.label}
+          </Link>
+        )}
       </header>
       <main className="mt-4">
         <div
