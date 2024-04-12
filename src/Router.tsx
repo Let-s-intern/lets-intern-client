@@ -50,6 +50,7 @@ import MainBanners from './pages/admin/banner/MainBanners';
 import TopBarBanners from './pages/admin/banner/TopBarBanners';
 import PopUpBanners from './pages/admin/banner/PopUpBanners';
 import ProgramBanners from './pages/admin/banner/ProgramBanners';
+import OnlineContents from './pages/admin/online-contents/OnlineContents';
 
 const Router = () => {
   return (
@@ -124,6 +125,7 @@ const Router = () => {
               <Route path="check-attendance" element={<AttendCheck />} />
             </Route>
           </Route>
+          <Route path="online-contents" element={<OnlineContents />} />
           <Route path="reviews">
             {/* /admin/reviews */}
             <Route path="" element={<AdminReviews />} />

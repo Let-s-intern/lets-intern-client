@@ -63,6 +63,10 @@ const AdminLayout = () => {
           url: '/admin/programs',
         },
         {
+          name: '상시 콘텐츠 개설',
+          url: '/admin/online-contents',
+        },
+        {
           name: '후기 관리',
           url: '/admin/reviews',
         },
