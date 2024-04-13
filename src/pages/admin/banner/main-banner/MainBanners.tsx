@@ -4,13 +4,13 @@ import { Checkbox } from '@mui/material';
 
 import TableTemplate, {
   TableTemplateProps,
-} from '../../../components/admin/ui/table/new/TableTemplate';
-import axios from '../../../utils/axios';
-import TableCell from '../../../components/admin/ui/table/new/TableCell';
-import TableRow from '../../../components/admin/ui/table/new/TableRow';
+} from '../../../../components/admin/ui/table/new/TableTemplate';
+import axios from '../../../../utils/axios';
+import TableCell from '../../../../components/admin/ui/table/new/TableCell';
+import TableRow from '../../../../components/admin/ui/table/new/TableRow';
 import { Link } from 'react-router-dom';
 import { CiTrash } from 'react-icons/ci';
-import TableManageContent from '../../../components/admin/ui/table/new/TableManageContent';
+import TableManageContent from '../../../../components/admin/ui/table/new/TableManageContent';
 
 type MainBannersTableKey =
   | 'title'

@@ -1,6 +1,6 @@
 import ActionButton from '../../../ui/button/ActionButton';
 
-interface EditorTemplateProps {
+export interface EditorTemplateProps {
   title: string;
   onSubmit?: (e: React.FormEvent) => void;
   submitButton: {

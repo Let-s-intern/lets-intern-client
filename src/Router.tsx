@@ -46,7 +46,7 @@ import ChallengeOnboarding from './pages/admin/challenge/ChallengeOnboarding';
 import Coupons from './pages/admin/coupon/Coupons';
 import CouponCreate from './pages/admin/coupon/CouponCreate';
 import CouponEdit from './pages/admin/coupon/CouponEdit';
-import MainBanners from './pages/admin/banner/MainBanners';
+import MainBanners from './pages/admin/banner/main-banner/MainBanners';
 import TopBarBanners from './pages/admin/banner/TopBarBanners';
 import PopUpBanners from './pages/admin/banner/PopUpBanners';
 import ProgramBanners from './pages/admin/banner/ProgramBanners';
@@ -55,6 +55,8 @@ import Reminders from './pages/admin/reminder/Reminders';
 import RemindersChallenge from './pages/admin/reminder/RemindersChallenge';
 import RemindersBootcamp from './pages/admin/reminder/RemindersBootcamp';
 import RemindersLetsChat from './pages/admin/reminder/RemindersLetsChat';
+import MainBannerCreate from './pages/admin/banner/main-banner/MainBannerCreate';
+import MainBannerEdit from './pages/admin/banner/main-banner/MainBannerEdit';
 
 const Router = () => {
   return (
@@ -159,7 +161,11 @@ const Router = () => {
             <Route path=":couponId/edit" element={<CouponEdit />} />
           </Route>
           <Route path="banner">
-            <Route path="main-banners" element={<MainBanners />} />
+            <Route path="main-banners">
+              <Route path="" element={<MainBanners />} />
+              <Route path="new" element={<MainBannerCreate />} />
+              <Route path=":bannerId/edit" element={<MainBannerEdit />} />
+            </Route>
             <Route path="top-bar-banners" element={<TopBarBanners />} />
             <Route path="pop-up" element={<PopUpBanners />} />
             <Route path="program-banners" element={<ProgramBanners />} />
