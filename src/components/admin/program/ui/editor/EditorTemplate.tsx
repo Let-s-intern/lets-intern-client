@@ -22,7 +22,7 @@ const EditorTemplate = ({
   children,
 }: EditorTemplateProps) => {
   return (
-    <main className="mx-auto mt-12 w-[36rem]">
+    <main className="mx-auto mb-24 mt-12 w-[36rem]">
       <header>
         <h1 className="text-2xl font-semibold">{title}</h1>
       </header>

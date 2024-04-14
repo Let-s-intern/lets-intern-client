@@ -1,4 +1,4 @@
-import MainBannerInputContent from '../../../../components/admin/banner/main-banner/MainBannerInputContent';
+import PopUpBannerInputContent from '../../../../components/admin/banner/pop-up-banner/PopUpBannerInputContent';
 import EditorTemplate from '../../../../components/admin/program/ui/editor/EditorTemplate';
 
 const PopUpBannerEdit = () => {
@@ -18,7 +18,7 @@ const PopUpBannerEdit = () => {
         to: '-1',
       }}
     >
-      <MainBannerInputContent />
+      <PopUpBannerInputContent />
     </EditorTemplate>
   );
 };

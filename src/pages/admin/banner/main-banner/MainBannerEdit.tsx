@@ -1,7 +1,28 @@
-import MainBannerInputContent from '../../../../components/admin/banner/main-banner/MainBannerInputContent';
+import { useState } from 'react';
+
+import MainBannerInputContent, {
+  MainBannerInputContentProps,
+} from '../../../../components/admin/banner/main-banner/MainBannerInputContent';
 import EditorTemplate from '../../../../components/admin/program/ui/editor/EditorTemplate';
 
 const MainBannerEdit = () => {
+  const [value, setValue] = useState<MainBannerInputContentProps['value']>({
+    type: 'MAIN',
+    title: '',
+    link: '',
+    startDate: '',
+    endDate: '',
+    image: undefined,
+  });
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      setValue({ ...value, image: e.target.files });
+    } else {
+      setValue({ ...value, [e.target.name]: e.target.value });
+    }
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
   };
@@ -18,7 +39,7 @@ const MainBannerEdit = () => {
         to: '-1',
       }}
     >
-      <MainBannerInputContent />
+      <MainBannerInputContent value={value} onChange={handleChange} />
     </EditorTemplate>
   );
 };

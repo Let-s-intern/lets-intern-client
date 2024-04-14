@@ -8,7 +8,7 @@ const ProgramBannerInputContent = () => {
       <Input label="제목" name="title" />
       <ImageUploader
         label="배너 이미지"
-        imageFormat={{ width: 500, height: 230, extension: ['png', 'jpeg'] }}
+        imageFormat={{ width: 500, height: 230 }}
       />
       <Input label="링크" name="link" />
       <DateTimePicker label="시작 일자" id="startDate" name="startDate" />
