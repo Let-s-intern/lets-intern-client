@@ -7,12 +7,11 @@ import EditorTemplate from '../../../../components/admin/program/ui/editor/Edito
 
 const MainBannerEdit = () => {
   const [value, setValue] = useState<MainBannerInputContentProps['value']>({
-    type: 'MAIN',
     title: '',
     link: '',
     startDate: '',
     endDate: '',
-    image: undefined,
+    image: null,
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {

@@ -4,12 +4,11 @@ import ImageUploader from '../../program/ui/form/ImageUploader';
 
 export interface MainBannerInputContentProps {
   value: {
-    type: 'MAIN';
     title: string;
     link: string;
     startDate: string;
     endDate: string;
-    image: FileList | undefined;
+    image: FileList | null;
   };
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }

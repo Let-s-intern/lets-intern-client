@@ -1,7 +1,26 @@
-import ProgramBannerInputContent from '../../../../components/admin/banner/program-banner/ProgramBannerInputContent';
+import { useState } from 'react';
+import ProgramBannerInputContent, {
+  ProgramBannerInputContentProps,
+} from '../../../../components/admin/banner/program-banner/ProgramBannerInputContent';
 import EditorTemplate from '../../../../components/admin/program/ui/editor/EditorTemplate';
 
 const ProgramBannerEdit = () => {
+  const [value, setValue] = useState<ProgramBannerInputContentProps['value']>({
+    title: '',
+    link: '',
+    startDate: '',
+    endDate: '',
+    image: undefined,
+  });
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      setValue({ ...value, image: e.target.files });
+    } else {
+      setValue({ ...value, [e.target.name]: e.target.value });
+    }
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
   };
@@ -18,7 +37,7 @@ const ProgramBannerEdit = () => {
         to: '-1',
       }}
     >
-      <ProgramBannerInputContent />
+      <ProgramBannerInputContent value={value} onChange={handleChange} />
     </EditorTemplate>
   );
 };

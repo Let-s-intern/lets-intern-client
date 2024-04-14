@@ -1,8 +1,30 @@
-import TopBarBannerInputContent from '../../../components/admin/banner/top-bar-banner/TopBarBannerInputContent';
-import OnlineContentsInputContent from '../../../components/admin/online-contents/OnlineContentsInputContent';
+import OnlineContentsInputContent, {
+  OnlineContentsInputContentProps,
+} from '../../../components/admin/online-contents/OnlineContentsInputContent';
 import EditorTemplate from '../../../components/admin/program/ui/editor/EditorTemplate';
+import { useState } from 'react';
+import { SelectChangeEvent } from '@mui/material';
 
 const OnlineContentsEdit = () => {
+  const [value, setValue] = useState<OnlineContentsInputContentProps['value']>({
+    title: '',
+    description: '',
+    link: '',
+    image: null,
+  });
+
+  const handleChange = (
+    e:
+      | React.ChangeEvent<HTMLInputElement>
+      | SelectChangeEvent<HTMLInputElement>,
+  ) => {
+    if ((e.target as HTMLInputElement).files) {
+      setValue({ ...value, image: (e.target as HTMLInputElement).files });
+    } else {
+      setValue({ ...value, [e.target.name]: e.target.value });
+    }
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
   };
@@ -19,7 +41,7 @@ const OnlineContentsEdit = () => {
         to: '-1',
       }}
     >
-      <OnlineContentsInputContent />
+      <OnlineContentsInputContent value={value} onChange={handleChange} />
     </EditorTemplate>
   );
 };
