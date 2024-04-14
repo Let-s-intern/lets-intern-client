@@ -202,13 +202,13 @@ const MainBanners = () => {
       </TableTemplate>
       {isDeleteModalShown && (
         <AlertModal
-          title="쿠폰 삭제"
+          title="메인 배너 삭제"
           onConfirm={() =>
             bannerIdForDeleting && deleteMainBanner.mutate(bannerIdForDeleting)
           }
           onCancel={() => setIsDeleteModalShown(false)}
         >
-          정말로 쿠폰을 삭제하시겠습니까?
+          정말로 메인 배너를 삭제하시겠습니까?
         </AlertModal>
       )}
     </>
