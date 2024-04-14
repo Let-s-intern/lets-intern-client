@@ -1,4 +1,4 @@
-import MainBannerInputContent from '../../../../components/admin/banner/main-banner/MainBannerInputContent';
+import ProgramBannerInputContent from '../../../../components/admin/banner/program-banner/ProgramBannerInputContent';
 import EditorTemplate from '../../../../components/admin/program/ui/editor/EditorTemplate';
 
 const ProgramBannerEdit = () => {
@@ -18,7 +18,7 @@ const ProgramBannerEdit = () => {
         to: '-1',
       }}
     >
-      <MainBannerInputContent />
+      <ProgramBannerInputContent />
     </EditorTemplate>
   );
 };

@@ -19,7 +19,7 @@ const OnlineContentsInputContent = () => {
       <Input label="링크" name="link" />
       <ImageUploader
         label="썸네일 이미지"
-        imageFormat={{ width: 500, height: 230, extension: ['png', 'jpeg'] }}
+        imageFormat={{ width: 500, height: 230 }}
       />
     </>
   );
