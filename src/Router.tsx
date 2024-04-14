@@ -46,15 +46,25 @@ import ChallengeOnboarding from './pages/admin/challenge/ChallengeOnboarding';
 import Coupons from './pages/admin/coupon/Coupons';
 import CouponCreate from './pages/admin/coupon/CouponCreate';
 import CouponEdit from './pages/admin/coupon/CouponEdit';
-import MainBanners from './pages/admin/banner/MainBanners';
-import TopBarBanners from './pages/admin/banner/TopBarBanners';
-import PopUpBanners from './pages/admin/banner/PopUpBanners';
-import ProgramBanners from './pages/admin/banner/ProgramBanners';
+import MainBanners from './pages/admin/banner/main-banner/MainBanners';
+import TopBarBanners from './pages/admin/banner/top-bar-banner/TopBarBanners';
+import PopUpBanners from './pages/admin/banner/pop-up-banner/PopUpBanners';
+import ProgramBanners from './pages/admin/banner/program-banner/ProgramBanners';
 import OnlineContents from './pages/admin/online-contents/OnlineContents';
 import Reminders from './pages/admin/reminder/Reminders';
 import RemindersChallenge from './pages/admin/reminder/RemindersChallenge';
 import RemindersBootcamp from './pages/admin/reminder/RemindersBootcamp';
 import RemindersLetsChat from './pages/admin/reminder/RemindersLetsChat';
+import MainBannerCreate from './pages/admin/banner/main-banner/MainBannerCreate';
+import MainBannerEdit from './pages/admin/banner/main-banner/MainBannerEdit';
+import TopBarBannerCreate from './pages/admin/banner/top-bar-banner/TopBarBannerCreate';
+import TopBarBannerEdit from './pages/admin/banner/top-bar-banner/TopBarBannerEdit';
+import ProgramBannerCreate from './pages/admin/banner/program-banner/ProgramBannerCreate';
+import ProgramBannerEdit from './pages/admin/banner/program-banner/ProgramBannerEdit';
+import PopUpBannerCreate from './pages/admin/banner/pop-up-banner/PopUpBannerCreate';
+import PopUpBannerEdit from './pages/admin/banner/pop-up-banner/PopUpBannerEdit';
+import OnlineContentsCreate from './pages/admin/online-contents/OnlineContentsCreate';
+import OnlineContentsEdit from './pages/admin/online-contents/OnlineContentsEdit';
 
 const Router = () => {
   return (
@@ -159,12 +169,32 @@ const Router = () => {
             <Route path=":couponId/edit" element={<CouponEdit />} />
           </Route>
           <Route path="banner">
-            <Route path="main-banners" element={<MainBanners />} />
-            <Route path="top-bar-banners" element={<TopBarBanners />} />
-            <Route path="pop-up" element={<PopUpBanners />} />
-            <Route path="program-banners" element={<ProgramBanners />} />
+            <Route path="main-banners">
+              <Route path="" element={<MainBanners />} />
+              <Route path="new" element={<MainBannerCreate />} />
+              <Route path=":bannerId/edit" element={<MainBannerEdit />} />
+            </Route>
+            <Route path="top-bar-banners">
+              <Route path="" element={<TopBarBanners />} />
+              <Route path="new" element={<TopBarBannerCreate />} />
+              <Route path=":bannerId/edit" element={<TopBarBannerEdit />} />
+            </Route>
+            <Route path="pop-up">
+              <Route path="" element={<PopUpBanners />} />
+              <Route path="new" element={<PopUpBannerCreate />} />
+              <Route path=":bannerId/edit" element={<PopUpBannerEdit />} />
+            </Route>
+            <Route path="program-banners">
+              <Route path="" element={<ProgramBanners />} />
+              <Route path="new" element={<ProgramBannerCreate />} />
+              <Route path=":bannerId/edit" element={<ProgramBannerEdit />} />
+            </Route>
           </Route>
-          <Route path="online-contents" element={<OnlineContents />} />
+          <Route path="online-contents">
+            <Route path="" element={<OnlineContents />} />
+            <Route path="new" element={<OnlineContentsCreate />} />
+            <Route path=":bannerId/edit" element={<OnlineContentsEdit />} />
+          </Route>
           <Route path="reminders">
             <Route path="" element={<Reminders />} />
             <Route path="challenge" element={<RemindersChallenge />} />

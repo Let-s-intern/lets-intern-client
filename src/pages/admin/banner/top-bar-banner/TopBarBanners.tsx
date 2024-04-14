@@ -4,13 +4,13 @@ import { Checkbox } from '@mui/material';
 
 import TableTemplate, {
   TableTemplateProps,
-} from '../../../components/admin/ui/table/new/TableTemplate';
-import axios from '../../../utils/axios';
-import TableCell from '../../../components/admin/ui/table/new/TableCell';
-import TableRow from '../../../components/admin/ui/table/new/TableRow';
+} from '../../../../components/admin/ui/table/new/TableTemplate';
+import axios from '../../../../utils/axios';
+import TableCell from '../../../../components/admin/ui/table/new/TableCell';
+import TableRow from '../../../../components/admin/ui/table/new/TableRow';
 import { Link } from 'react-router-dom';
 import { CiTrash } from 'react-icons/ci';
-import TableManageContent from '../../../components/admin/ui/table/new/TableManageContent';
+import TableManageContent from '../../../../components/admin/ui/table/new/TableManageContent';
 
 type TopBarBannersTableKey =
   | 'title'
@@ -22,7 +22,7 @@ type TopBarBannersTableKey =
 const TopBarBanners = () => {
   const queryClient = useQueryClient();
 
-  const [mainBannerList, setMainBannerList] = useState<
+  const [topBarBannerList, setTopBarBannerList] = useState<
     {
       id: number;
       title: string;
@@ -81,7 +81,7 @@ const TopBarBanners = () => {
 
   useEffect(() => {
     if (getTopBarBannerList.data) {
-      setMainBannerList(getTopBarBannerList.data.bannerList);
+      setTopBarBannerList(getTopBarBannerList.data.bannerList);
     }
   }, [getTopBarBannerList]);
 
@@ -132,7 +132,7 @@ const TopBarBanners = () => {
       columnMetaData={columnMetaData}
       minWidth="60rem"
     >
-      {mainBannerList.map((banner) => (
+      {topBarBannerList.map((banner) => (
         <TableRow key={banner.id} minWidth="60rem">
           <TableCell cellWidth={columnMetaData.title.cellWidth}>
             {banner.title}
