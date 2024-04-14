@@ -13,12 +13,11 @@ const MainBannerCreate = () => {
   const navigate = useNavigate();
 
   const [value, setValue] = useState<MainBannerInputContentProps['value']>({
-    type: 'MAIN',
     title: '',
     link: '',
     startDate: '',
     endDate: '',
-    image: undefined,
+    image: null,
   });
 
   const addMainBanner = useMutation({
@@ -47,14 +46,19 @@ const MainBannerCreate = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!value.image) return;
-    const newValue = { ...value };
+    const newValue = {
+      type: 'MAIN',
+      title: value.title,
+      link: value.link,
+      startDate: value.startDate,
+      endDate: value.endDate,
+    };
     const formData = new FormData();
-    formData.append('file', value.image[0]);
-    delete newValue.image;
     formData.append(
       'bannerCreateDTO',
-      new Blob([JSON.stringify(value)], { type: 'application/json' }),
+      new Blob([JSON.stringify(newValue)], { type: 'application/json' }),
     );
+    formData.append('file', value.image[0]);
     addMainBanner.mutate(formData);
   };
 

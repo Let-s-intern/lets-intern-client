@@ -1,7 +1,25 @@
-import PopUpBannerInputContent from '../../../../components/admin/banner/pop-up-banner/PopUpBannerInputContent';
+import { useState } from 'react';
+import PopUpBannerInputContent, {
+  PopUpBannerInputContentProps,
+} from '../../../../components/admin/banner/pop-up-banner/PopUpBannerInputContent';
 import EditorTemplate from '../../../../components/admin/program/ui/editor/EditorTemplate';
 
 const PopUpBannerEdit = () => {
+  const [value, setValue] = useState<PopUpBannerInputContentProps['value']>({
+    title: '',
+    link: '',
+    startDate: '',
+    endDate: '',
+    image: undefined,
+  });
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      setValue({ ...value, image: e.target.files });
+    } else {
+      setValue({ ...value, [e.target.name]: e.target.value });
+    }
+  };
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
   };
@@ -18,7 +36,7 @@ const PopUpBannerEdit = () => {
         to: '-1',
       }}
     >
-      <PopUpBannerInputContent />
+      <PopUpBannerInputContent value={value} onChange={handleChange} />
     </EditorTemplate>
   );
 };

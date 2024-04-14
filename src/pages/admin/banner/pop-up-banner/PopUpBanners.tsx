@@ -11,6 +11,7 @@ import TableRow from '../../../../components/admin/ui/table/new/TableRow';
 import { Link } from 'react-router-dom';
 import { CiTrash } from 'react-icons/ci';
 import TableManageContent from '../../../../components/admin/ui/table/new/TableManageContent';
+import AlertModal from '../../../../components/ui/alert/AlertModal';
 
 type PopUpTableKey =
   | 'title'
@@ -32,6 +33,8 @@ const PopUpBanners = () => {
       endDate: string;
     }[]
   >([]);
+  const [isDeleteModalShown, setIsDeleteModalShown] = useState<boolean>(false);
+  const [popUpIdForDeleting, setPopUpIdForDeleting] = useState<number>();
 
   const columnMetaData: TableTemplateProps<PopUpTableKey>['columnMetaData'] = {
     title: {
@@ -78,6 +81,21 @@ const PopUpBanners = () => {
     },
   });
 
+  const deletePopUpBanner = useMutation({
+    mutationFn: async (popUpId: number) => {
+      const res = await axios.delete(`/banner/${popUpId}`, {
+        params: {
+          type: 'POPUP',
+        },
+      });
+      return res.data;
+    },
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ['banner'] });
+      setIsDeleteModalShown(false);
+    },
+  });
+
   useEffect(() => {
     if (getPopUpList.data) {
       setPopUpList(getPopUpList.data.bannerList);
@@ -121,62 +139,78 @@ const PopUpBanners = () => {
     editPopUpVisible.mutate({ bannerId, isVisible });
   };
 
+  const handleDeleteButtonClicked = async (bannerId: number) => {
+    setPopUpIdForDeleting(bannerId);
+    setIsDeleteModalShown(true);
+  };
+
   return (
-    <TableTemplate<PopUpTableKey>
-      title="팝업 관리"
-      headerButton={{
-        label: '등록',
-        href: '/admin/banner/pop-up/new',
-      }}
-      columnMetaData={columnMetaData}
-      minWidth="60rem"
-    >
-      {popUpList.map((popUp) => (
-        <TableRow key={popUp.id} minWidth="60rem">
-          <TableCell cellWidth={columnMetaData.title.cellWidth}>
-            {popUp.title}
-          </TableCell>
-          <TableCell cellWidth={columnMetaData.link.cellWidth} textEllipsis>
-            <Link
-              to={popUp.link}
-              target="_blank"
-              rel="noopenner noreferrer"
-              className="hover:underline"
-            >
-              {popUp.link}
-            </Link>
-          </TableCell>
-          <TableCell cellWidth={columnMetaData.visible.cellWidth}>
-            <Checkbox
-              checked={popUp.isVisible}
-              onChange={() =>
-                handleVisibleCheckboxClicked(popUp.id, popUp.isVisible)
-              }
-            />
-          </TableCell>
-          <TableCell cellWidth={columnMetaData.visiblePeriod.cellWidth}>
-            {formatDateString(popUp.startDate)} ~{' '}
-            {formatDateString(popUp.endDate)}
-          </TableCell>
-          <TableCell cellWidth={columnMetaData.management.cellWidth}>
-            <TableManageContent>
-              <Link to={`/admin/banner/pop-up/${popUp.id}/edit`}>
-                <i>
-                  <img src="/icons/edit-icon.svg" alt="수정 아이콘" />
-                </i>
-              </Link>
-              <button
-              // onClick={() => handleDeleteButtonClicked(coupon.couponId)}
+    <>
+      <TableTemplate<PopUpTableKey>
+        title="팝업 관리"
+        headerButton={{
+          label: '등록',
+          href: '/admin/banner/pop-up/new',
+        }}
+        columnMetaData={columnMetaData}
+        minWidth="60rem"
+      >
+        {popUpList.map((popUp) => (
+          <TableRow key={popUp.id} minWidth="60rem">
+            <TableCell cellWidth={columnMetaData.title.cellWidth}>
+              {popUp.title}
+            </TableCell>
+            <TableCell cellWidth={columnMetaData.link.cellWidth} textEllipsis>
+              <Link
+                to={popUp.link}
+                target="_blank"
+                rel="noopenner noreferrer"
+                className="hover:underline"
               >
-                <i className="text-[1.75rem]">
-                  <CiTrash />
-                </i>
-              </button>
-            </TableManageContent>
-          </TableCell>
-        </TableRow>
-      ))}
-    </TableTemplate>
+                {popUp.link}
+              </Link>
+            </TableCell>
+            <TableCell cellWidth={columnMetaData.visible.cellWidth}>
+              <Checkbox
+                checked={popUp.isVisible}
+                onChange={() =>
+                  handleVisibleCheckboxClicked(popUp.id, popUp.isVisible)
+                }
+              />
+            </TableCell>
+            <TableCell cellWidth={columnMetaData.visiblePeriod.cellWidth}>
+              {formatDateString(popUp.startDate)} ~{' '}
+              {formatDateString(popUp.endDate)}
+            </TableCell>
+            <TableCell cellWidth={columnMetaData.management.cellWidth}>
+              <TableManageContent>
+                <Link to={`/admin/banner/pop-up/${popUp.id}/edit`}>
+                  <i>
+                    <img src="/icons/edit-icon.svg" alt="수정 아이콘" />
+                  </i>
+                </Link>
+                <button onClick={() => handleDeleteButtonClicked(popUp.id)}>
+                  <i className="text-[1.75rem]">
+                    <CiTrash />
+                  </i>
+                </button>
+              </TableManageContent>
+            </TableCell>
+          </TableRow>
+        ))}
+      </TableTemplate>
+      {isDeleteModalShown && (
+        <AlertModal
+          title="팝업 삭제"
+          onConfirm={() =>
+            popUpIdForDeleting && deletePopUpBanner.mutate(popUpIdForDeleting)
+          }
+          onCancel={() => setIsDeleteModalShown(false)}
+        >
+          정말로 팝업을 삭제하시겠습니까?
+        </AlertModal>
+      )}
+    </>
   );
 };
 
