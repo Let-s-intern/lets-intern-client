@@ -4,15 +4,15 @@ import { Checkbox } from '@mui/material';
 
 import TableTemplate, {
   TableTemplateProps,
-} from '../../../components/admin/ui/table/new/TableTemplate';
-import axios from '../../../utils/axios';
-import TableCell from '../../../components/admin/ui/table/new/TableCell';
-import TableRow from '../../../components/admin/ui/table/new/TableRow';
+} from '../../../../components/admin/ui/table/new/TableTemplate';
+import axios from '../../../../utils/axios';
+import TableCell from '../../../../components/admin/ui/table/new/TableCell';
+import TableRow from '../../../../components/admin/ui/table/new/TableRow';
 import { Link } from 'react-router-dom';
 import { CiTrash } from 'react-icons/ci';
-import TableManageContent from '../../../components/admin/ui/table/new/TableManageContent';
+import TableManageContent from '../../../../components/admin/ui/table/new/TableManageContent';
 
-type ProgramBannersTableKey =
+type PopUpTableKey =
   | 'title'
   | 'link'
   | 'visible'
@@ -22,7 +22,7 @@ type ProgramBannersTableKey =
 const PopUpBanners = () => {
   const queryClient = useQueryClient();
 
-  const [programBannerList, setProgramBannerList] = useState<
+  const [popUpList, setPopUpList] = useState<
     {
       id: number;
       title: string;
@@ -33,31 +33,30 @@ const PopUpBanners = () => {
     }[]
   >([]);
 
-  const columnMetaData: TableTemplateProps<ProgramBannersTableKey>['columnMetaData'] =
-    {
-      title: {
-        headLabel: '제목',
-        cellWidth: 'w-3/12',
-      },
-      link: {
-        headLabel: '링크',
-        cellWidth: 'w-3/12',
-      },
-      visible: {
-        headLabel: '노출 여부',
-        cellWidth: 'w-1/12',
-      },
-      visiblePeriod: {
-        headLabel: '노출 기간',
-        cellWidth: 'w-3/12',
-      },
-      management: {
-        headLabel: '관리',
-        cellWidth: 'w-2/12',
-      },
-    };
+  const columnMetaData: TableTemplateProps<PopUpTableKey>['columnMetaData'] = {
+    title: {
+      headLabel: '제목',
+      cellWidth: 'w-3/12',
+    },
+    link: {
+      headLabel: '링크',
+      cellWidth: 'w-3/12',
+    },
+    visible: {
+      headLabel: '노출 여부',
+      cellWidth: 'w-1/12',
+    },
+    visiblePeriod: {
+      headLabel: '노출 기간',
+      cellWidth: 'w-3/12',
+    },
+    management: {
+      headLabel: '관리',
+      cellWidth: 'w-2/12',
+    },
+  };
 
-  const getProgramBannerList = useQuery({
+  const getPopUpList = useQuery({
     queryKey: [
       'banner',
       'admin',
@@ -70,7 +69,7 @@ const PopUpBanners = () => {
     queryFn: async () => {
       const res = await axios('/banner/admin', {
         params: {
-          type: 'PROGRAM',
+          type: 'POPUP',
           page: 1,
           size: 10000,
         },
@@ -80,10 +79,10 @@ const PopUpBanners = () => {
   });
 
   useEffect(() => {
-    if (getProgramBannerList.data) {
-      setProgramBannerList(getProgramBannerList.data.bannerList);
+    if (getPopUpList.data) {
+      setPopUpList(getPopUpList.data.bannerList);
     }
-  }, [getProgramBannerList]);
+  }, [getPopUpList]);
 
   const formatDateString = (dateString: string) => {
     const date = new Date(dateString);
@@ -92,7 +91,7 @@ const PopUpBanners = () => {
     }월 ${date.getDate()}일`;
   };
 
-  const editProgramBannerVisible = useMutation({
+  const editPopUpVisible = useMutation({
     mutationFn: async (params: { bannerId: number; isVisible: boolean }) => {
       const { bannerId, isVisible } = params;
       const formData = new FormData();
@@ -102,7 +101,7 @@ const PopUpBanners = () => {
       );
       const res = await axios.patch(`/banner/${bannerId}`, formData, {
         params: {
-          type: 'PROGRAM',
+          type: 'POPUP',
         },
         headers: {
           'Content-Type': 'multipart/form-data',
@@ -119,49 +118,49 @@ const PopUpBanners = () => {
     bannerId: number,
     isVisible: boolean,
   ) => {
-    editProgramBannerVisible.mutate({ bannerId, isVisible });
+    editPopUpVisible.mutate({ bannerId, isVisible });
   };
 
   return (
-    <TableTemplate<ProgramBannersTableKey>
-      title="프로그램 배너 관리"
+    <TableTemplate<PopUpTableKey>
+      title="팝업 관리"
       headerButton={{
         label: '등록',
-        href: '/admin/banner/program-banners/new',
+        href: '/admin/banner/pop-up/new',
       }}
       columnMetaData={columnMetaData}
       minWidth="60rem"
     >
-      {programBannerList.map((banner) => (
-        <TableRow key={banner.id} minWidth="60rem">
+      {popUpList.map((popUp) => (
+        <TableRow key={popUp.id} minWidth="60rem">
           <TableCell cellWidth={columnMetaData.title.cellWidth}>
-            {banner.title}
+            {popUp.title}
           </TableCell>
           <TableCell cellWidth={columnMetaData.link.cellWidth} textEllipsis>
             <Link
-              to={banner.link}
+              to={popUp.link}
               target="_blank"
               rel="noopenner noreferrer"
               className="hover:underline"
             >
-              {banner.link}
+              {popUp.link}
             </Link>
           </TableCell>
           <TableCell cellWidth={columnMetaData.visible.cellWidth}>
             <Checkbox
-              checked={banner.isVisible}
+              checked={popUp.isVisible}
               onChange={() =>
-                handleVisibleCheckboxClicked(banner.id, banner.isVisible)
+                handleVisibleCheckboxClicked(popUp.id, popUp.isVisible)
               }
             />
           </TableCell>
           <TableCell cellWidth={columnMetaData.visiblePeriod.cellWidth}>
-            {formatDateString(banner.startDate)} ~{' '}
-            {formatDateString(banner.endDate)}
+            {formatDateString(popUp.startDate)} ~{' '}
+            {formatDateString(popUp.endDate)}
           </TableCell>
           <TableCell cellWidth={columnMetaData.management.cellWidth}>
             <TableManageContent>
-              <Link to={`/admin/banner/program-banners/${banner.id}/edit`}>
+              <Link to={`/admin/banner/pop-up/${popUp.id}/edit`}>
                 <i>
                   <img src="/icons/edit-icon.svg" alt="수정 아이콘" />
                 </i>
