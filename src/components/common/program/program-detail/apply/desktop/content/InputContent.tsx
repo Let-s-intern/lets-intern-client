@@ -16,9 +16,10 @@ import {
   bankTypeToText,
   wishJobToText,
 } from '../../../../../../../utils/convert';
-import CouponSubmit from './CouponSubmit';
-import PriceSection from '../section/PriceSection';
+import CouponSubmit from '../../../ui/price/CouponSubmit';
+import PriceView from '../../../ui/price/PriceView';
 import { calculateProgramPrice } from '../../../../../../../utils/programPrice';
+import InputPriceContent from '../../../ui/price/InputPriceContent';
 
 interface InputContentProps {
   program: any;
@@ -187,14 +188,19 @@ const InputContent = ({
     },
   };
 
-  const { price, discountAmount, totalPrice } = calculateProgramPrice({
-    feeType: program.feeType,
-    feeCharge: program.feeCharge,
-    feeRefund: program.feeRefund,
-    programDiscount: program.discountValue,
-    couponDiscount,
-  });
-
+  <InputPriceContent
+    programFee={{
+      feeType: program.feeType,
+      feeCharge: program.feeCharge,
+      feeRefund: program.feeRefund,
+      discountValue: program.discountValue,
+    }}
+    couponDiscount={couponDiscount}
+    setCouponDiscount={setCouponDiscount}
+    formData={formData}
+    setFormData={setFormData}
+    isLoggedIn={isLoggedIn}
+  />;
   return (
     <form className={classes.content} onSubmit={handleSubmit}>
       <div>
@@ -375,30 +381,6 @@ const InputContent = ({
               rows={4}
               maxLength={500}
             />
-          )}
-          {program.feeType !== 'FREE' && price !== 0 && (
-            <>
-              {isLoggedIn && (
-                <CouponSubmit
-                  className="mt-3"
-                  formData={formData}
-                  setCouponDiscount={setCouponDiscount}
-                  setFormData={setFormData}
-                />
-              )}
-              {program.type === 'LETS_CHAT' && (
-                <>
-                  <hr className="my-3" />
-                  <PriceSection
-                    className="mb-5"
-                    price={price}
-                    discountAmount={discountAmount}
-                    couponDiscount={couponDiscount}
-                    totalPrice={totalPrice}
-                  />
-                </>
-              )}
-            </>
           )}
         </div>
       )}

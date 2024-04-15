@@ -1,6 +1,6 @@
 import clsx from 'clsx';
 
-interface PriceSectionProps {
+interface PriceView {
   as?: keyof JSX.IntrinsicElements;
   className?: string;
   price: number;
@@ -9,14 +9,14 @@ interface PriceSectionProps {
   totalPrice: number;
 }
 
-const PriceSection = ({
+const PriceView = ({
   as: Wrapper = 'div',
   className,
   price,
   discountAmount,
   couponDiscount,
   totalPrice,
-}: PriceSectionProps) => {
+}: PriceView) => {
   return (
     <Wrapper className={clsx('font-pretendard', className)}>
       <h3 className="font-semibold">결제 금액</h3>
@@ -56,4 +56,4 @@ const PriceSection = ({
   );
 };
 
-export default PriceSection;
+export default PriceView;

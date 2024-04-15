@@ -4,6 +4,7 @@ import cn from 'classnames';
 import classes from './StartContent.module.scss';
 import { typeToText } from '../../../../../../../utils/converTypeToText';
 import formatDateString from '../../../../../../../utils/formatDateString';
+import StartPriceContent from '../../../ui/price/StartPriceContent';
 
 interface StartContentProps {
   program: any;
@@ -35,14 +36,6 @@ const StartContent = ({
       }
     }
   };
-
-  const price =
-    program.feeType === 'REFUND'
-      ? program.feeCharge + program.feeRefund
-      : program.feeType === 'CHARGE'
-      ? program.feeCharge
-      : 0;
-  const discountAmount = program.discountValue;
 
   return (
     <div className={classes.content}>
@@ -78,54 +71,27 @@ const StartContent = ({
           </li>
         </ul>
       ) : (
-        <>
-          <ul className={classes['date-info-list']}>
-            <li className={classes['date-info-item']}>
-              <strong>모집 마감 일자</strong>{' '}
-              {formatDateString(program.dueDate)}
-            </li>
-            <li className={classes['date-info-item']}>
-              <strong>시작 일자</strong> {formatDateString(program.startDate)}
-            </li>
-            <li className={classes['date-info-item']}>
-              <strong>종료 일자</strong> {formatDateString(program.endDate)}
-            </li>
-          </ul>
-          {program.type === 'LETS_CHAT' && (
-            <>
-              <hr className="my-2" />
-              <div className="flex items-center justify-between font-pretendard">
-                <div className="flex items-center gap-1.5">
-                  <span className="text-sm font-semibold">결제 금액</span>
-                  {program.feeType !== 'FREE' &&
-                    discountAmount > 0 &&
-                    price !== 0 && (
-                      <span className="text-xs font-semibold text-red-500">
-                        {Math.round((discountAmount / price) * 100)}%
-                      </span>
-                    )}
-                </div>
-                <div className="flex items-center gap-2">
-                  {program.feeType !== 'FREE' &&
-                    discountAmount > 0 &&
-                    price !== 0 && (
-                      <span className="font-semibold text-zinc-400 line-through">
-                        {price.toLocaleString()}원
-                      </span>
-                    )}
-                  <span className="text-lg font-semibold">
-                    {program.feeType === 'FREE' || price === 0 ? (
-                      <>무료</>
-                    ) : (
-                      <>{(price - discountAmount).toLocaleString()}원</>
-                    )}
-                  </span>
-                </div>
-              </div>
-            </>
-          )}
-        </>
+        <ul className={classes['date-info-list']}>
+          <li className={classes['date-info-item']}>
+            <strong>모집 마감 일자</strong> {formatDateString(program.dueDate)}
+          </li>
+          <li className={classes['date-info-item']}>
+            <strong>시작 일자</strong> {formatDateString(program.startDate)}
+          </li>
+          <li className={classes['date-info-item']}>
+            <strong>종료 일자</strong> {formatDateString(program.endDate)}
+          </li>
+        </ul>
       )}
+      <StartPriceContent
+        programFee={{
+          feeType: program.feeType,
+          feeCharge: program.feeCharge,
+          feeRefund: program.feeRefund,
+          discountValue: program.discountValue,
+        }}
+        topLine
+      />
       <button
         id="apply_button"
         className={cn(

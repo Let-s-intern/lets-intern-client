@@ -1,6 +1,6 @@
 import clsx from 'clsx';
 import { useEffect, useState } from 'react';
-import axios from '../../../../../../../utils/axios';
+import axios from '../../../../../../utils/axios';
 import { AxiosError } from 'axios';
 
 interface CouponSubmitProps {
@@ -84,7 +84,7 @@ const CouponSubmit = ({
           value={code}
           onChange={(e) => setCode(e.target.value)}
           placeholder="쿠폰 코드를 입력하세요."
-          className="flex-1 rounded border border-[#C4C4C4] px-3 py-2 text-sm outline-primary"
+          className="rounded flex-1 border border-[#C4C4C4] px-3 py-2 text-sm outline-primary"
           disabled={isSuccess}
         />
         {isSuccess ? (

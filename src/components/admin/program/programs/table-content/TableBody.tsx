@@ -45,7 +45,7 @@ const TableBody = ({
         {programList.map((program: any) => (
           <tr key={program.id}>
             <TD>
-              {convertTypeToText(program.type, true)}{' '}
+              {convertTypeToText(program.programType, true)}{' '}
               {program.topic && ` - ${challengeTopicToText[program.topic]}`}
             </TD>
             <TD>{program.th}</TD>
