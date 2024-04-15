@@ -36,14 +36,14 @@ interface CouponCommonValue {
 
 interface CouponInputValue extends CouponCommonValue {
   couponType: string;
-  programType: string;
+  programTypeList: string[];
   discount: string;
   time: string;
 }
 
 interface CouponRequestValue extends CouponCommonValue {
   couponType: number;
-  programType: number;
+  programTypeList: { programType: number }[];
   discount: number;
   time: number;
 }
@@ -55,7 +55,7 @@ const CouponEditor = ({ editorMode }: CouponEditorProps) => {
 
   const [value, setValue] = useState<CouponInputValue>({
     couponType: '',
-    programType: '',
+    programTypeList: [],
     name: '',
     code: '',
     discount: '',
@@ -110,10 +110,7 @@ const CouponEditor = ({ editorMode }: CouponEditorProps) => {
           couponTypeEnum[
             coupon.couponType as keyof typeof couponTypeEnum
           ].id.toString(),
-        programType:
-          couponProgramTypeEnum[
-            coupon.couponProgramType as keyof typeof couponProgramTypeEnum
-          ].id.toString(),
+        programTypeList: coupon.couponProgramList,
         name: coupon.name,
         code: coupon.code,
         discount: String(coupon.discount),
@@ -131,14 +128,35 @@ const CouponEditor = ({ editorMode }: CouponEditorProps) => {
     setValue({ ...value, [e.target.name]: e.target.value });
   };
 
+  const handleProgramTypeChange = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    programType: string,
+  ) => {
+    const programTypeList = value.programTypeList;
+    if (programTypeList.includes(programType)) {
+      setValue({
+        ...value,
+        programTypeList: programTypeList.filter((type) => type !== programType),
+      });
+    } else {
+      setValue({
+        ...value,
+        programTypeList: [...programTypeList, programType],
+      });
+    }
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const newValue = {
       ...value,
       couponType: Number(value.couponType),
-      programType: Number(value.programType),
       discount: isAllDiscount ? -1 : Number(value.discount),
       time: isUnlimited ? -1 : Number(value.time),
+      programTypeList: value.programTypeList.map((type) => ({
+        programType:
+          couponProgramTypeEnum[type as keyof typeof couponProgramTypeEnum].id,
+      })),
     };
     if (editorMode === 'create') {
       addCoupon.mutate(newValue);
@@ -183,22 +201,24 @@ const CouponEditor = ({ editorMode }: CouponEditorProps) => {
           <div className="ml-4 flex items-center">
             <label htmlFor="program" className="w-[8rem] font-medium">
               프로그램
-            </label>
-            <RadioGroup
-              row
-              name="programType"
-              value={value.programType}
-              onChange={handleChange}
-            >
-              {Object.keys(idTocouponProgramTypeText).map((id) => (
-                <FormControlLabel
-                  key={id}
-                  value={id}
-                  control={<Radio />}
-                  label={idTocouponProgramTypeText[id]}
-                />
-              ))}
-            </RadioGroup>
+            </label>{' '}
+            {Object.keys(couponProgramTypeEnum).map((key) => (
+              <FormControlLabel
+                key={key}
+                value={key}
+                control={
+                  <Checkbox
+                    checked={value.programTypeList.includes(key)}
+                    onChange={(e) => handleProgramTypeChange(e, key)}
+                  />
+                }
+                label={
+                  couponProgramTypeEnum[
+                    key as keyof typeof couponProgramTypeEnum
+                  ].text
+                }
+              />
+            ))}
           </div>
           <Input
             label="쿠폰명"

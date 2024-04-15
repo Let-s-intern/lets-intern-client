@@ -17,8 +17,8 @@ const TopBarBannerCreate = () => {
     link: '',
     startDate: '',
     endDate: '',
-    textColorCode: '',
-    bgColorCode: '',
+    textColorCode: '#000000',
+    bgColorCode: '#000000',
   });
 
   const addTopBarBanner = useMutation({
