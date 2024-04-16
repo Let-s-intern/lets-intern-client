@@ -7,10 +7,11 @@ import axios from '../../../../../../../utils/axios';
 import { typeToText } from '../../../../../../../utils/converTypeToText';
 
 import styles from './CautionContent.module.scss';
-import PriceSection from '../section/PriceSection';
+import PriceView from '../../../ui/price/PriceView';
 import { calculateProgramPrice } from '../../../../../../../utils/programPrice';
 import clsx from 'clsx';
 import { bankTypeToText } from '../../../../../../../utils/convert';
+import CautionPriceContent from '../../../ui/price/CautionPriceContent';
 
 interface CautionContentProps {
   program: any;
@@ -79,76 +80,28 @@ const CautionContent = ({
     }
   };
 
-  const formatDateString = (dateString: string) => {
-    const date = new Date(dateString);
-    const isAm = date.getHours() < 12;
-    let hours = date.getHours();
-    hours = hours % 12;
-    hours = hours ? hours : 12;
-    const hoursStr = hours < 10 ? '0' + hours : hours;
-    return `${date.getFullYear()}년 ${
-      date.getMonth() + 1
-    }월 ${date.getDate()}일 ${isAm ? '오전' : '오후'} ${hoursStr}시${
-      date.getMinutes() !== 0 && ` ${date.getMinutes()}분`
-    }`;
-  };
-
-  const { price, discountAmount, totalPrice } = calculateProgramPrice({
-    feeType: program.feeType,
-    feeCharge: program.feeCharge,
-    feeRefund: program.feeRefund,
-    programDiscount: program.discountValue,
-    couponDiscount,
-  });
-
   return (
     <div className={styles.content}>
       <h3 className="program-type">{typeToText[program.type]}</h3>
       <h2 className="program-title">{program.title}</h2>
       <h4>[필독사항]</h4>
       <p>{program.notice}</p>
-      {program.feeType !== 'FREE' &&
-        price !== 0 &&
-        program.type === 'LETS_CHAT' && (
-          <>
-            <hr />
-            <section className="mt-4 font-pretendard">
-              <h3 className="font-semibold text-zinc-600">결제 방법</h3>
-              <div className="mt-3 flex flex-col gap-2">
-                <div className="flex items-center justify-between">
-                  <span className="text-sm font-semibold text-zinc-600">
-                    입급 계좌
-                  </span>
-                  <span className="text-sm text-zinc-600">
-                    {bankTypeToText[program.accountType]}{' '}
-                    {program.accountNumber}
-                  </span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-sm font-semibold text-zinc-600">
-                    입금 마감기한
-                  </span>
-                  <span className="text-sm text-zinc-600">
-                    {formatDateString(program.feeDueDate)}
-                    {/* 2024년 3월 23일 오후 10시 */}
-                  </span>
-                </div>
-              </div>
-            </section>
-            <hr className="mb-3 mt-4" />
-            <PriceSection
-              as="section"
-              className={clsx('mt-4', {
-                'mb-2': message,
-                'mb-5': !message,
-              })}
-              price={price}
-              discountAmount={discountAmount}
-              couponDiscount={couponDiscount}
-              totalPrice={totalPrice}
-            />
-          </>
-        )}
+      <CautionPriceContent
+        program={{
+          feeType: program.feeType,
+          feeCharge: program.feeCharge,
+          feeRefund: program.feeRefund,
+          discountValue: program.discountValue,
+          accountType: program.accountType,
+          accountNumber: program.accountNumber,
+          feeDueDate: program.feeDueDate,
+        }}
+        couponDiscount={couponDiscount}
+        priceViewClassName={clsx({
+          'mb-2': message,
+          'mb-5': !message,
+        })}
+      />
       {message && (
         <span
           className={cn(styles.message, {

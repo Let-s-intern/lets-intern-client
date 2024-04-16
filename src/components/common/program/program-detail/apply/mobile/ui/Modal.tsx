@@ -43,8 +43,8 @@ const Modal = ({
       <div
         className={`relative w-full bg-white shadow${
           position === 'bottom'
-            ? ' fixed bottom-0 max-w-2xl rounded-tl-2xl rounded-tr-2xl'
-            : ' mx-5 max-w-md rounded sm:mx-0'
+            ? ' fixed bottom-0 max-w-2xl rounded-tl-lg rounded-tr-lg'
+            : ' rounded mx-5 max-w-md sm:mx-0'
         }`}
         onClick={(e) => {
           e.stopPropagation();

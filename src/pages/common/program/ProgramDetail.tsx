@@ -19,6 +19,7 @@ const ProgramDetail = () => {
   const [faqList, setFaqList] = useState<any>(null);
   const [wishJobList, setWishJobList] = useState<any>();
   const [loading, setLoading] = useState(true);
+  const [couponDiscount, setCouponDiscount] = useState<number>(0);
 
   const { isError } = useQuery({
     queryKey: ['program', params.programId],
@@ -86,6 +87,8 @@ const ProgramDetail = () => {
             program={program}
             participated={participated}
             wishJobList={wishJobList}
+            couponDiscount={couponDiscount}
+            setCouponDiscount={setCouponDiscount}
           />
         </main>
         <ApplySection
@@ -94,6 +97,8 @@ const ProgramDetail = () => {
           isLoggedIn={isLoggedIn}
           wishJobList={wishJobList}
           setParticipated={setParticipated}
+          couponDiscount={couponDiscount}
+          setCouponDiscount={setCouponDiscount}
         />
       </div>
     </div>

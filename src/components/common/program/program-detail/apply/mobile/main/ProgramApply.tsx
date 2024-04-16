@@ -27,6 +27,8 @@ interface ProgramApplyProps {
   setApplyPageIndex: (applyPageIndex: number) => void;
   setParticipated: (participated: boolean) => void;
   setIsApplyModalOpen: (isApplyModalOpen: boolean) => void;
+  couponDiscount: number;
+  setCouponDiscount: (couponDiscount: number) => void;
 }
 
 interface BlackBackgroundProps {
@@ -46,6 +48,8 @@ const ProgramApply = ({
   setApplyPageIndex,
   setParticipated,
   setIsApplyModalOpen,
+  couponDiscount,
+  setCouponDiscount,
 }: ProgramApplyProps) => {
   const navigate = useNavigate();
   const params = useParams();
@@ -236,11 +240,14 @@ const ProgramApply = ({
         )}
         <MemberInfoInputContent
           user={user}
+          setUser={setUser}
           hasDetailInfo={hasDetailInfo}
           isLoggedIn={isLoggedIn}
           wishJobList={wishJobList}
           handleApplyInput={handleApplyInput}
           program={program}
+          couponDiscount={couponDiscount}
+          setCouponDiscount={setCouponDiscount}
         />
       </Modal>
     </BlackBackground>
@@ -248,10 +255,9 @@ const ProgramApply = ({
     <BlackBackground $position="center" onClick={handleApplyModalClose}>
       <Modal
         nextButtonText="제출하기"
-        position="center"
+        position="bottom"
         onNextButtonClick={handleApplyNextButton}
         isNextButtonDisabled={isNextButtonDisabled}
-        hasFoldButton={false}
         nextButtonClass="caution-next-button"
         nextButtonId="complete_button"
         message={bottomMessage}
@@ -261,6 +267,8 @@ const ProgramApply = ({
           cautionChecked={cautionChecked}
           onCautionChecked={handleCautionChecked}
           notice={program.notice}
+          program={program}
+          couponDiscount={couponDiscount}
         />
       </Modal>
     </BlackBackground>
