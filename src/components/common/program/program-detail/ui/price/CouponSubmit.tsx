@@ -9,6 +9,8 @@ interface CouponSubmitProps {
   setCouponDiscount: (discount: number) => void;
   setFormData: (formData: any) => void;
   className?: string;
+  price: number;
+  programDiscount: number;
   programType: string;
 }
 
@@ -17,6 +19,8 @@ const CouponSubmit = ({
   setCouponDiscount,
   setFormData,
   className,
+  price,
+  programDiscount,
   programType,
 }: CouponSubmitProps) => {
   const [code, setCode] = useState('');
@@ -29,16 +33,35 @@ const CouponSubmit = ({
 
   const handleSubmitButtonClicked = async () => {
     try {
+      let typeId;
+      switch (programType) {
+        case 'CHALLENGE_FULL':
+          typeId = 2;
+          break;
+        case 'CHALLENGE_HALF':
+          typeId = 2;
+          break;
+        case 'BOOTCAMP':
+          typeId = 3;
+          break;
+        case 'LETS_CHAT':
+          typeId = 4;
+          break;
+      }
       const res = await axios.get('/coupon/code', {
         params: {
           code,
-          type: 4,
+          type: typeId,
         },
       });
       if (res.data.discount) {
         setMessageColor('green');
         setMessage('쿠폰이 성공적으로 등록되었습니다.');
-        setCouponDiscount(res.data.discount);
+        if (res.data.discount === -1) {
+          setCouponDiscount(price - programDiscount);
+        } else {
+          setCouponDiscount(res.data.discount);
+        }
         setIsSuccess(true);
         setSubmittedCode(code);
         setFormData({ ...formData, code });
@@ -50,6 +73,8 @@ const CouponSubmit = ({
         setMessage('존재하지 않는 쿠폰입니다.');
       } else if (errorCode === 'COUPON_409_2') {
         setMessage('이미 사용된 쿠폰입니다.');
+      } else if (errorCode === 'COUPON_400_1') {
+        setMessage('해당 프로그램에 적용할 수 없는 쿠폰입니다.');
       } else {
         setMessage('쿠폰 등록 중 오류가 발생했습니다.');
       }

@@ -383,6 +383,20 @@ const InputContent = ({
               maxLength={500}
             />
           )}
+          <InputPriceContent
+            program={{
+              type: program.type,
+              feeType: program.feeType,
+              feeCharge: program.feeCharge,
+              feeRefund: program.feeRefund,
+              discountValue: program.discountValue,
+            }}
+            couponDiscount={couponDiscount}
+            setCouponDiscount={setCouponDiscount}
+            formData={formData}
+            setFormData={setFormData}
+            isLoggedIn={isLoggedIn}
+          />
         </div>
       )}
       <button
