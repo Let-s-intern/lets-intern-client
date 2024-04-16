@@ -46,6 +46,8 @@ const InputPriceContent = ({
               formData={formData}
               setCouponDiscount={setCouponDiscount}
               setFormData={setFormData}
+              price={price}
+              programDiscount={program.discountValue}
               programType={program.type}
             />
           )}
