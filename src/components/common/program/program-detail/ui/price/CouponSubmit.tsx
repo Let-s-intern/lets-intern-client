@@ -2,12 +2,14 @@ import clsx from 'clsx';
 import { useEffect, useState } from 'react';
 import axios from '../../../../../../utils/axios';
 import { AxiosError } from 'axios';
+import { couponProgramTypeEnum } from '../../../../../../utils/convert';
 
 interface CouponSubmitProps {
   formData: any;
   setCouponDiscount: (discount: number) => void;
   setFormData: (formData: any) => void;
   className?: string;
+  programType: string;
 }
 
 const CouponSubmit = ({
@@ -15,6 +17,7 @@ const CouponSubmit = ({
   setCouponDiscount,
   setFormData,
   className,
+  programType,
 }: CouponSubmitProps) => {
   const [code, setCode] = useState('');
   const [submittedCode, setSubmittedCode] = useState('');
@@ -29,6 +32,7 @@ const CouponSubmit = ({
       const res = await axios.get('/coupon/code', {
         params: {
           code,
+          type: 4,
         },
       });
       if (res.data.discount) {
@@ -84,13 +88,13 @@ const CouponSubmit = ({
           value={code}
           onChange={(e) => setCode(e.target.value)}
           placeholder="쿠폰 코드를 입력하세요."
-          className="rounded flex-1 border border-[#C4C4C4] px-3 py-2 text-sm outline-primary"
+          className="flex-1 rounded-xs border border-[#C4C4C4] px-3 py-2 text-sm outline-primary"
           disabled={isSuccess}
         />
         {isSuccess ? (
           <button
             type="button"
-            className="rounded bg-[#BDBDBD] px-3 text-sm font-semibold text-white"
+            className="rounded-xs bg-[#BDBDBD] px-3 text-sm font-semibold text-white"
             onClick={handleCancel}
           >
             취소
@@ -98,10 +102,13 @@ const CouponSubmit = ({
         ) : (
           <button
             type="button"
-            className={clsx('rounded px-3 text-sm font-semibold text-white', {
-              'bg-primary': code.length > 0,
-              'bg-[#BDBDBD]': code.length === 0,
-            })}
+            className={clsx(
+              'rounded-xs px-3 text-sm font-semibold text-white',
+              {
+                'bg-primary': code.length > 0,
+                'bg-[#BDBDBD]': code.length === 0,
+              },
+            )}
             onClick={handleSubmitButtonClicked}
           >
             등록

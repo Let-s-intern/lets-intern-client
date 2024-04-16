@@ -4,7 +4,7 @@ import PriceView from './PriceView';
 import { calculateProgramPrice } from '../../../../../../utils/programPrice';
 
 interface CautionPriceContentProps {
-  programFee: {
+  program: {
     feeType: string;
     feeCharge: number;
     feeRefund: number;
@@ -15,18 +15,20 @@ interface CautionPriceContentProps {
   };
   couponDiscount: number;
   priceViewClassName?: string;
+  className?: string;
 }
 
 const CautionPriceContent = ({
-  programFee,
+  program,
   couponDiscount,
   priceViewClassName,
+  className,
 }: CautionPriceContentProps) => {
   const { price, discountAmount, totalPrice } = calculateProgramPrice({
-    feeType: programFee.feeType,
-    feeCharge: programFee.feeCharge,
-    feeRefund: programFee.feeRefund,
-    programDiscount: programFee.discountValue,
+    feeType: program.feeType,
+    feeCharge: program.feeCharge,
+    feeRefund: program.feeRefund,
+    programDiscount: program.discountValue,
     couponDiscount,
   });
 
@@ -46,8 +48,8 @@ const CautionPriceContent = ({
 
   return (
     <>
-      {programFee.feeType !== 'FREE' && price !== 0 && (
-        <>
+      {program.feeType !== 'FREE' && price !== 0 && (
+        <div className={clsx(className)}>
           <hr />
           <section className="mt-4 font-pretendard">
             <h3 className="font-semibold text-zinc-600">결제 방법</h3>
@@ -57,8 +59,7 @@ const CautionPriceContent = ({
                   입급 계좌
                 </span>
                 <span className="text-sm text-zinc-600">
-                  {bankTypeToText[programFee.accountType]}{' '}
-                  {programFee.accountNumber}
+                  {bankTypeToText[program.accountType]} {program.accountNumber}
                 </span>
               </div>
               <div className="flex items-center justify-between">
@@ -66,7 +67,7 @@ const CautionPriceContent = ({
                   입금 마감기한
                 </span>
                 <span className="text-sm text-zinc-600">
-                  {formatDateString(programFee.feeDueDate)}
+                  {formatDateString(program.feeDueDate)}
                 </span>
               </div>
             </div>
@@ -80,7 +81,7 @@ const CautionPriceContent = ({
             couponDiscount={couponDiscount}
             totalPrice={totalPrice}
           />
-        </>
+        </div>
       )}
     </>
   );

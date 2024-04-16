@@ -189,7 +189,8 @@ const InputContent = ({
   };
 
   <InputPriceContent
-    programFee={{
+    program={{
+      type: program.type,
       feeType: program.feeType,
       feeCharge: program.feeCharge,
       feeRefund: program.feeRefund,

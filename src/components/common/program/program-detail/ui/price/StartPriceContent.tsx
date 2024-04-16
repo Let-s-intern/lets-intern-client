@@ -1,3 +1,5 @@
+import clsx from 'clsx';
+
 interface StartPriceContentProps {
   programFee: {
     feeType: string;
@@ -6,9 +8,14 @@ interface StartPriceContentProps {
     discountValue: number;
   };
   topLine?: boolean;
+  className?: string;
 }
 
-const StartPriceContent = ({ programFee, topLine }: StartPriceContentProps) => {
+const StartPriceContent = ({
+  programFee,
+  topLine,
+  className,
+}: StartPriceContentProps) => {
   const price =
     programFee.feeType === 'REFUND'
       ? programFee.feeCharge + programFee.feeRefund
@@ -18,7 +25,7 @@ const StartPriceContent = ({ programFee, topLine }: StartPriceContentProps) => {
   const discountAmount = programFee.discountValue;
 
   return (
-    <>
+    <div className={clsx(className)}>
       {topLine && <hr className="my-2" />}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-1.5">
@@ -48,7 +55,7 @@ const StartPriceContent = ({ programFee, topLine }: StartPriceContentProps) => {
           </span>
         </div>
       </div>
-    </>
+    </div>
   );
 };
 

@@ -87,7 +87,7 @@ const CautionContent = ({
       <h4>[필독사항]</h4>
       <p>{program.notice}</p>
       <CautionPriceContent
-        programFee={{
+        program={{
           feeType: program.feeType,
           feeCharge: program.feeCharge,
           feeRefund: program.feeRefund,

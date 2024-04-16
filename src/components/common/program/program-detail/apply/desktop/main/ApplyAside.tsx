@@ -13,12 +13,16 @@ interface ApplyAsdieProps {
   program: any;
   participated: boolean;
   wishJobList: any;
+  couponDiscount: number;
+  setCouponDiscount: (couponDiscount: number) => void;
 }
 
 const ApplyAside = ({
   program,
   participated,
   wishJobList,
+  couponDiscount,
+  setCouponDiscount,
 }: ApplyAsdieProps) => {
   const [applyPageIndex, setApplyPageIndex] = useState(0);
   const [formData, setFormData] = useState<any>(null);
@@ -29,7 +33,6 @@ const ApplyAside = ({
     title: '',
     message: '',
   });
-  const [couponDiscount, setCouponDiscount] = useState<number>(0);
 
   const handleModalClose = () => {
     if (applyPageIndex === 3) {

@@ -5,23 +5,30 @@ import {
   bankTypeToText,
   wishJobToText,
 } from '../../../../../../../utils/convert';
+import InputPriceContent from '../../../ui/price/InputPriceContent';
 
 interface MemberInfoInputContentProps {
   user: any;
+  setUser: (user: any) => void;
   hasDetailInfo: boolean;
   isLoggedIn: boolean;
   program: any;
   wishJobList: any;
   handleApplyInput: (e: any) => void;
+  couponDiscount: number;
+  setCouponDiscount: (couponDiscount: number) => void;
 }
 
 const MemberInfoInputContent = ({
   user,
+  setUser,
   hasDetailInfo,
   isLoggedIn,
   program,
   wishJobList,
   handleApplyInput,
+  couponDiscount,
+  setCouponDiscount,
 }: MemberInfoInputContentProps) => {
   const dropdownStyle = {
     '& .MuiOutlinedInput-root': {
@@ -41,7 +48,7 @@ const MemberInfoInputContent = ({
     <>
       <h1 className="text-center text-xl">신청 정보</h1>
       <form className="mt-5 w-full">
-        <div className="mx-auto max-w-md space-y-3">
+        <div className="mx-auto flex max-w-md flex-col gap-3">
           <Input
             label="이름"
             name="name"
@@ -214,6 +221,20 @@ const MemberInfoInputContent = ({
               maxLength={500}
             />
           )}
+          <InputPriceContent
+            program={{
+              type: program.type,
+              feeType: program.feeType,
+              feeCharge: program.feeCharge,
+              feeRefund: program.feeRefund,
+              discountValue: program.discountValue,
+            }}
+            couponDiscount={couponDiscount}
+            setCouponDiscount={setCouponDiscount}
+            formData={user}
+            setFormData={setUser}
+            isLoggedIn={isLoggedIn}
+          />
         </div>
       </form>
     </>
