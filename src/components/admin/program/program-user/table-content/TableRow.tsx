@@ -77,6 +77,8 @@ const TableRow = ({
       </TD>
       <TD>{parseGrade(application.application.grade)}</TD>
       <TD>{application.optionalInfo ? application.optionalInfo.major : ''}</TD>
+      <TD>{application.application.couponName}</TD>
+      <TD>{application.application.totalFee.toLocaleString()}원</TD>
       <TD>
         {application.optionalInfo
           ? `${bankTypeToText[application.optionalInfo.accountType] || ''} ${
