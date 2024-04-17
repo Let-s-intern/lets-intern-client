@@ -3,7 +3,6 @@ import { useNavigate, useParams } from 'react-router-dom';
 import styled from 'styled-components';
 
 import axios from '../../../../../../../utils/axios';
-import Button from '../../../../../ui/button/Button';
 import ProgramApply from './ProgramApply';
 import StartPriceContent from '../../../ui/price/StartPriceContent';
 
@@ -79,7 +78,7 @@ const ApplySection = ({
     <>
       <ApplySectionBlock>
         <ApplyButtonWrapper>
-          <div className="flex w-full items-center gap-6 rounded-xs border border-neutral-75 px-6 py-4">
+          <div className="flex w-full items-center gap-3 rounded-xs border border-neutral-75 px-4 py-2 sm:px-6 sm:py-3">
             <StartPriceContent
               className="flex-1"
               programFee={{
@@ -105,29 +104,28 @@ const ApplySection = ({
                 ? '신청 완료'
                 : isFirstOpen
                 ? '신청하기'
-                : '이어서 신청하기'}
+                : '이어서 하기'}
             </button>
           </div>
         </ApplyButtonWrapper>
       </ApplySectionBlock>
-      {isApplyModalOpen && (
-        <ProgramApply
-          user={user}
-          hasDetailInfo={hasDetailInfo}
-          isLoggedIn={isLoggedIn}
-          program={program}
-          memberChecked={memberChecked}
-          applyPageIndex={applyPageIndex}
-          wishJobList={wishJobList}
-          setMemberChecked={setMemberChecked}
-          setApplyPageIndex={setApplyPageIndex}
-          setUser={setUser}
-          setParticipated={setParticipated}
-          setIsApplyModalOpen={setIsApplyModalOpen}
-          couponDiscount={couponDiscount}
-          setCouponDiscount={setCouponDiscount}
-        />
-      )}
+      <ProgramApply
+        user={user}
+        hasDetailInfo={hasDetailInfo}
+        isLoggedIn={isLoggedIn}
+        program={program}
+        memberChecked={memberChecked}
+        applyPageIndex={applyPageIndex}
+        wishJobList={wishJobList}
+        setMemberChecked={setMemberChecked}
+        setApplyPageIndex={setApplyPageIndex}
+        setUser={setUser}
+        setParticipated={setParticipated}
+        isApplyModalOpen={isApplyModalOpen}
+        setIsApplyModalOpen={setIsApplyModalOpen}
+        couponDiscount={couponDiscount}
+        setCouponDiscount={setCouponDiscount}
+      />
     </>
   );
 };
@@ -150,7 +148,6 @@ const ApplyButtonWrapper = styled.div`
   display: flex;
   width: 100%;
   justify-content: start;
-  padding: 0 1rem;
 
   @media (min-width: 640px) {
     justify-content: center;

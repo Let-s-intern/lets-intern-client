@@ -16,9 +16,6 @@ import {
   bankTypeToText,
   wishJobToText,
 } from '../../../../../../../utils/convert';
-import CouponSubmit from '../../../ui/price/CouponSubmit';
-import PriceView from '../../../ui/price/PriceView';
-import { calculateProgramPrice } from '../../../../../../../utils/programPrice';
 import InputPriceContent from '../../../ui/price/InputPriceContent';
 
 interface InputContentProps {
@@ -188,20 +185,6 @@ const InputContent = ({
     },
   };
 
-  <InputPriceContent
-    program={{
-      type: program.type,
-      feeType: program.feeType,
-      feeCharge: program.feeCharge,
-      feeRefund: program.feeRefund,
-      discountValue: program.discountValue,
-    }}
-    couponDiscount={couponDiscount}
-    setCouponDiscount={setCouponDiscount}
-    formData={formData}
-    setFormData={setFormData}
-    isLoggedIn={isLoggedIn}
-  />;
   return (
     <form className={classes.content} onSubmit={handleSubmit}>
       <div>
@@ -252,24 +235,6 @@ const InputContent = ({
             onChange={(e) => handleApplyInput(e)}
             disabled={hasDetailInfo ? true : false}
           />
-          <FormControl fullWidth sx={dropdownStyle}>
-            <InputLabel id="grade">학년</InputLabel>
-            <Select
-              labelId="grade"
-              id="grade"
-              label="학년"
-              name="grade"
-              value={formData.grade ? formData.grade : ''}
-              onChange={(e) => handleApplyInput(e)}
-            >
-              <MenuItem value="1">1학년</MenuItem>
-              <MenuItem value="2">2학년</MenuItem>
-              <MenuItem value="3">3학년</MenuItem>
-              <MenuItem value="4">4학년</MenuItem>
-              <MenuItem value="5">5학년 이상</MenuItem>
-              <MenuItem value="-1">졸업생</MenuItem>
-            </Select>
-          </FormControl>
           {(program.feeType === 'CHARGE' || program.feeType === 'REFUND') && (
             <>
               <FormControl fullWidth sx={dropdownStyle}>
@@ -298,6 +263,24 @@ const InputContent = ({
               />
             </>
           )}
+          <FormControl fullWidth sx={dropdownStyle}>
+            <InputLabel id="grade">학년</InputLabel>
+            <Select
+              labelId="grade"
+              id="grade"
+              label="학년"
+              name="grade"
+              value={formData.grade ? formData.grade : ''}
+              onChange={(e) => handleApplyInput(e)}
+            >
+              <MenuItem value="1">1학년</MenuItem>
+              <MenuItem value="2">2학년</MenuItem>
+              <MenuItem value="3">3학년</MenuItem>
+              <MenuItem value="4">4학년</MenuItem>
+              <MenuItem value="5">5학년 이상</MenuItem>
+              <MenuItem value="-1">졸업생</MenuItem>
+            </Select>
+          </FormControl>
           <FormControl fullWidth sx={dropdownStyle}>
             <InputLabel id="wish-job">희망 직무</InputLabel>
             <Select

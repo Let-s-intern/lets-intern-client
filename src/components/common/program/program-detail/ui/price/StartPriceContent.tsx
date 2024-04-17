@@ -1,4 +1,5 @@
 import clsx from 'clsx';
+import DiscountPercent from './DiscountPercent';
 
 interface StartPriceContentProps {
   programFee: {
@@ -28,21 +29,20 @@ const StartPriceContent = ({
     <div className={clsx(className)}>
       {topLine && <hr className="my-2" />}
       <div className="flex items-center justify-between">
-        <div className="flex items-center gap-1.5">
-          <span className="text-0.875-semibold">결제 금액</span>
-          {programFee.feeType !== 'FREE' &&
-            discountAmount > 0 &&
-            price !== 0 && (
-              <span className="text-0.75-semibold text-red-500">
-                {Math.round((discountAmount / price) * 100)}%
-              </span>
-            )}
-        </div>
         <div className="flex items-center gap-2">
+          <span className="text-0.875-semibold">결제 금액</span>
+          <DiscountPercent
+            className="hidden sm:block"
+            programFeeType={programFee.feeType}
+            discountAmount={discountAmount}
+            price={price}
+          />
+        </div>
+        <div className="flex flex-col items-end sm:flex-row sm:items-center sm:gap-2">
           {programFee.feeType !== 'FREE' &&
             discountAmount > 0 &&
             price !== 0 && (
-              <span className="text-1-semibold text-zinc-400 line-through">
+              <span className="text-0.875-semibold sm:text-1-semibold text-zinc-400 line-through">
                 {price.toLocaleString()}원
               </span>
             )}
@@ -50,7 +50,15 @@ const StartPriceContent = ({
             {programFee.feeType === 'FREE' || price === 0 ? (
               <>무료</>
             ) : (
-              <>{(price - discountAmount).toLocaleString()}원</>
+              <div className="flex items-center gap-1">
+                <DiscountPercent
+                  className="block sm:hidden"
+                  programFeeType={programFee.feeType}
+                  discountAmount={discountAmount}
+                  price={price}
+                />
+                <span>{(price - discountAmount).toLocaleString()}원</span>
+              </div>
             )}
           </span>
         </div>

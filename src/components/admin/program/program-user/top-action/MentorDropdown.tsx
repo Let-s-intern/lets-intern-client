@@ -75,13 +75,13 @@ const MentorDropdown = ({ program }: Props) => {
   return (
     <div className="relative" ref={dropdownRef}>
       <button
-        className="w-[5rem] rounded bg-[#E4D065] py-2 text-white"
+        className="w-[5rem] rounded-xxs bg-[#E4D065] py-2 text-white"
         onClick={() => setIsMenuOpen(!isMenuOpen)}
       >
         강연자
       </button>
       {isMenuOpen && (
-        <ul className="absolute -bottom-2 left-1/2 z-20 w-[10rem] -translate-x-1/2 translate-y-full overflow-hidden rounded border border-neutral-300 bg-white shadow-lg">
+        <ul className="rounded absolute -bottom-2 left-1/2 z-20 w-[10rem] -translate-x-1/2 translate-y-full overflow-hidden border border-neutral-300 bg-white shadow-lg">
           <li
             className="cursor-pointer px-4 py-3 text-center text-sm font-medium duration-200 hover:bg-neutral-200"
             onClick={() => copyLink('BEFORE')}
@@ -97,7 +97,7 @@ const MentorDropdown = ({ program }: Props) => {
           <li className="px-4 py-3 text-center text-sm font-medium">
             암호 :{' '}
             <span
-              className="cursor-pointer text-neutral-grey underline"
+              className="text-neutral-grey cursor-pointer underline"
               onClick={copyPassword}
             >
               {isLoading ? '0000' : password}
