@@ -2,6 +2,7 @@ import styled, { css } from 'styled-components';
 import { VscTriangleDown } from 'react-icons/vsc';
 
 import ScrollBox from './Scrollbox';
+import { useEffect, useRef } from 'react';
 
 interface ModalProps {
   position: 'bottom' | 'center';
@@ -15,6 +16,7 @@ interface ModalProps {
   nextButtonId?: string;
   message?: string;
   messageError?: unknown;
+  applyPageIndex: number;
 }
 
 interface NextButtonProps {
@@ -33,7 +35,16 @@ const Modal = ({
   nextButtonId,
   message,
   messageError,
+  applyPageIndex,
 }: ModalProps) => {
+  const scrollRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollTo(0, 0);
+    }
+  }, [scrollRef, applyPageIndex]);
+
   return (
     <div
       className={`flex w-full cursor-auto flex-col items-center${
@@ -59,7 +70,10 @@ const Modal = ({
             </TopButton>
           </TopFoldButtonArea>
         )}
-        <ScrollBox className="max-h-[400px] overflow-y-scroll px-6 py-8">
+        <ScrollBox
+          className="max-h-[400px] overflow-y-scroll px-6 py-8"
+          ref={scrollRef}
+        >
           {children}
         </ScrollBox>
         {message && (

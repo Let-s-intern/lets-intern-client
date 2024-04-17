@@ -26,6 +26,7 @@ interface ProgramApplyProps {
   setMemberChecked: (memberChecked: 'USER' | 'GUEST' | '') => void;
   setApplyPageIndex: (applyPageIndex: number) => void;
   setParticipated: (participated: boolean) => void;
+  isApplyModalOpen: boolean;
   setIsApplyModalOpen: (isApplyModalOpen: boolean) => void;
   couponDiscount: number;
   setCouponDiscount: (couponDiscount: number) => void;
@@ -33,6 +34,7 @@ interface ProgramApplyProps {
 
 interface BlackBackgroundProps {
   $position: 'bottom' | 'center';
+  $modalOpen: boolean;
 }
 
 const ProgramApply = ({
@@ -50,6 +52,7 @@ const ProgramApply = ({
   setIsApplyModalOpen,
   couponDiscount,
   setCouponDiscount,
+  isApplyModalOpen,
 }: ProgramApplyProps) => {
   const navigate = useNavigate();
   const params = useParams();
@@ -202,7 +205,11 @@ const ProgramApply = ({
   };
 
   return applyPageIndex === 0 ? (
-    <BlackBackground $position="bottom" onClick={handleApplyModalClose}>
+    <BlackBackground
+      $position="bottom"
+      onClick={handleApplyModalClose}
+      $modalOpen={isApplyModalOpen}
+    >
       <Modal
         nextButtonText="다음"
         position="bottom"
@@ -210,6 +217,7 @@ const ProgramApply = ({
         onFoldButtonClick={handleApplyModalClose}
         nextButtonClass="member-type-next-button"
         nextButtonId="member_type_next_button"
+        applyPageIndex={applyPageIndex}
       >
         <MemberTypeContent
           memberChecked={memberChecked}
@@ -218,7 +226,11 @@ const ProgramApply = ({
       </Modal>
     </BlackBackground>
   ) : applyPageIndex === 1 ? (
-    <BlackBackground $position="bottom" onClick={handleApplyModalClose}>
+    <BlackBackground
+      $position="bottom"
+      onClick={handleApplyModalClose}
+      $modalOpen={isApplyModalOpen}
+    >
       <Modal
         nextButtonText="다음"
         position="bottom"
@@ -227,6 +239,7 @@ const ProgramApply = ({
         onFoldButtonClick={handleApplyModalClose}
         nextButtonClass="member-info-input-next-button"
         nextButtonId="member_info_input_next_button"
+        applyPageIndex={applyPageIndex}
       >
         {showAlert && (
           <AlertModal
@@ -252,16 +265,22 @@ const ProgramApply = ({
       </Modal>
     </BlackBackground>
   ) : applyPageIndex === 2 ? (
-    <BlackBackground $position="center" onClick={handleApplyModalClose}>
+    <BlackBackground
+      $position="center"
+      onClick={handleApplyModalClose}
+      $modalOpen={isApplyModalOpen}
+    >
       <Modal
         nextButtonText="제출하기"
         position="bottom"
         onNextButtonClick={handleApplyNextButton}
         isNextButtonDisabled={isNextButtonDisabled}
+        onFoldButtonClick={handleApplyModalClose}
         nextButtonClass="caution-next-button"
         nextButtonId="complete_button"
         message={bottomMessage}
         messageError={submitError}
+        applyPageIndex={applyPageIndex}
       >
         <CautionContent
           cautionChecked={cautionChecked}
@@ -273,7 +292,11 @@ const ProgramApply = ({
       </Modal>
     </BlackBackground>
   ) : applyPageIndex === 3 ? (
-    <BlackBackground $position="center" onClick={handleApplyModalClose}>
+    <BlackBackground
+      $position="center"
+      onClick={handleApplyModalClose}
+      $modalOpen={isApplyModalOpen}
+    >
       <Modal
         nextButtonText={isLoggedIn ? '신청서 확인하기' : '닫기'}
         position="center"
@@ -281,6 +304,7 @@ const ProgramApply = ({
         hasFoldButton={false}
         nextButtonClass="close-button"
         nextButtonId="close_button"
+        applyPageIndex={applyPageIndex}
       >
         <ResultContent announcementDate={announcementDate} />
       </Modal>
@@ -295,7 +319,7 @@ const BlackBackground = styled.div<BlackBackgroundProps>`
   left: 0;
   top: 0;
   z-index: 100;
-  display: flex;
+  display: ${({ $modalOpen }) => ($modalOpen ? 'flex' : 'none')};
   width: 100vw;
   height: 100vh;
   cursor: pointer;
