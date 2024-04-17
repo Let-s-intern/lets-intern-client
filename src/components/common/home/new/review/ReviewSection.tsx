@@ -18,12 +18,6 @@ const ReviewSection = () => {
       imageSrc: '/images/home/review3.svg',
       imageAlt: '후기 3 이미지',
     },
-    {
-      title: '합격까지 필요한 모든 커리큘럼을 제공합니다.',
-      description: '기업 로고를 클릭해 합격 후기를 확인해보세요!',
-      imageSrc: '/images/home/review4.svg',
-      imageAlt: '후기 4 이미지',
-    },
   ];
 
   return (
