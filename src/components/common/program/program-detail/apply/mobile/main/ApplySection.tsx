@@ -90,7 +90,7 @@ const ApplySection = ({
             />
             <button
               id="apply_button"
-              className="text-0.875-semibold rounded-xs bg-primary px-4 py-2 text-static-100"
+              className="text-0.875-semibold rounded-xs bg-primary px-4 py-2 text-static-100 disabled:bg-primary-light"
               disabled={program.status !== 'OPEN' || participated}
               onClick={() => {
                 if (!participated) {

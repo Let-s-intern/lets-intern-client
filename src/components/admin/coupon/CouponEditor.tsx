@@ -4,8 +4,6 @@ import {
   FormControlLabel,
   InputLabel,
   MenuItem,
-  Radio,
-  RadioGroup,
   Select,
   SelectChangeEvent,
 } from '@mui/material';
@@ -15,13 +13,13 @@ import { useNavigate, useParams } from 'react-router-dom';
 
 import axios from '../../../utils/axios';
 import {
-  idTocouponProgramTypeText,
   couponTypeTextFromId,
   couponProgramTypeEnum,
   couponTypeEnum,
 } from '../../../utils/convert';
 import Input from '../../ui/input/Input';
 import ActionButton from '../ui/button/ActionButton';
+import { AxiosError } from 'axios';
 
 interface CouponEditorProps {
   editorMode: 'create' | 'edit';
@@ -86,6 +84,7 @@ const CouponEditor = ({ editorMode }: CouponEditorProps) => {
       await queryClient.invalidateQueries({ queryKey: ['coupon'] });
       navigate('/admin/coupons');
     },
+    onError: (error) => handleQueryError(error),
   });
 
   const editCoupon = useMutation({
@@ -98,6 +97,7 @@ const CouponEditor = ({ editorMode }: CouponEditorProps) => {
       queryClient.invalidateQueries({ queryKey: ['coupon'] });
       navigate('/admin/coupons');
     },
+    onError: (error) => handleQueryError(error),
   });
 
   useEffect(() => {
@@ -120,6 +120,7 @@ const CouponEditor = ({ editorMode }: CouponEditorProps) => {
       });
     }
     setIsLoading(false);
+    // eslint-disable-next-line
   }, [getCoupon.isSuccess]);
 
   const handleChange = (
@@ -165,6 +166,13 @@ const CouponEditor = ({ editorMode }: CouponEditorProps) => {
     }
   };
 
+  const handleQueryError = (error: Error) => {
+    const errorData = (error as AxiosError).response?.data;
+    const errorCode = (errorData as { code: string }).code;
+    if (errorCode === 'COUPON_400_1') {
+      alert('이미 사용 중인 쿠폰 코드입니다.');
+    }
+  };
   if (isLoading) return null;
 
   return (
