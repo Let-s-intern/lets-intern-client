@@ -121,7 +121,7 @@ const CouponSubmit = ({
           value={couponCode}
           onChange={(e) => setCouponCode(e.target.value)}
           placeholder="쿠폰 코드를 입력하세요."
-          className="flex-1 rounded-xs border border-[#C4C4C4] px-3 py-2 text-sm outline-primary"
+          className="min-w-0 flex-1 rounded-xs border border-[#C4C4C4] px-3 py-2 text-sm outline-primary"
           disabled={isSuccess}
         />
         {isSuccess ? (

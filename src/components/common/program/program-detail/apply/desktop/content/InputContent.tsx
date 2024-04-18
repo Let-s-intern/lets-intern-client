@@ -141,7 +141,7 @@ const InputContent = ({
       formData.major &&
       formData.university &&
       formData.inflowPath &&
-      (program.feeType === 'CHARGE' || program.feeType === 'REFUND'
+      (program.feeType === 'REFUND'
         ? formData.accountType && formData.accountNumber
         : true) &&
       (program.way === 'ALL' ? formData.way : true)
@@ -235,14 +235,14 @@ const InputContent = ({
             onChange={(e) => handleApplyInput(e)}
             disabled={hasDetailInfo ? true : false}
           />
-          {(program.feeType === 'CHARGE' || program.feeType === 'REFUND') && (
+          {program.feeType === 'REFUND' && (
             <>
               <FormControl fullWidth sx={dropdownStyle}>
-                <InputLabel id="acccount-type">계좌 은행</InputLabel>
+                <InputLabel id="acccount-type">환급계좌 은행</InputLabel>
                 <Select
                   labelId="acccount-type"
                   id="acccount-type"
-                  label="계좌 은행"
+                  label="환급계좌 은행"
                   name="accountType"
                   value={formData.accountType ? formData.accountType : ''}
                   onChange={(e) => handleApplyInput(e)}
@@ -255,7 +255,7 @@ const InputContent = ({
                 </Select>
               </FormControl>
               <Input
-                label="계좌 번호"
+                label="환급계좌 번호"
                 name="accountNumber"
                 placeholder="- 없이 숫자만 입력"
                 value={formData.accountNumber ? formData.accountNumber : ''}

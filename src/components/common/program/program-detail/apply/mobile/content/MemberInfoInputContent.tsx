@@ -97,7 +97,7 @@ const MemberInfoInputContent = ({
                 <Select
                   labelId="acccount-type"
                   id="acccount-type"
-                  label="계좌 은행"
+                  label="환급계좌 은행"
                   name="accountType"
                   value={user.accountType}
                   onChange={(e) => handleApplyInput(e)}
@@ -110,7 +110,7 @@ const MemberInfoInputContent = ({
                 </Select>
               </FormControl>
               <Input
-                label="계좌 번호"
+                label="환급계좌 번호"
                 name="accountNumber"
                 placeholder="- 없이 숫자만 입력"
                 value={user.accountNumber}

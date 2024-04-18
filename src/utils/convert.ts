@@ -90,6 +90,7 @@ export const wishJobToText: any = {
   RESEARCH_ELEC: '엔지니어(전기/전자, 반도체)',
   RESEARCH_MACHINE: '엔지니어(기계)',
   RESEARCH_BIO: '엔지니어(화학, 바이오)',
+  RESEARCH_RND: 'R&D 연구원',
 };
 
 export const topicRequiredToText: any = {
