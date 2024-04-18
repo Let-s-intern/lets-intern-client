@@ -81,10 +81,9 @@ const ProgramApply = ({
       user.name &&
       user.email &&
       user.phoneNum &&
-      user.major &&
-      user.university &&
+      (isLoggedIn ? user.major && user.university : true) &&
       user.inflowPath &&
-      (program.feeType === 'CHARGE' || program.feeType === 'REFUND'
+      (program.feeType === 'REFUND'
         ? user.accountType && user.accountNumber
         : true) &&
       (program.way === 'ALL' ? user.way : true)

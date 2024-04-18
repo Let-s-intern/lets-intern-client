@@ -30,7 +30,7 @@ const StartPriceContent = ({
       {topLine && <hr className="my-2" />}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <span className="text-0.875-semibold">결제 금액</span>
+          <span className="text-0.875-semibold">가격</span>
           <DiscountPercent
             className="hidden sm:block"
             programFeeType={programFee.feeType}

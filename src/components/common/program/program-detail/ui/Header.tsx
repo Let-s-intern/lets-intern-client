@@ -10,7 +10,7 @@ const Header = ({ title }: HeaderProps) => {
 
   return (
     <HeaderBlock>
-      <BackButton onClick={() => navigate(-1)}>
+      <BackButton onClick={() => navigate('/program')}>
         <i>
           <img src="/icons/back-icon.svg" alt="이전 버튼" className="w-full" />
         </i>

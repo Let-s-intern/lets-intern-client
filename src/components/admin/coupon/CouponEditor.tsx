@@ -170,9 +170,12 @@ const CouponEditor = ({ editorMode }: CouponEditorProps) => {
     const errorData = (error as AxiosError).response?.data;
     const errorCode = (errorData as { code: string }).code;
     if (errorCode === 'COUPON_400_1') {
+      alert('쿠폰 코드는 대문자와 숫자로만 구성되어야 합니다.');
+    } else if (errorCode === 'COUPON_400_2') {
       alert('이미 사용 중인 쿠폰 코드입니다.');
     }
   };
+
   if (isLoading) return null;
 
   return (
