@@ -27,7 +27,7 @@ const Layout = () => {
   }, [location]);
 
   return (
-    <div className="font-notosans">
+    <div className="font-pretendard">
       <NavBar />
       <div className="min-h-screen w-full">
         <Outlet />

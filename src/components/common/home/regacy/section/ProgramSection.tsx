@@ -1,12 +1,12 @@
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 
-import axios from '../../../../utils/axios';
-import { typeToText } from '../../../../utils/converTypeToText';
-import formatDateString from '../../../../utils/formatDateString';
-import CardListSlider from '../../ui/card/wrapper/CardListSlider';
-import CardListPlaceholder from '../../ui/card/placeholder/CardListPlaceholder';
-import ProgramCard from '../../program/programs/card/ProgramCard';
+import axios from '../../../../../utils/axios';
+import { typeToText } from '../../../../../utils/converTypeToText';
+import formatDateString from '../../../../../utils/formatDateString';
+import CardListSlider from '../../../ui/card/wrapper/CardListSlider';
+import CardListPlaceholder from '../../../ui/card/placeholder/CardListPlaceholder';
+import ProgramCard from '../../../program/programs/card/ProgramCard';
 
 const ProgramSection = () => {
   const [programList, setProgramList] = useState<any>();

@@ -2,6 +2,7 @@ import styled, { css } from 'styled-components';
 import { VscTriangleDown } from 'react-icons/vsc';
 
 import ScrollBox from './Scrollbox';
+import { useEffect, useRef } from 'react';
 
 interface ModalProps {
   position: 'bottom' | 'center';
@@ -15,6 +16,7 @@ interface ModalProps {
   nextButtonId?: string;
   message?: string;
   messageError?: unknown;
+  applyPageIndex: number;
 }
 
 interface NextButtonProps {
@@ -33,7 +35,16 @@ const Modal = ({
   nextButtonId,
   message,
   messageError,
+  applyPageIndex,
 }: ModalProps) => {
+  const scrollRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollTo(0, 0);
+    }
+  }, [scrollRef, applyPageIndex]);
+
   return (
     <div
       className={`flex w-full cursor-auto flex-col items-center${
@@ -43,8 +54,8 @@ const Modal = ({
       <div
         className={`relative w-full bg-white shadow${
           position === 'bottom'
-            ? ' fixed bottom-0 max-w-2xl rounded-tl-2xl rounded-tr-2xl'
-            : ' mx-5 max-w-md rounded sm:mx-0'
+            ? ' fixed bottom-0 max-w-2xl rounded-tl-lg rounded-tr-lg'
+            : ' rounded mx-5 max-w-md sm:mx-0'
         }`}
         onClick={(e) => {
           e.stopPropagation();
@@ -59,7 +70,10 @@ const Modal = ({
             </TopButton>
           </TopFoldButtonArea>
         )}
-        <ScrollBox className="max-h-[400px] overflow-y-scroll px-6 py-8">
+        <ScrollBox
+          className="max-h-[400px] overflow-y-scroll px-6 py-8"
+          ref={scrollRef}
+        >
           {children}
         </ScrollBox>
         {message && (

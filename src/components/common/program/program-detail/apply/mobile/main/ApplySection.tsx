@@ -3,8 +3,8 @@ import { useNavigate, useParams } from 'react-router-dom';
 import styled from 'styled-components';
 
 import axios from '../../../../../../../utils/axios';
-import Button from '../../../../../ui/button/Button';
 import ProgramApply from './ProgramApply';
+import StartPriceContent from '../../../ui/price/StartPriceContent';
 
 interface ApplySectionProps {
   program: any;
@@ -12,6 +12,8 @@ interface ApplySectionProps {
   isLoggedIn: boolean;
   wishJobList: any;
   setParticipated: (participated: boolean) => void;
+  couponDiscount: number;
+  setCouponDiscount: (couponDiscount: number) => void;
 }
 
 const ApplySection = ({
@@ -20,6 +22,8 @@ const ApplySection = ({
   isLoggedIn,
   wishJobList,
   setParticipated,
+  couponDiscount,
+  setCouponDiscount,
 }: ApplySectionProps) => {
   const params = useParams();
   const navigate = useNavigate();
@@ -74,42 +78,54 @@ const ApplySection = ({
     <>
       <ApplySectionBlock>
         <ApplyButtonWrapper>
-          <ApplyButton
-            id="apply_button"
-            className="apply-button"
-            disabled={program.status !== 'OPEN' || participated}
-            onClick={() => {
-              if (!participated) {
-                handleApplyButtonClick();
-              }
-            }}
-          >
-            {program.status !== 'OPEN'
-              ? '신청 마감'
-              : participated
-              ? '신청 완료'
-              : isFirstOpen
-              ? '신청하기'
-              : '이어서 신청하기'}
-          </ApplyButton>
+          <div className="flex w-full items-center gap-3 rounded-xs border border-neutral-75 px-4 py-2 sm:px-6 sm:py-3">
+            <StartPriceContent
+              className="flex-1"
+              programFee={{
+                feeType: program.feeType,
+                feeCharge: program.feeCharge,
+                feeRefund: program.feeRefund,
+                discountValue: program.discountValue,
+              }}
+            />
+            <button
+              id="apply_button"
+              className="text-0.875-semibold rounded-xs bg-primary px-4 py-2 text-static-100 disabled:bg-primary-light"
+              disabled={program.status !== 'OPEN' || participated}
+              onClick={() => {
+                if (!participated) {
+                  handleApplyButtonClick();
+                }
+              }}
+            >
+              {program.status !== 'OPEN'
+                ? '신청 마감'
+                : participated
+                ? '신청 완료'
+                : isFirstOpen
+                ? '신청하기'
+                : '이어서 하기'}
+            </button>
+          </div>
         </ApplyButtonWrapper>
       </ApplySectionBlock>
-      {isApplyModalOpen && (
-        <ProgramApply
-          user={user}
-          hasDetailInfo={hasDetailInfo}
-          isLoggedIn={isLoggedIn}
-          program={program}
-          memberChecked={memberChecked}
-          applyPageIndex={applyPageIndex}
-          wishJobList={wishJobList}
-          setMemberChecked={setMemberChecked}
-          setApplyPageIndex={setApplyPageIndex}
-          setUser={setUser}
-          setParticipated={setParticipated}
-          setIsApplyModalOpen={setIsApplyModalOpen}
-        />
-      )}
+      <ProgramApply
+        user={user}
+        hasDetailInfo={hasDetailInfo}
+        isLoggedIn={isLoggedIn}
+        program={program}
+        memberChecked={memberChecked}
+        applyPageIndex={applyPageIndex}
+        wishJobList={wishJobList}
+        setMemberChecked={setMemberChecked}
+        setApplyPageIndex={setApplyPageIndex}
+        setUser={setUser}
+        setParticipated={setParticipated}
+        isApplyModalOpen={isApplyModalOpen}
+        setIsApplyModalOpen={setIsApplyModalOpen}
+        couponDiscount={couponDiscount}
+        setCouponDiscount={setCouponDiscount}
+      />
     </>
   );
 };
@@ -118,7 +134,7 @@ export default ApplySection;
 
 const ApplySectionBlock = styled.section`
   position: sticky;
-  bottom: 1rem;
+  bottom: 1.5rem;
   left: 0;
   z-index: 30;
   margin-top: 5rem;
@@ -132,21 +148,8 @@ const ApplyButtonWrapper = styled.div`
   display: flex;
   width: 100%;
   justify-content: start;
-  padding: 0 1rem;
 
   @media (min-width: 640px) {
     justify-content: center;
-  }
-`;
-
-const ApplyButton = styled(Button)`
-  display: block;
-  width: 100%;
-  padding-left: 1.5rem;
-  padding-right: 1.5rem;
-  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.25);
-
-  @media (min-width: 640px) {
-    width: auto;
   }
 `;

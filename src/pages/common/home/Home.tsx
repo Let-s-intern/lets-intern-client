@@ -1,16 +1,19 @@
-import FeatureSection from '../../../components/common/home/section/FeatureSection';
-import HomeHeader from '../../../components/common/home/header/HomeHeader';
-import ProgramSection from '../../../components/common/home/section/ProgramSection';
-import ReviewSection from '../../../components/common/home/section/ReviewSection';
+import ProgramSection from '../../../components/common/home/new/program/ProgramSection';
+import ProgramOverviewSection from '../../../components/common/home/new/overview/ProgramOverviewSection';
+import AdvantageSection from '../../../components/common/home/new/advantage/AdvantageSection';
+import PassReviewSection from '../../../components/common/home/new/pass-review/PassReviewSection';
+import ReviewSection from '../../../components/common/home/new/review/ReviewSection';
 
 const Home = () => {
   return (
-    <div className="flex flex-col gap-12">
-      <HomeHeader />
-      <ProgramSection />
-      <FeatureSection />
-      <ReviewSection />
-      {/* <NewsSection /> */}
+    <div className="px-5">
+      <div className="mx-auto mb-16 mt-6 flex max-w-[1080px] flex-col gap-16 sm:gap-20">
+        <ProgramSection />
+        <ProgramOverviewSection />
+        <AdvantageSection />
+        <PassReviewSection />
+        <ReviewSection />
+      </div>
     </div>
   );
 };

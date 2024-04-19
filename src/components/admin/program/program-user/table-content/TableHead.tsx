@@ -1,4 +1,4 @@
-import TH from '../../../ui/table/TH';
+import TH from '../../../ui/table/regacy/TH';
 
 const UserTableHead = () => {
   return (
@@ -12,6 +12,8 @@ const UserTableHead = () => {
         <TH>학교</TH>
         <TH>학년</TH>
         <TH>전공</TH>
+        <TH>쿠폰명</TH>
+        <TH>입금 예정 금액</TH>
         <TH>환급계좌번호</TH>
         <TH>입금 여부</TH>
         <TH>희망직무</TH>

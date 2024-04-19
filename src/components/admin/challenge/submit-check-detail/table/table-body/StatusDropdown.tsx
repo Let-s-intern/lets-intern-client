@@ -49,7 +49,7 @@ const StatusDropdown = ({ attendance, cellWidthListIndex }: Props) => {
       >
         {attendance && (
           <div
-            className="cursor-pointer rounded-md border border-gray-400 py-1 pl-2 pr-1 text-xs"
+            className="cursor-pointer rounded-sm border border-gray-400 py-1 pl-2 pr-1 text-xs"
             onClick={() => setIsMenuShown(!isMenuShown)}
           >
             <div className="flex items-center gap-1">

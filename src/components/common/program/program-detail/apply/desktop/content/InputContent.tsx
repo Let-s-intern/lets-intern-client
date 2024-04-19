@@ -16,6 +16,7 @@ import {
   bankTypeToText,
   wishJobToText,
 } from '../../../../../../../utils/convert';
+import InputPriceContent from '../../../ui/price/InputPriceContent';
 
 interface InputContentProps {
   program: any;
@@ -26,6 +27,8 @@ interface InputContentProps {
   setFormData: (formData: any) => void;
   setShowAlert: (showAlert: boolean) => void;
   setAlertInfo: (alertInfo: { title: string; message: string }) => void;
+  couponDiscount: number;
+  setCouponDiscount: (couponDiscount: number) => void;
 }
 
 interface ScrollableDiv extends HTMLDivElement {
@@ -41,6 +44,8 @@ const InputContent = ({
   setFormData,
   setShowAlert,
   setAlertInfo,
+  couponDiscount,
+  setCouponDiscount,
 }: InputContentProps) => {
   const scrollRef = useRef<ScrollableDiv>(null);
 
@@ -133,10 +138,9 @@ const InputContent = ({
       formData.name &&
       formData.email &&
       formData.phoneNum &&
-      formData.major &&
-      formData.university &&
+      (isLoggedIn ? formData.major && formData.university : true) &&
       formData.inflowPath &&
-      (program.feeType === 'CHARGE' || program.feeType === 'REFUND'
+      (program.feeType === 'REFUND'
         ? formData.accountType && formData.accountNumber
         : true) &&
       (program.way === 'ALL' ? formData.way : true)
@@ -145,7 +149,7 @@ const InputContent = ({
     }
   }, [program, formData]);
 
-  const handleSubmit = (e: any) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (isNextButtonDisabled) return;
     if (!isValidEmail(formData.email)) {
@@ -214,22 +218,54 @@ const InputContent = ({
             onChange={(e) => handleApplyInput(e)}
             disabled={isLoggedIn}
           />
-          <Input
-            label="학교"
-            name="university"
-            placeholder="렛츠대학교"
-            value={formData.university ? formData.university : ''}
-            onChange={(e) => handleApplyInput(e)}
-            disabled={hasDetailInfo ? true : false}
-          />
-          <Input
-            label="전공"
-            name="major"
-            placeholder="컴퓨터공학과"
-            value={formData.major ? formData.major : ''}
-            onChange={(e) => handleApplyInput(e)}
-            disabled={hasDetailInfo ? true : false}
-          />
+          {isLoggedIn && (
+            <>
+              <Input
+                label="학교"
+                name="university"
+                placeholder="렛츠대학교"
+                value={formData.university ? formData.university : ''}
+                onChange={(e) => handleApplyInput(e)}
+                disabled={hasDetailInfo ? true : false}
+              />
+              <Input
+                label="전공"
+                name="major"
+                placeholder="컴퓨터공학과"
+                value={formData.major ? formData.major : ''}
+                onChange={(e) => handleApplyInput(e)}
+                disabled={hasDetailInfo ? true : false}
+              />
+            </>
+          )}
+          {program.feeType === 'REFUND' && (
+            <>
+              <FormControl fullWidth sx={dropdownStyle}>
+                <InputLabel id="acccount-type">환급계좌 은행</InputLabel>
+                <Select
+                  labelId="acccount-type"
+                  id="acccount-type"
+                  label="환급계좌 은행"
+                  name="accountType"
+                  value={formData.accountType ? formData.accountType : ''}
+                  onChange={(e) => handleApplyInput(e)}
+                >
+                  {Object.keys(bankTypeToText).map((bankType: any) => (
+                    <MenuItem key={bankType} value={bankType}>
+                      {bankTypeToText[bankType]}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+              <Input
+                label="환급계좌 번호"
+                name="accountNumber"
+                placeholder="- 없이 숫자만 입력"
+                value={formData.accountNumber ? formData.accountNumber : ''}
+                onChange={(e) => handleApplyInput(e)}
+              />
+            </>
+          )}
           <FormControl fullWidth sx={dropdownStyle}>
             <InputLabel id="grade">학년</InputLabel>
             <Select
@@ -248,34 +284,6 @@ const InputContent = ({
               <MenuItem value="-1">졸업생</MenuItem>
             </Select>
           </FormControl>
-          {(program.feeType === 'CHARGE' || program.feeType === 'REFUND') && (
-            <>
-              <FormControl fullWidth sx={dropdownStyle}>
-                <InputLabel id="acccount-type">계좌 은행</InputLabel>
-                <Select
-                  labelId="acccount-type"
-                  id="acccount-type"
-                  label="계좌 은행"
-                  name="accountType"
-                  value={formData.accountType ? formData.accountType : ''}
-                  onChange={(e) => handleApplyInput(e)}
-                >
-                  {Object.keys(bankTypeToText).map((bankType: any) => (
-                    <MenuItem value={bankType}>
-                      {bankTypeToText[bankType]}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-              <Input
-                label="계좌 번호"
-                name="accountNumber"
-                placeholder="- 없이 숫자만 입력"
-                value={formData.accountNumber ? formData.accountNumber : ''}
-                onChange={(e) => handleApplyInput(e)}
-              />
-            </>
-          )}
           <FormControl fullWidth sx={dropdownStyle}>
             <InputLabel id="wish-job">희망 직무</InputLabel>
             <Select
@@ -287,7 +295,7 @@ const InputContent = ({
               onChange={(e) => handleApplyInput(e)}
             >
               {wishJobList.map((wishJobKey: any) => (
-                <MenuItem value={wishJobKey}>
+                <MenuItem key={wishJobKey} value={wishJobKey}>
                   {wishJobToText[wishJobKey]}
                 </MenuItem>
               ))}
@@ -361,6 +369,20 @@ const InputContent = ({
               maxLength={500}
             />
           )}
+          <InputPriceContent
+            program={{
+              type: program.type,
+              feeType: program.feeType,
+              feeCharge: program.feeCharge,
+              feeRefund: program.feeRefund,
+              discountValue: program.discountValue,
+            }}
+            couponDiscount={couponDiscount}
+            setCouponDiscount={setCouponDiscount}
+            formData={formData}
+            setFormData={setFormData}
+            isLoggedIn={isLoggedIn}
+          />
         </div>
       )}
       <button

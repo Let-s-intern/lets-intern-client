@@ -13,12 +13,16 @@ interface ApplyAsdieProps {
   program: any;
   participated: boolean;
   wishJobList: any;
+  couponDiscount: number;
+  setCouponDiscount: (couponDiscount: number) => void;
 }
 
 const ApplyAside = ({
   program,
   participated,
   wishJobList,
+  couponDiscount,
+  setCouponDiscount,
 }: ApplyAsdieProps) => {
   const [applyPageIndex, setApplyPageIndex] = useState(0);
   const [formData, setFormData] = useState<any>(null);
@@ -83,6 +87,8 @@ const ApplyAside = ({
         setApplyPageIndex={setApplyPageIndex}
         setShowAlert={setShowAlert}
         setAlertInfo={setAlertInfo}
+        couponDiscount={couponDiscount}
+        setCouponDiscount={setCouponDiscount}
       />
     );
     modalContent = null;
@@ -94,6 +100,7 @@ const ApplyAside = ({
         isLoggedIn={isLoggedIn}
         setApplyPageIndex={setApplyPageIndex}
         setAnnouncementDate={setAnnouncementDate}
+        couponDiscount={couponDiscount}
       />
     );
     modalContent = null;
@@ -105,6 +112,7 @@ const ApplyAside = ({
         isLoggedIn={isLoggedIn}
         setApplyPageIndex={setApplyPageIndex}
         setAnnouncementDate={setAnnouncementDate}
+        couponDiscount={couponDiscount}
       />
     );
     modalContent = (

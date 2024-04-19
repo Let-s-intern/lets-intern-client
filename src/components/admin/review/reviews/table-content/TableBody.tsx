@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-import TD from '../../../ui/table/TD';
+import TD from '../../../ui/table/regacy/TD';
 import ActionButton from '../../../ui/button/ActionButton';
 import formatDateString from '../../../../../utils/formatDateString';
 

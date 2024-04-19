@@ -5,23 +5,30 @@ import {
   bankTypeToText,
   wishJobToText,
 } from '../../../../../../../utils/convert';
+import InputPriceContent from '../../../ui/price/InputPriceContent';
 
 interface MemberInfoInputContentProps {
   user: any;
+  setUser: (user: any) => void;
   hasDetailInfo: boolean;
   isLoggedIn: boolean;
   program: any;
   wishJobList: any;
   handleApplyInput: (e: any) => void;
+  couponDiscount: number;
+  setCouponDiscount: (couponDiscount: number) => void;
 }
 
 const MemberInfoInputContent = ({
   user,
+  setUser,
   hasDetailInfo,
   isLoggedIn,
   program,
   wishJobList,
   handleApplyInput,
+  couponDiscount,
+  setCouponDiscount,
 }: MemberInfoInputContentProps) => {
   const dropdownStyle = {
     '& .MuiOutlinedInput-root': {
@@ -41,7 +48,7 @@ const MemberInfoInputContent = ({
     <>
       <h1 className="text-center text-xl">신청 정보</h1>
       <form className="mt-5 w-full">
-        <div className="mx-auto max-w-md space-y-3">
+        <div className="mx-auto flex max-w-md flex-col gap-3">
           <Input
             label="이름"
             name="name"
@@ -66,22 +73,55 @@ const MemberInfoInputContent = ({
             onChange={(e) => handleApplyInput(e)}
             disabled={isLoggedIn}
           />
-          <Input
-            label="학교"
-            name="university"
-            placeholder="렛츠대학교"
-            value={user.university}
-            onChange={(e) => handleApplyInput(e)}
-            disabled={hasDetailInfo}
-          />
-          <Input
-            label="전공"
-            name="major"
-            placeholder="컴퓨터공학과"
-            value={user.major}
-            onChange={(e) => handleApplyInput(e)}
-            disabled={hasDetailInfo}
-          />
+          {isLoggedIn && (
+            <>
+              <Input
+                label="학교"
+                name="university"
+                placeholder="렛츠대학교"
+                value={user.university}
+                onChange={(e) => handleApplyInput(e)}
+                disabled={hasDetailInfo}
+              />
+              <Input
+                label="전공"
+                name="major"
+                placeholder="컴퓨터공학과"
+                value={user.major}
+                onChange={(e) => handleApplyInput(e)}
+                disabled={hasDetailInfo}
+              />
+            </>
+          )}
+          {program.feeType === 'REFUND' && (
+            <>
+              {' '}
+              <FormControl fullWidth sx={dropdownStyle}>
+                <InputLabel id="acccount-type">환급계좌 은행</InputLabel>
+                <Select
+                  labelId="acccount-type"
+                  id="acccount-type"
+                  label="환급계좌 은행"
+                  name="accountType"
+                  value={user.accountType}
+                  onChange={(e) => handleApplyInput(e)}
+                >
+                  {Object.keys(bankTypeToText).map((bankType: any) => (
+                    <MenuItem value={bankType}>
+                      {bankTypeToText[bankType]}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+              <Input
+                label="환급계좌 번호"
+                name="accountNumber"
+                placeholder="- 없이 숫자만 입력"
+                value={user.accountNumber}
+                onChange={(e) => handleApplyInput(e)}
+              />
+            </>
+          )}
           <FormControl fullWidth sx={dropdownStyle}>
             <InputLabel id="grade">학년</InputLabel>
             <Select
@@ -100,35 +140,6 @@ const MemberInfoInputContent = ({
               <MenuItem value="-1">졸업생</MenuItem>
             </Select>
           </FormControl>
-          {(program.feeType === 'CHARGE' || program.feeType === 'REFUND') && (
-            <>
-              {' '}
-              <FormControl fullWidth sx={dropdownStyle}>
-                <InputLabel id="acccount-type">환급계좌 은행</InputLabel>
-                <Select
-                  labelId="acccount-type"
-                  id="acccount-type"
-                  label="계좌 은행"
-                  name="accountType"
-                  value={user.accountType}
-                  onChange={(e) => handleApplyInput(e)}
-                >
-                  {Object.keys(bankTypeToText).map((bankType: any) => (
-                    <MenuItem value={bankType}>
-                      {bankTypeToText[bankType]}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-              <Input
-                label="계좌 번호"
-                name="accountNumber"
-                placeholder="- 없이 숫자만 입력"
-                value={user.accountNumber}
-                onChange={(e) => handleApplyInput(e)}
-              />
-            </>
-          )}
           <FormControl fullWidth sx={dropdownStyle}>
             <InputLabel id="wish-job">희망 직무</InputLabel>
             <Select
@@ -214,6 +225,20 @@ const MemberInfoInputContent = ({
               maxLength={500}
             />
           )}
+          <InputPriceContent
+            program={{
+              type: program.type,
+              feeType: program.feeType,
+              feeCharge: program.feeCharge,
+              feeRefund: program.feeRefund,
+              discountValue: program.discountValue,
+            }}
+            couponDiscount={couponDiscount}
+            setCouponDiscount={setCouponDiscount}
+            formData={user}
+            setFormData={setUser}
+            isLoggedIn={isLoggedIn}
+          />
         </div>
       </form>
     </>

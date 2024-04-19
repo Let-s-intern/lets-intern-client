@@ -2,6 +2,218 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer base {
+  .text-2\.25-semibold {
+    font-size: 2.25rem;
+    font-weight: 600;
+    line-height: 3.375rem;
+  }
+
+  .text-2-bold {
+    font-size: 2rem;
+    font-weight: 500;
+    line-height: 2.75rem;
+  }
+
+  .text-1\.75-bold {
+    font-size: 1.75rem;
+    font-weight: 700;
+    line-height: 2.5rem;
+  }
+
+  .text-1\.75-semibold {
+    font-size: 1.75rem;
+    font-weight: 600;
+    line-height: 2.5rem;
+  }
+
+  .text-1\.75-medium {
+    font-size: 1.75rem;
+    font-weight: 500;
+    line-height: 2.75rem;
+  }
+
+  .text-1\.625-semibold {
+    font-size: 1.625rem;
+    font-weight: 600;
+    line-height: 2.25rem;
+  }
+
+  .text-1\.625-medium {
+    font-size: 1.625rem;
+    font-weight: 600;
+    line-height: 2.25rem;
+  }
+
+  .text-1\.625-light {
+    font-size: 1.625rem;
+    font-weight: 300;
+    line-height: 2.25rem;
+  }
+
+  .text-1\.5-semibold {
+    font-size: 1.5rem;
+    font-weight: 600;
+    line-height: 2.25rem;
+  }
+
+  .text-1\.5-medium {
+    font-size: 1.5rem;
+    font-weight: 500;
+    line-height: 2.125rem;
+  }
+
+  .text-1\.5-light {
+    font-size: 1.5rem;
+    font-weight: 300;
+    line-height: 2.125rem;
+  }
+
+  .text-1\.375-semibold {
+    font-size: 1.375rem;
+    font-weight: 600;
+    line-height: 2.125rem;
+  }
+
+  .text-1\.375-medium {
+    font-size: 1.375rem;
+    font-weight: 500;
+    line-height: 1.875rem;
+  }
+
+  .text-1\.375-light {
+    font-size: 1.375rem;
+    font-weight: 300;
+    line-height: 1.875rem;
+  }
+
+  .text-1\.375-thin {
+    font-size: 1.375rem;
+    font-weight: 200;
+    line-height: 1.875rem;
+  }
+
+  .text-1\.25-medium {
+    font-size: 1.25rem;
+    font-weight: 500;
+    line-height: 1.875rem;
+  }
+
+  .text-1\.25 {
+    font-size: 1.25rem;
+    font-weight: 400;
+    line-height: 1.875rem;
+  }
+
+  .text-1\.25-light {
+    font-size: 1.25rem;
+    font-weight: 300;
+    line-height: 1.875rem;
+  }
+
+  .text-1\.125-bold {
+    font-size: 1.125rem;
+    font-weight: 700;
+    line-height: 1.75rem;
+  }
+
+  .text-1\.125-semibold {
+    font-size: 1.125rem;
+    font-weight: 600;
+    line-height: 1.75rem;
+  }
+
+  .text-1\.125-medium {
+    font-size: 1.125rem;
+    font-weight: 500;
+    line-height: 1.75rem;
+  }
+
+  .text-1\.125 {
+    font-size: 1.125rem;
+    font-weight: 400;
+    line-height: 1.75rem;
+  }
+
+  .text-1\.125-light {
+    font-size: 1.125rem;
+    font-weight: 300;
+    line-height: 1.75rem;
+  }
+
+  .text-1-semibold {
+    font-size: 1rem;
+    font-weight: 600;
+    line-height: 1.625rem;
+  }
+
+  .text-1-medium {
+    font-size: 1rem;
+    font-weight: 500;
+    line-height: 1.625rem;
+  }
+
+  .text-1 {
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.625rem;
+  }
+
+  .text-1-light {
+    font-size: 1rem;
+    font-weight: 300;
+    line-height: 1.625rem;
+  }
+
+  .text-0\.875-semibold {
+    font-size: 0.875rem;
+    font-weight: 600;
+    line-height: 1.375rem;
+  }
+
+  .text-0\.875-medium {
+    font-size: 0.875rem;
+    font-weight: 500;
+    line-height: 1.375rem;
+  }
+
+  .text-0\.875 {
+    font-size: 0.875rem;
+    font-weight: 400;
+    line-height: 1.375rem;
+  }
+
+  .text-0\.875-light {
+    font-size: 0.875rem;
+    font-weight: 400;
+    line-height: 1.375rem;
+  }
+
+  .text-0\.75-bold {
+    font-size: 0.75rem;
+    font-weight: 700;
+    line-height: 1.125rem;
+  }
+
+  .text-0\.75-semibold {
+    font-size: 0.75rem;
+    font-weight: 600;
+    line-height: 1.125rem;
+  }
+
+  .text-0\.75-medium {
+    font-size: 0.75rem;
+    font-weight: 500;
+    line-height: 1.125rem;
+  }
+
+  .text-0\.75 {
+    font-size: 0.75rem;
+    font-weight: 400;
+    line-height: 1.125rem;
+  }
+}
+
 body.non-scroll {
   overflow: hidden;
   padding-right: 1rem;

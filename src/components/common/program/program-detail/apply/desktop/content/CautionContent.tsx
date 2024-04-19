@@ -1,12 +1,17 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { useQueryClient } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import cn from 'classnames';
 
 import axios from '../../../../../../../utils/axios';
 import { typeToText } from '../../../../../../../utils/converTypeToText';
 
 import styles from './CautionContent.module.scss';
+import PriceView from '../../../ui/price/PriceView';
+import { calculateProgramPrice } from '../../../../../../../utils/programPrice';
+import clsx from 'clsx';
+import { bankTypeToText } from '../../../../../../../utils/convert';
+import CautionPriceContent from '../../../ui/price/CautionPriceContent';
 
 interface CautionContentProps {
   program: any;
@@ -14,6 +19,7 @@ interface CautionContentProps {
   isLoggedIn: boolean;
   setApplyPageIndex: (applyPageIndex: number) => void;
   setAnnouncementDate: (announcedmentDate: string) => void;
+  couponDiscount: number;
 }
 
 const CautionContent = ({
@@ -22,6 +28,7 @@ const CautionContent = ({
   isLoggedIn,
   setApplyPageIndex,
   setAnnouncementDate,
+  couponDiscount,
 }: CautionContentProps) => {
   const params = useParams();
   const queryClient = useQueryClient();
@@ -79,6 +86,22 @@ const CautionContent = ({
       <h2 className="program-title">{program.title}</h2>
       <h4>[필독사항]</h4>
       <p>{program.notice}</p>
+      <CautionPriceContent
+        program={{
+          feeType: program.feeType,
+          feeCharge: program.feeCharge,
+          feeRefund: program.feeRefund,
+          discountValue: program.discountValue,
+          accountType: program.accountType,
+          accountNumber: program.accountNumber,
+          feeDueDate: program.feeDueDate,
+        }}
+        couponDiscount={couponDiscount}
+        priceViewClassName={clsx({
+          'mb-2': message,
+          'mb-5': !message,
+        })}
+      />
       {message && (
         <span
           className={cn(styles.message, {

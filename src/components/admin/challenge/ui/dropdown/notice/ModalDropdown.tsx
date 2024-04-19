@@ -17,7 +17,7 @@ const ModalDropdown = ({ values, setValues }: Props) => {
   return (
     <div className="relative">
       <div
-        className="flex w-40 cursor-pointer items-center justify-between rounded-md border border-neutral-400 px-4 py-2"
+        className="flex w-40 cursor-pointer items-center justify-between rounded-sm border border-neutral-400 px-4 py-2"
         onClick={() => setIsMenuShown(!isMenuShown)}
       >
         <span className="text-sm">

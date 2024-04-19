@@ -4,6 +4,7 @@ import cn from 'classnames';
 import classes from './StartContent.module.scss';
 import { typeToText } from '../../../../../../../utils/converTypeToText';
 import formatDateString from '../../../../../../../utils/formatDateString';
+import StartPriceContent from '../../../ui/price/StartPriceContent';
 
 interface StartContentProps {
   program: any;
@@ -75,10 +76,6 @@ const StartContent = ({
             <strong>모집 마감 일자</strong> {formatDateString(program.dueDate)}
           </li>
           <li className={classes['date-info-item']}>
-            <strong>합격자 발표 일자</strong>{' '}
-            {formatDateString(program.announcementDate)}
-          </li>
-          <li className={classes['date-info-item']}>
             <strong>시작 일자</strong> {formatDateString(program.startDate)}
           </li>
           <li className={classes['date-info-item']}>
@@ -86,7 +83,15 @@ const StartContent = ({
           </li>
         </ul>
       )}
-
+      <StartPriceContent
+        programFee={{
+          feeType: program.feeType,
+          feeCharge: program.feeCharge,
+          feeRefund: program.feeRefund,
+          discountValue: program.discountValue,
+        }}
+        topLine
+      />
       <button
         id="apply_button"
         className={cn(

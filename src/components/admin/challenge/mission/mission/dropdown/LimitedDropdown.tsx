@@ -14,7 +14,7 @@ const LimitedDropdown = ({ values, setValues }: Props) => {
   return (
     <div className="relative w-32">
       <div
-        className="flex flex-1 cursor-pointer items-center justify-between rounded-lg border border-[#A3A3A3] bg-[#F5F5F5] px-3 py-2"
+        className="flex flex-1 cursor-pointer items-center justify-between rounded-sm border border-[#A3A3A3] bg-[#F5F5F5] px-3 py-2"
         id="link-contents"
         onClick={() => setIsMenuShown(!isMenuShown)}
       >

@@ -23,6 +23,7 @@ interface ProgramEditorProps {
   handleFAQChange: (e: any, faqId: number) => void;
   handleFAQCheckChange: (e: any, faqId: number) => void;
   handleFAQIdListReset: () => void;
+  editorMode: 'create' | 'edit';
 }
 
 const ProgramEditor = ({
@@ -38,6 +39,7 @@ const ProgramEditor = ({
   handleFAQChange,
   handleFAQCheckChange,
   handleFAQIdListReset,
+  editorMode,
 }: ProgramEditorProps) => {
   const navigate = useNavigate();
   const quillRef = useRef<any>();
@@ -234,17 +236,21 @@ const ProgramEditor = ({
           multiline
           rows={8}
         />
-        <FeeSection values={values} setValues={setValues} />
+        <FeeSection
+          values={values}
+          setValues={setValues}
+          editorMode={editorMode}
+        />
         <div className="flex justify-end gap-2">
           <button
             type="submit"
-            className="w-20 rounded bg-indigo-600 py-2 text-center font-medium text-white"
+            className="rounded-xxs w-20 bg-indigo-600 py-2 text-center font-medium text-white"
           >
             등록
           </button>
           <button
             type="button"
-            className="w-20 rounded bg-gray-400 py-2 text-center font-medium text-white"
+            className="rounded-xxs w-20 bg-gray-400 py-2 text-center font-medium text-white"
             onClick={() => navigate(-1)}
           >
             취소

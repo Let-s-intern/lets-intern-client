@@ -5,7 +5,7 @@ import axios from '../../../utils/axios';
 import ActionButton from '../../../components/admin/ui/button/ActionButton';
 import Header from '../../../components/admin/ui/header/Header';
 import Heading from '../../../components/admin/ui/heading/Heading';
-import Table from '../../../components/admin/ui/table/Table';
+import Table from '../../../components/admin/ui/table/regacy/Table';
 import Filter from '../../../components/admin/user/users/filter/Filter';
 import TableBody from '../../../components/admin/user/users/table-content/TableBody';
 import TableHead from '../../../components/admin/user/users/table-content/TableHead';

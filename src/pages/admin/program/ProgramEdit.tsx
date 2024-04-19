@@ -187,6 +187,7 @@ const ProgramEdit = () => {
       handleFAQChange={handleFAQChange}
       handleFAQCheckChange={handleFAQCheckChange}
       handleFAQIdListReset={handleFAQIdListReset}
+      editorMode="edit"
     />
   );
 };

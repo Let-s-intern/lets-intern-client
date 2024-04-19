@@ -57,7 +57,7 @@ const TopDropdown = ({
   return (
     <div className="relative" ref={dropdownRef}>
       <div
-        className="flex w-24 cursor-pointer items-center justify-between gap-4 rounded border border-neutral-400 py-2 pl-4 pr-2"
+        className="rounded-xxs flex w-24 cursor-pointer items-center justify-between gap-4 border border-neutral-400 py-2 pl-4 pr-2"
         onClick={() => setIsMenuShown(!isMenuShown)}
       >
         <span

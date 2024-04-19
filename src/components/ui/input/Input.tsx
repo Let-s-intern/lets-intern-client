@@ -15,6 +15,7 @@ interface InputProps {
   maxLength?: number;
   className?: string;
   error?: boolean;
+  fullWidth?: boolean;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
@@ -30,6 +31,7 @@ const Input = ({
   maxLength,
   className,
   error,
+  fullWidth = true,
   onChange,
 }: InputProps) => {
   const [focused, setFocused] = useState(false);
@@ -69,13 +71,14 @@ const Input = ({
       rows={rows}
       onChange={onChange}
       autoComplete="off"
-      fullWidth
+      fullWidth={fullWidth}
       className={className}
       inputProps={inputProps}
       sx={textFieldStyle}
       onFocus={() => setFocused(true)}
       onBlur={() => setFocused(false)}
       error={error}
+      onKeyDown={(e) => e.key === 'Enter' && e.preventDefault()}
     />
   );
 

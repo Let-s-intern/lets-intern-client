@@ -63,8 +63,16 @@ const AdminLayout = () => {
           url: '/admin/programs',
         },
         {
+          name: '상시 콘텐츠 개설',
+          url: '/admin/online-contents',
+        },
+        {
           name: '후기 관리',
           url: '/admin/reviews',
+        },
+        {
+          name: '알림 신청 관리',
+          url: '/admin/reminders',
         },
       ],
     },
@@ -90,6 +98,31 @@ const AdminLayout = () => {
           name: '회원 DB',
           url: '/admin/users',
         },
+        {
+          name: '쿠폰 관리',
+          url: '/admin/coupons',
+        },
+      ],
+    },
+    {
+      title: '홈페이지 관리',
+      itemList: [
+        {
+          name: '메인 배너 관리',
+          url: '/admin/banner/main-banners',
+        },
+        {
+          name: '상단 띠 배너 관리',
+          url: '/admin/banner/top-bar-banners',
+        },
+        {
+          name: '프로그램 배너 관리',
+          url: '/admin/banner/program-banners',
+        },
+        {
+          name: '팝업 관리',
+          url: '/admin/banner/pop-up',
+        },
       ],
     },
     {
@@ -105,9 +138,9 @@ const AdminLayout = () => {
   ];
 
   return (
-    <div className="flex font-notosans">
+    <div className="flex font-pretendard">
       <aside>
-        <nav className="fixed left-0 top-0 z-50 flex h-screen w-64 flex-col gap-8 bg-[#353535] pt-20 text-white">
+        <nav className="fixed left-0 top-0 z-50 flex h-screen w-64 flex-col gap-8 overflow-y-auto bg-[#353535] py-20 text-white">
           {navData.map((navSection, index) => (
             <div key={index}>
               <div className="flex items-center justify-between border-b border-b-neutral-600 pb-3 pl-12 pr-8">
