@@ -73,23 +73,27 @@ const MemberInfoInputContent = ({
             onChange={(e) => handleApplyInput(e)}
             disabled={isLoggedIn}
           />
-          <Input
-            label="학교"
-            name="university"
-            placeholder="렛츠대학교"
-            value={user.university}
-            onChange={(e) => handleApplyInput(e)}
-            disabled={hasDetailInfo}
-          />
-          <Input
-            label="전공"
-            name="major"
-            placeholder="컴퓨터공학과"
-            value={user.major}
-            onChange={(e) => handleApplyInput(e)}
-            disabled={hasDetailInfo}
-          />
-          {(program.feeType === 'CHARGE' || program.feeType === 'REFUND') && (
+          {isLoggedIn && (
+            <>
+              <Input
+                label="학교"
+                name="university"
+                placeholder="렛츠대학교"
+                value={user.university}
+                onChange={(e) => handleApplyInput(e)}
+                disabled={hasDetailInfo}
+              />
+              <Input
+                label="전공"
+                name="major"
+                placeholder="컴퓨터공학과"
+                value={user.major}
+                onChange={(e) => handleApplyInput(e)}
+                disabled={hasDetailInfo}
+              />
+            </>
+          )}
+          {program.feeType === 'REFUND' && (
             <>
               {' '}
               <FormControl fullWidth sx={dropdownStyle}>

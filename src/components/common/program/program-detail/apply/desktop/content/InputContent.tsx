@@ -138,8 +138,7 @@ const InputContent = ({
       formData.name &&
       formData.email &&
       formData.phoneNum &&
-      formData.major &&
-      formData.university &&
+      (isLoggedIn ? formData.major && formData.university : true) &&
       formData.inflowPath &&
       (program.feeType === 'REFUND'
         ? formData.accountType && formData.accountNumber
@@ -150,7 +149,7 @@ const InputContent = ({
     }
   }, [program, formData]);
 
-  const handleSubmit = (e: any) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (isNextButtonDisabled) return;
     if (!isValidEmail(formData.email)) {
@@ -219,22 +218,26 @@ const InputContent = ({
             onChange={(e) => handleApplyInput(e)}
             disabled={isLoggedIn}
           />
-          <Input
-            label="학교"
-            name="university"
-            placeholder="렛츠대학교"
-            value={formData.university ? formData.university : ''}
-            onChange={(e) => handleApplyInput(e)}
-            disabled={hasDetailInfo ? true : false}
-          />
-          <Input
-            label="전공"
-            name="major"
-            placeholder="컴퓨터공학과"
-            value={formData.major ? formData.major : ''}
-            onChange={(e) => handleApplyInput(e)}
-            disabled={hasDetailInfo ? true : false}
-          />
+          {isLoggedIn && (
+            <>
+              <Input
+                label="학교"
+                name="university"
+                placeholder="렛츠대학교"
+                value={formData.university ? formData.university : ''}
+                onChange={(e) => handleApplyInput(e)}
+                disabled={hasDetailInfo ? true : false}
+              />
+              <Input
+                label="전공"
+                name="major"
+                placeholder="컴퓨터공학과"
+                value={formData.major ? formData.major : ''}
+                onChange={(e) => handleApplyInput(e)}
+                disabled={hasDetailInfo ? true : false}
+              />
+            </>
+          )}
           {program.feeType === 'REFUND' && (
             <>
               <FormControl fullWidth sx={dropdownStyle}>
@@ -292,7 +295,7 @@ const InputContent = ({
               onChange={(e) => handleApplyInput(e)}
             >
               {wishJobList.map((wishJobKey: any) => (
-                <MenuItem value={wishJobKey}>
+                <MenuItem key={wishJobKey} value={wishJobKey}>
                   {wishJobToText[wishJobKey]}
                 </MenuItem>
               ))}
