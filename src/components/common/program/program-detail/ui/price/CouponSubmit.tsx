@@ -151,6 +151,7 @@ const CouponSubmit = ({
               },
             )}
             onClick={handleSubmitButtonClicked}
+            disabled={isDisabled}
           >
             등록
           </button>
