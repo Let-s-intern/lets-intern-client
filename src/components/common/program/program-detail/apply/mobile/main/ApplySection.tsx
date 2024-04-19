@@ -78,7 +78,7 @@ const ApplySection = ({
     <>
       <ApplySectionBlock>
         <ApplyButtonWrapper>
-          <div className="flex w-full items-center gap-3 rounded-xs border border-neutral-75 px-4 py-2 sm:px-6 sm:py-3">
+          <div className="flex w-full items-center gap-3 rounded-xs border border-neutral-75 bg-static-100 px-4 py-2 sm:px-6 sm:py-3">
             <StartPriceContent
               className="flex-1"
               programFee={{
