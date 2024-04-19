@@ -149,7 +149,7 @@ const InputContent = ({
     }
   }, [program, formData]);
 
-  const handleSubmit = (e: any) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (isNextButtonDisabled) return;
     if (!isValidEmail(formData.email)) {
@@ -295,7 +295,7 @@ const InputContent = ({
               onChange={(e) => handleApplyInput(e)}
             >
               {wishJobList.map((wishJobKey: any) => (
-                <MenuItem value={wishJobKey}>
+                <MenuItem key={wishJobKey} value={wishJobKey}>
                   {wishJobToText[wishJobKey]}
                 </MenuItem>
               ))}

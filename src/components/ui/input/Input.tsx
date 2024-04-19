@@ -78,6 +78,7 @@ const Input = ({
       onFocus={() => setFocused(true)}
       onBlur={() => setFocused(false)}
       error={error}
+      onKeyDown={(e) => e.key === 'Enter' && e.preventDefault()}
     />
   );
 

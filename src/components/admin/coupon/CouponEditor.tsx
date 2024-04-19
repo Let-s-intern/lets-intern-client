@@ -84,7 +84,7 @@ const CouponEditor = ({ editorMode }: CouponEditorProps) => {
       await queryClient.invalidateQueries({ queryKey: ['coupon'] });
       navigate('/admin/coupons');
     },
-    onError: (error) => handleQueryError(error),
+    onError: (error) => handleSubmitError(error),
   });
 
   const editCoupon = useMutation({
@@ -97,7 +97,7 @@ const CouponEditor = ({ editorMode }: CouponEditorProps) => {
       queryClient.invalidateQueries({ queryKey: ['coupon'] });
       navigate('/admin/coupons');
     },
-    onError: (error) => handleQueryError(error),
+    onError: (error) => handleSubmitError(error),
   });
 
   useEffect(() => {
@@ -166,13 +166,13 @@ const CouponEditor = ({ editorMode }: CouponEditorProps) => {
     }
   };
 
-  const handleQueryError = (error: Error) => {
+  const handleSubmitError = (error: Error) => {
     const errorData = (error as AxiosError).response?.data;
     const errorCode = (errorData as { code: string }).code;
-    if (errorCode === 'COUPON_400_1') {
-      alert('쿠폰 코드는 대문자와 숫자로만 구성되어야 합니다.');
-    } else if (errorCode === 'COUPON_400_2') {
+    if (errorCode === 'COUPON_400_2') {
       alert('이미 사용 중인 쿠폰 코드입니다.');
+    } else if (errorCode === 'COUPON_400_3') {
+      alert('쿠폰 코드는 영문 대문자와 숫자로만 구성되어야 합니다.');
     }
   };
 

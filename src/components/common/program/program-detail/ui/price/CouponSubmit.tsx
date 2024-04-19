@@ -22,13 +22,36 @@ const CouponSubmit = ({
   programDiscount,
   programType,
 }: CouponSubmitProps) => {
-  const [submittedCode, setSubmittedCode] = useState<string>('');
   const [message, setMessage] = useState<string>('');
   const [messageColor, setMessageColor] = useState<'green' | 'red' | 'none'>(
     'none',
   );
   const [isSuccess, setIsSuccess] = useState<boolean>(false);
   const [couponCode, setCouponCode] = useState<string>('');
+  const [isDisabled, setIsDisabled] = useState<boolean>(true);
+
+  const initializeMessage = async () => {
+    setMessage('');
+    setMessageColor('none');
+    setIsSuccess(false);
+    setCouponDiscount(0);
+  };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const regex = /^[A-Z0-9]+$/;
+    if (regex.test(e.target.value)) {
+      initializeMessage();
+      setIsDisabled(false);
+    } else if (e.target.value === '') {
+      initializeMessage();
+      setIsDisabled(true);
+    } else {
+      setMessage('영문 대문자와 숫자만 입력 가능합니다.');
+      setMessageColor('red');
+      setIsDisabled(true);
+    }
+    setCouponCode(e.target.value);
+  };
 
   const handleSubmitButtonClicked = async () => {
     try {
@@ -62,7 +85,6 @@ const CouponSubmit = ({
           setCouponDiscount(res.data.discount);
         }
         setIsSuccess(true);
-        setSubmittedCode(couponCode);
         setFormData({
           ...formData,
           code: couponCode,
@@ -86,32 +108,17 @@ const CouponSubmit = ({
         setMessage('쿠폰 등록 중 오류가 발생했습니다.');
       }
       setMessageColor('red');
-      setSubmittedCode(couponCode);
       setCouponDiscount(0);
     }
   };
 
   const handleCancel = () => {
     setCouponCode('');
-    setMessage('');
-    setMessageColor('none');
-    setIsSuccess(false);
-    setSubmittedCode('');
-    setCouponDiscount(0);
+    initializeMessage();
     const newFormData = { ...formData };
     delete newFormData.code;
     setFormData(newFormData);
   };
-
-  useEffect(() => {
-    if (couponCode !== submittedCode) {
-      setMessage('');
-      setMessageColor('none');
-      setIsSuccess(false);
-      setCouponDiscount(0);
-    }
-    // eslint-disable-next-line
-  }, [couponCode]);
 
   return (
     <div className={className}>
@@ -119,10 +126,11 @@ const CouponSubmit = ({
         <input
           type="text"
           value={couponCode}
-          onChange={(e) => setCouponCode(e.target.value)}
+          onChange={handleChange}
           placeholder="쿠폰 코드를 입력하세요."
           className="min-w-0 flex-1 rounded-xs border border-[#C4C4C4] px-3 py-2 text-sm outline-primary"
           disabled={isSuccess}
+          onKeyDown={(e) => e.key === 'Enter' && e.preventDefault()}
         />
         {isSuccess ? (
           <button
@@ -138,8 +146,8 @@ const CouponSubmit = ({
             className={clsx(
               'rounded-xs px-3 text-sm font-semibold text-white',
               {
-                'bg-primary': couponCode.length > 0,
-                'bg-[#BDBDBD]': couponCode.length === 0,
+                'bg-primary': !isDisabled,
+                'bg-[#BDBDBD]': isDisabled,
               },
             )}
             onClick={handleSubmitButtonClicked}
