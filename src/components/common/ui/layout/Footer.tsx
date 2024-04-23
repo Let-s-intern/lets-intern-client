@@ -8,14 +8,14 @@ const Footer = () => {
       <TopArea>
         <DocumentLinkGroup>
           <DocumentLink
-            to="https://ddayeah.notion.site/e3dff22b6bb6428bb841008cd1740759?pvs=4"
+            to="https://letsintern.notion.site/e3dff22b6bb6428bb841008cd1740759?pvs=74"
             target="_blank"
             rel="noopener noreferrer"
           >
             서비스 이용약관
           </DocumentLink>
           <DocumentLink
-            to="https://ddayeah.notion.site/22c0a812e31c4eb5afcd64e077d447be?pvs=4"
+            to="https://letsintern.notion.site/22c0a812e31c4eb5afcd64e077d447be?pvs=74"
             target="_blank"
             rel="noopener noreferrer"
           >
