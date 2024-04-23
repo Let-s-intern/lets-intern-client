@@ -22,7 +22,7 @@ const TabItem = ({ to, active, children }: TabItemProps) => {
     return (
       <Link
         to={to}
-        className="text-neutral-grey cursor-pointer pb-1 hover:border-b-2 hover:border-b-primary hover:text-primary"
+        className="cursor-pointer pb-1 text-neutral-30 hover:border-b-2 hover:border-b-primary hover:text-primary"
       >
         {children}
       </Link>
@@ -30,7 +30,7 @@ const TabItem = ({ to, active, children }: TabItemProps) => {
   }
 
   return (
-    <div className="text-neutral-grey cursor-pointer pb-1 hover:border-b-2 hover:border-b-primary hover:text-primary">
+    <div className="cursor-pointer pb-1 text-neutral-30 hover:border-b-2 hover:border-b-primary hover:text-primary">
       {children}
     </div>
   );

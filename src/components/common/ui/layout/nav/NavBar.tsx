@@ -111,10 +111,8 @@ const NavBar = () => {
           </div>
           <div className="flex items-center gap-4">
             {isLoggedIn ? (
-              <div className="hidden  gap-2 sm:flex ">
-                <span className="block text-[1.125rem] font-medium">
-                  {user?.name} 님
-                </span>
+              <div className="hidden gap-2 sm:flex ">
+                <span className="text-1.125-medium block">{user?.name} 님</span>
                 <img
                   src="/icons/user-circle.svg"
                   alt="User icon"
@@ -125,20 +123,16 @@ const NavBar = () => {
               <div className="hidden items-center gap-2 sm:flex">
                 <Link
                   to="/login"
-                  className="rounded-xxs bg-primary px-3 py-1 text-[0.75rem] text-white"
+                  className="text-0.75 rounded-xxs bg-primary px-3 py-1 text-static-100"
                 >
                   로그인
                 </Link>
-                <Link to="/signup" className="text-[0.75rem] text-primary">
+                <Link to="/signup" className="text-0.75 text-primary">
                   회원가입
                 </Link>
               </div>
             )}
-            <button
-              type="button"
-              className="block rounded-md text-gray-500 hover:text-gray-600"
-              onClick={toggleMenu}
-            >
+            <button type="button" onClick={toggleMenu}>
               <img src="/icons/nav-icon.svg" alt="네비게이션 아이콘" />
             </button>
           </div>
@@ -176,7 +170,7 @@ const NavBar = () => {
               </button>
             </span>
           ) : (
-            <div className="flex gap-6 text-[0.875rem]">
+            <div className="text-0.875 flex gap-6">
               <Link className="text-primary" to="/login" onClick={closeMenu}>
                 로그인
               </Link>

@@ -10,7 +10,7 @@ const SideNavItem = ({ to, onClick, children }: SideNavItemProps) => {
   return (
     <Link
       to={to}
-      className="text-neutral-grey flex w-full cursor-pointer justify-between rounded-md bg-gray-100 px-7 py-5"
+      className="flex w-full cursor-pointer justify-between rounded-md bg-gray-100 px-7 py-5 text-neutral-30"
       onClick={onClick}
     >
       <span>{children}</span>

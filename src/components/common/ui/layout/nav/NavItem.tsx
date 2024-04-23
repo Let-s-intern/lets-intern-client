@@ -1,17 +1,17 @@
 import { Link } from 'react-router-dom';
 
-interface TabItemProps {
+interface NavItemProps {
   to?: string;
   active?: boolean;
   children: React.ReactNode;
 }
 
-const NavItem = ({ to, active, children }: TabItemProps) => {
+const NavItem = ({ to, active, children }: NavItemProps) => {
   if (active) {
     return (
       <Link
         to={to || '#'}
-        className="cursor-pointer text-lg font-bold text-neutral-0 "
+        className="text-1.125-bold cursor-pointer text-neutral-0 "
       >
         {children}
       </Link>
@@ -22,7 +22,7 @@ const NavItem = ({ to, active, children }: TabItemProps) => {
     return (
       <Link
         to={to}
-        className="cursor-pointer text-lg font-medium text-neutral-60 "
+        className="text-1.125-medium cursor-pointer text-neutral-60 "
       >
         {children}
       </Link>
@@ -30,7 +30,7 @@ const NavItem = ({ to, active, children }: TabItemProps) => {
   }
 
   return (
-    <div className="cursor-pointer text-lg font-medium text-neutral-60">
+    <div className="text-1.125-medium cursor-pointer text-neutral-60">
       {children}
     </div>
   );
