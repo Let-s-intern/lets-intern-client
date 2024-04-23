@@ -24,7 +24,7 @@ const PrivacyPolicyModal = ({
         )}
       >
         <div
-          className="fixed left-1/2 top-1/2 z-[1000] w-full max-w-3xl -translate-x-1/2 -translate-y-1/2 bg-white p-8 md:px-12 md:py-16"
+          className="fixed left-1/2 top-1/2 z-[1000] w-full max-w-3xl -translate-x-1/2 -translate-y-1/2 rounded-xxs bg-white p-8 md:px-12 md:py-16"
           onClick={(e) => e.stopPropagation()}
         >
           <h2 className="mb-4 text-center text-2xl font-semibold">
@@ -62,7 +62,7 @@ const PrivacyPolicyModal = ({
               onClick={(e) => {
                 e.stopPropagation();
                 window.open(
-                  'https://letsintern.notion.site/22c0a812e31c4eb5afcd64e077d447be?pvs=74',
+                  'https://letsintern.notion.site/4e21a3c6f42a409da877a7b5d926f158?pvs=25',
                   '_blank',
                 );
               }}
@@ -73,7 +73,7 @@ const PrivacyPolicyModal = ({
           </p>
           <div className="mt-8 w-full text-center">
             <button
-              className="rounded bg-primary px-4 py-2 text-white"
+              className="rounded rounded-xxs bg-primary px-4 py-2 text-white"
               type="button"
               onClick={() => setShowModal(false)}
             >
