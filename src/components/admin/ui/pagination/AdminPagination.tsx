@@ -1,6 +1,6 @@
 import { useSearchParams } from 'react-router-dom';
-import cn from 'classnames';
 import { RiArrowLeftSLine, RiArrowRightSLine } from 'react-icons/ri';
+import clsx from 'clsx';
 
 interface AdminPaginationProps {
   maxPage: number;
@@ -72,7 +72,7 @@ const AdminPagination = ({ maxPage, className }: AdminPaginationProps) => {
 
   return (
     <div
-      className={cn(
+      className={clsx(
         'admin-pagination flex w-full items-center justify-center gap-4',
         className,
       )}
@@ -97,7 +97,7 @@ const AdminPagination = ({ maxPage, className }: AdminPaginationProps) => {
         {pageList.map((page) => (
           <li
             key={page}
-            className={cn('cursor-pointer', {
+            className={clsx('cursor-pointer', {
               'font-medium text-indigo-600':
                 page === Number(searchParams.get('page')) ||
                 (searchParams.get('page') === null && page === 1),
