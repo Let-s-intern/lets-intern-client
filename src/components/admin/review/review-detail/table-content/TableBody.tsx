@@ -24,7 +24,7 @@ const DetailTableBody = ({
       {reviewList.map((review) => (
         <tr key={review.id}>
           <TD>{review.userName ? '회원' : '비회원'}</TD>
-          <TD>{review.userName ? review.userName : '익명'}</TD>
+          <TD>{review.userName || '익명'}</TD>
           <TD>{review.grade}</TD>
           <TD whiteSpace="wrap">{review.reviewContents}</TD>
           <TD whiteSpace="wrap">{review.suggestContents}</TD>

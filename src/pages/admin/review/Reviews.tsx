@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
 
 import axios from '../../../utils/axios';
 import TableHead from '../../../components/admin/review/reviews/table-content/TableHead';
 import TableBody from '../../../components/admin/review/reviews/table-content/TableBody';
 import Table from '../../../components/admin/ui/table/regacy/Table';
 import AdminPagination from '../../../components/admin/ui/pagination/AdminPagination';
-import { useQuery } from '@tanstack/react-query';
 
 const Reviews = () => {
   const [searchParams] = useSearchParams();
