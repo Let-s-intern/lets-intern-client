@@ -9,16 +9,16 @@ interface NavItemProps {
 }
 
 const NavItem = ({ to, active, as, children }: NavItemProps) => {
-  const className = clsx({
+  const Wrapper = as || Link;
+  const style = {
     'text-1.125-bold text-neutral-0': active,
-    'text-1.125-medium text-neutral-60': !active && to,
-  });
-  const Element = as || Link;
+    'text-1.125-medium text-neutral-60': !active,
+  };
 
   return (
-    <Element to={to || '#'} className={`${className} cursor-pointer`}>
+    <Wrapper to={to || '#'} className={clsx(style, 'cursor-pointer')}>
       {children}
-    </Element>
+    </Wrapper>
   );
 };
 

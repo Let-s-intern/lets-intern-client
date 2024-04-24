@@ -111,7 +111,7 @@ const NavBar = () => {
           </div>
           <div className="flex items-center gap-4">
             {isLoggedIn ? (
-              <div className="hidden gap-2 sm:flex ">
+              <div className="hidden gap-2 sm:flex">
                 <span className="text-1.125-medium block">{user?.name} 님</span>
                 <img
                   src="/icons/user-circle.svg"
