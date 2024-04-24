@@ -1,98 +1,97 @@
 import { useEffect, useState } from 'react';
 import { useParams, useSearchParams } from 'react-router-dom';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import axios from '../../../utils/axios';
 import Table from '../../../components/admin/ui/table/regacy/Table';
 import TableHead from '../../../components/admin/review/review-detail/table-content/TableHead';
-import TableBody from '../../../components/admin/review/review-detail/table-content/TableBody';
+import TableBody, {
+  DetailTableBodyProps,
+} from '../../../components/admin/review/review-detail/table-content/TableBody';
 import Heading from '../../../components/admin/ui/heading/Heading';
 import AdminPagination from '../../../components/admin/ui/pagination/AdminPagination';
 
-import classes from './ReviewsDetail.module.scss';
-
 const ReviewsDetail = () => {
   const params = useParams();
-  const [searchParams] = useSearchParams();
-  const [loading, setLoading] = useState<boolean>(false);
-  const [error, setError] = useState<unknown>(null);
-  const [reviewList, setReviewList] = useState<any>([]);
-  const [program, setProgram] = useState<any>({});
-  const [maxPage, setMaxPage] = useState(1);
+  const queryClient = useQueryClient();
 
-  const sizePerPage = 10;
+  const [searchParams] = useSearchParams();
+  const [reviewList, setReviewList] = useState<
+    DetailTableBodyProps['reviewList']
+  >([]);
+  const [program, setProgram] = useState<{ title: string }>();
+  const [maxPage, setMaxPage] = useState<number>(0);
+
+  const getReviewList = useQuery({
+    queryKey: [
+      'review',
+      'admin',
+      params.programId,
+      {
+        page: searchParams.get('page'),
+        size: 10,
+      },
+    ],
+    queryFn: async ({ queryKey }) => {
+      const res = await axios.get(`/review/admin/${params.programId}`, {
+        params: queryKey[3],
+      });
+      return res.data;
+    },
+  });
 
   useEffect(() => {
-    const fetchReviews = async () => {
-      const currentPage = searchParams.get('page');
-      const pageParams = {
-        page: currentPage,
-        size: sizePerPage,
-      };
-      try {
-        let res;
-        res = await axios.get(`/review/admin/${params.programId}`, {
-          params: pageParams,
-        });
-        setReviewList(res.data.reviewList);
-        setMaxPage(res.data.pageInfo.totalPages);
-        res = await axios.get(`/program/admin`);
-        const foundedProgram = res.data.programList.find(
-          (program: any) => program.id === Number(params.programId),
-        );
-        setProgram(foundedProgram);
-      } catch (err) {
-        setError(err);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchReviews();
-  }, [searchParams, params.programId]);
+    if (getReviewList.data) {
+      setReviewList(getReviewList.data.reviewList);
+      setMaxPage(getReviewList.data.pageInfo.totalPages);
+    }
+  }, [getReviewList]);
+
+  const getProgram = useQuery({
+    queryKey: ['program', 'admin', params.programId],
+    queryFn: async () => {
+      const res = await axios.get(`/program/${params.programId}`);
+      return res.data;
+    },
+  });
+
+  useEffect(() => {
+    if (getProgram.data) {
+      setProgram(getProgram.data.programDetailVo);
+    }
+  }, [getProgram]);
+
+  const changeReviewVisible = useMutation({
+    mutationFn: async (params: { reviewId: number; status: string }) => {
+      const res = await axios.patch(`/review/${params.reviewId}`, {
+        status: params.status,
+      });
+      return res.data;
+    },
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ['review'] });
+    },
+  });
 
   const handleVisibleChanged = async (reviewId: number, status: string) => {
-    try {
-      await axios.patch(`/review/${reviewId}`, { status });
-      const newReviewList = reviewList.map((review: any) => {
-        if (review.id === reviewId) {
-          return {
-            ...review,
-            status,
-          };
-        }
-        return review;
-      });
-      setReviewList(newReviewList);
-    } catch (err) {
-      console.error(err);
-    }
+    changeReviewVisible.mutate({ reviewId, status });
   };
-
-  if (loading) {
-    return <></>;
-  }
-
-  if (error) {
-    return <>에러 발생</>;
-  }
 
   return (
     <div className="p-8">
-      <header className={classes.header}>
-        <Heading>후기 목록 - {program.title}</Heading>
+      <header className="mb-4">
+        <Heading>후기 목록 {program && <>- {program.title}</>}</Heading>
       </header>
-      <main className={classes.main}>
+      <main>
         <Table>
           <TableHead />
           <TableBody
-            program={program}
             reviewList={reviewList}
             handleVisibleChanged={handleVisibleChanged}
           />
         </Table>
         {reviewList.length > 0 && (
-          <div className={classes.pagination}>
-            <AdminPagination maxPage={maxPage} />
-          </div>
+          <AdminPagination className="mt-4" maxPage={maxPage} />
         )}
       </main>
     </div>

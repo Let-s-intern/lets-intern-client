@@ -74,9 +74,7 @@ const AdminPagination = ({ maxPage, className }: AdminPaginationProps) => {
     <div
       className={cn(
         'admin-pagination flex w-full items-center justify-center gap-4',
-        {
-          [className as string]: className,
-        },
+        className,
       )}
     >
       <span
