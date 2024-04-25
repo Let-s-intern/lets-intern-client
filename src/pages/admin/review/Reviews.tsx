@@ -1,37 +1,41 @@
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
 
 import axios from '../../../utils/axios';
 import TableHead from '../../../components/admin/review/reviews/table-content/TableHead';
 import TableBody from '../../../components/admin/review/reviews/table-content/TableBody';
 import Table from '../../../components/admin/ui/table/regacy/Table';
 import AdminPagination from '../../../components/admin/ui/pagination/AdminPagination';
-import classes from './Reviews.module.scss';
 
 const Reviews = () => {
   const [searchParams] = useSearchParams();
   const [programList, setProgramList] = useState([]);
   const [maxPage, setMaxPage] = useState(1);
 
-  const sizePerPage = 10;
+  const getProgramList = useQuery({
+    queryKey: [
+      'program',
+      'admin',
+      {
+        page: searchParams.get('page'),
+        size: 10,
+      },
+    ],
+    queryFn: async ({ queryKey }) => {
+      const res = await axios.get('/program/admin', {
+        params: queryKey[2],
+      });
+      return res.data;
+    },
+  });
 
   useEffect(() => {
-    const fetchData = async () => {
-      const currentPage = searchParams.get('page');
-      const params = {
-        size: sizePerPage,
-        page: currentPage,
-      };
-      try {
-        const res = await axios.get('/program/admin', { params });
-        setProgramList(res.data.programList);
-        setMaxPage(res.data.pageInfo.totalPages);
-      } catch (err) {
-        console.log(err);
-      }
-    };
-    fetchData();
-  }, [searchParams]);
+    if (getProgramList.data) {
+      setProgramList(getProgramList.data.programList);
+      setMaxPage(getProgramList.data.pageInfo.totalPages);
+    }
+  }, [getProgramList]);
 
   const copyReviewCreateLink = (programId: number) => {
     const url = `${window.location.protocol}//${window.location.hostname}:${window.location.port}/program/${programId}/review/create`;
@@ -47,10 +51,10 @@ const Reviews = () => {
 
   return (
     <div className="p-8">
-      <header className={classes.header}>
-        <h1 className={classes.heading}>후기 관리</h1>
+      <header className="mb-4">
+        <h1 className="text-1.5-bold">후기 관리</h1>
       </header>
-      <main className={classes.main}>
+      <main>
         <Table minWidth={1000}>
           <TableHead />
           <TableBody
@@ -59,9 +63,7 @@ const Reviews = () => {
           />
         </Table>
         {programList.length > 0 && (
-          <div className={classes.pagination}>
-            <AdminPagination maxPage={maxPage} />
-          </div>
+          <AdminPagination className="mt-4" maxPage={maxPage} />
         )}
       </main>
     </div>

@@ -2,23 +2,29 @@ import { FormControl, MenuItem, Select } from '@mui/material';
 
 import TD from '../../../ui/table/regacy/TD';
 
-interface DetailTableBodyProps {
-  program: any;
-  reviewList: any;
+export interface DetailTableBodyProps {
+  reviewList: {
+    id: number;
+    userName: string;
+    grade: number;
+    reviewContents: string;
+    suggestContents: string;
+    createdAt: string;
+    status: string;
+  }[];
   handleVisibleChanged: (reviewId: number, status: string) => void;
 }
 
 const DetailTableBody = ({
-  program,
   reviewList,
   handleVisibleChanged,
 }: DetailTableBodyProps) => {
   return (
     <tbody>
-      {reviewList.map((review: any) => (
-        <tr>
+      {reviewList.map((review) => (
+        <tr key={review.id}>
           <TD>{review.userName ? '회원' : '비회원'}</TD>
-          <TD>{review.userName ? review.userName : '익명'}</TD>
+          <TD>{review.userName || '익명'}</TD>
           <TD>{review.grade}</TD>
           <TD whiteSpace="wrap">{review.reviewContents}</TD>
           <TD whiteSpace="wrap">{review.suggestContents}</TD>
