@@ -28,7 +28,7 @@ const Footer = () => {
       </div>
 
       <div className="text-0.75-medium my-7 flex flex-col gap-2 text-neutral-45">
-        <span className="block"> 턴업컴퍼니 사업자 정보</span>
+        <span className="block">턴업컴퍼니 사업자 정보</span>
         <div className="flex gap-2">
           <span className="block">대표자: 송다예</span>
           <span className="block">|</span>
