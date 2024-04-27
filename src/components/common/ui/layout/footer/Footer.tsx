@@ -15,39 +15,37 @@ const Footer = () => {
         </div>
         <div>
           <span className="mb-1.5 block text-neutral-0">고객센터</span>
-          <p className="text-0.875 text-neutral-0/[.65]">
-            홈페이지 좌측 하단의 [이메일] 이나 우측 하단 [문의하기]를 통해
+          <p className="text-0.875 w-80 text-neutral-0/[.65]">
+            홈페이지 좌측 하단의 [이메일] 이나 우측 하단 [문의하기]를 통해 1:1
+            채팅상담을 이용하실 수 있습니다.
+            <br />* 채팅 상담 운영시간 : 평일, 주말 09:00-21:00
             <br />
-            1:1 채팅상담을 이용하실 수 있습니다. <br />* 채팅 상담 운영시간 :
-            평일, 주말 09:00-21:00
+            <span className="text-0.75">
+              (전화상담을 원하시는 경우, 채팅상담을 통해 신청 부탁드립니다.)
+            </span>
           </p>
-          <span className="text-0.75 text-neutral-0/[.65]">
-            (전화상담을 원하시는 경우, 채팅상담을 통해 신청 부탁드립니다.)
-          </span>
         </div>
       </div>
 
-      <div className="text-0.75-medium my-7 flex flex-col gap-2 text-neutral-45">
-        <span className="block">턴업컴퍼니 사업자 정보</span>
+      <p className="text-0.75-medium my-7 flex flex-col gap-2 text-neutral-45">
+        <span>턴업컴퍼니 사업자 정보</span>
         <div className="flex gap-2">
-          <span className="block">대표자: 송다예</span>
-          <span className="block">|</span>
-          <span className="block">사업자 등록번호: 369-16-01796</span>
+          <span>대표자: 송다예</span>
+          <span>|</span>
+          <span>사업자 등록번호: 369-16-01796</span>
         </div>
         <div className="flex flex-col gap-2 md:flex-row">
           <div className="flex gap-2">
-            <span className="block">주소: 서울특별시 성동구 상원길 63</span>
-            <span className="block">|</span>
+            <span>주소: 서울특별시 성동구 상원길 63</span>
+            <span>|</span>
           </div>
           <div className="flex gap-2">
-            <span className="block">이메일: letsintern.official@gmail.com</span>
-            <span className="block">|</span>
+            <span>이메일: letsintern.official@gmail.com</span>
+            <span>|</span>
           </div>
-          <span className="block">
-            Copyright ©2023 턴업컴퍼니. All rights reserved.
-          </span>
+          <span>Copyright ©2023 턴업컴퍼니. All rights reserved.</span>
         </div>
-      </div>
+      </p>
 
       <div className="mb-8 flex items-center justify-between">
         <div className="flex items-center gap-4">
