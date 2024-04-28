@@ -1,19 +1,16 @@
+import { Link } from 'react-router-dom';
+
 interface IconProps {
   src: string;
-  alt?: string;
-  openUrl?: string;
+  alt: string;
+  to?: string;
 }
 
-const Icon = ({ src, alt = '', openUrl }: IconProps) => {
+const Icon = ({ src, alt, to = '#' }: IconProps) => {
   return (
-    <img
-      className="w-5 cursor-pointer"
-      src={src}
-      alt={alt}
-      onClick={() => {
-        if (openUrl) window.open(openUrl, '_blank');
-      }}
-    />
+    <Link to={to} target="_blank" rel="noopener noreferrer">
+      <img className="w-5" src={src} alt={alt} />
+    </Link>
   );
 };
 

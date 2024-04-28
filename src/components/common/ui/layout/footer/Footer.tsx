@@ -52,12 +52,12 @@ const Footer = () => {
           <Icon
             src="/icons/instagram.svg"
             alt="인스타그램 아이콘"
-            openUrl="https://www.instagram.com/letsintern.official/"
+            to="https://www.instagram.com/letsintern.official/"
           />
           <Icon
             src="/icons/blog.png"
             alt="네이버 블로그 아이콘"
-            openUrl="https://blog.naver.com/PostList.naver?blogId=letsintern"
+            to="https://blog.naver.com/PostList.naver?blogId=letsintern"
           />
         </div>
         <div className="flex items-center gap-6 text-neutral-0/[.65]">

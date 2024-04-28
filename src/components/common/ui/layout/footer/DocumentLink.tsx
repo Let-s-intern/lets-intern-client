@@ -1,11 +1,11 @@
 import { Link } from 'react-router-dom';
 
 interface DocumentLinkProps {
-  to?: string;
+  to: string;
   children?: React.ReactNode;
 }
 
-const DocumentLink = ({ to = '', children }: DocumentLinkProps) => {
+const DocumentLink = ({ to, children }: DocumentLinkProps) => {
   return (
     <Link
       to={to}
