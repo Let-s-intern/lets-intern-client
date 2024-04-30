@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
 
 import NavBar from './nav/NavBar';
-import Footer from './Footer';
+import Footer from './footer/Footer';
 import ChannelService from '../../../../ChannelService';
 
 const Layout = () => {
