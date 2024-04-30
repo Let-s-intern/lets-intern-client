@@ -8,7 +8,10 @@ interface IconProps {
 
 const Icon = ({ src, alt, to = '#' }: IconProps) => {
   return (
-    <Link to={to} target="_blank" rel="noopener noreferrer">
+    <Link
+      to={to}
+      {...(to !== '#' && { target: '_blank', rel: 'noopener noreferrer' })}
+    >
       <img className="w-5" src={src} alt={alt} />
     </Link>
   );
