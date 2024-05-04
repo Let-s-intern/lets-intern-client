@@ -6,8 +6,11 @@ const MissionTooltipQuestion = () => {
   const [isTooltipOpen, setIsTooltipOpen] = useState(false);
 
   useEffect(() => {
-    function handleClickOutside(e: any) {
-      if (tooltipRef.current && !tooltipRef.current.contains(e.target)) {
+    function handleClickOutside(e: MouseEvent) {
+      if (
+        tooltipRef.current &&
+        !tooltipRef.current.contains(e.target as Node)
+      ) {
         setIsTooltipOpen(false);
       }
     }

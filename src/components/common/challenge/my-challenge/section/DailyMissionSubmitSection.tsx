@@ -5,9 +5,10 @@ import axios from '../../../../../utils/axios';
 import clsx from 'clsx';
 import AlertModal from '../../../../ui/alert/AlertModal';
 import { useLocation } from 'react-router-dom';
+import { DailyMission } from '../../../../../interfaces/interface';
 
 interface Props {
-  dailyMission: any;
+  dailyMission: DailyMission;
 }
 
 const DailyMissionSubmitSection = ({ dailyMission }: Props) => {
@@ -92,7 +93,7 @@ const DailyMissionSubmitSection = ({ dailyMission }: Props) => {
 
   const handleMissionLinkSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    submitMissionLink.mutate(value);
+    submitMissionLink.mutate(value as string);
     setIsEditing(false);
   };
 
