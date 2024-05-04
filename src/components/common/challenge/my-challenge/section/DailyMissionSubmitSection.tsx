@@ -71,7 +71,7 @@ const DailyMissionSubmitSection = ({ dailyMission }: Props) => {
     },
   });
 
-  const handleMissionLinkChanged = (e: any) => {
+  const handleMissionLinkChanged = (e: React.ChangeEvent<HTMLInputElement>) => {
     const inputValue = e.target.value;
     setValue(inputValue);
     if (inputValue.startsWith('https://') || inputValue.startsWith('http://')) {
@@ -105,8 +105,8 @@ const DailyMissionSubmitSection = ({ dailyMission }: Props) => {
 
   return (
     <form onSubmit={handleMissionLinkSubmit}>
-      <h3 className="text-lg font-semibold">미션 제출하기</h3>
-      <p className="mt-1 text-sm">
+      <h3 className="text-1-semibold">미션 제출하기</h3>
+      <p className="text-0.875 mt-1">
         {isEditing
           ? '링크를 제대로 확인해 주세요. 카톡으로 공유해야 미션 제출이 인정됩니다.'
           : '미션 제출이 완료되었습니다.'}
@@ -114,14 +114,14 @@ const DailyMissionSubmitSection = ({ dailyMission }: Props) => {
       <div className="mt-4 flex items-stretch gap-4">
         <label
           htmlFor="link"
-          className="flex items-center font-semibold text-[#626262]"
+          className="text-0.875-semibold flex items-center text-neutral-35"
         >
           링크
         </label>
         <input
           type="text"
           className={clsx(
-            'flex-1 cursor-text rounded-lg border border-[#A3A3A3] bg-[#F6F8FB] px-3 py-2 text-sm outline-none',
+            'text-0.875 flex-1 cursor-text rounded-xxs border border-neutral-50 bg-neutral-95 px-3 py-2 outline-none',
             {
               'text-neutral-400': !isEditing,
               'border-red-500': !isValidLinkValue && value && isEditing,
@@ -138,7 +138,7 @@ const DailyMissionSubmitSection = ({ dailyMission }: Props) => {
         />
         <button
           type="button"
-          className="rounded bg-primary px-5 font-medium text-white disabled:bg-[#c7c7c7]"
+          className="rounded-xxs bg-primary px-5 font-medium text-static-100 disabled:bg-neutral-70"
           onClick={() => {
             if (value) {
               Object.assign(document.createElement('a'), {
@@ -157,17 +157,17 @@ const DailyMissionSubmitSection = ({ dailyMission }: Props) => {
       {value &&
         isEditing &&
         (isLinkChecked ? (
-          <div className="ml-12 mt-1 text-xs font-medium text-primary">
+          <div className="text-0.75-medium ml-12 mt-1 text-primary">
             링크 확인을 완료하셨습니다. 링크가 올바르다면 제출 버튼을
             눌러주세요.
           </div>
         ) : !isValidLinkValue ? (
-          <div className="ml-12 mt-1 text-xs font-medium text-red-500">
+          <div className="text-0.75-medium ml-12 mt-1 text-red-500">
             URL 형식이 올바르지 않습니다.
             {!isStartedHttp && <> (https:// 또는 http://로 시작해야 합니다.)</>}
           </div>
         ) : (
-          <div className="ml-12 mt-1 text-xs font-medium text-primary">
+          <div className="text-0.75-medium ml-12 mt-1 text-primary">
             URL을 올바르게 입력하셨습니다. 링크 확인을 진행해주세요.
           </div>
         ))}
@@ -176,7 +176,7 @@ const DailyMissionSubmitSection = ({ dailyMission }: Props) => {
         {dailyMission.attendanceLink && (
           <button
             type="button"
-            className="rounded mr-3 border border-[#DCDCDC] bg-white px-5 py-2 text-center font-semibold disabled:bg-gray-50 disabled:text-gray-600"
+            className="text-1-semibold mr-3 rounded-xxs border border-neutral-75 bg-static-100 px-5 py-2 text-center disabled:bg-gray-50 disabled:text-gray-600"
             onClick={() => {
               if (isEditing) {
                 cancelMisiionLinkChange();
@@ -190,7 +190,7 @@ const DailyMissionSubmitSection = ({ dailyMission }: Props) => {
         )}
         <button
           type="submit"
-          className="rounded border border-[#DCDCDC] bg-white px-5 py-2 text-center font-semibold disabled:bg-gray-50 disabled:text-gray-600"
+          className="text-1-semibold rounded-xxs border border-neutral-75 bg-static-100 px-5 py-2 text-center disabled:bg-gray-50 disabled:text-gray-600"
           disabled={!isEditing || !value || !isLinkChecked}
         >
           {isEditing ? '제출' : '제출 완료'}
