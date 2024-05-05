@@ -182,6 +182,7 @@ const DailyMissionSubmitSection = ({ dailyMission }: Props) => {
                 cancelMisiionLinkChange();
               } else {
                 setIsEditing(true);
+                setIsLinkChecked(false);
               }
             }}
           >
