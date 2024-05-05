@@ -1,8 +1,3 @@
-import { useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
-
-import axios from '../../../../../../utils/axios';
-
 interface Props {
   applicationList: any;
 }
