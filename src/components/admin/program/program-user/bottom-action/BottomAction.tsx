@@ -2,12 +2,18 @@ import GeneralActionDropdown from './GeneralActionDropdown';
 import ChallengeActionDropdown from './ChallengeActionDropdown';
 
 interface Props {
+  applications: any;
   program: any;
   sizePerPage: number;
   maxPage: number;
 }
 
-const BottomAction = ({ program, sizePerPage, maxPage }: Props) => {
+const BottomAction = ({
+  applications,
+  program,
+  sizePerPage,
+  maxPage,
+}: Props) => {
   if (!program.type) {
     return <></>;
   }
@@ -17,6 +23,7 @@ const BottomAction = ({ program, sizePerPage, maxPage }: Props) => {
       {(program.type === 'CHALLENGE_FULL' ||
         program.type === 'CHALLENGE_HALF') && <ChallengeActionDropdown />}
       <GeneralActionDropdown
+        applications={applications}
         program={program}
         sizePerPage={sizePerPage}
         maxPage={maxPage}
