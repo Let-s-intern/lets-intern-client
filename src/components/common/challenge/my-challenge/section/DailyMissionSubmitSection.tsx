@@ -4,7 +4,6 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import axios from '../../../../../utils/axios';
 import clsx from 'clsx';
 import AlertModal from '../../../../ui/alert/AlertModal';
-import { useLocation } from 'react-router-dom';
 import { DailyMission } from '../../../../../interfaces/interface';
 
 interface Props {
@@ -13,7 +12,6 @@ interface Props {
 
 const DailyMissionSubmitSection = ({ dailyMission }: Props) => {
   const queryClient = useQueryClient();
-  const location = useLocation();
 
   const [value, setValue] = useState(
     dailyMission.attended ? dailyMission.attendanceLink : '',
@@ -25,25 +23,23 @@ const DailyMissionSubmitSection = ({ dailyMission }: Props) => {
   const [isStartedHttp, setIsStartedHttp] = useState(false);
   const [isEditing, setIsEditing] = useState(!dailyMission.attended);
   const [isAlertShown, setIsAlertShown] = useState(false);
-  const [isBack, setIsBack] = useState(false); // 뒤로가기 버튼 클릭 여부
 
   useEffect(() => {
-    window.history.pushState('challenge', '', location.pathname);
-    window.addEventListener('popstate', handlePopstate);
+    window.addEventListener('beforeunload', handleBeforeunload);
 
     return () => {
-      window.removeEventListener('popstate', handlePopstate);
+      window.removeEventListener('beforeunload', handleBeforeunload);
     };
   }, [isEditing, value]);
 
-  const handlePopstate = () => {
-    if (isEditing && value !== dailyMission.attendanceLink) {
-      window.history.pushState('challenge', '', location.pathname);
-      setIsAlertShown(true);
-      setIsBack(true);
-    }
-    window.removeEventListener('popstate', handlePopstate);
-    window.history.go(-3);
+  const handleBeforeunload = (e: BeforeUnloadEvent) => {
+    if (!isEditing || value === dailyMission.attendanceLink) return;
+    e.preventDefault();
+  };
+
+  const onConfirm = () => {
+    setValue(dailyMission.attendanceLink);
+    setIsEditing(false);
   };
 
   const submitMissionLink = useMutation({
@@ -201,12 +197,7 @@ const DailyMissionSubmitSection = ({ dailyMission }: Props) => {
       {isAlertShown && (
         <AlertModal
           onConfirm={() => {
-            setValue(dailyMission.attendanceLink);
-            setIsEditing(false);
-            if (isBack) {
-              window.removeEventListener('popstate', handlePopstate);
-              window.history.go(-6);
-            }
+            onConfirm();
             setIsAlertShown(false);
           }}
           title="링크 변경을 취소하시겠어요?"
