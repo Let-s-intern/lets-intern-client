@@ -111,7 +111,7 @@ const GeneralActionDropdown = ({
         parseGrade(application.application.grade),
         application.optionalInfo?.major,
         application.application.couponName,
-        application.application.totalFee?.toLocaleString() + '원',
+        application.application.totalFee || 0,
         application.optionalInfo
           ? `${application.optionalInfo.accountType || ''} ${
               application.optionalInfo.accountNumber || ''
@@ -141,7 +141,7 @@ const GeneralActionDropdown = ({
     const csvFile = new Blob([csv], { type: 'text/csv' });
     const link = document.createElement('a');
     link.href = window.URL.createObjectURL(csvFile);
-    link.download = `참여자 목록.csv`;
+    link.download = `${program.title} - 참여자 목록.csv`;
     link.click();
   };
 
