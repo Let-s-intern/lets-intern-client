@@ -1,20 +1,44 @@
-import styled from 'styled-components';
+import clsx from 'clsx';
+import { FaCheck } from 'react-icons/fa6';
 
-interface THProps {
+export interface THProps {
+  onClick?: () => void;
   children: React.ReactNode;
+  inOrder?: 'ASCENDING' | 'DESCENDING' | null;
+  inBoolFilter?: boolean | null;
 }
 
-const THBlock = styled.th`
-  border: 1px solid white;
-  /* background-color: #edf2f7; */
-  padding: 0.5rem 1rem;
-  font-weight: 500;
-  font-size: 0.75rem;
-  white-space: nowrap;
-`;
-
-const TH = ({ children }: THProps) => {
-  return <THBlock className="bg-neutral-200">{children}</THBlock>;
+const TH = ({ onClick, inOrder, inBoolFilter, children }: THProps) => {
+  return (
+    <th
+      className={clsx(
+        'whitespace-nowrap border border-white bg-neutral-200 px-4 py-2 text-xs font-medium',
+        onClick && 'cursor-pointer',
+      )}
+      onClick={onClick}
+    >
+      <span className="flex items-center justify-center gap-1">
+        <span>{children}</span>
+        {inOrder !== undefined &&
+          (inOrder === null ? (
+            <span>△▽</span>
+          ) : (
+            <span>
+              {inOrder === 'ASCENDING' ? '▲' : inOrder === 'DESCENDING' && '▼'}
+            </span>
+          ))}
+        {inBoolFilter !== undefined &&
+          (inBoolFilter === null ? (
+            <span className="flex items-center gap-0.5">
+              <FaCheck />
+              <span>□</span>
+            </span>
+          ) : (
+            <span>{inBoolFilter ? <FaCheck /> : '□'}</span>
+          ))}
+      </span>
+    </th>
+  );
 };
 
 export default TH;

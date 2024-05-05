@@ -3,14 +3,26 @@ import { useParams } from 'react-router-dom';
 
 import ActionButton from '../../../ui/button/ActionButton';
 import axios from '../../../../../utils/axios';
+import parseInflowPath from '../../../../../utils/parseInflowPath';
+import parseGrade from '../../../../../utils/parseGrade';
+import {
+  applicationStatusToText,
+  wishJobToText,
+} from '../../../../../utils/convert';
 
 interface Props {
+  applications: any;
   program: any;
   sizePerPage: number;
   maxPage: number;
 }
 
-const GeneralActionDropdown = ({ program, sizePerPage, maxPage }: Props) => {
+const GeneralActionDropdown = ({
+  applications,
+  program,
+  sizePerPage,
+  maxPage,
+}: Props) => {
   const params = useParams();
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -75,6 +87,64 @@ const GeneralActionDropdown = ({ program, sizePerPage, maxPage }: Props) => {
     URL.revokeObjectURL(url);
   };
 
+  const handleDownloadCSV = () => {
+    const csv = getCSV();
+    downloadCSVFile(csv);
+  };
+
+  const getCSV = () => {
+    const csv: any = [];
+    csv.push(
+      `구분,유입경로,이메일 주소,이름,휴대폰 번호,학교,학년,전공,쿠폰명,입금 예정 금액,환급계좌번호,입금 여부,희망직무,희망기업형태,신청자 답변, 온/오프라인 여부,참가여부,신청일자,사전질문`,
+    );
+    applications.forEach((application: any) => {
+      const row = [];
+      row.push(
+        application.application.type === 'USER'
+          ? '회원'
+          : application.application.type === 'GUEST' && '비회원',
+        parseInflowPath(application.application.inflowPath),
+        application.application.email,
+        application.application.name,
+        application.application.phoneNum,
+        application.optionalInfo?.university,
+        parseGrade(application.application.grade),
+        application.optionalInfo?.major,
+        application.application.couponName,
+        application.application.totalFee || 0,
+        application.optionalInfo
+          ? `${application.optionalInfo.accountType || ''} ${
+              application.optionalInfo.accountNumber || ''
+            }`
+          : '',
+        application.application.feeIsConfirmed ? '입금완료' : '입금대기',
+        wishJobToText[application.application.wishJob],
+        application.application.wishCompany,
+        application.application.applyMotive,
+        application.application.way === 'OFFLINE'
+          ? '오프라인'
+          : application.application.way === 'ONLINE'
+          ? '온라인'
+          : '',
+        applicationStatusToText[application.application.status],
+        application.application.createdAt,
+        application.application.preQuestions,
+      );
+      csv.push(row.join(','));
+    });
+    return csv.join('\n');
+  };
+
+  const downloadCSVFile = (csv: any) => {
+    const BOM = '\uFEFF';
+    csv = BOM + csv;
+    const csvFile = new Blob([csv], { type: 'text/csv' });
+    const link = document.createElement('a');
+    link.href = window.URL.createObjectURL(csvFile);
+    link.download = `${program.title} - 참여자 목록.csv`;
+    link.click();
+  };
+
   return (
     <div className="relative">
       <ActionButton
@@ -85,7 +155,13 @@ const GeneralActionDropdown = ({ program, sizePerPage, maxPage }: Props) => {
         일반
       </ActionButton>
       {isMenuOpen && (
-        <ul className="absolute -top-2 left-1/2 w-48 -translate-x-1/2 -translate-y-full overflow-hidden rounded border border-neutral-300 bg-white shadow-lg">
+        <ul className="absolute -top-2 left-1/2 w-48 -translate-x-1/2 -translate-y-full overflow-hidden rounded-xxs border border-neutral-300 bg-white shadow-lg">
+          <li
+            className="cursor-pointer px-3 py-3 text-sm font-medium duration-200 hover:bg-neutral-200"
+            onClick={handleDownloadCSV}
+          >
+            CSV 다운로드
+          </li>
           <li
             className="cursor-pointer px-3 py-3 text-sm font-medium duration-200 hover:bg-neutral-200"
             onClick={() => handleDownloadList(true, 'EMAIL')}
