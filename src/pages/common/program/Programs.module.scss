@@ -17,6 +17,10 @@
       background-color: #ffffff;
       padding: 0.75rem 1.5rem;
 
+      @media screen and (min-width: $screen-sm) {
+        top: 6rem;
+      }
+
       .categoryGroup {
         display: flex;
         gap: 0.5rem;
