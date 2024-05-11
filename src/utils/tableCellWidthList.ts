@@ -22,12 +22,16 @@ export const missionSubmitCellWidthList = [
 ];
 
 export const challengeUserCellWidthList = [
-  'w-[18%]',
-  'w-[20%]',
-  'w-[15%]',
-  'w-[15%]',
-  'w-[25%]',
   'w-[5%]',
+  'flex-1',
+  'w-[10%]',
+  'w-[10%]',
+  'w-[10%]',
+  'w-[5%]',
+  'w-[12%]',
+  'w-[10%]',
+  'w-[8%]',
+  'w-[15%]',
 ];
 
 export const challengeNoticeCellWidthList = [
