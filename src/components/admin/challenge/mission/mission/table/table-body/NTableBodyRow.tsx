@@ -7,75 +7,141 @@ import { missionManagementCellWidthList } from '../../../../../../../utils/table
 import { useState } from 'react';
 import AlertModal from '../../../../../../ui/alert/AlertModal';
 import { IMissionTemplate } from '../../../../../../../interfaces/interface';
+import TextareaCell from '../../../../ui/table/table-body/TextareaCell';
 
 interface NTableBodyRowProps {
-  mission: IMissionTemplate;
+  data: IMissionTemplate;
+  setTableData: React.Dispatch<React.SetStateAction<IMissionTemplate[]>>;
 }
 
-const NTableBodyRow = ({ mission }: NTableBodyRowProps) => {
+const NTableBodyRow = ({ data, setTableData }: NTableBodyRowProps) => {
   const cellWidthList = missionManagementCellWidthList;
 
   const [isAlertShown, setIsAlertShown] = useState(false);
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [values, setValues] = useState<IMissionTemplate>(data);
 
   return (
-    <div className="flex gap-6 rounded-md border border-neutral-200 px-3 font-pretendard">
+    <div className="flex gap-px rounded-md border border-neutral-200 p-1 font-pretendard">
       <NTableBodyCell className={clsx(cellWidthList[0])}>
         {/* 생성일자 필요 */}
-        {formatMissionDateString(mission.startDate)}
+        {formatMissionDateString(values.startDate)}
       </NTableBodyCell>
       <NTableBodyCell className={clsx(cellWidthList[1])}>
-        {mission.title}
+        <TextareaCell
+          name="title"
+          placeholder="미션명"
+          value={values.title}
+          disabled={!isEditMode}
+          onChange={(e) => {
+            setValues((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+          }}
+        />
       </NTableBodyCell>
       <NTableBodyCell className={clsx(cellWidthList[2])}>
-        {mission.contents}
+        <TextareaCell
+          name="contents"
+          placeholder="내용"
+          value={values.contents}
+          disabled={!isEditMode}
+          onChange={(e) => {
+            setValues((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+          }}
+        />
       </NTableBodyCell>
       <NTableBodyCell className={clsx(cellWidthList[3])}>
-        {mission.guide}
+        <TextareaCell
+          name="guide"
+          placeholder="가이드"
+          value={values.guide}
+          disabled={!isEditMode}
+          onChange={(e) => {
+            setValues((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+          }}
+        />
       </NTableBodyCell>
       <NTableBodyCell className={clsx(cellWidthList[4])}>
         {/* 클릭 시 링크 이동 */}
-        {mission.template}
+        <TextareaCell
+          name="template"
+          placeholder="템플릿 링크"
+          value={values.template}
+          disabled={!isEditMode}
+          onChange={(e) => {
+            setValues((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+          }}
+        />
       </NTableBodyCell>
       <NTableBodyCell className={clsx(cellWidthList[5])}>
-        <div
-          className="flex items-center gap-3"
-          onClick={(e) => e.stopPropagation}
-        >
-          {/* 수정 버튼 */}
-          <i
-            className="cursor-pointer"
-            onClick={(e) => {
-              e.stopPropagation();
-              console.log('clicked');
-            }}
-          >
-            <img src="/icons/edit-icon.svg" alt="edit-icon" />
-          </i>
-          {/* 삭제 버튼 */}
-          <>
-            <i
-              className="cursor-pointer text-[1.75rem]"
-              onClick={(e) => {
-                e.stopPropagation();
-                setIsAlertShown(true);
+        {isEditMode ? (
+          <div className="flex gap-2">
+            <button
+              type="button"
+              onClick={() => {
+                // DB에 저장
+                setIsEditMode(false);
               }}
             >
-              <CiTrash />
+              저장
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setValues(data);
+                setIsEditMode(false);
+              }}
+            >
+              취소
+            </button>
+          </div>
+        ) : (
+          <div
+            className="flex items-center gap-3"
+            onClick={(e) => e.stopPropagation}
+          >
+            {/* 수정 버튼 */}
+            <i
+              className="cursor-pointer"
+              onClick={(e) => {
+                e.stopPropagation();
+                setIsEditMode(true);
+              }}
+            >
+              <img src="/icons/edit-icon.svg" alt="edit-icon" />
             </i>
-            {isAlertShown && (
-              <AlertModal
-                onConfirm={() => console.log('delete')}
-                title="미션 삭제"
-                onCancel={(e) => {
+            {/* 삭제 버튼 */}
+            <>
+              <i
+                className="cursor-pointer text-[1.75rem]"
+                onClick={(e) => {
                   e.stopPropagation();
-                  setIsAlertShown(false);
+                  setIsAlertShown(true);
                 }}
               >
-                정말로 삭제하시겠습니까?
-              </AlertModal>
-            )}
-          </>
-        </div>
+                <CiTrash />
+              </i>
+              {isAlertShown && (
+                <AlertModal
+                  onConfirm={() => {
+                    // DB에서 삭제
+                    setTableData((prev) => {
+                      const i = prev.findIndex((el) => el.id === values.id);
+                      return [...prev.splice(0, i), ...prev.splice(i + 1)];
+                    });
+                    setIsAlertShown(false);
+                  }}
+                  title="미션 삭제"
+                  onCancel={(e) => {
+                    e.stopPropagation();
+                    setIsAlertShown(false);
+                  }}
+                >
+                  정말로 삭제하시겠습니까?
+                </AlertModal>
+              )}
+            </>
+          </div>
+        )}
       </NTableBodyCell>
     </div>
   );
