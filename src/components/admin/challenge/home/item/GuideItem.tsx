@@ -9,7 +9,7 @@ interface GuideItemProps {
 
 const GuideItem = ({ guide, setIsModalShown, setValues }: GuideItemProps) => {
   return (
-    <li className="flex justify-between text-sm">
+    <li className="text-0.875 flex justify-between">
       <Link
         to={guide.link}
         className="w-[60%] overflow-hidden text-ellipsis whitespace-nowrap hover:underline"

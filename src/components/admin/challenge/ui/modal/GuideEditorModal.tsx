@@ -26,13 +26,13 @@ const GuideEditorModal = ({
   };
 
   return (
-    <div className="fixed left-0 top-0 z-[100] flex h-full w-full items-center justify-end bg-black bg-opacity-50">
+    <div className="fixed left-0 top-0 z-[100] flex h-full w-full items-center justify-end bg-static-0/50">
       <div className="flex w-[calc(100%-16rem)] items-center justify-center">
         <form
-          className="w-[40rem] rounded-md bg-white px-12 py-10"
+          className="w-[40rem] rounded-md bg-static-100 px-12 py-10"
           onSubmit={onSubmit}
         >
-          <h2 className="text-xl font-semibold">챌린지 가이드</h2>
+          <h2 className="text-1.125-semibold">챌린지 가이드</h2>
           <div className="mt-6 flex flex-col gap-4">
             <InputBox
               key="title"
@@ -52,12 +52,12 @@ const GuideEditorModal = ({
           <div className="mt-12 flex justify-end gap-2">
             <button
               type="submit"
-              className="rounded-xxs bg-neutral-700 px-5 py-[2px] text-sm text-white"
+              className="text-0.875 rounded-xxs bg-neutral-30 px-5 py-[2px] text-static-100"
             >
               등록
             </button>
             <button
-              className="rounded-xxs bg-stone-300 px-5 py-[2px] text-sm"
+              className="text-0.875 rounded-xxs bg-neutral-75 px-5 py-[2px]"
               onClick={handleModalClose}
             >
               취소

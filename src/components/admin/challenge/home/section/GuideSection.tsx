@@ -44,8 +44,8 @@ const GuideSection = () => {
     // 생성과 수정 구분해야 함
     e.preventDefault();
     setGuideList((prev) => [
-      ...prev.filter((guide) => guide.id !== values.id),
       values,
+      ...prev.filter((guide) => guide.id !== values.id),
     ]);
     setValues(initGuide);
     setIsModalShown(false);
