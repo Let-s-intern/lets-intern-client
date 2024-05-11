@@ -84,6 +84,10 @@ const AdminLayout = () => {
           url: '/admin/challenge/contents',
         },
         {
+          name: '미션 관리',
+          url: '/admin/challenge/missions',
+        },
+        {
           name: '챌린지 운영',
           url: challengeId
             ? `/admin/challenge/${challengeId}`
