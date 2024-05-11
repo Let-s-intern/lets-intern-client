@@ -1,6 +1,5 @@
 export interface IMissionTemplate {
   id: number;
-  th: number;
   type: string;
   topic: string;
   status: string;

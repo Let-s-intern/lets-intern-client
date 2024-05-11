@@ -1,25 +1,25 @@
 import clsx from 'clsx';
 import { CiTrash } from 'react-icons/ci';
+import { useState } from 'react';
 
 import NTableBodyCell from '../../../../ui/table/table-body/NTableBodyCell';
 import { formatMissionDateString } from '../../../../../../../utils/formatDateString';
 import { missionManagementCellWidthList } from '../../../../../../../utils/tableCellWidthList';
-import { useState } from 'react';
 import AlertModal from '../../../../../../ui/alert/AlertModal';
-import { IMissionTemplate } from '../../../../../../../interfaces/interface';
 import TextareaCell from '../../../../ui/table/table-body/TextareaCell';
+import { IMissionTemplate } from '../../../../../../../interfaces/Mission.interface';
 
 interface NTableBodyRowProps {
-  data: IMissionTemplate;
-  setTableData: React.Dispatch<React.SetStateAction<IMissionTemplate[]>>;
+  item: IMissionTemplate;
+  setList: React.Dispatch<React.SetStateAction<IMissionTemplate[]>>;
 }
 
-const NTableBodyRow = ({ data, setTableData }: NTableBodyRowProps) => {
+const NTableBodyRow = ({ item, setList }: NTableBodyRowProps) => {
   const cellWidthList = missionManagementCellWidthList;
 
   const [isAlertShown, setIsAlertShown] = useState(false);
+  const [values, setValues] = useState(item);
   const [isEditMode, setIsEditMode] = useState(false);
-  const [values, setValues] = useState<IMissionTemplate>(data);
 
   return (
     <div className="flex gap-px rounded-md border border-neutral-200 p-1 font-pretendard">
@@ -87,7 +87,7 @@ const NTableBodyRow = ({ data, setTableData }: NTableBodyRowProps) => {
             <button
               type="button"
               onClick={() => {
-                setValues(data);
+                setValues(item);
                 setIsEditMode(false);
               }}
             >
@@ -124,7 +124,7 @@ const NTableBodyRow = ({ data, setTableData }: NTableBodyRowProps) => {
                 <AlertModal
                   onConfirm={() => {
                     // DB에서 삭제
-                    setTableData((prev) => {
+                    setList((prev) => {
                       const i = prev.findIndex((el) => el.id === values.id);
                       return [...prev.splice(0, i), ...prev.splice(i + 1)];
                     });
