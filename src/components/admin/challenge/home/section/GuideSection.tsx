@@ -31,23 +31,26 @@ const GuideSection = () => {
     },
   ]);
 
-  const initGuide = {
+  const initValue = {
     id: String(guideList.length + 1),
     title: '',
     link: '',
     createdAt: '2024-05-11',
   };
   const [isModalShown, setIsModalShown] = useState(false);
-  const [values, setValues] = useState(initGuide);
+  const [values, setValues] = useState(initValue);
 
   const handleSubmit = (e: React.FormEvent<Element>) => {
     // 생성과 수정 구분해야 함
     e.preventDefault();
-    setGuideList((prev) => [
-      values,
-      ...prev.filter((guide) => guide.id !== values.id),
-    ]);
-    setValues(initGuide);
+    setGuideList((prev) => {
+      const i = prev.findIndex((guide) => guide.id === values.id);
+      if (i === -1) return [values, ...prev];
+
+      prev[i] = values;
+      return prev;
+    });
+    setValues(initValue);
     setIsModalShown(false);
   };
 
@@ -77,6 +80,7 @@ const GuideSection = () => {
 
       {isModalShown && (
         <GuideEditorModal
+          initValue={initValue}
           values={values}
           setIsModalShown={setIsModalShown}
           onSubmit={handleSubmit}

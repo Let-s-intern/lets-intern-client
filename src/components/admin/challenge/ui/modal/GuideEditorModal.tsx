@@ -1,8 +1,9 @@
-import { useEffect, useRef } from 'react';
+import { useEffect } from 'react';
 import { IGuide } from '../../../../../interfaces/interface';
 import InputBox from './InputBox';
 
 interface GuideEditorModalProps {
+  initValue: IGuide;
   values: IGuide;
   setValues: React.Dispatch<React.SetStateAction<IGuide>>;
   setIsModalShown: React.Dispatch<React.SetStateAction<boolean>>;
@@ -10,19 +11,18 @@ interface GuideEditorModalProps {
 }
 
 const GuideEditorModal = ({
+  initValue,
   values,
   setValues,
   setIsModalShown,
   onSubmit,
 }: GuideEditorModalProps) => {
-  const ref = useRef<IGuide>(values);
-
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setValues({ ...values, [e.target.name]: e.target.value });
   };
   const handleModalClose = () => {
     setIsModalShown(false);
-    setValues(ref.current);
+    setValues(initValue);
   };
 
   return (
