@@ -1,27 +1,27 @@
 import clsx from 'clsx';
 
-import { missionManagementCellWidthList } from '../../../../../../../utils/tableCellWidthList';
 import TableHeadCell from '../../../../ui/table/table-head/TableHeadCell';
-import TableHeadBox from '../../../../ui/table/table-head/TableHeadBox';
 
-interface Props {
-  className?: string;
+interface NTableHeadProps {
+  colNames: string[];
+  cellWidthList: string[];
 }
 
-const NTableHead = ({ className }: Props) => {
-  const cellWidthList = missionManagementCellWidthList;
-
+/**
+ * 테이블 헤더 컴포넌트
+ * @param colNames - 테이블 헤더에 표시할 컬럼 이름 (배열 순서대로 컬럼에 표시)
+ * @param cellWidthList - 테이블 헤더 셀의 너비 리스트 (column과 순서 일치해야 함)
+ */
+const NTableHead = ({ colNames, cellWidthList }: NTableHeadProps) => {
   return (
-    <TableHeadBox className={className}>
-      <TableHeadCell className={clsx(cellWidthList[0])}>생성일자</TableHeadCell>
-      <TableHeadCell className={clsx(cellWidthList[1])}>미션명</TableHeadCell>
-      <TableHeadCell className={clsx(cellWidthList[2])}>내용</TableHeadCell>
-      <TableHeadCell className={clsx(cellWidthList[3])}>가이드</TableHeadCell>
-      <TableHeadCell className={clsx(cellWidthList[4])}>
-        템플릿 링크
-      </TableHeadCell>
-      <TableHeadCell className={clsx(cellWidthList[5])}>관리</TableHeadCell>
-    </TableHeadBox>
+    <div className={clsx('flex w-full rounded-sm bg-neutral-200')}>
+      {colNames.map((name, i) => (
+        <TableHeadCell key={name} className={clsx(cellWidthList[i])}>
+          {name}
+        </TableHeadCell>
+      ))}
+      <TableHeadCell className="flex-1">관리</TableHeadCell>
+    </div>
   );
 };
 

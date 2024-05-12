@@ -1,18 +1,12 @@
+import { Status } from './interface';
+
 export interface IMissionTemplate {
+  [key: string]: string | number;
+  status: Status;
   id: number;
-  type: string;
-  topic: string;
-  status: string;
   title: string;
-  contents: string;
+  description: string;
   guide: string;
-  template: string;
-  comments: string;
-  startDate: string;
-  endDate: string;
-  refund: number;
-  refundTotal: number;
-  essentialContentsTopic: string;
-  additionalContentsTopic: string;
-  limitedContentsTopic: null;
+  templateLink: string;
+  createdAt: string;
 }

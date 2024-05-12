@@ -1,13 +1,13 @@
 import React from 'react';
 import clsx from 'clsx';
 
-interface Props {
-  children: React.ReactNode;
+interface NTableBodyCellProps {
   className?: string;
-  onClick?: () => void;
+
+  children?: React.ReactNode;
 }
 
-const NTableBodyCell = ({ children, className }: Props) => {
+const NTableBodyCell = ({ className, children }: NTableBodyCellProps) => {
   return (
     <div
       className={clsx(

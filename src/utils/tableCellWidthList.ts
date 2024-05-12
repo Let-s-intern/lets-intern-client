@@ -15,7 +15,6 @@ export const missionManagementCellWidthList = [
   'w-[33%]',
   'w-[33%]',
   'w-[10%]',
-  'w-[7%]',
 ];
 
 export const missionContentsCellWidthList = ['w-20', 'flex-1', 'w-40'];

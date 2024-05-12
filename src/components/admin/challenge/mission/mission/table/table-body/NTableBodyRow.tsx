@@ -1,84 +1,79 @@
-import clsx from 'clsx';
+import React, { useState } from 'react';
 import { CiTrash } from 'react-icons/ci';
-import { useState } from 'react';
 
+import TextareaCell from '../../../../ui/table/table-body/TextareaCell';
 import NTableBodyCell from '../../../../ui/table/table-body/NTableBodyCell';
 import { formatMissionDateString } from '../../../../../../../utils/formatDateString';
-import { missionManagementCellWidthList } from '../../../../../../../utils/tableCellWidthList';
 import AlertModal from '../../../../../../ui/alert/AlertModal';
-import TextareaCell from '../../../../ui/table/table-body/TextareaCell';
-import { IMissionTemplate } from '../../../../../../../interfaces/Mission.interface';
+import { ItemWithStatus } from '../../../../../../../interfaces/interface';
 
-interface NTableBodyRowProps {
-  item: IMissionTemplate;
-  setList: React.Dispatch<React.SetStateAction<IMissionTemplate[]>>;
+interface NTableBodyRowProps<T extends ItemWithStatus> {
+  item: T;
+  attrNames: Array<keyof T>;
+  placeholders?: string[];
+  canEdits: boolean[];
+  cellWidthList: string[];
+  handleAdd: (item: T) => void;
+  handleDelete: (item: T) => void;
 }
 
-const NTableBodyRow = ({ item, setList }: NTableBodyRowProps) => {
-  const cellWidthList = missionManagementCellWidthList;
+/**
+ * 테이블 바디 행 컴포넌트
+ * @param item - 행에 표시할 객체 데이터
+ * @param placeholders - 수정 모드 시, textarea에 표시할 placeholder 리스트 (순서 중요)
+ * @param handleSave - 데이터 추가 핸들러 (저장 X)
+ * @param handleDelete - 데이터 삭제 핸들러 (저장 O)
+ * @param cellWidthList - 행 너비 리스트 (순서 중요)
+ * @param attrNames - 행에 넣을 객체 속성 리스트 (순서 중요)
+ */
 
+const NTableBodyRow = <T extends ItemWithStatus>({
+  item: initialValues,
+  placeholders = [],
+  handleAdd,
+  handleDelete,
+  cellWidthList,
+  attrNames,
+}: NTableBodyRowProps<T>) => {
+  const [values, setValues] = useState(initialValues);
+  const [isEditMode, setIsEditMode] = useState(
+    initialValues.status === 'S' ? false : true,
+  );
   const [isAlertShown, setIsAlertShown] = useState(false);
-  const [values, setValues] = useState(item);
-  const [isEditMode, setIsEditMode] = useState(false);
+
+  const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setValues((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+  };
 
   return (
     <div className="flex gap-px rounded-md border border-neutral-200 p-1 font-pretendard">
-      <NTableBodyCell className={clsx(cellWidthList[0])}>
-        {/* 생성일자 필요 */}
-        {formatMissionDateString(values.startDate)}
-      </NTableBodyCell>
-      <NTableBodyCell className={clsx(cellWidthList[1])}>
-        <TextareaCell
-          name="title"
-          placeholder="미션명"
-          value={values.title}
-          disabled={!isEditMode}
-          onChange={(e) => {
-            setValues((prev) => ({ ...prev, [e.target.name]: e.target.value }));
-          }}
-        />
-      </NTableBodyCell>
-      <NTableBodyCell className={clsx(cellWidthList[2])}>
-        <TextareaCell
-          name="contents"
-          placeholder="내용"
-          value={values.contents}
-          disabled={!isEditMode}
-          onChange={(e) => {
-            setValues((prev) => ({ ...prev, [e.target.name]: e.target.value }));
-          }}
-        />
-      </NTableBodyCell>
-      <NTableBodyCell className={clsx(cellWidthList[3])}>
-        <TextareaCell
-          name="guide"
-          placeholder="가이드"
-          value={values.guide}
-          disabled={!isEditMode}
-          onChange={(e) => {
-            setValues((prev) => ({ ...prev, [e.target.name]: e.target.value }));
-          }}
-        />
-      </NTableBodyCell>
-      <NTableBodyCell className={clsx(cellWidthList[4])}>
-        {/* 클릭 시 링크 이동 */}
-        <TextareaCell
-          name="template"
-          placeholder="템플릿 링크"
-          value={values.template}
-          disabled={!isEditMode}
-          onChange={(e) => {
-            setValues((prev) => ({ ...prev, [e.target.name]: e.target.value }));
-          }}
-        />
-      </NTableBodyCell>
-      <NTableBodyCell className={clsx(cellWidthList[5])}>
+      {attrNames.map((attr, i) => {
+        if (attr === 'id') return <></>;
+        return (
+          <NTableBodyCell key={i} className={cellWidthList[i]}>
+            {attr === 'createdAt' ? (
+              formatMissionDateString(values[attr] as string)
+            ) : (
+              <TextareaCell
+                name={attr as string}
+                placeholder={placeholders[i] || ''}
+                value={values[attr] as string}
+                disabled={!isEditMode}
+                onChange={handleChange}
+              />
+            )}
+          </NTableBodyCell>
+        );
+      })}
+
+      <NTableBodyCell className="flex-1">
         {isEditMode ? (
           <div className="flex gap-2">
             <button
               type="button"
               onClick={() => {
-                // DB에 저장
+                const newValues = { ...values, status: 'S' };
+                handleAdd(newValues);
                 setIsEditMode(false);
               }}
             >
@@ -87,8 +82,12 @@ const NTableBodyRow = ({ item, setList }: NTableBodyRowProps) => {
             <button
               type="button"
               onClick={() => {
-                setValues(item);
-                setIsEditMode(false);
+                setValues(initialValues);
+                if (initialValues.status === 'S') {
+                  setIsEditMode(false);
+                } else {
+                  handleDelete(values);
+                }
               }}
             >
               취소
@@ -123,11 +122,7 @@ const NTableBodyRow = ({ item, setList }: NTableBodyRowProps) => {
               {isAlertShown && (
                 <AlertModal
                   onConfirm={() => {
-                    // DB에서 삭제
-                    setList((prev) => {
-                      const i = prev.findIndex((el) => el.id === values.id);
-                      return [...prev.splice(0, i), ...prev.splice(i + 1)];
-                    });
+                    handleDelete(values);
                     setIsAlertShown(false);
                   }}
                   title="미션 삭제"

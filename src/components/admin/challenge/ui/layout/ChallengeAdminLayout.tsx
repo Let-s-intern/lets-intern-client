@@ -94,7 +94,7 @@ const ChallengeAdminLayout = () => {
               to={`/admin/challenge/${params.programId}/mission`}
               active={activeStatus === 'MISSION'}
             >
-              미션관리
+              미션등록
             </TabItem>
             <TabItem
               to={`/admin/challenge/${params.programId}/submit-check`}

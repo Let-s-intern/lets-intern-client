@@ -1,35 +1,9 @@
-import { useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
-import { useParams } from 'react-router-dom';
-
-import TableBodyBox from '../../../../ui/table/table-body/TableBodyBox';
-import { IMissionTemplate } from '../../../../../../../interfaces/interface';
-import NTableBodyRow from './NTableBodyRow';
-import NewTableBodyRow from './NewTableBodyRow';
-
 interface NTableBodyProps {
-  isModeAdd: boolean;
-  list: IMissionTemplate[];
-  setList: React.Dispatch<React.SetStateAction<IMissionTemplate[]>>;
-  setIsModeAdd: React.Dispatch<React.SetStateAction<boolean>>;
+  children: React.ReactNode;
 }
 
-const NTableBody = ({
-  list,
-  setList,
-  isModeAdd,
-  setIsModeAdd,
-}: NTableBodyProps) => {
-  return (
-    <TableBodyBox>
-      {isModeAdd && (
-        <NewTableBodyRow setList={setList} setIsModeAdd={setIsModeAdd} />
-      )}
-      {list.map((item) => (
-        <NTableBodyRow key={item.id} item={item} setList={setList} />
-      ))}
-    </TableBodyBox>
-  );
+const NTableBody = ({ children }: NTableBodyProps) => {
+  return <div className="mb-16 mt-3 flex flex-col gap-2">{children}</div>;
 };
 
 export default NTableBody;

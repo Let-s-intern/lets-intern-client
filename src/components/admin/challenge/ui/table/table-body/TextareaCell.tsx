@@ -9,6 +9,15 @@ interface TextareaCellProps {
   onChange?: React.ChangeEventHandler<HTMLTextAreaElement>;
 }
 
+/**
+ * 테이블 셀에 들어가는 Textarea 컴포넌트
+ * @param name - Textarea name
+ * @param placeholder - Textarea placeholder
+ * @param value - Textarea value
+ * @param disabled - Textarea disabled
+ * @param onChange - Textarea change 이벤트 핸들러
+ */
+
 const TextareaCell = ({
   name,
   placeholder,
@@ -20,7 +29,7 @@ const TextareaCell = ({
 
   useEffect(() => {
     ref.current!.style.height = `${ref.current!.scrollHeight}px`;
-  }, [value, disabled]);
+  });
 
   return (
     <textarea
