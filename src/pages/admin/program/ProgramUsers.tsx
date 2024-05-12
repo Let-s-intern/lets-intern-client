@@ -124,7 +124,7 @@ const ProgramUsers = () => {
         )}
       </div>
       <main className="mb-20">
-        <Table minWidth={2000}>
+        <Table minWidth={3000}>
           <TableHead filter={filter} setFilter={setFilter} />
           <TableBody
             program={program}
