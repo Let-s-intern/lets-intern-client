@@ -116,28 +116,6 @@ const ProgramEditor = ({
           setValues={setValues}
           handleFAQIdListReset={handleFAQIdListReset}
         />
-        <Input
-          label="기수"
-          type="number"
-          value={values.th ? values.th : ''}
-          placeholder="프로그램 기수를 입력하세요"
-          onChange={(e: any) => setValues({ ...values, th: e.target.value })}
-        />
-        <Input
-          label="제목"
-          placeholder="프로그램 제목을 입력하세요"
-          value={values.title ? values.title : ''}
-          onChange={(e: any) => setValues({ ...values, title: e.target.value })}
-        />
-        <Input
-          label="정원"
-          type="number"
-          value={values.headcount ? values.headcount : ''}
-          placeholder="총 정원 수를 입력하세요"
-          onChange={(e: any) =>
-            setValues({ ...values, headcount: e.target.value })
-          }
-        />
         <FormControl fullWidth>
           <InputLabel id="way">온/오프라인 여부</InputLabel>
           <Select
@@ -158,13 +136,63 @@ const ProgramEditor = ({
           <Input
             label="장소"
             value={values.location ? values.location : ''}
-            placeholder="장소를 입력하세요"
+            placeholder="장소를 입력해주세요"
             onChange={(e: any) =>
               setValues({ ...values, location: e.target.value })
             }
             disabled={!values.way || values.way === 'ONLINE'}
           />
         )}
+        <Input
+          label="썸네일 링크"
+          placeholder="프로그램의 썸네일 링크를 입력해주세요."
+        />
+        <Input
+          label="제목"
+          placeholder="프로그램 제목을 입력해주세요"
+          value={values.title ? values.title : ''}
+          onChange={(e: any) => setValues({ ...values, title: e.target.value })}
+        />
+        <Input
+          label="한 줄 설명"
+          placeholder="프로그램의 한 줄 설명을 입력해주세요"
+        />
+        <Input
+          label="정원"
+          type="number"
+          value={values.headcount ? values.headcount : ''}
+          placeholder="총 정원 수를 입력해주세요"
+          onChange={(e: any) =>
+            setValues({ ...values, headcount: e.target.value })
+          }
+        />
+        {(values.type === 'CHALLENGE_FULL' ||
+          values.type === 'CHALLENGE_HALF') && (
+          <>
+            <Input
+              label="카카오톡 오픈채팅 링크"
+              value={values.openKakaoLink ? values.openKakaoLink : ''}
+              placeholder="카카오톡 오픈채팅 링크를 입력하세요"
+              onChange={(e: any) =>
+                setValues({ ...values, openKakaoLink: e.target.value })
+              }
+            />
+            <Input
+              type="number"
+              label="카카오톡 오픈채팅 비밀번호"
+              value={values.openKakaoPassword ? values.openKakaoPassword : ''}
+              placeholder="카카오톡 오픈채팅 비밀번호를 입력하세요"
+              onChange={(e: any) =>
+                setValues({ ...values, openKakaoPassword: e.target.value })
+              }
+            />
+          </>
+        )}
+        <FeeSection
+          values={values}
+          setValues={setValues}
+          editorMode={editorMode}
+        />
         <DateTimeControl>
           <DateTimeLabel htmlFor="startDate">시작 일자</DateTimeLabel>
           <input
@@ -208,15 +236,6 @@ const ProgramEditor = ({
             }
           />
         </DateTimeControl>
-        <ReactQuill
-          modules={modules}
-          placeholder="상세 내용을 입력해주세요."
-          ref={quillRef}
-          value={content ? content : ''}
-          onChange={(value) => {
-            setContent(value);
-          }}
-        />
         <FAQEditor
           faqList={faqList}
           faqIdList={faqIdList}
@@ -236,21 +255,25 @@ const ProgramEditor = ({
           multiline
           rows={8}
         />
-        <FeeSection
-          values={values}
-          setValues={setValues}
-          editorMode={editorMode}
+        <ReactQuill
+          modules={modules}
+          placeholder="상세 내용을 입력해주세요."
+          ref={quillRef}
+          value={content ? content : ''}
+          onChange={(value) => {
+            setContent(value);
+          }}
         />
         <div className="flex justify-end gap-2">
           <button
             type="submit"
-            className="rounded-xxs w-20 bg-indigo-600 py-2 text-center font-medium text-white"
+            className="w-20 rounded-xxs bg-indigo-600 py-2 text-center font-medium text-white"
           >
             등록
           </button>
           <button
             type="button"
-            className="rounded-xxs w-20 bg-gray-400 py-2 text-center font-medium text-white"
+            className="w-20 rounded-xxs bg-gray-400 py-2 text-center font-medium text-white"
             onClick={() => navigate(-1)}
           >
             취소
