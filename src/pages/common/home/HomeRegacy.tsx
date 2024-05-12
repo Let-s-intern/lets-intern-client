@@ -10,7 +10,6 @@ const HomeRegacy = () => {
       <ProgramSection />
       <FeatureSection />
       <ReviewSection />
-      {/* <NewsSection /> */}
     </div>
   );
 };
