@@ -17,9 +17,10 @@ const TableBody = ({ addMenuShown, setAddMenuShown }: Props) => {
   const getContentsList = useQuery({
     queryKey: ['contents'],
     queryFn: async () => {
-      const res = await axios.get('/contents');
+      const res = await axios.get('/contents', {
+        params: { page: 1, size: 100000 },
+      });
       const data = res.data;
-      console.log(data);
       setContentsList(data.contentsList);
       return data;
     },
