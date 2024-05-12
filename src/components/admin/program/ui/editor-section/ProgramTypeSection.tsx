@@ -1,6 +1,5 @@
 import { FormControl, InputLabel, MenuItem, Select } from '@mui/material';
 import { challengeTopicToText } from '../../../../../utils/convert';
-import Input from '../../../../ui/input/Input';
 
 interface Props {
   values: any;
@@ -35,39 +34,20 @@ const ProgramTypeSection = ({
       </FormControl>
       {(values.type === 'CHALLENGE_FULL' ||
         values.type === 'CHALLENGE_HALF') && (
-        <>
-          <FormControl fullWidth>
-            <InputLabel id="topic">챌린지 주제</InputLabel>
-            <Select
-              labelId="topic"
-              id="topic"
-              label="챌린지 주제"
-              value={values.topic ? values.topic : ''}
-              onChange={(e) => setValues({ ...values, topic: e.target.value })}
-            >
-              {Object.keys(challengeTopicToText).map((topic: any) => (
-                <MenuItem value={topic}>{challengeTopicToText[topic]}</MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-          <Input
-            label="카카오톡 오픈채팅 링크"
-            value={values.openKakaoLink ? values.openKakaoLink : ''}
-            placeholder="카카오톡 오픈채팅 링크를 입력하세요"
-            onChange={(e: any) =>
-              setValues({ ...values, openKakaoLink: e.target.value })
-            }
-          />
-          <Input
-            type="number"
-            label="카카오톡 오픈채팅 비밀번호"
-            value={values.openKakaoPassword ? values.openKakaoPassword : ''}
-            placeholder="카카오톡 오픈채팅 비밀번호를 입력하세요"
-            onChange={(e: any) =>
-              setValues({ ...values, openKakaoPassword: e.target.value })
-            }
-          />
-        </>
+        <FormControl fullWidth>
+          <InputLabel id="topic">챌린지 주제</InputLabel>
+          <Select
+            labelId="topic"
+            id="topic"
+            label="챌린지 주제"
+            value={values.topic ? values.topic : ''}
+            onChange={(e) => setValues({ ...values, topic: e.target.value })}
+          >
+            {Object.keys(challengeTopicToText).map((topic: any) => (
+              <MenuItem value={topic}>{challengeTopicToText[topic]}</MenuItem>
+            ))}
+          </Select>
+        </FormControl>
       )}
     </>
   );

@@ -1,9 +1,5 @@
-<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-<g id="Frame 58">
-<g id="Group 70">
-<path id="Vector 151" d="M6 7H18" stroke="#888C90" stroke-linecap="round"/>
-<path id="Vector 152" d="M6 12H18" stroke="#888C90" stroke-linecap="round"/>
-<path id="Vector 153" d="M6 17H18" stroke="#888C90" stroke-linecap="round"/>
-</g>
+<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Menu / Hamburger_MD">
+<path id="Vector" d="M6.66675 22.6666H25.3334M6.66675 15.9999H25.3334M6.66675 9.33325H25.3334" stroke="#4D55F5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
 </g>
 </svg>

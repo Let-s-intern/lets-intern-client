@@ -1,3 +1,10 @@
+export const programTypeToText: Record<string, string> = {
+  CHALLENGE_FULL: '챌린지',
+  CHALLENGE_HALF: '챌린지',
+  BOOTCAMP: '챌린지',
+  LETS_CHAT: '클래스',
+};
+
 export const challengeTopicToText: Record<string, string> = {
   ALL: '전체',
   MARKETING: '마케팅',

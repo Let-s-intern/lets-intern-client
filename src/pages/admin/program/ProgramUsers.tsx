@@ -124,8 +124,8 @@ const ProgramUsers = () => {
         )}
       </div>
       <main className="mb-20">
-        <Table minWidth={3000}>
-          <TableHead filter={filter} setFilter={setFilter} />
+        <Table minWidth={program.type === 'LETS_CHAT' ? 2000 : 1000}>
+          <TableHead program={program} filter={filter} setFilter={setFilter} />
           <TableBody
             program={program}
             applications={applications}
