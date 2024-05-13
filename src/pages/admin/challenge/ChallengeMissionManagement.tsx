@@ -5,15 +5,16 @@ import Table from '../../../components/admin/challenge/ui/table/table-container/
 import Button from '../../../components/admin/challenge/ui/button/Button';
 import NTableHead from '../../../components/admin/challenge/mission/mission/table/table-head/NTableHead';
 import NTableBody from '../../../components/admin/challenge/mission/mission/table/table-body/NTableBody';
-import { IMissionTemplate } from '../../../interfaces/interface';
+import { IMissionTemplate, Status } from '../../../interfaces/interface';
 import missionTemplateReducer from '../../../reducers/missionTemplateReducer';
 import NTableBodyRow from '../../../components/admin/challenge/mission/mission/table/table-body/NTableBodyRow';
 import { missionManagementCellWidthList } from '../../../utils/tableCellWidthList';
+import { statusEnum } from '../../../utils/convert';
 
 // 테이블에 사용하는 데이터는 status 속성 추가하기 (타입은 Status 참고)
 const initalMissionList: IMissionTemplate[] = [
   {
-    status: 'S',
+    status: statusEnum.SAVE as Status,
     id: 1,
     title: '현직자 인터뷰 정리',
     description:
@@ -24,7 +25,7 @@ const initalMissionList: IMissionTemplate[] = [
     createdAt: '2021-09-01',
   },
   {
-    status: 'S',
+    status: statusEnum.SAVE as Status,
     id: 2,
     title: '채용공고 정리 및 분석',
     description:
@@ -70,7 +71,7 @@ const ChallengeMissionManagement = () => {
             dispatch({
               type: 'add',
               item: {
-                status: 'U',
+                status: statusEnum.INSERT as Status,
                 id: Date.now(),
                 title: '',
                 description: '',

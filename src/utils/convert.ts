@@ -1,3 +1,5 @@
+import { Status } from '../interfaces/interface';
+
 export const challengeTopicToText: Record<string, string> = {
   ALL: '전체',
   MARKETING: '마케팅',
@@ -252,4 +254,10 @@ export const missionSubmitToBadge = ({
     text: '확인완료',
     style: 'text-primary bg-[#E7E6FD]',
   };
+};
+
+// 테이블 컴포넌트에 사용 (SAVE: 1번 이상 저장한 행, INSERT: 새로 추가한 행)
+export const statusEnum = {
+  SAVE: 0,
+  INSERT: 1,
 };

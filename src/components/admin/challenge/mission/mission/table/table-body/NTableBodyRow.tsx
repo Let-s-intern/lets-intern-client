@@ -6,6 +6,7 @@ import NTableBodyCell from '../../../../ui/table/table-body/NTableBodyCell';
 import { formatMissionDateString } from '../../../../../../../utils/formatDateString';
 import AlertModal from '../../../../../../ui/alert/AlertModal';
 import { ItemWithStatus } from '../../../../../../../interfaces/interface';
+import { statusEnum } from '../../../../../../../utils/convert';
 
 interface NTableBodyRowProps<T extends ItemWithStatus> {
   item: T;
@@ -37,7 +38,7 @@ const NTableBodyRow = <T extends ItemWithStatus>({
 }: NTableBodyRowProps<T>) => {
   const [values, setValues] = useState(initialValues);
   const [isEditMode, setIsEditMode] = useState(
-    initialValues.status === 'S' ? false : true,
+    initialValues.status === statusEnum.SAVE ? false : true,
   );
   const [isAlertShown, setIsAlertShown] = useState(false);
 
@@ -72,7 +73,7 @@ const NTableBodyRow = <T extends ItemWithStatus>({
             <button
               type="button"
               onClick={() => {
-                const newValues = { ...values, status: 'S' };
+                const newValues = { ...values, status: statusEnum.SAVE };
                 handleAdd(newValues);
                 setIsEditMode(false);
               }}
@@ -83,7 +84,7 @@ const NTableBodyRow = <T extends ItemWithStatus>({
               type="button"
               onClick={() => {
                 setValues(initialValues);
-                if (initialValues.status === 'S') {
+                if (initialValues.status === statusEnum.SAVE) {
                   setIsEditMode(false);
                 } else {
                   handleDelete(values);
