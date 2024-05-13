@@ -1,12 +1,12 @@
 export const missionCellWidthList = [
-  'w-20',
-  'flex-1',
-  'w-32',
-  'w-32',
-  'w-20',
-  'w-20',
-  'w-20',
-  'w-32',
+  'w-[11%]',
+  'w-[13%]',
+  'w-[10%]',
+  'w-[10%]',
+  'w-[10%]',
+  'w-[12%]',
+  'w-[12%]',
+  'w-[12%]',
 ];
 
 export const missionManagementCellWidthList = [

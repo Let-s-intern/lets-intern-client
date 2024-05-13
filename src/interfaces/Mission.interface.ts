@@ -10,3 +10,23 @@ export interface IMissionTemplate {
   templateLink: string;
   createdAt: string;
 }
+
+export interface IContent {
+  id: number;
+  title: string;
+  link: string;
+}
+
+export interface IMission {
+  [key: string]: string | number | IContent[];
+  id: number;
+  status: Status;
+  type: 'GENERAL' | 'REFUND' | 'ADDITIONAL';
+  title: string;
+  startDate: string;
+  endDate: string;
+  refund: number;
+  essentialContentsList: IContent[];
+  additionalContentsList: IContent[];
+  limitedContentsList: IContent[];
+}

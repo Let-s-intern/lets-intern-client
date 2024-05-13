@@ -16,6 +16,7 @@ interface NTableBodyRowProps<T extends ItemWithStatus> {
   cellWidthList: string[];
   handleAdd: (item: T) => void;
   handleDelete: (item: T) => void;
+  children?: React.ReactNode;
 }
 
 /**
@@ -35,6 +36,8 @@ const NTableBodyRow = <T extends ItemWithStatus>({
   handleDelete,
   cellWidthList,
   attrNames,
+  canEdits,
+  children,
 }: NTableBodyRowProps<T>) => {
   const [values, setValues] = useState(initialValues);
   const [isEditMode, setIsEditMode] = useState(
@@ -52,17 +55,13 @@ const NTableBodyRow = <T extends ItemWithStatus>({
         if (attr === 'id') return <></>;
         return (
           <NTableBodyCell key={i} className={cellWidthList[i]}>
-            {attr === 'createdAt' ? (
-              formatMissionDateString(values[attr] as string)
-            ) : (
-              <TextareaCell
-                name={attr as string}
-                placeholder={placeholders[i] || ''}
-                value={values[attr] as string}
-                disabled={!isEditMode}
-                onChange={handleChange}
-              />
-            )}
+            <TextareaCell
+              name={attr as string}
+              placeholder={placeholders[i] || ''}
+              value={values[attr] as string}
+              disabled={!canEdits[i] || !isEditMode}
+              onChange={handleChange}
+            />
           </NTableBodyCell>
         );
       })}

@@ -11,7 +11,7 @@ import NTableBodyRow from '../../../components/admin/challenge/mission/mission/t
 import { missionManagementCellWidthList } from '../../../utils/tableCellWidthList';
 import { statusEnum } from '../../../utils/convert';
 
-// 테이블에 사용하는 데이터는 status 속성 추가하기 (타입은 Status 참고)
+// 테이블에 사용하는 데이터는 status 속성 추가하기
 const initalMissionList: IMissionTemplate[] = [
   {
     status: statusEnum.SAVE as Status,
@@ -38,15 +38,12 @@ const initalMissionList: IMissionTemplate[] = [
 ];
 
 const cellWidthList = missionManagementCellWidthList;
-const placeholders = ['생성일자', '미션명', '내용', '가이드', '템플릿 링크'];
-const attrNames = [
-  'createdAt',
-  'title',
-  'description',
-  'guide',
-  'templateLink',
-];
-const canEdits = [false, true, true, true, true];
+
+const tableSettings = {
+  placeholders: ['생성일자', '미션명', '내용', '가이드', '템플릿 링크'],
+  attrNames: ['createdAt', 'title', 'description', 'guide', 'templateLink'],
+  canEdits: [false, true, true, true, true],
+};
 
 const ChallengeMissionManagement = () => {
   const [missionList, dispatch] = useReducer(
@@ -86,19 +83,20 @@ const ChallengeMissionManagement = () => {
         </Button>
       </div>
       <Table>
-        <NTableHead cellWidthList={cellWidthList} colNames={placeholders} />
+        <NTableHead
+          cellWidthList={cellWidthList}
+          colNames={tableSettings.placeholders}
+        />
         <NTableBody>
           {missionList.map((mission) => (
             <NTableBodyRow<IMissionTemplate>
+              {...tableSettings}
               key={mission.id}
-              attrNames={attrNames}
               item={mission}
-              placeholders={placeholders}
-              canEdits={canEdits}
               handleAdd={handleAddMission}
               handleDelete={handleDeleteMission}
               cellWidthList={cellWidthList}
-            ></NTableBodyRow>
+            />
           ))}
         </NTableBody>
       </Table>
