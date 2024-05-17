@@ -1,5 +1,6 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useParams } from 'react-router-dom';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import RoundedBox from '../box/RoundedBox';
 import SectionHeading from '../heading/SectionHeading';
@@ -7,52 +8,87 @@ import Button from '../../ui/button/Button';
 import GuideEditorModal from '../../ui/modal/GuideEditorModal';
 import GuideItem from '../item/GuideItem';
 import { IGuide } from '../../../../../interfaces/interface';
+import axios from '../../../../../utils/axios';
+
+const initialValue = {
+  title: '',
+  link: '',
+};
 
 /* 추후 가이드 개수가 3개보다 많아질 수 있음 */
 const GuideSection = () => {
-  const [guideList, setGuideList] = useState<IGuide[]>([
-    {
-      id: '1',
-      title: '[미션수행법]',
-      link: 'https://naver.com',
-      createdAt: '2021-09-01',
-    },
-    {
-      id: '2',
-      title: '[환급정책]',
-      link: 'https://naver.com',
-      createdAt: '2021-09-01',
-    },
-    {
-      id: '3',
-      title: '[대시보드 사용설명서]',
-      link: 'https://naver.com',
-      createdAt: '2021-09-01',
-    },
-  ]);
+  const params = useParams();
+  const queryClient = useQueryClient();
 
-  const initValue = {
-    id: String(guideList.length + 1),
-    title: '',
-    link: '',
-    createdAt: '2024-05-11',
-  };
+  const [guideList, setGuideList] = useState<IGuide[]>([]);
   const [isModalShown, setIsModalShown] = useState(false);
-  const [values, setValues] = useState(initValue);
+  const [values, setValues] = useState<IGuide>(initialValue);
+
+  const { isLoading } = useQuery({
+    queryKey: ['challenge-guide', 'admin', params.programId],
+    queryFn: async ({ queryKey }) => {
+      const res = await axios.get(
+        `/api/v1/challenge-guide/admin/${queryKey[2]}`,
+      );
+      if (res.status !== 200) {
+        throw new Error(`${res.status} ${res.statusText}`);
+      }
+      const data = res.data;
+      setGuideList(data.challengeGuideAdminList);
+      return data;
+    },
+  });
 
   const handleSubmit = (e: React.FormEvent<Element>) => {
-    // 생성과 수정 구분해야 함
     e.preventDefault();
     setGuideList((prev) => {
       const i = prev.findIndex((guide) => guide.id === values.id);
-      if (i === -1) return [values, ...prev];
-
-      prev[i] = values;
-      return prev;
+      // 가이드 생성
+      if (i === -1) {
+        addGuide.mutate(values);
+        return [values, ...prev];
+      }
+      // 가이드 수정
+      editGuide.mutate(values);
+      return [...prev.slice(0, i), values, ...prev.slice(i + 1)];
     });
-    setValues(initValue);
+    setValues(initialValue);
     setIsModalShown(false);
   };
+
+  const addGuide = useMutation({
+    mutationFn: async (guide: IGuide) => {
+      const res = await axios.post(
+        `/api/v1/challenge-guide/${params.programId}`,
+        guide,
+      );
+      const data = res.data;
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ['challenge-guide', 'admin', params.programId],
+      });
+    },
+  });
+
+  const editGuide = useMutation({
+    mutationFn: async (guide: IGuide) => {
+      const res = await axios.patch(
+        `/api/v1/challenge-guide/${params.programId}`,
+        guide,
+      );
+      const data = res.data;
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ['challenge-guide', 'admin', params.programId],
+      });
+    },
+  });
+
+  if (isLoading) return <></>;
 
   return (
     <>
@@ -80,7 +116,7 @@ const GuideSection = () => {
 
       {isModalShown && (
         <GuideEditorModal
-          initValue={initValue}
+          initValue={initialValue}
           values={values}
           setIsModalShown={setIsModalShown}
           onSubmit={handleSubmit}

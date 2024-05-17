@@ -30,7 +30,7 @@ const GuideItem = ({ guide, setIsModalShown, setValues }: GuideItemProps) => {
             }}
           />
         </i>
-        <div className="flex gap-4">{guide.createdAt}</div>
+        <div className="flex gap-4">{guide.createdDate}</div>
       </div>
     </li>
   );

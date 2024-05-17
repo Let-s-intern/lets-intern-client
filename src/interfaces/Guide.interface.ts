@@ -4,8 +4,8 @@ export interface IGuideForm {
 }
 
 export interface IGuide {
-  id: string;
+  id?: string;
   title: string;
   link: string;
-  createdAt: string;
+  createdDate?: string;
 }
