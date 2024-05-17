@@ -3,16 +3,50 @@ import { CiTrash } from 'react-icons/ci';
 
 import TextareaCell from '../../../../ui/table/table-body/TextareaCell';
 import NTableBodyCell from '../../../../ui/table/table-body/NTableBodyCell';
-import { formatMissionDateString } from '../../../../../../../utils/formatDateString';
 import AlertModal from '../../../../../../ui/alert/AlertModal';
-import { ItemWithStatus } from '../../../../../../../interfaces/interface';
-import { statusEnum } from '../../../../../../../utils/convert';
+import {
+  IContent,
+  ItemWithStatus,
+} from '../../../../../../../interfaces/interface';
+import {
+  STATUS,
+  TABLE_CONTENT,
+  missionTypeToText,
+} from '../../../../../../../utils/convert';
+
+const missionTemplateList = [
+  {
+    id: 0,
+    createDate: '2024-05-17T13:28:53.014Z',
+    title: '미션1',
+    description: '미션1 설명',
+    guide: '미션1 가이드',
+    templateLink: 'https://www.naver.com/',
+  },
+  {
+    id: 1,
+    createDate: '2024-05-17T13:28:53.014Z',
+    title: '미션2',
+    description: '미션2 설명',
+    guide: '미션2 가이드',
+    templateLink: 'https://www.naver.com/',
+  },
+  {
+    id: 2,
+    createDate: '2024-05-17T13:28:53.014Z',
+    title: '미션3',
+    description: '미션3 설명',
+    guide: '미션3 가이드',
+    templateLink: 'https://www.naver.com/',
+  },
+];
 
 interface NTableBodyRowProps<T extends ItemWithStatus> {
   item: T;
   attrNames: Array<keyof T>;
   placeholders?: string[];
   canEdits: boolean[];
+  contents: number[];
   cellWidthList: string[];
   handleAdd: (item: T) => void;
   handleDelete: (item: T) => void;
@@ -37,11 +71,11 @@ const NTableBodyRow = <T extends ItemWithStatus>({
   cellWidthList,
   attrNames,
   canEdits,
-  children,
+  contents,
 }: NTableBodyRowProps<T>) => {
-  const [values, setValues] = useState(initialValues);
+  const [values, setValues] = useState(initialValues as T);
   const [isEditMode, setIsEditMode] = useState(
-    initialValues.status === statusEnum.SAVE ? false : true,
+    initialValues.status === STATUS.SAVE ? false : true,
   );
   const [isAlertShown, setIsAlertShown] = useState(false);
 
@@ -53,17 +87,68 @@ const NTableBodyRow = <T extends ItemWithStatus>({
     <div className="flex gap-px rounded-md border border-neutral-200 p-1 font-pretendard">
       {attrNames.map((attr, i) => {
         if (attr === 'id') return <></>;
-        return (
-          <NTableBodyCell key={i} className={cellWidthList[i]}>
-            <TextareaCell
+        if (contents[i] === TABLE_CONTENT.INPUT)
+          return (
+            <NTableBodyCell key={i} className={cellWidthList[i]}>
+              <TextareaCell
+                name={attr as string}
+                placeholder={placeholders[i] || ''}
+                value={values[attr] as string}
+                disabled={!canEdits[i] || !isEditMode}
+                onChange={handleChange}
+              />
+            </NTableBodyCell>
+          );
+        if (
+          contents[i] === TABLE_CONTENT.DROPDOWN &&
+          Array.isArray(values[attr])
+        ) {
+          const contents = values[attr] as IContent[];
+          return (
+            <select
               name={attr as string}
-              placeholder={placeholders[i] || ''}
-              value={values[attr] as string}
+              className={cellWidthList[i]}
+              id={`${attr as string}-select`}
               disabled={!canEdits[i] || !isEditMode}
-              onChange={handleChange}
-            />
-          </NTableBodyCell>
-        );
+            >
+              {contents.map((content) => (
+                <option value={content.title}>{content.title}</option>
+              ))}
+            </select>
+          );
+        }
+        if (contents[i] === TABLE_CONTENT.DROPDOWN && attr === 'type') {
+          return (
+            <select
+              name={attr as string}
+              className={cellWidthList[i]}
+              id={`${attr as string}-select`}
+              disabled={!canEdits[i] || !isEditMode}
+            >
+              {Object.values(missionTypeToText).map((missionType) => (
+                <option value={missionType as string}>
+                  {missionType as string}
+                </option>
+              ))}
+            </select>
+          );
+        }
+        if (contents[i] === TABLE_CONTENT.DROPDOWN && attr === 'title') {
+          return (
+            <select
+              name={attr as string}
+              className={cellWidthList[i]}
+              id={`${attr as string}-select`}
+              disabled={!canEdits[i] || !isEditMode}
+            >
+              {missionTemplateList.map((missionTemplate) => (
+                <option value={missionTemplate.title}>
+                  {missionTemplate.title}
+                </option>
+              ))}
+            </select>
+          );
+        } else return <div className={cellWidthList[i]}></div>;
       })}
 
       <NTableBodyCell className="flex-1">
@@ -72,7 +157,7 @@ const NTableBodyRow = <T extends ItemWithStatus>({
             <button
               type="button"
               onClick={() => {
-                const newValues = { ...values, status: statusEnum.SAVE };
+                const newValues = { ...values, status: STATUS.SAVE };
                 handleAdd(newValues);
                 setIsEditMode(false);
               }}
@@ -83,7 +168,7 @@ const NTableBodyRow = <T extends ItemWithStatus>({
               type="button"
               onClick={() => {
                 setValues(initialValues);
-                if (initialValues.status === statusEnum.SAVE) {
+                if (initialValues.status === STATUS.SAVE) {
                   setIsEditMode(false);
                 } else {
                   handleDelete(values);

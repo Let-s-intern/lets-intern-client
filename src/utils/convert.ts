@@ -257,7 +257,13 @@ export const missionSubmitToBadge = ({
 };
 
 // 테이블 컴포넌트에 사용 (SAVE: 1번 이상 저장한 행, INSERT: 새로 추가한 행)
-export const statusEnum = {
+export const STATUS = {
   SAVE: 0,
   INSERT: 1,
+};
+
+export const TABLE_CONTENT = {
+  INPUT: 0,
+  DROPDOWN: 1,
+  DATE: 2,
 };

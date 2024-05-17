@@ -9,13 +9,13 @@ import NTableBodyRow from '../../../components/admin/challenge/mission/mission/t
 import { missionCellWidthList } from '../../../utils/tableCellWidthList';
 import { IMission, Status } from '../../../interfaces/interface';
 import missionReducer from '../../../reducers/missionReducer';
-import { statusEnum } from '../../../utils/convert';
+import { STATUS, TABLE_CONTENT } from '../../../utils/convert';
 import { formatMissionDateString } from '../../../utils/formatDateString';
 
 const initalMissionList: IMission[] = [
   {
     id: 124,
-    status: statusEnum.SAVE as Status,
+    status: STATUS.SAVE as Status,
     type: 'GENERAL',
     title: '💛미션명1',
     startDate: formatMissionDateString('2024-05-13T12:15:39.813Z'),
@@ -45,7 +45,7 @@ const initalMissionList: IMission[] = [
   },
   {
     id: 345,
-    status: statusEnum.SAVE as Status,
+    status: STATUS.SAVE as Status,
     type: 'ADDITIONAL',
     title: '💛미션명2',
     startDate: formatMissionDateString('2032-05-13T12:15:39.813Z'),
@@ -74,7 +74,7 @@ const initalMissionList: IMission[] = [
   },
   {
     id: 68,
-    status: statusEnum.SAVE as Status,
+    status: STATUS.SAVE as Status,
     type: 'REFUND',
     title: '💛미션명3',
     startDate: formatMissionDateString('2024-05-13T12:15:39.813Z'),
@@ -125,6 +125,16 @@ const tableSettings = {
     'limitedContentsList',
   ],
   canEdits: [true, true, true, false, true, true, true, true],
+  contents: [
+    TABLE_CONTENT.DROPDOWN,
+    TABLE_CONTENT.DROPDOWN,
+    TABLE_CONTENT.DATE,
+    TABLE_CONTENT.INPUT,
+    TABLE_CONTENT.INPUT,
+    TABLE_CONTENT.DROPDOWN,
+    TABLE_CONTENT.DROPDOWN,
+    TABLE_CONTENT.DROPDOWN,
+  ],
 };
 
 const ChallengeMission = () => {
@@ -151,7 +161,7 @@ const ChallengeMission = () => {
               type: 'add',
               item: {
                 id: Date.now(),
-                status: statusEnum.INSERT as Status,
+                status: STATUS.INSERT as Status,
                 type: 'GENERAL',
                 title: '',
                 startDate: '',
