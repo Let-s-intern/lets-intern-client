@@ -130,6 +130,7 @@ const LineTableBodyRow = <T extends ItemWithStatus>({
             <LineTableBodyCell key={i} className={cellWidthList[i]}>
               {canEdits && isEditMode ? (
                 <DropdownCell
+                  selected={values[attr]}
                   name={attr as string}
                   optionList={contents[i].options as []}
                   onChange={handleChange}
@@ -156,6 +157,7 @@ const LineTableBodyRow = <T extends ItemWithStatus>({
             <LineTableBodyCell key={i} className={cellWidthList[i]}>
               {canEdits && isEditMode ? (
                 <DropdownCell
+                  selected={values[attr].length === 0 ? '' : values[attr][0].id}
                   name={attr as string}
                   optionList={contents[i].options as []}
                   onChange={handleChange}

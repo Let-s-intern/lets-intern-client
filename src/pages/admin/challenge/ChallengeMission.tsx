@@ -14,132 +14,11 @@ import missionReducer from '../../../reducers/missionReducer';
 import {
   STATUS,
   TABLE_CONTENT,
+  contentsTypeToText,
   missionTypeToText,
 } from '../../../utils/convert';
 import axios from '../../../utils/axios';
 
-const missionTemplateList = [
-  {
-    id: 0,
-    createDate: '2024-05-17T13:28:53.014Z',
-    title: '미션1',
-    description: '미션1 설명',
-    guide: '미션1 가이드',
-    templateLink: 'https://www.naver.com/',
-  },
-  {
-    id: 1,
-    createDate: '2024-05-17T13:28:53.014Z',
-    title: '미션2',
-    description: '미션2 설명',
-    guide: '미션2 가이드',
-    templateLink: 'https://www.naver.com/',
-  },
-  {
-    id: 2,
-    createDate: '2024-05-17T13:28:53.014Z',
-    title: '미션3',
-    description: '미션3 설명',
-    guide: '미션3 가이드',
-    templateLink: 'https://www.naver.com/',
-  },
-];
-const essentialContentList = [
-  {
-    id: 0,
-    title: '필수콘텐츠1',
-  },
-  {
-    id: 56,
-    title: '필수콘텐츠2',
-  },
-  {
-    id: 25,
-    title: '필수콘텐츠3',
-  },
-];
-const additionalContentList = [
-  {
-    id: 0,
-    title: '추가콘텐츠1',
-  },
-  {
-    id: 56,
-    title: '추가콘텐츠2',
-  },
-  {
-    id: 25,
-    title: '추가콘텐츠3',
-  },
-];
-const limitedContentList = [
-  {
-    id: 0,
-    title: '제한콘텐츠1',
-  },
-  {
-    id: 56,
-    title: '제한콘텐츠2',
-  },
-  {
-    id: 25,
-    title: '제한콘텐츠3',
-  },
-];
-const tableSettings = {
-  cellWidthList: missionCellWidthList,
-  placeholders: ['유형', '미션명', '공개일', '마감일', '환급금액'],
-  attrNames: [
-    'type',
-    'title',
-    'startDate',
-    'startDate',
-    'refund',
-    'essentialContentsList',
-    'additionalContentsList',
-    'limitedContentsList',
-  ],
-  canEdits: [true, true, true, false, true, true, true, true],
-  contents: [
-    {
-      type: TABLE_CONTENT.DROPDOWN,
-      options: Object.entries<string>(missionTypeToText).map(
-        ([key, value]) => ({
-          id: key,
-          title: value,
-        }),
-      ),
-    },
-    {
-      type: TABLE_CONTENT.DROPDOWN,
-      options: missionTemplateList.map((item) => ({
-        id: item.id,
-        title: item.title,
-      })),
-    },
-    { type: TABLE_CONTENT.DATE },
-    { type: TABLE_CONTENT.DATE },
-    { type: TABLE_CONTENT.INPUT },
-    {
-      type: TABLE_CONTENT.DROPDOWN,
-      options: essentialContentList,
-    },
-    {
-      type: TABLE_CONTENT.DROPDOWN,
-      options: additionalContentList,
-    },
-    {
-      type: TABLE_CONTENT.DROPDOWN,
-      options: limitedContentList,
-    },
-  ],
-};
-const colNames = [
-  ...tableSettings.placeholders,
-  '필수콘텐츠',
-  '추가콘텐츠',
-  '제한콘텐츠',
-];
 const initialMission: IMission = {
   status: STATUS.INSERT,
   type: 'GENERAL',
@@ -151,12 +30,47 @@ const initialMission: IMission = {
   limitedContentsList: [],
 };
 
+// API 구현 후 테스트 필요
 const ChallengeMission = () => {
   const params = useParams();
-  const { data, isLoading } = useQuery({
+  const { data: missionData, isLoading } = useQuery({
     queryKey: ['mission', 'admin'],
     queryFn: async () => {
       const res = await axios.get(`/api/v1/mission/admin/${params.programId}`);
+      return res.data;
+    },
+  });
+  const { data: templateData } = useQuery({
+    queryKey: ['mission-template', 'simple'],
+    queryFn: async () => {
+      const res = await axios.get('/api/v1/mission-template/simple');
+      return res.data;
+    },
+  });
+  const { data: essentialData } = useQuery({
+    queryKey: ['contents', 'admin', { type: contentsTypeToText.ESSENTIAL }],
+    queryFn: async () => {
+      const res = await axios.get(
+        `/api/v1/contents/admin?type=${contentsTypeToText.ESSENTIAL}`,
+      );
+      return res.data;
+    },
+  });
+  const { data: additionalData } = useQuery({
+    queryKey: ['contents', 'admin', { type: contentsTypeToText.ADDITIONAL }],
+    queryFn: async () => {
+      const res = await axios.get(
+        `/api/v1/contents/admin?type=${contentsTypeToText.ADDITIONAL}`,
+      );
+      return res.data;
+    },
+  });
+  const { data: limitedData } = useQuery({
+    queryKey: ['contents', 'admin', { type: contentsTypeToText.LIMITED }],
+    queryFn: async () => {
+      const res = await axios.get(
+        `/api/v1/contents/admin?type=${contentsTypeToText.LIMITED}`,
+      );
       return res.data;
     },
   });
@@ -190,10 +104,62 @@ const ChallengeMission = () => {
     },
   });
 
+  const tableSettings = {
+    cellWidthList: missionCellWidthList,
+    placeholders: ['유형', '미션명', '공개일', '마감일', '환급금액'],
+    attrNames: [
+      'type',
+      'title',
+      'startDate',
+      'startDate',
+      'refund',
+      'essentialContentsList',
+      'additionalContentsList',
+      'limitedContentsList',
+    ],
+    canEdits: [true, true, true, false, true, true, true, true],
+    contents: [
+      {
+        type: TABLE_CONTENT.DROPDOWN,
+        options: Object.entries<string>(missionTypeToText).map(
+          ([key, value]) => ({
+            id: key,
+            title: value,
+          }),
+        ),
+      },
+      {
+        type: TABLE_CONTENT.DROPDOWN,
+        options: templateData.missionTemplateAdminList,
+      },
+      { type: TABLE_CONTENT.DATE },
+      { type: TABLE_CONTENT.DATE },
+      { type: TABLE_CONTENT.INPUT },
+      {
+        type: TABLE_CONTENT.DROPDOWN,
+        options: essentialData.contentsAdminList,
+      },
+      {
+        type: TABLE_CONTENT.DROPDOWN,
+        options: additionalData.contentsAdminList,
+      },
+      {
+        type: TABLE_CONTENT.DROPDOWN,
+        options: limitedData.contentsAdminList,
+      },
+    ],
+  };
+  const colNames = [
+    ...tableSettings.placeholders,
+    '필수콘텐츠',
+    '추가콘텐츠',
+    '제한콘텐츠',
+  ];
+
   const [missionList, dispatch] = useReducer(missionReducer, null, () => {
     // 초기 미션 리스트 status 설정
-    return data
-      ? data.missionAdminList.map((item: IMission) => ({
+    return missionData
+      ? missionData.missionAdminList.map((item: IMission) => ({
           ...item,
           status: STATUS.SAVE,
         }))

@@ -12,6 +12,11 @@ export interface IMissionTemplate {
   createdDate?: string;
 }
 
+export interface IMissionTemplateSimple {
+  id: number;
+  title: string;
+}
+
 export interface IContent {
   id: number;
   title: string;
