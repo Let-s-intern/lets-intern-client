@@ -9,12 +9,8 @@ export default function missionTemplateReducer(
   action: IMissionTemplateAction,
 ) {
   switch (action.type) {
-    case 'save': {
-      // DB에 반영
-      return missions;
-    }
     case 'add': {
-      const i = missions.findIndex(
+      const i = missions?.findIndex(
         (mission: IMissionTemplate) => mission.id === action.item?.id,
       );
       if (i === -1) {
@@ -24,7 +20,7 @@ export default function missionTemplateReducer(
     }
 
     case 'delete': {
-      const i = missions.findIndex((mission) => mission.id === action.item.id);
+      const i = missions?.findIndex((mission) => mission.id === action.item.id);
       return [...missions.slice(0, i), ...missions.slice(i + 1)];
     }
 

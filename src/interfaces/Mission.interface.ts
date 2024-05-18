@@ -3,13 +3,13 @@ import { StatusKey } from './interface';
 
 export interface IMissionTemplate {
   [key: string]: any;
-  status: (typeof STATUS)[StatusKey];
-  id: number;
+  status?: (typeof STATUS)[StatusKey];
+  id?: number;
   title: string;
   description: string;
   guide: string;
   templateLink: string;
-  createdAt: string;
+  createdDate?: string;
 }
 
 export interface IContent {
@@ -20,13 +20,14 @@ export interface IContent {
 export interface IMission {
   [key: string]: any;
   id?: number;
-  status: (typeof STATUS)[StatusKey];
+  status?: (typeof STATUS)[StatusKey];
   type: 'GENERAL' | 'REFUND' | 'ADDITIONAL';
+  missionTemplateId?: number;
   title: string;
   startDate: string;
   endDate?: string;
   refund: number;
-  essentialContentsList: IContent[];
-  additionalContentsList: IContent[];
-  limitedContentsList: IContent[];
+  essentialContentsList: IContent[] | number[];
+  additionalContentsList: IContent[] | number[];
+  limitedContentsList: IContent[] | number[];
 }

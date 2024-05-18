@@ -10,7 +10,7 @@ export interface IAction {
   type: string;
 }
 export interface ItemWithStatus {
-  status: (typeof STATUS)[StatusKey];
+  status?: (typeof STATUS)[StatusKey];
   [key: string]: any;
 }
 export interface ITableContent {

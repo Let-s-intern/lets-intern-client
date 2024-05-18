@@ -25,6 +25,7 @@ interface LineTableBodyRowProps<T extends ItemWithStatus> {
   cellWidthList: string[];
   handleAdd: (item: T) => void;
   handleDelete: (item: T) => void;
+  handleSave: (item: T) => void;
   children?: React.ReactNode;
 }
 
@@ -45,6 +46,7 @@ const LineTableBodyRow = <T extends ItemWithStatus>({
   placeholders = [],
   handleAdd,
   handleDelete,
+  handleSave,
   cellWidthList,
   attrNames,
   canEdits,
@@ -61,9 +63,10 @@ const LineTableBodyRow = <T extends ItemWithStatus>({
       HTMLTextAreaElement | HTMLInputElement | HTMLSelectElement
     >,
   ) => {
-    // 드롭다운 선택
+    // 드롭다운 선택 (type 속성 제외)
     if (e.target.type === 'select-one' && e.target.name !== 'type') {
       const target = e.target as EventTarget & HTMLSelectElement;
+      // 미션명 드롭다운 선택
       if (e.target.name === 'title') {
         setValues((prev) => ({
           ...prev,
@@ -118,6 +121,7 @@ const LineTableBodyRow = <T extends ItemWithStatus>({
             </LineTableBodyCell>
           );
 
+        // 유형, 미션명 드롭다운
         if (
           contents[i].type === TABLE_CONTENT.DROPDOWN &&
           (attr === 'type' || attr === 'title')
@@ -192,8 +196,9 @@ const LineTableBodyRow = <T extends ItemWithStatus>({
               )}
             </LineTableBodyCell>
           );
-        } else
-          return <LineTableBodyCell key={i} className={cellWidthList[i]} />;
+        }
+
+        return <LineTableBodyCell key={i} className={cellWidthList[i]} />;
       })}
 
       <LineTableBodyCell className="flex-1">
@@ -204,6 +209,7 @@ const LineTableBodyRow = <T extends ItemWithStatus>({
               onClick={() => {
                 const newValues = { ...values, status: STATUS.SAVE };
                 handleAdd(newValues);
+                handleSave(newValues);
                 setIsEditMode(false);
               }}
             >

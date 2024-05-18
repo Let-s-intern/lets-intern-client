@@ -1,4 +1,6 @@
 import { useReducer } from 'react';
+import { useMutation, useQuery } from '@tanstack/react-query';
+import { useParams } from 'react-router-dom';
 
 import Heading from '../../../components/admin/challenge/ui/heading/Heading';
 import Table from '../../../components/admin/challenge/ui/table/table-container/Table';
@@ -14,80 +16,8 @@ import {
   TABLE_CONTENT,
   missionTypeToText,
 } from '../../../utils/convert';
+import axios from '../../../utils/axios';
 
-const initialMissionList: IMission[] = [
-  {
-    id: 124,
-    status: STATUS.SAVE,
-    type: 'GENERAL',
-    title: '💛미션명1',
-    startDate: '2024-05-13T12:15:39.813Z',
-    endDate: '2024-05-13T12:15:39.813Z',
-    refund: 0,
-    essentialContentsList: [
-      {
-        id: 459,
-        title: '💚 필수 콘텐츠명',
-      },
-    ],
-    additionalContentsList: [
-      {
-        id: 8024,
-        title: '💚 추가 콘텐츠명',
-      },
-    ],
-    limitedContentsList: [
-      {
-        id: 358,
-        title: '💚 제한 콘텐츠명',
-      },
-    ],
-  },
-  {
-    id: 345,
-    status: STATUS.SAVE,
-    type: 'ADDITIONAL',
-    title: '💛미션명2',
-    startDate: '2032-05-13T12:15:39.813Z',
-    endDate: '2032-06-13T12:15:39.813Z',
-    refund: 30000,
-    essentialContentsList: [
-      {
-        id: 123,
-        title: '💚 필수 콘텐츠명 1',
-      },
-    ],
-    additionalContentsList: [],
-    limitedContentsList: [
-      {
-        id: 345,
-        title: '💚 제한 콘텐츠명',
-      },
-    ],
-  },
-  {
-    id: 68,
-    status: STATUS.SAVE,
-    type: 'REFUND',
-    title: '💛미션명3',
-    startDate: '2024-05-13T12:15:39.813Z',
-    endDate: '2024-05-13T12:15:39.813Z',
-    refund: 0,
-    essentialContentsList: [
-      {
-        id: 247,
-        title: '💚 필수 콘텐츠명',
-      },
-    ],
-    additionalContentsList: [
-      {
-        id: 678,
-        title: '💚 추가 콘텐츠명 1',
-      },
-    ],
-    limitedContentsList: [],
-  },
-];
 const missionTemplateList = [
   {
     id: 0,
@@ -210,20 +140,79 @@ const colNames = [
   '추가콘텐츠',
   '제한콘텐츠',
 ];
+const initialMission: IMission = {
+  status: STATUS.INSERT,
+  type: 'GENERAL',
+  title: '',
+  startDate: new Date().toISOString(),
+  refund: 0,
+  essentialContentsList: [],
+  additionalContentsList: [],
+  limitedContentsList: [],
+};
 
 const ChallengeMission = () => {
-  const [missionList, dispatch] = useReducer(
-    missionReducer,
-    null,
-    () => initialMissionList,
-  );
+  const params = useParams();
+  const { data, isLoading } = useQuery({
+    queryKey: ['mission', 'admin'],
+    queryFn: async () => {
+      const res = await axios.get(`/api/v1/mission/admin/${params.programId}`);
+      return res.data;
+    },
+  });
+  const updateMutation = useMutation({
+    mutationFn: async (item: IMission) => {
+      const body = { ...item };
+      delete body.status;
+      delete body.id;
+      delete body.endDate;
+      // [TODO] 미션 템플릿 ID 추가
+      // 미션 생성
+      if (item.status === STATUS.INSERT) {
+        const res = await axios.post(
+          `/api/v1/mission/${params.programId}`,
+          body,
+        );
+        return res.data;
+      }
+      // 미션 수정
+      const res = await axios.patch(
+        `/api/v1/mission/${params.programId}`,
+        body,
+      );
+      return res.data;
+    },
+  });
+  const deleteMutation = useMutation({
+    mutationFn: async (id: number) => {
+      const res = await axios.delete(`/api/v1/mission/${id}`);
+      return res.data;
+    },
+  });
+
+  const [missionList, dispatch] = useReducer(missionReducer, null, () => {
+    // 초기 미션 리스트 status 설정
+    return data
+      ? data.missionAdminList.map((item: IMission) => ({
+          ...item,
+          status: STATUS.SAVE,
+        }))
+      : [];
+  });
+
+  const handleSaveMission = (item: IMission) => {
+    updateMutation.mutate(item);
+  };
 
   const handleAddMission = (item: IMission) => {
     dispatch({ type: 'add', item });
   };
   const handleDeleteMission = (item: IMission) => {
     dispatch({ type: 'delete', item });
+    deleteMutation.mutate(item.id as number);
   };
+
+  if (isLoading) return <></>;
 
   return (
     <div className="px-12 pt-6">
@@ -233,16 +222,7 @@ const ChallengeMission = () => {
           onClick={() => {
             dispatch({
               type: 'add',
-              item: {
-                status: STATUS.INSERT,
-                type: 'GENERAL',
-                title: '',
-                startDate: new Date().toISOString(),
-                refund: 0,
-                essentialContentsList: [],
-                additionalContentsList: [],
-                limitedContentsList: [],
-              },
+              item: initialMission,
             });
           }}
         >
@@ -260,6 +240,7 @@ const ChallengeMission = () => {
               {...tableSettings}
               key={mission.id}
               item={mission}
+              handleSave={handleSaveMission}
               handleAdd={handleAddMission}
               handleDelete={handleDeleteMission}
             ></LineTableBodyRow>
