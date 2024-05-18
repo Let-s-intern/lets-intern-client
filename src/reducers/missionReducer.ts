@@ -9,10 +9,6 @@ export default function missionReducer(
   action: IMissionAction,
 ) {
   switch (action.type) {
-    case 'save': {
-      // DB에 반영
-      return missions;
-    }
     case 'add': {
       const i = missions.findIndex(
         (mission: IMission) => mission.id === action.item?.id,

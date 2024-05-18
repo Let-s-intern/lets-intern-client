@@ -96,15 +96,6 @@ export const formatMissionTableDateString = (
   return formattedString;
 };
 
-export const formatTableMissionDateString = (dateString: string) => {
-  const endDate = new Date(dateString);
-  const weekdayList = ['일', '월', '화', '수', '목', '금', '토'];
-  const formattedString = `${endDate.getMonth() + 1}/${endDate.getDate()}(${
-    weekdayList[endDate.getDay()]
-  })`;
-  return formattedString;
-};
-
 export const formatToMonthDate = (dateString: string) => {
   const date = new Date(dateString);
   const weekdayList = ['일', '월', '화', '수', '목', '금', '토'];
