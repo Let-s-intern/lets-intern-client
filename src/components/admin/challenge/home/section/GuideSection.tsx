@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 
 import RoundedBox from '../box/RoundedBox';
 import SectionHeading from '../heading/SectionHeading';
@@ -18,45 +18,21 @@ const initialValue = {
 /* 추후 가이드 개수가 3개보다 많아질 수 있음 */
 const GuideSection = () => {
   const params = useParams();
-  const queryClient = useQueryClient();
 
-  const [guideList, setGuideList] = useState<IGuide[]>([]);
-  const [isModalShown, setIsModalShown] = useState(false);
-  const [values, setValues] = useState<IGuide>(initialValue);
-
-  const { isLoading } = useQuery({
+  const { data, isLoading } = useQuery({
     queryKey: ['challenge-guide', 'admin', params.programId],
-    queryFn: async ({ queryKey }) => {
+    queryFn: async () => {
       const res = await axios.get(
-        `/api/v1/challenge-guide/admin/${queryKey[2]}`,
+        `/api/v1/challenge-guide/admin/${params.programId}`,
       );
       if (res.status !== 200) {
         throw new Error(`${res.status} ${res.statusText}`);
       }
-      const data = res.data;
-      setGuideList(data.challengeGuideAdminList);
-      return data;
+      return res.data;
     },
   });
 
-  const handleSubmit = (e: React.FormEvent<Element>) => {
-    e.preventDefault();
-    setGuideList((prev) => {
-      const i = prev.findIndex((guide) => guide.id === values.id);
-      // 가이드 생성
-      if (i === -1) {
-        addGuide.mutate(values);
-        return [values, ...prev];
-      }
-      // 가이드 수정
-      editGuide.mutate(values);
-      return [...prev.slice(0, i), values, ...prev.slice(i + 1)];
-    });
-    setValues(initialValue);
-    setIsModalShown(false);
-  };
-
-  const addGuide = useMutation({
+  const postMutation = useMutation({
     mutationFn: async (guide: IGuide) => {
       const res = await axios.post(
         `/api/v1/challenge-guide/${params.programId}`,
@@ -65,14 +41,8 @@ const GuideSection = () => {
       const data = res.data;
       return data;
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: ['challenge-guide', 'admin', params.programId],
-      });
-    },
   });
-
-  const editGuide = useMutation({
+  const patchMutation = useMutation({
     mutationFn: async (guide: IGuide) => {
       const res = await axios.patch(
         `/api/v1/challenge-guide/${params.programId}`,
@@ -81,12 +51,33 @@ const GuideSection = () => {
       const data = res.data;
       return data;
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: ['challenge-guide', 'admin', params.programId],
-      });
-    },
   });
+
+  const [guideList, setGuideList] = useState<IGuide[]>(
+    data.challengeGuideAdminList,
+  );
+  const [isModalShown, setIsModalShown] = useState(false);
+  const [values, setValues] = useState<IGuide>(initialValue);
+
+  const handleSubmit = (e: React.FormEvent<Element>) => {
+    e.preventDefault();
+    const i = guideList.findIndex((guide) => guide.id === values.id);
+    // 가이드 생성
+    if (i === -1) {
+      setGuideList((prev) => [values, ...prev]);
+      postMutation.mutate(values);
+    } else {
+      // 가이드 수정
+      setGuideList((prev) => [
+        ...prev.slice(0, i),
+        values,
+        ...prev.slice(i + 1),
+      ]);
+      patchMutation.mutate(values);
+    }
+    setValues(initialValue);
+    setIsModalShown(false);
+  };
 
   if (isLoading) return <></>;
 
