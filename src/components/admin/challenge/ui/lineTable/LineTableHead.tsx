@@ -1,8 +1,8 @@
 import clsx from 'clsx';
 
-import TableHeadCell from '../../../../ui/table/table-head/TableHeadCell';
+import TableHeadCell from '../table/table-head/TableHeadCell';
 
-interface NTableHeadProps {
+interface LineTableHeadProps {
   colNames: string[];
   cellWidthList: string[];
 }
@@ -12,7 +12,7 @@ interface NTableHeadProps {
  * @param colNames - 테이블 헤더에 표시할 컬럼 이름 (배열 순서대로 컬럼에 표시)
  * @param cellWidthList - 테이블 헤더 셀의 너비 리스트 (column과 순서 일치해야 함)
  */
-const NTableHead = ({ colNames, cellWidthList }: NTableHeadProps) => {
+const LineTableHead = ({ colNames, cellWidthList }: LineTableHeadProps) => {
   return (
     <div className={clsx('flex w-full rounded-sm bg-neutral-200')}>
       {colNames.map((name, i) => (
@@ -25,4 +25,4 @@ const NTableHead = ({ colNames, cellWidthList }: NTableHeadProps) => {
   );
 };
 
-export default NTableHead;
+export default LineTableHead;

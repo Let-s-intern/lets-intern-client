@@ -1,5 +1,3 @@
-import { Status } from '../interfaces/interface';
-
 export const challengeTopicToText: Record<string, string> = {
   ALL: '전체',
   MARKETING: '마케팅',
@@ -260,10 +258,10 @@ export const missionSubmitToBadge = ({
 export const STATUS = {
   SAVE: 0,
   INSERT: 1,
-};
+} as const;
 
 export const TABLE_CONTENT = {
   INPUT: 0,
   DROPDOWN: 1,
   DATE: 2,
-};
+} as const;

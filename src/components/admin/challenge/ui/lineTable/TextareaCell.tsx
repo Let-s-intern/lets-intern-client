@@ -3,7 +3,7 @@ import { useEffect, useRef } from 'react';
 
 interface TextareaCellProps {
   name: string;
-  placeholder: string;
+  placeholder?: string;
   value: string;
   disabled?: boolean;
   onChange?: React.ChangeEventHandler<HTMLTextAreaElement>;

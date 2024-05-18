@@ -1,8 +1,9 @@
-import { Status } from './interface';
+import { STATUS } from '../utils/convert';
+import { StatusKey } from './interface';
 
 export interface IMissionTemplate {
-  [key: string]: string | number;
-  status: Status;
+  [key: string]: any;
+  status: (typeof STATUS)[StatusKey];
   id: number;
   title: string;
   description: string;
@@ -14,17 +15,16 @@ export interface IMissionTemplate {
 export interface IContent {
   id: number;
   title: string;
-  link: string;
 }
 
 export interface IMission {
-  [key: string]: string | number | IContent[];
-  id: number;
-  status: Status;
+  [key: string]: any;
+  id?: number;
+  status: (typeof STATUS)[StatusKey];
   type: 'GENERAL' | 'REFUND' | 'ADDITIONAL';
   title: string;
   startDate: string;
-  endDate: string;
+  endDate?: string;
   refund: number;
   essentialContentsList: IContent[];
   additionalContentsList: IContent[];

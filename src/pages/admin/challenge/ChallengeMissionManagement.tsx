@@ -3,11 +3,11 @@ import { useReducer } from 'react';
 import Heading from '../../../components/admin/challenge/ui/heading/Heading';
 import Table from '../../../components/admin/challenge/ui/table/table-container/Table';
 import Button from '../../../components/admin/challenge/ui/button/Button';
-import NTableHead from '../../../components/admin/challenge/mission/mission/table/table-head/NTableHead';
-import NTableBody from '../../../components/admin/challenge/mission/mission/table/table-body/NTableBody';
-import { IMissionTemplate, Status } from '../../../interfaces/interface';
+import LineTableHead from '../../../components/admin/challenge/ui/lineTable/LineTableHead';
+import LineTableBody from '../../../components/admin/challenge/ui/lineTable/LineTableBody';
+import { IMissionTemplate } from '../../../interfaces/interface';
 import missionTemplateReducer from '../../../reducers/missionTemplateReducer';
-import NTableBodyRow from '../../../components/admin/challenge/mission/mission/table/table-body/NTableBodyRow';
+import LineTableBodyRow from '../../../components/admin/challenge/ui/lineTable/LineTableBodyRow';
 import { missionManagementCellWidthList } from '../../../utils/tableCellWidthList';
 import { TABLE_CONTENT, STATUS } from '../../../utils/convert';
 import { formatMissionDateString } from '../../../utils/formatDateString';
@@ -15,7 +15,7 @@ import { formatMissionDateString } from '../../../utils/formatDateString';
 // 테이블에 사용하는 데이터는 status 속성 추가하기
 const initalMissionList: IMissionTemplate[] = [
   {
-    status: STATUS.SAVE as Status,
+    status: STATUS.SAVE,
     id: 1,
     title: '현직자 인터뷰 정리',
     description:
@@ -26,7 +26,7 @@ const initalMissionList: IMissionTemplate[] = [
     createdAt: formatMissionDateString('2024-10-01'),
   },
   {
-    status: STATUS.SAVE as Status,
+    status: STATUS.SAVE,
     id: 2,
     title: '채용공고 정리 및 분석',
     description:
@@ -45,11 +45,11 @@ const tableSettings = {
   attrNames: ['createdAt', 'title', 'description', 'guide', 'templateLink'],
   canEdits: [false, true, true, true, true],
   contents: [
-    TABLE_CONTENT.INPUT,
-    TABLE_CONTENT.INPUT,
-    TABLE_CONTENT.INPUT,
-    TABLE_CONTENT.INPUT,
-    TABLE_CONTENT.INPUT,
+    { type: TABLE_CONTENT.INPUT },
+    { type: TABLE_CONTENT.INPUT },
+    { type: TABLE_CONTENT.INPUT },
+    { type: TABLE_CONTENT.INPUT },
+    { type: TABLE_CONTENT.INPUT },
   ],
 };
 
@@ -76,7 +76,7 @@ const ChallengeMissionManagement = () => {
             dispatch({
               type: 'add',
               item: {
-                status: STATUS.INSERT as Status,
+                status: STATUS.INSERT,
                 id: Date.now(),
                 title: '',
                 description: '',
@@ -91,13 +91,13 @@ const ChallengeMissionManagement = () => {
         </Button>
       </div>
       <Table>
-        <NTableHead
+        <LineTableHead
           cellWidthList={cellWidthList}
           colNames={tableSettings.placeholders}
         />
-        <NTableBody>
+        <LineTableBody>
           {missionList.map((mission) => (
-            <NTableBodyRow<IMissionTemplate>
+            <LineTableBodyRow<IMissionTemplate>
               {...tableSettings}
               key={mission.id}
               item={mission}
@@ -106,7 +106,7 @@ const ChallengeMissionManagement = () => {
               cellWidthList={cellWidthList}
             />
           ))}
-        </NTableBody>
+        </LineTableBody>
       </Table>
     </div>
   );

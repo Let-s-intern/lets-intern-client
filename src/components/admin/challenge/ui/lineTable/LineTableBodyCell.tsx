@@ -1,13 +1,13 @@
 import React from 'react';
 import clsx from 'clsx';
 
-interface NTableBodyCellProps {
+interface LineTableBodyCellProps {
   className?: string;
 
   children?: React.ReactNode;
 }
 
-const NTableBodyCell = ({ className, children }: NTableBodyCellProps) => {
+const LineTableBodyCell = ({ className, children }: LineTableBodyCellProps) => {
   return (
     <div
       className={clsx(
@@ -20,4 +20,4 @@ const NTableBodyCell = ({ className, children }: NTableBodyCellProps) => {
   );
 };
 
-export default NTableBodyCell;
+export default LineTableBodyCell;
