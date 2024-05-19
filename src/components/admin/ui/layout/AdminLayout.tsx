@@ -43,7 +43,7 @@ const AdminLayout = () => {
 
     const fetchIsAdmin = async () => {
       try {
-        const res = await axios.get('/user/isAdmin');
+        const res = await axios.get('/user/is-admin');
         if (!res.data) {
           navigate('/');
         }

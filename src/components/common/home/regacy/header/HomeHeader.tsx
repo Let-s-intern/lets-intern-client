@@ -13,14 +13,14 @@ const HomeHeader = () => {
         <div className="mx-auto flex w-full max-w-[568px] items-center justify-between px-6">
           <div>
             <h1 className="mt-1 text-xl font-semibold text-white sm:text-[1.75rem]">
-              인턴 지원 챌린지 17기 모집
+              인턴 지원 챌린지 18기 모집
             </h1>
             <p className="mt-1 text-sm text-white xs:text-sm sm:text-base">
               매일 미션 수행하고 2주 만에 인턴 지원하자!
             </p>
             <Link
               to="/program?category=CHALLENGE"
-              className="rounded-xxs mt-3 inline-block bg-white px-3 py-1 text-sm font-semibold text-[#2F3437]"
+              className="mt-3 inline-block rounded-xxs bg-white px-3 py-1 text-sm font-semibold text-[#2F3437]"
             >
               신청하기
             </Link>

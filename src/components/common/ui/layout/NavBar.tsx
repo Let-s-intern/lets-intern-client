@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
+import { useQuery } from '@tanstack/react-query';
+
 import axios from '../../../../utils/axios';
 import TabBar from '../tab/TabBar';
 import TabItem from '../tab/TabItem';
@@ -22,6 +24,33 @@ const NavBar = () => {
   >('');
   const [showTopTabBar, setShowTopTabBar] = useState(true);
 
+  const accessToken = localStorage.getItem('access-token');
+  const refreshToken = localStorage.getItem('refresh-token');
+
+  const fetchUser = useQuery({
+    queryKey: ['user'],
+    queryFn: async () => {
+      try {
+        const res = await axios.get('/user');
+        return res.data;
+      } catch (error) {
+        console.error(error);
+        handleLogout();
+        return null;
+      }
+    },
+    enabled: accessToken !== null && refreshToken !== null,
+  });
+
+  const fetchIsAdmin = useQuery({
+    queryKey: ['user', 'is-admin'],
+    queryFn: async () => {
+      const res = await axios.get('/user/is-admin');
+      return res.data;
+    },
+    enabled: accessToken !== null && refreshToken !== null,
+  });
+
   const toggleMenu = () => {
     setIsOpen(!isOpen);
   };
@@ -29,6 +58,26 @@ const NavBar = () => {
   const closeMenu = () => {
     setIsOpen(false);
   };
+
+  const handleLogout = () => {
+    localStorage.removeItem('access-token');
+    localStorage.removeItem('refresh-token');
+    setIsLoggedIn(false);
+    window.location.href = '/';
+  };
+
+  useEffect(() => {
+    if (fetchUser.data) {
+      setIsLoggedIn(true);
+      setUser(fetchUser.data.data);
+    }
+  }, [fetchUser]);
+
+  useEffect(() => {
+    if (fetchIsAdmin.data) {
+      setIsAdmin(fetchIsAdmin.data);
+    }
+  }, [fetchIsAdmin]);
 
   useEffect(() => {
     if (
@@ -52,49 +101,6 @@ const NavBar = () => {
       setActiveLink('HOME');
     }
   }, [location]);
-
-  useEffect(() => {
-    const accessToken = localStorage.getItem('access-token');
-    const refreshToken = localStorage.getItem('refresh-token');
-    if (accessToken && refreshToken) {
-      setIsLoggedIn(true);
-      fetchAndSetUser();
-    }
-    if (!accessToken || !refreshToken) {
-      return;
-    }
-    const fetchIsAdmin = async () => {
-      try {
-        const res = await axios.get('/user/isAdmin');
-        if (res.data) {
-          setIsAdmin(true);
-        }
-      } catch (error) {
-        console.error(error);
-      }
-    };
-    fetchIsAdmin();
-  }, []);
-
-  const handleLogout = async () => {
-    try {
-      localStorage.removeItem('access-token');
-      localStorage.removeItem('refresh-token');
-      setIsLoggedIn(false);
-      window.location.href = '/';
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
-  const fetchAndSetUser = async () => {
-    try {
-      const res = await axios.get('/user');
-      setUser(res.data);
-    } catch (error) {
-      console.error(error);
-    }
-  };
 
   return (
     <>
