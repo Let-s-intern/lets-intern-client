@@ -43,9 +43,9 @@ const NavBar = () => {
   });
 
   const fetchIsAdmin = useQuery({
-    queryKey: ['user', 'isAdmin'],
+    queryKey: ['user', 'is-admin'],
     queryFn: async () => {
-      const res = await axios.get('/user/isAdmin');
+      const res = await axios.get('/user/is-admin');
       return res.data;
     },
     enabled: accessToken !== null && refreshToken !== null,
@@ -69,7 +69,7 @@ const NavBar = () => {
   useEffect(() => {
     if (fetchUser.data) {
       setIsLoggedIn(true);
-      setUser(fetchUser.data);
+      setUser(fetchUser.data.data);
     }
   }, [fetchUser]);
 

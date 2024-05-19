@@ -11,35 +11,41 @@ import ActionButton from '../../../components/admin/ui/button/ActionButton';
 import AdminPagination from '../../../components/admin/ui/pagination/AdminPagination';
 import axios from '../../../utils/axios';
 import classes from './Programs.module.scss';
+import { useQuery } from '@tanstack/react-query';
 
 const Programs = () => {
   const [searchParams] = useSearchParams();
   const [programList, setProgramList] = useState([]);
-  const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<unknown>(null);
   const [maxPage, setMaxPage] = useState(1);
 
   const sizePerPage = 10;
+  const currentPage = searchParams.get('page') || 1;
+
+  const getProgramList = useQuery({
+    queryKey: ['program'],
+    queryFn: async () => {
+      try {
+        const params = {
+          size: sizePerPage,
+          page: currentPage,
+          sort: 'title',
+        };
+        const res = await axios.get('/program', { params });
+        return res.data;
+      } catch (error) {
+        setError(error);
+        return null;
+      }
+    },
+  });
 
   useEffect(() => {
-    setLoading(true);
-    const currentPage = searchParams.get('page');
-    const params = {
-      numberOfPages: sizePerPage,
-    };
-    axios
-      .get('/program', { params })
-      .then((res) => {
-        setProgramList(res.data.programList);
-        setMaxPage(res.data.pageInfo.totalPages);
-      })
-      .catch((err) => {
-        setError(err);
-      })
-      .finally(() => {
-        setLoading(false);
-      });
-  }, [searchParams]);
+    if (getProgramList.data) {
+      setProgramList(getProgramList.data.programList);
+      setMaxPage(getProgramList.data.pageInfo.totalPages);
+    }
+  }, [getProgramList]);
 
   const fetchEditProgramVisible = (programId: number, visible: boolean) => {
     axios
@@ -74,6 +80,8 @@ const Programs = () => {
         console.log(err);
       });
   };
+
+  const loading = !getProgramList.isLoading;
 
   if (loading) {
     return <div className="p-8"></div>;
