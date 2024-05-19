@@ -1,10 +1,13 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
-import axios from 'axios';
+// import axios from 'axios';
+import { AxiosError } from 'axios';
+import axios from '../../../utils/axios';
 
 import Button from '../../../components/common/ui/button/Button';
 import Input from '../../../components/ui/input/Input';
 import SocialLogin from '../../../components/common/auth/ui/SocialLogin';
+import { useMutation } from '@tanstack/react-query';
 
 interface TextLinkProps {
   to: string;
@@ -33,6 +36,35 @@ const Login = () => {
   const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [buttonDisabled, setButtonDisabled] = useState(false);
+
+  const fetchLogin = useMutation({
+    mutationFn: async () => {
+      const res = await axios.post('/user/signin', {
+        email,
+        password,
+      });
+      return res.data;
+    },
+    onSuccess: (data) => {
+      console.log('success');
+      localStorage.setItem('access-token', data.data.accessToken);
+      localStorage.setItem('refresh-token', data.data.refreshToken);
+      if (searchParams.get('redirect')) {
+        window.location.href = searchParams.get('redirect') || '/';
+      } else {
+        window.location.href = '/';
+      }
+    },
+    onError: (error) => {
+      const axiosError = error as AxiosError;
+      if (
+        axiosError.response?.status === 400 ||
+        axiosError.response?.status === 404
+      ) {
+        setErrorMessage('이메일 또는 비밀번호가 일치하지 않습니다.');
+      }
+    },
+  });
 
   useEffect(() => {
     const accessToken = localStorage.getItem('access-token');
@@ -82,18 +114,7 @@ const Login = () => {
   const handleLogin = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (buttonDisabled) return;
-    axios
-      .post(`${process.env.REACT_APP_SERVER_API}/user/signin`, {
-        email,
-        password,
-      })
-      .then((res) => {
-        handleLoginSuccess(res.data);
-      })
-      .catch((err) => {
-        console.log(err);
-        setErrorMessage(err.response.data.reason);
-      });
+    fetchLogin.mutate();
   };
 
   return (
