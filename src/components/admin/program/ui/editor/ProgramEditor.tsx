@@ -9,6 +9,15 @@ import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
 import { useMemo, useRef } from 'react';
 import ProgramTypeSection from '../editor-section/ProgramTypeSection';
 import FeeSection from '../editor-section/FeeSection';
+import {
+  bankTypeToText,
+  challengeTypeToText,
+  newProgramFeeTypeToText,
+  newProgramTypeDetailToText,
+  newProgramTypeToText,
+  programParticipationTypeToText,
+  programPriceTypeToText,
+} from '../../../../../utils/convert';
 
 interface ProgramEditorProps {
   values: any;
@@ -111,159 +120,522 @@ const ProgramEditor = ({
     <div className="mx-auto max-w-xl p-8 font-notosans">
       <header className="my-5 text-2xl font-bold">프로그램 개설</header>
       <form className="space-y-5" onSubmit={handleSubmit}>
-        <ProgramTypeSection
-          values={values}
-          setValues={setValues}
-          handleFAQIdListReset={handleFAQIdListReset}
-        />
         <FormControl fullWidth>
-          <InputLabel id="way">온/오프라인 여부</InputLabel>
+          <InputLabel id="program">프로그램</InputLabel>
           <Select
-            labelId="way"
-            id="way"
-            label="온/오프라인 여부"
-            value={values.way ? values.way : ''}
+            labelId="program"
+            id="program"
+            label="프로그램"
+            name="program"
+            value={values?.program || ''}
             onChange={(e) => {
-              setValues({ ...values, way: e.target.value });
+              setValues({ ...values, [e.target.name]: e.target.value });
             }}
           >
-            <MenuItem value="OFFLINE">오프라인</MenuItem>
-            <MenuItem value="ONLINE">온라인</MenuItem>
-            <MenuItem value="ALL">온오프라인 병행</MenuItem>
+            {Object.keys(newProgramTypeToText).map((type: string) => (
+              <MenuItem key={type} value={type}>
+                {newProgramTypeToText[type]}
+              </MenuItem>
+            ))}
           </Select>
         </FormControl>
-        {(values.way === 'OFFLINE' || values.way === 'ALL') && (
-          <Input
-            label="장소"
-            value={values.location ? values.location : ''}
-            placeholder="장소를 입력해주세요"
-            onChange={(e: any) =>
-              setValues({ ...values, location: e.target.value })
-            }
-            disabled={!values.way || values.way === 'ONLINE'}
-          />
-        )}
-        <Input
-          label="썸네일 링크"
-          placeholder="프로그램의 썸네일 링크를 입력해주세요."
-        />
-        <Input
-          label="제목"
-          placeholder="프로그램 제목을 입력해주세요"
-          value={values.title ? values.title : ''}
-          onChange={(e: any) => setValues({ ...values, title: e.target.value })}
-        />
-        <Input
-          label="한 줄 설명"
-          placeholder="프로그램의 한 줄 설명을 입력해주세요"
-        />
-        <Input
-          label="정원"
-          type="number"
-          value={values.headcount ? values.headcount : ''}
-          placeholder="총 정원 수를 입력해주세요"
-          onChange={(e: any) =>
-            setValues({ ...values, headcount: e.target.value })
-          }
-        />
-        {(values.type === 'CHALLENGE_FULL' ||
-          values.type === 'CHALLENGE_HALF') && (
+        {values.program && (
           <>
+            <FormControl fullWidth>
+              <InputLabel id="programType">프로그램 분류</InputLabel>
+              <Select
+                labelId="programType"
+                id="programType"
+                label="프로그램 분류"
+                name="programType"
+                value={values?.programType || ''}
+                onChange={(e) => {
+                  setValues({ ...values, [e.target.name]: e.target.value });
+                }}
+              >
+                {Object.keys(newProgramTypeDetailToText).map((type: string) => (
+                  <MenuItem key={type} value={type}>
+                    {newProgramTypeDetailToText[type]}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+            {values.program === 'LIVE' && (
+              <>
+                <FormControl fullWidth>
+                  <InputLabel id="way">온/오프라인 여부</InputLabel>
+                  <Select
+                    labelId="way"
+                    id="way"
+                    label="온/오프라인 여부"
+                    name="way"
+                    value={values?.way || ''}
+                    onChange={(e) => {
+                      setValues({ ...values, [e.target.name]: e.target.value });
+                    }}
+                  >
+                    <MenuItem value="OFFLINE">오프라인</MenuItem>
+                    <MenuItem value="ONLINE">온라인</MenuItem>
+                    <MenuItem value="ALL">온오프라인 병행</MenuItem>
+                  </Select>
+                </FormControl>
+                {(values.way === 'OFFLINE' || values.way === 'ALL') && (
+                  <Input
+                    label="장소"
+                    name="location"
+                    value={values.location ? values.location : ''}
+                    placeholder="장소를 입력해주세요"
+                    onChange={(e) =>
+                      setValues({ ...values, [e.target.name]: e.target.value })
+                    }
+                    disabled={!values.way || values.way === 'ONLINE'}
+                  />
+                )}
+              </>
+            )}
+            {(values.program === 'LIVE' || values.program === 'VOD') && (
+              <Input
+                label="직무"
+                type="text"
+                name="job"
+                placeholder="직무를 입력해주세요"
+                value={values?.job || ''}
+                onChange={(e) => {
+                  setValues({ ...values, [e.target.name]: e.target.value });
+                }}
+              />
+            )}
+            {values.program === 'CHALLENGE' && (
+              <>
+                <FormControl fullWidth>
+                  <InputLabel id="challengeType">챌린지 구분</InputLabel>
+                  <Select
+                    labelId="challengeType"
+                    id="challengeType"
+                    label="챌린지 구분"
+                    name="challengeType"
+                    value={values.challengeType}
+                    onChange={(e) => {
+                      setValues({ ...values, [e.target.name]: e.target.value });
+                    }}
+                  >
+                    {Object.keys(challengeTypeToText).map((type: string) => (
+                      <MenuItem key={type} value={type}>
+                        {challengeTypeToText[type]}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+                <FormControl fullWidth>
+                  <InputLabel id="priceType">가격 구분</InputLabel>
+                  <Select
+                    labelId="priceType"
+                    id="priceType"
+                    label="가격 구분"
+                    name="priceType"
+                    value={values.priceType}
+                    onChange={(e) => {
+                      setValues({ ...values, [e.target.name]: e.target.value });
+                    }}
+                  >
+                    {Object.keys(programPriceTypeToText).map((type: string) => (
+                      <MenuItem key={type} value={type}>
+                        {programPriceTypeToText[type]}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+                <FormControl fullWidth>
+                  <InputLabel id="participationType">참여 형태</InputLabel>
+                  <Select
+                    labelId="participationType"
+                    id="participationType"
+                    label="참여 형태"
+                    name="participationType"
+                    value={values.participationType}
+                    onChange={(e) => {
+                      setValues({ ...values, [e.target.name]: e.target.value });
+                    }}
+                  >
+                    {Object.keys(programParticipationTypeToText).map(
+                      (type: string) => (
+                        <MenuItem key={type} value={type}>
+                          {programParticipationTypeToText[type]}
+                        </MenuItem>
+                      ),
+                    )}
+                  </Select>
+                </FormControl>
+              </>
+            )}
             <Input
-              label="카카오톡 오픈채팅 링크"
-              value={values.openKakaoLink ? values.openKakaoLink : ''}
-              placeholder="카카오톡 오픈채팅 링크를 입력하세요"
-              onChange={(e: any) =>
-                setValues({ ...values, openKakaoLink: e.target.value })
-              }
+              label="썸네일"
+              type="text"
+              name="thumbnail"
+              placeholder="썸네일 링크를 입력해주세요"
+              value={values?.thumbnail || ''}
+              onChange={(e) => {
+                setValues({ ...values, [e.target.name]: e.target.value });
+              }}
             />
             <Input
-              type="number"
-              label="카카오톡 오픈채팅 비밀번호"
-              value={values.openKakaoPassword ? values.openKakaoPassword : ''}
-              placeholder="카카오톡 오픈채팅 비밀번호를 입력하세요"
-              onChange={(e: any) =>
-                setValues({ ...values, openKakaoPassword: e.target.value })
-              }
+              label="제목"
+              type="text"
+              name="title"
+              placeholder="제목을 입력해주세요"
+              value={values?.title || ''}
+              onChange={(e) => {
+                setValues({ ...values, [e.target.name]: e.target.value });
+              }}
             />
+            <Input
+              label="한 줄 설명"
+              type="text"
+              name="shortDescription"
+              placeholder="한 줄 설명을 입력해주세요"
+              value={values?.shortDescription || ''}
+              onChange={(e) => {
+                setValues({ ...values, [e.target.name]: e.target.value });
+              }}
+            />
+            {values.program === 'VOD' && (
+              <Input
+                label="리틀리 링크"
+                type="text"
+                name="link"
+                placeholder="리틀리 링크를 입력해주세요"
+                value={values?.link || ''}
+                onChange={(e) => {
+                  setValues({ ...values, [e.target.name]: e.target.value });
+                }}
+              />
+            )}
+            {(values.program === 'CHALLENGE' || values.program === 'LIVE') && (
+              <Input
+                label="정원"
+                type="number"
+                name="headcount"
+                placeholder="총 정원 수를 입력해주세요"
+                value={values?.headcount || ''}
+                onChange={(e) => {
+                  setValues({ ...values, [e.target.name]: e.target.value });
+                }}
+              />
+            )}
+            {values.program === 'CHALLENGE' && (
+              <>
+                <Input
+                  label="카카오톡 오픈채팅 링크"
+                  name="openKakaoLink"
+                  value={values.openKakaoLink}
+                  placeholder="카카오톡 오픈채팅 링크를 입력하세요"
+                  onChange={(e) =>
+                    setValues({ ...values, [e.target.name]: e.target.value })
+                  }
+                />
+                <Input
+                  label="카카오톡 오픈채팅 비밀번호"
+                  name="openKakaoPassword"
+                  value={values.openKakaoPassword}
+                  placeholder="카카오톡 오픈채팅 비밀번호를 입력하세요"
+                  onChange={(e) =>
+                    setValues({ ...values, [e.target.name]: e.target.value })
+                  }
+                />
+              </>
+            )}
+            {(values.program === 'CHALLENGE' || values.program === 'LIVE') && (
+              <FormControl fullWidth>
+                <InputLabel id="feeType">금액유형</InputLabel>
+                <Select
+                  labelId="feeType"
+                  id="feeType"
+                  name="feeType"
+                  label="금액유형"
+                  value={values?.feeType || ''}
+                  onChange={(e) => {
+                    setValues({ ...values, [e.target.name]: e.target.value });
+                  }}
+                >
+                  {values.program === 'LIVE' && (
+                    <MenuItem value="FREE">
+                      {newProgramFeeTypeToText['FREE']}
+                    </MenuItem>
+                  )}
+                  <MenuItem value="CHARGE">
+                    {newProgramFeeTypeToText['CHARGE']}
+                  </MenuItem>
+                  {values.program === 'CHALLENGE' && (
+                    <MenuItem value="REFUND">
+                      {newProgramFeeTypeToText['REFUND']}
+                    </MenuItem>
+                  )}
+                </Select>
+              </FormControl>
+            )}
+            {(values.program === 'CHALLENGE' || values.program === 'LIVE') &&
+              (values.feeType === 'CHARGE' || values.feeType === 'REFUND') && (
+                <>
+                  {values.program === 'CHALLENGE' &&
+                    (values.priceType === 'BASIC' ||
+                      values.priceType === 'ALL') && (
+                      <>
+                        <Input
+                          label="베이직 이용료 금액"
+                          type="number"
+                          name="basicPrice"
+                          placeholder="이용료 금액을 입력해주세요"
+                          value={values?.basicPrice || ''}
+                          onChange={(e) => {
+                            setValues({
+                              ...values,
+                              [e.target.name]: e.target.value,
+                            });
+                          }}
+                        />
+                        {values.feeType === 'REFUND' && (
+                          <Input
+                            label="베이직 보증금 금액"
+                            type="number"
+                            name="basicRefund"
+                            placeholder="보증금 금액을 입력해주세요"
+                            value={values?.basicRefund || ''}
+                            onChange={(e) => {
+                              setValues({
+                                ...values,
+                                [e.target.name]: e.target.value,
+                              });
+                            }}
+                          />
+                        )}
+                        <Input
+                          label="베이직 할인 금액"
+                          type="number"
+                          name="basicDiscount"
+                          placeholder="할인 금액을 입력해주세요"
+                          value={values?.basicDiscount || ''}
+                          onChange={(e) => {
+                            setValues({
+                              ...values,
+                              [e.target.name]: e.target.value,
+                            });
+                          }}
+                        />
+                      </>
+                    )}
+                  {values.program === 'CHALLENGE' &&
+                    (values.priceType === 'PREMIUM' ||
+                      values.priceType === 'ALL') && (
+                      <>
+                        <Input
+                          label="프리미엄 이용료 금액"
+                          type="number"
+                          name="premiumPrice"
+                          placeholder="이용료 금액을 입력해주세요"
+                          value={values?.premiumPrice || ''}
+                          onChange={(e) => {
+                            setValues({
+                              ...values,
+                              [e.target.name]: e.target.value,
+                            });
+                          }}
+                        />
+                        {values.feeType === 'REFUND' && (
+                          <Input
+                            label="프리미엄 보증금 금액"
+                            type="number"
+                            name="premiumRefund"
+                            placeholder="보증금 금액을 입력해주세요"
+                            value={values?.premiumRefund || ''}
+                            onChange={(e) => {
+                              setValues({
+                                ...values,
+                                [e.target.name]: e.target.value,
+                              });
+                            }}
+                          />
+                        )}
+                        <Input
+                          label="프리미엄 할인 금액"
+                          type="number"
+                          name="premiumDiscount"
+                          placeholder="할인 금액을 입력해주세요"
+                          value={values?.premiumDiscount || ''}
+                          onChange={(e) => {
+                            setValues({
+                              ...values,
+                              [e.target.name]: e.target.value,
+                            });
+                          }}
+                        />
+                      </>
+                    )}
+                  {values.program === 'LIVE' && (
+                    <>
+                      <Input
+                        label="이용료 금액"
+                        type="number"
+                        name="price"
+                        placeholder="이용료 금액을 입력해주세요"
+                        value={values?.price || ''}
+                        onChange={(e) => {
+                          setValues({
+                            ...values,
+                            [e.target.name]: e.target.value,
+                          });
+                        }}
+                      />
+                      <Input
+                        label="할인 금액"
+                        type="number"
+                        name="discount"
+                        placeholder="할인 금액을 입력해주세요"
+                        value={values?.discount || ''}
+                        onChange={(e) => {
+                          setValues({
+                            ...values,
+                            [e.target.name]: e.target.value,
+                          });
+                        }}
+                      />
+                    </>
+                  )}
+                  <FormControl fullWidth>
+                    <InputLabel id="accountType">입금계좌 은행</InputLabel>
+                    <Select
+                      labelId="accountType"
+                      id="accountType"
+                      label="입금계좌 은행"
+                      name="accountType"
+                      value={values?.accountType || ''}
+                      onChange={(e) => {
+                        setValues({
+                          ...values,
+                          [e.target.name]: e.target.value,
+                        });
+                      }}
+                    >
+                      {Object.keys(bankTypeToText).map((bankType: any) => (
+                        <MenuItem key={bankType} value={bankType}>
+                          {bankTypeToText[bankType]}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+                  <Input
+                    label="입금 계좌번호"
+                    name="accountNumber"
+                    placeholder="입금 계좌번호를 입력해주세요"
+                    value={values?.accountNumber || ''}
+                    onChange={(e) => {
+                      setValues({
+                        ...values,
+                        [e.target.name]: e.target.value,
+                      });
+                    }}
+                  />
+                </>
+              )}
+            {(values.program === 'CHALLENGE' || values.program === 'LIVE') && (
+              <>
+                {values.feeType === 'CHARGE' && (
+                  <DateTimeControl>
+                    <DateTimeLabel htmlFor="feeDueDate">
+                      입금 마감 기한
+                    </DateTimeLabel>
+                    <input
+                      id="feeDueDate"
+                      type="datetime-local"
+                      name="feeDueDate"
+                      value={values.feeDueDate}
+                      onChange={(e) =>
+                        setValues({
+                          ...values,
+                          [e.target.name]: e.target.value,
+                        })
+                      }
+                      step={600}
+                    />
+                  </DateTimeControl>
+                )}
+                <DateTimeControl>
+                  <DateTimeLabel htmlFor="startDate">시작 일자</DateTimeLabel>
+                  <input
+                    id="startDate"
+                    type="datetime-local"
+                    name="startDate"
+                    value={values.startDate}
+                    onChange={(e) =>
+                      setValues({ ...values, [e.target.name]: e.target.value })
+                    }
+                    step={600}
+                  />
+                </DateTimeControl>
+                <DateTimeControl>
+                  <DateTimeLabel htmlFor="endDate">종료 일자</DateTimeLabel>
+                  <input
+                    id="endDate"
+                    type="datetime-local"
+                    name="endDate"
+                    value={values.endDate}
+                    onChange={(e) =>
+                      setValues({ ...values, [e.target.name]: e.target.value })
+                    }
+                  />
+                </DateTimeControl>
+                <DateTimeControl>
+                  <DateTimeLabel htmlFor="dueDate">
+                    모집 마감 일자
+                  </DateTimeLabel>
+                  <input
+                    id="dueDate"
+                    type="datetime-local"
+                    name="dueDate"
+                    value={values.dueDate}
+                    onChange={(e) =>
+                      setValues({ ...values, [e.target.name]: e.target.value })
+                    }
+                  />
+                </DateTimeControl>
+                <DateTimeControl>
+                  <DateTimeLabel htmlFor="announcementDate">
+                    합격자 발표 일자
+                  </DateTimeLabel>
+                  <input
+                    id="announcementDate"
+                    type="datetime-local"
+                    name="announcementDate"
+                    value={values.announcementDate}
+                    onChange={(e) =>
+                      setValues({ ...values, [e.target.name]: e.target.value })
+                    }
+                  />
+                </DateTimeControl>
+              </>
+            )}
+            {(values.program === 'CHALLENGE' || values.program === 'LIVE') && (
+              <>
+                <ReactQuill
+                  modules={modules}
+                  placeholder="상세 내용을 입력해주세요."
+                  ref={quillRef}
+                  value={content ? content : ''}
+                  onChange={(value) => {
+                    setContent(value);
+                  }}
+                />
+                <FAQEditor
+                  faqList={faqList}
+                  faqIdList={faqIdList}
+                  onFAQAdd={handleFAQAdd}
+                  onFAQDelete={handleFAQDelete}
+                  onFAQChange={handleFAQChange}
+                  onFAQCheckChange={handleFAQCheckChange}
+                />
+              </>
+            )}
           </>
         )}
-        <FeeSection
-          values={values}
-          setValues={setValues}
-          editorMode={editorMode}
-        />
-        <DateTimeControl>
-          <DateTimeLabel htmlFor="startDate">시작 일자</DateTimeLabel>
-          <input
-            id="startDate"
-            type="datetime-local"
-            value={values.startDate}
-            onChange={(e) =>
-              setValues({ ...values, startDate: e.target.value })
-            }
-            step={600}
-          />
-        </DateTimeControl>
-        <DateTimeControl>
-          <DateTimeLabel htmlFor="endDate">종료 일자</DateTimeLabel>
-          <input
-            id="endDate"
-            type="datetime-local"
-            value={values.endDate}
-            onChange={(e) => setValues({ ...values, endDate: e.target.value })}
-          />
-        </DateTimeControl>
-        <DateTimeControl>
-          <DateTimeLabel htmlFor="dueDate">모집 마감 일자</DateTimeLabel>
-          <input
-            id="dueDate"
-            type="datetime-local"
-            value={values.dueDate}
-            onChange={(e) => setValues({ ...values, dueDate: e.target.value })}
-          />
-        </DateTimeControl>
-        <DateTimeControl>
-          <DateTimeLabel htmlFor="announcementDate">
-            합격자 발표 일자
-          </DateTimeLabel>
-          <input
-            id="announcementDate"
-            type="datetime-local"
-            value={values.announcementDate}
-            onChange={(e) =>
-              setValues({ ...values, announcementDate: e.target.value })
-            }
-          />
-        </DateTimeControl>
-        <FAQEditor
-          faqList={faqList}
-          faqIdList={faqIdList}
-          onFAQAdd={handleFAQAdd}
-          onFAQDelete={handleFAQDelete}
-          onFAQChange={handleFAQChange}
-          onFAQCheckChange={handleFAQCheckChange}
-        />
-        <Input
-          label="필독사항"
-          value={values.notice ? values.notice : ''}
-          name="notice"
-          placeholder="필독사항을 입력하세요"
-          onChange={(e: any) =>
-            setValues({ ...values, notice: e.target.value })
-          }
-          multiline
-          rows={8}
-        />
-        <ReactQuill
-          modules={modules}
-          placeholder="상세 내용을 입력해주세요."
-          ref={quillRef}
-          value={content ? content : ''}
-          onChange={(value) => {
-            setContent(value);
-          }}
-        />
         <div className="flex justify-end gap-2">
           <button
             type="submit"

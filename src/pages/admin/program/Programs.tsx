@@ -25,11 +25,10 @@ const Programs = () => {
     setLoading(true);
     const currentPage = searchParams.get('page');
     const params = {
-      page: currentPage,
-      size: sizePerPage,
+      numberOfPages: sizePerPage,
     };
     axios
-      .get('/program/admin', { params })
+      .get('/program', { params })
       .then((res) => {
         setProgramList(res.data.programList);
         setMaxPage(res.data.pageInfo.totalPages);
