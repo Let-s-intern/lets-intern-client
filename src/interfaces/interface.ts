@@ -1,6 +1,7 @@
 import { STATUS, TABLE_CONTENT } from '../utils/convert';
 
 export * from './Program.interface';
+export * from './Application.interface';
 export * from './Mission.interface';
 export * from './Guide.interface';
 
