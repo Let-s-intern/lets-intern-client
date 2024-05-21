@@ -16,7 +16,7 @@ const HomeHeader = () => {
               인턴 지원 챌린지 18기 모집
             </h1>
             <p className="mt-1 text-sm text-white xs:text-sm sm:text-base">
-              매일 미션 수행하고 2주 만에 인턴 지원하자!
+              매일 미션 수행하고 4주 만에 인턴 지원하자!
             </p>
             <Link
               to="/program?category=CHALLENGE"

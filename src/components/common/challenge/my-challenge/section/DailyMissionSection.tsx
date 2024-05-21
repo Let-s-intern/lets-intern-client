@@ -26,8 +26,8 @@ const DailyMissionSection = ({ dailyMission }: Props) => {
       className="mt-5 scroll-mt-[calc(6rem+1rem)] text-[#333333]"
       ref={sectionRef}
     >
-      <h2 className="text-lg font-bold">데일리 미션</h2>
-      <div className="mt-2 rounded bg-[#F6F8FB] px-12 py-8">
+      <h2 className="text-lg font-bold">미션 수행하기</h2>
+      <div className="rounded mt-2 bg-[#F6F8FB] px-12 py-8">
         <DailyMissionInfoSection dailyMission={dailyMission} />
         <hr className="my-8 border-[0.5px] border-[#DEDEDE]" />
         <DailyMissionSubmitSection dailyMission={dailyMission} />
