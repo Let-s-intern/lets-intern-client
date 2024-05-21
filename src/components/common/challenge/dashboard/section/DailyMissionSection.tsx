@@ -28,7 +28,7 @@ const DailyMissionSection = ({ dailyMission, isLoading, isDone }: Props) => {
             '챌린지가 종료되었습니다.'
           ) : (
             <>
-              {dailyMission.th}일차. {dailyMission.title}
+              {dailyMission.th}회차. {dailyMission.title}
             </>
           )}
         </h2>
@@ -51,9 +51,9 @@ const DailyMissionSection = ({ dailyMission, isLoading, isDone }: Props) => {
         to={`/challenge/${params.programId}/me${
           !isDone ? '?scroll_to=daily-mission' : ''
         }`}
-        className="mt-4 w-full rounded bg-primary px-4 py-3 text-center font-semibold text-white"
+        className="mt-4 w-full rounded-xxs bg-primary px-4 py-3 text-center font-semibold text-white"
       >
-        {isDone ? '이전 미션 돌아보기' : '오늘의 미션 수행하기'}
+        {isDone ? '이전 미션 돌아보기' : `${dailyMission.th}회차 미션 수행하기`}
       </Link>
     </section>
   );

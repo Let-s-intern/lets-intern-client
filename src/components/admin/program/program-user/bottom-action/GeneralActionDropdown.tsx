@@ -13,16 +13,9 @@ import {
 interface Props {
   applications: any;
   program: any;
-  sizePerPage: number;
-  maxPage: number;
 }
 
-const GeneralActionDropdown = ({
-  applications,
-  program,
-  sizePerPage,
-  maxPage,
-}: Props) => {
+const GeneralActionDropdown = ({ applications, program }: Props) => {
   const params = useParams();
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -31,16 +24,9 @@ const GeneralActionDropdown = ({
     isApproved: boolean,
     column: 'EMAIL' | 'PHONE',
   ) => {
-    let allApplications: any[] = [];
-    for (let pageNum = 1; pageNum <= maxPage; pageNum++) {
-      const res = await axios.get(`/application/admin/${params.programId}`, {
-        params: {
-          page: pageNum,
-          size: sizePerPage,
-        },
-      });
-      allApplications = [...allApplications, ...res.data.applicationList];
-    }
+    const res = await axios.get(`/application/admin/${params.programId}`);
+    const allApplications: any[] = res.data.applicationList;
+    console.log(allApplications);
     const emailList = isApproved
       ? allApplications
           .filter(
@@ -119,8 +105,8 @@ const GeneralActionDropdown = ({
           : '',
         application.application.feeIsConfirmed ? '입금완료' : '입금대기',
         wishJobToText[application.application.wishJob],
-        application.application.wishCompany,
-        application.application.applyMotive,
+        `"${application.application.wishCompany}"`,
+        `"${application.application.applyMotive}"`,
         application.application.way === 'OFFLINE'
           ? '오프라인'
           : application.application.way === 'ONLINE'
@@ -128,7 +114,7 @@ const GeneralActionDropdown = ({
           : '',
         applicationStatusToText[application.application.status],
         application.application.createdAt,
-        application.application.preQuestions,
+        `"${application.application.preQuestions}"`,
       );
       csv.push(row.join(','));
     });

@@ -10,7 +10,7 @@ interface Props {
 
 const TableRowDetailMenu = ({ mission, setMenuShown }: Props) => {
   return (
-    <div className="rounded-xxs mt-1 bg-neutral-100 px-4 py-8">
+    <div className="mt-1 rounded-xxs bg-neutral-100 px-4 py-8">
       <div className="mx-auto w-[40rem]">
         <div className="flex flex-col gap-6">
           <div className="flex items-center">
@@ -31,7 +31,7 @@ const TableRowDetailMenu = ({ mission, setMenuShown }: Props) => {
                 공개일
               </label>
               <span className="w-48">
-                {mission.th}일차 ({formatMissionDateString(mission.startDate)})
+                {mission.th}회차 ({formatMissionDateString(mission.startDate)})
               </span>
             </div>
             <div className="flex items-center">

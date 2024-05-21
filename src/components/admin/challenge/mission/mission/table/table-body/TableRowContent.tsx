@@ -22,7 +22,9 @@ const TableRowContent = ({ th, mission, menuShown, setMenuShown }: Props) => {
     <TableBodyRowBox
       onClick={() => setMenuShown(menuShown !== 'DETAIL' ? 'DETAIL' : 'NONE')}
     >
-      <TableBodyCell className={clsx(cellWidthList[0])}>{th}</TableBodyCell>
+      <TableBodyCell className={clsx(cellWidthList[0])}>
+        {mission.th}
+      </TableBodyCell>
       <TableBodyCell className={clsx(cellWidthList[1])} bold>
         {mission.title}
       </TableBodyCell>

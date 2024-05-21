@@ -21,7 +21,7 @@ const MissionIcon = ({ className, mission }: Props) => {
       <Link
         to={`/challenge/${params.programId}/me?scroll_to_mission=${mission.missionId}`}
         className={clsx(
-          'relative flex aspect-square cursor-pointer flex-col items-center justify-center rounded-md text-white',
+          'relative flex aspect-square cursor-pointer flex-col items-center justify-center rounded-sm text-white',
           className,
           {
             'bg-[#d0cfcf]': !isAttended,
@@ -59,7 +59,7 @@ const MissionIcon = ({ className, mission }: Props) => {
           </i>
         )}
         <span className="block font-pretendard text-xs font-semibold">
-          {mission.missionTh}일차
+          {mission.missionTh}회차
         </span>
       </Link>
       <div className="mt-2 flex items-center justify-center">

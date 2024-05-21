@@ -24,13 +24,14 @@ const MissionResultItem = ({ mission, todayTh, isLastMission }: Props) => {
         })}
       >
         {formatToMonthDate(mission.missionStartDate)}
+        <br />~ {formatToMonthDate(mission.missionEndDate)}
       </div>
       <div
         className={clsx('mx-1 mt-1 pb-2', {
           'rounded bg-[#F2F1F1]': mission.missionTh === todayTh,
         })}
       >
-        <div className="py-2 text-center text-sm">{mission.missionTh}일차</div>
+        <div className="py-2 text-center text-sm">{mission.missionTh}회차</div>
         <div
           className={clsx('flex items-end justify-center text-3xl font-bold', {
             'opacity-0': todayTh < mission.missionTh && todayTh !== 0,

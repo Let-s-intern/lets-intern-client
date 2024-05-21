@@ -27,7 +27,7 @@ const MissionDateItem = ({ mission }: Props) => {
     <li className="cursor-pointer px-8 py-2 hover:bg-gray-50">
       <div className="flex items-center justify-between">
         <span>
-          {mission.th}일차. {mission.title}
+          {mission.th}회차. {mission.title}
         </span>
         <span className="text-sm">
           {formatMissionDateString(mission.startDate)} 진행
