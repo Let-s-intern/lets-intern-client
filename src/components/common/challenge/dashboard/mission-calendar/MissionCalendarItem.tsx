@@ -21,6 +21,7 @@ const MissionCalendarItem = ({ mission, todayTh }: Props) => {
           })}
         >
           {formatToMonthDate(mission.missionStartDate)}
+          <br />~ {formatToMonthDate(mission.missionEndDate)}
         </span>
         {mission.missionTh === todayTh ? (
           <MissionTodayIcon className="mt-3" mission={mission} />

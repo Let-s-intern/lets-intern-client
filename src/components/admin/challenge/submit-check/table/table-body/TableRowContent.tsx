@@ -21,7 +21,9 @@ const TableRowContent = ({ th, mission, onClick }: Props) => {
 
   return (
     <TableBodyRowBox onClick={onClick}>
-      <TableBodyCell className={clsx(cellWidthList[0])}>{th}</TableBodyCell>
+      <TableBodyCell className={clsx(cellWidthList[0])}>
+        {mission.th}
+      </TableBodyCell>
       <TableBodyCell className={clsx(cellWidthList[1])} bold>
         {mission.title}
       </TableBodyCell>

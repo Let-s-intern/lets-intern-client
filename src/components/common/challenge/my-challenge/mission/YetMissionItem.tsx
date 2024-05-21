@@ -31,7 +31,7 @@ const YetMissionItem = ({ mission }: Props) => {
     <li key={mission.id} className="rounded-xl bg-white p-6">
       <div className="flex items-center justify-between px-3">
         <h4 className="text-lg font-semibold">
-          {mission.th}일차. {mission.title}
+          {mission.th}회차. {mission.title}
         </h4>
         <button onClick={() => setIsDetailShown(!isDetailShown)}>
           {!isDetailShown || isDetailLoading ? '미션보기' : '닫기'}

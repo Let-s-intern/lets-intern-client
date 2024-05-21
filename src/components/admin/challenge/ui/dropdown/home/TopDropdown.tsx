@@ -57,7 +57,7 @@ const TopDropdown = ({
   return (
     <div className="relative" ref={dropdownRef}>
       <div
-        className="rounded-xxs flex w-24 cursor-pointer items-center justify-between gap-4 border border-neutral-400 py-2 pl-4 pr-2"
+        className="flex w-28 cursor-pointer items-center justify-between gap-4 rounded-xxs border border-neutral-400 py-2 pl-4 pr-2"
         onClick={() => setIsMenuShown(!isMenuShown)}
       >
         <span
@@ -72,7 +72,7 @@ const TopDropdown = ({
         </i>
       </div>
       {!isLoading && isMenuShown && (
-        <ul className="absolute bottom-0 w-24 translate-y-[calc(100%+0.25rem)] rounded bg-white shadow-md">
+        <ul className="rounded absolute bottom-0 w-24 translate-y-[calc(100%+0.25rem)] bg-white shadow-md">
           {challengeList.map((challenge: any) => (
             <li
               key={challenge.id}
