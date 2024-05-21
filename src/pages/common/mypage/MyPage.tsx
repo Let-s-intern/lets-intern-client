@@ -1,8 +1,8 @@
+import { useEffect } from 'react';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 
 import TabBar from '../../../components/common/ui/tab/TabBar';
 import TabItem from '../../../components/common/ui/tab/TabItem';
-import { useEffect } from 'react';
 
 const MyPage = () => {
   const location = useLocation();

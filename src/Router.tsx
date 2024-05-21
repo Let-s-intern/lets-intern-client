@@ -1,6 +1,5 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 
-import Home from './pages/common/home/Home';
 import About from './pages/common/about/About';
 import Programs from './pages/common/program/Programs';
 import ProgramDetail from './pages/common/program/ProgramDetail';
@@ -8,7 +7,7 @@ import Login from './pages/common/auth/Login';
 import MyPage from './pages/common/mypage/MyPage';
 import SignUp from './pages/common/auth/SignUp';
 import FindPassword from './pages/common/auth/FindPassword';
-import Privacy from './pages/common/mypage/Privacy';
+import PrivacyRegacy from './pages/common/mypage/PrivacyRegacy';
 import Review from './pages/common/mypage/Review';
 import Layout from './components/common/ui/layout/Layout';
 import AdminLayout from './components/admin/ui/layout/AdminLayout';
@@ -66,6 +65,7 @@ import PopUpBannerEdit from './pages/admin/banner/pop-up-banner/PopUpBannerEdit'
 import OnlineContentsCreate from './pages/admin/online-contents/OnlineContentsCreate';
 import OnlineContentsEdit from './pages/admin/online-contents/OnlineContentsEdit';
 import HomeRegacy from './pages/common/home/HomeRegacy';
+import Privacy from './pages/common/mypage/Privacy';
 
 const Router = () => {
   return (

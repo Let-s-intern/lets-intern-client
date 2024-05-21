@@ -1,119 +1,117 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 
 import axios from '../../../utils/axios';
-import MainInfo from '../../../components/common/mypage/section/privacy/MainInfo';
-import PasswordChange from '../../../components/common/mypage/section/privacy/PasswordChange';
-import SubInfo from '../../../components/common/mypage/section/privacy/SubInfo';
-import AlertModal from '../../../components/ui/alert/AlertModal';
-import AccountInfo from '../../../components/common/mypage/section/privacy/AccountInfo';
+import FormControl from '../../../components/common/mypage/privacy/FormControl';
+import Button from '../../../components/common/mypage/privacy/Button';
 
 const Privacy = () => {
-  const [userInfo, setUserInfo] = useState<any>({
-    mainInfoValues: {},
-    subInfoValues: {},
-    passwordValues: {},
-    socialAuth: null,
-    initialValues: {},
-  });
-  const [loading, setLoading] = useState(true);
-  const [showAlert, setShowAlert] = useState(false);
-  const [alertInfo, setAlertInfo] = useState<{
-    title: string;
-    message: string;
-    onConfirm?: () => void;
+  const [user, setUser] = useState<{
+    name: string;
+    phoneNum: string;
+    email: string;
+    contactEmail: string;
+    university: string;
+    grade: string;
+    major: string;
+    wishJob: string;
+    wishCompany: string;
   }>({
-    title: '',
-    message: '',
+    name: '',
+    phoneNum: '',
+    email: '',
+    contactEmail: '',
+    university: '',
+    grade: '',
+    major: '',
+    wishJob: '',
+    wishCompany: '',
   });
 
-  const { isError } = useQuery({
-    queryKey: ['user', 'privacy'],
+  const getMyInfo = useQuery({
+    queryKey: ['user'],
     queryFn: async () => {
       const res = await axios.get('/user');
-      const { name, email, phoneNum, major, university, authProvider } =
-        res.data;
-      setUserInfo({
-        mainInfoValues: { name, email, phoneNum },
-        subInfoValues: { major, university },
-        initialValues: { name, email, phoneNum, major, university },
-        passwordValues: {},
-        socialAuth: authProvider,
-      });
-      setLoading(false);
+      setUser(getMyInfo.data.data);
       return res.data;
     },
-    refetchOnWindowFocus: false,
   });
 
-  useEffect(() => {
-    if (isError) {
-      setLoading(false);
-    }
-  }, [isError]);
-
-  const resetInitialValues = () => {
-    setUserInfo((prev: any) => ({
-      ...prev,
-      initialValues: { ...prev.mainInfoValues, ...prev.subInfoValues },
-    }));
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setUser({ ...user, [e.target.name]: e.target.value });
   };
 
-  if (isError) {
-    return <main className="mypage-content privacy-page">에러 발생</main>;
-  }
-
   return (
-    <main className="mypage-content privacy-page">
-      <MainInfo
-        mainInfoValues={userInfo.mainInfoValues}
-        initialValues={userInfo.initialValues}
-        socialAuth={userInfo.socialAuth}
-        loading={loading}
-        setUserInfo={setUserInfo}
-        resetInitialValues={resetInitialValues}
-        setShowAlert={setShowAlert}
-        setAlertInfo={setAlertInfo}
-      />
-      <AccountInfo />
-      <SubInfo
-        subInfoValues={userInfo.subInfoValues}
-        initialValues={userInfo.initialValues}
-        loading={loading}
-        setUserInfo={setUserInfo}
-        resetInitialValues={resetInitialValues}
-        setShowAlert={setShowAlert}
-        setAlertInfo={setAlertInfo}
-      />
-      <PasswordChange
-        passwordValues={userInfo.passwordValues}
-        setUserInfo={setUserInfo}
-        setShowAlert={setShowAlert}
-        setAlertInfo={setAlertInfo}
-      />
-      {showAlert && (
-        <AlertModal
-          onConfirm={() => {
-            alertInfo.onConfirm && alertInfo.onConfirm();
-            setShowAlert(false);
-            setAlertInfo({ title: '', message: '' });
-          }}
-          title={alertInfo.title}
-          showCancel={false}
-          highlight="confirm"
-        >
-          <p>
-            {alertInfo.message.includes('\n')
-              ? alertInfo.message.split('\n').map((line) => (
-                  <>
-                    {line}
-                    <br />
-                  </>
-                ))
-              : alertInfo.message}
-          </p>
-        </AlertModal>
-      )}
+    <main>
+      <section className="flex flex-col gap-6">
+        <h1 className="text-1.125-bold">기본 정보</h1>
+        <div className="flex flex-col gap-3">
+          <FormControl
+            label="이름"
+            name="name"
+            value={user.name}
+            onChange={handleInputChange}
+            placeholder="김렛츠"
+          />
+          <FormControl
+            label="휴대폰 번호"
+            name="phoneNum"
+            value={user.phoneNum}
+            onChange={handleInputChange}
+            placeholder="010-0000-0000"
+          />
+          <FormControl
+            label="가입한 이메일"
+            name="email"
+            value={user.email}
+            onChange={handleInputChange}
+            placeholder="example@example.com"
+          />
+          <FormControl
+            label="렛츠커리어 정보 수신용 이메일"
+            name="contactEmail"
+            value={user.contactEmail}
+            onChange={handleInputChange}
+            placeholder="example@example.com"
+          />
+          <FormControl
+            label="학교"
+            name="university"
+            value={user.university}
+            onChange={handleInputChange}
+            placeholder="렛츠대학교"
+          />
+          <FormControl
+            label="학년"
+            name="grade"
+            value={user.grade}
+            onChange={handleInputChange}
+            placeholder="1"
+          />
+          <FormControl
+            label="전공"
+            name="major"
+            value={user.major}
+            onChange={handleInputChange}
+            placeholder="OO학과"
+          />
+          <FormControl
+            label="희망 직무"
+            name="wishJob"
+            value={user.wishJob}
+            onChange={handleInputChange}
+            placeholder="희망 직무를 입력해주세요."
+          />
+          <FormControl
+            label="희망 기업"
+            name="wishCompany"
+            value={user.wishCompany}
+            onChange={handleInputChange}
+            placeholder="희망 기업을 입력해주세요."
+          />
+        </div>
+        <Button>기본 정보 수정하기</Button>
+      </section>
     </main>
   );
 };
