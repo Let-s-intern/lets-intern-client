@@ -43,7 +43,7 @@ const AdminLayout = () => {
 
     const fetchIsAdmin = async () => {
       try {
-        const res = await axios.get('/user/isAdmin');
+        const res = await axios.get('/user/is-admin');
         if (!res.data) {
           navigate('/');
         }
@@ -82,6 +82,10 @@ const AdminLayout = () => {
         {
           name: '콘텐츠 관리',
           url: '/admin/challenge/contents',
+        },
+        {
+          name: '미션 관리',
+          url: '/admin/challenge/missions',
         },
         {
           name: '챌린지 운영',

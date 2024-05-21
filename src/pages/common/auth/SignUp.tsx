@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useMutation } from '@tanstack/react-query';
 
 import Input from '../../../components/ui/input/Input';
 import Button from '../../../components/common/ui/button/Button';
@@ -14,6 +15,7 @@ import {
 } from '../../../utils/valid';
 import AlertModal from '../../../components/ui/alert/AlertModal';
 import SocialLogin from '../../../components/common/auth/ui/SocialLogin';
+import { AxiosError } from 'axios';
 
 const SignUp = () => {
   const navigate = useNavigate();
@@ -31,6 +33,30 @@ const SignUp = () => {
   const [errorMessage, setErrorMessage] = useState('');
   const [showModal, setShowModal] = useState<boolean>(false);
   const [successModalOpen, setSuccessModalOpen] = useState<boolean>(false);
+
+  const fetchSignUp = useMutation({
+    mutationFn: async () => {
+      const res = await axios.post('/user/signup', {
+        email: value.email,
+        name: value.name,
+        phoneNum: value.phoneNum,
+        password: value.password,
+      });
+      return res.data;
+    },
+    onSuccess: () => {
+      setSuccessModalOpen(true);
+    },
+    onError: (error) => {
+      const axiosError = error as AxiosError;
+      setError(error);
+      if (axiosError.response?.status === 409) {
+        setErrorMessage('이미 가입된 이메일입니다.');
+      } else {
+        setErrorMessage('회원가입에 실패했습니다.');
+      }
+    },
+  });
 
   useEffect(() => {
     const accessToken = localStorage.getItem('access-token');
@@ -65,20 +91,7 @@ const SignUp = () => {
       setErrorMessage('비밀번호가 일치하지 않습니다.');
       return;
     }
-    const fetchSignUp = async () => {
-      const { passwordConfirm, agreeToTerms, agreeToPrivacy, ...data } = value;
-      try {
-        await axios.post('/user/signup', data, {
-          headers: { Authorization: '' },
-        });
-        setSuccessModalOpen(true);
-      } catch (err) {
-        console.error(err);
-        setError(err);
-        setErrorMessage((err as any).response?.data.reason);
-      }
-    };
-    fetchSignUp();
+    fetchSignUp.mutate();
   };
 
   useEffect(() => {

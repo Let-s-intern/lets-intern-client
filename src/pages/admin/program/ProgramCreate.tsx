@@ -3,6 +3,92 @@ import { useNavigate } from 'react-router-dom';
 
 import axios from '../../../utils/axios';
 import ProgramEditor from '../../../components/admin/program/ui/editor/ProgramEditor';
+import { useMutation } from '@tanstack/react-query';
+import { newProgramTypeDetailToText } from '../../../utils/convert';
+
+interface VodClassRequest {
+  title: string;
+  shortDesc: string;
+  thumbnail: string;
+  job: string;
+  programTypeInfo: {
+    classificationInfo: {
+      programClassification: keyof typeof newProgramTypeDetailToText;
+    };
+  }[];
+}
+
+interface LiveClassRequest {
+  title: string;
+  shortDesc: string;
+  desc: string;
+  participationCount: number;
+  thumbnail: string;
+  mentorName: string;
+  job: string;
+  place: string;
+  startDate: string;
+  endDate: string;
+  deadline: string;
+  progressType: string;
+  programTypeInfo: {
+    classificationInfo: {
+      programClassification: string;
+    };
+  }[];
+  priceInfo: {
+    priceInfo: {
+      price: number;
+      discount: number;
+      accountNumber: string;
+      deadline: string;
+      accountType: string;
+    };
+    livePriceType: string;
+  };
+  faqInfo: {
+    question: string;
+    answer: string;
+    faqProgramType: 'LIVE';
+  }[];
+}
+
+interface ChallengeRequest {
+  title: string;
+  shortDesc: string;
+  desc: string;
+  participationCount: number;
+  thumbnail: string;
+  mentorName: string;
+  startDate: string;
+  endDate: string;
+  deadline: string;
+  chatLink: string;
+  chatPassword: string;
+  challengeType: string;
+  programTypeInfo: {
+    classificationInfo: {
+      programClassification: string;
+    };
+  }[];
+  priceInfo: {
+    priceInfo: {
+      price: number;
+      discount: number;
+      accountNumber: string;
+      deadline: string;
+      accountType: string;
+    };
+    challengePriceType: string;
+    challengeUserType: string;
+    challengeParticipationType: string;
+  }[];
+  faqInfo: {
+    question: string;
+    answer: string;
+    faqProgramType: 'CHALLENGE';
+  }[];
+}
 
 const ProgramCreate = () => {
   const navigate = useNavigate();
@@ -12,6 +98,45 @@ const ProgramCreate = () => {
   const [content, setContent] = useState<any>('');
   const [faqList, setFaqList] = useState<any>([]);
   const [faqIdList, setFaqIdList] = useState<any>([]);
+
+  const addVodClass = useMutation({
+    mutationFn: async (req: VodClassRequest) => {
+      const res = await axios.post('/vod', req);
+      return res.data;
+    },
+    onSuccess: () => {
+      navigate('/admin/programs');
+    },
+    onError: () => {
+      alert('프로그램 생성에 실패했습니다.');
+    },
+  });
+
+  const addLiveClass = useMutation({
+    mutationFn: async (req: LiveClassRequest) => {
+      const res = await axios.post('/live', req);
+      return res.data;
+    },
+    onSuccess: () => {
+      navigate('/admin/programs');
+    },
+    onError: () => {
+      alert('프로그램 생성에 실패했습니다.');
+    },
+  });
+
+  const addChallenge = useMutation({
+    mutationFn: async (req: ChallengeRequest) => {
+      const res = await axios.post('/challenge', req);
+      return res.data;
+    },
+    onSuccess: () => {
+      navigate('/admin/programs');
+    },
+    onError: () => {
+      alert('프로그램 생성에 실패했습니다.');
+    },
+  });
 
   useEffect(() => {
     if (!values.type) return;
@@ -96,34 +221,153 @@ const ProgramCreate = () => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!values.type) {
-      alert('프로그램 유형을 선택해주세요.');
+    // if (!values.type) {
+    //   alert('프로그램 유형을 선택해주세요.');
+    //   return;
+    // }
+    // if (faqIdList.length === 0 || !faqIdList) {
+    //   alert('FAQ를 하나 이상 선택해주세요.');
+    //   return;
+    // }
+    if (values.program === 'VOD') {
+      const newValue: VodClassRequest = {
+        title: values.title,
+        shortDesc: values.shortDescription,
+        thumbnail: values.thumbnail,
+        job: values.job,
+        programTypeInfo: [
+          {
+            classificationInfo: {
+              programClassification: values.programType,
+            },
+          },
+        ],
+      };
+      addVodClass.mutate(newValue);
       return;
-    }
-    if (faqIdList.length === 0 || !faqIdList) {
-      alert('FAQ를 하나 이상 선택해주세요.');
+    } else if (values.program === 'LIVE') {
+      const newValue: LiveClassRequest = {
+        title: values.title,
+        shortDesc: values.shortDescription,
+        desc: content,
+        mentorName: '고정값입니다.',
+        participationCount: Number(values.headcount),
+        thumbnail: values.thumbnail,
+        job: values.job,
+        progressType: values.way,
+        place: values.location,
+        startDate: values.startDate,
+        endDate: values.endDate,
+        deadline: values.dueDate,
+        programTypeInfo: [
+          {
+            classificationInfo: {
+              programClassification: values.programType,
+            },
+          },
+        ],
+        priceInfo: {
+          priceInfo: {
+            price: Number(values.price),
+            discount: Number(values.discount),
+            accountNumber: values.accountNumber,
+            deadline: values.feeDueDate,
+            accountType: values.accountType,
+          },
+          livePriceType: values.feeType,
+        },
+        faqInfo: [
+          {
+            question: '고정값입니다.',
+            answer: '고정값입니다.',
+            faqProgramType: 'LIVE',
+          },
+        ],
+      };
+      addLiveClass.mutate(newValue);
       return;
-    }
-    const reqData = {
-      ...values,
-      contents: content,
-      th: Number(values.th),
-      headcount: Number(values.headcount),
-      faqIdList: faqIdList,
-    };
-    try {
-      await axios.post('/program', reqData);
-      for (let faq of faqList) {
-        await axios.patch(`/faq/${faq.id}`, {
-          programType: values.type,
-          question: faq.question,
-          answer: faq.answer,
+    } else if (values.program === 'CHALLENGE') {
+      const newPriceInfo = [];
+      if (values.priceType === 'BASIC' || values.priceType === 'ALL') {
+        newPriceInfo.push({
+          priceInfo: {
+            price: Number(values.basicPrice),
+            discount: Number(values.basicDiscount),
+            accountNumber: values.accountNumber,
+            deadline: values.feeDueDate,
+            accountType: values.accountType,
+          },
+          challengePriceType: values.feeType,
+          challengeUserType: values.priceType,
+          challengeParticipationType: values.participationType,
         });
       }
-      navigate('/admin/programs');
-    } catch (err) {
-      alert('프로그램 생성에 실패했습니다.');
+      if (values.priceType === 'PREMIUM' || values.priceType === 'ALL') {
+        newPriceInfo.push({
+          priceInfo: {
+            price: Number(values.premiumPrice),
+            discount: Number(values.premiumDiscount),
+            accountNumber: values.accountNumber,
+            deadline: values.feeDueDate,
+            accountType: values.accountType,
+          },
+          challengePriceType: values.feeType,
+          challengeUserType: values.priceType,
+          challengeParticipationType: values.participationType,
+        });
+      }
+      const newValue: ChallengeRequest = {
+        title: values.title,
+        shortDesc: values.shortDescription,
+        desc: content,
+        mentorName: '고정값입니다.',
+        participationCount: Number(values.headcount),
+        thumbnail: values.thumbnail,
+        startDate: values.startDate,
+        endDate: values.endDate,
+        deadline: values.dueDate,
+        chatLink: values.openKakaoLink,
+        chatPassword: values.openKakaoPassword,
+        challengeType: values.challengeType,
+        programTypeInfo: [
+          {
+            classificationInfo: {
+              programClassification: values.programType,
+            },
+          },
+        ],
+        priceInfo: newPriceInfo,
+        faqInfo: [
+          {
+            question: '고정값입니다.',
+            answer: '고정값입니다.',
+            faqProgramType: 'CHALLENGE',
+          },
+        ],
+      };
+      addChallenge.mutate(newValue);
+      return;
     }
+    // const reqData = {
+    //   ...values,
+    //   contents: content,
+    //   th: Number(values.th),
+    //   headcount: Number(values.headcount),
+    //   faqIdList: faqIdList,
+    // };
+    // try {
+    //   await axios.post('/program', reqData);
+    //   for (let faq of faqList) {
+    //     await axios.patch(`/faq/${faq.id}`, {
+    //       programType: values.type,
+    //       question: faq.question,
+    //       answer: faq.answer,
+    //     });
+    //   }
+    //   navigate('/admin/programs');
+    // } catch (err) {
+    //   alert('프로그램 생성에 실패했습니다.');
+    // }
   };
 
   const handleFAQIdListReset = () => {

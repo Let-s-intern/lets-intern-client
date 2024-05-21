@@ -1,3 +1,48 @@
+export const newProgramTypeToText: Record<string, string> = {
+  CHALLENGE: '챌린지',
+  LIVE: 'LIVE 클래스',
+  VOD: 'VOD 클래스',
+};
+
+export const newProgramFeeTypeToText: Record<string, string> = {
+  FREE: '무료',
+  CHARGE: '이용료',
+  REFUND: '보증금',
+};
+
+export const newProgramTypeDetailToText: Record<string, string> = {
+  CAREER_SEARCH: '커리어 서치',
+  DOCUMENT_PREPARATION: '서류 준비',
+  MEETING_PREPARATION: '면접 준비',
+  PASS: '합격 후 성장',
+};
+
+export const challengeTypeToText: Record<string, string> = {
+  CAREER_START: '커리어 시작',
+  DOCUMENT_PREPARATION: '서류 준비',
+  MEETING_PREPARATION: '면접 준비',
+  ETC: '기타',
+};
+
+export const programPriceTypeToText: Record<string, string> = {
+  ALL: '전체',
+  BASIC: '베이직',
+  PREMIUM: '프리미엄',
+};
+
+export const programParticipationTypeToText: Record<string, string> = {
+  ALL: '전체',
+  LIVE: 'LIVE',
+  FREE: '자율일정',
+};
+
+export const programTypeToText: Record<string, string> = {
+  CHALLENGE_FULL: '챌린지',
+  CHALLENGE_HALF: '챌린지',
+  BOOTCAMP: '챌린지',
+  LETS_CHAT: '클래스',
+};
+
 export const challengeTopicToText: Record<string, string> = {
   ALL: '전체',
   MARKETING: '마케팅',
@@ -253,3 +298,15 @@ export const missionSubmitToBadge = ({
     style: 'text-primary bg-[#E7E6FD]',
   };
 };
+
+// 테이블 컴포넌트에 사용 (SAVE: 1번 이상 저장한 행, INSERT: 새로 추가한 행)
+export const STATUS = {
+  SAVE: 0,
+  INSERT: 1,
+} as const;
+
+export const TABLE_CONTENT = {
+  INPUT: 0,
+  DROPDOWN: 1,
+  DATE: 2,
+} as const;

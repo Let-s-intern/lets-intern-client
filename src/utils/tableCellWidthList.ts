@@ -1,12 +1,20 @@
 export const missionCellWidthList = [
-  'w-20',
-  'flex-1',
-  'w-32',
-  'w-32',
-  'w-20',
-  'w-20',
-  'w-20',
-  'w-32',
+  'w-[11%]',
+  'w-[13%]',
+  'w-[10%]',
+  'w-[10%]',
+  'w-[10%]',
+  'w-[12%]',
+  'w-[12%]',
+  'w-[12%]',
+];
+
+export const missionManagementCellWidthList = [
+  'w-[7%]',
+  'w-[10%]',
+  'w-[33%]',
+  'w-[33%]',
+  'w-[10%]',
 ];
 
 export const missionContentsCellWidthList = ['w-20', 'flex-1', 'w-40'];
@@ -22,12 +30,16 @@ export const missionSubmitCellWidthList = [
 ];
 
 export const challengeUserCellWidthList = [
-  'w-[18%]',
-  'w-[20%]',
-  'w-[15%]',
-  'w-[15%]',
-  'w-[25%]',
   'w-[5%]',
+  'flex-1',
+  'w-[10%]',
+  'w-[10%]',
+  'w-[10%]',
+  'w-[5%]',
+  'w-[12%]',
+  'w-[10%]',
+  'w-[8%]',
+  'w-[15%]',
 ];
 
 export const challengeNoticeCellWidthList = [

@@ -17,7 +17,7 @@ const MissionDateSection = () => {
   const getMissionList = useQuery({
     queryKey: ['mission', 'admin', params.programId],
     queryFn: async () => {
-      const res = await axios.get(`/mission/admin/${params.programId}`);
+      const res = await axios.get(`/api/v1/mission/admin/${params.programId}`);
       const data = res.data;
       console.log(data);
       setMissionList(data.missionList);

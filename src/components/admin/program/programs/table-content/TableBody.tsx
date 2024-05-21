@@ -4,10 +4,8 @@ import { Checkbox } from '@mui/material';
 
 import ActionButton from '../../../ui/button/ActionButton';
 import TD from '../../../ui/table/regacy/TD';
-import { convertTypeToText } from '../../../../../utils/converTypeToText';
 import AlertModal from '../../../../ui/alert/AlertModal';
-import formatDateString from '../../../../../utils/formatDateString';
-import { challengeTopicToText } from '../../../../../utils/convert';
+import { programTypeToText } from '../../../../../utils/convert';
 
 interface ProgramTableBodyProps {
   programList: any;
@@ -29,6 +27,28 @@ const TableBody = ({
   const [isDeleteModal, setIsDeleteModal] = useState(false);
   const [programIdDelete, setProgramIdDelete] = useState(0);
 
+  const formatDueDateString = (dateString: string) => {
+    const date = new Date(dateString);
+    const weekdayList = ['일', '월', '화', '수', '목', '금', '토'];
+    const formattedString = `${date.getMonth() + 1}/${date.getDate()}(${
+      weekdayList[date.getDay()]
+    }) ${date.getHours() > 9 ? date.getHours() : '0' + date.getHours()}:${
+      date.getMinutes() > 9 ? date.getMinutes() : '0' + date.getMinutes()
+    }까지`;
+    return formattedString;
+  };
+
+  const formatStartDateString = (dateString: string) => {
+    const date = new Date(dateString);
+    const weekdayList = ['일', '월', '화', '수', '목', '금', '토'];
+    const formattedString = `${date.getFullYear()}/${
+      date.getMonth() + 1
+    }/${date.getDate()}(${weekdayList[date.getDay()]}) ${
+      date.getHours() > 9 ? date.getHours() : '0' + date.getHours()
+    }:${date.getMinutes() > 9 ? date.getMinutes() : '0' + date.getMinutes()}`;
+    return formattedString;
+  };
+
   const onConfirm = () => {
     fetchDelete(programIdDelete);
     setIsDeleteModal(false);
@@ -44,16 +64,12 @@ const TableBody = ({
       <tbody>
         {programList.map((program: any) => (
           <tr key={program.id}>
-            <TD>
-              {convertTypeToText(program.type, true)}{' '}
-              {program.topic && ` - ${challengeTopicToText[program.topic]}`}
-            </TD>
-            <TD>{program.th}</TD>
+            <TD>전체</TD>
+            <TD>{programTypeToText[program.type]}</TD>
             <TD>{program.title}</TD>
-            <TD>{formatDateString(program.dueDate)}</TD>
             <TD>
               {program.status === 'OPEN'
-                ? '모집 중'
+                ? '모집중'
                 : program.status === 'CLOSED'
                 ? '모집완료'
                 : program.status === 'DONE' && '진행완료'}
@@ -61,7 +77,8 @@ const TableBody = ({
             <TD>
               {program.applicationCount} / {program.headcount}
             </TD>
-            <TD>{formatDateString(program.startDate)}</TD>
+            <TD>{formatDueDateString(program.dueDate)}</TD>
+            <TD>{formatStartDateString(program.startDate)}</TD>
             <TD>
               <ActionButtonGroup>
                 <ActionButton
