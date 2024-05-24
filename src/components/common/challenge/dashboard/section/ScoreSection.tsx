@@ -48,8 +48,8 @@ const ScoreSection = ({ refundInfo, isLoading, todayTh }: Props) => {
         </h2>
         <div className="flex flex-1 items-center justify-start">
           <span className="font-pretendard text-2xl font-semibold text-[#4A495C]">
-            {refundInfo.yesterdayHeadCount !== null
-              ? refundInfo.yesterdayHeadCount
+            {refundInfo.previousHeadCount !== null
+              ? refundInfo.previousHeadCount
               : refundInfo.finalHeadCount}
             명 🔥
           </span>
