@@ -1,5 +1,5 @@
 import MissionCalendar from '../mission-calendar/MissionCalendar';
-import MissionTooltipQuestion from '../tooltip-question/MissionTooltipQuestion';
+import MissionTooltipQuestion from '../../ui/tooltip-question/MissionTooltipQuestion';
 
 interface Props {
   missionList: any;

@@ -62,7 +62,7 @@ const MissionTodayIcon = ({ mission, className }: Props) => {
       <div className="mt-2 flex items-center justify-center">
         <span
           className={clsx(
-            'rounded-md px-2 py-[0.125rem] text-sm',
+            'rounded-xs px-2 py-[0.125rem] text-sm',
             missionSubmitToBadge({
               status: mission.attendanceStatus,
               result: mission.attendanceResult,
