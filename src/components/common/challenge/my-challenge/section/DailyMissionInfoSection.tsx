@@ -11,7 +11,7 @@ const DailyMissionInfoSection = ({ dailyMission }: Props) => {
     <>
       <div className="flex items-end gap-2">
         <h3 className="text-xl font-semibold">
-          {dailyMission.th}일차. {dailyMission.title}
+          {dailyMission.th}회차. {dailyMission.title}
         </h3>
         <span className="text-sm text-[#4A495C]">
           마감 {formatMissionDateString(dailyMission.endDate)}까지
@@ -29,7 +29,7 @@ const DailyMissionInfoSection = ({ dailyMission }: Props) => {
       <div className="mt-5 flex gap-4">
         <Link
           to={dailyMission.template}
-          className="flex-1 rounded border border-[#DCDCDC] bg-white px-8 py-2 text-center font-semibold shadow"
+          className="rounded flex-1 border border-[#DCDCDC] bg-white px-8 py-2 text-center font-semibold shadow"
           target="_blank"
           rel="noopenner noreferrer"
         >
