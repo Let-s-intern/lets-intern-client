@@ -213,13 +213,6 @@ export const missionSubmitToBadge = ({
   result: string;
   isRefunded: string;
 }) => {
-  if (status === 'ABSENT') {
-    return {
-      text: '결석',
-      style: 'bg-[#E3E3E3] text-[#9B9B9B]',
-    };
-  }
-
   if (result === 'WAITING') {
     return {
       text: '확인중',
@@ -234,19 +227,26 @@ export const missionSubmitToBadge = ({
     };
   }
 
-  if (status === 'LATE' || (status === 'UPDATED' && result === 'PASS')) {
+  if (status === 'ABSENT') {
+    return {
+      text: '결석',
+      style: 'bg-[#E3E3E3] text-[#9B9B9B]',
+    };
+  }
+
+  if (status === 'LATE') {
     return {
       text: '지각',
       style: 'bg-[#E3E3E3] text-[#9B9B9B]',
     };
   }
 
-  if (isRefunded) {
-    return {
-      text: '환급완료',
-      style: 'text-primary bg-[#E7E6FD]',
-    };
-  }
+  // if (isRefunded) {
+  //   return {
+  //     text: '환급완료',
+  //     style: 'text-primary bg-[#E7E6FD]',
+  //   };
+  // }
 
   return {
     text: '확인완료',
