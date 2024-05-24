@@ -1,4 +1,4 @@
-import ScoreTooltipQuestion from '../tooltip-question/ScoreTooltipQuestion';
+import ScoreTooltipQuestion from '../../ui/tooltip-question/ScoreTooltipQuestion';
 
 interface Props {
   refundInfo: any;
