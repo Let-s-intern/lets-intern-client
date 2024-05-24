@@ -118,11 +118,11 @@ const Router = () => {
           <Route path="challenge/:programId" element={<ChallengeLayout />}>
             <Route path="" element={<ChallengeDashboard />} />
             <Route path="me" element={<MyChallengeDashboard />} />
-            <Route path="others" element={<OtherDashboardList />} />
+            {/* <Route path="others" element={<OtherDashboardList />} />
             <Route
               path="others/:applicationId"
               element={<OtherDashboardDetail />}
-            />
+            /> */}
           </Route>
         </Route>
         <Route path="/admin" element={<AdminLayout />}>

@@ -39,7 +39,7 @@ const NavBar = () => {
               나의 기록장
             </Link>
           </li>
-          <li>
+          {/* <li>
             <Link
               to={`/challenge/${params.programId}/others`}
               className={clsx('block px-3 py-2', {
@@ -50,7 +50,7 @@ const NavBar = () => {
             >
               모두의 기록장
             </Link>
-          </li>
+          </li> */}
         </ul>
       </nav>
       <div className="w-[10rem]"></div>
