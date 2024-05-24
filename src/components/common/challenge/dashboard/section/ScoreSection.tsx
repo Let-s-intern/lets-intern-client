@@ -29,8 +29,8 @@ const ScoreSection = ({ refundInfo, isLoading, todayTh }: Props) => {
           </div>
         </div>
       </div>
-      <hr className="my-4 border-[#AEADB6]" />
-      <div className="flex flex-1 flex-col">
+      <hr className="pointer-events-none my-4 hidden border-[#AEADB6] opacity-0" />
+      <div className="pointer-events-none flex flex-1 flex-col opacity-0">
         <h2 className="font-semibold text-[#4A495C]">
           {refundInfo.yesterdayHeadCount !== null ? (
             <>
