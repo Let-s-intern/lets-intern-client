@@ -13,7 +13,7 @@ const TableHead = ({ className }: Props) => {
 
   return (
     <TableHeadBox className={className}>
-      <TableHeadCell className={clsx(cellWidthList[0])}>번호</TableHeadCell>
+      <TableHeadCell className={clsx(cellWidthList[0])}>회차</TableHeadCell>
       <TableHeadCell className={clsx(cellWidthList[1])}>미션명</TableHeadCell>
       <TableHeadCell className={clsx(cellWidthList[2])}>공개일</TableHeadCell>
       <TableHeadCell className={clsx(cellWidthList[3])}>마감일</TableHeadCell>

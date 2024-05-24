@@ -9,7 +9,7 @@ const TableHead = () => {
 
   return (
     <TableHeadBox>
-      <TableHeadCell className={clsx(cellWidthList[0])}>구분</TableHeadCell>
+      <TableHeadCell className={clsx(cellWidthList[0])}>회차</TableHeadCell>
       <TableHeadCell className={clsx(cellWidthList[1])}>미션명</TableHeadCell>
       <TableHeadCell className={clsx(cellWidthList[2])}>공개일</TableHeadCell>
       <TableHeadCell className={clsx(cellWidthList[3])}>마감일</TableHeadCell>
