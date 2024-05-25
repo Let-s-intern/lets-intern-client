@@ -27,7 +27,9 @@ const ProgramMenu = ({
         category={category}
         fill={selected ? PRIMARY_LIGHT : NEUTRAL_75}
       />
-      <span className="text-0.75-medium mt-2.5 block">{caption}</span>
+      <span className="text-0.75-medium sm:text-0.875-medium lg:text-1-medium mt-2.5 block">
+        {caption}
+      </span>
     </Link>
   );
 };

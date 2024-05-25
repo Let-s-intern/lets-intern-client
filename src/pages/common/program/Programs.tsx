@@ -22,33 +22,35 @@ const Programs = () => {
     <>
       <div className={classes.page}>
         <main className={classes.main}>
-          <section className="sticky top-16 bg-static-100 px-5 pt-7">
-            <ul className="flex items-center justify-between">
-              <li className="w-4/12">
-                <ProgramMenu
-                  selected={category === PROGRAM_CATEGORY.ALL}
-                  to="/program"
-                  category={PROGRAM_CATEGORY.ALL}
-                  caption="전체보기"
-                />
-              </li>
-              <li className="w-4/12">
-                <ProgramMenu
-                  selected={category === PROGRAM_CATEGORY.CHALLENGE}
-                  to={`/program?category=${PROGRAM_CATEGORY.CHALLENGE}`}
-                  category={PROGRAM_CATEGORY.CHALLENGE}
-                  caption="렛츠 챌린지"
-                />
-              </li>
-              <li className="w-4/12">
-                <ProgramMenu
-                  selected={category === PROGRAM_CATEGORY.CLASS}
-                  to={`/program?category=${PROGRAM_CATEGORY.CLASS}`}
-                  category={PROGRAM_CATEGORY.CLASS}
-                  caption="렛츠 클래스"
-                />
-              </li>
-            </ul>
+          <section className="sticky top-16 bg-static-100 px-5 pt-7 sm:top-24 lg:pt-8">
+            <div className="flex justify-center">
+              <ul className="flex w-full max-w-[60rem] items-center justify-between">
+                <li className="w-4/12">
+                  <ProgramMenu
+                    selected={category === PROGRAM_CATEGORY.ALL}
+                    to="/program"
+                    category={PROGRAM_CATEGORY.ALL}
+                    caption="전체보기"
+                  />
+                </li>
+                <li className="w-4/12">
+                  <ProgramMenu
+                    selected={category === PROGRAM_CATEGORY.CHALLENGE}
+                    to={`/program?category=${PROGRAM_CATEGORY.CHALLENGE}`}
+                    category={PROGRAM_CATEGORY.CHALLENGE}
+                    caption="렛츠 챌린지"
+                  />
+                </li>
+                <li className="w-4/12">
+                  <ProgramMenu
+                    selected={category === PROGRAM_CATEGORY.CLASS}
+                    to={`/program?category=${PROGRAM_CATEGORY.CLASS}`}
+                    category={PROGRAM_CATEGORY.CLASS}
+                    caption="렛츠 클래스"
+                  />
+                </li>
+              </ul>
+            </div>
           </section>
           <section className={classes.openedPrograms}>
             <div className={classes.content}>
