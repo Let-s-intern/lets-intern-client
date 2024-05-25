@@ -1,5 +1,5 @@
-import { useEffect, useReducer } from 'react';
-import { QueryClient, useMutation, useQuery } from '@tanstack/react-query';
+import { useReducer } from 'react';
+import { useMutation, useQuery } from '@tanstack/react-query';
 
 import Heading from '../../../components/admin/challenge/ui/heading/Heading';
 import Table from '../../../components/admin/challenge/ui/table/table-container/Table';
@@ -29,11 +29,13 @@ const tableSettings = {
 
 const ChallengeMissionManagement = () => {
   const getMissionTemplateList = async () => {
-    const res = await axios.get('/mission-template/admin');
+    try {
+      const res = await axios.get('/mission-template/admin');
+      if (res.status !== 200) {
+        throw new Error(res.data.message);
+      }
 
-    if (res.status === 200) {
       const data = res.data.data.missionTemplateAdminList;
-      console.log(data);
       dispatch({
         type: 'init',
         list: data.map((item: IMissionTemplate) => ({
@@ -41,7 +43,8 @@ const ChallengeMissionManagement = () => {
           status: STATUS.SAVE,
         })),
       });
-      return data;
+    } catch (error) {
+      console.error(error);
     }
   };
   const updateMissionTemplate = async (item: IMissionTemplate) => {
@@ -52,11 +55,11 @@ const ChallengeMissionManagement = () => {
     // 미션 템플릿 생성
     if (item.status === STATUS.INSERT) {
       const res = await axios.post('/mission-template', body);
-      return res.data;
+      if (res.status !== 200) throw new Error(res.data.message);
     }
     // 미션 템플릿 수정
     const res = await axios.patch(`/mission-template/${item.id}`, body);
-    return res.data;
+    if (res.status !== 200) throw new Error(res.data.message);
   };
 
   const [missionList, dispatch] = useReducer(missionTemplateReducer, []);
@@ -66,11 +69,18 @@ const ChallengeMissionManagement = () => {
   });
   const updateMutation = useMutation({
     mutationFn: updateMissionTemplate,
+    onError(error) {
+      console.error(error);
+    },
   });
   const deleteMutation = useMutation({
     mutationFn: async (id: number) => {
       const res = await axios.delete(`/mission-template/${id}`);
-      return res.data;
+      if (res.status !== 200) throw new Error(res.data.message);
+      // console.log(res);
+    },
+    onError(error) {
+      console.error(error);
     },
   });
 
@@ -100,7 +110,7 @@ const ChallengeMissionManagement = () => {
               description: '',
               guide: '',
               templateLink: '',
-              createDate: new Date().toISOString(),
+              createDate: new Date().toISOString(), // 임시 생성일자
             });
           }}
         >

@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { IoIosArrowForward } from 'react-icons/io';
 
 import RoundedBox from '../box/RoundedBox';
 import NoticeItem from '../item/NoticeItem';
@@ -42,7 +41,7 @@ const NoticeSection = () => {
   const addNotice = useMutation({
     mutationFn: async (values) => {
       const res = await axios.post(
-        `/api/v1/challenge-notice/amin/${params.programId}`,
+        `/challenge-notice/admin/${params.programId}`,
         values,
       );
       const data = res.data;
