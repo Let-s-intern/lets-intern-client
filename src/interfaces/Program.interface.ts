@@ -1,3 +1,7 @@
+import { PROGRAM_CATEGORY } from '../utils/convert';
+
+export type ProgramCategoryKey = keyof typeof PROGRAM_CATEGORY;
+
 export interface DailyMission {
   id: number;
   th: number;

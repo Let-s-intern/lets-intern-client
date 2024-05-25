@@ -1,98 +1,59 @@
-import { useEffect, useState } from 'react';
-import { Link, useSearchParams } from 'react-router-dom';
-import cn from 'classnames';
+import { useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 
-import axios from '../../../utils/axios';
 import ClosedCard from '../../../components/common/program/programs/card/ClosedCard';
-
 import classes from './Programs.module.scss';
 import CardListSlider from '../../../components/common/ui/card/wrapper/CardListSlider';
 import CardListPlaceholder from '../../../components/common/ui/card/placeholder/CardListPlaceholder';
 import ProgramCard from '../../../components/common/program/programs/card/ProgramCard';
 import { typeToText } from '../../../utils/converTypeToText';
 import formatDateString from '../../../utils/formatDateString';
+import ProgramMenu from '../../../components/common/program/programs/menu/ProgramMenu';
+import { PROGRAM_CATEGORY } from '../../../utils/convert';
 
 const Programs = () => {
   const [searchParams] = useSearchParams();
   const [programs, setPrograms] = useState<any>(null);
   const [closedPrograms, setClosedPrograms] = useState<any>(null);
   const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<unknown>(null);
-  const category = searchParams.get('category') || 'ALL';
-
-  useEffect(() => {
-    const params = !category || category === 'ALL' ? {} : { type: category };
-    setLoading(true);
-    axios
-      .get('/program', {
-        params,
-        headers: {
-          Authorization: '',
-        },
-      })
-      .then((res) => {
-        return res.data.programList;
-      })
-      .then((programs) => {
-        setPrograms(
-          programs.filter((program: any) => program.status === 'OPEN'),
-        );
-        setClosedPrograms(
-          programs.filter((program: any) => program.status !== 'OPEN'),
-        );
-      })
-      .catch((err) => {
-        console.log(err);
-        setError(err);
-      })
-      .finally(() => {
-        setLoading(false);
-      });
-  }, [category]);
-
-  if (error) {
-    return <div>에러 발생</div>;
-  }
+  const category = searchParams.get('category') || PROGRAM_CATEGORY.ALL;
 
   return (
     <>
       <div className={classes.page}>
         <main className={classes.main}>
-          <section className={classes.filter}>
-            <ul className={classes.categoryGroup}>
-              <li
-                className={cn(classes.category, {
-                  [classes.active]: category === 'ALL',
-                })}
-              >
-                <Link to="/program">전체 프로그램</Link>
+          <section className="sticky top-16 bg-static-100 px-5 pt-7">
+            <ul className="flex items-center justify-between">
+              <li className="w-4/12">
+                <ProgramMenu
+                  selected={category === PROGRAM_CATEGORY.ALL}
+                  to="/program"
+                  category={PROGRAM_CATEGORY.ALL}
+                  caption="전체보기"
+                />
               </li>
-              <li
-                className={cn(classes.category, {
-                  [classes.active]: category === 'CHALLENGE',
-                })}
-              >
-                <Link to="/program?category=CHALLENGE">챌린지</Link>
+              <li className="w-4/12">
+                <ProgramMenu
+                  selected={category === PROGRAM_CATEGORY.CHALLENGE}
+                  to={`/program?category=${PROGRAM_CATEGORY.CHALLENGE}`}
+                  category={PROGRAM_CATEGORY.CHALLENGE}
+                  caption="렛츠 챌린지"
+                />
               </li>
-              <li
-                className={cn(classes.category, {
-                  [classes.active]: category === 'BOOTCAMP',
-                })}
-              >
-                <Link to="/program?category=BOOTCAMP">부트캠프</Link>
-              </li>
-              <li
-                className={cn(classes.category, {
-                  [classes.active]: category === 'LETS_CHAT',
-                })}
-              >
-                <Link to="/program?category=LETS_CHAT">렛츠챗</Link>
+              <li className="w-4/12">
+                <ProgramMenu
+                  selected={category === PROGRAM_CATEGORY.CLASS}
+                  to={`/program?category=${PROGRAM_CATEGORY.CLASS}`}
+                  category={PROGRAM_CATEGORY.CLASS}
+                  caption="렛츠 클래스"
+                />
               </li>
             </ul>
           </section>
           <section className={classes.openedPrograms}>
             <div className={classes.content}>
-              <h2 className={classes.sectionTitle}>현재 모집중이에요</h2>
+              현재 모집중이에요
+              <h2 className={classes.sectionTitle}></h2>
               <p className={classes.sectionDescription}>
                 아래에서 모집중인 프로그램을 확인해보세요!
               </p>

@@ -1,3 +1,5 @@
+import exp from 'constants';
+
 export const newProgramTypeToText: Record<string, string> = {
   CHALLENGE: '챌린지',
   LIVE: 'LIVE 클래스',
@@ -309,4 +311,10 @@ export const TABLE_CONTENT = {
   INPUT: 0,
   DROPDOWN: 1,
   DATE: 2,
+} as const;
+
+export const PROGRAM_CATEGORY = {
+  ALL: 'ALL',
+  CHALLENGE: 'CHALLENGE',
+  CLASS: 'CLASS',
 } as const;
