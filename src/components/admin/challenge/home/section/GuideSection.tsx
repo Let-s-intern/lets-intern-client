@@ -22,9 +22,7 @@ const GuideSection = () => {
   const { data, isLoading } = useQuery({
     queryKey: ['challenge-guide', 'admin', params.programId],
     queryFn: async () => {
-      const res = await axios.get(
-        `/api/v1/challenge-guide/admin/${params.programId}`,
-      );
+      const res = await axios.get(`/challenge-guide/admin/${params.programId}`);
       if (res.status !== 200) {
         throw new Error(`${res.status} ${res.statusText}`);
       }
@@ -35,7 +33,7 @@ const GuideSection = () => {
   const postMutation = useMutation({
     mutationFn: async (guide: IGuide) => {
       const res = await axios.post(
-        `/api/v1/challenge-guide/${params.programId}`,
+        `/challenge-guide/${params.programId}`,
         guide,
       );
       const data = res.data;
@@ -45,7 +43,7 @@ const GuideSection = () => {
   const patchMutation = useMutation({
     mutationFn: async (guide: IGuide) => {
       const res = await axios.patch(
-        `/api/v1/challenge-guide/${params.programId}`,
+        `/challenge-guide/${params.programId}`,
         guide,
       );
       const data = res.data;

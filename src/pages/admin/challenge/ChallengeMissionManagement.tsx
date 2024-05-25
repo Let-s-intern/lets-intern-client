@@ -1,4 +1,4 @@
-import { useReducer } from 'react';
+import { useEffect, useReducer } from 'react';
 import { QueryClient, useMutation, useQuery } from '@tanstack/react-query';
 
 import Heading from '../../../components/admin/challenge/ui/heading/Heading';
@@ -16,79 +16,63 @@ import axios from '../../../utils/axios';
 const cellWidthList = missionManagementCellWidthList;
 const tableSettings = {
   placeholders: ['생성일자', '미션명', '내용', '가이드', '템플릿 링크'],
-  attrNames: ['createdAt', 'title', 'description', 'guide', 'templateLink'],
+  attrNames: ['createDate', 'title', 'description', 'guide', 'templateLink'],
   canEdits: [false, true, true, true, true],
   contents: [
-    { type: TABLE_CONTENT.INPUT },
+    { type: TABLE_CONTENT.DATE },
     { type: TABLE_CONTENT.INPUT },
     { type: TABLE_CONTENT.INPUT },
     { type: TABLE_CONTENT.INPUT },
     { type: TABLE_CONTENT.INPUT },
   ],
 };
-const initialMissionTemplate = {
-  id: Date.now(), // 임시 id
-  status: STATUS.INSERT,
-  title: '',
-  description: '',
-  guide: '',
-  templateLink: '',
-};
 
 const ChallengeMissionManagement = () => {
-  const queryClient = new QueryClient();
-  const { data, isLoading } = useQuery({
-    queryKey: ['mission-template', 'admin'],
-    queryFn: async () => {
-      const res = await axios.get('/api/v1/mission-template/admin');
+  const getMissionTemplateList = async () => {
+    const res = await axios.get('/mission-template/admin');
+
+    if (res.status === 200) {
+      const data = res.data.data.missionTemplateAdminList;
+      console.log(data);
+      dispatch({
+        type: 'init',
+        list: data.map((item: IMissionTemplate) => ({
+          ...item,
+          status: STATUS.SAVE,
+        })),
+      });
+      return data;
+    }
+  };
+  const updateMissionTemplate = async (item: IMissionTemplate) => {
+    const body = { ...item };
+    delete body.id;
+    delete body.createdDate;
+    delete body.status;
+    // 미션 템플릿 생성
+    if (item.status === STATUS.INSERT) {
+      const res = await axios.post('/mission-template', body);
       return res.data;
-    },
+    }
+    // 미션 템플릿 수정
+    const res = await axios.patch(`/mission-template/${item.id}`, body);
+    return res.data;
+  };
+
+  const [missionList, dispatch] = useReducer(missionTemplateReducer, []);
+  const { isLoading } = useQuery({
+    queryKey: ['mission-template', 'admin'],
+    queryFn: getMissionTemplateList,
   });
   const updateMutation = useMutation({
-    mutationFn: async (item: IMissionTemplate) => {
-      const body = { ...item };
-      delete body.status;
-      delete body.id;
-      delete body.createdDate;
-      // 미션 템플릿 생성
-      if (item.status === STATUS.INSERT) {
-        const res = await axios.post('/api/v1/mission-template', body);
-        return res.data;
-      }
-      // 미션 템플릿 수정
-      const res = await axios.patch(
-        `/api/v1/mission-template/${item.id}`,
-        body,
-      );
-      return res.data;
-    },
-    onSuccess: () => {
-      // DB에서 createdDate 가져오는 용도
-      queryClient.invalidateQueries({
-        queryKey: ['mission-template', 'admin'],
-      });
-    },
+    mutationFn: updateMissionTemplate,
   });
   const deleteMutation = useMutation({
     mutationFn: async (id: number) => {
-      const res = await axios.delete(`/api/v1/mission-template/${id}`);
+      const res = await axios.delete(`/mission-template/${id}`);
       return res.data;
     },
   });
-
-  const [missionList, dispatch] = useReducer(
-    missionTemplateReducer,
-    null,
-    () => {
-      // 초기 미션 리스트 status 설정
-      return data
-        ? data.missionTemplateAdminList.map((item: IMissionTemplate) => ({
-            ...item,
-            status: STATUS.SAVE,
-          }))
-        : [];
-    },
-  );
 
   const handleAddMission = (item: IMissionTemplate) => {
     dispatch({ type: 'add', item });
@@ -109,9 +93,14 @@ const ChallengeMissionManagement = () => {
         <Heading>미션 관리</Heading>
         <Button
           onClick={() => {
-            dispatch({
-              type: 'add',
-              item: initialMissionTemplate,
+            handleAddMission({
+              id: Date.now(), // 임시 id
+              status: STATUS.INSERT,
+              title: '',
+              description: '',
+              guide: '',
+              templateLink: '',
+              createDate: new Date().toISOString(),
             });
           }}
         >
