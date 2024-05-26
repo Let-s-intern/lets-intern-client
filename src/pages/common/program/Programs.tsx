@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 
 import ClosedCard from '../../../components/common/program/programs/card/ClosedCard';
 import classes from './Programs.module.scss';
@@ -52,73 +52,49 @@ const Programs = () => {
               </ul>
             </div>
           </section>
-          <section className={classes.openedPrograms}>
-            <div className={classes.content}>
-              현재 모집중이에요
-              <h2 className={classes.sectionTitle}></h2>
-              <p className={classes.sectionDescription}>
-                아래에서 모집중인 프로그램을 확인해보세요!
-              </p>
-              {loading ? (
-                <CardListSlider>
-                  <CardListPlaceholder />
-                </CardListSlider>
-              ) : !programs || programs.length === 0 ? (
-                <CardListSlider isEmpty={true}>
-                  <CardListPlaceholder>
-                    현재 진행 중인 프로그램이 없습니다.
-                  </CardListPlaceholder>
-                </CardListSlider>
-              ) : (
-                <CardListSlider className={classes.programList}>
-                  {programs
-                    .filter((program: any) => program.status === 'OPEN')
-                    .map((program: any) => (
-                      <ProgramCard
-                        key={program.id}
-                        to={`/program/detail/${program.id}`}
-                      >
-                        <div className="card-top">
-                          <h2>{typeToText[program.type]}</h2>
-                          <h3>{program.title}</h3>
-                        </div>
-                        <div className="card-bottom">
-                          <div className="card-bottom-item">
-                            <strong>모집 마감</strong>
-                            <span>{formatDateString(program.dueDate)}</span>
-                          </div>
-                          <div className="card-bottom-item">
-                            <strong>시작 일자</strong>
-                            <span>{formatDateString(program.startDate)}</span>
-                          </div>
-                        </div>
-                      </ProgramCard>
-                    ))}
-                </CardListSlider>
-              )}
-            </div>
-          </section>
-          <section className={classes.closedPrograms}>
-            <div className={classes.content}>
-              <h2 className={classes.sectionTitle}>아쉽지만 마감되었어요</h2>
-              <p className={classes.sectionDescription}>
-                더 많은 프로그램들이 준비되어 있으니 걱정마세요!
-              </p>
-              {loading || closedPrograms.length === 0 ? (
-                <div className={classes.wrapper}>
-                  <div className={classes.placeholder} />
+          <section className="px-5 py-8">
+            <div>
+              <div className="flex items-center justify-between">
+                <div className="mb-6">
+                  <h1 className="text-1.125-bold">첫장 챌린지</h1>
+                  <span className="text-0.875 text-neutral-20">
+                    커리어 준비의 첫 시작이 막막하다면?
+                  </span>
                 </div>
-              ) : (
-                <div className={classes.wrapper}>
-                  <div className={classes.cardList}>
-                    {closedPrograms.map((program: any) => (
-                      <ClosedCard key={program.id} program={program} />
-                    ))}
+                <Link className="text-0.75 text-neutral-40" to="#">
+                  전체보기
+                </Link>
+              </div>
+              <div className="grid grid-cols-2 gap-x-4 gap-y-5">
+                <div className="flex flex-col gap-2 overflow-hidden rounded-md">
+                  <div className="relative">
+                    <img
+                      src="/images/home/program-thumbnail.png"
+                      alt="프로그램 썸네일 배경"
+                    />
+                    <img
+                      className="absolute inset-2/4 z-10 w-24 translate-x-[-50%] translate-y-[-50%]"
+                      src="/images/home/program-cell.png"
+                      alt="프로그램 썸네일 세포"
+                    />
+                  </div>
+                  <div className="flex flex-col gap-2">
+                    <div className="flex justify-between">
+                      <div className="text-0.75-medium rounded-md border border-primary bg-[#DBDDFD] px-2.5 py-0.5 text-primary">
+                        모집 중
+                      </div>
+                      <img
+                        className="cursor-pointer"
+                        src="/icons/program-detail.svg"
+                        alt="프로그램 상세 보기 아이콘"
+                      />
+                    </div>
                   </div>
                 </div>
-              )}
+              </div>
             </div>
           </section>
+          <section className={classes.closedPrograms}></section>
         </main>
       </div>
     </>
