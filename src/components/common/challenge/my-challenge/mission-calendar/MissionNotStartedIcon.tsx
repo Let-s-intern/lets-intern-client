@@ -15,7 +15,7 @@ const MissionNotStartedIcon = ({ className, mission }: Props) => {
     >
       <div className="mb-[0.175rem] h-[2.5rem] w-[2.5rem] rounded-full bg-[#D0CFCF]" />
       <span className="block font-pretendard text-sm font-semibold text-[#D0CFCF]">
-        {mission.missionTh}일차
+        {mission.missionTh}회차
       </span>
     </div>
   );

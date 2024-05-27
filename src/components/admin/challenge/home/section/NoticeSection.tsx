@@ -41,7 +41,10 @@ const NoticeSection = () => {
 
   const addNotice = useMutation({
     mutationFn: async (values) => {
-      const res = await axios.post(`/notice/${params.programId}`, values);
+      const res = await axios.post(
+        `/api/v1/challenge-notice/amin/${params.programId}`,
+        values,
+      );
       const data = res.data;
       return data;
     },

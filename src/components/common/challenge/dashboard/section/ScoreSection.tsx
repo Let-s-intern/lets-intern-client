@@ -1,4 +1,4 @@
-import ScoreTooltipQuestion from '../tooltip-question/ScoreTooltipQuestion';
+import ScoreTooltipQuestion from '../../ui/tooltip-question/ScoreTooltipQuestion';
 
 interface Props {
   refundInfo: any;
@@ -29,12 +29,12 @@ const ScoreSection = ({ refundInfo, isLoading, todayTh }: Props) => {
           </div>
         </div>
       </div>
-      <hr className="my-4 border-[#AEADB6]" />
-      <div className="flex flex-1 flex-col">
+      <hr className="pointer-events-none my-4 hidden border-[#AEADB6] opacity-0" />
+      <div className="pointer-events-none flex flex-1 flex-col opacity-0">
         <h2 className="font-semibold text-[#4A495C]">
           {refundInfo.yesterdayHeadCount !== null ? (
             <>
-              {todayTh - 1}일차에
+              {todayTh - 1}회차에
               <br />
               성공한 참여자
             </>
@@ -48,8 +48,8 @@ const ScoreSection = ({ refundInfo, isLoading, todayTh }: Props) => {
         </h2>
         <div className="flex flex-1 items-center justify-start">
           <span className="font-pretendard text-2xl font-semibold text-[#4A495C]">
-            {refundInfo.yesterdayHeadCount !== null
-              ? refundInfo.yesterdayHeadCount
+            {refundInfo.previousHeadCount !== null
+              ? refundInfo.previousHeadCount
               : refundInfo.finalHeadCount}
             명 🔥
           </span>

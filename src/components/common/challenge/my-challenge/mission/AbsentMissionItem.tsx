@@ -68,7 +68,7 @@ const AbsentMissionItem = ({ mission, isDone }: Props) => {
         <div className="flex flex-1 items-center justify-between">
           <div className="flex items-center gap-3">
             <h4 className="text-lg font-semibold">
-              {mission.th}일차. {mission.title}
+              {mission.th}회차. {mission.title}
             </h4>
             <span
               className={clsx(

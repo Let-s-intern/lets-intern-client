@@ -1,7 +1,10 @@
 import { useState } from 'react';
 import { IoMdArrowDropdown } from 'react-icons/io';
 
-import { topicToText } from '../../../../../../utils/convert';
+import {
+  topicRequiredToText,
+  topicToText,
+} from '../../../../../../utils/convert';
 
 interface Props {
   values?: any;
@@ -27,7 +30,7 @@ const AdditionalDropdown = ({ values, setValues }: Props) => {
       </div>
       {isMenuShown && (
         <ul className="absolute bottom-0 z-50 w-full translate-y-[calc(100%+0.25rem)] overflow-hidden rounded-lg border border-[#A3A3A3] bg-white">
-          {Object.keys(topicToText).map((topic: any, index: number) => (
+          {Object.keys(topicRequiredToText).map((topic: any, index: number) => (
             <li
               key={index}
               className="cursor-pointer px-3 py-2 text-sm hover:bg-gray-100"
@@ -36,9 +39,18 @@ const AdditionalDropdown = ({ values, setValues }: Props) => {
                 setIsMenuShown(false);
               }}
             >
-              {topicToText[topic]}
+              {topicRequiredToText[topic]}
             </li>
           ))}
+          <li
+            className="cursor-pointer px-3 py-2 text-sm hover:bg-gray-100"
+            onClick={() => {
+              setValues({ ...values, additionalContentsTopic: null });
+              setIsMenuShown(false);
+            }}
+          >
+            없음
+          </li>
         </ul>
       )}
     </div>

@@ -33,6 +33,8 @@ const TableBodyRow = ({ th, mission }: Props) => {
         contents: data.contents,
         guide: data.guide,
         th: data.th,
+        startDate: data.startDate,
+        endDate: data.endDate,
         template: data.template,
         topic: data.topic,
         essentialContentsTopic: data.essentialContentsTopic,

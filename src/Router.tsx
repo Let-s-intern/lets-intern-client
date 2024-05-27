@@ -66,6 +66,8 @@ import Privacy from './pages/common/mypage/Privacy';
 import Application from './pages/common/mypage/Application';
 import Review from './pages/common/mypage/Review';
 import ReviewCreate from './pages/common/review/ReviewCreate';
+import ChallengeMissions from './pages/admin/challenge/ChallengeMissionManagement';
+import ChallengeMissionManagement from './pages/admin/challenge/ChallengeMissionManagement';
 
 const Router = () => {
   return (
@@ -120,11 +122,11 @@ const Router = () => {
           <Route path="challenge/:programId" element={<ChallengeLayout />}>
             <Route path="" element={<ChallengeDashboard />} />
             <Route path="me" element={<MyChallengeDashboard />} />
-            <Route path="others" element={<OtherDashboardList />} />
+            {/* <Route path="others" element={<OtherDashboardList />} />
             <Route
               path="others/:applicationId"
               element={<OtherDashboardDetail />}
-            />
+            /> */}
           </Route>
         </Route>
         <Route path="/admin" element={<AdminLayout />}>
@@ -225,6 +227,11 @@ const Router = () => {
           <Route
             path="/admin/challenge/contents"
             element={<ChallengeContents />}
+          />
+          {/* /admin/challenge/missions */}
+          <Route
+            path="/admin/challenge/missions"
+            element={<ChallengeMissionManagement />}
           />
         </Route>
       </Routes>

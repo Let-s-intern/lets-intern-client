@@ -15,19 +15,12 @@ import MentorDropdown from '../../../components/admin/program/program-user/top-a
 const ProgramUsers = () => {
   const params = useParams();
   const queryClient = useQueryClient();
-  const [searchParams] = useSearchParams();
   const [program, setProgram] = useState<any>({});
   const [applications, setApplications] = useState<any>([]);
-  const [maxPage, setMaxPage] = useState(1);
   const [filter, setFilter] = useState<UserTableHeadProps['filter']>({
     name: null,
     isFeeConfirmed: null,
   });
-
-  const pageParams = {
-    page: Number(searchParams.get('page') || 1),
-    size: 10000,
-  };
 
   const getProgram = useQuery({
     queryKey: ['program', params.programId],
@@ -38,7 +31,7 @@ const ProgramUsers = () => {
   });
 
   const getApplicationList = useQuery({
-    queryKey: ['applications', 'admin', params.programId, pageParams],
+    queryKey: ['applications', 'admin', params.programId],
     queryFn: async ({ queryKey }) => {
       const res = await axios.get(`/application/admin/${params.programId}`, {
         params: queryKey[3],
@@ -65,8 +58,7 @@ const ProgramUsers = () => {
 
   useEffect(() => {
     if (getApplicationList.data) {
-      const { applicationList, pageInfo } = getApplicationList.data;
-      setMaxPage(pageInfo.totalPages);
+      const { applicationList } = getApplicationList.data;
       let filteredApplications =
         filter.name === null
           ? applicationList
@@ -133,12 +125,7 @@ const ProgramUsers = () => {
           />
         </Table>
       </main>
-      <BottomAction
-        applications={applications}
-        program={program}
-        sizePerPage={pageParams.size}
-        maxPage={maxPage}
-      />
+      <BottomAction applications={applications} program={program} />
     </div>
   );
 };

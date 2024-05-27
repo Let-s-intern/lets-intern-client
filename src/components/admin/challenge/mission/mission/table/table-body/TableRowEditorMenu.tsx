@@ -91,7 +91,7 @@ const TableRowEditorMenu = ({
             <div className="flex items-center">
               <div className="flex items-center">
                 <label htmlFor="day" className="w-32 font-medium">
-                  일차
+                  회차
                 </label>
                 <input
                   type="number"
@@ -100,6 +100,40 @@ const TableRowEditorMenu = ({
                   autoComplete="off"
                   name="th"
                   defaultValue={values?.th || ''}
+                  onChange={handleInputChange}
+                />
+              </div>
+            </div>
+          </div>
+          <div>
+            <div className="flex items-center">
+              <div className="flex items-center">
+                <label htmlFor="startDate" className="w-32 font-medium">
+                  공개일
+                </label>
+                <input
+                  type="datetime-local"
+                  className="rounded-sm border border-[#A3A3A3] bg-[#F5F5F5] px-3 py-2 text-sm outline-none"
+                  id="startDate"
+                  name="startDate"
+                  defaultValue={values?.startDate || ''}
+                  onChange={handleInputChange}
+                />
+              </div>
+            </div>
+          </div>
+          <div>
+            <div className="flex items-center">
+              <div className="flex items-center">
+                <label htmlFor="endDate" className="w-32 font-medium">
+                  마감일
+                </label>
+                <input
+                  type="datetime-local"
+                  className="rounded-sm border border-[#A3A3A3] bg-[#F5F5F5] px-3 py-2 text-sm outline-none"
+                  id="endDate"
+                  name="endDate"
+                  defaultValue={values?.endDate || ''}
                   onChange={handleInputChange}
                 />
               </div>

@@ -36,8 +36,8 @@ const TableBody = ({ isModeAdd, setIsModeAdd }: Props) => {
     <>
       {isModeAdd && <NewTableRowEditor setIsModeAdd={setIsModeAdd} />}
       <TableBodyBox>
-        {missionList.map((mission: any, index: number) => (
-          <TableBodyRow key={mission.id} th={index + 1} mission={mission} />
+        {missionList.map((mission: any) => (
+          <TableBodyRow key={mission.id} th={mission.th} mission={mission} />
         ))}
       </TableBodyBox>
     </>
