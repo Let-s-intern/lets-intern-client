@@ -36,14 +36,14 @@ const ChallengeMission = () => {
   const { data: missionData, isLoading } = useQuery({
     queryKey: ['mission', 'admin'],
     queryFn: async () => {
-      const res = await axios.get(`/api/v1/mission/admin/${params.programId}`);
+      const res = await axios.get(`/mission/admin/${params.programId}`);
       return res.data;
     },
   });
   const { data: templateData } = useQuery({
     queryKey: ['mission-template', 'simple'],
     queryFn: async () => {
-      const res = await axios.get('/api/v1/mission-template/simple');
+      const res = await axios.get('/mission-template/simple');
       return res.data;
     },
   });
@@ -51,7 +51,7 @@ const ChallengeMission = () => {
     queryKey: ['contents', 'admin', { type: contentsTypeToText.ESSENTIAL }],
     queryFn: async () => {
       const res = await axios.get(
-        `/api/v1/contents/admin?type=${contentsTypeToText.ESSENTIAL}`,
+        `/contents/admin?type=${contentsTypeToText.ESSENTIAL}`,
       );
       return res.data;
     },
@@ -60,7 +60,7 @@ const ChallengeMission = () => {
     queryKey: ['contents', 'admin', { type: contentsTypeToText.ADDITIONAL }],
     queryFn: async () => {
       const res = await axios.get(
-        `/api/v1/contents/admin?type=${contentsTypeToText.ADDITIONAL}`,
+        `/contents/admin?type=${contentsTypeToText.ADDITIONAL}`,
       );
       return res.data;
     },
@@ -69,7 +69,7 @@ const ChallengeMission = () => {
     queryKey: ['contents', 'admin', { type: contentsTypeToText.LIMITED }],
     queryFn: async () => {
       const res = await axios.get(
-        `/api/v1/contents/admin?type=${contentsTypeToText.LIMITED}`,
+        `/contents/admin?type=${contentsTypeToText.LIMITED}`,
       );
       return res.data;
     },
@@ -83,23 +83,17 @@ const ChallengeMission = () => {
       // [TODO] 미션 템플릿 ID 추가
       // 미션 생성
       if (item.status === STATUS.INSERT) {
-        const res = await axios.post(
-          `/api/v1/mission/${params.programId}`,
-          body,
-        );
+        const res = await axios.post(`/mission/${params.programId}`, body);
         return res.data;
       }
       // 미션 수정
-      const res = await axios.patch(
-        `/api/v1/mission/${params.programId}`,
-        body,
-      );
+      const res = await axios.patch(`/mission/${params.programId}`, body);
       return res.data;
     },
   });
   const deleteMutation = useMutation({
     mutationFn: async (id: number) => {
-      const res = await axios.delete(`/api/v1/mission/${id}`);
+      const res = await axios.delete(`/mission/${id}`);
       return res.data;
     },
   });
