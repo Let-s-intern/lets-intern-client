@@ -2,11 +2,11 @@ import { useEffect, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 
 import axios from '../../../utils/axios';
-import MainInfo from '../../../components/common/mypage/section/privacy/MainInfo';
-import PasswordChange from '../../../components/common/mypage/section/privacy/PasswordChange';
-import SubInfo from '../../../components/common/mypage/section/privacy/SubInfo';
+import MainInfo from '../../../components/common/mypage/regacy/section/privacy/MainInfo';
+import PasswordChange from '../../../components/common/mypage/regacy/section/privacy/PasswordChange';
+import SubInfo from '../../../components/common/mypage/regacy/section/privacy/SubInfo';
 import AlertModal from '../../../components/ui/alert/AlertModal';
-import AccountInfo from '../../../components/common/mypage/section/privacy/AccountInfo';
+import AccountInfo from '../../../components/common/mypage/regacy/section/privacy/AccountInfo';
 
 const PrivacyRegacy = () => {
   const [userInfo, setUserInfo] = useState<any>({

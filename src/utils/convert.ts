@@ -76,6 +76,15 @@ export const bankTypeToText: Record<string, string> = {
   TOSS: '토스뱅크',
 };
 
+export const gradeToText: Record<string, string> = {
+  FIRST: '1학년',
+  SECOND: '2학년',
+  THIRD: '3학년',
+  FOURTH: '4학년',
+  ETC: '5학년 이상',
+  GRADUATE: '졸업생',
+};
+
 export const wishJobToText: any = {
   ALL: '전체',
 

@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { IoMdArrowDropdown } from 'react-icons/io';
-import { bankTypeToText } from '../../../../utils/convert';
+import { bankTypeToText } from '../../../../../utils/convert';
 
 interface Props {
   values: any;

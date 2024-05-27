@@ -31,7 +31,7 @@ const MyPage = () => {
           </TabItem>
           <TabItem
             to="/mypage/review"
-            {...(location.pathname === '/mypage/review' && {
+            {...(location.pathname.startsWith('/mypage/review') && {
               active: true,
             })}
           >
