@@ -1,5 +1,5 @@
-import axios from '../../../../../utils/axios';
-import { isValidPassword } from '../../../../../utils/valid';
+import axios from '../../../../../../utils/axios';
+import { isValidPassword } from '../../../../../../utils/valid';
 
 interface PasswordChangeProps {
   passwordValues: any;

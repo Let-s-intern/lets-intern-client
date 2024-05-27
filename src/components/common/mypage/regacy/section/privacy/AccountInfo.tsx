@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
+import axios from '../../../../../../utils/axios';
+import AlertModal from '../../../../../ui/alert/AlertModal';
 import BankDropdown from '../../dropdown/BankDropdown';
-import axios from '../../../../../utils/axios';
-import AlertModal from '../../../../ui/alert/AlertModal';
 
 interface AccountInfoProps {}
 

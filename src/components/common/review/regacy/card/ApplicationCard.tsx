@@ -1,9 +1,9 @@
+import clsx from 'clsx';
 import { Link, useNavigate } from 'react-router-dom';
 import { LiaExternalLinkAltSolid } from 'react-icons/lia';
 
-import formatDateString from '../../../../utils/formatDateString';
-import clsx from 'clsx';
 import TooltipQuestion from '../tooltip-question/TooltipQuestion';
+import formatDateString from '../../../../../utils/formatDateString';
 
 interface ApplicationCardProps {
   application: any;

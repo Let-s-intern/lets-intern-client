@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import cn from 'classnames';
 
-import axios from '../../../../utils/axios';
-import AlertModal from '../../../ui/alert/AlertModal';
 import classes from './WithDrawAlertModal.module.scss';
+import AlertModal from '../../../../ui/alert/AlertModal';
+import axios from '../../../../../utils/axios';
 
 interface WithDrawAlertModalProps {
   setIsWithdrawModal: (isWithdrawModal: boolean) => void;
