@@ -1,22 +1,41 @@
 import { useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
 
-import ClosedCard from '../../../components/common/program/programs/card/ClosedCard';
 import classes from './Programs.module.scss';
-import CardListSlider from '../../../components/common/ui/card/wrapper/CardListSlider';
-import CardListPlaceholder from '../../../components/common/ui/card/placeholder/CardListPlaceholder';
 import ProgramCard from '../../../components/common/program/programs/card/ProgramCard';
-import { typeToText } from '../../../utils/converTypeToText';
-import formatDateString from '../../../utils/formatDateString';
 import ProgramMenu from '../../../components/common/program/programs/menu/ProgramMenu';
 import { PROGRAM_CATEGORY } from '../../../utils/convert';
+import axios from '../../../utils/axios';
+import { IProgram } from '../../../interfaces/Program.interface';
 
 const Programs = () => {
   const [searchParams] = useSearchParams();
-  const [programs, setPrograms] = useState<any>(null);
-  const [closedPrograms, setClosedPrograms] = useState<any>(null);
-  const [loading, setLoading] = useState<boolean>(true);
   const category = searchParams.get('category') || PROGRAM_CATEGORY.ALL;
+  const [challengeList, setChallengeList] = useState<IProgram[]>([]);
+
+  const getChallengeList = async () => {
+    const pageable = { page: 0, size: 4, sort: 'string' };
+    const queryList = Object.entries(pageable).map(
+      ([key, value]) => `${key}=${value}`,
+    );
+    try {
+      const res = await axios.get(`/challenge?${queryList.join('&')}`);
+      if (res.status === 200) {
+        setChallengeList(res.data.data.programList);
+        return res.data;
+      }
+      throw new Error(`${res.status} ${res.statusText}`);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+  const { isLoading } = useQuery({
+    queryKey: ['challenge'],
+    queryFn: getChallengeList,
+  });
+
+  if (isLoading) return <></>;
 
   return (
     <>
@@ -53,7 +72,7 @@ const Programs = () => {
             </div>
           </section>
           <section className="px-5 py-8">
-            <div>
+            <article>
               <div className="flex items-center justify-between">
                 <div className="mb-6">
                   <h1 className="text-1.125-bold">첫장 챌린지</h1>
@@ -66,33 +85,11 @@ const Programs = () => {
                 </Link>
               </div>
               <div className="grid grid-cols-2 gap-x-4 gap-y-5">
-                <div className="flex flex-col gap-2 overflow-hidden rounded-md">
-                  <div className="relative">
-                    <img
-                      src="/images/home/program-thumbnail.png"
-                      alt="프로그램 썸네일 배경"
-                    />
-                    <img
-                      className="absolute inset-2/4 z-10 w-24 translate-x-[-50%] translate-y-[-50%]"
-                      src="/images/home/program-cell.png"
-                      alt="프로그램 썸네일 세포"
-                    />
-                  </div>
-                  <div className="flex flex-col gap-2">
-                    <div className="flex justify-between">
-                      <div className="text-0.75-medium rounded-md border border-primary bg-[#DBDDFD] px-2.5 py-0.5 text-primary">
-                        모집 중
-                      </div>
-                      <img
-                        className="cursor-pointer"
-                        src="/icons/program-detail.svg"
-                        alt="프로그램 상세 보기 아이콘"
-                      />
-                    </div>
-                  </div>
-                </div>
+                {challengeList.map((challenge) => (
+                  <ProgramCard program={challenge} />
+                ))}
               </div>
-            </div>
+            </article>
           </section>
           <section className={classes.closedPrograms}></section>
         </main>

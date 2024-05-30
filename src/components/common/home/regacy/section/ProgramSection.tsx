@@ -6,7 +6,7 @@ import { typeToText } from '../../../../../utils/converTypeToText';
 import formatDateString from '../../../../../utils/formatDateString';
 import CardListSlider from '../../../ui/card/wrapper/CardListSlider';
 import CardListPlaceholder from '../../../ui/card/placeholder/CardListPlaceholder';
-import ProgramCard from '../../../program/programs/card/ProgramCard';
+import ProgramCardRegacy from '../../../program/programs/card/ProgramCardRegacy';
 
 const ProgramSection = () => {
   const [programList, setProgramList] = useState<any>();
@@ -49,7 +49,7 @@ const ProgramSection = () => {
           ) : (
             <CardListSlider>
               {programList.map((program: any) => (
-                <ProgramCard
+                <ProgramCardRegacy
                   key={program.id}
                   to={`/program/detail/${program.id}`}
                 >
@@ -67,7 +67,7 @@ const ProgramSection = () => {
                       <span>{formatDateString(program.startDate)}</span>
                     </div>
                   </div>
-                </ProgramCard>
+                </ProgramCardRegacy>
               ))}
             </CardListSlider>
           )}

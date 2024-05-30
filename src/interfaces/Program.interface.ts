@@ -16,3 +16,13 @@ export interface DailyMission {
   attendanceLink?: string;
   attended: boolean;
 }
+
+export interface IProgram {
+  id: number;
+  title: string;
+  shortDesc: string;
+  thumbnail: string;
+  startDate: string;
+  endDate: string;
+  deadline: string;
+}
