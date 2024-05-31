@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 
 import { IProgram } from '../../../../../interfaces/interface';
+import ProgramStatusTag from './ProgramStatusTag';
 
 interface ProgramCardProps {
   program: IProgram;
@@ -16,9 +17,10 @@ const ProgramCard = ({ program }: ProgramCardProps) => {
       <img src={program.thumbnail} alt="프로그램 썸네일 배경" />
       <div className="flex flex-col gap-2 py-2">
         <div className="flex justify-between">
-          <div className="text-0.75-medium rounded-md border border-primary bg-[#DBDDFD] px-2.5 py-0.5 text-primary">
-            모집 중
-          </div>
+          <ProgramStatusTag
+            startDate={program.startDate}
+            endDate={program.endDate}
+          />
           <img
             className="cursor-pointer"
             src="/icons/program-detail.svg"
