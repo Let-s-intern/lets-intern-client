@@ -1,28 +1,40 @@
 import { useState } from 'react';
-import { Link, useSearchParams } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 
-import classes from './Programs.module.scss';
-import ProgramCard from '../../../components/common/program/programs/card/ProgramCard';
 import ProgramMenu from '../../../components/common/program/programs/menu/ProgramMenu';
-import { PROGRAM_CATEGORY } from '../../../utils/convert';
+import {
+  CHALLENGE_ARTICLE,
+  LIVE_ARTICLE,
+  PROGRAM_CATEGORY,
+  PROGRAM_TYPE,
+  VOD_ARTICLE,
+} from '../../../utils/programConst';
 import axios from '../../../utils/axios';
-import { IProgram } from '../../../interfaces/Program.interface';
+import { IChallenge, ILive, IVod } from '../../../interfaces/interface';
+import ProgramArticle from '../../../components/common/program/programs/card/ProgramArticle';
+import ProgramCard from '../../../components/common/program/programs/card/ProgramCard';
 
 const Programs = () => {
   const [searchParams] = useSearchParams();
   const category = searchParams.get('category') || PROGRAM_CATEGORY.ALL;
-  const [challengeList, setChallengeList] = useState<IProgram[]>([]);
+  const [challengeList, setChallengeList] = useState<IChallenge[]>([]);
+  const [vodList, setVodList] = useState<IVod[]>([]);
+  const [liveList, setLiveList] = useState<ILive[]>([]);
 
-  const getChallengeList = async () => {
+  const getProgramList = async <T,>(
+    type: string,
+    setState: React.Dispatch<React.SetStateAction<T[]>>,
+  ) => {
     const pageable = { page: 0, size: 4, sort: 'string' };
-    const queryList = Object.entries(pageable).map(
+    const queryList = Object.entries(pageable)?.map(
       ([key, value]) => `${key}=${value}`,
     );
     try {
-      const res = await axios.get(`/challenge?${queryList.join('&')}`);
+      const res = await axios.get(`/${type}?${queryList.join('&')}`);
+      console.log(res);
       if (res.status === 200) {
-        setChallengeList(res.data.data.programList);
+        setState(res.data.data.programList);
         return res.data;
       }
       throw new Error(`${res.status} ${res.statusText}`);
@@ -30,17 +42,28 @@ const Programs = () => {
       console.error(error);
     }
   };
-  const { isLoading } = useQuery({
+
+  const { isLoading: isChallengeLoading } = useQuery({
     queryKey: ['challenge'],
-    queryFn: getChallengeList,
+    queryFn: () => getProgramList<IChallenge>('challenge', setChallengeList),
   });
+  const { isLoading: isVodLoading } = useQuery({
+    queryKey: ['vod'],
+    queryFn: () => getProgramList<IVod>('vod', setVodList),
+  });
+  const { isLoading: isLiveLoading } = useQuery({
+    queryKey: ['live'],
+    queryFn: () => getProgramList<ILive>('live', setLiveList),
+  });
+
+  const isLoading = isChallengeLoading || isVodLoading || isLiveLoading;
 
   if (isLoading) return <></>;
 
   return (
     <>
-      <div className={classes.page}>
-        <main className={classes.main}>
+      <div>
+        <main>
           <section className="sticky top-16 bg-static-100 px-5 pt-7 sm:top-24 lg:pt-8">
             <div className="flex justify-center">
               <ul className="flex w-full max-w-[60rem] items-center justify-between">
@@ -72,26 +95,31 @@ const Programs = () => {
             </div>
           </section>
           <section className="px-5 py-8">
-            <article>
-              <div className="flex items-center justify-between">
-                <div className="mb-6">
-                  <h1 className="text-1.125-bold">첫장 챌린지</h1>
-                  <span className="text-0.875 text-neutral-20">
-                    커리어 준비의 첫 시작이 막막하다면?
-                  </span>
-                </div>
-                <Link className="text-0.75 text-neutral-40" to="#">
-                  전체보기
-                </Link>
-              </div>
-              <div className="grid grid-cols-2 gap-x-4 gap-y-5">
-                {challengeList.map((challenge) => (
-                  <ProgramCard program={challenge} />
-                ))}
-              </div>
-            </article>
+            <ProgramArticle
+              title={CHALLENGE_ARTICLE.TITLE}
+              description={CHALLENGE_ARTICLE.DESCRIPTION}
+            >
+              {challengeList?.map((program) => (
+                <ProgramCard program={program} type={PROGRAM_TYPE.CHALLENGE} />
+              ))}
+            </ProgramArticle>
+            <ProgramArticle
+              title={VOD_ARTICLE.TITLE}
+              description={VOD_ARTICLE.DESCRIPTION}
+            >
+              {vodList?.map((program) => (
+                <ProgramCard program={program} type={PROGRAM_TYPE.VOD} />
+              ))}
+            </ProgramArticle>
+            <ProgramArticle
+              title={LIVE_ARTICLE.TITLE}
+              description={LIVE_ARTICLE.DESCRIPTION}
+            >
+              {liveList?.map((program) => (
+                <ProgramCard program={program} type={PROGRAM_TYPE.LIVE} />
+              ))}
+            </ProgramArticle>
           </section>
-          <section className={classes.closedPrograms}></section>
         </main>
       </div>
     </>

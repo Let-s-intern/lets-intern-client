@@ -312,21 +312,3 @@ export const TABLE_CONTENT = {
   DROPDOWN: 1,
   DATE: 2,
 } as const;
-
-export const PROGRAM_CATEGORY = {
-  ALL: 'ALL',
-  CHALLENGE: 'CHALLENGE',
-  CLASS: 'CLASS',
-} as const;
-
-export const PRGRAM_STATUS = {
-  PREV: '사전알림 신청',
-  PROCEEDING: '모집 중',
-  POST: '마감',
-} as const;
-
-export const PROGRAM_FILTER_STATUS = {
-  PREV: '모집 예정',
-  PROCEEDING: '모집 중',
-  POST: '모집 종료',
-} as const;

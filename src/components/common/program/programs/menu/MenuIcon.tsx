@@ -1,5 +1,5 @@
-import { ProgramCategoryKey } from '../../../../../interfaces/Program.interface';
-import { PROGRAM_CATEGORY } from '../../../../../utils/convert';
+import { ProgramCategoryKey } from '../../../../../interfaces/interface';
+import { PROGRAM_CATEGORY } from '../../../../../utils/programConst';
 
 interface MenuIconProps {
   fill: string;

@@ -1,4 +1,4 @@
-import { PROGRAM_CATEGORY } from '../utils/convert';
+import { PROGRAM_CATEGORY } from '../utils/programConst';
 
 export type ProgramCategoryKey = keyof typeof PROGRAM_CATEGORY;
 
@@ -17,12 +17,25 @@ export interface DailyMission {
   attended: boolean;
 }
 
-export interface IProgram {
+interface IProgram {
   id: number;
   title: string;
   shortDesc: string;
   thumbnail: string;
+}
+
+export interface IChallenge extends IProgram {
   startDate: string;
   endDate: string;
   deadline: string;
+}
+
+export interface ILive extends IProgram {
+  startDate: string;
+  endDate: string;
+  deadline: string;
+}
+
+export interface IVod extends IProgram {
+  link: string;
 }

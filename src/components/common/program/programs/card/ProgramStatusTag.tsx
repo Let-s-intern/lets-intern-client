@@ -1,21 +1,12 @@
 import clsx from 'clsx';
 
-import { PRGRAM_STATUS } from '../../../../../utils/convert';
+import { PRGRAM_STATUS } from '../../../../../utils/programConst';
 
 interface ProgramStatusTagProps {
-  startDate: string;
-  endDate: string;
+  status: (typeof PRGRAM_STATUS)[keyof typeof PRGRAM_STATUS];
 }
 
-const ProgramStatusTag = ({ startDate, endDate }: ProgramStatusTagProps) => {
-  const calculateStatus = (startDate: string, endDate: string) => {
-    const currentDate = new Date();
-    if (currentDate < new Date(startDate)) return PRGRAM_STATUS.PREV;
-    if (currentDate > new Date(endDate)) return PRGRAM_STATUS.POST;
-    return PRGRAM_STATUS.PROCEEDING;
-  };
-  const status = calculateStatus(startDate, endDate);
-
+const ProgramStatusTag = ({ status }: ProgramStatusTagProps) => {
   return (
     <div
       className={clsx(
