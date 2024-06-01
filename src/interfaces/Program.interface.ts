@@ -35,3 +35,7 @@ export interface ILive extends IProgram {
 export interface IVod extends IProgram {
   link: string;
 }
+
+export interface IFilter {
+  [key: string]: boolean;
+}

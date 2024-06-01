@@ -1,5 +1,5 @@
 import clsx from 'clsx';
-import React, { useCallback, useReducer } from 'react';
+import React from 'react';
 
 import {
   PROGRAM_FILTER_STATUS,
@@ -7,63 +7,25 @@ import {
   PROGRAM_FILTER_TYPE,
 } from '../../../../utils/programConst';
 import FilterCheckbox from './FilterCheckbox';
-import {
-  filterTypeReducer,
-  initialFilterType,
-  filterNameReducer,
-  initialFilterName,
-  filterStatusReducer,
-  initialFilterStatus,
-} from '../../../../reducers/filterReducer';
+import { IFilter } from '../../../../interfaces/interface';
 
 interface FilterSideBarProps {
   isOpen: boolean;
+  filterType: IFilter;
+  filterName: IFilter;
+  filterStatus: IFilter;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  handleClick: (key: string, value: string) => void;
 }
 
-const FilterSideBar = ({ isOpen, setIsOpen }: FilterSideBarProps) => {
-  const [filterType, typeDispatch] = useReducer(
-    filterTypeReducer,
-    initialFilterType,
-  );
-  const [filterName, nameDispatch] = useReducer(
-    filterNameReducer,
-    initialFilterName,
-  );
-  const [filterStatus, statusDispatch] = useReducer(
-    filterStatusReducer,
-    initialFilterStatus,
-  );
-
-  const handleClick = useCallback((key: string, value: string) => {
-    switch (key) {
-      case 'type': {
-        typeDispatch({ type: 'init' });
-        typeDispatch({
-          type: filterType[value] ? 'uncheck' : 'check',
-          value,
-        });
-        break;
-      }
-      case 'name': {
-        nameDispatch({ type: 'init' });
-        nameDispatch({
-          type: filterName[value] ? 'uncheck' : 'check',
-          value,
-        });
-        break;
-      }
-      case 'status': {
-        statusDispatch({ type: 'init' });
-        statusDispatch({
-          type: filterStatus[value] ? 'uncheck' : 'check',
-          value,
-        });
-        break;
-      }
-    }
-  }, []);
-
+const FilterSideBar = ({
+  isOpen,
+  setIsOpen,
+  handleClick,
+  filterType,
+  filterName,
+  filterStatus,
+}: FilterSideBarProps) => {
   return (
     <div
       className={clsx(

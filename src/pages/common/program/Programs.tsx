@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useCallback, useReducer, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import clsx from 'clsx';
 
@@ -15,9 +15,59 @@ import ProgramCard from '../../../components/common/program/programs/card/Progra
 import Banner from '../../../components/common/program/banner/Banner';
 import FilterItem from '../../../components/common/program/filter/FilterItem';
 import FilterSideBar from '../../../components/common/program/filter/FilterSideBar';
+import {
+  filterTypeReducer,
+  initialFilterType,
+  filterNameReducer,
+  initialFilterName,
+  filterStatusReducer,
+  initialFilterStatus,
+} from '../../../reducers/filterReducer';
 
 const Programs = () => {
+  // 필터링 상태 관리
   const [isOpen, setIsOpen] = useState(false);
+  const [filterType, typeDispatch] = useReducer(
+    filterTypeReducer,
+    initialFilterType,
+  );
+  const [filterName, nameDispatch] = useReducer(
+    filterNameReducer,
+    initialFilterName,
+  );
+  const [filterStatus, statusDispatch] = useReducer(
+    filterStatusReducer,
+    initialFilterStatus,
+  );
+
+  const handleClick = useCallback((key: string, value: string) => {
+    switch (key) {
+      case 'type': {
+        typeDispatch({ type: 'init' });
+        typeDispatch({
+          type: filterType[value] ? 'uncheck' : 'check',
+          value,
+        });
+        break;
+      }
+      case 'name': {
+        nameDispatch({ type: 'init' });
+        nameDispatch({
+          type: filterName[value] ? 'uncheck' : 'check',
+          value,
+        });
+        break;
+      }
+      case 'status': {
+        statusDispatch({ type: 'init' });
+        statusDispatch({
+          type: filterStatus[value] ? 'uncheck' : 'check',
+          value,
+        });
+        break;
+      }
+    }
+  }, []);
 
   // 프로그램 싱태 관리
   const [challengeList, setChallengeList] = useState<IChallenge[]>([]);
@@ -64,7 +114,14 @@ const Programs = () => {
 
   return (
     <div>
-      <FilterSideBar setIsOpen={setIsOpen} isOpen={isOpen} />
+      <FilterSideBar
+        setIsOpen={setIsOpen}
+        isOpen={isOpen}
+        handleClick={handleClick}
+        filterType={filterType}
+        filterName={filterName}
+        filterStatus={filterStatus}
+      />
       <main
         className={clsx('flex flex-col gap-16 px-5 py-8', {
           hidden: isOpen,
@@ -85,16 +142,15 @@ const Programs = () => {
             </div>
           </div>
           <div className="flex flex-nowrap items-center gap-4 overflow-scroll py-2">
-            <FilterItem caption="커리어 탐색" />
-            <FilterItem caption="커리어 탐색" />
-            <FilterItem caption="커리어 탐색" />
-            <FilterItem caption="커리어 탐색" />
-            <FilterItem caption="커리어 탐색" />
-            <FilterItem caption="커리어 탐색" />
-            <FilterItem caption="커리어 탐색" />
-            <FilterItem caption="커리어 탐색" />
-            <FilterItem caption="커리어 탐색" />
-            <FilterItem caption="커리어 탐색" />
+            {Object.entries(filterType).map(([key, value]) => {
+              if (value) return <FilterItem caption={key} />;
+            })}
+            {Object.entries(filterName).map(([key, value]) => {
+              if (value) return <FilterItem caption={key} />;
+            })}
+            {Object.entries(filterStatus).map(([key, value]) => {
+              if (value) return <FilterItem caption={key} />;
+            })}
           </div>
         </section>
         <section className="flex flex-col gap-16">

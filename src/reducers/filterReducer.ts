@@ -1,4 +1,4 @@
-import { IAction } from '../interfaces/interface';
+import { IAction, IFilter } from '../interfaces/interface';
 import {
   PROGRAM_FILTER_NAME,
   PROGRAM_FILTER_STATUS,
@@ -7,9 +7,6 @@ import {
 
 interface FilterCheckedAction extends IAction {
   value?: string;
-}
-interface IStatus {
-  [key: string]: boolean;
 }
 
 export const initialFilterName = {
@@ -29,7 +26,7 @@ export const initialFilterStatus = {
 };
 
 export function filterNameReducer(
-  status: IStatus,
+  status: IFilter,
   action: FilterCheckedAction,
 ) {
   const _status = { ...status };
@@ -61,7 +58,7 @@ export function filterNameReducer(
 }
 
 export function filterTypeReducer(
-  status: IStatus,
+  status: IFilter,
   action: FilterCheckedAction,
 ) {
   const _status = { ...status };
@@ -93,7 +90,7 @@ export function filterTypeReducer(
 }
 
 export function filterStatusReducer(
-  status: IStatus,
+  status: IFilter,
   action: FilterCheckedAction,
 ) {
   const _status = { ...status };
