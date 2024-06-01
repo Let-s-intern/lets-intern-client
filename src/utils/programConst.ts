@@ -36,3 +36,16 @@ export const PROGRAM_TYPE = {
   LIVE: 'live',
   VOD: 'vod',
 } as const;
+
+export const PROGRAM_FILTER_TYPE = {
+  CAREER_SEARCH: '커리어 탐색',
+  DOCUMENT_PREPARATION: '서류 준비',
+  MEETING_PREPARATION: '면접 준비',
+  PASS: '합격 후 성장',
+};
+
+export const PROGRAM_FILTER_TITLE = {
+  CHALLENGE: '챌린지',
+  LIVE: 'LIVE 클래스',
+  VOD: 'VOD 클래스',
+};

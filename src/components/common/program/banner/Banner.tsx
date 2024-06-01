@@ -56,13 +56,13 @@ const Banner = () => {
   if (isLoading || bannerList.length === 0) return <></>;
 
   return (
-    <div className="relative flex h-40 w-full items-center overflow-hidden rounded-lg bg-static-0 text-static-100">
+    <div className="relative flex h-40 w-full items-center overflow-hidden rounded-sm bg-static-0 text-static-100">
       <div
         ref={innerRef}
         className="flex flex-nowrap items-center transition ease-in-out"
       >
         {bannerList.map((banner) => (
-          <Link to={banner.link} className="w-[90vw]">
+          <Link to={banner.link} className="w-[92vw]">
             <img
               key={banner.id}
               ref={imgRef}

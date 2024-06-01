@@ -13,7 +13,7 @@ const ProgramCard = ({ program, type }: ProgramCardProps) => {
   let _program = program as IChallenge | ILive;
 
   const formatDate = (date: string) => {
-    return new Date(date).toLocaleDateString().replaceAll(' ', '');
+    return new Date(date).toLocaleDateString().replaceAll(' ', '').slice(0, -1);
   };
 
   // 날짜에 따라 뱃지 상태 계산
@@ -27,7 +27,7 @@ const ProgramCard = ({ program, type }: ProgramCardProps) => {
   const status = calculateStatus();
 
   return (
-    <Link to="#" className="flex flex-col overflow-hidden rounded-md">
+    <Link to="#" className="flex flex-col overflow-hidden rounded-xs">
       <img src={program.thumbnail} alt="프로그램 썸네일 배경" />
       <div className="flex flex-col gap-2 py-2">
         <div className="flex justify-between">
@@ -44,7 +44,7 @@ const ProgramCard = ({ program, type }: ProgramCardProps) => {
         </p>
         {/* VOD 클래스는 진행일정 없음 */}
         {type !== PROGRAM_TYPE.VOD && (
-          <div className="flex gap-2">
+          <div className="flex gap-1.5">
             <span className="text-0.75-medium">진행일정</span>
             <span className="text-0.75-medium text-primary-dark">
               {type === PROGRAM_TYPE.CHALLENGE

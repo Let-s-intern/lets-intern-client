@@ -12,6 +12,7 @@ import { IChallenge, ILive, IVod } from '../../../interfaces/interface';
 import ProgramArticle from '../../../components/common/program/programs/card/ProgramArticle';
 import ProgramCard from '../../../components/common/program/programs/card/ProgramCard';
 import Banner from '../../../components/common/program/banner/Banner';
+import FilterItem from '../../../components/common/program/filter/FilterItem';
 
 const Programs = () => {
   const [challengeList, setChallengeList] = useState<IChallenge[]>([]);
@@ -58,6 +59,21 @@ const Programs = () => {
 
   return (
     <main className="flex flex-col gap-16 px-5 py-8">
+      <section className="flex flex-col gap-3">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <img src="/icons/filter.svg" alt="필터 아이콘" />
+            <h2 className="text-1.125-bold text-neutral-40">필터</h2>
+          </div>
+          <div className="flex items-center gap-2">
+            <img src="/icons/redo.svg" alt="필터 초기화 아이콘" />
+            <span className="text-0.75-medium text-neutral-40">초기화</span>
+          </div>
+        </div>
+        <div className="flex items-center gap-4 py-2">
+          <FilterItem />
+        </div>
+      </section>
       <section className="flex flex-col gap-16">
         <ProgramArticle
           title={CHALLENGE_ARTICLE.TITLE}

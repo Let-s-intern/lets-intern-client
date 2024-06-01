@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 interface ProgramArticleProps {
   title: string;
   description: string;
-  children: React.ReactNode;
+  children?: React.ReactNode;
 }
 
 const ProgramArticle = ({
