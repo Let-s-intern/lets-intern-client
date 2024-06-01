@@ -1,12 +1,12 @@
 import { IAction, IMission } from '../interfaces/interface';
 
-interface IMissionAction extends IAction {
+interface MissionAction extends IAction {
   item: IMission;
 }
 
 export default function missionReducer(
   missions: IMission[],
-  action: IMissionAction,
+  action: MissionAction,
 ) {
   switch (action.type) {
     case 'add': {

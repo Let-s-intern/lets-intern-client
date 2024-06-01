@@ -1,12 +1,10 @@
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
+import clsx from 'clsx';
 
 import {
   CHALLENGE_ARTICLE,
   LIVE_ARTICLE,
-  PROGRAM_FILTER_STATUS,
-  PROGRAM_FILTER_TITLE,
-  PROGRAM_FILTER_TYPE,
   PROGRAM_TYPE,
   VOD_ARTICLE,
 } from '../../../utils/programConst';
@@ -16,13 +14,12 @@ import ProgramArticle from '../../../components/common/program/programs/card/Pro
 import ProgramCard from '../../../components/common/program/programs/card/ProgramCard';
 import Banner from '../../../components/common/program/banner/Banner';
 import FilterItem from '../../../components/common/program/filter/FilterItem';
-import FilterCheckbox from '../../../components/common/program/filter/FilterCheckbox';
+import FilterSideBar from '../../../components/common/program/filter/FilterSideBar';
 
 const Programs = () => {
-  const [typeChecked, setTypeChecked] = useState([false, false, false, false]);
-  const [titleChekced, setTitleChecked] = useState([false, false, false]);
-  const [statusChecked, setStatusChecked] = useState([false, false, false]);
+  const [isOpen, setIsOpen] = useState(false);
 
+  // 프로그램 싱태 관리
   const [challengeList, setChallengeList] = useState<IChallenge[]>([]);
   const [vodList, setVodList] = useState<IVod[]>([]);
   const [liveList, setLiveList] = useState<ILive[]>([]);
@@ -67,57 +64,18 @@ const Programs = () => {
 
   return (
     <div>
-      <div className="flex flex-col gap-5 bg-neutral-90 p-10">
-        <section className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <img src="/icons/filter.svg" alt="필터 아이콘" />
-            <h1 className="text-1.125-semibold text-neutral-40">필터</h1>
-          </div>
-          <img
-            className="cursor-pointer"
-            src="/icons/chevron-left-duo.svg"
-            alt="필터 닫기 아이콘"
-          />
-        </section>
-        <hr />
-        <section>
-          <h1 className="text-1-semibold mb-2">커리어 단계</h1>
-          {Object.values(PROGRAM_FILTER_TYPE).map((value, i) => (
-            <FilterCheckbox
-              isChecked={typeChecked[i]}
-              setIsChecked={setTypeChecked}
-              caption={value}
-              index={i}
-            />
-          ))}
-        </section>
-        <section>
-          <h1 className="text-1-semibold mb-2">프로그램</h1>
-          {Object.values(PROGRAM_FILTER_TITLE).map((value, i) => (
-            <FilterCheckbox
-              isChecked={titleChekced[i]}
-              setIsChecked={setTitleChecked}
-              caption={value}
-              index={i}
-            />
-          ))}
-        </section>
-        <section>
-          <h1 className="text-1-semibold mb-2">모집 현황</h1>
-          {Object.values(PROGRAM_FILTER_STATUS).map((value, i) => (
-            <FilterCheckbox
-              isChecked={statusChecked[i]}
-              setIsChecked={setStatusChecked}
-              caption={value}
-              index={i}
-            />
-          ))}
-        </section>
-      </div>
-      <main className="flex flex-col gap-16 px-5 py-8">
+      <FilterSideBar setIsOpen={setIsOpen} isOpen={isOpen} />
+      <main
+        className={clsx('flex flex-col gap-16 px-5 py-8', {
+          hidden: isOpen,
+        })}
+      >
         <section className="flex flex-col gap-3">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
+            <div
+              onClick={() => setIsOpen(true)}
+              className="flex items-center gap-2"
+            >
               <img src="/icons/filter.svg" alt="필터 아이콘" />
               <h1 className="text-1.125-bold text-neutral-40">필터</h1>
             </div>

@@ -44,7 +44,7 @@ export const PROGRAM_FILTER_TYPE = {
   PASS: '합격 후 성장',
 };
 
-export const PROGRAM_FILTER_TITLE = {
+export const PROGRAM_FILTER_NAME = {
   CHALLENGE: '챌린지',
   LIVE: 'LIVE 클래스',
   VOD: 'VOD 클래스',

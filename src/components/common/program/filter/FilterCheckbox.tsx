@@ -3,39 +3,16 @@ import React from 'react';
 interface FilterCheckboxProps {
   caption: string;
   isChecked: boolean;
-  index: number;
-  setIsChecked: React.Dispatch<React.SetStateAction<boolean[]>>;
+  onClick: React.MouseEventHandler<HTMLDivElement>;
 }
 
 const FilterCheckbox = ({
   caption,
   isChecked,
-  index,
-  setIsChecked,
+  onClick,
 }: FilterCheckboxProps) => {
-  const handleCheckbox = () => {
-    if (isChecked)
-      setIsChecked((prev) => {
-        const _prev = [...prev];
-        _prev[index] = false;
-        return _prev;
-      });
-    else {
-      setIsChecked((prev) => {
-        const i = prev.findIndex((ele) => ele === true);
-        const _prev = [...prev];
-        if (i !== -1) _prev[i] = false;
-        _prev[index] = true;
-        return _prev;
-      });
-    }
-  };
-
   return (
-    <div
-      onClick={handleCheckbox}
-      className="flex items-center gap-2 px-2 py-2.5"
-    >
+    <div onClick={onClick} className="flex items-center gap-2 px-2 py-2.5">
       <img
         className="w-8"
         src={`/icons/${
@@ -48,4 +25,4 @@ const FilterCheckbox = ({
   );
 };
 
-export default React.memo(FilterCheckbox);
+export default FilterCheckbox;
