@@ -19,7 +19,6 @@ const ProgramCard = ({ program, type }: ProgramCardProps) => {
   // 날짜에 따라 뱃지 상태 계산
   const calculateStatus = () => {
     if (type === PROGRAM_TYPE.VOD) return PRGRAM_STATUS.PROCEEDING; // VOD 클래스는 startDate가 없음
-
     const currentDate = new Date();
     if (currentDate < new Date(_program.startDate)) return PRGRAM_STATUS.PREV;
     if (currentDate > new Date(_program.endDate)) return PRGRAM_STATUS.POST;
