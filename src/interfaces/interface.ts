@@ -4,6 +4,7 @@ export * from './Program.interface';
 export * from './Application.interface';
 export * from './Mission.interface';
 export * from './Guide.interface';
+export * from './Banner.interface';
 
 export type StatusKey = keyof typeof STATUS;
 export type ContentTypeKey = keyof typeof TABLE_CONTENT;

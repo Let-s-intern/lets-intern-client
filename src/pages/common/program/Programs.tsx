@@ -11,6 +11,7 @@ import axios from '../../../utils/axios';
 import { IChallenge, ILive, IVod } from '../../../interfaces/interface';
 import ProgramArticle from '../../../components/common/program/programs/card/ProgramArticle';
 import ProgramCard from '../../../components/common/program/programs/card/ProgramCard';
+import Banner from '../../../components/common/program/banner/Banner';
 
 const Programs = () => {
   const [challengeList, setChallengeList] = useState<IChallenge[]>([]);
@@ -83,6 +84,7 @@ const Programs = () => {
           ))}
         </ProgramArticle>
       </section>
+      <Banner />
     </main>
   );
 };
