@@ -1,7 +1,3 @@
-import { PROGRAM_CATEGORY } from '../utils/programConst';
-
-export type ProgramCategoryKey = keyof typeof PROGRAM_CATEGORY;
-
 export interface DailyMission {
   id: number;
   th: number;

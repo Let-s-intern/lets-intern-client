@@ -1,4 +1,5 @@
 import { STATUS, TABLE_CONTENT } from '../utils/convert';
+import { PROGRAM_CATEGORY } from '../utils/programConst';
 
 export * from './Program.interface';
 export * from './Application.interface';
@@ -8,6 +9,7 @@ export * from './Banner.interface';
 
 export type StatusKey = keyof typeof STATUS;
 export type ContentTypeKey = keyof typeof TABLE_CONTENT;
+export type ProgramCategoryKey = keyof typeof PROGRAM_CATEGORY;
 
 export interface IAction {
   type: string;

@@ -1,18 +1,38 @@
 import { IAction } from '../interfaces/interface';
+import {
+  PROGRAM_FILTER_NAME,
+  PROGRAM_FILTER_STATUS,
+  PROGRAM_FILTER_TYPE,
+} from '../utils/programConst';
 
 interface FilterCheckedAction extends IAction {
-  index?: number;
+  value?: string;
+}
+interface IStatus {
+  [key: string]: boolean;
 }
 
-export const initialFilterName = [false, false, false];
-export const initialFilterType = [false, false, false, false];
-export const initialFilterStatus = [false, false, false];
+export const initialFilterName = {
+  [PROGRAM_FILTER_NAME.CHALLENGE]: false,
+  [PROGRAM_FILTER_NAME.LIVE]: false,
+  [PROGRAM_FILTER_NAME.VOD]: false,
+};
+export const initialFilterType = {
+  [PROGRAM_FILTER_TYPE.MEETING_PREPARATION]: false,
+  [PROGRAM_FILTER_TYPE.DOCUMENT_PREPARATION]: false,
+  [PROGRAM_FILTER_TYPE.PASS]: false,
+};
+export const initialFilterStatus = {
+  [PROGRAM_FILTER_STATUS.PREV]: false,
+  [PROGRAM_FILTER_STATUS.PROCEEDING]: false,
+  [PROGRAM_FILTER_STATUS.POST]: false,
+};
 
 export function filterNameReducer(
-  status: boolean[],
+  status: IStatus,
   action: FilterCheckedAction,
 ) {
-  const _status = [...status];
+  const _status = { ...status };
 
   switch (action.type) {
     case 'init': {
@@ -20,17 +40,17 @@ export function filterNameReducer(
     }
 
     case 'check': {
-      _status[action.index!] = true;
+      _status[action.value!] = true;
       return _status;
     }
 
     case 'uncheck': {
-      _status[action.index!] = false;
+      _status[action.value!] = false;
       return _status;
     }
 
     case 'toggle': {
-      _status[action.index!] = !_status[action.index!];
+      _status[action.value!] = !_status[action.value!];
       return _status;
     }
 
@@ -41,10 +61,10 @@ export function filterNameReducer(
 }
 
 export function filterTypeReducer(
-  status: boolean[],
+  status: IStatus,
   action: FilterCheckedAction,
 ) {
-  const _status = [...status];
+  const _status = { ...status };
 
   switch (action.type) {
     case 'init': {
@@ -52,17 +72,17 @@ export function filterTypeReducer(
     }
 
     case 'check': {
-      _status[action.index!] = true;
+      _status[action.value!] = true;
       return _status;
     }
 
     case 'uncheck': {
-      _status[action.index!] = false;
+      _status[action.value!] = false;
       return _status;
     }
 
     case 'toggle': {
-      _status[action.index!] = !_status[action.index!];
+      _status[action.value!] = !_status[action.value!];
       return _status;
     }
 
@@ -73,28 +93,28 @@ export function filterTypeReducer(
 }
 
 export function filterStatusReducer(
-  status: boolean[],
+  status: IStatus,
   action: FilterCheckedAction,
 ) {
-  const _status = [...status];
+  const _status = { ...status };
 
   switch (action.type) {
     case 'init': {
-      return [false, false, false];
+      return initialFilterStatus;
     }
 
     case 'check': {
-      _status[action.index!] = true;
+      _status[action.value!] = true;
       return _status;
     }
 
     case 'uncheck': {
-      _status[action.index!] = false;
+      _status[action.value!] = false;
       return _status;
     }
 
     case 'toggle': {
-      _status[action.index!] = !_status[action.index!];
+      _status[action.value!] = !_status[action.value!];
       return _status;
     }
 

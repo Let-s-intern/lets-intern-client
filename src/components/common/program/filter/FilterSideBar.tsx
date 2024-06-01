@@ -35,29 +35,29 @@ const FilterSideBar = ({ isOpen, setIsOpen }: FilterSideBarProps) => {
     initialFilterStatus,
   );
 
-  const handleClick = useCallback((key: string, index: number) => {
+  const handleClick = useCallback((key: string, value: string) => {
     switch (key) {
       case 'type': {
         typeDispatch({ type: 'init' });
         typeDispatch({
-          type: filterType[index] ? 'uncheck' : 'check',
-          index,
+          type: filterType[value] ? 'uncheck' : 'check',
+          value,
         });
         break;
       }
       case 'name': {
         nameDispatch({ type: 'init' });
         nameDispatch({
-          type: filterName[index] ? 'uncheck' : 'check',
-          index,
+          type: filterName[value] ? 'uncheck' : 'check',
+          value,
         });
         break;
       }
       case 'status': {
         statusDispatch({ type: 'init' });
         statusDispatch({
-          type: filterStatus[index] ? 'uncheck' : 'check',
-          index,
+          type: filterStatus[value] ? 'uncheck' : 'check',
+          value,
         });
         break;
       }
@@ -90,11 +90,11 @@ const FilterSideBar = ({ isOpen, setIsOpen }: FilterSideBarProps) => {
       <hr />
       <section>
         <h1 className="text-1-semibold mb-2">커리어 단계</h1>
-        {Object.values(PROGRAM_FILTER_TYPE).map((value, i) => (
+        {Object.values(PROGRAM_FILTER_TYPE).map((value) => (
           <FilterCheckbox
             caption={value}
-            isChecked={filterType[i]}
-            onClick={() => handleClick('type', i)}
+            isChecked={filterType[value]}
+            onClick={() => handleClick('type', value)}
           />
         ))}
       </section>
@@ -103,8 +103,8 @@ const FilterSideBar = ({ isOpen, setIsOpen }: FilterSideBarProps) => {
         {Object.values(PROGRAM_FILTER_NAME).map((value, i) => (
           <FilterCheckbox
             caption={value}
-            isChecked={filterName[i]}
-            onClick={() => handleClick('name', i)}
+            isChecked={filterName[value]}
+            onClick={() => handleClick('name', value)}
           />
         ))}
       </section>
@@ -113,8 +113,8 @@ const FilterSideBar = ({ isOpen, setIsOpen }: FilterSideBarProps) => {
         {Object.values(PROGRAM_FILTER_STATUS).map((value, i) => (
           <FilterCheckbox
             caption={value}
-            isChecked={filterStatus[i]}
-            onClick={() => handleClick('status', i)}
+            isChecked={filterStatus[value]}
+            onClick={() => handleClick('status', value)}
           />
         ))}
       </section>

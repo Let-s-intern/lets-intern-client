@@ -14,7 +14,7 @@ export const PROGRAM_FILTER_STATUS = {
   PREV: '모집 예정',
   PROCEEDING: '모집 중',
   POST: '모집 종료',
-} as const;
+};
 
 export const CHALLENGE_ARTICLE = {
   TITLE: '챌린지',
