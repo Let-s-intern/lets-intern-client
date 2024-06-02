@@ -25,12 +25,13 @@ const emptyList = [
   },
 ];
 
-const EmptyCard = () => {
+const EmptyCardList = () => {
   // API로 가져오는 게 아니라 정해진 데이터를 보여주는 카드
   return (
     <>
-      {emptyList.map((program) => (
+      {emptyList.map((program, i) => (
         <div
+          key={i}
           onClick={() => window.open(program.link, '_blank')}
           className="flex flex-col overflow-hidden rounded-xs"
         >
@@ -56,4 +57,4 @@ const EmptyCard = () => {
   );
 };
 
-export default EmptyCard;
+export default EmptyCardList;

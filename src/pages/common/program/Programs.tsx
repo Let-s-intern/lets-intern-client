@@ -38,7 +38,7 @@ import {
 } from '../../../reducers/filterReducer';
 import { getKeyByValue } from '../../../utils/convert';
 import MuiPagination from '../../../components/common/program/pagination/MuiPagination';
-import EmptyCard from '../../../components/common/program/programs/card/EmptyCard';
+import EmptyCardList from '../../../components/common/program/programs/card/EmptyCardList';
 
 const initialPageable = { page: 0, size: 12 };
 const initialPageInfo = {
@@ -174,40 +174,27 @@ const Programs = () => {
   //   }
   // };
 
-  const calculateDuration = () => {
-    const currentDate = new Date();
-    const startDate = currentDate;
-    const endDate = currentDate;
-    startDate.setMonth(currentDate.getMonth() - 3);
-    endDate.setMonth(currentDate.getMonth() + 3);
-
-    return { startDate, endDate };
-  };
-
   // 프로그램 리스트 가져오기
-  // const { isLoading } = useQuery({
-  //   queryKey: ['program', pageable],
-  //   queryFn: async () => {
-  //     const { startDate, endDate } = calculateDuration();
-  //     const queryList = Object.entries({
-  //       ...pageable,
-  //       sort: 'string',
-  //       startDate,
-  //       endDate,
-  //     })?.map(([key, value]) => `${key}=${value}`);
-  //     try {
-  //       const res = await axios.get(`/program/duration?${queryList.join('&')}`);
-  //       if (res.status === 200) {
-  //         console.log(res.data.data);
-  //         setProgramList(res.data.data.programList);
-  //         return res.data;
-  //       }
-  //       throw new Error(`${res.status} ${res.statusText}`);
-  //     } catch (error) {
-  //       console.error(error);
-  //     }
-  //   },
-  // });
+  const { isLoading } = useQuery({
+    queryKey: ['program', pageable],
+    queryFn: async () => {
+      const queryList = Object.entries({
+        ...pageable,
+        sort: 'string',
+      })?.map(([key, value]) => `${key}=${value}`);
+      try {
+        const res = await axios.get(`/program?${queryList.join('&')}`);
+        if (res.status === 200) {
+          console.log(res.data.data);
+          setProgramList(res.data.data.programList);
+          return res.data;
+        }
+        throw new Error(`${res.status} ${res.statusText}`);
+      } catch (error) {
+        console.error(error);
+      }
+    },
+  });
 
   // const { isLoading: isChallengeLoading } = useQuery({
   //   queryKey: ['challenge', challengePageable],
@@ -231,7 +218,7 @@ const Programs = () => {
 
   // const isLoading = isChallengeLoading || isVodLoading || isLiveLoading;
 
-  // if (isLoading) return <></>;
+  if (isLoading) return <></>;
 
   return (
     <div>
@@ -307,16 +294,16 @@ const Programs = () => {
             가장 먼저 신규 프로그램 소식을 받아보세요!
           </p>
         )}
-        {/* 프로그램 리스트 */}
+        {/* 전체 프로그램 리스트 */}
         <section className="grid min-h-[40vh] grid-cols-2 gap-x-4 gap-y-5">
           {programList?.map((program: IProgram) => (
             <ProgramCard
-              programType={program.programType}
-              key={program.id}
-              program={program}
+              programType={program.programInfo.programType}
+              key={program.programInfo.id}
+              program={program.programInfo}
             />
           ))}
-          <EmptyCard />
+          {programList.length === 0 && <EmptyCardList />}
         </section>
 
         <MuiPagination pageInfo={pageInfo} />

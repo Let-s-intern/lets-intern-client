@@ -2,7 +2,9 @@ import {
   PROGRAM_FILTER_NAME,
   PROGRAM_FILTER_STATUS,
   PROGRAM_FILTER_TYPE,
+  PROGRAM_NAME_KEY,
   PROGRAM_TYPE,
+  PROGRAM_TYPE_KEY,
 } from '../utils/programConst';
 
 export interface DailyMission {
@@ -28,13 +30,17 @@ interface IProgramCommon {
   createDate: string;
 }
 
-type ProgramTypeKey = keyof typeof PROGRAM_TYPE;
+export interface IClassification {
+  programClassification: keyof typeof PROGRAM_TYPE_KEY;
+}
 
-export interface IProgram extends IProgramCommon {
-  programType: (typeof PROGRAM_TYPE)[ProgramTypeKey];
-  startDate: string;
-  endDate: string;
-  deadline: string;
+export interface IProgramInfo extends IProgramCommon {
+  programType: keyof typeof PROGRAM_NAME_KEY;
+}
+
+export interface IProgram {
+  classificationList: IClassification[];
+  programInfo: IProgramInfo;
 }
 
 export interface IChallenge extends IProgramCommon {

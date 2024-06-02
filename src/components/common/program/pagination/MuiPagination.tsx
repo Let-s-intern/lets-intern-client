@@ -8,10 +8,11 @@ export interface MuiPaginationProps {
 }
 
 const MuiPagination = ({ pageInfo }: MuiPaginationProps) => {
-  if (pageInfo.totalPages > 1)
+  if (pageInfo.totalPages >= 0)
     return (
       <ThemeProvider theme={theme}>
         <Pagination
+          className="flex justify-center"
           onChange={(event, page) => console.log(event, page)}
           count={pageInfo.totalPages}
           color="primary"

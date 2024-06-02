@@ -3,14 +3,14 @@ import { Link } from 'react-router-dom';
 import {
   IChallenge,
   ILive,
-  IProgram,
+  IProgramInfo,
   IVod,
 } from '../../../../../interfaces/interface';
 import ProgramStatusTag from './ProgramStatusTag';
 import { PROGRAM_TYPE, PRGRAM_STATUS } from '../../../../../utils/programConst';
 
 interface ProgramCardProps {
-  program: IChallenge | IVod | ILive | IProgram;
+  program: IChallenge | IVod | ILive | IProgramInfo;
   programType: (typeof PROGRAM_TYPE)[keyof typeof PROGRAM_TYPE];
 }
 
@@ -34,7 +34,11 @@ const ProgramCard = ({ program, programType }: ProgramCardProps) => {
 
   return (
     <Link to="#" className="flex flex-col overflow-hidden rounded-xs">
-      <img src={program.thumbnail} alt="프로그램 썸네일 배경" />
+      <img
+        className="h-32 bg-neutral-80 object-cover"
+        src={program.thumbnail}
+        alt="프로그램 썸네일 배경"
+      />
       <div className="flex flex-col gap-2 py-2">
         <div className="flex justify-between">
           <ProgramStatusTag status={status} />

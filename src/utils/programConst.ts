@@ -26,9 +26,9 @@ export const LIVE_ARTICLE = {
 };
 
 export const PROGRAM_TYPE = {
-  CHALLENGE: 'challenge',
-  LIVE: 'live',
-  VOD: 'vod',
+  CHALLENGE: 'CHALLENGE',
+  LIVE: 'LIVE',
+  VOD: 'VOD',
 } as const;
 
 export const PROGRAM_FILTER_STATUS = {
