@@ -1,13 +1,3 @@
-import { useSearchParams } from 'react-router-dom';
-import { useEffect, useState } from 'react';
-
-import { getKeyByValue } from '../../../../utils/convert';
-import {
-  PROGRAM_FILTER_NAME,
-  PROGRAM_FILTER_STATUS,
-  PROGRAM_FILTER_TYPE,
-} from '../../../../utils/programConst';
-
 interface FilterItemProps {
   caption: string;
   programType: string;

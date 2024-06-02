@@ -1,4 +1,4 @@
-import { useCallback, useReducer, useState } from 'react';
+import { useCallback, useEffect, useReducer, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import clsx from 'clsx';
 import { useSearchParams } from 'react-router-dom';
@@ -9,6 +9,7 @@ import {
   PROGRAM_FILTER_NAME,
   PROGRAM_FILTER_STATUS,
   PROGRAM_FILTER_TYPE,
+  PROGRAM_NAME_KEY,
   PROGRAM_TYPE,
   VOD_ARTICLE,
 } from '../../../utils/programConst';
@@ -38,8 +39,12 @@ import { getKeyByValue } from '../../../utils/convert';
 
 const Programs = () => {
   // 페이지 상태 관리
-  const [totalPage, setTotalPage] = useState(0);
+  const [maxTotalPage, setMaxTotalPage] = useState(0);
   const [currentPage, setCurrentPage] = useState(0);
+  // 페이지 사이즈 상태 관리
+  const [challengeSize, setChallengeSize] = useState(4);
+  const [vodSize, setVodSize] = useState(4);
+  const [liveSize, setLiveSize] = useState(4);
 
   // 필터링 상태 관리
   const [searchParams, setSearchParams] = useSearchParams({});
@@ -129,6 +134,32 @@ const Programs = () => {
     setSearchParams(searchParams);
   }, []);
 
+  const initSize = () => {
+    setChallengeSize(4);
+    setVodSize(4);
+    setLiveSize(4);
+  };
+  // 프로그램 전체 보기 (name 필터링 없는 상태)
+  const [isAll, setIsAll] = useState(true);
+  useEffect(() => {
+    if (searchParams.get('name')) setIsAll(false);
+    else setIsAll(true);
+
+    // 선택된 프로그램 최대 12개 표시
+    initSize(); // 사이즈 초기화
+    switch (searchParams.get('name')) {
+      case PROGRAM_NAME_KEY.CHALLENGE:
+        setChallengeSize(12);
+        break;
+      case PROGRAM_NAME_KEY.VOD:
+        setVodSize(12);
+        break;
+      case PROGRAM_NAME_KEY.LIVE:
+        setLiveSize(12);
+        break;
+    }
+  }, [searchParams]);
+
   // 프로그램 싱태 관리
   const [challengeList, setChallengeList] = useState<IChallenge[]>([]);
   const [vodList, setVodList] = useState<IVod[]>([]);
@@ -137,8 +168,9 @@ const Programs = () => {
   const getProgramList = async <T,>(
     type: string,
     setState: React.Dispatch<React.SetStateAction<T[]>>,
+    size: number,
   ) => {
-    const pageable = { page: 0, size: 4, sort: 'string' };
+    const pageable = { page: 0, size, sort: 'string' };
     const queryList = Object.entries(pageable)?.map(
       ([key, value]) => `${key}=${value}`,
     );
@@ -154,26 +186,32 @@ const Programs = () => {
     }
   };
 
+  // 프로그램 리스트 가져오기
   const { isLoading: isChallengeLoading } = useQuery({
-    queryKey: ['challenge'],
+    queryKey: ['challenge', challengeSize],
     queryFn: async () =>
-      await getProgramList<IChallenge>('challenge', setChallengeList),
+      await getProgramList<IChallenge>(
+        'challenge',
+        setChallengeList,
+        challengeSize,
+      ),
   });
   const { isLoading: isVodLoading } = useQuery({
-    queryKey: ['vod'],
-    queryFn: async () => await getProgramList<IVod>('vod', setVodList),
+    queryKey: ['vod', vodSize],
+    queryFn: async () => await getProgramList<IVod>('vod', setVodList, vodSize),
   });
   const { isLoading: isLiveLoading } = useQuery({
-    queryKey: ['live'],
-    queryFn: async () => await getProgramList<ILive>('live', setLiveList),
+    queryKey: ['live', liveSize],
+    queryFn: async () =>
+      await getProgramList<ILive>('live', setLiveList, liveSize),
   });
 
   const isLoading = isChallengeLoading || isVodLoading || isLiveLoading;
-
   if (isLoading) return <></>;
 
   return (
     <div>
+      {/* 필터링 사이드바 */}
       <FilterSideBar
         setIsOpen={setIsOpen}
         isOpen={isOpen}
@@ -187,6 +225,7 @@ const Programs = () => {
           hidden: isOpen,
         })}
       >
+        {/* 상단 필터 */}
         <section className="flex flex-col gap-3">
           <div className="flex items-center justify-between">
             <div
@@ -234,44 +273,55 @@ const Programs = () => {
             )}
           </div>
         </section>
+
+        {/* 프로그램 리스트 */}
         <section className="flex flex-col gap-16">
-          <ProgramArticle
-            title={CHALLENGE_ARTICLE.TITLE}
-            description={CHALLENGE_ARTICLE.DESCRIPTION}
-          >
-            {challengeList?.map((program) => (
-              <ProgramCard
-                key={program.id}
-                program={program}
-                type={PROGRAM_TYPE.CHALLENGE}
-              />
-            ))}
-          </ProgramArticle>
-          <ProgramArticle
-            title={VOD_ARTICLE.TITLE}
-            description={VOD_ARTICLE.DESCRIPTION}
-          >
-            {vodList?.map((program) => (
-              <ProgramCard
-                key={program.id}
-                program={program}
-                type={PROGRAM_TYPE.VOD}
-              />
-            ))}
-          </ProgramArticle>
-          <ProgramArticle
-            title={LIVE_ARTICLE.TITLE}
-            description={LIVE_ARTICLE.DESCRIPTION}
-          >
-            {liveList?.map((program) => (
-              <ProgramCard
-                key={program.id}
-                program={program}
-                type={PROGRAM_TYPE.LIVE}
-              />
-            ))}
-          </ProgramArticle>
+          {(isAll ||
+            searchParams.get('name') === PROGRAM_NAME_KEY.CHALLENGE) && (
+            <ProgramArticle
+              title={CHALLENGE_ARTICLE.TITLE}
+              description={CHALLENGE_ARTICLE.DESCRIPTION}
+            >
+              {challengeList?.map((program) => (
+                <ProgramCard
+                  key={program.id}
+                  program={program}
+                  type={PROGRAM_TYPE.CHALLENGE}
+                />
+              ))}
+            </ProgramArticle>
+          )}
+          {(isAll || searchParams.get('name') === PROGRAM_NAME_KEY.VOD) && (
+            <ProgramArticle
+              title={VOD_ARTICLE.TITLE}
+              description={VOD_ARTICLE.DESCRIPTION}
+            >
+              {vodList?.map((program) => (
+                <ProgramCard
+                  key={program.id}
+                  program={program}
+                  type={PROGRAM_TYPE.VOD}
+                />
+              ))}
+            </ProgramArticle>
+          )}
+          {(isAll || searchParams.get('name') === PROGRAM_NAME_KEY.LIVE) && (
+            <ProgramArticle
+              title={LIVE_ARTICLE.TITLE}
+              description={LIVE_ARTICLE.DESCRIPTION}
+            >
+              {liveList?.map((program) => (
+                <ProgramCard
+                  key={program.id}
+                  program={program}
+                  type={PROGRAM_TYPE.LIVE}
+                />
+              ))}
+            </ProgramArticle>
+          )}
         </section>
+
+        {/* 프로그램 배너 */}
         <Banner />
       </main>
     </div>
