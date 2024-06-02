@@ -62,7 +62,7 @@ const FilterSideBar = ({
       </section>
       <section>
         <h1 className="text-1-semibold mb-2">프로그램</h1>
-        {Object.values(PROGRAM_FILTER_NAME).map((value, i) => (
+        {Object.values(PROGRAM_FILTER_NAME).map((value) => (
           <FilterCheckbox
             caption={value}
             isChecked={filterName[value]}
@@ -72,7 +72,7 @@ const FilterSideBar = ({
       </section>
       <section>
         <h1 className="text-1-semibold mb-2">모집 현황</h1>
-        {Object.values(PROGRAM_FILTER_STATUS).map((value, i) => (
+        {Object.values(PROGRAM_FILTER_STATUS).map((value) => (
           <FilterCheckbox
             caption={value}
             isChecked={filterStatus[value]}

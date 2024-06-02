@@ -40,30 +40,58 @@ const Programs = () => {
     initialFilterStatus,
   );
 
-  const handleClick = useCallback((key: string, value: string) => {
+  // 필터링 체크박스 클릭 이벤트
+  const handleClickCheckbox = useCallback(
+    (key: string, value: string) => {
+      switch (key) {
+        case 'type': {
+          typeDispatch({ type: 'init' });
+          typeDispatch({
+            type: filterType[value] ? 'uncheck' : 'check',
+            value,
+          });
+          break;
+        }
+        case 'name': {
+          nameDispatch({ type: 'init' });
+          nameDispatch({
+            type: filterName[value] ? 'uncheck' : 'check',
+            value,
+          });
+          break;
+        }
+        case 'status': {
+          statusDispatch({ type: 'init' });
+          statusDispatch({
+            type: filterStatus[value] ? 'uncheck' : 'check',
+            value,
+          });
+          break;
+        }
+      }
+    },
+    [filterType, filterName, filterStatus],
+  );
+
+  // 필터링 초기화
+  const resetFilter = () => {
+    typeDispatch({ type: 'init' });
+    nameDispatch({ type: 'init' });
+    statusDispatch({ type: 'init' });
+  };
+
+  const cancelFilter = useCallback((key: string, value: string) => {
     switch (key) {
       case 'type': {
-        typeDispatch({ type: 'init' });
-        typeDispatch({
-          type: filterType[value] ? 'uncheck' : 'check',
-          value,
-        });
+        typeDispatch({ type: 'uncheck', value });
         break;
       }
       case 'name': {
-        nameDispatch({ type: 'init' });
-        nameDispatch({
-          type: filterName[value] ? 'uncheck' : 'check',
-          value,
-        });
+        nameDispatch({ type: 'uncheck', value });
         break;
       }
       case 'status': {
-        statusDispatch({ type: 'init' });
-        statusDispatch({
-          type: filterStatus[value] ? 'uncheck' : 'check',
-          value,
-        });
+        statusDispatch({ type: 'uncheck', value });
         break;
       }
     }
@@ -117,7 +145,7 @@ const Programs = () => {
       <FilterSideBar
         setIsOpen={setIsOpen}
         isOpen={isOpen}
-        handleClick={handleClick}
+        handleClick={handleClickCheckbox}
         filterType={filterType}
         filterName={filterName}
         filterStatus={filterStatus}
@@ -136,21 +164,42 @@ const Programs = () => {
               <img src="/icons/filter.svg" alt="필터 아이콘" />
               <h1 className="text-1.125-bold text-neutral-40">필터</h1>
             </div>
-            <div className="flex items-center gap-2">
+            <div onClick={resetFilter} className="flex items-center gap-2">
               <img src="/icons/redo.svg" alt="필터 초기화 아이콘" />
               <span className="text-0.75-medium text-neutral-40">초기화</span>
             </div>
           </div>
           <div className="flex flex-nowrap items-center gap-4 overflow-scroll py-2">
-            {Object.entries(filterType).map(([key, value]) => {
-              if (value) return <FilterItem caption={key} />;
-            })}
-            {Object.entries(filterName).map(([key, value]) => {
-              if (value) return <FilterItem caption={key} />;
-            })}
-            {Object.entries(filterStatus).map(([key, value]) => {
-              if (value) return <FilterItem caption={key} />;
-            })}
+            {Object.entries(filterType).map(([key, value]) =>
+              value ? (
+                <FilterItem
+                  type="type"
+                  handleClick={cancelFilter}
+                  key={key}
+                  caption={key}
+                />
+              ) : null,
+            )}
+            {Object.entries(filterName).map(([key, value]) =>
+              value ? (
+                <FilterItem
+                  type="name"
+                  handleClick={cancelFilter}
+                  key={key}
+                  caption={key}
+                />
+              ) : null,
+            )}
+            {Object.entries(filterStatus).map(([key, value]) =>
+              value ? (
+                <FilterItem
+                  type="status"
+                  handleClick={cancelFilter}
+                  key={key}
+                  caption={key}
+                />
+              ) : null,
+            )}
           </div>
         </section>
         <section className="flex flex-col gap-16">
@@ -159,7 +208,11 @@ const Programs = () => {
             description={CHALLENGE_ARTICLE.DESCRIPTION}
           >
             {challengeList?.map((program) => (
-              <ProgramCard program={program} type={PROGRAM_TYPE.CHALLENGE} />
+              <ProgramCard
+                key={program.id}
+                program={program}
+                type={PROGRAM_TYPE.CHALLENGE}
+              />
             ))}
           </ProgramArticle>
           <ProgramArticle
@@ -167,7 +220,11 @@ const Programs = () => {
             description={VOD_ARTICLE.DESCRIPTION}
           >
             {vodList?.map((program) => (
-              <ProgramCard program={program} type={PROGRAM_TYPE.VOD} />
+              <ProgramCard
+                key={program.id}
+                program={program}
+                type={PROGRAM_TYPE.VOD}
+              />
             ))}
           </ProgramArticle>
           <ProgramArticle
@@ -175,7 +232,11 @@ const Programs = () => {
             description={LIVE_ARTICLE.DESCRIPTION}
           >
             {liveList?.map((program) => (
-              <ProgramCard program={program} type={PROGRAM_TYPE.LIVE} />
+              <ProgramCard
+                key={program.id}
+                program={program}
+                type={PROGRAM_TYPE.LIVE}
+              />
             ))}
           </ProgramArticle>
         </section>

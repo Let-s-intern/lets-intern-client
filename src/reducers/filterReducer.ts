@@ -15,6 +15,7 @@ export const initialFilterName = {
   [PROGRAM_FILTER_NAME.VOD]: false,
 };
 export const initialFilterType = {
+  [PROGRAM_FILTER_TYPE.CAREER_SEARCH]: false,
   [PROGRAM_FILTER_TYPE.MEETING_PREPARATION]: false,
   [PROGRAM_FILTER_TYPE.DOCUMENT_PREPARATION]: false,
   [PROGRAM_FILTER_TYPE.PASS]: false,
