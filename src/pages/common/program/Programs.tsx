@@ -7,14 +7,10 @@ import {
   PROGRAM_FILTER_NAME,
   PROGRAM_FILTER_STATUS,
   PROGRAM_FILTER_TYPE,
+  PROGRAM_QUERY_KEY,
 } from '../../../utils/programConst';
 import axios from '../../../utils/axios';
-import {
-  IProgram,
-  filterNamekey,
-  filterStatuskey,
-  filterTypekey,
-} from '../../../interfaces/interface';
+import { IProgram } from '../../../interfaces/interface';
 import ProgramCard from '../../../components/common/program/programs/card/ProgramCard';
 import Banner from '../../../components/common/program/banner/Banner';
 import FilterItem from '../../../components/common/program/filter/FilterItem';
@@ -60,7 +56,7 @@ const Programs = () => {
   const handleClickCheckbox = useCallback(
     (programType: string, value: string) => {
       switch (programType) {
-        case 'type': {
+        case PROGRAM_QUERY_KEY.TYPE: {
           const filterKey = getKeyByValue(PROGRAM_FILTER_TYPE, value);
           type keyType = keyof typeof filterType;
           typeDispatch({ type: 'init' });
@@ -71,7 +67,7 @@ const Programs = () => {
           searchParams.set(programType, filterKey as string);
           break;
         }
-        case 'name': {
+        case PROGRAM_QUERY_KEY.CLASSIFICATION: {
           const filterKey = getKeyByValue(PROGRAM_FILTER_NAME, value);
           type keyType = keyof typeof filterName;
           nameDispatch({ type: 'init' });
@@ -82,7 +78,7 @@ const Programs = () => {
           searchParams.set(programType, filterKey as string);
           break;
         }
-        case 'status': {
+        case PROGRAM_QUERY_KEY.STATUS: {
           const filterKey = getKeyByValue(PROGRAM_FILTER_STATUS, value);
           type keyType = keyof typeof filterStatus;
           statusDispatch({ type: 'init' });
@@ -109,17 +105,17 @@ const Programs = () => {
   const cancelFilter = useCallback(
     (key: string, value: string) => {
       switch (key) {
-        case 'type': {
+        case PROGRAM_QUERY_KEY.TYPE: {
           const filterKey = getKeyByValue(PROGRAM_FILTER_TYPE, value);
           typeDispatch({ type: 'uncheck', value: filterKey });
           break;
         }
-        case 'name': {
+        case PROGRAM_QUERY_KEY.CLASSIFICATION: {
           const filterKey = getKeyByValue(PROGRAM_FILTER_NAME, value);
           nameDispatch({ type: 'uncheck', value: filterKey });
           break;
         }
-        case 'status': {
+        case PROGRAM_QUERY_KEY.STATUS: {
           const filterKey = getKeyByValue(PROGRAM_FILTER_STATUS, value);
           statusDispatch({ type: 'uncheck', value: filterKey });
           break;
@@ -146,26 +142,27 @@ const Programs = () => {
   const [programList, setProgramList] = useState<IProgram[]>([]);
 
   // 프로그램 리스트 가져오기
+  const getProgramList = async () => {
+    const queryList = Object.entries({
+      ...pageable,
+      sort: 'string',
+    })?.map(([key, value]) => `${key}=${value}`);
+    try {
+      const res = await axios.get(`/program?${queryList.join('&')}`);
+      if (res.status === 200) {
+        console.log(res.data.data);
+        setProgramList(res.data.data.programList);
+        setPageInfo(res.data.data.pageInfo);
+        return res.data;
+      }
+      throw new Error(`${res.status} ${res.statusText}`);
+    } catch (error) {
+      console.error(error);
+    }
+  };
   const { isLoading } = useQuery({
     queryKey: ['program', pageable, searchParams],
-    queryFn: async () => {
-      const queryList = Object.entries({
-        ...pageable,
-        sort: 'string',
-      })?.map(([key, value]) => `${key}=${value}`);
-      try {
-        const res = await axios.get(`/program?${queryList.join('&')}`);
-        if (res.status === 200) {
-          console.log(res.data.data);
-          setProgramList(res.data.data.programList);
-          setPageInfo(res.data.data.pageInfo);
-          return res.data;
-        }
-        throw new Error(`${res.status} ${res.statusText}`);
-      } catch (error) {
-        console.error(error);
-      }
-    },
+    queryFn: getProgramList,
   });
 
   if (isLoading) return <></>;
@@ -202,35 +199,48 @@ const Programs = () => {
             </div>
           </div>
           <div className="flex flex-nowrap items-center gap-4 overflow-scroll py-2">
-            {Object.entries(filterType).map(([key, value]) =>
-              value ? (
-                <FilterItem
-                  programType="type"
-                  handleClick={cancelFilter}
-                  key={key}
-                  caption={PROGRAM_FILTER_TYPE[key as filterTypekey]}
-                />
-              ) : null,
+            {/* 파라미터에 따라 필터 표시 */}
+            {searchParams.get(PROGRAM_QUERY_KEY.TYPE) && (
+              <FilterItem
+                programType={PROGRAM_QUERY_KEY.TYPE}
+                handleClick={cancelFilter}
+                key={PROGRAM_QUERY_KEY.TYPE}
+                caption={
+                  PROGRAM_FILTER_TYPE[
+                    searchParams.get(
+                      PROGRAM_QUERY_KEY.TYPE,
+                    )! as keyof typeof PROGRAM_FILTER_TYPE
+                  ]
+                }
+              />
             )}
-            {Object.entries(filterName).map(([key, value]) =>
-              value ? (
-                <FilterItem
-                  programType="name"
-                  handleClick={cancelFilter}
-                  key={key}
-                  caption={PROGRAM_FILTER_NAME[key as filterNamekey]}
-                />
-              ) : null,
+            {searchParams.get(PROGRAM_QUERY_KEY.CLASSIFICATION) && (
+              <FilterItem
+                programType={PROGRAM_QUERY_KEY.CLASSIFICATION}
+                handleClick={cancelFilter}
+                key={PROGRAM_QUERY_KEY.CLASSIFICATION}
+                caption={
+                  PROGRAM_FILTER_NAME[
+                    searchParams.get(
+                      PROGRAM_QUERY_KEY.CLASSIFICATION,
+                    )! as keyof typeof PROGRAM_FILTER_NAME
+                  ]
+                }
+              />
             )}
-            {Object.entries(filterStatus).map(([key, value]) =>
-              value ? (
-                <FilterItem
-                  programType="status"
-                  handleClick={cancelFilter}
-                  key={key}
-                  caption={PROGRAM_FILTER_STATUS[key as filterStatuskey]}
-                />
-              ) : null,
+            {searchParams.get(PROGRAM_QUERY_KEY.STATUS) && (
+              <FilterItem
+                programType={PROGRAM_QUERY_KEY.STATUS}
+                handleClick={cancelFilter}
+                key={PROGRAM_QUERY_KEY.STATUS}
+                caption={
+                  PROGRAM_FILTER_STATUS[
+                    searchParams.get(
+                      PROGRAM_QUERY_KEY.STATUS,
+                    )! as keyof typeof PROGRAM_FILTER_STATUS
+                  ]
+                }
+              />
             )}
           </div>
         </section>
@@ -250,7 +260,6 @@ const Programs = () => {
           {/* 전체 프로그램 리스트 */}
           {programList?.map((program: IProgram) => (
             <ProgramCard
-              programType={program.programInfo.programType}
               key={program.programInfo.id}
               program={program.programInfo}
             />

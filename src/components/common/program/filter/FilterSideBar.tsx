@@ -5,6 +5,7 @@ import {
   PROGRAM_FILTER_STATUS,
   PROGRAM_FILTER_NAME,
   PROGRAM_FILTER_TYPE,
+  PROGRAM_QUERY_KEY,
 } from '../../../../utils/programConst';
 import FilterCheckbox from './FilterCheckbox';
 import { IFilter } from '../../../../interfaces/interface';
@@ -55,11 +56,12 @@ const FilterSideBar = ({
         <h1 className="text-1-semibold mb-2">커리어 단계</h1>
         {Object.values(PROGRAM_FILTER_TYPE).map((value) => (
           <FilterCheckbox
+            key={value}
             caption={value}
             isChecked={
               filterType[getKeyByValue(PROGRAM_FILTER_TYPE, value) as string]
             }
-            onClick={() => handleClick('type', value)}
+            onClick={() => handleClick(PROGRAM_QUERY_KEY.TYPE, value)}
           />
         ))}
       </section>
@@ -67,11 +69,12 @@ const FilterSideBar = ({
         <h1 className="text-1-semibold mb-2">프로그램</h1>
         {Object.values(PROGRAM_FILTER_NAME).map((value) => (
           <FilterCheckbox
+            key={value}
             caption={value}
             isChecked={
               filterName[getKeyByValue(PROGRAM_FILTER_NAME, value) as string]
             }
-            onClick={() => handleClick('name', value)}
+            onClick={() => handleClick(PROGRAM_QUERY_KEY.CLASSIFICATION, value)}
           />
         ))}
       </section>
@@ -79,13 +82,14 @@ const FilterSideBar = ({
         <h1 className="text-1-semibold mb-2">모집 현황</h1>
         {Object.values(PROGRAM_FILTER_STATUS).map((value) => (
           <FilterCheckbox
+            key={value}
             caption={value}
             isChecked={
               filterStatus[
                 getKeyByValue(PROGRAM_FILTER_STATUS, value) as string
               ]
             }
-            onClick={() => handleClick('status', value)}
+            onClick={() => handleClick(PROGRAM_QUERY_KEY.STATUS, value)}
           />
         ))}
       </section>

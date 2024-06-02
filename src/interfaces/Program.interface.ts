@@ -28,14 +28,24 @@ interface IProgramCommon {
   shortDesc: string;
   thumbnail: string;
   createDate: string;
+  beginning: string;
 }
 
 export interface IClassification {
   programClassification: keyof typeof PROGRAM_TYPE_KEY;
 }
 
-export interface IProgramInfo extends IProgramCommon {
+export interface IProgramInfo {
   programType: keyof typeof PROGRAM_NAME_KEY;
+  id: number;
+  title: string;
+  shortDesc: string;
+  thumbnail: string;
+  createDate: string;
+  beginning?: string;
+  deadline?: string;
+  startDate: string;
+  endDate?: string;
 }
 
 export interface IProgram {

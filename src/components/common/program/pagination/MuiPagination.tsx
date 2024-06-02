@@ -14,7 +14,7 @@ const MuiPagination = ({ pageInfo, setPageable }: MuiPaginationProps) => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  if (pageInfo.totalPages >= 0)
+  if (pageInfo.totalPages > 0)
     return (
       <ThemeProvider theme={theme}>
         <Pagination

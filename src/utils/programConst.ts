@@ -68,3 +68,16 @@ export const PROGRAM_STATUS_KEY = {
   PROCEEDING: 'PROCEEDING',
   POST: 'POST',
 };
+
+export const PROGRAM_QUERY_KEY = {
+  TYPE: 'type',
+  CLASSIFICATION: 'classification',
+  STATUS: 'status',
+};
+
+export const PROGRAM_TYPE_BADGE = {
+  CAREER_SEARCH: '스타트',
+  DOCUMENT_PREPARATION: '서류',
+  MEETING_PREPARATION: '면접',
+  PASS: '성장',
+};
