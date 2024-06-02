@@ -17,6 +17,7 @@ import axios from '../../../utils/axios';
 import {
   IChallenge,
   ILive,
+  IPageable,
   IVod,
   filterNamekey,
   filterStatuskey,
@@ -37,15 +38,15 @@ import {
 } from '../../../reducers/filterReducer';
 import { getKeyByValue } from '../../../utils/convert';
 
-const Programs = () => {
-  // 페이지 상태 관리
-  const [maxTotalPage, setMaxTotalPage] = useState(0);
-  const [currentPage, setCurrentPage] = useState(0);
-  // 페이지 사이즈 상태 관리
-  const [challengeSize, setChallengeSize] = useState(4);
-  const [vodSize, setVodSize] = useState(4);
-  const [liveSize, setLiveSize] = useState(4);
+const initialPageable = { page: 0, size: 4 };
+const initialPageInfo = {
+  pageNum: 0,
+  pageSize: 0,
+  totalElements: 0,
+  totalPages: 0,
+};
 
+const Programs = () => {
   // 필터링 상태 관리
   const [searchParams, setSearchParams] = useSearchParams({});
   const [isOpen, setIsOpen] = useState(false);
@@ -134,10 +135,19 @@ const Programs = () => {
     setSearchParams(searchParams);
   }, []);
 
+  // 페이지 파라미터 상태 관리
+  const [challengePageable, setChallengePageable] = useState(initialPageable);
+  const [vodPageable, setVodPageable] = useState(initialPageable);
+  const [livePageable, setLivePageable] = useState(initialPageable);
+  // 페이지 정보 상태 관리
+  const [challengePageInfo, setChallengePageInfo] = useState(initialPageInfo);
+  const [vodPageInfo, setVodPageInfo] = useState(initialPageInfo);
+  const [livePageInfo, setLivePageInfo] = useState(initialPageInfo);
+
   const initSize = () => {
-    setChallengeSize(4);
-    setVodSize(4);
-    setLiveSize(4);
+    setChallengePageable({ page: 0, size: 4 });
+    setVodPageable({ page: 0, size: 4 });
+    setLivePageable({ page: 0, size: 4 });
   };
   // 프로그램 전체 보기 (name 필터링 없는 상태)
   const [isAll, setIsAll] = useState(true);
@@ -149,18 +159,18 @@ const Programs = () => {
     initSize(); // 사이즈 초기화
     switch (searchParams.get('name')) {
       case PROGRAM_NAME_KEY.CHALLENGE:
-        setChallengeSize(12);
+        setChallengePageable({ page: 0, size: 12 });
         break;
       case PROGRAM_NAME_KEY.VOD:
-        setVodSize(12);
+        setVodPageable({ page: 0, size: 12 });
         break;
       case PROGRAM_NAME_KEY.LIVE:
-        setLiveSize(12);
+        setLivePageable({ page: 0, size: 12 });
         break;
     }
   }, [searchParams]);
 
-  // 프로그램 싱태 관리
+  // 프로그램 리스트 싱태 관리
   const [challengeList, setChallengeList] = useState<IChallenge[]>([]);
   const [vodList, setVodList] = useState<IVod[]>([]);
   const [liveList, setLiveList] = useState<ILive[]>([]);
@@ -168,10 +178,9 @@ const Programs = () => {
   const getProgramList = async <T,>(
     type: string,
     setState: React.Dispatch<React.SetStateAction<T[]>>,
-    size: number,
+    pageable: IPageable,
   ) => {
-    const pageable = { page: 0, size, sort: 'string' };
-    const queryList = Object.entries(pageable)?.map(
+    const queryList = Object.entries({ ...pageable, sort: 'string' })?.map(
       ([key, value]) => `${key}=${value}`,
     );
     try {
@@ -188,22 +197,23 @@ const Programs = () => {
 
   // 프로그램 리스트 가져오기
   const { isLoading: isChallengeLoading } = useQuery({
-    queryKey: ['challenge', challengeSize],
+    queryKey: ['challenge', challengePageable],
     queryFn: async () =>
       await getProgramList<IChallenge>(
         'challenge',
         setChallengeList,
-        challengeSize,
+        challengePageable,
       ),
   });
   const { isLoading: isVodLoading } = useQuery({
-    queryKey: ['vod', vodSize],
-    queryFn: async () => await getProgramList<IVod>('vod', setVodList, vodSize),
+    queryKey: ['vod', vodPageable],
+    queryFn: async () =>
+      await getProgramList<IVod>('vod', setVodList, vodPageable),
   });
   const { isLoading: isLiveLoading } = useQuery({
-    queryKey: ['live', liveSize],
+    queryKey: ['live', livePageable],
     queryFn: async () =>
-      await getProgramList<ILive>('live', setLiveList, liveSize),
+      await getProgramList<ILive>('live', setLiveList, livePageable),
   });
 
   const isLoading = isChallengeLoading || isVodLoading || isLiveLoading;

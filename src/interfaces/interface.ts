@@ -22,3 +22,7 @@ export interface ITableContent {
   type: (typeof TABLE_CONTENT)[ContentTypeKey];
   options?: { id: string | number; title: string }[];
 }
+export interface IPageable {
+  page: number;
+  size: number;
+}
