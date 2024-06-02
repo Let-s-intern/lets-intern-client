@@ -56,7 +56,7 @@ const Banner = () => {
   if (isLoading || bannerList.length === 0) return <></>;
 
   return (
-    <div className="relative flex h-40 w-full items-center overflow-hidden rounded-sm bg-static-0 text-static-100">
+    <div className="relative flex h-40 w-full items-center overflow-hidden rounded-sm bg-static-0 text-static-100 md:h-56 lg:h-80">
       <div
         ref={innerRef}
         className="flex flex-nowrap items-center transition ease-in-out"
@@ -73,14 +73,14 @@ const Banner = () => {
           </Link>
         ))}
       </div>
-      <div className="absolute bottom-4 left-5 flex items-center gap-1.5">
+      <div className="absolute bottom-4 left-5 flex items-center gap-1.5 md:bottom-6 md:left-8">
         <img
           onClick={() => setIsPlay(!isPlay)}
           className="w-5"
           src="/icons/play.svg"
           alt="배너 페이지네이션 재생 아이콘"
         />
-        <span>
+        <span className="text-0.75-medium md:text-0.875-medium">
           {bannerIndex + 1 < 10 ? `0${bannerIndex + 1}` : bannerIndex + 1} /{' '}
           {bannerList.length < 10 ? `0${bannerList.length}` : bannerList.length}
         </span>

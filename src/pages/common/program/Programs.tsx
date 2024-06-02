@@ -108,6 +108,10 @@ const Programs = () => {
     typeDispatch({ type: 'init' });
     classificationDispatch({ type: 'init' });
     statusDispatch({ type: 'init' });
+    searchParams.delete(PROGRAM_QUERY_KEY.CLASSIFICATION);
+    searchParams.delete(PROGRAM_QUERY_KEY.TYPE);
+    searchParams.delete(PROGRAM_QUERY_KEY.STATUS);
+    setSearchParams(searchParams);
   };
 
   const cancelFilter = useCallback(
@@ -169,7 +173,7 @@ const Programs = () => {
   if (isLoading) return <></>;
 
   return (
-    <div>
+    <div className="flex flex-col items-center">
       {/* 필터링 사이드바 */}
       <FilterSideBar
         setIsOpen={setIsOpen}
@@ -180,26 +184,38 @@ const Programs = () => {
         filterStatus={filterStatus}
       />
       <main
-        className={clsx('flex flex-col gap-16 px-5 py-8', {
-          hidden: isOpen,
-        })}
+        className={clsx(
+          'flex max-w-[99vw] flex-col gap-16 px-5 py-8 md:px-10 lg:px-[10%]',
+          {
+            hidden: isOpen,
+          },
+        )}
       >
         {/* 상단 필터 */}
         <section className="flex flex-col gap-3">
           <div className="flex items-center justify-between">
             <div
               onClick={() => setIsOpen(true)}
-              className="flex items-center gap-2"
+              className="flex items-center gap-2 md:px-5"
             >
               <img src="/icons/filter.svg" alt="필터 아이콘" />
-              <h1 className="text-1.125-bold text-neutral-40">필터</h1>
+              <h1 className="text-1.125-semibold text-neutral-40">필터</h1>
             </div>
-            <div onClick={resetFilter} className="flex items-center gap-2">
-              <img src="/icons/redo.svg" alt="필터 초기화 아이콘" />
-              <span className="text-0.75-medium text-neutral-40">초기화</span>
+            <div
+              onClick={resetFilter}
+              className="flex cursor-pointer items-center gap-2"
+            >
+              <img
+                className="w-4 md:w-5"
+                src="/icons/redo.svg"
+                alt="필터 초기화 아이콘"
+              />
+              <span className="text-0.75-medium md:text-0.875-semibold text-neutral-40">
+                초기화
+              </span>
             </div>
           </div>
-          <div className="flex flex-nowrap items-center gap-4 overflow-scroll py-2">
+          <div className="flex flex-nowrap items-center gap-4 overflow-scroll py-2 md:overflow-auto">
             {/* 파라미터에 따라 필터 표시 */}
             {searchParams.get(PROGRAM_QUERY_KEY.CLASSIFICATION) && (
               <FilterItem
@@ -250,14 +266,21 @@ const Programs = () => {
         {programList.length === 0 && (
           <p className="text-1 py-2 text-center text-neutral-0/40">
             찾으시는 프로그램이 아직 없어요ㅜㅡㅜ
-            <br />
-            알림 신청을 통해
-            <br />
-            가장 먼저 신규 프로그램 소식을 받아보세요!
+            <div className="flex flex-col  md:flex-row md:justify-center md:gap-1">
+              <span>알림 신청을 통해</span>
+              <span>가장 먼저 신규 프로그램 소식을 받아보세요!</span>
+            </div>
           </p>
         )}
 
-        <section className="grid min-h-[40vh] grid-cols-2 gap-x-4 gap-y-5">
+        {/* 프로그램 리스트 없을 때 */}
+        {programList.length === 0 && (
+          <section className="grid min-h-[40vh] grid-cols-2 gap-x-4 gap-y-5 md:grid-cols-3 md:gap-4 lg:grid-cols-4">
+            <EmptyCardList />
+          </section>
+        )}
+
+        <section className="grid min-h-[40vh] grid-cols-2 gap-x-4 gap-y-5 md:grid-cols-3 md:gap-4 lg:grid-cols-4">
           {/* 전체 프로그램 리스트 */}
           {programList?.map((program: IProgram) => (
             <ProgramCard
@@ -265,9 +288,6 @@ const Programs = () => {
               program={program.programInfo}
             />
           ))}
-
-          {/* 프로그램 리스트 없을 때 */}
-          {programList.length === 0 && <EmptyCardList />}
         </section>
 
         <MuiPagination pageInfo={pageInfo} setPageable={setPageable} />

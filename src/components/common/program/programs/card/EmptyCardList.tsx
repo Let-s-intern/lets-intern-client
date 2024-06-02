@@ -33,10 +33,10 @@ const EmptyCardList = () => {
         <div
           key={i}
           onClick={() => window.open(program.link, '_blank')}
-          className="flex flex-col overflow-hidden rounded-xs"
+          className="flex flex-col overflow-hidden rounded-xs md:gap-4 md:rounded-md md:border md:border-neutral-85 md:p-2.5"
         >
           <img
-            className="h-32 object-cover"
+            className="h-32 object-cover md:h-64 md:rounded-xs"
             src={program.thumbnail}
             alt="프로그램 썸네일 배경"
           />

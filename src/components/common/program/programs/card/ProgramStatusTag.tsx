@@ -18,7 +18,7 @@ const ProgramStatusTag = ({ status }: ProgramStatusTagProps) => {
           'border-neutral-45 bg-neutral-80 text-neutral-45':
             status === PRGRAM_STATUS.POST,
         },
-        'text-0.75-medium rounded-xs border px-2.5 py-0.5',
+        'text-0.75-medium md:text-0.875-medium rounded-xs border px-2.5 py-0.5',
       )}
     >
       {status}
