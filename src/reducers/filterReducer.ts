@@ -4,12 +4,12 @@ interface FilterCheckedAction extends IAction {
   value?: string;
 }
 
-export const initialFilterName = {
+export const initialFilterType = {
   CHALLENGE: false,
   LIVE: false,
   VOD: false,
 };
-export const initialFilterType = {
+export const initialFilterClassification = {
   CAREER_SEARCH: false,
   MEETING_PREPARATION: false,
   DOCUMENT_PREPARATION: false,
@@ -21,7 +21,7 @@ export const initialFilterStatus = {
   POST: false,
 };
 
-export function filterNameReducer(
+export function filterTypeReducer(
   status: IFilter,
   action: FilterCheckedAction,
 ) {
@@ -29,7 +29,7 @@ export function filterNameReducer(
 
   switch (action.type) {
     case 'init': {
-      return initialFilterName;
+      return initialFilterType;
     }
 
     case 'check': {
@@ -53,7 +53,7 @@ export function filterNameReducer(
   }
 }
 
-export function filterTypeReducer(
+export function filterClassificationReducer(
   status: IFilter,
   action: FilterCheckedAction,
 ) {
@@ -61,7 +61,7 @@ export function filterTypeReducer(
 
   switch (action.type) {
     case 'init': {
-      return initialFilterType;
+      return initialFilterClassification;
     }
 
     case 'check': {

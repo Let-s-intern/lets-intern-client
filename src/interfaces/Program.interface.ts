@@ -1,9 +1,7 @@
 import {
-  PROGRAM_FILTER_NAME,
+  PROGRAM_FILTER_CLASSIFICATION,
   PROGRAM_FILTER_STATUS,
   PROGRAM_FILTER_TYPE,
-  PROGRAM_NAME_KEY,
-  PROGRAM_TYPE,
   PROGRAM_TYPE_KEY,
 } from '../utils/programConst';
 
@@ -36,7 +34,7 @@ export interface IClassification {
 }
 
 export interface IProgramInfo {
-  programType: keyof typeof PROGRAM_NAME_KEY;
+  programType: keyof typeof PROGRAM_TYPE_KEY;
   id: number;
   title: string;
   shortDesc: string;
@@ -74,5 +72,6 @@ export interface IFilter {
 }
 
 export type filterStatuskey = keyof typeof PROGRAM_FILTER_STATUS;
-export type filterNamekey = keyof typeof PROGRAM_FILTER_NAME;
+export type filterClassificationkey =
+  keyof typeof PROGRAM_FILTER_CLASSIFICATION;
 export type filterTypekey = keyof typeof PROGRAM_FILTER_TYPE;

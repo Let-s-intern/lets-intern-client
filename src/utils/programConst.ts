@@ -37,26 +37,26 @@ export const PROGRAM_FILTER_STATUS = {
   POST: '모집 종료',
 };
 
-export const PROGRAM_FILTER_TYPE = {
+export const PROGRAM_FILTER_CLASSIFICATION = {
   CAREER_SEARCH: '커리어 탐색',
   DOCUMENT_PREPARATION: '서류 준비',
   MEETING_PREPARATION: '면접 준비',
   PASS: '합격 후 성장',
 };
 
-export const PROGRAM_FILTER_NAME = {
+export const PROGRAM_FILTER_TYPE = {
   CHALLENGE: '챌린지',
   LIVE: 'LIVE 클래스',
   VOD: 'VOD 클래스',
 };
 
-export const PROGRAM_NAME_KEY = {
+export const PROGRAM_TYPE_KEY = {
   CHALLENGE: 'CHALLENGE',
   LIVE: 'LIVE',
   VOD: 'VOD',
 };
 
-export const PROGRAM_TYPE_KEY = {
+export const PROGRAM_CLASSIFICATION_KEY = {
   CAREER_SEARCH: 'CAREER_SEARCH',
   DOCUMENT_PREPARATION: 'DOCUMENT_PREPARATION',
   MEETING_PREPARATION: 'MEETING_PREPARATION',

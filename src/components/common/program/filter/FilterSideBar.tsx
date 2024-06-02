@@ -3,9 +3,9 @@ import React from 'react';
 
 import {
   PROGRAM_FILTER_STATUS,
-  PROGRAM_FILTER_NAME,
   PROGRAM_FILTER_TYPE,
   PROGRAM_QUERY_KEY,
+  PROGRAM_FILTER_CLASSIFICATION,
 } from '../../../../utils/programConst';
 import FilterCheckbox from './FilterCheckbox';
 import { IFilter } from '../../../../interfaces/interface';
@@ -14,7 +14,7 @@ import { getKeyByValue } from '../../../../utils/convert';
 interface FilterSideBarProps {
   isOpen: boolean;
   filterType: IFilter;
-  filterName: IFilter;
+  filterClassification: IFilter;
   filterStatus: IFilter;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
   handleClick: (key: string, value: string) => void;
@@ -25,7 +25,7 @@ const FilterSideBar = ({
   setIsOpen,
   handleClick,
   filterType,
-  filterName,
+  filterClassification,
   filterStatus,
 }: FilterSideBarProps) => {
   return (
@@ -54,6 +54,21 @@ const FilterSideBar = ({
       <hr />
       <section>
         <h1 className="text-1-semibold mb-2">커리어 단계</h1>
+        {Object.values(PROGRAM_FILTER_CLASSIFICATION).map((value) => (
+          <FilterCheckbox
+            key={value}
+            caption={value}
+            isChecked={
+              filterClassification[
+                getKeyByValue(PROGRAM_FILTER_CLASSIFICATION, value) as string
+              ]
+            }
+            onClick={() => handleClick(PROGRAM_QUERY_KEY.CLASSIFICATION, value)}
+          />
+        ))}
+      </section>
+      <section>
+        <h1 className="text-1-semibold mb-2">프로그램</h1>
         {Object.values(PROGRAM_FILTER_TYPE).map((value) => (
           <FilterCheckbox
             key={value}
@@ -62,19 +77,6 @@ const FilterSideBar = ({
               filterType[getKeyByValue(PROGRAM_FILTER_TYPE, value) as string]
             }
             onClick={() => handleClick(PROGRAM_QUERY_KEY.TYPE, value)}
-          />
-        ))}
-      </section>
-      <section>
-        <h1 className="text-1-semibold mb-2">프로그램</h1>
-        {Object.values(PROGRAM_FILTER_NAME).map((value) => (
-          <FilterCheckbox
-            key={value}
-            caption={value}
-            isChecked={
-              filterName[getKeyByValue(PROGRAM_FILTER_NAME, value) as string]
-            }
-            onClick={() => handleClick(PROGRAM_QUERY_KEY.CLASSIFICATION, value)}
           />
         ))}
       </section>

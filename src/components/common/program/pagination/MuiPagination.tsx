@@ -2,6 +2,7 @@ import { Pagination, ThemeProvider } from '@mui/material';
 
 import { theme } from './mui-theme';
 import { IPageInfo, IPageable } from '../../../../interfaces/interface';
+import React from 'react';
 
 export interface MuiPaginationProps {
   pageInfo: IPageInfo;
@@ -14,7 +15,7 @@ const MuiPagination = ({ pageInfo, setPageable }: MuiPaginationProps) => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  if (pageInfo.totalPages > 0)
+  if (pageInfo.totalPages > 1)
     return (
       <ThemeProvider theme={theme}>
         <Pagination
@@ -31,4 +32,4 @@ const MuiPagination = ({ pageInfo, setPageable }: MuiPaginationProps) => {
   return null;
 };
 
-export default MuiPagination;
+export default React.memo(MuiPagination);
