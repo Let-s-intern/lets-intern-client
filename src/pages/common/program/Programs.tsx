@@ -18,12 +18,12 @@ import {
   IChallenge,
   ILive,
   IPageable,
+  IProgram,
   IVod,
   filterNamekey,
   filterStatuskey,
   filterTypekey,
 } from '../../../interfaces/interface';
-import ProgramArticle from '../../../components/common/program/programs/card/ProgramArticle';
 import ProgramCard from '../../../components/common/program/programs/card/ProgramCard';
 import Banner from '../../../components/common/program/banner/Banner';
 import FilterItem from '../../../components/common/program/filter/FilterItem';
@@ -37,8 +37,10 @@ import {
   initialFilterStatus,
 } from '../../../reducers/filterReducer';
 import { getKeyByValue } from '../../../utils/convert';
+import MuiPagination from '../../../components/common/program/pagination/MuiPagination';
+import EmptyCard from '../../../components/common/program/programs/card/EmptyCard';
 
-const initialPageable = { page: 0, size: 4 };
+const initialPageable = { page: 0, size: 12 };
 const initialPageInfo = {
   pageNum: 0,
   pageSize: 0,
@@ -135,89 +137,101 @@ const Programs = () => {
     setSearchParams(searchParams);
   }, []);
 
-  // 페이지 파라미터 상태 관리
-  const [challengePageable, setChallengePageable] = useState(initialPageable);
-  const [vodPageable, setVodPageable] = useState(initialPageable);
-  const [livePageable, setLivePageable] = useState(initialPageable);
-  // 페이지 정보 상태 관리
-  const [challengePageInfo, setChallengePageInfo] = useState(initialPageInfo);
-  const [vodPageInfo, setVodPageInfo] = useState(initialPageInfo);
-  const [livePageInfo, setLivePageInfo] = useState(initialPageInfo);
+  // 페이지 상태 관리
+  const [pageable, setPageable] = useState(initialPageable);
+  const [pageInfo, setPageInfo] = useState(initialPageInfo);
 
-  const initSize = () => {
-    setChallengePageable({ page: 0, size: 4 });
-    setVodPageable({ page: 0, size: 4 });
-    setLivePageable({ page: 0, size: 4 });
-  };
   // 프로그램 전체 보기 (name 필터링 없는 상태)
   const [isAll, setIsAll] = useState(true);
   useEffect(() => {
     if (searchParams.get('name')) setIsAll(false);
     else setIsAll(true);
-
-    // 선택된 프로그램 최대 12개 표시
-    initSize(); // 사이즈 초기화
-    switch (searchParams.get('name')) {
-      case PROGRAM_NAME_KEY.CHALLENGE:
-        setChallengePageable({ page: 0, size: 12 });
-        break;
-      case PROGRAM_NAME_KEY.VOD:
-        setVodPageable({ page: 0, size: 12 });
-        break;
-      case PROGRAM_NAME_KEY.LIVE:
-        setLivePageable({ page: 0, size: 12 });
-        break;
-    }
   }, [searchParams]);
 
   // 프로그램 리스트 싱태 관리
-  const [challengeList, setChallengeList] = useState<IChallenge[]>([]);
-  const [vodList, setVodList] = useState<IVod[]>([]);
-  const [liveList, setLiveList] = useState<ILive[]>([]);
+  const [programList, setProgramList] = useState<IProgram[]>([]);
+  // const [challengeList, setChallengeList] = useState<IChallenge[]>([]);
+  // const [vodList, setVodList] = useState<IVod[]>([]);
+  // const [liveList, setLiveList] = useState<ILive[]>([]);
 
-  const getProgramList = async <T,>(
-    type: string,
-    setState: React.Dispatch<React.SetStateAction<T[]>>,
-    pageable: IPageable,
-  ) => {
-    const queryList = Object.entries({ ...pageable, sort: 'string' })?.map(
-      ([key, value]) => `${key}=${value}`,
-    );
-    try {
-      const res = await axios.get(`/${type}?${queryList.join('&')}`);
-      if (res.status === 200) {
-        setState(res.data.data.programList);
-        return res.data;
-      }
-      throw new Error(`${res.status} ${res.statusText}`);
-    } catch (error) {
-      console.error(error);
-    }
+  // const getProgramList = async <T,>(
+  //   type: string,
+  //   setState: React.Dispatch<React.SetStateAction<T[]>>,
+  //   pageable: IPageable,
+  // ) => {
+  //   const queryList = Object.entries({ ...pageable, sort: 'string' })?.map(
+  //     ([key, value]) => `${key}=${value}`,
+  //   );
+  //   try {
+  //     const res = await axios.get(`/${type}?${queryList.join('&')}`);
+  //     if (res.status === 200) {
+  //       setState(res.data.data.programList);
+  //       return res.data;
+  //     }
+  //     throw new Error(`${res.status} ${res.statusText}`);
+  //   } catch (error) {
+  //     console.error(error);
+  //   }
+  // };
+
+  const calculateDuration = () => {
+    const currentDate = new Date();
+    const startDate = currentDate;
+    const endDate = currentDate;
+    startDate.setMonth(currentDate.getMonth() - 3);
+    endDate.setMonth(currentDate.getMonth() + 3);
+
+    return { startDate, endDate };
   };
 
   // 프로그램 리스트 가져오기
-  const { isLoading: isChallengeLoading } = useQuery({
-    queryKey: ['challenge', challengePageable],
-    queryFn: async () =>
-      await getProgramList<IChallenge>(
-        'challenge',
-        setChallengeList,
-        challengePageable,
-      ),
-  });
-  const { isLoading: isVodLoading } = useQuery({
-    queryKey: ['vod', vodPageable],
-    queryFn: async () =>
-      await getProgramList<IVod>('vod', setVodList, vodPageable),
-  });
-  const { isLoading: isLiveLoading } = useQuery({
-    queryKey: ['live', livePageable],
-    queryFn: async () =>
-      await getProgramList<ILive>('live', setLiveList, livePageable),
-  });
+  // const { isLoading } = useQuery({
+  //   queryKey: ['program', pageable],
+  //   queryFn: async () => {
+  //     const { startDate, endDate } = calculateDuration();
+  //     const queryList = Object.entries({
+  //       ...pageable,
+  //       sort: 'string',
+  //       startDate,
+  //       endDate,
+  //     })?.map(([key, value]) => `${key}=${value}`);
+  //     try {
+  //       const res = await axios.get(`/program/duration?${queryList.join('&')}`);
+  //       if (res.status === 200) {
+  //         console.log(res.data.data);
+  //         setProgramList(res.data.data.programList);
+  //         return res.data;
+  //       }
+  //       throw new Error(`${res.status} ${res.statusText}`);
+  //     } catch (error) {
+  //       console.error(error);
+  //     }
+  //   },
+  // });
 
-  const isLoading = isChallengeLoading || isVodLoading || isLiveLoading;
-  if (isLoading) return <></>;
+  // const { isLoading: isChallengeLoading } = useQuery({
+  //   queryKey: ['challenge', challengePageable],
+  //   queryFn: async () =>
+  //     await getProgramList<IChallenge>(
+  //       'challenge',
+  //       setChallengeList,
+  //       challengePageable,
+  //     ),
+  // });
+  // const { isLoading: isVodLoading } = useQuery({
+  //   queryKey: ['vod', vodPageable],
+  //   queryFn: async () =>
+  //     await getProgramList<IVod>('vod', setVodList, vodPageable),
+  // });
+  // const { isLoading: isLiveLoading } = useQuery({
+  //   queryKey: ['live', livePageable],
+  //   queryFn: async () =>
+  //     await getProgramList<ILive>('live', setLiveList, livePageable),
+  // });
+
+  // const isLoading = isChallengeLoading || isVodLoading || isLiveLoading;
+
+  // if (isLoading) return <></>;
 
   return (
     <div>
@@ -284,54 +298,28 @@ const Programs = () => {
           </div>
         </section>
 
+        {programList.length === 0 && (
+          <p className="text-1 py-2 text-center text-neutral-0/40">
+            찾으시는 프로그램이 아직 없어요ㅜㅡㅜ
+            <br />
+            알림 신청을 통해
+            <br />
+            가장 먼저 신규 프로그램 소식을 받아보세요!
+          </p>
+        )}
         {/* 프로그램 리스트 */}
-        <section className="flex flex-col gap-16">
-          {(isAll ||
-            searchParams.get('name') === PROGRAM_NAME_KEY.CHALLENGE) && (
-            <ProgramArticle
-              title={CHALLENGE_ARTICLE.TITLE}
-              description={CHALLENGE_ARTICLE.DESCRIPTION}
-            >
-              {challengeList?.map((program) => (
-                <ProgramCard
-                  key={program.id}
-                  program={program}
-                  type={PROGRAM_TYPE.CHALLENGE}
-                />
-              ))}
-            </ProgramArticle>
-          )}
-          {(isAll || searchParams.get('name') === PROGRAM_NAME_KEY.VOD) && (
-            <ProgramArticle
-              title={VOD_ARTICLE.TITLE}
-              description={VOD_ARTICLE.DESCRIPTION}
-            >
-              {vodList?.map((program) => (
-                <ProgramCard
-                  key={program.id}
-                  program={program}
-                  type={PROGRAM_TYPE.VOD}
-                />
-              ))}
-            </ProgramArticle>
-          )}
-          {(isAll || searchParams.get('name') === PROGRAM_NAME_KEY.LIVE) && (
-            <ProgramArticle
-              title={LIVE_ARTICLE.TITLE}
-              description={LIVE_ARTICLE.DESCRIPTION}
-            >
-              {liveList?.map((program) => (
-                <ProgramCard
-                  key={program.id}
-                  program={program}
-                  type={PROGRAM_TYPE.LIVE}
-                />
-              ))}
-            </ProgramArticle>
-          )}
+        <section className="grid min-h-[40vh] grid-cols-2 gap-x-4 gap-y-5">
+          {programList?.map((program: IProgram) => (
+            <ProgramCard
+              programType={program.programType}
+              key={program.id}
+              program={program}
+            />
+          ))}
+          <EmptyCard />
         </section>
 
-        {/* 프로그램 배너 */}
+        <MuiPagination pageInfo={pageInfo} />
         <Banner />
       </main>
     </div>

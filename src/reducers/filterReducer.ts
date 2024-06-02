@@ -26,7 +26,6 @@ export function filterNameReducer(
   action: FilterCheckedAction,
 ) {
   const _status = { ...status };
-  console.log(status);
 
   switch (action.type) {
     case 'init': {

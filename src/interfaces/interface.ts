@@ -26,3 +26,9 @@ export interface IPageable {
   page: number;
   size: number;
 }
+export interface IPageInfo {
+  pageNum: number;
+  pageSize: number;
+  totalElements: number;
+  totalPages: number;
+}

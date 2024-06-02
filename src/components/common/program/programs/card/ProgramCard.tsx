@@ -1,15 +1,20 @@
 import { Link } from 'react-router-dom';
 
-import { IChallenge, ILive, IVod } from '../../../../../interfaces/interface';
+import {
+  IChallenge,
+  ILive,
+  IProgram,
+  IVod,
+} from '../../../../../interfaces/interface';
 import ProgramStatusTag from './ProgramStatusTag';
 import { PROGRAM_TYPE, PRGRAM_STATUS } from '../../../../../utils/programConst';
 
 interface ProgramCardProps {
-  program: IChallenge | IVod | ILive;
-  type: (typeof PROGRAM_TYPE)[keyof typeof PROGRAM_TYPE];
+  program: IChallenge | IVod | ILive | IProgram;
+  programType: (typeof PROGRAM_TYPE)[keyof typeof PROGRAM_TYPE];
 }
 
-const ProgramCard = ({ program, type }: ProgramCardProps) => {
+const ProgramCard = ({ program, programType }: ProgramCardProps) => {
   let _program = program as IChallenge | ILive;
 
   const formatDate = (date: string) => {
@@ -18,11 +23,12 @@ const ProgramCard = ({ program, type }: ProgramCardProps) => {
 
   // 날짜에 따라 뱃지 상태 계산
   const calculateStatus = () => {
-    if (type === PROGRAM_TYPE.VOD) return PRGRAM_STATUS.PROCEEDING; // VOD 클래스는 startDate가 없음
-    const currentDate = new Date();
-    if (currentDate < new Date(_program.startDate)) return PRGRAM_STATUS.PREV;
-    if (currentDate > new Date(_program.endDate)) return PRGRAM_STATUS.POST;
-    return PRGRAM_STATUS.PROCEEDING;
+    if (programType === PROGRAM_TYPE.VOD) return PRGRAM_STATUS.PROCEEDING; // VOD 클래스는 startDate가 없음
+
+    const createDate = new Date(_program.createDate);
+    if (new Date() < createDate) return PRGRAM_STATUS.PREV; // 프로그램 개설일자보다 이르면 '사전알림 신청'
+    if (new Date() > new Date(_program.deadline)) return PRGRAM_STATUS.POST; // 모집마감일이 지났으면 '마감'
+    return PRGRAM_STATUS.PROCEEDING; // 그 외 '모집 중'
   };
   const status = calculateStatus();
 
@@ -43,18 +49,18 @@ const ProgramCard = ({ program, type }: ProgramCardProps) => {
           {program.shortDesc}
         </p>
         {/* VOD 클래스는 진행일정, 모집마감 없음 */}
-        {type !== PROGRAM_TYPE.VOD && (
+        {programType !== PROGRAM_TYPE.VOD && (
           <div>
             <div className="flex gap-1.5">
               <span className="text-0.75-medium">모집마감</span>
               <span className="text-0.75-medium text-primary-dark">
-                {formatDate(_program.deadline)}
+                ~ {formatDate(_program.deadline)}
               </span>
             </div>
             <div className="flex gap-1.5">
               <span className="text-0.75-medium">진행일정</span>
               <span className="text-0.75-medium text-primary-dark">
-                {type === PROGRAM_TYPE.CHALLENGE
+                {programType === PROGRAM_TYPE.CHALLENGE
                   ? `${formatDate(_program.startDate)} ~ ${formatDate(
                       _program.endDate,
                     )}`

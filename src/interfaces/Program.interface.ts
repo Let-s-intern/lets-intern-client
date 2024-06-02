@@ -2,6 +2,7 @@ import {
   PROGRAM_FILTER_NAME,
   PROGRAM_FILTER_STATUS,
   PROGRAM_FILTER_TYPE,
+  PROGRAM_TYPE,
 } from '../utils/programConst';
 
 export interface DailyMission {
@@ -19,26 +20,36 @@ export interface DailyMission {
   attended: boolean;
 }
 
-interface IProgram {
+interface IProgramCommon {
   id: number;
   title: string;
   shortDesc: string;
   thumbnail: string;
+  createDate: string;
 }
 
-export interface IChallenge extends IProgram {
+type ProgramTypeKey = keyof typeof PROGRAM_TYPE;
+
+export interface IProgram extends IProgramCommon {
+  programType: (typeof PROGRAM_TYPE)[ProgramTypeKey];
   startDate: string;
   endDate: string;
   deadline: string;
 }
 
-export interface ILive extends IProgram {
+export interface IChallenge extends IProgramCommon {
   startDate: string;
   endDate: string;
   deadline: string;
 }
 
-export interface IVod extends IProgram {
+export interface ILive extends IProgramCommon {
+  startDate: string;
+  endDate: string;
+  deadline: string;
+}
+
+export interface IVod extends IProgramCommon {
   link: string;
 }
 
