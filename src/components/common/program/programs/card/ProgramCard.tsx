@@ -42,17 +42,25 @@ const ProgramCard = ({ program, type }: ProgramCardProps) => {
         <p className="text-0.875 max-h-11 overflow-hidden text-neutral-30">
           {program.shortDesc}
         </p>
-        {/* VOD 클래스는 진행일정 없음 */}
+        {/* VOD 클래스는 진행일정, 모집마감 없음 */}
         {type !== PROGRAM_TYPE.VOD && (
-          <div className="flex gap-1.5">
-            <span className="text-0.75-medium">진행일정</span>
-            <span className="text-0.75-medium text-primary-dark">
-              {type === PROGRAM_TYPE.CHALLENGE
-                ? `${formatDate(_program.startDate)} ~ ${formatDate(
-                    _program.endDate,
-                  )}`
-                : formatDate(_program.startDate)}
-            </span>
+          <div>
+            <div className="flex gap-1.5">
+              <span className="text-0.75-medium">모집마감</span>
+              <span className="text-0.75-medium text-primary-dark">
+                {formatDate(_program.deadline)}
+              </span>
+            </div>
+            <div className="flex gap-1.5">
+              <span className="text-0.75-medium">진행일정</span>
+              <span className="text-0.75-medium text-primary-dark">
+                {type === PROGRAM_TYPE.CHALLENGE
+                  ? `${formatDate(_program.startDate)} ~ ${formatDate(
+                      _program.endDate,
+                    )}`
+                  : formatDate(_program.startDate)}
+              </span>
+            </div>
           </div>
         )}
       </div>
