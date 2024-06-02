@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
 
 import Table from '../../../components/admin/ui/table/regacy/Table';
 import TableHead from '../../../components/admin/program/programs/table-content/TableHead';
@@ -10,12 +11,29 @@ import Heading from '../../../components/admin/ui/heading/Heading';
 import ActionButton from '../../../components/admin/ui/button/ActionButton';
 import AdminPagination from '../../../components/admin/ui/pagination/AdminPagination';
 import axios from '../../../utils/axios';
-import classes from './Programs.module.scss';
-import { useQuery } from '@tanstack/react-query';
+
+export interface ProgramType {
+  programInfo: {
+    id: number;
+    title: string;
+    programType: string;
+    isVisible: boolean;
+    currentCount: number;
+    participationCount: number;
+    deadline: string;
+    startDate: string;
+    endDate: string;
+    zoomLink: string;
+    zoomPassword: string;
+  };
+  classificationList: {
+    programClassification: string;
+  }[];
+}
 
 const Programs = () => {
   const [searchParams] = useSearchParams();
-  const [programList, setProgramList] = useState([]);
+  const [programList, setProgramList] = useState<ProgramType[]>([]);
   const [error, setError] = useState<unknown>(null);
   const [maxPage, setMaxPage] = useState(1);
 
@@ -26,12 +44,10 @@ const Programs = () => {
     queryKey: ['program'],
     queryFn: async () => {
       try {
-        const params = {
-          size: sizePerPage,
-          page: currentPage,
-          sort: 'title',
-        };
-        const res = await axios.get('/program', { params });
+        const res = await axios.get('/program', {
+          params: { page: currentPage, size: sizePerPage },
+        });
+        setProgramList(res.data.data.programList);
         return res.data;
       } catch (error) {
         setError(error);
@@ -39,13 +55,6 @@ const Programs = () => {
       }
     },
   });
-
-  useEffect(() => {
-    if (getProgramList.data) {
-      setProgramList(getProgramList.data.programList);
-      setMaxPage(getProgramList.data.pageInfo.totalPages);
-    }
-  }, [getProgramList]);
 
   const fetchEditProgramVisible = (programId: number, visible: boolean) => {
     axios
@@ -70,18 +79,7 @@ const Programs = () => {
       });
   };
 
-  const fetchDelete = (programId: number) => {
-    axios
-      .delete(`/program/${programId}`)
-      .then(() => {
-        setProgramList(programList.filter((p: any) => p.id !== programId));
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  };
-
-  const loading = !getProgramList.isLoading;
+  const loading = getProgramList.isLoading;
 
   if (loading) {
     return <div className="p-8"></div>;
@@ -99,17 +97,16 @@ const Programs = () => {
           등록
         </ActionButton>
       </Header>
-      <main className={classes.main}>
+      <main>
         <Table>
           <TableHead />
           <TableBody
             programList={programList}
-            fetchDelete={fetchDelete}
             fetchEditProgramVisible={fetchEditProgramVisible}
           />
         </Table>
         {programList.length > 0 && (
-          <div className={classes.pagination}>
+          <div className="mt-4">
             <AdminPagination maxPage={maxPage} />
           </div>
         )}

@@ -1,105 +1,28 @@
-import { useEffect, useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
 import { useParams } from 'react-router-dom';
 
-import axios from '../../../utils/axios';
-import Header from '../../../components/common/program/program-detail/ui/Header';
-import MainContent from '../../../components/common/program/program-detail/content/MainContent';
-import ApplySection from '../../../components/common/program/program-detail/apply/mobile/main/ApplySection';
-import ApplyAside from '../../../components/common/program/program-detail/apply/desktop/main/ApplyAside';
+import Header from '../../../components/common/program/program-detail/header/Header';
+import TabSection from '../../../components/common/program/program-detail/section/TabSection';
+import ApplySection from '../../../components/common/program/program-detail/section/ApplySection';
 
-import styles from './ProgramDetail.module.scss';
+export type ProgramType = 'challenge' | 'live';
 
-const ProgramDetail = () => {
-  const params = useParams();
-  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
-  const [program, setProgram] = useState<any>(null);
-  const [participated, setParticipated] = useState<boolean>(false);
-  const [reviewList, setReviewList] = useState<any>(null);
-  const [faqList, setFaqList] = useState<any>(null);
-  const [wishJobList, setWishJobList] = useState<any>();
-  const [loading, setLoading] = useState(true);
-  const [couponDiscount, setCouponDiscount] = useState<number>(0);
+interface ProgramDetailProps {
+  programType: ProgramType;
+}
 
-  const { isError } = useQuery({
-    queryKey: ['program', params.programId],
-    queryFn: async ({ queryKey }) => {
-      const res = await axios.get(`/program/${queryKey[1]}`);
-      const {
-        programDetailVo,
-        participated,
-        reviewList,
-        faqList,
-        wishJobList,
-      } = res.data;
-      setProgram(programDetailVo);
-      setParticipated(participated);
-      setReviewList(reviewList);
-      setFaqList(faqList);
-      setWishJobList(wishJobList);
-      setLoading(false);
-      return res.data;
-    },
-  });
+const ProgramDetail = ({ programType }: ProgramDetailProps) => {
+  const params = useParams<{ programId: string }>();
 
-  useEffect(() => {
-    if (isError) {
-      setLoading(false);
-    }
-  }, [isError]);
-
-  useEffect(() => {
-    const accessToken = localStorage.getItem('access-token');
-    const refreshToken = localStorage.getItem('refresh-token');
-
-    setIsLoggedIn(accessToken && refreshToken ? true : false);
-  }, []);
-
-  if (loading) {
-    return (
-      <div className={styles.page}>
-        <main className="program-detail" />
-      </div>
-    );
-  }
-
-  if (isError) {
-    return (
-      <div className={styles.page}>
-        <main className="program-detail">에러 발생</main>
-      </div>
-    );
-  }
+  const programId = Number(params.programId);
 
   return (
-    <div className={styles.page}>
-      <div className={styles.content}>
-        <main>
-          <article>
-            <Header title={program.title} />
-            <MainContent
-              program={program}
-              reviewList={reviewList}
-              faqList={faqList}
-            />
-          </article>
-          <ApplyAside
-            program={program}
-            participated={participated}
-            wishJobList={wishJobList}
-            couponDiscount={couponDiscount}
-            setCouponDiscount={setCouponDiscount}
-          />
-        </main>
-        <ApplySection
-          program={program}
-          participated={participated}
-          isLoggedIn={isLoggedIn}
-          wishJobList={wishJobList}
-          setParticipated={setParticipated}
-          couponDiscount={couponDiscount}
-          setCouponDiscount={setCouponDiscount}
-        />
+    <div className="px-5">
+      <div className="mx-auto max-w-5xl">
+        <Header />
+        <div className="flex min-h-screen items-start gap-10">
+          <TabSection programId={programId} programType={programType} />
+          <ApplySection programType={programType} programId={programId} />
+        </div>
       </div>
     </div>
   );
