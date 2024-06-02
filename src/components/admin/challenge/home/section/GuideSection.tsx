@@ -17,64 +17,71 @@ const initialValue = {
 
 /* 추후 가이드 개수가 3개보다 많아질 수 있음 */
 const GuideSection = () => {
-  const params = useParams();
-
-  const { data, isLoading } = useQuery({
-    queryKey: ['challenge-guide', 'admin', params.programId],
-    queryFn: async () => {
-      const res = await axios.get(
-        `/api/v1/challenge-guide/admin/${params.programId}`,
-      );
+  const getGuideList = async () => {
+    try {
+      const res = await axios.get(`/challenge-guide/admin/${params.programId}`);
       if (res.status !== 200) {
-        throw new Error(`${res.status} ${res.statusText}`);
+        throw new Error(res.data.message);
       }
-      return res.data;
-    },
+      setGuideList(res.data.challengeGuideAdminList);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const params = useParams();
+  const [guideList, setGuideList] = useState<IGuide[]>([]);
+  const [isModalShown, setIsModalShown] = useState(false);
+  const [values, setValues] = useState<IGuide>(initialValue);
+
+  const { isLoading } = useQuery({
+    queryKey: ['challenge-guide', 'admin', params.programId],
+    queryFn: getGuideList,
   });
 
   const postMutation = useMutation({
     mutationFn: async (guide: IGuide) => {
       const res = await axios.post(
-        `/api/v1/challenge-guide/${params.programId}`,
+        `/challenge-guide/${params.programId}`,
         guide,
       );
-      const data = res.data;
-      return data;
+      if (res.status !== 200) throw new Error(res.data.message);
+    },
+    onError(error) {
+      console.error(error);
     },
   });
   const patchMutation = useMutation({
     mutationFn: async (guide: IGuide) => {
       const res = await axios.patch(
-        `/api/v1/challenge-guide/${params.programId}`,
+        `/challenge-guide/${params.programId}`,
         guide,
       );
-      const data = res.data;
-      return data;
+      if (res.status !== 200) throw new Error(res.data.message);
+    },
+    onError(error) {
+      console.error(error);
     },
   });
 
-  const [guideList, setGuideList] = useState<IGuide[]>(
-    data.challengeGuideAdminList,
-  );
-  const [isModalShown, setIsModalShown] = useState(false);
-  const [values, setValues] = useState<IGuide>(initialValue);
-
+  const createGuide = () => {
+    setGuideList((prev) => [values, ...prev]);
+    postMutation.mutate(values);
+  };
+  const editGuide = (index: number) => {
+    setGuideList((prev) => [
+      ...prev.slice(0, index),
+      values,
+      ...prev.slice(index + 1),
+    ]);
+    patchMutation.mutate(values);
+  };
   const handleSubmit = (e: React.FormEvent<Element>) => {
     e.preventDefault();
     const i = guideList.findIndex((guide) => guide.id === values.id);
-    // 가이드 생성
-    if (i === -1) {
-      setGuideList((prev) => [values, ...prev]);
-      postMutation.mutate(values);
-    } else {
-      // 가이드 수정
-      setGuideList((prev) => [
-        ...prev.slice(0, i),
-        values,
-        ...prev.slice(i + 1),
-      ]);
-      patchMutation.mutate(values);
-    }
+    if (i === -1) createGuide();
+    else editGuide(i);
+
     setValues(initialValue);
     setIsModalShown(false);
   };

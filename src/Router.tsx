@@ -1,15 +1,12 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 
-import Home from './pages/common/home/Home';
 import About from './pages/common/about/About';
 import Programs from './pages/common/program/Programs';
-import ProgramDetail from './pages/common/program/ProgramDetail';
+import ProgramDetailRegacy from './pages/common/program/regacy/ProgramDetailRegacy';
 import Login from './pages/common/auth/Login';
 import MyPage from './pages/common/mypage/MyPage';
 import SignUp from './pages/common/auth/SignUp';
 import FindPassword from './pages/common/auth/FindPassword';
-import Privacy from './pages/common/mypage/Privacy';
-import Review from './pages/common/mypage/Review';
 import Layout from './components/common/ui/layout/Layout';
 import AdminLayout from './components/admin/ui/layout/AdminLayout';
 import ProgramCreate from './pages/admin/program/ProgramCreate';
@@ -22,8 +19,7 @@ import UserDetail from './pages/admin/user/UserDetail';
 import UserMemo from './pages/admin/user/UserMemo';
 import UserCreate from './pages/admin/user/UserCreate';
 import UserEdit from './pages/admin/user/UserEdit';
-import Application from './pages/common/mypage/Application';
-import ReviewCreate from './pages/common/review/ReviewCreate';
+import ReviewCreateRegacy from './pages/common/review/regacy/ReviewCreateRegacy';
 import AttendCheck from './pages/admin/program/AttendCheck';
 import ScrollToTop from './components/ui/scroll-to-top/ScrollToTop';
 import AdminPrograms from './pages/admin/program/Programs';
@@ -38,8 +34,6 @@ import ChallengeNotice from './pages/admin/challenge/ChallengeNotice';
 import ChallengeDashboard from './pages/common/challenge/ChallengeDashboard';
 import ChallengeLayout from './components/common/challenge/ui/layout/ChallengeLayout';
 import MyChallengeDashboard from './pages/common/challenge/MyChallengeDashboard';
-import OtherDashboardList from './pages/common/challenge/OtherDashboardList';
-import OtherDashboardDetail from './pages/common/challenge/OtherDashboardDetail';
 import MentorNotificationBefore from './pages/common/mentor/MentorNotificationBefore';
 import MentorNotificationAfter from './pages/common/mentor/MentorNotificationAfter';
 import ChallengeOnboarding from './pages/admin/challenge/ChallengeOnboarding';
@@ -66,7 +60,12 @@ import PopUpBannerEdit from './pages/admin/banner/pop-up-banner/PopUpBannerEdit'
 import OnlineContentsCreate from './pages/admin/online-contents/OnlineContentsCreate';
 import OnlineContentsEdit from './pages/admin/online-contents/OnlineContentsEdit';
 import HomeRegacy from './pages/common/home/HomeRegacy';
+import Privacy from './pages/common/mypage/Privacy';
+import Application from './pages/common/mypage/Application';
+import Review from './pages/common/mypage/Review';
+import ReviewCreate from './pages/common/review/ReviewCreate';
 import ChallengeMissionManagement from './pages/admin/challenge/ChallengeMissionManagement';
+import ProgramDetail from './pages/common/program/ProgramDetail';
 
 const Router = () => {
   return (
@@ -78,18 +77,32 @@ const Router = () => {
           <Route path="" element={<HomeRegacy />} />
           {/* /about */}
           <Route path="about" element={<About />} />
+          {/* /program/challenge/:programId */}
+          <Route
+            path="program/challenge/:programId"
+            element={<ProgramDetail programType="challenge" />}
+          />
+          {/* /program/live/:programId */}
+          <Route
+            path="program/live/:programId"
+            element={<ProgramDetail programType="live" />}
+          />
+          {/* ---Regacy--- */}
           {/* /program */}
           <Route path="program" element={<Programs />} />
           {/* /program/detail/:programId */}
-          <Route path="program/detail/:programId" element={<ProgramDetail />} />
+          <Route
+            path="program/detail/:programId"
+            element={<ProgramDetailRegacy />}
+          />
           <Route path="program/:programId">
             {/* /program/:programId/application/:applicationId/review/create */}
             <Route
               path="application/:applicationId/review/create"
-              element={<ReviewCreate />}
+              element={<ReviewCreateRegacy />}
             />
-            {/* /program/:programId/review/create */}
-            <Route path="review/create" element={<ReviewCreate />} />
+            {/* /program/:programId/review/new */}
+            <Route path="review/new" element={<ReviewCreate />} />
             {/* /program/:programId/review/:reviewId */}
             <Route path="review/:reviewId" element={<ReviewDetail />} />
             {/* /program/:programId/mentor/notification */}
@@ -100,11 +113,16 @@ const Router = () => {
               <Route path="after" element={<MentorNotificationAfter />} />
             </Route>
           </Route>
+          {/* ---Regacy--- */}
           <Route path="mypage" element={<MyPage />}>
             {/* /mypage/application */}
             <Route path="application" element={<Application />} />
-            {/* /mypage/review */}
-            <Route path="review" element={<Review />} />
+            <Route path="review">
+              {/* /mypage/review */}
+              <Route path="" element={<Review />} />
+              {/* /review/new/program/:programId */}
+              <Route path="new/program/:programId" element={<ReviewCreate />} />
+            </Route>
             {/* /mypage/privacy */}
             <Route path="privacy" element={<Privacy />} />
           </Route>

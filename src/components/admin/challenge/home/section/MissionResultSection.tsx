@@ -18,7 +18,7 @@ const MissionResultSection = () => {
   const getMissionResult = useQuery({
     queryKey: ['mission', 'admin', params.programId, 'simple'],
     queryFn: async () => {
-      const res = await axios.get(`/mission/admin/${params.programId}/simple`);
+      const res = await axios.get(`/mission/admin/${params.programId}`);
       const data = res.data;
       setMissionList(data.missionList);
       setHeadCount(data.finalHeadCount);

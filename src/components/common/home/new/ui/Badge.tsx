@@ -14,7 +14,7 @@ const Badge = ({
   return (
     <span
       className={clsx(
-        'text-0.75-medium rounded-xs border bg-opacity-10 px-2 py-0.5',
+        'text-0.75-medium rounded-xs border bg-opacity-10 px-2.5 py-0.5',
         {
           'lg:text-0.875-medium': responsive,
           'border-secondary bg-secondary bg-opacity-10 text-secondary':

@@ -9,50 +9,50 @@ import { useQuery } from '@tanstack/react-query';
 const AdminLayout = () => {
   const navigate = useNavigate();
 
-  const [challengeId, setChallengeId] = useState<number>(0);
+  // const [challengeId, setChallengeId] = useState<number>(0);
 
-  useQuery({
-    queryKey: ['program', 'admin', { type: 'CHALLENGE' }, 'admin_layout'],
-    queryFn: async () => {
-      const res = await axios.get('/program/admin', {
-        params: { type: 'CHALLENGE' },
-      });
-      const challengeId =
-        Number(localStorage.getItem('admin-challenge-id')) || 0;
-      if (challengeId) {
-        res.data.programList
-          .filter((challenge: any) => challenge.th !== 0)
-          .forEach((challenge: any) => {
-            if (challenge.id === challengeId) {
-              setChallengeId(challenge.id);
-              return;
-            }
-          });
-      }
-      return res.data;
-    },
-  });
+  // useQuery({
+  //   queryKey: ['program', 'admin', { type: 'CHALLENGE' }, 'admin_layout'],
+  //   queryFn: async () => {
+  //     const res = await axios.get('/program/admin', {
+  //       params: { type: 'CHALLENGE' },
+  //     });
+  //     const challengeId =
+  //       Number(localStorage.getItem('admin-challenge-id')) || 0;
+  //     if (challengeId) {
+  //       res.data.programList
+  //         .filter((challenge: any) => challenge.th !== 0)
+  //         .forEach((challenge: any) => {
+  //           if (challenge.id === challengeId) {
+  //             setChallengeId(challenge.id);
+  //             return;
+  //           }
+  //         });
+  //     }
+  //     return res.data;
+  //   },
+  // });
 
-  useEffect(() => {
-    const accessToken = localStorage.getItem('access-token');
-    const refreshToken = localStorage.getItem('refresh-token');
+  // useEffect(() => {
+  //   const accessToken = localStorage.getItem('access-token');
+  //   const refreshToken = localStorage.getItem('refresh-token');
 
-    if (!accessToken || !refreshToken) {
-      navigate('/login');
-    }
+  //   if (!accessToken || !refreshToken) {
+  //     navigate('/login');
+  //   }
 
-    const fetchIsAdmin = async () => {
-      try {
-        const res = await axios.get('/user/is-admin');
-        if (!res.data) {
-          navigate('/');
-        }
-      } catch (error) {
-        console.error(error);
-      }
-    };
-    fetchIsAdmin();
-  }, [navigate]);
+  //   const fetchIsAdmin = async () => {
+  //     try {
+  //       const res = await axios.get('/user/is-admin');
+  //       if (!res.data) {
+  //         navigate('/');
+  //       }
+  //     } catch (error) {
+  //       console.error(error);
+  //     }
+  //   };
+  //   fetchIsAdmin();
+  // }, [navigate]);
 
   const navData = [
     {
@@ -63,16 +63,8 @@ const AdminLayout = () => {
           url: '/admin/programs',
         },
         {
-          name: '상시 콘텐츠 개설',
-          url: '/admin/online-contents',
-        },
-        {
           name: '후기 관리',
           url: '/admin/reviews',
-        },
-        {
-          name: '알림 신청 관리',
-          url: '/admin/reminders',
         },
       ],
     },
@@ -89,9 +81,7 @@ const AdminLayout = () => {
         },
         {
           name: '챌린지 운영',
-          url: challengeId
-            ? `/admin/challenge/${challengeId}`
-            : '/admin/challenge',
+          url: '/admin/challenge',
         },
       ],
     },

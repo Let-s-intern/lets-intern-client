@@ -46,11 +46,7 @@ interface LiveClassRequest {
     };
     livePriceType: string;
   };
-  faqInfo: {
-    question: string;
-    answer: string;
-    faqProgramType: 'LIVE';
-  }[];
+  faqInfo: { faqId: number }[];
 }
 
 interface ChallengeRequest {
@@ -59,7 +55,6 @@ interface ChallengeRequest {
   desc: string;
   participationCount: number;
   thumbnail: string;
-  mentorName: string;
   startDate: string;
   endDate: string;
   deadline: string;
@@ -83,11 +78,7 @@ interface ChallengeRequest {
     challengeUserType: string;
     challengeParticipationType: string;
   }[];
-  faqInfo: {
-    question: string;
-    answer: string;
-    faqProgramType: 'CHALLENGE';
-  }[];
+  faqInfo: { faqId: number }[];
 }
 
 const ProgramCreate = () => {
@@ -250,7 +241,7 @@ const ProgramCreate = () => {
         title: values.title,
         shortDesc: values.shortDescription,
         desc: content,
-        mentorName: '고정값입니다.',
+        mentorName: values.mentorName,
         participationCount: Number(values.headcount),
         thumbnail: values.thumbnail,
         job: values.job,
@@ -276,13 +267,7 @@ const ProgramCreate = () => {
           },
           livePriceType: values.feeType,
         },
-        faqInfo: [
-          {
-            question: '고정값입니다.',
-            answer: '고정값입니다.',
-            faqProgramType: 'LIVE',
-          },
-        ],
+        faqInfo: [{ faqId: 1 }],
       };
       addLiveClass.mutate(newValue);
       return;
@@ -320,7 +305,6 @@ const ProgramCreate = () => {
         title: values.title,
         shortDesc: values.shortDescription,
         desc: content,
-        mentorName: '고정값입니다.',
         participationCount: Number(values.headcount),
         thumbnail: values.thumbnail,
         startDate: values.startDate,
@@ -337,37 +321,11 @@ const ProgramCreate = () => {
           },
         ],
         priceInfo: newPriceInfo,
-        faqInfo: [
-          {
-            question: '고정값입니다.',
-            answer: '고정값입니다.',
-            faqProgramType: 'CHALLENGE',
-          },
-        ],
+        faqInfo: [{ faqId: 1 }],
       };
       addChallenge.mutate(newValue);
       return;
     }
-    // const reqData = {
-    //   ...values,
-    //   contents: content,
-    //   th: Number(values.th),
-    //   headcount: Number(values.headcount),
-    //   faqIdList: faqIdList,
-    // };
-    // try {
-    //   await axios.post('/program', reqData);
-    //   for (let faq of faqList) {
-    //     await axios.patch(`/faq/${faq.id}`, {
-    //       programType: values.type,
-    //       question: faq.question,
-    //       answer: faq.answer,
-    //     });
-    //   }
-    //   navigate('/admin/programs');
-    // } catch (err) {
-    //   alert('프로그램 생성에 실패했습니다.');
-    // }
   };
 
   const handleFAQIdListReset = () => {

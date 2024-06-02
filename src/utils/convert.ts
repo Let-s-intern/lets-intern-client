@@ -13,7 +13,7 @@ export const newProgramFeeTypeToText: Record<string, string> = {
 };
 
 export const newProgramTypeDetailToText: Record<string, string> = {
-  CAREER_SEARCH: '커리어 서치',
+  CAREER_SEARCH: '커리어 탐색',
   DOCUMENT_PREPARATION: '서류 준비',
   MEETING_PREPARATION: '면접 준비',
   PASS: '합격 후 성장',
@@ -76,6 +76,15 @@ export const bankTypeToText: Record<string, string> = {
   MG: '새마을금고',
   KAKAO: '카카오뱅크',
   TOSS: '토스뱅크',
+};
+
+export const gradeToText: Record<string, string> = {
+  FIRST: '1학년',
+  SECOND: '2학년',
+  THIRD: '3학년',
+  FOURTH: '4학년',
+  ETC: '5학년 이상',
+  GRADUATE: '졸업생',
 };
 
 export const wishJobToText: any = {

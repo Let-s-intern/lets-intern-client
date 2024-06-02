@@ -191,7 +191,11 @@ const LineTableBodyRow = <T extends ItemWithStatus>({
                   placeholder={placeholders[i] || ''}
                   value={formatMissionTableDateString(
                     values[attr] as string,
-                    canEdits[i] ? '06:00' : '23:59',
+                    attr === 'createDate'
+                      ? ''
+                      : canEdits[i]
+                      ? '06:00'
+                      : '23:59',
                   )}
                   disabled={true}
                 />
@@ -209,9 +213,8 @@ const LineTableBodyRow = <T extends ItemWithStatus>({
             <button
               type="button"
               onClick={() => {
-                const newValues = { ...values, status: STATUS.SAVE };
-                handleAdd(newValues);
-                handleSave(newValues);
+                handleSave(values);
+                handleAdd({ ...values, status: STATUS.SAVE });
                 setIsEditMode(false);
               }}
             >
