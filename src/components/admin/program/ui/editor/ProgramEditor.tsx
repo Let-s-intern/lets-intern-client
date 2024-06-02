@@ -322,6 +322,18 @@ const ProgramEditor = ({
                 }}
               />
             )}
+            {values.program === 'LIVE' && (
+              <Input
+                label="멘토 이름"
+                type="text"
+                name="mentorName"
+                placeholder="멘토 이름을 입력해주세요"
+                value={values?.mentorName || ''}
+                onChange={(e) => {
+                  setValues({ ...values, [e.target.name]: e.target.value });
+                }}
+              />
+            )}
             {values.program === 'CHALLENGE' && (
               <>
                 <Input

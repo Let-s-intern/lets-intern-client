@@ -26,6 +26,7 @@ const AccountInfo = () => {
       setValue({
         ...res.data.data,
       });
+      return res.data;
     },
   });
 

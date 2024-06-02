@@ -11,7 +11,7 @@ export const newProgramFeeTypeToText: Record<string, string> = {
 };
 
 export const newProgramTypeDetailToText: Record<string, string> = {
-  CAREER_SEARCH: '커리어 서치',
+  CAREER_SEARCH: '커리어 탐색',
   DOCUMENT_PREPARATION: '서류 준비',
   MEETING_PREPARATION: '면접 준비',
   PASS: '합격 후 성장',
