@@ -1,3 +1,9 @@
+import {
+  PROGRAM_FILTER_NAME,
+  PROGRAM_FILTER_STATUS,
+  PROGRAM_FILTER_TYPE,
+} from '../utils/programConst';
+
 export interface DailyMission {
   id: number;
   th: number;
@@ -39,3 +45,7 @@ export interface IVod extends IProgram {
 export interface IFilter {
   [key: string]: boolean;
 }
+
+export type filterStatuskey = keyof typeof PROGRAM_FILTER_STATUS;
+export type filterNamekey = keyof typeof PROGRAM_FILTER_NAME;
+export type filterTypekey = keyof typeof PROGRAM_FILTER_TYPE;

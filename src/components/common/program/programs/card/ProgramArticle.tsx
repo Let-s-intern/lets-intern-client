@@ -18,7 +18,7 @@ const ProgramArticle = ({
           <h1 className="text-1.125-bold">{title}</h1>
           <span className="text-0.875 text-neutral-20">{description}</span>
         </div>
-        <Link className="text-0.75 text-neutral-40" to="#">
+        <Link className="text-0.75 text-neutral-40" to={`/program/challenge`}>
           전체보기
         </Link>
       </div>

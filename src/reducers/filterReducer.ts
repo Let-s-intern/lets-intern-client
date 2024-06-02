@@ -1,29 +1,24 @@
 import { IAction, IFilter } from '../interfaces/interface';
-import {
-  PROGRAM_FILTER_NAME,
-  PROGRAM_FILTER_STATUS,
-  PROGRAM_FILTER_TYPE,
-} from '../utils/programConst';
 
 interface FilterCheckedAction extends IAction {
   value?: string;
 }
 
 export const initialFilterName = {
-  [PROGRAM_FILTER_NAME.CHALLENGE]: false,
-  [PROGRAM_FILTER_NAME.LIVE]: false,
-  [PROGRAM_FILTER_NAME.VOD]: false,
+  CHALLENGE: false,
+  LIVE: false,
+  VOD: false,
 };
 export const initialFilterType = {
-  [PROGRAM_FILTER_TYPE.CAREER_SEARCH]: false,
-  [PROGRAM_FILTER_TYPE.MEETING_PREPARATION]: false,
-  [PROGRAM_FILTER_TYPE.DOCUMENT_PREPARATION]: false,
-  [PROGRAM_FILTER_TYPE.PASS]: false,
+  CAREER_SEARCH: false,
+  MEETING_PREPARATION: false,
+  DOCUMENT_PREPARATION: false,
+  PASS: false,
 };
 export const initialFilterStatus = {
-  [PROGRAM_FILTER_STATUS.PREV]: false,
-  [PROGRAM_FILTER_STATUS.PROCEEDING]: false,
-  [PROGRAM_FILTER_STATUS.POST]: false,
+  PREV: false,
+  PROCEEDING: false,
+  POST: false,
 };
 
 export function filterNameReducer(
@@ -31,6 +26,7 @@ export function filterNameReducer(
   action: FilterCheckedAction,
 ) {
   const _status = { ...status };
+  console.log(status);
 
   switch (action.type) {
     case 'init': {
@@ -48,7 +44,7 @@ export function filterNameReducer(
     }
 
     case 'toggle': {
-      _status[action.value!] = !_status[action.value!];
+      _status[action.value!] = !status[action.value!];
       return _status;
     }
 

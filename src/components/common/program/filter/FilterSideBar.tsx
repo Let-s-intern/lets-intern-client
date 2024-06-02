@@ -8,6 +8,7 @@ import {
 } from '../../../../utils/programConst';
 import FilterCheckbox from './FilterCheckbox';
 import { IFilter } from '../../../../interfaces/interface';
+import { getKeyByValue } from '../../../../utils/convert';
 
 interface FilterSideBarProps {
   isOpen: boolean;
@@ -55,7 +56,9 @@ const FilterSideBar = ({
         {Object.values(PROGRAM_FILTER_TYPE).map((value) => (
           <FilterCheckbox
             caption={value}
-            isChecked={filterType[value]}
+            isChecked={
+              filterType[getKeyByValue(PROGRAM_FILTER_TYPE, value) as string]
+            }
             onClick={() => handleClick('type', value)}
           />
         ))}
@@ -65,7 +68,9 @@ const FilterSideBar = ({
         {Object.values(PROGRAM_FILTER_NAME).map((value) => (
           <FilterCheckbox
             caption={value}
-            isChecked={filterName[value]}
+            isChecked={
+              filterName[getKeyByValue(PROGRAM_FILTER_NAME, value) as string]
+            }
             onClick={() => handleClick('name', value)}
           />
         ))}
@@ -75,7 +80,11 @@ const FilterSideBar = ({
         {Object.values(PROGRAM_FILTER_STATUS).map((value) => (
           <FilterCheckbox
             caption={value}
-            isChecked={filterStatus[value]}
+            isChecked={
+              filterStatus[
+                getKeyByValue(PROGRAM_FILTER_STATUS, value) as string
+              ]
+            }
             onClick={() => handleClick('status', value)}
           />
         ))}

@@ -66,7 +66,6 @@ import PopUpBannerEdit from './pages/admin/banner/pop-up-banner/PopUpBannerEdit'
 import OnlineContentsCreate from './pages/admin/online-contents/OnlineContentsCreate';
 import OnlineContentsEdit from './pages/admin/online-contents/OnlineContentsEdit';
 import HomeRegacy from './pages/common/home/HomeRegacy';
-import ChallengeMissions from './pages/admin/challenge/ChallengeMissionManagement';
 import ChallengeMissionManagement from './pages/admin/challenge/ChallengeMissionManagement';
 
 const Router = () => {

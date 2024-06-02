@@ -1,15 +1,26 @@
 import { useCallback, useReducer, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import clsx from 'clsx';
+import { useSearchParams } from 'react-router-dom';
 
 import {
   CHALLENGE_ARTICLE,
   LIVE_ARTICLE,
+  PROGRAM_FILTER_NAME,
+  PROGRAM_FILTER_STATUS,
+  PROGRAM_FILTER_TYPE,
   PROGRAM_TYPE,
   VOD_ARTICLE,
 } from '../../../utils/programConst';
 import axios from '../../../utils/axios';
-import { IChallenge, ILive, IVod } from '../../../interfaces/interface';
+import {
+  IChallenge,
+  ILive,
+  IVod,
+  filterNamekey,
+  filterStatuskey,
+  filterTypekey,
+} from '../../../interfaces/interface';
 import ProgramArticle from '../../../components/common/program/programs/card/ProgramArticle';
 import ProgramCard from '../../../components/common/program/programs/card/ProgramCard';
 import Banner from '../../../components/common/program/banner/Banner';
@@ -23,9 +34,15 @@ import {
   filterStatusReducer,
   initialFilterStatus,
 } from '../../../reducers/filterReducer';
+import { getKeyByValue } from '../../../utils/convert';
 
 const Programs = () => {
+  // 페이지 상태 관리
+  const [totalPage, setTotalPage] = useState(0);
+  const [currentPage, setCurrentPage] = useState(0);
+
   // 필터링 상태 관리
+  const [searchParams, setSearchParams] = useSearchParams({});
   const [isOpen, setIsOpen] = useState(false);
   const [filterType, typeDispatch] = useReducer(
     filterTypeReducer,
@@ -42,35 +59,45 @@ const Programs = () => {
 
   // 필터링 체크박스 클릭 이벤트
   const handleClickCheckbox = useCallback(
-    (key: string, value: string) => {
-      switch (key) {
+    (programType: string, value: string) => {
+      switch (programType) {
         case 'type': {
+          const filterKey = getKeyByValue(PROGRAM_FILTER_TYPE, value);
+          type keyType = keyof typeof filterType;
           typeDispatch({ type: 'init' });
           typeDispatch({
-            type: filterType[value] ? 'uncheck' : 'check',
-            value,
+            type: filterType[filterKey as keyType] ? 'uncheck' : 'check',
+            value: filterKey,
           });
+          searchParams.set(programType, filterKey as string);
           break;
         }
         case 'name': {
+          const filterKey = getKeyByValue(PROGRAM_FILTER_NAME, value);
+          type keyType = keyof typeof filterName;
           nameDispatch({ type: 'init' });
           nameDispatch({
-            type: filterName[value] ? 'uncheck' : 'check',
-            value,
+            type: filterName[filterKey as keyType] ? 'uncheck' : 'check',
+            value: filterKey,
           });
+          searchParams.set(programType, filterKey as string);
           break;
         }
         case 'status': {
+          const filterKey = getKeyByValue(PROGRAM_FILTER_STATUS, value);
+          type keyType = keyof typeof filterStatus;
           statusDispatch({ type: 'init' });
           statusDispatch({
-            type: filterStatus[value] ? 'uncheck' : 'check',
-            value,
+            type: filterStatus[filterKey as keyType] ? 'uncheck' : 'check',
+            value: filterKey,
           });
+          searchParams.set(programType, filterKey as string);
           break;
         }
       }
+      setSearchParams(searchParams);
     },
-    [filterType, filterName, filterStatus],
+    [filterType, filterName, filterStatus, searchParams, setSearchParams],
   );
 
   // 필터링 초기화
@@ -83,18 +110,23 @@ const Programs = () => {
   const cancelFilter = useCallback((key: string, value: string) => {
     switch (key) {
       case 'type': {
-        typeDispatch({ type: 'uncheck', value });
+        const filterKey = getKeyByValue(PROGRAM_FILTER_TYPE, value);
+        typeDispatch({ type: 'uncheck', value: filterKey });
         break;
       }
       case 'name': {
-        nameDispatch({ type: 'uncheck', value });
+        const filterKey = getKeyByValue(PROGRAM_FILTER_NAME, value);
+        nameDispatch({ type: 'uncheck', value: filterKey });
         break;
       }
       case 'status': {
-        statusDispatch({ type: 'uncheck', value });
+        const filterKey = getKeyByValue(PROGRAM_FILTER_STATUS, value);
+        statusDispatch({ type: 'uncheck', value: filterKey });
         break;
       }
     }
+    searchParams.delete(key);
+    setSearchParams(searchParams);
   }, []);
 
   // 프로그램 싱태 관리
@@ -173,30 +205,30 @@ const Programs = () => {
             {Object.entries(filterType).map(([key, value]) =>
               value ? (
                 <FilterItem
-                  type="type"
+                  programType="type"
                   handleClick={cancelFilter}
                   key={key}
-                  caption={key}
+                  caption={PROGRAM_FILTER_TYPE[key as filterTypekey]}
                 />
               ) : null,
             )}
             {Object.entries(filterName).map(([key, value]) =>
               value ? (
                 <FilterItem
-                  type="name"
+                  programType="name"
                   handleClick={cancelFilter}
                   key={key}
-                  caption={key}
+                  caption={PROGRAM_FILTER_NAME[key as filterNamekey]}
                 />
               ) : null,
             )}
             {Object.entries(filterStatus).map(([key, value]) =>
               value ? (
                 <FilterItem
-                  type="status"
+                  programType="status"
                   handleClick={cancelFilter}
                   key={key}
-                  caption={key}
+                  caption={PROGRAM_FILTER_STATUS[key as filterStatuskey]}
                 />
               ) : null,
             )}

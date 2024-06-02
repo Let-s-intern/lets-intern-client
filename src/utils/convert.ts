@@ -312,3 +312,7 @@ export const TABLE_CONTENT = {
   DROPDOWN: 1,
   DATE: 2,
 } as const;
+
+export const getKeyByValue = (obj: any, value: string) => {
+  return Object.keys(obj).find((key) => obj[key] === value);
+};
