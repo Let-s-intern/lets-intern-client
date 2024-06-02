@@ -4,22 +4,13 @@ import clsx from 'clsx';
 import { useSearchParams } from 'react-router-dom';
 
 import {
-  CHALLENGE_ARTICLE,
-  LIVE_ARTICLE,
   PROGRAM_FILTER_NAME,
   PROGRAM_FILTER_STATUS,
   PROGRAM_FILTER_TYPE,
-  PROGRAM_NAME_KEY,
-  PROGRAM_TYPE,
-  VOD_ARTICLE,
 } from '../../../utils/programConst';
 import axios from '../../../utils/axios';
 import {
-  IChallenge,
-  ILive,
-  IPageable,
   IProgram,
-  IVod,
   filterNamekey,
   filterStatuskey,
   filterTypekey,
@@ -115,27 +106,30 @@ const Programs = () => {
     statusDispatch({ type: 'init' });
   };
 
-  const cancelFilter = useCallback((key: string, value: string) => {
-    switch (key) {
-      case 'type': {
-        const filterKey = getKeyByValue(PROGRAM_FILTER_TYPE, value);
-        typeDispatch({ type: 'uncheck', value: filterKey });
-        break;
+  const cancelFilter = useCallback(
+    (key: string, value: string) => {
+      switch (key) {
+        case 'type': {
+          const filterKey = getKeyByValue(PROGRAM_FILTER_TYPE, value);
+          typeDispatch({ type: 'uncheck', value: filterKey });
+          break;
+        }
+        case 'name': {
+          const filterKey = getKeyByValue(PROGRAM_FILTER_NAME, value);
+          nameDispatch({ type: 'uncheck', value: filterKey });
+          break;
+        }
+        case 'status': {
+          const filterKey = getKeyByValue(PROGRAM_FILTER_STATUS, value);
+          statusDispatch({ type: 'uncheck', value: filterKey });
+          break;
+        }
       }
-      case 'name': {
-        const filterKey = getKeyByValue(PROGRAM_FILTER_NAME, value);
-        nameDispatch({ type: 'uncheck', value: filterKey });
-        break;
-      }
-      case 'status': {
-        const filterKey = getKeyByValue(PROGRAM_FILTER_STATUS, value);
-        statusDispatch({ type: 'uncheck', value: filterKey });
-        break;
-      }
-    }
-    searchParams.delete(key);
-    setSearchParams(searchParams);
-  }, []);
+      searchParams.delete(key);
+      setSearchParams(searchParams);
+    },
+    [searchParams],
+  );
 
   // 페이지 상태 관리
   const [pageable, setPageable] = useState(initialPageable);
@@ -150,33 +144,10 @@ const Programs = () => {
 
   // 프로그램 리스트 싱태 관리
   const [programList, setProgramList] = useState<IProgram[]>([]);
-  // const [challengeList, setChallengeList] = useState<IChallenge[]>([]);
-  // const [vodList, setVodList] = useState<IVod[]>([]);
-  // const [liveList, setLiveList] = useState<ILive[]>([]);
-
-  // const getProgramList = async <T,>(
-  //   type: string,
-  //   setState: React.Dispatch<React.SetStateAction<T[]>>,
-  //   pageable: IPageable,
-  // ) => {
-  //   const queryList = Object.entries({ ...pageable, sort: 'string' })?.map(
-  //     ([key, value]) => `${key}=${value}`,
-  //   );
-  //   try {
-  //     const res = await axios.get(`/${type}?${queryList.join('&')}`);
-  //     if (res.status === 200) {
-  //       setState(res.data.data.programList);
-  //       return res.data;
-  //     }
-  //     throw new Error(`${res.status} ${res.statusText}`);
-  //   } catch (error) {
-  //     console.error(error);
-  //   }
-  // };
 
   // 프로그램 리스트 가져오기
   const { isLoading } = useQuery({
-    queryKey: ['program', pageable],
+    queryKey: ['program', pageable, searchParams],
     queryFn: async () => {
       const queryList = Object.entries({
         ...pageable,
@@ -187,6 +158,7 @@ const Programs = () => {
         if (res.status === 200) {
           console.log(res.data.data);
           setProgramList(res.data.data.programList);
+          setPageInfo(res.data.data.pageInfo);
           return res.data;
         }
         throw new Error(`${res.status} ${res.statusText}`);
@@ -195,28 +167,6 @@ const Programs = () => {
       }
     },
   });
-
-  // const { isLoading: isChallengeLoading } = useQuery({
-  //   queryKey: ['challenge', challengePageable],
-  //   queryFn: async () =>
-  //     await getProgramList<IChallenge>(
-  //       'challenge',
-  //       setChallengeList,
-  //       challengePageable,
-  //     ),
-  // });
-  // const { isLoading: isVodLoading } = useQuery({
-  //   queryKey: ['vod', vodPageable],
-  //   queryFn: async () =>
-  //     await getProgramList<IVod>('vod', setVodList, vodPageable),
-  // });
-  // const { isLoading: isLiveLoading } = useQuery({
-  //   queryKey: ['live', livePageable],
-  //   queryFn: async () =>
-  //     await getProgramList<ILive>('live', setLiveList, livePageable),
-  // });
-
-  // const isLoading = isChallengeLoading || isVodLoading || isLiveLoading;
 
   if (isLoading) return <></>;
 
@@ -285,6 +235,7 @@ const Programs = () => {
           </div>
         </section>
 
+        {/* 프로그램 리스트 없을 때 */}
         {programList.length === 0 && (
           <p className="text-1 py-2 text-center text-neutral-0/40">
             찾으시는 프로그램이 아직 없어요ㅜㅡㅜ
@@ -294,8 +245,9 @@ const Programs = () => {
             가장 먼저 신규 프로그램 소식을 받아보세요!
           </p>
         )}
-        {/* 전체 프로그램 리스트 */}
+
         <section className="grid min-h-[40vh] grid-cols-2 gap-x-4 gap-y-5">
+          {/* 전체 프로그램 리스트 */}
           {programList?.map((program: IProgram) => (
             <ProgramCard
               programType={program.programInfo.programType}
@@ -303,10 +255,12 @@ const Programs = () => {
               program={program.programInfo}
             />
           ))}
+
+          {/* 프로그램 리스트 없을 때 */}
           {programList.length === 0 && <EmptyCardList />}
         </section>
 
-        <MuiPagination pageInfo={pageInfo} />
+        <MuiPagination pageInfo={pageInfo} setPageable={setPageable} />
         <Banner />
       </main>
     </div>

@@ -33,7 +33,10 @@ const ProgramCard = ({ program, programType }: ProgramCardProps) => {
   const status = calculateStatus();
 
   return (
-    <Link to="#" className="flex flex-col overflow-hidden rounded-xs">
+    <Link
+      to={`/program/detail/${program.id}`}
+      className="flex flex-col overflow-hidden rounded-xs"
+    >
       <img
         className="h-32 bg-neutral-80 object-cover"
         src={program.thumbnail}
