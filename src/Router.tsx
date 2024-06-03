@@ -1,7 +1,7 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 
 import About from './pages/common/about/About';
-import Programs from './pages/common/program/regacy/Programs';
+import Programs from './pages/common/program/Programs';
 import ProgramDetailRegacy from './pages/common/program/regacy/ProgramDetailRegacy';
 import Login from './pages/common/auth/Login';
 import MyPage from './pages/common/mypage/MyPage';
