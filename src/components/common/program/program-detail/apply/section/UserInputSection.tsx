@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import { FaCheck } from 'react-icons/fa';
 
 import Input from '../../../../ui/input/Input';
@@ -9,8 +10,22 @@ interface UserInputSectionProps {
 }
 
 const UserInputSection = ({ userInfo, setUserInfo }: UserInputSectionProps) => {
+  const [isSameEmail, setIsSameEmail] = useState<boolean>(false);
+
   const handleSameEmail = () => {
-    throw new Error('Function not implemented.');
+    if (isSameEmail) {
+      setIsSameEmail(false);
+      setUserInfo({
+        ...userInfo,
+        contactEmail: '',
+      });
+    } else {
+      setIsSameEmail(true);
+      setUserInfo({
+        ...userInfo,
+        contactEmail: userInfo.email,
+      });
+    }
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -19,6 +34,10 @@ const UserInputSection = ({ userInfo, setUserInfo }: UserInputSectionProps) => {
       [e.target.name]: e.target.value,
     });
   };
+
+  useEffect(() => {
+    setIsSameEmail(userInfo.email === userInfo.contactEmail);
+  }, [userInfo.email, userInfo.contactEmail]);
 
   return (
     <div className="flex flex-col gap-2.5">
@@ -73,11 +92,11 @@ const UserInputSection = ({ userInfo, setUserInfo }: UserInputSectionProps) => {
               onClick={handleSameEmail}
             >
               <div className="flex h-[1rem] w-[1rem] items-center justify-center rounded-[0.125rem] border-[1.5px] border-neutral-60 bg-neutral-85">
-                {/* {isSameEmail && ( */}
-                <span className="text-[0.7rem] text-neutral-50">
-                  <FaCheck />
-                </span>
-                {/* )} */}
+                {isSameEmail && (
+                  <span className="text-[0.7rem] text-neutral-50">
+                    <FaCheck />
+                  </span>
+                )}
               </div>
               <span className="text-xs font-medium text-neutral-0 text-opacity-[74%]">
                 가입한 이메일과 동일
@@ -89,6 +108,8 @@ const UserInputSection = ({ userInfo, setUserInfo }: UserInputSectionProps) => {
           id="contactEmail"
           name="contactEmail"
           placeholder="example@example.com"
+          value={userInfo.contactEmail}
+          onChange={handleInputChange}
         />
       </div>
     </div>

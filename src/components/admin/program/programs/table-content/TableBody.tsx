@@ -10,6 +10,7 @@ import {
   challengeTypeToText,
   newProgramTypeDetailToText,
   newProgramTypeToText,
+  programStatusToText,
 } from '../../../../../utils/convert';
 import { ProgramType } from '../../../../../pages/admin/program/Programs';
 import axios from '../../../../../utils/axios';
@@ -103,11 +104,7 @@ const TableBody = ({
             <TD>{newProgramTypeToText[program.programInfo.programType]}</TD>
             <TD>{program.programInfo.title}</TD>
             <TD>
-              {/* {program === 'OPEN'
-                ? '모집중'
-                : program.status === 'CLOSED'
-                ? '모집완료'
-                : program.status === 'DONE' && '진행완료'} */}
+              {programStatusToText[program.programInfo.programStatusType]}
             </TD>
             <TD>
               {program.programInfo.programType === 'VOD' ? (
@@ -119,18 +116,26 @@ const TableBody = ({
                 </>
               )}
             </TD>
-            <TD>{formatDueDateString(program.programInfo.deadline)}</TD>
-            <TD>{formatStartDateString(program.programInfo.startDate)}</TD>
+            <TD>
+              {program.programInfo.programType === 'VOD'
+                ? '온라인'
+                : formatDueDateString(program.programInfo.deadline)}
+            </TD>
+            <TD>
+              {program.programInfo.programType === 'VOD'
+                ? '온라인'
+                : formatStartDateString(program.programInfo.startDate)}
+            </TD>
             <TD>
               <ActionButtonGroup>
                 <ActionButton
                   bgColor="green"
-                  to={`/admin/programs/${program.programInfo.id}/edit`}
+                  to={`/admin/programs/${program.programInfo.id}/edit?programType=${program.programInfo.programType}`}
                 >
                   수정
                 </ActionButton>
                 <ActionButton
-                  to={`/admin/programs/${program.programInfo.id}/users`}
+                  to={`/admin/programs/${program.programInfo.id}/users?programType=${program.programInfo.programType}`}
                   bgColor="blue"
                 >
                   참여자

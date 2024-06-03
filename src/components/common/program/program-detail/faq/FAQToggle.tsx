@@ -2,7 +2,13 @@ import clsx from 'clsx';
 import { useState } from 'react';
 import { IoTriangleSharp } from 'react-icons/io5';
 
-const FAQToggle = () => {
+import { FAQType } from '../tab/tab-content/FAQTabContent';
+
+interface FAQToggleProps {
+  faq: FAQType;
+}
+
+const FAQToggle = ({ faq }: FAQToggleProps) => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
 
   const handleToggleClick = () => {
@@ -23,16 +29,11 @@ const FAQToggle = () => {
         >
           <IoTriangleSharp />
         </span>
-        <span>챌린지 대시보드가 무엇인가요?</span>
+        <p>{faq.question}</p>
       </div>
       {isOpen && (
         <div className="px-2 py-4">
-          <p>
-            렛츠인턴에서 제작한 웹페이지로, 챌린지 전반 사항이 진행될
-            공간입니다. 매일 학습 콘텐츠와 데일리 미션을 비롯한 공지 사항을 전달
-            드리며, 참여자 분들은 그에 맞춰 미션 제출을 하고 보상을 받으실 수
-            있습니다.
-          </p>
+          <p>{faq.answer}</p>
         </div>
       )}
     </li>

@@ -35,7 +35,7 @@ interface ProgramEditorProps {
   editorMode: 'create' | 'edit';
 }
 
-const ProgramEditor = ({
+const ProgramInputContent = ({
   values,
   setValues,
   handleSubmit,
@@ -668,7 +668,7 @@ const ProgramEditor = ({
   );
 };
 
-export default ProgramEditor;
+export default ProgramInputContent;
 
 export const DateTimeControl = styled.div`
   display: flex;

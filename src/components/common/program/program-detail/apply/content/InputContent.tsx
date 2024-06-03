@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import { ProgramType } from '../../../../../../pages/common/program/ProgramDetail';
 import { UserInfo } from '../../section/ApplySection';
@@ -27,9 +27,27 @@ const InputContent = ({
 }: InputContentProps) => {
   const scrollableBoxRef = useRef<ScrollableDiv>(null);
 
+  const [buttonDisabled, setButtonDisabled] = useState<boolean>(true);
+
   const handleNextButtonClick = () => {
     setContentIndex(contentIndex + 1);
   };
+
+  useEffect(() => {
+    if (
+      userInfo.name &&
+      userInfo.email &&
+      userInfo.phoneNumber &&
+      userInfo.contactEmail &&
+      (programType !== 'challenge'
+        ? userInfo.motivate && userInfo.question
+        : true)
+    ) {
+      setButtonDisabled(false);
+    } else {
+      setButtonDisabled(true);
+    }
+  }, [userInfo]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -76,8 +94,9 @@ const InputContent = ({
         </div>
       </ScrollableBox>
       <button
-        className="flex w-full justify-center rounded-md bg-primary px-6 py-3 text-lg font-medium text-neutral-100"
+        className="flex w-full justify-center rounded-md bg-primary px-6 py-3 text-lg font-medium text-neutral-100 disabled:bg-neutral-70"
         onClick={handleNextButtonClick}
+        disabled={buttonDisabled}
       >
         다음
       </button>

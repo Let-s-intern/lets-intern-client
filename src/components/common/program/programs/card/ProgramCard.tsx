@@ -26,7 +26,7 @@ const ProgramCard = ({ program }: ProgramCardProps) => {
 
   return (
     <Link
-      to={`/program/detail/${program.id}`}
+      to={`/program/${program.programType.toLowerCase()}/${program.id}`}
       className="min-w-40 flex flex-col overflow-hidden rounded-xs md:gap-4 md:rounded-md md:border md:border-neutral-85 md:p-2.5"
     >
       <img

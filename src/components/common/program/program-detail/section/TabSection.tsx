@@ -23,7 +23,9 @@ const TabSection = ({ programId, programType }: TabSectionProps) => {
         {tabIndex === 1 && (
           <ReviewTabContent programId={programId} programType={programType} />
         )}
-        {tabIndex === 2 && <FAQTabContent />}
+        {tabIndex === 2 && (
+          <FAQTabContent programId={programId} programType={programType} />
+        )}
       </div>
     </section>
   );

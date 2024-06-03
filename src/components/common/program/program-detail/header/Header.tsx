@@ -1,7 +1,11 @@
 import { MdOutlineArrowBack } from 'react-icons/md';
 import { Link, useNavigate } from 'react-router-dom';
 
-const Header = () => {
+interface HeaderProps {
+  programTitle: string;
+}
+
+const Header = ({ programTitle }: HeaderProps) => {
   const navigate = useNavigate();
 
   const handleBackLinkClick = () => {
@@ -13,9 +17,7 @@ const Header = () => {
       <Link to="#" className="text-[1.5rem]" onClick={handleBackLinkClick}>
         <MdOutlineArrowBack />
       </Link>
-      <h1 className="text-lg font-medium">
-        인턴/신입 지원 챌린지 18기 최대글자는여기
-      </h1>
+      <h1 className="text-lg font-medium">{programTitle}</h1>
     </header>
   );
 };

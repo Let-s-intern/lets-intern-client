@@ -1,11 +1,39 @@
-import { IoTriangleSharp } from 'react-icons/io5';
-import FAQToggle from '../../faq/FAQToggle';
+import { useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
 
-const FAQTabContent = () => {
+import FAQToggle from '../../faq/FAQToggle';
+import axios from '../../../../../../utils/axios';
+
+export interface FAQType {
+  id: number;
+  question: string;
+  answer: string;
+  faqProgramType: string;
+}
+
+interface FAQTabContentProps {
+  programId: number;
+  programType: string;
+}
+
+const FAQTabContent = ({ programType, programId }: FAQTabContentProps) => {
+  const [faqList, setFaqList] = useState<FAQType[]>([]);
+
+  useQuery({
+    queryKey: [programType, programId, 'faqs'],
+    queryFn: async () => {
+      const res = await axios.get(`/${programType}/${programId}/faqs`);
+      setFaqList(res.data.data.faqList);
+      return res.data;
+    },
+  });
+
   return (
     <div>
       <ul>
-        <FAQToggle />
+        {faqList.map((faq) => (
+          <FAQToggle key={faq.id} faq={faq} />
+        ))}
       </ul>
     </div>
   );

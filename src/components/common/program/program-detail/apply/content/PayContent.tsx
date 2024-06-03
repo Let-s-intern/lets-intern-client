@@ -4,16 +4,18 @@ import CouponSection from '../section/CouponSection';
 import PayInfoSection from '../section/PayInfoSection';
 import PriceSection from '../section/PriceSection';
 import ScrollableBox from '../scrollable-box/ScrollableBox';
+import { PayInfo } from '../../section/ApplySection';
 
 interface ScrollableDiv extends HTMLDivElement {
   scrollTimeout?: number;
 }
 
 interface PayContentProps {
+  payInfo: PayInfo;
   handleApplyButtonClick: () => void;
 }
 
-const PayContent = ({ handleApplyButtonClick }: PayContentProps) => {
+const PayContent = ({ payInfo, handleApplyButtonClick }: PayContentProps) => {
   const scrollableBoxRef = useRef<ScrollableDiv>(null);
 
   useEffect(() => {
@@ -47,18 +49,23 @@ const PayContent = ({ handleApplyButtonClick }: PayContentProps) => {
         ref={scrollableBoxRef}
         className="flex max-h-[20rem] flex-col gap-6"
       >
-        <h2 className="font-medium">결제 정보</h2>
-        <PayInfoSection />
-        <hr className="bg-neutral-85" />
-        <CouponSection />
-        <hr className="bg-neutral-85" />
-        <PriceSection />
+        {payInfo.challengePriceType !== 'FREE' &&
+          payInfo.livePriceType !== 'FREE' && (
+            <>
+              <h2 className="font-medium">결제 정보</h2>
+              <PayInfoSection payInfo={payInfo} />
+              <hr className="bg-neutral-85" />
+              <CouponSection />
+              <hr className="bg-neutral-85" />
+              <PriceSection payInfo={payInfo} />
+            </>
+          )}
       </ScrollableBox>
       <button
         className="flex w-full justify-center rounded-md bg-primary px-6 py-3 text-lg font-medium text-neutral-100"
         onClick={handleApplyButtonClick}
       >
-        신청하기 40,000원
+        신청하기 {(payInfo.price - payInfo.discount).toLocaleString()}원
       </button>
     </div>
   );

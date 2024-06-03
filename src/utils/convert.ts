@@ -1,5 +1,3 @@
-import exp from 'constants';
-
 export const newProgramTypeToText: Record<string, string> = {
   CHALLENGE: '챌린지',
   LIVE: 'LIVE 클래스',
@@ -24,6 +22,12 @@ export const challengeTypeToText: Record<string, string> = {
   DOCUMENT_PREPARATION: '서류 준비',
   MEETING_PREPARATION: '면접 준비',
   ETC: '기타',
+};
+
+export const programStatusToText: Record<string, string> = {
+  PREV: '모집 전',
+  PROCEEDING: '모집 중',
+  POST: '모집 마감',
 };
 
 export const programPriceTypeToText: Record<string, string> = {
