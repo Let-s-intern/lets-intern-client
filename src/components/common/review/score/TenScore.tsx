@@ -3,7 +3,7 @@ import { useState } from 'react';
 
 interface TenScoreProps {
   tenScore: number | null;
-  setTenScore: React.Dispatch<React.SetStateAction<number | null>>;
+  setTenScore: (tenScore: number | null) => void;
 }
 
 const TenScore = ({ tenScore, setTenScore }: TenScoreProps) => {
@@ -19,6 +19,7 @@ const TenScore = ({ tenScore, setTenScore }: TenScoreProps) => {
     <div className="flex items-center justify-center">
       {Array.from({ length: 11 }, (_, index) => index).map((th) => (
         <div
+          key={th}
           className={clsx(
             'flex h-[2.5rem] w-[2.5rem] cursor-pointer items-center justify-center font-medium',
             {

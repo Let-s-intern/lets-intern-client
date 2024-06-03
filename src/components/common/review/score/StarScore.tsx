@@ -2,9 +2,12 @@ import clsx from 'clsx';
 import { useState } from 'react';
 import { FaStar } from 'react-icons/fa';
 
-const StarScore = () => {
-  const [starScore, setStarScore] = useState(0);
+interface StarScoreProps {
+  starScore: number;
+  setStarScore: (starScore: number) => void;
+}
 
+const StarScore = ({ starScore, setStarScore }: StarScoreProps) => {
   const handleStarClick = (th: number) => {
     if (starScore === th) {
       setStarScore(th - 1);

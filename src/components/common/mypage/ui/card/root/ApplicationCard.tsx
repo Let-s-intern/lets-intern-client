@@ -70,7 +70,9 @@ const ApplicationCard = ({
         </div>
       </div>
       {hasReviewButton && (
-        <LinkButton to="/mypage/review/new/program/1">
+        <LinkButton
+          to={`/mypage/review/new/program/${application.programId}?application=${application.id}`}
+        >
           {reviewButton?.text}
         </LinkButton>
       )}

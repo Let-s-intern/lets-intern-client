@@ -6,79 +6,113 @@ import ProgramInputContent from '../../../components/admin/program/ui/editor/Pro
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { newProgramTypeDetailToText } from '../../../utils/convert';
 
+interface AllValue {
+  program?: string;
+  programType?: string;
+  thumbnail?: string;
+  title?: string;
+  shortDescription?: string;
+  headcount?: string;
+  way?: string;
+  location?: string;
+  job?: string;
+  mentorName?: string;
+  startDate?: string;
+  endDate?: string;
+  dueDate?: string;
+  openKakaoLink?: string;
+  openKakaoPassword?: string;
+  feeType?: string;
+  price?: string;
+  discount?: string;
+  accountType?: string;
+  accountNumber?: string;
+  content?: string;
+  challengeType?: string;
+  participationType?: string;
+  basicPrice?: string;
+  basicDiscount?: string;
+  premiumPrice?: string;
+  premiumDiscount?: string;
+  priceType?: string;
+  feeDueDate?: string;
+  link?: string;
+}
+
 interface VodClassRequest {
-  title: string;
-  shortDesc: string;
-  thumbnail: string;
-  job: string;
-  programTypeInfo: {
-    classificationInfo: {
-      programClassification: keyof typeof newProgramTypeDetailToText;
+  title?: string;
+  shortDesc?: string;
+  thumbnail?: string;
+  job?: string;
+  link?: string;
+  programTypeInfo?: {
+    classificationInfo?: {
+      programClassification?: string;
     };
   }[];
 }
 
 interface LiveClassRequest {
-  title: string;
-  shortDesc: string;
-  desc: string;
-  participationCount: number;
-  thumbnail: string;
-  mentorName: string;
-  job: string;
-  place: string;
-  startDate: string;
-  endDate: string;
-  deadline: string;
-  progressType: string;
-  programTypeInfo: {
-    classificationInfo: {
-      programClassification: string;
+  title?: string;
+  shortDesc?: string;
+  desc?: string;
+  participationCount?: number;
+  thumbnail?: string;
+  mentorName?: string;
+  job?: string;
+  place?: string;
+  startDate?: string;
+  endDate?: string;
+  deadline?: string;
+  progressType?: string;
+  programTypeInfo?: {
+    classificationInfo?: {
+      programClassification?: string;
     };
   }[];
-  priceInfo: {
-    priceInfo: {
-      price: number;
-      discount: number;
-      accountNumber: string;
-      deadline: string;
-      accountType: string;
+  priceInfo?: {
+    priceInfo?: {
+      price?: number;
+      discount?: number;
+      accountNumber?: string;
+      deadline?: string;
+      accountType?: string;
     };
-    livePriceType: string;
+    livePriceType?: string;
   };
-  faqInfo: { faqId: number }[];
+  faqInfo?: { faqId?: number }[];
 }
 
 interface ChallengeRequest {
-  title: string;
-  shortDesc: string;
-  desc: string;
-  participationCount: number;
-  thumbnail: string;
-  startDate: string;
-  endDate: string;
-  deadline: string;
-  chatLink: string;
-  chatPassword: string;
-  challengeType: string;
-  programTypeInfo: {
-    classificationInfo: {
-      programClassification: string;
+  title?: string;
+  shortDesc?: string;
+  desc?: string;
+  participationCount?: number;
+  thumbnail?: string;
+  startDate?: string;
+  endDate?: string;
+  deadline?: string;
+  chatLink?: string;
+  chatPassword?: string;
+  challengeType?: string;
+  programTypeInfo?: {
+    classificationInfo?: {
+      programClassification?: string;
     };
   }[];
-  priceInfo: {
-    priceInfo: {
-      price: number;
-      discount: number;
-      accountNumber: string;
-      deadline: string;
-      accountType: string;
+  priceInfo?: {
+    priceInfo?: {
+      price?: number;
+      discount?: number;
+      accountNumber?: string;
+      deadline?: string;
+      accountType?: string;
     };
-    challengePriceType: string;
-    challengeUserType: string;
-    challengeParticipationType: string;
+    challengePriceType?: string;
+    challengeUserType?: string;
+    challengeParticipationType?: string;
   }[];
-  faqInfo: { faqId: number }[];
+  faqInfo?: { faqId?: number }[];
 }
 
 interface ProgramEditorProps {
@@ -92,8 +126,8 @@ const ProgramEditor = ({ mode }: ProgramEditorProps) => {
 
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<unknown>(null);
-  const [value, setValue] = useState<any>({});
-  const [content, setContent] = useState<any>('');
+  const [value, setValue] = useState<AllValue>({});
+  const [content, setContent] = useState<string>('');
   const [faqList, setFaqList] = useState<any>([]);
   const [faqIdList, setFaqIdList] = useState<any>([]);
 
@@ -103,16 +137,72 @@ const ProgramEditor = ({ mode }: ProgramEditorProps) => {
   useQuery({
     queryKey: [programType.toLowerCase(), programId],
     queryFn: async () => {
-      try {
-        const res = await axios.get(
-          `/${programType.toLowerCase()}/${programId}`,
-        );
-        setValue(res.data.data);
-        console.log(res.data.data);
-        return res.data;
-      } catch (err) {
-        setError(err);
+      const res = await axios.get(`/${programType.toLowerCase()}/${programId}`);
+      const data = res.data.data;
+      console.log(data);
+      if (programType === 'CHALLENGE') {
+        const priceInfo = data.priceInfo[0];
+        const basicPriceInfo = data.priceInfo.filter(
+          (price: { challengeUserType: string }) =>
+            price.challengeUserType === 'BASIC',
+        )[0];
+        setValue({
+          program: programType,
+          programType: data.classificationInfo[0].programClassification,
+          challengeType: data.challengeType,
+          priceType: priceInfo.challengeUserType,
+          participationType: priceInfo.challengeParticipationType,
+          thumbnail: data.thumbnail,
+          title: data.title,
+          shortDescription: data.shortDesc,
+          headcount: data.participationCount,
+          openKakaoLink: data.chatLink,
+          openKakaoPassword: data.chatPassword,
+          feeType: priceInfo.challengePriceType,
+          basicPrice: basicPriceInfo.price,
+          basicDiscount: basicPriceInfo.discount,
+          accountType: priceInfo.accountType,
+          accountNumber: priceInfo.accountNumber,
+          feeDueDate: priceInfo.deadline,
+          startDate: data.startDate,
+          endDate: data.endDate,
+          dueDate: data.deadline,
+        });
+      } else if (programType === 'LIVE') {
+        setValue({
+          program: programType,
+          programType: data.classificationInfo[0].programClassification,
+          way: data.place === null ? 'ONLINE' : 'OFFLINE',
+          location: data.place,
+          job: data.job,
+          thumbnail: data.thumbnail,
+          title: data.title,
+          shortDescription: data.shortDesc,
+          headcount: data.participationCount,
+          mentorName: data.mentorName,
+          feeType: data.priceInfo.livePriceType,
+          feeDueDate: data.priceInfo.deadline,
+          startDate: data.startDate,
+          endDate: data.endDate,
+          dueDate: data.deadline,
+          price: data.priceInfo.price,
+          discount: data.priceInfo.discount,
+          accountType: data.priceInfo.accountType,
+          accountNumber: data.priceInfo.accountNumber,
+        });
+      } else if (programType === 'VOD') {
+        setValue({
+          program: programType,
+          programType: data.programTypeInfo[0].programClassification,
+          job: data.vodInfo.job,
+          thumbnail: data.vodInfo.thumbnail,
+          title: data.vodInfo.title,
+          shortDescription: data.vodInfo.shortDesc,
+          link: data.vodInfo.link,
+        });
       }
+      setContent(data.desc);
+      return res.data;
     },
     enabled: mode === 'edit',
   });
@@ -130,6 +220,19 @@ const ProgramEditor = ({ mode }: ProgramEditorProps) => {
     },
   });
 
+  const editVodClass = useMutation({
+    mutationFn: async (req: VodClassRequest) => {
+      const res = await axios.patch(`/vod/${programId}`, req);
+      return res.data;
+    },
+    onSuccess: () => {
+      navigate(-1);
+    },
+    onError: () => {
+      alert('프로그램 수정에 실패했습니다.');
+    },
+  });
+
   const addLiveClass = useMutation({
     mutationFn: async (req: LiveClassRequest) => {
       const res = await axios.post('/live', req);
@@ -140,6 +243,19 @@ const ProgramEditor = ({ mode }: ProgramEditorProps) => {
     },
     onError: () => {
       alert('프로그램 생성에 실패했습니다.');
+    },
+  });
+
+  const editLiveClass = useMutation({
+    mutationFn: async (req: LiveClassRequest) => {
+      const res = await axios.patch(`/live/${programId}`, req);
+      return res.data;
+    },
+    onSuccess: () => {
+      navigate(-1);
+    },
+    onError: () => {
+      alert('프로그램 수정에 실패했습니다.');
     },
   });
 
@@ -156,20 +272,33 @@ const ProgramEditor = ({ mode }: ProgramEditorProps) => {
     },
   });
 
-  useEffect(() => {
-    if (!value.type) return;
-    const fetchFaqList = async () => {
-      try {
-        const res = await axios.get(`/faq/${value.type}`);
-        setFaqList(res.data.faqList);
-      } catch (err) {
-        setError(err);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchFaqList();
-  }, [value.type]);
+  const editChallenge = useMutation({
+    mutationFn: async (req: ChallengeRequest) => {
+      const res = await axios.patch(`/challenge/${programId}`, req);
+      return res.data;
+    },
+    onSuccess: () => {
+      navigate(-1);
+    },
+    onError: () => {
+      alert('프로그램 수정에 실패했습니다.');
+    },
+  });
+
+  // useEffect(() => {
+  //   if (!programType) return;
+  //   const fetchFaqList = async () => {
+  //     try {
+  //       const res = await axios.get(`/faq/${programType}`);
+  //       setFaqList(res.data.faqList);
+  //     } catch (err) {
+  //       setError(err);
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   };
+  //   fetchFaqList();
+  // }, [programType]);
 
   useEffect(() => {
     if (!faqList) return;
@@ -200,12 +329,12 @@ const ProgramEditor = ({ mode }: ProgramEditorProps) => {
   };
 
   const handleFAQAdd = async () => {
-    if (!value.type) {
+    if (!programType) {
       alert('프로그램 유형을 선택해주세요.');
       return;
     }
     try {
-      const res = await axios.post(`/faq/${value.type}`, {
+      const res = await axios.post(`/faq/${programType}`, {
         question: '',
         answer: '',
       });
@@ -216,7 +345,7 @@ const ProgramEditor = ({ mode }: ProgramEditorProps) => {
   };
 
   const handleFAQDelete = async (faqId: number) => {
-    if (!value.type) {
+    if (!programType) {
       alert('프로그램 유형을 선택해주세요.');
       return;
     }
@@ -253,6 +382,7 @@ const ProgramEditor = ({ mode }: ProgramEditorProps) => {
         shortDesc: value.shortDescription,
         thumbnail: value.thumbnail,
         job: value.job,
+        link: value.link,
         programTypeInfo: [
           {
             classificationInfo: {
@@ -261,7 +391,11 @@ const ProgramEditor = ({ mode }: ProgramEditorProps) => {
           },
         ],
       };
-      addVodClass.mutate(newValue);
+      if (mode === 'edit') {
+        editVodClass.mutate(newValue);
+      } else if (mode === 'create') {
+        addVodClass.mutate(newValue);
+      }
       return;
     } else if (value.program === 'LIVE') {
       const newValue: LiveClassRequest = {
@@ -296,7 +430,11 @@ const ProgramEditor = ({ mode }: ProgramEditorProps) => {
         },
         faqInfo: [{ faqId: 1 }],
       };
-      addLiveClass.mutate(newValue);
+      if (mode === 'edit') {
+        editLiveClass.mutate(newValue);
+      } else if (mode === 'create') {
+        addLiveClass.mutate(newValue);
+      }
       return;
     } else if (value.program === 'CHALLENGE') {
       const newPriceInfo = [];
@@ -350,7 +488,11 @@ const ProgramEditor = ({ mode }: ProgramEditorProps) => {
         priceInfo: newPriceInfo,
         faqInfo: [{ faqId: 1 }],
       };
-      addChallenge.mutate(newValue);
+      if (mode === 'edit') {
+        editChallenge.mutate(newValue);
+      } else if (mode === 'create') {
+        addChallenge.mutate(newValue);
+      }
       return;
     }
   };
@@ -381,7 +523,7 @@ const ProgramEditor = ({ mode }: ProgramEditorProps) => {
       handleFAQChange={handleFAQChange}
       handleFAQCheckChange={handleFAQCheckChange}
       handleFAQIdListReset={handleFAQIdListReset}
-      editorMode="create"
+      editorMode={mode}
     />
   );
 };

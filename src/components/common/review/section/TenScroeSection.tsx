@@ -4,9 +4,39 @@ import TextArea from '../../ui/input/TextArea';
 import TenScore from '../score/TenScore';
 import YesNoScore from '../score/YesNoScore';
 
-const TenScoreSection = () => {
-  const [tenScore, setTenScore] = useState<number | null>(null);
-  const [isYes, setIsYes] = useState<boolean | null>(null);
+interface TenScoreSectionProps {
+  tenScore: number | null;
+  setTenScore: (tenScore: number | null) => void;
+  isYes: boolean | null;
+  setIsYes: (isYes: boolean | null) => void;
+  answer: {
+    yes: string;
+    no: string;
+    low: string;
+  };
+  setAnswer: (answer: { yes: string; no: string; low: string }) => void;
+}
+
+const TenScoreSection = ({
+  tenScore,
+  setTenScore,
+  isYes,
+  setIsYes,
+  answer,
+  setAnswer,
+}: TenScoreSectionProps) => {
+  const handleAnswerChange = (
+    e: React.ChangeEvent<HTMLTextAreaElement>,
+    isYes: boolean,
+  ) => {
+    if (tenScore && tenScore <= 6) {
+      setAnswer({ ...answer, low: e.target.value });
+    } else if (isYes) {
+      setAnswer({ ...answer, yes: e.target.value });
+    } else {
+      setAnswer({ ...answer, no: e.target.value });
+    }
+  };
 
   return (
     <div className="flex flex-col gap-6">
@@ -38,6 +68,8 @@ const TenScoreSection = () => {
                   <TextArea
                     rows={3}
                     placeholder="이곳에 후기를 작성해주세요!"
+                    value={answer.yes}
+                    onChange={(e) => handleAnswerChange(e, true)}
                   />
                 </div>
               ) : (
@@ -50,6 +82,8 @@ const TenScoreSection = () => {
                   <TextArea
                     rows={3}
                     placeholder="이곳에 후기를 작성해주세요!"
+                    value={answer.no}
+                    onChange={(e) => handleAnswerChange(e, false)}
                   />
                 </div>
               ))}

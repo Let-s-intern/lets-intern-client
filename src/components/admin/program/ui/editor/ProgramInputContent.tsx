@@ -339,7 +339,7 @@ const ProgramInputContent = ({
                 <Input
                   label="카카오톡 오픈채팅 링크"
                   name="openKakaoLink"
-                  value={values.openKakaoLink}
+                  value={values.openKakaoLink || ''}
                   placeholder="카카오톡 오픈채팅 링크를 입력하세요"
                   onChange={(e) =>
                     setValues({ ...values, [e.target.name]: e.target.value })
@@ -348,7 +348,7 @@ const ProgramInputContent = ({
                 <Input
                   label="카카오톡 오픈채팅 비밀번호"
                   name="openKakaoPassword"
-                  value={values.openKakaoPassword}
+                  value={values.openKakaoPassword || ''}
                   placeholder="카카오톡 오픈채팅 비밀번호를 입력하세요"
                   onChange={(e) =>
                     setValues({ ...values, [e.target.name]: e.target.value })
@@ -609,20 +609,6 @@ const ProgramInputContent = ({
                     }
                   />
                 </DateTimeControl>
-                <DateTimeControl>
-                  <DateTimeLabel htmlFor="announcementDate">
-                    합격자 발표 일자
-                  </DateTimeLabel>
-                  <input
-                    id="announcementDate"
-                    type="datetime-local"
-                    name="announcementDate"
-                    value={values.announcementDate}
-                    onChange={(e) =>
-                      setValues({ ...values, [e.target.name]: e.target.value })
-                    }
-                  />
-                </DateTimeControl>
               </>
             )}
             {(values.program === 'CHALLENGE' || values.program === 'LIVE') && (
@@ -653,7 +639,7 @@ const ProgramInputContent = ({
             type="submit"
             className="w-20 rounded-xxs bg-indigo-600 py-2 text-center font-medium text-white"
           >
-            등록
+            {editorMode === 'create' ? '등록' : '수정'}
           </button>
           <button
             type="button"
