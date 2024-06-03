@@ -120,7 +120,7 @@ const Router = () => {
             <Route path="review">
               {/* /mypage/review */}
               <Route path="" element={<Review />} />
-              {/* /review/new/program/:programId */}
+              {/* /mypage/review/new/program/:programId */}
               <Route path="new/program/:programId" element={<ReviewCreate />} />
             </Route>
             {/* /mypage/privacy */}

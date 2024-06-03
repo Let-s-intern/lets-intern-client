@@ -7,19 +7,29 @@ import { ApplicationType } from './Application';
 import axios from '../../../utils/axios';
 
 const Review = () => {
-  const [applicationList, setApplicationList] = useState<ApplicationType[]>([]);
+  const [waitingApplicationList, setWaitingApplicationList] = useState<
+    ApplicationType[]
+  >([]);
+  const [doneApplicationList, setDoneApplicationList] = useState<
+    ApplicationType[]
+  >([]);
 
   useQuery({
     queryKey: ['application'],
     queryFn: async () => {
       const res = await axios.get('/application');
       const tempApplicationList = res.data.data.applicationList;
-      tempApplicationList.filter(
-        (application: ApplicationType) => application.status !== 'WAITING',
-      );
-      setApplicationList(
+      console.log(tempApplicationList);
+      setWaitingApplicationList(
         tempApplicationList.filter(
-          (application: ApplicationType) => application.status !== 'WAITING',
+          (application: ApplicationType) =>
+            application.status !== 'WAITING' && application.reviewId === null,
+        ),
+      );
+      setDoneApplicationList(
+        tempApplicationList.filter(
+          (application: ApplicationType) =>
+            application.status !== 'WAITING' && application.reviewId !== null,
         ),
       );
       return res.data;
@@ -28,8 +38,8 @@ const Review = () => {
 
   return (
     <main className="flex flex-col gap-16 pb-20">
-      <WaitingSection applicationList={applicationList} />
-      <DoneSection />
+      <WaitingSection applicationList={waitingApplicationList} />
+      <DoneSection applicationList={doneApplicationList} />
     </main>
   );
 };

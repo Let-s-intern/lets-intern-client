@@ -13,6 +13,8 @@ export interface ApplicationType {
   programStartDate: string;
   programEndDate: string;
   programType: string;
+  programId: number;
+  reviewId: number | null;
 }
 
 const Application = () => {
