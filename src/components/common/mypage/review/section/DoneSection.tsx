@@ -19,12 +19,7 @@ const DoneSection = ({ applicationList }: DoneSectionProps) => {
           </div>
         ) : (
           applicationList.map((application) => (
-            <ApplicationCard
-              hasReviewButton
-              grayscale
-              reviewButton={{ text: '수정하기' }}
-              application={application}
-            />
+            <ApplicationCard grayscale application={application} />
           ))
         )}
       </div>
