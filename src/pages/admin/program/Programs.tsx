@@ -25,6 +25,7 @@ export interface ProgramType {
     endDate: string;
     zoomLink: string;
     zoomPassword: string;
+    programStatusType: string;
   };
   classificationList: {
     programClassification: string;
@@ -48,6 +49,7 @@ const Programs = () => {
           params: { page: currentPage, size: sizePerPage },
         });
         setProgramList(res.data.data.programList);
+        setMaxPage(res.data.data.pageInfo.totalPages);
         return res.data;
       } catch (error) {
         setError(error);
@@ -78,6 +80,10 @@ const Programs = () => {
         setError(err);
       });
   };
+
+  useEffect(() => {
+    getProgramList.refetch();
+  }, [currentPage]);
 
   const loading = getProgramList.isLoading;
 

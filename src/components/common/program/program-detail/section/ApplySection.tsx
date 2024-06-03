@@ -8,11 +8,6 @@ import axios from '../../../../../utils/axios';
 import { ProgramType } from '../../../../../pages/common/program/ProgramDetail';
 import PayContent from '../apply/content/PayContent';
 
-interface ApplySectionProps {
-  programType: ProgramType;
-  programId: number;
-}
-
 export interface ProgramDate {
   deadline: string;
   startDate: string;
@@ -23,11 +18,33 @@ export interface UserInfo {
   name: string;
   email: string;
   phoneNumber: string;
+  contactEmail: string;
   motivate: string;
   question: string;
 }
 
-const ApplySection = ({ programType, programId }: ApplySectionProps) => {
+export interface PayInfo {
+  priceId: number;
+  price: number;
+  discount: number;
+  accountNumber: string;
+  deadline: string;
+  accountType: string;
+  livePriceType: string;
+  challengePriceType: string;
+}
+
+interface ApplySectionProps {
+  programType: ProgramType;
+  programId: number;
+  programTitle: string;
+}
+
+const ApplySection = ({
+  programType,
+  programId,
+  programTitle,
+}: ApplySectionProps) => {
   const [contentIndex, setContentIndex] = useState(0);
   const [programDate, setProgramDate] = useState<ProgramDate>({
     deadline: '',
@@ -38,31 +55,49 @@ const ApplySection = ({ programType, programId }: ApplySectionProps) => {
     name: '',
     email: '',
     phoneNumber: '',
+    contactEmail: '',
     motivate: '',
     question: '',
   });
   const [priceId, setPriceId] = useState<number>(0);
+  const [payInfo, setPayInfo] = useState<PayInfo>({
+    priceId: 0,
+    price: 0,
+    discount: 0,
+    accountNumber: '',
+    deadline: '',
+    accountType: '',
+    livePriceType: '',
+    challengePriceType: '',
+  });
+  const [originPhoneNumber, setOriginPhoneNumber] = useState<string>('');
 
   useQuery({
     queryKey: [programType, programId, 'application'],
     queryFn: async () => {
       const res = await axios.get(`/${programType}/${programId}/application`);
       const data = res.data.data;
+      console.log(data);
       setProgramDate({
         deadline: data.deadline,
         startDate: data.startDate,
         endDate: data.endDate,
       });
       setUserInfo({
-        ...userInfo,
         name: data.name,
         email: data.email,
         phoneNumber: data.phoneNumber,
+        contactEmail: data.contactEmail,
+        motivate: '',
+        question: '',
       });
+      setOriginPhoneNumber(data.phoneNumber);
       if (programType === 'challenge') {
         setPriceId(data.priceList[0].priceId);
+        setPayInfo(data.priceList[0]);
       } else {
         setPriceId(data.price.priceId);
+        setPayInfo(data.price);
       }
       return res.data;
     },
@@ -70,10 +105,15 @@ const ApplySection = ({ programType, programId }: ApplySectionProps) => {
 
   const applyProgram = useMutation({
     mutationFn: async () => {
+      if (originPhoneNumber !== userInfo.phoneNumber) {
+        await axios.patch('/user', {
+          phoneNum: userInfo.phoneNumber,
+        });
+      }
       await axios.patch('/user', {
         name: userInfo.name,
         email: userInfo.email,
-        phoneNumber: userInfo.phoneNumber,
+        contactEmail: userInfo.contactEmail,
       });
       const res = await axios.post(
         `/application/${programId}`,
@@ -110,6 +150,7 @@ const ApplySection = ({ programType, programId }: ApplySectionProps) => {
           setContentIndex={setContentIndex}
           programDate={programDate}
           programType={programType}
+          programTitle={programTitle}
         />
       )}
       {contentIndex === 1 && (
@@ -128,7 +169,10 @@ const ApplySection = ({ programType, programId }: ApplySectionProps) => {
         />
       )}
       {contentIndex === 3 && (
-        <PayContent handleApplyButtonClick={handleApplyButtonClick} />
+        <PayContent
+          payInfo={payInfo}
+          handleApplyButtonClick={handleApplyButtonClick}
+        />
       )}
     </section>
   );

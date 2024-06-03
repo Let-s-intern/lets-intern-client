@@ -2,7 +2,7 @@ import { FormControl, InputLabel, MenuItem, Select } from '@mui/material';
 
 import { bankTypeToText, feeTypeToText } from '../../../../../utils/convert';
 import Input from '../../../../ui/input/Input';
-import { DateTimeControl, DateTimeLabel } from '../editor/ProgramEditor';
+import { DateTimeControl, DateTimeLabel } from '../editor/ProgramInputContent';
 
 interface Props {
   values: any;

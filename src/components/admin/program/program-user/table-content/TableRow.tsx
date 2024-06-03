@@ -1,33 +1,47 @@
-import { useMutation } from '@tanstack/react-query';
+import { useState } from 'react';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
 import { Checkbox } from '@mui/material';
 
 import axios from '../../../../../utils/axios';
 import TD from '../../../ui/table/regacy/TD';
 import parseGrade from '../../../../../utils/parseGrade';
-import { useState } from 'react';
+import { ApplicationType } from '../../../../../pages/admin/program/ProgramUsers';
+import { gradeToText } from '../../../../../utils/convert';
 
 interface Props {
-  application: any;
+  application: ApplicationType;
   program: any;
   handleApplicationStatusChange: any;
+  programType: string;
 }
 
-const TableRow = ({ program, application }: Props) => {
-  const [isFeeConfirmed, setIsFeeConfirmed] = useState(
-    application.application.feeIsConfirmed,
-  );
+const TableRow = ({ program, application, programType }: Props) => {
+  const [isFeeConfirmed, setIsFeeConfirmed] = useState(application.isConfirmed);
+
+  const formatDateString = (dateString: string) => {
+    const date = new Date(dateString);
+    return `${date.getFullYear()}년 ${
+      date.getMonth() + 1
+    }월 ${date.getDate()}일 ${date.getHours() >= 12 ? '오후' : '오전'} ${
+      date.getHours() % 12
+    }시${date.getMinutes() !== 0 && ` ${date.getMinutes()}분`}`;
+  };
 
   const editIsFeeConfirmed = useMutation({
     mutationFn: async () => {
       const res = await axios.patch(
-        `/application/admin/${application.application.id}`,
+        `/payment/${application.paymentId}`,
         {
-          feeIsConfirmed: !isFeeConfirmed,
+          isConfirmed: !isFeeConfirmed,
+        },
+        {
+          params: {
+            type: programType,
+          },
         },
       );
-      const data = res.data;
-      return data;
+      return res.data;
     },
     onSuccess: async () => {
       setIsFeeConfirmed(!isFeeConfirmed);
@@ -37,37 +51,41 @@ const TableRow = ({ program, application }: Props) => {
   return (
     <tr>
       <TD>
-        {application.optionalInfo ? (
+        {/* {application.optionalInfo ? (
           <Link
             to={`/admin/users/${application.optionalInfo.userId}`}
             className="text-neutral-grey cursor-pointer underline"
           >
-            {application.application.name}
+            {application.name}
           </Link>
-        ) : (
-          <span>{application.application.name}</span>
-        )}
+        ) : ( */}
+        <span>{application.name}</span>
+        {/* )} */}
       </TD>
-      <TD>{application.application.email}</TD>
-      <TD>{application.application.phoneNum}</TD>
-      {program.type === 'LETS_CHAT' && (
+      <TD>{application.email}</TD>
+      <TD>{application.phoneNum}</TD>
+      {(programType === 'LIVE' || programType === 'VOD') && (
         <>
-          <TD>{application.optionalInfo?.university}</TD>
-          <TD>{parseGrade(application.application.grade)}</TD>
-          <TD>{application.optionalInfo?.major}</TD>
-          <TD whiteSpace="wrap">{application.application.applyMotive}</TD>
-          <TD whiteSpace="wrap">{application.application.preQuestions}</TD>
+          <TD>{application.university}</TD>
+          <TD>{gradeToText[application.grade]}</TD>
+          <TD>{application.major}</TD>
+          <TD whiteSpace="wrap">{application.motivate}</TD>
+          <TD whiteSpace="wrap">{application.question}</TD>
         </>
       )}
-      <TD>{application.application.couponName}</TD>
-      <TD>{application.application.totalFee?.toLocaleString()}원</TD>
+      <TD>{application.couponName || '없음'}</TD>
+      <TD>{application.totalCost.toLocaleString()}원</TD>
       <TD whiteSpace="wrap">
         <Checkbox
           checked={isFeeConfirmed}
           onChange={() => editIsFeeConfirmed.mutate()}
         />
       </TD>
-      <TD>{application.application.createdAt}</TD>
+      <TD>
+        {application.createDate
+          ? formatDateString(application.createDate)
+          : formatDateString(application.created_date)}
+      </TD>
     </tr>
   );
 };

@@ -10,9 +10,15 @@ export interface UserTableHeadProps {
     name: THProps['inOrder'];
     isFeeConfirmed: THProps['inBoolFilter'];
   }) => void;
+  programType: string;
 }
 
-const UserTableHead = ({ program, filter, setFilter }: UserTableHeadProps) => {
+const TableHead = ({
+  program,
+  filter,
+  setFilter,
+  programType,
+}: UserTableHeadProps) => {
   const handleNameHeadClick = () => {
     if (filter.name === 'ASCENDING') {
       setFilter({ ...filter, name: 'DESCENDING' });
@@ -40,7 +46,7 @@ const UserTableHead = ({ program, filter, setFilter }: UserTableHeadProps) => {
         </TH>
         <TH>이메일</TH>
         <TH>휴대폰 번호</TH>
-        {program.type === 'LETS_CHAT' && (
+        {(programType === 'LIVE' || programType === 'VOD') && (
           <>
             <TH>학교</TH>
             <TH>학년</TH>
@@ -63,4 +69,4 @@ const UserTableHead = ({ program, filter, setFilter }: UserTableHeadProps) => {
   );
 };
 
-export default UserTableHead;
+export default TableHead;

@@ -9,7 +9,6 @@ import SignUp from './pages/common/auth/SignUp';
 import FindPassword from './pages/common/auth/FindPassword';
 import Layout from './components/common/ui/layout/Layout';
 import AdminLayout from './components/admin/ui/layout/AdminLayout';
-import ProgramCreate from './pages/admin/program/ProgramCreate';
 import ReviewDetail from './pages/common/review/ReviewDetail';
 import ProgramEdit from './pages/admin/program/ProgramEdit';
 import AdminReviews from './pages/admin/review/Reviews';
@@ -66,6 +65,7 @@ import Review from './pages/common/mypage/Review';
 import ReviewCreate from './pages/common/review/ReviewCreate';
 import ChallengeMissionManagement from './pages/admin/challenge/ChallengeMissionManagement';
 import ProgramDetail from './pages/common/program/ProgramDetail';
+import ProgramCreate from './pages/admin/program/ProgramCreate';
 
 const Router = () => {
   return (

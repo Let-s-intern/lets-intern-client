@@ -1,4 +1,5 @@
 import { ProgramType } from '../../../../../../pages/common/program/ProgramDetail';
+import { newProgramTypeToText } from '../../../../../../utils/convert';
 import { ProgramDate } from '../../section/ApplySection';
 import DateToggle from '../../toggle/DateToggle';
 
@@ -7,6 +8,7 @@ interface OverviewContentProps {
   setContentIndex: (contentIndex: number) => void;
   programDate: ProgramDate;
   programType: ProgramType;
+  programTitle: string;
 }
 
 const OverviewContent = ({
@@ -14,15 +16,24 @@ const OverviewContent = ({
   setContentIndex,
   programDate,
   programType,
+  programTitle,
 }: OverviewContentProps) => {
+  const formatDateString = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.getFullYear();
+  };
+
   const handleNextButtonClick = () => {
     setContentIndex(contentIndex + 2);
   };
 
   return (
     <div className="flex flex-col gap-5">
-      <div className="text-xs font-medium">2024 [챌린지]</div>
-      <h2 className="text-lg font-semibold">인턴/신입 지원 챌린지 18기</h2>
+      <div className="text-xs font-medium">
+        {formatDateString(programDate?.startDate || '2024')} [
+        {newProgramTypeToText[programType.toUpperCase()]}]
+      </div>
+      <h2 className="text-lg font-semibold">{programTitle}</h2>
       <DateToggle programDate={programDate} programType={programType} />
       <div>
         <button
