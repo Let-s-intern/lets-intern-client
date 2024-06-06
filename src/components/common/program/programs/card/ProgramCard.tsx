@@ -14,6 +14,7 @@ import {
 } from '../../../../../utils/programConst';
 import ProgramClassificationTag from './ProgramClassificationTag';
 import axios from '../../../../../utils/axios';
+import clsx from 'clsx';
 
 interface ProgramCardProps {
   program: IProgram;
@@ -74,15 +75,32 @@ const ProgramCard = ({ program }: ProgramCardProps) => {
             />
           ))}
         </div>
-        <h2 className="text-1-semibold">{program.programInfo.title}</h2>
-        <p className="text-0.875 max-h-11 overflow-hidden text-neutral-30">
+        <h2
+          className={clsx(
+            {
+              'text-neutral-40':
+                program.programInfo.programStatusType ===
+                PROGRAM_STATUS_KEY.POST,
+            },
+            'text-1-semibold',
+          )}
+        >
+          {program.programInfo.title}
+        </h2>
+        <p
+          className={`text-0.875 max-h-11 overflow-hidden ${
+            program.programInfo.programStatusType === PROGRAM_STATUS_KEY.POST
+              ? 'text-neutral-50'
+              : 'text-neutral-30'
+          }`}
+        >
           {program.programInfo.shortDesc}
         </p>
-        {/* VOD 클래스 + 마감된 프로그램은 진행일정, 모집마감 없음 */}
+        {/* VOD 클래스 & 마감된 프로그램 - 진행일정, 모집마감 없음 */}
         {program.programInfo.programStatusType !== PROGRAM_STATUS_KEY.POST &&
           program.programInfo.programType !== PROGRAM_TYPE.VOD && (
             <div>
-              {/* 모집 중인 프로그램만 모집마감일자 표시 */}
+              {/* 모집 중인 프로그램 - 모집마감일자 표시 */}
               {program.programInfo.programStatusType ===
                 PROGRAM_STATUS_KEY.PROCEEDING && (
                 <div className="flex gap-1.5">
@@ -108,9 +126,12 @@ const ProgramCard = ({ program }: ProgramCardProps) => {
     </Link>
   );
 };
+
+// 프로그램 ID와 프로그램 타입이 같으면 true
 const isEqual = (prevProps: ProgramCardProps, nextProps: ProgramCardProps) =>
   prevProps.program.programInfo.id === nextProps.program.programInfo.id &&
   prevProps.program.programInfo.programType ===
     nextProps.program.programInfo.programType;
 
-export default memo(ProgramCard, isEqual);
+// export default memo(ProgramCard, isEqual);
+export default ProgramCard;

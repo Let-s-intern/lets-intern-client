@@ -167,6 +167,7 @@ const Programs = () => {
         `/program?${pageableQuery.join('&')}&${searchParams.toString()}`,
       );
       if (res.status === 200) {
+        console.log(res.data.data);
         setProgramList(res.data.data.programList);
         setPageInfo(res.data.data.pageInfo);
         return res.data;
@@ -223,23 +224,23 @@ const Programs = () => {
                 src="/icons/redo.svg"
                 alt="필터 초기화 아이콘"
               />
-              <span className="text-0.75-medium text-neutral-40">초기화</span>
+              <span className="text-0.75-medium w-9 text-neutral-40">
+                초기화
+              </span>
             </div>
           </div>
-          <div className="flex h-auto w-full flex-nowrap items-center gap-4 overflow-scroll py-2 md:h-20 md:overflow-auto md:rounded-lg md:bg-neutral-90 md:px-5 md:py-2">
+          <div className="flex h-fit w-full flex-nowrap items-center gap-4 overflow-auto py-4 md:min-h-[4.6rem] md:rounded-lg md:bg-neutral-90 md:px-5 md:py-2">
             {/* 초기화 버튼 */}
             <div
               onClick={resetFilter}
-              className="hidden cursor-pointer items-center gap-2 md:flex"
+              className="hidden min-w-max cursor-pointer items-center gap-2 md:flex"
             >
               <img
-                className="w-6"
+                className="w-5"
                 src="/icons/redo.svg"
                 alt="필터 초기화 아이콘"
               />
-              <span className="text-0.875-semibold text-neutral-40">
-                초기화
-              </span>
+              <div className="text-0.875-semibold text-neutral-40">초기화</div>
             </div>
             {/* 파라미터에 따라 필터 표시 */}
             {searchParams
@@ -295,8 +296,8 @@ const Programs = () => {
           </section>
         )}
 
+        {/* 전체 프로그램 리스트 */}
         <section className="grid grid-cols-2 gap-x-4 gap-y-5 md:grid-cols-3 md:gap-4 xl:grid-cols-4">
-          {/* 전체 프로그램 리스트 */}
           {isLoading ? (
             <></>
           ) : (
