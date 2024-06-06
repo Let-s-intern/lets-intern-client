@@ -1,4 +1,4 @@
-import { useCallback, useReducer, useState } from 'react';
+import { useCallback, useEffect, useReducer, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import clsx from 'clsx';
 import { useSearchParams } from 'react-router-dom';
@@ -10,7 +10,12 @@ import {
   PROGRAM_QUERY_KEY,
 } from '../../../utils/programConst';
 import axios from '../../../utils/axios';
-import { IProgram } from '../../../interfaces/interface';
+import {
+  IProgram,
+  filterClassificationkey,
+  filterStatuskey,
+  filterTypekey,
+} from '../../../interfaces/interface';
 import ProgramCard from '../../../components/common/program/programs/card/ProgramCard';
 import Banner from '../../../components/common/program/banner/Banner';
 import FilterItem from '../../../components/common/program/filter/FilterItem';
@@ -42,15 +47,39 @@ const Programs = () => {
   const [filterClassification, classificationDispatch] = useReducer(
     filterClassificationReducer,
     initialFilterClassification,
-  );
+  ); // 커리어 단계
   const [filterType, typeDispatch] = useReducer(
     filterTypeReducer,
     initialFilterType,
-  );
+  ); // 프로그램
   const [filterStatus, statusDispatch] = useReducer(
     filterStatusReducer,
     initialFilterStatus,
-  );
+  ); // 모집 현황
+
+  // 필터에 따라 검색 파라미터 설정
+  useEffect(() => {
+    searchParams.delete(PROGRAM_QUERY_KEY.CLASSIFICATION);
+    Object.entries(filterClassification).forEach(([key, value]) => {
+      if (value === true)
+        searchParams.append(PROGRAM_QUERY_KEY.CLASSIFICATION, key);
+    });
+    setSearchParams(searchParams);
+  }, [filterClassification]);
+  useEffect(() => {
+    searchParams.delete(PROGRAM_QUERY_KEY.TYPE);
+    Object.entries(filterType).forEach(([key, value]) => {
+      if (value === true) searchParams.append(PROGRAM_QUERY_KEY.TYPE, key);
+    });
+    setSearchParams(searchParams);
+  }, [filterType]);
+  useEffect(() => {
+    searchParams.delete(PROGRAM_QUERY_KEY.STATUS);
+    Object.entries(filterStatus).forEach(([key, value]) => {
+      if (value === true) searchParams.append(PROGRAM_QUERY_KEY.STATUS, key);
+    });
+    setSearchParams(searchParams);
+  }, [filterStatus]);
 
   // 필터링 체크박스 클릭 이벤트
   const handleClickCheckbox = useCallback(
@@ -58,15 +87,10 @@ const Programs = () => {
       switch (programType) {
         case PROGRAM_QUERY_KEY.CLASSIFICATION: {
           const filterKey = getKeyByValue(PROGRAM_FILTER_CLASSIFICATION, value);
-          type keyType = keyof typeof filterClassification;
-          classificationDispatch({ type: 'init' });
           classificationDispatch({
-            type: filterClassification[filterKey as keyType]
-              ? 'uncheck'
-              : 'check',
+            type: 'toggle',
             value: filterKey,
           });
-          searchParams.set(programType, filterKey as string);
           break;
         }
         case PROGRAM_QUERY_KEY.TYPE: {
@@ -77,7 +101,6 @@ const Programs = () => {
             type: filterType[filterKey as keyType] ? 'uncheck' : 'check',
             value: filterKey,
           });
-          searchParams.set(programType, filterKey as string);
           break;
         }
         case PROGRAM_QUERY_KEY.STATUS: {
@@ -88,23 +111,15 @@ const Programs = () => {
             type: filterStatus[filterKey as keyType] ? 'uncheck' : 'check',
             value: filterKey,
           });
-          searchParams.set(programType, filterKey as string);
           break;
         }
       }
-      setSearchParams(searchParams);
     },
-    [
-      filterType,
-      filterClassification,
-      filterStatus,
-      searchParams,
-      setSearchParams,
-    ],
+    [filterType, filterClassification, filterStatus],
   );
 
   // 필터링 초기화
-  const resetFilter = () => {
+  const resetFilter = useCallback(() => {
     typeDispatch({ type: 'init' });
     classificationDispatch({ type: 'init' });
     statusDispatch({ type: 'init' });
@@ -112,7 +127,7 @@ const Programs = () => {
     searchParams.delete(PROGRAM_QUERY_KEY.TYPE);
     searchParams.delete(PROGRAM_QUERY_KEY.STATUS);
     setSearchParams(searchParams);
-  };
+  }, [PROGRAM_QUERY_KEY]);
 
   const cancelFilter = useCallback(
     (key: string, value: string) => {
@@ -217,20 +232,20 @@ const Programs = () => {
           </div>
           <div className="flex flex-nowrap items-center gap-4 overflow-scroll py-2 md:overflow-auto">
             {/* 파라미터에 따라 필터 표시 */}
-            {searchParams.get(PROGRAM_QUERY_KEY.CLASSIFICATION) && (
-              <FilterItem
-                programType={PROGRAM_QUERY_KEY.CLASSIFICATION}
-                handleClick={cancelFilter}
-                key={PROGRAM_QUERY_KEY.CLASSIFICATION}
-                caption={
-                  PROGRAM_FILTER_CLASSIFICATION[
-                    searchParams.get(
-                      PROGRAM_QUERY_KEY.CLASSIFICATION,
-                    )! as keyof typeof PROGRAM_FILTER_CLASSIFICATION
-                  ]
-                }
-              />
-            )}
+            {searchParams
+              .getAll(PROGRAM_QUERY_KEY.CLASSIFICATION)
+              .map((item) => (
+                <FilterItem
+                  programType={PROGRAM_QUERY_KEY.CLASSIFICATION}
+                  handleClick={cancelFilter}
+                  key={item}
+                  caption={
+                    PROGRAM_FILTER_CLASSIFICATION[
+                      item as filterClassificationkey
+                    ]
+                  }
+                />
+              ))}
             {searchParams.get(PROGRAM_QUERY_KEY.TYPE) && (
               <FilterItem
                 programType={PROGRAM_QUERY_KEY.TYPE}
@@ -238,9 +253,7 @@ const Programs = () => {
                 key={PROGRAM_QUERY_KEY.TYPE}
                 caption={
                   PROGRAM_FILTER_TYPE[
-                    searchParams.get(
-                      PROGRAM_QUERY_KEY.TYPE,
-                    )! as keyof typeof PROGRAM_FILTER_TYPE
+                    searchParams.get(PROGRAM_QUERY_KEY.TYPE)! as filterTypekey
                   ]
                 }
               />
@@ -254,7 +267,7 @@ const Programs = () => {
                   PROGRAM_FILTER_STATUS[
                     searchParams.get(
                       PROGRAM_QUERY_KEY.STATUS,
-                    )! as keyof typeof PROGRAM_FILTER_STATUS
+                    )! as filterStatuskey
                   ]
                 }
               />
