@@ -149,10 +149,8 @@ const Programs = () => {
           break;
         }
       }
-      searchParams.delete(key);
-      setSearchParams(searchParams);
     },
-    [searchParams, setSearchParams],
+    [PROGRAM_QUERY_KEY],
   );
 
   // 페이지 상태 관리

@@ -15,8 +15,8 @@ const ProgramClassificationTag = ({
     if (classification === PROGRAM_CLASSIFICATION.DOCUMENT_PREPARATION)
       return 'document.svg';
     if (classification === PROGRAM_CLASSIFICATION.MEETING_PREPARATION)
-      return 'mingcute_celebrate-fill.svg';
-    return;
+      return 'checkbox-checked-tag.svg';
+    return 'mingcute_celebrate-fill.svg';
   };
 
   return (

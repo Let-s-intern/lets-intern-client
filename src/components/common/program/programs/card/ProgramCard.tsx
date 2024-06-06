@@ -12,21 +12,49 @@ import {
   PROGRAM_STATUS_KEY,
 } from '../../../../../utils/programConst';
 import ProgramClassificationTag from './ProgramClassificationTag';
+import axios from '../../../../../utils/axios';
+import { useQuery } from '@tanstack/react-query';
+import { useState } from 'react';
 
 interface ProgramCardProps {
   program: IProgram;
 }
 
 const ProgramCard = ({ program }: ProgramCardProps) => {
+  const [link, setLink] = useState(
+    `/program/${program.programInfo.programType.toLowerCase()}/${
+      program.programInfo.id
+    }`,
+  );
+
   const formatDate = (date: string) => {
     return new Date(date).toLocaleDateString().replaceAll(' ', '').slice(0, -1);
   };
 
+  const getVodLink = async () => {
+    // VOD 상세 조회
+    try {
+      const res = await axios.get(`/vod/${program.programInfo.id}`);
+      if (res.status === 200) {
+        setLink(res.data.data.vodInfo.link);
+        return res.data.data;
+      }
+      throw new Error(`${res.status} ${res.statusText}`);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const { isLoading } = useQuery({
+    queryKey: ['vod', program.programInfo.id],
+    queryFn: getVodLink,
+  });
+
+  if (isLoading) return <></>;
+
   return (
     <Link
-      to={`/program/${program.programInfo.programType.toLowerCase()}/${
-        program.programInfo.id
-      }`}
+      to={link}
       className="min-w-40 flex flex-col overflow-hidden rounded-xs md:gap-4 md:rounded-md md:border md:border-neutral-85 md:p-2.5"
     >
       <img
