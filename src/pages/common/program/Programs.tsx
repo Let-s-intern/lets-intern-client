@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useReducer, useState } from 'react';
+import React, { useCallback, useEffect, useReducer, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import clsx from 'clsx';
 import { useSearchParams } from 'react-router-dom';
@@ -42,7 +42,7 @@ const initialPageInfo = {
 
 const Programs = () => {
   // 필터링 상태 관리
-  const [searchParams, setSearchParams] = useSearchParams({});
+  const [searchParams, setSearchParams] = useSearchParams();
   const [isOpen, setIsOpen] = useState(false);
   const [filterClassification, classificationDispatch] = useReducer(
     filterClassificationReducer,
@@ -187,7 +187,7 @@ const Programs = () => {
   if (isLoading) return <></>;
 
   return (
-    <div className="flex flex-col items-center">
+    <div className="flex items-center">
       {/* 필터링 사이드바 */}
       <FilterSideBar
         setIsOpen={setIsOpen}
@@ -203,30 +203,49 @@ const Programs = () => {
         )}
       >
         {/* 상단 필터 */}
-        <section className="flex flex-col gap-3">
+        <section className="flex flex-col gap-3 md:flex-row">
           <div className="flex items-center justify-between">
             <div
               onClick={() => setIsOpen(true)}
-              className="flex items-center gap-2 md:px-5"
-            >
-              <img src="/icons/filter.svg" alt="필터 아이콘" />
-              <h1 className="text-1.125-semibold text-neutral-40">필터</h1>
-            </div>
-            <div
-              onClick={resetFilter}
-              className="flex cursor-pointer items-center gap-2"
+              className="flex cursor-pointer items-center gap-2 md:w-max md:px-5"
             >
               <img
-                className="w-4 md:w-5"
+                className="w-4 md:w-6"
+                src="/icons/filter.svg"
+                alt="필터 아이콘"
+              />
+              <h1 className="text-1.125-semibold md:text-1.25-semibold text-neutral-40">
+                필터
+              </h1>
+            </div>
+            {/* 모바일: 초기화 버튼 */}
+            <div
+              onClick={resetFilter}
+              className="flex cursor-pointer items-center gap-2 md:hidden"
+            >
+              <img
+                className="w-4"
                 src="/icons/redo.svg"
                 alt="필터 초기화 아이콘"
               />
-              <span className="text-0.75-medium md:text-0.875-semibold text-neutral-40">
+              <span className="text-0.75-medium text-neutral-40">초기화</span>
+            </div>
+          </div>
+          <div className="flex h-auto w-full flex-nowrap items-center gap-4 overflow-scroll py-2 md:h-20 md:overflow-auto md:rounded-lg md:bg-neutral-90 md:px-5 md:py-2">
+            {/* 초기화 버튼 */}
+            <div
+              onClick={resetFilter}
+              className="hidden cursor-pointer items-center gap-2 md:flex"
+            >
+              <img
+                className="w-6"
+                src="/icons/redo.svg"
+                alt="필터 초기화 아이콘"
+              />
+              <span className="text-0.875-semibold text-neutral-40">
                 초기화
               </span>
             </div>
-          </div>
-          <div className="flex flex-nowrap items-center gap-4 overflow-scroll py-2 md:overflow-auto">
             {/* 파라미터에 따라 필터 표시 */}
             {searchParams
               .getAll(PROGRAM_QUERY_KEY.CLASSIFICATION)
@@ -284,7 +303,10 @@ const Programs = () => {
         <section className="grid min-h-[40vh] grid-cols-2 gap-x-4 gap-y-5 md:grid-cols-3 md:gap-4 lg:grid-cols-4">
           {/* 전체 프로그램 리스트 */}
           {programList?.map((program: IProgram) => (
-            <ProgramCard key={program.programInfo.id} program={program} />
+            <ProgramCard
+              key={program.programInfo.id + program.programInfo.programType}
+              program={program}
+            />
           ))}
         </section>
 

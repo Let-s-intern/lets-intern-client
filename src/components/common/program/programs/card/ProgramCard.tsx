@@ -1,4 +1,6 @@
 import { Link } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
+import { memo, useState } from 'react';
 
 import {
   IProgram,
@@ -13,8 +15,6 @@ import {
 } from '../../../../../utils/programConst';
 import ProgramClassificationTag from './ProgramClassificationTag';
 import axios from '../../../../../utils/axios';
-import { useQuery } from '@tanstack/react-query';
-import { useState } from 'react';
 
 interface ProgramCardProps {
   program: IProgram;
@@ -58,7 +58,7 @@ const ProgramCard = ({ program }: ProgramCardProps) => {
       className="min-w-40 flex flex-col overflow-hidden rounded-xs md:gap-4 md:rounded-md md:border md:border-neutral-85 md:p-2.5"
     >
       <img
-        className=" h-32 bg-neutral-80 object-cover md:h-64 md:rounded-xs"
+        className="h-32 bg-neutral-80 object-cover md:h-64 md:rounded-xs"
         src={program.programInfo.thumbnail}
         alt="프로그램 썸네일 배경"
       />
@@ -111,5 +111,9 @@ const ProgramCard = ({ program }: ProgramCardProps) => {
     </Link>
   );
 };
+const isEqual = (prevProps: ProgramCardProps, nextProps: ProgramCardProps) =>
+  prevProps.program.programInfo.id === nextProps.program.programInfo.id &&
+  prevProps.program.programInfo.programType ===
+    nextProps.program.programInfo.programType;
 
-export default ProgramCard;
+export default memo(ProgramCard, isEqual);

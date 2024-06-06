@@ -41,7 +41,7 @@ const FilterSideBar = ({
 
       <div
         className={clsx(
-          'fixed left-0 top-0 z-50 flex h-screen w-full flex-col gap-5 bg-neutral-90 p-10 transition-transform duration-300 ease-in-out',
+          'fixed left-0 top-0 z-50 flex h-screen w-full flex-col gap-5 bg-neutral-90 p-10 transition-transform duration-300 ease-in-out md:w-80',
           {
             'translate-x-0': isOpen,
             'translate-x-[-100vw]': !isOpen,

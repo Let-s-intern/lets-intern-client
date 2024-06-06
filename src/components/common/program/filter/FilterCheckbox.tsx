@@ -1,4 +1,4 @@
-import React from 'react';
+import { memo } from 'react';
 
 interface FilterCheckboxProps {
   caption: string;
@@ -25,4 +25,9 @@ const FilterCheckbox = ({
   );
 };
 
-export default FilterCheckbox;
+const isEqual = (
+  oldProps: FilterCheckboxProps,
+  newProps: FilterCheckboxProps,
+) => oldProps.isChecked === newProps.isChecked;
+
+export default memo(FilterCheckbox, isEqual);

@@ -46,7 +46,7 @@ const EmptyCardList = () => {
               {program.desc}
             </p>
             <button
-              className={`text-0.875-medium rounded-sm border border-neutral-0 bg-point px-4 py-1.5 ${program.buttonColor}`}
+              className={`text-0.875-medium rounded-sm border border-neutral-0 px-4 py-1.5 ${program.buttonColor}`}
             >
               {program.buttonCaption}
             </button>
