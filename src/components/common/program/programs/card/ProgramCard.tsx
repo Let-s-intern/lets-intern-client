@@ -1,6 +1,5 @@
 import { Link } from 'react-router-dom';
-import { useQuery } from '@tanstack/react-query';
-import { memo, useState } from 'react';
+import { memo, useEffect, useState } from 'react';
 
 import {
   IProgram,
@@ -32,6 +31,7 @@ const ProgramCard = ({ program }: ProgramCardProps) => {
   };
 
   const getVodLink = async () => {
+    if (program.programInfo.programType !== PROGRAM_TYPE.VOD) return;
     // VOD 상세 조회
     try {
       const res = await axios.get(`/vod/${program.programInfo.id}`);
@@ -45,12 +45,9 @@ const ProgramCard = ({ program }: ProgramCardProps) => {
     }
   };
 
-  const { isLoading } = useQuery({
-    queryKey: ['vod', program.programInfo.id],
-    queryFn: getVodLink,
-  });
-
-  if (isLoading) return <></>;
+  useEffect(() => {
+    (async () => await getVodLink())();
+  }, []);
 
   return (
     <Link

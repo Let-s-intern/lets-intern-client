@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useReducer, useState } from 'react';
+import { useCallback, useEffect, useReducer, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import clsx from 'clsx';
 import { useSearchParams } from 'react-router-dom';
@@ -128,30 +128,27 @@ const Programs = () => {
     searchParams.delete(PROGRAM_QUERY_KEY.TYPE);
     searchParams.delete(PROGRAM_QUERY_KEY.STATUS);
     setSearchParams(searchParams);
-  }, [PROGRAM_QUERY_KEY]);
+  }, []);
 
-  const cancelFilter = useCallback(
-    (key: string, value: string) => {
-      switch (key) {
-        case PROGRAM_QUERY_KEY.CLASSIFICATION: {
-          const filterKey = getKeyByValue(PROGRAM_FILTER_CLASSIFICATION, value);
-          classificationDispatch({ type: 'uncheck', value: filterKey });
-          break;
-        }
-        case PROGRAM_QUERY_KEY.TYPE: {
-          const filterKey = getKeyByValue(PROGRAM_FILTER_TYPE, value);
-          typeDispatch({ type: 'uncheck', value: filterKey });
-          break;
-        }
-        case PROGRAM_QUERY_KEY.STATUS: {
-          const filterKey = getKeyByValue(PROGRAM_FILTER_STATUS, value);
-          statusDispatch({ type: 'uncheck', value: filterKey });
-          break;
-        }
+  const cancelFilter = useCallback((key: string, value: string) => {
+    switch (key) {
+      case PROGRAM_QUERY_KEY.CLASSIFICATION: {
+        const filterKey = getKeyByValue(PROGRAM_FILTER_CLASSIFICATION, value);
+        classificationDispatch({ type: 'uncheck', value: filterKey });
+        break;
       }
-    },
-    [PROGRAM_QUERY_KEY],
-  );
+      case PROGRAM_QUERY_KEY.TYPE: {
+        const filterKey = getKeyByValue(PROGRAM_FILTER_TYPE, value);
+        typeDispatch({ type: 'uncheck', value: filterKey });
+        break;
+      }
+      case PROGRAM_QUERY_KEY.STATUS: {
+        const filterKey = getKeyByValue(PROGRAM_FILTER_STATUS, value);
+        statusDispatch({ type: 'uncheck', value: filterKey });
+        break;
+      }
+    }
+  }, []);
 
   // 페이지 상태 관리
   const [pageable, setPageable] = useState(initialPageable);
@@ -180,11 +177,9 @@ const Programs = () => {
     }
   };
   const { isLoading } = useQuery({
-    queryKey: ['program', pageable, searchParams.toString(), isOpen],
+    queryKey: ['program', pageable.page, searchParams.toString()],
     queryFn: getProgramList,
   });
-
-  if (isLoading) return <></>;
 
   return (
     <div className="flex items-center">
@@ -288,10 +283,10 @@ const Programs = () => {
         {programList.length === 0 && (
           <p className="text-1 py-2 text-center text-neutral-0/40">
             찾으시는 프로그램이 아직 없어요ㅜㅡㅜ
-            <div className="flex flex-col  md:flex-row md:justify-center md:gap-1">
+            <span className="flex flex-col  md:flex-row md:justify-center md:gap-1">
               <span>알림 신청을 통해</span>
               <span>가장 먼저 신규 프로그램 소식을 받아보세요!</span>
-            </div>
+            </span>
           </p>
         )}
         {programList.length === 0 && (
@@ -300,14 +295,18 @@ const Programs = () => {
           </section>
         )}
 
-        <section className="grid min-h-[40vh] grid-cols-2 gap-x-4 gap-y-5 md:grid-cols-3 md:gap-4 lg:grid-cols-4">
+        <section className="grid grid-cols-2 gap-x-4 gap-y-5 md:grid-cols-3 md:gap-4 lg:grid-cols-4">
           {/* 전체 프로그램 리스트 */}
-          {programList?.map((program: IProgram) => (
-            <ProgramCard
-              key={program.programInfo.id + program.programInfo.programType}
-              program={program}
-            />
-          ))}
+          {isLoading ? (
+            <></>
+          ) : (
+            programList.map((program: IProgram) => (
+              <ProgramCard
+                key={program.programInfo.programType + program.programInfo.id}
+                program={program}
+              />
+            ))
+          )}
         </section>
 
         <MuiPagination pageInfo={pageInfo} setPageable={setPageable} />

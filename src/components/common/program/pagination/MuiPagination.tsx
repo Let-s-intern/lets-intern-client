@@ -1,8 +1,8 @@
-import { Pagination, ThemeProvider } from '@mui/material';
+import { Pagination, ThemeProvider, useMediaQuery } from '@mui/material';
 
 import { theme } from './mui-theme';
 import { IPageInfo, IPageable } from '../../../../interfaces/interface';
-import React from 'react';
+import React, { memo, useCallback } from 'react';
 
 export interface MuiPaginationProps {
   pageInfo: IPageInfo;
@@ -10,21 +10,28 @@ export interface MuiPaginationProps {
 }
 
 const MuiPagination = ({ pageInfo, setPageable }: MuiPaginationProps) => {
-  const handleChange = (event: React.ChangeEvent<unknown>, page: number) => {
-    setPageable((prev) => ({ ...prev, page }));
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
+  const matches = useMediaQuery('(min-width:640px)');
+
+  const handleChange = useCallback(
+    (event: React.ChangeEvent<unknown>, page: number) => {
+      setPageable((prev) => ({ ...prev, page }));
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    },
+    [],
+  );
 
   if (pageInfo.totalPages > 1)
     return (
       <ThemeProvider theme={theme}>
         <Pagination
-          className="flex justify-center"
           onChange={handleChange}
           count={pageInfo.totalPages}
           color="primary"
           showFirstButton
           showLastButton
+          size={matches ? 'medium' : 'small'}
+          sx={{ mx: 'auto' }}
+          boundaryCount={1}
         />
       </ThemeProvider>
     );
@@ -32,4 +39,4 @@ const MuiPagination = ({ pageInfo, setPageable }: MuiPaginationProps) => {
   return null;
 };
 
-export default React.memo(MuiPagination);
+export default memo(MuiPagination);
