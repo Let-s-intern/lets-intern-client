@@ -1,9 +1,9 @@
 import clsx from 'clsx';
 
-import { PRGRAM_STATUS } from '../../../../../utils/programConst';
+import { PROGRAM_STATUS } from '../../../../../utils/programConst';
 
 interface ProgramStatusTagProps {
-  status: (typeof PRGRAM_STATUS)[keyof typeof PRGRAM_STATUS];
+  status: (typeof PROGRAM_STATUS)[keyof typeof PROGRAM_STATUS];
 }
 
 const ProgramStatusTag = ({ status }: ProgramStatusTagProps) => {
@@ -12,11 +12,11 @@ const ProgramStatusTag = ({ status }: ProgramStatusTagProps) => {
       className={clsx(
         {
           'border-primary bg-[#DBDDFD] text-primary':
-            status === PRGRAM_STATUS.PROCEEDING,
+            status === PROGRAM_STATUS.PROCEEDING,
           'border-secondary bg-[#E8F9F2] text-secondary':
-            status === PRGRAM_STATUS.PREV,
+            status === PROGRAM_STATUS.PREV,
           'border-neutral-45 bg-neutral-80 text-neutral-45':
-            status === PRGRAM_STATUS.POST,
+            status === PROGRAM_STATUS.POST,
         },
         'text-0.75-medium md:text-0.875-medium rounded-xs border px-2.5 py-0.5',
       )}

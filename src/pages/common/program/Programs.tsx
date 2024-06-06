@@ -172,7 +172,6 @@ const Programs = () => {
         `/program?${pageableQuery.join('&')}&${searchParams.toString()}`,
       );
       if (res.status === 200) {
-        console.log(res.data.data);
         setProgramList(res.data.data.programList);
         setPageInfo(res.data.data.pageInfo);
         return res.data;
@@ -203,9 +202,6 @@ const Programs = () => {
       <main
         className={clsx(
           'flex max-w-[99vw] flex-col gap-16 px-5 py-8 md:px-10 lg:px-[10%]',
-          {
-            hidden: isOpen,
-          },
         )}
       >
         {/* 상단 필터 */}
@@ -290,10 +286,7 @@ const Programs = () => {
         <section className="grid min-h-[40vh] grid-cols-2 gap-x-4 gap-y-5 md:grid-cols-3 md:gap-4 lg:grid-cols-4">
           {/* 전체 프로그램 리스트 */}
           {programList?.map((program: IProgram) => (
-            <ProgramCard
-              key={program.programInfo.id}
-              program={program.programInfo}
-            />
+            <ProgramCard key={program.programInfo.id} program={program} />
           ))}
         </section>
 
