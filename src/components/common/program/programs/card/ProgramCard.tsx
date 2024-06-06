@@ -9,6 +9,7 @@ import {
   PROGRAM_TYPE,
   PROGRAM_STATUS,
   PROGRAM_CLASSIFICATION,
+  PROGRAM_STATUS_KEY,
 } from '../../../../../utils/programConst';
 import ProgramClassificationTag from './ProgramClassificationTag';
 
@@ -52,27 +53,32 @@ const ProgramCard = ({ program }: ProgramCardProps) => {
         <p className="text-0.875 max-h-11 overflow-hidden text-neutral-30">
           {program.programInfo.shortDesc}
         </p>
-        {/* VOD 클래스는 진행일정, 모집마감 없음 */}
-        {program.programInfo.programType !== PROGRAM_TYPE.VOD && (
-          <div>
-            <div className="flex gap-1.5">
-              <span className="text-0.75-medium">모집마감</span>
-              <span className="text-0.75-medium text-primary-dark">
-                ~{formatDate(program.programInfo.deadline!)}
-              </span>
+        {/* VOD 클래스 + 마감된 프로그램은 진행일정, 모집마감 없음 */}
+        {program.programInfo.programStatusType !== PROGRAM_STATUS_KEY.POST &&
+          program.programInfo.programType !== PROGRAM_TYPE.VOD && (
+            <div>
+              {/* 모집 중인 프로그램만 모집마감일자 표시 */}
+              {program.programInfo.programStatusType ===
+                PROGRAM_STATUS_KEY.PROCEEDING && (
+                <div className="flex gap-1.5">
+                  <span className="text-0.75-medium">모집마감</span>
+                  <span className="text-0.75-medium text-primary-dark">
+                    ~{formatDate(program.programInfo.deadline!)}
+                  </span>
+                </div>
+              )}
+              <div className="flex gap-1.5">
+                <span className="text-0.75-medium">진행일정</span>
+                <span className="text-0.75-medium text-primary-dark">
+                  {program.programInfo.programType === PROGRAM_TYPE.CHALLENGE
+                    ? `${formatDate(
+                        program.programInfo.startDate,
+                      )}~${formatDate(program.programInfo.endDate!)}`
+                    : formatDate(program.programInfo.startDate)}
+                </span>
+              </div>
             </div>
-            <div className="flex gap-1.5">
-              <span className="text-0.75-medium">진행일정</span>
-              <span className="text-0.75-medium text-primary-dark">
-                {program.programInfo.programType === PROGRAM_TYPE.CHALLENGE
-                  ? `${formatDate(program.programInfo.startDate)}~${formatDate(
-                      program.programInfo.endDate!,
-                    )}`
-                  : formatDate(program.programInfo.startDate)}
-              </span>
-            </div>
-          </div>
-        )}
+          )}
       </div>
     </Link>
   );
