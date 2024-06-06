@@ -31,12 +31,11 @@ const FilterSideBar = ({
   return (
     <div
       className={clsx(
-        'absolute z-10 flex h-full w-full flex-col gap-5 bg-neutral-90 p-10 transition ease-in-out',
+        'fixed left-0 top-0 z-50 flex h-screen w-full flex-col gap-5 bg-neutral-90 p-10 transition-transform duration-300 ease-in-out',
         {
           'translate-x-0': isOpen,
           'translate-x-[-100vw]': !isOpen,
         },
-        isOpen ? 'translate-x-0' : 'translate-x-[-100vw]',
       )}
     >
       <section className="flex items-center justify-between">
