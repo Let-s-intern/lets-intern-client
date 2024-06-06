@@ -33,10 +33,10 @@ const EmptyCardList = () => {
         <div
           key={i}
           onClick={() => window.open(program.link, '_blank')}
-          className="flex flex-col overflow-hidden rounded-xs md:gap-4 md:rounded-md md:border md:border-neutral-85 md:p-2.5"
+          className="max-w-64 flex cursor-pointer flex-col overflow-hidden rounded-xs md:gap-4 md:rounded-md md:border md:border-neutral-85 md:p-2.5"
         >
           <img
-            className="h-32 object-cover md:h-64 md:rounded-xs"
+            className="h-32 object-cover md:h-44 md:rounded-xs"
             src={program.thumbnail}
             alt="프로그램 썸네일 배경"
           />
@@ -46,7 +46,7 @@ const EmptyCardList = () => {
               {program.desc}
             </p>
             <button
-              className={`text-0.875-medium rounded-sm border border-neutral-0 bg-point px-4 py-1.5 ${program.buttonColor}`}
+              className={`text-0.875-medium rounded-sm border border-neutral-0 px-4 py-1.5 ${program.buttonColor}`}
             >
               {program.buttonCaption}
             </button>

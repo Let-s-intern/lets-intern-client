@@ -1,4 +1,4 @@
-import React from 'react';
+import { memo } from 'react';
 
 interface FilterCheckboxProps {
   caption: string;
@@ -12,7 +12,10 @@ const FilterCheckbox = ({
   onClick,
 }: FilterCheckboxProps) => {
   return (
-    <div onClick={onClick} className="flex items-center gap-2 px-2 py-2.5">
+    <div
+      onClick={onClick}
+      className="flex cursor-pointer items-center gap-2 px-2 py-2.5"
+    >
       <img
         className="w-8"
         src={`/icons/${
@@ -25,4 +28,9 @@ const FilterCheckbox = ({
   );
 };
 
-export default FilterCheckbox;
+const isEqual = (
+  oldProps: FilterCheckboxProps,
+  newProps: FilterCheckboxProps,
+) => oldProps.isChecked === newProps.isChecked;
+
+export default memo(FilterCheckbox, isEqual);
