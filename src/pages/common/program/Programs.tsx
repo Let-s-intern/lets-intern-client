@@ -68,9 +68,12 @@ const Programs = () => {
   }, [filterClassification]);
   useEffect(() => {
     searchParams.delete(PROGRAM_QUERY_KEY.TYPE);
-    Object.entries(filterType).forEach(([key, value]) => {
-      if (value === true) searchParams.append(PROGRAM_QUERY_KEY.TYPE, key);
-    });
+    for (const [key, value] of Object.entries(filterType)) {
+      if (value === true) {
+        searchParams.set(PROGRAM_QUERY_KEY.TYPE, key);
+        break;
+      }
+    }
     setSearchParams(searchParams);
   }, [filterType]);
   useEffect(() => {
@@ -105,10 +108,8 @@ const Programs = () => {
         }
         case PROGRAM_QUERY_KEY.STATUS: {
           const filterKey = getKeyByValue(PROGRAM_FILTER_STATUS, value);
-          type keyType = keyof typeof filterStatus;
-          statusDispatch({ type: 'init' });
           statusDispatch({
-            type: filterStatus[filterKey as keyType] ? 'uncheck' : 'check',
+            type: 'toggle',
             value: filterKey,
           });
           break;
@@ -171,6 +172,7 @@ const Programs = () => {
         `/program?${pageableQuery.join('&')}&${searchParams.toString()}`,
       );
       if (res.status === 200) {
+        console.log(res.data.data);
         setProgramList(res.data.data.programList);
         setPageInfo(res.data.data.pageInfo);
         return res.data;
@@ -258,20 +260,14 @@ const Programs = () => {
                 }
               />
             )}
-            {searchParams.get(PROGRAM_QUERY_KEY.STATUS) && (
+            {searchParams.getAll(PROGRAM_QUERY_KEY.STATUS).map((item) => (
               <FilterItem
                 programType={PROGRAM_QUERY_KEY.STATUS}
                 handleClick={cancelFilter}
-                key={PROGRAM_QUERY_KEY.STATUS}
-                caption={
-                  PROGRAM_FILTER_STATUS[
-                    searchParams.get(
-                      PROGRAM_QUERY_KEY.STATUS,
-                    )! as filterStatuskey
-                  ]
-                }
+                key={item}
+                caption={PROGRAM_FILTER_STATUS[item as filterStatuskey]}
               />
-            )}
+            ))}
           </div>
         </section>
 
@@ -285,8 +281,6 @@ const Programs = () => {
             </div>
           </p>
         )}
-
-        {/* 프로그램 리스트 없을 때 */}
         {programList.length === 0 && (
           <section className="grid min-h-[40vh] grid-cols-2 gap-x-4 gap-y-5 md:grid-cols-3 md:gap-4 lg:grid-cols-4">
             <EmptyCardList />
