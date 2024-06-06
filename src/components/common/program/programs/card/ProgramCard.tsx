@@ -55,7 +55,7 @@ const ProgramCard = ({ program }: ProgramCardProps) => {
       className="min-w-40 flex flex-col overflow-hidden rounded-xs md:gap-4 md:rounded-md md:border md:border-neutral-85 md:p-2.5"
     >
       <img
-        className="h-32 bg-neutral-80 object-cover md:h-64 md:rounded-xs"
+        className="h-32 bg-neutral-80 object-cover md:h-44 md:rounded-xs"
         src={program.programInfo.thumbnail}
         alt="프로그램 썸네일 배경"
       />

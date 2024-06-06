@@ -29,7 +29,7 @@ const FilterSideBar = ({
   filterStatus,
 }: FilterSideBarProps) => {
   return (
-    <>
+    <div>
       {/* 투명한 검정색 배경 */}
       <div
         className={`fixed inset-0 z-40 bg-black transition-opacity duration-300 ${
@@ -41,10 +41,10 @@ const FilterSideBar = ({
 
       <div
         className={clsx(
-          'fixed left-0 top-0 z-50 flex h-screen w-full flex-col gap-5 bg-neutral-90 p-10 transition-transform duration-300 ease-in-out md:w-80',
+          'fixed left-0 top-0 z-50 flex h-screen w-full flex-col gap-5 bg-neutral-90 p-10 transition-transform duration-300 ease-in-out md:w-72 lg:static lg:z-0 lg:h-full',
           {
             'translate-x-0': isOpen,
-            'translate-x-[-100vw]': !isOpen,
+            'translate-x-[-100vw] lg:translate-x-0': !isOpen,
           },
         )}
       >
@@ -55,7 +55,7 @@ const FilterSideBar = ({
           </div>
           <img
             onClick={() => setIsOpen(false)}
-            className="cursor-pointer"
+            className="cursor-pointer lg:hidden"
             src="/icons/chevron-left-duo.svg"
             alt="필터 닫기 아이콘"
           />
@@ -107,7 +107,7 @@ const FilterSideBar = ({
           ))}
         </section>
       </div>
-    </>
+    </div>
   );
 };
 

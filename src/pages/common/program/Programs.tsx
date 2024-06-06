@@ -182,7 +182,7 @@ const Programs = () => {
   });
 
   return (
-    <div className="flex items-center">
+    <div className="flex">
       {/* 필터링 사이드바 */}
       <FilterSideBar
         setIsOpen={setIsOpen}
@@ -194,7 +194,7 @@ const Programs = () => {
       />
       <main
         className={clsx(
-          'flex max-w-[99vw] flex-col gap-16 px-5 py-8 md:px-10 lg:px-[10%]',
+          'flex w-full max-w-[99vw] flex-col gap-16 px-5 py-8 md:px-10 lg:px-[10%]',
         )}
       >
         {/* 상단 필터 */}
@@ -202,7 +202,7 @@ const Programs = () => {
           <div className="flex items-center justify-between">
             <div
               onClick={() => setIsOpen(true)}
-              className="flex cursor-pointer items-center gap-2 md:w-max md:px-5"
+              className="flex cursor-pointer items-center gap-2 md:w-max md:px-5 lg:hidden"
             >
               <img
                 className="w-4 md:w-6"
@@ -280,22 +280,22 @@ const Programs = () => {
         </section>
 
         {/* 프로그램 리스트 없을 때 */}
-        {programList.length === 0 && (
+        {!isLoading && programList.length === 0 && (
           <p className="text-1 py-2 text-center text-neutral-0/40">
             찾으시는 프로그램이 아직 없어요ㅜㅡㅜ
-            <span className="flex flex-col  md:flex-row md:justify-center md:gap-1">
+            <span className="flex flex-col md:flex-row md:justify-center md:gap-1">
               <span>알림 신청을 통해</span>
               <span>가장 먼저 신규 프로그램 소식을 받아보세요!</span>
             </span>
           </p>
         )}
-        {programList.length === 0 && (
-          <section className="grid min-h-[40vh] grid-cols-2 gap-x-4 gap-y-5 md:grid-cols-3 md:gap-4 lg:grid-cols-4">
+        {!isLoading && programList.length === 0 && (
+          <section className="lg:xl-[10%] grid grid-cols-2 gap-x-4 gap-y-5 md:grid-cols-3 md:gap-4">
             <EmptyCardList />
           </section>
         )}
 
-        <section className="grid grid-cols-2 gap-x-4 gap-y-5 md:grid-cols-3 md:gap-4 lg:grid-cols-4">
+        <section className="grid grid-cols-2 gap-x-4 gap-y-5 md:grid-cols-3 md:gap-4 xl:grid-cols-4">
           {/* 전체 프로그램 리스트 */}
           {isLoading ? (
             <></>
