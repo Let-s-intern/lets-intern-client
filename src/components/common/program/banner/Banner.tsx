@@ -79,7 +79,7 @@ const Banner = () => {
       <div className="absolute bottom-4 left-5 flex items-center gap-1.5 md:bottom-6 md:left-8">
         <img
           onClick={() => setIsPlay(!isPlay)}
-          className="w-5"
+          className="w-5 cursor-pointer"
           src="/icons/play.svg"
           alt="배너 페이지네이션 재생 아이콘"
         />

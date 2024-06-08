@@ -172,18 +172,17 @@ const Programs = () => {
         `/program?${pageableQuery.join('&')}&${searchParams.toString()}`,
       );
       if (res.status === 200) {
-        console.log(res.data.data, programList);
-        console.log(res.data.data, pageInfo);
         setProgramList(res.data.data.programList);
         setPageInfo(res.data.data.pageInfo);
         return res.data.data;
       }
-      throw new Error(`${res.status} ${res.statusText}`);
+      throw new Error(res.data.status, res.data.message);
     } catch (error) {
       console.error(error);
+      alert(error);
     }
   };
-  const { isSuccess, isPending } = useQuery({
+  const { isSuccess, isFetching } = useQuery({
     queryKey: ['program', pageable.page, searchParams.toString()],
     queryFn: getProgramList,
   });
@@ -288,26 +287,26 @@ const Programs = () => {
 
         {/* 프로그램 리스트 없을 때 */}
         {isSuccess && programList.length === 0 && (
-          <p className="text-1 py-2 text-center text-neutral-0/40">
-            찾으시는 프로그램이 아직 없어요ㅜㅡㅜ
-            <span className="flex flex-col md:flex-row md:justify-center md:gap-1">
-              <span>알림 신청을 통해</span>
-              <span>가장 먼저 신규 프로그램 소식을 받아보세요!</span>
-            </span>
-          </p>
-        )}
-        {isSuccess && programList.length === 0 && (
-          <section className="grid grid-cols-2 gap-x-4 gap-y-5 md:grid-cols-3 md:gap-4">
-            <EmptyCardList />
-          </section>
+          <>
+            <p className="text-1 py-2 text-center text-neutral-0/40">
+              찾으시는 프로그램이 아직 없어요ㅜㅡㅜ
+              <span className="flex flex-col md:flex-row md:justify-center md:gap-1">
+                <span>알림 신청을 통해</span>
+                <span>가장 먼저 신규 프로그램 소식을 받아보세요!</span>
+              </span>
+            </p>
+            <section className="grid grid-cols-2 gap-x-4 gap-y-5 md:grid-cols-3 md:gap-4">
+              <EmptyCardList />
+            </section>
+          </>
         )}
 
         {/* 전체 프로그램 리스트 */}
-        <section className="grid grid-cols-2 gap-x-4 gap-y-5 md:grid-cols-3 md:gap-4 xl:grid-cols-4">
-          {isPending && !isSuccess ? (
-            <div className="h-[80vh]"></div>
+        <section className="min-h-2/4 grid grid-cols-2 gap-x-4 gap-y-5 md:grid-cols-3 md:gap-4 xl:grid-cols-4">
+          {isFetching && !isSuccess ? (
+            <></>
           ) : (
-            programList.map((program: IProgram) => (
+            programList?.map((program: IProgram) => (
               <ProgramCard
                 key={program.programInfo.programType + program.programInfo.id}
                 program={program}
@@ -317,7 +316,7 @@ const Programs = () => {
         </section>
 
         <MuiPagination pageInfo={pageInfo} setPageable={setPageable} />
-        <Banner />
+        {!isFetching && <Banner />}
       </main>
     </div>
   );
