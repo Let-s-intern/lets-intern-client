@@ -53,10 +53,10 @@ const ProgramCard = ({ program }: ProgramCardProps) => {
   return (
     <Link
       to={link}
-      className="min-w-40 flex flex-col overflow-hidden rounded-xs md:gap-4 md:rounded-md md:border md:border-neutral-85 md:p-2.5"
+      className="flex w-44 flex-col overflow-hidden rounded-xs md:w-52 md:gap-4 md:rounded-md md:border md:border-neutral-85 md:p-2.5 xl:w-56"
     >
       <img
-        className="h-32 bg-neutral-80 object-cover md:h-44 md:rounded-xs"
+        className="h-32 w-full bg-neutral-80 object-cover md:h-44 md:rounded-xs"
         src={program.programInfo.thumbnail}
         alt="프로그램 썸네일 배경"
       />
@@ -82,13 +82,13 @@ const ProgramCard = ({ program }: ProgramCardProps) => {
                 program.programInfo.programStatusType ===
                 PROGRAM_STATUS_KEY.POST,
             },
-            'text-1-semibold',
+            'text-1-semibold h-[1.625rem] overflow-hidden',
           )}
         >
           {program.programInfo.title}
         </h2>
         <p
-          className={`text-0.875 max-h-11 overflow-hidden ${
+          className={`text-0.875 h-11 overflow-hidden ${
             program.programInfo.programStatusType === PROGRAM_STATUS_KEY.POST
               ? 'text-neutral-50'
               : 'text-neutral-30'
@@ -133,5 +133,5 @@ const isEqual = (prevProps: ProgramCardProps, nextProps: ProgramCardProps) =>
   prevProps.program.programInfo.programType ===
     nextProps.program.programInfo.programType;
 
-// export default memo(ProgramCard, isEqual);
-export default ProgramCard;
+export default memo(ProgramCard, isEqual);
+//export default ProgramCard;

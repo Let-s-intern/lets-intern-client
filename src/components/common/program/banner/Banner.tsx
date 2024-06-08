@@ -1,9 +1,9 @@
 import { useEffect, useRef, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
+import { Link } from 'react-router-dom';
 
 import { IProgramBanner } from '../../../../interfaces/interface';
 import axios from '../../../../utils/axios';
-import { Link } from 'react-router-dom';
 
 const Banner = () => {
   const imgRef = useRef<HTMLImageElement>(null);
@@ -56,15 +56,18 @@ const Banner = () => {
   if (isLoading || bannerList.length === 0) return <></>;
 
   return (
-    <div className="relative flex h-40 w-full items-center overflow-hidden rounded-sm bg-static-0 text-static-100 md:h-56 lg:h-80">
+    <div className="relative flex h-40 w-[22rem] items-center overflow-hidden rounded-sm bg-static-0 text-static-100 md:h-44 md:w-[30rem] lg:h-56 lg:w-[40rem] xl:h-72 xl:w-[59rem]">
       <div
         ref={innerRef}
-        className="flex flex-nowrap items-center transition ease-in-out"
+        className="flex flex-nowrap items-center transition-transform duration-300 ease-in-out"
       >
         {bannerList.map((banner) => (
-          <Link to={banner.link} className="w-[92vw]">
+          <Link
+            to={banner.link}
+            key={banner.id}
+            className="w-[22rem] md:w-[30rem] lg:w-[40rem] xl:w-[59rem]"
+          >
             <img
-              key={banner.id}
               ref={imgRef}
               className="w-full object-cover brightness-50"
               src={banner.imgUrl}
@@ -76,7 +79,7 @@ const Banner = () => {
       <div className="absolute bottom-4 left-5 flex items-center gap-1.5 md:bottom-6 md:left-8">
         <img
           onClick={() => setIsPlay(!isPlay)}
-          className="w-5"
+          className="w-5 cursor-pointer"
           src="/icons/play.svg"
           alt="배너 페이지네이션 재생 아이콘"
         />
