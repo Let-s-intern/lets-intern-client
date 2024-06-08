@@ -84,6 +84,10 @@ const Programs = () => {
     setSearchParams(searchParams);
   }, [filterStatus]);
 
+  const resetPageable = () => {
+    setPageable(initialPageable);
+  };
+
   // 필터링 체크박스 클릭 이벤트
   const handleClickCheckbox = useCallback(
     (programType: string, value: string) => {
@@ -115,6 +119,7 @@ const Programs = () => {
           break;
         }
       }
+      resetPageable();
     },
     [filterType, filterClassification, filterStatus],
   );
@@ -167,10 +172,11 @@ const Programs = () => {
         `/program?${pageableQuery.join('&')}&${searchParams.toString()}`,
       );
       if (res.status === 200) {
-        console.log(res.data.data);
+        console.log(res.data.data, programList);
+        console.log(res.data.data, pageInfo);
         setProgramList(res.data.data.programList);
         setPageInfo(res.data.data.pageInfo);
-        return res.data;
+        return res.data.data;
       }
       throw new Error(`${res.status} ${res.statusText}`);
     } catch (error) {
@@ -299,7 +305,7 @@ const Programs = () => {
         {/* 전체 프로그램 리스트 */}
         <section className="grid grid-cols-2 gap-x-4 gap-y-5 md:grid-cols-3 md:gap-4 xl:grid-cols-4">
           {isLoading ? (
-            <></>
+            <div className="h-[80vh]"></div>
           ) : (
             programList.map((program: IProgram) => (
               <ProgramCard
