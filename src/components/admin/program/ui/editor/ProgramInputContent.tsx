@@ -596,6 +596,20 @@ const ProgramInputContent = ({
                   />
                 </DateTimeControl>
                 <DateTimeControl>
+                  <DateTimeLabel htmlFor="beginning">
+                    모집 시작 일자
+                  </DateTimeLabel>
+                  <input
+                    id="beginning"
+                    type="datetime-local"
+                    name="beginning"
+                    value={values.beginning}
+                    onChange={(e) =>
+                      setValues({ ...values, [e.target.name]: e.target.value })
+                    }
+                  />
+                </DateTimeControl>
+                <DateTimeControl>
                   <DateTimeLabel htmlFor="dueDate">
                     모집 마감 일자
                   </DateTimeLabel>

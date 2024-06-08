@@ -37,7 +37,6 @@ export const programPriceTypeToText: Record<string, string> = {
 };
 
 export const programParticipationTypeToText: Record<string, string> = {
-  ALL: '전체',
   LIVE: 'LIVE',
   FREE: '자율일정',
 };
