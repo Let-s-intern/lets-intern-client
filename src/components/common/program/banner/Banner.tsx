@@ -1,19 +1,16 @@
 import { useEffect, useRef, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
+import { Link } from 'react-router-dom';
 
 import { IProgramBanner } from '../../../../interfaces/interface';
 import axios from '../../../../utils/axios';
-import { Link } from 'react-router-dom';
 
 const Banner = () => {
   const imgRef = useRef<HTMLImageElement>(null);
   const innerRef = useRef<HTMLDivElement>(null);
-  const linkRef = useRef<HTMLAnchorElement>(null);
-  const bannerRef = useRef<HTMLDivElement>(null);
 
   const [bannerList, setBannerList] = useState<IProgramBanner[]>([]);
   const [bannerIndex, setBannerIndex] = useState(0);
-  const [bannerWidth, setBannerWidth] = useState(window.innerWidth - 288);
   const [isPlay, setIsPlay] = useState(true);
 
   const getBannerList = async () => {
@@ -56,23 +53,10 @@ const Banner = () => {
     };
   }, [bannerIndex, bannerList.length, isPlay]);
 
-  useEffect(() => {
-    const resizeBanner = () => {
-      const windowWidth = window.innerWidth;
-      if (windowWidth >= 991) setBannerWidth(window.innerWidth - 288);
-      else setBannerWidth(windowWidth);
-    };
-
-    window.addEventListener('resize', resizeBanner);
-  }, []);
-
   if (isLoading || bannerList.length === 0) return <></>;
 
   return (
-    <div
-      ref={bannerRef}
-      className="relative flex h-40 w-80 items-center justify-center overflow-hidden rounded-sm bg-static-0 text-static-100 md:h-56 md:w-[30rem] lg:h-80 lg:w-[40rem] xl:w-[59rem]"
-    >
+    <div className="relative flex h-40 w-[22rem] items-center overflow-hidden rounded-sm bg-static-0 text-static-100 md:h-44 md:w-[30rem] lg:h-56 lg:w-[40rem] xl:h-72 xl:w-[59rem]">
       <div
         ref={innerRef}
         className="flex flex-nowrap items-center transition-transform duration-300 ease-in-out"
@@ -80,11 +64,10 @@ const Banner = () => {
         {bannerList.map((banner) => (
           <Link
             to={banner.link}
-            ref={linkRef}
-            className={`w-80 md:w-[30rem] lg:w-[40rem] xl:w-[59rem]`}
+            key={banner.id}
+            className="w-[22rem] md:w-[30rem] lg:w-[40rem] xl:w-[59rem]"
           >
             <img
-              key={banner.id}
               ref={imgRef}
               className="w-full object-cover brightness-50"
               src={banner.imgUrl}
