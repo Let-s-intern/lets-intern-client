@@ -32,11 +32,14 @@ interface AllValue {
   participationType?: string;
   basicPrice?: string;
   basicDiscount?: string;
+  basicRefund?: string;
   premiumPrice?: string;
   premiumDiscount?: string;
+  premiumRefund?: string;
   priceType?: string;
   feeDueDate?: string;
   link?: string;
+  beginning?: string;
 }
 
 interface VodClassRequest {
@@ -64,6 +67,7 @@ interface LiveClassRequest {
   startDate?: string;
   endDate?: string;
   deadline?: string;
+  beginning?: string;
   progressType?: string;
   programTypeInfo?: {
     classificationInfo?: {
@@ -92,6 +96,7 @@ interface ChallengeRequest {
   startDate?: string;
   endDate?: string;
   deadline?: string;
+  beginning?: string;
   chatLink?: string;
   chatPassword?: string;
   challengeType?: string;
@@ -108,6 +113,8 @@ interface ChallengeRequest {
       deadline?: string;
       accountType?: string;
     };
+    charge?: number;
+    refund?: number;
     challengePriceType?: string;
     challengeUserType?: string;
     challengeParticipationType?: string;
@@ -167,6 +174,7 @@ const ProgramEditor = ({ mode }: ProgramEditorProps) => {
           startDate: data.startDate,
           endDate: data.endDate,
           dueDate: data.deadline,
+          beginning: data.beginning,
         });
       } else if (programType === 'LIVE') {
         setValue({
@@ -185,6 +193,7 @@ const ProgramEditor = ({ mode }: ProgramEditorProps) => {
           startDate: data.startDate,
           endDate: data.endDate,
           dueDate: data.deadline,
+          beginning: data.beginning,
           price: data.priceInfo.price,
           discount: data.priceInfo.discount,
           accountType: data.priceInfo.accountType,
@@ -411,6 +420,7 @@ const ProgramEditor = ({ mode }: ProgramEditorProps) => {
         startDate: value.startDate,
         endDate: value.endDate,
         deadline: value.dueDate,
+        beginning: value.beginning,
         programTypeInfo: [
           {
             classificationInfo: {
@@ -447,6 +457,8 @@ const ProgramEditor = ({ mode }: ProgramEditorProps) => {
             deadline: value.feeDueDate,
             accountType: value.accountType,
           },
+          charge: Number(value.basicPrice) || 0,
+          refund: Number(value.basicRefund) || 0,
           challengePriceType: value.feeType,
           challengeUserType: value.priceType,
           challengeParticipationType: value.participationType,
@@ -461,6 +473,8 @@ const ProgramEditor = ({ mode }: ProgramEditorProps) => {
             deadline: value.feeDueDate,
             accountType: value.accountType,
           },
+          charge: Number(value.premiumPrice) || 0,
+          refund: Number(value.premiumRefund) || 0,
           challengePriceType: value.feeType,
           challengeUserType: value.priceType,
           challengeParticipationType: value.participationType,
@@ -475,6 +489,7 @@ const ProgramEditor = ({ mode }: ProgramEditorProps) => {
         startDate: value.startDate,
         endDate: value.endDate,
         deadline: value.dueDate,
+        beginning: value.beginning,
         chatLink: value.openKakaoLink,
         chatPassword: value.openKakaoPassword,
         challengeType: value.challengeType,
