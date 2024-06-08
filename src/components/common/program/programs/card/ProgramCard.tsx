@@ -82,13 +82,13 @@ const ProgramCard = ({ program }: ProgramCardProps) => {
                 program.programInfo.programStatusType ===
                 PROGRAM_STATUS_KEY.POST,
             },
-            'text-1-semibold',
+            'text-1-semibold h-[1.625rem] overflow-hidden',
           )}
         >
           {program.programInfo.title}
         </h2>
         <p
-          className={`text-0.875 max-h-11 overflow-hidden ${
+          className={`text-0.875 h-11 overflow-hidden ${
             program.programInfo.programStatusType === PROGRAM_STATUS_KEY.POST
               ? 'text-neutral-50'
               : 'text-neutral-30'
@@ -133,5 +133,5 @@ const isEqual = (prevProps: ProgramCardProps, nextProps: ProgramCardProps) =>
   prevProps.program.programInfo.programType ===
     nextProps.program.programInfo.programType;
 
-// export default memo(ProgramCard, isEqual);
-export default ProgramCard;
+export default memo(ProgramCard, isEqual);
+//export default ProgramCard;
