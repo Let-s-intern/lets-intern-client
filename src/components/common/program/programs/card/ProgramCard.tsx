@@ -53,7 +53,7 @@ const ProgramCard = ({ program }: ProgramCardProps) => {
   return (
     <Link
       to={link}
-      className="min-w-40 flex flex-col overflow-hidden rounded-xs md:gap-4 md:rounded-md md:border md:border-neutral-85 md:p-2.5"
+      className="flex w-44 flex-col overflow-hidden rounded-xs md:w-52 md:gap-4 md:rounded-md md:border md:border-neutral-85 md:p-2.5 xl:w-56"
     >
       <img
         className="h-32 bg-neutral-80 object-cover md:h-44 md:rounded-xs"
