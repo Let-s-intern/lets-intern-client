@@ -33,16 +33,16 @@ const EmptyCardList = () => {
         <div
           key={i}
           onClick={() => window.open(program.link, '_blank')}
-          className="max-w-64 flex cursor-pointer flex-col overflow-hidden rounded-xs md:gap-4 md:rounded-md md:border md:border-neutral-85 md:p-2.5"
+          className="max-w-72 flex cursor-pointer flex-col overflow-hidden rounded-xs md:gap-4 md:rounded-md md:border md:border-neutral-85 md:p-2.5"
         >
           <img
-            className="h-32 object-cover md:h-44 md:rounded-xs"
+            className="h-32 object-cover md:h-36 md:rounded-xs lg:h-48"
             src={program.thumbnail}
             alt="프로그램 썸네일 배경"
           />
           <div className="flex flex-col gap-2 py-2">
             <h2 className="text-1-semibold">{program.title}</h2>
-            <p className="text-0.875 max-h-11 overflow-hidden text-neutral-30">
+            <p className="text-0.875 h-11 overflow-hidden text-neutral-30">
               {program.desc}
             </p>
             <button

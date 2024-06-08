@@ -183,7 +183,7 @@ const Programs = () => {
       console.error(error);
     }
   };
-  const { isLoading } = useQuery({
+  const { isSuccess, isPending } = useQuery({
     queryKey: ['program', pageable.page, searchParams.toString()],
     queryFn: getProgramList,
   });
@@ -287,7 +287,7 @@ const Programs = () => {
         </section>
 
         {/* 프로그램 리스트 없을 때 */}
-        {!isLoading && programList.length === 0 && (
+        {isSuccess && programList.length === 0 && (
           <p className="text-1 py-2 text-center text-neutral-0/40">
             찾으시는 프로그램이 아직 없어요ㅜㅡㅜ
             <span className="flex flex-col md:flex-row md:justify-center md:gap-1">
@@ -296,15 +296,15 @@ const Programs = () => {
             </span>
           </p>
         )}
-        {!isLoading && programList.length === 0 && (
-          <section className="grid grid-cols-2 gap-x-4 gap-y-5 md:grid-cols-3 md:gap-4 xl:px-[10%]">
+        {isSuccess && programList.length === 0 && (
+          <section className="grid grid-cols-2 gap-x-4 gap-y-5 md:grid-cols-3 md:gap-4">
             <EmptyCardList />
           </section>
         )}
 
         {/* 전체 프로그램 리스트 */}
         <section className="grid grid-cols-2 gap-x-4 gap-y-5 md:grid-cols-3 md:gap-4 xl:grid-cols-4">
-          {isLoading ? (
+          {isPending && !isSuccess ? (
             <div className="h-[80vh]"></div>
           ) : (
             programList.map((program: IProgram) => (
