@@ -195,11 +195,11 @@ const Programs = () => {
       />
       <main
         className={clsx(
-          'flex w-full max-w-[99vw] flex-col gap-16 px-5 py-8 md:px-10 lg:px-[10%]',
+          'flex w-full flex-col items-center gap-16 px-5 py-8 md:px-10 lg:px-[10%]',
         )}
       >
         {/* 상단 필터 */}
-        <section className="flex flex-col gap-3 md:flex-row">
+        <section className="flex w-full flex-col gap-3 md:flex-row">
           <div className="flex items-center justify-between">
             <div
               onClick={() => setIsOpen(true)}
@@ -291,7 +291,7 @@ const Programs = () => {
           </p>
         )}
         {!isLoading && programList.length === 0 && (
-          <section className="lg:xl-[10%] grid grid-cols-2 gap-x-4 gap-y-5 md:grid-cols-3 md:gap-4">
+          <section className="grid grid-cols-2 gap-x-4 gap-y-5 md:grid-cols-3 md:gap-4 xl:px-[10%]">
             <EmptyCardList />
           </section>
         )}
