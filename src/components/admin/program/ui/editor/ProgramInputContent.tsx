@@ -25,13 +25,6 @@ interface ProgramEditorProps {
   handleSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
   content: string;
   setContent: React.Dispatch<React.SetStateAction<string>>;
-  faqList: any;
-  faqIdList: any;
-  handleFAQAdd: () => void;
-  handleFAQDelete: (faqId: number) => void;
-  handleFAQChange: (e: any, faqId: number) => void;
-  handleFAQCheckChange: (e: any, faqId: number) => void;
-  handleFAQIdListReset: () => void;
   editorMode: 'create' | 'edit';
 }
 
@@ -41,13 +34,6 @@ const ProgramInputContent = ({
   handleSubmit,
   content,
   setContent,
-  faqList,
-  faqIdList,
-  handleFAQAdd,
-  handleFAQDelete,
-  handleFAQChange,
-  handleFAQCheckChange,
-  handleFAQIdListReset,
   editorMode,
 }: ProgramEditorProps) => {
   const navigate = useNavigate();
@@ -638,8 +624,6 @@ const ProgramInputContent = ({
                 />
                 <FAQEditor
                   programType={value.program}
-                  faqIdList={faqIdList}
-                  onFAQCheckChange={handleFAQCheckChange}
                   value={value}
                   setValue={setValue}
                 />

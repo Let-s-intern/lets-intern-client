@@ -1,34 +1,44 @@
-import styled from 'styled-components';
+import dayjs from 'dayjs';
+import 'dayjs/locale/ko';
 
 import TD from '../../../ui/table/regacy/TD';
 import ActionButton from '../../../ui/button/ActionButton';
-import formatDateString from '../../../../../utils/formatDateString';
+import { ProgramType } from '../../../../../pages/admin/review/Reviews';
 
 interface TableBodyProps {
-  programList: any;
+  programList: ProgramType[];
   copyReviewCreateLink: any;
 }
 
 const TableBody = ({ programList, copyReviewCreateLink }: TableBodyProps) => {
   return (
     <thead>
-      {programList.map((program: any) => (
-        <tr key={program.id}>
-          <TD whiteSpace="wrap">{program.title}</TD>
-          <TD>{formatDateString(program.announcementDate)}</TD>
+      {programList.map((program) => (
+        <tr key={program.programInfo.id}>
+          <TD whiteSpace="wrap">{program.programInfo.title}</TD>
           <TD>
-            <ButtonGroup>
-              <ActionButton to={`/admin/reviews/${program.id}`} bgColor="blue">
+            {program.programInfo.startDate
+              ? dayjs(program.programInfo.startDate).format(
+                  'YYYY년 MM월 DD일 (ddd) A hh:mm',
+                )
+              : '온라인'}
+          </TD>
+          <TD>
+            <div className="flex justify-center gap-2">
+              <ActionButton
+                to={`/admin/reviews/${program.programInfo.id}?type=${program.programInfo.programType}`}
+                bgColor="blue"
+              >
                 상세
               </ActionButton>
               <ActionButton
                 bgColor="lightBlue"
                 width="6rem"
-                onClick={() => copyReviewCreateLink(program.id)}
+                onClick={() => copyReviewCreateLink(program.programInfo.id)}
               >
                 링크 복사하기
               </ActionButton>
-            </ButtonGroup>
+            </div>
           </TD>
         </tr>
       ))}
@@ -37,9 +47,3 @@ const TableBody = ({ programList, copyReviewCreateLink }: TableBodyProps) => {
 };
 
 export default TableBody;
-
-const ButtonGroup = styled.div`
-  display: flex;
-  justify-content: center;
-  gap: 0.5rem;
-`;

@@ -12,19 +12,11 @@ interface FaqType {
 
 interface FAQEditorProps {
   programType: string;
-  faqIdList: any[];
-  onFAQCheckChange: (e: any, faqId: number) => void;
   value: any;
   setValue: (value: any) => void;
 }
 
-const FAQEditor = ({
-  programType,
-  faqIdList,
-  onFAQCheckChange,
-  value,
-  setValue,
-}: FAQEditorProps) => {
+const FAQEditor = ({ programType, value, setValue }: FAQEditorProps) => {
   const queryClient = useQueryClient();
 
   const [faqList, setFaqList] = useState<FaqType[]>([]);

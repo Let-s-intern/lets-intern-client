@@ -43,7 +43,7 @@ const OverviewContent = ({
           onClick={handleNextButtonClick}
           disabled={isApplied}
         >
-          신청 완료
+          {isApplied ? '신청 완료' : '신청하기'}
         </button>
       </div>
     </div>

@@ -299,97 +299,8 @@ const ProgramEditor = ({ mode }: ProgramEditorProps) => {
     },
   });
 
-  // useEffect(() => {
-  //   if (!programType) return;
-  //   const fetchFaqList = async () => {
-  //     try {
-  //       const res = await axios.get(`/faq/${programType}`);
-  //       setFaqList(res.data.faqList);
-  //     } catch (err) {
-  //       setError(err);
-  //     } finally {
-  //       setLoading(false);
-  //     }
-  //   };
-  //   fetchFaqList();
-  // }, [programType]);
-
-  useEffect(() => {
-    if (!faqList) return;
-    const newFaqIdList: number[] = [];
-    const originFaqIdList = faqList.map((faq: any) => faq.id);
-    for (let faqId of faqIdList) {
-      if (originFaqIdList.includes(faqId)) {
-        newFaqIdList.push(faqId);
-      }
-    }
-    newFaqIdList.sort();
-  }, [faqList, faqIdList]);
-
-  const handleFAQChange = (e: any, faqId: number) => {
-    const { name, value } = e.target;
-    console.log(name, value);
-    setFaqList(
-      faqList.map((faq: any) => {
-        if (faq.id === faqId) {
-          return {
-            ...faq,
-            [name]: value,
-          };
-        }
-        return faq;
-      }),
-    );
-  };
-
-  const handleFAQAdd = async () => {
-    if (!programType) {
-      alert('프로그램 유형을 선택해주세요.');
-      return;
-    }
-    try {
-      const res = await axios.post(`/faq/${programType}`, {
-        question: '',
-        answer: '',
-      });
-      setFaqList([...faqList, res.data]);
-    } catch (err) {
-      setError(err);
-    }
-  };
-
-  const handleFAQDelete = async (faqId: number) => {
-    if (!programType) {
-      alert('프로그램 유형을 선택해주세요.');
-      return;
-    }
-    try {
-      await axios.delete(`/faq/${faqId}`);
-      setFaqList(faqList.filter((faq: any) => faq.id !== faqId));
-      setFaqIdList(faqIdList.filter((id: number) => id !== faqId));
-    } catch (err) {
-      setError(err);
-    }
-  };
-
-  const handleFAQCheckChange = (e: any, faqId: number) => {
-    if (e.target.checked) {
-      setFaqIdList([...faqIdList, faqId]);
-    } else {
-      setFaqIdList(faqIdList.filter((id: number) => id !== faqId));
-    }
-  };
-
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    // if (!values.type) {
-    //   alert('프로그램 유형을 선택해주세요.');
-    //   return;
-    // }
-    // if (faqIdList.length === 0 || !faqIdList) {
-    //   alert('FAQ를 하나 이상 선택해주세요.');
-    //   return;
-    // }
     if (value.program === 'VOD') {
       const newValue: VodClassRequest = {
         title: value.title,
@@ -533,16 +444,9 @@ const ProgramEditor = ({ mode }: ProgramEditorProps) => {
     <ProgramInputContent
       value={value}
       content={content}
-      faqList={faqList}
-      faqIdList={faqIdList}
       setValue={setValue}
       setContent={setContent}
       handleSubmit={handleSubmit}
-      handleFAQAdd={handleFAQAdd}
-      handleFAQDelete={handleFAQDelete}
-      handleFAQChange={handleFAQChange}
-      handleFAQCheckChange={handleFAQCheckChange}
-      handleFAQIdListReset={handleFAQIdListReset}
       editorMode={mode}
     />
   );
