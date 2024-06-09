@@ -30,7 +30,16 @@ const InputContent = ({
   const [buttonDisabled, setButtonDisabled] = useState<boolean>(true);
 
   const handleNextButtonClick = () => {
+    const regex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
+    if (!regex.test(userInfo.contactEmail)) {
+      alert('렛츠커리어 정보 수신용 이메일의 형식이 올바르지 않습니다.');
+      return;
+    }
     setContentIndex(contentIndex + 1);
+  };
+
+  const handleBackButtonClick = () => {
+    setContentIndex(contentIndex - 2);
   };
 
   useEffect(() => {
@@ -93,13 +102,21 @@ const InputContent = ({
           )}
         </div>
       </ScrollableBox>
-      <button
-        className="flex w-full justify-center rounded-md bg-primary px-6 py-3 text-lg font-medium text-neutral-100 disabled:bg-neutral-70"
-        onClick={handleNextButtonClick}
-        disabled={buttonDisabled}
-      >
-        다음
-      </button>
+      <div className="flex items-center gap-2">
+        <button
+          className="flex w-full flex-1 justify-center rounded-md border-2 border-primary bg-neutral-100 px-6 py-3 text-lg font-medium text-primary-dark"
+          onClick={handleBackButtonClick}
+        >
+          이전 단계로
+        </button>
+        <button
+          className="flex w-full flex-1 justify-center rounded-md border-2 border-primary bg-primary px-6 py-3 text-lg font-medium text-neutral-100 disabled:border-neutral-70 disabled:bg-neutral-70"
+          onClick={handleNextButtonClick}
+          disabled={buttonDisabled}
+        >
+          다음
+        </button>
+      </div>
     </div>
   );
 };

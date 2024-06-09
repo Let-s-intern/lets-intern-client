@@ -18,9 +18,10 @@ const DateToggle = ({ programDate, programType }: DateToggleProps) => {
 
   const formatDateString = (dateString: string) => {
     const date = new Date(dateString);
-    return `${(date.getMonth() + 1)
+    return `${(date.getMonth() + 1).toString().padStart(2, '0')}.${date
+      .getDate()
       .toString()
-      .padStart(2, '0')}.${date.getDate()} (${date.toLocaleDateString('ko-KR', {
+      .padStart(2, '0')} (${date.toLocaleDateString('ko-KR', {
       weekday: 'short',
     })}) ${date.getHours() >= 12 ? '오후' : '오전'} ${
       date.getHours() >= 12 ? date.getHours() - 12 : date.getHours()
@@ -69,7 +70,6 @@ const DateToggle = ({ programDate, programType }: DateToggleProps) => {
             <span className="font-medium text-neutral-0 text-opacity-[94%]">
               {formatDurationString(programDate.startDate)} ~{' '}
               {formatDurationString(programDate.endDate)}
-              {/* 05.25 (토) ~ 06.21 (금) */}
             </span>
           </div>
         </div>

@@ -20,8 +20,8 @@ import {
 } from '../../../../../utils/convert';
 
 interface ProgramEditorProps {
-  values: any;
-  setValues: React.Dispatch<React.SetStateAction<any>>;
+  value: any;
+  setValue: React.Dispatch<React.SetStateAction<any>>;
   handleSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
   content: string;
   setContent: React.Dispatch<React.SetStateAction<string>>;
@@ -36,8 +36,8 @@ interface ProgramEditorProps {
 }
 
 const ProgramInputContent = ({
-  values,
-  setValues,
+  value,
+  setValue,
   handleSubmit,
   content,
   setContent,
@@ -127,9 +127,9 @@ const ProgramInputContent = ({
             id="program"
             label="프로그램"
             name="program"
-            value={values?.program || ''}
+            value={value?.program || ''}
             onChange={(e) => {
-              setValues({ ...values, [e.target.name]: e.target.value });
+              setValue({ ...value, [e.target.name]: e.target.value });
             }}
           >
             {Object.keys(newProgramTypeToText).map((type: string) => (
@@ -139,7 +139,7 @@ const ProgramInputContent = ({
             ))}
           </Select>
         </FormControl>
-        {values.program && (
+        {value.program && (
           <>
             <FormControl fullWidth>
               <InputLabel id="programType">프로그램 분류</InputLabel>
@@ -148,9 +148,9 @@ const ProgramInputContent = ({
                 id="programType"
                 label="프로그램 분류"
                 name="programType"
-                value={values?.programType || ''}
+                value={value?.programType || ''}
                 onChange={(e) => {
-                  setValues({ ...values, [e.target.name]: e.target.value });
+                  setValue({ ...value, [e.target.name]: e.target.value });
                 }}
               >
                 {Object.keys(newProgramTypeDetailToText).map((type: string) => (
@@ -160,7 +160,7 @@ const ProgramInputContent = ({
                 ))}
               </Select>
             </FormControl>
-            {values.program === 'LIVE' && (
+            {value.program === 'LIVE' && (
               <>
                 <FormControl fullWidth>
                   <InputLabel id="way">온/오프라인 여부</InputLabel>
@@ -169,9 +169,9 @@ const ProgramInputContent = ({
                     id="way"
                     label="온/오프라인 여부"
                     name="way"
-                    value={values?.way || ''}
+                    value={value?.way || ''}
                     onChange={(e) => {
-                      setValues({ ...values, [e.target.name]: e.target.value });
+                      setValue({ ...value, [e.target.name]: e.target.value });
                     }}
                   >
                     <MenuItem value="OFFLINE">오프라인</MenuItem>
@@ -179,33 +179,33 @@ const ProgramInputContent = ({
                     <MenuItem value="ALL">온오프라인 병행</MenuItem>
                   </Select>
                 </FormControl>
-                {(values.way === 'OFFLINE' || values.way === 'ALL') && (
+                {(value.way === 'OFFLINE' || value.way === 'ALL') && (
                   <Input
                     label="장소"
                     name="location"
-                    value={values.location ? values.location : ''}
+                    value={value.location ? value.location : ''}
                     placeholder="장소를 입력해주세요"
                     onChange={(e) =>
-                      setValues({ ...values, [e.target.name]: e.target.value })
+                      setValue({ ...value, [e.target.name]: e.target.value })
                     }
-                    disabled={!values.way || values.way === 'ONLINE'}
+                    disabled={!value.way || value.way === 'ONLINE'}
                   />
                 )}
               </>
             )}
-            {(values.program === 'LIVE' || values.program === 'VOD') && (
+            {(value.program === 'LIVE' || value.program === 'VOD') && (
               <Input
                 label="직무"
                 type="text"
                 name="job"
                 placeholder="직무를 입력해주세요"
-                value={values?.job || ''}
+                value={value?.job || ''}
                 onChange={(e) => {
-                  setValues({ ...values, [e.target.name]: e.target.value });
+                  setValue({ ...value, [e.target.name]: e.target.value });
                 }}
               />
             )}
-            {values.program === 'CHALLENGE' && (
+            {value.program === 'CHALLENGE' && (
               <>
                 <FormControl fullWidth>
                   <InputLabel id="challengeType">챌린지 구분</InputLabel>
@@ -214,9 +214,9 @@ const ProgramInputContent = ({
                     id="challengeType"
                     label="챌린지 구분"
                     name="challengeType"
-                    value={values.challengeType}
+                    value={value.challengeType}
                     onChange={(e) => {
-                      setValues({ ...values, [e.target.name]: e.target.value });
+                      setValue({ ...value, [e.target.name]: e.target.value });
                     }}
                   >
                     {Object.keys(challengeTypeToText).map((type: string) => (
@@ -233,9 +233,9 @@ const ProgramInputContent = ({
                     id="priceType"
                     label="가격 구분"
                     name="priceType"
-                    value={values.priceType}
+                    value={value.priceType}
                     onChange={(e) => {
-                      setValues({ ...values, [e.target.name]: e.target.value });
+                      setValue({ ...value, [e.target.name]: e.target.value });
                     }}
                   >
                     {Object.keys(programPriceTypeToText).map((type: string) => (
@@ -252,9 +252,9 @@ const ProgramInputContent = ({
                     id="participationType"
                     label="참여 형태"
                     name="participationType"
-                    value={values.participationType}
+                    value={value.participationType}
                     onChange={(e) => {
-                      setValues({ ...values, [e.target.name]: e.target.value });
+                      setValue({ ...value, [e.target.name]: e.target.value });
                     }}
                   >
                     {Object.keys(programParticipationTypeToText).map(
@@ -273,9 +273,9 @@ const ProgramInputContent = ({
               type="text"
               name="thumbnail"
               placeholder="썸네일 링크를 입력해주세요"
-              value={values?.thumbnail || ''}
+              value={value?.thumbnail || ''}
               onChange={(e) => {
-                setValues({ ...values, [e.target.name]: e.target.value });
+                setValue({ ...value, [e.target.name]: e.target.value });
               }}
             />
             <Input
@@ -283,9 +283,9 @@ const ProgramInputContent = ({
               type="text"
               name="title"
               placeholder="제목을 입력해주세요"
-              value={values?.title || ''}
+              value={value?.title || ''}
               onChange={(e) => {
-                setValues({ ...values, [e.target.name]: e.target.value });
+                setValue({ ...value, [e.target.name]: e.target.value });
               }}
             />
             <Input
@@ -293,70 +293,70 @@ const ProgramInputContent = ({
               type="text"
               name="shortDescription"
               placeholder="한 줄 설명을 입력해주세요"
-              value={values?.shortDescription || ''}
+              value={value?.shortDescription || ''}
               onChange={(e) => {
-                setValues({ ...values, [e.target.name]: e.target.value });
+                setValue({ ...value, [e.target.name]: e.target.value });
               }}
             />
-            {values.program === 'VOD' && (
+            {value.program === 'VOD' && (
               <Input
                 label="리틀리 링크"
                 type="text"
                 name="link"
                 placeholder="리틀리 링크를 입력해주세요"
-                value={values?.link || ''}
+                value={value?.link || ''}
                 onChange={(e) => {
-                  setValues({ ...values, [e.target.name]: e.target.value });
+                  setValue({ ...value, [e.target.name]: e.target.value });
                 }}
               />
             )}
-            {(values.program === 'CHALLENGE' || values.program === 'LIVE') && (
+            {(value.program === 'CHALLENGE' || value.program === 'LIVE') && (
               <Input
                 label="정원"
                 type="number"
                 name="headcount"
                 placeholder="총 정원 수를 입력해주세요"
-                value={values?.headcount || ''}
+                value={value?.headcount || ''}
                 onChange={(e) => {
-                  setValues({ ...values, [e.target.name]: e.target.value });
+                  setValue({ ...value, [e.target.name]: e.target.value });
                 }}
               />
             )}
-            {values.program === 'LIVE' && (
+            {value.program === 'LIVE' && (
               <Input
                 label="멘토 이름"
                 type="text"
                 name="mentorName"
                 placeholder="멘토 이름을 입력해주세요"
-                value={values?.mentorName || ''}
+                value={value?.mentorName || ''}
                 onChange={(e) => {
-                  setValues({ ...values, [e.target.name]: e.target.value });
+                  setValue({ ...value, [e.target.name]: e.target.value });
                 }}
               />
             )}
-            {values.program === 'CHALLENGE' && (
+            {value.program === 'CHALLENGE' && (
               <>
                 <Input
                   label="카카오톡 오픈채팅 링크"
                   name="openKakaoLink"
-                  value={values.openKakaoLink || ''}
+                  value={value.openKakaoLink || ''}
                   placeholder="카카오톡 오픈채팅 링크를 입력하세요"
                   onChange={(e) =>
-                    setValues({ ...values, [e.target.name]: e.target.value })
+                    setValue({ ...value, [e.target.name]: e.target.value })
                   }
                 />
                 <Input
                   label="카카오톡 오픈채팅 비밀번호"
                   name="openKakaoPassword"
-                  value={values.openKakaoPassword || ''}
+                  value={value.openKakaoPassword || ''}
                   placeholder="카카오톡 오픈채팅 비밀번호를 입력하세요"
                   onChange={(e) =>
-                    setValues({ ...values, [e.target.name]: e.target.value })
+                    setValue({ ...value, [e.target.name]: e.target.value })
                   }
                 />
               </>
             )}
-            {(values.program === 'CHALLENGE' || values.program === 'LIVE') && (
+            {(value.program === 'CHALLENGE' || value.program === 'LIVE') && (
               <FormControl fullWidth>
                 <InputLabel id="feeType">금액유형</InputLabel>
                 <Select
@@ -364,12 +364,12 @@ const ProgramInputContent = ({
                   id="feeType"
                   name="feeType"
                   label="금액유형"
-                  value={values?.feeType || ''}
+                  value={value?.feeType || ''}
                   onChange={(e) => {
-                    setValues({ ...values, [e.target.name]: e.target.value });
+                    setValue({ ...value, [e.target.name]: e.target.value });
                   }}
                 >
-                  {values.program === 'LIVE' && (
+                  {value.program === 'LIVE' && (
                     <MenuItem value="FREE">
                       {newProgramFeeTypeToText['FREE']}
                     </MenuItem>
@@ -377,7 +377,7 @@ const ProgramInputContent = ({
                   <MenuItem value="CHARGE">
                     {newProgramFeeTypeToText['CHARGE']}
                   </MenuItem>
-                  {values.program === 'CHALLENGE' && (
+                  {value.program === 'CHALLENGE' && (
                     <MenuItem value="REFUND">
                       {newProgramFeeTypeToText['REFUND']}
                     </MenuItem>
@@ -385,36 +385,36 @@ const ProgramInputContent = ({
                 </Select>
               </FormControl>
             )}
-            {(values.program === 'CHALLENGE' || values.program === 'LIVE') &&
-              (values.feeType === 'CHARGE' || values.feeType === 'REFUND') && (
+            {(value.program === 'CHALLENGE' || value.program === 'LIVE') &&
+              (value.feeType === 'CHARGE' || value.feeType === 'REFUND') && (
                 <>
-                  {values.program === 'CHALLENGE' &&
-                    (values.priceType === 'BASIC' ||
-                      values.priceType === 'ALL') && (
+                  {value.program === 'CHALLENGE' &&
+                    (value.priceType === 'BASIC' ||
+                      value.priceType === 'ALL') && (
                       <>
                         <Input
                           label="베이직 이용료 금액"
                           type="number"
                           name="basicPrice"
                           placeholder="이용료 금액을 입력해주세요"
-                          value={values?.basicPrice || ''}
+                          value={value?.basicPrice || ''}
                           onChange={(e) => {
-                            setValues({
-                              ...values,
+                            setValue({
+                              ...value,
                               [e.target.name]: e.target.value,
                             });
                           }}
                         />
-                        {values.feeType === 'REFUND' && (
+                        {value.feeType === 'REFUND' && (
                           <Input
                             label="베이직 보증금 금액"
                             type="number"
                             name="basicRefund"
                             placeholder="보증금 금액을 입력해주세요"
-                            value={values?.basicRefund || ''}
+                            value={value?.basicRefund || ''}
                             onChange={(e) => {
-                              setValues({
-                                ...values,
+                              setValue({
+                                ...value,
                                 [e.target.name]: e.target.value,
                               });
                             }}
@@ -425,43 +425,43 @@ const ProgramInputContent = ({
                           type="number"
                           name="basicDiscount"
                           placeholder="할인 금액을 입력해주세요"
-                          value={values?.basicDiscount || ''}
+                          value={value?.basicDiscount || ''}
                           onChange={(e) => {
-                            setValues({
-                              ...values,
+                            setValue({
+                              ...value,
                               [e.target.name]: e.target.value,
                             });
                           }}
                         />
                       </>
                     )}
-                  {values.program === 'CHALLENGE' &&
-                    (values.priceType === 'PREMIUM' ||
-                      values.priceType === 'ALL') && (
+                  {value.program === 'CHALLENGE' &&
+                    (value.priceType === 'PREMIUM' ||
+                      value.priceType === 'ALL') && (
                       <>
                         <Input
                           label="프리미엄 이용료 금액"
                           type="number"
                           name="premiumPrice"
                           placeholder="이용료 금액을 입력해주세요"
-                          value={values?.premiumPrice || ''}
+                          value={value?.premiumPrice || ''}
                           onChange={(e) => {
-                            setValues({
-                              ...values,
+                            setValue({
+                              ...value,
                               [e.target.name]: e.target.value,
                             });
                           }}
                         />
-                        {values.feeType === 'REFUND' && (
+                        {value.feeType === 'REFUND' && (
                           <Input
                             label="프리미엄 보증금 금액"
                             type="number"
                             name="premiumRefund"
                             placeholder="보증금 금액을 입력해주세요"
-                            value={values?.premiumRefund || ''}
+                            value={value?.premiumRefund || ''}
                             onChange={(e) => {
-                              setValues({
-                                ...values,
+                              setValue({
+                                ...value,
                                 [e.target.name]: e.target.value,
                               });
                             }}
@@ -472,27 +472,27 @@ const ProgramInputContent = ({
                           type="number"
                           name="premiumDiscount"
                           placeholder="할인 금액을 입력해주세요"
-                          value={values?.premiumDiscount || ''}
+                          value={value?.premiumDiscount || ''}
                           onChange={(e) => {
-                            setValues({
-                              ...values,
+                            setValue({
+                              ...value,
                               [e.target.name]: e.target.value,
                             });
                           }}
                         />
                       </>
                     )}
-                  {values.program === 'LIVE' && (
+                  {value.program === 'LIVE' && (
                     <>
                       <Input
                         label="이용료 금액"
                         type="number"
                         name="price"
                         placeholder="이용료 금액을 입력해주세요"
-                        value={values?.price || ''}
+                        value={value?.price || ''}
                         onChange={(e) => {
-                          setValues({
-                            ...values,
+                          setValue({
+                            ...value,
                             [e.target.name]: e.target.value,
                           });
                         }}
@@ -502,10 +502,10 @@ const ProgramInputContent = ({
                         type="number"
                         name="discount"
                         placeholder="할인 금액을 입력해주세요"
-                        value={values?.discount || ''}
+                        value={value?.discount || ''}
                         onChange={(e) => {
-                          setValues({
-                            ...values,
+                          setValue({
+                            ...value,
                             [e.target.name]: e.target.value,
                           });
                         }}
@@ -519,10 +519,10 @@ const ProgramInputContent = ({
                       id="accountType"
                       label="입금계좌 은행"
                       name="accountType"
-                      value={values?.accountType || ''}
+                      value={value?.accountType || ''}
                       onChange={(e) => {
-                        setValues({
-                          ...values,
+                        setValue({
+                          ...value,
                           [e.target.name]: e.target.value,
                         });
                       }}
@@ -538,19 +538,19 @@ const ProgramInputContent = ({
                     label="입금 계좌번호"
                     name="accountNumber"
                     placeholder="입금 계좌번호를 입력해주세요"
-                    value={values?.accountNumber || ''}
+                    value={value?.accountNumber || ''}
                     onChange={(e) => {
-                      setValues({
-                        ...values,
+                      setValue({
+                        ...value,
                         [e.target.name]: e.target.value,
                       });
                     }}
                   />
                 </>
               )}
-            {(values.program === 'CHALLENGE' || values.program === 'LIVE') && (
+            {(value.program === 'CHALLENGE' || value.program === 'LIVE') && (
               <>
-                {values.feeType === 'CHARGE' && (
+                {value.feeType === 'CHARGE' && (
                   <DateTimeControl>
                     <DateTimeLabel htmlFor="feeDueDate">
                       입금 마감 기한
@@ -559,10 +559,10 @@ const ProgramInputContent = ({
                       id="feeDueDate"
                       type="datetime-local"
                       name="feeDueDate"
-                      value={values.feeDueDate}
+                      value={value.feeDueDate}
                       onChange={(e) =>
-                        setValues({
-                          ...values,
+                        setValue({
+                          ...value,
                           [e.target.name]: e.target.value,
                         })
                       }
@@ -576,9 +576,9 @@ const ProgramInputContent = ({
                     id="startDate"
                     type="datetime-local"
                     name="startDate"
-                    value={values.startDate}
+                    value={value.startDate}
                     onChange={(e) =>
-                      setValues({ ...values, [e.target.name]: e.target.value })
+                      setValue({ ...value, [e.target.name]: e.target.value })
                     }
                     step={600}
                   />
@@ -589,9 +589,9 @@ const ProgramInputContent = ({
                     id="endDate"
                     type="datetime-local"
                     name="endDate"
-                    value={values.endDate}
+                    value={value.endDate}
                     onChange={(e) =>
-                      setValues({ ...values, [e.target.name]: e.target.value })
+                      setValue({ ...value, [e.target.name]: e.target.value })
                     }
                   />
                 </DateTimeControl>
@@ -603,9 +603,9 @@ const ProgramInputContent = ({
                     id="beginning"
                     type="datetime-local"
                     name="beginning"
-                    value={values.beginning}
+                    value={value.beginning}
                     onChange={(e) =>
-                      setValues({ ...values, [e.target.name]: e.target.value })
+                      setValue({ ...value, [e.target.name]: e.target.value })
                     }
                   />
                 </DateTimeControl>
@@ -617,15 +617,15 @@ const ProgramInputContent = ({
                     id="dueDate"
                     type="datetime-local"
                     name="dueDate"
-                    value={values.dueDate}
+                    value={value.dueDate}
                     onChange={(e) =>
-                      setValues({ ...values, [e.target.name]: e.target.value })
+                      setValue({ ...value, [e.target.name]: e.target.value })
                     }
                   />
                 </DateTimeControl>
               </>
             )}
-            {(values.program === 'CHALLENGE' || values.program === 'LIVE') && (
+            {(value.program === 'CHALLENGE' || value.program === 'LIVE') && (
               <>
                 <ReactQuill
                   modules={modules}
@@ -637,12 +637,11 @@ const ProgramInputContent = ({
                   }}
                 />
                 <FAQEditor
-                  faqList={faqList}
+                  programType={value.program}
                   faqIdList={faqIdList}
-                  onFAQAdd={handleFAQAdd}
-                  onFAQDelete={handleFAQDelete}
-                  onFAQChange={handleFAQChange}
                   onFAQCheckChange={handleFAQCheckChange}
+                  value={value}
+                  setValue={setValue}
                 />
               </>
             )}

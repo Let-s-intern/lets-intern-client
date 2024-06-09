@@ -7,6 +7,7 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 import axios from '../../../../../utils/axios';
 import { ProgramType } from '../../../../../pages/common/program/ProgramDetail';
 import PayContent from '../apply/content/PayContent';
+import CautionContent from '../apply/content/CautionContent';
 
 export interface ProgramDate {
   deadline: string;
@@ -70,7 +71,8 @@ const ApplySection = ({
     livePriceType: '',
     challengePriceType: '',
   });
-  const [originPhoneNumber, setOriginPhoneNumber] = useState<string>('');
+  const [isCautionChecked, setIsCautionChecked] = useState<boolean>(false);
+  const [isApplied, setIsApplied] = useState<boolean>(false);
 
   useQuery({
     queryKey: [programType, programId, 'application'],
@@ -91,7 +93,7 @@ const ApplySection = ({
         motivate: '',
         question: '',
       });
-      setOriginPhoneNumber(data.phoneNumber);
+      setIsApplied(data.applied);
       if (programType === 'challenge') {
         setPriceId(data.priceList[0].priceId);
         setPayInfo(data.priceList[0]);
@@ -105,16 +107,9 @@ const ApplySection = ({
 
   const applyProgram = useMutation({
     mutationFn: async () => {
-      if (originPhoneNumber !== userInfo.phoneNumber) {
-        await axios.patch('/user', {
-          phoneNum: userInfo.phoneNumber,
-        });
-      }
-      await axios.patch('/user', {
-        name: userInfo.name,
-        email: userInfo.email,
-        contactEmail: userInfo.contactEmail,
-      });
+      // await axios.patch('/user', {
+      //   contactEmail: userInfo.contactEmail,
+      // });
       const res = await axios.post(
         `/application/${programId}`,
         {
@@ -151,6 +146,7 @@ const ApplySection = ({
           programDate={programDate}
           programType={programType}
           programTitle={programTitle}
+          isApplied={isApplied}
         />
       )}
       {contentIndex === 1 && (
@@ -169,9 +165,19 @@ const ApplySection = ({
         />
       )}
       {contentIndex === 3 && (
+        <CautionContent
+          contentIndex={contentIndex}
+          setContentIndex={setContentIndex}
+          isCautionChecked={isCautionChecked}
+          setIsCautionChecked={setIsCautionChecked}
+        />
+      )}
+      {contentIndex === 4 && (
         <PayContent
           payInfo={payInfo}
           handleApplyButtonClick={handleApplyButtonClick}
+          contentIndex={contentIndex}
+          setContentIndex={setContentIndex}
         />
       )}
     </section>

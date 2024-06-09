@@ -32,6 +32,7 @@ const MotiveAnswerSection = ({
           rows={3}
           value={userInfo.motivate}
           onChange={handleInputChange}
+          maxLength={200}
         />
       </div>
       <div className="flex flex-col gap-1">
@@ -45,6 +46,7 @@ const MotiveAnswerSection = ({
           rows={3}
           value={userInfo.question}
           onChange={handleInputChange}
+          maxLength={200}
         />
       </div>
     </div>

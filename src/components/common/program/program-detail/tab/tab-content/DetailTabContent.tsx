@@ -18,7 +18,11 @@ const DetailTabContent = ({
     queryKey: ['detail'],
     queryFn: async () => {
       const res = await axios.get(`/${programType}/${programId}/content`);
-      setContent(res.data.data.content.description);
+      setContent(
+        programType === 'challenge'
+          ? res.data.data.content.description
+          : res.data.data.contentVo.description,
+      );
       return res.data;
     },
   });

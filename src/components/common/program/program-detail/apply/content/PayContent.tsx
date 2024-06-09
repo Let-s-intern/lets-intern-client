@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react';
+import { FaArrowLeft } from 'react-icons/fa6';
 
 import CouponSection from '../section/CouponSection';
 import PayInfoSection from '../section/PayInfoSection';
@@ -13,10 +14,21 @@ interface ScrollableDiv extends HTMLDivElement {
 interface PayContentProps {
   payInfo: PayInfo;
   handleApplyButtonClick: () => void;
+  contentIndex: number;
+  setContentIndex: (contentIndex: number) => void;
 }
 
-const PayContent = ({ payInfo, handleApplyButtonClick }: PayContentProps) => {
+const PayContent = ({
+  payInfo,
+  handleApplyButtonClick,
+  contentIndex,
+  setContentIndex,
+}: PayContentProps) => {
   const scrollableBoxRef = useRef<ScrollableDiv>(null);
+
+  const handleBackButtonClick = () => {
+    setContentIndex(contentIndex - 1);
+  };
 
   useEffect(() => {
     const handleScroll = () => {
@@ -47,7 +59,7 @@ const PayContent = ({ payInfo, handleApplyButtonClick }: PayContentProps) => {
     <div className="flex flex-col gap-6">
       <ScrollableBox
         ref={scrollableBoxRef}
-        className="flex max-h-[20rem] flex-col gap-6"
+        className="flex max-h-[24.5rem] flex-col gap-6"
       >
         {payInfo.challengePriceType !== 'FREE' &&
           payInfo.livePriceType !== 'FREE' && (
@@ -61,12 +73,22 @@ const PayContent = ({ payInfo, handleApplyButtonClick }: PayContentProps) => {
             </>
           )}
       </ScrollableBox>
-      <button
-        className="flex w-full justify-center rounded-md bg-primary px-6 py-3 text-lg font-medium text-neutral-100"
-        onClick={handleApplyButtonClick}
-      >
-        신청하기 {(payInfo.price - payInfo.discount).toLocaleString()}원
-      </button>
+      <div className="flex gap-2">
+        <button
+          className="flex w-full flex-1 items-center justify-center rounded-md border-2 border-primary bg-neutral-100 px-6 py-3 text-lg font-medium text-primary-dark"
+          onClick={handleBackButtonClick}
+        >
+          <span className="text-[1.25rem]">
+            <FaArrowLeft />
+          </span>
+        </button>
+        <button
+          className="flex w-full justify-center rounded-md bg-primary px-6 py-3 text-lg font-medium text-neutral-100"
+          onClick={handleApplyButtonClick}
+        >
+          신청하기 {(payInfo.price - payInfo.discount).toLocaleString()}원
+        </button>
+      </div>
     </div>
   );
 };
