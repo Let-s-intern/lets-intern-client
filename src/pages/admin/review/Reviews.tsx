@@ -8,17 +8,26 @@ import TableBody from '../../../components/admin/review/reviews/table-content/Ta
 import Table from '../../../components/admin/ui/table/regacy/Table';
 import AdminPagination from '../../../components/admin/ui/pagination/AdminPagination';
 
+export interface ProgramType {
+  programInfo: {
+    id: number;
+    title: string;
+    startDate: string;
+    programType: string;
+  };
+}
+
 const Reviews = () => {
   const [searchParams] = useSearchParams();
-  const [programList, setProgramList] = useState([]);
+  const [programList, setProgramList] = useState<ProgramType[]>([]);
   const [maxPage, setMaxPage] = useState(1);
 
-  const getProgramList = useQuery({
+  useQuery({
     queryKey: [
       'program',
       'admin',
       {
-        page: searchParams.get('page'),
+        page: searchParams.get('page') || 1,
         size: 10,
       },
     ],
@@ -26,16 +35,11 @@ const Reviews = () => {
       const res = await axios.get('/program/admin', {
         params: queryKey[2],
       });
+      setProgramList(res.data.data.programList);
+      setMaxPage(res.data.data.pageInfo.totalPages);
       return res.data;
     },
   });
-
-  useEffect(() => {
-    if (getProgramList.data) {
-      setProgramList(getProgramList.data.programList);
-      setMaxPage(getProgramList.data.pageInfo.totalPages);
-    }
-  }, [getProgramList]);
 
   const copyReviewCreateLink = (programId: number) => {
     const url = `${window.location.protocol}//${window.location.hostname}:${window.location.port}/program/${programId}/review/create`;

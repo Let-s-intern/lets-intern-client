@@ -22,60 +22,37 @@ const ReviewsDetail = () => {
   const [program, setProgram] = useState<{ title: string }>();
   const [maxPage, setMaxPage] = useState<number>(0);
 
-  const getReviewList = useQuery({
+  const progarmType = searchParams.get('type');
+
+  useQuery({
     queryKey: [
-      'review',
-      'admin',
+      progarmType?.toLowerCase(),
       params.programId,
       {
-        page: searchParams.get('page'),
+        page: searchParams.get('page') || 1,
         size: 10,
       },
     ],
     queryFn: async ({ queryKey }) => {
-      const res = await axios.get(`/review/admin/${params.programId}`, {
-        params: queryKey[3],
+      const res = await axios.get(`/${queryKey[0]}/${queryKey[1]}/reviews`, {
+        params: queryKey[2],
       });
+      setReviewList(res.data.data.reviewList);
+      setMaxPage(res.data.data.pageInfo.totalPages);
       return res.data;
     },
   });
 
-  useEffect(() => {
-    if (getReviewList.data) {
-      setReviewList(getReviewList.data.reviewList);
-      setMaxPage(getReviewList.data.pageInfo.totalPages);
-    }
-  }, [getReviewList]);
-
-  const getProgram = useQuery({
-    queryKey: ['program', 'admin', params.programId],
-    queryFn: async () => {
-      const res = await axios.get(`/program/${params.programId}`);
+  useQuery({
+    queryKey: [progarmType?.toLowerCase(), params.programId, 'title'],
+    queryFn: async ({ queryKey }) => {
+      const res = await axios.get(
+        `/${queryKey[0]}/${queryKey[1]}/${queryKey[2]}`,
+      );
+      setProgram({ title: res.data.data.title });
       return res.data;
     },
   });
-
-  useEffect(() => {
-    if (getProgram.data) {
-      setProgram(getProgram.data.programDetailVo);
-    }
-  }, [getProgram]);
-
-  const changeReviewVisible = useMutation({
-    mutationFn: async (params: { reviewId: number; status: string }) => {
-      const res = await axios.patch(`/review/${params.reviewId}`, {
-        status: params.status,
-      });
-      return res.data;
-    },
-    onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: ['review'] });
-    },
-  });
-
-  const handleVisibleChanged = async (reviewId: number, status: string) => {
-    changeReviewVisible.mutate({ reviewId, status });
-  };
 
   return (
     <div className="p-8">
@@ -85,10 +62,7 @@ const ReviewsDetail = () => {
       <main>
         <Table>
           <TableHead />
-          <TableBody
-            reviewList={reviewList}
-            handleVisibleChanged={handleVisibleChanged}
-          />
+          <TableBody reviewList={reviewList} />
         </Table>
         {reviewList.length > 0 && (
           <AdminPagination className="mt-4" maxPage={maxPage} />

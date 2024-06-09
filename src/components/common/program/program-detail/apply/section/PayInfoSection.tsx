@@ -12,7 +12,7 @@ const PayInfoSection = ({ payInfo }: PayInfoSectionProps) => {
       date.getMonth() + 1
     }월 ${date.getDate()}일 ${date.getHours() >= 12 ? '오후' : '오전'} ${
       date.getHours() % 12
-    }시${date.getMinutes() !== 0 && ` ${date.getMinutes()}분`}`;
+    }시${date.getMinutes() !== 0 ? ` ${date.getMinutes()}분` : ''}`;
   };
 
   return (
