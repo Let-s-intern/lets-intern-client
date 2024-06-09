@@ -32,11 +32,11 @@ const ProgramClassificationTag = ({
           'border-[#8444FF] bg-[#F2ECFC] text-[#8444FF]':
             classification === PROGRAM_CLASSIFICATION.PASS,
         },
-        'text-0.75-medium md:text-0.875-medium flex items-center justify-center gap-1 rounded-xs border px-2.5 py-0.5',
+        'text-0.75-medium md:text-0.875-medium flex items-center justify-center gap-1 rounded-sm border-[1.4px] px-3 py-0.5',
       )}
     >
       <img
-        className="w-3"
+        className="h-3 w-3"
         src={`/icons/${getIconName()}`}
         alt="커리어 단계 아이콘"
       />

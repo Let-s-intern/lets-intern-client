@@ -32,7 +32,7 @@ import { getKeyByValue } from '../../../utils/convert';
 import MuiPagination from '../../../components/common/program/pagination/MuiPagination';
 import EmptyCardList from '../../../components/common/program/programs/card/EmptyCardList';
 
-const initialPageable = { page: 0, size: 12 };
+const initialPageable = { page: 1, size: 12 };
 const initialPageInfo = {
   pageNum: 0,
   pageSize: 0,
@@ -315,7 +315,11 @@ const Programs = () => {
           )}
         </section>
 
-        <MuiPagination pageInfo={pageInfo} setPageable={setPageable} />
+        <MuiPagination
+          page={pageable.page}
+          pageInfo={pageInfo}
+          setPageable={setPageable}
+        />
         {!isFetching && <Banner />}
       </main>
     </div>

@@ -6,10 +6,11 @@ import React, { memo, useCallback } from 'react';
 
 export interface MuiPaginationProps {
   pageInfo: IPageInfo;
+  page: number;
   setPageable: React.Dispatch<React.SetStateAction<IPageable>>;
 }
 
-const MuiPagination = ({ pageInfo, setPageable }: MuiPaginationProps) => {
+const MuiPagination = ({ pageInfo, setPageable, page }: MuiPaginationProps) => {
   const matches = useMediaQuery('(min-width:640px)');
 
   const handleChange = useCallback(
@@ -24,6 +25,7 @@ const MuiPagination = ({ pageInfo, setPageable }: MuiPaginationProps) => {
     return (
       <ThemeProvider theme={theme}>
         <Pagination
+          page={page}
           onChange={handleChange}
           count={pageInfo.totalPages}
           color="primary"
