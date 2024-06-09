@@ -53,7 +53,7 @@ const ProgramCard = ({ program }: ProgramCardProps) => {
   return (
     <Link
       to={link}
-      className="flex w-44 flex-col overflow-hidden rounded-xs md:w-52 md:gap-4 md:rounded-md md:border md:border-neutral-85 md:p-2.5 xl:w-56"
+      className="flex w-full flex-col overflow-hidden rounded-xs md:w-52 md:gap-4 md:rounded-md md:border md:border-neutral-85 md:p-2.5 xl:w-56"
     >
       <img
         className="h-32 w-full bg-neutral-80 object-cover md:h-44 md:rounded-xs"
@@ -82,13 +82,13 @@ const ProgramCard = ({ program }: ProgramCardProps) => {
                 program.programInfo.programStatusType ===
                 PROGRAM_STATUS_KEY.POST,
             },
-            'text-1-semibold h-[1.625rem] overflow-hidden',
+            'text-1-semibold max-h-[52px]',
           )}
         >
           {program.programInfo.title}
         </h2>
         <p
-          className={`text-0.875 h-11 overflow-hidden ${
+          className={`text-0.875 max-h-11 overflow-hidden ${
             program.programInfo.programStatusType === PROGRAM_STATUS_KEY.POST
               ? 'text-neutral-50'
               : 'text-neutral-30'
@@ -100,16 +100,20 @@ const ProgramCard = ({ program }: ProgramCardProps) => {
         {program.programInfo.programStatusType !== PROGRAM_STATUS_KEY.POST &&
           program.programInfo.programType !== PROGRAM_TYPE.VOD && (
             <div>
-              <div className="flex gap-1.5">
-                <span className="text-0.75-medium">모집기간</span>
-                <span className="text-0.75-medium text-primary-dark">
+              <div className="flex items-center gap-1.5">
+                <span className="text-0.75-medium text-[0.69rem]">
+                  모집기간
+                </span>
+                <span className="text-0.75-medium text-[0.69rem] text-primary-dark">
                   {formatDate(program.programInfo.beginning!)}~
                   {formatDate(program.programInfo.deadline!)}
                 </span>
               </div>
-              <div className="flex gap-1.5">
-                <span className="text-0.75-medium">진행일정</span>
-                <span className="text-0.75-medium text-primary-dark">
+              <div className="flex items-center gap-1.5">
+                <span className="text-0.75-medium w-fit text-[0.69rem]">
+                  진행일정
+                </span>
+                <span className="text-0.75-medium text-[0.69rem] text-primary-dark">
                   {program.programInfo.programType === PROGRAM_TYPE.CHALLENGE
                     ? `${formatDate(
                         program.programInfo.startDate,
