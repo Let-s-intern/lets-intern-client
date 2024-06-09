@@ -40,6 +40,7 @@ interface AllValue {
   feeDueDate?: string;
   link?: string;
   beginning?: string;
+  faqList?: number[];
 }
 
 interface VodClassRequest {
@@ -133,7 +134,9 @@ const ProgramEditor = ({ mode }: ProgramEditorProps) => {
 
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<unknown>(null);
-  const [value, setValue] = useState<AllValue>({});
+  const [value, setValue] = useState<AllValue>({
+    faqList: [],
+  });
   const [content, setContent] = useState<string>('');
   const [faqList, setFaqList] = useState<any>([]);
   const [faqIdList, setFaqIdList] = useState<any>([]);
@@ -175,6 +178,7 @@ const ProgramEditor = ({ mode }: ProgramEditorProps) => {
           endDate: data.endDate,
           dueDate: data.deadline,
           beginning: data.beginning,
+          faqList: data.faqInfo?.map((faq: { id: number }) => faq.id),
         });
       } else if (programType === 'LIVE') {
         setValue({
@@ -198,6 +202,7 @@ const ProgramEditor = ({ mode }: ProgramEditorProps) => {
           discount: data.priceInfo.discount,
           accountType: data.priceInfo.accountType,
           accountNumber: data.priceInfo.accountNumber,
+          faqList: data.faqInfo?.map((faq: { id: number }) => faq.id),
         });
       } else if (programType === 'VOD') {
         setValue({
@@ -438,7 +443,7 @@ const ProgramEditor = ({ mode }: ProgramEditorProps) => {
           },
           livePriceType: value.feeType,
         },
-        faqInfo: [{ faqId: 1 }],
+        faqInfo: value.faqList?.map((faqId: number) => ({ faqId })),
       };
       if (mode === 'edit') {
         editLiveClass.mutate(newValue);
@@ -501,7 +506,7 @@ const ProgramEditor = ({ mode }: ProgramEditorProps) => {
           },
         ],
         priceInfo: newPriceInfo,
-        faqInfo: [{ faqId: 1 }],
+        faqInfo: value.faqList?.map((faqId: number) => ({ faqId })),
       };
       if (mode === 'edit') {
         editChallenge.mutate(newValue);
@@ -526,11 +531,11 @@ const ProgramEditor = ({ mode }: ProgramEditorProps) => {
 
   return (
     <ProgramInputContent
-      values={value}
+      value={value}
       content={content}
       faqList={faqList}
       faqIdList={faqIdList}
-      setValues={setValue}
+      setValue={setValue}
       setContent={setContent}
       handleSubmit={handleSubmit}
       handleFAQAdd={handleFAQAdd}

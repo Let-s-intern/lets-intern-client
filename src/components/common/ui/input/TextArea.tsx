@@ -27,7 +27,7 @@ const TextArea = (props: TextAreaProps) => {
   return (
     <div className="rounded-md bg-neutral-95 p-3">
       <textarea
-        className="text-1-medium w-full resize-none outline-none"
+        className="text-1-medium w-full resize-none bg-neutral-95 outline-none"
         {...props}
         onChange={handleTextAreaChange}
       />

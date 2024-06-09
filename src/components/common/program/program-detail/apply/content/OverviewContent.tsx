@@ -9,6 +9,7 @@ interface OverviewContentProps {
   programDate: ProgramDate;
   programType: ProgramType;
   programTitle: string;
+  isApplied: boolean;
 }
 
 const OverviewContent = ({
@@ -17,6 +18,7 @@ const OverviewContent = ({
   programDate,
   programType,
   programTitle,
+  isApplied,
 }: OverviewContentProps) => {
   const formatDateString = (dateString: string) => {
     const date = new Date(dateString);
@@ -37,10 +39,11 @@ const OverviewContent = ({
       <DateToggle programDate={programDate} programType={programType} />
       <div>
         <button
-          className="flex w-full justify-center rounded-md bg-primary px-6 py-3 text-lg font-medium text-neutral-100"
+          className="flex w-full justify-center rounded-md bg-primary px-6 py-3 text-lg font-medium text-neutral-100 disabled:bg-neutral-70"
           onClick={handleNextButtonClick}
+          disabled={isApplied}
         >
-          신청하기
+          신청 완료
         </button>
       </div>
     </div>

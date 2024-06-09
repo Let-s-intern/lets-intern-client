@@ -72,6 +72,7 @@ const ApplySection = ({
     challengePriceType: '',
   });
   const [isCautionChecked, setIsCautionChecked] = useState<boolean>(false);
+  const [isApplied, setIsApplied] = useState<boolean>(false);
 
   useQuery({
     queryKey: [programType, programId, 'application'],
@@ -92,6 +93,7 @@ const ApplySection = ({
         motivate: '',
         question: '',
       });
+      setIsApplied(data.applied);
       if (programType === 'challenge') {
         setPriceId(data.priceList[0].priceId);
         setPayInfo(data.priceList[0]);
@@ -144,6 +146,7 @@ const ApplySection = ({
           programDate={programDate}
           programType={programType}
           programTitle={programTitle}
+          isApplied={isApplied}
         />
       )}
       {contentIndex === 1 && (

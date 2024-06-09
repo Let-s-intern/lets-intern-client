@@ -94,11 +94,13 @@ const TableBody = ({
         {programList.map((program, index: number) => (
           <tr key={index}>
             <TD>
-              <span className="flex items-center gap-1">
-                {program.classificationList.map(
-                  (type) =>
-                    newProgramTypeDetailToText[type.programClassification],
-                )}
+              <span className="flex justify-center">
+                {program.classificationList
+                  .map(
+                    (type) =>
+                      newProgramTypeDetailToText[type.programClassification],
+                  )
+                  .join(', ')}
               </span>
             </TD>
             <TD>{newProgramTypeToText[program.programInfo.programType]}</TD>

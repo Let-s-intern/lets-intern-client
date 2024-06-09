@@ -42,10 +42,10 @@ const Programs = () => {
   const currentPage = searchParams.get('page') || 1;
 
   const getProgramList = useQuery({
-    queryKey: ['program'],
+    queryKey: ['program', 'admin'],
     queryFn: async () => {
       try {
-        const res = await axios.get('/program', {
+        const res = await axios.get('/program/admin', {
           params: { page: currentPage, size: sizePerPage },
         });
         setProgramList(res.data.data.programList);
