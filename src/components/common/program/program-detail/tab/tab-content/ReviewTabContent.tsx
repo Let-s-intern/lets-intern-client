@@ -39,7 +39,7 @@ const ReviewTabContent = ({
 
   return (
     <div className="py-2">
-      <ul>
+      <ul className="flex flex-col gap-2">
         {reviewList.map((review, index) => (
           <ReviewItem key={index} review={review} />
         ))}

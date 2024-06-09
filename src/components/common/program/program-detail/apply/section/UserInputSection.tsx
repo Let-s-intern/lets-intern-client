@@ -51,6 +51,7 @@ const UserInputSection = ({ userInfo, setUserInfo }: UserInputSectionProps) => {
           placeholder="김렛츠"
           value={userInfo.name}
           onChange={handleInputChange}
+          disabled
         />
       </div>
       <div className="flex flex-col gap-1">
@@ -63,6 +64,7 @@ const UserInputSection = ({ userInfo, setUserInfo }: UserInputSectionProps) => {
           placeholder="010-0000-0000"
           value={userInfo.phoneNumber}
           onChange={handleInputChange}
+          disabled
         />
       </div>
       <div className="flex flex-col gap-1">
