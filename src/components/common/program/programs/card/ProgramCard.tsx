@@ -96,20 +96,17 @@ const ProgramCard = ({ program }: ProgramCardProps) => {
         >
           {program.programInfo.shortDesc}
         </p>
-        {/* VOD 클래스 & 마감된 프로그램 - 진행일정, 모집마감 없음 */}
+        {/* VOD 클래스 & 마감된 프로그램 - 진행기간, 모집기간 없음 */}
         {program.programInfo.programStatusType !== PROGRAM_STATUS_KEY.POST &&
           program.programInfo.programType !== PROGRAM_TYPE.VOD && (
             <div>
-              {/* 모집 중인 프로그램 - 모집마감일자 표시 */}
-              {program.programInfo.programStatusType ===
-                PROGRAM_STATUS_KEY.PROCEEDING && (
-                <div className="flex gap-1.5">
-                  <span className="text-0.75-medium">모집마감</span>
-                  <span className="text-0.75-medium text-primary-dark">
-                    ~{formatDate(program.programInfo.deadline!)}
-                  </span>
-                </div>
-              )}
+              <div className="flex gap-1.5">
+                <span className="text-0.75-medium">모집기간</span>
+                <span className="text-0.75-medium text-primary-dark">
+                  {formatDate(program.programInfo.beginning!)}~
+                  {formatDate(program.programInfo.deadline!)}
+                </span>
+              </div>
               <div className="flex gap-1.5">
                 <span className="text-0.75-medium">진행일정</span>
                 <span className="text-0.75-medium text-primary-dark">
