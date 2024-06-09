@@ -1,3 +1,4 @@
+import dayjs from 'dayjs';
 import { bankTypeToText } from '../../../../../../utils/convert';
 import { PayInfo } from '../../section/ApplySection';
 
@@ -27,7 +28,9 @@ const PayInfoSection = ({ payInfo }: PayInfoSectionProps) => {
         </div>
         <div className="flex items-center justify-between p-1.5 text-neutral-0">
           <span className="text-sm">입금 마감 기한</span>
-          <span className="text-sm">{formatDateString(payInfo.deadline)}</span>
+          <span className="text-sm">
+            {dayjs(payInfo.deadline).format('YYYY년 M월 D일 A hh시 mm분')}
+          </span>
         </div>
       </div>
     </div>

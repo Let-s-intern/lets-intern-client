@@ -3,6 +3,7 @@ import { MdKeyboardArrowDown, MdKeyboardArrowUp } from 'react-icons/md';
 
 import { ProgramDate } from '../section/ApplySection';
 import { ProgramType } from '../../../../../pages/common/program/ProgramDetail';
+import dayjs from 'dayjs';
 
 interface DateToggleProps {
   programDate: ProgramDate;
@@ -14,28 +15,6 @@ const DateToggle = ({ programDate, programType }: DateToggleProps) => {
 
   const handleToggleClick = () => {
     setIsContentOpen(!isContentOpen);
-  };
-
-  const formatDateString = (dateString: string) => {
-    const date = new Date(dateString);
-    return `${(date.getMonth() + 1).toString().padStart(2, '0')}.${date
-      .getDate()
-      .toString()
-      .padStart(2, '0')} (${date.toLocaleDateString('ko-KR', {
-      weekday: 'short',
-    })}) ${date.getHours() >= 12 ? '오후' : '오전'} ${
-      date.getHours() >= 12 ? date.getHours() - 12 : date.getHours()
-    }시 ${date.getMinutes() !== 0 && `${date.getMinutes()}분`}`;
-  };
-
-  const formatDurationString = (dateString: string) => {
-    const date = new Date(dateString);
-    return `${(date.getMonth() + 1).toString().padStart(2, '0')}.${date
-      .getDate()
-      .toString()
-      .padStart(2, '0')} (${date.toLocaleDateString('ko-KR', {
-      weekday: 'short',
-    })})`;
   };
 
   return (
@@ -54,22 +33,26 @@ const DateToggle = ({ programDate, programType }: DateToggleProps) => {
           <div className="flex items-center justify-between p-1.5">
             <span className="text-neutral-0 text-opacity-[74%]">모집 마감</span>
             <span className="font-medium text-neutral-0 text-opacity-[94%]">
-              {formatDateString(programDate.deadline)}
+              {dayjs(programDate.deadline).format(
+                `MM.DD (ddd) A hh시${
+                  dayjs(programDate.deadline).minute() !== 0 ? ' mm분' : ''
+                }`,
+              )}
             </span>
           </div>
           {programType === 'challenge' && (
             <div className="flex items-center justify-between p-1.5">
               <span className="text-neutral-0 text-opacity-[74%]">OT 일시</span>
               <span className="font-medium text-neutral-0 text-opacity-[94%]">
-                {formatDurationString(programDate.startDate)} 오전 10시
+                {dayjs(programDate.startDate).format('MM.DD (ddd)')} 오전 10시
               </span>
             </div>
           )}
           <div className="flex items-center justify-between p-1.5">
             <span className="text-neutral-0 text-opacity-[74%]">진행 기간</span>
             <span className="font-medium text-neutral-0 text-opacity-[94%]">
-              {formatDurationString(programDate.startDate)} ~{' '}
-              {formatDurationString(programDate.endDate)}
+              {dayjs(programDate.startDate).format('MM.DD (ddd)')} ~{' '}
+              {dayjs(programDate.endDate).format('MM.DD (ddd)')}
             </span>
           </div>
         </div>
