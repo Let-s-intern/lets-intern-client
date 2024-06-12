@@ -1,4 +1,5 @@
 import { IProgramGridItem } from '../../../../../interfaces/Program.interface';
+import { PROGRAM_CLASSIFICATION } from '../../../../../utils/programConst';
 import ProgramGridItem from './ProgramGridItem';
 import ProgramPointItem from './ProgramPointItem';
 
@@ -11,16 +12,19 @@ const programList: IProgramGridItem[] = [
       '찾지 못한 취업준비생',
     ],
     bgColor: 'bg-primary-10',
+    link: `/program?classification=${PROGRAM_CLASSIFICATION.CAREER_SEARCH}`,
   },
   {
     title: '서류 작성 단계',
     descriptionList: ['이력서, 포트폴리오', '준비가 어려운', '취업준비생'],
     bgColor: 'bg-primary-20',
+    link: `/program?classification=${PROGRAM_CLASSIFICATION.DOCUMENT_PREPARATION}`,
   },
   {
     title: '면접 준비 단계',
     descriptionList: ['서류를 합격했지만,', '면접 준비에 어려움을 겪는 사람'],
     bgColor: 'bg-primary-xlight',
+    link: `/program?classification=${PROGRAM_CLASSIFICATION.MEETING_PREPARATION}`,
   },
 ];
 
@@ -38,7 +42,7 @@ const ProgramSection = () => {
       </div>
       <ul className="mt-6 grid grid-cols-2 gap-4 lg:grid-cols-4">
         {programList.map((program) => (
-          <ProgramGridItem program={program} />
+          <ProgramGridItem key={program.title} program={program} />
         ))}
         <ProgramPointItem />
       </ul>

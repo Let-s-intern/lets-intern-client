@@ -55,6 +55,7 @@ export interface IProgramGridItem {
   title: string;
   descriptionList: string[];
   bgColor: string;
+  link: string;
 }
 
 export type filterStatuskey = keyof typeof PROGRAM_FILTER_STATUS;
