@@ -66,6 +66,7 @@ import ReviewCreate from './pages/common/review/ReviewCreate';
 import ChallengeMissionManagement from './pages/admin/challenge/ChallengeMissionManagement';
 import ProgramDetail from './pages/common/program/ProgramDetail';
 import ProgramCreate from './pages/admin/program/ProgramCreate';
+import Home from './pages/common/home/Home';
 
 const Router = () => {
   return (
@@ -74,7 +75,7 @@ const Router = () => {
       <Routes>
         <Route path="/" element={<Layout />}>
           {/* / */}
-          <Route path="" element={<HomeRegacy />} />
+          <Route path="" element={<Home />} />
           {/* /about */}
           <Route path="about" element={<About />} />
           {/* /program/challenge/:programId */}

@@ -51,6 +51,12 @@ export interface IFilter {
   [key: string]: boolean;
 }
 
+export interface IProgramGridItem {
+  title: string;
+  descriptionList: string[];
+  bgColor: string;
+}
+
 export type filterStatuskey = keyof typeof PROGRAM_FILTER_STATUS;
 export type filterClassificationkey =
   keyof typeof PROGRAM_FILTER_CLASSIFICATION;
