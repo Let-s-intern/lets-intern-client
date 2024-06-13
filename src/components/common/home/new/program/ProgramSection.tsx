@@ -3,6 +3,11 @@ import { PROGRAM_CLASSIFICATION } from '../../../../../utils/programConst';
 import ProgramGridItem from './ProgramGridItem';
 import ProgramPointItem from './ProgramPointItem';
 
+const PROGRAM_SECTION = {
+  TITLE: ['내 커리어 단계에 딱 맞는', '프로그램을 찾아보세요'],
+  DESC: '원하는 키워드를 클릭해보세요!',
+};
+
 const programList: IProgramGridItem[] = [
   {
     title: '커리어 탐색 단계',
@@ -33,11 +38,12 @@ const ProgramSection = () => {
     <section>
       <div className="flex flex-col gap-1">
         <h1 className="text-1.125-bold lg:text-1.375-bold xl:text-1.5-semibold flex flex-col gap-1 text-neutral-0 md:flex-row">
-          <span>내 커리어 단계에 딱 맞는</span>
-          <span>프로그램을 찾아보세요</span>
+          {PROGRAM_SECTION.TITLE.map((title) => (
+            <span>{title}</span>
+          ))}
         </h1>
         <span className="text-0.75 text-neutral-20">
-          원하는 키워드를 클릭해보세요!
+          {PROGRAM_SECTION.DESC}
         </span>
       </div>
       <ul className="mt-6 grid grid-cols-2 gap-4 lg:grid-cols-4">

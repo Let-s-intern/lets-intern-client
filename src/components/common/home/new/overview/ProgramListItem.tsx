@@ -1,15 +1,55 @@
-import { Link } from 'react-router-dom';
-import Badge from '../ui/Badge';
-import { FaChevronRight } from 'react-icons/fa';
-import clsx from 'clsx';
+import { PROGRAM_STATUS } from '../../../../../utils/programConst';
+import ProgramStatusTag from '../../../program/programs/card/ProgramStatusTag';
 
-export interface ProgramListItemProps {
-  status: 'IN_PROGRESS' | 'BEFORE';
-  title: string;
-  openDate?: string;
-}
+const programOverviewList = [
+  {
+    programInfo: {
+      id: 0,
+      programType: 'LIVE',
+      programStatusType: 'PROCEEDING',
+      title: 'AI 개발자의 커리어 세션',
+      thumbnail: '/images/home/home-program-default.png',
+      shortDesc: '29CM 백엔드 개발자',
+      startDate: '2024-06-13T13:50:16.388Z',
+      endDate: '2024-06-13T13:50:16.388Z',
+      beginning: '2024-06-13T13:50:16.388Z',
+      deadline: '2024-06-13T13:50:16.388Z',
+    },
+    classificationList: { programClassification: 'CAREER_SEARCH' },
+  },
+  {
+    programInfo: {
+      id: 1,
+      programType: 'CHALLENGE',
+      programStatusType: 'PROCEEDING',
+      title: '면접 완성 1주 챌린지',
+      thumbnail: '/images/home/home-program-default.png',
+      shortDesc: '1주만에 면접을 끝내보자',
+      startDate: '2024-06-13T13:50:16.388Z',
+      endDate: '2024-06-13T13:50:16.388Z',
+      beginning: '2024-06-13T13:50:16.388Z',
+      deadline: '2024-06-13T13:50:16.388Z',
+    },
+    classificationList: { programClassification: 'DOCUMENT_PREPARATION' },
+  },
+  {
+    programInfo: {
+      id: 2,
+      programType: 'VOD',
+      programStatusType: 'PROCEEDING',
+      title: 'VOD 클래스',
+      thumbnail: '/images/home/home-program-default.png',
+      shortDesc: 'VOD 클래스로 Skill up 하기',
+      startDate: '2024-06-13T13:50:16.388Z',
+      endDate: '2024-06-13T13:50:16.388Z',
+      beginning: '2024-06-13T13:50:16.388Z',
+      deadline: '2024-06-13T13:50:16.388Z',
+    },
+    classificationList: { programClassification: 'MEETING_PREPARATION' },
+  },
+];
 
-const ProgramListItem = ({ status, title, openDate }: ProgramListItemProps) => {
+const ProgramListItem = () => {
   const formatDateString = (dateString: string | undefined) => {
     if (!dateString) return '';
     const date = new Date(dateString);
@@ -19,41 +59,23 @@ const ProgramListItem = ({ status, title, openDate }: ProgramListItemProps) => {
   };
 
   return (
-    <li
-      className={clsx('flex h-[3.375rem] items-center justify-between px-3', {
-        'bg-primary bg-opacity-10': status === 'IN_PROGRESS',
-        'bg-neutral-100': status === 'BEFORE',
-      })}
-    >
-      <div className="flex items-center gap-2">
-        <h3 className="text-1-semibold">{title}</h3>
-        {status === 'IN_PROGRESS' ? (
-          <Badge color="primary">모집 중</Badge>
-        ) : (
-          status === 'BEFORE' && (
-            <span className="text-0.75 text-neutral-30">
-              {formatDateString(openDate)} 오픈 예정
-            </span>
-          )
-        )}
+    <li className="flex items-center rounded-xs border border-neutral-85">
+      <img
+        className="h-[7.5rem] w-[7.5rem] rounded-xs"
+        src="/images/home/home-program-default.png"
+        alt="프로그램 썸네일"
+      />
+      <div className="w-full px-3">
+        <div className="mb-2 flex flex-col items-start gap-1">
+          <ProgramStatusTag status={PROGRAM_STATUS.PROCEEDING} />
+          <h2 className="text-1-medium">VOD 클래스</h2>
+          <span className="text-0.75">29CM 백엔드 개발자</span>
+        </div>
+        <div className="text-0.75-medium flex w-full justify-end gap-1.5">
+          <span>진행기간</span>
+          <span className="text-primary-dark">24.04.04 ~ 24.04.04</span>
+        </div>
       </div>
-      {status === 'IN_PROGRESS' ? (
-        <button className="text-0.875-semibold rounded-sm bg-primary px-4 py-2 text-static-100">
-          신청하기
-        </button>
-      ) : (
-        status === 'BEFORE' && (
-          <Link
-            to="#"
-            className="text-0.875-medium flex items-center gap-0.5 text-neutral-30"
-          >
-            <span>사전알림 신청</span>
-            <i className="text-0.75 p-1">
-              <FaChevronRight />
-            </i>
-          </Link>
-        )
-      )}
     </li>
   );
 };
