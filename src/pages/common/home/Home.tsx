@@ -7,7 +7,7 @@ import ReviewSection from '../../../components/common/home/new/review/ReviewSect
 const Home = () => {
   return (
     <div className="px-5">
-      <div className="mx-auto mb-16 mt-6 flex max-w-[1080px] flex-col gap-16 sm:gap-20">
+      <div className="mx-auto my-6 flex max-w-[1080px] flex-col gap-16 sm:gap-20">
         <ProgramSection />
         <ProgramOverviewSection />
         <AdvantageSection />
