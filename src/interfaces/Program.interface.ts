@@ -23,7 +23,7 @@ export interface DailyMission {
 }
 
 export interface IClassification {
-  programClassification: keyof typeof PROGRAM_TYPE_KEY;
+  programClassification: keyof typeof PROGRAM_CLASSIFICATION;
 }
 
 export type IProgramStatusType = keyof typeof PROGRAM_STATUS_KEY;
