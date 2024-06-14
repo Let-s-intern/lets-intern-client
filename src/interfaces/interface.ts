@@ -30,3 +30,24 @@ export interface IPageInfo {
   totalElements: number;
   totalPages: number;
 }
+
+// 스프린트 4 ~
+export interface IChallengeListRes {
+  programList: {
+    id: number;
+    title: string;
+    shortDesc: string;
+    thumbnail: string; // link
+    startDate: string; // "2024-06-14T13:23:15.987Z",
+    endDate: string; // "2024-06-14T13:23:15.987Z",
+    beginning: string; // "2024-06-14T13:23:15.987Z",
+    deadline: string; // "2024-06-14T13:23:15.987Z",
+    createDate: string; // "2024-06-14T13:23:15.987Z"
+  }[];
+  pageInfo: {
+    pageNum: number;
+    pageSize: number;
+    totalElements: number;
+    totalPages: number;
+  };
+}
