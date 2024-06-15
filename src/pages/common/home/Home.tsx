@@ -5,10 +5,12 @@ import PassReviewSection from '../../../components/common/home/new/pass-review/P
 import ReviewSection from '../../../components/common/home/new/review/ReviewSection';
 import Banner from '../../../components/common/home/new/banner/Banner';
 import Popup from '../../../components/common/home/new/ui/Popup';
+import TopBanner from '../../../components/common/home/new/banner/TopBanner';
 
 const Home = () => {
   return (
     <>
+      <TopBanner />
       <div className="flex justify-center px-5">
         <div className="mb-6 flex w-full max-w-[1080px] flex-col gap-16 lg:gap-20">
           <Banner />

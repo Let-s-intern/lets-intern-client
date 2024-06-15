@@ -4,6 +4,7 @@ import { Outlet, useLocation } from 'react-router-dom';
 import ChannelService from '../../../../ChannelService';
 import Footer from './footer/Footer';
 import NavBar from './nav/NavBar';
+import TopBanner from '../../home/new/banner/TopBanner';
 
 const Layout = () => {
   const location = useLocation();
