@@ -1,20 +1,27 @@
 import MenuLink from './MenuLink';
 import Icon from './Icon';
 import DocumentLink from './DocumentLink';
+import Notice from './Notice';
 
 const Footer = () => {
   return (
-    <footer className="border-t-1 w-full border-neutral-80 px-5 pb-6 pt-10 lg:px-10 xl:px-52">
+    <footer className="border-t-1 w-full border-neutral-80 bg-neutral-85 px-5 pb-6 pt-10 lg:px-10 xl:px-52">
       <div className="mb-7 flex flex-col gap-5 lg:flex-row lg:items-start xl:gap-16">
-        <img className="h-5 w-fit" src="/logo/letscareer-logo.png" alt="Logo" />
-        <div className="flex w-80 items-center gap-8">
-          <MenuLink to="/">홈</MenuLink>
-          <MenuLink to="/about">브랜드 스토리</MenuLink>
-          <MenuLink to="/program">프로그램</MenuLink>
-          <MenuLink to="/blog">블로그</MenuLink>
+        <img className="w-[7.5rem]" src="/logo/logo.svg" alt="Logo" />
+        <div className="flex flex-col gap-8">
+          <div className="flex w-80 items-center gap-8">
+            <MenuLink to="/">홈</MenuLink>
+            <MenuLink to="/about">브랜드 스토리</MenuLink>
+            <MenuLink to="/program">프로그램</MenuLink>
+            <MenuLink to="/blog">블로그</MenuLink>
+          </div>
+          <Notice className="hidden lg:flex" />
         </div>
         <div>
-          <span className="mb-1.5 block text-neutral-0">고객센터</span>
+          <div className="mb-1.5 flex items-center gap-10">
+            <span className="text-neutral-0">고객센터</span>
+            <Notice className="lg:hidden" />
+          </div>
           <p className="text-0.875 w-80 text-neutral-0/[.65]">
             홈페이지 좌측 하단의 [이메일] 이나 우측 하단 [문의하기]를 통해 1:1
             채팅상담을 이용하실 수 있습니다.

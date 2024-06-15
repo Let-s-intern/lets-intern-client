@@ -1,58 +1,56 @@
-import ProgramGridItem, { ProgramGridItemProps } from './ProgramGridItem';
+import { IProgramGridItem } from '../../../../../interfaces/Program.interface';
+import { PROGRAM_CLASSIFICATION } from '../../../../../utils/programConst';
+import Description from '../ui/Description';
+import Heading from '../ui/Heading';
+import ProgramGridItem from './ProgramGridItem';
+import ProgramPointItem from './ProgramPointItem';
+
+const PROGRAM_SECTION = {
+  TITLE: ['내 커리어 단계에 딱 맞는', '프로그램을 찾아보세요'],
+  DESC: '원하는 키워드를 클릭해보세요!',
+};
+
+const programList: IProgramGridItem[] = [
+  {
+    title: '커리어 탐색 단계',
+    descriptionList: [
+      '아직 본인만의',
+      '커리어 로드맵을',
+      '찾지 못한 취업준비생',
+    ],
+    bgColor: 'bg-primary-10',
+    link: `/program?classification=${PROGRAM_CLASSIFICATION.CAREER_SEARCH}`,
+  },
+  {
+    title: '서류 작성 단계',
+    descriptionList: ['이력서, 포트폴리오', '준비가 어려운', '취업준비생'],
+    bgColor: 'bg-primary-20',
+    link: `/program?classification=${PROGRAM_CLASSIFICATION.DOCUMENT_PREPARATION}`,
+  },
+  {
+    title: '면접 준비 단계',
+    descriptionList: ['서류를 합격했지만,', '면접 준비에 어려움을 겪는 사람'],
+    bgColor: 'bg-primary-xlight',
+    link: `/program?classification=${PROGRAM_CLASSIFICATION.MEETING_PREPARATION}`,
+  },
+];
 
 const ProgramSection = () => {
-  const programList: ProgramGridItemProps[] = [
-    {
-      imageColor: 'blue',
-      status: 'IN_PROGRESS',
-      title: '인턴 지원 2주 챌린지',
-      description: '2주동안 ~을 통해 경험정리 및 지원까지 한번에 최대글자수는',
-      startDate: '2024-04-01T00:00Z',
-      endDate: '2024-04-20T00:00Z',
-    },
-    {
-      imageColor: 'green',
-      status: 'BEFORE',
-      title: '부트캠프',
-      description: '2주동안 ~을 통해 경험정리 및 지원까지 한번에 최대글자수는',
-      startDate: '2024-04-01T00:00Z',
-      endDate: '2024-04-20T00:00Z',
-    },
-    {
-      imageColor: 'gray',
-      status: 'DONE',
-      title: '렛츠챗 세션',
-      description: '2주동안 ~을 통해 경험정리 및 지원까지 한번에 최대글자수는',
-      startDate: '2024-04-01T00:00Z',
-      endDate: '2024-04-20T00:00Z',
-    },
-    {
-      imageColor: 'yellow',
-      status: 'IN_PROGRESS',
-      title: '상시 콘텐츠',
-      description: '2주동안 ~을 통해 경험정리 및 지원까지 한번에 최대글자수는',
-      allDay: true,
-    },
-  ];
-
   return (
     <section>
-      <h1 className="text-1.125-bold lg:text-1.375-semibold text-neutral-0">
-        렛츠커리어 프로그램
-      </h1>
-      <ul className="mt-6 grid grid-cols-2 gap-x-4 gap-y-5 lg:grid-cols-4">
-        {programList.map((program, index) => (
-          <ProgramGridItem
-            key={index}
-            imageColor={program.imageColor}
-            status={program.status}
-            title={program.title}
-            description={program.description}
-            startDate={program.startDate}
-            endDate={program.endDate}
-            allDay={program.allDay}
-          />
+      <div className="flex flex-col gap-1">
+        <Heading>
+          {PROGRAM_SECTION.TITLE.map((title) => (
+            <span>{title}</span>
+          ))}
+        </Heading>
+        <Description>{PROGRAM_SECTION.DESC}</Description>
+      </div>
+      <ul className="mt-6 grid grid-cols-2 gap-4 lg:grid-cols-4">
+        {programList.map((program) => (
+          <ProgramGridItem key={program.title} program={program} />
         ))}
+        <ProgramPointItem />
       </ul>
     </section>
   );

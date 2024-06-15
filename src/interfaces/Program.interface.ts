@@ -23,7 +23,7 @@ export interface DailyMission {
 }
 
 export interface IClassification {
-  programClassification: keyof typeof PROGRAM_TYPE_KEY;
+  programClassification: keyof typeof PROGRAM_CLASSIFICATION;
 }
 
 export type IProgramStatusType = keyof typeof PROGRAM_STATUS_KEY;
@@ -49,6 +49,13 @@ export interface IProgram {
 
 export interface IFilter {
   [key: string]: boolean;
+}
+
+export interface IProgramGridItem {
+  title: string;
+  descriptionList: string[];
+  bgColor: string;
+  link: string;
 }
 
 export type filterStatuskey = keyof typeof PROGRAM_FILTER_STATUS;

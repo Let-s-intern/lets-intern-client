@@ -83,19 +83,19 @@ const NavBar = () => {
   return (
     <>
       {/* 상단 네비게이션 바 */}
-      <div className="fixed top-0 z-30 w-screen bg-static-100 px-5 sm:px-20 lg:px-28">
-        <div className="mx-auto flex h-16 items-center justify-between">
+      <div className="lg:p-30 fixed top-0 z-30 w-screen border-b border-neutral-80 bg-static-100 px-5 sm:px-20 lg:px-28">
+        <div className="flex h-[3.75rem] items-center justify-between md:h-[4.375rem]">
           <div className="flex items-center gap-6 sm:gap-9">
-            <Link to="/" className="w-12 sm:w-24">
+            <Link to="/" className="h-[34px] w-auto md:h-[2.2rem]">
               <img
-                src="/logo/letscareer-logo-simple.png"
-                alt="Logo"
-                className="w-full sm:hidden"
+                src="/logo/logo-simple.svg"
+                alt="렛츠커리어 로고"
+                className="w-full md:hidden"
               />
               <img
-                src="/logo/letscareer-logo.png"
-                alt="Logo"
-                className="hidden w-full sm:block"
+                src="/logo/logo.svg"
+                alt="렛츠커리어 로고"
+                className="hidden w-full md:block"
               />
             </Link>
             {/* 메뉴 아이템 */}

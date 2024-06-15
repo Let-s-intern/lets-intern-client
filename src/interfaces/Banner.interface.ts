@@ -1,4 +1,4 @@
-export interface IProgramBanner {
+export interface IBanner {
   id: number;
   title: string;
   link: string;

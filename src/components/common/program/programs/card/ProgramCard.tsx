@@ -67,6 +67,7 @@ const ProgramCard = ({ program }: ProgramCardProps) => {
           />
           {program.classificationList.map((item) => (
             <ProgramClassificationTag
+              key={item.programClassification}
               classification={
                 PROGRAM_CLASSIFICATION[
                   item.programClassification as ProgramClassificationKey

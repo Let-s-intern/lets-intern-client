@@ -1,59 +1,44 @@
-import { Link } from 'react-router-dom';
-import Badge from '../ui/Badge';
-import { FaChevronRight } from 'react-icons/fa';
-import clsx from 'clsx';
+import { IProgram } from '../../../../../interfaces/interface';
+import { PROGRAM_STATUS } from '../../../../../utils/programConst';
+import ProgramStatusTag from '../../../program/programs/card/ProgramStatusTag';
 
-export interface ProgramListItemProps {
-  status: 'IN_PROGRESS' | 'BEFORE';
-  title: string;
-  openDate?: string;
+interface ProgramOverviewListItemProps {
+  program: IProgram;
 }
 
-const ProgramListItem = ({ status, title, openDate }: ProgramListItemProps) => {
-  const formatDateString = (dateString: string | undefined) => {
-    if (!dateString) return '';
-    const date = new Date(dateString);
-    const year = date.getFullYear();
-    const month = date.getMonth();
-    return `${year}년 ${month}월`;
+const ProgramListItem = ({ program }: ProgramOverviewListItemProps) => {
+  const formatDate = (date: string) => {
+    return new Date(date).toLocaleDateString().replaceAll(' ', '').slice(0, -1);
   };
 
   return (
-    <li
-      className={clsx('flex h-[3.375rem] items-center justify-between px-3', {
-        'bg-primary bg-opacity-10': status === 'IN_PROGRESS',
-        'bg-neutral-100': status === 'BEFORE',
-      })}
-    >
-      <div className="flex items-center gap-2">
-        <h3 className="text-1-semibold">{title}</h3>
-        {status === 'IN_PROGRESS' ? (
-          <Badge color="primary">모집 중</Badge>
-        ) : (
-          status === 'BEFORE' && (
-            <span className="text-0.75 text-neutral-30">
-              {formatDateString(openDate)} 오픈 예정
-            </span>
-          )
+    <li className="flex items-center gap-3 rounded-xs border border-neutral-85 md:gap-4 md:p-2.5">
+      <img
+        className="h-[7.5rem] w-[7.5rem] rounded-xs md:h-40 md:w-44"
+        src={program.programInfo.thumbnail}
+        alt="프로그램 썸네일"
+      />
+      <div className="w-full pr-3">
+        <div className="mb-2 flex flex-col items-start gap-1">
+          <ProgramStatusTag
+            status={PROGRAM_STATUS[program.programInfo.programStatusType]}
+          />
+          <h2 className="text-1-medium md:text-1-semibold">
+            {program.programInfo.title}
+          </h2>
+          <span className="text-0.75 md:text-0.875 text-neutral-30 ">
+            {program.programInfo.shortDesc}
+          </span>
+        </div>
+        {program.programInfo.programType !== 'VOD' && (
+          <div className="text-0.75-medium flex w-full justify-end gap-1.5">
+            <span>진행기간</span>
+            <span className="text-primary- dark">{`${formatDate(
+              program.programInfo.startDate,
+            )} ~ ${formatDate(program.programInfo.endDate!)}`}</span>
+          </div>
         )}
       </div>
-      {status === 'IN_PROGRESS' ? (
-        <button className="text-0.875-semibold rounded-sm bg-primary px-4 py-2 text-static-100">
-          신청하기
-        </button>
-      ) : (
-        status === 'BEFORE' && (
-          <Link
-            to="#"
-            className="text-0.875-medium flex items-center gap-0.5 text-neutral-30"
-          >
-            <span>사전알림 신청</span>
-            <i className="text-0.75 p-1">
-              <FaChevronRight />
-            </i>
-          </Link>
-        )
-      )}
     </li>
   );
 };

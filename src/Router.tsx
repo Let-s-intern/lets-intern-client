@@ -53,7 +53,6 @@ import PopUpBannerCreate from './pages/admin/banner/pop-up-banner/PopUpBannerCre
 import PopUpBannerEdit from './pages/admin/banner/pop-up-banner/PopUpBannerEdit';
 import OnlineContentsCreate from './pages/admin/online-contents/OnlineContentsCreate';
 import OnlineContentsEdit from './pages/admin/online-contents/OnlineContentsEdit';
-import HomeRegacy from './pages/common/home/HomeRegacy';
 import Privacy from './pages/common/mypage/Privacy';
 import Application from './pages/common/mypage/Application';
 import Review from './pages/common/mypage/Review';
@@ -61,6 +60,7 @@ import ReviewCreate from './pages/common/review/ReviewCreate';
 import ChallengeMissionManagement from './pages/admin/challenge/ChallengeMissionManagement';
 import ProgramDetail from './pages/common/program/ProgramDetail';
 import ProgramCreate from './pages/admin/program/ProgramCreate';
+import Home from './pages/common/home/Home';
 import ChallengeOperationOnboarding from './pages/admin/challenge/ChallengeOperationOnboarding';
 import ChallengeOperationRegisterMission from './pages/admin/challenge/ChallengeOperationRegisterMission';
 import { CurrentChallengeProvider } from './context/CurrentChallengeProvider';
@@ -75,7 +75,7 @@ const Router = () => {
       <Routes>
         <Route path="/" element={<Layout />}>
           {/* / */}
-          <Route path="" element={<HomeRegacy />} />
+          <Route path="" element={<Home />} />
           {/* /about */}
           <Route path="about" element={<About />} />
           {/* /program/challenge/:programId */}
@@ -259,7 +259,6 @@ const Router = () => {
 
             {/* /admin/challenge/operation/1/payback */}
             <Route path="payback" element={<ChallengeOperationPayback />} />
-
           </Route>
           {/* /admin/challenge/contents */}
           <Route
