@@ -47,7 +47,7 @@ const Banner = () => {
   };
 
   return (
-    <section className="relative top-[3px] flex overflow-hidden text-static-100 md:top-[13px]">
+    <section className="relative top-[3px] flex max-h-[25rem] overflow-hidden text-static-100 md:top-[13px]">
       {bannerList.map((bannner) => (
         <img
           onClick={() => window.open(bannner.link)}

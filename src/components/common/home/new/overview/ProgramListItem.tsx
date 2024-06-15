@@ -26,7 +26,7 @@ const ProgramListItem = ({ program }: ProgramOverviewListItemProps) => {
           <h2 className="text-1-medium md:text-1-semibold">
             {program.programInfo.title}
           </h2>
-          <span className="text-0.75 md:text-0.875 text-neutral-30">
+          <span className="text-0.75 md:text-0.875 text-neutral-30 ">
             {program.programInfo.shortDesc}
           </span>
         </div>
