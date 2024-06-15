@@ -12,24 +12,28 @@ const ProgramListItem = ({ program }: ProgramOverviewListItemProps) => {
   };
 
   return (
-    <li className="flex items-center rounded-xs border border-neutral-85">
+    <li className="flex items-center gap-3 rounded-xs border border-neutral-85 md:gap-4 md:p-2.5">
       <img
-        className="h-[7.5rem] w-[7.5rem] rounded-xs"
+        className="h-[7.5rem] w-[7.5rem] rounded-xs md:h-40 md:w-44"
         src={program.programInfo.thumbnail}
         alt="프로그램 썸네일"
       />
-      <div className="w-full px-3">
+      <div className="w-full pr-3">
         <div className="mb-2 flex flex-col items-start gap-1">
           <ProgramStatusTag
             status={PROGRAM_STATUS[program.programInfo.programStatusType]}
           />
-          <h2 className="text-1-medium">{program.programInfo.title}</h2>
-          <span className="text-0.75">{program.programInfo.shortDesc}</span>
+          <h2 className="text-1-medium md:text-1-semibold">
+            {program.programInfo.title}
+          </h2>
+          <span className="text-0.75 md:text-0.875 text-neutral-30">
+            {program.programInfo.shortDesc}
+          </span>
         </div>
         {program.programInfo.programType !== 'VOD' && (
           <div className="text-0.75-medium flex w-full justify-end gap-1.5">
             <span>진행기간</span>
-            <span className="text-primary-dark">{`${formatDate(
+            <span className="text-primary- dark">{`${formatDate(
               program.programInfo.startDate,
             )} ~ ${formatDate(program.programInfo.endDate!)}`}</span>
           </div>

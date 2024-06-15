@@ -1,3 +1,4 @@
+import { useMediaQuery } from '@mui/material';
 import { IProgram } from '../../../../../interfaces/interface';
 import ProgramListItem from './ProgramListItem';
 
@@ -59,12 +60,34 @@ const programOverviewList: IProgram[] = [
 ];
 
 const ProgramOverviewListItem = () => {
+  const matches = useMediaQuery('(min-width: 768px)');
+
   return (
     <div className="mt-6 overflow-hidden rounded-xs">
-      <div className="flex items-center justify-center gap-1 bg-primary-10 py-3.5">
-        <img className="w-5" src="/icons/Chevron_Left_MD.svg" alt="이전 달" />
-        <span className="text-1">2024년 6월</span>
-        <img className="w-5" src="/icons/Chevron_Right_MD.svg" alt="다음 달" />
+      <div className="flex items-center">
+        {matches && (
+          <div className="w-1/4 bg-neutral-80 py-3.5 text-center text-neutral-0/60">
+            2024년 5월
+          </div>
+        )}
+        <div className="flex w-full items-center justify-center gap-1 bg-primary-10 py-3.5 md:w-2/4">
+          <img
+            className="w-5 cursor-pointer"
+            src="/icons/Chevron_Left_MD.svg"
+            alt="이전 달"
+          />
+          <span className="text-1">2024년 6월</span>
+          <img
+            className="w-5 cursor-pointer"
+            src="/icons/Chevron_Right_MD.svg"
+            alt="다음 달"
+          />
+        </div>
+        {matches && (
+          <div className="w-1/4 bg-[#E8F9F2] py-3.5 text-center text-neutral-0/60">
+            2024년 7월
+          </div>
+        )}
       </div>
       <ul className=" grid grid-cols-1 gap-4 md:grid-cols-2">
         {programOverviewList.map((program) => (
