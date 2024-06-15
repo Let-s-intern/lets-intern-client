@@ -122,6 +122,5 @@ testWithAuth('GET /api/v1/challenge/{id}/applications', async ({ request }) => {
   });
 
   const data = await res.json();
-  console.log(JSON.stringify(data.data, null, 2));
-  // getChallengeIdApplications.parse(data.data);
+  getChallengeIdApplications.parse(data.data);
 });

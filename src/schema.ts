@@ -241,6 +241,8 @@ export const getChallengeIdApplications = z
         wishCompany: z.string().or(z.null()),
         inflowPath: z.string().or(z.null()),
         createDate: z.string(),
+        accountType: accountType.or(z.null()),
+        accountNum: z.string().or(z.null()),
       }),
     ),
   })
@@ -284,6 +286,7 @@ export const getChallengeIdApplicationsPayback = z
     return {
       missionApplications: data.missionApplications.map((application) => ({
         ...application,
+        id: application.applicationId,
         email: application.email ?? '',
         scores: application.scores
           .filter((s): s is Exclude<typeof s, null> => Boolean(s))
