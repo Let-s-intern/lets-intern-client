@@ -122,7 +122,7 @@ const MainBanners = () => {
     bannerId: number,
     isVisible: boolean,
   ) => {
-    editMainBannerVisible.mutate({ bannerId, isVisible: !isVisible });
+    editMainBannerVisible.mutate({ bannerId, isVisible });
   };
 
   const handleDeleteButtonClicked = async (bannerId: number) => {
@@ -160,7 +160,7 @@ const MainBanners = () => {
               <Checkbox
                 checked={banner.isVisible}
                 onChange={() =>
-                  handleVisibleCheckboxClicked(banner.id, banner.isVisible)
+                  handleVisibleCheckboxClicked(banner.id, !banner.isVisible)
                 }
               />
             </TableCell>

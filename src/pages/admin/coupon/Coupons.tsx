@@ -29,11 +29,10 @@ const Coupons = () => {
   );
 
   useQuery({
-    queryKey: ['coupon'],
+    queryKey: ['coupon', 'admin'],
     queryFn: async () => {
       const res = await axios.get('/coupon/admin');
       setCouponList(res.data.data.couponList);
-      console.log(res.data.data.couponList);
       return res.data;
     },
   });

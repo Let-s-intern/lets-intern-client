@@ -4,36 +4,27 @@ import { useQuery } from '@tanstack/react-query';
 
 import axios from '../../../utils/axios';
 import TableHead from '../../../components/admin/review/reviews/table-content/TableHead';
-import TableBody from '../../../components/admin/review/reviews/table-content/TableBody';
+import TableBody, {
+  ReviewTableBodyProps,
+} from '../../../components/admin/review/reviews/table-content/TableBody';
 import Table from '../../../components/admin/ui/table/regacy/Table';
 import AdminPagination from '../../../components/admin/ui/pagination/AdminPagination';
 
-export interface ProgramType {
-  programInfo: {
-    id: number;
-    title: string;
-    startDate: string;
-    programType: string;
-  };
-}
-
 const Reviews = () => {
   const [searchParams] = useSearchParams();
-  const [programList, setProgramList] = useState<ProgramType[]>([]);
+  const [programList, setProgramList] = useState<
+    ReviewTableBodyProps['programList']
+  >([]);
   const [maxPage, setMaxPage] = useState(1);
 
-  useQuery({
-    queryKey: [
-      'program',
-      'admin',
-      {
-        page: searchParams.get('page') || 1,
-        size: 10,
-      },
-    ],
-    queryFn: async ({ queryKey }) => {
+  const sizePerPage = 10;
+  const currentPage = searchParams.get('page') || 1;
+
+  const getProgramList = useQuery({
+    queryKey: ['program', 'admin', { page: currentPage, size: sizePerPage }],
+    queryFn: async () => {
       const res = await axios.get('/program/admin', {
-        params: queryKey[2],
+        params: { page: currentPage, size: sizePerPage },
       });
       setProgramList(res.data.data.programList);
       setMaxPage(res.data.data.pageInfo.totalPages);

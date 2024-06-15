@@ -33,10 +33,9 @@ const Users = () => {
       const res = await axios.get('/user/admin', {
         params,
       });
-      console.log(res.data.data);
       setUserList(res.data.data.userAdminList);
       setMaxPage(res.data.data.pageInfo.totalPages);
-      return res.data.userList;
+      return res.data;
     },
   });
 

@@ -11,6 +11,7 @@ const DetailTableHead = () => {
         <TH>만족도</TH>
         <TH>후기</TH>
         <TH>작성일자</TH>
+        <TH>노출 여부</TH>
       </tr>
     </thead>
   );

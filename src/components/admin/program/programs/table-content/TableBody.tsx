@@ -17,7 +17,6 @@ import dayjs from 'dayjs';
 
 interface ProgramTableBodyProps {
   programList: ProgramType[];
-  fetchEditProgramVisible: (programId: number, visible: boolean) => void;
 }
 
 const ActionButtonGroup = styled.div`
@@ -26,10 +25,7 @@ const ActionButtonGroup = styled.div`
   gap: 0.5rem;
 `;
 
-const TableBody = ({
-  programList,
-  fetchEditProgramVisible,
-}: ProgramTableBodyProps) => {
+const TableBody = ({ programList }: ProgramTableBodyProps) => {
   const queryClient = useQueryClient();
 
   const [isDeleteModal, setIsDeleteModal] = useState(false);
@@ -45,12 +41,12 @@ const TableBody = ({
     mutationFn: async (params: {
       programType: string;
       programId: number;
-      visible: boolean;
+      isVisible: boolean;
     }) => {
       const res = await axios.patch(
         `/${params.programType.toLocaleLowerCase()}/${params.programId}`,
         {
-          isVisible: params.visible,
+          isVisible: params.isVisible,
         },
       );
       return res.data;
@@ -79,9 +75,9 @@ const TableBody = ({
   const handleEditProgramVisible = (
     programType: string,
     programId: number,
-    visible: boolean,
+    isVisible: boolean,
   ) => {
-    editProgramVisible.mutate({ programType, programId, visible: !visible });
+    editProgramVisible.mutate({ programType, programId, isVisible });
   };
 
   const handleDeleteModalConfirm = () => {
@@ -96,8 +92,10 @@ const TableBody = ({
   return (
     <>
       <tbody>
-        {programList.map((program, index: number) => (
-          <tr key={index}>
+        {programList.map((program) => (
+          <tr
+            key={`${program.programInfo.programType}${program.programInfo.id}`}
+          >
             <TD>
               <span className="flex justify-center">
                 {program.classificationList
@@ -172,7 +170,7 @@ const TableBody = ({
                   handleEditProgramVisible(
                     program.programInfo.programType,
                     program.programInfo.id,
-                    program.programInfo.isVisible,
+                    !program.programInfo.isVisible,
                   );
                 }}
               />
