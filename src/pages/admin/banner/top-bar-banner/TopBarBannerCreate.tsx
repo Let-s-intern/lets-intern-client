@@ -13,19 +13,20 @@ const TopBarBannerCreate = () => {
 
   const [value, setValue] = useState<TopBarBannerInputContentProps['value']>({
     title: '',
-    description: '',
+    contents: '',
     link: '',
     startDate: '',
     endDate: '',
     textColorCode: '#000000',
-    bgColorCode: '#000000',
+    colorCode: '#000000',
+    imgUrl: '',
   });
 
   const addTopBarBanner = useMutation({
-    mutationFn: async (formData: FormData) => {
-      const res = await axios.post('/banner', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
+    mutationFn: async () => {
+      const res = await axios.post('/banner', value, {
+        params: {
+          type: 'LINE',
         },
       });
       return res.data;
@@ -42,22 +43,7 @@ const TopBarBannerCreate = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const newValue = {
-      type: 'LINE',
-      title: value.title,
-      link: value.link,
-      startDate: value.startDate,
-      endDate: value.endDate,
-      contents: value.description,
-      colorCode: value.bgColorCode,
-      textColorCode: value.textColorCode,
-    };
-    const formData = new FormData();
-    formData.append(
-      'bannerCreateDTO',
-      new Blob([JSON.stringify(newValue)], { type: 'application/json' }),
-    );
-    addTopBarBanner.mutate(formData);
+    addTopBarBanner.mutate();
   };
 
   return (

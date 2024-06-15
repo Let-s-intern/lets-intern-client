@@ -15,9 +15,9 @@ const Review = () => {
   >([]);
 
   useQuery({
-    queryKey: ['application'],
+    queryKey: ['user', 'applications'],
     queryFn: async () => {
-      const res = await axios.get('/application');
+      const res = await axios.get('/user/applications');
       const tempApplicationList = res.data.data.applicationList;
       console.log(tempApplicationList);
       setWaitingApplicationList(

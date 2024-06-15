@@ -7,17 +7,16 @@ import ActionButton from '../../../ui/button/ActionButton';
 import TD from '../../../ui/table/regacy/TD';
 import AlertModal from '../../../../ui/alert/AlertModal';
 import {
-  challengeTypeToText,
   newProgramTypeDetailToText,
   newProgramTypeToText,
   programStatusToText,
 } from '../../../../../utils/convert';
 import { ProgramType } from '../../../../../pages/admin/program/Programs';
 import axios from '../../../../../utils/axios';
+import dayjs from 'dayjs';
 
 interface ProgramTableBodyProps {
   programList: ProgramType[];
-  fetchEditProgramVisible: (programId: number, visible: boolean) => void;
 }
 
 const ActionButtonGroup = styled.div`
@@ -26,10 +25,7 @@ const ActionButtonGroup = styled.div`
   gap: 0.5rem;
 `;
 
-const TableBody = ({
-  programList,
-  fetchEditProgramVisible,
-}: ProgramTableBodyProps) => {
+const TableBody = ({ programList }: ProgramTableBodyProps) => {
   const queryClient = useQueryClient();
 
   const [isDeleteModal, setIsDeleteModal] = useState(false);
@@ -39,6 +35,25 @@ const TableBody = ({
   }>({
     programId: 0,
     programType: '',
+  });
+
+  const editProgramVisible = useMutation({
+    mutationFn: async (params: {
+      programType: string;
+      programId: number;
+      isVisible: boolean;
+    }) => {
+      const res = await axios.patch(
+        `/${params.programType.toLocaleLowerCase()}/${params.programId}`,
+        {
+          isVisible: params.isVisible,
+        },
+      );
+      return res.data;
+    },
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ['program'] });
+    },
   });
 
   const delelteProgram = useMutation({
@@ -57,26 +72,12 @@ const TableBody = ({
     },
   });
 
-  const formatDueDateString = (dateString: string) => {
-    const date = new Date(dateString);
-    const weekdayList = ['일', '월', '화', '수', '목', '금', '토'];
-    const formattedString = `${date.getMonth() + 1}/${date.getDate()}(${
-      weekdayList[date.getDay()]
-    }) ${date.getHours() > 9 ? date.getHours() : '0' + date.getHours()}:${
-      date.getMinutes() > 9 ? date.getMinutes() : '0' + date.getMinutes()
-    }까지`;
-    return formattedString;
-  };
-
-  const formatStartDateString = (dateString: string) => {
-    const date = new Date(dateString);
-    const weekdayList = ['일', '월', '화', '수', '목', '금', '토'];
-    const formattedString = `${date.getFullYear()}/${
-      date.getMonth() + 1
-    }/${date.getDate()}(${weekdayList[date.getDay()]}) ${
-      date.getHours() > 9 ? date.getHours() : '0' + date.getHours()
-    }:${date.getMinutes() > 9 ? date.getMinutes() : '0' + date.getMinutes()}`;
-    return formattedString;
+  const handleEditProgramVisible = (
+    programType: string,
+    programId: number,
+    isVisible: boolean,
+  ) => {
+    editProgramVisible.mutate({ programType, programId, isVisible });
   };
 
   const handleDeleteModalConfirm = () => {
@@ -91,8 +92,10 @@ const TableBody = ({
   return (
     <>
       <tbody>
-        {programList.map((program, index: number) => (
-          <tr key={index}>
+        {programList.map((program) => (
+          <tr
+            key={`${program.programInfo.programType}${program.programInfo.id}`}
+          >
             <TD>
               <span className="flex justify-center">
                 {program.classificationList
@@ -121,12 +124,16 @@ const TableBody = ({
             <TD>
               {program.programInfo.programType === 'VOD'
                 ? '온라인'
-                : formatDueDateString(program.programInfo.deadline)}
+                : dayjs(program.programInfo.deadline).format(
+                    `M/D(dd) HH:mm까지`,
+                  )}
             </TD>
             <TD>
               {program.programInfo.programType === 'VOD'
                 ? '온라인'
-                : formatStartDateString(program.programInfo.startDate)}
+                : dayjs(program.programInfo.startDate).format(
+                    `YYYY/M/D(dd) HH:mm까지`,
+                  )}
             </TD>
             <TD>
               <ActionButtonGroup>
@@ -160,9 +167,10 @@ const TableBody = ({
               <Checkbox
                 checked={program.programInfo.isVisible}
                 onChange={() => {
-                  fetchEditProgramVisible(
+                  handleEditProgramVisible(
+                    program.programInfo.programType,
                     program.programInfo.id,
-                    program.programInfo.isVisible,
+                    !program.programInfo.isVisible,
                   );
                 }}
               />

@@ -3,26 +3,73 @@ import ProgramBannerInputContent, {
   ProgramBannerInputContentProps,
 } from '../../../../components/admin/banner/program-banner/ProgramBannerInputContent';
 import EditorTemplate from '../../../../components/admin/program/ui/editor/EditorTemplate';
+import axios from '../../../../utils/axios';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useNavigate, useParams } from 'react-router-dom';
 
 const ProgramBannerEdit = () => {
+  const params = useParams();
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
+
   const [value, setValue] = useState<ProgramBannerInputContentProps['value']>({
     title: '',
     link: '',
     startDate: '',
     endDate: '',
-    image: undefined,
+    imgUrl: '',
+    contents: '',
+    colorCode: '',
+    textColorCode: '',
+  });
+
+  const bannerId = Number(params.bannerId);
+
+  useQuery({
+    queryKey: [
+      'banner',
+      'admin',
+      {
+        type: 'PROGRAM',
+      },
+    ],
+    queryFn: async () => {
+      const res = await axios.get('/banner/admin', {
+        params: {
+          type: 'PROGRAM',
+        },
+      });
+      const programBanner = res.data.data.bannerList.find(
+        (banner: { id: number }) => banner.id === bannerId,
+      );
+      setValue(programBanner);
+      return res.data;
+    },
+    refetchOnWindowFocus: false,
+  });
+
+  const editProgramBanner = useMutation({
+    mutationFn: async () => {
+      const res = await axios.patch(`/banner/${bannerId}`, value, {
+        params: {
+          type: 'PROGRAM',
+        },
+      });
+      return res.data;
+    },
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ['banner'] });
+      navigate('/admin/banner/program-banners');
+    },
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files) {
-      setValue({ ...value, image: e.target.files });
-    } else {
-      setValue({ ...value, [e.target.name]: e.target.value });
-    }
+    setValue({ ...value, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    editProgramBanner.mutate();
   };
 
   return (

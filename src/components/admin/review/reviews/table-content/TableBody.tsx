@@ -3,18 +3,27 @@ import 'dayjs/locale/ko';
 
 import TD from '../../../ui/table/regacy/TD';
 import ActionButton from '../../../ui/button/ActionButton';
-import { ProgramType } from '../../../../../pages/admin/review/Reviews';
 
-interface TableBodyProps {
-  programList: ProgramType[];
+export interface ReviewTableBodyProps {
+  programList: {
+    programInfo: {
+      id: number;
+      title: string;
+      startDate: string;
+      programType: string;
+    };
+  }[];
   copyReviewCreateLink: any;
 }
 
-const TableBody = ({ programList, copyReviewCreateLink }: TableBodyProps) => {
+const TableBody = ({
+  programList,
+  copyReviewCreateLink,
+}: ReviewTableBodyProps) => {
   return (
     <thead>
       {programList.map((program) => (
-        <tr key={program.programInfo.id}>
+        <tr key={`${program.programInfo.programType}${program.programInfo.id}`}>
           <TD whiteSpace="wrap">{program.programInfo.title}</TD>
           <TD>
             {program.programInfo.startDate

@@ -42,7 +42,7 @@ const Programs = () => {
   const currentPage = searchParams.get('page') || 1;
 
   const getProgramList = useQuery({
-    queryKey: ['program', 'admin'],
+    queryKey: ['program', 'admin', { page: currentPage, size: sizePerPage }],
     queryFn: async () => {
       try {
         const res = await axios.get('/program/admin', {
@@ -81,10 +81,6 @@ const Programs = () => {
       });
   };
 
-  useEffect(() => {
-    getProgramList.refetch();
-  }, [currentPage]);
-
   const loading = getProgramList.isLoading;
 
   if (loading) {
@@ -106,10 +102,7 @@ const Programs = () => {
       <main>
         <Table>
           <TableHead />
-          <TableBody
-            programList={programList}
-            fetchEditProgramVisible={fetchEditProgramVisible}
-          />
+          <TableBody programList={programList} />
         </Table>
         {programList.length > 0 && (
           <div className="mt-4">

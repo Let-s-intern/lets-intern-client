@@ -1,4 +1,12 @@
-import { FormControl, InputLabel, MenuItem, Select } from '@mui/material';
+import {
+  Box,
+  Chip,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  OutlinedInput,
+  Select,
+} from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import Input from '../../../../ui/input/Input';
 import ReactQuill from 'react-quill';
@@ -131,15 +139,27 @@ const ProgramInputContent = ({
               <InputLabel id="programType">프로그램 분류</InputLabel>
               <Select
                 labelId="programType"
-                id="programType"
                 label="프로그램 분류"
+                id="programType"
                 name="programType"
-                value={value?.programType || ''}
+                multiple
+                value={value.programType || []}
                 onChange={(e) => {
                   setValue({ ...value, [e.target.name]: e.target.value });
                 }}
+                input={<OutlinedInput label="프로그램 분류" />}
+                renderValue={(selectedList: string[]) => (
+                  <div className="flex flex-wrap gap-2">
+                    {selectedList.map((value) => (
+                      <Chip
+                        key={value}
+                        label={newProgramTypeDetailToText[value]}
+                      />
+                    ))}
+                  </div>
+                )}
               >
-                {Object.keys(newProgramTypeDetailToText).map((type: string) => (
+                {Object.keys(newProgramTypeDetailToText).map((type) => (
                   <MenuItem key={type} value={type}>
                     {newProgramTypeDetailToText[type]}
                   </MenuItem>

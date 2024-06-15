@@ -17,14 +17,17 @@ const MainBannerCreate = () => {
     link: '',
     startDate: '',
     endDate: '',
-    image: null,
+    imgUrl: '',
+    contents: '',
+    colorCode: '',
+    textColorCode: '',
   });
 
   const addMainBanner = useMutation({
-    mutationFn: async (formData: FormData) => {
-      const res = await axios.post('/banner', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
+    mutationFn: async () => {
+      const res = await axios.post('/banner', value, {
+        params: {
+          type: 'MAIN',
         },
       });
       return res.data;
@@ -36,30 +39,12 @@ const MainBannerCreate = () => {
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files) {
-      setValue({ ...value, image: e.target.files });
-    } else {
-      setValue({ ...value, [e.target.name]: e.target.value });
-    }
+    setValue({ ...value, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!value.image) return;
-    const newValue = {
-      type: 'MAIN',
-      title: value.title,
-      link: value.link,
-      startDate: value.startDate,
-      endDate: value.endDate,
-    };
-    const formData = new FormData();
-    formData.append(
-      'bannerCreateDTO',
-      new Blob([JSON.stringify(newValue)], { type: 'application/json' }),
-    );
-    formData.append('file', value.image[0]);
-    addMainBanner.mutate(formData);
+    addMainBanner.mutate();
   };
 
   return (

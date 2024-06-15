@@ -1,14 +1,13 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 
 import axios from '../../../utils/axios';
 import ProgramInputContent from '../../../components/admin/program/ui/editor/ProgramInputContent';
 import { useMutation, useQuery } from '@tanstack/react-query';
-import { newProgramTypeDetailToText } from '../../../utils/convert';
 
 interface AllValue {
   program?: string;
-  programType?: string;
+  programType?: string[];
   thumbnail?: string;
   title?: string;
   shortDescription?: string;
@@ -96,8 +95,8 @@ interface ChallengeRequest {
   thumbnail?: string;
   startDate?: string;
   endDate?: string;
-  deadline?: string;
   beginning?: string;
+  deadline?: string;
   chatLink?: string;
   chatPassword?: string;
   challengeType?: string;
@@ -138,8 +137,6 @@ const ProgramEditor = ({ mode }: ProgramEditorProps) => {
     faqList: [],
   });
   const [content, setContent] = useState<string>('');
-  const [faqList, setFaqList] = useState<any>([]);
-  const [faqIdList, setFaqIdList] = useState<any>([]);
 
   const programType = searchParams.get('programType') || '';
   const programId = Number(params.programId);
@@ -158,7 +155,10 @@ const ProgramEditor = ({ mode }: ProgramEditorProps) => {
         )[0];
         setValue({
           program: programType,
-          programType: data.classificationInfo[0].programClassification,
+          programType: data.classificationInfo.map(
+            (info: { programClassification: string }) =>
+              info.programClassification,
+          ),
           challengeType: data.challengeType,
           priceType: priceInfo.challengeUserType,
           participationType: priceInfo.challengeParticipationType,
@@ -183,7 +183,10 @@ const ProgramEditor = ({ mode }: ProgramEditorProps) => {
       } else if (programType === 'LIVE') {
         setValue({
           program: programType,
-          programType: data.classificationInfo[0].programClassification,
+          programType: data.classificationInfo.map(
+            (info: { programClassification: string }) =>
+              info.programClassification,
+          ),
           way: data.place === null ? 'ONLINE' : 'OFFLINE',
           location: data.place,
           job: data.job,
@@ -207,7 +210,10 @@ const ProgramEditor = ({ mode }: ProgramEditorProps) => {
       } else if (programType === 'VOD') {
         setValue({
           program: programType,
-          programType: data.programTypeInfo[0].programClassification,
+          programType: data.programTypeInfo.map(
+            (info: { programClassification: string }) =>
+              info.programClassification,
+          ),
           job: data.vodInfo.job,
           thumbnail: data.vodInfo.thumbnail,
           title: data.vodInfo.title,
@@ -308,13 +314,12 @@ const ProgramEditor = ({ mode }: ProgramEditorProps) => {
         thumbnail: value.thumbnail,
         job: value.job,
         link: value.link,
-        programTypeInfo: [
-          {
+        programTypeInfo:
+          value.programType?.map((type) => ({
             classificationInfo: {
-              programClassification: value.programType,
+              programClassification: type,
             },
-          },
-        ],
+          })) || [],
       };
       if (mode === 'edit') {
         editVodClass.mutate(newValue);
@@ -337,13 +342,12 @@ const ProgramEditor = ({ mode }: ProgramEditorProps) => {
         endDate: value.endDate,
         deadline: value.dueDate,
         beginning: value.beginning,
-        programTypeInfo: [
-          {
+        programTypeInfo:
+          value.programType?.map((type) => ({
             classificationInfo: {
-              programClassification: value.programType,
+              programClassification: type,
             },
-          },
-        ],
+          })) || [],
         priceInfo: {
           priceInfo: {
             price: Number(value.price),
@@ -409,13 +413,12 @@ const ProgramEditor = ({ mode }: ProgramEditorProps) => {
         chatLink: value.openKakaoLink,
         chatPassword: value.openKakaoPassword,
         challengeType: value.challengeType,
-        programTypeInfo: [
-          {
+        programTypeInfo:
+          value.programType?.map((type) => ({
             classificationInfo: {
-              programClassification: value.programType,
+              programClassification: type,
             },
-          },
-        ],
+          })) || [],
         priceInfo: newPriceInfo,
         faqInfo: value.faqList?.map((faqId: number) => ({ faqId })),
       };
@@ -426,10 +429,6 @@ const ProgramEditor = ({ mode }: ProgramEditorProps) => {
       }
       return;
     }
-  };
-
-  const handleFAQIdListReset = () => {
-    setFaqIdList([]);
   };
 
   if (loading) {

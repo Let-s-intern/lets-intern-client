@@ -12,6 +12,7 @@ import { Link } from 'react-router-dom';
 import { CiTrash } from 'react-icons/ci';
 import TableManageContent from '../../../../components/admin/ui/table/new/TableManageContent';
 import AlertModal from '../../../../components/ui/alert/AlertModal';
+import dayjs from 'dayjs';
 
 type MainBannersTableKey =
   | 'title'
@@ -28,9 +29,11 @@ const MainBanners = () => {
       id: number;
       title: string;
       link: string;
-      isVisible: boolean;
       startDate: string;
       endDate: string;
+      isValid: boolean;
+      isVisible: boolean;
+      imgUrl: string;
     }[]
   >([]);
   const [isDeleteModalShown, setIsDeleteModalShown] = useState<boolean>(false);
@@ -60,24 +63,21 @@ const MainBanners = () => {
       },
     };
 
-  const getMainBannerList = useQuery({
+  useQuery({
     queryKey: [
       'banner',
       'admin',
       {
         type: 'MAIN',
-        page: 1,
-        size: 10000,
       },
     ],
     queryFn: async () => {
       const res = await axios('/banner/admin', {
         params: {
           type: 'MAIN',
-          page: 1,
-          size: 10000,
         },
       });
+      setMainBannerList(res.data.data.bannerList);
       return res.data;
     },
   });
@@ -97,29 +97,20 @@ const MainBanners = () => {
     },
   });
 
-  const formatDateString = (dateString: string) => {
-    const date = new Date(dateString);
-    return `${date.getFullYear()}년 ${
-      date.getMonth() + 1
-    }월 ${date.getDate()}일`;
-  };
-
   const editMainBannerVisible = useMutation({
     mutationFn: async (params: { bannerId: number; isVisible: boolean }) => {
       const { bannerId, isVisible } = params;
-      const formData = new FormData();
-      formData.append(
-        'bannerCreateDTO',
-        JSON.stringify({ isVisible: !isVisible }),
+      const res = await axios.patch(
+        `/banner/${bannerId}`,
+        {
+          isVisible,
+        },
+        {
+          params: {
+            type: 'MAIN',
+          },
+        },
       );
-      const res = await axios.patch(`/banner/${bannerId}`, formData, {
-        params: {
-          type: 'MAIN',
-        },
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
       return res.data;
     },
     onSuccess: async () => {
@@ -138,12 +129,6 @@ const MainBanners = () => {
     setBannerIdForDeleting(bannerId);
     setIsDeleteModalShown(true);
   };
-
-  useEffect(() => {
-    if (getMainBannerList.data) {
-      setMainBannerList(getMainBannerList.data.bannerList);
-    }
-  }, [getMainBannerList]);
 
   return (
     <>
@@ -175,13 +160,13 @@ const MainBanners = () => {
               <Checkbox
                 checked={banner.isVisible}
                 onChange={() =>
-                  handleVisibleCheckboxClicked(banner.id, banner.isVisible)
+                  handleVisibleCheckboxClicked(banner.id, !banner.isVisible)
                 }
               />
             </TableCell>
             <TableCell cellWidth={columnMetaData.visiblePeriod.cellWidth}>
-              {formatDateString(banner.startDate)} ~{' '}
-              {formatDateString(banner.endDate)}
+              {dayjs(banner.startDate).format('YYYY년 MM월 DD일')} ~{' '}
+              {dayjs(banner.endDate).format('YYYY년 MM월 DD일')}
             </TableCell>
             <TableCell cellWidth={columnMetaData.management.cellWidth}>
               <TableManageContent>
