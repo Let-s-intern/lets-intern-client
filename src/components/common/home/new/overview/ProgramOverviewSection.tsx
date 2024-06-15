@@ -1,3 +1,4 @@
+import Description from '../ui/Description';
 import Heading from '../ui/Heading';
 import ProgramOverviewListItem from './ProgramOverviewListItem';
 
@@ -14,9 +15,7 @@ const ProgramOverviewSection = () => {
           <span>{title}</span>
         ))}
       </Heading>
-      <span className="text-0.75 text-neutral-20">
-        {PROGRAM_OVERVIEW_SECTION.DESC}
-      </span>
+      <Description> {PROGRAM_OVERVIEW_SECTION.DESC}</Description>
       <ProgramOverviewListItem />
     </section>
   );

@@ -1,5 +1,6 @@
 import { IProgramGridItem } from '../../../../../interfaces/Program.interface';
 import { PROGRAM_CLASSIFICATION } from '../../../../../utils/programConst';
+import Description from '../ui/Description';
 import Heading from '../ui/Heading';
 import ProgramGridItem from './ProgramGridItem';
 import ProgramPointItem from './ProgramPointItem';
@@ -43,9 +44,7 @@ const ProgramSection = () => {
             <span>{title}</span>
           ))}
         </Heading>
-        <span className="text-0.75 text-neutral-20">
-          {PROGRAM_SECTION.DESC}
-        </span>
+        <Description>{PROGRAM_SECTION.DESC}</Description>
       </div>
       <ul className="mt-6 grid grid-cols-2 gap-4 lg:grid-cols-4">
         {programList.map((program) => (
