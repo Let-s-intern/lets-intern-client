@@ -23,9 +23,9 @@ const FAQEditor = ({ programType, value, setValue }: FAQEditorProps) => {
   const [faqSaveError, setFaqSaveError] = useState<Error>();
 
   useQuery({
-    queryKey: ['faq'],
-    queryFn: async () => {
-      const res = await axios.get('/faq', { params: { type: programType } });
+    queryKey: ['faq', { type: programType }],
+    queryFn: async ({ queryKey }) => {
+      const res = await axios.get('/faq', { params: queryKey[1] });
       setFaqList(res.data.data.faqList);
       console.log(res.data.data.faqList);
       return res.data;
