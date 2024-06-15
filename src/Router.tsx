@@ -25,17 +25,12 @@ import AdminPrograms from './pages/admin/program/Programs';
 import ProgramUsers from './pages/admin/program/ProgramUsers';
 import ChallengeOperationAdminLayout from './components/admin/challenge/ui/ChallengeOperationAdminLayout';
 import ChallengeOperationHome from './pages/admin/challenge/ChallengeOperationHome';
-import ChallengeMission from './pages/admin/challenge/ChallengeMission';
 import ChallengeContents from './pages/admin/challenge/ChallengeContents';
-// import ChallengeSubmitCheck from './pages/admin/challenge/ChallengeSubmitCheck';
-// import ChallengeUser from './pages/admin/challenge/ChallengeUser';
-import ChallengeNotice from './pages/admin/challenge/ChallengeNotice';
 import ChallengeDashboard from './pages/common/challenge/ChallengeDashboard';
 import ChallengeLayout from './components/common/challenge/ui/layout/ChallengeLayout';
 import MyChallengeDashboard from './pages/common/challenge/MyChallengeDashboard';
 import MentorNotificationBefore from './pages/common/mentor/MentorNotificationBefore';
 import MentorNotificationAfter from './pages/common/mentor/MentorNotificationAfter';
-// import ChallengeOnboarding from './pages/admin/challenge/ChallengeOnboarding';
 import Coupons from './pages/admin/coupon/Coupons';
 import CouponCreate from './pages/admin/coupon/CouponCreate';
 import CouponEdit from './pages/admin/coupon/CouponEdit';
@@ -67,7 +62,11 @@ import ChallengeMissionManagement from './pages/admin/challenge/ChallengeMission
 import ProgramDetail from './pages/common/program/ProgramDetail';
 import ProgramCreate from './pages/admin/program/ProgramCreate';
 import ChallengeOperationOnboarding from './pages/admin/challenge/ChallengeOperationOnboarding';
+import ChallengeOperationRegisterMission from './pages/admin/challenge/ChallengeOperationRegisterMission';
 import { CurrentChallengeProvider } from './context/CurrentChallengeProvider';
+import ChallengeOperationSubmission from './pages/admin/challenge/ChallengeOperationSubmission';
+import ChallengeOperationPayback from './pages/admin/challenge/ChallengeOperationPayback';
+import ChallengeOperationParticipants from './pages/admin/challenge/ChallengeOperationParticipants';
 
 const Router = () => {
   return (
@@ -239,19 +238,28 @@ const Router = () => {
           >
             {/* /admin/challenge/operation/1/home */}
             <Route path="home" element={<ChallengeOperationHome />} />
-            {/* /admin/challenge/operation/1/register */}
-            {/* /admin/challenge/operation/1/submission */}
-            {/* /admin/challenge/operation/1/participant */}
-            {/* /admin/challenge/operation/1/payback */}
 
-            {/* /admin/challenge/1/notice */}
-            {/* <Route path="notice" element={<ChallengeNotice />} /> */}
-            {/* /admin/challenge/1/mission */}
-            {/* <Route path="mission" element={<ChallengeMission />} /> */}
-            {/* /admin/challenge/1/submit-check */}
-            {/* <Route path="submit-check" element={<ChallengeSubmitCheck />} /> */}
-            {/* /admin/challenge/1/user */}
-            {/* <Route path="user" element={<ChallengeUser />} /> */}
+            {/* /admin/challenge/operation/1/register-mission */}
+            <Route
+              path="register-mission"
+              element={<ChallengeOperationRegisterMission />}
+            />
+
+            {/* /admin/challenge/operation/1/submission */}
+            <Route
+              path="submission"
+              element={<ChallengeOperationSubmission />}
+            />
+
+            {/* /admin/challenge/operation/1/participants */}
+            <Route
+              path="participants"
+              element={<ChallengeOperationParticipants />}
+            />
+
+            {/* /admin/challenge/operation/1/payback */}
+            <Route path="payback" element={<ChallengeOperationPayback />} />
+
           </Route>
           {/* /admin/challenge/contents */}
           <Route

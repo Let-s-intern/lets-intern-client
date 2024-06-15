@@ -18,7 +18,7 @@ const ChallengeAdminLayout = () => {
     },
   });
 
-  const currentChallenge = useCurrentChallenge();
+  const { currentChallenge } = useCurrentChallenge();
 
   const navLinks = [
     {
@@ -26,7 +26,7 @@ const ChallengeAdminLayout = () => {
       text: '홈',
     },
     {
-      to: `/admin/challenge/operation/${params.programId}/register`,
+      to: `/admin/challenge/operation/${params.programId}/register-mission`,
       text: '미션등록',
     },
     {
@@ -34,7 +34,7 @@ const ChallengeAdminLayout = () => {
       text: '제출확인',
     },
     {
-      to: `/admin/challenge/operation/${params.programId}/participant`,
+      to: `/admin/challenge/operation/${params.programId}/participants`,
       text: '참여자',
     },
     {

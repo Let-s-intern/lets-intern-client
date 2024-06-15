@@ -87,6 +87,12 @@ export const accountType = z.union([
   z.literal('TOSS'),
 ]);
 
+export const missionStatusType = z.union([
+  z.literal('WAITING'),
+  z.literal('CHECK_DONE'),
+  z.literal('REFUND_DONE'),
+]);
+
   
 export const getChallengeId = z
   .object({
@@ -139,6 +145,31 @@ export const getChallengeId = z
       priceInfo: data.priceInfo.map((price) => ({
         ...price,
         deadline: dayjs(price.deadline),
+      })),
+    };
+  });
+
+
+export const getMissionAdminId = z
+  .object({
+    missionList: z.array(
+      z.object({
+        id: z.number(),
+        th: z.number(),
+        missionStatusType: missionStatusType,
+        attendanceCount: z.number(),
+        lateAttendanceCount: z.number(),
+        startDate: z.string(),
+        endDate: z.string(),
+      }),
+    ),
+  })
+  .transform((data) => {
+    return {
+      missionList: data.missionList.map((mission) => ({
+        ...mission,
+        startDate: dayjs(mission.startDate),
+        endDate: dayjs(mission.endDate),
       })),
     };
   });

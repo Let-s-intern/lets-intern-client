@@ -1,19 +1,26 @@
-import { useQuery } from "@tanstack/react-query";
-import { createContext, useContext } from "react";
-import { useParams } from "react-router-dom";
-import { z } from "zod";
-import { getChallengeId } from "../schema";
-import axios from "../utils/axios";
+import { useQuery } from '@tanstack/react-query';
+import { createContext, useContext, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
+import { z } from 'zod';
+import { getChallengeId, getMissionAdminId } from '../schema';
+import axios from '../utils/axios';
+
+type CurrentChallenge = z.infer<typeof getChallengeId>;
+type MissionList = z.infer<typeof getMissionAdminId>;
+
+const currentChallengeContext = createContext<{
+  currentChallenge?: CurrentChallenge | null;
+  missionsOfCurrentChallenge?: MissionList | null;
+}>({});
 
 export const CurrentChallengeProvider = ({
   children,
 }: {
   children: React.ReactNode;
 }) => {
-
   const params = useParams();
 
-  const { data } = useQuery({
+  const { data: currentChallenge } = useQuery({
     queryKey: ['admin', 'challenge', params.programId],
     queryFn: async () => {
       if (!params.programId) {
@@ -24,22 +31,34 @@ export const CurrentChallengeProvider = ({
     },
   });
 
+  const { data: missionsOfCurrentChallenge } = useQuery({
+    queryKey: ['admin', 'challenge', params.programId, 'missions'],
+    queryFn: async () => {
+      if (!params.programId) {
+        return null;
+      }
+      const res = await axios.get(`/mission/admin/${params.programId}`);
+      return res.data.data as z.infer<typeof getMissionAdminId>;
+    },
+  });
+
+  useEffect(() => {
+    console.log("missionsOfCurrentChallenge", missionsOfCurrentChallenge);
+  }, [missionsOfCurrentChallenge]);
+
   return (
-    <currentChallengeContext.Provider value={data}>
+    <currentChallengeContext.Provider
+      value={{ currentChallenge, missionsOfCurrentChallenge }}
+    >
       {children}
     </currentChallengeContext.Provider>
   );
 };
 
-type CurrentChallenge = z.infer<typeof getChallengeId>;
-const currentChallengeContext = createContext<CurrentChallenge | null | undefined>(
-  null,
-);
-
 export const useCurrentChallenge = () => {
-  const currentChallenge = useContext(currentChallengeContext);
-  // if (!currentChallenge) {
-  //   throw new Error('useChallenge must be used within a ChallengeProvider');
-  // }
-  return currentChallenge;
+  return useContext(currentChallengeContext);
 };
+
+export const useMissionsOfCurrentChallenge = () => {
+  return useContext(currentChallengeContext).missionsOfCurrentChallenge;
+}
