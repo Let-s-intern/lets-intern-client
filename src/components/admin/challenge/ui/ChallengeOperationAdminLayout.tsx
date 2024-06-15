@@ -57,15 +57,20 @@ const ChallengeAdminLayout = () => {
             }
           }}
         >
-          <option value="">챌린지 변경</option>
+          <option key="change" value="">
+            챌린지 변경
+          </option>
           {data?.programList.map((program) => (
-            <option value={program.id}>{program.title}</option>
+            <option key={program.id} value={program.id}>
+              {program.title}
+            </option>
           ))}
         </select>
       </div>
       <nav id="sidebar" className="flex">
         {navLinks.map((navLink) => (
           <NavLink
+            key={navLink.to}
             to={navLink.to}
             className={({ isActive, isPending, isTransitioning }) =>
               twMerge('block px-4 py-2', isActive && 'text-blue-600')

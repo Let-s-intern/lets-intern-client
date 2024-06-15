@@ -27,7 +27,7 @@ export const CurrentChallengeProvider = ({
         return null;
       }
       const res = await axios.get(`/challenge/${params.programId}`);
-      return res.data.data as z.infer<typeof getChallengeId>;
+      return getChallengeId.parse(res.data.data);
     },
   });
 
@@ -38,13 +38,9 @@ export const CurrentChallengeProvider = ({
         return null;
       }
       const res = await axios.get(`/mission/admin/${params.programId}`);
-      return res.data.data as z.infer<typeof getMissionAdminId>;
+      return getMissionAdminId.parse(res.data.data);
     },
   });
-
-  useEffect(() => {
-    console.log("missionsOfCurrentChallenge", missionsOfCurrentChallenge);
-  }, [missionsOfCurrentChallenge]);
 
   return (
     <currentChallengeContext.Provider

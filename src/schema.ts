@@ -93,7 +93,6 @@ export const missionStatusType = z.union([
   z.literal('REFUND_DONE'),
 ]);
 
-  
 export const getChallengeId = z
   .object({
     title: z.string(),
@@ -149,7 +148,6 @@ export const getChallengeId = z
     };
   });
 
-
 export const getMissionAdminId = z
   .object({
     missionList: z.array(
@@ -159,6 +157,8 @@ export const getMissionAdminId = z
         missionStatusType: missionStatusType,
         attendanceCount: z.number(),
         lateAttendanceCount: z.number(),
+        score: z.number(),
+        lateScore: z.number(),
         startDate: z.string(),
         endDate: z.string(),
       }),
@@ -173,3 +173,131 @@ export const getMissionAdminId = z
       })),
     };
   });
+
+/** 참여 폼 */
+export const getChallengeIdApplication = z
+  .object({
+    applied: z.boolean(),
+    name: z.string(),
+    email: z.string(),
+    contactEmail: z.string(),
+    phoneNumber: z.string(),
+    startDate: z.string(),
+    endDate: z.string(),
+    deadline: z.string(),
+    priceList: z.array(
+      z.object({
+        priceId: z.number(),
+        price: z.number(),
+        discount: z.number(),
+        accountNumber: z.string(),
+        deadline: z.string(),
+        accountType: accountType,
+        challengePriceType: challengePriceType,
+        challengeUserType: challengeUserType,
+        challengeParticipationType: challengeParticipationType,
+      }),
+    ),
+  })
+  .transform((data) => {
+    return {
+      ...data,
+      startDate: dayjs(data.startDate),
+      endDate: dayjs(data.endDate),
+      deadline: dayjs(data.deadline),
+      priceList: data.priceList.map((price) => ({
+        ...price,
+        deadline: dayjs(price.deadline),
+      })),
+    };
+  });
+
+export const grade = z.union([
+  z.literal('GRADUATE'),
+  z.literal('FIRST'),
+  z.literal('SECOND'),
+  z.literal('THIRD'),
+  z.literal('FOURTH'),
+  z.literal('ETC'),
+]);
+
+/** 참여자 */
+export const getChallengeIdApplications = z
+  .object({
+    applicationList: z.array(
+      z.object({
+        id: z.number(),
+        paymentId: z.number(),
+        name: z.string(),
+        email: z.string(),
+        phoneNum: z.string(),
+        university: z.string().or(z.null()),
+        grade: grade.or(z.null()),
+        major: z.string().or(z.null()),
+        couponName: z.string().or(z.null()),
+        totalCost: z.number(),
+        isConfirmed: z.boolean(),
+        wishJob: z.string().or(z.null()),
+        wishCompany: z.string().or(z.null()),
+        inflowPath: z.string().or(z.null()),
+        createDate: z.string(),
+      }),
+    ),
+  })
+  .transform((data) => {
+    return {
+      applicationList: data.applicationList.map((application) => ({
+        ...application,
+        createDate: dayjs(application.createDate),
+      })),
+    };
+  });
+
+export const getChallengeIdApplicationsPayback = z
+  .object({
+    missionApplications: z.array(
+      z.object({
+        applicationId: z.number(),
+        name: z.string(),
+        // TODO: remove null
+        email: z.string().or(z.null()),
+        phoneNum: z.string(),
+        accountNum: z.string(),
+        accountType: accountType,
+        scores: z.array(
+          z
+            .object({
+              th: z.number(),
+              // TODO: remove null
+              score: z.number().or(z.null()),
+            })
+            // TODO: remove null
+            .or(z.null()),
+        ),
+        isRefunded: z.boolean(),
+      }),
+    ),
+    pageInfo: pageinfo,
+  })
+  // TODO: remove transform
+  .transform((data) => {
+    return {
+      missionApplications: data.missionApplications.map((application) => ({
+        ...application,
+        email: application.email ?? '',
+        scores: application.scores
+          .filter((s): s is Exclude<typeof s, null> => Boolean(s))
+          .map((score) => ({
+            ...score,
+            score: score.score ?? 0,
+          })),
+      })),
+      pageInfo: data.pageInfo,
+    };
+  });
+
+/// patch /api/v1/challenge/{challengeId}/application/{applicationId}/payback
+export const patchChallengeIdApplicationIdPaybackVariables = z.object({
+  adminScore: z.number(),
+  isRefunded: z.boolean(),
+});

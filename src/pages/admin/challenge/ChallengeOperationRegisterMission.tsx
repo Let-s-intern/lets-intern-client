@@ -1,10 +1,7 @@
+import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import { z } from 'zod';
 import { useMissionsOfCurrentChallenge } from '../../../context/CurrentChallengeProvider';
-import { getMissionAdminId, missionStatusType } from '../../../schema';
-
-import * as React from 'react';
-import Box from '@mui/material/Box';
-import { DataGrid, GridColDef } from '@mui/x-data-grid';
+import { getMissionAdminId } from '../../../schema';
 
 type Mission = z.infer<typeof getMissionAdminId>['missionList'][number];
 

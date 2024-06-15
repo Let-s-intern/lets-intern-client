@@ -1,6 +1,12 @@
 /* eslint-disable no-empty-pattern */
 import { expect, test } from 'vitest';
-import { getChallenge, getChallengeId, getMissionAdminId } from './schema';
+import {
+  getChallenge,
+  getChallengeId,
+  getChallengeIdApplications,
+  getChallengeIdApplicationsPayback,
+  getMissionAdminId
+} from './schema';
 
 const requestPromise = (async () => {
   const res = await fetch(`${process.env.REACT_APP_SERVER_API}/user/signin`, {
@@ -89,9 +95,33 @@ testWithAuth('GET /api/v1/challenge/{id}', async ({ request }) => {
 testWithAuth('GET /api/v1/mission/admin/{id}', async ({ request }) => {
   const res = await request({
     method: 'GET',
-    path: "/mission/admin/20",
+    path: '/mission/admin/20',
   });
 
   const data = await res.json();
   getMissionAdminId.parse(data.data);
+});
+
+testWithAuth(
+  'GET /api/v1/challenge/{id}/applications/payback',
+  async ({ request }) => {
+    const res = await request({
+      method: 'GET',
+      path: '/challenge/20/applications/payback',
+    });
+
+    const data = await res.json();
+    getChallengeIdApplicationsPayback.parse(data.data);
+  },
+);
+
+testWithAuth('GET /api/v1/challenge/{id}/applications', async ({ request }) => {
+  const res = await request({
+    method: 'GET',
+    path: '/challenge/20/applications',
+  });
+
+  const data = await res.json();
+  console.log(JSON.stringify(data.data, null, 2));
+  // getChallengeIdApplications.parse(data.data);
 });
