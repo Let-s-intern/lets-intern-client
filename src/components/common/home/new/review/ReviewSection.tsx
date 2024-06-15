@@ -1,10 +1,8 @@
 import { Link } from 'react-router-dom';
-import Heading from '../../../../admin/ui/heading/Heading';
+import Heading from '../ui/Heading';
 
 const ReviewSection = () => {
   const reviewList = [
-    '/images/home/blog-default-thumbnail.png',
-    '/images/home/blog-default-thumbnail.png',
     '/images/home/blog-default-thumbnail.png',
     '/images/home/blog-default-thumbnail.png',
     '/images/home/blog-default-thumbnail.png',
@@ -14,7 +12,7 @@ const ReviewSection = () => {
   return (
     <section>
       <Heading title="생생한 참여 후기" />
-      <div className="flex flex-col flex-nowrap gap-4 overflow-x-auto md:flex-row">
+      <div className="mt-6 flex  flex-col flex-nowrap gap-4 overflow-x-auto md:flex-row">
         {reviewList.map((review, index) => (
           <Link
             to="#"

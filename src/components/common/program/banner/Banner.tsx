@@ -2,14 +2,14 @@ import { useEffect, useRef, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
 
-import { IProgramBanner } from '../../../../interfaces/interface';
+import { IBanner } from '../../../../interfaces/interface';
 import axios from '../../../../utils/axios';
 
 const Banner = () => {
   const imgRef = useRef<HTMLImageElement>(null);
   const innerRef = useRef<HTMLDivElement>(null);
 
-  const [bannerList, setBannerList] = useState<IProgramBanner[]>([]);
+  const [bannerList, setBannerList] = useState<IBanner[]>([]);
   const [bannerIndex, setBannerIndex] = useState(0);
   const [isPlay, setIsPlay] = useState(true);
 
@@ -17,9 +17,9 @@ const Banner = () => {
     try {
       const res = await axios.get(`/banner/admin?type=PROGRAM`);
       if (res.status === 200) {
-        const bannerList = res.data.data.bannerList as IProgramBanner[];
+        const bannerList = res.data.data.bannerList as IBanner[];
         const filtered = bannerList.filter(
-          (banner: IProgramBanner) => banner.isVisible,
+          (banner: IBanner) => banner.isVisible,
         );
         setBannerList(filtered);
         return res.data;
