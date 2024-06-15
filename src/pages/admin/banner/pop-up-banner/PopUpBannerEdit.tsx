@@ -3,25 +3,72 @@ import PopUpBannerInputContent, {
   PopUpBannerInputContentProps,
 } from '../../../../components/admin/banner/pop-up-banner/PopUpBannerInputContent';
 import EditorTemplate from '../../../../components/admin/program/ui/editor/EditorTemplate';
+import axios from '../../../../utils/axios';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useNavigate, useParams } from 'react-router-dom';
 
 const PopUpBannerEdit = () => {
+  const params = useParams();
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
+
   const [value, setValue] = useState<PopUpBannerInputContentProps['value']>({
     title: '',
     link: '',
     startDate: '',
     endDate: '',
-    image: undefined,
+    imgUrl: '',
+    contents: '',
+    textColorCode: '#000000',
+    colorCode: '#000000',
+  });
+
+  const bannerId = Number(params.bannerId);
+
+  useQuery({
+    queryKey: [
+      'banner',
+      'admin',
+      {
+        type: 'POPUP',
+      },
+    ],
+    queryFn: async () => {
+      const res = await axios.get('/banner/admin', {
+        params: {
+          type: 'POPUP',
+        },
+      });
+      const programBanner = res.data.data.bannerList.find(
+        (banner: { id: number }) => banner.id === bannerId,
+      );
+      setValue(programBanner);
+      return res.data;
+    },
+    refetchOnWindowFocus: false,
+  });
+
+  const editPopUpBanner = useMutation({
+    mutationFn: async () => {
+      const res = await axios.patch(`/banner/${bannerId}`, value, {
+        params: {
+          type: 'POPUP',
+        },
+      });
+      return res.data;
+    },
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ['banner'] });
+      navigate('/admin/banner/pop-up');
+    },
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files) {
-      setValue({ ...value, image: e.target.files });
-    } else {
-      setValue({ ...value, [e.target.name]: e.target.value });
-    }
+    setValue({ ...value, [e.target.name]: e.target.value });
   };
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    editPopUpBanner.mutate();
   };
 
   return (

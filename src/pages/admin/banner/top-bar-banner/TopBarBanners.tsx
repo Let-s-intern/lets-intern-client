@@ -12,6 +12,7 @@ import { Link } from 'react-router-dom';
 import { CiTrash } from 'react-icons/ci';
 import TableManageContent from '../../../../components/admin/ui/table/new/TableManageContent';
 import AlertModal from '../../../../components/ui/alert/AlertModal';
+import dayjs from 'dayjs';
 
 type TopBarBannersTableKey =
   | 'title'
@@ -28,9 +29,11 @@ const TopBarBanners = () => {
       id: number;
       title: string;
       link: string;
-      isVisible: boolean;
       startDate: string;
       endDate: string;
+      isValid: boolean;
+      isVisible: boolean;
+      imgUrl: string;
     }[]
   >([]);
   const [isDeleteModalShown, setIsDeleteModalShown] = useState<boolean>(false);
@@ -66,18 +69,15 @@ const TopBarBanners = () => {
       'admin',
       {
         type: 'LINE',
-        page: 1,
-        size: 10000,
       },
     ],
     queryFn: async () => {
       const res = await axios('/banner/admin', {
         params: {
           type: 'LINE',
-          page: 1,
-          size: 10000,
         },
       });
+      setTopBarBannerList(res.data.data.bannerList);
       return res.data;
     },
   });
@@ -97,35 +97,20 @@ const TopBarBanners = () => {
     },
   });
 
-  useEffect(() => {
-    if (getTopBarBannerList.data) {
-      setTopBarBannerList(getTopBarBannerList.data.bannerList);
-    }
-  }, [getTopBarBannerList]);
-
-  const formatDateString = (dateString: string) => {
-    const date = new Date(dateString);
-    return `${date.getFullYear()}년 ${
-      date.getMonth() + 1
-    }월 ${date.getDate()}일`;
-  };
-
   const editTopBarBannerVisible = useMutation({
     mutationFn: async (params: { bannerId: number; isVisible: boolean }) => {
       const { bannerId, isVisible } = params;
-      const formData = new FormData();
-      formData.append(
-        'bannerCreateDTO',
-        JSON.stringify({ isVisible: !isVisible }),
+      const res = await axios.patch(
+        `/banner/${bannerId}`,
+        {
+          isVisible,
+        },
+        {
+          params: {
+            type: 'LINE',
+          },
+        },
       );
-      const res = await axios.patch(`/banner/${bannerId}`, formData, {
-        params: {
-          type: 'LINE',
-        },
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
       return res.data;
     },
     onSuccess: async () => {
@@ -137,7 +122,7 @@ const TopBarBanners = () => {
     bannerId: number,
     isVisible: boolean,
   ) => {
-    editTopBarBannerVisible.mutate({ bannerId, isVisible });
+    editTopBarBannerVisible.mutate({ bannerId, isVisible: !isVisible });
   };
 
   const handleDeleteButtonClicked = async (bannerId: number) => {
@@ -180,8 +165,8 @@ const TopBarBanners = () => {
               />
             </TableCell>
             <TableCell cellWidth={columnMetaData.visiblePeriod.cellWidth}>
-              {formatDateString(banner.startDate)} ~{' '}
-              {formatDateString(banner.endDate)}
+              {dayjs(banner.startDate).format('YYYY년 MM월 DD일')} ~{' '}
+              {dayjs(banner.endDate).format('YYYY년 MM월 DD일')}
             </TableCell>
             <TableCell cellWidth={columnMetaData.management.cellWidth}>
               <TableManageContent>

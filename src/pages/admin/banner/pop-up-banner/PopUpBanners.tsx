@@ -12,6 +12,7 @@ import { Link } from 'react-router-dom';
 import { CiTrash } from 'react-icons/ci';
 import TableManageContent from '../../../../components/admin/ui/table/new/TableManageContent';
 import AlertModal from '../../../../components/ui/alert/AlertModal';
+import dayjs from 'dayjs';
 
 type PopUpTableKey =
   | 'title'
@@ -28,9 +29,11 @@ const PopUpBanners = () => {
       id: number;
       title: string;
       link: string;
-      isVisible: boolean;
       startDate: string;
       endDate: string;
+      isValid: boolean;
+      isVisible: boolean;
+      imgUrl: string;
     }[]
   >([]);
   const [isDeleteModalShown, setIsDeleteModalShown] = useState<boolean>(false);
@@ -59,24 +62,21 @@ const PopUpBanners = () => {
     },
   };
 
-  const getPopUpList = useQuery({
+  useQuery({
     queryKey: [
       'banner',
       'admin',
       {
         type: 'POPUP',
-        page: 1,
-        size: 10000,
       },
     ],
     queryFn: async () => {
       const res = await axios('/banner/admin', {
         params: {
           type: 'POPUP',
-          page: 1,
-          size: 10000,
         },
       });
+      setPopUpList(res.data.data.bannerList);
       return res.data;
     },
   });
@@ -96,35 +96,20 @@ const PopUpBanners = () => {
     },
   });
 
-  useEffect(() => {
-    if (getPopUpList.data) {
-      setPopUpList(getPopUpList.data.bannerList);
-    }
-  }, [getPopUpList]);
-
-  const formatDateString = (dateString: string) => {
-    const date = new Date(dateString);
-    return `${date.getFullYear()}년 ${
-      date.getMonth() + 1
-    }월 ${date.getDate()}일`;
-  };
-
   const editPopUpVisible = useMutation({
     mutationFn: async (params: { bannerId: number; isVisible: boolean }) => {
       const { bannerId, isVisible } = params;
-      const formData = new FormData();
-      formData.append(
-        'bannerCreateDTO',
-        JSON.stringify({ isVisible: !isVisible }),
+      const res = await axios.patch(
+        `/banner/${bannerId}`,
+        {
+          isVisible,
+        },
+        {
+          params: {
+            type: 'POPUP',
+          },
+        },
       );
-      const res = await axios.patch(`/banner/${bannerId}`, formData, {
-        params: {
-          type: 'POPUP',
-        },
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
       return res.data;
     },
     onSuccess: async () => {
@@ -136,7 +121,7 @@ const PopUpBanners = () => {
     bannerId: number,
     isVisible: boolean,
   ) => {
-    editPopUpVisible.mutate({ bannerId, isVisible });
+    editPopUpVisible.mutate({ bannerId, isVisible: !isVisible });
   };
 
   const handleDeleteButtonClicked = async (bannerId: number) => {
@@ -179,8 +164,8 @@ const PopUpBanners = () => {
               />
             </TableCell>
             <TableCell cellWidth={columnMetaData.visiblePeriod.cellWidth}>
-              {formatDateString(popUp.startDate)} ~{' '}
-              {formatDateString(popUp.endDate)}
+              {dayjs(popUp.startDate).format('YYYY년 MM월 DD일')} ~{' '}
+              {dayjs(popUp.endDate).format('YYYY년 MM월 DD일')}
             </TableCell>
             <TableCell cellWidth={columnMetaData.management.cellWidth}>
               <TableManageContent>
