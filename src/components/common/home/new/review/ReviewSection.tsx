@@ -11,7 +11,7 @@ const ReviewSection = () => {
 
   return (
     <section>
-      <Heading title="생생한 참여 후기" />
+      <Heading>생생한 참여 후기</Heading>
       <div className="mt-6 flex  flex-col flex-nowrap gap-4 overflow-x-auto md:flex-row">
         {reviewList.map((review, index) => (
           <Link

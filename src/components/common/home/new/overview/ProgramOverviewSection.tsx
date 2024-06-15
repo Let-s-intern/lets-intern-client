@@ -1,3 +1,4 @@
+import Heading from '../ui/Heading';
 import ProgramOverviewListItem from './ProgramOverviewListItem';
 
 const PROGRAM_OVERVIEW_SECTION = {
@@ -8,11 +9,11 @@ const PROGRAM_OVERVIEW_SECTION = {
 const ProgramOverviewSection = () => {
   return (
     <section>
-      <h1 className="text-1.125-bold lg:text-1.375-bold xl:text-1.5-semibold flex flex-col gap-1 text-neutral-0 md:flex-row">
+      <Heading>
         {PROGRAM_OVERVIEW_SECTION.TITLE.map((title) => (
           <span>{title}</span>
         ))}
-      </h1>
+      </Heading>
       <span className="text-0.75 text-neutral-20">
         {PROGRAM_OVERVIEW_SECTION.DESC}
       </span>

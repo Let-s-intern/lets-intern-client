@@ -1,5 +1,6 @@
 import { IProgramGridItem } from '../../../../../interfaces/Program.interface';
 import { PROGRAM_CLASSIFICATION } from '../../../../../utils/programConst';
+import Heading from '../ui/Heading';
 import ProgramGridItem from './ProgramGridItem';
 import ProgramPointItem from './ProgramPointItem';
 
@@ -37,11 +38,11 @@ const ProgramSection = () => {
   return (
     <section>
       <div className="flex flex-col gap-1">
-        <h1 className="text-1.125-bold lg:text-1.375-bold xl:text-1.5-semibold flex flex-col gap-1 text-neutral-0 md:flex-row">
+        <Heading>
           {PROGRAM_SECTION.TITLE.map((title) => (
             <span>{title}</span>
           ))}
-        </h1>
+        </Heading>
         <span className="text-0.75 text-neutral-20">
           {PROGRAM_SECTION.DESC}
         </span>

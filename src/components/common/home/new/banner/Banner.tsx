@@ -50,8 +50,9 @@ const Banner = () => {
     <section className="relative top-[3px] flex overflow-hidden text-static-100 md:top-[13px]">
       {bannerList.map((bannner) => (
         <img
+          onClick={() => window.open(bannner.link)}
           key={bannner.id}
-          className="rounded-sm object-cover transition-all duration-500 ease-in-out"
+          className="cursor-pointer rounded-sm object-cover transition-all duration-500 ease-in-out"
           style={{ translate: `-${bannerIndex * 100}%` }}
           src={bannner.imgUrl}
           alt="홈 배너 이미지"
