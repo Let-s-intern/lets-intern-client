@@ -1,145 +1,81 @@
 import { useQuery } from '@tanstack/react-query';
-import { useState } from 'react';
 import { NavLink, Outlet, useNavigate, useParams } from 'react-router-dom';
+import { twMerge } from 'tailwind-merge';
+import { z } from 'zod';
+import { useCurrentChallenge } from '../../../../context/CurrentChallengeProvider';
+import { getChallenge } from '../../../../schema';
 import axios from '../../../../utils/axios';
-import TopDropdown from './dropdown/home/TopDropdown';
 
 const ChallengeAdminLayout = () => {
   const params = useParams();
-  // const location = useLocation();
-  // const navigate = useNavigate();
+  const navigate = useNavigate();
 
-  // const [challengeList, setChallengeList] = useState<any>();
-  // const [currentChallenge, setCurrentChallenge] = useState<any>();
+  const { data } = useQuery({
+    queryKey: ['admin', 'challenge'],
+    queryFn: async () => {
+      const res = await axios.get(`/challenge?size=1000`);
+      return res.data.data as z.infer<typeof getChallenge>;
+    },
+  });
 
-  // const getChallengeList = useQuery({
-  //   queryKey: [
-  //     'program',
-  //     'admin',
-  //     { type: 'CHALLENGE' },
-  //     'challenge_admin_layout',
-  //   ],
-  //   queryFn: async () => {
-  //     const res = await axios.get('/program/admin', {
-  //       params: { type: 'CHALLENGE' },
-  //     });
-  //     const data = res.data;
-  //     const challengeId = Number(params.programId);
-  //     const newChallengeList = data.programList
-  //       .filter((challenge: any) => challenge.th !== 0)
-  //       .sort((a: any, b: any) => b.th - a.th);
-  //     newChallengeList.forEach((challenge: any) => {
-  //       if (challenge.id === Number(params.programId)) {
-  //         setCurrentChallenge(challenge);
-  //         return;
-  //       }
-  //     });
-  //     setChallengeList(newChallengeList);
-  //     const selectedChallenge = res.data.programList
-  //       .filter((challenge: any) => challenge.th !== 0)
-  //       .find((challenge: any) => challenge.id === challengeId);
-  //     if (selectedChallenge) {
-  //       localStorage.setItem('admin-challenge-id', selectedChallenge.id);
-  //     } else {
-  //       navigate(`/admin/challenge`);
-  //     }
-  //     return data;
-  //   },
-  // });
+  const currentChallenge = useCurrentChallenge();
 
-  // const activeStatus = /^\/admin\/challenge\/(\d+)\/notice/.test(
-  //   location.pathname,
-  // )
-  //   ? 'NOTICE'
-  //   : /^\/admin\/challenge\/(\d+)\/mission/.test(location.pathname)
-  //   ? 'MISSION'
-  //   : /^\/admin\/challenge\/(\d+)\/submit-check/.test(location.pathname)
-  //   ? 'SUBMIT_CHECK'
-  //   : /^\/admin\/challenge\/(\d+)\/user/.test(location.pathname)
-  //   ? 'USER'
-  //   : /^\/admin\/challenge\/(\d+)/.test(location.pathname) && 'HOME';
-
-  // const isLoading = getChallengeList.isLoading || !currentChallenge;
-
-  // if (isLoading) return <></>;
+  const navLinks = [
+    {
+      to: `/admin/challenge/operation/${params.programId}/home`,
+      text: '홈',
+    },
+    {
+      to: `/admin/challenge/operation/${params.programId}/register`,
+      text: '미션등록',
+    },
+    {
+      to: `/admin/challenge/operation/${params.programId}/submission`,
+      text: '제출확인',
+    },
+    {
+      to: `/admin/challenge/operation/${params.programId}/participant`,
+      text: '참여자',
+    },
+    {
+      to: `/admin/challenge/operation/${params.programId}/payback`,
+      text: '페이백',
+    },
+  ];
 
   return (
-    <div className="text-zinc-600">
-      <div className="fixed top-0 z-50 w-full bg-white pt-6">
-        <div className="flex items-center gap-4 px-12">
-          {/* <TopDropdown
-            currentChallenge={currentChallenge}
-            setCurrentChallenge={setCurrentChallenge}
-            challengeList={challengeList}
-          /> */}
-          {/* <h1 className="text-lg font-semibold">{currentChallenge.title}</h1> */}
-        </div>
-        <nav id="sidebar">
+    <div className="p-3">
+      <div className="flex items-center justify-between">
+        <h1 className="text-lg font-bold">
+          챌린지 운영: {currentChallenge?.title}
+        </h1>
+        <select
+          className="border p-3"
+          onChange={(e) => {
+            if (e.target.value) {
+              navigate(`/admin/challenge/operation/${e.target.value}/home`);
+            }
+          }}
+        >
+          <option value="">챌린지 변경</option>
+          {data?.programList.map((program) => (
+            <option value={program.id}>{program.title}</option>
+          ))}
+        </select>
+      </div>
+      <nav id="sidebar" className="flex">
+        {navLinks.map((navLink) => (
           <NavLink
-            to={`/admin/challenge/operation/${params.programId}/home`}
-            // TODO: 테스트
+            to={navLink.to}
             className={({ isActive, isPending, isTransitioning }) =>
-              [
-                isPending ? 'pending' : '',
-                isActive ? 'active' : '',
-                isTransitioning ? 'transitioning' : '',
-              ].join(' ')
+              twMerge('block px-4 py-2', isActive && 'text-blue-600')
             }
           >
-            홈
+            {navLink.text}
           </NavLink>
-          <NavLink to={`/admin/challenge/operation/${params.programId}/register`}>
-            미션등록
-          </NavLink>
-          <NavLink to={`/admin/challenge/operation/${params.programId}/submission`}>
-            제출확인
-          </NavLink>
-          <NavLink to={`/admin/challenge/operation/${params.programId}/participant`}>
-            참여자
-          </NavLink>
-          <NavLink to={`/admin/challenge/operation/${params.programId}/payback`}>
-            페이백
-          </NavLink>
-        </nav>
-        {/* <nav className="mt-1">
-          <ul className="flex gap-8 px-12 shadow-[0_4px_4px_-4px_rgba(0,0,0,0.3)]">
-            <TabItem
-              to={`/admin/challenge/${params.programId}`}
-              active={activeStatus === 'HOME'}
-            >
-              홈
-            </TabItem>
-            <TabItem
-              to={`/admin/challenge/${params.programId}/notice`}
-              active={activeStatus === 'NOTICE'}
-            >
-              공지사항
-            </TabItem>
-            <TabItem
-              to={`/admin/challenge/${params.programId}/mission`}
-              active={activeStatus === 'MISSION'}
-            >
-              미션등록
-            </TabItem>
-            <TabItem
-              to={`/admin/challenge/${params.programId}/submit-check`}
-              active={activeStatus === 'SUBMIT_CHECK'}
-            >
-              제출확인
-            </TabItem>
-            <TabItem
-              to={`/admin/challenge/${params.programId}/user`}
-              active={activeStatus === 'USER'}
-            >
-              참여자
-            </TabItem>
-          </ul>
-        </nav> */}
-      </div>
-      <>
-        <div className="h-[7rem]" />
-        <Outlet />
-      </>
+        ))}
+      </nav>
+      <Outlet />
     </div>
   );
 };

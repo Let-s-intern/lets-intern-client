@@ -67,6 +67,7 @@ import ChallengeMissionManagement from './pages/admin/challenge/ChallengeMission
 import ProgramDetail from './pages/common/program/ProgramDetail';
 import ProgramCreate from './pages/admin/program/ProgramCreate';
 import ChallengeOperationOnboarding from './pages/admin/challenge/ChallengeOperationOnboarding';
+import { CurrentChallengeProvider } from './context/CurrentChallengeProvider';
 
 const Router = () => {
   return (
@@ -223,18 +224,25 @@ const Router = () => {
             <Route path="lets-chat" element={<RemindersLetsChat />} />
           </Route>
           {/* /admin/challenge/operation */}
-          <Route path="challenge/operation" element={<ChallengeOperationOnboarding />} />
+          <Route
+            path="challenge/operation"
+            element={<ChallengeOperationOnboarding />}
+          />
           {/* /admin/challenge/operation/1 */}
-          <Route path="challenge/operation/:programId" element={<ChallengeOperationAdminLayout />}>
+          <Route
+            path="challenge/operation/:programId"
+            element={
+              <CurrentChallengeProvider>
+                <ChallengeOperationAdminLayout />
+              </CurrentChallengeProvider>
+            }
+          >
             {/* /admin/challenge/operation/1/home */}
             <Route path="home" element={<ChallengeOperationHome />} />
             {/* /admin/challenge/operation/1/register */}
             {/* /admin/challenge/operation/1/submission */}
             {/* /admin/challenge/operation/1/participant */}
             {/* /admin/challenge/operation/1/payback */}
-            
-
-
 
             {/* /admin/challenge/1/notice */}
             {/* <Route path="notice" element={<ChallengeNotice />} /> */}
