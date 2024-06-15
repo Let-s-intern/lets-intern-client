@@ -58,7 +58,7 @@ const Banner = () => {
           alt="홈 배너 이미지"
         />
       ))}
-      <button onClick={clickLeft} className="absolute inset-y-1/2 left-0 z-20">
+      <button onClick={clickLeft} className="absolute inset-y-1/2 left-0 z-10">
         <img
           className="h-10 w-10 md:h-16 md:w-16"
           src="/icons/Caret_Circle_Left.svg"
@@ -67,7 +67,7 @@ const Banner = () => {
       </button>
       <button
         onClick={clickRight}
-        className="absolute inset-y-1/2 right-0 z-20"
+        className="absolute inset-y-1/2 right-0 z-10"
       >
         <img
           className="h-10 w-10 md:h-16 md:w-16"

@@ -15,7 +15,7 @@ const ProgramOverviewSection = () => {
           <span>{title}</span>
         ))}
       </Heading>
-      <Description> {PROGRAM_OVERVIEW_SECTION.DESC}</Description>
+      <Description>{PROGRAM_OVERVIEW_SECTION.DESC}</Description>
       <ProgramOverviewListItem />
     </section>
   );
