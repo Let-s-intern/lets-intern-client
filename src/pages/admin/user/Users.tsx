@@ -84,9 +84,6 @@ const Users = () => {
     <div className="p-8">
       <Header>
         <Heading>회원 관리</Heading>
-        <ActionButton to="/admin/users/create" bgColor="blue">
-          등록
-        </ActionButton>
       </Header>
       <main className={classes.main}>
         <div className={classes.filterWrapper}>

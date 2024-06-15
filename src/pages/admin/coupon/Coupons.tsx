@@ -7,9 +7,10 @@ import { CiTrash } from 'react-icons/ci';
 import axios from '../../../utils/axios';
 import { couponTypeToText } from '../../../utils/convert';
 import AlertModal from '../../../components/ui/alert/AlertModal';
+import dayjs from 'dayjs';
 
 interface Coupon {
-  couponId: number;
+  id: number;
   code: string;
   couponType: string;
   createDate: string;
@@ -27,15 +28,12 @@ const Coupons = () => {
     null,
   );
 
-  const getCouponList = useQuery({
+  useQuery({
     queryKey: ['coupon'],
     queryFn: async () => {
-      const res = await axios.get('/coupon', {
-        params: {
-          page: 1,
-          size: 10000,
-        },
-      });
+      const res = await axios.get('/coupon/admin');
+      setCouponList(res.data.data.couponList);
+      console.log(res.data.data.couponList);
       return res.data;
     },
   });
@@ -52,12 +50,6 @@ const Coupons = () => {
     },
   });
 
-  useEffect(() => {
-    if (getCouponList.isSuccess) {
-      setCouponList(getCouponList.data.couponList);
-    }
-  }, [getCouponList]);
-
   const couponCellWidth = {
     couponType: 'w-28',
     name: 'w-40',
@@ -65,13 +57,6 @@ const Coupons = () => {
     // createdDate: 'w-40',
     validPeriod: 'w-60',
     management: 'w-48',
-  };
-
-  const formateDateString = (dateString: string) => {
-    const date = new Date(dateString);
-    return `${date.getFullYear()}년 ${
-      date.getMonth() + 1
-    }월 ${date.getDate()}일`;
   };
 
   const handleDeleteButtonClicked = (couponId: number) => {
@@ -91,8 +76,8 @@ const Coupons = () => {
             등록
           </Link>
         </header>
-        <div className="mt-3">
-          <div className="flex rounded-lg bg-[#E5E5E5]">
+        <div className="mt-3 min-w-[60rem]">
+          <div className="flex rounded-sm bg-[#E5E5E5]">
             <div
               className={clsx(
                 'flex justify-center py-2 text-sm font-medium text-[#717179]',
@@ -145,7 +130,7 @@ const Coupons = () => {
           <div className="mb-16 mt-3 flex flex-col gap-2">
             {couponList.map((coupon) => (
               <div
-                key={coupon.couponId}
+                key={coupon.id}
                 className="flex rounded-md border border-neutral-200"
               >
                 <div
@@ -186,8 +171,8 @@ const Coupons = () => {
                     couponCellWidth.validPeriod,
                   )}
                 >
-                  {formateDateString(coupon.startDate)} ~{' '}
-                  {formateDateString(coupon.endDate)}
+                  {dayjs(coupon.startDate).format('YYYY년 MM월 DD일')} ~{' '}
+                  {dayjs(coupon.endDate).format('YYYY년 MM월 DD일')}
                 </div>
                 <div
                   className={clsx(
@@ -196,13 +181,13 @@ const Coupons = () => {
                   )}
                 >
                   <div className="flex items-center gap-4">
-                    <Link to={`/admin/coupons/${coupon.couponId}/edit`}>
+                    <Link to={`/admin/coupons/${coupon.id}/edit`}>
                       <i>
                         <img src="/icons/edit-icon.svg" alt="수정 아이콘" />
                       </i>
                     </Link>
                     <button
-                      onClick={() => handleDeleteButtonClicked(coupon.couponId)}
+                      onClick={() => handleDeleteButtonClicked(coupon.id)}
                     >
                       <i className="text-[1.75rem]">
                         <CiTrash />
