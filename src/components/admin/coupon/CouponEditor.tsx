@@ -8,14 +8,15 @@ import {
   SelectChangeEvent,
 } from '@mui/material';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import axios from '../../../utils/axios';
 import {
-  couponTypeTextFromId,
+  couponTypeToText,
   couponProgramTypeEnum,
   couponTypeEnum,
+  newProgramTypeToText,
 } from '../../../utils/convert';
 import Input from '../../ui/input/Input';
 import ActionButton from '../ui/button/ActionButton';
@@ -25,25 +26,28 @@ interface CouponEditorProps {
   editorMode: 'create' | 'edit';
 }
 
-interface CouponCommonValue {
+interface CouponInputValue {
+  couponType: string;
+  programTypeList: string[];
   name: string;
   code: string;
+  discount: string;
+  time: string;
   startDate: string;
   endDate: string;
 }
 
-interface CouponInputValue extends CouponCommonValue {
+interface CouponRequestValue {
   couponType: string;
-  programTypeList: string[];
-  discount: string;
-  time: string;
-}
-
-interface CouponRequestValue extends CouponCommonValue {
-  couponType: number;
-  programTypeList: { programType: number }[];
+  programTypeList: {
+    programType: string;
+  }[];
+  name: string;
+  code: string;
   discount: number;
   time: number;
+  startDate: string;
+  endDate: string;
 }
 
 const CouponEditor = ({ editorMode }: CouponEditorProps) => {
@@ -61,14 +65,28 @@ const CouponEditor = ({ editorMode }: CouponEditorProps) => {
     startDate: '',
     endDate: '',
   });
-  const [isLoading, setIsLoading] = useState(true);
   const [isAllDiscount, setIsAllDiscount] = useState(false);
   const [isUnlimited, setIsUnlimited] = useState(false);
 
-  const getCoupon = useQuery({
-    queryKey: ['coupon', params.couponId],
+  const couponId = Number(params.couponId);
+
+  useQuery({
+    queryKey: ['coupon', 'admin', couponId],
     queryFn: async () => {
-      const res = await axios.get(`/coupon/${params.couponId}`);
+      const res = await axios.get(`/coupon/admin/${couponId}`);
+      const data = res.data.data.couponInfo;
+      setIsAllDiscount(data.discount === -1);
+      setIsUnlimited(data.time === -1);
+      setValue({
+        couponType: data.couponType,
+        programTypeList: data.couponProgramTypeList,
+        name: data.name,
+        code: data.code,
+        discount: data.discount === -1 ? '' : String(data.discount),
+        time: data.time === -1 ? '' : String(data.time),
+        startDate: data.startDate,
+        endDate: data.endDate,
+      });
       return res.data;
     },
     enabled: editorMode === 'edit',
@@ -77,8 +95,7 @@ const CouponEditor = ({ editorMode }: CouponEditorProps) => {
   const addCoupon = useMutation({
     mutationFn: async (value: CouponRequestValue) => {
       const res = await axios.post('/coupon', value);
-      const data = res.data;
-      return data;
+      return res.data;
     },
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ['coupon'] });
@@ -100,29 +117,6 @@ const CouponEditor = ({ editorMode }: CouponEditorProps) => {
     onError: (error) => handleSubmitError(error),
   });
 
-  useEffect(() => {
-    if (getCoupon.isSuccess) {
-      const coupon = getCoupon.data;
-      setIsAllDiscount(coupon.discount === -1);
-      setIsUnlimited(coupon.time === -1);
-      setValue({
-        couponType:
-          couponTypeEnum[
-            coupon.couponType as keyof typeof couponTypeEnum
-          ].id.toString(),
-        programTypeList: coupon.couponProgramList,
-        name: coupon.name,
-        code: coupon.code,
-        discount: String(coupon.discount),
-        time: String(coupon.time),
-        startDate: coupon.startDate,
-        endDate: coupon.endDate,
-      });
-    }
-    setIsLoading(false);
-    // eslint-disable-next-line
-  }, [getCoupon.isSuccess]);
-
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement> | SelectChangeEvent<string>,
   ) => {
@@ -133,31 +127,38 @@ const CouponEditor = ({ editorMode }: CouponEditorProps) => {
     e: React.ChangeEvent<HTMLInputElement>,
     programType: string,
   ) => {
-    const programTypeList = value.programTypeList;
-    if (programTypeList.includes(programType)) {
+    if (e.target.checked) {
       setValue({
         ...value,
-        programTypeList: programTypeList.filter((type) => type !== programType),
+        programTypeList: [...value.programTypeList, programType],
       });
     } else {
       setValue({
         ...value,
-        programTypeList: [...programTypeList, programType],
+        programTypeList: value.programTypeList.filter(
+          (type) => type !== programType,
+        ),
       });
     }
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    const newValue = {
-      ...value,
-      couponType: Number(value.couponType),
+    const newValue: CouponRequestValue = {
+      couponType: value.couponType,
+      programTypeList: value.programTypeList.map((type) => ({
+        programType: type,
+      })),
+      name: value.name,
+      code: value.code,
       discount: isAllDiscount ? -1 : Number(value.discount),
       time: isUnlimited ? -1 : Number(value.time),
-      programTypeList: value.programTypeList.map((type) => ({
-        programType:
-          couponProgramTypeEnum[type as keyof typeof couponProgramTypeEnum].id,
-      })),
+      startDate: value.startDate,
+      endDate: value.endDate,
+      // programTypeList: value.programTypeList.map((type) => ({
+      //   programType:
+      //     couponProgramTypeEnum[type as keyof typeof couponProgramTypeEnum].id,
+      // })),
     };
     if (editorMode === 'create') {
       addCoupon.mutate(newValue);
@@ -175,8 +176,6 @@ const CouponEditor = ({ editorMode }: CouponEditorProps) => {
       alert('쿠폰 코드는 영문 대문자와 숫자로만 구성되어야 합니다.');
     }
   };
-
-  if (isLoading) return null;
 
   return (
     <main className="mx-auto mt-12 w-[36rem]">
@@ -202,9 +201,9 @@ const CouponEditor = ({ editorMode }: CouponEditorProps) => {
               value={value.couponType}
               onChange={handleChange}
             >
-              {Object.keys(couponTypeTextFromId).map((id) => (
-                <MenuItem key={id} value={id}>
-                  {couponTypeTextFromId[id]}
+              {Object.keys(couponTypeToText).map((type) => (
+                <MenuItem key={type} value={type}>
+                  {couponTypeToText[type]}
                 </MenuItem>
               ))}
             </Select>
@@ -212,22 +211,27 @@ const CouponEditor = ({ editorMode }: CouponEditorProps) => {
           <div className="ml-4 flex items-center">
             <label htmlFor="program" className="w-[8rem] font-medium">
               프로그램
-            </label>{' '}
-            {Object.keys(couponProgramTypeEnum).map((key) => (
+            </label>
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={value.programTypeList.includes('ALL')}
+                  onChange={(e) => handleProgramTypeChange(e, 'ALL')}
+                />
+              }
+              label="전체"
+            />
+            {Object.keys(newProgramTypeToText).map((programType) => (
               <FormControlLabel
-                key={key}
-                value={key}
+                key={programType}
+                value={programType}
                 control={
                   <Checkbox
-                    checked={value.programTypeList.includes(key)}
-                    onChange={(e) => handleProgramTypeChange(e, key)}
+                    checked={value.programTypeList.includes(programType)}
+                    onChange={(e) => handleProgramTypeChange(e, programType)}
                   />
                 }
-                label={
-                  couponProgramTypeEnum[
-                    key as keyof typeof couponProgramTypeEnum
-                  ].text
-                }
+                label={newProgramTypeToText[programType]}
               />
             ))}
           </div>

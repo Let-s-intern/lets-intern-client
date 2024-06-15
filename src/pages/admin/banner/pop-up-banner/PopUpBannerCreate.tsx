@@ -17,49 +17,34 @@ const PopUpBannerCreate = () => {
     link: '',
     startDate: '',
     endDate: '',
-    image: undefined,
+    imgUrl: '',
+    contents: '',
+    colorCode: '',
+    textColorCode: '',
   });
 
   const addPopUpBanner = useMutation({
-    mutationFn: async (formData: FormData) => {
-      const res = await axios.post('/banner', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
+    mutationFn: async () => {
+      const res = await axios.post('/banner', value, {
+        params: {
+          type: 'POPUP',
         },
       });
       return res.data;
     },
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ['banner'] });
-      navigate('/admin/banner/program-banners');
+      navigate('/admin/banner/pop-up');
     },
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files) {
-      setValue({ ...value, image: e.target.files });
-    } else {
-      setValue({ ...value, [e.target.name]: e.target.value });
-    }
+    setValue({ ...value, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!value.image) return;
-    const newValue = {
-      type: 'POPUP',
-      title: value.title,
-      link: value.link,
-      startDate: value.startDate,
-      endDate: value.endDate,
-    };
-    const formData = new FormData();
-    formData.append(
-      'bannerCreateDTO',
-      new Blob([JSON.stringify(newValue)], { type: 'application/json' }),
-    );
-    formData.append('file', value.image[0]);
-    addPopUpBanner.mutate(formData);
+    addPopUpBanner.mutate();
   };
 
   return (

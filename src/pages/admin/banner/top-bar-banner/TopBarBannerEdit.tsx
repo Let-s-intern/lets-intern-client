@@ -1,4 +1,4 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import TopBarBannerInputContent, {
   TopBarBannerInputContentProps,
 } from '../../../../components/admin/banner/top-bar-banner/TopBarBannerInputContent';
@@ -14,21 +14,44 @@ const TopBarBannerEdit = () => {
 
   const [value, setValue] = useState<TopBarBannerInputContentProps['value']>({
     title: '',
-    description: '',
     link: '',
     startDate: '',
     endDate: '',
+    imgUrl: '',
+    contents: '',
     textColorCode: '#000000',
-    bgColorCode: '#000000',
+    colorCode: '#000000',
+  });
+
+  const bannerId = Number(params.bannerId);
+
+  useQuery({
+    queryKey: [
+      'banner',
+      'admin',
+      {
+        type: 'LINE',
+      },
+    ],
+    queryFn: async () => {
+      const res = await axios.get('/banner/admin', {
+        params: {
+          type: 'LINE',
+        },
+      });
+      const topBanner = res.data.data.bannerList.find(
+        (banner: { id: number }) => banner.id === bannerId,
+      );
+      setValue(topBanner);
+      return res.data;
+    },
+    refetchOnWindowFocus: false,
   });
 
   const editTopBarBanner = useMutation({
-    mutationFn: async (formData: FormData) => {
-      const res = await axios.patch(`/banner/${params.bannerId}`, formData, {
-        params: 'LINE',
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
+    mutationFn: async () => {
+      const res = await axios.patch(`/banner/${params.bannerId}`, value, {
+        params: { type: 'LINE' },
       });
       return res.data;
     },
@@ -44,22 +67,7 @@ const TopBarBannerEdit = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const newValue = {
-      type: 'LINE',
-      title: value.title,
-      link: value.link,
-      startDate: value.startDate,
-      endDate: value.endDate,
-      contents: value.description,
-      colorCode: value.bgColorCode,
-      textColorCode: value.textColorCode,
-    };
-    const formData = new FormData();
-    formData.append(
-      'bannerCreateDTO',
-      new Blob([JSON.stringify(newValue)], { type: 'application/json' }),
-    );
-    editTopBarBanner.mutate(formData);
+    editTopBarBanner.mutate();
   };
 
   return (

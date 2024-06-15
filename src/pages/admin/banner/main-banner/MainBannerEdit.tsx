@@ -1,29 +1,76 @@
 import { useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import MainBannerInputContent, {
   MainBannerInputContentProps,
 } from '../../../../components/admin/banner/main-banner/MainBannerInputContent';
 import EditorTemplate from '../../../../components/admin/program/ui/editor/EditorTemplate';
+import axios from '../../../../utils/axios';
 
 const MainBannerEdit = () => {
+  const params = useParams();
+  const queryClient = useQueryClient();
+  const navigate = useNavigate();
+
   const [value, setValue] = useState<MainBannerInputContentProps['value']>({
     title: '',
     link: '',
     startDate: '',
     endDate: '',
-    image: null,
+    imgUrl: '',
+    contents: '',
+    colorCode: '',
+    textColorCode: '',
+  });
+
+  const bannerId = Number(params.bannerId);
+
+  useQuery({
+    queryKey: [
+      'banner',
+      'admin',
+      {
+        type: 'MAIN',
+      },
+    ],
+    queryFn: async () => {
+      const res = await axios.get('/banner/admin', {
+        params: {
+          type: 'MAIN',
+        },
+      });
+      const mainBanner = res.data.data.bannerList.find(
+        (banner: { id: number }) => banner.id === bannerId,
+      );
+      setValue(mainBanner);
+      return res.data;
+    },
+    refetchOnWindowFocus: false,
+  });
+
+  const editMainBanner = useMutation({
+    mutationFn: async () => {
+      const res = await axios.patch(`/banner/${bannerId}`, value, {
+        params: {
+          type: 'MAIN',
+        },
+      });
+      return res.data;
+    },
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ['banner'] });
+      navigate('/admin/banner/main-banners');
+    },
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files) {
-      setValue({ ...value, image: e.target.files });
-    } else {
-      setValue({ ...value, [e.target.name]: e.target.value });
-    }
+    setValue({ ...value, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    editMainBanner.mutate();
   };
 
   return (

@@ -21,9 +21,9 @@ const Application = () => {
   const [applicationList, setApplicationList] = useState<ApplicationType[]>([]);
 
   const getApplicationList = useQuery({
-    queryKey: ['application'],
+    queryKey: ['user', 'applications'],
     queryFn: async () => {
-      const res = await axios.get('/application');
+      const res = await axios.get('/user/applications');
       setApplicationList(res.data.data.applicationList);
       console.log(res.data.data.applicationList);
       return res.data;

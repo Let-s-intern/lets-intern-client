@@ -23,19 +23,14 @@ import AttendCheck from './pages/admin/program/AttendCheck';
 import ScrollToTop from './components/ui/scroll-to-top/ScrollToTop';
 import AdminPrograms from './pages/admin/program/Programs';
 import ProgramUsers from './pages/admin/program/ProgramUsers';
-import ChallengeAdminLayout from './components/admin/challenge/ui/layout/ChallengeAdminLayout';
-import ChallengeHome from './pages/admin/challenge/ChallengeHome';
-import ChallengeMission from './pages/admin/challenge/ChallengeMission';
+import ChallengeOperationAdminLayout from './components/admin/challenge/ui/ChallengeOperationAdminLayout';
+import ChallengeOperationHome from './pages/admin/challenge/ChallengeOperationHome';
 import ChallengeContents from './pages/admin/challenge/ChallengeContents';
-import ChallengeSubmitCheck from './pages/admin/challenge/ChallengeSubmitCheck';
-import ChallengeUser from './pages/admin/challenge/ChallengeUser';
-import ChallengeNotice from './pages/admin/challenge/ChallengeNotice';
 import ChallengeDashboard from './pages/common/challenge/ChallengeDashboard';
 import ChallengeLayout from './components/common/challenge/ui/layout/ChallengeLayout';
 import MyChallengeDashboard from './pages/common/challenge/MyChallengeDashboard';
 import MentorNotificationBefore from './pages/common/mentor/MentorNotificationBefore';
 import MentorNotificationAfter from './pages/common/mentor/MentorNotificationAfter';
-import ChallengeOnboarding from './pages/admin/challenge/ChallengeOnboarding';
 import Coupons from './pages/admin/coupon/Coupons';
 import CouponCreate from './pages/admin/coupon/CouponCreate';
 import CouponEdit from './pages/admin/coupon/CouponEdit';
@@ -58,7 +53,6 @@ import PopUpBannerCreate from './pages/admin/banner/pop-up-banner/PopUpBannerCre
 import PopUpBannerEdit from './pages/admin/banner/pop-up-banner/PopUpBannerEdit';
 import OnlineContentsCreate from './pages/admin/online-contents/OnlineContentsCreate';
 import OnlineContentsEdit from './pages/admin/online-contents/OnlineContentsEdit';
-import HomeRegacy from './pages/common/home/HomeRegacy';
 import Privacy from './pages/common/mypage/Privacy';
 import Application from './pages/common/mypage/Application';
 import Review from './pages/common/mypage/Review';
@@ -67,6 +61,12 @@ import ChallengeMissionManagement from './pages/admin/challenge/ChallengeMission
 import ProgramDetail from './pages/common/program/ProgramDetail';
 import ProgramCreate from './pages/admin/program/ProgramCreate';
 import Home from './pages/common/home/Home';
+import ChallengeOperationOnboarding from './pages/admin/challenge/ChallengeOperationOnboarding';
+import ChallengeOperationRegisterMission from './pages/admin/challenge/ChallengeOperationRegisterMission';
+import { CurrentChallengeProvider } from './context/CurrentChallengeProvider';
+import ChallengeOperationSubmission from './pages/admin/challenge/ChallengeOperationSubmission';
+import ChallengeOperationPayback from './pages/admin/challenge/ChallengeOperationPayback';
+import ChallengeOperationParticipants from './pages/admin/challenge/ChallengeOperationParticipants';
 
 const Router = () => {
   return (
@@ -222,20 +222,43 @@ const Router = () => {
             <Route path="bootcamp" element={<RemindersBootcamp />} />
             <Route path="lets-chat" element={<RemindersLetsChat />} />
           </Route>
-          {/* /admin/challenge */}
-          <Route path="challenge" element={<ChallengeOnboarding />} />
-          {/* /admin/challenge/1 */}
-          <Route path="challenge/:programId" element={<ChallengeAdminLayout />}>
-            {/* /admin/challenge/1 */}
-            <Route path="" element={<ChallengeHome />} />
-            {/* /admin/challenge/1/notice */}
-            <Route path="notice" element={<ChallengeNotice />} />
-            {/* /admin/challenge/1/mission */}
-            <Route path="mission" element={<ChallengeMission />} />
-            {/* /admin/challenge/1/submit-check */}
-            <Route path="submit-check" element={<ChallengeSubmitCheck />} />
-            {/* /admin/challenge/1/user */}
-            <Route path="user" element={<ChallengeUser />} />
+          {/* /admin/challenge/operation */}
+          <Route
+            path="challenge/operation"
+            element={<ChallengeOperationOnboarding />}
+          />
+          {/* /admin/challenge/operation/1 */}
+          <Route
+            path="challenge/operation/:programId"
+            element={
+              <CurrentChallengeProvider>
+                <ChallengeOperationAdminLayout />
+              </CurrentChallengeProvider>
+            }
+          >
+            {/* /admin/challenge/operation/1/home */}
+            <Route path="home" element={<ChallengeOperationHome />} />
+
+            {/* /admin/challenge/operation/1/register-mission */}
+            <Route
+              path="register-mission"
+              element={<ChallengeOperationRegisterMission />}
+            />
+
+            {/* /admin/challenge/operation/1/submission */}
+            <Route
+              path="submission"
+              element={<ChallengeOperationSubmission />}
+            />
+
+            {/* /admin/challenge/operation/1/participants */}
+            <Route
+              path="participants"
+              element={<ChallengeOperationParticipants />}
+            />
+
+            {/* /admin/challenge/operation/1/payback */}
+            <Route path="payback" element={<ChallengeOperationPayback />} />
           </Route>
           {/* /admin/challenge/contents */}
           <Route
