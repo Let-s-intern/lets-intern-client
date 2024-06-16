@@ -1,42 +1,37 @@
 import { useEffect, useState } from 'react';
 import BannerPlay from './BannerPlay';
+import { useQuery } from '@tanstack/react-query';
 
-const bannerList = [
-  {
-    id: 0,
-    title: '배너타이틀',
-    link: 'https://www.naver.com/',
-    imgUrl:
-      'https://www.applovin.com/wp-content/uploads/2022/07/1440x810_MAX_FB_Banner_ads-1440x810-1.jpg',
-  },
-  {
-    id: 1,
-    title: '배너타이틀',
-    link: 'https://www.naver.com/',
-    imgUrl:
-      'https://milkad.co.kr/boardForder/marketing4/CK_ti375a38706082843.jpg',
-  },
-  {
-    id: 2,
-    title: '배너타이틀',
-    link: 'https://www.naver.com/',
-    imgUrl:
-      'https://png.pngtree.com/png-clipart/20220424/original/pngtree-tasty-food-hamburger-fast-food-sale-web-banner-ad-png-image_7555326.png',
-  },
-];
+import axios from '../../../../../utils/axios';
+import { IBanner } from '../../../../../interfaces/Banner.interface';
 
 const Banner = () => {
+  const [bannerList, setBannerList] = useState<IBanner[]>([]);
   const [bannerIndex, setBannerIndex] = useState(0);
   const [isPlay, setIsPlay] = useState(true);
+
+  const {isLoading} = useQuery({
+    queryKey: ['banner'],
+    queryFn: async () => {
+      const res = await axios.get(`/banner`, {
+        params: {
+          type: 'MAIN'
+        }
+      });
+      const data = res.data;
+      setBannerList(data.data.bannerList);
+      return data;
+    },
+  });
 
   useEffect(() => {
     if (isPlay) {
       const interval = setInterval(() => {
-        setBannerIndex((prev) => (prev + 1) % bannerList.length);
+        setBannerIndex((prev) => ((prev + 1) % bannerList.length));
       }, 5000);
       return () => clearInterval(interval);
     }
-  }, [isPlay]);
+  }, [isPlay, bannerList]);
 
   const clickLeft = () => {
     if (bannerIndex === 0) setBannerIndex(bannerList.length - 1);
@@ -45,6 +40,10 @@ const Banner = () => {
   const clickRight = () => {
     setBannerIndex((prev) => (prev + 1) % bannerList.length);
   };
+
+  if (isLoading) {
+    return <p>Loading...</p>;
+  }
 
   return (
     <section className="relative top-[3px] flex max-h-[25rem] overflow-hidden text-static-100 md:top-[13px]">
