@@ -1,6 +1,5 @@
 import { useState } from 'react';
 
-import OverviewContent from '../apply/content/OverviewContent';
 import InputContent from '../apply/content/InputContent';
 import ChoicePayPlanContent from '../apply/content/ChoicePayPlanContent';
 import { useMutation, useQuery } from '@tanstack/react-query';
@@ -35,18 +34,16 @@ export interface PayInfo {
   challengePriceType: string;
 }
 
-interface ApplySectionProps {
+interface MobileApplySectionProps {
   programType: ProgramType;
   programId: number;
-  programTitle: string;
 }
 
-const ApplySection = ({
+const MobileApplySection = ({
   programType,
   programId,
-  programTitle,
-}: ApplySectionProps) => {
-  const [contentIndex, setContentIndex] = useState(0);
+}: MobileApplySectionProps) => {
+  const [contentIndex, setContentIndex] = useState(1);
   const [programDate, setProgramDate] = useState<ProgramDate>({
     deadline: '',
     startDate: '',
@@ -126,7 +123,7 @@ const ApplySection = ({
       return res.data;
     },
     onSuccess: () => {
-      setContentIndex(0);
+      setContentIndex(1);
     },
   });
 
@@ -135,17 +132,7 @@ const ApplySection = ({
   };
 
   return (
-    <section className="sticky top-[7rem] w-[22rem] rounded-lg px-5 py-6 shadow-03">
-      {contentIndex === 0 && (
-        <OverviewContent
-          contentIndex={contentIndex}
-          setContentIndex={setContentIndex}
-          programDate={programDate}
-          programType={programType}
-          programTitle={programTitle}
-          isApplied={isApplied}
-        />
-      )}
+    <section className="w-full">
       {contentIndex === 1 && (
         <ChoicePayPlanContent
           contentIndex={contentIndex}
@@ -181,4 +168,4 @@ const ApplySection = ({
   );
 };
 
-export default ApplySection;
+export default MobileApplySection;

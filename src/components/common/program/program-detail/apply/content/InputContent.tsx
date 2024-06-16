@@ -39,7 +39,7 @@ const InputContent = ({
   };
 
   const handleBackButtonClick = () => {
-    setContentIndex(contentIndex - 2);
+    setContentIndex(contentIndex - 1);
   };
 
   useEffect(() => {
@@ -87,7 +87,7 @@ const InputContent = ({
     <div className="flex flex-col gap-5">
       <ScrollableBox
         ref={scrollableBoxRef}
-        className="flex max-h-[20rem] flex-col gap-3"
+        className="flex h-full flex-col gap-3"
       >
         <p className="font-medium text-neutral-0">
           신청 폼을 모두 입력해주세요.

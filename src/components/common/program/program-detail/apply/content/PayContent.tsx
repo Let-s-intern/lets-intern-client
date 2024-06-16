@@ -59,7 +59,7 @@ const PayContent = ({
     <div className="flex flex-col gap-6">
       <ScrollableBox
         ref={scrollableBoxRef}
-        className="flex max-h-[24.5rem] flex-col gap-6"
+        className="flex h-full flex-col gap-6"
       >
         {payInfo.challengePriceType !== 'FREE' &&
           payInfo.livePriceType !== 'FREE' && (
