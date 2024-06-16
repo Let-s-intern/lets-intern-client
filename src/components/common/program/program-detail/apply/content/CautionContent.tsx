@@ -1,5 +1,3 @@
-import { useState } from 'react';
-
 interface CautionContentProps {
   contentIndex: number;
   setContentIndex: (contentIndex: number) => void;

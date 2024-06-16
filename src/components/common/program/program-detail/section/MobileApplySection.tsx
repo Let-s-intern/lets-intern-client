@@ -1,6 +1,5 @@
-import { useState } from 'react';
+import { useReducer, useState } from 'react';
 
-import OverviewContent from '../apply/content/OverviewContent';
 import InputContent from '../apply/content/InputContent';
 import ChoicePayPlanContent from '../apply/content/ChoicePayPlanContent';
 import { useMutation, useQuery } from '@tanstack/react-query';
@@ -8,6 +7,8 @@ import axios from '../../../../../utils/axios';
 import { ProgramType } from '../../../../../pages/common/program/ProgramDetail';
 import PayContent from '../apply/content/PayContent';
 import CautionContent from '../apply/content/CautionContent';
+import drawerReducer from '../../../../../reducers/drawerReducer';
+import applyReducer from '../../../../../reducers/applyReducer';
 
 export interface ProgramDate {
   deadline: string;
@@ -35,19 +36,19 @@ export interface PayInfo {
   challengePriceType: string;
 }
 
-interface ApplySectionProps {
+interface MobileApplySectionProps {
   programType: ProgramType;
   programId: number;
-  programTitle: string;
   toggleApplyModal: () => void;
+  toggleDrawer: () => void;
 }
 
-const ApplySection = ({
+const MobileApplySection = ({
   programType,
   programId,
-  programTitle,
   toggleApplyModal,
-}: ApplySectionProps) => {
+  toggleDrawer,
+}: MobileApplySectionProps) => {
   const [contentIndex, setContentIndex] = useState(0);
   const [programDate, setProgramDate] = useState<ProgramDate>({
     deadline: '',
@@ -81,6 +82,7 @@ const ApplySection = ({
     queryFn: async () => {
       const res = await axios.get(`/${programType}/${programId}/application`);
       const data = res.data.data;
+      console.log(data);
       setProgramDate({
         deadline: data.deadline,
         startDate: data.startDate,
@@ -127,34 +129,19 @@ const ApplySection = ({
       return res.data;
     },
     onSuccess: () => {
-      setContentIndex(0);
+      setContentIndex(1);
     },
   });
 
   const handleApplyButtonClick = () => {
     applyProgram.mutate();
+    toggleDrawer();
     toggleApplyModal();
   };
 
   return (
-    <section className="sticky top-[7rem] w-[22rem] rounded-lg px-5 py-6 shadow-03">
+    <section className="w-full">
       {contentIndex === 0 && (
-        <OverviewContent
-          contentIndex={contentIndex}
-          setContentIndex={setContentIndex}
-          programDate={programDate}
-          programType={programType}
-          programTitle={programTitle}
-          isApplied={isApplied}
-        />
-      )}
-      {contentIndex === 1 && (
-        <ChoicePayPlanContent
-          contentIndex={contentIndex}
-          setContentIndex={setContentIndex}
-        />
-      )}
-      {contentIndex === 2 && (
         <InputContent
           contentIndex={contentIndex}
           setContentIndex={setContentIndex}
@@ -163,7 +150,7 @@ const ApplySection = ({
           programType={programType}
         />
       )}
-      {contentIndex === 3 && (
+      {contentIndex === 1 && (
         <CautionContent
           contentIndex={contentIndex}
           setContentIndex={setContentIndex}
@@ -171,7 +158,7 @@ const ApplySection = ({
           setIsCautionChecked={setIsCautionChecked}
         />
       )}
-      {contentIndex === 4 && (
+      {contentIndex === 2 && (
         <PayContent
           payInfo={payInfo}
           handleApplyButtonClick={handleApplyButtonClick}
@@ -183,4 +170,4 @@ const ApplySection = ({
   );
 };
 
-export default ApplySection;
+export default MobileApplySection;

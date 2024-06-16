@@ -59,7 +59,7 @@ const PayContent = ({
     <div className="flex flex-col gap-6">
       <ScrollableBox
         ref={scrollableBoxRef}
-        className="flex max-h-[24.5rem] flex-col gap-6"
+        className="flex h-full flex-col gap-6"
       >
         {payInfo.challengePriceType !== 'FREE' &&
           payInfo.livePriceType !== 'FREE' && (
@@ -83,10 +83,12 @@ const PayContent = ({
           </span>
         </button>
         <button
-          className="flex w-full justify-center rounded-md bg-primary px-6 py-3 text-lg font-medium text-neutral-100"
-          onClick={handleApplyButtonClick}
+          className="text-1.125-medium flex w-full justify-center rounded-md bg-primary px-6 py-3 font-medium text-neutral-100"
+          onClick={() => {
+            handleApplyButtonClick();
+          }}
         >
-          신청하기 {(payInfo.price - payInfo.discount).toLocaleString()}원
+          최종 결제 금액 {(payInfo.price - payInfo.discount).toLocaleString()}원
         </button>
       </div>
     </div>

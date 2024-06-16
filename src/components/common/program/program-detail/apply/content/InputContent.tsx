@@ -1,10 +1,13 @@
 import { useEffect, useRef, useState } from 'react';
+import clsx from 'clsx';
+import { useMediaQuery } from '@mui/material';
 
 import { ProgramType } from '../../../../../../pages/common/program/ProgramDetail';
 import { UserInfo } from '../../section/ApplySection';
 import MotiveAnswerSection from '../section/MotiveAnswerSection';
 import UserInputSection from '../section/UserInputSection';
 import ScrollableBox from '../scrollable-box/ScrollableBox';
+import { table } from 'console';
 
 interface InputContentProps {
   contentIndex: number;
@@ -26,8 +29,9 @@ const InputContent = ({
   programType,
 }: InputContentProps) => {
   const scrollableBoxRef = useRef<ScrollableDiv>(null);
-
   const [buttonDisabled, setButtonDisabled] = useState<boolean>(true);
+  const mobileMatches = useMediaQuery('(max-width: 768px)');
+  const tabletMatches = useMediaQuery('(max-width: 991px)');
 
   const handleNextButtonClick = () => {
     const regex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
@@ -39,7 +43,7 @@ const InputContent = ({
   };
 
   const handleBackButtonClick = () => {
-    setContentIndex(contentIndex - 2);
+    setContentIndex(contentIndex - 1);
   };
 
   useEffect(() => {
@@ -87,7 +91,10 @@ const InputContent = ({
     <div className="flex flex-col gap-5">
       <ScrollableBox
         ref={scrollableBoxRef}
-        className="flex max-h-[20rem] flex-col gap-3"
+        className={clsx('overflow-y flex h-full flex-col gap-3', {
+          'max-h-[30rem]': mobileMatches,
+          'max-h-[40rem]': tabletMatches,
+        })}
       >
         <p className="font-medium text-neutral-0">
           신청 폼을 모두 입력해주세요.
