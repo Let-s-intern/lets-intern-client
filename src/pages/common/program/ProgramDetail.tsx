@@ -11,6 +11,7 @@ import MobileApplySection from '../../../components/common/program/program-detai
 import drawerReducer from '../../../reducers/drawerReducer';
 import ApplyModal from '../../../components/common/program/program-detail/apply/modal/ApplyModal';
 import applyReducer from '../../../reducers/applyReducer';
+import FilledButton from '../../../components/common/program/program-detail/button/FilledButton';
 
 export type ProgramType = 'challenge' | 'live';
 
@@ -63,7 +64,7 @@ const ProgramDetail = ({ programType }: ProgramDetailProps) => {
             <div className="fixed bottom-0 left-0 right-0 flex w-screen flex-col items-center rounded-t-lg bg-static-100 px-5 py-3 shadow-05">
               <div
                 onClick={() => drawerDispatch({ type: 'toggle' })}
-                className="mb-3 h-[5px] w-[70px] rounded-full bg-neutral-80"
+                className="mb-3 h-[5px] w-[70px] cursor-pointer rounded-full bg-neutral-80"
               />
               {isOpen ? (
                 <MobileApplySection
@@ -73,12 +74,7 @@ const ProgramDetail = ({ programType }: ProgramDetailProps) => {
                   toggleDrawer={toggleDrawer}
                 />
               ) : (
-                <button
-                  onClick={toggleDrawer}
-                  className="flex w-full flex-1 justify-center rounded-md border-2 border-primary bg-primary px-6 py-3 text-lg font-medium text-neutral-100 disabled:border-neutral-70 disabled:bg-neutral-70"
-                >
-                  신청하기
-                </button>
+                <FilledButton onClick={toggleDrawer} caption="신청하기" />
               )}
             </div>
           )}

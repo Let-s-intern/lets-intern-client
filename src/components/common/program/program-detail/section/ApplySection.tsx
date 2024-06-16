@@ -79,7 +79,6 @@ const ApplySection = ({
     queryFn: async () => {
       const res = await axios.get(`/${programType}/${programId}/application`);
       const data = res.data.data;
-      console.log(data);
       setProgramDate({
         deadline: data.deadline,
         startDate: data.startDate,

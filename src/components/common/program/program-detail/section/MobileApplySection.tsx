@@ -49,7 +49,7 @@ const MobileApplySection = ({
   toggleApplyModal,
   toggleDrawer,
 }: MobileApplySectionProps) => {
-  const [contentIndex, setContentIndex] = useState(1);
+  const [contentIndex, setContentIndex] = useState(0);
   const [programDate, setProgramDate] = useState<ProgramDate>({
     deadline: '',
     startDate: '',
@@ -141,13 +141,7 @@ const MobileApplySection = ({
 
   return (
     <section className="w-full">
-      {contentIndex === 1 && (
-        <ChoicePayPlanContent
-          contentIndex={contentIndex}
-          setContentIndex={setContentIndex}
-        />
-      )}
-      {contentIndex === 2 && (
+      {contentIndex === 0 && (
         <InputContent
           contentIndex={contentIndex}
           setContentIndex={setContentIndex}
@@ -156,7 +150,7 @@ const MobileApplySection = ({
           programType={programType}
         />
       )}
-      {contentIndex === 3 && (
+      {contentIndex === 1 && (
         <CautionContent
           contentIndex={contentIndex}
           setContentIndex={setContentIndex}
@@ -164,7 +158,7 @@ const MobileApplySection = ({
           setIsCautionChecked={setIsCautionChecked}
         />
       )}
-      {contentIndex === 4 && (
+      {contentIndex === 2 && (
         <PayContent
           payInfo={payInfo}
           handleApplyButtonClick={handleApplyButtonClick}
