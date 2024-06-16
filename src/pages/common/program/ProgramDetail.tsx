@@ -75,6 +75,7 @@ const ProgramDetail = ({ programType }: ProgramDetailProps) => {
                   toggleDrawer={toggleDrawer}
                 />
               ) : (
+                // 모집 전이면 사전알림신청 버튼 표시
                 <FilledButton onClick={toggleDrawer} caption="신청하기" />
               )}
             </div>
