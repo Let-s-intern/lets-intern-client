@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { CiTrash } from 'react-icons/ci';
 import {
-  ITableContent,
+  TableContent,
   ItemWithStatus,
 } from '../../../../../interfaces/interface';
-import { STATUS, TABLE_CONTENT } from '../../../../../utils/convert';
+import { TABLE_STATUS, TABLE_CONTENT } from '../../../../../utils/convert';
 import { formatMissionTableDateString } from '../../../../../utils/formatDateString';
 import AlertModal from '../../../../ui/alert/AlertModal';
 import DropdownCell from './DropdownCell';
@@ -16,7 +16,7 @@ interface LineTableBodyRowProps<T extends ItemWithStatus> {
   attrNames: Array<keyof T> extends Array<string> ? Array<string> : never;
   placeholders?: string[];
   canEdits: boolean[];
-  contents: ITableContent[];
+  contents: TableContent[];
   cellWidthList: string[];
   onDelete: (item: T) => void;
   onSave: (item: T) => void;
@@ -49,7 +49,7 @@ const LineTableBodyRow = <T extends ItemWithStatus>({
 }: LineTableBodyRowProps<T>) => {
   const [values, setValues] = useState(initialValues as T);
   const [isEditMode, setIsEditMode] = useState(
-    initialValues.status === STATUS.SAVE ? false : true,
+    initialValues.status === TABLE_STATUS.SAVE ? false : true,
   );
   const [isAlertShown, setIsAlertShown] = useState(false);
 
@@ -91,72 +91,74 @@ const LineTableBodyRow = <T extends ItemWithStatus>({
   return (
     <div className="flex gap-px rounded-md border border-neutral-200 p-1 font-pretendard">
       {attrNames.map((attr, i) => {
-        if (contents[i].type === TABLE_CONTENT.INPUT)
-          return (
-            <LineTableBodyCell key={i} className={cellWidthList[i]}>
-              <TextareaCell
-                name={attr as string}
-                placeholder={placeholders[i] || ''}
-                value={values[attr] as string}
-                disabled={!canEdits[i] || !isEditMode}
-                onChange={handleChange}
-              />
-            </LineTableBodyCell>
-          );
+        const content = contents[i];
+        const value = values[attr as keyof T];
+        console.log("value", value);
 
-        if (contents[i].type === TABLE_CONTENT.DROPDOWN) {
-          return (
-            <LineTableBodyCell key={i} className={cellWidthList[i]}>
-              {canEdits && isEditMode ? (
-                <DropdownCell
-                  selected={values[attr].length === 0 ? '' : values[attr][0].id}
-                  name={attr as string}
-                  optionList={contents[i].options as []}
-                  onChange={handleChange}
-                />
-              ) : (
-                <TextareaCell
-                  name={attr as string}
-                  placeholder={placeholders[i] || ''}
-                  value={values[attr].length === 0 ? '' : values[attr][0].title}
-                  disabled={true}
-                  onChange={handleChange}
-                />
-              )}
-            </LineTableBodyCell>
-          );
-        }
 
-        if (contents[i].type === TABLE_CONTENT.DATE) {
-          return (
-            <LineTableBodyCell key={i} className={cellWidthList[i]}>
-              {canEdits[i] && isEditMode ? (
-                <input
-                  type="date"
-                  name={attr}
-                  value={values[attr]}
-                  onChange={handleChange}
-                />
-              ) : (
+        switch (content.type) {
+          case TABLE_CONTENT.INPUT:
+            return (
+              <LineTableBodyCell key={i} className={cellWidthList[i]}>
                 <TextareaCell
                   name={attr}
                   placeholder={placeholders[i] || ''}
-                  value={formatMissionTableDateString(
-                    values[attr],
-                    attr === 'createDate'
-                      ? ''
-                      : canEdits[i]
-                      ? '06:00'
-                      : '23:59',
-                  )}
-                  disabled={true}
+                  value={value}
+                  disabled={!canEdits[i] || !isEditMode}
+                  onChange={handleChange}
                 />
-              )}
-            </LineTableBodyCell>
-          );
+              </LineTableBodyCell>
+            );
+          case TABLE_CONTENT.DROPDOWN:
+            return (
+              <LineTableBodyCell key={i} className={cellWidthList[i]}>
+                {canEdits && isEditMode ? (
+                  <DropdownCell
+                    selected={value}
+                    name={attr}
+                    optionList={content.options}
+                    onChange={handleChange}
+                  />
+                ) : (
+                  <TextareaCell
+                    name={attr}
+                    placeholder={placeholders[i] || ''}
+                    value={content.options.find((option) => option.id === value)?.title || ''}
+                    disabled={true}
+                  />
+                )}
+              </LineTableBodyCell>
+            );
+          case TABLE_CONTENT.DATE:
+            return (
+              <LineTableBodyCell key={i} className={cellWidthList[i]}>
+                {canEdits[i] && isEditMode ? (
+                  <input
+                    type="date"
+                    name={attr}
+                    value={value}
+                    onChange={handleChange}
+                  />
+                ) : (
+                  <TextareaCell
+                    name={attr}
+                    placeholder={placeholders[i] || ''}
+                    value={formatMissionTableDateString(
+                      value,
+                      attr === 'createDate'
+                        ? ''
+                        : canEdits[i]
+                        ? '06:00'
+                        : '23:59',
+                    )}
+                    disabled={true}
+                  />
+                )}
+              </LineTableBodyCell>
+            );
+          default:
+            return <LineTableBodyCell key={i} className={cellWidthList[i]} />;
         }
-
-        return <LineTableBodyCell key={i} className={cellWidthList[i]} />;
       })}
 
       <LineTableBodyCell className="flex-1">
@@ -175,7 +177,7 @@ const LineTableBodyRow = <T extends ItemWithStatus>({
               type="button"
               onClick={() => {
                 setValues(initialValues);
-                if (initialValues.status === STATUS.SAVE) {
+                if (initialValues.status === TABLE_STATUS.SAVE) {
                   setIsEditMode(false);
                 } else {
                   onCancel(values);

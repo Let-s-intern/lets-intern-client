@@ -1,26 +1,170 @@
-import { useState } from 'react';
+import { useMutation, useQuery } from '@tanstack/react-query';
+import dayjs from 'dayjs';
+import { useMemo, useState } from 'react';
 
-import TableBody from '../../../components/admin/challenge/mission/mission-contents/table/table-body/TableBody';
-import TableHead from '../../../components/admin/challenge/mission/mission-contents/table/table-head/TableHead';
 import Button from '../../../components/admin/challenge/ui/button/Button';
+import Heading from '../../../components/admin/challenge/ui/heading/Heading';
+import LineTableBody from '../../../components/admin/challenge/ui/lineTable/LineTableBody';
+import LineTableBodyRow from '../../../components/admin/challenge/ui/lineTable/LineTableBodyRow';
+import LineTableHead from '../../../components/admin/challenge/ui/lineTable/LineTableHead';
 import Table from '../../../components/admin/challenge/ui/table/table-container/Table';
+import {
+  ContentsResItem,
+  CreateContentsReq,
+  getContentsAdmin,
+  UpdateContentsReq,
+} from '../../../schema';
+import axios from '../../../utils/axios';
+import {
+  TableStatus,
+  TABLE_CONTENT,
+  TABLE_STATUS,
+} from '../../../utils/convert';
+
+const cellWidthList = [
+  'w-[140px]',
+  'w-[60px]',
+  'w-[10%]',
+  'w-[20%]',
+  'w-[20%]',
+];
+
+const colNames = ['생성일자', 'id', '콘텐츠구분', '콘텐츠명', '콘텐츠링크'];
+
+type Row = ContentsResItem & { status: TableStatus };
 
 const ChallengeContents = () => {
-  const [addMenuShown, setAddMenuShown] = useState(false);
+  const { data, refetch } = useQuery({
+    queryKey: ['contents', 'admin'],
+    queryFn: async () => {
+      const res = await axios.get('/contents/admin');
+      return getContentsAdmin.parse(res.data.data);
+    },
+  });
+
+  const [insertingContents, setInsertingContents] = useState<Row | null>(null);
+
+  const contentsListRows = useMemo(() => {
+    const list =
+      data?.contentsAdminList?.map(
+        (item): Row => ({
+          ...item,
+          status: TABLE_STATUS.SAVE,
+        }),
+      ) ?? [];
+
+    if (insertingContents) {
+      list?.push(insertingContents);
+    }
+
+    return list;
+  }, [data?.contentsAdminList, insertingContents]);
+
+  const createMutation = useMutation({
+    mutationFn: async (req: CreateContentsReq) => {
+      const res = await axios.post('/contents', req);
+      if (res.status !== 200) {
+        console.warn(res);
+      }
+    },
+  });
+
+  const updateMutation = useMutation({
+    mutationFn: async (req: UpdateContentsReq & { id: number }) => {
+      const { id, ...payload } = req;
+      const res = await axios.patch(`/contents/${id}`, payload);
+      if (res.status !== 200) {
+        console.warn(res);
+      }
+    },
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: async (id: number) => {
+      const res = await axios.delete(`/contents/${id}`);
+      if (res.status !== 200) {
+        console.warn(res);
+      }
+    },
+  });
 
   return (
-    <div className="px-12 pt-12">
+    <div className="px-12 pt-6">
       <div className="flex items-center justify-between px-3">
-        <h1 className="text-2xl font-semibold">학습 콘텐츠</h1>
-        <Button onClick={() => setAddMenuShown(true)}>등록</Button>
+        <Heading>콘텐츠 관리</Heading>
+        <Button
+          onClick={() => {
+            setInsertingContents({
+              id: 0, // 임시 id
+              title: '',
+              createDate: dayjs(), // 임시 생성일자
+              link: '',
+              type: 'ADDITIONAL',
+              status: TABLE_STATUS.INSERT,
+            });
+          }}
+        >
+          등록
+        </Button>
       </div>
-      <Table>
-        <TableHead />
-        <TableBody
-          addMenuShown={addMenuShown}
-          setAddMenuShown={setAddMenuShown}
-        />
-      </Table>
+      <div className="min-w-[1000px]">
+        <Table>
+          <LineTableHead cellWidthList={cellWidthList} colNames={colNames} />
+          <LineTableBody>
+            {contentsListRows?.map((row) => (
+              <LineTableBodyRow<Row>
+                attrNames={['createDate', 'id', 'type', 'title', 'link']}
+                placeholders={colNames}
+                canEdits={[false, false, true, true, true, true, true]}
+                contents={[
+                  { type: TABLE_CONTENT.DATE },
+                  { type: TABLE_CONTENT.INPUT },
+                  {
+                    type: TABLE_CONTENT.DROPDOWN,
+                    options: [
+                      { id: 'ADDITIONAL', title: '추가콘텐츠' },
+                      { id: 'ESSENTIAL', title: '필수콘텐츠' },
+                    ],
+                  },
+                  { type: TABLE_CONTENT.INPUT },
+                  { type: TABLE_CONTENT.INPUT },
+                  { type: TABLE_CONTENT.INPUT },
+                  { type: TABLE_CONTENT.INPUT },
+                ]}
+                key={row.id}
+                item={row}
+                onCancel={() => {
+                  setInsertingContents(null);
+                }}
+                onDelete={async (item) => {
+                  await deleteMutation.mutateAsync(item.id);
+                  refetch();
+                }}
+                onSave={async (item) => {
+                  if (item.status === TABLE_STATUS.INSERT) {
+                    await createMutation.mutateAsync({
+                      title: item.title,
+                      link: item.link,
+                      type: item.type,
+                    });
+                    refetch();
+                    setInsertingContents(null);
+                  } else if (item.status === TABLE_STATUS.SAVE) {
+                    await updateMutation.mutateAsync({
+                      id: item.id,
+                      title: item.title,
+                      link: item.link,
+                      type: item.type,
+                    });
+                    refetch();
+                  }
+                }}
+                cellWidthList={cellWidthList}
+              />
+            ))}
+          </LineTableBody>
+        </Table>
+      </div>
     </div>
   );
 };

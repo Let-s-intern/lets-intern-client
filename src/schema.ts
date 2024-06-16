@@ -436,6 +436,8 @@ export const getContentsAdmin = z
     };
   });
 
+export type ContentsResItem = z.infer<typeof getContentsAdmin>['contentsAdminList'][number];
+
 /** GET /api/v1/contents/admin/simple  */
 export const getContentsAdminSimple = z.object({
   contentsSimpleList: z.array(

@@ -15,7 +15,7 @@ import {
   UpdateMissionTemplateReq,
 } from '../../../schema';
 import axios from '../../../utils/axios';
-import { STATUS, TableStatus, TABLE_CONTENT } from '../../../utils/convert';
+import { TABLE_STATUS, TableStatus, TABLE_CONTENT } from '../../../utils/convert';
 
 const cellWidthList = [
   'w-[120px]',
@@ -57,7 +57,7 @@ const ChallengeMissionManagement = () => {
       data?.missionTemplateAdminList?.map(
         (item): Row => ({
           ...item,
-          status: STATUS.SAVE,
+          status: TABLE_STATUS.SAVE,
         }),
       ) ?? [];
 
@@ -113,7 +113,7 @@ const ChallengeMissionManagement = () => {
               guide: '',
               templateLink: '',
               createDate: dayjs(), // 임시 생성일자
-              status: STATUS.INSERT,
+              status: TABLE_STATUS.INSERT,
               missionTag: '',
             });
           }}
@@ -160,7 +160,7 @@ const ChallengeMissionManagement = () => {
                   refetch();
                 }}
                 onSave={async (item) => {
-                  if (item.status === STATUS.INSERT) {
+                  if (item.status === TABLE_STATUS.INSERT) {
                     await createMutation.mutateAsync({
                       description: item.description,
                       guide: item.guide,
@@ -170,7 +170,7 @@ const ChallengeMissionManagement = () => {
                     });
                     refetch();
                     setInsertingMissionTemplate(null);
-                  } else if (item.status === STATUS.SAVE) {
+                  } else if (item.status === TABLE_STATUS.SAVE) {
                     await updateMutation.mutateAsync({
                       id: item.id,
                       description: item.description,
