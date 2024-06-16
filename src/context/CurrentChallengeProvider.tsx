@@ -5,7 +5,7 @@ import { z } from 'zod';
 import { getChallengeId, getMissionAdminId } from '../schema';
 import axios from '../utils/axios';
 
-type CurrentChallenge = z.infer<typeof getChallengeId>;
+type CurrentChallenge = z.infer<typeof getChallengeId> & { id: number };
 type MissionList = z.infer<typeof getMissionAdminId>;
 
 const currentChallengeContext = createContext<{
@@ -27,7 +27,10 @@ export const CurrentChallengeProvider = ({
         return null;
       }
       const res = await axios.get(`/challenge/${params.programId}`);
-      return getChallengeId.parse(res.data.data);
+      return {
+        ...getChallengeId.parse(res.data.data),
+        id: Number(params.programId),
+      };
     },
   });
 
@@ -57,4 +60,4 @@ export const useCurrentChallenge = () => {
 
 export const useMissionsOfCurrentChallenge = () => {
   return useContext(currentChallengeContext).missionsOfCurrentChallenge;
-}
+};

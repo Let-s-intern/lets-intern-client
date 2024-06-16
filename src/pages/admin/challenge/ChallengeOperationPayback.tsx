@@ -1,4 +1,4 @@
-import { Button } from '@mui/base';
+import { Button } from '@mui/material';
 import {
   DataGrid,
   GridColDef, GridToolbarContainer,

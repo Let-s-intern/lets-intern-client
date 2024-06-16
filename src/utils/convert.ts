@@ -313,6 +313,8 @@ export const STATUS = {
   INSERT: 1,
 } as const;
 
+export type TableStatus = typeof STATUS[keyof typeof STATUS];
+
 export const TABLE_CONTENT = {
   INPUT: 0,
   DROPDOWN: 1,

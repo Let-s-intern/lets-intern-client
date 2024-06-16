@@ -1,31 +1,26 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { CiTrash } from 'react-icons/ci';
-
-import TextareaCell from './TextareaCell';
-import LineTableBodyCell from './LineTableBodyCell';
-import AlertModal from '../../../../ui/alert/AlertModal';
 import {
   ITableContent,
   ItemWithStatus,
 } from '../../../../../interfaces/interface';
-import {
-  STATUS,
-  TABLE_CONTENT,
-  missionTypeToText,
-} from '../../../../../utils/convert';
+import { STATUS, TABLE_CONTENT } from '../../../../../utils/convert';
 import { formatMissionTableDateString } from '../../../../../utils/formatDateString';
+import AlertModal from '../../../../ui/alert/AlertModal';
 import DropdownCell from './DropdownCell';
+import LineTableBodyCell from './LineTableBodyCell';
+import TextareaCell from './TextareaCell';
 
 interface LineTableBodyRowProps<T extends ItemWithStatus> {
   item: T;
-  attrNames: Array<keyof T>;
+  attrNames: Array<keyof T> extends Array<string> ? Array<string> : never;
   placeholders?: string[];
   canEdits: boolean[];
   contents: ITableContent[];
   cellWidthList: string[];
-  handleAdd: (item: T) => void;
-  handleDelete: (item: T) => void;
-  handleSave: (item: T) => void;
+  onDelete: (item: T) => void;
+  onSave: (item: T) => void;
+  onCancel: (item: T) => void;
   children?: React.ReactNode;
 }
 
@@ -33,7 +28,7 @@ interface LineTableBodyRowProps<T extends ItemWithStatus> {
  * 테이블 바디 행 컴포넌트
  * @param item - 행에 표시할 객체 데이터
  * @param placeholders - 수정 모드 시, textarea에 표시할 placeholder 리스트 (순서 중요)
- * @param handleAdd - 데이터 추가 핸들러 (저장 X)
+ * @param handleSave - "저장" 버튼을 눌렀을 시
  * @param handleDelete - 데이터 삭제 핸들러 (저장 O)
  * @param cellWidthList - 행 너비 리스트 (순서 중요)
  * @param attrNames - 행에 넣을 객체 속성 리스트 (순서 중요)
@@ -44,9 +39,9 @@ interface LineTableBodyRowProps<T extends ItemWithStatus> {
 const LineTableBodyRow = <T extends ItemWithStatus>({
   item: initialValues,
   placeholders = [],
-  handleAdd,
-  handleDelete,
-  handleSave,
+  onDelete,
+  onSave,
+  onCancel,
   cellWidthList,
   attrNames,
   canEdits,
@@ -57,6 +52,10 @@ const LineTableBodyRow = <T extends ItemWithStatus>({
     initialValues.status === STATUS.SAVE ? false : true,
   );
   const [isAlertShown, setIsAlertShown] = useState(false);
+
+  useEffect(() => {
+    console.log('values', values);
+  }, [values]);
 
   const handleChange = (
     e: React.ChangeEvent<
@@ -92,22 +91,6 @@ const LineTableBodyRow = <T extends ItemWithStatus>({
   return (
     <div className="flex gap-px rounded-md border border-neutral-200 p-1 font-pretendard">
       {attrNames.map((attr, i) => {
-        // 보증금 미션만 환급금액 표시
-        if (attr === 'refund')
-          return (
-            <LineTableBodyCell key={i} className={cellWidthList[i]}>
-              {values.type === 'REFUND' && (
-                <TextareaCell
-                  name={attr as string}
-                  placeholder={placeholders[i] || ''}
-                  value={values[attr] as string}
-                  disabled={!canEdits[i] || !isEditMode}
-                  onChange={handleChange}
-                />
-              )}
-            </LineTableBodyCell>
-          );
-
         if (contents[i].type === TABLE_CONTENT.INPUT)
           return (
             <LineTableBodyCell key={i} className={cellWidthList[i]}>
@@ -120,37 +103,6 @@ const LineTableBodyRow = <T extends ItemWithStatus>({
               />
             </LineTableBodyCell>
           );
-
-        // 유형, 미션명 드롭다운
-        if (
-          contents[i].type === TABLE_CONTENT.DROPDOWN &&
-          (attr === 'type' || attr === 'title')
-        ) {
-          return (
-            <LineTableBodyCell key={i} className={cellWidthList[i]}>
-              {canEdits && isEditMode ? (
-                <DropdownCell
-                  selected={values[attr]}
-                  name={attr as string}
-                  optionList={contents[i].options as []}
-                  onChange={handleChange}
-                />
-              ) : (
-                <TextareaCell
-                  name={attr as string}
-                  placeholder={placeholders[i] || ''}
-                  value={
-                    attr === 'type'
-                      ? missionTypeToText[values[attr]]
-                      : values[attr]
-                  }
-                  disabled={true}
-                  onChange={handleChange}
-                />
-              )}
-            </LineTableBodyCell>
-          );
-        }
 
         if (contents[i].type === TABLE_CONTENT.DROPDOWN) {
           return (
@@ -181,16 +133,16 @@ const LineTableBodyRow = <T extends ItemWithStatus>({
               {canEdits[i] && isEditMode ? (
                 <input
                   type="date"
-                  name={attr as string}
-                  value={values[attr] as string}
+                  name={attr}
+                  value={values[attr]}
                   onChange={handleChange}
                 />
               ) : (
                 <TextareaCell
-                  name={attr as string}
+                  name={attr}
                   placeholder={placeholders[i] || ''}
                   value={formatMissionTableDateString(
-                    values[attr] as string,
+                    values[attr],
                     attr === 'createDate'
                       ? ''
                       : canEdits[i]
@@ -213,8 +165,7 @@ const LineTableBodyRow = <T extends ItemWithStatus>({
             <button
               type="button"
               onClick={() => {
-                handleSave(values);
-                handleAdd({ ...values, status: STATUS.SAVE });
+                onSave(values);
                 setIsEditMode(false);
               }}
             >
@@ -227,7 +178,7 @@ const LineTableBodyRow = <T extends ItemWithStatus>({
                 if (initialValues.status === STATUS.SAVE) {
                   setIsEditMode(false);
                 } else {
-                  handleDelete(values);
+                  onCancel(values);
                 }
               }}
             >
@@ -263,7 +214,7 @@ const LineTableBodyRow = <T extends ItemWithStatus>({
               {isAlertShown && (
                 <AlertModal
                   onConfirm={() => {
-                    handleDelete(values);
+                    onDelete(values);
                     setIsAlertShown(false);
                   }}
                   title="미션 삭제"

@@ -304,3 +304,144 @@ export const patchChallengeIdApplicationIdPaybackVariables = z.object({
   adminScore: z.number(),
   isRefunded: z.boolean(),
 });
+
+export const missionType = z.union([
+  z.literal('GENERAL'),
+  z.literal('REWARD'),
+  z.literal('REFUND'),
+]);
+
+export const contentsType = z.union([
+  z.literal('ESSENTIAL'),
+  z.literal('ADDITIONAL'),
+]);
+
+export type ContentsType = z.infer<typeof contentsType>;
+
+/// POST /api/v1/mission/{id}
+export const postMissionIdReq = z.object({
+  th: z.number(),
+  title: z.string(),
+  type: missionType,
+  refund: z.number(),
+  score: z.number(),
+  lateScore: z.number(),
+  startDate: z.string(),
+  missionTemplateId: z.number(),
+  essentialContentsIdList: z.array(z.number()),
+  additionalContentsIdList: z.array(z.number()),
+  limitedContentsIdList: z.array(z.number()),
+});
+
+export type CreateMissionReq = z.infer<typeof postMissionIdReq>;
+
+/// PATCH /api/v1/mission/{id}
+export const patchMissionIdReq = z.object({
+  th: z.number(),
+  title: z.string(),
+  type: missionType,
+  score: z.number(),
+  lateScore: z.number(),
+  startDate: z.string(),
+  missionTemplateId: z.number(),
+  essentialContentsIdList: z.array(z.number()),
+  additionalContentsIdList: z.array(z.number()),
+});
+
+export type UpdateMissionReq = z.infer<typeof patchMissionIdReq>;
+
+// GET /api/v1/mission-template/admin
+export const getMissionTemplateAdmin = z
+  .object({
+    missionTemplateAdminList: z.array(
+      z.object({
+        id: z.number(),
+        createDate: z.string(),
+        missionTag: z.string(),
+        title: z.string(),
+        description: z.string(),
+        guide: z.string(),
+        templateLink: z.string(),
+      }),
+    ),
+  })
+  .transform((data) => {
+    return {
+      missionTemplateAdminList: data.missionTemplateAdminList.map(
+        (missionTemplate) => ({
+          ...missionTemplate,
+          createDate: dayjs(missionTemplate.createDate),
+        }),
+      ),
+    };
+  });
+
+export type MissionTemplateResItem = z.infer<
+  typeof getMissionTemplateAdmin
+>['missionTemplateAdminList'][number];
+
+// POST /api/v1/mission-template
+export type CreateMissionTemplateReq = {
+  missionTag: string;
+  title: string;
+  description: string;
+  guide: string;
+  templateLink: string;
+};
+
+// PATCH /api/v1/mission-template/{id}
+export type UpdateMissionTemplateReq = {
+  missionTag?: string;
+  title?: string;
+  description?: string;
+  guide?: string;
+  templateLink?: string;
+};
+
+// POST /api/v1/contents
+export type CreateContentsReq = {
+  type: ContentsType;
+  title: string;
+  link: string;
+};
+
+// PATCH /api/v1/contents/{id}
+export type UpdateContentsReq = {
+  type?: ContentsType;
+  title?: string;
+  link?: string;
+};
+
+/** GET /api/v1/contents/admin */
+export const getContentsAdmin = z
+  .object({
+    contentsAdminList: z.array(
+      z.object({
+        id: z.number(),
+        type: contentsType,
+        title: z.string(),
+        link: z.string(),
+        createDate: z.string(),
+      }),
+    ),
+    pageInfo: pageinfo,
+  })
+  .transform((data) => {
+    return {
+      contentsAdminList: data.contentsAdminList.map((content) => ({
+        ...content,
+        createDate: dayjs(content.createDate),
+      })),
+      pageInfo: data.pageInfo,
+    };
+  });
+
+/** GET /api/v1/contents/admin/simple  */
+export const getContentsAdminSimple = z.object({
+  contentsSimpleList: z.array(
+    z.object({
+      id: z.number(),
+      title: z.string().or(z.null()),
+    }),
+  ),
+});
