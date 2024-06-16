@@ -22,12 +22,13 @@ const ReviewsDetail = () => {
   const [program, setProgram] = useState<{ title: string }>();
   const [maxPage, setMaxPage] = useState<number>(0);
 
-  const progarmType = searchParams.get('type');
+  const programType = searchParams.get('type') || '';
 
   useQuery({
     queryKey: [
-      progarmType?.toLowerCase(),
+      programType?.toLowerCase(),
       params.programId,
+      'reviews',
       {
         page: searchParams.get('page') || 1,
         size: 10,
@@ -44,7 +45,7 @@ const ReviewsDetail = () => {
   });
 
   useQuery({
-    queryKey: [progarmType?.toLowerCase(), params.programId, 'title'],
+    queryKey: [programType.toLowerCase(), params.programId, 'title'],
     queryFn: async ({ queryKey }) => {
       const res = await axios.get(
         `/${queryKey[0]}/${queryKey[1]}/${queryKey[2]}`,
@@ -62,7 +63,7 @@ const ReviewsDetail = () => {
       <main>
         <Table>
           <TableHead />
-          <TableBody reviewList={reviewList} />
+          <TableBody reviewList={reviewList} programType={programType} />
         </Table>
         {reviewList.length > 0 && (
           <AdminPagination className="mt-4" maxPage={maxPage} />

@@ -17,9 +17,6 @@ const ProgramBannerCreate = () => {
     startDate: '',
     endDate: '',
     imgUrl: '',
-    contents: '',
-    colorCode: '',
-    textColorCode: '',
   });
 
   const addProgramBanner = useMutation({

@@ -19,9 +19,6 @@ const MainBannerEdit = () => {
     startDate: '',
     endDate: '',
     imgUrl: '',
-    contents: '',
-    colorCode: '',
-    textColorCode: '',
   });
 
   const bannerId = Number(params.bannerId);
@@ -30,20 +27,18 @@ const MainBannerEdit = () => {
     queryKey: [
       'banner',
       'admin',
+      bannerId,
       {
         type: 'MAIN',
       },
     ],
     queryFn: async () => {
-      const res = await axios.get('/banner/admin', {
+      const res = await axios.get(`/banner/admin/${bannerId}`, {
         params: {
           type: 'MAIN',
         },
       });
-      const mainBanner = res.data.data.bannerList.find(
-        (banner: { id: number }) => banner.id === bannerId,
-      );
-      setValue(mainBanner);
+      setValue(res.data.data.bannerAdminDetailVo);
       return res.data;
     },
     refetchOnWindowFocus: false,

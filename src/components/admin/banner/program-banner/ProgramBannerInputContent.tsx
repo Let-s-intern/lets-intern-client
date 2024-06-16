@@ -1,7 +1,5 @@
 import Input from '../../../ui/input/Input';
-import ColorPicker from '../../program/ui/form/ColorPicker';
 import DateTimePicker from '../../program/ui/form/DateTimePicker';
-import ImageUploader from '../../program/ui/form/ImageUploader';
 
 export interface ProgramBannerInputContentProps {
   value: {
@@ -10,9 +8,6 @@ export interface ProgramBannerInputContentProps {
     startDate: string;
     endDate: string;
     imgUrl: string;
-    contents: string;
-    colorCode: string;
-    textColorCode: string;
   };
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
@@ -34,26 +29,6 @@ const ProgramBannerInputContent = ({
         label="썸네일 링크"
         name="imgUrl"
         value={value.imgUrl}
-        onChange={onChange}
-      />
-      <Input
-        label="내용"
-        name="contents"
-        value={value.contents}
-        onChange={onChange}
-      />
-      <ColorPicker
-        label="배경 색상"
-        id="colorCode"
-        name="colorCode"
-        value={value.colorCode}
-        onChange={onChange}
-      />
-      <ColorPicker
-        label="글자 색상"
-        id="textColorCode"
-        name="textColorCode"
-        value={value.textColorCode}
         onChange={onChange}
       />
       <DateTimePicker
