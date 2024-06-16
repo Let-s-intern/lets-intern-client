@@ -6,19 +6,16 @@ import { ILineBanner } from '../../../../../interfaces/Banner.interface';
 
 const TopBanner = () => {
   const [isShow, setIsShow] = useState(true);
-  const [lineBanner, setLineBanner] = useState<ILineBanner>();
 
-  const {isLoading} = useQuery({
+  const {isLoading, data} = useQuery<ILineBanner>({
     queryKey: ['LineBanner'],
     queryFn: async () => {
       const res = await axios.get(`/banner`, {
         params: {
-          type: 'LINE'
+          type: 'LINE',
         }
       });
-      const data = res.data;
-      setLineBanner(data.data.bannerList[0]);
-      return data;
+      return res.data.data.bannerList[0];
     },
   });
 
@@ -30,9 +27,9 @@ const TopBanner = () => {
     <section className="mt-3 bg-neutral-0 px-5 py-3">
       <div className="relative">
         <div className="flex flex-col items-center justify-center gap-1 text-center text-static-100 md:flex-row">
-          <span className="text-1-semibold">{lineBanner?.title}</span>
+          <span className="text-1-semibold">{data?.title}</span>
           <span className="text-0.875-medium">
-            {lineBanner?.contents}
+            {data?.contents}
           </span>
         </div>
         <img

@@ -28,7 +28,7 @@ const Banner = () => {
   };
 
   const {isLoading} = useQuery({
-    queryKey: ['MainBanner'],
+    queryKey: ['mainBanner'],
     queryFn: async () => {
       const res = await axios.get(`/banner`, {
         params: {

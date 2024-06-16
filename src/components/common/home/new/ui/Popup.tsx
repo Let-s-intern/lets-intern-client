@@ -1,4 +1,8 @@
 import { useEffect, useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
+
+import axios from '../../../../../utils/axios';
+import { IBanner } from '../../../../../interfaces/Banner.interface';
 
 const DAY = 86400000;
 
@@ -29,11 +33,27 @@ const Popup = () => {
     setShowPopup(true);
   }, []);
 
+  const {isLoading, data} = useQuery<IBanner>({
+    queryKey: ['PopUp'],
+    queryFn: async () => {
+      const res = await axios.get(`/banner`, {
+        params: {
+          type: 'POPUP',
+        }
+      });
+      return res.data.data.bannerList[0];
+    },
+  });
+
+  if (isLoading) {
+    return <p>Loading...</p>;
+  }
+
   return showPopup ? (
     <div className="fixed bottom-0 top-0 z-50 flex h-full w-screen items-center justify-center bg-neutral-0/60 px-8">
       <div className="relative w-80  rounded-xl bg-static-100 px-4 py-6">
         <img
-          src="https://www.urbanbrush.net/web/wp-content/uploads/edd/2020/04/urbanbrush-20200407234100762630.jpg"
+          src={data?.imgUrl}
           alt="홈 화면 팝업 이미지"
         />
         <img
