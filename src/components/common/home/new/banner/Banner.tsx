@@ -10,20 +10,6 @@ const Banner = () => {
   const [bannerIndex, setBannerIndex] = useState(0);
   const [isPlay, setIsPlay] = useState(true);
 
-  const {isLoading} = useQuery({
-    queryKey: ['banner'],
-    queryFn: async () => {
-      const res = await axios.get(`/banner`, {
-        params: {
-          type: 'MAIN'
-        }
-      });
-      const data = res.data;
-      setBannerList(data.data.bannerList);
-      return data;
-    },
-  });
-
   useEffect(() => {
     if (isPlay) {
       const interval = setInterval(() => {
@@ -40,6 +26,20 @@ const Banner = () => {
   const clickRight = () => {
     setBannerIndex((prev) => (prev + 1) % bannerList.length);
   };
+
+  const {isLoading} = useQuery({
+    queryKey: ['MainBanner'],
+    queryFn: async () => {
+      const res = await axios.get(`/banner`, {
+        params: {
+          type: 'MAIN'
+        }
+      });
+      const data = res.data;
+      setBannerList(data.data.bannerList);
+      return data;
+    },
+  });
 
   if (isLoading) {
     return <p>Loading...</p>;

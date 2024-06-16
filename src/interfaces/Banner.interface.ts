@@ -8,3 +8,15 @@ export interface IBanner {
   isVisible: boolean;
   imgUrl: string;
 }
+
+export interface ILineBanner {
+  id: number;
+  title: string;
+  colorCode: string;
+  contents: string;
+  startDate: string;
+  endDate: string;
+  isValid: boolean;
+  link: string;
+  textColorCode: string;
+}
