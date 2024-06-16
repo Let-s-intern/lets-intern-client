@@ -1,4 +1,8 @@
-import { QueryCache, QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import {
+  QueryCache,
+  QueryClient,
+  QueryClientProvider,
+} from '@tanstack/react-query';
 import dayjs from 'dayjs';
 import 'dayjs/locale/ko';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
@@ -17,7 +21,7 @@ const App = () => {
         if (error instanceof ZodError) {
           console.log(error.issues);
         }
-      }
+      },
     }),
   });
 

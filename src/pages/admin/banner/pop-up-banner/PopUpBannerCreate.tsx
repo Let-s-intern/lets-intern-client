@@ -18,9 +18,6 @@ const PopUpBannerCreate = () => {
     startDate: '',
     endDate: '',
     imgUrl: '',
-    contents: '',
-    colorCode: '',
-    textColorCode: '',
   });
 
   const addPopUpBanner = useMutation({

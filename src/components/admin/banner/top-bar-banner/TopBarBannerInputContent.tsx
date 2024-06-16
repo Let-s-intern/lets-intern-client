@@ -8,7 +8,6 @@ export interface TopBarBannerInputContentProps {
     link: string;
     startDate: string;
     endDate: string;
-    imgUrl: string;
     contents: string;
     colorCode: string;
     textColorCode: string;
@@ -29,12 +28,6 @@ const TopBarBannerInputContent = ({
         onChange={onChange}
       />
       <Input label="링크" name="link" value={value.link} onChange={onChange} />
-      <Input
-        label="썸네일 링크"
-        name="imgUrl"
-        value={value.imgUrl}
-        onChange={onChange}
-      />
       <Input
         label="내용"
         name="contents"

@@ -18,9 +18,6 @@ const MainBannerCreate = () => {
     startDate: '',
     endDate: '',
     imgUrl: '',
-    contents: '',
-    colorCode: '',
-    textColorCode: '',
   });
 
   const addMainBanner = useMutation({
