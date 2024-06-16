@@ -5,7 +5,7 @@ import {
   getChallengeId,
   getChallengeIdApplications,
   getChallengeIdApplicationsPayback,
-  getMissionAdminId
+  missionAdmin
 } from './schema';
 
 const requestPromise = (async () => {
@@ -99,7 +99,7 @@ testWithAuth('GET /api/v1/mission/admin/{id}', async ({ request }) => {
   });
 
   const data = await res.json();
-  getMissionAdminId.parse(data.data);
+  missionAdmin.parse(data.data);
 });
 
 testWithAuth(

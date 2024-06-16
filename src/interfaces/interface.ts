@@ -12,27 +12,7 @@ export type ContentTypeKey = keyof typeof TABLE_CONTENT;
 export interface IAction {
   type: string;
 }
-export interface ItemWithStatus {
-  status?: (typeof TABLE_STATUS)[StatusKey];
-  [key: string]: any;
-}
-export type TableContent =
-  | InputTableContent
-  | DropdownTableContent
-  | DateTableContent;
 
-export interface InputTableContent {
-  type: typeof TABLE_CONTENT.INPUT;
-}
-
-export interface DropdownTableContent {
-  type: typeof TABLE_CONTENT.DROPDOWN;
-  options: { id: string | number; title: string }[];
-}
-
-export interface DateTableContent {
-  type: typeof TABLE_CONTENT.DATE;
-}
 
 export interface IPageable {
   page: number;

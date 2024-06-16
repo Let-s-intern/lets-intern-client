@@ -5,17 +5,19 @@ import dayjs from 'dayjs';
 import Button from '../../../components/admin/challenge/ui/button/Button';
 import Heading from '../../../components/admin/challenge/ui/heading/Heading';
 import LineTableBody from '../../../components/admin/challenge/ui/lineTable/LineTableBody';
-import LineTableBodyRow from '../../../components/admin/challenge/ui/lineTable/LineTableBodyRow';
+import LineTableBodyRow, { ItemWithStatus } from '../../../components/admin/challenge/ui/lineTable/LineTableBodyRow';
 import LineTableHead from '../../../components/admin/challenge/ui/lineTable/LineTableHead';
-import Table from '../../../components/admin/challenge/ui/table/table-container/Table';
 import {
   CreateMissionTemplateReq,
   getMissionTemplateAdmin,
   MissionTemplateResItem,
-  UpdateMissionTemplateReq,
+  UpdateMissionTemplateReq
 } from '../../../schema';
 import axios from '../../../utils/axios';
-import { TABLE_STATUS, TableStatus, TABLE_CONTENT } from '../../../utils/convert';
+import {
+  TableStatus,
+  TABLE_CONTENT, TABLE_STATUS
+} from '../../../utils/convert';
 
 const cellWidthList = [
   'w-[120px]',
@@ -37,7 +39,7 @@ const colNames = [
   '템플릿 링크',
 ];
 
-type Row = MissionTemplateResItem & { status: TableStatus };
+type Row = MissionTemplateResItem & ItemWithStatus;
 
 /** 미션 (템플릿) 관리 */
 const ChallengeMissionManagement = () => {
@@ -57,7 +59,7 @@ const ChallengeMissionManagement = () => {
       data?.missionTemplateAdminList?.map(
         (item): Row => ({
           ...item,
-          status: TABLE_STATUS.SAVE,
+          rowStatus: TABLE_STATUS.SAVE,
         }),
       ) ?? [];
 
@@ -113,7 +115,7 @@ const ChallengeMissionManagement = () => {
               guide: '',
               templateLink: '',
               createDate: dayjs(), // 임시 생성일자
-              status: TABLE_STATUS.INSERT,
+              rowStatus: TABLE_STATUS.INSERT,
               missionTag: '',
             });
           }}
@@ -122,71 +124,66 @@ const ChallengeMissionManagement = () => {
         </Button>
       </div>
       <div className="min-w-[1400px]">
-        <Table>
-          <LineTableHead
-            cellWidthList={cellWidthList}
-            colNames={colNames}
-          />
-          <LineTableBody>
-            {missionTemplateListRows?.map((row) => (
-              <LineTableBodyRow<Row>
-                attrNames={[
-                  'createDate',
-                  'id',
-                  'missionTag',
-                  'title',
-                  'description',
-                  'guide',
-                  'templateLink',
-                ]}
-                placeholders={colNames}
-                canEdits={[false, false, true, true, true, true, true]}
-                contents={[
-                  { type: TABLE_CONTENT.DATE },
-                  { type: TABLE_CONTENT.INPUT },
-                  { type: TABLE_CONTENT.INPUT },
-                  { type: TABLE_CONTENT.INPUT },
-                  { type: TABLE_CONTENT.INPUT },
-                  { type: TABLE_CONTENT.INPUT },
-                  { type: TABLE_CONTENT.INPUT },
-                ]}
-                key={row.id}
-                item={row}
-                onCancel={() => {
-                  setInsertingMissionTemplate(null);
-                }}
-                onDelete={async (item) => {
-                  await deleteMutation.mutateAsync(item.id);
+        <LineTableHead cellWidthList={cellWidthList} colNames={colNames} />
+        <LineTableBody>
+          {missionTemplateListRows?.map((row) => (
+            <LineTableBodyRow<Row>
+              attrNames={[
+                'createDate',
+                'id',
+                'missionTag',
+                'title',
+                'description',
+                'guide',
+                'templateLink',
+              ]}
+              placeholders={colNames}
+              canEdits={[false, false, true, true, true, true, true]}
+              contents={[
+                { type: TABLE_CONTENT.DATE },
+                { type: TABLE_CONTENT.INPUT },
+                { type: TABLE_CONTENT.INPUT },
+                { type: TABLE_CONTENT.INPUT },
+                { type: TABLE_CONTENT.INPUT },
+                { type: TABLE_CONTENT.INPUT },
+                { type: TABLE_CONTENT.INPUT },
+              ]}
+              key={row.id}
+              initialValues={row}
+              onCancel={() => {
+                setInsertingMissionTemplate(null);
+              }}
+              onDelete={async (item) => {
+                await deleteMutation.mutateAsync(item.id);
+                refetch();
+              }}
+              onSave={async (item) => {
+                if (item.rowStatus === TABLE_STATUS.INSERT) {
+                  await createMutation.mutateAsync({
+                    description: item.description,
+                    guide: item.guide,
+                    missionTag: item.missionTag,
+                    templateLink: item.templateLink,
+                    title: item.title,
+                  });
                   refetch();
-                }}
-                onSave={async (item) => {
-                  if (item.status === TABLE_STATUS.INSERT) {
-                    await createMutation.mutateAsync({
-                      description: item.description,
-                      guide: item.guide,
-                      missionTag: item.missionTag,
-                      templateLink: item.templateLink,
-                      title: item.title,
-                    });
-                    refetch();
-                    setInsertingMissionTemplate(null);
-                  } else if (item.status === TABLE_STATUS.SAVE) {
-                    await updateMutation.mutateAsync({
-                      id: item.id,
-                      description: item.description,
-                      guide: item.guide,
-                      missionTag: item.missionTag,
-                      templateLink: item.templateLink,
-                      title: item.title,
-                    });
-                    refetch();
-                  }
-                }}
-                cellWidthList={cellWidthList}
-              />
-            ))}
-          </LineTableBody>
-        </Table>
+                  setInsertingMissionTemplate(null);
+                } else if (item.rowStatus === TABLE_STATUS.SAVE) {
+                  await updateMutation.mutateAsync({
+                    id: item.id,
+                    description: item.description,
+                    guide: item.guide,
+                    missionTag: item.missionTag,
+                    templateLink: item.templateLink,
+                    title: item.title,
+                  });
+                  refetch();
+                }
+              }}
+              cellWidthList={cellWidthList}
+            />
+          ))}
+        </LineTableBody>
       </div>
     </div>
   );

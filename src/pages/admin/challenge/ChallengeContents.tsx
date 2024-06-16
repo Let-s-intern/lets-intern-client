@@ -5,9 +5,8 @@ import { useMemo, useState } from 'react';
 import Button from '../../../components/admin/challenge/ui/button/Button';
 import Heading from '../../../components/admin/challenge/ui/heading/Heading';
 import LineTableBody from '../../../components/admin/challenge/ui/lineTable/LineTableBody';
-import LineTableBodyRow from '../../../components/admin/challenge/ui/lineTable/LineTableBodyRow';
+import LineTableBodyRow, { ItemWithStatus } from '../../../components/admin/challenge/ui/lineTable/LineTableBodyRow';
 import LineTableHead from '../../../components/admin/challenge/ui/lineTable/LineTableHead';
-import Table from '../../../components/admin/challenge/ui/table/table-container/Table';
 import {
   ContentsResItem,
   CreateContentsReq,
@@ -31,7 +30,7 @@ const cellWidthList = [
 
 const colNames = ['생성일자', 'id', '콘텐츠구분', '콘텐츠명', '콘텐츠링크'];
 
-type Row = ContentsResItem & { status: TableStatus };
+type Row = ContentsResItem & ItemWithStatus;
 
 const ChallengeContents = () => {
   const { data, refetch } = useQuery({
@@ -49,7 +48,7 @@ const ChallengeContents = () => {
       data?.contentsAdminList?.map(
         (item): Row => ({
           ...item,
-          status: TABLE_STATUS.SAVE,
+          rowStatus: TABLE_STATUS.SAVE,
         }),
       ) ?? [];
 
@@ -100,7 +99,7 @@ const ChallengeContents = () => {
               createDate: dayjs(), // 임시 생성일자
               link: '',
               type: 'ADDITIONAL',
-              status: TABLE_STATUS.INSERT,
+              rowStatus: TABLE_STATUS.INSERT,
             });
           }}
         >
@@ -108,62 +107,60 @@ const ChallengeContents = () => {
         </Button>
       </div>
       <div className="min-w-[1000px]">
-        <Table>
-          <LineTableHead cellWidthList={cellWidthList} colNames={colNames} />
-          <LineTableBody>
-            {contentsListRows?.map((row) => (
-              <LineTableBodyRow<Row>
-                attrNames={['createDate', 'id', 'type', 'title', 'link']}
-                placeholders={colNames}
-                canEdits={[false, false, true, true, true, true, true]}
-                contents={[
-                  { type: TABLE_CONTENT.DATE },
-                  { type: TABLE_CONTENT.INPUT },
-                  {
-                    type: TABLE_CONTENT.DROPDOWN,
-                    options: [
-                      { id: 'ADDITIONAL', title: '추가콘텐츠' },
-                      { id: 'ESSENTIAL', title: '필수콘텐츠' },
-                    ],
-                  },
-                  { type: TABLE_CONTENT.INPUT },
-                  { type: TABLE_CONTENT.INPUT },
-                  { type: TABLE_CONTENT.INPUT },
-                  { type: TABLE_CONTENT.INPUT },
-                ]}
-                key={row.id}
-                item={row}
-                onCancel={() => {
-                  setInsertingContents(null);
-                }}
-                onDelete={async (item) => {
-                  await deleteMutation.mutateAsync(item.id);
+        <LineTableHead cellWidthList={cellWidthList} colNames={colNames} />
+        <LineTableBody>
+          {contentsListRows?.map((row) => (
+            <LineTableBodyRow<Row>
+              attrNames={['createDate', 'id', 'type', 'title', 'link']}
+              placeholders={colNames}
+              canEdits={[false, false, true, true, true, true, true]}
+              contents={[
+                { type: TABLE_CONTENT.DATE },
+                { type: TABLE_CONTENT.INPUT },
+                {
+                  type: TABLE_CONTENT.DROPDOWN,
+                  options: [
+                    { id: 'ADDITIONAL', title: '추가콘텐츠' },
+                    { id: 'ESSENTIAL', title: '필수콘텐츠' },
+                  ],
+                },
+                { type: TABLE_CONTENT.INPUT },
+                { type: TABLE_CONTENT.INPUT },
+                { type: TABLE_CONTENT.INPUT },
+                { type: TABLE_CONTENT.INPUT },
+              ]}
+              key={row.id}
+              initialValues={row}
+              onCancel={() => {
+                setInsertingContents(null);
+              }}
+              onDelete={async (item) => {
+                await deleteMutation.mutateAsync(item.id);
+                refetch();
+              }}
+              onSave={async (item) => {
+                if (item.rowStatus === TABLE_STATUS.INSERT) {
+                  await createMutation.mutateAsync({
+                    title: item.title,
+                    link: item.link,
+                    type: item.type,
+                  });
                   refetch();
-                }}
-                onSave={async (item) => {
-                  if (item.status === TABLE_STATUS.INSERT) {
-                    await createMutation.mutateAsync({
-                      title: item.title,
-                      link: item.link,
-                      type: item.type,
-                    });
-                    refetch();
-                    setInsertingContents(null);
-                  } else if (item.status === TABLE_STATUS.SAVE) {
-                    await updateMutation.mutateAsync({
-                      id: item.id,
-                      title: item.title,
-                      link: item.link,
-                      type: item.type,
-                    });
-                    refetch();
-                  }
-                }}
-                cellWidthList={cellWidthList}
-              />
-            ))}
-          </LineTableBody>
-        </Table>
+                  setInsertingContents(null);
+                } else if (item.rowStatus === TABLE_STATUS.SAVE) {
+                  await updateMutation.mutateAsync({
+                    id: item.id,
+                    title: item.title,
+                    link: item.link,
+                    type: item.type,
+                  });
+                  refetch();
+                }
+              }}
+              cellWidthList={cellWidthList}
+            />
+          ))}
+        </LineTableBody>
       </div>
     </div>
   );

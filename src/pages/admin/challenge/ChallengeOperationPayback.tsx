@@ -1,16 +1,19 @@
 import { Button } from '@mui/material';
 import {
   DataGrid,
-  GridColDef, GridToolbarContainer,
-  GridToolbarExport, useGridApiContext
+  GridColDef,
+  GridToolbarContainer,
+  GridToolbarExport,
+  useGridApiContext,
 } from '@mui/x-data-grid';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 import { z } from 'zod';
 import {
   accountType,
-  getChallengeIdApplicationsPayback
+  getChallengeIdApplicationsPayback,
+  UpdatePaybackReq,
 } from '../../../schema';
 import axios from '../../../utils/axios';
 
@@ -105,6 +108,20 @@ const ChallengeOperationPayback = () => {
     },
   });
 
+  const updateMutation = useMutation({
+    mutationFn: async (req: UpdatePaybackReq & { id: number }) => {
+      const { id, ...payload } = req;
+      const res = await axios.patch(
+        `/challenge/${challengeId}/application/${id}/payback`,
+        payload,
+      );
+      if (res.status !== 200) {
+        console.warn(res);
+      }
+    },
+    onError: console.error,
+  });
+
   const ths = useMemo(() => {
     const ths = new Set<number>();
     paybackRes?.missionApplications?.forEach((application) => {
@@ -144,6 +161,19 @@ const ChallengeOperationPayback = () => {
         disableRowSelectionOnClick
         autoHeight
         hideFooter
+        processRowUpdate={async (updatedRow, originalRow) => {
+          const adminScore =
+            updatedRow.scores.find((s) => s.th === 99)?.score ?? 0;
+            
+          await updateMutation.mutateAsync({
+            adminScore: adminScore,
+            isRefunded: updatedRow.isRefunded,
+            id: updatedRow.id,
+          });
+
+          return updatedRow;
+        }}
+        onProcessRowUpdateError={console.error}
       />
     </main>
   );

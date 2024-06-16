@@ -12,12 +12,11 @@ import {
 import {
   CreateMissionReq,
   getContentsAdminSimple,
-  getMissionAdminId,
+  missionAdmin,
+  Mission,
   UpdateMissionReq,
 } from '../../../schema';
 import axios from '../../../utils/axios';
-
-type Mission = z.infer<typeof getMissionAdminId>['missionList'][number];
 
 type Content = z.infer<
   typeof getContentsAdminSimple
@@ -114,7 +113,6 @@ const columns: GridColDef<Row>[] = [
     headerName: '미션점수',
     editable: true,
     width: 60,
-
   },
   {
     field: 'lateScore',
@@ -129,7 +127,6 @@ const columns: GridColDef<Row>[] = [
     renderCell(params) {
       return params.row.essentialContent?.map((c) => c?.title)?.join(', ');
     },
-    
   },
   {
     field: 'additional',
@@ -285,7 +282,7 @@ const ChallengeOperationRegisterMission = () => {
   });
 
   const missionList = useMemo((): Row[] => {
-    const result: Row[] = (missions?.missionList || []).map((m) => ({
+    const result: Row[] = (missions || []).map((m) => ({
       ...m,
       mode: 'normal',
       additionalContent: null,
@@ -306,12 +303,7 @@ const ChallengeOperationRegisterMission = () => {
     }
 
     return result;
-  }, [
-    additionalContents,
-    editingMission,
-    essentialContents,
-    missions?.missionList,
-  ]);
+  }, [additionalContents, editingMission, essentialContents, missions]);
 
   return (
     <MissionProvider>
@@ -335,6 +327,9 @@ const ChallengeOperationRegisterMission = () => {
                   th: 1,
                   missionStatusType: 'WAITING',
                   lateAttendanceCount: 0,
+                  additionalContentsList: [],
+                  essentialContentsList: [],
+                  missionType: '',
                 });
               },
             },

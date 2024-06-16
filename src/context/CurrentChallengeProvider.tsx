@@ -1,12 +1,12 @@
 import { useQuery } from '@tanstack/react-query';
-import { createContext, useContext, useEffect } from 'react';
+import { createContext, useContext } from 'react';
 import { useParams } from 'react-router-dom';
 import { z } from 'zod';
-import { getChallengeId, getMissionAdminId } from '../schema';
+import { getChallengeId, missionAdmin } from '../schema';
 import axios from '../utils/axios';
 
 type CurrentChallenge = z.infer<typeof getChallengeId> & { id: number };
-type MissionList = z.infer<typeof getMissionAdminId>;
+type MissionList = z.infer<typeof missionAdmin>;
 
 const currentChallengeContext = createContext<{
   currentChallenge?: CurrentChallenge | null;
@@ -40,8 +40,8 @@ export const CurrentChallengeProvider = ({
       if (!params.programId) {
         return null;
       }
-      const res = await axios.get(`/mission/admin/${params.programId}`);
-      return getMissionAdminId.parse(res.data.data);
+      const res = await axios.get(`/mission/${params.programId}/admin`);
+      return missionAdmin.parse(res.data.data);
     },
   });
 
@@ -59,5 +59,8 @@ export const useCurrentChallenge = () => {
 };
 
 export const useMissionsOfCurrentChallenge = () => {
-  return useContext(currentChallengeContext).missionsOfCurrentChallenge;
+  return (
+    useContext(currentChallengeContext).missionsOfCurrentChallenge
+      ?.missionList ?? []
+  );
 };

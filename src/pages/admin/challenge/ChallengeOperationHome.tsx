@@ -124,7 +124,7 @@ const ChallengeOperationHome = () => {
     <main>
       <h2 className="text-lg font-bold">미션제출현황</h2>
       <div className="flex items-center gap-2">
-        {missions?.missionList.map((mission) => {
+        {missions?.map((mission) => {
           return (
             <div key={mission.id} className="border p-3 text-center">
               <p>

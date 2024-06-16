@@ -148,12 +148,14 @@ export const getChallengeId = z
     };
   });
 
-export const getMissionAdminId = z
+/** GET /api/v1/mission/{id}/admin */
+export const missionAdmin = z
   .object({
     missionList: z.array(
       z.object({
         id: z.number(),
         th: z.number(),
+        missionType: z.string(),
         missionStatusType: missionStatusType,
         attendanceCount: z.number(),
         lateAttendanceCount: z.number(),
@@ -161,6 +163,20 @@ export const getMissionAdminId = z
         lateScore: z.number(),
         startDate: z.string(),
         endDate: z.string(),
+        essentialContentsList: z.array(
+          z.object({
+            id: z.number(),
+            title: z.string(),
+            link: z.string(),
+          }),
+        ),
+        additionalContentsList: z.array(
+          z.object({
+            id: z.number(),
+            title: z.string(),
+            link: z.string(),
+          }),
+        ),
       }),
     ),
   })
@@ -173,6 +189,60 @@ export const getMissionAdminId = z
       })),
     };
   });
+
+export type Mission = z.infer<typeof missionAdmin>['missionList'][number];
+
+export const attendanceStatus = z.union([
+  z.literal('PRESENT'),
+  z.literal('UPDATED'),
+  z.literal('LATE'),
+  z.literal('ABSENT'),
+]);
+
+export type AttendanceStatus = z.infer<typeof attendanceStatus>;
+
+export const attendanceResult = z.union([
+  z.literal('WAITING'),
+  z.literal('PASS'),
+  z.literal('WRONG'),
+]);
+
+export type AttendanceResult = z.infer<typeof attendanceResult>;
+
+/** GET /api/v1/challenge/{challengeId}/mission/{missionId}/attendances */
+export const attendances = z
+  .object({
+    attendanceList: z.array(
+      z.object({
+        id: z.number(),
+        name: z.string().or(z.null()),
+        email: z.string().or(z.null()),
+        status: attendanceStatus.or(z.null()),
+        link: z.string().or(z.null()),
+        result: attendanceResult.or(z.null()),
+        comment: z.string().or(z.null()),
+        sendDate: z.string().or(z.null()),
+      }),
+    ),
+  })
+  .transform((data) => {
+    return {
+      attendanceList: data.attendanceList.map((attendance) => ({
+        ...attendance,
+        sendDate: dayjs(attendance.sendDate),
+      })),
+    };
+  });
+
+/** PATCH /api/v1/attendance/{id} */
+export type UpdateAttendanceReq = {
+  link?: string;
+  status?: AttendanceStatus;
+  result?: AttendanceResult;
+  comments?: string;
+};
+
+export type Attendance = z.infer<typeof attendances>['attendanceList'][number];
 
 /** 참여 폼 */
 export const getChallengeIdApplication = z
@@ -299,11 +369,11 @@ export const getChallengeIdApplicationsPayback = z
     };
   });
 
-/// patch /api/v1/challenge/{challengeId}/application/{applicationId}/payback
-export const patchChallengeIdApplicationIdPaybackVariables = z.object({
-  adminScore: z.number(),
-  isRefunded: z.boolean(),
-});
+/** patch /api/v1/challenge/{challengeId}/application/{applicationId}/payback  */
+export type UpdatePaybackReq = {
+  adminScore: number;
+  isRefunded: boolean;
+};
 
 export const missionType = z.union([
   z.literal('GENERAL'),
@@ -436,7 +506,9 @@ export const getContentsAdmin = z
     };
   });
 
-export type ContentsResItem = z.infer<typeof getContentsAdmin>['contentsAdminList'][number];
+export type ContentsResItem = z.infer<
+  typeof getContentsAdmin
+>['contentsAdminList'][number];
 
 /** GET /api/v1/contents/admin/simple  */
 export const getContentsAdminSimple = z.object({
