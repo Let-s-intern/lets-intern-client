@@ -56,6 +56,7 @@ const ProgramDetail = ({ programType }: ProgramDetailProps) => {
                 programType={programType}
                 programId={programId}
                 programTitle={programTitle}
+                toggleApplyModal={toggleApplyModal}
               />
             )}
           </section>

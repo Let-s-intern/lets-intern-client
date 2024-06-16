@@ -39,12 +39,14 @@ interface ApplySectionProps {
   programType: ProgramType;
   programId: number;
   programTitle: string;
+  toggleApplyModal: () => void;
 }
 
 const ApplySection = ({
   programType,
   programId,
   programTitle,
+  toggleApplyModal,
 }: ApplySectionProps) => {
   const [contentIndex, setContentIndex] = useState(0);
   const [programDate, setProgramDate] = useState<ProgramDate>({
@@ -131,6 +133,7 @@ const ApplySection = ({
 
   const handleApplyButtonClick = () => {
     applyProgram.mutate();
+    toggleApplyModal();
   };
 
   return (

@@ -14,7 +14,7 @@ const ApplyModal = ({ toggle }: ApplyModalProps) => {
   };
   return (
     <div className="z-100 fixed inset-0 flex items-center justify-center bg-neutral-0/50 px-8">
-      <div className="flex h-40 w-[20rem] flex-col items-center justify-center gap-7 rounded-xl bg-static-100 px-4">
+      <div className="flex h-40 w-full flex-col items-center justify-center gap-7 rounded-xl bg-static-100 px-4 pb-4 pt-11 md:h-44 md:w-[31rem] md:gap-8 md:px-6 md:pb-6 lg:w-[37.5rem] lg:gap-12 lg:pt-14">
         <p className="text-1.125-bold">{CONTENT.TITLE}</p>
         <button
           onClick={onClick}
