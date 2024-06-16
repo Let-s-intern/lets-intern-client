@@ -3,7 +3,7 @@ import { useState } from 'react';
 import OverviewContent from '../apply/content/OverviewContent';
 import InputContent from '../apply/content/InputContent';
 import ChoicePayPlanContent from '../apply/content/ChoicePayPlanContent';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import axios from '../../../../../utils/axios';
 import { ProgramType } from '../../../../../pages/common/program/ProgramDetail';
 import PayContent from '../apply/content/PayContent';
@@ -48,6 +48,8 @@ const ApplySection = ({
   programTitle,
   toggleApplyModal,
 }: ApplySectionProps) => {
+  const queryClient = useQueryClient();
+
   const [contentIndex, setContentIndex] = useState(0);
   const [programDate, setProgramDate] = useState<ProgramDate>({
     deadline: '',
@@ -126,7 +128,10 @@ const ApplySection = ({
       );
       return res.data;
     },
-    onSuccess: () => {
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({
+        queryKey: [programType],
+      });
       setContentIndex(0);
     },
   });
