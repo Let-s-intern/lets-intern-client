@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useReducer, useState } from 'react';
 
 import InputContent from '../apply/content/InputContent';
 import ChoicePayPlanContent from '../apply/content/ChoicePayPlanContent';
@@ -7,6 +7,8 @@ import axios from '../../../../../utils/axios';
 import { ProgramType } from '../../../../../pages/common/program/ProgramDetail';
 import PayContent from '../apply/content/PayContent';
 import CautionContent from '../apply/content/CautionContent';
+import drawerReducer from '../../../../../reducers/drawerReducer';
+import applyReducer from '../../../../../reducers/applyReducer';
 
 export interface ProgramDate {
   deadline: string;
@@ -37,11 +39,15 @@ export interface PayInfo {
 interface MobileApplySectionProps {
   programType: ProgramType;
   programId: number;
+  toggleApplyModal: () => void;
+  toggleDrawer: () => void;
 }
 
 const MobileApplySection = ({
   programType,
   programId,
+  toggleApplyModal,
+  toggleDrawer,
 }: MobileApplySectionProps) => {
   const [contentIndex, setContentIndex] = useState(1);
   const [programDate, setProgramDate] = useState<ProgramDate>({
@@ -129,6 +135,8 @@ const MobileApplySection = ({
 
   const handleApplyButtonClick = () => {
     applyProgram.mutate();
+    toggleDrawer();
+    toggleApplyModal();
   };
 
   return (

@@ -83,10 +83,12 @@ const PayContent = ({
           </span>
         </button>
         <button
-          className="flex w-full justify-center rounded-md bg-primary px-6 py-3 text-lg font-medium text-neutral-100"
-          onClick={handleApplyButtonClick}
+          className="text-1.125-medium flex w-full justify-center rounded-md bg-primary px-6 py-3 font-medium text-neutral-100"
+          onClick={() => {
+            handleApplyButtonClick();
+          }}
         >
-          신청하기 {(payInfo.price - payInfo.discount).toLocaleString()}원
+          최종 결제 금액 {(payInfo.price - payInfo.discount).toLocaleString()}원
         </button>
       </div>
     </div>
