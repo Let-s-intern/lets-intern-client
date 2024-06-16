@@ -1,10 +1,9 @@
 import dayjs from 'dayjs';
-import 'dayjs/locale/ko';
 
 import TD from '../../../ui/table/regacy/TD';
 import ActionButton from '../../../ui/button/ActionButton';
 
-export interface ReviewTableBodyProps {
+interface ReviewTableBodyProps {
   programList: {
     programInfo: {
       id: number;
@@ -36,14 +35,22 @@ const TableBody = ({
             <div className="flex justify-center gap-2">
               <ActionButton
                 to={`/admin/reviews/${program.programInfo.id}?type=${program.programInfo.programType}`}
-                bgColor="blue"
+                bgColor={
+                  program.programInfo.programType === 'VOD' ? 'gray' : 'blue'
+                }
+                disabled={program.programInfo.programType === 'VOD'}
               >
                 상세
               </ActionButton>
               <ActionButton
-                bgColor="lightBlue"
                 width="6rem"
+                bgColor={
+                  program.programInfo.programType === 'VOD'
+                    ? 'gray'
+                    : 'lightBlue'
+                }
                 onClick={() => copyReviewCreateLink(program.programInfo.id)}
+                disabled={program.programInfo.programType === 'VOD'}
               >
                 링크 복사하기
               </ActionButton>

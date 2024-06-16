@@ -2,6 +2,7 @@ import { useState } from 'react';
 import styled from 'styled-components';
 import { Checkbox } from '@mui/material';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import dayjs from 'dayjs';
 
 import ActionButton from '../../../ui/button/ActionButton';
 import TD from '../../../ui/table/regacy/TD';
@@ -11,12 +12,28 @@ import {
   newProgramTypeToText,
   programStatusToText,
 } from '../../../../../utils/convert';
-import { ProgramType } from '../../../../../pages/admin/program/Programs';
 import axios from '../../../../../utils/axios';
-import dayjs from 'dayjs';
 
 interface ProgramTableBodyProps {
-  programList: ProgramType[];
+  programList: {
+    programInfo: {
+      id: number;
+      title: string;
+      programType: string;
+      isVisible: boolean;
+      currentCount: number;
+      participationCount: number;
+      deadline: string;
+      startDate: string;
+      endDate: string;
+      zoomLink: string;
+      zoomPassword: string;
+      programStatusType: string;
+    };
+    classificationList: {
+      programClassification: string;
+    }[];
+  }[];
 }
 
 const ActionButtonGroup = styled.div`
