@@ -60,6 +60,7 @@ const ProgramDetail = ({ programType }: ProgramDetailProps) => {
               />
             )}
           </section>
+
           {/* 모바일 신청 세션 */}
           {!matches && (
             <div className="fixed bottom-0 left-0 right-0 flex w-screen flex-col items-center rounded-t-lg bg-static-100 px-5 py-3 shadow-05">
