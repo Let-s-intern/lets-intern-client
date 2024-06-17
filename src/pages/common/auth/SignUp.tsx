@@ -46,10 +46,13 @@ const SignUp = () => {
         name: value.name,
         phoneNum: value.phoneNum,
         password: value.password,
+        inflowPath: value.inflow,
+        marketingAgree: value.agreeToMarketing,
       });
       return res.data;
     },
     onSuccess: () => {
+      localStorage.setItem('email', value.email);
       setIsSignupSuccess(true);
     },
     onError: (error) => {
@@ -126,12 +129,7 @@ const SignUp = () => {
         accountOwner=""
       /> */}
       {isSignupSuccess ? (
-        <InfoContainer
-          marketingAgree={value.agreeToMarketing}
-          accountType={0}
-          accountNum=""
-          accountOwner=""
-        />
+        <InfoContainer />
       ) : (
         <>
           <div className="container mx-auto mt-8 p-5">
