@@ -1,10 +1,10 @@
 import { useMutation } from '@tanstack/react-query';
-import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Input from '../../../ui/input/Input';
 import Button from '../../ui/button/Button';
 import AlertModal from '../../../ui/alert/AlertModal';
+import axios from '../../../../utils/axios';
 
 const InfoContainer = () => {
   const navigate = useNavigate();
@@ -48,21 +48,14 @@ const InfoContainer = () => {
 
   const postUserInfo = useMutation({
     mutationFn: async () => {
-      const res = await axios.patch(
-        `/user/additional-info`,
-        {
-          university: value.university,
-          major: value.major,
-          grade: convertGradeToEng(value.grade as number),
-          wishJob: value.wishJob,
-          wishCompany: value.wishCompany,
-        },
-        {
-          params: {
-            email: email,
-          },
-        },
-      );
+      const res = await axios.patch(`/user/additional-info`, {
+        email: email,
+        university: value.university,
+        major: value.major,
+        grade: convertGradeToEng(value.grade as number),
+        wishJob: value.wishJob,
+        wishCompany: value.wishCompany,
+      });
       return res.data;
     },
     onSuccess: () => {
