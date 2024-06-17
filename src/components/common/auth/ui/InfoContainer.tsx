@@ -6,18 +6,9 @@ import Input from '../../../ui/input/Input';
 import Button from '../../ui/button/Button';
 import AlertModal from '../../../ui/alert/AlertModal';
 
-const InfoContainer = ({
-  marketingAgree,
-  accountType,
-  accountNum,
-  accountOwner,
-}: {
-  marketingAgree: boolean;
-  accountType: number;
-  accountNum: string;
-  accountOwner: string;
-}) => {
+const InfoContainer = () => {
   const navigate = useNavigate();
+  const email = localStorage.getItem('email');
   const [buttonDisabled, setButtonDisabled] = useState(false);
   const [value, setValue] = useState<{
     university: string;
@@ -36,19 +27,42 @@ const InfoContainer = ({
   const [errorMessage, setErrorMessage] = useState('');
   const [successModalOpen, setSuccessModalOpen] = useState(false);
 
+  const convertGradeToEng = (grade: number) => {
+    switch (grade) {
+      case 0:
+        return 'GRADUATE';
+      case 1:
+        return 'FIRST';
+      case 2:
+        return 'SECOND';
+      case 3:
+        return 'THIRD';
+      case 4:
+        return 'FOURTH';
+      case 5:
+        return 'ETC';
+      default:
+        return 'GRADUATE';
+    }
+  };
+
   const postUserInfo = useMutation({
     mutationFn: async () => {
-      const res = await axios.post('/user/info', {
-        university: value.university,
-        major: value.major,
-        grade: value.grade,
-        wishJob: value.wishJob,
-        wishCompany: value.wishCompany,
-        marketingAgree: marketingAgree,
-        accountType: accountType,
-        accountNum: accountNum,
-        accountOwner: accountOwner,
-      });
+      const res = await axios.patch(
+        `/user/additional-info`,
+        {
+          university: value.university,
+          major: value.major,
+          grade: convertGradeToEng(value.grade as number),
+          wishJob: value.wishJob,
+          wishCompany: value.wishCompany,
+        },
+        {
+          params: {
+            email: email,
+          },
+        },
+      );
       return res.data;
     },
     onSuccess: () => {
@@ -72,6 +86,14 @@ const InfoContainer = ({
     ) {
       setError(true);
       setErrorMessage('모든 항목을 입력해주세요.');
+      return;
+    } else if (value.grade < 1 || value.grade > 4) {
+      setError(true);
+      setErrorMessage('학년은 1~4 사이의 숫자로 입력해주세요.');
+      return;
+    } else if (!email) {
+      setError(true);
+      setErrorMessage('이메일이 없습니다.');
       return;
     }
     postUserInfo.mutate();
