@@ -161,22 +161,31 @@ export const missionAdmin = z
         lateAttendanceCount: z.number(),
         score: z.number(),
         lateScore: z.number(),
+        missionTemplateId: z.number().or(z.null()),
         startDate: z.string(),
         endDate: z.string(),
-        essentialContentsList: z.array(
-          z.object({
-            id: z.number(),
-            title: z.string(),
-            link: z.string(),
-          }),
-        ),
-        additionalContentsList: z.array(
-          z.object({
-            id: z.number(),
-            title: z.string(),
-            link: z.string(),
-          }),
-        ),
+        essentialContentsList: z
+          .array(
+            z
+              .object({
+                id: z.number(),
+                title: z.string(),
+                link: z.string(),
+              })
+              .or(z.null()),
+          )
+          .or(z.null()),
+        additionalContentsList: z
+          .array(
+            z
+              .object({
+                id: z.number(),
+                title: z.string(),
+                link: z.string(),
+              })
+              .or(z.null()),
+          )
+          .or(z.null()),
       }),
     ),
   })
@@ -215,13 +224,13 @@ export const attendances = z
     attendanceList: z.array(
       z.object({
         id: z.number(),
-        name: z.string().or(z.null()),
-        email: z.string().or(z.null()),
-        status: attendanceStatus.or(z.null()),
-        link: z.string().or(z.null()),
-        result: attendanceResult.or(z.null()),
-        comment: z.string().or(z.null()),
-        sendDate: z.string().or(z.null()),
+        name: z.string().nullable(),
+        email: z.string().nullable(),
+        status: attendanceStatus.nullable(),
+        link: z.string().nullable(),
+        result: attendanceResult.nullable(),
+        comment: z.string().nullable(),
+        sendDate: z.string().nullable(),
       }),
     ),
   })
@@ -299,20 +308,20 @@ export const getChallengeIdApplications = z
         id: z.number(),
         paymentId: z.number(),
         name: z.string(),
-        email: z.string(),
-        phoneNum: z.string(),
-        university: z.string().or(z.null()),
-        grade: grade.or(z.null()),
-        major: z.string().or(z.null()),
-        couponName: z.string().or(z.null()),
+        email: z.string().nullable(),
+        phoneNum: z.string().nullable(),
+        university: z.string().nullable(),
+        grade: grade.nullable(),
+        major: z.string().nullable(),
+        couponName: z.string().nullable(),
         totalCost: z.number(),
         isConfirmed: z.boolean(),
-        wishJob: z.string().or(z.null()),
-        wishCompany: z.string().or(z.null()),
-        inflowPath: z.string().or(z.null()),
+        wishJob: z.string().nullable(),
+        wishCompany: z.string().nullable(),
+        inflowPath: z.string().nullable(),
         createDate: z.string(),
-        accountType: accountType.or(z.null()),
-        accountNum: z.string().or(z.null()),
+        accountType: accountType.nullable(),
+        accountNum: z.string().nullable(),
       }),
     ),
   })
@@ -330,23 +339,20 @@ export const getChallengeIdApplicationsPayback = z
     missionApplications: z.array(
       z.object({
         applicationId: z.number(),
-        name: z.string(),
-        // TODO: remove null
-        email: z.string().or(z.null()),
-        phoneNum: z.string(),
-        accountNum: z.string(),
-        accountType: accountType,
+        name: z.string().nullable(),
+        email: z.string().nullable(),
+        phoneNum: z.string().nullable(),
+        accountNum: z.string().nullable(),
+        accountType: accountType.nullable(),
         scores: z.array(
           z
             .object({
-              th: z.number(),
-              // TODO: remove null
-              score: z.number().or(z.null()),
+              th: z.number().nullable(),
+              score: z.number().nullable(),
             })
-            // TODO: remove null
-            .or(z.null()),
+            .nullable(),
         ),
-        isRefunded: z.boolean(),
+        isRefunded: z.boolean().nullable(),
       }),
     ),
     pageInfo: pageinfo,
@@ -371,15 +377,15 @@ export const getChallengeIdApplicationsPayback = z
 
 /** patch /api/v1/challenge/{challengeId}/application/{applicationId}/payback  */
 export type UpdatePaybackReq = {
-  adminScore: number;
-  isRefunded: boolean;
+  adminScore?: number;
+  isRefunded?: boolean;
 };
 
-export const missionType = z.union([
-  z.literal('GENERAL'),
-  z.literal('REWARD'),
-  z.literal('REFUND'),
-]);
+// export const missionType = z.union([
+//   z.literal('GENERAL'),
+//   z.literal('REWARD'),
+//   z.literal('REFUND'),
+// ]);
 
 export const contentsType = z.union([
   z.literal('ESSENTIAL'),
@@ -392,36 +398,34 @@ export type ContentsType = z.infer<typeof contentsType>;
 export const postMissionIdReq = z.object({
   th: z.number(),
   title: z.string(),
-  type: missionType,
-  refund: z.number(),
   score: z.number(),
   lateScore: z.number(),
   startDate: z.string(),
-  missionTemplateId: z.number(),
+  endDate: z.string(),
+  missionTemplateId: z.number().or(z.null()),
   essentialContentsIdList: z.array(z.number()),
   additionalContentsIdList: z.array(z.number()),
-  limitedContentsIdList: z.array(z.number()),
 });
 
 export type CreateMissionReq = z.infer<typeof postMissionIdReq>;
 
 /// PATCH /api/v1/mission/{id}
 export const patchMissionIdReq = z.object({
-  th: z.number(),
-  title: z.string(),
-  type: missionType,
-  score: z.number(),
-  lateScore: z.number(),
-  startDate: z.string(),
-  missionTemplateId: z.number(),
-  essentialContentsIdList: z.array(z.number()),
-  additionalContentsIdList: z.array(z.number()),
+  th: z.number().optional(),
+  title: z.string().optional(),
+  score: z.number().optional(),
+  lateScore: z.number().optional(),
+  startDate: z.string().optional(),
+  endDate: z.string().optional(),
+  missionTemplateId: z.number().optional(),
+  essentialContentsIdList: z.array(z.number()).optional(),
+  additionalContentsIdList: z.array(z.number()).optional(),
 });
 
 export type UpdateMissionReq = z.infer<typeof patchMissionIdReq>;
 
 // GET /api/v1/mission-template/admin
-export const getMissionTemplateAdmin = z
+export const missionTemplateAdmin = z
   .object({
     missionTemplateAdminList: z.array(
       z.object({
@@ -447,7 +451,7 @@ export const getMissionTemplateAdmin = z
   });
 
 export type MissionTemplateResItem = z.infer<
-  typeof getMissionTemplateAdmin
+  typeof missionTemplateAdmin
 >['missionTemplateAdminList'][number];
 
 // POST /api/v1/mission-template
@@ -519,3 +523,82 @@ export const getContentsAdminSimple = z.object({
     }),
   ),
 });
+
+// GET /api/v1/challenge/{id}/notices
+export const challengeNotices = z
+  .object({
+    challengeNoticeList: z.array(
+      z.object({
+        id: z.number(),
+        type: contentsType.nullable(),
+        title: z.string().nullable(),
+        link: z.string().nullable(),
+        createDate: z.string().nullable(),
+      }),
+    ),
+    pageInfo: pageinfo,
+  })
+  .transform((data) => {
+    return {
+      challengeNoticeList: data.challengeNoticeList.map((content) => ({
+        ...content,
+        createDate: dayjs(content.createDate),
+      })),
+      pageInfo: data.pageInfo,
+    };
+  });
+
+export type ChallengeNotice = z.infer<
+  typeof challengeNotices
+>['challengeNoticeList'][number];
+
+// POST /api/v1/challenge-notice/{id}
+export type CreateChallengeNoticeReq = {
+  type: ContentsType;
+  title: string;
+  link: string;
+};
+
+// PATCH /api/v1/challenge-notice/{id}
+export type UpdateChallengeNoticeReq = {
+  type: ContentsType;
+  title: string;
+  link: string;
+};
+
+// GET /api/v1/challenge/{id}/guides
+export const challengeGuides = z
+  .object({
+    challengeGuideList: z.array(
+      z.object({
+        id: z.number(),
+        title: z.string().nullable(),
+        link: z.string().nullable(),
+        createDate: z.string().nullable(),
+      }),
+    ),
+  })
+  .transform((data) => {
+    return {
+      challengeGuideList: data.challengeGuideList.map((content) => ({
+        ...content,
+        createDate: content.createDate ? dayjs(content.createDate) : null,
+      })),
+    };
+  });
+
+export type ChallengeGuide = z.infer<
+  typeof challengeGuides
+>['challengeGuideList'][number];
+
+// POST /api/v1/challenge-guide/{id}
+export type CreateChallengeGuideReq = {
+  title: string;
+  link: string;
+};
+
+// PATCH /api/v1/challenge-guide/{id}
+export type UpdateChallengeGuideReq = {
+  title: string;
+  link: string;
+};

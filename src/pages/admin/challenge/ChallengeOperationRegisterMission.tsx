@@ -1,20 +1,35 @@
-import { Button } from '@mui/material';
-import { DataGrid, GridColDef, GridToolbarContainer } from '@mui/x-data-grid';
-import { DateCalendar, renderDateViewCalendar } from '@mui/x-date-pickers';
+import {
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  IconButton,
+  Snackbar
+} from '@mui/material';
+import {
+  DataGrid, GridColDef,
+  GridToolbarContainer,
+  useGridApiRef
+} from '@mui/x-data-grid';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import dayjs from 'dayjs';
-import { createContext, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { FaCheck, FaTrashCan, FaX } from 'react-icons/fa6';
 import { z } from 'zod';
 import {
   useCurrentChallenge,
   useMissionsOfCurrentChallenge,
+  useMissionsOfCurrentChallengeRefetch
 } from '../../../context/CurrentChallengeProvider';
 import {
   CreateMissionReq,
   getContentsAdminSimple,
-  missionAdmin,
   Mission,
-  UpdateMissionReq,
+  missionTemplateAdmin,
+  MissionTemplateResItem,
+  UpdateMissionReq
 } from '../../../schema';
 import axios from '../../../utils/axios';
 
@@ -24,80 +39,108 @@ type Content = z.infer<
 
 type Row = Mission & {
   mode: 'normal' | 'create';
-  additionalContent: [Content] | [] | null | [null];
-  essentialContent: [Content] | [] | null | [null];
-  additionalContentList: Content[];
-  essentialContentList: Content[];
+  additionalContentsOptions: Content[]; // List from API
+  essentialContentsOptions: Content[]; // List from API
+  missionTemplatesOptions: MissionTemplateResItem[];
+  onAction(params: {
+    action: 'create' | 'cancel' | 'edit' | 'delete';
+    row: Row;
+  }): void;
 };
 
-/**
- * startDate: dayjs.Dayjs;
-    endDate: dayjs.Dayjs;
-    id: number;
-    th: number;
-    missionStatusType: "WAITING" | "CHECK_DONE" | "REFUND_DONE";
-    attendanceCount: number;
-    lateAttendanceCount: number;
-    score: number;
-    lateScore: number;
- */
 const columns: GridColDef<Row>[] = [
+  {
+    field: 'id',
+    headerName: 'ID',
+    width: 70,
+    editable: false,
+  },
   {
     field: 'tag',
     headerName: '태그',
+    valueGetter(_, row) {
+      return (
+        row.missionTemplatesOptions.find((t) => t.id === row.missionTemplateId)
+          ?.missionTag ?? ''
+      );
+    },
   },
   {
-    field: 'missionName',
+    field: 'missionTemplateId',
     headerName: '미션명',
     editable: true,
+    width: 200,
+    valueFormatter(_, row) {
+      return (
+        row.missionTemplatesOptions.find((t) => t.id === row.missionTemplateId)
+          ?.title || ''
+      );
+    },
+    renderCell(params) {
+      return (
+        params.formattedValue || (
+          <span className="text-gray-400">더블클릭하여 편집</span>
+        )
+      );
+    },
+    renderEditCell(params) {
+      return (
+        <select
+          className="w-full"
+          value={params.row.missionTemplateId ?? ''}
+          onChange={(e) => {
+            params.api.setEditCellValue({
+              id: params.id,
+              field: 'missionTemplateId',
+              value: e.target.value ? Number(e.target.value) : null,
+            });
+          }}
+        >
+          <option value="">선택</option>
+          {params.row.missionTemplatesOptions.map((t) => (
+            <option key={t.id} value={t.id}>
+              {t.title}
+            </option>
+          ))}
+        </select>
+      );
+    },
   },
   {
     field: 'th',
     headerName: '회차',
     editable: true,
-    width: 60,
+    width: 70,
+    type: 'number',
   },
   {
     field: 'startDate',
     headerName: '공개일',
-    width: 150,
+    width: 100,
     editable: true,
-    renderCell(params) {
-      return params.row.startDate.format('YYYY-MM-DD');
+    valueFormatter(_, row) {
+      return row.startDate.format('YYYY-MM-DD');
     },
-    renderEditCell(params) {
-      return (
-        <input
-          type="date"
-          value={params.row.startDate.format('YYYY-MM-DD')}
-          onChange={(e) => {
-            console.log(e.target.value);
-            params.api.setEditCellValue({
-              id: params.id,
-              field: 'endDate',
-              value: dayjs(e.target.value),
-            });
-          }}
-        />
-      );
+    type: 'date',
+    valueParser(value) {
+      return dayjs(value);
     },
   },
   {
     field: 'endDate',
     headerName: '마감일',
-    width: 150,
+    width: 100,
     editable: true,
-    renderCell(params) {
-      console.log(params);
-      return params.row.endDate.format('YYYY-MM-DD');
+    valueFormatter(_, row) {
+      return row.endDate.format('YYYY-MM-DD');
     },
     renderEditCell(params) {
       return (
         <input
           type="date"
+          className="w-full"
           value={params.row.endDate.format('YYYY-MM-DD')}
           onChange={(e) => {
-            console.log(e.target.value);
             params.api.setEditCellValue({
               id: params.id,
               field: 'endDate',
@@ -112,59 +155,176 @@ const columns: GridColDef<Row>[] = [
     field: 'score',
     headerName: '미션점수',
     editable: true,
-    width: 60,
+    type: 'number',
+    width: 70,
   },
   {
     field: 'lateScore',
     headerName: '지각점수',
     editable: true,
-    width: 60,
+    type: 'number',
+    width: 70,
   },
   {
-    field: 'essential',
+    field: 'essentialContentsList',
     headerName: '필수 콘텐츠',
-    width: 100,
-    renderCell(params) {
-      return params.row.essentialContent?.map((c) => c?.title)?.join(', ');
+    width: 160,
+    editable: true,
+    valueFormatter(_, row) {
+      return row.essentialContentsList?.map((c) => c?.title)?.join(', ') || '';
     },
-  },
-  {
-    field: 'additional',
-    headerName: '추가 콘텐츠',
-    width: 100,
-  },
-  {
-    field: 'management',
-    headerName: '',
     renderCell(params) {
-      if (params.row.mode === 'create') {
-        return (
-          <Button
-            variant="outlined"
-            onClick={() => {
-              // api.setEditCellValue({ id: params.id, field: 'mode', value: 'edit' });
-            }}
-          >
-            등록
-          </Button>
-        );
-      }
-      return null;
+      return (
+        params.formattedValue || (
+          <span className="text-gray-400">더블클릭하여 편집</span>
+        )
+      );
     },
     renderEditCell(params) {
-      if (params.row.mode === 'create') {
+      return (
+        <select
+          className="w-full"
+          value={params.row.essentialContentsList?.[0]?.id ?? ''}
+          onChange={(e) => {
+            const content = params.row.essentialContentsOptions.find(
+              (c) => String(c.id) === e.target.value,
+            );
+            params.api.setEditCellValue({
+              id: params.id,
+              field: 'essentialContentsList',
+              value: content ? [content] : [],
+            });
+          }}
+        >
+          <option value="">선택</option>
+          {params.row.essentialContentsOptions.map((c) => (
+            <option key={c.id} value={c.id ?? ''}>
+              {c.title}
+            </option>
+          ))}
+        </select>
+      );
+    },
+  },
+  {
+    field: 'additionalContentsList',
+    headerName: '추가 콘텐츠',
+    width: 160,
+    editable: true,
+    valueFormatter(_, row) {
+      return row.additionalContentsList?.map((c) => c?.title)?.join(', ') || '';
+    },
+    renderCell(params) {
+      return (
+        params.formattedValue || (
+          <span className="text-gray-400">더블클릭하여 편집</span>
+        )
+      );
+    },
+    renderEditCell(params) {
+      return (
+        <select
+          className="w-full"
+          value={params.row.additionalContentsList?.[0]?.id ?? ''}
+          onChange={(e) => {
+            const content = params.row.additionalContentsOptions.find(
+              (c) => String(c.id) === e.target.value,
+            );
+
+            params.api.setEditCellValue({
+              id: params.id,
+              field: 'additionalContentsList',
+              value: content ? [content] : [],
+            });
+          }}
+        >
+          <option value="">선택</option>
+          {params.row.additionalContentsOptions.map((c) => (
+            <option key={c.id} value={c.id ?? ''}>
+              {c.title}
+            </option>
+          ))}
+        </select>
+      );
+    },
+  },
+  {
+    field: 'actions',
+    editable: true,
+    headerName: '',
+    cellClassName: 'flex items-center justify-center',
+    renderEditCell(params) {
+      if (params.row.mode === 'normal') {
         return (
-          <Button
-            variant="outlined"
-            onClick={() => {
-              // api.commitRowChange(params.id);
-            }}
-          >
-            등록
-          </Button>
+          <div className="flex items-center justify-center gap-2 px-2">
+            <button
+              className="px-2 py-2 text-primary"
+              onClick={() => {
+                params.row.onAction({ action: 'edit', row: params.row });
+              }}
+            >
+              <FaCheck />
+            </button>
+            <button
+              className="px-2 py-2"
+              onClick={() => {
+                params.row.onAction({ action: 'cancel', row: params.row });
+              }}
+            >
+              <FaX />
+            </button>
+          </div>
         );
       }
-      return null;
+
+      return (
+        <div className="flex items-center justify-center gap-2 px-2">
+          <button
+            className="px-2 py-2 text-primary"
+            onClick={() => {
+              params.row.onAction({ action: 'create', row: params.row });
+            }}
+          >
+            <FaCheck />
+          </button>
+          <button
+            className="px-2 py-2"
+            onClick={() => {
+              params.row.onAction({ action: 'cancel', row: params.row });
+            }}
+          >
+            <FaX />
+          </button>
+        </div>
+      );
+    },
+    renderCell(params) {
+      if (params.row.mode === 'normal') {
+        return (
+          <RemoveAlertDialog onAction={params.row.onAction} row={params.row} />
+        );
+      }
+
+      return (
+        <div className="flex items-center justify-center gap-2 px-2">
+          <button
+            className="px-2 py-2 text-primary"
+            onClick={() => {
+              params.row.onAction({ action: 'create', row: params.row });
+            }}
+          >
+            <FaCheck />
+          </button>
+          <button
+            className="px-2 py-2"
+            onClick={() => {
+              params.row.onAction({ action: 'cancel', row: params.row });
+            }}
+          >
+            <FaX />
+          </button>
+        </div>
+      );
     },
   },
 ];
@@ -173,11 +333,6 @@ declare module '@mui/x-data-grid' {
   export interface ToolbarPropsOverrides {
     onRegisterButtonClick?: () => void;
   }
-
-  export interface CellPropsOverrides {
-    essentialContents?: Content[];
-    additionalContents?: Content[];
-  }
 }
 
 function ChallengeOperationRegisterMissionToolbar({
@@ -185,8 +340,6 @@ function ChallengeOperationRegisterMissionToolbar({
 }: {
   onRegisterButtonClick?: () => void;
 }) {
-  // const api = useGridApiContext();
-
   return (
     <GridToolbarContainer
       sx={{
@@ -195,12 +348,6 @@ function ChallengeOperationRegisterMissionToolbar({
         gap: '8px',
       }}
     >
-      {/* <GridToolbarExport
-        slotProps={{
-          tooltip: { title: 'Export data' },
-          button: { variant: 'outlined' },
-        }}
-      /> */}
       <Button variant="outlined" onClick={onRegisterButtonClick}>
         등록
       </Button>
@@ -208,27 +355,14 @@ function ChallengeOperationRegisterMissionToolbar({
   );
 }
 
-const missionContext = createContext<{
-  editingMission: Mission | null;
-  setEditingMission: (mission: Mission | null) => void;
-}>({
-  editingMission: null,
-  setEditingMission: () => {},
-});
-
-const MissionProvider = ({ children }: { children: React.ReactNode }) => {
-  const [editingMission, setEditingMission] = useState<Mission | null>(null);
-
-  return (
-    <missionContext.Provider value={{ editingMission, setEditingMission }}>
-      {children}
-    </missionContext.Provider>
-  );
-};
-
 const ChallengeOperationRegisterMission = () => {
   const missions = useMissionsOfCurrentChallenge();
   const { currentChallenge } = useCurrentChallenge();
+  const refetchMissions = useMissionsOfCurrentChallengeRefetch();
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: '',
+  });
 
   const [editingMission, setEditingMission] = useState<Mission | null>(null);
 
@@ -236,7 +370,56 @@ const ChallengeOperationRegisterMission = () => {
     mutationFn: async (mission: CreateMissionReq) => {
       return axios.post(`/mission/${currentChallenge?.id}`, mission);
     },
+    onError(error, variables, context) {
+      console.log('error', error);
+      setSnackbar({
+        open: true,
+        message: '미션 생성에 실패했습니다. ' + error,
+      });
+    },
   });
+
+  const apiRef = useGridApiRef();
+
+  const updateMission = useMutation({
+    mutationFn: async (mission: UpdateMissionReq & { id: number }) => {
+      const { id, ...payload } = mission;
+      return axios.patch(`/mission/${id}`, payload);
+    },
+    onError(error, variables, context) {
+      console.log('error', error);
+      setSnackbar({
+        open: true,
+        message: '미션 수정에 실패했습니다. ' + error,
+      });
+    },
+  });
+
+  const deleteMission = useMutation({
+    mutationFn: async (id: number) => {
+      return axios.delete(`/mission/${id}`);
+    },
+    onError(error, variables, context) {
+      console.log('error', error);
+      setSnackbar({
+        open: true,
+        message: '미션 삭제에 실패했습니다. ' + error,
+      });
+    },
+  });
+
+  const { data: missionTemplates } = useQuery({
+    queryKey: ['admin', 'challenge', 'missionTemplates'],
+    enabled: Boolean(currentChallenge),
+    queryFn: async (): Promise<MissionTemplateResItem[]> => {
+      const res = await axios.get(`/mission-template/admin`);
+      return missionTemplateAdmin.parse(res.data.data).missionTemplateAdminList;
+    },
+  });
+
+  useEffect(() => {
+    console.log('editingMission', editingMission);
+  }, [editingMission]);
 
   const { data: additionalContents = [] } = useQuery({
     queryKey: [
@@ -253,13 +436,6 @@ const ChallengeOperationRegisterMission = () => {
       }
       const res = await axios.get(`/contents/admin/simple?type=ADDITIONAL`);
       return getContentsAdminSimple.parse(res.data.data).contentsSimpleList;
-    },
-  });
-
-  const updateMission = useMutation({
-    mutationFn: async (mission: UpdateMissionReq & { id: number }) => {
-      const { id, ...payload } = mission;
-      return axios.patch(`/mission/${id}`, payload);
     },
   });
 
@@ -281,88 +457,251 @@ const ChallengeOperationRegisterMission = () => {
     },
   });
 
-  const missionList = useMemo((): Row[] => {
+  // TODO: 최선은 아님... column 자체에 action을 넣는게 좋을듯.
+  const onAction = useCallback(
+    async ({
+      action,
+      row,
+    }: {
+      action: 'create' | 'edit' | 'delete' | 'cancel';
+      row: Row;
+    }) => {
+      switch (action) {
+        case 'create':
+          await createMissionMutation.mutateAsync({
+            additionalContentsIdList:
+              row.additionalContentsList
+                ?.map((c) => c?.id)
+                .filter((id): id is number => Boolean(id)) || [],
+            essentialContentsIdList:
+              row.essentialContentsList
+                ?.map((c) => c?.id)
+                .filter((id): id is number => Boolean(id)) || [],
+            lateScore: row.lateScore,
+            missionTemplateId: row.missionTemplateId,
+            score: row.score,
+            startDate: row.startDate.format('YYYY-MM-DD'),
+            endDate: row.endDate.format('YYYY-MM-DD'),
+            th: row.th,
+            title: '미션이름',
+          });
+          if (apiRef.current?.getRowMode(row.id) === 'edit') {
+            apiRef.current?.stopRowEditMode({
+              id: row.id,
+            });
+          }
+          setSnackbar({ open: true, message: '미션을 생성했습니다.' });
+          setEditingMission(null);
+          refetchMissions();
+          apiRef.current?.forceUpdate();
+          return;
+        case 'edit':
+          await updateMission.mutateAsync({
+            additionalContentsIdList:
+              row.additionalContentsList
+                ?.map((c) => c?.id)
+                .filter((id): id is number => Boolean(id)) || [],
+            essentialContentsIdList:
+              row.essentialContentsList
+                ?.map((c) => c?.id)
+                .filter((id): id is number => Boolean(id)) || [],
+            id: row.id,
+            lateScore: row.lateScore,
+            // 아래로 수정
+            // missionTemplateId: row.missionTemplateId,
+            missionTemplateId: 1,
+            score: row.score,
+            startDate: row.startDate.format('YYYY-MM-DD'),
+            endDate: row.endDate.format('YYYY-MM-DD'),
+            th: row.th,
+            title: '미션이름',
+          });
+          if (apiRef.current?.getRowMode(row.id) === 'edit') {
+            apiRef.current?.stopRowEditMode({
+              id: row.id,
+            });
+          }
+          setSnackbar({ open: true, message: '미션을 수정했습니다.' });
+          setEditingMission(null);
+          refetchMissions();
+          apiRef.current?.forceUpdate();
+          return;
+        case 'delete':
+          await deleteMission.mutateAsync(row.id);
+          setSnackbar({ open: true, message: '미션을 삭제했습니다.' });
+          refetchMissions();
+          apiRef.current?.forceUpdate();
+          return;
+        case 'cancel':
+          if (apiRef.current?.getRowMode(row.id) === 'edit') {
+            apiRef.current?.stopRowEditMode({
+              id: row.id,
+            });
+          }
+          refetchMissions();
+          apiRef.current?.forceUpdate();
+          setEditingMission(null);
+          return;
+      }
+    },
+    [
+      apiRef,
+      createMissionMutation,
+      deleteMission,
+      refetchMissions,
+      updateMission,
+    ],
+  );
+
+  const rows = useMemo((): Row[] => {
     const result: Row[] = (missions || []).map((m) => ({
       ...m,
       mode: 'normal',
-      additionalContent: null,
-      essentialContent: null,
-      additionalContentList: additionalContents,
-      essentialContentList: essentialContents,
+      additionalContentsOptions: additionalContents,
+      essentialContentsOptions: essentialContents,
+      missionTemplatesOptions: missionTemplates ?? [],
+      onAction,
     }));
 
     if (editingMission) {
       result.push({
         ...editingMission,
         mode: 'create',
-        additionalContent: null,
-        essentialContent: null,
-        additionalContentList: additionalContents,
-        essentialContentList: essentialContents,
+        additionalContentsOptions: additionalContents,
+        essentialContentsOptions: essentialContents,
+        missionTemplatesOptions: missionTemplates ?? [],
+        onAction,
       });
     }
 
     return result;
-  }, [additionalContents, editingMission, essentialContents, missions]);
+  }, [
+    missions,
+    editingMission,
+    additionalContents,
+    essentialContents,
+    missionTemplates,
+    onAction,
+  ]);
 
   return (
-    <MissionProvider>
-      <main>
-        {/* TODO: 채워넣기 */}
-        <DataGrid
-          editMode="row"
-          slots={{
-            toolbar: ChallengeOperationRegisterMissionToolbar,
-          }}
-          slotProps={{
-            toolbar: {
-              onRegisterButtonClick: () => {
-                setEditingMission({
-                  attendanceCount: 0,
-                  endDate: dayjs(),
-                  startDate: dayjs(),
-                  id: -1,
-                  lateScore: 5,
-                  score: 10,
-                  th: 1,
-                  missionStatusType: 'WAITING',
-                  lateAttendanceCount: 0,
-                  additionalContentsList: [],
-                  essentialContentsList: [],
-                  missionType: '',
-                });
-              },
+    <main>
+      {/* TODO: 채워넣기 */}
+      <DataGrid
+        apiRef={apiRef}
+        editMode="row"
+        initialState={{
+          sorting: { sortModel: [{ field: 'id', sort: 'desc' }] },
+        }}
+        slots={{
+          toolbar: ChallengeOperationRegisterMissionToolbar,
+        }}
+        slotProps={{
+          toolbar: {
+            onRegisterButtonClick: () => {
+              setEditingMission({
+                attendanceCount: 0,
+                endDate: dayjs(),
+                startDate: dayjs(),
+                id: 99,
+                lateScore: 5,
+                score: 10,
+                th: 1,
+                missionTemplateId: null,
+                missionStatusType: 'WAITING',
+                lateAttendanceCount: 0,
+                additionalContentsList: [],
+                essentialContentsList: [],
+                missionType: '',
+              });
             },
-            cell: {
-              essentialContents,
-              additionalContents,
-            },
-          }}
-          rows={missionList}
-          columns={columns}
-          getRowClassName={(params) => {
-            if (params.row.mode === 'create') {
-              return 'bg-green-100';
-            }
-            return '';
-          }}
-          // initialState={
-          //   {
-          //     // pagination: {
-          //     // paginationModel: {
-          //     //   pageSize: 5,
-          //     // },
-          //     // },
-          //   }
-          // }
-          // pageSizeOptions={[5]}
-          // checkboxSelection
-          disableRowSelectionOnClick
-          autoHeight
-        />
-      </main>
-    </MissionProvider>
+          },
+        }}
+        rows={rows}
+        columns={columns}
+        disableRowSelectionOnClick
+        rowHeight={48}
+        autoHeight
+        getDetailPanelContent={() => 'hello!'}
+        hideFooter
+        processRowUpdate={(updatedRow, originalRow) => {
+          return originalRow;
+        }}
+      />
+      <Snackbar
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+        open={snackbar.open}
+        onClose={() => setSnackbar({ ...snackbar, open: false })}
+        message={snackbar.message}
+      />
+    </main>
   );
 };
+
+function RemoveAlertDialog({
+  onAction,
+  row,
+}: {
+  onAction: (params: {
+    action: 'create' | 'cancel' | 'edit' | 'delete';
+    row: Row;
+  }) => void;
+  row: Row;
+}) {
+  const [removeDialog, setRemoveDialog] = useState({
+    open: false,
+    id: 0,
+  });
+
+  return (
+    <React.Fragment>
+      <IconButton
+        sx={{
+          width: 30,
+          height: 30,
+        }}
+        onClick={() => {
+          setRemoveDialog({ open: true, id: row.id });
+        }}
+        color="error"
+      >
+        <FaTrashCan />
+      </IconButton>
+      <Dialog
+        open={removeDialog.open}
+        onClose={() => setRemoveDialog({ open: false, id: 0 })}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">미션 삭제</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            정말로 삭제하시겠습니까?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button
+            onClick={() => {
+              setRemoveDialog({ open: false, id: 0 });
+            }}
+          >
+            취소
+          </Button>
+          <Button
+            onClick={async () => {
+              onAction({ action: 'delete', row });
+              setRemoveDialog({ open: false, id: 0 });
+            }}
+            autoFocus
+            // variant='contained'
+            color="error"
+          >
+            삭제
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </React.Fragment>
+  );
+}
 
 export default ChallengeOperationRegisterMission;

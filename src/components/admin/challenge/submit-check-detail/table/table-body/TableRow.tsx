@@ -8,10 +8,11 @@ import ResultDropdown from './ResultDropdown';
 import CommentCell from './CommentCell';
 import RefundCheckbox from './RefundCheckbox';
 import ChoiceCheckbox from './ChoiceCheckbox';
+import { Mission } from '../../../../../../schema';
 
 interface Props {
   attendance?: any;
-  missionDetail?: any;
+  missionDetail?: Mission;
   th?: number;
   bgColor: 'DARK' | 'LIGHT';
   isChecked: boolean;
@@ -99,21 +100,21 @@ const TableRow = ({
           </Link>
         )}
       </div>
-      <ResultDropdown
+      {/* <ResultDropdown
         attendance={attendance}
         attendanceResult={attendanceResult}
         setAttendanceResult={setAttendanceResult}
         setIsRefunded={setIsRefunded}
         cellWidthListIndex={7}
-      />
-      <RefundCheckbox
+      /> */}
+      {/* <RefundCheckbox
         attendance={attendance}
         attendanceResult={attendanceResult}
         missionDetail={missionDetail}
         cellWidthListIndex={8}
         isRefunded={isRefunded}
         setIsRefunded={setIsRefunded}
-      />
+      /> */}
       <CommentCell attendance={attendance} cellWidthListIndex={8} />
     </div>
   );

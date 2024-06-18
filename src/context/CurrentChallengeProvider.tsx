@@ -11,7 +11,12 @@ type MissionList = z.infer<typeof missionAdmin>;
 const currentChallengeContext = createContext<{
   currentChallenge?: CurrentChallenge | null;
   missionsOfCurrentChallenge?: MissionList | null;
-}>({});
+  missionsOfCurrentChallengeRefetch: () => void;
+}>({
+  currentChallenge: null,
+  missionsOfCurrentChallenge: null,
+  missionsOfCurrentChallengeRefetch: () => {},
+});
 
 export const CurrentChallengeProvider = ({
   children,
@@ -34,7 +39,7 @@ export const CurrentChallengeProvider = ({
     },
   });
 
-  const { data: missionsOfCurrentChallenge } = useQuery({
+  const { data: missionsOfCurrentChallenge, refetch } = useQuery({
     queryKey: ['admin', 'challenge', params.programId, 'missions'],
     queryFn: async () => {
       if (!params.programId) {
@@ -47,7 +52,7 @@ export const CurrentChallengeProvider = ({
 
   return (
     <currentChallengeContext.Provider
-      value={{ currentChallenge, missionsOfCurrentChallenge }}
+      value={{ currentChallenge, missionsOfCurrentChallenge, missionsOfCurrentChallengeRefetch: refetch}}
     >
       {children}
     </currentChallengeContext.Provider>
@@ -64,3 +69,8 @@ export const useMissionsOfCurrentChallenge = () => {
       ?.missionList ?? []
   );
 };
+
+/** TODO: queryKey 방식으로 수정 */
+export const useMissionsOfCurrentChallengeRefetch = () => {
+  return useContext(currentChallengeContext).missionsOfCurrentChallengeRefetch;
+}

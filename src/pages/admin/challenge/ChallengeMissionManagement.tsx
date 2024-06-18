@@ -9,7 +9,7 @@ import LineTableBodyRow, { ItemWithStatus } from '../../../components/admin/chal
 import LineTableHead from '../../../components/admin/challenge/ui/lineTable/LineTableHead';
 import {
   CreateMissionTemplateReq,
-  getMissionTemplateAdmin,
+  missionTemplateAdmin,
   MissionTemplateResItem,
   UpdateMissionTemplateReq
 } from '../../../schema';
@@ -47,7 +47,7 @@ const ChallengeMissionManagement = () => {
     queryKey: ['mission-template', 'admin'],
     queryFn: async () => {
       const res = await axios.get('/mission-template/admin');
-      return getMissionTemplateAdmin.parse(res.data.data);
+      return missionTemplateAdmin.parse(res.data.data);
     },
   });
 
