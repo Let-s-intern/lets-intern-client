@@ -6,17 +6,19 @@ import Button from '../../ui/button/Button';
 import AlertModal from '../../../ui/alert/AlertModal';
 import axios from '../../../../utils/axios';
 
-const InfoContainer = () => {
+const InfoContainer = ({ accessToken }: { accessToken?: string }) => {
   const navigate = useNavigate();
   const email = localStorage.getItem('email');
   const [buttonDisabled, setButtonDisabled] = useState(false);
   const [value, setValue] = useState<{
+    inflow: string;
     university: string;
     grade: number | null;
     major: string;
     wishJob: string;
     wishCompany: string;
   }>({
+    inflow: '',
     university: '',
     grade: null,
     major: '',
@@ -60,6 +62,7 @@ const InfoContainer = () => {
     },
     onSuccess: () => {
       setSuccessModalOpen(true);
+      localStorage.removeItem('email');
     },
     onError: (error) => {
       // const axiosError = error as AxiosError;
@@ -68,9 +71,39 @@ const InfoContainer = () => {
     },
   });
 
+  const patchUserInfo = useMutation({
+    mutationFn: async () => {
+      const res = await axios.patch(
+        '/user',
+        {
+          inflowPath: value.inflow,
+          university: value.university,
+          grade: convertGradeToEng(value.grade as number),
+          major: value.major,
+          wishJob: value.wishJob,
+          wishCompany: value.wishCompany,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        },
+      );
+      return res.data;
+    },
+    onSuccess: () => {
+      setSuccessModalOpen(true);
+    },
+    onError: (error) => {
+      setError(error);
+      setErrorMessage('추가 정보 입력에 실패했습니다.');
+    },
+  });
+
   const handleOnSubmit = (e: any) => {
     e.preventDefault();
     if (
+      (accessToken && !value.inflow) ||
       !value.university ||
       !value.major ||
       !value.grade ||
@@ -89,11 +122,17 @@ const InfoContainer = () => {
       setErrorMessage('이메일이 없습니다.');
       return;
     }
-    postUserInfo.mutate();
+
+    if (accessToken) {
+      patchUserInfo.mutate();
+    } else {
+      postUserInfo.mutate();
+    }
   };
 
   useEffect(() => {
     if (
+      (accessToken && value.inflow === '') ||
       value.university === '' ||
       value.major === '' ||
       value.grade === null ||
@@ -104,7 +143,7 @@ const InfoContainer = () => {
     } else {
       setButtonDisabled(false);
     }
-  }, [value]);
+  }, [value, accessToken]);
 
   return (
     <div className="container mx-auto mt-8 p-5">
