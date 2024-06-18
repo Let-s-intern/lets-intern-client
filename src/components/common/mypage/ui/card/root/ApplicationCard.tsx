@@ -7,9 +7,7 @@ import { ApplicationType } from '../../../../../../pages/common/mypage/Applicati
 interface ApplicationCardProps {
   application: ApplicationType;
   hasReviewButton?: boolean;
-  reviewButton?: {
-    text: string;
-  };
+  reviewType?: 'CREATE' | 'EDIT';
   grayscale?: boolean;
   showDeleteMenu?: boolean;
 }
@@ -17,7 +15,7 @@ interface ApplicationCardProps {
 const ApplicationCard = ({
   application,
   hasReviewButton,
-  reviewButton,
+  reviewType,
   grayscale,
   showDeleteMenu,
 }: ApplicationCardProps) => {
@@ -77,9 +75,11 @@ const ApplicationCard = ({
       </div>
       {hasReviewButton && (
         <LinkButton
-          to={`/mypage/review/new/program/${application.programId}?application=${application.id}`}
+          to={`/mypage/review/${
+            reviewType === 'CREATE' ? 'new' : 'edit'
+          }/program/${application.programId}?application=${application.id}`}
         >
-          {reviewButton?.text}
+          {reviewType === 'CREATE' ? '후기 작성하기' : '수정하기'}
         </LinkButton>
       )}
     </div>
