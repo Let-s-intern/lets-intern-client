@@ -1,9 +1,9 @@
-import { STATUS } from '../utils/convert';
+import { TABLE_STATUS } from '../utils/convert';
 import { StatusKey } from './interface';
 
 export interface IMissionTemplate {
   [key: string]: any;
-  status?: (typeof STATUS)[StatusKey];
+  status?: (typeof TABLE_STATUS)[StatusKey];
   id?: number;
   title: string;
   description: string;
@@ -25,7 +25,7 @@ export interface IContent {
 export interface IMission {
   [key: string]: any;
   id?: number;
-  status?: (typeof STATUS)[StatusKey];
+  status?: (typeof TABLE_STATUS)[StatusKey];
   type: 'GENERAL' | 'REFUND' | 'ADDITIONAL';
   missionTemplateId?: number;
   title: string;

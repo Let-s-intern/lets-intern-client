@@ -1,47 +1,61 @@
 import { useQuery } from '@tanstack/react-query';
-import { NavLink, Outlet, useNavigate, useParams } from 'react-router-dom';
+import {
+  NavLink,
+  Outlet,
+  useNavigate,
+  useParams,
+  useResolvedPath
+} from 'react-router-dom';
 import { twMerge } from 'tailwind-merge';
 import { z } from 'zod';
 import { useCurrentChallenge } from '../../../../context/CurrentChallengeProvider';
-import { getChallenge } from '../../../../schema';
+import { challenges } from '../../../../schema';
 import axios from '../../../../utils/axios';
+
+const getNavLinks = (programId?: string | number) => {
+  return [
+    {
+      id: 'home',
+      to: `/admin/challenge/operation/${programId}/home`,
+      text: '홈',
+    },
+    {
+      id: 'register-mission',
+      to: `/admin/challenge/operation/${programId}/register-mission`,
+      text: '미션등록',
+    },
+    {
+      id: 'attendances',
+      to: `/admin/challenge/operation/${programId}/attendances`,
+      text: '제출확인',
+    },
+    {
+      id: 'participants',
+      to: `/admin/challenge/operation/${programId}/participants`,
+      text: '참여자',
+    },
+    {
+      id: 'payback',
+      to: `/admin/challenge/operation/${programId}/payback`,
+      text: '페이백',
+    },
+  ];
+};
 
 const ChallengeAdminLayout = () => {
   const params = useParams();
   const navigate = useNavigate();
-
   const { data } = useQuery({
     queryKey: ['admin', 'challenge'],
     queryFn: async () => {
       const res = await axios.get(`/challenge?size=1000`);
-      return res.data.data as z.infer<typeof getChallenge>;
+      return res.data.data as z.infer<typeof challenges>;
     },
   });
 
   const { currentChallenge } = useCurrentChallenge();
 
-  const navLinks = [
-    {
-      to: `/admin/challenge/operation/${params.programId}/home`,
-      text: '홈',
-    },
-    {
-      to: `/admin/challenge/operation/${params.programId}/register-mission`,
-      text: '미션등록',
-    },
-    {
-      to: `/admin/challenge/operation/${params.programId}/submission`,
-      text: '제출확인',
-    },
-    {
-      to: `/admin/challenge/operation/${params.programId}/participants`,
-      text: '참여자',
-    },
-    {
-      to: `/admin/challenge/operation/${params.programId}/payback`,
-      text: '페이백',
-    },
-  ];
+  const navLinks = getNavLinks(params.programId);
 
   return (
     <div className="p-3">

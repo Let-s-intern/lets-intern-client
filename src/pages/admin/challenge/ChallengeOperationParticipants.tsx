@@ -2,10 +2,6 @@ import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import { useQuery } from '@tanstack/react-query';
 import { useParams } from 'react-router-dom';
 import { z } from 'zod';
-import {
-  useCurrentChallenge,
-  useMissionsOfCurrentChallenge
-} from '../../../context/CurrentChallengeProvider';
 import { getChallengeIdApplications, grade } from '../../../schema';
 import axios from '../../../utils/axios';
 
@@ -74,7 +70,6 @@ const DownloadButtonGroup = ({
 };
 
 const columns: GridColDef<Participant>[] = [
-  // { field: 'id', headerName: 'ID', width: 90 },
   { field: 'name', headerName: '이름', width: 100 },
   { field: 'email', headerName: '이메일', width: 200 },
   { field: 'phoneNum', headerName: '전화번호', width: 150 },
@@ -87,26 +82,17 @@ const columns: GridColDef<Participant>[] = [
     valueFormatter: (value) => gradeToText[value as z.infer<typeof grade>],
   },
   { field: 'major', headerName: '전공', width: 150 },
-  // { field: 'couponName', headerName: 'Coupon Name', width: 150 },
-  // { field: 'totalCost', headerName: 'Total Cost', width: 150 },
-  // { field: 'isConfirmed', headerName: 'Is Confirmed', width: 150 },
   { field: 'wishJob', headerName: '희망직무', width: 150 },
   { field: 'wishCompany', headerName: '희망기업', width: 150 },
-  // { field: 'createDate', headerName: 'Create Date', width: 150 },
 ];
 
 const ChallengeOperationParticipants = () => {
   const params = useParams();
   const challengeId = params.programId;
-  const missions = useMissionsOfCurrentChallenge();
-  const { currentChallenge } = useCurrentChallenge();
-
-  const { data: participantsRes, error } = useQuery({
+  const { data: participantsRes} = useQuery({
+    enabled: Boolean(challengeId),
     queryKey: ['admin', 'challenge', challengeId, 'participants'],
     queryFn: async () => {
-      if (!challengeId) {
-        return null;
-      }
       const res = await axios.get(`/challenge/${challengeId}/applications`);
       return getChallengeIdApplications.parse(res.data.data);
     },
@@ -120,17 +106,6 @@ const ChallengeOperationParticipants = () => {
       <DataGrid
         rows={participantsRes?.applicationList || []}
         columns={columns}
-        initialState={
-          {
-            // pagination: {
-            // paginationModel: {
-            //   pageSize: 5,
-            // },
-            // },
-          }
-        }
-        // pageSizeOptions={[5]}
-        // checkboxSelection
         disableRowSelectionOnClick
         autoHeight
         hideFooter

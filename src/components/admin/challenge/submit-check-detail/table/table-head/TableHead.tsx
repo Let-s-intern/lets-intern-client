@@ -4,12 +4,13 @@ import { challengeSubmitDetailCellWidthList } from '../../../../../../utils/tabl
 import AllChoiceCheckbox from '../table-body/AllChoiceCheckbox';
 import ResultFilter from '../../filter/ResultFilter';
 import StatusFilter from '../../filter/StatusFilter';
+import { Attendance } from '../../../../../../schema';
 
 interface Props {
   className?: string;
-  attendanceList: any;
-  isCheckedList: any;
-  setIsCheckedList: (isCheckedList: any) => void;
+  attendances: Attendance[];
+  isCheckedList: number[];
+  setIsCheckedList: (isCheckedList: number[]) => void;
   resultFilter: string;
   setResultFilter: (resultFilter: string) => void;
   statusFilter: string;
@@ -18,7 +19,7 @@ interface Props {
 
 const TableHead = ({
   className,
-  attendanceList,
+  attendances: attendances,
   isCheckedList,
   setIsCheckedList,
   resultFilter,
@@ -37,7 +38,7 @@ const TableHead = ({
     >
       <AllChoiceCheckbox
         cellWidthListIndex={0}
-        attendanceList={attendanceList}
+        attendanceList={attendances}
         isCheckedList={isCheckedList}
         setIsCheckedList={setIsCheckedList}
       />

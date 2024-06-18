@@ -1,60 +1,83 @@
-import React, { useState } from 'react';
+import dayjs from 'dayjs';
+import React, { useEffect, useState } from 'react';
 import { CiTrash } from 'react-icons/ci';
-
-import TextareaCell from './TextareaCell';
-import LineTableBodyCell from './LineTableBodyCell';
-import AlertModal from '../../../../ui/alert/AlertModal';
-import {
-  ITableContent,
-  ItemWithStatus,
-} from '../../../../../interfaces/interface';
-import {
-  STATUS,
-  TABLE_CONTENT,
-  missionTypeToText,
-} from '../../../../../utils/convert';
+import { twMerge } from 'tailwind-merge';
+import { TABLE_CONTENT, TABLE_STATUS } from '../../../../../utils/convert';
 import { formatMissionTableDateString } from '../../../../../utils/formatDateString';
+import AlertModal from '../../../../ui/alert/AlertModal';
 import DropdownCell from './DropdownCell';
+import LineTableBodyCell from './LineTableBodyCell';
+import TextareaCell from './TextareaCell';
+
+export type StatusKey = keyof typeof TABLE_STATUS;
+
+export type TableContent =
+  | InputTableContent
+  | DropdownTableContent
+  | DateTableContent;
+
+export interface InputTableContent {
+  type: typeof TABLE_CONTENT.INPUT;
+}
+
+export interface DropdownTableContent {
+  type: typeof TABLE_CONTENT.DROPDOWN;
+  options: { id: string | number; title: string }[];
+}
+
+export interface DateTableContent {
+  type: typeof TABLE_CONTENT.DATE;
+}
+export interface ItemWithStatus {
+  rowStatus?: (typeof TABLE_STATUS)[StatusKey];
+}
 
 interface LineTableBodyRowProps<T extends ItemWithStatus> {
-  item: T;
+  initialValues: T;
   attrNames: Array<keyof T>;
   placeholders?: string[];
   canEdits: boolean[];
-  contents: ITableContent[];
+  contents: TableContent[];
   cellWidthList: string[];
-  handleAdd: (item: T) => void;
-  handleDelete: (item: T) => void;
-  handleSave: (item: T) => void;
+  onDelete?: (item: T) => void;
+  onSave?: (item: T) => void;
+  onCancel?: (item: T) => void;
+  onClick?: (item: T) => void;
   children?: React.ReactNode;
+  editable?: boolean;
 }
 
 /**
  * 테이블 바디 행 컴포넌트
- * @param item - 행에 표시할 객체 데이터
+ * @param initialValues - 행에 표시할 객체 데이터
  * @param placeholders - 수정 모드 시, textarea에 표시할 placeholder 리스트 (순서 중요)
- * @param handleAdd - 데이터 추가 핸들러 (저장 X)
- * @param handleDelete - 데이터 삭제 핸들러 (저장 O)
+ * @param onSave - "저장" 버튼을 눌렀을 시
+ * @param onCancel - "취소" 버튼을 눌렀을 시
+ * @param onDelete - "삭제" 버튼을 눌렀을 시
+ * @param onClick - 행을 클릭했을 시
  * @param cellWidthList - 행 너비 리스트 (순서 중요)
  * @param attrNames - 행에 넣을 객체 속성 리스트 (순서 중요)
  * @param canEdits - 행 수정 여부 리스트 (순서 중요)
+ * @param editable - 수정/삭제가 가능한지 여부 (우측 버튼이 보이고 안보임) @deafult true
  * @param contents - 행에 넣을 컨텐츠 타입 리스트 (순서 중요)
  */
 
 const LineTableBodyRow = <T extends ItemWithStatus>({
-  item: initialValues,
+  initialValues,
   placeholders = [],
-  handleAdd,
-  handleDelete,
-  handleSave,
+  onDelete,
+  onSave,
+  onCancel,
   cellWidthList,
   attrNames,
   canEdits,
   contents,
+  editable = true,
+  onClick,
 }: LineTableBodyRowProps<T>) => {
   const [values, setValues] = useState(initialValues as T);
   const [isEditMode, setIsEditMode] = useState(
-    initialValues.status === STATUS.SAVE ? false : true,
+    initialValues.rowStatus === TABLE_STATUS.SAVE ? false : true,
   );
   const [isAlertShown, setIsAlertShown] = useState(false);
 
@@ -90,195 +113,152 @@ const LineTableBodyRow = <T extends ItemWithStatus>({
   };
 
   return (
-    <div className="flex gap-px rounded-md border border-neutral-200 p-1 font-pretendard">
-      {attrNames.map((attr, i) => {
-        // 보증금 미션만 환급금액 표시
-        if (attr === 'refund')
-          return (
-            <LineTableBodyCell key={i} className={cellWidthList[i]}>
-              {values.type === 'REFUND' && (
-                <TextareaCell
-                  name={attr as string}
-                  placeholder={placeholders[i] || ''}
-                  value={values[attr] as string}
-                  disabled={!canEdits[i] || !isEditMode}
-                  onChange={handleChange}
-                />
-              )}
-            </LineTableBodyCell>
-          );
+    <div
+      className={twMerge(
+        'flex gap-px rounded-md border border-neutral-200 p-1 font-pretendard',
+        onClick && 'cursor-pointer hover:bg-slate-50',
+      )}
+      onClick={() => onClick?.(values)}
+    >
+      {attrNames.map((_attr, i) => {
+        const content = contents[i];
+        // TODO: 타입 제대로 설정
+        const attr = _attr as string;
+        const value = values[attr as keyof T] as string;
 
-        if (contents[i].type === TABLE_CONTENT.INPUT)
-          return (
-            <LineTableBodyCell key={i} className={cellWidthList[i]}>
-              <TextareaCell
-                name={attr as string}
-                placeholder={placeholders[i] || ''}
-                value={values[attr] as string}
-                disabled={!canEdits[i] || !isEditMode}
-                onChange={handleChange}
-              />
-            </LineTableBodyCell>
-          );
-
-        // 유형, 미션명 드롭다운
-        if (
-          contents[i].type === TABLE_CONTENT.DROPDOWN &&
-          (attr === 'type' || attr === 'title')
-        ) {
-          return (
-            <LineTableBodyCell key={i} className={cellWidthList[i]}>
-              {canEdits && isEditMode ? (
-                <DropdownCell
-                  selected={values[attr]}
-                  name={attr as string}
-                  optionList={contents[i].options as []}
-                  onChange={handleChange}
-                />
-              ) : (
-                <TextareaCell
-                  name={attr as string}
-                  placeholder={placeholders[i] || ''}
-                  value={
-                    attr === 'type'
-                      ? missionTypeToText[values[attr]]
-                      : values[attr]
-                  }
-                  disabled={true}
-                  onChange={handleChange}
-                />
-              )}
-            </LineTableBodyCell>
-          );
+        switch (content.type) {
+          case TABLE_CONTENT.INPUT:
+            return (
+              <LineTableBodyCell key={i} className={cellWidthList[i]}>
+                {canEdits[i] && isEditMode ? (
+                  <TextareaCell
+                    name={attr}
+                    placeholder={placeholders[i] || ''}
+                    value={value}
+                    disabled={!canEdits[i] || !isEditMode}
+                    onChange={handleChange}
+                  />
+                ) : (
+                  value
+                )}
+              </LineTableBodyCell>
+            );
+          case TABLE_CONTENT.DROPDOWN:
+            return (
+              <LineTableBodyCell key={i} className={cellWidthList[i]}>
+                {canEdits[i] && isEditMode ? (
+                  <DropdownCell
+                    selected={value}
+                    name={attr}
+                    optionList={content.options}
+                    onChange={handleChange}
+                  />
+                ) : (
+                  <TextareaCell
+                    name={attr}
+                    placeholder={placeholders[i] || ''}
+                    value={
+                      content.options.find((option) => option.id === value)
+                        ?.title || ''
+                    }
+                    disabled={true}
+                  />
+                )}
+              </LineTableBodyCell>
+            );
+          case TABLE_CONTENT.DATE:
+            return (
+              <LineTableBodyCell key={i} className={cellWidthList[i]}>
+                {canEdits[i] && isEditMode ? (
+                  <input
+                    type="date"
+                    name={attr}
+                    value={value}
+                    onChange={handleChange}
+                  />
+                ) : (
+                  dayjs(value).format('YYYY-MM-DD HH:mm:ss')
+                )}
+              </LineTableBodyCell>
+            );
+          default:
+            return <LineTableBodyCell key={i} className={cellWidthList[i]} />;
         }
-
-        if (contents[i].type === TABLE_CONTENT.DROPDOWN) {
-          return (
-            <LineTableBodyCell key={i} className={cellWidthList[i]}>
-              {canEdits && isEditMode ? (
-                <DropdownCell
-                  selected={values[attr].length === 0 ? '' : values[attr][0].id}
-                  name={attr as string}
-                  optionList={contents[i].options as []}
-                  onChange={handleChange}
-                />
-              ) : (
-                <TextareaCell
-                  name={attr as string}
-                  placeholder={placeholders[i] || ''}
-                  value={values[attr].length === 0 ? '' : values[attr][0].title}
-                  disabled={true}
-                  onChange={handleChange}
-                />
-              )}
-            </LineTableBodyCell>
-          );
-        }
-
-        if (contents[i].type === TABLE_CONTENT.DATE) {
-          return (
-            <LineTableBodyCell key={i} className={cellWidthList[i]}>
-              {canEdits[i] && isEditMode ? (
-                <input
-                  type="date"
-                  name={attr as string}
-                  value={values[attr] as string}
-                  onChange={handleChange}
-                />
-              ) : (
-                <TextareaCell
-                  name={attr as string}
-                  placeholder={placeholders[i] || ''}
-                  value={formatMissionTableDateString(
-                    values[attr] as string,
-                    attr === 'createDate'
-                      ? ''
-                      : canEdits[i]
-                      ? '06:00'
-                      : '23:59',
-                  )}
-                  disabled={true}
-                />
-              )}
-            </LineTableBodyCell>
-          );
-        }
-
-        return <LineTableBodyCell key={i} className={cellWidthList[i]} />;
       })}
 
-      <LineTableBodyCell className="flex-1">
-        {isEditMode ? (
-          <div className="flex gap-2">
-            <button
-              type="button"
-              onClick={() => {
-                handleSave(values);
-                handleAdd({ ...values, status: STATUS.SAVE });
-                setIsEditMode(false);
-              }}
-            >
-              저장
-            </button>
-            <button
-              type="button"
-              onClick={() => {
-                setValues(initialValues);
-                if (initialValues.status === STATUS.SAVE) {
+      {editable ? (
+        <LineTableBodyCell className="flex-1">
+          {isEditMode ? (
+            <div className="flex gap-2">
+              <button
+                type="button"
+                onClick={() => {
+                  onSave?.(values);
                   setIsEditMode(false);
-                } else {
-                  handleDelete(values);
-                }
-              }}
-            >
-              취소
-            </button>
-          </div>
-        ) : (
-          <div
-            className="flex items-center gap-3"
-            onClick={(e) => e.stopPropagation}
-          >
-            {/* 수정 버튼 */}
-            <i
-              className="cursor-pointer"
-              onClick={(e) => {
-                e.stopPropagation();
-                setIsEditMode(true);
-              }}
-            >
-              <img src="/icons/edit-icon.svg" alt="edit-icon" />
-            </i>
-            {/* 삭제 버튼 */}
-            <>
-              <i
-                className="cursor-pointer text-[1.75rem]"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setIsAlertShown(true);
                 }}
               >
-                <CiTrash />
+                저장
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setValues(initialValues);
+                  if (initialValues.rowStatus === TABLE_STATUS.SAVE) {
+                    setIsEditMode(false);
+                  } else {
+                    onCancel?.(values);
+                  }
+                }}
+              >
+                취소
+              </button>
+            </div>
+          ) : (
+            <div
+              className="flex items-center gap-3"
+              onClick={(e) => e.stopPropagation}
+            >
+              {/* 수정 버튼 */}
+              <i
+                className="cursor-pointer"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setIsEditMode(true);
+                }}
+              >
+                <img src="/icons/edit-icon.svg" alt="edit-icon" />
               </i>
-              {isAlertShown && (
-                <AlertModal
-                  onConfirm={() => {
-                    handleDelete(values);
-                    setIsAlertShown(false);
-                  }}
-                  title="미션 삭제"
-                  onCancel={(e) => {
+              {/* 삭제 버튼 */}
+              <>
+                <i
+                  className="cursor-pointer text-[1.75rem]"
+                  onClick={(e) => {
                     e.stopPropagation();
-                    setIsAlertShown(false);
+                    setIsAlertShown(true);
                   }}
                 >
-                  정말로 삭제하시겠습니까?
-                </AlertModal>
-              )}
-            </>
-          </div>
-        )}
-      </LineTableBodyCell>
+                  <CiTrash />
+                </i>
+                {isAlertShown && (
+                  <AlertModal
+                    onConfirm={() => {
+                      onDelete?.(values);
+                      setIsAlertShown(false);
+                    }}
+                    title="미션 삭제"
+                    onCancel={(e) => {
+                      e.stopPropagation();
+                      setIsAlertShown(false);
+                    }}
+                  >
+                    정말로 삭제하시겠습니까?
+                  </AlertModal>
+                )}
+              </>
+            </div>
+          )}
+        </LineTableBodyCell>
+      ) : null}
     </div>
   );
 };

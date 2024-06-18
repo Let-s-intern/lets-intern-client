@@ -15,6 +15,7 @@ const DropdownCell = ({
     <select className="w-full" name={name} onChange={onChange}>
       {optionList.map(({ id, title }) => (
         <option
+          key={id}
           selected={selected === id || selected === title ? true : false}
           value={id}
         >

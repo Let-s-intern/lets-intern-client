@@ -1,126 +1,273 @@
-import { useState } from 'react';
-import { useParams } from 'react-router-dom';
+import {
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  IconButton,
+  Link,
+  Snackbar,
+} from '@mui/material';
 import { useMutation, useQuery } from '@tanstack/react-query';
-
+import { useState } from 'react';
+import { FaEdit } from 'react-icons/fa';
+import { FaTrashCan } from 'react-icons/fa6';
+import { twMerge } from 'tailwind-merge';
+import { useCurrentChallenge } from '../../../../../context/CurrentChallengeProvider';
+import {
+  challengeGuides,
+  CreateChallengeGuideReq,
+  UpdateChallengeGuideReq,
+} from '../../../../../schema';
+import axios from '../../../../../utils/axios';
 import RoundedBox from '../box/RoundedBox';
 import SectionHeading from '../heading/SectionHeading';
-import Button from '../../ui/button/Button';
-import GuideEditorModal from '../../ui/modal/GuideEditorModal';
-import GuideItem from '../item/GuideItem';
-import { IGuide } from '../../../../../interfaces/interface';
-import axios from '../../../../../utils/axios';
 
-const initialValue = {
-  title: '',
-  link: '',
-};
-
-/* 추후 가이드 개수가 3개보다 많아질 수 있음 */
-const GuideSection = () => {
-  const getGuideList = async () => {
-    try {
-      const res = await axios.get(`/challenge-guide/admin/${params.programId}`);
-      if (res.status !== 200) {
-        throw new Error(res.data.message);
+const GuideSection = ({ className }: { className?: string }) => {
+  const { currentChallenge } = useCurrentChallenge();
+  const [modalStatus, setModalStatus] = useState<
+    | {
+        open: boolean;
+        mode: 'create';
       }
-      setGuideList(res.data.challengeGuideAdminList);
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
-  const params = useParams();
-  const [guideList, setGuideList] = useState<IGuide[]>([]);
-  const [isModalShown, setIsModalShown] = useState(false);
-  const [values, setValues] = useState<IGuide>(initialValue);
-
-  const { isLoading } = useQuery({
-    queryKey: ['challenge-guide', 'admin', params.programId],
-    queryFn: getGuideList,
+    | {
+        open: boolean;
+        mode: 'edit';
+        guideId: number;
+      }
+  >({
+    open: false,
+    mode: 'create',
   });
 
-  const postMutation = useMutation({
-    mutationFn: async (guide: IGuide) => {
-      const res = await axios.post(
-        `/challenge-guide/${params.programId}`,
-        guide,
-      );
-      if (res.status !== 200) throw new Error(res.data.message);
-    },
-    onError(error) {
-      console.error(error);
-    },
-  });
-  const patchMutation = useMutation({
-    mutationFn: async (guide: IGuide) => {
-      const res = await axios.patch(
-        `/challenge-guide/${params.programId}`,
-        guide,
-      );
-      if (res.status !== 200) throw new Error(res.data.message);
-    },
-    onError(error) {
-      console.error(error);
-    },
+  const [snackbar, setSnackbar] = useState<{
+    open: boolean;
+    message: string;
+  }>({
+    open: false,
+    message: '',
   });
 
-  const createGuide = () => {
-    setGuideList((prev) => [values, ...prev]);
-    postMutation.mutate(values);
-  };
-  const editGuide = (index: number) => {
-    setGuideList((prev) => [
-      ...prev.slice(0, index),
-      values,
-      ...prev.slice(index + 1),
-    ]);
-    patchMutation.mutate(values);
-  };
-  const handleSubmit = (e: React.FormEvent<Element>) => {
-    e.preventDefault();
-    const i = guideList.findIndex((guide) => guide.id === values.id);
-    if (i === -1) createGuide();
-    else editGuide(i);
+  // const [pageNum, setPageNum] = useState<number>(1);
+  const [editingGuide, setCreatingGuide] = useState<CreateChallengeGuideReq>({
+    title: '',
+    link: '',
+  });
 
-    setValues(initialValue);
-    setIsModalShown(false);
-  };
+  const { data, refetch } = useQuery({
+    enabled: Boolean(currentChallenge?.id),
+    queryKey: [
+      'challenge',
+      currentChallenge?.id,
+      'guides',
+      // { page: pageNum, size: 5 },
+    ],
+    queryFn: async () => {
+      const res = await axios.get(`/challenge/${currentChallenge?.id}/guides`, {
+        // params: { page: pageNum, size: 5 },
+      });
+      return challengeGuides.parse(res.data.data);
+    },
+  });
 
-  if (isLoading) return <></>;
+  const guides = data?.challengeGuideList ?? [];
+
+  const createGuideMutation = useMutation({
+    mutationFn: (values: CreateChallengeGuideReq) => {
+      return axios.post(`/challenge-guide/${currentChallenge?.id}`, values);
+    },
+  });
+
+  const updateGuideMutation = useMutation({
+    mutationFn: (values: UpdateChallengeGuideReq & { guideId: number }) => {
+      const { guideId, ...payload } = values;
+      return axios.patch(`/challenge-guide/${guideId}`, payload);
+    },
+  });
+
+  const deleteGuideMutation = useMutation({
+    mutationFn: (guideId: number) => {
+      return axios.delete(`/challenge-guide/${guideId}`);
+    },
+  });
 
   return (
     <>
       <RoundedBox
         as="section"
-        className="flex w-[50%] flex-col justify-between px-8 py-6"
+        className={twMerge(
+          'flex flex-col justify-between px-8 py-6',
+          className,
+        )}
       >
         <div className="flex flex-col gap-4">
           <div className="flex items-center justify-between">
             <SectionHeading>챌린지 가이드</SectionHeading>
-            <Button onClick={() => setIsModalShown(true)}>등록</Button>
+            <Button
+              onClick={() =>
+                setModalStatus({
+                  mode: 'create',
+                  open: true,
+                })
+              }
+            >
+              새 가이드 등록
+            </Button>
           </div>
           <ul className="flex flex-col gap-2">
-            {guideList.map((guide: IGuide) => (
-              <GuideItem
-                key={guide.id}
-                guide={guide}
-                setValues={setValues}
-                setIsModalShown={setIsModalShown}
-              />
+            {guides.map((guide) => (
+              <li key={guide.id} className="flex items-center">
+                <Link href={guide.link ?? ''} className="flex-1">
+                  {guide.title}
+                </Link>
+                <IconButton
+                  onClick={() => {
+                    setCreatingGuide({
+                      link: guide.link ?? '',
+                      title: guide.title ?? '',
+                    });
+                    setModalStatus({
+                      mode: 'edit',
+                      open: true,
+                      guideId: guide.id,
+                    });
+                  }}
+                  sx={{ width: 32, height: 32 }}
+                >
+                  <FaEdit />
+                </IconButton>
+                <IconButton
+                  sx={{ width: 32, height: 32 }}
+                  color="error"
+                  onClick={async () => {
+                    await deleteGuideMutation.mutateAsync(guide.id);
+                    setSnackbar({
+                      open: true,
+                      message: '가이드가 성공적으로 삭제되었습니다.',
+                    });
+                    refetch();
+                  }}
+                >
+                  <FaTrashCan />
+                </IconButton>
+                <span>
+                  {guide.createDate?.format('YYYY-MM-DD') ?? '날짜 없음'}
+                </span>
+              </li>
             ))}
           </ul>
         </div>
+
+        {/* <div className="flex items-center justify-center">
+          <div className="mt-10 flex items-center gap-3 justify-self-center rounded-full border px-3 py-1 text-sm">
+            {pageInfo &&
+              Array.from(
+                { length: pageInfo.totalPages },
+                (_, index) => index + 1,
+              ).map((pageNum) => (
+                <span
+                  key={pageNum}
+                  className={clsx('cursor-pointer', {
+                    'font-medium': pageNum === pageInfo.pageNum,
+                  })}
+                  onClick={() => {
+                    setPageNum(pageNum);
+                  }}
+                >
+                  {pageNum}
+                </span>
+              ))}
+          </div>
+        </div> */}
       </RoundedBox>
 
-      {isModalShown && (
-        <GuideEditorModal
-          initValue={initialValue}
-          values={values}
-          setIsModalShown={setIsModalShown}
-          onSubmit={handleSubmit}
-          setValues={setValues}
-        />
-      )}
+      <Dialog
+        open={modalStatus.open}
+        onClose={() => setModalStatus({ ...modalStatus, open: false })}
+      >
+        <DialogTitle id="alert-dialog-title">
+          {modalStatus.mode === 'create' ? '가이드 등록' : '가이드 수정'}
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            {modalStatus.mode === 'create'
+              ? '새로운 가이드를 등록합니다.'
+              : '가이드를 수정합니다.'}
+          </DialogContentText>
+          <div className="mt-10">
+            <label htmlFor="guide-title">제목</label>
+            <input
+              type="text"
+              id="guide"
+              className="rounded mb-4 w-full border px-3 py-1"
+              placeholder="제목"
+              value={editingGuide.title}
+              onChange={(e) =>
+                setCreatingGuide((prev) => ({
+                  ...prev,
+                  title: e.target.value,
+                }))
+              }
+            />
+            <label htmlFor="guide-link">링크</label>
+            <input
+              type="text"
+              id="guide-link"
+              className="rounded mb-4 w-full border px-3 py-1"
+              placeholder="링크"
+              value={editingGuide.link}
+              onChange={(e) =>
+                setCreatingGuide((prev) => ({
+                  ...prev,
+                  link: e.target.value,
+                }))
+              }
+            />
+          </div>
+        </DialogContent>
+        <DialogActions>
+          <Button
+            onClick={() => {
+              setModalStatus((prev) => ({ ...prev, open: false }));
+            }}
+            color="inherit"
+          >
+            취소
+          </Button>
+          <Button
+            onClick={async () => {
+              if (modalStatus.mode === 'create') {
+                await createGuideMutation.mutateAsync(editingGuide);
+                setSnackbar({
+                  open: true,
+                  message: '가이드가 성공적으로 등록되었습니다.',
+                });
+              } else if (modalStatus.mode === 'edit') {
+                await updateGuideMutation.mutateAsync({
+                  ...editingGuide,
+                  guideId: modalStatus.guideId,
+                });
+                setSnackbar({
+                  open: true,
+                  message: '가이드가 성공적으로 수정되었습니다.',
+                });
+              }
+              refetch();
+              setModalStatus((prev) => ({ ...prev, open: false }));
+            }}
+            autoFocus
+          >
+            {modalStatus.mode === 'create' ? '등록' : '수정'}
+          </Button>
+        </DialogActions>
+      </Dialog>
+      <Snackbar
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+        open={snackbar.open}
+        onClose={() => setSnackbar({ ...snackbar, open: false })}
+        message={snackbar.message}
+      />
     </>
   );
 };

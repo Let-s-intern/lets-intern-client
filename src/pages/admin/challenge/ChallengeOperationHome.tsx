@@ -1,44 +1,24 @@
-import { z } from 'zod';
+import MissionResultItem from '../../../components/admin/challenge/home/item/MissionResultItem';
+import GuideSection from '../../../components/admin/challenge/home/section/GuideSection';
+import NoticeSection from '../../../components/admin/challenge/home/section/NoticeSection';
 import { useMissionsOfCurrentChallenge } from '../../../context/CurrentChallengeProvider';
-import { missionStatusType } from '../../../schema';
-
-const MissionStateBadge = ({
-  state,
-}: {
-  state: z.infer<typeof missionStatusType>;
-}) => {
-  switch (state) {
-    case 'CHECK_DONE':
-      return <span className="rounded bg-green-500 text-white">확인완료</span>;
-    case 'REFUND_DONE':
-      return <span className="rounded bg-red-500 text-white">환불완료</span>;
-    case 'WAITING':
-      return <span className="rounded bg-gray-500 text-white">대기</span>;
-  }
-};
 
 const ChallengeOperationHome = () => {
   const missions = useMissionsOfCurrentChallenge();
   return (
     <main>
-      <h2 className="text-lg font-bold">미션제출현황</h2>
-      <div className="flex items-center gap-2">
-        {missions?.missionList.map((mission) => {
-          return (
-            <div key={mission.id} className="border p-3 text-center">
-              <p>
-                {mission.startDate.format('MM/DD(ddd)')}-
-                {mission.endDate.format('MM/DD(ddd)')}
-              </p>
-              <h3>{mission.th}회차</h3>
-              <p className="text-xl">{mission.attendanceCount}</p>
-              <p>지각 {mission.lateAttendanceCount}</p>
-              <p>
-                <MissionStateBadge state={mission.missionStatusType} />
-              </p>
-            </div>
-          );
-        })}
+      <section className="rounded mt-10 border px-3 py-2">
+        <h2 className="text-lg font-bold">미션제출현황</h2>
+        <div className="flex min-w-full items-center justify-around">
+          {missions.map((mission, index) => (
+            <MissionResultItem key={mission.id} mission={mission} />
+          ))}
+        </div>
+      </section>
+
+      <div className="mt-12 flex">
+        <NoticeSection className="flex-1" />
+        <GuideSection className="flex-1" />
       </div>
     </main>
   );

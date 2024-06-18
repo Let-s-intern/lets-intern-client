@@ -1,8 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { z } from 'zod';
-import { getChallenge } from '../../../schema';
+import { challenges } from '../../../schema';
 import axios from '../../../utils/axios';
 
 const ChallengeOnboarding = () => {
@@ -12,7 +11,7 @@ const ChallengeOnboarding = () => {
     queryKey: ['challenge', 'admin'],
     queryFn: async () => {
       const res = await axios.get(`/challenge?size=1000`);
-      return res.data.data as z.infer<typeof getChallenge>;
+      return challenges.parse(res.data.data);
     },
   });
 

@@ -1,17 +1,22 @@
 import { useQuery } from '@tanstack/react-query';
-import { createContext, useContext, useEffect } from 'react';
+import { createContext, useContext } from 'react';
 import { useParams } from 'react-router-dom';
 import { z } from 'zod';
-import { getChallengeId, getMissionAdminId } from '../schema';
+import { getChallengeId, missionAdmin } from '../schema';
 import axios from '../utils/axios';
 
-type CurrentChallenge = z.infer<typeof getChallengeId>;
-type MissionList = z.infer<typeof getMissionAdminId>;
+type CurrentChallenge = z.infer<typeof getChallengeId> & { id: number };
+type MissionList = z.infer<typeof missionAdmin>;
 
 const currentChallengeContext = createContext<{
   currentChallenge?: CurrentChallenge | null;
   missionsOfCurrentChallenge?: MissionList | null;
-}>({});
+  missionsOfCurrentChallengeRefetch: () => void;
+}>({
+  currentChallenge: null,
+  missionsOfCurrentChallenge: null,
+  missionsOfCurrentChallengeRefetch: () => {},
+});
 
 export const CurrentChallengeProvider = ({
   children,
@@ -27,24 +32,27 @@ export const CurrentChallengeProvider = ({
         return null;
       }
       const res = await axios.get(`/challenge/${params.programId}`);
-      return getChallengeId.parse(res.data.data);
+      return {
+        ...getChallengeId.parse(res.data.data),
+        id: Number(params.programId),
+      };
     },
   });
 
-  const { data: missionsOfCurrentChallenge } = useQuery({
+  const { data: missionsOfCurrentChallenge, refetch } = useQuery({
     queryKey: ['admin', 'challenge', params.programId, 'missions'],
     queryFn: async () => {
       if (!params.programId) {
         return null;
       }
-      const res = await axios.get(`/mission/admin/${params.programId}`);
-      return getMissionAdminId.parse(res.data.data);
+      const res = await axios.get(`/mission/${params.programId}/admin`);
+      return missionAdmin.parse(res.data.data);
     },
   });
 
   return (
     <currentChallengeContext.Provider
-      value={{ currentChallenge, missionsOfCurrentChallenge }}
+      value={{ currentChallenge, missionsOfCurrentChallenge, missionsOfCurrentChallengeRefetch: refetch}}
     >
       {children}
     </currentChallengeContext.Provider>
@@ -56,5 +64,13 @@ export const useCurrentChallenge = () => {
 };
 
 export const useMissionsOfCurrentChallenge = () => {
-  return useContext(currentChallengeContext).missionsOfCurrentChallenge;
+  return (
+    useContext(currentChallengeContext).missionsOfCurrentChallenge
+      ?.missionList ?? []
+  );
+};
+
+/** TODO: queryKey 방식으로 수정 */
+export const useMissionsOfCurrentChallengeRefetch = () => {
+  return useContext(currentChallengeContext).missionsOfCurrentChallengeRefetch;
 }
