@@ -62,8 +62,8 @@ const PopUpBannerEdit = () => {
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.name === 'file' && e.target.files) {
-      setValue({ ...value, file: e.target.files[0] });
+    if (e.target.files) {
+      setValue({ ...value, [e.target.name]: e.target.files[0] });
     } else {
       setValue({ ...value, [e.target.name]: e.target.value });
     }
@@ -74,7 +74,7 @@ const PopUpBannerEdit = () => {
 
     const formData = new FormData();
     formData.append(
-      'updateBannerRequestDto',
+      'requestDto',
       new Blob(
         [
           JSON.stringify({

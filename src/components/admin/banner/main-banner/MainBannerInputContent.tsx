@@ -22,10 +22,17 @@ const MainBannerInputContent = ({
       />
       <Input label="링크" name="link" value={value.link} onChange={onChange} />
       <ImageUpload
-        label="배너 이미지 업로드"
+        label="데스크탑용 배너 이미지 업로드"
         id="file"
         name="file"
         image={value.imgUrl}
+        onChange={onChange}
+      />
+      <ImageUpload
+        label="모바일용 배너 이미지 업로드"
+        id="mobileFile"
+        name="mobileFile"
+        image={value.mobileImgUrl}
         onChange={onChange}
       />
       <DateTimePicker

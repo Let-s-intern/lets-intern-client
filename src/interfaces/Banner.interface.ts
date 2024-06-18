@@ -27,7 +27,9 @@ export interface IBannerForm {
   startDate: string;
   endDate: string;
   imgUrl: string;
+  mobileImgUrl?: string;
   file: File | null;
+  mobileFile?: File | null;
 }
 
 export interface ILineBannerForm {

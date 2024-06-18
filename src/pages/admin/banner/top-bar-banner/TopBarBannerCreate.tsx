@@ -47,7 +47,7 @@ const TopBarBannerCreate = () => {
 
     const formData = new FormData();
     formData.append(
-      'createBannerRequestDto',
+      'requestDto',
       new Blob(
         [
           JSON.stringify({

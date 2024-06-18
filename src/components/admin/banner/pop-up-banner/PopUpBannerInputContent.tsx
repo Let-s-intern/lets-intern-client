@@ -22,7 +22,7 @@ const PopUpBannerInputContent = ({
       />
       <Input label="링크" name="link" value={value.link} onChange={onChange} />
       <ImageUpload
-        label="배너 이미지 업로드"
+        label="팝업 이미지 업로드"
         id="file"
         name="file"
         image={value.imgUrl}
