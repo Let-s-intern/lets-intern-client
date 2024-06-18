@@ -84,7 +84,7 @@ const NavBar = () => {
     <>
       {/* 상단 네비게이션 바 */}
       <div className="lg:p-30 fixed top-0 z-30 w-screen border-b border-neutral-80 bg-static-100 px-5 sm:px-20 lg:px-28">
-        <div className="flex h-[3.75rem] items-center justify-between md:h-[4.375rem]">
+        <div className="flex h-[3.75rem] items-center justify-between md:h-[4.375rem] lg:h-[4.75rem]">
           <div className="flex items-center gap-6 sm:gap-9">
             <Link to="/" className="h-[34px] w-auto md:h-[2.2rem]">
               <img
@@ -201,7 +201,7 @@ const NavBar = () => {
         </div>
       </div>
       {/* 네비게이션 바 공간 차지 */}
-      <div className="h-[3.75rem]"></div>
+      <div className="h-[3.75rem] md:h-[4.375rem] lg:h-[4.75rem]"></div>
     </>
   );
 };
