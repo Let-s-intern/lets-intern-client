@@ -9,6 +9,7 @@ import PayContent from '../apply/content/PayContent';
 import CautionContent from '../apply/content/CautionContent';
 import drawerReducer from '../../../../../reducers/drawerReducer';
 import applyReducer from '../../../../../reducers/applyReducer';
+import { PayInfo } from './ApplySection';
 
 export interface ProgramDate {
   deadline: string;
@@ -23,17 +24,6 @@ export interface UserInfo {
   contactEmail: string;
   motivate: string;
   question: string;
-}
-
-export interface PayInfo {
-  priceId: number;
-  price: number;
-  discount: number;
-  accountNumber: string;
-  deadline: string;
-  accountType: string;
-  livePriceType: string;
-  challengePriceType: string;
 }
 
 interface MobileApplySectionProps {
@@ -73,6 +63,8 @@ const MobileApplySection = ({
     accountType: '',
     livePriceType: '',
     challengePriceType: '',
+    couponId: 0,
+    couponPrice: 0,
   });
   const [isCautionChecked, setIsCautionChecked] = useState<boolean>(false);
   const [isApplied, setIsApplied] = useState<boolean>(false);
@@ -161,9 +153,11 @@ const MobileApplySection = ({
       {contentIndex === 2 && (
         <PayContent
           payInfo={payInfo}
+          setPayInfo={setPayInfo}
           handleApplyButtonClick={handleApplyButtonClick}
           contentIndex={contentIndex}
           setContentIndex={setContentIndex}
+          programType={programType}
         />
       )}
     </section>
