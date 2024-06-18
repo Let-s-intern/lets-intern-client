@@ -13,16 +13,20 @@ interface ScrollableDiv extends HTMLDivElement {
 
 interface PayContentProps {
   payInfo: PayInfo;
+  setPayInfo: (payInfo: (prevPayInfo: PayInfo) => PayInfo) => void;
   handleApplyButtonClick: () => void;
   contentIndex: number;
   setContentIndex: (contentIndex: number) => void;
+  programType: string;
 }
 
 const PayContent = ({
   payInfo,
+  setPayInfo,
   handleApplyButtonClick,
   contentIndex,
   setContentIndex,
+  programType
 }: PayContentProps) => {
   const scrollableBoxRef = useRef<ScrollableDiv>(null);
 
@@ -55,6 +59,14 @@ const PayContent = ({
     };
   }, [scrollableBoxRef]);
 
+  const totalPrice = () => {
+    let totalDiscount = payInfo.discount + payInfo.couponPrice;
+    if (payInfo.price < totalDiscount)
+      return 0;
+    else
+      return payInfo.price - totalDiscount;
+  }
+
   return (
     <div className="flex flex-col gap-6">
       <ScrollableBox
@@ -67,7 +79,7 @@ const PayContent = ({
               <h2 className="font-medium">결제 정보</h2>
               <PayInfoSection payInfo={payInfo} />
               <hr className="bg-neutral-85" />
-              <CouponSection />
+              <CouponSection setPayInfo={setPayInfo} programType={programType} />
               <hr className="bg-neutral-85" />
               <PriceSection payInfo={payInfo} />
             </>
@@ -88,7 +100,7 @@ const PayContent = ({
             handleApplyButtonClick();
           }}
         >
-          최종 결제 금액 {(payInfo.price - payInfo.discount).toLocaleString()}원
+          신청하기 {(totalPrice()).toLocaleString()}원
         </button>
       </div>
     </div>

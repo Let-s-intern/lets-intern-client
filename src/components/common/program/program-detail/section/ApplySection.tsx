@@ -26,8 +26,10 @@ export interface UserInfo {
 
 export interface PayInfo {
   priceId: number;
+  couponId: number;
   price: number;
   discount: number;
+  couponPrice: number;
   accountNumber: string;
   deadline: string;
   accountType: string;
@@ -67,8 +69,10 @@ const ApplySection = ({
   const [priceId, setPriceId] = useState<number>(0);
   const [payInfo, setPayInfo] = useState<PayInfo>({
     priceId: 0,
+    couponId: 0,
     price: 0,
     discount: 0,
+    couponPrice: 0,
     accountNumber: '',
     deadline: '',
     accountType: '',
@@ -99,10 +103,32 @@ const ApplySection = ({
       setIsApplied(data.applied);
       if (programType === 'challenge') {
         setPriceId(data.priceList[0].priceId);
-        setPayInfo(data.priceList[0]);
+        setPayInfo({
+          priceId: data.priceList[0].priceId,
+          couponId: 0,
+          price: data.priceList[0].price,
+          discount: data.priceList[0].discount,
+          couponPrice: 0,
+          accountNumber: data.priceList[0].accountNumber,
+          deadline: data.priceList[0].deadline,
+          accountType: data.priceList[0].accountType,
+          livePriceType: data.priceList[0].livePriceType,
+          challengePriceType: data.priceList[0].challengePriceType,
+        })
       } else {
         setPriceId(data.price.priceId);
-        setPayInfo(data.price);
+        setPayInfo({
+          priceId: data.price.priceId,
+          couponId: 0,
+          price: data.price.price,
+          discount: data.price.discount,
+          couponPrice: 0,
+          accountNumber: data.price.accountNumber,
+          deadline: data.price.deadline,
+          accountType: data.price.accountType,
+          livePriceType: data.price.livePriceType,
+          challengePriceType: data.price.challengePriceType,
+        })
       }
       return res.data;
     },
@@ -115,7 +141,7 @@ const ApplySection = ({
         {
           paymentInfo: {
             priceId: priceId,
-            couponId: 0,
+            couponId: payInfo.couponId,
           },
           motivate: userInfo.motivate,
           question: userInfo.question,
@@ -179,9 +205,11 @@ const ApplySection = ({
       {contentIndex === 4 && (
         <PayContent
           payInfo={payInfo}
+          setPayInfo={setPayInfo}
           handleApplyButtonClick={handleApplyButtonClick}
           contentIndex={contentIndex}
           setContentIndex={setContentIndex}
+          programType={programType}
         />
       )}
     </section>
