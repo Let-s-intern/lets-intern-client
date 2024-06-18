@@ -9,16 +9,16 @@ interface SocialLoginProps {
 const SocialLogin = ({ type }: SocialLoginProps) => {
   const [searchParams] = useSearchParams();
 
-  const handleSocialLogin = (type: 'KAKAO' | 'NAVER') => {
+  const handleSocialLogin = (socialType: 'KAKAO' | 'NAVER') => {
     const redirectPath = `${window.location.protocol}//${
       window.location.hostname
-    }:${window.location.port}/login${
+    }:${window.location.port}/${type === 'LOGIN' ? 'login' : 'signup'}${
       searchParams.get('redirect')
         ? `?redirect=${searchParams.get('redirect')}`
         : ''
     }`;
     const path = `https://letsintern.kr/oauth2/authorize/${
-      type === 'KAKAO' ? 'kakao' : type === 'NAVER' && 'naver'
+      socialType === 'KAKAO' ? 'kakao' : socialType === 'NAVER' && 'naver'
     }?redirect_uri=${redirectPath}`;
     window.location.href = path;
   };
