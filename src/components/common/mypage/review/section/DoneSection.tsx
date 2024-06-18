@@ -21,7 +21,12 @@ const DoneSection = ({ applicationList }: DoneSectionProps) => {
           applicationList
             .slice(0, 3)
             .map((application) => (
-              <ApplicationCard grayscale application={application} />
+              <ApplicationCard
+                grayscale
+                application={application}
+                hasReviewButton
+                reviewType="EDIT"
+              />
             ))
         )}
       </div>
