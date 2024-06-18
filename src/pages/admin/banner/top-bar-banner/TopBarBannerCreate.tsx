@@ -1,17 +1,16 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import TopBarBannerInputContent, {
-  TopBarBannerInputContentProps,
-} from '../../../../components/admin/banner/top-bar-banner/TopBarBannerInputContent';
+import TopBarBannerInputContent from '../../../../components/admin/banner/top-bar-banner/TopBarBannerInputContent';
 import EditorTemplate from '../../../../components/admin/program/ui/editor/EditorTemplate';
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import axios from '../../../../utils/axios';
+import { ILineBannerForm } from '../../../../interfaces/interface';
 
 const TopBarBannerCreate = () => {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
 
-  const [value, setValue] = useState<TopBarBannerInputContentProps['value']>({
+  const [value, setValue] = useState<ILineBannerForm>({
     title: '',
     contents: '',
     link: '',
@@ -22,10 +21,13 @@ const TopBarBannerCreate = () => {
   });
 
   const addTopBarBanner = useMutation({
-    mutationFn: async () => {
-      const res = await axios.post('/banner', value, {
+    mutationFn: async (formData: FormData) => {
+      const res = await axios.post('/banner', formData, {
         params: {
           type: 'LINE',
+        },
+        headers: {
+          'Content-Type': 'multipart/form-data',
         },
       });
       return res.data;
@@ -42,7 +44,30 @@ const TopBarBannerCreate = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    addTopBarBanner.mutate();
+
+    const formData = new FormData();
+    formData.append(
+      'createBannerRequestDto',
+      new Blob(
+        [
+          JSON.stringify({
+            title: value.title,
+            link: value.link,
+            startDate: value.startDate,
+            endDate: value.endDate,
+            contents: value.contents,
+            colorCode: value.colorCode,
+            textColorCode: value.textColorCode,
+          }),
+        ],
+        {
+          type: 'application/json',
+        },
+      ),
+    );
+    formData.append('file', new Blob([], { type: 'application/json' }));
+
+    addTopBarBanner.mutate(formData);
   };
 
   return (

@@ -3,18 +3,10 @@ import dayjs from 'dayjs';
 import TD from '../../../ui/table/regacy/TD';
 import ActionButton from '../../../ui/button/ActionButton';
 import { convertTypeToBank } from '../../../../../utils/convertTypeToBank';
+import { IUser } from '../../../../../interfaces/User.interface';
 
 interface TableBodyProps {
-  userList: {
-    id: number;
-    name: string;
-    email: string;
-    phoneNum: string;
-    createdDate: string;
-    accountType: string;
-    accountNum: string;
-    accountOwner: string;
-  }[];
+  userList: IUser[];
 }
 
 const TableBody = ({ userList }: TableBodyProps) => {
@@ -29,6 +21,7 @@ const TableBody = ({ userList }: TableBodyProps) => {
           <TD>{dayjs(user.createdDate).format('YYYY-MM-DD (dd)')}</TD>
           <TD>{convertTypeToBank(user.accountType) || '없음'}</TD>
           <TD>{user.accountNum || '없음'}</TD>
+          <TD>{user.marketingAgree ? 'O' : 'X'}</TD>
           <TD>
             <div className="flex justify-center gap-2">
               <ActionButton to={`/admin/users/${user.id}`} bgColor="lightBlue">

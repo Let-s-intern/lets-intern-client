@@ -93,19 +93,16 @@ const PopUpBanners = () => {
   });
 
   const editPopUpVisible = useMutation({
-    mutationFn: async (params: { bannerId: number; isVisible: boolean }) => {
-      const { bannerId, isVisible } = params;
-      const res = await axios.patch(
-        `/banner/${bannerId}`,
-        {
-          isVisible,
+    mutationFn: async (params: { bannerId: number; formData: FormData }) => {
+      const { bannerId, formData } = params;
+      const res = await axios.patch(`/banner/${bannerId}`, formData, {
+        params: {
+          type: 'POPUP',
         },
-        {
-          params: {
-            type: 'POPUP',
-          },
+        headers: {
+          'Content-Type': 'multipart/form-data',
         },
-      );
+      });
       return res.data;
     },
     onSuccess: async () => {
@@ -117,7 +114,21 @@ const PopUpBanners = () => {
     bannerId: number,
     isVisible: boolean,
   ) => {
-    editPopUpVisible.mutate({ bannerId, isVisible });
+    const formData = new FormData();
+    formData.append(
+      'updateBannerRequestDto',
+      new Blob(
+        [
+          JSON.stringify({
+            isVisible,
+          }),
+        ],
+        {
+          type: 'application/json',
+        },
+      ),
+    );
+    editPopUpVisible.mutate({ bannerId, formData });
   };
 
   const handleDeleteButtonClicked = async (bannerId: number) => {

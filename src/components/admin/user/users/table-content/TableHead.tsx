@@ -11,6 +11,7 @@ const TableHead = () => {
         <TH>가입일자</TH>
         <TH>거래 은행</TH>
         <TH>계좌번호</TH>
+        <TH>마케팅 동의 여부</TH>
         <TH>관리</TH>
       </tr>
     </thead>

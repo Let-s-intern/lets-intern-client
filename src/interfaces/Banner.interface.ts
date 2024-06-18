@@ -20,3 +20,22 @@ export interface ILineBanner {
   link: string;
   textColorCode: string;
 }
+
+export interface IBannerForm {
+  title: string;
+  link: string;
+  startDate: string;
+  endDate: string;
+  imgUrl: string;
+  file: File | null;
+}
+
+export interface ILineBannerForm {
+  title: string;
+  colorCode: string;
+  contents: string;
+  startDate: string;
+  endDate: string;
+  link: string;
+  textColorCode: string;
+}

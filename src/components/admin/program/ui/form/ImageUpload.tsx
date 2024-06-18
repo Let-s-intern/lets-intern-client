@@ -1,9 +1,11 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { FiUpload } from 'react-icons/fi';
 
 interface ImageUploaderProps {
   label: string;
   id?: string;
   name?: string;
+  image?: string;
   imageFormat?: {
     width?: number;
     height?: number;
@@ -11,15 +13,16 @@ interface ImageUploaderProps {
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
-const ImageUploader = ({
+const ImageUpload = ({
   label,
+  image,
   imageFormat,
   id,
   name,
   onChange,
 }: ImageUploaderProps) => {
   const imageInputRef = useRef<HTMLInputElement>(null);
-  const [imageFile, setImageFile] = useState<string>();
+  const [imageFile, setImageFile] = useState<string>('');
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     onChange && onChange(e);
@@ -33,11 +36,26 @@ const ImageUploader = ({
     }
   };
 
+  const handleImageUpload = () => {
+    if (imageInputRef.current) {
+      imageInputRef.current.click();
+    }
+  };
+
+  useEffect(() => {
+    if (!image) return;
+    if (image === imageFile) return;
+    setImageFile(image);
+  }, [image, imageInputRef]);
+
   return (
     <div className="flex flex-col gap-4 rounded-xxs bg-neutral-90 px-6 py-4">
       <div>
         <label htmlFor={id} className="text-1-medium block">
-          {label}
+          {label}{' '}
+          <span className="text-sm font-normal">
+            (사진을 눌러 이미지를 업로드하세요.)
+          </span>
         </label>
         {imageFormat && (
           <span className="text-0.875 text-neutral-40">
@@ -50,13 +68,26 @@ const ImageUploader = ({
           </span>
         )}
       </div>
-      {imageFile && <img src={imageFile} alt="업로드 이미지" />}
+      <div className="cursor-pointer" onClick={handleImageUpload}>
+        {imageFile ? (
+          <div className="flex cursor-pointer items-center justify-center">
+            <img src={imageFile} alt="업로드 이미지" />
+          </div>
+        ) : (
+          <div className="flex aspect-video w-full cursor-pointer items-center justify-center bg-neutral-75">
+            <span className="text-[2rem] text-neutral-40">
+              <FiUpload />
+            </span>
+          </div>
+        )}
+      </div>
+      {/* {imageFile && <img src={imageFile} alt="업로드 이미지" />} */}
       <input
         type="file"
         id={id}
         name={name}
         accept="image/*"
-        className="text-0.875"
+        className="hidden"
         onChange={handleChange}
         ref={imageInputRef}
       />
@@ -64,4 +95,4 @@ const ImageUploader = ({
   );
 };
 
-export default ImageUploader;
+export default ImageUpload;

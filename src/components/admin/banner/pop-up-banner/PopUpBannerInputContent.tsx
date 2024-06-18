@@ -1,15 +1,10 @@
+import { IBannerForm } from '../../../../interfaces/interface';
 import Input from '../../../ui/input/Input';
-import ColorPicker from '../../program/ui/form/ColorPicker';
 import DateTimePicker from '../../program/ui/form/DateTimePicker';
+import ImageUpload from '../../program/ui/form/ImageUpload';
 
-export interface PopUpBannerInputContentProps {
-  value: {
-    title: string;
-    link: string;
-    startDate: string;
-    endDate: string;
-    imgUrl: string;
-  };
+interface PopUpBannerInputContentProps {
+  value: IBannerForm;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
@@ -26,10 +21,11 @@ const PopUpBannerInputContent = ({
         onChange={onChange}
       />
       <Input label="링크" name="link" value={value.link} onChange={onChange} />
-      <Input
-        label="썸네일 링크"
-        name="imgUrl"
-        value={value.imgUrl}
+      <ImageUpload
+        label="배너 이미지 업로드"
+        id="file"
+        name="file"
+        image={value.imgUrl}
         onChange={onChange}
       />
       <DateTimePicker

@@ -1,6 +1,6 @@
 import { SelectChangeEvent } from '@mui/material';
 import Input from '../../ui/input/Input';
-import ImageUploader from '../program/ui/form/ImageUploader';
+import ImageUpload from '../program/ui/form/ImageUpload';
 
 export interface OnlineContentsInputContentProps {
   value: {
@@ -50,7 +50,7 @@ const OnlineContentsInputContent = ({
         onChange={onChange}
       />
       <Input label="링크" name="link" value={value.link} onChange={onChange} />
-      <ImageUploader
+      <ImageUpload
         label="썸네일 이미지"
         imageFormat={{ width: 500, height: 230 }}
         name="image"
