@@ -19,6 +19,7 @@ const MainBannerEdit = () => {
     endDate: '',
     imgUrl: '',
     file: null,
+    mobileFile: null,
   });
 
   const bannerId = Number(params.bannerId);
@@ -63,8 +64,8 @@ const MainBannerEdit = () => {
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.name === 'file' && e.target.files) {
-      setValue({ ...value, file: e.target.files[0] });
+    if (e.target.files) {
+      setValue({ ...value, [e.target.name]: e.target.files[0] });
     } else {
       setValue({ ...value, [e.target.name]: e.target.value });
     }
@@ -75,7 +76,7 @@ const MainBannerEdit = () => {
 
     const formData = new FormData();
     formData.append(
-      'updateBannerRequestDto',
+      'requestDto',
       new Blob(
         [
           JSON.stringify({
@@ -92,6 +93,9 @@ const MainBannerEdit = () => {
     );
     if (value.file) {
       formData.append('file', value.file);
+    }
+    if (value.mobileFile) {
+      formData.append('mobileFile', value.mobileFile);
     }
 
     editMainBanner.mutate(formData);

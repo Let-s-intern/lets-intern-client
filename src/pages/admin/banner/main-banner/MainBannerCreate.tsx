@@ -18,6 +18,7 @@ const MainBannerCreate = () => {
     endDate: '',
     imgUrl: '',
     file: null,
+    mobileFile: null,
   });
 
   const addMainBanner = useMutation({
@@ -39,8 +40,8 @@ const MainBannerCreate = () => {
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.name === 'file' && e.target.files) {
-      setValue({ ...value, file: e.target.files[0] });
+    if (e.target.files) {
+      setValue({ ...value, [e.target.name]: e.target.files[0] });
     } else {
       setValue({ ...value, [e.target.name]: e.target.value });
     }
@@ -49,11 +50,11 @@ const MainBannerCreate = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!value.file) return;
+    if (!value.file || !value.mobileFile) return;
 
     const formData = new FormData();
     formData.append(
-      'createBannerRequestDto',
+      'requestDto',
       new Blob(
         [
           JSON.stringify({
@@ -69,6 +70,7 @@ const MainBannerCreate = () => {
       ),
     );
     formData.append('file', value.file);
+    formData.append('mobileFile', value.mobileFile);
 
     addMainBanner.mutate(formData);
   };

@@ -116,7 +116,7 @@ const PopUpBanners = () => {
   ) => {
     const formData = new FormData();
     formData.append(
-      'updateBannerRequestDto',
+      'requestDto',
       new Blob(
         [
           JSON.stringify({

@@ -39,8 +39,8 @@ const PopUpBannerCreate = () => {
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.name === 'file' && e.target.files) {
-      setValue({ ...value, file: e.target.files[0] });
+    if (e.target.files) {
+      setValue({ ...value, [e.target.name]: e.target.files[0] });
     } else {
       setValue({ ...value, [e.target.name]: e.target.value });
     }
@@ -53,7 +53,7 @@ const PopUpBannerCreate = () => {
 
     const formData = new FormData();
     formData.append(
-      'createBannerRequestDto',
+      'requestDto',
       new Blob(
         [
           JSON.stringify({
