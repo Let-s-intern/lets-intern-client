@@ -7,6 +7,7 @@ const ChallengeLayout = () => {
   const params = useParams();
   const navigate = useNavigate();
 
+  // TODO: 검증 로직 필요함.
   const [isValidUser, setIsValidUser] = useState<boolean>(true);
 
   // useQuery({

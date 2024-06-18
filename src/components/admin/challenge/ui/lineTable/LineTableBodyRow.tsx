@@ -122,7 +122,7 @@ const LineTableBodyRow = <T extends ItemWithStatus>({
     >
       {attrNames.map((_attr, i) => {
         const content = contents[i];
-        // TODO: 타입 제대로 설정
+        // TODO: [나중에...] 타입 제대로 설정
         const attr = _attr as string;
         const value = values[attr as keyof T] as string;
 

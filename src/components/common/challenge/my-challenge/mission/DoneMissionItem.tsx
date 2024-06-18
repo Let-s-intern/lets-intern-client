@@ -23,23 +23,6 @@ const DoneMissionItem = ({ schedule }: Props) => {
 
   const [isDetailShown, setIsDetailShown] = useState(false);
 
-  // const {
-  //   data: missionDetail,
-  //   isLoading: isDetailLoading,
-  //   error: detailError,
-  // } = useQuery({
-  //   queryKey: ['mission', mission.id, 'detail', { status: mission.status }],
-  //   queryFn: async () => {
-  //     const res = await axios.get(`/mission/${mission.id}/detail`, {
-  //       // TODO: 체크 필요
-  //       params: { status: mission.status },
-  //     });
-  //     const data = res.data;
-  //     console.log(data);
-  //     return data;
-  //   },
-  //   enabled: isDetailShown,
-  // });
   const {
     data: missionDetail,
     isLoading: isDetailLoading,

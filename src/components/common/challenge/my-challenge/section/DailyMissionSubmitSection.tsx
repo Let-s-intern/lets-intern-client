@@ -1,15 +1,16 @@
 import { useEffect, useState } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-
 import axios from '../../../../../utils/axios';
 import clsx from 'clsx';
 import AlertModal from '../../../../ui/alert/AlertModal';
-import { DailyMission, UserChallengeMissionDetail } from '../../../../../schema';
+import {
+  DailyMission,
+  UserChallengeMissionDetail,
+} from '../../../../../schema';
 
 interface Props {
   missionDetail: UserChallengeMissionDetail;
-  dailyMission: DailyMission & 
-  // TODO: 스키마 맞추고 삭제
+  dailyMission: DailyMission & // TODO: 스키마 맞추고 삭제
   {
     attended?: boolean;
     attendanceLink?: string;

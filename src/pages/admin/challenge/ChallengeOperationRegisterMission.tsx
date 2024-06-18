@@ -454,7 +454,7 @@ const ChallengeOperationRegisterMission = () => {
     },
   });
 
-  // TODO: 최선은 아님... column 자체에 action을 넣는게 좋을듯.
+  // TODO: [나중에...] 최선은 아님... column 자체에 action을 넣는게 좋을듯.
   const onAction = useCallback(
     async ({
       action,

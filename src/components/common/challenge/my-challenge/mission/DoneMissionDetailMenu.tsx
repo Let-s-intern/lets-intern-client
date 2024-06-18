@@ -46,12 +46,12 @@ const DoneMissionDetailMenu = ({ missionDetail }: Props) => {
             rel="noopenner noreferrer"
             className="flex-1 overflow-hidden text-ellipsis whitespace-nowrap text-gray-500 hover:underline"
           >
-            TODO: 머지
+            TODO: 내용 추가
             {/* {missionDetail.attendanceLink} */}
           </Link>
         </div>
 
-        {/* TODO: 머지
+        {/* TODO: 내용 추가
         {missionDetail.type === 'GENERAL' && missionDetail.missionComments && (
           <div className="mt-4">
             <div className="rounded-md bg-[#F2F2F2] px-8 py-6 text-sm">
