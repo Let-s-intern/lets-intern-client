@@ -19,7 +19,7 @@ const ApplySection = ({ applicationList }: ApplySectionProps) => {
               신청한 내역이 아직 없어요.
             </p>
             <Link
-              to="/programs"
+              to="/program"
               className="rounded-sm border-2 border-primary-xlight bg-white px-5 py-2 font-medium text-neutral-35"
             >
               프로그램 신청하기
