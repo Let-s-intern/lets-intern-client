@@ -1,40 +1,12 @@
-import clsx from 'clsx';
-
-import { formatToMonthDate } from '../../../../../utils/formatDateString';
-import MissionTopStatusBar from '../status-bar/MissionTopStatusBar';
-import { missionStatusToBadge } from '../../../../../utils/convert';
-import { Mission } from '../../../../../schema';
 import dayjs from 'dayjs';
 import { twMerge } from 'tailwind-merge';
+import { Mission } from '../../../../../schema';
+import { missionStatusToBadge } from '../../../../../utils/convert';
 
 const MissionResultItem = ({ mission }: { mission: Mission }) => {
   return (
     <div className="font-pretendard">
       <div className="relative flex items-center">
-        {/* {mission.th === todayTh ? (
-          <>
-            <div className="h-[2px] w-full flex-1 bg-primary" />
-            <div className="absolute left-1/2 h-[8px] w-[8px] -translate-x-1/2 rounded-full bg-primary" />
-            <div className="h-[1px] w-full flex-1 bg-gray-200" />
-          </>
-        ) : todayTh === 0 ? (
-          <>
-            <div className="h-[2px] w-full flex-1 bg-primary" />
-            {isLastMission && (
-              <div className="absolute right-0 h-[8px] w-[8px] translate-x-1/2 rounded-full bg-primary" />
-            )}
-          </>
-        ) : mission.th > todayTh ? (
-          <>
-            <div className="h-[1px] w-full flex-1 bg-gray-200" />
-          </>
-        ) : (
-          mission.th < todayTh && (
-            <>
-              <div className="h-[2px] w-full flex-1 bg-primary" />
-            </>
-          )
-        )} */}
       </div>
       <div className="mt-2 max-w-[80px] text-center text-sm">
         {dayjs(mission.startDate).format('MM/DD(dd)') +

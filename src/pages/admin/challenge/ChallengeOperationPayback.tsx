@@ -287,8 +287,6 @@ const ChallengeOperationPayback = () => {
         autoHeight
         hideFooter
         processRowUpdate={async (updatedRow, originalRow) => {
-          console.log('u', updatedRow, 'o', originalRow);
-
           const payload: UpdatePaybackReq = {};
 
           if (

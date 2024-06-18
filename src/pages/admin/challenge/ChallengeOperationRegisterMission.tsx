@@ -15,7 +15,7 @@ import {
 } from '@mui/x-data-grid';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import dayjs from 'dayjs';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { FaCheck, FaTrashCan, FaX } from 'react-icons/fa6';
 import { z } from 'zod';
 import {
@@ -416,10 +416,6 @@ const ChallengeOperationRegisterMission = () => {
       return missionTemplateAdmin.parse(res.data.data).missionTemplateAdminList;
     },
   });
-
-  useEffect(() => {
-    console.log('editingMission', editingMission);
-  }, [editingMission]);
 
   const { data: additionalContents = [] } = useQuery({
     queryKey: [
