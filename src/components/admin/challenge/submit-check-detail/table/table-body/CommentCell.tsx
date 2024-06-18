@@ -4,9 +4,10 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 import { challengeSubmitDetailCellWidthList } from '../../../../../../utils/tableCellWidthList';
 import axios from '../../../../../../utils/axios';
+import { Attendance, UpdateAttendanceReq } from '../../../../../../schema';
 
 interface Props {
-  attendance: any;
+  attendance: Attendance;
   cellWidthListIndex: number;
 }
 
@@ -14,17 +15,15 @@ const CommentCell = ({ attendance, cellWidthListIndex }: Props) => {
   const queryClient = useQueryClient();
 
   const [modalShown, setModalShown] = useState(false);
-  const [value, setValue] = useState(attendance?.comments || '');
+  const [editingComment, setEditingComment] = useState(
+    attendance.comments || '',
+  );
 
   const cellWidthList = challengeSubmitDetailCellWidthList;
 
   const editComment = useMutation({
-    mutationFn: async () => {
-      const res = await axios.patch(`/attendance/admin/${attendance.id}`, {
-        comments: value,
-      });
-      const data = res.data;
-      return data;
+    mutationFn: async (req: UpdateAttendanceReq) => {
+      return axios.patch(`/attendance/${attendance.id}`, req);
     },
     onSuccess: async () => {
       await queryClient.invalidateQueries();
@@ -34,7 +33,9 @@ const CommentCell = ({ attendance, cellWidthListIndex }: Props) => {
 
   const handleCommentEdit = (e: React.FormEvent) => {
     e.preventDefault();
-    editComment.mutate();
+    editComment.mutate({
+      comments: editingComment,
+    });
   };
 
   return (
@@ -46,7 +47,7 @@ const CommentCell = ({ attendance, cellWidthListIndex }: Props) => {
         )}
         onClick={() => setModalShown(true)}
       >
-        {attendance?.comments || ''}
+        {attendance.comments || ''}
       </div>
       {modalShown && (
         <div className="fixed left-0 top-0 z-[100] flex h-full w-full items-center justify-end bg-[rgb(0,0,0,0.5)]">
@@ -62,7 +63,7 @@ const CommentCell = ({ attendance, cellWidthListIndex }: Props) => {
                     To.
                   </label>
                   <div className="flex-1 rounded-md border border-neutral-400 px-4 py-2 text-sm outline-none">
-                    {attendance.userName}
+                    {attendance.name}
                   </div>
                 </div>
                 <div className="flex items-start">
@@ -73,9 +74,9 @@ const CommentCell = ({ attendance, cellWidthListIndex }: Props) => {
                     className="flex-1 resize-none rounded-md border border-neutral-400 px-4 py-2 text-sm outline-none"
                     name="comments"
                     rows={3}
-                    value={value || ''}
+                    value={editingComment || ''}
                     placeholder="코멘트를 입력해주세요."
-                    onChange={(e) => setValue(e.target.value)}
+                    onChange={(e) => setEditingComment(e.target.value)}
                     autoComplete="off"
                   />
                 </div>

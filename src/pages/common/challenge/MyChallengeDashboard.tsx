@@ -10,7 +10,7 @@ import { useCurrentChallenge } from '../../../context/CurrentChallengeProvider';
 import { myDailyMission, Schedule } from '../../../schema';
 import dayjs from 'dayjs';
 
-// TODO: 외부로 빼야 함
+// TODO: [나중에...] 외부로 빼야 함
 const getIsDone = (schedules: Schedule[]) => {
   const last = schedules.reduce((acc, schedule) => {
     const endDate = dayjs(schedule.missionInfo.endDate) ?? dayjs('2000-01-01');

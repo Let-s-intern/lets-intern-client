@@ -7,9 +7,10 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import axios from '../../../../../../utils/axios';
 import { attendanceStatusToText } from '../../../../../../utils/convert';
 import AlertModal from '../../../../../ui/alert/AlertModal';
+import { Attendance } from '../../../../../../schema';
 
 interface Props {
-  attendance: any;
+  attendance: Attendance;
   cellWidthListIndex: number;
 }
 
@@ -53,7 +54,7 @@ const StatusDropdown = ({ attendance, cellWidthListIndex }: Props) => {
             onClick={() => setIsMenuShown(!isMenuShown)}
           >
             <div className="flex items-center gap-1">
-              <span>{attendanceStatusToText[attendance.status]}</span>
+              <span>{attendance.status && attendanceStatusToText[attendance.status]}</span>
               <i>
                 <IoMdArrowDropdown />
               </i>

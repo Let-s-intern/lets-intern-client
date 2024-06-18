@@ -232,18 +232,9 @@ export const attendances = z
         status: attendanceStatus.nullable(),
         link: z.string().nullable(),
         result: attendanceResult.nullable(),
-        comment: z.string().nullable(),
-        sendDate: z.string().nullable(),
+        comments: z.string().nullable().optional(),
       }),
     ),
-  })
-  .transform((data) => {
-    return {
-      attendanceList: data.attendanceList.map((attendance) => ({
-        ...attendance,
-        sendDate: dayjs(attendance.sendDate),
-      })),
-    };
   });
 
 /** PATCH /api/v1/attendance/{id} */

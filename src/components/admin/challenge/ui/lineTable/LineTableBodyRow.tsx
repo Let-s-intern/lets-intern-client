@@ -1,9 +1,8 @@
 import dayjs from 'dayjs';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { CiTrash } from 'react-icons/ci';
 import { twMerge } from 'tailwind-merge';
 import { TABLE_CONTENT, TABLE_STATUS } from '../../../../../utils/convert';
-import { formatMissionTableDateString } from '../../../../../utils/formatDateString';
 import AlertModal from '../../../../ui/alert/AlertModal';
 import DropdownCell from './DropdownCell';
 import LineTableBodyCell from './LineTableBodyCell';
@@ -45,6 +44,7 @@ interface LineTableBodyRowProps<T extends ItemWithStatus> {
   onClick?: (item: T) => void;
   children?: React.ReactNode;
   editable?: boolean;
+  formatter?: (null | ((value: any) => any))[];
 }
 
 /**
@@ -60,6 +60,7 @@ interface LineTableBodyRowProps<T extends ItemWithStatus> {
  * @param canEdits - 행 수정 여부 리스트 (순서 중요)
  * @param editable - 수정/삭제가 가능한지 여부 (우측 버튼이 보이고 안보임) @deafult true
  * @param contents - 행에 넣을 컨텐츠 타입 리스트 (순서 중요)
+ * @param formatter - 행에 넣을 데이터 포맷 함수 리스트 (순서 중요)
  */
 
 const LineTableBodyRow = <T extends ItemWithStatus>({
@@ -74,6 +75,7 @@ const LineTableBodyRow = <T extends ItemWithStatus>({
   contents,
   editable = true,
   onClick,
+  formatter,
 }: LineTableBodyRowProps<T>) => {
   const [values, setValues] = useState(initialValues as T);
   const [isEditMode, setIsEditMode] = useState(
@@ -138,6 +140,8 @@ const LineTableBodyRow = <T extends ItemWithStatus>({
                     disabled={!canEdits[i] || !isEditMode}
                     onChange={handleChange}
                   />
+                ) : formatter?.[i] ? (
+                  formatter?.[i]?.(value) ?? value
                 ) : (
                   value
                 )}

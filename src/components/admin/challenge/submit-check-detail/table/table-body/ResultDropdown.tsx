@@ -3,17 +3,38 @@ import { useState } from 'react';
 import { IoMdArrowDropdown } from 'react-icons/io';
 
 import { challengeSubmitDetailCellWidthList } from '../../../../../../utils/tableCellWidthList';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation } from '@tanstack/react-query';
 import axios from '../../../../../../utils/axios';
 import { attendanceResultToText } from '../../../../../../utils/convert';
+import { Attendance } from '../../../../../../schema';
 
 interface Props {
-  attendance: any;
-  attendanceResult: string;
-  setAttendanceResult: (attendanceResult: string) => void;
+  attendance: Attendance;
+  attendanceResult: Attendance['result'];
+  setAttendanceResult: (attendanceResult: Attendance['result']) => void;
   cellWidthListIndex: number;
+  // TODO: 삭제 검토해야 함
   setIsRefunded: (isRefunded: boolean) => void;
 }
+
+// export const attendanceResultToText: any = {
+//   WAITING: '확인중',
+//   PASS: '확인 완료',
+//   WRONG: '반려',
+// };
+
+const getAttendanceResultText = (result: Attendance['result']) => {
+  switch (result) {
+    case 'WAITING':
+      return '확인중';
+    case 'PASS':
+      return '확인 완료';
+    case 'WRONG':
+      return '반려';
+  }
+
+  return '';
+};
 
 const ResultDropdown = ({
   attendance,
@@ -27,16 +48,16 @@ const ResultDropdown = ({
   const cellWidthList = challengeSubmitDetailCellWidthList;
 
   const editAttendanceStatus = useMutation({
-    mutationFn: async (result: string) => {
+    mutationFn: async (result: Attendance['result']) => {
       const res = await axios.patch(`/attendance/admin/${attendance.id}`, {
         result,
-        isRefunded:
-          result === 'PASS' && attendanceResult !== 'PASS' ? false : true,
+        // isRefunded:
+        //   result === 'PASS' && attendanceResult !== 'PASS' ? false : true,
       });
       const data = res.data;
       return data;
     },
-    onSuccess: async (_, result: string) => {
+    onSuccess: async (_, result: Attendance['result']) => {
       setIsMenuShown(false);
       setIsRefunded(
         result === 'PASS' && attendanceResult !== 'PASS' ? false : true,
@@ -59,7 +80,7 @@ const ResultDropdown = ({
           onClick={() => setIsMenuShown(!isMenuShown)}
         >
           <div className="flex items-center gap-1">
-            <span>{attendanceResultToText[attendanceResult]}</span>
+            <span>{getAttendanceResultText(attendanceResult)}</span>
             <i>
               <IoMdArrowDropdown />
             </i>
