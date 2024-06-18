@@ -6,7 +6,7 @@ import Button from '../../ui/button/Button';
 import AlertModal from '../../../ui/alert/AlertModal';
 import axios from '../../../../utils/axios';
 
-const InfoContainer = ({ accessToken }: { accessToken?: string }) => {
+const InfoContainer = ({ isSocial }: { isSocial: boolean }) => {
   const navigate = useNavigate();
   const email = localStorage.getItem('email');
   const [buttonDisabled, setButtonDisabled] = useState(false);
@@ -28,6 +28,11 @@ const InfoContainer = ({ accessToken }: { accessToken?: string }) => {
   const [error, setError] = useState<unknown>(null);
   const [errorMessage, setErrorMessage] = useState('');
   const [successModalOpen, setSuccessModalOpen] = useState(false);
+
+  useEffect(() => {
+    console.log('현재 access : ', localStorage.getItem('access-token'));
+    console.log('현재 refresh : ', localStorage.getItem('refresh-token'));
+  }, []);
 
   const convertGradeToEng = (grade: number) => {
     switch (grade) {
@@ -85,13 +90,16 @@ const InfoContainer = ({ accessToken }: { accessToken?: string }) => {
         },
         {
           headers: {
-            Authorization: `Bearer ${accessToken}`,
+            Authorization: `Bearer ${localStorage.getItem('access-token')}`,
           },
         },
       );
       return res.data;
     },
     onSuccess: () => {
+      localStorage.removeItem('access-token');
+      localStorage.removeItem('refresh-token');
+      localStorage.removeItem('email');
       setSuccessModalOpen(true);
     },
     onError: (error) => {
@@ -103,7 +111,7 @@ const InfoContainer = ({ accessToken }: { accessToken?: string }) => {
   const handleOnSubmit = (e: any) => {
     e.preventDefault();
     if (
-      (accessToken && !value.inflow) ||
+      (isSocial && !value.inflow) ||
       !value.university ||
       !value.major ||
       !value.grade ||
@@ -117,13 +125,9 @@ const InfoContainer = ({ accessToken }: { accessToken?: string }) => {
       setError(true);
       setErrorMessage('학년은 1~4 사이의 숫자로 입력해주세요.');
       return;
-    } else if (!email) {
-      setError(true);
-      setErrorMessage('이메일이 없습니다.');
-      return;
     }
 
-    if (accessToken) {
+    if (isSocial) {
       patchUserInfo.mutate();
     } else {
       postUserInfo.mutate();
@@ -132,7 +136,7 @@ const InfoContainer = ({ accessToken }: { accessToken?: string }) => {
 
   useEffect(() => {
     if (
-      (accessToken && value.inflow === '') ||
+      (isSocial && value.inflow === '') ||
       value.university === '' ||
       value.major === '' ||
       value.grade === null ||
@@ -143,7 +147,7 @@ const InfoContainer = ({ accessToken }: { accessToken?: string }) => {
     } else {
       setButtonDisabled(false);
     }
-  }, [value, accessToken]);
+  }, [value, isSocial]);
 
   return (
     <div className="container mx-auto mt-8 p-5">
@@ -155,6 +159,15 @@ const InfoContainer = ({ accessToken }: { accessToken?: string }) => {
           상세 정보를 입력해주세요
         </h1>
         <form onSubmit={handleOnSubmit} className="flex flex-col space-y-3">
+          <div>
+            <Input
+              label="유입경로"
+              value={value.inflow}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                setValue({ ...value, inflow: e.target.value })
+              }
+            />
+          </div>
           <div>
             <Input
               label="학교"
@@ -231,7 +244,7 @@ const InfoContainer = ({ accessToken }: { accessToken?: string }) => {
       {successModalOpen && (
         <AlertModal
           onConfirm={() => {
-            navigate('/login');
+            isSocial ? navigate('/') : navigate('/login');
           }}
           title="회원가입 완료"
           showCancel={false}
