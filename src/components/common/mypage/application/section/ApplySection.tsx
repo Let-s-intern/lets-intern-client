@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 
 import { ApplicationType } from '../../../../../pages/common/mypage/Application';
-import Button from '../../ui/button/Button';
+import MoreButton from '../../ui/button/MoreButton';
 import ApplicationCard from '../../ui/card/root/ApplicationCard';
 
 interface ApplySectionProps {
@@ -26,17 +26,19 @@ const ApplySection = ({ applicationList }: ApplySectionProps) => {
             </Link>
           </div>
         ) : (
-          applicationList.map((application) => (
-            <ApplicationCard
-              key={application.id}
-              application={application}
-              showDeleteMenu
-            />
-          ))
+          applicationList
+            .slice(0, 3)
+            .map((application) => (
+              <ApplicationCard
+                key={application.id}
+                application={application}
+                showDeleteMenu
+              />
+            ))
         )}
       </div>
-      {applicationList.length > 0 && (
-        <Button className="hidden md:flex">더보기</Button>
+      {applicationList.length > 3 && (
+        <MoreButton className="hidden md:flex">더보기</MoreButton>
       )}
     </section>
   );
