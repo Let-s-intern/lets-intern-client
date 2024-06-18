@@ -12,7 +12,7 @@ import {
 } from '../../../context/CurrentAdminChallengeProvider';
 import { attendances, Mission } from '../../../schema';
 import axios from '../../../utils/axios';
-import { TABLE_CONTENT } from '../../../utils/convert';
+import { missionStatusToText, TABLE_CONTENT } from '../../../utils/convert';
 
 type Row = Mission &
   ItemWithStatus & {
@@ -81,14 +81,15 @@ const ChallengeOperationAttendances = () => {
                 editable={false}
                 attrNames={[
                   'th',
-                  'th',
+                  'missionType',
                   'startDate',
                   'endDate',
                   'currentAttendance',
                   'missionStatusType',
                 ]}
                 placeholders={colNames}
-                canEdits={[false, false, false, false, false, false, false]}
+                canEdits={[false, false, false, false, false, false]}
+                formatter={[null, null, null, null, null, (status) => missionStatusToText[status]]}
                 contents={[
                   { type: TABLE_CONTENT.INPUT },
                   { type: TABLE_CONTENT.INPUT },

@@ -232,7 +232,7 @@ export const attendances = z
         status: attendanceStatus.nullable(),
         link: z.string().nullable(),
         result: attendanceResult.nullable(),
-        comment: z.string().nullable(),
+        comments: z.string().nullable().optional(),
       }),
     ),
   });

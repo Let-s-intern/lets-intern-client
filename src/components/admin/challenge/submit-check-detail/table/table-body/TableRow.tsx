@@ -1,17 +1,15 @@
 import clsx from 'clsx';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
-
+import { Attendance, Mission } from '../../../../../../schema';
 import { challengeSubmitDetailCellWidthList } from '../../../../../../utils/tableCellWidthList';
-import StatusDropdown from './StatusDropdown';
-import ResultDropdown from './ResultDropdown';
-import CommentCell from './CommentCell';
-import RefundCheckbox from './RefundCheckbox';
 import ChoiceCheckbox from './ChoiceCheckbox';
-import { Mission } from '../../../../../../schema';
+import CommentCell from './CommentCell';
+import ResultDropdown from './ResultDropdown';
+import StatusDropdown from './StatusDropdown';
 
 interface Props {
-  attendance?: any;
+  attendance: Attendance;
   missionDetail?: Mission;
   th?: number;
   bgColor: 'DARK' | 'LIGHT';
@@ -28,13 +26,13 @@ const TableRow = ({
   setIsCheckedList,
 }: Props) => {
   const [attendanceResult, setAttendanceResult] = useState(attendance.result);
-  const [isRefunded, setIsRefunded] = useState(attendance.isRefund);
+  // const [isRefunded, setIsRefunded] = useState(attendance?.isRefund);
 
   const cellWidthList = challengeSubmitDetailCellWidthList;
 
-  useEffect(() => {
-    setIsRefunded(attendance.isRefund);
-  }, [attendance]);
+  // useEffect(() => {
+  //   setIsRefunded(attendance.isRefund);
+  // }, [attendance]);
 
   return (
     <div
@@ -49,47 +47,67 @@ const TableRow = ({
         isChecked={isChecked}
         setIsCheckedList={setIsCheckedList}
       />
-      <div
+      {/* 번호 */}
+      {/* <div
         className={clsx(
           'overflow-hidden text-ellipsis border-r border-[#D9D9D9] py-3 text-center text-sm',
           cellWidthList[1],
         )}
       >
         {th || ''}
-      </div>
+      </div> */}
+
+      {/* 제출일자 */}
       <div
         className={clsx(
           'overflow-hidden text-ellipsis border-r border-[#D9D9D9] py-3 text-center text-sm',
           cellWidthList[2],
         )}
       >
-        {attendance?.userName || <span className="opacity-0">hello</span>}
+        TODO: 수정 제출일자
+        {/* {attendance?.createDate?. || <span className="opacity-0">hello</span>} */}
       </div>
+
+      {/* 이름 */}
+      <div
+        className={clsx(
+          'overflow-hidden text-ellipsis border-r border-[#D9D9D9] py-3 text-center text-sm',
+          cellWidthList[2],
+        )}
+      >
+        {attendance.name}
+      </div>
+
+      {/* 메일 */}
       <div
         className={clsx(
           'overflow-hidden text-ellipsis border-r border-[#D9D9D9] py-3 text-center text-sm',
           cellWidthList[3],
         )}
       >
-        {attendance?.userEmail || ''}
+        {attendance.email}
       </div>
-      <div
+      {/* <div
         className={clsx(
           'overflow-hidden text-ellipsis whitespace-nowrap border-r border-[#D9D9D9] py-3 text-center text-sm',
           cellWidthList[4],
         )}
       >
-        {attendance?.userAccountType || ''}{' '}
+        {attendance. || ''}{' '}
         {attendance?.userAccountNumber || ''}
-      </div>
+      </div> */}
+
+      {/* 제출현황 */}
       <StatusDropdown attendance={attendance} cellWidthListIndex={5} />
+
+      {/* 미션 */}
       <div
         className={clsx(
           'overflow-hidden text-ellipsis border-r border-[#D9D9D9] py-3 text-center text-sm',
           cellWidthList[6],
         )}
       >
-        {attendance && (
+        {attendance.link && (
           <Link
             to={attendance.link}
             target="_blank"
@@ -100,13 +118,15 @@ const TableRow = ({
           </Link>
         )}
       </div>
-      {/* <ResultDropdown
+
+      {/* 확인여부 */}
+      <ResultDropdown
         attendance={attendance}
         attendanceResult={attendanceResult}
         setAttendanceResult={setAttendanceResult}
-        setIsRefunded={setIsRefunded}
+        setIsRefunded={() => {}}
         cellWidthListIndex={7}
-      /> */}
+      />
       {/* <RefundCheckbox
         attendance={attendance}
         attendanceResult={attendanceResult}

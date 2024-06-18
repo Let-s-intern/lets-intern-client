@@ -1,8 +1,5 @@
-import clsx from 'clsx';
 import dayjs from 'dayjs';
 import { Mission } from '../../../../../../../schema';
-import { topicToText } from '../../../../../../../utils/convert';
-import { formatMissionDateString } from '../../../../../../../utils/formatDateString';
 import Button from '../../../../ui/button/Button';
 
 interface Props {
@@ -110,7 +107,7 @@ const TableRowDetail = ({ mission, setState: setMenuShown }: Props) => {
               </span>
             </div>
           </div>
-          {/* {mission.comment && (
+          {/* {mission.comments && (
             <div className="flex items-start">
               <label htmlFor="comments" className="w-32 font-medium">
                 코멘트
