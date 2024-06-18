@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 
@@ -10,6 +10,7 @@ import Filter from '../../../components/admin/user/users/filter/Filter';
 import TableBody from '../../../components/admin/user/users/table-content/TableBody';
 import TableHead from '../../../components/admin/user/users/table-content/TableHead';
 import AdminPagination from '../../../components/admin/ui/pagination/AdminPagination';
+import { IUser } from '../../../interfaces/User.interface';
 
 const Users = () => {
   const [searchParams] = useSearchParams();
@@ -31,7 +32,7 @@ const Users = () => {
     },
   });
 
-  const userList = data?.data?.userAdminList || [];
+  const userList: IUser[] = data?.data?.userAdminList || [];
   const maxPage = data?.data?.pageInfo?.totalPages || 1;
 
   return (

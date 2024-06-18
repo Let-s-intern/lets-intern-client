@@ -2,29 +2,32 @@ import { useState } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 
-import MainBannerInputContent, {
-  MainBannerInputContentProps,
-} from '../../../../components/admin/banner/main-banner/MainBannerInputContent';
+import MainBannerInputContent from '../../../../components/admin/banner/main-banner/MainBannerInputContent';
 import EditorTemplate from '../../../../components/admin/program/ui/editor/EditorTemplate';
 import axios from '../../../../utils/axios';
+import { IBannerForm } from '../../../../interfaces/Banner.interface';
 
 const MainBannerCreate = () => {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
 
-  const [value, setValue] = useState<MainBannerInputContentProps['value']>({
+  const [value, setValue] = useState<IBannerForm>({
     title: '',
     link: '',
     startDate: '',
     endDate: '',
     imgUrl: '',
+    file: null,
   });
 
   const addMainBanner = useMutation({
-    mutationFn: async () => {
-      const res = await axios.post('/banner', value, {
+    mutationFn: async (formData: FormData) => {
+      const res = await axios.post('/banner', formData, {
         params: {
           type: 'MAIN',
+        },
+        headers: {
+          'Content-Type': 'multipart/form-data',
         },
       });
       return res.data;
@@ -36,12 +39,38 @@ const MainBannerCreate = () => {
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setValue({ ...value, [e.target.name]: e.target.value });
+    if (e.target.name === 'file' && e.target.files) {
+      setValue({ ...value, file: e.target.files[0] });
+    } else {
+      setValue({ ...value, [e.target.name]: e.target.value });
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    addMainBanner.mutate();
+
+    if (!value.file) return;
+
+    const formData = new FormData();
+    formData.append(
+      'createBannerRequestDto',
+      new Blob(
+        [
+          JSON.stringify({
+            title: value.title,
+            link: value.link,
+            startDate: value.startDate,
+            endDate: value.endDate,
+          }),
+        ],
+        {
+          type: 'application/json',
+        },
+      ),
+    );
+    formData.append('file', value.file);
+
+    addMainBanner.mutate(formData);
   };
 
   return (

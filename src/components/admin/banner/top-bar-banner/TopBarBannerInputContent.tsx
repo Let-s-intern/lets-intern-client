@@ -1,17 +1,10 @@
+import { ILineBannerForm } from '../../../../interfaces/interface';
 import Input from '../../../ui/input/Input';
 import ColorPicker from '../../program/ui/form/ColorPicker';
 import DateTimePicker from '../../program/ui/form/DateTimePicker';
 
-export interface TopBarBannerInputContentProps {
-  value: {
-    title: string;
-    link: string;
-    startDate: string;
-    endDate: string;
-    contents: string;
-    colorCode: string;
-    textColorCode: string;
-  };
+interface TopBarBannerInputContentProps {
+  value: ILineBannerForm;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 

@@ -2,23 +2,23 @@ import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
-import MainBannerInputContent, {
-  MainBannerInputContentProps,
-} from '../../../../components/admin/banner/main-banner/MainBannerInputContent';
+import MainBannerInputContent from '../../../../components/admin/banner/main-banner/MainBannerInputContent';
 import EditorTemplate from '../../../../components/admin/program/ui/editor/EditorTemplate';
 import axios from '../../../../utils/axios';
+import { IBannerForm } from '../../../../interfaces/Banner.interface';
 
 const MainBannerEdit = () => {
   const params = useParams();
   const queryClient = useQueryClient();
   const navigate = useNavigate();
 
-  const [value, setValue] = useState<MainBannerInputContentProps['value']>({
+  const [value, setValue] = useState<IBannerForm>({
     title: '',
     link: '',
     startDate: '',
     endDate: '',
     imgUrl: '',
+    file: null,
   });
 
   const bannerId = Number(params.bannerId);
@@ -45,10 +45,13 @@ const MainBannerEdit = () => {
   });
 
   const editMainBanner = useMutation({
-    mutationFn: async () => {
-      const res = await axios.patch(`/banner/${bannerId}`, value, {
+    mutationFn: async (formData: FormData) => {
+      const res = await axios.patch(`/banner/${bannerId}`, formData, {
         params: {
           type: 'MAIN',
+        },
+        headers: {
+          'Content-Type': 'multipart/form-data',
         },
       });
       return res.data;
@@ -60,12 +63,38 @@ const MainBannerEdit = () => {
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setValue({ ...value, [e.target.name]: e.target.value });
+    if (e.target.name === 'file' && e.target.files) {
+      setValue({ ...value, file: e.target.files[0] });
+    } else {
+      setValue({ ...value, [e.target.name]: e.target.value });
+    }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    editMainBanner.mutate();
+
+    const formData = new FormData();
+    formData.append(
+      'updateBannerRequestDto',
+      new Blob(
+        [
+          JSON.stringify({
+            title: value.title,
+            link: value.link,
+            startDate: value.startDate,
+            endDate: value.endDate,
+          }),
+        ],
+        {
+          type: 'application/json',
+        },
+      ),
+    );
+    if (value.file) {
+      formData.append('file', value.file);
+    }
+
+    editMainBanner.mutate(formData);
   };
 
   return (

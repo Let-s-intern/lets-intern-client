@@ -1,29 +1,32 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import ProgramBannerInputContent, {
-  ProgramBannerInputContentProps,
-} from '../../../../components/admin/banner/program-banner/ProgramBannerInputContent';
+import ProgramBannerInputContent from '../../../../components/admin/banner/program-banner/ProgramBannerInputContent';
 import EditorTemplate from '../../../../components/admin/program/ui/editor/EditorTemplate';
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import axios from '../../../../utils/axios';
+import { IBannerForm } from '../../../../interfaces/interface';
 
 const ProgramBannerCreate = () => {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
 
-  const [value, setValue] = useState<ProgramBannerInputContentProps['value']>({
+  const [value, setValue] = useState<IBannerForm>({
     title: '',
     link: '',
     startDate: '',
     endDate: '',
     imgUrl: '',
+    file: null,
   });
 
   const addProgramBanner = useMutation({
-    mutationFn: async () => {
-      const res = await axios.post('/banner', value, {
+    mutationFn: async (formData: FormData) => {
+      const res = await axios.post('/banner', formData, {
         params: {
           type: 'PROGRAM',
+        },
+        headers: {
+          'Content-Type': 'multipart/form-data',
         },
       });
       return res.data;
@@ -35,12 +38,38 @@ const ProgramBannerCreate = () => {
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setValue({ ...value, [e.target.name]: e.target.value });
+    if (e.target.name === 'file' && e.target.files) {
+      setValue({ ...value, file: e.target.files[0] });
+    } else {
+      setValue({ ...value, [e.target.name]: e.target.value });
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    addProgramBanner.mutate();
+
+    if (!value.file) return;
+
+    const formData = new FormData();
+    formData.append(
+      'createBannerRequestDto',
+      new Blob(
+        [
+          JSON.stringify({
+            title: value.title,
+            link: value.link,
+            startDate: value.startDate,
+            endDate: value.endDate,
+          }),
+        ],
+        {
+          type: 'application/json',
+        },
+      ),
+    );
+    formData.append('file', value.file);
+
+    addProgramBanner.mutate(formData);
   };
 
   return (
