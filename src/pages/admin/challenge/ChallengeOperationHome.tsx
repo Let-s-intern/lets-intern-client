@@ -1,10 +1,10 @@
 import MissionResultItem from '../../../components/admin/challenge/home/item/MissionResultItem';
 import GuideSection from '../../../components/admin/challenge/home/section/GuideSection';
 import NoticeSection from '../../../components/admin/challenge/home/section/NoticeSection';
-import { useMissionsOfCurrentChallenge } from '../../../context/CurrentChallengeProvider';
+import { useAdminMissionsOfCurrentChallenge } from '../../../context/CurrentAdminChallengeProvider';
 
 const ChallengeOperationHome = () => {
-  const missions = useMissionsOfCurrentChallenge();
+  const missions = useAdminMissionsOfCurrentChallenge();
   return (
     <main>
       <section className="rounded mt-10 border px-3 py-2">

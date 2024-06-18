@@ -1,18 +1,22 @@
 import clsx from 'clsx';
-
+import { Schedule } from '../../../../../schema';
 import MissionCalendarItem from './MissionCalendarItem';
 
 interface Props {
   className?: string;
-  missionList: any;
+  schedules: Schedule[];
   todayTh: number;
 }
 
-const MissionCalendar = ({ className, missionList, todayTh }: Props) => {
+const MissionCalendar = ({ className, schedules, todayTh }: Props) => {
   return (
     <div className={clsx('grid grid-cols-7 gap-y-6', className)}>
-      {missionList.map((mission: any, index: number) => (
-        <MissionCalendarItem key={index} mission={mission} todayTh={todayTh} />
+      {schedules.map((schedule, index) => (
+        <MissionCalendarItem
+          key={index}
+          schedule={schedule}
+          todayTh={todayTh}
+        />
       ))}
     </div>
   );

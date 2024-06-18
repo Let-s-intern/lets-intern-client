@@ -1,18 +1,16 @@
 import { useQuery } from '@tanstack/react-query';
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import ChallengeSubmitDetail from '../../../components/admin/challenge/submit-check/table/table-body/ChallengeSubmitDetail';
 import LineTableBody from '../../../components/admin/challenge/ui/lineTable/LineTableBody';
 import LineTableBodyRow, {
-  ItemWithStatus
+  ItemWithStatus,
 } from '../../../components/admin/challenge/ui/lineTable/LineTableBodyRow';
 import LineTableHead from '../../../components/admin/challenge/ui/lineTable/LineTableHead';
 import {
-  useCurrentChallenge,
-  useMissionsOfCurrentChallenge
-} from '../../../context/CurrentChallengeProvider';
-import {
-  attendances, Mission
-} from '../../../schema';
+  useAdminCurrentChallenge,
+  useAdminMissionsOfCurrentChallenge,
+} from '../../../context/CurrentAdminChallengeProvider';
+import { attendances, Mission } from '../../../schema';
 import axios from '../../../utils/axios';
 import { TABLE_CONTENT } from '../../../utils/convert';
 
@@ -32,8 +30,8 @@ const cellWidthList = [
 const colNames = ['회차', '미션명', '공개일', '마감일', '제출현황', '상태'];
 
 const ChallengeOperationAttendances = () => {
-  const { currentChallenge } = useCurrentChallenge();
-  const missions = useMissionsOfCurrentChallenge();
+  const { currentChallenge } = useAdminCurrentChallenge();
+  const missions = useAdminMissionsOfCurrentChallenge();
   const [detailedMission, setDetailedMission] = useState<Mission | null>(null);
 
   const { data: detailedAttendances } = useQuery({
@@ -47,13 +45,21 @@ const ChallengeOperationAttendances = () => {
     },
   });
 
+  useEffect(() => {
+    console.log('detailedAttendances', detailedAttendances);
+  }, [detailedAttendances]);
+
+  useEffect(() => {
+    console.log('missions', missions);
+  }, [missions]);
+
   const rows = useMemo(() => {
     return (
       missions?.map((mission) => {
         return {
           ...mission,
           currentAttendance: `${mission.attendanceCount ?? 0}(제출)/${
-            mission.attendanceCount ?? 0
+            mission.applicationCount ?? 0
           }(전체)`,
         };
       }) ?? []

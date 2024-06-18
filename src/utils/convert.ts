@@ -260,11 +260,9 @@ export const couponProgramTypeEnum = {
 export const missionSubmitToBadge = ({
   status,
   result,
-  isRefunded,
 }: {
-  status: string;
-  result: string;
-  isRefunded: string;
+  status: string | null;
+  result: string | null;
 }) => {
   if (result === 'WAITING') {
     return {
@@ -294,13 +292,6 @@ export const missionSubmitToBadge = ({
     };
   }
 
-  // if (isRefunded) {
-  //   return {
-  //     text: '환급완료',
-  //     style: 'text-primary bg-[#E7E6FD]',
-  //   };
-  // }
-
   return {
     text: '확인완료',
     style: 'text-primary bg-[#E7E6FD]',
@@ -313,7 +304,7 @@ export const TABLE_STATUS = {
   INSERT: 1,
 } as const;
 
-export type TableStatus = typeof TABLE_STATUS[keyof typeof TABLE_STATUS];
+export type TableStatus = (typeof TABLE_STATUS)[keyof typeof TABLE_STATUS];
 
 export const TABLE_CONTENT = {
   INPUT: 0,

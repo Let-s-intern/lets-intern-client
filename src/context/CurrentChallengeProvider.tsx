@@ -1,21 +1,27 @@
 import { useQuery } from '@tanstack/react-query';
-import { createContext, useContext } from 'react';
+import { createContext, useContext, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { z } from 'zod';
-import { getChallengeId, missionAdmin } from '../schema';
+import {
+  challengeSchedule,
+  DailyMission,
+  dailyMissionSchema,
+  getChallengeId,
+  Schedule,
+} from '../schema';
 import axios from '../utils/axios';
 
 type CurrentChallenge = z.infer<typeof getChallengeId> & { id: number };
-type MissionList = z.infer<typeof missionAdmin>;
+
+const emptySchedules: Schedule[] = [];
 
 const currentChallengeContext = createContext<{
   currentChallenge?: CurrentChallenge | null;
-  missionsOfCurrentChallenge?: MissionList | null;
-  missionsOfCurrentChallengeRefetch: () => void;
+  schedules: Schedule[];
+  dailyMission?: DailyMission | null;
 }>({
   currentChallenge: null,
-  missionsOfCurrentChallenge: null,
-  missionsOfCurrentChallengeRefetch: () => {},
+  schedules: emptySchedules,
 });
 
 export const CurrentChallengeProvider = ({
@@ -26,7 +32,7 @@ export const CurrentChallengeProvider = ({
   const params = useParams();
 
   const { data: currentChallenge } = useQuery({
-    queryKey: ['admin', 'challenge', params.programId],
+    queryKey: ['challenge', params.programId],
     queryFn: async () => {
       if (!params.programId) {
         return null;
@@ -39,20 +45,38 @@ export const CurrentChallengeProvider = ({
     },
   });
 
-  const { data: missionsOfCurrentChallenge, refetch } = useQuery({
-    queryKey: ['admin', 'challenge', params.programId, 'missions'],
+  const { data: schedules = [] } = useQuery({
+    queryKey: ['challenge', params.programId, 'schedule'],
     queryFn: async () => {
       if (!params.programId) {
         return null;
       }
-      const res = await axios.get(`/mission/${params.programId}/admin`);
-      return missionAdmin.parse(res.data.data);
+      const res = await axios.get(`/challenge/${params.programId}/schedule`);
+      return challengeSchedule.parse(res.data.data).scheduleList;
     },
   });
 
+  const { data: dailyMission } = useQuery({
+    queryKey: ['challenge', params.programId, 'daily-mission'],
+    queryFn: async () => {
+      const res = await axios.get(
+        `/challenge/${params.programId}/daily-mission`,
+      );
+      return dailyMissionSchema.parse(res.data.data).dailyMission;
+    },
+  });
+
+  useEffect(() => {
+    console.log("schedules", schedules);
+  }, [schedules]);
+
   return (
     <currentChallengeContext.Provider
-      value={{ currentChallenge, missionsOfCurrentChallenge, missionsOfCurrentChallengeRefetch: refetch}}
+      value={{
+        currentChallenge,
+        schedules: schedules ?? emptySchedules,
+        dailyMission,
+      }}
     >
       {children}
     </currentChallengeContext.Provider>
@@ -62,15 +86,3 @@ export const CurrentChallengeProvider = ({
 export const useCurrentChallenge = () => {
   return useContext(currentChallengeContext);
 };
-
-export const useMissionsOfCurrentChallenge = () => {
-  return (
-    useContext(currentChallengeContext).missionsOfCurrentChallenge
-      ?.missionList ?? []
-  );
-};
-
-/** TODO: queryKey 방식으로 수정 */
-export const useMissionsOfCurrentChallengeRefetch = () => {
-  return useContext(currentChallengeContext).missionsOfCurrentChallengeRefetch;
-}

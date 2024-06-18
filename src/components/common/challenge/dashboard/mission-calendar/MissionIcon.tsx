@@ -1,25 +1,27 @@
 import clsx from 'clsx';
 import { Link, useParams } from 'react-router-dom';
+import { Schedule } from '../../../../../schema';
 
 import { missionSubmitToBadge } from '../../../../../utils/convert';
 
 interface Props {
   className?: string;
-  mission: any;
+  schedule: Schedule;
 }
 
-const MissionIcon = ({ className, mission }: Props) => {
+const MissionIcon = ({ className, schedule }: Props) => {
   const params = useParams();
+  const mission = schedule.missionInfo;
+  const attendance = schedule.attendanceInfo;
 
   const isAttended =
-    (mission.attendanceResult === 'WAITING' ||
-      mission.attendanceResult === 'PASS') &&
-    mission.attendanceStatus !== 'ABSENT';
+    (attendance.result === 'WAITING' || attendance.result === 'PASS') &&
+    attendance.status !== 'ABSENT';
 
   return (
     <>
       <Link
-        to={`/challenge/${params.programId}/me?scroll_to_mission=${mission.missionId}`}
+        to={`/challenge/${params.programId}/me?scroll_to_mission=${mission.id}`}
         className={clsx(
           'relative flex aspect-square cursor-pointer flex-col items-center justify-center rounded-sm text-white',
           className,
@@ -59,7 +61,7 @@ const MissionIcon = ({ className, mission }: Props) => {
           </i>
         )}
         <span className="block font-pretendard text-xs font-semibold">
-          {mission.missionTh}회차
+          {mission.th}회차
         </span>
       </Link>
       <div className="mt-2 flex items-center justify-center">
@@ -67,17 +69,15 @@ const MissionIcon = ({ className, mission }: Props) => {
           className={clsx(
             'rounded-xs px-2 py-[0.125rem] text-xs ',
             missionSubmitToBadge({
-              status: mission.attendanceStatus,
-              result: mission.attendanceResult,
-              isRefunded: mission.attendanceIsRefunded,
+              status: attendance.status,
+              result: attendance.result,
             }).style,
           )}
         >
           {
             missionSubmitToBadge({
-              status: mission.attendanceStatus,
-              result: mission.attendanceResult,
-              isRefunded: mission.attendanceIsRefunded,
+              status: attendance.status,
+              result: attendance.result,
             }).text
           }
         </span>

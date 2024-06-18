@@ -6,12 +6,13 @@ import {
   DialogContentText,
   DialogTitle,
   IconButton,
-  Snackbar
+  Snackbar,
 } from '@mui/material';
 import {
-  DataGrid, GridColDef,
+  DataGrid,
+  GridColDef,
   GridToolbarContainer,
-  useGridApiRef
+  useGridApiRef,
 } from '@mui/x-data-grid';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import dayjs from 'dayjs';
@@ -19,17 +20,17 @@ import React, { useCallback, useMemo, useState } from 'react';
 import { FaCheck, FaTrashCan, FaX } from 'react-icons/fa6';
 import { z } from 'zod';
 import {
-  useCurrentChallenge,
-  useMissionsOfCurrentChallenge,
-  useMissionsOfCurrentChallengeRefetch
-} from '../../../context/CurrentChallengeProvider';
+  useAdminCurrentChallenge,
+  useAdminMissionsOfCurrentChallenge,
+  useMissionsOfCurrentChallengeRefetch,
+} from '../../../context/CurrentAdminChallengeProvider';
 import {
   CreateMissionReq,
   getContentsAdminSimple,
   Mission,
   missionTemplateAdmin,
   MissionTemplateResItem,
-  UpdateMissionReq
+  UpdateMissionReq,
 } from '../../../schema';
 import axios from '../../../utils/axios';
 
@@ -356,8 +357,8 @@ function ChallengeOperationRegisterMissionToolbar({
 }
 
 const ChallengeOperationRegisterMission = () => {
-  const missions = useMissionsOfCurrentChallenge();
-  const { currentChallenge } = useCurrentChallenge();
+  const missions = useAdminMissionsOfCurrentChallenge();
+  const { currentChallenge } = useAdminCurrentChallenge();
   const refetchMissions = useMissionsOfCurrentChallengeRefetch();
   const [snackbar, setSnackbar] = useState({
     open: false,
@@ -492,6 +493,9 @@ const ChallengeOperationRegisterMission = () => {
           apiRef.current?.forceUpdate();
           return;
         case 'edit':
+          if (!row.missionTemplateId) {
+            return;
+          }
           await updateMission.mutateAsync({
             additionalContentsIdList:
               row.additionalContentsList
@@ -503,9 +507,7 @@ const ChallengeOperationRegisterMission = () => {
                 .filter((id): id is number => Boolean(id)) || [],
             id: row.id,
             lateScore: row.lateScore,
-            // 아래로 수정
-            // missionTemplateId: row.missionTemplateId,
-            missionTemplateId: 1,
+            missionTemplateId: row.missionTemplateId,
             score: row.score,
             startDate: row.startDate.format('YYYY-MM-DD'),
             endDate: row.endDate.format('YYYY-MM-DD'),
@@ -582,7 +584,6 @@ const ChallengeOperationRegisterMission = () => {
 
   return (
     <main>
-      {/* TODO: 채워넣기 */}
       <DataGrid
         apiRef={apiRef}
         editMode="row"
@@ -606,6 +607,7 @@ const ChallengeOperationRegisterMission = () => {
                 missionTemplateId: null,
                 missionStatusType: 'WAITING',
                 lateAttendanceCount: 0,
+                applicationCount: 0,
                 additionalContentsList: [],
                 essentialContentsList: [],
                 missionType: '',

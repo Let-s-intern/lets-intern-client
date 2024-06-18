@@ -63,10 +63,11 @@ import ProgramCreate from './pages/admin/program/ProgramCreate';
 import Home from './pages/common/home/Home';
 import ChallengeOperationOnboarding from './pages/admin/challenge/ChallengeOperationOnboarding';
 import ChallengeOperationRegisterMission from './pages/admin/challenge/ChallengeOperationRegisterMission';
-import { CurrentChallengeProvider } from './context/CurrentChallengeProvider';
+import { CurrentAdminChallengeProvider } from './context/CurrentAdminChallengeProvider';
 import ChallengeOperationAttendances from './pages/admin/challenge/ChallengeOperationAttendances';
 import ChallengeOperationPayback from './pages/admin/challenge/ChallengeOperationPayback';
 import ChallengeOperationParticipants from './pages/admin/challenge/ChallengeOperationParticipants';
+import { CurrentChallengeProvider } from './context/CurrentChallengeProvider';
 
 const Router = () => {
   return (
@@ -133,7 +134,14 @@ const Router = () => {
           <Route path="signup" element={<SignUp />} />
           {/* /find-password */}
           <Route path="find-password" element={<FindPassword />} />
-          <Route path="challenge/:programId" element={<ChallengeLayout />}>
+          <Route
+            path="challenge/:programId"
+            element={
+              <CurrentChallengeProvider>
+                <ChallengeLayout />
+              </CurrentChallengeProvider>
+            }
+          >
             <Route path="" element={<ChallengeDashboard />} />
             <Route path="me" element={<MyChallengeDashboard />} />
             {/* <Route path="others" element={<OtherDashboardList />} />
@@ -231,9 +239,9 @@ const Router = () => {
           <Route
             path="challenge/operation/:programId"
             element={
-              <CurrentChallengeProvider>
+              <CurrentAdminChallengeProvider>
                 <ChallengeOperationAdminLayout />
-              </CurrentChallengeProvider>
+              </CurrentAdminChallengeProvider>
             }
           >
             {/* /admin/challenge/operation/1/home */}
