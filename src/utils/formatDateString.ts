@@ -1,3 +1,5 @@
+import { Dayjs } from "dayjs";
+
 const formatDateString = (
   dateString: string,
   format?: { date: boolean; weekday: boolean; time: boolean },
@@ -104,3 +106,12 @@ export const formatToMonthDate = (dateString: string) => {
   })`;
   return formattedString;
 };
+
+const weekdayList = ['일', '월', '화', '수', '목', '금', '토'];
+export const formatToMonthDateFromDayjs = (dayjsDate: Dayjs) => {
+  return dayjsDate?.format('MM/DD(ddd)') ?? "";
+  // const formattedString = `${dayjsDate.month() + 1}/${dayjsDate.date()}(${
+  //   weekdayList[dayjsDate.day()]
+  // })`;
+  // return formattedString;
+}

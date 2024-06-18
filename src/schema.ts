@@ -161,9 +161,10 @@ export const missionAdmin = z
         missionStatusType: missionStatusType,
         attendanceCount: z.number(),
         lateAttendanceCount: z.number(),
+        applicationCount: z.number(),
         score: z.number(),
         lateScore: z.number(),
-        missionTemplateId: z.number().or(z.null()),
+        missionTemplateId: z.number().nullable(),
         startDate: z.string(),
         endDate: z.string(),
         essentialContentsList: z
@@ -255,7 +256,7 @@ export type UpdateAttendanceReq = {
 
 export type Attendance = z.infer<typeof attendances>['attendanceList'][number];
 
-/** 참여 폼 */
+/** GET /challenge/{id}/application */
 export const getChallengeIdApplication = z
   .object({
     applied: z.boolean(),
@@ -359,7 +360,6 @@ export const getChallengeIdApplicationsPayback = z
     ),
     pageInfo: pageinfo,
   })
-  // TODO: remove transform
   .transform((data) => {
     return {
       missionApplications: data.missionApplications.map((application) => ({
@@ -377,7 +377,7 @@ export const getChallengeIdApplicationsPayback = z
     };
   });
 
-/** patch /api/v1/challenge/{challengeId}/application/{applicationId}/payback  */
+/** PATCH /api/v1/challenge/{challengeId}/application/{applicationId}/payback  */
 export type UpdatePaybackReq = {
   adminScore?: number;
   isRefunded?: boolean;
@@ -604,3 +604,199 @@ export type UpdateChallengeGuideReq = {
   title: string;
   link: string;
 };
+
+// GET /api/v1/challenge/{id}/schedule 챌린지 대시보드 일정 및 미션 제출 현황
+export const challengeSchedule = z
+  .object({
+    scheduleList: z.array(
+      z.object({
+        missionInfo: z.object({
+          id: z.number(),
+          th: z.number().nullable(),
+          startDate: z.string().nullable(),
+          endDate: z.string().nullable(),
+          status: missionStatusType.nullable(),
+        }),
+        attendanceInfo: z.object({
+          submitted: z.boolean().nullable(),
+          id: z.number().nullable(),
+          link: z.string().nullable(),
+          status: attendanceStatus.nullable(),
+          result: attendanceResult.nullable(),
+        }),
+      }),
+    ),
+  })
+  .transform((data) => {
+    return {
+      scheduleList: data.scheduleList.map((schedule) => ({
+        ...schedule,
+        missionInfo: {
+          ...schedule.missionInfo,
+          startDate: schedule.missionInfo.startDate
+            ? dayjs(schedule.missionInfo.startDate)
+            : null,
+          endDate: schedule.missionInfo.endDate
+            ? dayjs(schedule.missionInfo.endDate)
+            : null,
+        },
+        attendanceInfo: {
+          ...schedule.attendanceInfo,
+        },
+      })),
+    };
+  });
+
+export type Schedule = z.infer<
+  typeof challengeSchedule
+>['scheduleList'][number];
+
+export type ScheduleMission = Schedule['missionInfo'];
+
+// GET /api/v1/challenge/{challengeId}/missions/{missionId} 나의 기록장 미션 상세
+export const userChallengeMissionDetail = z
+  .object({
+    missionInfo: z.object({
+      id: z.number(),
+      th: z.number().nullable(),
+      title: z.string().nullable(),
+      startDate: z.string().nullable(),
+      endDate: z.string().nullable(),
+      essentialContentsList: z.array(
+        z.object({
+          id: z.number(),
+          title: z.string().nullable(),
+          link: z.string().nullable(),
+        }),
+      ),
+      additionalContentsList: z.array(
+        z.object({
+          id: z.number(),
+          title: z.string().nullable(),
+          link: z.string().nullable(),
+        }),
+      ),
+      status: missionStatusType,
+      missionTag: z.string(),
+      description: z.string(),
+      guide: z.string(),
+      templateLink: z.string(),
+    }),
+  })
+  .transform((data) => {
+    return {
+      missionInfo: {
+        ...data.missionInfo,
+        startDate: dayjs(data.missionInfo.startDate),
+        endDate: dayjs(data.missionInfo.endDate),
+      },
+    };
+  });
+
+export type UserChallengeMissionDetail = z.infer<
+  typeof userChallengeMissionDetail
+>["missionInfo"];
+
+/** GET /api/v1/challenge/{id}/daily-mission */
+export const dailyMissionSchema = z
+  .object({
+    dailyMission: z.object({
+      id: z.number(),
+      th: z.number().nullable(),
+      title: z.string().nullable(),
+      startDate: z.string().nullable(),
+      endDate: z.string().nullable(),
+      missionTag: z.string().nullable(),
+      description: z.string().nullable(),
+    }),
+  })
+  .transform((data) => {
+    return {
+      dailyMission: {
+        ...data.dailyMission,
+        startDate: data.dailyMission.startDate
+          ? dayjs(data.dailyMission.startDate)
+          : null,
+        endDate: data.dailyMission.startDate
+          ? dayjs(data.dailyMission.endDate)
+          : null,
+      },
+    };
+  });
+
+export type DailyMission = z.infer<typeof dailyMissionSchema>['dailyMission'];
+
+/** GET /api/v1/user */
+export const userSchema = z.object({
+  id: z.number(),
+  name: z.string().nullable(),
+  email: z.string().nullable(),
+  contactEmail: z.string().nullable(),
+  phoneNum: z.string().nullable(),
+  university: z.string().nullable(),
+  grade: grade.nullable(),
+  major: z.string().nullable(),
+  wishJob: z.string().nullable(),
+  wishCompany: z.string().nullable(),
+  accountType: accountType.nullable(),
+  accountNum: z.string().nullable(),
+  accountOwner: z.string().nullable(),
+  marketingAgree: z.boolean().nullable(),
+});
+
+/** GET /api/v1/challenge/{id}/score */
+export const challengeScore = z.object({
+  totalScore: z.number(),
+});
+
+/** GET /api/v1/challenge/{id}/my/daily-mission 챌린지 나의 기록장 데일리 미션 */
+export const myDailyMission = z
+  .object({
+    dailyMission: z.object({
+      id: z.number(),
+      th: z.number().nullable(),
+      title: z.string().nullable(),
+      startDate: z.string().nullable(),
+      endDate: z.string().nullable(),
+      essentialContentsList: z.array(
+        z.object({
+          id: z.number(),
+          title: z.string().nullable(),
+          link: z.string().nullable(),
+        }),
+      ),
+      additionalContentsList: z.array(
+        z.object({
+          id: z.number(),
+          title: z.string().nullable(),
+          link: z.string().nullable(),
+        }),
+      ),
+      status: missionStatusType,
+      missionTag: z.string().nullable(),
+      description: z.string().nullable(),
+      guide: z.string().nullable(),
+      templateLink: z.string().nullable(),
+    }),
+    attendanceInfo: z.object({
+      submitted: z.boolean(),
+      id: z.number().nullable(),
+      link: z.string().nullable(),
+      status: attendanceStatus.nullable(),
+      result: attendanceResult.nullable(),
+    }),
+  })
+  .transform((data) => {
+    return {
+      ...data,
+      dailyMission: {
+        ...data.dailyMission,
+        startDate: data.dailyMission.startDate
+          ? dayjs(data.dailyMission.startDate)
+          : null,
+        endDate: data.dailyMission.endDate
+          ? dayjs(data.dailyMission.endDate)
+          : null,
+      },
+    };
+  });

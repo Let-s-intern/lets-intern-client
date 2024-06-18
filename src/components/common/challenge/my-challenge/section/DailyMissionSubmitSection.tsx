@@ -1,16 +1,24 @@
 import { useEffect, useState } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-
 import axios from '../../../../../utils/axios';
 import clsx from 'clsx';
 import AlertModal from '../../../../ui/alert/AlertModal';
-import { DailyMission } from '../../../../../interfaces/interface';
+import {
+  DailyMission,
+  UserChallengeMissionDetail,
+} from '../../../../../schema';
 
 interface Props {
-  dailyMission: DailyMission;
+  missionDetail: UserChallengeMissionDetail;
+  dailyMission: DailyMission & // TODO: 스키마 맞추고 삭제
+  {
+    attended?: boolean;
+    attendanceLink?: string;
+    attendanceId?: number;
+  };
 }
 
-const DailyMissionSubmitSection = ({ dailyMission }: Props) => {
+const DailyMissionSubmitSection = ({ missionDetail, dailyMission }: Props) => {
   const queryClient = useQueryClient();
 
   const [value, setValue] = useState(

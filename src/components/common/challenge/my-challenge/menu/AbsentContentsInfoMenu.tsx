@@ -1,16 +1,19 @@
 import { Link } from 'react-router-dom';
+import { Mission } from '../../../../../schema';
 
 import AbsentContentsDropdown from '../dropdown/AbsentContentsDropdown';
 
 interface Props {
-  missionDetail: any;
+  missionDetail: Mission;
 }
 
 const AbsentContentsInfoMenu = ({ missionDetail }: Props) => {
   return (
     <div className="mt-5 flex gap-4 px-3">
       <Link
-        to={missionDetail.template}
+        // TODO: mission template link
+        // to={missionDetail.missionTemplateId}
+        to=""
         className="flex-1 rounded border border-[#DCDCDC] bg-white px-8 py-2 text-center font-semibold shadow"
         target="_blank"
         rel="noopenner noreferrer"

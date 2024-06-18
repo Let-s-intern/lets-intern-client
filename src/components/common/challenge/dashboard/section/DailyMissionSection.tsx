@@ -1,21 +1,15 @@
 import { Link, useParams } from 'react-router-dom';
-
 import { formatMissionDateString } from '../../../../../utils/formatDateString';
 import clsx from 'clsx';
+import { DailyMission } from '../../../../../schema';
+import { useCurrentChallenge } from '../../../../../context/CurrentChallengeProvider';
 
-interface Props {
-  dailyMission: any;
-  isLoading: boolean;
+
+const DailyMissionSection = ({ dailyMission, isDone }: {
+  dailyMission: DailyMission;
   isDone: boolean;
-}
-
-const DailyMissionSection = ({ dailyMission, isLoading, isDone }: Props) => {
-  const params = useParams();
-
-  if (isLoading) {
-    return <section className="mb-10">로딩 중...</section>;
-  }
-
+}) => {
+  const {currentChallenge} = useCurrentChallenge();
   return (
     <section className="flex flex-1 flex-col rounded-xl border border-[#E4E4E7] p-6">
       <div className="flex items-end gap-2">
@@ -34,7 +28,7 @@ const DailyMissionSection = ({ dailyMission, isLoading, isDone }: Props) => {
         </h2>
         {!isDone && (
           <span className="text-sm text-[#7D7D7D]">
-            {formatMissionDateString(dailyMission.endDate)}까지
+            {dailyMission.endDate?.format("MM/DD(ddd) HH:mm")}까지
           </span>
         )}
       </div>
@@ -45,10 +39,10 @@ const DailyMissionSection = ({ dailyMission, isLoading, isDone }: Props) => {
       >
         {isDone
           ? '나의 기록장에서 이전 미션들을 확인하실 수 있습니다.'
-          : dailyMission.contents}
+          : dailyMission.description}
       </p>
       <Link
-        to={`/challenge/${params.programId}/me${
+        to={`/challenge/${currentChallenge?.id}/me${
           !isDone ? '?scroll_to=daily-mission' : ''
         }`}
         className="mt-4 w-full rounded-xxs bg-primary px-4 py-3 text-center font-semibold text-white"

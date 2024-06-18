@@ -7,6 +7,8 @@ import axios from '../../../../../utils/axios';
 import YetMissionItem from '../mission/YetMissionItem';
 import DoneMissionItem from '../mission/DoneMissionItem';
 import AbsentMissionItem from '../mission/AbsentMissionItem';
+import { Schedule, userChallengeMissionDetail } from '../../../../../schema';
+import { useCurrentChallenge } from '../../../../../context/CurrentChallengeProvider';
 
 interface Props {
   todayTh: number;
@@ -15,59 +17,63 @@ interface Props {
 
 const OtherMissionSection = ({ todayTh, isDone }: Props) => {
   const params = useParams();
+  const { schedules } = useCurrentChallenge();
   const [searchParams, setSearchParams] = useSearchParams();
 
   const sectionRef = useRef<HTMLElement>(null);
 
-  const [missionList, setMissionList] = useState<any>();
+  // const [missionList, setMissionList] = useState<any>();
   const [tabIndex, setTabIndex] = useState(isDone ? 1 : 0);
 
-  const getMissionList = useQuery({
-    queryKey: ['mission', params.programId, 'list'],
-    queryFn: async () => {
-      const res = await axios.get(`/mission/${params.programId}/list`);
-      const data = res.data;
-      console.log(data);
-      setMissionList(data.missionList);
-      return data;
-    },
-  });
+  // const getMissionList = useQuery({
+  //   queryKey: ['mission', params.programId, 'list'],
+  //   queryFn: async () => {
+  //     const res = await axios.get(`/mission/${params.programId}/list`);
+  //     const data = res.data;
+  //     console.log(data);
+  //     setMissionList(data.missionList);
+  //     return data;
+  //   },
+  // });
 
-  const isLoading = getMissionList.isLoading || !missionList;
+  
 
-  useEffect(() => {
-    getMissionList.refetch();
-  }, [tabIndex]);
+  // const isLoading = getMissionList.isLoading || !missionList;
 
-  let lastMissionList =
-    missionList && missionList.filter((mission: any) => mission.th < todayTh);
+  // useEffect(() => {
+  //   getMissionList.refetch();
+  // }, [tabIndex]);
+
+  let lastScheduleList =
+    schedules &&
+    schedules.filter((schedule) => (schedule.missionInfo.th ?? 0) < todayTh);
 
   let absentMissionList =
-    lastMissionList &&
-    lastMissionList
-      .filter((mission: any) => mission.attendanceStatus === 'ABSENT')
-      .map((mission: any) => ({ ...mission, status: 'ABSENT' }))
-      .sort((a: any, b: any) => a.th - b.th);
+    lastScheduleList &&
+    lastScheduleList
+      .filter((schedule) => schedule.attendanceInfo.status === 'ABSENT')
+      .map((schedule) => ({ ...schedule, status: 'ABSENT' }))
+      .sort((a, b) => (a.missionInfo?.th ?? 0) - (b.missionInfo?.th ?? 0));
 
-  lastMissionList =
-    lastMissionList &&
-    lastMissionList
-      .filter((mission: any) => mission.attendanceStatus !== 'ABSENT')
-      .map((mission: any) => ({ ...mission, status: 'DONE' }))
-      .sort((a: any, b: any) => a.th - b.th);
+  lastScheduleList =
+    lastScheduleList &&
+    lastScheduleList
+      .filter((schedule) => schedule.attendanceInfo.status !== 'ABSENT')
+      .map((schedule) => ({ ...schedule, status: 'DONE' }))
+      .sort((a, b) => (a.missionInfo?.th ?? 0) - (b.missionInfo?.th ?? 0));
 
   let remainedMissionList =
-    missionList &&
-    missionList
-      .filter((mission: any) => mission.th > todayTh)
-      .map((mission: any) => ({ ...mission, status: 'YET' }))
-      .sort((a: any, b: any) => a.th - b.th);
+    schedules &&
+    schedules
+      .filter((schedule) => (schedule.missionInfo.th ?? 0) > todayTh)
+      .map((schedule) => ({ ...schedule, status: 'YET' }))
+      .sort((a, b) => (a.missionInfo?.th ?? 0) - (b.missionInfo?.th ?? 0));
 
   useEffect(() => {
     const scrollToMission = searchParams.get('scroll_to_mission');
-    if (scrollToMission && lastMissionList) {
+    if (scrollToMission && lastScheduleList) {
       let isExist = false;
-      lastMissionList.forEach((mission: any) => {
+      lastScheduleList.forEach((mission: any) => {
         if (mission.id === Number(scrollToMission)) {
           isExist = true;
           return;
@@ -75,11 +81,11 @@ const OtherMissionSection = ({ todayTh, isDone }: Props) => {
       });
       setTabIndex(isExist ? 1 : 0);
     }
-  }, [searchParams, setSearchParams, lastMissionList]);
+  }, [searchParams, setSearchParams, lastScheduleList]);
 
-  if (isLoading) {
-    return <></>;
-  }
+  // if (isLoading) {
+  //   return <></>;
+  // }
 
   return (
     <section
@@ -114,8 +120,8 @@ const OtherMissionSection = ({ todayTh, isDone }: Props) => {
             {remainedMissionList.length === 0 ? (
               <span className="font-medium">남은 미션이 없습니다.</span>
             ) : (
-              remainedMissionList.map((mission: any) => (
-                <YetMissionItem key={mission.id} mission={mission} />
+              remainedMissionList.map((schedule) => (
+                <YetMissionItem key={schedule.missionInfo.id} schedule={schedule} />
               ))
             )}
           </ul>
@@ -126,7 +132,7 @@ const OtherMissionSection = ({ todayTh, isDone }: Props) => {
                 {absentMissionList.map((mission: any) => (
                   <AbsentMissionItem
                     key={mission.id}
-                    mission={mission}
+                    schedule={mission}
                     isDone={isDone}
                   />
                 ))}
@@ -137,22 +143,25 @@ const OtherMissionSection = ({ todayTh, isDone }: Props) => {
       ) : (
         tabIndex === 1 && (
           <div className="mt-2 bg-[#F6F8FB] p-8">
-            {lastMissionList.length === 0 ? (
+            {lastScheduleList.length === 0 ? (
               <span className="font-medium">제출한 미션이 없습니다.</span>
             ) : (
               <ul className="flex flex-col gap-4">
-                {lastMissionList.map((mission: any) => {
-                  if (mission.attendanceResult === 'WRONG') {
+                {lastScheduleList.map((lastSchedule) => {
+                  if (lastSchedule.attendanceInfo.result === 'WRONG') {
                     return (
                       <AbsentMissionItem
-                        key={mission.id}
-                        mission={mission}
+                        key={lastSchedule.missionInfo.id}
+                        schedule={lastSchedule}
                         isDone={isDone}
                       />
                     );
                   } else {
                     return (
-                      <DoneMissionItem key={mission.id} mission={mission} />
+                      <DoneMissionItem
+                        key={lastSchedule.missionInfo.id}
+                        schedule={lastSchedule}
+                      />
                     );
                   }
                 })}

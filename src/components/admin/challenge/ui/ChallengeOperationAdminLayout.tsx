@@ -8,7 +8,7 @@ import {
 } from 'react-router-dom';
 import { twMerge } from 'tailwind-merge';
 import { z } from 'zod';
-import { useCurrentChallenge } from '../../../../context/CurrentChallengeProvider';
+import { useAdminCurrentChallenge } from '../../../../context/CurrentAdminChallengeProvider';
 import { challenges } from '../../../../schema';
 import axios from '../../../../utils/axios';
 
@@ -53,7 +53,7 @@ const ChallengeAdminLayout = () => {
     },
   });
 
-  const { currentChallenge } = useCurrentChallenge();
+  const { currentChallenge } = useAdminCurrentChallenge();
 
   const navLinks = getNavLinks(params.programId);
 

@@ -14,7 +14,7 @@ import { useState } from 'react';
 import { FaEdit } from 'react-icons/fa';
 import { FaTrashCan } from 'react-icons/fa6';
 import { twMerge } from 'tailwind-merge';
-import { useCurrentChallenge } from '../../../../../context/CurrentChallengeProvider';
+import { useAdminCurrentChallenge } from '../../../../../context/CurrentAdminChallengeProvider';
 import {
   challengeGuides,
   CreateChallengeGuideReq,
@@ -25,7 +25,7 @@ import RoundedBox from '../box/RoundedBox';
 import SectionHeading from '../heading/SectionHeading';
 
 const GuideSection = ({ className }: { className?: string }) => {
-  const { currentChallenge } = useCurrentChallenge();
+  const { currentChallenge } = useAdminCurrentChallenge();
   const [modalStatus, setModalStatus] = useState<
     | {
         open: boolean;

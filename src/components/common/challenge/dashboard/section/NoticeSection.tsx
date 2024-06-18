@@ -1,25 +1,22 @@
 import clsx from 'clsx';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { ChallengeGuide, ChallengeNotice } from '../../../../../schema';
 
-interface Props {
-  noticeList: any;
-  isLoading: boolean;
+interface INoticeSectionProps {
+  notices: ChallengeNotice[];
+  guides: ChallengeGuide[];
 }
 
-const NoticeSection = ({ noticeList, isLoading }: Props) => {
+const NoticeSection = ({ notices, guides }: INoticeSectionProps) => {
   const [currentPageNum, setCurrentPageNum] = useState(1);
 
-  const currentNoticeList = noticeList.slice(
+  const currentNoticeList = notices.slice(
     (currentPageNum - 1) * 4,
     currentPageNum * 4,
   );
   const totalPageCount =
-    noticeList.length / 4 + (noticeList.length % 4 !== 0 ? 1 : 0);
-
-  if (isLoading) {
-    return <section className="mb-10">로딩 중...</section>;
-  }
+    notices.length / 4 + (notices.length % 4 !== 0 ? 1 : 0);
 
   return (
     <section className="flex w-[13rem] flex-col gap-4">
@@ -72,42 +69,20 @@ const NoticeSection = ({ noticeList, isLoading }: Props) => {
         </div>
       </div>
       <ul className="flex rounded-xl border border-[#E4E4E7]">
-        <li className="flex flex-1">
-          <Link
-            to="https://letsintern.notion.site/d514a9ba8b3f40e2b2e81a448468b941?pvs=4"
-            className="flex h-16 w-16 flex-1 cursor-pointer items-center justify-center rounded-xl text-center text-sm transition-all duration-200 hover:bg-[#F0F0F0]"
-            target="_blank"
-            rel="noopenner noreferrer"
-          >
-            미션
-            <br />
-            수행법
-          </Link>
-        </li>
-        <li className="flex flex-1">
-          <Link
-            to="https://letsintern.notion.site/0102aa215e1b4bf3b76f999f5cb907f2?pvs=4"
-            className="flex h-16 w-16 flex-1 cursor-pointer items-center justify-center rounded-xl text-center text-sm transition-all duration-200 hover:bg-[#F0F0F0]"
-            target="_blank"
-            rel="noopenner noreferrer"
-          >
-            환급
-            <br />
-            정책
-          </Link>
-        </li>
-        <li className="flex flex-1">
-          <Link
-            to="https://letsintern.notion.site/3fbe143bda6b4613826a78da74b08b65?pvs=4"
-            className="flex h-16 w-16 flex-1 cursor-pointer items-center justify-center rounded-xl text-center text-sm transition-all duration-200 hover:bg-[#F0F0F0]"
-            target="_blank"
-            rel="noopenner noreferrer"
-          >
-            대시보드
-            <br />
-            설명서
-          </Link>
-        </li>
+        {/* first 3 guides */}
+        {guides.slice(0, 3).map((guide) => (
+          <li className="flex flex-1">
+            <Link
+              key={guide.id}
+              to={guide.link ?? ''}
+              className="flex h-16 w-16 flex-1 cursor-pointer items-center justify-center rounded-xl text-center text-sm transition-all duration-200 hover:bg-[#F0F0F0]"
+              target="_blank"
+              rel="noopenner noreferrer"
+            >
+              {guide.title}
+            </Link>
+          </li>
+        ))}
       </ul>
     </section>
   );
