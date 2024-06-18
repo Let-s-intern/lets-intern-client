@@ -2,10 +2,8 @@ import { Button, Snackbar, Switch } from '@mui/material';
 import {
   DataGrid,
   GridColDef,
-  GridToolbarContainer,
-  GridToolbarExport,
-  ToolbarPropsOverrides,
-  useGridApiContext,
+  GridToolbarContainer, ToolbarPropsOverrides,
+  useGridApiContext
 } from '@mui/x-data-grid';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import dayjs from 'dayjs';
@@ -15,7 +13,7 @@ import { z } from 'zod';
 import {
   accountType,
   getChallengeIdApplicationsPayback,
-  UpdatePaybackReq,
+  UpdatePaybackReq
 } from '../../../schema';
 import axios from '../../../utils/axios';
 

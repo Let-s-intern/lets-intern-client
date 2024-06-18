@@ -11,13 +11,12 @@ import {
   ContentsResItem,
   CreateContentsReq,
   getContentsAdmin,
-  UpdateContentsReq,
+  UpdateContentsReq
 } from '../../../schema';
 import axios from '../../../utils/axios';
 import {
-  TableStatus,
   TABLE_CONTENT,
-  TABLE_STATUS,
+  TABLE_STATUS
 } from '../../../utils/convert';
 
 const cellWidthList = [

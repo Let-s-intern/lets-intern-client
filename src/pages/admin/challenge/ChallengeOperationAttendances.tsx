@@ -1,24 +1,20 @@
 import { useQuery } from '@tanstack/react-query';
 import React, { useMemo, useState } from 'react';
-import { useParams } from 'react-router-dom';
-import TableRowDetail from '../../../components/admin/challenge/mission/mission/table/table-body/TableRowDetailMenu';
+import ChallengeSubmitDetail from '../../../components/admin/challenge/submit-check/table/table-body/ChallengeSubmitDetail';
 import LineTableBody from '../../../components/admin/challenge/ui/lineTable/LineTableBody';
 import LineTableBodyRow, {
-  ItemWithStatus,
+  ItemWithStatus
 } from '../../../components/admin/challenge/ui/lineTable/LineTableBodyRow';
 import LineTableHead from '../../../components/admin/challenge/ui/lineTable/LineTableHead';
 import {
   useCurrentChallenge,
-  useMissionsOfCurrentChallenge,
+  useMissionsOfCurrentChallenge
 } from '../../../context/CurrentChallengeProvider';
 import {
-  attendances,
-  getChallengeIdApplication,
-  Mission,
+  attendances, Mission
 } from '../../../schema';
 import axios from '../../../utils/axios';
 import { TABLE_CONTENT } from '../../../utils/convert';
-import ChallengeSubmitDetail from '../../../components/admin/challenge/submit-check/table/table-body/ChallengeSubmitDetail';
 
 type Row = Mission &
   ItemWithStatus & {
@@ -36,29 +32,16 @@ const cellWidthList = [
 const colNames = ['회차', '미션명', '공개일', '마감일', '제출현황', '상태'];
 
 const ChallengeOperationAttendances = () => {
-  const params = useParams();
-  const challengeId = params.programId;
-  const missions = useMissionsOfCurrentChallenge();
   const { currentChallenge } = useCurrentChallenge();
+  const missions = useMissionsOfCurrentChallenge();
   const [detailedMission, setDetailedMission] = useState<Mission | null>(null);
 
-  const { data: submissionRes } = useQuery({
-    queryKey: ['challenge', challengeId, 'application'],
-    queryFn: async () => {
-      if (challengeId) {
-        return null;
-      }
-      const res = await axios.get(`/challenge/${challengeId}/application`);
-      return getChallengeIdApplication.parse(res.data.data);
-    },
-  });
-
   const { data: detailedAttendances } = useQuery({
-    queryKey: ['challenge', challengeId, 'attendances'],
-    enabled: Boolean(challengeId) && Boolean(detailedMission?.id),
+    queryKey: ['challenge', currentChallenge?.id, 'attendances'],
+    enabled: Boolean(currentChallenge?.id) && Boolean(detailedMission?.id),
     queryFn: async () => {
       const res = await axios.get(
-        `/challenge/${challengeId}/mission/${detailedMission?.id}/attendances`,
+        `/challenge/${currentChallenge?.id}/mission/${detailedMission?.id}/attendances`,
       );
       return attendances.parse(res.data.data).attendanceList ?? [];
     },

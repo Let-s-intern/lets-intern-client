@@ -9,7 +9,7 @@ import {
 import { twMerge } from 'tailwind-merge';
 import { z } from 'zod';
 import { useCurrentChallenge } from '../../../../context/CurrentChallengeProvider';
-import { getChallenge } from '../../../../schema';
+import { challenges } from '../../../../schema';
 import axios from '../../../../utils/axios';
 
 const getNavLinks = (programId?: string | number) => {
@@ -45,12 +45,11 @@ const getNavLinks = (programId?: string | number) => {
 const ChallengeAdminLayout = () => {
   const params = useParams();
   const navigate = useNavigate();
-  const currentPath = useResolvedPath('', { relative: 'path' });
   const { data } = useQuery({
     queryKey: ['admin', 'challenge'],
     queryFn: async () => {
       const res = await axios.get(`/challenge?size=1000`);
-      return res.data.data as z.infer<typeof getChallenge>;
+      return res.data.data as z.infer<typeof challenges>;
     },
   });
 

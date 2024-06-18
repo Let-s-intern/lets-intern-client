@@ -1,7 +1,6 @@
 import { useMutation, useQuery } from '@tanstack/react-query';
-import { useMemo, useState } from 'react';
-
 import dayjs from 'dayjs';
+import { useMemo, useState } from 'react';
 import Button from '../../../components/admin/challenge/ui/button/Button';
 import Heading from '../../../components/admin/challenge/ui/heading/Heading';
 import LineTableBody from '../../../components/admin/challenge/ui/lineTable/LineTableBody';
@@ -15,7 +14,6 @@ import {
 } from '../../../schema';
 import axios from '../../../utils/axios';
 import {
-  TableStatus,
   TABLE_CONTENT, TABLE_STATUS
 } from '../../../utils/convert';
 

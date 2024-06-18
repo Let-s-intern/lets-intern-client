@@ -8,7 +8,8 @@ const pageinfo = z.object({
   totalPages: z.number().gte(0),
 });
 
-export const getChallenge = z
+/** GET /api/v1/challenge */
+export const challenges = z
   .object({
     programList: z.array(
       z.object({
@@ -93,6 +94,7 @@ export const missionStatusType = z.union([
   z.literal('REFUND_DONE'),
 ]);
 
+/** GET /api/v1/challenge/{id} */
 export const getChallengeId = z
   .object({
     title: z.string(),

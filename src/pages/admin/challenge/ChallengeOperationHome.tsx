@@ -1,10 +1,7 @@
-import { SxProps } from '@mui/material';
-import { z } from 'zod';
 import MissionResultItem from '../../../components/admin/challenge/home/item/MissionResultItem';
 import GuideSection from '../../../components/admin/challenge/home/section/GuideSection';
 import NoticeSection from '../../../components/admin/challenge/home/section/NoticeSection';
 import { useMissionsOfCurrentChallenge } from '../../../context/CurrentChallengeProvider';
-import { missionStatusType } from '../../../schema';
 
 const ChallengeOperationHome = () => {
   const missions = useMissionsOfCurrentChallenge();
