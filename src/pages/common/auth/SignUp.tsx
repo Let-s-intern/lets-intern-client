@@ -21,6 +21,7 @@ import InfoContainer from '../../../components/common/auth/ui/InfoContainer';
 const SignUp = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
+  const [isSocial, setIsSocial] = useState<boolean>(false);
   const result = searchParams.get('result');
 
   const resultToToken = (result: string) => {
@@ -30,6 +31,8 @@ const SignUp = () => {
     const token = JSON.parse(result);
     localStorage.setItem('access-token', token.accessToken);
     localStorage.setItem('refresh-token', token.refreshToken);
+    // axios.defaults.headers.common.Authorization = `Bearer ${token.accessToken}`;
+    setIsSocial(true);
 
     return token;
   };
@@ -38,12 +41,6 @@ const SignUp = () => {
     console.log(result);
 
     resultToToken(result || '');
-
-    return () => {
-      localStorage.removeItem('access-token');
-      localStorage.removeItem('refresh-token');
-      localStorage.removeItem('email');
-    };
   }, [result]);
 
   const [isSignupSuccess, setIsSignupSuccess] = useState<boolean>(false);
@@ -94,9 +91,17 @@ const SignUp = () => {
 
   const patchUserInfo = useMutation({
     mutationFn: async () => {
-      const res = await axios.patch('/user', {
-        contactEmail: value.email,
-      });
+      const res = await axios.patch(
+        '/user',
+        {
+          contactEmail: value.email,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('access-token')}`,
+          },
+        },
+      );
       return res.data;
     },
     onSuccess: () => {
@@ -197,7 +202,7 @@ const SignUp = () => {
         accountOwner=""
       /> */}
       {isSignupSuccess ? (
-        <InfoContainer accessToken={resultToToken(result || '')} />
+        <InfoContainer isSocial={isSocial} />
       ) : (
         <>
           <div className="container mx-auto mt-8 p-5">
