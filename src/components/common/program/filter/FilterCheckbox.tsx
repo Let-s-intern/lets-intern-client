@@ -33,4 +33,4 @@ const isEqual = (
   newProps: FilterCheckboxProps,
 ) => oldProps.isChecked === newProps.isChecked;
 
-export default memo(FilterCheckbox, isEqual);
+export default FilterCheckbox;

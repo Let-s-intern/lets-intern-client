@@ -29,7 +29,7 @@ export function filterTypeReducer(
 
   switch (action.type) {
     case 'init': {
-      return initialFilterType;
+      return { ...initialFilterType };
     }
 
     case 'check': {
@@ -61,7 +61,7 @@ export function filterClassificationReducer(
 
   switch (action.type) {
     case 'init': {
-      return initialFilterClassification;
+      return { ...initialFilterClassification };
     }
 
     case 'check': {
@@ -93,7 +93,7 @@ export function filterStatusReducer(
 
   switch (action.type) {
     case 'init': {
-      return initialFilterStatus;
+      return { ...initialFilterStatus };
     }
 
     case 'check': {
