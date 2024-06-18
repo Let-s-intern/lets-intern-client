@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 
 import ApplicationCard from '../../ui/card/root/ApplicationCard';
-import Button from '../../ui/button/Button';
+import MoreButton from '../../ui/button/MoreButton';
 import { ApplicationType } from '../../../../../pages/common/mypage/Application';
 
 interface WaitingSectionProps {
@@ -26,18 +26,20 @@ const WaitingSection = ({ applicationList }: WaitingSectionProps) => {
             </Link>
           </div>
         ) : (
-          applicationList.map((application) => (
-            <ApplicationCard
-              key={application.id}
-              application={application}
-              hasReviewButton
-              reviewButton={{ text: '후기 작성하기' }}
-            />
-          ))
+          applicationList
+            .slice(0, 3)
+            .map((application) => (
+              <ApplicationCard
+                key={application.id}
+                application={application}
+                hasReviewButton
+                reviewType="CREATE"
+              />
+            ))
         )}
       </div>
-      {applicationList.length > 0 && (
-        <Button className="hidden md:flex">더보기</Button>
+      {applicationList.length > 3 && (
+        <MoreButton className="hidden md:flex">더보기</MoreButton>
       )}
     </section>
   );

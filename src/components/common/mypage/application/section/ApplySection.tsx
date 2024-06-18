@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 
 import { ApplicationType } from '../../../../../pages/common/mypage/Application';
-import Button from '../../ui/button/Button';
+import MoreButton from '../../ui/button/MoreButton';
 import ApplicationCard from '../../ui/card/root/ApplicationCard';
 
 interface ApplySectionProps {
@@ -19,24 +19,26 @@ const ApplySection = ({ applicationList }: ApplySectionProps) => {
               신청한 내역이 아직 없어요.
             </p>
             <Link
-              to="/programs"
+              to="/program"
               className="rounded-sm border-2 border-primary-xlight bg-white px-5 py-2 font-medium text-neutral-35"
             >
               프로그램 신청하기
             </Link>
           </div>
         ) : (
-          applicationList.map((application) => (
-            <ApplicationCard
-              key={application.id}
-              application={application}
-              showDeleteMenu
-            />
-          ))
+          applicationList
+            .slice(0, 3)
+            .map((application) => (
+              <ApplicationCard
+                key={application.id}
+                application={application}
+                showDeleteMenu
+              />
+            ))
         )}
       </div>
-      {applicationList.length > 0 && (
-        <Button className="hidden md:flex">더보기</Button>
+      {applicationList.length > 3 && (
+        <MoreButton className="hidden md:flex">더보기</MoreButton>
       )}
     </section>
   );

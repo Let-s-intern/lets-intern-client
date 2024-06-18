@@ -10,6 +10,7 @@ export interface ApplicationType {
   id: number;
   status: string;
   programTitle: string;
+  programShortDesc: string;
   programStartDate: string;
   programEndDate: string;
   programType: string;
@@ -25,7 +26,7 @@ const Application = () => {
     queryFn: async () => {
       const res = await axios.get('/user/applications');
       setApplicationList(res.data.data.applicationList);
-      console.log(res.data.data.applicationList);
+      console.log(res.data.data);
       return res.data;
     },
   });
@@ -45,7 +46,7 @@ const Application = () => {
   if (isLoading) return <></>;
 
   return (
-    <main className="flex flex-col gap-16 pb-20">
+    <main className="flex w-full flex-col gap-16 pb-20">
       <ApplySection applicationList={waitingApplicationList} />
       <ParticipateSection applicationList={inProgressApplicationList} />
       <CompleteSection applicationList={completedApplicationList} />

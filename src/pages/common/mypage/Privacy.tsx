@@ -5,7 +5,7 @@ import MarketingAgree from '../../../components/common/mypage/privacy/section/Ma
 
 const Privacy = () => {
   return (
-    <main className="flex flex-col gap-16 pb-16">
+    <main className="flex w-full flex-col gap-16 pb-16 md:w-4/5">
       <BasicInfo />
       <AccountInfo />
       <ChangePassword />

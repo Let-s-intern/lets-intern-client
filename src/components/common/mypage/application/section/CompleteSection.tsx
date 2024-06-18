@@ -18,17 +18,19 @@ const CompleteSection = ({ applicationList }: CompleteSectionProps) => {
             </p>
           </div>
         ) : (
-          applicationList.map((application) => (
-            <ApplicationCard
-              hasReviewButton
-              grayscale
-              reviewButton={{ text: '후기 작성하기' }}
-              application={application}
-            />
-          ))
+          applicationList
+            .slice(0, 3)
+            .map((application) => (
+              <ApplicationCard
+                hasReviewButton
+                grayscale
+                reviewType="CREATE"
+                application={application}
+              />
+            ))
         )}
       </div>
-      {applicationList.length > 0 && (
+      {applicationList.length > 3 && (
         <Button className="hidden md:flex">더보기</Button>
       )}
     </section>
