@@ -65,19 +65,21 @@ const ReviewCreate = () => {
   };
 
   return (
-    <main className="mx-auto flex max-w-3xl flex-col gap-16 pb-16 pt-8">
-      <StarScoreSection starScore={starScore} setStarScore={setStarScore} />
-      <TenScoreSection
-        tenScore={tenScore}
-        setTenScore={setTenScore}
-        isYes={isYes}
-        setIsYes={setIsYes}
-        answer={answer}
-        setAnswer={setAnswer}
-      />
-      <TextAreaSection content={content} setContent={setContent} />
-      <ConfirmSection onConfirm={handleConfirm} />
-    </main>
+    <div className="fixed left-0 top-0 flex h-screen w-screen items-center justify-center bg-neutral-50">
+      <main className="mx-auto flex w-full max-w-3xl flex-col gap-16 bg-white pb-16 pt-8 md:w-16">
+        <StarScoreSection starScore={starScore} setStarScore={setStarScore} />
+        <TenScoreSection
+          tenScore={tenScore}
+          setTenScore={setTenScore}
+          isYes={isYes}
+          setIsYes={setIsYes}
+          answer={answer}
+          setAnswer={setAnswer}
+        />
+        <TextAreaSection content={content} setContent={setContent} />
+        <ConfirmSection onConfirm={handleConfirm} />
+      </main>
+    </div>
   );
 };
 
