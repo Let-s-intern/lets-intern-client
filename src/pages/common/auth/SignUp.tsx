@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useMutation } from '@tanstack/react-query';
 
 import Input from '../../../components/ui/input/Input';
@@ -20,6 +20,32 @@ import InfoContainer from '../../../components/common/auth/ui/InfoContainer';
 
 const SignUp = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const result = searchParams.get('result');
+
+  const resultToToken = (result: string) => {
+    if (result === '') {
+      return undefined;
+    }
+    const token = JSON.parse(result);
+    localStorage.setItem('access-token', token.accessToken);
+    localStorage.setItem('refresh-token', token.refreshToken);
+
+    return token;
+  };
+
+  useEffect(() => {
+    console.log(result);
+
+    resultToToken(result || '');
+
+    return () => {
+      localStorage.removeItem('access-token');
+      localStorage.removeItem('refresh-token');
+      localStorage.removeItem('email');
+    };
+  }, [result]);
+
   const [isSignupSuccess, setIsSignupSuccess] = useState<boolean>(false);
   const [buttonDisabled, setButtonDisabled] = useState(false);
   const [value, setValue] = useState({
@@ -39,7 +65,7 @@ const SignUp = () => {
   const [showPrivacyModal, setShowPrivacyModal] = useState<boolean>(false);
   const [showMarketingModal, setShowMarketingModal] = useState<boolean>(false);
 
-  const fetchSignUp = useMutation({
+  const postSignUp = useMutation({
     mutationFn: async () => {
       const res = await axios.post('/user/signup', {
         email: value.email,
@@ -66,13 +92,37 @@ const SignUp = () => {
     },
   });
 
+  const patchUserInfo = useMutation({
+    mutationFn: async () => {
+      const res = await axios.patch('/user', {
+        contactEmail: value.email,
+      });
+      return res.data;
+    },
+    onSuccess: () => {
+      setIsSignupSuccess(true);
+    },
+    onError: (error) => {
+      const axiosError = error as AxiosError;
+      setError(error);
+      if (axiosError.response?.status === 409) {
+        setErrorMessage('이미 가입된 이메일입니다.');
+      } else {
+        setErrorMessage('회원가입에 실패했습니다.');
+      }
+    },
+  });
+
   useEffect(() => {
+    if (result) {
+      return;
+    }
     const accessToken = localStorage.getItem('access-token');
     const refreshToken = localStorage.getItem('refresh-token');
     if (accessToken && refreshToken) {
       navigate('/');
     }
-  }, [navigate]);
+  }, [navigate, result]);
 
   const handleOnSubmit = (e: any) => {
     e.preventDefault();
@@ -82,43 +132,61 @@ const SignUp = () => {
       setErrorMessage('이메일 형식이 올바르지 않습니다.');
       return;
     }
-    if (!isValidPhoneNumber(value.phoneNum)) {
+    if (!result && !isValidPhoneNumber(value.phoneNum)) {
       setError(true);
       setErrorMessage('휴대폰 번호 형식이 올바르지 않습니다.');
       return;
     }
-    if (!isValidPassword(value.password)) {
+    if (!result && !isValidPassword(value.password)) {
       setError(true);
       setErrorMessage(
         '비밀번호 형식이 올바르지 않습니다. (영어, 숫자, 특수문자 포함 8자 이상)',
       );
       return;
     }
-    if (value.password !== value.passwordConfirm) {
+    if (!result && value.password !== value.passwordConfirm) {
       setError(true);
       setErrorMessage('비밀번호가 일치하지 않습니다.');
       return;
     }
-    fetchSignUp.mutate();
+
+    if (result) {
+      patchUserInfo.mutate();
+    } else {
+      postSignUp.mutate();
+    }
   };
 
   useEffect(() => {
-    if (
-      value.email === '' ||
-      value.name === '' ||
-      value.phoneNum === '' ||
-      value.password === '' ||
-      value.passwordConfirm === '' ||
-      value.inflow === '' ||
-      value.acceptedAge === false ||
-      value.agreeToTerms === false ||
-      value.agreeToPrivacy === false
-    ) {
-      setButtonDisabled(true);
+    if (result) {
+      if (
+        value.email === '' ||
+        value.acceptedAge === false ||
+        value.agreeToTerms === false ||
+        value.agreeToPrivacy === false
+      ) {
+        setButtonDisabled(true);
+      } else {
+        setButtonDisabled(false);
+      }
     } else {
-      setButtonDisabled(false);
+      if (
+        value.email === '' ||
+        value.name === '' ||
+        value.phoneNum === '' ||
+        value.password === '' ||
+        value.passwordConfirm === '' ||
+        value.inflow === '' ||
+        value.acceptedAge === false ||
+        value.agreeToTerms === false ||
+        value.agreeToPrivacy === false
+      ) {
+        setButtonDisabled(true);
+      } else {
+        setButtonDisabled(false);
+      }
     }
-  }, [value]);
+  }, [value, result]);
 
   return (
     <>
@@ -129,7 +197,7 @@ const SignUp = () => {
         accountOwner=""
       /> */}
       {isSignupSuccess ? (
-        <InfoContainer />
+        <InfoContainer accessToken={resultToToken(result || '')} />
       ) : (
         <>
           <div className="container mx-auto mt-8 p-5">
@@ -154,55 +222,62 @@ const SignUp = () => {
                     }
                   />
                 </div>
-                <div>
-                  <Input
-                    label="이름"
-                    value={value.name}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                      setValue({ ...value, name: e.target.value })
-                    }
-                  />
-                </div>
-                <div>
-                  <Input
-                    label="휴대폰 번호"
-                    placeholder="010-1234-4567"
-                    value={value.phoneNum}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                      setValue({ ...value, phoneNum: e.target.value })
-                    }
-                  />
-                </div>
-                <div>
-                  <Input
-                    type="password"
-                    label="비밀번호"
-                    placeholder="영어, 숫자, 특수문자 포함 8자 이상"
-                    value={value.password}
-                    onChange={(e: any) => {
-                      setValue({ ...value, password: e.target.value });
-                    }}
-                  />
-                </div>
-                <div>
-                  <Input
-                    type="password"
-                    label="비밀번호 확인"
-                    value={value.passwordConfirm}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                      setValue({ ...value, passwordConfirm: e.target.value })
-                    }
-                  />
-                </div>
-                <div>
-                  <Input
-                    label="유입경로"
-                    value={value.inflow}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                      setValue({ ...value, inflow: e.target.value })
-                    }
-                  />
-                </div>
+                {!result && (
+                  <>
+                    <div>
+                      <Input
+                        label="이름"
+                        value={value.name}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                          setValue({ ...value, name: e.target.value })
+                        }
+                      />
+                    </div>
+                    <div>
+                      <Input
+                        label="휴대폰 번호"
+                        placeholder="010-1234-4567"
+                        value={value.phoneNum}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                          setValue({ ...value, phoneNum: e.target.value })
+                        }
+                      />
+                    </div>
+                    <div>
+                      <Input
+                        type="password"
+                        label="비밀번호"
+                        placeholder="영어, 숫자, 특수문자 포함 8자 이상"
+                        value={value.password}
+                        onChange={(e: any) => {
+                          setValue({ ...value, password: e.target.value });
+                        }}
+                      />
+                    </div>
+                    <div>
+                      <Input
+                        type="password"
+                        label="비밀번호 확인"
+                        value={value.passwordConfirm}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                          setValue({
+                            ...value,
+                            passwordConfirm: e.target.value,
+                          })
+                        }
+                      />
+                    </div>
+                    <div>
+                      <Input
+                        label="유입경로"
+                        value={value.inflow}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                          setValue({ ...value, inflow: e.target.value })
+                        }
+                      />
+                    </div>
+                  </>
+                )}
                 <hr />
                 <div className="flex flex-col space-y-2">
                   <div className="flex items-center">
