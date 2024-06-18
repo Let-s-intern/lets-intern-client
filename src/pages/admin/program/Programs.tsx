@@ -12,84 +12,24 @@ import ActionButton from '../../../components/admin/ui/button/ActionButton';
 import AdminPagination from '../../../components/admin/ui/pagination/AdminPagination';
 import axios from '../../../utils/axios';
 
-export interface ProgramType {
-  programInfo: {
-    id: number;
-    title: string;
-    programType: string;
-    isVisible: boolean;
-    currentCount: number;
-    participationCount: number;
-    deadline: string;
-    startDate: string;
-    endDate: string;
-    zoomLink: string;
-    zoomPassword: string;
-    programStatusType: string;
-  };
-  classificationList: {
-    programClassification: string;
-  }[];
-}
-
 const Programs = () => {
   const [searchParams] = useSearchParams();
-  const [programList, setProgramList] = useState<ProgramType[]>([]);
-  const [error, setError] = useState<unknown>(null);
-  const [maxPage, setMaxPage] = useState(1);
 
   const sizePerPage = 10;
   const currentPage = searchParams.get('page') || 1;
 
-  const getProgramList = useQuery({
+  const { data, isLoading, error } = useQuery({
     queryKey: ['program', 'admin', { page: currentPage, size: sizePerPage }],
     queryFn: async () => {
-      try {
-        const res = await axios.get('/program/admin', {
-          params: { page: currentPage, size: sizePerPage },
-        });
-        setProgramList(res.data.data.programList);
-        setMaxPage(res.data.data.pageInfo.totalPages);
-        return res.data;
-      } catch (error) {
-        setError(error);
-        return null;
-      }
+      const res = await axios.get('/program/admin', {
+        params: { page: currentPage, size: sizePerPage },
+      });
+      return res.data;
     },
   });
 
-  const fetchEditProgramVisible = (programId: number, visible: boolean) => {
-    axios
-      .patch(`/program/${programId}`, {
-        isVisible: !visible,
-      })
-      .then(() => {
-        const newProgramList: any = programList.map((program: any) => {
-          if (program.id === programId) {
-            return {
-              ...program,
-              isVisible: !visible,
-              isApproved: !visible,
-            };
-          }
-          return program;
-        });
-        setProgramList(newProgramList);
-      })
-      .catch((err) => {
-        setError(err);
-      });
-  };
-
-  const loading = getProgramList.isLoading;
-
-  if (loading) {
-    return <div className="p-8"></div>;
-  }
-
-  if (error) {
-    return <div className="p-8">에러 발생</div>;
-  }
+  const programList = data?.data?.programList || [];
+  const maxPage = data?.data?.pageInfo?.totalPages || 1;
 
   return (
     <div className="p-8">
@@ -100,14 +40,24 @@ const Programs = () => {
         </ActionButton>
       </Header>
       <main>
-        <Table>
-          <TableHead />
-          <TableBody programList={programList} />
-        </Table>
-        {programList.length > 0 && (
-          <div className="mt-4">
-            <AdminPagination maxPage={maxPage} />
-          </div>
+        {isLoading ? (
+          <div className="py-4 text-center">로딩 중...</div>
+        ) : error ? (
+          <div className="py-4 text-center">에러 발생</div>
+        ) : programList.length === 0 ? (
+          <div className="py-4 text-center">프로그램이 없습니다.</div>
+        ) : (
+          <>
+            <Table>
+              <TableHead />
+              <TableBody programList={programList} />
+            </Table>
+            {programList.length > 0 && (
+              <div className="mt-4">
+                <AdminPagination maxPage={maxPage} />
+              </div>
+            )}
+          </>
         )}
       </main>
     </div>

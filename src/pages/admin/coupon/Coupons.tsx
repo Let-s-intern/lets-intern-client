@@ -22,20 +22,20 @@ interface Coupon {
 const Coupons = () => {
   const queryClient = useQueryClient();
 
-  const [couponList, setCouponList] = useState<Coupon[]>([]);
   const [isDeleteModalShown, setIsDeleteModalShown] = useState(false);
   const [couponIdForDelete, setCouponIdForDelete] = useState<number | null>(
     null,
   );
 
-  useQuery({
+  const { data, isLoading, error } = useQuery({
     queryKey: ['coupon', 'admin'],
     queryFn: async () => {
       const res = await axios.get('/coupon/admin');
-      setCouponList(res.data.data.couponList);
       return res.data;
     },
   });
+
+  const couponList: Coupon[] = data?.data.couponList;
 
   const deleteCoupon = useMutation({
     mutationFn: async (couponId: number) => {
@@ -126,37 +126,44 @@ const Coupons = () => {
               관리
             </div>
           </div>
-          <div className="mb-16 mt-3 flex flex-col gap-2">
-            {couponList.map((coupon) => (
-              <div
-                key={coupon.id}
-                className="flex rounded-md border border-neutral-200"
-              >
+          {isLoading ? (
+            <div className="py-6 text-center">로딩 중...</div>
+          ) : error ? (
+            <div className="py-6 text-center">에러 발생</div>
+          ) : couponList.length === 0 ? (
+            <div className="py-6 text-center">쿠폰이 없습니다.</div>
+          ) : (
+            <div className="mb-16 mt-3 flex flex-col gap-2">
+              {couponList.map((coupon) => (
                 <div
-                  className={clsx(
-                    'flex items-center justify-center py-4 text-sm text-zinc-600',
-                    couponCellWidth.couponType,
-                  )}
+                  key={coupon.id}
+                  className="flex rounded-md border border-neutral-200"
                 >
-                  {couponTypeToText[coupon.couponType]}
-                </div>
-                <div
-                  className={clsx(
-                    'flex items-center justify-center py-4 text-sm text-zinc-600',
-                    couponCellWidth.name,
-                  )}
-                >
-                  {coupon.name}
-                </div>
-                <div
-                  className={clsx(
-                    'flex items-center justify-center py-4 text-sm text-zinc-600',
-                    couponCellWidth.code,
-                  )}
-                >
-                  {coupon.code}
-                </div>
-                {/* <div
+                  <div
+                    className={clsx(
+                      'flex items-center justify-center py-4 text-sm text-zinc-600',
+                      couponCellWidth.couponType,
+                    )}
+                  >
+                    {couponTypeToText[coupon.couponType]}
+                  </div>
+                  <div
+                    className={clsx(
+                      'flex items-center justify-center py-4 text-sm text-zinc-600',
+                      couponCellWidth.name,
+                    )}
+                  >
+                    {coupon.name}
+                  </div>
+                  <div
+                    className={clsx(
+                      'flex items-center justify-center py-4 text-sm text-zinc-600',
+                      couponCellWidth.code,
+                    )}
+                  >
+                    {coupon.code}
+                  </div>
+                  {/* <div
             className={clsx(
               'flex items-center justify-center py-4 text-sm text-zinc-600',
               couponCellWidth.createdDate,
@@ -164,39 +171,40 @@ const Coupons = () => {
           >
             {coupon.createDate}
           </div> */}
-                <div
-                  className={clsx(
-                    'flex items-center justify-center py-4 text-sm text-zinc-600',
-                    couponCellWidth.validPeriod,
-                  )}
-                >
-                  {dayjs(coupon.startDate).format('YYYY년 MM월 DD일')} ~{' '}
-                  {dayjs(coupon.endDate).format('YYYY년 MM월 DD일')}
-                </div>
-                <div
-                  className={clsx(
-                    'flex items-center justify-center py-4 text-sm text-zinc-600',
-                    couponCellWidth.management,
-                  )}
-                >
-                  <div className="flex items-center gap-4">
-                    <Link to={`/admin/coupons/${coupon.id}/edit`}>
-                      <i>
-                        <img src="/icons/edit-icon.svg" alt="수정 아이콘" />
-                      </i>
-                    </Link>
-                    <button
-                      onClick={() => handleDeleteButtonClicked(coupon.id)}
-                    >
-                      <i className="text-[1.75rem]">
-                        <CiTrash />
-                      </i>
-                    </button>
+                  <div
+                    className={clsx(
+                      'flex items-center justify-center py-4 text-sm text-zinc-600',
+                      couponCellWidth.validPeriod,
+                    )}
+                  >
+                    {dayjs(coupon.startDate).format('YYYY년 MM월 DD일')} ~{' '}
+                    {dayjs(coupon.endDate).format('YYYY년 MM월 DD일')}
+                  </div>
+                  <div
+                    className={clsx(
+                      'flex items-center justify-center py-4 text-sm text-zinc-600',
+                      couponCellWidth.management,
+                    )}
+                  >
+                    <div className="flex items-center gap-4">
+                      <Link to={`/admin/coupons/${coupon.id}/edit`}>
+                        <i>
+                          <img src="/icons/edit-icon.svg" alt="수정 아이콘" />
+                        </i>
+                      </Link>
+                      <button
+                        onClick={() => handleDeleteButtonClicked(coupon.id)}
+                      >
+                        <i className="text-[1.75rem]">
+                          <CiTrash />
+                        </i>
+                      </button>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
         </div>
       </main>
       {isDeleteModalShown && (

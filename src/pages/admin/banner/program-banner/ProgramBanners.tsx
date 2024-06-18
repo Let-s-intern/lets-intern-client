@@ -24,18 +24,6 @@ type ProgramBannersTableKey =
 const PopUpBanners = () => {
   const queryClient = useQueryClient();
 
-  const [programBannerList, setProgramBannerList] = useState<
-    {
-      id: number;
-      title: string;
-      link: string;
-      startDate: string;
-      endDate: string;
-      isValid: boolean;
-      isVisible: boolean;
-      imgUrl: string;
-    }[]
-  >([]);
   const [isDeleteModalShown, setIsDeleteModalShown] = useState<boolean>(false);
   const [bannerIdForDeleting, setBannerIdForDeleting] = useState<number>();
 
@@ -63,7 +51,7 @@ const PopUpBanners = () => {
       },
     };
 
-  useQuery({
+  const { data, isLoading, error } = useQuery({
     queryKey: [
       'banner',
       'admin',
@@ -71,16 +59,24 @@ const PopUpBanners = () => {
         type: 'PROGRAM',
       },
     ],
-    queryFn: async () => {
-      const res = await axios('/banner/admin', {
-        params: {
-          type: 'PROGRAM',
-        },
+    queryFn: async ({ queryKey }) => {
+      const res = await axios(`/${queryKey[0]}/${queryKey[1]}`, {
+        params: queryKey[2],
       });
-      setProgramBannerList(res.data.data.bannerList);
       return res.data;
     },
   });
+
+  const programBannerList: {
+    id: number;
+    title: string;
+    link: string;
+    startDate: string;
+    endDate: string;
+    isValid: boolean;
+    isVisible: boolean;
+    imgUrl: string;
+  }[] = data?.data?.bannerList || [];
 
   const deleteProgramBanner = useMutation({
     mutationFn: async (bannerId: number) => {
@@ -141,49 +137,57 @@ const PopUpBanners = () => {
         columnMetaData={columnMetaData}
         minWidth="60rem"
       >
-        {programBannerList.map((banner) => (
-          <TableRow key={banner.id} minWidth="60rem">
-            <TableCell cellWidth={columnMetaData.title.cellWidth}>
-              {banner.title}
-            </TableCell>
-            <TableCell cellWidth={columnMetaData.link.cellWidth} textEllipsis>
-              <Link
-                to={banner.link}
-                target="_blank"
-                rel="noopenner noreferrer"
-                className="hover:underline"
-              >
-                {banner.link}
-              </Link>
-            </TableCell>
-            <TableCell cellWidth={columnMetaData.visible.cellWidth}>
-              <Checkbox
-                checked={banner.isVisible}
-                onChange={() =>
-                  handleVisibleCheckboxClicked(banner.id, !banner.isVisible)
-                }
-              />
-            </TableCell>
-            <TableCell cellWidth={columnMetaData.visiblePeriod.cellWidth}>
-              {dayjs(banner.startDate).format('YYYY년 MM월 DD일')} ~{' '}
-              {dayjs(banner.endDate).format('YYYY년 MM월 DD일')}
-            </TableCell>
-            <TableCell cellWidth={columnMetaData.management.cellWidth}>
-              <TableManageContent>
-                <Link to={`/admin/banner/program-banners/${banner.id}/edit`}>
-                  <i>
-                    <img src="/icons/edit-icon.svg" alt="수정 아이콘" />
-                  </i>
+        {isLoading ? (
+          <div className="py-6 text-center">로딩 중...</div>
+        ) : error ? (
+          <div className="py-6 text-center">에러 발생</div>
+        ) : programBannerList.length === 0 ? (
+          <div className="py-6 text-center">프로그램 배너가 없습니다.</div>
+        ) : (
+          programBannerList.map((banner) => (
+            <TableRow key={banner.id} minWidth="60rem">
+              <TableCell cellWidth={columnMetaData.title.cellWidth}>
+                {banner.title}
+              </TableCell>
+              <TableCell cellWidth={columnMetaData.link.cellWidth} textEllipsis>
+                <Link
+                  to={banner.link}
+                  target="_blank"
+                  rel="noopenner noreferrer"
+                  className="hover:underline"
+                >
+                  {banner.link}
                 </Link>
-                <button onClick={() => handleDeleteButtonClicked(banner.id)}>
-                  <i className="text-[1.75rem]">
-                    <CiTrash />
-                  </i>
-                </button>
-              </TableManageContent>
-            </TableCell>
-          </TableRow>
-        ))}
+              </TableCell>
+              <TableCell cellWidth={columnMetaData.visible.cellWidth}>
+                <Checkbox
+                  checked={banner.isVisible}
+                  onChange={() =>
+                    handleVisibleCheckboxClicked(banner.id, !banner.isVisible)
+                  }
+                />
+              </TableCell>
+              <TableCell cellWidth={columnMetaData.visiblePeriod.cellWidth}>
+                {dayjs(banner.startDate).format('YYYY년 MM월 DD일')} ~{' '}
+                {dayjs(banner.endDate).format('YYYY년 MM월 DD일')}
+              </TableCell>
+              <TableCell cellWidth={columnMetaData.management.cellWidth}>
+                <TableManageContent>
+                  <Link to={`/admin/banner/program-banners/${banner.id}/edit`}>
+                    <i>
+                      <img src="/icons/edit-icon.svg" alt="수정 아이콘" />
+                    </i>
+                  </Link>
+                  <button onClick={() => handleDeleteButtonClicked(banner.id)}>
+                    <i className="text-[1.75rem]">
+                      <CiTrash />
+                    </i>
+                  </button>
+                </TableManageContent>
+              </TableCell>
+            </TableRow>
+          ))
+        )}
       </TableTemplate>
       {isDeleteModalShown && (
         <AlertModal

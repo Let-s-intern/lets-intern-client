@@ -17,7 +17,6 @@ const TopBarBannerEdit = () => {
     link: '',
     startDate: '',
     endDate: '',
-    imgUrl: '',
     contents: '',
     textColorCode: '#000000',
     colorCode: '#000000',
@@ -29,20 +28,18 @@ const TopBarBannerEdit = () => {
     queryKey: [
       'banner',
       'admin',
+      bannerId,
       {
         type: 'LINE',
       },
     ],
     queryFn: async () => {
-      const res = await axios.get('/banner/admin', {
+      const res = await axios.get(`/banner/admin/${bannerId}`, {
         params: {
           type: 'LINE',
         },
       });
-      const topBanner = res.data.data.bannerList.find(
-        (banner: { id: number }) => banner.id === bannerId,
-      );
-      setValue(topBanner);
+      setValue(res.data.data.bannerAdminDetailVo);
       return res.data;
     },
     refetchOnWindowFocus: false,

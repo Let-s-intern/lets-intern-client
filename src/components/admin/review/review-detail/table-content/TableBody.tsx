@@ -7,6 +7,7 @@ import axios from '../../../../../utils/axios';
 
 export interface DetailTableBodyProps {
   reviewList: {
+    id: number;
     name: string;
     nps: number;
     npsAns: string;
@@ -14,10 +15,12 @@ export interface DetailTableBodyProps {
     content: string;
     score: number;
     createdDate: string;
+    isVisible: boolean;
   }[];
+  programType: string;
 }
 
-const TableBody = ({ reviewList }: DetailTableBodyProps) => {
+const TableBody = ({ reviewList, programType }: DetailTableBodyProps) => {
   const queryClient = useQueryClient();
 
   const editReviewVisible = useMutation({
@@ -34,7 +37,9 @@ const TableBody = ({ reviewList }: DetailTableBodyProps) => {
       return res.data;
     },
     onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: ['review'] });
+      await queryClient.invalidateQueries({
+        queryKey: [programType.toLowerCase()],
+      });
     },
   });
 
@@ -58,8 +63,10 @@ const TableBody = ({ reviewList }: DetailTableBodyProps) => {
           <TD>{dayjs(review.createdDate).format('YYYY년 M월 D일')}</TD>
           <TD>
             <Checkbox
-              checked={true}
-              onChange={() => handleVisibleCheckboxClicked(1, false)}
+              checked={review.isVisible}
+              onChange={() =>
+                handleVisibleCheckboxClicked(review.id, !review.isVisible)
+              }
             />
           </TD>
         </tr>

@@ -13,16 +13,20 @@ interface ScrollableDiv extends HTMLDivElement {
 
 interface PayContentProps {
   payInfo: PayInfo;
+  setPayInfo: (payInfo: (prevPayInfo: PayInfo) => PayInfo) => void;
   handleApplyButtonClick: () => void;
   contentIndex: number;
   setContentIndex: (contentIndex: number) => void;
+  programType: string;
 }
 
 const PayContent = ({
   payInfo,
+  setPayInfo,
   handleApplyButtonClick,
   contentIndex,
   setContentIndex,
+  programType
 }: PayContentProps) => {
   const scrollableBoxRef = useRef<ScrollableDiv>(null);
 
@@ -55,11 +59,19 @@ const PayContent = ({
     };
   }, [scrollableBoxRef]);
 
+  const totalPrice = () => {
+    let totalDiscount = payInfo.discount + payInfo.couponPrice;
+    if (payInfo.price < totalDiscount)
+      return 0;
+    else
+      return payInfo.price - totalDiscount;
+  }
+
   return (
     <div className="flex flex-col gap-6">
       <ScrollableBox
         ref={scrollableBoxRef}
-        className="flex max-h-[24.5rem] flex-col gap-6"
+        className="flex h-full flex-col gap-6"
       >
         {payInfo.challengePriceType !== 'FREE' &&
           payInfo.livePriceType !== 'FREE' && (
@@ -67,7 +79,7 @@ const PayContent = ({
               <h2 className="font-medium">결제 정보</h2>
               <PayInfoSection payInfo={payInfo} />
               <hr className="bg-neutral-85" />
-              <CouponSection />
+              <CouponSection setPayInfo={setPayInfo} programType={programType} />
               <hr className="bg-neutral-85" />
               <PriceSection payInfo={payInfo} />
             </>
@@ -83,10 +95,12 @@ const PayContent = ({
           </span>
         </button>
         <button
-          className="flex w-full justify-center rounded-md bg-primary px-6 py-3 text-lg font-medium text-neutral-100"
-          onClick={handleApplyButtonClick}
+          className="text-1.125-medium flex w-full justify-center rounded-md bg-primary px-6 py-3 font-medium text-neutral-100"
+          onClick={() => {
+            handleApplyButtonClick();
+          }}
         >
-          신청하기 {(payInfo.price - payInfo.discount).toLocaleString()}원
+          신청하기 {(totalPrice()).toLocaleString()}원
         </button>
       </div>
     </div>

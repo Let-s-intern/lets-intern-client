@@ -7,37 +7,32 @@ import Header from '../../../components/admin/ui/header/Header';
 import Heading from '../../../components/admin/ui/heading/Heading';
 import Table from '../../../components/admin/ui/table/regacy/Table';
 import Filter from '../../../components/admin/user/users/filter/Filter';
-import TableBody, {
-  UserTableBodyProps,
-} from '../../../components/admin/user/users/table-content/TableBody';
+import TableBody from '../../../components/admin/user/users/table-content/TableBody';
 import TableHead from '../../../components/admin/user/users/table-content/TableHead';
 import AdminPagination from '../../../components/admin/ui/pagination/AdminPagination';
 
 const Users = () => {
   const [searchParams] = useSearchParams();
-  const [userList, setUserList] = useState<UserTableBodyProps['userList']>([]);
   const [searchValues, setSearchValues] = useState<any>({});
-  const [maxPage, setMaxPage] = useState(1);
-
-  const sizePerPage = 10;
 
   const params = {
     page: searchParams.get('page') || '1',
-    size: sizePerPage,
+    size: 10,
     ...searchValues,
   };
 
-  useQuery({
+  const { data, isLoading, error } = useQuery({
     queryKey: ['user', 'admin', params],
     queryFn: async () => {
       const res = await axios.get('/user/admin', {
         params,
       });
-      setUserList(res.data.data.userAdminList);
-      setMaxPage(res.data.data.pageInfo.totalPages);
       return res.data;
     },
   });
+
+  const userList = data?.data?.userAdminList || [];
+  const maxPage = data?.data?.pageInfo?.totalPages || 1;
 
   return (
     <div className="p-8">
@@ -48,8 +43,12 @@ const Users = () => {
         <div className="mb-4">
           <Filter setSearchValues={setSearchValues} />
         </div>
-        {userList.length === 0 ? (
-          <div className="py-4 text-center">유저 정보가 없습니다.</div>
+        {isLoading ? (
+          <div className="py-4 text-center">로딩 중...</div>
+        ) : error ? (
+          <div className="py-4 text-center">에러 발생</div>
+        ) : userList.length === 0 ? (
+          <div className="py-4 text-center">유저가 없습니다.</div>
         ) : (
           <>
             <Table>

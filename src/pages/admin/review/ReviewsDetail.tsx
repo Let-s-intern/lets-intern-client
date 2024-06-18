@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useParams, useSearchParams } from 'react-router-dom';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 
 import axios from '../../../utils/axios';
 import Table from '../../../components/admin/ui/table/regacy/Table';
@@ -13,46 +13,44 @@ import AdminPagination from '../../../components/admin/ui/pagination/AdminPagina
 
 const ReviewsDetail = () => {
   const params = useParams();
-  const queryClient = useQueryClient();
-
   const [searchParams] = useSearchParams();
-  const [reviewList, setReviewList] = useState<
-    DetailTableBodyProps['reviewList']
-  >([]);
-  const [program, setProgram] = useState<{ title: string }>();
-  const [maxPage, setMaxPage] = useState<number>(0);
 
-  const progarmType = searchParams.get('type');
+  const programType = searchParams.get('type') || '';
 
-  useQuery({
+  const { data, isLoading, error } = useQuery({
     queryKey: [
-      progarmType?.toLowerCase(),
+      programType.toLowerCase(),
       params.programId,
+      'reviews',
       {
         page: searchParams.get('page') || 1,
         size: 10,
       },
     ],
     queryFn: async ({ queryKey }) => {
-      const res = await axios.get(`/${queryKey[0]}/${queryKey[1]}/reviews`, {
-        params: queryKey[2],
-      });
-      setReviewList(res.data.data.reviewList);
-      setMaxPage(res.data.data.pageInfo.totalPages);
+      const res = await axios.get(
+        `/${queryKey[0]}/${queryKey[1]}/${queryKey[2]}`,
+      );
       return res.data;
     },
   });
 
-  useQuery({
-    queryKey: [progarmType?.toLowerCase(), params.programId, 'title'],
+  const reviewList = data?.data?.reviewList || [];
+  const maxPage = data?.data?.pageInfo?.totalPages || 1;
+
+  const { data: programData } = useQuery({
+    queryKey: [programType.toLowerCase(), params.programId, 'title'],
     queryFn: async ({ queryKey }) => {
       const res = await axios.get(
         `/${queryKey[0]}/${queryKey[1]}/${queryKey[2]}`,
       );
-      setProgram({ title: res.data.data.title });
       return res.data;
     },
   });
+
+  const program = {
+    title: programData?.data?.title || '',
+  };
 
   return (
     <div className="p-8">
@@ -60,12 +58,22 @@ const ReviewsDetail = () => {
         <Heading>후기 목록 {program && <>- {program.title}</>}</Heading>
       </header>
       <main>
-        <Table>
-          <TableHead />
-          <TableBody reviewList={reviewList} />
-        </Table>
-        {reviewList.length > 0 && (
-          <AdminPagination className="mt-4" maxPage={maxPage} />
+        {isLoading ? (
+          <div className="py-4 text-center">로딩 중...</div>
+        ) : error ? (
+          <div className="py-4 text-center">에러 발생</div>
+        ) : reviewList.length === 0 ? (
+          <div className="py-4 text-center">후기가 없습니다.</div>
+        ) : (
+          <>
+            <Table>
+              <TableHead />
+              <TableBody reviewList={reviewList} programType={programType} />
+            </Table>
+            {reviewList.length > 0 && (
+              <AdminPagination className="mt-4" maxPage={maxPage} />
+            )}
+          </>
         )}
       </main>
     </div>

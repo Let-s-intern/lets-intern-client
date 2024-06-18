@@ -1,14 +1,10 @@
-import { useEffect, useState } from 'react';
-import { FormControl, InputLabel, MenuItem, Select } from '@mui/material';
-import styled from 'styled-components';
+import dayjs from 'dayjs';
 
-import axios from '../../../../../utils/axios';
 import TD from '../../../ui/table/regacy/TD';
 import ActionButton from '../../../ui/button/ActionButton';
 import { convertTypeToBank } from '../../../../../utils/convertTypeToBank';
-import dayjs from 'dayjs';
 
-export interface UserTableBodyProps {
+interface TableBodyProps {
   userList: {
     id: number;
     name: string;
@@ -21,7 +17,7 @@ export interface UserTableBodyProps {
   }[];
 }
 
-const TableBody = ({ userList }: UserTableBodyProps) => {
+const TableBody = ({ userList }: TableBodyProps) => {
   return (
     <tbody>
       {userList.map((user) => (
