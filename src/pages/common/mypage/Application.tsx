@@ -45,7 +45,7 @@ const Application = () => {
   if (isLoading) return <></>;
 
   return (
-    <main className="flex flex-col gap-16 pb-20">
+    <main className="flex w-full flex-col gap-16 pb-20">
       <ApplySection applicationList={waitingApplicationList} />
       <ParticipateSection applicationList={inProgressApplicationList} />
       <CompleteSection applicationList={completedApplicationList} />
