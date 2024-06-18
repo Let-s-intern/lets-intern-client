@@ -70,17 +70,17 @@ const Programs = () => {
 
   const [filterClassification, classificationDispatch] = useReducer(
     filterClassificationReducer,
-    initialFilterClassification,
+    null,
     setFilterClassification,
   ); // 커리어 단계
   const [filterType, typeDispatch] = useReducer(
     filterTypeReducer,
-    initialFilterType,
+    null,
     setFilterType,
   ); // 프로그램
   const [filterStatus, statusDispatch] = useReducer(
     filterStatusReducer,
-    initialFilterStatus,
+    null,
     setFilterStatus,
   ); // 모집 현황
 
@@ -100,7 +100,7 @@ const Programs = () => {
     searchParams.getAll(PROGRAM_QUERY_KEY.STATUS).forEach((item) => {
       statusDispatch({ type: 'check', value: item });
     });
-  }, [searchParams, filterClassification, filterStatus, filterType]);
+  }, [searchParams]);
 
   const resetPageable = () => {
     setPageable(initialPageable);
@@ -108,7 +108,7 @@ const Programs = () => {
 
   // 파라미터 하나 삭제
   const deleteParam = (target: string, key: string) => {
-    const checkedList = searchParams.getAll(key);
+    const checkedList = [...searchParams.getAll(key)];
     searchParams.delete(key);
     checkedList.forEach((item) => {
       if (item !== target) searchParams.append(key, item);
@@ -121,10 +121,9 @@ const Programs = () => {
       switch (programType) {
         case PROGRAM_QUERY_KEY.CLASSIFICATION: {
           const filterKey = getKeyByValue(PROGRAM_FILTER_CLASSIFICATION, value);
-          const isChecked =
-            filterClassification[filterKey as filterClassificationkey];
           // 체크된 상태일 때
-          if (isChecked) {
+          if (filterClassification[filterKey as filterClassificationkey]) {
+            classificationDispatch({ type: 'uncheck', value: filterKey });
             deleteParam(filterKey as string, PROGRAM_QUERY_KEY.CLASSIFICATION);
           } else {
             // 체크가 안된 상태일 때
@@ -132,6 +131,7 @@ const Programs = () => {
               PROGRAM_QUERY_KEY.CLASSIFICATION,
               filterKey as string,
             );
+            classificationDispatch({ type: 'check', value: filterKey });
           }
           break;
         }
@@ -139,10 +139,14 @@ const Programs = () => {
         case PROGRAM_QUERY_KEY.TYPE: {
           const filterKey = getKeyByValue(PROGRAM_FILTER_TYPE, value);
           const isChecked = filterType[filterKey as filterTypekey];
+
           // 파라미터 설정
           searchParams.delete(PROGRAM_QUERY_KEY.TYPE);
-          if (!isChecked)
+          typeDispatch({ type: 'init' });
+          if (!isChecked) {
             searchParams.set(PROGRAM_QUERY_KEY.TYPE, filterKey as string);
+            typeDispatch({ type: 'check', value: filterKey });
+          }
           break;
         }
 
@@ -151,10 +155,12 @@ const Programs = () => {
           const isChecked = filterStatus[filterKey as filterStatuskey];
           // 체크된 상태일 때
           if (isChecked) {
+            statusDispatch({ type: 'uncheck', value: filterKey });
             deleteParam(filterKey as string, PROGRAM_QUERY_KEY.STATUS);
           } else {
             // 체크가 안된 상태일 때
             searchParams.append(PROGRAM_QUERY_KEY.STATUS, filterKey as string);
+            statusDispatch({ type: 'check', value: filterKey });
           }
           break;
         }
@@ -365,7 +371,7 @@ const Programs = () => {
           pageInfo={pageInfo}
           setPageable={setPageable}
         />
-        {!isFetching && <Banner />}
+        {/* {!isFetching && <Banner />} */}
       </main>
     </div>
   );
