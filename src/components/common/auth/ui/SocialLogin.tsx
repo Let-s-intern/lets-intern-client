@@ -17,7 +17,11 @@ const SocialLogin = ({ type }: SocialLoginProps) => {
         ? `?redirect=${searchParams.get('redirect')}`
         : ''
     }`;
-    const path = `https://letsintern.kr/oauth2/authorize/${
+
+    console.log('SearchParam: ', searchParams);
+    console.log(redirectPath);
+
+    const path = `https://letscareer-test.shop/oauth2/authorize/${
       socialType === 'KAKAO' ? 'kakao' : socialType === 'NAVER' && 'naver'
     }?redirect_uri=${redirectPath}`;
     window.location.href = path;
