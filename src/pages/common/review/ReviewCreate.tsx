@@ -65,8 +65,16 @@ const ReviewCreate = () => {
   };
 
   return (
-    <div className="fixed left-0 top-0 flex h-screen w-screen items-center justify-center bg-neutral-50">
-      <main className="mx-auto flex w-full max-w-3xl flex-col gap-16 bg-white pb-16 pt-8 md:w-16">
+    <div className="z-40 flex w-full flex-col items-center bg-neutral-0/50 md:fixed md:left-0 md:top-0 md:h-screen md:w-screen md:justify-center">
+      <main className="flex w-full max-w-3xl flex-col gap-16 bg-white md:relative md:max-h-[45rem] md:w-[40rem] md:overflow-y-scroll md:rounded-xl md:px-14 md:pb-6 md:pt-12">
+        <img
+          src="/icons/menu_close_md.svg"
+          alt="close"
+          className="absolute right-6 top-6 hidden cursor-pointer md:block"
+          onClick={() => {
+            navigate(-1);
+          }}
+        />
         <StarScoreSection starScore={starScore} setStarScore={setStarScore} />
         <TenScoreSection
           tenScore={tenScore}
@@ -80,6 +88,27 @@ const ReviewCreate = () => {
         <ConfirmSection onConfirm={handleConfirm} />
       </main>
     </div>
+    // <div className="fixed left-0 top-0 z-40 flex h-screen w-screen items-center justify-center bg-neutral-0/50">
+    //   <main className="mx-auto flex w-full max-w-3xl flex-col gap-16 bg-white md:relative md:max-h-[45rem] md:w-[40rem] md:overflow-y-scroll md:rounded-xl md:px-14 md:pb-6 md:pt-12">
+    //     <img
+    //       src="/icons/menu_close_md.svg"
+    //       alt="close"
+    //       className="absolute right-6 top-6 cursor-pointer"
+    //       onClick={() => {}}
+    //     />
+    //     <StarScoreSection starScore={starScore} setStarScore={setStarScore} />
+    //     <TenScoreSection
+    //       tenScore={tenScore}
+    //       setTenScore={setTenScore}
+    //       isYes={isYes}
+    //       setIsYes={setIsYes}
+    //       answer={answer}
+    //       setAnswer={setAnswer}
+    //     />
+    //     <TextAreaSection content={content} setContent={setContent} />
+    //     <ConfirmSection onConfirm={handleConfirm} />
+    //   </main>
+    // </div>
   );
 };
 
