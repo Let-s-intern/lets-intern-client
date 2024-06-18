@@ -22,7 +22,7 @@ const SocialLogin = ({ type }: SocialLoginProps) => {
     console.log(redirectPath);
 
     const path = `https://letscareer-test.shop/oauth2/authorize/${
-      socialType === 'KAKAO' ? 'kakao' : socialType === 'NAVER' && 'naver'
+      socialType === 'KAKAO' ? 'kakao' : 'naver'
     }?redirect_uri=${redirectPath}`;
     window.location.href = path;
   };
