@@ -23,10 +23,11 @@ const ApplicationCard = ({
 }: ApplicationCardProps) => {
   const formatDateString = (dateString: string) => {
     const date = new Date(dateString);
-    return `${date.getFullYear()}.${date
-      .getMonth()
-      .toString()
-      .padStart(2, '0')}.${date.getDate().toString().padStart(2, '0')}`;
+    const year = date.getFullYear().toString().slice(-2); // 두 자리 형식으로 연도 추출
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const day = date.getDate().toString().padStart(2, '0');
+
+    return `${year}.${month}.${day}`;
   };
 
   return (
@@ -46,6 +47,15 @@ const ApplicationCard = ({
             <span className="rounded-xs border border-primary bg-primary-20 px-2.5 py-0.5 text-xs font-medium text-primary-dark">
               모집 중
             </span>
+            {/* {showDeleteMenu && (
+              <DeleteMenu
+                className="hidden md:block"
+                application={application}
+              />
+            )} */}
+          </div>
+          <div className="flex justify-between">
+            <h2 className="font-semibold">{application.programTitle}</h2>
             {showDeleteMenu && (
               <DeleteMenu
                 className="hidden md:block"
@@ -53,14 +63,10 @@ const ApplicationCard = ({
               />
             )}
           </div>
-          <div className="flex justify-between">
-            <h2 className="font-semibold">{application.programTitle}</h2>
-            <DeleteMenu className="block md:hidden" application={application} />
-          </div>
           <p className="text-sm text-neutral-30">
-            2주동안 ~을 통해 경험정리 및 지원까지 한번에 최대글자수는
+            {application.programShortDesc}
           </p>
-          <div className="flex gap-1.5">
+          <div className="flex items-center gap-1.5 md:justify-end">
             <span className="text-xs text-neutral-0">진행기간</span>
             <span className="text-xs font-medium text-primary-dark">
               {formatDateString(application.programStartDate)} ~{' '}
