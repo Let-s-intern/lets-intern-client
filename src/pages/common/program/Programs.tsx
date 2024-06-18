@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useReducer, useState } from 'react';
+import { useCallback, useReducer, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import clsx from 'clsx';
 import { useSearchParams } from 'react-router-dom';
@@ -44,48 +44,57 @@ const Programs = () => {
   // 필터링 상태 관리
   const [searchParams, setSearchParams] = useSearchParams();
   const [isOpen, setIsOpen] = useState(false);
+
+  // 필터  초기화 (URL 기준 필터 설정)
+  const setFilterClassification = () => {
+    const initial = { ...initialFilterClassification };
+    searchParams.getAll(PROGRAM_QUERY_KEY.CLASSIFICATION).forEach((item) => {
+      initialFilterClassification[item as filterClassificationkey] = true;
+    });
+    return initial;
+  };
+  const setFilterType = () => {
+    const initial = { ...initialFilterType };
+    searchParams.getAll(PROGRAM_QUERY_KEY.TYPE).forEach((item) => {
+      initialFilterType[item as filterTypekey] = true;
+    });
+    return initial;
+  };
+  const setFilterStatus = () => {
+    const initial = { ...initialFilterStatus };
+    searchParams.getAll(PROGRAM_QUERY_KEY.STATUS).forEach((item) => {
+      initialFilterStatus[item as filterStatuskey] = true;
+    });
+    return initial;
+  };
+
   const [filterClassification, classificationDispatch] = useReducer(
     filterClassificationReducer,
     initialFilterClassification,
+    setFilterClassification,
   ); // 커리어 단계
   const [filterType, typeDispatch] = useReducer(
     filterTypeReducer,
     initialFilterType,
+    setFilterType,
   ); // 프로그램
   const [filterStatus, statusDispatch] = useReducer(
     filterStatusReducer,
     initialFilterStatus,
+    setFilterStatus,
   ); // 모집 현황
-
-  // 필터에 따라 검색 파라미터 설정
-  useEffect(() => {
-    searchParams.delete(PROGRAM_QUERY_KEY.CLASSIFICATION);
-    Object.entries(filterClassification).forEach(([key, value]) => {
-      if (value === true)
-        searchParams.append(PROGRAM_QUERY_KEY.CLASSIFICATION, key);
-    });
-    setSearchParams(searchParams);
-  }, [filterClassification]);
-  useEffect(() => {
-    searchParams.delete(PROGRAM_QUERY_KEY.TYPE);
-    for (const [key, value] of Object.entries(filterType)) {
-      if (value === true) {
-        searchParams.set(PROGRAM_QUERY_KEY.TYPE, key);
-        break;
-      }
-    }
-    setSearchParams(searchParams);
-  }, [filterType]);
-  useEffect(() => {
-    searchParams.delete(PROGRAM_QUERY_KEY.STATUS);
-    Object.entries(filterStatus).forEach(([key, value]) => {
-      if (value === true) searchParams.append(PROGRAM_QUERY_KEY.STATUS, key);
-    });
-    setSearchParams(searchParams);
-  }, [filterStatus]);
 
   const resetPageable = () => {
     setPageable(initialPageable);
+  };
+
+  // 파라미터 하나 삭제
+  const deleteParam = (target: string, key: string) => {
+    const checkedList = searchParams.getAll(key);
+    searchParams.delete(key);
+    checkedList.forEach((item) => {
+      if (item !== target) searchParams.append(key, item);
+    });
   };
 
   // 필터링 체크박스 클릭 이벤트
@@ -94,15 +103,34 @@ const Programs = () => {
       switch (programType) {
         case PROGRAM_QUERY_KEY.CLASSIFICATION: {
           const filterKey = getKeyByValue(PROGRAM_FILTER_CLASSIFICATION, value);
+          const isChecked =
+            filterClassification[filterKey as filterClassificationkey];
+          // 체크된 상태일 때
+          if (isChecked) {
+            deleteParam(filterKey as string, PROGRAM_QUERY_KEY.CLASSIFICATION);
+          } else {
+            // 체크가 안된 상태일 때
+            searchParams.append(
+              PROGRAM_QUERY_KEY.CLASSIFICATION,
+              filterKey as string,
+            );
+          }
           classificationDispatch({
             type: 'toggle',
             value: filterKey,
           });
           break;
         }
+
         case PROGRAM_QUERY_KEY.TYPE: {
           const filterKey = getKeyByValue(PROGRAM_FILTER_TYPE, value);
           type keyType = keyof typeof filterType;
+          const isChecked = filterType[filterKey as filterTypekey];
+          // 파라미터 설정
+          searchParams.delete(PROGRAM_QUERY_KEY.TYPE);
+          if (!isChecked)
+            searchParams.set(PROGRAM_QUERY_KEY.TYPE, filterKey as string);
+          // 체크박스 설정
           typeDispatch({ type: 'init' });
           typeDispatch({
             type: filterType[filterKey as keyType] ? 'uncheck' : 'check',
@@ -110,8 +138,18 @@ const Programs = () => {
           });
           break;
         }
+
         case PROGRAM_QUERY_KEY.STATUS: {
           const filterKey = getKeyByValue(PROGRAM_FILTER_STATUS, value);
+          const isChecked = filterStatus[filterKey as filterStatuskey];
+          console.log(isChecked, filterKey);
+          // 체크된 상태일 때
+          if (isChecked) {
+            deleteParam(filterKey as string, PROGRAM_QUERY_KEY.STATUS);
+          } else {
+            // 체크가 안된 상태일 때
+            searchParams.append(PROGRAM_QUERY_KEY.STATUS, filterKey as string);
+          }
           statusDispatch({
             type: 'toggle',
             value: filterKey,
@@ -120,6 +158,7 @@ const Programs = () => {
         }
       }
       resetPageable();
+      setSearchParams(searchParams);
     },
     [filterType, filterClassification, filterStatus],
   );
@@ -139,27 +178,31 @@ const Programs = () => {
     switch (key) {
       case PROGRAM_QUERY_KEY.CLASSIFICATION: {
         const filterKey = getKeyByValue(PROGRAM_FILTER_CLASSIFICATION, value);
+        deleteParam(filterKey as string, PROGRAM_QUERY_KEY.CLASSIFICATION);
         classificationDispatch({ type: 'uncheck', value: filterKey });
         break;
       }
       case PROGRAM_QUERY_KEY.TYPE: {
         const filterKey = getKeyByValue(PROGRAM_FILTER_TYPE, value);
+        deleteParam(filterKey as string, PROGRAM_QUERY_KEY.TYPE);
         typeDispatch({ type: 'uncheck', value: filterKey });
         break;
       }
       case PROGRAM_QUERY_KEY.STATUS: {
         const filterKey = getKeyByValue(PROGRAM_FILTER_STATUS, value);
+        deleteParam(filterKey as string, PROGRAM_QUERY_KEY.STATUS);
         statusDispatch({ type: 'uncheck', value: filterKey });
         break;
       }
     }
+    setSearchParams(searchParams);
   }, []);
 
   // 페이지 상태 관리
   const [pageable, setPageable] = useState(initialPageable);
   const [pageInfo, setPageInfo] = useState(initialPageInfo);
 
-  // 프로그램 리스트 싱태 관리
+  // 프로그램 리스트 상태 관리
   const [programList, setProgramList] = useState<IProgram[]>([]);
 
   // 프로그램 리스트 가져오기
