@@ -1,4 +1,4 @@
-import { useCallback, useReducer, useState } from 'react';
+import { useCallback, useEffect, useReducer, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import clsx from 'clsx';
 import { useSearchParams } from 'react-router-dom';
@@ -49,21 +49,21 @@ const Programs = () => {
   const setFilterClassification = () => {
     const initial = { ...initialFilterClassification };
     searchParams.getAll(PROGRAM_QUERY_KEY.CLASSIFICATION).forEach((item) => {
-      initialFilterClassification[item as filterClassificationkey] = true;
+      initial[item as filterClassificationkey] = true;
     });
     return initial;
   };
   const setFilterType = () => {
     const initial = { ...initialFilterType };
     searchParams.getAll(PROGRAM_QUERY_KEY.TYPE).forEach((item) => {
-      initialFilterType[item as filterTypekey] = true;
+      initial[item as filterTypekey] = true;
     });
     return initial;
   };
   const setFilterStatus = () => {
     const initial = { ...initialFilterStatus };
     searchParams.getAll(PROGRAM_QUERY_KEY.STATUS).forEach((item) => {
-      initialFilterStatus[item as filterStatuskey] = true;
+      initial[item as filterStatuskey] = true;
     });
     return initial;
   };
@@ -83,6 +83,24 @@ const Programs = () => {
     initialFilterStatus,
     setFilterStatus,
   ); // 모집 현황
+
+  useEffect(() => {
+    // 필터 초기화
+    typeDispatch({ type: 'init' });
+    classificationDispatch({ type: 'init' });
+    statusDispatch({ type: 'init' });
+
+    // URL 파라미터로 필터 설정
+    searchParams.getAll(PROGRAM_QUERY_KEY.CLASSIFICATION).forEach((item) => {
+      classificationDispatch({ type: 'check', value: item });
+    });
+    searchParams.getAll(PROGRAM_QUERY_KEY.TYPE).forEach((item) => {
+      typeDispatch({ type: 'check', value: item });
+    });
+    searchParams.getAll(PROGRAM_QUERY_KEY.STATUS).forEach((item) => {
+      statusDispatch({ type: 'check', value: item });
+    });
+  }, [searchParams, filterClassification, filterStatus, filterType]);
 
   const resetPageable = () => {
     setPageable(initialPageable);
@@ -115,34 +133,22 @@ const Programs = () => {
               filterKey as string,
             );
           }
-          classificationDispatch({
-            type: 'toggle',
-            value: filterKey,
-          });
           break;
         }
 
         case PROGRAM_QUERY_KEY.TYPE: {
           const filterKey = getKeyByValue(PROGRAM_FILTER_TYPE, value);
-          type keyType = keyof typeof filterType;
           const isChecked = filterType[filterKey as filterTypekey];
           // 파라미터 설정
           searchParams.delete(PROGRAM_QUERY_KEY.TYPE);
           if (!isChecked)
             searchParams.set(PROGRAM_QUERY_KEY.TYPE, filterKey as string);
-          // 체크박스 설정
-          typeDispatch({ type: 'init' });
-          typeDispatch({
-            type: filterType[filterKey as keyType] ? 'uncheck' : 'check',
-            value: filterKey,
-          });
           break;
         }
 
         case PROGRAM_QUERY_KEY.STATUS: {
           const filterKey = getKeyByValue(PROGRAM_FILTER_STATUS, value);
           const isChecked = filterStatus[filterKey as filterStatuskey];
-          console.log(isChecked, filterKey);
           // 체크된 상태일 때
           if (isChecked) {
             deleteParam(filterKey as string, PROGRAM_QUERY_KEY.STATUS);
@@ -150,17 +156,13 @@ const Programs = () => {
             // 체크가 안된 상태일 때
             searchParams.append(PROGRAM_QUERY_KEY.STATUS, filterKey as string);
           }
-          statusDispatch({
-            type: 'toggle',
-            value: filterKey,
-          });
           break;
         }
       }
       resetPageable();
       setSearchParams(searchParams);
     },
-    [filterType, filterClassification, filterStatus],
+    [filterClassification, filterStatus, filterType],
   );
 
   // 필터링 초기화

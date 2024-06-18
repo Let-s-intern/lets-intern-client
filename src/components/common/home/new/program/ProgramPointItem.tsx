@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 
-import { PROGRAM_CLASSIFICATION } from '../../../../../utils/programConst';
+import { PROGRAM_CLASSIFICATION_KEY } from '../../../../../utils/programConst';
 
 const PROGRAM = {
   TITLE_LIST: ['합격 후', '성장 단계'],
@@ -10,7 +10,7 @@ const PROGRAM = {
 const ProgramPointItem = () => {
   return (
     <Link
-      to={`/program?classification=${PROGRAM_CLASSIFICATION.MEETING_PREPARATION}`}
+      to={`/program?classification=${PROGRAM_CLASSIFICATION_KEY.MEETING_PREPARATION}`}
     >
       <li className="flex h-[13.75rem] cursor-pointer flex-col justify-between rounded-lg bg-primary px-4 pb-6 pt-[3.75rem] md:h-80 md:pt-24 lg:h-[27.5rem] lg:pt-[12.7rem]">
         <h2 className="text-1.25-medium lg:text-1.5-medium text-center text-primary">

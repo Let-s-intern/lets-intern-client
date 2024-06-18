@@ -1,17 +1,15 @@
 import { Link } from 'react-router-dom';
 
 import { IProgramGridItem } from '../../../../../interfaces/Program.interface';
-import { PROGRAM_CLASSIFICATION } from '../../../../../utils/programConst';
 
 export interface ProgramGridItemProps {
   program: IProgramGridItem;
+  link: string;
 }
 
-const ProgramGridItem = ({ program }: ProgramGridItemProps) => {
+const ProgramGridItem = ({ program, link }: ProgramGridItemProps) => {
   return (
-    <Link
-      to={`/program?classification=${PROGRAM_CLASSIFICATION.MEETING_PREPARATION}`}
-    >
+    <Link to={link}>
       <li
         className={`flex h-[13.75rem] cursor-pointer flex-col justify-between rounded-lg md:h-80 lg:h-[27.5rem] ${program.bgColor} px-4 pb-6 pt-[3.75rem] md:pt-24 lg:pt-[12.7rem]`}
       >
