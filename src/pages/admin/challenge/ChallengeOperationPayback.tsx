@@ -123,45 +123,59 @@ function Toolbar({ onMakeRefundedClick }: ToolbarPropsOverrides) {
   const hasSelected = api.current.getSelectedRows().size !== 0;
 
   return (
-    <GridToolbarContainer>
-      <Button
-        onClick={() => {
-          api.current.exportDataAsCsv({
-            fileName: `페이백_${dayjs().format('YYYY-MM-DD')}`,
-          });
-        }}
-        variant="outlined"
-      >
-        데이터 추출
-      </Button>
-      <Button
-        onClick={() => {
-          onMakeRefundedClick?.(
-            api.current.getSelectedRows() as Map<number, Row>,
-          );
-        }}
-        disabled={!hasSelected}
-        variant="outlined"
-      >
-        환급 완료로 변경
-      </Button>
-      <Button
-        onClick={() => {
-          api.current.sortColumn('total', 'desc');
-        }}
-        variant="outlined"
-      >
-        점수 정렬
-      </Button>
-      <Button
-        onClick={() => {
-          api.current.sortColumn('name', 'asc');
-        }}
-        variant="outlined"
-      >
-        이름 정렬
-      </Button>
-    </GridToolbarContainer>
+    <div>
+      <p>운영진 점수와 환급여부 수정 가능합니다. 수정하려면 더블클릭 하세요</p>
+      <GridToolbarContainer>
+        <Button
+          onClick={() => {
+            api.current.exportDataAsCsv({
+              fileName: `페이백_${dayjs().format('YYYY-MM-DD')}`,
+              getRowsToExport(params) {
+                return params.apiRef.current
+                  .getAllRowIds()
+                  .map((id) => ({
+                    id,
+                    total: params.apiRef.current.getCellValue(id, 'total'),
+                  }))
+                  .filter((row) => row.total >= 80)
+                  .sort((a, b) => b.total - a.total)
+                  .map((row) => row.id);
+              },
+            });
+          }}
+          variant="outlined"
+        >
+          80점 이상 데이터 추출
+        </Button>
+        <Button
+          onClick={() => {
+            onMakeRefundedClick?.(
+              api.current.getSelectedRows() as Map<number, Row>,
+            );
+          }}
+          disabled={!hasSelected}
+          variant="outlined"
+        >
+          환급 완료로 변경
+        </Button>
+        <Button
+          onClick={() => {
+            api.current.sortColumn('total', 'desc');
+          }}
+          variant="outlined"
+        >
+          점수 정렬
+        </Button>
+        <Button
+          onClick={() => {
+            api.current.sortColumn('name', 'asc');
+          }}
+          variant="outlined"
+        >
+          이름 정렬
+        </Button>
+      </GridToolbarContainer>
+    </div>
   );
 }
 
