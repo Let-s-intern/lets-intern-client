@@ -14,7 +14,7 @@ const TabSection = ({ programId, programType }: TabSectionProps) => {
   const [tabIndex, setTabIndex] = useState<number>(0);
 
   return (
-    <section className="sticky top-[7rem] flex-1">
+    <section className="flex-1 bg-static-100">
       <TabBar tabIndex={tabIndex} setTabIndex={setTabIndex} />
       <div>
         {tabIndex === 0 && (

@@ -51,9 +51,7 @@ const CouponSection = ({ setPayInfo, programType }: CouponSectionProps) => {
         <button
           className="flex items-center justify-center rounded-sm bg-primary px-4 py-1.5 text-sm font-medium text-neutral-100"
           onClick={() => fetchCouponAvailability()}
-        >
-          쿠폰 등록
-        </button>
+        />
       </div>
     </div>
   );

@@ -1,13 +1,14 @@
-import { useState } from 'react';
+import { useReducer, useState } from 'react';
 
-import OverviewContent from '../apply/content/OverviewContent';
 import InputContent from '../apply/content/InputContent';
 import ChoicePayPlanContent from '../apply/content/ChoicePayPlanContent';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import axios from '../../../../../utils/axios';
 import { ProgramType } from '../../../../../pages/common/program/ProgramDetail';
 import PayContent from '../apply/content/PayContent';
 import CautionContent from '../apply/content/CautionContent';
+import drawerReducer from '../../../../../reducers/drawerReducer';
+import applyReducer from '../../../../../reducers/applyReducer';
 
 export interface ProgramDate {
   deadline: string;
@@ -26,10 +27,8 @@ export interface UserInfo {
 
 export interface PayInfo {
   priceId: number;
-  couponId: number;
   price: number;
   discount: number;
-  couponPrice: number;
   accountNumber: string;
   deadline: string;
   accountType: string;
@@ -37,21 +36,19 @@ export interface PayInfo {
   challengePriceType: string;
 }
 
-interface ApplySectionProps {
+interface MobileApplySectionProps {
   programType: ProgramType;
   programId: number;
-  programTitle: string;
   toggleApplyModal: () => void;
+  toggleDrawer: () => void;
 }
 
-const ApplySection = ({
+const MobileApplySection = ({
   programType,
   programId,
-  programTitle,
   toggleApplyModal,
-}: ApplySectionProps) => {
-  const queryClient = useQueryClient();
-
+  toggleDrawer,
+}: MobileApplySectionProps) => {
   const [contentIndex, setContentIndex] = useState(0);
   const [programDate, setProgramDate] = useState<ProgramDate>({
     deadline: '',
@@ -69,10 +66,8 @@ const ApplySection = ({
   const [priceId, setPriceId] = useState<number>(0);
   const [payInfo, setPayInfo] = useState<PayInfo>({
     priceId: 0,
-    couponId: 0,
     price: 0,
     discount: 0,
-    couponPrice: 0,
     accountNumber: '',
     deadline: '',
     accountType: '',
@@ -87,6 +82,7 @@ const ApplySection = ({
     queryFn: async () => {
       const res = await axios.get(`/${programType}/${programId}/application`);
       const data = res.data.data;
+      console.log(data);
       setProgramDate({
         deadline: data.deadline,
         startDate: data.startDate,
@@ -103,32 +99,10 @@ const ApplySection = ({
       setIsApplied(data.applied);
       if (programType === 'challenge') {
         setPriceId(data.priceList[0].priceId);
-        setPayInfo({
-          priceId: data.priceList[0].priceId,
-          couponId: 0,
-          price: data.priceList[0].price,
-          discount: data.priceList[0].discount,
-          couponPrice: 0,
-          accountNumber: data.priceList[0].accountNumber,
-          deadline: data.priceList[0].deadline,
-          accountType: data.priceList[0].accountType,
-          livePriceType: data.priceList[0].livePriceType,
-          challengePriceType: data.priceList[0].challengePriceType,
-        })
+        setPayInfo(data.priceList[0]);
       } else {
         setPriceId(data.price.priceId);
-        setPayInfo({
-          priceId: data.price.priceId,
-          couponId: 0,
-          price: data.price.price,
-          discount: data.price.discount,
-          couponPrice: 0,
-          accountNumber: data.price.accountNumber,
-          deadline: data.price.deadline,
-          accountType: data.price.accountType,
-          livePriceType: data.price.livePriceType,
-          challengePriceType: data.price.challengePriceType,
-        })
+        setPayInfo(data.price);
       }
       return res.data;
     },
@@ -141,7 +115,7 @@ const ApplySection = ({
         {
           paymentInfo: {
             priceId: priceId,
-            couponId: payInfo.couponId,
+            couponId: 0,
           },
           motivate: userInfo.motivate,
           question: userInfo.question,
@@ -154,38 +128,20 @@ const ApplySection = ({
       );
       return res.data;
     },
-    onSuccess: async () => {
-      await queryClient.invalidateQueries({
-        queryKey: [programType],
-      });
-      setContentIndex(0);
+    onSuccess: () => {
+      setContentIndex(1);
     },
   });
 
   const handleApplyButtonClick = () => {
     applyProgram.mutate();
+    toggleDrawer();
     toggleApplyModal();
   };
 
   return (
-    <section className="sticky top-[7rem] w-[22rem] rounded-lg px-5 py-6 shadow-03">
+    <section className="w-full">
       {contentIndex === 0 && (
-        <OverviewContent
-          contentIndex={contentIndex}
-          setContentIndex={setContentIndex}
-          programDate={programDate}
-          programType={programType}
-          programTitle={programTitle}
-          isApplied={isApplied}
-        />
-      )}
-      {contentIndex === 1 && (
-        <ChoicePayPlanContent
-          contentIndex={contentIndex}
-          setContentIndex={setContentIndex}
-        />
-      )}
-      {contentIndex === 2 && (
         <InputContent
           contentIndex={contentIndex}
           setContentIndex={setContentIndex}
@@ -194,7 +150,7 @@ const ApplySection = ({
           programType={programType}
         />
       )}
-      {contentIndex === 3 && (
+      {contentIndex === 1 && (
         <CautionContent
           contentIndex={contentIndex}
           setContentIndex={setContentIndex}
@@ -202,18 +158,16 @@ const ApplySection = ({
           setIsCautionChecked={setIsCautionChecked}
         />
       )}
-      {contentIndex === 4 && (
+      {contentIndex === 2 && (
         <PayContent
           payInfo={payInfo}
-          setPayInfo={setPayInfo}
           handleApplyButtonClick={handleApplyButtonClick}
           contentIndex={contentIndex}
           setContentIndex={setContentIndex}
-          programType={programType}
         />
       )}
     </section>
   );
 };
 
-export default ApplySection;
+export default MobileApplySection;

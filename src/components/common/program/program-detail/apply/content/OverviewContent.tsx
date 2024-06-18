@@ -43,6 +43,7 @@ const OverviewContent = ({
           onClick={handleNextButtonClick}
           disabled={isApplied}
         >
+          {/* 모집 전이면 사전알림신청 버튼 표시 */}
           {isApplied ? '신청 완료' : '신청하기'}
         </button>
       </div>
