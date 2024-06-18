@@ -33,7 +33,7 @@ const WaitingSection = ({ applicationList }: WaitingSectionProps) => {
                 key={application.id}
                 application={application}
                 hasReviewButton
-                reviewButton={{ text: '후기 작성하기' }}
+                reviewType="CREATE"
               />
             ))
         )}

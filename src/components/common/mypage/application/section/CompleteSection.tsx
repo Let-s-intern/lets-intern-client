@@ -24,7 +24,7 @@ const CompleteSection = ({ applicationList }: CompleteSectionProps) => {
               <ApplicationCard
                 hasReviewButton
                 grayscale
-                reviewButton={{ text: '후기 작성하기' }}
+                reviewType="CREATE"
                 application={application}
               />
             ))
