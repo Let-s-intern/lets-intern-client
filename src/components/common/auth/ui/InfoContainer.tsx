@@ -29,11 +29,6 @@ const InfoContainer = ({ isSocial }: { isSocial: boolean }) => {
   const [errorMessage, setErrorMessage] = useState('');
   const [successModalOpen, setSuccessModalOpen] = useState(false);
 
-  useEffect(() => {
-    console.log('현재 access : ', localStorage.getItem('access-token'));
-    console.log('현재 refresh : ', localStorage.getItem('refresh-token'));
-  }, []);
-
   const convertGradeToEng = (grade: number) => {
     switch (grade) {
       case 0:
@@ -244,7 +239,7 @@ const InfoContainer = ({ isSocial }: { isSocial: boolean }) => {
       {successModalOpen && (
         <AlertModal
           onConfirm={() => {
-            isSocial ? navigate('/') : navigate('/login');
+            navigate('/login');
           }}
           title="회원가입 완료"
           showCancel={false}

@@ -17,8 +17,10 @@ import SocialLogin from '../../../components/common/auth/ui/SocialLogin';
 import { AxiosError } from 'axios';
 import MarketingModal from '../../../components/common/auth/modal/MarketingModal';
 import InfoContainer from '../../../components/common/auth/ui/InfoContainer';
+import useAuthStore from '../../../store/useAuthStore';
 
 const SignUp = () => {
+  const { isLoggedIn } = useAuthStore();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const [isSocial, setIsSocial] = useState<boolean>(false);
@@ -119,15 +121,10 @@ const SignUp = () => {
   });
 
   useEffect(() => {
-    if (result) {
-      return;
-    }
-    const accessToken = localStorage.getItem('access-token');
-    const refreshToken = localStorage.getItem('refresh-token');
-    if (accessToken && refreshToken) {
+    if (isLoggedIn) {
       navigate('/');
     }
-  }, [navigate, result]);
+  }, [navigate, isLoggedIn]);
 
   const handleOnSubmit = (e: any) => {
     e.preventDefault();
