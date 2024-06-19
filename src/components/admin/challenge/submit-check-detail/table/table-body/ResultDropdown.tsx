@@ -2,18 +2,18 @@ import clsx from 'clsx';
 import { useState } from 'react';
 import { IoMdArrowDropdown } from 'react-icons/io';
 
-import { challengeSubmitDetailCellWidthList } from '../../../../../../utils/tableCellWidthList';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useAdminCurrentChallenge } from '../../../../../../context/CurrentAdminChallengeProvider';
+import { Attendance } from '../../../../../../schema';
 import axios from '../../../../../../utils/axios';
 import { attendanceResultToText } from '../../../../../../utils/convert';
-import { Attendance } from '../../../../../../schema';
+import { challengeSubmitDetailCellWidthList } from '../../../../../../utils/tableCellWidthList';
 
 interface Props {
   attendance: Attendance;
   attendanceResult: Attendance['result'];
   setAttendanceResult: (attendanceResult: Attendance['result']) => void;
   cellWidthListIndex: number;
-  // TODO: 삭제 검토해야 함
   setIsRefunded: (isRefunded: boolean) => void;
 }
 
@@ -43,13 +43,15 @@ const ResultDropdown = ({
   cellWidthListIndex,
   setIsRefunded,
 }: Props) => {
+  const queryClient = useQueryClient();
+  const { currentChallenge } = useAdminCurrentChallenge();
   const [isMenuShown, setIsMenuShown] = useState(false);
 
   const cellWidthList = challengeSubmitDetailCellWidthList;
 
   const editAttendanceStatus = useMutation({
     mutationFn: async (result: Attendance['result']) => {
-      const res = await axios.patch(`/attendance/admin/${attendance.id}`, {
+      const res = await axios.patch(`/attendance/${attendance.id}`, {
         result,
         // isRefunded:
         //   result === 'PASS' && attendanceResult !== 'PASS' ? false : true,
@@ -63,6 +65,9 @@ const ResultDropdown = ({
         result === 'PASS' && attendanceResult !== 'PASS' ? false : true,
       );
       setAttendanceResult(result);
+      queryClient.invalidateQueries({
+        queryKey: ['admin', 'challenge', currentChallenge?.id, 'attendances'],
+      });
     },
   });
 

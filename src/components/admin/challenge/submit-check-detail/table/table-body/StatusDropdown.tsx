@@ -1,21 +1,21 @@
+import { useMutation } from '@tanstack/react-query';
 import clsx from 'clsx';
 import { useState } from 'react';
 import { IoMdArrowDropdown } from 'react-icons/io';
-
-import { challengeSubmitDetailCellWidthList } from '../../../../../../utils/tableCellWidthList';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { Attendance } from '../../../../../../schema';
 import axios from '../../../../../../utils/axios';
 import { attendanceStatusToText } from '../../../../../../utils/convert';
+import { challengeSubmitDetailCellWidthList } from '../../../../../../utils/tableCellWidthList';
 import AlertModal from '../../../../../ui/alert/AlertModal';
-import { Attendance } from '../../../../../../schema';
 
 interface Props {
   attendance: Attendance;
   cellWidthListIndex: number;
+  refetch: () => void;
 }
 
-const StatusDropdown = ({ attendance, cellWidthListIndex }: Props) => {
-  const queryClient = useQueryClient();
+const StatusDropdown = ({ attendance, cellWidthListIndex, refetch }: Props) => {
+  
 
   const [isMenuShown, setIsMenuShown] = useState(false);
   const [isModalShown, setIsModalShown] = useState(false);
@@ -25,16 +25,14 @@ const StatusDropdown = ({ attendance, cellWidthListIndex }: Props) => {
 
   const editAttendanceStatus = useMutation({
     mutationFn: async (status: string) => {
-      const res = await axios.patch(`/attendance/admin/${attendance.id}`, {
+      const res = await axios.patch(`/attendance/${attendance.id}`, {
         status,
       });
       const data = res.data;
       return data;
     },
     onSuccess: async () => {
-      await queryClient.invalidateQueries({
-        queryKey: ['attendance'],
-      });
+      refetch();
       setIsMenuShown(false);
       setIsModalShown(false);
     },
@@ -54,7 +52,9 @@ const StatusDropdown = ({ attendance, cellWidthListIndex }: Props) => {
             onClick={() => setIsMenuShown(!isMenuShown)}
           >
             <div className="flex items-center gap-1">
-              <span>{attendance.status && attendanceStatusToText[attendance.status]}</span>
+              <span>
+                {attendance.status && attendanceStatusToText[attendance.status]}
+              </span>
               <i>
                 <IoMdArrowDropdown />
               </i>

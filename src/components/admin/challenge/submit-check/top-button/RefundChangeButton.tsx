@@ -12,7 +12,7 @@ const RefundChangeButton = ({ isCheckedList, setIsCheckedList }: Props) => {
 
   const editIsRefunded = useMutation({
     mutationFn: async (attendanceId: number) => {
-      const res = await axios.patch(`/attendance/admin/${attendanceId}`, {
+      const res = await axios.patch(`/attendance/${attendanceId}`, {
         isRefunded: true,
       });
       const data = res.data;

@@ -15,6 +15,7 @@ interface Props {
   bgColor: 'DARK' | 'LIGHT';
   isChecked: boolean;
   setIsCheckedList: (isCheckedList: any) => void;
+  refetch: () => void;
 }
 
 const TableRow = ({
@@ -24,6 +25,7 @@ const TableRow = ({
   bgColor,
   isChecked,
   setIsCheckedList,
+  refetch,
 }: Props) => {
   const [attendanceResult, setAttendanceResult] = useState(attendance.result);
   // const [isRefunded, setIsRefunded] = useState(attendance?.isRefund);
@@ -64,8 +66,7 @@ const TableRow = ({
           cellWidthList[2],
         )}
       >
-        TODO: 수정 제출일자
-        {/* {attendance?.createDate?. || <span className="opacity-0">hello</span>} */}
+        {attendance?.createDate?.format('YYYY-MM-DD HH:mm')}
       </div>
 
       {/* 이름 */}
@@ -98,7 +99,11 @@ const TableRow = ({
       </div> */}
 
       {/* 제출현황 */}
-      <StatusDropdown attendance={attendance} cellWidthListIndex={5} />
+      <StatusDropdown
+        attendance={attendance}
+        cellWidthListIndex={5}
+        refetch={refetch}
+      />
 
       {/* 미션 */}
       <div

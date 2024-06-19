@@ -8,12 +8,14 @@ interface Props {
   mission: Mission;
   setIsDetailShown: (isDetailShown: boolean) => void;
   attendances: Attendance[];
+  refetch: () => void;
 }
 
 const ChallengeSubmitDetail = ({
   mission,
   setIsDetailShown,
   attendances,
+  refetch
 }: Props) => {
   const [isCheckedList, setIsCheckedList] = useState<Array<number>>([]);
   const [resultFilter, setResultFilter] = useState<Attendance['result'] | null>(
@@ -52,6 +54,7 @@ const ChallengeSubmitDetail = ({
               bgColor={(index + 1) % 2 === 1 ? 'DARK' : 'LIGHT'}
               isChecked={isCheckedList.includes(attendance.id)}
               setIsCheckedList={setIsCheckedList}
+              refetch={refetch}
             />
           ))}
         </div>

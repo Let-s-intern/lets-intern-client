@@ -1,21 +1,18 @@
 import { useQuery } from '@tanstack/react-query';
 import dayjs from 'dayjs';
-import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
-
-import MissionCalendar from '../../../components/common/challenge/dashboard/mission-calendar/MissionCalendar';
+import { useEffect } from 'react';
+// import MissionCalendar from '../../../components/common/challenge/dashboard/mission-calendar/MissionCalendar';
 import DailyMissionSection from '../../../components/common/challenge/dashboard/section/DailyMissionSection';
 import NoticeSection from '../../../components/common/challenge/dashboard/section/NoticeSection';
 import ScoreSection from '../../../components/common/challenge/dashboard/section/ScoreSection';
+import MissionCalendar from '../../../components/common/challenge/my-challenge/mission-calendar/MissionCalendar';
 import MissionTooltipQuestion from '../../../components/common/challenge/ui/tooltip-question/MissionTooltipQuestion';
 import { useCurrentChallenge } from '../../../context/CurrentChallengeProvider';
 import {
   challengeGuides,
   challengeNotices,
-  challengeScore,
-  dailyMissionSchema,
-  Schedule,
-  userSchema,
+  challengeScore, Schedule,
+  userSchema
 } from '../../../schema';
 import axios from '../../../utils/axios';
 
@@ -47,8 +44,7 @@ const getIsDone = (schedules: Schedule[]) => {
 
 const ChallengeDashboard = () => {
   const { currentChallenge, schedules, dailyMission } = useCurrentChallenge();
-  // TODO: 잘 지정해야 함
-  const [todayTh, setTodayTh] = useState(0);
+  const todayTh = dailyMission?.th ?? schedules.length + 1;
 
   const { data: notices = [] } = useQuery({
     enabled: Boolean(currentChallenge?.id),
@@ -152,6 +148,7 @@ const ChallengeDashboard = () => {
               <MissionTooltipQuestion />
             </div>
             {schedules && (
+              // myChallenge 에 있는 미션캘린더 가져옴
               <MissionCalendar
                 className="mt-4"
                 schedules={schedules}
