@@ -154,15 +154,17 @@ const InfoContainer = ({ isSocial }: { isSocial: boolean }) => {
           상세 정보를 입력해주세요
         </h1>
         <form onSubmit={handleOnSubmit} className="flex flex-col space-y-3">
-          <div>
-            <Input
-              label="유입경로"
-              value={value.inflow}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                setValue({ ...value, inflow: e.target.value })
-              }
-            />
-          </div>
+          {isSocial && (
+            <div>
+              <Input
+                label="유입경로"
+                value={value.inflow}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                  setValue({ ...value, inflow: e.target.value })
+                }
+              />
+            </div>
+          )}
           <div>
             <Input
               label="학교"
