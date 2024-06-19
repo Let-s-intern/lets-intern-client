@@ -19,7 +19,7 @@ const WaitingSection = ({ applicationList }: WaitingSectionProps) => {
               프로그램 완주하고 후기를 작성해보세요!
             </p>
             <Link
-              to="/programs"
+              to="/program"
               className="rounded-sm border-2 border-primary-xlight bg-white px-5 py-2 font-medium text-neutral-35"
             >
               프로그램 신청하기
