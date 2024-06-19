@@ -8,6 +8,7 @@ import Button from '../../../components/common/ui/button/Button';
 import Input from '../../../components/ui/input/Input';
 import SocialLogin from '../../../components/common/auth/ui/SocialLogin';
 import { useMutation } from '@tanstack/react-query';
+import useAuthStore from '../../../store/useAuthStore';
 
 interface TextLinkProps {
   to: string;
@@ -30,6 +31,7 @@ const TextLink = ({ to, dark, className, children }: TextLinkProps) => {
 };
 
 const Login = () => {
+  const { isLoggedIn, login } = useAuthStore();
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const [email, setEmail] = useState('');
@@ -47,13 +49,11 @@ const Login = () => {
     },
     onSuccess: (data) => {
       console.log('success');
-      localStorage.setItem('access-token', data.data.accessToken);
-      localStorage.setItem('refresh-token', data.data.refreshToken);
-      if (searchParams.get('redirect')) {
-        window.location.href = searchParams.get('redirect') || '/';
-      } else {
-        window.location.href = '/';
-      }
+      login(
+        data.data.accessToken,
+        data.data.refreshToken,
+        searchParams.get('redirect') || '/',
+      );
     },
     onError: (error) => {
       const axiosError = error as AxiosError;
@@ -67,12 +67,10 @@ const Login = () => {
   });
 
   useEffect(() => {
-    const accessToken = localStorage.getItem('access-token');
-    const refreshToken = localStorage.getItem('refresh-token');
-    if (accessToken && refreshToken) {
+    if (isLoggedIn) {
       navigate('/');
     }
-  }, [navigate]);
+  }, [isLoggedIn, navigate]);
 
   useEffect(() => {
     if (!email || !password) {
@@ -102,13 +100,11 @@ const Login = () => {
   }, [searchParams, setSearchParams]);
 
   const handleLoginSuccess = (token: any) => {
-    localStorage.setItem('access-token', token.accessToken);
-    localStorage.setItem('refresh-token', token.refreshToken);
-    if (searchParams.get('redirect')) {
-      window.location.href = searchParams.get('redirect') || '/';
-    } else {
-      window.location.href = '/';
-    }
+    login(
+      token.accessToken,
+      token.refreshToken,
+      searchParams.get('redirect') || '/',
+    );
   };
 
   const handleLogin = (e: React.FormEvent<HTMLFormElement>) => {

@@ -4,8 +4,10 @@ import { useNavigate } from 'react-router-dom';
 import Button from '../../../components/common/ui/button/Button';
 import Input from '../../../components/ui/input/Input';
 import axios from '../../../utils/axios';
+import useAuthStore from '../../../store/useAuthStore';
 
 const FindPassword = () => {
+  const { isLoggedIn } = useAuthStore();
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [name, setName] = useState('');
@@ -14,12 +16,10 @@ const FindPassword = () => {
   const [isError, setIsError] = useState(false);
 
   useEffect(() => {
-    const accessToken = localStorage.getItem('access-token');
-    const refreshToken = localStorage.getItem('refresh-token');
-    if (accessToken && refreshToken) {
+    if (isLoggedIn) {
       navigate('/');
     }
-  }, [navigate]);
+  }, [navigate, isLoggedIn]);
 
   const handleOnSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -34,6 +34,7 @@ const FindPassword = () => {
       );
       setMessage('비밀번호 재설정 이메일을 전송하였습니다.');
       alert('입력하신 이메일로 임시 비밀번호가 전송되었습니다.');
+      navigate('/login');
     } catch (error) {
       if ((error as any).response?.status === 404) {
         setIsError(true);

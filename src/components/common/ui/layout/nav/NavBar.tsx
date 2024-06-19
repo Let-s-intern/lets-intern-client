@@ -3,11 +3,12 @@ import { Link, useLocation } from 'react-router-dom';
 import axios from '../../../../../utils/axios';
 import NavItem from './NavItem';
 import SideNavItem from './SideNavItem';
+import useAuthStore from '../../../../../store/useAuthStore';
 
 const NavBar = () => {
+  const { isLoggedIn, logout } = useAuthStore();
   const location = useLocation();
   const [isOpen, setIsOpen] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [user, setUser] = useState<any>(null);
   const [isAdmin, setIsAdmin] = useState(false);
   const [activeLink, setActiveLink] = useState<
@@ -38,15 +39,6 @@ const NavBar = () => {
   }, [location]);
 
   useEffect(() => {
-    const accessToken = localStorage.getItem('access-token');
-    const refreshToken = localStorage.getItem('refresh-token');
-    if (accessToken && refreshToken) {
-      setIsLoggedIn(true);
-      fetchAndSetUser();
-    }
-    if (!accessToken || !refreshToken) {
-      return;
-    }
     const fetchIsAdmin = async () => {
       try {
         const res = await axios.get('/user/isAdmin');
@@ -57,19 +49,12 @@ const NavBar = () => {
         console.error(error);
       }
     };
-    fetchIsAdmin();
-  }, []);
 
-  const handleLogout = async () => {
-    try {
-      localStorage.removeItem('access-token');
-      localStorage.removeItem('refresh-token');
-      setIsLoggedIn(false);
-      window.location.href = '/';
-    } catch (error) {
-      console.error(error);
+    if (isLoggedIn) {
+      fetchAndSetUser();
+      fetchIsAdmin();
     }
-  };
+  }, [isLoggedIn]);
 
   const fetchAndSetUser = async () => {
     try {
@@ -165,7 +150,7 @@ const NavBar = () => {
               <span>
                 환영합니다, <span className="text-primary">{user?.name}</span>님
               </span>
-              <button className="text-primary" onClick={handleLogout}>
+              <button className="text-primary" onClick={logout}>
                 로그아웃
               </button>
             </span>

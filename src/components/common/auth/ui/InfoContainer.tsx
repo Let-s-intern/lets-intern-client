@@ -29,11 +29,6 @@ const InfoContainer = ({ isSocial }: { isSocial: boolean }) => {
   const [errorMessage, setErrorMessage] = useState('');
   const [successModalOpen, setSuccessModalOpen] = useState(false);
 
-  useEffect(() => {
-    console.log('현재 access : ', localStorage.getItem('access-token'));
-    console.log('현재 refresh : ', localStorage.getItem('refresh-token'));
-  }, []);
-
   const convertGradeToEng = (grade: number) => {
     switch (grade) {
       case 0:
@@ -159,15 +154,17 @@ const InfoContainer = ({ isSocial }: { isSocial: boolean }) => {
           상세 정보를 입력해주세요
         </h1>
         <form onSubmit={handleOnSubmit} className="flex flex-col space-y-3">
-          <div>
-            <Input
-              label="유입경로"
-              value={value.inflow}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                setValue({ ...value, inflow: e.target.value })
-              }
-            />
-          </div>
+          {isSocial && (
+            <div>
+              <Input
+                label="유입경로"
+                value={value.inflow}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                  setValue({ ...value, inflow: e.target.value })
+                }
+              />
+            </div>
+          )}
           <div>
             <Input
               label="학교"
@@ -244,7 +241,7 @@ const InfoContainer = ({ isSocial }: { isSocial: boolean }) => {
       {successModalOpen && (
         <AlertModal
           onConfirm={() => {
-            isSocial ? navigate('/') : navigate('/login');
+            navigate('/login');
           }}
           title="회원가입 완료"
           showCancel={false}
