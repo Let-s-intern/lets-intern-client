@@ -4,20 +4,24 @@ import { useEffect, useRef, useState } from 'react';
 
 import { useSearchParams } from 'react-router-dom';
 import { useCurrentChallenge } from '../../../../../context/CurrentChallengeProvider';
-import { Schedule, userChallengeMissionDetail } from '../../../../../schema';
+import {
+  MyChallengeMissionByType,
+  Schedule,
+  userChallengeMissionDetail,
+} from '../../../../../schema';
 import axios from '../../../../../utils/axios';
 import { missionSubmitToBadge } from '../../../../../utils/convert';
 import AbsentMissionDetailMenu from './AbsentMissionDetailMenu';
 
 interface Props {
-  schedule: Schedule;
+  mission: MyChallengeMissionByType;
   isDone: boolean;
 }
 
-const AbsentMissionItem = ({ schedule, isDone }: Props) => {
+const AbsentMissionItem = ({ mission, isDone }: Props) => {
   // const queryClient = useQueryClient();
-  const mission = schedule.missionInfo;
-  const attendance = schedule.attendanceInfo;
+  // const mission = mission.missionInfo;
+  // const attendance = mission.attendanceInfo;
   const [searchParams, setSearchParams] = useSearchParams();
   const { currentChallenge } = useCurrentChallenge();
 
@@ -61,7 +65,7 @@ const AbsentMissionItem = ({ schedule, isDone }: Props) => {
       'challenge',
       currentChallenge?.id,
       'mission',
-      schedule.missionInfo.id,
+      mission.id,
       'detail',
       // { status: schedule.attendanceInfo.status },
     ],
@@ -92,7 +96,7 @@ const AbsentMissionItem = ({ schedule, isDone }: Props) => {
         }
       }
     }
-  }, [searchParams, setSearchParams, isDetailShown]);
+  }, [searchParams, setSearchParams, isDetailShown, isDone, mission.id]);
 
   return (
     <li
@@ -111,15 +115,15 @@ const AbsentMissionItem = ({ schedule, isDone }: Props) => {
               className={clsx(
                 'rounded-md px-2 py-[0.125rem] text-xs',
                 missionSubmitToBadge({
-                  status: attendance.status,
-                  result: attendance.result,
+                  status: mission.attendanceStatus,
+                  result: mission.attendanceResult,
                 }).style,
               )}
             >
               {
                 missionSubmitToBadge({
-                  status: attendance.status,
-                  result: attendance.result,
+                  status: mission.attendanceStatus,
+                  result: mission.attendanceResult,
                 }).text
               }
             </span>

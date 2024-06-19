@@ -1,14 +1,10 @@
-import { useState } from 'react';
-import { useParams } from 'react-router-dom';
-import { useQuery } from '@tanstack/react-query';
-
-import axios from '../../../utils/axios';
-import MissionCalendarSection from '../../../components/common/challenge/my-challenge/section/MissionCalendarSection';
+import dayjs from 'dayjs';
+import { useEffect } from 'react';
 import DailyMissionSection from '../../../components/common/challenge/my-challenge/section/DailyMissionSection';
+import MissionCalendarSection from '../../../components/common/challenge/my-challenge/section/MissionCalendarSection';
 import OtherMissionSection from '../../../components/common/challenge/my-challenge/section/OtherMissionSection';
 import { useCurrentChallenge } from '../../../context/CurrentChallengeProvider';
-import { myDailyMission, Schedule } from '../../../schema';
-import dayjs from 'dayjs';
+import { Schedule } from '../../../schema';
 
 // TODO: [나중에...] 외부로 빼야 함
 const getIsDone = (schedules: Schedule[]) => {
@@ -25,25 +21,26 @@ const getIsDone = (schedules: Schedule[]) => {
 };
 
 const MyChallengeDashboard = () => {
-  const { currentChallenge, schedules, dailyMission } = useCurrentChallenge();
-  
+  const { schedules, myDailyMission } = useCurrentChallenge();
 
   // const [missionList, setMissionList] = useState<any>();
   // const [dailyMission, setDailyMission] = useState<any>();
-  const [todayTh, setTodayTh] = useState<number>(0);
+  // const [todayTh, setTodayTh] = useState<number>(0);
   // const [isDone, setIsDone] = useState<boolean>(false);
   // const [isLoading, setIsLoading] = useState<boolean>(true);
 
-  const { data } = useQuery({
-    enabled: Boolean(currentChallenge?.id),
-    queryKey: ['challenge', currentChallenge?.id, 'my', 'daily-mission'],
-    queryFn: async () => {
-      const res = await axios.get(
-        `/challenge/${currentChallenge?.id}/my/daily-mission`,
-      );
-      return myDailyMission.parse(res.data.data);
-    },
-  });
+  // const { data: myDailyMission } = useQuery({
+  //   enabled: Boolean(currentChallenge?.id),
+  //   queryKey: ['challenge', currentChallenge?.id, 'my', 'daily-mission'],
+  //   queryFn: async () => {
+  //     const res = await axios.get(
+  //       `/challenge/${currentChallenge?.id}/my/daily-mission`,
+  //     );
+  //     return myDailyMissionSchema.parse(res.data.data);
+  //   },
+  // });
+
+  const todayTh = myDailyMission?.dailyMission.th ?? schedules.length + 1;
 
   // useQuery({
   //   queryKey: ['programs', params.programId, 'dashboard', 'my'],
@@ -81,7 +78,9 @@ const MyChallengeDashboard = () => {
         todayTh={todayTh}
         isDone={isDone}
       />
-      {dailyMission && <DailyMissionSection dailyMission={dailyMission} />}
+      {myDailyMission && (
+        <DailyMissionSection myDailyMission={myDailyMission} />
+      )}
       <OtherMissionSection todayTh={todayTh} isDone={isDone} />
     </main>
   );

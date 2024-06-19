@@ -16,7 +16,7 @@ export const challenges = z
         id: z.number(),
         title: z.string(),
         shortDesc: z.string(),
-        thumbnail: z.string().url(),
+        thumbnail: z.string(),
         startDate: z.string(),
         endDate: z.string(),
         beginning: z.string(),
@@ -101,7 +101,7 @@ export const getChallengeId = z
     shortDesc: z.string(),
     desc: z.string(),
     participationCount: z.number(),
-    thumbnail: z.string().url(),
+    thumbnail: z.string(),
     startDate: z.string(),
     endDate: z.string(),
     beginning: z.string(),
@@ -222,20 +222,19 @@ export const attendanceResult = z.union([
 export type AttendanceResult = z.infer<typeof attendanceResult>;
 
 /** GET /api/v1/challenge/{challengeId}/mission/{missionId}/attendances */
-export const attendances = z
-  .object({
-    attendanceList: z.array(
-      z.object({
-        id: z.number(),
-        name: z.string().nullable(),
-        email: z.string().nullable(),
-        status: attendanceStatus.nullable(),
-        link: z.string().nullable(),
-        result: attendanceResult.nullable(),
-        comments: z.string().nullable().optional(),
-      }),
-    ),
-  });
+export const attendances = z.object({
+  attendanceList: z.array(
+    z.object({
+      id: z.number(),
+      name: z.string().nullable(),
+      email: z.string().nullable(),
+      status: attendanceStatus.nullable(),
+      link: z.string().nullable(),
+      result: attendanceResult.nullable(),
+      comments: z.string().nullable().optional(),
+    }),
+  ),
+});
 
 /** PATCH /api/v1/attendance/{id} */
 export type UpdateAttendanceReq = {
@@ -603,6 +602,7 @@ export const challengeSchedule = z
       z.object({
         missionInfo: z.object({
           id: z.number(),
+          title: z.string().nullable(),
           th: z.number().nullable(),
           startDate: z.string().nullable(),
           endDate: z.string().nullable(),
@@ -612,6 +612,7 @@ export const challengeSchedule = z
           submitted: z.boolean().nullable(),
           id: z.number().nullable(),
           link: z.string().nullable(),
+          comments: z.string().nullable(),
           status: attendanceStatus.nullable(),
           result: attendanceResult.nullable(),
         }),
@@ -686,7 +687,7 @@ export const userChallengeMissionDetail = z
 
 export type UserChallengeMissionDetail = z.infer<
   typeof userChallengeMissionDetail
->["missionInfo"];
+>['missionInfo'];
 
 /** GET /api/v1/challenge/{id}/daily-mission */
 export const dailyMissionSchema = z
@@ -773,6 +774,7 @@ export const myDailyMission = z
       submitted: z.boolean(),
       id: z.number().nullable(),
       link: z.string().nullable(),
+      comments: z.string().nullable(),
       status: attendanceStatus.nullable(),
       result: attendanceResult.nullable(),
     }),
@@ -791,3 +793,21 @@ export const myDailyMission = z
       },
     };
   });
+
+export type MyDailyMission = z.infer<typeof myDailyMission>;
+
+// GET /api/v1/challenge/{id}/missions?type=GENERAL
+export const myChallengeMissionsByType = z.object({
+  missionList: z.array(
+    z.object({
+      attendanceLink: z.string().nullable().optional(),
+      attendanceResult: attendanceResult.nullable().optional(),
+      attendanceStatus: attendanceStatus.nullable().optional(),
+      id: z.number(),
+      th: z.number().nullable(),
+      title: z.string().nullable(),
+    }),
+  ),
+});
+
+export type MyChallengeMissionByType = z.infer<typeof myChallengeMissionsByType>["missionList"][number];

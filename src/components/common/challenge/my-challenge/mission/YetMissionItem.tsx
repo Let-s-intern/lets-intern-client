@@ -3,16 +3,16 @@ import { useQuery } from '@tanstack/react-query';
 
 import axios from '../../../../../utils/axios';
 import YetMissionDetailMenu from './YetMissionDetailMenu';
-import { Schedule, userChallengeMissionDetail } from '../../../../../schema';
+import { MyChallengeMissionByType, Schedule, userChallengeMissionDetail } from '../../../../../schema';
 import { useCurrentChallenge } from '../../../../../context/CurrentChallengeProvider';
 
 interface Props {
-  schedule: Schedule;
+  mission: MyChallengeMissionByType;
 }
 
-const YetMissionItem = ({ schedule }: Props) => {
+const YetMissionItem = ({ mission }: Props) => {
   const [isDetailShown, setIsDetailShown] = useState(false);
-  const mission = schedule.missionInfo;
+  // const mission = schedule.missionInfo;
   const { currentChallenge } = useCurrentChallenge();
 
   // const {
@@ -42,7 +42,7 @@ const YetMissionItem = ({ schedule }: Props) => {
       'challenge',
       currentChallenge?.id,
       'mission',
-      schedule.missionInfo.id,
+      mission.id,
       'detail',
       // { status: schedule.attendanceInfo.status },
     ],

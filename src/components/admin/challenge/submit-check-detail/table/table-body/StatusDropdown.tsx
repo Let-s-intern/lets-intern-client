@@ -8,14 +8,16 @@ import axios from '../../../../../../utils/axios';
 import { attendanceStatusToText } from '../../../../../../utils/convert';
 import AlertModal from '../../../../../ui/alert/AlertModal';
 import { Attendance } from '../../../../../../schema';
+import { useAdminCurrentChallenge } from '../../../../../../context/CurrentAdminChallengeProvider';
 
 interface Props {
   attendance: Attendance;
   cellWidthListIndex: number;
+  refetch: () => void;
 }
 
-const StatusDropdown = ({ attendance, cellWidthListIndex }: Props) => {
-  const queryClient = useQueryClient();
+const StatusDropdown = ({ attendance, cellWidthListIndex, refetch }: Props) => {
+  
 
   const [isMenuShown, setIsMenuShown] = useState(false);
   const [isModalShown, setIsModalShown] = useState(false);
@@ -25,16 +27,14 @@ const StatusDropdown = ({ attendance, cellWidthListIndex }: Props) => {
 
   const editAttendanceStatus = useMutation({
     mutationFn: async (status: string) => {
-      const res = await axios.patch(`/attendance/admin/${attendance.id}`, {
+      const res = await axios.patch(`/attendance/${attendance.id}`, {
         status,
       });
       const data = res.data;
       return data;
     },
     onSuccess: async () => {
-      await queryClient.invalidateQueries({
-        queryKey: ['attendance'],
-      });
+      refetch();
       setIsMenuShown(false);
       setIsModalShown(false);
     },
@@ -54,7 +54,9 @@ const StatusDropdown = ({ attendance, cellWidthListIndex }: Props) => {
             onClick={() => setIsMenuShown(!isMenuShown)}
           >
             <div className="flex items-center gap-1">
-              <span>{attendance.status && attendanceStatusToText[attendance.status]}</span>
+              <span>
+                {attendance.status && attendanceStatusToText[attendance.status]}
+              </span>
               <i>
                 <IoMdArrowDropdown />
               </i>

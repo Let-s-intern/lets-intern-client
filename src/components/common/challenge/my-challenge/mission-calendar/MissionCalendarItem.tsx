@@ -8,14 +8,15 @@ import MissionTopStatusBar from './MissionTopStatusBar';
 interface Props {
   schedule: Schedule;
   todayTh: number;
+  className?: string;
 }
 
-const MissionCalendarItem = ({ schedule, todayTh }: Props) => {
+const MissionCalendarItem = ({ schedule, todayTh, className }: Props) => {
   const mission = schedule.missionInfo;
   const attendance = schedule.attendanceInfo;
 
   return (
-    <div>
+    <div className={className}>
       <MissionTopStatusBar mission={schedule.missionInfo} todayTh={todayTh} />
       <div className="mt-2 px-1.5">
         <span
@@ -33,7 +34,7 @@ const MissionCalendarItem = ({ schedule, todayTh }: Props) => {
             attendance={attendance}
           />
         ) : (mission.th ?? 0) > todayTh ? (
-          <MissionNotStartedIcon className="mt-3" mission={mission} />
+          <MissionNotStartedIcon className="mt-3" schedule={schedule} />
         ) : (
           (mission.th ?? 0) < todayTh && (
             <MissionIcon className="mt-3" schedule={schedule} />

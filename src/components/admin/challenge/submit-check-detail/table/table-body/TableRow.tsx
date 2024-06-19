@@ -15,6 +15,7 @@ interface Props {
   bgColor: 'DARK' | 'LIGHT';
   isChecked: boolean;
   setIsCheckedList: (isCheckedList: any) => void;
+  refetch: () => void;
 }
 
 const TableRow = ({
@@ -24,6 +25,7 @@ const TableRow = ({
   bgColor,
   isChecked,
   setIsCheckedList,
+  refetch,
 }: Props) => {
   const [attendanceResult, setAttendanceResult] = useState(attendance.result);
   // const [isRefunded, setIsRefunded] = useState(attendance?.isRefund);
@@ -98,7 +100,7 @@ const TableRow = ({
       </div> */}
 
       {/* 제출현황 */}
-      <StatusDropdown attendance={attendance} cellWidthListIndex={5} />
+      <StatusDropdown attendance={attendance} cellWidthListIndex={5} refetch={refetch} />
 
       {/* 미션 */}
       <div

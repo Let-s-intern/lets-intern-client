@@ -261,8 +261,8 @@ export const missionSubmitToBadge = ({
   status,
   result,
 }: {
-  status: string | null;
-  result: string | null;
+  status?: string | null;
+  result?: string | null;
 }) => {
   if (result === 'WAITING') {
     return {

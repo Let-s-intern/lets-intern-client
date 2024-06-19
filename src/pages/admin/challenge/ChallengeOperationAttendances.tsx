@@ -34,8 +34,8 @@ const ChallengeOperationAttendances = () => {
   const missions = useAdminMissionsOfCurrentChallenge();
   const [detailedMission, setDetailedMission] = useState<Mission | null>(null);
 
-  const { data: detailedAttendances } = useQuery({
-    queryKey: ['challenge', currentChallenge?.id, 'attendances'],
+  const { data: detailedAttendances, refetch } = useQuery({
+    queryKey: ['admin', 'challenge', currentChallenge?.id, 'attendances'],
     enabled: Boolean(currentChallenge?.id) && Boolean(detailedMission?.id),
     queryFn: async () => {
       const res = await axios.get(
@@ -118,6 +118,7 @@ const ChallengeOperationAttendances = () => {
                     }
                   }}
                   attendances={detailedAttendances || []}
+                  refetch={refetch}
                 />
               ) : null}
             </React.Fragment>
