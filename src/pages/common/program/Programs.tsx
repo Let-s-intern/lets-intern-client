@@ -371,7 +371,7 @@ const Programs = () => {
           pageInfo={pageInfo}
           setPageable={setPageable}
         />
-        {/* {!isFetching && <Banner />} */}
+        {!isFetching && <Banner />}
       </main>
     </div>
   );
