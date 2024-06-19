@@ -52,10 +52,14 @@ export interface IFilter {
 }
 
 export interface IProgramGridItem {
+  keyword: string;
   title: string;
   descriptionList: string[];
   bgColor: string;
+  borderColor: string;
+  textColor: string;
   link: string;
+  imgSrc: string;
 }
 
 export type filterStatuskey = keyof typeof PROGRAM_FILTER_STATUS;

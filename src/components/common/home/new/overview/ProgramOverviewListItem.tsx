@@ -44,24 +44,37 @@ const getNextMonth = (year: number, month: number): DateInfo => {
 };
 
 const ProgramOverviewListItem = () => {
+  const now: DateInfo = {
+    year: new Date().getFullYear(),
+    month: new Date().getMonth() + 1,
+  };
   const [current, setCurrent] = useState<DateInfo>({
     year: new Date().getFullYear(),
-    month: new Date().getMonth() + 1
+    month: new Date().getMonth() + 1,
   });
-  const prevMonth = useCallback(() => getPreviousMonth(current.year, current.month), [current]);
-  const nextMonth = useCallback(() => getNextMonth(current.year, current.month), [current]);
+  const prevMonth = useCallback(
+    () => getPreviousMonth(current.year, current.month),
+    [current],
+  );
+  const nextMonth = useCallback(
+    () => getNextMonth(current.year, current.month),
+    [current],
+  );
   const matches = useMediaQuery('(min-width: 768px)');
 
-  const {isLoading, data} = useQuery<IProgram[]>({
+  const { isLoading, data } = useQuery<IProgram[]>({
     queryKey: ['HomeProgram', current],
     queryFn: async () => {
-      const { startDate, endDate } = getMonthStartEndDates(current.year, current.month);
+      const { startDate, endDate } = getMonthStartEndDates(
+        current.year,
+        current.month,
+      );
       const res = await axios.get(`/program`, {
         params: {
           size: 4,
           startDate: startDate,
-          endDate: endDate
-        }
+          endDate: endDate,
+        },
       });
       return res.data.data.programList;
     },
@@ -89,15 +102,45 @@ const ProgramOverviewListItem = () => {
         )}
         <div className="flex w-full items-center justify-center gap-1 bg-primary-10 py-3.5 md:w-2/4">
           <img
-            className="w-5 cursor-pointer"
-            onClick={() => goToPreviousMonth()}
+            className={`w-5 cursor-pointer ${
+              now.month === 1
+                ? current.year === now.year - 1 && current.month === 12
+                : current.year === now.year && current.month === now.month - 1
+                ? 'cursor-not-allowed opacity-30'
+                : ''
+            }`}
+            onClick={() => {
+              if (
+                now.month === 1
+                  ? current.year === now.year - 1 && current.month === 12
+                  : current.year === now.year && current.month === now.month - 1
+              ) {
+                return;
+              }
+              goToPreviousMonth();
+            }}
             src="/icons/Chevron_Left_MD.svg"
             alt="이전 달"
           />
           <span className="text-1">{`${current.year}년 ${current.month}월`}</span>
           <img
-            className="w-5 cursor-pointer"
-            onClick={() => goToNextMonth()}
+            className={`w-5 cursor-pointer ${
+              now.month === 12
+                ? current.year === now.year + 1 && current.month === 1
+                : current.year === now.year && current.month === now.month + 1
+                ? 'cursor-not-allowed opacity-30'
+                : ''
+            }`}
+            onClick={() => {
+              if (
+                now.month === 12
+                  ? current.year === now.year + 1 && current.month === 1
+                  : current.year === now.year && current.month === now.month + 1
+              ) {
+                return;
+              }
+              goToNextMonth();
+            }}
             src="/icons/Chevron_Right_MD.svg"
             alt="다음 달"
           />
@@ -109,12 +152,13 @@ const ProgramOverviewListItem = () => {
         )}
       </div>
       <ul className=" grid grid-cols-1 gap-4 md:grid-cols-2">
-        {data && data.map((program) => (
-          <ProgramListItem
-            key={program.programInfo.programType + program.programInfo.id}
-            program={program}
-          />
-        ))}
+        {data &&
+          data.map((program) => (
+            <ProgramListItem
+              key={program.programInfo.programType + program.programInfo.id}
+              program={program}
+            />
+          ))}
       </ul>
     </div>
   );

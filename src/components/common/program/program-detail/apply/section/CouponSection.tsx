@@ -9,40 +9,40 @@ interface CouponSectionProps {
 }
 
 const CouponSection = ({ setPayInfo, programType }: CouponSectionProps) => {
-  const [code, setCode] = useState<string>("");
+  const [code, setCode] = useState<string>('');
 
   const fetchCouponAvailability = async () => {
     try {
       const res = await axios.get(`/coupon`, {
         params: {
           code: code,
-          programType: programType.toUpperCase()
-        }
-      })
+          programType: programType.toUpperCase(),
+        },
+      });
       setPayInfo((prevPayInfo: PayInfo) => ({
         ...prevPayInfo,
         couponId: res.data.data.couponId,
-        couponPrice: res.data.data.discount
+        couponPrice: res.data.data.discount,
       }));
     } catch (error) {
       setPayInfo((prevPayInfo: PayInfo) => ({
         ...prevPayInfo,
-        couponId: 0,
-        couponPrice: 0
+        couponId: null,
+        couponPrice: 0,
       }));
     }
-  }
+  };
 
   const handleCodeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setCode(e.target.value);
-  }
+  };
 
   return (
     <div className="flex flex-col gap-3">
       <div className="font-semibold text-neutral-0">쿠폰 등록</div>
-      <div className="flex gap-2.5">
+      <div className="flex w-full gap-2.5">
         <Input
-          type='text'
+          type="text"
           className="flex-1"
           placeholder="쿠폰 코드 입력"
           value={code}
@@ -51,7 +51,9 @@ const CouponSection = ({ setPayInfo, programType }: CouponSectionProps) => {
         <button
           className="flex items-center justify-center rounded-sm bg-primary px-4 py-1.5 text-sm font-medium text-neutral-100"
           onClick={() => fetchCouponAvailability()}
-        />
+        >
+          쿠폰 등록
+        </button>
       </div>
     </div>
   );

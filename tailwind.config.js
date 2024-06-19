@@ -87,6 +87,17 @@ module.exports = {
           '0px 0px 8px 0px rgba(0, 0, 0, 0.08)',
         ],
       },
+      backgroundImage: {
+        'gradient-start':
+          'linear-gradient(165deg, #EDEEFE 10.2%, #D1D4FF 93.43%)',
+        'gradient-cv': 'linear-gradient(165deg, #DBDDFD 10.2%, #9EADFF 93.43%)',
+        'gradient-interview':
+          'linear-gradient(165deg, #A9C1FF 10.2%, #667FFF 93.43%)',
+        'gradient-growth':
+          'linear-gradient(165deg, #667FFF 10.2%, #4D55F5 80.95%)',
+        'gradient-desc':
+          'linear-gradient(180deg, rgba(77, 85, 245, 0.00) 0%, rgba(77, 85, 245, 0.70) 100%)',
+      },
     },
     borderRadius: {
       none: '0',
@@ -100,5 +111,5 @@ module.exports = {
       full: '9999px',
     },
   },
-  plugins: [],
+  plugins: [require('tailwind-scrollbar-hide')],
 };

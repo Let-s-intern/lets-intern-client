@@ -3,16 +3,16 @@ import Heading from '../ui/Heading';
 
 const ReviewSection = () => {
   const reviewList = [
-    '/images/home/blog-default-thumbnail.png',
-    '/images/home/blog-default-thumbnail.png',
-    '/images/home/blog-default-thumbnail.png',
-    '/images/home/blog-default-thumbnail.png',
+    '/images/home/review_naver.png',
+    '/images/home/review_hybe.png',
+    '/images/home/review_samsung.png',
+    '/images/home/review_sparta.png',
   ];
 
   return (
     <section>
       <Heading>생생한 참여 후기</Heading>
-      <div className="mt-6 flex  flex-col flex-nowrap gap-4 overflow-x-auto md:flex-row">
+      <div className="scrollbar-hide mt-6 flex w-full flex-col flex-nowrap gap-4 overflow-x-auto md:w-auto md:flex-row">
         {reviewList.map((review, index) => (
           <Link
             to="#"

@@ -4,6 +4,7 @@ import axios from '../../../../../utils/axios';
 import NavItem from './NavItem';
 import SideNavItem from './SideNavItem';
 import useAuthStore from '../../../../../store/useAuthStore';
+import { useQuery } from '@tanstack/react-query';
 
 const NavBar = () => {
   const { isLoggedIn, logout } = useAuthStore();
@@ -38,32 +39,36 @@ const NavBar = () => {
     }
   }, [location]);
 
-  useEffect(() => {
-    const fetchIsAdmin = async () => {
-      try {
-        const res = await axios.get('/user/isAdmin');
-        if (res.data) {
-          setIsAdmin(true);
-        }
-      } catch (error) {
-        console.error(error);
-      }
-    };
-
-    if (isLoggedIn) {
-      fetchAndSetUser();
-      fetchIsAdmin();
-    }
-  }, [isLoggedIn]);
-
-  const fetchAndSetUser = async () => {
-    try {
+  const { data: userData } = useQuery({
+    queryKey: ['mainUser'],
+    queryFn: async () => {
       const res = await axios.get('/user');
-      setUser(res.data);
-    } catch (error) {
-      console.error(error);
+      return res.data.data;
+    },
+    enabled: isLoggedIn,
+    retry: 1,
+  });
+
+  const { data: isAdminData } = useQuery({
+    queryKey: ['isAdmin'],
+    queryFn: async () => {
+      const res = await axios.get('/user/isAdmin');
+      return res.data.data;
+    },
+    enabled: isLoggedIn,
+    retry: 1,
+  });
+
+  useEffect(() => {
+    if (userData) {
+      console.log(userData);
+      setUser(userData);
     }
-  };
+
+    if (isAdminData) {
+      setIsAdmin(isAdminData);
+    }
+  }, [userData, isAdminData]);
 
   return (
     <>
