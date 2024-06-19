@@ -5,7 +5,8 @@ import { useSearchParams } from 'react-router-dom';
 
 import { useCurrentChallenge } from '../../../../../context/CurrentChallengeProvider';
 import {
-  MyChallengeMissionByType, userChallengeMissionDetail
+  MyChallengeMissionByType,
+  userChallengeMissionDetail,
 } from '../../../../../schema';
 import axios from '../../../../../utils/axios';
 import { missionSubmitToBadge } from '../../../../../utils/convert';
@@ -17,10 +18,8 @@ interface Props {
 
 const DoneMissionItem = ({ mission }: Props) => {
   const [searchParams, setSearchParams] = useSearchParams();
-  const { currentChallenge } = useCurrentChallenge();
-
+  const { currentChallenge, schedules } = useCurrentChallenge();
   const itemRef = useRef<HTMLLIElement>(null);
-
   const [isDetailShown, setIsDetailShown] = useState(false);
 
   const {
@@ -44,6 +43,10 @@ const DoneMissionItem = ({ mission }: Props) => {
       );
       return userChallengeMissionDetail.parse(res.data.data).missionInfo;
     },
+  });
+
+  const currentSchedule = schedules.find((schedule) => {
+    return schedule.missionInfo.id === mission.id;
   });
 
   useEffect(() => {
@@ -75,9 +78,7 @@ const DoneMissionItem = ({ mission }: Props) => {
         <div className="flex flex-1 items-center justify-between">
           <div className="flex items-center gap-3">
             <h4 className="text-lg font-semibold">
-              {/* TODO: 아래로 변경 */}
-              {/* {mission.th}회차. {mission.title} */}
-              {mission.th}회차.
+              {mission.th}회차. {mission.title}
             </h4>
             <span
               className={clsx(
@@ -105,8 +106,13 @@ const DoneMissionItem = ({ mission }: Props) => {
         (detailError
           ? '에러 발생'
           : !isDetailLoading &&
-            missionDetail && (
-              <DoneMissionDetailMenu missionDetail={missionDetail} />
+            missionDetail &&
+            currentSchedule && (
+              <DoneMissionDetailMenu
+                missionDetail={missionDetail}
+                schedule={currentSchedule}
+                missionByType={mission}
+              />
             ))}
     </li>
   );

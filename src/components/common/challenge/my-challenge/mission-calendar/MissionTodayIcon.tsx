@@ -68,7 +68,6 @@ const MissionTodayIcon = ({ mission, className, attendance }: Props) => {
             missionSubmitToBadge({
               status: attendance.status,
               result: attendance.result,
-              // isRefunded: attendance.submitted,
             }).style,
             {
               'opacity-0': attendance.status === 'ABSENT',
@@ -79,7 +78,6 @@ const MissionTodayIcon = ({ mission, className, attendance }: Props) => {
             missionSubmitToBadge({
               status: attendance.status,
               result: attendance.result,
-              // isRefunded: attendance.submitted,
             }).text
           }
         </span>

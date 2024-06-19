@@ -14,7 +14,6 @@ interface Props {
   attendanceResult: Attendance['result'];
   setAttendanceResult: (attendanceResult: Attendance['result']) => void;
   cellWidthListIndex: number;
-  // TODO: 삭제 검토해야 함
   setIsRefunded: (isRefunded: boolean) => void;
 }
 

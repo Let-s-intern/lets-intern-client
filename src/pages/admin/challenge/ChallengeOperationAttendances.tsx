@@ -93,8 +93,8 @@ const ChallengeOperationAttendances = () => {
                 contents={[
                   { type: TABLE_CONTENT.INPUT },
                   { type: TABLE_CONTENT.INPUT },
-                  { type: TABLE_CONTENT.DATE },
-                  { type: TABLE_CONTENT.DATE },
+                  { type: TABLE_CONTENT.DATETIME },
+                  { type: TABLE_CONTENT.DATETIME },
                   { type: TABLE_CONTENT.INPUT },
                   { type: TABLE_CONTENT.INPUT },
                 ]}

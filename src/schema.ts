@@ -222,19 +222,35 @@ export const attendanceResult = z.union([
 export type AttendanceResult = z.infer<typeof attendanceResult>;
 
 /** GET /api/v1/challenge/{challengeId}/mission/{missionId}/attendances */
-export const attendances = z.object({
-  attendanceList: z.array(
-    z.object({
-      id: z.number(),
-      name: z.string().nullable(),
-      email: z.string().nullable(),
-      status: attendanceStatus.nullable(),
-      link: z.string().nullable(),
-      result: attendanceResult.nullable(),
-      comments: z.string().nullable().optional(),
-    }),
-  ),
-});
+export const attendances = z
+  .object({
+    attendanceList: z.array(
+      z.object({
+        id: z.number(),
+        name: z.string().nullable(),
+        email: z.string().nullable(),
+        status: attendanceStatus.nullable(),
+        link: z.string().nullable(),
+        result: attendanceResult.nullable(),
+        comments: z.string().nullable().optional(),
+        createDate: z.string().nullable(),
+        lastModifiedDate: z.string().nullable(),
+      }),
+    ),
+  })
+  .transform((data) => {
+    return {
+      attendanceList: data.attendanceList.map((attendance) => ({
+        ...attendance,
+        createDate: attendance.createDate ? dayjs(attendance.createDate) : null,
+        lastModifiedDate: attendance.lastModifiedDate
+          ? dayjs(attendance.lastModifiedDate)
+          : null,
+      })),
+    };
+  });
+
+export type Attendance = z.infer<typeof attendances>['attendanceList'][number];
 
 /** PATCH /api/v1/attendance/{id} */
 export type UpdateAttendanceReq = {
@@ -243,8 +259,6 @@ export type UpdateAttendanceReq = {
   result?: AttendanceResult;
   comments?: string;
 };
-
-export type Attendance = z.infer<typeof attendances>['attendanceList'][number];
 
 /** GET /challenge/{id}/application */
 export const getChallengeIdApplication = z
@@ -810,4 +824,6 @@ export const myChallengeMissionsByType = z.object({
   ),
 });
 
-export type MyChallengeMissionByType = z.infer<typeof myChallengeMissionsByType>["missionList"][number];
+export type MyChallengeMissionByType = z.infer<
+  typeof myChallengeMissionsByType
+>['missionList'][number];

@@ -44,8 +44,6 @@ const getIsDone = (schedules: Schedule[]) => {
 
 const ChallengeDashboard = () => {
   const { currentChallenge, schedules, dailyMission } = useCurrentChallenge();
-  // TODO: 잘 지정해야 함
-  // const [todayTh, setTodayTh] = useState(0);
   const todayTh = dailyMission?.th ?? schedules.length + 1;
 
   const { data: notices = [] } = useQuery({

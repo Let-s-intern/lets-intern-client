@@ -23,7 +23,10 @@ const AbsentMissionItem = ({ mission, isDone }: Props) => {
   // const mission = mission.missionInfo;
   // const attendance = mission.attendanceInfo;
   const [searchParams, setSearchParams] = useSearchParams();
-  const { currentChallenge } = useCurrentChallenge();
+  const { currentChallenge, schedules } = useCurrentChallenge();
+  const currentSchedule = schedules.find((schedule) => {
+    return schedule.missionInfo.id === mission.id;
+  });
 
   const itemRef = useRef<HTMLLIElement>(null);
 
@@ -136,7 +139,9 @@ const AbsentMissionItem = ({ mission, isDone }: Props) => {
       {isDetailShown &&
         (detailError
           ? '에러 발생'
-          : !isDetailLoading && (
+          : !isDetailLoading &&
+            missionDetail &&
+            currentSchedule && (
               <AbsentMissionDetailMenu missionDetail={missionDetail} />
             ))}
     </li>

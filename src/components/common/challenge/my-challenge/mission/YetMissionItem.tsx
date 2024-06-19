@@ -1,10 +1,11 @@
-import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-
+import { useState } from 'react';
+import { useCurrentChallenge } from '../../../../../context/CurrentChallengeProvider';
+import {
+  MyChallengeMissionByType, userChallengeMissionDetail
+} from '../../../../../schema';
 import axios from '../../../../../utils/axios';
 import YetMissionDetailMenu from './YetMissionDetailMenu';
-import { MyChallengeMissionByType, Schedule, userChallengeMissionDetail } from '../../../../../schema';
-import { useCurrentChallenge } from '../../../../../context/CurrentChallengeProvider';
 
 interface Props {
   mission: MyChallengeMissionByType;
@@ -58,9 +59,7 @@ const YetMissionItem = ({ mission }: Props) => {
     <li key={mission.id} className="rounded-xl bg-white p-6">
       <div className="flex items-center justify-between px-3">
         <h4 className="text-lg font-semibold">
-          {/* TODO: 타이틀 추가 */}
-          {/* {mission?.th}회차. {mission?.title} */}
-          {mission?.th}회차.
+          {mission?.th}회차. {mission?.title}
         </h4>
         <button onClick={() => setIsDetailShown(!isDetailShown)}>
           {!isDetailShown || isDetailLoading ? '미션보기' : '닫기'}
@@ -69,7 +68,8 @@ const YetMissionItem = ({ mission }: Props) => {
       {isDetailShown &&
         (detailError
           ? '에러 발생'
-          : !isDetailLoading && missionDetail && (
+          : !isDetailLoading &&
+            missionDetail && (
               <YetMissionDetailMenu missionDetail={missionDetail} />
             ))}
     </li>

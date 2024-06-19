@@ -9,9 +9,9 @@ interface Props {
 
 const ContentsDropdown = ({ missionDetail }: Props) => {
   const [isMenuShown, setIsMenuShown] = useState(false);
-  const essentialContentsLink = missionDetail.essentialContentsList?.[0]?.link;
   const additionalContentsLink =
     missionDetail.additionalContentsList?.[0]?.link;
+  const essentialContentsLink = missionDetail.essentialContentsList?.[0]?.link;
 
   return (
     <div className="relative flex-1">

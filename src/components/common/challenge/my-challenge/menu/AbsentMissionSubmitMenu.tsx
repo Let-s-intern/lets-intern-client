@@ -1,15 +1,25 @@
 import { useMutation } from '@tanstack/react-query';
 import clsx from 'clsx';
 import { useState } from 'react';
+import { useCurrentChallenge } from '../../../../../context/CurrentChallengeProvider';
+import { UserChallengeMissionDetail } from '../../../../../schema';
 import axios from '../../../../../utils/axios';
 
 interface Props {
-  missionDetail: any;
+  missionDetail: UserChallengeMissionDetail;
 }
 
 const AbsentMissionSubmitMenu = ({ missionDetail }: Props) => {
-  const [isAttended, setIsAttended] = useState(missionDetail.attended);
-  const [value, setValue] = useState(missionDetail?.link || '');
+  const { schedules } = useCurrentChallenge();
+  const currentSchedule = schedules.find((schedule) => {
+    return schedule.missionInfo.id === missionDetail.id;
+  });
+  const [isAttended, setIsAttended] = useState(
+    currentSchedule?.attendanceInfo.submitted ?? false,
+  );
+  const [value, setValue] = useState(
+    currentSchedule?.attendanceInfo?.link || '',
+  );
   const [isLinkChecked, setIsLinkChecked] = useState(false);
   const [isValidLinkValue, setIsValidLinkValue] = useState(isAttended);
   const [isStartedHttp, setIsStartedHttp] = useState(false);
@@ -17,10 +27,13 @@ const AbsentMissionSubmitMenu = ({ missionDetail }: Props) => {
   const submitMissionLink = useMutation({
     mutationFn: async () => {
       let res;
-      if (missionDetail.attendanceResult === 'WRONG') {
-        res = await axios.patch(`/attendance/${missionDetail.attendanceId}`, {
-          link: value,
-        });
+      if (currentSchedule?.attendanceInfo.result === 'WRONG') {
+        res = await axios.patch(
+          `/attendance/${currentSchedule?.attendanceInfo.id}`,
+          {
+            link: value,
+          },
+        );
       } else {
         res = await axios.post(`/attendance/${missionDetail.id}`, {
           link: value,
@@ -65,16 +78,16 @@ const AbsentMissionSubmitMenu = ({ missionDetail }: Props) => {
       {isAttended ? (
         <p className="mt-1 text-sm">미션 제출이 완료되었습니다.</p>
       ) : (
-        missionDetail.attendanceResult === 'WRONG' && (
+        currentSchedule?.attendanceInfo.result === 'WRONG' && (
           <p className="mt-1 text-sm">
             아래 반려 사유를 확인하여, 다시 제출해주세요!
           </p>
         )
       )}
-      {missionDetail.attendanceComments && (
+      {currentSchedule?.attendanceInfo.comments && (
         <div className="mt-4">
           <div className="rounded-md bg-[#F2F2F2] px-8 py-6 text-sm">
-            {missionDetail.attendanceComments}
+            {currentSchedule?.attendanceInfo.comments}
           </div>
         </div>
       )}

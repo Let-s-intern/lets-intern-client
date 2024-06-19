@@ -1,14 +1,12 @@
+import { useMutation } from '@tanstack/react-query';
 import clsx from 'clsx';
 import { useState } from 'react';
 import { IoMdArrowDropdown } from 'react-icons/io';
-
-import { challengeSubmitDetailCellWidthList } from '../../../../../../utils/tableCellWidthList';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { Attendance } from '../../../../../../schema';
 import axios from '../../../../../../utils/axios';
 import { attendanceStatusToText } from '../../../../../../utils/convert';
+import { challengeSubmitDetailCellWidthList } from '../../../../../../utils/tableCellWidthList';
 import AlertModal from '../../../../../ui/alert/AlertModal';
-import { Attendance } from '../../../../../../schema';
-import { useAdminCurrentChallenge } from '../../../../../../context/CurrentAdminChallengeProvider';
 
 interface Props {
   attendance: Attendance;
