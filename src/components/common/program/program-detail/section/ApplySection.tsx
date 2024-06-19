@@ -26,7 +26,7 @@ export interface UserInfo {
 
 export interface PayInfo {
   priceId: number;
-  couponId: number;
+  couponId: null | number;
   price: number;
   discount: number;
   couponPrice: number;
@@ -69,7 +69,7 @@ const ApplySection = ({
   const [priceId, setPriceId] = useState<number>(0);
   const [payInfo, setPayInfo] = useState<PayInfo>({
     priceId: 0,
-    couponId: 0,
+    couponId: null,
     price: 0,
     discount: 0,
     couponPrice: 0,
@@ -105,7 +105,7 @@ const ApplySection = ({
         setPriceId(data.priceList[0].priceId);
         setPayInfo({
           priceId: data.priceList[0].priceId,
-          couponId: 0,
+          couponId: null,
           price: data.priceList[0].price,
           discount: data.priceList[0].discount,
           couponPrice: 0,
@@ -114,12 +114,12 @@ const ApplySection = ({
           accountType: data.priceList[0].accountType,
           livePriceType: data.priceList[0].livePriceType,
           challengePriceType: data.priceList[0].challengePriceType,
-        })
+        });
       } else {
         setPriceId(data.price.priceId);
         setPayInfo({
           priceId: data.price.priceId,
-          couponId: 0,
+          couponId: null,
           price: data.price.price,
           discount: data.price.discount,
           couponPrice: 0,
@@ -128,7 +128,7 @@ const ApplySection = ({
           accountType: data.price.accountType,
           livePriceType: data.price.livePriceType,
           challengePriceType: data.price.challengePriceType,
-        })
+        });
       }
       return res.data;
     },
