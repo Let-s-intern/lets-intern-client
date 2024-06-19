@@ -1,18 +1,29 @@
+import { useEffect } from 'react';
 import { IProgram } from '../../../../../interfaces/interface';
 import { PROGRAM_STATUS } from '../../../../../utils/programConst';
 import ProgramStatusTag from '../../../program/programs/card/ProgramStatusTag';
+import { useNavigate } from 'react-router-dom';
 
 interface ProgramOverviewListItemProps {
   program: IProgram;
 }
 
 const ProgramListItem = ({ program }: ProgramOverviewListItemProps) => {
+  const navigate = useNavigate();
+  useEffect(() => {
+    console.log(program);
+  
+  }, [program]);
   const formatDate = (date: string) => {
     return new Date(date).toLocaleDateString().replaceAll(' ', '').slice(0, -1);
   };
 
   return (
-    <li className="flex items-center gap-3 rounded-xs border border-neutral-85 md:gap-4 md:p-2.5">
+    <li className="flex items-center gap-3 rounded-xs border border-neutral-85 md:gap-4 md:p-2.5 cursor-pointer"
+      onClick={() => {
+        navigate(`/program/${program.programInfo.programType.toLowerCase()}/${program.programInfo.id}`)
+      }}
+    >
       <img
         className="h-[7.5rem] w-[7.5rem] rounded-xs md:h-40 md:w-44"
         src={program.programInfo.thumbnail}

@@ -7,6 +7,7 @@ export interface IBanner {
   isValid: boolean;
   isVisible: boolean;
   imgUrl: string;
+  mobileImgUrl: string;
 }
 
 export interface ILineBanner {

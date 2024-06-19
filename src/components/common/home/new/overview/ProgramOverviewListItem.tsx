@@ -102,18 +102,14 @@ const ProgramOverviewListItem = () => {
         )}
         <div className="flex w-full items-center justify-center gap-1 bg-primary-10 py-3.5 md:w-2/4">
           <img
-            className={`w-5 cursor-pointer ${
-              now.month === 1
-                ? current.year === now.year - 1 && current.month === 12
-                : current.year === now.year && current.month === now.month - 1
+            className={`w-5 cursor-pointer ${(current.year === now.year && current.month === now.month - 3) ||
+                (now.month - 3 < 1 && current.year === now.year - 1 && current.month === 12 + (now.month - 3))
                 ? 'cursor-not-allowed opacity-30'
                 : ''
-            }`}
+              }`}
             onClick={() => {
               if (
-                now.month === 1
-                  ? current.year === now.year - 1 && current.month === 12
-                  : current.year === now.year && current.month === now.month - 1
+                (current.year === now.year && current.month === now.month - 3) || (now.month - 3 < 1 && current.year === now.year - 1 && current.month === 12 + (now.month - 3))
               ) {
                 return;
               }
@@ -124,18 +120,16 @@ const ProgramOverviewListItem = () => {
           />
           <span className="text-1">{`${current.year}년 ${current.month}월`}</span>
           <img
-            className={`w-5 cursor-pointer ${
-              now.month === 12
-                ? current.year === now.year + 1 && current.month === 1
-                : current.year === now.year && current.month === now.month + 1
-                ? 'cursor-not-allowed opacity-30'
-                : ''
-            }`}
+className={`w-5 cursor-pointer ${
+  (current.year === now.year && current.month === now.month + 3) ||
+  (now.month + 3 > 12 && current.year === now.year + 1 && current.month === now.month - 9)
+    ? 'cursor-not-allowed opacity-30'
+    : ''
+}`}
             onClick={() => {
               if (
-                now.month === 12
-                  ? current.year === now.year + 1 && current.month === 1
-                  : current.year === now.year && current.month === now.month + 1
+                (current.year === now.year && current.month === now.month + 3) ||
+                (now.month + 3 > 12 && current.year === now.year + 1 && current.month === now.month - 9)
               ) {
                 return;
               }
