@@ -11,9 +11,8 @@ const Footer = () => {
         <div className="flex flex-col gap-8">
           <div className="flex w-80 items-center gap-8">
             <MenuLink to="/">홈</MenuLink>
-            <MenuLink to="/about">브랜드 스토리</MenuLink>
             <MenuLink to="/program">프로그램</MenuLink>
-            <MenuLink to="/blog">블로그</MenuLink>
+            {/* <MenuLink to="/blog">블로그</MenuLink> */}
           </div>
           <Notice className="hidden lg:flex" />
         </div>
@@ -59,7 +58,7 @@ const Footer = () => {
           <Icon
             src="/icons/instagram.svg"
             alt="인스타그램 아이콘"
-            to="https://www.instagram.com/letsintern.official/"
+            to="https://www.instagram.com/letscareer.official/"
           />
           <Icon
             src="/icons/blog.png"

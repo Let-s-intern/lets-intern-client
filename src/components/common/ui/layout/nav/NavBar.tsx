@@ -95,9 +95,6 @@ const NavBar = () => {
             <NavItem to="/program" active={activeLink === 'PROGRAM'}>
               프로그램
             </NavItem>
-            <NavItem to="/blog" active={activeLink === 'BLOG'}>
-              블로그
-            </NavItem>
           </div>
           <div className="flex items-center gap-4">
             {isLoggedIn ? (
@@ -173,9 +170,6 @@ const NavBar = () => {
         <div className="mt-5 flex flex-col gap-2">
           <SideNavItem to="/" onClick={closeMenu}>
             홈
-          </SideNavItem>
-          <SideNavItem to="/about" onClick={closeMenu}>
-            브랜드 스토리
           </SideNavItem>
           <SideNavItem to="/program" onClick={closeMenu}>
             프로그램

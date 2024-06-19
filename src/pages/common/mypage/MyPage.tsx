@@ -33,7 +33,7 @@ const MyPage = () => {
                       : ''
                   }.svg`}
                   alt="user"
-                  className="h-[1.625rem] w-[1.625rem]"
+                  className="hidden md:block h-[1.625rem] w-[1.625rem]"
                 />
                 신청현황
               </NavItem>
@@ -46,7 +46,7 @@ const MyPage = () => {
                     location.pathname === '/mypage/review' ? '-primary' : ''
                   }.svg`}
                   alt="list"
-                  className="h-[1.625rem] w-[1.625rem]"
+                  className="hidden md:block h-[1.625rem] w-[1.625rem]"
                 />
                 후기작성
               </NavItem>
@@ -59,7 +59,7 @@ const MyPage = () => {
                     location.pathname === '/mypage/privacy' ? '-primary' : ''
                   }.svg`}
                   alt="user"
-                  className="h-[1.625rem] w-[1.625rem]"
+                  className="hidden md:block h-[1.625rem] w-[1.625rem]"
                 />
                 개인정보
               </NavItem>

@@ -1,10 +1,15 @@
+import { useNavigate } from "react-router-dom";
+
 interface NoticeProps {
   className?: string;
 }
 
 const Notice = ({ className }: NoticeProps) => {
+  const navigate = useNavigate();
   return (
-    <div className={`flex cursor-pointer items-center gap-1 ${className}`}>
+    <div className={`flex cursor-pointer items-center gap-1 ${className}`}
+      onClick={() => navigate('/') }
+    >
       <img
         className="w-5"
         src="/icons/megaphone-line.svg"

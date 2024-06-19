@@ -9,6 +9,20 @@ const Banner = () => {
   const [bannerList, setBannerList] = useState<IBanner[]>([]);
   const [bannerIndex, setBannerIndex] = useState(0);
   const [isPlay, setIsPlay] = useState(true);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+
+    window.addEventListener('resize', handleResize);
+
+    // Cleanup event listener on component unmount
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
 
   useEffect(() => {
     if (isPlay) {
@@ -53,7 +67,7 @@ const Banner = () => {
           key={bannner.id}
           className="cursor-pointer rounded-sm object-cover transition-all duration-500 ease-in-out"
           style={{ translate: `-${bannerIndex * 100}%` }}
-          src={bannner.imgUrl}
+          src={isMobile ? bannner.mobileImgUrl : bannner.imgUrl}
           alt="홈 배너 이미지"
         />
       ))}
