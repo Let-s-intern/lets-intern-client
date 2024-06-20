@@ -21,8 +21,8 @@ const cellWidthList = [
   'w-[200px]',
   'w-[40px]',
   'w-[10%]',
-  'w-[20%]',
-  'w-[20%]',
+  'w-[15%]',
+  'w-[15%]',
   'w-[16%]',
   'w-[17%]',
 ];
@@ -121,7 +121,7 @@ const ChallengeMissionManagement = () => {
           등록
         </Button>
       </div>
-      <div className="min-w-[1400px]">
+      <div className="min-w-[1700px]">
         <LineTableHead cellWidthList={cellWidthList} colNames={colNames} />
         <LineTableBody>
           {missionTemplateListRows?.map((row) => (
