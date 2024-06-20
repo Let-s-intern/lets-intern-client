@@ -35,7 +35,7 @@ const MarketingModal = ({ showModal, setShowModal }: MarketingModalProps) => {
             <tbody>
               <tr>
                 <td className="break-keep border border-neutral-200 p-2">
-                  턴업컴퍼니가 제공하는 이용자 맞춤형 서비스 및 프로그램 추천,
+                  아이엔지가 제공하는 이용자 맞춤형 서비스 및 프로그램 추천,
                   각종 경품 행사, 이벤트의 광고성 정보 제공 (이메일, SMS,
                   카카오톡 등)
                 </td>

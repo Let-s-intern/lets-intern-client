@@ -1,11 +1,11 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 
 import axios from '../../../../../utils/axios';
 import { ILineBanner } from '../../../../../interfaces/Banner.interface';
 
 const TopBanner = () => {
-  const [isShow, setIsShow] = useState(true);
+  const [isShow, setIsShow] = useState(false);
 
   const {isLoading, data} = useQuery<ILineBanner>({
     queryKey: ['LineBanner'],
@@ -19,12 +19,25 @@ const TopBanner = () => {
     },
   });
 
+  useEffect(() => {
+    console.log('topbanner: ', data);
+    data && setIsShow(true);
+  }, [data]);
+
   if (isLoading) {
     return <p>Loading...</p>;
   }
 
   return isShow ? (
-    <section className="mt-3 bg-neutral-0 px-5 py-3">
+    <section className="mt-3 bg-neutral-0 md:px-5 py-3"
+      style={{
+        backgroundColor: data?.colorCode,
+        color: data?.textColorCode,
+      }}
+      onClick={() => 
+        window.open(data?.link, '_blank')
+      }
+    >
       <div className="relative">
         <div className="flex flex-col items-center justify-center gap-1 text-center text-static-100 md:flex-row">
           <span className="text-1-semibold">{data?.title}</span>

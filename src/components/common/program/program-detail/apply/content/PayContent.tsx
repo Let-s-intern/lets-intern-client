@@ -60,8 +60,8 @@ const PayContent = ({
   }, [scrollableBoxRef]);
 
   const totalPrice = () => {
-    let totalDiscount = payInfo.discount + payInfo.couponPrice;
-    if (payInfo.price < totalDiscount)
+    let totalDiscount = payInfo.couponPrice === -1 ? payInfo.price : payInfo.discount + payInfo.couponPrice;
+    if (payInfo.price <= totalDiscount)
       return 0;
     else
       return payInfo.price - totalDiscount;

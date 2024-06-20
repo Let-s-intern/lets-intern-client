@@ -239,7 +239,7 @@ const Programs = () => {
   });
 
   return (
-    <div className="flex">
+    <div className={`flex ${isOpen ? 'overflow-hidden' : ''}`}>
       {/* 필터링 사이드바 */}
       <FilterSideBar
         setIsOpen={setIsOpen}

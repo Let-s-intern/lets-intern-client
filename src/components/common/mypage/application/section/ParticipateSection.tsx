@@ -3,12 +3,14 @@ import { Link } from 'react-router-dom';
 import MoreButton from '../../ui/button/MoreButton';
 import ApplicationCard from '../../ui/card/root/ApplicationCard';
 import { ApplicationType } from '../../../../../pages/common/mypage/Application';
+import { useState } from 'react';
 
 interface ParticipateSectionProps {
   applicationList: ApplicationType[];
 }
 
 const ParticipateSection = ({ applicationList }: ParticipateSectionProps) => {
+  const [viewList, setViewList] = useState<ApplicationType[]>(applicationList.slice(0, 3));
   return (
     <section className="flex flex-col gap-6">
       <h1 className="text-lg font-semibold">참여 중</h1>
@@ -26,13 +28,14 @@ const ParticipateSection = ({ applicationList }: ParticipateSectionProps) => {
             </Link>
           </div>
         ) : (
-          applicationList
-            .slice(0, 3)
+          viewList
             .map((application) => <ApplicationCard application={application} />)
         )}
       </div>
       {applicationList.length > 3 && (
-        <MoreButton className="hidden md:flex">더보기</MoreButton>
+        <MoreButton className="hidden md:flex" onClick={() => {
+          setViewList(applicationList);
+        }}>더보기</MoreButton>
       )}
     </section>
   );

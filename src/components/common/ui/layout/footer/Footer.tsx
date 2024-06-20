@@ -12,9 +12,11 @@ const Footer = () => {
           <div className="flex w-80 items-center gap-8">
             <MenuLink to="/">홈</MenuLink>
             <MenuLink to="/program">프로그램</MenuLink>
+            <MenuLink to='https://letscareer.oopy.io/4e78d954-c4ac-4c14-a122-a21fe890de5b'>공지사항</MenuLink>
+            <MenuLink to="https://letscareer.oopy.io/5eb0ebdd-e10c-4aa1-b28a-8bd0964eca0b">자주묻는 질문</MenuLink>
             {/* <MenuLink to="/blog">블로그</MenuLink> */}
           </div>
-          <Notice className="hidden lg:flex" />
+          {/* <Notice className="hidden lg:flex" /> */}
         </div>
         <div>
           <div className="mb-1.5 flex items-center gap-10">
@@ -67,10 +69,10 @@ const Footer = () => {
           />
         </div>
         <div className="flex items-center gap-6 text-neutral-0/[.65]">
-          <DocumentLink to="https://letsintern.notion.site/241b2e747ddf47478012a68f7c03f9e1?pvs=25">
+          <DocumentLink to="https://letscareer.oopy.io/241b2e74-7ddf-4747-8012-a68f7c03f9e1">
             서비스 이용약관
           </DocumentLink>
-          <DocumentLink to="https://letsintern.notion.site/4e21a3c6f42a409da877a7b5d926f158?pvs=25">
+          <DocumentLink to="https://letscareer.oopy.io/4e21a3c6-f42a-409d-a877-a7b5d926f158">
             개인정보처리방침
           </DocumentLink>
         </div>
