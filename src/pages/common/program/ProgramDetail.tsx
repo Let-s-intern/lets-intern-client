@@ -26,6 +26,10 @@ const ProgramDetail = ({ programType }: ProgramDetailProps) => {
   const matches = useMediaQuery('(min-width: 991px)');
   const [isOpen, drawerDispatch] = useReducer(drawerReducer, false);
   const [isComplete, applyDispatch] = useReducer(applyReducer, false);
+  const [programInfo, setProgramInfo] = useState({
+    beginning: '',
+    deadline: '',
+  });
 
   const toggleApplyModal = () => {
     applyDispatch({ type: 'toggle' });
@@ -34,6 +38,7 @@ const ProgramDetail = ({ programType }: ProgramDetailProps) => {
     drawerDispatch({ type: 'toggle' });
   };
 
+  // 프로그램 제목 가져오기
   useQuery({
     queryKey: [programType, programId, 'title'],
     queryFn: async () => {
@@ -42,6 +47,20 @@ const ProgramDetail = ({ programType }: ProgramDetailProps) => {
       return res.data;
     },
   });
+  // 프로그램 일정 가져오기
+  useQuery({
+    queryKey: [programType, programId],
+    queryFn: async () => {
+      const res = await axios.get(`/${programType}/${programId}`);
+      const { beginning, deadline } = res.data.data;
+      setProgramInfo({ beginning, deadline });
+      return res.data;
+    },
+  });
+
+  const Button = () => {
+    // 일정에 따라 버튼 컴포넌트 반환
+  };
 
   return (
     <div className="px-5">
