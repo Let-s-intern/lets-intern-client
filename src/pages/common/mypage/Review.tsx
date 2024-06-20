@@ -19,7 +19,7 @@ const Review = () => {
     queryFn: async () => {
       const res = await axios.get('/user/applications');
       const tempApplicationList = res.data.data.applicationList;
-      console.log(tempApplicationList);
+      // console.log(tempApplicationList);
       setWaitingApplicationList(
         tempApplicationList.filter(
           (application: ApplicationType) =>
