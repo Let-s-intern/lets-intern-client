@@ -26,7 +26,7 @@ const ReviewTabContent = ({
   useQuery({
     queryKey: [programType, programId, 'reviews'],
     queryFn: async () => {
-      const res = await axios.get(`/${programType}/${programId}/reviews`, {
+      const res = await axios.get(`/${programType}/reviews`, {
         params: {
           page: 1,
           size: 100000,
