@@ -17,9 +17,10 @@ const handleCouponPrice = (payInfo: PayInfo): DiscountResult => {
     totalDiscount = payInfo.price;
     couponDiscount = payInfo.price - payInfo.discount;
   }
-  const discountPer = payInfo.price === 0 ? 0 : (totalDiscount / payInfo.price) * 100;
-  return {couponDiscount, discountPer};
-}
+  const discountPer =
+    payInfo.price === 0 ? 0 : (totalDiscount / payInfo.price) * 100;
+  return { couponDiscount, discountPer };
+};
 
 const PriceSection = ({ payInfo }: PriceSectionProps) => {
   const discountInfo = handleCouponPrice(payInfo);
@@ -37,7 +38,7 @@ const PriceSection = ({ payInfo }: PriceSectionProps) => {
           <span>-{discountInfo.couponDiscount}원</span>
         </div>
         <div className="flex items-center justify-between px-1.5 py-2.5 font-semibold text-system-error">
-          <span>할인 {discountInfo.discountPer}%</span>
+          <span>할인 {Math.round(discountInfo.discountPer)}%</span>
           <span>-{payInfo.discount.toLocaleString()}원</span>
         </div>
       </div>
