@@ -104,7 +104,7 @@ const Router = () => {
               element={<ReviewCreateRegacy />}
             />
             {/* /program/:programId/review/new */}
-            <Route path="review/new" element={<ReviewCreate />} />
+            <Route path="review/new" element={<ReviewCreate isEdit={false} />} />
             {/* /program/:programId/review/:reviewId */}
             <Route path="review/:reviewId" element={<ReviewDetail />} />
             {/* /program/:programId/mentor/notification */}
@@ -123,7 +123,9 @@ const Router = () => {
               {/* /mypage/review */}
               <Route path="" element={<Review />} />
               {/* /mypage/review/new/program/:programId */}
-              <Route path="new/program/:programId" element={<ReviewCreate />} />
+              <Route path="new/program/:programId" element={<ReviewCreate isEdit={false} />} />
+              {/* /mypage/review/edit/program/:programId */}
+              <Route path="edit/program/:programId" element={<ReviewCreate isEdit={true} />} />
             </Route>
             {/* /mypage/privacy */}
             <Route path="privacy" element={<Privacy />} />

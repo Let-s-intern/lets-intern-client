@@ -1,4 +1,4 @@
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { useMediaQuery } from '@mui/material';
 import { useReducer, useState } from 'react';
@@ -12,6 +12,7 @@ import drawerReducer from '../../../reducers/drawerReducer';
 import ApplyModal from '../../../components/common/program/program-detail/apply/modal/ApplyModal';
 import applyReducer from '../../../reducers/applyReducer';
 import FilledButton from '../../../components/common/program/program-detail/button/FilledButton';
+import useAuthStore from '../../../store/useAuthStore';
 
 export type ProgramType = 'challenge' | 'live';
 
@@ -21,6 +22,8 @@ interface ProgramDetailProps {
 
 const ProgramDetail = ({ programType }: ProgramDetailProps) => {
   const params = useParams<{ programId: string }>();
+  const navigate = useNavigate();
+  const {isLoggedIn} = useAuthStore();
   const [programTitle, setProgramTitle] = useState('');
   const programId = Number(params.programId);
   const matches = useMediaQuery('(min-width: 991px)');
@@ -35,6 +38,11 @@ const ProgramDetail = ({ programType }: ProgramDetailProps) => {
     applyDispatch({ type: 'toggle' });
   };
   const toggleDrawer = () => {
+    if (!isLoggedIn) {
+      alert('로그인 후 이용해주세요.');
+      navigate(`/login?redirect=${window.location.pathname}`);
+      return;
+    }
     drawerDispatch({ type: 'toggle' });
   };
 

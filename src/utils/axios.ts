@@ -4,8 +4,6 @@ const axios = Axios.create();
 
 const accessToken = localStorage.getItem('access-token');
 const refreshToken = localStorage.getItem('refresh-token');
-console.log('AXIOS accessToken: ', accessToken);
-console.log('AXIOS refreshToken: ', refreshToken);
 
 axios.defaults.baseURL = `${process.env.REACT_APP_SERVER_API}`;
 axios.defaults.headers.common['Content-Type'] = 'application/json';

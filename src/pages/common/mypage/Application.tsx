@@ -26,7 +26,7 @@ const Application = () => {
     queryFn: async () => {
       const res = await axios.get('/user/applications');
       setApplicationList(res.data.data.applicationList);
-      console.log(res.data.data);
+      // console.log(res.data.data);
       return res.data;
     },
   });

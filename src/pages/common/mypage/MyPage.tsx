@@ -2,19 +2,18 @@ import { useEffect } from 'react';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 // import { ReactComponent as User } from '../../../../public/icons/user-user-circle.svg';
 import NavItem from '../../../components/common/mypage/ui/nav/NavItem';
+import useAuthStore from '../../../store/useAuthStore';
 
 const MyPage = () => {
+  const {isLoggedIn} = useAuthStore();
   const location = useLocation();
   const navigate = useNavigate();
 
   useEffect(() => {
-    const accessToken = localStorage.getItem('access-token');
-    const refreshToken = localStorage.getItem('refresh-token');
-
-    if (!accessToken || !refreshToken) {
+    if (!isLoggedIn) {
       navigate('/login');
     }
-  }, [navigate]);
+  }, [isLoggedIn, navigate]);
 
   return (
     <div className="flex w-full flex-col items-center justify-start lg:px-[7.5rem]">
