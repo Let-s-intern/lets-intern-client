@@ -1,7 +1,9 @@
+import { useState } from 'react';
+
 import axios from '../../../../../../utils/axios';
 import Input from '../../../../ui/input/Input';
 import { PayInfo } from '../../section/ApplySection';
-import { useState } from 'react';
+import { isAxiosError } from 'axios';
 
 interface CouponSectionProps {
   setPayInfo: (payInfo: (prevPayInfo: PayInfo) => PayInfo) => void;
@@ -9,8 +11,13 @@ interface CouponSectionProps {
 }
 
 const CouponSection = ({ setPayInfo, programType }: CouponSectionProps) => {
-  const [code, setCode] = useState<string>('');
-  const [error, setError] = useState<string>('');
+  const [code, setCode] = useState('');
+  const [validationMsg, setValidationMsg] = useState('');
+
+  const clickApply = async () => {
+    if (code === '') return;
+    await fetchCouponAvailability();
+  };
 
   const fetchCouponAvailability = async () => {
     try {
@@ -26,39 +33,43 @@ const CouponSection = ({ setPayInfo, programType }: CouponSectionProps) => {
         couponPrice: res.data.data.discount,
       }));
     } catch (error) {
+      if (isAxiosError(error)) {
+        setValidationMsg(error.response?.data.message);
+      }
       setPayInfo((prevPayInfo: PayInfo) => ({
         ...prevPayInfo,
         couponId: null,
         couponPrice: 0,
       }));
-      setError('쿠폰 등록에 실패하였습니다.');
     }
   };
 
   const handleCodeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setCode(e.target.value);
-    setError('');
+    setValidationMsg('');
   };
 
   return (
     <div className="flex w-full flex-col gap-3">
       <div className="font-semibold text-neutral-0">쿠폰 등록</div>
-      <div className="flex w-full gap-2.5 items-center justify-start">
+      <div className="flex gap-2.5">
         <Input
+          className="w-full"
           type="text"
-          className=""
           placeholder="쿠폰 코드 입력"
           value={code}
           onChange={handleCodeChange}
         />
         <button
-          className="flex shrink-0 py-3 items-center justify-center rounded-sm bg-primary px-4 text-sm font-medium text-neutral-100"
-          onClick={() => fetchCouponAvailability()}
+          className="flex shrink-0 items-center justify-center rounded-sm bg-primary px-4 py-1.5 text-sm font-medium text-neutral-100"
+          onClick={clickApply}
         >
           쿠폰 등록
         </button>
       </div>
-      { error && <div className='text-system-error text-sm h-3'>{error}</div> }
+      {validationMsg && (
+        <div className="text-0.875 h-3 text-system-error">{validationMsg}</div>
+      )}
     </div>
   );
 };

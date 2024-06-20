@@ -26,7 +26,7 @@ const PayContent = ({
   handleApplyButtonClick,
   contentIndex,
   setContentIndex,
-  programType
+  programType,
 }: PayContentProps) => {
   const scrollableBoxRef = useRef<ScrollableDiv>(null);
 
@@ -60,12 +60,13 @@ const PayContent = ({
   }, [scrollableBoxRef]);
 
   const totalPrice = () => {
-    let totalDiscount = payInfo.couponPrice === -1 ? payInfo.price : payInfo.discount + payInfo.couponPrice;
-    if (payInfo.price <= totalDiscount)
-      return 0;
-    else
-      return payInfo.price - totalDiscount;
-  }
+    let totalDiscount =
+      payInfo.couponPrice === -1
+        ? payInfo.price
+        : payInfo.discount + payInfo.couponPrice;
+    if (payInfo.price <= totalDiscount) return 0;
+    else return payInfo.price - totalDiscount;
+  };
 
   return (
     <div className="flex flex-col gap-6">
@@ -79,7 +80,10 @@ const PayContent = ({
               <h2 className="font-medium">결제 정보</h2>
               <PayInfoSection payInfo={payInfo} />
               <hr className="bg-neutral-85" />
-              <CouponSection setPayInfo={setPayInfo} programType={programType} />
+              <CouponSection
+                setPayInfo={setPayInfo}
+                programType={programType}
+              />
               <hr className="bg-neutral-85" />
               <PriceSection payInfo={payInfo} />
             </>
@@ -100,7 +104,7 @@ const PayContent = ({
             handleApplyButtonClick();
           }}
         >
-          신청하기 {(totalPrice()).toLocaleString()}원
+          신청하기 {totalPrice().toLocaleString()}원
         </button>
       </div>
     </div>
