@@ -9,6 +9,23 @@ import { useQuery } from '@tanstack/react-query';
 const AdminLayout = () => {
   const navigate = useNavigate();
 
+  const { data, isLoading } = useQuery({
+    queryKey: ['user', 'isAdmin'],
+    queryFn: async ({ queryKey }) => {
+      const res = await axios.get(`/${queryKey[0]}/${queryKey[1]}`);
+      return res.data;
+    },
+  });
+
+  const isAdmin = data?.data || false;
+
+  useEffect(() => {
+    if (isLoading) return;
+    if (!isAdmin) {
+      navigate('/');
+    }
+  }, [data, isAdmin, isLoading]);
+
   // const [challengeId, setChallengeId] = useState<number>(0);
 
   // useQuery({
@@ -130,6 +147,8 @@ const AdminLayout = () => {
       ],
     },
   ];
+
+  if (!isAdmin) return null;
 
   return (
     <div className="flex font-pretendard">

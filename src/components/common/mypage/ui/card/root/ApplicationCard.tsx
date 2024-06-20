@@ -73,6 +73,12 @@ const ApplicationCard = ({
           </div>
         </div>
       </div>
+      {application.programType === 'CHALLENGE' &&
+        application.status === 'IN_PROGRESS' && (
+          <LinkButton to={`/challenge/${application.programId}`}>
+            챌린지로 이동
+          </LinkButton>
+        )}
       {hasReviewButton && (
         <LinkButton
           to={`/mypage/review/${

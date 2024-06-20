@@ -753,6 +753,7 @@ export const userSchema = z.object({
 /** GET /api/v1/challenge/{id}/score */
 export const challengeScore = z.object({
   totalScore: z.number(),
+  currentScore: z.number(),
 });
 
 /** GET /api/v1/challenge/{id}/my/daily-mission 챌린지 나의 기록장 데일리 미션 */

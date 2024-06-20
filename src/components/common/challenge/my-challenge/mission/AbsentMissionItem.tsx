@@ -112,20 +112,20 @@ const AbsentMissionItem = ({ mission, isDone }: Props) => {
         <div className="flex flex-1 items-center justify-between">
           <div className="flex items-center gap-3">
             <h4 className="text-lg font-semibold">
-              {missionDetail?.th}회차. {missionDetail?.title}
+              {mission.th}회차. {mission.title}
             </h4>
             <span
               className={clsx(
                 'rounded-md px-2 py-[0.125rem] text-xs',
                 missionSubmitToBadge({
-                  status: mission.attendanceStatus,
+                  status: 'ABSENT',
                   result: mission.attendanceResult,
                 }).style,
               )}
             >
               {
                 missionSubmitToBadge({
-                  status: mission.attendanceStatus,
+                  status: 'ABSENT',
                   result: mission.attendanceResult,
                 }).text
               }

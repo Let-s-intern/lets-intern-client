@@ -1,6 +1,6 @@
 import { useMutation } from '@tanstack/react-query';
 import clsx from 'clsx';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useCurrentChallenge } from '../../../../../context/CurrentChallengeProvider';
 import { UserChallengeMissionDetail } from '../../../../../schema';
 import axios from '../../../../../utils/axios';
@@ -15,7 +15,9 @@ const AbsentMissionSubmitMenu = ({ missionDetail }: Props) => {
     return schedule.missionInfo.id === missionDetail.id;
   });
   const [isAttended, setIsAttended] = useState(
-    currentSchedule?.attendanceInfo.submitted ?? false,
+    currentSchedule?.attendanceInfo.result === 'WRONG'
+      ? false
+      : currentSchedule?.attendanceInfo.submitted || false,
   );
   const [value, setValue] = useState(
     currentSchedule?.attendanceInfo?.link || '',
@@ -71,6 +73,10 @@ const AbsentMissionSubmitMenu = ({ missionDetail }: Props) => {
     e.preventDefault();
     submitMissionLink.mutate();
   };
+
+  useEffect(() => {
+    handleMissionLinkChanged({ target: { value } });
+  }, [value]);
 
   return (
     <form onSubmit={handleMissionLinkSubmit} className="px-3">

@@ -11,8 +11,9 @@ import { useCurrentChallenge } from '../../../context/CurrentChallengeProvider';
 import {
   challengeGuides,
   challengeNotices,
-  challengeScore, Schedule,
-  userSchema
+  challengeScore,
+  Schedule,
+  userSchema,
 } from '../../../schema';
 import axios from '../../../utils/axios';
 
@@ -75,14 +76,17 @@ const ChallengeDashboard = () => {
     },
   });
 
-  const { data: totalScore = 0 } = useQuery({
+  const { data: scoreGroup } = useQuery({
     enabled: Boolean(currentChallenge?.id),
     queryKey: ['challenge', currentChallenge?.id, 'score'],
     queryFn: async () => {
       const res = await axios.get(`/challenge/${currentChallenge?.id}/score`);
-      return challengeScore.parse(res.data.data).totalScore;
+      return challengeScore.parse(res.data.data);
     },
   });
+
+  const totalScore = scoreGroup?.totalScore || 0;
+  const currentScore = scoreGroup?.currentScore || 0;
 
   useEffect(() => {
     console.log('currentChallenge', currentChallenge);
@@ -135,6 +139,7 @@ const ChallengeDashboard = () => {
               // isLoading={isLoading}
               // todayTh={todayTh}
               totalScore={totalScore}
+              currentScore={currentScore}
             />
           )}
           <NoticeSection notices={notices} guides={guides} />
