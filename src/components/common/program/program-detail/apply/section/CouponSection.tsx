@@ -40,16 +40,16 @@ const CouponSection = ({ setPayInfo, programType }: CouponSectionProps) => {
   return (
     <div className="flex flex-col gap-3">
       <div className="font-semibold text-neutral-0">쿠폰 등록</div>
-      <div className="flex w-full gap-2.5">
+      <div className="flex gap-2.5">
         <Input
+          className="w-full"
           type="text"
-          className="flex-1"
           placeholder="쿠폰 코드 입력"
           value={code}
           onChange={handleCodeChange}
         />
         <button
-          className="flex items-center justify-center rounded-sm bg-primary px-4 py-1.5 text-sm font-medium text-neutral-100"
+          className="flex shrink-0 items-center justify-center rounded-sm bg-primary px-4 py-1.5 text-sm font-medium text-neutral-100"
           onClick={() => fetchCouponAvailability()}
         >
           쿠폰 등록
