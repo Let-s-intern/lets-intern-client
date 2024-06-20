@@ -43,7 +43,7 @@ const InputContent = ({
   };
 
   const handleBackButtonClick = () => {
-    setContentIndex(contentIndex - 1);
+    setContentIndex(contentIndex - 2);
   };
 
   useEffect(() => {
