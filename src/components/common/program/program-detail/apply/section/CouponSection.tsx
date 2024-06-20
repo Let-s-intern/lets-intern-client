@@ -13,7 +13,6 @@ interface CouponSectionProps {
 const CouponSection = ({ setPayInfo, programType }: CouponSectionProps) => {
   const [code, setCode] = useState('');
   const [validationMsg, setValidationMsg] = useState('');
-  const [error, setError] = useState<string>('');
 
   const clickApply = async () => {
     if (code === '') return;
@@ -47,7 +46,7 @@ const CouponSection = ({ setPayInfo, programType }: CouponSectionProps) => {
 
   const handleCodeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setCode(e.target.value);
-    setError('');
+    setValidationMsg('');
   };
 
   return (
