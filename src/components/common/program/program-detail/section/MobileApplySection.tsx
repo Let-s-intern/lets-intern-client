@@ -1,15 +1,13 @@
 import { useReducer, useState } from 'react';
 
 import InputContent from '../apply/content/InputContent';
-import ChoicePayPlanContent from '../apply/content/ChoicePayPlanContent';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import axios from '../../../../../utils/axios';
 import { ProgramType } from '../../../../../pages/common/program/ProgramDetail';
 import PayContent from '../apply/content/PayContent';
 import CautionContent from '../apply/content/CautionContent';
-import drawerReducer from '../../../../../reducers/drawerReducer';
-import applyReducer from '../../../../../reducers/applyReducer';
 import { PayInfo } from './ApplySection';
+import { IAction } from '../../../../../interfaces/interface';
 
 export interface ProgramDate {
   deadline: string;
@@ -31,6 +29,7 @@ interface MobileApplySectionProps {
   programId: number;
   toggleApplyModal: () => void;
   toggleDrawer: () => void;
+  drawerDispatch: (value: IAction) => void;
 }
 
 const MobileApplySection = ({
@@ -38,6 +37,7 @@ const MobileApplySection = ({
   programId,
   toggleApplyModal,
   toggleDrawer,
+  drawerDispatch,
 }: MobileApplySectionProps) => {
   const [contentIndex, setContentIndex] = useState(0);
   const [programDate, setProgramDate] = useState<ProgramDate>({
@@ -74,7 +74,6 @@ const MobileApplySection = ({
     queryFn: async () => {
       const res = await axios.get(`/${programType}/${programId}/application`);
       const data = res.data.data;
-      console.log(data);
       setProgramDate({
         deadline: data.deadline,
         startDate: data.startDate,
@@ -140,6 +139,7 @@ const MobileApplySection = ({
           userInfo={userInfo}
           setUserInfo={setUserInfo}
           programType={programType}
+          drawerDispatch={drawerDispatch}
         />
       )}
       {contentIndex === 1 && (

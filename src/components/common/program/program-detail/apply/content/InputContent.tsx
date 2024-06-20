@@ -7,7 +7,7 @@ import { UserInfo } from '../../section/ApplySection';
 import MotiveAnswerSection from '../section/MotiveAnswerSection';
 import UserInputSection from '../section/UserInputSection';
 import ScrollableBox from '../scrollable-box/ScrollableBox';
-import { table } from 'console';
+import { IAction } from '../../../../../../interfaces/interface';
 
 interface InputContentProps {
   contentIndex: number;
@@ -15,6 +15,7 @@ interface InputContentProps {
   userInfo: UserInfo;
   setUserInfo: (userInfo: UserInfo) => void;
   programType: ProgramType;
+  drawerDispatch?: (value: IAction) => void;
 }
 
 interface ScrollableDiv extends HTMLDivElement {
@@ -27,9 +28,10 @@ const InputContent = ({
   userInfo,
   setUserInfo,
   programType,
+  drawerDispatch,
 }: InputContentProps) => {
   const scrollableBoxRef = useRef<ScrollableDiv>(null);
-  const [buttonDisabled, setButtonDisabled] = useState<boolean>(true);
+  const [buttonDisabled, setButtonDisabled] = useState(true);
   const mobileMatches = useMediaQuery('(max-width: 768px)');
   const tabletMatches = useMediaQuery('(max-width: 991px)');
 
@@ -43,6 +45,9 @@ const InputContent = ({
   };
 
   const handleBackButtonClick = () => {
+    if (drawerDispatch) {
+      drawerDispatch({ type: 'close' });
+    }
     setContentIndex(contentIndex - 2);
   };
 

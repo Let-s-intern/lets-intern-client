@@ -21,7 +21,7 @@ interface ProgramDetailProps {
 
 const ProgramDetail = ({ programType }: ProgramDetailProps) => {
   const params = useParams<{ programId: string }>();
-  const [programTitle, setProgramTitle] = useState<string>('');
+  const [programTitle, setProgramTitle] = useState('');
   const programId = Number(params.programId);
   const matches = useMediaQuery('(min-width: 991px)');
   const [isOpen, drawerDispatch] = useReducer(drawerReducer, false);
@@ -74,6 +74,7 @@ const ProgramDetail = ({ programType }: ProgramDetailProps) => {
                   programId={programId}
                   toggleApplyModal={toggleApplyModal}
                   toggleDrawer={toggleDrawer}
+                  drawerDispatch={drawerDispatch}
                 />
               ) : (
                 // 모집 전이면 사전알림신청 버튼 표시
