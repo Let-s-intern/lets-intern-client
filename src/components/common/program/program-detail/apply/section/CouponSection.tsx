@@ -1,7 +1,9 @@
+import { useState } from 'react';
+
 import axios from '../../../../../../utils/axios';
 import Input from '../../../../ui/input/Input';
 import { PayInfo } from '../../section/ApplySection';
-import { useState } from 'react';
+import { AxiosError, isAxiosError } from 'axios';
 
 interface CouponSectionProps {
   setPayInfo: (payInfo: (prevPayInfo: PayInfo) => PayInfo) => void;
@@ -9,7 +11,13 @@ interface CouponSectionProps {
 }
 
 const CouponSection = ({ setPayInfo, programType }: CouponSectionProps) => {
-  const [code, setCode] = useState<string>('');
+  const [code, setCode] = useState('');
+  const [validationMsg, setValidationMsg] = useState('');
+
+  const clickApply = async () => {
+    if (code === '') return;
+    await fetchCouponAvailability();
+  };
 
   const fetchCouponAvailability = async () => {
     try {
@@ -25,6 +33,9 @@ const CouponSection = ({ setPayInfo, programType }: CouponSectionProps) => {
         couponPrice: res.data.data.discount,
       }));
     } catch (error) {
+      if (isAxiosError(error)) {
+        setValidationMsg(error.response?.data.message);
+      }
       setPayInfo((prevPayInfo: PayInfo) => ({
         ...prevPayInfo,
         couponId: null,
@@ -50,11 +61,12 @@ const CouponSection = ({ setPayInfo, programType }: CouponSectionProps) => {
         />
         <button
           className="flex shrink-0 items-center justify-center rounded-sm bg-primary px-4 py-1.5 text-sm font-medium text-neutral-100"
-          onClick={() => fetchCouponAvailability()}
+          onClick={clickApply}
         >
           쿠폰 등록
         </button>
       </div>
+      <p className="text-0.875 text-system-error">{validationMsg}</p>
     </div>
   );
 };
