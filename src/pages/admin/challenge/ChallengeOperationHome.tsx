@@ -10,7 +10,7 @@ const ChallengeOperationHome = () => {
       <section className="rounded mt-10 border px-3 py-2">
         <h2 className="text-lg font-bold">미션제출현황</h2>
         <div className="flex min-w-full items-center justify-around">
-          {missions.map((mission, index) => (
+          {missions.map((mission) => (
             <MissionResultItem key={mission.id} mission={mission} />
           ))}
         </div>

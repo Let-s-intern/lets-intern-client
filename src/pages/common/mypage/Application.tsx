@@ -21,7 +21,7 @@ export interface ApplicationType {
 const Application = () => {
   const [applicationList, setApplicationList] = useState<ApplicationType[]>([]);
 
-  const getApplicationList = useQuery({
+  const { data, isLoading } = useQuery({
     queryKey: ['user', 'applications'],
     queryFn: async () => {
       const res = await axios.get('/user/applications');
@@ -31,17 +31,18 @@ const Application = () => {
     },
   });
 
-  const waitingApplicationList = applicationList.filter(
-    (application) => application.status === 'WAITING',
-  );
-  const inProgressApplicationList = applicationList.filter(
-    (application) => application.status === 'IN_PROGRESS',
-  );
-  const completedApplicationList = applicationList.filter(
-    (application) => application.status === 'DONE',
-  );
-
-  const isLoading = getApplicationList.isLoading;
+  const waitingApplicationList =
+    data?.data?.applicationList.filter(
+      (application: ApplicationType) => application.status === 'WAITING',
+    ) || [];
+  const inProgressApplicationList =
+    data?.data?.applicationList.filter(
+      (application: ApplicationType) => application.status === 'IN_PROGRESS',
+    ) || [];
+  const completedApplicationList =
+    data?.data?.applicationList.filter(
+      (application: ApplicationType) => application.status === 'DONE',
+    ) || [];
 
   if (isLoading) return <></>;
 

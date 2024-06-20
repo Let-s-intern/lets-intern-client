@@ -11,7 +11,7 @@ import {
 } from '@mui/material';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import clsx from 'clsx';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { FaEdit } from 'react-icons/fa';
 import { FaTrashCan } from 'react-icons/fa6';
 import { twMerge } from 'tailwind-merge';
@@ -83,6 +83,13 @@ const NoticeSection = ({ className }: { className?: string }) => {
   const createNoticeMutation = useMutation({
     mutationFn: (values: CreateChallengeNoticeReq) => {
       return axios.post(`/challenge-notice/${currentChallenge?.id}`, values);
+    },
+    onSuccess: () => {
+      setCreatingNotice({
+        title: '',
+        link: '',
+        type: 'ESSENTIAL',
+      });
     },
   });
 
@@ -192,7 +199,14 @@ const NoticeSection = ({ className }: { className?: string }) => {
 
       <Dialog
         open={modalStatus.open}
-        onClose={() => setModalStatus({ ...modalStatus, open: false })}
+        onClose={() => {
+          setModalStatus({ ...modalStatus, open: false });
+          setCreatingNotice({
+            title: '',
+            link: '',
+            type: 'ESSENTIAL',
+          });
+        }}
       >
         <DialogTitle id="alert-dialog-title">
           {modalStatus.mode === 'create' ? '공지사항 등록' : '공지사항 수정'}
@@ -217,6 +231,7 @@ const NoticeSection = ({ className }: { className?: string }) => {
                   title: e.target.value,
                 }))
               }
+              autoComplete="off"
             />
             <label htmlFor="notice-link">링크</label>
             <input
@@ -231,6 +246,7 @@ const NoticeSection = ({ className }: { className?: string }) => {
                   link: e.target.value,
                 }))
               }
+              autoComplete="off"
             />
           </div>
         </DialogContent>
@@ -238,6 +254,11 @@ const NoticeSection = ({ className }: { className?: string }) => {
           <Button
             onClick={() => {
               setModalStatus((prev) => ({ ...prev, open: false }));
+              setCreatingNotice({
+                title: '',
+                link: '',
+                type: 'ESSENTIAL',
+              });
             }}
             color="inherit"
           >
@@ -263,6 +284,11 @@ const NoticeSection = ({ className }: { className?: string }) => {
               }
               refetch();
               setModalStatus((prev) => ({ ...prev, open: false }));
+              setCreatingNotice({
+                title: '',
+                link: '',
+                type: 'ESSENTIAL',
+              });
             }}
             autoFocus
           >

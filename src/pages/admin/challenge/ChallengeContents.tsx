@@ -5,22 +5,21 @@ import { useMemo, useState } from 'react';
 import Button from '../../../components/admin/challenge/ui/button/Button';
 import Heading from '../../../components/admin/challenge/ui/heading/Heading';
 import LineTableBody from '../../../components/admin/challenge/ui/lineTable/LineTableBody';
-import LineTableBodyRow, { ItemWithStatus } from '../../../components/admin/challenge/ui/lineTable/LineTableBodyRow';
+import LineTableBodyRow, {
+  ItemWithStatus,
+} from '../../../components/admin/challenge/ui/lineTable/LineTableBodyRow';
 import LineTableHead from '../../../components/admin/challenge/ui/lineTable/LineTableHead';
 import {
   ContentsResItem,
   CreateContentsReq,
   getContentsAdmin,
-  UpdateContentsReq
+  UpdateContentsReq,
 } from '../../../schema';
 import axios from '../../../utils/axios';
-import {
-  TABLE_CONTENT,
-  TABLE_STATUS
-} from '../../../utils/convert';
+import { TABLE_CONTENT, TABLE_STATUS } from '../../../utils/convert';
 
 const cellWidthList = [
-  'w-[140px]',
+  'w-[200px]',
   'w-[60px]',
   'w-[10%]',
   'w-[20%]',

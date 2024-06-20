@@ -10,7 +10,7 @@ import {
   Snackbar,
 } from '@mui/material';
 import { useMutation, useQuery } from '@tanstack/react-query';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { FaEdit } from 'react-icons/fa';
 import { FaTrashCan } from 'react-icons/fa6';
 import { twMerge } from 'tailwind-merge';
@@ -184,7 +184,13 @@ const GuideSection = ({ className }: { className?: string }) => {
 
       <Dialog
         open={modalStatus.open}
-        onClose={() => setModalStatus({ ...modalStatus, open: false })}
+        onClose={() => {
+          setModalStatus({ ...modalStatus, open: false });
+          setCreatingGuide({
+            title: '',
+            link: '',
+          });
+        }}
       >
         <DialogTitle id="alert-dialog-title">
           {modalStatus.mode === 'create' ? '가이드 등록' : '가이드 수정'}
@@ -209,6 +215,7 @@ const GuideSection = ({ className }: { className?: string }) => {
                   title: e.target.value,
                 }))
               }
+              autoComplete="off"
             />
             <label htmlFor="guide-link">링크</label>
             <input
@@ -223,6 +230,7 @@ const GuideSection = ({ className }: { className?: string }) => {
                   link: e.target.value,
                 }))
               }
+              autoComplete="off"
             />
           </div>
         </DialogContent>
@@ -230,6 +238,10 @@ const GuideSection = ({ className }: { className?: string }) => {
           <Button
             onClick={() => {
               setModalStatus((prev) => ({ ...prev, open: false }));
+              setCreatingGuide({
+                title: '',
+                link: '',
+              });
             }}
             color="inherit"
           >
@@ -255,6 +267,10 @@ const GuideSection = ({ className }: { className?: string }) => {
               }
               refetch();
               setModalStatus((prev) => ({ ...prev, open: false }));
+              setCreatingGuide({
+                title: '',
+                link: '',
+              });
             }}
             autoFocus
           >
