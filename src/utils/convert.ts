@@ -1,4 +1,4 @@
-import { AttendanceResult, AttendanceStatus } from "../schema";
+import { AttendanceResult, AttendanceStatus } from '../schema';
 
 export const newProgramTypeToText: Record<string, string> = {
   CHALLENGE: '챌린지',
@@ -273,9 +273,16 @@ export const missionSubmitToBadge = ({
     };
   }
 
-  if (status === "UPDATED" && result === "WRONG") {
+  if (status === 'UPDATED' && result === 'WRONG') {
     return {
       text: '결석',
+      style: 'bg-[#E3E3E3] text-[#9B9B9B]',
+    };
+  }
+
+  if (status === 'UPDATED' && result === 'PASS') {
+    return {
+      text: '지각',
       style: 'bg-[#E3E3E3] text-[#9B9B9B]',
     };
   }

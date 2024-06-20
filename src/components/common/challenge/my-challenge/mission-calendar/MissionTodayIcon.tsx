@@ -24,13 +24,22 @@ const MissionTodayIcon = ({ mission, className, attendance }: Props) => {
           className,
         )}
       >
-        {attendance.status !== 'ABSENT' ? (
-          <div className="mb-[10%] flex h-[30%] w-[50%] min-w-[2.5rem] items-center justify-center rounded-full bg-primary">
-            <i className="text-2xl text-white">
-              <FaCheck />
-            </i>
-          </div>
-        ) : (
+        {
+          attendance.status === 'ABSENT' || attendance.result === 'WRONG' ? (
+            <div className="mb-[10%] flex h-[30%] w-[50%] min-w-[2.5rem] items-center justify-center">
+              <img
+                src="/icons/general-mission.svg"
+                alt="general mission icon"
+                className="w-full"
+              />
+            </div>
+          ) : (
+            <div className="mb-[10%] flex h-[30%] w-[50%] min-w-[2.5rem] items-center justify-center rounded-full bg-primary">
+              <i className="text-2xl text-white">
+                <FaCheck />
+              </i>
+            </div>
+          )
           // ) : mission. === 'ADDITIONAL' ? (
           //   <div className="mb-[0.175rem] flex w-[2.5rem] items-center justify-center">
           //     <i>
@@ -49,14 +58,7 @@ const MissionTodayIcon = ({ mission, className, attendance }: Props) => {
           // ) : (
 
           // mission.missionType === 'GENERAL' &&
-          <div className="mb-[10%] flex h-[30%] w-[50%] min-w-[2.5rem] items-center justify-center">
-            <img
-              src="/icons/general-mission.svg"
-              alt="general mission icon"
-              className="w-full"
-            />
-          </div>
-        )}
+        }
         <span className="font-pretendard text-sm font-semibold text-primary">
           {mission.th}회차
         </span>
