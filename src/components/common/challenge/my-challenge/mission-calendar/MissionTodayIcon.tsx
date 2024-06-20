@@ -25,7 +25,9 @@ const MissionTodayIcon = ({ mission, className, attendance }: Props) => {
         )}
       >
         {
-          attendance.status === 'ABSENT' || attendance.result === 'WRONG' ? (
+          attendance.status === 'ABSENT' ||
+          attendance.result === 'WRONG' ||
+          attendance.result === null ? (
             <div className="mb-[10%] flex h-[30%] w-[50%] min-w-[2.5rem] items-center justify-center">
               <img
                 src="/icons/general-mission.svg"
@@ -72,7 +74,8 @@ const MissionTodayIcon = ({ mission, className, attendance }: Props) => {
               result: attendance.result,
             }).style,
             {
-              'opacity-0': attendance.status === 'ABSENT',
+              'opacity-0':
+                attendance.status === 'ABSENT' || attendance.result === null,
             },
           )}
         >

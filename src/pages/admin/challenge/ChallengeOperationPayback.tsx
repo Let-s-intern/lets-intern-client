@@ -2,8 +2,9 @@ import { Button, Snackbar, Switch } from '@mui/material';
 import {
   DataGrid,
   GridColDef,
-  GridToolbarContainer, ToolbarPropsOverrides,
-  useGridApiContext
+  GridToolbarContainer,
+  ToolbarPropsOverrides,
+  useGridApiContext,
 } from '@mui/x-data-grid';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import dayjs from 'dayjs';
@@ -13,7 +14,7 @@ import { z } from 'zod';
 import {
   accountType,
   getChallengeIdApplicationsPayback,
-  UpdatePaybackReq
+  UpdatePaybackReq,
 } from '../../../schema';
 import axios from '../../../utils/axios';
 
@@ -273,9 +274,13 @@ const ChallengeOperationPayback = () => {
 
               setSnackbar({
                 open: true,
-                message: `환급 완료: ${success.join(', ')}, 실패: ${failed.join(
-                  ', ',
-                )}`,
+                message: `${
+                  success.length !== 0
+                    ? `환급 완료: ${success.join(', ')}${
+                        failed.length !== 0 ? ', ' : ''
+                      }`
+                    : ''
+                }${failed.length !== 0 ? `실패: ${failed.join(', ')}` : ''}`,
               });
 
               refetch();
