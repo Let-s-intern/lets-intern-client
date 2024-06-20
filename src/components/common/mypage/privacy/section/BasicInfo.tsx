@@ -213,7 +213,12 @@ const BasicInfo = () => {
           />
         </div>
       </div>
-      <Button onClick={handleSubmit}>기본 정보 수정하기</Button>
+      <Button onClick={handleSubmit}>{
+        (user.contactEmail === '' && user.university === '' && user.grade === '' && user.major === '' && user.wishJob === '' && user.wishCompany === '') ? 
+          '기본 정보 등록하기'
+         : 
+          '기본 정보 수정하기'
+    }</Button>
     </section>
   );
 };
