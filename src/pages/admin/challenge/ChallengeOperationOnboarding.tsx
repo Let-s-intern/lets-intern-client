@@ -11,7 +11,8 @@ const ChallengeOnboarding = () => {
     queryKey: ['challenge', 'admin'],
     queryFn: async () => {
       const res = await axios.get(`/challenge?size=1000`);
-      return challenges.parse(res.data.data);
+      return res.data.data;
+      // return challenges.parse(res.data.data);
     },
   });
 

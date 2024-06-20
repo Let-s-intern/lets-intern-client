@@ -2,9 +2,10 @@ import ScoreTooltipQuestion from '../../ui/tooltip-question/ScoreTooltipQuestion
 
 interface Props {
   totalScore: number;
+  currentScore: number;
 }
 
-const ScoreSection = ({ totalScore }: Props) => {
+const ScoreSection = ({ totalScore, currentScore }: Props) => {
   return (
     <section className="flex w-[12rem] flex-col rounded-xl border border-[#E4E4E7] p-6">
       <div className="flex flex-1 flex-col">
@@ -15,10 +16,10 @@ const ScoreSection = ({ totalScore }: Props) => {
         <div className="flex flex-1 items-center justify-start font-pretendard">
           <div className="flex items-end">
             <span className="text-3xl font-bold text-primary">
-              {totalScore}
+              {currentScore}
             </span>
             <span className="mb-[1px] ml-1 font-semibold text-[#D3D3D3]">
-              /{100}
+              /{totalScore}
             </span>
           </div>
         </div>

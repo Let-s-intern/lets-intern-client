@@ -16,7 +16,7 @@ export const challenges = z
         id: z.number(),
         title: z.string(),
         shortDesc: z.string(),
-        thumbnail: z.string().url(),
+        thumbnail: z.string(),
         startDate: z.string(),
         endDate: z.string(),
         beginning: z.string(),
@@ -101,7 +101,7 @@ export const getChallengeId = z
     shortDesc: z.string(),
     desc: z.string(),
     participationCount: z.number(),
-    thumbnail: z.string().url(),
+    thumbnail: z.string(),
     startDate: z.string(),
     endDate: z.string(),
     beginning: z.string(),
@@ -233,9 +233,24 @@ export const attendances = z
         link: z.string().nullable(),
         result: attendanceResult.nullable(),
         comments: z.string().nullable().optional(),
+        createDate: z.string().nullable(),
+        lastModifiedDate: z.string().nullable(),
       }),
     ),
+  })
+  .transform((data) => {
+    return {
+      attendanceList: data.attendanceList.map((attendance) => ({
+        ...attendance,
+        createDate: attendance.createDate ? dayjs(attendance.createDate) : null,
+        lastModifiedDate: attendance.lastModifiedDate
+          ? dayjs(attendance.lastModifiedDate)
+          : null,
+      })),
+    };
   });
+
+export type Attendance = z.infer<typeof attendances>['attendanceList'][number];
 
 /** PATCH /api/v1/attendance/{id} */
 export type UpdateAttendanceReq = {
@@ -244,8 +259,6 @@ export type UpdateAttendanceReq = {
   result?: AttendanceResult;
   comments?: string;
 };
-
-export type Attendance = z.infer<typeof attendances>['attendanceList'][number];
 
 /** GET /challenge/{id}/application */
 export const getChallengeIdApplication = z
@@ -603,6 +616,7 @@ export const challengeSchedule = z
       z.object({
         missionInfo: z.object({
           id: z.number(),
+          title: z.string().nullable(),
           th: z.number().nullable(),
           startDate: z.string().nullable(),
           endDate: z.string().nullable(),
@@ -612,6 +626,7 @@ export const challengeSchedule = z
           submitted: z.boolean().nullable(),
           id: z.number().nullable(),
           link: z.string().nullable(),
+          comments: z.string().nullable(),
           status: attendanceStatus.nullable(),
           result: attendanceResult.nullable(),
         }),
@@ -686,7 +701,7 @@ export const userChallengeMissionDetail = z
 
 export type UserChallengeMissionDetail = z.infer<
   typeof userChallengeMissionDetail
->["missionInfo"];
+>['missionInfo'];
 
 /** GET /api/v1/challenge/{id}/daily-mission */
 export const dailyMissionSchema = z
@@ -738,6 +753,7 @@ export const userSchema = z.object({
 /** GET /api/v1/challenge/{id}/score */
 export const challengeScore = z.object({
   totalScore: z.number(),
+  currentScore: z.number(),
 });
 
 /** GET /api/v1/challenge/{id}/my/daily-mission 챌린지 나의 기록장 데일리 미션 */
@@ -773,6 +789,7 @@ export const myDailyMission = z
       submitted: z.boolean(),
       id: z.number().nullable(),
       link: z.string().nullable(),
+      comments: z.string().nullable(),
       status: attendanceStatus.nullable(),
       result: attendanceResult.nullable(),
     }),
@@ -791,3 +808,23 @@ export const myDailyMission = z
       },
     };
   });
+
+export type MyDailyMission = z.infer<typeof myDailyMission>;
+
+// GET /api/v1/challenge/{id}/missions?type=GENERAL
+export const myChallengeMissionsByType = z.object({
+  missionList: z.array(
+    z.object({
+      attendanceLink: z.string().nullable().optional(),
+      attendanceResult: attendanceResult.nullable().optional(),
+      attendanceStatus: attendanceStatus.nullable().optional(),
+      id: z.number(),
+      th: z.number().nullable(),
+      title: z.string().nullable(),
+    }),
+  ),
+});
+
+export type MyChallengeMissionByType = z.infer<
+  typeof myChallengeMissionsByType
+>['missionList'][number];

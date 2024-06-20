@@ -9,7 +9,7 @@ const Input = (props: InputProps) => {
     <input
       type="text"
       className={clsx(
-        'text-1-medium rounded-md bg-neutral-95 p-3 outline-none',
+        'text-1-medium rounded-md min-w-0 bg-neutral-95 p-3 outline-none',
         className,
       )}
       autoComplete="off"

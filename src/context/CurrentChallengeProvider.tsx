@@ -7,6 +7,10 @@ import {
   DailyMission,
   dailyMissionSchema,
   getChallengeId,
+  MyChallengeMissionByType,
+  myChallengeMissionsByType,
+  MyDailyMission,
+  myDailyMission as myDailyMissionSchema,
   Schedule,
 } from '../schema';
 import axios from '../utils/axios';
@@ -19,9 +23,18 @@ const currentChallengeContext = createContext<{
   currentChallenge?: CurrentChallenge | null;
   schedules: Schedule[];
   dailyMission?: DailyMission | null;
+  myDailyMission?: MyDailyMission | null;
+  submittedMissions: MyChallengeMissionByType[];
+  remainingMissions: MyChallengeMissionByType[];
+  absentMissions: MyChallengeMissionByType[]
 }>({
   currentChallenge: null,
   schedules: emptySchedules,
+  dailyMission: null,
+  myDailyMission: null,
+  submittedMissions: [],
+  remainingMissions: [],
+  absentMissions: []
 });
 
 export const CurrentChallengeProvider = ({
@@ -66,8 +79,64 @@ export const CurrentChallengeProvider = ({
     },
   });
 
+  const { data: myDailyMission } = useQuery({
+    queryKey: ['challenge', params.programId, 'my', 'daily-mission'],
+    queryFn: async () => {
+      const res = await axios.get(
+        `/challenge/${params.programId}/my/daily-mission`,
+      );
+      return myDailyMissionSchema.parse(res.data.data);
+    },
+  });
+
+  const { data: submittedMissions = [] } = useQuery({
+    queryKey: ['challenge', params.programId, 'missions', 'submitted'],
+    queryFn: async () => {
+      const res = await axios.get(
+        `/challenge/${params.programId}/missions?type=SUBMITTED`,
+      );
+      return myChallengeMissionsByType.parse(res.data.data).missionList;
+    },
+  });
+
+  const { data: remainingMissions = [] } = useQuery({
+    queryKey: ['challenge', params.programId, 'missions', 'remaining'],
+    queryFn: async () => {
+      const res = await axios.get(
+        `/challenge/${params.programId}/missions?type=REMAINING`,
+      );
+      return myChallengeMissionsByType.parse(res.data.data).missionList;
+    },
+  });
+
+  const { data: absentMissions = [] } = useQuery({
+    queryKey: ['challenge', params.programId, 'missions', 'absent'],
+    queryFn: async () => {
+      const res = await axios.get(
+        `/challenge/${params.programId}/missions?type=ABSENT`,
+      );
+      return myChallengeMissionsByType.parse(res.data.data).missionList;
+    },
+  });
+
+  // useEffect(() => {
+  //   console.log("submittedMissions", submittedMissions);
+  // }, [submittedMissions]);
+
+  // useEffect(() => {
+  //   console.log("remainingMissions", remainingMissions);
+  // }, [remainingMissions]);
+
+  // useEffect(() => {
+  //   console.log("absentMissions", absentMissions);
+  // }, [absentMissions]);
+
+  // useEffect(() => {
+  //   console.log("missions", missions);
+  // }, [missions]);
+
   useEffect(() => {
-    console.log("schedules", schedules);
+    console.log('schedules', schedules);
   }, [schedules]);
 
   return (
@@ -76,6 +145,10 @@ export const CurrentChallengeProvider = ({
         currentChallenge,
         schedules: schedules ?? emptySchedules,
         dailyMission,
+        myDailyMission,
+        submittedMissions,
+        remainingMissions,
+        absentMissions,
       }}
     >
       {children}

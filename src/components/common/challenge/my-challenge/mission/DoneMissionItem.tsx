@@ -1,26 +1,25 @@
+import { useQuery } from '@tanstack/react-query';
 import clsx from 'clsx';
 import { useEffect, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { useQuery } from '@tanstack/react-query';
 
-import axios from '../../../../../utils/axios';
-import DoneMissionDetailMenu from './DoneMissionDetailMenu';
-import { missionSubmitToBadge } from '../../../../../utils/convert';
-import { Schedule, userChallengeMissionDetail } from '../../../../../schema';
 import { useCurrentChallenge } from '../../../../../context/CurrentChallengeProvider';
+import {
+  MyChallengeMissionByType,
+  userChallengeMissionDetail,
+} from '../../../../../schema';
+import axios from '../../../../../utils/axios';
+import { missionSubmitToBadge } from '../../../../../utils/convert';
+import DoneMissionDetailMenu from './DoneMissionDetailMenu';
 
 interface Props {
-  schedule: Schedule;
+  mission: MyChallengeMissionByType;
 }
 
-const DoneMissionItem = ({ schedule }: Props) => {
+const DoneMissionItem = ({ mission }: Props) => {
   const [searchParams, setSearchParams] = useSearchParams();
-  const mission = schedule.missionInfo;
-  const attendance = schedule.attendanceInfo;
-  const { currentChallenge } = useCurrentChallenge();
-
+  const { currentChallenge, schedules } = useCurrentChallenge();
   const itemRef = useRef<HTMLLIElement>(null);
-
   const [isDetailShown, setIsDetailShown] = useState(false);
 
   const {
@@ -34,7 +33,7 @@ const DoneMissionItem = ({ schedule }: Props) => {
       'challenge',
       currentChallenge?.id,
       'mission',
-      schedule.missionInfo.id,
+      mission.id,
       'detail',
       // { status: schedule.attendanceInfo.status },
     ],
@@ -44,6 +43,10 @@ const DoneMissionItem = ({ schedule }: Props) => {
       );
       return userChallengeMissionDetail.parse(res.data.data).missionInfo;
     },
+  });
+
+  const currentSchedule = schedules.find((schedule) => {
+    return schedule.missionInfo.id === mission.id;
   });
 
   useEffect(() => {
@@ -57,7 +60,7 @@ const DoneMissionItem = ({ schedule }: Props) => {
         }
       }
     }
-  }, [searchParams, setSearchParams, isDetailShown]);
+  }, [searchParams, setSearchParams, isDetailShown, mission.id]);
 
   return (
     <li
@@ -68,31 +71,28 @@ const DoneMissionItem = ({ schedule }: Props) => {
       <div className="flex gap-6 px-3">
         <div
           className={clsx('h-12 w-[5px] rounded-lg', {
-            'bg-[#fff961]': attendance.result === 'WAITING',
-            'bg-primary': attendance.result === 'PASS',
+            'bg-[#fff961]': mission.attendanceResult === 'WAITING',
+            'bg-primary': mission.attendanceResult === 'PASS',
           })}
         />
         <div className="flex flex-1 items-center justify-between">
           <div className="flex items-center gap-3">
             <h4 className="text-lg font-semibold">
-              {/* TODO: 아래로 변경 */}
-              {/* {mission.th}회차. {mission.title} */}
-              {mission.th}회차.
-
+              {mission.th}회차. {mission.title}
             </h4>
             <span
               className={clsx(
                 'rounded-md px-2 py-[0.125rem] text-xs',
                 missionSubmitToBadge({
-                  status: attendance.status,
-                  result: attendance.result,
+                  status: mission.attendanceStatus,
+                  result: mission.attendanceResult,
                 }).style,
               )}
             >
               {
                 missionSubmitToBadge({
-                  status: attendance.status,
-                  result: attendance.result,
+                  status: mission.attendanceStatus,
+                  result: mission.attendanceResult,
                 }).text
               }
             </span>
@@ -105,8 +105,14 @@ const DoneMissionItem = ({ schedule }: Props) => {
       {isDetailShown &&
         (detailError
           ? '에러 발생'
-          : !isDetailLoading && missionDetail && (
-              <DoneMissionDetailMenu missionDetail={missionDetail } />
+          : !isDetailLoading &&
+            missionDetail &&
+            currentSchedule && (
+              <DoneMissionDetailMenu
+                missionDetail={missionDetail}
+                schedule={currentSchedule}
+                missionByType={mission}
+              />
             ))}
     </li>
   );

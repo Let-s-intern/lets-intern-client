@@ -4,8 +4,8 @@ import Heading from '../ui/Heading';
 const ReviewSection = () => {
   const reviewList = [
     {
-      img: '/images/home/review_naver.png',
-      url: '#'
+      img: '/images/home/review_naver_webtoon.png',
+      url: 'https://blog.naver.com/letsintern/223342477519'
     },
     {
       img: '/images/home/review_hybe.png',
@@ -16,8 +16,8 @@ const ReviewSection = () => {
       url: 'https://blog.naver.com/letsintern/223415067865'
     },
     {
-      img: '/images/home/review_sparta.png',
-      url: '#'
+      img: '/images/home/review_cj.png',
+      url: 'https://blog.naver.com/letsintern/223407562305'
     },
   ];
 

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import axios from '../../../../../utils/axios';
 import NavItem from './NavItem';
 import SideNavItem from './SideNavItem';
@@ -7,6 +7,7 @@ import useAuthStore from '../../../../../store/useAuthStore';
 import { useQuery } from '@tanstack/react-query';
 
 const NavBar = () => {
+  const navigate = useNavigate();
   const { isLoggedIn, logout } = useAuthStore();
   const location = useLocation();
   const [isOpen, setIsOpen] = useState(false);
@@ -98,7 +99,8 @@ const NavBar = () => {
           </div>
           <div className="flex items-center gap-4">
             {isLoggedIn ? (
-              <div className="hidden gap-2 sm:flex">
+              <div className="hidden gap-2 sm:flex cursor-pointer"
+              onClick={() => navigate('/mypage/application')}>
                 <span className="text-1.125-medium block">{user?.name} 님</span>
                 <img
                   src="/icons/user-circle.svg"

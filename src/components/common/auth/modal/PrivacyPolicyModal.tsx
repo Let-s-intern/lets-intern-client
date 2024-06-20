@@ -30,7 +30,7 @@ const PrivacyPolicyModal = ({
             개인정보 수집 및 이용 동의서
           </h2>
           <p className="my-4 w-full">
-            아이엔지컴퍼니는 렛츠커리어 서비스 회원가입, 고객상담, 고지사항 전달
+            아이엔지는 렛츠커리어 서비스 회원가입, 고객상담, 고지사항 전달
             등을 위해 아래와 같이 개인정보를 수집*이용합니다.
           </p>
           <table className="w-full table-fixed border-collapse text-sm">

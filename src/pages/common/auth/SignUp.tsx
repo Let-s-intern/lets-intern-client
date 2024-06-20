@@ -82,9 +82,10 @@ const SignUp = () => {
     },
     onError: (error) => {
       const axiosError = error as AxiosError;
+      console.log(axiosError);
       setError(error);
       if (axiosError.response?.status === 409) {
-        setErrorMessage('이미 가입된 이메일입니다.');
+        setErrorMessage('이미 가입된 사용자입니다.');
       } else {
         setErrorMessage('회원가입에 실패했습니다.');
       }
@@ -287,16 +288,28 @@ const SignUp = () => {
                       checked={
                         value.acceptedAge &&
                         value.agreeToTerms &&
-                        value.agreeToPrivacy
+                        value.agreeToPrivacy &&
+                        value.agreeToMarketing
                       }
                       onClick={() =>
-                        setValue({
+                        setValue(
+                          (value.acceptedAge &&
+                            value.agreeToTerms &&
+                            value.agreeToPrivacy &&
+                            value.agreeToMarketing) ? (
+                              {
                           ...value,
-                          acceptedAge: !value.acceptedAge,
-                          agreeToTerms: !value.agreeToTerms,
-                          agreeToPrivacy: !value.agreeToPrivacy,
-                          agreeToMarketing: !value.agreeToMarketing,
-                        })
+                            acceptedAge: false,
+                            agreeToTerms: false,
+                            agreeToPrivacy: false,
+                            agreeToMarketing: false,}
+                            ) : ({
+                          ...value,
+                            acceptedAge: true,
+                            agreeToTerms: true,
+                            agreeToPrivacy: true,
+                            agreeToMarketing: true,}
+                            ))
                       }
                     />
                     <label

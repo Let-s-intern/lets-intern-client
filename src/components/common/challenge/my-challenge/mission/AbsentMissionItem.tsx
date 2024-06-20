@@ -4,22 +4,29 @@ import { useEffect, useRef, useState } from 'react';
 
 import { useSearchParams } from 'react-router-dom';
 import { useCurrentChallenge } from '../../../../../context/CurrentChallengeProvider';
-import { Schedule, userChallengeMissionDetail } from '../../../../../schema';
+import {
+  MyChallengeMissionByType,
+  Schedule,
+  userChallengeMissionDetail,
+} from '../../../../../schema';
 import axios from '../../../../../utils/axios';
 import { missionSubmitToBadge } from '../../../../../utils/convert';
 import AbsentMissionDetailMenu from './AbsentMissionDetailMenu';
 
 interface Props {
-  schedule: Schedule;
+  mission: MyChallengeMissionByType;
   isDone: boolean;
 }
 
-const AbsentMissionItem = ({ schedule, isDone }: Props) => {
+const AbsentMissionItem = ({ mission, isDone }: Props) => {
   // const queryClient = useQueryClient();
-  const mission = schedule.missionInfo;
-  const attendance = schedule.attendanceInfo;
+  // const mission = mission.missionInfo;
+  // const attendance = mission.attendanceInfo;
   const [searchParams, setSearchParams] = useSearchParams();
-  const { currentChallenge } = useCurrentChallenge();
+  const { currentChallenge, schedules } = useCurrentChallenge();
+  const currentSchedule = schedules.find((schedule) => {
+    return schedule.missionInfo.id === mission.id;
+  });
 
   const itemRef = useRef<HTMLLIElement>(null);
 
@@ -61,7 +68,7 @@ const AbsentMissionItem = ({ schedule, isDone }: Props) => {
       'challenge',
       currentChallenge?.id,
       'mission',
-      schedule.missionInfo.id,
+      mission.id,
       'detail',
       // { status: schedule.attendanceInfo.status },
     ],
@@ -92,7 +99,7 @@ const AbsentMissionItem = ({ schedule, isDone }: Props) => {
         }
       }
     }
-  }, [searchParams, setSearchParams, isDetailShown]);
+  }, [searchParams, setSearchParams, isDetailShown, isDone, mission.id]);
 
   return (
     <li
@@ -105,21 +112,21 @@ const AbsentMissionItem = ({ schedule, isDone }: Props) => {
         <div className="flex flex-1 items-center justify-between">
           <div className="flex items-center gap-3">
             <h4 className="text-lg font-semibold">
-              {missionDetail?.th}회차. {missionDetail?.title}
+              {mission.th}회차. {mission.title}
             </h4>
             <span
               className={clsx(
                 'rounded-md px-2 py-[0.125rem] text-xs',
                 missionSubmitToBadge({
-                  status: attendance.status,
-                  result: attendance.result,
+                  status: 'ABSENT',
+                  result: mission.attendanceResult,
                 }).style,
               )}
             >
               {
                 missionSubmitToBadge({
-                  status: attendance.status,
-                  result: attendance.result,
+                  status: 'ABSENT',
+                  result: mission.attendanceResult,
                 }).text
               }
             </span>
@@ -132,7 +139,9 @@ const AbsentMissionItem = ({ schedule, isDone }: Props) => {
       {isDetailShown &&
         (detailError
           ? '에러 발생'
-          : !isDetailLoading && (
+          : !isDetailLoading &&
+            missionDetail &&
+            currentSchedule && (
               <AbsentMissionDetailMenu missionDetail={missionDetail} />
             ))}
     </li>

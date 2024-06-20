@@ -3,12 +3,14 @@ import { Link } from 'react-router-dom';
 import ApplicationCard from '../../ui/card/root/ApplicationCard';
 import MoreButton from '../../ui/button/MoreButton';
 import { ApplicationType } from '../../../../../pages/common/mypage/Application';
+import { useState } from 'react';
 
 interface WaitingSectionProps {
   applicationList: ApplicationType[];
 }
 
 const WaitingSection = ({ applicationList }: WaitingSectionProps) => {
+  const [viewList, setViewList] = useState<ApplicationType[]>(applicationList.slice(0, 3));
   return (
     <section className="flex flex-col gap-6">
       <h1 className="text-lg font-semibold">후기 작성하고 00 받아가세요!</h1>
@@ -25,9 +27,7 @@ const WaitingSection = ({ applicationList }: WaitingSectionProps) => {
               프로그램 신청하기
             </Link>
           </div>
-        ) : (
-          applicationList
-            .slice(0, 3)
+        ) : (viewList
             .map((application) => (
               <ApplicationCard
                 key={application.id}
@@ -39,7 +39,9 @@ const WaitingSection = ({ applicationList }: WaitingSectionProps) => {
         )}
       </div>
       {applicationList.length > 3 && (
-        <MoreButton className="hidden md:flex">더보기</MoreButton>
+        <MoreButton className="hidden md:flex" onClick={() => {
+          setViewList(applicationList);
+        }}>더보기</MoreButton>
       )}
     </section>
   );

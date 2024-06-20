@@ -1,4 +1,4 @@
-import { useReducer, useState } from 'react';
+import { useState } from 'react';
 
 import InputContent from '../apply/content/InputContent';
 import { useMutation, useQuery } from '@tanstack/react-query';
@@ -63,7 +63,7 @@ const MobileApplySection = ({
     accountType: '',
     livePriceType: '',
     challengePriceType: '',
-    couponId: 0,
+    couponId: null,
     couponPrice: 0,
   });
   const [isCautionChecked, setIsCautionChecked] = useState<boolean>(false);
@@ -90,10 +90,32 @@ const MobileApplySection = ({
       setIsApplied(data.applied);
       if (programType === 'challenge') {
         setPriceId(data.priceList[0].priceId);
-        setPayInfo(data.priceList[0]);
+        setPayInfo({
+          priceId: data.priceList[0].priceId,
+          couponId: null,
+          price: data.priceList[0].price,
+          discount: data.priceList[0].discount,
+          couponPrice: 0,
+          accountNumber: data.priceList[0].accountNumber,
+          deadline: data.priceList[0].deadline,
+          accountType: data.priceList[0].accountType,
+          livePriceType: data.priceList[0].livePriceType,
+          challengePriceType: data.priceList[0].challengePriceType,
+        });
       } else {
         setPriceId(data.price.priceId);
-        setPayInfo(data.price);
+        setPayInfo({
+          priceId: data.price.priceId,
+          couponId: null,
+          price: data.price.price,
+          discount: data.price.discount,
+          couponPrice: 0,
+          accountNumber: data.price.accountNumber,
+          deadline: data.price.deadline,
+          accountType: data.price.accountType,
+          livePriceType: data.price.livePriceType,
+          challengePriceType: data.price.challengePriceType,
+        });
       }
       return res.data;
     },

@@ -48,6 +48,7 @@ const InputContent = ({
     if (drawerDispatch) {
       drawerDispatch({ type: 'close' });
     }
+    if (contentIndex === 0) return;
     setContentIndex(contentIndex - 2);
   };
 
@@ -93,7 +94,7 @@ const InputContent = ({
   }, [scrollableBoxRef]);
 
   return (
-    <div className="flex max-h-[36rem] flex-col  gap-5 md:h-full">
+    <div className="flex max-h-[36rem] flex-col gap-5 md:h-full">
       <ScrollableBox
         ref={scrollableBoxRef}
         className={clsx('overflow-y flex h-full flex-col gap-3', {
@@ -116,8 +117,9 @@ const InputContent = ({
       </ScrollableBox>
       <div className="flex items-center gap-2">
         <button
-          className="flex w-full flex-1 justify-center rounded-md border-2 border-primary bg-neutral-100 px-6 py-3 text-lg font-medium text-primary-dark"
+          className="flex w-full flex-1 justify-center rounded-md border-2 border-primary bg-neutral-100 px-6 py-3 text-lg font-medium text-primary-dark disabled:border-neutral-70 disabled:bg-neutral-70 disabled:text-white"
           onClick={handleBackButtonClick}
+          disabled={contentIndex === 0}
         >
           이전 단계로
         </button>

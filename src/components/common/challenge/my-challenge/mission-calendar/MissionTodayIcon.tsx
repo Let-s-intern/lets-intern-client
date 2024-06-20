@@ -24,15 +24,24 @@ const MissionTodayIcon = ({ mission, className, attendance }: Props) => {
           className,
         )}
       >
-        {attendance.status !== 'ABSENT' ? (
-          <div className="mb-[0.175rem] flex h-[2.5rem] w-[2.5rem] items-center justify-center rounded-full bg-primary">
-            <i className="text-2xl text-white">
-              <FaCheck />
-            </i>
-          </div>
-        ) : (
+        {
+          attendance.status === 'ABSENT' || attendance.result === 'WRONG' ? (
+            <div className="mb-[10%] flex h-[30%] w-[50%] min-w-[2.5rem] items-center justify-center">
+              <img
+                src="/icons/general-mission.svg"
+                alt="general mission icon"
+                className="w-full"
+              />
+            </div>
+          ) : (
+            <div className="mb-[10%] flex h-[30%] w-[50%] min-w-[2.5rem] items-center justify-center rounded-full bg-primary">
+              <i className="text-2xl text-white">
+                <FaCheck />
+              </i>
+            </div>
+          )
           // ) : mission. === 'ADDITIONAL' ? (
-          //   <div className="mb-[0.175rem] flex h-[2.5rem] w-[2.5rem] items-center justify-center">
+          //   <div className="mb-[0.175rem] flex w-[2.5rem] items-center justify-center">
           //     <i>
           //       <img
           //         src="/icons/additional-contents.svg"
@@ -41,7 +50,7 @@ const MissionTodayIcon = ({ mission, className, attendance }: Props) => {
           //     </i>
           //   </div>
           // ) : mission.missionType === 'REFUND' ? (
-          //   <div className="mb-[0.175rem] flex h-[2.5rem] w-[2.5rem] items-center justify-center">
+          //   <div className="mb-[0.175rem] flex w-[2.5rem] items-center justify-center">
           //     <i>
           //       <img src="/icons/refund.svg" alt="refund icon" />
           //     </i>
@@ -49,15 +58,7 @@ const MissionTodayIcon = ({ mission, className, attendance }: Props) => {
           // ) : (
 
           // mission.missionType === 'GENERAL' &&
-          <div className="mb-[0.175rem] flex h-[2.5rem] w-[2.5rem] items-center justify-center">
-            <i>
-              <img
-                src="/icons/general-mission.svg"
-                alt="general mission icon"
-              />
-            </i>
-          </div>
-        )}
+        }
         <span className="font-pretendard text-sm font-semibold text-primary">
           {mission.th}회차
         </span>
@@ -69,7 +70,6 @@ const MissionTodayIcon = ({ mission, className, attendance }: Props) => {
             missionSubmitToBadge({
               status: attendance.status,
               result: attendance.result,
-              // isRefunded: attendance.submitted,
             }).style,
             {
               'opacity-0': attendance.status === 'ABSENT',
@@ -80,7 +80,6 @@ const MissionTodayIcon = ({ mission, className, attendance }: Props) => {
             missionSubmitToBadge({
               status: attendance.status,
               result: attendance.result,
-              // isRefunded: attendance.submitted,
             }).text
           }
         </span>

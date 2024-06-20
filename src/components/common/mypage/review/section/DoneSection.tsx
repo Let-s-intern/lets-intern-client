@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { ApplicationType } from '../../../../../pages/common/mypage/Application';
 import MoreButton from '../../ui/button/MoreButton';
 import ApplicationCard from '../../ui/card/root/ApplicationCard';
@@ -7,6 +8,7 @@ interface DoneSectionProps {
 }
 
 const DoneSection = ({ applicationList }: DoneSectionProps) => {
+  const [viewList, setViewList] = useState<ApplicationType[]>(applicationList.slice(0, 3));
   return (
     <section className="flex flex-col gap-6">
       <h1 className="text-lg font-semibold">작성된 후기</h1>
@@ -17,9 +19,7 @@ const DoneSection = ({ applicationList }: DoneSectionProps) => {
               작성한 후기가 아직 없어요.
             </p>
           </div>
-        ) : (
-          applicationList
-            .slice(0, 3)
+        ) : (viewList
             .map((application) => (
               <ApplicationCard
                 grayscale
@@ -31,7 +31,9 @@ const DoneSection = ({ applicationList }: DoneSectionProps) => {
         )}
       </div>
       {applicationList.length > 3 && (
-        <MoreButton className="hidden md:flex">더보기</MoreButton>
+        <MoreButton className="hidden md:flex" onClick={() => {
+          setViewList(applicationList);
+        }}>더보기</MoreButton>
       )}
     </section>
   );

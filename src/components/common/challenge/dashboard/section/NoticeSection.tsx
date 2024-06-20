@@ -28,10 +28,10 @@ const NoticeSection = ({ notices, guides }: INoticeSectionProps) => {
           </div>
         ) : (
           <ul className="flex flex-1 flex-col gap-1">
-            {currentNoticeList.map((notice: any) => (
+            {currentNoticeList.map((notice) => (
               <Link
                 key={notice.id}
-                to={notice.link}
+                to={notice.link ?? ""}
                 target="_blank"
                 rel="noopenner noreferrer"
                 className="overflow-hidden text-ellipsis whitespace-nowrap text-sm text-[#333333] hover:underline"
@@ -71,7 +71,7 @@ const NoticeSection = ({ notices, guides }: INoticeSectionProps) => {
       <ul className="flex rounded-xl border border-[#E4E4E7]">
         {/* first 3 guides */}
         {guides.slice(0, 3).map((guide) => (
-          <li className="flex flex-1">
+          <li className="flex flex-1" key={guide.id}>
             <Link
               key={guide.id}
               to={guide.link ?? ''}

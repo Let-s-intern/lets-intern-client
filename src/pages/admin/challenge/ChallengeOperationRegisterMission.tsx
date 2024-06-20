@@ -33,6 +33,12 @@ import {
   UpdateMissionReq,
 } from '../../../schema';
 import axios from '../../../utils/axios';
+import utc from 'dayjs/plugin/utc';
+import timezone from 'dayjs/plugin/timezone';
+
+dayjs.extend(utc);
+dayjs.extend(timezone);
+dayjs.tz.setDefault('Asia/Seoul');
 
 type Content = z.infer<
   typeof getContentsAdminSimple
@@ -70,7 +76,7 @@ const columns: GridColDef<Row>[] = [
     field: 'missionTemplateId',
     headerName: '미션명',
     editable: true,
-    width: 200,
+    width: 140,
     valueFormatter(_, row) {
       return (
         row.missionTemplatesOptions.find((t) => t.id === row.missionTemplateId)
@@ -117,30 +123,42 @@ const columns: GridColDef<Row>[] = [
   {
     field: 'startDate',
     headerName: '공개일',
-    width: 100,
+    width: 200,
     editable: true,
     valueFormatter(_, row) {
-      return row.startDate.format('YYYY-MM-DD');
+      return row.startDate.format('YYYY-MM-DD HH:mm');
     },
-    type: 'date',
-    valueParser(value) {
-      return dayjs(value);
+    renderEditCell(params) {
+      return (
+        <input
+          type="datetime-local"
+          className="w-full"
+          value={params.row.startDate.format('YYYY-MM-DDTHH:mm')}
+          onChange={(e) => {
+            params.api.setEditCellValue({
+              id: params.id,
+              field: 'startDate',
+              value: dayjs(e.target.value),
+            });
+          }}
+        />
+      );
     },
   },
   {
     field: 'endDate',
     headerName: '마감일',
-    width: 100,
+    width: 200,
     editable: true,
     valueFormatter(_, row) {
-      return row.endDate.format('YYYY-MM-DD');
+      return row.endDate.format('YYYY-MM-DD HH:mm');
     },
     renderEditCell(params) {
       return (
         <input
-          type="date"
+          type="datetime-local"
           className="w-full"
-          value={params.row.endDate.format('YYYY-MM-DD')}
+          value={params.row.endDate.format('YYYY-MM-DDTHH:mm')}
           onChange={(e) => {
             params.api.setEditCellValue({
               id: params.id,
@@ -477,8 +495,8 @@ const ChallengeOperationRegisterMission = () => {
             lateScore: row.lateScore,
             missionTemplateId: row.missionTemplateId,
             score: row.score,
-            startDate: row.startDate.format('YYYY-MM-DD'),
-            endDate: row.endDate.format('YYYY-MM-DD'),
+            startDate: row.startDate.tz().format("YYYY-MM-DDTHH:mm:ss"),
+            endDate: row.endDate.tz().format("YYYY-MM-DDTHH:mm:ss"),
             th: row.th,
             title: '미션이름',
           });
@@ -509,8 +527,8 @@ const ChallengeOperationRegisterMission = () => {
             lateScore: row.lateScore,
             missionTemplateId: row.missionTemplateId,
             score: row.score,
-            startDate: row.startDate.format('YYYY-MM-DD'),
-            endDate: row.endDate.format('YYYY-MM-DD'),
+            startDate: row.startDate.tz().format("YYYY-MM-DDTHH:mm:ss"),
+            endDate: row.endDate.tz().format("YYYY-MM-DDTHH:mm:ss"),
             th: row.th,
             title: '미션이름',
           });

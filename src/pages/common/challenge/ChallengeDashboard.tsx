@@ -1,19 +1,17 @@
 import { useQuery } from '@tanstack/react-query';
 import dayjs from 'dayjs';
-import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
-
-import MissionCalendar from '../../../components/common/challenge/dashboard/mission-calendar/MissionCalendar';
+import { useEffect } from 'react';
+// import MissionCalendar from '../../../components/common/challenge/dashboard/mission-calendar/MissionCalendar';
 import DailyMissionSection from '../../../components/common/challenge/dashboard/section/DailyMissionSection';
 import NoticeSection from '../../../components/common/challenge/dashboard/section/NoticeSection';
 import ScoreSection from '../../../components/common/challenge/dashboard/section/ScoreSection';
+import MissionCalendar from '../../../components/common/challenge/my-challenge/mission-calendar/MissionCalendar';
 import MissionTooltipQuestion from '../../../components/common/challenge/ui/tooltip-question/MissionTooltipQuestion';
 import { useCurrentChallenge } from '../../../context/CurrentChallengeProvider';
 import {
   challengeGuides,
   challengeNotices,
   challengeScore,
-  dailyMissionSchema,
   Schedule,
   userSchema,
 } from '../../../schema';
@@ -47,8 +45,7 @@ const getIsDone = (schedules: Schedule[]) => {
 
 const ChallengeDashboard = () => {
   const { currentChallenge, schedules, dailyMission } = useCurrentChallenge();
-  // TODO: 잘 지정해야 함
-  const [todayTh, setTodayTh] = useState(0);
+  const todayTh = dailyMission?.th ?? schedules.length + 1;
 
   const { data: notices = [] } = useQuery({
     enabled: Boolean(currentChallenge?.id),
@@ -79,14 +76,17 @@ const ChallengeDashboard = () => {
     },
   });
 
-  const { data: totalScore = 0 } = useQuery({
+  const { data: scoreGroup } = useQuery({
     enabled: Boolean(currentChallenge?.id),
     queryKey: ['challenge', currentChallenge?.id, 'score'],
     queryFn: async () => {
       const res = await axios.get(`/challenge/${currentChallenge?.id}/score`);
-      return challengeScore.parse(res.data.data).totalScore;
+      return challengeScore.parse(res.data.data);
     },
   });
+
+  const totalScore = scoreGroup?.totalScore || 0;
+  const currentScore = scoreGroup?.currentScore || 0;
 
   useEffect(() => {
     console.log('currentChallenge', currentChallenge);
@@ -139,6 +139,7 @@ const ChallengeDashboard = () => {
               // isLoading={isLoading}
               // todayTh={todayTh}
               totalScore={totalScore}
+              currentScore={currentScore}
             />
           )}
           <NoticeSection notices={notices} guides={guides} />
@@ -152,6 +153,7 @@ const ChallengeDashboard = () => {
               <MissionTooltipQuestion />
             </div>
             {schedules && (
+              // myChallenge 에 있는 미션캘린더 가져옴
               <MissionCalendar
                 className="mt-4"
                 schedules={schedules}

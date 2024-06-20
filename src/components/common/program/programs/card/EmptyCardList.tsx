@@ -4,7 +4,7 @@ const emptyList = [
     thumbnail: '/images/home/program-thumbnail.png',
     title: '신규 챌린지',
     desc: '2주동안 ~을 통해 경험정리 및 지원까지 한번에 최대글자수는',
-    buttonCaption: '사전알림신청',
+    buttonCaption: '출시알림신청',
     buttonColor: 'bg-point',
   },
   {

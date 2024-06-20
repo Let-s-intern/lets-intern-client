@@ -1,3 +1,5 @@
+import { AttendanceResult, AttendanceStatus } from '../schema';
+
 export const newProgramTypeToText: Record<string, string> = {
   CHALLENGE: '챌린지',
   LIVE: 'LIVE 클래스',
@@ -261,13 +263,27 @@ export const missionSubmitToBadge = ({
   status,
   result,
 }: {
-  status: string | null;
-  result: string | null;
+  status?: AttendanceStatus | null;
+  result?: AttendanceResult | null;
 }) => {
   if (result === 'WAITING') {
     return {
       text: '확인중',
       style: 'bg-[#FFFACD] text-[#D3CB00]',
+    };
+  }
+
+  if (status === 'UPDATED' && result === 'WRONG') {
+    return {
+      text: '결석',
+      style: 'bg-[#E3E3E3] text-[#9B9B9B]',
+    };
+  }
+
+  if (status === 'UPDATED' && result === 'PASS') {
+    return {
+      text: '지각',
+      style: 'bg-[#E3E3E3] text-[#9B9B9B]',
     };
   }
 
@@ -310,6 +326,7 @@ export const TABLE_CONTENT = {
   INPUT: 0,
   DROPDOWN: 1,
   DATE: 2,
+  DATETIME: 3,
 } as const;
 
 export const getKeyByValue = (obj: any, value: string) => {

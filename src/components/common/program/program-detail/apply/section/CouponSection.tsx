@@ -3,7 +3,7 @@ import { useState } from 'react';
 import axios from '../../../../../../utils/axios';
 import Input from '../../../../ui/input/Input';
 import { PayInfo } from '../../section/ApplySection';
-import { AxiosError, isAxiosError } from 'axios';
+import { isAxiosError } from 'axios';
 
 interface CouponSectionProps {
   setPayInfo: (payInfo: (prevPayInfo: PayInfo) => PayInfo) => void;
@@ -13,6 +13,7 @@ interface CouponSectionProps {
 const CouponSection = ({ setPayInfo, programType }: CouponSectionProps) => {
   const [code, setCode] = useState('');
   const [validationMsg, setValidationMsg] = useState('');
+  const [error, setError] = useState<string>('');
 
   const clickApply = async () => {
     if (code === '') return;
@@ -46,10 +47,11 @@ const CouponSection = ({ setPayInfo, programType }: CouponSectionProps) => {
 
   const handleCodeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setCode(e.target.value);
+    setError('');
   };
 
   return (
-    <div className="flex flex-col gap-3">
+    <div className="flex w-full flex-col gap-3">
       <div className="font-semibold text-neutral-0">쿠폰 등록</div>
       <div className="flex gap-2.5">
         <Input
@@ -66,7 +68,9 @@ const CouponSection = ({ setPayInfo, programType }: CouponSectionProps) => {
           쿠폰 등록
         </button>
       </div>
-      <p className="text-0.875 text-system-error">{validationMsg}</p>
+      {validationMsg && (
+        <div className="text-0.875 h-3 text-system-error">{validationMsg}</div>
+      )}
     </div>
   );
 };

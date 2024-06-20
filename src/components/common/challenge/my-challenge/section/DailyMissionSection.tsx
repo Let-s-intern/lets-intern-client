@@ -3,18 +3,19 @@ import { useEffect, useRef } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useCurrentChallenge } from '../../../../../context/CurrentChallengeProvider';
 import {
-  DailyMission,
-  userChallengeMissionDetail
+  myDailyMission,
+  MyDailyMission,
+  userChallengeMissionDetail,
 } from '../../../../../schema';
 import axios from '../../../../../utils/axios';
 import DailyMissionInfoSection from './DailyMissionInfoSection';
 import DailyMissionSubmitSection from './DailyMissionSubmitSection';
 
 interface Props {
-  dailyMission: DailyMission;
+  myDailyMission: MyDailyMission;
 }
 
-const DailyMissionSection = ({ dailyMission }: Props) => {
+const DailyMissionSection = ({ myDailyMission }: Props) => {
   const [searchParams, setSearchParams] = useSearchParams();
   const { currentChallenge } = useCurrentChallenge();
 
@@ -43,7 +44,7 @@ const DailyMissionSection = ({ dailyMission }: Props) => {
     ],
     queryFn: async () => {
       const res = await axios.get(
-        `challenge/${currentChallenge?.id}/missions/${dailyMission.id}`,
+        `challenge/${currentChallenge?.id}/missions/${myDailyMission.dailyMission.id}`,
       );
       return userChallengeMissionDetail.parse(res.data.data).missionInfo;
     },
@@ -60,11 +61,8 @@ const DailyMissionSection = ({ dailyMission }: Props) => {
           <DailyMissionInfoSection missionDetail={missionDetail} />
         )}
         <hr className="my-8 border-[0.5px] border-[#DEDEDE]" />
-        {missionDetail && (
-          <DailyMissionSubmitSection
-            missionDetail={missionDetail}
-            dailyMission={dailyMission}
-          />
+        {myDailyMission && (
+          <DailyMissionSubmitSection myDailyMission={myDailyMission} />
         )}
       </div>
     </section>

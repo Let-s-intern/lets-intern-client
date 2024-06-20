@@ -45,7 +45,7 @@ const MissionIcon = ({ className, schedule }: Props) => {
           )}
         />
         {isAttended ? (
-          <i className="mb-1 mt-2 h-[1.75rem] w-[1.75rem]">
+          <i className="mb-[10%] mt-2 h-[30%] min-h-[1.5rem] w-[20%] min-w-[1.5rem]">
             <img
               src="/icons/check-icon.svg"
               alt="check-icon"
@@ -53,7 +53,7 @@ const MissionIcon = ({ className, schedule }: Props) => {
             />
           </i>
         ) : (
-          <i className="mb-2 mt-2 h-[1.25rem] w-[1.25rem]">
+          <i className="mb-[10%] mt-2 h-[30%] min-h-[1.5rem] w-[20%] min-w-[1.5rem]">
             <img
               src="/icons/x-icon.svg"
               alt="not-started-icon"
@@ -70,14 +70,14 @@ const MissionIcon = ({ className, schedule }: Props) => {
           className={clsx(
             'rounded-xs px-2 py-[0.125rem] text-sm',
             missionSubmitToBadge({
-              status: attendance.status,
+              status: attendance.status || 'ABSENT',
               result: attendance.result,
             }).style,
           )}
         >
           {
             missionSubmitToBadge({
-              status: attendance.status,
+              status: attendance.status || 'ABSENT',
               result: attendance.result,
             }).text
           }

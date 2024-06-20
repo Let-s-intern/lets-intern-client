@@ -1,30 +1,30 @@
-import { useCallback, useMemo } from 'react';
 import { PayInfo } from '../../section/ApplySection';
-
-interface PriceSectionProps {
-  payInfo: PayInfo;
-}
 
 interface DiscountResult {
   couponDiscount: number;
   discountPer: number;
+  totalDiscount: number;
 }
 
 const handleCouponPrice = (payInfo: PayInfo): DiscountResult => {
-  let totalDiscount = payInfo.discount + payInfo.couponPrice;
-  let couponDiscount = payInfo.couponPrice;
-  if (payInfo.price < totalDiscount) {
+  let totalDiscount =
+    payInfo.discount +
+    (payInfo.couponPrice === -1 ? payInfo.price : payInfo.couponPrice);
+  let couponDiscount =
+    payInfo.couponPrice === -1 ? payInfo.price : payInfo.couponPrice;
+  if (payInfo.price <= totalDiscount) {
     totalDiscount = payInfo.price;
     couponDiscount = payInfo.price - payInfo.discount;
   }
   const discountPer =
-    payInfo.price === 0 ? 0 : (totalDiscount / payInfo.price) * 100;
-  return { couponDiscount, discountPer };
+    payInfo.price === 0 || totalDiscount === 0
+      ? 0
+      : (totalDiscount / payInfo.price) * 100;
+  return { couponDiscount, discountPer, totalDiscount };
 };
 
-const PriceSection = ({ payInfo }: PriceSectionProps) => {
+const PriceSection = ({ payInfo }: { payInfo: PayInfo }) => {
   const discountInfo = handleCouponPrice(payInfo);
-
   return (
     <div className="flex flex-col gap-3">
       <div className="font-semibold text-neutral-0">결제 금액</div>

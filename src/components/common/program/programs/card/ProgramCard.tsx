@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { memo, useEffect, useState } from 'react';
 
 import {
@@ -21,6 +21,7 @@ interface ProgramCardProps {
 }
 
 const ProgramCard = ({ program }: ProgramCardProps) => {
+  const navigate = useNavigate();
   const [link, setLink] = useState(
     `/program/${program.programInfo.programType.toLowerCase()}/${
       program.programInfo.id
@@ -51,8 +52,10 @@ const ProgramCard = ({ program }: ProgramCardProps) => {
   }, []);
 
   return (
-    <Link
-      to={link}
+    <div
+      onClick={() => {
+        program.programInfo.programType === PROGRAM_TYPE.VOD ? window.open(link) : navigate(link);
+      }}
       className="flex w-full flex-col overflow-hidden rounded-xs md:w-52 md:gap-4 md:rounded-md md:border md:border-neutral-85 md:p-2.5 xl:w-56"
     >
       <img
@@ -125,7 +128,7 @@ const ProgramCard = ({ program }: ProgramCardProps) => {
             </div>
           )}
       </div>
-    </Link>
+    </div>
   );
 };
 

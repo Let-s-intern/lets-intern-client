@@ -38,10 +38,9 @@ const FilterSideBar = ({
             : 'pointer-events-none opacity-0 ease-in'
         }`}
       ></div>
-
       <div
         className={clsx(
-          'fixed left-0 top-0 z-50 flex h-screen w-full flex-col gap-5 bg-neutral-90 p-10 transition-transform duration-300 ease-in-out md:w-72 lg:static lg:z-0 lg:h-full lg:transition-none',
+          'fixed min-h-screen left-0 top-0 z-50 flex h-full w-full flex-col gap-5 bg-neutral-90 p-10 transition-transform duration-300 ease-in-out md:w-72 lg:static lg:z-0 lg:transition-none overflow-y-auto',
           {
             'translate-x-0': isOpen,
             'translate-x-[-100vw] lg:translate-x-0': !isOpen,

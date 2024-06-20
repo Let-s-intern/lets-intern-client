@@ -13,7 +13,8 @@ export type StatusKey = keyof typeof TABLE_STATUS;
 export type TableContent =
   | InputTableContent
   | DropdownTableContent
-  | DateTableContent;
+  | DateTableContent
+  | DateTimeTableContent;
 
 export interface InputTableContent {
   type: typeof TABLE_CONTENT.INPUT;
@@ -26,6 +27,10 @@ export interface DropdownTableContent {
 
 export interface DateTableContent {
   type: typeof TABLE_CONTENT.DATE;
+}
+
+export interface DateTimeTableContent {
+  type: typeof TABLE_CONTENT.DATETIME;
 }
 export interface ItemWithStatus {
   rowStatus?: (typeof TABLE_STATUS)[StatusKey];
@@ -176,6 +181,21 @@ const LineTableBodyRow = <T extends ItemWithStatus>({
                 {canEdits[i] && isEditMode ? (
                   <input
                     type="date"
+                    name={attr}
+                    value={value}
+                    onChange={handleChange}
+                  />
+                ) : (
+                  dayjs(value).format('YYYY-MM-DD HH:mm:ss')
+                )}
+              </LineTableBodyCell>
+            );
+          case TABLE_CONTENT.DATETIME:
+            return (
+              <LineTableBodyCell key={i} className={cellWidthList[i]}>
+                {canEdits[i] && isEditMode ? (
+                  <input
+                    type="datetime-local"
                     name={attr}
                     value={value}
                     onChange={handleChange}
