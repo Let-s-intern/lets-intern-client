@@ -5,7 +5,7 @@ export const PROGRAM_STATUS = {
 } as const;
 
 export const PROGRAM_CLASSIFICATION = {
-  CAREER_SEARCH: '스타트',
+  CAREER_SEARCH: '탐색',
   DOCUMENT_PREPARATION: '서류',
   MEETING_PREPARATION: '면접',
   PASS: '성장',

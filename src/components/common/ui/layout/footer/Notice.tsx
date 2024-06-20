@@ -8,7 +8,7 @@ const Notice = ({ className }: NoticeProps) => {
   const navigate = useNavigate();
   return (
     <div className={`flex cursor-pointer items-center gap-1 ${className}`}
-      onClick={() => navigate('/') }
+      onClick={() => window.open('https://letscareer.oopy.io/4e78d954-c4ac-4c14-a122-a21fe890de5b', '_blank') }
     >
       <img
         className="w-5"

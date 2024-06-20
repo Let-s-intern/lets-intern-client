@@ -43,7 +43,8 @@ const InputContent = ({
   };
 
   const handleBackButtonClick = () => {
-    setContentIndex(contentIndex - 1);
+    if (contentIndex === 0) return;
+    setContentIndex(contentIndex - 2);
   };
 
   useEffect(() => {
@@ -111,8 +112,9 @@ const InputContent = ({
       </ScrollableBox>
       <div className="flex items-center gap-2">
         <button
-          className="flex w-full flex-1 justify-center rounded-md border-2 border-primary bg-neutral-100 px-6 py-3 text-lg font-medium text-primary-dark"
+          className="flex w-full flex-1 justify-center rounded-md border-2 border-primary bg-neutral-100 px-6 py-3 text-lg font-medium text-primary-dark disabled:border-neutral-70 disabled:bg-neutral-70 disabled:text-white"
           onClick={handleBackButtonClick}
+          disabled={contentIndex === 0}
         >
           이전 단계로
         </button>

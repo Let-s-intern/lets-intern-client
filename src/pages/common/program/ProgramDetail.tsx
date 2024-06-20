@@ -63,7 +63,7 @@ const ProgramDetail = ({ programType }: ProgramDetailProps) => {
 
           {/* 모바일 신청 세션 */}
           {!matches && (
-            <div className="fixed bottom-0 left-0 right-0 flex w-screen flex-col items-center rounded-t-lg bg-static-100 px-5 py-3 shadow-05">
+            <div className="fixed bottom-0 left-0 right-0 flex w-screen flex-col items-center max-h-[25rem] z-30 scrollbar-hide rounded-t-lg bg-static-100 px-5 py-3 shadow-05 overflow-y-auto">
               <div
                 onClick={() => drawerDispatch({ type: 'toggle' })}
                 className="mb-3 h-[5px] w-[70px] cursor-pointer rounded-full bg-neutral-80"

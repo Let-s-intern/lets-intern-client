@@ -1,4 +1,6 @@
+import { useNavigate } from 'react-router-dom';
 import { ProgramType } from '../../../../../../pages/common/program/ProgramDetail';
+import useAuthStore from '../../../../../../store/useAuthStore';
 import { newProgramTypeToText } from '../../../../../../utils/convert';
 import { ProgramDate } from '../../section/ApplySection';
 import DateToggle from '../../toggle/DateToggle';
@@ -20,12 +22,19 @@ const OverviewContent = ({
   programTitle,
   isApplied,
 }: OverviewContentProps) => {
+  // console.log('OverviewContent', programDate);
+  const {isLoggedIn} = useAuthStore();
+  const navigate = useNavigate();
   const formatDateString = (dateString: string) => {
     const date = new Date(dateString);
     return date.getFullYear();
   };
 
   const handleNextButtonClick = () => {
+    if (!isLoggedIn) {
+      navigate(`/login?redirect=${window.location.pathname}`);
+      return;
+    }
     setContentIndex(contentIndex + 2);
   };
 

@@ -55,7 +55,7 @@ const programList: IProgramGridItem[] = [
     bgColor: 'bg-gradient-growth',
     borderColor: 'border-[#CCD7FF]',
     textColor: 'text-white',
-    link: `/program?classification=${PROGRAM_CLASSIFICATION_KEY.PASS}`,
+    link: `https://letscareer.oopy.io/fb187843-f493-47cf-9d2a-f647875bb3df`,
     imgSrc: '/images/home/keyword-trophy.png',
   },
 ];
