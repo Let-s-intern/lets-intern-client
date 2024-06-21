@@ -106,18 +106,19 @@ const Programs = () => {
     setPageable(initialPageable);
   };
 
-  // 파라미터 하나 삭제
-  const deleteParam = (target: string, key: string) => {
-    const checkedList = [...searchParams.getAll(key)];
-    searchParams.delete(key);
-    checkedList.forEach((item) => {
-      if (item !== target) searchParams.append(key, item);
-    });
-  };
-
   // 필터링 체크박스 클릭 이벤트
   const handleClickCheckbox = useCallback(
     (programType: string, value: string) => {
+
+      // 파라미터 하나 삭제
+      const deleteParam = (target: string, key: string) => {
+        const checkedList = [...searchParams.getAll(key)];
+        searchParams.delete(key);
+        checkedList.forEach((item) => {
+          if (item !== target) searchParams.append(key, item);
+        });
+      };
+
       switch (programType) {
         case PROGRAM_QUERY_KEY.CLASSIFICATION: {
           const filterKey = getKeyByValue(PROGRAM_FILTER_CLASSIFICATION, value);
@@ -168,11 +169,11 @@ const Programs = () => {
       resetPageable();
       setSearchParams(searchParams);
     },
-    [filterClassification, filterStatus, filterType],
+    [filterClassification, filterStatus, filterType, searchParams, setSearchParams],
   );
 
   // 필터링 초기화
-  const resetFilter = useCallback(() => {
+  const resetFilter = () => {
     typeDispatch({ type: 'init' });
     classificationDispatch({ type: 'init' });
     statusDispatch({ type: 'init' });
@@ -180,31 +181,41 @@ const Programs = () => {
     searchParams.delete(PROGRAM_QUERY_KEY.TYPE);
     searchParams.delete(PROGRAM_QUERY_KEY.STATUS);
     setSearchParams(searchParams);
-  }, []);
+  }
 
-  const cancelFilter = useCallback((key: string, value: string) => {
+  const cancelFilter = (key: string, value: string) => {
+
+    // 파라미터 하나 삭제
+    const deleteParam = (target: string, key: string) => {
+      const checkedList = [...searchParams.getAll(key)];
+      searchParams.delete(key);
+      checkedList.forEach((item) => {
+        if (item !== target) searchParams.append(key, item);
+      });
+    };
+
     switch (key) {
       case PROGRAM_QUERY_KEY.CLASSIFICATION: {
         const filterKey = getKeyByValue(PROGRAM_FILTER_CLASSIFICATION, value);
-        deleteParam(filterKey as string, PROGRAM_QUERY_KEY.CLASSIFICATION);
         classificationDispatch({ type: 'uncheck', value: filterKey });
+        deleteParam(filterKey as string, PROGRAM_QUERY_KEY.CLASSIFICATION);
         break;
       }
       case PROGRAM_QUERY_KEY.TYPE: {
-        const filterKey = getKeyByValue(PROGRAM_FILTER_TYPE, value);
-        deleteParam(filterKey as string, PROGRAM_QUERY_KEY.TYPE);
-        typeDispatch({ type: 'uncheck', value: filterKey });
+        searchParams.delete(PROGRAM_QUERY_KEY.TYPE);
+        typeDispatch({ type: 'init'});
         break;
       }
       case PROGRAM_QUERY_KEY.STATUS: {
         const filterKey = getKeyByValue(PROGRAM_FILTER_STATUS, value);
-        deleteParam(filterKey as string, PROGRAM_QUERY_KEY.STATUS);
         statusDispatch({ type: 'uncheck', value: filterKey });
+        deleteParam(filterKey as string, PROGRAM_QUERY_KEY.STATUS);
         break;
       }
     }
+    resetPageable();
     setSearchParams(searchParams);
-  }, []);
+  };
 
   // 페이지 상태 관리
   const [pageable, setPageable] = useState(initialPageable);
@@ -346,7 +357,7 @@ const Programs = () => {
                 <span>가장 먼저 신규 프로그램 소식을 받아보세요!</span>
               </span>
             </p>
-            <section className="grid grid-cols-2 gap-x-4 gap-y-5 md:grid-cols-3 md:gap-4">
+            <section className="w-full grid grid-cols-2 gap-x-4 gap-y-5 md:grid-cols-3 md:gap-4">
               <EmptyCardList />
             </section>
           </>

@@ -18,13 +18,17 @@ import { AxiosError } from 'axios';
 import MarketingModal from '../../../components/common/auth/modal/MarketingModal';
 import InfoContainer from '../../../components/common/auth/ui/InfoContainer';
 import useAuthStore from '../../../store/useAuthStore';
+import { ErrorResonse } from '../../../interfaces/interface';
 
 const SignUp = () => {
   const { isLoggedIn } = useAuthStore();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const [isSocial, setIsSocial] = useState<boolean>(false);
-  const result = searchParams.get('result');
+  const [error, setError] = useState<unknown>(null);
+  const [errorMessage, setErrorMessage] = useState('');
+  const [showPrivacyModal, setShowPrivacyModal] = useState<boolean>(false);
+  const [showMarketingModal, setShowMarketingModal] = useState<boolean>(false);
 
   const resultToToken = (result: string) => {
     if (result === '') {
@@ -40,10 +44,18 @@ const SignUp = () => {
   };
 
   useEffect(() => {
-    console.log(result);
+    const error = searchParams.get('error');
+    const result = searchParams.get('result');
+    if (error !== null) {
+      setError(true);
+      setErrorMessage('이미 가입된 휴대폰 번호입니다.');
+      return;
+    }
+    if (result) {
+      resultToToken(result);
+    }
+  }, [searchParams]);
 
-    resultToToken(result || '');
-  }, [result]);
 
   const [isSignupSuccess, setIsSignupSuccess] = useState<boolean>(false);
   const [buttonDisabled, setButtonDisabled] = useState(false);
@@ -59,10 +71,6 @@ const SignUp = () => {
     agreeToPrivacy: false,
     agreeToMarketing: false,
   });
-  const [error, setError] = useState<unknown>(null);
-  const [errorMessage, setErrorMessage] = useState('');
-  const [showPrivacyModal, setShowPrivacyModal] = useState<boolean>(false);
-  const [showMarketingModal, setShowMarketingModal] = useState<boolean>(false);
 
   const postSignUp = useMutation({
     mutationFn: async () => {
@@ -81,11 +89,11 @@ const SignUp = () => {
       setIsSignupSuccess(true);
     },
     onError: (error) => {
-      const axiosError = error as AxiosError;
+      const axiosError = error as AxiosError<ErrorResonse>;
       console.log(axiosError);
       setError(error);
       if (axiosError.response?.status === 409) {
-        setErrorMessage('이미 가입된 사용자입니다.');
+        setErrorMessage(axiosError.response.data?.message || '이미 가입된 사용자입니다.');
       } else {
         setErrorMessage('회원가입에 실패했습니다.');
       }
@@ -135,25 +143,25 @@ const SignUp = () => {
       setErrorMessage('이메일 형식이 올바르지 않습니다.');
       return;
     }
-    if (!result && !isValidPhoneNumber(value.phoneNum)) {
+    if (!isSocial && !isValidPhoneNumber(value.phoneNum)) {
       setError(true);
       setErrorMessage('휴대폰 번호 형식이 올바르지 않습니다.');
       return;
     }
-    if (!result && !isValidPassword(value.password)) {
+    if (!isSocial && !isValidPassword(value.password)) {
       setError(true);
       setErrorMessage(
         '비밀번호 형식이 올바르지 않습니다. (영어, 숫자, 특수문자 포함 8자 이상)',
       );
       return;
     }
-    if (!result && value.password !== value.passwordConfirm) {
+    if (!isSocial && value.password !== value.passwordConfirm) {
       setError(true);
       setErrorMessage('비밀번호가 일치하지 않습니다.');
       return;
     }
 
-    if (result) {
+    if (isSocial) {
       patchUserInfo.mutate();
     } else {
       postSignUp.mutate();
@@ -161,7 +169,7 @@ const SignUp = () => {
   };
 
   useEffect(() => {
-    if (result) {
+    if (isSocial) {
       if (
         value.email === '' ||
         value.acceptedAge === false ||
@@ -189,7 +197,7 @@ const SignUp = () => {
         setButtonDisabled(false);
       }
     }
-  }, [value, result]);
+  }, [value, isSocial]);
 
   return (
     <>
@@ -225,7 +233,7 @@ const SignUp = () => {
                     }
                   />
                 </div>
-                {!result && (
+                {!isSocial && (
                   <>
                     <div>
                       <Input
@@ -316,12 +324,24 @@ const SignUp = () => {
                       htmlFor="agree-to-all"
                       className="ml-2 w-full cursor-pointer text-xs font-bold"
                       onClick={() =>
-                        setValue({
+                        setValue(
+                          (value.acceptedAge &&
+                            value.agreeToTerms &&
+                            value.agreeToPrivacy &&
+                            value.agreeToMarketing) ? (
+                              {
                           ...value,
-                          acceptedAge: !value.acceptedAge,
-                          agreeToTerms: !value.agreeToTerms,
-                          agreeToPrivacy: !value.agreeToPrivacy,
-                        })
+                            acceptedAge: false,
+                            agreeToTerms: false,
+                            agreeToPrivacy: false,
+                            agreeToMarketing: false,}
+                            ) : ({
+                          ...value,
+                            acceptedAge: true,
+                            agreeToTerms: true,
+                            agreeToPrivacy: true,
+                            agreeToMarketing: true,}
+                            ))
                       }
                     >
                       전체 동의

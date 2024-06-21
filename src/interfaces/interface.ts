@@ -24,3 +24,8 @@ export interface IPageInfo {
   totalElements: number;
   totalPages: number;
 }
+
+export interface ErrorResonse {
+  status: number;
+  message: string;
+}

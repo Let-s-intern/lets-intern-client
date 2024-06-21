@@ -16,12 +16,10 @@ const Footer = () => {
             <MenuLink to="https://letscareer.oopy.io/5eb0ebdd-e10c-4aa1-b28a-8bd0964eca0b">자주묻는 질문</MenuLink>
             {/* <MenuLink to="/blog">블로그</MenuLink> */}
           </div>
-          {/* <Notice className="hidden lg:flex" /> */}
         </div>
         <div>
           <div className="mb-1.5 flex items-center gap-10">
             <span className="text-neutral-0">고객센터</span>
-            <Notice className="lg:hidden" />
           </div>
           <p className="text-0.875 w-80 text-neutral-0/[.65]">
             홈페이지 좌측 하단의 [이메일] 이나 우측 하단 [문의하기]를 통해 1:1

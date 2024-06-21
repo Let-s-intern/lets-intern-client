@@ -1,20 +1,20 @@
 import { useEffect, useRef, useState } from 'react';
 import { gradeToText } from '../../../../../utils/convert';
 import { FaChevronDown, FaChevronUp } from 'react-icons/fa';
-import { BasicInfoValue } from '../section/BasicInfo';
 
 interface GradeDropdownProps {
-  value: any;
-  setValue: (value: any) => void;
+  value: string;
+  setValue: (value: string) => void;
+  type : 'SIGNUP' | 'MYPAGE'
 }
 
-const GradeDropdown = ({ value, setValue }: GradeDropdownProps) => {
+const GradeDropdown = ({ value, setValue, type }: GradeDropdownProps) => {
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const handleMenuItemClick = (grade: string) => {
-    setValue({ ...value, grade });
+    setValue(grade);
     setIsMenuOpen(false);
   };
 
@@ -30,14 +30,14 @@ const GradeDropdown = ({ value, setValue }: GradeDropdownProps) => {
   }, [dropdownRef]);
 
   return (
-    <div className="relative" ref={dropdownRef}>
+    <div className={`relative ${type === 'SIGNUP' ? 'bg-white rounded-xxs border border-[#C4C4C4] z-10' : ''}`} ref={dropdownRef}>
       <div
-        className="flex w-full cursor-pointer items-center justify-between rounded-md bg-neutral-0 bg-opacity-[4%] px-4 py-3"
+        className={`flex w-full cursor-pointer items-center justify-between rounded-md ${type === 'SIGNUP' ? 'bg-white' : 'bg-neutral-0 bg-opacity-[4%]'} px-4 py-3`}
         onClick={() => setIsMenuOpen(!isMenuOpen)}
       >
         <span className="font-medium">
-          {value.grade ? (
-            <span>{gradeToText[value.grade]}</span>
+          {value ? (
+            <span>{gradeToText[value]}</span>
           ) : (
             <span className="text-neutral-0 text-opacity-75">
               학년을 선택해주세요.

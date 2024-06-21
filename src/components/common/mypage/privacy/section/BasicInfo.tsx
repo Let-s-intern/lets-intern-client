@@ -55,6 +55,10 @@ const BasicInfo = () => {
       alert('정보가 수정되었습니다.');
       await queryClient.invalidateQueries({ queryKey: ['user'] });
     },
+    onError: (error) => {
+      alert('정보 수정에 실패했습니다.');
+      console.error(error);
+    }
   });
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -69,6 +73,10 @@ const BasicInfo = () => {
       setUser({ ...user, contactEmail: user.email });
     }
   };
+
+  const handleGradeChange = (grade: string) => {
+    setUser({ ...user, grade });
+  }
 
   const handleSubmit = () => {
     const newUser = {
@@ -174,7 +182,7 @@ const BasicInfo = () => {
           <label htmlFor="grade" className="text-1-medium">
             학년
           </label>
-          <GradeDropdown value={user} setValue={setUser} />
+          <GradeDropdown value={user.grade} setValue={handleGradeChange} type={'MYPAGE'}/>
         </div>
         <div className="flex flex-col gap-1">
           <label htmlFor="major" className="text-1-medium">

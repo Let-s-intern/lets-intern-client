@@ -56,7 +56,7 @@ const ProgramCard = ({ program }: ProgramCardProps) => {
       onClick={() => {
         program.programInfo.programType === PROGRAM_TYPE.VOD ? window.open(link) : navigate(link);
       }}
-      className="flex w-full flex-col overflow-hidden rounded-xs md:w-52 md:gap-4 md:rounded-md md:border md:border-neutral-85 md:p-2.5 xl:w-56"
+      className="flex w-full flex-col overflow-hidden rounded-xs md:gap-4 md:rounded-md md:border md:border-neutral-85 md:p-2.5"
     >
       <img
         className="h-32 w-full bg-neutral-80 object-cover md:h-44 md:rounded-xs"

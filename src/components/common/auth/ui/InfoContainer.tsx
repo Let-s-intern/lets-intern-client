@@ -5,6 +5,7 @@ import Input from '../../../ui/input/Input';
 import Button from '../../ui/button/Button';
 import AlertModal from '../../../ui/alert/AlertModal';
 import axios from '../../../../utils/axios';
+import GradeDropdown from '../../mypage/privacy/form-control/GradeDropdown';
 
 const InfoContainer = ({ isSocial }: { isSocial: boolean }) => {
   const navigate = useNavigate();
@@ -13,14 +14,14 @@ const InfoContainer = ({ isSocial }: { isSocial: boolean }) => {
   const [value, setValue] = useState<{
     inflow: string;
     university: string;
-    grade: number | null;
+    grade: string;
     major: string;
     wishJob: string;
     wishCompany: string;
   }>({
     inflow: '',
     university: '',
-    grade: null,
+    grade: '',
     major: '',
     wishJob: '',
     wishCompany: '',
@@ -29,32 +30,13 @@ const InfoContainer = ({ isSocial }: { isSocial: boolean }) => {
   const [errorMessage, setErrorMessage] = useState('');
   const [successModalOpen, setSuccessModalOpen] = useState(false);
 
-  const convertGradeToEng = (grade: number) => {
-    switch (grade) {
-      case 0:
-        return 'GRADUATE';
-      case 1:
-        return 'FIRST';
-      case 2:
-        return 'SECOND';
-      case 3:
-        return 'THIRD';
-      case 4:
-        return 'FOURTH';
-      case 5:
-        return 'ETC';
-      default:
-        return 'GRADUATE';
-    }
-  };
-
   const postUserInfo = useMutation({
     mutationFn: async () => {
       const res = await axios.patch(`/user/additional-info`, {
         email: email,
         university: value.university,
         major: value.major,
-        grade: convertGradeToEng(value.grade as number),
+        grade: value.grade,
         wishJob: value.wishJob,
         wishCompany: value.wishCompany,
       });
@@ -78,7 +60,7 @@ const InfoContainer = ({ isSocial }: { isSocial: boolean }) => {
         {
           inflowPath: value.inflow,
           university: value.university,
-          grade: convertGradeToEng(value.grade as number),
+          grade: value.grade,
           major: value.major,
           wishJob: value.wishJob,
           wishCompany: value.wishCompany,
@@ -103,6 +85,10 @@ const InfoContainer = ({ isSocial }: { isSocial: boolean }) => {
     },
   });
 
+  const handleGradeChange = (grade: string) => {
+    setValue({ ...value, grade });
+  }
+
   const handleOnSubmit = (e: any) => {
     e.preventDefault();
     if (
@@ -116,9 +102,9 @@ const InfoContainer = ({ isSocial }: { isSocial: boolean }) => {
       setError(true);
       setErrorMessage('모든 항목을 입력해주세요.');
       return;
-    } else if (value.grade < 1 || value.grade > 4) {
+    } else if (!value.grade) {
       setError(true);
-      setErrorMessage('학년은 1~4 사이의 숫자로 입력해주세요.');
+      setErrorMessage('학년을 선택해주세요.');
       return;
     }
 
@@ -175,17 +161,7 @@ const InfoContainer = ({ isSocial }: { isSocial: boolean }) => {
             />
           </div>
           <div>
-            <Input
-              label="학년"
-              type="number"
-              value={value.grade ? value.grade.toString() : ''}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                setValue({
-                  ...value,
-                  grade: e.target.value ? parseInt(e.target.value) : null,
-                })
-              }
-            />
+            <GradeDropdown value={value.grade} setValue={handleGradeChange} type='SIGNUP'/>
           </div>
           <div>
             <Input
