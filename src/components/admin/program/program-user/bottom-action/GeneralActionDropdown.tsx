@@ -9,55 +9,35 @@ import {
   applicationStatusToText,
   wishJobToText,
 } from '../../../../../utils/convert';
+import { ApplicationType } from '../../../../../pages/admin/program/ProgramUsers';
+import dayjs from 'dayjs';
 
 interface Props {
-  applications: any;
-  program: any;
+  applications: ApplicationType[];
+  programTitle: string;
 }
 
-const GeneralActionDropdown = ({ applications, program }: Props) => {
+const GeneralActionDropdown = ({ applications, programTitle }: Props) => {
   const params = useParams();
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const handleDownloadList = async (
-    isApproved: boolean,
+    isConfirmed: boolean,
     column: 'EMAIL' | 'PHONE',
   ) => {
-    const res = await axios.get(`/application/admin/${params.programId}`);
-    const allApplications: any[] = res.data.applicationList;
-    console.log(allApplications);
-    const emailList = isApproved
-      ? allApplications
-          .filter(
-            (application: any) =>
-              application.application.status === 'IN_PROGRESS',
-          )
-          .map((application: any) => {
-            if (column === 'EMAIL') {
-              return application.application.email;
-            }
-            return application.application.phoneNum;
-          })
-      : allApplications
-          .filter(
-            (application: any) =>
-              application.application.status === 'APPLIED_NOT_APPROVED',
-          )
-          .map((application: any) => {
-            if (column === 'EMAIL') {
-              return application.application.email;
-            }
-            return application.application.phoneNum;
-          });
+    const emailList = applications
+      .filter((application) => application.isConfirmed === isConfirmed)
+      .map((application) =>
+        column === 'EMAIL' ? application.email : application.phoneNum,
+      );
     const label =
       column === 'EMAIL' ? '이메일' : column === 'PHONE' && '전화번호';
     const subject =
-      (isApproved ? `참가확정 ${label} 목록` : `미선발 ${label} 목록`) +
+      (isConfirmed ? `참가확정 ${label} 목록` : `미선발 ${label} 목록`) +
       ' - ' +
-      program.title;
-    const emailString = subject + '\n' + emailList.join('\n');
-    downloadFile(subject + '.txt', emailString);
+      programTitle;
+    downloadFile(subject + '.txt', emailList.join('\n'));
     setIsMenuOpen(false);
   };
 
@@ -81,40 +61,22 @@ const GeneralActionDropdown = ({ applications, program }: Props) => {
   const getCSV = () => {
     const csv: any = [];
     csv.push(
-      `구분,유입경로,이메일 주소,이름,휴대폰 번호,학교,학년,전공,쿠폰명,입금 예정 금액,환급계좌번호,입금 여부,희망직무,희망기업형태,신청자 답변, 온/오프라인 여부,참가여부,신청일자,사전질문`,
+      `이름,이메일,휴대폰 번호,쿠폰명,입금 예정 금액,입금 여부,신청일자`,
     );
-    applications.forEach((application: any) => {
+    applications.forEach((application) => {
       const row = [];
       row.push(
-        application.application.type === 'USER'
-          ? '회원'
-          : application.application.type === 'GUEST' && '비회원',
-        parseInflowPath(application.application.inflowPath),
-        application.application.email,
-        application.application.name,
-        application.application.phoneNum,
-        application.optionalInfo?.university,
-        parseGrade(application.application.grade),
-        application.optionalInfo?.major,
-        application.application.couponName,
-        application.application.totalFee || 0,
-        application.optionalInfo
-          ? `${application.optionalInfo.accountType || ''} ${
-              application.optionalInfo.accountNumber || ''
-            }`
-          : '',
-        application.application.feeIsConfirmed ? '입금완료' : '입금대기',
-        wishJobToText[application.application.wishJob],
-        `"${application.application.wishCompany}"`,
-        `"${application.application.applyMotive}"`,
-        application.application.way === 'OFFLINE'
-          ? '오프라인'
-          : application.application.way === 'ONLINE'
-          ? '온라인'
-          : '',
-        applicationStatusToText[application.application.status],
-        application.application.createdAt,
-        `"${application.application.preQuestions}"`,
+        application.name,
+        application.email,
+        application.phoneNum,
+        application.couponName || '없음',
+        application.totalCost,
+        application.isConfirmed ? '입금완료' : '입금대기',
+        application.createDate
+          ? dayjs(application.createDate).format('YYYY년 MM월 DD일 a h시 m분')
+          : dayjs(application.created_date).format(
+              'YYYY년 MM월 DD일 a h시 m분',
+            ),
       );
       csv.push(row.join(','));
     });
@@ -127,7 +89,7 @@ const GeneralActionDropdown = ({ applications, program }: Props) => {
     const csvFile = new Blob([csv], { type: 'text/csv' });
     const link = document.createElement('a');
     link.href = window.URL.createObjectURL(csvFile);
-    link.download = `${program.title} - 참여자 목록.csv`;
+    link.download = `${programTitle} - 참여자 목록.csv`;
     link.click();
   };
 

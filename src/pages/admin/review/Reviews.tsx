@@ -26,7 +26,7 @@ const Reviews = () => {
   const maxPage = data?.data?.pageInfo?.totalPages || 1;
 
   const copyReviewCreateLink = (programId: number) => {
-    const url = `${window.location.protocol}//${window.location.hostname}:${window.location.port}/program/${programId}/review/create`;
+    const url = `${window.location.protocol}//${window.location.hostname}:${window.location.port}/mypage/review/new/program/${programId}`;
     navigator.clipboard
       .writeText(url)
       .then(() => {
