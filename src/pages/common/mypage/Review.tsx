@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 
-import { useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import DoneSection from '../../../components/common/mypage/review/section/DoneSection';
 import WaitingSection from '../../../components/common/mypage/review/section/WaitingSection';
 import { ApplicationType } from './Application';
@@ -36,13 +36,28 @@ const Review = () => {
     },
   });
 
-  const waitingApplicationList = data?.data?.applicationList || [];
-  const doneApplicationList = data?.data?.applicationList || [];
+  const doneList = useMemo(() => {
+    return (
+      data?.data?.applicationList?.filter(
+        (application: ApplicationType) =>
+          application.status !== 'WAITING' && application.reviewId !== null,
+      ) || []
+    );
+  }, [data?.data?.applicationList]);
+
+  const waitingList = useMemo(() => {
+    return (
+      data?.data?.applicationList?.filter(
+        (application: ApplicationType) =>
+          application.status !== 'WAITING' && application.reviewId === null,
+      ) || []
+    );
+  }, [data?.data?.applicationList]);
 
   return (
     <main className="flex w-full flex-col gap-16 pb-20">
-      <WaitingSection applicationList={waitingApplicationList} />
-      <DoneSection applicationList={doneApplicationList} />
+      <WaitingSection applicationList={waitingList} />
+      <DoneSection applicationList={doneList} />
     </main>
   );
 };
