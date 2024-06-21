@@ -574,27 +574,26 @@ const ProgramInputContent = ({
               )}
             {(value.program === 'CHALLENGE' || value.program === 'LIVE') && (
               <>
-                {value.feeType === 'CHARGE' ||
-                  (value.feeType === 'REFUND' && (
-                    <DateTimeControl>
-                      <DateTimeLabel htmlFor="feeDueDate">
-                        입금 마감 기한
-                      </DateTimeLabel>
-                      <input
-                        id="feeDueDate"
-                        type="datetime-local"
-                        name="feeDueDate"
-                        value={value.feeDueDate}
-                        onChange={(e) =>
-                          setValue({
-                            ...value,
-                            [e.target.name]: e.target.value,
-                          })
-                        }
-                        step={600}
-                      />
-                    </DateTimeControl>
-                  ))}
+                {(value.feeType === 'CHARGE' || value.feeType === 'REFUND') && (
+                  <DateTimeControl>
+                    <DateTimeLabel htmlFor="feeDueDate">
+                      입금 마감 기한
+                    </DateTimeLabel>
+                    <input
+                      id="feeDueDate"
+                      type="datetime-local"
+                      name="feeDueDate"
+                      value={value.feeDueDate}
+                      onChange={(e) =>
+                        setValue({
+                          ...value,
+                          [e.target.name]: e.target.value,
+                        })
+                      }
+                      step={600}
+                    />
+                  </DateTimeControl>
+                )}
                 <DateTimeControl>
                   <DateTimeLabel htmlFor="startDate">시작 일자</DateTimeLabel>
                   <input
