@@ -68,6 +68,7 @@ import ChallengeOperationAttendances from './pages/admin/challenge/ChallengeOper
 import ChallengeOperationPayback from './pages/admin/challenge/ChallengeOperationPayback';
 import ChallengeOperationParticipants from './pages/admin/challenge/ChallengeOperationParticipants';
 import { CurrentChallengeProvider } from './context/CurrentChallengeProvider';
+import ChallengeUserInfo from './pages/common/challenge/ChallengeUserInfo';
 
 const Router = () => {
   return (
@@ -104,7 +105,10 @@ const Router = () => {
               element={<ReviewCreateRegacy />}
             />
             {/* /program/:programId/review/new */}
-            <Route path="review/new" element={<ReviewCreate isEdit={false} />} />
+            <Route
+              path="review/new"
+              element={<ReviewCreate isEdit={false} />}
+            />
             {/* /program/:programId/review/:reviewId */}
             <Route path="review/:reviewId" element={<ReviewDetail />} />
             {/* /program/:programId/mentor/notification */}
@@ -123,9 +127,15 @@ const Router = () => {
               {/* /mypage/review */}
               <Route path="" element={<Review />} />
               {/* /mypage/review/new/program/:programId */}
-              <Route path="new/program/:programId" element={<ReviewCreate isEdit={false} />} />
+              <Route
+                path="new/program/:programId"
+                element={<ReviewCreate isEdit={false} />}
+              />
               {/* /mypage/review/edit/program/:programId */}
-              <Route path="edit/program/:programId" element={<ReviewCreate isEdit={true} />} />
+              <Route
+                path="edit/program/:programId"
+                element={<ReviewCreate isEdit={true} />}
+              />
             </Route>
             {/* /mypage/privacy */}
             <Route path="privacy" element={<Privacy />} />
@@ -136,21 +146,23 @@ const Router = () => {
           <Route path="signup" element={<SignUp />} />
           {/* /find-password */}
           <Route path="find-password" element={<FindPassword />} />
-          <Route
-            path="challenge/:programId"
-            element={
-              <CurrentChallengeProvider>
-                <ChallengeLayout />
-              </CurrentChallengeProvider>
-            }
-          >
-            <Route path="" element={<ChallengeDashboard />} />
-            <Route path="me" element={<MyChallengeDashboard />} />
-            {/* <Route path="others" element={<OtherDashboardList />} />
+          <Route path="challenge/:programId">
+            <Route path="user/info" element={<ChallengeUserInfo />} />
+            <Route
+              element={
+                <CurrentChallengeProvider>
+                  <ChallengeLayout />
+                </CurrentChallengeProvider>
+              }
+            >
+              <Route path="" element={<ChallengeDashboard />} />
+              <Route path="me" element={<MyChallengeDashboard />} />
+              {/* <Route path="others" element={<OtherDashboardList />} />
             <Route
               path="others/:applicationId"
               element={<OtherDashboardDetail />}
             /> */}
+            </Route>
           </Route>
         </Route>
         <Route path="/admin" element={<AdminLayout />}>

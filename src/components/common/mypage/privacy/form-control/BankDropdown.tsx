@@ -5,8 +5,8 @@ import { bankTypeToText } from '../../../../../utils/convert';
 import { AccountInfoValue } from '../section/AccountInfo';
 
 interface BankDropdownProps {
-  value: AccountInfoValue;
-  setValue: (values: AccountInfoValue) => void;
+  value: any;
+  setValue: (values: any) => void;
 }
 
 const BankDropdown = ({ value, setValue }: BankDropdownProps) => {
