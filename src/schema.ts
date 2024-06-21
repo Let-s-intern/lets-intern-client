@@ -14,13 +14,13 @@ export const challenges = z
     programList: z.array(
       z.object({
         id: z.number(),
-        title: z.string(),
-        shortDesc: z.string(),
-        thumbnail: z.string(),
-        startDate: z.string(),
-        endDate: z.string(),
-        beginning: z.string(),
-        deadline: z.string(),
+        title: z.string().nullable(),
+        shortDesc: z.string().nullable(),
+        thumbnail: z.string().nullable(),
+        startDate: z.string().nullable(),
+        endDate: z.string().nullable(),
+        beginning: z.string().nullable(),
+        deadline: z.string().nullable(),
         createDate: z.string(),
       }),
     ),
@@ -30,10 +30,10 @@ export const challenges = z
     return {
       programList: data.programList.map((program) => ({
         ...program,
-        startDate: dayjs(program.startDate),
-        endDate: dayjs(program.endDate),
-        beginning: dayjs(program.beginning),
-        deadline: dayjs(program.deadline),
+        startDate: program.startDate ? dayjs(program.startDate) : null,
+        endDate: program.endDate ? dayjs(program.endDate) : null,
+        beginning: program.beginning ? dayjs(program.beginning) : null,
+        deadline: program.deadline ? dayjs(program.deadline) : null,
         createDate: dayjs(program.createDate),
       })),
       pageInfo: data.pageInfo,
@@ -101,7 +101,7 @@ export const getChallengeId = z
     shortDesc: z.string(),
     desc: z.string(),
     participationCount: z.number(),
-    thumbnail: z.string(),
+    thumbnail: z.string().nullable(),
     startDate: z.string(),
     endDate: z.string(),
     beginning: z.string(),
@@ -120,7 +120,7 @@ export const getChallengeId = z
         price: z.number(),
         discount: z.number(),
         accountNumber: z.string(),
-        deadline: z.string(),
+        deadline: z.string().nullable(),
         accountType: accountType,
         challengePriceType: challengePriceType,
         challengeUserType: challengeUserType,
@@ -145,7 +145,7 @@ export const getChallengeId = z
       deadline: dayjs(data.deadline),
       priceInfo: data.priceInfo.map((price) => ({
         ...price,
-        deadline: dayjs(price.deadline),
+        deadline: price.deadline ? dayjs(price.deadline) : null, 
       })),
     };
   });

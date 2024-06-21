@@ -78,10 +78,10 @@ const columns: GridColDef<Row>[] = [
     editable: true,
     width: 140,
     valueFormatter(_, row) {
-      return (
+      return `${row.missionTemplateId}.${
         row.missionTemplatesOptions.find((t) => t.id === row.missionTemplateId)
           ?.title || ''
-      );
+      }`;
     },
     renderCell(params) {
       return (
@@ -190,7 +190,9 @@ const columns: GridColDef<Row>[] = [
     width: 160,
     editable: true,
     valueFormatter(_, row) {
-      return row.essentialContentsList?.map((c) => c?.title)?.join(', ') || '';
+      return `${row.essentialContentsList?.[0]?.id}.${
+        row.essentialContentsList?.map((c) => c?.title)?.join(', ') || ''
+      }`;
     },
     renderCell(params) {
       return (
@@ -231,7 +233,9 @@ const columns: GridColDef<Row>[] = [
     width: 160,
     editable: true,
     valueFormatter(_, row) {
-      return row.additionalContentsList?.map((c) => c?.title)?.join(', ') || '';
+      return `${row.additionalContentsList?.[0]?.id}.${
+        row.additionalContentsList?.map((c) => c?.title)?.join(', ') || ''
+      }`;
     },
     renderCell(params) {
       return (
@@ -495,8 +499,8 @@ const ChallengeOperationRegisterMission = () => {
             lateScore: row.lateScore,
             missionTemplateId: row.missionTemplateId,
             score: row.score,
-            startDate: row.startDate.tz().format("YYYY-MM-DDTHH:mm:ss"),
-            endDate: row.endDate.tz().format("YYYY-MM-DDTHH:mm:ss"),
+            startDate: row.startDate.tz().format('YYYY-MM-DDTHH:mm:ss'),
+            endDate: row.endDate.tz().format('YYYY-MM-DDTHH:mm:ss'),
             th: row.th,
             title: '미션이름',
           });
@@ -527,8 +531,8 @@ const ChallengeOperationRegisterMission = () => {
             lateScore: row.lateScore,
             missionTemplateId: row.missionTemplateId,
             score: row.score,
-            startDate: row.startDate.tz().format("YYYY-MM-DDTHH:mm:ss"),
-            endDate: row.endDate.tz().format("YYYY-MM-DDTHH:mm:ss"),
+            startDate: row.startDate.tz().format('YYYY-MM-DDTHH:mm:ss'),
+            endDate: row.endDate.tz().format('YYYY-MM-DDTHH:mm:ss'),
             th: row.th,
             title: '미션이름',
           });

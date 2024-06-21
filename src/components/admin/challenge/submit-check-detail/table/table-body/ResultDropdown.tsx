@@ -3,7 +3,10 @@ import { useState } from 'react';
 import { IoMdArrowDropdown } from 'react-icons/io';
 
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { useAdminCurrentChallenge } from '../../../../../../context/CurrentAdminChallengeProvider';
+import {
+  useAdminCurrentChallenge,
+  useMissionsOfCurrentChallengeRefetch,
+} from '../../../../../../context/CurrentAdminChallengeProvider';
 import { Attendance } from '../../../../../../schema';
 import axios from '../../../../../../utils/axios';
 import { attendanceResultToText } from '../../../../../../utils/convert';
@@ -46,6 +49,7 @@ const ResultDropdown = ({
   const queryClient = useQueryClient();
   const { currentChallenge } = useAdminCurrentChallenge();
   const [isMenuShown, setIsMenuShown] = useState(false);
+  const missionRefetch = useMissionsOfCurrentChallengeRefetch();
 
   const cellWidthList = challengeSubmitDetailCellWidthList;
 
@@ -65,8 +69,9 @@ const ResultDropdown = ({
         result === 'PASS' && attendanceResult !== 'PASS' ? false : true,
       );
       setAttendanceResult(result);
+      missionRefetch();
       queryClient.invalidateQueries({
-        queryKey: ['admin', 'challenge', currentChallenge?.id, 'attendances'],
+        queryKey: ['admin', 'challenge', currentChallenge?.id],
       });
     },
   });

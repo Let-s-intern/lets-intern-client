@@ -1,7 +1,11 @@
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import clsx from 'clsx';
 import { useState } from 'react';
 import { IoMdArrowDropdown } from 'react-icons/io';
+import {
+  useAdminCurrentChallenge,
+  useMissionsOfCurrentChallengeRefetch
+} from '../../../../../../context/CurrentAdminChallengeProvider';
 import { Attendance } from '../../../../../../schema';
 import axios from '../../../../../../utils/axios';
 import { attendanceStatusToText } from '../../../../../../utils/convert';
@@ -15,13 +19,14 @@ interface Props {
 }
 
 const StatusDropdown = ({ attendance, cellWidthListIndex, refetch }: Props) => {
-  
+  const queryClient = useQueryClient();
 
   const [isMenuShown, setIsMenuShown] = useState(false);
   const [isModalShown, setIsModalShown] = useState(false);
   const [newStatus, setNewStatus] = useState('');
-
   const cellWidthList = challengeSubmitDetailCellWidthList;
+  const { currentChallenge } = useAdminCurrentChallenge();
+  const missionRefetch = useMissionsOfCurrentChallengeRefetch();
 
   const editAttendanceStatus = useMutation({
     mutationFn: async (status: string) => {
@@ -35,6 +40,10 @@ const StatusDropdown = ({ attendance, cellWidthListIndex, refetch }: Props) => {
       refetch();
       setIsMenuShown(false);
       setIsModalShown(false);
+      missionRefetch();
+      queryClient.invalidateQueries({
+        queryKey: ['admin', 'challenge', currentChallenge?.id],
+      });
     },
   });
 
