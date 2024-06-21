@@ -4,8 +4,15 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 
 import ActionButton from '../../../ui/button/ActionButton';
 import axios from '../../../../../utils/axios';
+import { ApplicationType } from '../../../../../pages/admin/program/ProgramUsers';
 
-const ChallengeActionDropdown = () => {
+interface ChallengeActionDropdownProps {
+  applications: ApplicationType[];
+}
+
+const ChallengeActionDropdown = ({
+  applications,
+}: ChallengeActionDropdownProps) => {
   const params = useParams();
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -14,23 +21,6 @@ const ChallengeActionDropdown = () => {
     useState<string>('');
   const [emailAddressList, setEmailAddressList] = useState<string[] | null>();
   const [emailContent, setEmailContent] = useState<string>('');
-
-  const confirmHeadCount = useMutation({
-    mutationFn: async () => {
-      const res = await axios.get(
-        `/program/admin/${params.programId}/headcount`,
-      );
-      const data = res.data;
-      return data;
-    },
-    onSuccess: () => {
-      alert('참여인원이 확정되었습니다.');
-      setIsMenuOpen(false);
-    },
-    onError: () => {
-      alert('참여인원 확정에 실패했습니다.');
-    },
-  });
 
   const getMailAddressList = useQuery({
     queryKey: ['program', 'admin', params.programId, 'email', 'address'],
@@ -104,17 +94,22 @@ const ChallengeActionDropdown = () => {
 
   useEffect(() => {
     if (emailContent) {
-      const subject =
-        downloadMailContentType === 'APPROVED'
-          ? '선발 및 입금 안내 대상자 이메일 내용'
-          : downloadMailContentType === 'FEE_CONFIRMED' &&
-            '참여 확정 공지 대상자 이메일 내용';
+      const subject = '참여 확정 공지 대상자 이메일 내용';
       downloadFile(subject + '.txt', emailContent);
       setIsMenuOpen(false);
       setDownloadMailContentType('');
       setEmailContent('');
     }
   }, [getMailContent]);
+
+  const downloadConfirmedEmailList = () => {
+    const subject = '참여 확정 공지 대상자 이메일 내용';
+    const emailList = applications
+      .filter((application) => application.isConfirmed)
+      .map((application) => application.email);
+    const emailContent = emailList.join('\n');
+    downloadFile(subject + '.txt', emailContent);
+  };
 
   return (
     <div className="relative">
@@ -126,28 +121,10 @@ const ChallengeActionDropdown = () => {
         챌린지
       </ActionButton>
       {isMenuOpen && (
-        <ul className="absolute -top-2 left-1/2 w-56 -translate-x-1/2 -translate-y-full overflow-hidden rounded border border-neutral-300 bg-white shadow-lg">
+        <ul className="rounded absolute -top-2 left-1/2 w-56 -translate-x-1/2 -translate-y-full overflow-hidden border border-neutral-300 bg-white shadow-lg">
           <li
             className="cursor-pointer px-3 py-3 text-sm font-medium duration-200 hover:bg-neutral-200"
-            onClick={() => confirmHeadCount.mutate()}
-          >
-            참가인원 확정
-          </li>
-          <li
-            className="cursor-pointer px-3 py-3 text-sm font-medium duration-200 hover:bg-neutral-200"
-            onClick={() => setDownloadMailListType('APPROVED')}
-          >
-            선발 및 입금 안내 이메일 대상자
-          </li>
-          <li
-            className="cursor-pointer px-3 py-3 text-sm font-medium duration-200 hover:bg-neutral-200"
-            onClick={() => setDownloadMailContentType('APPROVED')}
-          >
-            선발 및 입금 안내 이메일 내용
-          </li>
-          <li
-            className="cursor-pointer px-3 py-3 text-sm font-medium duration-200 hover:bg-neutral-200"
-            onClick={() => setDownloadMailListType('FEE_CONFIRMED')}
+            onClick={downloadConfirmedEmailList}
           >
             참여 확정 공지 이메일 대상자
           </li>

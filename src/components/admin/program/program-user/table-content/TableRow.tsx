@@ -17,6 +17,8 @@ interface Props {
 }
 
 const TableRow = ({ program, application, programType }: Props) => {
+  const queryClient = useQueryClient();
+
   const [isFeeConfirmed, setIsFeeConfirmed] = useState(application.isConfirmed);
 
   const formatDateString = (dateString: string) => {
@@ -45,6 +47,9 @@ const TableRow = ({ program, application, programType }: Props) => {
     },
     onSuccess: async () => {
       setIsFeeConfirmed(!isFeeConfirmed);
+      await queryClient.invalidateQueries({
+        queryKey: [programType.toLowerCase()],
+      });
     },
   });
 

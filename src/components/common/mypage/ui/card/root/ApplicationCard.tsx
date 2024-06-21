@@ -11,6 +11,7 @@ interface ApplicationCardProps {
   grayscale?: boolean;
   showDeleteMenu?: boolean;
   refetch?: () => void;
+  showChallengeButton?: boolean;
 }
 
 const ApplicationCard = ({
@@ -20,6 +21,7 @@ const ApplicationCard = ({
   grayscale,
   showDeleteMenu,
   refetch,
+  showChallengeButton,
 }: ApplicationCardProps) => {
   const formatDateString = (dateString: string) => {
     const date = new Date(dateString);
@@ -77,7 +79,8 @@ const ApplicationCard = ({
         </div>
       </div>
       {application.programType === 'CHALLENGE' &&
-        application.status === 'IN_PROGRESS' && (
+        application.status === 'IN_PROGRESS' &&
+        showChallengeButton && (
           <LinkButton to={`/challenge/${application.programId}`}>
             챌린지로 이동
           </LinkButton>
