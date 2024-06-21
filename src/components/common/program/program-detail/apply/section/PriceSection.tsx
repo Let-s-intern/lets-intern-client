@@ -19,7 +19,7 @@ const handleCouponPrice = (payInfo: PayInfo): DiscountResult => {
   const discountPer =
     payInfo.price === 0 || totalDiscount === 0
       ? 0
-      : (totalDiscount / payInfo.price) * 100;
+      : Math.floor((totalDiscount / payInfo.price) * 100);
   return { couponDiscount, discountPer, totalDiscount };
 };
 

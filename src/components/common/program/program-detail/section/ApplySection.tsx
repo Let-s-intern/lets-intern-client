@@ -86,6 +86,7 @@ const ApplySection = ({
     queryKey: [programType, programId, 'application'],
     queryFn: async () => {
       const res = await axios.get(`/${programType}/${programId}/application`);
+      console.log(res.data);
       const data = res.data.data;
       setProgramDate({
         deadline: data.deadline,
@@ -158,13 +159,17 @@ const ApplySection = ({
       await queryClient.invalidateQueries({
         queryKey: [programType],
       });
+      toggleApplyModal();
       setContentIndex(0);
     },
+    onError: (error) => {
+      alert('신청에 실패했습니다. 다시 시도해주세요.');
+      setContentIndex(0);
+    }
   });
 
   const handleApplyButtonClick = () => {
     applyProgram.mutate();
-    toggleApplyModal();
   };
 
   return (

@@ -11,9 +11,10 @@ import { ApplicationType } from '../../../../../../pages/common/mypage/Applicati
 interface DeleteMenuProps {
   className?: string;
   application: ApplicationType;
+  refetch?: () => void;
 }
 
-const DeleteMenu = ({ className, application }: DeleteMenuProps) => {
+const DeleteMenu = ({ className, application, refetch }: DeleteMenuProps) => {
   const queryClient = useQueryClient();
 
   const menuRef = useRef<HTMLDivElement>(null);
@@ -29,8 +30,15 @@ const DeleteMenu = ({ className, application }: DeleteMenuProps) => {
       return res.data;
     },
     onSuccess: async () => {
+      console.log('delete success');
+      if (refetch) {
+        refetch();
+      }
       await queryClient.invalidateQueries({ queryKey: ['application'] });
       setIsAlertModalOpen(false);
+    },
+    onError: (error) => {
+      console.error(error);
     },
   });
 
@@ -92,7 +100,10 @@ const DeleteMenu = ({ className, application }: DeleteMenuProps) => {
           onCancel={handleAlertCancel}
           title="프로그램 신청 취소"
         >
-          정말로 신청을 취소하시겠습니까?
+          신청한 프로그램을 취소하시면,신청 시에 작성했던 정보가 모두 삭제됩니다.<br/>그래도 취소하시겠습니까?
+          <div className='mt-4 text-system-error text-sm'>
+          *결제금액 입금을 완료하신 경우, 자주 묻는 질문내 환불 신청서를 제출해주세요!
+          </div>
         </AlertModal>
       )}
     </div>

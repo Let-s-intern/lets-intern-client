@@ -8,6 +8,7 @@ import { useState } from 'react';
 
 export interface ApplicationType {
   id: number;
+  programThumbnail: string;
   status: string;
   programTitle: string;
   programShortDesc: string;
@@ -21,12 +22,12 @@ export interface ApplicationType {
 const Application = () => {
   const [applicationList, setApplicationList] = useState<ApplicationType[]>([]);
 
-  const { data, isLoading } = useQuery({
+  const { data, isLoading, refetch } = useQuery({
     queryKey: ['user', 'applications'],
     queryFn: async () => {
       const res = await axios.get('/user/applications');
       setApplicationList(res.data.data.applicationList);
-      // console.log(res.data.data);
+      console.log(res.data.data);
       return res.data;
     },
   });
@@ -48,7 +49,7 @@ const Application = () => {
 
   return (
     <main className="flex w-full flex-col gap-16 pb-20">
-      <ApplySection applicationList={waitingApplicationList} />
+      <ApplySection applicationList={waitingApplicationList} refetch={refetch} />
       <ParticipateSection applicationList={inProgressApplicationList} />
       <CompleteSection applicationList={completedApplicationList} />
     </main>
