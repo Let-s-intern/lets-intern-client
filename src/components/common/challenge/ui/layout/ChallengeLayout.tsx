@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react';
 import { Outlet, useNavigate, useParams } from 'react-router-dom';
 
 import NavBar from './NavBar';
+import { useQuery } from '@tanstack/react-query';
+import axios from '../../../../../utils/axios';
 
 const ChallengeLayout = () => {
   const params = useParams();
@@ -9,6 +11,7 @@ const ChallengeLayout = () => {
 
   // TODO: 검증 로직 필요함.
   const [isValidUser, setIsValidUser] = useState<boolean>(true);
+  // const [isValidUserInfo, setIsValidUserInfo] = useState<boolean>(true);
 
   // useQuery({
   //   enabled: Boolean(params.programId),
@@ -23,14 +26,26 @@ const ChallengeLayout = () => {
   //   },
   // });
 
-  const isLoading = isValidUser === undefined;
+  const { data: isValidUserInfoData, isLoading: isValidUserInfoLoading } =
+    useQuery({
+      queryKey: ['user', 'challenge-info'],
+      queryFn: async ({ queryKey }) => {
+        const res = await axios.get(`/${queryKey[0]}/${queryKey[1]}`);
+        return res.data;
+      },
+    });
+
+  const isValidUserInfo = isValidUserInfoData?.data?.pass;
+
+  const isLoading = isValidUserInfoLoading || isValidUser === undefined;
 
   useEffect(() => {
     if (isLoading) return;
     if (!isValidUser) navigate('/');
-  }, [isValidUser]);
+    if (!isValidUserInfo) navigate(`/challenge/${params.programId}/user/info`);
+  }, [isValidUser, isValidUserInfo]);
 
-  if (isLoading || !isValidUser) {
+  if (isLoading || !isValidUser || !isValidUserInfo) {
     return <></>;
   }
 

@@ -7,8 +7,8 @@ import axios from '../../../utils/axios';
 import useAuthStore from '../../../store/useAuthStore';
 
 const Privacy = () => {
-  const {logout} = useAuthStore();
-  const {mutate:tryDeleteUser} = useMutation({
+  const { logout } = useAuthStore();
+  const { mutate: tryDeleteUser } = useMutation({
     mutationFn: async () => {
       const res = await axios.delete('/user');
       return res.data;
@@ -19,9 +19,8 @@ const Privacy = () => {
     onError: (error) => {
       alert('회원 탈퇴에 실패했습니다.');
       console.error(error);
-    }
-  }
-  );
+    },
+  });
 
   return (
     <main className="flex w-full flex-col gap-16 pb-16 md:w-4/5">
@@ -29,7 +28,8 @@ const Privacy = () => {
       <AccountInfo />
       <ChangePassword />
       <MarketingAgree />
-      <button className='w-full flex items-center justify-center mt-[24px] text-neutral-0/40'
+      <button
+        className="mt-[24px] flex w-full items-center justify-center text-neutral-0/40"
         onClick={() => tryDeleteUser()}
       >
         회원 탈퇴

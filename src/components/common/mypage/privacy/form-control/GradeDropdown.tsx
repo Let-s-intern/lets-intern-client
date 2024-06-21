@@ -4,8 +4,8 @@ import { FaChevronDown, FaChevronUp } from 'react-icons/fa';
 import { BasicInfoValue } from '../section/BasicInfo';
 
 interface GradeDropdownProps {
-  value: BasicInfoValue;
-  setValue: (value: BasicInfoValue) => void;
+  value: any;
+  setValue: (value: any) => void;
 }
 
 const GradeDropdown = ({ value, setValue }: GradeDropdownProps) => {
