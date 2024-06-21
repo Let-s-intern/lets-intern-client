@@ -22,7 +22,7 @@ const ProgramGridItem = ({ program, link }: ProgramGridItemProps) => {
             {program.keyword}
           </div>
           <h2
-            className={`text-1.25-medium lg:text-1.5-medium pt-2 text-center ${program.textColor}`}
+            className={`text-1.25-medium lg:text-1.5-medium pt-2 text-left lg:text-center break-keep ${program.textColor}`}
           >
             {program.title}
           </h2>
@@ -31,7 +31,7 @@ const ProgramGridItem = ({ program, link }: ProgramGridItemProps) => {
           <img
             src={program.imgSrc}
             alt={program.keyword}
-            className="h-auto w-full max-w-[6.25rem] lg:max-w-[8.75rem]"
+            className="absolute left-1/2 -translate-x-1/2 bottom-5 md:static md:translate-x-0 md:left-auto h-auto w-full max-w-[6.25rem] lg:max-w-[8.75rem]"
           />
         </div>
         <div

@@ -49,10 +49,21 @@ const DateToggle = ({ programDate, programType }: DateToggleProps) => {
             </div>
           )}
           <div className="flex items-center justify-between p-1.5">
-            <span className="text-neutral-0 text-opacity-[74%] shrink-0">진행 기간</span>
-            <span className="font-medium text-end text-neutral-0 text-opacity-[94%]">
-              {dayjs(programDate.startDate).format(`MM.DD (ddd) ${ programType === 'live' && 'A hh시'}`)}<br/> ~{' '}
-              {dayjs(programDate.endDate).format(`MM.DD (ddd) ${ programType === 'live' && 'A hh시'}`)}
+            <span className="shrink-0 text-neutral-0 text-opacity-[74%]">
+              진행 기간
+            </span>
+            <span className="text-end font-medium text-neutral-0 text-opacity-[94%]">
+              {programType === 'live' ? (
+                <>
+                  {dayjs(programDate.startDate).format(`MM.DD (ddd) A hh시`)}
+                  <br /> ~{' '}
+                  {dayjs(programDate.endDate).format(`MM.DD (ddd) A hh시`)}
+                </>
+              ) : (
+                dayjs(programDate.startDate).format(`MM.DD (ddd)`) +
+                ' ~ ' +
+                dayjs(programDate.endDate).format(`MM.DD (ddd)`)
+              )}
             </span>
           </div>
         </div>

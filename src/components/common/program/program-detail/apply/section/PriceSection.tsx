@@ -16,10 +16,13 @@ const handleCouponPrice = (payInfo: PayInfo): DiscountResult => {
     totalDiscount = payInfo.price;
     couponDiscount = payInfo.price - payInfo.discount;
   }
+
+  // payInfo.discount만 할인율 이용
   const discountPer =
-    payInfo.price === 0 || totalDiscount === 0
+    payInfo.price === 0 || payInfo.discount === 0
       ? 0
-      : Math.floor((totalDiscount / payInfo.price) * 100);
+      : Math.floor((payInfo.discount / payInfo.price) * 100);
+
   return { couponDiscount, discountPer, totalDiscount };
 };
 
@@ -35,7 +38,7 @@ const PriceSection = ({ payInfo }: { payInfo: PayInfo }) => {
         </div>
         <div className="flex items-center justify-between px-1.5 py-2.5 font-semibold text-primary">
           <span>쿠폰 할인</span>
-          <span>-{discountInfo.couponDiscount}원</span>
+          <span>-{discountInfo.couponDiscount.toLocaleString()}원</span>
         </div>
         <div className="flex items-center justify-between px-1.5 py-2.5 font-semibold text-system-error">
           <span>할인 {Math.round(discountInfo.discountPer)}%</span>
