@@ -35,7 +35,13 @@ const ChallengeOperationAttendances = () => {
   const [detailedMission, setDetailedMission] = useState<Mission | null>(null);
 
   const { data: detailedAttendances, refetch } = useQuery({
-    queryKey: ['admin', 'challenge', currentChallenge?.id, 'attendances'],
+    queryKey: [
+      'admin',
+      'challenge',
+      currentChallenge?.id,
+      'attendances',
+      detailedMission?.id,
+    ],
     enabled: Boolean(currentChallenge?.id) && Boolean(detailedMission?.id),
     queryFn: async () => {
       const res = await axios.get(
@@ -44,10 +50,6 @@ const ChallengeOperationAttendances = () => {
       return attendances.parse(res.data.data).attendanceList ?? [];
     },
   });
-
-  useEffect(() => {
-    console.log('detailedAttendances', detailedAttendances);
-  }, [detailedAttendances]);
 
   useEffect(() => {
     console.log('missions', missions);
@@ -89,7 +91,14 @@ const ChallengeOperationAttendances = () => {
                 ]}
                 placeholders={colNames}
                 canEdits={[false, false, false, false, false, false]}
-                formatter={[null, null, null, null, null, (status) => missionStatusToText[status]]}
+                formatter={[
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  (status) => missionStatusToText[status],
+                ]}
                 contents={[
                   { type: TABLE_CONTENT.INPUT },
                   { type: TABLE_CONTENT.INPUT },
@@ -104,6 +113,7 @@ const ChallengeOperationAttendances = () => {
                   if (detailedMission?.id === row.id) {
                     setDetailedMission(null);
                   } else {
+                    console.log('row', row);
                     setDetailedMission(row);
                   }
                 }}
@@ -111,6 +121,7 @@ const ChallengeOperationAttendances = () => {
               />
               {detailedMission?.id === row.id ? (
                 <ChallengeSubmitDetail
+                  key={`detail-${row.id}`}
                   mission={detailedMission}
                   setIsDetailShown={(isDetailShown) => {
                     if (!isDetailShown) {
