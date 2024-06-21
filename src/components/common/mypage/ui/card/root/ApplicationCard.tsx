@@ -19,7 +19,7 @@ const ApplicationCard = ({
   reviewType,
   grayscale,
   showDeleteMenu,
-  refetch
+  refetch,
 }: ApplicationCardProps) => {
   const formatDateString = (dateString: string) => {
     const date = new Date(dateString);
