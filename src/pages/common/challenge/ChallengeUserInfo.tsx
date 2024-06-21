@@ -72,6 +72,11 @@ const ChallengeUserInfo = () => {
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setValue({ ...value, [e.target.name]: e.target.value });
   };
+
+  const handleGradeChange = (grade: string) => {
+    setValue({ ...value, grade });
+  };
+
   const handleSubmit = () => {
     editMyInfo.mutate();
   };
@@ -130,7 +135,11 @@ const ChallengeUserInfo = () => {
               <label htmlFor="grade" className="text-1-medium">
                 학년
               </label>
-              <GradeDropdown value={value} setValue={setValue} />
+              <GradeDropdown
+                value={value.grade}
+                setValue={handleGradeChange}
+                type="MYPAGE"
+              />
             </div>
             <div className="flex flex-col gap-1">
               <label htmlFor="major" className="text-1-medium">
