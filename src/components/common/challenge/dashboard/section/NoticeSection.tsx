@@ -5,21 +5,20 @@ import { ChallengeGuide, ChallengeNotice } from '../../../../../schema';
 
 interface INoticeSectionProps {
   notices: ChallengeNotice[];
-  guides: ChallengeGuide[];
 }
 
-const NoticeSection = ({ notices, guides }: INoticeSectionProps) => {
+const NoticeSection = ({ notices }: INoticeSectionProps) => {
   const [currentPageNum, setCurrentPageNum] = useState(1);
 
   const currentNoticeList = notices.slice(
-    (currentPageNum - 1) * 4,
-    currentPageNum * 4,
+    (currentPageNum - 1) * 3,
+    currentPageNum * 3,
   );
   const totalPageCount =
-    notices.length / 4 + (notices.length % 4 !== 0 ? 1 : 0);
+    notices.length / 3 + (notices.length % 3 !== 0 ? 1 : 0);
 
   return (
-    <section className="flex w-[13rem] flex-col gap-4">
+    <section className="flex w-full flex-col gap-4">
       <div className="flex flex-1 flex-col gap-2 rounded-xl border border-[#E4E4E7] p-6">
         <h2 className="font-semibold text-[#4A495C]">공지사항</h2>
         {currentNoticeList.length === 0 ? (
@@ -31,7 +30,7 @@ const NoticeSection = ({ notices, guides }: INoticeSectionProps) => {
             {currentNoticeList.map((notice) => (
               <Link
                 key={notice.id}
-                to={notice.link ?? ""}
+                to={notice.link ?? ''}
                 target="_blank"
                 rel="noopenner noreferrer"
                 className="overflow-hidden text-ellipsis whitespace-nowrap text-sm text-[#333333] hover:underline"
@@ -68,22 +67,6 @@ const NoticeSection = ({ notices, guides }: INoticeSectionProps) => {
           )}
         </div>
       </div>
-      <ul className="flex rounded-xl border border-[#E4E4E7]">
-        {/* first 3 guides */}
-        {guides.slice(0, 3).map((guide) => (
-          <li className="flex flex-1" key={guide.id}>
-            <Link
-              key={guide.id}
-              to={guide.link ?? ''}
-              className="flex h-16 w-16 flex-1 cursor-pointer items-center justify-center rounded-xl text-center text-sm transition-all duration-200 hover:bg-[#F0F0F0]"
-              target="_blank"
-              rel="noopenner noreferrer"
-            >
-              {guide.title}
-            </Link>
-          </li>
-        ))}
-      </ul>
     </section>
   );
 };

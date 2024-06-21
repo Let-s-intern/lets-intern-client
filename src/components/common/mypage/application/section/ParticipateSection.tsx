@@ -10,7 +10,9 @@ interface ParticipateSectionProps {
 }
 
 const ParticipateSection = ({ applicationList }: ParticipateSectionProps) => {
-  const [viewList, setViewList] = useState<ApplicationType[]>(applicationList.slice(0, 3));
+  const [viewList, setViewList] = useState<ApplicationType[]>(
+    applicationList.slice(0, 3),
+  );
   return (
     <section className="flex flex-col gap-6">
       <h1 className="text-lg font-semibold">참여 중</h1>
@@ -28,14 +30,20 @@ const ParticipateSection = ({ applicationList }: ParticipateSectionProps) => {
             </Link>
           </div>
         ) : (
-          viewList
-            .map((application) => <ApplicationCard application={application} />)
+          viewList.map((application) => (
+            <ApplicationCard application={application} showChallengeButton />
+          ))
         )}
       </div>
       {applicationList.length > 3 && (
-        <MoreButton className="hidden md:flex" onClick={() => {
-          setViewList(applicationList);
-        }}>더보기</MoreButton>
+        <MoreButton
+          className="hidden md:flex"
+          onClick={() => {
+            setViewList(applicationList);
+          }}
+        >
+          더보기
+        </MoreButton>
       )}
     </section>
   );

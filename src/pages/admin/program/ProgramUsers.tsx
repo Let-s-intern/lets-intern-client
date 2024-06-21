@@ -46,19 +46,49 @@ const ProgramUsers = () => {
 
   const programType = searchParams.get('programType') || '';
 
-  console.log(programType);
-
   const getApplicationList = useQuery({
-    queryKey: ['programs'],
+    queryKey: [programType.toLowerCase(), params.programId, 'applications'],
     queryFn: async () => {
       const res = await axios.get(
         `/${programType.toLowerCase()}/${params.programId}/applications`,
       );
-      console.log(res.data.data.applicationList);
-      setApplications(res.data.data.applicationList);
+      let filteredApplications =
+        filter.name === null
+          ? res.data.data.applicationList
+          : res.data.data.applicationList.sort(
+              (a: ApplicationType, b: ApplicationType) =>
+                filter.name === 'ASCENDING'
+                  ? a.name >= b.name
+                    ? 1
+                    : -1
+                  : filter.name === 'DESCENDING' && a.name <= b.name
+                  ? 1
+                  : -1,
+            );
+      filteredApplications =
+        filter.isFeeConfirmed === null
+          ? filteredApplications
+          : filteredApplications.filter(
+              (application: ApplicationType) =>
+                application.isConfirmed === filter.isFeeConfirmed,
+            );
+      setApplications(filteredApplications);
       return res.data;
     },
   });
+
+  const { data: programTitleData } = useQuery({
+    queryKey: [programType.toLowerCase(), params.programId, 'title'],
+    queryFn: async ({ queryKey }) => {
+      const res = await axios.get(
+        `/${queryKey[0]}/${queryKey[1]}/${queryKey[2]}`,
+      );
+      setProgram(res.data.data.program);
+      return res.data;
+    },
+  });
+
+  const programTitle = programTitleData?.data?.title;
 
   // const getProgram = useQuery({
   //   queryKey: ['program', params.programId],
@@ -90,45 +120,15 @@ const ProgramUsers = () => {
       return res.data;
     },
     onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: ['applications'] });
+      await queryClient.invalidateQueries({
+        queryKey: [programType.toLowerCase()],
+      });
     },
   });
 
   useEffect(() => {
-    if (applications) {
-      let filteredApplications =
-        filter.name === null
-          ? applications
-          : applications.sort((a: any, b: any) =>
-              filter.name === 'ASCENDING'
-                ? a.application.name >= b.application.name
-                  ? 1
-                  : -1
-                : filter.name === 'DESCENDING' &&
-                  a.application.name <= b.application.name
-                ? 1
-                : -1,
-            );
-      filteredApplications =
-        filter.isFeeConfirmed === null
-          ? filteredApplications
-          : filteredApplications.filter(
-              (application) =>
-                application.isConfirmed === filter.isFeeConfirmed,
-            );
-      setApplications(filteredApplications);
-    }
-  }, [applications]);
-
-  useEffect(() => {
     getApplicationList.refetch();
   }, [filter]);
-
-  // useEffect(() => {
-  //   if (getProgram.data) {
-  //     setProgram(getProgram.data);
-  //   }
-  // }, [getProgram]);
 
   const handleApplicationStatusChange = (e: any, applicationId: number) => {
     const status = e.target.value;
@@ -138,7 +138,7 @@ const ProgramUsers = () => {
   return (
     <div className="p-8">
       <div className="mb-4 flex items-center justify-between">
-        <h1 className="text-1.5-bold">참여자 보기 - {}</h1>
+        <h1 className="text-1.5-bold">참여자 보기 - {programTitle}</h1>
         {/* {program.type === 'LETS_CHAT' && (
           <div className="flex gap-2">
             <MentorDropdown program={program} />
@@ -171,7 +171,11 @@ const ProgramUsers = () => {
           />
         </Table>
       </main>
-      {/* <BottomAction applications={applications} program={program} /> */}
+      <BottomAction
+        applications={applications}
+        programType={programType}
+        programTitle={programTitle}
+      />
     </div>
   );
 };

@@ -3,19 +3,20 @@ import ChallengeActionDropdown from './ChallengeActionDropdown';
 
 interface Props {
   applications: any;
-  program: any;
+  programType: string;
+  programTitle: string;
 }
 
-const BottomAction = ({ applications, program }: Props) => {
-  if (!program.type) {
-    return <></>;
-  }
-
+const BottomAction = ({ applications, programType, programTitle }: Props) => {
   return (
     <div className="fixed bottom-12 left-[250px] flex w-[calc(100vw-250px)] items-center justify-center gap-4">
-      {(program.type === 'CHALLENGE_FULL' ||
-        program.type === 'CHALLENGE_HALF') && <ChallengeActionDropdown />}
-      <GeneralActionDropdown applications={applications} program={program} />
+      {programType === 'CHALLENGE' && (
+        <ChallengeActionDropdown applications={applications} />
+      )}
+      <GeneralActionDropdown
+        applications={applications}
+        programTitle={programTitle}
+      />
     </div>
   );
 };
