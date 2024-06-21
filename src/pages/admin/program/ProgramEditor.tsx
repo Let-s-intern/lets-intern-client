@@ -39,6 +39,7 @@ interface AllValue {
   feeDueDate?: string;
   link?: string;
   beginning?: string;
+  criticalNotice?: string;
   faqList?: number[];
 }
 
@@ -74,6 +75,7 @@ interface LiveClassRequest {
       programClassification?: string;
     };
   }[];
+  criticalNotice?: string;
   priceInfo?: {
     priceInfo?: {
       price?: number;
@@ -100,6 +102,7 @@ interface ChallengeRequest {
   chatLink?: string;
   chatPassword?: string;
   challengeType?: string;
+  criticalNotice?: string;
   programTypeInfo?: {
     classificationInfo?: {
       programClassification?: string;
@@ -153,6 +156,10 @@ const ProgramEditor = ({ mode }: ProgramEditorProps) => {
           (price: { challengeUserType: string }) =>
             price.challengeUserType === 'BASIC',
         )[0];
+        const premiumPriceInfo = data.priceInfo.filter(
+          (price: { challengeUserType: string }) =>
+            price.challengeUserType === 'PREMIUM',
+        )[0];
         setValue({
           program: programType,
           programType: data.classificationInfo.map(
@@ -169,8 +176,12 @@ const ProgramEditor = ({ mode }: ProgramEditorProps) => {
           openKakaoLink: data.chatLink,
           openKakaoPassword: data.chatPassword,
           feeType: priceInfo.challengePriceType,
-          basicPrice: basicPriceInfo.price,
-          basicDiscount: basicPriceInfo.discount,
+          basicPrice: basicPriceInfo?.price,
+          basicRefund: basicPriceInfo?.refund,
+          basicDiscount: basicPriceInfo?.discount,
+          premiumPrice: premiumPriceInfo?.price,
+          premiumDiscount: premiumPriceInfo?.discount,
+          premiumRefund: premiumPriceInfo?.refund,
           accountType: priceInfo.accountType,
           accountNumber: priceInfo.accountNumber,
           feeDueDate: priceInfo.deadline,
@@ -179,6 +190,7 @@ const ProgramEditor = ({ mode }: ProgramEditorProps) => {
           dueDate: data.deadline,
           beginning: data.beginning,
           faqList: data.faqInfo?.map((faq: { id: number }) => faq.id),
+          criticalNotice: data.criticalNotice,
         });
       } else if (programType === 'LIVE') {
         setValue({
@@ -206,6 +218,7 @@ const ProgramEditor = ({ mode }: ProgramEditorProps) => {
           accountType: data.priceInfo.accountType,
           accountNumber: data.priceInfo.accountNumber,
           faqList: data.faqInfo?.map((faq: { id: number }) => faq.id),
+          criticalNotice: data.criticalNotice,
         });
       } else if (programType === 'VOD') {
         setValue({
@@ -342,6 +355,7 @@ const ProgramEditor = ({ mode }: ProgramEditorProps) => {
         endDate: value.endDate,
         deadline: value.dueDate,
         beginning: value.beginning,
+        criticalNotice: value.criticalNotice,
         programTypeInfo:
           value.programType?.map((type) => ({
             classificationInfo: {
@@ -413,6 +427,7 @@ const ProgramEditor = ({ mode }: ProgramEditorProps) => {
         chatLink: value.openKakaoLink,
         chatPassword: value.openKakaoPassword,
         challengeType: value.challengeType,
+        criticalNotice: value.criticalNotice,
         programTypeInfo:
           value.programType?.map((type) => ({
             classificationInfo: {

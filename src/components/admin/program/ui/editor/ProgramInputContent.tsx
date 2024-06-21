@@ -6,6 +6,7 @@ import {
   MenuItem,
   OutlinedInput,
   Select,
+  TextField,
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import Input from '../../../../ui/input/Input';
@@ -200,16 +201,33 @@ const ProgramInputContent = ({
               </>
             )}
             {(value.program === 'LIVE' || value.program === 'VOD') && (
-              <Input
-                label="직무"
-                type="text"
-                name="job"
-                placeholder="직무를 입력해주세요"
-                value={value?.job || ''}
-                onChange={(e) => {
-                  setValue({ ...value, [e.target.name]: e.target.value });
-                }}
-              />
+              <FormControl fullWidth>
+                <InputLabel id="job">직무</InputLabel>
+                <Select
+                  labelId="job"
+                  id="job"
+                  label="직무"
+                  name="job"
+                  value={value?.job || ''}
+                  onChange={(e) => {
+                    setValue({ ...value, [e.target.name]: e.target.value });
+                  }}
+                >
+                  <MenuItem value="경영관리">경영관리</MenuItem>
+                  <MenuItem value="금융">금융</MenuItem>
+                  <MenuItem value="마케팅">마케팅</MenuItem>
+                  <MenuItem value="광고">광고</MenuItem>
+                  <MenuItem value="디자인">디자인</MenuItem>
+                  <MenuItem value="방송">방송</MenuItem>
+                  <MenuItem value="개발">개발</MenuItem>
+                  <MenuItem value="영업">영업</MenuItem>
+                  <MenuItem value="서비스기획">서비스기획</MenuItem>
+                  <MenuItem value="사업전략">사업전략</MenuItem>
+                  <MenuItem value="컨설팅">컨설팅</MenuItem>
+                  <MenuItem value="유통">유통</MenuItem>
+                  <MenuItem value="공정연구">공정연구</MenuItem>
+                </Select>
+              </FormControl>
             )}
             {value.program === 'CHALLENGE' && (
               <>
@@ -556,26 +574,27 @@ const ProgramInputContent = ({
               )}
             {(value.program === 'CHALLENGE' || value.program === 'LIVE') && (
               <>
-                {value.feeType === 'CHARGE' && (
-                  <DateTimeControl>
-                    <DateTimeLabel htmlFor="feeDueDate">
-                      입금 마감 기한
-                    </DateTimeLabel>
-                    <input
-                      id="feeDueDate"
-                      type="datetime-local"
-                      name="feeDueDate"
-                      value={value.feeDueDate}
-                      onChange={(e) =>
-                        setValue({
-                          ...value,
-                          [e.target.name]: e.target.value,
-                        })
-                      }
-                      step={600}
-                    />
-                  </DateTimeControl>
-                )}
+                {value.feeType === 'CHARGE' ||
+                  (value.feeType === 'REFUND' && (
+                    <DateTimeControl>
+                      <DateTimeLabel htmlFor="feeDueDate">
+                        입금 마감 기한
+                      </DateTimeLabel>
+                      <input
+                        id="feeDueDate"
+                        type="datetime-local"
+                        name="feeDueDate"
+                        value={value.feeDueDate}
+                        onChange={(e) =>
+                          setValue({
+                            ...value,
+                            [e.target.name]: e.target.value,
+                          })
+                        }
+                        step={600}
+                      />
+                    </DateTimeControl>
+                  ))}
                 <DateTimeControl>
                   <DateTimeLabel htmlFor="startDate">시작 일자</DateTimeLabel>
                   <input
@@ -632,22 +651,39 @@ const ProgramInputContent = ({
               </>
             )}
             {(value.program === 'CHALLENGE' || value.program === 'LIVE') && (
-              <>
-                <ReactQuill
-                  modules={modules}
-                  placeholder="상세 내용을 입력해주세요."
-                  ref={quillRef}
-                  value={content ? content : ''}
-                  onChange={(value) => {
-                    setContent(value);
-                  }}
-                />
-                <FAQEditor
-                  programType={value.program}
-                  value={value}
-                  setValue={setValue}
-                />
-              </>
+              <ReactQuill
+                modules={modules}
+                placeholder="상세 내용을 입력해주세요."
+                ref={quillRef}
+                value={content ? content : ''}
+                onChange={(value) => {
+                  setContent(value);
+                }}
+              />
+            )}
+            {(value.program === 'CHALLENGE' || value.program === 'LIVE') && (
+              <TextField
+                label="필독사항"
+                name="criticalNotice"
+                placeholder="필독사항을 입력해주세요"
+                value={value?.criticalNotice || ''}
+                onChange={(e) => {
+                  setValue({
+                    ...value,
+                    [e.target.name]: e.target.value,
+                  });
+                }}
+                fullWidth
+                multiline
+                rows={4}
+              />
+            )}
+            {(value.program === 'CHALLENGE' || value.program === 'LIVE') && (
+              <FAQEditor
+                programType={value.program}
+                value={value}
+                setValue={setValue}
+              />
             )}
           </>
         )}
