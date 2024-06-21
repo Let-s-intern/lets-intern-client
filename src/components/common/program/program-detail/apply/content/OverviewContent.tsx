@@ -22,7 +22,7 @@ const OverviewContent = ({
   programTitle,
   isApplied,
 }: OverviewContentProps) => {
-  // console.log('OverviewContent', programDate);
+  console.log('OverviewContent', programDate);
   const {isLoggedIn} = useAuthStore();
   const navigate = useNavigate();
   const formatDateString = (dateString: string) => {
