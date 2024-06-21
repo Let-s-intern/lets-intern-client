@@ -20,7 +20,7 @@ const ApplicationCard = ({
   reviewType,
   grayscale,
   showDeleteMenu,
-  refetch
+  refetch,
   showChallengeButton,
 }: ApplicationCardProps) => {
   const formatDateString = (dateString: string) => {
