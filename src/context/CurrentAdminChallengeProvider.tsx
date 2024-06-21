@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { createContext, useContext } from 'react';
+import { createContext, useContext, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { z } from 'zod';
 import { getChallengeId, missionAdmin } from '../schema';
@@ -49,6 +49,14 @@ export const CurrentAdminChallengeProvider = ({
       return missionAdmin.parse(res.data.data);
     },
   });
+
+  useEffect(() => {
+    console.log('currentChallenge', currentChallenge);
+  }, [currentChallenge]);
+
+  useEffect(() => {
+    console.log('missionsOfCurrentChallenge', missionsOfCurrentChallenge);
+  }, [missionsOfCurrentChallenge]);
 
   return (
     <currentChallengeContext.Provider
