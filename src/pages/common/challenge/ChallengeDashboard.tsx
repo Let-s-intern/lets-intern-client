@@ -16,6 +16,7 @@ import {
   userSchema,
 } from '../../../schema';
 import axios from '../../../utils/axios';
+import GuideSection from '../../../components/common/challenge/dashboard/section/GuideSection';
 
 const getScoreFromSchedule = (schedule: Schedule) => {
   switch (schedule.attendanceInfo.status) {
@@ -132,17 +133,21 @@ const ChallengeDashboard = () => {
           {dailyMission && (
             <DailyMissionSection dailyMission={dailyMission} isDone={isDone} />
           )}
-
-          {!isDone && (
-            <ScoreSection
-              // refundInfo={refundInfo}
-              // isLoading={isLoading}
-              // todayTh={todayTh}
-              totalScore={totalScore}
-              currentScore={currentScore}
-            />
-          )}
-          <NoticeSection notices={notices} guides={guides} />
+          <div className="flex w-[12rem] flex-col gap-4">
+            {!isDone && (
+              <ScoreSection
+                // refundInfo={refundInfo}
+                // isLoading={isLoading}
+                // todayTh={todayTh}
+                totalScore={totalScore}
+                currentScore={currentScore}
+              />
+            )}
+            <NoticeSection notices={notices} />
+          </div>
+          {/* <div className="flex h-full w-full max-w-[12rem] flex-col gap-4"> */}
+          <GuideSection guides={guides} />
+          {/* </div> */}
         </div>
         <div className="flex gap-4">
           <section className="flex-1 rounded-xl border border-neutral-80 px-10 py-8">
