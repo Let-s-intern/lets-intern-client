@@ -19,7 +19,7 @@ interface AlertModalProps {
 const AlertModal = ({
   onConfirm,
   onCancel,
-  highlight = 'cancel',
+  highlight = 'confirm',
   title,
   confirmText = '확인',
   cancelText = '취소',
@@ -45,7 +45,6 @@ const AlertModal = ({
             type="button"
             className={cn(styles.confirm, styles.button, {
               [styles.highlight]: highlight === 'confirm',
-              [styles.disabled]: disabled,
             })}
             onClick={() => !disabled && onConfirm()}
           >
@@ -56,6 +55,7 @@ const AlertModal = ({
               type="button"
               className={cn(styles.confirm, styles.button, {
                 [styles.highlight]: highlight === 'cancel',
+                [styles.disabled]: disabled,
               })}
               onClick={onCancel}
             >

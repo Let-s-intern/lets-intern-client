@@ -13,6 +13,7 @@ interface CouponSectionProps {
 const CouponSection = ({ setPayInfo, programType }: CouponSectionProps) => {
   const [code, setCode] = useState('');
   const [validationMsg, setValidationMsg] = useState('');
+  const [successMsg, setSuccessMsg] = useState('');
 
   const clickApply = async () => {
     if (code === '') return;
@@ -32,8 +33,11 @@ const CouponSection = ({ setPayInfo, programType }: CouponSectionProps) => {
         couponId: res.data.data.couponId,
         couponPrice: res.data.data.discount,
       }));
+      setValidationMsg('');
+      setSuccessMsg('쿠폰이 등록되었습니다.');
     } catch (error) {
       if (isAxiosError(error)) {
+        setSuccessMsg('');
         setValidationMsg(error.response?.data.message);
       }
       setPayInfo((prevPayInfo: PayInfo) => ({
@@ -69,6 +73,9 @@ const CouponSection = ({ setPayInfo, programType }: CouponSectionProps) => {
       </div>
       {validationMsg && (
         <div className="text-0.875 h-3 text-system-error">{validationMsg}</div>
+      )}
+      {successMsg && (
+        <div className="text-0.875 h-3 text-system-positive-blue">{successMsg}</div>
       )}
     </div>
   );

@@ -67,10 +67,11 @@ const Login = () => {
   });
 
   useEffect(() => {
-    if (isLoggedIn) {
+    setErrorMessage('');
+    if (!searchParams.get('error') && isLoggedIn) {
       navigate('/');
     }
-  }, [isLoggedIn, navigate]);
+  }, [isLoggedIn, navigate, searchParams]);
 
   useEffect(() => {
     if (!email || !password) {
@@ -81,21 +82,26 @@ const Login = () => {
   }, [email, password]);
 
   useEffect(() => {
+    if (searchParams.get('error')) {
+      setErrorMessage('다른 로그인 방법으로 가입된 유저입니다.');
+      return;
+    }
     if (searchParams.get('result')) {
       const parsedToken = JSON.parse(searchParams.get('result') || '');
       const newSearchParams = new URLSearchParams(searchParams);
       newSearchParams.delete('result');
       setSearchParams(newSearchParams);
       handleLoginSuccess(parsedToken);
-    } else if (searchParams.get('error')) {
-      const errorParam = JSON.parse(searchParams.get('error') || '');
-      const newSearchParams = new URLSearchParams(searchParams);
-      newSearchParams.delete('error');
-      setSearchParams(newSearchParams);
-      if (errorParam.status === 400 && errorParam.code === 'USER_400_4') {
-        setErrorMessage('이미 존재하는 이메일입니다.');
-      }
     }
+    // } else if (searchParams.get('error')) {
+    //   const errorParam = JSON.parse(searchParams.get('error') || '');
+    //   const newSearchParams = new URLSearchParams(searchParams);
+    //   newSearchParams.delete('error');
+    //   setSearchParams(newSearchParams);
+    //   if (errorParam.status === 400 && errorParam.code === 'USER_400_4') {
+    //     setErrorMessage('이미 존재하는 이메일입니다.');
+    //   }
+    // }
     // eslint-disable-next-line
   }, [searchParams, setSearchParams]);
 

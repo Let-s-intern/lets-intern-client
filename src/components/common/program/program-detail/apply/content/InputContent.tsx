@@ -59,7 +59,7 @@ const InputContent = ({
       userInfo.phoneNumber &&
       userInfo.contactEmail &&
       (programType !== 'challenge'
-        ? userInfo.motivate && userInfo.question
+        ? userInfo.motivate
         : true)
     ) {
       setButtonDisabled(false);

@@ -10,6 +10,7 @@ interface ApplicationCardProps {
   reviewType?: 'CREATE' | 'EDIT';
   grayscale?: boolean;
   showDeleteMenu?: boolean;
+  refetch?: () => void;
   showChallengeButton?: boolean;
 }
 
@@ -19,6 +20,7 @@ const ApplicationCard = ({
   reviewType,
   grayscale,
   showDeleteMenu,
+  refetch
   showChallengeButton,
 }: ApplicationCardProps) => {
   const formatDateString = (dateString: string) => {
@@ -33,15 +35,15 @@ const ApplicationCard = ({
   return (
     <div
       className={clsx(
-        'flex w-[11rem] flex-col items-start gap-4 overflow-hidden rounded-xs md:w-full md:flex-row md:border md:border-neutral-85 md:p-2.5',
+        'flex w-full flex-col items-start gap-4 overflow-hidden rounded-xs md:flex-row md:border md:border-neutral-85 md:p-2.5',
       )}
     >
       <div
-        className={clsx('flex flex-1 flex-col gap-2 md:flex-row md:gap-4', {
+        className={clsx('w-full flex flex-1 flex-col gap-2 md:flex-row md:gap-4', {
           grayscale: grayscale,
         })}
       >
-        <div className="h-[7.5rem] w-[11rem] bg-primary-light md:h-[9rem] md:rounded-xs"></div>
+        <img src={application.programThumbnail} alt={'프로그렘 썸네일'} className="object-cover h-[7.5rem] w-full md:w-[11rem] bg-primary-light md:h-[9rem] md:rounded-xs"/>
         <div className="flex flex-1 flex-col gap-2">
           <div className="flex items-center justify-between">
             <span className="rounded-xs border border-primary bg-primary-20 px-2.5 py-0.5 text-xs font-medium text-primary-dark">
@@ -58,8 +60,9 @@ const ApplicationCard = ({
             <h2 className="font-semibold">{application.programTitle}</h2>
             {showDeleteMenu && (
               <DeleteMenu
-                className="hidden md:block"
+                // className="md:block"
                 application={application}
+                refetch={refetch}
               />
             )}
           </div>
