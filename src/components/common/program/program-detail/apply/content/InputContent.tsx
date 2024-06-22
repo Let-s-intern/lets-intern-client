@@ -28,7 +28,6 @@ const InputContent = ({
   userInfo,
   setUserInfo,
   programType,
-  drawerDispatch,
 }: InputContentProps) => {
   const scrollableBoxRef = useRef<ScrollableDiv>(null);
   const [buttonDisabled, setButtonDisabled] = useState(true);
@@ -45,11 +44,8 @@ const InputContent = ({
   };
 
   const handleBackButtonClick = () => {
-    if (drawerDispatch) {
-      drawerDispatch({ type: 'close' });
-    }
-    if (contentIndex === 0) return;
-    setContentIndex(contentIndex - 2);
+    if (contentIndex === 1) setContentIndex(contentIndex - 1);
+    if (contentIndex === 2) setContentIndex(contentIndex - 2);
   };
 
   useEffect(() => {
@@ -58,9 +54,7 @@ const InputContent = ({
       userInfo.email &&
       userInfo.phoneNumber &&
       userInfo.contactEmail &&
-      (programType !== 'challenge'
-        ? userInfo.motivate
-        : true)
+      (programType !== 'challenge' ? userInfo.motivate : true)
     ) {
       setButtonDisabled(false);
     } else {

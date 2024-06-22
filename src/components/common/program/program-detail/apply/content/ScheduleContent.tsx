@@ -4,9 +4,8 @@ import useAuthStore from '../../../../../../store/useAuthStore';
 import { newProgramTypeToText } from '../../../../../../utils/convert';
 import { ProgramDate } from '../../section/ApplySection';
 import DateToggle from '../../toggle/DateToggle';
-import NotiButton from '../../button/NotiButton';
 
-interface OverviewContentProps {
+interface ScheduleContentProps {
   contentIndex: number;
   setContentIndex: (contentIndex: number) => void;
   programDate: ProgramDate;
@@ -15,15 +14,14 @@ interface OverviewContentProps {
   isApplied: boolean;
 }
 
-const OverviewContent = ({
+const ScheduleContent = ({
   contentIndex,
   setContentIndex,
   programDate,
   programType,
   programTitle,
   isApplied,
-}: OverviewContentProps) => {
-  console.log('OverviewContent', programDate);
+}: ScheduleContentProps) => {
   const { isLoggedIn } = useAuthStore();
   const navigate = useNavigate();
   const formatDateString = (dateString: string) => {
@@ -36,7 +34,7 @@ const OverviewContent = ({
       navigate(`/login?redirect=${window.location.pathname}`);
       return;
     }
-    setContentIndex(contentIndex + 2);
+    setContentIndex(contentIndex + 1);
   };
 
   return (
@@ -48,25 +46,17 @@ const OverviewContent = ({
       <h2 className="text-lg font-semibold">{programTitle}</h2>
       <DateToggle programDate={programDate} programType={programType} />
       <div>
-        {new Date() < new Date(programDate.beginning) ||
-        new Date() > new Date(programDate.deadline) ? (
-          <NotiButton
-            onClick={() => console.log('땡땡')}
-            caption={'출시알림신청'}
-          />
-        ) : (
-          <button
-            className="flex w-full justify-center rounded-md bg-primary px-6 py-3 text-lg font-medium text-neutral-100 disabled:bg-neutral-70"
-            onClick={handleNextButtonClick}
-            disabled={isApplied}
-          >
-            {/* 모집 전이면 사전알림신청 버튼 표시 */}
-            {isApplied ? '신청 완료' : '신청하기'}
-          </button>
-        )}
+        <button
+          className="text-1.125-medium flex w-full justify-center rounded-md bg-primary px-6 py-3  font-medium text-neutral-100 disabled:bg-neutral-70"
+          onClick={handleNextButtonClick}
+          disabled={isApplied}
+        >
+          {/* 모집 전이면 사전알림신청 버튼 표시 */}
+          {isApplied ? '신청 완료' : '신청 품 입력하기'}
+        </button>
       </div>
     </div>
   );
 };
 
-export default OverviewContent;
+export default ScheduleContent;
