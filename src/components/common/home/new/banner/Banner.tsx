@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
-import BannerPlay from './BannerPlay';
 import { useQuery } from '@tanstack/react-query';
 
 import axios from '../../../../../utils/axios';
 import { IBanner } from '../../../../../interfaces/Banner.interface';
+import BannerPlay from '../../../ui/button/BannerPlay';
 
 const Banner = () => {
   const [bannerList, setBannerList] = useState<IBanner[]>([]);
@@ -27,7 +27,7 @@ const Banner = () => {
   useEffect(() => {
     if (isPlay) {
       const interval = setInterval(() => {
-        setBannerIndex((prev) => ((prev + 1) % bannerList.length));
+        setBannerIndex((prev) => (prev + 1) % bannerList.length);
       }, 5000);
       return () => clearInterval(interval);
     }
@@ -41,13 +41,13 @@ const Banner = () => {
     setBannerIndex((prev) => (prev + 1) % bannerList.length);
   };
 
-  const {isLoading} = useQuery({
+  const { isLoading } = useQuery({
     queryKey: ['mainBanner'],
     queryFn: async () => {
       const res = await axios.get(`/banner`, {
         params: {
-          type: 'MAIN'
-        }
+          type: 'MAIN',
+        },
       });
       const data = res.data;
       setBannerList(data.data.bannerList);
