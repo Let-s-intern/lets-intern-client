@@ -3,12 +3,12 @@ import React, { useMemo, useState } from 'react';
 import ChallengeSubmitDetail from '../../../components/admin/challenge/submit-check/table/table-body/ChallengeSubmitDetail';
 import LineTableBody from '../../../components/admin/challenge/ui/lineTable/LineTableBody';
 import LineTableBodyRow, {
-  ItemWithStatus
+  ItemWithStatus,
 } from '../../../components/admin/challenge/ui/lineTable/LineTableBodyRow';
 import LineTableHead from '../../../components/admin/challenge/ui/lineTable/LineTableHead';
 import {
   useAdminCurrentChallenge,
-  useAdminMissionsOfCurrentChallenge
+  useAdminMissionsOfCurrentChallenge,
 } from '../../../context/CurrentAdminChallengeProvider';
 import { attendances, Mission } from '../../../schema';
 import axios from '../../../utils/axios';
@@ -56,9 +56,9 @@ const ChallengeOperationAttendances = () => {
       missions?.map((mission) => {
         return {
           ...mission,
-          currentAttendance: `${(mission.attendanceCount ?? 0) + (mission.lateAttendanceCount ?? 0)}(제출)/${
-            mission.applicationCount ?? 0
-          }(전체)`,
+          currentAttendance: `${
+            (mission.attendanceCount ?? 0) + (mission.lateAttendanceCount ?? 0)
+          }(제출)/${mission.applicationCount ?? 0}(전체)`,
         };
       }) ?? []
     );
@@ -101,7 +101,9 @@ const ChallengeOperationAttendances = () => {
                   { type: TABLE_CONTENT.DATETIME },
                   { type: TABLE_CONTENT.DATETIME },
                   { type: TABLE_CONTENT.INPUT },
-                  { type: TABLE_CONTENT.INPUT },
+                  {
+                    type: TABLE_CONTENT.INPUT,
+                  },
                 ]}
                 key={row.id}
                 initialValues={row}

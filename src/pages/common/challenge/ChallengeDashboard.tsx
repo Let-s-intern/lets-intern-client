@@ -34,8 +34,6 @@ const getScoreFromSchedule = (schedule: Schedule) => {
 
 // TODO: [나중에... ]외부로 빼야 함
 const getIsDone = (schedules: Schedule[]) => {
-  // 모든 스케줄의 endDate 중에서 가장 늦은 날짜를 구함
-
   const last = schedules.reduce((acc, schedule) => {
     const endDate = dayjs(schedule.missionInfo.endDate) ?? dayjs('2000-01-01');
     if (acc.isBefore(endDate)) {
@@ -44,12 +42,9 @@ const getIsDone = (schedules: Schedule[]) => {
     return acc;
   }, dayjs('2000-01-01'));
 
-  // dayjs에서 날짜 간에 비교를 하려면?
-  // dayjs(new Date()).isAfter(last) // true
+  console.log('lastday', last.add(2, 'day'));
 
-  // console.log(last.toISOString());
-
-  return dayjs(new Date()).isAfter(last);
+  return dayjs(new Date()).isAfter(last.add(2, 'day'));
 };
 
 const ChallengeDashboard = () => {

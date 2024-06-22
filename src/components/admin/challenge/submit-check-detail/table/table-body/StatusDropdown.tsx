@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { IoMdArrowDropdown } from 'react-icons/io';
 import {
   useAdminCurrentChallenge,
-  useMissionsOfCurrentChallengeRefetch
+  useMissionsOfCurrentChallengeRefetch,
 } from '../../../../../../context/CurrentAdminChallengeProvider';
 import { Attendance } from '../../../../../../schema';
 import axios from '../../../../../../utils/axios';
@@ -37,13 +37,16 @@ const StatusDropdown = ({ attendance, cellWidthListIndex, refetch }: Props) => {
       return data;
     },
     onSuccess: async () => {
+      await queryClient.invalidateQueries({
+        queryKey: ['admin'],
+      });
+      await queryClient.invalidateQueries({
+        queryKey: ['challenge'],
+      });
       refetch();
+      missionRefetch();
       setIsMenuShown(false);
       setIsModalShown(false);
-      missionRefetch();
-      queryClient.invalidateQueries({
-        queryKey: ['admin', 'challenge', currentChallenge?.id],
-      });
     },
   });
 

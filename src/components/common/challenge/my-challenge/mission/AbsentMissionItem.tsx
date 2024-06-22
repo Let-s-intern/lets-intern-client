@@ -118,14 +118,14 @@ const AbsentMissionItem = ({ mission, isDone }: Props) => {
               className={clsx(
                 'rounded-md px-2 py-[0.125rem] text-xs',
                 missionSubmitToBadge({
-                  status: 'ABSENT',
+                  status: mission.attendanceStatus,
                   result: mission.attendanceResult,
                 }).style,
               )}
             >
               {
                 missionSubmitToBadge({
-                  status: 'ABSENT',
+                  status: mission.attendanceStatus,
                   result: mission.attendanceResult,
                 }).text
               }
