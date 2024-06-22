@@ -3,7 +3,7 @@ import Heading from '../../../../admin/ui/heading/Heading';
 const AdvantageSection = () => {
   const introList = [
     {
-      description: '합격까지의 모든 여정에 렛츠커리어가 함께합니다.',
+      description: '합격까지 필요한 모든 커리큘럼을 제공합니다.',
       imageSrc: '/images/home/intro1.png',
       imageAlt: '렛츠커리어 소개 1 이미지',
     },

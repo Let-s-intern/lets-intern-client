@@ -29,7 +29,7 @@ const ApplicationCard = ({
 }: ApplicationCardProps) => {
   const [isPriceInfoOpen, setPriceInfoOpen] = useState({
     isOpen: false,
-    applicationId: 0,
+    paymentId: 0,
   });
   const formatDateString = (dateString: string) => {
     const date = new Date(dateString);
@@ -98,7 +98,7 @@ const ApplicationCard = ({
           <ApplicationCardButton onClick={() => {
             setPriceInfoOpen({
               isOpen: true,
-              applicationId: application.id,
+              paymentId: application.paymentId || 0,
             });
           }}>
             결제 정보 확인
@@ -106,7 +106,6 @@ const ApplicationCard = ({
         )
       }
       {application.programType === 'CHALLENGE' &&
-        application.status === 'IN_PROGRESS' &&
         showChallengeButton && (
           <LinkButton
             to={`/challenge/${application.programId}`}
@@ -128,8 +127,8 @@ const ApplicationCard = ({
       {
         isPriceInfoOpen.isOpen && (
           <PriceInfoModal
-            applicationId={isPriceInfoOpen.applicationId}
-            onClose={() => setPriceInfoOpen({ isOpen: false, applicationId: 0 })}
+          paymentId={isPriceInfoOpen.paymentId}
+            onClose={() => setPriceInfoOpen({ isOpen: false, paymentId: 0 })}
           />
         )
       }

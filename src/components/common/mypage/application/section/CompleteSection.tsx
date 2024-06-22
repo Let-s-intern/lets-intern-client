@@ -24,9 +24,7 @@ const CompleteSection = ({ applicationList }: CompleteSectionProps) => {
         ) : (
           viewList.map((application) => (
             <ApplicationCard
-              hasReviewButton
               grayscale
-              reviewType="CREATE"
               application={application}
               showChallengeButton
             />

@@ -10,6 +10,7 @@ export interface ApplicationType {
   id: number;
   programThumbnail: string;
   status: string;
+  paymentId: number | null;
   programTitle: string;
   programShortDesc: string;
   programStartDate: string;
