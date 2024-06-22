@@ -1,4 +1,4 @@
-const ApplyModal = ({toggle}:{toggle:() => void}) => {
+const UserDeleteModal = ({toggle}:{toggle:() => void}) => {
   const onClick = () => {
     toggle();
     window.location.href = '/mypage/application';
@@ -19,4 +19,4 @@ const ApplyModal = ({toggle}:{toggle:() => void}) => {
   );
 };
 
-export default ApplyModal;
+export default UserDeleteModal;
