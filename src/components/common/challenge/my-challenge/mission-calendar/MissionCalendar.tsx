@@ -6,9 +6,10 @@ interface Props {
   className?: string;
   schedules: Schedule[];
   todayTh: number;
+  isDone: boolean;
 }
 
-const MissionCalendar = ({ className, schedules, todayTh }: Props) => {
+const MissionCalendar = ({ className, schedules, todayTh, isDone }: Props) => {
   return (
     // <div className={clsx('grid grid-cols-7 gap-y-6', className)}>
     <div className={twMerge('flex', className)}>
@@ -18,6 +19,7 @@ const MissionCalendar = ({ className, schedules, todayTh }: Props) => {
           schedule={schedule}
           todayTh={todayTh}
           className="flex-1"
+          isDone={isDone}
         />
       ))}
     </div>

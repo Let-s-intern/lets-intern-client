@@ -9,9 +9,15 @@ interface Props {
   schedule: Schedule;
   todayTh: number;
   className?: string;
+  isDone: boolean;
 }
 
-const MissionCalendarItem = ({ schedule, todayTh, className }: Props) => {
+const MissionCalendarItem = ({
+  schedule,
+  todayTh,
+  className,
+  isDone,
+}: Props) => {
   const mission = schedule.missionInfo;
   const attendance = schedule.attendanceInfo;
 
@@ -32,12 +38,13 @@ const MissionCalendarItem = ({ schedule, todayTh, className }: Props) => {
             className="mt-3"
             mission={mission}
             attendance={attendance}
+            isDone={isDone}
           />
         ) : (mission.th ?? 0) > todayTh ? (
           <MissionNotStartedIcon className="mt-3" schedule={schedule} />
         ) : (
           (mission.th ?? 0) < todayTh && (
-            <MissionIcon className="mt-3" schedule={schedule} />
+            <MissionIcon className="mt-3" schedule={schedule} isDone={isDone} />
           )
         )}
       </div>

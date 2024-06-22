@@ -12,11 +12,13 @@ import {
   challengeGuides,
   challengeNotices,
   challengeScore,
+  DailyMission,
   Schedule,
   userSchema,
 } from '../../../schema';
 import axios from '../../../utils/axios';
 import GuideSection from '../../../components/common/challenge/dashboard/section/GuideSection';
+import EndDailyMissionSection from '../../../components/common/challenge/dashboard/section/EndDailyMissionSection';
 
 const getScoreFromSchedule = (schedule: Schedule) => {
   switch (schedule.attendanceInfo.status) {
@@ -32,6 +34,8 @@ const getScoreFromSchedule = (schedule: Schedule) => {
 
 // TODO: [나중에... ]외부로 빼야 함
 const getIsDone = (schedules: Schedule[]) => {
+  // 모든 스케줄의 endDate 중에서 가장 늦은 날짜를 구함
+
   const last = schedules.reduce((acc, schedule) => {
     const endDate = dayjs(schedule.missionInfo.endDate) ?? dayjs('2000-01-01');
     if (acc.isBefore(endDate)) {
@@ -40,14 +44,22 @@ const getIsDone = (schedules: Schedule[]) => {
     return acc;
   }, dayjs('2000-01-01'));
 
-  console.log(last.toISOString());
-  return last.isBefore(dayjs());
+  // dayjs에서 날짜 간에 비교를 하려면?
+  // dayjs(new Date()).isAfter(last) // true
+
+  // console.log(last.toISOString());
+
+  return dayjs(new Date()).isAfter(last);
 };
 
 const ChallengeDashboard = () => {
   const { currentChallenge, schedules, dailyMission } = useCurrentChallenge();
-  // const todayTh = dailyMission?.th || 10000;
-  const todayTh = dailyMission?.th ?? schedules.length + 1;
+
+  const todayTh =
+    dailyMission?.th ||
+    schedules.reduce((th, schedule) => {
+      return Math.max(th, schedule.missionInfo.th || 0);
+    }, 0) + 1;
 
   const { data: notices = [] } = useQuery({
     enabled: Boolean(currentChallenge?.id),
@@ -71,7 +83,7 @@ const ChallengeDashboard = () => {
   });
 
   const { data: user } = useQuery({
-    queryKey: ['challenge', 'user'],
+    queryKey: ['user'],
     queryFn: async () => {
       const res = await axios.get('/user');
       return userSchema.parse(res.data.data);
@@ -131,19 +143,19 @@ const ChallengeDashboard = () => {
       </header>
       <div className="flex flex-col gap-4">
         <div className="mt-4 flex gap-4">
-          {dailyMission && (
-            <DailyMissionSection dailyMission={dailyMission} isDone={isDone} />
+          {dailyMission ? (
+            <DailyMissionSection dailyMission={dailyMission} />
+          ) : (
+            isDone && <EndDailyMissionSection />
           )}
           <div className="flex w-[12rem] flex-col gap-4">
-            {!isDone && (
-              <ScoreSection
-                // refundInfo={refundInfo}
-                // isLoading={isLoading}
-                // todayTh={todayTh}
-                totalScore={totalScore}
-                currentScore={currentScore}
-              />
-            )}
+            <ScoreSection
+              // refundInfo={refundInfo}
+              // isLoading={isLoading}
+              // todayTh={todayTh}
+              totalScore={totalScore}
+              currentScore={currentScore}
+            />
             <NoticeSection notices={notices} />
           </div>
           {/* <div className="flex h-full w-full max-w-[12rem] flex-col gap-4"> */}
@@ -164,6 +176,7 @@ const ChallengeDashboard = () => {
                 className="mt-4"
                 schedules={schedules}
                 todayTh={todayTh}
+                isDone={isDone}
               />
             )}
           </section>

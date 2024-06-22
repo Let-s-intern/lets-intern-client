@@ -4,33 +4,26 @@ import clsx from 'clsx';
 import { DailyMission } from '../../../../../schema';
 import { useCurrentChallenge } from '../../../../../context/CurrentChallengeProvider';
 
-const DailyMissionSection = ({
-  dailyMission,
-}: {
-  dailyMission: DailyMission;
-}) => {
+const EndDailyMissionSection = () => {
   const { currentChallenge } = useCurrentChallenge();
   return (
     <section className="flex flex-1 flex-col rounded-xl border border-[#E4E4E7] p-6">
       <div className="flex items-end gap-2">
-        <h2 className="font-semibold text-[#4A495C]">
-          {dailyMission.th}회차. {dailyMission.title}
+        <h2 className="w-full text-center font-semibold text-[#4A495C]">
+          챌린지가 종료되었습니다.
         </h2>
-        <span className="text-sm text-[#7D7D7D]">
-          {dailyMission.endDate?.format('MM/DD(ddd) HH:mm')}까지
-        </span>
       </div>
-      <p className="mt-2 line-clamp-6 flex-1 whitespace-pre-line">
-        {dailyMission.description}
+      <p className="mt-2 line-clamp-6 flex-1 whitespace-pre-line text-center">
+        나의 기록장에서 이전 미션들을 확인하실 수 있습니다.
       </p>
       <Link
-        to={`/challenge/${currentChallenge?.id}/me?scroll_to=daily-mission`}
+        to={`/challenge/${currentChallenge?.id}/me`}
         className="mt-4 w-full rounded-xxs bg-primary px-4 py-3 text-center font-semibold text-white"
       >
-        {dailyMission.th}회차 미션 수행하기
+        이전 미션 돌아보기
       </Link>
     </section>
   );
 };
 
-export default DailyMissionSection;
+export default EndDailyMissionSection;

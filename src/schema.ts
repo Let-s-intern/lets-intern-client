@@ -145,7 +145,7 @@ export const getChallengeId = z
       deadline: dayjs(data.deadline),
       priceInfo: data.priceInfo.map((price) => ({
         ...price,
-        deadline: price.deadline ? dayjs(price.deadline) : null, 
+        deadline: price.deadline ? dayjs(price.deadline) : null,
       })),
     };
   });
@@ -734,7 +734,6 @@ export type DailyMission = z.infer<typeof dailyMissionSchema>['dailyMission'];
 
 /** GET /api/v1/user */
 export const userSchema = z.object({
-  id: z.number(),
   name: z.string().nullable(),
   email: z.string().nullable(),
   contactEmail: z.string().nullable(),
