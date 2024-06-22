@@ -71,7 +71,7 @@ const ResultDropdown = ({
       setAttendanceResult(result);
       missionRefetch();
       queryClient.invalidateQueries({
-        queryKey: ['admin', 'challenge', currentChallenge?.id],
+        queryKey: ['admin'],
       });
     },
   });

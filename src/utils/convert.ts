@@ -186,6 +186,11 @@ export const missionStatusToText: any = {
   REFUND_DONE: '환급완료',
 };
 
+export const newMissionStatusToText: Record<string, string> = {
+  WAITING: '대기',
+  CHECK_DONE: '확인완료',
+};
+
 export const missionStatusToBadge: any = {
   WAITING: { text: '대기', style: 'bg-[#E3E3E3] text-[#9B9B9B]' },
   CHECK_DONE: { text: '확인완료', style: 'text-primary bg-[#E7E6FD]' },

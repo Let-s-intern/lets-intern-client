@@ -89,11 +89,15 @@ const columns: GridColDef<Participant>[] = [
 const ChallengeOperationParticipants = () => {
   const params = useParams();
   const challengeId = params.programId;
-  const { data: participantsRes} = useQuery({
+  const { data: participantsRes } = useQuery({
     enabled: Boolean(challengeId),
     queryKey: ['admin', 'challenge', challengeId, 'participants'],
     queryFn: async () => {
-      const res = await axios.get(`/challenge/${challengeId}/applications`);
+      const res = await axios.get(`/challenge/${challengeId}/applications`, {
+        params: {
+          isConfirmed: true,
+        },
+      });
       return getChallengeIdApplications.parse(res.data.data);
     },
   });

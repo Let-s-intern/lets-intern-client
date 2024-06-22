@@ -40,11 +40,18 @@ const ApplicationCard = ({
       )}
     >
       <div
-        className={clsx('w-full flex flex-1 flex-col gap-2 md:flex-row md:gap-4', {
-          grayscale: grayscale,
-        })}
+        className={clsx(
+          'flex w-full flex-1 flex-col gap-2 md:flex-row md:gap-4',
+          {
+            grayscale: grayscale,
+          },
+        )}
       >
-        <img src={application.programThumbnail} alt={'프로그렘 썸네일'} className="object-cover h-[7.5rem] w-full md:w-[11rem] bg-primary-light md:h-[9rem] md:rounded-xs"/>
+        <img
+          src={application.programThumbnail}
+          alt={'프로그렘 썸네일'}
+          className="h-[7.5rem] w-full bg-primary-light object-cover md:h-[9rem] md:w-[11rem] md:rounded-xs"
+        />
         <div className="flex flex-1 flex-col gap-2">
           <div className="flex items-center justify-between">
             <span className="rounded-xs border border-primary bg-primary-20 px-2.5 py-0.5 text-xs font-medium text-primary-dark">
@@ -79,17 +86,17 @@ const ApplicationCard = ({
           </div>
         </div>
       </div>
-      {
-        application.status === 'WAITING' && (
-          <LinkButton to={`/`}>
-            결제 정보 확인
-          </LinkButton>
-        )
-      }
+      {application.status === 'WAITING' && (
+        <LinkButton to={`/`}>결제 정보 확인</LinkButton>
+      )}
       {application.programType === 'CHALLENGE' &&
         application.status === 'IN_PROGRESS' &&
         showChallengeButton && (
-          <LinkButton to={`/challenge/${application.programId}`}>
+          <LinkButton
+            to={`/challenge/${application.programId}`}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
             챌린지 대시보드
           </LinkButton>
         )}
@@ -97,7 +104,9 @@ const ApplicationCard = ({
         <LinkButton
           to={`/mypage/review/${
             reviewType === 'CREATE' ? 'new' : 'edit'
-          }/program/${application.programType}/${application.programId}?application=${application.id}`}
+          }/program/${application.programType}/${
+            application.programId
+          }?application=${application.id}`}
         >
           {reviewType === 'CREATE' ? '후기 작성하기' : '수정하기'}
         </LinkButton>
