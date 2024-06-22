@@ -11,15 +11,12 @@ import { gradeToText } from '../../../../../utils/convert';
 
 interface Props {
   application: ApplicationType;
-  program: any;
   handleApplicationStatusChange: any;
   programType: string;
 }
 
-const TableRow = ({ program, application, programType }: Props) => {
+const TableRow = ({ application, programType }: Props) => {
   const queryClient = useQueryClient();
-
-  const [isFeeConfirmed, setIsFeeConfirmed] = useState(application.isConfirmed);
 
   const formatDateString = (dateString: string) => {
     const date = new Date(dateString);
@@ -35,7 +32,7 @@ const TableRow = ({ program, application, programType }: Props) => {
       const res = await axios.patch(
         `/payment/${application.paymentId}`,
         {
-          isConfirmed: !isFeeConfirmed,
+          isConfirmed: !application.isConfirmed,
         },
         {
           params: {
@@ -46,7 +43,6 @@ const TableRow = ({ program, application, programType }: Props) => {
       return res.data;
     },
     onSuccess: async () => {
-      setIsFeeConfirmed(!isFeeConfirmed);
       await queryClient.invalidateQueries({
         queryKey: [programType.toLowerCase()],
       });
@@ -82,7 +78,7 @@ const TableRow = ({ program, application, programType }: Props) => {
       <TD>{application.totalCost.toLocaleString()}원</TD>
       <TD whiteSpace="wrap">
         <Checkbox
-          checked={isFeeConfirmed}
+          checked={application.isConfirmed}
           onChange={() => editIsFeeConfirmed.mutate()}
         />
       </TD>

@@ -27,6 +27,7 @@ import {
   programParticipationTypeToText,
   programPriceTypeToText,
 } from '../../../../../utils/convert';
+import ImageUpload from '../form/ImageUpload';
 
 interface ProgramEditorProps {
   value: any;
@@ -35,6 +36,7 @@ interface ProgramEditorProps {
   content: string;
   setContent: React.Dispatch<React.SetStateAction<string>>;
   editorMode: 'create' | 'edit';
+  handleImageUpload: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
 const ProgramInputContent = ({
@@ -44,6 +46,7 @@ const ProgramInputContent = ({
   content,
   setContent,
   editorMode,
+  handleImageUpload,
 }: ProgramEditorProps) => {
   const navigate = useNavigate();
   const quillRef = useRef<any>();
@@ -292,15 +295,12 @@ const ProgramInputContent = ({
                 </FormControl>
               </>
             )}
-            <Input
-              label="썸네일"
-              type="text"
+            <ImageUpload
+              label="프로그램 썸네일 이미지 업로드"
+              id="thumbnail"
               name="thumbnail"
-              placeholder="썸네일 링크를 입력해주세요"
-              value={value?.thumbnail || ''}
-              onChange={(e) => {
-                setValue({ ...value, [e.target.name]: e.target.value });
-              }}
+              image={value?.thumbnail || ''}
+              onChange={handleImageUpload}
             />
             <Input
               label="제목"

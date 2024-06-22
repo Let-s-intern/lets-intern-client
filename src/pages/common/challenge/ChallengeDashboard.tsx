@@ -46,6 +46,7 @@ const getIsDone = (schedules: Schedule[]) => {
 
 const ChallengeDashboard = () => {
   const { currentChallenge, schedules, dailyMission } = useCurrentChallenge();
+  // const todayTh = dailyMission?.th || 10000;
   const todayTh = dailyMission?.th ?? schedules.length + 1;
 
   const { data: notices = [] } = useQuery({

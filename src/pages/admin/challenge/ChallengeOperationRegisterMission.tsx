@@ -78,7 +78,9 @@ const columns: GridColDef<Row>[] = [
     editable: true,
     width: 140,
     valueFormatter(_, row) {
-      return `${row.missionTemplateId}.${
+      return `${
+        Boolean(row.missionTemplateId) ? `(${row.missionTemplateId}) ` : ''
+      }${
         row.missionTemplatesOptions.find((t) => t.id === row.missionTemplateId)
           ?.title || ''
       }`;
@@ -106,7 +108,7 @@ const columns: GridColDef<Row>[] = [
           <option value="">선택</option>
           {params.row.missionTemplatesOptions.map((t) => (
             <option key={t.id} value={t.id}>
-              {t.title}
+              ({t.id}) {t.title}
             </option>
           ))}
         </select>
@@ -190,9 +192,11 @@ const columns: GridColDef<Row>[] = [
     width: 160,
     editable: true,
     valueFormatter(_, row) {
-      return `${row.essentialContentsList?.[0]?.id}.${
-        row.essentialContentsList?.map((c) => c?.title)?.join(', ') || ''
-      }`;
+      return `${
+        Boolean(row.essentialContentsList?.[0]?.id)
+          ? `(${row.essentialContentsList?.[0]?.id}) `
+          : ''
+      }${row.essentialContentsList?.map((c) => c?.title)?.join(', ') || ''}`;
     },
     renderCell(params) {
       return (
@@ -220,7 +224,7 @@ const columns: GridColDef<Row>[] = [
           <option value="">선택</option>
           {params.row.essentialContentsOptions.map((c) => (
             <option key={c.id} value={c.id ?? ''}>
-              {c.title}
+              ({c.id}) {c.title}
             </option>
           ))}
         </select>
@@ -233,9 +237,11 @@ const columns: GridColDef<Row>[] = [
     width: 160,
     editable: true,
     valueFormatter(_, row) {
-      return `${row.additionalContentsList?.[0]?.id}.${
-        row.additionalContentsList?.map((c) => c?.title)?.join(', ') || ''
-      }`;
+      return `${
+        Boolean(row.additionalContentsList?.[0]?.id)
+          ? `(${row.additionalContentsList?.[0]?.id}) `
+          : ''
+      }${row.additionalContentsList?.map((c) => c?.title)?.join(', ') || ''}`;
     },
     renderCell(params) {
       return (
@@ -264,7 +270,7 @@ const columns: GridColDef<Row>[] = [
           <option value="">선택</option>
           {params.row.additionalContentsOptions.map((c) => (
             <option key={c.id} value={c.id ?? ''}>
-              {c.title}
+              ({c.id}) {c.title}
             </option>
           ))}
         </select>

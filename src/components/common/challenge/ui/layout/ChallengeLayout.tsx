@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { Outlet, useNavigate, useParams } from 'react-router-dom';
 
 import NavBar from './NavBar';
@@ -9,22 +9,16 @@ const ChallengeLayout = () => {
   const params = useParams();
   const navigate = useNavigate();
 
-  // TODO: 검증 로직 필요함.
-  const [isValidUser, setIsValidUser] = useState<boolean>(true);
-  // const [isValidUserInfo, setIsValidUserInfo] = useState<boolean>(true);
-
-  // useQuery({
-  //   enabled: Boolean(params.programId),
-  //   queryKey: ['application', params.programId],
-  //   queryFn: async () => {
-  //     const res = await axios.get(`/challenge/${params.programId}/application`);
-  //     const data = getChallengeIdApplication.parse(res.data.data);
-
-  //     const data = res.data;
-  //     setIsValidUser(data.valid);
-  //     return data;
-  //   },
-  // });
+  const { data: isValidUserAccessData, isLoading: isValidUserAccessLoading } =
+    useQuery({
+      queryKey: ['challenge', params.programId, 'access'],
+      queryFn: async ({ queryKey }) => {
+        const res = await axios.get(
+          `/${queryKey[0]}/${queryKey[1]}/${queryKey[2]}`,
+        );
+        return res.data;
+      },
+    });
 
   const { data: isValidUserInfoData, isLoading: isValidUserInfoLoading } =
     useQuery({
@@ -35,17 +29,18 @@ const ChallengeLayout = () => {
       },
     });
 
+  const isValidUserAccess = isValidUserAccessData?.data?.isAccessible;
   const isValidUserInfo = isValidUserInfoData?.data?.pass;
 
-  const isLoading = isValidUserInfoLoading || isValidUser === undefined;
+  const isLoading = isValidUserInfoLoading || isValidUserAccessLoading;
 
   useEffect(() => {
     if (isLoading) return;
-    if (!isValidUser) navigate('/');
+    if (!isValidUserAccess) navigate('/');
     if (!isValidUserInfo) navigate(`/challenge/${params.programId}/user/info`);
-  }, [isValidUser, isValidUserInfo]);
+  }, [isValidUserAccess, isValidUserInfo]);
 
-  if (isLoading || !isValidUser || !isValidUserInfo) {
+  if (isLoading) {
     return <></>;
   }
 

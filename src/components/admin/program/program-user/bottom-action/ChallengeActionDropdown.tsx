@@ -17,8 +17,6 @@ const ChallengeActionDropdown = ({
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [downloadMailListType, setDownloadMailListType] = useState<string>('');
-  const [downloadMailContentType, setDownloadMailContentType] =
-    useState<string>('');
   const [emailAddressList, setEmailAddressList] = useState<string[] | null>();
   const [emailContent, setEmailContent] = useState<string>('');
 
@@ -38,20 +36,16 @@ const ChallengeActionDropdown = ({
     enabled: !downloadMailListType,
   });
 
-  const getMailContent = useQuery({
-    queryKey: ['program', 'admin', params.programId, 'email', 'content'],
-    queryFn: async () => {
-      if (!downloadMailContentType) return {};
-      const res = await axios.get(`/program/admin/${params.programId}/email`, {
-        params: {
-          mailType: downloadMailContentType,
-        },
-      });
+  useQuery({
+    queryKey: ['challenge', params.programId, 'mail-contents'],
+    queryFn: async ({ queryKey }) => {
+      const res = await axios.get(
+        `/${queryKey[0]}/${queryKey[1]}/${queryKey[2]}`,
+      );
       const data = res.data;
-      setEmailContent(data.emailContents);
+      setEmailContent(data.data.title + '\n\n' + data.data.contents);
       return data;
     },
-    enabled: !downloadMailContentType,
   });
 
   const downloadFile = (fileName: string, fileContent: string) => {
@@ -73,12 +67,6 @@ const ChallengeActionDropdown = ({
   }, [downloadMailListType]);
 
   useEffect(() => {
-    if (downloadMailContentType) {
-      getMailContent.refetch();
-    }
-  }, [downloadMailContentType]);
-
-  useEffect(() => {
     if (emailAddressList) {
       const subject =
         downloadMailListType === 'APPROVED'
@@ -92,16 +80,6 @@ const ChallengeActionDropdown = ({
     }
   }, [emailAddressList]);
 
-  useEffect(() => {
-    if (emailContent) {
-      const subject = '참여 확정 공지 대상자 이메일 내용';
-      downloadFile(subject + '.txt', emailContent);
-      setIsMenuOpen(false);
-      setDownloadMailContentType('');
-      setEmailContent('');
-    }
-  }, [getMailContent]);
-
   const downloadConfirmedEmailList = () => {
     const subject = '참여 확정 공지 대상자 이메일 내용';
     const emailList = applications
@@ -109,6 +87,13 @@ const ChallengeActionDropdown = ({
       .map((application) => application.email);
     const emailContent = emailList.join('\n');
     downloadFile(subject + '.txt', emailContent);
+  };
+
+  const handleDownloadMailContent = () => {
+    const subject = '참여 확정 공지 대상자 이메일 내용';
+    downloadFile(subject + '.txt', emailContent);
+    setIsMenuOpen(false);
+    setEmailContent('');
   };
 
   return (
@@ -130,7 +115,7 @@ const ChallengeActionDropdown = ({
           </li>
           <li
             className="cursor-pointer px-3 py-3 text-sm font-medium duration-200 hover:bg-neutral-200"
-            onClick={() => setDownloadMailContentType('FEE_CONFIRMED')}
+            onClick={handleDownloadMailContent}
           >
             참여 확정 공지 이메일 내용
           </li>

@@ -55,7 +55,30 @@ const ChallengeUserInfo = () => {
 
   const isValidUserInfo = isValidUserInfoData?.data?.pass;
 
-  const isLoading = isValidUserInfoLoading;
+  const { data: programTitleData, isLoading: programTitleLoading } = useQuery({
+    queryKey: ['challenge', params.programId, 'title'],
+    queryFn: async ({ queryKey }) => {
+      const res = await axios.get(
+        `/${queryKey[0]}/${queryKey[1]}/${queryKey[2]}`,
+      );
+      return res.data;
+    },
+  });
+
+  const programTitle = programTitleData?.data?.title;
+
+  const { data: usernameData, isLoading: usernameLoading } = useQuery({
+    queryKey: ['user'],
+    queryFn: async ({ queryKey }) => {
+      const res = await axios.get(`/${queryKey[0]}`);
+      return res.data;
+    },
+  });
+
+  const username = usernameData?.data?.name;
+
+  const isLoading =
+    isValidUserInfoLoading || programTitleLoading || usernameLoading;
 
   const editMyInfo = useMutation({
     mutationFn: async () => {
@@ -65,7 +88,6 @@ const ChallengeUserInfo = () => {
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ['user'] });
       navigate(`/challenge/${params.programId}`);
-      // window.location.href = `/challenge/${params.programId}`;
     },
   });
 
@@ -96,7 +118,7 @@ const ChallengeUserInfo = () => {
   useEffect(() => {
     if (isLoading) return;
     if (isValidUserInfo) navigate(`/challenge/${params.programId}`);
-  }, [isValidUserInfo, isValidUserInfoLoading]);
+  }, [isValidUserInfo, isLoading]);
 
   return (
     <main className="mx-auto flex max-w-3xl flex-col gap-6 pb-24 pt-12">
@@ -105,7 +127,7 @@ const ChallengeUserInfo = () => {
           챌린지 대시보드 추가정보 입력
         </h1>
         <p className="text-center text-neutral-40">
-          안녕하세요, 이름님! 챌린지 대시보드에 입장하신 걸 환영합니다!
+          안녕하세요, {username}님! {programTitle}에 입장하신 걸 환영합니다!
           <br />
           챌린지 대시보드 입장을 위해 추가정보를 입력해주세요.
         </p>
