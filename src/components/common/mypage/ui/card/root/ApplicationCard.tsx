@@ -4,6 +4,9 @@ import LinkButton from '../../button/LinkButton';
 import DeleteMenu from '../menu/DeleteMenu';
 import { ApplicationType } from '../../../../../../pages/common/mypage/Application';
 import Button from '../../../../ui/button/Button';
+import ApplicationCardButton from '../../button/ApplicationCardButton';
+import { useState } from 'react';
+import PriceInfoModal from '../../modal/PriceInfoModal';
 
 interface ApplicationCardProps {
   application: ApplicationType;
@@ -24,6 +27,10 @@ const ApplicationCard = ({
   refetch,
   showChallengeButton,
 }: ApplicationCardProps) => {
+  const [isPriceInfoOpen, setPriceInfoOpen] = useState({
+    isOpen: false,
+    applicationId: 0,
+  });
   const formatDateString = (dateString: string) => {
     const date = new Date(dateString);
     const year = date.getFullYear().toString().slice(-2); // 두 자리 형식으로 연도 추출
@@ -86,9 +93,18 @@ const ApplicationCard = ({
           </div>
         </div>
       </div>
-      {application.status === 'WAITING' && (
-        <LinkButton to={`/`}>결제 정보 확인</LinkButton>
-      )}
+      {
+        application.status === 'WAITING' && (
+          <ApplicationCardButton onClick={() => {
+            setPriceInfoOpen({
+              isOpen: true,
+              applicationId: application.id,
+            });
+          }}>
+            결제 정보 확인
+          </ApplicationCardButton>
+        )
+      }
       {application.programType === 'CHALLENGE' &&
         application.status === 'IN_PROGRESS' &&
         showChallengeButton && (
@@ -104,13 +120,19 @@ const ApplicationCard = ({
         <LinkButton
           to={`/mypage/review/${
             reviewType === 'CREATE' ? 'new' : 'edit'
-          }/program/${application.programType}/${
-            application.programId
-          }?application=${application.id}`}
+          }/program/${application.programType}/${application.programId}/${application.reviewId ? application.reviewId : `?application=${application.id}`}`}
         >
           {reviewType === 'CREATE' ? '후기 작성하기' : '수정하기'}
         </LinkButton>
       )}
+      {
+        isPriceInfoOpen.isOpen && (
+          <PriceInfoModal
+            applicationId={isPriceInfoOpen.applicationId}
+            onClose={() => setPriceInfoOpen({ isOpen: false, applicationId: 0 })}
+          />
+        )
+      }
     </div>
   );
 };

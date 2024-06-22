@@ -133,7 +133,7 @@ const Router = () => {
               />
               {/* /mypage/review/edit/program/:programId */}
               <Route
-                path="edit/program/:programType/:programId"
+                path="edit/program/:programType/:programId/:reviewId"
                 element={<ReviewCreate isEdit={true} />}
               />
             </Route>

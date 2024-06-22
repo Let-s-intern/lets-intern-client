@@ -83,7 +83,7 @@ const Login = () => {
 
   useEffect(() => {
     if (searchParams.get('error')) {
-      setErrorMessage('다른 로그인 방법으로 가입된 유저입니다.');
+      setErrorMessage('이미 가입된 휴대폰 번호입니다.');
       return;
     }
     if (searchParams.get('result')) {

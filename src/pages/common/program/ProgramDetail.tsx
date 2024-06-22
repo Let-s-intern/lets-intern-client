@@ -2,6 +2,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { useMediaQuery } from '@mui/material';
 import { useReducer, useState } from 'react';
+import clsx from 'clsx';
 
 import Header from '../../../components/common/program/program-detail/header/Header';
 import TabSection from '../../../components/common/program/program-detail/section/TabSection';
@@ -13,6 +14,7 @@ import ApplyModal from '../../../components/common/program/program-detail/apply/
 import applyReducer from '../../../reducers/applyReducer';
 import FilledButton from '../../../components/common/program/program-detail/button/FilledButton';
 import useAuthStore from '../../../store/useAuthStore';
+import NotiButton from '../../../components/common/program/program-detail/button/NotiButton';
 
 export type ProgramType = 'challenge' | 'live';
 
@@ -23,7 +25,7 @@ interface ProgramDetailProps {
 const ProgramDetail = ({ programType }: ProgramDetailProps) => {
   const params = useParams<{ programId: string }>();
   const navigate = useNavigate();
-  const {isLoggedIn} = useAuthStore();
+  const { isLoggedIn } = useAuthStore();
   const [programTitle, setProgramTitle] = useState('');
   const programId = Number(params.programId);
   const matches = useMediaQuery('(min-width: 991px)');
@@ -33,6 +35,20 @@ const ProgramDetail = ({ programType }: ProgramDetailProps) => {
   const [programInfo, setProgramInfo] = useState({
     beginning: '',
     deadline: '',
+  });
+
+  useQuery({
+    queryKey: [programType, programId, 'application'],
+    queryFn: async () => {
+      try {
+        const res = await axios.get(`/${programType}/${programId}/application`);
+        const data = res.data.data;
+        setIsAlreadyApplied(data.applied);
+        return res.data;
+      } catch (error) {
+        console.error(error);
+      }
+    },
   });
 
   const toggleApplyModal = () => {
@@ -45,6 +61,9 @@ const ProgramDetail = ({ programType }: ProgramDetailProps) => {
       return;
     }
     drawerDispatch({ type: 'toggle' });
+  };
+  const handleDrawer = () => {
+    if (!isAlreadyApplied) toggleDrawer();
   };
 
   // 프로그램 제목 가져오기
@@ -66,16 +85,6 @@ const ProgramDetail = ({ programType }: ProgramDetailProps) => {
       return res.data;
     },
   });
-
-  useQuery({
-    queryKey: [programType, programId, 'isComplete'],
-    queryFn: async () => {
-      const res = await axios.get(`/${programType}/${programId}/history`);
-      console.log(res.data.data);
-      setIsAlreadyApplied(res.data.data.isAlreadyApplied);
-      return res.data;
-    },
-  })
 
   return (
     <div className="px-5">
@@ -99,20 +108,33 @@ const ProgramDetail = ({ programType }: ProgramDetailProps) => {
           {!matches && (
             <div className="fixed bottom-0 left-0 right-0 z-30 flex max-h-[25rem] w-screen flex-col items-center overflow-y-auto rounded-t-lg bg-static-100 px-5 py-3 shadow-05 scrollbar-hide">
               <div
-                onClick={() => drawerDispatch({ type: 'toggle' })}
-                className="mb-3 h-[5px] w-[70px] cursor-pointer rounded-full bg-neutral-80"
+                onClick={handleDrawer}
+                className={clsx(
+                  'mb-3 h-[5px] w-[70px] cursor-pointer rounded-full bg-neutral-80',
+                )}
               />
               {isOpen ? (
                 <MobileApplySection
+                  programTitle={programTitle}
                   programType={programType}
                   programId={programId}
                   toggleApplyModal={toggleApplyModal}
                   toggleDrawer={toggleDrawer}
                   drawerDispatch={drawerDispatch}
                 />
+              ) : // 모집 예정 or 모집 종료이면 출시알림신청 버튼 표시
+              new Date() < new Date(programInfo.beginning) ||
+                new Date() > new Date(programInfo.deadline) ? (
+                <NotiButton
+                  onClick={() => console.log('땡땡')}
+                  caption={'출시알림신청'}
+                />
               ) : (
-                // 모집 전이면 사전알림신청 버튼 표시
-                <FilledButton onClick={toggleDrawer} caption={ isAlreadyApplied ? '신청완료' : '신청하기' } isAlreadyApplied = {isAlreadyApplied}/>
+                <FilledButton
+                  onClick={toggleDrawer}
+                  caption={isAlreadyApplied ? '신청완료' : '신청하기'}
+                  isAlreadyApplied={isAlreadyApplied}
+                />
               )}
             </div>
           )}

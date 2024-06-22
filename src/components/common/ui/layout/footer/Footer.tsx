@@ -46,7 +46,7 @@ const Footer = () => {
             <span>|</span>
           </div>
           <div className="flex gap-2">
-            <span>이메일: letsintern.official@gmail.com</span>
+            <span>이메일: official@letscareer.co.kr</span>
             <span>|</span>
           </div>
           <span>Copyright ©2024 아이엔지. All rights reserved.</span>

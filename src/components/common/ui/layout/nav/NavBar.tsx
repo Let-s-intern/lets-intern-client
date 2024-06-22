@@ -62,7 +62,6 @@ const NavBar = () => {
 
   useEffect(() => {
     if (userData) {
-      console.log(userData);
       setUser(userData);
     }
 
@@ -99,8 +98,10 @@ const NavBar = () => {
           </div>
           <div className="flex items-center gap-4">
             {isLoggedIn ? (
-              <div className="hidden gap-2 sm:flex cursor-pointer"
-              onClick={() => navigate('/mypage/application')}>
+              <div
+                className="hidden cursor-pointer gap-2 sm:flex"
+                onClick={() => navigate('/mypage/application')}
+              >
                 <span className="text-1.125-medium block">{user?.name} 님</span>
                 <img
                   src="/icons/user-circle.svg"
@@ -184,6 +185,12 @@ const NavBar = () => {
               관리자 페이지
             </SideNavItem>
           )}
+          <SideNavItem to="https://letscareer.oopy.io/5eb0ebdd-e10c-4aa1-b28a-8bd0964eca0b" onClick={closeMenu}>
+            자주 묻는 질문
+          </SideNavItem>
+          <SideNavItem to="https://letscareer.oopy.io/4e78d954-c4ac-4c14-a122-a21fe890de5b" onClick={closeMenu}>
+            공지사항
+          </SideNavItem>
         </div>
       </div>
       {/* 네비게이션 바 공간 차지 */}
