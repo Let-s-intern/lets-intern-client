@@ -13,6 +13,7 @@ import ApplyModal from '../../../components/common/program/program-detail/apply/
 import applyReducer from '../../../reducers/applyReducer';
 import FilledButton from '../../../components/common/program/program-detail/button/FilledButton';
 import useAuthStore from '../../../store/useAuthStore';
+import clsx from 'clsx';
 
 export type ProgramType = 'challenge' | 'live';
 
@@ -35,6 +36,21 @@ const ProgramDetail = ({ programType }: ProgramDetailProps) => {
     deadline: '',
   });
 
+  useQuery({
+    queryKey: [programType, programId, 'application'],
+    queryFn: async () => {
+      try {
+        const res = await axios.get(`/${programType}/${programId}/application`);
+        const data = res.data.data;
+        console.log('신청여부', data);
+        setIsAlreadyApplied(data.applied);
+        return res.data;
+      } catch (error) {
+        console.error(error);
+      }
+    },
+  });
+
   const toggleApplyModal = () => {
     applyDispatch({ type: 'toggle' });
   };
@@ -45,6 +61,9 @@ const ProgramDetail = ({ programType }: ProgramDetailProps) => {
       return;
     }
     drawerDispatch({ type: 'toggle' });
+  };
+  const handleDrawer = () => {
+    if (!isAlreadyApplied) toggleDrawer();
   };
 
   // 프로그램 제목 가져오기
@@ -63,15 +82,6 @@ const ProgramDetail = ({ programType }: ProgramDetailProps) => {
       const res = await axios.get(`/${programType}/${programId}`);
       const { beginning, deadline } = res.data.data;
       setProgramInfo({ beginning, deadline });
-      return res.data;
-    },
-  });
-
-  useQuery({
-    queryKey: [programType, programId, 'isComplete'],
-    queryFn: async () => {
-      const res = await axios.get(`/${programType}/${programId}/history`);
-      setIsAlreadyApplied(res.data.data.isAlreadyApplied);
       return res.data;
     },
   });
@@ -98,8 +108,10 @@ const ProgramDetail = ({ programType }: ProgramDetailProps) => {
           {!matches && (
             <div className="fixed bottom-0 left-0 right-0 z-30 flex max-h-[25rem] w-screen flex-col items-center overflow-y-auto rounded-t-lg bg-static-100 px-5 py-3 shadow-05 scrollbar-hide">
               <div
-                onClick={toggleDrawer}
-                className="mb-3 h-[5px] w-[70px] cursor-pointer rounded-full bg-neutral-80"
+                onClick={handleDrawer}
+                className={clsx(
+                  'mb-3 h-[5px] w-[70px] cursor-pointer rounded-full bg-neutral-80',
+                )}
               />
               {isOpen ? (
                 <MobileApplySection

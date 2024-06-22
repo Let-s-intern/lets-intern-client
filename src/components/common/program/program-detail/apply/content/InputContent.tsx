@@ -28,7 +28,6 @@ const InputContent = ({
   userInfo,
   setUserInfo,
   programType,
-  drawerDispatch,
 }: InputContentProps) => {
   const scrollableBoxRef = useRef<ScrollableDiv>(null);
   const [buttonDisabled, setButtonDisabled] = useState(true);
