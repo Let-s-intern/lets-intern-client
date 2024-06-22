@@ -39,6 +39,10 @@ const OverviewContent = ({
     setContentIndex(contentIndex + 2);
   };
 
+  const clickNotiButton = () => {
+    window.open('https://forms.gle/ddFtGQfBpGk7Jxpq9', '_blank');
+  };
+
   return (
     <div className="flex flex-col gap-5">
       <div className="text-xs font-medium">
@@ -48,19 +52,16 @@ const OverviewContent = ({
       <h2 className="text-lg font-semibold">{programTitle}</h2>
       <DateToggle programDate={programDate} programType={programType} />
       <div>
+        {/* 모집 전이면 사전알림신청 버튼 표시 */}
         {new Date() < new Date(programDate.beginning) ||
         new Date() > new Date(programDate.deadline) ? (
-          <NotiButton
-            onClick={() => console.log('땡땡')}
-            caption={'출시알림신청'}
-          />
+          <NotiButton onClick={clickNotiButton} caption={'출시알림신청'} />
         ) : (
           <button
             className="flex w-full justify-center rounded-md bg-primary px-6 py-3 text-lg font-medium text-neutral-100 disabled:bg-neutral-70"
             onClick={handleNextButtonClick}
             disabled={isApplied}
           >
-            {/* 모집 전이면 사전알림신청 버튼 표시 */}
             {isApplied ? '신청 완료' : '신청하기'}
           </button>
         )}
