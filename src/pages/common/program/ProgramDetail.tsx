@@ -71,7 +71,6 @@ const ProgramDetail = ({ programType }: ProgramDetailProps) => {
     queryKey: [programType, programId, 'isComplete'],
     queryFn: async () => {
       const res = await axios.get(`/${programType}/${programId}/history`);
-      console.log(res.data.data);
       setIsAlreadyApplied(res.data.data.isAlreadyApplied);
       return res.data;
     },
