@@ -19,6 +19,7 @@ import {
 import axios from '../../../utils/axios';
 import GuideSection from '../../../components/common/challenge/dashboard/section/GuideSection';
 import EndDailyMissionSection from '../../../components/common/challenge/dashboard/section/EndDailyMissionSection';
+import { useParams } from 'react-router-dom';
 
 const getScoreFromSchedule = (schedule: Schedule) => {
   switch (schedule.attendanceInfo.status) {
@@ -32,23 +33,18 @@ const getScoreFromSchedule = (schedule: Schedule) => {
   return 0;
 };
 
-// TODO: [나중에... ]외부로 빼야 함
-const getIsDone = (schedules: Schedule[]) => {
-  const last = schedules.reduce((acc, schedule) => {
-    const endDate = dayjs(schedule.missionInfo.endDate) ?? dayjs('2000-01-01');
-    if (acc.isBefore(endDate)) {
-      return endDate;
-    }
-    return acc;
-  }, dayjs('2000-01-01'));
+const getIsChallengeDone = (endDate: string) => {
+  return dayjs(new Date()).isAfter(dayjs(endDate));
+};
 
-  console.log('lastday', last.add(2, 'day'));
-
-  return dayjs(new Date()).isAfter(last.add(2, 'day'));
+const getIsChallengeSubmitDone = (endDate: string) => {
+  return dayjs(new Date()).isAfter(dayjs(endDate).add(2, 'day'));
 };
 
 const ChallengeDashboard = () => {
   const { currentChallenge, schedules, dailyMission } = useCurrentChallenge();
+
+  const params = useParams();
 
   const todayTh =
     dailyMission?.th ||
@@ -94,42 +90,55 @@ const ChallengeDashboard = () => {
     },
   });
 
+  const { data: programData } = useQuery({
+    queryKey: ['challenge', params.programId, 'application'],
+    queryFn: async ({ queryKey }) => {
+      const res = await axios.get(
+        `/${queryKey[0]}/${queryKey[1]}/${queryKey[2]}`,
+      );
+      return res.data;
+    },
+  });
+
+  const programEndDate = programData?.data?.endDate;
+
   const totalScore = scoreGroup?.totalScore || 0;
   const currentScore = scoreGroup?.currentScore || 0;
 
-  useEffect(() => {
-    console.log('currentChallenge', currentChallenge);
-  }, [currentChallenge]);
+  // useEffect(() => {
+  //   console.log('currentChallenge', currentChallenge);
+  // }, [currentChallenge]);
 
-  useEffect(() => {
-    console.log('schedule', schedules);
-  }, [schedules]);
+  // useEffect(() => {
+  //   console.log('schedule', schedules);
+  // }, [schedules]);
 
-  useEffect(() => {
-    console.log('notices', notices);
-  }, [notices]);
+  // useEffect(() => {
+  //   console.log('notices', notices);
+  // }, [notices]);
 
-  useEffect(() => {
-    console.log('guides', guides);
-  }, [guides]);
+  // useEffect(() => {
+  //   console.log('guides', guides);
+  // }, [guides]);
 
-  useEffect(() => {
-    console.log('dailyMission', dailyMission);
-  }, [dailyMission]);
+  // useEffect(() => {
+  //   console.log('dailyMission', dailyMission);
+  // }, [dailyMission]);
 
-  useEffect(() => {
-    console.log('user', user);
-  }, [user]);
+  // useEffect(() => {
+  //   console.log('user', user);
+  // }, [user]);
 
-  useEffect(() => {
-    console.log('totalScore', totalScore);
-  }, [totalScore]);
+  // useEffect(() => {
+  //   console.log('totalScore', totalScore);
+  // }, [totalScore]);
 
-  const isDone = getIsDone(schedules);
+  // useEffect(() => {
+  //   console.log('isDone', isDone);
+  // }, [isDone]);
 
-  useEffect(() => {
-    console.log('isDone', isDone);
-  }, [isDone]);
+  const isChallengeDone = getIsChallengeDone(programEndDate);
+  const isChallengeSubmitDone = getIsChallengeSubmitDone(programEndDate);
 
   return (
     <main className="mr-[-1rem] pl-6">
@@ -141,7 +150,7 @@ const ChallengeDashboard = () => {
           {dailyMission ? (
             <DailyMissionSection dailyMission={dailyMission} />
           ) : (
-            isDone && <EndDailyMissionSection />
+            isChallengeDone && <EndDailyMissionSection />
           )}
           <div className="flex w-[12rem] flex-col gap-4">
             <ScoreSection
@@ -171,7 +180,7 @@ const ChallengeDashboard = () => {
                 className="mt-4"
                 schedules={schedules}
                 todayTh={todayTh}
-                isDone={isDone}
+                isDone={isChallengeSubmitDone}
               />
             )}
           </section>

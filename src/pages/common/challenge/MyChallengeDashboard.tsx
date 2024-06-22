@@ -5,6 +5,9 @@ import MissionCalendarSection from '../../../components/common/challenge/my-chal
 import OtherMissionSection from '../../../components/common/challenge/my-challenge/section/OtherMissionSection';
 import { useCurrentChallenge } from '../../../context/CurrentChallengeProvider';
 import { Schedule } from '../../../schema';
+import { useQuery } from '@tanstack/react-query';
+import axios from '../../../utils/axios';
+import { useParams } from 'react-router-dom';
 
 // TODO: [나중에...] 외부로 빼야 함
 const getIsDone = (schedules: Schedule[]) => {
@@ -20,7 +23,17 @@ const getIsDone = (schedules: Schedule[]) => {
   return last.isBefore(dayjs());
 };
 
+const getIsChallengeDone = (endDate: string) => {
+  return dayjs(new Date()).isAfter(dayjs(endDate));
+};
+
+const getIsChallengeSubmitDone = (endDate: string) => {
+  return dayjs(new Date()).isAfter(dayjs(endDate).add(2, 'day'));
+};
+
 const MyChallengeDashboard = () => {
+  const params = useParams<{ programId: string }>();
+
   const { schedules, myDailyMission } = useCurrentChallenge();
 
   // const [missionList, setMissionList] = useState<any>();
@@ -66,7 +79,20 @@ const MyChallengeDashboard = () => {
   //   return <></>;
   // }
 
-  const isDone = getIsDone(schedules);
+  const { data: programData } = useQuery({
+    queryKey: ['challenge', params.programId, 'application'],
+    queryFn: async ({ queryKey }) => {
+      const res = await axios.get(
+        `/${queryKey[0]}/${queryKey[1]}/${queryKey[2]}`,
+      );
+      return res.data;
+    },
+  });
+
+  const programEndDate = programData?.data?.endDate;
+
+  const isChallengeDone = getIsChallengeDone(programEndDate);
+  const isChallengeSubmitDone = getIsChallengeSubmitDone(programEndDate);
 
   return (
     <main className="px-6">
@@ -76,12 +102,12 @@ const MyChallengeDashboard = () => {
       <MissionCalendarSection
         schedules={schedules}
         todayTh={todayTh}
-        isDone={isDone}
+        isDone={isChallengeDone}
       />
       {myDailyMission && (
         <DailyMissionSection myDailyMission={myDailyMission} />
       )}
-      <OtherMissionSection todayTh={todayTh} isDone={isDone} />
+      <OtherMissionSection todayTh={todayTh} isDone={isChallengeSubmitDone} />
     </main>
   );
 };
