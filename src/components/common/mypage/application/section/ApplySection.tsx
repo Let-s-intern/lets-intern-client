@@ -42,7 +42,6 @@ const ApplySection = ({ applicationList, refetch }: ApplySectionProps) => {
           ))}
         </div>
       )}
-
       {applicationList.length > 3 && (
         <MoreButton
           className="md:flex"

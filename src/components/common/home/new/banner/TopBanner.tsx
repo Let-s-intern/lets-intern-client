@@ -23,11 +23,7 @@ const TopBanner = () => {
     console.log('topbanner: ', data);
     data && setIsShow(true);
   }, [data]);
-
-  if (isLoading) {
-    return <p>Loading...</p>;
-  }
-
+  
   return isShow ? (
     <section className="bg-neutral-0 md:px-5 py-3"
       style={{

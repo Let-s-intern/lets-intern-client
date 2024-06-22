@@ -52,7 +52,7 @@ const ScheduleContent = ({
           disabled={isApplied}
         >
           {/* 모집 전이면 사전알림신청 버튼 표시 */}
-          {isApplied ? '신청 완료' : '신청 품 입력하기'}
+          {isApplied ? '신청 완료' : '신청 폼 입력하기'}
         </button>
       </div>
     </div>

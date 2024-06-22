@@ -49,9 +49,9 @@ const ReviewCreate = ({isEdit}:{isEdit:boolean}) => {
       setTenScore(reviewDetailData.nps);
       setIsYes(reviewDetailData.npsCheckAns);
       setAnswer({
-        yes: reviewDetailData.npsAns === 'YES' ? 'YES' : '',
-        no: reviewDetailData.npsAns === 'NO' ? 'NO' : '',
-        low: reviewDetailData.npsAns === 'LOW' ? 'LOW' : '',
+        yes: reviewDetailData.score > 6 && reviewDetailData.npsCheckAns ? reviewDetailData.npsAns : '',
+        no: reviewDetailData.score > 6 && !reviewDetailData.npsCheckAns ? reviewDetailData.npsAns : '',
+        low: reviewDetailData.score <= 6 ? reviewDetailData.npsAns : '',
       });
       setContent(reviewDetailData.content);
     }
@@ -100,11 +100,11 @@ const ReviewCreate = ({isEdit}:{isEdit:boolean}) => {
 
   const editReview = useMutation({
     mutationFn: async () => {
-      const res = await axios.put(
+      const res = await axios.patch(
         `/review/${reviewId}`,
         {
           npsAns:
-            tenScore && tenScore <= 6
+            tenScore !== null && tenScore <= 6
               ? answer.low
               : isYes
               ? answer.yes
@@ -124,6 +124,11 @@ const ReviewCreate = ({isEdit}:{isEdit:boolean}) => {
 
   const handleConfirm = () => {
     if (isEdit) {
+      console.log('edit, ', answer);
+      if (answer === null || (answer.low === '' && answer.no === '' && answer.yes === '') || content === '' || starScore === 0 || tenScore === null) {
+        alert('모든 항목을 입력해주세요.');
+        return;
+      }
       editReview.mutate();
       return;
     }
@@ -154,9 +159,11 @@ const ReviewCreate = ({isEdit}:{isEdit:boolean}) => {
         <TextAreaSection content={content} setContent={setContent} />
         <ConfirmSection isEdit={isEdit} onConfirm={handleConfirm} isDisabled={
           starScore === 0 ||
-          (tenScore === null || tenScore === 0) ||
-          (tenScore && tenScore <= 6 && answer.low === '') ||
-          (isYes === null && (answer.yes === '' || answer.no === ''))
+          tenScore === null || tenScore === 0 ||
+          (tenScore <= 6 && answer.low === '') ||
+          (tenScore > 6 && isYes === null) ||
+          (isYes === true && answer.yes === '') ||
+          (isYes === false && answer.no === '')
         }/>
       </main>
     </div>
