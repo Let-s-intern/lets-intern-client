@@ -31,6 +31,7 @@ import {
 import { getKeyByValue } from '../../../utils/convert';
 import MuiPagination from '../../../components/common/program/pagination/MuiPagination';
 import EmptyCardList from '../../../components/common/program/programs/card/EmptyCardList';
+import LoadingContainer from '../../../components/common/ui/loading/LoadingContainer';
 
 const initialPageable = { page: 1, size: 12 };
 const initialPageInfo = {
@@ -244,7 +245,7 @@ const Programs = () => {
       alert(error);
     }
   };
-  const { isSuccess, isFetching } = useQuery({
+  const { isSuccess, isFetching, isLoading } = useQuery({
     queryKey: ['program', pageable.page, searchParams.toString()],
     queryFn: getProgramList,
   });
@@ -262,7 +263,7 @@ const Programs = () => {
       />
       <main
         className={clsx(
-          'flex w-full flex-col items-center gap-16 px-5 py-8 md:px-10 lg:px-[10%]',
+          'flex w-full flex-col items-center gap-4 md:gap-16 px-5 py-8 md:px-10 lg:px-[10%]',
         )}
       >
         {/* 상단 필터 */}
@@ -346,43 +347,46 @@ const Programs = () => {
             ))}
           </div>
         </section>
-
-        {/* 프로그램 리스트 없을 때 */}
-        {isSuccess && programList.length === 0 && (
-          <>
-            <p className="text-1 py-2 text-center text-neutral-0/40">
-              찾으시는 프로그램이 아직 없어요ㅜㅡㅜ
-              <span className="flex flex-col md:flex-row md:justify-center md:gap-1">
-                <span>알림 신청을 통해</span>
-                <span>가장 먼저 신규 프로그램 소식을 받아보세요!</span>
-              </span>
-            </p>
-            <section className="w-full grid grid-cols-2 gap-x-4 gap-y-5 md:grid-cols-3 md:gap-4">
-              <EmptyCardList />
-            </section>
-          </>
-        )}
-
-        {/* 전체 프로그램 리스트 */}
-        <section className="min-h-2/4 grid grid-cols-2 gap-x-4 gap-y-5 md:grid-cols-3 md:gap-4 xl:grid-cols-4">
-          {isFetching && !isSuccess ? (
-            <></>
+        {
+          isLoading || isFetching ? (
+            <LoadingContainer />
+          ) : isSuccess && programList ? (
+            programList.length < 1 ? (
+              <>
+                <p className="text-1 py-2 text-center text-neutral-0/40">
+                혹시, 찾으시는 프로그램이 없으신가요?
+                  <span className="flex flex-col md:flex-row md:justify-center md:gap-1">
+                    <span>출시 알림 신청을 통해 가장 먼저 신규 프로그램 소식을 받아보세요.</span>
+                  </span>
+                </p>
+                <section className="w-full grid grid-cols-2 gap-x-4 gap-y-5 md:grid-cols-3 md:gap-4">
+                  <EmptyCardList />
+                </section>
+              </>
+            ) : (
+              <>
+                <section className="min-h-2/4 grid grid-cols-2 gap-x-4 gap-y-5 md:grid-cols-3 md:gap-4 xl:grid-cols-4 mb-4 md:mb-0">
+                  {
+                    programList.map((program: IProgram) => (
+                      <ProgramCard
+                        key={program.programInfo.programType + program.programInfo.id}
+                        program={program}
+                      />
+                    ))
+                  }
+                </section>
+                <MuiPagination
+                  page={pageable.page}
+                  pageInfo={pageInfo}
+                  setPageable={setPageable}
+                />
+              </>
+            )
           ) : (
-            programList?.map((program: IProgram) => (
-              <ProgramCard
-                key={program.programInfo.programType + program.programInfo.id}
-                program={program}
-              />
-            ))
-          )}
-        </section>
-
-        <MuiPagination
-          page={pageable.page}
-          pageInfo={pageInfo}
-          setPageable={setPageable}
-        />
-        {!isFetching && <Banner />}
+            <></>
+          )
+        }
+        <Banner />
       </main>
     </div>
   );

@@ -29,6 +29,7 @@ const ReviewCreate = ({isEdit}:{isEdit:boolean}) => {
 
   const applicationId = Number(searchParams.get('application'));
   const programId = Number(params.programId);
+  const programType = params.programType;
   
   const { data: reviewDetailData } = useQuery({
     queryKey: ['review', applicationId],
@@ -37,6 +38,7 @@ const ReviewCreate = ({isEdit}:{isEdit:boolean}) => {
       return res.data;
     },
     enabled: isEdit,
+    retry: 1,
   })
 
   useEffect(() => {
@@ -47,6 +49,16 @@ const ReviewCreate = ({isEdit}:{isEdit:boolean}) => {
       setContent(reviewDetailData.content);
     }
   }, [reviewDetailData, isEdit])
+
+  const { data: programTitle } = useQuery({
+    queryKey: ['program', programId, programType],
+    queryFn: async () => {
+      const res = await axios.get(`/${programType?.toLowerCase}/${programId}/title`);
+      console.log(res.data);
+      return res.data.title;
+    },
+    retry: 1,
+  })
 
 
   const addReview = useMutation({
@@ -122,7 +134,7 @@ const ReviewCreate = ({isEdit}:{isEdit:boolean}) => {
             navigate(-1);
           }}
         />
-        <StarScoreSection starScore={starScore} setStarScore={setStarScore} />
+        <StarScoreSection starScore={starScore} setStarScore={setStarScore} title={programTitle}/>
         <TenScoreSection
           tenScore={tenScore}
           setTenScore={setTenScore}
@@ -132,7 +144,12 @@ const ReviewCreate = ({isEdit}:{isEdit:boolean}) => {
           setAnswer={setAnswer}
         />
         <TextAreaSection content={content} setContent={setContent} />
-        <ConfirmSection onConfirm={handleConfirm} />
+        <ConfirmSection onConfirm={handleConfirm} isDisabled={
+          starScore === 0 ||
+          (tenScore === null || tenScore === 0) ||
+          (tenScore && tenScore <= 6 && answer.low === '') ||
+          (isYes === null && (answer.yes === '' || answer.no === ''))
+        }/>
       </main>
     </div>
   );

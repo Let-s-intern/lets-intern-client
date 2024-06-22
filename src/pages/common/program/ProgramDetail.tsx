@@ -29,6 +29,7 @@ const ProgramDetail = ({ programType }: ProgramDetailProps) => {
   const matches = useMediaQuery('(min-width: 991px)');
   const [isOpen, drawerDispatch] = useReducer(drawerReducer, false);
   const [isComplete, applyDispatch] = useReducer(applyReducer, false);
+  const [isAlreadyApplied, setIsAlreadyApplied] = useState(false);
   const [programInfo, setProgramInfo] = useState({
     beginning: '',
     deadline: '',
@@ -66,9 +67,15 @@ const ProgramDetail = ({ programType }: ProgramDetailProps) => {
     },
   });
 
-  const Button = () => {
-    // 일정에 따라 버튼 컴포넌트 반환
-  };
+  useQuery({
+    queryKey: [programType, programId, 'isComplete'],
+    queryFn: async () => {
+      const res = await axios.get(`/${programType}/${programId}/history`);
+      console.log(res.data.data);
+      setIsAlreadyApplied(res.data.data.isAlreadyApplied);
+      return res.data;
+    },
+  })
 
   return (
     <div className="px-5">
@@ -105,7 +112,7 @@ const ProgramDetail = ({ programType }: ProgramDetailProps) => {
                 />
               ) : (
                 // 모집 전이면 사전알림신청 버튼 표시
-                <FilledButton onClick={toggleDrawer} caption="신청하기" />
+                <FilledButton onClick={toggleDrawer} caption={ isAlreadyApplied ? '신청완료' : '신청하기' } isAlreadyApplied = {isAlreadyApplied}/>
               )}
             </div>
           )}

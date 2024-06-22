@@ -24,7 +24,7 @@ const ReviewSection = () => {
   return (
     <section>
       <Heading>생생한 참여 후기</Heading>
-      <div className="scrollbar-hide mt-6 flex w-full flex-col flex-nowrap gap-4 overflow-x-auto md:w-auto md:flex-row">
+      <div className="mt-6 flex w-full flex-col flex-nowrap gap-4 overflow-x-auto md:w-auto md:flex-row">
         {reviewList.map((review, index) => (
           <Link
             to={review.url}

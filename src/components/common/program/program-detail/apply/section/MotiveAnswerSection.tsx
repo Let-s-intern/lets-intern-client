@@ -37,7 +37,7 @@ const MotiveAnswerSection = ({
       </div>
       <div className="flex flex-col gap-1">
         <label htmlFor="question" className="text-1-medium">
-          사전 질문
+          사전 질문 (선택)
         </label>
         <TextArea
           id="question"

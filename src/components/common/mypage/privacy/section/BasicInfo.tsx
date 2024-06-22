@@ -17,6 +17,7 @@ export interface BasicInfoValue {
   major: string;
   wishJob: string;
   wishCompany: string;
+  authProvider: string;
 }
 
 const BasicInfo = () => {
@@ -32,6 +33,7 @@ const BasicInfo = () => {
     major: '',
     wishJob: '',
     wishCompany: '',
+    authProvider: '',
   });
   const [isSameEmail, setIsSameEmail] = useState<boolean>(false);
 
@@ -39,6 +41,7 @@ const BasicInfo = () => {
     queryKey: ['user', '_basic-info'],
     queryFn: async () => {
       const res = await axios.get('/user');
+      console.log(res.data.data);
       setUser({
         ...res.data.data,
       });
@@ -94,6 +97,7 @@ const BasicInfo = () => {
     <section className="flex flex-col gap-6">
       <h1 className="text-lg font-semibold">기본 정보</h1>
       <div className="flex flex-col gap-3">
+        <div className='flex flex-col gap-3 pb-4 border-b border-b-neutral-70'>
         <div className="flex flex-col gap-1">
           <label htmlFor="name" className="text-1-medium">
             이름
@@ -104,6 +108,7 @@ const BasicInfo = () => {
             placeholder="김렛츠"
             value={user.name}
             onChange={handleInputChange}
+            readOnly = {user.authProvider === 'KAKAO' || user.authProvider === 'NAVER' ? true : false}
           />
         </div>
         <div className="flex flex-col gap-1">
@@ -116,6 +121,7 @@ const BasicInfo = () => {
             placeholder="010-0000-0000"
             value={user.phoneNum}
             onChange={handleInputChange}
+            readOnly = {user.authProvider === 'KAKAO' || user.authProvider === 'NAVER' ? true : false}
           />
         </div>
         <div className="flex flex-col gap-1">
@@ -129,7 +135,9 @@ const BasicInfo = () => {
             value={user.email}
             onChange={handleInputChange}
             disabled
+            readOnly = {user.authProvider === 'KAKAO' || user.authProvider === 'NAVER' ? true : false}
           />
+        </div>
         </div>
         <div className="flex flex-col gap-2">
           <div>

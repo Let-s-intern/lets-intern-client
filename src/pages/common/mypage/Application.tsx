@@ -49,7 +49,7 @@ const Application = () => {
 
   return (
     <main className="flex w-full flex-col gap-16 pb-20">
-      <ApplySection applicationList={waitingApplicationList} refetch={refetch} />
+      <ApplySection applicationList={waitingApplicationList} refetch={() => refetch()} />
       <ParticipateSection applicationList={inProgressApplicationList} />
       <CompleteSection applicationList={completedApplicationList} />
     </main>

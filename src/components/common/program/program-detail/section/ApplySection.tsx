@@ -66,6 +66,7 @@ const ApplySection = ({
     motivate: '',
     question: '',
   });
+  const [criticalNotice, setCriticalNotice] = useState<string>('');
   const [priceId, setPriceId] = useState<number>(0);
   const [payInfo, setPayInfo] = useState<PayInfo>({
     priceId: 0,
@@ -101,6 +102,7 @@ const ApplySection = ({
         motivate: '',
         question: '',
       });
+      setCriticalNotice(data.criticalNotice);
       setIsApplied(data.applied);
       if (programType === 'challenge') {
         setPriceId(data.priceList[0].priceId);
@@ -201,6 +203,7 @@ const ApplySection = ({
       )}
       {contentIndex === 3 && (
         <CautionContent
+          criticalNotice={criticalNotice}
           contentIndex={contentIndex}
           setContentIndex={setContentIndex}
           isCautionChecked={isCautionChecked}

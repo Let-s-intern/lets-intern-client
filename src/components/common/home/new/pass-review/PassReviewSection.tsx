@@ -26,10 +26,10 @@ const PassReviewSection = () => {
         {images.map((image) => (
           <div
             key={image}
-            className="h-12 shrink-0 px-3.5 py-2.5 md:h-16 lg:h-24"
+            className="h-12 shrink-0 px-[24px] py-[14px] md:h-16 lg:h-24"
           >
             <img
-              className="h-full w-full object-contain"
+              className="lg:max-h-[80px] lg:max-w-[160px] h-full w-full object-contain"
               src={`/images/home/company/${image}`}
               alt={image}
             />
