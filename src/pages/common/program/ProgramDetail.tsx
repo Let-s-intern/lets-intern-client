@@ -23,7 +23,7 @@ interface ProgramDetailProps {
 const ProgramDetail = ({ programType }: ProgramDetailProps) => {
   const params = useParams<{ programId: string }>();
   const navigate = useNavigate();
-  const {isLoggedIn} = useAuthStore();
+  const { isLoggedIn } = useAuthStore();
   const [programTitle, setProgramTitle] = useState('');
   const programId = Number(params.programId);
   const matches = useMediaQuery('(min-width: 991px)');
@@ -75,7 +75,7 @@ const ProgramDetail = ({ programType }: ProgramDetailProps) => {
       setIsAlreadyApplied(res.data.data.isAlreadyApplied);
       return res.data;
     },
-  })
+  });
 
   return (
     <div className="px-5">
@@ -99,11 +99,12 @@ const ProgramDetail = ({ programType }: ProgramDetailProps) => {
           {!matches && (
             <div className="fixed bottom-0 left-0 right-0 z-30 flex max-h-[25rem] w-screen flex-col items-center overflow-y-auto rounded-t-lg bg-static-100 px-5 py-3 shadow-05 scrollbar-hide">
               <div
-                onClick={() => drawerDispatch({ type: 'toggle' })}
+                onClick={toggleDrawer}
                 className="mb-3 h-[5px] w-[70px] cursor-pointer rounded-full bg-neutral-80"
               />
               {isOpen ? (
                 <MobileApplySection
+                  programTitle={programTitle}
                   programType={programType}
                   programId={programId}
                   toggleApplyModal={toggleApplyModal}
@@ -112,7 +113,11 @@ const ProgramDetail = ({ programType }: ProgramDetailProps) => {
                 />
               ) : (
                 // 모집 전이면 사전알림신청 버튼 표시
-                <FilledButton onClick={toggleDrawer} caption={ isAlreadyApplied ? '신청완료' : '신청하기' } isAlreadyApplied = {isAlreadyApplied}/>
+                <FilledButton
+                  onClick={toggleDrawer}
+                  caption={isAlreadyApplied ? '신청완료' : '신청하기'}
+                  isAlreadyApplied={isAlreadyApplied}
+                />
               )}
             </div>
           )}

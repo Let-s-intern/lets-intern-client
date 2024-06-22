@@ -8,6 +8,7 @@ import PayContent from '../apply/content/PayContent';
 import CautionContent from '../apply/content/CautionContent';
 import { PayInfo } from './ApplySection';
 import { IAction } from '../../../../../interfaces/interface';
+import ScheduleContent from '../apply/content/ScheduleContent';
 
 export interface ProgramDate {
   deadline: string;
@@ -27,6 +28,7 @@ export interface UserInfo {
 interface MobileApplySectionProps {
   programType: ProgramType;
   programId: number;
+  programTitle: string;
   toggleApplyModal: () => void;
   toggleDrawer: () => void;
   drawerDispatch: (value: IAction) => void;
@@ -35,6 +37,7 @@ interface MobileApplySectionProps {
 const MobileApplySection = ({
   programType,
   programId,
+  programTitle,
   toggleApplyModal,
   toggleDrawer,
   drawerDispatch,
@@ -157,6 +160,16 @@ const MobileApplySection = ({
   return (
     <section className="w-full">
       {contentIndex === 0 && (
+        <ScheduleContent
+          contentIndex={contentIndex}
+          setContentIndex={setContentIndex}
+          programDate={programDate}
+          programType={programType}
+          programTitle={programTitle}
+          isApplied={isApplied}
+        />
+      )}
+      {contentIndex === 1 && (
         <InputContent
           contentIndex={contentIndex}
           setContentIndex={setContentIndex}
@@ -166,7 +179,7 @@ const MobileApplySection = ({
           drawerDispatch={drawerDispatch}
         />
       )}
-      {contentIndex === 1 && (
+      {contentIndex === 2 && (
         <CautionContent
           contentIndex={contentIndex}
           criticalNotice={criticalNotice}
@@ -175,7 +188,7 @@ const MobileApplySection = ({
           setIsCautionChecked={setIsCautionChecked}
         />
       )}
-      {contentIndex === 2 && (
+      {contentIndex === 3 && (
         <PayContent
           payInfo={payInfo}
           setPayInfo={setPayInfo}

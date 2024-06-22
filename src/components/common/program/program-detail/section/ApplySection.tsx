@@ -167,7 +167,7 @@ const ApplySection = ({
     onError: (error) => {
       alert('신청에 실패했습니다. 다시 시도해주세요.');
       setContentIndex(0);
-    }
+    },
   });
 
   const handleApplyButtonClick = () => {
