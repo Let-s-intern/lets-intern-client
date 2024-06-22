@@ -72,6 +72,7 @@ const ProgramUsers = () => {
               (application: ApplicationType) =>
                 application.isConfirmed === filter.isFeeConfirmed,
             );
+      console.log('filteredApplication', filteredApplications);
       setApplications(filteredApplications);
       return res.data;
     },
@@ -164,7 +165,6 @@ const ProgramUsers = () => {
             programType={programType}
           />
           <TableBody
-            program={program}
             applications={applications}
             handleApplicationStatusChange={handleApplicationStatusChange}
             programType={programType}

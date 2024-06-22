@@ -14,7 +14,15 @@ import { IUser } from '../../../interfaces/User.interface';
 
 const Users = () => {
   const [searchParams] = useSearchParams();
-  const [searchValues, setSearchValues] = useState<any>({});
+  const [searchValues, setSearchValues] = useState<{
+    name: string;
+    email: string;
+    phoneNum: string;
+  }>({
+    name: '',
+    email: '',
+    phoneNum: '',
+  });
 
   const params = {
     page: searchParams.get('page') || '1',

@@ -318,6 +318,34 @@ const ProgramEditor = ({ mode }: ProgramEditorProps) => {
     },
   });
 
+  const uploadImage = useMutation({
+    mutationFn: async (params: { formData: FormData; type: string }) => {
+      const res = await axios.post('/file', params.formData, {
+        params: {
+          type: params.type,
+        },
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+      return res.data;
+    },
+    onSuccess: (data) => {
+      setValue({
+        ...value,
+        thumbnail: data.data.fileUrl,
+      });
+    },
+  });
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && value.program) {
+      const formData = new FormData();
+      formData.append('file', e.target.files[0]);
+      uploadImage.mutate({ formData, type: value.program });
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (value.program === 'VOD') {
@@ -462,6 +490,7 @@ const ProgramEditor = ({ mode }: ProgramEditorProps) => {
       setContent={setContent}
       handleSubmit={handleSubmit}
       editorMode={mode}
+      handleImageUpload={handleImageUpload}
     />
   );
 };
