@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
+import { Link, Outlet, useNavigate } from 'react-router-dom';
 import { ImExit } from 'react-icons/im';
 import { IoIosArrowDown } from 'react-icons/io';
 
@@ -8,7 +8,6 @@ import { useQuery } from '@tanstack/react-query';
 
 const AdminLayout = () => {
   const navigate = useNavigate();
-  const location = useLocation();
 
   const { data, isLoading } = useQuery({
     queryKey: ['user', 'isAdmin'],
@@ -148,12 +147,6 @@ const AdminLayout = () => {
       ],
     },
   ];
-
-  useEffect(() => {
-    navigate('/maintenance');
-  }, [location]);
-
-  return <Outlet />;
 
   if (!isAdmin) return null;
 
