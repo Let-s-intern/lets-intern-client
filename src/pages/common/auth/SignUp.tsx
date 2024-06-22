@@ -214,81 +214,108 @@ const SignUp = () => {
           <div className="container mx-auto mt-8 p-5">
             <div className="mx-auto mb-16 w-full sm:max-w-md">
               <span className="mb-2 block font-bold">회원가입</span>
-              <h1 className="mb-10 text-2xl">
-                기본 정보를
-                <br />
-                입력하세요
-              </h1>
+              {
+                !isSocial && (
+                  <h1 className="mb-10 text-2xl">
+                    기본 정보를
+                    <br />
+                    입력하세요
+                  </h1>
+                )
+              }
               <form
                 onSubmit={handleOnSubmit}
                 className="flex flex-col space-y-3"
               >
-                <div>
-                  <Input
-                    label="이메일"
-                    placeholder="example@example.com"
-                    value={value.email}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                      setValue({ ...value, email: e.target.value })
-                    }
-                  />
-                </div>
-                {!isSocial && (
-                  <>
+                {
+                  isSocial ? (
+                    <div className="flex flex-col gap-2">
                     <div>
-                      <Input
-                        label="이름"
-                        value={value.name}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                          setValue({ ...value, name: e.target.value })
-                        }
-                      />
+                      <label htmlFor="contactEmail" className="text-1-medium">
+                        렛츠커리어 정보 수신용 이메일
+                      </label>
+                      <div className="flex flex-col gap-1.5">
+                        <p className="text-sm text-neutral-0 text-opacity-[52%]">
+                          * 결제정보 및 프로그램 신청 관련 알림 수신을 위해, 자주 사용하는
+                          이메일 주소를 입력해주세요!
+                        </p>
+                      </div>
                     </div>
-                    <div>
-                      <Input
-                        label="휴대폰 번호"
-                        placeholder="010-1234-4567"
-                        value={value.phoneNum}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                          setValue({ ...value, phoneNum: e.target.value })
-                        }
-                      />
-                    </div>
-                    <div>
-                      <Input
-                        type="password"
-                        label="비밀번호"
-                        placeholder="영어, 숫자, 특수문자 포함 8자 이상"
-                        value={value.password}
-                        onChange={(e: any) => {
-                          setValue({ ...value, password: e.target.value });
-                        }}
-                      />
-                    </div>
-                    <div>
-                      <Input
-                        type="password"
-                        label="비밀번호 확인"
-                        value={value.passwordConfirm}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                          setValue({
-                            ...value,
-                            passwordConfirm: e.target.value,
-                          })
-                        }
-                      />
-                    </div>
-                    <div>
-                      <Input
-                        label="유입경로"
-                        value={value.inflow}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                          setValue({ ...value, inflow: e.target.value })
-                        }
-                      />
-                    </div>
-                  </>
-                )}
+                    <Input
+                      name="contactEmail"
+                      placeholder="example@example.com"
+                      value={value.email}
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                        setValue({ ...value, email: e.target.value });
+                      }} />
+                  </div>
+                  ) : (
+                    <>
+                      <div>
+                        <Input
+                          label="이메일"
+                          placeholder="example@example.com"
+                          value={value.email}
+                          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                            setValue({ ...value, email: e.target.value })
+                          }
+                        />
+                      </div>
+                      <div>
+                        <Input
+                          label="이름"
+                          value={value.name}
+                          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                            setValue({ ...value, name: e.target.value })
+                          }
+                        />
+                      </div>
+                      <div>
+                        <Input
+                          label="휴대폰 번호"
+                          placeholder="010-1234-4567"
+                          value={value.phoneNum}
+                          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                            setValue({ ...value, phoneNum: e.target.value })
+                          }
+                        />
+                      </div>
+                      <div>
+                        <Input
+                          type="password"
+                          label="비밀번호"
+                          placeholder="영어, 숫자, 특수문자 포함 8자 이상"
+                          value={value.password}
+                          onChange={(e: any) => {
+                            setValue({ ...value, password: e.target.value });
+                          }}
+                        />
+                      </div>
+                      <div>
+                        <Input
+                          type="password"
+                          label="비밀번호 확인"
+                          value={value.passwordConfirm}
+                          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                            setValue({
+                              ...value,
+                              passwordConfirm: e.target.value,
+                            })
+                          }
+                        />
+                      </div>
+                      <div>
+                        <Input
+                          label="유입경로"
+                          value={value.inflow}
+                          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                            setValue({ ...value, inflow: e.target.value })
+                          }
+                        />
+                      </div>
+                    </>
+                  )
+                }
                 <hr />
                 <div className="flex flex-col space-y-2">
                   <div className="flex items-center">
@@ -498,10 +525,13 @@ const SignUp = () => {
                   className="mt-8"
                   {...(buttonDisabled && { disabled: true })}
                 >
-                  회원가입
+                  {
+                    isSocial ? '다음' : '회원가입'}
                 </Button>
               </form>
-              <SocialLogin type="SIGN_UP" />
+              {
+                !isSocial && <SocialLogin type="SIGN_UP" />
+              }
             </div>
           </div>
         </>

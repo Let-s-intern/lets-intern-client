@@ -1,9 +1,10 @@
 interface ConfirmSectionProps {
+  isEdit: boolean;
   onConfirm: () => void;
   isDisabled: boolean;
 }
 
-const ConfirmSection = ({ onConfirm, isDisabled }: ConfirmSectionProps) => {
+const ConfirmSection = ({ isEdit, onConfirm, isDisabled }: ConfirmSectionProps) => {
   return (
     <div className="w-full">
       <button
@@ -11,7 +12,7 @@ const ConfirmSection = ({ onConfirm, isDisabled }: ConfirmSectionProps) => {
         onClick={onConfirm}
         disabled={isDisabled}
       >
-        등록하기
+        {isEdit ? '수정하기' : '등록하기'}
       </button>
     </div>
   );
