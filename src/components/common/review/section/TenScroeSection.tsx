@@ -42,8 +42,9 @@ const TenScoreSection = ({
   };
 
   useEffect(() => {
-    setIsYes(null);
-    setAnswer({ yes: '', no: '', low: '' });
+    if (tenScore !== null && tenScore <= 6) {
+      setIsYes(null);
+    }
   }, [tenScore, setIsYes, setAnswer]);
 
   // useEffect(() => {
