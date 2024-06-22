@@ -66,6 +66,7 @@ import PopUpBannerEdit from './pages/admin/banner/pop-up-banner/PopUpBannerEdit'
 import OnlineContentsCreate from './pages/admin/online-contents/OnlineContentsCreate';
 import OnlineContentsEdit from './pages/admin/online-contents/OnlineContentsEdit';
 import HomeRegacy from './pages/common/home/HomeRegacy';
+import Maintenance from './pages/maintenance/Maintenance';
 
 const Router = () => {
   return (
@@ -73,6 +74,8 @@ const Router = () => {
       <ScrollToTop />
       <Routes>
         <Route path="/" element={<Layout />}>
+          {/* /maintenance */}
+          <Route path="maintenance" element={<Maintenance />} />
           {/* / */}
           <Route path="" element={<HomeRegacy />} />
           {/* /about */}
