@@ -50,11 +50,15 @@ const OverviewContent = ({
         {newProgramTypeToText[programType.toUpperCase()]}]
       </div>
       <h2 className="text-lg font-semibold">{programTitle}</h2>
-      <DateToggle programDate={programDate} programType={programType} />
+      {programDate.beginning && programDate.deadline && (
+        <DateToggle programDate={programDate} programType={programType} />
+      )}
       <div>
         {/* 모집 전이면 사전알림신청 버튼 표시 */}
-        {new Date() < new Date(programDate.beginning) ||
-        new Date() > new Date(programDate.deadline) ? (
+        {!programDate.beginning || !programDate.deadline ? (
+          <></>
+        ) : new Date() < new Date(programDate.beginning) ||
+          new Date() > new Date(programDate.deadline) ? (
           <NotiButton onClick={clickNotiButton} caption={'출시알림신청'} />
         ) : (
           <button

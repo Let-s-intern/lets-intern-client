@@ -111,7 +111,6 @@ const Programs = () => {
   // 필터링 체크박스 클릭 이벤트
   const handleClickCheckbox = useCallback(
     (programType: string, value: string) => {
-
       // 파라미터 하나 삭제
       const deleteParam = (target: string, key: string) => {
         const checkedList = [...searchParams.getAll(key)];
@@ -171,7 +170,13 @@ const Programs = () => {
       resetPageable();
       setSearchParams(searchParams);
     },
-    [filterClassification, filterStatus, filterType, searchParams, setSearchParams],
+    [
+      filterClassification,
+      filterStatus,
+      filterType,
+      searchParams,
+      setSearchParams,
+    ],
   );
 
   // 필터링 초기화
@@ -183,10 +188,9 @@ const Programs = () => {
     searchParams.delete(PROGRAM_QUERY_KEY.TYPE);
     searchParams.delete(PROGRAM_QUERY_KEY.STATUS);
     setSearchParams(searchParams);
-  }
+  };
 
   const cancelFilter = (key: string, value: string) => {
-
     // 파라미터 하나 삭제
     const deleteParam = (target: string, key: string) => {
       const checkedList = [...searchParams.getAll(key)];
@@ -205,7 +209,7 @@ const Programs = () => {
       }
       case PROGRAM_QUERY_KEY.TYPE: {
         searchParams.delete(PROGRAM_QUERY_KEY.TYPE);
-        typeDispatch({ type: 'init'});
+        typeDispatch({ type: 'init' });
         break;
       }
       case PROGRAM_QUERY_KEY.STATUS: {
@@ -277,7 +281,7 @@ const Programs = () => {
       />
       <main
         className={clsx(
-          'flex w-full flex-col items-center gap-4 md:gap-16 px-5 py-8 md:px-10 lg:px-[10%]',
+          'flex w-full flex-col items-center gap-4 px-5 py-8 md:gap-16 md:px-10 lg:px-[10%]',
         )}
       >
         {/* 상단 필터 */}
@@ -361,45 +365,46 @@ const Programs = () => {
             ))}
           </div>
         </section>
-        {
-          loading || isLoading || isFetching ? (
-            <LoadingContainer />
-          ) : isSuccess && programList ? (
-            programList.length < 1 ? (
-              <>
-                <p className="text-1 py-2 text-center text-neutral-0/40">
+        {loading || isLoading || isFetching ? (
+          <LoadingContainer text="프로그램 조회 중" />
+        ) : isSuccess && programList ? (
+          programList.length < 1 ? (
+            <>
+              <p className="text-1 py-2 text-center text-neutral-0/40">
                 혹시, 찾으시는 프로그램이 없으신가요?
-                  <span className="flex flex-col md:flex-row md:justify-center md:gap-1">
-                    <span>출시 알림 신청을 통해 가장 먼저 신규 프로그램 소식을 받아보세요.</span>
+                <span className="flex flex-col md:flex-row md:justify-center md:gap-1">
+                  <span>
+                    출시 알림 신청을 통해 가장 먼저 신규 프로그램 소식을
+                    받아보세요.
                   </span>
-                </p>
-                <section className="w-full grid grid-cols-2 gap-x-4 gap-y-5 md:grid-cols-3 md:gap-4">
-                  <EmptyCardList />
-                </section>
-              </>
-            ) : (
-              <>
-                <section className="min-h-2/4 grid grid-cols-2 gap-x-4 gap-y-5 md:grid-cols-3 md:gap-4 xl:grid-cols-4 mb-4 md:mb-0">
-                  {
-                    programList.map((program: IProgram) => (
-                      <ProgramCard
-                        key={program.programInfo.programType + program.programInfo.id}
-                        program={program}
-                      />
-                    ))
-                  }
-                </section>
-                <MuiPagination
-                  page={pageable.page}
-                  pageInfo={pageInfo}
-                  setPageable={setPageable}
-                />
-              </>
-            )
+                </span>
+              </p>
+              <section className="grid w-full grid-cols-2 gap-x-4 gap-y-5 md:grid-cols-3 md:gap-4">
+                <EmptyCardList />
+              </section>
+            </>
           ) : (
-            <></>
+            <>
+              <section className="min-h-2/4 mb-4 grid grid-cols-2 gap-x-4 gap-y-5 md:mb-0 md:grid-cols-3 md:gap-4 xl:grid-cols-4">
+                {programList.map((program: IProgram) => (
+                  <ProgramCard
+                    key={
+                      program.programInfo.programType + program.programInfo.id
+                    }
+                    program={program}
+                  />
+                ))}
+              </section>
+              <MuiPagination
+                page={pageable.page}
+                pageInfo={pageInfo}
+                setPageable={setPageable}
+              />
+            </>
           )
-        }
+        ) : (
+          <></>
+        )}
         <Banner />
       </main>
     </div>

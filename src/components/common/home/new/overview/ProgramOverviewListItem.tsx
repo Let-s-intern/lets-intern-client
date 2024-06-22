@@ -105,7 +105,7 @@ const ProgramOverviewListItem = () => {
           endDate: endDate,
         },
       });
-      console.log('res.data.data.programList', res.data.data.programList)
+      console.log('res.data.data.programList', res.data.data.programList);
       return res.data.data.programList;
     },
   });
@@ -123,9 +123,6 @@ const ProgramOverviewListItem = () => {
     }
   }, [loading]);
 
-  
-  
-
   const goToPreviousMonth = () => {
     setCurrent(prevMonth());
   };
@@ -135,7 +132,7 @@ const ProgramOverviewListItem = () => {
   };
 
   return (
-    <div className="mt-6 md:mx-5 overflow-hidden md:rounded-xs bg-neutral-90 p-5 md:p-0">
+    <div className="mt-6 overflow-hidden bg-neutral-90 p-5 md:mx-5 md:rounded-xs md:p-0">
       <div className="flex items-center">
         {matches && (
           <div className="w-1/4 bg-neutral-80 py-3.5 text-center text-neutral-0/60">
@@ -144,14 +141,13 @@ const ProgramOverviewListItem = () => {
         )}
         <div className="flex w-full items-center justify-center gap-1 bg-primary-10 py-3.5 md:w-2/4">
           <img
-            className={`w-5 ${(current.year === now.year && current.month === now.month)
+            className={`w-5 ${
+              current.year === now.year && current.month === now.month
                 ? 'cursor-not-allowed opacity-30'
                 : 'cursor-pointer'
-              }`}
+            }`}
             onClick={() => {
-              if (
-                (current.year === now.year && current.month === now.month)
-              ) {
+              if (current.year === now.year && current.month === now.month) {
                 return;
               }
               goToPreviousMonth();
@@ -163,14 +159,19 @@ const ProgramOverviewListItem = () => {
           <img
             className={`w-5 ${
               (current.year === now.year && current.month === now.month + 3) ||
-              (now.month + 3 > 12 && current.year === now.year + 1 && current.month === now.month - 9)
+              (now.month + 3 > 12 &&
+                current.year === now.year + 1 &&
+                current.month === now.month - 9)
                 ? 'cursor-not-allowed opacity-30'
                 : 'cursor-pointer'
             }`}
             onClick={() => {
               if (
-                (current.year === now.year && current.month === now.month + 3) ||
-                (now.month + 3 > 12 && current.year === now.year + 1 && current.month === now.month - 9)
+                (current.year === now.year &&
+                  current.month === now.month + 3) ||
+                (now.month + 3 > 12 &&
+                  current.year === now.year + 1 &&
+                  current.month === now.month - 9)
               ) {
                 return;
               }
@@ -186,47 +187,43 @@ const ProgramOverviewListItem = () => {
           </div>
         )}
       </div>
-      <ul className="w-full grid grid-cols-1 grid-rows-3 md:grid-cols-2 md:grid-rows-2 gap-4 overflow-y-scroll">
-        {
-          loading || isLoading ? (
-            <div className='row-span-4 h-[536px] md:col-span-2 md:row-span-2 md:h-[380px] flex items-center justify-center'>
-              <LoadingContainer />
-            </div>
-          ) : !data ? (
-              emptyList.map((emptyItem) => (
-                <EmptyListItemContainer
-                  key={emptyItem.title}
-                  thumbnail={emptyItem.thumbnail}
-                  title={emptyItem.title}
-                  desc={emptyItem.desc}
-                  link={emptyItem.link}
-                  buttonCaption={emptyItem.buttonCaption}
-                  buttonColor={emptyItem.buttonColor}
-                />
-              ))
-          ) : (
-            data.length < 1 ? (
-                  emptyList.map((emptyItem) => (
-                    <EmptyListItemContainer
-                      key={emptyItem.title}
-                      thumbnail={emptyItem.thumbnail}
-                      title={emptyItem.title}
-                      desc={emptyItem.desc}
-                      link={emptyItem.link}
-                      buttonCaption={emptyItem.buttonCaption}
-                      buttonColor={emptyItem.buttonColor}
-                    />
-                  ))
-            ) : (
-              data.map((program) => (
-                <ProgramListItemContainer
-                  key={program.programInfo.programType + program.programInfo.id}
-                  program={program}
-                />
-              ))
-            )
-          )
-        }
+      <ul className="grid w-full grid-cols-1 gap-4 overflow-y-auto md:grid-cols-2">
+        {loading || isLoading ? (
+          <div className="row-span-4 flex h-[172px] items-center justify-center md:col-span-2">
+            <LoadingContainer text="프로그램 조회 중" />
+          </div>
+        ) : !data ? (
+          emptyList.map((emptyItem) => (
+            <EmptyListItemContainer
+              key={emptyItem.title}
+              thumbnail={emptyItem.thumbnail}
+              title={emptyItem.title}
+              desc={emptyItem.desc}
+              link={emptyItem.link}
+              buttonCaption={emptyItem.buttonCaption}
+              buttonColor={emptyItem.buttonColor}
+            />
+          ))
+        ) : data.length < 1 ? (
+          emptyList.map((emptyItem) => (
+            <EmptyListItemContainer
+              key={emptyItem.title}
+              thumbnail={emptyItem.thumbnail}
+              title={emptyItem.title}
+              desc={emptyItem.desc}
+              link={emptyItem.link}
+              buttonCaption={emptyItem.buttonCaption}
+              buttonColor={emptyItem.buttonColor}
+            />
+          ))
+        ) : (
+          data.map((program) => (
+            <ProgramListItemContainer
+              key={program.programInfo.programType + program.programInfo.id}
+              program={program}
+            />
+          ))
+        )}
       </ul>
     </div>
   );

@@ -6,14 +6,18 @@ import axios from '../../../../../utils/axios';
 import { IBanner } from '../../../../../interfaces/Banner.interface';
 
 const Banner = () => {
+  const bannerSidePadding = 20;
+
   const [bannerList, setBannerList] = useState<IBanner[]>([]);
   const [bannerIndex, setBannerIndex] = useState(0);
   const [isPlay, setIsPlay] = useState(true);
-  const [isMobile, setIsMobile] = useState(window.innerWidth < 350);
+  const [bannerWidth, setBannerWidth] = useState(
+    window.innerWidth - bannerSidePadding * 2,
+  );
 
   useEffect(() => {
     const handleResize = () => {
-      setIsMobile(window.innerWidth < 350);
+      setBannerWidth(window.innerWidth - bannerSidePadding * 2);
     };
 
     window.addEventListener('resize', handleResize);
@@ -27,7 +31,7 @@ const Banner = () => {
   useEffect(() => {
     if (isPlay) {
       const interval = setInterval(() => {
-        setBannerIndex((prev) => ((prev + 1) % bannerList.length));
+        setBannerIndex((prev) => (prev + 1) % bannerList.length);
       }, 5000);
       return () => clearInterval(interval);
     }
@@ -41,13 +45,13 @@ const Banner = () => {
     setBannerIndex((prev) => (prev + 1) % bannerList.length);
   };
 
-  const {isLoading} = useQuery({
+  const { isLoading } = useQuery({
     queryKey: ['mainBanner'],
     queryFn: async () => {
       const res = await axios.get(`/banner`, {
         params: {
-          type: 'MAIN'
-        }
+          type: 'MAIN',
+        },
       });
       const data = res.data;
       setBannerList(data.data.bannerList);
@@ -56,17 +60,42 @@ const Banner = () => {
   });
 
   return (
-    <section className='px-5'>
-      <div className="relative top-[3px] flex max-h-[25rem] overflow-hidden text-static-100 md:top-[13px]">
+    <section
+      style={{
+        paddingLeft: `${bannerSidePadding}px`,
+        paddingRight: `${bannerSidePadding}px`,
+      }}
+    >
+      <div className="relative top-[3px] flex overflow-hidden text-static-100 md:top-[13px]">
         {bannerList.map((bannner) => (
-          <img
-            onClick={() => window.open(bannner.link)}
-            key={bannner.id}
-            className="cursor-pointer rounded-sm object-cover transition-all duration-500 ease-in-out"
-            style={{ translate: `-${bannerIndex * 100}%` }}
-            src={isMobile ? bannner.mobileImgUrl : bannner.imgUrl}
-            alt="홈 배너 이미지"
-          />
+          <>
+            <div>
+              <img
+                onClick={() => window.open(bannner.link)}
+                key={bannner.id}
+                className="hidden cursor-pointer rounded-sm object-cover transition-all duration-500 ease-in-out sm:block"
+                style={{
+                  translate: `-${bannerIndex * 100}%`,
+                  width: `${bannerWidth}px`,
+                }}
+                src={bannner.imgUrl}
+                alt="홈 배너 이미지"
+              />
+            </div>
+            <div>
+              <img
+                onClick={() => window.open(bannner.link)}
+                key={bannner.id}
+                className="block cursor-pointer rounded-sm transition-all duration-500 ease-in-out sm:hidden"
+                style={{
+                  translate: `-${bannerIndex * 100}%`,
+                  width: `${bannerWidth}px`,
+                }}
+                src={bannner.mobileImgUrl}
+                alt="홈 배너 이미지"
+              />
+            </div>
+          </>
         ))}
         <button
           onClick={clickLeft}

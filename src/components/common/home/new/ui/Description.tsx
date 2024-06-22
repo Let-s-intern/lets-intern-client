@@ -3,7 +3,7 @@ interface DescriptionProps {
 }
 
 const Description = ({ children }: DescriptionProps) => (
-  <span className="text-0.75 lg:text-1 text-neutral-20 px-5 ">{children}</span>
+  <span className="text-0.75 lg:text-1 px-5 text-neutral-20">{children}</span>
 );
 
 export default Description;

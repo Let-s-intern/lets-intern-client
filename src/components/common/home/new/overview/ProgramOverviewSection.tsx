@@ -10,11 +10,13 @@ const PROGRAM_OVERVIEW_SECTION = {
 const ProgramOverviewSection = () => {
   return (
     <section>
-      <Heading>
-        {PROGRAM_OVERVIEW_SECTION.TITLE.map((title) => (
-          <span>{title}</span>
-        ))}
-      </Heading>
+      <div className="px-4 sm:px-0">
+        <Heading>
+          {PROGRAM_OVERVIEW_SECTION.TITLE.map((title) => (
+            <span>{title}</span>
+          ))}
+        </Heading>
+      </div>
       <Description>{PROGRAM_OVERVIEW_SECTION.DESC}</Description>
       <ProgramOverviewListItem />
     </section>
