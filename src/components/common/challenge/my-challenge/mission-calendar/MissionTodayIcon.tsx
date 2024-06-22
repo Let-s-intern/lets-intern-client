@@ -9,18 +9,31 @@ interface Props {
   mission: ScheduleMission;
   attendance: Schedule['attendanceInfo'];
   className: string;
+  isDone: boolean;
 }
 
-const MissionTodayIcon = ({ mission, className, attendance }: Props) => {
+const MissionTodayIcon = ({
+  mission,
+  className,
+  attendance,
+  isDone,
+}: Props) => {
   const params = useParams();
 
   return (
     <>
       <Link
-        to={`/challenge/${params.programId}/me?scroll_to=daily-mission`}
+        to={
+          !isDone
+            ? `/challenge/${params.programId}/me?scroll_to=daily-mission`
+            : '#'
+        }
         replace
         className={clsx(
           'flex aspect-square cursor-pointer flex-col items-center justify-center rounded-md shadow-[0px_0px_10px_rgba(0,0,0,0.1)]',
+          {
+            'cursor-default': isDone,
+          },
           className,
         )}
       >

@@ -31,6 +31,7 @@ const MissionCalendarSection = ({ schedules, todayTh, isDone }: Props) => {
         className="mt-4"
         schedules={schedules}
         todayTh={todayTh}
+        isDone={isDone}
       />
     </section>
   );

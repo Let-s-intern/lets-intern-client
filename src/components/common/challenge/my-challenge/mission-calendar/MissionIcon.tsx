@@ -7,9 +7,10 @@ import { missionSubmitToBadge } from '../../../../../utils/convert';
 interface Props {
   className?: string;
   schedule: Schedule;
+  isDone: boolean;
 }
 
-const MissionIcon = ({ className, schedule }: Props) => {
+const MissionIcon = ({ className, schedule, isDone }: Props) => {
   const params = useParams();
   const mission = schedule.missionInfo;
   const attendance = schedule.attendanceInfo;
@@ -21,15 +22,22 @@ const MissionIcon = ({ className, schedule }: Props) => {
   return (
     <>
       <Link
-        to={`/challenge/${params.programId}/me?scroll_to_mission=${mission.id}`}
+        to={
+          !isDone
+            ? `/challenge/${params.programId}/me?scroll_to_mission=${mission.id}`
+            : '#'
+        }
         replace
         className={clsx(
           'relative flex aspect-square cursor-pointer flex-col items-center justify-center rounded-md text-white',
-          className,
           {
             'bg-[#d0cfcf]': !isAttended,
             'bg-[#928DF8]': isAttended,
           },
+          {
+            'cursor-default': isDone,
+          },
+          className,
         )}
         style={{
           clipPath: 'polygon(30% 0, 100% 0, 100% 100%, 0 100%, 0 30%)',
