@@ -9,7 +9,7 @@ const Banner = () => {
   const [bannerList, setBannerList] = useState<IBanner[]>([]);
   const [bannerIndex, setBannerIndex] = useState(0);
   const [isPlay, setIsPlay] = useState(true);
-  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 350);
 
   useEffect(() => {
     const handleResize = () => {
@@ -54,10 +54,6 @@ const Banner = () => {
       return data;
     },
   });
-
-  if (isLoading) {
-    return <p>Loading...</p>;
-  }
 
   return (
     <section className="relative top-[3px] flex max-h-[25rem] overflow-hidden text-static-100 md:top-[13px]">

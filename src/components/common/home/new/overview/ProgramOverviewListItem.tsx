@@ -9,6 +9,8 @@ import axios from '../../../../../utils/axios';
 import { useState, useCallback, useEffect } from 'react';
 import LoadingContainer from '../../../ui/loading/LoadingContainer';
 import EmptyContainer from '../../../ui/loading/EmptyContainer';
+import ProgramListItemContainer from './ProgramListItemContainer';
+import EmptyListItemContainer from './EmptyListItemContainer';
 
 export interface ProgramOverviewListItemProps {
   title: string;
@@ -44,6 +46,33 @@ const getNextMonth = (year: number, month: number): DateInfo => {
     return { year, month: month + 1 };
   }
 };
+
+const emptyList = [
+  {
+    link: 'https://forms.gle/ddFtGQfBpGk7Jxpq9',
+    thumbnail: '/images/home/challenge-thumbnail.png',
+    title: '신규 챌린지',
+    desc: '챌린지를 통해 경험정리부터 서류 지원, 면접 준비까지 완성할 수 있어요.',
+    buttonCaption: '출시알림신청',
+    buttonColor: 'bg-point',
+  },
+  {
+    link: 'https://forms.gle/ddFtGQfBpGk7Jxpq9',
+    thumbnail: '/images/home/live-thumbnail.png',
+    title: 'LIVE 클래스',
+    desc: 'LIVE 클래스를 통해 현직자에게 생생한 실무 이야기를 들으며, 성장해 나갈 수 있어요.',
+    buttonCaption: '출시알림신청',
+    buttonColor: 'bg-[#BBEDD8]',
+  },
+  {
+    link: 'https://forms.gle/ddFtGQfBpGk7Jxpq9',
+    thumbnail: '/images/home/vod-thumbnail.png',
+    title: 'VOD 클래스',
+    desc: 'VOD 클래스를 통해 부족했던 하드스킬 및 소프트스킬을 모두 업그레이드 할 수 있어요.',
+    buttonCaption: '출시알림신청',
+    buttonColor: 'bg-[#CACCFC]',
+  },
+];
 
 const ProgramOverviewListItem = () => {
   const [loading, setLoading] = useState<boolean>(true);
@@ -87,11 +116,16 @@ const ProgramOverviewListItem = () => {
   useEffect(() => {
     if (isLoading) {
       setLoading(true);
-    } else {
-      const timer = setTimeout(() => setLoading(false), 1500);
-      return () => clearTimeout(timer);
     }
   }, [isLoading]);
+
+  useEffect(() => {
+    if (loading) {
+      const timer = setTimeout(() => setLoading(false), 700);
+      return () => clearTimeout(timer);
+    }
+  }, [loading]);
+
   
   
 
@@ -155,24 +189,60 @@ const ProgramOverviewListItem = () => {
           </div>
         )}
       </div>
-      <ul className=" grid grid-cols-1 grid-rows-4 md:grid-rows-2 gap-4 md:grid-cols-2 overflow-y-scroll">
+      <ul className="w-full bg-neutral-90 grid grid-cols-1 grid-rows-3 gap-4 row overflow-y-scroll">
         {
-          loading ? (
+          loading || isLoading ? (
             <div className='row-span-4 h-[536px] md:col-span-2 md:row-span-2 md:h-[380px] flex items-center justify-center'>
               <LoadingContainer />
             </div>
           ) : !data ? (
-            <div className='row-span-4 h-[536px] md:col-span-2 md:row-span-2 md:h-[380px] flex items-center justify-center'>
-              <EmptyContainer />
-            </div>
+            <>
+              <div className="flex flex-col items-center justify-center text-1 py-2 text-center text-neutral-0/40">
+                혹시, 찾으시는 프로그램이 없으신가요?
+                <span className="flex flex-col md:flex-row md:justify-center md:gap-1">
+                  <span>출시 알림 신청을 통해 가장 먼저 신규 프로그램 소식을 받아보세요.</span>
+                </span>
+              </div>
+              {
+                emptyList.map((emptyItem) => (
+                  <EmptyListItemContainer
+                    key={emptyItem.title}
+                    thumbnail={emptyItem.thumbnail}
+                    title={emptyItem.title}
+                    desc={emptyItem.desc}
+                    link={emptyItem.link}
+                    buttonCaption={emptyItem.buttonCaption}
+                    buttonColor={emptyItem.buttonColor}
+                  />
+                ))
+              }
+            </>
           ) : (
             data.length < 1 ? (
-              <div className='row-span-4 h-[536px] md:col-span-2 md:row-span-2 md:h-[380px] flex items-center justify-center'>
-                <EmptyContainer />
-              </div>
+              <>
+                <div className="flex flex-col items-center justify-center text-1 py-2 text-center text-neutral-0/40">
+                  혹시, 찾으시는 프로그램이 없으신가요?
+                  <span className="flex flex-col md:flex-row md:justify-center md:gap-1">
+                    <span>출시 알림 신청을 통해 가장 먼저 신규 프로그램 소식을 받아보세요.</span>
+                  </span>
+                </div>
+                {
+                  emptyList.map((emptyItem) => (
+                    <EmptyListItemContainer
+                      key={emptyItem.title}
+                      thumbnail={emptyItem.thumbnail}
+                      title={emptyItem.title}
+                      desc={emptyItem.desc}
+                      link={emptyItem.link}
+                      buttonCaption={emptyItem.buttonCaption}
+                      buttonColor={emptyItem.buttonColor}
+                    />
+                  ))
+                }
+              </>
             ) : (
               data.map((program) => (
-                <ProgramListItem
+                <ProgramListItemContainer
                   key={program.programInfo.programType + program.programInfo.id}
                   program={program}
                 />

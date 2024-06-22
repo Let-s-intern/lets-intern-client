@@ -254,11 +254,15 @@ const Programs = () => {
   useEffect(() => {
     if (isLoading || isFetching) {
       setLoading(true);
-    } else {
-      const timer = setTimeout(() => setLoading(false), 1000);
-      return () => clearTimeout(timer);
     }
   }, [isLoading, isFetching]);
+
+  useEffect(() => {
+    if (loading) {
+      const timer = setTimeout(() => setLoading(false), 700);
+      return () => clearTimeout(timer);
+    }
+  }, [loading]);
 
   return (
     <div className={`flex ${isOpen ? 'overflow-hidden' : ''}`}>
@@ -358,7 +362,7 @@ const Programs = () => {
           </div>
         </section>
         {
-          loading ? (
+          loading || isLoading || isFetching ? (
             <LoadingContainer />
           ) : isSuccess && programList ? (
             programList.length < 1 ? (

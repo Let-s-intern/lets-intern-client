@@ -1,6 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
 import axios from "../../../../../utils/axios";
 import LoadingContainer from "../../../ui/loading/LoadingContainer";
+import { bankTypeToText } from "../../../../../utils/convert";
+import dayjs from "dayjs";
 
 const PriceInfoModal = ({onClose, paymentId}:{
   onClose: () => void;
@@ -17,7 +19,7 @@ const PriceInfoModal = ({onClose, paymentId}:{
   });
 
   return (
-    <div className="z-100 fixed inset-0 flex items-center justify-center bg-neutral-0/50 px-8">
+    <div className="z-100 fixed inset-0 flex items-center justify-center bg-neutral-0/50 px-8 z-10">
       <div className="flex items-center justify-center flex-col p-6 rounded-lg gap-y-5 bg-static-100 relative w-[30rem]">
         <img
         onClick={onClose}
@@ -32,14 +34,23 @@ const PriceInfoModal = ({onClose, paymentId}:{
               <div className="font-semibold mb-3">결제 방법</div>
               <div className="w-full flex item-center justify-between gap-x-2 p-2">
                 <div className="text-neutral-30">입금 계좌</div>
-                <div className="grow flex item-center justify-end font-semibold">
-                  {data.priceInfo.accountType} {data.priceInfo.accountNumber}
+                <div className="grow flex item-center justify-end font-semibold flex-wrap">
+                  <div>
+                    {bankTypeToText[data.priceInfo.accountType]}
+                  </div>
+                  <div>
+                    {data.priceInfo.accountNumber}
+                  </div>
                 </div>
               </div>
               <div className="w-full flex item-center justify-between gap-x-2 p-2">
                 <div className="text-neutral-30">입금 마감 기한</div>
-                <div className="grow flex item-center justify-end font-semibold">
-                  {data.priceInfo.deadline}
+                <div className="grow flex item-center justify-end font-semibold text-end">
+                  {dayjs(data.priceInfo.deadline).format(
+                    `MM.DD (ddd) A hh시${
+                      dayjs(data.priceInfo.deadline).minute() !== 0 ? ' mm분' : ''
+                    }`,
+                  )}
                 </div>
               </div>
             </div>
@@ -53,16 +64,15 @@ const PriceInfoModal = ({onClose, paymentId}:{
               <div className="w-full flex item-center justify-between gap-x-2 p-2 font-semibold text-primary">
                 <div className="">쿠폰 할인</div>
                 <div className="grow flex item-center justify-end font-semibold">
-                  {data.paymentInfo.couponDiscount === null ? '0' : data.paymentInfo.couponDiscount} 원
+                  -{data.paymentInfo.couponDiscount === null ? '0' : data.paymentInfo.couponDiscount} 원
                 </div>
               </div>
               <div className="w-full flex item-center justify-between gap-x-2 p-2 font-semibold text-system-error">
-                <div className="">할인 {
-                   Math.floor(100 - (data.priceInfo.price - data.paymentInfo.couponDiscount) / data.priceInfo.price * 100)
-                  }%</div>
+                <div className="">할인 {Math.floor((data.priceInfo.price - data.paymentInfo.finalPrice - data.paymentInfo.couponDiscount)/data.priceInfo.price * 100)}%
+                </div>
                 <div className="grow flex item-center justify-end font-semibold">
-                  {
-                    data.priceInfo.price - data.paymentInfo.couponDiscount
+                  -{
+                    data.priceInfo.price - data.paymentInfo.finalPrice - data.paymentInfo.couponDiscount
                   } 원
                 </div>
               </div>

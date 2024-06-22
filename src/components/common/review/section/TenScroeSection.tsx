@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import TextArea from '../../ui/input/TextArea';
 import TenScore from '../score/TenScore';
@@ -31,7 +31,8 @@ const TenScoreSection = ({
     e: React.ChangeEvent<HTMLTextAreaElement>,
     isYes: boolean,
   ) => {
-    if (tenScore && tenScore <= 6) {
+    if (tenScore === null) return;
+    if (tenScore < 7) {
       setAnswer({ ...answer, low: e.target.value });
     } else if (isYes) {
       setAnswer({ ...answer, yes: e.target.value });
@@ -39,6 +40,15 @@ const TenScoreSection = ({
       setAnswer({ ...answer, no: e.target.value });
     }
   };
+
+  useEffect(() => {
+    setIsYes(null);
+    setAnswer({ yes: '', no: '', low: '' });
+  }, [tenScore, setIsYes, setAnswer]);
+
+  // useEffect(() => {
+  //   console.log('answer', answer);
+  // }, [answer]);
 
   return (
     <div className="flex flex-col gap-6">
@@ -52,7 +62,7 @@ const TenScoreSection = ({
         <TenScore tenScore={tenScore} setTenScore={setTenScore} />
       </div>
       {tenScore !== null &&
-        (tenScore >= 7 ? (
+        (tenScore > 6 ? (
           <>
             <div className="flex flex-col gap-3">
               <p>
@@ -95,7 +105,10 @@ const TenScoreSection = ({
             <p className="px-2.5">
               해당 점수를 선택한 이유는 무엇인가요? 이유를 자세히 설명해주세요.
             </p>
-            <TextArea rows={3} placeholder="이곳에 후기를 작성해주세요!" />
+            <TextArea rows={3} placeholder="이곳에 후기를 작성해주세요!"
+              value={answer.low}
+              onChange={(e) => handleAnswerChange(e, false)}
+            />
           </div>
         ))}
     </div>

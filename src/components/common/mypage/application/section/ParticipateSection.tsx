@@ -16,8 +16,8 @@ const ParticipateSection = ({ applicationList }: ParticipateSectionProps) => {
   return (
     <section className="flex flex-col gap-6">
       <h1 className="text-lg font-semibold">참여 중</h1>
-      <div className="flex gap-4 md:flex-col">
-        {applicationList.length === 0 ? (
+      {
+        applicationList.length === 0 ? (
           <div className="flex w-full flex-col items-center gap-4 py-14">
             <p className="text-neutral-0 text-opacity-[36%]">
               참여 중인 내역이 아직 없어요.
@@ -30,11 +30,15 @@ const ParticipateSection = ({ applicationList }: ParticipateSectionProps) => {
             </Link>
           </div>
         ) : (
-          viewList.map((application) => (
-            <ApplicationCard application={application} showChallengeButton />
-          ))
-        )}
-      </div>
+          <div className='grid grid-cols-2 gap-4 md:flex md:flex-col'>
+            {
+              viewList.map((application) => (
+                <ApplicationCard application={application} showChallengeButton />
+              ))
+            }
+          </div>
+        )
+      }
       {applicationList.length > 3 && (
         <MoreButton
           className="hidden md:flex"

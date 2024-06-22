@@ -14,23 +14,27 @@ const CompleteSection = ({ applicationList }: CompleteSectionProps) => {
   return (
     <section className="flex flex-col gap-6">
       <h1 className="text-lg font-semibold">참여 완료</h1>
-      <div className="flex gap-4 md:flex-col">
-        {applicationList.length === 0 ? (
+      {
+        applicationList.length === 0 ? (
           <div className="flex w-full flex-col items-center gap-4 py-20">
             <p className="text-neutral-0 text-opacity-[36%]">
               참여 완료한 내역이 아직 없어요.
             </p>
           </div>
         ) : (
-          viewList.map((application) => (
-            <ApplicationCard
-              grayscale
-              application={application}
-              showChallengeButton
-            />
-          ))
-        )}
-      </div>
+          <div className='grid grid-cols-2 gap-4 md:flex md:flex-col'>
+            {
+              viewList.map((application) => (
+                <ApplicationCard
+                  grayscale
+                  application={application}
+                  showChallengeButton
+                />
+              ))
+            }
+          </div>
+        )
+      }
       {applicationList.length > 3 && (
         <Button
           className="hidden md:flex"

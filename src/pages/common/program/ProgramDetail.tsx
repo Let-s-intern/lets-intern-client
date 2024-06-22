@@ -129,20 +129,29 @@ const ProgramDetail = ({ programType }: ProgramDetailProps) => {
                   toggleApplyModal={toggleApplyModal}
                   toggleDrawer={toggleDrawer}
                   drawerDispatch={drawerDispatch}
+                  setApplied={setIsAlreadyApplied}
                 />
               ) : // 모집 예정 or 모집 종료이면 출시알림신청 버튼 표시
-              new Date() < new Date(programInfo.beginning) ||
-                new Date() > new Date(programInfo.deadline) ? (
-                <NotiButton
-                  onClick={clickNotiButton}
-                  caption={'출시알림신청'}
+              programInfo.beginning === '' || programInfo.deadline === '' ? (
+                <FilledButton
+                  onClick={() => {}}
+                  caption={'로딩 중 ...'}
+                  isAlreadyApplied={false}
                 />
               ) : (
-                <FilledButton
-                  onClick={toggleDrawer}
-                  caption={isAlreadyApplied ? '신청완료' : '신청하기'}
-                  isAlreadyApplied={isAlreadyApplied}
-                />
+                new Date() < new Date(programInfo.beginning) ||
+                  new Date() > new Date(programInfo.deadline) ? (
+                  <NotiButton
+                    onClick={clickNotiButton}
+                    caption={'출시알림신청'}
+                  />
+                ) : (
+                  <FilledButton
+                    onClick={toggleDrawer}
+                    caption={isAlreadyApplied ? '신청완료' : '신청하기'}
+                    isAlreadyApplied={isAlreadyApplied}
+                  />
+                )
               )}
             </div>
           )}

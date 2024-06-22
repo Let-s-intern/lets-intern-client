@@ -33,6 +33,7 @@ interface MobileApplySectionProps {
   toggleApplyModal: () => void;
   toggleDrawer: () => void;
   drawerDispatch: (value: IAction) => void;
+  setApplied: (isApplied: boolean) => void;
 }
 
 const MobileApplySection = ({
@@ -42,6 +43,7 @@ const MobileApplySection = ({
   toggleApplyModal,
   toggleDrawer,
   drawerDispatch,
+  setApplied,
 }: MobileApplySectionProps) => {
   const [contentIndex, setContentIndex] = useState(0);
   const [programDate, setProgramDate] = useState<ProgramDate>({
@@ -159,7 +161,7 @@ const MobileApplySection = ({
       return res.data;
     },
     onSuccess: () => {
-      setContentIndex(1);
+      setApplied(true);
     },
   });
 

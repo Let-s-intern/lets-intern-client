@@ -12,7 +12,7 @@ const Banner = () => {
   const [bannerList, setBannerList] = useState<IBanner[]>([]);
   const [bannerIndex, setBannerIndex] = useState(0);
   const [isPlay, setIsPlay] = useState(true);
-  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 350);
 
   useEffect(() => {
     const handleResize = () => {
@@ -80,11 +80,11 @@ const Banner = () => {
           <Link
             to={banner.link}
             key={banner.id}
-            className="w-full"
+            className="w-full shrink-0"
           >
             <img
               ref={imgRef}
-              className="w-full object-cover"
+              className="w-full shrink-0 object-cover"
               src={isMobile ? banner.mobileImgUrl : banner.imgUrl}
               alt="배너 이미지"
             />
