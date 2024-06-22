@@ -62,7 +62,6 @@ const NavBar = () => {
 
   useEffect(() => {
     if (userData) {
-      console.log(userData);
       setUser(userData);
     }
 
@@ -99,8 +98,10 @@ const NavBar = () => {
           </div>
           <div className="flex items-center gap-4">
             {isLoggedIn ? (
-              <div className="hidden gap-2 sm:flex cursor-pointer"
-              onClick={() => navigate('/mypage/application')}>
+              <div
+                className="hidden cursor-pointer gap-2 sm:flex"
+                onClick={() => navigate('/mypage/application')}
+              >
                 <span className="text-1.125-medium block">{user?.name} 님</span>
                 <img
                   src="/icons/user-circle.svg"
