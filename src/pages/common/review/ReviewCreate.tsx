@@ -27,21 +27,23 @@ const ReviewCreate = ({isEdit}:{isEdit:boolean}) => {
     low: '',
   });
 
+  const reviewId = Number(params.reviewId);
   const applicationId = Number(searchParams.get('application'));
   const programId = Number(params.programId);
-  const programType = params.programType;
+  const programType = params.programType?.toLowerCase();
   
   const { data: reviewDetailData } = useQuery({
     queryKey: ['review', applicationId],
     queryFn: async () => {
-      const res = await axios.get(`/review/${applicationId}`);
-      return res.data;
+      const res = await axios.get(`/review/${reviewId}`);
+      return res.data.data;
     },
     enabled: isEdit,
     retry: 1,
   })
 
   useEffect(() => {
+    console.log('리뷰 : ', reviewDetailData)
     if (isEdit && reviewDetailData) {
       setStarScore(reviewDetailData.score);
       setTenScore(reviewDetailData.nps);
@@ -53,9 +55,9 @@ const ReviewCreate = ({isEdit}:{isEdit:boolean}) => {
   const { data: programTitle } = useQuery({
     queryKey: ['program', programId, programType],
     queryFn: async () => {
-      const res = await axios.get(`/${programType?.toLowerCase}/${programId}/title`);
+      const res = await axios.get(`/${programType}/${programId}/title`);
       console.log(res.data);
-      return res.data.title;
+      return res.data.data.title;
     },
     retry: 1,
   })
@@ -94,7 +96,7 @@ const ReviewCreate = ({isEdit}:{isEdit:boolean}) => {
   const editReview = useMutation({
     mutationFn: async () => {
       const res = await axios.put(
-        `/review/${applicationId}`,
+        `/review/${reviewId}`,
         {
           npsAns:
             tenScore && tenScore <= 6
@@ -144,7 +146,7 @@ const ReviewCreate = ({isEdit}:{isEdit:boolean}) => {
           setAnswer={setAnswer}
         />
         <TextAreaSection content={content} setContent={setContent} />
-        <ConfirmSection onConfirm={handleConfirm} isDisabled={
+        <ConfirmSection isEdit={isEdit} onConfirm={handleConfirm} isDisabled={
           starScore === 0 ||
           (tenScore === null || tenScore === 0) ||
           (tenScore && tenScore <= 6 && answer.low === '') ||

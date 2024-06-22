@@ -39,7 +39,7 @@ const TopBanner = () => {
       }
     >
       <div className="relative">
-        <div className="flex flex-col items-center justify-center gap-1 text-center text-static-100 md:flex-row">
+        <div className="flex flex-col items-center justify-center gap-1 text-center md:flex-row">
           <span className="text-1-semibold">{data?.title}</span>
           <span className="text-0.875-medium">
             {data?.contents}
