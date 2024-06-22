@@ -1,3 +1,55 @@
+import { AttendanceResult, AttendanceStatus } from '../schema';
+
+export const newProgramTypeToText: Record<string, string> = {
+  CHALLENGE: '챌린지',
+  LIVE: 'LIVE 클래스',
+  VOD: 'VOD 클래스',
+};
+
+export const newProgramFeeTypeToText: Record<string, string> = {
+  FREE: '무료',
+  CHARGE: '이용료',
+  REFUND: '보증금',
+};
+
+export const newProgramTypeDetailToText: Record<string, string> = {
+  CAREER_SEARCH: '커리어 탐색',
+  DOCUMENT_PREPARATION: '서류 준비',
+  MEETING_PREPARATION: '면접 준비',
+  PASS: '합격 후 성장',
+};
+
+export const challengeTypeToText: Record<string, string> = {
+  CAREER_START: '커리어 시작',
+  DOCUMENT_PREPARATION: '서류 준비',
+  MEETING_PREPARATION: '면접 준비',
+  ETC: '기타',
+};
+
+export const programStatusToText: Record<string, string> = {
+  PREV: '모집 전',
+  PROCEEDING: '모집 중',
+  POST: '모집 마감',
+};
+
+export const programPriceTypeToText: Record<string, string> = {
+  ALL: '전체',
+  BASIC: '베이직',
+  PREMIUM: '프리미엄',
+};
+
+export const programParticipationTypeToText: Record<string, string> = {
+  LIVE: 'LIVE',
+  FREE: '자율일정',
+};
+
+export const programTypeToText: Record<string, string> = {
+  CHALLENGE_FULL: '챌린지',
+  CHALLENGE_HALF: '챌린지',
+  BOOTCAMP: '챌린지',
+  LETS_CHAT: '클래스',
+};
+
 export const challengeTopicToText: Record<string, string> = {
   ALL: '전체',
   MARKETING: '마케팅',
@@ -29,6 +81,15 @@ export const bankTypeToText: Record<string, string> = {
   MG: '새마을금고',
   KAKAO: '카카오뱅크',
   TOSS: '토스뱅크',
+};
+
+export const gradeToText: Record<string, string> = {
+  FIRST: '1학년',
+  SECOND: '2학년',
+  THIRD: '3학년',
+  FOURTH: '4학년',
+  ETC: '5학년 이상',
+  GRADUATE: '졸업생',
 };
 
 export const wishJobToText: any = {
@@ -125,6 +186,11 @@ export const missionStatusToText: any = {
   REFUND_DONE: '환급완료',
 };
 
+export const newMissionStatusToText: Record<string, string> = {
+  WAITING: '대기',
+  CHECK_DONE: '확인완료',
+};
+
 export const missionStatusToBadge: any = {
   WAITING: { text: '대기', style: 'bg-[#E3E3E3] text-[#9B9B9B]' },
   CHECK_DONE: { text: '확인완료', style: 'text-primary bg-[#E7E6FD]' },
@@ -148,12 +214,6 @@ export const couponTypeToText: Record<string, string> = {
   PARTNERSHIP: '제휴',
   EVENT: '이벤트',
   GRADE: '등급별 할인',
-};
-
-export const couponTypeTextFromId: Record<string, string> = {
-  1: couponTypeToText.PARTNERSHIP,
-  2: couponTypeToText.EVENT,
-  3: couponTypeToText.GRADE,
 };
 
 export const couponProgramTypeToText: Record<string, string> = {
@@ -207,16 +267,28 @@ export const couponProgramTypeEnum = {
 export const missionSubmitToBadge = ({
   status,
   result,
-  isRefunded,
 }: {
-  status: string;
-  result: string;
-  isRefunded: string;
+  status?: AttendanceStatus | null;
+  result?: AttendanceResult | null;
 }) => {
   if (result === 'WAITING') {
     return {
       text: '확인중',
       style: 'bg-[#FFFACD] text-[#D3CB00]',
+    };
+  }
+
+  if (status === 'UPDATED' && result === 'WRONG') {
+    return {
+      text: '결석',
+      style: 'bg-[#E3E3E3] text-[#9B9B9B]',
+    };
+  }
+
+  if (status === 'UPDATED' && result === 'PASS') {
+    return {
+      text: '지각',
+      style: 'bg-[#E3E3E3] text-[#9B9B9B]',
     };
   }
 
@@ -241,15 +313,27 @@ export const missionSubmitToBadge = ({
     };
   }
 
-  // if (isRefunded) {
-  //   return {
-  //     text: '환급완료',
-  //     style: 'text-primary bg-[#E7E6FD]',
-  //   };
-  // }
-
   return {
     text: '확인완료',
     style: 'text-primary bg-[#E7E6FD]',
   };
+};
+
+// 테이블 컴포넌트에 사용 (SAVE: 1번 이상 저장한 행, INSERT: 새로 추가한 행)
+export const TABLE_STATUS = {
+  SAVE: 0,
+  INSERT: 1,
+} as const;
+
+export type TableStatus = (typeof TABLE_STATUS)[keyof typeof TABLE_STATUS];
+
+export const TABLE_CONTENT = {
+  INPUT: 0,
+  DROPDOWN: 1,
+  DATE: 2,
+  DATETIME: 3,
+} as const;
+
+export const getKeyByValue = (obj: any, value: string) => {
+  return Object.keys(obj).find((key) => obj[key] === value);
 };

@@ -1,128 +1,186 @@
-import styled, { css } from 'styled-components';
+import { useState } from 'react';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
-interface FAQEditorProps {
-  faqList: any[];
-  faqIdList: any[];
-  onFAQAdd: () => void;
-  onFAQDelete: (faqId: number) => void;
-  onFAQChange: (e: any, faqId: number) => void;
-  onFAQCheckChange: (e: any, faqId: number) => void;
+import axios from '../../../../../utils/axios';
+
+interface FaqType {
+  id: number;
+  question: string;
+  answer: string;
+  faqProgramType: string;
 }
 
-const FAQEditor = (props: FAQEditorProps) => {
+interface FAQEditorProps {
+  programType: string;
+  value: any;
+  setValue: (value: any) => void;
+}
+
+const FAQEditor = ({ programType, value, setValue }: FAQEditorProps) => {
+  const queryClient = useQueryClient();
+
+  const [faqList, setFaqList] = useState<FaqType[]>([]);
+  const [faqSaveError, setFaqSaveError] = useState<Error>();
+
+  useQuery({
+    queryKey: ['faq', { type: programType }],
+    queryFn: async ({ queryKey }) => {
+      const res = await axios.get('/faq', { params: queryKey[1] });
+      setFaqList(res.data.data.faqList);
+      console.log(res.data.data.faqList);
+      return res.data;
+    },
+    refetchOnWindowFocus: false,
+  });
+
+  const addFaq = useMutation({
+    mutationFn: async () => {
+      const res = await axios.post('/faq', {
+        question: '',
+        answer: '',
+        type: programType,
+      });
+      return res.data;
+    },
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ['faq'] });
+    },
+  });
+
+  const editFaq = useMutation({
+    mutationFn: async (faq: FaqType) => {
+      const res = await axios.patch(`/faq/${faq.id}`, {
+        question: faq.question,
+        answer: faq.answer,
+        type: faq.faqProgramType,
+      });
+      return res.data;
+    },
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ['faq'] });
+    },
+    onError: (error) => {
+      setFaqSaveError(error);
+    },
+  });
+
+  const deleteFaq = useMutation({
+    mutationFn: async (faqId: number) => {
+      const res = await axios.delete(`/faq/${faqId}`);
+      return res.data;
+    },
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ['faq'] });
+    },
+  });
+
+  const handleFaqChange = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    faqId: number,
+  ) => {
+    const { name, value } = e.target;
+    setFaqList((prev) =>
+      prev.map((faq) => (faq.id === faqId ? { ...faq, [name]: value } : faq)),
+    );
+  };
+
+  const handleFaqAdd = async () => {
+    addFaq.mutate();
+  };
+
+  const handleFaqSave = async () => {
+    for (const faq of faqList) {
+      editFaq.mutate(faq);
+    }
+    if (faqSaveError) {
+      alert('FAQ 저장에 실패했습니다.');
+    } else {
+      alert('FAQ가 저장되었습니다.');
+    }
+    setFaqSaveError(undefined);
+  };
+
+  const handleFaqDelete = async (faqId: number) => {
+    deleteFaq.mutate(faqId);
+  };
+
+  const handleFaqCheckChange = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    faqId: number,
+  ) => {
+    if (e.target.checked) {
+      setValue({ ...value, faqList: [...value.faqList, faqId] });
+    } else {
+      setValue({
+        ...value,
+        faqList: value.faqList.filter((id: number) => id !== faqId),
+      });
+    }
+  };
+
   return (
-    <FAQEditorBlock>
-      <Title>FAQ</Title>
-      {props.faqList.length === 0 || !props.faqList ? (
-        <Placeholder>등록된 FAQ가 없습니다.</Placeholder>
+    <div className="px-6 py-5 shadow-[0_0_8px_rgba(0,0,0,0.125)]">
+      <h3 className="mb-4 text-xl font-medium">FAQ</h3>
+      {faqList.length === 0 || !faqList ? (
+        <p className="text-center">등록된 FAQ가 없습니다.</p>
       ) : (
-        props.faqList.map((faq: any) => (
-          <InputControl key={faq.id}>
-            <input
-              type="checkbox"
-              checked={props.faqIdList.includes(faq.id)}
-              onChange={(e) => props.onFAQCheckChange(e, faq.id)}
-            />
-            <InputGroup>
-              <Input
-                type="text"
-                name="question"
-                placeholder="질문을 입력하세요."
-                value={faq.question}
-                onChange={(e) => props.onFAQChange(e, faq.id)}
-                autoComplete="off"
+        <div className="flex flex-col gap-2">
+          {faqList.map((faq: FaqType) => (
+            <div key={faq.id} className="flex gap-2">
+              <input
+                type="checkbox"
+                checked={value.faqList.includes(faq.id)}
+                onChange={(e) => handleFaqCheckChange(e, faq.id)}
               />
-              <Input
-                type="text"
-                name="answer"
-                placeholder="답변을 입력하세요."
-                value={faq.answer}
-                onChange={(e) => props.onFAQChange(e, faq.id)}
-                autoComplete="off"
-              />
-            </InputGroup>
-            <DeleteButton
-              type="button"
-              onClick={() => props.onFAQDelete(faq.id)}
-            >
-              삭제
-            </DeleteButton>
-          </InputControl>
-        ))
+              <div className="flex w-full flex-col gap-2">
+                <input
+                  type="text"
+                  className="w-full rounded-sm border border-[#cbd5e0] px-4 py-2 text-sm"
+                  name="question"
+                  placeholder="질문을 입력하세요."
+                  value={faq.question}
+                  onChange={(e) => handleFaqChange(e, faq.id)}
+                  autoComplete="off"
+                />
+                <input
+                  type="text"
+                  className="w-full rounded-sm border border-[#cbd5e0] px-4 py-2 text-sm"
+                  name="answer"
+                  placeholder="답변을 입력하세요."
+                  value={faq.answer}
+                  onChange={(e) => handleFaqChange(e, faq.id)}
+                  autoComplete="off"
+                />
+              </div>
+              <button
+                type="button"
+                className="w-[5rem] rounded-sm bg-[#e0e0e0] px-4 py-2 font-medium"
+                onClick={() => handleFaqDelete(faq.id)}
+              >
+                삭제
+              </button>
+            </div>
+          ))}
+        </div>
       )}
-      <BottomButtonGroup>
-        <AddButton type="button" onClick={props.onFAQAdd}>
+      <div className="mt-4 flex justify-between">
+        <button
+          type="button"
+          className="rounded-sm bg-[#e0e0e0] px-4 py-2 font-medium"
+          onClick={handleFaqSave}
+        >
+          저장
+        </button>
+        <button
+          type="button"
+          className="rounded-sm bg-[#e0e0e0] px-4 py-2 font-medium"
+          onClick={handleFaqAdd}
+        >
           추가
-        </AddButton>
-      </BottomButtonGroup>
-    </FAQEditorBlock>
+        </button>
+      </div>
+    </div>
   );
 };
 
 export default FAQEditor;
-
-const buttonStyle = css`
-  background-color: #e0e0e0;
-  border-radius: 8px;
-  padding: 0.5rem 1rem;
-  outline: none;
-  border: none;
-  font-weight: 500;
-  cursor: pointer;
-`;
-
-const FAQEditorBlock = styled.div`
-  box-shadow: 0 0 8px rgba(0, 0, 0, 0.125);
-  padding: 1.25rem 1.5rem;
-`;
-
-const Title = styled.h3`
-  font-weight: 500;
-  margin-bottom: 1rem;
-  font-size: 1.25rem;
-`;
-
-const Placeholder = styled.p`
-  text-align: center;
-`;
-
-const InputControl = styled.div`
-  display: flex;
-  gap: 0.5rem;
-
-  & + & {
-    margin-top: 1rem;
-  }
-`;
-
-const InputGroup = styled.div`
-  width: 100%;
-`;
-
-const Input = styled.input`
-  width: 100%;
-  border: 1px solid #cbd5e0;
-  border-radius: 8px;
-  padding: 0.5rem 1rem;
-  outline: none;
-  font-size: 0.875rem;
-
-  & + & {
-    margin-top: 0.5rem;
-  }
-`;
-
-const DeleteButton = styled.button`
-  width: 5rem;
-  ${buttonStyle}
-`;
-
-const BottomButtonGroup = styled.div`
-  display: flex;
-  justify-content: center;
-  margin-top: 1rem;
-`;
-
-const AddButton = styled.button`
-  ${buttonStyle}
-`;

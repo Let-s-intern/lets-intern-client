@@ -3,18 +3,26 @@ import ProgramOverviewSection from '../../../components/common/home/new/overview
 import AdvantageSection from '../../../components/common/home/new/advantage/AdvantageSection';
 import PassReviewSection from '../../../components/common/home/new/pass-review/PassReviewSection';
 import ReviewSection from '../../../components/common/home/new/review/ReviewSection';
+import Banner from '../../../components/common/home/new/banner/Banner';
+import Popup from '../../../components/common/home/new/ui/Popup';
+import TopBanner from '../../../components/common/home/new/banner/TopBanner';
 
 const Home = () => {
   return (
-    <div className="px-5">
-      <div className="mx-auto mb-16 mt-6 flex max-w-[1080px] flex-col gap-16 sm:gap-20">
-        <ProgramSection />
-        <ProgramOverviewSection />
-        <AdvantageSection />
-        <PassReviewSection />
-        <ReviewSection />
+    <>
+      <TopBanner />
+      <div className="flex justify-center py-5">
+        <div className="mb-6 flex w-full max-w-[1080px] flex-col gap-16 lg:gap-20">
+          <Banner />
+          <ProgramSection />
+          <ProgramOverviewSection />
+          <AdvantageSection />
+          <PassReviewSection />
+          <ReviewSection />
+        </div>
       </div>
-    </div>
+      <Popup />
+    </>
   );
 };
 

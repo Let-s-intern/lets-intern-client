@@ -7,9 +7,10 @@ import { CiTrash } from 'react-icons/ci';
 import axios from '../../../utils/axios';
 import { couponTypeToText } from '../../../utils/convert';
 import AlertModal from '../../../components/ui/alert/AlertModal';
+import dayjs from 'dayjs';
 
 interface Coupon {
-  couponId: number;
+  id: number;
   code: string;
   couponType: string;
   createDate: string;
@@ -21,24 +22,20 @@ interface Coupon {
 const Coupons = () => {
   const queryClient = useQueryClient();
 
-  const [couponList, setCouponList] = useState<Coupon[]>([]);
   const [isDeleteModalShown, setIsDeleteModalShown] = useState(false);
   const [couponIdForDelete, setCouponIdForDelete] = useState<number | null>(
     null,
   );
 
-  const getCouponList = useQuery({
-    queryKey: ['coupon'],
+  const { data, isLoading, error } = useQuery({
+    queryKey: ['coupon', 'admin'],
     queryFn: async () => {
-      const res = await axios.get('/coupon', {
-        params: {
-          page: 1,
-          size: 10000,
-        },
-      });
+      const res = await axios.get('/coupon/admin');
       return res.data;
     },
   });
+
+  const couponList: Coupon[] = data?.data.couponList;
 
   const deleteCoupon = useMutation({
     mutationFn: async (couponId: number) => {
@@ -52,12 +49,6 @@ const Coupons = () => {
     },
   });
 
-  useEffect(() => {
-    if (getCouponList.isSuccess) {
-      setCouponList(getCouponList.data.couponList);
-    }
-  }, [getCouponList]);
-
   const couponCellWidth = {
     couponType: 'w-28',
     name: 'w-40',
@@ -65,13 +56,6 @@ const Coupons = () => {
     // createdDate: 'w-40',
     validPeriod: 'w-60',
     management: 'w-48',
-  };
-
-  const formateDateString = (dateString: string) => {
-    const date = new Date(dateString);
-    return `${date.getFullYear()}년 ${
-      date.getMonth() + 1
-    }월 ${date.getDate()}일`;
   };
 
   const handleDeleteButtonClicked = (couponId: number) => {
@@ -91,8 +75,8 @@ const Coupons = () => {
             등록
           </Link>
         </header>
-        <div className="mt-3">
-          <div className="flex rounded-lg bg-[#E5E5E5]">
+        <div className="mt-3 min-w-[60rem]">
+          <div className="flex rounded-sm bg-[#E5E5E5]">
             <div
               className={clsx(
                 'flex justify-center py-2 text-sm font-medium text-[#717179]',
@@ -142,37 +126,44 @@ const Coupons = () => {
               관리
             </div>
           </div>
-          <div className="mb-16 mt-3 flex flex-col gap-2">
-            {couponList.map((coupon) => (
-              <div
-                key={coupon.couponId}
-                className="flex rounded-md border border-neutral-200"
-              >
+          {isLoading ? (
+            <div className="py-6 text-center">로딩 중...</div>
+          ) : error ? (
+            <div className="py-6 text-center">에러 발생</div>
+          ) : couponList.length === 0 ? (
+            <div className="py-6 text-center">쿠폰이 없습니다.</div>
+          ) : (
+            <div className="mb-16 mt-3 flex flex-col gap-2">
+              {couponList.map((coupon) => (
                 <div
-                  className={clsx(
-                    'flex items-center justify-center py-4 text-sm text-zinc-600',
-                    couponCellWidth.couponType,
-                  )}
+                  key={coupon.id}
+                  className="flex rounded-md border border-neutral-200"
                 >
-                  {couponTypeToText[coupon.couponType]}
-                </div>
-                <div
-                  className={clsx(
-                    'flex items-center justify-center py-4 text-sm text-zinc-600',
-                    couponCellWidth.name,
-                  )}
-                >
-                  {coupon.name}
-                </div>
-                <div
-                  className={clsx(
-                    'flex items-center justify-center py-4 text-sm text-zinc-600',
-                    couponCellWidth.code,
-                  )}
-                >
-                  {coupon.code}
-                </div>
-                {/* <div
+                  <div
+                    className={clsx(
+                      'flex items-center justify-center py-4 text-sm text-zinc-600',
+                      couponCellWidth.couponType,
+                    )}
+                  >
+                    {couponTypeToText[coupon.couponType]}
+                  </div>
+                  <div
+                    className={clsx(
+                      'flex items-center justify-center py-4 text-sm text-zinc-600',
+                      couponCellWidth.name,
+                    )}
+                  >
+                    {coupon.name}
+                  </div>
+                  <div
+                    className={clsx(
+                      'flex items-center justify-center py-4 text-sm text-zinc-600',
+                      couponCellWidth.code,
+                    )}
+                  >
+                    {coupon.code}
+                  </div>
+                  {/* <div
             className={clsx(
               'flex items-center justify-center py-4 text-sm text-zinc-600',
               couponCellWidth.createdDate,
@@ -180,39 +171,40 @@ const Coupons = () => {
           >
             {coupon.createDate}
           </div> */}
-                <div
-                  className={clsx(
-                    'flex items-center justify-center py-4 text-sm text-zinc-600',
-                    couponCellWidth.validPeriod,
-                  )}
-                >
-                  {formateDateString(coupon.startDate)} ~{' '}
-                  {formateDateString(coupon.endDate)}
-                </div>
-                <div
-                  className={clsx(
-                    'flex items-center justify-center py-4 text-sm text-zinc-600',
-                    couponCellWidth.management,
-                  )}
-                >
-                  <div className="flex items-center gap-4">
-                    <Link to={`/admin/coupons/${coupon.couponId}/edit`}>
-                      <i>
-                        <img src="/icons/edit-icon.svg" alt="수정 아이콘" />
-                      </i>
-                    </Link>
-                    <button
-                      onClick={() => handleDeleteButtonClicked(coupon.couponId)}
-                    >
-                      <i className="text-[1.75rem]">
-                        <CiTrash />
-                      </i>
-                    </button>
+                  <div
+                    className={clsx(
+                      'flex items-center justify-center py-4 text-sm text-zinc-600',
+                      couponCellWidth.validPeriod,
+                    )}
+                  >
+                    {dayjs(coupon.startDate).format('YYYY년 MM월 DD일')} ~{' '}
+                    {dayjs(coupon.endDate).format('YYYY년 MM월 DD일')}
+                  </div>
+                  <div
+                    className={clsx(
+                      'flex items-center justify-center py-4 text-sm text-zinc-600',
+                      couponCellWidth.management,
+                    )}
+                  >
+                    <div className="flex items-center gap-4">
+                      <Link to={`/admin/coupons/${coupon.id}/edit`}>
+                        <i>
+                          <img src="/icons/edit-icon.svg" alt="수정 아이콘" />
+                        </i>
+                      </Link>
+                      <button
+                        onClick={() => handleDeleteButtonClicked(coupon.id)}
+                      >
+                        <i className="text-[1.75rem]">
+                          <CiTrash />
+                        </i>
+                      </button>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
         </div>
       </main>
       {isDeleteModalShown && (

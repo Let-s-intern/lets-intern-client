@@ -1,75 +1,55 @@
-import clsx from 'clsx';
-import Badge from '../ui/Badge';
+import { Link, useNavigate } from 'react-router-dom';
+
+import { IProgramGridItem } from '../../../../../interfaces/Program.interface';
+import { useState } from 'react';
 
 export interface ProgramGridItemProps {
-  imageColor: 'blue' | 'green' | 'gray' | 'yellow';
-  status: 'BEFORE' | 'IN_PROGRESS' | 'DONE';
-  title: string;
-  description: string;
-  allDay?: boolean;
-  startDate?: string;
-  endDate?: string;
+  program: IProgramGridItem;
+  link: string;
 }
 
-const ProgramGridItem = ({
-  imageColor,
-  status,
-  title,
-  description,
-  allDay,
-  startDate,
-  endDate,
-}: ProgramGridItemProps) => {
-  const formatDateString = (dateString: string | undefined) => {
-    if (!dateString) return '';
-    const date = new Date(dateString);
-    const year = date.getFullYear().toString().slice(-2);
-    const month =
-      date.getMonth() + 1 > 9 ? date.getMonth() + 1 : `0${date.getMonth() + 1}`;
-    const day = date.getDate() > 9 ? date.getDate() : `0${date.getDate()}`;
-    const weekDay = ['일', '월', '화', '수', '목', '금', '토'][date.getDay()];
-    return `${year}.${month}.${day}(${weekDay})`;
-  };
-
+const ProgramGridItem = ({ program, link }: ProgramGridItemProps) => {
+  const navigate = useNavigate();
   return (
-    <li className="flex flex-col items-start gap-2">
-      <div className="h-40 w-full overflow-hidden rounded-xs">
-        <img
-          src={clsx({
-            '/images/home/program-green.svg': imageColor === 'green',
-            '/images/home/program-blue.svg': imageColor === 'blue',
-            '/images/home/program-gray.svg': imageColor === 'gray',
-            '/images/home/program-yellow.svg': imageColor === 'yellow',
-          })}
-          alt="프로그램 이미지"
-          className="h-full w-full object-cover object-top"
-        />
-      </div>
-      {status === 'BEFORE' ? (
-        <Badge color="secondary" responsive>
-          사전알림 신청
-        </Badge>
-      ) : status === 'IN_PROGRESS' ? (
-        <Badge color="primary" responsive>
-          모집 중
-        </Badge>
-      ) : (
-        status === 'DONE' && (
-          <Badge color="gray" responsive>
-            마감
-          </Badge>
-        )
-      )}
-      <h2 className="text-1-semibold lg:text-1.375-semibold text-neutral-0">
-        {title}
-      </h2>
-      <p className="text-0.875 lg:text-1 text-neutral-30">{description}</p>
-      <p className="text-0.75-medium lg:text-0.875-medium text-neutral-0">
-        {allDay
-          ? '상시 모집 중'
-          : `${formatDateString(startDate)}~${formatDateString(endDate)}`}
-      </p>
-    </li>
+    <div
+      onClick={() => {
+        program.keyword === 'Growth'
+          ? window.open(link, '_blank')
+          : navigate(link);
+      }}
+    >
+      <li
+        className={`group flex h-[13.75rem] cursor-pointer flex-col justify-start rounded-lg border-2 md:h-80 lg:h-[27.5rem] ${program.bgColor} ${program.borderColor} relative overflow-hidden px-4 pb-6 pt-4 md:pt-5 lg:pt-6`}
+      >
+        <div className="flex w-full flex-col items-start justify-start lg:items-center">
+          <div className="flex items-center justify-center rounded-full bg-white px-3 py-1 font-bold">
+            {program.keyword}
+          </div>
+          <div
+            className={`text-1-medium min-[400px]:text-1.25-medium lg:text-1.5-medium flex flex-wrap gap-1 break-keep pt-2 text-left lg:text-center ${program.textColor}`}
+          >
+            {program.title.map((title, idx) => (
+              <span key={title + idx}>{title}</span>
+            ))}
+          </div>
+        </div>
+        <div className="mt-4 flex w-full items-center justify-center md:mt-12">
+          <img
+            src={program.imgSrc}
+            alt={program.keyword}
+            className="absolute bottom-5 left-1/2 h-auto w-full max-w-[6.25rem] -translate-x-1/2 md:static md:left-auto md:translate-x-0 lg:max-w-[8.75rem]"
+          />
+        </div>
+        <div className="absolute left-0 top-0 h-full w-full duration-300 group-hover:backdrop-blur-[2px]" />
+        <div className="text-0.875 absolute bottom-0 left-0 flex h-40 w-full flex-wrap items-end bg-gradient-desc px-8 py-8 text-white opacity-0 duration-300 group-hover:opacity-100">
+          <div className="flex w-full flex-wrap items-end">
+            {program.descriptionList.map((description) => (
+              <div className="shrink-0">{description + ' '}</div>
+            ))}
+          </div>
+        </div>
+      </li>
+    </div>
   );
 };
 

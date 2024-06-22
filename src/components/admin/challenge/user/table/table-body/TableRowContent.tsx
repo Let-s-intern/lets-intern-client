@@ -1,12 +1,12 @@
 import clsx from 'clsx';
-import { IoMdArrowDropdown } from 'react-icons/io';
 
 import TableBodyCell from './TableBodyCell';
 import { challengeUserCellWidthList } from '../../../../../../utils/tableCellWidthList';
 import parseInflowPath from '../../../../../../utils/parseInflowPath';
+import { IApplication } from '../../../../../../interfaces/interface';
 
 interface Props {
-  application: any;
+  application: IApplication;
   onClick: (e: any) => void;
 }
 
@@ -19,13 +19,7 @@ const TableRowContent = ({ application, onClick }: Props) => {
       onClick={onClick}
     >
       <TableBodyCell className={clsx(cellWidthList[0])}>
-        <div className="flex items-center gap-2">
-          <span className="text-lg">{application.name}</span>
-          <span className="rounded-xxs block border border-black px-1 py-[1px] text-xs">
-            {application.type === 'USER' ? '회원' : '비회원'}
-          </span>
-        </div>
-        <div className="text-xs font-light">{application.university}</div>
+        {application.name}
       </TableBodyCell>
       <TableBodyCell className={clsx(cellWidthList[1])}>
         {application.email}
@@ -37,12 +31,24 @@ const TableRowContent = ({ application, onClick }: Props) => {
         {parseInflowPath(application.inflowPath)}
       </TableBodyCell>
       <TableBodyCell className={clsx(cellWidthList[4])}>
-        {application.accountType} {application.accountNumber}
+        {application.university ? application.university : '-'}
       </TableBodyCell>
       <TableBodyCell className={clsx(cellWidthList[5])}>
-        <i className="text-xl">
-          <IoMdArrowDropdown />
-        </i>
+        {application.grade === -1 ? '-' : application.grade}
+      </TableBodyCell>
+      <TableBodyCell className={clsx(cellWidthList[6])}>
+        {application.major ? application.major : '-'}
+      </TableBodyCell>
+      <TableBodyCell className={clsx(cellWidthList[7])}>
+        데이터 분석가T
+      </TableBodyCell>
+      <TableBodyCell className={clsx(cellWidthList[8])}>
+        스타트업T
+      </TableBodyCell>
+      <TableBodyCell className={clsx(cellWidthList[9])}>
+        {application.accountType
+          ? `${application.accountType} ${application.accountNumber}`
+          : '-'}
       </TableBodyCell>
     </div>
   );

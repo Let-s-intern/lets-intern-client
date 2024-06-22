@@ -1,83 +1,190 @@
-import { useState } from 'react';
-import { useParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-
+import dayjs from 'dayjs';
+import { useEffect } from 'react';
+// import MissionCalendar from '../../../components/common/challenge/dashboard/mission-calendar/MissionCalendar';
 import DailyMissionSection from '../../../components/common/challenge/dashboard/section/DailyMissionSection';
 import NoticeSection from '../../../components/common/challenge/dashboard/section/NoticeSection';
 import ScoreSection from '../../../components/common/challenge/dashboard/section/ScoreSection';
+import MissionCalendar from '../../../components/common/challenge/my-challenge/mission-calendar/MissionCalendar';
+import MissionTooltipQuestion from '../../../components/common/challenge/ui/tooltip-question/MissionTooltipQuestion';
+import { useCurrentChallenge } from '../../../context/CurrentChallengeProvider';
+import {
+  challengeGuides,
+  challengeNotices,
+  challengeScore,
+  DailyMission,
+  Schedule,
+  userSchema,
+} from '../../../schema';
 import axios from '../../../utils/axios';
-import MissionSection from '../../../components/common/challenge/dashboard/section/MissionSection';
-import CurriculumSection from '../../../components/common/challenge/dashboard/section/CurriculumSection';
+import GuideSection from '../../../components/common/challenge/dashboard/section/GuideSection';
+import EndDailyMissionSection from '../../../components/common/challenge/dashboard/section/EndDailyMissionSection';
+import { useParams } from 'react-router-dom';
+
+const getScoreFromSchedule = (schedule: Schedule) => {
+  switch (schedule.attendanceInfo.status) {
+    case 'ABSENT':
+      return 0;
+    case 'LATE':
+    case 'PRESENT':
+    case 'UPDATED':
+      return 0;
+  }
+  return 0;
+};
+
+const getIsChallengeDone = (endDate: string) => {
+  return dayjs(new Date()).isAfter(dayjs(endDate));
+};
+
+const getIsChallengeSubmitDone = (endDate: string) => {
+  return dayjs(new Date()).isAfter(dayjs(endDate).add(2, 'day'));
+};
 
 const ChallengeDashboard = () => {
+  const { currentChallenge, schedules, dailyMission } = useCurrentChallenge();
+
   const params = useParams();
 
-  const [dailyMission, setDailyMission] = useState<any>();
-  const [refundInfo, setRefundInfo] = useState<any>();
-  const [noticeList, setNoticeList] = useState<any>();
-  const [missionList, setMissionList] = useState<any>();
-  const [todayTh, setTodayTh] = useState<number>(0);
-  const [username, setUsername] = useState('');
-  const [isDone, setIsDone] = useState<boolean>(false);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const todayTh =
+    dailyMission?.th ||
+    schedules.reduce((th, schedule) => {
+      return Math.max(th, schedule.missionInfo.th || 0);
+    }, 0) + 1;
 
-  useQuery({
-    queryKey: ['programs', params.programId, 'dashboard'],
+  const { data: notices = [] } = useQuery({
+    enabled: Boolean(currentChallenge?.id),
+    queryKey: ['challenge', currentChallenge?.id, 'notices', { size: 99 }],
     queryFn: async () => {
-      const res = await axios.get(`/program/${params.programId}/dashboard`);
-      const data = res.data;
-
-      console.log(data);
-
-      setDailyMission(data.dailyMission);
-      setRefundInfo({
-        currentRefund: data.currentRefund,
-        totalRefund: data.totalRefund,
-        finalHeadCount: data.finalHeadCount,
-        previousHeadCount: data.previousHeadCount,
-      });
-      setNoticeList(data.noticeList);
-      setMissionList(data.missionList);
-      setTodayTh(
-        data.dailyMission ? data.dailyMission.th : data.missionList.length + 1,
+      const res = await axios.get(
+        `/challenge/${currentChallenge?.id}/notices`,
+        { params: { size: 99 } },
       );
-      setIsDone(data.isDone);
-      setUsername(data.userName);
-
-      setIsLoading(false);
-
-      return data;
+      return challengeNotices.parse(res.data.data).challengeNoticeList;
     },
   });
 
-  if (isLoading) {
-    return <main />;
-  }
+  const { data: guides = [] } = useQuery({
+    enabled: Boolean(currentChallenge?.id),
+    queryKey: ['challenge', currentChallenge?.id, 'guides'],
+    queryFn: async () => {
+      const res = await axios.get(`/challenge/${currentChallenge?.id}/guides`);
+      return challengeGuides.parse(res.data.data).challengeGuideList;
+    },
+  });
+
+  const { data: user } = useQuery({
+    queryKey: ['user'],
+    queryFn: async () => {
+      const res = await axios.get('/user');
+      return userSchema.parse(res.data.data);
+    },
+  });
+
+  const { data: scoreGroup } = useQuery({
+    enabled: Boolean(currentChallenge?.id),
+    queryKey: ['challenge', currentChallenge?.id, 'score'],
+    queryFn: async () => {
+      const res = await axios.get(`/challenge/${currentChallenge?.id}/score`);
+      return challengeScore.parse(res.data.data);
+    },
+  });
+
+  const { data: programData } = useQuery({
+    queryKey: ['challenge', params.programId, 'application'],
+    queryFn: async ({ queryKey }) => {
+      const res = await axios.get(
+        `/${queryKey[0]}/${queryKey[1]}/${queryKey[2]}`,
+      );
+      return res.data;
+    },
+  });
+
+  const programEndDate = programData?.data?.endDate;
+
+  const totalScore = scoreGroup?.totalScore || 0;
+  const currentScore = scoreGroup?.currentScore || 0;
+
+  // useEffect(() => {
+  //   console.log('currentChallenge', currentChallenge);
+  // }, [currentChallenge]);
+
+  // useEffect(() => {
+  //   console.log('schedule', schedules);
+  // }, [schedules]);
+
+  // useEffect(() => {
+  //   console.log('notices', notices);
+  // }, [notices]);
+
+  // useEffect(() => {
+  //   console.log('guides', guides);
+  // }, [guides]);
+
+  // useEffect(() => {
+  //   console.log('dailyMission', dailyMission);
+  // }, [dailyMission]);
+
+  // useEffect(() => {
+  //   console.log('user', user);
+  // }, [user]);
+
+  // useEffect(() => {
+  //   console.log('totalScore', totalScore);
+  // }, [totalScore]);
+
+  // useEffect(() => {
+  //   console.log('isDone', isDone);
+  // }, [isDone]);
+
+  const isChallengeDone = getIsChallengeDone(programEndDate);
+  const isChallengeSubmitDone = getIsChallengeSubmitDone(programEndDate);
 
   return (
     <main className="mr-[-1rem] pl-6">
       <header>
-        <h1 className="text-2xl font-semibold">{username}님의 대시보드</h1>
+        <h1 className="text-2xl font-semibold">{user?.name}님의 대시보드</h1>
       </header>
       <div className="flex flex-col gap-4">
         <div className="mt-4 flex gap-4">
-          <DailyMissionSection
-            dailyMission={dailyMission}
-            isLoading={isLoading}
-            isDone={isDone}
-          />
-          {!isDone && (
-            <ScoreSection
-              refundInfo={refundInfo}
-              isLoading={isLoading}
-              todayTh={todayTh}
-            />
+          {dailyMission ? (
+            <DailyMissionSection dailyMission={dailyMission} />
+          ) : (
+            isChallengeDone && <EndDailyMissionSection />
           )}
-          <NoticeSection noticeList={noticeList} isLoading={isLoading} />
+          <div className="flex w-[12rem] flex-col gap-4">
+            <ScoreSection
+              // refundInfo={refundInfo}
+              // isLoading={isLoading}
+              // todayTh={todayTh}
+              totalScore={totalScore}
+              currentScore={currentScore}
+            />
+            <NoticeSection notices={notices} />
+          </div>
+          {/* <div className="flex h-full w-full max-w-[12rem] flex-col gap-4"> */}
+          <GuideSection guides={guides} />
+          {/* </div> */}
         </div>
         <div className="flex gap-4">
-          <MissionSection missionList={missionList} todayTh={todayTh || 0} />
-          <CurriculumSection />
+          <section className="flex-1 rounded-xl border border-neutral-80 px-10 py-8">
+            <div className="flex items-center gap-2">
+              <h2 className="text-1-bold text-neutral-30">
+                일정 및 미션 제출 현황
+              </h2>
+              <MissionTooltipQuestion />
+            </div>
+            {schedules && (
+              // myChallenge 에 있는 미션캘린더 가져옴
+              <MissionCalendar
+                className="mt-4"
+                schedules={schedules}
+                todayTh={todayTh}
+                isDone={isChallengeSubmitDone}
+              />
+            )}
+          </section>
+          {/* <CurriculumSection /> */}
         </div>
       </div>
     </main>

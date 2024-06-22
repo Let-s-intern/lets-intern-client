@@ -4,11 +4,12 @@ import { useState } from 'react';
 import { challengeSubmitDetailCellWidthList } from '../../../../../utils/tableCellWidthList';
 import { IoMdArrowDropdown } from 'react-icons/io';
 import { attendanceStatusToText } from '../../../../../utils/convert';
+import { Attendance } from '../../../../../schema';
 
 interface Props {
   cellWidthListIndex: number;
-  statusFilter: string;
-  setStatusFilter: (statusFilter: string) => void;
+  statusFilter: Attendance['status'];
+  setStatusFilter: (statusFilter: Attendance['status']) => void;
 }
 
 const StatusFilter = ({
@@ -20,7 +21,10 @@ const StatusFilter = ({
 
   const cellWidthList = challengeSubmitDetailCellWidthList;
 
-  const handleMenuClicked = (status: string) => {
+  const handleMenuClicked = (status: Attendance['status']) => {
+    if (!status) {
+      return;
+    }
     setIsMenuOpen(!isMenuOpen);
     setStatusFilter(status);
   };
@@ -36,7 +40,9 @@ const StatusFilter = ({
         className="flex cursor-pointer items-center gap-1"
         onClick={() => setIsMenuOpen(!isMenuOpen)}
       >
-        <span>{attendanceStatusToText[statusFilter] || '제출현황'}</span>
+        <span>
+          {statusFilter ? attendanceStatusToText[statusFilter] : '제출현황'}
+        </span>
         <i>
           <IoMdArrowDropdown />
         </i>
@@ -45,14 +51,15 @@ const StatusFilter = ({
         <ul className="absolute bottom-0 z-30 w-full translate-y-full bg-white shadow">
           <li
             className="cursor-pointer py-2 duration-200 hover:bg-neutral-200"
-            onClick={() => handleMenuClicked('')}
+            onClick={() => handleMenuClicked(null)}
           >
             전체
           </li>
           {Object.keys(attendanceStatusToText).map((status) => (
             <li
+              key={status}
               className="cursor-pointer py-2 duration-200 hover:bg-neutral-200"
-              onClick={() => handleMenuClicked(status)}
+              onClick={() => handleMenuClicked(status as Attendance['status'])}
             >
               {attendanceStatusToText[status]}
             </li>

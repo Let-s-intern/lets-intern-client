@@ -1,18 +1,26 @@
-import clsx from 'clsx';
-
+import { twMerge } from 'tailwind-merge';
+import { Schedule } from '../../../../../schema';
 import MissionCalendarItem from './MissionCalendarItem';
 
 interface Props {
   className?: string;
-  missionList: any;
+  schedules: Schedule[];
   todayTh: number;
+  isDone: boolean;
 }
 
-const MissionCalendar = ({ className, missionList, todayTh }: Props) => {
+const MissionCalendar = ({ className, schedules, todayTh, isDone }: Props) => {
   return (
-    <div className={clsx('grid grid-cols-7 gap-y-6', className)}>
-      {missionList.map((mission: any, index: number) => (
-        <MissionCalendarItem key={index} mission={mission} todayTh={todayTh} />
+    // <div className={clsx('grid grid-cols-7 gap-y-6', className)}>
+    <div className={twMerge('flex', className)}>
+      {schedules.map((schedule, index) => (
+        <MissionCalendarItem
+          key={index}
+          schedule={schedule}
+          todayTh={todayTh}
+          className="flex-1"
+          isDone={isDone}
+        />
       ))}
     </div>
   );

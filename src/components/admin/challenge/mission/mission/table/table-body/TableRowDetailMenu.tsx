@@ -1,14 +1,13 @@
-import clsx from 'clsx';
-import { topicToText } from '../../../../../../../utils/convert';
-import { formatMissionDateString } from '../../../../../../../utils/formatDateString';
+import dayjs from 'dayjs';
+import { Mission } from '../../../../../../../schema';
 import Button from '../../../../ui/button/Button';
 
 interface Props {
-  mission: any;
-  setMenuShown: (menuShown: 'DETAIL' | 'EDIT' | 'NONE') => void;
+  mission: Mission;
+  setState: (menuShown: 'DETAIL' | 'EDIT' | 'NONE') => void;
 }
 
-const TableRowDetailMenu = ({ mission, setMenuShown }: Props) => {
+const TableRowDetail = ({ mission, setState: setMenuShown }: Props) => {
   return (
     <div className="mt-1 rounded-xxs bg-neutral-100 px-4 py-8">
       <div className="mx-auto w-[40rem]">
@@ -17,13 +16,14 @@ const TableRowDetailMenu = ({ mission, setMenuShown }: Props) => {
             <label htmlFor="name" className="w-32 font-medium">
               미션명
             </label>
-            <span>{mission.title}</span>
+            <span>{mission.id}</span>
           </div>
           <div className="flex">
             <label htmlFor="name" className="w-32 font-medium">
               내용
             </label>
-            <p className="whitespace-pre-line">{mission.contents}</p>
+            {/* TODO: 수정 */}
+            <p className="whitespace-pre-line">{mission.id}</p>
           </div>
           <div className="flex items-center gap-4">
             <div className="flex items-center">
@@ -31,7 +31,7 @@ const TableRowDetailMenu = ({ mission, setMenuShown }: Props) => {
                 공개일
               </label>
               <span className="w-48">
-                {mission.th}회차 ({formatMissionDateString(mission.startDate)})
+                {mission.th}회차 ({dayjs(mission.startDate).format('MM/DD(ddd)')})
               </span>
             </div>
             <div className="flex items-center">
@@ -39,11 +39,11 @@ const TableRowDetailMenu = ({ mission, setMenuShown }: Props) => {
                 마감일
               </label>
               <span className="w-36">
-                {formatMissionDateString(mission.endDate)}
+                {/* {formatMissionDateString(mission.endDate)} */}
               </span>
             </div>
           </div>
-          {mission.essentialContentsTopic && (
+          {/* {mission.essentialContentsTopic && (
             <div className="flex gap-16">
               <div className="flex items-center">
                 <label htmlFor="name" className="w-32 font-medium">
@@ -54,32 +54,32 @@ const TableRowDetailMenu = ({ mission, setMenuShown }: Props) => {
                 </div>
               </div>
             </div>
-          )}
+          )} */}
           <div className="flex gap-12">
             <div className="flex items-center">
               <label htmlFor="name" className="w-32 font-medium">
                 추가 콘텐츠
               </label>
-              <div className="w-32 rounded-sm border border-neutral-400 p-2 text-sm">
+              {/* <div className="w-32 rounded-sm border border-neutral-400 p-2 text-sm">
                 {mission.additionalContentsTopic
                   ? topicToText[mission.additionalContentsTopic]
                   : '없음'}
-              </div>
+              </div> */}
             </div>
             <div className="flex items-center">
               <label
                 htmlFor="name"
-                className={clsx('w-28 font-medium', {
-                  'w-32': !mission.additionalContentsTopic,
-                  'w-28': mission.additionalContentsTopic,
-                })}
+                // className={clsx('w-28 font-medium', {
+                //   'w-32': !mission.additionalContentsTopic,
+                //   'w-28': mission.additionalContentsTopic,
+                // })}
               >
                 제한 콘텐츠
               </label>
               <div className="w-32 rounded-sm border border-neutral-400 p-2 text-sm">
-                {mission.limitedContentsTopic
+                {/* {mission.limitedContentsTopic
                   ? topicToText[mission.limitedContentsTopic]
-                  : '없음'}
+                  : '없음'} */}
               </div>
             </div>
           </div>
@@ -89,7 +89,7 @@ const TableRowDetailMenu = ({ mission, setMenuShown }: Props) => {
                 환급미션 여부
               </label>
               <span>
-                {mission.refund ? (
+                {/* {mission.refund ? (
                   <i className="cursor-pointer">
                     <img
                       src="/icons/admin-checkbox-checked.svg"
@@ -103,18 +103,18 @@ const TableRowDetailMenu = ({ mission, setMenuShown }: Props) => {
                       alt="admin-checkbox-unchecked"
                     />
                   </i>
-                )}
+                )} */}
               </span>
             </div>
           </div>
-          {mission.comment && (
+          {/* {mission.comments && (
             <div className="flex items-start">
               <label htmlFor="comments" className="w-32 font-medium">
                 코멘트
               </label>
               <p>{mission.comments}</p>
             </div>
-          )}
+          )} */}
         </div>
         <div className="mt-6 flex justify-end gap-2">
           <Button active disableHover onClick={() => setMenuShown('EDIT')}>
@@ -129,4 +129,4 @@ const TableRowDetailMenu = ({ mission, setMenuShown }: Props) => {
   );
 };
 
-export default TableRowDetailMenu;
+export default TableRowDetail;

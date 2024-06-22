@@ -1,34 +1,54 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import TopBarBannerInputContent, {
-  TopBarBannerInputContentProps,
-} from '../../../../components/admin/banner/top-bar-banner/TopBarBannerInputContent';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import TopBarBannerInputContent from '../../../../components/admin/banner/top-bar-banner/TopBarBannerInputContent';
 import EditorTemplate from '../../../../components/admin/program/ui/editor/EditorTemplate';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useState } from 'react';
 import axios from '../../../../utils/axios';
+import { ILineBannerForm } from '../../../../interfaces/interface';
 
 const TopBarBannerEdit = () => {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
   const params = useParams();
 
-  const [value, setValue] = useState<TopBarBannerInputContentProps['value']>({
+  const [value, setValue] = useState<ILineBannerForm>({
     title: '',
-    description: '',
     link: '',
     startDate: '',
     endDate: '',
+    contents: '',
     textColorCode: '#000000',
-    bgColorCode: '#000000',
+    colorCode: '#000000',
+  });
+
+  const bannerId = Number(params.bannerId);
+
+  useQuery({
+    queryKey: [
+      'banner',
+      'admin',
+      bannerId,
+      {
+        type: 'LINE',
+      },
+    ],
+    queryFn: async () => {
+      const res = await axios.get(`/banner/admin/${bannerId}`, {
+        params: {
+          type: 'LINE',
+        },
+      });
+      setValue(res.data.data.bannerAdminDetailVo);
+      return res.data;
+    },
+    refetchOnWindowFocus: false,
   });
 
   const editTopBarBanner = useMutation({
     mutationFn: async (formData: FormData) => {
       const res = await axios.patch(`/banner/${params.bannerId}`, formData, {
-        params: 'LINE',
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
+        params: { type: 'LINE' },
+        headers: { 'Content-Type': 'multipart/form-data' },
       });
       return res.data;
     },
@@ -44,21 +64,28 @@ const TopBarBannerEdit = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const newValue = {
-      type: 'LINE',
-      title: value.title,
-      link: value.link,
-      startDate: value.startDate,
-      endDate: value.endDate,
-      contents: value.description,
-      colorCode: value.bgColorCode,
-      textColorCode: value.textColorCode,
-    };
+
     const formData = new FormData();
     formData.append(
-      'bannerCreateDTO',
-      new Blob([JSON.stringify(newValue)], { type: 'application/json' }),
+      'requestDto',
+      new Blob(
+        [
+          JSON.stringify({
+            title: value.title,
+            link: value.link,
+            startDate: value.startDate,
+            endDate: value.endDate,
+            contents: value.contents,
+            colorCode: value.colorCode,
+            textColorCode: value.textColorCode,
+          }),
+        ],
+        {
+          type: 'application/json',
+        },
+      ),
     );
+
     editTopBarBanner.mutate(formData);
   };
 

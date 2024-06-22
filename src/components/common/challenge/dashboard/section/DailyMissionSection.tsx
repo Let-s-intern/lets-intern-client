@@ -1,59 +1,33 @@
 import { Link, useParams } from 'react-router-dom';
-
 import { formatMissionDateString } from '../../../../../utils/formatDateString';
 import clsx from 'clsx';
+import { DailyMission } from '../../../../../schema';
+import { useCurrentChallenge } from '../../../../../context/CurrentChallengeProvider';
 
-interface Props {
-  dailyMission: any;
-  isLoading: boolean;
-  isDone: boolean;
-}
-
-const DailyMissionSection = ({ dailyMission, isLoading, isDone }: Props) => {
-  const params = useParams();
-
-  if (isLoading) {
-    return <section className="mb-10">로딩 중...</section>;
-  }
-
+const DailyMissionSection = ({
+  dailyMission,
+}: {
+  dailyMission: DailyMission;
+}) => {
+  const { currentChallenge } = useCurrentChallenge();
   return (
     <section className="flex flex-1 flex-col rounded-xl border border-[#E4E4E7] p-6">
       <div className="flex items-end gap-2">
-        <h2
-          className={clsx('font-semibold text-[#4A495C]', {
-            'w-full text-center': isDone,
-          })}
-        >
-          {isDone ? (
-            '챌린지가 종료되었습니다.'
-          ) : (
-            <>
-              {dailyMission.th}회차. {dailyMission.title}
-            </>
-          )}
+        <h2 className="font-semibold text-[#4A495C]">
+          {dailyMission.th}회차. {dailyMission.title}
         </h2>
-        {!isDone && (
-          <span className="text-sm text-[#7D7D7D]">
-            {formatMissionDateString(dailyMission.endDate)}까지
-          </span>
-        )}
+        <span className="text-sm text-[#7D7D7D]">
+          {dailyMission.endDate?.format('MM/DD(ddd) HH:mm')}까지
+        </span>
       </div>
-      <p
-        className={clsx('mt-2 line-clamp-6 flex-1 whitespace-pre-line', {
-          'text-center': isDone,
-        })}
-      >
-        {isDone
-          ? '나의 기록장에서 이전 미션들을 확인하실 수 있습니다.'
-          : dailyMission.contents}
+      <p className="mt-2 line-clamp-6 flex-1 whitespace-pre-line">
+        {dailyMission.description}
       </p>
       <Link
-        to={`/challenge/${params.programId}/me${
-          !isDone ? '?scroll_to=daily-mission' : ''
-        }`}
+        to={`/challenge/${currentChallenge?.id}/me?scroll_to=daily-mission`}
         className="mt-4 w-full rounded-xxs bg-primary px-4 py-3 text-center font-semibold text-white"
       >
-        {isDone ? '이전 미션 돌아보기' : `${dailyMission.th}회차 미션 수행하기`}
+        {dailyMission.th}회차 미션 수행하기
       </Link>
     </section>
   );

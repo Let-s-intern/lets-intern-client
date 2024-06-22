@@ -1,44 +1,88 @@
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import clsx from 'clsx';
 import { useEffect, useRef, useState } from 'react';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
 
-import axios from '../../../../../utils/axios';
-import AbsentMissionDetailMenu from './AbsentMissionDetailMenu';
-import { missionSubmitToBadge } from '../../../../../utils/convert';
 import { useSearchParams } from 'react-router-dom';
+import { useCurrentChallenge } from '../../../../../context/CurrentChallengeProvider';
+import {
+  MyChallengeMissionByType,
+  Schedule,
+  userChallengeMissionDetail,
+} from '../../../../../schema';
+import axios from '../../../../../utils/axios';
+import { missionSubmitToBadge } from '../../../../../utils/convert';
+import AbsentMissionDetailMenu from './AbsentMissionDetailMenu';
 
 interface Props {
-  mission: any;
+  mission: MyChallengeMissionByType;
   isDone: boolean;
 }
 
 const AbsentMissionItem = ({ mission, isDone }: Props) => {
-  const queryClient = useQueryClient();
+  // const queryClient = useQueryClient();
+  // const mission = mission.missionInfo;
+  // const attendance = mission.attendanceInfo;
   const [searchParams, setSearchParams] = useSearchParams();
+  const { currentChallenge, schedules } = useCurrentChallenge();
+  const currentSchedule = schedules.find((schedule) => {
+    return schedule.missionInfo.id === mission.id;
+  });
 
   const itemRef = useRef<HTMLLIElement>(null);
 
   const [isDetailShown, setIsDetailShown] = useState(false);
 
+  // const {
+  //   data: missionDetail,
+  //   isLoading: isDetailLoading,
+  //   error: detailError,
+  // } = useQuery({
+  //   enabled: Boolean(currentChallenge?.id) && isDetailShown,
+  //   queryKey: [
+  //     'challenge',
+  //     currentChallenge?.id,
+  //     'mission',
+  //     mission.id,
+  //     'detail',
+  //     { status: mission.status },
+  //   ],
+  //   queryFn: async () => {
+  //     const res = await axios.get(
+  //       `challenge/${currentChallenge?.id}/mission/${mission.id}`,
+  //       {
+  //         params: { status: mission.status },
+  //       },
+  //     );
+  //     return userChallengeMissionDetail.parse(res.data.data).missionInfo;
+  //   },
+  // });
+
   const {
     data: missionDetail,
     isLoading: isDetailLoading,
     error: detailError,
+    refetch,
   } = useQuery({
-    queryKey: ['mission', mission.id, 'detail', { status: mission.status }],
+    enabled: Boolean(currentChallenge?.id) && isDetailShown,
+    queryKey: [
+      'challenge',
+      currentChallenge?.id,
+      'mission',
+      mission.id,
+      'detail',
+      // { status: schedule.attendanceInfo.status },
+    ],
     queryFn: async () => {
-      const res = await axios.get(`/mission/${mission.id}/detail`, {
-        params: { status: mission.status },
-      });
-      const data = res.data;
-      return data;
+      const res = await axios.get(
+        `challenge/${currentChallenge?.id}/missions/${mission.id}`,
+      );
+      return userChallengeMissionDetail.parse(res.data.data).missionInfo;
     },
-    enabled: isDetailShown,
   });
 
-  useEffect(() => {
-    queryClient.invalidateQueries({ queryKey: ['mission'] });
-  }, [isDetailShown]);
+  // useEffect(() => {
+  //   queryClient.invalidateQueries({ queryKey: ['mission'] });
+  // }, [isDetailShown]);
 
   useEffect(() => {
     if (isDone) {
@@ -55,7 +99,7 @@ const AbsentMissionItem = ({ mission, isDone }: Props) => {
         }
       }
     }
-  }, [searchParams, setSearchParams, isDetailShown]);
+  }, [searchParams, setSearchParams, isDetailShown, isDone, mission.id]);
 
   return (
     <li
@@ -76,7 +120,6 @@ const AbsentMissionItem = ({ mission, isDone }: Props) => {
                 missionSubmitToBadge({
                   status: mission.attendanceStatus,
                   result: mission.attendanceResult,
-                  isRefunded: mission.attendanceIsRefunded,
                 }).style,
               )}
             >
@@ -84,7 +127,6 @@ const AbsentMissionItem = ({ mission, isDone }: Props) => {
                 missionSubmitToBadge({
                   status: mission.attendanceStatus,
                   result: mission.attendanceResult,
-                  isRefunded: mission.attendanceIsRefunded,
                 }).text
               }
             </span>
@@ -97,7 +139,9 @@ const AbsentMissionItem = ({ mission, isDone }: Props) => {
       {isDetailShown &&
         (detailError
           ? '에러 발생'
-          : !isDetailLoading && (
+          : !isDetailLoading &&
+            missionDetail &&
+            currentSchedule && (
               <AbsentMissionDetailMenu missionDetail={missionDetail} />
             ))}
     </li>

@@ -2,18 +2,42 @@ import clsx from 'clsx';
 import { useState } from 'react';
 import { IoMdArrowDropdown } from 'react-icons/io';
 
-import { challengeSubmitDetailCellWidthList } from '../../../../../../utils/tableCellWidthList';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import {
+  useAdminCurrentChallenge,
+  useMissionsOfCurrentChallengeRefetch,
+} from '../../../../../../context/CurrentAdminChallengeProvider';
+import { Attendance } from '../../../../../../schema';
 import axios from '../../../../../../utils/axios';
 import { attendanceResultToText } from '../../../../../../utils/convert';
+import { challengeSubmitDetailCellWidthList } from '../../../../../../utils/tableCellWidthList';
 
 interface Props {
-  attendance: any;
-  attendanceResult: string;
-  setAttendanceResult: (attendanceResult: string) => void;
+  attendance: Attendance;
+  attendanceResult: Attendance['result'];
+  setAttendanceResult: (attendanceResult: Attendance['result']) => void;
   cellWidthListIndex: number;
   setIsRefunded: (isRefunded: boolean) => void;
 }
+
+// export const attendanceResultToText: any = {
+//   WAITING: '확인중',
+//   PASS: '확인 완료',
+//   WRONG: '반려',
+// };
+
+const getAttendanceResultText = (result: Attendance['result']) => {
+  switch (result) {
+    case 'WAITING':
+      return '확인중';
+    case 'PASS':
+      return '확인 완료';
+    case 'WRONG':
+      return '반려';
+  }
+
+  return '';
+};
 
 const ResultDropdown = ({
   attendance,
@@ -22,26 +46,33 @@ const ResultDropdown = ({
   cellWidthListIndex,
   setIsRefunded,
 }: Props) => {
+  const queryClient = useQueryClient();
+  const { currentChallenge } = useAdminCurrentChallenge();
   const [isMenuShown, setIsMenuShown] = useState(false);
+  const missionRefetch = useMissionsOfCurrentChallengeRefetch();
 
   const cellWidthList = challengeSubmitDetailCellWidthList;
 
   const editAttendanceStatus = useMutation({
-    mutationFn: async (result: string) => {
-      const res = await axios.patch(`/attendance/admin/${attendance.id}`, {
+    mutationFn: async (result: Attendance['result']) => {
+      const res = await axios.patch(`/attendance/${attendance.id}`, {
         result,
-        isRefunded:
-          result === 'PASS' && attendanceResult !== 'PASS' ? false : true,
+        // isRefunded:
+        //   result === 'PASS' && attendanceResult !== 'PASS' ? false : true,
       });
       const data = res.data;
       return data;
     },
-    onSuccess: async (_, result: string) => {
+    onSuccess: async (_, result: Attendance['result']) => {
       setIsMenuShown(false);
       setIsRefunded(
         result === 'PASS' && attendanceResult !== 'PASS' ? false : true,
       );
       setAttendanceResult(result);
+      missionRefetch();
+      queryClient.invalidateQueries({
+        queryKey: ['admin'],
+      });
     },
   });
 
@@ -59,7 +90,7 @@ const ResultDropdown = ({
           onClick={() => setIsMenuShown(!isMenuShown)}
         >
           <div className="flex items-center gap-1">
-            <span>{attendanceResultToText[attendanceResult]}</span>
+            <span>{getAttendanceResultText(attendanceResult)}</span>
             <i>
               <IoMdArrowDropdown />
             </i>

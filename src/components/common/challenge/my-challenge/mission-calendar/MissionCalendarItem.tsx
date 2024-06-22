@@ -1,36 +1,50 @@
 import clsx from 'clsx';
-
-import { formatToMonthDate } from '../../../../../utils/formatDateString';
+import { Schedule } from '../../../../../schema';
 import MissionIcon from './MissionIcon';
 import MissionNotStartedIcon from './MissionNotStartedIcon';
 import MissionTodayIcon from './MissionTodayIcon';
 import MissionTopStatusBar from './MissionTopStatusBar';
 
 interface Props {
-  mission: any;
+  schedule: Schedule;
   todayTh: number;
+  className?: string;
+  isDone: boolean;
 }
 
-const MissionCalendarItem = ({ mission, todayTh }: Props) => {
+const MissionCalendarItem = ({
+  schedule,
+  todayTh,
+  className,
+  isDone,
+}: Props) => {
+  const mission = schedule.missionInfo;
+  const attendance = schedule.attendanceInfo;
+
   return (
-    <div>
-      <MissionTopStatusBar mission={mission} todayTh={todayTh} />
+    <div className={className}>
+      <MissionTopStatusBar mission={schedule.missionInfo} todayTh={todayTh} />
       <div className="mt-2 px-1.5">
         <span
           className={clsx('block w-full text-center text-xs', {
-            'font-semibold text-primary': mission.missionTh === todayTh,
+            'font-semibold text-primary': mission.th === todayTh,
           })}
         >
-          {formatToMonthDate(mission.missionStartDate)}
-          <br />~ {formatToMonthDate(mission.missionEndDate)}
+          {mission.startDate?.format('MM/DD(ddd)')}
+          <br />~ {mission.endDate?.format('MM/DD(ddd)')}
         </span>
-        {mission.missionTh === todayTh ? (
-          <MissionTodayIcon className="mt-3" mission={mission} />
-        ) : mission.missionTh > todayTh ? (
-          <MissionNotStartedIcon className="mt-3" mission={mission} />
+        {mission.th === todayTh ? (
+          <MissionTodayIcon
+            className="mt-3"
+            mission={mission}
+            attendance={attendance}
+            isDone={isDone}
+          />
+        ) : (mission.th ?? 0) > todayTh ? (
+          <MissionNotStartedIcon className="mt-3" schedule={schedule} />
         ) : (
-          mission.missionTh < todayTh && (
-            <MissionIcon className="mt-3" mission={mission} />
+          (mission.th ?? 0) < todayTh && (
+            <MissionIcon className="mt-3" schedule={schedule} isDone={isDone} />
           )
         )}
       </div>

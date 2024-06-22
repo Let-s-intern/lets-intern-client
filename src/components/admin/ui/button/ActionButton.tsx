@@ -11,6 +11,7 @@ interface ActionButtonProps {
   onClick?: () => void;
   to?: string;
   className?: string;
+  disabled?: boolean;
 }
 
 interface ActionButtonBlockProps {
@@ -26,6 +27,7 @@ const ActionButton = ({
   to,
   children,
   className,
+  disabled,
 }: ActionButtonProps) => {
   const navigate = useNavigate();
 
@@ -39,6 +41,7 @@ const ActionButton = ({
         onClick && onClick();
         to && (to === '-1' ? navigate(-1) : navigate(to));
       }}
+      disabled={disabled}
     >
       {children}
     </ActionButtonBlock>

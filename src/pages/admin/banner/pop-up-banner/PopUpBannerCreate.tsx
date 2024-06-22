@@ -2,27 +2,30 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 
-import PopUpBannerInputContent, {
-  PopUpBannerInputContentProps,
-} from '../../../../components/admin/banner/pop-up-banner/PopUpBannerInputContent';
+import PopUpBannerInputContent from '../../../../components/admin/banner/pop-up-banner/PopUpBannerInputContent';
 import EditorTemplate from '../../../../components/admin/program/ui/editor/EditorTemplate';
 import axios from '../../../../utils/axios';
+import { IBannerForm } from '../../../../interfaces/interface';
 
 const PopUpBannerCreate = () => {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
 
-  const [value, setValue] = useState<PopUpBannerInputContentProps['value']>({
+  const [value, setValue] = useState<IBannerForm>({
     title: '',
     link: '',
     startDate: '',
     endDate: '',
-    image: undefined,
+    imgUrl: '',
+    file: null,
   });
 
   const addPopUpBanner = useMutation({
     mutationFn: async (formData: FormData) => {
       const res = await axios.post('/banner', formData, {
+        params: {
+          type: 'POPUP',
+        },
         headers: {
           'Content-Type': 'multipart/form-data',
         },
@@ -31,13 +34,13 @@ const PopUpBannerCreate = () => {
     },
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ['banner'] });
-      navigate('/admin/banner/program-banners');
+      navigate('/admin/banner/pop-up');
     },
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
-      setValue({ ...value, image: e.target.files });
+      setValue({ ...value, [e.target.name]: e.target.files[0] });
     } else {
       setValue({ ...value, [e.target.name]: e.target.value });
     }
@@ -45,20 +48,28 @@ const PopUpBannerCreate = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!value.image) return;
-    const newValue = {
-      type: 'POPUP',
-      title: value.title,
-      link: value.link,
-      startDate: value.startDate,
-      endDate: value.endDate,
-    };
+
+    if (!value.file) return;
+
     const formData = new FormData();
     formData.append(
-      'bannerCreateDTO',
-      new Blob([JSON.stringify(newValue)], { type: 'application/json' }),
+      'requestDto',
+      new Blob(
+        [
+          JSON.stringify({
+            title: value.title,
+            link: value.link,
+            startDate: value.startDate,
+            endDate: value.endDate,
+          }),
+        ],
+        {
+          type: 'application/json',
+        },
+      ),
     );
-    formData.append('file', value.image[0]);
+    formData.append('file', value.file);
+
     addPopUpBanner.mutate(formData);
   };
 

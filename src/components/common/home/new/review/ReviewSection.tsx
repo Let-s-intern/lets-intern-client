@@ -1,42 +1,44 @@
+import { Link } from 'react-router-dom';
+import Heading from '../ui/Heading';
+
 const ReviewSection = () => {
   const reviewList = [
     {
-      title: '합격까지 필요한 모든 커리큘럼을 제공합니다.',
-      description: '기업 로고를 클릭해 합격 후기를 확인해보세요!',
-      imageSrc: '/images/home/review1.svg',
-      imageAlt: '후기 1 이미지',
+      img: '/images/home/review_naver_webtoon.png',
+      url: 'https://blog.naver.com/letsintern/223342477519',
     },
     {
-      title: '합격까지 필요한 모든 커리큘럼을 제공합니다.',
-      description: '기업 로고를 클릭해 합격 후기를 확인해보세요!',
-      imageSrc: '/images/home/review2.svg',
-      imageAlt: '후기 2 이미지',
+      img: '/images/home/review_hybe.png',
+      url: 'https://blog.naver.com/letsintern/223402704433',
     },
     {
-      title: '합격까지 필요한 모든 커리큘럼을 제공합니다.',
-      description: '기업 로고를 클릭해 합격 후기를 확인해보세요!',
-      imageSrc: '/images/home/review3.svg',
-      imageAlt: '후기 3 이미지',
+      img: '/images/home/review_samsung.png',
+      url: 'https://blog.naver.com/letsintern/223415067865',
+    },
+    {
+      img: '/images/home/review_cj.png',
+      url: 'https://blog.naver.com/letsintern/223407562305',
     },
   ];
 
   return (
-    <section>
-      <h1 className="text-1.125-bold lg:text-1.375-semibold text-neutral-0">
-        생생한 참여 후기
-      </h1>
-      <div className="mt-6 flex flex-col gap-4 sm:flex-row sm:flex-nowrap sm:overflow-x-auto">
+    <section className=" px-5 ">
+      <Heading>생생한 참여 후기</Heading>
+      <div className="mt-6 flex w-full flex-col flex-nowrap gap-4 overflow-x-auto md:w-auto md:flex-row">
         {reviewList.map((review, index) => (
-          <div
+          <Link
+            to={review.url}
             key={index}
-            className="flex h-[15rem] w-full flex-col justify-end rounded-xs bg-primary-xlight bg-cover px-5 py-7 sm:w-[21rem] sm:flex-shrink-0"
-            style={{ backgroundImage: `url(${review.imageSrc})` }}
+            className="lg:min-w-96 w-full flex-shrink-0 md:w-80 lg:w-96"
+            target="_blank"
+            rel="noreferrer noopener"
           >
-            <h2 className="text-0.875-medium text-neutral-0">{review.title}</h2>
-            <p className="text-0.875-light mt-2 text-neutral-30">
-              {review.description}
-            </p>
-          </div>
+            <img
+              className="h-auto w-full"
+              src={review.img}
+              alt="참여 후기 썸네일"
+            />
+          </Link>
         ))}
       </div>
     </section>

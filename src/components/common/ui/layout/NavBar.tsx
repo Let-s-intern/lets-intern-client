@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
+import { useQuery } from '@tanstack/react-query';
+
 import axios from '../../../../utils/axios';
 import TabBar from '../tab/TabBar';
 import TabItem from '../tab/TabItem';
@@ -22,6 +24,33 @@ const NavBar = () => {
   >('');
   const [showTopTabBar, setShowTopTabBar] = useState(true);
 
+  const accessToken = localStorage.getItem('access-token');
+  const refreshToken = localStorage.getItem('refresh-token');
+
+  const fetchUser = useQuery({
+    queryKey: ['user'],
+    queryFn: async () => {
+      try {
+        const res = await axios.get('/user');
+        return res.data;
+      } catch (error) {
+        console.error(error);
+        handleLogout();
+        return null;
+      }
+    },
+    enabled: accessToken !== null && refreshToken !== null,
+  });
+
+  const fetchIsAdmin = useQuery({
+    queryKey: ['user', 'is-admin'],
+    queryFn: async () => {
+      const res = await axios.get('/user/is-admin');
+      return res.data;
+    },
+    enabled: accessToken !== null && refreshToken !== null,
+  });
+
   const toggleMenu = () => {
     setIsOpen(!isOpen);
   };
@@ -29,6 +58,26 @@ const NavBar = () => {
   const closeMenu = () => {
     setIsOpen(false);
   };
+
+  const handleLogout = () => {
+    localStorage.removeItem('access-token');
+    localStorage.removeItem('refresh-token');
+    setIsLoggedIn(false);
+    window.location.href = '/';
+  };
+
+  useEffect(() => {
+    if (fetchUser.data) {
+      setIsLoggedIn(true);
+      setUser(fetchUser.data.data);
+    }
+  }, [fetchUser]);
+
+  useEffect(() => {
+    if (fetchIsAdmin.data) {
+      setIsAdmin(fetchIsAdmin.data);
+    }
+  }, [fetchIsAdmin]);
 
   useEffect(() => {
     if (
@@ -53,53 +102,10 @@ const NavBar = () => {
     }
   }, [location]);
 
-  useEffect(() => {
-    const accessToken = localStorage.getItem('access-token');
-    const refreshToken = localStorage.getItem('refresh-token');
-    if (accessToken && refreshToken) {
-      setIsLoggedIn(true);
-      fetchAndSetUser();
-    }
-    if (!accessToken || !refreshToken) {
-      return;
-    }
-    const fetchIsAdmin = async () => {
-      try {
-        const res = await axios.get('/user/isAdmin');
-        if (res.data) {
-          setIsAdmin(true);
-        }
-      } catch (error) {
-        console.error(error);
-      }
-    };
-    fetchIsAdmin();
-  }, []);
-
-  const handleLogout = async () => {
-    try {
-      localStorage.removeItem('access-token');
-      localStorage.removeItem('refresh-token');
-      setIsLoggedIn(false);
-      window.location.href = '/';
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
-  const fetchAndSetUser = async () => {
-    try {
-      const res = await axios.get('/user');
-      setUser(res.data);
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
   return (
     <>
       {/* 상단 네비게이션 바 */}
-      <div className="bg-static-100 fixed top-0 z-30 w-screen pe-[1.5rem] ps-[1.125rem] md:pe-[2.5rem]">
+      <div className="fixed top-0 z-30 w-screen bg-static-100 pe-[1.5rem] ps-[1.125rem] md:pe-[2.5rem]">
         <div className="mx-auto flex h-16 items-center justify-between">
           <Link to="/" className="h-10 w-10">
             <img src="/logo/logo.png" alt="Logo" className="w-full" />
@@ -117,7 +123,7 @@ const NavBar = () => {
                 </div>
                 <Link
                   to="/mypage/application"
-                  className="text-static-100 rounded-xxs bg-primary px-2 py-1 text-[0.75rem]"
+                  className="rounded-xxs bg-primary px-2 py-1 text-[0.75rem] text-static-100"
                 >
                   마이페이지
                 </Link>
@@ -241,7 +247,7 @@ const SideNavItem = ({ to, onClick, children }: SideNavItemProps) => {
   return (
     <Link
       to={to}
-      className="flex w-full cursor-pointer justify-between rounded-md bg-gray-100 px-7 py-5 text-neutral-grey"
+      className="text-neutral-grey flex w-full cursor-pointer justify-between rounded-md bg-gray-100 px-7 py-5"
       onClick={onClick}
     >
       <span>{children}</span>

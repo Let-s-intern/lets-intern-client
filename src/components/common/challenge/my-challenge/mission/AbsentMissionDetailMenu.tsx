@@ -1,8 +1,9 @@
+import { UserChallengeMissionDetail } from '../../../../../schema';
 import AbsentContentsInfoMenu from '../menu/AbsentContentsInfoMenu';
 import AbsentMissionSubmitMenu from '../menu/AbsentMissionSubmitMenu';
 
 interface Props {
-  missionDetail: any;
+  missionDetail: UserChallengeMissionDetail;
 }
 
 const AbsentMissionDetailMenu = ({ missionDetail }: Props) => {
@@ -11,7 +12,7 @@ const AbsentMissionDetailMenu = ({ missionDetail }: Props) => {
       <hr className="my-4 border-[#DEDEDE]" />
       <div className="px-3">
         <p className="whitespace-pre-line text-black">
-          {missionDetail.contents}
+          {missionDetail.description}
         </p>
         <div className="mt-4">
           <h4 className="text-sm text-[#898989]">미션 가이드</h4>
