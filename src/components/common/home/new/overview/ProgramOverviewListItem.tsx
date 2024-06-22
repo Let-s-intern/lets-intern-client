@@ -1,8 +1,5 @@
 import { useMediaQuery } from '@mui/material';
 import { IProgram } from '../../../../../interfaces/interface';
-
-import ProgramListItem from './ProgramListItem';
-
 import { useQuery } from '@tanstack/react-query';
 
 import axios from '../../../../../utils/axios';
@@ -121,7 +118,7 @@ const ProgramOverviewListItem = () => {
 
   useEffect(() => {
     if (loading) {
-      const timer = setTimeout(() => setLoading(false), 700);
+      const timer = setTimeout(() => setLoading(false), 300);
       return () => clearTimeout(timer);
     }
   }, [loading]);
@@ -138,7 +135,7 @@ const ProgramOverviewListItem = () => {
   };
 
   return (
-    <div className="mt-6 overflow-hidden rounded-xs">
+    <div className="mt-6 md:mx-5 overflow-hidden md:rounded-xs bg-neutral-90 p-5 md:p-0">
       <div className="flex items-center">
         {matches && (
           <div className="w-1/4 bg-neutral-80 py-3.5 text-center text-neutral-0/60">
@@ -189,44 +186,26 @@ const ProgramOverviewListItem = () => {
           </div>
         )}
       </div>
-      <ul className="w-full bg-neutral-90 grid grid-cols-1 grid-rows-3 gap-4 row overflow-y-scroll">
+      <ul className="w-full grid grid-cols-1 grid-rows-3 md:grid-cols-2 md:grid-rows-2 gap-4 overflow-y-scroll">
         {
           loading || isLoading ? (
             <div className='row-span-4 h-[536px] md:col-span-2 md:row-span-2 md:h-[380px] flex items-center justify-center'>
               <LoadingContainer />
             </div>
           ) : !data ? (
-            <>
-              <div className="flex flex-col items-center justify-center text-1 py-2 text-center text-neutral-0/40">
-                혹시, 찾으시는 프로그램이 없으신가요?
-                <span className="flex flex-col md:flex-row md:justify-center md:gap-1">
-                  <span>출시 알림 신청을 통해 가장 먼저 신규 프로그램 소식을 받아보세요.</span>
-                </span>
-              </div>
-              {
-                emptyList.map((emptyItem) => (
-                  <EmptyListItemContainer
-                    key={emptyItem.title}
-                    thumbnail={emptyItem.thumbnail}
-                    title={emptyItem.title}
-                    desc={emptyItem.desc}
-                    link={emptyItem.link}
-                    buttonCaption={emptyItem.buttonCaption}
-                    buttonColor={emptyItem.buttonColor}
-                  />
-                ))
-              }
-            </>
+              emptyList.map((emptyItem) => (
+                <EmptyListItemContainer
+                  key={emptyItem.title}
+                  thumbnail={emptyItem.thumbnail}
+                  title={emptyItem.title}
+                  desc={emptyItem.desc}
+                  link={emptyItem.link}
+                  buttonCaption={emptyItem.buttonCaption}
+                  buttonColor={emptyItem.buttonColor}
+                />
+              ))
           ) : (
             data.length < 1 ? (
-              <>
-                <div className="flex flex-col items-center justify-center text-1 py-2 text-center text-neutral-0/40">
-                  혹시, 찾으시는 프로그램이 없으신가요?
-                  <span className="flex flex-col md:flex-row md:justify-center md:gap-1">
-                    <span>출시 알림 신청을 통해 가장 먼저 신규 프로그램 소식을 받아보세요.</span>
-                  </span>
-                </div>
-                {
                   emptyList.map((emptyItem) => (
                     <EmptyListItemContainer
                       key={emptyItem.title}
@@ -238,8 +217,6 @@ const ProgramOverviewListItem = () => {
                       buttonColor={emptyItem.buttonColor}
                     />
                   ))
-                }
-              </>
             ) : (
               data.map((program) => (
                 <ProgramListItemContainer

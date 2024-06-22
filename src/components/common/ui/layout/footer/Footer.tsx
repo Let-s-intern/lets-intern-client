@@ -12,8 +12,8 @@ const Footer = () => {
           <div className="flex w-80 items-center gap-8">
             <MenuLink to="/">홈</MenuLink>
             <MenuLink to="/program">프로그램</MenuLink>
-            <MenuLink to='https://letscareer.oopy.io/4e78d954-c4ac-4c14-a122-a21fe890de5b'>공지사항</MenuLink>
-            <MenuLink to="https://letscareer.oopy.io/5eb0ebdd-e10c-4aa1-b28a-8bd0964eca0b">자주 묻는 질문</MenuLink>
+            <MenuLink to='https://letscareer.oopy.io'>공지사항</MenuLink>
+            <MenuLink to="https://letscareer.oopy.io">자주 묻는 질문</MenuLink>
             {/* <MenuLink to="/blog">블로그</MenuLink> */}
           </div>
         </div>

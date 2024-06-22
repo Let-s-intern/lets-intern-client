@@ -20,7 +20,7 @@ const images = [
 
 const PassReviewSection = () => {
   return (
-    <section>
+    <section className=' px-5 '>
       <Heading>렛츠커리어인들은 어디서 커리어를 시작했을까요?</Heading>
       <div className="mt-6 flex flex-nowrap gap-x-1.5 overflow-visible overflow-x-auto md:gap-4 lg:gap-6">
         {images.map((image) => (
