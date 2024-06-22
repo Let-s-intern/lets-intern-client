@@ -4,6 +4,7 @@ import useAuthStore from '../../../../../../store/useAuthStore';
 import { newProgramTypeToText } from '../../../../../../utils/convert';
 import { ProgramDate } from '../../section/ApplySection';
 import DateToggle from '../../toggle/DateToggle';
+import NotiButton from '../../button/NotiButton';
 
 interface OverviewContentProps {
   contentIndex: number;
@@ -23,7 +24,7 @@ const OverviewContent = ({
   isApplied,
 }: OverviewContentProps) => {
   console.log('OverviewContent', programDate);
-  const {isLoggedIn} = useAuthStore();
+  const { isLoggedIn } = useAuthStore();
   const navigate = useNavigate();
   const formatDateString = (dateString: string) => {
     const date = new Date(dateString);
@@ -47,14 +48,22 @@ const OverviewContent = ({
       <h2 className="text-lg font-semibold">{programTitle}</h2>
       <DateToggle programDate={programDate} programType={programType} />
       <div>
-        <button
-          className="flex w-full justify-center rounded-md bg-primary px-6 py-3 text-lg font-medium text-neutral-100 disabled:bg-neutral-70"
-          onClick={handleNextButtonClick}
-          disabled={isApplied}
-        >
-          {/* 모집 전이면 사전알림신청 버튼 표시 */}
-          {isApplied ? '신청 완료' : '신청하기'}
-        </button>
+        {new Date() < new Date(programDate.beginning) ||
+        new Date() > new Date(programDate.deadline) ? (
+          <NotiButton
+            onClick={() => console.log('땡땡')}
+            caption={'출시알림신청'}
+          />
+        ) : (
+          <button
+            className="flex w-full justify-center rounded-md bg-primary px-6 py-3 text-lg font-medium text-neutral-100 disabled:bg-neutral-70"
+            onClick={handleNextButtonClick}
+            disabled={isApplied}
+          >
+            {/* 모집 전이면 사전알림신청 버튼 표시 */}
+            {isApplied ? '신청 완료' : '신청하기'}
+          </button>
+        )}
       </div>
     </div>
   );

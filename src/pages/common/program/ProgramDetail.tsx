@@ -2,6 +2,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { useMediaQuery } from '@mui/material';
 import { useReducer, useState } from 'react';
+import clsx from 'clsx';
 
 import Header from '../../../components/common/program/program-detail/header/Header';
 import TabSection from '../../../components/common/program/program-detail/section/TabSection';
@@ -13,7 +14,7 @@ import ApplyModal from '../../../components/common/program/program-detail/apply/
 import applyReducer from '../../../reducers/applyReducer';
 import FilledButton from '../../../components/common/program/program-detail/button/FilledButton';
 import useAuthStore from '../../../store/useAuthStore';
-import clsx from 'clsx';
+import NotiButton from '../../../components/common/program/program-detail/button/NotiButton';
 
 export type ProgramType = 'challenge' | 'live';
 
@@ -42,7 +43,6 @@ const ProgramDetail = ({ programType }: ProgramDetailProps) => {
       try {
         const res = await axios.get(`/${programType}/${programId}/application`);
         const data = res.data.data;
-        console.log('신청여부', data);
         setIsAlreadyApplied(data.applied);
         return res.data;
       } catch (error) {
@@ -122,8 +122,14 @@ const ProgramDetail = ({ programType }: ProgramDetailProps) => {
                   toggleDrawer={toggleDrawer}
                   drawerDispatch={drawerDispatch}
                 />
+              ) : // 모집 예정 or 모집 종료이면 출시알림신청 버튼 표시
+              new Date() < new Date(programInfo.beginning) ||
+                new Date() > new Date(programInfo.deadline) ? (
+                <NotiButton
+                  onClick={() => console.log('땡땡')}
+                  caption={'출시알림신청'}
+                />
               ) : (
-                // 모집 전이면 사전알림신청 버튼 표시
                 <FilledButton
                   onClick={toggleDrawer}
                   caption={isAlreadyApplied ? '신청완료' : '신청하기'}

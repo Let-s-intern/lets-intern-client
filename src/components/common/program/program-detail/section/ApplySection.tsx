@@ -13,6 +13,7 @@ export interface ProgramDate {
   deadline: string;
   startDate: string;
   endDate: string;
+  beginning: string;
 }
 
 export interface UserInfo {
@@ -57,6 +58,7 @@ const ApplySection = ({
     deadline: '',
     startDate: '',
     endDate: '',
+    beginning: '',
   });
   const [userInfo, setUserInfo] = useState<UserInfo>({
     name: '',
@@ -89,11 +91,6 @@ const ApplySection = ({
       const res = await axios.get(`/${programType}/${programId}/application`);
       console.log(res.data);
       const data = res.data.data;
-      setProgramDate({
-        deadline: data.deadline,
-        startDate: data.startDate,
-        endDate: data.endDate,
-      });
       setUserInfo({
         name: data.name,
         email: data.email,
@@ -134,6 +131,20 @@ const ApplySection = ({
         });
       }
       return res.data;
+    },
+  });
+
+  useQuery({
+    queryKey: [programType, programId],
+    queryFn: async () => {
+      const res = await axios.get(`/${programType}/${programId}`);
+      const data = res.data.data;
+      setProgramDate({
+        deadline: data.deadline,
+        startDate: data.startDate,
+        endDate: data.endDate,
+        beginning: data.beginning,
+      });
     },
   });
 

@@ -22,7 +22,6 @@ const ScheduleContent = ({
   programTitle,
   isApplied,
 }: ScheduleContentProps) => {
-  console.log('ScheduleContent', programDate);
   const { isLoggedIn } = useAuthStore();
   const navigate = useNavigate();
   const formatDateString = (dateString: string) => {
