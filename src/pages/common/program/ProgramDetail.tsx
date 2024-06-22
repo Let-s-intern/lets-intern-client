@@ -36,6 +36,7 @@ const ProgramDetail = ({ programType }: ProgramDetailProps) => {
     beginning: '',
     deadline: '',
   });
+  const [disabledButton, setDisabledButton] = useState(false);
 
   useQuery({
     queryKey: [programType, programId, 'application'],
@@ -44,27 +45,13 @@ const ProgramDetail = ({ programType }: ProgramDetailProps) => {
         const res = await axios.get(`/${programType}/${programId}/application`);
         const data = res.data.data;
         setIsAlreadyApplied(data.applied);
+        setDisabledButton(!data.applied);
         return res.data;
       } catch (error) {
         console.error(error);
       }
     },
   });
-
-  const toggleApplyModal = () => {
-    applyDispatch({ type: 'toggle' });
-  };
-  const toggleDrawer = () => {
-    if (!isLoggedIn) {
-      alert('로그인 후 이용해주세요.');
-      navigate(`/login?redirect=${window.location.pathname}`);
-      return;
-    }
-    drawerDispatch({ type: 'toggle' });
-  };
-  const handleDrawer = () => {
-    if (!isAlreadyApplied) toggleDrawer();
-  };
 
   // 프로그램 제목 가져오기
   useQuery({
@@ -82,9 +69,30 @@ const ProgramDetail = ({ programType }: ProgramDetailProps) => {
       const res = await axios.get(`/${programType}/${programId}`);
       const { beginning, deadline } = res.data.data;
       setProgramInfo({ beginning, deadline });
+      setDisabledButton(
+        new Date() < new Date(beginning) || new Date() > new Date(deadline),
+      );
       return res.data;
     },
   });
+
+  const toggleApplyModal = () => {
+    applyDispatch({ type: 'toggle' });
+  };
+  const toggleDrawer = () => {
+    if (!isLoggedIn) {
+      alert('로그인 후 이용해주세요.');
+      navigate(`/login?redirect=${window.location.pathname}`);
+      return;
+    }
+    drawerDispatch({ type: 'toggle' });
+  };
+  const handleDrawer = () => {
+    if (!isAlreadyApplied && !disabledButton) toggleDrawer();
+  };
+  const clickNotiButton = () => {
+    window.open('https://forms.gle/ddFtGQfBpGk7Jxpq9', '_blank');
+  };
 
   return (
     <div className="px-5">
@@ -126,7 +134,7 @@ const ProgramDetail = ({ programType }: ProgramDetailProps) => {
               new Date() < new Date(programInfo.beginning) ||
                 new Date() > new Date(programInfo.deadline) ? (
                 <NotiButton
-                  onClick={() => console.log('땡땡')}
+                  onClick={clickNotiButton}
                   caption={'출시알림신청'}
                 />
               ) : (
