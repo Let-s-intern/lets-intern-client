@@ -56,43 +56,45 @@ const Banner = () => {
   });
 
   return (
-    <section className="relative top-[3px] flex max-h-[25rem] overflow-hidden text-static-100 md:top-[13px]">
-      {bannerList.map((bannner) => (
-        <img
-          onClick={() => window.open(bannner.link)}
-          key={bannner.id}
-          className="cursor-pointer rounded-sm object-cover transition-all duration-500 ease-in-out"
-          style={{ translate: `-${bannerIndex * 100}%` }}
-          src={isMobile ? bannner.mobileImgUrl : bannner.imgUrl}
-          alt="홈 배너 이미지"
+    <section className='px-5'>
+      <div className="relative top-[3px] flex max-h-[25rem] overflow-hidden text-static-100 md:top-[13px]">
+        {bannerList.map((bannner) => (
+          <img
+            onClick={() => window.open(bannner.link)}
+            key={bannner.id}
+            className="cursor-pointer rounded-sm object-cover transition-all duration-500 ease-in-out"
+            style={{ translate: `-${bannerIndex * 100}%` }}
+            src={isMobile ? bannner.mobileImgUrl : bannner.imgUrl}
+            alt="홈 배너 이미지"
+          />
+        ))}
+        <button
+          onClick={clickLeft}
+          className="absolute inset-y-1/2 left-0 top-[43%] z-10"
+        >
+          <img
+            className="h-10 w-10 md:h-16 md:w-16"
+            src="/icons/Caret_Circle_Left.svg"
+            alt="왼쪽 슬라이드로 이동"
+          />
+        </button>
+        <button
+          onClick={clickRight}
+          className="absolute inset-y-1/2 right-0 top-[43%] z-10"
+        >
+          <img
+            className="h-10 w-10 md:h-16 md:w-16"
+            src="/icons/Caret_Circle_Right.svg"
+            alt="오른쪽 슬라이드로 이동"
+          />
+        </button>
+        <BannerPlay
+          isPlay={isPlay}
+          setIsPlay={setIsPlay}
+          bannerIndex={bannerIndex}
+          length={bannerList.length}
         />
-      ))}
-      <button
-        onClick={clickLeft}
-        className="absolute inset-y-1/2 left-0 top-[43%] z-10"
-      >
-        <img
-          className="h-10 w-10 md:h-16 md:w-16"
-          src="/icons/Caret_Circle_Left.svg"
-          alt="왼쪽 슬라이드로 이동"
-        />
-      </button>
-      <button
-        onClick={clickRight}
-        className="absolute inset-y-1/2 right-0 top-[43%] z-10"
-      >
-        <img
-          className="h-10 w-10 md:h-16 md:w-16"
-          src="/icons/Caret_Circle_Right.svg"
-          alt="오른쪽 슬라이드로 이동"
-        />
-      </button>
-      <BannerPlay
-        isPlay={isPlay}
-        setIsPlay={setIsPlay}
-        bannerIndex={bannerIndex}
-        length={bannerList.length}
-      />
+      </div>
     </section>
   );
 };

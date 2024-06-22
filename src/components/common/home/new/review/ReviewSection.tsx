@@ -22,7 +22,7 @@ const ReviewSection = () => {
   ];
 
   return (
-    <section>
+    <section className=' px-5 '>
       <Heading>생생한 참여 후기</Heading>
       <div className="mt-6 flex w-full flex-col flex-nowrap gap-4 overflow-x-auto md:w-auto md:flex-row">
         {reviewList.map((review, index) => (

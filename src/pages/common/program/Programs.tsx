@@ -259,7 +259,7 @@ const Programs = () => {
 
   useEffect(() => {
     if (loading) {
-      const timer = setTimeout(() => setLoading(false), 700);
+      const timer = setTimeout(() => setLoading(false), 300);
       return () => clearTimeout(timer);
     }
   }, [loading]);

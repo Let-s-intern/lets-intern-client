@@ -62,7 +62,7 @@ const programList: IProgramGridItem[] = [
 
 const ProgramSection = () => {
   return (
-    <section>
+    <section className='px-5 '>
       <div className="flex flex-col gap-1">
         <Heading>
           {PROGRAM_SECTION.TITLE.map((title) => (
