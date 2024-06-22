@@ -1,18 +1,14 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 
-import Home from './pages/common/home/Home';
 import About from './pages/common/about/About';
 import Programs from './pages/common/program/Programs';
-import ProgramDetail from './pages/common/program/ProgramDetail';
+import ProgramDetailRegacy from './pages/common/program/regacy/ProgramDetailRegacy';
 import Login from './pages/common/auth/Login';
 import MyPage from './pages/common/mypage/MyPage';
 import SignUp from './pages/common/auth/SignUp';
 import FindPassword from './pages/common/auth/FindPassword';
-import Privacy from './pages/common/mypage/Privacy';
-import Review from './pages/common/mypage/Review';
 import Layout from './components/common/ui/layout/Layout';
 import AdminLayout from './components/admin/ui/layout/AdminLayout';
-import ProgramCreate from './pages/admin/program/ProgramCreate';
 import ReviewDetail from './pages/common/review/ReviewDetail';
 import ProgramEdit from './pages/admin/program/ProgramEdit';
 import AdminReviews from './pages/admin/review/Reviews';
@@ -22,27 +18,19 @@ import UserDetail from './pages/admin/user/UserDetail';
 import UserMemo from './pages/admin/user/UserMemo';
 import UserCreate from './pages/admin/user/UserCreate';
 import UserEdit from './pages/admin/user/UserEdit';
-import Application from './pages/common/mypage/Application';
-import ReviewCreate from './pages/common/review/ReviewCreate';
+import ReviewCreateRegacy from './pages/common/review/regacy/ReviewCreateRegacy';
 import AttendCheck from './pages/admin/program/AttendCheck';
 import ScrollToTop from './components/ui/scroll-to-top/ScrollToTop';
 import AdminPrograms from './pages/admin/program/Programs';
 import ProgramUsers from './pages/admin/program/ProgramUsers';
-import ChallengeAdminLayout from './components/admin/challenge/ui/layout/ChallengeAdminLayout';
-import ChallengeHome from './pages/admin/challenge/ChallengeHome';
-import ChallengeMission from './pages/admin/challenge/ChallengeMission';
+import ChallengeOperationAdminLayout from './components/admin/challenge/ui/ChallengeOperationAdminLayout';
+import ChallengeOperationHome from './pages/admin/challenge/ChallengeOperationHome';
 import ChallengeContents from './pages/admin/challenge/ChallengeContents';
-import ChallengeSubmitCheck from './pages/admin/challenge/ChallengeSubmitCheck';
-import ChallengeUser from './pages/admin/challenge/ChallengeUser';
-import ChallengeNotice from './pages/admin/challenge/ChallengeNotice';
 import ChallengeDashboard from './pages/common/challenge/ChallengeDashboard';
 import ChallengeLayout from './components/common/challenge/ui/layout/ChallengeLayout';
 import MyChallengeDashboard from './pages/common/challenge/MyChallengeDashboard';
-import OtherDashboardList from './pages/common/challenge/OtherDashboardList';
-import OtherDashboardDetail from './pages/common/challenge/OtherDashboardDetail';
 import MentorNotificationBefore from './pages/common/mentor/MentorNotificationBefore';
 import MentorNotificationAfter from './pages/common/mentor/MentorNotificationAfter';
-import ChallengeOnboarding from './pages/admin/challenge/ChallengeOnboarding';
 import Coupons from './pages/admin/coupon/Coupons';
 import CouponCreate from './pages/admin/coupon/CouponCreate';
 import CouponEdit from './pages/admin/coupon/CouponEdit';
@@ -67,6 +55,22 @@ import OnlineContentsCreate from './pages/admin/online-contents/OnlineContentsCr
 import OnlineContentsEdit from './pages/admin/online-contents/OnlineContentsEdit';
 import HomeRegacy from './pages/common/home/HomeRegacy';
 import Maintenance from './pages/maintenance/Maintenance';
+import Privacy from './pages/common/mypage/Privacy';
+import Application from './pages/common/mypage/Application';
+import Review from './pages/common/mypage/Review';
+import ReviewCreate from './pages/common/review/ReviewCreate';
+import ChallengeMissionManagement from './pages/admin/challenge/ChallengeMissionManagement';
+import ProgramDetail from './pages/common/program/ProgramDetail';
+import ProgramCreate from './pages/admin/program/ProgramCreate';
+import Home from './pages/common/home/Home';
+import ChallengeOperationOnboarding from './pages/admin/challenge/ChallengeOperationOnboarding';
+import ChallengeOperationRegisterMission from './pages/admin/challenge/ChallengeOperationRegisterMission';
+import { CurrentAdminChallengeProvider } from './context/CurrentAdminChallengeProvider';
+import ChallengeOperationAttendances from './pages/admin/challenge/ChallengeOperationAttendances';
+import ChallengeOperationPayback from './pages/admin/challenge/ChallengeOperationPayback';
+import ChallengeOperationParticipants from './pages/admin/challenge/ChallengeOperationParticipants';
+import { CurrentChallengeProvider } from './context/CurrentChallengeProvider';
+import ChallengeUserInfo from './pages/common/challenge/ChallengeUserInfo';
 
 const Router = () => {
   return (
@@ -77,21 +81,38 @@ const Router = () => {
           {/* /maintenance */}
           <Route path="maintenance" element={<Maintenance />} />
           {/* / */}
-          <Route path="" element={<HomeRegacy />} />
+          <Route path="" element={<Home />} />
           {/* /about */}
           <Route path="about" element={<About />} />
+          {/* /program/challenge/:programId */}
+          <Route
+            path="program/challenge/:programId"
+            element={<ProgramDetail programType="challenge" />}
+          />
+          {/* /program/live/:programId */}
+          <Route
+            path="program/live/:programId"
+            element={<ProgramDetail programType="live" />}
+          />
+          {/* ---Regacy--- */}
           {/* /program */}
           <Route path="program" element={<Programs />} />
           {/* /program/detail/:programId */}
-          <Route path="program/detail/:programId" element={<ProgramDetail />} />
+          <Route
+            path="program/detail/:programId"
+            element={<ProgramDetailRegacy />}
+          />
           <Route path="program/:programId">
             {/* /program/:programId/application/:applicationId/review/create */}
             <Route
               path="application/:applicationId/review/create"
-              element={<ReviewCreate />}
+              element={<ReviewCreateRegacy />}
             />
-            {/* /program/:programId/review/create */}
-            <Route path="review/create" element={<ReviewCreate />} />
+            {/* /program/:programId/review/new */}
+            <Route
+              path="review/new"
+              element={<ReviewCreate isEdit={false} />}
+            />
             {/* /program/:programId/review/:reviewId */}
             <Route path="review/:reviewId" element={<ReviewDetail />} />
             {/* /program/:programId/mentor/notification */}
@@ -102,11 +123,24 @@ const Router = () => {
               <Route path="after" element={<MentorNotificationAfter />} />
             </Route>
           </Route>
+          {/* ---Regacy--- */}
           <Route path="mypage" element={<MyPage />}>
             {/* /mypage/application */}
             <Route path="application" element={<Application />} />
-            {/* /mypage/review */}
-            <Route path="review" element={<Review />} />
+            <Route path="review">
+              {/* /mypage/review */}
+              <Route path="" element={<Review />} />
+              {/* /mypage/review/new/program/:programId */}
+              <Route
+                path="new/program/:programType/:programId"
+                element={<ReviewCreate isEdit={false} />}
+              />
+              {/* /mypage/review/edit/program/:programId */}
+              <Route
+                path="edit/program/:programType/:programId/:reviewId"
+                element={<ReviewCreate isEdit={true} />}
+              />
+            </Route>
             {/* /mypage/privacy */}
             <Route path="privacy" element={<Privacy />} />
           </Route>
@@ -116,14 +150,23 @@ const Router = () => {
           <Route path="signup" element={<SignUp />} />
           {/* /find-password */}
           <Route path="find-password" element={<FindPassword />} />
-          <Route path="challenge/:programId" element={<ChallengeLayout />}>
-            <Route path="" element={<ChallengeDashboard />} />
-            <Route path="me" element={<MyChallengeDashboard />} />
-            {/* <Route path="others" element={<OtherDashboardList />} />
+          <Route path="challenge/:programId">
+            <Route path="user/info" element={<ChallengeUserInfo />} />
+            <Route
+              element={
+                <CurrentChallengeProvider>
+                  <ChallengeLayout />
+                </CurrentChallengeProvider>
+              }
+            >
+              <Route path="" element={<ChallengeDashboard />} />
+              <Route path="me" element={<MyChallengeDashboard />} />
+              {/* <Route path="others" element={<OtherDashboardList />} />
             <Route
               path="others/:applicationId"
               element={<OtherDashboardDetail />}
             /> */}
+            </Route>
           </Route>
         </Route>
         <Route path="/admin" element={<AdminLayout />}>
@@ -205,25 +248,53 @@ const Router = () => {
             <Route path="bootcamp" element={<RemindersBootcamp />} />
             <Route path="lets-chat" element={<RemindersLetsChat />} />
           </Route>
-          {/* /admin/challenge */}
-          <Route path="challenge" element={<ChallengeOnboarding />} />
-          {/* /admin/challenge/1 */}
-          <Route path="challenge/:programId" element={<ChallengeAdminLayout />}>
-            {/* /admin/challenge/1 */}
-            <Route path="" element={<ChallengeHome />} />
-            {/* /admin/challenge/1/notice */}
-            <Route path="notice" element={<ChallengeNotice />} />
-            {/* /admin/challenge/1/mission */}
-            <Route path="mission" element={<ChallengeMission />} />
-            {/* /admin/challenge/1/submit-check */}
-            <Route path="submit-check" element={<ChallengeSubmitCheck />} />
-            {/* /admin/challenge/1/user */}
-            <Route path="user" element={<ChallengeUser />} />
+          {/* /admin/challenge/operation */}
+          <Route
+            path="challenge/operation"
+            element={<ChallengeOperationOnboarding />}
+          />
+          {/* /admin/challenge/operation/1 */}
+          <Route
+            path="challenge/operation/:programId"
+            element={
+              <CurrentAdminChallengeProvider>
+                <ChallengeOperationAdminLayout />
+              </CurrentAdminChallengeProvider>
+            }
+          >
+            {/* /admin/challenge/operation/1/home */}
+            <Route path="home" element={<ChallengeOperationHome />} />
+
+            {/* /admin/challenge/operation/1/register-mission */}
+            <Route
+              path="register-mission"
+              element={<ChallengeOperationRegisterMission />}
+            />
+
+            {/* /admin/challenge/operation/1/attendances */}
+            <Route
+              path="attendances"
+              element={<ChallengeOperationAttendances />}
+            />
+
+            {/* /admin/challenge/operation/1/participants */}
+            <Route
+              path="participants"
+              element={<ChallengeOperationParticipants />}
+            />
+
+            {/* /admin/challenge/operation/1/payback */}
+            <Route path="payback" element={<ChallengeOperationPayback />} />
           </Route>
           {/* /admin/challenge/contents */}
           <Route
             path="/admin/challenge/contents"
             element={<ChallengeContents />}
+          />
+          {/* /admin/challenge/missions */}
+          <Route
+            path="/admin/challenge/missions"
+            element={<ChallengeMissionManagement />}
           />
         </Route>
       </Routes>

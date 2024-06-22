@@ -4,7 +4,7 @@ import styled from 'styled-components';
 
 import axios from '../../../utils/axios';
 import { convertTypeToText } from '../../../utils/converTypeToText';
-import Star from '../../../components/common/review/ui/Star';
+import Star from '../../../components/common/review/regacy/ui/Star';
 
 const ReviewDetail = () => {
   const params = useParams();

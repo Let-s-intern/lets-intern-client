@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useParams, useSearchParams } from 'react-router-dom';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 
 import axios from '../../../utils/axios';
 import Table from '../../../components/admin/ui/table/regacy/Table';
@@ -13,68 +13,43 @@ import AdminPagination from '../../../components/admin/ui/pagination/AdminPagina
 
 const ReviewsDetail = () => {
   const params = useParams();
-  const queryClient = useQueryClient();
-
   const [searchParams] = useSearchParams();
-  const [reviewList, setReviewList] = useState<
-    DetailTableBodyProps['reviewList']
-  >([]);
-  const [program, setProgram] = useState<{ title: string }>();
-  const [maxPage, setMaxPage] = useState<number>(0);
 
-  const getReviewList = useQuery({
+  const programType = searchParams.get('type') || '';
+
+  const { data, isLoading, error } = useQuery({
     queryKey: [
-      'review',
-      'admin',
+      programType.toLowerCase(),
       params.programId,
+      'reviews',
       {
-        page: searchParams.get('page'),
+        page: searchParams.get('page') || 1,
         size: 10,
       },
     ],
     queryFn: async ({ queryKey }) => {
-      const res = await axios.get(`/review/admin/${params.programId}`, {
-        params: queryKey[3],
-      });
+      const res = await axios.get(
+        `/${queryKey[0]}/${queryKey[1]}/${queryKey[2]}`,
+      );
       return res.data;
     },
   });
 
-  useEffect(() => {
-    if (getReviewList.data) {
-      setReviewList(getReviewList.data.reviewList);
-      setMaxPage(getReviewList.data.pageInfo.totalPages);
-    }
-  }, [getReviewList]);
+  const reviewList = data?.data?.reviewList || [];
+  const maxPage = data?.data?.pageInfo?.totalPages || 1;
 
-  const getProgram = useQuery({
-    queryKey: ['program', 'admin', params.programId],
-    queryFn: async () => {
-      const res = await axios.get(`/program/${params.programId}`);
+  const { data: programData } = useQuery({
+    queryKey: [programType.toLowerCase(), params.programId, 'title'],
+    queryFn: async ({ queryKey }) => {
+      const res = await axios.get(
+        `/${queryKey[0]}/${queryKey[1]}/${queryKey[2]}`,
+      );
       return res.data;
     },
   });
 
-  useEffect(() => {
-    if (getProgram.data) {
-      setProgram(getProgram.data.programDetailVo);
-    }
-  }, [getProgram]);
-
-  const changeReviewVisible = useMutation({
-    mutationFn: async (params: { reviewId: number; status: string }) => {
-      const res = await axios.patch(`/review/${params.reviewId}`, {
-        status: params.status,
-      });
-      return res.data;
-    },
-    onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: ['review'] });
-    },
-  });
-
-  const handleVisibleChanged = async (reviewId: number, status: string) => {
-    changeReviewVisible.mutate({ reviewId, status });
+  const program = {
+    title: programData?.data?.title || '',
   };
 
   return (
@@ -83,15 +58,22 @@ const ReviewsDetail = () => {
         <Heading>후기 목록 {program && <>- {program.title}</>}</Heading>
       </header>
       <main>
-        <Table>
-          <TableHead />
-          <TableBody
-            reviewList={reviewList}
-            handleVisibleChanged={handleVisibleChanged}
-          />
-        </Table>
-        {reviewList.length > 0 && (
-          <AdminPagination className="mt-4" maxPage={maxPage} />
+        {isLoading ? (
+          <div className="py-4 text-center">로딩 중...</div>
+        ) : error ? (
+          <div className="py-4 text-center">에러 발생</div>
+        ) : reviewList.length === 0 ? (
+          <div className="py-4 text-center">후기가 없습니다.</div>
+        ) : (
+          <>
+            <Table>
+              <TableHead />
+              <TableBody reviewList={reviewList} programType={programType} />
+            </Table>
+            {reviewList.length > 0 && (
+              <AdminPagination className="mt-4" maxPage={maxPage} />
+            )}
+          </>
         )}
       </main>
     </div>

@@ -1,34 +1,60 @@
-import styled from 'styled-components';
+import dayjs from 'dayjs';
 
 import TD from '../../../ui/table/regacy/TD';
 import ActionButton from '../../../ui/button/ActionButton';
-import formatDateString from '../../../../../utils/formatDateString';
 
-interface TableBodyProps {
-  programList: any;
+interface ReviewTableBodyProps {
+  programList: {
+    programInfo: {
+      id: number;
+      title: string;
+      startDate: string;
+      programType: string;
+    };
+  }[];
   copyReviewCreateLink: any;
 }
 
-const TableBody = ({ programList, copyReviewCreateLink }: TableBodyProps) => {
+const TableBody = ({
+  programList,
+  copyReviewCreateLink,
+}: ReviewTableBodyProps) => {
   return (
     <thead>
-      {programList.map((program: any) => (
-        <tr key={program.id}>
-          <TD whiteSpace="wrap">{program.title}</TD>
-          <TD>{formatDateString(program.announcementDate)}</TD>
+      {programList.map((program) => (
+        <tr key={`${program.programInfo.programType}${program.programInfo.id}`}>
+          <TD whiteSpace="wrap">{program.programInfo.title}</TD>
           <TD>
-            <ButtonGroup>
-              <ActionButton to={`/admin/reviews/${program.id}`} bgColor="blue">
+            {program.programInfo.startDate
+              ? dayjs(program.programInfo.startDate).format(
+                  'YYYY년 MM월 DD일 (ddd) A hh:mm',
+                )
+              : '온라인'}
+          </TD>
+          <TD>
+            <div className="flex justify-center gap-2">
+              <ActionButton
+                to={`/admin/reviews/${program.programInfo.id}?type=${program.programInfo.programType}`}
+                bgColor={
+                  program.programInfo.programType === 'VOD' ? 'gray' : 'blue'
+                }
+                disabled={program.programInfo.programType === 'VOD'}
+              >
                 상세
               </ActionButton>
               <ActionButton
-                bgColor="lightBlue"
                 width="6rem"
-                onClick={() => copyReviewCreateLink(program.id)}
+                bgColor={
+                  program.programInfo.programType === 'VOD'
+                    ? 'gray'
+                    : 'lightBlue'
+                }
+                onClick={() => copyReviewCreateLink(program.programInfo.id)}
+                disabled={program.programInfo.programType === 'VOD'}
               >
                 링크 복사하기
               </ActionButton>
-            </ButtonGroup>
+            </div>
           </TD>
         </tr>
       ))}
@@ -37,9 +63,3 @@ const TableBody = ({ programList, copyReviewCreateLink }: TableBodyProps) => {
 };
 
 export default TableBody;
-
-const ButtonGroup = styled.div`
-  display: flex;
-  justify-content: center;
-  gap: 0.5rem;
-`;

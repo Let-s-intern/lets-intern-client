@@ -18,12 +18,12 @@ const TableBodyRow = ({ th, mission }: Props) => {
         mission={mission}
         onClick={() => setIsDetailShown(!isDetailShown)}
       />
-      {isDetailShown && (
+      {/* {isDetailShown && (
         <ChallengeSubmitDetail
           mission={mission}
           setIsDetailShown={setIsDetailShown}
         />
-      )}
+      )} */}
     </>
   );
 };

@@ -1,61 +1,35 @@
-import clsx from 'clsx';
-
-import { formatToMonthDate } from '../../../../../utils/formatDateString';
-import MissionTopStatusBar from '../status-bar/MissionTopStatusBar';
+import dayjs from 'dayjs';
+import { twMerge } from 'tailwind-merge';
+import { Mission } from '../../../../../schema';
 import { missionStatusToBadge } from '../../../../../utils/convert';
 
-interface Props {
-  mission: any;
-  todayTh: number;
-  isLastMission: boolean;
-}
-
-const MissionResultItem = ({ mission, todayTh, isLastMission }: Props) => {
+const MissionResultItem = ({ mission }: { mission: Mission }) => {
   return (
     <div className="font-pretendard">
-      <MissionTopStatusBar
-        mission={mission}
-        todayTh={todayTh}
-        isLastMission={isLastMission}
-      />
-      <div
-        className={clsx('mt-2 text-center text-sm', {
-          'font-medium text-primary': mission.missionTh === todayTh,
-        })}
-      >
-        {formatToMonthDate(mission.missionStartDate)}
-        <br />~ {formatToMonthDate(mission.missionEndDate)}
+      <div className="relative flex items-center">
       </div>
-      <div
-        className={clsx('mx-1 mt-1 pb-2', {
-          'rounded bg-[#F2F1F1]': mission.missionTh === todayTh,
-        })}
-      >
-        <div className="py-2 text-center text-sm">{mission.missionTh}회차</div>
-        <div
-          className={clsx('flex items-end justify-center text-3xl font-bold', {
-            'opacity-0': todayTh < mission.missionTh && todayTh !== 0,
-          })}
-        >
+      <div className="mt-2 max-w-[80px] text-center text-sm">
+        {dayjs(mission.startDate).format('MM/DD(dd)') +
+          ' ~ ' +
+          dayjs(mission.endDate).format('MM/DD(dd)')}
+      </div>
+      <div className="mx-1 mt-1 pb-2">
+        <div className="py-2 text-center text-sm">{mission.th}회차</div>
+        <div className="flex items-end justify-center text-3xl font-bold">
           {mission.attendanceCount}
         </div>
-        <div
-          className={clsx('text-center text-sm', {
-            'opacity-0': todayTh < mission.missionTh && todayTh !== 0,
-          })}
-        >
+        <div className="text-center text-sm">
           지각 {mission.lateAttendanceCount}
         </div>
       </div>
       <div className="mt-2 flex items-center justify-center">
         <span
-          className={clsx(
+          className={twMerge(
             'rounded-md px-2 py-[0.125rem] text-xs ',
-            missionStatusToBadge[mission.missionStatus].style,
-            { 'opacity-0': todayTh < mission.missionTh },
+            missionStatusToBadge[mission.missionStatusType].style,
           )}
         >
-          {missionStatusToBadge[mission.missionStatus].text}
+          {missionStatusToBadge[mission.missionStatusType].text}
         </span>
       </div>
     </div>

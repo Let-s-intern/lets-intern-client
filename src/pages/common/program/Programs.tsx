@@ -1,164 +1,413 @@
-import { useEffect, useState } from 'react';
-import { Link, useSearchParams } from 'react-router-dom';
-import cn from 'classnames';
+import { useCallback, useEffect, useReducer, useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import clsx from 'clsx';
+import { useSearchParams } from 'react-router-dom';
 
+import {
+  PROGRAM_FILTER_CLASSIFICATION,
+  PROGRAM_FILTER_STATUS,
+  PROGRAM_FILTER_TYPE,
+  PROGRAM_QUERY_KEY,
+} from '../../../utils/programConst';
 import axios from '../../../utils/axios';
-import ClosedCard from '../../../components/common/program/programs/card/ClosedCard';
-
-import classes from './Programs.module.scss';
-import CardListSlider from '../../../components/common/ui/card/wrapper/CardListSlider';
-import CardListPlaceholder from '../../../components/common/ui/card/placeholder/CardListPlaceholder';
+import {
+  IProgram,
+  filterClassificationkey,
+  filterStatuskey,
+  filterTypekey,
+} from '../../../interfaces/interface';
 import ProgramCard from '../../../components/common/program/programs/card/ProgramCard';
-import { typeToText } from '../../../utils/converTypeToText';
-import formatDateString from '../../../utils/formatDateString';
+import Banner from '../../../components/common/program/banner/Banner';
+import FilterItem from '../../../components/common/program/filter/FilterItem';
+import FilterSideBar from '../../../components/common/program/filter/FilterSideBar';
+import {
+  filterTypeReducer,
+  initialFilterType,
+  filterStatusReducer,
+  initialFilterStatus,
+  filterClassificationReducer,
+  initialFilterClassification,
+} from '../../../reducers/filterReducer';
+import { getKeyByValue } from '../../../utils/convert';
+import MuiPagination from '../../../components/common/program/pagination/MuiPagination';
+import EmptyCardList from '../../../components/common/program/programs/card/EmptyCardList';
+import LoadingContainer from '../../../components/common/ui/loading/LoadingContainer';
+
+const initialPageable = { page: 1, size: 12 };
+const initialPageInfo = {
+  pageNum: 0,
+  pageSize: 0,
+  totalElements: 0,
+  totalPages: 0,
+};
 
 const Programs = () => {
-  const [searchParams] = useSearchParams();
-  const [programs, setPrograms] = useState<any>(null);
-  const [closedPrograms, setClosedPrograms] = useState<any>(null);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<unknown>(null);
-  const category = searchParams.get('category') || 'ALL';
+  // 필터링 상태 관리
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [isOpen, setIsOpen] = useState(false);
+  const [loading, setLoading] = useState(true);
+
+  // 필터  초기화 (URL 기준 필터 설정)
+  const setFilterClassification = () => {
+    const initial = { ...initialFilterClassification };
+    searchParams.getAll(PROGRAM_QUERY_KEY.CLASSIFICATION).forEach((item) => {
+      initial[item as filterClassificationkey] = true;
+    });
+    return initial;
+  };
+  const setFilterType = () => {
+    const initial = { ...initialFilterType };
+    searchParams.getAll(PROGRAM_QUERY_KEY.TYPE).forEach((item) => {
+      initial[item as filterTypekey] = true;
+    });
+    return initial;
+  };
+  const setFilterStatus = () => {
+    const initial = { ...initialFilterStatus };
+    searchParams.getAll(PROGRAM_QUERY_KEY.STATUS).forEach((item) => {
+      initial[item as filterStatuskey] = true;
+    });
+    return initial;
+  };
+
+  const [filterClassification, classificationDispatch] = useReducer(
+    filterClassificationReducer,
+    null,
+    setFilterClassification,
+  ); // 커리어 단계
+  const [filterType, typeDispatch] = useReducer(
+    filterTypeReducer,
+    null,
+    setFilterType,
+  ); // 프로그램
+  const [filterStatus, statusDispatch] = useReducer(
+    filterStatusReducer,
+    null,
+    setFilterStatus,
+  ); // 모집 현황
 
   useEffect(() => {
-    const params = !category || category === 'ALL' ? {} : { type: category };
-    setLoading(true);
-    axios
-      .get('/program', {
-        params,
-        headers: {
-          Authorization: '',
-        },
-      })
-      .then((res) => {
-        return res.data.programList;
-      })
-      .then((programs) => {
-        setPrograms(
-          programs.filter((program: any) => program.status === 'OPEN'),
-        );
-        setClosedPrograms(
-          programs.filter((program: any) => program.status !== 'OPEN'),
-        );
-      })
-      .catch((err) => {
-        console.log(err);
-        setError(err);
-      })
-      .finally(() => {
-        setLoading(false);
-      });
-  }, [category]);
+    // 필터 초기화
+    typeDispatch({ type: 'init' });
+    classificationDispatch({ type: 'init' });
+    statusDispatch({ type: 'init' });
 
-  if (error) {
-    return <div>에러 발생</div>;
-  }
+    // URL 파라미터로 필터 설정
+    searchParams.getAll(PROGRAM_QUERY_KEY.CLASSIFICATION).forEach((item) => {
+      classificationDispatch({ type: 'check', value: item });
+    });
+    searchParams.getAll(PROGRAM_QUERY_KEY.TYPE).forEach((item) => {
+      typeDispatch({ type: 'check', value: item });
+    });
+    searchParams.getAll(PROGRAM_QUERY_KEY.STATUS).forEach((item) => {
+      statusDispatch({ type: 'check', value: item });
+    });
+  }, [searchParams]);
+
+  const resetPageable = () => {
+    setPageable(initialPageable);
+  };
+
+  // 필터링 체크박스 클릭 이벤트
+  const handleClickCheckbox = useCallback(
+    (programType: string, value: string) => {
+      // 파라미터 하나 삭제
+      const deleteParam = (target: string, key: string) => {
+        const checkedList = [...searchParams.getAll(key)];
+        searchParams.delete(key);
+        checkedList.forEach((item) => {
+          if (item !== target) searchParams.append(key, item);
+        });
+      };
+
+      switch (programType) {
+        case PROGRAM_QUERY_KEY.CLASSIFICATION: {
+          const filterKey = getKeyByValue(PROGRAM_FILTER_CLASSIFICATION, value);
+          // 체크된 상태일 때
+          if (filterClassification[filterKey as filterClassificationkey]) {
+            classificationDispatch({ type: 'uncheck', value: filterKey });
+            deleteParam(filterKey as string, PROGRAM_QUERY_KEY.CLASSIFICATION);
+          } else {
+            // 체크가 안된 상태일 때
+            searchParams.append(
+              PROGRAM_QUERY_KEY.CLASSIFICATION,
+              filterKey as string,
+            );
+            classificationDispatch({ type: 'check', value: filterKey });
+          }
+          break;
+        }
+
+        case PROGRAM_QUERY_KEY.TYPE: {
+          const filterKey = getKeyByValue(PROGRAM_FILTER_TYPE, value);
+          const isChecked = filterType[filterKey as filterTypekey];
+
+          // 파라미터 설정
+          searchParams.delete(PROGRAM_QUERY_KEY.TYPE);
+          typeDispatch({ type: 'init' });
+          if (!isChecked) {
+            searchParams.set(PROGRAM_QUERY_KEY.TYPE, filterKey as string);
+            typeDispatch({ type: 'check', value: filterKey });
+          }
+          break;
+        }
+
+        case PROGRAM_QUERY_KEY.STATUS: {
+          const filterKey = getKeyByValue(PROGRAM_FILTER_STATUS, value);
+          const isChecked = filterStatus[filterKey as filterStatuskey];
+          // 체크된 상태일 때
+          if (isChecked) {
+            statusDispatch({ type: 'uncheck', value: filterKey });
+            deleteParam(filterKey as string, PROGRAM_QUERY_KEY.STATUS);
+          } else {
+            // 체크가 안된 상태일 때
+            searchParams.append(PROGRAM_QUERY_KEY.STATUS, filterKey as string);
+            statusDispatch({ type: 'check', value: filterKey });
+          }
+          break;
+        }
+      }
+      resetPageable();
+      setSearchParams(searchParams);
+    },
+    [
+      filterClassification,
+      filterStatus,
+      filterType,
+      searchParams,
+      setSearchParams,
+    ],
+  );
+
+  // 필터링 초기화
+  const resetFilter = () => {
+    typeDispatch({ type: 'init' });
+    classificationDispatch({ type: 'init' });
+    statusDispatch({ type: 'init' });
+    searchParams.delete(PROGRAM_QUERY_KEY.CLASSIFICATION);
+    searchParams.delete(PROGRAM_QUERY_KEY.TYPE);
+    searchParams.delete(PROGRAM_QUERY_KEY.STATUS);
+    setSearchParams(searchParams);
+  };
+
+  const cancelFilter = (key: string, value: string) => {
+    // 파라미터 하나 삭제
+    const deleteParam = (target: string, key: string) => {
+      const checkedList = [...searchParams.getAll(key)];
+      searchParams.delete(key);
+      checkedList.forEach((item) => {
+        if (item !== target) searchParams.append(key, item);
+      });
+    };
+
+    switch (key) {
+      case PROGRAM_QUERY_KEY.CLASSIFICATION: {
+        const filterKey = getKeyByValue(PROGRAM_FILTER_CLASSIFICATION, value);
+        classificationDispatch({ type: 'uncheck', value: filterKey });
+        deleteParam(filterKey as string, PROGRAM_QUERY_KEY.CLASSIFICATION);
+        break;
+      }
+      case PROGRAM_QUERY_KEY.TYPE: {
+        searchParams.delete(PROGRAM_QUERY_KEY.TYPE);
+        typeDispatch({ type: 'init' });
+        break;
+      }
+      case PROGRAM_QUERY_KEY.STATUS: {
+        const filterKey = getKeyByValue(PROGRAM_FILTER_STATUS, value);
+        statusDispatch({ type: 'uncheck', value: filterKey });
+        deleteParam(filterKey as string, PROGRAM_QUERY_KEY.STATUS);
+        break;
+      }
+    }
+    resetPageable();
+    setSearchParams(searchParams);
+  };
+
+  // 페이지 상태 관리
+  const [pageable, setPageable] = useState(initialPageable);
+  const [pageInfo, setPageInfo] = useState(initialPageInfo);
+
+  // 프로그램 리스트 상태 관리
+  const [programList, setProgramList] = useState<IProgram[]>([]);
+
+  // 프로그램 리스트 가져오기
+  const getProgramList = async () => {
+    const pageableQuery = Object.entries({
+      ...pageable,
+    })?.map(([key, value]) => `${key}=${value}`);
+    try {
+      const res = await axios.get(
+        `/program?${pageableQuery.join('&')}&${searchParams.toString()}`,
+      );
+      if (res.status === 200) {
+        setProgramList(res.data.data.programList);
+        setPageInfo(res.data.data.pageInfo);
+        return res.data.data;
+      }
+      throw new Error(res.data.status, res.data.message);
+    } catch (error) {
+      console.error(error);
+      alert(error);
+    }
+  };
+  const { isSuccess, isFetching, isLoading } = useQuery({
+    queryKey: ['program', pageable.page, searchParams.toString()],
+    queryFn: getProgramList,
+  });
+
+  useEffect(() => {
+    if (isLoading || isFetching) {
+      setLoading(true);
+    }
+  }, [isLoading, isFetching]);
+
+  useEffect(() => {
+    if (loading) {
+      const timer = setTimeout(() => setLoading(false), 300);
+      return () => clearTimeout(timer);
+    }
+  }, [loading]);
 
   return (
-    <>
-      <div className={classes.page}>
-        <main className={classes.main}>
-          <section className={classes.filter}>
-            <ul className={classes.categoryGroup}>
-              <li
-                className={cn(classes.category, {
-                  [classes.active]: category === 'ALL',
-                })}
-              >
-                <Link to="/program">전체 프로그램</Link>
-              </li>
-              <li
-                className={cn(classes.category, {
-                  [classes.active]: category === 'CHALLENGE',
-                })}
-              >
-                <Link to="/program?category=CHALLENGE">챌린지</Link>
-              </li>
-              <li
-                className={cn(classes.category, {
-                  [classes.active]: category === 'BOOTCAMP',
-                })}
-              >
-                <Link to="/program?category=BOOTCAMP">부트캠프</Link>
-              </li>
-              <li
-                className={cn(classes.category, {
-                  [classes.active]: category === 'LETS_CHAT',
-                })}
-              >
-                <Link to="/program?category=LETS_CHAT">렛츠챗</Link>
-              </li>
-            </ul>
-          </section>
-          <section className={classes.openedPrograms}>
-            <div className={classes.content}>
-              <h2 className={classes.sectionTitle}>현재 모집중이에요</h2>
-              <p className={classes.sectionDescription}>
-                아래에서 모집중인 프로그램을 확인해보세요!
-              </p>
-              {loading ? (
-                <CardListSlider>
-                  <CardListPlaceholder />
-                </CardListSlider>
-              ) : !programs || programs.length === 0 ? (
-                <CardListSlider isEmpty={true}>
-                  <CardListPlaceholder>
-                    현재 진행 중인 프로그램이 없습니다.
-                  </CardListPlaceholder>
-                </CardListSlider>
-              ) : (
-                <CardListSlider className={classes.programList}>
-                  {programs
-                    .filter((program: any) => program.status === 'OPEN')
-                    .map((program: any) => (
-                      <ProgramCard
-                        key={program.id}
-                        to={`/program/detail/${program.id}`}
-                      >
-                        <div className="card-top">
-                          <h2>{typeToText[program.type]}</h2>
-                          <h3>{program.title}</h3>
-                        </div>
-                        <div className="card-bottom">
-                          <div className="card-bottom-item">
-                            <strong>모집 마감</strong>
-                            <span>{formatDateString(program.dueDate)}</span>
-                          </div>
-                          <div className="card-bottom-item">
-                            <strong>시작 일자</strong>
-                            <span>{formatDateString(program.startDate)}</span>
-                          </div>
-                        </div>
-                      </ProgramCard>
-                    ))}
-                </CardListSlider>
-              )}
+    <div className={`flex ${isOpen ? 'overflow-hidden' : ''}`}>
+      {/* 필터링 사이드바 */}
+      <FilterSideBar
+        setIsOpen={setIsOpen}
+        isOpen={isOpen}
+        handleClick={handleClickCheckbox}
+        filterType={filterType}
+        filterClassification={filterClassification}
+        filterStatus={filterStatus}
+      />
+      <main
+        className={clsx(
+          'flex w-full flex-col items-center gap-4 px-5 py-8 md:gap-16 md:px-10 lg:px-[10%]',
+        )}
+      >
+        {/* 상단 필터 */}
+        <section className="flex w-full flex-col gap-3 md:flex-row">
+          <div className="flex items-center justify-between">
+            <div
+              onClick={() => setIsOpen(true)}
+              className="flex cursor-pointer items-center gap-2 md:w-max md:px-5 lg:hidden"
+            >
+              <img
+                className="w-4 md:w-6"
+                src="/icons/filter.svg"
+                alt="필터 아이콘"
+              />
+              <h1 className="text-1.125-semibold md:text-1.25-semibold text-neutral-40">
+                필터
+              </h1>
             </div>
-          </section>
-          <section className={classes.closedPrograms}>
-            <div className={classes.content}>
-              <h2 className={classes.sectionTitle}>아쉽지만 마감되었어요</h2>
-              <p className={classes.sectionDescription}>
-                더 많은 프로그램들이 준비되어 있으니 걱정마세요!
-              </p>
-              {loading || closedPrograms.length === 0 ? (
-                <div className={classes.wrapper}>
-                  <div className={classes.placeholder} />
-                </div>
-              ) : (
-                <div className={classes.wrapper}>
-                  <div className={classes.cardList}>
-                    {closedPrograms.map((program: any) => (
-                      <ClosedCard key={program.id} program={program} />
-                    ))}
-                  </div>
-                </div>
-              )}
+            {/* 모바일: 초기화 버튼 */}
+            <div
+              onClick={resetFilter}
+              className="flex cursor-pointer items-center gap-2 md:hidden"
+            >
+              <img
+                className="w-4"
+                src="/icons/redo.svg"
+                alt="필터 초기화 아이콘"
+              />
+              <span className="text-0.75-medium w-9 text-neutral-40">
+                초기화
+              </span>
             </div>
-          </section>
-        </main>
-      </div>
-    </>
+          </div>
+          <div className="flex h-fit w-full flex-nowrap items-center gap-4 overflow-auto py-4 md:min-h-[4.6rem] md:rounded-lg md:bg-neutral-90 md:px-5 md:py-2">
+            {/* 초기화 버튼 */}
+            <div
+              onClick={resetFilter}
+              className="hidden min-w-max cursor-pointer items-center gap-2 md:flex"
+            >
+              <img
+                className="w-5"
+                src="/icons/redo.svg"
+                alt="필터 초기화 아이콘"
+              />
+              <div className="text-0.875-semibold text-neutral-40">초기화</div>
+            </div>
+            {/* 파라미터에 따라 필터 표시 */}
+            {searchParams
+              .getAll(PROGRAM_QUERY_KEY.CLASSIFICATION)
+              .map((item) => (
+                <FilterItem
+                  programType={PROGRAM_QUERY_KEY.CLASSIFICATION}
+                  handleClick={cancelFilter}
+                  key={item}
+                  caption={
+                    PROGRAM_FILTER_CLASSIFICATION[
+                      item as filterClassificationkey
+                    ]
+                  }
+                />
+              ))}
+            {searchParams.get(PROGRAM_QUERY_KEY.TYPE) && (
+              <FilterItem
+                programType={PROGRAM_QUERY_KEY.TYPE}
+                handleClick={cancelFilter}
+                key={PROGRAM_QUERY_KEY.TYPE}
+                caption={
+                  PROGRAM_FILTER_TYPE[
+                    searchParams.get(PROGRAM_QUERY_KEY.TYPE)! as filterTypekey
+                  ]
+                }
+              />
+            )}
+            {searchParams.getAll(PROGRAM_QUERY_KEY.STATUS).map((item) => (
+              <FilterItem
+                programType={PROGRAM_QUERY_KEY.STATUS}
+                handleClick={cancelFilter}
+                key={item}
+                caption={PROGRAM_FILTER_STATUS[item as filterStatuskey]}
+              />
+            ))}
+          </div>
+        </section>
+        {loading || isLoading || isFetching ? (
+          <LoadingContainer text="프로그램 조회 중" />
+        ) : isSuccess && programList ? (
+          programList.length < 1 ? (
+            <>
+              <p className="text-1 py-2 text-center text-neutral-0/40">
+                혹시, 찾으시는 프로그램이 없으신가요?
+                <span className="flex flex-col md:flex-row md:justify-center md:gap-1">
+                  <span>
+                    출시 알림 신청을 통해 가장 먼저 신규 프로그램 소식을
+                    받아보세요.
+                  </span>
+                </span>
+              </p>
+              <section className="grid w-full grid-cols-2 gap-x-4 gap-y-5 md:grid-cols-3 md:gap-4">
+                <EmptyCardList />
+              </section>
+            </>
+          ) : (
+            <>
+              <section className="min-h-2/4 mb-4 grid grid-cols-2 gap-x-4 gap-y-5 md:mb-0 md:grid-cols-3 md:gap-4 xl:grid-cols-4">
+                {programList.map((program: IProgram) => (
+                  <ProgramCard
+                    key={
+                      program.programInfo.programType + program.programInfo.id
+                    }
+                    program={program}
+                  />
+                ))}
+              </section>
+              <MuiPagination
+                page={pageable.page}
+                pageInfo={pageInfo}
+                setPageable={setPageable}
+              />
+            </>
+          )
+        ) : (
+          <></>
+        )}
+        <Banner />
+      </main>
+    </div>
   );
 };
 

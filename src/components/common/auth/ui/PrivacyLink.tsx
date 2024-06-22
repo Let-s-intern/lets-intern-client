@@ -5,12 +5,12 @@ interface PrivacyLinkProps {
 
 const PrivacyLink = ({ children, onClick }: PrivacyLinkProps) => {
   return (
-    <b
-      className="cursor-pointer font-medium text-primary underline"
+    <button
+      className="shrink-0 cursor-pointer text-neutral-50"
       onClick={onClick}
     >
       {children}
-    </b>
+    </button>
   );
 };
 

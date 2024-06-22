@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
 
 import Table from '../../../components/admin/ui/table/regacy/Table';
 import TableHead from '../../../components/admin/program/programs/table-content/TableHead';
@@ -10,79 +11,25 @@ import Heading from '../../../components/admin/ui/heading/Heading';
 import ActionButton from '../../../components/admin/ui/button/ActionButton';
 import AdminPagination from '../../../components/admin/ui/pagination/AdminPagination';
 import axios from '../../../utils/axios';
-import classes from './Programs.module.scss';
 
 const Programs = () => {
   const [searchParams] = useSearchParams();
-  const [programList, setProgramList] = useState([]);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<unknown>(null);
-  const [maxPage, setMaxPage] = useState(1);
 
   const sizePerPage = 10;
+  const currentPage = searchParams.get('page') || 1;
 
-  useEffect(() => {
-    setLoading(true);
-    const currentPage = searchParams.get('page');
-    const params = {
-      page: currentPage,
-      size: sizePerPage,
-    };
-    axios
-      .get('/program/admin', { params })
-      .then((res) => {
-        setProgramList(res.data.programList);
-        setMaxPage(res.data.pageInfo.totalPages);
-      })
-      .catch((err) => {
-        setError(err);
-      })
-      .finally(() => {
-        setLoading(false);
+  const { data, isLoading, error } = useQuery({
+    queryKey: ['program', 'admin', { page: currentPage, size: sizePerPage }],
+    queryFn: async () => {
+      const res = await axios.get('/program/admin', {
+        params: { page: currentPage, size: sizePerPage },
       });
-  }, [searchParams]);
+      return res.data;
+    },
+  });
 
-  const fetchEditProgramVisible = (programId: number, visible: boolean) => {
-    axios
-      .patch(`/program/${programId}`, {
-        isVisible: !visible,
-      })
-      .then(() => {
-        const newProgramList: any = programList.map((program: any) => {
-          if (program.id === programId) {
-            return {
-              ...program,
-              isVisible: !visible,
-              isApproved: !visible,
-            };
-          }
-          return program;
-        });
-        setProgramList(newProgramList);
-      })
-      .catch((err) => {
-        setError(err);
-      });
-  };
-
-  const fetchDelete = (programId: number) => {
-    axios
-      .delete(`/program/${programId}`)
-      .then(() => {
-        setProgramList(programList.filter((p: any) => p.id !== programId));
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  };
-
-  if (loading) {
-    return <div className="p-8"></div>;
-  }
-
-  if (error) {
-    return <div className="p-8">에러 발생</div>;
-  }
+  const programList = data?.data?.programList || [];
+  const maxPage = data?.data?.pageInfo?.totalPages || 1;
 
   return (
     <div className="p-8">
@@ -92,19 +39,25 @@ const Programs = () => {
           등록
         </ActionButton>
       </Header>
-      <main className={classes.main}>
-        <Table>
-          <TableHead />
-          <TableBody
-            programList={programList}
-            fetchDelete={fetchDelete}
-            fetchEditProgramVisible={fetchEditProgramVisible}
-          />
-        </Table>
-        {programList.length > 0 && (
-          <div className={classes.pagination}>
-            <AdminPagination maxPage={maxPage} />
-          </div>
+      <main>
+        {isLoading ? (
+          <div className="py-4 text-center">로딩 중...</div>
+        ) : error ? (
+          <div className="py-4 text-center">에러 발생</div>
+        ) : programList.length === 0 ? (
+          <div className="py-4 text-center">프로그램이 없습니다.</div>
+        ) : (
+          <>
+            <Table>
+              <TableHead />
+              <TableBody programList={programList} />
+            </Table>
+            {programList.length > 0 && (
+              <div className="mt-4">
+                <AdminPagination maxPage={maxPage} />
+              </div>
+            )}
+          </>
         )}
       </main>
     </div>

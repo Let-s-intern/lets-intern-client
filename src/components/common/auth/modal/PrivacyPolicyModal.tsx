@@ -1,7 +1,6 @@
 import cn from 'classnames';
 
 import PrivacyLink from '../ui/PrivacyLink';
-import styles from './PrivacyPolicyModal.module.scss';
 
 interface PrivacyPolicyModalProps {
   showModal: boolean;
@@ -30,30 +29,48 @@ const PrivacyPolicyModal = ({
           <h2 className="mb-4 text-center text-2xl font-semibold">
             개인정보 수집 및 이용 동의서
           </h2>
-          <div className="grid grid-cols-1 border border-black sm:grid-cols-2 md:grid-cols-4">
-            <div className={styles.tableItem}>
-              <div className={styles.thead}>수집목적</div>
-              <div className={styles.tbody}>
-                회원가입 및 서비스 이용, 고지사항 전달
-              </div>
-            </div>
-            <div className={styles.tableItem}>
-              <div className={styles.thead}>수집항목</div>
-              <div className={styles.tbody}>
-                이메일주소, 이름, 휴대폰 번호, 비밀번호
-              </div>
-            </div>
-            <div className={styles.tableItem}>
-              <div className={styles.thead}>수집기간</div>
-              <div className={styles.tbody}>회원 탈퇴 후 30일까지</div>
-            </div>
-            <div className={styles.tableItem}>
-              <div className={styles.thead}>수집근거</div>
-              <div className={styles.tbody}>개인정보 보호법 제 15조 제1항</div>
-            </div>
-          </div>
+          <p className="my-4 w-full">
+            아이엔지는 렛츠커리어 서비스 회원가입, 고객상담, 고지사항 전달
+            등을 위해 아래와 같이 개인정보를 수집*이용합니다.
+          </p>
+          <table className="w-full table-fixed border-collapse text-sm">
+            <thead>
+              <tr>
+                <th className="border border-neutral-200 px-2 py-1 text-start font-semibold">
+                  수집목적
+                </th>
+                <th className="border border-neutral-200 px-2 py-1 text-start font-semibold">
+                  수집항목
+                </th>
+                <th className="border border-neutral-200 px-2 py-1 text-start font-semibold">
+                  수집기간
+                </th>
+                <th className="border border-neutral-200 px-2 py-1 text-start font-semibold">
+                  수집근거
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td className="break-keep border border-neutral-200 p-2">
+                  - 회원가입 및 서비스 이용
+                  <br />- 고지사항 전달(프로그램 참여 방법 및 일정, 장소 안내 /
+                  후기작성)
+                </td>
+                <td className="break-keep border border-neutral-200 p-2">
+                  이메일주소, 이름, 휴대폰 번호, 비밀번호
+                </td>
+                <td className="break-keep border border-neutral-200 p-2">
+                  회원 탈퇴 후 30일까지
+                </td>
+                <td className="break-keep border border-neutral-200 p-2">
+                  개인정보 보호법 제 15조 제1항
+                </td>
+              </tr>
+            </tbody>
+          </table>
           <p className="mt-4">
-            귀하는 렛츠인턴 서비스 이용에 필요한 개인정보 수집·이용에 동의하지
+            귀하는 렛츠커리어 서비스 이용에 필요한 개인정보 수집*이용에 동의하지
             않을 수 있으나, 동의를 거부할 경우 회원제 서비스 이용이 불가합니다.
           </p>
           <p>
@@ -62,7 +79,7 @@ const PrivacyPolicyModal = ({
               onClick={(e) => {
                 e.stopPropagation();
                 window.open(
-                  'https://letsintern.notion.site/4e21a3c6f42a409da877a7b5d926f158?pvs=25',
+                  'https://letsintern.notion.site/4e21a3c6f42a409da877a7b5d926f158',
                   '_blank',
                 );
               }}

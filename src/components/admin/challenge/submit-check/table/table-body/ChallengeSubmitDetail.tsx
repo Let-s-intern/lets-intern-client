@@ -1,116 +1,108 @@
-import { useEffect, useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
-
-import TableHead from '../../../submit-check-detail/table/table-head/TableHead';
+import { useState } from 'react';
+import { Attendance, Mission } from '../../../../../../schema';
 import TableRow from '../../../submit-check-detail/table/table-body/TableRow';
-import axios from '../../../../../../utils/axios';
+import TableHead from '../../../submit-check-detail/table/table-head/TableHead';
 import Button from '../../../ui/button/Button';
-import AccountDownloadButton from '../../top-button/AccountDownloadButton';
-import RefundChangeButton from '../../top-button/RefundChangeButton';
+import {
+  missionStatusToText,
+  newMissionStatusToText,
+} from '../../../../../../utils/convert';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import axios from '../../../../../../utils/axios';
 
 interface Props {
-  mission: any;
+  mission: Mission;
   setIsDetailShown: (isDetailShown: boolean) => void;
+  attendances: Attendance[];
+  refetch: () => void;
 }
 
-const ChallengeSubmitDetail = ({ mission, setIsDetailShown }: Props) => {
-  const [missionDetail, setMissionDetail] = useState();
-  const [attendanceList, setAttendanceList] = useState<any>();
-  const [isCheckedList, setIsCheckedList] = useState<any>([]);
-  const [originalAttendanceList, setOriginalAttendanceList] = useState<any>();
-  const [resultFilter, setResultFilter] = useState('');
-  const [statusFilter, setStatusFilter] = useState('');
+const ChallengeSubmitDetail = ({
+  mission,
+  setIsDetailShown,
+  attendances,
+  refetch,
+}: Props) => {
+  const queryClient = useQueryClient();
 
-  const getMission = useQuery({
-    queryKey: ['mission', 'admin', 'detail', mission.id],
-    queryFn: async () => {
-      const res = await axios.get(`/mission/admin/detail/${mission.id}`);
-      const data = res.data;
-      setMissionDetail(data);
-      console.log(data);
-      return data;
+  const [isCheckedList, setIsCheckedList] = useState<Array<number>>([]);
+  const [resultFilter, setResultFilter] = useState<Attendance['result'] | null>(
+    null,
+  );
+  const [statusFilter, setStatusFilter] = useState<Attendance['status'] | null>(
+    null,
+  );
+
+  const editMissionStatus = useMutation({
+    mutationFn: async (status: string) => {
+      const res = await axios.patch(`/mission/${mission.id}`, {
+        status,
+      });
+      return res.data;
+    },
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({
+        queryKey: ['mission'],
+      });
     },
   });
 
-  const getAttendanceList = useQuery({
-    queryKey: ['attendance', 'admin', { missionId: mission.id }],
-    queryFn: async () => {
-      const res = await axios.get(`/attendance/admin`, {
-        params: { missionId: mission.id },
-      });
-      const data = res.data;
-      setAttendanceList(data.attendanceList);
-      setOriginalAttendanceList(data.attendanceList);
-      console.log(data);
-      return data;
-    },
-    refetchOnWindowFocus: false,
-  });
-
-  useEffect(() => {
-    if (!attendanceList) return;
-    let filteredList = [...originalAttendanceList];
-    if (resultFilter) {
-      filteredList = filteredList.filter((attendance: any) => {
-        return attendance.result === resultFilter;
-      });
-    }
-    if (statusFilter) {
-      filteredList = filteredList.filter((attendance: any) => {
-        return attendance.status === statusFilter;
-      });
-    }
-    setAttendanceList(filteredList);
-    setIsCheckedList([]);
-  }, [resultFilter, statusFilter]);
-
-  const isLoading =
-    getAttendanceList.isLoading ||
-    getMission.isLoading ||
-    !attendanceList ||
-    !missionDetail;
+  const handleChangeMissionStatus = async (
+    e: React.ChangeEvent<HTMLSelectElement>,
+  ) => {
+    editMissionStatus.mutate(e.target.value);
+  };
 
   return (
-    <>
-      {!isLoading && (
-        <div className="rounded">
-          <div className="flex justify-between bg-[#F1F1F1] px-6 py-3">
-            <RefundChangeButton
-              isCheckedList={isCheckedList}
+    <div className="rounded">
+      <div className="flex justify-end bg-[#F1F1F1] px-6 py-3">
+        {/* <RefundChangeButton
+          isCheckedList={isCheckedList}
+          setIsCheckedList={setIsCheckedList}
+        /> */}
+        {/* <AccountDownloadButton mission={mission} /> */}
+        <select
+          name="missionStatusType"
+          id="missionStatusType"
+          className="rounded-sm border border-gray-400 bg-transparent px-2 py-1 text-sm"
+          onChange={handleChangeMissionStatus}
+        >
+          {Object.keys(newMissionStatusToText).map((key) => (
+            <option key={key} value={key}>
+              {newMissionStatusToText[key]}
+            </option>
+          ))}
+        </select>
+      </div>
+      <div className="">
+        <div className="flex flex-col bg-[#F7F7F7]">
+          <TableHead
+            attendances={attendances ?? []}
+            isCheckedList={isCheckedList}
+            setIsCheckedList={setIsCheckedList}
+            resultFilter={resultFilter}
+            setResultFilter={setResultFilter}
+            statusFilter={statusFilter}
+            setStatusFilter={setStatusFilter}
+          />
+          {attendances?.map((attendance, index) => (
+            <TableRow
+              key={attendance.id}
+              attendance={attendance}
+              missionDetail={mission}
+              th={index + 1}
+              bgColor={(index + 1) % 2 === 1 ? 'DARK' : 'LIGHT'}
+              isChecked={isCheckedList.includes(attendance.id)}
               setIsCheckedList={setIsCheckedList}
+              refetch={refetch}
             />
-            <AccountDownloadButton mission={mission} />
-          </div>
-          <div className="">
-            <div className="flex flex-col bg-[#F7F7F7]">
-              <TableHead
-                attendanceList={attendanceList}
-                isCheckedList={isCheckedList}
-                setIsCheckedList={setIsCheckedList}
-                resultFilter={resultFilter}
-                setResultFilter={setResultFilter}
-                statusFilter={statusFilter}
-                setStatusFilter={setStatusFilter}
-              />
-              {attendanceList.map((attendance: any, index: number) => (
-                <TableRow
-                  key={attendance.id}
-                  attendance={attendance}
-                  missionDetail={missionDetail}
-                  th={index + 1}
-                  bgColor={(index + 1) % 2 === 1 ? 'DARK' : 'LIGHT'}
-                  isChecked={isCheckedList.includes(attendance.id)}
-                  setIsCheckedList={setIsCheckedList}
-                />
-              ))}
-            </div>
-          </div>
-          <div className="mb-2 mt-4 flex justify-center">
-            <Button onClick={() => setIsDetailShown(false)}>닫기</Button>
-          </div>
+          ))}
         </div>
-      )}
-    </>
+      </div>
+      <div className="mb-2 mt-4 flex justify-center">
+        <Button onClick={() => setIsDetailShown(false)}>닫기</Button>
+      </div>
+    </div>
   );
 };
 

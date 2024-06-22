@@ -1,69 +1,71 @@
-import { useEffect, useState } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-
-import axios from '../../../../../utils/axios';
 import clsx from 'clsx';
+import { useEffect, useState } from 'react';
+import { MyDailyMission } from '../../../../../schema';
+import axios from '../../../../../utils/axios';
 import AlertModal from '../../../../ui/alert/AlertModal';
-import { DailyMission } from '../../../../../interfaces/interface';
 
 interface Props {
-  dailyMission: DailyMission;
+  myDailyMission: MyDailyMission;
 }
 
-const DailyMissionSubmitSection = ({ dailyMission }: Props) => {
+const DailyMissionSubmitSection = ({ myDailyMission }: Props) => {
   const queryClient = useQueryClient();
 
-  const [value, setValue] = useState(
-    dailyMission.attended ? dailyMission.attendanceLink : '',
-  );
+  const attendanceLink = myDailyMission.attendanceInfo.link;
+  const attended = myDailyMission.attendanceInfo.submitted;
+  const attendanceId = myDailyMission.attendanceInfo.id;
+
+  const [value, setValue] = useState(attendanceLink ?? '');
   const [isLinkChecked, setIsLinkChecked] = useState(false);
-  const [isValidLinkValue, setIsValidLinkValue] = useState(
-    dailyMission.attended,
-  );
+  const [isValidLinkValue, setIsValidLinkValue] = useState(attended);
   const [isStartedHttp, setIsStartedHttp] = useState(false);
-  const [isEditing, setIsEditing] = useState(!dailyMission.attended);
+  const [isEditing, setIsEditing] = useState(
+    !myDailyMission.attendanceInfo.submitted,
+  );
   const [isAlertShown, setIsAlertShown] = useState(false);
 
   useEffect(() => {
+    const handleBeforeunload = (e: BeforeUnloadEvent) => {
+      if (!isEditing || value === myDailyMission.attendanceInfo.link) {
+        return;
+      }
+      e.preventDefault();
+    };
     window.addEventListener('beforeunload', handleBeforeunload);
 
     return () => {
       window.removeEventListener('beforeunload', handleBeforeunload);
     };
-  }, [isEditing, value]);
-
-  const handleBeforeunload = (e: BeforeUnloadEvent) => {
-    if (!isEditing || value === dailyMission.attendanceLink) return;
-    e.preventDefault();
-  };
+  }, [isEditing, myDailyMission.attendanceInfo.link, value]);
 
   const onConfirm = () => {
-    setValue(dailyMission.attendanceLink);
+    setValue(attendanceLink ?? '');
     setIsEditing(false);
   };
 
   const submitMissionLink = useMutation({
     mutationFn: async (linkValue: string) => {
       // 출석 링크 수정
-      if (dailyMission.attended) {
-        const res = await axios.patch(
-          `/attendance/${dailyMission.attendanceId}`,
-          {
-            link: linkValue,
-          },
-        );
+      if (attended) {
+        const res = await axios.patch(`/attendance/${attendanceId}`, {
+          link: linkValue,
+        });
         const data = res.data;
         return data;
       }
 
-      const res = await axios.post(`/attendance/${dailyMission.id}`, {
-        link: linkValue,
-      });
+      const res = await axios.post(
+        `/attendance/${myDailyMission.dailyMission.id}`,
+        {
+          link: linkValue,
+        },
+      );
       const data = res.data;
       return data;
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['programs'] });
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ['challenge'] });
     },
   });
 
@@ -95,8 +97,9 @@ const DailyMissionSubmitSection = ({ dailyMission }: Props) => {
 
   const cancelMisiionLinkChange = () => {
     // 입력값이 이전 링크와 다를 때만 팝업 띄우기
-    if (dailyMission.attendanceLink !== value) setIsAlertShown(true);
-    else setIsEditing(false);
+    if (attendanceLink !== value) {
+      setIsAlertShown(true);
+    } else setIsEditing(false);
   };
 
   return (
@@ -169,7 +172,7 @@ const DailyMissionSubmitSection = ({ dailyMission }: Props) => {
         ))}
 
       <div className="mt-6 text-right">
-        {dailyMission.attendanceLink && (
+        {attendanceLink && (
           <button
             type="button"
             className="text-1-semibold mr-3 rounded-xxs border border-neutral-75 bg-static-100 px-5 py-2 text-center disabled:bg-gray-50 disabled:text-gray-600"

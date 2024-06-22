@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
-import TableRowDetailMenu from './TableRowDetailMenu';
+import TableRowDetail from './TableRowDetailMenu';
 import TableRowEditorMenu from './TableRowEditorMenu';
 import TableRowContent from './TableRowContent';
 import axios from '../../../../../../../utils/axios';
@@ -98,9 +98,9 @@ const TableBodyRow = ({ th, mission }: Props) => {
       />
       {menuShown === 'DETAIL'
         ? !isLoading && (
-            <TableRowDetailMenu
+            <TableRowDetail
               mission={missionDetail}
-              setMenuShown={setMenuShown}
+              setState={setMenuShown}
             />
           )
         : menuShown === 'EDIT' &&
