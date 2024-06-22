@@ -1,4 +1,3 @@
-import { useEffect } from 'react';
 import { IProgram } from '../../../../../interfaces/interface';
 import { PROGRAM_STATUS } from '../../../../../utils/programConst';
 import ProgramStatusTag from '../../../program/programs/card/ProgramStatusTag';
@@ -10,10 +9,7 @@ interface ProgramOverviewListItemProps {
 
 const ProgramListItem = ({ program }: ProgramOverviewListItemProps) => {
   const navigate = useNavigate();
-  useEffect(() => {
-    console.log(program);
-  
-  }, [program]);
+
   const formatDate = (date: string) => {
     return new Date(date).toLocaleDateString().replaceAll(' ', '').slice(0, -1);
   };
@@ -25,7 +21,7 @@ const ProgramListItem = ({ program }: ProgramOverviewListItemProps) => {
       }}
     >
       <img
-        className="h-[7.5rem] w-[7.5rem] rounded-xs md:h-40 md:w-44"
+        className="h-[7.5rem] w-[7.5rem] rounded-xs md:h-40 md:w-44 object-cover"
         src={program.programInfo.thumbnail}
         alt="프로그램 썸네일"
       />

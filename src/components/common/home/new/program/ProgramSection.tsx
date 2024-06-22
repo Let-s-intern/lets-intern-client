@@ -12,7 +12,7 @@ const PROGRAM_SECTION = {
 const programList: IProgramGridItem[] = [
   {
     keyword: 'Start',
-    title: '커리어 탐색 단계',
+    title: ['커리어 탐색', '단계'],
     descriptionList: [
       '아직 본인만의',
       '커리어 로드맵을',
@@ -26,7 +26,7 @@ const programList: IProgramGridItem[] = [
   },
   {
     keyword: 'CV',
-    title: '서류 준비 단계',
+    title: ['서류 준비','단계'],
     descriptionList: ['이력서, 포트폴리오', '준비가 어려운', '취업준비생'],
     bgColor: 'bg-gradient-cv',
     borderColor: 'border-[#F1F1FF]',
@@ -36,7 +36,7 @@ const programList: IProgramGridItem[] = [
   },
   {
     keyword: 'Interview',
-    title: '면접 준비 단계',
+    title: ['면접 준비', '단계'],
     descriptionList: [
       '서류를 합격했지만,',
       '면접 준비에 어려움을 겪는',
@@ -50,7 +50,7 @@ const programList: IProgramGridItem[] = [
   },
   {
     keyword: 'Growth',
-    title: '합격 후 성장 단계',
+    title: ['합격 후', '성장 단계'],
     descriptionList: ['취뽀후 계속해서', '성장하고 싶은 누구나'],
     bgColor: 'bg-gradient-growth',
     borderColor: 'border-[#CCD7FF]',
@@ -74,7 +74,7 @@ const ProgramSection = () => {
       <ul className="mt-6 grid grid-cols-2 gap-4 lg:grid-cols-4">
         {programList.map((program) => (
           <ProgramGridItem
-            key={program.title}
+            key={program.keyword}
             program={program}
             link={program.link}
           />

@@ -29,7 +29,7 @@ const TopBanner = () => {
   }
 
   return isShow ? (
-    <section className="mt-3 bg-neutral-0 md:px-5 py-3"
+    <section className="bg-neutral-0 md:px-5 py-3"
       style={{
         backgroundColor: data?.colorCode,
         color: data?.textColorCode,

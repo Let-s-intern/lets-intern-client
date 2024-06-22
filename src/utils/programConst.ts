@@ -1,5 +1,5 @@
 export const PROGRAM_STATUS = {
-  PREV: '사전알림 신청',
+  PREV: '모집 예정',
   PROCEEDING: '모집 중',
   POST: '마감',
 } as const;
@@ -18,8 +18,8 @@ export const PROGRAM_TYPE = {
 } as const;
 
 export const PROGRAM_FILTER_STATUS = {
-  PREV: '모집 예정',
   PROCEEDING: '모집 중',
+  PREV: '모집 예정',
   POST: '모집 종료',
 };
 

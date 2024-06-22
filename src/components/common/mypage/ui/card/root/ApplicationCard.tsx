@@ -3,6 +3,7 @@ import clsx from 'clsx';
 import LinkButton from '../../button/LinkButton';
 import DeleteMenu from '../menu/DeleteMenu';
 import { ApplicationType } from '../../../../../../pages/common/mypage/Application';
+import Button from '../../../../ui/button/Button';
 
 interface ApplicationCardProps {
   application: ApplicationType;
@@ -78,18 +79,25 @@ const ApplicationCard = ({
           </div>
         </div>
       </div>
+      {
+        application.status === 'WAITING' && (
+          <LinkButton to={`/`}>
+            결제 정보 확인
+          </LinkButton>
+        )
+      }
       {application.programType === 'CHALLENGE' &&
         application.status === 'IN_PROGRESS' &&
         showChallengeButton && (
           <LinkButton to={`/challenge/${application.programId}`}>
-            챌린지로 이동
+            챌린지 대시보드
           </LinkButton>
         )}
       {hasReviewButton && (
         <LinkButton
           to={`/mypage/review/${
             reviewType === 'CREATE' ? 'new' : 'edit'
-          }/program/${application.programId}?application=${application.id}`}
+          }/program/${application.programType}/${application.programId}?application=${application.id}`}
         >
           {reviewType === 'CREATE' ? '후기 작성하기' : '수정하기'}
         </LinkButton>

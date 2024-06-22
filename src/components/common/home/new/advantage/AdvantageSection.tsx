@@ -13,7 +13,7 @@ const AdvantageSection = () => {
       imageAlt: '렛츠커리어 소개 2 이미지',
     },
     {
-      description: '주니어 네트워크를 통해 모두함께 성장할 수 있습니다.',
+      description: '주니어 네트워크를 통해 모두 함께 성장할 수 있습니다.',
       imageSrc: '/images/home/intro3.png',
       imageAlt: '렛츠커리어 소개 3 이미지',
     },

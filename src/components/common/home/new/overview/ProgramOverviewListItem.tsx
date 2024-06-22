@@ -7,6 +7,8 @@ import { useQuery } from '@tanstack/react-query';
 
 import axios from '../../../../../utils/axios';
 import { useState, useCallback } from 'react';
+import LoadingContainer from '../../../ui/loading/LoadingContainer';
+import EmptyContainer from '../../../ui/loading/EmptyContainer';
 
 export interface ProgramOverviewListItemProps {
   title: string;
@@ -76,6 +78,7 @@ const ProgramOverviewListItem = () => {
           endDate: endDate,
         },
       });
+      console.log('res.data.data.programList', res.data.data.programList)
       return res.data.data.programList;
     },
   });
@@ -87,10 +90,6 @@ const ProgramOverviewListItem = () => {
   const goToNextMonth = () => {
     setCurrent(nextMonth());
   };
-
-  if (isLoading) {
-    return <p>Loading...</p>;
-  }
 
   return (
     <div className="mt-6 overflow-hidden rounded-xs">
@@ -144,14 +143,33 @@ className={`w-5 ${
           </div>
         )}
       </div>
-      <ul className=" grid grid-cols-1 gap-4 md:grid-cols-2">
-        {data &&
-          data.map((program) => (
-            <ProgramListItem
-              key={program.programInfo.programType + program.programInfo.id}
-              program={program}
-            />
-          ))}
+      <ul className=" grid grid-cols-1 grid-rows-4 md:grid-rows-2 gap-4 md:grid-cols-2 overflow-y-scroll">
+        {
+          !data ? (
+            isLoading ? (
+              <div className='row-span-4 h-[536px] md:col-span-2 md:row-span-2 md:h-[380px] flex items-center justify-center'>
+                <LoadingContainer />
+              </div>
+            ) : (
+              <div className='row-span-4 h-[536px] md:col-span-2 md:row-span-2 md:h-[380px] flex items-center justify-center'>
+                <EmptyContainer />
+              </div>
+            )
+          ) : (
+            data.length < 1 ? (
+              <div className='row-span-4 h-[536px] md:col-span-2 md:row-span-2 md:h-[380px] flex items-center justify-center'>
+                <EmptyContainer />
+              </div>
+            ) : (
+              data.map((program) => (
+                <ProgramListItem
+                  key={program.programInfo.programType + program.programInfo.id}
+                  program={program}
+                />
+              ))
+            )
+          )
+        }
       </ul>
     </div>
   );

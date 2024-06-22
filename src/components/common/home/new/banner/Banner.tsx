@@ -13,7 +13,7 @@ const Banner = () => {
 
   useEffect(() => {
     const handleResize = () => {
-      setIsMobile(window.innerWidth < 768);
+      setIsMobile(window.innerWidth < 350);
     };
 
     window.addEventListener('resize', handleResize);

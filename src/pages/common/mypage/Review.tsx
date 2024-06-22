@@ -18,20 +18,7 @@ const Review = () => {
     queryKey: ['user', 'applications'],
     queryFn: async () => {
       const res = await axios.get('/user/applications');
-      // const tempApplicationList = res.data.data.applicationList;
-      // console.log(tempApplicationList);
-      // setWaitingApplicationList(
-      //   tempApplicationList.filter(
-      //     (application: ApplicationType) =>
-      //       application.status !== 'WAITING' && application.reviewId === null,
-      //   ),
-      // );
-      // setDoneApplicationList(
-      //   tempApplicationList.filter(
-      //     (application: ApplicationType) =>
-      //       application.status !== 'WAITING' && application.reviewId !== null,
-      //   ),
-      // );
+      console.log(res.data)
       return res.data;
     },
   });

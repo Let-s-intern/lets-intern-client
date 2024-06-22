@@ -15,11 +15,12 @@ const Banner = () => {
 
   const getBannerList = async () => {
     try {
-      const res = await axios.get(`/banner/admin?type=PROGRAM`);
+      const res = await axios.get(`/banner?type=PROGRAM`);
       if (res.status === 200) {
         const bannerList = res.data.data.bannerList as IBanner[];
+        // console.log('bannerList', bannerList);
         const filtered = bannerList.filter(
-          (banner: IBanner) => banner.isVisible,
+          (banner: IBanner) => banner.isValid,
         );
         setBannerList(filtered);
         return res.data;
@@ -69,7 +70,7 @@ const Banner = () => {
           >
             <img
               ref={imgRef}
-              className="w-full object-cover brightness-50"
+              className="w-full object-cover"
               src={banner.imgUrl}
               alt="배너 이미지"
             />

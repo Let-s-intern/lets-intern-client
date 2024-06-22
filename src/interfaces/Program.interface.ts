@@ -53,7 +53,7 @@ export interface IFilter {
 
 export interface IProgramGridItem {
   keyword: string;
-  title: string;
+  title: string[];
   descriptionList: string[];
   bgColor: string;
   borderColor: string;

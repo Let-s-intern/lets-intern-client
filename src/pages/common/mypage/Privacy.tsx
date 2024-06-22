@@ -5,8 +5,11 @@ import ChangePassword from '../../../components/common/mypage/privacy/section/Ch
 import MarketingAgree from '../../../components/common/mypage/privacy/section/MarketingAgree';
 import axios from '../../../utils/axios';
 import useAuthStore from '../../../store/useAuthStore';
+import UserDeleteModal from '../../../components/common/mypage/ui/modal/UserDeleteModal';
+import { useState } from 'react';
 
 const Privacy = () => {
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const { logout } = useAuthStore();
   const { mutate: tryDeleteUser } = useMutation({
     mutationFn: async () => {
@@ -30,11 +33,14 @@ const Privacy = () => {
       <MarketingAgree />
       <button
         className="mt-[24px] flex w-full items-center justify-center text-neutral-0/40"
-        onClick={() => tryDeleteUser()}
+        onClick={() => setIsDeleteModalOpen(true)}
       >
         회원 탈퇴
       </button>
+      {isDeleteModalOpen && <UserDeleteModal toggle={() => setIsDeleteModalOpen(false)} />}
+
     </main>
+    
   );
 };
 

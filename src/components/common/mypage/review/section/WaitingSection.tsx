@@ -13,7 +13,7 @@ const WaitingSection = ({ applicationList }: WaitingSectionProps) => {
   const [viewList, setViewList] = useState<ApplicationType[]>(applicationList.slice(0, 3));
   return (
     <section className="flex flex-col gap-6">
-      <h1 className="text-lg font-semibold">후기 작성하고 00 받아가세요!</h1>
+      <h1 className="text-lg font-semibold">프로그램 후기를 작성해주세요.</h1>
       <div className="flex gap-4 md:flex-col">
         {applicationList.length === 0 ? (
           <div className="flex w-full flex-col items-center gap-4 py-14">

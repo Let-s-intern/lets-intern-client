@@ -1,5 +1,6 @@
 interface CautionContentProps {
   contentIndex: number;
+  criticalNotice: string;
   setContentIndex: (contentIndex: number) => void;
   isCautionChecked: boolean;
   setIsCautionChecked: (isCautionChecked: boolean) => void;
@@ -7,6 +8,7 @@ interface CautionContentProps {
 
 const CautionContent = ({
   contentIndex,
+  criticalNotice,
   setContentIndex,
   isCautionChecked,
   setIsCautionChecked,
@@ -28,9 +30,7 @@ const CautionContent = ({
     <div className="flex flex-col items-start gap-3">
       <h2 className="font-medium text-neutral-0">[필독사항]</h2>
       <p className="text-sm font-medium text-neutral-0 text-opacity-[88%]">
-        2주간 코스별 목표 미션을 달성하기 위해 3일에 한번 정해진 날 23:59까지
-        주어진 미션을 인증해야 합니다. 인턴 지원에 한걸음 다가가기 위해 열심히
-        해주실 거죠?
+        {criticalNotice}
       </p>
       <div
         className="flex cursor-pointer items-center gap-2 px-1.5 py-2.5"

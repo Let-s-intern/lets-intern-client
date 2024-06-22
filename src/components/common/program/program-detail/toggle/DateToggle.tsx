@@ -11,24 +11,14 @@ interface DateToggleProps {
 }
 
 const DateToggle = ({ programDate, programType }: DateToggleProps) => {
-  const [isContentOpen, setIsContentOpen] = useState(false);
-
-  const handleToggleClick = () => {
-    setIsContentOpen(!isContentOpen);
-  };
 
   return (
     <div className="rounded-sm bg-neutral-100">
       <div
         className="flex cursor-pointer items-center justify-center gap-0.5 rounded-sm bg-neutral-0 bg-opacity-5 px-1.5 py-4 text-neutral-0 text-opacity-[74%]"
-        onClick={handleToggleClick}
       >
-        <span className="font-semibold">일정 보기</span>
-        <span className="text-[1.5rem]">
-          {isContentOpen ? <MdKeyboardArrowUp /> : <MdKeyboardArrowDown />}
-        </span>
+        <span className="font-semibold">프로그램 일정</span>
       </div>
-      {isContentOpen && (
         <div className="px-2">
           <div className="flex items-center justify-between p-1.5">
             <span className="text-neutral-0 text-opacity-[74%]">모집 마감</span>
@@ -67,7 +57,6 @@ const DateToggle = ({ programDate, programType }: DateToggleProps) => {
             </span>
           </div>
         </div>
-      )}
     </div>
   );
 };

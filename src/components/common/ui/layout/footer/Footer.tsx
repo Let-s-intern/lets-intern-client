@@ -13,7 +13,7 @@ const Footer = () => {
             <MenuLink to="/">홈</MenuLink>
             <MenuLink to="/program">프로그램</MenuLink>
             <MenuLink to='https://letscareer.oopy.io/4e78d954-c4ac-4c14-a122-a21fe890de5b'>공지사항</MenuLink>
-            <MenuLink to="https://letscareer.oopy.io/5eb0ebdd-e10c-4aa1-b28a-8bd0964eca0b">자주묻는 질문</MenuLink>
+            <MenuLink to="https://letscareer.oopy.io/5eb0ebdd-e10c-4aa1-b28a-8bd0964eca0b">자주 묻는 질문</MenuLink>
             {/* <MenuLink to="/blog">블로그</MenuLink> */}
           </div>
         </div>
@@ -34,22 +34,22 @@ const Footer = () => {
       </div>
 
       <p className="text-0.75-medium my-7 flex flex-col gap-2 text-neutral-45">
-        <span>턴업컴퍼니 사업자 정보</span>
+        <span>아이엔지 사업자 정보</span>
         <div className="flex gap-2">
           <span>대표자: 송다예</span>
           <span>|</span>
-          <span>사업자 등록번호: 369-16-01796</span>
+          <span>사업자 등록번호: 871-11-02629</span>
         </div>
         <div className="flex flex-col gap-2 md:flex-row">
           <div className="flex gap-2">
-            <span>주소: 서울특별시 성동구 상원길 63</span>
+            <span>주소: 서울특별시 마포구 독막로 9길 18, 서홍빌딩 3층 A9호</span>
             <span>|</span>
           </div>
           <div className="flex gap-2">
             <span>이메일: letsintern.official@gmail.com</span>
             <span>|</span>
           </div>
-          <span>Copyright ©2023 턴업컴퍼니. All rights reserved.</span>
+          <span>Copyright ©2024 아이엔지. All rights reserved.</span>
         </div>
       </p>
 
