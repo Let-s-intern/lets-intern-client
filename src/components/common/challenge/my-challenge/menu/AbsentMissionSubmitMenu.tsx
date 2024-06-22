@@ -1,4 +1,4 @@
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import clsx from 'clsx';
 import { useEffect, useState } from 'react';
 import { useCurrentChallenge } from '../../../../../context/CurrentChallengeProvider';
@@ -10,6 +10,7 @@ interface Props {
 }
 
 const AbsentMissionSubmitMenu = ({ missionDetail }: Props) => {
+  const queryClient = useQueryClient();
   const { schedules } = useCurrentChallenge();
   const currentSchedule = schedules.find((schedule) => {
     return schedule.missionInfo.id === missionDetail.id;
@@ -44,8 +45,9 @@ const AbsentMissionSubmitMenu = ({ missionDetail }: Props) => {
       const data = res.data;
       return data;
     },
-    onSuccess: () => {
+    onSuccess: async () => {
       setIsAttended(true);
+      await queryClient.invalidateQueries({ queryKey: ['challenge'] });
     },
   });
 

@@ -64,8 +64,8 @@ const DailyMissionSubmitSection = ({ myDailyMission }: Props) => {
       const data = res.data;
       return data;
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['programs'] });
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ['challenge'] });
     },
   });
 
