@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { Outlet, useLocation } from 'react-router-dom';
+import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 
 import ChannelService from '../../../../ChannelService';
 import Footer from './footer/Footer';
@@ -7,6 +7,7 @@ import NavBar from './nav/NavBar';
 
 const Layout = () => {
   const location = useLocation();
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (!window.ChannelIO) {
@@ -25,6 +26,12 @@ const Layout = () => {
       ChannelService.showChannelButton();
     }
   }, [location]);
+
+  useEffect(() => {
+    navigate('/maintenance');
+  }, [location]);
+
+  return <Outlet />;
 
   return (
     <div className="font-pretendard">
