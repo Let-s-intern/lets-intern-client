@@ -1,193 +1,173 @@
 import { useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
-import styled from 'styled-components';
+import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
+import { useMutation, useQuery } from '@tanstack/react-query';
 
+import ConfirmSection from '../../../components/common/review/section/ConfirmSection';
+import StarScoreSection from '../../../components/common/review/section/StarScoreSection';
+import TenScoreSection from '../../../components/common/review/section/TenScroeSection';
+import TextAreaSection from '../../../components/common/review/section/TextAreaSection';
 import axios from '../../../utils/axios';
-import { typeToText } from '../../../utils/converTypeToText';
-import ReviewHeader from '../../../components/common/review/ui/ReviewHeader';
-import InputTitle from '../../../components/common/review/ui/InputTitle';
-import Star from '../../../components/common/review/ui/Star';
-import TextArea from '../../../components/common/review/ui/TextArea';
-import AlertModal from '../../../components/ui/alert/AlertModal';
 
-interface SubmitButtonProps {
-  $disabled?: boolean;
-}
-
-const ReviewCreate = () => {
-  const navigate = useNavigate();
+const ReviewCreate = ({isEdit}:{isEdit:boolean}) => {
   const params = useParams();
-  const [program, setProgram] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<unknown>(null);
-  const [values, setValues] = useState<any>({});
-  const [isSubmitDisabled, setIsSubmitDisabled] = useState<boolean>(true);
-  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
-  const [successModalOpen, setSuccessModalOpen] = useState<boolean>(false);
+  const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
+
+  const [starScore, setStarScore] = useState<number>(0);
+  const [tenScore, setTenScore] = useState<number | null>(null);
+  const [content, setContent] = useState<string>('');
+  const [isYes, setIsYes] = useState<boolean | null>(null);
+  const [answer, setAnswer] = useState<{
+    yes: string;
+    no: string;
+    low: string;
+  }>({
+    yes: '',
+    no: '',
+    low: '',
+  });
+
+  const reviewId = Number(params.reviewId);
+  const applicationId = Number(searchParams.get('application'));
+  const programId = Number(params.programId);
+  const programType = params.programType?.toLowerCase();
+  
+  const { data: reviewDetailData } = useQuery({
+    queryKey: ['review', applicationId],
+    queryFn: async () => {
+      const res = await axios.get(`/review/${reviewId}`);
+      return res.data.data;
+    },
+    enabled: isEdit,
+    retry: 1,
+  })
 
   useEffect(() => {
-    const checkLoggedIn = async () => {
-      const token = localStorage.getItem('access-token');
-      if (!token) {
-        setIsLoggedIn(false);
+    console.log('리뷰 : ', reviewDetailData)
+    if (isEdit && reviewDetailData) {
+      setStarScore(reviewDetailData.score);
+      setTenScore(reviewDetailData.nps);
+      setIsYes(reviewDetailData.npsCheckAns);
+      setAnswer({
+        yes: reviewDetailData.score > 6 && reviewDetailData.npsCheckAns ? reviewDetailData.npsAns : '',
+        no: reviewDetailData.score > 6 && !reviewDetailData.npsCheckAns ? reviewDetailData.npsAns : '',
+        low: reviewDetailData.score <= 6 ? reviewDetailData.npsAns : '',
+      });
+      setContent(reviewDetailData.content);
+    }
+  }, [reviewDetailData, isEdit])
+
+  const { data: programTitle } = useQuery({
+    queryKey: ['program', programId, programType],
+    queryFn: async () => {
+      const res = await axios.get(`/${programType}/${programId}/title`);
+      console.log(res.data);
+      return res.data.data.title;
+    },
+    retry: 1,
+  })
+
+
+  const addReview = useMutation({
+    mutationFn: async () => {
+      const res = await axios.post(
+        '/review',
+        {
+          programId: programId,
+          npsAns:
+            tenScore && tenScore <= 6
+              ? answer.low
+              : isYes
+              ? answer.yes
+              : answer.no,
+          npsCheckAns: isYes === null ? false : isYes,
+          nps: tenScore,
+          content: content,
+          score: starScore,
+        },
+        {
+          params: {
+            applicationId: applicationId,
+          },
+        },
+      );
+      return res.data;
+    },
+    onSuccess: () => {
+      navigate(-1);
+    },
+  });
+
+  const editReview = useMutation({
+    mutationFn: async () => {
+      const res = await axios.patch(
+        `/review/${reviewId}`,
+        {
+          npsAns:
+            tenScore !== null && tenScore <= 6
+              ? answer.low
+              : isYes
+              ? answer.yes
+              : answer.no,
+          npsCheckAns: isYes === null ? false : isYes,
+          nps: tenScore,
+          content: content,
+          score: starScore,
+        },
+      );
+      return res.data;
+    },
+    onSuccess: () => {
+      navigate(-1);
+    },
+  });
+
+  const handleConfirm = () => {
+    if (isEdit) {
+      console.log('edit, ', answer);
+      if (answer === null || (answer.low === '' && answer.no === '' && answer.yes === '') || content === '' || starScore === 0 || tenScore === null) {
+        alert('모든 항목을 입력해주세요.');
         return;
       }
-      try {
-        await axios.get('/user');
-        setIsLoggedIn(true);
-      } catch (err) {
-        setIsLoggedIn(false);
-      }
-    };
-    checkLoggedIn();
-  }, []);
-
-  useEffect(() => {
-    if (values.grade >= 1 && values.reviewContents) {
-      setIsSubmitDisabled(false);
-    } else {
-      setIsSubmitDisabled(true);
+      editReview.mutate();
+      return;
     }
-  }, [values]);
-
-  useEffect(() => {
-    const fetchProgram = async () => {
-      if (!params.programId) return;
-      setLoading(true);
-      try {
-        const res = await axios.get(`/program/${params.programId}`, {
-          headers: {
-            Authorization: isLoggedIn
-              ? `Bearer ${localStorage.getItem('access-token')}`
-              : '',
-          },
-        });
-        console.log(res.data.programDetailVo);
-        setProgram({
-          ...res.data.programDetailVo,
-          type: typeToText[res.data.type],
-        });
-      } catch (err) {
-        setError(err);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchProgram();
-  }, [params, isLoggedIn]);
-
-  const handleRatingChange = (value: number) => {
-    setValues({ ...values, grade: value });
+    addReview.mutate();
   };
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setValues({ ...values, [name]: value });
-  };
-
-  const handleSubmitButton = async () => {
-    const reqData = values;
-    try {
-      if (isLoggedIn && params.applicationId) {
-        await axios.post(`/review/${params.applicationId}`, reqData);
-        navigate(`/mypage/review`);
-      } else {
-        await axios.post(`/review?programId=${params.programId}`, reqData, {
-          headers: { Authorization: '' },
-        });
-        setSuccessModalOpen(true);
-      }
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
-  if (loading) {
-    return <div className="mx-auto w-full max-w-xl px-7">loading</div>;
-  }
-
-  if (error) {
-    return <div className="mx-auto w-full max-w-xl px-7">error</div>;
-  }
 
   return (
-    <div className="mx-auto w-full max-w-xl px-7">
-      <ReviewHeader program={program} />
-      <hr />
-      <section className="py-5">
-        <InputTitle>프로그램은 어떠셨나요?</InputTitle>
-        <p className="mx-auto mt-2 w-52 break-keep text-center text-zinc-500">
-          참여한 프로그램의 만족도를 별점으로 평가해 주세요.
-        </p>
-        <div className="mt-3 flex justify-center">
-          <div className="flex gap-2">
-            {Array.from({ length: 5 }, (_, i) => (
-              <Star
-                key={i}
-                onClick={() => handleRatingChange(i + 1)}
-                isActive={values.grade > i}
-              />
-            ))}
-          </div>
-        </div>
-      </section>
-      <hr />
-      <section className="py-7">
-        <InputTitle>전반적인 후기를 남겨주세요.</InputTitle>
-        <TextArea
-          placeholder="후기를 여기에 작성해주세요."
-          name="reviewContents"
-          value={values.reviewContents}
-          onChange={handleInputChange}
-        />
-      </section>
-      <hr />
-      <section className="py-7">
-        <InputTitle>그 외 바라는 점이 있다면 작성해주세요.</InputTitle>
-        <TextArea
-          placeholder="바라는 점을 여기에 작성해주세요.(선택)"
-          name="suggestContents"
-          value={values.suggestContents}
-          onChange={handleInputChange}
-        />
-      </section>
-      <div className="h-14 sm:h-20" />
-      <div className="fixed bottom-0 left-0 flex w-screen justify-center sm:bottom-3">
-        <SubmitButton $disabled={isSubmitDisabled} onClick={handleSubmitButton}>
-          등록하기
-        </SubmitButton>
-      </div>
-      {successModalOpen && (
-        <AlertModal
-          onConfirm={() => {
-            setSuccessModalOpen(false);
-            navigate('/');
+    <div className="z-40 flex w-full flex-col items-center bg-neutral-0/50 md:fixed md:left-0 md:top-0 md:h-screen md:w-screen md:justify-center">
+      <main className="flex w-full max-w-3xl flex-col gap-16 bg-white md:relative md:max-h-[45rem] md:w-[40rem] md:overflow-y-scroll md:rounded-xl md:px-14 md:pb-6 md:pt-12">
+        <img
+          src="/icons/menu_close_md.svg"
+          alt="close"
+          className="absolute right-6 top-6 hidden cursor-pointer md:block"
+          onClick={() => {
+            navigate(-1);
           }}
-          title="후기 작성 완료"
-          showCancel={false}
-          highlight="confirm"
-          confirmText="확인"
-        >
-          후기가 성공적으로 동록되었습니다.
-          <br />
-          메인 화면으로 이동합니다.
-        </AlertModal>
-      )}
+        />
+        <StarScoreSection starScore={starScore} setStarScore={setStarScore} title={programTitle}/>
+        <TenScoreSection
+          programTitle={programTitle}
+          tenScore={tenScore}
+          setTenScore={setTenScore}
+          isYes={isYes}
+          setIsYes={setIsYes}
+          answer={answer}
+          setAnswer={setAnswer}
+        />
+        <TextAreaSection content={content} setContent={setContent} />
+        <ConfirmSection isEdit={isEdit} onConfirm={handleConfirm} isDisabled={
+          starScore === 0 ||
+          tenScore === null || tenScore === 0 ||
+          (tenScore <= 6 && answer.low === '') ||
+          (tenScore > 6 && isYes === null) ||
+          (isYes === true && answer.yes === '') ||
+          (isYes === false && answer.no === '')
+        }/>
+      </main>
     </div>
   );
 };
 
 export default ReviewCreate;
-
-const SubmitButton = styled.button<SubmitButtonProps>`
-  height: 3.5rem;
-  width: 100%;
-  background-color: ${({ $disabled }) => ($disabled ? '#a5a1fa' : '#6963F6')};
-  color: #ffffff;
-  cursor: ${({ $disabled }) => ($disabled ? 'auto' : 'pointer')};
-
-  @media (min-width: 640px) {
-    max-width: 36rem;
-    border-radius: 4px;
-  }
-`;

@@ -1,120 +1,307 @@
-import { useEffect, useState } from 'react';
-import { Link, useParams } from 'react-router-dom';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { IoIosArrowForward } from 'react-icons/io';
-
-import RoundedBox from '../box/RoundedBox';
-import NoticeItem from '../item/NoticeItem';
-import SectionHeading from '../heading/SectionHeading';
-import Button from '../../ui/button/Button';
-import NoticeEditorModal from '../../ui/modal/NoticeEditorModal';
-import axios from '../../../../../utils/axios';
+import {
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  IconButton,
+  Link,
+  Snackbar,
+} from '@mui/material';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import clsx from 'clsx';
+import { useEffect, useState } from 'react';
+import { FaEdit } from 'react-icons/fa';
+import { FaTrashCan } from 'react-icons/fa6';
+import { twMerge } from 'tailwind-merge';
+import { useAdminCurrentChallenge } from '../../../../../context/CurrentAdminChallengeProvider';
+import {
+  challengeNotices,
+  CreateChallengeNoticeReq,
+  UpdateChallengeNoticeReq,
+} from '../../../../../schema';
+import axios from '../../../../../utils/axios';
+import RoundedBox from '../box/RoundedBox';
+import SectionHeading from '../heading/SectionHeading';
 
-const NoticeSection = () => {
-  const params = useParams();
-  const queryClient = useQueryClient();
+const NoticeSection = ({ className }: { className?: string }) => {
+  const { currentChallenge } = useAdminCurrentChallenge();
+  const [modalStatus, setModalStatus] = useState<
+    | {
+        open: boolean;
+        mode: 'create';
+      }
+    | {
+        open: boolean;
+        mode: 'edit';
+        noticeId: number;
+      }
+  >({
+    open: false,
+    mode: 'create',
+  });
 
-  const [noticeList, setNoticeList] = useState<any>();
+  const [snackbar, setSnackbar] = useState<{
+    open: boolean;
+    message: string;
+  }>({
+    open: false,
+    message: '',
+  });
+
   const [pageNum, setPageNum] = useState<number>(1);
-  const [pageInfo, setPageInfo] = useState<any>();
-  const [isModalShown, setIsModalShown] = useState(false);
-  const [values, setValues] = useState<any>({});
+  const [editingNotice, setCreatingNotice] = useState<CreateChallengeNoticeReq>(
+    {
+      title: '',
+      link: '',
+      type: 'ESSENTIAL',
+    },
+  );
 
-  const getNotice = useQuery({
-    queryKey: ['notice', params.programId, { page: pageNum, size: 4 }],
-    queryFn: async ({ queryKey }) => {
-      const res = await axios.get(`/notice/${params.programId}`, {
-        params: queryKey[2],
-      });
-      const data = res.data;
-      setNoticeList(data.noticeList);
-      setPageInfo(data.pageInfo);
-      console.log(data);
-      return data;
+  const { data, refetch } = useQuery({
+    enabled: Boolean(currentChallenge?.id),
+    queryKey: [
+      'challenge',
+      currentChallenge?.id,
+      'notices',
+      { page: pageNum, size: 5 },
+    ],
+    queryFn: async () => {
+      const res = await axios.get(
+        `/challenge/${currentChallenge?.id}/notices`,
+        { params: { page: pageNum, size: 5 } },
+      );
+      return challengeNotices.parse(res.data.data);
     },
   });
 
-  useEffect(() => {
-    getNotice.refetch();
-  }, [pageNum]);
+  const notices = data?.challengeNoticeList ?? [];
 
-  const addNotice = useMutation({
-    mutationFn: async (values) => {
-      const res = await axios.post(`/notice/${params.programId}`, values);
-      const data = res.data;
-      return data;
+  const pageInfo = data?.pageInfo;
+
+  const createNoticeMutation = useMutation({
+    mutationFn: (values: CreateChallengeNoticeReq) => {
+      return axios.post(`/challenge-notice/${currentChallenge?.id}`, values);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['notice'] });
-      setIsModalShown(false);
+      setCreatingNotice({
+        title: '',
+        link: '',
+        type: 'ESSENTIAL',
+      });
     },
   });
 
-  const handleNoticeAdd = (e: any) => {
-    e.preventDefault();
-    addNotice.mutate(values);
-  };
+  const updateNoticeMutation = useMutation({
+    mutationFn: (values: UpdateChallengeNoticeReq & { noticeId: number }) => {
+      const { noticeId, ...payload } = values;
+      return axios.patch(`/challenge-notice/${noticeId}`, payload);
+    },
+  });
 
-  const isLoading = getNotice.isLoading || !noticeList || !pageInfo;
+  const deleteNoticeMutation = useMutation({
+    mutationFn: (noticeId: number) => {
+      return axios.delete(`/challenge-notice/${noticeId}`);
+    },
+  });
 
   return (
     <>
       <RoundedBox
         as="section"
-        className="flex w-[50%] flex-col justify-between px-8 py-6"
+        className={twMerge(
+          'flex flex-col justify-between px-8 py-6',
+          className,
+        )}
       >
         <div className="flex flex-col gap-4">
           <div className="flex items-center justify-between">
             <SectionHeading>공지사항</SectionHeading>
-            <Button onClick={() => setIsModalShown(true)}>새 공지 등록</Button>
+            <Button
+              onClick={() =>
+                setModalStatus({
+                  mode: 'create',
+                  open: true,
+                })
+              }
+            >
+              새 공지 등록
+            </Button>
           </div>
           <ul className="flex flex-col gap-2">
-            {!isLoading &&
-              noticeList.map((notice: any) => (
-                <NoticeItem key={notice.id} notice={notice} />
-              ))}
+            {notices.map((notice) => (
+              <li key={notice.id} className="flex items-center">
+                <Link href={notice.link ?? ''} className="flex-1">
+                  {notice.title}
+                </Link>
+                <IconButton
+                  onClick={() => {
+                    setCreatingNotice({
+                      link: notice.link ?? '',
+                      title: notice.title ?? '',
+                      type: notice.type ?? 'ESSENTIAL', // unused
+                    });
+                    setModalStatus({
+                      mode: 'edit',
+                      open: true,
+                      noticeId: notice.id,
+                    });
+                  }}
+                  sx={{ width: 32, height: 32 }}
+                >
+                  <FaEdit />
+                </IconButton>
+                <IconButton
+                  sx={{ width: 32, height: 32 }}
+                  color="error"
+                  onClick={async () => {
+                    await deleteNoticeMutation.mutateAsync(notice.id);
+                    setSnackbar({
+                      open: true,
+                      message: '공지사항이 성공적으로 삭제되었습니다.',
+                    });
+                    refetch();
+                  }}
+                >
+                  <FaTrashCan />
+                </IconButton>
+                <span>
+                  {notice.createDate?.format('YYYY-MM-DD') ?? '날짜 없음'}
+                </span>
+              </li>
+            ))}
           </ul>
         </div>
-        <div className="flex items-center justify-center gap-5">
-          <div className="w-20" />
-          <div className="flex items-center gap-2">
-            <div className="flex items-center gap-3 text-sm">
-              {!isLoading &&
-                Array.from(
-                  { length: pageInfo.totalPages },
-                  (_, index) => index + 1,
-                ).map((pageNum) => (
-                  <span
-                    key={pageNum}
-                    className={clsx('cursor-pointer', {
-                      'font-medium': pageNum === pageInfo.pageNum,
-                    })}
-                    onClick={() => {
-                      setPageNum(pageNum);
-                    }}
-                  >
-                    {pageNum}
-                  </span>
-                ))}
-            </div>
+
+        <div className="flex items-center justify-center">
+          <div className="mt-10 flex items-center gap-3 justify-self-center rounded-full border px-3 py-1 text-sm">
+            {pageInfo &&
+              Array.from(
+                { length: pageInfo.totalPages },
+                (_, index) => index + 1,
+              ).map((pageNum) => (
+                <span
+                  key={pageNum}
+                  className={clsx('cursor-pointer', {
+                    'font-medium': pageNum === pageInfo.pageNum,
+                  })}
+                  onClick={() => {
+                    setPageNum(pageNum);
+                  }}
+                >
+                  {pageNum}
+                </span>
+              ))}
           </div>
-          <Link
-            to={`/admin/challenge/${params.programId}/notice`}
-            className="w-20 text-sm"
-          >
-            전체보기
-          </Link>
         </div>
       </RoundedBox>
-      {isModalShown && (
-        <NoticeEditorModal
-          setIsModalShown={setIsModalShown}
-          values={values}
-          setValues={setValues}
-          onSubmit={handleNoticeAdd}
-        />
-      )}
+
+      <Dialog
+        open={modalStatus.open}
+        onClose={() => {
+          setModalStatus({ ...modalStatus, open: false });
+          setCreatingNotice({
+            title: '',
+            link: '',
+            type: 'ESSENTIAL',
+          });
+        }}
+      >
+        <DialogTitle id="alert-dialog-title">
+          {modalStatus.mode === 'create' ? '공지사항 등록' : '공지사항 수정'}
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            {modalStatus.mode === 'create'
+              ? '새로운 공지사항을 등록합니다.'
+              : '공지사항을 수정합니다.'}
+          </DialogContentText>
+          <div className="mt-10">
+            <label htmlFor="notice-title">제목</label>
+            <input
+              type="text"
+              id="notice"
+              className="rounded mb-4 w-full border px-3 py-1"
+              placeholder="제목"
+              value={editingNotice.title}
+              onChange={(e) =>
+                setCreatingNotice((prev) => ({
+                  ...prev,
+                  title: e.target.value,
+                }))
+              }
+              autoComplete="off"
+            />
+            <label htmlFor="notice-link">링크</label>
+            <input
+              type="text"
+              id="notice-link"
+              className="rounded mb-4 w-full border px-3 py-1"
+              placeholder="링크"
+              value={editingNotice.link}
+              onChange={(e) =>
+                setCreatingNotice((prev) => ({
+                  ...prev,
+                  link: e.target.value,
+                }))
+              }
+              autoComplete="off"
+            />
+          </div>
+        </DialogContent>
+        <DialogActions>
+          <Button
+            onClick={() => {
+              setModalStatus((prev) => ({ ...prev, open: false }));
+              setCreatingNotice({
+                title: '',
+                link: '',
+                type: 'ESSENTIAL',
+              });
+            }}
+            color="inherit"
+          >
+            취소
+          </Button>
+          <Button
+            onClick={async () => {
+              if (modalStatus.mode === 'create') {
+                await createNoticeMutation.mutateAsync(editingNotice);
+                setSnackbar({
+                  open: true,
+                  message: '공지사항이 성공적으로 등록되었습니다.',
+                });
+              } else if (modalStatus.mode === 'edit') {
+                await updateNoticeMutation.mutateAsync({
+                  ...editingNotice,
+                  noticeId: modalStatus.noticeId,
+                });
+                setSnackbar({
+                  open: true,
+                  message: '공지사항이 성공적으로 수정되었습니다.',
+                });
+              }
+              refetch();
+              setModalStatus((prev) => ({ ...prev, open: false }));
+              setCreatingNotice({
+                title: '',
+                link: '',
+                type: 'ESSENTIAL',
+              });
+            }}
+            autoFocus
+          >
+            {modalStatus.mode === 'create' ? '등록' : '수정'}
+          </Button>
+        </DialogActions>
+      </Dialog>
+      <Snackbar
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+        open={snackbar.open}
+        onClose={() => setSnackbar({ ...snackbar, open: false })}
+        message={snackbar.message}
+      />
     </>
   );
 };

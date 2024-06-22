@@ -1,33 +1,43 @@
 import clsx from 'clsx';
 import { Link, useParams } from 'react-router-dom';
+import { Schedule } from '../../../../../schema';
 
 import { missionSubmitToBadge } from '../../../../../utils/convert';
 
 interface Props {
   className?: string;
-  mission: any;
+  schedule: Schedule;
+  isDone: boolean;
 }
 
-const MissionIcon = ({ className, mission }: Props) => {
+const MissionIcon = ({ className, schedule, isDone }: Props) => {
   const params = useParams();
+  const mission = schedule.missionInfo;
+  const attendance = schedule.attendanceInfo;
 
   const isAttended =
-    (mission.attendanceResult === 'WAITING' ||
-      mission.attendanceResult === 'PASS') &&
-    mission.attendanceStatus !== 'ABSENT';
+    (attendance.result === 'WAITING' || attendance.result === 'PASS') &&
+    attendance.status !== 'ABSENT';
 
   return (
     <>
       <Link
-        to={`/challenge/${params.programId}/me?scroll_to_mission=${mission.missionId}`}
+        to={
+          !isDone
+            ? `/challenge/${params.programId}/me?scroll_to_mission=${mission.id}`
+            : '#'
+        }
         replace
         className={clsx(
           'relative flex aspect-square cursor-pointer flex-col items-center justify-center rounded-md text-white',
-          className,
           {
             'bg-[#d0cfcf]': !isAttended,
             'bg-[#928DF8]': isAttended,
           },
+          {
+            'cursor-default': isDone,
+          },
+          className,
         )}
         style={{
           clipPath: 'polygon(30% 0, 100% 0, 100% 100%, 0 100%, 0 30%)',
@@ -43,7 +53,7 @@ const MissionIcon = ({ className, mission }: Props) => {
           )}
         />
         {isAttended ? (
-          <i className="mb-1 mt-2 h-[1.75rem] w-[1.75rem]">
+          <i className="mb-[10%] mt-2 h-[30%] min-h-[1.5rem] w-[20%] min-w-[1.5rem]">
             <img
               src="/icons/check-icon.svg"
               alt="check-icon"
@@ -51,7 +61,7 @@ const MissionIcon = ({ className, mission }: Props) => {
             />
           </i>
         ) : (
-          <i className="mb-2 mt-2 h-[1.25rem] w-[1.25rem]">
+          <i className="mb-[10%] mt-2 h-[30%] min-h-[1.5rem] w-[20%] min-w-[1.5rem]">
             <img
               src="/icons/x-icon.svg"
               alt="not-started-icon"
@@ -60,7 +70,7 @@ const MissionIcon = ({ className, mission }: Props) => {
           </i>
         )}
         <span className="font-pretendard text-sm font-semibold">
-          {mission.missionTh}회차
+          {mission.th}회차
         </span>
       </Link>
       <div className="mt-2 flex items-center justify-center">
@@ -68,17 +78,15 @@ const MissionIcon = ({ className, mission }: Props) => {
           className={clsx(
             'rounded-xs px-2 py-[0.125rem] text-sm',
             missionSubmitToBadge({
-              status: mission.attendanceStatus,
-              result: mission.attendanceResult,
-              isRefunded: mission.attendanceIsRefunded,
+              status: attendance.status || 'ABSENT',
+              result: attendance.result,
             }).style,
           )}
         >
           {
             missionSubmitToBadge({
-              status: mission.attendanceStatus,
-              result: mission.attendanceResult,
-              isRefunded: mission.attendanceIsRefunded,
+              status: attendance.status || 'ABSENT',
+              result: attendance.result,
             }).text
           }
         </span>

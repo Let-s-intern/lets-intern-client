@@ -1,120 +1,59 @@
-import { useEffect, useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
-
+import { useMutation } from '@tanstack/react-query';
+import AccountInfo from '../../../components/common/mypage/privacy/section/AccountInfo';
+import BasicInfo from '../../../components/common/mypage/privacy/section/BasicInfo';
+import ChangePassword from '../../../components/common/mypage/privacy/section/ChangePassword';
+import MarketingAgree from '../../../components/common/mypage/privacy/section/MarketingAgree';
 import axios from '../../../utils/axios';
-import MainInfo from '../../../components/common/mypage/section/privacy/MainInfo';
-import PasswordChange from '../../../components/common/mypage/section/privacy/PasswordChange';
-import SubInfo from '../../../components/common/mypage/section/privacy/SubInfo';
+import useAuthStore from '../../../store/useAuthStore';
+import { useState } from 'react';
 import AlertModal from '../../../components/ui/alert/AlertModal';
-import AccountInfo from '../../../components/common/mypage/section/privacy/AccountInfo';
 
 const Privacy = () => {
-  const [userInfo, setUserInfo] = useState<any>({
-    mainInfoValues: {},
-    subInfoValues: {},
-    passwordValues: {},
-    socialAuth: null,
-    initialValues: {},
-  });
-  const [loading, setLoading] = useState(true);
-  const [showAlert, setShowAlert] = useState(false);
-  const [alertInfo, setAlertInfo] = useState<{
-    title: string;
-    message: string;
-    onConfirm?: () => void;
-  }>({
-    title: '',
-    message: '',
-  });
-
-  const { isError } = useQuery({
-    queryKey: ['user', 'privacy'],
-    queryFn: async () => {
-      const res = await axios.get('/user');
-      const { name, email, phoneNum, major, university, authProvider } =
-        res.data;
-      setUserInfo({
-        mainInfoValues: { name, email, phoneNum },
-        subInfoValues: { major, university },
-        initialValues: { name, email, phoneNum, major, university },
-        passwordValues: {},
-        socialAuth: authProvider,
-      });
-      setLoading(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const { logout } = useAuthStore();
+  const { mutate: tryDeleteUser } = useMutation({
+    mutationFn: async () => {
+      const res = await axios.delete('/user');
       return res.data;
     },
-    refetchOnWindowFocus: false,
+    onSuccess: () => {
+      logout();
+    },
+    onError: (error) => {
+      alert('회원 탈퇴에 실패했습니다.');
+      console.error(error);
+    },
   });
 
-  useEffect(() => {
-    if (isError) {
-      setLoading(false);
-    }
-  }, [isError]);
-
-  const resetInitialValues = () => {
-    setUserInfo((prev: any) => ({
-      ...prev,
-      initialValues: { ...prev.mainInfoValues, ...prev.subInfoValues },
-    }));
-  };
-
-  if (isError) {
-    return <main className="mypage-content privacy-page">에러 발생</main>;
-  }
-
   return (
-    <main className="mypage-content privacy-page">
-      <MainInfo
-        mainInfoValues={userInfo.mainInfoValues}
-        initialValues={userInfo.initialValues}
-        socialAuth={userInfo.socialAuth}
-        loading={loading}
-        setUserInfo={setUserInfo}
-        resetInitialValues={resetInitialValues}
-        setShowAlert={setShowAlert}
-        setAlertInfo={setAlertInfo}
-      />
+    <main className="flex w-full flex-col gap-16 pb-16 md:w-4/5">
+      <BasicInfo />
       <AccountInfo />
-      <SubInfo
-        subInfoValues={userInfo.subInfoValues}
-        initialValues={userInfo.initialValues}
-        loading={loading}
-        setUserInfo={setUserInfo}
-        resetInitialValues={resetInitialValues}
-        setShowAlert={setShowAlert}
-        setAlertInfo={setAlertInfo}
-      />
-      <PasswordChange
-        passwordValues={userInfo.passwordValues}
-        setUserInfo={setUserInfo}
-        setShowAlert={setShowAlert}
-        setAlertInfo={setAlertInfo}
-      />
-      {showAlert && (
+      <ChangePassword />
+      <MarketingAgree />
+      <button
+        className="mt-[24px] flex w-full items-center justify-center text-neutral-0/40"
+        onClick={() => setIsDeleteModalOpen(true)}
+      >
+        회원 탈퇴
+      </button>
+      {isDeleteModalOpen && (
         <AlertModal
           onConfirm={() => {
-            alertInfo.onConfirm && alertInfo.onConfirm();
-            setShowAlert(false);
-            setAlertInfo({ title: '', message: '' });
+            tryDeleteUser();
           }}
-          title={alertInfo.title}
-          showCancel={false}
-          highlight="confirm"
-        >
-          <p>
-            {alertInfo.message.includes('\n')
-              ? alertInfo.message.split('\n').map((line) => (
-                  <>
-                    {line}
-                    <br />
-                  </>
-                ))
-              : alertInfo.message}
-          </p>
-        </AlertModal>
+          onCancel={() => setIsDeleteModalOpen(false)}
+          className='break-keep'
+          title='회원 탈퇴'>
+            정말로 탈퇴하시겠습니까?
+            <div className='mt-4 text-system-error text-sm'>
+              탈퇴 시 복구가 불가능하며, 모든 정보가 삭제됩니다.
+            </div>
+          </AlertModal>
       )}
+
     </main>
+    
   );
 };
 

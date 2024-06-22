@@ -3,13 +3,22 @@ import { useState } from 'react';
 
 import { challengeSubmitDetailCellWidthList } from '../../../../../utils/tableCellWidthList';
 import { IoMdArrowDropdown } from 'react-icons/io';
-import { attendanceResultToText } from '../../../../../utils/convert';
+import { Attendance } from '../../../../../schema';
 
 interface Props {
   cellWidthListIndex: number;
-  resultFilter: string;
-  setResultFilter: (resultFilter: string) => void;
+  resultFilter: Attendance['result'];
+  setResultFilter: (resultFilter: Attendance['result']) => void;
 }
+
+const attendanceResultToText: Record<
+  Exclude<Attendance['result'], null>,
+  string
+> = {
+  WAITING: '확인중',
+  PASS: '확인 완료',
+  WRONG: '반려',
+};
 
 const ResultFilter = ({
   cellWidthListIndex,
@@ -20,9 +29,11 @@ const ResultFilter = ({
 
   const cellWidthList = challengeSubmitDetailCellWidthList;
 
-  const handleMenuClicked = (result: string) => {
-    setIsMenuOpen(!isMenuOpen);
-    setResultFilter(result);
+  const handleMenuClicked = (result: Attendance['result']) => {
+    if (result) {
+      setIsMenuOpen(!isMenuOpen);
+      setResultFilter(result);
+    }
   };
 
   return (
@@ -36,7 +47,9 @@ const ResultFilter = ({
         className="flex cursor-pointer items-center gap-1"
         onClick={() => setIsMenuOpen(!isMenuOpen)}
       >
-        <span>{attendanceResultToText[resultFilter] || '확인여부'}</span>
+        <span>
+          {resultFilter ? attendanceResultToText[resultFilter] : '확인여부'}
+        </span>
         <i>
           <IoMdArrowDropdown />
         </i>
@@ -45,12 +58,13 @@ const ResultFilter = ({
         <ul className="absolute bottom-0 z-30 w-full translate-y-full bg-white shadow">
           <li
             className="cursor-pointer py-2 duration-200 hover:bg-neutral-200"
-            onClick={() => handleMenuClicked('')}
+            onClick={() => handleMenuClicked(null)}
           >
             전체
           </li>
-          {Object.keys(attendanceResultToText).map((result) => (
+          {(["WAITING", "PASS", "WRONG"] as const).map((result) => (
             <li
+              key={result}
               className="cursor-pointer py-2 duration-200 hover:bg-neutral-200"
               onClick={() => handleMenuClicked(result)}
             >

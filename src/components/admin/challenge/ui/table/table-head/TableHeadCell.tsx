@@ -1,11 +1,11 @@
 import clsx from 'clsx';
 
-interface Props {
+interface TableHeadProps {
   children?: React.ReactNode;
   className?: string;
 }
 
-const TableHeadCell = ({ children, className }: Props) => {
+const TableHeadCell = ({ children, className }: TableHeadProps) => {
   return (
     <div
       className={clsx(

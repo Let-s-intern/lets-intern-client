@@ -1,15 +1,23 @@
+import { useQuery } from '@tanstack/react-query';
 import { useEffect, useRef } from 'react';
 import { useSearchParams } from 'react-router-dom';
-
+import { useCurrentChallenge } from '../../../../../context/CurrentChallengeProvider';
+import {
+  myDailyMission,
+  MyDailyMission,
+  userChallengeMissionDetail,
+} from '../../../../../schema';
+import axios from '../../../../../utils/axios';
 import DailyMissionInfoSection from './DailyMissionInfoSection';
 import DailyMissionSubmitSection from './DailyMissionSubmitSection';
 
 interface Props {
-  dailyMission: any;
+  myDailyMission: MyDailyMission;
 }
 
-const DailyMissionSection = ({ dailyMission }: Props) => {
+const DailyMissionSection = ({ myDailyMission }: Props) => {
   const [searchParams, setSearchParams] = useSearchParams();
+  const { currentChallenge } = useCurrentChallenge();
 
   const sectionRef = useRef<HTMLElement>(null);
 
@@ -21,6 +29,27 @@ const DailyMissionSection = ({ dailyMission }: Props) => {
     }
   }, [sectionRef, searchParams, setSearchParams]);
 
+  const {
+    data: missionDetail,
+    isLoading: isDetailLoading,
+    error: detailError,
+    refetch,
+  } = useQuery({
+    enabled: Boolean(currentChallenge?.id),
+    queryKey: [
+      'challenge',
+      currentChallenge?.id,
+      'mission',
+      'daily-mission-detail',
+    ],
+    queryFn: async () => {
+      const res = await axios.get(
+        `challenge/${currentChallenge?.id}/missions/${myDailyMission.dailyMission.id}`,
+      );
+      return userChallengeMissionDetail.parse(res.data.data).missionInfo;
+    },
+  });
+
   return (
     <section
       className="mt-5 scroll-mt-[calc(6rem+1rem)] text-[#333333]"
@@ -28,9 +57,13 @@ const DailyMissionSection = ({ dailyMission }: Props) => {
     >
       <h2 className="text-lg font-bold">미션 수행하기</h2>
       <div className="rounded mt-2 bg-[#F6F8FB] px-12 py-8">
-        <DailyMissionInfoSection dailyMission={dailyMission} />
+        {missionDetail && (
+          <DailyMissionInfoSection missionDetail={missionDetail} />
+        )}
         <hr className="my-8 border-[0.5px] border-[#DEDEDE]" />
-        <DailyMissionSubmitSection dailyMission={dailyMission} />
+        {myDailyMission && (
+          <DailyMissionSubmitSection myDailyMission={myDailyMission} />
+        )}
       </div>
     </section>
   );

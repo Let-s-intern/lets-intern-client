@@ -1,49 +1,73 @@
-import { FormControl, MenuItem, Select } from '@mui/material';
+import { Checkbox, FormControl, MenuItem, Select } from '@mui/material';
 
 import TD from '../../../ui/table/regacy/TD';
+import dayjs from 'dayjs';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import axios from '../../../../../utils/axios';
 
 export interface DetailTableBodyProps {
   reviewList: {
     id: number;
-    userName: string;
-    grade: number;
-    reviewContents: string;
-    suggestContents: string;
-    createdAt: string;
-    status: string;
+    name: string;
+    nps: number;
+    npsAns: string;
+    npsCheckAns: boolean;
+    content: string;
+    score: number;
+    createdDate: string;
+    isVisible: boolean;
   }[];
-  handleVisibleChanged: (reviewId: number, status: string) => void;
+  programType: string;
 }
 
-const DetailTableBody = ({
-  reviewList,
-  handleVisibleChanged,
-}: DetailTableBodyProps) => {
+const TableBody = ({ reviewList, programType }: DetailTableBodyProps) => {
+  const queryClient = useQueryClient();
+
+  const editReviewVisible = useMutation({
+    mutationFn: async (params: { reviewId: number; isVisible: boolean }) => {
+      const res = await axios.patch(
+        `/review/${params.reviewId}/status`,
+        {},
+        {
+          params: {
+            isVisible: params.isVisible,
+          },
+        },
+      );
+      return res.data;
+    },
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({
+        queryKey: [programType.toLowerCase()],
+      });
+    },
+  });
+
+  const handleVisibleCheckboxClicked = (
+    reviewId: number,
+    isVisible: boolean,
+  ) => {
+    editReviewVisible.mutate({ reviewId, isVisible });
+  };
+
   return (
     <tbody>
-      {reviewList.map((review) => (
-        <tr key={review.id}>
-          <TD>{review.userName ? '회원' : '비회원'}</TD>
-          <TD>{review.userName || '익명'}</TD>
-          <TD>{review.grade}</TD>
-          <TD whiteSpace="wrap">{review.reviewContents}</TD>
-          <TD whiteSpace="wrap">{review.suggestContents}</TD>
-          <TD>{review.createdAt}</TD>
+      {reviewList.map((review, index) => (
+        <tr key={index}>
+          <TD>{review.name || '익명'}</TD>
+          <TD>{review.nps}</TD>
+          <TD whiteSpace="wrap">{review.npsAns}</TD>
+          <TD whiteSpace="wrap">{review.npsCheckAns ? 'O' : 'X'}</TD>
+          <TD>{review.score}</TD>
+          <TD>{review.content}</TD>
+          <TD>{dayjs(review.createdDate).format('YYYY년 M월 D일')}</TD>
           <TD>
-            <FormControl sx={{ width: 100 }}>
-              <Select
-                labelId="status"
-                id="status"
-                name="status"
-                value={review.status}
-                onChange={(e) =>
-                  handleVisibleChanged(review.id, e.target.value)
-                }
-              >
-                <MenuItem value="VISIBLE">노출</MenuItem>
-                <MenuItem value="INVISIBLE">비노출</MenuItem>
-              </Select>
-            </FormControl>
+            <Checkbox
+              checked={review.isVisible}
+              onChange={() =>
+                handleVisibleCheckboxClicked(review.id, !review.isVisible)
+              }
+            />
           </TD>
         </tr>
       ))}
@@ -51,4 +75,4 @@ const DetailTableBody = ({
   );
 };
 
-export default DetailTableBody;
+export default TableBody;

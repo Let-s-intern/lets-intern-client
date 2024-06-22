@@ -1,13 +1,14 @@
 import clsx from 'clsx';
 import { useEffect, useState } from 'react';
+import { Attendance } from '../../../../../../schema';
 
 import { challengeSubmitDetailCellWidthList } from '../../../../../../utils/tableCellWidthList';
 
 interface Props {
   cellWidthListIndex: number;
-  attendanceList: any;
-  isCheckedList: any;
-  setIsCheckedList: (isCheckedList: any) => void;
+  attendanceList: Attendance[];
+  isCheckedList: number[];
+  setIsCheckedList: (isCheckedList: number[]) => void;
 }
 
 const AllChoiceCheckbox = ({
@@ -18,16 +19,16 @@ const AllChoiceCheckbox = ({
 }: Props) => {
   const cellWidthList = challengeSubmitDetailCellWidthList;
 
-  const allCheckedList = attendanceList.map((attendance: any) => attendance.id);
+  const allCheckedList = attendanceList.map((attendance) => attendance.id);
 
-  const checkArrayEqual = (arr1: any, arr2: any) => {
+  function isArrayEqual<T>(arr1: T[], arr2: T[]) {
     arr1 = arr1.sort();
     arr2 = arr2.sort();
     return JSON.stringify(arr1) === JSON.stringify(arr2);
-  };
+  }
 
   const [isChecked, setIsChecked] = useState(
-    checkArrayEqual(isCheckedList, allCheckedList),
+    isArrayEqual(isCheckedList, allCheckedList),
   );
 
   const handleCheckboxClicked = () => {
@@ -40,10 +41,9 @@ const AllChoiceCheckbox = ({
 
   useEffect(() => {
     setIsChecked(
-      checkArrayEqual(isCheckedList, allCheckedList) &&
-        attendanceList.length > 0,
+      isArrayEqual(isCheckedList, allCheckedList) && attendanceList.length > 0,
     );
-  }, [isChecked, isCheckedList, allCheckedList]);
+  }, [isChecked, isCheckedList, allCheckedList, attendanceList.length]);
 
   return (
     <div

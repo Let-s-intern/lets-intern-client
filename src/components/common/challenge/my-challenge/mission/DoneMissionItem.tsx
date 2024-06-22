@@ -1,38 +1,52 @@
+import { useQuery } from '@tanstack/react-query';
 import clsx from 'clsx';
 import { useEffect, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { useQuery } from '@tanstack/react-query';
 
+import { useCurrentChallenge } from '../../../../../context/CurrentChallengeProvider';
+import {
+  MyChallengeMissionByType,
+  userChallengeMissionDetail,
+} from '../../../../../schema';
 import axios from '../../../../../utils/axios';
-import DoneMissionDetailMenu from './DoneMissionDetailMenu';
 import { missionSubmitToBadge } from '../../../../../utils/convert';
+import DoneMissionDetailMenu from './DoneMissionDetailMenu';
 
 interface Props {
-  mission: any;
+  mission: MyChallengeMissionByType;
 }
 
 const DoneMissionItem = ({ mission }: Props) => {
   const [searchParams, setSearchParams] = useSearchParams();
-
+  const { currentChallenge, schedules } = useCurrentChallenge();
   const itemRef = useRef<HTMLLIElement>(null);
-
   const [isDetailShown, setIsDetailShown] = useState(false);
 
   const {
     data: missionDetail,
     isLoading: isDetailLoading,
     error: detailError,
+    refetch,
   } = useQuery({
-    queryKey: ['mission', mission.id, 'detail', { status: mission.status }],
+    enabled: Boolean(currentChallenge?.id) && isDetailShown,
+    queryKey: [
+      'challenge',
+      currentChallenge?.id,
+      'mission',
+      mission.id,
+      'detail',
+      // { status: schedule.attendanceInfo.status },
+    ],
     queryFn: async () => {
-      const res = await axios.get(`/mission/${mission.id}/detail`, {
-        params: { status: mission.status },
-      });
-      const data = res.data;
-      console.log(data);
-      return data;
+      const res = await axios.get(
+        `challenge/${currentChallenge?.id}/missions/${mission.id}`,
+      );
+      return userChallengeMissionDetail.parse(res.data.data).missionInfo;
     },
-    enabled: isDetailShown,
+  });
+
+  const currentSchedule = schedules.find((schedule) => {
+    return schedule.missionInfo.id === mission.id;
   });
 
   useEffect(() => {
@@ -46,7 +60,7 @@ const DoneMissionItem = ({ mission }: Props) => {
         }
       }
     }
-  }, [searchParams, setSearchParams, isDetailShown]);
+  }, [searchParams, setSearchParams, isDetailShown, mission.id]);
 
   return (
     <li
@@ -72,7 +86,6 @@ const DoneMissionItem = ({ mission }: Props) => {
                 missionSubmitToBadge({
                   status: mission.attendanceStatus,
                   result: mission.attendanceResult,
-                  isRefunded: mission.attendanceIsRefunded,
                 }).style,
               )}
             >
@@ -80,7 +93,6 @@ const DoneMissionItem = ({ mission }: Props) => {
                 missionSubmitToBadge({
                   status: mission.attendanceStatus,
                   result: mission.attendanceResult,
-                  isRefunded: mission.attendanceIsRefunded,
                 }).text
               }
             </span>
@@ -93,8 +105,14 @@ const DoneMissionItem = ({ mission }: Props) => {
       {isDetailShown &&
         (detailError
           ? '에러 발생'
-          : !isDetailLoading && (
-              <DoneMissionDetailMenu missionDetail={missionDetail} />
+          : !isDetailLoading &&
+            missionDetail &&
+            currentSchedule && (
+              <DoneMissionDetailMenu
+                missionDetail={missionDetail}
+                schedule={currentSchedule}
+                missionByType={mission}
+              />
             ))}
     </li>
   );

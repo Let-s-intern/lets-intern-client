@@ -1,13 +1,14 @@
 import MissionCalendar from '../mission-calendar/MissionCalendar';
 import MissionTooltipQuestion from '../../ui/tooltip-question/MissionTooltipQuestion';
+import { Schedule } from '../../../../../schema';
 
 interface Props {
-  missionList: any;
+  schedules: Schedule[];
   todayTh: number;
   isDone: boolean;
 }
 
-const MissionCalendarSection = ({ missionList, todayTh, isDone }: Props) => {
+const MissionCalendarSection = ({ schedules, todayTh, isDone }: Props) => {
   return (
     <section className="mt-4 rounded-xl border border-[#E4E4E7] px-10 pb-10 pt-6">
       <div className="flex items-center gap-2">
@@ -28,8 +29,9 @@ const MissionCalendarSection = ({ missionList, todayTh, isDone }: Props) => {
       </div>
       <MissionCalendar
         className="mt-4"
-        missionList={missionList}
+        schedules={schedules}
         todayTh={todayTh}
+        isDone={isDone}
       />
     </section>
   );

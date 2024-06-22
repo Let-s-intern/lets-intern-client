@@ -1,18 +1,39 @@
 import { useState } from 'react';
 import styled from 'styled-components';
 import { Checkbox } from '@mui/material';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import dayjs from 'dayjs';
 
 import ActionButton from '../../../ui/button/ActionButton';
 import TD from '../../../ui/table/regacy/TD';
-import { convertTypeToText } from '../../../../../utils/converTypeToText';
 import AlertModal from '../../../../ui/alert/AlertModal';
-import formatDateString from '../../../../../utils/formatDateString';
-import { challengeTopicToText } from '../../../../../utils/convert';
+import {
+  newProgramTypeDetailToText,
+  newProgramTypeToText,
+  programStatusToText,
+} from '../../../../../utils/convert';
+import axios from '../../../../../utils/axios';
 
 interface ProgramTableBodyProps {
-  programList: any;
-  fetchDelete: (programId: number) => void;
-  fetchEditProgramVisible: (programId: number, visible: boolean) => void;
+  programList: {
+    programInfo: {
+      id: number;
+      title: string;
+      programType: string;
+      isVisible: boolean;
+      currentCount: number;
+      participationCount: number;
+      deadline: string;
+      startDate: string;
+      endDate: string;
+      zoomLink: string;
+      zoomPassword: string;
+      programStatusType: string;
+    };
+    classificationList: {
+      programClassification: string;
+    }[];
+  }[];
 }
 
 const ActionButtonGroup = styled.div`
@@ -21,57 +42,126 @@ const ActionButtonGroup = styled.div`
   gap: 0.5rem;
 `;
 
-const TableBody = ({
-  programList,
-  fetchDelete,
-  fetchEditProgramVisible,
-}: ProgramTableBodyProps) => {
-  const [isDeleteModal, setIsDeleteModal] = useState(false);
-  const [programIdDelete, setProgramIdDelete] = useState(0);
+const TableBody = ({ programList }: ProgramTableBodyProps) => {
+  const queryClient = useQueryClient();
 
-  const onConfirm = () => {
-    fetchDelete(programIdDelete);
-    setIsDeleteModal(false);
+  const [isDeleteModal, setIsDeleteModal] = useState(false);
+  const [programDelete, setProgramDelete] = useState<{
+    programId: number;
+    programType: string;
+  }>({
+    programId: 0,
+    programType: '',
+  });
+
+  const editProgramVisible = useMutation({
+    mutationFn: async (params: {
+      programType: string;
+      programId: number;
+      isVisible: boolean;
+    }) => {
+      const res = await axios.patch(
+        `/${params.programType.toLocaleLowerCase()}/${params.programId}`,
+        {
+          isVisible: params.isVisible,
+        },
+      );
+      return res.data;
+    },
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ['program'] });
+    },
+  });
+
+  const delelteProgram = useMutation({
+    mutationFn: async () => {
+      const res = await axios.delete(
+        `/${programDelete.programType.toLowerCase()}/${
+          programDelete.programId
+        }`,
+      );
+      return res.data;
+    },
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ['program'] });
+      setIsDeleteModal(false);
+      setProgramDelete({ programId: 0, programType: '' });
+    },
+  });
+
+  const handleEditProgramVisible = (
+    programType: string,
+    programId: number,
+    isVisible: boolean,
+  ) => {
+    editProgramVisible.mutate({ programType, programId, isVisible });
   };
 
-  const onCancel = () => {
-    setProgramIdDelete(0);
+  const handleDeleteModalConfirm = () => {
+    delelteProgram.mutate();
+  };
+
+  const handleDeleteModalCancel = () => {
+    setProgramDelete({ programId: 0, programType: '' });
     setIsDeleteModal(false);
   };
 
   return (
     <>
       <tbody>
-        {programList.map((program: any) => (
-          <tr key={program.id}>
+        {programList.map((program) => (
+          <tr
+            key={`${program.programInfo.programType}${program.programInfo.id}`}
+          >
             <TD>
-              {convertTypeToText(program.type, true)}{' '}
-              {program.topic && ` - ${challengeTopicToText[program.topic]}`}
+              <span className="flex justify-center">
+                {program.classificationList
+                  .map(
+                    (type) =>
+                      newProgramTypeDetailToText[type.programClassification],
+                  )
+                  .join(', ')}
+              </span>
             </TD>
-            <TD>{program.th}</TD>
-            <TD>{program.title}</TD>
-            <TD>{formatDateString(program.dueDate)}</TD>
+            <TD>{newProgramTypeToText[program.programInfo.programType]}</TD>
+            <TD>{program.programInfo.title}</TD>
             <TD>
-              {program.status === 'OPEN'
-                ? '모집 중'
-                : program.status === 'CLOSED'
-                ? '모집완료'
-                : program.status === 'DONE' && '진행완료'}
+              {programStatusToText[program.programInfo.programStatusType]}
             </TD>
             <TD>
-              {program.applicationCount} / {program.headcount}
+              {program.programInfo.programType === 'VOD' ? (
+                '온라인'
+              ) : (
+                <>
+                  {program.programInfo.currentCount} /{' '}
+                  {program.programInfo.participationCount}
+                </>
+              )}
             </TD>
-            <TD>{formatDateString(program.startDate)}</TD>
+            <TD>
+              {program.programInfo.programType === 'VOD'
+                ? '온라인'
+                : dayjs(program.programInfo.deadline).format(
+                    `M/D(dd) HH:mm까지`,
+                  )}
+            </TD>
+            <TD>
+              {program.programInfo.programType === 'VOD'
+                ? '온라인'
+                : dayjs(program.programInfo.startDate).format(
+                    `YYYY/M/D(dd) HH:mm까지`,
+                  )}
+            </TD>
             <TD>
               <ActionButtonGroup>
                 <ActionButton
                   bgColor="green"
-                  to={`/admin/programs/${program.id}/edit`}
+                  to={`/admin/programs/${program.programInfo.id}/edit?programType=${program.programInfo.programType}`}
                 >
                   수정
                 </ActionButton>
                 <ActionButton
-                  to={`/admin/programs/${program.id}/users`}
+                  to={`/admin/programs/${program.programInfo.id}/users?programType=${program.programInfo.programType}`}
                   bgColor="blue"
                 >
                   참여자
@@ -80,7 +170,10 @@ const TableBody = ({
                   bgColor="red"
                   onClick={() => {
                     setIsDeleteModal(true);
-                    setProgramIdDelete(program.id);
+                    setProgramDelete({
+                      programId: program.programInfo.id,
+                      programType: program.programInfo.programType,
+                    });
                   }}
                 >
                   삭제
@@ -89,9 +182,13 @@ const TableBody = ({
             </TD>
             <TD>
               <Checkbox
-                checked={program.isVisible}
+                checked={program.programInfo.isVisible}
                 onChange={() => {
-                  fetchEditProgramVisible(program.id, program.isVisible);
+                  handleEditProgramVisible(
+                    program.programInfo.programType,
+                    program.programInfo.id,
+                    !program.programInfo.isVisible,
+                  );
                 }}
               />
             </TD>
@@ -99,9 +196,9 @@ const TableBody = ({
               <button
                 className="rounded-xxs border border-gray-300 bg-white px-2 py-1"
                 onClick={() => {
-                  if (program.way === 'OFFLINE' || !program.link) return;
+                  if (!program.programInfo.zoomLink) return;
                   navigator.clipboard
-                    .writeText(program.link)
+                    .writeText(program.programInfo.zoomLink)
                     .then(() => {
                       alert('링크가 클립보드에 복사되었습니다.');
                     })
@@ -110,22 +207,18 @@ const TableBody = ({
                     });
                 }}
               >
-                {program.way === 'OFFLINE'
-                  ? '오프라인'
-                  : program.link
-                  ? '복사'
-                  : '없음'}
+                {program.programInfo.zoomLink ? '복사' : '없음'}
               </button>
             </TD>
-            <TD>{program.linkPassword || '없음'}</TD>
+            <TD>{program.programInfo.zoomPassword || '없음'}</TD>
           </tr>
         ))}
       </tbody>
 
       {isDeleteModal && (
         <AlertModal
-          onConfirm={onConfirm}
-          onCancel={onCancel}
+          onConfirm={handleDeleteModalConfirm}
+          onCancel={handleDeleteModalCancel}
           title="프로그램 삭제"
           confirmText="예"
           cancelText="아니오"

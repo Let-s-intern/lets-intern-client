@@ -1,15 +1,10 @@
+import { IBannerForm } from '../../../../interfaces/interface';
 import Input from '../../../ui/input/Input';
 import DateTimePicker from '../../program/ui/form/DateTimePicker';
-import ImageUploader from '../../program/ui/form/ImageUploader';
+import ImageUpload from '../../program/ui/form/ImageUpload';
 
-export interface ProgramBannerInputContentProps {
-  value: {
-    title: string;
-    link: string;
-    startDate: string;
-    endDate: string;
-    image: FileList | undefined;
-  };
+interface ProgramBannerInputContentProps {
+  value: IBannerForm;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
@@ -25,12 +20,21 @@ const ProgramBannerInputContent = ({
         value={value.title}
         onChange={onChange}
       />
-      <ImageUploader
-        label="배너 이미지"
-        imageFormat={{ width: 500, height: 230 }}
+      <Input label="링크" name="link" value={value.link} onChange={onChange} />
+      <ImageUpload
+        label="데스크탑용 배너 이미지 업로드"
+        id="file"
+        name="file"
+        image={value.imgUrl}
         onChange={onChange}
       />
-      <Input label="링크" name="link" value={value.link} onChange={onChange} />
+      <ImageUpload
+        label="모바일용 배너 이미지 업로드"
+        id="mobileFile"
+        name="mobileFile"
+        image={value.mobileImgUrl}
+        onChange={onChange}
+      />
       <DateTimePicker
         label="시작 일자"
         id="startDate"

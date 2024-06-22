@@ -4,21 +4,22 @@ import { challengeSubmitDetailCellWidthList } from '../../../../../../utils/tabl
 import AllChoiceCheckbox from '../table-body/AllChoiceCheckbox';
 import ResultFilter from '../../filter/ResultFilter';
 import StatusFilter from '../../filter/StatusFilter';
+import { Attendance } from '../../../../../../schema';
 
 interface Props {
   className?: string;
-  attendanceList: any;
-  isCheckedList: any;
-  setIsCheckedList: (isCheckedList: any) => void;
-  resultFilter: string;
-  setResultFilter: (resultFilter: string) => void;
-  statusFilter: string;
-  setStatusFilter: (statusFilter: string) => void;
+  attendances: Attendance[];
+  isCheckedList: number[];
+  setIsCheckedList: (isCheckedList: number[]) => void;
+  resultFilter: Attendance['result'];
+  setResultFilter: (resultFilter: Attendance['result']) => void;
+  statusFilter: Attendance['status'];
+  setStatusFilter: (statusFilter: Attendance['status']) => void;
 }
 
 const TableHead = ({
   className,
-  attendanceList,
+  attendances,
   isCheckedList,
   setIsCheckedList,
   resultFilter,
@@ -37,17 +38,25 @@ const TableHead = ({
     >
       <AllChoiceCheckbox
         cellWidthListIndex={0}
-        attendanceList={attendanceList}
+        attendanceList={attendances}
         isCheckedList={isCheckedList}
         setIsCheckedList={setIsCheckedList}
       />
-      <div
+      {/* <div
         className={clsx(
           'border-r border-[#D9D9D9] py-3 text-center',
           cellWidthList[1],
         )}
       >
         번호
+      </div> */}
+      <div
+        className={clsx(
+          'border-r border-[#D9D9D9] py-3 text-center',
+          cellWidthList[1],
+        )}
+      >
+        제출일자
       </div>
       <div
         className={clsx(
@@ -65,14 +74,14 @@ const TableHead = ({
       >
         메일
       </div>
-      <div
+      {/* <div
         className={clsx(
           'border-r border-[#D9D9D9] py-3 text-center',
           cellWidthList[4],
         )}
       >
         계좌번호
-      </div>
+      </div> */}
       <StatusFilter
         cellWidthListIndex={5}
         statusFilter={statusFilter}
@@ -91,14 +100,14 @@ const TableHead = ({
         resultFilter={resultFilter}
         setResultFilter={setResultFilter}
       />
-      <div
+      {/* <div
         className={clsx(
           'border-r border-[#D9D9D9] py-3 text-center',
           cellWidthList[8],
         )}
       >
         환급여부
-      </div>
+      </div> */}
       <div className={clsx('py-3 text-center', cellWidthList[8])}>코멘트</div>
     </div>
   );

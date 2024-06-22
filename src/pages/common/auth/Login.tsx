@@ -1,10 +1,14 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
-import axios from 'axios';
+// import axios from 'axios';
+import { AxiosError } from 'axios';
+import axios from '../../../utils/axios';
 
 import Button from '../../../components/common/ui/button/Button';
 import Input from '../../../components/ui/input/Input';
 import SocialLogin from '../../../components/common/auth/ui/SocialLogin';
+import { useMutation } from '@tanstack/react-query';
+import useAuthStore from '../../../store/useAuthStore';
 
 interface TextLinkProps {
   to: string;
@@ -27,6 +31,7 @@ const TextLink = ({ to, dark, className, children }: TextLinkProps) => {
 };
 
 const Login = () => {
+  const { isLoggedIn, login } = useAuthStore();
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const [email, setEmail] = useState('');
@@ -34,13 +39,39 @@ const Login = () => {
   const [errorMessage, setErrorMessage] = useState('');
   const [buttonDisabled, setButtonDisabled] = useState(false);
 
+  const fetchLogin = useMutation({
+    mutationFn: async () => {
+      const res = await axios.post('/user/signin', {
+        email,
+        password,
+      });
+      return res.data;
+    },
+    onSuccess: (data) => {
+      console.log('success');
+      login(
+        data.data.accessToken,
+        data.data.refreshToken,
+        searchParams.get('redirect') || '/',
+      );
+    },
+    onError: (error) => {
+      const axiosError = error as AxiosError;
+      if (
+        axiosError.response?.status === 400 ||
+        axiosError.response?.status === 404
+      ) {
+        setErrorMessage('이메일 또는 비밀번호가 일치하지 않습니다.');
+      }
+    },
+  });
+
   useEffect(() => {
-    const accessToken = localStorage.getItem('access-token');
-    const refreshToken = localStorage.getItem('refresh-token');
-    if (accessToken && refreshToken) {
+    setErrorMessage('');
+    if (!searchParams.get('error') && isLoggedIn) {
       navigate('/');
     }
-  }, [navigate]);
+  }, [isLoggedIn, navigate, searchParams]);
 
   useEffect(() => {
     if (!email || !password) {
@@ -51,49 +82,41 @@ const Login = () => {
   }, [email, password]);
 
   useEffect(() => {
+    if (searchParams.get('error')) {
+      setErrorMessage('이미 가입된 휴대폰 번호입니다.');
+      return;
+    }
     if (searchParams.get('result')) {
       const parsedToken = JSON.parse(searchParams.get('result') || '');
       const newSearchParams = new URLSearchParams(searchParams);
       newSearchParams.delete('result');
       setSearchParams(newSearchParams);
       handleLoginSuccess(parsedToken);
-    } else if (searchParams.get('error')) {
-      const errorParam = JSON.parse(searchParams.get('error') || '');
-      const newSearchParams = new URLSearchParams(searchParams);
-      newSearchParams.delete('error');
-      setSearchParams(newSearchParams);
-      if (errorParam.status === 400 && errorParam.code === 'USER_400_4') {
-        setErrorMessage('이미 존재하는 이메일입니다.');
-      }
     }
+    // } else if (searchParams.get('error')) {
+    //   const errorParam = JSON.parse(searchParams.get('error') || '');
+    //   const newSearchParams = new URLSearchParams(searchParams);
+    //   newSearchParams.delete('error');
+    //   setSearchParams(newSearchParams);
+    //   if (errorParam.status === 400 && errorParam.code === 'USER_400_4') {
+    //     setErrorMessage('이미 존재하는 이메일입니다.');
+    //   }
+    // }
     // eslint-disable-next-line
   }, [searchParams, setSearchParams]);
 
   const handleLoginSuccess = (token: any) => {
-    localStorage.setItem('access-token', token.accessToken);
-    localStorage.setItem('refresh-token', token.refreshToken);
-    if (searchParams.get('redirect')) {
-      window.location.href = searchParams.get('redirect') || '/';
-    } else {
-      window.location.href = '/';
-    }
+    login(
+      token.accessToken,
+      token.refreshToken,
+      searchParams.get('redirect') || '/',
+    );
   };
 
   const handleLogin = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (buttonDisabled) return;
-    axios
-      .post(`${process.env.REACT_APP_SERVER_API}/user/signin`, {
-        email,
-        password,
-      })
-      .then((res) => {
-        handleLoginSuccess(res.data);
-      })
-      .catch((err) => {
-        console.log(err);
-        setErrorMessage(err.response.data.reason);
-      });
+    fetchLogin.mutate();
   };
 
   return (

@@ -1,28 +1,32 @@
 import { useState } from 'react';
 import { IoIosLink } from 'react-icons/io';
 import { Link } from 'react-router-dom';
+import { UserChallengeMissionDetail } from '../../../../../schema';
 
 interface Props {
-  missionDetail: any;
+  missionDetail: UserChallengeMissionDetail;
 }
 
 const MenuContentsDropdown = ({ missionDetail }: Props) => {
   const [isMenuShown, setIsMenuShown] = useState(false);
+  const additionalContentsLink =
+    missionDetail.additionalContentsList?.[0]?.link;
+  const essentialContentsLink = missionDetail.essentialContentsList?.[0]?.link;
 
   return (
     <div className="relative">
       <button
-        className="w-full rounded border border-[#BCBCBC] px-4 py-2 font-medium"
+        className="rounded w-full border border-[#BCBCBC] px-4 py-2 font-medium"
         onClick={() => setIsMenuShown(!isMenuShown)}
       >
         학습 콘텐츠 확인하기
       </button>
       {isMenuShown && (
-        <ul className="absolute -bottom-1 w-full translate-y-full rounded border border-[#BCBCBC] bg-white">
-          {missionDetail.essentialContentsLink && (
+        <ul className="rounded absolute -bottom-1 w-full translate-y-full border border-[#BCBCBC] bg-white">
+          {essentialContentsLink && (
             <li>
               <Link
-                to={missionDetail.essentialContentsLink}
+                to={essentialContentsLink}
                 className="flex items-center justify-between px-5 py-3 text-center text-primary duration-200 hover:bg-gray-100"
                 target="_blank"
                 rel="noopenner noreferrer"
@@ -34,10 +38,10 @@ const MenuContentsDropdown = ({ missionDetail }: Props) => {
               </Link>
             </li>
           )}
-          {missionDetail.additionalContentsLink && (
+          {additionalContentsLink && (
             <li>
               <Link
-                to={missionDetail.additionalContentsLink}
+                to={additionalContentsLink}
                 className="flex items-center justify-between px-5 py-3 text-center text-primary duration-200 hover:bg-gray-100"
                 target="_blank"
                 rel="noopenner noreferrer"

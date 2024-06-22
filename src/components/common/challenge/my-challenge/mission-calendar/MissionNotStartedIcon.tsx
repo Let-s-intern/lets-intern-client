@@ -1,11 +1,12 @@
 import clsx from 'clsx';
+import { Schedule } from '../../../../../schema';
 
 interface Props {
   className?: string;
-  mission: any;
+  schedule: Schedule;
 }
 
-const MissionNotStartedIcon = ({ className, mission }: Props) => {
+const MissionNotStartedIcon = ({ className, schedule }: Props) => {
   return (
     <div
       className={clsx(
@@ -13,9 +14,9 @@ const MissionNotStartedIcon = ({ className, mission }: Props) => {
         className,
       )}
     >
-      <div className="mb-[0.175rem] h-[2.5rem] w-[2.5rem] rounded-full bg-[#D0CFCF]" />
+      <div className="mb-[10%] flex h-[30%] min-h-[2.5rem] w-[30%] min-w-[2.5rem] rounded-full bg-[#D0CFCF]" />
       <span className="block font-pretendard text-sm font-semibold text-[#D0CFCF]">
-        {mission.missionTh}회차
+        {schedule.missionInfo.th}회차
       </span>
     </div>
   );
