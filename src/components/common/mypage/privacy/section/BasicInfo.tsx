@@ -95,7 +95,14 @@ const BasicInfo = () => {
 
   return (
     <section className="flex flex-col gap-6">
-      <h1 className="text-lg font-semibold">기본 정보 {user.authProvider === 'KAKAO' ? '(카카오 로그인)' : user.authProvider === 'NAVER' ? '(네이버 로그인)' : ''}</h1>
+      <div className='flex w-full items-center gap-x-3'>
+      <h1 className="text-lg font-semibold">기본 정보</h1>
+      {
+        (user.authProvider === 'KAKAO' || user.authProvider === 'NAVER') && (
+          <img src={user.authProvider === 'KAKAO' ? '/images/social_kakao.svg' : user.authProvider === 'NAVER' ? '/images/social_naver.png' : ''} alt="profile" className="h-8" />
+        )
+      }
+      </div>
       <div className="flex flex-col gap-3">
         <div className='flex flex-col gap-3 pb-4 border-b border-b-neutral-70'>
         <div className="flex flex-col gap-1">

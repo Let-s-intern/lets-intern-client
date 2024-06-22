@@ -5,6 +5,7 @@ import TenScore from '../score/TenScore';
 import YesNoScore from '../score/YesNoScore';
 
 interface TenScoreSectionProps {
+  programTitle: string;
   tenScore: number | null;
   setTenScore: (tenScore: number | null) => void;
   isYes: boolean | null;
@@ -18,6 +19,7 @@ interface TenScoreSectionProps {
 }
 
 const TenScoreSection = ({
+  programTitle,
   tenScore,
   setTenScore,
   isYes,
@@ -43,7 +45,7 @@ const TenScoreSection = ({
       <div className="flex flex-col gap-6">
         <div className="flex flex-col gap-2">
           <h1 className="text-lg font-semibold">
-            (프로그램이름)을 주변에 얼마나 추천하고 싶으신가요?
+            {programTitle}을 주변에 얼마나 추천하고 싶으신가요?
           </h1>
           <p>0~10점 사이로 선택해주세요.</p>
         </div>

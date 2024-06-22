@@ -42,7 +42,7 @@ const EmptyCardList = () => {
           />
           <div className="flex flex-col gap-2 py-2">
             <h2 className="text-1-semibold">{program.title}</h2>
-            <p className="text-0.875 h-11 overflow-hidden text-neutral-30">
+            <p className="text-0.875 h-11 text-neutral-30 line-clamp-2">
               {program.desc}
             </p>
             <button

@@ -5,7 +5,6 @@ import ChangePassword from '../../../components/common/mypage/privacy/section/Ch
 import MarketingAgree from '../../../components/common/mypage/privacy/section/MarketingAgree';
 import axios from '../../../utils/axios';
 import useAuthStore from '../../../store/useAuthStore';
-import UserDeleteModal from '../../../components/common/mypage/ui/modal/UserDeleteModal';
 import { useState } from 'react';
 import AlertModal from '../../../components/ui/alert/AlertModal';
 

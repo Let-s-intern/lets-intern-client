@@ -45,6 +45,7 @@ const Programs = () => {
   // 필터링 상태 관리
   const [searchParams, setSearchParams] = useSearchParams();
   const [isOpen, setIsOpen] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   // 필터  초기화 (URL 기준 필터 설정)
   const setFilterClassification = () => {
@@ -250,6 +251,15 @@ const Programs = () => {
     queryFn: getProgramList,
   });
 
+  useEffect(() => {
+    if (isLoading || isFetching) {
+      setLoading(true);
+    } else {
+      const timer = setTimeout(() => setLoading(false), 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [isLoading, isFetching]);
+
   return (
     <div className={`flex ${isOpen ? 'overflow-hidden' : ''}`}>
       {/* 필터링 사이드바 */}
@@ -348,7 +358,7 @@ const Programs = () => {
           </div>
         </section>
         {
-          isLoading || isFetching ? (
+          loading ? (
             <LoadingContainer />
           ) : isSuccess && programList ? (
             programList.length < 1 ? (

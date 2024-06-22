@@ -48,6 +48,11 @@ const ReviewCreate = ({isEdit}:{isEdit:boolean}) => {
       setStarScore(reviewDetailData.score);
       setTenScore(reviewDetailData.nps);
       setIsYes(reviewDetailData.npsCheckAns);
+      setAnswer({
+        yes: reviewDetailData.npsAns === 'YES' ? 'YES' : '',
+        no: reviewDetailData.npsAns === 'NO' ? 'NO' : '',
+        low: reviewDetailData.npsAns === 'LOW' ? 'LOW' : '',
+      });
       setContent(reviewDetailData.content);
     }
   }, [reviewDetailData, isEdit])
@@ -138,6 +143,7 @@ const ReviewCreate = ({isEdit}:{isEdit:boolean}) => {
         />
         <StarScoreSection starScore={starScore} setStarScore={setStarScore} title={programTitle}/>
         <TenScoreSection
+          programTitle={programTitle}
           tenScore={tenScore}
           setTenScore={setTenScore}
           isYes={isYes}

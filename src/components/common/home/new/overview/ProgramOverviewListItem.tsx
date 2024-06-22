@@ -6,7 +6,7 @@ import ProgramListItem from './ProgramListItem';
 import { useQuery } from '@tanstack/react-query';
 
 import axios from '../../../../../utils/axios';
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import LoadingContainer from '../../../ui/loading/LoadingContainer';
 import EmptyContainer from '../../../ui/loading/EmptyContainer';
 
@@ -46,6 +46,7 @@ const getNextMonth = (year: number, month: number): DateInfo => {
 };
 
 const ProgramOverviewListItem = () => {
+  const [loading, setLoading] = useState<boolean>(true);
   const now: DateInfo = {
     year: new Date().getFullYear(),
     month: new Date().getMonth() + 1,
@@ -83,6 +84,17 @@ const ProgramOverviewListItem = () => {
     },
   });
 
+  useEffect(() => {
+    if (isLoading) {
+      setLoading(true);
+    } else {
+      const timer = setTimeout(() => setLoading(false), 1500);
+      return () => clearTimeout(timer);
+    }
+  }, [isLoading]);
+  
+  
+
   const goToPreviousMonth = () => {
     setCurrent(prevMonth());
   };
@@ -118,12 +130,12 @@ const ProgramOverviewListItem = () => {
           />
           <span className="text-1">{`${current.year}년 ${current.month}월`}</span>
           <img
-className={`w-5 ${
-  (current.year === now.year && current.month === now.month + 3) ||
-  (now.month + 3 > 12 && current.year === now.year + 1 && current.month === now.month - 9)
-    ? 'cursor-not-allowed opacity-30'
-    : 'cursor-pointer'
-}`}
+            className={`w-5 ${
+              (current.year === now.year && current.month === now.month + 3) ||
+              (now.month + 3 > 12 && current.year === now.year + 1 && current.month === now.month - 9)
+                ? 'cursor-not-allowed opacity-30'
+                : 'cursor-pointer'
+            }`}
             onClick={() => {
               if (
                 (current.year === now.year && current.month === now.month + 3) ||
@@ -145,16 +157,14 @@ className={`w-5 ${
       </div>
       <ul className=" grid grid-cols-1 grid-rows-4 md:grid-rows-2 gap-4 md:grid-cols-2 overflow-y-scroll">
         {
-          !data ? (
-            isLoading ? (
-              <div className='row-span-4 h-[536px] md:col-span-2 md:row-span-2 md:h-[380px] flex items-center justify-center'>
-                <LoadingContainer />
-              </div>
-            ) : (
-              <div className='row-span-4 h-[536px] md:col-span-2 md:row-span-2 md:h-[380px] flex items-center justify-center'>
-                <EmptyContainer />
-              </div>
-            )
+          loading ? (
+            <div className='row-span-4 h-[536px] md:col-span-2 md:row-span-2 md:h-[380px] flex items-center justify-center'>
+              <LoadingContainer />
+            </div>
+          ) : !data ? (
+            <div className='row-span-4 h-[536px] md:col-span-2 md:row-span-2 md:h-[380px] flex items-center justify-center'>
+              <EmptyContainer />
+            </div>
           ) : (
             data.length < 1 ? (
               <div className='row-span-4 h-[536px] md:col-span-2 md:row-span-2 md:h-[380px] flex items-center justify-center'>
