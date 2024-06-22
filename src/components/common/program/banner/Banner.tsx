@@ -33,9 +33,7 @@ const Banner = () => {
       if (res.status === 200) {
         const bannerList = res.data.data.bannerList as IBanner[];
         // console.log('bannerList', bannerList);
-        const filtered = bannerList.filter(
-          (banner: IBanner) => banner.isValid,
-        );
+        const filtered = bannerList.filter((banner: IBanner) => banner.isValid);
         setBannerList(filtered);
         return res.data;
       }
@@ -71,7 +69,7 @@ const Banner = () => {
   if (isLoading || bannerList.length === 0) return <></>;
 
   return (
-    <div className="relative flex h-40 w-full items-center overflow-hidden rounded-sm bg-static-0 text-static-100 md:h-44 lg:h-56 xl:h-72 max-w-[59rem]">
+    <div className="relative flex h-40 w-full max-w-[59rem] items-center overflow-hidden rounded-sm bg-static-0 text-static-100 md:h-44 lg:h-56 xl:h-72">
       <div
         ref={innerRef}
         className="flex flex-nowrap items-center transition-transform duration-300 ease-in-out"
@@ -81,6 +79,8 @@ const Banner = () => {
             to={banner.link}
             key={banner.id}
             className="w-full shrink-0"
+            target="_blank"
+            rel="noreferrer noopener"
           >
             <img
               ref={imgRef}

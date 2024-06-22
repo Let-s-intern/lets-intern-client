@@ -12,8 +12,20 @@ const Footer = () => {
           <div className="flex w-80 items-center gap-8">
             <MenuLink to="/">홈</MenuLink>
             <MenuLink to="/program">프로그램</MenuLink>
-            <MenuLink to='https://letscareer.oopy.io'>공지사항</MenuLink>
-            <MenuLink to="https://letscareer.oopy.io">자주 묻는 질문</MenuLink>
+            <MenuLink
+              to="https://letscareer.oopy.io"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              공지사항
+            </MenuLink>
+            <MenuLink
+              to="https://letscareer.oopy.io"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              자주 묻는 질문
+            </MenuLink>
             {/* <MenuLink to="/blog">블로그</MenuLink> */}
           </div>
         </div>
@@ -42,7 +54,9 @@ const Footer = () => {
         </div>
         <div className="flex flex-col gap-2 md:flex-row">
           <div className="flex gap-2">
-            <span>주소: 서울특별시 마포구 독막로 9길 18, 서홍빌딩 3층 A9호</span>
+            <span>
+              주소: 서울특별시 마포구 독막로 9길 18, 서홍빌딩 3층 A9호
+            </span>
             <span>|</span>
           </div>
           <div className="flex gap-2">

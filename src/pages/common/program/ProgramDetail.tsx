@@ -137,21 +137,20 @@ const ProgramDetail = ({ programType }: ProgramDetailProps) => {
                   onClick={() => {}}
                   caption={'로딩 중 ...'}
                   isAlreadyApplied={false}
+                  className="opacity-0"
+                />
+              ) : new Date() < new Date(programInfo.beginning) ||
+                new Date() > new Date(programInfo.deadline) ? (
+                <NotiButton
+                  onClick={clickNotiButton}
+                  caption={'출시알림신청'}
                 />
               ) : (
-                new Date() < new Date(programInfo.beginning) ||
-                  new Date() > new Date(programInfo.deadline) ? (
-                  <NotiButton
-                    onClick={clickNotiButton}
-                    caption={'출시알림신청'}
-                  />
-                ) : (
-                  <FilledButton
-                    onClick={toggleDrawer}
-                    caption={isAlreadyApplied ? '신청완료' : '신청하기'}
-                    isAlreadyApplied={isAlreadyApplied}
-                  />
-                )
+                <FilledButton
+                  onClick={toggleDrawer}
+                  caption={isAlreadyApplied ? '신청완료' : '신청하기'}
+                  isAlreadyApplied={isAlreadyApplied}
+                />
               )}
             </div>
           )}

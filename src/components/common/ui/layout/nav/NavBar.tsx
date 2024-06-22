@@ -185,10 +185,20 @@ const NavBar = () => {
               관리자 페이지
             </SideNavItem>
           )}
-          <SideNavItem to="https://letscareer.oopy.io" onClick={closeMenu}>
+          <SideNavItem
+            to="https://letscareer.oopy.io"
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={closeMenu}
+          >
             자주 묻는 질문
           </SideNavItem>
-          <SideNavItem to="https://letscareer.oopy.io" onClick={closeMenu}>
+          <SideNavItem
+            to="https://letscareer.oopy.io"
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={closeMenu}
+          >
             공지사항
           </SideNavItem>
         </div>

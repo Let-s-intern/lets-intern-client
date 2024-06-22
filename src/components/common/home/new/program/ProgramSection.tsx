@@ -26,7 +26,7 @@ const programList: IProgramGridItem[] = [
   },
   {
     keyword: 'CV',
-    title: ['서류 준비','단계'],
+    title: ['서류 준비', '단계'],
     descriptionList: ['이력서, 포트폴리오', '준비가 어려운', '취업준비생'],
     bgColor: 'bg-gradient-cv',
     borderColor: 'border-[#F1F1FF]',
@@ -62,7 +62,7 @@ const programList: IProgramGridItem[] = [
 
 const ProgramSection = () => {
   return (
-    <section className='px-5 '>
+    <section className="px-5 ">
       <div className="flex flex-col gap-1">
         <Heading>
           {PROGRAM_SECTION.TITLE.map((title) => (
