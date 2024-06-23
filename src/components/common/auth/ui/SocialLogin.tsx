@@ -21,7 +21,7 @@ const SocialLogin = ({ type }: SocialLoginProps) => {
     console.log('SearchParam: ', searchParams);
     console.log(redirectPath);
 
-    const path = `https://letsintern.kr/oauth2/authorize/${
+    const path = `https://letscareer-test.shop/oauth2/authorize/${
       socialType === 'KAKAO' ? 'kakao' : 'naver'
     }?redirect_uri=${redirectPath}`;
     window.location.href = path;
