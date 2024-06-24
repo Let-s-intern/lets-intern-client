@@ -91,7 +91,7 @@ const ProgramDetail = ({ programType }: ProgramDetailProps) => {
     if (!isAlreadyApplied && !disabledButton) toggleDrawer();
   };
   const clickNotiButton = () => {
-    window.open('https://forms.gle/ddFtGQfBpGk7Jxpq9', '_blank');
+    window.open('https://forms.gle/u6ePSE2WoRYjxyGS6', '_blank');
   };
 
   return (
