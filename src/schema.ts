@@ -706,31 +706,43 @@ export type UserChallengeMissionDetail = z.infer<
 /** GET /api/v1/challenge/{id}/daily-mission */
 export const dailyMissionSchema = z
   .object({
-    dailyMission: z.object({
-      id: z.number(),
-      th: z.number().nullable(),
-      title: z.string().nullable(),
-      startDate: z.string().nullable(),
-      endDate: z.string().nullable(),
-      missionTag: z.string().nullable(),
-      description: z.string().nullable(),
-    }),
+    dailyMission: z
+      .object({
+        id: z.number(),
+        th: z.number().nullable(),
+        title: z.string().nullable(),
+        startDate: z.string().nullable(),
+        endDate: z.string().nullable(),
+        missionTag: z.string().nullable(),
+        description: z.string().nullable(),
+      })
+      .nullable(),
   })
   .transform((data) => {
     return {
-      dailyMission: {
-        ...data.dailyMission,
-        startDate: data.dailyMission.startDate
-          ? dayjs(data.dailyMission.startDate)
-          : null,
-        endDate: data.dailyMission.startDate
-          ? dayjs(data.dailyMission.endDate)
-          : null,
-      },
+      dailyMission: data.dailyMission
+        ? {
+            ...data.dailyMission,
+            startDate: data.dailyMission.startDate
+              ? dayjs(data.dailyMission.startDate)
+              : null,
+            endDate: data.dailyMission.startDate
+              ? dayjs(data.dailyMission.endDate)
+              : null,
+          }
+        : null,
     };
   });
 
 export type DailyMission = z.infer<typeof dailyMissionSchema>['dailyMission'];
+
+// KAKAO, NAVER, GOOGLE, SERVICE
+export const authProviderSchema = z.union([
+  z.literal('KAKAO'),
+  z.literal('NAVER'),
+  z.literal('GOOGLE'),
+  z.literal('SERVICE'),
+]);
 
 /** GET /api/v1/user */
 export const userSchema = z.object({
@@ -745,8 +757,8 @@ export const userSchema = z.object({
   wishCompany: z.string().nullable(),
   accountType: accountType.nullable(),
   accountNum: z.string().nullable(),
-  accountOwner: z.string().nullable(),
   marketingAgree: z.boolean().nullable(),
+  authProvider: authProviderSchema.nullable(),
 });
 
 /** GET /api/v1/challenge/{id}/score */

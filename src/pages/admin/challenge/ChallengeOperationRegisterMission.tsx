@@ -508,7 +508,9 @@ const ChallengeOperationRegisterMission = () => {
             startDate: row.startDate.tz().format('YYYY-MM-DDTHH:mm:ss'),
             endDate: row.endDate.tz().format('YYYY-MM-DDTHH:mm:ss'),
             th: row.th,
-            title: '미션이름',
+            title: row.missionTemplatesOptions.find(
+              (t) => t.id === row.missionTemplateId,
+            )?.title ?? '',
           });
           if (apiRef.current?.getRowMode(row.id) === 'edit') {
             apiRef.current?.stopRowEditMode({
@@ -540,7 +542,10 @@ const ChallengeOperationRegisterMission = () => {
             startDate: row.startDate.tz().format('YYYY-MM-DDTHH:mm:ss'),
             endDate: row.endDate.tz().format('YYYY-MM-DDTHH:mm:ss'),
             th: row.th,
-            title: '미션이름',
+            title:
+              row.missionTemplatesOptions.find(
+                (t) => t.id === row.missionTemplateId,
+              )?.title ?? '',
           });
           if (apiRef.current?.getRowMode(row.id) === 'edit') {
             apiRef.current?.stopRowEditMode({
