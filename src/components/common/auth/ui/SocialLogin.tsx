@@ -20,8 +20,8 @@ const SocialLogin = ({ type }: SocialLoginProps) => {
 
     console.log('SearchParam: ', searchParams);
     console.log(redirectPath);
-
-    const path = `https://letscareer-test.shop/oauth2/authorize/${
+    const basePath = process.env.REACT_APP_API_BASE_PATH || "https://letscareer-test.shop"
+    const path = `${basePath}/oauth2/authorize/${
       socialType === 'KAKAO' ? 'kakao' : 'naver'
     }?redirect_uri=${redirectPath}`;
     window.location.href = path;
