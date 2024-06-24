@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import Button from '../../../components/common/ui/button/Button';
@@ -11,7 +11,7 @@ const FindPassword = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [name, setName] = useState('');
-  const [buttonDisabled, setButtonDisabled] = useState(true);
+  const [phoneNum, setPhoneNum] = useState('');
   const [message, setMessage] = useState('');
   const [isError, setIsError] = useState(false);
 
@@ -23,13 +23,13 @@ const FindPassword = () => {
 
   const handleOnSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (buttonDisabled) return;
+
     try {
       setIsError(false);
       setMessage('이메일을 전송 중입니다. 잠시만 기다려주세요.');
       await axios.post(
         '/user/password',
-        { name, email },
+        { name, email, phoneNum },
         { headers: { Authorization: '' } },
       );
       setMessage('비밀번호 재설정 이메일을 전송하였습니다.');
@@ -46,13 +46,9 @@ const FindPassword = () => {
     }
   };
 
-  useEffect(() => {
-    if (!email || !name) {
-      setButtonDisabled(true);
-    } else {
-      setButtonDisabled(false);
-    }
-  }, [name, email]);
+  const submitDisabled = useMemo(() => {
+    return !email || !name || !phoneNum;
+  }, [email, name, phoneNum]);
 
   return (
     <div className="mx-auto mt-8 min-h-screen p-5 sm:mt-12">
@@ -64,17 +60,19 @@ const FindPassword = () => {
               label="이름"
               placeholder="가입하신 이름을 입력해주세요."
               value={name}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                setName(e.target.value)
-              }
+              onChange={(e) => setName(e.target.value)}
             />
             <Input
               label="이메일"
               placeholder="가입하신 이메일을 입력해주세요."
               value={email}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                setEmail(e.target.value)
-              }
+              onChange={(e) => setEmail(e.target.value)}
+            />
+            <Input
+              label="휴대폰 번호"
+              placeholder="010-1234-4567"
+              value={phoneNum}
+              onChange={(e) => setPhoneNum(e.target.value)}
             />
           </div>
           <div className="space-y-3">
@@ -87,11 +85,7 @@ const FindPassword = () => {
                 {message}
               </span>
             )}
-            <Button
-              type="submit"
-              className="w-full"
-              {...(buttonDisabled && { disabled: true })}
-            >
+            <Button type="submit" className="w-full" disabled={submitDisabled}>
               비밀번호 찾기
             </Button>
           </div>
