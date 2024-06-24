@@ -1,7 +1,6 @@
 import MenuLink from './MenuLink';
 import Icon from './Icon';
 import DocumentLink from './DocumentLink';
-import Notice from './Notice';
 
 const Footer = () => {
   return (
@@ -47,10 +46,12 @@ const Footer = () => {
 
       <p className="text-0.75-medium my-7 flex flex-col gap-2 text-neutral-45">
         <span>아이엔지 사업자 정보</span>
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
           <span>대표자: 송다예</span>
           <span>|</span>
           <span>사업자 등록번호: 871-11-02629</span>
+          <span>|</span>
+          <span>통신판매업신고번호 제 2024-서울마포-2221호</span>
         </div>
         <div className="flex flex-col gap-2 md:flex-row">
           <div className="flex gap-2">
