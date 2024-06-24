@@ -714,11 +714,11 @@ export const dailyMissionSchema = z
       endDate: z.string().nullable(),
       missionTag: z.string().nullable(),
       description: z.string().nullable(),
-    }),
+    }).nullable(),
   })
   .transform((data) => {
     return {
-      dailyMission: {
+      dailyMission: data.dailyMission ? {
         ...data.dailyMission,
         startDate: data.dailyMission.startDate
           ? dayjs(data.dailyMission.startDate)
@@ -726,7 +726,7 @@ export const dailyMissionSchema = z
         endDate: data.dailyMission.startDate
           ? dayjs(data.dailyMission.endDate)
           : null,
-      },
+      } : null,
     };
   });
 
