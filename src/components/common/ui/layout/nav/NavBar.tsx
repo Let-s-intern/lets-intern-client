@@ -190,6 +190,7 @@ const NavBar = () => {
             target="_blank"
             rel="noopener noreferrer"
             onClick={closeMenu}
+            className="q&a_gnb"
           >
             자주 묻는 질문
           </SideNavItem>
@@ -198,6 +199,7 @@ const NavBar = () => {
             target="_blank"
             rel="noopener noreferrer"
             onClick={closeMenu}
+            className="notice_gnb"
           >
             공지사항
           </SideNavItem>

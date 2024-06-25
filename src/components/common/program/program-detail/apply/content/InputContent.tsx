@@ -118,7 +118,7 @@ const InputContent = ({
           이전 단계로
         </button>
         <button
-          className="flex w-full flex-1 justify-center rounded-md border-2 border-primary bg-primary px-6 py-3 text-lg font-medium text-neutral-100 disabled:border-neutral-70 disabled:bg-neutral-70"
+          className="next_button flex w-full flex-1 justify-center rounded-md border-2 border-primary bg-primary px-6 py-3 text-lg font-medium text-neutral-100 disabled:border-neutral-70 disabled:bg-neutral-70"
           onClick={handleNextButtonClick}
           disabled={buttonDisabled}
         >

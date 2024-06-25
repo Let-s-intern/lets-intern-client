@@ -60,6 +60,7 @@ export interface IProgramGridItem {
   textColor: string;
   link: string;
   imgSrc: string;
+  className: string;
 }
 
 export type filterStatuskey = keyof typeof PROGRAM_FILTER_STATUS;

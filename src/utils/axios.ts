@@ -16,40 +16,34 @@ axios.interceptors.response.use(
   },
   async (error) => {
     if (error.response.status === 401) {
-      if (error.response.data.code === 'AUTH_401_2') {
-        const originalRequest = error.config;
-        const accessToken = localStorage.getItem('access-token');
-        const refreshToken = localStorage.getItem('refresh-token');
-        try {
-          const res = await axios.post(
-            '/user/reissue',
-            {
-              accessToken,
-              refreshToken,
+      const originalRequest = error.config;
+      const refreshToken = localStorage.getItem('refresh-token');
+      try {
+        const res = await axios.patch(
+          '/user/token',
+          {
+            refreshToken,
+          },
+          {
+            headers: {
+              Authorization: '',
             },
-            {
-              headers: {
-                Authorization: '',
-              },
-            },
-          );
-          localStorage.setItem('access-token', res.data.accessToken);
-          localStorage.setItem('refresh-token', res.data.refreshToken);
-          axios.defaults.headers.common.Authorization = `Bearer ${res.data.accessToken}`;
-          originalRequest.headers.Authorization = `Bearer ${res.data.accessToken}`;
-          return axios(originalRequest);
-        } catch (err: any) {
-          if (err.response.status === 404) {
-            if (err.response.data.code === 'ADMIN_404_2') {
-              localStorage.removeItem('access-token');
-              localStorage.removeItem('refresh-token');
-              window.location.reload();
-            }
-          } else if (err.response.status === 500) {
-            localStorage.removeItem('access-token');
-            localStorage.removeItem('refresh-token');
-            window.location.reload();
-          }
+          },
+        );
+        localStorage.setItem('access-token', res.data.data.accessToken);
+        localStorage.setItem('refresh-token', res.data.data.refreshToken);
+        axios.defaults.headers.common.Authorization = `Bearer ${res.data.data.accessToken}`;
+        originalRequest.headers.Authorization = `Bearer ${res.data.data.accessToken}`;
+        return axios(originalRequest);
+      } catch (err: any) {
+        if (err.response.status === 404) {
+          localStorage.removeItem('access-token');
+          localStorage.removeItem('refresh-token');
+          window.location.reload();
+        } else if (err.response.status === 500) {
+          localStorage.removeItem('access-token');
+          localStorage.removeItem('refresh-token');
+          window.location.reload();
         }
       }
     }

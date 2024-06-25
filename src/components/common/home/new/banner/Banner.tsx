@@ -73,7 +73,7 @@ const Banner = () => {
               <img
                 onClick={() => window.open(bannner.link)}
                 key={bannner.id}
-                className="hidden cursor-pointer rounded-sm object-cover transition-all duration-500 ease-in-out sm:block"
+                className="main_banner hidden cursor-pointer rounded-sm object-cover transition-all duration-500 ease-in-out sm:block"
                 style={{
                   translate: `-${bannerIndex * 100}%`,
                   width: `${bannerWidth}px`,
@@ -86,7 +86,7 @@ const Banner = () => {
               <img
                 onClick={() => window.open(bannner.link)}
                 key={bannner.id}
-                className="block cursor-pointer rounded-sm transition-all duration-500 ease-in-out sm:hidden"
+                className="main_banner block cursor-pointer rounded-sm transition-all duration-500 ease-in-out sm:hidden"
                 style={{
                   translate: `-${bannerIndex * 100}%`,
                   width: `${bannerWidth}px`,
