@@ -91,6 +91,7 @@ const BasicInfo = () => {
 
   useEffect(() => {
     setIsSameEmail(user.email === user.contactEmail);
+    // console.log(user);
   }, [user]);
 
   return (
@@ -237,7 +238,7 @@ const BasicInfo = () => {
         </div>
       </div>
       <Button onClick={handleSubmit}>{
-        (user.contactEmail === '' && user.university === '' && user.grade === '' && user.major === '' && user.wishJob === '' && user.wishCompany === '') ? 
+        !(user.contactEmail || user.university || user.grade || user.major || user.wishJob || user.wishCompany) ? 
           '기본 정보 등록하기'
          : 
           '기본 정보 수정하기'
