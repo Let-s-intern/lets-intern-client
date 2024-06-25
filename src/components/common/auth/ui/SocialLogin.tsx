@@ -18,8 +18,8 @@ const SocialLogin = ({ type }: SocialLoginProps) => {
         : ''
     }`;
 
-    console.log('SearchParam: ', searchParams);
-    console.log(redirectPath);
+    // console.log('SearchParam: ', searchParams);
+    // console.log(redirectPath);
     const basePath = process.env.REACT_APP_API_BASE_PATH || "https://letscareer-test.shop"
     const path = `${basePath}/oauth2/authorize/${
       socialType === 'KAKAO' ? 'kakao' : 'naver'
