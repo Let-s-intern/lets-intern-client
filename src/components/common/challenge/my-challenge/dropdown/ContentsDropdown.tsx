@@ -10,7 +10,7 @@ interface Props {
 const ContentsDropdown = ({ missionDetail }: Props) => {
   const [isMenuShown, setIsMenuShown] = useState(false);
   const additionalContentsLink =
-    missionDetail.additionalContentsList?.[1]?.link;
+    missionDetail.additionalContentsList?.[0]?.link;
   const essentialContentsLink = missionDetail.essentialContentsList?.[0]?.link;
 
   return (
