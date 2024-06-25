@@ -1,23 +1,18 @@
 import {
-  Box,
   Chip,
   FormControl,
   InputLabel,
   MenuItem,
   OutlinedInput,
   Select,
-  TextField,
+  TextField
 } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
-import Input from '../../../../ui/input/Input';
-import ReactQuill from 'react-quill';
-import styled from 'styled-components';
-import FAQEditor from './FAQEditor';
-import storage from '../../../../../Firebase';
 import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
 import { useMemo, useRef } from 'react';
-import ProgramTypeSection from '../editor-section/ProgramTypeSection';
-import FeeSection from '../editor-section/FeeSection';
+import ReactQuill from 'react-quill';
+import { useNavigate } from 'react-router-dom';
+import styled from 'styled-components';
+import storage from '../../../../../Firebase';
 import {
   bankTypeToText,
   challengeTypeToText,
@@ -25,9 +20,11 @@ import {
   newProgramTypeDetailToText,
   newProgramTypeToText,
   programParticipationTypeToText,
-  programPriceTypeToText,
+  programPriceTypeToText
 } from '../../../../../utils/convert';
+import Input from '../../../../ui/input/Input';
 import ImageUpload from '../form/ImageUpload';
+import FAQEditor from './FAQEditor';
 
 interface ProgramEditorProps {
   value: any;
