@@ -21,7 +21,7 @@ import useAuthStore from '../../../store/useAuthStore';
 import { ErrorResonse } from '../../../interfaces/interface';
 
 const SignUp = () => {
-  const { isLoggedIn } = useAuthStore();
+  const { isLoggedIn, login } = useAuthStore();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const [isSocial, setIsSocial] = useState<boolean>(false);
@@ -35,9 +35,14 @@ const SignUp = () => {
       return undefined;
     }
     const token = JSON.parse(result);
+    // console.log('SIGNUP ISNEW: ', token.isNew);
     localStorage.setItem('access-token', token.accessToken);
     localStorage.setItem('refresh-token', token.refreshToken);
-    // axios.defaults.headers.common.Authorization = `Bearer ${token.accessToken}`;
+    if (!token.isNew) {
+      const redirect = searchParams.get('redirect') || '/';
+      login(token.accessToken, token.refreshToken, redirect);
+      return;
+    }
     setIsSocial(true);
 
     return token;
