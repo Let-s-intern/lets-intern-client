@@ -39,9 +39,17 @@ const DateToggle = ({ programDate, programType }: DateToggleProps) => {
           <span className="text-end font-medium text-neutral-0 text-opacity-[94%]">
             {programType === 'live' ? (
               <>
-                {dayjs(programDate.startDate).format(`MM.DD (ddd) A hh시`)}
+                {dayjs(programDate.startDate).format(
+                  `MM.DD (ddd) A hh시${
+                    dayjs(programDate.startDate).minute() !== 0 ? ' mm분' : ''
+                  }`,
+                )}
                 <br /> ~{' '}
-                {dayjs(programDate.endDate).format(`MM.DD (ddd) A hh시`)}
+                {dayjs(programDate.endDate).format(
+                  `MM.DD (ddd) A hh시${
+                    dayjs(programDate.endDate).minute() !== 0 ? ' mm분' : ''
+                  }`,
+                )}
               </>
             ) : (
               dayjs(programDate.startDate).format(`MM.DD (ddd)`) +
