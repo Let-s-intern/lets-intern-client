@@ -106,6 +106,12 @@ const Login = () => {
   }, [searchParams, setSearchParams]);
 
   const handleLoginSuccess = (token: any) => {
+    // console.log('LOGIN ISNEW: ', token.isNew);
+
+    if (token.isNew) {
+      navigate(`/signup?result=${JSON.stringify(token)}&redirect=${searchParams.get('redirect')}`);
+      return;
+    }
     login(
       token.accessToken,
       token.refreshToken,
