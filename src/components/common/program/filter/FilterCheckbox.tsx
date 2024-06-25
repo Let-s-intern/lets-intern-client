@@ -1,20 +1,26 @@
+import clsx from 'clsx';
 import { memo } from 'react';
 
 interface FilterCheckboxProps {
   caption: string;
   isChecked: boolean;
   onClick: React.MouseEventHandler<HTMLDivElement>;
+  className?: string;
 }
 
 const FilterCheckbox = ({
   caption,
   isChecked,
   onClick,
+  className,
 }: FilterCheckboxProps) => {
   return (
     <div
       onClick={onClick}
-      className="flex cursor-pointer items-center gap-2 px-2 py-2.5"
+      className={clsx(
+        'flex cursor-pointer items-center gap-2 px-2 py-2.5',
+        className,
+      )}
     >
       <img
         className="w-8"

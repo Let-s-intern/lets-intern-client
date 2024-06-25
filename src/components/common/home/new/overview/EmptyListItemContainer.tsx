@@ -1,30 +1,42 @@
-
-const EmptyListItemContainer = ({thumbnail, title, desc, link, buttonCaption, buttonColor}:{thumbnail: string; title: string; desc: string; link: string; buttonCaption: string; buttonColor: string}) => {
+const EmptyListItemContainer = ({
+  thumbnail,
+  title,
+  desc,
+  link,
+  buttonCaption,
+  buttonColor,
+}: {
+  thumbnail: string;
+  title: string;
+  desc: string;
+  link: string;
+  buttonCaption: string;
+  buttonColor: string;
+}) => {
   return (
-    <div className='w-full flex items-center justify-center'>
-      <div className='w-full bg-neutral-100 flex items-center justify-center p-2.5 rounded-md gap-x-4 border border-neutral-85'
-      >
-        <img src={thumbnail} alt='프로그램 썸네일' className='w-[120px] h-[120px] md:w-[179px] md:h-[150px] rounded-md object-cover'/>
-        <div className='grow flex flex-col items-start py-2 justify-between'>
-          <div className='w-full flex flex-col items-start justify-center gap-y-[6px]'>
-            <div className='w-full flex flex-col gap-y-[2px] items-start justify-center py-1'>
-              <div className='font-semibold'>
-                {title}
-              </div>
-              <div className='text-sm font-medium text-neutral-30'>
-                {desc}
-              </div>
+    <div className="flex w-full items-center justify-center">
+      <div className="flex w-full items-center justify-center gap-x-4 rounded-md border border-neutral-85 bg-neutral-100 p-2.5">
+        <img
+          src={thumbnail}
+          alt="프로그램 썸네일"
+          className="h-[120px] w-[120px] rounded-md object-cover md:h-[150px] md:w-[179px]"
+        />
+        <div className="flex grow flex-col items-start justify-between py-2">
+          <div className="flex w-full flex-col items-start justify-center gap-y-[6px]">
+            <div className="flex w-full flex-col items-start justify-center gap-y-[2px] py-1">
+              <div className="font-semibold">{title}</div>
+              <div className="text-sm font-medium text-neutral-30">{desc}</div>
             </div>
           </div>
-          <div className="w-full flex items-center justify-end">
-          <button
-            className={`text-0.875-medium rounded-sm border border-neutral-0 px-4 py-1.5 ${buttonColor}`}
-            onClick={() => {
-              window.open(link, '_blank');
-            }}
-          >
-            {buttonCaption}
-          </button>
+          <div className="flex w-full items-center justify-end">
+            <button
+              className={`early_button text-0.875-medium rounded-sm border border-neutral-0 px-4 py-1.5 ${buttonColor}`}
+              onClick={() => {
+                window.open(link, '_blank');
+              }}
+            >
+              {buttonCaption}
+            </button>
           </div>
         </div>
       </div>

@@ -10,7 +10,7 @@ const TabBar = ({ tabIndex, setTabIndex }: TabBarProps) => {
     <ul className="grid grid-cols-3">
       <li
         className={clsx(
-          'flex cursor-pointer items-center justify-center border-b-2 px-3 py-4',
+          'info_cta flex cursor-pointer items-center justify-center border-b-2 px-3 py-4',
           {
             'border-primary text-primary': tabIndex === 0,
             'border-neutral-0 border-opacity-[16%] text-neutral-0 text-opacity-[74%]':
@@ -23,7 +23,7 @@ const TabBar = ({ tabIndex, setTabIndex }: TabBarProps) => {
       </li>
       <li
         className={clsx(
-          'flex cursor-pointer items-center justify-center border-b-2 px-3 py-4',
+          'review_cta flex cursor-pointer items-center justify-center border-b-2 px-3 py-4',
           {
             'border-primary text-primary': tabIndex === 1,
             'border-neutral-0 border-opacity-[16%] text-neutral-0 text-opacity-[74%]':
@@ -36,7 +36,7 @@ const TabBar = ({ tabIndex, setTabIndex }: TabBarProps) => {
       </li>
       <li
         className={clsx(
-          'flex cursor-pointer items-center justify-center border-b-2 px-3 py-4',
+          'faq_cta flex cursor-pointer items-center justify-center border-b-2 px-3 py-4',
           {
             'border-primary text-primary': tabIndex === 2,
             'border-neutral-0 border-opacity-[16%] text-neutral-0 text-opacity-[74%]':

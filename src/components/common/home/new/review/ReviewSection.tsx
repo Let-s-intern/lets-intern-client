@@ -29,7 +29,7 @@ const ReviewSection = () => {
           <Link
             to={review.url}
             key={index}
-            className="lg:min-w-96 w-full flex-shrink-0 md:w-80 lg:w-96"
+            className="review_card lg:min-w-96 w-full flex-shrink-0 md:w-80 lg:w-96"
             target="_blank"
             rel="noreferrer noopener"
           >

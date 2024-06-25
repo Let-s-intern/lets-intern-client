@@ -1,3 +1,4 @@
+import clsx from 'clsx';
 import { Link } from 'react-router-dom';
 
 interface MenuLinkProps {
@@ -5,11 +6,17 @@ interface MenuLinkProps {
   children: React.ReactNode;
   target?: string;
   rel?: string;
+  className?: string;
 }
 
-const MenuLink = ({ to, children, target, rel }: MenuLinkProps) => {
+const MenuLink = ({ to, children, target, rel, className }: MenuLinkProps) => {
   return (
-    <Link to={to} className="text-1-medium" target={target} rel={rel}>
+    <Link
+      to={to}
+      className={clsx('text-1-medium', className)}
+      target={target}
+      rel={rel}
+    >
       {children}
     </Link>
   );

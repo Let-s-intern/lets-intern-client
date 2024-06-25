@@ -6,9 +6,14 @@ import { useState } from 'react';
 export interface ProgramGridItemProps {
   program: IProgramGridItem;
   link: string;
+  className: string;
 }
 
-const ProgramGridItem = ({ program, link }: ProgramGridItemProps) => {
+const ProgramGridItem = ({
+  program,
+  link,
+  className: linkClassName,
+}: ProgramGridItemProps) => {
   const navigate = useNavigate();
   return (
     <div
@@ -17,6 +22,7 @@ const ProgramGridItem = ({ program, link }: ProgramGridItemProps) => {
           ? window.open(link, '_blank')
           : navigate(link);
       }}
+      className={linkClassName}
     >
       <li
         className={`group flex h-[13.75rem] cursor-pointer flex-col justify-start rounded-lg border-2 md:h-80 lg:h-[27.5rem] ${program.bgColor} ${program.borderColor} relative overflow-hidden px-4 pb-6 pt-4 md:pt-5 lg:pt-6`}

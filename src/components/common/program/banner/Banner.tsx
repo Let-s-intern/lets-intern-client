@@ -78,7 +78,7 @@ const Banner = () => {
           <Link
             to={banner.link}
             key={banner.id}
-            className="w-full shrink-0"
+            className="program_banner w-full shrink-0"
             target="_blank"
             rel="noreferrer noopener"
           >
