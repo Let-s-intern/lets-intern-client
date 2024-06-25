@@ -1,9 +1,8 @@
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
-
-import axios from '../../../utils/axios';
 import ProgramInputContent from '../../../components/admin/program/ui/editor/ProgramInputContent';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import axios from '../../../utils/axios';
 
 interface AllValue {
   program?: string;
@@ -199,7 +198,7 @@ const ProgramEditor = ({ mode }: ProgramEditorProps) => {
             (info: { programClassification: string }) =>
               info.programClassification,
           ),
-          way: data.place === null ? 'ONLINE' : 'OFFLINE',
+          way: data.progressType ?? 'OFFLINE',
           location: data.place,
           job: data.job,
           thumbnail: data.thumbnail,
