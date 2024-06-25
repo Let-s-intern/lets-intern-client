@@ -4,11 +4,17 @@ interface ConfirmSectionProps {
   isDisabled: boolean;
 }
 
-const ConfirmSection = ({ isEdit, onConfirm, isDisabled }: ConfirmSectionProps) => {
+const ConfirmSection = ({
+  isEdit,
+  onConfirm,
+  isDisabled,
+}: ConfirmSectionProps) => {
   return (
     <div className="w-full">
       <button
-        className={`w-full rounded-md bg-primary px-6 py-3 text-lg font-medium text-neutral-100 ${isDisabled ? 'opacity-50' : ''}`}
+        className={`w-full rounded-md bg-primary px-6 py-3 text-lg font-medium text-neutral-100 ${
+          isDisabled ? 'opacity-50' : ''
+        } ${isEdit ? '' : 'submit_button'}`}
         onClick={onConfirm}
         disabled={isDisabled}
       >

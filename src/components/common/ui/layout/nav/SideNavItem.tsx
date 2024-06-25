@@ -1,3 +1,4 @@
+import clsx from 'clsx';
 import { Link } from 'react-router-dom';
 
 interface SideNavItemProps {
@@ -6,6 +7,7 @@ interface SideNavItemProps {
   children: string;
   target?: string;
   rel?: string;
+  className?: string;
 }
 
 const SideNavItem = ({
@@ -14,11 +16,15 @@ const SideNavItem = ({
   children,
   target,
   rel,
+  className,
 }: SideNavItemProps) => {
   return (
     <Link
       to={to}
-      className="flex w-full cursor-pointer justify-between rounded-md bg-gray-100 px-7 py-5 text-neutral-30"
+      className={clsx(
+        'flex w-full cursor-pointer justify-between rounded-md bg-gray-100 px-7 py-5 text-neutral-30',
+        className,
+      )}
       onClick={onClick}
       target={target}
       rel={rel}

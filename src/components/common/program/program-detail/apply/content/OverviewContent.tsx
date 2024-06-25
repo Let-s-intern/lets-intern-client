@@ -59,10 +59,14 @@ const OverviewContent = ({
           <></>
         ) : new Date() < new Date(programDate.beginning) ||
           new Date() > new Date(programDate.deadline) ? (
-          <NotiButton onClick={clickNotiButton} caption={'출시알림신청'} />
+          <NotiButton
+            onClick={clickNotiButton}
+            caption={'출시알림신청'}
+            className="early_button"
+          />
         ) : (
           <button
-            className="flex w-full justify-center rounded-md bg-primary px-6 py-3 text-lg font-medium text-neutral-100 disabled:bg-neutral-70"
+            className="apply_button flex w-full justify-center rounded-md bg-primary px-6 py-3 text-lg font-medium text-neutral-100 disabled:bg-neutral-70"
             onClick={handleNextButtonClick}
             disabled={isApplied}
           >

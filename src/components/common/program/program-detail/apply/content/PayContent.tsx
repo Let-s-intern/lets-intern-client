@@ -99,7 +99,7 @@ const PayContent = ({
           </span>
         </button>
         <button
-          className="text-1.125-medium flex w-full justify-center rounded-md bg-primary px-6 py-3 font-medium text-neutral-100"
+          className="complete_button text-1.125-medium flex w-full justify-center rounded-md bg-primary px-6 py-3 font-medium text-neutral-100"
           onClick={() => {
             handleApplyButtonClick();
           }}

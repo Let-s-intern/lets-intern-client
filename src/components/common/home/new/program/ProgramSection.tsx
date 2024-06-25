@@ -23,6 +23,7 @@ const programList: IProgramGridItem[] = [
     textColor: 'text-primary',
     link: `/program?classification=${PROGRAM_CLASSIFICATION_KEY.CAREER_SEARCH}`,
     imgSrc: '/images/home/keyword-search.png',
+    className: 'career_card',
   },
   {
     keyword: 'CV',
@@ -33,6 +34,7 @@ const programList: IProgramGridItem[] = [
     textColor: 'text-primary',
     link: `/program?classification=${PROGRAM_CLASSIFICATION_KEY.DOCUMENT_PREPARATION}`,
     imgSrc: '/images/home/keyword-book.png',
+    className: 'document_card',
   },
   {
     keyword: 'Interview',
@@ -47,6 +49,7 @@ const programList: IProgramGridItem[] = [
     textColor: 'text-white',
     link: `/program?classification=${PROGRAM_CLASSIFICATION_KEY.MEETING_PREPARATION}`,
     imgSrc: '/images/home/keyword-chat.png',
+    className: 'interview_card',
   },
   {
     keyword: 'Growth',
@@ -57,6 +60,7 @@ const programList: IProgramGridItem[] = [
     textColor: 'text-white',
     link: `https://letscareer.oopy.io/fb187843-f493-47cf-9d2a-f647875bb3df`,
     imgSrc: '/images/home/keyword-trophy.png',
+    className: 'pass_card',
   },
 ];
 
@@ -77,6 +81,7 @@ const ProgramSection = () => {
             key={program.keyword}
             program={program}
             link={program.link}
+            className={program.className}
           />
         ))}
       </ul>

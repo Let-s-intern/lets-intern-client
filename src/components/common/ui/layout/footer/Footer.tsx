@@ -33,6 +33,7 @@ const Footer = () => {
               to="https://letscareer.oopy.io"
               target="_blank"
               rel="noopener noreferrer"
+              className="notice_cta"
             >
               공지사항
             </MenuLink>
@@ -40,6 +41,7 @@ const Footer = () => {
               to="https://letscareer.oopy.io"
               target="_blank"
               rel="noopener noreferrer"
+              className="q&a_cta"
             >
               자주 묻는 질문
             </MenuLink>
@@ -88,11 +90,13 @@ const Footer = () => {
             src="/icons/instagram.svg"
             alt="인스타그램 아이콘"
             to="https://www.instagram.com/letscareer.official/"
+            className="instagram_cta"
           />
           <Icon
             src="/icons/blog.png"
             alt="네이버 블로그 아이콘"
             to="https://blog.naver.com/PostList.naver?blogId=letsintern"
+            className="blog_cta"
           />
         </div>
         <div className="flex items-center gap-6 text-neutral-0/[.65]">

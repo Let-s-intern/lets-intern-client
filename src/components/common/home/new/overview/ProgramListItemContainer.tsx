@@ -12,7 +12,7 @@ const ProgramListItemContainer = ({ program }: { program: IProgram }) => {
   return (
     <div className="flex w-full items-center justify-center">
       <div
-        className="flex w-full cursor-pointer items-center justify-center gap-x-4 rounded-md border border-neutral-85 bg-neutral-100 p-2.5"
+        className="calendar_program flex w-full cursor-pointer items-center justify-center gap-x-4 rounded-md border border-neutral-85 bg-neutral-100 p-2.5"
         onClick={() =>
           navigate(
             `/program/${program.programInfo.programType.toLowerCase()}/${

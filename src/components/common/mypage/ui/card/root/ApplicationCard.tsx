@@ -93,45 +93,48 @@ const ApplicationCard = ({
           </div>
         </div>
       </div>
-      {
-        application.status === 'WAITING' && (
-          <ApplicationCardButton onClick={() => {
+      {application.status === 'WAITING' && (
+        <ApplicationCardButton
+          onClick={() => {
             setPriceInfoOpen({
               isOpen: true,
               paymentId: application.paymentId || 0,
             });
-          }}>
-            결제 정보 확인
-          </ApplicationCardButton>
-        )
-      }
-      {application.programType === 'CHALLENGE' &&
-        showChallengeButton && (
-          <LinkButton
-            to={`/challenge/${application.programId}`}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            챌린지 대시보드
-          </LinkButton>
-        )}
+          }}
+          className="payment_button"
+        >
+          결제 정보 확인
+        </ApplicationCardButton>
+      )}
+      {application.programType === 'CHALLENGE' && showChallengeButton && (
+        <LinkButton
+          to={`/challenge/${application.programId}`}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          챌린지 대시보드
+        </LinkButton>
+      )}
       {hasReviewButton && (
         <LinkButton
           to={`/mypage/review/${
             reviewType === 'CREATE' ? 'new' : 'edit'
-          }/program/${application.programType}/${application.programId}/${application.reviewId ? application.reviewId : `?application=${application.id}`}`}
+          }/program/${application.programType}/${application.programId}/${
+            application.reviewId
+              ? application.reviewId
+              : `?application=${application.id}`
+          }`}
+          className={clsx(reviewType === 'CREATE' && 'review_button')}
         >
           {reviewType === 'CREATE' ? '후기 작성하기' : '수정하기'}
         </LinkButton>
       )}
-      {
-        isPriceInfoOpen.isOpen && (
-          <PriceInfoModal
+      {isPriceInfoOpen.isOpen && (
+        <PriceInfoModal
           paymentId={isPriceInfoOpen.paymentId}
-            onClose={() => setPriceInfoOpen({ isOpen: false, paymentId: 0 })}
-          />
-        )
-      }
+          onClose={() => setPriceInfoOpen({ isOpen: false, paymentId: 0 })}
+        />
+      )}
     </div>
   );
 };

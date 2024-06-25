@@ -144,12 +144,14 @@ const ProgramDetail = ({ programType }: ProgramDetailProps) => {
                 <NotiButton
                   onClick={clickNotiButton}
                   caption={'출시알림신청'}
+                  className="early_button"
                 />
               ) : (
                 <FilledButton
                   onClick={toggleDrawer}
                   caption={isAlreadyApplied ? '신청완료' : '신청하기'}
                   isAlreadyApplied={isAlreadyApplied}
+                  className="apply_button"
                 />
               )}
             </div>
