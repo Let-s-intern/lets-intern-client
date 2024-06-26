@@ -76,7 +76,7 @@ const FilterSideBar = ({
               }
               className={clsx({
                 career_filter:
-                  filterClassification[
+                  !filterClassification[
                     getKeyByValue(
                       PROGRAM_FILTER_CLASSIFICATION,
                       value,
@@ -98,7 +98,7 @@ const FilterSideBar = ({
               onClick={() => handleClick(PROGRAM_QUERY_KEY.TYPE, value)}
               className={clsx({
                 program_filter:
-                  filterType[
+                  !filterType[
                     getKeyByValue(PROGRAM_FILTER_TYPE, value) as string
                   ],
               })}
@@ -119,7 +119,7 @@ const FilterSideBar = ({
               onClick={() => handleClick(PROGRAM_QUERY_KEY.STATUS, value)}
               className={clsx({
                 recruit_filter:
-                  filterStatus[
+                  !filterStatus[
                     getKeyByValue(PROGRAM_FILTER_STATUS, value) as string
                   ],
               })}
