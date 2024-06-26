@@ -67,3 +67,5 @@ export const PROGRAM_TYPE_BADGE = {
   MEETING_PREPARATION: '면접',
   PASS: '성장',
 };
+
+export const REMINDER_LINK = 'https://forms.gle/u6ePSE2WoRYjxyGS6';
