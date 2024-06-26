@@ -15,6 +15,7 @@ import applyReducer from '../../../reducers/applyReducer';
 import FilledButton from '../../../components/common/program/program-detail/button/FilledButton';
 import useAuthStore from '../../../store/useAuthStore';
 import NotiButton from '../../../components/common/program/program-detail/button/NotiButton';
+import { REMINDER_LINK } from '../../../utils/programConst';
 
 export type ProgramType = 'challenge' | 'live';
 
@@ -91,7 +92,7 @@ const ProgramDetail = ({ programType }: ProgramDetailProps) => {
     if (!isAlreadyApplied && !disabledButton) toggleDrawer();
   };
   const clickNotiButton = () => {
-    window.open('https://forms.gle/u6ePSE2WoRYjxyGS6', '_blank');
+    window.open(REMINDER_LINK, '_blank');
   };
 
   return (
@@ -118,7 +119,7 @@ const ProgramDetail = ({ programType }: ProgramDetailProps) => {
               <div
                 onClick={handleDrawer}
                 className={clsx(
-                  'mb-3 h-[5px] w-[70px] cursor-pointer rounded-full bg-neutral-80',
+                  'mb-3 h-[5px] w-[70px] shrink-0 cursor-pointer rounded-full bg-neutral-80',
                 )}
               />
               {isOpen ? (
