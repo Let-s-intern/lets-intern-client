@@ -115,13 +115,13 @@ const ProgramDetail = ({ programType }: ProgramDetailProps) => {
 
           {/* 모바일 신청 세션 */}
           {!matches && (
-            <div className="fixed bottom-0 left-0 right-0 z-30 flex max-h-[25rem] w-screen flex-col items-center overflow-y-auto rounded-t-lg bg-static-100 px-5 py-3 shadow-05 scrollbar-hide">
-              <div
-                onClick={handleDrawer}
-                className={clsx(
-                  'mb-3 h-[5px] w-[70px] shrink-0 cursor-pointer rounded-full bg-neutral-80',
-                )}
-              />
+            <div className="fixed bottom-0 left-0 right-0 z-30 flex max-h-[25rem] w-screen flex-col items-center overflow-y-auto rounded-t-lg bg-static-100 px-5 pb-3 shadow-05 scrollbar-hide">
+              <div className="sticky top-0 flex w-full justify-center bg-static-100 py-3">
+                <div
+                  onClick={handleDrawer}
+                  className="h-[5px] w-[70px] shrink-0 cursor-pointer rounded-full bg-neutral-80"
+                />
+              </div>
               {isOpen ? (
                 <MobileApplySection
                   programTitle={programTitle}
