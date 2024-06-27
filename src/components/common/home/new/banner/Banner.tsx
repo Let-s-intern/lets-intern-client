@@ -66,31 +66,33 @@ const Banner = () => {
         paddingRight: `${bannerSidePadding}px`,
       }}
     >
-      <div className="relative top-[3px] flex overflow-hidden text-static-100 md:top-[13px]">
+      <div className="relative top-[3px] flex max-h-[25rem] overflow-hidden rounded-sm text-static-100 md:top-[13px]">
         {bannerList.map((bannner) => (
           <>
-            <div>
+            <div
+              className="hidden min-w-full cursor-pointer transition-all duration-500 ease-in-out sm:block"
+              style={{
+                translate: `-${bannerIndex * 100}%`,
+              }}
+            >
               <img
                 onClick={() => window.open(bannner.link)}
                 key={bannner.id}
-                className="main_banner hidden cursor-pointer rounded-sm object-cover transition-all duration-500 ease-in-out sm:block"
-                style={{
-                  translate: `-${bannerIndex * 100}%`,
-                  width: `${bannerWidth}px`,
-                }}
+                className="main_banner h-full w-full object-cover"
                 src={bannner.imgUrl}
                 alt="홈 배너 이미지"
               />
             </div>
-            <div>
+            <div
+              className="block min-w-full cursor-pointer transition-all duration-500 ease-in-out sm:hidden"
+              style={{
+                translate: `-${bannerIndex * 100}%`,
+              }}
+            >
               <img
                 onClick={() => window.open(bannner.link)}
                 key={bannner.id}
-                className="main_banner block cursor-pointer rounded-sm transition-all duration-500 ease-in-out sm:hidden"
-                style={{
-                  translate: `-${bannerIndex * 100}%`,
-                  width: `${bannerWidth}px`,
-                }}
+                className="main_banner h-full w-full object-cover"
                 src={bannner.mobileImgUrl}
                 alt="홈 배너 이미지"
               />

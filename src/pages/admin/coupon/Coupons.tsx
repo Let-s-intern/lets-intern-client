@@ -101,14 +101,6 @@ const Coupons = () => {
             >
               쿠폰코드
             </div>
-            {/* <div
-                  className={clsx(
-                    'flex justify-center py-2 text-sm font-medium text-[#717179]',
-                    couponCellWidth.createdDate,
-                  )}
-                >
-                  발급날짜
-                </div> */}
             <div
               className={clsx(
                 'flex justify-center py-2 text-sm font-medium text-[#717179]',
@@ -141,7 +133,7 @@ const Coupons = () => {
                 >
                   <div
                     className={clsx(
-                      'flex items-center justify-center py-4 text-sm text-zinc-600',
+                      'flex items-center justify-center py-4 text-center text-sm text-zinc-600',
                       couponCellWidth.couponType,
                     )}
                   >
@@ -149,7 +141,7 @@ const Coupons = () => {
                   </div>
                   <div
                     className={clsx(
-                      'flex items-center justify-center py-4 text-sm text-zinc-600',
+                      'flex items-center justify-center py-4 text-center text-sm text-zinc-600',
                       couponCellWidth.name,
                     )}
                   >
@@ -157,23 +149,15 @@ const Coupons = () => {
                   </div>
                   <div
                     className={clsx(
-                      'flex items-center justify-center py-4 text-sm text-zinc-600',
+                      'flex items-center justify-center py-4 text-center text-sm text-zinc-600',
                       couponCellWidth.code,
                     )}
                   >
                     {coupon.code}
                   </div>
-                  {/* <div
-            className={clsx(
-              'flex items-center justify-center py-4 text-sm text-zinc-600',
-              couponCellWidth.createdDate,
-            )}
-          >
-            {coupon.createDate}
-          </div> */}
                   <div
                     className={clsx(
-                      'flex items-center justify-center py-4 text-sm text-zinc-600',
+                      'flex items-center justify-center py-4 text-center text-sm text-zinc-600',
                       couponCellWidth.validPeriod,
                     )}
                   >
@@ -182,7 +166,7 @@ const Coupons = () => {
                   </div>
                   <div
                     className={clsx(
-                      'flex items-center justify-center py-4 text-sm text-zinc-600',
+                      'flex items-center justify-center py-4 text-center text-sm text-zinc-600',
                       couponCellWidth.management,
                     )}
                   >
