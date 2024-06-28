@@ -8,6 +8,7 @@ interface DateToggleProps {
 }
 
 const DateToggle = ({ programDate, programType }: DateToggleProps) => {
+  // console.log('DateToggle', programDate);
   return (
     <div className="rounded-sm bg-neutral-100">
       <div className="flex items-center justify-center gap-0.5 rounded-sm bg-neutral-0 bg-opacity-5 px-1.5 py-4 text-neutral-0 text-opacity-[74%]">
@@ -28,7 +29,11 @@ const DateToggle = ({ programDate, programType }: DateToggleProps) => {
           <div className="flex items-center justify-between p-1.5">
             <span className="text-neutral-0 text-opacity-[74%]">OT 일시</span>
             <span className="font-medium text-neutral-0 text-opacity-[94%]">
-              {dayjs(programDate.startDate).format('MM.DD (ddd)')} 오전 10시
+            {dayjs(programDate.startDate).format(
+              `MM.DD (ddd) A hh시${
+                dayjs(programDate.startDate).minute() !== 0 ? ' mm분' : ''
+              }`,
+            )}
             </span>
           </div>
         )}
