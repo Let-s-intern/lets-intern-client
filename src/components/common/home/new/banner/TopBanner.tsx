@@ -7,7 +7,7 @@ import { ILineBanner } from '../../../../../interfaces/Banner.interface';
 const TopBanner = () => {
   const [isShow, setIsShow] = useState(false);
 
-  const { isLoading, data } = useQuery<ILineBanner>({
+  const {  data } = useQuery<ILineBanner>({
     queryKey: ['LineBanner'],
     queryFn: async () => {
       const res = await axios.get(`/banner`, {
