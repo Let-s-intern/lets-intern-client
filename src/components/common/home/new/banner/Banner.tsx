@@ -5,47 +5,61 @@ import { useQuery } from '@tanstack/react-query';
 import axios from '../../../../../utils/axios';
 import { IBanner } from '../../../../../interfaces/Banner.interface';
 
-const Banner = () => {
-  const bannerSidePadding = 20;
+const bannerSidePadding = 20;
+const sectionStyle = {
+  paddingLeft: `${bannerSidePadding}px`,
+  paddingRight: `${bannerSidePadding}px`,
+};
 
+const Banner = () => {
   const [bannerList, setBannerList] = useState<IBanner[]>([]);
   const [bannerIndex, setBannerIndex] = useState(0);
   const [isPlay, setIsPlay] = useState(true);
   const [bannerWidth, setBannerWidth] = useState(
     window.innerWidth - bannerSidePadding * 2,
   );
+  const bannerStyle = {
+    translate: `-${bannerIndex * 100}%`,
+  };
 
   useEffect(() => {
     const handleResize = () => {
       setBannerWidth(window.innerWidth - bannerSidePadding * 2);
     };
-
     window.addEventListener('resize', handleResize);
 
-    // Cleanup event listener on component unmount
     return () => {
       window.removeEventListener('resize', handleResize);
     };
   }, []);
 
   useEffect(() => {
-    if (isPlay) {
-      const interval = setInterval(() => {
-        setBannerIndex((prev) => (prev + 1) % bannerList.length);
-      }, 5000);
-      return () => clearInterval(interval);
-    }
+    if (!isPlay) return;
+
+    const interval = setInterval(() => {
+      setBannerIndex((prev) => (prev + 1) % bannerList.length);
+    }, 5000);
+
+    return () => clearInterval(interval);
   }, [isPlay, bannerList]);
 
   const clickLeft = () => {
     if (bannerIndex === 0) setBannerIndex(bannerList.length - 1);
     else setBannerIndex((prev) => prev - 1);
   };
+
   const clickRight = () => {
     setBannerIndex((prev) => (prev + 1) % bannerList.length);
   };
 
-  const { isLoading } = useQuery({
+  const clickImg = (imgLInk: string) => {
+    const target = imgLInk.includes(window.location.origin)
+      ? '_self'
+      : '_blank';
+    window.open(imgLInk, target);
+  };
+
+  useQuery({
     queryKey: ['mainBanner'],
     queryFn: async () => {
       const res = await axios.get(`/banner`, {
@@ -60,40 +74,32 @@ const Banner = () => {
   });
 
   return (
-    <section
-      style={{
-        paddingLeft: `${bannerSidePadding}px`,
-        paddingRight: `${bannerSidePadding}px`,
-      }}
-    >
+    <section style={sectionStyle}>
       <div className="relative top-[3px] flex max-h-[25rem] overflow-hidden rounded-sm text-static-100 md:top-[13px]">
-        {bannerList.map((bannner) => (
+        {bannerList.map((banner) => (
           <>
             <div
+              key={banner.id}
               className="hidden min-w-full cursor-pointer transition-all duration-500 ease-in-out sm:block"
-              style={{
-                translate: `-${bannerIndex * 100}%`,
-              }}
+              style={bannerStyle}
             >
               <img
-                onClick={() => window.open(bannner.link)}
-                key={bannner.id}
+                onClick={() => clickImg(banner.link)}
+                key={banner.id}
                 className="main_banner h-full w-full object-cover"
-                src={bannner.imgUrl}
+                src={banner.imgUrl}
                 alt="홈 배너 이미지"
               />
             </div>
             <div
               className="block min-w-full cursor-pointer transition-all duration-500 ease-in-out sm:hidden"
-              style={{
-                translate: `-${bannerIndex * 100}%`,
-              }}
+              style={bannerStyle}
             >
               <img
-                onClick={() => window.open(bannner.link)}
-                key={bannner.id}
+                onClick={() => window.open(banner.link)}
+                key={banner.id}
                 className="main_banner h-full w-full object-cover"
-                src={bannner.mobileImgUrl}
+                src={banner.mobileImgUrl}
                 alt="홈 배너 이미지"
               />
             </div>
