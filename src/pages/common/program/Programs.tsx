@@ -40,6 +40,8 @@ const initialPageInfo = {
   totalElements: 0,
   totalPages: 0,
 };
+const ERROR_MESSAGE =
+  "프로그램 조회 중 오류가 발생했습니다.\n문제가 지속되면 아래 '채팅문의'를 통해 문의해주세요.";
 
 const Programs = () => {
   // 필터링 상태 관리
@@ -244,10 +246,8 @@ const Programs = () => {
         setPageInfo(res.data.data.pageInfo);
         return res.data.data;
       }
-      throw new Error(res.data.status, res.data.message);
     } catch (error) {
-      console.error(error);
-      alert(error);
+      alert(ERROR_MESSAGE);
     }
   };
   const { isSuccess, isFetching, isLoading } = useQuery({
@@ -269,7 +269,7 @@ const Programs = () => {
   }, [loading]);
 
   return (
-    <div className={`flex ${isOpen ? 'overflow-hidden' : ''}`}>
+    <div className={clsx('flex', { 'overflow-hidden': isOpen })}>
       {/* 필터링 사이드바 */}
       <FilterSideBar
         setIsOpen={setIsOpen}
@@ -367,8 +367,10 @@ const Programs = () => {
         </section>
         {loading || isLoading || isFetching ? (
           <LoadingContainer text="프로그램 조회 중" />
-        ) : isSuccess && programList ? (
-          programList.length < 1 ? (
+        ) : (
+          isSuccess &&
+          programList &&
+          (programList.length < 1 ? (
             <>
               <p className="text-1 py-2 text-center text-neutral-0/40">
                 혹시, 찾으시는 프로그램이 없으신가요?
@@ -401,9 +403,7 @@ const Programs = () => {
                 setPageable={setPageable}
               />
             </>
-          )
-        ) : (
-          <></>
+          ))
         )}
         <Banner />
       </main>

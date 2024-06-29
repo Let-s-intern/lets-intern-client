@@ -53,7 +53,6 @@ import PopUpBannerCreate from './pages/admin/banner/pop-up-banner/PopUpBannerCre
 import PopUpBannerEdit from './pages/admin/banner/pop-up-banner/PopUpBannerEdit';
 import OnlineContentsCreate from './pages/admin/online-contents/OnlineContentsCreate';
 import OnlineContentsEdit from './pages/admin/online-contents/OnlineContentsEdit';
-import HomeRegacy from './pages/common/home/HomeRegacy';
 import Maintenance from './pages/maintenance/Maintenance';
 import Privacy from './pages/common/mypage/Privacy';
 import Application from './pages/common/mypage/Application';

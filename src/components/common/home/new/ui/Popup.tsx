@@ -4,7 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 import axios from '../../../../../utils/axios';
 import { IBanner } from '../../../../../interfaces/Banner.interface';
 
-const DAY = 86400000;
+const ONE_DAY = 86400000;
 
 const Popup = () => {
   const [showPopup, setShowPopup] = useState(false);
@@ -21,12 +21,19 @@ const Popup = () => {
     setShowPopup(false);
   };
 
+  const clickPopup = () => {
+    const target = data?.link.includes(window.location.origin)
+      ? '_self'
+      : '_blank';
+    window.open(data?.link, target);
+  };
+
   useEffect(() => {
     const closedTime = localStorage.getItem('closedTime');
 
     if (closedTime) {
       const diff = Date.now() - Number(closedTime);
-      if (diff > DAY)
+      if (diff > ONE_DAY)
         localStorage.removeItem('closedTime'); // 하루가 지났으면 시간 삭제
       else return; // 하루가 지나지 않았으면 팝업 띄우지 않음
     }
@@ -41,6 +48,10 @@ const Popup = () => {
           type: 'POPUP',
         },
       });
+
+      const bannerList = res.data.data.bannerList;
+
+      if (bannerList.length === 0) return null;
       return res.data.data.bannerList[0];
     },
   });
@@ -51,11 +62,11 @@ const Popup = () => {
 
   return showPopup && data ? (
     <div className="fixed bottom-0 top-0 z-50 flex h-full w-screen items-center justify-center bg-neutral-0/60 px-8">
-      <div className="relative w-80  rounded-xl bg-static-100 px-4 py-6">
+      <div className="relative w-80 rounded-xl bg-static-100 px-4 py-6">
         <img
           className="popup_banner cursor-pointer"
           src={data?.imgUrl}
-          onClick={() => window.open(data?.link, '_blank')}
+          onClick={clickPopup}
           alt="홈 화면 팝업 이미지"
         />
         <img

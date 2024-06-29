@@ -21,7 +21,6 @@ const Banner = () => {
 
     window.addEventListener('resize', handleResize);
 
-    // Cleanup event listener on component unmount
     return () => {
       window.removeEventListener('resize', handleResize);
     };
@@ -32,12 +31,10 @@ const Banner = () => {
       const res = await axios.get(`/banner?type=PROGRAM`);
       if (res.status === 200) {
         const bannerList = res.data.data.bannerList as IBanner[];
-        // console.log('bannerList', bannerList);
         const filtered = bannerList.filter((banner: IBanner) => banner.isValid);
         setBannerList(filtered);
         return res.data;
       }
-      throw new Error(`${res.status} ${res.statusText}`);
     } catch (error) {
       console.error(error);
     }
@@ -49,7 +46,7 @@ const Banner = () => {
 
   useEffect(() => {
     if (!isPlay) return;
-    // 배너 슬라이드
+    // 배너 슬라이드 애니메이션
     const timer = setInterval(() => {
       const distance = imgRef.current?.offsetWidth;
       const nextIndex = (bannerIndex + 1) % bannerList.length;
@@ -79,8 +76,9 @@ const Banner = () => {
             to={banner.link}
             key={banner.id}
             className="program_banner w-full shrink-0"
-            target="_blank"
-            rel="noreferrer noopener"
+            target={
+              banner.link.includes(window.location.origin) ? '_self' : '_blank'
+            }
           >
             <img
               ref={imgRef}
