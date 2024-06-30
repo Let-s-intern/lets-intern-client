@@ -1,20 +1,20 @@
-import { Link, useNavigate } from 'react-router-dom';
+import clsx from 'clsx';
+import dayjs from 'dayjs';
 import { memo, useEffect, useState } from 'react';
-
+import { useNavigate } from 'react-router-dom';
 import {
   IProgram,
   ProgramClassificationKey,
 } from '../../../../../interfaces/interface';
-import ProgramStatusTag from './ProgramStatusTag';
+import axios from '../../../../../utils/axios';
 import {
-  PROGRAM_TYPE,
-  PROGRAM_STATUS,
   PROGRAM_CLASSIFICATION,
+  PROGRAM_STATUS,
   PROGRAM_STATUS_KEY,
+  PROGRAM_TYPE,
 } from '../../../../../utils/programConst';
 import ProgramClassificationTag from './ProgramClassificationTag';
-import axios from '../../../../../utils/axios';
-import clsx from 'clsx';
+import ProgramStatusTag from './ProgramStatusTag';
 
 interface ProgramCardProps {
   program: IProgram;
@@ -28,10 +28,6 @@ const ProgramCard = ({ program }: ProgramCardProps) => {
     }`,
   );
 
-  const formatDate = (date: string) => {
-    return new Date(date).toLocaleDateString().replaceAll(' ', '').slice(0, -1);
-  };
-
   const getVodLink = async () => {
     if (program.programInfo.programType !== PROGRAM_TYPE.VOD) return;
     // VOD 상세 조회
@@ -43,7 +39,7 @@ const ProgramCard = ({ program }: ProgramCardProps) => {
       }
       throw new Error(`${res.status} ${res.statusText}`);
     } catch (error) {
-      console.error(error);
+      // console.error(error);
     }
   };
 
@@ -111,8 +107,8 @@ const ProgramCard = ({ program }: ProgramCardProps) => {
                   모집기간
                 </span>
                 <span className="text-0.75-medium text-[0.69rem] text-primary-dark">
-                  {formatDate(program.programInfo.beginning!)}~
-                  {formatDate(program.programInfo.deadline!)}
+                  {dayjs(program.programInfo.beginning).format('YY.MM.DD')} ~{' '}
+                  {dayjs(program.programInfo.deadline).format('YY.MM.DD')}
                 </span>
               </div>
               <div className="flex items-center gap-1.5">
@@ -121,10 +117,12 @@ const ProgramCard = ({ program }: ProgramCardProps) => {
                 </span>
                 <span className="text-0.75-medium text-[0.69rem] text-primary-dark">
                   {program.programInfo.programType === PROGRAM_TYPE.CHALLENGE
-                    ? `${formatDate(
-                        program.programInfo.startDate,
-                      )}~${formatDate(program.programInfo.endDate!)}`
-                    : formatDate(program.programInfo.startDate)}
+                    ? `${dayjs(program.programInfo.startDate).format(
+                        'YY.MM.DD',
+                      )} ~ ${dayjs(program.programInfo.endDate).format(
+                        'YY.MM.DD',
+                      )}`
+                    : dayjs(program.programInfo.startDate).format('YY.MM.DD')}
                 </span>
               </div>
             </div>
