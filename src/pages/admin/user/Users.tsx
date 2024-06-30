@@ -36,7 +36,6 @@ const Users = () => {
       const res = await axios.get('/user/admin', {
         params,
       });
-      console.log(res.data);
       return res.data;
     },
   });
