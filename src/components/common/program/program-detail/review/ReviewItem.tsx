@@ -14,6 +14,7 @@ const ReviewItem = ({ review }: ReviewItemProps) => {
   };
 
   const makeMaskingName = () => {
+    if (review.name === '익명') return review.name;
     if (review.name.length === 2) return review.name[0] + '*';
     if (review.name.length >= 3) {
       return (
