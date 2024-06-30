@@ -5,8 +5,8 @@ import Heading from '../ui/Heading';
 import ProgramGridItem from './ProgramGridItem';
 
 const PROGRAM_SECTION = {
-  TITLE: ['내 커리어 단계에 딱 맞는', '프로그램을 찾아보세요'],
-  DESC: '원하는 키워드를 클릭해보세요!',
+  title: ['내 커리어 단계에 딱 맞는', '프로그램을 찾아보세요'],
+  description: '원하는 키워드를 클릭해보세요!',
 };
 
 const programList: IProgramGridItem[] = [
@@ -69,11 +69,11 @@ const ProgramSection = () => {
     <section className="px-5 ">
       <div className="flex flex-col gap-1">
         <Heading>
-          {PROGRAM_SECTION.TITLE.map((title) => (
-            <span>{title}</span>
+          {PROGRAM_SECTION.title.map((title) => (
+            <span key={title}>{title}</span>
           ))}
         </Heading>
-        <Description>{PROGRAM_SECTION.DESC}</Description>
+        <Description>{PROGRAM_SECTION.description}</Description>
       </div>
       <ul className="mt-6 grid grid-cols-2 gap-4 lg:grid-cols-4">
         {programList.map((program) => (

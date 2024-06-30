@@ -1,8 +1,8 @@
-import { useEffect, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
+import { useEffect, useState } from 'react';
 
-import axios from '../../../../../utils/axios';
 import { IBanner } from '../../../../../interfaces/Banner.interface';
+import axios from '../../../../../utils/axios';
 
 const ONE_DAY = 86400000;
 
@@ -62,7 +62,7 @@ const Popup = () => {
 
   return showPopup && data ? (
     <div className="fixed bottom-0 top-0 z-50 flex h-full w-screen items-center justify-center bg-neutral-0/60 px-8">
-      <div className="relative w-80 rounded-xl bg-static-100 px-4 py-6">
+      <div className="relative w-80 rounded-xl bg-static-100 px-4 py-6 shadow-05">
         <img
           className="popup_banner cursor-pointer"
           src={data?.imgUrl}
