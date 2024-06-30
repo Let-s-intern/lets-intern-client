@@ -1,9 +1,9 @@
-import { useEffect, useState } from 'react';
-import BannerPlay from './BannerPlay';
 import { useQuery } from '@tanstack/react-query';
+import { Fragment, useEffect, useState } from 'react';
+import BannerPlay from './BannerPlay';
 
-import axios from '../../../../../utils/axios';
 import { IBanner } from '../../../../../interfaces/Banner.interface';
+import axios from '../../../../../utils/axios';
 
 const bannerSidePadding = 20;
 const sectionStyle = {
@@ -77,7 +77,7 @@ const Banner = () => {
     <section style={sectionStyle}>
       <div className="relative top-[3px] flex max-h-[25rem] overflow-hidden rounded-sm text-static-100 md:top-[13px]">
         {bannerList.map((banner) => (
-          <>
+          <Fragment key={banner.id}>
             <div
               key={banner.id}
               className="hidden min-w-full cursor-pointer transition-all duration-500 ease-in-out sm:block"
@@ -103,7 +103,7 @@ const Banner = () => {
                 alt="홈 배너 이미지"
               />
             </div>
-          </>
+          </Fragment>
         ))}
         <button
           onClick={clickLeft}

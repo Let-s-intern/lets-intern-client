@@ -1,8 +1,8 @@
-import { useEffect, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
+import { useEffect, useState } from 'react';
 
-import axios from '../../../../../utils/axios';
 import { ILineBanner } from '../../../../../interfaces/Banner.interface';
+import axios from '../../../../../utils/axios';
 
 const TopBanner = () => {
   const [isShow, setIsShow] = useState(false);
@@ -15,6 +15,7 @@ const TopBanner = () => {
           type: 'LINE',
         },
       });
+      if (res.data.data.bannerList.length === 0) return null;
       return res.data.data.bannerList[0];
     },
   });
