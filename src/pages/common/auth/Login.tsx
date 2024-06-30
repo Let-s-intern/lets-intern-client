@@ -38,6 +38,7 @@ const Login = () => {
   const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [buttonDisabled, setButtonDisabled] = useState(false);
+  const redirect = searchParams.get('redirect');
 
   const fetchLogin = useMutation({
     mutationFn: async () => {
@@ -155,7 +156,9 @@ const Login = () => {
       </form>
       <SocialLogin type="LOGIN" />
       <div className="mt-8 flex justify-center gap-8">
-        <TextLink to="/signup">회원가입</TextLink>
+        <TextLink to={redirect ? `/signup?redirect=${redirect}` : '/signup'}>
+          회원가입
+        </TextLink>
         <TextLink to="/find-password" dark>
           비밀번호 찾기
         </TextLink>
