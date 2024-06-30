@@ -1,10 +1,10 @@
 import { useQuery } from '@tanstack/react-query';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import DoneSection from '../../../components/common/mypage/review/section/DoneSection';
 import WaitingSection from '../../../components/common/mypage/review/section/WaitingSection';
-import { ApplicationType } from './Application';
 import axios from '../../../utils/axios';
+import { ApplicationType } from './Application';
 
 const Review = () => {
   // const [waitingApplicationList, setWaitingApplicationList] = useState<
@@ -18,7 +18,6 @@ const Review = () => {
     queryKey: ['user', 'applications'],
     queryFn: async () => {
       const res = await axios.get('/user/applications');
-      console.log(res.data)
       return res.data;
     },
   });

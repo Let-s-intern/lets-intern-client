@@ -1,5 +1,5 @@
-import { useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useState } from 'react';
 
 import axios from '../../../../../utils/axios';
 
@@ -27,7 +27,6 @@ const FAQEditor = ({ programType, value, setValue }: FAQEditorProps) => {
     queryFn: async ({ queryKey }) => {
       const res = await axios.get('/faq', { params: queryKey[1] });
       setFaqList(res.data.data.faqList);
-      console.log(res.data.data.faqList);
       return res.data;
     },
     refetchOnWindowFocus: false,

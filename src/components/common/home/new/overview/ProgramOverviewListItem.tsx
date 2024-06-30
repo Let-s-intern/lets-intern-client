@@ -1,12 +1,12 @@
 import { useMediaQuery } from '@mui/material';
-import { IProgram } from '../../../../../interfaces/interface';
 import { useQuery } from '@tanstack/react-query';
+import { IProgram } from '../../../../../interfaces/interface';
 
+import { useCallback, useEffect, useState } from 'react';
 import axios from '../../../../../utils/axios';
-import { useState, useCallback, useEffect } from 'react';
 import LoadingContainer from '../../../ui/loading/LoadingContainer';
-import ProgramListItemContainer from './ProgramListItemContainer';
 import EmptyListItemContainer from './EmptyListItemContainer';
+import ProgramListItemContainer from './ProgramListItemContainer';
 
 interface ProgramOverviewListItemProps {
   title: string;
@@ -104,7 +104,6 @@ const ProgramOverviewListItem = () => {
           endDate: endDate,
         },
       });
-      console.log('res.data.data.programList', res.data.data.programList);
       return res.data.data.programList;
     },
   });

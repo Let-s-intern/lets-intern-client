@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react';
 
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import axios from '../../../../../utils/axios';
-import Button from '../../ui/button/Button';
-import Input from '../../../ui/input/Input';
-import GradeDropdown from '../form-control/GradeDropdown';
 import { FaCheck } from 'react-icons/fa';
+import axios from '../../../../../utils/axios';
+import Input from '../../../ui/input/Input';
+import Button from '../../ui/button/Button';
+import GradeDropdown from '../form-control/GradeDropdown';
 
 interface BasicInfoValue {
   name: string;
@@ -41,7 +41,6 @@ const BasicInfo = () => {
     queryKey: ['user', '_basic-info'],
     queryFn: async () => {
       const res = await axios.get('/user');
-      console.log(res.data.data);
       setUser({
         ...res.data.data,
       });
@@ -61,7 +60,7 @@ const BasicInfo = () => {
     onError: (error) => {
       alert('정보 수정에 실패했습니다.');
       console.error(error);
-    }
+    },
   });
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -79,7 +78,7 @@ const BasicInfo = () => {
 
   const handleGradeChange = (grade: string) => {
     setUser({ ...user, grade });
-  }
+  };
 
   const handleSubmit = () => {
     const newUser = {
@@ -91,61 +90,80 @@ const BasicInfo = () => {
 
   useEffect(() => {
     setIsSameEmail(user.email === user.contactEmail);
-    // console.log(user);
   }, [user]);
 
   return (
     <section className="flex flex-col gap-6">
-      <div className='flex w-full items-center gap-x-3'>
-      <h1 className="text-lg font-semibold">기본 정보</h1>
-      {
-        (user.authProvider === 'KAKAO' || user.authProvider === 'NAVER') && (
-          <img src={user.authProvider === 'KAKAO' ? '/images/social_kakao.svg' : user.authProvider === 'NAVER' ? '/images/social_naver.png' : ''} alt="profile" className="h-8" />
-        )
-      }
+      <div className="flex w-full items-center gap-x-3">
+        <h1 className="text-lg font-semibold">기본 정보</h1>
+        {(user.authProvider === 'KAKAO' || user.authProvider === 'NAVER') && (
+          <img
+            src={
+              user.authProvider === 'KAKAO'
+                ? '/images/social_kakao.svg'
+                : user.authProvider === 'NAVER'
+                  ? '/images/social_naver.png'
+                  : ''
+            }
+            alt="profile"
+            className="h-8"
+          />
+        )}
       </div>
       <div className="flex flex-col gap-3">
-        <div className='flex flex-col gap-3 pb-4 border-b border-b-neutral-70'>
-        <div className="flex flex-col gap-1">
-          <label htmlFor="name" className="text-1-medium">
-            이름
-          </label>
-          <Input
-            id="name"
-            name="name"
-            placeholder="김렛츠"
-            value={user.name}
-            onChange={handleInputChange}
-            readOnly = {user.authProvider === 'KAKAO' || user.authProvider === 'NAVER' ? true : false}
-          />
-        </div>
-        <div className="flex flex-col gap-1">
-          <label htmlFor="phoneNum" className="text-1-medium">
-            휴대폰 번호
-          </label>
-          <Input
-            id="phoneNum"
-            name="phoneNum"
-            placeholder="010-0000-0000"
-            value={user.phoneNum}
-            onChange={handleInputChange}
-            readOnly = {user.authProvider === 'KAKAO' || user.authProvider === 'NAVER' ? true : false}
-          />
-        </div>
-        <div className="flex flex-col gap-1">
-          <label htmlFor="email" className="text-1-medium">
-            가입한 이메일
-          </label>
-          <Input
-            id="email"
-            name="email"
-            placeholder="example@example.com"
-            value={user.email}
-            onChange={handleInputChange}
-            disabled
-            readOnly = {user.authProvider === 'KAKAO' || user.authProvider === 'NAVER' ? true : false}
-          />
-        </div>
+        <div className="flex flex-col gap-3 border-b border-b-neutral-70 pb-4">
+          <div className="flex flex-col gap-1">
+            <label htmlFor="name" className="text-1-medium">
+              이름
+            </label>
+            <Input
+              id="name"
+              name="name"
+              placeholder="김렛츠"
+              value={user.name}
+              onChange={handleInputChange}
+              readOnly={
+                user.authProvider === 'KAKAO' || user.authProvider === 'NAVER'
+                  ? true
+                  : false
+              }
+            />
+          </div>
+          <div className="flex flex-col gap-1">
+            <label htmlFor="phoneNum" className="text-1-medium">
+              휴대폰 번호
+            </label>
+            <Input
+              id="phoneNum"
+              name="phoneNum"
+              placeholder="010-0000-0000"
+              value={user.phoneNum}
+              onChange={handleInputChange}
+              readOnly={
+                user.authProvider === 'KAKAO' || user.authProvider === 'NAVER'
+                  ? true
+                  : false
+              }
+            />
+          </div>
+          <div className="flex flex-col gap-1">
+            <label htmlFor="email" className="text-1-medium">
+              가입한 이메일
+            </label>
+            <Input
+              id="email"
+              name="email"
+              placeholder="example@example.com"
+              value={user.email}
+              onChange={handleInputChange}
+              disabled
+              readOnly={
+                user.authProvider === 'KAKAO' || user.authProvider === 'NAVER'
+                  ? true
+                  : false
+              }
+            />
+          </div>
         </div>
         <div className="flex flex-col gap-2">
           <div>
@@ -198,7 +216,11 @@ const BasicInfo = () => {
           <label htmlFor="grade" className="text-1-medium">
             학년
           </label>
-          <GradeDropdown value={user.grade} setValue={handleGradeChange} type={'MYPAGE'}/>
+          <GradeDropdown
+            value={user.grade}
+            setValue={handleGradeChange}
+            type={'MYPAGE'}
+          />
         </div>
         <div className="flex flex-col gap-1">
           <label htmlFor="major" className="text-1-medium">
@@ -237,12 +259,18 @@ const BasicInfo = () => {
           />
         </div>
       </div>
-      <Button onClick={handleSubmit}>{
-        !(user.contactEmail || user.university || user.grade || user.major || user.wishJob || user.wishCompany) ? 
-          '기본 정보 등록하기'
-         : 
-          '기본 정보 수정하기'
-    }</Button>
+      <Button onClick={handleSubmit}>
+        {!(
+          user.contactEmail ||
+          user.university ||
+          user.grade ||
+          user.major ||
+          user.wishJob ||
+          user.wishCompany
+        )
+          ? '기본 정보 등록하기'
+          : '기본 정보 수정하기'}
+      </Button>
     </section>
   );
 };

@@ -1,16 +1,14 @@
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
 import { useParams, useSearchParams } from 'react-router-dom';
-import { useQueryClient, useQuery, useMutation } from '@tanstack/react-query';
 
-import ActionButton from '../../../components/admin/ui/button/ActionButton';
-import Table from '../../../components/admin/ui/table/regacy/Table';
+import BottomAction from '../../../components/admin/program/program-user/bottom-action/BottomAction';
+import TableBody from '../../../components/admin/program/program-user/table-content/TableBody';
 import TableHead, {
   UserTableHeadProps,
 } from '../../../components/admin/program/program-user/table-content/TableHead';
-import TableBody from '../../../components/admin/program/program-user/table-content/TableBody';
+import Table from '../../../components/admin/ui/table/regacy/Table';
 import axios from '../../../utils/axios';
-import BottomAction from '../../../components/admin/program/program-user/bottom-action/BottomAction';
-import MentorDropdown from '../../../components/admin/program/program-user/top-action/MentorDropdown';
 
 export interface ApplicationType {
   couponName: string;
@@ -62,8 +60,8 @@ const ProgramUsers = () => {
                     ? 1
                     : -1
                   : filter.name === 'DESCENDING' && a.name <= b.name
-                  ? 1
-                  : -1,
+                    ? 1
+                    : -1,
             );
       filteredApplications =
         filter.isFeeConfirmed === null
@@ -72,7 +70,6 @@ const ProgramUsers = () => {
               (application: ApplicationType) =>
                 application.isConfirmed === filter.isFeeConfirmed,
             );
-      console.log('filteredApplication', filteredApplications);
       setApplications(filteredApplications);
       return res.data;
     },

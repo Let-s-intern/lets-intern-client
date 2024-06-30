@@ -1,6 +1,6 @@
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
-import { useMutation, useQuery } from '@tanstack/react-query';
 
 import ConfirmSection from '../../../components/common/review/section/ConfirmSection';
 import StarScoreSection from '../../../components/common/review/section/StarScoreSection';
@@ -8,7 +8,7 @@ import TenScoreSection from '../../../components/common/review/section/TenScroeS
 import TextAreaSection from '../../../components/common/review/section/TextAreaSection';
 import axios from '../../../utils/axios';
 
-const ReviewCreate = ({isEdit}:{isEdit:boolean}) => {
+const ReviewCreate = ({ isEdit }: { isEdit: boolean }) => {
   const params = useParams();
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
@@ -31,7 +31,7 @@ const ReviewCreate = ({isEdit}:{isEdit:boolean}) => {
   const applicationId = Number(searchParams.get('application'));
   const programId = Number(params.programId);
   const programType = params.programType?.toLowerCase();
-  
+
   const { data: reviewDetailData } = useQuery({
     queryKey: ['review', applicationId],
     queryFn: async () => {
@@ -40,33 +40,36 @@ const ReviewCreate = ({isEdit}:{isEdit:boolean}) => {
     },
     enabled: isEdit,
     retry: 1,
-  })
+  });
 
   useEffect(() => {
-    console.log('리뷰 : ', reviewDetailData)
     if (isEdit && reviewDetailData) {
       setStarScore(reviewDetailData.score);
       setTenScore(reviewDetailData.nps);
       setIsYes(reviewDetailData.npsCheckAns);
       setAnswer({
-        yes: reviewDetailData.score > 6 && reviewDetailData.npsCheckAns ? reviewDetailData.npsAns : '',
-        no: reviewDetailData.score > 6 && !reviewDetailData.npsCheckAns ? reviewDetailData.npsAns : '',
+        yes:
+          reviewDetailData.score > 6 && reviewDetailData.npsCheckAns
+            ? reviewDetailData.npsAns
+            : '',
+        no:
+          reviewDetailData.score > 6 && !reviewDetailData.npsCheckAns
+            ? reviewDetailData.npsAns
+            : '',
         low: reviewDetailData.score <= 6 ? reviewDetailData.npsAns : '',
       });
       setContent(reviewDetailData.content);
     }
-  }, [reviewDetailData, isEdit])
+  }, [reviewDetailData, isEdit]);
 
   const { data: programTitle } = useQuery({
     queryKey: ['program', programId, programType],
     queryFn: async () => {
       const res = await axios.get(`/${programType}/${programId}/title`);
-      console.log(res.data);
       return res.data.data.title;
     },
     retry: 1,
-  })
-
+  });
 
   const addReview = useMutation({
     mutationFn: async () => {
@@ -78,8 +81,8 @@ const ReviewCreate = ({isEdit}:{isEdit:boolean}) => {
             tenScore && tenScore <= 6
               ? answer.low
               : isYes
-              ? answer.yes
-              : answer.no,
+                ? answer.yes
+                : answer.no,
           npsCheckAns: isYes === null ? false : isYes,
           nps: tenScore,
           content: content,
@@ -100,21 +103,18 @@ const ReviewCreate = ({isEdit}:{isEdit:boolean}) => {
 
   const editReview = useMutation({
     mutationFn: async () => {
-      const res = await axios.patch(
-        `/review/${reviewId}`,
-        {
-          npsAns:
-            tenScore !== null && tenScore <= 6
-              ? answer.low
-              : isYes
+      const res = await axios.patch(`/review/${reviewId}`, {
+        npsAns:
+          tenScore !== null && tenScore <= 6
+            ? answer.low
+            : isYes
               ? answer.yes
               : answer.no,
-          npsCheckAns: isYes === null ? false : isYes,
-          nps: tenScore,
-          content: content,
-          score: starScore,
-        },
-      );
+        npsCheckAns: isYes === null ? false : isYes,
+        nps: tenScore,
+        content: content,
+        score: starScore,
+      });
       return res.data;
     },
     onSuccess: () => {
@@ -124,8 +124,13 @@ const ReviewCreate = ({isEdit}:{isEdit:boolean}) => {
 
   const handleConfirm = () => {
     if (isEdit) {
-      console.log('edit, ', answer);
-      if (answer === null || (answer.low === '' && answer.no === '' && answer.yes === '') || content === '' || starScore === 0 || tenScore === null) {
+      if (
+        answer === null ||
+        (answer.low === '' && answer.no === '' && answer.yes === '') ||
+        content === '' ||
+        starScore === 0 ||
+        tenScore === null
+      ) {
         alert('모든 항목을 입력해주세요.');
         return;
       }
@@ -146,7 +151,11 @@ const ReviewCreate = ({isEdit}:{isEdit:boolean}) => {
             navigate(-1);
           }}
         />
-        <StarScoreSection starScore={starScore} setStarScore={setStarScore} title={programTitle}/>
+        <StarScoreSection
+          starScore={starScore}
+          setStarScore={setStarScore}
+          title={programTitle}
+        />
         <TenScoreSection
           programTitle={programTitle}
           tenScore={tenScore}
@@ -157,14 +166,19 @@ const ReviewCreate = ({isEdit}:{isEdit:boolean}) => {
           setAnswer={setAnswer}
         />
         <TextAreaSection content={content} setContent={setContent} />
-        <ConfirmSection isEdit={isEdit} onConfirm={handleConfirm} isDisabled={
-          starScore === 0 ||
-          tenScore === null || tenScore === 0 ||
-          (tenScore <= 6 && answer.low === '') ||
-          (tenScore > 6 && isYes === null) ||
-          (isYes === true && answer.yes === '') ||
-          (isYes === false && answer.no === '')
-        }/>
+        <ConfirmSection
+          isEdit={isEdit}
+          onConfirm={handleConfirm}
+          isDisabled={
+            starScore === 0 ||
+            tenScore === null ||
+            tenScore === 0 ||
+            (tenScore <= 6 && answer.low === '') ||
+            (tenScore > 6 && isYes === null) ||
+            (isYes === true && answer.yes === '') ||
+            (isYes === false && answer.no === '')
+          }
+        />
       </main>
     </div>
   );

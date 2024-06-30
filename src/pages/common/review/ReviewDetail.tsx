@@ -1,10 +1,9 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import styled from 'styled-components';
-
+import Star from '../../../components/common/review/regacy/ui/Star';
 import axios from '../../../utils/axios';
 import { convertTypeToText } from '../../../utils/converTypeToText';
-import Star from '../../../components/common/review/regacy/ui/Star';
 
 const ReviewDetail = () => {
   const params = useParams();
@@ -16,7 +15,6 @@ const ReviewDetail = () => {
     const fetchReview = async () => {
       try {
         const res = await axios.get(`/review/${params.reviewId}`);
-        console.log(res.data);
         setReview(res.data);
       } catch (error) {
         setError(error);

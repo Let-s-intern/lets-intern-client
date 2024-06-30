@@ -1,24 +1,24 @@
+import { useMutation } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { useMutation } from '@tanstack/react-query';
 
-import Input from '../../../components/ui/input/Input';
-import Button from '../../../components/common/ui/button/Button';
-import axios from '../../../utils/axios';
+import { AxiosError } from 'axios';
+import MarketingModal from '../../../components/common/auth/modal/MarketingModal';
 import PrivacyPolicyModal from '../../../components/common/auth/modal/PrivacyPolicyModal';
 import CheckBox from '../../../components/common/auth/ui/CheckBox';
+import InfoContainer from '../../../components/common/auth/ui/InfoContainer';
 import PrivacyLink from '../../../components/common/auth/ui/PrivacyLink';
+import SocialLogin from '../../../components/common/auth/ui/SocialLogin';
+import Button from '../../../components/common/ui/button/Button';
+import Input from '../../../components/ui/input/Input';
+import { ErrorResonse } from '../../../interfaces/interface';
+import useAuthStore from '../../../store/useAuthStore';
+import axios from '../../../utils/axios';
 import {
   isValidEmail,
   isValidPassword,
   isValidPhoneNumber,
 } from '../../../utils/valid';
-import SocialLogin from '../../../components/common/auth/ui/SocialLogin';
-import { AxiosError } from 'axios';
-import MarketingModal from '../../../components/common/auth/modal/MarketingModal';
-import InfoContainer from '../../../components/common/auth/ui/InfoContainer';
-import useAuthStore from '../../../store/useAuthStore';
-import { ErrorResonse } from '../../../interfaces/interface';
 
 const SignUp = () => {
   const { isLoggedIn, login } = useAuthStore();
@@ -35,7 +35,6 @@ const SignUp = () => {
       return undefined;
     }
     const token = JSON.parse(result);
-    // console.log('SIGNUP ISNEW: ', token.isNew);
     localStorage.setItem('access-token', token.accessToken);
     localStorage.setItem('refresh-token', token.refreshToken);
     if (!token.isNew) {
@@ -60,7 +59,6 @@ const SignUp = () => {
       resultToToken(result);
     }
   }, [searchParams]);
-
 
   const [isSignupSuccess, setIsSignupSuccess] = useState<boolean>(false);
   const [buttonDisabled, setButtonDisabled] = useState(false);
@@ -95,10 +93,11 @@ const SignUp = () => {
     },
     onError: (error) => {
       const axiosError = error as AxiosError<ErrorResonse>;
-      console.log(axiosError);
       setError(error);
       if (axiosError.response?.status === 409) {
-        setErrorMessage(axiosError.response.data?.message || '이미 가입된 사용자입니다.');
+        setErrorMessage(
+          axiosError.response.data?.message || '이미 가입된 사용자입니다.',
+        );
       } else {
         setErrorMessage('회원가입에 실패했습니다.');
       }
@@ -219,30 +218,27 @@ const SignUp = () => {
           <div className="container mx-auto mt-8 p-5">
             <div className="mx-auto mb-16 w-full sm:max-w-md">
               <span className="mb-2 block font-bold">회원가입</span>
-              {
-                !isSocial && (
-                  <h1 className="mb-10 text-2xl">
-                    기본 정보를
-                    <br />
-                    입력하세요
-                  </h1>
-                )
-              }
+              {!isSocial && (
+                <h1 className="mb-10 text-2xl">
+                  기본 정보를
+                  <br />
+                  입력하세요
+                </h1>
+              )}
               <form
                 onSubmit={handleOnSubmit}
                 className="flex flex-col space-y-3"
               >
-                {
-                  isSocial ? (
-                    <div className="flex flex-col gap-2">
+                {isSocial ? (
+                  <div className="flex flex-col gap-2">
                     <div>
                       <label htmlFor="contactEmail" className="text-1-medium">
                         렛츠커리어 정보 수신용 이메일
                       </label>
                       <div className="flex flex-col gap-1.5">
                         <p className="text-sm text-neutral-0 text-opacity-[52%]">
-                          * 결제정보 및 프로그램 신청 관련 알림 수신을 위해, 자주 사용하는
-                          이메일 주소를 입력해주세요!
+                          * 결제정보 및 프로그램 신청 관련 알림 수신을 위해,
+                          자주 사용하는 이메일 주소를 입력해주세요!
                         </p>
                       </div>
                     </div>
@@ -252,75 +248,75 @@ const SignUp = () => {
                       value={value.email}
                       onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                         setValue({ ...value, email: e.target.value });
-                      }} />
+                      }}
+                    />
                   </div>
-                  ) : (
-                    <>
-                      <div>
-                        <Input
-                          label="이메일"
-                          placeholder="example@example.com"
-                          value={value.email}
-                          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                            setValue({ ...value, email: e.target.value })
-                          }
-                        />
-                      </div>
-                      <div>
-                        <Input
-                          label="이름"
-                          value={value.name}
-                          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                            setValue({ ...value, name: e.target.value })
-                          }
-                        />
-                      </div>
-                      <div>
-                        <Input
-                          label="휴대폰 번호"
-                          placeholder="010-1234-4567"
-                          value={value.phoneNum}
-                          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                            setValue({ ...value, phoneNum: e.target.value })
-                          }
-                        />
-                      </div>
-                      <div>
-                        <Input
-                          type="password"
-                          label="비밀번호"
-                          placeholder="영어, 숫자, 특수문자 포함 8자 이상"
-                          value={value.password}
-                          onChange={(e: any) => {
-                            setValue({ ...value, password: e.target.value });
-                          }}
-                        />
-                      </div>
-                      <div>
-                        <Input
-                          type="password"
-                          label="비밀번호 확인"
-                          value={value.passwordConfirm}
-                          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                            setValue({
-                              ...value,
-                              passwordConfirm: e.target.value,
-                            })
-                          }
-                        />
-                      </div>
-                      <div>
-                        <Input
-                          label="유입경로"
-                          value={value.inflow}
-                          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                            setValue({ ...value, inflow: e.target.value })
-                          }
-                        />
-                      </div>
-                    </>
-                  )
-                }
+                ) : (
+                  <>
+                    <div>
+                      <Input
+                        label="이메일"
+                        placeholder="example@example.com"
+                        value={value.email}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                          setValue({ ...value, email: e.target.value })
+                        }
+                      />
+                    </div>
+                    <div>
+                      <Input
+                        label="이름"
+                        value={value.name}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                          setValue({ ...value, name: e.target.value })
+                        }
+                      />
+                    </div>
+                    <div>
+                      <Input
+                        label="휴대폰 번호"
+                        placeholder="010-1234-4567"
+                        value={value.phoneNum}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                          setValue({ ...value, phoneNum: e.target.value })
+                        }
+                      />
+                    </div>
+                    <div>
+                      <Input
+                        type="password"
+                        label="비밀번호"
+                        placeholder="영어, 숫자, 특수문자 포함 8자 이상"
+                        value={value.password}
+                        onChange={(e: any) => {
+                          setValue({ ...value, password: e.target.value });
+                        }}
+                      />
+                    </div>
+                    <div>
+                      <Input
+                        type="password"
+                        label="비밀번호 확인"
+                        value={value.passwordConfirm}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                          setValue({
+                            ...value,
+                            passwordConfirm: e.target.value,
+                          })
+                        }
+                      />
+                    </div>
+                    <div>
+                      <Input
+                        label="유입경로"
+                        value={value.inflow}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                          setValue({ ...value, inflow: e.target.value })
+                        }
+                      />
+                    </div>
+                  </>
+                )}
                 <hr />
                 <div className="flex flex-col space-y-2">
                   <div className="flex items-center">
@@ -333,23 +329,25 @@ const SignUp = () => {
                       }
                       onClick={() =>
                         setValue(
-                          (value.acceptedAge &&
+                          value.acceptedAge &&
                             value.agreeToTerms &&
                             value.agreeToPrivacy &&
-                            value.agreeToMarketing) ? (
-                              {
-                          ...value,
-                            acceptedAge: false,
-                            agreeToTerms: false,
-                            agreeToPrivacy: false,
-                            agreeToMarketing: false,}
-                            ) : ({
-                          ...value,
-                            acceptedAge: true,
-                            agreeToTerms: true,
-                            agreeToPrivacy: true,
-                            agreeToMarketing: true,}
-                            ))
+                            value.agreeToMarketing
+                            ? {
+                                ...value,
+                                acceptedAge: false,
+                                agreeToTerms: false,
+                                agreeToPrivacy: false,
+                                agreeToMarketing: false,
+                              }
+                            : {
+                                ...value,
+                                acceptedAge: true,
+                                agreeToTerms: true,
+                                agreeToPrivacy: true,
+                                agreeToMarketing: true,
+                              },
+                        )
                       }
                     />
                     <label
@@ -357,23 +355,25 @@ const SignUp = () => {
                       className="ml-2 w-full cursor-pointer text-xs font-bold"
                       onClick={() =>
                         setValue(
-                          (value.acceptedAge &&
+                          value.acceptedAge &&
                             value.agreeToTerms &&
                             value.agreeToPrivacy &&
-                            value.agreeToMarketing) ? (
-                              {
-                          ...value,
-                            acceptedAge: false,
-                            agreeToTerms: false,
-                            agreeToPrivacy: false,
-                            agreeToMarketing: false,}
-                            ) : ({
-                          ...value,
-                            acceptedAge: true,
-                            agreeToTerms: true,
-                            agreeToPrivacy: true,
-                            agreeToMarketing: true,}
-                            ))
+                            value.agreeToMarketing
+                            ? {
+                                ...value,
+                                acceptedAge: false,
+                                agreeToTerms: false,
+                                agreeToPrivacy: false,
+                                agreeToMarketing: false,
+                              }
+                            : {
+                                ...value,
+                                acceptedAge: true,
+                                agreeToTerms: true,
+                                agreeToPrivacy: true,
+                                agreeToMarketing: true,
+                              },
+                        )
                       }
                     >
                       전체 동의
@@ -530,13 +530,10 @@ const SignUp = () => {
                   className="mt-8"
                   {...(buttonDisabled && { disabled: true })}
                 >
-                  {
-                    isSocial ? '다음' : '회원가입'}
+                  {isSocial ? '다음' : '회원가입'}
                 </Button>
               </form>
-              {
-                !isSocial && <SocialLogin type="SIGN_UP" />
-              }
+              {!isSocial && <SocialLogin type="SIGN_UP" />}
             </div>
           </div>
         </>
