@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { createContext, useContext, useEffect } from 'react';
+import { createContext, useContext } from 'react';
 import { useParams } from 'react-router-dom';
 import { z } from 'zod';
 import {
@@ -26,7 +26,7 @@ const currentChallengeContext = createContext<{
   myDailyMission?: MyDailyMission | null;
   submittedMissions: MyChallengeMissionByType[];
   remainingMissions: MyChallengeMissionByType[];
-  absentMissions: MyChallengeMissionByType[]
+  absentMissions: MyChallengeMissionByType[];
 }>({
   currentChallenge: null,
   schedules: emptySchedules,
@@ -34,7 +34,7 @@ const currentChallengeContext = createContext<{
   myDailyMission: null,
   submittedMissions: [],
   remainingMissions: [],
-  absentMissions: []
+  absentMissions: [],
 });
 
 export const CurrentChallengeProvider = ({
@@ -118,26 +118,6 @@ export const CurrentChallengeProvider = ({
       return myChallengeMissionsByType.parse(res.data.data).missionList;
     },
   });
-
-  // useEffect(() => {
-  //   console.log("submittedMissions", submittedMissions);
-  // }, [submittedMissions]);
-
-  // useEffect(() => {
-  //   console.log("remainingMissions", remainingMissions);
-  // }, [remainingMissions]);
-
-  // useEffect(() => {
-  //   console.log("absentMissions", absentMissions);
-  // }, [absentMissions]);
-
-  // useEffect(() => {
-  //   console.log("missions", missions);
-  // }, [missions]);
-
-  useEffect(() => {
-    console.log('schedules', schedules);
-  }, [schedules]);
 
   return (
     <currentChallengeContext.Provider

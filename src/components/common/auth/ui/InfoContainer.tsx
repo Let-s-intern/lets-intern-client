@@ -1,11 +1,11 @@
 import { useMutation } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Input from '../../../ui/input/Input';
-import Button from '../../ui/button/Button';
-import AlertModal from '../../../ui/alert/AlertModal';
 import axios from '../../../../utils/axios';
+import AlertModal from '../../../ui/alert/AlertModal';
+import Input from '../../../ui/input/Input';
 import GradeDropdown from '../../mypage/privacy/form-control/GradeDropdown';
+import Button from '../../ui/button/Button';
 
 const InfoContainer = ({ isSocial }: { isSocial: boolean }) => {
   const navigate = useNavigate();
@@ -102,6 +102,7 @@ const InfoContainer = ({ isSocial }: { isSocial: boolean }) => {
       setError(true);
       setErrorMessage('모든 항목을 입력해주세요.');
       return;
+    // eslint-disable-next-line no-dupe-else-if
     } else if (!value.grade) {
       setError(true);
       setErrorMessage('학년을 선택해주세요.');

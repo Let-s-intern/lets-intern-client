@@ -1,9 +1,9 @@
 import dayjs from 'dayjs';
 
-import TD from '../../../ui/table/regacy/TD';
-import ActionButton from '../../../ui/button/ActionButton';
-import { convertTypeToBank } from '../../../../../utils/convertTypeToBank';
 import { IUser } from '../../../../../interfaces/User.interface';
+import { convertTypeToBank } from '../../../../../utils/convertTypeToBank';
+import ActionButton from '../../../ui/button/ActionButton';
+import TD from '../../../ui/table/regacy/TD';
 
 interface TableBodyProps {
   userList: IUser[];
@@ -16,6 +16,7 @@ const TableBody = ({ userList }: TableBodyProps) => {
         <tr key={user.id}>
           <TD>{user.name}</TD>
           <TD>{user.email}</TD>
+          <TD>{`${!!user.contactEmail ? user.contactEmail : '-'}`}</TD>
           <TD>{user.phoneNum}</TD>
           {/* <TD>참여 프로그램 없음</TD> */}
           <TD>{dayjs(user.createdDate).format('YYYY-MM-DD (dd)')}</TD>

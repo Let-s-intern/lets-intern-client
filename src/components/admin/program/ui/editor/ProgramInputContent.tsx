@@ -57,14 +57,9 @@ const ProgramInputContent = ({
       const editor = quillRef.current.getEditor();
       const file = input.files?.[0];
       const range = editor.getSelection(true);
-      console.log('editor', editor);
-      console.log('file', file);
-      console.log('range', range);
       try {
         // 파일명을 "image/Date.now()"로 저장
         const storageRef = ref(storage, `image/${Date.now()}`);
-        console.log('storageRef', storageRef);
-        console.log('imageHandler');
         // Firebase Method : uploadBytes, getDownloadURL
         await uploadBytes(storageRef, file!).then((snapshot) => {
           getDownloadURL(snapshot.ref).then((url) => {
@@ -75,7 +70,8 @@ const ProgramInputContent = ({
           });
         });
       } catch (error) {
-        console.log(error);
+        // eslint-disable-next-line no-console
+        console.error(error);
       }
     });
   };
@@ -705,13 +701,13 @@ const ProgramInputContent = ({
 
 export default ProgramInputContent;
 
-export const DateTimeControl = styled.div`
+const DateTimeControl = styled.div`
   display: flex;
   align-items: center;
   gap: 1rem;
 `;
 
-export const DateTimeLabel = styled.label`
+const DateTimeLabel = styled.label`
   font-weight: 500;
   width: 8rem;
 `;

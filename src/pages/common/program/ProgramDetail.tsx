@@ -1,20 +1,19 @@
-import { useNavigate, useParams } from 'react-router-dom';
-import { useQuery } from '@tanstack/react-query';
 import { useMediaQuery } from '@mui/material';
-import { useReducer, useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import clsx from 'clsx';
-
-import Header from '../../../components/common/program/program-detail/header/Header';
-import TabSection from '../../../components/common/program/program-detail/section/TabSection';
-import ApplySection from '../../../components/common/program/program-detail/section/ApplySection';
-import axios from '../../../utils/axios';
-import MobileApplySection from '../../../components/common/program/program-detail/section/MobileApplySection';
-import drawerReducer from '../../../reducers/drawerReducer';
+import { useReducer, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import ApplyModal from '../../../components/common/program/program-detail/apply/modal/ApplyModal';
-import applyReducer from '../../../reducers/applyReducer';
 import FilledButton from '../../../components/common/program/program-detail/button/FilledButton';
-import useAuthStore from '../../../store/useAuthStore';
 import NotiButton from '../../../components/common/program/program-detail/button/NotiButton';
+import Header from '../../../components/common/program/program-detail/header/Header';
+import ApplySection from '../../../components/common/program/program-detail/section/ApplySection';
+import MobileApplySection from '../../../components/common/program/program-detail/section/MobileApplySection';
+import TabSection from '../../../components/common/program/program-detail/section/TabSection';
+import applyReducer from '../../../reducers/applyReducer';
+import drawerReducer from '../../../reducers/drawerReducer';
+import useAuthStore from '../../../store/useAuthStore';
+import axios from '../../../utils/axios';
 
 export type ProgramType = 'challenge' | 'live';
 

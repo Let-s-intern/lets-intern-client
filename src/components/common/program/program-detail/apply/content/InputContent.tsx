@@ -1,13 +1,13 @@
-import { useEffect, useRef, useState } from 'react';
-import clsx from 'clsx';
 import { useMediaQuery } from '@mui/material';
+import clsx from 'clsx';
+import { useEffect, useRef, useState } from 'react';
 
+import { IAction } from '../../../../../../interfaces/interface';
 import { ProgramType } from '../../../../../../pages/common/program/ProgramDetail';
 import { UserInfo } from '../../section/ApplySection';
+import ScrollableBox from '../scrollable-box/ScrollableBox';
 import MotiveAnswerSection from '../section/MotiveAnswerSection';
 import UserInputSection from '../section/UserInputSection';
-import ScrollableBox from '../scrollable-box/ScrollableBox';
-import { IAction } from '../../../../../../interfaces/interface';
 
 interface InputContentProps {
   contentIndex: number;

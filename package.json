@@ -3,55 +3,54 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@emotion/react": "^11.11.1",
-    "@emotion/styled": "^11.11.0",
-    "@mui/material": "^5.14.17",
-    "@mui/x-data-grid": "^7.7.0",
-    "@mui/x-date-pickers": "^6.18.1",
-    "@tanstack/react-query": "^5.17.9",
-    "@tanstack/react-query-devtools": "^5.45.0",
-    "@testing-library/jest-dom": "^5.17.0",
-    "@testing-library/react": "^13.4.0",
-    "@testing-library/user-event": "^13.5.0",
-    "@types/jest": "^27.5.2",
-    "@types/node": "^20",
-    "@types/react": "^18.2.34",
-    "@types/react-dom": "^18.2.14",
-    "axios": "^1.6.1",
-    "classnames": "^2.3.2",
-    "clsx": "^2.1.0",
+    "@emotion/react": "^11.11.4",
+    "@emotion/styled": "^11.11.5",
+    "@mui/material": "^5.15.21",
+    "@mui/x-data-grid": "^7.8.0",
+    "@tanstack/react-query": "^5.49.2",
+    "@tanstack/react-query-devtools": "^5.49.2",
+    "@types/node": "^20.14.9",
+    "@types/react": "^18.3.3",
+    "@types/react-dom": "^18.3.0",
+    "axios": "^1.7.2",
+    "classnames": "^2.5.1",
+    "clsx": "^2.1.1",
     "dayjs": "^1.11.11",
-    "firebase": "^10.7.0",
-    "firebase-tools": "^12.9.1",
-    "github-markdown-css": "^5.4.0",
-    "highlight.js": "^11.9.0",
-    "quill": "^1.3.7",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
+    "firebase": "^10.12.2",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
     "react-icons": "^4.11.0",
-    "react-markdown": "^9.0.0",
     "react-quill": "^2.0.0",
-    "react-router-dom": "^6.18.0",
+    "react-router-dom": "^6.24.0",
     "react-scripts": "5.0.1",
-    "styled-components": "^6.1.1",
+    "styled-components": "^6.1.11",
     "tailwind-merge": "^2.3.0",
     "tailwind-scrollbar-hide": "^1.1.7",
     "typescript": "^4.9.5",
-    "web-vitals": "^2.1.4",
     "zod": "^3.23.8",
-    "zustand": "^4.5.2"
+    "zustand": "^4.5.4"
   },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "vitest",
+    "lint": "eslint src",
     "eject": "react-scripts eject"
   },
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ]
+  "proxy": "https://api.letsintern.co.kr",
+  "devDependencies": {
+    "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
+    "@eslint/js": "^9.6.0",
+    "dotenv": "^16.4.5",
+    "eslint": "^8.57.0",
+    "eslint-plugin-react": "^7.34.3",
+    "globals": "^15.6.0",
+    "prettier": "^3.3.2",
+    "prettier-plugin-tailwindcss": "^0.6.5",
+    "sass": "^1.77.6",
+    "tailwindcss": "^3.4.4",
+    "typescript-eslint": "^7.14.1",
+    "vitest": "^1.6.0"
   },
   "browserslist": {
     "production": [
@@ -64,15 +63,5 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  },
-  "proxy": "https://api.letsintern.co.kr",
-  "devDependencies": {
-    "@iconify/react": "^4.1.1",
-    "@types/quill": "^2.0.14",
-    "dotenv": "^16.4.5",
-    "prettier": "^3.0.3",
-    "prettier-plugin-tailwindcss": "^0.5.6",
-    "tailwindcss": "^3.3.5",
-    "vitest": "^1.6.0"
   }
 }

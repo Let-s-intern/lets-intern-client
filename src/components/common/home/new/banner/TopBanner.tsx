@@ -1,13 +1,13 @@
-import { useEffect, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
+import { useEffect, useState } from 'react';
 
-import axios from '../../../../../utils/axios';
 import { ILineBanner } from '../../../../../interfaces/Banner.interface';
+import axios from '../../../../../utils/axios';
 
 const TopBanner = () => {
   const [isShow, setIsShow] = useState(false);
 
-  const { isLoading, data } = useQuery<ILineBanner>({
+  const { data } = useQuery<ILineBanner>({
     queryKey: ['LineBanner'],
     queryFn: async () => {
       const res = await axios.get(`/banner`, {
@@ -15,14 +15,21 @@ const TopBanner = () => {
           type: 'LINE',
         },
       });
+      if (res.data.data.bannerList.length === 0) return null;
       return res.data.data.bannerList[0];
     },
   });
 
   useEffect(() => {
-    console.log('topbanner: ', data);
     data && setIsShow(true);
   }, [data]);
+
+  const handleClick = () => {
+    const target = data?.link.includes(window.location.origin)
+      ? '_self'
+      : '_blank';
+    window.open(data?.link, target);
+  };
 
   return isShow ? (
     <section
@@ -31,7 +38,7 @@ const TopBanner = () => {
         backgroundColor: data?.colorCode,
         color: data?.textColorCode,
       }}
-      onClick={() => window.open(data?.link, '_blank')}
+      onClick={handleClick}
     >
       <div className="relative">
         <div className="flex flex-col items-center justify-center gap-1 text-center md:flex-row">

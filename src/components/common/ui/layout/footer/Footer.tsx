@@ -1,6 +1,6 @@
-import MenuLink from './MenuLink';
-import Icon from './Icon';
 import DocumentLink from './DocumentLink';
+import Icon from './Icon';
+import MenuLink from './MenuLink';
 
 const CUSTOEMR_CENTER = {
   title: '고객센터',
@@ -62,27 +62,27 @@ const Footer = () => {
         </div>
       </div>
 
-      <p className="text-0.75-medium my-7 flex flex-col gap-2 text-neutral-45">
+      <div className="text-0.75-medium my-7 flex flex-col gap-2 text-neutral-45">
         <span>{BUSINESS_INFORMATION.title}</span>
-        <div className="flex flex-wrap gap-2">
+        <p className="flex flex-wrap gap-2">
           <span>{BUSINESS_INFORMATION.owner}</span>
           <span>|</span>
           <span>{BUSINESS_INFORMATION.registrationNumber}</span>
           <span>|</span>
           <span>{BUSINESS_INFORMATION.mailOrderSales}</span>
-        </div>
+        </p>
         <div className="flex flex-col gap-2 md:flex-row">
-          <div className="flex gap-2">
+          <p className="flex gap-2">
             <span>{BUSINESS_INFORMATION.address}</span>
             <span>|</span>
-          </div>
-          <div className="flex gap-2">
+          </p>
+          <p className="flex gap-2">
             <span>{BUSINESS_INFORMATION.email}</span>
             <span>|</span>
-          </div>
+          </p>
           <span>{BUSINESS_INFORMATION.copyright}</span>
         </div>
-      </p>
+      </div>
 
       <div className="mb-8 flex items-center justify-between">
         <div className="flex items-center gap-4">

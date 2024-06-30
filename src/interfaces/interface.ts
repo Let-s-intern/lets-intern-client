@@ -1,13 +1,11 @@
-import { TABLE_STATUS, TABLE_CONTENT } from '../utils/convert';
+import { TABLE_CONTENT, TABLE_STATUS } from '../utils/convert';
 
-export * from './Program.interface';
-export * from './Application.interface';
-export * from './Mission.interface';
-export * from './Guide.interface';
 export * from './Banner.interface';
+export * from './Mission.interface';
+export * from './Program.interface';
 
 export type StatusKey = keyof typeof TABLE_STATUS;
-export type ContentTypeKey = keyof typeof TABLE_CONTENT;
+type ContentTypeKey = keyof typeof TABLE_CONTENT;
 
 export interface IAction {
   type: string;

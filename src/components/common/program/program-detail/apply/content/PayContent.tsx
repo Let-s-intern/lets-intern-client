@@ -60,7 +60,7 @@ const PayContent = ({
   }, [scrollableBoxRef]);
 
   const totalPrice = () => {
-    let totalDiscount =
+    const totalDiscount =
       payInfo.couponPrice === -1
         ? payInfo.price
         : payInfo.discount + payInfo.couponPrice;

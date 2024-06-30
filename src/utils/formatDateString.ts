@@ -36,7 +36,7 @@ const formatDateString = (
     return `${formattedDate} (${weekdayShort}) ${formattedTime}`;
   }
 
-  let resultFormatList = [];
+  const resultFormatList = [];
 
   if (format?.date === true) {
     resultFormatList.push(`${formattedDate}`);
@@ -86,7 +86,7 @@ export const formatMissionDateString = (dateString: string) => {
   return formattedString;
 };
 
-export const formatMissionTableDateString = (
+const formatMissionTableDateString = (
   dateString: string,
   time: string,
 ) => {
@@ -98,7 +98,7 @@ export const formatMissionTableDateString = (
   return formattedString;
 };
 
-export const formatToMonthDate = (dateString: string) => {
+const formatToMonthDate = (dateString: string) => {
   const date = new Date(dateString);
   const weekdayList = ['일', '월', '화', '수', '목', '금', '토'];
   const formattedString = `${date.getMonth() + 1}/${date.getDate()}(${
@@ -108,7 +108,7 @@ export const formatToMonthDate = (dateString: string) => {
 };
 
 const weekdayList = ['일', '월', '화', '수', '목', '금', '토'];
-export const formatToMonthDateFromDayjs = (dayjsDate: Dayjs) => {
+const formatToMonthDateFromDayjs = (dayjsDate: Dayjs) => {
   return dayjsDate?.format('MM/DD(ddd)') ?? "";
   // const formattedString = `${dayjsDate.month() + 1}/${dayjsDate.date()}(${
   //   weekdayList[dayjsDate.day()]

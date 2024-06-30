@@ -44,7 +44,7 @@ const ChallengeMissionManagement = () => {
   const { data, refetch } = useQuery({
     queryKey: ['mission-template', 'admin'],
     queryFn: async () => {
-      const res = await axios.get('/mission-template/admin');
+      const res = await axios.get('/mission-template/admin?size=1000');
       return missionTemplateAdmin.parse(res.data.data);
     },
   });

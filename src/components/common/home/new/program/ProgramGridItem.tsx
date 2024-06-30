@@ -1,9 +1,8 @@
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 import { IProgramGridItem } from '../../../../../interfaces/Program.interface';
-import { useState } from 'react';
 
-export interface ProgramGridItemProps {
+interface ProgramGridItemProps {
   program: IProgramGridItem;
   link: string;
   className: string;
@@ -15,6 +14,7 @@ const ProgramGridItem = ({
   className: linkClassName,
 }: ProgramGridItemProps) => {
   const navigate = useNavigate();
+
   return (
     <div
       onClick={() => {
@@ -50,7 +50,9 @@ const ProgramGridItem = ({
         <div className="text-0.875 absolute bottom-0 left-0 flex h-40 w-full flex-wrap items-end bg-gradient-desc px-8 py-8 text-white opacity-0 duration-300 group-hover:opacity-100">
           <div className="flex w-full flex-wrap items-end">
             {program.descriptionList.map((description) => (
-              <div className="shrink-0">{description + ' '}</div>
+              <div key={description} className="shrink-0">
+                {description + ' '}
+              </div>
             ))}
           </div>
         </div>

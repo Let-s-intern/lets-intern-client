@@ -9,7 +9,7 @@ type Participant = z.infer<
   typeof getChallengeIdApplications
 >['applicationList'][number];
 
-export const gradeToText: Record<z.infer<typeof grade>, string> = {
+const gradeToText: Record<z.infer<typeof grade>, string> = {
   FIRST: '1학년',
   SECOND: '2학년',
   THIRD: '3학년',

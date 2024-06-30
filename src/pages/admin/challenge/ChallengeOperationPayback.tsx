@@ -203,7 +203,6 @@ const ChallengeOperationPayback = () => {
         `/challenge/${challengeId}/applications/payback`,
         { params: { page: pageNum, size: 10 } },
       );
-      // console.log('RES', res.data);
       setPageInfo(res.data.data.pageInfo);
       return getChallengeIdApplicationsPayback.parse(res.data.data);
     },
@@ -241,7 +240,6 @@ const ChallengeOperationPayback = () => {
   }, [ths]);
 
   const rows = useMemo((): Row[] => {
-    // console.log('rows', paybackRes?.missionApplications);
     return (
       paybackRes?.missionApplications?.map((application) => {
         const total = application.scores.reduce(

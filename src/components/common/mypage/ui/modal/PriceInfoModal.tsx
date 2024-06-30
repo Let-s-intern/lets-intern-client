@@ -1,8 +1,8 @@
 import { useQuery } from '@tanstack/react-query';
-import axios from '../../../../../utils/axios';
-import LoadingContainer from '../../../ui/loading/LoadingContainer';
-import { bankTypeToText } from '../../../../../utils/convert';
 import dayjs from 'dayjs';
+import axios from '../../../../../utils/axios';
+import { bankTypeToText } from '../../../../../utils/convert';
+import LoadingContainer from '../../../ui/loading/LoadingContainer';
 
 const PriceInfoModal = ({
   onClose,
@@ -15,7 +15,6 @@ const PriceInfoModal = ({
     queryKey: ['payment', paymentId],
     queryFn: async () => {
       const res = await axios.get(`/payment/${paymentId}`);
-      console.log(res.data);
       return res.data.data;
     },
   });
@@ -73,10 +72,10 @@ const PriceInfoModal = ({
                     {data.paymentInfo.couponDiscount === null
                       ? 0
                       : data.paymentInfo.couponDiscount === -1
-                      ? (
-                          data.priceInfo.price - data.priceInfo.discount
-                        ).toLocaleString()
-                      : data.paymentInfo.couponDiscount.toLocaleString()}{' '}
+                        ? (
+                            data.priceInfo.price - data.priceInfo.discount
+                          ).toLocaleString()
+                        : data.paymentInfo.couponDiscount.toLocaleString()}{' '}
                     원
                   </div>
                 </div>
@@ -95,7 +94,7 @@ const PriceInfoModal = ({
               </div>
               <div className="item-center flex w-full justify-between gap-x-2 p-2">
                 <div className="font-semibold">최종 결제 금액</div>
-                <div className=" font-semibold">
+                <div className="font-semibold">
                   {data.paymentInfo.finalPrice.toLocaleString()} 원
                 </div>
               </div>

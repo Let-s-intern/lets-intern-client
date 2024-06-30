@@ -16,6 +16,8 @@ import {
 } from '@mui/x-data-grid';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import dayjs from 'dayjs';
+import timezone from 'dayjs/plugin/timezone';
+import utc from 'dayjs/plugin/utc';
 import React, { useCallback, useMemo, useState } from 'react';
 import { FaCheck, FaTrashCan, FaX } from 'react-icons/fa6';
 import { z } from 'zod';
@@ -33,8 +35,6 @@ import {
   UpdateMissionReq,
 } from '../../../schema';
 import axios from '../../../utils/axios';
-import utc from 'dayjs/plugin/utc';
-import timezone from 'dayjs/plugin/timezone';
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -78,9 +78,7 @@ const columns: GridColDef<Row>[] = [
     editable: true,
     width: 140,
     valueFormatter(_, row) {
-      return `${
-        Boolean(row.missionTemplateId) ? `(${row.missionTemplateId}) ` : ''
-      }${
+      return `${row.missionTemplateId ? `(${row.missionTemplateId}) ` : ''}${
         row.missionTemplatesOptions.find((t) => t.id === row.missionTemplateId)
           ?.title || ''
       }`;
@@ -193,7 +191,7 @@ const columns: GridColDef<Row>[] = [
     editable: true,
     valueFormatter(_, row) {
       return `${
-        Boolean(row.essentialContentsList?.[0]?.id)
+        row.essentialContentsList?.[0]?.id
           ? `(${row.essentialContentsList?.[0]?.id}) `
           : ''
       }${row.essentialContentsList?.map((c) => c?.title)?.join(', ') || ''}`;
@@ -238,7 +236,7 @@ const columns: GridColDef<Row>[] = [
     editable: true,
     valueFormatter(_, row) {
       return `${
-        Boolean(row.additionalContentsList?.[0]?.id)
+        row.additionalContentsList?.[0]?.id
           ? `(${row.additionalContentsList?.[0]?.id}) `
           : ''
       }${row.additionalContentsList?.map((c) => c?.title)?.join(', ') || ''}`;
@@ -399,8 +397,7 @@ const ChallengeOperationRegisterMission = () => {
     mutationFn: async (mission: CreateMissionReq) => {
       return axios.post(`/mission/${currentChallenge?.id}`, mission);
     },
-    onError(error, variables, context) {
-      console.log('error', error);
+    onError(error) {
       setSnackbar({
         open: true,
         message: '미션 생성에 실패했습니다. ' + error,
@@ -415,8 +412,7 @@ const ChallengeOperationRegisterMission = () => {
       const { id, ...payload } = mission;
       return axios.patch(`/mission/${id}`, payload);
     },
-    onError(error, variables, context) {
-      console.log('error', error);
+    onError(error) {
       setSnackbar({
         open: true,
         message: '미션 수정에 실패했습니다. ' + error,
@@ -428,8 +424,7 @@ const ChallengeOperationRegisterMission = () => {
     mutationFn: async (id: number) => {
       return axios.delete(`/mission/${id}`);
     },
-    onError(error, variables, context) {
-      console.log('error', error);
+    onError(error) {
       setSnackbar({
         open: true,
         message: '미션 삭제에 실패했습니다. ' + error,
@@ -508,9 +503,10 @@ const ChallengeOperationRegisterMission = () => {
             startDate: row.startDate.tz().format('YYYY-MM-DDTHH:mm:ss'),
             endDate: row.endDate.tz().format('YYYY-MM-DDTHH:mm:ss'),
             th: row.th,
-            title: row.missionTemplatesOptions.find(
-              (t) => t.id === row.missionTemplateId,
-            )?.title ?? '',
+            title:
+              row.missionTemplatesOptions.find(
+                (t) => t.id === row.missionTemplateId,
+              )?.title ?? '',
           });
           if (apiRef.current?.getRowMode(row.id) === 'edit') {
             apiRef.current?.stopRowEditMode({

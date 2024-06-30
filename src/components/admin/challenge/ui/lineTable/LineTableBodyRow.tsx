@@ -8,28 +8,28 @@ import DropdownCell from './DropdownCell';
 import LineTableBodyCell from './LineTableBodyCell';
 import TextareaCell from './TextareaCell';
 
-export type StatusKey = keyof typeof TABLE_STATUS;
+type StatusKey = keyof typeof TABLE_STATUS;
 
-export type TableContent =
+type TableContent =
   | InputTableContent
   | DropdownTableContent
   | DateTableContent
   | DateTimeTableContent;
 
-export interface InputTableContent {
+interface InputTableContent {
   type: typeof TABLE_CONTENT.INPUT;
 }
 
-export interface DropdownTableContent {
+interface DropdownTableContent {
   type: typeof TABLE_CONTENT.DROPDOWN;
   options: { id: string | number; title: string }[];
 }
 
-export interface DateTableContent {
+interface DateTableContent {
   type: typeof TABLE_CONTENT.DATE;
 }
 
-export interface DateTimeTableContent {
+interface DateTimeTableContent {
   type: typeof TABLE_CONTENT.DATETIME;
 }
 export interface ItemWithStatus {

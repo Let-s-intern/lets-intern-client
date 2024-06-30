@@ -2,9 +2,9 @@ import { useNavigate } from 'react-router-dom';
 import { ProgramType } from '../../../../../../pages/common/program/ProgramDetail';
 import useAuthStore from '../../../../../../store/useAuthStore';
 import { newProgramTypeToText } from '../../../../../../utils/convert';
+import NotiButton from '../../button/NotiButton';
 import { ProgramDate } from '../../section/ApplySection';
 import DateToggle from '../../toggle/DateToggle';
-import NotiButton from '../../button/NotiButton';
 
 interface OverviewContentProps {
   contentIndex: number;
@@ -23,7 +23,6 @@ const OverviewContent = ({
   programTitle,
   isApplied,
 }: OverviewContentProps) => {
-  // console.log('OverviewContent', programDate);
   const { isLoggedIn } = useAuthStore();
   const navigate = useNavigate();
   const formatDateString = (dateString: string) => {

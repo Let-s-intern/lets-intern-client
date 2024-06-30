@@ -1,11 +1,11 @@
+import { useMutation } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { useMutation } from '@tanstack/react-query';
 
+import { AxiosError } from 'axios';
+import axios from '../../../utils/axios';
 import Input from '../../ui/input/Input';
 import Button from '../ui/button/Button';
-import axios from '../../../utils/axios';
-import { AxiosError } from 'axios';
 
 interface Props {
   mode: 'BEFORE' | 'AFTER';
@@ -48,7 +48,6 @@ const PasswordContent = ({
       }
     },
     onSuccess: (data) => {
-      console.log(data);
       setContentData(data);
       setIsAuthenticated(true);
     },
