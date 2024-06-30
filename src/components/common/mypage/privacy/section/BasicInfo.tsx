@@ -63,6 +63,36 @@ const BasicInfo = () => {
     },
   });
 
+  const handlePhoneNumChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    let phoneNum = e.target.value.replace(/[^0-9]/g, '');
+
+    if (phoneNum.length > 11) {
+      phoneNum = phoneNum.slice(0, 11);
+    }
+
+    if (phoneNum.length <= 6) {
+      phoneNum = phoneNum.replace(/(\d{0,3})(\d{0,3})/, (match, p1, p2) => {
+        return p2 ? `${p1}-${p2}` : `${p1}`;
+      });
+    } else if (phoneNum.length <= 10) {
+      phoneNum = phoneNum.replace(
+        /(\d{0,3})(\d{0,3})(\d{0,4})/,
+        (match, p1, p2, p3) => {
+          return p3 ? `${p1}-${p2}-${p3}` : `${p1}-${p2}`;
+        },
+      );
+    } else {
+      phoneNum = phoneNum.replace(
+        /(\d{3})(\d{4})(\d+)/,
+        (match, p1, p2, p3) => {
+          return `${p1}-${p2}-${p3}`;
+        },
+      );
+    }
+
+    setUser({ ...user, phoneNum });
+  };
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setUser({ ...user, [e.target.name]: e.target.value });
   };
@@ -138,7 +168,7 @@ const BasicInfo = () => {
               name="phoneNum"
               placeholder="010-0000-0000"
               value={user.phoneNum}
-              onChange={handleInputChange}
+              onChange={handlePhoneNumChange}
               readOnly={
                 user.authProvider === 'KAKAO' || user.authProvider === 'NAVER'
                   ? true

@@ -345,7 +345,9 @@ const ChallengeOperationPayback = () => {
             ).map((pageIdx) => (
               <span
                 key={pageIdx}
-                className={`cursor-pointer ${pageIdx - 1 === pageInfo.pageNum ? 'font-bold' : ''}`}
+                className={`cursor-pointer ${
+                  pageIdx - 1 === pageInfo.pageNum ? 'font-bold' : ''
+                }`}
                 onClick={() => {
                   setPageNum(pageIdx);
                 }}

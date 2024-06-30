@@ -75,6 +75,36 @@ const SignUp = () => {
     agreeToMarketing: false,
   });
 
+  const handlePhoneNumChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    let phoneNum = e.target.value.replace(/[^0-9]/g, '');
+
+    if (phoneNum.length > 11) {
+      phoneNum = phoneNum.slice(0, 11);
+    }
+
+    if (phoneNum.length <= 6) {
+      phoneNum = phoneNum.replace(/(\d{0,3})(\d{0,3})/, (match, p1, p2) => {
+        return p2 ? `${p1}-${p2}` : `${p1}`;
+      });
+    } else if (phoneNum.length <= 10) {
+      phoneNum = phoneNum.replace(
+        /(\d{0,3})(\d{0,3})(\d{0,4})/,
+        (match, p1, p2, p3) => {
+          return p3 ? `${p1}-${p2}-${p3}` : `${p1}-${p2}`;
+        },
+      );
+    } else {
+      phoneNum = phoneNum.replace(
+        /(\d{3})(\d{4})(\d+)/,
+        (match, p1, p2, p3) => {
+          return `${p1}-${p2}-${p3}`;
+        },
+      );
+    }
+
+    setValue({ ...value, phoneNum });
+  };
+
   const postSignUp = useMutation({
     mutationFn: async () => {
       const res = await axios.post('/user/signup', {
@@ -278,7 +308,7 @@ const SignUp = () => {
                         placeholder="010-1234-4567"
                         value={value.phoneNum}
                         onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                          setValue({ ...value, phoneNum: e.target.value })
+                          handlePhoneNumChange(e)
                         }
                       />
                     </div>
