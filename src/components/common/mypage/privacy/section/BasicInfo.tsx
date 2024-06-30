@@ -7,7 +7,7 @@ import Input from '../../../ui/input/Input';
 import GradeDropdown from '../form-control/GradeDropdown';
 import { FaCheck } from 'react-icons/fa';
 
-export interface BasicInfoValue {
+interface BasicInfoValue {
   name: string;
   phoneNum: string;
   email: string;

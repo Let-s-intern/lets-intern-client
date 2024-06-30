@@ -8,7 +8,7 @@ import LoadingContainer from '../../../ui/loading/LoadingContainer';
 import ProgramListItemContainer from './ProgramListItemContainer';
 import EmptyListItemContainer from './EmptyListItemContainer';
 
-export interface ProgramOverviewListItemProps {
+interface ProgramOverviewListItemProps {
   title: string;
   description: string;
   imageColor?: 'blue' | 'green' | 'purple' | 'yellow';

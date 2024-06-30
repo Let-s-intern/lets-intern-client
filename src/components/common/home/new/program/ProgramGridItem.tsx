@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { IProgramGridItem } from '../../../../../interfaces/Program.interface';
 import { useState } from 'react';
 
-export interface ProgramGridItemProps {
+interface ProgramGridItemProps {
   program: IProgramGridItem;
   link: string;
   className: string;

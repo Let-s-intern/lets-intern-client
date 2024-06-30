@@ -1,7 +1,7 @@
 import { TABLE_STATUS } from '../utils/convert';
 import { StatusKey } from './interface';
 
-export interface IMissionTemplate {
+interface IMissionTemplate {
   [key: string]: any;
   status?: (typeof TABLE_STATUS)[StatusKey];
   id?: number;
@@ -12,17 +12,17 @@ export interface IMissionTemplate {
   createdDate?: string;
 }
 
-export interface IMissionTemplateSimple {
+interface IMissionTemplateSimple {
   id: number;
   title: string;
 }
 
-export interface IContent {
+interface IContent {
   id: number;
   title: string;
 }
 
-export interface IMission {
+interface IMission {
   [key: string]: any;
   id?: number;
   status?: (typeof TABLE_STATUS)[StatusKey];

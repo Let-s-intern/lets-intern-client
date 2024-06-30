@@ -4,7 +4,7 @@ import { theme } from './mui-theme';
 import { IPageInfo, IPageable } from '../../../../interfaces/interface';
 import React, { memo, useCallback } from 'react';
 
-export interface MuiPaginationProps {
+interface MuiPaginationProps {
   pageInfo: IPageInfo;
   page: number;
   setPageable: React.Dispatch<React.SetStateAction<IPageable>>;

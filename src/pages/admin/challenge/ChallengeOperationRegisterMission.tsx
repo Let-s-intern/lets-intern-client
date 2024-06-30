@@ -79,7 +79,7 @@ const columns: GridColDef<Row>[] = [
     width: 140,
     valueFormatter(_, row) {
       return `${
-        Boolean(row.missionTemplateId) ? `(${row.missionTemplateId}) ` : ''
+        row.missionTemplateId ? `(${row.missionTemplateId}) ` : ''
       }${
         row.missionTemplatesOptions.find((t) => t.id === row.missionTemplateId)
           ?.title || ''
@@ -193,7 +193,7 @@ const columns: GridColDef<Row>[] = [
     editable: true,
     valueFormatter(_, row) {
       return `${
-        Boolean(row.essentialContentsList?.[0]?.id)
+        row.essentialContentsList?.[0]?.id
           ? `(${row.essentialContentsList?.[0]?.id}) `
           : ''
       }${row.essentialContentsList?.map((c) => c?.title)?.join(', ') || ''}`;
@@ -238,7 +238,7 @@ const columns: GridColDef<Row>[] = [
     editable: true,
     valueFormatter(_, row) {
       return `${
-        Boolean(row.additionalContentsList?.[0]?.id)
+        row.additionalContentsList?.[0]?.id
           ? `(${row.additionalContentsList?.[0]?.id}) `
           : ''
       }${row.additionalContentsList?.map((c) => c?.title)?.join(', ') || ''}`;

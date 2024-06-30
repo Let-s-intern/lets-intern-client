@@ -705,13 +705,13 @@ const ProgramInputContent = ({
 
 export default ProgramInputContent;
 
-export const DateTimeControl = styled.div`
+const DateTimeControl = styled.div`
   display: flex;
   align-items: center;
   gap: 1rem;
 `;
 
-export const DateTimeLabel = styled.label`
+const DateTimeLabel = styled.label`
   font-weight: 500;
   width: 8rem;
 `;

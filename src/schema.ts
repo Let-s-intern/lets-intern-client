@@ -40,36 +40,36 @@ export const challenges = z
     };
   });
 
-export const challengeType = z.union([
+const challengeType = z.union([
   z.literal('CAREER_START'),
   z.literal('DOCUMENT_PREPARATION'),
   z.literal('MEETING_PREPARATION'),
   z.literal('ETC'),
 ]);
 
-export const programClassification = z.union([
+const programClassification = z.union([
   z.literal('CAREER_SEARCH'),
   z.literal('DOCUMENT_PREPARATION'),
   z.literal('MEETING_PREPARATION'),
   z.literal('PASS'),
 ]);
 
-export const challengePriceType = z.union([
+const challengePriceType = z.union([
   z.literal('CHARGE'),
   z.literal('REFUND'),
 ]);
 
-export const challengeUserType = z.union([
+const challengeUserType = z.union([
   z.literal('BASIC'),
   z.literal('PREMIUM'),
 ]);
 
-export const challengeParticipationType = z.union([
+const challengeParticipationType = z.union([
   z.literal('LIVE'),
   z.literal('FREE'),
 ]);
 
-export const faqProgramType = z.union([
+const faqProgramType = z.union([
   z.literal('CHALLENGE'),
   z.literal('LIVE'),
   z.literal('VOD'),
@@ -88,7 +88,7 @@ export const accountType = z.union([
   z.literal('TOSS'),
 ]);
 
-export const missionStatusType = z.union([
+const missionStatusType = z.union([
   z.literal('WAITING'),
   z.literal('CHECK_DONE'),
   z.literal('REFUND_DONE'),
@@ -204,7 +204,7 @@ export const missionAdmin = z
 
 export type Mission = z.infer<typeof missionAdmin>['missionList'][number];
 
-export const attendanceStatus = z.union([
+const attendanceStatus = z.union([
   z.literal('PRESENT'),
   z.literal('UPDATED'),
   z.literal('LATE'),
@@ -213,7 +213,7 @@ export const attendanceStatus = z.union([
 
 export type AttendanceStatus = z.infer<typeof attendanceStatus>;
 
-export const attendanceResult = z.union([
+const attendanceResult = z.union([
   z.literal('WAITING'),
   z.literal('PASS'),
   z.literal('WRONG'),
@@ -261,7 +261,7 @@ export type UpdateAttendanceReq = {
 };
 
 /** GET /challenge/{id}/application */
-export const getChallengeIdApplication = z
+const getChallengeIdApplication = z
   .object({
     applied: z.boolean(),
     name: z.string(),
@@ -393,15 +393,15 @@ export type UpdatePaybackReq = {
 //   z.literal('REFUND'),
 // ]);
 
-export const contentsType = z.union([
+const contentsType = z.union([
   z.literal('ESSENTIAL'),
   z.literal('ADDITIONAL'),
 ]);
 
-export type ContentsType = z.infer<typeof contentsType>;
+type ContentsType = z.infer<typeof contentsType>;
 
 /// POST /api/v1/mission/{id}
-export const postMissionIdReq = z.object({
+const postMissionIdReq = z.object({
   th: z.number(),
   title: z.string(),
   score: z.number(),
@@ -416,7 +416,7 @@ export const postMissionIdReq = z.object({
 export type CreateMissionReq = z.infer<typeof postMissionIdReq>;
 
 /// PATCH /api/v1/mission/{id}
-export const patchMissionIdReq = z.object({
+const patchMissionIdReq = z.object({
   th: z.number().optional(),
   title: z.string().optional(),
   score: z.number().optional(),
@@ -737,7 +737,7 @@ export const dailyMissionSchema = z
 export type DailyMission = z.infer<typeof dailyMissionSchema>['dailyMission'];
 
 // KAKAO, NAVER, GOOGLE, SERVICE
-export const authProviderSchema = z.union([
+const authProviderSchema = z.union([
   z.literal('KAKAO'),
   z.literal('NAVER'),
   z.literal('GOOGLE'),
