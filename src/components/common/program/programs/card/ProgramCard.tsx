@@ -39,7 +39,8 @@ const ProgramCard = ({ program }: ProgramCardProps) => {
       }
       throw new Error(`${res.status} ${res.statusText}`);
     } catch (error) {
-      // console.error(error);
+      // eslint-disable-next-line no-console
+      console.error(error);
     }
   };
 
