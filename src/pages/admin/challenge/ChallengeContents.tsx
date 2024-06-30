@@ -34,7 +34,7 @@ const ChallengeContents = () => {
   const { data, refetch } = useQuery({
     queryKey: ['contents', 'admin'],
     queryFn: async () => {
-      const res = await axios.get('/contents/admin');
+      const res = await axios.get('/contents/admin?size=1000');
       return getContentsAdmin.parse(res.data.data);
     },
   });
