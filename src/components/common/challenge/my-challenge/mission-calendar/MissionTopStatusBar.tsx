@@ -1,4 +1,3 @@
-import { useEffect } from 'react';
 import { ScheduleMission } from '../../../../../schema';
 
 interface Props {
@@ -7,11 +6,6 @@ interface Props {
 }
 
 const MissionTopStatusBar = ({ mission, todayTh }: Props) => {
-
-  useEffect(() => {
-    console.log("mission.th", mission.th);
-  }, [mission.th]);
-
   return (
     <div className="relative flex items-center">
       {mission.th === todayTh ? (

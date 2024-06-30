@@ -22,7 +22,7 @@ const AdminPagination = ({ maxPage, className }: AdminPaginationProps) => {
   const minOffset = isPageInStart ? offset + 1 - currentPage : 0;
   const maxOffset = isPageInEnd ? offset + currentPage - maxPage : 0;
 
-  let pageList = [];
+  const pageList = [];
 
   for (let page = 1; page <= maxPage; page++) {
     if (

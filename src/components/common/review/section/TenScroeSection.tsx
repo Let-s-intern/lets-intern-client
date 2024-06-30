@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 
 import TextArea from '../../ui/input/TextArea';
 import TenScore from '../score/TenScore';
@@ -46,10 +46,6 @@ const TenScoreSection = ({
       setIsYes(null);
     }
   }, [tenScore, setIsYes, setAnswer]);
-
-  // useEffect(() => {
-  //   console.log('answer', answer);
-  // }, [answer]);
 
   return (
     <div className="flex flex-col gap-6">
@@ -106,7 +102,9 @@ const TenScoreSection = ({
             <p className="px-2.5">
               해당 점수를 선택한 이유는 무엇인가요? 이유를 자세히 설명해주세요.
             </p>
-            <TextArea rows={3} placeholder="이곳에 후기를 작성해주세요!"
+            <TextArea
+              rows={3}
+              placeholder="이곳에 후기를 작성해주세요!"
               value={answer.low}
               onChange={(e) => handleAnswerChange(e, false)}
             />

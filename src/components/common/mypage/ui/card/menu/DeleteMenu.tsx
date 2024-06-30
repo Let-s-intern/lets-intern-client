@@ -1,12 +1,12 @@
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import clsx from 'clsx';
 import { useEffect, useRef, useState } from 'react';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { MdMoreVert } from 'react-icons/md';
 import { FiMinusCircle } from 'react-icons/fi';
+import { MdMoreVert } from 'react-icons/md';
 
-import AlertModal from '../../../../../ui/alert/AlertModal';
-import axios from '../../../../../../utils/axios';
 import { ApplicationType } from '../../../../../../pages/common/mypage/Application';
+import axios from '../../../../../../utils/axios';
+import AlertModal from '../../../../../ui/alert/AlertModal';
 
 interface DeleteMenuProps {
   className?: string;
@@ -30,7 +30,6 @@ const DeleteMenu = ({ className, application, refetch }: DeleteMenuProps) => {
       return res.data;
     },
     onSuccess: async () => {
-      console.log('delete success');
       if (refetch) {
         window.location.reload();
       }
@@ -38,6 +37,7 @@ const DeleteMenu = ({ className, application, refetch }: DeleteMenuProps) => {
       setIsAlertModalOpen(false);
     },
     onError: (error) => {
+      // eslint-disable-next-line no-console
       console.error(error);
     },
   });
@@ -101,9 +101,15 @@ const DeleteMenu = ({ className, application, refetch }: DeleteMenuProps) => {
           className="break-keep"
           title="프로그램 신청 취소"
         >
-          신청한 프로그램을 취소하시면,<br/>신청 시에 작성했던 정보가 모두 삭제됩니다.<br/>그래도 취소하시겠습니까?
-          <div className='mt-4 text-system-error text-sm'>
-          *결제금액 입금을 완료하신 경우,<br/>자주 묻는 질문 내 환불 신청서를 제출해주세요!
+          신청한 프로그램을 취소하시면,
+          <br />
+          신청 시에 작성했던 정보가 모두 삭제됩니다.
+          <br />
+          그래도 취소하시겠습니까?
+          <div className="mt-4 text-sm text-system-error">
+            *결제금액 입금을 완료하신 경우,
+            <br />
+            자주 묻는 질문 내 환불 신청서를 제출해주세요!
           </div>
         </AlertModal>
       )}

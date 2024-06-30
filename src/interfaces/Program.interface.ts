@@ -7,7 +7,7 @@ import {
   PROGRAM_TYPE_KEY,
 } from '../utils/programConst';
 
-export interface DailyMission {
+interface DailyMission {
   id: number;
   th: number;
   title: string;
@@ -22,13 +22,13 @@ export interface DailyMission {
   attended: boolean;
 }
 
-export interface IClassification {
+interface IClassification {
   programClassification: keyof typeof PROGRAM_CLASSIFICATION;
 }
 
-export type IProgramStatusType = keyof typeof PROGRAM_STATUS_KEY;
+type IProgramStatusType = keyof typeof PROGRAM_STATUS_KEY;
 
-export interface IProgramInfo {
+interface IProgramInfo {
   programType: keyof typeof PROGRAM_TYPE_KEY;
   id: number;
   title: string;

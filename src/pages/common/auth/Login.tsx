@@ -4,10 +4,10 @@ import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { AxiosError } from 'axios';
 import axios from '../../../utils/axios';
 
+import { useMutation } from '@tanstack/react-query';
+import SocialLogin from '../../../components/common/auth/ui/SocialLogin';
 import Button from '../../../components/common/ui/button/Button';
 import Input from '../../../components/ui/input/Input';
-import SocialLogin from '../../../components/common/auth/ui/SocialLogin';
-import { useMutation } from '@tanstack/react-query';
 import useAuthStore from '../../../store/useAuthStore';
 
 interface TextLinkProps {
@@ -22,7 +22,7 @@ const TextLink = ({ to, dark, className, children }: TextLinkProps) => {
     <Link
       to={to}
       className={`text-sm underline${
-        dark ? ' text-neutral-grey' : ' text-primary'
+        dark ? 'text-neutral-grey' : 'text-primary'
       }${className ? ` ${className}` : ''}`}
     >
       {children}
@@ -48,7 +48,6 @@ const Login = () => {
       return res.data;
     },
     onSuccess: (data) => {
-      console.log('success');
       login(
         data.data.accessToken,
         data.data.refreshToken,
@@ -106,10 +105,10 @@ const Login = () => {
   }, [searchParams, setSearchParams]);
 
   const handleLoginSuccess = (token: any) => {
-    // console.log('LOGIN ISNEW: ', token.isNew);
-
     if (token.isNew) {
-      navigate(`/signup?result=${JSON.stringify(token)}&redirect=${searchParams.get('redirect')}`);
+      navigate(
+        `/signup?result=${JSON.stringify(token)}&redirect=${searchParams.get('redirect')}`,
+      );
       return;
     }
     login(

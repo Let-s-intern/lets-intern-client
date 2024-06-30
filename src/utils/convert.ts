@@ -43,14 +43,14 @@ export const programParticipationTypeToText: Record<string, string> = {
   FREE: '자율일정',
 };
 
-export const programTypeToText: Record<string, string> = {
+const programTypeToText: Record<string, string> = {
   CHALLENGE_FULL: '챌린지',
   CHALLENGE_HALF: '챌린지',
   BOOTCAMP: '챌린지',
   LETS_CHAT: '클래스',
 };
 
-export const challengeTopicToText: Record<string, string> = {
+const challengeTopicToText: Record<string, string> = {
   ALL: '전체',
   MARKETING: '마케팅',
   DEVELOPMENT: '개발',
@@ -154,7 +154,7 @@ export const wishJobToText: any = {
   RESEARCH_RND: 'R&D 연구원',
 };
 
-export const topicRequiredToText: any = {
+const topicRequiredToText: any = {
   EXPERIENCE: '경험정리',
   JOB: '직무탐색',
   CONCEPT: '컨셉잡기',
@@ -163,18 +163,18 @@ export const topicRequiredToText: any = {
   APPLY: '지원하기',
 };
 
-export const topicToText: any = {
+const topicToText: any = {
   ...topicRequiredToText,
   NULL: '없음',
 };
 
-export const missionTypeToText: any = {
+const missionTypeToText: any = {
   GENERAL: '일반',
   ADDITIONAL: '제한 컨텐츠',
   REFUND: '보증금',
 };
 
-export const contentsTypeToText: any = {
+const contentsTypeToText: any = {
   ESSENTIAL: '필수',
   ADDITIONAL: '추가',
   LIMITED: '제한',
@@ -216,14 +216,14 @@ export const couponTypeToText: Record<string, string> = {
   GRADE: '등급별 할인',
 };
 
-export const couponProgramTypeToText: Record<string, string> = {
+const couponProgramTypeToText: Record<string, string> = {
   ALL: '전체',
   CHALLENGE: '챌린지',
   BOOTCAMP: '부트캠프',
   SESSION: '렛츠챗',
 };
 
-export const idTocouponProgramTypeText: Record<string, string> = {
+const idTocouponProgramTypeText: Record<string, string> = {
   1: couponProgramTypeToText.ALL,
   2: couponProgramTypeToText.CHALLENGE,
   3: couponProgramTypeToText.BOOTCAMP,
@@ -325,7 +325,7 @@ export const TABLE_STATUS = {
   INSERT: 1,
 } as const;
 
-export type TableStatus = (typeof TABLE_STATUS)[keyof typeof TABLE_STATUS];
+type TableStatus = (typeof TABLE_STATUS)[keyof typeof TABLE_STATUS];
 
 export const TABLE_CONTENT = {
   INPUT: 0,

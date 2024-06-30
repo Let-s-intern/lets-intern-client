@@ -1,13 +1,13 @@
 import { useState } from 'react';
 
-import OverviewContent from '../apply/content/OverviewContent';
-import InputContent from '../apply/content/InputContent';
-import ChoicePayPlanContent from '../apply/content/ChoicePayPlanContent';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import axios from '../../../../../utils/axios';
 import { ProgramType } from '../../../../../pages/common/program/ProgramDetail';
-import PayContent from '../apply/content/PayContent';
+import axios from '../../../../../utils/axios';
 import CautionContent from '../apply/content/CautionContent';
+import ChoicePayPlanContent from '../apply/content/ChoicePayPlanContent';
+import InputContent from '../apply/content/InputContent';
+import OverviewContent from '../apply/content/OverviewContent';
+import PayContent from '../apply/content/PayContent';
 
 export interface ProgramDate {
   deadline: string;
@@ -89,7 +89,6 @@ const ApplySection = ({
     queryKey: [programType, programId, 'application'],
     queryFn: async () => {
       const res = await axios.get(`/${programType}/${programId}/application`);
-      console.log(res.data);
       const data = res.data.data;
       setUserInfo({
         name: data.name,

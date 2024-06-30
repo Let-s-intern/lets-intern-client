@@ -148,7 +148,6 @@ const ProgramEditor = ({ mode }: ProgramEditorProps) => {
     queryFn: async () => {
       const res = await axios.get(`/${programType.toLowerCase()}/${programId}`);
       const data = res.data.data;
-      console.log(data);
       if (programType === 'CHALLENGE') {
         const priceInfo = data.priceInfo[0];
         const basicPriceInfo = data.priceInfo.filter(

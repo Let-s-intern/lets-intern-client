@@ -111,7 +111,6 @@ const ChallengeOperationAttendances = () => {
                   if (detailedMission?.id === row.id) {
                     setDetailedMission(null);
                   } else {
-                    console.log('row', row);
                     setDetailedMission(row);
                   }
                 }}

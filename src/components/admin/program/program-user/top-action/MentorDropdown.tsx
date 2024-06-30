@@ -19,8 +19,7 @@ const MentorDropdown = ({ program }: Props) => {
     queryKey: ['program', 'admin', params.programId, 'mentor'],
     queryFn: async () => {
       const res = await axios.get(`/program/admin/${params.programId}/mentor`);
-      const data = res.data;
-      console.log(data);
+      const data = res.data; 
       setPassword(data.mentorPassword);
       return res.data;
     },

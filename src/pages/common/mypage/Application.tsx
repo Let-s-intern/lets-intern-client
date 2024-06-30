@@ -1,10 +1,10 @@
 import { useQuery } from '@tanstack/react-query';
 
+import { useState } from 'react';
 import ApplySection from '../../../components/common/mypage/application/section/ApplySection';
 import CompleteSection from '../../../components/common/mypage/application/section/CompleteSection';
 import ParticipateSection from '../../../components/common/mypage/application/section/ParticipateSection';
 import axios from '../../../utils/axios';
-import { useState } from 'react';
 
 export interface ApplicationType {
   id: number;
@@ -28,7 +28,6 @@ const Application = () => {
     queryFn: async () => {
       const res = await axios.get('/user/applications');
       setApplicationList(res.data.data.applicationList);
-      console.log(res.data.data);
       return res.data;
     },
   });
@@ -50,7 +49,10 @@ const Application = () => {
 
   return (
     <main className="flex w-full flex-col gap-16 pb-20">
-      <ApplySection applicationList={waitingApplicationList} refetch={() => refetch()} />
+      <ApplySection
+        applicationList={waitingApplicationList}
+        refetch={() => refetch()}
+      />
       <ParticipateSection applicationList={inProgressApplicationList} />
       <CompleteSection applicationList={completedApplicationList} />
     </main>

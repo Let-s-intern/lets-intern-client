@@ -1,8 +1,10 @@
 import { useQuery } from '@tanstack/react-query';
 import dayjs from 'dayjs';
-import { useEffect } from 'react';
 // import MissionCalendar from '../../../components/common/challenge/dashboard/mission-calendar/MissionCalendar';
+import { useParams } from 'react-router-dom';
 import DailyMissionSection from '../../../components/common/challenge/dashboard/section/DailyMissionSection';
+import EndDailyMissionSection from '../../../components/common/challenge/dashboard/section/EndDailyMissionSection';
+import GuideSection from '../../../components/common/challenge/dashboard/section/GuideSection';
 import NoticeSection from '../../../components/common/challenge/dashboard/section/NoticeSection';
 import ScoreSection from '../../../components/common/challenge/dashboard/section/ScoreSection';
 import MissionCalendar from '../../../components/common/challenge/my-challenge/mission-calendar/MissionCalendar';
@@ -12,14 +14,10 @@ import {
   challengeGuides,
   challengeNotices,
   challengeScore,
-  DailyMission,
   Schedule,
   userSchema,
 } from '../../../schema';
 import axios from '../../../utils/axios';
-import GuideSection from '../../../components/common/challenge/dashboard/section/GuideSection';
-import EndDailyMissionSection from '../../../components/common/challenge/dashboard/section/EndDailyMissionSection';
-import { useParams } from 'react-router-dom';
 
 const getScoreFromSchedule = (schedule: Schedule) => {
   switch (schedule.attendanceInfo.status) {
@@ -104,38 +102,6 @@ const ChallengeDashboard = () => {
 
   const totalScore = scoreGroup?.totalScore || 0;
   const currentScore = scoreGroup?.currentScore || 0;
-
-  // useEffect(() => {
-  //   console.log('currentChallenge', currentChallenge);
-  // }, [currentChallenge]);
-
-  // useEffect(() => {
-  //   console.log('schedule', schedules);
-  // }, [schedules]);
-
-  // useEffect(() => {
-  //   console.log('notices', notices);
-  // }, [notices]);
-
-  // useEffect(() => {
-  //   console.log('guides', guides);
-  // }, [guides]);
-
-  // useEffect(() => {
-  //   console.log('dailyMission', dailyMission);
-  // }, [dailyMission]);
-
-  // useEffect(() => {
-  //   console.log('user', user);
-  // }, [user]);
-
-  // useEffect(() => {
-  //   console.log('totalScore', totalScore);
-  // }, [totalScore]);
-
-  // useEffect(() => {
-  //   console.log('isDone', isDone);
-  // }, [isDone]);
 
   const isChallengeDone = getIsChallengeDone(programEndDate);
   const isChallengeSubmitDone = getIsChallengeSubmitDone(programEndDate);

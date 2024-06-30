@@ -1,14 +1,13 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import styled from 'styled-components';
-
-import axios from '../../../../utils/axios';
-import { typeToText } from '../../../../utils/converTypeToText';
-import ReviewHeader from '../../../../components/common/review/regacy/ui/ReviewHeader';
 import InputTitle from '../../../../components/common/review/regacy/ui/InputTitle';
+import ReviewHeader from '../../../../components/common/review/regacy/ui/ReviewHeader';
 import Star from '../../../../components/common/review/regacy/ui/Star';
 import TextArea from '../../../../components/common/review/regacy/ui/TextArea';
 import AlertModal from '../../../../components/ui/alert/AlertModal';
+import axios from '../../../../utils/axios';
+import { typeToText } from '../../../../utils/converTypeToText';
 
 interface SubmitButtonProps {
   $disabled?: boolean;
@@ -62,7 +61,6 @@ const ReviewCreateRegacy = () => {
               : '',
           },
         });
-        console.log(res.data.programDetailVo);
         setProgram({
           ...res.data.programDetailVo,
           type: typeToText[res.data.type],

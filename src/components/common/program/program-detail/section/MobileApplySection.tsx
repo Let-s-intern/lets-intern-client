@@ -10,14 +10,14 @@ import { PayInfo } from './ApplySection';
 import { IAction } from '../../../../../interfaces/interface';
 import ScheduleContent from '../apply/content/ScheduleContent';
 
-export interface ProgramDate {
+interface ProgramDate {
   deadline: string;
   startDate: string;
   endDate: string;
   beginning: string;
 }
 
-export interface UserInfo {
+interface UserInfo {
   name: string;
   email: string;
   phoneNumber: string;
