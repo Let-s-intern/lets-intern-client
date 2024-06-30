@@ -40,6 +40,12 @@ const ApplicationCard = ({
     return `${year}.${month}.${day}`;
   };
 
+  const checkChallengeStarted = (dateString: string) => {
+    const date = new Date(dateString);
+    const currentDate = new Date();
+    return date < currentDate;
+  }
+
   return (
     <div
       className={clsx(
@@ -106,7 +112,7 @@ const ApplicationCard = ({
           결제 정보 확인
         </ApplicationCardButton>
       )}
-      {application.programType === 'CHALLENGE' && showChallengeButton && (
+      {application.programType === 'CHALLENGE' && showChallengeButton && checkChallengeStarted(application.programStartDate) && (
         <LinkButton
           to={`/challenge/${application.programId}`}
           target="_blank"
