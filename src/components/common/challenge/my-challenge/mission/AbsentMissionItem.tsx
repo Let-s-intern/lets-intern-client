@@ -1,4 +1,4 @@
-import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import clsx from 'clsx';
 import { useEffect, useRef, useState } from 'react';
 
@@ -6,11 +6,10 @@ import { useSearchParams } from 'react-router-dom';
 import { useCurrentChallenge } from '../../../../../context/CurrentChallengeProvider';
 import {
   MyChallengeMissionByType,
-  Schedule,
   userChallengeMissionDetail,
 } from '../../../../../schema';
 import axios from '../../../../../utils/axios';
-import { missionSubmitToBadge } from '../../../../../utils/convert';
+import { absent } from '../../../../../utils/convert';
 import AbsentMissionDetailMenu from './AbsentMissionDetailMenu';
 
 interface Props {
@@ -19,9 +18,6 @@ interface Props {
 }
 
 const AbsentMissionItem = ({ mission, isDone }: Props) => {
-  // const queryClient = useQueryClient();
-  // const mission = mission.missionInfo;
-  // const attendance = mission.attendanceInfo;
   const [searchParams, setSearchParams] = useSearchParams();
   const { currentChallenge, schedules } = useCurrentChallenge();
   const currentSchedule = schedules.find((schedule) => {
@@ -32,36 +28,10 @@ const AbsentMissionItem = ({ mission, isDone }: Props) => {
 
   const [isDetailShown, setIsDetailShown] = useState(false);
 
-  // const {
-  //   data: missionDetail,
-  //   isLoading: isDetailLoading,
-  //   error: detailError,
-  // } = useQuery({
-  //   enabled: Boolean(currentChallenge?.id) && isDetailShown,
-  //   queryKey: [
-  //     'challenge',
-  //     currentChallenge?.id,
-  //     'mission',
-  //     mission.id,
-  //     'detail',
-  //     { status: mission.status },
-  //   ],
-  //   queryFn: async () => {
-  //     const res = await axios.get(
-  //       `challenge/${currentChallenge?.id}/mission/${mission.id}`,
-  //       {
-  //         params: { status: mission.status },
-  //       },
-  //     );
-  //     return userChallengeMissionDetail.parse(res.data.data).missionInfo;
-  //   },
-  // });
-
   const {
     data: missionDetail,
     isLoading: isDetailLoading,
     error: detailError,
-    refetch,
   } = useQuery({
     enabled: Boolean(currentChallenge?.id) && isDetailShown,
     queryKey: [
@@ -70,7 +40,6 @@ const AbsentMissionItem = ({ mission, isDone }: Props) => {
       'mission',
       mission.id,
       'detail',
-      // { status: schedule.attendanceInfo.status },
     ],
     queryFn: async () => {
       const res = await axios.get(
@@ -79,10 +48,6 @@ const AbsentMissionItem = ({ mission, isDone }: Props) => {
       return userChallengeMissionDetail.parse(res.data.data).missionInfo;
     },
   });
-
-  // useEffect(() => {
-  //   queryClient.invalidateQueries({ queryKey: ['mission'] });
-  // }, [isDetailShown]);
 
   useEffect(() => {
     if (isDone) {
@@ -117,18 +82,10 @@ const AbsentMissionItem = ({ mission, isDone }: Props) => {
             <span
               className={clsx(
                 'rounded-md px-2 py-[0.125rem] text-xs',
-                missionSubmitToBadge({
-                  status: mission.attendanceStatus,
-                  result: mission.attendanceResult,
-                }).style,
+                absent.style,
               )}
             >
-              {
-                missionSubmitToBadge({
-                  status: mission.attendanceStatus,
-                  result: mission.attendanceResult,
-                }).text
-              }
+              {absent.text}
             </span>
           </div>
           <button onClick={() => setIsDetailShown(!isDetailShown)}>

@@ -1,13 +1,13 @@
-import { useEffect, useRef, useState } from 'react';
-import clsx from 'clsx';
 import { useMediaQuery } from '@mui/material';
+import clsx from 'clsx';
+import { useEffect, useRef, useState } from 'react';
 
+import { IAction } from '../../../../../../interfaces/interface';
 import { ProgramType } from '../../../../../../pages/common/program/ProgramDetail';
 import { UserInfo } from '../../section/ApplySection';
+import ScrollableBox from '../scrollable-box/ScrollableBox';
 import MotiveAnswerSection from '../section/MotiveAnswerSection';
 import UserInputSection from '../section/UserInputSection';
-import ScrollableBox from '../scrollable-box/ScrollableBox';
-import { IAction } from '../../../../../../interfaces/interface';
 
 interface InputContentProps {
   contentIndex: number;
@@ -88,10 +88,10 @@ const InputContent = ({
   }, [scrollableBoxRef]);
 
   return (
-    <div className="flex flex-col gap-5">
+    <div className="flex max-h-[36rem] flex-col gap-5 md:h-full">
       <ScrollableBox
         ref={scrollableBoxRef}
-        className={clsx('flex h-full flex-col gap-3', {
+        className={clsx('overflow-y flex h-full flex-col gap-3', {
           'max-h-[30rem]': mobileMatches,
           'max-h-[40rem]': tabletMatches,
         })}

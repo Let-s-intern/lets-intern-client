@@ -13,6 +13,7 @@ import {
   myDailyMission as myDailyMissionSchema,
   Schedule,
 } from '../schema';
+import useAuthStore from '../store/useAuthStore';
 import axios from '../utils/axios';
 
 type CurrentChallenge = z.infer<typeof getChallengeId> & { id: number };
@@ -43,8 +44,10 @@ export const CurrentChallengeProvider = ({
   children: React.ReactNode;
 }) => {
   const params = useParams();
+  const { isLoggedIn } = useAuthStore();
 
   const { data: currentChallenge } = useQuery({
+    enabled: isLoggedIn,
     queryKey: ['challenge', params.programId],
     queryFn: async () => {
       if (!params.programId) {
@@ -59,6 +62,7 @@ export const CurrentChallengeProvider = ({
   });
 
   const { data: schedules = [] } = useQuery({
+    enabled: isLoggedIn,
     queryKey: ['challenge', params.programId, 'schedule'],
     queryFn: async () => {
       if (!params.programId) {
@@ -70,6 +74,7 @@ export const CurrentChallengeProvider = ({
   });
 
   const { data: dailyMission } = useQuery({
+    enabled: isLoggedIn,
     queryKey: ['challenge', params.programId, 'daily-mission'],
     queryFn: async () => {
       const res = await axios.get(
@@ -80,6 +85,7 @@ export const CurrentChallengeProvider = ({
   });
 
   const { data: myDailyMission } = useQuery({
+    enabled: isLoggedIn,
     queryKey: ['challenge', params.programId, 'my', 'daily-mission'],
     queryFn: async () => {
       const res = await axios.get(
@@ -90,6 +96,7 @@ export const CurrentChallengeProvider = ({
   });
 
   const { data: submittedMissions = [] } = useQuery({
+    enabled: isLoggedIn,
     queryKey: ['challenge', params.programId, 'missions', 'submitted'],
     queryFn: async () => {
       const res = await axios.get(
@@ -100,6 +107,7 @@ export const CurrentChallengeProvider = ({
   });
 
   const { data: remainingMissions = [] } = useQuery({
+    enabled: isLoggedIn,
     queryKey: ['challenge', params.programId, 'missions', 'remaining'],
     queryFn: async () => {
       const res = await axios.get(
@@ -110,6 +118,7 @@ export const CurrentChallengeProvider = ({
   });
 
   const { data: absentMissions = [] } = useQuery({
+    enabled: isLoggedIn,
     queryKey: ['challenge', params.programId, 'missions', 'absent'],
     queryFn: async () => {
       const res = await axios.get(

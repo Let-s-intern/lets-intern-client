@@ -1,21 +1,19 @@
-import { useNavigate, useParams } from 'react-router-dom';
-import { useQuery } from '@tanstack/react-query';
 import { useMediaQuery } from '@mui/material';
-import { useReducer, useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import clsx from 'clsx';
-
-import Header from '../../../components/common/program/program-detail/header/Header';
-import TabSection from '../../../components/common/program/program-detail/section/TabSection';
-import ApplySection from '../../../components/common/program/program-detail/section/ApplySection';
-import axios from '../../../utils/axios';
-import MobileApplySection from '../../../components/common/program/program-detail/section/MobileApplySection';
-import drawerReducer from '../../../reducers/drawerReducer';
+import { useReducer, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import ApplyModal from '../../../components/common/program/program-detail/apply/modal/ApplyModal';
-import applyReducer from '../../../reducers/applyReducer';
 import FilledButton from '../../../components/common/program/program-detail/button/FilledButton';
-import useAuthStore from '../../../store/useAuthStore';
 import NotiButton from '../../../components/common/program/program-detail/button/NotiButton';
-import { REMINDER_LINK } from '../../../utils/programConst';
+import Header from '../../../components/common/program/program-detail/header/Header';
+import ApplySection from '../../../components/common/program/program-detail/section/ApplySection';
+import MobileApplySection from '../../../components/common/program/program-detail/section/MobileApplySection';
+import TabSection from '../../../components/common/program/program-detail/section/TabSection';
+import applyReducer from '../../../reducers/applyReducer';
+import drawerReducer from '../../../reducers/drawerReducer';
+import useAuthStore from '../../../store/useAuthStore';
+import axios from '../../../utils/axios';
 
 export type ProgramType = 'challenge' | 'live';
 
@@ -92,7 +90,7 @@ const ProgramDetail = ({ programType }: ProgramDetailProps) => {
     if (!isAlreadyApplied && !disabledButton) toggleDrawer();
   };
   const clickNotiButton = () => {
-    window.open(REMINDER_LINK, '_blank');
+    window.open('https://forms.gle/u6ePSE2WoRYjxyGS6', '_blank');
   };
 
   return (
@@ -115,13 +113,13 @@ const ProgramDetail = ({ programType }: ProgramDetailProps) => {
 
           {/* 모바일 신청 세션 */}
           {!matches && (
-            <div className="fixed bottom-0 left-0 right-0 z-30 flex max-h-[25rem] w-screen flex-col items-center overflow-y-auto rounded-t-lg bg-static-100 px-5 pb-3 shadow-05 scrollbar-hide">
-              <div className="sticky top-0 flex w-full justify-center bg-static-100 py-3">
-                <div
-                  onClick={handleDrawer}
-                  className="h-[5px] w-[70px] shrink-0 cursor-pointer rounded-full bg-neutral-80"
-                />
-              </div>
+            <div className="fixed bottom-0 left-0 right-0 z-30 flex max-h-[25rem] w-screen flex-col items-center overflow-y-auto rounded-t-lg bg-static-100 px-5 py-3 shadow-05 scrollbar-hide">
+              <div
+                onClick={handleDrawer}
+                className={clsx(
+                  'mb-3 h-[5px] w-[70px] cursor-pointer rounded-full bg-neutral-80',
+                )}
+              />
               {isOpen ? (
                 <MobileApplySection
                   programTitle={programTitle}
