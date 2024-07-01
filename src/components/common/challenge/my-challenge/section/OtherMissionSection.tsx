@@ -1,6 +1,6 @@
 import clsx from 'clsx';
 import { useEffect, useRef, useState } from 'react';
-import { useParams, useSearchParams } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
 import { useCurrentChallenge } from '../../../../../context/CurrentChallengeProvider';
 import AbsentMissionItem from '../mission/AbsentMissionItem';
 import DoneMissionItem from '../mission/DoneMissionItem';
@@ -11,64 +11,20 @@ interface Props {
   isDone: boolean;
 }
 
-const OtherMissionSection = ({ todayTh, isDone }: Props) => {
-  const params = useParams();
-  const { schedules, absentMissions, remainingMissions, submittedMissions } =
+const OtherMissionSection = ({ isDone }: Props) => {
+  const { absentMissions, remainingMissions, submittedMissions } =
     useCurrentChallenge();
   const [searchParams, setSearchParams] = useSearchParams();
 
   const sectionRef = useRef<HTMLElement>(null);
 
-  // const [missionList, setMissionList] = useState<any>();
   const [tabIndex, setTabIndex] = useState(isDone ? 1 : 0);
-
-  // const getMissionList = useQuery({
-  //   queryKey: ['mission', params.programId, 'list'],
-  //   queryFn: async () => {
-  //     const res = await axios.get(`/mission/${params.programId}/list`);
-  //     const data = res.data;
-  //     console.log(data);
-  //     setMissionList(data.missionList);
-  //     return data;
-  //   },
-  // });
-
-  // const isLoading = getMissionList.isLoading || !missionList;
-
-  // useEffect(() => {
-  //   getMissionList.refetch();
-  // }, [tabIndex]);
-
-  // let lastScheduleList =
-  //   schedules &&
-  //   schedules.filter((schedule) => (schedule.missionInfo.th ?? 0) < todayTh);
-
-  // let absentMissionList =
-  //   lastScheduleList &&
-  //   lastScheduleList
-  //     .filter((schedule) => schedule.attendanceInfo.status === 'ABSENT')
-  //     .map((schedule) => ({ ...schedule, status: 'ABSENT' }))
-  //     .sort((a, b) => (a.missionInfo?.th ?? 0) - (b.missionInfo?.th ?? 0));
-
-  // lastScheduleList =
-  //   lastScheduleList &&
-  //   lastScheduleList
-  //     .filter((schedule) => schedule.attendanceInfo.status !== 'ABSENT')
-  //     .map((schedule) => ({ ...schedule, status: 'DONE' }))
-  //     .sort((a, b) => (a.missionInfo?.th ?? 0) - (b.missionInfo?.th ?? 0));
-
-  // let remainedMissionList =
-  //   schedules &&
-  //   schedules
-  //     .filter((schedule) => (schedule.missionInfo.th ?? 0) > todayTh)
-  //     .map((schedule) => ({ ...schedule, status: 'YET' }))
-  //     .sort((a, b) => (a.missionInfo?.th ?? 0) - (b.missionInfo?.th ?? 0));
 
   useEffect(() => {
     const scrollToMission = searchParams.get('scroll_to_mission');
     if (scrollToMission) {
       let isExist = false;
-      submittedMissions.forEach((mission: any) => {
+      submittedMissions.forEach((mission) => {
         if (mission.id === Number(scrollToMission)) {
           isExist = true;
           return;
@@ -77,10 +33,6 @@ const OtherMissionSection = ({ todayTh, isDone }: Props) => {
       setTabIndex(isExist ? 1 : 0);
     }
   }, [searchParams, setSearchParams, submittedMissions]);
-
-  // if (isLoading) {
-  //   return <></>;
-  // }
 
   return (
     <section
