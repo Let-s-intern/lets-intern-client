@@ -264,6 +264,11 @@ export const couponProgramTypeEnum = {
   },
 };
 
+export const absent = {
+  text: '결석',
+  style: 'bg-[#E3E3E3] text-[#9B9B9B]',
+};
+
 export const missionSubmitToBadge = ({
   status,
   result,
@@ -279,10 +284,7 @@ export const missionSubmitToBadge = ({
   }
 
   if (status === 'UPDATED' && result === 'WRONG') {
-    return {
-      text: '결석',
-      style: 'bg-[#E3E3E3] text-[#9B9B9B]',
-    };
+    return absent;
   }
 
   if (status === 'UPDATED' && result === 'PASS') {
@@ -300,10 +302,7 @@ export const missionSubmitToBadge = ({
   }
 
   if (status === 'ABSENT') {
-    return {
-      text: '결석',
-      style: 'bg-[#E3E3E3] text-[#9B9B9B]',
-    };
+    return absent;
   }
 
   if (status === 'LATE') {
