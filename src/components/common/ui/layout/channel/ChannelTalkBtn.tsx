@@ -1,5 +1,5 @@
 import clsx from 'clsx';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 
 import channelService from '../../../../../ChannelService';
@@ -9,6 +9,8 @@ const programDetailPathRegex = /^\/program\/(live|challenge|vod)\/\d+$/; // /pro
 const ChannelTalkBtn = () => {
   const location = useLocation();
 
+  const [isHidden, setIsHidden] = useState(false);
+
   useEffect(() => {
     if (!window.ChannelIO) {
       channelService.loadScript();
@@ -17,6 +19,8 @@ const ChannelTalkBtn = () => {
         customLauncherSelector: '#custom-channel-button',
         hideChannelButtonOnBoot: true,
       });
+      channelService.onShowMessenger(() => setIsHidden(true));
+      channelService.onHideMessenger(() => setIsHidden(false));
     }
   }, []);
 
@@ -24,8 +28,8 @@ const ChannelTalkBtn = () => {
     <button
       id="custom-channel-button"
       className={clsx(
-        'z-100 fixed bottom-20 right-4 flex items-center overflow-hidden rounded-[25rem] bg-neutral-100 shadow-05',
-        { hidden: programDetailPathRegex.test(location.pathname) },
+        'fixed bottom-20 right-4 flex items-center overflow-hidden rounded-[25rem] shadow-05 sm:bg-neutral-100',
+        { hidden: programDetailPathRegex.test(location.pathname) || isHidden },
       )}
     >
       <div className="text-1.125-medium hidden h-[4.25rem] w-28 items-center justify-center sm:flex">
