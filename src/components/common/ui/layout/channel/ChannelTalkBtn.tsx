@@ -28,7 +28,7 @@ const ChannelTalkBtn = () => {
         { hidden: programDetailPathRegex.test(location.pathname) },
       )}
     >
-      <div className="text-1.125-medium flex h-[4.25rem] w-28 items-center justify-center">
+      <div className="text-1.125-medium hidden h-[4.25rem] w-28 items-center justify-center sm:flex">
         문의하기
       </div>
       <div className="flex h-[4.25rem] w-[4.25rem] items-center justify-center rounded-full bg-primary">
