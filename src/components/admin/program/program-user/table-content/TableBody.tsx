@@ -1,24 +1,18 @@
-import { ApplicationType } from '../../../../../pages/admin/program/ProgramUsers';
+import { ChallengeApplication, LiveApplication } from '../../../../../schema';
 import TableRow from './TableRow';
 
 interface UserTableBodyProps {
-  applications: ApplicationType[];
-  handleApplicationStatusChange: (e: any, applicationId: number) => void;
+  applications: (ChallengeApplication | LiveApplication)[];
   programType: string;
 }
 
-const UserTableBody = ({
-  applications,
-  handleApplicationStatusChange,
-  programType,
-}: UserTableBodyProps) => {
+const UserTableBody = ({ applications, programType }: UserTableBodyProps) => {
   return (
     <tbody>
       {applications.map((application, index) => (
         <TableRow
           key={index}
           application={application}
-          handleApplicationStatusChange={handleApplicationStatusChange}
           programType={programType}
         />
       ))}

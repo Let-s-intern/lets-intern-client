@@ -1,31 +1,18 @@
-import { useState } from 'react';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { Link } from 'react-router-dom';
 import { Checkbox } from '@mui/material';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { ChallengeApplication, LiveApplication } from '../../../../../schema';
 
 import axios from '../../../../../utils/axios';
-import TD from '../../../ui/table/regacy/TD';
-import parseGrade from '../../../../../utils/parseGrade';
-import { ApplicationType } from '../../../../../pages/admin/program/ProgramUsers';
 import { gradeToText } from '../../../../../utils/convert';
+import TD from '../../../ui/table/regacy/TD';
 
 interface Props {
-  application: ApplicationType;
-  handleApplicationStatusChange: any;
+  application: ChallengeApplication | LiveApplication;
   programType: string;
 }
 
 const TableRow = ({ application, programType }: Props) => {
   const queryClient = useQueryClient();
-
-  const formatDateString = (dateString: string) => {
-    const date = new Date(dateString);
-    return `${date.getFullYear()}년 ${
-      date.getMonth() + 1
-    }월 ${date.getDate()}일 ${date.getHours() >= 12 ? '오후' : '오전'} ${
-      date.getHours() % 12
-    }시${date.getMinutes() !== 0 && ` ${date.getMinutes()}분`}`;
-  };
 
   const editIsFeeConfirmed = useMutation({
     mutationFn: async () => {
@@ -49,6 +36,27 @@ const TableRow = ({ application, programType }: Props) => {
     },
   });
 
+  const updateIsRefunded = useMutation({
+    mutationFn: async (refunded: boolean) => {
+      const res = await axios.patch(
+        `/payment/${application.paymentId}`,
+        { isRefunded: refunded },
+        { params: { type: programType } },
+      );
+      return res.data;
+    },
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({
+        queryKey: [programType.toLowerCase()],
+      });
+    },
+  });
+
+  const createDate =
+    'createDate' in application
+      ? application.createDate
+      : application.created_date;
+
   return (
     <tr>
       <TD>
@@ -68,25 +76,37 @@ const TableRow = ({ application, programType }: Props) => {
       {(programType === 'LIVE' || programType === 'VOD') && (
         <>
           <TD>{application.university}</TD>
-          <TD>{gradeToText[application.grade]}</TD>
+          <TD>{application.grade ? gradeToText[application.grade] : ''}</TD>
           <TD>{application.major}</TD>
-          <TD whiteSpace="wrap">{application.motivate}</TD>
-          <TD whiteSpace="wrap">{application.question}</TD>
+          <TD whiteSpace="wrap">
+            {'motivate' in application ? application.motivate : ''}
+          </TD>
+          <TD whiteSpace="wrap">
+            {'question' in application ? application.question : ''}
+          </TD>
         </>
       )}
       <TD>{application.couponName || '없음'}</TD>
-      <TD>{application.totalCost.toLocaleString()}원</TD>
+      <TD>{application.totalCost?.toLocaleString()}원</TD>
       <TD whiteSpace="wrap">
         <Checkbox
-          checked={application.isConfirmed}
+          checked={application.isConfirmed ?? false}
           onChange={() => editIsFeeConfirmed.mutate()}
         />
       </TD>
-      <TD>
-        {application.createDate
-          ? formatDateString(application.createDate)
-          : formatDateString(application.created_date)}
+      <TD whiteSpace="wrap">
+        <Checkbox
+          checked={
+            'isRefunded' in application
+              ? application.isRefunded ?? false
+              : false
+          }
+          onChange={(e) => {
+            updateIsRefunded.mutate(e.target.checked);
+          }}
+        />
       </TD>
+      <TD>{createDate.format('YYYY-MM-DD HH:mm')}</TD>
     </tr>
   );
 };
