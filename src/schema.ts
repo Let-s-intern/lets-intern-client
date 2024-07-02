@@ -888,6 +888,7 @@ export const liveApplicationsSchema = z
         couponName: z.string().nullable().optional(),
         totalCost: z.number().nullable().optional(),
         isConfirmed: z.boolean().nullable().optional(),
+        isRefunded: z.boolean().nullable().optional(),
         created_date: z.string().nullable().optional(),
       }),
     ),
