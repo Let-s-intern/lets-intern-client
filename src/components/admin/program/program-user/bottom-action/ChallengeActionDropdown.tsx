@@ -1,13 +1,12 @@
+import { useQuery } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { useMutation, useQuery } from '@tanstack/react-query';
-
-import ActionButton from '../../../ui/button/ActionButton';
+import { ChallengeApplication } from '../../../../../schema';
 import axios from '../../../../../utils/axios';
-import { ApplicationType } from '../../../../../pages/admin/program/ProgramUsers';
+import ActionButton from '../../../ui/button/ActionButton';
 
 interface ChallengeActionDropdownProps {
-  applications: ApplicationType[];
+  applications: ChallengeApplication[];
 }
 
 const ChallengeActionDropdown = ({

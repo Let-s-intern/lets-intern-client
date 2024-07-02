@@ -158,6 +158,7 @@ const ApplySection = ({
           },
           motivate: userInfo.motivate,
           question: userInfo.question,
+          contactEmail: userInfo.contactEmail,
         },
         {
           params: {

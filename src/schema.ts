@@ -54,15 +54,9 @@ const programClassification = z.union([
   z.literal('PASS'),
 ]);
 
-const challengePriceType = z.union([
-  z.literal('CHARGE'),
-  z.literal('REFUND'),
-]);
+const challengePriceType = z.union([z.literal('CHARGE'), z.literal('REFUND')]);
 
-const challengeUserType = z.union([
-  z.literal('BASIC'),
-  z.literal('PREMIUM'),
-]);
+const challengeUserType = z.union([z.literal('BASIC'), z.literal('PREMIUM')]);
 
 const challengeParticipationType = z.union([
   z.literal('LIVE'),
@@ -393,10 +387,7 @@ export type UpdatePaybackReq = {
 //   z.literal('REFUND'),
 // ]);
 
-const contentsType = z.union([
-  z.literal('ESSENTIAL'),
-  z.literal('ADDITIONAL'),
-]);
+const contentsType = z.union([z.literal('ESSENTIAL'), z.literal('ADDITIONAL')]);
 
 type ContentsType = z.infer<typeof contentsType>;
 
@@ -839,3 +830,78 @@ export const myChallengeMissionsByType = z.object({
 export type MyChallengeMissionByType = z.infer<
   typeof myChallengeMissionsByType
 >['missionList'][number];
+
+/** GET /api/v1/challenge/{id}/applications [어드민] 프로그램 신청자 조회 */
+export const challengeApplicationsSchema = z
+  .object({
+    applicationList: z.array(
+      z.object({
+        id: z.number(),
+        paymentId: z.number().nullable().optional(),
+        name: z.string().nullable().optional(),
+        email: z.string().nullable().optional(),
+        phoneNum: z.string().nullable().optional(),
+        university: z.string().nullable().optional(),
+        grade: grade.nullable().optional(),
+        major: z.string().nullable().optional(),
+        couponName: z.string().nullable().optional(),
+        totalCost: z.number().nullable().optional(),
+        isRefunded: z.boolean().nullable().optional(),
+        isConfirmed: z.boolean().nullable().optional(),
+        wishJob: z.string().nullable().optional(),
+        wishCompany: z.string().nullable().optional(),
+        inflowPath: z.string().nullable().optional(),
+        createDate: z.string().nullable().optional(),
+        accountType: accountType.nullable().optional(),
+        accountNum: z.string().nullable().optional(),
+      }),
+    ),
+  })
+  .transform((data) => {
+    return {
+      applicationList: data.applicationList.map((application) => ({
+        ...application,
+        createDate: dayjs(application.createDate),
+      })),
+    };
+  });
+
+export type ChallengeApplication = z.infer<
+  typeof challengeApplicationsSchema
+>['applicationList'][number];
+
+/** GET /api/v1/live/{id}/applications */
+export const liveApplicationsSchema = z
+  .object({
+    applicationList: z.array(
+      z.object({
+        id: z.number(),
+        paymentId: z.number().nullable().optional(),
+        name: z.string().nullable().optional(),
+        email: z.string().nullable().optional(),
+        phoneNum: z.string().nullable().optional(),
+        university: z.string().nullable().optional(),
+        major: z.string().nullable().optional(),
+        grade: grade.nullable().optional(),
+        motivate: z.string().nullable().optional(),
+        question: z.string().nullable().optional(),
+        couponName: z.string().nullable().optional(),
+        totalCost: z.number().nullable().optional(),
+        isConfirmed: z.boolean().nullable().optional(),
+        isRefunded: z.boolean().nullable().optional(),
+        created_date: z.string().nullable().optional(),
+      }),
+    ),
+  })
+  .transform((data) => {
+    return {
+      applicationList: data.applicationList.map((application) => ({
+        ...application,
+        created_date: dayjs(application.created_date),
+      })),
+    };
+  });
+
+export type LiveApplication = z.infer<
+  typeof liveApplicationsSchema
+>['applicationList'][number];

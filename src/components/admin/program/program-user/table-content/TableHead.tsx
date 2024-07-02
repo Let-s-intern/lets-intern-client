@@ -1,7 +1,6 @@
 import TH, { THProps } from '../../../ui/table/regacy/TH';
 
 export interface UserTableHeadProps {
-  program: any;
   filter: {
     name: THProps['inOrder'];
     isFeeConfirmed: THProps['inBoolFilter'];
@@ -13,12 +12,7 @@ export interface UserTableHeadProps {
   programType: string;
 }
 
-const TableHead = ({
-  program,
-  filter,
-  setFilter,
-  programType,
-}: UserTableHeadProps) => {
+const TableHead = ({ filter, setFilter, programType }: UserTableHeadProps) => {
   const handleNameHeadClick = () => {
     if (filter.name === 'ASCENDING') {
       setFilter({ ...filter, name: 'DESCENDING' });
@@ -44,7 +38,7 @@ const TableHead = ({
         <TH inOrder={filter.name} onClick={handleNameHeadClick}>
           이름
         </TH>
-        <TH>이메일</TH>
+        <TH>소통용 이메일</TH>
         <TH>휴대폰 번호</TH>
         {(programType === 'LIVE' || programType === 'VOD') && (
           <>
@@ -63,6 +57,7 @@ const TableHead = ({
         >
           입금여부
         </TH>
+        <TH>환불여부</TH>
         <TH>신청일자</TH>
       </tr>
     </thead>
