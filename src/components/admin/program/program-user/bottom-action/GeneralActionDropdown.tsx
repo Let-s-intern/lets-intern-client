@@ -1,25 +1,13 @@
 import { useState } from 'react';
-import { useParams } from 'react-router-dom';
-
+import { ChallengeApplication, LiveApplication } from '../../../../../schema';
 import ActionButton from '../../../ui/button/ActionButton';
-import axios from '../../../../../utils/axios';
-import parseInflowPath from '../../../../../utils/parseInflowPath';
-import parseGrade from '../../../../../utils/parseGrade';
-import {
-  applicationStatusToText,
-  wishJobToText,
-} from '../../../../../utils/convert';
-import { ApplicationType } from '../../../../../pages/admin/program/ProgramUsers';
-import dayjs from 'dayjs';
 
 interface Props {
-  applications: ApplicationType[];
+  applications: (ChallengeApplication | LiveApplication)[];
   programTitle: string;
 }
 
 const GeneralActionDropdown = ({ applications, programTitle }: Props) => {
-  const params = useParams();
-
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const handleDownloadList = async (
@@ -65,6 +53,11 @@ const GeneralActionDropdown = ({ applications, programTitle }: Props) => {
     );
     applications.forEach((application) => {
       const row = [];
+      const createDate =
+        'createDate' in application
+          ? application.createDate
+          : application.created_date;
+
       row.push(
         application.name,
         application.email,
@@ -72,12 +65,9 @@ const GeneralActionDropdown = ({ applications, programTitle }: Props) => {
         application.couponName || '없음',
         application.totalCost,
         application.isConfirmed ? '입금완료' : '입금대기',
-        application.createDate
-          ? dayjs(application.createDate).format('YYYY년 MM월 DD일 a h시 m분')
-          : dayjs(application.created_date).format(
-              'YYYY년 MM월 DD일 a h시 m분',
-            ),
+        createDate.format('YYYY년 MM월 DD일 a h시 m분'),
       );
+
       csv.push(row.join(','));
     });
     return csv.join('\n');

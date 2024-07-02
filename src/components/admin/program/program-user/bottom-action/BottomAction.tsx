@@ -1,8 +1,9 @@
-import GeneralActionDropdown from './GeneralActionDropdown';
+import { ChallengeApplication, LiveApplication } from '../../../../../schema';
 import ChallengeActionDropdown from './ChallengeActionDropdown';
+import GeneralActionDropdown from './GeneralActionDropdown';
 
 interface Props {
-  applications: any;
+  applications: (ChallengeApplication | LiveApplication)[];
   programType: string;
   programTitle: string;
 }
@@ -11,7 +12,10 @@ const BottomAction = ({ applications, programType, programTitle }: Props) => {
   return (
     <div className="fixed bottom-12 left-[250px] flex w-[calc(100vw-250px)] items-center justify-center gap-4">
       {programType === 'CHALLENGE' && (
-        <ChallengeActionDropdown applications={applications} />
+        // TODO: typing
+        <ChallengeActionDropdown
+          applications={applications as ChallengeApplication[]}
+        />
       )}
       <GeneralActionDropdown
         applications={applications}
