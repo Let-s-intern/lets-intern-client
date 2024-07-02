@@ -44,7 +44,7 @@ const TableHead = ({
         <TH inOrder={filter.name} onClick={handleNameHeadClick}>
           이름
         </TH>
-        <TH>이메일</TH>
+        <TH>소통용 이메일</TH>
         <TH>휴대폰 번호</TH>
         {(programType === 'LIVE' || programType === 'VOD') && (
           <>
