@@ -1,4 +1,5 @@
-import Heading from '../../../../admin/ui/heading/Heading';
+import Heading from "../ui/Heading";
+
 
 const AdvantageSection = () => {
   const introList = [

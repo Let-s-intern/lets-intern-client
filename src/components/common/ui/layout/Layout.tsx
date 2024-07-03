@@ -1,31 +1,10 @@
-import { useEffect } from 'react';
-import { Outlet, useLocation } from 'react-router-dom';
+import { Outlet } from 'react-router-dom';
 
-import ChannelService from '../../../../ChannelService';
+import ChannelTalkBtn from './channel/ChannelTalkBtn';
 import Footer from './footer/Footer';
 import NavBar from './nav/NavBar';
 
 const Layout = () => {
-  const location = useLocation();
-
-  useEffect(() => {
-    if (!window.ChannelIO) {
-      ChannelService.loadScript();
-      ChannelService.boot({
-        pluginKey: '3acfb692-c643-456f-86e8-dd64da454947',
-      });
-    }
-  }, []);
-
-  useEffect(() => {
-    const programPathRegex = /^\/program\/detail\/\d+$/; // /program/detail/:programId
-    if (programPathRegex.test(location.pathname)) {
-      ChannelService.hideChannelButton();
-    } else {
-      ChannelService.showChannelButton();
-    }
-  }, [location]);
-
   return (
     <div className="font-pretendard">
       <NavBar />
@@ -33,6 +12,7 @@ const Layout = () => {
         <Outlet />
       </div>
       <Footer />
+      <ChannelTalkBtn />
     </div>
   );
 };
