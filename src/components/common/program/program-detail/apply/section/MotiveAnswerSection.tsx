@@ -23,12 +23,12 @@ const MotiveAnswerSection = ({
     <div className="flex flex-col gap-2.5">
       <div className="flex flex-col gap-1">
         <label htmlFor="motivate" className="text-1-medium">
-          지원 동기
+          신청 동기
         </label>
         <TextArea
           id="motivate"
           name="motivate"
-          placeholder="지원 동기를 입력해주세요."
+          placeholder="신청 동기를 입력해주세요."
           rows={3}
           value={userInfo.motivate}
           onChange={handleInputChange}
