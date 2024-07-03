@@ -42,7 +42,7 @@ const ApplySection = ({ applicationList, refetch }: ApplySectionProps) => {
           ))}
         </div>
       )}
-      {applicationList.length > 3 && (
+      {applicationList.length > 3 && applicationList.length !== viewList.length && (
         <MoreButton
           className="md:flex"
           onClick={() => setViewList(applicationList)}
