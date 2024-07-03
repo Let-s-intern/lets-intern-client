@@ -5,8 +5,8 @@ import Heading from '../ui/Heading';
 import ProgramGridItem from './ProgramGridItem';
 
 const PROGRAM_SECTION = {
-  title: ['내 커리어 단계에 딱 맞는', '프로그램을 찾아보세요'],
-  description: '원하는 키워드를 클릭해보세요!',
+  title: ['내 커리어 단계에 딱 맞는 프로그램'],
+  description: '원하는 단계가 없다면, 커리어 탐색부터!',
 };
 
 const programList: IProgramGridItem[] = [
@@ -27,7 +27,7 @@ const programList: IProgramGridItem[] = [
   },
   {
     keyword: 'CV',
-    title: ['서류 준비', '단계'],
+    title: ['서류 작성', '단계'],
     descriptionList: ['이력서, 포트폴리오', '준비가 어려운', '취업준비생'],
     bgColor: 'bg-gradient-cv',
     borderColor: 'border-[#F1F1FF]',
@@ -75,7 +75,7 @@ const ProgramSection = () => {
         </Heading>
         <Description>{PROGRAM_SECTION.description}</Description>
       </div>
-      <ul className="mt-6 grid grid-cols-2 gap-4 lg:grid-cols-4">
+      <ul className="mt-6 grid grid-cols-2 gap-4 md:grid-cols-4">
         {programList.map((program) => (
           <ProgramGridItem
             key={program.keyword}
