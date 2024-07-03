@@ -35,7 +35,7 @@ const CompleteSection = ({ applicationList }: CompleteSectionProps) => {
           </div>
         )
       }
-      {applicationList.length > 3 && (
+      {applicationList.length > 3 && applicationList.length !== viewList.length && (
         <Button
           className="hidden md:flex"
           onClick={() => {
