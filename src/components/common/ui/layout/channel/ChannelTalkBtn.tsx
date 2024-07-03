@@ -28,16 +28,16 @@ const ChannelTalkBtn = () => {
     <button
       id="custom-channel-button"
       className={clsx(
-        'fixed bottom-20 right-4 flex items-center overflow-hidden rounded-[25rem] shadow-05 sm:bg-neutral-100',
+        'fixed bottom-20 right-4 flex items-center rounded-[25rem] bg-neutral-100 shadow-05',
         { hidden: programDetailPathRegex.test(location.pathname) || isHidden },
       )}
     >
-      <div className="text-1.125-medium hidden h-[4.25rem] w-28 items-center justify-center sm:flex">
-        문의하기
+      <div className="text-1-medium sm:text-1.125-medium flex w-20 items-center justify-center pl-2 sm:h-[4.25rem] sm:w-[105px]">
+        채팅문의
       </div>
-      <div className="flex h-[4.25rem] w-[4.25rem] items-center justify-center rounded-full bg-primary">
+      <div className="flex h-14 w-14 translate-x-px items-center justify-center rounded-full bg-primary sm:h-[4.25rem] sm:w-[4.25rem]">
         <img
-          className="h-8 w-8"
+          className="h-7 w-7 sm:h-8 sm:w-8"
           src="/icons/channel.png"
           alt="렛츠커리어 채널톡 로고"
         />
