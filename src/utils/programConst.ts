@@ -60,3 +60,5 @@ export const PROGRAM_QUERY_KEY = {
   CLASSIFICATION: 'classification',
   STATUS: 'status',
 };
+
+export const REMINDER_LINK = 'https://forms.gle/u6ePSE2WoRYjxyGS6';

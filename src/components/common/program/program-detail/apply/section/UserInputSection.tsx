@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import { FaCheck } from 'react-icons/fa';
 
 import Input from '../../../../ui/input/Input';
 import { UserInfo } from '../../section/ApplySection';
@@ -93,13 +92,7 @@ const UserInputSection = ({ userInfo, setUserInfo }: UserInputSectionProps) => {
               className="flex cursor-pointer items-center gap-1"
               onClick={handleSameEmail}
             >
-              <div className="flex h-[1rem] w-[1rem] items-center justify-center rounded-[0.125rem] border-[1.5px] border-neutral-60 bg-neutral-85">
-                {isSameEmail && (
-                  <span className="text-[0.7rem] text-neutral-50">
-                    <FaCheck />
-                  </span>
-                )}
-              </div>
+              <img src={isSameEmail ? '/icons/checkbox-checked.svg' : '/icons/checkbox-unchecked.svg'} alt="check" className="w-6 h-6" />
               <span className="text-xs font-medium text-neutral-0 text-opacity-[74%]">
                 가입한 이메일과 동일
               </span>
