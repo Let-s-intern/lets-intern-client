@@ -46,7 +46,7 @@ const ChannelTalkBtn = () => {
       <div className="flex h-14 w-14 translate-x-px items-center justify-center rounded-full bg-primary sm:h-[4.25rem] sm:w-[4.25rem]">
         <img
           className="h-7 w-7 sm:h-8 sm:w-8"
-          src="/icons/channel.png"
+          src="/icons/channel.svg"
           alt="렛츠커리어 채널톡 로고"
         />
       </div>
