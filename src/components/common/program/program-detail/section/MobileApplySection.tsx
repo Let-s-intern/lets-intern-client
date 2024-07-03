@@ -1,30 +1,13 @@
-import { useState } from 'react';
 
-import InputContent from '../apply/content/InputContent';
-import { useMutation, useQuery } from '@tanstack/react-query';
-import axios from '../../../../../utils/axios';
-import { ProgramType } from '../../../../../pages/common/program/ProgramDetail';
-import PayContent from '../apply/content/PayContent';
-import CautionContent from '../apply/content/CautionContent';
-import { PayInfo } from './ApplySection';
+import { useMutation } from '@tanstack/react-query';
 import { IAction } from '../../../../../interfaces/interface';
+import { ProgramType } from '../../../../../pages/common/program/ProgramDetail';
+import axios from '../../../../../utils/axios';
+import CautionContent from '../apply/content/CautionContent';
+import InputContent from '../apply/content/InputContent';
+import PayContent from '../apply/content/PayContent';
 import ScheduleContent from '../apply/content/ScheduleContent';
-
-interface ProgramDate {
-  deadline: string;
-  startDate: string;
-  endDate: string;
-  beginning: string;
-}
-
-interface UserInfo {
-  name: string;
-  email: string;
-  phoneNumber: string;
-  contactEmail: string;
-  motivate: string;
-  question: string;
-}
+import { PayInfo, ProgramDate, UserInfo } from './ApplySection';
 
 interface MobileApplySectionProps {
   programType: ProgramType;
@@ -33,7 +16,19 @@ interface MobileApplySectionProps {
   toggleApplyModal: () => void;
   toggleDrawer: () => void;
   drawerDispatch: (value: IAction) => void;
-  setApplied: (isApplied: boolean) => void;
+  userInfo: UserInfo;
+  setUserInfo: (userInfo: UserInfo) => void;
+  payInfo: PayInfo;
+  setPayInfo: (payInfo: (prevPayInfo: PayInfo) => PayInfo) => void;
+  criticalNotice: string;
+  priceId: number;
+  programDate: ProgramDate;
+  isApplied: boolean;
+  setIsApplied: (isApplied: boolean) => void;
+  isCautionChecked: boolean;
+  setIsCautionChecked: (isCautionChecked: boolean) => void;
+  contentIndex: number;
+  setContentIndex: (contentIndex: number) => void;
 }
 
 const MobileApplySection = ({
@@ -43,102 +38,20 @@ const MobileApplySection = ({
   toggleApplyModal,
   toggleDrawer,
   drawerDispatch,
-  setApplied,
+  userInfo,
+  setUserInfo,
+  payInfo,
+  setPayInfo,
+  criticalNotice,
+  priceId,
+  programDate,
+  isApplied,
+  setIsApplied,
+  isCautionChecked,
+  setIsCautionChecked,
+  contentIndex,
+  setContentIndex,
 }: MobileApplySectionProps) => {
-  const [contentIndex, setContentIndex] = useState(0);
-  const [programDate, setProgramDate] = useState<ProgramDate>({
-    deadline: '',
-    startDate: '',
-    endDate: '',
-    beginning: '',
-  });
-  const [userInfo, setUserInfo] = useState<UserInfo>({
-    name: '',
-    email: '',
-    phoneNumber: '',
-    contactEmail: '',
-    motivate: '',
-    question: '',
-  });
-  const [criticalNotice, setCriticalNotice] = useState<string>('');
-  const [priceId, setPriceId] = useState<number>(0);
-  const [payInfo, setPayInfo] = useState<PayInfo>({
-    priceId: 0,
-    price: 0,
-    discount: 0,
-    accountNumber: '',
-    deadline: '',
-    accountType: '',
-    livePriceType: '',
-    challengePriceType: '',
-    couponId: null,
-    couponPrice: 0,
-  });
-  const [isCautionChecked, setIsCautionChecked] = useState<boolean>(false);
-  const [isApplied, setIsApplied] = useState<boolean>(false);
-
-  useQuery({
-    queryKey: [programType, programId, 'application'],
-    queryFn: async () => {
-      const res = await axios.get(`/${programType}/${programId}/application`);
-      const data = res.data.data;
-      setUserInfo({
-        name: data.name,
-        email: data.email,
-        phoneNumber: data.phoneNumber,
-        contactEmail: data.contactEmail,
-        motivate: '',
-        question: '',
-      });
-      setCriticalNotice(data.criticalNotice);
-      setIsApplied(data.applied);
-      if (programType === 'challenge') {
-        setPriceId(data.priceList[0].priceId);
-        setPayInfo({
-          priceId: data.priceList[0].priceId,
-          couponId: null,
-          price: data.priceList[0].price,
-          discount: data.priceList[0].discount,
-          couponPrice: 0,
-          accountNumber: data.priceList[0].accountNumber,
-          deadline: data.priceList[0].deadline,
-          accountType: data.priceList[0].accountType,
-          livePriceType: data.priceList[0].livePriceType,
-          challengePriceType: data.priceList[0].challengePriceType,
-        });
-      } else {
-        setPriceId(data.price.priceId);
-        setPayInfo({
-          priceId: data.price.priceId,
-          couponId: null,
-          price: data.price.price,
-          discount: data.price.discount,
-          couponPrice: 0,
-          accountNumber: data.price.accountNumber,
-          deadline: data.price.deadline,
-          accountType: data.price.accountType,
-          livePriceType: data.price.livePriceType,
-          challengePriceType: data.price.challengePriceType,
-        });
-      }
-      return res.data;
-    },
-  });
-
-  useQuery({
-    queryKey: [programType, programId],
-    queryFn: async () => {
-      const res = await axios.get(`/${programType}/${programId}`);
-      const data = res.data.data;
-      setProgramDate({
-        deadline: data.deadline,
-        startDate: data.startDate,
-        endDate: data.endDate,
-        beginning: data.beginning,
-      });
-      return res.data;
-    },
-  });
 
   const applyProgram = useMutation({
     mutationFn: async () => {
@@ -161,7 +74,7 @@ const MobileApplySection = ({
       return res.data;
     },
     onSuccess: () => {
-      setApplied(true);
+      setIsApplied(true);
     },
   });
 
