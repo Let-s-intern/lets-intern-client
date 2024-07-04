@@ -21,7 +21,6 @@ export interface UserInfo {
   email: string;
   phoneNumber: string;
   contactEmail: string;
-  motivate: string;
   question: string;
 }
 
@@ -65,7 +64,6 @@ const ApplySection = ({
     email: '',
     phoneNumber: '',
     contactEmail: '',
-    motivate: '',
     question: '',
   });
   const [criticalNotice, setCriticalNotice] = useState<string>('');
@@ -95,7 +93,6 @@ const ApplySection = ({
         email: data.email,
         phoneNumber: data.phoneNumber,
         contactEmail: data.contactEmail,
-        motivate: '',
         question: '',
       });
       setCriticalNotice(data.criticalNotice);
@@ -115,6 +112,7 @@ const ApplySection = ({
           challengePriceType: data.priceList[0].challengePriceType,
         });
       } else {
+        setIsCautionChecked(true);
         setPriceId(data.price.priceId);
         setPayInfo({
           priceId: data.price.priceId,
@@ -156,8 +154,8 @@ const ApplySection = ({
             priceId: priceId,
             couponId: payInfo.couponId,
           },
-          motivate: userInfo.motivate,
           question: userInfo.question,
+          contactEmail: userInfo.contactEmail,
         },
         {
           params: {

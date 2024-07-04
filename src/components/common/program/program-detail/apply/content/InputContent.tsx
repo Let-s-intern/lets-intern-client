@@ -40,6 +40,11 @@ const InputContent = ({
       alert('렛츠커리어 정보 수신용 이메일의 형식이 올바르지 않습니다.');
       return;
     }
+
+    if (programType === 'live') {
+      setContentIndex(contentIndex + 2);
+      return;
+    }
     setContentIndex(contentIndex + 1);
   };
 
@@ -53,8 +58,7 @@ const InputContent = ({
       userInfo.name &&
       userInfo.email &&
       userInfo.phoneNumber &&
-      userInfo.contactEmail &&
-      (programType !== 'challenge' ? userInfo.motivate : true)
+      userInfo.contactEmail
     ) {
       setButtonDisabled(false);
     } else {
@@ -88,10 +92,10 @@ const InputContent = ({
   }, [scrollableBoxRef]);
 
   return (
-    <div className="flex max-h-[36rem] flex-col gap-5 md:h-full">
+    <div className="flex flex-col gap-5">
       <ScrollableBox
         ref={scrollableBoxRef}
-        className={clsx('overflow-y flex h-full flex-col gap-3', {
+        className={clsx('flex h-full flex-col gap-3', {
           'max-h-[30rem]': mobileMatches,
           'max-h-[40rem]': tabletMatches,
         })}

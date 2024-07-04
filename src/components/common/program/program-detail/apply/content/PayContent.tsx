@@ -1,11 +1,11 @@
 import { useEffect, useRef } from 'react';
 import { FaArrowLeft } from 'react-icons/fa6';
 
+import { PayInfo } from '../../section/ApplySection';
+import ScrollableBox from '../scrollable-box/ScrollableBox';
 import CouponSection from '../section/CouponSection';
 import PayInfoSection from '../section/PayInfoSection';
 import PriceSection from '../section/PriceSection';
-import ScrollableBox from '../scrollable-box/ScrollableBox';
-import { PayInfo } from '../../section/ApplySection';
 
 interface ScrollableDiv extends HTMLDivElement {
   scrollTimeout?: number;
@@ -31,6 +31,11 @@ const PayContent = ({
   const scrollableBoxRef = useRef<ScrollableDiv>(null);
 
   const handleBackButtonClick = () => {
+    if (programType === 'live') {
+      setContentIndex(contentIndex - 2);
+      return;
+    }
+
     setContentIndex(contentIndex - 1);
   };
 

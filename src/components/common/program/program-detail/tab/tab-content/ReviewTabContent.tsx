@@ -1,11 +1,11 @@
-import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { FaStar } from 'react-icons/fa';
+import { useState } from 'react';
 
 import axios from '../../../../../../utils/axios';
 import ReviewItem from '../../review/ReviewItem';
 
 export interface ReviewType {
+  id: number;
   name: string;
   content: string;
   score: number;
@@ -22,6 +22,7 @@ const ReviewTabContent = ({
   programType,
 }: ReviewTabContentProps) => {
   const [reviewList, setReviewList] = useState<ReviewType[]>([]);
+  const [programTitle, setProgramTitle] = useState('');
 
   useQuery({
     queryKey: [programType, programId, 'reviews'],
@@ -37,11 +38,24 @@ const ReviewTabContent = ({
     },
   });
 
+  useQuery({
+    queryKey: [programType, programId],
+    queryFn: async () => {
+      const res = await axios.get(`/${programType}/${programId}/title`);
+      setProgramTitle(res.data.data.title);
+      return res.data;
+    },
+  });
+
   return (
     <div className="py-2">
       <ul className="flex flex-col gap-2">
-        {reviewList.map((review, index) => (
-          <ReviewItem key={index} review={review} />
+        {reviewList.map((review) => (
+          <ReviewItem
+            key={review.id}
+            review={review}
+            programTitle={programTitle}
+          />
         ))}
       </ul>
     </div>

@@ -1,9 +1,9 @@
 import { Link } from 'react-router-dom';
 
+import { useState } from 'react';
+import { ApplicationType } from '../../../../../pages/common/mypage/Application';
 import MoreButton from '../../ui/button/MoreButton';
 import ApplicationCard from '../../ui/card/root/ApplicationCard';
-import { ApplicationType } from '../../../../../pages/common/mypage/Application';
-import { useState } from 'react';
 
 interface ParticipateSectionProps {
   applicationList: ApplicationType[];
@@ -39,7 +39,7 @@ const ParticipateSection = ({ applicationList }: ParticipateSectionProps) => {
           </div>
         )
       }
-      {applicationList.length > 3 && (
+      {applicationList.length > 3 && applicationList.length !== viewList.length && (
         <MoreButton
           className="hidden md:flex"
           onClick={() => {

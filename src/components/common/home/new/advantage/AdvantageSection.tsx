@@ -1,4 +1,5 @@
-import Heading from '../../../../admin/ui/heading/Heading';
+import Heading from "../ui/Heading";
+
 
 const AdvantageSection = () => {
   const introList = [
@@ -26,7 +27,7 @@ const AdvantageSection = () => {
 
   return (
     <section className=' px-5 '>
-      <Heading>렛츠커리어와 왜 함께해야 할까요?</Heading>
+      <Heading>왜 렛츠커리어와 함께해야 할까요?</Heading>
       <div className="mt-6 grid  grid-cols-1 flex-col gap-4 md:grid-cols-2">
         {introList.map((intro, index) => (
           <div key={index} className="w-full">

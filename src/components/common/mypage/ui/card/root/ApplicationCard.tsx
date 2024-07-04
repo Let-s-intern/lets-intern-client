@@ -1,12 +1,11 @@
 import clsx from 'clsx';
 
-import LinkButton from '../../button/LinkButton';
-import DeleteMenu from '../menu/DeleteMenu';
-import { ApplicationType } from '../../../../../../pages/common/mypage/Application';
-import Button from '../../../../ui/button/Button';
-import ApplicationCardButton from '../../button/ApplicationCardButton';
 import { useState } from 'react';
+import { ApplicationType } from '../../../../../../pages/common/mypage/Application';
+import ApplicationCardButton from '../../button/ApplicationCardButton';
+import LinkButton from '../../button/LinkButton';
 import PriceInfoModal from '../../modal/PriceInfoModal';
+import DeleteMenu from '../menu/DeleteMenu';
 
 interface ApplicationCardProps {
   application: ApplicationType;
@@ -65,18 +64,18 @@ const ApplicationCard = ({
           alt={'프로그렘 썸네일'}
           className="h-[7.5rem] w-full bg-primary-light object-cover md:h-[9rem] md:w-[11rem] md:rounded-xs"
         />
-        <div className="flex flex-1 flex-col gap-2">
-          <div className="flex items-center justify-between">
+        <div className="flex flex-1 flex-col gap-2 py-2">
+          {/* <div className="flex items-center justify-between">
             <span className="rounded-xs border border-primary bg-primary-20 px-2.5 py-0.5 text-xs font-medium text-primary-dark">
               모집 중
             </span>
-            {/* {showDeleteMenu && (
+            {showDeleteMenu && (
               <DeleteMenu
                 className="hidden md:block"
                 application={application}
               />
-            )} */}
-          </div>
+            )}
+          </div> */}
           <div className="flex justify-between">
             <h2 className="font-semibold">{application.programTitle}</h2>
             {showDeleteMenu && (
