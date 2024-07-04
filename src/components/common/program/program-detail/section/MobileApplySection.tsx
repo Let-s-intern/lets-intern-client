@@ -1,4 +1,3 @@
-
 import { useMutation } from '@tanstack/react-query';
 import { IAction } from '../../../../../interfaces/interface';
 import { ProgramType } from '../../../../../pages/common/program/ProgramDetail';
@@ -52,7 +51,6 @@ const MobileApplySection = ({
   contentIndex,
   setContentIndex,
 }: MobileApplySectionProps) => {
-
   const applyProgram = useMutation({
     mutationFn: async () => {
       const res = await axios.post(
@@ -60,10 +58,10 @@ const MobileApplySection = ({
         {
           paymentInfo: {
             priceId: priceId,
-            couponId: 0,
+            couponId: payInfo.couponId,
           },
-          motivate: userInfo.motivate,
           question: userInfo.question,
+          contactEmail: userInfo.contactEmail,
         },
         {
           params: {

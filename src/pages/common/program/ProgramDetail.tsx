@@ -6,7 +6,10 @@ import ApplyModal from '../../../components/common/program/program-detail/apply/
 import FilledButton from '../../../components/common/program/program-detail/button/FilledButton';
 import NotiButton from '../../../components/common/program/program-detail/button/NotiButton';
 import Header from '../../../components/common/program/program-detail/header/Header';
-import ApplySection, { PayInfo, UserInfo } from '../../../components/common/program/program-detail/section/ApplySection';
+import ApplySection, {
+  PayInfo,
+  UserInfo,
+} from '../../../components/common/program/program-detail/section/ApplySection';
 import MobileApplySection from '../../../components/common/program/program-detail/section/MobileApplySection';
 import TabSection from '../../../components/common/program/program-detail/section/TabSection';
 import applyReducer from '../../../reducers/applyReducer';
@@ -50,9 +53,8 @@ const ProgramDetail = ({ programType }: ProgramDetailProps) => {
     email: '',
     phoneNumber: '',
     contactEmail: '',
-    motivate: '',
     question: '',
-  });  
+  });
   const [payInfo, setPayInfo] = useState<PayInfo>({
     priceId: 0,
     price: 0,
@@ -69,7 +71,7 @@ const ProgramDetail = ({ programType }: ProgramDetailProps) => {
   const [priceId, setPriceId] = useState<number>(0);
   const [isCautionChecked, setIsCautionChecked] = useState<boolean>(false);
   const [contentIndex, setContentIndex] = useState(0);
-  
+
   useQuery({
     queryKey: [programType, programId, 'application'],
     queryFn: async () => {
@@ -81,7 +83,6 @@ const ProgramDetail = ({ programType }: ProgramDetailProps) => {
           email: data.email,
           phoneNumber: data.phoneNumber,
           contactEmail: data.contactEmail,
-          motivate: '',
           question: '',
         });
         setCriticalNotice(data.criticalNotice);
@@ -100,6 +101,7 @@ const ProgramDetail = ({ programType }: ProgramDetailProps) => {
             challengePriceType: data.priceList[0].challengePriceType,
           });
         } else {
+          setIsCautionChecked(true);
           setPriceId(data.price.priceId);
           setPayInfo({
             priceId: data.price.priceId,
@@ -114,7 +116,7 @@ const ProgramDetail = ({ programType }: ProgramDetailProps) => {
             challengePriceType: data.price.challengePriceType,
           });
         }
-        console.log(data);
+        // console.log(data);
         setIsAlreadyApplied(data.applied);
         setDisabledButton(!data.applied);
         return res.data;
@@ -145,7 +147,7 @@ const ProgramDetail = ({ programType }: ProgramDetailProps) => {
     queryFn: async () => {
       const res = await axios.get(`/${programType}/${programId}`);
       const { beginning, deadline, startDate, endDate } = res.data.data;
-      setProgramInfo({startDate, endDate, beginning, deadline });
+      setProgramInfo({ startDate, endDate, beginning, deadline });
       setDisabledButton(
         new Date() < new Date(beginning) || new Date() > new Date(deadline),
       );
@@ -238,7 +240,13 @@ const ProgramDetail = ({ programType }: ProgramDetailProps) => {
               ) : (
                 <FilledButton
                   onClick={toggleDrawer}
-                  caption={isAlreadyApplied ? '신청완료' : isResumed ? '이어서 신청하기' : '신청하기'}
+                  caption={
+                    isAlreadyApplied
+                      ? '신청완료'
+                      : isResumed
+                        ? '이어서 신청하기'
+                        : '신청하기'
+                  }
                   isAlreadyApplied={isAlreadyApplied}
                   className="apply_button"
                 />

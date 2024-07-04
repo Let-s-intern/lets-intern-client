@@ -31,6 +31,11 @@ const PayContent = ({
   const scrollableBoxRef = useRef<ScrollableDiv>(null);
 
   const handleBackButtonClick = () => {
+    if (programType === 'live') {
+      setContentIndex(contentIndex - 2);
+      return;
+    }
+
     setContentIndex(contentIndex - 1);
   };
 
