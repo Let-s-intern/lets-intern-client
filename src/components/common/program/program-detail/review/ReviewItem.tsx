@@ -36,6 +36,22 @@ const ReviewItem = ({ review }: ReviewItemProps) => {
         </div>
         <p>{review.content}</p>
       </div>
+      <div className="flex gap-0.5">
+        {Array.from({ length: review.score }, (_, index) => index + 1).map(
+          (th) => (
+            <span key={th} className="text-primary">
+              <FaStar />
+            </span>
+          ),
+        )}
+        {Array.from({ length: 5 - review.score }, (_, index) => index + 1).map(
+          (th) => (
+            <span key={th} className="text-neutral-70">
+              <FaStar />
+            </span>
+          ),
+        )}
+      </div>
     </li>
   );
 };
