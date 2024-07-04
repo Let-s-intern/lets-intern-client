@@ -40,6 +40,11 @@ const InputContent = ({
       alert('렛츠커리어 정보 수신용 이메일의 형식이 올바르지 않습니다.');
       return;
     }
+
+    if (programType === 'live') {
+      setContentIndex(contentIndex + 2);
+      return;
+    }
     setContentIndex(contentIndex + 1);
   };
 
@@ -53,8 +58,7 @@ const InputContent = ({
       userInfo.name &&
       userInfo.email &&
       userInfo.phoneNumber &&
-      userInfo.contactEmail &&
-      (programType !== 'challenge' ? userInfo.motivate : true)
+      userInfo.contactEmail
     ) {
       setButtonDisabled(false);
     } else {
