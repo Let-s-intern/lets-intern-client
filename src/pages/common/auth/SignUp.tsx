@@ -105,7 +105,7 @@ const SignUp = () => {
     setValue({ ...value, phoneNum });
   };
 
-  const postSignUp = useMutation({
+  const postEmailUser = useMutation({
     mutationFn: async () => {
       const res = await axios.post('/user/signup', {
         email: value.email,
@@ -134,7 +134,7 @@ const SignUp = () => {
     },
   });
 
-  const patchUserInfo = useMutation({
+  const patchSocialUserContactEmail = useMutation({
     mutationFn: async () => {
       const res = await axios.patch(
         '/user',
@@ -196,9 +196,9 @@ const SignUp = () => {
     }
 
     if (isSocial) {
-      patchUserInfo.mutate();
+      patchSocialUserContactEmail.mutate();
     } else {
-      postSignUp.mutate();
+      postEmailUser.mutate();
     }
   };
 
@@ -235,12 +235,6 @@ const SignUp = () => {
 
   return (
     <>
-      {/* <InfoContainer
-        marketingAgree={value.agreeToMarketing}
-        accountType={0}
-        accountNum=""
-        accountOwner=""
-      /> */}
       {isSignupSuccess ? (
         <InfoContainer isSocial={isSocial} />
       ) : (

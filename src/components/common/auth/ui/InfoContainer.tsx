@@ -32,7 +32,7 @@ const InfoContainer = ({ isSocial }: { isSocial: boolean }) => {
   const [searchParams] = useSearchParams();
   const redirect = searchParams.get('redirect');
 
-  const postUserInfo = useMutation({
+  const patchEmailUserInfo = useMutation({
     mutationFn: async () => {
       const res = await axios.patch(`/user/additional-info`, {
         email: email,
@@ -55,7 +55,7 @@ const InfoContainer = ({ isSocial }: { isSocial: boolean }) => {
     },
   });
 
-  const patchUserInfo = useMutation({
+  const patchSocialUserInfo = useMutation({
     mutationFn: async () => {
       const res = await axios.patch(
         '/user',
@@ -112,9 +112,9 @@ const InfoContainer = ({ isSocial }: { isSocial: boolean }) => {
     }
 
     if (isSocial) {
-      patchUserInfo.mutate();
+      patchSocialUserInfo.mutate();
     } else {
-      postUserInfo.mutate();
+      patchEmailUserInfo.mutate();
     }
   };
 
@@ -224,11 +224,7 @@ const InfoContainer = ({ isSocial }: { isSocial: boolean }) => {
       {successModalOpen && (
         <AlertModal
           onConfirm={() => {
-            if (redirect) {
-              navigate(`/login?redirect=${redirect}`);
-              return;
-            }
-            navigate('/login');
+            navigate(redirect ? `/login?redirect=${redirect}` : '/login');
           }}
           title="회원가입 완료"
           showCancel={false}
