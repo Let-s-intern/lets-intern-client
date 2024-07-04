@@ -5,7 +5,7 @@ import MenuLink from './MenuLink';
 const CUSTOEMR_CENTER = {
   title: '고객센터',
   content:
-    '홈페이지 좌측 하단의 [이메일] 이나 우측 하단 [문의하기]를 통해 1:1 채팅상담을 이용하실 수 있습니다.',
+    '홈페이지 좌측 하단의 [이메일] 이나 우측 하단 [채팅문의]를 통해 1:1 채팅상담을 이용하실 수 있습니다.',
   time: '* 채팅 상담 운영시간 : 평일, 주말 09:00-21:00',
   notice: '(전화상담을 원하시는 경우, 채팅상담을 통해 신청 부탁드립니다.)',
 };
@@ -17,6 +17,7 @@ const BUSINESS_INFORMATION = {
   mailOrderSales: '통신판매업신고번호 제 2024-서울마포-2221호',
   address: '주소: 서울특별시 마포구 독막로 9길 18, 서홍빌딩 3층 A9호',
   email: '이메일: official@letscareer.co.kr',
+  call: '고객센터: 0507-0178-8541',
   copyright: 'Copyright ©2024 아이엔지. All rights reserved.',
 };
 
@@ -70,6 +71,7 @@ const Footer = () => {
           <span>{BUSINESS_INFORMATION.registrationNumber}</span>
           <span>|</span>
           <span>{BUSINESS_INFORMATION.mailOrderSales}</span>
+          <span className="block md:hidden">|</span>
         </p>
         <div className="flex flex-col gap-2 md:flex-row">
           <p className="flex gap-2">
@@ -80,8 +82,12 @@ const Footer = () => {
             <span>{BUSINESS_INFORMATION.email}</span>
             <span>|</span>
           </p>
-          <span>{BUSINESS_INFORMATION.copyright}</span>
+          <p className="flex gap-2">
+            <span>{BUSINESS_INFORMATION.call}</span>
+            <span className="block md:hidden">|</span>
+          </p>
         </div>
+        <span>{BUSINESS_INFORMATION.copyright}</span>
       </div>
 
       <div className="mb-8 flex items-center justify-between">
