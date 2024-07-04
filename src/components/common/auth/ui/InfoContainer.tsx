@@ -1,6 +1,6 @@
 import { useMutation } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import axios from '../../../../utils/axios';
 import AlertModal from '../../../ui/alert/AlertModal';
 import Input from '../../../ui/input/Input';
@@ -29,8 +29,10 @@ const InfoContainer = ({ isSocial }: { isSocial: boolean }) => {
   const [error, setError] = useState<unknown>(null);
   const [errorMessage, setErrorMessage] = useState('');
   const [successModalOpen, setSuccessModalOpen] = useState(false);
+  const [searchParams] = useSearchParams();
+  const redirect = searchParams.get('redirect');
 
-  const postUserInfo = useMutation({
+  const patchEmailUserInfo = useMutation({
     mutationFn: async () => {
       const res = await axios.patch(`/user/additional-info`, {
         email: email,
@@ -53,7 +55,7 @@ const InfoContainer = ({ isSocial }: { isSocial: boolean }) => {
     },
   });
 
-  const patchUserInfo = useMutation({
+  const patchSocialUserInfo = useMutation({
     mutationFn: async () => {
       const res = await axios.patch(
         '/user',
@@ -87,7 +89,7 @@ const InfoContainer = ({ isSocial }: { isSocial: boolean }) => {
 
   const handleGradeChange = (grade: string) => {
     setValue({ ...value, grade });
-  }
+  };
 
   const handleOnSubmit = (e: any) => {
     e.preventDefault();
@@ -102,7 +104,7 @@ const InfoContainer = ({ isSocial }: { isSocial: boolean }) => {
       setError(true);
       setErrorMessage('모든 항목을 입력해주세요.');
       return;
-    // eslint-disable-next-line no-dupe-else-if
+      // eslint-disable-next-line no-dupe-else-if
     } else if (!value.grade) {
       setError(true);
       setErrorMessage('학년을 선택해주세요.');
@@ -110,9 +112,9 @@ const InfoContainer = ({ isSocial }: { isSocial: boolean }) => {
     }
 
     if (isSocial) {
-      patchUserInfo.mutate();
+      patchSocialUserInfo.mutate();
     } else {
-      postUserInfo.mutate();
+      patchEmailUserInfo.mutate();
     }
   };
 
@@ -162,7 +164,11 @@ const InfoContainer = ({ isSocial }: { isSocial: boolean }) => {
             />
           </div>
           <div>
-            <GradeDropdown value={value.grade} setValue={handleGradeChange} type='SIGNUP'/>
+            <GradeDropdown
+              value={value.grade}
+              setValue={handleGradeChange}
+              type="SIGNUP"
+            />
           </div>
           <div>
             <Input
@@ -218,7 +224,7 @@ const InfoContainer = ({ isSocial }: { isSocial: boolean }) => {
       {successModalOpen && (
         <AlertModal
           onConfirm={() => {
-            navigate('/login');
+            navigate(redirect ? `/login?redirect=${redirect}` : '/login');
           }}
           title="회원가입 완료"
           showCancel={false}
