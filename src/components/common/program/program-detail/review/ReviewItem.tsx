@@ -30,9 +30,6 @@ const ReviewItem = ({ review }: ReviewItemProps) => {
       <div className="flex flex-col gap-1">
         <div className="flex items-center gap-2 text-xs">
           <span className="text-primary">{makeMaskingName()}</span>
-          <span className="text-neutral-45">
-            {formatDateString(review.createdDate)}
-          </span>
         </div>
         <p>{review.content}</p>
       </div>
