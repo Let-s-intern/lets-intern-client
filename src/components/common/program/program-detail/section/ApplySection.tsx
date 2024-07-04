@@ -154,7 +154,6 @@ const ApplySection = ({
             priceId: priceId,
             couponId: payInfo.couponId,
           },
-          motivate: '신청동기',
           question: userInfo.question,
           contactEmail: userInfo.contactEmail,
         },
