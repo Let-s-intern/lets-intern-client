@@ -1,22 +1,21 @@
-import { useSearchParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 
-import axios from '../../../utils/axios';
-import TableHead from '../../../components/admin/review/reviews/table-content/TableHead';
+import { useState } from 'react';
 import TableBody from '../../../components/admin/review/reviews/table-content/TableBody';
-import Table from '../../../components/admin/ui/table/regacy/Table';
+import TableHead from '../../../components/admin/review/reviews/table-content/TableHead';
 import AdminPagination from '../../../components/admin/ui/pagination/AdminPagination';
+import Table from '../../../components/admin/ui/table/regacy/Table';
+import axios from '../../../utils/axios';
 
 const Reviews = () => {
-  const [searchParams] = useSearchParams();
+  const [pageNum, setPageNum] = useState<number>(1);
   const sizePerPage = 10;
-  const currentPage = searchParams.get('page') || 1;
 
   const { data, isLoading, error } = useQuery({
-    queryKey: ['program', 'admin', { page: currentPage, size: sizePerPage }],
+    queryKey: ['program', 'admin', { page: pageNum, size: sizePerPage }],
     queryFn: async () => {
       const res = await axios.get('/program/admin', {
-        params: { page: currentPage, size: sizePerPage },
+        params: { page: pageNum, size: sizePerPage },
       });
       return res.data;
     },
@@ -59,7 +58,12 @@ const Reviews = () => {
               />
             </Table>
             {programList.length > 0 && (
-              <AdminPagination className="mt-4" maxPage={maxPage} />
+              <AdminPagination
+                className="mt-4"
+                maxPage={maxPage}
+                pageNum={pageNum}
+                setPageNum={setPageNum}
+              />
             )}
           </>
         )}
