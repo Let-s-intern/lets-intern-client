@@ -183,7 +183,7 @@ const ApplySection = ({
   };
 
   return (
-    <section className="sticky top-[7rem] w-[22rem] rounded-lg px-5 py-6 shadow-03">
+    <section className={`w-[22rem] rounded-lg px-5 py-6 shadow-03`}>
       {contentIndex === 0 && (
         <OverviewContent
           contentIndex={contentIndex}
