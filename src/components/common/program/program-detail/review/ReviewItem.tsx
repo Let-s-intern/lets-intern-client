@@ -4,15 +4,14 @@ import { ReviewType } from '../tab/tab-content/ReviewTabContent';
 
 interface ReviewItemProps {
   review: ReviewType;
-  programTitle: string;
 }
 
-const ReviewItem = ({ review, programTitle }: ReviewItemProps) => {
+const ReviewItem = ({ review }: ReviewItemProps) => {
   return (
     <li className="flex flex-col gap-2 rounded-md bg-neutral-0 bg-opacity-5 px-8 py-6">
       <div className="flex flex-col gap-1">
         <div className="flex items-center gap-2">
-          {/* <span className="text-0.875-medium">{programTitle}</span> */}
+          <span className="text-0.875-medium">{review.title}</span>
           <span className="text-0.75 text-primary">
             {makeMaskingName(review.name)}
           </span>
