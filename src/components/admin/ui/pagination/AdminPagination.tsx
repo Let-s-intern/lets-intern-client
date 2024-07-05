@@ -1,72 +1,64 @@
-import { useSearchParams } from 'react-router-dom';
-import { RiArrowLeftSLine, RiArrowRightSLine } from 'react-icons/ri';
 import clsx from 'clsx';
+import { RiArrowLeftSLine, RiArrowRightSLine } from 'react-icons/ri';
 
 interface AdminPaginationProps {
   maxPage: number;
   className?: string;
+  pageNum: number;
+  setPageNum: (pageNum: number) => void;
 }
 
-const AdminPagination = ({ maxPage, className }: AdminPaginationProps) => {
-  const [searchParams, setSearchParams] = useSearchParams();
-
-  const currentPage = Number(searchParams.get('page')) || 1;
-
+const AdminPagination = ({
+  maxPage,
+  className,
+  pageNum,
+  setPageNum,
+}: AdminPaginationProps) => {
   const offset = 2;
 
-  const isPageInStart = currentPage < offset + 1;
-  const isPageInEnd = currentPage > maxPage - offset;
+  const isPageInStart = pageNum < offset + 1;
+  const isPageInEnd = pageNum > maxPage - offset;
 
   const isSmallPageList = maxPage <= offset * 2 + 1;
 
-  const minOffset = isPageInStart ? offset + 1 - currentPage : 0;
-  const maxOffset = isPageInEnd ? offset + currentPage - maxPage : 0;
+  const minOffset = isPageInStart ? offset + 1 - pageNum : 0;
+  const maxOffset = isPageInEnd ? offset + pageNum - maxPage : 0;
 
   const pageList = [];
 
   for (let page = 1; page <= maxPage; page++) {
     if (
-      page >= currentPage - offset - maxOffset &&
-      page <= currentPage + offset + minOffset
+      page >= pageNum - offset - maxOffset &&
+      page <= pageNum + offset + minOffset
     ) {
       pageList.push(page);
     }
   }
 
   const handlePageButtonClick = (page: number) => {
-    const newSearchParams = new URLSearchParams(searchParams);
-    newSearchParams.set('page', `${page}`);
-    setSearchParams(newSearchParams);
+    setPageNum(page);
     window.scrollTo(0, 0);
   };
 
   const handleArrowLeftClick = () => {
-    if (currentPage <= 1) return;
-    const newSearchParams = new URLSearchParams(searchParams);
-    newSearchParams.set('page', `${currentPage - 1}`);
-    setSearchParams(newSearchParams);
+    if (pageNum <= 1) return;
+    setPageNum(pageNum - 1);
     window.scrollTo(0, 0);
   };
 
   const handleArrowRightClick = () => {
-    if (currentPage + 1 > maxPage) return;
-    const newSearchParams = new URLSearchParams(searchParams);
-    newSearchParams.set('page', `${currentPage + 1}`);
-    setSearchParams(newSearchParams);
+    if (pageNum + 1 > maxPage) return;
+    setPageNum(pageNum + 1);
     window.scrollTo(0, 0);
   };
 
   const handleFirstButtonClick = () => {
-    const newSearchParams = new URLSearchParams(searchParams);
-    newSearchParams.set('page', '1');
-    setSearchParams(newSearchParams);
+    setPageNum(1);
     window.scrollTo(0, 0);
   };
 
   const handleLastButtonClick = () => {
-    const newSearchParams = new URLSearchParams(searchParams);
-    newSearchParams.set('page', `${maxPage}`);
-    setSearchParams(newSearchParams);
+    setPageNum(maxPage);
     window.scrollTo(0, 0);
   };
 
@@ -85,12 +77,12 @@ const AdminPagination = ({ maxPage, className }: AdminPaginationProps) => {
           <RiArrowLeftSLine />
         </i>
       </span>
-      {!isSmallPageList && !isPageInStart && currentPage !== offset + 1 && (
+      {!isSmallPageList && !isPageInStart && pageNum !== offset + 1 && (
         <>
           <span className="cursor-pointer" onClick={handleFirstButtonClick}>
             1
           </span>
-          {currentPage !== offset + 2 && <span>...</span>}
+          {pageNum !== offset + 2 && <span>...</span>}
         </>
       )}
       <ul className="flex items-center gap-4">
@@ -98,9 +90,7 @@ const AdminPagination = ({ maxPage, className }: AdminPaginationProps) => {
           <li
             key={page}
             className={clsx('cursor-pointer', {
-              'font-medium text-indigo-600':
-                page === Number(searchParams.get('page')) ||
-                (searchParams.get('page') === null && page === 1),
+              'font-medium text-indigo-600': page === pageNum,
             })}
             onClick={() => handlePageButtonClick(page)}
           >
@@ -108,9 +98,9 @@ const AdminPagination = ({ maxPage, className }: AdminPaginationProps) => {
           </li>
         ))}
       </ul>
-      {!isSmallPageList && !isPageInEnd && currentPage !== maxPage - offset && (
+      {!isSmallPageList && !isPageInEnd && pageNum !== maxPage - offset && (
         <>
-          {currentPage !== maxPage - (offset + 1) && <span>...</span>}
+          {pageNum !== maxPage - (offset + 1) && <span>...</span>}
           <span className="cursor-pointer" onClick={handleLastButtonClick}>
             {maxPage}
           </span>
