@@ -1,28 +1,26 @@
-import { useEffect, useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
+import { useState } from 'react';
 
-import Table from '../../../components/admin/ui/table/regacy/Table';
-import TableHead from '../../../components/admin/program/programs/table-content/TableHead';
 import TableBody from '../../../components/admin/program/programs/table-content/TableBody';
+import TableHead from '../../../components/admin/program/programs/table-content/TableHead';
+import Table from '../../../components/admin/ui/table/regacy/Table';
 
+import ActionButton from '../../../components/admin/ui/button/ActionButton';
 import Header from '../../../components/admin/ui/header/Header';
 import Heading from '../../../components/admin/ui/heading/Heading';
-import ActionButton from '../../../components/admin/ui/button/ActionButton';
 import AdminPagination from '../../../components/admin/ui/pagination/AdminPagination';
 import axios from '../../../utils/axios';
 
 const Programs = () => {
-  const [searchParams] = useSearchParams();
+  const [pageNum, setPageNum] = useState<number>(1);
 
   const sizePerPage = 10;
-  const currentPage = searchParams.get('page') || 1;
 
   const { data, isLoading, error } = useQuery({
-    queryKey: ['program', 'admin', { page: currentPage, size: sizePerPage }],
+    queryKey: ['program', 'admin', { page: pageNum, size: sizePerPage }],
     queryFn: async () => {
       const res = await axios.get('/program/admin', {
-        params: { page: currentPage, size: sizePerPage },
+        params: { page: pageNum, size: sizePerPage },
       });
       return res.data;
     },
@@ -54,7 +52,11 @@ const Programs = () => {
             </Table>
             {programList.length > 0 && (
               <div className="mt-4">
-                <AdminPagination maxPage={maxPage} />
+                <AdminPagination
+                  maxPage={maxPage}
+                  pageNum={pageNum}
+                  setPageNum={setPageNum}
+                />
               </div>
             )}
           </>

@@ -1,35 +1,38 @@
+import { useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
 import { useParams, useSearchParams } from 'react-router-dom';
-import { useQuery } from '@tanstack/react-query';
 
-import axios from '../../../utils/axios';
-import Table from '../../../components/admin/ui/table/regacy/Table';
+import TableBody from '../../../components/admin/review/review-detail/table-content/TableBody';
 import TableHead from '../../../components/admin/review/review-detail/table-content/TableHead';
-import TableBody, {
-  DetailTableBodyProps,
-} from '../../../components/admin/review/review-detail/table-content/TableBody';
 import Heading from '../../../components/admin/ui/heading/Heading';
 import AdminPagination from '../../../components/admin/ui/pagination/AdminPagination';
+import Table from '../../../components/admin/ui/table/regacy/Table';
+import axios from '../../../utils/axios';
 
 const ReviewsDetail = () => {
   const params = useParams();
   const [searchParams] = useSearchParams();
 
-  const programType = searchParams.get('type') || '';
+  const programType = searchParams.get('type')?.toLowerCase() || '';
+  const programId = params.programId || '';
+  const [pageNum, setPageNum] = useState<number>(1);
 
   const { data, isLoading, error } = useQuery({
     queryKey: [
-      programType.toLowerCase(),
-      params.programId,
       'reviews',
+      programType,
+      programId,
       {
-        page: searchParams.get('page') || 1,
+        page: pageNum,
         size: 10,
       },
     ],
-    queryFn: async ({ queryKey }) => {
+    queryFn: async () => {
       const res = await axios.get(
-        `/${queryKey[0]}/${queryKey[1]}/${queryKey[2]}`,
+        `/${programType}/${params.programId}/reviews`,
+        {
+          params: { page: pageNum, size: 10 },
+        },
       );
       return res.data;
     },
@@ -71,7 +74,12 @@ const ReviewsDetail = () => {
               <TableBody reviewList={reviewList} programType={programType} />
             </Table>
             {reviewList.length > 0 && (
-              <AdminPagination className="mt-4" maxPage={maxPage} />
+              <AdminPagination
+                className="mt-4"
+                maxPage={maxPage}
+                pageNum={pageNum}
+                setPageNum={setPageNum}
+              />
             )}
           </>
         )}
