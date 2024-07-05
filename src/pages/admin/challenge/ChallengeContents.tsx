@@ -139,18 +139,18 @@ const ChallengeContents = () => {
               onSave={async (item) => {
                 if (item.rowStatus === TABLE_STATUS.INSERT) {
                   await createMutation.mutateAsync({
-                    title: item.title,
-                    link: item.link,
-                    type: item.type,
+                    title: item.title ?? '',
+                    link: item.link ?? '',
+                    type: item.type ?? 'ADDITIONAL',
                   });
                   refetch();
                   setInsertingContents(null);
                 } else if (item.rowStatus === TABLE_STATUS.SAVE) {
                   await updateMutation.mutateAsync({
                     id: item.id,
-                    title: item.title,
-                    link: item.link,
-                    type: item.type,
+                    title: item.title ?? '',
+                    link: item.link ?? '',
+                    type: item.type ?? 'ADDITIONAL',
                   });
                   refetch();
                 }
