@@ -5,8 +5,8 @@ import Heading from '../ui/Heading';
 import ProgramGridItem from './ProgramGridItem';
 
 const PROGRAM_SECTION = {
-  title: ['내 커리어 단계에 딱 맞는 프로그램'],
-  description: '원하는 단계가 없다면, 커리어 탐색부터!',
+  title: ['내 커리어 단계에 딱 맞는 프로그램을 찾아보세요'],
+  description: '취업준비가 처음이라면, 커리어 탐색부터 시작해보세요!',
 };
 
 const programList: IProgramGridItem[] = [
@@ -66,7 +66,7 @@ const programList: IProgramGridItem[] = [
 
 const ProgramSection = () => {
   return (
-    <section className="px-5 ">
+    <section className="px-5">
       <div className="flex flex-col gap-1">
         <Heading>
           {PROGRAM_SECTION.title.map((title) => (
