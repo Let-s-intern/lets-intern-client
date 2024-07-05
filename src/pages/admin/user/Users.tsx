@@ -1,6 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
 
 import Header from '../../../components/admin/ui/header/Header';
 import Heading from '../../../components/admin/ui/heading/Heading';
@@ -13,7 +12,7 @@ import { IUser } from '../../../interfaces/User.interface';
 import axios from '../../../utils/axios';
 
 const Users = () => {
-  const [searchParams] = useSearchParams();
+  const [pageNum, setPageNum] = useState<number>(1);
   const [searchValues, setSearchValues] = useState<{
     name: string;
     email: string;
@@ -25,7 +24,7 @@ const Users = () => {
   });
 
   const params = {
-    page: searchParams.get('page') || '1',
+    page: pageNum,
     size: 10,
     ...searchValues,
   };
@@ -65,7 +64,11 @@ const Users = () => {
               <TableBody userList={userList} />
             </Table>
             <div className="mt-4">
-              <AdminPagination maxPage={maxPage} />
+              <AdminPagination
+                maxPage={maxPage}
+                pageNum={pageNum}
+                setPageNum={setPageNum}
+              />
             </div>
           </>
         )}

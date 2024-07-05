@@ -1,20 +1,20 @@
 import { useEffect, useState } from 'react';
-import { useParams, useSearchParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 
-import axios from '../../../utils/axios';
+import ActionButton from '../../../components/admin/ui/button/ActionButton';
+import Heading from '../../../components/admin/ui/heading/Heading';
+import AdminPagination from '../../../components/admin/ui/pagination/AdminPagination';
 import Table from '../../../components/admin/ui/table/regacy/Table';
+import UserMemoModal from '../../../components/admin/user/user-memo/modal/UserMemoModal';
 import MemoTableBody from '../../../components/admin/user/user-memo/table-content/TableBody';
 import MemoTableHead from '../../../components/admin/user/user-memo/table-content/TableHead';
-import Heading from '../../../components/admin/ui/heading/Heading';
-import ActionButton from '../../../components/admin/ui/button/ActionButton';
-import UserMemoModal from '../../../components/admin/user/user-memo/modal/UserMemoModal';
-import AdminPagination from '../../../components/admin/ui/pagination/AdminPagination';
+import axios from '../../../utils/axios';
 
 import classes from './UserMemo.module.scss';
 
 const UserMemo = () => {
   const params = useParams();
-  const [searchParams] = useSearchParams();
+  const [pageNum, setPageNum] = useState<number>(1);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<unknown>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -28,9 +28,8 @@ const UserMemo = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const currentPage = searchParams.get('page');
       const reqParams = {
-        page: currentPage,
+        page: pageNum,
         size: sizePerPage,
       };
       try {
@@ -48,7 +47,7 @@ const UserMemo = () => {
       }
     };
     fetchData();
-  }, [searchParams, params.userId]);
+  }, [pageNum, params.userId]);
 
   const handleModalOpen = () => {
     setMemoId(-1);
@@ -134,7 +133,11 @@ const UserMemo = () => {
         </Table>
         {memoList.length > 0 && (
           <div className={classes.pagination}>
-            <AdminPagination maxPage={maxPage} />
+            <AdminPagination
+              maxPage={maxPage}
+              pageNum={pageNum}
+              setPageNum={setPageNum}
+            />
           </div>
         )}
         <UserMemoModal
