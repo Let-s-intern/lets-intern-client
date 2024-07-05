@@ -1,5 +1,4 @@
-import Heading from "../ui/Heading";
-
+import Heading from '../ui/Heading';
 
 const AdvantageSection = () => {
   const introList = [
@@ -19,16 +18,16 @@ const AdvantageSection = () => {
       imageAlt: '렛츠커리어 소개 3 이미지',
     },
     {
-      description: '선배, 실무자의 이야기를 직접 들을 수 있습니다.',
+      description: '커리어 선배, 실무자의 이야기를 직접 들을 수 있습니다.',
       imageSrc: '/images/home/intro4.png',
       imageAlt: '렛츠커리어 소개 4 이미지',
     },
   ];
 
   return (
-    <section className=' px-5 '>
-      <Heading>왜 렛츠커리어와 함께해야 할까요?</Heading>
-      <div className="mt-6 grid  grid-cols-1 flex-col gap-4 md:grid-cols-2">
+    <section className="px-5">
+      <Heading>렛츠커리어와 왜 함께해야 할까요?</Heading>
+      <div className="mt-6 grid grid-cols-1 flex-col gap-4 md:grid-cols-2">
         {introList.map((intro, index) => (
           <div key={index} className="w-full">
             <div className="w-full overflow-hidden rounded-xs">
