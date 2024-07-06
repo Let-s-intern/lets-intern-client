@@ -978,3 +978,42 @@ export type CreateReviewByLinkReq = {
 };
 
 export type CreateReviewByLinkProgramType = 'CHALLENGE' | 'LIVE' | 'VOD';
+
+/** GET /api/v1/live/{liveId}/mentor/{password} [어드민] 라이브 멘토 전달 내용 조회 */
+
+export const mentorNotificationSchema = z
+  .object({
+    liveMentorVo: z.object({
+      id: z.number().nullable().optional(),
+      title: z.string().nullable().optional(),
+      participationCount: z.number().nullable().optional(),
+      mentorName: z.string().nullable().optional(),
+      zoomLink: z.string().nullable().optional(),
+      zoomPassword: z.string().nullable().optional(),
+      place: z.string().nullable().optional(),
+      startDate: z.string().nullable().optional(),
+      endDate: z.string().nullable().optional(),
+    }),
+    questionList: z.array(z.string()).nullable().optional(),
+    motivateList: z.array(z.string()).nullable().optional(),
+    reviewList: z.array(z.string()).nullable().optional(),
+  })
+  .transform((data) => {
+    return {
+      ...data,
+      liveMentorVo: {
+        ...data.liveMentorVo,
+        startDate: data.liveMentorVo.startDate
+          ? dayjs(data.liveMentorVo.startDate)
+          : null,
+        endDate: data.liveMentorVo.endDate
+          ? dayjs(data.liveMentorVo.endDate)
+          : null,
+      },
+      questionList: data.questionList ?? [],
+      motivateList: data.motivateList ?? [],
+      reviewList: data.reviewList ?? [],
+    };
+  });
+
+export type MentorNotificationType = 'PREV' | 'REVIEW';

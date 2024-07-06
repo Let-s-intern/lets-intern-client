@@ -171,14 +171,24 @@ const Router = () => {
             /> */}
             </Route>
           </Route>
+
           {/* 비로그인 리뷰 작성 페이지 */}
           <Route
             path="write-review/challenge/:id"
             element={<WriteReviewChallenge />}
           />
+          <Route path="write-review/live/:id" element={<WriteReviewLive />} />
+
+          {/* 라이브 클래스 멘토 사전 전달 사항 */}
           <Route
-            path="write-review/live/:id"
-            element={<WriteReviewLive />}
+            path="live/:id/mentor/notification/before"
+            element={<MentorNotificationBefore />}
+          />
+
+          {/* 라이브 클래스 멘토 전달 후기 */}
+          <Route
+            path="live/:id/mentor/notification/after"
+            element={<MentorNotificationAfter />}
           />
         </Route>
         <Route path="/admin" element={<AdminLayout />}>
