@@ -102,6 +102,7 @@ const Router = () => {
             path="program/detail/:programId"
             element={<ProgramDetailRegacy />}
           />
+
           <Route path="program/:programId">
             {/* /program/:programId/application/:applicationId/review/create */}
             <Route
@@ -123,6 +124,7 @@ const Router = () => {
               <Route path="after" element={<MentorNotificationAfter />} />
             </Route>
           </Route>
+
           {/* ---Regacy--- */}
           <Route path="mypage" element={<MyPage />}>
             {/* /mypage/application */}

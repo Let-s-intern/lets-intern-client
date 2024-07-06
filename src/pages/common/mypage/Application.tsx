@@ -1,6 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
 
-import { useState } from 'react';
 import ApplySection from '../../../components/common/mypage/application/section/ApplySection';
 import CompleteSection from '../../../components/common/mypage/application/section/CompleteSection';
 import ParticipateSection from '../../../components/common/mypage/application/section/ParticipateSection';
@@ -8,41 +7,39 @@ import axios from '../../../utils/axios';
 
 export interface ApplicationType {
   id: number;
-  programThumbnail: string;
   status: string;
-  paymentId: number | null;
+  programId: number;
+  programType: string;
+  programStatusType: string;
   programTitle: string;
   programShortDesc: string;
+  programThumbnail: string;
   programStartDate: string;
   programEndDate: string;
-  programType: string;
-  programId: number;
   reviewId: number | null;
+  paymentId: number | null;
 }
 
 const Application = () => {
-  const [applicationList, setApplicationList] = useState<ApplicationType[]>([]);
-
   const { data, isLoading, refetch } = useQuery({
     queryKey: ['user', 'applications'],
     queryFn: async () => {
       const res = await axios.get('/user/applications');
-      setApplicationList(res.data.data.applicationList);
-      return res.data;
+      return res.data.data as { applicationList: ApplicationType[] };
     },
   });
 
   const waitingApplicationList =
-    data?.data?.applicationList.filter(
-      (application: ApplicationType) => application.status === 'WAITING',
+    data?.applicationList?.filter(
+      (application) => application.status === 'WAITING',
     ) || [];
   const inProgressApplicationList =
-    data?.data?.applicationList.filter(
-      (application: ApplicationType) => application.status === 'IN_PROGRESS',
+    data?.applicationList?.filter(
+      (application) => application.status === 'IN_PROGRESS',
     ) || [];
   const completedApplicationList =
-    data?.data?.applicationList.filter(
-      (application: ApplicationType) => application.status === 'DONE',
+    data?.applicationList?.filter(
+      (application) => application.status === 'DONE',
     ) || [];
 
   if (isLoading) return <></>;

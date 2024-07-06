@@ -16,16 +16,9 @@ const ReviewCreate = ({ isEdit }: { isEdit: boolean }) => {
   const [starScore, setStarScore] = useState<number>(0);
   const [tenScore, setTenScore] = useState<number | null>(null);
   const [content, setContent] = useState<string>('');
-  const [isYes, setIsYes] = useState<boolean | null>(null);
-  const [answer, setAnswer] = useState<{
-    yes: string;
-    no: string;
-    low: string;
-  }>({
-    yes: '',
-    no: '',
-    low: '',
-  });
+  const [hasRecommendationExperience, setHasRecommendationExperience] =
+    useState<boolean | null>(null);
+  const [npsAns, setNpsAns] = useState('');
 
   const reviewId = Number(params.reviewId);
   const applicationId = Number(searchParams.get('application'));
@@ -46,18 +39,8 @@ const ReviewCreate = ({ isEdit }: { isEdit: boolean }) => {
     if (isEdit && reviewDetailData) {
       setStarScore(reviewDetailData.score);
       setTenScore(reviewDetailData.nps);
-      setIsYes(reviewDetailData.npsCheckAns);
-      setAnswer({
-        yes:
-          reviewDetailData.score > 6 && reviewDetailData.npsCheckAns
-            ? reviewDetailData.npsAns
-            : '',
-        no:
-          reviewDetailData.score > 6 && !reviewDetailData.npsCheckAns
-            ? reviewDetailData.npsAns
-            : '',
-        low: reviewDetailData.score <= 6 ? reviewDetailData.npsAns : '',
-      });
+      setHasRecommendationExperience(reviewDetailData.npsCheckAns);
+      setNpsAns(reviewDetailData.npsAns ?? '');
       setContent(reviewDetailData.content);
     }
   }, [reviewDetailData, isEdit]);
@@ -77,13 +60,11 @@ const ReviewCreate = ({ isEdit }: { isEdit: boolean }) => {
         '/review',
         {
           programId: programId,
-          npsAns:
-            tenScore && tenScore <= 6
-              ? answer.low
-              : isYes
-                ? answer.yes
-                : answer.no,
-          npsCheckAns: isYes === null ? false : isYes,
+          npsAns,
+          npsCheckAns:
+            hasRecommendationExperience === null
+              ? false
+              : hasRecommendationExperience,
           nps: tenScore,
           content: content,
           score: starScore,
@@ -104,13 +85,11 @@ const ReviewCreate = ({ isEdit }: { isEdit: boolean }) => {
   const editReview = useMutation({
     mutationFn: async () => {
       const res = await axios.patch(`/review/${reviewId}`, {
-        npsAns:
-          tenScore !== null && tenScore <= 6
-            ? answer.low
-            : isYes
-              ? answer.yes
-              : answer.no,
-        npsCheckAns: isYes === null ? false : isYes,
+        npsAns,
+        npsCheckAns:
+          hasRecommendationExperience === null
+            ? false
+            : hasRecommendationExperience,
         nps: tenScore,
         content: content,
         score: starScore,
@@ -124,13 +103,7 @@ const ReviewCreate = ({ isEdit }: { isEdit: boolean }) => {
 
   const handleConfirm = () => {
     if (isEdit) {
-      if (
-        answer === null ||
-        (answer.low === '' && answer.no === '' && answer.yes === '') ||
-        content === '' ||
-        starScore === 0 ||
-        tenScore === null
-      ) {
+      if (!npsAns || content === '' || starScore === 0 || tenScore === null) {
         alert('모든 항목을 입력해주세요.');
         return;
       }
@@ -160,23 +133,17 @@ const ReviewCreate = ({ isEdit }: { isEdit: boolean }) => {
           programTitle={programTitle}
           tenScore={tenScore}
           setTenScore={setTenScore}
-          isYes={isYes}
-          setIsYes={setIsYes}
-          answer={answer}
-          setAnswer={setAnswer}
+          hasRecommendationExperience={hasRecommendationExperience}
+          setHasRecommendationExperience={setHasRecommendationExperience}
+          npsAns={npsAns}
+          setNpsAns={setNpsAns}
         />
         <TextAreaSection content={content} setContent={setContent} />
         <ConfirmSection
           isEdit={isEdit}
           onConfirm={handleConfirm}
           isDisabled={
-            starScore === 0 ||
-            tenScore === null ||
-            tenScore === 0 ||
-            (tenScore <= 6 && answer.low === '') ||
-            (tenScore > 6 && isYes === null) ||
-            (isYes === true && answer.yes === '') ||
-            (isYes === false && answer.no === '')
+            starScore === 0 || tenScore === null || tenScore === 0 || !npsAns
           }
         />
       </main>
