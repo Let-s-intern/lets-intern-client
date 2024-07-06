@@ -2,10 +2,10 @@ import { useQuery } from '@tanstack/react-query';
 import { createContext, useContext } from 'react';
 import { useParams } from 'react-router-dom';
 import { z } from 'zod';
-import { getChallengeId, missionAdmin } from '../schema';
+import { getChallengeIdSchema, missionAdmin } from '../schema';
 import axios from '../utils/axios';
 
-type CurrentChallenge = z.infer<typeof getChallengeId> & { id: number };
+type CurrentChallenge = z.infer<typeof getChallengeIdSchema> & { id: number };
 type MissionList = z.infer<typeof missionAdmin>;
 
 const currentChallengeContext = createContext<{
@@ -33,7 +33,7 @@ export const CurrentAdminChallengeProvider = ({
       }
       const res = await axios.get(`/challenge/${params.programId}`);
       return {
-        ...getChallengeId.parse(res.data.data),
+        ...getChallengeIdSchema.parse(res.data.data),
         id: Number(params.programId),
       };
     },

@@ -89,7 +89,7 @@ const missionStatusType = z.union([
 ]);
 
 /** GET /api/v1/challenge/{id} */
-export const getChallengeId = z
+export const getChallengeIdSchema = z
   .object({
     title: z.string().nullable().optional(),
     shortDesc: z.string().nullable().optional(),
@@ -143,6 +143,61 @@ export const getChallengeId = z
         ...price,
         deadline: price.deadline ? dayjs(price.deadline) : null,
       })),
+    };
+  });
+
+/** GET /api/v1/live/{id} 라이브 상세 조회 */
+export const getLiveIdSchema = z
+  .object({
+    title: z.string().nullable().optional(),
+    shortDesc: z.string().nullable().optional(),
+    desc: z.string().nullable().optional(),
+    criticalNotice: z.string().nullable().optional(),
+    participationCount: z.number().nullable().optional(),
+    thumbnail: z.string().nullable().optional(),
+    mentorName: z.string().nullable().optional(),
+    mentorPassword: z.string().nullable().optional(),
+    job: z.string().nullable().optional(),
+    place: z.string().nullable().optional(),
+    startDate: z.string().nullable().optional(),
+    endDate: z.string().nullable().optional(),
+    beginning: z.string().nullable().optional(),
+    deadline: z.string().nullable().optional(),
+    progressType: z.string().nullable().optional(),
+    classificationInfo: z.array(
+      z.object({
+        programClassification: programClassification.nullable().optional(),
+      }),
+    ),
+    priceInfo: z.object({
+      priceId: z.number(),
+      price: z.number().nullable().optional(),
+      discount: z.number().nullable().optional(),
+      accountNumber: z.string().nullable().optional(),
+      deadline: z.string().nullable().optional(),
+      accountType: accountType.nullable().optional(),
+      livePriceType: challengeParticipationType.nullable().optional(),
+    }),
+    faqInfo: z.array(
+      z.object({
+        id: z.number(),
+        question: z.string().nullable().optional(),
+        answer: z.string().nullable().optional(),
+        faqProgramType: faqProgramType.nullable().optional(),
+      }),
+    ),
+  })
+  .transform((data) => {
+    return {
+      ...data,
+      startDate: data.startDate ? dayjs(data.startDate) : null,
+      endDate: data.endDate ? dayjs(data.endDate) : null,
+      beginning: data.beginning ? dayjs(data.beginning) : null,
+      deadline: data.deadline ? dayjs(data.deadline) : null,
+      priceInfo: {
+        ...data.priceInfo,
+        deadline: data.priceInfo.deadline ? dayjs(data.priceInfo.deadline) : null,
+      },
     };
   });
 
@@ -907,3 +962,15 @@ export const liveApplicationsSchema = z
 export type LiveApplication = z.infer<
   typeof liveApplicationsSchema
 >['applicationList'][number];
+
+/** POST /api/v1/review/{id} */
+export type CreateReviewByLinkReq = {
+  programId: number;
+  npsAns: string;
+  npsCheckAns: boolean;
+  nps: number;
+  content: string;
+  score: number;
+};
+
+export type CreateReviewByLinkProgramType = 'CHALLENGE' | 'LIVE' | 'VOD';
