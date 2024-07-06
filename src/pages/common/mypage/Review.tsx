@@ -7,13 +7,6 @@ import axios from '../../../utils/axios';
 import { ApplicationType } from './Application';
 
 const Review = () => {
-  // const [waitingApplicationList, setWaitingApplicationList] = useState<
-  //   ApplicationType[]
-  // >([]);
-  // const [doneApplicationList, setDoneApplicationList] = useState<
-  //   ApplicationType[]
-  // >([]);
-
   const { data } = useQuery({
     queryKey: ['user', 'applications'],
     queryFn: async () => {

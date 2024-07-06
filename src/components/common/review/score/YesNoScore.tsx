@@ -1,17 +1,21 @@
 import clsx from 'clsx';
-import { useState } from 'react';
 
 interface YesNoScoreProps {
-  isYes: boolean | null;
-  setIsYes: (isYes: boolean | null) => void;
+  hasRecommendationExperience: boolean | null;
+  setHasRecommendationExperience: (
+    hasRecommendationExperience: boolean | null,
+  ) => void;
 }
 
-const YesNoScore = ({ isYes, setIsYes }: YesNoScoreProps) => {
+const YesNoScore = ({
+  hasRecommendationExperience,
+  setHasRecommendationExperience,
+}: YesNoScoreProps) => {
   const handleYesOrNoClick = (isYesValue: boolean) => {
-    if (isYes === isYesValue) {
-      setIsYes(null);
+    if (hasRecommendationExperience === isYesValue) {
+      setHasRecommendationExperience(null);
     } else {
-      setIsYes(isYesValue);
+      setHasRecommendationExperience(isYesValue);
     }
   };
 
@@ -21,9 +25,11 @@ const YesNoScore = ({ isYes, setIsYes }: YesNoScoreProps) => {
         className={clsx(
           'w-full rounded-md border-2 px-5 py-2 font-medium hover:border-primary hover:bg-primary hover:text-neutral-100',
           {
-            'border-primary bg-primary text-neutral-100': isYes === true,
+            'border-primary bg-primary text-neutral-100':
+              hasRecommendationExperience === true,
             'border-primary-xlight bg-white text-primary-dark':
-              isYes === false || isYes === null,
+              hasRecommendationExperience === false ||
+              hasRecommendationExperience === null,
           },
         )}
         onClick={() => handleYesOrNoClick(true)}
@@ -34,9 +40,11 @@ const YesNoScore = ({ isYes, setIsYes }: YesNoScoreProps) => {
         className={clsx(
           'w-full rounded-md border-2 px-5 py-2 font-medium hover:border-primary hover:bg-primary hover:text-neutral-100',
           {
-            'border-primary bg-primary text-neutral-100': isYes === false,
+            'border-primary bg-primary text-neutral-100':
+              hasRecommendationExperience === false,
             'border-primary-xlight bg-white text-primary-dark':
-              isYes === true || isYes === null,
+              hasRecommendationExperience === true ||
+              hasRecommendationExperience === null,
           },
         )}
         onClick={() => handleYesOrNoClick(false)}

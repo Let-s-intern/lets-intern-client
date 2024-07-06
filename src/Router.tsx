@@ -1,75 +1,77 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 
-import About from './pages/common/about/About';
-import Programs from './pages/common/program/Programs';
-import ProgramDetailRegacy from './pages/common/program/regacy/ProgramDetailRegacy';
-import Login from './pages/common/auth/Login';
-import MyPage from './pages/common/mypage/MyPage';
-import SignUp from './pages/common/auth/SignUp';
-import FindPassword from './pages/common/auth/FindPassword';
-import Layout from './components/common/ui/layout/Layout';
-import AdminLayout from './components/admin/ui/layout/AdminLayout';
-import ReviewDetail from './pages/common/review/ReviewDetail';
-import ProgramEdit from './pages/admin/program/ProgramEdit';
-import AdminReviews from './pages/admin/review/Reviews';
-import AdminReviewsDetail from './pages/admin/review/ReviewsDetail';
-import Users from './pages/admin/user/Users';
-import UserDetail from './pages/admin/user/UserDetail';
-import UserMemo from './pages/admin/user/UserMemo';
-import UserCreate from './pages/admin/user/UserCreate';
-import UserEdit from './pages/admin/user/UserEdit';
-import ReviewCreateRegacy from './pages/common/review/regacy/ReviewCreateRegacy';
-import AttendCheck from './pages/admin/program/AttendCheck';
-import ScrollToTop from './components/ui/scroll-to-top/ScrollToTop';
-import AdminPrograms from './pages/admin/program/Programs';
-import ProgramUsers from './pages/admin/program/ProgramUsers';
 import ChallengeOperationAdminLayout from './components/admin/challenge/ui/ChallengeOperationAdminLayout';
-import ChallengeOperationHome from './pages/admin/challenge/ChallengeOperationHome';
-import ChallengeContents from './pages/admin/challenge/ChallengeContents';
-import ChallengeDashboard from './pages/common/challenge/ChallengeDashboard';
+import AdminLayout from './components/admin/ui/layout/AdminLayout';
 import ChallengeLayout from './components/common/challenge/ui/layout/ChallengeLayout';
-import MyChallengeDashboard from './pages/common/challenge/MyChallengeDashboard';
-import MentorNotificationBefore from './pages/common/mentor/MentorNotificationBefore';
-import MentorNotificationAfter from './pages/common/mentor/MentorNotificationAfter';
-import Coupons from './pages/admin/coupon/Coupons';
-import CouponCreate from './pages/admin/coupon/CouponCreate';
-import CouponEdit from './pages/admin/coupon/CouponEdit';
-import MainBanners from './pages/admin/banner/main-banner/MainBanners';
-import TopBarBanners from './pages/admin/banner/top-bar-banner/TopBarBanners';
-import PopUpBanners from './pages/admin/banner/pop-up-banner/PopUpBanners';
-import ProgramBanners from './pages/admin/banner/program-banner/ProgramBanners';
-import OnlineContents from './pages/admin/online-contents/OnlineContents';
-import Reminders from './pages/admin/reminder/Reminders';
-import RemindersChallenge from './pages/admin/reminder/RemindersChallenge';
-import RemindersBootcamp from './pages/admin/reminder/RemindersBootcamp';
-import RemindersLetsChat from './pages/admin/reminder/RemindersLetsChat';
+import Layout from './components/common/ui/layout/Layout';
+import ScrollToTop from './components/ui/scroll-to-top/ScrollToTop';
+import { CurrentAdminChallengeProvider } from './context/CurrentAdminChallengeProvider';
+import { CurrentChallengeProvider } from './context/CurrentChallengeProvider';
 import MainBannerCreate from './pages/admin/banner/main-banner/MainBannerCreate';
 import MainBannerEdit from './pages/admin/banner/main-banner/MainBannerEdit';
-import TopBarBannerCreate from './pages/admin/banner/top-bar-banner/TopBarBannerCreate';
-import TopBarBannerEdit from './pages/admin/banner/top-bar-banner/TopBarBannerEdit';
-import ProgramBannerCreate from './pages/admin/banner/program-banner/ProgramBannerCreate';
-import ProgramBannerEdit from './pages/admin/banner/program-banner/ProgramBannerEdit';
+import MainBanners from './pages/admin/banner/main-banner/MainBanners';
 import PopUpBannerCreate from './pages/admin/banner/pop-up-banner/PopUpBannerCreate';
 import PopUpBannerEdit from './pages/admin/banner/pop-up-banner/PopUpBannerEdit';
+import PopUpBanners from './pages/admin/banner/pop-up-banner/PopUpBanners';
+import ProgramBannerCreate from './pages/admin/banner/program-banner/ProgramBannerCreate';
+import ProgramBannerEdit from './pages/admin/banner/program-banner/ProgramBannerEdit';
+import ProgramBanners from './pages/admin/banner/program-banner/ProgramBanners';
+import TopBarBannerCreate from './pages/admin/banner/top-bar-banner/TopBarBannerCreate';
+import TopBarBannerEdit from './pages/admin/banner/top-bar-banner/TopBarBannerEdit';
+import TopBarBanners from './pages/admin/banner/top-bar-banner/TopBarBanners';
+import ChallengeContents from './pages/admin/challenge/ChallengeContents';
+import ChallengeMissionManagement from './pages/admin/challenge/ChallengeMissionManagement';
+import ChallengeOperationAttendances from './pages/admin/challenge/ChallengeOperationAttendances';
+import ChallengeOperationHome from './pages/admin/challenge/ChallengeOperationHome';
+import ChallengeOperationOnboarding from './pages/admin/challenge/ChallengeOperationOnboarding';
+import ChallengeOperationParticipants from './pages/admin/challenge/ChallengeOperationParticipants';
+import ChallengeOperationPayback from './pages/admin/challenge/ChallengeOperationPayback';
+import ChallengeOperationRegisterMission from './pages/admin/challenge/ChallengeOperationRegisterMission';
+import CouponCreate from './pages/admin/coupon/CouponCreate';
+import CouponEdit from './pages/admin/coupon/CouponEdit';
+import Coupons from './pages/admin/coupon/Coupons';
+import OnlineContents from './pages/admin/online-contents/OnlineContents';
 import OnlineContentsCreate from './pages/admin/online-contents/OnlineContentsCreate';
 import OnlineContentsEdit from './pages/admin/online-contents/OnlineContentsEdit';
-import Maintenance from './pages/maintenance/Maintenance';
-import Privacy from './pages/common/mypage/Privacy';
-import Application from './pages/common/mypage/Application';
-import Review from './pages/common/mypage/Review';
-import ReviewCreate from './pages/common/review/ReviewCreate';
-import ChallengeMissionManagement from './pages/admin/challenge/ChallengeMissionManagement';
-import ProgramDetail from './pages/common/program/ProgramDetail';
+import AttendCheck from './pages/admin/program/AttendCheck';
 import ProgramCreate from './pages/admin/program/ProgramCreate';
-import Home from './pages/common/home/Home';
-import ChallengeOperationOnboarding from './pages/admin/challenge/ChallengeOperationOnboarding';
-import ChallengeOperationRegisterMission from './pages/admin/challenge/ChallengeOperationRegisterMission';
-import { CurrentAdminChallengeProvider } from './context/CurrentAdminChallengeProvider';
-import ChallengeOperationAttendances from './pages/admin/challenge/ChallengeOperationAttendances';
-import ChallengeOperationPayback from './pages/admin/challenge/ChallengeOperationPayback';
-import ChallengeOperationParticipants from './pages/admin/challenge/ChallengeOperationParticipants';
-import { CurrentChallengeProvider } from './context/CurrentChallengeProvider';
+import ProgramEdit from './pages/admin/program/ProgramEdit';
+import AdminPrograms from './pages/admin/program/Programs';
+import ProgramUsers from './pages/admin/program/ProgramUsers';
+import Reminders from './pages/admin/reminder/Reminders';
+import RemindersBootcamp from './pages/admin/reminder/RemindersBootcamp';
+import RemindersChallenge from './pages/admin/reminder/RemindersChallenge';
+import RemindersLetsChat from './pages/admin/reminder/RemindersLetsChat';
+import AdminReviews from './pages/admin/review/Reviews';
+import AdminReviewsDetail from './pages/admin/review/ReviewsDetail';
+import UserCreate from './pages/admin/user/UserCreate';
+import UserDetail from './pages/admin/user/UserDetail';
+import UserEdit from './pages/admin/user/UserEdit';
+import UserMemo from './pages/admin/user/UserMemo';
+import Users from './pages/admin/user/Users';
+import About from './pages/common/about/About';
+import FindPassword from './pages/common/auth/FindPassword';
+import Login from './pages/common/auth/Login';
+import SignUp from './pages/common/auth/SignUp';
+import ChallengeDashboard from './pages/common/challenge/ChallengeDashboard';
 import ChallengeUserInfo from './pages/common/challenge/ChallengeUserInfo';
+import MyChallengeDashboard from './pages/common/challenge/MyChallengeDashboard';
+import Home from './pages/common/home/Home';
+import MentorNotificationAfter from './pages/common/mentor/MentorNotificationAfter';
+import MentorNotificationBefore from './pages/common/mentor/MentorNotificationBefore';
+import Application from './pages/common/mypage/Application';
+import MyPage from './pages/common/mypage/MyPage';
+import Privacy from './pages/common/mypage/Privacy';
+import Review from './pages/common/mypage/Review';
+import ProgramDetail from './pages/common/program/ProgramDetail';
+import Programs from './pages/common/program/Programs';
+import ProgramDetailRegacy from './pages/common/program/regacy/ProgramDetailRegacy';
+import ReviewCreateRegacy from './pages/common/review/regacy/ReviewCreateRegacy';
+import ReviewCreate from './pages/common/review/ReviewCreate';
+import ReviewDetail from './pages/common/review/ReviewDetail';
+import Maintenance from './pages/maintenance/Maintenance';
+import WriteReviewChallenge from './pages/WriteReviewChallenge';
+import WriteReviewLive from './pages/WriteReviewLive';
 
 const Router = () => {
   return (
@@ -101,6 +103,7 @@ const Router = () => {
             path="program/detail/:programId"
             element={<ProgramDetailRegacy />}
           />
+
           <Route path="program/:programId">
             {/* /program/:programId/application/:applicationId/review/create */}
             <Route
@@ -122,6 +125,7 @@ const Router = () => {
               <Route path="after" element={<MentorNotificationAfter />} />
             </Route>
           </Route>
+
           {/* ---Regacy--- */}
           <Route path="mypage" element={<MyPage />}>
             {/* /mypage/application */}
@@ -167,6 +171,15 @@ const Router = () => {
             /> */}
             </Route>
           </Route>
+          {/* 비로그인 리뷰 작성 페이지 */}
+          <Route
+            path="write-review/challenge/:id"
+            element={<WriteReviewChallenge />}
+          />
+          <Route
+            path="write-review/live/:id"
+            element={<WriteReviewLive />}
+          />
         </Route>
         <Route path="/admin" element={<AdminLayout />}>
           {/* /admin */}

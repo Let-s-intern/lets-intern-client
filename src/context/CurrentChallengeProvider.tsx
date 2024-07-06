@@ -6,7 +6,7 @@ import {
   challengeSchedule,
   DailyMission,
   dailyMissionSchema,
-  getChallengeId,
+  getChallengeIdSchema,
   MyChallengeMissionByType,
   myChallengeMissionsByType,
   MyDailyMission,
@@ -16,7 +16,7 @@ import {
 import useAuthStore from '../store/useAuthStore';
 import axios from '../utils/axios';
 
-type CurrentChallenge = z.infer<typeof getChallengeId> & { id: number };
+type CurrentChallenge = z.infer<typeof getChallengeIdSchema> & { id: number };
 
 const emptySchedules: Schedule[] = [];
 
@@ -55,7 +55,7 @@ export const CurrentChallengeProvider = ({
       }
       const res = await axios.get(`/challenge/${params.programId}`);
       return {
-        ...getChallengeId.parse(res.data.data),
+        ...getChallengeIdSchema.parse(res.data.data),
         id: Number(params.programId),
       };
     },
