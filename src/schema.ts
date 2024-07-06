@@ -89,7 +89,7 @@ const missionStatusType = z.union([
 ]);
 
 /** GET /api/v1/challenge/{id} */
-export const getChallengeId = z
+export const getChallengeIdSchema = z
   .object({
     title: z.string().nullable().optional(),
     shortDesc: z.string().nullable().optional(),
@@ -907,3 +907,15 @@ export const liveApplicationsSchema = z
 export type LiveApplication = z.infer<
   typeof liveApplicationsSchema
 >['applicationList'][number];
+
+/** POST /api/v1/review/{id} */
+export type CreateReviewByLinkReq = {
+  programId: number;
+  npsAns: string;
+  npsCheckAns: boolean;
+  nps: number;
+  content: string;
+  score: number;
+};
+
+export type CreateReviewByLinkProgramType = 'CHALLENGE' | 'LIVE' | 'VOD';

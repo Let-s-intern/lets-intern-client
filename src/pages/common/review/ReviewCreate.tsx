@@ -4,7 +4,7 @@ import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 
 import ConfirmSection from '../../../components/common/review/section/ConfirmSection';
 import StarScoreSection from '../../../components/common/review/section/StarScoreSection';
-import TenScoreSection from '../../../components/common/review/section/TenScroeSection';
+import TenScoreSection from '../../../components/common/review/section/TenScoreSection';
 import TextAreaSection from '../../../components/common/review/section/TextAreaSection';
 import axios from '../../../utils/axios';
 

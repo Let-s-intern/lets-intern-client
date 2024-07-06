@@ -1,15 +1,15 @@
 /* eslint-disable no-empty-pattern */
 import { expect, test } from 'vitest';
 import {
+  challengeGuides,
+  challengeNotices,
   challenges,
-  getChallengeId,
   getChallengeIdApplications,
   getChallengeIdApplicationsPayback,
-  missionAdmin,
+  getChallengeIdSchema,
   getContentsAdmin,
   getContentsAdminSimple,
-  challengeNotices,
-  challengeGuides,
+  missionAdmin,
 } from './schema';
 
 const requestPromise = (async () => {
@@ -592,7 +592,7 @@ testWithAuth('GET /api/v1/challenge/{id}', async ({ request }) => {
   });
 
   const data = await res.json();
-  getChallengeId.parse(data.data);
+  getChallengeIdSchema.parse(data.data);
 });
 
 // DELETE
