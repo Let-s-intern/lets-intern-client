@@ -38,7 +38,7 @@ const TopBanner = () => {
 
   return isShow ? (
     <section
-      className="band_banner bg-neutral-0 py-3 md:px-5"
+      className="band_banner cursor-pointer bg-neutral-0 py-3 md:px-5"
       style={{
         backgroundColor: data?.colorCode,
         color: data?.textColorCode,
@@ -52,7 +52,7 @@ const TopBanner = () => {
         </div>
         <img
           onClick={closeBanner}
-          className="absolute right-0 top-0 h-6 w-6 cursor-pointer"
+          className="absolute right-0 top-0 h-6 w-6"
           src="/icons/Close_MD.svg"
           alt="상단띠배너 닫기"
         />
