@@ -24,7 +24,6 @@ const DoneSection = ({ applicationList }: DoneSectionProps) => {
         <div className="grid grid-cols-2 gap-4 md:flex md:flex-col">
           {viewList.map((application) => (
             <ApplicationCard
-              key={application.id}
               grayscale
               application={application}
               hasReviewButton
