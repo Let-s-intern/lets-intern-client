@@ -63,6 +63,8 @@ const challengeParticipationType = z.union([
   z.literal('FREE'),
 ]);
 
+const livePriceType = z.union([z.literal('CHARGE'), z.literal('FREE')]);
+
 const faqProgramType = z.union([
   z.literal('CHALLENGE'),
   z.literal('LIVE'),
@@ -176,7 +178,7 @@ export const getLiveIdSchema = z
       accountNumber: z.string().nullable().optional(),
       deadline: z.string().nullable().optional(),
       accountType: accountType.nullable().optional(),
-      livePriceType: challengeParticipationType.nullable().optional(),
+      livePriceType: livePriceType.nullable().optional(),
     }),
     faqInfo: z.array(
       z.object({
@@ -196,7 +198,9 @@ export const getLiveIdSchema = z
       deadline: data.deadline ? dayjs(data.deadline) : null,
       priceInfo: {
         ...data.priceInfo,
-        deadline: data.priceInfo.deadline ? dayjs(data.priceInfo.deadline) : null,
+        deadline: data.priceInfo.deadline
+          ? dayjs(data.priceInfo.deadline)
+          : null,
       },
     };
   });

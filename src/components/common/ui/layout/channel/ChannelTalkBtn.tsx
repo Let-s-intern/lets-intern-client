@@ -1,8 +1,8 @@
+import { useMediaQuery } from '@mui/material';
 import clsx from 'clsx';
 import { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 
-import { useMediaQuery } from '@mui/material';
 import channelService from '../../../../../ChannelService';
 
 const programDetailPathRegex = /^\/program\/(live|challenge|vod)\/\d+$/; // /program/live/:programId
@@ -12,6 +12,7 @@ const ChannelTalkBtn = () => {
   const matches = useMediaQuery('(max-width: 991px)');
 
   const [isHidden, setIsHidden] = useState(false);
+  const [alert, setAlert] = useState(0);
 
   useEffect(() => {
     if (!window.ChannelIO) {
@@ -21,8 +22,13 @@ const ChannelTalkBtn = () => {
         customLauncherSelector: '#custom-channel-button',
         hideChannelButtonOnBoot: true,
       });
+      // 버튼 표시/숨김
       channelService.onShowMessenger(() => setIsHidden(true));
       channelService.onHideMessenger(() => setIsHidden(false));
+      // 채팅 알림 이벤트 설정
+      channelService.onBadgeChanged((unread, alert) => {
+        setAlert(alert);
+      });
     }
   }, []);
 
@@ -50,6 +56,11 @@ const ChannelTalkBtn = () => {
           alt="렛츠커리어 채널톡 로고"
         />
       </div>
+      {alert > 0 && (
+        <div className="text-0.75 absolute right-0 top-0 flex h-5 w-5 items-center justify-center rounded-full bg-system-error text-static-100 sm:h-6 sm:w-6">
+          {alert}
+        </div>
+      )}
     </button>
   );
 };
