@@ -1,8 +1,8 @@
+import { useMediaQuery } from '@mui/material';
 import clsx from 'clsx';
 import { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 
-import { useMediaQuery } from '@mui/material';
 import channelService from '../../../../../ChannelService';
 
 const programDetailPathRegex = /^\/program\/(live|challenge|vod)\/\d+$/; // /program/live/:programId

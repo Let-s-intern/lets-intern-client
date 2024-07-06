@@ -24,11 +24,16 @@ const TopBanner = () => {
     data && setIsShow(true);
   }, [data]);
 
-  const handleClick = () => {
+  const clickBanner = () => {
     const target = data?.link.includes(window.location.origin)
       ? '_self'
       : '_blank';
     window.open(data?.link, target);
+  };
+
+  const closeBanner = (event: React.MouseEvent) => {
+    event.stopPropagation();
+    setIsShow(false);
   };
 
   return isShow ? (
@@ -38,7 +43,7 @@ const TopBanner = () => {
         backgroundColor: data?.colorCode,
         color: data?.textColorCode,
       }}
-      onClick={handleClick}
+      onClick={clickBanner}
     >
       <div className="relative">
         <div className="flex flex-col items-center justify-center gap-1 text-center md:flex-row">
@@ -46,7 +51,7 @@ const TopBanner = () => {
           <span className="text-0.875-medium">{data?.contents}</span>
         </div>
         <img
-          onClick={() => setIsShow(false)}
+          onClick={closeBanner}
           className="absolute right-0 top-0 h-6 w-6 cursor-pointer"
           src="/icons/Close_MD.svg"
           alt="상단띠배너 닫기"
