@@ -35,7 +35,7 @@ const WriteReviewChallenge = () => {
     },
     onSuccess: () => {
       alert('리뷰가 작성되었습니다.');
-      navigate(-1);
+      navigate('/', { replace: true });
     },
   });
 
@@ -48,11 +48,15 @@ const WriteReviewChallenge = () => {
     retry: 1,
   });
 
+  const invalid =
+    starScore === 0 || tenScore === null || tenScore === 0 || !npsAns;
+
   const handleConfirm = () => {
-    if (!npsAns || content === '' || starScore === 0 || tenScore === null) {
+    if (invalid) {
       alert('모든 항목을 입력해주세요.');
       return;
     }
+
     createReviewMutation.mutate({
       programId: challengeId,
       npsAns,
@@ -86,9 +90,7 @@ const WriteReviewChallenge = () => {
       <ConfirmSection
         isEdit={false}
         onConfirm={handleConfirm}
-        isDisabled={
-          starScore === 0 || tenScore === null || tenScore === 0 || !npsAns
-        }
+        isDisabled={invalid}
       />
     </main>
   );

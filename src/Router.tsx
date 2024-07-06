@@ -71,6 +71,7 @@ import ReviewCreate from './pages/common/review/ReviewCreate';
 import ReviewDetail from './pages/common/review/ReviewDetail';
 import Maintenance from './pages/maintenance/Maintenance';
 import WriteReviewChallenge from './pages/WriteReviewChallenge';
+import WriteReviewLive from './pages/WriteReviewLive';
 
 const Router = () => {
   return (
@@ -174,6 +175,10 @@ const Router = () => {
           <Route
             path="write-review/challenge/:id"
             element={<WriteReviewChallenge />}
+          />
+          <Route
+            path="write-review/live/:id"
+            element={<WriteReviewLive />}
           />
         </Route>
         <Route path="/admin" element={<AdminLayout />}>
