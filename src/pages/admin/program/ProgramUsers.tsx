@@ -1,7 +1,7 @@
+import { Button } from '@mui/material';
 import { useQuery } from '@tanstack/react-query';
 import { useEffect, useMemo, useState } from 'react';
 import { useParams, useSearchParams } from 'react-router-dom';
-
 import BottomAction from '../../../components/admin/program/program-user/bottom-action/BottomAction';
 import UserTableBody from '../../../components/admin/program/program-user/table-content/TableBody';
 import TableHead, {
@@ -11,6 +11,7 @@ import Table from '../../../components/admin/ui/table/regacy/Table';
 import {
   ChallengeApplication,
   challengeApplicationsSchema,
+  getLiveIdSchema,
   LiveApplication,
   liveApplicationsSchema,
 } from '../../../schema';
@@ -19,6 +20,7 @@ import axios from '../../../utils/axios';
 const ProgramUsers = () => {
   const [searchParams] = useSearchParams();
   const params = useParams();
+  const programId = Number(params.programId);
 
   const [filter, setFilter] = useState<UserTableHeadProps['filter']>({
     name: null,
@@ -32,11 +34,9 @@ const ProgramUsers = () => {
     refetch: refetchChallengeApplications,
   } = useQuery({
     enabled: programType === 'CHALLENGE',
-    queryKey: ['challenge', params.programId, 'applications'],
+    queryKey: ['challenge', programId, 'applications'],
     queryFn: async () => {
-      const res = await axios.get(
-        `/challenge/${params.programId}/applications`,
-      );
+      const res = await axios.get(`/challenge/${programId}/applications`);
 
       return challengeApplicationsSchema.parse(res.data.data).applicationList;
     },
@@ -45,12 +45,26 @@ const ProgramUsers = () => {
   const { data: liveApplications = [], refetch: refetchLiveApplications } =
     useQuery({
       enabled: programType === 'LIVE',
-      queryKey: ['live', params.programId, 'applications'],
+      queryKey: ['live', programId, 'applications'],
       queryFn: async () => {
-        const res = await axios.get(`/live/${params.programId}/applications`);
+        const res = await axios.get(`/live/${programId}/applications`);
         return liveApplicationsSchema.parse(res.data.data).applicationList;
       },
     });
+
+  const { data: liveDetail } = useQuery({
+    enabled: programType === 'LIVE',
+    queryKey: ['live', programId],
+    queryFn: async () => {
+      const res = await axios.get(`/live/${programId}`);
+      return getLiveIdSchema.parse(res.data.data);
+    },
+  });
+
+  // TODO: 삭제
+  useEffect(() => {
+    console.log('liveDetail', liveDetail);
+  }, [liveDetail]);
 
   const applications = useMemo<
     (ChallengeApplication | LiveApplication)[]
@@ -88,7 +102,7 @@ const ProgramUsers = () => {
   }, [applications, filter.isFeeConfirmed, filter.name]);
 
   const { data: programTitleData } = useQuery({
-    queryKey: [programType.toLowerCase(), params.programId, 'title'],
+    queryKey: [programType.toLowerCase(), programId, 'title'],
     queryFn: async ({ queryKey }) => {
       const res = await axios.get(
         `/${queryKey[0]}/${queryKey[1]}/${queryKey[2]}`,
@@ -109,6 +123,42 @@ const ProgramUsers = () => {
     <div className="p-8">
       <div className="mb-4 flex items-center justify-between">
         <h1 className="text-1.5-bold">참여자 보기 - {programTitle}</h1>
+        <div className="flex items-center gap-2">
+          <Button
+            variant="outlined"
+            onClick={() => {
+              navigator.clipboard
+                .writeText(
+                  `${window.location.protocol}//${window.location.host}/live/${programId}/mentor/notification/before?code=${liveDetail?.mentorPassword}`,
+                )
+                .then(() => {
+                  alert('링크가 클립보드에 복사되었습니다.');
+                })
+                .catch(() => {
+                  alert('복사에 실패했습니다');
+                });
+            }}
+          >
+            클래스 전 안내사항
+          </Button>
+          <Button
+            variant="outlined"
+            onClick={() => {
+              navigator.clipboard
+                .writeText(
+                  `${window.location.protocol}//${window.location.host}/live/${programId}/mentor/notification/after?code=${liveDetail?.mentorPassword}`,
+                )
+                .then(() => {
+                  alert('링크가 클립보드에 복사되었습니다.');
+                })
+                .catch(() => {
+                  alert('복사에 실패했습니다');
+                });
+            }}
+          >
+            클래스 후 안내사항
+          </Button>
+        </div>
       </div>
       <main className="mb-20">
         <Table
