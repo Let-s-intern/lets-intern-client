@@ -1,18 +1,18 @@
-import { useState } from 'react';
-import styled from 'styled-components';
 import { Checkbox } from '@mui/material';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import dayjs from 'dayjs';
+import { useState } from 'react';
+import styled from 'styled-components';
 
-import ActionButton from '../../../ui/button/ActionButton';
-import TD from '../../../ui/table/regacy/TD';
-import AlertModal from '../../../../ui/alert/AlertModal';
+import axios from '../../../../../utils/axios';
 import {
   newProgramTypeDetailToText,
   newProgramTypeToText,
   programStatusToText,
 } from '../../../../../utils/convert';
-import axios from '../../../../../utils/axios';
+import AlertModal from '../../../../ui/alert/AlertModal';
+import ActionButton from '../../../ui/button/ActionButton';
+import TD from '../../../ui/table/regacy/TD';
 
 interface ProgramTableBodyProps {
   programList: {
