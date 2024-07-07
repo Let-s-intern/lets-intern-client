@@ -44,6 +44,11 @@ const MentorNotificationBefore = () => {
 
   return (
     <div className="mx-auto max-w-[40rem] px-5 pt-20">
+      <h2 className="mb-4 text-xl">
+        {'<'}
+        <strong>{notification?.liveMentorVo.title}</strong>
+        {'>'} 사전 안내사항
+      </h2>
       <section className="mb-4">
         <p>
           안녕하세요, 렛츠커리어입니다.
@@ -53,11 +58,9 @@ const MentorNotificationBefore = () => {
           라이브 클래스 진행 관련 사전 안내사항 전달드립니다.
         </p>
       </section>
-      <h2 className="mb-4 text-xl">
-        {'<'}
-        <strong>{notification?.liveMentorVo.title}</strong>
-        {'>'} 사전 안내사항
-      </h2>
+
+      <hr className="my-4" />
+
       <ul className="mb-8 flex list-disc flex-col gap-1 pl-4">
         <li>
           <span className="font-semibold">시작일시</span>:{' '}
@@ -93,19 +96,27 @@ const MentorNotificationBefore = () => {
         </li>
       </ul>
 
-      <h2 className="mb-4 text-xl font-semibold">참여자 사전질문</h2>
-      <ul className="mb-8 flex list-disc flex-col gap-1 pl-4">
-        {notification?.questionList.map((question, index) => (
-          <li key={index}>{question}</li>
-        ))}
-      </ul>
+      {(notification?.questionList.length ?? 0) > 0 ? (
+        <>
+          <h2 className="mb-4 text-xl font-semibold">참여자 사전질문</h2>
+          <ul className="mb-8 flex list-disc flex-col gap-1 pl-4">
+            {notification?.questionList.map((question, index) => (
+              <li key={index}>{question}</li>
+            ))}
+          </ul>
+        </>
+      ) : null}
 
-      <h2 className="mb-4 text-xl font-semibold">참여자 신청동기</h2>
-      <ul className="mb-8 flex list-disc flex-col gap-1 pl-4">
-        {notification?.motivateList.map((motivation, index) => (
-          <li key={index}>{motivation}</li>
-        ))}
-      </ul>
+      {(notification?.motivateList.length ?? 0) > 0 ? (
+        <>
+          <h2 className="mb-4 text-xl font-semibold">참여자 신청동기</h2>
+          <ul className="mb-8 flex list-disc flex-col gap-1 pl-4">
+            {notification?.motivateList.map((motivation, index) => (
+              <li key={index}>{motivation}</li>
+            ))}
+          </ul>
+        </>
+      ) : null}
     </div>
   );
 };
