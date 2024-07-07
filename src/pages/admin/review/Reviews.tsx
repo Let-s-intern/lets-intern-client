@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import TableBody from '../../../components/admin/review/reviews/table-content/TableBody';
 import TableHead from '../../../components/admin/review/reviews/table-content/TableHead';
 import AdminPagination from '../../../components/admin/ui/pagination/AdminPagination';
@@ -24,17 +24,26 @@ const Reviews = () => {
   const programList = data?.data?.programList || [];
   const maxPage = data?.data?.pageInfo?.totalPages || 1;
 
-  const copyReviewCreateLink = (programId: number) => {
-    const url = `${window.location.protocol}//${window.location.hostname}:${window.location.port}/mypage/review/new/program/${programId}`;
-    navigator.clipboard
-      .writeText(url)
-      .then(() => {
-        alert('링크가 클립보드에 복사되었습니다.');
-      })
-      .catch((err) => {
-        console.error('복사에 실패했습니다:', err);
-      });
-  };
+  const copyReviewCreateLink = useCallback(
+    (info: {
+      id: number;
+      title: string;
+      startDate: string;
+      programType: string;
+    }) => {
+      const url = `${window.location.protocol}//${window.location.host}/write-review/${info.programType.toLowerCase()}/${info.id}`;
+      navigator.clipboard
+        .writeText(url)
+        .then(() => {
+          alert('링크가 클립보드에 복사되었습니다.');
+        })
+        .catch((err) => {
+          console.error(err);
+          alert('링크 복사에 실패했습니다.');
+        });
+    },
+    [],
+  );
 
   return (
     <div className="p-8">
