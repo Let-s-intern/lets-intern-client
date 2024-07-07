@@ -142,6 +142,8 @@ const ApplySection = ({
         endDate: data.endDate,
         beginning: data.beginning,
       });
+
+      return res.data.data;
     },
   });
 
@@ -172,7 +174,7 @@ const ApplySection = ({
       toggleApplyModal();
       setContentIndex(0);
     },
-    onError: (error) => {
+    onError: () => {
       alert('신청에 실패했습니다. 다시 시도해주세요.');
       setContentIndex(0);
     },

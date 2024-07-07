@@ -142,18 +142,17 @@ const ProgramDetail = ({ programType }: ProgramDetailProps) => {
       return res.data;
     },
   });
-  // 프로그램 일정 가져오기
-  useQuery({
+
+  const { data: program } = useQuery({
     queryKey: [programType, programId],
     queryFn: async () => {
       const res = await axios.get(`/${programType}/${programId}`);
-      console.log('res.data.data', res.data.data);
       const { beginning, deadline, startDate, endDate } = res.data.data;
       setProgramInfo({ startDate, endDate, beginning, deadline });
       setDisabledButton(
         new Date() < new Date(beginning) || new Date() > new Date(deadline),
       );
-      return res.data;
+      return res.data.data as { shortDesc?: string | null };
     },
   });
 
@@ -183,7 +182,7 @@ const ProgramDetail = ({ programType }: ProgramDetailProps) => {
         : '프로그램';
   const title = `${programTitle ?? programTypeKor} | ${programTypeKor} - 렛츠커리어`;
   const url = `${window.location.origin}/program/${programType}/${programId}`;
-  // const description = '';
+  const description = program?.shortDesc ?? '';
 
   return (
     <div className="px-5">
@@ -191,18 +190,19 @@ const ProgramDetail = ({ programType }: ProgramDetailProps) => {
         <meta name="robots" content="index,follow" />
         <title>{title}</title>
         <link rel="canonical" href={url} />
-        {/* TODO: 추가 */}
-        {/* <meta name="description" content={description} /> */}
+        {description ? <meta name="description" content={description} /> : null}
         <meta property="og:title" content={title} />
         <meta property="og:url" content={url} />
         <meta property="og:site_name" content="렛츠커리어" />
         <meta property="og:locale" content="ko-KR" />
-        {/* TODO: 추가 */}
-        {/* <meta property="og:description" content={description} /> */}
+        {description ? (
+          <meta property="og:description" content={description} />
+        ) : null}
         <meta name="twitter:title" content={title} />
         <meta name="twitter:url" content={url} />
-        {/* TODO: 추가 */}
-        {/* <meta name="twitter:description" content={description} /> */}
+        {description ? (
+          <meta name="twitter:description" content={description} />
+        ) : null}
         <meta name="twitter:card" content="summary" />
       </Helmet>
       <div className="mx-auto max-w-5xl">
