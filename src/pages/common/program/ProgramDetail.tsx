@@ -1,6 +1,7 @@
 import { useMediaQuery } from '@mui/material';
 import { useQuery } from '@tanstack/react-query';
 import { useEffect, useReducer, useState } from 'react';
+import { Helmet } from 'react-helmet';
 import { useNavigate, useParams } from 'react-router-dom';
 import ApplyModal from '../../../components/common/program/program-detail/apply/modal/ApplyModal';
 import FilledButton from '../../../components/common/program/program-detail/button/FilledButton';
@@ -146,6 +147,7 @@ const ProgramDetail = ({ programType }: ProgramDetailProps) => {
     queryKey: [programType, programId],
     queryFn: async () => {
       const res = await axios.get(`/${programType}/${programId}`);
+      console.log('res.data.data', res.data.data);
       const { beginning, deadline, startDate, endDate } = res.data.data;
       setProgramInfo({ startDate, endDate, beginning, deadline });
       setDisabledButton(
@@ -173,8 +175,36 @@ const ProgramDetail = ({ programType }: ProgramDetailProps) => {
     window.open(REMINDER_LINK, '_blank');
   };
 
+  const programTypeKor =
+    programType === 'challenge'
+      ? '챌린지'
+      : programType === 'live'
+        ? '라이브 클래스'
+        : '프로그램';
+  const title = `${programTitle ?? programTypeKor} | ${programTypeKor} - 렛츠커리어`;
+  const url = `${window.location.origin}/program/${programType}/${programId}`;
+  // const description = '';
+
   return (
     <div className="px-5">
+      <Helmet>
+        <meta name="robots" content="index,follow" />
+        <title>{title}</title>
+        <link rel="canonical" href={url} />
+        {/* TODO: 추가 */}
+        {/* <meta name="description" content={description} /> */}
+        <meta property="og:title" content={title} />
+        <meta property="og:url" content={url} />
+        <meta property="og:site_name" content="렛츠커리어" />
+        <meta property="og:locale" content="ko-KR" />
+        {/* TODO: 추가 */}
+        {/* <meta property="og:description" content={description} /> */}
+        <meta name="twitter:title" content={title} />
+        <meta name="twitter:url" content={url} />
+        {/* TODO: 추가 */}
+        {/* <meta name="twitter:description" content={description} /> */}
+        <meta name="twitter:card" content="summary" />
+      </Helmet>
       <div className="mx-auto max-w-5xl">
         <Header programTitle={programTitle} />
         <div className="flex min-h-screen flex-col">

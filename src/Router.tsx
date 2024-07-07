@@ -95,7 +95,6 @@ const Router = () => {
             path="program/live/:programId"
             element={<ProgramDetail programType="live" />}
           />
-          {/* ---Regacy--- */}
           {/* /program */}
           <Route path="program" element={<Programs />} />
           {/* /program/detail/:programId */}
