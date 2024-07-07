@@ -1,6 +1,7 @@
 import clsx from 'clsx';
 
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { ApplicationType } from '../../../../../../pages/common/mypage/Application';
 import ApplicationCardButton from '../../button/ApplicationCardButton';
 import LinkButton from '../../button/LinkButton';
@@ -43,7 +44,9 @@ const ApplicationCard = ({
     const date = new Date(dateString);
     const currentDate = new Date();
     return date < currentDate;
-  }
+  };
+
+  const programLink = `/program/${application.programType.toLowerCase()}/${application.programId}`;
 
   return (
     <div
@@ -59,31 +62,22 @@ const ApplicationCard = ({
           },
         )}
       >
-        <img
-          src={application.programThumbnail}
-          alt={'프로그렘 썸네일'}
-          className="h-[7.5rem] w-full bg-primary-light object-cover md:h-[9rem] md:w-[11rem] md:rounded-xs"
-        />
+        <Link to={programLink}>
+          <img
+            src={application.programThumbnail}
+            alt="프로그램 썸네일"
+            className="h-[7.5rem] w-full bg-primary-light object-cover md:h-[9rem] md:w-[11rem] md:rounded-xs"
+          />
+        </Link>
         <div className="flex flex-1 flex-col gap-2 py-2">
-          {/* <div className="flex items-center justify-between">
-            <span className="rounded-xs border border-primary bg-primary-20 px-2.5 py-0.5 text-xs font-medium text-primary-dark">
-              모집 중
-            </span>
-            {showDeleteMenu && (
-              <DeleteMenu
-                className="hidden md:block"
-                application={application}
-              />
-            )}
-          </div> */}
           <div className="flex justify-between">
-            <h2 className="font-semibold">{application.programTitle}</h2>
+            <h2 className="font-semibold">
+              <Link to={programLink} className="hover:underline">
+                {application.programTitle}
+              </Link>
+            </h2>
             {showDeleteMenu && (
-              <DeleteMenu
-                // className="md:block"
-                application={application}
-                refetch={refetch}
-              />
+              <DeleteMenu application={application} refetch={refetch} />
             )}
           </div>
           <p className="text-sm text-neutral-30">
@@ -111,15 +105,17 @@ const ApplicationCard = ({
           결제 정보 확인
         </ApplicationCardButton>
       )}
-      {application.programType === 'CHALLENGE' && showChallengeButton && checkChallengeStarted(application.programStartDate) && (
-        <LinkButton
-          to={`/challenge/${application.programId}`}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          챌린지 대시보드
-        </LinkButton>
-      )}
+      {application.programType === 'CHALLENGE' &&
+        showChallengeButton &&
+        checkChallengeStarted(application.programStartDate) && (
+          <LinkButton
+            to={`/challenge/${application.programId}`}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            챌린지 대시보드
+          </LinkButton>
+        )}
       {hasReviewButton && (
         <LinkButton
           to={`/mypage/review/${
