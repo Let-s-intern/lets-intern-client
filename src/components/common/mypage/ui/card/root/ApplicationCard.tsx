@@ -53,6 +53,7 @@ const ApplicationCard = ({
       className={clsx(
         'flex w-full flex-col items-start gap-4 overflow-hidden rounded-xs md:flex-row md:border md:border-neutral-85 md:p-2.5',
       )}
+      data-program-text={application.programTitle}
     >
       <div
         className={clsx(
