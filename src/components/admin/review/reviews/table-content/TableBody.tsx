@@ -1,7 +1,7 @@
 import dayjs from 'dayjs';
 
-import TD from '../../../ui/table/regacy/TD';
 import ActionButton from '../../../ui/button/ActionButton';
+import TD from '../../../ui/table/regacy/TD';
 
 interface ReviewTableBodyProps {
   programList: {
@@ -12,7 +12,12 @@ interface ReviewTableBodyProps {
       programType: string;
     };
   }[];
-  copyReviewCreateLink: any;
+  copyReviewCreateLink: (info: {
+    id: number;
+    title: string;
+    startDate: string;
+    programType: string;
+  }) => void;
 }
 
 const TableBody = ({
@@ -49,7 +54,7 @@ const TableBody = ({
                     ? 'gray'
                     : 'lightBlue'
                 }
-                onClick={() => copyReviewCreateLink(program.programInfo.id)}
+                onClick={() => copyReviewCreateLink(program.programInfo)}
                 disabled={program.programInfo.programType === 'VOD'}
               >
                 링크 복사하기
