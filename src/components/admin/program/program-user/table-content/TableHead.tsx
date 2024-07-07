@@ -45,6 +45,7 @@ const TableHead = ({ filter, setFilter, programType }: UserTableHeadProps) => {
             <TH>학교</TH>
             <TH>학년</TH>
             <TH>전공</TH>
+            <TH>지원동기</TH>
             <TH>사전질문</TH>
           </>
         )}

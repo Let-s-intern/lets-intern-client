@@ -79,6 +79,9 @@ const TableRow = ({ application, programType }: Props) => {
           <TD>{application.grade ? gradeToText[application.grade] : ''}</TD>
           <TD>{application.major}</TD>
           <TD whiteSpace="wrap">
+            {'motivate' in application ? application.motivate : ''}
+          </TD>
+          <TD whiteSpace="wrap">
             {'question' in application ? application.question : ''}
           </TD>
         </>
