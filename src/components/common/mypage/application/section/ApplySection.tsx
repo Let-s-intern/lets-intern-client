@@ -10,11 +10,11 @@ interface ApplySectionProps {
   refetch: () => void;
 }
 
-
 const ApplySection = ({ applicationList, refetch }: ApplySectionProps) => {
-  const [viewList, setViewList] = useState<ApplicationType[]>(
-    applicationList.slice(0, 3),
-  );
+  const [showMore, setShowMore] = useState(false);
+
+  const viewList = showMore ? applicationList : applicationList.slice(0, 3);
+
   return (
     <section className="flex flex-col gap-6">
       <h1 className="text-lg font-semibold">신청 완료</h1>
@@ -31,7 +31,7 @@ const ApplySection = ({ applicationList, refetch }: ApplySectionProps) => {
           </Link>
         </div>
       ) : (
-        <div className=" grid grid-cols-2 gap-4 md:flex md:flex-col">
+        <div className="grid grid-cols-2 gap-4 md:flex md:flex-col">
           {viewList.map((application) => (
             <ApplicationCard
               key={application.id}
@@ -42,11 +42,8 @@ const ApplySection = ({ applicationList, refetch }: ApplySectionProps) => {
           ))}
         </div>
       )}
-      {applicationList.length > 3 && applicationList.length !== viewList.length && (
-        <MoreButton
-          className="md:flex"
-          onClick={() => setViewList(applicationList)}
-        >
+      {applicationList.length > 3 && !showMore && (
+        <MoreButton className="md:flex" onClick={() => setShowMore(true)}>
           더보기
         </MoreButton>
       )}
