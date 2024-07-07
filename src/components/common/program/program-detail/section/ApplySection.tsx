@@ -183,7 +183,9 @@ const ApplySection = ({
   };
 
   return (
-    <section className={`w-[22rem] rounded-lg px-5 py-6 shadow-03`}>
+    <section
+      className={`sticky top-[7rem] max-h-[calc(100vh-11.75rem)] w-[22rem] overflow-y-auto rounded-lg px-5 py-6 shadow-03 scrollbar-hide`}
+    >
       {contentIndex === 0 && (
         <OverviewContent
           contentIndex={contentIndex}
