@@ -218,6 +218,7 @@ const ApplySection = ({
           setContentIndex={setContentIndex}
           isCautionChecked={isCautionChecked}
           setIsCautionChecked={setIsCautionChecked}
+          programType={programType}
         />
       )}
       {contentIndex === 4 && (
