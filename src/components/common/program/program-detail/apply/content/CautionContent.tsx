@@ -1,9 +1,13 @@
+import { useNavigate } from 'react-router-dom';
+import { ProgramType } from '../../../../../../pages/common/program/ProgramDetail';
+
 interface CautionContentProps {
   contentIndex: number;
   criticalNotice: string;
   setContentIndex: (contentIndex: number) => void;
   isCautionChecked: boolean;
   setIsCautionChecked: (isCautionChecked: boolean) => void;
+  programType: ProgramType;
 }
 
 const CautionContent = ({
@@ -12,10 +16,15 @@ const CautionContent = ({
   setContentIndex,
   isCautionChecked,
   setIsCautionChecked,
+  programType,
 }: CautionContentProps) => {
+  const navigate = useNavigate();
+
   const handleNextButtonClick = () => {
     if (!isCautionChecked) return;
-    setContentIndex(contentIndex + 1);
+
+    navigate(`/${programType}/`);
+    // setContentIndex(contentIndex + 1);
   };
 
   const handleBackButtonClick = () => {
