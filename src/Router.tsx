@@ -63,6 +63,7 @@ import Application from './pages/common/mypage/Application';
 import MyPage from './pages/common/mypage/MyPage';
 import Privacy from './pages/common/mypage/Privacy';
 import Review from './pages/common/mypage/Review';
+import PaymentInfo from './pages/common/program/PaymentInfo';
 import ProgramDetail from './pages/common/program/ProgramDetail';
 import Programs from './pages/common/program/Programs';
 import ProgramDetailRegacy from './pages/common/program/regacy/ProgramDetailRegacy';
@@ -94,6 +95,15 @@ const Router = () => {
           <Route
             path="program/live/:programId"
             element={<ProgramDetail programType="live" />}
+          />
+          <Route
+            path="program/challenge/:programId/paymentInfo"
+            element={<PaymentInfo programType="challenge" />}
+          />
+          {/* /program/live/:programId */}
+          <Route
+            path="program/live/:programId/paymentInfo"
+            element={<PaymentInfo programType="live" />}
           />
           {/* ---Regacy--- */}
           {/* /program */}
