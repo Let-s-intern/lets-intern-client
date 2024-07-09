@@ -5,7 +5,6 @@ import { PayInfo } from '../../section/ApplySection';
 import ScrollableBox from '../scrollable-box/ScrollableBox';
 import CouponSection from '../section/CouponSection';
 import PayInfoSection from '../section/PayInfoSection';
-import PriceSection from '../section/PriceSection';
 
 interface ScrollableDiv extends HTMLDivElement {
   scrollTimeout?: number;
@@ -90,7 +89,7 @@ const PayContent = ({
                 programType={programType}
               />
               <hr className="bg-neutral-85" />
-              <PriceSection payInfo={payInfo} />
+              {/* <PriceSection payInfo={payInfo} /> */}
             </>
           )}
       </ScrollableBox>
