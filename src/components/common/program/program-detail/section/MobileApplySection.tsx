@@ -2,9 +2,7 @@ import { useMutation } from '@tanstack/react-query';
 import { IAction } from '../../../../../interfaces/interface';
 import { ProgramType } from '../../../../../pages/common/program/ProgramDetail';
 import axios from '../../../../../utils/axios';
-import CautionContent from '../apply/content/CautionContent';
 import InputContent from '../apply/content/InputContent';
-import PayContent from '../apply/content/PayContent';
 import ScheduleContent from '../apply/content/ScheduleContent';
 import { PayInfo, ProgramDate, UserInfo } from './ApplySection';
 
@@ -96,31 +94,13 @@ const MobileApplySection = ({
       )}
       {contentIndex === 1 && (
         <InputContent
+          programId={programId}
           contentIndex={contentIndex}
           setContentIndex={setContentIndex}
           userInfo={userInfo}
           setUserInfo={setUserInfo}
           programType={programType}
           drawerDispatch={drawerDispatch}
-        />
-      )}
-      {contentIndex === 2 && (
-        <CautionContent
-          contentIndex={contentIndex}
-          criticalNotice={criticalNotice}
-          setContentIndex={setContentIndex}
-          isCautionChecked={isCautionChecked}
-          setIsCautionChecked={setIsCautionChecked}
-        />
-      )}
-      {contentIndex === 3 && (
-        <PayContent
-          payInfo={payInfo}
-          setPayInfo={setPayInfo}
-          handleApplyButtonClick={handleApplyButtonClick}
-          contentIndex={contentIndex}
-          setContentIndex={setContentIndex}
-          programType={programType}
         />
       )}
     </section>
