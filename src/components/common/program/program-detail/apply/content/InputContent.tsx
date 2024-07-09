@@ -2,6 +2,7 @@ import { useMediaQuery } from '@mui/material';
 import clsx from 'clsx';
 import { useEffect, useRef, useState } from 'react';
 
+import { useNavigate } from 'react-router-dom';
 import { IAction } from '../../../../../../interfaces/interface';
 import { ProgramType } from '../../../../../../pages/common/program/ProgramDetail';
 import { UserInfo } from '../../section/ApplySection';
@@ -10,6 +11,7 @@ import MotiveAnswerSection from '../section/MotiveAnswerSection';
 import UserInputSection from '../section/UserInputSection';
 
 interface InputContentProps {
+  programId: number;
   contentIndex: number;
   setContentIndex: (contentIndex: number) => void;
   userInfo: UserInfo;
@@ -23,12 +25,14 @@ interface ScrollableDiv extends HTMLDivElement {
 }
 
 const InputContent = ({
+  programId,
   contentIndex,
   setContentIndex,
   userInfo,
   setUserInfo,
   programType,
 }: InputContentProps) => {
+  const navigate = useNavigate();
   const scrollableBoxRef = useRef<ScrollableDiv>(null);
   const [buttonDisabled, setButtonDisabled] = useState(true);
   const mobileMatches = useMediaQuery('(max-width: 768px)');
@@ -41,11 +45,7 @@ const InputContent = ({
       return;
     }
 
-    if (programType === 'live') {
-      setContentIndex(contentIndex + 2);
-      return;
-    }
-    setContentIndex(contentIndex + 1);
+    navigate(`/program/${programType}/${programId}/paymentInfo`);
   };
 
   const handleBackButtonClick = () => {
@@ -126,7 +126,7 @@ const InputContent = ({
           onClick={handleNextButtonClick}
           disabled={buttonDisabled}
         >
-          다음
+          결제하기
         </button>
       </div>
     </div>
