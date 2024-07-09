@@ -26,10 +26,17 @@ const handleCouponPrice = (payInfo: PayInfo): DiscountResult => {
   return { couponDiscount, discountPer, totalDiscount };
 };
 
-const PriceSection = ({ payInfo }: { payInfo: PayInfo }) => {
+const PriceSection = ({
+  payInfo,
+  totalPrice,
+}: {
+  payInfo: PayInfo;
+  totalPrice: number;
+}) => {
   const discountInfo = handleCouponPrice(payInfo);
+
   return (
-    <div className="flex flex-col gap-3">
+    <div className="flex w-full flex-col gap-3">
       <div className="font-semibold text-neutral-0">결제 금액</div>
       <div>
         <div className="flex items-center justify-between px-1.5 py-2.5 text-neutral-0">
@@ -43,6 +50,11 @@ const PriceSection = ({ payInfo }: { payInfo: PayInfo }) => {
         <div className="flex items-center justify-between px-1.5 py-2.5 font-semibold text-system-error">
           <span>할인 {Math.round(discountInfo.discountPer)}%</span>
           <span>-{payInfo.discount.toLocaleString()}원</span>
+        </div>
+        <hr className="bg-neutral-85" />
+        <div className="flex items-center justify-between px-1.5 py-2.5 font-semibold">
+          <span>합계</span>
+          <span>{totalPrice.toLocaleString()}원</span>
         </div>
       </div>
     </div>
