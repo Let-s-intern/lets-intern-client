@@ -64,6 +64,7 @@ import MyPage from './pages/common/mypage/MyPage';
 import Privacy from './pages/common/mypage/Privacy';
 import Review from './pages/common/mypage/Review';
 import PaymentInfo from './pages/common/program/PaymentInfo';
+import PaymentSuccess from './pages/common/program/PaymentSuccess';
 import ProgramDetail from './pages/common/program/ProgramDetail';
 import Programs from './pages/common/program/Programs';
 import ProgramDetailRegacy from './pages/common/program/regacy/ProgramDetailRegacy';
@@ -96,14 +97,25 @@ const Router = () => {
             path="program/live/:programId"
             element={<ProgramDetail programType="live" />}
           />
+          {/* /program/challenge/:programId/paymentInfo */}
           <Route
             path="program/challenge/:programId/paymentInfo"
             element={<PaymentInfo programType="challenge" />}
           />
-          {/* /program/live/:programId */}
+          {/* /program/live/:programId/paymentInfo */}
           <Route
             path="program/live/:programId/paymentInfo"
             element={<PaymentInfo programType="live" />}
+          />
+          {/* /program/challenge/:programId/success */}
+          <Route
+            path="program/challenge/:programId/success"
+            element={<PaymentSuccess programType="challenge" />}
+          />
+          {/* /program/live/:programId/success */}
+          <Route
+            path="program/live/:programId/success"
+            element={<PaymentSuccess programType="live" />}
           />
           {/* ---Regacy--- */}
           {/* /program */}
