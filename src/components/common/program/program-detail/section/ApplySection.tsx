@@ -3,11 +3,9 @@ import { useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { ProgramType } from '../../../../../pages/common/program/ProgramDetail';
 import axios from '../../../../../utils/axios';
-import CautionContent from '../apply/content/CautionContent';
 import ChoicePayPlanContent from '../apply/content/ChoicePayPlanContent';
 import InputContent from '../apply/content/InputContent';
 import OverviewContent from '../apply/content/OverviewContent';
-import PayContent from '../apply/content/PayContent';
 
 export interface ProgramDate {
   deadline: string;
@@ -30,9 +28,6 @@ export interface PayInfo {
   price: number;
   discount: number;
   couponPrice: number;
-  accountNumber: string;
-  deadline: string;
-  accountType: string;
   livePriceType: string;
   challengePriceType: string;
 }
@@ -74,9 +69,6 @@ const ApplySection = ({
     price: 0,
     discount: 0,
     couponPrice: 0,
-    accountNumber: '',
-    deadline: '',
-    accountType: '',
     livePriceType: '',
     challengePriceType: '',
   });
@@ -105,9 +97,6 @@ const ApplySection = ({
           price: data.priceList[0].price,
           discount: data.priceList[0].discount,
           couponPrice: 0,
-          accountNumber: data.priceList[0].accountNumber,
-          deadline: data.priceList[0].deadline,
-          accountType: data.priceList[0].accountType,
           livePriceType: data.priceList[0].livePriceType,
           challengePriceType: data.priceList[0].challengePriceType,
         });
@@ -120,9 +109,6 @@ const ApplySection = ({
           price: data.price.price,
           discount: data.price.discount,
           couponPrice: 0,
-          accountNumber: data.price.accountNumber,
-          deadline: data.price.deadline,
-          accountType: data.price.accountType,
           livePriceType: data.price.livePriceType,
           challengePriceType: data.price.challengePriceType,
         });
@@ -204,30 +190,11 @@ const ApplySection = ({
       )}
       {contentIndex === 2 && (
         <InputContent
+          programId={programId}
           contentIndex={contentIndex}
           setContentIndex={setContentIndex}
           userInfo={userInfo}
           setUserInfo={setUserInfo}
-          programType={programType}
-        />
-      )}
-      {contentIndex === 3 && (
-        <CautionContent
-          criticalNotice={criticalNotice}
-          contentIndex={contentIndex}
-          setContentIndex={setContentIndex}
-          isCautionChecked={isCautionChecked}
-          setIsCautionChecked={setIsCautionChecked}
-          programType={programType}
-        />
-      )}
-      {contentIndex === 4 && (
-        <PayContent
-          payInfo={payInfo}
-          setPayInfo={setPayInfo}
-          handleApplyButtonClick={handleApplyButtonClick}
-          contentIndex={contentIndex}
-          setContentIndex={setContentIndex}
           programType={programType}
         />
       )}
