@@ -1,5 +1,3 @@
-import dayjs from 'dayjs';
-import { bankTypeToText } from '../../../../../../utils/convert';
 import { PayInfo } from '../../section/ApplySection';
 
 interface PayInfoSectionProps {
@@ -23,13 +21,13 @@ const PayInfoSection = ({ payInfo }: PayInfoSectionProps) => {
         <div className="flex items-center justify-between p-1.5 text-neutral-0">
           <span className="text-sm">입금 계좌</span>
           <span className="text-sm">
-            {bankTypeToText[payInfo.accountType]} {payInfo.accountNumber}
+            {/* {bankTypeToText[payInfo.accountType]} {payInfo.accountNumber} */}
           </span>
         </div>
         <div className="flex items-center justify-between p-1.5 text-neutral-0">
           <span className="text-sm">입금 마감 기한</span>
           <span className="text-sm">
-            {dayjs(payInfo.deadline).format('YYYY년 M월 D일 A hh시 mm분')}
+            {/* {dayjs(payInfo.deadline).format('YYYY년 M월 D일 A hh시 mm분')} */}
           </span>
         </div>
       </div>
