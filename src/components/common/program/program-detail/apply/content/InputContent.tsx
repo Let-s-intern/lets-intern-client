@@ -1,11 +1,8 @@
-import { useMediaQuery } from '@mui/material';
-import clsx from 'clsx';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { IAction } from '../../../../../../interfaces/interface';
 import { ProgramType } from '../../../../../../pages/common/program/ProgramDetail';
 import { UserInfo } from '../../section/ApplySection';
-import ScrollableBox from '../scrollable-box/ScrollableBox';
 import MotiveAnswerSection from '../section/MotiveAnswerSection';
 import UserInputSection from '../section/UserInputSection';
 
@@ -18,10 +15,6 @@ interface InputContentProps {
   drawerDispatch?: (value: IAction) => void;
 }
 
-interface ScrollableDiv extends HTMLDivElement {
-  scrollTimeout?: number;
-}
-
 const InputContent = ({
   contentIndex,
   setContentIndex,
@@ -29,10 +22,7 @@ const InputContent = ({
   setUserInfo,
   programType,
 }: InputContentProps) => {
-  const scrollableBoxRef = useRef<ScrollableDiv>(null);
   const [buttonDisabled, setButtonDisabled] = useState(true);
-  const mobileMatches = useMediaQuery('(max-width: 768px)');
-  const tabletMatches = useMediaQuery('(max-width: 991px)');
 
   const handleNextButtonClick = () => {
     const regex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
@@ -66,40 +56,9 @@ const InputContent = ({
     }
   }, [userInfo]);
 
-  useEffect(() => {
-    const handleScroll = () => {
-      if (scrollableBoxRef.current) {
-        scrollableBoxRef.current.classList.add('scrolling');
-        clearTimeout(scrollableBoxRef.current.scrollTimeout);
-        scrollableBoxRef.current.scrollTimeout = setTimeout(() => {
-          if (scrollableBoxRef.current) {
-            scrollableBoxRef.current.classList.remove('scrolling');
-          }
-        }, 500) as unknown as number;
-      }
-    };
-
-    const scrollableElement = scrollableBoxRef.current;
-    if (scrollableElement) {
-      scrollableElement.addEventListener('scroll', handleScroll);
-    }
-
-    return () => {
-      if (scrollableElement) {
-        scrollableElement.removeEventListener('scroll', handleScroll);
-      }
-    };
-  }, [scrollableBoxRef]);
-
   return (
-    <div className="flex flex-col gap-5">
-      <ScrollableBox
-        ref={scrollableBoxRef}
-        className={clsx('flex h-full flex-col gap-3', {
-          'max-h-[30rem]': mobileMatches,
-          'max-h-[40rem]': tabletMatches,
-        })}
-      >
+    <div className="flex h-full flex-col gap-5">
+      <div className="flex h-full flex-col gap-3">
         <p className="font-medium text-neutral-0">
           신청 폼을 모두 입력해주세요.
         </p>
@@ -112,7 +71,7 @@ const InputContent = ({
             />
           )}
         </div>
-      </ScrollableBox>
+      </div>
       <div className="flex items-center gap-2">
         <button
           className="flex w-full flex-1 justify-center rounded-md border-2 border-primary bg-neutral-100 px-6 py-3 text-lg font-medium text-primary-dark disabled:border-neutral-70 disabled:bg-neutral-70 disabled:text-white"
