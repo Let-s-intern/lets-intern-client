@@ -8,9 +8,10 @@ interface DoneSectionProps {
 }
 
 const DoneSection = ({ applicationList }: DoneSectionProps) => {
-  const [viewList, setViewList] = useState<ApplicationType[]>(
-    applicationList.slice(0, 3),
-  );
+  const [showMore, setShowMore] = useState(false);
+
+  const viewList = showMore ? applicationList : applicationList.slice(0, 3);
+
   return (
     <section className="flex flex-col gap-6">
       <h1 className="text-lg font-semibold">작성된 후기</h1>
@@ -24,6 +25,7 @@ const DoneSection = ({ applicationList }: DoneSectionProps) => {
         <div className="grid grid-cols-2 gap-4 md:flex md:flex-col">
           {viewList.map((application) => (
             <ApplicationCard
+              key={application.id}
               grayscale
               application={application}
               hasReviewButton
@@ -32,11 +34,12 @@ const DoneSection = ({ applicationList }: DoneSectionProps) => {
           ))}
         </div>
       )}
-      {applicationList.length > 3 && (
+
+      {applicationList.length > 3 && !showMore && (
         <MoreButton
           className="hidden md:flex"
           onClick={() => {
-            setViewList(applicationList);
+            setShowMore(true);
           }}
         >
           더보기
