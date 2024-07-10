@@ -158,6 +158,7 @@ export const getLiveIdSchema = z
     participationCount: z.number().nullable().optional(),
     thumbnail: z.string().nullable().optional(),
     mentorName: z.string().nullable().optional(),
+    mentorPassword: z.string().nullable().optional(),
     job: z.string().nullable().optional(),
     place: z.string().nullable().optional(),
     startDate: z.string().nullable().optional(),
@@ -1016,7 +1017,3 @@ export const mentorNotificationSchema = z
   });
 
 export type MentorNotificationType = 'PREV' | 'REVIEW';
-
-export const adminMentorInfoSchema = z.object({
-  mentorPassword: z.string().nullable().optional(),
-});
