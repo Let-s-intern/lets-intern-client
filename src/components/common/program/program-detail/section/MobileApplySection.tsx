@@ -28,6 +28,7 @@ interface MobileApplySectionProps {
   setIsCautionChecked: (isCautionChecked: boolean) => void;
   contentIndex: number;
   setContentIndex: (contentIndex: number) => void;
+  totalPrice: number;
 }
 
 const MobileApplySection = ({
@@ -50,6 +51,7 @@ const MobileApplySection = ({
   setIsCautionChecked,
   contentIndex,
   setContentIndex,
+  totalPrice,
 }: MobileApplySectionProps) => {
   const applyProgram = useMutation({
     mutationFn: async () => {
@@ -121,6 +123,7 @@ const MobileApplySection = ({
           contentIndex={contentIndex}
           setContentIndex={setContentIndex}
           programType={programType}
+          totalPrice={totalPrice}
         />
       )}
     </section>

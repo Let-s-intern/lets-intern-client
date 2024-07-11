@@ -1,6 +1,7 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useNavigate } from 'react-router-dom';
 import { ProgramType } from '../../../../../pages/common/program/ProgramDetail';
 import axios from '../../../../../utils/axios';
 import CautionContent from '../apply/content/CautionContent';
@@ -51,7 +52,7 @@ const ApplySection = ({
   toggleApplyModal,
 }: ApplySectionProps) => {
   const queryClient = useQueryClient();
-
+  const navigate = useNavigate();
   const [contentIndex, setContentIndex] = useState(0);
   const [programDate, setProgramDate] = useState<ProgramDate>({
     deadline: '',
@@ -82,6 +83,7 @@ const ApplySection = ({
   });
   const [isCautionChecked, setIsCautionChecked] = useState<boolean>(false);
   const [isApplied, setIsApplied] = useState<boolean>(false);
+  const [totalPrice, setTotalPrice] = useState<number>(0);
 
   useQuery({
     queryKey: [programType, programId, 'application'],
@@ -92,7 +94,7 @@ const ApplySection = ({
         name: data.name,
         email: data.email,
         phoneNumber: data.phoneNumber,
-        contactEmail: data.contactEmail,
+        contactEmail: data.contactEmail || '',
         question: '',
       });
       setCriticalNotice(data.criticalNotice);
@@ -178,8 +180,33 @@ const ApplySection = ({
     },
   });
 
+  useEffect(() => {
+    const totalDiscount =
+      payInfo.couponPrice === -1
+        ? payInfo.price
+        : payInfo.discount + payInfo.couponPrice;
+    if (payInfo.price <= totalDiscount) setTotalPrice(0);
+    else return setTotalPrice(payInfo.price - totalDiscount);
+  }, [payInfo.couponPrice, payInfo.price, payInfo.discount]);
+
   const handleApplyButtonClick = () => {
-    applyProgram.mutate();
+    // applyProgram.mutate();
+    navigate(`/program/${programType}/${programId}/payment`, {
+      state: {
+        priceId: priceId,
+        couponId: payInfo.couponId,
+        price: payInfo.price,
+        discount: payInfo.discount,
+        couponPrice: payInfo.couponPrice,
+        totalPrice: totalPrice,
+        contactEmail: userInfo.contactEmail,
+        question: userInfo.question,
+        email: userInfo.email,
+        phone: userInfo.phoneNumber,
+        name: userInfo.name,
+        programTitle: programTitle,
+      },
+    });
   };
 
   return (
@@ -228,6 +255,7 @@ const ApplySection = ({
           contentIndex={contentIndex}
           setContentIndex={setContentIndex}
           programType={programType}
+          totalPrice={totalPrice}
         />
       )}
     </section>
