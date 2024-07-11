@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { useEffect, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ProgramType } from '../../../../../pages/common/program/ProgramDetail';
 import axios from '../../../../../utils/axios';
@@ -82,7 +82,6 @@ const ApplySection = ({
   });
   const [isCautionChecked, setIsCautionChecked] = useState<boolean>(false);
   const [isApplied, setIsApplied] = useState<boolean>(false);
-  const [totalPrice, setTotalPrice] = useState<number>(0);
 
   useQuery({
     queryKey: [programType, programId, 'application'],
@@ -188,14 +187,16 @@ const ApplySection = ({
     },
   });
 
-  useEffect(() => {
+  const totalPrice = useMemo(() => {
     const totalDiscount =
       payInfo.couponPrice === -1
         ? payInfo.price
         : payInfo.discount + payInfo.couponPrice;
-    if (payInfo.price <= totalDiscount) setTotalPrice(0);
-    else return setTotalPrice(payInfo.price - totalDiscount);
-  }, [payInfo.couponPrice, payInfo.price, payInfo.discount]);
+    if (payInfo.price <= totalDiscount) {
+      return 0;
+    }
+    return payInfo.price - totalDiscount;
+  }, [payInfo.couponPrice, payInfo.discount, payInfo.price]);
 
   const handleApplyButtonClick = () => {
     if (isTest) {

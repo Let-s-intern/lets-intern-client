@@ -9,15 +9,6 @@ interface PayInfoSectionProps {
 }
 
 const PayInfoSection = ({ payInfo, isTest }: PayInfoSectionProps) => {
-  const formatDateString = (dateString: string) => {
-    const date = new Date(dateString);
-    return `${date.getFullYear()}년 ${
-      date.getMonth() + 1
-    }월 ${date.getDate()}일 ${date.getHours() >= 12 ? '오후' : '오전'} ${
-      date.getHours() % 12
-    }시${date.getMinutes() !== 0 ? ` ${date.getMinutes()}분` : ''}`;
-  };
-
   if (isTest) {
     return null;
   }
