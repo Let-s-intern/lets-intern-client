@@ -1,8 +1,7 @@
-import React from 'react';
-import { IProgram } from '../../../../../interfaces/Program.interface';
-import ProgramStatusTag from '../../../program/programs/card/ProgramStatusTag';
-import { PROGRAM_STATUS } from '../../../../../utils/programConst';
 import { useNavigate } from 'react-router-dom';
+import { IProgram } from '../../../../../interfaces/Program.interface';
+import { PROGRAM_STATUS } from '../../../../../utils/programConst';
+import ProgramStatusTag from '../../../program/programs/card/ProgramStatusTag';
 
 const ProgramListItemContainer = ({ program }: { program: IProgram }) => {
   const navigate = useNavigate();
@@ -20,6 +19,7 @@ const ProgramListItemContainer = ({ program }: { program: IProgram }) => {
             }`,
           )
         }
+        data-program-text={program.programInfo.title}
       >
         <img
           src={program.programInfo.thumbnail}

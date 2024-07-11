@@ -1,9 +1,9 @@
 import { useState } from 'react';
 
+import { isAxiosError } from 'axios';
 import axios from '../../../../../../utils/axios';
 import Input from '../../../../ui/input/Input';
 import { PayInfo } from '../../section/ApplySection';
-import { isAxiosError } from 'axios';
 
 interface CouponSectionProps {
   setPayInfo: (payInfo: (prevPayInfo: PayInfo) => PayInfo) => void;
@@ -75,7 +75,9 @@ const CouponSection = ({ setPayInfo, programType }: CouponSectionProps) => {
         <div className="text-0.875 h-3 text-system-error">{validationMsg}</div>
       )}
       {successMsg && (
-        <div className="text-0.875 h-3 text-system-positive-blue">{successMsg}</div>
+        <div className="text-0.875 h-3 text-system-positive-blue">
+          {successMsg}
+        </div>
       )}
     </div>
   );

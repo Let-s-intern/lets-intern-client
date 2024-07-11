@@ -33,20 +33,28 @@ const SocialLogin = ({ type }: SocialLoginProps) => {
         <h2>SNS 계정으로 {type === 'LOGIN' ? '로그인' : '회원가입'}하기</h2>
         <div className={styles.buttons}>
           <button
-            className={styles.kakao}
+            className="flex h-[43px] w-[43px] items-center justify-center rounded-full bg-[#FEE500]"
             onClick={() => handleSocialLogin('KAKAO')}
           >
-            <i>
-              <img src="/icons/kakao-icon.svg" alt="카카오톡 아이콘" />
-            </i>
+            <div className="w-[20px]">
+              <img
+                className="h-full w-full"
+                src="/icons/kakao-icon.svg"
+                alt="카카오톡 아이콘"
+              />
+            </div>
           </button>
           <button
-            className={styles.naver}
+            className="flex h-[43px] w-[43px] items-center justify-center rounded-full bg-[#2db400]"
             onClick={() => handleSocialLogin('NAVER')}
           >
-            <i>
-              <img src="/icons/naver-icon.svg" alt="네이버 아이콘" />
-            </i>
+            <div className="h-4 w-4">
+              <img
+                className="h-full w-full"
+                src="/icons/naver-icon.svg"
+                alt="네이버 아이콘"
+              />
+            </div>
           </button>
         </div>
       </div>
