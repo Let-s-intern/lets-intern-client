@@ -4,7 +4,6 @@ import { FaArrowLeft } from 'react-icons/fa6';
 import { PayInfo } from '../../section/ApplySection';
 import ScrollableBox from '../scrollable-box/ScrollableBox';
 import CouponSection from '../section/CouponSection';
-import PayInfoSection from '../section/PayInfoSection';
 import PriceSection from '../section/PriceSection';
 
 interface ScrollableDiv extends HTMLDivElement {
@@ -18,6 +17,7 @@ interface PayContentProps {
   contentIndex: number;
   setContentIndex: (contentIndex: number) => void;
   programType: string;
+  totalPrice: number;
 }
 
 const PayContent = ({
@@ -27,6 +27,7 @@ const PayContent = ({
   contentIndex,
   setContentIndex,
   programType,
+  totalPrice,
 }: PayContentProps) => {
   const scrollableBoxRef = useRef<ScrollableDiv>(null);
 
@@ -64,15 +65,6 @@ const PayContent = ({
     };
   }, [scrollableBoxRef]);
 
-  const totalPrice = () => {
-    const totalDiscount =
-      payInfo.couponPrice === -1
-        ? payInfo.price
-        : payInfo.discount + payInfo.couponPrice;
-    if (payInfo.price <= totalDiscount) return 0;
-    else return payInfo.price - totalDiscount;
-  };
-
   return (
     <div className="flex flex-col gap-6">
       <ScrollableBox
@@ -83,8 +75,6 @@ const PayContent = ({
           payInfo.livePriceType !== 'FREE' && (
             <>
               <h2 className="font-medium">결제 정보</h2>
-              <PayInfoSection payInfo={payInfo} />
-              <hr className="bg-neutral-85" />
               <CouponSection
                 setPayInfo={setPayInfo}
                 programType={programType}
@@ -109,7 +99,7 @@ const PayContent = ({
             handleApplyButtonClick();
           }}
         >
-          신청하기 {totalPrice().toLocaleString()}원
+          결제하기 {totalPrice.toLocaleString()}원
         </button>
       </div>
     </div>
