@@ -13,6 +13,7 @@ const SelectPaymentPage = ({ programType }: SelectPaymentPageProps) => {
   const numberRegex = /[^0-9]/g;
 
   const clientKey = process.env.REACT_APP_TOSS_CLIENT_KEY || '';
+  // TODO: 수정
   const customerKey = 'zOZ8i_RHluykZWVBsLqXp';
   const [amount, setAmount] = useState({
     currency: 'KRW',

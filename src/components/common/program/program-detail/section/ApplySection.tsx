@@ -1,6 +1,5 @@
-import { useEffect, useState } from 'react';
-
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ProgramType } from '../../../../../pages/common/program/ProgramDetail';
 import axios from '../../../../../utils/axios';
@@ -147,6 +146,15 @@ const ApplySection = ({
     },
   });
 
+  const { data: user } = useQuery({
+    queryKey: ['user', 'me'],
+    queryFn: async () => {
+      const res = await axios.get('/user');
+      return res.data.data as { email?: string };
+    },
+  });
+  const isTest = user?.email === 'test@test.com';
+
   const applyProgram = useMutation({
     mutationFn: async () => {
       const res = await axios.post(
@@ -190,23 +198,27 @@ const ApplySection = ({
   }, [payInfo.couponPrice, payInfo.price, payInfo.discount]);
 
   const handleApplyButtonClick = () => {
-    // applyProgram.mutate();
-    navigate(`/program/${programType}/${programId}/payment`, {
-      state: {
-        priceId: priceId,
-        couponId: payInfo.couponId,
-        price: payInfo.price,
-        discount: payInfo.discount,
-        couponPrice: payInfo.couponPrice,
-        totalPrice: totalPrice,
-        contactEmail: userInfo.contactEmail,
-        question: userInfo.question,
-        email: userInfo.email,
-        phone: userInfo.phoneNumber,
-        name: userInfo.name,
-        programTitle: programTitle,
-      },
-    });
+    if (isTest) {
+      navigate(`/program/${programType}/${programId}/payment`, {
+        state: {
+          priceId: priceId,
+          couponId: payInfo.couponId,
+          price: payInfo.price,
+          discount: payInfo.discount,
+          couponPrice: payInfo.couponPrice,
+          totalPrice: totalPrice,
+          contactEmail: userInfo.contactEmail,
+          question: userInfo.question,
+          email: userInfo.email,
+          phone: userInfo.phoneNumber,
+          name: userInfo.name,
+          programTitle: programTitle,
+        },
+      });
+      return;
+    }
+
+    applyProgram.mutate();
   };
 
   return (
@@ -256,6 +268,7 @@ const ApplySection = ({
           setContentIndex={setContentIndex}
           programType={programType}
           totalPrice={totalPrice}
+          isTest={isTest}
         />
       )}
     </section>

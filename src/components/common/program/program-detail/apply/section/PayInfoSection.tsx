@@ -4,9 +4,11 @@ import { PayInfo } from '../../section/ApplySection';
 
 interface PayInfoSectionProps {
   payInfo: PayInfo;
+  // 결제 심사 용도로 만든 임시 결제인지 여부
+  isTest?: boolean;
 }
 
-const PayInfoSection = ({ payInfo }: PayInfoSectionProps) => {
+const PayInfoSection = ({ payInfo, isTest }: PayInfoSectionProps) => {
   const formatDateString = (dateString: string) => {
     const date = new Date(dateString);
     return `${date.getFullYear()}년 ${
@@ -15,6 +17,10 @@ const PayInfoSection = ({ payInfo }: PayInfoSectionProps) => {
       date.getHours() % 12
     }시${date.getMinutes() !== 0 ? ` ${date.getMinutes()}분` : ''}`;
   };
+
+  if (isTest) {
+    return null;
+  }
 
   return (
     <div className="flex flex-col gap-3">

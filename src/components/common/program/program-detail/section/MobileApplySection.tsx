@@ -135,6 +135,7 @@ const MobileApplySection = ({
           setContentIndex={setContentIndex}
           programType={programType}
           totalPrice={totalPrice}
+          isTest={false}
         />
       )}
     </section>
