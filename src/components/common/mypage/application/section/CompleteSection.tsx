@@ -8,9 +8,10 @@ interface CompleteSectionProps {
 }
 
 const CompleteSection = ({ applicationList }: CompleteSectionProps) => {
-  const [viewList, setViewList] = useState<ApplicationType[]>(
-    applicationList.slice(0, 3),
-  );
+  const [showMore, setShowMore] = useState(false);
+
+  const viewList = showMore ? applicationList : applicationList.slice(0, 3);
+
   return (
     <section className="flex flex-col gap-6">
       <h1 className="text-lg font-semibold">참여 완료</h1>
@@ -24,6 +25,7 @@ const CompleteSection = ({ applicationList }: CompleteSectionProps) => {
         <div className="grid grid-cols-2 gap-4 md:flex md:flex-col">
           {viewList.map((application) => (
             <ApplicationCard
+              key={application.id}
               grayscale
               application={application}
               showChallengeButton
@@ -32,11 +34,11 @@ const CompleteSection = ({ applicationList }: CompleteSectionProps) => {
         </div>
       )}
       {applicationList.length > 3 &&
-        applicationList.length !== viewList.length && (
+        !showMore && (
           <Button
             className="hidden md:flex"
             onClick={() => {
-              setViewList(applicationList);
+              setShowMore(true);
             }}
           >
             더보기

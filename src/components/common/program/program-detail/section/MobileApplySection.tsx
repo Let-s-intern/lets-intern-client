@@ -1,4 +1,5 @@
 import { useMutation } from '@tanstack/react-query';
+import { useEffect, useRef } from 'react';
 import { IAction } from '../../../../../interfaces/interface';
 import { ProgramType } from '../../../../../pages/common/program/ProgramDetail';
 import axios from '../../../../../utils/axios';
@@ -53,6 +54,7 @@ const MobileApplySection = ({
   setContentIndex,
   totalPrice,
 }: MobileApplySectionProps) => {
+  const scrollRef = useRef<HTMLDivElement>(null);
   const applyProgram = useMutation({
     mutationFn: async () => {
       const res = await axios.post(
@@ -84,8 +86,17 @@ const MobileApplySection = ({
     toggleApplyModal();
   };
 
+  useEffect(() => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollTo(0, 0);
+    }
+  }, [contentIndex, scrollRef]);
+
   return (
-    <section className="w-full">
+    <section
+      className="h-full w-full overflow-y-auto scrollbar-hide"
+      ref={scrollRef}
+    >
       {contentIndex === 0 && (
         <ScheduleContent
           contentIndex={contentIndex}
