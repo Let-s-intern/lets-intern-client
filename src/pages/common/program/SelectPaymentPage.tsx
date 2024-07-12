@@ -137,7 +137,7 @@ const SelectPaymentPage = ({ programType }: SelectPaymentPageProps) => {
 
   return (
     <div className="px-5">
-      <div className="mx-auto max-w-5xl">
+      <div className="mx-auto max-w-5xl pb-6">
         {/* 결제 UI */}
         <div id="payment-method" />
         {/* 이용약관 UI */}
