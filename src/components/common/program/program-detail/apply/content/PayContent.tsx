@@ -1,7 +1,7 @@
 import { useRef } from 'react';
 import { FaArrowLeft } from 'react-icons/fa6';
 
-import { PayInfo } from '../../section/ApplySection';
+import { PayInfo, ProgramDate } from '../../section/ApplySection';
 import CouponSection from '../section/CouponSection';
 import PayInfoSection from '../section/PayInfoSection';
 import PriceSection from '../section/PriceSection';
@@ -16,6 +16,7 @@ interface PayContentProps {
   totalPrice: number;
   // 결제 심사 용도로 만든 임시 결제 페이지인지 여부
   isTest: boolean;
+  programDate: ProgramDate;
 }
 
 const PayContent = ({
@@ -27,6 +28,7 @@ const PayContent = ({
   programType,
   totalPrice,
   isTest,
+  programDate,
 }: PayContentProps) => {
   const topRef = useRef<HTMLDivElement>(null);
 
@@ -48,12 +50,12 @@ const PayContent = ({
               <h2 className="font-medium" ref={topRef}>
                 결제 정보
               </h2>
-              {!isTest && (
-                <>
-                  <PayInfoSection payInfo={payInfo} />
-                  <hr className="bg-neutral-85" />
-                </>
-              )}
+              <PayInfoSection
+                payInfo={payInfo}
+                isTest={isTest}
+                programDate={programDate}
+              />
+              <hr className="bg-neutral-85" />
               <CouponSection
                 setPayInfo={setPayInfo}
                 programType={programType}
