@@ -145,14 +145,7 @@ const ApplySection = ({
     },
   });
 
-  const { data: user } = useQuery({
-    queryKey: ['user', 'me'],
-    queryFn: async () => {
-      const res = await axios.get('/user');
-      return res.data.data as { email?: string };
-    },
-  });
-  const isTest = user?.email === 'test@test.com';
+  const isTest = userInfo?.email === 'test@test.com';
 
   const applyProgram = useMutation({
     mutationFn: async () => {
