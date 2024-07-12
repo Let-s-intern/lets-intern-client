@@ -151,6 +151,7 @@ const ProgramDetail = ({ programType }: ProgramDetailProps) => {
       return res.data;
     },
   });
+
   // 프로그램 일정 가져오기
   useQuery({
     queryKey: [programType, programId],

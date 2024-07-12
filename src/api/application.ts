@@ -64,18 +64,22 @@ export const usePostApplicationMutation = (
       programType: string;
       requestBody: PostApplicationInterface;
     }) => {
-      return await axios.post(
-        `/application/${programId}?type=${programType.toUpperCase()}`,
-        requestBody,
-      );
+      return (
+        await axios.post(
+          `/application/${programId}?type=${programType.toUpperCase()}`,
+          requestBody,
+        )
+      ).data.data;
     },
-    onSuccess: (response) => {
-      console.log('SUCCESS : ', response);
+    onSuccess: (data) => {
+      console.log('SUCCESS : ', data);
       successCallback();
       //이 mutation이 성공하면 재로딩되어야 하는 쿼리키 invalidate 처리 후 successCallback
       // client.invalidateQueries(UseUserInfoQueryKey)
       // .then(() => successCallback());
     },
-    onError: (error) => errorCallback(error),
+    onError: (error) => {
+      errorCallback(error);
+    },
   });
 };

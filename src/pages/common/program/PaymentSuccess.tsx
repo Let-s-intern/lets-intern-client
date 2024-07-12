@@ -1,60 +1,62 @@
-import { useEffect } from 'react';
-import { useSearchParams } from 'react-router-dom';
-import {
-  PostApplicationInterface,
-  usePostApplicationMutation,
-} from '../../../api/application';
+import dayjs from 'dayjs';
+import { useEffect, useMemo, useState } from 'react';
+import { Link, useSearchParams } from 'react-router-dom';
+import { z } from 'zod';
+import { PostApplicationInterface } from '../../../api/application';
+import { useChallengeQuery } from '../../../api/challenge';
+import { useLiveQuery } from '../../../api/program';
 import DescriptionBox from '../../../components/common/program/paymentSuccess/DescriptionBox';
 import PaymentInfoRow from '../../../components/common/program/paymentSuccess/PaymentInfoRow';
+import useRunOnce from '../../../hooks/useRunOnce';
+import axios from '../../../utils/axios';
+import { searchParamsToObject } from '../../../utils/network';
+
+const searchParamsSchema = z
+  .object({
+    programId: z.coerce.number(),
+    programType: z.string(),
+    couponId: z.union([z.literal('null'), z.coerce.number()]),
+    priceId: z.coerce.number(),
+    price: z.coerce.number(),
+    discount: z.coerce.number(),
+    couponPrice: z.coerce.number(),
+    paymentKey: z.string(),
+    orderId: z.string(),
+    amount: z.string(),
+    contactEmail: z.string(),
+    question: z.string(),
+  })
+  .transform((data) => ({
+    ...data,
+    couponId: data.couponId === 'null' ? null : data.couponId,
+  }));
 
 const PaymentSuccess = () => {
   const [searchParams] = useSearchParams();
+  // TODO: any 타입을 사용하지 않도록 수정
+  const [result, setResult] = useState<any>(null);
 
-  const { mutate, isPending, isSuccess, isError, data } =
-    usePostApplicationMutation(
-      () => {},
-      () => {},
+  const params = useMemo(() => {
+    const obj = searchParamsToObject(
+      new URL(window.location.href).searchParams,
     );
-
-  useEffect(() => {
-    const params = {
-      programId: Number(searchParams.get('programId')),
-      programType: searchParams.get('programType') as string,
-      couponId:
-        searchParams.get('couponId') === 'null'
-          ? null
-          : Number(searchParams.get('couponId')),
-      priceId: Number(searchParams.get('priceId')),
-      price: Number(searchParams.get('price')),
-      discount: Number(searchParams.get('discount')),
-      couponPrice: Number(searchParams.get('couponPrice')),
-      paymentKey: searchParams.get('paymentKey') as string,
-      orderId: searchParams.get('orderId') as string,
-      amount: searchParams.get('amount') as string,
-      contactEmail: searchParams.get('contactEmail') as string,
-      question: searchParams.get('question') as string,
-    };
-
-    if (
-      !(
-        params.programId !== null &&
-        params.programType !== null &&
-        params.priceId !== null &&
-        params.price !== null &&
-        params.discount !== null &&
-        params.couponPrice !== null &&
-        params.paymentKey !== null &&
-        params.orderId !== null &&
-        params.amount !== null &&
-        params.contactEmail !== null &&
-        params.question !== null
-      )
-    ) {
+    const result = searchParamsSchema.safeParse(obj);
+    if (!result.success) {
+      console.log(result.error);
       alert('잘못된 접근입니다.');
       return;
     }
 
-    const requestBody: PostApplicationInterface = {
+    return result.data;
+  }, []);
+
+  useRunOnce(() => {
+    if (!params) {
+      return;
+    }
+    console.log('mutate!!');
+
+    const body: PostApplicationInterface = {
       paymentInfo: {
         couponId: params.couponId,
         priceId: params.priceId,
@@ -67,27 +69,45 @@ const PaymentSuccess = () => {
       question: params.question,
     };
 
-    mutate({
-      programId: params.programId,
-      programType: params.programType.toUpperCase(),
-      requestBody,
-    });
-  }, [searchParams, mutate]);
+    axios
+      .post(
+        `/application/${params.programId}?type=${params.programType.toUpperCase()}`,
+        body,
+      )
+      .then((res) => {
+        setResult(res.data.data);
+      })
+      .catch((e) => {
+        console.error(e);
+        setResult('error');
+      });
+  });
 
-  const dayArray = ['일', '월', '화', '수', '목', '금', '토'];
+  const { data: live } = useLiveQuery({
+    enabled:
+      typeof params?.programId === 'number' && params?.programType === 'live',
+    liveId: params?.programId || 0,
+  });
 
-  const getApprovedDateFormat = (date: string) => {
-    const approvedDate = new Date(date);
-    return `${approvedDate.getFullYear()}.${
-      approvedDate.getMonth() + 1
-    }.${approvedDate.getDate()} (${dayArray[approvedDate.getDay()]})`;
-  };
+  const { data: challenge } = useChallengeQuery({
+    enabled:
+      typeof params?.programId === 'number' &&
+      params?.programType === 'challenge',
+    challengeId: params?.programId || 0,
+  });
+
+  const isSuccess = typeof result === 'object' && result !== null;
 
   useEffect(() => {
-    console.log('isSuccess, ', isSuccess);
-    console.log('isPending, ', isPending);
-    console.log('isError, ', isError);
-  }, [isSuccess, isPending, isError]);
+    console.log('live', live);
+  }, [live]);
+
+  useEffect(() => {
+    console.log('challenge', challenge);
+  }, [challenge]);
+
+  const program = params?.programType === 'live' ? live : challenge;
+  const programLink = `/program/${params?.programType}/${params?.programId}`;
 
   return (
     <div className="w-full px-5 py-10">
@@ -96,7 +116,7 @@ const PaymentSuccess = () => {
           결제 확인하기
         </div>
         <div className="flex min-h-52 w-full flex-col items-center justify-center">
-          {isPending ? (
+          {!result ? (
             <div>결제 확인 중입니다.</div>
           ) : (
             <>
@@ -106,7 +126,23 @@ const PaymentSuccess = () => {
                   <div className="font-semibold text-neutral-0">
                     결제 프로그램
                   </div>
-                  <div className="flex w-full items-center justify-start gap-x-4"></div>
+                  <div className="flex w-full items-center justify-start gap-x-4">
+                    <div className="flex">
+                      <Link to={programLink}>
+                        <img
+                          src={program?.thumbnail ?? ''}
+                          alt="thumbnail"
+                          className="h-24 w-24 object-cover"
+                        />
+                      </Link>
+                      <div className="ml-5">
+                        <h2 className="mb-3 text-xl font-bold hover:underline">
+                          <Link to={programLink}>{program?.title}</Link>
+                        </h2>
+                        <p className="text-neutral-40">{program?.shortDesc}</p>
+                      </div>
+                    </div>
+                  </div>
                   {isSuccess && (
                     <button className="flex w-full flex-1 justify-center rounded-md border-2 border-primary bg-neutral-100 px-6 py-3 text-lg font-medium text-primary-dark">
                       다른 프로그램 둘러보기
@@ -155,13 +191,15 @@ const PaymentSuccess = () => {
                       <>
                         <PaymentInfoRow
                           title="결제일자"
-                          content={getApprovedDateFormat(
-                            data?.data.data.tossInfo.approvedAt,
-                          )}
+                          content={dayjs(
+                            // TODO: any 타입을 사용하지 않도록 수정
+                            result?.tossInfo.approvedAt,
+                          ).format('YYYY.MM.DD(ddd) HH:mm')}
                         />
                         <PaymentInfoRow
                           title="결제수단"
-                          content={data?.data.data.tossInfo.method}
+                          // TODO: any 타입을 사용하지 않도록 수정
+                          content={result?.tossInfo.method}
                         />
                         <div className="flex w-full items-center justify-start gap-x-2 px-3 py-2">
                           <div className="text-neutral-40">영수증</div>
@@ -170,7 +208,8 @@ const PaymentSuccess = () => {
                               className="flex items-center justify-center rounded-sm border border-neutral-60 bg-white px-3 py-2 text-sm font-medium"
                               onClick={() => {
                                 window.open(
-                                  data?.data.data.tossInfo.receipt.url,
+                                  // TODO: any 타입을 사용하지 않도록 수정
+                                  result?.tossInfo.receipt.url,
                                   '_blank',
                                 );
                               }}
