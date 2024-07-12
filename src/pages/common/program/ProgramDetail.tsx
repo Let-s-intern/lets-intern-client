@@ -71,7 +71,6 @@ const ProgramDetail = ({ programType }: ProgramDetailProps) => {
   const [priceId, setPriceId] = useState<number>(0);
   const [isCautionChecked, setIsCautionChecked] = useState<boolean>(false);
   const [contentIndex, setContentIndex] = useState(0);
-  const [totalPrice, setTotalPrice] = useState(0);
 
   useQuery({
     queryKey: [programType, programId, 'application'],
@@ -126,15 +125,6 @@ const ProgramDetail = ({ programType }: ProgramDetailProps) => {
       }
     },
   });
-
-  useEffect(() => {
-    const totalDiscount =
-      payInfo.couponPrice === -1
-        ? payInfo.price
-        : payInfo.discount + payInfo.couponPrice;
-    if (payInfo.price <= totalDiscount) setTotalPrice(0);
-    else return setTotalPrice(payInfo.price - totalDiscount);
-  }, [payInfo.couponPrice, payInfo.price, payInfo.discount]);
 
   useEffect(() => {
     if (contentIndex !== 0 && !isResumed) {
@@ -232,7 +222,6 @@ const ProgramDetail = ({ programType }: ProgramDetailProps) => {
                   setIsCautionChecked={setIsCautionChecked}
                   contentIndex={contentIndex}
                   setContentIndex={setContentIndex}
-                  totalPrice={totalPrice}
                 />
               ) : // 모집 예정 or 모집 종료이면 출시알림신청 버튼 표시
               programInfo.beginning === '' || programInfo.deadline === '' ? (
