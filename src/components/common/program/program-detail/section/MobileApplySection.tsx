@@ -1,5 +1,6 @@
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { IAction } from '../../../../../interfaces/interface';
 import { ProgramType } from '../../../../../pages/common/program/ProgramDetail';
 import axios from '../../../../../utils/axios';
@@ -54,7 +55,10 @@ const MobileApplySection = ({
   setContentIndex,
   totalPrice,
 }: MobileApplySectionProps) => {
+  const queryClient = useQueryClient();
+  const navigate = useNavigate();
   const scrollRef = useRef<HTMLDivElement>(null);
+
   const applyProgram = useMutation({
     mutationFn: async () => {
       const res = await axios.post(
@@ -75,15 +79,48 @@ const MobileApplySection = ({
       );
       return res.data;
     },
-    onSuccess: () => {
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({
+        queryKey: [programType],
+      });
       setIsApplied(true);
+      toggleApplyModal();
+    },
+    onError: (error) => {
+      alert('신청에 실패했습니다. 다시 시도해주세요.');
+      setContentIndex(0);
     },
   });
 
+  // const handleApplyButtonClick = () => {
+  //   applyProgram.mutate();
+  //   toggleDrawer();
+  //   toggleApplyModal();
+  // };
+
   const handleApplyButtonClick = () => {
+    if (isTest) {
+      navigate(`/program/${programType}/${programId}/payment`, {
+        state: {
+          priceId: priceId,
+          couponId: payInfo.couponId,
+          price: payInfo.price,
+          discount: payInfo.discount,
+          couponPrice: payInfo.couponPrice,
+          totalPrice: totalPrice,
+          contactEmail: userInfo.contactEmail,
+          question: userInfo.question,
+          email: userInfo.email,
+          phone: userInfo.phoneNumber,
+          name: userInfo.name,
+          programTitle: programTitle,
+        },
+      });
+      return;
+    }
+
     applyProgram.mutate();
     toggleDrawer();
-    toggleApplyModal();
   };
 
   useEffect(() => {
@@ -91,6 +128,8 @@ const MobileApplySection = ({
       scrollRef.current.scrollTo(0, 0);
     }
   }, [contentIndex, scrollRef]);
+
+  const isTest = userInfo?.email === 'test@test.com';
 
   return (
     <section
@@ -135,7 +174,8 @@ const MobileApplySection = ({
           setContentIndex={setContentIndex}
           programType={programType}
           totalPrice={totalPrice}
-          isTest={false}
+          isTest={isTest}
+          programDate={programDate}
         />
       )}
     </section>
