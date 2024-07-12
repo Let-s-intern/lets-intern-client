@@ -4,15 +4,9 @@ import { PayInfo } from '../../section/ApplySection';
 
 interface PayInfoSectionProps {
   payInfo: PayInfo;
-  // 결제 심사 용도로 만든 임시 결제인지 여부
-  isTest?: boolean;
 }
 
-const PayInfoSection = ({ payInfo, isTest }: PayInfoSectionProps) => {
-  if (isTest) {
-    return null;
-  }
-
+const PayInfoSection = ({ payInfo }: PayInfoSectionProps) => {
   return (
     <div className="flex flex-col gap-3">
       <div className="font-semibold text-neutral-0">결제 방법</div>

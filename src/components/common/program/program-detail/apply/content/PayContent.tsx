@@ -48,8 +48,12 @@ const PayContent = ({
               <h2 className="font-medium" ref={topRef}>
                 결제 정보
               </h2>
-              <PayInfoSection payInfo={payInfo} isTest={isTest} />
-              <hr className="bg-neutral-85" />
+              {!isTest && (
+                <>
+                  <PayInfoSection payInfo={payInfo} />
+                  <hr className="bg-neutral-85" />
+                </>
+              )}
               <CouponSection
                 setPayInfo={setPayInfo}
                 programType={programType}
