@@ -1,6 +1,10 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import {
+  PostApplicationInterface,
+  usePostApplicationMutation,
+} from '../../../../../api/application';
 import { ProgramType } from '../../../../../pages/common/program/ProgramDetail';
 import axios from '../../../../../utils/axios';
 import CautionContent from '../apply/content/CautionContent';
@@ -147,38 +151,19 @@ const ApplySection = ({
 
   const isTest = userInfo?.email === 'test@test.com';
 
-  const applyProgram = useMutation({
-    mutationFn: async () => {
-      const res = await axios.post(
-        `/application/${programId}`,
-        {
-          paymentInfo: {
-            priceId: priceId,
-            couponId: payInfo.couponId,
-          },
-          question: userInfo.question,
-          contactEmail: userInfo.contactEmail,
-        },
-        {
-          params: {
-            type: programType.toUpperCase(),
-          },
-        },
-      );
-      return res.data;
-    },
-    onSuccess: async () => {
+  const { mutate: applyProgram } = usePostApplicationMutation(
+    async () => {
       await queryClient.invalidateQueries({
         queryKey: [programType],
       });
       toggleApplyModal();
       setContentIndex(0);
     },
-    onError: (error) => {
+    (error) => {
       alert('신청에 실패했습니다. 다시 시도해주세요.');
       setContentIndex(0);
     },
-  });
+  );
 
   const totalPrice = useMemo(() => {
     const totalDiscount =
@@ -212,7 +197,24 @@ const ApplySection = ({
       return;
     }
 
-    applyProgram.mutate();
+    const body: PostApplicationInterface = {
+      paymentInfo: {
+        priceId: priceId,
+        couponId: payInfo.couponId,
+        paymentKey: '',
+        orderId: '',
+        amount: totalPrice.toString(),
+      },
+      contactEmail: userInfo.contactEmail,
+      motivate: '',
+      question: userInfo.question,
+    };
+
+    applyProgram({
+      programId: programId,
+      programType: programType,
+      requestBody: body,
+    });
   };
 
   return (
