@@ -263,6 +263,7 @@ const ApplySection = ({
           programType={programType}
           totalPrice={totalPrice}
           isTest={isTest}
+          programDate={programDate}
         />
       )}
     </section>
