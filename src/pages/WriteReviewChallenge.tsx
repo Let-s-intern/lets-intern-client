@@ -45,7 +45,6 @@ const WriteReviewChallenge = () => {
       const res = await axios.get(`/challenge/${challengeId}`);
       return getChallengeIdSchema.parse(res.data.data);
     },
-    retry: 1,
   });
 
   const invalid =
