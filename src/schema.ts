@@ -1061,3 +1061,23 @@ export const programApplicationType = z.object({
   priceList: z.array(challengeApplicationPriceType).nullable().optional(),
   price: liveApplicationPriceType.nullable().optional(),
 });
+
+/** GET /api/v1/user/admin */
+export const userAdminType = z.object({
+  userAdminList: z.array(
+    z.object({
+      id: z.number(),
+      name: z.string(),
+      email: z.string(),
+      contactEmail: z.string().nullable(),
+      phoneNum: z.string(),
+      createdDate: z.string(),
+      accountType: accountType.nullable(),
+      accountNum: z.string().nullable(),
+      marketingAgree: z.boolean().nullable(),
+    }),
+  ),
+  pageInfo: pageinfo,
+});
+
+export type UserAdmin = z.infer<typeof userAdminType>['userAdminList'];
