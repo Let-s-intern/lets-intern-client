@@ -14,8 +14,6 @@ interface PayContentProps {
   setContentIndex: (contentIndex: number) => void;
   programType: string;
   totalPrice: number;
-  // 결제 심사 용도로 만든 임시 결제 페이지인지 여부
-  isTest: boolean;
   programDate: ProgramDate;
 }
 
@@ -27,7 +25,6 @@ const PayContent = ({
   setContentIndex,
   programType,
   totalPrice,
-  isTest,
   programDate,
 }: PayContentProps) => {
   const topRef = useRef<HTMLDivElement>(null);
@@ -50,11 +47,7 @@ const PayContent = ({
               <h2 className="font-medium" ref={topRef}>
                 결제 정보
               </h2>
-              <PayInfoSection
-                payInfo={payInfo}
-                isTest={isTest}
-                programDate={programDate}
-              />
+              <PayInfoSection payInfo={payInfo} programDate={programDate} />
               <hr className="bg-neutral-85" />
               <CouponSection
                 setPayInfo={setPayInfo}
@@ -80,9 +73,7 @@ const PayContent = ({
             handleApplyButtonClick();
           }}
         >
-          {isTest
-            ? `결제하기 ${totalPrice.toLocaleString()}원`
-            : `신청하기 ${totalPrice.toLocaleString()}원`}
+          결제하기 {totalPrice.toLocaleString()}원
         </button>
       </div>
     </div>

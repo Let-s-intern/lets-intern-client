@@ -1,10 +1,7 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import {
-  PostApplicationInterface,
-  usePostApplicationMutation,
-} from '../../../../../api/application';
+import { getPaymentSearchParams } from '../../../../../data/getPaymentSearchParams';
 import { ProgramType } from '../../../../../pages/common/program/ProgramDetail';
 import axios from '../../../../../utils/axios';
 import CautionContent from '../apply/content/CautionContent';
@@ -149,22 +146,6 @@ const ApplySection = ({
     },
   });
 
-  const isTest = userInfo?.email === 'test@test.com';
-
-  const { mutate: applyProgram } = usePostApplicationMutation(
-    async () => {
-      await queryClient.invalidateQueries({
-        queryKey: [programType],
-      });
-      toggleApplyModal();
-      setContentIndex(0);
-    },
-    (error) => {
-      alert('신청에 실패했습니다. 다시 시도해주세요.');
-      setContentIndex(0);
-    },
-  );
-
   const totalPrice = useMemo(() => {
     const totalDiscount =
       payInfo.couponPrice === -1
@@ -177,44 +158,16 @@ const ApplySection = ({
   }, [payInfo.couponPrice, payInfo.discount, payInfo.price]);
 
   const handleApplyButtonClick = () => {
-    if (isTest) {
-      navigate(`/program/${programType}/${programId}/payment`, {
-        state: {
-          priceId: priceId,
-          couponId: payInfo.couponId,
-          price: payInfo.price,
-          discount: payInfo.discount,
-          couponPrice: payInfo.couponPrice,
-          totalPrice: totalPrice,
-          contactEmail: userInfo.contactEmail,
-          question: userInfo.question,
-          email: userInfo.email,
-          phone: userInfo.phoneNumber,
-          name: userInfo.name,
-          programTitle: programTitle,
-        },
-      });
-      return;
-    }
-
-    const body: PostApplicationInterface = {
-      paymentInfo: {
-        priceId: priceId,
-        couponId: payInfo.couponId,
-        paymentKey: '',
-        orderId: '',
-        amount: totalPrice.toString(),
-      },
-      contactEmail: userInfo.contactEmail,
-      motivate: '',
-      question: userInfo.question,
-    };
-
-    applyProgram({
-      programId: programId,
-      programType: programType,
-      requestBody: body,
+    const searchParams = getPaymentSearchParams({
+      payInfo,
+      userInfo,
+      priceId,
+      totalPrice,
+      programTitle,
+      programType,
+      programId,
     });
+    navigate(`/payment?${searchParams.toString()}`);
   };
 
   return (
@@ -264,7 +217,6 @@ const ApplySection = ({
           setContentIndex={setContentIndex}
           programType={programType}
           totalPrice={totalPrice}
-          isTest={isTest}
           programDate={programDate}
         />
       )}
