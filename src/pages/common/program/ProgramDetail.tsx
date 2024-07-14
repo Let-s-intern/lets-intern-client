@@ -130,7 +130,7 @@ const ProgramDetail = ({ programType }: ProgramDetailProps) => {
     if (contentIndex !== 0 && !isResumed) {
       setIsResumed(true);
     }
-  }, [contentIndex]);
+  }, [contentIndex, isResumed]);
 
   // 프로그램 제목 가져오기
   useQuery({
@@ -141,6 +141,7 @@ const ProgramDetail = ({ programType }: ProgramDetailProps) => {
       return res.data;
     },
   });
+
   // 프로그램 일정 가져오기
   useQuery({
     queryKey: [programType, programId],

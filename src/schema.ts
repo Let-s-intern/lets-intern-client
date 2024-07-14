@@ -158,6 +158,7 @@ export const getLiveIdSchema = z
     participationCount: z.number().nullable().optional(),
     thumbnail: z.string().nullable().optional(),
     mentorName: z.string().nullable().optional(),
+    mentorPassword: z.string().nullable().optional(),
     job: z.string().nullable().optional(),
     place: z.string().nullable().optional(),
     startDate: z.string().nullable().optional(),
@@ -1017,6 +1018,46 @@ export const mentorNotificationSchema = z
 
 export type MentorNotificationType = 'PREV' | 'REVIEW';
 
-export const adminMentorInfoSchema = z.object({
-  mentorPassword: z.string().nullable().optional(),
+export const programStatus = z.union([
+  z.literal('PREV'),
+  z.literal('PROCEEDING'),
+  z.literal('POST'),
+]);
+
+export const challengeApplicationPriceType = z.object({
+  priceId: z.number(),
+  price: z.number(),
+  refund: z.number(),
+  discount: z.number(),
+  accountNumber: z.string(),
+  deadline: z.string(),
+  accountType: z.string(),
+  challengePriceType: challengePriceType,
+  challengeUserType: challengeUserType,
+  challengeParticipationType: challengeParticipationType,
+});
+
+export const liveApplicationPriceType = z.object({
+  priceId: z.number(),
+  price: z.number(),
+  discount: z.number(),
+  accountNumber: z.string(),
+  deadline: z.string(),
+  accountType: z.string(),
+  livePriceType: livePriceType,
+});
+
+export const programApplicationType = z.object({
+  applied: z.boolean(),
+  name: z.string(),
+  email: z.string(),
+  contactEmail: z.string(),
+  phoneNumber: z.string(),
+  criticalNotice: z.string(),
+  startDate: z.string(),
+  endDate: z.string(),
+  deadline: z.string(),
+  statusType: programStatus,
+  priceList: z.array(challengeApplicationPriceType).nullable().optional(),
+  price: liveApplicationPriceType.nullable().optional(),
 });

@@ -1,7 +1,7 @@
 import { useRef } from 'react';
 import { FaArrowLeft } from 'react-icons/fa6';
 
-import { PayInfo } from '../../section/ApplySection';
+import { PayInfo, ProgramDate } from '../../section/ApplySection';
 import CouponSection from '../section/CouponSection';
 import PayInfoSection from '../section/PayInfoSection';
 import PriceSection from '../section/PriceSection';
@@ -13,6 +13,10 @@ interface PayContentProps {
   contentIndex: number;
   setContentIndex: (contentIndex: number) => void;
   programType: string;
+  totalPrice: number;
+  // 결제 심사 용도로 만든 임시 결제 페이지인지 여부
+  isTest: boolean;
+  programDate: ProgramDate;
 }
 
 const PayContent = ({
@@ -22,6 +26,9 @@ const PayContent = ({
   contentIndex,
   setContentIndex,
   programType,
+  totalPrice,
+  isTest,
+  programDate,
 }: PayContentProps) => {
   const topRef = useRef<HTMLDivElement>(null);
 
@@ -34,15 +41,6 @@ const PayContent = ({
     setContentIndex(contentIndex - 1);
   };
 
-  const totalPrice = () => {
-    const totalDiscount =
-      payInfo.couponPrice === -1
-        ? payInfo.price
-        : payInfo.discount + payInfo.couponPrice;
-    if (payInfo.price <= totalDiscount) return 0;
-    else return payInfo.price - totalDiscount;
-  };
-
   return (
     <div className="flex h-full flex-col gap-6">
       <div className="flex h-full flex-col gap-6">
@@ -52,7 +50,11 @@ const PayContent = ({
               <h2 className="font-medium" ref={topRef}>
                 결제 정보
               </h2>
-              <PayInfoSection payInfo={payInfo} />
+              <PayInfoSection
+                payInfo={payInfo}
+                isTest={isTest}
+                programDate={programDate}
+              />
               <hr className="bg-neutral-85" />
               <CouponSection
                 setPayInfo={setPayInfo}
@@ -78,7 +80,9 @@ const PayContent = ({
             handleApplyButtonClick();
           }}
         >
-          신청하기 {totalPrice().toLocaleString()}원
+          {isTest
+            ? `결제하기 ${totalPrice.toLocaleString()}원`
+            : `신청하기 ${totalPrice.toLocaleString()}원`}
         </button>
       </div>
     </div>

@@ -1,8 +1,12 @@
-import { useMutation } from '@tanstack/react-query';
-import { useEffect, useRef } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
+import { useEffect, useMemo, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
+import {
+  PostApplicationInterface,
+  usePostApplicationMutation,
+} from '../../../../../api/application';
 import { IAction } from '../../../../../interfaces/interface';
 import { ProgramType } from '../../../../../pages/common/program/ProgramDetail';
-import axios from '../../../../../utils/axios';
 import CautionContent from '../apply/content/CautionContent';
 import InputContent from '../apply/content/InputContent';
 import PayContent from '../apply/content/PayContent';
@@ -52,43 +56,86 @@ const MobileApplySection = ({
   contentIndex,
   setContentIndex,
 }: MobileApplySectionProps) => {
+  const queryClient = useQueryClient();
+  const navigate = useNavigate();
   const scrollRef = useRef<HTMLDivElement>(null);
-  const applyProgram = useMutation({
-    mutationFn: async () => {
-      const res = await axios.post(
-        `/application/${programId}`,
-        {
-          paymentInfo: {
-            priceId: priceId,
-            couponId: payInfo.couponId,
-          },
-          question: userInfo.question,
-          contactEmail: userInfo.contactEmail,
-        },
-        {
-          params: {
-            type: programType.toUpperCase(),
-          },
-        },
-      );
-      return res.data;
-    },
-    onSuccess: () => {
+
+  const { mutate: applyProgram } = usePostApplicationMutation(
+    async () => {
+      await queryClient.invalidateQueries({
+        queryKey: [programType],
+      });
+      toggleApplyModal();
       setIsApplied(true);
+      setContentIndex(0);
     },
-  });
+    (error) => {
+      alert('신청에 실패했습니다. 다시 시도해주세요.');
+      setContentIndex(0);
+    },
+  );
 
   const handleApplyButtonClick = () => {
-    applyProgram.mutate();
+    if (isTest) {
+      navigate(`/program/${programType}/${programId}/payment`, {
+        state: {
+          priceId: priceId,
+          couponId: payInfo.couponId,
+          price: payInfo.price,
+          discount: payInfo.discount,
+          couponPrice: payInfo.couponPrice,
+          totalPrice: totalPrice,
+          contactEmail: userInfo.contactEmail,
+          question: userInfo.question,
+          email: userInfo.email,
+          phone: userInfo.phoneNumber,
+          name: userInfo.name,
+          programTitle: programTitle,
+        },
+      });
+      return;
+    }
+
+    const body: PostApplicationInterface = {
+      paymentInfo: {
+        priceId: priceId,
+        couponId: payInfo.couponId,
+        paymentKey: '',
+        orderId: '',
+        amount: totalPrice.toString(),
+      },
+      contactEmail: userInfo.contactEmail,
+      motivate: '',
+      question: userInfo.question,
+    };
+
+    applyProgram({
+      programId: programId,
+      programType: programType,
+      requestBody: body,
+    });
+
     toggleDrawer();
-    toggleApplyModal();
   };
+
+  const totalPrice = useMemo(() => {
+    const totalDiscount =
+      payInfo.couponPrice === -1
+        ? payInfo.price
+        : payInfo.discount + payInfo.couponPrice;
+    if (payInfo.price <= totalDiscount) {
+      return 0;
+    }
+    return payInfo.price - totalDiscount;
+  }, [payInfo.couponPrice, payInfo.discount, payInfo.price]);
 
   useEffect(() => {
     if (scrollRef.current) {
       scrollRef.current.scrollTo(0, 0);
     }
   }, [contentIndex, scrollRef]);
+
+  const isTest = userInfo?.email === 'test@test.com';
 
   return (
     <section
@@ -132,6 +179,9 @@ const MobileApplySection = ({
           contentIndex={contentIndex}
           setContentIndex={setContentIndex}
           programType={programType}
+          totalPrice={totalPrice}
+          isTest={isTest}
+          programDate={programDate}
         />
       )}
     </section>
