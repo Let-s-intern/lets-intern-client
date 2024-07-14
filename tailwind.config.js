@@ -3,6 +3,12 @@ module.exports = {
   content: ['./src/**/*.{js,jsx,ts,tsx}'],
   theme: {
     extend: {
+      fontSize: {
+        small20: [
+          '1.25rem',
+          { lineHeight: '1.75rem', letterSpacing: '-0.4px' },
+        ],
+      },
       screens: {
         xs: '390px',
         sm: '640px',
