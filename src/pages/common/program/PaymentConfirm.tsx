@@ -1,11 +1,7 @@
-import dayjs from 'dayjs';
-import { useEffect, useMemo, useState } from 'react';
-import { Link, useSearchParams } from 'react-router-dom';
+import { useMemo, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { z } from 'zod';
 import { PostApplicationInterface } from '../../../api/application';
-import { useChallengeQuery } from '../../../api/challenge';
-import { useLiveQuery } from '../../../api/program';
-import PaymentInfoRow from '../../../components/common/program/paymentSuccess/PaymentInfoRow';
 import useRunOnce from '../../../hooks/useRunOnce';
 import axios from '../../../utils/axios';
 import { searchParamsToObject } from '../../../utils/network';
@@ -31,9 +27,10 @@ const searchParamsSchema = z
   }));
 
 const PaymentConfirm = () => {
-  const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
   // TODO: any 타입을 사용하지 않도록 수정
   const [result, setResult] = useState<any>(null);
+  const [isConfirm, setIsConfirm] = useState(false);
 
   const params = useMemo(() => {
     const obj = searchParamsToObject(
@@ -73,161 +70,23 @@ const PaymentConfirm = () => {
         body,
       )
       .then((res) => {
-        setResult(res.data.data);
+        navigate(
+          `/order/${params?.orderId}/success?${new URL(window.location.href).searchParams.toString()}`,
+        );
       })
       .catch((e) => {
         console.error(e);
-        setResult('error');
+        navigate(
+          `/order/${params?.orderId}/fail?${new URL(window.location.href).searchParams.toString()}`,
+        );
       });
   });
-
-  const { data: live } = useLiveQuery({
-    enabled:
-      typeof params?.programId === 'number' && params?.programType === 'live',
-    liveId: params?.programId || 0,
-  });
-
-  const { data: challenge } = useChallengeQuery({
-    enabled:
-      typeof params?.programId === 'number' &&
-      params?.programType === 'challenge',
-    challengeId: params?.programId || 0,
-  });
-
-  const isConfirm = typeof result === 'object' && result !== null;
-
-  useEffect(() => {
-    console.log('live', live);
-  }, [live]);
-
-  useEffect(() => {
-    console.log('challenge', challenge);
-  }, [challenge]);
-
-  const program = params?.programType === 'live' ? live : challenge;
-  const programLink = `/program/${params?.programType}/${params?.programId}`;
 
   return (
     <div className="w-full px-5 py-10">
       <div className="mx-auto max-w-5xl">
-        <div className="flex w-full items-center justify-start py-6 text-xl font-bold">
-          결제 확인하기
-        </div>
         <div className="flex min-h-52 w-full flex-col items-center justify-center">
-          {!result ? (
-            <div>결제 확인 중입니다.</div>
-          ) : (
-            <>
-              {/* <DescriptionBox isConfirm={isConfirm} /> */}
-              <div className="flex w-full flex-col items-center justify-start gap-y-10 py-8">
-                <div className="flex w-full flex-col items-start justify-center gap-6">
-                  <div className="font-semibold text-neutral-0">
-                    결제 프로그램
-                  </div>
-                  <div className="flex w-full items-center justify-start gap-x-4">
-                    <div className="flex">
-                      <Link to={programLink}>
-                        <img
-                          src={program?.thumbnail ?? ''}
-                          alt="thumbnail"
-                          className="h-24 w-24 object-cover"
-                        />
-                      </Link>
-                      <div className="ml-5">
-                        <h2 className="mb-3 text-xl font-bold hover:underline">
-                          <Link to={programLink}>{program?.title}</Link>
-                        </h2>
-                        <p className="text-neutral-40">{program?.shortDesc}</p>
-                      </div>
-                    </div>
-                  </div>
-                  {isConfirm && (
-                    <button className="flex w-full flex-1 justify-center rounded-md border-2 border-primary bg-neutral-100 px-6 py-3 text-lg font-medium text-primary-dark">
-                      다른 프로그램 둘러보기
-                    </button>
-                  )}
-                </div>
-                <div className="flex w-full flex-col items-start justify-center gap-6">
-                  <div className="font-semibold text-neutral-0">결제 상세</div>
-                  <div className="flex w-full items-center justify-between gap-x-4 bg-neutral-90 px-3 py-5">
-                    <div className="font-bold">총 결제금액</div>
-                    <div>
-                      {Number(searchParams.get('amount')).toLocaleString() +
-                        '원'}
-                    </div>
-                  </div>
-                  <div className="flex w-full flex-col items-center justify-center">
-                    <PaymentInfoRow
-                      title="상품금액"
-                      content={
-                        Number(searchParams.get('price')).toLocaleString() +
-                        '원'
-                      }
-                    />
-                    <PaymentInfoRow
-                      title={`할인 (${Math.floor(Number(searchParams.get('discount')) / Number(searchParams.get('price')))}%)`}
-                      content={
-                        '-' +
-                        Number(searchParams.get('discount')).toLocaleString() +
-                        '원'
-                      }
-                    />
-                    <PaymentInfoRow
-                      title={`쿠폰할인`}
-                      content={
-                        '-' +
-                        Number(
-                          searchParams.get('couponPrice'),
-                        ).toLocaleString() +
-                        '원'
-                      }
-                    />
-                  </div>
-                  <hr className="bg-neutral-85" />
-                  <div className="flex w-full flex-col items-center justify-center">
-                    {isConfirm && (
-                      <>
-                        <PaymentInfoRow
-                          title="결제일자"
-                          content={dayjs(
-                            // TODO: any 타입을 사용하지 않도록 수정
-                            result?.tossInfo.approvedAt,
-                          ).format('YYYY.MM.DD(ddd) HH:mm')}
-                        />
-                        <PaymentInfoRow
-                          title="결제수단"
-                          // TODO: any 타입을 사용하지 않도록 수정
-                          content={result?.tossInfo.method}
-                        />
-                        <div className="flex w-full items-center justify-start gap-x-2 px-3 py-2">
-                          <div className="text-neutral-40">영수증</div>
-                          <div className="flex grow items-center justify-end text-neutral-0">
-                            <button
-                              className="flex items-center justify-center rounded-sm border border-neutral-60 bg-white px-3 py-2 text-sm font-medium"
-                              onClick={() => {
-                                window.open(
-                                  // TODO: any 타입을 사용하지 않도록 수정
-                                  result?.tossInfo.receipt.url,
-                                  '_blank',
-                                );
-                              }}
-                            >
-                              영수증 보기
-                            </button>
-                          </div>
-                        </div>
-                      </>
-                    )}
-                  </div>
-                  {isConfirm && (
-                    <button className="flex w-full flex-1 justify-center rounded-md border-2 border-primary bg-neutral-100 px-6 py-3 text-lg font-medium text-primary-dark">
-                      다른 프로그램 둘러보기
-                    </button>
-                  )}
-                </div>
-              </div>
-            </>
-          )}
+          결제 확인 중입니다...
         </div>
       </div>
     </div>
