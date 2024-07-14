@@ -28,11 +28,7 @@ const Payment = () => {
 
     return result.data;
   }, []);
-
-  // TODO: API 폴더로 옮겨야 함
   const { data: user } = useUserQuery();
-
-  // TODO: 수정
 
   const [ready, setReady] = useState(false);
   const [widgets, setWidgets] = useState<TossPaymentsWidgets | null>(null);
