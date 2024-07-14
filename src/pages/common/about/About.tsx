@@ -4,7 +4,7 @@ import EndSection from '../../../components/common/about/section/EndSection';
 import IntroSection from '../../../components/common/about/section/introduction/IntroSection';
 import ProblemSection from '../../../components/common/about/section/problem/ProblemSection';
 import ProgramMenuSection from '../../../components/common/about/section/ProgramMenuSection';
-import ResultSection from '../../../components/common/about/section/ResultSection';
+import ResultSection from '../../../components/common/about/section/result/ResultSection';
 import SolutionSection from '../../../components/common/about/section/SolutionSection';
 
 const About = () => {
