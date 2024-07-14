@@ -1,112 +1,69 @@
-import { useState } from 'react';
-
-import ProgramInfoModalGroup, {
-  ModalContentType,
-} from '../modal/ProgramInfoModalGroup';
-import classes from './ProgramMenuSection.module.scss';
-import AlertModal from '../../../ui/alert/AlertModal';
+const CONTENT = [
+  {
+    title: '인턴/신입 지원 챌린지',
+    description: [
+      '챌린지 형태로 경험정리, 직무탐색,',
+      '서류완성, 지원까지의 미션을 수행하며',
+      '커리어 시작을 준비할 수 있어요.',
+    ],
+  },
+  {
+    title: 'LIVE/VOD 클래스',
+    description: [
+      '커리어 선배를 통해 지원부터 합격,',
+      '그리고 직무이야기를 들을 수 있어요.',
+    ],
+  },
+];
 
 const ProgramMenuSection = () => {
-  const [showModalContent, setShowModalContent] =
-    useState<ModalContentType>('');
-  const [showTILAlert, setShowTILAlert] = useState(false);
-
   return (
-    <section className={classes.section}>
-      <div className={classes.content}>
-        <h3>
-          <span>
-            모두가 자신만의 커리어를 <br />
-            설계하고 지속할 수 있도록
-          </span>
-          <strong>
-            다양한 성장 프로그램을
-            <br />
-            제공하고 있습니다
-          </strong>
-        </h3>
-        <ul className={classes.menuList}>
-          <li
-            className={classes.menu}
-            onClick={() => setShowModalContent('CHALLENGE')}
-          >
-            <div className={classes.text}>
-              <h4>인턴 지원 챌린지</h4>
-              <p>
-                인턴 준비 및 지원에 어려움을 느끼는 <br />
-                사회초년생들을 위한 챌린지 프로그램
-              </p>
-            </div>
-            <div className={classes.arrow}>
-              <i>
-                <img src="./icons/arrow-line-right.svg" alt="오른쪽 화살표" />
-              </i>
-            </div>
-          </li>
-          <li
-            className={classes.menu}
-            onClick={() => setShowModalContent('BOOTCAMP')}
-          >
-            <div className={classes.text}>
-              <h4>부트캠프</h4>
-              <p>
-                일주일 간 무조건 3곳 이상 지원하는 <br />
-                인턴 지원 부트캠프
-              </p>
-            </div>
-            <div className={classes.arrow}>
-              <i>
-                <img src="./icons/arrow-line-right.svg" alt="오른쪽 화살표" />
-              </i>
-            </div>
-          </li>
-          <li
-            className={classes.menu}
-            onClick={() => setShowModalContent('LETS_CHAT')}
-          >
-            <div className={classes.text}>
-              <h4>렛츠챗</h4>
-              <p>
-                커리어 선배가 들려주는 <br />
-                지원부터 합격, 그리고 직무 이야기
-              </p>
-            </div>
-            <div className={classes.arrow}>
-              <i>
-                <img src="./icons/arrow-line-right.svg" alt="오른쪽 화살표" />
-              </i>
-            </div>
-          </li>
-          <li className={classes.menu} onClick={() => setShowTILAlert(true)}>
-            <div className={classes.text}>
-              <h4>TIL 챌린지</h4>
-              <p>
-                Today I Learned <br className={classes.fix} />
-                인턴/신입의 성장 기록 챌린지
-              </p>
-            </div>
-            <div className={classes.arrow}>
-              <i>
-                <img src="./icons/arrow-line-right.svg" alt="오른쪽 화살표" />
-              </i>
-            </div>
-          </li>
-        </ul>
+    <section className="overflow-hidden bg-neutral-100 px-5 py-[3.75rem]">
+      <div className="mb-10 flex flex-col gap-2">
+        <span className="text-1-bold text-neutral-40">
+          자신만의 커리어를 설계하고 지속할 수 있는
+        </span>
+        <h1 className="text-1.25-bold">커리어 단계별 프로그램</h1>
       </div>
-      <ProgramInfoModalGroup
-        showModalContent={showModalContent}
-        setShowModalContent={setShowModalContent}
-      />
-      {showTILAlert && (
-        <AlertModal
-          onConfirm={() => setShowTILAlert(false)}
-          title="TIL 챌린지"
-          showCancel={false}
-          highlight="confirm"
-        >
-          <p>오픈 예정입니다.</p>
-        </AlertModal>
-      )}
+
+      <div className="flex flex-col gap-5">
+        <div className="relative h-44 rounded-xl bg-[#FF6F0F] px-6 pt-7">
+          <div className="mb-3 flex items-center gap-2">
+            <h2 className="text-1-bold text-neutral-100">{CONTENT[0].title}</h2>
+            <img
+              src="/icons/Caret_Circle_Right.svg"
+              alt="인턴/신입 지원 챌린지 이동 아이콘"
+            />
+          </div>
+          <p className="text-0.875-medium flex flex-col text-static-100/90">
+            {CONTENT[0].description.map((desc) => (
+              <span key={desc}>{desc}</span>
+            ))}
+          </p>
+          <img
+            className="absolute -bottom-14 -right-2 h-full w-[7.82rem]"
+            src="/icons/Union.svg"
+          />
+        </div>
+        <div className="relative h-44 rounded-xl bg-[#3283FF] px-6 pb-[3.25rem] pt-7">
+          <div className="mb-3 flex items-center gap-2">
+            <h2 className="text-1-bold text-neutral-100">{CONTENT[1].title}</h2>
+            <img
+              src="/icons/Caret_Circle_Right.svg"
+              alt="인턴/신입 지원 챌린지 이동 아이콘"
+            />
+          </div>
+          <p className="text-0.875-medium flex flex-col text-static-100/90">
+            {CONTENT[1].description.map((desc) => (
+              <span key={desc}>{desc}</span>
+            ))}
+          </p>
+          <img
+            className="absolute -bottom-16 -right-6 h-full w-[7.82rem]"
+            src="/icons/Exclude.svg"
+          />
+        </div>
+      </div>
     </section>
   );
 };
