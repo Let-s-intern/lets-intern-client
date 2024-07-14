@@ -1,5 +1,5 @@
 import dayjs from 'dayjs';
-import { ProgramType } from '../../../../../pages/common/program/ProgramDetail';
+import { ProgramType } from '../../../../../types/common';
 import { ProgramDate } from '../section/ApplySection';
 
 interface DateToggleProps {

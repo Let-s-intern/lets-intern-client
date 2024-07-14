@@ -1,15 +1,20 @@
+import { Dayjs } from 'dayjs';
 import { useNavigate } from 'react-router-dom';
-import { ProgramType } from '../../../../../../pages/common/program/ProgramDetail';
 import useAuthStore from '../../../../../../store/useAuthStore';
+import { ProgramType } from '../../../../../../types/common';
 import { newProgramTypeToText } from '../../../../../../utils/convert';
 import NotiButton from '../../button/NotiButton';
-import { ProgramDate } from '../../section/ApplySection';
 import DateToggle from '../../toggle/DateToggle';
 
 interface OverviewContentProps {
   contentIndex: number;
   setContentIndex: (contentIndex: number) => void;
-  programDate: ProgramDate;
+  programDate: {
+    deadline: Dayjs | null;
+    startDate: Dayjs | null;
+    endDate: Dayjs | null;
+    beginning: Dayjs | null;
+  };
   programType: ProgramType;
   programTitle: string;
   isApplied: boolean;
@@ -45,7 +50,7 @@ const OverviewContent = ({
   return (
     <div className="flex flex-col gap-5">
       <div className="text-xs font-medium">
-        {formatDateString(programDate?.startDate || '2024')} [
+        {programDate?.startDate?.get('year') || '2024'} [
         {newProgramTypeToText[programType.toUpperCase()]}]
       </div>
       <h2 className="text-lg font-semibold">{programTitle}</h2>
@@ -56,8 +61,8 @@ const OverviewContent = ({
         {/* 모집 전이면 사전알림신청 버튼 표시 */}
         {!programDate.beginning || !programDate.deadline ? (
           <></>
-        ) : new Date() < new Date(programDate.beginning) ||
-          new Date() > new Date(programDate.deadline) ? (
+        ) : new Date() < new Date(programDate.beginning?.toISOString()) ||
+          new Date() > new Date(programDate.deadline?.toISOString()) ? (
           <NotiButton
             onClick={clickNotiButton}
             caption={'출시알림신청'}

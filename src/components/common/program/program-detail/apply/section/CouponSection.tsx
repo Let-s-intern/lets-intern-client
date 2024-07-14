@@ -3,14 +3,18 @@ import { useState } from 'react';
 import { isAxiosError } from 'axios';
 import axios from '../../../../../../utils/axios';
 import Input from '../../../../ui/input/Input';
-import { PayInfo } from '../../section/ApplySection';
+
+type Coupon = {
+  id: number;
+  price: number;
+};
 
 interface CouponSectionProps {
-  setPayInfo: (payInfo: (prevPayInfo: PayInfo) => PayInfo) => void;
+  setCoupon: (coupon: ((prevCoupon: Coupon) => Coupon) | Coupon) => void;
   programType: string;
 }
 
-const CouponSection = ({ setPayInfo, programType }: CouponSectionProps) => {
+const CouponSection = ({ setCoupon, programType }: CouponSectionProps) => {
   const [code, setCode] = useState('');
   const [validationMsg, setValidationMsg] = useState('');
   const [successMsg, setSuccessMsg] = useState('');
@@ -28,11 +32,10 @@ const CouponSection = ({ setPayInfo, programType }: CouponSectionProps) => {
           programType: programType.toUpperCase(),
         },
       });
-      setPayInfo((prevPayInfo: PayInfo) => ({
-        ...prevPayInfo,
-        couponId: res.data.data.couponId,
-        couponPrice: res.data.data.discount,
-      }));
+      setCoupon({
+        id: res.data.data.couponId,
+        price: res.data.data.discount,
+      });
       setValidationMsg('');
       setSuccessMsg('쿠폰이 등록되었습니다.');
     } catch (error) {
@@ -40,8 +43,8 @@ const CouponSection = ({ setPayInfo, programType }: CouponSectionProps) => {
         setSuccessMsg('');
         setValidationMsg(error.response?.data.message);
       }
-      setPayInfo((prevPayInfo: PayInfo) => ({
-        ...prevPayInfo,
+      setCoupon((prevCoupon: Coupon) => ({
+        ...prevCoupon,
         couponId: null,
         couponPrice: 0,
       }));

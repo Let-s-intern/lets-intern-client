@@ -6,9 +6,15 @@ import CouponSection from '../section/CouponSection';
 import PayInfoSection from '../section/PayInfoSection';
 import PriceSection from '../section/PriceSection';
 
+type Coupon = {
+  id: number;
+  price: number;
+};
+
 interface PayContentProps {
   payInfo: PayInfo;
-  setPayInfo: (payInfo: (prevPayInfo: PayInfo) => PayInfo) => void;
+  coupon: Coupon;
+  setCoupon: (coupon: ((prevCoupon: Coupon) => Coupon) | Coupon) => void;
   handleApplyButtonClick: () => void;
   contentIndex: number;
   setContentIndex: (contentIndex: number) => void;
@@ -19,7 +25,8 @@ interface PayContentProps {
 
 const PayContent = ({
   payInfo,
-  setPayInfo,
+  coupon,
+  setCoupon,
   handleApplyButtonClick,
   contentIndex,
   setContentIndex,
@@ -49,12 +56,9 @@ const PayContent = ({
               </h2>
               <PayInfoSection payInfo={payInfo} programDate={programDate} />
               <hr className="bg-neutral-85" />
-              <CouponSection
-                setPayInfo={setPayInfo}
-                programType={programType}
-              />
+              <CouponSection setCoupon={setCoupon} programType={programType} />
               <hr className="bg-neutral-85" />
-              <PriceSection payInfo={payInfo} />
+              <PriceSection payInfo={payInfo} coupon={coupon} />
             </>
           )}
       </div>

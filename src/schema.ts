@@ -84,6 +84,8 @@ export const accountType = z.union([
   z.literal('TOSS'),
 ]);
 
+export type AccountType = z.infer<typeof accountType>;
+
 const missionStatusType = z.union([
   z.literal('WAITING'),
   z.literal('CHECK_DONE'),
@@ -1014,7 +1016,7 @@ export const challengeApplicationPriceType = z.object({
   discount: z.number(),
   accountNumber: z.string(),
   deadline: z.string(),
-  accountType: z.string(),
+  accountType: accountType.nullable().optional(),
   challengePriceType: challengePriceType,
   challengeUserType: challengeUserType,
   challengeParticipationType: challengeParticipationType,
@@ -1026,21 +1028,6 @@ export const liveApplicationPriceType = z.object({
   discount: z.number(),
   accountNumber: z.string(),
   deadline: z.string(),
-  accountType: z.string(),
+  accountType: accountType.nullable().optional(),
   livePriceType: livePriceType,
-});
-
-export const programApplicationType = z.object({
-  applied: z.boolean(),
-  name: z.string(),
-  email: z.string(),
-  contactEmail: z.string(),
-  phoneNumber: z.string(),
-  criticalNotice: z.string(),
-  startDate: z.string(),
-  endDate: z.string(),
-  deadline: z.string(),
-  statusType: programStatus,
-  priceList: z.array(challengeApplicationPriceType).nullable().optional(),
-  price: liveApplicationPriceType.nullable().optional(),
 });

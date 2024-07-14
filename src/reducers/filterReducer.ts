@@ -1,4 +1,4 @@
-import { IAction, IFilter } from '../interfaces/interface';
+import { IAction, IFilter } from '../types/interface';
 
 interface FilterCheckedAction extends IAction {
   value?: string;

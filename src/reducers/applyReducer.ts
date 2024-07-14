@@ -1,4 +1,4 @@
-import { IAction } from '../interfaces/interface';
+import { IAction } from '../types/interface';
 
 // 프로그램 신청 완료 모달 열기/닫기
 export default function applyReducer(isOpen: boolean, action: IAction) {

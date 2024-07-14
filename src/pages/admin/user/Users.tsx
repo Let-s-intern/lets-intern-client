@@ -8,7 +8,7 @@ import Table from '../../../components/admin/ui/table/regacy/Table';
 import Filter from '../../../components/admin/user/users/filter/Filter';
 import TableBody from '../../../components/admin/user/users/table-content/TableBody';
 import TableHead from '../../../components/admin/user/users/table-content/TableHead';
-import { IUser } from '../../../interfaces/User.interface';
+import { IUser } from '../../../types/User.interface';
 import axios from '../../../utils/axios';
 
 const Users = () => {

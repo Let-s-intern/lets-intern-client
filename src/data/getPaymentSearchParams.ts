@@ -3,6 +3,7 @@ import { PayInfo } from '../components/common/program/program-detail/section/App
 
 export const getPaymentSearchParams = ({
   payInfo,
+  coupon,
   userInfo,
   priceId,
   totalPrice,
@@ -11,11 +12,12 @@ export const getPaymentSearchParams = ({
   programId,
 }: {
   payInfo: PayInfo;
+  coupon: { id: number; price: number } | null;
   userInfo: {
     contactEmail: string;
     question: string;
-    email: string;
-    phoneNumber: string;
+    email?: string | null;
+    phoneNumber?: string | null;
     name: string;
   };
   priceId: number;
@@ -26,15 +28,15 @@ export const getPaymentSearchParams = ({
 }): URLSearchParams => {
   const result = new URLSearchParams();
   result.set('priceId', priceId.toString());
-  result.set('couponId', payInfo.couponId ? payInfo.couponId.toString() : '');
+  result.set('couponId', coupon ? coupon.id.toString() : '');
   result.set('price', payInfo.price.toString());
   result.set('discount', payInfo.discount.toString());
-  result.set('couponPrice', payInfo.couponPrice.toString());
+  result.set('couponPrice', coupon ? coupon.price.toString() : '0');
   result.set('totalPrice', totalPrice.toString());
   result.set('contactEmail', userInfo.contactEmail);
   result.set('question', userInfo.question);
-  result.set('email', userInfo.email);
-  result.set('phone', userInfo.phoneNumber);
+  result.set('email', userInfo.email ?? '');
+  result.set('phone', userInfo.phoneNumber ?? '');
   result.set('name', userInfo.name);
   result.set('programTitle', programTitle);
   result.set('programType', programType);

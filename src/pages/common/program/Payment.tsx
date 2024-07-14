@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { useUserQuery } from '../../../api/user';
 import { paymentSearchParamsSchema } from '../../../data/getPaymentSearchParams';
 import { searchParamsToObject } from '../../../utils/network';
-import { generateRandomString, sha256Base64 } from '../../../utils/random';
+import { generateRandomString } from '../../../utils/random';
 
 type TossPaymentsWidgets = ReturnType<
   Awaited<ReturnType<typeof loadTossPayments>>['widgets']
@@ -39,15 +39,13 @@ const Payment = () => {
     }
 
     const init = async () => {
-      const customerKey = (await sha256Base64(user.phoneNum || '')).slice(
-        0,
-        17,
-      );
+      const customerKey = (user.id ?? '').slice(0, 16);
+      console.log('customerKey', customerKey);
 
       const tossPayments = await loadTossPayments(clientKey);
       // 회원 결제
       const widgets = tossPayments.widgets({
-        customerKey,
+        customerKey: customerKey,
       });
       setWidgets(widgets);
 

@@ -1,10 +1,18 @@
 import { AttendanceResult, AttendanceStatus } from '../schema';
 
+/** @deprecated use `newProgramTypeText` instead. */
 export const newProgramTypeToText: Record<string, string> = {
   CHALLENGE: '챌린지',
   LIVE: 'LIVE 클래스',
   VOD: 'VOD 클래스',
 };
+
+export const newProgramTypeText: Record<'CHALLENGE' | 'LIVE' | 'VOD', string> =
+  {
+    CHALLENGE: '챌린지',
+    LIVE: 'LIVE 클래스',
+    VOD: 'VOD 클래스',
+  };
 
 export const newProgramFeeTypeToText: Record<string, string> = {
   FREE: '무료',

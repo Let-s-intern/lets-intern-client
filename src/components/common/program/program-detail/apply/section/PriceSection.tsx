@@ -6,12 +6,21 @@ interface DiscountResult {
   totalDiscount: number;
 }
 
-const handleCouponPrice = (payInfo: PayInfo): DiscountResult => {
+type Coupon = {
+  id: number;
+  price: number;
+};
+
+const handleCouponPrice = ({
+  coupon,
+  payInfo,
+}: {
+  payInfo: PayInfo;
+  coupon: Coupon;
+}): DiscountResult => {
   let totalDiscount =
-    payInfo.discount +
-    (payInfo.couponPrice === -1 ? payInfo.price : payInfo.couponPrice);
-  let couponDiscount =
-    payInfo.couponPrice === -1 ? payInfo.price : payInfo.couponPrice;
+    payInfo.discount + (coupon.price === -1 ? payInfo.price : coupon.price);
+  let couponDiscount = coupon.price === -1 ? payInfo.price : coupon.price;
   if (payInfo.price <= totalDiscount) {
     totalDiscount = payInfo.price;
     couponDiscount = payInfo.price - payInfo.discount;
@@ -26,8 +35,14 @@ const handleCouponPrice = (payInfo: PayInfo): DiscountResult => {
   return { couponDiscount, discountPer, totalDiscount };
 };
 
-const PriceSection = ({ payInfo }: { payInfo: PayInfo }) => {
-  const discountInfo = handleCouponPrice(payInfo);
+const PriceSection = ({
+  payInfo,
+  coupon,
+}: {
+  payInfo: PayInfo;
+  coupon: Coupon;
+}) => {
+  const discountInfo = handleCouponPrice({ payInfo, coupon });
   return (
     <div className="flex flex-col gap-3">
       <div className="font-semibold text-neutral-0">결제 금액</div>

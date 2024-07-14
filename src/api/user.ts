@@ -5,6 +5,7 @@ import axios from '../utils/axios';
 
 /** GET /api/v1/user */
 export const userSchema = z.object({
+  id: z.string().nullable(),
   name: z.string().nullable(),
   email: z.string().nullable(),
   contactEmail: z.string().nullable(),

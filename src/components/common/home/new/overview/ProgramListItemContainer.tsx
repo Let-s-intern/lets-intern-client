@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import { IProgram } from '../../../../../interfaces/Program.interface';
+import { IProgram } from '../../../../../types/Program.interface';
 import { PROGRAM_STATUS } from '../../../../../utils/programConst';
 import ProgramStatusTag from '../../../program/programs/card/ProgramStatusTag';
 

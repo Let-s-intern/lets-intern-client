@@ -1,6 +1,6 @@
 import { useMediaQuery } from '@mui/material';
 import { useQuery } from '@tanstack/react-query';
-import { IProgram } from '../../../../../interfaces/interface';
+import { IProgram } from '../../../../../types/interface';
 
 import { useCallback, useEffect, useState } from 'react';
 import axios from '../../../../../utils/axios';

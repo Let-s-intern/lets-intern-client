@@ -1,5 +1,6 @@
 import { useMediaQuery } from '@mui/material';
 import { useQuery } from '@tanstack/react-query';
+import dayjs from 'dayjs';
 import { useEffect, useReducer, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import ApplyModal from '../../../components/common/program/program-detail/apply/modal/ApplyModal';
@@ -15,10 +16,9 @@ import TabSection from '../../../components/common/program/program-detail/sectio
 import applyReducer from '../../../reducers/applyReducer';
 import drawerReducer from '../../../reducers/drawerReducer';
 import useAuthStore from '../../../store/useAuthStore';
+import { ProgramType } from '../../../types/common';
 import axios from '../../../utils/axios';
 import { REMINDER_LINK } from '../../../utils/programConst';
-
-export type ProgramType = 'challenge' | 'live';
 
 interface ProgramDate {
   deadline: string;
@@ -61,11 +61,9 @@ const ProgramDetail = ({ programType }: ProgramDetailProps) => {
     discount: 0,
     accountNumber: '',
     deadline: '',
-    accountType: '',
+    accountType: 'HANA',
     livePriceType: '',
     challengePriceType: '',
-    couponId: null,
-    couponPrice: 0,
   });
   const [criticalNotice, setCriticalNotice] = useState<string>('');
   const [priceId, setPriceId] = useState<number>(0);
@@ -90,10 +88,10 @@ const ProgramDetail = ({ programType }: ProgramDetailProps) => {
           setPriceId(data.priceList[0].priceId);
           setPayInfo({
             priceId: data.priceList[0].priceId,
-            couponId: null,
+            // couponId: null,
             price: data.priceList[0].price,
             discount: data.priceList[0].discount,
-            couponPrice: 0,
+            // couponPrice: 0,
             accountNumber: data.priceList[0].accountNumber,
             deadline: data.priceList[0].deadline,
             accountType: data.priceList[0].accountType,
@@ -105,10 +103,10 @@ const ProgramDetail = ({ programType }: ProgramDetailProps) => {
           setPriceId(data.price.priceId);
           setPayInfo({
             priceId: data.price.priceId,
-            couponId: null,
+            // couponId: null,
             price: data.price.price,
             discount: data.price.discount,
-            couponPrice: 0,
+            // couponPrice: 0,
             accountNumber: data.price.accountNumber,
             deadline: data.price.deadline,
             accountType: data.price.accountType,
@@ -215,7 +213,13 @@ const ProgramDetail = ({ programType }: ProgramDetailProps) => {
                   setPayInfo={setPayInfo}
                   criticalNotice={criticalNotice}
                   priceId={priceId}
-                  programDate={programInfo}
+                  // TODO: 수정
+                  programDate={{
+                    beginning: dayjs(),
+                    deadline: dayjs(),
+                    startDate: dayjs(),
+                    endDate: dayjs(),
+                  }}
                   isApplied={isAlreadyApplied}
                   setIsApplied={setIsAlreadyApplied}
                   isCautionChecked={isCautionChecked}

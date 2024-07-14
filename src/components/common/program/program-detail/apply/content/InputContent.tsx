@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
-
-import { IAction } from '../../../../../../interfaces/interface';
-import { ProgramType } from '../../../../../../pages/common/program/ProgramDetail';
+import { ProgramType } from '../../../../../../types/common';
+import { IAction } from '../../../../../../types/interface';
 import { UserInfo } from '../../section/ApplySection';
 import MotiveAnswerSection from '../section/MotiveAnswerSection';
 import UserInputSection from '../section/UserInputSection';
@@ -35,7 +34,7 @@ const InputContent = ({
       setContentIndex(contentIndex + 2);
       return;
     }
-    setContentIndex(contentIndex + 1);
+    setContentIndex(contentIndex + 2);
   };
 
   const handleBackButtonClick = () => {
