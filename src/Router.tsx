@@ -60,6 +60,7 @@ import Home from './pages/common/home/Home';
 import MentorNotificationAfter from './pages/common/mentor/MentorNotificationAfter';
 import MentorNotificationBefore from './pages/common/mentor/MentorNotificationBefore';
 import Application from './pages/common/mypage/Application';
+import Credit from './pages/common/mypage/Credit';
 import MyPage from './pages/common/mypage/MyPage';
 import Privacy from './pages/common/mypage/Privacy';
 import Review from './pages/common/mypage/Review';
@@ -157,6 +158,8 @@ const Router = () => {
                 element={<ReviewCreate isEdit={true} />}
               />
             </Route>
+            {/* /mypage/credit */}
+            <Route path="credit" element={<Credit />} />
             {/* /mypage/privacy */}
             <Route path="privacy" element={<Privacy />} />
           </Route>
