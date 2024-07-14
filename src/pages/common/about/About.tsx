@@ -5,6 +5,7 @@ import IntroSection from '../../../components/common/about/section/introduction/
 import ProblemSection from '../../../components/common/about/section/problem/ProblemSection';
 import ProgramMenuSection from '../../../components/common/about/section/ProgramMenuSection';
 import ResultSection from '../../../components/common/about/section/result/ResultSection';
+import ReviewSection from '../../../components/common/about/section/ReviewSection';
 import SolutionSection from '../../../components/common/about/section/SolutionSection';
 
 const About = () => {
@@ -17,6 +18,7 @@ const About = () => {
       <ProgramMenuSection />
       <CommunitySection />
       <ResultSection />
+      <ReviewSection />
       <EndSection />
       {/* <BottomSection /> */}
     </>

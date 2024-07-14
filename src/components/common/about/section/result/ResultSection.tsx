@@ -17,7 +17,7 @@ const ResultSection = () => {
   return (
     <section className="bg-[#101348] px-5 py-[3.75rem]">
       <AboutTitleDark {...TITLE} />
-      <div className="flex flex-col gap-10">
+      <div className="mt-[3.75rem] flex flex-col gap-10">
         <div>
           <ResultLine />
           <ResultTitle title="프로그램 수" />
