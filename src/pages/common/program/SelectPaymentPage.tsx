@@ -1,6 +1,8 @@
 import { loadTossPayments } from '@tosspayments/tosspayments-sdk';
-import { useEffect, useState } from 'react';
-import { useLocation, useParams } from 'react-router-dom';
+import { useEffect, useMemo, useState } from 'react';
+import { useParams } from 'react-router-dom';
+import { paymentSearchParamsSchema } from '../../../data/getPaymentSearchParams';
+import { searchParamsToObject } from '../../../utils/network';
 import { ProgramType } from './ProgramDetail';
 
 export interface SelectPaymentPageProps {
@@ -9,7 +11,25 @@ export interface SelectPaymentPageProps {
 
 const SelectPaymentPage = ({ programType }: SelectPaymentPageProps) => {
   const { programId } = useParams<{ programId: string }>();
-  const state = useLocation().state;
+
+  const params = useMemo(() => {
+    const obj = searchParamsToObject(
+      new URL(window.location.href).searchParams,
+    );
+    const result = paymentSearchParamsSchema.safeParse(obj);
+    if (!result.success) {
+      console.log(result.error);
+      throw new Error('잘못된 접근입니다.');
+      // alert('잘못된 접근입니다.');
+    }
+
+    return result.data;
+  }, []);
+
+  useEffect(() => {
+    console.log('params', params);
+  }, [params]);
+
   const numberRegex = /[^0-9]/g;
 
   const clientKey = process.env.REACT_APP_TOSS_CLIENT_KEY || '';
@@ -17,7 +37,7 @@ const SelectPaymentPage = ({ programType }: SelectPaymentPageProps) => {
   const customerKey = 'zOZ8i_RHluykZWVBsLqXp';
   const [amount, setAmount] = useState({
     currency: 'KRW',
-    value: state.totalPrice,
+    value: params.totalPrice,
   });
   const [ready, setReady] = useState(false);
   const [widgets, setWidgets] = useState<any>(null);
@@ -41,12 +61,12 @@ const SelectPaymentPage = ({ programType }: SelectPaymentPageProps) => {
   useEffect(() => {
     setAmount({
       currency: 'KRW',
-      value: state.totalPrice,
+      value: params.totalPrice,
     });
-  }, [state.totalPrice]);
+  }, [params.totalPrice]);
 
   useEffect(() => {
-    if (state.totalPrice === 0 || widgets != null) {
+    if (params.totalPrice === 0 || widgets != null) {
       return;
     }
     const fetchPaymentWidgets = async () => {
@@ -67,7 +87,7 @@ const SelectPaymentPage = ({ programType }: SelectPaymentPageProps) => {
         setWidgets(null);
       }
     };
-  }, [clientKey, customerKey, state.totalPrice]);
+  }, [clientKey, customerKey, params.totalPrice]);
 
   useEffect(() => {
     const renderPaymentWidgets = async () => {
@@ -105,7 +125,7 @@ const SelectPaymentPage = ({ programType }: SelectPaymentPageProps) => {
   }, [widgets, amount]);
 
   const handleButtonClick = async () => {
-    if (widgets == null || !state.programTitle) {
+    if (widgets == null || !params.programTitle) {
       return;
     }
 
@@ -114,26 +134,22 @@ const SelectPaymentPage = ({ programType }: SelectPaymentPageProps) => {
     try {
       await widgets.requestPayment({
         orderId: orderId,
-        orderName: state.programTitle,
+        orderName: params.programTitle,
         successUrl:
           window.location.origin +
-          `/program/${orderId}/success?programType=${programType}&programId=${programId}&couponId=${state.couponId}&priceId=${state.priceId}&price=${state.price}&discount=${state.discount}&couponPrice=${state.couponPrice}&contactEmail=${state.contactEmail}&question=${state.question}`,
+          `/program/${orderId}/success?${new URL(window.location.href).searchParams.toString()}`,
         failUrl:
           window.location.origin +
-          `/program/${orderId}/fail?programType=${programType}&programId=${programId}`,
-        customerEmail: state.email,
-        customerName: state.name,
-        customerMobilePhone: state.phone.replace(numberRegex, ''),
+          `/program/${orderId}/fail?${new URL(window.location.href).searchParams.toString()}`,
+        customerEmail: params.email,
+        customerName: params.name,
+        customerMobilePhone: params.phone.replace(numberRegex, ''),
       });
     } catch (error) {
       // 에러 처리하기
       console.error(error);
     }
   };
-
-  useEffect(() => {
-    console.log(state);
-  }, [state]);
 
   return (
     <div className="px-5">
@@ -147,7 +163,7 @@ const SelectPaymentPage = ({ programType }: SelectPaymentPageProps) => {
           disabled={!ready}
           onClick={handleButtonClick}
         >
-          결제하기 {state.totalPrice.toLocaleString()}원
+          결제하기 {params.totalPrice.toLocaleString()}원
         </button>
       </div>
     </div>

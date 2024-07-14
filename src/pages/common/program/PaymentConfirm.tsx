@@ -5,7 +5,6 @@ import { z } from 'zod';
 import { PostApplicationInterface } from '../../../api/application';
 import { useChallengeQuery } from '../../../api/challenge';
 import { useLiveQuery } from '../../../api/program';
-import DescriptionBox from '../../../components/common/program/paymentSuccess/DescriptionBox';
 import PaymentInfoRow from '../../../components/common/program/paymentSuccess/PaymentInfoRow';
 import useRunOnce from '../../../hooks/useRunOnce';
 import axios from '../../../utils/axios';
@@ -31,7 +30,7 @@ const searchParamsSchema = z
     couponId: data.couponId === 'null' ? null : data.couponId,
   }));
 
-const PaymentSuccess = () => {
+const PaymentConfirm = () => {
   const [searchParams] = useSearchParams();
   // TODO: any 타입을 사용하지 않도록 수정
   const [result, setResult] = useState<any>(null);
@@ -54,7 +53,6 @@ const PaymentSuccess = () => {
     if (!params) {
       return;
     }
-    console.log('mutate!!');
 
     const body: PostApplicationInterface = {
       paymentInfo: {
@@ -96,7 +94,7 @@ const PaymentSuccess = () => {
     challengeId: params?.programId || 0,
   });
 
-  const isSuccess = typeof result === 'object' && result !== null;
+  const isConfirm = typeof result === 'object' && result !== null;
 
   useEffect(() => {
     console.log('live', live);
@@ -120,7 +118,7 @@ const PaymentSuccess = () => {
             <div>결제 확인 중입니다.</div>
           ) : (
             <>
-              <DescriptionBox isSuccess />
+              {/* <DescriptionBox isConfirm={isConfirm} /> */}
               <div className="flex w-full flex-col items-center justify-start gap-y-10 py-8">
                 <div className="flex w-full flex-col items-start justify-center gap-6">
                   <div className="font-semibold text-neutral-0">
@@ -143,7 +141,7 @@ const PaymentSuccess = () => {
                       </div>
                     </div>
                   </div>
-                  {isSuccess && (
+                  {isConfirm && (
                     <button className="flex w-full flex-1 justify-center rounded-md border-2 border-primary bg-neutral-100 px-6 py-3 text-lg font-medium text-primary-dark">
                       다른 프로그램 둘러보기
                     </button>
@@ -187,7 +185,7 @@ const PaymentSuccess = () => {
                   </div>
                   <hr className="bg-neutral-85" />
                   <div className="flex w-full flex-col items-center justify-center">
-                    {isSuccess && (
+                    {isConfirm && (
                       <>
                         <PaymentInfoRow
                           title="결제일자"
@@ -221,7 +219,7 @@ const PaymentSuccess = () => {
                       </>
                     )}
                   </div>
-                  {isSuccess && (
+                  {isConfirm && (
                     <button className="flex w-full flex-1 justify-center rounded-md border-2 border-primary bg-neutral-100 px-6 py-3 text-lg font-medium text-primary-dark">
                       다른 프로그램 둘러보기
                     </button>
@@ -236,4 +234,4 @@ const PaymentSuccess = () => {
   );
 };
 
-export default PaymentSuccess;
+export default PaymentConfirm;

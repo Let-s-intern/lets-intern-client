@@ -56,11 +56,11 @@ const Router = () => {
             element={<ProgramDetail programType="live" />}
           />
           <Route
-            path="program/challenge/:programId/payment"
+            path="payment"
             element={<SelectPaymentPage programType="challenge" />}
           />
           <Route
-            path="program/live/:programId/payment"
+            path="payment"
             element={<SelectPaymentPage programType="live" />}
           />
           <Route path="program/:orderId/success" element={<PaymentSuccess />} />

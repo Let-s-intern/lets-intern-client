@@ -5,6 +5,7 @@ import {
   PostApplicationInterface,
   usePostApplicationMutation,
 } from '../../../../../api/application';
+import { getPaymentSearchParams } from '../../../../../data/getPaymentSearchParams';
 import { ProgramType } from '../../../../../pages/common/program/ProgramDetail';
 import axios from '../../../../../utils/axios';
 import CautionContent from '../apply/content/CautionContent';
@@ -176,24 +177,19 @@ const ApplySection = ({
     return payInfo.price - totalDiscount;
   }, [payInfo.couponPrice, payInfo.discount, payInfo.price]);
 
+  const searchParams = getPaymentSearchParams({
+    payInfo,
+    userInfo,
+    priceId,
+    totalPrice,
+    programTitle,
+    programType,
+    programId,
+  });
+
   const handleApplyButtonClick = () => {
     if (isTest) {
-      navigate(`/program/${programType}/${programId}/payment`, {
-        state: {
-          priceId: priceId,
-          couponId: payInfo.couponId,
-          price: payInfo.price,
-          discount: payInfo.discount,
-          couponPrice: payInfo.couponPrice,
-          totalPrice: totalPrice,
-          contactEmail: userInfo.contactEmail,
-          question: userInfo.question,
-          email: userInfo.email,
-          phone: userInfo.phoneNumber,
-          name: userInfo.name,
-          programTitle: programTitle,
-        },
-      });
+      navigate(`/payment?${searchParams.toString()}`);
       return;
     }
 
