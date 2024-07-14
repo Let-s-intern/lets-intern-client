@@ -789,29 +789,12 @@ export const dailyMissionSchema = z
 export type DailyMission = z.infer<typeof dailyMissionSchema>['dailyMission'];
 
 // KAKAO, NAVER, GOOGLE, SERVICE
-const authProviderSchema = z.union([
+export const authProviderSchema = z.union([
   z.literal('KAKAO'),
   z.literal('NAVER'),
   z.literal('GOOGLE'),
   z.literal('SERVICE'),
 ]);
-
-/** GET /api/v1/user */
-export const userSchema = z.object({
-  name: z.string().nullable(),
-  email: z.string().nullable(),
-  contactEmail: z.string().nullable(),
-  phoneNum: z.string().nullable(),
-  university: z.string().nullable(),
-  grade: grade.nullable(),
-  major: z.string().nullable(),
-  wishJob: z.string().nullable(),
-  wishCompany: z.string().nullable(),
-  accountType: accountType.nullable(),
-  accountNum: z.string().nullable(),
-  marketingAgree: z.boolean().nullable(),
-  authProvider: authProviderSchema.nullable(),
-});
 
 /** GET /api/v1/challenge/{id}/score */
 export const challengeScore = z.object({

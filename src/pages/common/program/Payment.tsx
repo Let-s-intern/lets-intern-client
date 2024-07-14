@@ -1,9 +1,19 @@
 import { loadTossPayments } from '@tosspayments/tosspayments-sdk';
 import { useEffect, useMemo, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useUserQuery } from '../../../api/user';
 import { paymentSearchParamsSchema } from '../../../data/getPaymentSearchParams';
 import { searchParamsToObject } from '../../../utils/network';
+import { generateRandomString, sha256Base64 } from '../../../utils/random';
+
+type TossPaymentsWidgets = ReturnType<
+  Awaited<ReturnType<typeof loadTossPayments>>['widgets']
+>;
+
+const clientKey = process.env.REACT_APP_TOSS_CLIENT_KEY || '';
 
 const Payment = () => {
+  const navigate = useNavigate();
   const params = useMemo(() => {
     const obj = searchParamsToObject(
       new URL(window.location.href).searchParams,
@@ -11,83 +21,45 @@ const Payment = () => {
     const result = paymentSearchParamsSchema.safeParse(obj);
     if (!result.success) {
       console.log(result.error);
-      throw new Error('잘못된 접근입니다.');
-      // alert('잘못된 접근입니다.');
+
+      alert('잘못된 접근입니다.');
+      navigate('/');
     }
 
     return result.data;
   }, []);
 
-  useEffect(() => {
-    console.log('params', params);
-  }, [params]);
+  // TODO: API 폴더로 옮겨야 함
+  const { data: user } = useUserQuery();
 
-  const numberRegex = /[^0-9]/g;
-
-  const clientKey = process.env.REACT_APP_TOSS_CLIENT_KEY || '';
   // TODO: 수정
-  const customerKey = 'zOZ8i_RHluykZWVBsLqXp';
-  const [amount, setAmount] = useState({
-    currency: 'KRW',
-    value: params.totalPrice,
-  });
+
   const [ready, setReady] = useState(false);
-  const [widgets, setWidgets] = useState<any>(null);
-
-  const getRandomString = (length: number) => {
-    const randomChars =
-      'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    let result = '';
-    for (let i = 0; i < length; i++) {
-      result += randomChars.charAt(
-        Math.floor(Math.random() * randomChars.length),
-      );
-    }
-    return result;
-  };
-
-  const getOrderId = () => {
-    return `${params.programType}-${params.programId}-${getRandomString(8)}`;
-  };
+  const [widgets, setWidgets] = useState<TossPaymentsWidgets | null>(null);
 
   useEffect(() => {
-    setAmount({
-      currency: 'KRW',
-      value: params.totalPrice,
-    });
-  }, [params.totalPrice]);
-
-  useEffect(() => {
-    if (params.totalPrice === 0 || widgets != null) {
+    if (!user || !params) {
       return;
     }
-    const fetchPaymentWidgets = async () => {
-      // ------  결제위젯 초기화 ------
+
+    const init = async () => {
+      const customerKey = (await sha256Base64(user.phoneNum || '')).slice(
+        0,
+        17,
+      );
+
       const tossPayments = await loadTossPayments(clientKey);
       // 회원 결제
       const widgets = tossPayments.widgets({
         customerKey,
       });
-
       setWidgets(widgets);
-    };
 
-    fetchPaymentWidgets();
-
-    return () => {
-      if (widgets != null) {
-        setWidgets(null);
-      }
-    };
-  }, [clientKey, customerKey, params.totalPrice]);
-
-  useEffect(() => {
-    const renderPaymentWidgets = async () => {
-      if (widgets == null) {
-        return;
-      }
       // ------ 주문의 결제 금액 설정 ------
-      await widgets.setAmount(amount);
+      await widgets.setAmount({
+        currency: 'KRW',
+        value: params.totalPrice,
+      });
 
       // ------  결제 UI 렌더링 ------
       await widgets.renderPaymentMethods({
@@ -100,28 +72,18 @@ const Payment = () => {
         selector: '#agreement',
         variantKey: 'AGREEMENT',
       });
-
       setReady(true);
     };
 
-    renderPaymentWidgets();
-  }, [widgets, amount]);
-
-  useEffect(() => {
-    if (widgets == null) {
-      return;
-    }
-
-    widgets.setAmount(amount);
-    console.log(amount);
-  }, [widgets, amount]);
+    init();
+  }, [params, user]);
 
   const handleButtonClick = async () => {
-    if (widgets == null || !params.programTitle) {
+    if (!widgets || !params) {
       return;
     }
 
-    const orderId = getOrderId();
+    const orderId = generateRandomString();
 
     try {
       await widgets.requestPayment({
@@ -129,13 +91,13 @@ const Payment = () => {
         orderName: params.programTitle,
         successUrl:
           window.location.origin +
-          `/order/${orderId}/confirm?${new URL(window.location.href).searchParams.toString()}`,
+          `/order/${orderId}/result?${new URL(window.location.href).searchParams.toString()}`,
         failUrl:
           window.location.origin +
           `/order/${orderId}/fail?${new URL(window.location.href).searchParams.toString()}`,
         customerEmail: params.email,
         customerName: params.name,
-        customerMobilePhone: params.phone.replace(numberRegex, ''),
+        customerMobilePhone: params.phone.replace(/[^0-9]/g, ''),
       });
     } catch (error) {
       // 에러 처리하기
@@ -155,7 +117,7 @@ const Payment = () => {
           disabled={!ready}
           onClick={handleButtonClick}
         >
-          결제하기 {params.totalPrice.toLocaleString()}원
+          결제하기 {params?.totalPrice.toLocaleString()}원
         </button>
       </div>
     </div>

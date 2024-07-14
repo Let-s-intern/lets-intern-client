@@ -1,5 +1,5 @@
 import dayjs from 'dayjs';
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { z } from 'zod';
 import { PostApplicationInterface } from '../../../api/application';
@@ -15,7 +15,7 @@ const searchParamsSchema = z
   .object({
     programId: z.coerce.number(),
     programType: z.string(),
-    couponId: z.union([z.literal('null'), z.coerce.number()]),
+    couponId: z.union([z.literal(''), z.coerce.number()]),
     priceId: z.coerce.number(),
     price: z.coerce.number(),
     discount: z.coerce.number(),
@@ -28,10 +28,10 @@ const searchParamsSchema = z
   })
   .transform((data) => ({
     ...data,
-    couponId: data.couponId === 'null' ? null : data.couponId,
+    couponId: data.couponId === '' ? null : data.couponId,
   }));
 
-const PaymentSuccess = () => {
+const PaymentResult = () => {
   const [searchParams] = useSearchParams();
   // TODO: any 타입을 사용하지 않도록 수정
   const [result, setResult] = useState<any>(null);
@@ -54,7 +54,6 @@ const PaymentSuccess = () => {
     if (!params) {
       return;
     }
-    console.log('mutate!!');
 
     const body: PostApplicationInterface = {
       paymentInfo: {
@@ -78,7 +77,6 @@ const PaymentSuccess = () => {
         setResult(res.data.data);
       })
       .catch((e) => {
-        console.error(e);
         setResult('error');
       });
   });
@@ -98,21 +96,13 @@ const PaymentSuccess = () => {
 
   const isSuccess = typeof result === 'object' && result !== null;
 
-  useEffect(() => {
-    console.log('live', live);
-  }, [live]);
-
-  useEffect(() => {
-    console.log('challenge', challenge);
-  }, [challenge]);
-
   const program = params?.programType === 'live' ? live : challenge;
   const programLink = `/program/${params?.programType}/${params?.programId}`;
 
   return (
     <div className="w-full px-5 py-10">
       <div className="mx-auto max-w-5xl">
-        <div className="flex w-full items-center justify-start py-6 text-xl font-bold">
+        <div className="text-small20 flex w-full items-center justify-start py-6 font-bold text-neutral-0">
           결제 확인하기
         </div>
         <div className="flex min-h-52 w-full flex-col items-center justify-center">
@@ -120,7 +110,7 @@ const PaymentSuccess = () => {
             <div>결제 확인 중입니다.</div>
           ) : (
             <>
-              <DescriptionBox isSuccess />
+              <DescriptionBox isSuccess={isSuccess} />
               <div className="flex w-full flex-col items-center justify-start gap-y-10 py-8">
                 <div className="flex w-full flex-col items-start justify-center gap-6">
                   <div className="font-semibold text-neutral-0">
@@ -236,4 +226,4 @@ const PaymentSuccess = () => {
   );
 };
 
-export default PaymentSuccess;
+export default PaymentResult;

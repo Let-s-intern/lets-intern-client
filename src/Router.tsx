@@ -20,9 +20,8 @@ import MyPage from './pages/common/mypage/MyPage';
 import Privacy from './pages/common/mypage/Privacy';
 import Review from './pages/common/mypage/Review';
 import Payment from './pages/common/program/Payment';
-import PaymentConfirm from './pages/common/program/PaymentConfirm';
 import PaymentFail from './pages/common/program/PaymentFail';
-import PaymentSuccess from './pages/common/program/PaymentSuccess';
+import PaymentResult from './pages/common/program/PaymentResult';
 import ProgramDetail from './pages/common/program/ProgramDetail';
 import Programs from './pages/common/program/Programs';
 import ProgramDetailRegacy from './pages/common/program/regacy/ProgramDetailRegacy';
@@ -56,10 +55,11 @@ const Router = () => {
             path="program/live/:programId"
             element={<ProgramDetail programType="live" />}
           />
+
           <Route path="payment" element={<Payment />} />
-          <Route path="order/:orderId/confirm" element={<PaymentConfirm />} />
-          <Route path="order/:orderId/success" element={<PaymentSuccess />} />
+          <Route path="order/:orderId/result" element={<PaymentResult />} />
           <Route path="order/:orderId/fail" element={<PaymentFail />} />
+
           {/* ---Regacy--- */}
           {/* /program */}
           <Route path="program" element={<Programs />} />
