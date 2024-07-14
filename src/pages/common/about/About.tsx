@@ -1,4 +1,5 @@
 import AboutHeader from '../../../components/common/about/header/AboutHeader';
+import CommunitySection from '../../../components/common/about/section/CommunitySection';
 import EndSection from '../../../components/common/about/section/EndSection';
 import IntroSection from '../../../components/common/about/section/introduction/IntroSection';
 import ProblemSection from '../../../components/common/about/section/problem/ProblemSection';
@@ -14,6 +15,7 @@ const About = () => {
       <SolutionSection />
       <IntroSection />
       <ProgramMenuSection />
+      <CommunitySection />
       <ResultSection />
       <EndSection />
       {/* <BottomSection /> */}

@@ -1,5 +1,11 @@
+import AboutTitle from '../../ui/AboutTitle';
 import IntroCard from './IntroCard';
 import IntroTitle from './IntroTtile';
+
+const TITLE = {
+  subTitle: '렛츠커리어와 함께',
+  title: '커리어의 첫 시작을 함께해요',
+};
 
 const CONTENT = [
   {
@@ -45,10 +51,7 @@ const CARD_CONTENT = [
 const IntroSection = () => {
   return (
     <section className="flex flex-col px-5 py-[3.75rem]">
-      <div className="mb-10">
-        <span>렛츠커리어와 함께</span>
-        <h1>커리어의 첫 시작을 함께해요</h1>
-      </div>
+      <AboutTitle {...TITLE} />
       <div className="flex flex-col gap-[3.75rem]">
         {CONTENT.map(({ title, lineWidth, description }) => (
           <div key={title}>
