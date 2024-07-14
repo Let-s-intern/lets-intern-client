@@ -1,17 +1,9 @@
 import { loadTossPayments } from '@tosspayments/tosspayments-sdk';
 import { useEffect, useMemo, useState } from 'react';
-import { useParams } from 'react-router-dom';
 import { paymentSearchParamsSchema } from '../../../data/getPaymentSearchParams';
 import { searchParamsToObject } from '../../../utils/network';
-import { ProgramType } from './ProgramDetail';
 
-export interface SelectPaymentPageProps {
-  programType: ProgramType;
-}
-
-const SelectPaymentPage = ({ programType }: SelectPaymentPageProps) => {
-  const { programId } = useParams<{ programId: string }>();
-
+const Payment = () => {
   const params = useMemo(() => {
     const obj = searchParamsToObject(
       new URL(window.location.href).searchParams,
@@ -55,7 +47,7 @@ const SelectPaymentPage = ({ programType }: SelectPaymentPageProps) => {
   };
 
   const getOrderId = () => {
-    return `${programType}-${programId}-${getRandomString(8)}`;
+    return `${params.programType}-${params.programId}-${getRandomString(8)}`;
   };
 
   useEffect(() => {
@@ -137,10 +129,10 @@ const SelectPaymentPage = ({ programType }: SelectPaymentPageProps) => {
         orderName: params.programTitle,
         successUrl:
           window.location.origin +
-          `/program/${orderId}/success?${new URL(window.location.href).searchParams.toString()}`,
+          `/order/${orderId}/confirm?${new URL(window.location.href).searchParams.toString()}`,
         failUrl:
           window.location.origin +
-          `/program/${orderId}/fail?${new URL(window.location.href).searchParams.toString()}`,
+          `/order/${orderId}/fail?${new URL(window.location.href).searchParams.toString()}`,
         customerEmail: params.email,
         customerName: params.name,
         customerMobilePhone: params.phone.replace(numberRegex, ''),
@@ -170,4 +162,4 @@ const SelectPaymentPage = ({ programType }: SelectPaymentPageProps) => {
   );
 };
 
-export default SelectPaymentPage;
+export default Payment;
