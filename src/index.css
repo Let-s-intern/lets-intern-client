@@ -99,6 +99,12 @@
     line-height: 1.875rem;
   }
 
+  .text-1\.25-bold {
+    font-size: 1.25rem;
+    font-weight: 700;
+    line-height: 1.875rem;
+  }
+
   .text-1\.25-medium {
     font-size: 1.25rem;
     font-weight: 500;
@@ -145,6 +151,12 @@
     font-size: 1.125rem;
     font-weight: 300;
     line-height: 1.75rem;
+  }
+
+  .text-1-bold {
+    font-size: 1rem;
+    font-weight: 700;
+    line-height: 1.625rem;
   }
 
   .text-1-semibold {

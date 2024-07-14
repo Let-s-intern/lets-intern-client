@@ -1,10 +1,11 @@
+import { useQuery } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
+
+import useAuthStore from '../../../../../store/useAuthStore';
 import axios from '../../../../../utils/axios';
 import NavItem from './NavItem';
 import SideNavItem from './SideNavItem';
-import useAuthStore from '../../../../../store/useAuthStore';
-import { useQuery } from '@tanstack/react-query';
 
 const NavBar = () => {
   const navigate = useNavigate();
@@ -32,7 +33,6 @@ const NavBar = () => {
       setActiveLink('PROGRAM');
     } else if (location.pathname.startsWith('/admin')) {
       setActiveLink('ADMIN');
-      // [논의] 블로그 주소 확인 필요
     } else if (location.pathname.startsWith('/blog')) {
       setActiveLink('BLOG');
     } else if (location.pathname.startsWith('/')) {
@@ -92,6 +92,9 @@ const NavBar = () => {
             <NavItem to="/" active={activeLink === 'HOME'}>
               홈
             </NavItem>
+            <NavItem to="/about" active={activeLink === 'ABOUT'}>
+              브랜드 스토리
+            </NavItem>
             <NavItem to="/program" active={activeLink === 'PROGRAM'}>
               프로그램
             </NavItem>
@@ -140,8 +143,8 @@ const NavBar = () => {
       ></div>
       {/* 사이드 네비게이션 바 */}
       <div
-        className={`fixed right-0 top-0 z-50 h-screen w-full bg-white p-5 shadow-md transition-all sm:w-80 duration-300${
-          isOpen ? ' translate-x-0' : ' translate-x-full'
+        className={`fixed right-0 top-0 z-50 h-screen w-full bg-white p-5 shadow-md transition-all duration-300 sm:w-80 ${
+          isOpen ? 'translate-x-0' : 'translate-x-full'
         }`}
       >
         <div className="flex w-full justify-end">
