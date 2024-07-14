@@ -1,5 +1,6 @@
 import AboutHeader from '../../../components/common/about/header/AboutHeader';
 import CommunitySection from '../../../components/common/about/section/CommunitySection';
+import ContactSection from '../../../components/common/about/section/ContactSection';
 import EndSection from '../../../components/common/about/section/EndSection';
 import IntroSection from '../../../components/common/about/section/introduction/IntroSection';
 import PartnerSection from '../../../components/common/about/section/PartnerSection';
@@ -22,7 +23,7 @@ const About = () => {
       <ReviewSection />
       <PartnerSection />
       <EndSection />
-      {/* <BottomSection /> */}
+      <ContactSection />
     </>
   );
 };
