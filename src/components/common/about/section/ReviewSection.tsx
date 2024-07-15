@@ -27,9 +27,9 @@ const reviewList = [
 
 const ReviewSection = () => {
   return (
-    <section className="bg-[#101348] px-5 py-[3.75rem]">
+    <section className="bg-[#101348] px-5 py-[3.75rem] sm:px-10 sm:py-[6.25rem] xl:py-[8.75rem]">
       <AboutTitleDark {...TITLE} />
-      <div className="mt-10 flex w-auto flex-row flex-nowrap gap-4 overflow-x-auto">
+      <div className="custom-scrollbar mt-10 flex w-auto flex-row flex-nowrap gap-4 overflow-x-auto xl:pl-16">
         {reviewList.map((review) => (
           <Link
             to={review.url}

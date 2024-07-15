@@ -2,7 +2,7 @@ const CAPTION = ['교내활동', '대외활동', '인턴십'];
 
 const ProblemInterview = () => {
   return (
-    <div className="flex flex-col items-center">
+    <div className="flex w-80 flex-col items-center">
       <div className="relative flex w-[22rem] flex-col items-center pb-9">
         <div className="flex flex-col items-center gap-6">
           {CAPTION.map((item) => (
@@ -24,13 +24,13 @@ const ProblemInterview = () => {
       <div className="mb-8 flex h-11 w-[9.875rem] -translate-x-1 items-center justify-center rounded-md border border-dashed border-primary">
         <span className="text-0.875-bold text-primary">자신감</span>
       </div>
-      <span className="text-0.75-medium text-primary-dark">
+      <span className="text-0.75-medium xl:text-1-medium text-primary-dark">
         취업 준비생 인터뷰
       </span>
-      <p className="text-1-medium mt-3 text-center text-static-100/65">
-        경쟁의 굴레 속에 끊임없이 남들과 비교하며
+      <p className="text-1-medium xl:text-1.25 mt-3 text-center text-static-100/65">
+        경쟁의 굴레 속에 끊임없이 남들과
         <br />
-        자신감을 잃어가는 취업 준비생
+        비교하며 자신감을 잃어가는 취업 준비생
       </p>
     </div>
   );

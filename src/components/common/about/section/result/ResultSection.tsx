@@ -15,9 +15,9 @@ interface ResultScoreProps {
 
 const ResultSection = () => {
   return (
-    <section className="bg-[#101348] px-5 py-[3.75rem]">
+    <section className="flex flex-col bg-[#101348] px-5 py-[3.75rem] sm:px-10 sm:py-[6.25rem] md:items-center md:px-10 xl:py-[8.75rem]">
       <AboutTitleDark {...TITLE} />
-      <div className="mt-[3.75rem] flex flex-col gap-10">
+      <div className="mt-[3.75rem] flex w-full max-w-[50rem] flex-col gap-10 md:flex-row md:items-center md:justify-between">
         <div>
           <ResultLine />
           <ResultTitle title="프로그램 수" />
@@ -47,11 +47,17 @@ const ResultSection = () => {
 };
 
 const ResultLine = () => {
-  return <div className="mb-3 h-0.5 w-full bg-neutral-100" />;
+  return (
+    <div className="mb-3 h-0.5 w-full bg-neutral-100 md:w-32 xl:w-[8.75rem]" />
+  );
 };
 
 const ResultTitle = ({ title }: ResultTitleProps) => {
-  return <h2 className="text-0.875-medium text-neutral-100">{title}</h2>;
+  return (
+    <h2 className="text-0.875-medium xl:text-1-medium text-neutral-100">
+      {title}
+    </h2>
+  );
 };
 
 const ResultScore = ({ children }: ResultScoreProps) => {

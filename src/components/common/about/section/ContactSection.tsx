@@ -15,10 +15,12 @@ const cardStyle = {
 
 const ContactSection = () => {
   return (
-    <section className="flex flex-col gap-20 px-5 py-20">
+    <section className="flex flex-col gap-20 px-5 py-20 sm:px-10 sm:py-[6.25rem] lg:gap-[6.25rem] xl:py-[8.75rem]">
       <div className="flex flex-col items-center gap-2">
-        <span className="text-1-bold text-primary">B2B · 제휴 · 광고 문의</span>
-        <h1 className="text-1.125-bold text-center">
+        <span className="text-1-bold xl:text-1.25-bold text-primary">
+          B2B · 제휴 · 광고 문의
+        </span>
+        <h1 className="text-1.125-bold xl:text-1.75-bold text-center">
           주니어 커리어 성장과 관련한
           <br />
           문의는 언제든 열려있어요
@@ -28,7 +30,7 @@ const ContactSection = () => {
         <div className="absolute -top-8 h-32 w-[15.5rem] -translate-x-8 -rotate-12 rounded-sm bg-primary-20 sm:-translate-x-12"></div>
         <div
           style={cardStyle}
-          className="shadow-06 flex w-[17.5rem] flex-col gap-5 rounded-sm border border-neutral-80 bg-static-100/80 p-5"
+          className="flex w-[17.5rem] flex-col gap-5 rounded-sm border border-neutral-80 bg-static-100/80 p-5 shadow-06"
         >
           {CONTACT.map(({ title, contact }) => (
             <div key={title}>
