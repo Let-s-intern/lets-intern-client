@@ -1,76 +1,106 @@
-import { useQueryClient } from '@tanstack/react-query';
-import { useEffect, useMemo, useRef } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useProgramApplicationQuery } from '../../../../../api/application';
+import { useProgramQuery } from '../../../../../api/program';
 import { getPaymentSearchParams } from '../../../../../data/getPaymentSearchParams';
-import { IAction } from '../../../../../interfaces/interface';
-import { ProgramType } from '../../../../../pages/common/program/ProgramDetail';
-import CautionContent from '../apply/content/CautionContent';
+import { ProgramType } from '../../../../../types/common';
+import {
+  IApplyDrawerAction,
+  ICouponForm,
+} from '../../../../../types/interface';
 import InputContent from '../apply/content/InputContent';
 import PayContent from '../apply/content/PayContent';
 import ScheduleContent from '../apply/content/ScheduleContent';
-import { PayInfo, ProgramDate, UserInfo } from './ApplySection';
+import { getPayInfo, UserInfo } from './ApplySection';
 
 interface MobileApplySectionProps {
   programType: ProgramType;
   programId: number;
   programTitle: string;
-  toggleApplyModal: () => void;
   toggleDrawer: () => void;
-  drawerDispatch: (value: IAction) => void;
-  userInfo: UserInfo;
-  setUserInfo: (userInfo: UserInfo) => void;
-  payInfo: PayInfo;
-  setPayInfo: (payInfo: (prevPayInfo: PayInfo) => PayInfo) => void;
-  criticalNotice: string;
-  priceId: number;
-  programDate: ProgramDate;
-  isApplied: boolean;
-  setIsApplied: (isApplied: boolean) => void;
-  isCautionChecked: boolean;
-  setIsCautionChecked: (isCautionChecked: boolean) => void;
-  contentIndex: number;
-  setContentIndex: (contentIndex: number) => void;
+  drawerDispatch: (value: IApplyDrawerAction) => void;
 }
 
 const MobileApplySection = ({
   programType,
   programId,
   programTitle,
-  toggleApplyModal,
   toggleDrawer,
   drawerDispatch,
-  userInfo,
-  setUserInfo,
-  payInfo,
-  setPayInfo,
-  criticalNotice,
-  priceId,
-  programDate,
-  isApplied,
-  setIsApplied,
-  isCautionChecked,
-  setIsCautionChecked,
-  contentIndex,
-  setContentIndex,
 }: MobileApplySectionProps) => {
-  const queryClient = useQueryClient();
   const navigate = useNavigate();
   const scrollRef = useRef<HTMLDivElement>(null);
+  const [contentIndex, setContentIndex] = useState(0);
+  const [userInfo, setUserInfo] = useState<UserInfo>({
+    name: '',
+    email: '',
+    phoneNumber: '',
+    contactEmail: '',
+    question: '',
+  });
+
+  const [coupon, setCoupon] = useState<ICouponForm>({
+    id: null,
+    price: 0,
+  });
+
+  const { data: application } = useProgramApplicationQuery(
+    programType,
+    programId,
+  );
+
+  useEffect(() => {
+    if (!application) {
+      return;
+    }
+
+    setUserInfo({
+      name: application.name ?? '',
+      email: application.email ?? '',
+      phoneNumber: application.phoneNumber ?? '',
+      contactEmail: application.contactEmail ?? '',
+      question: '',
+    });
+  }, [application]);
+
+  const isApplied = application?.applied ?? false;
+
+  const priceId =
+    application?.priceList?.[0]?.priceId ?? application?.price?.priceId ?? -1;
+
+  const program = useProgramQuery({ programId, type: programType });
+
+  const programDate =
+    program && program.query.data
+      ? {
+          beginning: program.query.data.beginning,
+          deadline: program.query.data.deadline,
+          startDate: program.query.data.startDate,
+          endDate: program.query.data.endDate,
+        }
+      : null;
+
+  const payInfo = application ? getPayInfo(application) : null;
 
   const totalPrice = useMemo(() => {
+    if (!payInfo) {
+      return 0;
+    }
     const totalDiscount =
-      payInfo.couponPrice === -1
-        ? payInfo.price
-        : payInfo.discount + payInfo.couponPrice;
+      coupon.price === -1 ? payInfo.price : payInfo.discount + coupon.price;
     if (payInfo.price <= totalDiscount) {
       return 0;
     }
     return payInfo.price - totalDiscount;
-  }, [payInfo.couponPrice, payInfo.discount, payInfo.price]);
+  }, [coupon, payInfo]);
 
   const handleApplyButtonClick = () => {
+    if (!payInfo || !userInfo) {
+      return;
+    }
     const searchParams = getPaymentSearchParams({
       payInfo,
+      coupon,
       userInfo,
       priceId,
       totalPrice,
@@ -78,7 +108,6 @@ const MobileApplySection = ({
       programType,
       programId,
     });
-
     navigate(`/payment?${searchParams.toString()}`);
     toggleDrawer();
   };
@@ -94,7 +123,7 @@ const MobileApplySection = ({
       className="h-full w-full overflow-y-auto scrollbar-hide"
       ref={scrollRef}
     >
-      {contentIndex === 0 && (
+      {contentIndex === 0 && programDate ? (
         <ScheduleContent
           contentIndex={contentIndex}
           setContentIndex={setContentIndex}
@@ -103,7 +132,7 @@ const MobileApplySection = ({
           programTitle={programTitle}
           isApplied={isApplied}
         />
-      )}
+      ) : null}
       {contentIndex === 1 && (
         <InputContent
           contentIndex={contentIndex}
@@ -114,7 +143,7 @@ const MobileApplySection = ({
           drawerDispatch={drawerDispatch}
         />
       )}
-      {contentIndex === 2 && (
+      {/* {contentIndex === 2 && (
         <CautionContent
           contentIndex={contentIndex}
           criticalNotice={criticalNotice}
@@ -122,19 +151,22 @@ const MobileApplySection = ({
           isCautionChecked={isCautionChecked}
           setIsCautionChecked={setIsCautionChecked}
         />
-      )}
-      {contentIndex === 3 && (
+      )} */}
+      {contentIndex === 3 && programDate && payInfo ? (
         <PayContent
           payInfo={payInfo}
-          setPayInfo={setPayInfo}
+          coupon={coupon}
+          setCoupon={setCoupon}
           handleApplyButtonClick={handleApplyButtonClick}
           contentIndex={contentIndex}
           setContentIndex={setContentIndex}
           programType={programType}
           totalPrice={totalPrice}
           programDate={programDate}
+          programQuery={program}
+          programId={programId}
         />
-      )}
+      ) : null}
     </section>
   );
 };

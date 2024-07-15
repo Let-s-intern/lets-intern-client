@@ -1,8 +1,8 @@
-import { useEffect, useRef, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
+import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 
-import { IBanner } from '../../../../interfaces/interface';
+import { IBanner } from '../../../../types/interface';
 import axios from '../../../../utils/axios';
 
 const Banner = () => {

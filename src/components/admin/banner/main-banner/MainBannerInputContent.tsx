@@ -1,4 +1,4 @@
-import { IBannerForm } from '../../../../interfaces/interface';
+import { IBannerForm } from '../../../../types/interface';
 import Input from '../../../ui/input/Input';
 import DateTimePicker from '../../program/ui/form/DateTimePicker';
 import ImageUpload from '../../program/ui/form/ImageUpload';

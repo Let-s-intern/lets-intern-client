@@ -1,8 +1,8 @@
 import { Pagination, ThemeProvider, useMediaQuery } from '@mui/material';
 
-import { theme } from './mui-theme';
-import { IPageInfo, IPageable } from '../../../../interfaces/interface';
 import React, { memo, useCallback } from 'react';
+import { IPageable, IPageInfo } from '../../../../types/interface';
+import { theme } from './mui-theme';
 
 interface MuiPaginationProps {
   pageInfo: IPageInfo;

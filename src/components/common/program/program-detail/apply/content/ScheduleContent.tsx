@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom';
-import { ProgramType } from '../../../../../../pages/common/program/ProgramDetail';
 import useAuthStore from '../../../../../../store/useAuthStore';
+import { ProgramType } from '../../../../../../types/common';
 import { newProgramTypeToText } from '../../../../../../utils/convert';
 import { ProgramDate } from '../../section/ApplySection';
 import DateToggle from '../../toggle/DateToggle';
@@ -24,10 +24,6 @@ const ScheduleContent = ({
 }: ScheduleContentProps) => {
   const { isLoggedIn } = useAuthStore();
   const navigate = useNavigate();
-  const formatDateString = (dateString: string) => {
-    const date = new Date(dateString);
-    return date.getFullYear();
-  };
 
   const handleNextButtonClick = () => {
     if (!isLoggedIn) {
@@ -40,14 +36,14 @@ const ScheduleContent = ({
   return (
     <div className="flex flex-col gap-5">
       <div className="text-xs font-medium">
-        {formatDateString(programDate?.startDate || '2024')} [
+        {programDate?.startDate?.get('year') || '2024'} [
         {newProgramTypeToText[programType.toUpperCase()]}]
       </div>
       <h2 className="text-lg font-semibold">{programTitle}</h2>
       <DateToggle programDate={programDate} programType={programType} />
       <div>
         <button
-          className="text-1.125-medium flex w-full justify-center rounded-md bg-primary px-6 py-3  font-medium text-neutral-100 disabled:bg-neutral-70"
+          className="text-1.125-medium flex w-full justify-center rounded-md bg-primary px-6 py-3 font-medium text-neutral-100 disabled:bg-neutral-70"
           onClick={handleNextButtonClick}
           disabled={isApplied}
         >

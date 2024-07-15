@@ -6,7 +6,14 @@ import tseslint from 'typescript-eslint';
 
 export default [
   { files: ['**/*.{js,mjs,cjs,ts,jsx,tsx}'] },
-  { languageOptions: { parserOptions: { ecmaFeatures: { jsx: true } } } },
+  {
+    languageOptions: {
+      parserOptions: {
+        ecmaFeatures: { jsx: true },
+        project: './tsconfig.json',
+      },
+    },
+  },
   { languageOptions: { globals: globals.browser } },
   pluginJs.configs.recommended,
   ...tseslint.configs.recommended,
@@ -23,6 +30,10 @@ export default [
       '@typescript-eslint/no-explicit-any': 'warn',
       'no-console': 'warn',
       'react/react-in-jsx-scope': 'off',
+      'object-shorthand': ['warn', 'always'],
+      'no-useless-rename': 'warn',
+      // switch
+      '@typescript-eslint/switch-exhaustiveness-check': 'warn',
     },
   },
 ];
