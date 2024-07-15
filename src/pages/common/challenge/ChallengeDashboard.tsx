@@ -2,6 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import dayjs from 'dayjs';
 // import MissionCalendar from '../../../components/common/challenge/dashboard/mission-calendar/MissionCalendar';
 import { useParams } from 'react-router-dom';
+import { useUserQuery } from '../../../api/user';
 import DailyMissionSection from '../../../components/common/challenge/dashboard/section/DailyMissionSection';
 import EndDailyMissionSection from '../../../components/common/challenge/dashboard/section/EndDailyMissionSection';
 import GuideSection from '../../../components/common/challenge/dashboard/section/GuideSection';
@@ -15,7 +16,6 @@ import {
   challengeNotices,
   challengeScore,
   Schedule,
-  userSchema,
 } from '../../../schema';
 import axios from '../../../utils/axios';
 
@@ -71,13 +71,7 @@ const ChallengeDashboard = () => {
     },
   });
 
-  const { data: user } = useQuery({
-    queryKey: ['user'],
-    queryFn: async () => {
-      const res = await axios.get('/user');
-      return userSchema.parse(res.data.data);
-    },
-  });
+  const { data: user } = useUserQuery();
 
   const { data: scoreGroup } = useQuery({
     enabled: Boolean(currentChallenge?.id),

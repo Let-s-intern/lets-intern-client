@@ -1,10 +1,7 @@
 import { useQueryClient } from '@tanstack/react-query';
 import { useEffect, useMemo, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import {
-  PostApplicationInterface,
-  usePostApplicationMutation,
-} from '../../../../../api/application';
+import { getPaymentSearchParams } from '../../../../../data/getPaymentSearchParams';
 import { IAction } from '../../../../../interfaces/interface';
 import { ProgramType } from '../../../../../pages/common/program/ProgramDetail';
 import CautionContent from '../apply/content/CautionContent';
@@ -60,64 +57,6 @@ const MobileApplySection = ({
   const navigate = useNavigate();
   const scrollRef = useRef<HTMLDivElement>(null);
 
-  const { mutate: applyProgram } = usePostApplicationMutation(
-    async () => {
-      await queryClient.invalidateQueries({
-        queryKey: [programType],
-      });
-      toggleApplyModal();
-      setIsApplied(true);
-      setContentIndex(0);
-    },
-    (error) => {
-      alert('신청에 실패했습니다. 다시 시도해주세요.');
-      setContentIndex(0);
-    },
-  );
-
-  const handleApplyButtonClick = () => {
-    if (isTest) {
-      navigate(`/program/${programType}/${programId}/payment`, {
-        state: {
-          priceId: priceId,
-          couponId: payInfo.couponId,
-          price: payInfo.price,
-          discount: payInfo.discount,
-          couponPrice: payInfo.couponPrice,
-          totalPrice: totalPrice,
-          contactEmail: userInfo.contactEmail,
-          question: userInfo.question,
-          email: userInfo.email,
-          phone: userInfo.phoneNumber,
-          name: userInfo.name,
-          programTitle: programTitle,
-        },
-      });
-      return;
-    }
-
-    const body: PostApplicationInterface = {
-      paymentInfo: {
-        priceId: priceId,
-        couponId: payInfo.couponId,
-        paymentKey: '',
-        orderId: '',
-        amount: totalPrice.toString(),
-      },
-      contactEmail: userInfo.contactEmail,
-      motivate: '',
-      question: userInfo.question,
-    };
-
-    applyProgram({
-      programId: programId,
-      programType: programType,
-      requestBody: body,
-    });
-
-    toggleDrawer();
-  };
-
   const totalPrice = useMemo(() => {
     const totalDiscount =
       payInfo.couponPrice === -1
@@ -129,13 +68,26 @@ const MobileApplySection = ({
     return payInfo.price - totalDiscount;
   }, [payInfo.couponPrice, payInfo.discount, payInfo.price]);
 
+  const handleApplyButtonClick = () => {
+    const searchParams = getPaymentSearchParams({
+      payInfo,
+      userInfo,
+      priceId,
+      totalPrice,
+      programTitle,
+      programType,
+      programId,
+    });
+
+    navigate(`/payment?${searchParams.toString()}`);
+    toggleDrawer();
+  };
+
   useEffect(() => {
     if (scrollRef.current) {
       scrollRef.current.scrollTo(0, 0);
     }
   }, [contentIndex, scrollRef]);
-
-  const isTest = userInfo?.email === 'test@test.com';
 
   return (
     <section
@@ -180,7 +132,6 @@ const MobileApplySection = ({
           setContentIndex={setContentIndex}
           programType={programType}
           totalPrice={totalPrice}
-          isTest={isTest}
           programDate={programDate}
         />
       )}
