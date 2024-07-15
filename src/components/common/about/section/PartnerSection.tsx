@@ -44,21 +44,36 @@ const logoList = [
   },
 ];
 
+interface PartnerCardProps {
+  logo: {
+    bgColor: string;
+    imgSize: string;
+    imgSrc: string;
+    alt: string;
+  };
+}
+
 const PartnerSection = () => {
   return (
     <section className="flex flex-col bg-neutral-100 px-5 py-[3.75rem] sm:px-10 sm:py-[6.25rem] md:items-center xl:py-[8.75rem]">
       <AboutTitle subTitle={TITLE.subTitle} title={TITLE.title} />
       <div className="grid grid-cols-2 gap-4">
         {logoList.map((logo) => (
-          <div
-            key={logo.imgSrc}
-            className={`flex h-16 w-full items-center justify-center sm:h-[8.25rem] md:w-[22rem] ${logo.bgColor} shadow-03`}
-          >
-            <img className={logo.imgSize} src={logo.imgSrc} alt={logo.alt} />
-          </div>
+          <PartnerCard key={logo.imgSrc} logo={logo} />
         ))}
       </div>
     </section>
+  );
+};
+
+const PartnerCard = ({ logo }: PartnerCardProps) => {
+  return (
+    <div
+      key={logo.imgSrc}
+      className={`flex h-16 w-full items-center justify-center sm:h-[8.25rem] md:w-[22rem] ${logo.bgColor} shadow-03`}
+    >
+      <img className={logo.imgSize} src={logo.imgSrc} alt={logo.alt} />
+    </div>
   );
 };
 

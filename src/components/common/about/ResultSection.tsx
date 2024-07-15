@@ -1,4 +1,4 @@
-import AboutTitleDark from '../../ui/AboutTitleDark';
+import AboutTitleDark from './ui/AboutTitleDark';
 
 const TITLE = {
   subTitle: '참여자 만족도 4.8점',
