@@ -26,7 +26,7 @@ const WaitingSection = ({ applicationList }: WaitingSectionProps) => {
             to="/program"
             className="rounded-sm border-2 border-primary-xlight bg-white px-5 py-2 font-medium text-neutral-35"
           >
-            프로그램 신청하기
+            다른 프로그램 둘러보기
           </Link>
         </div>
       ) : (

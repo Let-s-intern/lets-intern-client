@@ -2,6 +2,7 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { getAdminRoutes } from './AdminRoutes';
 
 import ChallengeLayout from './components/common/challenge/ui/layout/ChallengeLayout';
+import CreditDetail from './components/common/mypage/credit/section/CreditDetail';
 import Layout from './components/common/ui/layout/Layout';
 import ScrollToTop from './components/ui/scroll-to-top/ScrollToTop';
 import { CurrentChallengeProvider } from './context/CurrentChallengeProvider';
@@ -16,6 +17,7 @@ import Home from './pages/common/home/Home';
 import MentorNotificationAfter from './pages/common/mentor/MentorNotificationAfter';
 import MentorNotificationBefore from './pages/common/mentor/MentorNotificationBefore';
 import Application from './pages/common/mypage/Application';
+import Credit from './pages/common/mypage/Credit';
 import MyPage from './pages/common/mypage/MyPage';
 import Privacy from './pages/common/mypage/Privacy';
 import Review from './pages/common/mypage/Review';
@@ -104,7 +106,27 @@ const Router = () => {
               path="review/edit/program/:programType/:programId/:reviewId"
               element={<ReviewCreate isEdit={true} />}
             />
-
+          {/* ---Regacy--- */}
+          <Route path="mypage" element={<MyPage />}>
+            {/* /mypage/application */}
+            <Route path="application" element={<Application />} />
+            <Route path="review">
+              {/* /mypage/review */}
+              <Route path="" element={<Review />} />
+              {/* /mypage/review/new/program/:programId */}
+              <Route
+                path="new/program/:programType/:programId"
+                element={<ReviewCreate isEdit={false} />}
+              />
+              {/* /mypage/review/edit/program/:programId */}
+              <Route
+                path="edit/program/:programType/:programId/:reviewId"
+                element={<ReviewCreate isEdit={true} />}
+              />
+            </Route>
+            {/* /mypage/credit */}
+            <Route path="credit" element={<Credit />} />
+            <Route path="credit/:orderId" element={<CreditDetail />} />
             {/* /mypage/privacy */}
             <Route path="privacy" element={<Privacy />} />
           </Route>

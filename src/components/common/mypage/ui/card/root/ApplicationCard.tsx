@@ -3,7 +3,6 @@ import clsx from 'clsx';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ApplicationType } from '../../../../../../pages/common/mypage/Application';
-import ApplicationCardButton from '../../button/ApplicationCardButton';
 import LinkButton from '../../button/LinkButton';
 import PriceInfoModal from '../../modal/PriceInfoModal';
 import DeleteMenu from '../menu/DeleteMenu';
@@ -70,7 +69,7 @@ const ApplicationCard = ({
             className="h-[7.5rem] w-full bg-primary-light object-cover md:h-[9rem] md:w-[11rem] md:rounded-xs"
           />
         </Link>
-        <div className="flex flex-1 flex-col gap-2 py-2">
+        <div className="flex flex-1 flex-col justify-between gap-2 py-2">
           <div className="flex justify-between">
             <h2 className="font-semibold">
               <Link to={programLink} className="hover:underline">
@@ -84,7 +83,7 @@ const ApplicationCard = ({
           <p className="text-sm text-neutral-30">
             {application.programShortDesc}
           </p>
-          <div className="flex items-center gap-1.5 md:justify-end">
+          <div className="flex items-center gap-1.5 md:justify-start">
             <span className="text-xs text-neutral-0">진행기간</span>
             <span className="text-xs font-medium text-primary-dark">
               {formatDateString(application.programStartDate)} ~{' '}
@@ -93,19 +92,6 @@ const ApplicationCard = ({
           </div>
         </div>
       </div>
-      {application.status === 'WAITING' && (
-        <ApplicationCardButton
-          onClick={() => {
-            setPriceInfoOpen({
-              isOpen: true,
-              paymentId: application.paymentId || 0,
-            });
-          }}
-          className="payment_button"
-        >
-          결제 정보 확인
-        </ApplicationCardButton>
-      )}
       {application.programType === 'CHALLENGE' &&
         showChallengeButton &&
         checkChallengeStarted(application.programStartDate) && (
