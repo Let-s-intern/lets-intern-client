@@ -3,6 +3,7 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import ChallengeOperationAdminLayout from './components/admin/challenge/ui/ChallengeOperationAdminLayout';
 import AdminLayout from './components/admin/ui/layout/AdminLayout';
 import ChallengeLayout from './components/common/challenge/ui/layout/ChallengeLayout';
+import CreditDetail from './components/common/mypage/credit/section/CreditDetail';
 import Layout from './components/common/ui/layout/Layout';
 import ScrollToTop from './components/ui/scroll-to-top/ScrollToTop';
 import { CurrentAdminChallengeProvider } from './context/CurrentAdminChallengeProvider';
@@ -160,6 +161,7 @@ const Router = () => {
             </Route>
             {/* /mypage/credit */}
             <Route path="credit" element={<Credit />} />
+            <Route path="credit/:orderId" element={<CreditDetail />} />
             {/* /mypage/privacy */}
             <Route path="privacy" element={<Privacy />} />
           </Route>
