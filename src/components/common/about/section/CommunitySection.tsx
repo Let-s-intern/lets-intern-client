@@ -26,13 +26,16 @@ const CONTENT = [
 
 const CommunitySection = () => {
   return (
-    <section className="px-5 py-[3.75rem]">
+    <section className="px-5 py-[3.75rem] sm:px-10 sm:py-[6.25rem] xl:py-[7.5rem]">
       <AboutTitle {...TITLE} />
-      <div className="flex flex-col gap-10">
+      <div className="flex flex-col items-start justify-center gap-10 md:flex-row">
         {CONTENT.map(({ imgSrc, alt, description }) => (
-          <div key={alt} className="flex flex-col gap-5">
-            <img className="h-full w-full sm:w-80" src={imgSrc} alt={alt} />
-            <p className="text-0.875 px-3.5 text-neutral-40">
+          <div
+            key={alt}
+            className="flex w-full flex-col items-center gap-5 md:max-w-[24rem]"
+          >
+            <img className="h-auto w-full" src={imgSrc} alt={alt} />
+            <p className="text-0.875 xl:text-1 px-3.5 text-neutral-40 lg:text-center xl:px-0">
               {description.map((desc) => (
                 <span key={desc} className="mr-1">
                   {desc}

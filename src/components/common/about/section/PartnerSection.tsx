@@ -14,51 +14,66 @@ const logoList = [
   },
   {
     bgColor: 'bg-static-100',
-    imgSize: 'h-7 w-auto',
+    imgSize: 'h-7 w-auto sm:h-[3.7rem]',
     imgSrc: '/images/yonsei.png',
     alt: '연세대학교 로고',
   },
   {
     bgColor: 'bg-static-100',
-    imgSize: 'h-5 w-auto',
+    imgSize: 'h-5 w-auto sm:h-10',
     imgSrc: '/images/root-impact.png',
     alt: '루트임팩트 로고',
   },
   {
     bgColor: 'bg-static-100',
-    imgSize: 'h-auto w-[3.125rem]',
+    imgSize: 'h-auto sm:w-24 w-[3.125rem]',
     imgSrc: '/images/sggsagg.svg',
     alt: '슥삭 로고',
   },
   {
     bgColor: 'bg-[#00A58A]',
-    imgSize: 'h-auto w-[3.25rem]',
+    imgSize: 'h-auto sm:w-[6.7rem]  w-[3.25rem]',
     imgSrc: '/images/orang.png',
     alt: '성동 오랑 로고',
   },
   {
     bgColor: 'bg-static-100',
-    imgSize: 'h-auto w-[3.34rem]',
+    imgSize: 'h-auto sm:w-[6.45rem] w-[3.34rem]',
     imgSrc: '/images/disquiet.png',
     alt: '디스콰이엇 로고',
   },
 ];
 
+interface PartnerCardProps {
+  logo: {
+    bgColor: string;
+    imgSize: string;
+    imgSrc: string;
+    alt: string;
+  };
+}
+
 const PartnerSection = () => {
   return (
-    <section className="bg-neutral-100 px-5 py-[3.75rem]">
+    <section className="flex flex-col bg-neutral-100 px-5 py-[3.75rem] sm:px-10 sm:py-[6.25rem] md:items-center xl:py-[8.75rem]">
       <AboutTitle subTitle={TITLE.subTitle} title={TITLE.title} />
-      <div className="mt-10 grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-2 gap-4">
         {logoList.map((logo) => (
-          <div
-            key={logo.imgSrc}
-            className={`flex h-16 w-full items-center justify-center ${logo.bgColor} shadow-03`}
-          >
-            <img className={logo.imgSize} src={logo.imgSrc} alt={logo.alt} />
-          </div>
+          <PartnerCard key={logo.imgSrc} logo={logo} />
         ))}
       </div>
     </section>
+  );
+};
+
+const PartnerCard = ({ logo }: PartnerCardProps) => {
+  return (
+    <div
+      key={logo.imgSrc}
+      className={`flex h-16 w-full items-center justify-center sm:h-[8.25rem] md:w-[22rem] ${logo.bgColor} shadow-03`}
+    >
+      <img className={logo.imgSize} src={logo.imgSrc} alt={logo.alt} />
+    </div>
   );
 };
 
