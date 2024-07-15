@@ -15,7 +15,6 @@ export const useProgramApplicationQuery = (
       const res = await axios.get(`/${programType}/${programId}/application`);
       return programApplicationType.parse(res.data.data);
     },
-    retry: 0,
   });
 };
 
