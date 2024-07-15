@@ -1,3 +1,4 @@
+import { ICouponForm } from '../../../../../../types/interface';
 import { PayInfo } from '../../section/ApplySection';
 
 interface DiscountResult {
@@ -6,17 +7,12 @@ interface DiscountResult {
   totalDiscount: number;
 }
 
-type Coupon = {
-  id: number;
-  price: number;
-};
-
 const handleCouponPrice = ({
   coupon,
   payInfo,
 }: {
   payInfo: PayInfo;
-  coupon: Coupon;
+  coupon: ICouponForm;
 }): DiscountResult => {
   let totalDiscount =
     payInfo.discount + (coupon.price === -1 ? payInfo.price : coupon.price);
@@ -40,25 +36,24 @@ const PriceSection = ({
   coupon,
 }: {
   payInfo: PayInfo;
-  coupon: Coupon;
+  coupon: ICouponForm;
 }) => {
   const discountInfo = handleCouponPrice({ payInfo, coupon });
   return (
-    <div className="flex flex-col gap-3">
-      <div className="font-semibold text-neutral-0">결제 금액</div>
-      <div>
-        <div className="flex items-center justify-between px-1.5 py-2.5 text-neutral-0">
-          <span>참여 비용</span>
-          <span>{payInfo.price.toLocaleString()}원</span>
-        </div>
-        <div className="flex items-center justify-between px-1.5 py-2.5 font-semibold text-primary">
-          <span>쿠폰 할인</span>
-          <span>-{discountInfo.couponDiscount.toLocaleString()}원</span>
-        </div>
-        <div className="flex items-center justify-between px-1.5 py-2.5 font-semibold text-system-error">
-          <span>할인 {Math.round(discountInfo.discountPer)}%</span>
-          <span>-{payInfo.discount.toLocaleString()}원</span>
-        </div>
+    <div className="flex flex-col">
+      <div className="flex h-10 items-center justify-between px-3 text-neutral-0">
+        <span>결제상품</span>
+        <span>{payInfo.price.toLocaleString()}원</span>
+      </div>
+      <div className="flex h-10 items-center justify-between px-3 text-neutral-0">
+        <span>{Math.round(discountInfo.discountPer)}% 할인</span>
+        <span>-{payInfo.discount.toLocaleString()}원</span>
+      </div>
+      <div className="flex h-10 items-center justify-between px-3 text-primary">
+        <span>쿠폰할인</span>
+        <span className="font-bold">
+          -{discountInfo.couponDiscount.toLocaleString()}원
+        </span>
       </div>
     </div>
   );

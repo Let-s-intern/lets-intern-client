@@ -4,7 +4,7 @@ import { accountType, authProviderSchema, grade } from '../schema';
 import axios from '../utils/axios';
 
 /** GET /api/v1/user */
-export const userSchema = z.object({
+const userSchema = z.object({
   id: z.string().nullable(),
   name: z.string().nullable(),
   email: z.string().nullable(),
@@ -21,7 +21,7 @@ export const userSchema = z.object({
   authProvider: authProviderSchema.nullable(),
 });
 
-export const useUserQueryKey = 'useUserQueryKey';
+const useUserQueryKey = 'useUserQueryKey';
 
 export const useUserQuery = ({ enabled }: { enabled?: boolean } = {}) => {
   return useQuery({

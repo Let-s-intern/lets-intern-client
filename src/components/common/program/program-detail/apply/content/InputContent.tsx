@@ -30,10 +30,6 @@ const InputContent = ({
       return;
     }
 
-    if (programType === 'live') {
-      setContentIndex(contentIndex + 2);
-      return;
-    }
     setContentIndex(contentIndex + 2);
   };
 
@@ -58,7 +54,7 @@ const InputContent = ({
   return (
     <div className="flex h-full flex-col gap-5">
       <div className="flex h-full flex-col gap-3">
-        <p className="font-medium text-neutral-0">
+        <p className="text-xsmall16 font-semibold text-neutral-0">
           신청 폼을 모두 입력해주세요.
         </p>
         <div className="flex flex-col gap-2.5">
@@ -84,7 +80,7 @@ const InputContent = ({
           onClick={handleNextButtonClick}
           disabled={buttonDisabled}
         >
-          다음
+          결제하기
         </button>
       </div>
     </div>

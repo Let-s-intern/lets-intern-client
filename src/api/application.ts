@@ -10,7 +10,7 @@ import {
 import { ProgramType } from '../types/common';
 import axios from '../utils/axios';
 
-export const programApplicationSchema = z
+const programApplicationSchema = z
   .object({
     applied: z.boolean().nullable().optional(),
     name: z.string().nullable().optional(),
@@ -38,7 +38,7 @@ export type ProgramApplicationFormInfo = z.infer<
   typeof programApplicationSchema
 >;
 
-export const UseProgramApplicationQueryKey = 'useProgramApplicationQueryKey';
+const UseProgramApplicationQueryKey = 'useProgramApplicationQueryKey';
 
 export const useProgramApplicationQuery = (
   programType: ProgramType,
@@ -54,9 +54,9 @@ export const useProgramApplicationQuery = (
   });
 };
 
-export const UseProgramTitleQueryKey = 'useProgramTitleQueryKey';
+const UseProgramTitleQueryKey = 'useProgramTitleQueryKey';
 
-export const useProgramTitleQuery = (
+const useProgramTitleQuery = (
   programType: ProgramType,
   programId: number,
 ) => {
@@ -83,7 +83,7 @@ export interface PostApplicationInterface {
   question?: string;
 }
 
-export const usePostApplicationMutation = (
+const usePostApplicationMutation = (
   successCallback: () => void,
   errorCallback: (error: Error) => void,
 ) => {

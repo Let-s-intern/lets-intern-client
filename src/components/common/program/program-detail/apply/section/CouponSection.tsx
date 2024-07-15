@@ -1,16 +1,14 @@
 import { useState } from 'react';
 
 import { isAxiosError } from 'axios';
+import { ICouponForm } from '../../../../../../types/interface';
 import axios from '../../../../../../utils/axios';
 import Input from '../../../../ui/input/Input';
 
-type Coupon = {
-  id: number;
-  price: number;
-};
-
 interface CouponSectionProps {
-  setCoupon: (coupon: ((prevCoupon: Coupon) => Coupon) | Coupon) => void;
+  setCoupon: (
+    coupon: ((prevCoupon: ICouponForm) => ICouponForm) | ICouponForm,
+  ) => void;
   programType: string;
 }
 
@@ -28,7 +26,7 @@ const CouponSection = ({ setCoupon, programType }: CouponSectionProps) => {
     try {
       const res = await axios.get(`/coupon`, {
         params: {
-          code: code,
+          code,
           programType: programType.toUpperCase(),
         },
       });
@@ -43,7 +41,7 @@ const CouponSection = ({ setCoupon, programType }: CouponSectionProps) => {
         setSuccessMsg('');
         setValidationMsg(error.response?.data.message);
       }
-      setCoupon((prevCoupon: Coupon) => ({
+      setCoupon((prevCoupon: ICouponForm) => ({
         ...prevCoupon,
         couponId: null,
         couponPrice: 0,
@@ -58,12 +56,11 @@ const CouponSection = ({ setCoupon, programType }: CouponSectionProps) => {
 
   return (
     <div className="flex w-full flex-col gap-3">
-      <div className="font-semibold text-neutral-0">쿠폰 등록</div>
       <div className="flex gap-2.5">
         <Input
           className="w-full"
           type="text"
-          placeholder="쿠폰 코드 입력"
+          placeholder="쿠폰 번호를 입력해주세요."
           value={code}
           onChange={handleCodeChange}
         />

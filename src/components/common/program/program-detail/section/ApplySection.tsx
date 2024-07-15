@@ -3,12 +3,13 @@ import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   ProgramApplicationFormInfo,
-  useProgramApplicationQuery
+  useProgramApplicationQuery,
 } from '../../../../../api/application';
 import { useProgramQuery } from '../../../../../api/program';
 import { getPaymentSearchParams } from '../../../../../data/getPaymentSearchParams';
 import { AccountType } from '../../../../../schema';
 import { ProgramType } from '../../../../../types/common';
+import { ICouponForm } from '../../../../../types/interface';
 import ChoicePayPlanContent from '../apply/content/ChoicePayPlanContent';
 import InputContent from '../apply/content/InputContent';
 import OverviewContent from '../apply/content/OverviewContent';
@@ -44,7 +45,6 @@ interface ApplySectionProps {
   programType: ProgramType;
   programId: number;
   programTitle: string;
-  toggleApplyModal: () => void;
 }
 
 // TODO: 다른 곳으로 옮기기
@@ -94,7 +94,6 @@ const ApplySection = ({
   programType,
   programId,
   programTitle,
-  toggleApplyModal,
 }: ApplySectionProps) => {
   const navigate = useNavigate();
   const [contentIndex, setContentIndex] = useState(0);
@@ -106,11 +105,8 @@ const ApplySection = ({
     question: '',
   });
 
-  const [coupon, setCoupon] = useState<{
-    id: number;
-    price: number;
-  }>({
-    id: -1,
+  const [coupon, setCoupon] = useState<ICouponForm>({
+    id: null,
     price: 0,
   });
 
@@ -230,6 +226,8 @@ const ApplySection = ({
           programType={programType}
           totalPrice={totalPrice}
           programDate={programDate}
+          programQuery={program}
+          programId={programId}
         />
       ) : null}
     </section>

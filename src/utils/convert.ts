@@ -7,7 +7,7 @@ export const newProgramTypeToText: Record<string, string> = {
   VOD: 'VOD 클래스',
 };
 
-export const newProgramTypeText: Record<'CHALLENGE' | 'LIVE' | 'VOD', string> =
+const newProgramTypeText: Record<'CHALLENGE' | 'LIVE' | 'VOD', string> =
   {
     CHALLENGE: '챌린지',
     LIVE: 'LIVE 클래스',
@@ -64,7 +64,7 @@ const challengeTopicToText: Record<string, string> = {
   DEVELOPMENT: '개발',
 };
 
-export const applicationStatusToText: Record<string, string> = {
+const applicationStatusToText: Record<string, string> = {
   APPLIED: '대기',
   IN_PROGRESS: '참가확정',
   APPLIED_NOT_APPROVED: '미선발',

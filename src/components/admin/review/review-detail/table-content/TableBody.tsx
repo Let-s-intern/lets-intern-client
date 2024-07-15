@@ -5,7 +5,7 @@ import dayjs from 'dayjs';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import axios from '../../../../../utils/axios';
 
-export interface DetailTableBodyProps {
+interface DetailTableBodyProps {
   reviewList: {
     id: number;
     name: string;

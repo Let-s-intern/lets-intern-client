@@ -5,14 +5,12 @@ import { useReducer, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useProgramApplicationQuery } from '../../../api/application';
 import { useProgramQuery } from '../../../api/program';
-import ApplyModal from '../../../components/common/program/program-detail/apply/modal/ApplyModal';
 import FilledButton from '../../../components/common/program/program-detail/button/FilledButton';
 import NotiButton from '../../../components/common/program/program-detail/button/NotiButton';
 import Header from '../../../components/common/program/program-detail/header/Header';
 import ApplySection from '../../../components/common/program/program-detail/section/ApplySection';
 import MobileApplySection from '../../../components/common/program/program-detail/section/MobileApplySection';
 import TabSection from '../../../components/common/program/program-detail/section/TabSection';
-import applyReducer from '../../../reducers/applyReducer';
 import drawerReducer from '../../../reducers/drawerReducer';
 import useAuthStore from '../../../store/useAuthStore';
 import { ProgramType } from '../../../types/common';
@@ -36,7 +34,6 @@ const ProgramDetail = ({ programType }: ProgramDetailProps) => {
   const programId = Number(params.programId);
   const isDesktop = useMediaQuery('(min-width: 991px)');
   const [isDrawerOpen, dispatchIsDrawerOpen] = useReducer(drawerReducer, false);
-  const [isComplete, applyDispatch] = useReducer(applyReducer, false);
 
   const { data: application } = useProgramApplicationQuery(
     programType,
@@ -74,10 +71,6 @@ const ProgramDetail = ({ programType }: ProgramDetailProps) => {
         dayjs().isAfter(programDate.deadline)
       : false;
 
-  const toggleApplyModal = () => {
-    applyDispatch({ type: 'toggle' });
-  };
-
   const toggleDrawer = () => {
     if (!isLoggedIn) {
       alert('로그인 후 이용해주세요.');
@@ -86,6 +79,7 @@ const ProgramDetail = ({ programType }: ProgramDetailProps) => {
     }
     dispatchIsDrawerOpen({ type: 'toggle' });
   };
+
   const openApplyDrawer = () => {
     if (isAlreadyApplied || isOutOfDate) {
       return;
@@ -100,6 +94,14 @@ const ProgramDetail = ({ programType }: ProgramDetailProps) => {
     <div className="px-5">
       <div className="mx-auto max-w-5xl">
         <Header programTitle={programTitle} />
+        {/* Thumbnail */}
+        <div className="flex justify-center">
+          <img
+            src={program.query.data?.thumbnail ?? '#'}
+            alt="thumbnail"
+            className="h-[20rem] w-full rounded-sm object-cover"
+          />
+        </div>
         <div className="flex min-h-screen flex-col">
           {/* 프로그램 상세 */}
           <section className="flex items-start gap-10 md:mt-8">
@@ -109,7 +111,6 @@ const ProgramDetail = ({ programType }: ProgramDetailProps) => {
                 programType={programType}
                 programId={programId}
                 programTitle={programTitle}
-                toggleApplyModal={toggleApplyModal}
               />
             )}
           </section>
@@ -119,7 +120,11 @@ const ProgramDetail = ({ programType }: ProgramDetailProps) => {
             <div className="fixed bottom-0 left-0 right-0 z-30 flex max-h-[25rem] w-screen flex-col items-center overflow-hidden rounded-t-lg bg-static-100 px-5 pb-3 shadow-05 scrollbar-hide">
               <div className="sticky top-0 flex w-full justify-center bg-static-100 py-3">
                 <div
-                  onClick={openApplyDrawer}
+                  onClick={() =>
+                    dispatchIsDrawerOpen({
+                      type: 'close',
+                    })
+                  }
                   className="h-[5px] w-[70px] shrink-0 cursor-pointer rounded-full bg-neutral-80"
                 />
               </div>
@@ -128,7 +133,6 @@ const ProgramDetail = ({ programType }: ProgramDetailProps) => {
                   programTitle={programTitle}
                   programType={programType}
                   programId={programId}
-                  toggleApplyModal={toggleApplyModal}
                   toggleDrawer={toggleDrawer}
                   drawerDispatch={dispatchIsDrawerOpen}
                 />
@@ -154,7 +158,6 @@ const ProgramDetail = ({ programType }: ProgramDetailProps) => {
           )}
         </div>
       </div>
-      {isComplete && <ApplyModal toggle={toggleApplyModal} />}
     </div>
   );
 };

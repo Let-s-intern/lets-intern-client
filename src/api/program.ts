@@ -3,7 +3,7 @@ import { getLiveIdSchema } from '../schema';
 import axios from '../utils/axios';
 import { useChallengeQuery } from './challenge';
 
-export const useLiveQueryKey = 'useLiveQueryKey';
+const useLiveQueryKey = 'useLiveQueryKey';
 
 export const useLiveQuery = ({
   liveId,
@@ -54,3 +54,5 @@ export const useProgramQuery = ({
       };
   }
 };
+
+export type ProgramQuery = ReturnType<typeof useProgramQuery>;

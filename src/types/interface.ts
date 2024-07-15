@@ -25,3 +25,8 @@ export interface ErrorResonse {
   status: number;
   message: string;
 }
+
+export interface ICouponForm {
+  id: number | null;
+  price: number;
+}

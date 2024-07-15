@@ -1,26 +1,28 @@
+import dayjs from 'dayjs';
 import { useRef } from 'react';
 import { FaArrowLeft } from 'react-icons/fa6';
+import { ProgramQuery } from '../../../../../../api/program';
+import { ICouponForm } from '../../../../../../types/interface';
+import ProgramCard from '../../../ProgramCard';
 
 import { PayInfo, ProgramDate } from '../../section/ApplySection';
 import CouponSection from '../section/CouponSection';
-import PayInfoSection from '../section/PayInfoSection';
 import PriceSection from '../section/PriceSection';
-
-type Coupon = {
-  id: number;
-  price: number;
-};
 
 interface PayContentProps {
   payInfo: PayInfo;
-  coupon: Coupon;
-  setCoupon: (coupon: ((prevCoupon: Coupon) => Coupon) | Coupon) => void;
+  coupon: ICouponForm;
+  setCoupon: (
+    coupon: ((prevCoupon: ICouponForm) => ICouponForm) | ICouponForm,
+  ) => void;
   handleApplyButtonClick: () => void;
   contentIndex: number;
   setContentIndex: (contentIndex: number) => void;
-  programType: string;
+  programType: 'live' | 'challenge';
   totalPrice: number;
   programDate: ProgramDate;
+  programQuery: ProgramQuery;
+  programId: number;
 }
 
 const PayContent = ({
@@ -33,16 +35,13 @@ const PayContent = ({
   programType,
   totalPrice,
   programDate,
+  programQuery,
+  programId,
 }: PayContentProps) => {
   const topRef = useRef<HTMLDivElement>(null);
 
   const handleBackButtonClick = () => {
-    if (programType === 'live') {
-      setContentIndex(contentIndex - 2);
-      return;
-    }
-
-    setContentIndex(contentIndex - 1);
+    setContentIndex(contentIndex - 2);
   };
 
   return (
@@ -51,14 +50,37 @@ const PayContent = ({
         {payInfo.challengePriceType !== 'FREE' &&
           payInfo.livePriceType !== 'FREE' && (
             <>
-              <h2 className="font-medium" ref={topRef}>
-                결제 정보
+              <h2 className="text-small20 font-bold" ref={topRef}>
+                결제하기
               </h2>
-              <PayInfoSection payInfo={payInfo} programDate={programDate} />
+              <h3 className="text-xsmall16 font-semibold text-neutral-0">
+                {programType === 'live'
+                  ? 'LIVE 클래스'
+                  : programType === 'challenge'
+                    ? '챌린지'
+                    : ''}{' '}
+                프로그램 정보
+              </h3>
+              <ProgramCard
+                border={false}
+                type={programType}
+                id={programId}
+                title={programQuery.query.data?.title ?? ''}
+                thumbnail={programQuery.query.data?.thumbnail ?? ''}
+                startDate={programDate.startDate ?? dayjs()}
+                endDate={programDate.endDate ?? dayjs()}
+                thumbnailLinkClassName="max-w-32"
+              />
               <hr className="bg-neutral-85" />
+              <div className="font-semibold text-neutral-0">결제</div>
               <CouponSection setCoupon={setCoupon} programType={programType} />
               <hr className="bg-neutral-85" />
               <PriceSection payInfo={payInfo} coupon={coupon} />
+              <hr className="bg-neutral-85" />
+              <div className="flex h-10 items-center justify-between px-3 font-semibold text-neutral-0">
+                <span>결제금액</span>
+                <span>{totalPrice.toLocaleString()}원</span>
+              </div>
             </>
           )}
       </div>
@@ -77,7 +99,7 @@ const PayContent = ({
             handleApplyButtonClick();
           }}
         >
-          결제하기 {totalPrice.toLocaleString()}원
+          결제하기
         </button>
       </div>
     </div>

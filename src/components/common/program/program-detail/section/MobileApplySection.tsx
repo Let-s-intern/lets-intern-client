@@ -4,7 +4,10 @@ import { useProgramApplicationQuery } from '../../../../../api/application';
 import { useProgramQuery } from '../../../../../api/program';
 import { getPaymentSearchParams } from '../../../../../data/getPaymentSearchParams';
 import { ProgramType } from '../../../../../types/common';
-import { IApplyDrawerAction } from '../../../../../types/interface';
+import {
+  IApplyDrawerAction,
+  ICouponForm,
+} from '../../../../../types/interface';
 import InputContent from '../apply/content/InputContent';
 import PayContent from '../apply/content/PayContent';
 import ScheduleContent from '../apply/content/ScheduleContent';
@@ -14,7 +17,6 @@ interface MobileApplySectionProps {
   programType: ProgramType;
   programId: number;
   programTitle: string;
-  toggleApplyModal: () => void;
   toggleDrawer: () => void;
   drawerDispatch: (value: IApplyDrawerAction) => void;
 }
@@ -23,7 +25,6 @@ const MobileApplySection = ({
   programType,
   programId,
   programTitle,
-  toggleApplyModal,
   toggleDrawer,
   drawerDispatch,
 }: MobileApplySectionProps) => {
@@ -38,11 +39,8 @@ const MobileApplySection = ({
     question: '',
   });
 
-  const [coupon, setCoupon] = useState<{
-    id: number;
-    price: number;
-  }>({
-    id: -1,
+  const [coupon, setCoupon] = useState<ICouponForm>({
+    id: null,
     price: 0,
   });
 
@@ -165,6 +163,8 @@ const MobileApplySection = ({
           programType={programType}
           totalPrice={totalPrice}
           programDate={programDate}
+          programQuery={program}
+          programId={programId}
         />
       ) : null}
     </section>

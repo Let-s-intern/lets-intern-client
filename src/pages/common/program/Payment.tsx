@@ -1,8 +1,11 @@
 import { loadTossPayments } from '@tosspayments/tosspayments-sdk';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useUserQuery } from '../../../api/user';
-import { paymentSearchParamsSchema } from '../../../data/getPaymentSearchParams';
+import {
+  PaymentMethodKey,
+  paymentSearchParamsSchema,
+} from '../../../data/getPaymentSearchParams';
 import { searchParamsToObject } from '../../../utils/network';
 import { generateRandomString } from '../../../utils/random';
 
@@ -32,6 +35,9 @@ const Payment = () => {
 
   const [ready, setReady] = useState(false);
   const [widgets, setWidgets] = useState<TossPaymentsWidgets | null>(null);
+  const [selectedPaymentMethod, setSelectedPaymentMethod] =
+    useState<PaymentMethodKey | null>(null);
+  const tossInitialized = useRef(false);
 
   useEffect(() => {
     if (!user || !params) {
@@ -39,13 +45,15 @@ const Payment = () => {
     }
 
     const init = async () => {
+      if (tossInitialized.current) {
+        return;
+      }
+      tossInitialized.current = true;
       const customerKey = (user.id ?? '').slice(0, 16);
-      console.log('customerKey', customerKey);
-
       const tossPayments = await loadTossPayments(clientKey);
       // 회원 결제
       const widgets = tossPayments.widgets({
-        customerKey: customerKey,
+        customerKey,
       });
       setWidgets(widgets);
 
@@ -56,9 +64,17 @@ const Payment = () => {
       });
 
       // ------  결제 UI 렌더링 ------
-      await widgets.renderPaymentMethods({
+      const methods = await widgets.renderPaymentMethods({
         selector: '#payment-method',
         variantKey: 'DEFAULT',
+      });
+
+      methods.getSelectedPaymentMethod().then((paymentMethod) => {
+        setSelectedPaymentMethod(paymentMethod.code as PaymentMethodKey);
+      });
+      methods.on('paymentMethodSelect', (paymentMethod) => {
+        // TODO: as 삭제
+        setSelectedPaymentMethod(paymentMethod.code as PaymentMethodKey);
       });
 
       // ------  이용약관 UI 렌더링 ------
@@ -79,16 +95,19 @@ const Payment = () => {
 
     const orderId = generateRandomString();
 
+    const searchParams = new URLSearchParams(window.location.search);
+    searchParams.set('paymentMethodKey', selectedPaymentMethod || '');
+
     try {
       await widgets.requestPayment({
-        orderId: orderId,
+        orderId,
         orderName: params.programTitle,
         successUrl:
           window.location.origin +
-          `/order/${orderId}/result?${new URL(window.location.href).searchParams.toString()}`,
+          `/order/${orderId}/result?${searchParams.toString()}`,
         failUrl:
           window.location.origin +
-          `/order/${orderId}/fail?${new URL(window.location.href).searchParams.toString()}`,
+          `/order/${orderId}/fail?${searchParams.toString()}`,
         customerEmail: params.email,
         customerName: params.name,
         customerMobilePhone: params.phone.replace(/[^0-9]/g, ''),
