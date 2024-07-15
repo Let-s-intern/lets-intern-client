@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 import { useState } from 'react';
 import { ApplicationType } from '../../../../../pages/common/mypage/Application';
@@ -11,6 +11,7 @@ interface ApplySectionProps {
 }
 
 const ApplySection = ({ applicationList, refetch }: ApplySectionProps) => {
+  const navigate = useNavigate();
   const [showMore, setShowMore] = useState(false);
 
   const viewList = showMore ? applicationList : applicationList.slice(0, 3);
@@ -27,7 +28,7 @@ const ApplySection = ({ applicationList, refetch }: ApplySectionProps) => {
             to="/program"
             className="rounded-sm border-2 border-primary-xlight bg-white px-5 py-2 font-medium text-neutral-35"
           >
-            프로그램 신청하기
+            다른 프로그램 둘러보기
           </Link>
         </div>
       ) : (
@@ -42,8 +43,14 @@ const ApplySection = ({ applicationList, refetch }: ApplySectionProps) => {
           ))}
         </div>
       )}
-      {applicationList.length > 3 && !showMore && (
-        <MoreButton className="md:flex" onClick={() => setShowMore(true)}>
+      {applicationList.length > 3 && (
+        <MoreButton
+          className="md:flex"
+          onClick={() => {
+            showMore ? navigate('/program') : setShowMore(true);
+          }}
+        >
+          {showMore ? '다른 프로그램 둘러보기' : `더보기`}
           더보기
         </MoreButton>
       )}
