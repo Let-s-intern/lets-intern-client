@@ -1,10 +1,9 @@
-import { useQueryClient } from '@tanstack/react-query';
 import { Dayjs } from 'dayjs';
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   ProgramApplicationFormInfo,
-  useProgramApplicationQuery,
+  useProgramApplicationQuery
 } from '../../../../../api/application';
 import { useProgramQuery } from '../../../../../api/program';
 import { getPaymentSearchParams } from '../../../../../data/getPaymentSearchParams';
@@ -30,18 +29,6 @@ export interface UserInfo {
   question: string;
 }
 
-// export interface PayInfo {
-//   priceId: number;
-//   couponId: null | number;
-//   price: number;
-//   discount: number;
-//   couponPrice: number;
-//   accountNumber: string;
-//   deadline: string;
-//   accountType: string;
-//   livePriceType: string;
-//   challengePriceType: string;
-// }
 export interface PayInfo {
   priceId: number;
   price: number;
@@ -60,7 +47,8 @@ interface ApplySectionProps {
   toggleApplyModal: () => void;
 }
 
-const getPayInfo = (
+// TODO: 다른 곳으로 옮기기
+export const getPayInfo = (
   application: ProgramApplicationFormInfo,
 ): null | {
   priceId: number;
@@ -108,15 +96,8 @@ const ApplySection = ({
   programTitle,
   toggleApplyModal,
 }: ApplySectionProps) => {
-  const queryClient = useQueryClient();
   const navigate = useNavigate();
   const [contentIndex, setContentIndex] = useState(0);
-  // const [programDate, setProgramDate] = useState<ProgramDate>({
-  //   deadline: '',
-  //   startDate: '',
-  //   endDate: '',
-  //   beginning: '',
-  // });
   const [userInfo, setUserInfo] = useState<UserInfo>({
     name: '',
     email: '',
@@ -124,22 +105,7 @@ const ApplySection = ({
     contactEmail: '',
     question: '',
   });
-  // const [criticalNotice, setCriticalNotice] = useState<string>('');
-  // const [priceId, setPriceId] = useState<number>(0);
-  // const [payInfo, setPayInfo] = useState<PayInfo>({
-  //   priceId: 0,
-  //   couponId: null,
-  //   price: 0,
-  //   discount: 0,
-  //   couponPrice: 0,
-  //   accountNumber: '',
-  //   deadline: '',
-  //   accountType: '',
-  //   livePriceType: '',
-  //   challengePriceType: '',
-  // });
-  const [isCautionChecked, setIsCautionChecked] = useState<boolean>(false);
-  // const [isApplied, setIsApplied] = useState<boolean>(false);
+
   const [coupon, setCoupon] = useState<{
     id: number;
     price: number;
@@ -171,67 +137,6 @@ const ApplySection = ({
 
   const priceId =
     application?.priceList?.[0]?.priceId ?? application?.price?.priceId ?? -1;
-  // const payInfo1234 = useQuery({
-  //   queryKey: [programType, programId, 'application'],
-  //   queryFn: async () => {
-  //     const res = await axios.get(`/${programType}/${programId}/application`);
-  //     const data = res.data.data;
-  //     // setUserInfo({
-  //     //   name: data.name,
-  //     //   email: data.email,
-  //     //   phoneNumber: data.phoneNumber,
-  //     //   contactEmail: data.contactEmail || '',
-  //     //   question: '',
-  //     // });
-  //     // setCriticalNotice(data.criticalNotice);
-  //     // setIsApplied(data.applied);
-  //     // if (programType === 'challenge') {
-  //     //   setPriceId(data.priceList[0].priceId);
-  //     //   setPayInfo({
-  //     //     priceId: data.priceList[0].priceId,
-  //     //     couponId: null,
-  //     //     price: data.priceList[0].price,
-  //     //     discount: data.priceList[0].discount,
-  //     //     couponPrice: 0,
-  //     //     accountNumber: data.priceList[0].accountNumber,
-  //     //     deadline: data.priceList[0].deadline,
-  //     //     accountType: data.priceList[0].accountType,
-  //     //     livePriceType: data.priceList[0].livePriceType,
-  //     //     challengePriceType: data.priceList[0].challengePriceType,
-  //     //   });
-  //     // } else {
-  //     //   setIsCautionChecked(true);
-  //     //   setPriceId(data.price.priceId);
-  //     //   setPayInfo({
-  //     //     priceId: data.price.priceId,
-  //     //     couponId: null,
-  //     //     price: data.price.price,
-  //     //     discount: data.price.discount,
-  //     //     couponPrice: 0,
-  //     //     accountNumber: data.price.accountNumber,
-  //     //     deadline: data.price.deadline,
-  //     //     accountType: data.price.accountType,
-  //     //     livePriceType: data.price.livePriceType,
-  //     //     challengePriceType: data.price.challengePriceType,
-  //     //   });
-  //     // }
-  //     return res.data;
-  //   },
-  // });
-
-  // useQuery({
-  //   queryKey: [programType, programId],
-  //   queryFn: async () => {
-  //     const res = await axios.get(`/${programType}/${programId}`);
-  //     const data = res.data.data;
-  //     setProgramDate({
-  //       deadline: data.deadline,
-  //       startDate: data.startDate,
-  //       endDate: data.endDate,
-  //       beginning: data.beginning,
-  //     });
-  //   },
-  // });
 
   const program = useProgramQuery({ programId, type: programType });
 

@@ -4,15 +4,10 @@ import { IProgram } from '../../../../../types/interface';
 
 import { useCallback, useEffect, useState } from 'react';
 import axios from '../../../../../utils/axios';
+import { REMINDER_LINK } from '../../../../../utils/programConst';
 import LoadingContainer from '../../../ui/loading/LoadingContainer';
 import EmptyListItemContainer from './EmptyListItemContainer';
 import ProgramListItemContainer from './ProgramListItemContainer';
-
-interface ProgramOverviewListItemProps {
-  title: string;
-  description: string;
-  imageColor?: 'blue' | 'green' | 'purple' | 'yellow';
-}
 
 interface DateInfo {
   year: number;
@@ -45,7 +40,7 @@ const getNextMonth = (year: number, month: number): DateInfo => {
 
 const emptyList = [
   {
-    link: 'https://forms.gle/u6ePSE2WoRYjxyGS6',
+    link: REMINDER_LINK,
     thumbnail: '/images/home/challenge-thumbnail.png',
     title: '신규 챌린지',
     desc: '챌린지를 통해 경험정리부터 서류 지원, 면접 준비까지 완성할 수 있어요.',
@@ -53,7 +48,7 @@ const emptyList = [
     buttonColor: 'bg-point',
   },
   {
-    link: 'https://forms.gle/u6ePSE2WoRYjxyGS6',
+    link: REMINDER_LINK,
     thumbnail: '/images/home/live-thumbnail.png',
     title: 'LIVE 클래스',
     desc: 'LIVE 클래스를 통해 현직자에게 생생한 실무 이야기를 들으며, 성장해 나갈 수 있어요.',
@@ -61,7 +56,7 @@ const emptyList = [
     buttonColor: 'bg-[#BBEDD8]',
   },
   {
-    link: 'https://forms.gle/u6ePSE2WoRYjxyGS6',
+    link: REMINDER_LINK,
     thumbnail: '/images/home/vod-thumbnail.png',
     title: 'VOD 클래스',
     desc: 'VOD 클래스를 통해 부족했던 하드스킬 및 소프트스킬을 모두 업그레이드 할 수 있어요.',
@@ -100,8 +95,8 @@ const ProgramOverviewListItem = () => {
       const res = await axios.get(`/program`, {
         params: {
           size: 4,
-          startDate: startDate,
-          endDate: endDate,
+          startDate,
+          endDate,
         },
       });
       return res.data.data.programList;

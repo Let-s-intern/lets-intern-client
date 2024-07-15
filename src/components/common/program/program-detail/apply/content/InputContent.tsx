@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { ProgramType } from '../../../../../../types/common';
-import { IAction } from '../../../../../../types/interface';
+import { IApplyDrawerAction } from '../../../../../../types/interface';
 import { UserInfo } from '../../section/ApplySection';
 import MotiveAnswerSection from '../section/MotiveAnswerSection';
 import UserInputSection from '../section/UserInputSection';
@@ -11,7 +11,7 @@ interface InputContentProps {
   userInfo: UserInfo;
   setUserInfo: (userInfo: UserInfo) => void;
   programType: ProgramType;
-  drawerDispatch?: (value: IAction) => void;
+  drawerDispatch?: (value: IApplyDrawerAction) => void;
 }
 
 const InputContent = ({

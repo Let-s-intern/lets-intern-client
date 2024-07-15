@@ -23,6 +23,8 @@ export default [
       '@typescript-eslint/no-explicit-any': 'warn',
       'no-console': 'warn',
       'react/react-in-jsx-scope': 'off',
+      'object-shorthand': ['warn', 'always'],
+      'no-useless-rename': 'warn',
     },
   },
 ];

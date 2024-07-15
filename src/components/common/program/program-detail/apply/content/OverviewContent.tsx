@@ -30,10 +30,6 @@ const OverviewContent = ({
 }: OverviewContentProps) => {
   const { isLoggedIn } = useAuthStore();
   const navigate = useNavigate();
-  const formatDateString = (dateString: string) => {
-    const date = new Date(dateString);
-    return date.getFullYear();
-  };
 
   const handleNextButtonClick = () => {
     if (!isLoggedIn) {
@@ -41,10 +37,6 @@ const OverviewContent = ({
       return;
     }
     setContentIndex(contentIndex + 2);
-  };
-
-  const clickNotiButton = () => {
-    window.open('https://forms.gle/u6ePSE2WoRYjxyGS6', '_blank');
   };
 
   return (
@@ -63,11 +55,7 @@ const OverviewContent = ({
           <></>
         ) : new Date() < new Date(programDate.beginning?.toISOString()) ||
           new Date() > new Date(programDate.deadline?.toISOString()) ? (
-          <NotiButton
-            onClick={clickNotiButton}
-            caption={'출시알림신청'}
-            className="early_button"
-          />
+          <NotiButton text={'출시알림신청'} className="early_button" />
         ) : (
           <button
             className="apply_button flex w-full justify-center rounded-md bg-primary px-6 py-3 text-lg font-medium text-neutral-100 disabled:bg-neutral-70"
