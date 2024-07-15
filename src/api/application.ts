@@ -50,7 +50,6 @@ export const useProgramApplicationQuery = (
       const res = await axios.get(`/${programType}/${programId}/application`);
       return programApplicationSchema.parse(res.data.data);
     },
-    retry: 0,
   });
 };
 
