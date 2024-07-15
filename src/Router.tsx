@@ -100,37 +100,17 @@ const Router = () => {
               path="review/new/program/:programType/:programId"
               element={<ReviewCreate isEdit={false} />}
             />
-
             {/* /mypage/review/edit/program/:programId */}
             <Route
               path="review/edit/program/:programType/:programId/:reviewId"
               element={<ReviewCreate isEdit={true} />}
             />
-          {/* ---Regacy--- */}
-          <Route path="mypage" element={<MyPage />}>
-            {/* /mypage/application */}
-            <Route path="application" element={<Application />} />
-            <Route path="review">
-              {/* /mypage/review */}
-              <Route path="" element={<Review />} />
-              {/* /mypage/review/new/program/:programId */}
-              <Route
-                path="new/program/:programType/:programId"
-                element={<ReviewCreate isEdit={false} />}
-              />
-              {/* /mypage/review/edit/program/:programId */}
-              <Route
-                path="edit/program/:programType/:programId/:reviewId"
-                element={<ReviewCreate isEdit={true} />}
-              />
+            <Route path="credit">
+              <Route path="" element={<Credit />} />
+              <Route path=":orderId" element={<CreditDetail />} />
             </Route>
-            {/* /mypage/credit */}
-            <Route path="credit" element={<Credit />} />
-            <Route path="credit/:orderId" element={<CreditDetail />} />
-            {/* /mypage/privacy */}
             <Route path="privacy" element={<Privacy />} />
           </Route>
-
           {/* /login */}
           <Route path="login" element={<Login />} />
           {/* /signup */}
