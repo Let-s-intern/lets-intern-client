@@ -18,7 +18,7 @@ const SolutionBox = ({
         <h2 className="text-1-bold xl:text-1.25-bold text-primary md:text-center">
           {title}
         </h2>
-        <p className="text-0.875 xl:text-1.125 text-justify text-neutral-40 md:text-center">
+        <p className="text-0.875 xl:text-1.125 text-neutral-40 md:text-center">
           {description}
         </p>
       </div>

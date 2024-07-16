@@ -35,7 +35,7 @@ const CommunitySection = () => {
             className="flex w-full flex-col items-center gap-5 md:max-w-[24rem]"
           >
             <img className="h-auto w-full" src={imgSrc} alt={alt} />
-            <p className="text-0.875 xl:text-1 px-3.5 text-neutral-40 lg:text-center xl:px-0">
+            <p className="text-0.875 xl:text-1 px-3 text-neutral-40 lg:text-center xl:px-0">
               {description.map((desc) => (
                 <span key={desc} className="mr-1">
                   {desc}
