@@ -129,10 +129,10 @@ const ProgramDetail = ({ programType }: ProgramDetailProps) => {
             ) : (
               <div
                 className={twMerge(
-                  'fixed bottom-0 left-0 right-0 z-30 flex max-h-[calc(100vh-60px)] w-screen flex-col items-center overflow-hidden rounded-t-lg bg-static-100 px-5 shadow-05 scrollbar-hide',
+                  'fixed bottom-0 left-0 right-0 z-30 w-screen rounded-t-lg bg-static-100 px-5 pb-3 shadow-05',
                 )}
               >
-                <div className="sticky top-0 flex w-full justify-center bg-static-100 py-3">
+                <div className="flex w-full justify-center bg-static-100 py-3">
                   <div
                     onClick={() =>
                       dispatchIsDrawerOpen({
