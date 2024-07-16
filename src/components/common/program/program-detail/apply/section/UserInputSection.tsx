@@ -1,4 +1,3 @@
-import { useEffect, useState } from 'react';
 import { FaCheck } from 'react-icons/fa6';
 import { twMerge } from 'tailwind-merge';
 
@@ -11,17 +10,13 @@ interface UserInputSectionProps {
 }
 
 const UserInputSection = ({ userInfo, setUserInfo }: UserInputSectionProps) => {
-  const [isSameEmail, setIsSameEmail] = useState<boolean>(false);
-
   const handleSameEmail = () => {
     if (isSameEmail) {
-      setIsSameEmail(false);
       setUserInfo({
         ...userInfo,
         contactEmail: '',
       });
     } else {
-      setIsSameEmail(true);
       setUserInfo({
         ...userInfo,
         contactEmail: userInfo.email,
@@ -36,9 +31,7 @@ const UserInputSection = ({ userInfo, setUserInfo }: UserInputSectionProps) => {
     });
   };
 
-  useEffect(() => {
-    setIsSameEmail(userInfo.email === userInfo.contactEmail);
-  }, [userInfo.email, userInfo.contactEmail]);
+  const isSameEmail = userInfo.email === userInfo.contactEmail;
 
   return (
     <div className="flex flex-col gap-2.5">
