@@ -1,11 +1,11 @@
-const CONTACT = [
+const contact = [
   {
     title: '이메일 문의',
-    contact: 'official@letscareer.co.kr',
+    info: 'official@letscareer.co.kr',
   },
   {
     title: 'CEO 송다예',
-    contact: '010-5411-8647',
+    info: '010-5411-8647',
   },
 ];
 
@@ -34,10 +34,10 @@ const ContactSection = () => {
           style={cardStyle}
           className="z-10 flex w-[17.5rem] flex-col gap-5 rounded-sm border border-neutral-80 bg-static-100/80 p-5 shadow-06"
         >
-          {CONTACT.map(({ title, contact }) => (
+          {contact.map(({ title, info }) => (
             <div key={title}>
               <h2 className="text-0.875-medium text-neutral-20">{title}</h2>
-              <span className="text-0.875 text-neutral-40">{contact}</span>
+              <span className="text-0.875 text-neutral-40">{info}</span>
             </div>
           ))}
         </div>

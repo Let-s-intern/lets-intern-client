@@ -1,6 +1,6 @@
 import useScrollFade from '../../../../hooks/useScrollFade';
 
-const CAPTION = [
+const Caption = [
   '취업, 어디서부터 시작해야 할 지 모르겠어..',
   '나에게 맞는 직무, 어떻게 찾아야 하지?',
   '인턴 어떻게 시작하는 건데?',
@@ -35,7 +35,7 @@ const TopSection = () => {
               className="absolute left-1/2 top-1/2 flex h-10 min-w-max -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-static-100 px-6 py-3 shadow-[0_0_12px_0] shadow-static-100/40 transition-all duration-300"
             >
               <span className="text-0.875-semibold xl:text-1-semibold text-primary">
-                {CAPTION[0]}
+                {Caption[0]}
               </span>
             </div>
             <div
@@ -43,7 +43,7 @@ const TopSection = () => {
               className="absolute left-1/2 top-1/2 flex h-10 min-w-max -translate-x-1/2 -translate-y-2/3 items-center justify-center rounded-full bg-static-100 px-6 py-3 opacity-0 shadow-[0_0_12px_0] shadow-static-100/40 transition-all duration-300"
             >
               <span className="text-0.875-semibold xl:text-1-semibold text-primary">
-                {CAPTION[1]}
+                {Caption[1]}
               </span>
             </div>
             <div
@@ -51,7 +51,7 @@ const TopSection = () => {
               className="absolute left-1/2 top-1/2 flex h-10 min-w-max -translate-x-1/2 -translate-y-2/3 items-center justify-center rounded-full bg-static-100 px-6 py-3 opacity-0 shadow-[0_0_12px_0] shadow-static-100/40 transition-all duration-300"
             >
               <span className="text-0.875-semibold xl:text-1-semibold text-primary">
-                {CAPTION[2]}
+                {Caption[2]}
               </span>
             </div>
           </div>

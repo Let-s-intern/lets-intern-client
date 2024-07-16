@@ -1,8 +1,8 @@
 import AboutTitle from '../ui/AboutTitle';
 
-const TITLE = {
+const title = {
   subTitle: '커리어 파트너십',
-  title: '이런 파트너들과 함께 해요',
+  mainTitle: '이런 파트너들과 함께 해요',
 };
 
 const logoList = [
@@ -56,7 +56,7 @@ interface PartnerCardProps {
 const PartnerSection = () => {
   return (
     <section className="flex flex-col bg-neutral-100 px-5 py-[3.75rem] sm:px-10 sm:py-[6.25rem] md:items-center xl:py-[8.75rem]">
-      <AboutTitle subTitle={TITLE.subTitle} title={TITLE.title} />
+      <AboutTitle {...title} />
       <div className="grid grid-cols-2 gap-4">
         {logoList.map((logo) => (
           <PartnerCard key={logo.imgSrc} logo={logo} />

@@ -1,11 +1,11 @@
 import AboutTitle from '../ui/AboutTitle';
 
-const TITLE = {
+const title = {
   subTitle: '선순환 커뮤니티',
-  title: '인턴·신입 취업 성공 후에도 함께해요',
+  mainTitle: '인턴·신입 취업 성공 후에도 함께해요',
 };
 
-const CONTENT = [
+const content = [
   {
     imgSrc: '/images/community1.png',
     alt: '렛츠커리어 네트워킹 파티',
@@ -27,9 +27,9 @@ const CONTENT = [
 const CommunitySection = () => {
   return (
     <section className="px-5 py-[3.75rem] sm:px-10 sm:py-[6.25rem] xl:py-[7.5rem]">
-      <AboutTitle {...TITLE} />
+      <AboutTitle {...title} />
       <div className="flex flex-col items-start justify-center gap-10 md:flex-row">
-        {CONTENT.map(({ imgSrc, alt, description }) => (
+        {content.map(({ imgSrc, alt, description }) => (
           <div
             key={alt}
             className="flex w-full flex-col items-center gap-5 md:max-w-[24rem]"

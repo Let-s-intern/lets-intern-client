@@ -1,19 +1,22 @@
 interface SolutionBoxProps {
   title: string;
-  imgWidth: string;
+  imgWidthClassName: string;
   imgName: string;
   description: string;
 }
 
 const SolutionBox = ({
   title,
-  imgWidth,
+  imgWidthClassName,
   imgName,
   description,
 }: SolutionBoxProps) => {
   return (
     <div key={title} className="flex items-center gap-6 md:flex-col">
-      <img className={`h-full ${imgWidth}`} src={`/icons/${imgName}`} />
+      <img
+        className={`h-full ${imgWidthClassName}`}
+        src={`/icons/${imgName}`}
+      />
       <div className="flex flex-col gap-2">
         <h2 className="text-1-bold xl:text-1.25-bold text-primary md:text-center">
           {title}

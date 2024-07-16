@@ -1,23 +1,23 @@
 import SolutionBox from './SolutionBox';
 
-const CONTENT = [
+const content = [
   {
     imgName: 'lets-solution.svg',
-    imgWidth: 'w-[3.78rem] xl:w-[5.75rem]',
+    imgWidthClassName: 'w-[3.78rem] xl:w-[5.75rem]',
     title: '렛츠(Let’s)!',
     description:
       "'함께 해보자'는 말처럼, 렛츠커리어는 독자적인 커리어 교육 프로그램으로 나만의 이야기를 만들어 가는 방법을 함께 합니다.",
   },
   {
     imgName: 'career-solution.svg',
-    imgWidth: 'w-[4rem] xl:w-[5.8rem]',
+    imgWidthClassName: 'w-[4rem] xl:w-[5.8rem]',
     title: '커리어 프로그램',
     description:
       '정보찾기부터 활용하기, 자신을 되돌아보기까지 여러 프로그램을 제공합니다. 막막함을 느끼지 않게 러닝 메이트가 되어 드립니다.',
   },
   {
     imgName: 'community-solution.svg',
-    imgWidth: 'w-[4.3rem] xl:w-[6rem]',
+    imgWidthClassName: 'w-[4.3rem] xl:w-[6rem]',
     title: '선순환 커뮤니티',
     description:
       '렛츠커리어 프로그램을 통해 성장한 참여자들은, 다른 이들의 시작을 돕는 커뮤니티의 일원이 될 수 있습니다.',
@@ -40,7 +40,7 @@ const SolutionSection = () => {
         </p>
       </div>
       <div className="flex max-w-[63.75rem] flex-col gap-20 md:flex-row md:gap-[3.56rem] xl:gap-[7.5rem]">
-        {CONTENT.map((item) => (
+        {content.map((item) => (
           <SolutionBox key={item.title} {...item} />
         ))}
       </div>
