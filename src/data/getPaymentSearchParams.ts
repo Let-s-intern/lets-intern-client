@@ -137,6 +137,13 @@ export const paymentResultSearchParamsSchema = z.object({
   paymentMethodKey: paymentMethodKeySchema,
 });
 
+export const paymentFailSearchParamsSchema = z.object({
+  ...base,
+  orderId: z.string(),
+  code: z.string(),
+  message: z.string(),
+});
+
 /** 토스 라이브러리의 WidgetsPaymentMethodCode 참고 */
 export type PaymentMethodKey = z.infer<typeof paymentMethodKeySchema>;
 

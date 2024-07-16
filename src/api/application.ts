@@ -80,10 +80,13 @@ export interface PostApplicationInterface {
   question?: string;
 }
 
-const usePostApplicationMutation = (
-  successCallback: () => void,
-  errorCallback: (error: Error) => void,
-) => {
+export const usePostApplicationMutation = ({
+  errorCallback,
+  successCallback,
+}: {
+  successCallback?: () => void;
+  errorCallback?: (error: Error) => void;
+} = {}) => {
   // const client = useQueryClient();
 
   return useMutation({
@@ -104,13 +107,13 @@ const usePostApplicationMutation = (
       ).data.data;
     },
     onSuccess: (data) => {
-      successCallback();
+      successCallback?.();
       //이 mutation이 성공하면 재로딩되어야 하는 쿼리키 invalidate 처리 후 successCallback
       // client.invalidateQueries(UseUserInfoQueryKey)
       // .then(() => successCallback());
     },
     onError: (error) => {
-      errorCallback(error);
+      errorCallback?.(error);
     },
   });
 };

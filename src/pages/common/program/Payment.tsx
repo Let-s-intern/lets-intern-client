@@ -1,4 +1,7 @@
-import { loadTossPayments } from '@tosspayments/tosspayments-sdk';
+import {
+  loadTossPayments,
+  WidgetPaymentMethodWidget,
+} from '@tosspayments/tosspayments-sdk';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useUserQuery } from '../../../api/user';
@@ -35,8 +38,10 @@ const Payment = () => {
 
   const [ready, setReady] = useState(false);
   const [widgets, setWidgets] = useState<TossPaymentsWidgets | null>(null);
-  const [selectedPaymentMethod, setSelectedPaymentMethod] =
-    useState<PaymentMethodKey | null>(null);
+  const [methods, setMethods] = useState<WidgetPaymentMethodWidget | null>(
+    null,
+  );
+
   const tossInitialized = useRef(false);
 
   useEffect(() => {
@@ -69,13 +74,7 @@ const Payment = () => {
         variantKey: 'DEFAULT',
       });
 
-      methods.getSelectedPaymentMethod().then((paymentMethod) => {
-        setSelectedPaymentMethod(paymentMethod.code as PaymentMethodKey);
-      });
-      methods.on('paymentMethodSelect', (paymentMethod) => {
-        // TODO: as 삭제
-        setSelectedPaymentMethod(paymentMethod.code as PaymentMethodKey);
-      });
+      setMethods(methods);
 
       // ------  이용약관 UI 렌더링 ------
       await widgets.renderAgreement({
@@ -95,8 +94,14 @@ const Payment = () => {
 
     const orderId = generateRandomString();
 
+    const paymentMethod = await methods?.getSelectedPaymentMethod();
+
     const searchParams = new URLSearchParams(window.location.search);
-    searchParams.set('paymentMethodKey', selectedPaymentMethod || '');
+    searchParams.set(
+      'paymentMethodKey',
+      ((paymentMethod?.code as PaymentMethodKey | null | undefined) ?? null) ||
+        '',
+    );
 
     try {
       await widgets.requestPayment({
@@ -119,14 +124,14 @@ const Payment = () => {
   };
 
   return (
-    <div className="px-5">
-      <div className="mx-auto max-w-5xl pb-6">
-        {/* 결제 UI */}
-        <div id="payment-method" />
-        {/* 이용약관 UI */}
-        <div id="agreement" />
+    <div className="mx-auto max-w-5xl pb-6">
+      {/* 결제 UI */}
+      <div id="payment-method" />
+      {/* 이용약관 UI */}
+      <div id="agreement" />
+      <div className="px-5">
         <button
-          className="complete_button text-1.125-medium flex w-full justify-center rounded-md bg-primary px-6 py-3 font-medium text-neutral-100"
+          className="complete_button text-1.125-medium block w-full rounded-md bg-primary px-6 py-3 font-medium text-neutral-100"
           disabled={!ready}
           onClick={handleButtonClick}
         >

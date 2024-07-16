@@ -16,7 +16,7 @@ const Row = ({
 }) => (
   <div className="flex h-10 items-center justify-between p-1.5">
     <span className="text-neutral-0 text-opacity-[74%]">{title}</span>
-    <span className="font-medium text-neutral-0 text-opacity-[94%]">
+    <span className="text-right font-medium text-neutral-0 text-opacity-[94%]">
       {value}
     </span>
   </div>

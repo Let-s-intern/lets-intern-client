@@ -9,7 +9,7 @@ const Input = (props: InputProps) => {
     <input
       type="text"
       className={twMerge(
-        `min-w-0 rounded-md bg-neutral-95 p-3 text-xsmall14 outline-none`,
+        `min-w-0 rounded-md bg-neutral-95 p-3 text-xsmall14 outline-none disabled:opacity-100`,
         props.readOnly ? 'text-neutral-50' : '',
         className,
       )}
