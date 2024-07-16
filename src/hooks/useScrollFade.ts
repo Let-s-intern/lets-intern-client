@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 
-const maxScrollY = 800;
+const maxScrollY = 2500;
 
 const useScrollFade = () => {
   const boxRef = useRef<HTMLDivElement>(null);
@@ -17,6 +17,7 @@ const useScrollFade = () => {
 
   const handleScroll = () => {
     const scrollY = window.scrollY;
+    console.log(scrollY);
 
     if (scrollY >= 0) init();
     if (scrollY >= maxScrollY / 3 - 20) fadeOut(ref0);
