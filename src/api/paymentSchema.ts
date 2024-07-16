@@ -171,7 +171,7 @@ export type TossInfoType = z.infer<typeof tossInfoType>;
 // Payment schema
 export const paymentType = z.object({
   programInfo: programInfoType,
-  tossInfo: tossInfoType,
+  tossInfo: tossInfoType.nullable().optional(),
 });
 
 export const paymentListType = z.object({

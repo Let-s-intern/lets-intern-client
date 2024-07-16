@@ -8,7 +8,7 @@ const CreditListItem = ({ payment }: { payment: PaymentType }) => {
       className="flex w-full flex-col items-start justify-center gap-y-2"
       to={`/mypage/credit/${payment.programInfo.paymentId}`}
     >
-      <CardStatus status={payment.tossInfo.status || ''} />
+      <CardStatus status={payment.tossInfo?.status || ''} />
       <div className="flex w-full items-center gap-x-[14px]">
         <img
           src={payment.programInfo.thumbnail || ''}
@@ -23,7 +23,7 @@ const CreditListItem = ({ payment }: { payment: PaymentType }) => {
               {payment.programInfo.price?.toLocaleString()}원
             </div>
             <div className="text-sm font-semibold text-neutral-0 md:text-base">
-              {payment.tossInfo.totalAmount?.toLocaleString()}원
+              {payment.tossInfo?.totalAmount?.toLocaleString()}원
             </div>
           </div>
           <button className="flex items-center justify-start text-xs font-semibold text-primary md:text-sm">

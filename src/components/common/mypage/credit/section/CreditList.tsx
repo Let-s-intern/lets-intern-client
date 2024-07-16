@@ -6,7 +6,7 @@ import CreditListItem from '../CreditListItem';
 
 const groupByDate = (data: PaymentType[]) => {
   return data.reduce((acc: Record<string, PaymentType[]>, payment) => {
-    const date = dayjs(payment.tossInfo.requestedAt).format('YYYY.MM.DD');
+    const date = dayjs(payment.tossInfo?.requestedAt).format('YYYY.MM.DD');
 
     if (!acc[date]) {
       acc[date] = [];
