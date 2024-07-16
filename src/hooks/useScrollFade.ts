@@ -18,12 +18,12 @@ const useScrollFade = () => {
   const handleScroll = () => {
     const scrollY = window.scrollY;
 
-    if (scrollY <= maxScrollY) {
-      boxRef.current?.style.setProperty(
-        'transform',
-        `translateY(${scrollY}px)`,
-      );
-    }
+    // if (scrollY <= maxScrollY) {
+    //   boxRef.current?.style.setProperty(
+    //     'transform',
+    //     `translateY(${scrollY}px)`,
+    //   );
+    // }
 
     if (scrollY >= 0) init();
     if (scrollY >= maxScrollY / 3 - 20) fadeOut(ref0);
