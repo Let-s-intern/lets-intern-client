@@ -119,14 +119,14 @@ const Payment = () => {
   };
 
   return (
-    <div className="px-5">
-      <div className="mx-auto max-w-5xl pb-6">
-        {/* 결제 UI */}
-        <div id="payment-method" />
-        {/* 이용약관 UI */}
-        <div id="agreement" />
+    <div className="mx-auto max-w-5xl pb-6">
+      {/* 결제 UI */}
+      <div id="payment-method" />
+      {/* 이용약관 UI */}
+      <div id="agreement" />
+      <div className="px-5">
         <button
-          className="complete_button text-1.125-medium flex w-full justify-center rounded-md bg-primary px-6 py-3 font-medium text-neutral-100"
+          className="complete_button text-1.125-medium block w-full rounded-md bg-primary px-6 py-3 font-medium text-neutral-100"
           disabled={!ready}
           onClick={handleButtonClick}
         >
