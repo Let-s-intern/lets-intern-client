@@ -3,6 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import dayjs from 'dayjs';
 import { useReducer, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { twMerge } from 'tailwind-merge';
 import { useProgramApplicationQuery } from '../../../api/application';
 import { useProgramQuery } from '../../../api/program';
 import FilledButton from '../../../components/common/program/program-detail/button/FilledButton';
@@ -116,46 +117,50 @@ const ProgramDetail = ({ programType }: ProgramDetailProps) => {
           </section>
 
           {/* 모바일 신청 세션 */}
-          {!isDesktop && (
-            <div className="fixed bottom-0 left-0 right-0 z-30 flex max-h-[25rem] w-screen flex-col items-center overflow-hidden rounded-t-lg bg-static-100 px-5 pb-3 shadow-05 scrollbar-hide">
-              <div className="sticky top-0 flex w-full justify-center bg-static-100 py-3">
-                <div
-                  onClick={() =>
-                    dispatchIsDrawerOpen({
-                      type: 'close',
-                    })
-                  }
-                  className="h-[5px] w-[70px] shrink-0 cursor-pointer rounded-full bg-neutral-80"
-                />
+          {!isDesktop &&
+            (isDrawerOpen ? (
+              <MobileApplySection
+                programTitle={programTitle}
+                programType={programType}
+                programId={programId}
+                toggleDrawer={toggleDrawer}
+                dispatchDrawerIsOpen={dispatchIsDrawerOpen}
+              />
+            ) : (
+              <div
+                className={twMerge(
+                  'fixed bottom-0 left-0 right-0 z-30 flex max-h-[calc(100vh-60px)] w-screen flex-col items-center overflow-hidden rounded-t-lg bg-static-100 px-5 shadow-05 scrollbar-hide',
+                )}
+              >
+                <div className="sticky top-0 flex w-full justify-center bg-static-100 py-3">
+                  <div
+                    onClick={() =>
+                      dispatchIsDrawerOpen({
+                        type: 'close',
+                      })
+                    }
+                    className="h-[5px] w-[70px] shrink-0 cursor-pointer rounded-full bg-neutral-80"
+                  />
+                </div>
+                {loading ? (
+                  <FilledButton
+                    onClick={() => {}}
+                    caption={'로딩 중 ...'}
+                    isAlreadyApplied={false}
+                    className="opacity-0"
+                  />
+                ) : isOutOfDate ? (
+                  <NotiButton text={'출시알림신청'} className="early_button" />
+                ) : (
+                  <FilledButton
+                    onClick={toggleDrawer}
+                    caption={isAlreadyApplied ? '신청완료' : '신청하기'}
+                    isAlreadyApplied={isAlreadyApplied}
+                    className="apply_button"
+                  />
+                )}
               </div>
-              {isDrawerOpen ? (
-                <MobileApplySection
-                  programTitle={programTitle}
-                  programType={programType}
-                  programId={programId}
-                  toggleDrawer={toggleDrawer}
-                  drawerDispatch={dispatchIsDrawerOpen}
-                />
-              ) : // 모집 예정 or 모집 종료이면 출시알림신청 버튼 표시
-              loading ? (
-                <FilledButton
-                  onClick={() => {}}
-                  caption={'로딩 중 ...'}
-                  isAlreadyApplied={false}
-                  className="opacity-0"
-                />
-              ) : isOutOfDate ? (
-                <NotiButton text={'출시알림신청'} className="early_button" />
-              ) : (
-                <FilledButton
-                  onClick={toggleDrawer}
-                  caption={isAlreadyApplied ? '신청완료' : '신청하기'}
-                  isAlreadyApplied={isAlreadyApplied}
-                  className="apply_button"
-                />
-              )}
-            </div>
-          )}
+            ))}
         </div>
       </div>
     </div>

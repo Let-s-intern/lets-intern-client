@@ -45,46 +45,45 @@ const PayContent = ({
   };
 
   return (
-    <div className="flex h-full flex-col gap-6">
-      <div className="flex h-full flex-col gap-6">
-        {payInfo.challengePriceType !== 'FREE' &&
-          payInfo.livePriceType !== 'FREE' && (
-            <>
-              <h2 className="text-small20 font-bold" ref={topRef}>
-                결제하기
-              </h2>
-              <h3 className="text-xsmall16 font-semibold text-neutral-0">
-                {programType === 'live'
-                  ? 'LIVE 클래스'
-                  : programType === 'challenge'
-                    ? '챌린지'
-                    : ''}{' '}
-                프로그램 정보
-              </h3>
-              <ProgramCard
-                border={false}
-                type={programType}
-                id={programId}
-                title={programQuery.query.data?.title ?? ''}
-                thumbnail={programQuery.query.data?.thumbnail ?? ''}
-                startDate={programDate.startDate ?? dayjs()}
-                endDate={programDate.endDate ?? dayjs()}
-                thumbnailLinkClassName="max-w-32"
-              />
-              <hr className="bg-neutral-85" />
-              <div className="font-semibold text-neutral-0">결제</div>
-              <CouponSection setCoupon={setCoupon} programType={programType} />
-              <hr className="bg-neutral-85" />
-              <PriceSection payInfo={payInfo} coupon={coupon} />
-              <hr className="bg-neutral-85" />
-              <div className="flex h-10 items-center justify-between px-3 font-semibold text-neutral-0">
-                <span>결제금액</span>
-                <span>{totalPrice.toLocaleString()}원</span>
-              </div>
-            </>
-          )}
-      </div>
-      <div className="flex gap-2">
+    <div className="flex h-full flex-col gap-6 px-5">
+      {payInfo.challengePriceType !== 'FREE' &&
+        payInfo.livePriceType !== 'FREE' && (
+          <>
+            <h2 className="text-small20 font-bold" ref={topRef}>
+              결제하기
+            </h2>
+            <h3 className="text-xsmall16 font-semibold text-neutral-0">
+              {programType === 'live'
+                ? 'LIVE 클래스'
+                : programType === 'challenge'
+                  ? '챌린지'
+                  : ''}{' '}
+              프로그램 정보
+            </h3>
+            <ProgramCard
+              border={false}
+              type={programType}
+              id={programId}
+              title={programQuery.query.data?.title ?? ''}
+              thumbnail={programQuery.query.data?.thumbnail ?? ''}
+              startDate={programDate.startDate ?? dayjs()}
+              endDate={programDate.endDate ?? dayjs()}
+              thumbnailLinkClassName="max-w-32"
+            />
+            <hr className="bg-neutral-85" />
+            <div className="font-semibold text-neutral-0">결제</div>
+            <CouponSection setCoupon={setCoupon} programType={programType} />
+            <hr className="bg-neutral-85" />
+            <PriceSection payInfo={payInfo} coupon={coupon} />
+            <hr className="bg-neutral-85" />
+            <div className="flex h-10 items-center justify-between px-3 font-semibold text-neutral-0">
+              <span>결제금액</span>
+              <span>{totalPrice.toLocaleString()}원</span>
+            </div>
+          </>
+        )}
+
+      <div className="sticky bottom-0 -mx-5 -mb-3 flex gap-2 rounded-t-lg bg-white/[64%] px-5 py-3 shadow-05">
         <button
           className="flex w-full flex-1 items-center justify-center rounded-md border-2 border-primary bg-neutral-100 px-6 py-3 text-lg font-medium text-primary-dark"
           onClick={handleBackButtonClick}
@@ -99,7 +98,7 @@ const PayContent = ({
             handleApplyButtonClick();
           }}
         >
-          결제하기
+          {totalPrice === 0 ? '신청하기' : '결제하기'}
         </button>
       </div>
     </div>
