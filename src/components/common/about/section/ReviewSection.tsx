@@ -1,9 +1,9 @@
 import { Link } from 'react-router-dom';
 import AboutTitleDark from '../ui/AboutTitleDark';
 
-const TITLE = {
+const title = {
   subTitle: '원하는 신입 · 인턴십 합격',
-  title: '렛츠커리어와 함께한 사람들의 이야기',
+  mainTitle: '렛츠커리어와 함께한 사람들의 이야기',
 };
 
 const reviewList = [
@@ -28,7 +28,7 @@ const reviewList = [
 const ReviewSection = () => {
   return (
     <section className="bg-[#101348] px-5 py-[3.75rem] sm:px-10 sm:py-[6.25rem] xl:py-[8.75rem]">
-      <AboutTitleDark {...TITLE} />
+      <AboutTitleDark {...title} />
       <div className="custom-scrollbar mt-10 flex w-auto flex-row flex-nowrap gap-4 overflow-x-auto xl:pl-16">
         {reviewList.map((review) => (
           <Link

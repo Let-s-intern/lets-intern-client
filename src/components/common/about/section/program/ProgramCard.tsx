@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 
 interface ProgramCardProps {
   link: string;
-  bgColor: string;
+  bgColorClassName: string;
   title: string;
   description: string[];
   alt: string;
@@ -11,7 +11,7 @@ interface ProgramCardProps {
 
 const ProgramCard = ({
   link,
-  bgColor,
+  bgColorClassName,
   title,
   description,
   alt,
@@ -20,7 +20,7 @@ const ProgramCard = ({
   return (
     <Link
       to={link}
-      className={`relative w-full rounded-xl ${bgColor} px-6 pb-[3.25rem] pt-7 xl:pb-[4.5rem]`}
+      className={`relative w-full rounded-xl ${bgColorClassName} px-6 pb-[3.25rem] pt-7 xl:pb-[4.5rem]`}
     >
       <div className="mb-3 flex items-center gap-2">
         <h2 className="text-1-bold text-neutral-100">{title}</h2>

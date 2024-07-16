@@ -4,9 +4,9 @@ import useCounter from '../../../hooks/useCounter';
 import useDecimalCounter from '../../../hooks/useDecimalCounter';
 import AboutTitleDark from './ui/AboutTitleDark';
 
-const TITLE = {
+const title = {
   subTitle: '참여자 만족도 4.8점',
-  title: '렛츠커리어가 이뤄낸 성과',
+  mainTitle: '렛츠커리어가 이뤄낸 성과',
 };
 
 const maxProgramCount = 59;
@@ -65,7 +65,7 @@ const ResultSection = () => {
 
   return (
     <section className="flex flex-col bg-[#101348] px-5 py-[3.75rem] sm:px-10 sm:py-[6.25rem] md:items-center md:px-10 xl:py-[8.75rem]">
-      <AboutTitleDark {...TITLE} />
+      <AboutTitleDark {...title} />
       <div className="mt-[3.75rem] flex w-full max-w-[50rem] flex-col gap-10 md:flex-row md:items-center md:justify-between">
         <div ref={programRef}>
           <ResultLine />
