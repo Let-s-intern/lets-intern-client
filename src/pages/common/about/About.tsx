@@ -14,16 +14,18 @@ const About = () => {
   return (
     <div>
       <AboutHeader />
-      <ProblemSection />
-      <SolutionSection />
-      <IntroSection />
-      <ProgramMenuSection />
-      <CommunitySection />
-      <ResultSection />
-      <ReviewSection />
-      <PartnerSection />
-      <EndSection />
-      <ContactSection />
+      <main>
+        <ProblemSection />
+        <SolutionSection />
+        <IntroSection />
+        <ProgramMenuSection />
+        <CommunitySection />
+        <ResultSection />
+        <ReviewSection />
+        <PartnerSection />
+        <EndSection />
+        <ContactSection />
+      </main>
     </div>
   );
 };
