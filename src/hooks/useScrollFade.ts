@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 
-const maxScrollY = 800;
+const maxScrollY = 2500; // Header 높이 - 500
 
 const useScrollFade = () => {
   const boxRef = useRef<HTMLDivElement>(null);

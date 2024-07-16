@@ -10,7 +10,7 @@ const TopSection = () => {
   const { boxRef, ref0, ref1, ref2 } = useScrollFade();
 
   return (
-    <header className="px-auto relative h-[180vh] bg-gradient-to-b from-[#4D55F5] via-[#2D328F] via-80% to-[#101348] pb-24 sm:pb-[6.5rem] xl:pb-32">
+    <header className="px-auto relative h-[3000px] bg-gradient-to-b from-[#4D55F5] via-[#2D328F] via-80% to-[#101348] pb-24 sm:pb-[6.5rem] xl:pb-32">
       <div
         ref={boxRef}
         className="sticky top-48 flex w-full flex-col items-center"
@@ -32,7 +32,7 @@ const TopSection = () => {
           <div>
             <div
               ref={ref0}
-              className="absolute left-1/2 top-1/2 flex h-10 min-w-max -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-static-100 px-6 py-3 shadow-[0_0_12px_0] shadow-static-100/40 transition-all"
+              className="absolute left-1/2 top-1/2 flex h-10 min-w-max -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-static-100 px-6 py-3 shadow-[0_0_12px_0] shadow-static-100/40 transition-all duration-300"
             >
               <span className="text-0.875-semibold xl:text-1-semibold text-primary">
                 {CAPTION[0]}
@@ -40,7 +40,7 @@ const TopSection = () => {
             </div>
             <div
               ref={ref1}
-              className="absolute left-1/2 top-1/2 flex h-10 min-w-max -translate-x-1/2 -translate-y-2/3 items-center justify-center rounded-full bg-static-100 px-6 py-3 opacity-0 shadow-[0_0_12px_0] shadow-static-100/40 transition-all"
+              className="absolute left-1/2 top-1/2 flex h-10 min-w-max -translate-x-1/2 -translate-y-2/3 items-center justify-center rounded-full bg-static-100 px-6 py-3 opacity-0 shadow-[0_0_12px_0] shadow-static-100/40 transition-all duration-300"
             >
               <span className="text-0.875-semibold xl:text-1-semibold text-primary">
                 {CAPTION[1]}
@@ -48,7 +48,7 @@ const TopSection = () => {
             </div>
             <div
               ref={ref2}
-              className="absolute left-1/2 top-1/2 flex h-10 min-w-max -translate-x-1/2 -translate-y-2/3 items-center justify-center rounded-full bg-static-100 px-6 py-3 opacity-0 shadow-[0_0_12px_0] shadow-static-100/40 transition-all"
+              className="absolute left-1/2 top-1/2 flex h-10 min-w-max -translate-x-1/2 -translate-y-2/3 items-center justify-center rounded-full bg-static-100 px-6 py-3 opacity-0 shadow-[0_0_12px_0] shadow-static-100/40 transition-all duration-300"
             >
               <span className="text-0.875-semibold xl:text-1-semibold text-primary">
                 {CAPTION[2]}
