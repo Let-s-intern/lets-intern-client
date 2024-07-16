@@ -5,7 +5,7 @@ import {
   MenuItem,
   OutlinedInput,
   Select,
-  TextField
+  TextField,
 } from '@mui/material';
 import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
 import { useMemo, useRef } from 'react';
@@ -14,13 +14,12 @@ import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import storage from '../../../../../Firebase';
 import {
-  bankTypeToText,
   challengeTypeToText,
   newProgramFeeTypeToText,
   newProgramTypeDetailToText,
   newProgramTypeToText,
   programParticipationTypeToText,
-  programPriceTypeToText
+  programPriceTypeToText,
 } from '../../../../../utils/convert';
 import Input from '../../../../ui/input/Input';
 import ImageUpload from '../form/ImageUpload';
@@ -529,64 +528,10 @@ const ProgramInputContent = ({
                       />
                     </>
                   )}
-                  <FormControl fullWidth>
-                    <InputLabel id="accountType">입금계좌 은행</InputLabel>
-                    <Select
-                      labelId="accountType"
-                      id="accountType"
-                      label="입금계좌 은행"
-                      name="accountType"
-                      value={value?.accountType || ''}
-                      onChange={(e) => {
-                        setValue({
-                          ...value,
-                          [e.target.name]: e.target.value,
-                        });
-                      }}
-                    >
-                      {Object.keys(bankTypeToText).map((bankType: any) => (
-                        <MenuItem key={bankType} value={bankType}>
-                          {bankTypeToText[bankType]}
-                        </MenuItem>
-                      ))}
-                    </Select>
-                  </FormControl>
-                  <Input
-                    label="입금 계좌번호"
-                    name="accountNumber"
-                    placeholder="입금 계좌번호를 입력해주세요"
-                    value={value?.accountNumber || ''}
-                    onChange={(e) => {
-                      setValue({
-                        ...value,
-                        [e.target.name]: e.target.value,
-                      });
-                    }}
-                  />
                 </>
               )}
             {(value.program === 'CHALLENGE' || value.program === 'LIVE') && (
               <>
-                {(value.feeType === 'CHARGE' || value.feeType === 'REFUND') && (
-                  <DateTimeControl>
-                    <DateTimeLabel htmlFor="feeDueDate">
-                      입금 마감 기한
-                    </DateTimeLabel>
-                    <input
-                      id="feeDueDate"
-                      type="datetime-local"
-                      name="feeDueDate"
-                      value={value.feeDueDate}
-                      onChange={(e) =>
-                        setValue({
-                          ...value,
-                          [e.target.name]: e.target.value,
-                        })
-                      }
-                      step={600}
-                    />
-                  </DateTimeControl>
-                )}
                 <DateTimeControl>
                   <DateTimeLabel htmlFor="startDate">시작 일자</DateTimeLabel>
                   <input
