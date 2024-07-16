@@ -271,7 +271,7 @@ const CreditDetail = () => {
                 </button>
               ) : (
                 <MoreButton
-                  className="md:flex"
+                  className="w-full md:flex"
                   onClick={() => {
                     navigate('/program');
                   }}
