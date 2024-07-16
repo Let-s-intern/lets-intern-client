@@ -23,7 +23,7 @@ const CreditListItem = ({ payment }: { payment: PaymentType }) => {
               {payment.programInfo.price?.toLocaleString()}원
             </div>
             <div className="text-sm font-semibold text-neutral-0 md:text-base">
-              {payment.tossInfo.totalAmount}
+              {payment.tossInfo.totalAmount?.toLocaleString()}원
             </div>
           </div>
           <button className="flex items-center justify-start text-xs font-semibold text-primary md:text-sm">
