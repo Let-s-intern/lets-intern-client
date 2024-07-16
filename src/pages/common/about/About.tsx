@@ -1,5 +1,3 @@
-import { useState } from 'react';
-
 import AboutHeader from '../../../components/common/about/header/AboutHeader';
 import ResultSection from '../../../components/common/about/ResultSection';
 import CommunitySection from '../../../components/common/about/section/CommunitySection';
@@ -13,11 +11,9 @@ import ReviewSection from '../../../components/common/about/section/ReviewSectio
 import SolutionSection from '../../../components/common/about/section/solution/SolutionSection';
 
 const About = () => {
-  const [isScroll, setIsScroll] = useState(false);
-
   return (
-    <div className={`${!isScroll && 'fixed w-screen'}`}>
-      <AboutHeader isScroll={isScroll} setIsScroll={setIsScroll} />
+    <div>
+      <AboutHeader />
       <ProblemSection />
       <SolutionSection />
       <IntroSection />

@@ -27,7 +27,7 @@ const ContactSection = () => {
         </h1>
       </div>
       <div className="relative flex w-full flex-col items-center">
-        {/* Back */}
+        {/* Backward */}
         <div className="absolute -top-8 h-32 w-[15.5rem] -translate-x-8 -rotate-12 rounded-sm bg-primary-20 sm:-translate-x-12"></div>
         {/* Forward */}
         <div

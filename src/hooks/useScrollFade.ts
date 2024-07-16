@@ -1,11 +1,9 @@
 import { useEffect, useRef } from 'react';
 
-interface UseScrollFadeProps {
-  isScroll: boolean;
-  setIsScroll: (isScroll: boolean) => void;
-}
+const maxScrollY = 800;
 
-const useScrollFade = ({ isScroll, setIsScroll }: UseScrollFadeProps) => {
+const useScrollFade = () => {
+  const boxRef = useRef<HTMLDivElement>(null);
   const ref0 = useRef<HTMLDivElement>(null);
   const ref1 = useRef<HTMLDivElement>(null);
   const ref2 = useRef<HTMLDivElement>(null);
@@ -19,16 +17,20 @@ const useScrollFade = ({ isScroll, setIsScroll }: UseScrollFadeProps) => {
   }, []);
 
   const handleScroll = () => {
-    const maxScrollY =
-      document.documentElement.scrollHeight - window.innerHeight; // 스크롤 최대값
     const scrollY = window.scrollY;
 
-    if (!isScroll && scrollY >= 0) init();
-    if (!isScroll && scrollY >= maxScrollY / 3 - 20) fadeOut(ref0);
-    if (!isScroll && scrollY >= maxScrollY / 3 + 20) fadeIn(ref1);
-    if (!isScroll && scrollY >= (maxScrollY / 3) * 2 - 20) fadeOut(ref1);
-    if (!isScroll && scrollY >= (maxScrollY / 3) * 2 + 20) fadeIn(ref2);
-    if (!isScroll && scrollY >= maxScrollY - 10) startScroll();
+    if (scrollY <= maxScrollY) {
+      boxRef.current?.style.setProperty(
+        'transform',
+        `translateY(${scrollY}px)`,
+      );
+    }
+
+    if (scrollY >= 0) init();
+    if (scrollY >= maxScrollY / 3 - 20) fadeOut(ref0);
+    if (scrollY >= maxScrollY / 3 + 20) fadeIn(ref1);
+    if (scrollY >= (maxScrollY / 3) * 2 - 20) fadeOut(ref1);
+    if (scrollY >= (maxScrollY / 3) * 2 + 20) fadeIn(ref2);
   };
 
   const init = () => {
@@ -65,13 +67,7 @@ const useScrollFade = ({ isScroll, setIsScroll }: UseScrollFadeProps) => {
     ref.current?.style.setProperty('opacity', `1`);
   };
 
-  const startScroll = () => {
-    setIsScroll(true);
-    window.scrollTo({ top: 0, left: 0 });
-    window.removeEventListener('scroll', handleScroll);
-  };
-
-  return { ref0, ref1, ref2 };
+  return { boxRef, ref0, ref1, ref2 };
 };
 
 export default useScrollFade;
