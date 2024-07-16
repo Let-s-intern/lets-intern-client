@@ -179,3 +179,42 @@ export const paymentListType = z.object({
 });
 
 export type PaymentType = z.infer<typeof paymentType>;
+
+// export type PaymentStatus = 'DONE' | 'CANCELED' | 'PARTIAL_CANCELED';
+
+export const convertPaymentStatus = (status: string) => {
+  switch (status) {
+    case 'DONE':
+      return '결제완료';
+    case 'CANCELED':
+      return '결제취소';
+    case 'PARTIAL_CANCELED':
+      return '부분취소';
+    default:
+      return '상태없음';
+  }
+};
+
+export const paymentDetailType = z.object({
+  programInfo: z.object({
+    id: z.number().nullable().optional(),
+    title: z.string().nullable().optional(),
+    thumbnail: z.string().nullable().optional(),
+    programType: z.enum(['CHALLENGE', 'LIVE', 'VOD']).nullable().optional(),
+    startDate: z.string().nullable().optional(),
+    endDate: z.string().nullable().optional(),
+  }),
+  priceInfo: z.object({
+    id: z.number().nullable().optional(),
+    price: z.number().nullable().optional(),
+    discount: z.number().nullable().optional(),
+  }),
+  paymentInfo: z.object({
+    id: z.number().nullable().optional(),
+    finalPrice: z.number().nullable().optional(),
+    couponDiscount: z.number().nullable().optional(),
+  }),
+  tossInfo: tossInfoType,
+});
+
+export type PaymentDetailType = z.infer<typeof paymentDetailType>;
