@@ -1,8 +1,98 @@
+import { useEffect, useRef, useState } from 'react';
+
+import useCounter from '../../../hooks/useCounter';
+import useDecimalCounter from '../../../hooks/useDecimalCounter';
 import AboutTitleDark from './ui/AboutTitleDark';
 
 const TITLE = {
   subTitle: '참여자 만족도 4.8점',
   title: '렛츠커리어가 이뤄낸 성과',
+};
+
+const maxProgramCount = 59;
+const maxApplicationCount = 1600;
+const maxSuccessCount = 160;
+const maxSatisfaction = 4.8;
+const defaultIncrement = 1;
+
+const groupDigit = (num: number) => {
+  return num.toLocaleString();
+};
+
+const calculateIncrement = (target: number) => {
+  const min = Math.min(maxProgramCount, maxApplicationCount, maxSuccessCount);
+  return Math.floor(defaultIncrement * (target / min));
+};
+
+const ResultSection = () => {
+  const programRef = useRef<HTMLDivElement>(null);
+
+  const [isCount, setIsCount] = useState(false);
+
+  const programCount = useCounter({
+    isStartCount: isCount,
+    maxCount: maxProgramCount,
+    increment: calculateIncrement(maxProgramCount),
+  });
+  const applicationCount = useCounter({
+    isStartCount: isCount,
+    maxCount: maxApplicationCount,
+    increment: calculateIncrement(maxApplicationCount),
+  });
+  const successCount = useCounter({
+    isStartCount: isCount,
+    maxCount: maxSuccessCount,
+    increment: calculateIncrement(maxSuccessCount),
+  });
+
+  const satisfaction = useDecimalCounter({
+    isStartCount: isCount,
+    maxCount: maxSatisfaction,
+  });
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const current = programRef.current;
+      if (current && current.getBoundingClientRect().top <= window.innerHeight)
+        setIsCount(true);
+    };
+    window.addEventListener('scroll', handleScroll);
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
+
+  return (
+    <section className="flex flex-col bg-[#101348] px-5 py-[3.75rem] sm:px-10 sm:py-[6.25rem] md:items-center md:px-10 xl:py-[8.75rem]">
+      <AboutTitleDark {...TITLE} />
+      <div className="mt-[3.75rem] flex w-full max-w-[50rem] flex-col gap-10 md:flex-row md:items-center md:justify-between">
+        <div ref={programRef}>
+          <ResultLine />
+          <ResultTitle title="프로그램 수" />
+          <ResultScore>{groupDigit(programCount)}개</ResultScore>
+        </div>
+        <div>
+          <ResultLine />
+          <ResultTitle title="참여자 수" />
+          <ResultScore>{groupDigit(applicationCount)}명</ResultScore>
+        </div>
+        <div>
+          <ResultLine />
+          <div className="flex items-center gap-1">
+            <ResultTitle title="합격자 수" />
+            <span className="text-0.75 text-neutral-40">*24년 4월 기준</span>
+          </div>
+          <ResultScore>{groupDigit(successCount)}명</ResultScore>
+        </div>
+        <div>
+          <ResultLine />
+          <ResultTitle title="참여자 만족도" />
+          <ResultScore>{satisfaction}점</ResultScore>
+        </div>
+      </div>
+    </section>
+  );
 };
 
 interface ResultTitleProps {
@@ -12,39 +102,6 @@ interface ResultTitleProps {
 interface ResultScoreProps {
   children: React.ReactNode;
 }
-
-const ResultSection = () => {
-  return (
-    <section className="flex flex-col bg-[#101348] px-5 py-[3.75rem] sm:px-10 sm:py-[6.25rem] md:items-center md:px-10 xl:py-[8.75rem]">
-      <AboutTitleDark {...TITLE} />
-      <div className="mt-[3.75rem] flex w-full max-w-[50rem] flex-col gap-10 md:flex-row md:items-center md:justify-between">
-        <div>
-          <ResultLine />
-          <ResultTitle title="프로그램 수" />
-          <ResultScore>59개</ResultScore>
-        </div>
-        <div>
-          <ResultLine />
-          <ResultTitle title="참여자 수" />
-          <ResultScore>1,600명</ResultScore>
-        </div>
-        <div>
-          <ResultLine />
-          <div className="flex items-center gap-1">
-            <ResultTitle title="합격자 수" />
-            <span className="text-0.75 text-neutral-40">*24년 4월 기준</span>
-          </div>
-          <ResultScore>160명</ResultScore>
-        </div>
-        <div>
-          <ResultLine />
-          <ResultTitle title="참여자 만족도" />
-          <ResultScore>4.8점</ResultScore>
-        </div>
-      </div>
-    </section>
-  );
-};
 
 const ResultLine = () => {
   return (

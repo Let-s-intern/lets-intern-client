@@ -16,7 +16,7 @@ const About = () => {
   const [isScroll, setIsScroll] = useState(false);
 
   return (
-    <div className={`${!isScroll && 'fixed'} w-screen`}>
+    <div className={`${!isScroll && 'fixed w-screen'}`}>
       <AboutHeader isScroll={isScroll} setIsScroll={setIsScroll} />
       <ProblemSection />
       <SolutionSection />
