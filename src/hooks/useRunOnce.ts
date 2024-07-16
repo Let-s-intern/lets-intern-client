@@ -1,12 +1,18 @@
-import { EffectCallback, useEffect, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 
-export default function useRunOnce(callback: EffectCallback) {
+export default function useRunOnce(callback: () => void | Promise<void>) {
   const runOnce = useRef(false);
 
   useEffect(() => {
     if (!runOnce.current) {
-      callback();
       runOnce.current = true;
+      const maybePromise = callback();
+      if (maybePromise instanceof Promise) {
+        maybePromise.catch((e) => {
+          // eslint-disable-next-line no-console
+          console.error(e);
+        });
+      }
     }
   }, []);
 }

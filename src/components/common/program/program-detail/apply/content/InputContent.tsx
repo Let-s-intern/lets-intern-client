@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
-
-import { IAction } from '../../../../../../interfaces/interface';
-import { ProgramType } from '../../../../../../pages/common/program/ProgramDetail';
+import { ProgramType } from '../../../../../../types/common';
+import { IApplyDrawerAction } from '../../../../../../types/interface';
 import { UserInfo } from '../../section/ApplySection';
 import MotiveAnswerSection from '../section/MotiveAnswerSection';
 import UserInputSection from '../section/UserInputSection';
@@ -12,7 +11,7 @@ interface InputContentProps {
   userInfo: UserInfo;
   setUserInfo: (userInfo: UserInfo) => void;
   programType: ProgramType;
-  drawerDispatch?: (value: IAction) => void;
+  drawerDispatch?: (value: IApplyDrawerAction) => void;
 }
 
 const InputContent = ({
@@ -31,11 +30,7 @@ const InputContent = ({
       return;
     }
 
-    if (programType === 'live') {
-      setContentIndex(contentIndex + 2);
-      return;
-    }
-    setContentIndex(contentIndex + 1);
+    setContentIndex(contentIndex + 2);
   };
 
   const handleBackButtonClick = () => {
@@ -59,7 +54,7 @@ const InputContent = ({
   return (
     <div className="flex h-full flex-col gap-5">
       <div className="flex h-full flex-col gap-3">
-        <p className="font-medium text-neutral-0">
+        <p className="text-xsmall16 font-semibold text-neutral-0">
           신청 폼을 모두 입력해주세요.
         </p>
         <div className="flex flex-col gap-2.5">
@@ -85,7 +80,7 @@ const InputContent = ({
           onClick={handleNextButtonClick}
           disabled={buttonDisabled}
         >
-          다음
+          결제하기
         </button>
       </div>
     </div>

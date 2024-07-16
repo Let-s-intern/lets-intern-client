@@ -1,15 +1,15 @@
 import clsx from 'clsx';
 import React from 'react';
 
+import { IFilter } from '../../../../types/interface';
+import { getKeyByValue } from '../../../../utils/convert';
 import {
+  PROGRAM_FILTER_CLASSIFICATION,
   PROGRAM_FILTER_STATUS,
   PROGRAM_FILTER_TYPE,
   PROGRAM_QUERY_KEY,
-  PROGRAM_FILTER_CLASSIFICATION,
 } from '../../../../utils/programConst';
 import FilterCheckbox from './FilterCheckbox';
-import { IFilter } from '../../../../interfaces/interface';
-import { getKeyByValue } from '../../../../utils/convert';
 
 interface FilterSideBarProps {
   isOpen: boolean;

@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import { getChallengeIdSchema } from '../schema';
 import axios from '../utils/axios';
 
-export const useChallengeQueryKey = 'useChallengeQueryKey';
+const useChallengeQueryKey = 'useChallengeQueryKey';
 
 export const useChallengeQuery = ({
   challengeId,

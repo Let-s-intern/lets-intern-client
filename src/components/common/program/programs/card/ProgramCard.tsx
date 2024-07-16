@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import {
   IProgram,
   ProgramClassificationKey,
-} from '../../../../../interfaces/interface';
+} from '../../../../../types/interface';
 import axios from '../../../../../utils/axios';
 import {
   PROGRAM_CLASSIFICATION,

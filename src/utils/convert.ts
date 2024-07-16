@@ -1,10 +1,18 @@
 import { AttendanceResult, AttendanceStatus } from '../schema';
 
+/** @deprecated use `newProgramTypeText` instead. */
 export const newProgramTypeToText: Record<string, string> = {
   CHALLENGE: '챌린지',
   LIVE: 'LIVE 클래스',
   VOD: 'VOD 클래스',
 };
+
+const newProgramTypeText: Record<'CHALLENGE' | 'LIVE' | 'VOD', string> =
+  {
+    CHALLENGE: '챌린지',
+    LIVE: 'LIVE 클래스',
+    VOD: 'VOD 클래스',
+  };
 
 export const newProgramFeeTypeToText: Record<string, string> = {
   FREE: '무료',
@@ -56,7 +64,7 @@ const challengeTopicToText: Record<string, string> = {
   DEVELOPMENT: '개발',
 };
 
-export const applicationStatusToText: Record<string, string> = {
+const applicationStatusToText: Record<string, string> = {
   APPLIED: '대기',
   IN_PROGRESS: '참가확정',
   APPLIED_NOT_APPROVED: '미선발',

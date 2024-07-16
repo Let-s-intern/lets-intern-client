@@ -1,6 +1,6 @@
 import dayjs from 'dayjs';
 
-import { IUser } from '../../../../../interfaces/User.interface';
+import { IUser } from '../../../../../types/User.interface';
 import { convertTypeToBank } from '../../../../../utils/convertTypeToBank';
 import ActionButton from '../../../ui/button/ActionButton';
 import TD from '../../../ui/table/regacy/TD';

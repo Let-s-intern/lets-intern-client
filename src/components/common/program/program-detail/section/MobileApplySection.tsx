@@ -1,133 +1,144 @@
-import { useQueryClient } from '@tanstack/react-query';
-import { useEffect, useMemo, useRef } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { twMerge } from 'tailwind-merge';
 import {
-  PostApplicationInterface,
   usePostApplicationMutation,
+  useProgramApplicationQuery,
 } from '../../../../../api/application';
-import { IAction } from '../../../../../interfaces/interface';
-import { ProgramType } from '../../../../../pages/common/program/ProgramDetail';
-import CautionContent from '../apply/content/CautionContent';
+import { useProgramQuery } from '../../../../../api/program';
+import { getPaymentSearchParams } from '../../../../../data/getPaymentSearchParams';
+import { ProgramType } from '../../../../../types/common';
+import {
+  IApplyDrawerAction,
+  ICouponForm,
+} from '../../../../../types/interface';
 import InputContent from '../apply/content/InputContent';
 import PayContent from '../apply/content/PayContent';
 import ScheduleContent from '../apply/content/ScheduleContent';
-import { PayInfo, ProgramDate, UserInfo } from './ApplySection';
+import { getPayInfo, UserInfo } from './ApplySection';
 
 interface MobileApplySectionProps {
   programType: ProgramType;
   programId: number;
   programTitle: string;
-  toggleApplyModal: () => void;
   toggleDrawer: () => void;
-  drawerDispatch: (value: IAction) => void;
-  userInfo: UserInfo;
-  setUserInfo: (userInfo: UserInfo) => void;
-  payInfo: PayInfo;
-  setPayInfo: (payInfo: (prevPayInfo: PayInfo) => PayInfo) => void;
-  criticalNotice: string;
-  priceId: number;
-  programDate: ProgramDate;
-  isApplied: boolean;
-  setIsApplied: (isApplied: boolean) => void;
-  isCautionChecked: boolean;
-  setIsCautionChecked: (isCautionChecked: boolean) => void;
-  contentIndex: number;
-  setContentIndex: (contentIndex: number) => void;
+  dispatchDrawerIsOpen: (value: IApplyDrawerAction) => void;
 }
 
 const MobileApplySection = ({
   programType,
   programId,
   programTitle,
-  toggleApplyModal,
   toggleDrawer,
-  drawerDispatch,
-  userInfo,
-  setUserInfo,
-  payInfo,
-  setPayInfo,
-  criticalNotice,
-  priceId,
-  programDate,
-  isApplied,
-  setIsApplied,
-  isCautionChecked,
-  setIsCautionChecked,
-  contentIndex,
-  setContentIndex,
+  dispatchDrawerIsOpen: drawerDispatch,
 }: MobileApplySectionProps) => {
-  const queryClient = useQueryClient();
   const navigate = useNavigate();
   const scrollRef = useRef<HTMLDivElement>(null);
+  const [contentIndex, setContentIndex] = useState(0);
+  const [userInfo, setUserInfo] = useState<UserInfo>({
+    name: '',
+    email: '',
+    phoneNumber: '',
+    contactEmail: '',
+    question: '',
+  });
 
-  const { mutate: applyProgram } = usePostApplicationMutation(
-    async () => {
-      await queryClient.invalidateQueries({
-        queryKey: [programType],
-      });
-      toggleApplyModal();
-      setIsApplied(true);
-      setContentIndex(0);
-    },
-    (error) => {
-      alert('신청에 실패했습니다. 다시 시도해주세요.');
-      setContentIndex(0);
-    },
+  const [coupon, setCoupon] = useState<ICouponForm>({
+    id: null,
+    price: 0,
+  });
+
+  const { data: application } = useProgramApplicationQuery(
+    programType,
+    programId,
   );
 
-  const handleApplyButtonClick = () => {
-    if (isTest) {
-      navigate(`/program/${programType}/${programId}/payment`, {
-        state: {
-          priceId: priceId,
-          couponId: payInfo.couponId,
-          price: payInfo.price,
-          discount: payInfo.discount,
-          couponPrice: payInfo.couponPrice,
-          totalPrice: totalPrice,
-          contactEmail: userInfo.contactEmail,
-          question: userInfo.question,
-          email: userInfo.email,
-          phone: userInfo.phoneNumber,
-          name: userInfo.name,
-          programTitle: programTitle,
-        },
-      });
+  useEffect(() => {
+    if (!application) {
       return;
     }
 
-    const body: PostApplicationInterface = {
-      paymentInfo: {
-        priceId: priceId,
-        couponId: payInfo.couponId,
-        paymentKey: '',
-        orderId: '',
-        amount: totalPrice.toString(),
-      },
-      contactEmail: userInfo.contactEmail,
-      motivate: '',
-      question: userInfo.question,
-    };
-
-    applyProgram({
-      programId: programId,
-      programType: programType,
-      requestBody: body,
+    setUserInfo({
+      name: application.name ?? '',
+      email: application.email ?? '',
+      phoneNumber: application.phoneNumber ?? '',
+      contactEmail: application.contactEmail ?? '',
+      question: '',
     });
+  }, [application]);
 
-    toggleDrawer();
-  };
+  const isApplied = application?.applied ?? false;
+
+  const priceId =
+    application?.priceList?.[0]?.priceId ?? application?.price?.priceId ?? -1;
+
+  const program = useProgramQuery({ programId, type: programType });
+
+  const programDate =
+    program && program.query.data
+      ? {
+          beginning: program.query.data.beginning,
+          deadline: program.query.data.deadline,
+          startDate: program.query.data.startDate,
+          endDate: program.query.data.endDate,
+        }
+      : null;
+
+  // TODO: 0원일 시 바로 신청
+  const postApplicationMutation = usePostApplicationMutation();
+
+  const payInfo = application ? getPayInfo(application) : null;
 
   const totalPrice = useMemo(() => {
+    if (!payInfo) {
+      return 0;
+    }
     const totalDiscount =
-      payInfo.couponPrice === -1
-        ? payInfo.price
-        : payInfo.discount + payInfo.couponPrice;
+      coupon.price === -1 ? payInfo.price : payInfo.discount + coupon.price;
     if (payInfo.price <= totalDiscount) {
       return 0;
     }
     return payInfo.price - totalDiscount;
-  }, [payInfo.couponPrice, payInfo.discount, payInfo.price]);
+  }, [coupon, payInfo]);
+
+  const handleApplyButtonClick = () => {
+    if (!payInfo || !userInfo) {
+      return;
+    }
+
+    // if (totalPrice === 0) {
+    //   const body: PostApplicationInterface = {
+    //     paymentInfo: {
+    //       couponId: coupon.id,
+    //       priceId,
+    //       paymentKey: paymentKey,
+    //       orderId: orderId,s
+    //       amount: amount.toString(),
+    //     },
+    //     contactEmail: params.contactEmail,
+    //     motivate: '',
+    //     question: params.question,
+    //   };
+    //   postApplicationMutation.mutate({
+    //     programId,
+    //   });
+    //   return;
+    // }
+
+    const params = getPaymentSearchParams({
+      payInfo,
+      coupon,
+      userInfo,
+      priceId,
+      totalPrice,
+      programTitle,
+      programType,
+      programId,
+    });
+
+    navigate(`/payment?${params.toString()}`);
+    toggleDrawer();
+  };
 
   useEffect(() => {
     if (scrollRef.current) {
@@ -135,34 +146,55 @@ const MobileApplySection = ({
     }
   }, [contentIndex, scrollRef]);
 
-  const isTest = userInfo?.email === 'test@test.com';
+  const isShowingPayContent = contentIndex === 3;
 
   return (
-    <section
-      className="h-full w-full overflow-y-auto scrollbar-hide"
-      ref={scrollRef}
+    <div
+      className={twMerge(
+        'fixed bottom-0 left-0 right-0 z-30 flex max-h-[calc(100vh-60px)] w-screen flex-col items-center overflow-hidden rounded-t-lg bg-static-100 shadow-05 scrollbar-hide',
+        isShowingPayContent && 'rounded-none border-t shadow-none',
+      )}
     >
-      {contentIndex === 0 && (
-        <ScheduleContent
-          contentIndex={contentIndex}
-          setContentIndex={setContentIndex}
-          programDate={programDate}
-          programType={programType}
-          programTitle={programTitle}
-          isApplied={isApplied}
-        />
-      )}
-      {contentIndex === 1 && (
-        <InputContent
-          contentIndex={contentIndex}
-          setContentIndex={setContentIndex}
-          userInfo={userInfo}
-          setUserInfo={setUserInfo}
-          programType={programType}
-          drawerDispatch={drawerDispatch}
-        />
-      )}
-      {contentIndex === 2 && (
+      {!isShowingPayContent ? (
+        <div className="sticky top-0 flex w-full justify-center bg-static-100 py-3">
+          <div
+            onClick={() =>
+              drawerDispatch({
+                type: 'close',
+              })
+            }
+            className="h-[5px] w-[70px] shrink-0 cursor-pointer rounded-full bg-neutral-80"
+          />
+        </div>
+      ) : null}
+      <section
+        className={twMerge(
+          'h-full w-full overflow-y-auto px-5 pb-3 scrollbar-hide',
+          isShowingPayContent && 'px-0 pb-0 pt-3',
+        )}
+        ref={scrollRef}
+      >
+        {contentIndex === 0 && programDate ? (
+          <ScheduleContent
+            contentIndex={contentIndex}
+            setContentIndex={setContentIndex}
+            programDate={programDate}
+            programType={programType}
+            programTitle={programTitle}
+            isApplied={isApplied}
+          />
+        ) : null}
+        {contentIndex === 1 && (
+          <InputContent
+            contentIndex={contentIndex}
+            setContentIndex={setContentIndex}
+            userInfo={userInfo}
+            setUserInfo={setUserInfo}
+            programType={programType}
+            drawerDispatch={drawerDispatch}
+          />
+        )}
+        {/* {contentIndex === 2 && (
         <CautionContent
           contentIndex={contentIndex}
           criticalNotice={criticalNotice}
@@ -170,21 +202,25 @@ const MobileApplySection = ({
           isCautionChecked={isCautionChecked}
           setIsCautionChecked={setIsCautionChecked}
         />
-      )}
-      {contentIndex === 3 && (
-        <PayContent
-          payInfo={payInfo}
-          setPayInfo={setPayInfo}
-          handleApplyButtonClick={handleApplyButtonClick}
-          contentIndex={contentIndex}
-          setContentIndex={setContentIndex}
-          programType={programType}
-          totalPrice={totalPrice}
-          isTest={isTest}
-          programDate={programDate}
-        />
-      )}
-    </section>
+      )} */}
+        {contentIndex === 3 && programDate && payInfo ? (
+          <PayContent
+            payInfo={payInfo}
+            userInfo={userInfo}
+            coupon={coupon}
+            setCoupon={setCoupon}
+            handleApplyButtonClick={handleApplyButtonClick}
+            contentIndex={contentIndex}
+            setContentIndex={setContentIndex}
+            programType={programType}
+            totalPrice={totalPrice}
+            programDate={programDate}
+            programQuery={program}
+            programId={programId}
+          />
+        ) : null}
+      </section>
+    </div>
   );
 };
 

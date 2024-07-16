@@ -1,16 +1,18 @@
 import { useState } from 'react';
 
 import { isAxiosError } from 'axios';
+import { ICouponForm } from '../../../../../../types/interface';
 import axios from '../../../../../../utils/axios';
 import Input from '../../../../ui/input/Input';
-import { PayInfo } from '../../section/ApplySection';
 
 interface CouponSectionProps {
-  setPayInfo: (payInfo: (prevPayInfo: PayInfo) => PayInfo) => void;
+  setCoupon: (
+    coupon: ((prevCoupon: ICouponForm) => ICouponForm) | ICouponForm,
+  ) => void;
   programType: string;
 }
 
-const CouponSection = ({ setPayInfo, programType }: CouponSectionProps) => {
+const CouponSection = ({ setCoupon, programType }: CouponSectionProps) => {
   const [code, setCode] = useState('');
   const [validationMsg, setValidationMsg] = useState('');
   const [successMsg, setSuccessMsg] = useState('');
@@ -24,15 +26,14 @@ const CouponSection = ({ setPayInfo, programType }: CouponSectionProps) => {
     try {
       const res = await axios.get(`/coupon`, {
         params: {
-          code: code,
+          code,
           programType: programType.toUpperCase(),
         },
       });
-      setPayInfo((prevPayInfo: PayInfo) => ({
-        ...prevPayInfo,
-        couponId: res.data.data.couponId,
-        couponPrice: res.data.data.discount,
-      }));
+      setCoupon({
+        id: res.data.data.couponId,
+        price: res.data.data.discount,
+      });
       setValidationMsg('');
       setSuccessMsg('쿠폰이 등록되었습니다.');
     } catch (error) {
@@ -40,8 +41,8 @@ const CouponSection = ({ setPayInfo, programType }: CouponSectionProps) => {
         setSuccessMsg('');
         setValidationMsg(error.response?.data.message);
       }
-      setPayInfo((prevPayInfo: PayInfo) => ({
-        ...prevPayInfo,
+      setCoupon((prevCoupon: ICouponForm) => ({
+        ...prevCoupon,
         couponId: null,
         couponPrice: 0,
       }));
@@ -55,12 +56,11 @@ const CouponSection = ({ setPayInfo, programType }: CouponSectionProps) => {
 
   return (
     <div className="flex w-full flex-col gap-3">
-      <div className="font-semibold text-neutral-0">쿠폰 등록</div>
       <div className="flex gap-2.5">
         <Input
           className="w-full"
           type="text"
-          placeholder="쿠폰 코드 입력"
+          placeholder="쿠폰 번호를 입력해주세요."
           value={code}
           onChange={handleCodeChange}
         />

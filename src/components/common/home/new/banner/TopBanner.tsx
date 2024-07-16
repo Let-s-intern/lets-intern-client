@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
 
-import { ILineBanner } from '../../../../../interfaces/Banner.interface';
+import { ILineBanner } from '../../../../../types/Banner.interface';
 import axios from '../../../../../utils/axios';
 
 const TopBanner = () => {

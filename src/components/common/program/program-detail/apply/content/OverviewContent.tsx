@@ -1,15 +1,20 @@
+import { Dayjs } from 'dayjs';
 import { useNavigate } from 'react-router-dom';
-import { ProgramType } from '../../../../../../pages/common/program/ProgramDetail';
 import useAuthStore from '../../../../../../store/useAuthStore';
+import { ProgramType } from '../../../../../../types/common';
 import { newProgramTypeToText } from '../../../../../../utils/convert';
 import NotiButton from '../../button/NotiButton';
-import { ProgramDate } from '../../section/ApplySection';
 import DateToggle from '../../toggle/DateToggle';
 
 interface OverviewContentProps {
   contentIndex: number;
   setContentIndex: (contentIndex: number) => void;
-  programDate: ProgramDate;
+  programDate: {
+    deadline: Dayjs | null;
+    startDate: Dayjs | null;
+    endDate: Dayjs | null;
+    beginning: Dayjs | null;
+  };
   programType: ProgramType;
   programTitle: string;
   isApplied: boolean;
@@ -25,10 +30,6 @@ const OverviewContent = ({
 }: OverviewContentProps) => {
   const { isLoggedIn } = useAuthStore();
   const navigate = useNavigate();
-  const formatDateString = (dateString: string) => {
-    const date = new Date(dateString);
-    return date.getFullYear();
-  };
 
   const handleNextButtonClick = () => {
     if (!isLoggedIn) {
@@ -38,14 +39,10 @@ const OverviewContent = ({
     setContentIndex(contentIndex + 2);
   };
 
-  const clickNotiButton = () => {
-    window.open('https://forms.gle/u6ePSE2WoRYjxyGS6', '_blank');
-  };
-
   return (
     <div className="flex flex-col gap-5">
       <div className="text-xs font-medium">
-        {formatDateString(programDate?.startDate || '2024')} [
+        {programDate?.startDate?.get('year') || '2024'} [
         {newProgramTypeToText[programType.toUpperCase()]}]
       </div>
       <h2 className="text-lg font-semibold">{programTitle}</h2>
@@ -56,20 +53,16 @@ const OverviewContent = ({
         {/* 모집 전이면 사전알림신청 버튼 표시 */}
         {!programDate.beginning || !programDate.deadline ? (
           <></>
-        ) : new Date() < new Date(programDate.beginning) ||
-          new Date() > new Date(programDate.deadline) ? (
-          <NotiButton
-            onClick={clickNotiButton}
-            caption={'출시알림신청'}
-            className="early_button"
-          />
+        ) : new Date() < new Date(programDate.beginning?.toISOString()) ||
+          new Date() > new Date(programDate.deadline?.toISOString()) ? (
+          <NotiButton text={'출시알림신청'} className="early_button" />
         ) : (
           <button
             className="apply_button flex w-full justify-center rounded-md bg-primary px-6 py-3 text-lg font-medium text-neutral-100 disabled:bg-neutral-70"
             onClick={handleNextButtonClick}
             disabled={isApplied}
           >
-            {isApplied ? '신청 완료' : '신청하기'}
+            {isApplied ? '신청 완료' : '신청 폼 입력하기'}
           </button>
         )}
       </div>

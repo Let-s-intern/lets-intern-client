@@ -1,5 +1,5 @@
 import dayjs from 'dayjs';
-import { ProgramType } from '../../../../../pages/common/program/ProgramDetail';
+import { ProgramType } from '../../../../../types/common';
 import { ProgramDate } from '../section/ApplySection';
 
 interface DateToggleProps {
@@ -7,61 +7,54 @@ interface DateToggleProps {
   programType: ProgramType;
 }
 
+const Row = ({
+  title,
+  value,
+}: {
+  title: React.ReactNode;
+  value: React.ReactNode;
+}) => (
+  <div className="flex h-10 items-center justify-between p-1.5">
+    <span className="text-neutral-0 text-opacity-[74%]">{title}</span>
+    <span className="text-right font-medium text-neutral-0 text-opacity-[94%]">
+      {value}
+    </span>
+  </div>
+);
+
 const DateToggle = ({ programDate, programType }: DateToggleProps) => {
   return (
     <div className="rounded-sm bg-neutral-100">
-      <div className="flex items-center justify-center gap-0.5 rounded-sm bg-neutral-0 bg-opacity-5 px-1.5 py-4 text-neutral-0 text-opacity-[74%]">
-        <span className="font-semibold">프로그램 일정</span>
+      <div className="flex items-center justify-center gap-0.5 rounded-sm bg-neutral-0 bg-opacity-5 px-1.5 py-4 text-xsmall14 font-semibold text-neutral-0 text-opacity-[74%]">
+        프로그램 일정
       </div>
       <div className="px-2">
-        <div className="flex items-center justify-between p-1.5">
-          <span className="text-neutral-0 text-opacity-[74%]">모집 마감</span>
-          <span className="font-medium text-neutral-0 text-opacity-[94%]">
-            {dayjs(programDate.deadline).format(
-              `MM.DD (ddd) A hh시${
-                dayjs(programDate.deadline).minute() !== 0 ? ' mm분' : ''
-              }`,
-            )}
-          </span>
-        </div>
+        <Row
+          title="모집 마감"
+          value={dayjs(programDate.deadline).format('MM.DD (ddd) HH:mm')}
+        />
         {programType === 'challenge' && (
-          <div className="flex items-center justify-between p-1.5">
-            <span className="text-neutral-0 text-opacity-[74%]">OT 일시</span>
-            <span className="font-medium text-neutral-0 text-opacity-[94%]">
-              {dayjs(programDate.startDate).format(
-                `MM.DD (ddd) A hh시${
-                  dayjs(programDate.startDate).minute() !== 0 ? ' mm분' : ''
-                }`,
-              )}
-            </span>
-          </div>
+          <Row
+            title="OT 일시"
+            value={dayjs(programDate.startDate).format('MM.DD (ddd) HH:mm')}
+          />
         )}
-        <div className="flex items-center justify-between p-1.5">
-          <span className="shrink-0 text-neutral-0 text-opacity-[74%]">
-            진행 기간
-          </span>
-          <span className="text-end font-medium text-neutral-0 text-opacity-[94%]">
-            {programType === 'live' ? (
+        <Row
+          title="진행 기간"
+          value={
+            programType === 'live' ? (
               <>
-                {dayjs(programDate.startDate).format(
-                  `MM.DD (ddd) A hh시${
-                    dayjs(programDate.startDate).minute() !== 0 ? ' mm분' : ''
-                  }`,
-                )}
+                {dayjs(programDate.startDate).format('MM.DD (ddd) HH:mm')}
                 <br /> ~{' '}
-                {dayjs(programDate.endDate).format(
-                  `MM.DD (ddd) A hh시${
-                    dayjs(programDate.endDate).minute() !== 0 ? ' mm분' : ''
-                  }`,
-                )}
+                {dayjs(programDate.endDate).format('MM.DD (ddd) HH:mm')}
               </>
             ) : (
               dayjs(programDate.startDate).format(`MM.DD (ddd)`) +
               ' ~ ' +
               dayjs(programDate.endDate).format(`MM.DD (ddd)`)
-            )}
-          </span>
-        </div>
+            )
+          }
+        />
       </div>
     </div>
   );
