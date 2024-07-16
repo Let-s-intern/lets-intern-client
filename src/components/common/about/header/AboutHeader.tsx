@@ -10,8 +10,8 @@ const TopSection = () => {
   const { boxRef, ref0, ref1, ref2 } = useScrollFade();
 
   return (
-    <header className="relative flex h-[200vh] justify-center bg-gradient-to-b from-[#4D55F5] via-[#2D328F] via-80% to-[#101348] py-20 sm:py-[6.25rem] xl:py-[7.5rem]">
-      <div ref={boxRef} className="absolute flex w-full flex-col items-center">
+    <header className="relative flex h-[200vh] justify-center bg-gradient-to-b from-[#4D55F5] via-[#2D328F] via-80% to-[#101348] pb-20 sm:pb-[6.25rem] xl:pb-[7.5rem]">
+      <div ref={boxRef} className="sticky flex w-full flex-col items-center">
         <h1 className="text-1.75-bold xl:text-2.25-bold mb-[3.25rem] text-center text-static-100">
           커리어의 첫 걸음 🏃‍♀️
           <br />
