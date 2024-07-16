@@ -36,51 +36,23 @@ const UserInputSection = ({ userInfo, setUserInfo }: UserInputSectionProps) => {
   return (
     <div className="flex flex-col gap-2.5">
       <div className="flex flex-col gap-1">
-        <label htmlFor="name" className="ml-3 text-xsmall14 font-semibold">
-          이름
-        </label>
-        <Input
-          id="name"
-          name="name"
-          placeholder="김렛츠"
-          value={userInfo.name}
-          onChange={handleInputChange}
-          disabled
-          readOnly
-          className="text-sm"
-        />
+        <label className="ml-3 text-xsmall14 font-semibold">이름</label>
+        <Input value={userInfo.name} disabled readOnly className="text-sm" />
       </div>
       <div className="flex flex-col gap-1">
-        <label
-          htmlFor="phoneNumber"
-          className="ml-3 text-xsmall14 font-semibold"
-        >
-          휴대폰 번호
-        </label>
+        <label className="ml-3 text-xsmall14 font-semibold">휴대폰 번호</label>
         <Input
-          id="phoneNumber"
-          name="phoneNumber"
-          placeholder="010-0000-0000"
           value={userInfo.phoneNumber}
-          onChange={handleInputChange}
           disabled
           readOnly
           className="text-sm"
         />
       </div>
       <div className="flex flex-col gap-1">
-        <label htmlFor="email" className="ml-3 text-xsmall14 font-semibold">
+        <label className="ml-3 text-xsmall14 font-semibold">
           가입한 이메일
         </label>
-        <Input
-          id="email"
-          name="email"
-          placeholder="example@example.com"
-          value={userInfo.email}
-          disabled
-          readOnly
-          className="text-sm"
-        />
+        <Input value={userInfo.email} disabled readOnly className="text-sm" />
       </div>
       <div className="flex flex-col gap-2">
         <div className="ml-3">

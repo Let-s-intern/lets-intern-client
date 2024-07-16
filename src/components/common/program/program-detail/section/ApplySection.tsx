@@ -218,6 +218,7 @@ const ApplySection = ({
       {contentIndex === 4 && payInfo && programDate ? (
         <PayContent
           payInfo={payInfo}
+          userInfo={userInfo}
           coupon={coupon}
           setCoupon={setCoupon}
           handleApplyButtonClick={handleApplyButtonClick}

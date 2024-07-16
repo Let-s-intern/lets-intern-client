@@ -3,9 +3,10 @@ import { useRef } from 'react';
 import { FaArrowLeft } from 'react-icons/fa6';
 import { ProgramQuery } from '../../../../../../api/program';
 import { ICouponForm } from '../../../../../../types/interface';
+import Input from '../../../../ui/input/Input';
 import ProgramCard from '../../../ProgramCard';
 
-import { PayInfo, ProgramDate } from '../../section/ApplySection';
+import { PayInfo, ProgramDate, UserInfo } from '../../section/ApplySection';
 import CouponSection from '../section/CouponSection';
 import PriceSection from '../section/PriceSection';
 
@@ -23,6 +24,7 @@ interface PayContentProps {
   programDate: ProgramDate;
   programQuery: ProgramQuery;
   programId: number;
+  userInfo: UserInfo;
 }
 
 const PayContent = ({
@@ -37,6 +39,7 @@ const PayContent = ({
   programDate,
   programQuery,
   programId,
+  userInfo,
 }: PayContentProps) => {
   const topRef = useRef<HTMLDivElement>(null);
 
@@ -70,8 +73,45 @@ const PayContent = ({
               endDate={programDate.endDate ?? dayjs()}
               thumbnailLinkClassName="max-w-32"
             />
+            <h3 className="text-xsmall16 font-semibold text-neutral-0">
+              참여자 정보
+            </h3>
+            <div className="flex flex-col gap-3">
+              <div className="flex flex-col gap-1">
+                <label className="ml-3 text-xsmall14 font-semibold">이름</label>
+                <Input
+                  value={userInfo.name}
+                  disabled
+                  readOnly
+                  className="text-sm"
+                />
+              </div>
+              <div className="flex flex-col gap-1">
+                <label className="ml-3 text-xsmall14 font-semibold">
+                  휴대폰 번호
+                </label>
+                <Input
+                  value={userInfo.phoneNumber}
+                  disabled
+                  readOnly
+                  className="text-sm"
+                />
+              </div>
+              <div className="flex flex-col gap-1">
+                <label className="ml-3 text-xsmall14 font-semibold">
+                  이메일
+                </label>
+                <Input
+                  value={userInfo.contactEmail}
+                  disabled
+                  readOnly
+                  className="text-sm"
+                />
+              </div>
+            </div>
+
             <hr className="bg-neutral-85" />
-            <div className="font-semibold text-neutral-0">결제</div>
+            <div className="font-semibold text-neutral-0">결제 정보</div>
             <CouponSection setCoupon={setCoupon} programType={programType} />
             <hr className="bg-neutral-85" />
             <PriceSection payInfo={payInfo} coupon={coupon} />

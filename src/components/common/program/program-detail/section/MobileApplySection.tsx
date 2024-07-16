@@ -3,14 +3,14 @@ import { useNavigate } from 'react-router-dom';
 import { twMerge } from 'tailwind-merge';
 import {
   usePostApplicationMutation,
-  useProgramApplicationQuery
+  useProgramApplicationQuery,
 } from '../../../../../api/application';
 import { useProgramQuery } from '../../../../../api/program';
 import { getPaymentSearchParams } from '../../../../../data/getPaymentSearchParams';
 import { ProgramType } from '../../../../../types/common';
 import {
   IApplyDrawerAction,
-  ICouponForm
+  ICouponForm,
 } from '../../../../../types/interface';
 import InputContent from '../apply/content/InputContent';
 import PayContent from '../apply/content/PayContent';
@@ -169,8 +169,8 @@ const MobileApplySection = ({
       ) : null}
       <section
         className={twMerge(
-          'h-full w-full overflow-y-auto scrollbar-hide px-5 pb-3',
-          isShowingPayContent && 'pt-3 pb-0 px-0',
+          'h-full w-full overflow-y-auto px-5 pb-3 scrollbar-hide',
+          isShowingPayContent && 'px-0 pb-0 pt-3',
         )}
         ref={scrollRef}
       >
@@ -206,6 +206,7 @@ const MobileApplySection = ({
         {contentIndex === 3 && programDate && payInfo ? (
           <PayContent
             payInfo={payInfo}
+            userInfo={userInfo}
             coupon={coupon}
             setCoupon={setCoupon}
             handleApplyButtonClick={handleApplyButtonClick}
