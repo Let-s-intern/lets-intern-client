@@ -17,7 +17,6 @@ const useScrollFade = () => {
 
   const handleScroll = () => {
     const scrollY = window.scrollY;
-    console.log(scrollY);
 
     if (scrollY >= 0) init();
     if (scrollY >= maxScrollY / 3 - 20) fadeOut(ref0);
