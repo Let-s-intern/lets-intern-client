@@ -27,10 +27,12 @@ const ContactSection = () => {
         </h1>
       </div>
       <div className="relative flex w-full flex-col items-center">
+        {/* Back */}
         <div className="absolute -top-8 h-32 w-[15.5rem] -translate-x-8 -rotate-12 rounded-sm bg-primary-20 sm:-translate-x-12"></div>
+        {/* Forward */}
         <div
           style={cardStyle}
-          className="flex w-[17.5rem] flex-col gap-5 rounded-sm border border-neutral-80 bg-static-100/80 p-5 shadow-06"
+          className="z-10 flex w-[17.5rem] flex-col gap-5 rounded-sm border border-neutral-80 bg-static-100/80 p-5 shadow-06"
         >
           {CONTACT.map(({ title, contact }) => (
             <div key={title}>

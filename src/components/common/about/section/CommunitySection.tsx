@@ -2,7 +2,7 @@ import AboutTitle from '../ui/AboutTitle';
 
 const TITLE = {
   subTitle: '선순환 커뮤니티',
-  title: '인턴·취업 성공 후에도 함께해요',
+  title: '인턴·신입 취업 성공 후에도 함께해요',
 };
 
 const CONTENT = [

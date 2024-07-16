@@ -10,8 +10,8 @@ const TITLE = {
 };
 
 const maxProgramCount = 59;
-const maxApplicationCount = 1600;
-const maxSuccessCount = 160;
+const maxApplicationCount = 1646;
+const maxSuccessCount = 162;
 const maxSatisfaction = 4.8;
 const defaultIncrement = 1;
 
