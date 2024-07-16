@@ -1,9 +1,13 @@
+import { ReactNode } from 'react';
+
 const PaymentInfoRow = ({
   title,
   content,
+  subInfo,
 }: {
   title: string;
   content: string;
+  subInfo?: ReactNode;
 }) => {
   return (
     <div className="flex w-full items-center justify-start gap-x-2 px-3 py-2">
@@ -11,6 +15,9 @@ const PaymentInfoRow = ({
       <div className="flex grow items-center justify-end text-neutral-0">
         {content}
       </div>
+      {subInfo && (
+        <div className="flex w-full items-center justify-start">{subInfo}</div>
+      )}
     </div>
   );
 };
