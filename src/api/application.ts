@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import dayjs from 'dayjs';
 import { z } from 'zod';
 import {
@@ -6,6 +6,7 @@ import {
   liveApplicationPriceType,
   programStatus,
 } from '../schema';
+import { UsePaymentQueryKey } from './payment';
 
 import { ProgramType } from '../types/common';
 import axios from '../utils/axios';
@@ -55,10 +56,7 @@ export const useProgramApplicationQuery = (
 
 const UseProgramTitleQueryKey = 'useProgramTitleQueryKey';
 
-const useProgramTitleQuery = (
-  programType: ProgramType,
-  programId: number,
-) => {
+const useProgramTitleQuery = (programType: ProgramType, programId: number) => {
   return useQuery({
     queryKey: [UseProgramTitleQueryKey, programType, programId],
     queryFn: async () => {
@@ -113,6 +111,40 @@ const usePostApplicationMutation = (
     },
     onError: (error) => {
       errorCallback(error);
+    },
+  });
+};
+
+export const useCancelApplicationMutation = ({
+  successCallback,
+  errorCallback,
+}: {
+  successCallback?: () => void;
+  errorCallback?: (error: Error) => void;
+}) => {
+  const client = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({
+      applicationId,
+      programType,
+    }: {
+      applicationId: number;
+      programType: string;
+    }) => {
+      const res = await axios.delete(`/application/${applicationId}`, {
+        params: { type: programType.toUpperCase() },
+      });
+      return res.data;
+    },
+    onSuccess: () => {
+      successCallback && successCallback();
+      client.invalidateQueries({
+        queryKey: [UsePaymentQueryKey],
+      });
+    },
+    onError: (error) => {
+      errorCallback && errorCallback(error);
     },
   });
 };
