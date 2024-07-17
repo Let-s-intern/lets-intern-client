@@ -75,9 +75,6 @@ const ApplicationCard = ({
                 {application.programTitle}
               </Link>
             </h2>
-            {/* {showDeleteMenu && (
-              <DeleteMenu application={application} refetch={refetch} />
-            )} */}
           </div>
           <p className="text-sm text-neutral-30">
             {application.programShortDesc}
