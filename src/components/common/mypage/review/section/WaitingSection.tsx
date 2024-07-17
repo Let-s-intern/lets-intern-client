@@ -24,7 +24,7 @@ const WaitingSection = ({ applicationList }: WaitingSectionProps) => {
           </p>
           <Link
             to="/program"
-            className="rounded-sm border-2 border-primary-xlight bg-white px-5 py-2 font-medium text-neutral-35"
+            className="other_program rounded-sm border-2 border-primary-xlight bg-white px-5 py-2 font-medium text-neutral-35"
           >
             다른 프로그램 둘러보기
           </Link>

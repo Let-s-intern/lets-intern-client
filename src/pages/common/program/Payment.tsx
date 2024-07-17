@@ -4,6 +4,7 @@ import {
 } from '@tosspayments/tosspayments-sdk';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useProgramQuery } from '../../../api/program';
 import { useUserQuery } from '../../../api/user';
 import {
   PaymentMethodKey,
@@ -43,6 +44,11 @@ const Payment = () => {
   );
 
   const tossInitialized = useRef(false);
+
+  const program = useProgramQuery({
+    programId: params?.programId ?? -1,
+    type: params?.programType ?? 'live',
+  });
 
   useEffect(() => {
     if (!user || !params) {
@@ -124,7 +130,10 @@ const Payment = () => {
   };
 
   return (
-    <div className="mx-auto max-w-5xl pb-6">
+    <div
+      className="mx-auto max-w-5xl pb-6"
+      data-program-text={program.query.data?.title}
+    >
       {/* 결제 UI */}
       <div id="payment-method" />
       {/* 이용약관 UI */}
