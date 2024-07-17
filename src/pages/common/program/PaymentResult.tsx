@@ -74,7 +74,10 @@ const PaymentResult = () => {
   const programLink = `/program/${params?.programType}/${params?.programId}`;
 
   return (
-    <div className="w-full px-5 py-10">
+    <div
+      className="w-full px-5 py-10"
+      data-program-text={program.query.data?.title}
+    >
       <div className="mx-auto max-w-5xl">
         <div className="flex w-full items-center justify-start py-6 text-small20 font-bold text-neutral-0">
           결제 확인하기
@@ -105,7 +108,7 @@ const PaymentResult = () => {
                   {isSuccess && (
                     <Link
                       to="/program"
-                      className="flex w-full flex-1 justify-center rounded-md border-2 border-primary bg-neutral-100 px-6 py-3 text-lg font-medium text-primary-dark"
+                      className="other_program flex w-full flex-1 justify-center rounded-md border-2 border-primary bg-neutral-100 px-6 py-3 text-lg font-medium text-primary-dark"
                     >
                       다른 프로그램 둘러보기
                     </Link>
@@ -199,7 +202,7 @@ const PaymentResult = () => {
                   {isSuccess && (
                     <Link
                       to="/mypage/application"
-                      className="flex w-full flex-1 justify-center rounded-md border-2 border-primary bg-primary px-6 py-3 text-lg font-medium text-neutral-100"
+                      className="mypage_button flex w-full flex-1 justify-center rounded-md border-2 border-primary bg-primary px-6 py-3 text-lg font-medium text-neutral-100"
                     >
                       마이페이지 바로가기
                     </Link>

@@ -7,6 +7,7 @@ const CreditListItem = ({ payment }: { payment: PaymentType }) => {
     <Link
       className="flex w-full flex-col items-start justify-center gap-y-2"
       to={`/mypage/credit/${payment.programInfo.paymentId}`}
+      data-program-text={payment.programInfo.title}
     >
       <CardStatus status={payment.tossInfo?.status || ''} />
       <div className="flex w-full items-center gap-x-[14px]">

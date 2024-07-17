@@ -46,7 +46,10 @@ const CreditDetail = () => {
   });
 
   return (
-    <section className="flex w-full flex-col pt-8">
+    <section
+      className="flex w-full flex-col pt-8"
+      data-program-text={paymentDetail?.programInfo?.title}
+    >
       <div className="flex items-center justify-start gap-x-2">
         <img
           src="/icons/Arrow_Left_MD.svg"
@@ -271,7 +274,7 @@ const CreditDetail = () => {
                 </button>
               ) : (
                 <MoreButton
-                  className="w-full md:flex"
+                  className="other_program w-full md:flex"
                   onClick={() => {
                     navigate('/program');
                   }}
