@@ -5,7 +5,6 @@ import { Link } from 'react-router-dom';
 import { ApplicationType } from '../../../../../../pages/common/mypage/Application';
 import LinkButton from '../../button/LinkButton';
 import PriceInfoModal from '../../modal/PriceInfoModal';
-import DeleteMenu from '../menu/DeleteMenu';
 
 interface ApplicationCardProps {
   application: ApplicationType;
@@ -58,7 +57,7 @@ const ApplicationCard = ({
         className={clsx(
           'flex w-full flex-1 flex-col gap-2 md:flex-row md:gap-4',
           {
-            grayscale: grayscale,
+            grayscale,
           },
         )}
       >
@@ -76,9 +75,6 @@ const ApplicationCard = ({
                 {application.programTitle}
               </Link>
             </h2>
-            {showDeleteMenu && (
-              <DeleteMenu application={application} refetch={refetch} />
-            )}
           </div>
           <p className="text-sm text-neutral-30">
             {application.programShortDesc}
