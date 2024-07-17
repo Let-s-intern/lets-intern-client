@@ -106,7 +106,7 @@ export const getChallengeIdSchema = z
     deadline: z.string().nullable().optional(),
     chatLink: z.string().nullable().optional(),
     chatPassword: z.string().nullable().optional(),
-    challengeType: challengeType,
+    challengeType,
     classificationInfo: z.array(
       z.object({
         programClassification: programClassification.nullable().optional(),
@@ -215,7 +215,7 @@ export const missionAdmin = z
         id: z.number(),
         th: z.number(),
         missionType: z.string(),
-        missionStatusType: missionStatusType,
+        missionStatusType,
         attendanceCount: z.number(),
         lateAttendanceCount: z.number(),
         applicationCount: z.number(),
@@ -335,10 +335,10 @@ const getChallengeIdApplication = z
         discount: z.number(),
         accountNumber: z.string(),
         deadline: z.string(),
-        accountType: accountType,
-        challengePriceType: challengePriceType,
-        challengeUserType: challengeUserType,
-        challengeParticipationType: challengeParticipationType,
+        accountType,
+        challengePriceType,
+        challengeUserType,
+        challengeParticipationType,
       }),
     ),
   })
@@ -1010,24 +1010,24 @@ export const programStatus = z.union([
 ]);
 
 export const challengeApplicationPriceType = z.object({
-  priceId: z.number(),
-  price: z.number(),
-  refund: z.number(),
-  discount: z.number(),
-  accountNumber: z.string(),
-  deadline: z.string(),
+  priceId: z.number().nullable().optional(),
+  price: z.number().nullable().optional(),
+  refund: z.number().nullable().optional(),
+  discount: z.number().nullable().optional(),
+  accountNumber: z.string().nullable().optional(),
+  deadline: z.string().nullable().optional(),
   accountType: accountType.nullable().optional(),
-  challengePriceType: challengePriceType,
-  challengeUserType: challengeUserType,
-  challengeParticipationType: challengeParticipationType,
+  challengePriceType,
+  challengeUserType,
+  challengeParticipationType,
 });
 
 export const liveApplicationPriceType = z.object({
-  priceId: z.number(),
-  price: z.number(),
-  discount: z.number(),
-  accountNumber: z.string(),
-  deadline: z.string(),
+  priceId: z.number().nullable().optional(),
+  price: z.number().nullable().optional(),
+  discount: z.number().nullable().optional(),
+  accountNumber: z.string().nullable().optional(),
+  deadline: z.string().nullable().optional(),
   accountType: accountType.nullable().optional(),
-  livePriceType: livePriceType,
+  livePriceType,
 });

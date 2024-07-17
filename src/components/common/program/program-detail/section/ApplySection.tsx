@@ -63,12 +63,12 @@ export const getPayInfo = (
   const item = application.priceList?.[0];
   if (item) {
     return {
-      priceId: item.priceId,
-      price: item.price,
-      discount: item.discount,
-      accountNumber: item.accountNumber,
-      deadline: item.deadline,
-      accountType: item.accountType,
+      priceId: item.priceId ? item.priceId : -1,
+      price: item.price ? item.price : 0,
+      discount: item.discount ? item.discount : 0,
+      accountNumber: item.accountNumber ? item.accountNumber : '',
+      deadline: item.deadline ? item.deadline : '',
+      accountType: item.accountType ? item.accountType : null,
       challengePriceType: item.challengePriceType,
       livePriceType: undefined,
     };
@@ -76,11 +76,11 @@ export const getPayInfo = (
 
   if (application.price) {
     return {
-      priceId: application.price.priceId,
-      price: application.price.price,
-      discount: application.price.discount,
-      accountNumber: application.price.accountNumber,
-      deadline: application.price.deadline,
+      priceId: application.price.priceId ? application.price.priceId : -1,
+      price: application.price.price ? application.price.price : 0,
+      discount: application.price.discount ? application.price.discount : 0,
+      accountNumber: application.price.accountNumber ?? '',
+      deadline: application.price.deadline ?? '',
       accountType: application.price.accountType,
       challengePriceType: undefined,
       livePriceType: application.price.livePriceType,
