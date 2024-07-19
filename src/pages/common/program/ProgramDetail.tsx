@@ -17,12 +17,6 @@ import useAuthStore from '../../../store/useAuthStore';
 import { ProgramType } from '../../../types/common';
 import axios from '../../../utils/axios';
 
-interface ProgramDate {
-  deadline: string;
-  startDate: string;
-  endDate: string;
-  beginning: string;
-}
 interface ProgramDetailProps {
   programType: ProgramType;
 }
@@ -81,28 +75,10 @@ const ProgramDetail = ({ programType }: ProgramDetailProps) => {
     dispatchIsDrawerOpen({ type: 'toggle' });
   };
 
-  const openApplyDrawer = () => {
-    if (isAlreadyApplied || isOutOfDate) {
-      return;
-    }
-
-    dispatchIsDrawerOpen({
-      type: 'open',
-    });
-  };
-
   return (
     <div className="px-5">
       <div className="mx-auto max-w-5xl">
         <Header programTitle={programTitle} />
-        {/* Thumbnail */}
-        <div className="flex justify-center">
-          <img
-            src={program.query.data?.thumbnail ?? '#'}
-            alt="thumbnail"
-            className="h-[20rem] w-full rounded-sm object-cover"
-          />
-        </div>
         <div className="flex min-h-screen flex-col">
           {/* 프로그램 상세 */}
           <section className="flex items-start gap-10 md:mt-8">
