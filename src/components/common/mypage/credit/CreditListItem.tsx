@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import { twMerge } from 'tailwind-merge';
 import { PaymentType } from '../../../../api/paymentSchema';
 import CardStatus from './CardStatus';
 
@@ -13,7 +14,10 @@ const CreditListItem = ({ payment }: { payment: PaymentType }) => {
       <div className="flex w-full items-center gap-x-[14px]">
         <img
           src={payment.programInfo.thumbnail || ''}
-          className={`h-[97px] w-[137px] rounded-sm object-cover ${payment.tossInfo?.status !== 'DONE' ? 'grayscale' : ''}`}
+          className={twMerge(
+            'h-[97px] w-[137px] rounded-sm object-cover',
+            payment.tossInfo?.status !== 'DONE' && 'grayscale',
+          )}
         />
         <div className="flex grow flex-col items-start justify-between gap-2 self-stretch">
           <div className="text-xs font-semibold text-neutral-0 md:text-sm">
