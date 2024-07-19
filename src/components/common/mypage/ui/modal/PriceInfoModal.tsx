@@ -48,13 +48,11 @@ const PriceInfoModal = ({
                 <div className="item-center flex w-full justify-between gap-x-2 p-2">
                   <div className="text-neutral-30">입금 마감 기한</div>
                   <div className="item-center flex grow justify-end text-end font-semibold">
-                    {dayjs(data.priceInfo.deadline).format(
-                      `MM.DD (ddd) A hh시${
-                        dayjs(data.priceInfo.deadline).minute() !== 0
-                          ? ' mm분'
-                          : ''
-                      }`,
-                    )}
+                    {data?.priceInfo?.deadline
+                      ? dayjs(data.priceInfo.deadline).format(
+                          'MM.DD (ddd) HH:mm',
+                        )
+                      : '-'}
                   </div>
                 </div>
               </div>
