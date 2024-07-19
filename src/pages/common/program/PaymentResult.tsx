@@ -132,7 +132,7 @@ const PaymentResult = () => {
                       }
                     />
                     <PaymentInfoRow
-                      title={`할인 (${Math.floor(Number(searchParams.get('discount')) / Number(searchParams.get('price')))}%)`}
+                      title={`할인 (${Math.floor((Number(searchParams.get('discount')) / Number(searchParams.get('price'))) * 100)}%)`}
                       content={
                         '-' +
                         Number(searchParams.get('discount')).toLocaleString() +
