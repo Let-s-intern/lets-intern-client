@@ -86,7 +86,7 @@ const ProgramCard = ({ program }: ProgramCardProps) => {
                 program.programInfo.programStatusType ===
                 PROGRAM_STATUS_KEY.POST,
             },
-            'text-1-semibold max-h-[52px]',
+            'text-1-semibold',
           )}
         >
           {program.programInfo.title}
