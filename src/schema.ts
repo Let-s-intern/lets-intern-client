@@ -71,6 +71,12 @@ const faqProgramType = z.union([
   z.literal('VOD'),
 ]);
 
+export const programType = z.union([
+  z.literal('CHALLENGE'),
+  z.literal('LIVE'),
+  z.literal('VOD'),
+]);
+
 export const accountType = z.union([
   z.literal('KB'),
   z.literal('HANA'),

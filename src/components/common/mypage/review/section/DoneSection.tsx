@@ -1,10 +1,10 @@
 import { useState } from 'react';
-import { ApplicationType } from '../../../../../pages/common/mypage/Application';
+import { MypageApplication } from '../../../../../api/application';
 import MoreButton from '../../ui/button/MoreButton';
 import ApplicationCard from '../../ui/card/root/ApplicationCard';
 
 interface DoneSectionProps {
-  applicationList: ApplicationType[];
+  applicationList: MypageApplication[];
 }
 
 const DoneSection = ({ applicationList }: DoneSectionProps) => {

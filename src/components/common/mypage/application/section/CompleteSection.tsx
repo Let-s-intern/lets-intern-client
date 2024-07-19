@@ -1,10 +1,10 @@
 import { useState } from 'react';
-import { ApplicationType } from '../../../../../pages/common/mypage/Application';
+import { MypageApplication } from '../../../../../api/application';
 import Button from '../../ui/button/Button';
 import ApplicationCard from '../../ui/card/root/ApplicationCard';
 
 interface CompleteSectionProps {
-  applicationList: ApplicationType[];
+  applicationList: MypageApplication[];
 }
 
 const CompleteSection = ({ applicationList }: CompleteSectionProps) => {
@@ -33,17 +33,16 @@ const CompleteSection = ({ applicationList }: CompleteSectionProps) => {
           ))}
         </div>
       )}
-      {applicationList.length > 3 &&
-        !showMore && (
-          <Button
-            className="hidden md:flex"
-            onClick={() => {
-              setShowMore(true);
-            }}
-          >
-            더보기
-          </Button>
-        )}
+      {applicationList.length > 3 && !showMore && (
+        <Button
+          className="hidden md:flex"
+          onClick={() => {
+            setShowMore(true);
+          }}
+        >
+          더보기
+        </Button>
+      )}
     </section>
   );
 };

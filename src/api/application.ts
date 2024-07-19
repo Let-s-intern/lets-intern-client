@@ -5,6 +5,7 @@ import {
   challengeApplicationPriceType,
   liveApplicationPriceType,
   programStatus,
+  programType,
 } from '../schema';
 import { UsePaymentQueryKey } from './payment';
 
@@ -54,11 +55,11 @@ export const useProgramApplicationQuery = (
   });
 };
 
-const UseProgramTitleQueryKey = 'useProgramTitleQueryKey';
+const useProgramTitleQueryKey = 'useProgramTitleQueryKey';
 
 const useProgramTitleQuery = (programType: ProgramType, programId: number) => {
   return useQuery({
-    queryKey: [UseProgramTitleQueryKey, programType, programId],
+    queryKey: [useProgramTitleQueryKey, programType, programId],
     queryFn: async () => {
       const res = await axios.get(`/${programType}/${programId}/title`);
       return res.data.data;
@@ -148,6 +149,61 @@ export const useCancelApplicationMutation = ({
     },
     onError: (error) => {
       errorCallback && errorCallback(error);
+    },
+  });
+};
+
+const useMypageApplicationsQueryKey = 'useMypageApplicationsQueryKey';
+
+const applicationStatus = z.union([
+  z.literal('WAITING'),
+  z.literal('IN_PROGRESS'),
+  z.literal('DONE'),
+]);
+
+const mypageApplicationsSchema = z
+  .object({
+    applicationList: z.array(
+      z.object({
+        id: z.number().nullable().optional(),
+        status: applicationStatus.nullable().optional(),
+        programId: z.number().nullable().optional(),
+        programType: programType.nullable().optional(),
+        programStatusType: programStatus.nullable().optional(),
+        programTitle: z.string().nullable().optional(),
+        programShortDesc: z.string().nullable().optional(),
+        programThumbnail: z.string().nullable().optional(),
+        programStartDate: z.string().nullable().optional(),
+        programEndDate: z.string().nullable().optional(),
+        reviewId: z.number().nullable().optional(),
+        paymentId: z.number().nullable().optional(),
+      }),
+    ),
+  })
+  .transform((data) => {
+    return {
+      applicationList: data.applicationList.map((application) => ({
+        ...application,
+        programStartDate: application.programStartDate
+          ? dayjs(application.programStartDate)
+          : null,
+        programEndDate: application.programEndDate
+          ? dayjs(application.programEndDate)
+          : null,
+      })),
+    };
+  });
+
+export type MypageApplication = z.infer<
+  typeof mypageApplicationsSchema
+>['applicationList'][0];
+
+export const useMypageApplicationsQuery = () => {
+  return useQuery({
+    queryKey: [useMypageApplicationsQueryKey],
+    queryFn: async () => {
+      const res = await axios.get('/user/applications');
+      return mypageApplicationsSchema.parse(res.data.data).applicationList;
     },
   });
 };

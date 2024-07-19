@@ -1,13 +1,14 @@
 import clsx from 'clsx';
+import dayjs from 'dayjs';
 
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ApplicationType } from '../../../../../../pages/common/mypage/Application';
+import { MypageApplication } from '../../../../../../api/application';
 import LinkButton from '../../button/LinkButton';
 import PriceInfoModal from '../../modal/PriceInfoModal';
 
 interface ApplicationCardProps {
-  application: ApplicationType;
+  application: MypageApplication;
   hasReviewButton?: boolean;
   reviewType?: 'CREATE' | 'EDIT';
   grayscale?: boolean;
@@ -29,22 +30,8 @@ const ApplicationCard = ({
     isOpen: false,
     paymentId: 0,
   });
-  const formatDateString = (dateString: string) => {
-    const date = new Date(dateString);
-    const year = date.getFullYear().toString().slice(-2); // 두 자리 형식으로 연도 추출
-    const month = (date.getMonth() + 1).toString().padStart(2, '0');
-    const day = date.getDate().toString().padStart(2, '0');
 
-    return `${year}.${month}.${day}`;
-  };
-
-  const checkChallengeStarted = (dateString: string) => {
-    const date = new Date(dateString);
-    const currentDate = new Date();
-    return date < currentDate;
-  };
-
-  const programLink = `/program/${application.programType.toLowerCase()}/${application.programId}`;
+  const programLink = `/program/${application.programType?.toLowerCase()}/${application.programId}`;
 
   return (
     <div
@@ -63,7 +50,7 @@ const ApplicationCard = ({
       >
         <Link to={programLink}>
           <img
-            src={application.programThumbnail}
+            src={application.programThumbnail ?? ''}
             alt="프로그램 썸네일"
             className="h-[7.5rem] w-full bg-primary-light object-cover md:h-[9rem] md:w-[11rem] md:rounded-xs"
           />
@@ -82,15 +69,15 @@ const ApplicationCard = ({
           <div className="flex items-center gap-1.5 md:justify-start">
             <span className="text-xs text-neutral-0">진행기간</span>
             <span className="text-xs font-medium text-primary-dark">
-              {formatDateString(application.programStartDate)} ~{' '}
-              {formatDateString(application.programEndDate)}
+              {application.programStartDate?.format('YY.MM.DD')} ~{' '}
+              {application.programEndDate?.format('YY.MM.DD')}
             </span>
           </div>
         </div>
       </div>
       {application.programType === 'CHALLENGE' &&
         showChallengeButton &&
-        checkChallengeStarted(application.programStartDate) && (
+        application.programStartDate?.isBefore(dayjs()) && (
           <LinkButton
             to={`/challenge/${application.programId}`}
             target="_blank"
