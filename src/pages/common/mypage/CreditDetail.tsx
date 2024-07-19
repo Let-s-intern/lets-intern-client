@@ -266,7 +266,8 @@ const CreditDetail = () => {
                   </div>
                 </div>
               </div>
-              {paymentDetail.tossInfo.status === 'DONE' ? (
+              {paymentDetail.tossInfo.status === 'DONE' &&
+              dayjs().isBefore(dayjs(paymentDetail?.programInfo.endDate)) ? (
                 <button
                   className="flex w-full items-center justify-center rounded-sm bg-neutral-80 px-5 py-2.5 font-medium text-neutral-40"
                   onClick={() => {
