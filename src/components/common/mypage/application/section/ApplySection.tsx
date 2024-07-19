@@ -52,7 +52,6 @@ const ApplySection = ({ applicationList, refetch }: ApplySectionProps) => {
           }}
         >
           {showMore ? '다른 프로그램 둘러보기' : `더보기`}
-          더보기
         </MoreButton>
       )}
     </section>
