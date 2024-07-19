@@ -19,7 +19,7 @@ const MyPage = () => {
     <div className="flex w-full flex-col items-center justify-start lg:px-[7.5rem]">
       <div className="flex w-full flex-col items-start justify-center gap-x-20 md:flex-row md:p-10 lg:px-5 lg:py-[3.75rem]">
         <nav className="flex w-full items-center justify-center md:w-auto">
-          <div className="flex w-full items-center justify-center py-1 md:w-[12.5rem] md:p-0">
+          <div className="flex w-full items-center justify-center py-8 md:w-[12.5rem] md:p-0">
             <div className="flex w-full flex-row items-center gap-x-2 gap-y-[0.0625rem] md:flex-col md:p-2">
               <NavItem
                 to="/mypage/application"

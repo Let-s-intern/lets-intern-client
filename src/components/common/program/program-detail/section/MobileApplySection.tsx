@@ -152,7 +152,8 @@ const MobileApplySection = ({
     <div
       className={twMerge(
         'fixed bottom-0 left-0 right-0 z-30 flex max-h-[calc(100vh-60px)] w-screen flex-col items-center overflow-hidden rounded-t-lg bg-static-100 shadow-05 scrollbar-hide',
-        isShowingPayContent && 'rounded-none border-t shadow-none',
+        isShowingPayContent &&
+          'mx-auto max-w-5xl rounded-none border-t px-5 py-6 shadow-none',
       )}
     >
       {!isShowingPayContent ? (

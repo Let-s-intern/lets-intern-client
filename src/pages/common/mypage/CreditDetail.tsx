@@ -47,7 +47,7 @@ const CreditDetail = () => {
 
   return (
     <section
-      className="flex w-full flex-col pt-8"
+      className="flex w-full flex-col px-5 md:px-0"
       data-program-text={paymentDetail?.programInfo?.title}
     >
       <div className="flex items-center justify-start gap-x-2">
@@ -75,11 +75,14 @@ const CreditDetail = () => {
         ) : (
           <>
             <div className="flex w-full flex-col items-start justify-center gap-y-6">
-              {paymentDetail.tossInfo.status === 'CANCELED' &&
+              {(paymentDetail.tossInfo.status === 'CANCELED' ||
+                paymentDetail.tossInfo.status === 'PARTIAL_CANCELED') &&
                 paymentDetail.tossInfo.cancels && (
                   <div className="flex w-full gap-2 rounded-xxs bg-neutral-90 px-4 py-3">
                     <div className="text-sm font-semibold text-system-error">
-                      환불 완료
+                      {paymentDetail.tossInfo.status === 'CANCELED'
+                        ? '환불 완료'
+                        : '부분 환불 완료'}
                     </div>
                     <div className="flex grow items-center justify-end">
                       {convertDateFormat(
@@ -180,12 +183,12 @@ const CreditDetail = () => {
               <div className="flex w-full flex-col items-start justify-start gap-y-3">
                 <div className="flex w-full items-center justify-start gap-3 border-y-[1.5px] border-neutral-0 px-3 py-5 font-bold text-neutral-0">
                   <div>
-                    {paymentDetail.tossInfo.status === 'CANCELED'
+                    {paymentDetail.tossInfo.status !== 'DONE'
                       ? '총 환불 금액'
                       : '총 결제 금액'}
                   </div>
                   <div className="flex grow items-center justify-end">
-                    {paymentDetail.tossInfo.status === 'CANCELED' &&
+                    {paymentDetail.tossInfo.status !== 'DONE' &&
                     paymentDetail.tossInfo.cancels
                       ? paymentDetail.tossInfo.cancels[0].cancelAmount?.toLocaleString()
                       : paymentDetail.tossInfo.totalAmount?.toLocaleString()}
@@ -207,7 +210,7 @@ const CreditDetail = () => {
                   />
                   {paymentDetail.tossInfo.status === 'PARTIAL_CANCELED' && (
                     <PaymentInfoRow
-                      title={`부분 환불 (${paymentDetail.programInfo.programType})`}
+                      title={`부분 환불 (${paymentDetail.programInfo.programType === 'CHALLENGE' ? '챌린지' : '라이브'})`}
                       content={`-${paymentDetail.tossInfo.cancels ? paymentDetail.tossInfo.cancels[0].cancelAmount?.toLocaleString() : 0}원`}
                       subInfo={
                         <div className="text-xs font-medium text-primary-dark">
