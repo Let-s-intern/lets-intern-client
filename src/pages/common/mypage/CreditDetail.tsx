@@ -47,7 +47,7 @@ const CreditDetail = () => {
 
   return (
     <section
-      className="flex w-full flex-col pt-8"
+      className="flex w-full flex-col px-5 md:px-0"
       data-program-text={paymentDetail?.programInfo?.title}
     >
       <div className="flex items-center justify-start gap-x-2">

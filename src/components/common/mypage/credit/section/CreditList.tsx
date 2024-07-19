@@ -21,9 +21,9 @@ const CreditList = () => {
   const { data: paymentData, isLoading, isError } = usePaymentQuery();
 
   return (
-    <section className="flex flex-col gap-y-6">
+    <section className="flex flex-col">
       <h1 className="text-lg font-semibold">결제내역</h1>
-      <h2 className="font-semibold">결제프로그램</h2>
+      <h2 className="pt-6 font-semibold">결제프로그램</h2>
       <div className="flex w-full flex-col gap-y-10 py-5">
         {paymentData ? (
           Object.entries(groupByDate(paymentData.payments)).map(
