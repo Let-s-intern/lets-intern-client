@@ -80,8 +80,8 @@ const PaymentFail = () => {
                 content={params?.price.toLocaleString() + '원'}
               />
               <PaymentInfoRow
-                title={`할인 (${Math.floor((params?.discount ?? 0) / (params?.price ?? 1))}%)`}
-                content={'-' + params?.discount.toLocaleString() + '원'}
+                title={`할인 (${Math.floor(((params?.discount ?? 0) / (params?.price ?? 1)) * 100)}%)`}
+                content={'-' + (params?.discount ?? 0).toLocaleString() + '원'}
               />
               <PaymentInfoRow
                 title={`쿠폰할인`}
