@@ -57,7 +57,7 @@ const ProgramCard = ({
       </Link>
       <div>
         <div className="flex justify-between">
-          <h2 className="mb-3 break-keep text-xsmall16 font-semibold">
+          <h2 className="text-xsmall16 mb-3 break-keep font-semibold">
             <Link to={programLink} className="hover:underline">
               {title}
             </Link>
@@ -77,7 +77,7 @@ const ProgramCard = ({
           </div>
         ) : null}
 
-        {showType ? (
+        {showType && progressType !== 'none' ? (
           <div className="flex items-center gap-1.5">
             <span className="text-xs text-neutral-0">진행방식</span>
             <span className="text-xs font-medium text-primary-dark">
