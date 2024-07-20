@@ -10,6 +10,7 @@ export const getPaymentSearchParams = ({
   totalPrice,
   programTitle,
   programType,
+  progressType,
   programId,
 }: {
   payInfo: PayInfo;
@@ -25,6 +26,7 @@ export const getPaymentSearchParams = ({
   totalPrice: number;
   programTitle: string;
   programType: string;
+  progressType: string;
   programId: number;
 }): URLSearchParams => {
   const result = new URLSearchParams();
@@ -41,6 +43,7 @@ export const getPaymentSearchParams = ({
   result.set('name', userInfo.name);
   result.set('programTitle', programTitle);
   result.set('programType', programType);
+  result.set('progressType', progressType);
   result.set('programId', programId.toString());
   return result;
 };
@@ -124,6 +127,11 @@ const base = {
   name: z.string(),
   programTitle: z.string(),
   programType: z.union([z.literal('challenge'), z.literal('live')]),
+  progressType: z.union([
+    z.literal('all'),
+    z.literal('online'),
+    z.literal('offline'),
+  ]),
   programId: z.coerce.number(),
 };
 
