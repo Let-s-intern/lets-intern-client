@@ -1,7 +1,6 @@
 import dayjs from 'dayjs';
 
 import { UserAdmin } from '../../../../../schema';
-import { convertTypeToBank } from '../../../../../utils/convertTypeToBank';
 import ActionButton from '../../../ui/button/ActionButton';
 import TD from '../../../ui/table/regacy/TD';
 
@@ -11,6 +10,7 @@ interface TableBodyProps {
 }
 
 const TableBody = ({ userList, handleDeleteUser }: TableBodyProps) => {
+  console.log('userList', userList);
   return (
     <tbody>
       {userList.map((user) => (
@@ -19,12 +19,8 @@ const TableBody = ({ userList, handleDeleteUser }: TableBodyProps) => {
           <TD>{user.email}</TD>
           <TD>{`${user.contactEmail ? user.contactEmail : '-'}`}</TD>
           <TD>{user.phoneNum}</TD>
-          {/* <TD>참여 프로그램 없음</TD> */}
           <TD>{dayjs(user.createdDate).format('YYYY-MM-DD (dd)')}</TD>
-          <TD>
-            {user.accountType ? convertTypeToBank(user.accountType) : '없음'}
-          </TD>
-          <TD>{user.accountNum || '없음'}</TD>
+          <TD>보기</TD>
           <TD>{user.marketingAgree ? 'O' : 'X'}</TD>
           <TD>
             <div className="flex justify-center gap-2">
