@@ -50,80 +50,77 @@ const PayContent = ({
     setContentIndex(contentIndex - 2);
   };
 
+  const isFree =
+    payInfo.challengePriceType === 'FREE' ||
+    payInfo.livePriceType === 'FREE' ||
+    payInfo.price === 0;
+
   return (
     <div className={twMerge('flex h-full flex-col gap-6', isMobile && 'px-5')}>
-      {payInfo.challengePriceType !== 'FREE' &&
-        payInfo.livePriceType !== 'FREE' && (
-          <>
-            <h2 className="text-small20 font-bold" ref={topRef}>
-              결제하기
-            </h2>
-            <h3 className="text-xsmall16 font-semibold text-neutral-0">
-              {programType === 'live'
-                ? 'LIVE 클래스'
-                : programType === 'challenge'
-                  ? '챌린지'
-                  : ''}{' '}
-              프로그램 정보
-            </h3>
-            <ProgramCard
-              border={false}
-              type={programType}
-              id={programId}
-              title={programQuery.query.data?.title ?? ''}
-              thumbnail={programQuery.query.data?.thumbnail ?? ''}
-              startDate={programDate.startDate ?? dayjs()}
-              endDate={programDate.endDate ?? dayjs()}
-              thumbnailLinkClassName="max-w-32"
-            />
-            <h3 className="text-xsmall16 font-semibold text-neutral-0">
-              참여자 정보
-            </h3>
-            <div className="mb-4 flex flex-col gap-3">
-              <div className="flex flex-col gap-1">
-                <label className="ml-3 text-xsmall14 font-semibold">이름</label>
-                <Input
-                  value={userInfo.name}
-                  disabled
-                  readOnly
-                  className="text-sm"
-                />
-              </div>
-              <div className="flex flex-col gap-1">
-                <label className="ml-3 text-xsmall14 font-semibold">
-                  휴대폰 번호
-                </label>
-                <Input
-                  value={userInfo.phoneNumber}
-                  disabled
-                  readOnly
-                  className="text-sm"
-                />
-              </div>
-              <div className="flex flex-col gap-1">
-                <label className="ml-3 text-xsmall14 font-semibold">
-                  이메일
-                </label>
-                <Input
-                  value={userInfo.contactEmail}
-                  disabled
-                  readOnly
-                  className="text-sm"
-                />
-              </div>
-            </div>
+      <h2 className="text-small20 font-bold" ref={topRef}>
+        결제하기
+      </h2>
+      <h3 className="text-xsmall16 font-semibold text-neutral-0">
+        {programType === 'live'
+          ? 'LIVE 클래스'
+          : programType === 'challenge'
+            ? '챌린지'
+            : ''}{' '}
+        프로그램 정보
+      </h3>
+      <ProgramCard
+        border={false}
+        type={programType}
+        id={programId}
+        title={programQuery.query.data?.title ?? ''}
+        thumbnail={programQuery.query.data?.thumbnail ?? ''}
+        startDate={programDate.startDate ?? dayjs()}
+        endDate={programDate.endDate ?? dayjs()}
+        thumbnailLinkClassName="max-w-32"
+      />
+      <h3 className="text-xsmall16 font-semibold text-neutral-0">
+        참여자 정보
+      </h3>
+      <div className="mb-4 flex flex-col gap-3">
+        <div className="flex flex-col gap-1">
+          <label className="ml-3 text-xsmall14 font-semibold">이름</label>
+          <Input value={userInfo.name} disabled readOnly className="text-sm" />
+        </div>
+        <div className="flex flex-col gap-1">
+          <label className="ml-3 text-xsmall14 font-semibold">
+            휴대폰 번호
+          </label>
+          <Input
+            value={userInfo.phoneNumber}
+            disabled
+            readOnly
+            className="text-sm"
+          />
+        </div>
+        <div className="flex flex-col gap-1">
+          <label className="ml-3 text-xsmall14 font-semibold">이메일</label>
+          <Input
+            value={userInfo.contactEmail}
+            disabled
+            readOnly
+            className="text-sm"
+          />
+        </div>
+      </div>
 
-            <div className="font-semibold text-neutral-0">결제 정보</div>
-            <CouponSection setCoupon={setCoupon} programType={programType} />
-            <hr className="bg-neutral-85" />
-            <PriceSection payInfo={payInfo} coupon={coupon} />
-            <hr className="bg-neutral-85" />
-            <div className="flex h-10 items-center justify-between px-3 font-semibold text-neutral-0">
-              <span>결제금액</span>
-              <span>{totalPrice.toLocaleString()}원</span>
-            </div>
-          </>
-        )}
+      {!isFree ? (
+        <>
+          <div className="font-semibold text-neutral-0">결제 정보</div>
+          <CouponSection setCoupon={setCoupon} programType={programType} />
+          <hr className="bg-neutral-85" />
+          <PriceSection payInfo={payInfo} coupon={coupon} />
+          <hr className="bg-neutral-85" />
+          <div className="flex h-10 items-center justify-between px-3 font-semibold text-neutral-0">
+            <span>결제금액</span>
+            <span>{totalPrice.toLocaleString()}원</span>
+          </div>
+        </>
+      ) : null}
 
       <div
         className={twMerge(
@@ -145,7 +142,7 @@ const PayContent = ({
             handleApplyButtonClick();
           }}
         >
-          {totalPrice === 0 ? '신청하기' : '결제하기'}
+          {isFree ? '신청하기' : '결제하기'}
         </button>
       </div>
     </div>
