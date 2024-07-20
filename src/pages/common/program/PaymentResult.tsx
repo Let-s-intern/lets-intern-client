@@ -95,7 +95,7 @@ const PaymentResult = () => {
       data-program-text={program.query.data?.title}
     >
       <div className="mx-auto max-w-5xl">
-        <div className="flex w-full items-center justify-start py-6 text-small20 font-bold text-neutral-0">
+        <div className="text-small20 flex w-full items-center justify-start py-6 font-bold text-neutral-0">
           결제 확인하기
         </div>
         <div className="flex min-h-52 w-full flex-col items-center justify-center">
@@ -123,7 +123,7 @@ const PaymentResult = () => {
                         'progressType' in program.query.data &&
                         program.query.data.progressType
                           ? program.query.data.progressType
-                          : ''
+                          : 'none'
                       }
                       showType={params.programType === 'live'}
                     />
