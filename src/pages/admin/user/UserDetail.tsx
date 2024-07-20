@@ -90,8 +90,10 @@ const UserDetail = () => {
                 {data.applicationInfo.length < 1 ? (
                   <div>신청 내역이 없습니다.</div>
                 ) : (
-                  data.applicationInfo.map((applicationInfo) => (
-                    <div key={applicationInfo.programId}>
+                  data.applicationInfo.map((applicationInfo, idx) => (
+                    <div
+                      key={data.userInfo.id + applicationInfo.programId + idx}
+                    >
                       {applicationInfo.programTitle}
                     </div>
                   ))

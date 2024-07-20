@@ -38,13 +38,15 @@ const TableBody = ({ userList, handleDeleteUser }: TableBodyProps) => {
             >
               보기
               <div
-                className={`absolute top-8 z-10 flex ${hoveredUserId === user.userInfo.id ? 'block' : 'hidden'} flex-col items-center justify-center gap-y-1 rounded-xl bg-neutral-70 p-4`}
+                className={`absolute top-8 z-10 flex max-h-24 overflow-y-auto ${hoveredUserId === user.userInfo.id ? 'block' : 'hidden'} flex-col items-center justify-start gap-y-1 rounded-xl bg-neutral-70 p-4`}
               >
                 {user.applicationInfos.length < 1 ? (
                   <div>신청 내역이 없습니다.</div>
                 ) : (
-                  user.applicationInfos.map((applicationInfo) => (
-                    <div key={applicationInfo.programId}>
+                  user.applicationInfos.map((applicationInfo, idx) => (
+                    <div
+                      key={`${user.userInfo.id}-${applicationInfo.programId}-${idx}`}
+                    >
                       {applicationInfo.programTitle}
                     </div>
                   ))

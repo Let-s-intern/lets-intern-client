@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { Grade, userAdminDetailType, userAdminType } from '../schema';
+import { userAdminDetailType, userAdminType } from '../schema';
 import axios from '../utils/axios';
 
 export const UseUserAdminQueryKey = 'useUserListQueryKey';
@@ -87,13 +87,21 @@ export type PatchUserType = {
   phoneNum: string;
   university: string | null;
   inflowPath: string | null;
-  grade: Grade | null;
+  grade: string | null;
   major: string | null;
   wishJob: string | null;
   wishCompany: string | null;
 };
 
-export const usePatchUserAdminMutation = (userId: number) => {
+export const usePatchUserAdminMutation = ({
+  userId,
+  successCallback,
+  errorCallback,
+}: {
+  userId: number;
+  successCallback?: () => void;
+  errorCallback?: (error: Error) => void;
+}) => {
   const client = useQueryClient();
 
   return useMutation({
@@ -104,6 +112,10 @@ export const usePatchUserAdminMutation = (userId: number) => {
       client.invalidateQueries({
         queryKey: [UseUserAdminQueryKey, UseUserDetailAdminQueryKey, userId],
       });
+      successCallback && successCallback();
+    },
+    onError: (error: Error) => {
+      errorCallback && errorCallback(error);
     },
   });
 };

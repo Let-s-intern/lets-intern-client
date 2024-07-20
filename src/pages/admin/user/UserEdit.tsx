@@ -1,12 +1,14 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
-import { TextField } from '@mui/material';
 import {
   PatchUserType,
   usePatchUserAdminMutation,
   useUserDetailAdminQuery,
 } from '../../../api/user';
+import ActionButton from '../../../components/admin/ui/button/ActionButton';
+import GradeDropdown from '../../../components/common/mypage/privacy/form-control/GradeDropdown';
+import Input from '../../../components/ui/input/Input';
 import { isValidEmail, isValidPhoneNumber } from '../../../utils/valid';
 
 const UserEdit = () => {
@@ -19,7 +21,7 @@ const UserEdit = () => {
     phoneNum: '',
     university: null,
     inflowPath: null,
-    grade: null,
+    grade: '',
     major: null,
     wishJob: null,
     wishCompany: null,
@@ -30,11 +32,17 @@ const UserEdit = () => {
     enabled: params.userId !== undefined,
   });
 
-  const {
-    mutate: tryPatchUserDetail,
-    isPending,
-    isSuccess,
-  } = usePatchUserAdminMutation(Number(params.userId || 0));
+  const { mutate: tryPatchUserDetail } = usePatchUserAdminMutation({
+    userId: Number(params.userId || 0),
+    successCallback: () => {
+      alert('수정되었습니다.');
+      navigate(-1);
+    },
+    errorCallback: (error: Error) => {
+      console.log(error);
+      alert('수정에 실패했습니다.');
+    },
+  });
 
   useEffect(() => {
     if (data) {
@@ -84,6 +92,10 @@ const UserEdit = () => {
     setUserForm({ ...userForm, phoneNum });
   };
 
+  const handleGradeChange = (grade: string) => {
+    setUserForm({ ...userForm, grade: grade });
+  };
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!userForm.name) {
@@ -104,7 +116,7 @@ const UserEdit = () => {
 
   return (
     <div className="py flex h-full w-full flex-col items-center justify-start gap-y-8 px-8 py-16">
-      <div className="text-xl font-bold">회원 정보 수정</div>
+      <div className="w-full text-xl font-bold">회원 정보 수정</div>
       <form
         className="grid w-full grid-cols-2 flex-col items-center justify-start gap-x-5 gap-y-4"
         onSubmit={handleSubmit}
@@ -117,100 +129,103 @@ const UserEdit = () => {
           )
         ) : (
           <>
-            <TextField
+            <Input
               label="이름"
               name="name"
               value={userForm.name ? userForm.name : ''}
               onChange={handleInputChanged}
               placeholder="이름을 입력하세요"
             />
-            <TextField
+            <Input
               label="이메일"
               name="email"
               value={userForm.email ? userForm.email : ''}
               onChange={handleInputChanged}
               placeholder="이메일을 입력하세요"
             />
-            <TextField
+            <Input
               label="소통용 이메일"
               name="contactEmail"
               value={userForm.contactEmail ? userForm.contactEmail : ''}
               onChange={handleInputChanged}
               placeholder="소통용 이메일을 입력하세요"
             />
-            <TextField
+            <Input
               label="전화번호"
               name="phoneNum"
               value={userForm.phoneNum ? userForm.phoneNum : ''}
               onChange={handlePhoneNumChange}
               placeholder="010-1234-5678"
             />
-            <TextField
+            <Input
               label="유입경로"
               name="inflowPath"
               value={userForm.inflowPath ? userForm.inflowPath : ''}
               onChange={handleInputChanged}
               placeholder="유입경로를 입력하세요"
             />
-            <TextField
+            <Input
               label="학교"
               name="university"
-              value={userForm.inflowPath ? userForm.inflowPath : ''}
+              value={userForm.university ? userForm.university : ''}
               onChange={handleInputChanged}
               placeholder="학교를 입력하세요"
             />
-            <div className="flex w-full flex-col gap-y-2">
-              <div className="font-semibold">학년</div>
-              <div className="w-full rounded-sm bg-neutral-90 px-4 py-3">
-                {data.userInfo.grade ? gradeToText[data.userInfo.grade] : '-'}
-              </div>
+            <div className="z-10 flex w-full flex-col gap-y-2">
+              <GradeDropdown
+                value={userForm.grade === null ? '' : userForm.grade}
+                setValue={handleGradeChange}
+                type="MYPAGE"
+              />
             </div>
-            <div className="flex w-full flex-col gap-y-2">
-              <div className="font-semibold">전공</div>
-              <div className="w-full rounded-sm bg-neutral-90 px-4 py-3">
-                {data.userInfo.major ? data.userInfo.major : '-'}
-              </div>
-            </div>
-            <div className="flex w-full flex-col gap-y-2">
-              <div className="font-semibold">희망 직무</div>
-              <div className="w-full rounded-sm bg-neutral-90 px-4 py-3">
-                {data.userInfo.wishJob ? data.userInfo.wishJob : '-'}
-              </div>
-            </div>
-            <div className="flex w-full flex-col gap-y-2">
-              <div className="font-semibold">희망 기업</div>
-              <div className="w-full rounded-sm bg-neutral-90 px-4 py-3">
-                {data.userInfo.wishCompany ? data.userInfo.wishCompany : '-'}
-              </div>
-            </div>
+            <Input
+              label="전공"
+              name="major"
+              value={userForm.major ? userForm.major : ''}
+              onChange={handleInputChanged}
+              placeholder="전공을 입력하세요"
+            />
+            <Input
+              label="희망 직무"
+              name="wishJob"
+              value={userForm.wishJob ? userForm.wishJob : ''}
+              onChange={handleInputChanged}
+              placeholder="희망 직무를 입력하세요"
+            />
+            <Input
+              label="희망 기업"
+              name="wishCompany"
+              value={userForm.wishCompany ? userForm.wishCompany : ''}
+              onChange={handleInputChanged}
+              placeholder="희망 기업을 입력하세요"
+            />
             <div className="flex w-full flex-col gap-y-2">
               <div className="font-semibold">참여 프로그램 내역</div>
               <div className="w-full rounded-sm bg-neutral-90 px-4 py-3">
                 {data.applicationInfo.length < 1 ? (
                   <div>신청 내역이 없습니다.</div>
                 ) : (
-                  data.applicationInfo.map((applicationInfo) => (
-                    <div key={applicationInfo.programId}>
+                  data.applicationInfo.map((applicationInfo, idx) => (
+                    <div
+                      key={data.userInfo.id + applicationInfo.programId + idx}
+                    >
                       {applicationInfo.programTitle}
                     </div>
                   ))
                 )}
               </div>
             </div>
+            <div className="col-span-2 mt-9 flex w-full items-center justify-center gap-x-5">
+              <ActionButton bgColor="gray" onClick={handleCancelButtonClick}>
+                닫기
+              </ActionButton>
+              <ActionButton bgColor="green" type={'submit'}>
+                수정하기
+              </ActionButton>
+            </div>
           </>
         )}
       </form>
-      <div className="flex items-center justify-center gap-x-5">
-        <ActionButton bgColor="gray" onClick={() => navigate(-1)}>
-          이전
-        </ActionButton>
-        <ActionButton
-          to={`/admin/users/${data?.userInfo.id}/edit`}
-          bgColor="green"
-        >
-          수정
-        </ActionButton>
-      </div>
     </div>
   );
 };

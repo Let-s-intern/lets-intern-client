@@ -1101,7 +1101,7 @@ export const userAdminDetailType = z.object({
     phoneNum: z.string(),
     university: z.string().nullable(),
     inflowPath: z.string().nullable(),
-    grade: grade.nullable(),
+    grade: z.string().nullable(),
     major: z.string().nullable(),
     wishJob: z.string().nullable(),
     wishCompany: z.string().nullable(),
