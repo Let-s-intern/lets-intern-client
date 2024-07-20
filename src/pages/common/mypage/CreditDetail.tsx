@@ -109,7 +109,13 @@ const CreditDetail = () => {
                     </div>
                     <div className="flex w-full items-center justify-start gap-x-4 text-xs font-medium">
                       <div className="text-neutral-30">진행 방식</div>
-                      <div className="text-primary-dark">{`${paymentDetail.programInfo.programType}`}</div>
+                      <div className="text-primary-dark">{`${
+                        paymentDetail.programInfo.programType === 'CHALLENGE'
+                          ? '챌린지'
+                          : paymentDetail.programInfo.programType === 'LIVE'
+                            ? '라이브 클래스'
+                            : ''
+                      }`}</div>
                     </div>
                   </div>
                 </div>

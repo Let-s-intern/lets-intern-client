@@ -10,7 +10,7 @@ const ProgramCard = ({
   title,
   type,
   border = true,
-  showLiveType,
+  showType,
   thumbnailClassName,
   thumbnailLinkClassName,
 }: {
@@ -18,12 +18,12 @@ const ProgramCard = ({
   id: number;
   title: string;
   thumbnail: string;
-  startDate: Dayjs;
-  endDate: Dayjs;
+  startDate: Dayjs | null | undefined;
+  endDate: Dayjs | null | undefined;
   /** border 부분이 렌더링 될지 여부 */
   border?: boolean;
-  /** 진행방식: Live 표기 여부 (챌린지일 경우 무시) */
-  showLiveType?: boolean;
+  /** 진행방식 표기 여부 */
+  showType?: boolean;
   thumbnailClassName?: string;
   thumbnailLinkClassName?: string;
 }) => {
@@ -48,35 +48,38 @@ const ProgramCard = ({
           src={thumbnail}
           alt={`${title} 썸네일`}
           className={twMerge(
-            'min-h-[104px] min-w-[124px] object-cover',
+            'min-h-[104px] min-w-[124px] rounded-sm object-cover',
             thumbnailClassName,
           )}
         />
       </Link>
-      <div className="flex flex-1 flex-col gap-2">
+      <div>
         <div className="flex justify-between">
-          <h2 className="break-keep text-xsmall16 font-semibold">
+          <h2 className="mb-3 break-keep text-xsmall16 font-semibold">
             <Link to={programLink} className="hover:underline">
               {title}
             </Link>
           </h2>
         </div>
 
-        <div className="flex items-center gap-1.5">
-          <span className="text-xs text-neutral-0">진행일정</span>
-          <span className="text-xs font-medium text-primary-dark">
-            {type === 'challenge'
-              ? `${startDate.format('YY.MM.DD')} ~ ${endDate.format(
-                  'YY.MM.DD',
-                )}`
-              : startDate.format('YY.MM.DD')}
-          </span>
-        </div>
-        {type === 'live' && showLiveType ? (
+        {startDate ? (
+          <div className="mb-1 flex items-center gap-1.5">
+            <span className="text-xs text-neutral-0">진행일정</span>
+            <span className="text-xs font-medium text-primary-dark">
+              {type === 'challenge'
+                ? `${startDate.format('YY.MM.DD')} ~ ${
+                    endDate ? endDate.format('YY.MM.DD') : ''
+                  }`
+                : startDate.format('YY.MM.DD')}
+            </span>
+          </div>
+        ) : null}
+
+        {showType ? (
           <div className="flex items-center gap-1.5">
             <span className="text-xs text-neutral-0">진행방식</span>
             <span className="text-xs font-medium text-primary-dark">
-              라이브 클래스
+              {type === 'challenge' ? '챌린지' : '라이브 클래스'}
             </span>
           </div>
         ) : null}

@@ -1,4 +1,3 @@
-import dayjs from 'dayjs';
 import { useRef } from 'react';
 import { FaArrowLeft } from 'react-icons/fa6';
 import { twMerge } from 'tailwind-merge';
@@ -74,8 +73,8 @@ const PayContent = ({
         id={programId}
         title={programQuery.query.data?.title ?? ''}
         thumbnail={programQuery.query.data?.thumbnail ?? ''}
-        startDate={programDate.startDate ?? dayjs()}
-        endDate={programDate.endDate ?? dayjs()}
+        startDate={programDate.startDate}
+        endDate={programDate.endDate}
         thumbnailLinkClassName="max-w-32"
       />
       <h3 className="text-xsmall16 font-semibold text-neutral-0">

@@ -1,4 +1,3 @@
-import dayjs from 'dayjs';
 import { useEffect, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { useProgramQuery } from '../../../api/program';
@@ -60,9 +59,10 @@ const PaymentFail = () => {
                 id={params.programId}
                 title={program.query.data?.title ?? ''}
                 thumbnail={program.query.data?.thumbnail ?? ''}
-                startDate={program.query.data?.startDate ?? dayjs()}
-                endDate={program.query.data?.endDate ?? dayjs()}
+                startDate={program.query.data?.startDate}
+                endDate={program.query.data?.endDate}
                 thumbnailLinkClassName="max-w-32"
+                showType
               />
             ) : null}
           </div>
