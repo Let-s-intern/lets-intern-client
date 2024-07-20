@@ -29,9 +29,9 @@ export const getPaymentSearchParams = ({
 }): URLSearchParams => {
   const result = new URLSearchParams();
   result.set('priceId', priceId.toString());
-  result.set('couponId', coupon && coupon.id ? coupon.id.toString() : '');
   result.set('price', payInfo.price.toString());
   result.set('discount', payInfo.discount.toString());
+  result.set('couponId', coupon && coupon.id ? coupon.id.toString() : '');
   result.set('couponPrice', coupon ? coupon.price.toString() : '0');
   result.set('totalPrice', totalPrice.toString());
   result.set('contactEmail', userInfo.contactEmail);

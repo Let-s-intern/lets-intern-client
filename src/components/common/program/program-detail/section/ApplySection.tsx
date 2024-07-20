@@ -7,6 +7,7 @@ import {
 } from '../../../../../api/application';
 import { useProgramQuery } from '../../../../../api/program';
 import { getPaymentSearchParams } from '../../../../../data/getPaymentSearchParams';
+import useRunOnce from '../../../../../hooks/useRunOnce';
 import { AccountType } from '../../../../../schema';
 import { ProgramType } from '../../../../../types/common';
 import { ICouponForm } from '../../../../../types/interface';
@@ -28,6 +29,7 @@ export interface UserInfo {
   phoneNumber: string;
   contactEmail: string;
   question: string;
+  initialized?: boolean;
 }
 
 export interface PayInfo {
@@ -115,17 +117,84 @@ const ApplySection = ({
     programId,
   );
 
+  // searchParams 에 관련 정보가 있을 때 초기 세팅해주고 값 없애기
+  useRunOnce(() => {
+    const searchParams = new URLSearchParams(window.location.search);
+
+    const contentIndex = searchParams.get('contentIndex');
+    const couponId = searchParams.get('couponId');
+    const couponPrice = searchParams.get('couponPrice');
+    const contactEmail = searchParams.get('contactEmail');
+    const question = searchParams.get('question');
+    const email = searchParams.get('email');
+    const phone = searchParams.get('phone');
+    const name = searchParams.get('name');
+
+    if (
+      typeof contactEmail === 'string' &&
+      typeof question === 'string' &&
+      typeof email === 'string' &&
+      typeof phone === 'string' &&
+      typeof name === 'string'
+    ) {
+      // initialize 무시한다 (우선수위 높음)
+      setUserInfo({
+        name,
+        email,
+        phoneNumber: phone,
+        contactEmail,
+        question,
+        initialized: true,
+      });
+    }
+
+    if (contentIndex === 'pay') {
+      setContentIndex(4);
+    }
+
+    if (couponId && couponPrice) {
+      setCoupon({
+        id: Number(couponId),
+        price: Number(couponPrice),
+      });
+    }
+
+    const newSearchParams = new URLSearchParams(searchParams);
+    newSearchParams.delete('contentIndex');
+    newSearchParams.delete('couponId');
+    newSearchParams.delete('couponPrice');
+    newSearchParams.delete('contactEmail');
+    newSearchParams.delete('question');
+    newSearchParams.delete('email');
+    newSearchParams.delete('phone');
+    newSearchParams.delete('name');
+
+    window.history.replaceState(
+      {},
+      '',
+      `${window.location.pathname}${newSearchParams.toString()}`,
+    );
+  });
+
+  /** application으로부터 user 정보 초기화 */
   useEffect(() => {
     if (!application) {
       return;
     }
 
-    setUserInfo({
-      name: application.name ?? '',
-      email: application.email ?? '',
-      phoneNumber: application.phoneNumber ?? '',
-      contactEmail: application.contactEmail ?? '',
-      question: '',
+    setUserInfo((prev) => {
+      if (prev.initialized) {
+        return prev;
+      }
+
+      return {
+        name: application.name ?? '',
+        email: application.email ?? '',
+        phoneNumber: application.phoneNumber ?? '',
+        contactEmail: application.contactEmail ?? '',
+        question: '',
+        initialized: true,
+      };
     });
   }, [application]);
 

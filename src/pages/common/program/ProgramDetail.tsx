@@ -12,6 +12,7 @@ import Header from '../../../components/common/program/program-detail/header/Hea
 import ApplySection from '../../../components/common/program/program-detail/section/ApplySection';
 import MobileApplySection from '../../../components/common/program/program-detail/section/MobileApplySection';
 import TabSection from '../../../components/common/program/program-detail/section/TabSection';
+import useRunOnce from '../../../hooks/useRunOnce';
 import drawerReducer from '../../../reducers/drawerReducer';
 import useAuthStore from '../../../store/useAuthStore';
 import { ProgramType } from '../../../types/common';
@@ -29,6 +30,15 @@ const ProgramDetail = ({ programType }: ProgramDetailProps) => {
   const programId = Number(params.programId);
   const isDesktop = useMediaQuery('(min-width: 991px)');
   const [isDrawerOpen, dispatchIsDrawerOpen] = useReducer(drawerReducer, false);
+
+  useRunOnce(() => {
+    const searchParams = new URLSearchParams(window.location.search);
+    if (searchParams.has('contentIndex')) {
+      dispatchIsDrawerOpen({
+        type: 'open',
+      });
+    }
+  });
 
   const { data: application } = useProgramApplicationQuery(
     programType,
