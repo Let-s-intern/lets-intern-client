@@ -1,118 +1,114 @@
-import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
-import axios from '../../../utils/axios';
-import classes from './UserDetail.module.scss';
+import { useUserDetailAdminQuery } from '../../../api/user';
 import ActionButton from '../../../components/admin/ui/button/ActionButton';
-import { convertTypeToBank } from '../../../utils/convertTypeToBank';
+import { gradeToText } from '../../../utils/convert';
 
 const UserDetail = () => {
   const params = useParams();
   const navigate = useNavigate();
-  const [user, setUser] = useState<any>({});
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<unknown>(null);
 
-  useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const res = await axios.get(`/user/admin/${params.userId}`);
-        setUser(res.data);
-      } catch (error) {
-        setError(error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchUser();
-  }, [params.userId]);
-
-  if (loading) {
-    return <div className={classes.container} />;
-  }
-
-  if (error) {
-    return <div className={classes.container}>에러 발생</div>;
-  }
+  const { data, isLoading } = useUserDetailAdminQuery({
+    userId: Number(params.userId || 0),
+    enabled: params.userId !== undefined,
+  });
 
   return (
-    <div className={classes.container}>
-      <div className={classes.content}>
-        {user.name && (
+    <div className="py flex h-full w-full flex-col items-center justify-start gap-y-8 px-8 py-16">
+      <div className="grid w-full grid-cols-2 flex-col items-center justify-start gap-x-5 gap-y-4">
+        {!data ? (
+          isLoading ? (
+            <div>로딩 중...</div>
+          ) : (
+            <div>데이터가 없습니다.</div>
+          )
+        ) : (
           <>
-            <span className={classes.label}>이름</span>
-            <span>{user.name}</span>
+            <div className="flex w-full flex-col gap-y-2">
+              <div className="font-semibold">이름</div>
+              <div className="w-full rounded-sm bg-neutral-90 px-4 py-3">
+                {data.userInfo.name}
+              </div>
+            </div>
+            <div className="flex w-full flex-col gap-y-2">
+              <div className="font-semibold">이메일</div>
+              <div className="w-full rounded-sm bg-neutral-90 px-4 py-3">
+                {data.userInfo.email}
+              </div>
+            </div>
+            <div className="flex w-full flex-col gap-y-2">
+              <div className="font-semibold">소통용 이메일</div>
+              <div className="w-full rounded-sm bg-neutral-90 px-4 py-3">
+                {data.userInfo.contactEmail ? data.userInfo.contactEmail : '-'}
+              </div>
+            </div>
+            <div className="flex w-full flex-col gap-y-2">
+              <div className="font-semibold">휴대폰 번호</div>
+              <div className="w-full rounded-sm bg-neutral-90 px-4 py-3">
+                {data.userInfo.phoneNum}
+              </div>
+            </div>
+            <div className="flex w-full flex-col gap-y-2">
+              <div className="font-semibold">유입경로</div>
+              <div className="w-full rounded-sm bg-neutral-90 px-4 py-3">
+                {data.userInfo.inflowPath ? data.userInfo.inflowPath : '-'}
+              </div>
+            </div>
+            <div className="flex w-full flex-col gap-y-2">
+              <div className="font-semibold">학교</div>
+              <div className="w-full rounded-sm bg-neutral-90 px-4 py-3">
+                {data.userInfo.university ? data.userInfo.university : '-'}
+              </div>
+            </div>
+            <div className="flex w-full flex-col gap-y-2">
+              <div className="font-semibold">학년</div>
+              <div className="w-full rounded-sm bg-neutral-90 px-4 py-3">
+                {data.userInfo.grade ? gradeToText[data.userInfo.grade] : '-'}
+              </div>
+            </div>
+            <div className="flex w-full flex-col gap-y-2">
+              <div className="font-semibold">전공</div>
+              <div className="w-full rounded-sm bg-neutral-90 px-4 py-3">
+                {data.userInfo.major ? data.userInfo.major : '-'}
+              </div>
+            </div>
+            <div className="flex w-full flex-col gap-y-2">
+              <div className="font-semibold">희망 직무</div>
+              <div className="w-full rounded-sm bg-neutral-90 px-4 py-3">
+                {data.userInfo.wishJob ? data.userInfo.wishJob : '-'}
+              </div>
+            </div>
+            <div className="flex w-full flex-col gap-y-2">
+              <div className="font-semibold">희망 기업</div>
+              <div className="w-full rounded-sm bg-neutral-90 px-4 py-3">
+                {data.userInfo.wishCompany ? data.userInfo.wishCompany : '-'}
+              </div>
+            </div>
+            <div className="flex w-full flex-col gap-y-2">
+              <div className="font-semibold">참여 프로그램 내역</div>
+              <div className="w-full rounded-sm bg-neutral-90 px-4 py-3">
+                {data.applicationInfo.length < 1 ? (
+                  <div>신청 내역이 없습니다.</div>
+                ) : (
+                  data.applicationInfo.map((applicationInfo) => (
+                    <div key={applicationInfo.programId}>
+                      {applicationInfo.programTitle}
+                    </div>
+                  ))
+                )}
+              </div>
+            </div>
           </>
         )}
-        {user.email && (
-          <>
-            <span className={classes.label}>이메일</span>
-            <span>{user.email}</span>
-          </>
-        )}
-        {user.phoneNum && (
-          <>
-            <span className={classes.label}>휴대폰 번호</span>
-            <span>{user.phoneNum}</span>
-          </>
-        )}
-
-        {user.university && (
-          <>
-            <span className={classes.label}>학교</span>
-            <span>{user.university}</span>
-          </>
-        )}
-
-        {user.grade && (
-          <>
-            <span className={classes.label}>전공</span>
-            <span>{user.grade}</span>
-          </>
-        )}
-        {user.major && (
-          <>
-            <span className={classes.label}>전공</span>
-            <span>{user.major}</span>
-          </>
-        )}
-        {user.wishJob && (
-          <>
-            <span className={classes.label}>관심직군</span>
-            <span>{user.wishJob}</span>
-          </>
-        )}
-        {user.wishCompany && (
-          <>
-            <span className={classes.label}>희망기업</span>
-            <span>{user.wishCompany}</span>
-          </>
-        )}
-        {user.accountType && (
-          <>
-            <span className={classes.label}>거래은행</span>
-            <span>{convertTypeToBank(user.accountType)}</span>
-          </>
-        )}
-        {user.accountNumber && (
-          <>
-            <span className={classes.label}>계좌번호</span>
-            <span>{user.accountNumber}</span>
-          </>
-        )}
-        {/* <Label>참여 프로그램 내역</Label>
-        <Text>
-          <ol>
-            <li>챌린지 1기</li>
-            <li>부트캠프 1기</li>
-          </ol>
-        </Text> */}
       </div>
-      <div className={classes.actionGroup}>
+      <div className="flex items-center justify-center gap-x-5">
         <ActionButton bgColor="gray" onClick={() => navigate(-1)}>
           이전
         </ActionButton>
-        <ActionButton to={`/admin/users/${user.id}/edit`} bgColor="green">
+        <ActionButton
+          to={`/admin/users/${data?.userInfo.id}/edit`}
+          bgColor="green"
+        >
           수정
         </ActionButton>
       </div>

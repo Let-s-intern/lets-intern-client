@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { userAdminType } from '../schema';
+import { Grade, userAdminDetailType, userAdminType } from '../schema';
 import axios from '../utils/axios';
 
 export const UseUserAdminQueryKey = 'useUserListQueryKey';
@@ -57,6 +57,53 @@ export const useDeleteUserMutation = (
     },
     onError: (error: Error) => {
       errorCallback && errorCallback(error);
+    },
+  });
+};
+
+export const UseUserDetailAdminQueryKey = 'useUserDetailQueryKey';
+
+export const useUserDetailAdminQuery = ({
+  userId,
+  enabled,
+}: {
+  userId: number;
+  enabled?: boolean;
+}) => {
+  return useQuery({
+    enabled,
+    queryKey: [UseUserDetailAdminQueryKey, userId],
+    queryFn: async () => {
+      const res = await axios.get(`/user/${userId}`);
+      return userAdminDetailType.parse(res.data.data);
+    },
+  });
+};
+
+export type PatchUserType = {
+  name: string;
+  email: string;
+  contactEmail: string | null;
+  phoneNum: string;
+  university: string | null;
+  inflowPath: string | null;
+  grade: Grade | null;
+  major: string | null;
+  wishJob: string | null;
+  wishCompany: string | null;
+};
+
+export const usePatchUserAdminMutation = (userId: number) => {
+  const client = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (userForm: PatchUserType) => {
+      await axios.patch(`/user/${userId}`, userForm);
+    },
+    onSuccess: () => {
+      client.invalidateQueries({
+        queryKey: [UseUserAdminQueryKey, UseUserDetailAdminQueryKey, userId],
+      });
     },
   });
 };
