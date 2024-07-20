@@ -201,6 +201,7 @@ export const paymentDetailType = z.object({
     title: z.string().nullable().optional(),
     thumbnail: z.string().nullable().optional(),
     programType: z.enum(['CHALLENGE', 'LIVE', 'VOD']).nullable().optional(),
+    progressType: z.enum(['ALL', 'ONLINE', 'OFFLINE']).nullable().optional(),
     startDate: z.string().nullable().optional(),
     endDate: z.string().nullable().optional(),
     applicationId: z.number().nullable().optional(),

@@ -217,6 +217,13 @@ const ApplySection = ({
 
   const payInfo = application ? getPayInfo(application) : null;
 
+  const progressType =
+    program.query.data &&
+    'progressType' in program.query.data &&
+    program.query.data.progressType
+      ? program.query.data.progressType
+      : '';
+
   const totalPrice = useMemo(() => {
     if (!payInfo) {
       return 0;
@@ -241,6 +248,7 @@ const ApplySection = ({
       totalPrice,
       programTitle,
       programType,
+      progressType,
       programId,
     });
     navigate(`/payment?${searchParams.toString()}`);
@@ -294,6 +302,7 @@ const ApplySection = ({
           contentIndex={contentIndex}
           setContentIndex={setContentIndex}
           programType={programType}
+          progressType={progressType}
           totalPrice={totalPrice}
           programDate={programDate}
           programQuery={program}

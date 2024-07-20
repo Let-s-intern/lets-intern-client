@@ -12,6 +12,7 @@ const ProgramCard = ({
   border = true,
   showType,
   thumbnailClassName,
+  progressType,
   thumbnailLinkClassName,
 }: {
   type: 'challenge' | 'live';
@@ -24,6 +25,7 @@ const ProgramCard = ({
   border?: boolean;
   /** 진행방식 표기 여부 */
   showType?: boolean;
+  progressType: string;
   thumbnailClassName?: string;
   thumbnailLinkClassName?: string;
 }) => {
@@ -79,7 +81,11 @@ const ProgramCard = ({
           <div className="flex items-center gap-1.5">
             <span className="text-xs text-neutral-0">진행방식</span>
             <span className="text-xs font-medium text-primary-dark">
-              {type === 'challenge' ? '챌린지' : '라이브 클래스'}
+              {progressType === 'ALL'
+                ? '온라인/오프라인'
+                : progressType === 'ONLINE'
+                  ? '온라인'
+                  : '오프라인'}
             </span>
           </div>
         ) : null}

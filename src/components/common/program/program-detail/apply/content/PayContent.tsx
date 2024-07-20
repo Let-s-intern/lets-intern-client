@@ -20,6 +20,7 @@ interface PayContentProps {
   contentIndex: number;
   setContentIndex: (contentIndex: number) => void;
   programType: 'live' | 'challenge';
+  progressType: string;
   totalPrice: number;
   programDate: ProgramDate;
   programQuery: ProgramQuery;
@@ -36,6 +37,7 @@ const PayContent = ({
   contentIndex,
   setContentIndex,
   programType,
+  progressType,
   totalPrice,
   programDate,
   programQuery,
@@ -75,6 +77,7 @@ const PayContent = ({
         thumbnail={programQuery.query.data?.thumbnail ?? ''}
         startDate={programDate.startDate}
         endDate={programDate.endDate}
+        progressType={progressType}
         thumbnailLinkClassName="max-w-32"
       />
       <h3 className="text-xsmall16 font-semibold text-neutral-0">

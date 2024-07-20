@@ -143,6 +143,13 @@ const MobileApplySection = ({
 
   const program = useProgramQuery({ programId, type: programType });
 
+  const progressType =
+    program.query.data &&
+    'progressType' in program.query.data &&
+    program.query.data.progressType
+      ? program.query.data.progressType
+      : '';
+
   const programDate =
     program && program.query.data
       ? {
@@ -202,6 +209,7 @@ const MobileApplySection = ({
       totalPrice,
       programTitle,
       programType,
+      progressType,
       programId,
     });
 
@@ -283,6 +291,7 @@ const MobileApplySection = ({
             contentIndex={contentIndex}
             setContentIndex={setContentIndex}
             programType={programType}
+            progressType={progressType}
             totalPrice={totalPrice}
             programDate={programDate}
             programQuery={program}
