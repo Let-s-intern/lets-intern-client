@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from 'react';
+import { useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { useProgramQuery } from '../../../api/program';
 import PaymentInfoRow from '../../../components/common/program/paymentSuccess/PaymentInfoRow';
@@ -14,6 +14,7 @@ const PaymentFail = () => {
     );
     const result = paymentFailSearchParamsSchema.safeParse(obj);
     if (!result.success) {
+      // eslint-disable-next-line no-console
       console.log(result.error);
       alert('잘못된 접근입니다.');
       return;
@@ -22,16 +23,27 @@ const PaymentFail = () => {
     return result.data;
   }, []);
 
-  useEffect(() => {
-    console.log('params', params);
-  }, [params]);
-
   const program = useProgramQuery({
     programId: params?.programId ?? -1,
     type: params?.programType ?? 'live',
   });
 
-  const programLink = `/program/${params?.programType}/${params?.programId}`;
+  const returnLink = useMemo(() => {
+    const base = `/program/${params?.programType}/${params?.programId}`;
+    if (!params) {
+      return base;
+    }
+    const searchParams = new URLSearchParams();
+    searchParams.set('contentIndex', 'pay');
+    searchParams.set('couponId', String(params.couponId));
+    searchParams.set('couponPrice', String(params.couponPrice));
+    searchParams.set('contactEmail', params.contactEmail);
+    searchParams.set('question', params.question);
+    searchParams.set('email', params.email);
+    searchParams.set('phone', params.phone);
+    searchParams.set('name', params.name);
+    return `${base}?${searchParams.toString()}`;
+  }, [params]);
 
   return (
     <div
@@ -91,7 +103,7 @@ const PaymentFail = () => {
             <hr className="border-neutral-85" />
             <div className="flex w-full flex-col items-center justify-center"></div>
             <Link
-              to={programLink}
+              to={returnLink}
               className="flex w-full flex-1 justify-center rounded-md border-2 border-primary bg-primary px-6 py-3 text-lg font-medium text-neutral-100"
             >
               다시 결제하기
