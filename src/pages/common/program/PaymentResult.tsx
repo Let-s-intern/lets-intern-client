@@ -118,7 +118,14 @@ const PaymentResult = () => {
                       startDate={program.query.data?.startDate}
                       endDate={program.query.data?.endDate}
                       thumbnailLinkClassName="max-w-32"
-                      showType
+                      progressType={
+                        program.query.data &&
+                        'progressType' in program.query.data &&
+                        program.query.data.progressType
+                          ? program.query.data.progressType
+                          : ''
+                      }
+                      showType={params.programType === 'live'}
                     />
                   ) : null}
 

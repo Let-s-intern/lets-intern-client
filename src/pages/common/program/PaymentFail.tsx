@@ -74,7 +74,8 @@ const PaymentFail = () => {
                 startDate={program.query.data?.startDate}
                 endDate={program.query.data?.endDate}
                 thumbnailLinkClassName="max-w-32"
-                showType
+                progressType={params.progressType}
+                showType={params.programType === 'live'}
               />
             ) : null}
           </div>
