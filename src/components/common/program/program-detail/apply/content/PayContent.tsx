@@ -79,17 +79,18 @@ const PayContent = ({
         endDate={programDate.endDate}
         progressType={progressType}
         thumbnailLinkClassName="max-w-32"
+        showType={programType === 'live'}
       />
       <h3 className="text-xsmall16 font-semibold text-neutral-0">
         참여자 정보
       </h3>
       <div className="mb-4 flex flex-col gap-3">
         <div className="flex flex-col gap-1">
-          <label className="ml-3 text-xsmall14 font-semibold">이름</label>
+          <label className="text-xsmall14 ml-3 font-semibold">이름</label>
           <Input value={userInfo.name} disabled readOnly className="text-sm" />
         </div>
         <div className="flex flex-col gap-1">
-          <label className="ml-3 text-xsmall14 font-semibold">
+          <label className="text-xsmall14 ml-3 font-semibold">
             휴대폰 번호
           </label>
           <Input
@@ -100,7 +101,7 @@ const PayContent = ({
           />
         </div>
         <div className="flex flex-col gap-1">
-          <label className="ml-3 text-xsmall14 font-semibold">이메일</label>
+          <label className="text-xsmall14 ml-3 font-semibold">이메일</label>
           <Input
             value={userInfo.contactEmail}
             disabled
