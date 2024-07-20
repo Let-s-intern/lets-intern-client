@@ -14,8 +14,8 @@ const CreditCancelModal = ({
   cancelText?: string;
 }) => {
   return (
-    <div className="fixed left-0 top-0 z-[1000] flex h-full w-full items-center justify-center bg-neutral-0/50">
-      <div className="relative flex flex-col items-center justify-center gap-y-8 rounded-xl bg-static-100 px-14 pb-6 pt-11 shadow-05">
+    <div className="fixed left-0 top-0 z-[1000] flex h-full w-full items-center justify-center bg-neutral-0/50 px-8">
+      <div className="relative flex max-w-full flex-col items-center justify-center gap-y-8 break-keep rounded-xl bg-static-100 px-4 pb-4 pt-9 shadow-05 md:px-14 md:pb-6 md:pt-11">
         <img
           src="/icons/menu_close_md.svg"
           alt="close"
@@ -26,7 +26,7 @@ const CreditCancelModal = ({
           <div className="w-full text-center text-lg font-bold text-neutral-0">
             {title}
           </div>
-          <div className="whitespace-pre text-center font-medium text-neutral-0 text-opacity-[52%]">
+          <div className="whitespace-pre-line break-keep text-center font-medium text-neutral-0 text-opacity-[52%]">
             {text}
           </div>
         </div>
