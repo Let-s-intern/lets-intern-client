@@ -127,11 +127,7 @@ const base = {
   name: z.string(),
   programTitle: z.string(),
   programType: z.union([z.literal('challenge'), z.literal('live')]),
-  progressType: z.union([
-    z.literal('all'),
-    z.literal('online'),
-    z.literal('offline'),
-  ]),
+  progressType: z.string(),
   programId: z.coerce.number(),
 };
 

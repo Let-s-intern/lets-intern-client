@@ -222,7 +222,7 @@ const ApplySection = ({
     'progressType' in program.query.data &&
     program.query.data.progressType
       ? program.query.data.progressType
-      : '';
+      : 'none';
 
   const totalPrice = useMemo(() => {
     if (!payInfo) {

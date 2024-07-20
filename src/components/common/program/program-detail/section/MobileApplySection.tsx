@@ -148,7 +148,7 @@ const MobileApplySection = ({
     'progressType' in program.query.data &&
     program.query.data.progressType
       ? program.query.data.progressType
-      : '';
+      : 'none';
 
   const programDate =
     program && program.query.data
