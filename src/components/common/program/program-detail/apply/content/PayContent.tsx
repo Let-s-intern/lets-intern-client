@@ -16,7 +16,7 @@ interface PayContentProps {
   setCoupon: (
     coupon: ((prevCoupon: ICouponForm) => ICouponForm) | ICouponForm,
   ) => void;
-  handleApplyButtonClick: () => void;
+  handleApplyButtonClick: (isFree: boolean) => void;
   contentIndex: number;
   setContentIndex: (contentIndex: number) => void;
   programType: 'live' | 'challenge';
@@ -57,7 +57,7 @@ const PayContent = ({
     payInfo.price === 0;
 
   return (
-    <div className={twMerge('flex h-full flex-col gap-6', isMobile && 'px-5')}>
+    <div className={`flex h-full flex-col gap-3 ${isMobile ? 'px-5' : ''}`}>
       <h2 className="text-small20 font-bold" ref={topRef}>
         결제하기
       </h2>
@@ -86,11 +86,11 @@ const PayContent = ({
       </h3>
       <div className="mb-4 flex flex-col gap-3">
         <div className="flex flex-col gap-1">
-          <label className="text-xsmall14 ml-3 font-semibold">이름</label>
+          <label className="ml-3 text-xsmall14 font-semibold">이름</label>
           <Input value={userInfo.name} disabled readOnly className="text-sm" />
         </div>
         <div className="flex flex-col gap-1">
-          <label className="text-xsmall14 ml-3 font-semibold">
+          <label className="ml-3 text-xsmall14 font-semibold">
             휴대폰 번호
           </label>
           <Input
@@ -101,7 +101,7 @@ const PayContent = ({
           />
         </div>
         <div className="flex flex-col gap-1">
-          <label className="text-xsmall14 ml-3 font-semibold">이메일</label>
+          <label className="ml-3 text-xsmall14 font-semibold">이메일</label>
           <Input
             value={userInfo.contactEmail}
             disabled
@@ -142,10 +142,10 @@ const PayContent = ({
         <button
           className="complete_button text-1.125-medium flex w-full justify-center rounded-md bg-primary px-6 py-3 font-medium text-neutral-100"
           onClick={() => {
-            handleApplyButtonClick();
+            handleApplyButtonClick(isFree || totalPrice === 0);
           }}
         >
-          {isFree ? '신청하기' : '결제하기'}
+          {isFree || totalPrice === 0 ? '신청하기' : '결제하기'}
         </button>
       </div>
     </div>

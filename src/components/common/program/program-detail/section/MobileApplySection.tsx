@@ -13,6 +13,7 @@ import {
   IApplyDrawerAction,
   ICouponForm,
 } from '../../../../../types/interface';
+import { generateRandomString } from '../../../../../utils/random';
 import InputContent from '../apply/content/InputContent';
 import PayContent from '../apply/content/PayContent';
 import ScheduleContent from '../apply/content/ScheduleContent';
@@ -141,6 +142,8 @@ const MobileApplySection = ({
   const priceId =
     application?.priceList?.[0]?.priceId ?? application?.price?.priceId ?? -1;
 
+  const orderId = generateRandomString();
+
   const program = useProgramQuery({ programId, type: programType });
 
   const progressType =
@@ -177,31 +180,12 @@ const MobileApplySection = ({
     return payInfo.price - totalDiscount;
   }, [coupon, payInfo]);
 
-  const handleApplyButtonClick = () => {
+  const handleApplyButtonClick = (isFree: boolean) => {
     if (!payInfo || !userInfo) {
       return;
     }
 
-    // if (totalPrice === 0) {
-    //   const body: PostApplicationInterface = {
-    //     paymentInfo: {
-    //       couponId: coupon.id,
-    //       priceId,
-    //       paymentKey: paymentKey,
-    //       orderId: orderId,s
-    //       amount: amount.toString(),
-    //     },
-    //     contactEmail: params.contactEmail,
-    //     motivate: '',
-    //     question: params.question,
-    //   };
-    //   postApplicationMutation.mutate({
-    //     programId,
-    //   });
-    //   return;
-    // }
-
-    const params = getPaymentSearchParams({
+    const searchParams = getPaymentSearchParams({
       payInfo,
       coupon,
       userInfo,
@@ -211,10 +195,18 @@ const MobileApplySection = ({
       programType,
       progressType,
       programId,
+      orderId,
+      isFree,
     });
 
-    navigate(`/payment?${params.toString()}`);
+    if (isFree) {
+      navigate(`/order/${orderId}/result?${searchParams.toString()}`);
+    } else {
+      navigate(`/payment?${searchParams.toString()}`);
+    }
+
     toggleDrawer();
+    return;
   };
 
   useEffect(() => {
@@ -223,32 +215,25 @@ const MobileApplySection = ({
     }
   }, [contentIndex, scrollRef]);
 
-  const isShowingPayContent = contentIndex === 3;
-
   return (
     <div
       className={twMerge(
-        'fixed bottom-0 left-0 right-0 z-30 flex max-h-[calc(100vh-60px)] w-screen flex-col items-center overflow-hidden rounded-t-lg bg-static-100 shadow-05 scrollbar-hide',
-        isShowingPayContent &&
-          'mx-auto max-w-5xl rounded-none border-t px-5 pb-6 shadow-none',
+        'fixed bottom-0 left-0 right-0 z-30 flex max-h-[80%] w-screen flex-col items-center overflow-hidden rounded-t-lg bg-static-100 shadow-05 scrollbar-hide',
       )}
     >
-      {!isShowingPayContent ? (
-        <div className="sticky top-0 flex w-full justify-center bg-static-100 py-3">
-          <div
-            onClick={() =>
-              drawerDispatch({
-                type: 'close',
-              })
-            }
-            className="h-[5px] w-[70px] shrink-0 cursor-pointer rounded-full bg-neutral-80"
-          />
-        </div>
-      ) : null}
+      <div className="sticky top-0 flex w-full justify-center bg-static-100 py-3">
+        <div
+          onClick={() =>
+            drawerDispatch({
+              type: 'close',
+            })
+          }
+          className="h-[5px] w-[70px] shrink-0 cursor-pointer rounded-full bg-neutral-80"
+        />
+      </div>
       <section
         className={twMerge(
           'h-full w-full overflow-y-auto px-5 pb-3 scrollbar-hide',
-          isShowingPayContent && 'px-0 pb-0 pt-3',
         )}
         ref={scrollRef}
       >
