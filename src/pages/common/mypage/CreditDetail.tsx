@@ -45,6 +45,23 @@ const CreditDetail = () => {
     },
   });
 
+  const isCancelable = () => {
+    if (!paymentDetail || paymentDetail.tossInfo.status !== 'DONE') {
+      return false;
+    }
+
+    if (paymentDetail.programInfo.programType === 'CHALLENGE') {
+      const start = dayjs(paymentDetail.programInfo.startDate);
+      const end = dayjs(paymentDetail.programInfo.endDate);
+      const now = dayjs();
+
+      const mid = start.add(end.diff(start) / 2, 'ms');
+      return now.isBefore(mid);
+    } else {
+      return dayjs().isBefore(dayjs(paymentDetail.programInfo.startDate));
+    }
+  };
+
   return (
     <section
       className="flex w-full flex-col px-5 md:px-0"
@@ -275,8 +292,7 @@ const CreditDetail = () => {
                   </div>
                 </div>
               </div>
-              {paymentDetail.tossInfo.status === 'DONE' &&
-              dayjs().isBefore(dayjs(paymentDetail?.programInfo.endDate)) ? (
+              {isCancelable() ? (
                 <button
                   className="flex w-full items-center justify-center rounded-sm bg-neutral-80 px-5 py-2.5 font-medium text-neutral-40"
                   onClick={() => {
