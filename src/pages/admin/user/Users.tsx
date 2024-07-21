@@ -1,6 +1,6 @@
+import { useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
 
-import { useDeleteUserMutation, useUserAdminQuery } from '../../../api/user';
 import Header from '../../../components/admin/ui/header/Header';
 import Heading from '../../../components/admin/ui/heading/Heading';
 import AdminPagination from '../../../components/admin/ui/pagination/AdminPagination';
@@ -8,7 +8,8 @@ import Table from '../../../components/admin/ui/table/regacy/Table';
 import Filter from '../../../components/admin/user/users/filter/Filter';
 import TableBody from '../../../components/admin/user/users/table-content/TableBody';
 import TableHead from '../../../components/admin/user/users/table-content/TableHead';
-import AlertModal from '../../../components/ui/alert/AlertModal';
+import { IUser } from '../../../interfaces/User.interface';
+import axios from '../../../utils/axios';
 
 const Users = () => {
   const [pageNum, setPageNum] = useState<number>(1);
@@ -21,30 +22,25 @@ const Users = () => {
     email: '',
     phoneNum: '',
   });
-  const { data, isLoading, isError } = useUserAdminQuery({
-    email: searchValues.email,
-    name: searchValues.name,
-    phoneNum: searchValues.phoneNum,
-    pageable: {
-      page: pageNum,
-      size: 10,
+
+  const params = {
+    page: pageNum,
+    size: 10,
+    ...searchValues,
+  };
+
+  const { data, isLoading, error } = useQuery({
+    queryKey: ['user', 'admin', params],
+    queryFn: async () => {
+      const res = await axios.get('/user/admin', {
+        params,
+      });
+      return res.data;
     },
   });
 
-  const maxPage = data?.pageInfo.totalPages || 1;
-
-  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState({
-    isOpen: false,
-    phoneNum: '',
-  });
-
-  const {
-    mutate: tryDeleteUser,
-    isPending,
-    isSuccess,
-  } = useDeleteUserMutation(() => {
-    setIsDeleteModalOpen({ isOpen: false, phoneNum: '' });
-  });
+  const userList: IUser[] = data?.data?.userAdminList || [];
+  const maxPage = data?.data?.pageInfo?.totalPages || 1;
 
   return (
     <div className="p-8">
@@ -57,23 +53,15 @@ const Users = () => {
         </div>
         {isLoading ? (
           <div className="py-4 text-center">로딩 중...</div>
-        ) : isError ? (
+        ) : error ? (
           <div className="py-4 text-center">에러 발생</div>
-        ) : !data || data.userAdminList.length === 0 ? (
+        ) : userList.length === 0 ? (
           <div className="py-4 text-center">유저가 없습니다.</div>
         ) : (
           <>
             <Table>
               <TableHead />
-              <TableBody
-                userList={data.userAdminList}
-                handleDeleteUser={(phoneNum: string) => {
-                  setIsDeleteModalOpen({
-                    isOpen: true,
-                    phoneNum: phoneNum.toString(),
-                  });
-                }}
-              />
+              <TableBody userList={userList} />
             </Table>
             <div className="mt-4">
               <AdminPagination
@@ -83,30 +71,6 @@ const Users = () => {
               />
             </div>
           </>
-        )}
-
-        {isDeleteModalOpen.isOpen && (
-          <AlertModal
-            onConfirm={() => {
-              tryDeleteUser(isDeleteModalOpen.phoneNum);
-            }}
-            onCancel={() =>
-              setIsDeleteModalOpen({ isOpen: false, phoneNum: '' })
-            }
-            className="break-keep"
-            title="회원 탈퇴"
-          >
-            {isPending || isSuccess ? (
-              '로딩 중...'
-            ) : (
-              <>
-                회원을 삭제하시겠습니까?
-                <div className="mt-4 text-sm text-system-error">
-                  회원 삭제 시 복구가 불가능하며, 모든 정보가 삭제됩니다.
-                </div>
-              </>
-            )}
-          </AlertModal>
         )}
       </main>
     </div>
