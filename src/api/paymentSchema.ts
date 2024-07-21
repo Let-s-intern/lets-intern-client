@@ -5,6 +5,7 @@ export const programInfoType = z.object({
   title: z.string().nullable().optional(),
   thumbnail: z.string().nullable().optional(),
   price: z.number().nullable().optional(),
+  isCanceled: z.boolean().nullable().optional(),
 });
 
 // CardInfo schema
@@ -190,6 +191,8 @@ export const convertPaymentStatus = (status: string) => {
       return '결제취소';
     case 'PARTIAL_CANCELED':
       return '부분취소';
+    case 'ZERO':
+      return '신청취소';
     default:
       return '상태없음';
   }
@@ -202,6 +205,7 @@ export const paymentDetailType = z.object({
     thumbnail: z.string().nullable().optional(),
     programType: z.enum(['CHALLENGE', 'LIVE', 'VOD']).nullable().optional(),
     progressType: z.string().nullable().optional(),
+    isCanceled: z.boolean().nullable().optional(),
     startDate: z.string().nullable().optional(),
     endDate: z.string().nullable().optional(),
     applicationId: z.number().nullable().optional(),
@@ -215,8 +219,9 @@ export const paymentDetailType = z.object({
     id: z.number().nullable().optional(),
     finalPrice: z.number().nullable().optional(),
     couponDiscount: z.number().nullable().optional(),
+    lastModifiedDate: z.string().nullable().optional(),
   }),
-  tossInfo: tossInfoType,
+  tossInfo: tossInfoType.nullable().optional(),
 });
 
 export type PaymentDetailType = z.infer<typeof paymentDetailType>;

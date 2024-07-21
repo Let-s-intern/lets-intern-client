@@ -37,13 +37,34 @@ const CreditDetail = () => {
   const { mutate: tryCancelPayment } = useCancelApplicationMutation({
     successCallback: () => {
       setIsCancelModalOpen(false);
-      navigate(-1);
+      navigate(`/mypage/credit/${paymentId}`);
     },
     errorCallback: (error) => {
       alert('결제 취소에 실패했습니다.');
       console.error(error);
     },
   });
+
+  const isCancelable = () => {
+    if (
+      !paymentDetail ||
+      (paymentDetail.tossInfo && paymentDetail.tossInfo?.status !== 'DONE') ||
+      paymentDetail.programInfo.isCanceled
+    ) {
+      return false;
+    }
+
+    if (paymentDetail.programInfo.programType === 'CHALLENGE') {
+      const start = dayjs(paymentDetail.programInfo.startDate);
+      const end = dayjs(paymentDetail.programInfo.endDate);
+      const now = dayjs();
+
+      const mid = start.add(end.diff(start) / 2, 'ms');
+      return now.isBefore(mid);
+    } else {
+      return dayjs().isBefore(dayjs(paymentDetail.programInfo.startDate));
+    }
+  };
 
   return (
     <section
@@ -75,22 +96,34 @@ const CreditDetail = () => {
         ) : (
           <>
             <div className="flex w-full flex-col items-start justify-center gap-y-6">
-              {(paymentDetail.tossInfo.status === 'CANCELED' ||
-                paymentDetail.tossInfo.status === 'PARTIAL_CANCELED') &&
-                paymentDetail.tossInfo.cancels && (
-                  <div className="flex w-full gap-2 rounded-xxs bg-neutral-90 px-4 py-3">
-                    <div className="text-sm font-semibold text-system-error">
-                      {paymentDetail.tossInfo.status === 'CANCELED'
+              {paymentDetail.tossInfo?.status === 'CANCELED' ||
+              paymentDetail.tossInfo?.status === 'PARTIAL_CANCELED' ||
+              paymentDetail.programInfo.isCanceled ? (
+                <div className="flex w-full gap-2 rounded-xxs bg-neutral-90 px-4 py-3">
+                  <div className="text-sm font-semibold text-system-error">
+                    {paymentDetail.tossInfo
+                      ? paymentDetail.tossInfo.status === 'CANCELED'
                         ? '환불 완료'
-                        : '부분 환불 완료'}
-                    </div>
-                    <div className="flex grow items-center justify-end">
-                      {convertDateFormat(
-                        paymentDetail.tossInfo.cancels[0].canceledAt || '',
-                      )}
-                    </div>
+                        : paymentDetail.tossInfo.status === 'PARTIAL_CANCELED'
+                          ? '부분 환불 완료'
+                          : '신청 취소'
+                      : paymentDetail.programInfo.isCanceled
+                        ? '신청 취소'
+                        : ''}
                   </div>
-                )}
+                  <div className="flex grow items-center justify-end">
+                    {convertDateFormat(
+                      paymentDetail.tossInfo?.cancels
+                        ? paymentDetail.tossInfo.cancels[0].canceledAt
+                          ? paymentDetail.tossInfo.cancels[0].canceledAt
+                          : ''
+                        : paymentDetail.paymentInfo?.lastModifiedDate
+                          ? paymentDetail.paymentInfo.lastModifiedDate
+                          : '',
+                    )}
+                  </div>
+                </div>
+              ) : null}
               <div className="font-semibold text-neutral-0">프로그램 정보</div>
               <div className="flex w-full items-start justify-center gap-x-4">
                 <img
@@ -104,12 +137,14 @@ const CreditDetail = () => {
                   </div>
                   <div className="flex w-full flex-col gap-y-1">
                     <div className="flex w-full items-center justify-start gap-x-4 text-xs font-medium">
-                      <div className="text-neutral-30">진행 기간</div>
+                      <div className="shrink-0 text-neutral-30">진행 일정</div>
                       <div className="text-primary-dark">{`${convertDateFormat(paymentDetail.programInfo.startDate || '')} - ${convertDateFormat(paymentDetail.programInfo.endDate || '')}`}</div>
                     </div>
                     {paymentDetail.programInfo.progressType && (
                       <div className="flex w-full items-center justify-start gap-x-4 text-xs font-medium">
-                        <div className="text-neutral-30">진행 방식</div>
+                        <div className="shrink-0 text-neutral-30">
+                          진행 방식
+                        </div>
                         <div className="text-primary-dark">{`${
                           paymentDetail.programInfo.progressType === 'ALL'
                             ? '온라인/오프라인'
@@ -185,22 +220,28 @@ const CreditDetail = () => {
             </div>
             <div className="flex w-full flex-col items-start justify-center gap-y-6">
               <div className="font-semibold text-neutral-0">
-                {paymentDetail.tossInfo.status === 'CANCELED'
+                {(paymentDetail.tossInfo &&
+                  paymentDetail.tossInfo.status !== 'DONE') ||
+                paymentDetail.programInfo.isCanceled
                   ? '환불 정보'
                   : '결제 정보'}
               </div>
               <div className="flex w-full flex-col items-start justify-start gap-y-3">
                 <div className="flex w-full items-center justify-start gap-3 border-y-[1.5px] border-neutral-0 px-3 py-5 font-bold text-neutral-0">
                   <div>
-                    {paymentDetail.tossInfo.status !== 'DONE'
-                      ? '총 환불 금액'
-                      : '총 결제 금액'}
+                    {(paymentDetail.tossInfo &&
+                      paymentDetail.tossInfo.status !== 'DONE') ||
+                    paymentDetail.programInfo.isCanceled === true
+                      ? '총 환불금액'
+                      : '총 결제금액'}
                   </div>
                   <div className="flex grow items-center justify-end">
-                    {paymentDetail.tossInfo.status !== 'DONE' &&
-                    paymentDetail.tossInfo.cancels
-                      ? paymentDetail.tossInfo.cancels[0].cancelAmount?.toLocaleString()
-                      : paymentDetail.tossInfo.totalAmount?.toLocaleString()}
+                    {paymentDetail.tossInfo
+                      ? paymentDetail.tossInfo.status !== 'DONE' &&
+                        paymentDetail.tossInfo.cancels
+                        ? paymentDetail.tossInfo.cancels[0].cancelAmount?.toLocaleString()
+                        : paymentDetail.tossInfo.balanceAmount?.toLocaleString()
+                      : paymentDetail.paymentInfo.finalPrice?.toLocaleString()}
                     원
                   </div>
                 </div>
@@ -215,12 +256,12 @@ const CreditDetail = () => {
                   />
                   <PaymentInfoRow
                     title={`쿠폰할인`}
-                    content={`-${paymentDetail.paymentInfo.couponDiscount ? paymentDetail.paymentInfo.couponDiscount?.toLocaleString() : 0}원`}
+                    content={`-${(paymentDetail.paymentInfo?.couponDiscount === -1 ? (paymentDetail.priceInfo.price ? paymentDetail.priceInfo.price : 0) - (paymentDetail.priceInfo.discount ? paymentDetail.priceInfo.discount : 0) : paymentDetail.paymentInfo?.couponDiscount ? paymentDetail.paymentInfo.couponDiscount : 0)?.toLocaleString()}원`}
                   />
-                  {paymentDetail.tossInfo.status === 'PARTIAL_CANCELED' && (
+                  {paymentDetail.tossInfo?.status === 'PARTIAL_CANCELED' && (
                     <PaymentInfoRow
                       title={`부분 환불 (${paymentDetail.programInfo.programType === 'CHALLENGE' ? '챌린지' : '라이브'})`}
-                      content={`-${paymentDetail.tossInfo.cancels ? paymentDetail.tossInfo.cancels[0].cancelAmount?.toLocaleString() : 0}원`}
+                      content={`-${paymentDetail.tossInfo.cancels ? paymentDetail.tossInfo.balanceAmount?.toLocaleString() : 0}원`}
                       subInfo={
                         <div className="text-xs font-medium text-primary-dark">
                           *환불 규정은{' '}
@@ -237,46 +278,55 @@ const CreditDetail = () => {
                 <div className="flex w-full flex-col">
                   <PaymentInfoRow
                     title={
-                      paymentDetail.tossInfo.status === 'CANCELED'
+                      paymentDetail.tossInfo?.status === 'CANCELED' ||
+                      paymentDetail.tossInfo?.status === 'PARTIAL_CANCELED'
                         ? '환불일자'
                         : '결제일자'
                     }
                     content={
-                      paymentDetail.tossInfo.status === 'CANCELED' &&
-                      paymentDetail.tossInfo.cancels
-                        ? convertDateFormat(
-                            paymentDetail.tossInfo.cancels[0].canceledAt || '',
-                          )
+                      paymentDetail.tossInfo
+                        ? paymentDetail.tossInfo?.status === 'CANCELED' &&
+                          paymentDetail.tossInfo.cancels
+                          ? convertDateFormat(
+                              paymentDetail.tossInfo?.cancels[0].canceledAt ||
+                                '',
+                            )
+                          : convertDateFormat(
+                              paymentDetail.tossInfo?.requestedAt || '',
+                            )
                         : convertDateFormat(
-                            paymentDetail.tossInfo.requestedAt || '',
+                            paymentDetail.paymentInfo.lastModifiedDate || '',
                           )
                     }
                   />
-                  <PaymentInfoRow
-                    title="결제수단"
-                    content={paymentDetail.tossInfo.method || ''}
-                  />
-                  <div className="flex w-full items-center justify-start gap-x-2 px-3 py-2">
-                    <div className="text-neutral-40">영수증</div>
-                    <div className="flex grow items-center justify-end text-neutral-0">
-                      <button
-                        className="flex items-center justify-center rounded-sm border border-neutral-60 bg-white px-2.5 py-1.5 text-sm font-medium"
-                        onClick={() => {
-                          paymentDetail.tossInfo.receipt &&
-                            window.open(
-                              paymentDetail.tossInfo.receipt.url || '',
-                              '_blank',
-                            );
-                        }}
-                      >
-                        영수증 보기
-                      </button>
-                    </div>
-                  </div>
+                  {paymentDetail.tossInfo && (
+                    <>
+                      <PaymentInfoRow
+                        title="결제수단"
+                        content={paymentDetail.tossInfo?.method || ''}
+                      />
+                      <div className="flex w-full items-center justify-start gap-x-2 px-3 py-2">
+                        <div className="text-neutral-40">영수증</div>
+                        <div className="flex grow items-center justify-end text-neutral-0">
+                          <button
+                            className="flex items-center justify-center rounded-sm border border-neutral-60 bg-white px-2.5 py-1.5 text-sm font-medium"
+                            onClick={() => {
+                              paymentDetail.tossInfo?.receipt &&
+                                window.open(
+                                  paymentDetail.tossInfo.receipt.url || '',
+                                  '_blank',
+                                );
+                            }}
+                          >
+                            영수증 보기
+                          </button>
+                        </div>
+                      </div>
+                    </>
+                  )}
                 </div>
               </div>
-              {paymentDetail.tossInfo.status === 'DONE' &&
-              dayjs().isBefore(dayjs(paymentDetail?.programInfo.endDate)) ? (
+              {isCancelable() ? (
                 <button
                   className="flex w-full items-center justify-center rounded-sm bg-neutral-80 px-5 py-2.5 font-medium text-neutral-40"
                   onClick={() => {

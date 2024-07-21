@@ -11,7 +11,6 @@ import {
   paymentSearchParamsSchema,
 } from '../../../data/getPaymentSearchParams';
 import { searchParamsToObject } from '../../../utils/network';
-import { generateRandomString } from '../../../utils/random';
 
 type TossPaymentsWidgets = ReturnType<
   Awaited<ReturnType<typeof loadTossPayments>>['widgets']
@@ -98,9 +97,10 @@ const Payment = () => {
       return;
     }
 
-    const orderId = generateRandomString();
-
     const paymentMethod = await methods?.getSelectedPaymentMethod();
+
+    const orderId =
+      typeof params.orderId === 'string' ? params.orderId : params.orderId[0];
 
     const searchParams = new URLSearchParams(window.location.search);
     searchParams.set(
@@ -131,7 +131,7 @@ const Payment = () => {
 
   return (
     <div
-      className="mx-auto max-w-5xl pb-6"
+      className="mx-auto w-full max-w-5xl pb-6"
       data-program-text={program.query.data?.title}
     >
       {/* 결제 UI */}

@@ -11,6 +11,7 @@ import useRunOnce from '../../../../../hooks/useRunOnce';
 import { AccountType } from '../../../../../schema';
 import { ProgramType } from '../../../../../types/common';
 import { ICouponForm } from '../../../../../types/interface';
+import { generateRandomString } from '../../../../../utils/random';
 import ChoicePayPlanContent from '../apply/content/ChoicePayPlanContent';
 import InputContent from '../apply/content/InputContent';
 import OverviewContent from '../apply/content/OverviewContent';
@@ -203,6 +204,8 @@ const ApplySection = ({
   const priceId =
     application?.priceList?.[0]?.priceId ?? application?.price?.priceId ?? -1;
 
+  const orderId = generateRandomString();
+
   const program = useProgramQuery({ programId, type: programType });
 
   const programDate =
@@ -236,7 +239,7 @@ const ApplySection = ({
     return payInfo.price - totalDiscount;
   }, [coupon, payInfo]);
 
-  const handleApplyButtonClick = () => {
+  const handleApplyButtonClick = (isFree: boolean) => {
     if (!payInfo || !userInfo) {
       return;
     }
@@ -250,8 +253,17 @@ const ApplySection = ({
       programType,
       progressType,
       programId,
+      orderId,
+      isFree,
     });
-    navigate(`/payment?${searchParams.toString()}`);
+
+    if (isFree) {
+      navigate(`/order/${orderId}/result?${searchParams.toString()}`);
+      return;
+    } else {
+      navigate(`/payment?${searchParams.toString()}`);
+      return;
+    }
   };
 
   return (

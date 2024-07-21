@@ -98,7 +98,7 @@ const PaymentFail = () => {
               />
               <PaymentInfoRow
                 title={`쿠폰할인`}
-                content={'-' + params?.couponPrice.toLocaleString() + '원'}
+                content={`-${(params?.couponPrice === -1 ? params.price - params.discount : params?.couponPrice)?.toLocaleString()}원`}
               />
             </div>
             <hr className="border-neutral-85" />

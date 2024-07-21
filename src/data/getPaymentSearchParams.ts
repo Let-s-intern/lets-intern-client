@@ -12,6 +12,8 @@ export const getPaymentSearchParams = ({
   programType,
   progressType,
   programId,
+  orderId,
+  isFree,
 }: {
   payInfo: PayInfo;
   coupon: ICouponForm | null;
@@ -28,6 +30,8 @@ export const getPaymentSearchParams = ({
   programType: string;
   progressType: string;
   programId: number;
+  orderId: string;
+  isFree: boolean;
 }): URLSearchParams => {
   const result = new URLSearchParams();
   result.set('priceId', priceId.toString());
@@ -45,6 +49,8 @@ export const getPaymentSearchParams = ({
   result.set('programType', programType);
   result.set('progressType', progressType);
   result.set('programId', programId.toString());
+  result.set('orderId', orderId);
+  result.set('isFree', isFree.toString());
   return result;
 };
 
@@ -129,21 +135,21 @@ const base = {
   programType: z.union([z.literal('challenge'), z.literal('live')]),
   progressType: z.string(),
   programId: z.coerce.number(),
+  orderId: z.union([z.array(z.string()), z.string()]),
+  isFree: z.string(),
 };
 
 export const paymentSearchParamsSchema = z.object(base);
 
 export const paymentResultSearchParamsSchema = z.object({
   ...base,
-  paymentKey: z.string(),
-  orderId: z.string(),
-  amount: z.coerce.number(),
-  paymentMethodKey: paymentMethodKeySchema,
+  paymentKey: z.string().nullable().optional(),
+  amount: z.coerce.number().nullable().optional(),
+  paymentMethodKey: paymentMethodKeySchema.nullable().optional(),
 });
 
 export const paymentFailSearchParamsSchema = z.object({
   ...base,
-  orderId: z.string(),
   code: z.string(),
   message: z.string(),
 });
@@ -151,7 +157,13 @@ export const paymentFailSearchParamsSchema = z.object({
 /** 토스 라이브러리의 WidgetsPaymentMethodCode 참고 */
 export type PaymentMethodKey = z.infer<typeof paymentMethodKeySchema>;
 
-export const getPaymentMethodLabel = (key: PaymentMethodKey) => {
+export const getPaymentMethodLabel = (
+  key: PaymentMethodKey | null | undefined,
+) => {
+  if (!key) {
+    return '0원 결제';
+  }
+
   switch (key) {
     case 'CARD':
       return '카드';
