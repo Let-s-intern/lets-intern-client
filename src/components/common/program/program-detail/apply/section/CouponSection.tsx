@@ -16,8 +16,21 @@ const CouponSection = ({ setCoupon, programType }: CouponSectionProps) => {
   const [code, setCode] = useState('');
   const [validationMsg, setValidationMsg] = useState('');
   const [successMsg, setSuccessMsg] = useState('');
+  const [isCoupon, setIsCoupon] = useState(false);
 
   const clickApply = async () => {
+    if (isCoupon) {
+      setCoupon({
+        id: null,
+        price: 0,
+      });
+      setCode('');
+      setIsCoupon(false);
+      setSuccessMsg('');
+      setValidationMsg('');
+      return;
+    }
+
     if (code === '') return;
     await fetchCouponAvailability();
   };
@@ -36,6 +49,7 @@ const CouponSection = ({ setCoupon, programType }: CouponSectionProps) => {
       });
       setValidationMsg('');
       setSuccessMsg('쿠폰이 등록되었습니다.');
+      setIsCoupon(true);
     } catch (error) {
       if (isAxiosError(error)) {
         setSuccessMsg('');
@@ -46,6 +60,7 @@ const CouponSection = ({ setCoupon, programType }: CouponSectionProps) => {
         couponId: null,
         couponPrice: 0,
       }));
+      setIsCoupon(false);
     }
   };
 
@@ -65,10 +80,10 @@ const CouponSection = ({ setCoupon, programType }: CouponSectionProps) => {
           onChange={handleCodeChange}
         />
         <button
-          className="flex shrink-0 items-center justify-center rounded-sm bg-primary px-4 py-1.5 text-sm font-medium text-neutral-100"
+          className={`flex shrink-0 items-center justify-center rounded-sm ${isCoupon ? 'border-2 border-primary bg-neutral-100 text-primary' : 'bg-primary text-neutral-100'} px-4 py-1.5 text-sm font-medium`}
           onClick={clickApply}
         >
-          쿠폰 등록
+          {isCoupon ? '쿠폰 취소' : '쿠폰 적용'}
         </button>
       </div>
       {validationMsg && (
