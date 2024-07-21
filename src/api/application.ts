@@ -7,7 +7,7 @@ import {
   programStatus,
   programType,
 } from '../schema';
-import { UsePaymentQueryKey } from './payment';
+import { UsePaymentDetailQueryKey, UsePaymentQueryKey } from './payment';
 
 import { ProgramType } from '../types/common';
 import axios from '../utils/axios';
@@ -72,7 +72,7 @@ export interface PostApplicationInterface {
   paymentInfo: {
     couponId: number | null;
     priceId: number;
-    paymentKey: string;
+    paymentKey: string | null;
     orderId: string;
     amount: string;
   };
@@ -144,7 +144,7 @@ export const useCancelApplicationMutation = ({
     onSuccess: () => {
       successCallback && successCallback();
       client.invalidateQueries({
-        queryKey: [UsePaymentQueryKey],
+        queryKey: [UsePaymentQueryKey, UsePaymentDetailQueryKey],
       });
     },
     onError: (error) => {
