@@ -23,7 +23,9 @@ const PaymentResult = () => {
     const obj = searchParamsToObject(
       new URL(window.location.href).searchParams,
     );
+    // console.log(obj);
     const result = paymentResultSearchParamsSchema.safeParse(obj);
+    // console.log(result);
     if (!result.success) {
       // eslint-disable-next-line no-console
       console.log(result.error);
@@ -43,9 +45,18 @@ const PaymentResult = () => {
       paymentInfo: {
         couponId: params.couponId === '' ? null : params.couponId,
         priceId: params.priceId,
-        paymentKey: params.paymentKey,
-        orderId: params.orderId,
-        amount: params.amount.toString(),
+        paymentKey:
+          params.isFree === 'true' || !params.paymentKey
+            ? null
+            : params.paymentKey,
+        orderId:
+          typeof params.orderId === 'string'
+            ? params.orderId
+            : params.orderId[0],
+        amount:
+          params.isFree === 'true' || !params.amount
+            ? params.totalPrice.toString()
+            : params.amount.toString(),
       },
       contactEmail: params.contactEmail,
       motivate: '',
@@ -95,7 +106,7 @@ const PaymentResult = () => {
       data-program-text={program.query.data?.title}
     >
       <div className="mx-auto max-w-5xl">
-        <div className="text-small20 flex w-full items-center justify-start py-6 font-bold text-neutral-0">
+        <div className="flex w-full items-center justify-start py-6 text-small20 font-bold text-neutral-0">
           결제 확인하기
         </div>
         <div className="flex min-h-52 w-full flex-col items-center justify-center">
@@ -165,18 +176,19 @@ const PaymentResult = () => {
                     />
                     <PaymentInfoRow
                       title={`쿠폰할인`}
-                      content={
-                        '-' +
-                        Number(
-                          searchParams.get('couponPrice'),
-                        ).toLocaleString() +
-                        '원'
-                      }
+                      content={`-${(params?.couponPrice === -1 ? params.price - params.discount : params?.couponPrice)?.toLocaleString()}원`}
                     />
                   </div>
                   <hr className="border-neutral-85" />
                   <div className="flex w-full flex-col items-center justify-center">
-                    {!isSuccess ? (
+                    {params?.isFree === 'true' ? (
+                      <PaymentInfoRow
+                        title="결제일자"
+                        content={dayjs(new Date()).format(
+                          'YYYY.MM.DD(ddd) HH:mm',
+                        )}
+                      />
+                    ) : !isSuccess ? (
                       <PaymentInfoRow
                         title="결제수단"
                         // TODO: any 타입을 사용하지 않도록 수정
@@ -187,8 +199,7 @@ const PaymentResult = () => {
                             : '')
                         }
                       />
-                    ) : null}
-                    {isSuccess && (
+                    ) : (
                       <>
                         <PaymentInfoRow
                           title="결제일자"

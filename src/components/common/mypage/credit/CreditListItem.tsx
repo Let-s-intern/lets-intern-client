@@ -10,13 +10,23 @@ const CreditListItem = ({ payment }: { payment: PaymentType }) => {
       to={`/mypage/credit/${payment.programInfo.paymentId}`}
       data-program-text={payment.programInfo.title}
     >
-      <CardStatus status={payment.tossInfo?.status || ''} />
+      <CardStatus
+        status={
+          payment.tossInfo && payment.tossInfo.status
+            ? payment.tossInfo.status
+            : payment.programInfo.isCanceled
+              ? 'ZERO'
+              : 'DONE'
+        }
+      />
       <div className="flex w-full items-center gap-x-[14px]">
         <img
           src={payment.programInfo.thumbnail || ''}
           className={twMerge(
             'h-[97px] w-[137px] rounded-sm object-cover',
-            payment.tossInfo?.status !== 'DONE' && 'grayscale',
+            ((payment.tossInfo && payment.tossInfo?.status !== 'DONE') ||
+              payment.programInfo.isCanceled) &&
+              'grayscale',
           )}
         />
         <div className="flex grow flex-col items-start justify-between gap-2 self-stretch">
@@ -28,7 +38,10 @@ const CreditListItem = ({ payment }: { payment: PaymentType }) => {
               {payment.programInfo.price?.toLocaleString()}원
             </div>
             <div className="text-sm font-semibold text-neutral-0 md:text-base">
-              {payment.tossInfo?.totalAmount?.toLocaleString()}원
+              {payment.tossInfo && payment.tossInfo.totalAmount
+                ? payment.tossInfo.totalAmount.toLocaleString()
+                : 0}
+              원
             </div>
           </div>
           <button className="flex items-center justify-start text-xs font-semibold text-primary md:text-sm">

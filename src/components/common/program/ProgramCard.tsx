@@ -57,7 +57,7 @@ const ProgramCard = ({
       </Link>
       <div>
         <div className="flex justify-between">
-          <h2 className="text-xsmall16 mb-3 break-keep font-semibold">
+          <h2 className="mb-3 break-keep text-xsmall16 font-semibold">
             <Link to={programLink} className="hover:underline">
               {title}
             </Link>
@@ -66,7 +66,7 @@ const ProgramCard = ({
 
         {startDate ? (
           <div className="mb-1 flex items-center gap-1.5">
-            <span className="text-xs text-neutral-0">진행일정</span>
+            <span className="shrink-0 text-xs text-neutral-0">진행 일정</span>
             <span className="text-xs font-medium text-primary-dark">
               {type === 'challenge'
                 ? `${startDate.format('YY.MM.DD')} ~ ${
