@@ -1,4 +1,4 @@
-import BlogPostEditor from '../../components/admin/BlogPostEditor';
+import BlogPostEditor from '../../components/admin/blog/BlogPostEditor';
 
 const BlogEditPage = () => {
   return (

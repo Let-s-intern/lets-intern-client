@@ -13,7 +13,7 @@ const mock = [
   },
 ];
 
-const BlogPostList = () => {
+const BlogPostListPage = () => {
   const data = mock;
   return (
     <div>
@@ -37,4 +37,4 @@ const BlogPostList = () => {
   );
 };
 
-export default BlogPostList;
+export default BlogPostListPage;

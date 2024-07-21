@@ -1,11 +1,12 @@
-import BlogPostEditor from '../../components/admin/BlogPostEditor';
+import BlogPostEditor from '../../components/admin/blog/BlogPostEditor';
 
-const BlogPostList = () => {
+const BlogCreatePage = () => {
   return (
     <div>
       <BlogPostEditor />
+      https://lexical.dev/docs/getting-started/react 따라하는중...
     </div>
   );
 };
 
-export default BlogPostList;
+export default BlogCreatePage;
