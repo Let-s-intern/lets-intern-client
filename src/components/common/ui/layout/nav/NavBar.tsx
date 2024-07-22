@@ -75,7 +75,7 @@ const NavBar = () => {
       {/* 상단 네비게이션 바 */}
       <div className="lg:p-30 fixed top-0 z-30 w-screen border-b border-neutral-80 bg-static-100 px-5 sm:px-20 lg:px-28">
         <div className="flex h-[3.75rem] items-center justify-between md:h-[4.375rem] lg:h-[4.75rem]">
-          <div className="flex items-center gap-6 sm:gap-9">
+          <div className="flex items-center gap-4 sm:gap-9">
             <Link to="/" className="h-[34px] w-auto md:h-[2.2rem]">
               <img
                 src="/logo/logo-simple.svg"
@@ -89,11 +89,8 @@ const NavBar = () => {
               />
             </Link>
             {/* 메뉴 아이템 */}
-            <NavItem to="/" active={activeLink === 'HOME'}>
-              홈
-            </NavItem>
             <NavItem to="/about" active={activeLink === 'ABOUT'}>
-              브랜드 스토리
+              렛츠커리어 스토리
             </NavItem>
             <NavItem to="/program" active={activeLink === 'PROGRAM'}>
               프로그램
@@ -176,6 +173,9 @@ const NavBar = () => {
         <div className="mt-5 flex flex-col gap-2">
           <SideNavItem to="/" onClick={closeMenu}>
             홈
+          </SideNavItem>
+          <SideNavItem to="/about" onClick={closeMenu}>
+            렛츠커리어 스토리
           </SideNavItem>
           <SideNavItem to="/program" onClick={closeMenu}>
             프로그램
