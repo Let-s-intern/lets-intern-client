@@ -1039,29 +1039,32 @@ export const liveApplicationPriceType = z.object({
 });
 
 // 블로그
+export const blogThumbnailSchema = z.object({
+  id: z.number(),
+  title: z.string().nullable().optional(),
+  category: z.string().nullable().optional(),
+  thumbnail: z.string().nullable().optional(),
+  description: z.string().nullable().optional(),
+  displayDate: z.string().nullable().optional(),
+  createDate: z.string().nullable().optional(),
+  lastModifiedDate: z.string().nullable().optional(),
+});
+
+export const tagDetailSchema = z.array(
+  z.object({
+    id: z.number(),
+    title: z.string().nullable().optional(),
+    createDate: z.string().nullable().optional(),
+    lastModifiedDate: z.string().nullable().optional(),
+  }),
+);
 
 export const blogSchema = z
   .object({
     blogInfos: z.array(
       z.object({
-        blogThumbnailInfo: z.object({
-          id: z.number().nullable().optional(),
-          title: z.string().nullable().optional(),
-          category: z.string().nullable().optional(),
-          thumbnail: z.string().nullable().optional(),
-          description: z.string().nullable().optional(),
-          displayDate: z.string().nullable().optional(),
-          createDate: z.string().nullable().optional(),
-          lastModifiedDate: z.string().nullable().optional(),
-        }),
-        tagDetailInfos: z.array(
-          z.object({
-            id: z.number().nullable().optional(),
-            title: z.string().nullable().optional(),
-            createDate: z.string().nullable().optional(),
-            lastModifiedDate: z.string().nullable().optional(),
-          }),
-        ),
+        blogThumbnailInfo: blogThumbnailSchema,
+        tagDetailInfos: tagDetailSchema,
       }),
     ),
   })
@@ -1093,3 +1096,7 @@ export const blogSchema = z
       })),
     };
   });
+
+export const blogTagSchema = z.object({
+  tagDetailInfos: tagDetailSchema,
+});

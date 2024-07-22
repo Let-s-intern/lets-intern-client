@@ -9,6 +9,7 @@ import {
 import { ChangeEvent, useState } from 'react';
 import { IoCloseOutline } from 'react-icons/io5';
 
+import { useBlogTagQuery } from '../../api/blog';
 import BlogPostEditor from '../../components/admin/blog/BlogPostEditor';
 import { blogCategory } from '../../utils/convert';
 
@@ -67,6 +68,8 @@ const dummyTagList = [
 ];
 
 const BlogCreatePage = () => {
+  const { data, isLoading } = useBlogTagQuery();
+
   const [value, setValue] = useState({
     title: '',
     category: '',
@@ -101,116 +104,118 @@ const BlogCreatePage = () => {
     // 태그 등록
   };
   return (
-    <main className="mx-auto my-12 w-[36rem]">
+    <div className="mx-auto my-12 w-[36rem]">
       <header>
         <h1 className="text-2xl font-semibold">블로그 등록</h1>
       </header>
-      <form className="mt-4 flex flex-col gap-4" onSubmit={handleSubmit}>
-        <FormControl fullWidth>
-          <InputLabel id="category">카테고리</InputLabel>
-          <Select
-            labelId="category"
-            id="category"
-            label="구분"
-            name="category"
-            value={value.category}
+      <main>
+        <form className="mt-4 flex flex-col gap-4" onSubmit={handleSubmit}>
+          <FormControl fullWidth>
+            <InputLabel id="category">카테고리</InputLabel>
+            <Select
+              labelId="category"
+              id="category"
+              label="구분"
+              name="category"
+              value={value.category}
+              onChange={handleChange}
+            >
+              {Object.entries(blogCategory).map(([key, value]) => (
+                <MenuItem key={key} value={key}>
+                  {value}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+          <TextField
+            type="text"
+            label="제목"
+            placeholder="제목"
+            name="title"
+            value={value.title}
             onChange={handleChange}
-          >
-            {Object.entries(blogCategory).map(([key, value]) => (
-              <MenuItem key={key} value={key}>
-                {value}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
-        <TextField
-          type="text"
-          label="제목"
-          placeholder="제목"
-          name="title"
-          value={value.title}
-          onChange={handleChange}
-          autoComplete="off"
-          fullWidth
-        />
-        <TextField
-          type="text"
-          label="설명"
-          placeholder="설명"
-          name="description"
-          value={value.description}
-          onChange={handleChange}
-          multiline
-          minRows={3}
-          autoComplete="off"
-          fullWidth
-        />
-        <BlogPostEditor />
-        https://lexical.dev/docs/getting-started/react 따라하는중...
-        <TextField
-          type="text"
-          label="CTA 링크"
-          placeholder="CTA 링크"
-          name="ctaLink"
-          value={value.ctaLink}
-          onChange={handleChange}
-          autoComplete="off"
-          fullWidth
-        />
-        <TextField
-          type="text"
-          label="CTA 텍스트"
-          placeholder="CTA 텍스트"
-          name="ctaText"
-          value={value.ctaText}
-          onChange={handleChange}
-          autoComplete="off"
-          fullWidth
-        />
-        {/* 해시태그 */}
-        <div className="mt-4">
-          <div className="mb-4 flex gap-4">
-            {newTagList.map((newTag) => (
-              <div
-                key={newTag.title}
-                className="flex items-center gap-2.5 bg-[#FAEDEE] pl-2.5"
-              >
-                <div className="text-0.875 bg-[#FAEDEE]">#{newTag.title}</div>
-                <IoCloseOutline
-                  className="cursor-pointer bg-neutral-0"
-                  color="#FFF"
-                  size={20}
-                />
-              </div>
-            ))}
-          </div>
-          <div>
-            <span className="text-0.875 text-neutral-30">
-              자유 태그등록하기 (중복되지 않은 태그만 등록됩니다)
-            </span>
-            <TextField
-              type="text"
-              placeholder="등록할 태그를 입력하세요"
-              name="tag"
-              value={newTag}
-              onChange={handleChangeTag}
-              onKeyDown={handleKeyPressDown}
-              fullWidth
-            />
-            <div className="mt-2 flex gap-4">
-              {dummyTagList.map((tag) => (
+            autoComplete="off"
+            fullWidth
+          />
+          <TextField
+            type="text"
+            label="설명"
+            placeholder="설명"
+            name="description"
+            value={value.description}
+            onChange={handleChange}
+            multiline
+            minRows={3}
+            autoComplete="off"
+            fullWidth
+          />
+          <BlogPostEditor />
+          https://lexical.dev/docs/getting-started/react 따라하는중...
+          <TextField
+            type="text"
+            label="CTA 링크"
+            placeholder="CTA 링크"
+            name="ctaLink"
+            value={value.ctaLink}
+            onChange={handleChange}
+            autoComplete="off"
+            fullWidth
+          />
+          <TextField
+            type="text"
+            label="CTA 텍스트"
+            placeholder="CTA 텍스트"
+            name="ctaText"
+            value={value.ctaText}
+            onChange={handleChange}
+            autoComplete="off"
+            fullWidth
+          />
+          {/* 해시태그 */}
+          <div className="mt-4">
+            <div className="mb-4 flex gap-4">
+              {newTagList.map((newTag) => (
                 <div
-                  key={tag.id}
-                  className="text-0.75 cursor-pointer rounded-full bg-[#F3F5FA] px-2.5 py-1 text-primary-dark"
+                  key={newTag.title}
+                  className="flex items-center gap-2.5 bg-[#FAEDEE] pl-2.5"
                 >
-                  #{tag.title}
+                  <div className="text-0.875 bg-[#FAEDEE]">#{newTag.title}</div>
+                  <IoCloseOutline
+                    className="cursor-pointer bg-neutral-0"
+                    color="#FFF"
+                    size={20}
+                  />
                 </div>
               ))}
             </div>
+            <div>
+              <span className="text-0.875 text-neutral-30">
+                자유 태그등록하기 (중복되지 않은 태그만 등록됩니다)
+              </span>
+              <TextField
+                type="text"
+                placeholder="등록할 태그를 입력하세요"
+                name="tag"
+                value={newTag}
+                onChange={handleChangeTag}
+                onKeyDown={handleKeyPressDown}
+                fullWidth
+              />
+              <div className="mt-2 flex gap-4">
+                {data?.tagDetailInfos.map((tag) => (
+                  <div
+                    key={tag.id}
+                    className="text-0.75 cursor-pointer rounded-full bg-[#F3F5FA] px-2.5 py-1 text-primary-dark"
+                  >
+                    #{tag.title}
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
-        </div>
-      </form>
-    </main>
+        </form>
+      </main>
+    </div>
   );
 };
 
