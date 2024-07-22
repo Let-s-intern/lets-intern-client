@@ -1,6 +1,7 @@
 import { useMediaQuery } from '@mui/material';
 import { useQuery } from '@tanstack/react-query';
 import { useEffect, useReducer, useState } from 'react';
+import { Helmet } from 'react-helmet';
 import { useNavigate, useParams } from 'react-router-dom';
 import ApplyModal from '../../../components/common/program/program-detail/apply/modal/ApplyModal';
 import FilledButton from '../../../components/common/program/program-detail/button/FilledButton';
@@ -130,7 +131,7 @@ const ProgramDetail = ({ programType }: ProgramDetailProps) => {
     if (contentIndex !== 0 && !isResumed) {
       setIsResumed(true);
     }
-  }, [contentIndex]);
+  }, [contentIndex, isResumed]);
 
   // 프로그램 제목 가져오기
   useQuery({
@@ -141,8 +142,8 @@ const ProgramDetail = ({ programType }: ProgramDetailProps) => {
       return res.data;
     },
   });
-  // 프로그램 일정 가져오기
-  useQuery({
+
+  const { data: program } = useQuery({
     queryKey: [programType, programId],
     queryFn: async () => {
       const res = await axios.get(`/${programType}/${programId}`);
@@ -151,7 +152,7 @@ const ProgramDetail = ({ programType }: ProgramDetailProps) => {
       setDisabledButton(
         new Date() < new Date(beginning) || new Date() > new Date(deadline),
       );
-      return res.data;
+      return res.data.data as { shortDesc?: string | null };
     },
   });
 
@@ -173,8 +174,35 @@ const ProgramDetail = ({ programType }: ProgramDetailProps) => {
     window.open(REMINDER_LINK, '_blank');
   };
 
+  const programTypeKor =
+    programType === 'challenge'
+      ? '챌린지'
+      : programType === 'live'
+        ? 'LIVE 클래스'
+        : '프로그램';
+  const title = `${programTitle ?? programTypeKor} | ${programTypeKor} - 렛츠커리어`;
+  const url = `${window.location.origin}/program/${programType}/${programId}`;
+  const description = program?.shortDesc ?? '';
+
   return (
     <div className="px-5">
+      <Helmet>
+        <title>{title}</title>
+        <link rel="canonical" href={url} />
+        {description ? <meta name="description" content={description} /> : null}
+        <meta property="og:title" content={title} />
+        <meta property="og:url" content={url} />
+
+        {description ? (
+          <meta property="og:description" content={description} />
+        ) : null}
+        <meta name="twitter:title" content={title} />
+        <meta name="twitter:url" content={url} />
+        {description ? (
+          <meta name="twitter:description" content={description} />
+        ) : null}
+        <meta name="twitter:card" content="summary" />
+      </Helmet>
       <div className="mx-auto max-w-5xl">
         <Header programTitle={programTitle} />
         <div className="flex min-h-screen flex-col">

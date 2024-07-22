@@ -1,10 +1,11 @@
+import { useQuery } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
+
+import useAuthStore from '../../../../../store/useAuthStore';
 import axios from '../../../../../utils/axios';
 import NavItem from './NavItem';
 import SideNavItem from './SideNavItem';
-import useAuthStore from '../../../../../store/useAuthStore';
-import { useQuery } from '@tanstack/react-query';
 
 const NavBar = () => {
   const navigate = useNavigate();
@@ -32,7 +33,6 @@ const NavBar = () => {
       setActiveLink('PROGRAM');
     } else if (location.pathname.startsWith('/admin')) {
       setActiveLink('ADMIN');
-      // [논의] 블로그 주소 확인 필요
     } else if (location.pathname.startsWith('/blog')) {
       setActiveLink('BLOG');
     } else if (location.pathname.startsWith('/')) {
@@ -75,7 +75,7 @@ const NavBar = () => {
       {/* 상단 네비게이션 바 */}
       <div className="lg:p-30 fixed top-0 z-30 w-screen border-b border-neutral-80 bg-static-100 px-5 sm:px-20 lg:px-28">
         <div className="flex h-[3.75rem] items-center justify-between md:h-[4.375rem] lg:h-[4.75rem]">
-          <div className="flex items-center gap-6 sm:gap-9">
+          <div className="flex items-center gap-4 sm:gap-9">
             <Link to="/" className="h-[34px] w-auto md:h-[2.2rem]">
               <img
                 src="/logo/logo-simple.svg"
@@ -89,8 +89,8 @@ const NavBar = () => {
               />
             </Link>
             {/* 메뉴 아이템 */}
-            <NavItem to="/" active={activeLink === 'HOME'}>
-              홈
+            <NavItem to="/about" active={activeLink === 'ABOUT'}>
+              렛츠커리어 스토리
             </NavItem>
             <NavItem to="/program" active={activeLink === 'PROGRAM'}>
               프로그램
@@ -140,8 +140,8 @@ const NavBar = () => {
       ></div>
       {/* 사이드 네비게이션 바 */}
       <div
-        className={`fixed right-0 top-0 z-50 h-screen w-full bg-white p-5 shadow-md transition-all sm:w-80 duration-300${
-          isOpen ? ' translate-x-0' : ' translate-x-full'
+        className={`fixed right-0 top-0 z-50 h-screen w-full bg-white p-5 shadow-md transition-all duration-300 sm:w-80 ${
+          isOpen ? 'translate-x-0' : 'translate-x-full'
         }`}
       >
         <div className="flex w-full justify-end">
@@ -173,6 +173,9 @@ const NavBar = () => {
         <div className="mt-5 flex flex-col gap-2">
           <SideNavItem to="/" onClick={closeMenu}>
             홈
+          </SideNavItem>
+          <SideNavItem to="/about" onClick={closeMenu}>
+            렛츠커리어 스토리
           </SideNavItem>
           <SideNavItem to="/program" onClick={closeMenu}>
             프로그램

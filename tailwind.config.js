@@ -1,3 +1,5 @@
+const { transform } = require('typescript');
+
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: ['./src/**/*.{js,jsx,ts,tsx}'],
@@ -86,6 +88,10 @@ module.exports = {
           '0px 8px 16px 0px rgba(0, 0, 0, 0.08)',
           '0px 0px 8px 0px rgba(0, 0, 0, 0.08)',
         ],
+        '06': [
+          '0px 0px 12px 0px rgba(255, 255, 255, 0.45)',
+          '4px 4px 8px 0px rgba(0, 0, 0, 0.04)',
+        ],
       },
       backgroundImage: {
         'gradient-start':
@@ -97,6 +103,21 @@ module.exports = {
           'linear-gradient(165deg, #667FFF 10.2%, #4D55F5 80.95%)',
         'gradient-desc':
           'linear-gradient(180deg, rgba(77, 85, 245, 0.00) 0%, rgba(77, 85, 245, 0.70) 100%)',
+      },
+      keyframes: {
+        fadeInDown: {
+          '0%': {
+            opacity: '0',
+            transform: 'translateY(-60%) translateX(-50%)',
+          },
+          '100%': {
+            opacity: '1',
+            transform: 'translateY(-50%) translateX(-50%)',
+          },
+        },
+      },
+      animation: {
+        fadeInDown: 'fadeInDown 1s ease-in-out',
       },
     },
     borderRadius: {

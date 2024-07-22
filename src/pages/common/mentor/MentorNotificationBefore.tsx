@@ -55,7 +55,7 @@ const MentorNotificationBefore = () => {
           <br />
           소중한 시간 내어 준비해주셔서 감사드립니다.
           <br />
-          라이브 클래스 진행 관련 사전 안내사항 전달드립니다.
+          LIVE 클래스 진행 관련 사전 안내사항 전달드립니다.
         </p>
       </section>
 

@@ -63,9 +63,12 @@ import Application from './pages/common/mypage/Application';
 import MyPage from './pages/common/mypage/MyPage';
 import Privacy from './pages/common/mypage/Privacy';
 import Review from './pages/common/mypage/Review';
+import PaymentFail from './pages/common/program/PaymentFail';
+import PaymentSuccess from './pages/common/program/PaymentSuccess';
 import ProgramDetail from './pages/common/program/ProgramDetail';
 import Programs from './pages/common/program/Programs';
 import ProgramDetailRegacy from './pages/common/program/regacy/ProgramDetailRegacy';
+import SelectPaymentPage from './pages/common/program/SelectPaymentPage';
 import ReviewCreateRegacy from './pages/common/review/regacy/ReviewCreateRegacy';
 import ReviewCreate from './pages/common/review/ReviewCreate';
 import ReviewDetail from './pages/common/review/ReviewDetail';
@@ -95,6 +98,17 @@ const Router = () => {
             path="program/live/:programId"
             element={<ProgramDetail programType="live" />}
           />
+          <Route
+            path="program/challenge/:programId/payment"
+            element={<SelectPaymentPage programType="challenge" />}
+          />
+          <Route
+            path="program/live/:programId/payment"
+            element={<SelectPaymentPage programType="live" />}
+          />
+          <Route path="program/:orderId/success" element={<PaymentSuccess />} />
+          <Route path="program/:orderId/fail" element={<PaymentFail />} />
+
           {/* ---Regacy--- */}
           {/* /program */}
           <Route path="program" element={<Programs />} />
@@ -179,13 +193,13 @@ const Router = () => {
           />
           <Route path="write-review/live/:id" element={<WriteReviewLive />} />
 
-          {/* 라이브 클래스 멘토 사전 전달 사항 */}
+          {/* LIVE 클래스 멘토 사전 전달 사항 */}
           <Route
             path="live/:id/mentor/notification/before"
             element={<MentorNotificationBefore />}
           />
 
-          {/* 라이브 클래스 멘토 전달 후기 */}
+          {/* LIVE 클래스 멘토 전달 후기 */}
           <Route
             path="live/:id/mentor/notification/after"
             element={<MentorNotificationAfter />}
