@@ -62,7 +62,6 @@ const Router = () => {
           <Route path="order/:orderId/result" element={<PaymentResult />} />
           <Route path="order/:orderId/fail" element={<PaymentFail />} />
 
-          {/* ---Regacy--- */}
           {/* /program */}
           <Route path="program" element={<Programs />} />
           {/* /program/detail/:programId */}
@@ -139,13 +138,13 @@ const Router = () => {
           />
           <Route path="write-review/live/:id" element={<WriteReviewLive />} />
 
-          {/* 라이브 클래스 멘토 사전 전달 사항 */}
+          {/* LIVE 클래스 멘토 사전 전달 사항 */}
           <Route
             path="live/:id/mentor/notification/before"
             element={<MentorNotificationBefore />}
           />
 
-          {/* 라이브 클래스 멘토 전달 후기 */}
+          {/* LIVE 클래스 멘토 전달 후기 */}
           <Route
             path="live/:id/mentor/notification/after"
             element={<MentorNotificationAfter />}

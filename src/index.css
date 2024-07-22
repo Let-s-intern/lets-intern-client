@@ -3,6 +3,12 @@
 @tailwind utilities;
 
 @layer base {
+  .text-2\.25-bold {
+    font-size: 2.25rem;
+    font-weight: 600;
+    line-height: 3.375rem;
+  }
+
   .text-2\.25-semibold {
     font-size: 2.25rem;
     font-weight: 600;
@@ -99,6 +105,12 @@
     line-height: 1.875rem;
   }
 
+  .text-1\.25-bold {
+    font-size: 1.25rem;
+    font-weight: 700;
+    line-height: 1.875rem;
+  }
+
   .text-1\.25-medium {
     font-size: 1.25rem;
     font-weight: 500;
@@ -145,6 +157,12 @@
     font-size: 1.125rem;
     font-weight: 300;
     line-height: 1.75rem;
+  }
+
+  .text-1-bold {
+    font-size: 1rem;
+    font-weight: 700;
+    line-height: 1.625rem;
   }
 
   .text-1-semibold {
@@ -225,8 +243,28 @@ body.non-scroll {
   padding-right: 1rem;
 }
 
+/* 모바일 환경 */
 @media (hover: none) and (pointer: coarse) {
   body.non-scroll {
     padding-right: inherit;
+  }
+}
+
+/* PC 환경 */
+@media (hover: hover) and (pointer: fine) {
+  .custom-scrollbar {
+    &::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+
+    &::-webkit-scrollbar-track {
+      background-color: transparent;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background: #888;
+      border-radius: 24px;
+    }
   }
 }
