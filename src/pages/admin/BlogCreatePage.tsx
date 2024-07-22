@@ -8,7 +8,7 @@ import {
 } from '@mui/material';
 import { ChangeEvent, useState } from 'react';
 
-import { useBlogTagQuery } from '../../api/blog';
+import { useBlogTagQuery, usePostBlogTagMutation } from '../../api/blog';
 import { TagDetail } from '../../api/blogSchema';
 import BlogPostEditor from '../../components/admin/blog/BlogPostEditor';
 import TagDelete from '../../components/admin/blog/TagDelete';
@@ -27,8 +27,6 @@ interface NewBlog {
 }
 
 const BlogCreatePage = () => {
-  const { data: blogTagData } = useBlogTagQuery();
-
   const [value, setValue] = useState<NewBlog>({
     title: '',
     category: '',
@@ -70,7 +68,15 @@ const BlogCreatePage = () => {
   };
 
   const handleKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    if (event.key !== 'Enter') return;
+    const isEmpty = newTag === '';
+    const isExist = blogTagData?.tagDetailInfos.some(
+      (tag) => tag.title === newTag,
+    );
+
+    if (event.key !== 'Enter' || isEmpty) return;
+    if (isExist) {
+      alert('이미 존재하는 태그입니다.');
+    } else blogTagMutation.mutate();
   };
 
   const addTagToBlog = (tag: TagDetail) => {
@@ -81,6 +87,11 @@ const BlogCreatePage = () => {
       tagList: [...prev.tagList, tag.id],
     }));
   };
+
+  const resetTag = () => setNewTag('');
+
+  const { data: blogTagData } = useBlogTagQuery();
+  const blogTagMutation = usePostBlogTagMutation(newTag, resetTag);
 
   return (
     <div className="mx-auto my-12 w-[36rem]">
@@ -152,7 +163,7 @@ const BlogCreatePage = () => {
           />
           {/* 해시태그 */}
           <div className="mt-4">
-            <div className="mb-4 flex gap-4">
+            <div className="mb-4 flex flex-wrap gap-4">
               {newTagList.map((newTag) => (
                 <TagDelete
                   key={newTag.title}
@@ -174,7 +185,7 @@ const BlogCreatePage = () => {
                 onKeyDown={handleKeyPress}
                 fullWidth
               />
-              <div className="mt-2 flex gap-4">
+              <div className="mt-2 flex flex-wrap gap-4">
                 {blogTagData?.tagDetailInfos.map((tag) => (
                   <div
                     key={tag.id}

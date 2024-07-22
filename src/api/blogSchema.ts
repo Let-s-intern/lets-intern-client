@@ -2,7 +2,6 @@ import dayjs from 'dayjs';
 import { z } from 'zod';
 
 export type TagDetail = z.infer<typeof tagDetailSchema>[0];
-export type TagDetailTitle = z.infer<typeof tagDetailSchema>[0]['title'];
 
 export const blogThumbnailSchema = z.object({
   id: z.string(),

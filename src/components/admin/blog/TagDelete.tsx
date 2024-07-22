@@ -1,8 +1,8 @@
 import { IoCloseOutline } from 'react-icons/io5';
-import { TagDetailTitle } from '../../../api/blogSchema';
+import { TagDetail } from '../../../api/blogSchema';
 
 interface TagDeleteProps {
-  title: TagDetailTitle;
+  title: TagDetail['title'];
   onClickDelete: () => void;
 }
 
