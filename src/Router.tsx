@@ -1,4 +1,6 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
+
+import { getAdminRoutes } from './AdminRoutes';
 import ChallengeLayout from './components/common/challenge/ui/layout/ChallengeLayout';
 import Layout from './components/common/ui/layout/Layout';
 import ScrollToTop from './components/ui/scroll-to-top/ScrollToTop';
@@ -32,12 +34,6 @@ import Maintenance from './pages/maintenance/Maintenance';
 import NotFound from './pages/NotFound';
 import WriteReviewChallenge from './pages/WriteReviewChallenge';
 import WriteReviewLive from './pages/WriteReviewLive';
-
-let getAdminRoutes: () => JSX.Element = () => <></>;
-
-import('./AdminRoutes').then((module) => {
-  getAdminRoutes = module.getAdminRoutes;
-});
 
 const Router = () => {
   return (
