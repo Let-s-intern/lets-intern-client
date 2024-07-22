@@ -7,16 +7,12 @@ import {
   TextField,
 } from '@mui/material';
 import { ChangeEvent, useState } from 'react';
-import { IoCloseOutline } from 'react-icons/io5';
 
 import { useBlogTagQuery } from '../../api/blog';
-import { TagDetail, TagDetailTitle } from '../../api/blogSchema';
+import { TagDetail } from '../../api/blogSchema';
 import BlogPostEditor from '../../components/admin/blog/BlogPostEditor';
+import TagDelete from '../../components/admin/blog/TagDelete';
 import { blogCategory } from '../../utils/convert';
-
-interface BlogTag {
-  title: TagDetailTitle;
-}
 
 interface NewBlog {
   title: string;
@@ -45,7 +41,7 @@ const BlogCreatePage = () => {
     tagList: [],
   });
   const [newTag, setNewTag] = useState('');
-  const [newTagList, setNewTagList] = useState<BlogTag[]>([]);
+  const [newTagList, setNewTagList] = useState<TagDetail[]>([]);
 
   const handleSubmit = () => {
     console.log('블로그 제출');
@@ -59,17 +55,27 @@ const BlogCreatePage = () => {
     setValue({ ...value, [event.target.name]: event.target.value });
   };
 
+  const deleteTag = (id: number) => {
+    const i = newTagList.findIndex((tag) => tag.id === id);
+    setNewTagList((prev) => [...prev.slice(0, i), ...prev.slice(i + 1)]);
+    const j = value.tagList.findIndex((tag) => tag === id);
+    setValue((prev) => ({
+      ...prev,
+      tagList: [...prev.tagList.slice(0, j), ...prev.tagList.slice(j + 1)],
+    }));
+  };
+
   const handleChangeTag = (event: ChangeEvent<HTMLInputElement>) => {
     setNewTag(event.target.value);
   };
 
-  const handleKeyPressDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    // 태그 등록
+  const handleKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key !== 'Enter') return;
   };
 
   const addTagToBlog = (tag: TagDetail) => {
     if (value.tagList.includes(tag.id)) return;
-    setNewTagList((prev) => [...prev, { title: tag.title }]);
+    setNewTagList((prev) => [...prev, { id: tag.id, title: tag.title }]);
     setValue((prev) => ({
       ...prev,
       tagList: [...prev.tagList, tag.id],
@@ -148,17 +154,11 @@ const BlogCreatePage = () => {
           <div className="mt-4">
             <div className="mb-4 flex gap-4">
               {newTagList.map((newTag) => (
-                <div
+                <TagDelete
                   key={newTag.title}
-                  className="flex items-center gap-2.5 bg-[#FAEDEE] pl-2.5"
-                >
-                  <div className="text-0.875 bg-[#FAEDEE]">#{newTag.title}</div>
-                  <IoCloseOutline
-                    className="cursor-pointer bg-neutral-0"
-                    color="#FFF"
-                    size={20}
-                  />
-                </div>
+                  title={newTag.title}
+                  onClickDelete={() => deleteTag(newTag.id)}
+                />
               ))}
             </div>
             <div>
@@ -171,7 +171,7 @@ const BlogCreatePage = () => {
                 name="tag"
                 value={newTag}
                 onChange={handleChangeTag}
-                onKeyDown={handleKeyPressDown}
+                onKeyDown={handleKeyPress}
                 fullWidth
               />
               <div className="mt-2 flex gap-4">
