@@ -1,6 +1,10 @@
-import { useState } from 'react';
-
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useMemo, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import {
+  PostApplicationInterface,
+  usePostApplicationMutation,
+} from '../../../../../api/application';
 import { ProgramType } from '../../../../../pages/common/program/ProgramDetail';
 import axios from '../../../../../utils/axios';
 import CautionContent from '../apply/content/CautionContent';
@@ -51,7 +55,7 @@ const ApplySection = ({
   toggleApplyModal,
 }: ApplySectionProps) => {
   const queryClient = useQueryClient();
-
+  const navigate = useNavigate();
   const [contentIndex, setContentIndex] = useState(0);
   const [programDate, setProgramDate] = useState<ProgramDate>({
     deadline: '',
@@ -92,7 +96,7 @@ const ApplySection = ({
         name: data.name,
         email: data.email,
         phoneNumber: data.phoneNumber,
-        contactEmail: data.contactEmail,
+        contactEmail: data.contactEmail || '',
         question: '',
       });
       setCriticalNotice(data.criticalNotice);
@@ -147,41 +151,72 @@ const ApplySection = ({
     },
   });
 
-  const applyProgram = useMutation({
-    mutationFn: async () => {
-      const res = await axios.post(
-        `/application/${programId}`,
-        {
-          paymentInfo: {
-            priceId: priceId,
-            couponId: payInfo.couponId,
-          },
-          question: userInfo.question,
-          contactEmail: userInfo.contactEmail,
-        },
-        {
-          params: {
-            type: programType.toUpperCase(),
-          },
-        },
-      );
-      return res.data;
-    },
-    onSuccess: async () => {
+  const isTest = userInfo?.email === 'test@test.com';
+
+  const { mutate: applyProgram } = usePostApplicationMutation(
+    async () => {
       await queryClient.invalidateQueries({
         queryKey: [programType],
       });
       toggleApplyModal();
       setContentIndex(0);
     },
-    onError: () => {
+    () => {
       alert('신청에 실패했습니다. 다시 시도해주세요.');
       setContentIndex(0);
     },
-  });
+  );
+
+  const totalPrice = useMemo(() => {
+    const totalDiscount =
+      payInfo.couponPrice === -1
+        ? payInfo.price
+        : payInfo.discount + payInfo.couponPrice;
+    if (payInfo.price <= totalDiscount) {
+      return 0;
+    }
+    return payInfo.price - totalDiscount;
+  }, [payInfo.couponPrice, payInfo.discount, payInfo.price]);
 
   const handleApplyButtonClick = () => {
-    applyProgram.mutate();
+    if (isTest) {
+      navigate(`/program/${programType}/${programId}/payment`, {
+        state: {
+          priceId: priceId,
+          couponId: payInfo.couponId,
+          price: payInfo.price,
+          discount: payInfo.discount,
+          couponPrice: payInfo.couponPrice,
+          totalPrice: totalPrice,
+          contactEmail: userInfo.contactEmail,
+          question: userInfo.question,
+          email: userInfo.email,
+          phone: userInfo.phoneNumber,
+          name: userInfo.name,
+          programTitle: programTitle,
+        },
+      });
+      return;
+    }
+
+    const body: PostApplicationInterface = {
+      paymentInfo: {
+        priceId: priceId,
+        couponId: payInfo.couponId,
+        paymentKey: '',
+        orderId: '',
+        amount: totalPrice.toString(),
+      },
+      contactEmail: userInfo.contactEmail,
+      motivate: '',
+      question: userInfo.question,
+    };
+
+    applyProgram({
+      programId: programId,
+      programType: programType,
+      requestBody: body,
+    });
   };
 
   return (
@@ -230,6 +265,9 @@ const ApplySection = ({
           contentIndex={contentIndex}
           setContentIndex={setContentIndex}
           programType={programType}
+          totalPrice={totalPrice}
+          isTest={isTest}
+          programDate={programDate}
         />
       )}
     </section>
