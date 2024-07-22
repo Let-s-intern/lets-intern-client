@@ -10,67 +10,30 @@ import { ChangeEvent, useState } from 'react';
 import { IoCloseOutline } from 'react-icons/io5';
 
 import { useBlogTagQuery } from '../../api/blog';
+import { TagDetail, TagDetailTitle } from '../../api/blogSchema';
 import BlogPostEditor from '../../components/admin/blog/BlogPostEditor';
 import { blogCategory } from '../../utils/convert';
 
-interface IhashTag {
-  title: string;
+interface BlogTag {
+  title: TagDetailTitle;
 }
 
-const dummyNewTagList = [
-  {
-    title: '마케팅',
-  },
-  {
-    title: 'IT',
-  },
-  {
-    title: '직무찾기',
-  },
-];
-const dummyTagList = [
-  {
-    id: 0,
-    title: '인턴',
-    createDate: '2024-07-22T10:56:57.200Z',
-    lastModifiedDate: '2024-07-22T10:56:57.200Z',
-  },
-  {
-    id: 1,
-    title: '마케팅',
-    createDate: '2024-07-22T10:56:57.200Z',
-    lastModifiedDate: '2024-07-22T10:56:57.200Z',
-  },
-  {
-    id: 2,
-    title: '지원서',
-    createDate: '2024-07-22T10:56:57.200Z',
-    lastModifiedDate: '2024-07-22T10:56:57.200Z',
-  },
-  {
-    id: 3,
-    title: '면접',
-    createDate: '2024-07-22T10:56:57.200Z',
-    lastModifiedDate: '2024-07-22T10:56:57.200Z',
-  },
-  {
-    id: 4,
-    title: '직무찾기',
-    createDate: '2024-07-22T10:56:57.200Z',
-    lastModifiedDate: '2024-07-22T10:56:57.200Z',
-  },
-  {
-    id: 5,
-    title: '챌린지',
-    createDate: '2024-07-22T10:56:57.200Z',
-    lastModifiedDate: '2024-07-22T10:56:57.200Z',
-  },
-];
+interface NewBlog {
+  title: string;
+  category: string;
+  thumbnail: string;
+  description: string;
+  content: string;
+  ctaLink: string;
+  ctaText: string;
+  displayDate: string;
+  tagList: number[];
+}
 
 const BlogCreatePage = () => {
-  const { data, isLoading } = useBlogTagQuery();
+  const { data: blogTagData } = useBlogTagQuery();
 
-  const [value, setValue] = useState({
+  const [value, setValue] = useState<NewBlog>({
     title: '',
     category: '',
     thumbnail: '',
@@ -82,7 +45,7 @@ const BlogCreatePage = () => {
     tagList: [],
   });
   const [newTag, setNewTag] = useState('');
-  const [newTagList, setNewTagList] = useState<IhashTag[]>(dummyNewTagList);
+  const [newTagList, setNewTagList] = useState<BlogTag[]>([]);
 
   const handleSubmit = () => {
     console.log('블로그 제출');
@@ -103,6 +66,16 @@ const BlogCreatePage = () => {
   const handleKeyPressDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
     // 태그 등록
   };
+
+  const addTagToBlog = (tag: TagDetail) => {
+    if (value.tagList.includes(tag.id)) return;
+    setNewTagList((prev) => [...prev, { title: tag.title }]);
+    setValue((prev) => ({
+      ...prev,
+      tagList: [...prev.tagList, tag.id],
+    }));
+  };
+
   return (
     <div className="mx-auto my-12 w-[36rem]">
       <header>
@@ -202,10 +175,11 @@ const BlogCreatePage = () => {
                 fullWidth
               />
               <div className="mt-2 flex gap-4">
-                {data?.tagDetailInfos.map((tag) => (
+                {blogTagData?.tagDetailInfos.map((tag) => (
                   <div
                     key={tag.id}
                     className="text-0.75 cursor-pointer rounded-full bg-[#F3F5FA] px-2.5 py-1 text-primary-dark"
+                    onClick={() => addTagToBlog(tag)}
                   >
                     #{tag.title}
                   </div>
