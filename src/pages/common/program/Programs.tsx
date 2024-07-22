@@ -1,37 +1,37 @@
-import { useCallback, useEffect, useReducer, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import clsx from 'clsx';
+import { useCallback, useEffect, useReducer, useState } from 'react';
+import { Helmet } from 'react-helmet';
 import { useSearchParams } from 'react-router-dom';
-
+import Banner from '../../../components/common/program/banner/Banner';
+import FilterItem from '../../../components/common/program/filter/FilterItem';
+import FilterSideBar from '../../../components/common/program/filter/FilterSideBar';
+import MuiPagination from '../../../components/common/program/pagination/MuiPagination';
+import EmptyCardList from '../../../components/common/program/programs/card/EmptyCardList';
+import ProgramCard from '../../../components/common/program/programs/card/ProgramCard';
+import LoadingContainer from '../../../components/common/ui/loading/LoadingContainer';
+import {
+  filterClassificationkey,
+  filterStatuskey,
+  filterTypekey,
+  IProgram,
+} from '../../../interfaces/interface';
+import {
+  filterClassificationReducer,
+  filterStatusReducer,
+  filterTypeReducer,
+  initialFilterClassification,
+  initialFilterStatus,
+  initialFilterType,
+} from '../../../reducers/filterReducer';
+import axios from '../../../utils/axios';
+import { getKeyByValue } from '../../../utils/convert';
 import {
   PROGRAM_FILTER_CLASSIFICATION,
   PROGRAM_FILTER_STATUS,
   PROGRAM_FILTER_TYPE,
   PROGRAM_QUERY_KEY,
 } from '../../../utils/programConst';
-import axios from '../../../utils/axios';
-import {
-  IProgram,
-  filterClassificationkey,
-  filterStatuskey,
-  filterTypekey,
-} from '../../../interfaces/interface';
-import ProgramCard from '../../../components/common/program/programs/card/ProgramCard';
-import Banner from '../../../components/common/program/banner/Banner';
-import FilterItem from '../../../components/common/program/filter/FilterItem';
-import FilterSideBar from '../../../components/common/program/filter/FilterSideBar';
-import {
-  filterTypeReducer,
-  initialFilterType,
-  filterStatusReducer,
-  initialFilterStatus,
-  filterClassificationReducer,
-  initialFilterClassification,
-} from '../../../reducers/filterReducer';
-import { getKeyByValue } from '../../../utils/convert';
-import MuiPagination from '../../../components/common/program/pagination/MuiPagination';
-import EmptyCardList from '../../../components/common/program/programs/card/EmptyCardList';
-import LoadingContainer from '../../../components/common/ui/loading/LoadingContainer';
 
 const initialPageable = { page: 1, size: 12 };
 const initialPageInfo = {
@@ -270,6 +270,33 @@ const Programs = () => {
 
   return (
     <div className={clsx('flex', { 'overflow-hidden': isOpen })}>
+      <Helmet>
+        <meta name="robots" content="index,follow" />
+        <title>프로그램 목록 | 렛츠커리어</title>
+        <link rel="canonical" href={`${window.location.origin}/program`} />
+        <meta
+          name="description"
+          content="렛츠커리어의 프로그램 목록 페이지입니다."
+        />
+        <meta property="og:title" content="프로그램 목록 | 렛츠커리어" />
+        <meta property="og:url" content={`${window.location.origin}/program`} />
+        <meta property="og:site_name" content="렛츠커리어" />
+        <meta property="og:locale" content="ko-KR" />
+        <meta
+          property="og:description"
+          content="렛츠커리어의 프로그램 목록 페이지입니다."
+        />
+        <meta name="twitter:title" content="프로그램 목록 | 렛츠커리어" />
+        <meta
+          name="twitter:url"
+          content={`${window.location.origin}/program`}
+        />
+        <meta
+          name="twitter:description"
+          content="렛츠커리어의 프로그램 목록 페이지입니다."
+        />
+        <meta name="twitter:card" content="summary" />
+      </Helmet>
       {/* 필터링 사이드바 */}
       <FilterSideBar
         setIsOpen={setIsOpen}
