@@ -6,7 +6,7 @@
  *
  */
 
-body {
+/* body {
   margin: 0;
   background: #eee;
   font-family:
@@ -18,7 +18,7 @@ body {
   font-weight: 500;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-}
+} */
 
 .other h2 {
   font-size: 18px;
