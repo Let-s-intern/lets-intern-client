@@ -49,11 +49,8 @@ const Login = () => {
       return res.data;
     },
     onSuccess: (data) => {
-      login(
-        data.data.accessToken,
-        data.data.refreshToken,
-        searchParams.get('redirect') || '/',
-      );
+      login(data.data.accessToken, data.data.refreshToken);
+      navigate(searchParams.get('redirect') || '/');
     },
     onError: (error) => {
       const axiosError = error as AxiosError;
@@ -112,11 +109,8 @@ const Login = () => {
       );
       return;
     }
-    login(
-      token.accessToken,
-      token.refreshToken,
-      searchParams.get('redirect') || '/',
-    );
+    login(token.accessToken, token.refreshToken);
+    navigate(searchParams.get('redirect') || '/');
   };
 
   const handleLogin = (e: React.FormEvent<HTMLFormElement>) => {

@@ -1,15 +1,16 @@
-import { useEffect, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
+import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
-import axios from '../../../../utils/axios';
-import Header from '../../../../components/common/program/program-detail/regacy/ui/Header';
-import MainContent from '../../../../components/common/program/program-detail/regacy/content/MainContent';
-import ApplySection from '../../../../components/common/program/program-detail/regacy/apply/mobile/main/ApplySection';
 import ApplyAside from '../../../../components/common/program/program-detail/regacy/apply/desktop/main/ApplyAside';
+import ApplySection from '../../../../components/common/program/program-detail/regacy/apply/mobile/main/ApplySection';
+import MainContent from '../../../../components/common/program/program-detail/regacy/content/MainContent';
+import Header from '../../../../components/common/program/program-detail/regacy/ui/Header';
+import axios from '../../../../utils/axios';
 
 import styles from './ProgramDetailRegacy.module.scss';
 
+/** @deprecated */
 const ProgramDetailRegacy = () => {
   const params = useParams();
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);

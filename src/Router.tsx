@@ -67,9 +67,7 @@ import PaymentFail from './pages/common/program/PaymentFail';
 import PaymentSuccess from './pages/common/program/PaymentSuccess';
 import ProgramDetail from './pages/common/program/ProgramDetail';
 import Programs from './pages/common/program/Programs';
-import ProgramDetailRegacy from './pages/common/program/regacy/ProgramDetailRegacy';
 import SelectPaymentPage from './pages/common/program/SelectPaymentPage';
-import ReviewCreateRegacy from './pages/common/review/regacy/ReviewCreateRegacy';
 import ReviewCreate from './pages/common/review/ReviewCreate';
 import ReviewDetail from './pages/common/review/ReviewDetail';
 import Maintenance from './pages/maintenance/Maintenance';
@@ -109,21 +107,20 @@ const Router = () => {
           <Route path="program/:orderId/success" element={<PaymentSuccess />} />
           <Route path="program/:orderId/fail" element={<PaymentFail />} />
 
-          {/* ---Regacy--- */}
           {/* /program */}
           <Route path="program" element={<Programs />} />
           {/* /program/detail/:programId */}
-          <Route
+          {/* <Route
             path="program/detail/:programId"
             element={<ProgramDetailRegacy />}
-          />
+          /> */}
 
           <Route path="program/:programId">
             {/* /program/:programId/application/:applicationId/review/create */}
-            <Route
+            {/* <Route
               path="application/:applicationId/review/create"
               element={<ReviewCreateRegacy />}
-            />
+            /> */}
             {/* /program/:programId/review/new */}
             <Route
               path="review/new"

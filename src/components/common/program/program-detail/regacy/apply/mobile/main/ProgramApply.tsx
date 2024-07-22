@@ -1,18 +1,17 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import styled, { css } from 'styled-components';
-
 import axios from '../../../../../../../../utils/axios';
-import CautionContent from '../content/CautionContent';
-import Modal from '../ui/Modal';
-import ResultContent from '../content/ResultContent';
-import MemberInfoInputContent from '../content/MemberInfoInputContent';
 import {
   isValidEmail,
   isValidPhoneNumber,
 } from '../../../../../../../../utils/valid';
-import MemberTypeContent from '../content/MemberTypeContent';
 import AlertModal from '../../../../../../../ui/alert/AlertModal';
+import CautionContent from '../content/CautionContent';
+import MemberInfoInputContent from '../content/MemberInfoInputContent';
+import MemberTypeContent from '../content/MemberTypeContent';
+import ResultContent from '../content/ResultContent';
+import Modal from '../ui/Modal';
 
 interface ProgramApplyProps {
   user: any;
@@ -37,6 +36,7 @@ interface BlackBackgroundProps {
   $modalOpen: boolean;
 }
 
+/** @deprecated */
 const ProgramApply = ({
   user,
   hasDetailInfo,
