@@ -7,9 +7,64 @@ import {
   TextField,
 } from '@mui/material';
 import { ChangeEvent, useState } from 'react';
+import { IoCloseOutline } from 'react-icons/io5';
 
 import BlogPostEditor from '../../components/admin/blog/BlogPostEditor';
 import { blogCategory } from '../../utils/convert';
+
+interface IhashTag {
+  title: string;
+}
+
+const dummyNewTagList = [
+  {
+    title: '마케팅',
+  },
+  {
+    title: 'IT',
+  },
+  {
+    title: '직무찾기',
+  },
+];
+const dummyTagList = [
+  {
+    id: 0,
+    title: '인턴',
+    createDate: '2024-07-22T10:56:57.200Z',
+    lastModifiedDate: '2024-07-22T10:56:57.200Z',
+  },
+  {
+    id: 1,
+    title: '마케팅',
+    createDate: '2024-07-22T10:56:57.200Z',
+    lastModifiedDate: '2024-07-22T10:56:57.200Z',
+  },
+  {
+    id: 2,
+    title: '지원서',
+    createDate: '2024-07-22T10:56:57.200Z',
+    lastModifiedDate: '2024-07-22T10:56:57.200Z',
+  },
+  {
+    id: 3,
+    title: '면접',
+    createDate: '2024-07-22T10:56:57.200Z',
+    lastModifiedDate: '2024-07-22T10:56:57.200Z',
+  },
+  {
+    id: 4,
+    title: '직무찾기',
+    createDate: '2024-07-22T10:56:57.200Z',
+    lastModifiedDate: '2024-07-22T10:56:57.200Z',
+  },
+  {
+    id: 5,
+    title: '챌린지',
+    createDate: '2024-07-22T10:56:57.200Z',
+    lastModifiedDate: '2024-07-22T10:56:57.200Z',
+  },
+];
 
 const BlogCreatePage = () => {
   const [value, setValue] = useState({
@@ -23,6 +78,8 @@ const BlogCreatePage = () => {
     displayDate: '',
     tagList: [],
   });
+  const [newTag, setNewTag] = useState('');
+  const [newTagList, setNewTagList] = useState<IhashTag[]>(dummyNewTagList);
 
   const handleSubmit = () => {
     console.log('블로그 제출');
@@ -36,6 +93,13 @@ const BlogCreatePage = () => {
     setValue({ ...value, [event.target.name]: event.target.value });
   };
 
+  const handleChangeTag = (event: ChangeEvent<HTMLInputElement>) => {
+    setNewTag(event.target.value);
+  };
+
+  const handleKeyPressDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    // 태그 등록
+  };
   return (
     <main className="mx-auto my-12 w-[36rem]">
       <header>
@@ -103,6 +167,48 @@ const BlogCreatePage = () => {
           autoComplete="off"
           fullWidth
         />
+        {/* 해시태그 */}
+        <div className="mt-4">
+          <div className="mb-4 flex gap-4">
+            {newTagList.map((newTag) => (
+              <div
+                key={newTag.title}
+                className="flex items-center gap-2.5 bg-[#FAEDEE] pl-2.5"
+              >
+                <div className="text-0.875 bg-[#FAEDEE]">#{newTag.title}</div>
+                <IoCloseOutline
+                  className="cursor-pointer bg-neutral-0"
+                  color="#FFF"
+                  size={20}
+                />
+              </div>
+            ))}
+          </div>
+          <div>
+            <span className="text-0.875 text-neutral-30">
+              자유 태그등록하기 (중복되지 않은 태그만 등록됩니다)
+            </span>
+            <TextField
+              type="text"
+              placeholder="등록할 태그를 입력하세요"
+              name="tag"
+              value={newTag}
+              onChange={handleChangeTag}
+              onKeyDown={handleKeyPressDown}
+              fullWidth
+            />
+            <div className="mt-2 flex gap-4">
+              {dummyTagList.map((tag) => (
+                <div
+                  key={tag.id}
+                  className="text-0.75 cursor-pointer rounded-full bg-[#F3F5FA] px-2.5 py-1 text-primary-dark"
+                >
+                  #{tag.title}
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
       </form>
     </main>
   );
