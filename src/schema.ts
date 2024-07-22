@@ -1038,6 +1038,8 @@ export const liveApplicationPriceType = z.object({
   livePriceType,
 });
 
+// 블로그
+
 export const blogSchema = z
   .object({
     blogInfos: z.array(
@@ -1068,6 +1070,7 @@ export const blogSchema = z
       blogInfos: data.blogInfos.map((blogInfo) => ({
         ...blogInfo,
         blogThumbnailInfo: {
+          ...blogInfo.blogThumbnailInfo,
           displayDate: blogInfo.blogThumbnailInfo.displayDate
             ? dayjs(blogInfo.blogThumbnailInfo.displayDate)
             : null,
