@@ -178,7 +178,7 @@ const ProgramDetail = ({ programType }: ProgramDetailProps) => {
     programType === 'challenge'
       ? '챌린지'
       : programType === 'live'
-        ? '라이브 클래스'
+        ? 'LIVE 클래스'
         : '프로그램';
   const title = `${programTitle ?? programTypeKor} | ${programTypeKor} - 렛츠커리어`;
   const url = `${window.location.origin}/program/${programType}/${programId}`;
@@ -187,14 +187,12 @@ const ProgramDetail = ({ programType }: ProgramDetailProps) => {
   return (
     <div className="px-5">
       <Helmet>
-        <meta name="robots" content="index,follow" />
         <title>{title}</title>
         <link rel="canonical" href={url} />
         {description ? <meta name="description" content={description} /> : null}
         <meta property="og:title" content={title} />
         <meta property="og:url" content={url} />
-        <meta property="og:site_name" content="렛츠커리어" />
-        <meta property="og:locale" content="ko-KR" />
+
         {description ? (
           <meta property="og:description" content={description} />
         ) : null}
