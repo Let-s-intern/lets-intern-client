@@ -31,33 +31,34 @@ const maxTitleLength = 49;
 const maxDescriptionLength = 100;
 const titleHelperText = '제목을 입력해주세요';
 const categoryHelperText = '카테고리를 선택주세요';
+const initialBlog = {
+  title: '',
+  category: '',
+  thumbnail: '',
+  description: '',
+  content: '',
+  ctaLink: '',
+  ctaText: '',
+  displayDate: '',
+  tagList: [],
+};
 
 const BlogCreatePage = () => {
   const navgiate = useNavigate();
 
-  const [value, setValue] = useState<PostBlog>({
-    title: '',
-    category: '',
-    thumbnail: '',
-    description: '',
-    content: '',
-    ctaLink: '',
-    ctaText: '',
-    displayDate: '',
-    tagList: [],
-  });
+  const [value, setValue] = useState<PostBlog>(initialBlog);
   const [newTag, setNewTag] = useState('');
   const [newTagList, setNewTagList] = useState<TagDetail[]>([]);
   const [file, setFile] = useState<File | null>(null);
   const [isTitleValid, setIsTitleValid] = useState(true);
   const [isCategoryValid, setIsCategoryValid] = useState(true);
-  const [editorState, setEditorState] = useState<string>('');
+  const [content, setContent] = useState('');
 
   const submitBlog = () => {
     if (!validate()) return;
     // File을 url로 변환
     if (file) fileMutation.mutate({ type: 'BLOG', file });
-    setValue((prev) => ({ ...prev, content: editorState }));
+    setValue((prev) => ({ ...prev, content }));
     blogMutation.mutate(value);
   };
 
@@ -209,7 +210,7 @@ const BlogCreatePage = () => {
             image={value.thumbnail as string}
             onChange={handleChange}
           />
-          <BlogPostEditor setEditorState={setEditorState} />
+          <BlogPostEditor setContent={setContent} />
           https://lexical.dev/docs/getting-started/react 따라하는중...
           <TextField
             type="text"

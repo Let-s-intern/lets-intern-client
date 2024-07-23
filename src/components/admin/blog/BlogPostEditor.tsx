@@ -5,6 +5,7 @@
  * LICENSE file in the root directory of this source tree.
  *
  */
+import { $generateHtmlFromNodes } from '@lexical/html';
 import { LinkNode } from '@lexical/link';
 import { AutoFocusPlugin } from '@lexical/react/LexicalAutoFocusPlugin';
 import { LexicalComposer } from '@lexical/react/LexicalComposer';
@@ -14,7 +15,7 @@ import { HistoryPlugin } from '@lexical/react/LexicalHistoryPlugin';
 import { LinkPlugin } from '@lexical/react/LexicalLinkPlugin';
 import { OnChangePlugin } from '@lexical/react/LexicalOnChangePlugin';
 import { RichTextPlugin } from '@lexical/react/LexicalRichTextPlugin';
-import { EditorState } from 'lexical';
+import { EditorState, LexicalEditor } from 'lexical';
 
 import ToolbarPlugin from './ToolbarPlugin';
 import TreeViewPlugin from './TreeViewPlugin';
@@ -83,15 +84,15 @@ const validateUrl = (url: string) => {
 };
 
 interface BlogPostEditorProps {
-  setEditorState: React.Dispatch<React.SetStateAction<string>>;
+  setContent: React.Dispatch<React.SetStateAction<string>>;
 }
 
-export default function BlogPostEditor({
-  setEditorState,
-}: BlogPostEditorProps) {
-  const handleChange = (editorState: EditorState) => {
-    const json = editorState.toJSON();
-    setEditorState(JSON.stringify(json));
+export default function BlogPostEditor({ setContent }: BlogPostEditorProps) {
+  const handleChange = (editorState: EditorState, editor: LexicalEditor) => {
+    editorState.read(() => {
+      const htmlString = $generateHtmlFromNodes(editor);
+      setContent(htmlString);
+    });
   };
 
   return (
