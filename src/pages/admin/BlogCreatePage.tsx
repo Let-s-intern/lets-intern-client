@@ -20,9 +20,14 @@ import { usePostFileMutation } from '../../api/file';
 import BlogPostEditor from '../../components/admin/blog/BlogPostEditor';
 import Tag from '../../components/admin/blog/Tag';
 import TagDelete from '../../components/admin/blog/TagDelete';
+import TextFieldLimit from '../../components/admin/blog/TextFieldLimit';
 import ImageUpload from '../../components/admin/program/ui/form/ImageUpload';
 import ActionButton from '../../components/admin/ui/button/ActionButton';
 import { blogCategory } from '../../utils/convert';
+
+const maxCtaTextLength = 23;
+const maxTitleLength = 49;
+const maxDescriptionLength = 100;
 
 const BlogCreatePage = () => {
   const navgiate = useNavigate();
@@ -63,9 +68,9 @@ const BlogCreatePage = () => {
     const target = event.target as HTMLInputElement;
     if (target.files) {
       setFile(target.files[0]);
-    } else {
-      setValue({ ...value, [event.target.name]: event.target.value });
+      return;
     }
+    setValue({ ...value, [event.target.name]: event.target.value });
   };
 
   const deleteTag = (id: number) => {
@@ -145,7 +150,7 @@ const BlogCreatePage = () => {
               ))}
             </Select>
           </FormControl>
-          <TextField
+          <TextFieldLimit
             type="text"
             label="제목"
             placeholder="제목"
@@ -154,8 +159,9 @@ const BlogCreatePage = () => {
             onChange={handleChange}
             autoComplete="off"
             fullWidth
+            maxLength={maxTitleLength}
           />
-          <TextField
+          <TextFieldLimit
             type="text"
             label="메타 디스크립션"
             placeholder="설명"
@@ -166,6 +172,7 @@ const BlogCreatePage = () => {
             minRows={3}
             autoComplete="off"
             fullWidth
+            maxLength={maxDescriptionLength}
           />
           <ImageUpload
             label="블로그 썸네일"
@@ -186,7 +193,7 @@ const BlogCreatePage = () => {
             autoComplete="off"
             fullWidth
           />
-          <TextField
+          <TextFieldLimit
             type="text"
             label="CTA 텍스트"
             placeholder="CTA 텍스트"
@@ -195,6 +202,7 @@ const BlogCreatePage = () => {
             onChange={handleChange}
             autoComplete="off"
             fullWidth
+            maxLength={maxCtaTextLength}
           />
           {/* 해시태그 */}
           <div className="mt-4">
@@ -208,7 +216,7 @@ const BlogCreatePage = () => {
               ))}
             </div>
             <div>
-              <span className="text-0.875 text-neutral-30">
+              <span className="text-0.875 text-neutral-40">
                 자유 태그등록하기 (중복되지 않은 태그만 등록됩니다)
               </span>
               <TextField
