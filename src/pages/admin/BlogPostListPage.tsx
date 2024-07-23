@@ -2,6 +2,7 @@ import clsx from 'clsx';
 import dayjs from 'dayjs';
 import { CiTrash } from 'react-icons/ci';
 import { Link } from 'react-router-dom';
+
 import { blogCategory } from '../../utils/convert';
 
 const mock = {
@@ -200,17 +201,6 @@ const BlogPostListPage = () => {
           )}
         </div>
       </main>
-      {/* {isDeleteModalShown && (
-        <AlertModal
-          title="쿠폰 삭제"
-          onConfirm={() =>
-            blogInfoIdForDelete && deleteblogInfo.mutate(blogInfoIdForDelete)
-          }
-          onCancel={() => setIsDeleteModalShown(false)}
-        >
-          정말로 쿠폰을 삭제하시겠습니까?
-        </AlertModal>
-      )} */}
     </div>
   );
 };

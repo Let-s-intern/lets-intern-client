@@ -10,7 +10,11 @@ import { LexicalComposer } from '@lexical/react/LexicalComposer';
 import { ContentEditable } from '@lexical/react/LexicalContentEditable';
 import { LexicalErrorBoundary } from '@lexical/react/LexicalErrorBoundary';
 import { HistoryPlugin } from '@lexical/react/LexicalHistoryPlugin';
+import { OnChangePlugin } from '@lexical/react/LexicalOnChangePlugin';
 import { RichTextPlugin } from '@lexical/react/LexicalRichTextPlugin';
+
+import { EditorState, LexicalEditor } from 'lexical';
+import { useState } from 'react';
 import ToolbarPlugin from './ToolbarPlugin';
 import TreeViewPlugin from './TreeViewPlugin';
 
@@ -71,10 +75,16 @@ const editorConfig = {
 };
 
 interface BlogPostEditorProps {
-  onChange?: React.FormEventHandler<HTMLDivElement>;
+  onChange?: (
+    editorState: EditorState,
+    editor: LexicalEditor,
+    tags: Set<string>,
+  ) => void;
 }
 
-export default function BlogPostEditor() {
+export default function BlogPostEditor({ onChange }: BlogPostEditorProps) {
+  const [editorState, setEditorState] = useState<EditorState | null>(null);
+
   return (
     <LexicalComposer initialConfig={editorConfig}>
       <div className="editor-container">
@@ -91,6 +101,11 @@ export default function BlogPostEditor() {
               />
             }
             ErrorBoundary={LexicalErrorBoundary}
+          />
+          <OnChangePlugin
+            onChange={(editorState, editor, tags) => {
+              setEditorState(editorState);
+            }}
           />
           <HistoryPlugin />
           <AutoFocusPlugin />
