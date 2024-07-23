@@ -17,7 +17,7 @@ const blogColumnWidth = {
 const BlogPostListPage = () => {
   const { data, isLoading } = useBlogQuery({ pageable: { page: 1, size: 10 } });
 
-  const handleClickDelete = (blogId: number) => {
+  const deleteBlog = (blogId: number) => {
     const isDelete = window.confirm('정말로 삭제하시겠습니까?');
     if (isDelete) {
       deleteBlogMutation.mutate(blogId);
@@ -130,7 +130,12 @@ const BlogPostListPage = () => {
                       blogColumnWidth.isVisible,
                     )}
                   >
-                    <input type="checkbox" />
+                    <input
+                      type="checkbox"
+                      checked={
+                        blogInfo.blogThumbnailInfo.displayDate ? true : false
+                      }
+                    />
                   </div>
                   <div
                     className={clsx(
@@ -146,7 +151,7 @@ const BlogPostListPage = () => {
                       </Link>
                       <button
                         onClick={() =>
-                          handleClickDelete(blogInfo.blogThumbnailInfo.id)
+                          deleteBlog(blogInfo.blogThumbnailInfo.id)
                         }
                       >
                         <i className="text-[1.75rem]">
@@ -161,7 +166,9 @@ const BlogPostListPage = () => {
                       blogColumnWidth.status,
                     )}
                   >
-                    임시저장
+                    {blogInfo.blogThumbnailInfo.displayDate
+                      ? '발행'
+                      : '임시저장'}
                   </div>
                 </div>
               ))}
