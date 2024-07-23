@@ -1,5 +1,6 @@
 import {
   FormControl,
+  FormHelperText,
   InputLabel,
   MenuItem,
   Select,
@@ -7,7 +8,7 @@ import {
   TextField,
 } from '@mui/material';
 import { AxiosResponse } from 'axios';
-import { ChangeEvent, FormEvent, useState } from 'react';
+import { ChangeEvent, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import {
@@ -18,8 +19,7 @@ import {
 import { PostBlog, TagDetail } from '../../api/blogSchema';
 import { usePostFileMutation } from '../../api/file';
 import BlogPostEditor from '../../components/admin/blog/BlogPostEditor';
-import Tag from '../../components/admin/blog/Tag';
-import TagDelete from '../../components/admin/blog/TagDelete';
+import TagSelector from '../../components/admin/blog/TagSelector';
 import TextFieldLimit from '../../components/admin/blog/TextFieldLimit';
 import ImageUpload from '../../components/admin/program/ui/form/ImageUpload';
 import ActionButton from '../../components/admin/ui/button/ActionButton';
@@ -28,36 +28,54 @@ import { blogCategory } from '../../utils/convert';
 const maxCtaTextLength = 23;
 const maxTitleLength = 49;
 const maxDescriptionLength = 100;
+const titleHelperText = '제목을 입력해주세요';
+const categoryHelperText = '카테고리를 선택주세요';
+const initialBlog = {
+  title: '',
+  category: '',
+  thumbnail: '',
+  description: '',
+  content: '',
+  ctaLink: '',
+  ctaText: '',
+  displayDate: '',
+  tagList: [],
+};
 
 const BlogCreatePage = () => {
   const navgiate = useNavigate();
 
-  const [value, setValue] = useState<PostBlog>({
-    title: '',
-    category: '',
-    thumbnail: '',
-    description: '',
-    content: '',
-    ctaLink: '',
-    ctaText: '',
-    displayDate: '',
-    tagList: [],
-  });
+  const [value, setValue] = useState<PostBlog>(initialBlog);
   const [newTag, setNewTag] = useState('');
-  const [newTagList, setNewTagList] = useState<TagDetail[]>([]);
+  const [selectedTagList, setNewTagList] = useState<TagDetail[]>([]);
   const [file, setFile] = useState<File | null>(null);
+  const [isTitleValid, setIsTitleValid] = useState(true);
+  const [isCategoryValid, setIsCategoryValid] = useState(true);
+  const [content, setContent] = useState('');
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-
-    if (value.title === '' || value.category === '') {
-      alert('카테고리와 제목을 입력해주세요');
-      return;
-    }
-
+  const submitBlog = () => {
+    if (!validate()) return;
     // File을 url로 변환
     if (file) fileMutation.mutate({ type: 'BLOG', file });
+    setValue((prev) => ({ ...prev, content }));
     blogMutation.mutate(value);
+  };
+
+  const validate = () => {
+    // 제목, 카테고리는 필수값
+    let isValid = true;
+
+    if (value.category === '') {
+      setIsCategoryValid(false);
+      isValid = false;
+    }
+    if (value.title === '') {
+      setIsTitleValid(false);
+      isValid = false;
+    }
+    if (!isValid) scrollTo(0, 0);
+
+    return isValid;
   };
 
   const handleChange = (
@@ -74,7 +92,7 @@ const BlogCreatePage = () => {
   };
 
   const deleteTag = (id: number) => {
-    const i = newTagList.findIndex((tag) => tag.id === id);
+    const i = selectedTagList.findIndex((tag) => tag.id === id);
     setNewTagList((prev) => [...prev.slice(0, i), ...prev.slice(i + 1)]);
     const j = value.tagList.findIndex((tag) => tag === id);
     setValue((prev) => ({
@@ -87,7 +105,7 @@ const BlogCreatePage = () => {
     setNewTag(event.target.value);
   };
 
-  const handleKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
     const isEmpty = newTag === '';
     const isExist = blogTagData?.tagDetailInfos.some(
       (tag) => tag.title === newTag,
@@ -99,7 +117,7 @@ const BlogCreatePage = () => {
     } else blogTagMutation.mutate();
   };
 
-  const addTagToBlog = (tag: TagDetail) => {
+  const selectTag = (tag: TagDetail) => {
     if (value.tagList.includes(tag.id)) return;
     setNewTagList((prev) => [...prev, { id: tag.id, title: tag.title }]);
     setValue((prev) => ({
@@ -132,8 +150,12 @@ const BlogCreatePage = () => {
         <h1 className="text-2xl font-semibold">블로그 등록</h1>
       </header>
       <main>
-        <form className="mt-4 flex flex-col gap-4" onSubmit={handleSubmit}>
-          <FormControl fullWidth>
+        <form className="mt-4 flex flex-col gap-4">
+          <FormControl
+            focused={!isCategoryValid}
+            error={!isCategoryValid}
+            fullWidth
+          >
             <InputLabel id="category">카테고리</InputLabel>
             <Select
               labelId="category"
@@ -149,6 +171,9 @@ const BlogCreatePage = () => {
                 </MenuItem>
               ))}
             </Select>
+            <FormHelperText>
+              {!isCategoryValid ? categoryHelperText : ''}
+            </FormHelperText>
           </FormControl>
           <TextFieldLimit
             type="text"
@@ -160,6 +185,9 @@ const BlogCreatePage = () => {
             autoComplete="off"
             fullWidth
             maxLength={maxTitleLength}
+            focused={!isTitleValid}
+            error={!isTitleValid}
+            helperText={!isTitleValid ? titleHelperText : ''}
           />
           <TextFieldLimit
             type="text"
@@ -181,7 +209,7 @@ const BlogCreatePage = () => {
             image={value.thumbnail as string}
             onChange={handleChange}
           />
-          <BlogPostEditor />
+          <BlogPostEditor setContent={setContent} />
           https://lexical.dev/docs/getting-started/react 따라하는중...
           <TextField
             type="text"
@@ -204,54 +232,36 @@ const BlogCreatePage = () => {
             fullWidth
             maxLength={maxCtaTextLength}
           />
-          {/* 해시태그 */}
-          <div className="mt-4">
-            <div className="mb-4 flex flex-wrap gap-4">
-              {newTagList.map((newTag) => (
-                <TagDelete
-                  key={newTag.title}
-                  title={newTag.title}
-                  onClickDelete={() => deleteTag(newTag.id)}
-                />
-              ))}
-            </div>
-            <div>
-              <span className="text-0.875 text-neutral-40">
-                자유 태그등록하기 (중복되지 않은 태그만 등록됩니다)
-              </span>
-              <TextField
-                type="text"
-                placeholder="등록할 태그를 입력하세요"
-                name="tag"
-                value={newTag}
-                onChange={handleChangeTag}
-                onKeyDown={handleKeyPress}
-                fullWidth
-              />
-              <div className="mt-2 flex flex-wrap gap-4">
-                {blogTagData?.tagDetailInfos.map((tag) => (
-                  <Tag
-                    key={tag.id}
-                    id={tag.id}
-                    title={tag.title!}
-                    onClick={() => addTagToBlog(tag)}
-                  />
-                ))}
-              </div>
-            </div>
-          </div>
-          {/* 버튼 */}
-          <div className="mt-4 flex items-center justify-end gap-4">
-            <ActionButton type="submit" bgColor="gray" width="6rem">
-              임시 저장
-            </ActionButton>
-            <ActionButton type="submit">발행</ActionButton>
-            <ActionButton to="/admin/blog/list" bgColor="gray">
-              취소
-            </ActionButton>
-          </div>
+          <TagSelector
+            selectedTagList={selectedTagList}
+            tagList={blogTagData?.tagDetailInfos || []}
+            value={newTag}
+            deleteTag={deleteTag}
+            selectTag={selectTag}
+            onChange={handleChangeTag}
+            onKeyDown={handleKeyDown}
+          />
         </form>
       </main>
+      {/* 버튼 */}
+      <footer>
+        <div className="flex items-center justify-end gap-4">
+          <ActionButton
+            onClick={submitBlog}
+            type="button"
+            bgColor="gray"
+            width="6rem"
+          >
+            임시 저장
+          </ActionButton>
+          <ActionButton onClick={submitBlog} type="button">
+            발행
+          </ActionButton>
+          <ActionButton type="button" to="/admin/blog/list" bgColor="gray">
+            취소
+          </ActionButton>
+        </div>
+      </footer>
     </div>
   );
 };
