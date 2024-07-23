@@ -6,16 +6,16 @@ import {
   SelectChangeEvent,
   TextField,
 } from '@mui/material';
-import { ChangeEvent, FormEvent, useState } from 'react';
-
 import { AxiosResponse } from 'axios';
+import { ChangeEvent, FormEvent, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+
 import {
   useBlogTagQuery,
   usePostBlogMutation,
   usePostBlogTagMutation,
 } from '../../api/blog';
-import { TagDetail } from '../../api/blogSchema';
+import { PostBlog, TagDetail } from '../../api/blogSchema';
 import { usePostFileMutation } from '../../api/file';
 import BlogPostEditor from '../../components/admin/blog/BlogPostEditor';
 import Tag from '../../components/admin/blog/Tag';
@@ -24,22 +24,10 @@ import ImageUpload from '../../components/admin/program/ui/form/ImageUpload';
 import ActionButton from '../../components/admin/ui/button/ActionButton';
 import { blogCategory } from '../../utils/convert';
 
-interface NewBlog {
-  title: string;
-  category: string;
-  thumbnail: string;
-  description: string;
-  content: string;
-  ctaLink: string;
-  ctaText: string;
-  displayDate: string;
-  tagList: number[];
-}
-
 const BlogCreatePage = () => {
   const navgiate = useNavigate();
 
-  const [value, setValue] = useState<NewBlog>({
+  const [value, setValue] = useState<PostBlog>({
     title: '',
     category: '',
     thumbnail: '',

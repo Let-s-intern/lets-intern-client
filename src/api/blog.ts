@@ -2,22 +2,10 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import { IPageable } from '../types/interface';
 import axios from '../utils/axios';
-import { blogSchema, blogTagSchema, TagDetail } from './blogSchema';
+import { blogSchema, blogTagSchema, PostBlog, TagDetail } from './blogSchema';
 
 const blogQueryKey = 'BlogQueryKey';
 const blogTagQueryKey = 'BlogTagQueryKey';
-
-interface NewBlog {
-  title: string;
-  category: string;
-  thumbnail: string;
-  description: string;
-  content: string;
-  ctaLink: string;
-  ctaText: string;
-  displayDate: string;
-  tagList: number[];
-}
 
 export const useBlogQuery = (
   pageable: IPageable,
@@ -38,7 +26,7 @@ export const usePostBlogMutation = (
   onErrorCallback?: () => void,
 ) => {
   return useMutation({
-    mutationFn: async (newBlog: NewBlog) => {
+    mutationFn: async (newBlog: PostBlog) => {
       return await axios.post('/blog', newBlog);
     },
     onSuccess: () => {

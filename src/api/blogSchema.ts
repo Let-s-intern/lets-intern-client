@@ -1,6 +1,18 @@
 import dayjs from 'dayjs';
 import { z } from 'zod';
 
+export interface PostBlog {
+  title: string;
+  category: string;
+  thumbnail: string;
+  description: string;
+  content: string;
+  ctaLink: string;
+  ctaText: string;
+  displayDate: string;
+  tagList: number[];
+}
+
 export type TagDetail = z.infer<typeof tagDetailSchema>[0];
 
 export const blogThumbnailSchema = z.object({
