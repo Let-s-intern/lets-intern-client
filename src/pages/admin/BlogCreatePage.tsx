@@ -19,8 +19,7 @@ import {
 import { PostBlog, TagDetail } from '../../api/blogSchema';
 import { usePostFileMutation } from '../../api/file';
 import BlogPostEditor from '../../components/admin/blog/BlogPostEditor';
-import Tag from '../../components/admin/blog/Tag';
-import TagDelete from '../../components/admin/blog/TagDelete';
+import TagSelector from '../../components/admin/blog/TagSelector';
 import TextFieldLimit from '../../components/admin/blog/TextFieldLimit';
 import ImageUpload from '../../components/admin/program/ui/form/ImageUpload';
 import ActionButton from '../../components/admin/ui/button/ActionButton';
@@ -48,7 +47,7 @@ const BlogCreatePage = () => {
 
   const [value, setValue] = useState<PostBlog>(initialBlog);
   const [newTag, setNewTag] = useState('');
-  const [newTagList, setNewTagList] = useState<TagDetail[]>([]);
+  const [selectedTagList, setNewTagList] = useState<TagDetail[]>([]);
   const [file, setFile] = useState<File | null>(null);
   const [isTitleValid, setIsTitleValid] = useState(true);
   const [isCategoryValid, setIsCategoryValid] = useState(true);
@@ -93,7 +92,7 @@ const BlogCreatePage = () => {
   };
 
   const deleteTag = (id: number) => {
-    const i = newTagList.findIndex((tag) => tag.id === id);
+    const i = selectedTagList.findIndex((tag) => tag.id === id);
     setNewTagList((prev) => [...prev.slice(0, i), ...prev.slice(i + 1)]);
     const j = value.tagList.findIndex((tag) => tag === id);
     setValue((prev) => ({
@@ -106,7 +105,7 @@ const BlogCreatePage = () => {
     setNewTag(event.target.value);
   };
 
-  const handleKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
     const isEmpty = newTag === '';
     const isExist = blogTagData?.tagDetailInfos.some(
       (tag) => tag.title === newTag,
@@ -118,7 +117,7 @@ const BlogCreatePage = () => {
     } else blogTagMutation.mutate();
   };
 
-  const addTagToBlog = (tag: TagDetail) => {
+  const selectTag = (tag: TagDetail) => {
     if (value.tagList.includes(tag.id)) return;
     setNewTagList((prev) => [...prev, { id: tag.id, title: tag.title }]);
     setValue((prev) => ({
@@ -233,47 +232,20 @@ const BlogCreatePage = () => {
             fullWidth
             maxLength={maxCtaTextLength}
           />
-          {/* 해시태그 */}
-          <div className="mt-4">
-            <div className="mb-4 flex flex-wrap gap-4">
-              {newTagList.map((newTag) => (
-                <TagDelete
-                  key={newTag.title}
-                  title={newTag.title}
-                  onClickDelete={() => deleteTag(newTag.id)}
-                />
-              ))}
-            </div>
-            <div>
-              <span className="text-0.875 text-neutral-40">
-                자유 태그등록하기 (중복되지 않은 태그만 등록됩니다)
-              </span>
-              <TextField
-                type="text"
-                placeholder="등록할 태그를 입력하세요"
-                name="tag"
-                value={newTag}
-                onChange={handleChangeTag}
-                onKeyDown={handleKeyPress}
-                fullWidth
-              />
-              <div className="mt-2 flex flex-wrap gap-4">
-                {blogTagData?.tagDetailInfos.map((tag) => (
-                  <Tag
-                    key={tag.id}
-                    id={tag.id}
-                    title={tag.title!}
-                    onClick={() => addTagToBlog(tag)}
-                  />
-                ))}
-              </div>
-            </div>
-          </div>
+          <TagSelector
+            selectedTagList={selectedTagList}
+            tagList={blogTagData?.tagDetailInfos || []}
+            value={newTag}
+            deleteTag={deleteTag}
+            selectTag={selectTag}
+            onChange={handleChangeTag}
+            onKeyDown={handleKeyDown}
+          />
         </form>
       </main>
       {/* 버튼 */}
       <footer>
-        <div className="mt-4 flex items-center justify-end gap-4">
+        <div className="flex items-center justify-end gap-4">
           <ActionButton
             onClick={submitBlog}
             type="button"

@@ -3,10 +3,10 @@ import { TagDetail } from '../../../api/blogSchema';
 
 interface TagDeleteProps {
   title: TagDetail['title'];
-  onClickDelete: () => void;
+  onClick: () => void;
 }
 
-const TagDelete = ({ title, onClickDelete }: TagDeleteProps) => {
+const TagDelete = ({ title, onClick }: TagDeleteProps) => {
   return (
     <div key={title} className="flex items-center gap-2.5 bg-[#FAEDEE] pl-2.5">
       <div className="text-0.875 bg-[#FAEDEE]">#{title}</div>
@@ -14,7 +14,7 @@ const TagDelete = ({ title, onClickDelete }: TagDeleteProps) => {
         className="cursor-pointer bg-neutral-0"
         color="#FFF"
         size={20}
-        onClick={onClickDelete}
+        onClick={onClick}
       />
     </div>
   );
