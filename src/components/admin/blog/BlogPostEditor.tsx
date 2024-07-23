@@ -70,6 +70,10 @@ const editorConfig = {
   theme: ExampleTheme,
 };
 
+interface BlogPostEditorProps {
+  onChange?: React.FormEventHandler<HTMLDivElement>;
+}
+
 export default function BlogPostEditor() {
   return (
     <LexicalComposer initialConfig={editorConfig}>

@@ -11,6 +11,7 @@ import { ChangeEvent, useState } from 'react';
 import { useBlogTagQuery, usePostBlogTagMutation } from '../../api/blog';
 import { TagDetail } from '../../api/blogSchema';
 import BlogPostEditor from '../../components/admin/blog/BlogPostEditor';
+import Tag from '../../components/admin/blog/Tag';
 import TagDelete from '../../components/admin/blog/TagDelete';
 import { blogCategory } from '../../utils/convert';
 
@@ -88,7 +89,9 @@ const BlogCreatePage = () => {
     }));
   };
 
-  const resetTag = () => setNewTag('');
+  const resetTag = () => {
+    setNewTag('');
+  };
 
   const { data: blogTagData } = useBlogTagQuery();
   const blogTagMutation = usePostBlogTagMutation(newTag, resetTag);
@@ -187,13 +190,7 @@ const BlogCreatePage = () => {
               />
               <div className="mt-2 flex flex-wrap gap-4">
                 {blogTagData?.tagDetailInfos.map((tag) => (
-                  <div
-                    key={tag.id}
-                    className="text-0.75 cursor-pointer rounded-full bg-[#F3F5FA] px-2.5 py-1 text-primary-dark"
-                    onClick={() => addTagToBlog(tag)}
-                  >
-                    #{tag.title}
-                  </div>
+                  <Tag key={tag.id} id={tag.id} title={tag.title!} />
                 ))}
               </div>
             </div>
