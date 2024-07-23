@@ -1,52 +1,9 @@
 import clsx from 'clsx';
-import dayjs from 'dayjs';
 import { CiTrash } from 'react-icons/ci';
 import { Link } from 'react-router-dom';
-import { blogCategory } from '../../utils/convert';
 
-const mock = {
-  blogInfos: [
-    {
-      blogThumbnailInfo: {
-        id: 0,
-        title: '근로조건의 기준은 인간의 존엄성을 보장하도록',
-        category: 'JOB_PREPARATION_TIPS',
-        thumbnail: 'string',
-        description:
-          '근로조건의 기준은 인간의 존엄성을 보장하도록 법률로 정한다. 국가는 모성의 보호를 위하여 노력하여야 한다. 선거운동은 각급 선거관리위원회의 관리하에 법률이 정하는 범위안에서 하되, 균등한 기회가 보장되어야 한다.',
-        displayDate: '2024-07-22T06:26:29.722Z',
-        createDate: '2024-07-22T06:26:29.722Z',
-        lastModifiedDate: '2024-07-22T06:26:29.722Z',
-      },
-    },
-    {
-      blogThumbnailInfo: {
-        id: 1,
-        title: '선거운동은 각급 선거관리위원회의',
-        category: 'PROGRAM_REVIEWS',
-        thumbnail: 'string',
-        description:
-          '근로조건의 기준은 인간의 존엄성을 보장하도록 법률로 정한다. 국가는 모성의 보호를 위하여 노력하여야 한다. 선거운동은 각급 선거관리위원회의 관리하에 법률이 정하는 범위안에서 하되, 균등한 기회가 보장되어야 한다.',
-        displayDate: '2024-07-22T06:26:29.722Z',
-        createDate: '2024-07-22T06:26:29.722Z',
-        lastModifiedDate: '2024-07-22T06:26:29.722Z',
-      },
-    },
-    {
-      blogThumbnailInfo: {
-        id: 2,
-        title: '불가피한 사정으로 발생하는 농지의 임대차와 위탁경영은',
-        category: 'JUNIOR_STORIES',
-        thumbnail: 'string',
-        description:
-          '근로조건의 기준은 인간의 존엄성을 보장하도록 법률로 정한다. 국가는 모성의 보호를 위하여 노력하여야 한다. 선거운동은 각급 선거관리위원회의 관리하에 법률이 정하는 범위안에서 하되, 균등한 기회가 보장되어야 한다.',
-        displayDate: '2024-07-22T06:26:29.722Z',
-        createDate: '2024-07-22T06:26:29.722Z',
-        lastModifiedDate: '2024-07-22T06:26:29.722Z',
-      },
-    },
-  ],
-};
+import { useBlogQuery, useDeleteBlogMutation } from '../../api/blog';
+import { blogCategory } from '../../utils/convert';
 
 const blogColumnWidth = {
   displayDate: 'w-40',
@@ -58,8 +15,16 @@ const blogColumnWidth = {
 };
 
 const BlogPostListPage = () => {
-  // const { data, isLoading } = useBlogQuery({ pageable: { page: 1, size: 10 } });
-  const data = mock.blogInfos;
+  const { data, isLoading } = useBlogQuery({ pageable: { page: 1, size: 10 } });
+
+  const handleClickDelete = (blogId: number) => {
+    const isDelete = window.confirm('정말로 삭제하시겠습니까?');
+    if (isDelete) {
+      deleteBlogMutation.mutate(blogId);
+    }
+  };
+
+  const deleteBlogMutation = useDeleteBlogMutation();
 
   return (
     <div className="px-12 pt-12">
@@ -124,11 +89,11 @@ const BlogPostListPage = () => {
               상태
             </div>
           </div>
-          {data.length === 0 ? (
+          {data?.blogInfos.length === 0 ? (
             <div className="py-6 text-center">개설된 블로그가 없습니다.</div>
           ) : (
             <div className="mb-16 mt-3 flex flex-col gap-2">
-              {data.map((blogInfo) => (
+              {data?.blogInfos.map((blogInfo) => (
                 <div
                   key={blogInfo.blogThumbnailInfo.id}
                   className="flex rounded-md border border-neutral-200"
@@ -139,7 +104,7 @@ const BlogPostListPage = () => {
                       blogColumnWidth.displayDate,
                     )}
                   >
-                    {dayjs(blogInfo.blogThumbnailInfo.displayDate).format(
+                    {blogInfo.blogThumbnailInfo.displayDate!.format(
                       'YYYY년 M월 D일',
                     )}
                   </div>
@@ -149,7 +114,7 @@ const BlogPostListPage = () => {
                       blogColumnWidth.category,
                     )}
                   >
-                    {blogCategory[blogInfo.blogThumbnailInfo.category]}
+                    {blogCategory[blogInfo.blogThumbnailInfo.category!]}
                   </div>
                   <div
                     className={clsx(
@@ -179,7 +144,11 @@ const BlogPostListPage = () => {
                           <img src="/icons/edit-icon.svg" alt="수정 아이콘" />
                         </i>
                       </Link>
-                      <button onClick={() => console.log('블로그 삭제')}>
+                      <button
+                        onClick={() =>
+                          handleClickDelete(blogInfo.blogThumbnailInfo.id)
+                        }
+                      >
                         <i className="text-[1.75rem]">
                           <CiTrash />
                         </i>
@@ -200,17 +169,6 @@ const BlogPostListPage = () => {
           )}
         </div>
       </main>
-      {/* {isDeleteModalShown && (
-        <AlertModal
-          title="쿠폰 삭제"
-          onConfirm={() =>
-            blogInfoIdForDelete && deleteblogInfo.mutate(blogInfoIdForDelete)
-          }
-          onCancel={() => setIsDeleteModalShown(false)}
-        >
-          정말로 쿠폰을 삭제하시겠습니까?
-        </AlertModal>
-      )} */}
     </div>
   );
 };

@@ -16,7 +16,7 @@ export interface PostBlog {
 export type TagDetail = z.infer<typeof tagDetailSchema>[0];
 
 export const blogThumbnailSchema = z.object({
-  id: z.string(),
+  id: z.number(),
   title: z.string().nullable().optional(),
   category: z.string().nullable().optional(),
   thumbnail: z.string().nullable().optional(),
