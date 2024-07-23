@@ -234,12 +234,10 @@ const BlogCreatePage = () => {
           </div>
           {/* 버튼 */}
           <div className="mt-4 flex items-center justify-end gap-4">
-            <ActionButton onClick={() => {}} bgColor="gray" width="6rem">
+            <ActionButton type="submit" bgColor="gray" width="6rem">
               임시 저장
             </ActionButton>
-            <ActionButton onClick={() => {}} type="submit">
-              발행
-            </ActionButton>
+            <ActionButton type="submit">발행</ActionButton>
             <ActionButton to="/admin/blog/list" bgColor="gray">
               취소
             </ActionButton>
