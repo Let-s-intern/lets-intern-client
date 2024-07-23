@@ -7,6 +7,18 @@ import { blogSchema, blogTagSchema, TagDetail } from './blogSchema';
 const blogQueryKey = 'BlogQueryKey';
 const blogTagQueryKey = 'BlogTagQueryKey';
 
+interface NewBlog {
+  title: string;
+  category: string;
+  thumbnail: string;
+  description: string;
+  content: string;
+  ctaLink: string;
+  ctaText: string;
+  displayDate: string;
+  tagList: number[];
+}
+
 export const useBlogQuery = (
   pageable: IPageable,
   type?: string,
@@ -22,15 +34,20 @@ export const useBlogQuery = (
 };
 
 export const usePostBlogMutation = (
-  successCallback: () => void,
-  errorCallback: () => void,
+  onSuccessCallback?: () => void,
+  onErrorCallback?: () => void,
 ) => {
   return useMutation({
-    mutationFn: async () => {
-      return await axios.post('/blog');
+    mutationFn: async (newBlog: NewBlog) => {
+      return await axios.post('/blog', newBlog);
     },
-    onSuccess: successCallback,
-    onError: errorCallback,
+    onSuccess: () => {
+      onSuccessCallback && onSuccessCallback();
+    },
+    onError: (error) => {
+      console.error(error);
+      onErrorCallback && onErrorCallback();
+    },
   });
 };
 
@@ -62,7 +79,6 @@ export const usePostBlogTagMutation = (
     },
     onError: (error) => {
       console.error(error);
-      alert('태그를 추가하지 못했습니다.');
       onErrorCallback && onErrorCallback();
     },
   });

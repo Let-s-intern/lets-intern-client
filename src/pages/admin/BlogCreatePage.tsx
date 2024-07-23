@@ -6,13 +6,22 @@ import {
   SelectChangeEvent,
   TextField,
 } from '@mui/material';
-import { ChangeEvent, useState } from 'react';
+import { ChangeEvent, FormEvent, useState } from 'react';
 
-import { useBlogTagQuery, usePostBlogTagMutation } from '../../api/blog';
+import { AxiosResponse } from 'axios';
+import { useNavigate } from 'react-router-dom';
+import {
+  useBlogTagQuery,
+  usePostBlogMutation,
+  usePostBlogTagMutation,
+} from '../../api/blog';
 import { TagDetail } from '../../api/blogSchema';
+import { usePostFileMutation } from '../../api/file';
 import BlogPostEditor from '../../components/admin/blog/BlogPostEditor';
 import Tag from '../../components/admin/blog/Tag';
 import TagDelete from '../../components/admin/blog/TagDelete';
+import ImageUpload from '../../components/admin/program/ui/form/ImageUpload';
+import ActionButton from '../../components/admin/ui/button/ActionButton';
 import { blogCategory } from '../../utils/convert';
 
 interface NewBlog {
@@ -28,6 +37,8 @@ interface NewBlog {
 }
 
 const BlogCreatePage = () => {
+  const navgiate = useNavigate();
+
   const [value, setValue] = useState<NewBlog>({
     title: '',
     category: '',
@@ -41,9 +52,19 @@ const BlogCreatePage = () => {
   });
   const [newTag, setNewTag] = useState('');
   const [newTagList, setNewTagList] = useState<TagDetail[]>([]);
+  const [file, setFile] = useState<File | null>(null);
 
-  const handleSubmit = () => {
-    console.log('블로그 제출');
+  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    if (value.title === '' || value.category === '') {
+      alert('카테고리와 제목을 입력해주세요');
+      return;
+    }
+
+    // File을 url로 변환
+    if (file) fileMutation.mutate({ type: 'BLOG', file });
+    blogMutation.mutate(value);
   };
 
   const handleChange = (
@@ -51,7 +72,12 @@ const BlogCreatePage = () => {
       | ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
       | SelectChangeEvent<string>,
   ) => {
-    setValue({ ...value, [event.target.name]: event.target.value });
+    const target = event.target as HTMLInputElement;
+    if (target.files) {
+      setFile(target.files[0]);
+    } else {
+      setValue({ ...value, [event.target.name]: event.target.value });
+    }
   };
 
   const deleteTag = (id: number) => {
@@ -93,8 +119,19 @@ const BlogCreatePage = () => {
     setNewTag('');
   };
 
+  const setImgUrl = (res: AxiosResponse) => {
+    const imgUrl = res.data.data.fileUrl;
+    setValue((prev) => ({ ...prev, thumbnail: imgUrl }));
+  };
+
+  const navigateToBlogList = () => {
+    navgiate('/admin/blog/list');
+  };
+
   const { data: blogTagData } = useBlogTagQuery();
   const blogTagMutation = usePostBlogTagMutation(newTag, resetTag);
+  const fileMutation = usePostFileMutation(setImgUrl);
+  const blogMutation = usePostBlogMutation(navigateToBlogList);
 
   return (
     <div className="mx-auto my-12 w-[36rem]">
@@ -132,7 +169,7 @@ const BlogCreatePage = () => {
           />
           <TextField
             type="text"
-            label="설명"
+            label="메타 디스크립션"
             placeholder="설명"
             name="description"
             value={value.description}
@@ -141,6 +178,13 @@ const BlogCreatePage = () => {
             minRows={3}
             autoComplete="off"
             fullWidth
+          />
+          <ImageUpload
+            label="블로그 썸네일"
+            id="file"
+            name="file"
+            image={value.thumbnail as string}
+            onChange={handleChange}
           />
           <BlogPostEditor />
           https://lexical.dev/docs/getting-started/react 따라하는중...
@@ -190,10 +234,27 @@ const BlogCreatePage = () => {
               />
               <div className="mt-2 flex flex-wrap gap-4">
                 {blogTagData?.tagDetailInfos.map((tag) => (
-                  <Tag key={tag.id} id={tag.id} title={tag.title!} />
+                  <Tag
+                    key={tag.id}
+                    id={tag.id}
+                    title={tag.title!}
+                    onClick={() => addTagToBlog(tag)}
+                  />
                 ))}
               </div>
             </div>
+          </div>
+          {/* 버튼 */}
+          <div className="mt-4 flex items-center justify-end gap-4">
+            <ActionButton onClick={() => {}} bgColor="gray" width="6rem">
+              임시 저장
+            </ActionButton>
+            <ActionButton onClick={() => {}} type="submit">
+              발행
+            </ActionButton>
+            <ActionButton to="/admin/blog/list" bgColor="gray">
+              취소
+            </ActionButton>
           </div>
         </form>
       </main>
