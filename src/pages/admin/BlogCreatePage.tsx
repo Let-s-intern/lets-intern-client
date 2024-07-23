@@ -51,11 +51,13 @@ const BlogCreatePage = () => {
   const [file, setFile] = useState<File | null>(null);
   const [isTitleValid, setIsTitleValid] = useState(true);
   const [isCategoryValid, setIsCategoryValid] = useState(true);
+  const [editorState, setEditorState] = useState<string>('');
 
   const submitBlog = () => {
     if (!validate()) return;
     // File을 url로 변환
     if (file) fileMutation.mutate({ type: 'BLOG', file });
+    setValue((prev) => ({ ...prev, content: editorState }));
     blogMutation.mutate(value);
   };
 
@@ -207,7 +209,7 @@ const BlogCreatePage = () => {
             image={value.thumbnail as string}
             onChange={handleChange}
           />
-          <BlogPostEditor />
+          <BlogPostEditor setEditorState={setEditorState} />
           https://lexical.dev/docs/getting-started/react 따라하는중...
           <TextField
             type="text"

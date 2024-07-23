@@ -13,8 +13,6 @@ import { HistoryPlugin } from '@lexical/react/LexicalHistoryPlugin';
 import { OnChangePlugin } from '@lexical/react/LexicalOnChangePlugin';
 import { RichTextPlugin } from '@lexical/react/LexicalRichTextPlugin';
 
-import { EditorState, LexicalEditor } from 'lexical';
-import { useState } from 'react';
 import ToolbarPlugin from './ToolbarPlugin';
 import TreeViewPlugin from './TreeViewPlugin';
 
@@ -75,16 +73,12 @@ const editorConfig = {
 };
 
 interface BlogPostEditorProps {
-  onChange?: (
-    editorState: EditorState,
-    editor: LexicalEditor,
-    tags: Set<string>,
-  ) => void;
+  setEditorState: React.Dispatch<React.SetStateAction<string>>;
 }
 
-export default function BlogPostEditor({ onChange }: BlogPostEditorProps) {
-  const [editorState, setEditorState] = useState<EditorState | null>(null);
-
+export default function BlogPostEditor({
+  setEditorState,
+}: BlogPostEditorProps) {
   return (
     <LexicalComposer initialConfig={editorConfig}>
       <div className="editor-container">
@@ -103,8 +97,9 @@ export default function BlogPostEditor({ onChange }: BlogPostEditorProps) {
             ErrorBoundary={LexicalErrorBoundary}
           />
           <OnChangePlugin
-            onChange={(editorState, editor, tags) => {
-              setEditorState(editorState);
+            onChange={(editorState) => {
+              const json = editorState.toJSON();
+              setEditorState(JSON.stringify(json));
             }}
           />
           <HistoryPlugin />
