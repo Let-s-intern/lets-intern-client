@@ -1,5 +1,6 @@
 import {
   FormControl,
+  FormHelperText,
   InputLabel,
   MenuItem,
   Select,
@@ -7,7 +8,7 @@ import {
   TextField,
 } from '@mui/material';
 import { AxiosResponse } from 'axios';
-import { ChangeEvent, FormEvent, useState } from 'react';
+import { ChangeEvent, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import {
@@ -28,6 +29,8 @@ import { blogCategory } from '../../utils/convert';
 const maxCtaTextLength = 23;
 const maxTitleLength = 49;
 const maxDescriptionLength = 100;
+const titleHelperText = '제목을 입력해주세요';
+const categoryHelperText = '카테고리를 선택주세요';
 
 const BlogCreatePage = () => {
   const navgiate = useNavigate();
@@ -46,18 +49,33 @@ const BlogCreatePage = () => {
   const [newTag, setNewTag] = useState('');
   const [newTagList, setNewTagList] = useState<TagDetail[]>([]);
   const [file, setFile] = useState<File | null>(null);
+  const [isTitleValid, setIsTitleValid] = useState(true);
+  const [isCategoryValid, setIsCategoryValid] = useState(true);
+  const [editorState, setEditorState] = useState<string>('');
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-
-    if (value.title === '' || value.category === '') {
-      alert('카테고리와 제목을 입력해주세요');
-      return;
-    }
-
+  const submitBlog = () => {
+    if (!validate()) return;
     // File을 url로 변환
     if (file) fileMutation.mutate({ type: 'BLOG', file });
+    setValue((prev) => ({ ...prev, content: editorState }));
     blogMutation.mutate(value);
+  };
+
+  const validate = () => {
+    // 제목, 카테고리는 필수값
+    let isValid = true;
+
+    if (value.category === '') {
+      setIsCategoryValid(false);
+      isValid = false;
+    }
+    if (value.title === '') {
+      setIsTitleValid(false);
+      isValid = false;
+    }
+    if (!isValid) scrollTo(0, 0);
+
+    return isValid;
   };
 
   const handleChange = (
@@ -132,8 +150,12 @@ const BlogCreatePage = () => {
         <h1 className="text-2xl font-semibold">블로그 등록</h1>
       </header>
       <main>
-        <form className="mt-4 flex flex-col gap-4" onSubmit={handleSubmit}>
-          <FormControl fullWidth>
+        <form className="mt-4 flex flex-col gap-4">
+          <FormControl
+            focused={!isCategoryValid}
+            error={!isCategoryValid}
+            fullWidth
+          >
             <InputLabel id="category">카테고리</InputLabel>
             <Select
               labelId="category"
@@ -149,6 +171,9 @@ const BlogCreatePage = () => {
                 </MenuItem>
               ))}
             </Select>
+            <FormHelperText>
+              {!isCategoryValid ? categoryHelperText : ''}
+            </FormHelperText>
           </FormControl>
           <TextFieldLimit
             type="text"
@@ -160,6 +185,9 @@ const BlogCreatePage = () => {
             autoComplete="off"
             fullWidth
             maxLength={maxTitleLength}
+            focused={!isTitleValid}
+            error={!isTitleValid}
+            helperText={!isTitleValid ? titleHelperText : ''}
           />
           <TextFieldLimit
             type="text"
@@ -181,7 +209,7 @@ const BlogCreatePage = () => {
             image={value.thumbnail as string}
             onChange={handleChange}
           />
-          <BlogPostEditor />
+          <BlogPostEditor setEditorState={setEditorState} />
           https://lexical.dev/docs/getting-started/react 따라하는중...
           <TextField
             type="text"
@@ -240,18 +268,27 @@ const BlogCreatePage = () => {
               </div>
             </div>
           </div>
-          {/* 버튼 */}
-          <div className="mt-4 flex items-center justify-end gap-4">
-            <ActionButton type="submit" bgColor="gray" width="6rem">
-              임시 저장
-            </ActionButton>
-            <ActionButton type="submit">발행</ActionButton>
-            <ActionButton to="/admin/blog/list" bgColor="gray">
-              취소
-            </ActionButton>
-          </div>
         </form>
       </main>
+      {/* 버튼 */}
+      <footer>
+        <div className="mt-4 flex items-center justify-end gap-4">
+          <ActionButton
+            onClick={submitBlog}
+            type="button"
+            bgColor="gray"
+            width="6rem"
+          >
+            임시 저장
+          </ActionButton>
+          <ActionButton onClick={submitBlog} type="button">
+            발행
+          </ActionButton>
+          <ActionButton type="button" to="/admin/blog/list" bgColor="gray">
+            취소
+          </ActionButton>
+        </div>
+      </footer>
     </div>
   );
 };

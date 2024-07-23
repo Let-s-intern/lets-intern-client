@@ -13,6 +13,9 @@ interface TextFieldLimitProps {
   maxLength: number;
   multiline?: boolean;
   minRows?: number;
+  helperText?: string;
+  focused?: boolean;
+  error?: boolean;
 }
 
 export default function TextFieldLimit({
@@ -27,6 +30,9 @@ export default function TextFieldLimit({
   maxLength,
   multiline = false,
   minRows = 1,
+  helperText = '',
+  focused = false,
+  error = false,
 }: TextFieldLimitProps) {
   const ref = useRef<HTMLInputElement>(null);
 
@@ -51,6 +57,9 @@ export default function TextFieldLimit({
         fullWidth={fullWidth}
         multiline={multiline}
         minRows={minRows}
+        helperText={helperText}
+        focused={focused}
+        error={error}
       />
       <span className="text-0.875 text-neutral-40">
         {value.length} / {maxLength}
