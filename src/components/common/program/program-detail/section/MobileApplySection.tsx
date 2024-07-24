@@ -13,7 +13,10 @@ import {
   IApplyDrawerAction,
   ICouponForm,
 } from '../../../../../types/interface';
-import { generateRandomString } from '../../../../../utils/random';
+import {
+  generateRandomNumber,
+  generateRandomString,
+} from '../../../../../utils/random';
 import InputContent from '../apply/content/InputContent';
 import PayContent from '../apply/content/PayContent';
 import ScheduleContent from '../apply/content/ScheduleContent';
@@ -142,7 +145,7 @@ const MobileApplySection = ({
   const priceId =
     application?.priceList?.[0]?.priceId ?? application?.price?.priceId ?? -1;
 
-  const orderId = generateRandomString();
+  const orderId = 'lets' + generateRandomString() + generateRandomNumber();
 
   const program = useProgramQuery({ programId, type: programType });
 
