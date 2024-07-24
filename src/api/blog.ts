@@ -51,14 +51,13 @@ export const useBlogTagQuery = () => {
 };
 
 export const usePostBlogTagMutation = (
-  title: TagDetail['title'],
   onSuccessCallback?: () => void,
   onErrorCallback?: () => void,
 ) => {
   const client = useQueryClient();
 
   return useMutation({
-    mutationFn: async () => {
+    mutationFn: async (title: TagDetail['title']) => {
       return await axios.post('/blog-tag', { title });
     },
     onSuccess: () => {
