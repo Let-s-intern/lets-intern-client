@@ -8,7 +8,7 @@ import {
   TextField,
 } from '@mui/material';
 import { AxiosResponse } from 'axios';
-import { ChangeEvent, useState } from 'react';
+import { ChangeEvent, FormEvent, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import {
@@ -39,6 +39,7 @@ const initialBlog = {
   ctaLink: '',
   ctaText: '',
   displayDate: '',
+  isDisplayed: false,
   tagList: [],
 };
 
@@ -53,12 +54,32 @@ const BlogCreatePage = () => {
   const [isCategoryValid, setIsCategoryValid] = useState(true);
   const [content, setContent] = useState('');
 
+  const hadnleSubmit = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+  };
+
+  const saveBlog = () => {
+    if (!validate()) return;
+    // File을 url로 변환
+    if (file) fileMutation.mutate({ type: 'BLOG', file });
+
+    setValue((prev) => ({ ...prev, content }));
+    blogMutation.mutate(value);
+    alert('임시 저장되었습니다.');
+  };
+
   const submitBlog = () => {
     if (!validate()) return;
     // File을 url로 변환
     if (file) fileMutation.mutate({ type: 'BLOG', file });
-    setValue((prev) => ({ ...prev, content }));
+    setValue((prev) => ({
+      ...prev,
+      content,
+      displayDate: new Date().toISOString(),
+      isDisplayed: true,
+    }));
     blogMutation.mutate(value);
+    navgiate('/admin/blog/list');
   };
 
   const validate = () => {
@@ -114,7 +135,7 @@ const BlogCreatePage = () => {
     if (event.key !== 'Enter' || isEmpty) return;
     if (isExist) {
       alert('이미 존재하는 태그입니다.');
-    } else blogTagMutation.mutate();
+    } else blogTagMutation.mutate(newTag);
   };
 
   const selectTag = (tag: TagDetail) => {
@@ -135,14 +156,10 @@ const BlogCreatePage = () => {
     setValue((prev) => ({ ...prev, thumbnail: imgUrl }));
   };
 
-  const navigateToBlogList = () => {
-    navgiate('/admin/blog/list');
-  };
-
   const { data: blogTagData } = useBlogTagQuery();
-  const blogTagMutation = usePostBlogTagMutation(newTag, resetTag);
+  const blogTagMutation = usePostBlogTagMutation(resetTag);
   const fileMutation = usePostFileMutation(setImgUrl);
-  const blogMutation = usePostBlogMutation(navigateToBlogList);
+  const blogMutation = usePostBlogMutation();
 
   return (
     <div className="mx-auto my-12 w-[36rem]">
@@ -150,7 +167,7 @@ const BlogCreatePage = () => {
         <h1 className="text-2xl font-semibold">블로그 등록</h1>
       </header>
       <main>
-        <form className="mt-4 flex flex-col gap-4">
+        <form className="mt-4 flex flex-col gap-4" onSubmit={hadnleSubmit}>
           <FormControl
             focused={!isCategoryValid}
             error={!isCategoryValid}
@@ -210,7 +227,6 @@ const BlogCreatePage = () => {
             onChange={handleChange}
           />
           <BlogPostEditor setContent={setContent} />
-          https://lexical.dev/docs/getting-started/react 따라하는중...
           <TextField
             type="text"
             label="CTA 링크"
@@ -247,7 +263,7 @@ const BlogCreatePage = () => {
       <footer>
         <div className="flex items-center justify-end gap-4">
           <ActionButton
-            onClick={submitBlog}
+            onClick={saveBlog}
             type="button"
             bgColor="gray"
             width="6rem"
