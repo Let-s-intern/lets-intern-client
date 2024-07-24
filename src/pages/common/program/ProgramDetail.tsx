@@ -2,6 +2,7 @@ import { useMediaQuery } from '@mui/material';
 import { useQuery } from '@tanstack/react-query';
 import dayjs from 'dayjs';
 import { useReducer, useState } from 'react';
+import { Helmet } from 'react-helmet';
 import { useNavigate, useParams } from 'react-router-dom';
 import { twMerge } from 'tailwind-merge';
 import { useProgramApplicationQuery } from '../../../api/application';
@@ -85,8 +86,35 @@ const ProgramDetail = ({ programType }: ProgramDetailProps) => {
     dispatchIsDrawerOpen({ type: 'toggle' });
   };
 
+  const programTypeKor =
+    programType === 'challenge'
+      ? '챌린지'
+      : programType === 'live'
+        ? 'LIVE 클래스'
+        : '프로그램';
+  const title = `${programTitle ?? programTypeKor} | ${programTypeKor} - 렛츠커리어`;
+  const url = `${window.location.origin}/program/${programType}/${programId}`;
+  const description = program?.query?.data?.shortDesc ?? '';
+
   return (
     <div className="px-5">
+      <Helmet>
+        <title>{title}</title>
+        <link rel="canonical" href={url} />
+        {description ? <meta name="description" content={description} /> : null}
+        <meta property="og:title" content={title} />
+        <meta property="og:url" content={url} />
+
+        {description ? (
+          <meta property="og:description" content={description} />
+        ) : null}
+        <meta name="twitter:title" content={title} />
+        <meta name="twitter:url" content={url} />
+        {description ? (
+          <meta name="twitter:description" content={description} />
+        ) : null}
+        <meta name="twitter:card" content="summary" />
+      </Helmet>
       <div className="mx-auto max-w-5xl">
         <Header programTitle={programTitle} />
         <div className="flex min-h-screen flex-col">

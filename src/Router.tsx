@@ -17,6 +17,7 @@ import MentorNotificationAfter from './pages/common/mentor/MentorNotificationAft
 import MentorNotificationBefore from './pages/common/mentor/MentorNotificationBefore';
 import Application from './pages/common/mypage/Application';
 import Credit from './pages/common/mypage/Credit';
+import CreditDelete from './pages/common/mypage/CreditDelete';
 import CreditDetail from './pages/common/mypage/CreditDetail';
 import MyPage from './pages/common/mypage/MyPage';
 import Privacy from './pages/common/mypage/Privacy';
@@ -62,7 +63,6 @@ const Router = () => {
           <Route path="order/:orderId/result" element={<PaymentResult />} />
           <Route path="order/:orderId/fail" element={<PaymentFail />} />
 
-          {/* ---Regacy--- */}
           {/* /program */}
           <Route path="program" element={<Programs />} />
           {/* /program/detail/:programId */}
@@ -108,6 +108,7 @@ const Router = () => {
             <Route path="credit">
               <Route path="" element={<Credit />} />
               <Route path=":paymentId" element={<CreditDetail />} />
+              <Route path=":paymentId/delete" element={<CreditDelete />} />
             </Route>
             <Route path="privacy" element={<Privacy />} />
           </Route>
@@ -139,13 +140,13 @@ const Router = () => {
           />
           <Route path="write-review/live/:id" element={<WriteReviewLive />} />
 
-          {/* 라이브 클래스 멘토 사전 전달 사항 */}
+          {/* LIVE 클래스 멘토 사전 전달 사항 */}
           <Route
             path="live/:id/mentor/notification/before"
             element={<MentorNotificationBefore />}
           />
 
-          {/* 라이브 클래스 멘토 전달 후기 */}
+          {/* LIVE 클래스 멘토 전달 후기 */}
           <Route
             path="live/:id/mentor/notification/after"
             element={<MentorNotificationAfter />}

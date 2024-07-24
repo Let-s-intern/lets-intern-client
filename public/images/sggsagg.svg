@@ -1,0 +1,34 @@
+<svg width="98" height="26" viewBox="0 0 98 26" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="logo_ssgsag 1" clip-path="url(#clip0_7540_2039)">
+<g id="Clip path group">
+<mask id="mask0_7540_2039" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="0" y="0" width="98" height="26">
+<g id="clip0_2201_3534">
+<path id="Vector" d="M97.5 0.25H0.5V25.25H97.5V0.25Z" fill="white"/>
+</g>
+</mask>
+<g mask="url(#mask0_7540_2039)">
+<g id="Group">
+<path id="Vector_2" opacity="0.7" d="M17.8008 7.52246L34.8206 7.67402L42.5817 25.2501L25.7072 25.1015L17.8008 7.52246Z" fill="url(#paint0_linear_7540_2039)"/>
+<path id="Vector_3" d="M30.9956 0.401569L13.9729 0.25L0.5 20.7802L17.3715 20.9318L30.9956 0.401569Z" fill="url(#paint1_linear_7540_2039)"/>
+<path id="Vector_4" d="M72.2857 10.9577V14.8836H49.7617V10.9577H72.2857ZM56.7399 9.97695H50.0079L58.0863 1.02246H64.5752L62.422 3.47431H66.2151L72.0427 9.97695H65.3108L61.0251 5.07025L56.7399 9.97695ZM50.4972 19.6685V15.8673H71.5501V23.5944H65.9185V19.6685H50.4943H50.4972Z" fill="#5663E2"/>
+<path id="Vector_5" d="M79.5072 14.5156H73.7539L78.5286 1.26674H84.2819L82.5203 6.17341H86.6574L89.1779 14.5156H83.4246L81.6367 8.60445L79.5072 14.5156ZM89.9105 23.8387V20.1594H74.2429V15.4994H95.5425V23.8416H89.9105V23.8387ZM97.4997 5.07083V10.2242H95.5425V14.5186H89.9105V0.776367H95.5425V5.07083H97.4997Z" fill="#5663E2"/>
+</g>
+</g>
+</g>
+</g>
+<defs>
+<linearGradient id="paint0_linear_7540_2039" x1="65.1831" y1="51.5892" x2="4.31429" y2="-9.51156" gradientUnits="userSpaceOnUse">
+<stop stop-color="#2BEBFF"/>
+<stop offset="0.29" stop-color="#07BFFF"/>
+<stop offset="1" stop-color="#9D34FF"/>
+</linearGradient>
+<linearGradient id="paint1_linear_7540_2039" x1="60.7724" y1="55.9833" x2="-0.0933562" y2="-5.11746" gradientUnits="userSpaceOnUse">
+<stop stop-color="#2BEBFF"/>
+<stop offset="0.29" stop-color="#07BFFF"/>
+<stop offset="1" stop-color="#9D34FF"/>
+</linearGradient>
+<clipPath id="clip0_7540_2039">
+<rect width="97" height="25" fill="white" transform="translate(0.5 0.25)"/>
+</clipPath>
+</defs>
+</svg>
