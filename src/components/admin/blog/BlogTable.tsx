@@ -2,7 +2,14 @@ import clsx from 'clsx';
 import { CiTrash } from 'react-icons/ci';
 import { Link } from 'react-router-dom';
 
-import { useBlogQuery, useDeleteBlogMutation } from '../../../api/blog';
+import { ChangeEvent } from 'react';
+import {
+  useBlogListQuery,
+  useDeleteBlogMutation,
+  usePatchBlogMutation,
+} from '../../../api/blog';
+import { blogDetailSchema } from '../../../api/blogSchema';
+import axios from '../../../utils/axios';
 import { blogCategory } from '../../../utils/convert';
 
 const blogColumnWidth = {
@@ -15,7 +22,9 @@ const blogColumnWidth = {
 };
 
 export default function BlogTable() {
-  const { data, isLoading } = useBlogQuery({ pageable: { page: 1, size: 10 } });
+  const { data } = useBlogListQuery({
+    pageable: { page: 1, size: 10 },
+  });
 
   const deleteBlog = (blogId: number) => {
     const isDelete = window.confirm('정말로 삭제하시겠습니까?');
@@ -24,7 +33,20 @@ export default function BlogTable() {
     }
   };
 
+  const handleCheck = async ({ target }: ChangeEvent<HTMLInputElement>) => {
+    // 블로그 상세 정보 불러오기
+    const res = await axios.get(`/blog/${target.dataset.blogId}`);
+    const data = blogDetailSchema.parse(res.data.data);
+
+    if (target.checked) {
+      // 블로그 노출 O
+    } else {
+      // 블로그 노출 X
+    }
+  };
+
   const deleteBlogMutation = useDeleteBlogMutation();
+  const patchBlogMutation = usePatchBlogMutation();
 
   return (
     <div className="mt-3 min-w-[60rem]">
@@ -74,9 +96,11 @@ export default function BlogTable() {
               <TableBodyCell widthClassName={blogColumnWidth.isVisible}>
                 <input
                   type="checkbox"
+                  data-blog-id={blogInfo.blogThumbnailInfo.id}
                   checked={
                     blogInfo.blogThumbnailInfo.displayDate ? true : false
                   }
+                  onChange={handleCheck}
                 />
               </TableBodyCell>
               <TableBodyCell widthClassName={blogColumnWidth.status}>

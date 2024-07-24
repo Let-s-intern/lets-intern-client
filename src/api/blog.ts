@@ -2,8 +2,16 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import { IPageable } from '../types/interface';
 import axios from '../utils/axios';
-import { blogSchema, blogTagSchema, PostBlog, TagDetail } from './blogSchema';
+import {
+  blogListSchema,
+  blogSchema,
+  blogTagSchema,
+  PatchBlogReqBody,
+  PostBlogReqBody,
+  TagDetail,
+} from './blogSchema';
 
+const blogListQueryKey = 'BlogListQueryKey';
 const blogQueryKey = 'BlogQueryKey';
 const blogTagQueryKey = 'BlogTagQueryKey';
 
@@ -13,11 +21,25 @@ interface BlogQueryParams {
   tagId?: number;
 }
 
-export const useBlogQuery = ({ type, tagId, pageable }: BlogQueryParams) => {
+export const useBlogListQuery = ({
+  type,
+  tagId,
+  pageable,
+}: BlogQueryParams) => {
   return useQuery({
-    queryKey: [blogQueryKey, pageable],
+    queryKey: [blogListQueryKey, pageable],
     queryFn: async () => {
       const res = await axios.get(`/blog`, { params: pageable });
+      return blogListSchema.parse(res.data.data);
+    },
+  });
+};
+
+export const useBlogQuery = (blogId: number) => {
+  return useQuery({
+    queryKey: [blogQueryKey, blogId],
+    queryFn: async () => {
+      const res = await axios.get(`/blog/${blogId}`);
       console.log(res);
       return blogSchema.parse(res.data.data);
     },
@@ -29,7 +51,7 @@ export const usePostBlogMutation = (
   onErrorCallback?: () => void,
 ) => {
   return useMutation({
-    mutationFn: async (newBlog: PostBlog) => {
+    mutationFn: async (newBlog: PostBlogReqBody) => {
       return await axios.post('/blog', newBlog);
     },
     onSuccess: () => {
@@ -54,6 +76,27 @@ export const useDeleteBlogMutation = (
     },
     onSuccess: () => {
       client.invalidateQueries({ queryKey: [blogQueryKey] });
+      onSuccessCallback && onSuccessCallback();
+    },
+    onError: (error) => {
+      console.error(error);
+      onErrorCallback && onErrorCallback();
+    },
+  });
+};
+
+export const usePatchBlogMutation = (
+  onSuccessCallback?: () => void,
+  onErrorCallback?: () => void,
+) => {
+  return useMutation({
+    mutationFn: async (blog: PatchBlogReqBody) => {
+      const req: any = { ...blog };
+      delete req.id;
+
+      return await axios.patch(`/blog/${blog.id}`, req);
+    },
+    onSuccess: () => {
       onSuccessCallback && onSuccessCallback();
     },
     onError: (error) => {

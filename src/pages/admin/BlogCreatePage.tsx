@@ -16,7 +16,7 @@ import {
   usePostBlogMutation,
   usePostBlogTagMutation,
 } from '../../api/blog';
-import { PostBlog, TagDetail } from '../../api/blogSchema';
+import { PostBlogReqBody, TagDetail } from '../../api/blogSchema';
 import { usePostFileMutation } from '../../api/file';
 import BlogPostEditor from '../../components/admin/blog/BlogPostEditor';
 import TagSelector from '../../components/admin/blog/TagSelector';
@@ -45,7 +45,7 @@ const initialBlog = {
 const BlogCreatePage = () => {
   const navgiate = useNavigate();
 
-  const [value, setValue] = useState<PostBlog>(initialBlog);
+  const [value, setValue] = useState<PostBlogReqBody>(initialBlog);
   const [newTag, setNewTag] = useState('');
   const [selectedTagList, setNewTagList] = useState<TagDetail[]>([]);
   const [file, setFile] = useState<File | null>(null);
