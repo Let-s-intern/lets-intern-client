@@ -130,7 +130,7 @@ const BlogCreatePage = () => {
     if (event.key !== 'Enter' || isEmpty) return;
     if (isExist) {
       alert('이미 존재하는 태그입니다.');
-    } else blogTagMutation.mutate();
+    } else blogTagMutation.mutate(newTag);
   };
 
   const selectTag = (tag: TagDetail) => {
@@ -152,7 +152,7 @@ const BlogCreatePage = () => {
   };
 
   const { data: blogTagData } = useBlogTagQuery();
-  const blogTagMutation = usePostBlogTagMutation(newTag, resetTag);
+  const blogTagMutation = usePostBlogTagMutation(resetTag);
   const fileMutation = usePostFileMutation(setImgUrl);
   const blogMutation = usePostBlogMutation();
 
