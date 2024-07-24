@@ -120,7 +120,9 @@ export default function BlogTable() {
               </TableBodyCell>
               <TableBodyCell widthClassName={blogColumnWidth.management}>
                 <div className="flex items-center gap-4">
-                  <Link to={`blog/edit/${blogInfo.blogThumbnailInfo.id}`}>
+                  <Link
+                    to={`/admin/blog/edit/${blogInfo.blogThumbnailInfo.id}`}
+                  >
                     <i>
                       <img src="/icons/edit-icon.svg" alt="수정 아이콘" />
                     </i>
