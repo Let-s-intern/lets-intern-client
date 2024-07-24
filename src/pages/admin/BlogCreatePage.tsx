@@ -60,6 +60,7 @@ const BlogCreatePage = () => {
 
     setValue((prev) => ({ ...prev, content }));
     blogMutation.mutate(value);
+    alert('임시 저장되었습니다.');
   };
 
   const submitBlog = () => {
@@ -73,6 +74,7 @@ const BlogCreatePage = () => {
       displayDate: new Date().toISOString(),
     }));
     blogMutation.mutate(value);
+    navgiate('/admin/blog/list');
   };
 
   const validate = () => {
@@ -149,14 +151,10 @@ const BlogCreatePage = () => {
     setValue((prev) => ({ ...prev, thumbnail: imgUrl }));
   };
 
-  const navigateToBlogList = () => {
-    navgiate('/admin/blog/list');
-  };
-
   const { data: blogTagData } = useBlogTagQuery();
   const blogTagMutation = usePostBlogTagMutation(newTag, resetTag);
   const fileMutation = usePostFileMutation(setImgUrl);
-  const blogMutation = usePostBlogMutation(navigateToBlogList);
+  const blogMutation = usePostBlogMutation();
 
   return (
     <div className="mx-auto my-12 w-[36rem]">
