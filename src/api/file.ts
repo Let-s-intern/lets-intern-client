@@ -23,7 +23,8 @@ export const usePostFileMutation = (
         },
       });
     },
-    onSuccess: (data) => {
+    onSuccess: async (data) => {
+      console.log(data);
       onSuccessCallback && onSuccessCallback(data);
     },
     onError: (error) => {

@@ -7,7 +7,6 @@ import {
   SelectChangeEvent,
   TextField,
 } from '@mui/material';
-import { AxiosResponse } from 'axios';
 import { ChangeEvent, FormEvent, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -56,26 +55,28 @@ const BlogCreatePage = () => {
     event.preventDefault();
   };
 
-  const saveBlog = () => {
+  const saveBlog = async () => {
     if (!validate()) return;
-    // File을 url로 변환
-    if (file) fileMutation.mutate({ type: 'BLOG', file });
 
-    blogMutation.mutate(value);
+    const thumbnail = await convertFiletoUrl(file);
+    const reqBody = { ...value, thumbnail };
+    blogMutation.mutate(reqBody);
     navgiate('/admin/blog/list');
   };
 
-  const submitBlog = () => {
+  const submitBlog = async () => {
     if (!validate()) return;
-    // File을 url로 변환
-    if (file) {
-      fileMutation.mutate({ type: 'BLOG', file });
-    }
-    blogMutation.mutate({
-      ...value,
-      isDisplayed: true,
-    });
+
+    const thumbnail = await convertFiletoUrl(file);
+    const reqBody = { ...value, thumbnail, isDisplayed: true };
+    blogMutation.mutate(reqBody);
     navgiate('/admin/blog/list');
+  };
+
+  const convertFiletoUrl = async (file: File | null) => {
+    if (!file) return '';
+    const res = await fileMutation.mutateAsync({ type: 'BLOG', file });
+    return res.data.data.fileUrl;
   };
 
   const validate = () => {
@@ -151,14 +152,9 @@ const BlogCreatePage = () => {
     setNewTag('');
   };
 
-  const setImgUrl = (res: AxiosResponse) => {
-    const imgUrl = res.data.data.fileUrl;
-    setValue((prev) => ({ ...prev, thumbnail: imgUrl }));
-  };
-
   const { data: blogTagData } = useBlogTagQuery();
   const blogTagMutation = usePostBlogTagMutation(resetTag);
-  const fileMutation = usePostFileMutation(setImgUrl);
+  const fileMutation = usePostFileMutation();
   const blogMutation = usePostBlogMutation();
 
   return (
