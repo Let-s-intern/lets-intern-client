@@ -11,7 +11,10 @@ import useRunOnce from '../../../../../hooks/useRunOnce';
 import { AccountType } from '../../../../../schema';
 import { ProgramType } from '../../../../../types/common';
 import { ICouponForm } from '../../../../../types/interface';
-import { generateRandomString } from '../../../../../utils/random';
+import {
+  generateRandomNumber,
+  generateRandomString,
+} from '../../../../../utils/random';
 import ChoicePayPlanContent from '../apply/content/ChoicePayPlanContent';
 import InputContent from '../apply/content/InputContent';
 import OverviewContent from '../apply/content/OverviewContent';
@@ -204,7 +207,7 @@ const ApplySection = ({
   const priceId =
     application?.priceList?.[0]?.priceId ?? application?.price?.priceId ?? -1;
 
-  const orderId = 'lets' + generateRandomString();
+  const orderId = 'lets' + generateRandomString() + generateRandomNumber();
 
   const program = useProgramQuery({ programId, type: programType });
 
