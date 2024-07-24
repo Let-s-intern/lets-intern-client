@@ -161,17 +161,12 @@ const PaymentResult = () => {
                   <div className="flex w-full flex-col items-center justify-center">
                     <PaymentInfoRow
                       title="상품금액"
-                      content={
-                        Number(searchParams.get('price')).toLocaleString() +
-                        '원'
-                      }
+                      content={params?.price.toLocaleString() + '원'}
                     />
                     <PaymentInfoRow
-                      title={`할인 (${Math.floor((Number(searchParams.get('discount')) / Number(searchParams.get('price'))) * 100)}%)`}
+                      title={`할인 (${params?.price === 0 ? 0 : Math.floor(((params?.discount ?? 0) / (params?.price ?? 1)) * 100)}%)`}
                       content={
-                        '-' +
-                        Number(searchParams.get('discount')).toLocaleString() +
-                        '원'
+                        '-' + (params?.discount ?? 0).toLocaleString() + '원'
                       }
                     />
                     <PaymentInfoRow
