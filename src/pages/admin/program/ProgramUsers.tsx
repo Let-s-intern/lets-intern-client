@@ -82,7 +82,7 @@ const ProgramUsers = () => {
 
     if (filter.isFeeConfirmed !== null) {
       result = result.filter(
-        (application) => application.isConfirmed === filter.isFeeConfirmed,
+        (application) => application.isCanceled === filter.isFeeConfirmed,
       );
     }
     return result;

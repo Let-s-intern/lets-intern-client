@@ -1,8 +1,5 @@
-import { Checkbox } from '@mui/material';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { ChallengeApplication, LiveApplication } from '../../../../../schema';
 
-import axios from '../../../../../utils/axios';
 import { gradeToText } from '../../../../../utils/convert';
 import TD from '../../../ui/table/regacy/TD';
 
@@ -12,46 +9,6 @@ interface Props {
 }
 
 const TableRow = ({ application, programType }: Props) => {
-  const queryClient = useQueryClient();
-
-  const editIsFeeConfirmed = useMutation({
-    mutationFn: async () => {
-      const res = await axios.patch(
-        `/payment/${application.paymentId}`,
-        {
-          isConfirmed: !application.isConfirmed,
-        },
-        {
-          params: {
-            type: programType,
-          },
-        },
-      );
-      return res.data;
-    },
-    onSuccess: async () => {
-      await queryClient.invalidateQueries({
-        queryKey: [programType.toLowerCase()],
-      });
-    },
-  });
-
-  const updateIsRefunded = useMutation({
-    mutationFn: async (refunded: boolean) => {
-      const res = await axios.patch(
-        `/payment/${application.paymentId}`,
-        { isRefunded: refunded },
-        { params: { type: programType } },
-      );
-      return res.data;
-    },
-    onSuccess: async () => {
-      await queryClient.invalidateQueries({
-        queryKey: [programType.toLowerCase()],
-      });
-    },
-  });
-
   const createDate =
     'createDate' in application
       ? application.createDate
@@ -89,22 +46,12 @@ const TableRow = ({ application, programType }: Props) => {
       <TD>{application.couponName || '없음'}</TD>
       <TD>{application.totalCost?.toLocaleString()}원</TD>
       <TD whiteSpace="wrap">
-        <Checkbox
-          checked={application.isConfirmed ?? false}
-          onChange={() => editIsFeeConfirmed.mutate()}
-        />
-      </TD>
-      <TD whiteSpace="wrap">
-        <Checkbox
-          checked={
-            'isRefunded' in application
-              ? application.isRefunded ?? false
-              : false
-          }
-          onChange={(e) => {
-            updateIsRefunded.mutate(e.target.checked);
-          }}
-        />
+        {application.isCanceled ? (
+          <span className="font-bold">Y</span>
+        ) : (
+          <span className="text-gray-300">N</span>
+        )}
+        {/* <Checkbox disabled checked={application.isCanceled ?? false} /> */}
       </TD>
       <TD>{createDate.format('YYYY-MM-DD HH:mm')}</TD>
     </tr>
