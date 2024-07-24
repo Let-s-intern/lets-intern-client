@@ -114,7 +114,7 @@ const PaymentResult = () => {
             <div>결제 확인 중입니다.</div>
           ) : (
             <>
-              <DescriptionBox isSuccess={isSuccess} />
+              <DescriptionBox type={isSuccess ? 'SUCCESS' : 'FAIL'} />
               <div className="flex w-full flex-col items-center justify-start gap-y-10 py-8">
                 <div className="flex w-full flex-col items-start justify-center gap-6">
                   <div className="text-xsmall16 font-semibold text-neutral-0">

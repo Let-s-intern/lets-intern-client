@@ -17,6 +17,7 @@ import MentorNotificationAfter from './pages/common/mentor/MentorNotificationAft
 import MentorNotificationBefore from './pages/common/mentor/MentorNotificationBefore';
 import Application from './pages/common/mypage/Application';
 import Credit from './pages/common/mypage/Credit';
+import CreditDelete from './pages/common/mypage/CreditDelete';
 import CreditDetail from './pages/common/mypage/CreditDetail';
 import MyPage from './pages/common/mypage/MyPage';
 import Privacy from './pages/common/mypage/Privacy';
@@ -107,6 +108,7 @@ const Router = () => {
             <Route path="credit">
               <Route path="" element={<Credit />} />
               <Route path=":paymentId" element={<CreditDetail />} />
+              <Route path=":paymentId/delete" element={<CreditDelete />} />
             </Route>
             <Route path="privacy" element={<Privacy />} />
           </Route>
