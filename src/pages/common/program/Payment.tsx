@@ -76,7 +76,7 @@ const Payment = () => {
       // ------  결제 UI 렌더링 ------
       const methods = await widgets.renderPaymentMethods({
         selector: '#payment-method',
-        variantKey: 'widgetB',
+        variantKey: 'widgetA',
       });
 
       setMethods(methods);

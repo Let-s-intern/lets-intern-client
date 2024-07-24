@@ -120,22 +120,18 @@ export const usePostApplicationMutation = ({
 };
 
 export const useCancelApplicationMutation = ({
+  applicationId,
   successCallback,
   errorCallback,
 }: {
+  applicationId: number;
   successCallback?: () => void;
   errorCallback?: (error: Error) => void;
 }) => {
   const client = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({
-      applicationId,
-      programType,
-    }: {
-      applicationId: number;
-      programType: string;
-    }) => {
+    mutationFn: async ({ programType }: { programType: string }) => {
       const res = await axios.delete(`/application/${applicationId}`, {
         params: { type: programType.toUpperCase() },
       });
@@ -144,7 +140,7 @@ export const useCancelApplicationMutation = ({
     onSuccess: () => {
       successCallback && successCallback();
       client.invalidateQueries({
-        queryKey: [UsePaymentQueryKey, UsePaymentDetailQueryKey],
+        queryKey: [UsePaymentQueryKey, UsePaymentDetailQueryKey, applicationId],
       });
     },
     onError: (error) => {
