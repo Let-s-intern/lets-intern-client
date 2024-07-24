@@ -10,6 +10,7 @@ export interface PostBlog {
   ctaLink: string;
   ctaText: string;
   displayDate: string;
+  isDisplayed: boolean;
   tagList: number[];
 }
 

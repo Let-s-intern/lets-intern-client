@@ -8,7 +8,7 @@ import {
   TextField,
 } from '@mui/material';
 import { AxiosResponse } from 'axios';
-import { ChangeEvent, useState } from 'react';
+import { ChangeEvent, FormEvent, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import {
@@ -39,6 +39,7 @@ const initialBlog = {
   ctaLink: '',
   ctaText: '',
   displayDate: '',
+  isDisplayed: false,
   tagList: [],
 };
 
@@ -52,6 +53,10 @@ const BlogCreatePage = () => {
   const [isTitleValid, setIsTitleValid] = useState(true);
   const [isCategoryValid, setIsCategoryValid] = useState(true);
   const [content, setContent] = useState('');
+
+  const hadnleSubmit = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+  };
 
   const saveBlog = () => {
     if (!validate()) return;
@@ -67,11 +72,11 @@ const BlogCreatePage = () => {
     if (!validate()) return;
     // File을 url로 변환
     if (file) fileMutation.mutate({ type: 'BLOG', file });
-    // displayDate가 있으면 블로그 발행
     setValue((prev) => ({
       ...prev,
       content,
       displayDate: new Date().toISOString(),
+      isDisplayed: true,
     }));
     blogMutation.mutate(value);
     navgiate('/admin/blog/list');
@@ -162,7 +167,7 @@ const BlogCreatePage = () => {
         <h1 className="text-2xl font-semibold">블로그 등록</h1>
       </header>
       <main>
-        <form className="mt-4 flex flex-col gap-4">
+        <form className="mt-4 flex flex-col gap-4" onSubmit={hadnleSubmit}>
           <FormControl
             focused={!isCategoryValid}
             error={!isCategoryValid}
@@ -222,7 +227,6 @@ const BlogCreatePage = () => {
             onChange={handleChange}
           />
           <BlogPostEditor setContent={setContent} />
-          https://lexical.dev/docs/getting-started/react 따라하는중...
           <TextField
             type="text"
             label="CTA 링크"
