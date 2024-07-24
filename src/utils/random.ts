@@ -1,5 +1,2 @@
 import { customAlphabet } from 'nanoid';
-export const generateRandomString = customAlphabet(
-  'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789',
-  8,
-);
+export const generateRandomString = customAlphabet('1234567890', 9);

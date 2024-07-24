@@ -204,7 +204,7 @@ const ApplySection = ({
   const priceId =
     application?.priceList?.[0]?.priceId ?? application?.price?.priceId ?? -1;
 
-  const orderId = 'lets-' + generateRandomString();
+  const orderId = 'lets' + generateRandomString();
 
   const program = useProgramQuery({ programId, type: programType });
 
