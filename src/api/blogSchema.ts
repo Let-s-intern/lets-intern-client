@@ -9,25 +9,24 @@ export interface PostBlogReqBody {
   content: string;
   ctaLink: string;
   ctaText: string;
-  displayDate: string;
   tagList: number[];
 }
 
 export interface PatchBlogReqBody {
   id: number;
-  title: string;
-  category: string;
-  thumbnail: string;
-  description: string;
-  content: string;
-  ctaLink: string;
-  ctaText: string;
-  displayDate: string;
-  isDisplayed: boolean;
-  tagList: number[];
+  title?: string;
+  category?: string;
+  thumbnail?: string;
+  description?: string;
+  content?: string;
+  ctaLink?: string;
+  ctaText?: string;
+  isDisplayed?: boolean;
+  tagList?: number[];
 }
 
 export type TagDetail = z.infer<typeof tagDetailSchema>[0];
+export type BlogThumbnail = z.infer<typeof blogThumbnailSchema>;
 
 export const pageSchema = z.object({
   pageNum: z.number(),
@@ -43,6 +42,7 @@ export const blogThumbnailSchema = z.object({
   thumbnail: z.string().nullable().optional(),
   description: z.string().nullable().optional(),
   displayDate: z.string().nullable().optional(),
+  isDisplayed: z.boolean().nullable().optional(),
   createDate: z.string().nullable().optional(),
   lastModifiedDate: z.string().nullable().optional(),
 });
@@ -107,9 +107,9 @@ export const blogListSchema = z
       z.object({
         blogThumbnailInfo: blogThumbnailSchema,
         tagDetailInfos: tagDetailSchema,
-        pageInfo: pageSchema,
       }),
     ),
+    pageInfo: pageSchema,
   })
   .transform((data) => {
     return {
@@ -136,8 +136,8 @@ export const blogListSchema = z
             ? dayjs(tagDetailInfo.lastModifiedDate)
             : null,
         })),
-        pageInfo: blogInfo.pageInfo,
       })),
+      pageInfo: data.pageInfo,
     };
   });
 

@@ -92,6 +92,7 @@ export default function BlogPostEditor({ setContent }: BlogPostEditorProps) {
     editorState.read(() => {
       const htmlString = $generateHtmlFromNodes(editor);
       setContent(htmlString);
+      console.log(htmlString);
     });
   };
 

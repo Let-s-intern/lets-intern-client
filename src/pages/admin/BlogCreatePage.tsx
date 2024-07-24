@@ -38,7 +38,6 @@ const initialBlog = {
   content: '',
   ctaLink: '',
   ctaText: '',
-  displayDate: '',
   isDisplayed: false,
   tagList: [],
 };
@@ -54,7 +53,7 @@ const BlogCreatePage = () => {
   const [isCategoryValid, setIsCategoryValid] = useState(true);
   const [content, setContent] = useState('');
 
-  const hadnleSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
   };
 
@@ -71,11 +70,12 @@ const BlogCreatePage = () => {
   const submitBlog = () => {
     if (!validate()) return;
     // File을 url로 변환
-    if (file) fileMutation.mutate({ type: 'BLOG', file });
+    if (file) {
+      fileMutation.mutate({ type: 'BLOG', file });
+    }
     setValue((prev) => ({
       ...prev,
       content,
-      displayDate: new Date().toISOString(),
       isDisplayed: true,
     }));
     blogMutation.mutate(value);
@@ -167,7 +167,7 @@ const BlogCreatePage = () => {
         <h1 className="text-2xl font-semibold">블로그 등록</h1>
       </header>
       <main>
-        <form className="mt-4 flex flex-col gap-4" onSubmit={hadnleSubmit}>
+        <form className="mt-4 flex flex-col gap-4" onSubmit={handleSubmit}>
           <FormControl
             focused={!isCategoryValid}
             error={!isCategoryValid}

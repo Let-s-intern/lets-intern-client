@@ -8,8 +8,7 @@ import {
   useDeleteBlogMutation,
   usePatchBlogMutation,
 } from '../../../api/blog';
-import { blogDetailSchema } from '../../../api/blogSchema';
-import axios from '../../../utils/axios';
+import { BlogThumbnail, PatchBlogReqBody } from '../../../api/blogSchema';
 import { blogCategory } from '../../../utils/convert';
 
 const blogColumnWidth = {
@@ -22,10 +21,6 @@ const blogColumnWidth = {
 };
 
 export default function BlogTable() {
-  const { data } = useBlogListQuery({
-    pageable: { page: 1, size: 10 },
-  });
-
   const deleteBlog = (blogId: number) => {
     const isDelete = window.confirm('정말로 삭제하시겠습니까?');
     if (isDelete) {
@@ -33,18 +28,28 @@ export default function BlogTable() {
     }
   };
 
-  const handleCheck = async ({ target }: ChangeEvent<HTMLInputElement>) => {
-    // 블로그 상세 정보 불러오기
-    const res = await axios.get(`/blog/${target.dataset.blogId}`);
-    const data = blogDetailSchema.parse(res.data.data);
-
-    if (target.checked) {
-      // 블로그 노출 O
+  const handleCheck = (
+    event: ChangeEvent<HTMLInputElement>,
+    checkedBlog: BlogThumbnail,
+  ) => {
+    if (event.target.checked) {
+      const reqBody: PatchBlogReqBody = {
+        id: checkedBlog.id,
+        isDisplayed: false,
+      };
+      patchBlogMutation.mutate(reqBody);
     } else {
-      // 블로그 노출 X
+      const reqBody: PatchBlogReqBody = {
+        id: checkedBlog.id,
+        isDisplayed: true,
+      };
+      patchBlogMutation.mutate(reqBody);
     }
   };
 
+  const { data, isLoading } = useBlogListQuery({
+    pageable: { page: 1, size: 10 },
+  });
   const deleteBlogMutation = useDeleteBlogMutation();
   const patchBlogMutation = usePatchBlogMutation();
 
@@ -73,7 +78,9 @@ export default function BlogTable() {
       </div>
 
       {/* TableBody */}
-      {data?.blogInfos.length === 0 ? (
+      {isLoading ? (
+        <div className="py-6 text-center">블로그를 가져오는 중입니다..</div>
+      ) : data?.blogInfos.length === 0 ? (
         <div className="py-6 text-center">개설된 블로그가 없습니다.</div>
       ) : (
         <div className="mb-16 mt-3 flex flex-col gap-2">
@@ -83,7 +90,7 @@ export default function BlogTable() {
               className="flex rounded-md border border-neutral-200"
             >
               <TableBodyCell widthClassName={blogColumnWidth.displayDate}>
-                {blogInfo.blogThumbnailInfo.displayDate!.format(
+                {blogInfo.blogThumbnailInfo.displayDate?.format(
                   'YYYY년 M월 D일',
                 )}
               </TableBodyCell>
@@ -100,7 +107,12 @@ export default function BlogTable() {
                   checked={
                     blogInfo.blogThumbnailInfo.displayDate ? true : false
                   }
-                  onChange={handleCheck}
+                  onChange={(event) =>
+                    handleCheck(
+                      event,
+                      blogInfo.blogThumbnailInfo as BlogThumbnail,
+                    )
+                  }
                 />
               </TableBodyCell>
               <TableBodyCell widthClassName={blogColumnWidth.status}>

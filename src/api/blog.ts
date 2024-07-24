@@ -40,7 +40,6 @@ export const useBlogQuery = (blogId: number) => {
     queryKey: [blogQueryKey, blogId],
     queryFn: async () => {
       const res = await axios.get(`/blog/${blogId}`);
-      console.log(res);
       return blogSchema.parse(res.data.data);
     },
   });
@@ -50,11 +49,15 @@ export const usePostBlogMutation = (
   onSuccessCallback?: () => void,
   onErrorCallback?: () => void,
 ) => {
+  const client = useQueryClient();
+
   return useMutation({
     mutationFn: async (newBlog: PostBlogReqBody) => {
+      console.log(newBlog);
       return await axios.post('/blog', newBlog);
     },
-    onSuccess: () => {
+    onSuccess: async () => {
+      await client.invalidateQueries({ queryKey: [blogListQueryKey] });
       onSuccessCallback && onSuccessCallback();
     },
     onError: (error) => {
@@ -74,8 +77,8 @@ export const useDeleteBlogMutation = (
     mutationFn: async (blogId: number) => {
       return await axios.delete(`/blog/${blogId}`);
     },
-    onSuccess: () => {
-      client.invalidateQueries({ queryKey: [blogQueryKey] });
+    onSuccess: async () => {
+      await client.invalidateQueries({ queryKey: [blogListQueryKey] });
       onSuccessCallback && onSuccessCallback();
     },
     onError: (error) => {
@@ -89,14 +92,17 @@ export const usePatchBlogMutation = (
   onSuccessCallback?: () => void,
   onErrorCallback?: () => void,
 ) => {
+  const client = useQueryClient();
+
   return useMutation({
     mutationFn: async (blog: PatchBlogReqBody) => {
-      const req: any = { ...blog };
-      delete req.id;
+      const reqBody: any = { ...blog };
+      delete reqBody.id;
 
-      return await axios.patch(`/blog/${blog.id}`, req);
+      return await axios.patch(`/blog/${blog.id}`, reqBody);
     },
     onSuccess: () => {
+      client.invalidateQueries({ queryKey: [blogListQueryKey] });
       onSuccessCallback && onSuccessCallback();
     },
     onError: (error) => {
@@ -127,8 +133,8 @@ export const usePostBlogTagMutation = (
     mutationFn: async (title: TagDetail['title']) => {
       return await axios.post('/blog-tag', { title });
     },
-    onSuccess: () => {
-      client.invalidateQueries({ queryKey: [blogTagQueryKey] });
+    onSuccess: async () => {
+      await client.invalidateQueries({ queryKey: [blogTagQueryKey] });
       onSuccessCallback && onSuccessCallback();
     },
     onError: (error) => {
