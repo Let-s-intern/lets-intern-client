@@ -56,7 +56,7 @@ const PaymentFail = () => {
       <div className="flex min-h-52 w-full flex-col items-center justify-center">
         <div className="flex w-full flex-col items-center justify-center rounded-md bg-neutral-100 py-6">
           <div className="text-small20 font-semibold text-primary">
-            결제를 실패했습니다❗️
+            결제가 실패했습니다❗️
           </div>
           <div className="text-xsmall16 text-neutral-20">{params?.message}</div>
         </div>
