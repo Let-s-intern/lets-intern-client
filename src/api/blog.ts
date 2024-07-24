@@ -35,7 +35,7 @@ export const useBlogListQuery = ({
   });
 };
 
-export const useBlogQuery = (blogId: number) => {
+export const useBlogQuery = (blogId: string) => {
   return useQuery({
     queryKey: [blogQueryKey, blogId],
     queryFn: async () => {
@@ -53,7 +53,6 @@ export const usePostBlogMutation = (
 
   return useMutation({
     mutationFn: async (newBlog: PostBlogReqBody) => {
-      console.log(newBlog);
       return await axios.post('/blog', newBlog);
     },
     onSuccess: async () => {
