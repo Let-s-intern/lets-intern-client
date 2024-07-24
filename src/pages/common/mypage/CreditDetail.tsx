@@ -1,10 +1,7 @@
 import dayjs from 'dayjs';
-import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useCancelApplicationMutation } from '../../../api/application';
 import { usePaymentDetailQuery } from '../../../api/payment';
 import { useUserQuery } from '../../../api/user';
-import CreditCancelModal from '../../../components/common/mypage/credit/CreditCancelModal';
 import MoreButton from '../../../components/common/mypage/ui/button/MoreButton';
 import PaymentInfoRow from '../../../components/common/program/paymentSuccess/PaymentInfoRow';
 import Input from '../../../components/common/ui/input/Input';
@@ -19,7 +16,6 @@ const calPercent = (price: number, discount: number) => {
 
 const CreditDetail = () => {
   const navigate = useNavigate();
-  const [isCancelModalOpen, setIsCancelModalOpen] = useState(false);
   const { paymentId } = useParams<{ paymentId: string }>();
 
   const {
@@ -33,17 +29,6 @@ const CreditDetail = () => {
     isLoading: userDataIsLoading,
     isError: userDataIsError,
   } = useUserQuery();
-
-  const { mutate: tryCancelPayment } = useCancelApplicationMutation({
-    successCallback: () => {
-      setIsCancelModalOpen(false);
-      navigate(`/mypage/credit/${paymentId}`);
-    },
-    errorCallback: (error) => {
-      alert('결제 취소에 실패했습니다.');
-      console.error(error);
-    },
-  });
 
   const isCancelable = () => {
     if (
@@ -77,7 +62,7 @@ const CreditDetail = () => {
           alt="arrow-left"
           className="h-6 w-6 cursor-pointer"
           onClick={() => {
-            navigate(-1);
+            navigate(`/mypage/credit`);
           }}
         />
         <h1 className="text-lg font-medium text-neutral-0">결제상세</h1>
@@ -330,7 +315,7 @@ const CreditDetail = () => {
                 <button
                   className="flex w-full items-center justify-center rounded-sm bg-neutral-80 px-5 py-2.5 font-medium text-neutral-40"
                   onClick={() => {
-                    setIsCancelModalOpen(true);
+                    navigate(`/mypage/credit/${paymentId}/delete`);
                   }}
                 >
                   결제 취소하기
@@ -349,22 +334,6 @@ const CreditDetail = () => {
           </>
         )}
       </div>
-      {isCancelModalOpen && (
-        <CreditCancelModal
-          title="결제 취소 전 꼭 확인해주세요!"
-          text={`결제취소시 환불규정에 따라 부분 환불 처리 될 수 있습니다.\n자세한 내용은 자주 묻는 질문 내 환불규정을 참고해주세요.`}
-          onConfirm={() => {
-            tryCancelPayment({
-              applicationId: paymentDetail?.programInfo.applicationId || 0,
-              programType:
-                paymentDetail?.programInfo.programType || 'CHALLENGE',
-            });
-          }}
-          onCancel={() => {
-            setIsCancelModalOpen(false);
-          }}
-        />
-      )}
     </section>
   );
 };
