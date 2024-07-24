@@ -2,20 +2,44 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import { IPageable } from '../types/interface';
 import axios from '../utils/axios';
-import { blogSchema, blogTagSchema, PostBlog, TagDetail } from './blogSchema';
+import {
+  blogListSchema,
+  blogSchema,
+  blogTagSchema,
+  PatchBlogReqBody,
+  PostBlogReqBody,
+  TagDetail,
+} from './blogSchema';
 
+const blogListQueryKey = 'BlogListQueryKey';
 const blogQueryKey = 'BlogQueryKey';
 const blogTagQueryKey = 'BlogTagQueryKey';
 
-export const useBlogQuery = (
-  pageable: IPageable,
-  type?: string,
-  tagId?: number,
-) => {
+interface BlogQueryParams {
+  pageable: IPageable;
+  type?: string;
+  tagId?: number;
+}
+
+export const useBlogListQuery = ({
+  type,
+  tagId,
+  pageable,
+}: BlogQueryParams) => {
   return useQuery({
-    queryKey: [blogQueryKey, pageable],
+    queryKey: [blogListQueryKey, pageable],
     queryFn: async () => {
       const res = await axios.get(`/blog`, { params: pageable });
+      return blogListSchema.parse(res.data.data);
+    },
+  });
+};
+
+export const useBlogQuery = (blogId: number) => {
+  return useQuery({
+    queryKey: [blogQueryKey, blogId],
+    queryFn: async () => {
+      const res = await axios.get(`/blog/${blogId}`);
       return blogSchema.parse(res.data.data);
     },
   });
@@ -25,11 +49,60 @@ export const usePostBlogMutation = (
   onSuccessCallback?: () => void,
   onErrorCallback?: () => void,
 ) => {
+  const client = useQueryClient();
+
   return useMutation({
-    mutationFn: async (newBlog: PostBlog) => {
+    mutationFn: async (newBlog: PostBlogReqBody) => {
+      console.log(newBlog);
       return await axios.post('/blog', newBlog);
     },
+    onSuccess: async () => {
+      await client.invalidateQueries({ queryKey: [blogListQueryKey] });
+      onSuccessCallback && onSuccessCallback();
+    },
+    onError: (error) => {
+      console.error(error);
+      onErrorCallback && onErrorCallback();
+    },
+  });
+};
+
+export const useDeleteBlogMutation = (
+  onSuccessCallback?: () => void,
+  onErrorCallback?: () => void,
+) => {
+  const client = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (blogId: number) => {
+      return await axios.delete(`/blog/${blogId}`);
+    },
+    onSuccess: async () => {
+      await client.invalidateQueries({ queryKey: [blogListQueryKey] });
+      onSuccessCallback && onSuccessCallback();
+    },
+    onError: (error) => {
+      console.error(error);
+      onErrorCallback && onErrorCallback();
+    },
+  });
+};
+
+export const usePatchBlogMutation = (
+  onSuccessCallback?: () => void,
+  onErrorCallback?: () => void,
+) => {
+  const client = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (blog: PatchBlogReqBody) => {
+      const reqBody: any = { ...blog };
+      delete reqBody.id;
+
+      return await axios.patch(`/blog/${blog.id}`, reqBody);
+    },
     onSuccess: () => {
+      client.invalidateQueries({ queryKey: [blogListQueryKey] });
       onSuccessCallback && onSuccessCallback();
     },
     onError: (error) => {
@@ -60,8 +133,8 @@ export const usePostBlogTagMutation = (
     mutationFn: async (title: TagDetail['title']) => {
       return await axios.post('/blog-tag', { title });
     },
-    onSuccess: () => {
-      client.invalidateQueries({ queryKey: [blogTagQueryKey] });
+    onSuccess: async () => {
+      await client.invalidateQueries({ queryKey: [blogTagQueryKey] });
       onSuccessCallback && onSuccessCallback();
     },
     onError: (error) => {

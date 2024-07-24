@@ -7,7 +7,6 @@ import {
   SelectChangeEvent,
   TextField,
 } from '@mui/material';
-import { AxiosResponse } from 'axios';
 import { ChangeEvent, FormEvent, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -16,7 +15,7 @@ import {
   usePostBlogMutation,
   usePostBlogTagMutation,
 } from '../../api/blog';
-import { PostBlog, TagDetail } from '../../api/blogSchema';
+import { PostBlogReqBody, TagDetail } from '../../api/blogSchema';
 import { usePostFileMutation } from '../../api/file';
 import BlogPostEditor from '../../components/admin/blog/BlogPostEditor';
 import TagSelector from '../../components/admin/blog/TagSelector';
@@ -38,7 +37,6 @@ const initialBlog = {
   content: '',
   ctaLink: '',
   ctaText: '',
-  displayDate: '',
   isDisplayed: false,
   tagList: [],
 };
@@ -46,40 +44,39 @@ const initialBlog = {
 const BlogCreatePage = () => {
   const navgiate = useNavigate();
 
-  const [value, setValue] = useState<PostBlog>(initialBlog);
+  const [value, setValue] = useState<PostBlogReqBody>(initialBlog);
   const [newTag, setNewTag] = useState('');
   const [selectedTagList, setNewTagList] = useState<TagDetail[]>([]);
   const [file, setFile] = useState<File | null>(null);
   const [isTitleValid, setIsTitleValid] = useState(true);
   const [isCategoryValid, setIsCategoryValid] = useState(true);
-  const [content, setContent] = useState('');
 
-  const hadnleSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
   };
 
-  const saveBlog = () => {
+  const saveBlog = async () => {
     if (!validate()) return;
-    // File을 url로 변환
-    if (file) fileMutation.mutate({ type: 'BLOG', file });
 
-    setValue((prev) => ({ ...prev, content }));
-    blogMutation.mutate(value);
-    alert('임시 저장되었습니다.');
+    const thumbnail = await convertFiletoUrl(file);
+    const reqBody = { ...value, thumbnail };
+    blogMutation.mutate(reqBody);
+    navgiate('/admin/blog/list');
   };
 
-  const submitBlog = () => {
+  const submitBlog = async () => {
     if (!validate()) return;
-    // File을 url로 변환
-    if (file) fileMutation.mutate({ type: 'BLOG', file });
-    setValue((prev) => ({
-      ...prev,
-      content,
-      displayDate: new Date().toISOString(),
-      isDisplayed: true,
-    }));
-    blogMutation.mutate(value);
+
+    const thumbnail = await convertFiletoUrl(file);
+    const reqBody = { ...value, thumbnail, isDisplayed: true };
+    blogMutation.mutate(reqBody);
     navgiate('/admin/blog/list');
+  };
+
+  const convertFiletoUrl = async (file: File | null) => {
+    if (!file) return '';
+    const res = await fileMutation.mutateAsync({ type: 'BLOG', file });
+    return res.data.data.fileUrl;
   };
 
   const validate = () => {
@@ -138,6 +135,10 @@ const BlogCreatePage = () => {
     } else blogTagMutation.mutate(newTag);
   };
 
+  const getHTMLString = (htmlString: string) => {
+    setValue((prev) => ({ ...prev, content: htmlString }));
+  };
+
   const selectTag = (tag: TagDetail) => {
     if (value.tagList.includes(tag.id)) return;
     setNewTagList((prev) => [...prev, { id: tag.id, title: tag.title }]);
@@ -151,14 +152,9 @@ const BlogCreatePage = () => {
     setNewTag('');
   };
 
-  const setImgUrl = (res: AxiosResponse) => {
-    const imgUrl = res.data.data.fileUrl;
-    setValue((prev) => ({ ...prev, thumbnail: imgUrl }));
-  };
-
   const { data: blogTagData } = useBlogTagQuery();
   const blogTagMutation = usePostBlogTagMutation(resetTag);
-  const fileMutation = usePostFileMutation(setImgUrl);
+  const fileMutation = usePostFileMutation();
   const blogMutation = usePostBlogMutation();
 
   return (
@@ -167,7 +163,7 @@ const BlogCreatePage = () => {
         <h1 className="text-2xl font-semibold">블로그 등록</h1>
       </header>
       <main>
-        <form className="mt-4 flex flex-col gap-4" onSubmit={hadnleSubmit}>
+        <form className="mt-4 flex flex-col gap-4" onSubmit={handleSubmit}>
           <FormControl
             focused={!isCategoryValid}
             error={!isCategoryValid}
@@ -226,7 +222,7 @@ const BlogCreatePage = () => {
             image={value.thumbnail as string}
             onChange={handleChange}
           />
-          <BlogPostEditor setContent={setContent} />
+          <BlogPostEditor getHTMLString={getHTMLString} />
           <TextField
             type="text"
             label="CTA 링크"
