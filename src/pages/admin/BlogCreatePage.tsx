@@ -53,11 +53,25 @@ const BlogCreatePage = () => {
   const [isCategoryValid, setIsCategoryValid] = useState(true);
   const [content, setContent] = useState('');
 
+  const saveBlog = () => {
+    if (!validate()) return;
+    // File을 url로 변환
+    if (file) fileMutation.mutate({ type: 'BLOG', file });
+
+    setValue((prev) => ({ ...prev, content }));
+    blogMutation.mutate(value);
+  };
+
   const submitBlog = () => {
     if (!validate()) return;
     // File을 url로 변환
     if (file) fileMutation.mutate({ type: 'BLOG', file });
-    setValue((prev) => ({ ...prev, content }));
+    // displayDate가 있으면 블로그 발행
+    setValue((prev) => ({
+      ...prev,
+      content,
+      displayDate: new Date().toISOString(),
+    }));
     blogMutation.mutate(value);
   };
 
@@ -247,7 +261,7 @@ const BlogCreatePage = () => {
       <footer>
         <div className="flex items-center justify-end gap-4">
           <ActionButton
-            onClick={submitBlog}
+            onClick={saveBlog}
             type="button"
             bgColor="gray"
             width="6rem"
