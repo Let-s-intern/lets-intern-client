@@ -362,6 +362,8 @@ export const grade = z.union([
   z.literal('ETC'),
 ]);
 
+export type Grade = z.infer<typeof grade>;
+
 /** 참여자 */
 export const getChallengeIdApplications = z
   .object({
@@ -1061,3 +1063,59 @@ export const programApplicationType = z.object({
   priceList: z.array(challengeApplicationPriceType).nullable().optional(),
   price: liveApplicationPriceType.nullable().optional(),
 });
+
+/** GET /api/v1/user/admin */
+export const userAdminType = z.object({
+  userAdminList: z.array(
+    z.object({
+      userInfo: z.object({
+        id: z.number(),
+        name: z.string(),
+        email: z.string(),
+        contactEmail: z.string().nullable(),
+        phoneNum: z.string(),
+        createdDate: z.string(),
+        accountType: accountType.nullable(),
+        accountNum: z.string().nullable(),
+        marketingAgree: z.boolean().nullable(),
+      }),
+      applicationInfos: z.array(
+        z.object({
+          programId: z.number().nullable(),
+          programTitle: z.string(),
+        }),
+      ),
+    }),
+  ),
+  pageInfo: pageinfo,
+});
+
+export type UserAdmin = z.infer<typeof userAdminType>['userAdminList'];
+
+export const userAdminDetailType = z.object({
+  userInfo: z.object({
+    id: z.string(),
+    name: z.string(),
+    email: z.string(),
+    contactEmail: z.string().nullable(),
+    phoneNum: z.string(),
+    university: z.string().nullable(),
+    inflowPath: z.string().nullable(),
+    grade: z.string().nullable(),
+    major: z.string().nullable(),
+    wishJob: z.string().nullable(),
+    wishCompany: z.string().nullable(),
+    accountType: accountType.nullable(),
+    accountNum: z.string().nullable(),
+    marketingAgree: z.boolean().nullable(),
+    authProvider: authProviderSchema.nullable(),
+  }),
+  applicationInfo: z.array(
+    z.object({
+      programId: z.number().nullable(),
+      programTitle: z.string(),
+    }),
+  ),
+});
+
+export type UserAdminDetail = z.infer<typeof userAdminDetailType>;
