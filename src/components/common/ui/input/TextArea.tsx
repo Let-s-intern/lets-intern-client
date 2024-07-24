@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { twMerge } from 'tailwind-merge';
 
 interface TextAreaProps
   extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
@@ -27,8 +28,11 @@ const TextArea = (props: TextAreaProps) => {
   return (
     <div className="rounded-md bg-neutral-95 p-3">
       <textarea
-        className="text-1-medium w-full resize-none bg-neutral-95 outline-none"
         {...props}
+        className={twMerge(
+          'text-1-medium w-full resize-none bg-neutral-95 outline-none',
+          props.className,
+        )}
         onChange={handleTextAreaChange}
       />
       {props.maxLength && (

@@ -1,71 +1,136 @@
 import { useRef } from 'react';
 import { FaArrowLeft } from 'react-icons/fa6';
+import { twMerge } from 'tailwind-merge';
+import { ProgramQuery } from '../../../../../../api/program';
+import { ICouponForm } from '../../../../../../types/interface';
+import Input from '../../../../ui/input/Input';
+import ProgramCard from '../../../ProgramCard';
 
-import { PayInfo, ProgramDate } from '../../section/ApplySection';
+import { PayInfo, ProgramDate, UserInfo } from '../../section/ApplySection';
 import CouponSection from '../section/CouponSection';
-import PayInfoSection from '../section/PayInfoSection';
 import PriceSection from '../section/PriceSection';
 
 interface PayContentProps {
   payInfo: PayInfo;
-  setPayInfo: (payInfo: (prevPayInfo: PayInfo) => PayInfo) => void;
-  handleApplyButtonClick: () => void;
+  coupon: ICouponForm;
+  setCoupon: (
+    coupon: ((prevCoupon: ICouponForm) => ICouponForm) | ICouponForm,
+  ) => void;
+  handleApplyButtonClick: (isFree: boolean) => void;
   contentIndex: number;
   setContentIndex: (contentIndex: number) => void;
-  programType: string;
+  programType: 'live' | 'challenge';
+  progressType: string;
   totalPrice: number;
-  // 결제 심사 용도로 만든 임시 결제 페이지인지 여부
-  isTest: boolean;
   programDate: ProgramDate;
+  programQuery: ProgramQuery;
+  programId: number;
+  userInfo: UserInfo;
+  isMobile?: boolean;
 }
 
 const PayContent = ({
   payInfo,
-  setPayInfo,
+  coupon,
+  setCoupon,
   handleApplyButtonClick,
   contentIndex,
   setContentIndex,
   programType,
+  progressType,
   totalPrice,
-  isTest,
   programDate,
+  programQuery,
+  programId,
+  userInfo,
+  isMobile,
 }: PayContentProps) => {
   const topRef = useRef<HTMLDivElement>(null);
 
   const handleBackButtonClick = () => {
-    if (programType === 'live') {
-      setContentIndex(contentIndex - 2);
-      return;
-    }
-
-    setContentIndex(contentIndex - 1);
+    setContentIndex(contentIndex - 2);
   };
 
+  const isFree =
+    payInfo.challengePriceType === 'FREE' ||
+    payInfo.livePriceType === 'FREE' ||
+    payInfo.price === 0;
+
   return (
-    <div className="flex h-full flex-col gap-6">
-      <div className="flex h-full flex-col gap-6">
-        {payInfo.challengePriceType !== 'FREE' &&
-          payInfo.livePriceType !== 'FREE' && (
-            <>
-              <h2 className="font-medium" ref={topRef}>
-                결제 정보
-              </h2>
-              <PayInfoSection
-                payInfo={payInfo}
-                isTest={isTest}
-                programDate={programDate}
-              />
-              <hr className="bg-neutral-85" />
-              <CouponSection
-                setPayInfo={setPayInfo}
-                programType={programType}
-              />
-              <hr className="bg-neutral-85" />
-              <PriceSection payInfo={payInfo} />
-            </>
-          )}
+    <div className={`flex h-full flex-col gap-3 ${isMobile ? 'px-5' : ''}`}>
+      <h2 className="text-small20 font-bold" ref={topRef}>
+        결제하기
+      </h2>
+      <h3 className="text-xsmall16 font-semibold text-neutral-0">
+        {programType === 'live'
+          ? 'LIVE 클래스'
+          : programType === 'challenge'
+            ? '챌린지'
+            : ''}{' '}
+        프로그램 정보
+      </h3>
+      <ProgramCard
+        border={false}
+        type={programType}
+        id={programId}
+        title={programQuery.query.data?.title ?? ''}
+        thumbnail={programQuery.query.data?.thumbnail ?? ''}
+        startDate={programDate.startDate}
+        endDate={programDate.endDate}
+        progressType={progressType}
+        thumbnailLinkClassName="max-w-32"
+        showType={programType === 'live'}
+      />
+      <h3 className="text-xsmall16 font-semibold text-neutral-0">
+        참여자 정보
+      </h3>
+      <div className="mb-4 flex flex-col gap-3">
+        <div className="flex flex-col gap-1">
+          <label className="ml-3 text-xsmall14 font-semibold">이름</label>
+          <Input value={userInfo.name} disabled readOnly className="text-sm" />
+        </div>
+        <div className="flex flex-col gap-1">
+          <label className="ml-3 text-xsmall14 font-semibold">
+            휴대폰 번호
+          </label>
+          <Input
+            value={userInfo.phoneNumber}
+            disabled
+            readOnly
+            className="text-sm"
+          />
+        </div>
+        <div className="flex flex-col gap-1">
+          <label className="ml-3 text-xsmall14 font-semibold">이메일</label>
+          <Input
+            value={userInfo.contactEmail}
+            disabled
+            readOnly
+            className="text-sm"
+          />
+        </div>
       </div>
-      <div className="flex gap-2">
+
+      {!isFree ? (
+        <>
+          <div className="font-semibold text-neutral-0">결제 정보</div>
+          <CouponSection setCoupon={setCoupon} programType={programType} />
+          <hr className="bg-neutral-85" />
+          <PriceSection payInfo={payInfo} coupon={coupon} />
+          <hr className="bg-neutral-85" />
+          <div className="flex h-10 items-center justify-between px-3 font-semibold text-neutral-0">
+            <span>결제금액</span>
+            <span>{totalPrice.toLocaleString()}원</span>
+          </div>
+        </>
+      ) : null}
+
+      <div
+        className={twMerge(
+          'sticky bottom-0 -mx-5 flex gap-2 bg-white/[64%] px-5',
+          isMobile && '-mb-3 rounded-t-lg py-3 shadow-05',
+        )}
+      >
         <button
           className="flex w-full flex-1 items-center justify-center rounded-md border-2 border-primary bg-neutral-100 px-6 py-3 text-lg font-medium text-primary-dark"
           onClick={handleBackButtonClick}
@@ -77,12 +142,10 @@ const PayContent = ({
         <button
           className="complete_button text-1.125-medium flex w-full justify-center rounded-md bg-primary px-6 py-3 font-medium text-neutral-100"
           onClick={() => {
-            handleApplyButtonClick();
+            handleApplyButtonClick(isFree || totalPrice === 0);
           }}
         >
-          {isTest
-            ? `결제하기 ${totalPrice.toLocaleString()}원`
-            : `신청하기 ${totalPrice.toLocaleString()}원`}
+          {isFree || totalPrice === 0 ? '신청하기' : '결제하기'}
         </button>
       </div>
     </div>

@@ -1,4 +1,4 @@
-import { ILineBannerForm } from '../../../../interfaces/interface';
+import { ILineBannerForm } from '../../../../types/interface';
 import Input from '../../../ui/input/Input';
 import ColorPicker from '../../program/ui/form/ColorPicker';
 import DateTimePicker from '../../program/ui/form/DateTimePicker';

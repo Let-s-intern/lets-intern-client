@@ -1,4 +1,4 @@
-import clsx from 'clsx';
+import { twMerge } from 'tailwind-merge';
 
 interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {}
 
@@ -8,13 +8,13 @@ const Input = (props: InputProps) => {
   return (
     <input
       type="text"
-      className={clsx(
-        `text-1-medium min-w-0 rounded-md bg-neutral-95 p-3 outline-none ${props.readOnly ? 'text-neutral-50' : ''}`,
+      className={twMerge(
+        `min-w-0 rounded-md bg-neutral-95 p-3 text-xsmall14 outline-none disabled:opacity-100`,
+        props.readOnly ? 'text-neutral-50' : '',
         className,
       )}
       autoComplete="off"
       {...newProps}
-      readOnly={props.readOnly}
     />
   );
 };

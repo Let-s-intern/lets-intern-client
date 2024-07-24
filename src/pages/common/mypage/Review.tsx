@@ -1,40 +1,31 @@
-import { useQuery } from '@tanstack/react-query';
-
 import { useMemo } from 'react';
+import { useMypageApplicationsQuery } from '../../../api/application';
 import DoneSection from '../../../components/common/mypage/review/section/DoneSection';
 import WaitingSection from '../../../components/common/mypage/review/section/WaitingSection';
-import axios from '../../../utils/axios';
-import { ApplicationType } from './Application';
 
 const Review = () => {
-  const { data } = useQuery({
-    queryKey: ['user', 'applications'],
-    queryFn: async () => {
-      const res = await axios.get('/user/applications');
-      return res.data;
-    },
-  });
+  const { data: applications } = useMypageApplicationsQuery();
 
   const doneList = useMemo(() => {
     return (
-      data?.data?.applicationList?.filter(
-        (application: ApplicationType) =>
+      applications?.filter(
+        (application) =>
           application.status !== 'WAITING' && application.reviewId !== null,
       ) || []
     );
-  }, [data?.data?.applicationList]);
+  }, [applications]);
 
   const waitingList = useMemo(() => {
     return (
-      data?.data?.applicationList?.filter(
-        (application: ApplicationType) =>
+      applications?.filter(
+        (application) =>
           application.status !== 'WAITING' && application.reviewId === null,
       ) || []
     );
-  }, [data?.data?.applicationList]);
+  }, [applications]);
 
   return (
-    <main className="flex w-full flex-col gap-16 pb-20">
+    <main className="flex w-full flex-col gap-16 px-5 pb-20">
       <WaitingSection applicationList={waitingList} />
       <DoneSection applicationList={doneList} />
     </main>

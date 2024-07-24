@@ -1,51 +1,33 @@
-import { useQuery } from '@tanstack/react-query';
+import { useMypageApplicationsQuery } from '../../../api/application';
 
 import ApplySection from '../../../components/common/mypage/application/section/ApplySection';
 import CompleteSection from '../../../components/common/mypage/application/section/CompleteSection';
 import ParticipateSection from '../../../components/common/mypage/application/section/ParticipateSection';
-import axios from '../../../utils/axios';
-
-export interface ApplicationType {
-  id: number;
-  status: string;
-  programId: number;
-  programType: string;
-  programStatusType: string;
-  programTitle: string;
-  programShortDesc: string;
-  programThumbnail: string;
-  programStartDate: string;
-  programEndDate: string;
-  reviewId: number | null;
-  paymentId: number | null;
-}
 
 const Application = () => {
-  const { data, isLoading, refetch } = useQuery({
-    queryKey: ['user', 'applications'],
-    queryFn: async () => {
-      const res = await axios.get('/user/applications');
-      return res.data.data as { applicationList: ApplicationType[] };
-    },
-  });
+  const {
+    data: applications,
+    isLoading,
+    refetch,
+  } = useMypageApplicationsQuery();
 
   const waitingApplicationList =
-    data?.applicationList?.filter(
-      (application) => application.status === 'WAITING',
+    applications?.filter(
+      (application) => application.programStatusType === 'PREV',
     ) || [];
   const inProgressApplicationList =
-    data?.applicationList?.filter(
-      (application) => application.status === 'IN_PROGRESS',
+    applications?.filter(
+      (application) => application.programStatusType === 'PROCEEDING',
     ) || [];
   const completedApplicationList =
-    data?.applicationList?.filter(
-      (application) => application.status === 'DONE',
+    applications?.filter(
+      (application) => application.programStatusType === 'POST',
     ) || [];
 
   if (isLoading) return <></>;
 
   return (
-    <main className="flex w-full flex-col gap-16 pb-20">
+    <main className="flex w-full flex-col gap-16 px-5 pb-20">
       <ApplySection
         applicationList={waitingApplicationList}
         refetch={() => refetch()}

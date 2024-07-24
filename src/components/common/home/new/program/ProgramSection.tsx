@@ -1,4 +1,4 @@
-import { IProgramGridItem } from '../../../../../interfaces/Program.interface';
+import { IProgramGridItem } from '../../../../../types/Program.interface';
 import { PROGRAM_CLASSIFICATION_KEY } from '../../../../../utils/programConst';
 import Description from '../ui/Description';
 import Heading from '../ui/Heading';

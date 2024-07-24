@@ -11,8 +11,8 @@ import PrivacyLink from '../../../components/common/auth/ui/PrivacyLink';
 import SocialLogin from '../../../components/common/auth/ui/SocialLogin';
 import Button from '../../../components/common/ui/button/Button';
 import Input from '../../../components/ui/input/Input';
-import { ErrorResonse } from '../../../interfaces/interface';
 import useAuthStore from '../../../store/useAuthStore';
+import { ErrorResonse } from '../../../types/interface';
 import axios from '../../../utils/axios';
 import {
   isValidEmail,

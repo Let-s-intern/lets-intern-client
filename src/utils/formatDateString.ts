@@ -55,7 +55,7 @@ const formatDateString = (
 
 export default formatDateString;
 
-export const formatMentorDateString = (dateString: string) => {
+const formatMentorDateString = (dateString: string) => {
   const date = new Date(dateString);
   const weekdayList = ['일', '월', '화', '수', '목', '금', '토'];
   const isAm = date.getHours() < 12;

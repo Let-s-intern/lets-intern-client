@@ -1,10 +1,10 @@
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import PopUpBannerInputContent from '../../../../components/admin/banner/pop-up-banner/PopUpBannerInputContent';
 import EditorTemplate from '../../../../components/admin/program/ui/editor/EditorTemplate';
+import { IBannerForm } from '../../../../types/interface';
 import axios from '../../../../utils/axios';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { useNavigate, useParams } from 'react-router-dom';
-import { IBannerForm } from '../../../../interfaces/interface';
 
 const PopUpBannerEdit = () => {
   const params = useParams();

@@ -11,10 +11,10 @@ const NavItem = ({ to, active, children }: NavItemProps) => {
 
   return (
     <div
-      className={`flex w-full cursor-pointer items-center justify-center gap-x-2 rounded-md px-3 py-4 ${
+      className={`flex w-full cursor-pointer items-center justify-center gap-x-2 border-b-4 px-3 py-4 text-base md:border-b-0 md:border-l-4 ${
         active
-          ? 'bg-primary-20 font-semibold text-primary'
-          : 'bg-transparent font-medium text-neutral-0/75'
+          ? 'border-static-0 font-semibold text-static-0'
+          : 'border-transparent font-medium text-neutral-0/75'
       }`}
       onClick={() => {
         if (to) {

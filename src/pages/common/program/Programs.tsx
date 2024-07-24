@@ -11,12 +11,6 @@ import EmptyCardList from '../../../components/common/program/programs/card/Empt
 import ProgramCard from '../../../components/common/program/programs/card/ProgramCard';
 import LoadingContainer from '../../../components/common/ui/loading/LoadingContainer';
 import {
-  filterClassificationkey,
-  filterStatuskey,
-  filterTypekey,
-  IProgram,
-} from '../../../interfaces/interface';
-import {
   filterClassificationReducer,
   filterStatusReducer,
   filterTypeReducer,
@@ -24,6 +18,12 @@ import {
   initialFilterStatus,
   initialFilterType,
 } from '../../../reducers/filterReducer';
+import {
+  filterClassificationkey,
+  filterStatuskey,
+  filterTypekey,
+  IProgram,
+} from '../../../types/interface';
 import axios from '../../../utils/axios';
 import { getKeyByValue } from '../../../utils/convert';
 import {

@@ -71,6 +71,12 @@ const faqProgramType = z.union([
   z.literal('VOD'),
 ]);
 
+export const programType = z.union([
+  z.literal('CHALLENGE'),
+  z.literal('LIVE'),
+  z.literal('VOD'),
+]);
+
 export const accountType = z.union([
   z.literal('KB'),
   z.literal('HANA'),
@@ -83,6 +89,8 @@ export const accountType = z.union([
   z.literal('KAKAO'),
   z.literal('TOSS'),
 ]);
+
+export type AccountType = z.infer<typeof accountType>;
 
 const missionStatusType = z.union([
   z.literal('WAITING'),
@@ -104,7 +112,7 @@ export const getChallengeIdSchema = z
     deadline: z.string().nullable().optional(),
     chatLink: z.string().nullable().optional(),
     chatPassword: z.string().nullable().optional(),
-    challengeType: challengeType,
+    challengeType,
     classificationInfo: z.array(
       z.object({
         programClassification: programClassification.nullable().optional(),
@@ -158,7 +166,6 @@ export const getLiveIdSchema = z
     participationCount: z.number().nullable().optional(),
     thumbnail: z.string().nullable().optional(),
     mentorName: z.string().nullable().optional(),
-    mentorPassword: z.string().nullable().optional(),
     job: z.string().nullable().optional(),
     place: z.string().nullable().optional(),
     startDate: z.string().nullable().optional(),
@@ -213,7 +220,7 @@ export const missionAdmin = z
         id: z.number(),
         th: z.number(),
         missionType: z.string(),
-        missionStatusType: missionStatusType,
+        missionStatusType,
         attendanceCount: z.number(),
         lateAttendanceCount: z.number(),
         applicationCount: z.number(),
@@ -333,10 +340,10 @@ const getChallengeIdApplication = z
         discount: z.number(),
         accountNumber: z.string(),
         deadline: z.string(),
-        accountType: accountType,
-        challengePriceType: challengePriceType,
-        challengeUserType: challengeUserType,
-        challengeParticipationType: challengeParticipationType,
+        accountType,
+        challengePriceType,
+        challengeUserType,
+        challengeParticipationType,
       }),
     ),
   })
@@ -370,22 +377,22 @@ export const getChallengeIdApplications = z
     applicationList: z.array(
       z.object({
         id: z.number(),
-        paymentId: z.number(),
-        name: z.string(),
-        email: z.string().nullable(),
-        phoneNum: z.string().nullable(),
-        university: z.string().nullable(),
-        grade: grade.nullable(),
-        major: z.string().nullable(),
-        couponName: z.string().nullable(),
-        totalCost: z.number(),
-        isConfirmed: z.boolean(),
-        wishJob: z.string().nullable(),
-        wishCompany: z.string().nullable(),
-        inflowPath: z.string().nullable(),
+        paymentId: z.number().nullable().optional(),
+        name: z.string().nullable().optional(),
+        email: z.string().nullable().optional(),
+        phoneNum: z.string().nullable().optional(),
+        university: z.string().nullable().optional(),
+        grade: grade.nullable().optional(),
+        major: z.string().nullable().optional(),
+        couponName: z.string().nullable().optional(),
+        totalCost: z.number().nullable().optional(),
+        isConfirmed: z.boolean().nullable().optional(),
+        wishJob: z.string().nullable().optional(),
+        wishCompany: z.string().nullable().optional(),
+        inflowPath: z.string().nullable().optional(),
         createDate: z.string(),
-        accountType: accountType.nullable(),
-        accountNum: z.string().nullable(),
+        accountType: accountType.nullable().optional(),
+        accountNum: z.string().nullable().optional(),
       }),
     ),
   })
@@ -791,29 +798,12 @@ export const dailyMissionSchema = z
 export type DailyMission = z.infer<typeof dailyMissionSchema>['dailyMission'];
 
 // KAKAO, NAVER, GOOGLE, SERVICE
-const authProviderSchema = z.union([
+export const authProviderSchema = z.union([
   z.literal('KAKAO'),
   z.literal('NAVER'),
   z.literal('GOOGLE'),
   z.literal('SERVICE'),
 ]);
-
-/** GET /api/v1/user */
-export const userSchema = z.object({
-  name: z.string().nullable(),
-  email: z.string().nullable(),
-  contactEmail: z.string().nullable(),
-  phoneNum: z.string().nullable(),
-  university: z.string().nullable(),
-  grade: grade.nullable(),
-  major: z.string().nullable(),
-  wishJob: z.string().nullable(),
-  wishCompany: z.string().nullable(),
-  accountType: accountType.nullable(),
-  accountNum: z.string().nullable(),
-  marketingAgree: z.boolean().nullable(),
-  authProvider: authProviderSchema.nullable(),
-});
 
 /** GET /api/v1/challenge/{id}/score */
 export const challengeScore = z.object({
@@ -1020,6 +1010,10 @@ export const mentorNotificationSchema = z
 
 export type MentorNotificationType = 'PREV' | 'REVIEW';
 
+export const adminMentorInfoSchema = z.object({
+  mentorPassword: z.string().nullable().optional(),
+});
+
 export const programStatus = z.union([
   z.literal('PREV'),
   z.literal('PROCEEDING'),
@@ -1027,41 +1021,26 @@ export const programStatus = z.union([
 ]);
 
 export const challengeApplicationPriceType = z.object({
-  priceId: z.number(),
-  price: z.number(),
-  refund: z.number(),
-  discount: z.number(),
-  accountNumber: z.string(),
-  deadline: z.string(),
-  accountType: z.string(),
-  challengePriceType: challengePriceType,
-  challengeUserType: challengeUserType,
-  challengeParticipationType: challengeParticipationType,
+  priceId: z.number().nullable().optional(),
+  price: z.number().nullable().optional(),
+  refund: z.number().nullable().optional(),
+  discount: z.number().nullable().optional(),
+  accountNumber: z.string().nullable().optional(),
+  deadline: z.string().nullable().optional(),
+  accountType: accountType.nullable().optional(),
+  challengePriceType,
+  challengeUserType,
+  challengeParticipationType,
 });
 
 export const liveApplicationPriceType = z.object({
-  priceId: z.number(),
-  price: z.number(),
-  discount: z.number(),
-  accountNumber: z.string(),
-  deadline: z.string(),
-  accountType: z.string(),
-  livePriceType: livePriceType,
-});
-
-export const programApplicationType = z.object({
-  applied: z.boolean(),
-  name: z.string(),
-  email: z.string(),
-  contactEmail: z.string(),
-  phoneNumber: z.string(),
-  criticalNotice: z.string(),
-  startDate: z.string(),
-  endDate: z.string(),
-  deadline: z.string(),
-  statusType: programStatus,
-  priceList: z.array(challengeApplicationPriceType).nullable().optional(),
-  price: liveApplicationPriceType.nullable().optional(),
+  priceId: z.number().nullable().optional(),
+  price: z.number().nullable().optional(),
+  discount: z.number().nullable().optional(),
+  accountNumber: z.string().nullable().optional(),
+  deadline: z.string().nullable().optional(),
+  accountType: accountType.nullable().optional(),
+  livePriceType,
 });
 
 /** GET /api/v1/user/admin */
