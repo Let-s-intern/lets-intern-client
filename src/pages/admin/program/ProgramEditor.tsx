@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import ProgramInputContent from '../../../components/admin/program/ui/editor/ProgramInputContent';
 import axios from '../../../utils/axios';
+import { generateRandomString } from '../../../utils/random';
 
 interface AllValue {
   program?: string;
@@ -339,7 +340,11 @@ const ProgramEditor = ({ mode }: ProgramEditorProps) => {
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && value.program) {
       const formData = new FormData();
-      formData.append('file', e.target.files[0]);
+      formData.append(
+        'file',
+        e.target.files[0],
+        `${generateRandomString(10)}_${e.target.files[0].name}`,
+      );
       uploadImage.mutate({ formData, type: value.program });
     }
   };
