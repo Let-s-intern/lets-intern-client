@@ -9,6 +9,7 @@ export interface PostBlogReqBody {
   content: string;
   ctaLink: string;
   ctaText: string;
+  isDisplayed?: boolean;
   tagList: number[];
 }
 

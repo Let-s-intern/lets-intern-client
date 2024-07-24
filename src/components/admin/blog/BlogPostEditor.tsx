@@ -84,15 +84,14 @@ const validateUrl = (url: string) => {
 };
 
 interface BlogPostEditorProps {
-  setContent: React.Dispatch<React.SetStateAction<string>>;
+  getHTMLString: (htmlString: string) => void;
 }
 
-export default function BlogPostEditor({ setContent }: BlogPostEditorProps) {
+export default function BlogPostEditor({ getHTMLString }: BlogPostEditorProps) {
   const handleChange = (editorState: EditorState, editor: LexicalEditor) => {
     editorState.read(() => {
       const htmlString = $generateHtmlFromNodes(editor);
-      setContent(htmlString);
-      console.log(htmlString);
+      getHTMLString(htmlString);
     });
   };
 

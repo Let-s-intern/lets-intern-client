@@ -51,7 +51,6 @@ const BlogCreatePage = () => {
   const [file, setFile] = useState<File | null>(null);
   const [isTitleValid, setIsTitleValid] = useState(true);
   const [isCategoryValid, setIsCategoryValid] = useState(true);
-  const [content, setContent] = useState('');
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -62,9 +61,8 @@ const BlogCreatePage = () => {
     // File을 url로 변환
     if (file) fileMutation.mutate({ type: 'BLOG', file });
 
-    setValue((prev) => ({ ...prev, content }));
     blogMutation.mutate(value);
-    alert('임시 저장되었습니다.');
+    navgiate('/admin/blog/list');
   };
 
   const submitBlog = () => {
@@ -73,12 +71,10 @@ const BlogCreatePage = () => {
     if (file) {
       fileMutation.mutate({ type: 'BLOG', file });
     }
-    setValue((prev) => ({
-      ...prev,
-      content,
+    blogMutation.mutate({
+      ...value,
       isDisplayed: true,
-    }));
-    blogMutation.mutate(value);
+    });
     navgiate('/admin/blog/list');
   };
 
@@ -136,6 +132,10 @@ const BlogCreatePage = () => {
     if (isExist) {
       alert('이미 존재하는 태그입니다.');
     } else blogTagMutation.mutate(newTag);
+  };
+
+  const getHTMLString = (htmlString: string) => {
+    setValue((prev) => ({ ...prev, content: htmlString }));
   };
 
   const selectTag = (tag: TagDetail) => {
@@ -226,7 +226,7 @@ const BlogCreatePage = () => {
             image={value.thumbnail as string}
             onChange={handleChange}
           />
-          <BlogPostEditor setContent={setContent} />
+          <BlogPostEditor getHTMLString={getHTMLString} />
           <TextField
             type="text"
             label="CTA 링크"
