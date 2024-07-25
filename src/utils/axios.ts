@@ -5,7 +5,7 @@ const axios = Axios.create();
 const accessToken = localStorage.getItem('access-token');
 const refreshToken = localStorage.getItem('refresh-token');
 
-axios.defaults.baseURL = `${process.env.REACT_APP_SERVER_API}`;
+axios.defaults.baseURL = `${process.env.NEXT_PUBLIC_SERVER_API}`;
 axios.defaults.headers.common['Content-Type'] = 'application/json';
 axios.defaults.headers.common.Authorization =
   accessToken && refreshToken ? `Bearer ${accessToken}` : '';

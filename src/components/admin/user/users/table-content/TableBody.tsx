@@ -16,7 +16,7 @@ const TableBody = ({ userList }: TableBodyProps) => {
         <tr key={user.id}>
           <TD>{user.name}</TD>
           <TD>{user.email}</TD>
-          <TD>{`${!!user.contactEmail ? user.contactEmail : '-'}`}</TD>
+          <TD>{`${user.contactEmail ? user.contactEmail : '-'}`}</TD>
           <TD>{user.phoneNum}</TD>
           {/* <TD>참여 프로그램 없음</TD> */}
           <TD>{dayjs(user.createdDate).format('YYYY-MM-DD (dd)')}</TD>

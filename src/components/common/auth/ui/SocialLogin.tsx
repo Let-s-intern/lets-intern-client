@@ -19,7 +19,7 @@ const SocialLogin = ({ type }: SocialLoginProps) => {
     }`;
 
     const basePath =
-      process.env.REACT_APP_API_BASE_PATH || 'https://letscareer-test.shop';
+      process.env.NEXT_PUBLIC_API_BASE_PATH || 'https://letscareer-test.shop';
     const path = `${basePath}/oauth2/authorize/${
       socialType === 'KAKAO' ? 'kakao' : 'naver'
     }?redirect_uri=${redirectPath}`;
