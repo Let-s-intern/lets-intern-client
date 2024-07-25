@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { twMerge } from 'tailwind-merge';
 import { MypageApplication } from '../../../../../api/application';
 import MoreButton from '../../ui/button/MoreButton';
 import ApplicationCard from '../../ui/card/root/ApplicationCard';
@@ -43,14 +42,21 @@ const ApplySection = ({ applicationList, refetch }: ApplySectionProps) => {
           ))}
         </div>
       )}
-      {applicationList.length > 3 && (
+      {applicationList.length > 3 ? (
         <MoreButton
-          className={twMerge('md:flex', showMore && 'other_program')}
+          className={`md:flex ${showMore ? 'other-program border-2 border-primary bg-neutral-100 text-primary-dark' : ''}`}
           onClick={() => {
             showMore ? navigate('/program') : setShowMore(true);
           }}
         >
           {showMore ? '다른 프로그램 둘러보기' : `더보기`}
+        </MoreButton>
+      ) : (
+        <MoreButton
+          className="border-2 border-primary bg-neutral-100 text-primary-dark"
+          onClick={() => navigate('/program')}
+        >
+          다른 프로그램 둘러보기
         </MoreButton>
       )}
     </section>

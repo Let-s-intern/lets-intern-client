@@ -14,7 +14,7 @@ const Row = ({
   title: React.ReactNode;
   value: React.ReactNode;
 }) => (
-  <div className="flex h-10 items-center justify-between p-1.5">
+  <div className="flex items-center justify-between px-1.5 py-2">
     <span className="text-neutral-0 text-opacity-[74%]">{title}</span>
     <span className="text-right font-medium text-neutral-0 text-opacity-[94%]">
       {value}

@@ -56,7 +56,7 @@ const PaymentFail = () => {
       <div className="flex min-h-52 w-full flex-col items-center justify-center">
         <div className="flex w-full flex-col items-center justify-center rounded-md bg-neutral-100 py-6">
           <div className="text-small20 font-semibold text-primary">
-            결제를 실패했습니다❗️
+            결제가 실패했습니다❗️
           </div>
           <div className="text-xsmall16 text-neutral-20">{params?.message}</div>
         </div>
@@ -89,11 +89,11 @@ const PaymentFail = () => {
             </div>
             <div className="flex w-full flex-col items-center justify-center">
               <PaymentInfoRow
-                title="상품금액"
+                title="참여비용"
                 content={params?.price.toLocaleString() + '원'}
               />
               <PaymentInfoRow
-                title={`할인 (${Math.floor(((params?.discount ?? 0) / (params?.price ?? 1)) * 100)}%)`}
+                title={`할인 (${params?.price === 0 ? 0 : Math.floor(((params?.discount ?? 0) / (params?.price ?? 1)) * 100)}%)`}
                 content={'-' + (params?.discount ?? 0).toLocaleString() + '원'}
               />
               <PaymentInfoRow

@@ -22,7 +22,7 @@ const MotiveAnswerSection = ({
   return (
     <div className="flex flex-col gap-2.5">
       <div className="flex flex-col gap-1">
-        <label htmlFor="question" className="text-1-medium ml-3">
+        <label htmlFor="question" className="ml-3 text-xsmall14 font-semibold">
           사전 질문 (선택)
         </label>
         <TextArea
