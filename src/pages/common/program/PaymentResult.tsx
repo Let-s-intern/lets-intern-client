@@ -160,7 +160,7 @@ const PaymentResult = () => {
                   </div>
                   <div className="flex w-full flex-col items-center justify-center">
                     <PaymentInfoRow
-                      title="상품금액"
+                      title="참여비용"
                       content={params?.price.toLocaleString() + '원'}
                     />
                     <PaymentInfoRow

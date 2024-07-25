@@ -91,9 +91,9 @@ const CreditDetail = () => {
                         ? '환불 완료'
                         : paymentDetail.tossInfo.status === 'PARTIAL_CANCELED'
                           ? '부분 환불 완료'
-                          : '신청 취소'
+                          : '결제 취소'
                       : paymentDetail.programInfo.isCanceled
-                        ? '신청 취소'
+                        ? '결제 취소'
                         : ''}
                   </div>
                   <div className="flex grow items-center justify-end">
@@ -122,7 +122,7 @@ const CreditDetail = () => {
                   </div>
                   <div className="flex w-full flex-col gap-y-1">
                     <div className="flex w-full items-center justify-start gap-x-4 text-xs font-medium">
-                      <div className="shrink-0 text-neutral-30">진행 일정</div>
+                      <div className="shrink-0 text-neutral-30">진행 기간</div>
                       <div className="text-primary-dark">{`${convertDateFormat(paymentDetail.programInfo.startDate || '')} - ${convertDateFormat(paymentDetail.programInfo.endDate || '')}`}</div>
                     </div>
                     {paymentDetail.programInfo.progressType && (

@@ -1,10 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { twMerge } from 'tailwind-merge';
-import {
-  usePostApplicationMutation,
-  useProgramApplicationQuery,
-} from '../../../../../api/application';
+import { useProgramApplicationQuery } from '../../../../../api/application';
 import { useProgramQuery } from '../../../../../api/program';
 import { getPaymentSearchParams } from '../../../../../data/getPaymentSearchParams';
 import useRunOnce from '../../../../../hooks/useRunOnce';
@@ -165,9 +162,6 @@ const MobileApplySection = ({
           endDate: program.query.data.endDate,
         }
       : null;
-
-  // TODO: 0원일 시 바로 신청
-  const postApplicationMutation = usePostApplicationMutation();
 
   const payInfo = application ? getPayInfo(application) : null;
 
