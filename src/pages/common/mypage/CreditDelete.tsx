@@ -176,9 +176,14 @@ const CreditDelete = () => {
                       subInfo={
                         <div className="text-xs font-medium text-primary-dark">
                           *환불 규정은{' '}
-                          <span className="underline underline-offset-2">
+                          <a
+                            className="underline underline-offset-2"
+                            href="https://letscareer.oopy.io"
+                            target="_blank"
+                            rel="noreferrer"
+                          >
                             자주 묻는 질문
-                          </span>
+                          </a>
                           을 참고해주세요
                         </div>
                       }
