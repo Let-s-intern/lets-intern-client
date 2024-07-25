@@ -105,6 +105,7 @@ export default function BlogTable() {
                   type="checkbox"
                   data-blog-id={blogInfo.blogThumbnailInfo.id}
                   checked={
+                    // isDisplayed로 교체해야 함
                     blogInfo.blogThumbnailInfo.displayDate ? true : false
                   }
                   onChange={(event) =>

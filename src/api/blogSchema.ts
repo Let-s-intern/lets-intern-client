@@ -54,12 +54,13 @@ export const blogDetailSchema = z.object({
   category: z.string().nullable().optional(),
   thumbnail: z.string().nullable().optional(),
   description: z.string().nullable().optional(),
+  content: z.string().nullable().optional(),
+  isDisplayed: z.boolean().nullable().optional(),
+  ctaLink: z.string().nullable().optional(),
+  ctaText: z.string().nullable().optional(),
   displayDate: z.string().nullable().optional(),
   createDate: z.string().nullable().optional(),
   lastModifiedDate: z.string().nullable().optional(),
-  subContent: z.string().nullable().optional(),
-  subCtaLink: z.string().nullable().optional(),
-  subCtaText: z.string().nullable().optional(),
 });
 
 export const tagDetailSchema = z.array(
@@ -90,15 +91,7 @@ export const blogSchema = z
           ? dayjs(data.blogDetailInfo.lastModifiedDate)
           : null,
       },
-      tagDetailInfos: data.tagDetailInfos.map((tagDetailInfo) => ({
-        ...tagDetailInfo,
-        createDate: tagDetailInfo.createDate
-          ? dayjs(tagDetailInfo.createDate)
-          : null,
-        lastModifiedDate: tagDetailInfo.lastModifiedDate
-          ? dayjs(tagDetailInfo.lastModifiedDate)
-          : null,
-      })),
+      tagDetailInfos: data.tagDetailInfos,
     };
   });
 
@@ -128,15 +121,7 @@ export const blogListSchema = z
             ? dayjs(blogInfo.blogThumbnailInfo.lastModifiedDate)
             : null,
         },
-        tagDetailInfos: blogInfo.tagDetailInfos.map((tagDetailInfo) => ({
-          ...tagDetailInfo,
-          createDate: tagDetailInfo.createDate
-            ? dayjs(tagDetailInfo.createDate)
-            : null,
-          lastModifiedDate: tagDetailInfo.lastModifiedDate
-            ? dayjs(tagDetailInfo.lastModifiedDate)
-            : null,
-        })),
+        tagDetailInfos: blogInfo.tagDetailInfos,
       })),
       pageInfo: data.pageInfo,
     };

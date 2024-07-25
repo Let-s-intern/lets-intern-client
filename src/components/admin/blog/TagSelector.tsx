@@ -5,7 +5,7 @@ import Tag from './Tag';
 import TagDelete from './TagDelete';
 
 interface TagSelectorProps {
-  selectedTagList: TagDetail[];
+  selectedTagList: TagDetail[] ;
   tagList: TagDetail[];
   value: string;
   deleteTag: (id: number) => void;

@@ -35,7 +35,7 @@ export const useBlogListQuery = ({
   });
 };
 
-export const useBlogQuery = (blogId: number) => {
+export const useBlogQuery = (blogId: string) => {
   return useQuery({
     queryKey: [blogQueryKey, blogId],
     queryFn: async () => {
@@ -53,7 +53,6 @@ export const usePostBlogMutation = (
 
   return useMutation({
     mutationFn: async (newBlog: PostBlogReqBody) => {
-      console.log(newBlog);
       return await axios.post('/blog', newBlog);
     },
     onSuccess: async () => {
@@ -88,6 +87,7 @@ export const useDeleteBlogMutation = (
   });
 };
 
+// PATCH: request body에 isDisplayed 속성을 필수로 넣어야 함
 export const usePatchBlogMutation = (
   onSuccessCallback?: () => void,
   onErrorCallback?: () => void,
@@ -98,11 +98,11 @@ export const usePatchBlogMutation = (
     mutationFn: async (blog: PatchBlogReqBody) => {
       const reqBody: any = { ...blog };
       delete reqBody.id;
-
-      return await axios.patch(`/blog/${blog.id}`, reqBody);
+      const res = await axios.patch(`/blog/${blog.id}`, reqBody);
+      return res;
     },
-    onSuccess: () => {
-      client.invalidateQueries({ queryKey: [blogListQueryKey] });
+    onSuccess: async () => {
+      await client.invalidateQueries({ queryKey: [blogListQueryKey] });
       onSuccessCallback && onSuccessCallback();
     },
     onError: (error) => {
