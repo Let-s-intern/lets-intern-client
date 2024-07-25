@@ -60,8 +60,8 @@ const CreditDelete = () => {
       const duration = end.diff(start, 'day');
       const elapsed = now.diff(start, 'day');
 
-      if (elapsed < duration / 3) {
-        return nearestTen(paymentDetail.tossInfo.balanceAmount / 3);
+      if (elapsed < Math.ceil(duration / 3)) {
+        return nearestTen((paymentDetail.tossInfo.balanceAmount / 3) * 2);
       } else if (elapsed < duration / 2) {
         return nearestTen(paymentDetail.tossInfo.balanceAmount / 2);
       } else {
