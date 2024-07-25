@@ -98,15 +98,7 @@ const CreditDetail = () => {
               paymentDetail.programInfo.isCanceled ? (
                 <div className="flex w-full gap-2 rounded-xxs bg-neutral-90 px-4 py-3">
                   <div className="text-sm font-semibold text-system-error">
-                    {paymentDetail.tossInfo
-                      ? paymentDetail.tossInfo.status === 'CANCELED'
-                        ? '환불 완료'
-                        : paymentDetail.tossInfo.status === 'PARTIAL_CANCELED'
-                          ? '부분 환불 완료'
-                          : '결제 취소'
-                      : paymentDetail.programInfo.isCanceled
-                        ? '결제 취소'
-                        : ''}
+                    결제 취소
                   </div>
                   <div className="flex grow items-center justify-end">
                     {convertDateFormat(
