@@ -56,17 +56,31 @@ const CreditDelete = () => {
       const start = dayjs(paymentDetail.programInfo.startDate);
       const end = dayjs(paymentDetail.programInfo.endDate);
       const now = dayjs();
+      // console.log('----DELETE----');
+      // console.log('start: ', start.format('YYYY-MM-DD HH:mm:ss'));
+      // console.log('end: ', end.format('YYYY-MM-DD HH:mm:ss'));
+      // console.log('now: ', now.format('YYYY-MM-DD HH:mm:ss'));
+      // console.log('now is before start :', now.isBefore(start));
 
       if (now.isBefore(start)) {
         return nearestTen(paymentDetail.tossInfo.balanceAmount);
       }
 
-      const duration = end.diff(start, 'day');
-      const elapsed = now.diff(start, 'day');
-
-      if (elapsed < Math.ceil(duration / 3)) {
+      const duration = end.diff(start, 'day') + 1;
+      // console.log('duration: ', duration);
+      if (now.isBefore(start.add(Math.ceil(duration / 3), 'day'))) {
+        // console.log(
+        //   '1/3: ',
+        //   start.add(Math.ceil(duration / 3)).format('YYYY-MM-DD HH:mm:ss'),
+        // );
         return nearestTen((paymentDetail.tossInfo.balanceAmount / 3) * 2);
-      } else if (elapsed < duration / 2) {
+      } else if (now.isBefore(start.add(Math.ceil(duration / 2), 'day'))) {
+        // console.log(
+        //   '1/2: ',
+        //   start
+        //     .add(Math.ceil(duration / 2), 'day')
+        //     .format('YYYY-MM-DD HH:mm:ss'),
+        // );
         return nearestTen(paymentDetail.tossInfo.balanceAmount / 2);
       } else {
         return 0;
@@ -89,10 +103,12 @@ const CreditDelete = () => {
       const end = dayjs(paymentDetail.programInfo.endDate);
       const now = dayjs();
 
-      const duration = end.diff(start, 'day');
-      const elapsed = now.diff(start, 'day');
+      const duration = end.diff(start, 'day') + 1;
 
-      return now.isAfter(start) && elapsed < duration / 2;
+      return (
+        now.isAfter(start) &&
+        now.isBefore(start.add(Math.ceil(duration / 2), 'day'))
+      );
     }
     return false;
   };
