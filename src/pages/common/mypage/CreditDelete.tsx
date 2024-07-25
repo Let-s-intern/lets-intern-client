@@ -1,3 +1,4 @@
+import { AxiosError } from 'axios';
 import dayjs from 'dayjs';
 import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -35,8 +36,11 @@ const CreditDelete = () => {
       navigate(`/mypage/credit/${paymentId}`);
     },
     errorCallback: (error) => {
-      alert('결제 취소에 실패했습니다.');
-      console.error(error);
+      const err = error as AxiosError<{ status: number; message: string }>;
+      alert(
+        err.response ? err.response.data.message : '결제 취소에 실패했습니다.',
+      );
+      // console.error(error);
     },
   });
   const getTotalRefund = (): number => {
