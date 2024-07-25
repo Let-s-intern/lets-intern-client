@@ -2,7 +2,7 @@ import clsx from 'clsx';
 import { CiTrash } from 'react-icons/ci';
 import { Link } from 'react-router-dom';
 
-import { ChangeEvent, useState } from 'react';
+import { ChangeEvent, useCallback, useState } from 'react';
 import {
   useBlogListQuery,
   useDeleteBlogMutation,
@@ -57,13 +57,13 @@ export default function BlogTable() {
     }
   };
 
-  const handlePageChange = (
-    event: React.ChangeEvent<unknown>,
-    page: number,
-  ) => {
-    setPageable((prev) => ({ ...prev, page }));
-    window.scrollTo(0, 0);
-  };
+  const handlePageChange = useCallback(
+    (event: React.ChangeEvent<unknown>, page: number) => {
+      setPageable((prev) => ({ ...prev, page }));
+      window.scrollTo(0, 0);
+    },
+    [],
+  );
 
   const { data, isLoading } = useBlogListQuery({
     pageable,
