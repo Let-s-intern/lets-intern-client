@@ -24,7 +24,7 @@ const ProgramCard = ({
     >
       <div className="mb-3 flex items-center gap-2">
         <h2 className="text-1-bold text-neutral-100">{title}</h2>
-        <img src="/icons/Caret_Circle_Right.svg" alt={alt} />
+        <img src="/icons/Caret_Circle_Right_Outline.svg" alt={alt} />
       </div>
       <p className="text-0.875-medium flex flex-col text-static-100/90">
         {description.map((desc) => (

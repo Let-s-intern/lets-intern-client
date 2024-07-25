@@ -1,6 +1,17 @@
-<svg width="24" height="25" viewBox="0 0 24 25" fill="none" xmlns="http://www.w3.org/2000/svg">
+<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
 <g id="Arrow / Caret_Circle_Right">
-<path id="Vector" d="M12 3.3457C16.9706 3.3457 21 7.37514 21 12.3457C21 17.3163 16.9706 21.3457 12 21.3457C7.02944 21.3457 3 17.3163 3 12.3457C3 7.37514 7.02944 3.3457 12 3.3457Z" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-<path id="Vector_2" d="M11 9.3457L14 12.3457L11 15.3457" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+<g id="Vector" filter="url(#filter0_b_4933_130049)">
+<path d="M32 8C45.2548 8 56 18.7452 56 32C56 45.2548 45.2548 56 32 56C18.7452 56 8 45.2548 8 32C8 18.7452 18.7452 8 32 8Z" fill="#FAFAFA" fill-opacity="0.7"/>
+<path d="M32 8C45.2548 8 56 18.7452 56 32C56 45.2548 45.2548 56 32 56C18.7452 56 8 45.2548 8 32C8 18.7452 18.7452 8 32 8Z" stroke="#E7E7E7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
 </g>
+<path id="Vector_2" d="M29.3333 24L37.3333 32L29.3333 40" stroke="#BDBDBD" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+</g>
+<defs>
+<filter id="filter0_b_4933_130049" x="3" y="3" width="58" height="58" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+<feFlood flood-opacity="0" result="BackgroundImageFix"/>
+<feGaussianBlur in="BackgroundImageFix" stdDeviation="2"/>
+<feComposite in2="SourceAlpha" operator="in" result="effect1_backgroundBlur_4933_130049"/>
+<feBlend mode="normal" in="SourceGraphic" in2="effect1_backgroundBlur_4933_130049" result="shape"/>
+</filter>
+</defs>
 </svg>
