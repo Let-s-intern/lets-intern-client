@@ -258,12 +258,16 @@ const CreditDelete = () => {
                   이전
                 </button>
                 <button
-                  className="h-[46px] grow rounded-sm bg-primary px-5 py-2 font-medium text-neutral-100"
+                  className={`h-[46px] grow rounded-sm ${isChecked ? 'bg-primary' : 'cursor-not-allowed bg-primary-20'} px-5 py-2 font-medium text-neutral-100`}
                   onClick={() => {
-                    tryCancelPayment({
-                      programType:
-                        paymentDetail?.programInfo.programType || 'CHALLENGE',
-                    });
+                    if (isChecked) {
+                      tryCancelPayment({
+                        programType:
+                          paymentDetail?.programInfo.programType || 'CHALLENGE',
+                      });
+                    } else {
+                      alert('환불 정보를 확인해주세요.');
+                    }
                   }}
                 >
                   결제 취소하기
