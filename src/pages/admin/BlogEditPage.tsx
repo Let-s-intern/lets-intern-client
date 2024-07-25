@@ -38,7 +38,7 @@ const initialBlog = {
   content: '',
   ctaLink: '',
   ctaText: '',
-  isDisplayed: false,
+  // isDisplayed: false,
   tagList: [],
 };
 
@@ -77,7 +77,8 @@ export default function BlogEditPage() {
       ...value,
       id: Number(id),
       thumbnail,
-      tagList: value.tagList.map((tag) => tag.id),
+      isDisplayed: false,
+      tagList: selectedTagList.map((tag) => tag.id),
     };
     patchBlogMutation.mutate(reqBody);
 
@@ -93,7 +94,7 @@ export default function BlogEditPage() {
       id: Number(id),
       thumbnail,
       isDisplayed: true,
-      tagList: value.tagList.map((tag) => tag.id),
+      tagList: selectedTagList.map((tag) => tag.id),
     };
     patchBlogMutation.mutate(reqBody);
 
@@ -101,7 +102,7 @@ export default function BlogEditPage() {
   };
 
   const convertFiletoUrl = async (file: File | null) => {
-    if (!file) return '';
+    if (!file) return value.thumbnail;
     const res = await fileMutation.mutateAsync({ type: 'BLOG', file });
     return res.data.data.fileUrl;
   };
@@ -188,8 +189,6 @@ export default function BlogEditPage() {
 
   useEffect(() => {
     if (isLoading || !blogData) return;
-
-    console.log(blogData);
     setValue({
       title: blogData.blogDetailInfo.title!,
       category: blogData.blogDetailInfo.category!,
@@ -198,7 +197,7 @@ export default function BlogEditPage() {
       content: blogData.blogDetailInfo.content || '',
       ctaLink: blogData.blogDetailInfo.ctaLink || '',
       ctaText: blogData.blogDetailInfo.ctaText || '',
-      isDisplayed: blogData.blogDetailInfo.isDisplayed!,
+      // isDisplayed: blogData.blogDetailInfo.isDisplayed!,
       tagList: blogData.tagDetailInfos!,
     });
     setSelectedTagList(blogData.tagDetailInfos!);
@@ -244,7 +243,7 @@ export default function BlogEditPage() {
                 label="제목"
                 placeholder="제목"
                 name="title"
-                value={blogData?.blogDetailInfo.title || ''}
+                value={value.title}
                 onChange={handleChange}
                 autoComplete="off"
                 fullWidth
@@ -258,7 +257,7 @@ export default function BlogEditPage() {
                 label="메타 디스크립션"
                 placeholder="설명"
                 name="description"
-                value={blogData?.blogDetailInfo.description || ''}
+                value={value.description}
                 onChange={handleChange}
                 multiline
                 minRows={3}
@@ -270,7 +269,7 @@ export default function BlogEditPage() {
                 label="블로그 썸네일"
                 id="file"
                 name="file"
-                image={blogData?.blogDetailInfo.thumbnail || ''}
+                image={value.thumbnail}
                 onChange={handleChange}
               />
               <BlogPostEditor getHTMLString={getHTMLString} />
@@ -279,7 +278,7 @@ export default function BlogEditPage() {
                 label="CTA 링크"
                 placeholder="CTA 링크"
                 name="ctaLink"
-                value={blogData?.blogDetailInfo.ctaLink || ''}
+                value={value.ctaLink}
                 onChange={handleChange}
                 autoComplete="off"
                 fullWidth
@@ -289,7 +288,7 @@ export default function BlogEditPage() {
                 label="CTA 텍스트"
                 placeholder="CTA 텍스트"
                 name="ctaText"
-                value={blogData?.blogDetailInfo.ctaText || ''}
+                value={value.ctaText}
                 onChange={handleChange}
                 autoComplete="off"
                 fullWidth
@@ -309,8 +308,8 @@ export default function BlogEditPage() {
           {/* 버튼 */}
           <footer>
             <div className="flex items-center justify-end gap-4">
-              {/* 발행된 블로그는 임시 저장 불가능 */}
-              {!blogData?.blogDetailInfo.isDisplayed && (
+              {/* 노출된 블로그는 임시 저장 불가능 */}
+              {!value.isDisplayed && (
                 <ActionButton
                   onClick={saveBlog}
                   type="button"
