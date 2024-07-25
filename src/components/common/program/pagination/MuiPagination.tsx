@@ -1,32 +1,24 @@
 import { Pagination, ThemeProvider, useMediaQuery } from '@mui/material';
 
-import React, { memo, useCallback } from 'react';
-import { IPageable, IPageInfo } from '../../../../types/interface';
+import React, { memo } from 'react';
+import { IPageInfo } from '../../../../types/interface';
 import { theme } from './mui-theme';
 
 interface MuiPaginationProps {
   pageInfo: IPageInfo;
   page: number;
-  setPageable: React.Dispatch<React.SetStateAction<IPageable>>;
+  onChange?: (event: React.ChangeEvent<unknown>, page: number) => void;
 }
 
-const MuiPagination = ({ pageInfo, setPageable, page }: MuiPaginationProps) => {
+const MuiPagination = ({ pageInfo, onChange, page }: MuiPaginationProps) => {
   const matches = useMediaQuery('(min-width:640px)');
-
-  const handleChange = useCallback(
-    (event: React.ChangeEvent<unknown>, page: number) => {
-      setPageable((prev) => ({ ...prev, page }));
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    },
-    [],
-  );
 
   if (pageInfo.totalPages > 1)
     return (
       <ThemeProvider theme={theme}>
         <Pagination
           page={page}
-          onChange={handleChange}
+          onChange={onChange}
           count={pageInfo.totalPages}
           color="primary"
           showFirstButton

@@ -2,7 +2,7 @@ import clsx from 'clsx';
 import { CiTrash } from 'react-icons/ci';
 import { Link } from 'react-router-dom';
 
-import { ChangeEvent } from 'react';
+import { ChangeEvent, useState } from 'react';
 import {
   useBlogListQuery,
   useDeleteBlogMutation,
@@ -10,6 +10,7 @@ import {
 } from '../../../api/blog';
 import { BlogThumbnail, PatchBlogReqBody } from '../../../api/blogSchema';
 import { blogCategory } from '../../../utils/convert';
+import MuiPagination from '../../common/program/pagination/MuiPagination';
 
 const blogColumnWidth = {
   displayDate: 'w-40',
@@ -19,8 +20,17 @@ const blogColumnWidth = {
   management: 'w-52',
   status: 'w-40',
 };
+const initialPageable = { page: 1, size: 10 };
+const initialPageInfo = {
+  pageNum: 0,
+  pageSize: 0,
+  totalElements: 0,
+  totalPages: 0,
+};
 
 export default function BlogTable() {
+  const [pageable, setPageable] = useState(initialPageable);
+
   const deleteBlog = (blogId: number) => {
     const isDelete = window.confirm('정말로 삭제하시겠습니까?');
     if (isDelete) {
@@ -47,8 +57,16 @@ export default function BlogTable() {
     }
   };
 
+  const handlePageChange = (
+    event: React.ChangeEvent<unknown>,
+    page: number,
+  ) => {
+    setPageable((prev) => ({ ...prev, page }));
+    window.scrollTo(0, 0);
+  };
+
   const { data, isLoading } = useBlogListQuery({
-    pageable: { page: 1, size: 10 },
+    pageable,
   });
   const deleteBlogMutation = useDeleteBlogMutation();
   const patchBlogMutation = usePatchBlogMutation();
@@ -141,6 +159,14 @@ export default function BlogTable() {
           ))}
         </div>
       )}
+
+      <div className="flex">
+        <MuiPagination
+          page={pageable.page}
+          pageInfo={data?.pageInfo || initialPageInfo}
+          onChange={handlePageChange}
+        />
+      </div>
     </div>
   );
 }
