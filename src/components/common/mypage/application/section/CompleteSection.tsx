@@ -18,7 +18,7 @@ const CompleteSection = ({ applicationList }: CompleteSectionProps) => {
       {applicationList.length === 0 ? (
         <div className="flex w-full flex-col items-center gap-4 py-20">
           <p className="text-neutral-0 text-opacity-[36%]">
-            참여 완료한 내역이 아직 없어요.
+            참여 완료한 프로그램이 아직 없어요.
           </p>
         </div>
       ) : (

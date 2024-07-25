@@ -190,9 +190,9 @@ export const convertPaymentStatus = (status: string) => {
     case 'CANCELED':
       return '결제취소';
     case 'PARTIAL_CANCELED':
-      return '부분취소';
+      return '결제취소';
     case 'ZERO':
-      return '신청취소';
+      return '결제취소';
     default:
       return '상태없음';
   }

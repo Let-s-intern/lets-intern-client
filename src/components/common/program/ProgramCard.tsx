@@ -66,7 +66,7 @@ const ProgramCard = ({
 
         {startDate ? (
           <div className="mb-1 flex items-center gap-1.5">
-            <span className="shrink-0 text-xs text-neutral-0">진행 일정</span>
+            <span className="shrink-0 text-xs text-neutral-0">진행 기간</span>
             <span className="text-xs font-medium text-primary-dark">
               {type === 'challenge'
                 ? `${startDate.format('YY.MM.DD')} ~ ${
@@ -79,7 +79,7 @@ const ProgramCard = ({
 
         {showType && progressType !== 'none' ? (
           <div className="flex items-center gap-1.5">
-            <span className="text-xs text-neutral-0">진행방식</span>
+            <span className="text-xs text-neutral-0">진행 방식</span>
             <span className="text-xs font-medium text-primary-dark">
               {progressType === 'ALL'
                 ? '온라인/오프라인'

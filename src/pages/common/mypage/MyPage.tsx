@@ -49,11 +49,13 @@ const MyPage = () => {
               </NavItem>
               <NavItem
                 to="/mypage/credit"
-                active={location.pathname === '/mypage/credit'}
+                active={location.pathname.startsWith('/mypage/credit')}
               >
                 <img
                   src={`/icons/credit-list${
-                    location.pathname === '/mypage/credit' ? '-black' : ''
+                    location.pathname.startsWith('/mypage/credit')
+                      ? '-black'
+                      : ''
                   }.svg`}
                   alt="list"
                   className="hidden h-[1.625rem] w-[1.625rem] md:block"

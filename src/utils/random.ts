@@ -4,4 +4,4 @@ export const generateRandomString = customAlphabet(
   2,
 );
 
-export const generateRandomNumber = customAlphabet('1234567890', 7);
+export const generateRandomNumber = customAlphabet('1234567890', 6);

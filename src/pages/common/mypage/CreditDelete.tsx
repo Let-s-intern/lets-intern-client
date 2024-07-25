@@ -1,3 +1,4 @@
+import { AxiosError } from 'axios';
 import dayjs from 'dayjs';
 import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -35,8 +36,11 @@ const CreditDelete = () => {
       navigate(`/mypage/credit/${paymentId}`);
     },
     errorCallback: (error) => {
-      alert('결제 취소에 실패했습니다.');
-      console.error(error);
+      const err = error as AxiosError<{ status: number; message: string }>;
+      alert(
+        err.response ? err.response.data.message : '결제 취소에 실패했습니다.',
+      );
+      // console.error(error);
     },
   });
   const getTotalRefund = (): number => {
@@ -52,17 +56,31 @@ const CreditDelete = () => {
       const start = dayjs(paymentDetail.programInfo.startDate);
       const end = dayjs(paymentDetail.programInfo.endDate);
       const now = dayjs();
+      // console.log('----DELETE----');
+      // console.log('start: ', start.format('YYYY-MM-DD HH:mm:ss'));
+      // console.log('end: ', end.format('YYYY-MM-DD HH:mm:ss'));
+      // console.log('now: ', now.format('YYYY-MM-DD HH:mm:ss'));
+      // console.log('now is before start :', now.isBefore(start));
 
       if (now.isBefore(start)) {
         return nearestTen(paymentDetail.tossInfo.balanceAmount);
       }
 
-      const duration = end.diff(start, 'day');
-      const elapsed = now.diff(start, 'day');
-
-      if (elapsed < duration / 3) {
-        return nearestTen(paymentDetail.tossInfo.balanceAmount / 3);
-      } else if (elapsed < duration / 2) {
+      const duration = end.diff(start, 'day') + 1;
+      // console.log('duration: ', duration);
+      if (now.isBefore(start.add(Math.ceil(duration / 3), 'day'))) {
+        // console.log(
+        //   '1/3: ',
+        //   start.add(Math.ceil(duration / 3)).format('YYYY-MM-DD HH:mm:ss'),
+        // );
+        return nearestTen((paymentDetail.tossInfo.balanceAmount / 3) * 2);
+      } else if (now.isBefore(start.add(Math.ceil(duration / 2), 'day'))) {
+        // console.log(
+        //   '1/2: ',
+        //   start
+        //     .add(Math.ceil(duration / 2), 'day')
+        //     .format('YYYY-MM-DD HH:mm:ss'),
+        // );
         return nearestTen(paymentDetail.tossInfo.balanceAmount / 2);
       } else {
         return 0;
@@ -85,10 +103,12 @@ const CreditDelete = () => {
       const end = dayjs(paymentDetail.programInfo.endDate);
       const now = dayjs();
 
-      const duration = end.diff(start, 'day');
-      const elapsed = now.diff(start, 'day');
+      const duration = end.diff(start, 'day') + 1;
 
-      return now.isAfter(start) && elapsed < duration / 2;
+      return (
+        now.isAfter(start) &&
+        now.isBefore(start.add(Math.ceil(duration / 2), 'day'))
+      );
     }
     return false;
   };
@@ -176,9 +196,14 @@ const CreditDelete = () => {
                       subInfo={
                         <div className="text-xs font-medium text-primary-dark">
                           *환불 규정은{' '}
-                          <span className="underline underline-offset-2">
+                          <a
+                            className="underline underline-offset-2"
+                            href="https://letscareer.oopy.io"
+                            target="_blank"
+                            rel="noreferrer"
+                          >
                             자주 묻는 질문
-                          </span>
+                          </a>
                           을 참고해주세요
                         </div>
                       }
@@ -258,12 +283,16 @@ const CreditDelete = () => {
                   이전
                 </button>
                 <button
-                  className="h-[46px] grow rounded-sm bg-primary px-5 py-2 font-medium text-neutral-100"
+                  className={`h-[46px] grow rounded-sm ${isChecked ? 'bg-primary' : 'cursor-not-allowed bg-primary-20'} px-5 py-2 font-medium text-neutral-100`}
                   onClick={() => {
-                    tryCancelPayment({
-                      programType:
-                        paymentDetail?.programInfo.programType || 'CHALLENGE',
-                    });
+                    if (isChecked) {
+                      tryCancelPayment({
+                        programType:
+                          paymentDetail?.programInfo.programType || 'CHALLENGE',
+                      });
+                    } else {
+                      alert('환불 정보를 확인해주세요.');
+                    }
                   }}
                 >
                   결제 취소하기

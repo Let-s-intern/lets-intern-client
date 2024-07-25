@@ -43,9 +43,21 @@ const CreditDetail = () => {
       const start = dayjs(paymentDetail.programInfo.startDate);
       const end = dayjs(paymentDetail.programInfo.endDate);
       const now = dayjs();
+      // console.log('-----DETAIL-----');
+      // console.log('start: ', start.format('YYYY-MM-DD HH:mm:ss'));
+      // console.log('end: ', end.format('YYYY-MM-DD HH:mm:ss'));
+      // console.log('now: ', now.format('YYYY-MM-DD HH:mm:ss'));
 
-      const mid = start.add(end.diff(start) / 2, 'ms');
-      return now.isBefore(mid);
+      const duration = end.diff(start, 'day') + 1;
+      const mid = Math.ceil(duration / 2);
+      // console.log('duration: ', duration);
+      // console.log('mid: ', mid);
+      // console.log(
+      //   'midDate: ',
+      //   start.add(mid, 'day').format('YYYY-MM-DD HH:mm:ss'),
+      // );
+      // console.log('now is before mid :', now.isBefore(start.add(mid, 'day')));
+      return now.isBefore(start.add(mid, 'day'));
     } else {
       return dayjs().isBefore(dayjs(paymentDetail.programInfo.startDate));
     }
@@ -86,15 +98,7 @@ const CreditDetail = () => {
               paymentDetail.programInfo.isCanceled ? (
                 <div className="flex w-full gap-2 rounded-xxs bg-neutral-90 px-4 py-3">
                   <div className="text-sm font-semibold text-system-error">
-                    {paymentDetail.tossInfo
-                      ? paymentDetail.tossInfo.status === 'CANCELED'
-                        ? '환불 완료'
-                        : paymentDetail.tossInfo.status === 'PARTIAL_CANCELED'
-                          ? '부분 환불 완료'
-                          : '신청 취소'
-                      : paymentDetail.programInfo.isCanceled
-                        ? '신청 취소'
-                        : ''}
+                    결제 취소
                   </div>
                   <div className="flex grow items-center justify-end">
                     {convertDateFormat(
@@ -122,7 +126,7 @@ const CreditDetail = () => {
                   </div>
                   <div className="flex w-full flex-col gap-y-1">
                     <div className="flex w-full items-center justify-start gap-x-4 text-xs font-medium">
-                      <div className="shrink-0 text-neutral-30">진행 일정</div>
+                      <div className="shrink-0 text-neutral-30">진행 기간</div>
                       <div className="text-primary-dark">{`${convertDateFormat(paymentDetail.programInfo.startDate || '')} - ${convertDateFormat(paymentDetail.programInfo.endDate || '')}`}</div>
                     </div>
                     {paymentDetail.programInfo.progressType && (
@@ -250,9 +254,14 @@ const CreditDetail = () => {
                       subInfo={
                         <div className="text-xs font-medium text-primary-dark">
                           *환불 규정은{' '}
-                          <span className="underline underline-offset-2">
+                          <a
+                            className="underline underline-offset-2"
+                            href="https://letscareer.oopy.io"
+                            target="_blank"
+                            rel="noreferrer"
+                          >
                             자주 묻는 질문
-                          </span>
+                          </a>
                           을 참고해주세요
                         </div>
                       }
