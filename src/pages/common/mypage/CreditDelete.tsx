@@ -49,15 +49,15 @@ const CreditDelete = () => {
     const end = dayjs(paymentDetail?.programInfo.endDate);
     const now = dayjs();
     if (now.isBefore(start)) {
-      return 100;
+      return 1;
     }
 
     const duration = end.diff(start, 'day') + 1;
     const d3 = start.add(Math.ceil(duration / 3), 'day');
     const d2 = start.add(Math.ceil(duration / 2), 'day');
 
-    if (now.isBefore(d3)) return 66;
-    if (now.isBefore(d2)) return 50;
+    if (now.isBefore(d3)) return 2 / 3;
+    if (now.isBefore(d2)) return 1 / 2;
     return 0;
   };
 
@@ -74,9 +74,8 @@ const CreditDelete = () => {
 
     const couponPrice = paymentDetail.paymentInfo.couponDiscount || 0;
     const refundPrice = nearestTen(
-      ((paymentDetail.priceInfo.price - paymentDetail.priceInfo.discount) *
-        getRefundPercent()) /
-        100 -
+      (paymentDetail.priceInfo.price - paymentDetail.priceInfo.discount) *
+        getRefundPercent() -
         couponPrice,
     );
 
