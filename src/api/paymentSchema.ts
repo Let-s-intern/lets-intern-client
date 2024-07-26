@@ -145,7 +145,7 @@ export const tossInfoType = z.object({
   mobilePhone: mobilePhoneInfoType.nullable().optional(),
   giftCertificate: giftCertificateInfoType.nullable().optional(),
   cashReceipt: cashReceiptInfoType.nullable().optional(),
-  cashReceipts: cashReceiptsInfoType.nullable().optional(),
+  cashReceipts: cashReceiptsInfoType.array().nullable().optional(),
   discount: discountInfoType.nullable().optional(),
   cancels: z.array(cancelsInfoType).nullable().optional(),
   secret: z.string().nullable().optional(),
