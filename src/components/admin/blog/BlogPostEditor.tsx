@@ -7,15 +7,19 @@
  */
 import { LinkNode } from '@lexical/link';
 import { AutoFocusPlugin } from '@lexical/react/LexicalAutoFocusPlugin';
-import { LexicalComposer } from '@lexical/react/LexicalComposer';
+import {
+  InitialEditorStateType,
+  LexicalComposer,
+} from '@lexical/react/LexicalComposer';
 import { ContentEditable } from '@lexical/react/LexicalContentEditable';
 import { LexicalErrorBoundary } from '@lexical/react/LexicalErrorBoundary';
 import { HistoryPlugin } from '@lexical/react/LexicalHistoryPlugin';
 import { LinkPlugin } from '@lexical/react/LexicalLinkPlugin';
 import { OnChangePlugin } from '@lexical/react/LexicalOnChangePlugin';
 import { RichTextPlugin } from '@lexical/react/LexicalRichTextPlugin';
-import { EditorState, LexicalEditor } from 'lexical';
+import { EditorState } from 'lexical';
 
+import { useEffect, useState } from 'react';
 import ToolbarPlugin from './ToolbarPlugin';
 import TreeViewPlugin from './TreeViewPlugin';
 
@@ -83,21 +87,34 @@ const validateUrl = (url: string) => {
 };
 
 interface BlogPostEditorProps {
+  jsonString: string;
   getJSONFromLexical: (jsonString: string) => void;
 }
 
 export default function BlogPostEditor({
+  jsonString,
   getJSONFromLexical,
 }: BlogPostEditorProps) {
-  const handleChange = (editorState: EditorState, editor: LexicalEditor) => {
+  const [initialContent, setInitialContent] =
+    useState<InitialEditorStateType | null>(null);
+
+  const handleChange = (editorState: EditorState) => {
     editorState.read(() => {
       const jsonString = JSON.stringify(editorState);
       getJSONFromLexical(jsonString);
     });
   };
 
+  useEffect(function initLexical() {
+    if (jsonString === '') return;
+    console.log('JSON:', JSON.parse(jsonString));
+    setInitialContent(JSON.parse(jsonString));
+  }, []);
+
   return (
-    <LexicalComposer initialConfig={editorConfig}>
+    <LexicalComposer
+      initialConfig={{ ...editorConfig, editorState: initialContent }}
+    >
       <div className="editor-container">
         <ToolbarPlugin />
         <div className="editor-inner">

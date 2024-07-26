@@ -7,7 +7,13 @@ import {
   SelectChangeEvent,
   TextField,
 } from '@mui/material';
-import { ChangeEvent, FormEvent, useEffect, useState } from 'react';
+import {
+  ChangeEvent,
+  FormEvent,
+  useCallback,
+  useEffect,
+  useState,
+} from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import {
@@ -64,6 +70,14 @@ export default function BlogEditPage() {
   const [file, setFile] = useState<File | null>(null);
   const [isTitleValid, setIsTitleValid] = useState(true);
   const [isCategoryValid, setIsCategoryValid] = useState(true);
+
+  const { data: blogTagData } = useBlogTagQuery();
+  const { data: blogData, isLoading } = useBlogQuery(id!);
+  const blogTagMutation = usePostBlogTagMutation(function resetTag() {
+    setNewTag('');
+  });
+  const fileMutation = usePostFileMutation();
+  const patchBlogMutation = usePatchBlogMutation();
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -137,7 +151,7 @@ export default function BlogEditPage() {
     setValue({ ...value, [event.target.name]: event.target.value });
   };
 
-  const deleteTag = (id: number) => {
+  const deleteTag = useCallback((id: number) => {
     const i = selectedTagList.findIndex((tag) => tag.id === id);
     setSelectedTagList((prev) => [...prev.slice(0, i), ...prev.slice(i + 1)]);
     const j = value.tagList.findIndex((tag) => tag.id === id);
@@ -145,47 +159,46 @@ export default function BlogEditPage() {
       ...prev,
       tagList: [...prev.tagList.slice(0, j), ...prev.tagList.slice(j + 1)],
     }));
-  };
+  }, []);
 
-  const handleChangeTag = (event: ChangeEvent<HTMLInputElement>) => {
-    setNewTag(event.target.value);
-  };
+  const handleChangeTag = useCallback(
+    (event: ChangeEvent<HTMLInputElement>) => {
+      setNewTag(event.target.value);
+    },
+    [],
+  );
 
-  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    const isEmpty = newTag === '';
-    const isExist = blogTagData?.tagDetailInfos.some(
-      (tag) => tag.title === newTag,
-    );
+  const handleKeyDown = useCallback(
+    (event: React.KeyboardEvent<HTMLInputElement>) => {
+      const isEmpty = newTag === '';
+      const isExist = blogTagData?.tagDetailInfos.some(
+        (tag) => tag.title === newTag,
+      );
 
-    if (event.key !== 'Enter' || isEmpty) return;
-    if (isExist) {
-      alert('이미 존재하는 태그입니다.');
-    } else blogTagMutation.mutate(newTag);
-  };
+      if (event.key !== 'Enter' || isEmpty) return;
+      if (isExist) {
+        alert('이미 존재하는 태그입니다.');
+      } else blogTagMutation.mutate(newTag);
+    },
+    [blogTagData?.tagDetailInfos],
+  );
 
   const getJSONFromLexical = (jsonString: string) => {
     setValue((prev) => ({ ...prev, content: jsonString }));
   };
 
-  const selectTag = (tag: TagDetail) => {
-    if (value.tagList.some((item) => item.id === tag.id)) return;
+  const selectTag = useCallback(
+    (tag: TagDetail) => {
+      if (value.tagList.some((item) => item.id === tag.id)) return;
 
-    setSelectedTagList((prev) => [...prev, { id: tag.id, title: tag.title }]);
-    setValue((prev) => ({
-      ...prev,
-      tagList: [...prev.tagList, tag],
-    }));
-  };
-
-  const resetTag = () => {
-    setNewTag('');
-  };
-
-  const { data: blogTagData } = useBlogTagQuery();
-  const { data: blogData, isLoading } = useBlogQuery(id!);
-  const blogTagMutation = usePostBlogTagMutation(resetTag);
-  const fileMutation = usePostFileMutation();
-  const patchBlogMutation = usePatchBlogMutation();
+      setSelectedTagList((prev) => [...prev, { id: tag.id, title: tag.title }]);
+      setValue((prev) => ({
+        ...prev,
+        tagList: [...prev.tagList, tag],
+      }));
+    },
+    [value.tagList],
+  );
 
   useEffect(() => {
     if (isLoading || !blogData) return;
@@ -200,6 +213,7 @@ export default function BlogEditPage() {
       // isDisplayed: blogData.blogDetailInfo.isDisplayed!,
       tagList: blogData.tagDetailInfos!,
     });
+    console.log('받은 콘텐츠:', blogData.blogDetailInfo.content);
     setSelectedTagList(blogData.tagDetailInfos!);
   }, [isLoading, blogData]);
 
@@ -272,7 +286,10 @@ export default function BlogEditPage() {
                 image={value.thumbnail}
                 onChange={handleChange}
               />
-              <BlogPostEditor getJSONFromLexical={getJSONFromLexical} />
+              <BlogPostEditor
+                jsonString={value.content}
+                getJSONFromLexical={getJSONFromLexical}
+              />
               <TextField
                 type="text"
                 label="CTA 링크"

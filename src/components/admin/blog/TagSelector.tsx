@@ -1,11 +1,12 @@
 import { TextField } from '@mui/material';
 
+import { memo } from 'react';
 import { TagDetail } from '../../../api/blogSchema';
 import Tag from './Tag';
 import TagDelete from './TagDelete';
 
 interface TagSelectorProps {
-  selectedTagList: TagDetail[] ;
+  selectedTagList: TagDetail[];
   tagList: TagDetail[];
   value: string;
   deleteTag: (id: number) => void;
@@ -14,7 +15,7 @@ interface TagSelectorProps {
   onKeyDown: React.KeyboardEventHandler<HTMLInputElement>;
 }
 
-export default function TagSelector({
+const TagSelector = ({
   selectedTagList,
   tagList,
   value,
@@ -22,7 +23,7 @@ export default function TagSelector({
   selectTag,
   onChange,
   onKeyDown,
-}: TagSelectorProps) {
+}: TagSelectorProps) => {
   return (
     <div className="my-4">
       <div className="mb-4 flex flex-wrap gap-4">
@@ -60,4 +61,6 @@ export default function TagSelector({
       </div>
     </div>
   );
-}
+};
+
+export default memo(TagSelector);

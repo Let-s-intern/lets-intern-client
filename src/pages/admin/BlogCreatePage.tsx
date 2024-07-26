@@ -222,7 +222,10 @@ const BlogCreatePage = () => {
             image={value.thumbnail as string}
             onChange={handleChange}
           />
-          <BlogPostEditor getJSONFromLexical={getJSONFromLexical} />
+          <BlogPostEditor
+            jsonString={value.content}
+            getJSONFromLexical={getJSONFromLexical}
+          />
           <TextField
             type="text"
             label="CTA 링크"

@@ -1,5 +1,5 @@
 import { TextField } from '@mui/material';
-import { ChangeEvent, useEffect, useRef } from 'react';
+import { ChangeEvent, memo, useEffect, useRef } from 'react';
 
 interface TextFieldLimitProps {
   type: string;
@@ -18,7 +18,7 @@ interface TextFieldLimitProps {
   error?: boolean;
 }
 
-export default function TextFieldLimit({
+const TextFieldLimit = ({
   type,
   label,
   placeholder,
@@ -33,7 +33,7 @@ export default function TextFieldLimit({
   helperText = '',
   focused = false,
   error = false,
-}: TextFieldLimitProps) {
+}: TextFieldLimitProps) => {
   const ref = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -66,4 +66,6 @@ export default function TextFieldLimit({
       </span>
     </div>
   );
-}
+};
+
+export default memo(TextFieldLimit);
