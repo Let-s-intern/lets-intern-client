@@ -163,8 +163,8 @@ export default function BlogEditPage() {
     } else blogTagMutation.mutate(newTag);
   };
 
-  const getHTMLString = (htmlString: string) => {
-    setValue((prev) => ({ ...prev, content: htmlString }));
+  const getJSONFromLexical = (jsonString: string) => {
+    setValue((prev) => ({ ...prev, content: jsonString }));
   };
 
   const selectTag = (tag: TagDetail) => {
@@ -272,7 +272,7 @@ export default function BlogEditPage() {
                 image={value.thumbnail}
                 onChange={handleChange}
               />
-              <BlogPostEditor getHTMLString={getHTMLString} />
+              <BlogPostEditor getJSONFromLexical={getJSONFromLexical} />
               <TextField
                 type="text"
                 label="CTA 링크"

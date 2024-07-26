@@ -5,7 +5,6 @@
  * LICENSE file in the root directory of this source tree.
  *
  */
-import { $generateHtmlFromNodes } from '@lexical/html';
 import { LinkNode } from '@lexical/link';
 import { AutoFocusPlugin } from '@lexical/react/LexicalAutoFocusPlugin';
 import { LexicalComposer } from '@lexical/react/LexicalComposer';
@@ -84,14 +83,16 @@ const validateUrl = (url: string) => {
 };
 
 interface BlogPostEditorProps {
-  getHTMLString: (htmlString: string) => void;
+  getJSONFromLexical: (jsonString: string) => void;
 }
 
-export default function BlogPostEditor({ getHTMLString }: BlogPostEditorProps) {
+export default function BlogPostEditor({
+  getJSONFromLexical,
+}: BlogPostEditorProps) {
   const handleChange = (editorState: EditorState, editor: LexicalEditor) => {
     editorState.read(() => {
-      const htmlString = $generateHtmlFromNodes(editor);
-      getHTMLString(htmlString);
+      const jsonString = JSON.stringify(editorState);
+      getJSONFromLexical(jsonString);
     });
   };
 
