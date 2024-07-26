@@ -455,7 +455,7 @@ const SignUp = () => {
                         onClick={(e) => {
                           e.stopPropagation();
                           window.open(
-                            'https://letsintern.notion.site/241b2e747ddf47478012a68f7c03f9e1?pvs=25',
+                            'https://letsintern.notion.site/a121a038f72f42d7bde747624ecc0943?pvs=4',
                             '_blank',
                           );
                         }}
