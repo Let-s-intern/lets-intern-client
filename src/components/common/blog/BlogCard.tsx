@@ -1,8 +1,10 @@
+import { useNavigate } from 'react-router-dom';
 import { TransformedBlogInfoType } from '../../../api/blogSchema';
 import { blogCategory } from '../../../utils/convert';
 import BlogHashtag from './BlogHashtag';
 
 const BlogCard = (blogInfo: TransformedBlogInfoType) => {
+  const navigate = useNavigate();
   return (
     <div className="flex w-full flex-col gap-y-2 py-3">
       <span className="w-full text-xsmall16 font-bold text-primary">
@@ -29,7 +31,9 @@ const BlogCard = (blogInfo: TransformedBlogInfoType) => {
             <BlogHashtag
               key={tag.id}
               text={tag.title || ''}
-              onClick={() => {}}
+              onClick={() => {
+                navigate(`/blog/hashtag`, { state: tag });
+              }}
             />
           ))}
         </div>
