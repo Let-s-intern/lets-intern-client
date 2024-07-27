@@ -9,6 +9,7 @@ import About from './pages/common/about/About';
 import FindPassword from './pages/common/auth/FindPassword';
 import Login from './pages/common/auth/Login';
 import SignUp from './pages/common/auth/SignUp';
+import BlogDetailPage from './pages/common/blog/BlogDetailPage';
 import BlogHashtagListPage from './pages/common/blog/BlogHashtagListPage';
 import BlogListPage from './pages/common/blog/BlogListPage';
 import ChallengeDashboard from './pages/common/challenge/ChallengeDashboard';
@@ -94,6 +95,8 @@ const Router = () => {
           <Route path="blog" element={<BlogListPage />} />
           {/* blog/hashtag?tag=:tag */}
           <Route path="blog/hashtag" element={<BlogHashtagListPage />} />
+          {/* blog/:id */}
+          <Route path="blog/:id" element={<BlogDetailPage />} />
 
           {/* 마이페이지 */}
           <Route path="mypage" element={<MyPage />}>

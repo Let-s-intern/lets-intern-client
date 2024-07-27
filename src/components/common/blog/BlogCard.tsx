@@ -6,7 +6,12 @@ import BlogHashtag from './BlogHashtag';
 const BlogCard = (blogInfo: TransformedBlogInfoType) => {
   const navigate = useNavigate();
   return (
-    <div className="flex w-full flex-col gap-y-2 py-3">
+    <div
+      className="flex w-full cursor-pointer flex-col gap-y-2 py-3"
+      onClick={() => {
+        navigate(`/blog/${blogInfo.blogThumbnailInfo.id}`);
+      }}
+    >
       <span className="w-full text-xsmall16 font-bold text-primary">
         {blogCategory[blogInfo.blogThumbnailInfo.category || '']}
       </span>
