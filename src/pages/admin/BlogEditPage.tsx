@@ -287,7 +287,7 @@ export default function BlogEditPage() {
                 onChange={handleChange}
               />
               <BlogPostEditor
-                jsonString={value.content}
+                editorStateJsonString={value.content}
                 getJSONFromLexical={getJSONFromLexical}
               />
               <TextField

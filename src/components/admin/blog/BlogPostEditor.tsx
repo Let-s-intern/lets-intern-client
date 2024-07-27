@@ -7,10 +7,7 @@
  */
 import { LinkNode } from '@lexical/link';
 import { AutoFocusPlugin } from '@lexical/react/LexicalAutoFocusPlugin';
-import {
-  InitialEditorStateType,
-  LexicalComposer,
-} from '@lexical/react/LexicalComposer';
+import { LexicalComposer } from '@lexical/react/LexicalComposer';
 import { ContentEditable } from '@lexical/react/LexicalContentEditable';
 import { LexicalErrorBoundary } from '@lexical/react/LexicalErrorBoundary';
 import { HistoryPlugin } from '@lexical/react/LexicalHistoryPlugin';
@@ -18,8 +15,8 @@ import { LinkPlugin } from '@lexical/react/LexicalLinkPlugin';
 import { OnChangePlugin } from '@lexical/react/LexicalOnChangePlugin';
 import { RichTextPlugin } from '@lexical/react/LexicalRichTextPlugin';
 import { EditorState } from 'lexical';
-import { useEffect, useState } from 'react';
 
+import ContextPlugin from './ContextPlugin';
 import ToolbarPlugin from './ToolbarPlugin';
 import TreeViewPlugin from './TreeViewPlugin';
 
@@ -87,17 +84,14 @@ const validateUrl = (url: string) => {
 };
 
 interface BlogPostEditorProps {
-  jsonString: string;
+  editorStateJsonString?: string;
   getJSONFromLexical: (jsonString: string) => void;
 }
 
 export default function BlogPostEditor({
-  jsonString,
+  editorStateJsonString = '',
   getJSONFromLexical,
 }: BlogPostEditorProps) {
-  const [initialContent, setInitialContent] =
-    useState<InitialEditorStateType | null>(null);
-
   const handleChange = (editorState: EditorState) => {
     editorState.read(() => {
       const jsonString = JSON.stringify(editorState);
@@ -105,18 +99,8 @@ export default function BlogPostEditor({
     });
   };
 
-  useEffect(
-    function initLexical() {
-      if (jsonString === '') return;
-      setInitialContent(JSON.parse(jsonString));
-    },
-    [jsonString],
-  );
-
   return (
-    <LexicalComposer
-      initialConfig={{ ...editorConfig, editorState: initialContent }}
-    >
+    <LexicalComposer initialConfig={editorConfig}>
       <div className="editor-container">
         <ToolbarPlugin />
         <div className="editor-inner">
@@ -137,6 +121,7 @@ export default function BlogPostEditor({
           <AutoFocusPlugin />
           <TreeViewPlugin />
           <LinkPlugin validateUrl={validateUrl} />
+          <ContextPlugin editorStateJsonString={editorStateJsonString} />
         </div>
       </div>
     </LexicalComposer>
