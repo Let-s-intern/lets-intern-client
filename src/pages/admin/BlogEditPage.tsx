@@ -66,7 +66,6 @@ export default function BlogEditPage() {
 
   const [value, setValue] = useState<EditBlog>(initialBlog);
   const [newTag, setNewTag] = useState('');
-  const [selectedTagList, setSelectedTagList] = useState<TagDetail[]>([]);
   const [file, setFile] = useState<File | null>(null);
   const [isTitleValid, setIsTitleValid] = useState(true);
   const [isCategoryValid, setIsCategoryValid] = useState(true);
@@ -92,9 +91,8 @@ export default function BlogEditPage() {
       id: Number(id),
       thumbnail,
       isDisplayed: false,
-      tagList: selectedTagList.map((tag) => tag.id),
+      tagList: value.tagList.map((tag) => tag.id),
     };
-    //console.log(reqBody.content);
     patchBlogMutation.mutate(reqBody);
 
     navgiate('/admin/blog/list');
@@ -109,7 +107,7 @@ export default function BlogEditPage() {
       id: Number(id),
       thumbnail,
       isDisplayed: true,
-      tagList: selectedTagList.map((tag) => tag.id),
+      tagList: value.tagList.map((tag) => tag.id),
     };
     patchBlogMutation.mutate(reqBody);
 
@@ -153,8 +151,6 @@ export default function BlogEditPage() {
   };
 
   const deleteTag = useCallback((id: number) => {
-    const i = selectedTagList.findIndex((tag) => tag.id === id);
-    setSelectedTagList((prev) => [...prev.slice(0, i), ...prev.slice(i + 1)]);
     const j = value.tagList.findIndex((tag) => tag.id === id);
     setValue((prev) => ({
       ...prev,
@@ -190,9 +186,11 @@ export default function BlogEditPage() {
 
   const selectTag = useCallback(
     (tag: TagDetail) => {
-      if (value.tagList.some((item) => item.id === tag.id)) return;
+      const isAlreadySelected = value.tagList.some(
+        (item) => item.id === tag.id,
+      );
+      if (isAlreadySelected) return;
 
-      setSelectedTagList((prev) => [...prev, { id: tag.id, title: tag.title }]);
       setValue((prev) => ({
         ...prev,
         tagList: [...prev.tagList, tag],
@@ -214,7 +212,6 @@ export default function BlogEditPage() {
       // isDisplayed: blogData.blogDetailInfo.isDisplayed!,
       tagList: blogData.tagDetailInfos!,
     });
-    setSelectedTagList(blogData.tagDetailInfos!);
   }, [isLoading, blogData]);
 
   return (
@@ -312,7 +309,7 @@ export default function BlogEditPage() {
                 maxLength={maxCtaTextLength}
               />
               <TagSelector
-                selectedTagList={selectedTagList}
+                selectedTagList={value.tagList}
                 tagList={blogTagData?.tagDetailInfos || []}
                 value={newTag}
                 deleteTag={deleteTag}
