@@ -35,6 +35,7 @@ export default function ToolbarPlugin() {
   const [isItalic, setIsItalic] = useState(false);
   const [isUnderline, setIsUnderline] = useState(false);
   const [isStrikethrough, setIsStrikethrough] = useState(false);
+  const [isLink, setIsLink] = useState(false);
 
   const $updateToolbar = useCallback(() => {
     const selection = $getSelection();
@@ -146,6 +147,15 @@ export default function ToolbarPlugin() {
       >
         <i className="format strikethrough" />
       </button>
+      <button
+        onClick={() => console.log('Insert link')}
+        className={'toolbar-item spaced ' + (isLink ? 'active' : '')}
+        aria-label="Insert link"
+        title="Insert link"
+        type="button"
+      >
+        <i className="format link" />
+      </button>
       <Divider />
       <button
         type="button"
@@ -186,7 +196,7 @@ export default function ToolbarPlugin() {
         aria-label="Justify Align"
       >
         <i className="format justify-align" />
-      </button>{' '}
+      </button>
     </div>
   );
 }

@@ -7,7 +7,13 @@ import {
   SelectChangeEvent,
   TextField,
 } from '@mui/material';
-import { ChangeEvent, FormEvent, useEffect, useState } from 'react';
+import {
+  ChangeEvent,
+  FormEvent,
+  useCallback,
+  useEffect,
+  useState,
+} from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import {
@@ -65,6 +71,14 @@ export default function BlogEditPage() {
   const [isTitleValid, setIsTitleValid] = useState(true);
   const [isCategoryValid, setIsCategoryValid] = useState(true);
 
+  const { data: blogTagData } = useBlogTagQuery();
+  const { data: blogData, isLoading } = useBlogQuery(id!);
+  const blogTagMutation = usePostBlogTagMutation(function resetTag() {
+    setNewTag('');
+  });
+  const fileMutation = usePostFileMutation();
+  const patchBlogMutation = usePatchBlogMutation();
+
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
   };
@@ -80,6 +94,7 @@ export default function BlogEditPage() {
       isDisplayed: false,
       tagList: selectedTagList.map((tag) => tag.id),
     };
+    //console.log(reqBody.content);
     patchBlogMutation.mutate(reqBody);
 
     navgiate('/admin/blog/list');
@@ -137,7 +152,7 @@ export default function BlogEditPage() {
     setValue({ ...value, [event.target.name]: event.target.value });
   };
 
-  const deleteTag = (id: number) => {
+  const deleteTag = useCallback((id: number) => {
     const i = selectedTagList.findIndex((tag) => tag.id === id);
     setSelectedTagList((prev) => [...prev.slice(0, i), ...prev.slice(i + 1)]);
     const j = value.tagList.findIndex((tag) => tag.id === id);
@@ -145,47 +160,46 @@ export default function BlogEditPage() {
       ...prev,
       tagList: [...prev.tagList.slice(0, j), ...prev.tagList.slice(j + 1)],
     }));
+  }, []);
+
+  const handleChangeTag = useCallback(
+    (event: ChangeEvent<HTMLInputElement>) => {
+      setNewTag(event.target.value);
+    },
+    [],
+  );
+
+  const handleKeyDown = useCallback(
+    (event: React.KeyboardEvent<HTMLInputElement>) => {
+      const isEmpty = newTag === '';
+      const isExist = blogTagData?.tagDetailInfos.some(
+        (tag) => tag.title === newTag,
+      );
+
+      if (event.key !== 'Enter' || isEmpty) return;
+      if (isExist) {
+        alert('이미 존재하는 태그입니다.');
+      } else blogTagMutation.mutate(newTag);
+    },
+    [newTag, blogTagData?.tagDetailInfos],
+  );
+
+  const getJSONFromLexical = (jsonString: string) => {
+    setValue((prev) => ({ ...prev, content: jsonString }));
   };
 
-  const handleChangeTag = (event: ChangeEvent<HTMLInputElement>) => {
-    setNewTag(event.target.value);
-  };
+  const selectTag = useCallback(
+    (tag: TagDetail) => {
+      if (value.tagList.some((item) => item.id === tag.id)) return;
 
-  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    const isEmpty = newTag === '';
-    const isExist = blogTagData?.tagDetailInfos.some(
-      (tag) => tag.title === newTag,
-    );
-
-    if (event.key !== 'Enter' || isEmpty) return;
-    if (isExist) {
-      alert('이미 존재하는 태그입니다.');
-    } else blogTagMutation.mutate(newTag);
-  };
-
-  const getHTMLString = (htmlString: string) => {
-    setValue((prev) => ({ ...prev, content: htmlString }));
-  };
-
-  const selectTag = (tag: TagDetail) => {
-    if (value.tagList.some((item) => item.id === tag.id)) return;
-
-    setSelectedTagList((prev) => [...prev, { id: tag.id, title: tag.title }]);
-    setValue((prev) => ({
-      ...prev,
-      tagList: [...prev.tagList, tag],
-    }));
-  };
-
-  const resetTag = () => {
-    setNewTag('');
-  };
-
-  const { data: blogTagData } = useBlogTagQuery();
-  const { data: blogData, isLoading } = useBlogQuery(id!);
-  const blogTagMutation = usePostBlogTagMutation(resetTag);
-  const fileMutation = usePostFileMutation();
-  const patchBlogMutation = usePatchBlogMutation();
+      setSelectedTagList((prev) => [...prev, { id: tag.id, title: tag.title }]);
+      setValue((prev) => ({
+        ...prev,
+        tagList: [...prev.tagList, tag],
+      }));
+    },
+    [value.tagList],
+  );
 
   useEffect(() => {
     if (isLoading || !blogData) return;
@@ -272,7 +286,10 @@ export default function BlogEditPage() {
                 image={value.thumbnail}
                 onChange={handleChange}
               />
-              <BlogPostEditor getHTMLString={getHTMLString} />
+              <BlogPostEditor
+                jsonString={value.content}
+                getJSONFromLexical={getJSONFromLexical}
+              />
               <TextField
                 type="text"
                 label="CTA 링크"

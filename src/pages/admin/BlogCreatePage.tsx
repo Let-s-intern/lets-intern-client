@@ -51,6 +51,13 @@ const BlogCreatePage = () => {
   const [isTitleValid, setIsTitleValid] = useState(true);
   const [isCategoryValid, setIsCategoryValid] = useState(true);
 
+  const { data: blogTagData } = useBlogTagQuery();
+  const blogTagMutation = usePostBlogTagMutation(function resetTag() {
+    setNewTag('');
+  });
+  const fileMutation = usePostFileMutation();
+  const blogMutation = usePostBlogMutation();
+
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
   };
@@ -135,8 +142,8 @@ const BlogCreatePage = () => {
     } else blogTagMutation.mutate(newTag);
   };
 
-  const getHTMLString = (htmlString: string) => {
-    setValue((prev) => ({ ...prev, content: htmlString }));
+  const getJSONFromLexical = (jsonString: string) => {
+    setValue((prev) => ({ ...prev, content: jsonString }));
   };
 
   const selectTag = (tag: TagDetail) => {
@@ -147,15 +154,6 @@ const BlogCreatePage = () => {
       tagList: [...prev.tagList, tag.id],
     }));
   };
-
-  const resetTag = () => {
-    setNewTag('');
-  };
-
-  const { data: blogTagData } = useBlogTagQuery();
-  const blogTagMutation = usePostBlogTagMutation(resetTag);
-  const fileMutation = usePostFileMutation();
-  const blogMutation = usePostBlogMutation();
 
   return (
     <div className="mx-auto my-12 w-[36rem]">
@@ -222,7 +220,10 @@ const BlogCreatePage = () => {
             image={value.thumbnail as string}
             onChange={handleChange}
           />
-          <BlogPostEditor getHTMLString={getHTMLString} />
+          <BlogPostEditor
+            jsonString={value.content}
+            getJSONFromLexical={getJSONFromLexical}
+          />
           <TextField
             type="text"
             label="CTA 링크"

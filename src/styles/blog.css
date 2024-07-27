@@ -451,3 +451,7 @@ i.right-align {
 i.justify-align {
   background-image: url('/public/icons/justify.svg');
 }
+
+i.link {
+  background-image: url('/public/icons/link.svg');
+}
