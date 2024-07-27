@@ -9,6 +9,8 @@ import About from './pages/common/about/About';
 import FindPassword from './pages/common/auth/FindPassword';
 import Login from './pages/common/auth/Login';
 import SignUp from './pages/common/auth/SignUp';
+import BlogHashtagListPage from './pages/common/blog/BlogHashtagListPage';
+import BlogListPage from './pages/common/blog/BlogListPage';
 import ChallengeDashboard from './pages/common/challenge/ChallengeDashboard';
 import ChallengeUserInfo from './pages/common/challenge/ChallengeUserInfo';
 import MyChallengeDashboard from './pages/common/challenge/MyChallengeDashboard';
@@ -86,6 +88,12 @@ const Router = () => {
             path="program/:programId/review/:reviewId"
             element={<ReviewDetail />}
           />
+
+          {/* 블로그 */}
+          {/* /blog?category=:category */}
+          <Route path="blog" element={<BlogListPage />} />
+          {/* blog/hashtag?tag=:tag */}
+          <Route path="blog/hashtag" element={<BlogHashtagListPage />} />
 
           {/* 마이페이지 */}
           <Route path="mypage" element={<MyPage />}>
