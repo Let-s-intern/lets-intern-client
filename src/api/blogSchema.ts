@@ -95,14 +95,16 @@ export const blogSchema = z
     };
   });
 
+export const blogInfoSchema = z.object({
+  blogThumbnailInfo: blogThumbnailSchema,
+  tagDetailInfos: tagDetailSchema,
+});
+
+export type BlogInfoType = z.infer<typeof blogInfoSchema>;
+
 export const blogListSchema = z
   .object({
-    blogInfos: z.array(
-      z.object({
-        blogThumbnailInfo: blogThumbnailSchema,
-        tagDetailInfos: tagDetailSchema,
-      }),
-    ),
+    blogInfos: z.array(blogInfoSchema),
     pageInfo: pageSchema,
   })
   .transform((data) => {
