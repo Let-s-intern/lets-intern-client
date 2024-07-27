@@ -18,8 +18,8 @@ import { LinkPlugin } from '@lexical/react/LexicalLinkPlugin';
 import { OnChangePlugin } from '@lexical/react/LexicalOnChangePlugin';
 import { RichTextPlugin } from '@lexical/react/LexicalRichTextPlugin';
 import { EditorState } from 'lexical';
-
 import { useEffect, useState } from 'react';
+
 import ToolbarPlugin from './ToolbarPlugin';
 import TreeViewPlugin from './TreeViewPlugin';
 
@@ -66,7 +66,7 @@ const ExampleTheme = {
   },
 };
 
-const placeholder = 'Enter some rich text...';
+const placeholder = '내용을 입력하세요';
 
 const editorConfig = {
   namespace: 'React.js Demo',
@@ -97,7 +97,6 @@ export default function BlogPostEditor({
 }: BlogPostEditorProps) {
   const [initialContent, setInitialContent] =
     useState<InitialEditorStateType | null>(null);
-
   const handleChange = (editorState: EditorState) => {
     editorState.read(() => {
       const jsonString = JSON.stringify(editorState);
@@ -105,11 +104,13 @@ export default function BlogPostEditor({
     });
   };
 
-  useEffect(function initLexical() {
-    if (jsonString === '') return;
-    console.log('JSON:', JSON.parse(jsonString));
-    setInitialContent(JSON.parse(jsonString));
-  }, []);
+  useEffect(
+    function initLexical() {
+      if (jsonString === '') return;
+      setInitialContent(JSON.parse(jsonString));
+    },
+    [jsonString],
+  );
 
   return (
     <LexicalComposer

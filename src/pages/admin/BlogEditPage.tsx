@@ -94,6 +94,7 @@ export default function BlogEditPage() {
       isDisplayed: false,
       tagList: selectedTagList.map((tag) => tag.id),
     };
+    //console.log(reqBody.content);
     patchBlogMutation.mutate(reqBody);
 
     navgiate('/admin/blog/list');
@@ -180,7 +181,7 @@ export default function BlogEditPage() {
         alert('이미 존재하는 태그입니다.');
       } else blogTagMutation.mutate(newTag);
     },
-    [blogTagData?.tagDetailInfos],
+    [newTag, blogTagData?.tagDetailInfos],
   );
 
   const getJSONFromLexical = (jsonString: string) => {
@@ -213,7 +214,6 @@ export default function BlogEditPage() {
       // isDisplayed: blogData.blogDetailInfo.isDisplayed!,
       tagList: blogData.tagDetailInfos!,
     });
-    console.log('받은 콘텐츠:', blogData.blogDetailInfo.content);
     setSelectedTagList(blogData.tagDetailInfos!);
   }, [isLoading, blogData]);
 

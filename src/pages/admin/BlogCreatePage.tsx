@@ -51,6 +51,13 @@ const BlogCreatePage = () => {
   const [isTitleValid, setIsTitleValid] = useState(true);
   const [isCategoryValid, setIsCategoryValid] = useState(true);
 
+  const { data: blogTagData } = useBlogTagQuery();
+  const blogTagMutation = usePostBlogTagMutation(function resetTag() {
+    setNewTag('');
+  });
+  const fileMutation = usePostFileMutation();
+  const blogMutation = usePostBlogMutation();
+
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
   };
@@ -147,15 +154,6 @@ const BlogCreatePage = () => {
       tagList: [...prev.tagList, tag.id],
     }));
   };
-
-  const resetTag = () => {
-    setNewTag('');
-  };
-
-  const { data: blogTagData } = useBlogTagQuery();
-  const blogTagMutation = usePostBlogTagMutation(resetTag);
-  const fileMutation = usePostFileMutation();
-  const blogMutation = usePostBlogMutation();
 
   return (
     <div className="mx-auto my-12 w-[36rem]">
