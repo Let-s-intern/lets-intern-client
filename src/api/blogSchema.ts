@@ -100,7 +100,25 @@ export const blogInfoSchema = z.object({
   tagDetailInfos: tagDetailSchema,
 });
 
-export type BlogInfoType = z.infer<typeof blogInfoSchema>;
+export const transformedBlogInfoSchema = blogInfoSchema.transform((data) => {
+  return {
+    blogThumbnailInfo: {
+      ...data.blogThumbnailInfo,
+      displayDate: data.blogThumbnailInfo.displayDate
+        ? dayjs(data.blogThumbnailInfo.displayDate)
+        : null,
+      createDate: data.blogThumbnailInfo.createDate
+        ? dayjs(data.blogThumbnailInfo.createDate)
+        : null,
+      lastModifiedDate: data.blogThumbnailInfo.lastModifiedDate
+        ? dayjs(data.blogThumbnailInfo.lastModifiedDate)
+        : null,
+    },
+    tagDetailInfos: data.tagDetailInfos,
+  };
+});
+
+export type TransformedBlogInfoType = z.infer<typeof transformedBlogInfoSchema>;
 
 export const blogListSchema = z
   .object({
