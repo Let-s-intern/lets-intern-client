@@ -7,7 +7,7 @@ const BlogHashtag = ({
 }) => {
   return (
     <div
-      className="flex items-center justify-center rounded-full bg-[#F3F5FA] px-2.5 py-1 text-xsmall14 text-primary-dark"
+      className="flex cursor-pointer items-center justify-center rounded-full bg-[#F3F5FA] px-2.5 py-1 text-xsmall14 text-primary-dark"
       onClick={onClick}
     >
       #{text}
