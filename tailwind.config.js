@@ -117,7 +117,9 @@ module.exports = {
           'linear-gradient(165deg, #667FFF 10.2%, #4D55F5 80.95%)',
         'gradient-desc':
           'linear-gradient(180deg, rgba(77, 85, 245, 0.00) 0%, rgba(77, 85, 245, 0.70) 100%)',
-        'blog-banner': 'url("../public/images/blog_banner_bg.png")',
+        'blog-banner-sm': 'url("../public/images/blog_banner_bg_sm.png")',
+        'blog-banner-md': 'url("../public/images/blog_banner_bg_md.png")',
+        'blog-banner-lg': 'url("../public/images/blog_banner_bg_lg.png")',
       },
       keyframes: {
         fadeInDown: {
