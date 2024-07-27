@@ -386,7 +386,9 @@ export const getChallengeIdApplications = z
         major: z.string().nullable().optional(),
         couponName: z.string().nullable().optional(),
         totalCost: z.number().nullable().optional(),
+        /** @deprecated */
         isConfirmed: z.boolean().nullable().optional(),
+        isCanceled: z.boolean().nullable().optional(),
         wishJob: z.string().nullable().optional(),
         wishCompany: z.string().nullable().optional(),
         inflowPath: z.string().nullable().optional(),

@@ -52,12 +52,14 @@ const ApplySection = ({ applicationList, refetch }: ApplySectionProps) => {
           {showMore ? '다른 프로그램 둘러보기' : `더보기`}
         </MoreButton>
       ) : (
-        <MoreButton
-          className="border-2 border-primary bg-neutral-100 text-primary-dark"
-          onClick={() => navigate('/program')}
-        >
-          다른 프로그램 둘러보기
-        </MoreButton>
+        applicationList.length > 0 && (
+          <MoreButton
+            className="border-2 border-primary bg-neutral-100 text-primary-dark"
+            onClick={() => navigate('/program')}
+          >
+            다른 프로그램 둘러보기
+          </MoreButton>
+        )
       )}
     </section>
   );

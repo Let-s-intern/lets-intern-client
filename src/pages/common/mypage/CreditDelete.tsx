@@ -43,72 +43,48 @@ const CreditDelete = () => {
       // console.error(error);
     },
   });
+
+  const getRefundPercent = (): number => {
+    const start = dayjs(paymentDetail?.programInfo.startDate);
+    const end = dayjs(paymentDetail?.programInfo.endDate);
+    const now = dayjs();
+    if (now.isBefore(start)) {
+      return 1;
+    }
+
+    const duration = end.diff(start, 'day') + 1;
+    const d3 = start.add(Math.ceil(duration / 3), 'day');
+    const d2 = start.add(Math.ceil(duration / 2), 'day');
+
+    if (now.isBefore(d3)) return 2 / 3;
+    if (now.isBefore(d2)) return 1 / 2;
+    return 0;
+  };
+
   const getTotalRefund = (): number => {
     if (
       paymentDetail?.paymentInfo.finalPrice === 0 ||
       !paymentDetail?.tossInfo?.balanceAmount ||
-      paymentDetail.tossInfo.status !== 'DONE'
+      paymentDetail.tossInfo.status !== 'DONE' ||
+      !paymentDetail.priceInfo.price ||
+      !paymentDetail.priceInfo.discount
     ) {
       return 0;
     }
 
-    if (paymentDetail?.programInfo.programType === 'CHALLENGE') {
-      const start = dayjs(paymentDetail.programInfo.startDate);
-      const end = dayjs(paymentDetail.programInfo.endDate);
-      const now = dayjs();
-      // console.log('----DELETE----');
-      // console.log('start: ', start.format('YYYY-MM-DD HH:mm:ss'));
-      // console.log('end: ', end.format('YYYY-MM-DD HH:mm:ss'));
-      // console.log('now: ', now.format('YYYY-MM-DD HH:mm:ss'));
-      // console.log('now is before start :', now.isBefore(start));
+    const couponPrice = paymentDetail.paymentInfo.couponDiscount || 0;
+    const refundPrice = nearestTen(
+      (paymentDetail.priceInfo.price - paymentDetail.priceInfo.discount) *
+        getRefundPercent() -
+        couponPrice,
+    );
 
-      if (now.isBefore(start)) {
-        return nearestTen(paymentDetail.tossInfo.balanceAmount);
-      }
-
-      const duration = end.diff(start, 'day') + 1;
-      // console.log('duration: ', duration);
-      if (now.isBefore(start.add(Math.ceil(duration / 3), 'day'))) {
-        // console.log(
-        //   '1/3: ',
-        //   start.add(Math.ceil(duration / 3)).format('YYYY-MM-DD HH:mm:ss'),
-        // );
-        return nearestTen((paymentDetail.tossInfo.balanceAmount / 3) * 2);
-      } else if (now.isBefore(start.add(Math.ceil(duration / 2), 'day'))) {
-        // console.log(
-        //   '1/2: ',
-        //   start
-        //     .add(Math.ceil(duration / 2), 'day')
-        //     .format('YYYY-MM-DD HH:mm:ss'),
-        // );
-        return nearestTen(paymentDetail.tossInfo.balanceAmount / 2);
-      } else {
-        return 0;
-      }
-    } else {
-      const start = dayjs(paymentDetail.programInfo.startDate);
-      const now = dayjs();
-
-      if (now.isBefore(start)) {
-        return paymentDetail.tossInfo.balanceAmount;
-      } else {
-        return 0;
-      }
-    }
+    return Math.max(0, refundPrice);
   };
 
   const isPartialRefund = (): boolean => {
-    if (paymentDetail?.programInfo.programType === 'CHALLENGE') {
-      const start = dayjs(paymentDetail.programInfo.startDate);
-      const end = dayjs(paymentDetail.programInfo.endDate);
-      const now = dayjs();
-
-      const duration = end.diff(start, 'day') + 1;
-
-      return (
-        now.isAfter(start) &&
-        now.isBefore(start.add(Math.ceil(duration / 2), 'day'))
-      );
+    if (getRefundPercent() === 66 || getRefundPercent() === 50) {
+      return true;
     }
     return false;
   };
