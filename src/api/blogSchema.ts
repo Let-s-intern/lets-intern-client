@@ -95,14 +95,34 @@ export const blogSchema = z
     };
   });
 
+export const blogInfoSchema = z.object({
+  blogThumbnailInfo: blogThumbnailSchema,
+  tagDetailInfos: tagDetailSchema,
+});
+
+export const transformedBlogInfoSchema = blogInfoSchema.transform((data) => {
+  return {
+    blogThumbnailInfo: {
+      ...data.blogThumbnailInfo,
+      displayDate: data.blogThumbnailInfo.displayDate
+        ? dayjs(data.blogThumbnailInfo.displayDate)
+        : null,
+      createDate: data.blogThumbnailInfo.createDate
+        ? dayjs(data.blogThumbnailInfo.createDate)
+        : null,
+      lastModifiedDate: data.blogThumbnailInfo.lastModifiedDate
+        ? dayjs(data.blogThumbnailInfo.lastModifiedDate)
+        : null,
+    },
+    tagDetailInfos: data.tagDetailInfos,
+  };
+});
+
+export type TransformedBlogInfoType = z.infer<typeof transformedBlogInfoSchema>;
+
 export const blogListSchema = z
   .object({
-    blogInfos: z.array(
-      z.object({
-        blogThumbnailInfo: blogThumbnailSchema,
-        tagDetailInfos: tagDetailSchema,
-      }),
-    ),
+    blogInfos: z.array(blogInfoSchema),
     pageInfo: pageSchema,
   })
   .transform((data) => {

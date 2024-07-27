@@ -1,4 +1,9 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import {
+  useInfiniteQuery,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from '@tanstack/react-query';
 
 import { IPageable } from '../types/interface';
 import axios from '../utils/axios';
@@ -17,8 +22,8 @@ const blogTagQueryKey = 'BlogTagQueryKey';
 
 interface BlogQueryParams {
   pageable: IPageable;
-  type?: string;
-  tagId?: number;
+  type?: string | null;
+  tagId?: number | null;
 }
 
 export const useBlogListQuery = ({
@@ -31,6 +36,33 @@ export const useBlogListQuery = ({
     queryFn: async () => {
       const res = await axios.get(`/blog`, { params: pageable });
       return blogListSchema.parse(res.data.data);
+    },
+  });
+};
+
+export const useInfiniteBlogListQuery = ({
+  type,
+  tagId,
+  pageable,
+}: BlogQueryParams) => {
+  return useInfiniteQuery({
+    queryKey: [blogListQueryKey, pageable, type, tagId],
+    queryFn: async ({ pageParam = pageable }) => {
+      const res = await axios.get('/blog', {
+        params: {
+          ...pageParam,
+          type,
+          tagId,
+        },
+      });
+      return blogListSchema.parse(res.data.data);
+    },
+    initialPageParam: pageable,
+    getNextPageParam: (lastPage) => {
+      return lastPage.pageInfo.totalElements === 0 ||
+        lastPage.pageInfo.totalPages - 1 === lastPage.pageInfo.pageNum
+        ? undefined
+        : { page: lastPage.pageInfo.pageNum + 1, size: pageable.size };
     },
   });
 };
