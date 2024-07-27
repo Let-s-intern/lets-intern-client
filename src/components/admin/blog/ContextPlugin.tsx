@@ -2,20 +2,18 @@ import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext
 import { useEffect } from 'react';
 
 interface ContextPluginProps {
-  editorStateJsonString?: string;
+  editorStateJsonString: string;
 }
 
-const ContextPlugin = ({ editorStateJsonString = '' }: ContextPluginProps) => {
+const ContextPlugin = ({ editorStateJsonString }: ContextPluginProps) => {
   const [editor] = useLexicalComposerContext();
 
-  useEffect(
-    function initLexical() {
-      if (editorStateJsonString === '') return;
-      const editorState = editor.parseEditorState(editorStateJsonString);
-      editor.setEditorState(editorState);
-    },
-    [editorStateJsonString],
-  );
+  useEffect(function initLexical() {
+    if (editorStateJsonString === '') return;
+
+    const editorState = editor.parseEditorState(editorStateJsonString);
+    editor.setEditorState(editorState);
+  }, []);
 
   return null;
 };

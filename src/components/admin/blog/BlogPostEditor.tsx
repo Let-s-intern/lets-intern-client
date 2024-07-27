@@ -15,6 +15,7 @@ import { LinkPlugin } from '@lexical/react/LexicalLinkPlugin';
 import { OnChangePlugin } from '@lexical/react/LexicalOnChangePlugin';
 import { RichTextPlugin } from '@lexical/react/LexicalRichTextPlugin';
 import { EditorState } from 'lexical';
+import { useCallback } from 'react';
 
 import ContextPlugin from './ContextPlugin';
 import ToolbarPlugin from './ToolbarPlugin';
@@ -92,12 +93,12 @@ export default function BlogPostEditor({
   editorStateJsonString = '',
   getJSONFromLexical,
 }: BlogPostEditorProps) {
-  const handleChange = (editorState: EditorState) => {
+  const handleChange = useCallback((editorState: EditorState) => {
     editorState.read(() => {
       const jsonString = JSON.stringify(editorState);
       getJSONFromLexical(jsonString);
     });
-  };
+  }, []);
 
   return (
     <LexicalComposer initialConfig={editorConfig}>

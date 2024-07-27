@@ -19,7 +19,7 @@ import {
   SELECTION_CHANGE_COMMAND,
   UNDO_COMMAND,
 } from 'lexical';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { memo, useCallback, useEffect, useRef, useState } from 'react';
 
 import { getSelectedNode } from '../../../utils/getSelectedNode';
 
@@ -29,7 +29,7 @@ function Divider() {
   return <div className="divider" />;
 }
 
-export default function ToolbarPlugin() {
+const ToolbarPlugin = () => {
   const toolbarRef = useRef(null);
 
   const [editor] = useLexicalComposerContext();
@@ -225,4 +225,6 @@ export default function ToolbarPlugin() {
       </button>
     </div>
   );
-}
+};
+
+export default memo(ToolbarPlugin);
