@@ -63,14 +63,16 @@ export const blogDetailSchema = z.object({
   lastModifiedDate: z.string().nullable().optional(),
 });
 
-export const tagDetailSchema = z.array(
-  z.object({
-    id: z.number(),
-    title: z.string().nullable().optional(),
-    createDate: z.string().nullable().optional(),
-    lastModifiedDate: z.string().nullable().optional(),
-  }),
-);
+export const tagSchema = z.object({
+  id: z.number(),
+  title: z.string().nullable().optional(),
+  createDate: z.string().nullable().optional(),
+  lastModifiedDate: z.string().nullable().optional(),
+});
+
+export type TagType = z.infer<typeof tagSchema>;
+
+export const tagDetailSchema = z.array(tagSchema);
 
 export const blogSchema = z
   .object({
