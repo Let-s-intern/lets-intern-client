@@ -224,7 +224,7 @@ export default function BlogEditPage() {
       </header>
       {isLoading ? (
         <span>로딩 중...</span>
-      ) : (
+      ) : blogData ? (
         <>
           <main>
             <form className="mt-4 flex flex-col gap-4" onSubmit={handleSubmit}>
@@ -287,7 +287,7 @@ export default function BlogEditPage() {
                 onChange={handleChange}
               />
               <BlogPostEditor
-                jsonString={value.content}
+                editorStateJsonString={blogData.blogDetailInfo.content!}
                 getJSONFromLexical={getJSONFromLexical}
               />
               <TextField
@@ -345,6 +345,8 @@ export default function BlogEditPage() {
             </div>
           </footer>
         </>
+      ) : (
+        <span>블로그를 불러오지 못했습니다.</span>
       )}
     </div>
   );
