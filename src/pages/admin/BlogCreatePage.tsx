@@ -46,7 +46,7 @@ const BlogCreatePage = () => {
 
   const [value, setValue] = useState<PostBlogReqBody>(initialBlog);
   const [newTag, setNewTag] = useState('');
-  const [selectedTagList, setNewTagList] = useState<TagDetail[]>([]);
+  const [selectedTagList, setSelectedTagList] = useState<TagDetail[]>([]);
   const [file, setFile] = useState<File | null>(null);
   const [isTitleValid, setIsTitleValid] = useState(true);
   const [isCategoryValid, setIsCategoryValid] = useState(true);
@@ -118,7 +118,7 @@ const BlogCreatePage = () => {
 
   const deleteTag = (id: number) => {
     const i = selectedTagList.findIndex((tag) => tag.id === id);
-    setNewTagList((prev) => [...prev.slice(0, i), ...prev.slice(i + 1)]);
+    setSelectedTagList((prev) => [...prev.slice(0, i), ...prev.slice(i + 1)]);
     const j = value.tagList.findIndex((tag) => tag === id);
     setValue((prev) => ({
       ...prev,
@@ -148,7 +148,7 @@ const BlogCreatePage = () => {
 
   const selectTag = (tag: TagDetail) => {
     if (value.tagList.includes(tag.id)) return;
-    setNewTagList((prev) => [...prev, { id: tag.id, title: tag.title }]);
+    setSelectedTagList((prev) => [...prev, { id: tag.id, title: tag.title }]);
     setValue((prev) => ({
       ...prev,
       tagList: [...prev.tagList, tag.id],
