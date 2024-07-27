@@ -28,24 +28,8 @@ const Footer = () => {
         <img className="w-[7.5rem]" src="/logo/logo.svg" alt="Logo" />
         <div className="flex flex-col gap-8">
           <div className="flex w-80 items-center gap-8">
-            <MenuLink to="/">홈</MenuLink>
+            <MenuLink to="/about">렛츠커리어 스토리</MenuLink>
             <MenuLink to="/program">프로그램</MenuLink>
-            <MenuLink
-              to="https://letscareer.oopy.io"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="notice_cta"
-            >
-              공지사항
-            </MenuLink>
-            <MenuLink
-              to="https://letscareer.oopy.io"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="q&a_cta"
-            >
-              자주 묻는 질문
-            </MenuLink>
             {/* <MenuLink to="/blog">블로그</MenuLink> */}
           </div>
         </div>
