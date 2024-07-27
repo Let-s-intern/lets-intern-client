@@ -97,6 +97,7 @@ export default function BlogPostEditor({
 }: BlogPostEditorProps) {
   const [initialContent, setInitialContent] =
     useState<InitialEditorStateType | null>(null);
+
   const handleChange = (editorState: EditorState) => {
     editorState.read(() => {
       const jsonString = JSON.stringify(editorState);

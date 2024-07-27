@@ -5,6 +5,7 @@
  * LICENSE file in the root directory of this source tree.
  *
  */
+import { $isLinkNode } from '@lexical/link';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { mergeRegister } from '@lexical/utils';
 import {
@@ -20,6 +21,8 @@ import {
 } from 'lexical';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
+import { getSelectedNode } from '../../../utils/getSelectedNode';
+
 const LowPriority = 1;
 
 function Divider() {
@@ -27,8 +30,10 @@ function Divider() {
 }
 
 export default function ToolbarPlugin() {
-  const [editor] = useLexicalComposerContext();
   const toolbarRef = useRef(null);
+
+  const [editor] = useLexicalComposerContext();
+
   const [canUndo, setCanUndo] = useState(false);
   const [canRedo, setCanRedo] = useState(false);
   const [isBold, setIsBold] = useState(false);
@@ -45,8 +50,29 @@ export default function ToolbarPlugin() {
       setIsItalic(selection.hasFormat('italic'));
       setIsUnderline(selection.hasFormat('underline'));
       setIsStrikethrough(selection.hasFormat('strikethrough'));
+
+      // Update links
+      const node = getSelectedNode(selection);
+      const parent = node.getParent();
+      if ($isLinkNode(parent) || $isLinkNode(node)) {
+        setIsLink(true);
+      } else {
+        setIsLink(false);
+      }
     }
   }, []);
+
+  const insertLink = useCallback(() => {
+    if (!isLink) {
+      //setIsLinkEditMode(true);
+      //editor.dispatchCommand(TOGGLE_LINK_COMMAND, sanitizeUrl('https://'));
+      console.log('Insert link');
+    } else {
+      //setIsLinkEditMode(false);
+      //editor.dispatchCommand(TOGGLE_LINK_COMMAND, null);
+      console.log('remove link');
+    }
+  }, [editor, isLink]);
 
   useEffect(() => {
     return mergeRegister(
@@ -148,7 +174,7 @@ export default function ToolbarPlugin() {
         <i className="format strikethrough" />
       </button>
       <button
-        onClick={() => console.log('Insert link')}
+        onClick={insertLink}
         className={'toolbar-item spaced ' + (isLink ? 'active' : '')}
         aria-label="Insert link"
         title="Insert link"
