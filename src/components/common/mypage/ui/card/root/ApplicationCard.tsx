@@ -56,16 +56,16 @@ const ApplicationCard = ({
           />
         </Link>
         <div className="flex flex-1 flex-col justify-between gap-2 py-2">
-          <div className="flex justify-between">
+          <div className="flex w-full flex-col gap-y-0.5">
             <h2 className="font-semibold">
               <Link to={programLink} className="hover:underline">
                 {application.programTitle}
               </Link>
             </h2>
+            <p className="text-sm text-neutral-30">
+              {application.programShortDesc}
+            </p>
           </div>
-          <p className="text-sm text-neutral-30">
-            {application.programShortDesc}
-          </p>
           <div className="flex items-center gap-1.5 md:justify-start">
             <span className="text-xs text-neutral-0">진행기간</span>
             <span className="text-xs font-medium text-primary-dark">
