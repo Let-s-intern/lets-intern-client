@@ -9,9 +9,9 @@ import TableHead, {
 } from '../../../components/admin/program/program-user/table-content/TableHead';
 import Table from '../../../components/admin/ui/table/regacy/Table';
 import {
+  adminMentorInfoSchema,
   ChallengeApplication,
   challengeApplicationsSchema,
-  getLiveIdSchema,
   LiveApplication,
   liveApplicationsSchema,
 } from '../../../schema';
@@ -38,7 +38,13 @@ const ProgramUsers = () => {
     queryFn: async () => {
       const res = await axios.get(`/challenge/${programId}/applications`);
 
-      return challengeApplicationsSchema.parse(res.data.data).applicationList;
+      const list = challengeApplicationsSchema.parse(
+        res.data.data,
+      ).applicationList;
+      list.sort((a, b) => {
+        return a.isCanceled === b.isCanceled ? 0 : a.isCanceled ? -1 : 1;
+      });
+      return list;
     },
   });
 
@@ -48,23 +54,15 @@ const ProgramUsers = () => {
       queryKey: ['live', programId, 'applications'],
       queryFn: async () => {
         const res = await axios.get(`/live/${programId}/applications`);
-        return liveApplicationsSchema.parse(res.data.data).applicationList;
+        const list = liveApplicationsSchema.parse(
+          res.data.data,
+        ).applicationList;
+        list.sort((a, b) => {
+          return a.isCanceled === b.isCanceled ? 0 : a.isCanceled ? -1 : 1;
+        });
+        return list;
       },
     });
-
-  const { data: liveDetail } = useQuery({
-    enabled: programType === 'LIVE',
-    queryKey: ['live', programId],
-    queryFn: async () => {
-      const res = await axios.get(`/live/${programId}`);
-      return getLiveIdSchema.parse(res.data.data);
-    },
-  });
-
-  // TODO: 삭제
-  useEffect(() => {
-    console.log('liveDetail', liveDetail);
-  }, [liveDetail]);
 
   const applications = useMemo<
     (ChallengeApplication | LiveApplication)[]
@@ -93,9 +91,10 @@ const ProgramUsers = () => {
             : 0,
       );
     }
+
     if (filter.isFeeConfirmed !== null) {
       result = result.filter(
-        (application) => application.isConfirmed === filter.isFeeConfirmed,
+        (application) => application.isCanceled === filter.isFeeConfirmed,
       );
     }
     return result;
@@ -103,12 +102,21 @@ const ProgramUsers = () => {
 
   const { data: programTitleData } = useQuery({
     queryKey: [programType.toLowerCase(), programId, 'title'],
-    queryFn: async ({ queryKey }) => {
+    queryFn: async () => {
       const res = await axios.get(
-        `/${queryKey[0]}/${queryKey[1]}/${queryKey[2]}`,
+        `/${programType.toLowerCase()}/${programId}/title`,
       );
 
       return res.data;
+    },
+  });
+
+  const { data: mentorInfo = {} } = useQuery({
+    enabled: programType === 'LIVE' && !!programId,
+    queryKey: [programType.toLowerCase(), programId, 'mentorPassword'],
+    queryFn: async () => {
+      const res = await axios.get(`/live/${programId}/mentor`);
+      return adminMentorInfoSchema.parse(res.data.data);
     },
   });
 
@@ -129,7 +137,7 @@ const ProgramUsers = () => {
             onClick={() => {
               navigator.clipboard
                 .writeText(
-                  `${window.location.protocol}//${window.location.host}/live/${programId}/mentor/notification/before?code=${liveDetail?.mentorPassword}`,
+                  `${window.location.origin}/live/${programId}/mentor/notification/before?code=${mentorInfo?.mentorPassword}`,
                 )
                 .then(() => {
                   alert('링크가 클립보드에 복사되었습니다.');
@@ -146,7 +154,7 @@ const ProgramUsers = () => {
             onClick={() => {
               navigator.clipboard
                 .writeText(
-                  `${window.location.protocol}//${window.location.host}/live/${programId}/mentor/notification/after?code=${liveDetail?.mentorPassword}`,
+                  `${window.location.origin}/live/${programId}/mentor/notification/after?code=${mentorInfo?.mentorPassword}`,
                 )
                 .then(() => {
                   alert('링크가 클립보드에 복사되었습니다.');

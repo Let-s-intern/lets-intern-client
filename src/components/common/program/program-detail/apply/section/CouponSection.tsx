@@ -1,21 +1,36 @@
 import { useState } from 'react';
 
 import { isAxiosError } from 'axios';
+import { ICouponForm } from '../../../../../../types/interface';
 import axios from '../../../../../../utils/axios';
 import Input from '../../../../ui/input/Input';
-import { PayInfo } from '../../section/ApplySection';
 
 interface CouponSectionProps {
-  setPayInfo: (payInfo: (prevPayInfo: PayInfo) => PayInfo) => void;
+  setCoupon: (
+    coupon: ((prevCoupon: ICouponForm) => ICouponForm) | ICouponForm,
+  ) => void;
   programType: string;
 }
 
-const CouponSection = ({ setPayInfo, programType }: CouponSectionProps) => {
+const CouponSection = ({ setCoupon, programType }: CouponSectionProps) => {
   const [code, setCode] = useState('');
   const [validationMsg, setValidationMsg] = useState('');
   const [successMsg, setSuccessMsg] = useState('');
+  const [isCoupon, setIsCoupon] = useState(false);
 
   const clickApply = async () => {
+    if (isCoupon) {
+      setCoupon({
+        id: null,
+        price: 0,
+      });
+      setCode('');
+      setIsCoupon(false);
+      setSuccessMsg('');
+      setValidationMsg('');
+      return;
+    }
+
     if (code === '') return;
     await fetchCouponAvailability();
   };
@@ -24,27 +39,28 @@ const CouponSection = ({ setPayInfo, programType }: CouponSectionProps) => {
     try {
       const res = await axios.get(`/coupon`, {
         params: {
-          code: code,
+          code,
           programType: programType.toUpperCase(),
         },
       });
-      setPayInfo((prevPayInfo: PayInfo) => ({
-        ...prevPayInfo,
-        couponId: res.data.data.couponId,
-        couponPrice: res.data.data.discount,
-      }));
+      setCoupon({
+        id: res.data.data.couponId,
+        price: res.data.data.discount,
+      });
       setValidationMsg('');
       setSuccessMsg('쿠폰이 등록되었습니다.');
+      setIsCoupon(true);
     } catch (error) {
       if (isAxiosError(error)) {
         setSuccessMsg('');
         setValidationMsg(error.response?.data.message);
       }
-      setPayInfo((prevPayInfo: PayInfo) => ({
-        ...prevPayInfo,
+      setCoupon((prevCoupon: ICouponForm) => ({
+        ...prevCoupon,
         couponId: null,
         couponPrice: 0,
       }));
+      setIsCoupon(false);
     }
   };
 
@@ -55,20 +71,19 @@ const CouponSection = ({ setPayInfo, programType }: CouponSectionProps) => {
 
   return (
     <div className="flex w-full flex-col gap-3">
-      <div className="font-semibold text-neutral-0">쿠폰 등록</div>
       <div className="flex gap-2.5">
         <Input
           className="w-full"
           type="text"
-          placeholder="쿠폰 코드 입력"
+          placeholder="쿠폰 번호를 입력해주세요."
           value={code}
           onChange={handleCodeChange}
         />
         <button
-          className="flex shrink-0 items-center justify-center rounded-sm bg-primary px-4 py-1.5 text-sm font-medium text-neutral-100"
+          className={`flex shrink-0 items-center justify-center rounded-sm ${isCoupon ? 'border-2 border-primary bg-neutral-100 text-primary' : 'bg-primary text-neutral-100'} px-4 py-1.5 text-sm font-medium`}
           onClick={clickApply}
         >
-          쿠폰 등록
+          {isCoupon ? '쿠폰 취소' : '쿠폰 적용'}
         </button>
       </div>
       {validationMsg && (

@@ -1,12 +1,12 @@
 import { Link } from 'react-router-dom';
 
 import { useState } from 'react';
-import { ApplicationType } from '../../../../../pages/common/mypage/Application';
+import { MypageApplication } from '../../../../../api/application';
 import MoreButton from '../../ui/button/MoreButton';
 import ApplicationCard from '../../ui/card/root/ApplicationCard';
 
 interface WaitingSectionProps {
-  applicationList: ApplicationType[];
+  applicationList: MypageApplication[];
 }
 
 const WaitingSection = ({ applicationList }: WaitingSectionProps) => {
@@ -24,9 +24,9 @@ const WaitingSection = ({ applicationList }: WaitingSectionProps) => {
           </p>
           <Link
             to="/program"
-            className="rounded-sm border-2 border-primary-xlight bg-white px-5 py-2 font-medium text-neutral-35"
+            className="other_program rounded-sm border-2 border-primary-xlight bg-white px-5 py-2 font-medium text-neutral-35"
           >
-            프로그램 신청하기
+            다른 프로그램 둘러보기
           </Link>
         </div>
       ) : (

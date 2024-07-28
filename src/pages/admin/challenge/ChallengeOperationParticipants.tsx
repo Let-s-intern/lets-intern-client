@@ -73,6 +73,13 @@ const columns: GridColDef<Participant>[] = [
   { field: 'name', headerName: '이름', width: 100 },
   { field: 'email', headerName: '이메일', width: 200 },
   { field: 'phoneNum', headerName: '전화번호', width: 150 },
+  {
+    field: 'isCanceled',
+    headerName: '환불',
+    width: 50,
+    valueFormatter: (value) =>
+      typeof value === 'boolean' ? (value ? 'Y' : 'N') : '',
+  },
   { field: 'inflowPath', headerName: '유입경로', width: 150 },
   { field: 'university', headerName: '학교', width: 150 },
   {
