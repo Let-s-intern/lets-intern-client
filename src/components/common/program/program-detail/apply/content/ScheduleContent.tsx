@@ -1,4 +1,3 @@
-import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import useAuthStore from '../../../../../../store/useAuthStore';
 import { ProgramType } from '../../../../../../types/common';
@@ -24,14 +23,8 @@ const ScheduleContent = ({
   isApplied,
 }: ScheduleContentProps) => {
   const { isLoggedIn } = useAuthStore();
-  const [isInstagram, setIsInstagram] = useState(false);
   const navigate = useNavigate();
-
-  useEffect(() => {
-    if (navigator.userAgent.includes('Instagram')) {
-      setIsInstagram(true);
-    }
-  }, []);
+  const isInstagram = navigator.userAgent.includes('Instagram');
 
   const handleNextButtonClick = () => {
     if (isInstagram) {
