@@ -30,8 +30,8 @@ const PrivacyPolicyModal = ({
             개인정보 수집 및 이용 동의서
           </h2>
           <p className="my-4 w-full">
-            아이엔지는 렛츠커리어 서비스 회원가입, 고객상담, 고지사항 전달
-            등을 위해 아래와 같이 개인정보를 수집*이용합니다.
+            아이엔지는 렛츠커리어 서비스 회원가입, 고객상담, 고지사항 전달 등을
+            위해 아래와 같이 개인정보를 수집*이용합니다.
           </p>
           <table className="w-full table-fixed border-collapse text-sm">
             <thead>
@@ -79,7 +79,7 @@ const PrivacyPolicyModal = ({
               onClick={(e) => {
                 e.stopPropagation();
                 window.open(
-                  'https://letsintern.notion.site/4e21a3c6f42a409da877a7b5d926f158',
+                  'https://letsintern.notion.site/c3af485bfced49ab9601f2d7bf07657d?pvs=4',
                   '_blank',
                 );
               }}

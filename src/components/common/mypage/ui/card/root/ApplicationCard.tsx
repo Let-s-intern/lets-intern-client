@@ -1,15 +1,14 @@
 import clsx from 'clsx';
+import dayjs from 'dayjs';
 
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ApplicationType } from '../../../../../../pages/common/mypage/Application';
-import ApplicationCardButton from '../../button/ApplicationCardButton';
+import { MypageApplication } from '../../../../../../api/application';
 import LinkButton from '../../button/LinkButton';
 import PriceInfoModal from '../../modal/PriceInfoModal';
-import DeleteMenu from '../menu/DeleteMenu';
 
 interface ApplicationCardProps {
-  application: ApplicationType;
+  application: MypageApplication;
   hasReviewButton?: boolean;
   reviewType?: 'CREATE' | 'EDIT';
   grayscale?: boolean;
@@ -31,22 +30,8 @@ const ApplicationCard = ({
     isOpen: false,
     paymentId: 0,
   });
-  const formatDateString = (dateString: string) => {
-    const date = new Date(dateString);
-    const year = date.getFullYear().toString().slice(-2); // 두 자리 형식으로 연도 추출
-    const month = (date.getMonth() + 1).toString().padStart(2, '0');
-    const day = date.getDate().toString().padStart(2, '0');
 
-    return `${year}.${month}.${day}`;
-  };
-
-  const checkChallengeStarted = (dateString: string) => {
-    const date = new Date(dateString);
-    const currentDate = new Date();
-    return date < currentDate;
-  };
-
-  const programLink = `/program/${application.programType.toLowerCase()}/${application.programId}`;
+  const programLink = `/program/${application.programType?.toLowerCase()}/${application.programId}`;
 
   return (
     <div
@@ -59,56 +44,40 @@ const ApplicationCard = ({
         className={clsx(
           'flex w-full flex-1 flex-col gap-2 md:flex-row md:gap-4',
           {
-            grayscale: grayscale,
+            grayscale,
           },
         )}
       >
         <Link to={programLink}>
           <img
-            src={application.programThumbnail}
+            src={application.programThumbnail ?? ''}
             alt="프로그램 썸네일"
             className="h-[7.5rem] w-full bg-primary-light object-cover md:h-[9rem] md:w-[11rem] md:rounded-xs"
           />
         </Link>
-        <div className="flex flex-1 flex-col gap-2 py-2">
-          <div className="flex justify-between">
+        <div className="flex flex-1 flex-col justify-between gap-2 py-2">
+          <div className="flex w-full flex-col gap-y-0.5">
             <h2 className="font-semibold">
               <Link to={programLink} className="hover:underline">
                 {application.programTitle}
               </Link>
             </h2>
-            {showDeleteMenu && (
-              <DeleteMenu application={application} refetch={refetch} />
-            )}
+            <p className="text-sm text-neutral-30">
+              {application.programShortDesc}
+            </p>
           </div>
-          <p className="text-sm text-neutral-30">
-            {application.programShortDesc}
-          </p>
-          <div className="flex items-center gap-1.5 md:justify-end">
+          <div className="flex items-center gap-1.5 md:justify-start">
             <span className="text-xs text-neutral-0">진행기간</span>
             <span className="text-xs font-medium text-primary-dark">
-              {formatDateString(application.programStartDate)} ~{' '}
-              {formatDateString(application.programEndDate)}
+              {application.programStartDate?.format('YY.MM.DD')} ~{' '}
+              {application.programEndDate?.format('YY.MM.DD')}
             </span>
           </div>
         </div>
       </div>
-      {application.status === 'WAITING' && (
-        <ApplicationCardButton
-          onClick={() => {
-            setPriceInfoOpen({
-              isOpen: true,
-              paymentId: application.paymentId || 0,
-            });
-          }}
-          className="payment_button"
-        >
-          결제 정보 확인
-        </ApplicationCardButton>
-      )}
       {application.programType === 'CHALLENGE' &&
         showChallengeButton &&
-        checkChallengeStarted(application.programStartDate) && (
+        application.programStartDate?.isBefore(dayjs()) && (
           <LinkButton
             to={`/challenge/${application.programId}`}
             target="_blank"

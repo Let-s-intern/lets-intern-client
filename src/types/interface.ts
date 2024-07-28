@@ -1,16 +1,14 @@
-import { TABLE_CONTENT, TABLE_STATUS } from '../utils/convert';
+import { TABLE_STATUS } from '../utils/convert';
 
 export * from './Banner.interface';
 export * from './Mission.interface';
 export * from './Program.interface';
 
 export type StatusKey = keyof typeof TABLE_STATUS;
-type ContentTypeKey = keyof typeof TABLE_CONTENT;
 
-export interface IAction {
-  type: string;
+export interface IApplyDrawerAction {
+  type: 'toggle' | 'close' | 'open';
 }
-
 
 export interface IPageable {
   page: number;
@@ -26,4 +24,9 @@ export interface IPageInfo {
 export interface ErrorResonse {
   status: number;
   message: string;
+}
+
+export interface ICouponForm {
+  id: number | null;
+  price: number;
 }

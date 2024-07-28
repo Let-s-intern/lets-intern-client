@@ -181,29 +181,15 @@ function Toolbar({ onMakeRefundedClick }: ToolbarPropsOverrides) {
 const ChallengeOperationPayback = () => {
   const params = useParams();
   const challengeId = params.programId;
-  const [pageNum, setPageNum] = useState(0);
-  const [pageInfo, setPageInfo] = useState<{
-    pageNum: number;
-    pageSize: number;
-    totalElements: number;
-    totalPages: number;
-  } | null>(null);
 
   const { data: paybackRes, refetch } = useQuery({
-    queryKey: [
-      'admin',
-      'challenge',
-      challengeId,
-      'participants',
-      { page: pageNum, size: 10 },
-    ],
+    queryKey: ['admin', 'challenge', challengeId, 'participants'],
     enabled: Boolean(challengeId),
     queryFn: async () => {
       const res = await axios.get(
         `/challenge/${challengeId}/applications/payback`,
-        { params: { page: pageNum, size: 10 } },
+        { params: { page: 0, size: 1000 } },
       );
-      setPageInfo(res.data.data.pageInfo);
       return getChallengeIdApplicationsPayback.parse(res.data.data);
     },
   });
@@ -336,27 +322,6 @@ const ChallengeOperationPayback = () => {
         onProcessRowUpdateError={console.error}
       />
 
-      <div className="flex items-center justify-center">
-        <div className="mt-10 flex items-center gap-3 justify-self-center rounded-full border px-3 py-1 text-sm">
-          {pageInfo &&
-            Array.from(
-              { length: pageInfo.totalPages },
-              (_, index) => index + 1,
-            ).map((pageIdx) => (
-              <span
-                key={pageIdx}
-                className={`cursor-pointer ${
-                  pageIdx - 1 === pageInfo.pageNum ? 'font-bold' : ''
-                }`}
-                onClick={() => {
-                  setPageNum(pageIdx);
-                }}
-              >
-                {pageIdx}
-              </span>
-            ))}
-        </div>
-      </div>
       <Snackbar
         anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
         open={snackbar.open}

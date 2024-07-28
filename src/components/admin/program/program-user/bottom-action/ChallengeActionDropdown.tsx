@@ -81,9 +81,7 @@ const ChallengeActionDropdown = ({
 
   const downloadConfirmedEmailList = () => {
     const subject = '참여 확정 공지 대상자 이메일 내용';
-    const emailList = applications
-      .filter((application) => application.isConfirmed)
-      .map((application) => application.email);
+    const emailList = applications.map((application) => application.email);
     const emailContent = emailList.join('\n');
     downloadFile(subject + '.txt', emailContent);
   };

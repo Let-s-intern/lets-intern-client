@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import {
   IProgram,
   ProgramClassificationKey,
-} from '../../../../../interfaces/interface';
+} from '../../../../../types/interface';
 import axios from '../../../../../utils/axios';
 import {
   PROGRAM_CLASSIFICATION,
@@ -86,7 +86,7 @@ const ProgramCard = ({ program }: ProgramCardProps) => {
                 program.programInfo.programStatusType ===
                 PROGRAM_STATUS_KEY.POST,
             },
-            'text-1-semibold max-h-[52px]',
+            'text-1-semibold',
           )}
         >
           {program.programInfo.title}

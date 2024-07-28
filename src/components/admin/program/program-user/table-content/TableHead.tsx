@@ -23,18 +23,12 @@ const TableHead = ({ filter, setFilter, programType }: UserTableHeadProps) => {
     }
   };
 
-  const handleIsFeeConfirmedHeadClick = () => {
-    if (filter.isFeeConfirmed) {
-      setFilter({ ...filter, isFeeConfirmed: false });
-    } else if (filter.isFeeConfirmed === false) {
-      setFilter({ ...filter, isFeeConfirmed: null });
-    } else if (filter.isFeeConfirmed === null) {
-      setFilter({ ...filter, isFeeConfirmed: true });
-    }
-  };
   return (
     <thead>
       <tr>
+        <TH>
+          주문번호
+        </TH>
         <TH inOrder={filter.name} onClick={handleNameHeadClick}>
           이름
         </TH>
@@ -50,13 +44,7 @@ const TableHead = ({ filter, setFilter, programType }: UserTableHeadProps) => {
           </>
         )}
         <TH>쿠폰명</TH>
-        <TH>입금예정금액</TH>
-        <TH
-          inBoolFilter={filter.isFeeConfirmed}
-          onClick={handleIsFeeConfirmedHeadClick}
-        >
-          입금여부
-        </TH>
+        <TH>결제금액</TH>
         <TH>환불여부</TH>
         <TH>신청일자</TH>
       </tr>

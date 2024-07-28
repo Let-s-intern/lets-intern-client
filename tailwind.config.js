@@ -5,6 +5,19 @@ module.exports = {
   content: ['./src/**/*.{js,jsx,ts,tsx}'],
   theme: {
     extend: {
+      fontSize: {
+        xxlarge36: ['2.25rem', { lineHeight: '3rem' }],
+        xxlarge32: ['2rem', { lineHeight: '2.625rem' }],
+        xlarge28: ['1.75rem', { lineHeight: '2.375rem' }],
+        large26: ['1.625rem', { lineHeight: '2.125rem' }],
+        medium24: ['1.5rem', { lineHeight: '2rem' }],
+        medium22: ['1.375rem', { lineHeight: '1.875rem' }],
+        small20: ['1.25rem', { lineHeight: '1.75rem' }],
+        small18: ['1.125rem', { lineHeight: '1.625rem' }],
+        xsmall16: ['1rem', { lineHeight: '1.5rem' }],
+        xsmall14: ['0.875rem', { lineHeight: '1.25rem' }],
+        xxsmall12: ['0.75rem', { lineHeight: '1rem' }],
+      },
       screens: {
         xs: '390px',
         sm: '640px',

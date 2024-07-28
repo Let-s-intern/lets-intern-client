@@ -3,14 +3,13 @@ import clsx from 'clsx';
 import { useEffect, useRef, useState } from 'react';
 import { FiMinusCircle } from 'react-icons/fi';
 import { MdMoreVert } from 'react-icons/md';
-
-import { ApplicationType } from '../../../../../../pages/common/mypage/Application';
+import { MypageApplication } from '../../../../../../api/application';
 import axios from '../../../../../../utils/axios';
 import AlertModal from '../../../../../ui/alert/AlertModal';
 
 interface DeleteMenuProps {
   className?: string;
-  application: ApplicationType;
+  application: MypageApplication;
   refetch?: () => void;
 }
 
@@ -25,7 +24,7 @@ const DeleteMenu = ({ className, application, refetch }: DeleteMenuProps) => {
   const deleteApplication = useMutation({
     mutationFn: async () => {
       const res = await axios.delete(`/application/${application.id}`, {
-        params: { type: application.programType.toUpperCase() },
+        params: { type: application.programType?.toUpperCase() },
       });
       return res.data;
     },

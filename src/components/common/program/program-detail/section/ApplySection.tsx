@@ -1,23 +1,30 @@
-import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { useMemo, useState } from 'react';
+import { Dayjs } from 'dayjs';
+import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
-  PostApplicationInterface,
-  usePostApplicationMutation,
+  ProgramApplicationFormInfo,
+  useProgramApplicationQuery,
 } from '../../../../../api/application';
-import { ProgramType } from '../../../../../pages/common/program/ProgramDetail';
-import axios from '../../../../../utils/axios';
-import CautionContent from '../apply/content/CautionContent';
+import { useProgramQuery } from '../../../../../api/program';
+import { getPaymentSearchParams } from '../../../../../data/getPaymentSearchParams';
+import useRunOnce from '../../../../../hooks/useRunOnce';
+import { AccountType } from '../../../../../schema';
+import { ProgramType } from '../../../../../types/common';
+import { ICouponForm } from '../../../../../types/interface';
+import {
+  generateRandomNumber,
+  generateRandomString,
+} from '../../../../../utils/random';
 import ChoicePayPlanContent from '../apply/content/ChoicePayPlanContent';
 import InputContent from '../apply/content/InputContent';
 import OverviewContent from '../apply/content/OverviewContent';
 import PayContent from '../apply/content/PayContent';
 
 export interface ProgramDate {
-  deadline: string;
-  startDate: string;
-  endDate: string;
-  beginning: string;
+  deadline: Dayjs | null;
+  startDate: Dayjs | null;
+  endDate: Dayjs | null;
+  beginning: Dayjs | null;
 }
 
 export interface UserInfo {
@@ -26,43 +33,76 @@ export interface UserInfo {
   phoneNumber: string;
   contactEmail: string;
   question: string;
+  initialized?: boolean;
 }
 
 export interface PayInfo {
   priceId: number;
-  couponId: null | number;
   price: number;
   discount: number;
-  couponPrice: number;
   accountNumber: string;
   deadline: string;
-  accountType: string;
-  livePriceType: string;
-  challengePriceType: string;
+  accountType?: AccountType | null;
+  challengePriceType: string | undefined;
+  livePriceType: string | undefined;
 }
 
 interface ApplySectionProps {
   programType: ProgramType;
   programId: number;
   programTitle: string;
-  toggleApplyModal: () => void;
 }
+
+// TODO: 다른 곳으로 옮기기
+export const getPayInfo = (
+  application: ProgramApplicationFormInfo,
+): null | {
+  priceId: number;
+  price: number;
+  discount: number;
+  accountNumber: string;
+  deadline: string;
+  accountType?: AccountType | null;
+  challengePriceType: string | undefined;
+  livePriceType: string | undefined;
+} => {
+  const item = application.priceList?.[0];
+  if (item) {
+    return {
+      priceId: item.priceId ? item.priceId : -1,
+      price: item.price ? item.price : 0,
+      discount: item.discount ? item.discount : 0,
+      accountNumber: item.accountNumber ? item.accountNumber : '',
+      deadline: item.deadline ? item.deadline : '',
+      accountType: item.accountType ? item.accountType : null,
+      challengePriceType: item.challengePriceType,
+      livePriceType: undefined,
+    };
+  }
+
+  if (application.price) {
+    return {
+      priceId: application.price.priceId ? application.price.priceId : -1,
+      price: application.price.price ? application.price.price : 0,
+      discount: application.price.discount ? application.price.discount : 0,
+      accountNumber: application.price.accountNumber ?? '',
+      deadline: application.price.deadline ?? '',
+      accountType: application.price.accountType,
+      challengePriceType: undefined,
+      livePriceType: application.price.livePriceType,
+    };
+  }
+
+  return null;
+};
 
 const ApplySection = ({
   programType,
   programId,
   programTitle,
-  toggleApplyModal,
 }: ApplySectionProps) => {
-  const queryClient = useQueryClient();
   const navigate = useNavigate();
   const [contentIndex, setContentIndex] = useState(0);
-  const [programDate, setProgramDate] = useState<ProgramDate>({
-    deadline: '',
-    startDate: '',
-    endDate: '',
-    beginning: '',
-  });
   const [userInfo, setUserInfo] = useState<UserInfo>({
     name: '',
     email: '',
@@ -70,160 +110,170 @@ const ApplySection = ({
     contactEmail: '',
     question: '',
   });
-  const [criticalNotice, setCriticalNotice] = useState<string>('');
-  const [priceId, setPriceId] = useState<number>(0);
-  const [payInfo, setPayInfo] = useState<PayInfo>({
-    priceId: 0,
-    couponId: null,
+
+  const [coupon, setCoupon] = useState<ICouponForm>({
+    id: null,
     price: 0,
-    discount: 0,
-    couponPrice: 0,
-    accountNumber: '',
-    deadline: '',
-    accountType: '',
-    livePriceType: '',
-    challengePriceType: '',
-  });
-  const [isCautionChecked, setIsCautionChecked] = useState<boolean>(false);
-  const [isApplied, setIsApplied] = useState<boolean>(false);
-
-  useQuery({
-    queryKey: [programType, programId, 'application'],
-    queryFn: async () => {
-      const res = await axios.get(`/${programType}/${programId}/application`);
-      const data = res.data.data;
-      setUserInfo({
-        name: data.name,
-        email: data.email,
-        phoneNumber: data.phoneNumber,
-        contactEmail: data.contactEmail || '',
-        question: '',
-      });
-      setCriticalNotice(data.criticalNotice);
-      setIsApplied(data.applied);
-      if (programType === 'challenge') {
-        setPriceId(data.priceList[0].priceId);
-        setPayInfo({
-          priceId: data.priceList[0].priceId,
-          couponId: null,
-          price: data.priceList[0].price,
-          discount: data.priceList[0].discount,
-          couponPrice: 0,
-          accountNumber: data.priceList[0].accountNumber,
-          deadline: data.priceList[0].deadline,
-          accountType: data.priceList[0].accountType,
-          livePriceType: data.priceList[0].livePriceType,
-          challengePriceType: data.priceList[0].challengePriceType,
-        });
-      } else {
-        setIsCautionChecked(true);
-        setPriceId(data.price.priceId);
-        setPayInfo({
-          priceId: data.price.priceId,
-          couponId: null,
-          price: data.price.price,
-          discount: data.price.discount,
-          couponPrice: 0,
-          accountNumber: data.price.accountNumber,
-          deadline: data.price.deadline,
-          accountType: data.price.accountType,
-          livePriceType: data.price.livePriceType,
-          challengePriceType: data.price.challengePriceType,
-        });
-      }
-      return res.data;
-    },
   });
 
-  useQuery({
-    queryKey: [programType, programId],
-    queryFn: async () => {
-      const res = await axios.get(`/${programType}/${programId}`);
-      const data = res.data.data;
-      setProgramDate({
-        deadline: data.deadline,
-        startDate: data.startDate,
-        endDate: data.endDate,
-        beginning: data.beginning,
-      });
-
-      return res.data.data;
-    },
-  });
-
-  const isTest = userInfo?.email === 'test@test.com';
-
-  const { mutate: applyProgram } = usePostApplicationMutation(
-    async () => {
-      await queryClient.invalidateQueries({
-        queryKey: [programType],
-      });
-      toggleApplyModal();
-      setContentIndex(0);
-    },
-    () => {
-      alert('신청에 실패했습니다. 다시 시도해주세요.');
-      setContentIndex(0);
-    },
+  const { data: application } = useProgramApplicationQuery(
+    programType,
+    programId,
   );
 
+  // searchParams 에 관련 정보가 있을 때 초기 세팅해주고 값 없애기
+  useRunOnce(() => {
+    const searchParams = new URLSearchParams(window.location.search);
+
+    const contentIndex = searchParams.get('contentIndex');
+    const couponId = searchParams.get('couponId');
+    const couponPrice = searchParams.get('couponPrice');
+    const contactEmail = searchParams.get('contactEmail');
+    const question = searchParams.get('question');
+    const email = searchParams.get('email');
+    const phone = searchParams.get('phone');
+    const name = searchParams.get('name');
+
+    if (
+      typeof contactEmail === 'string' &&
+      typeof question === 'string' &&
+      typeof email === 'string' &&
+      typeof phone === 'string' &&
+      typeof name === 'string'
+    ) {
+      // initialize 무시한다 (우선수위 높음)
+      setUserInfo({
+        name,
+        email,
+        phoneNumber: phone,
+        contactEmail,
+        question,
+        initialized: true,
+      });
+    }
+
+    if (contentIndex === 'pay') {
+      setContentIndex(4);
+    }
+
+    if (couponId && couponPrice) {
+      setCoupon({
+        id: Number(couponId),
+        price: Number(couponPrice),
+      });
+    }
+
+    const newSearchParams = new URLSearchParams(searchParams);
+    newSearchParams.delete('contentIndex');
+    newSearchParams.delete('couponId');
+    newSearchParams.delete('couponPrice');
+    newSearchParams.delete('contactEmail');
+    newSearchParams.delete('question');
+    newSearchParams.delete('email');
+    newSearchParams.delete('phone');
+    newSearchParams.delete('name');
+
+    window.history.replaceState(
+      {},
+      '',
+      `${window.location.pathname}${newSearchParams.toString()}`,
+    );
+  });
+
+  /** application으로부터 user 정보 초기화 */
+  useEffect(() => {
+    if (!application) {
+      return;
+    }
+
+    setUserInfo((prev) => {
+      if (prev.initialized) {
+        return prev;
+      }
+
+      return {
+        name: application.name ?? '',
+        email: application.email ?? '',
+        phoneNumber: application.phoneNumber ?? '',
+        contactEmail: application.contactEmail ?? '',
+        question: '',
+        initialized: true,
+      };
+    });
+  }, [application]);
+
+  const isApplied = application?.applied ?? false;
+
+  const priceId =
+    application?.priceList?.[0]?.priceId ?? application?.price?.priceId ?? -1;
+
+  const orderId = 'lets' + generateRandomString() + generateRandomNumber();
+
+  const program = useProgramQuery({ programId, type: programType });
+
+  const programDate =
+    program && program.query.data
+      ? {
+          beginning: program.query.data.beginning,
+          deadline: program.query.data.deadline,
+          startDate: program.query.data.startDate,
+          endDate: program.query.data.endDate,
+        }
+      : null;
+
+  const payInfo = application ? getPayInfo(application) : null;
+
+  const progressType =
+    program.query.data &&
+    'progressType' in program.query.data &&
+    program.query.data.progressType
+      ? program.query.data.progressType
+      : 'none';
+
   const totalPrice = useMemo(() => {
+    if (!payInfo) {
+      return 0;
+    }
     const totalDiscount =
-      payInfo.couponPrice === -1
-        ? payInfo.price
-        : payInfo.discount + payInfo.couponPrice;
+      coupon.price === -1 ? payInfo.price : payInfo.discount + coupon.price;
     if (payInfo.price <= totalDiscount) {
       return 0;
     }
     return payInfo.price - totalDiscount;
-  }, [payInfo.couponPrice, payInfo.discount, payInfo.price]);
+  }, [coupon, payInfo]);
 
-  const handleApplyButtonClick = () => {
-    if (isTest) {
-      navigate(`/program/${programType}/${programId}/payment`, {
-        state: {
-          priceId: priceId,
-          couponId: payInfo.couponId,
-          price: payInfo.price,
-          discount: payInfo.discount,
-          couponPrice: payInfo.couponPrice,
-          totalPrice: totalPrice,
-          contactEmail: userInfo.contactEmail,
-          question: userInfo.question,
-          email: userInfo.email,
-          phone: userInfo.phoneNumber,
-          name: userInfo.name,
-          programTitle: programTitle,
-        },
-      });
+  const handleApplyButtonClick = (isFree: boolean) => {
+    if (!payInfo || !userInfo) {
       return;
     }
-
-    const body: PostApplicationInterface = {
-      paymentInfo: {
-        priceId: priceId,
-        couponId: payInfo.couponId,
-        paymentKey: '',
-        orderId: '',
-        amount: totalPrice.toString(),
-      },
-      contactEmail: userInfo.contactEmail,
-      motivate: '',
-      question: userInfo.question,
-    };
-
-    applyProgram({
-      programId: programId,
-      programType: programType,
-      requestBody: body,
+    const searchParams = getPaymentSearchParams({
+      payInfo,
+      coupon,
+      userInfo,
+      priceId,
+      totalPrice,
+      programTitle,
+      programType,
+      progressType,
+      programId,
+      orderId,
+      isFree,
     });
+
+    if (isFree) {
+      navigate(`/order/result?${searchParams.toString()}`);
+      return;
+    } else {
+      navigate(`/payment?${searchParams.toString()}`);
+      return;
+    }
   };
 
   return (
     <section
       className={`sticky top-[7rem] max-h-[calc(100vh-11.75rem)] w-[22rem] overflow-y-auto rounded-lg px-5 py-6 shadow-03 scrollbar-hide`}
     >
-      {contentIndex === 0 && (
+      {contentIndex === 0 && programDate ? (
         <OverviewContent
           contentIndex={contentIndex}
           setContentIndex={setContentIndex}
@@ -232,14 +282,14 @@ const ApplySection = ({
           programTitle={programTitle}
           isApplied={isApplied}
         />
-      )}
-      {contentIndex === 1 && (
+      ) : null}
+      {contentIndex === 1 ? (
         <ChoicePayPlanContent
           contentIndex={contentIndex}
           setContentIndex={setContentIndex}
         />
-      )}
-      {contentIndex === 2 && (
+      ) : null}
+      {contentIndex === 2 ? (
         <InputContent
           contentIndex={contentIndex}
           setContentIndex={setContentIndex}
@@ -247,8 +297,8 @@ const ApplySection = ({
           setUserInfo={setUserInfo}
           programType={programType}
         />
-      )}
-      {contentIndex === 3 && (
+      ) : null}
+      {/* {contentIndex === 3 && (
         <CautionContent
           criticalNotice={criticalNotice}
           contentIndex={contentIndex}
@@ -256,20 +306,24 @@ const ApplySection = ({
           isCautionChecked={isCautionChecked}
           setIsCautionChecked={setIsCautionChecked}
         />
-      )}
-      {contentIndex === 4 && (
+      )} */}
+      {contentIndex === 4 && payInfo && programDate ? (
         <PayContent
           payInfo={payInfo}
-          setPayInfo={setPayInfo}
+          userInfo={userInfo}
+          coupon={coupon}
+          setCoupon={setCoupon}
           handleApplyButtonClick={handleApplyButtonClick}
           contentIndex={contentIndex}
           setContentIndex={setContentIndex}
           programType={programType}
+          progressType={progressType}
           totalPrice={totalPrice}
-          isTest={isTest}
           programDate={programDate}
+          programQuery={program}
+          programId={programId}
         />
-      )}
+      ) : null}
     </section>
   );
 };

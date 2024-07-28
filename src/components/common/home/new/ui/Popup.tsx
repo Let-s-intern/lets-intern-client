@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
 
-import { IBanner } from '../../../../../interfaces/Banner.interface';
+import { IBanner } from '../../../../../types/Banner.interface';
 import axios from '../../../../../utils/axios';
 
 const ONE_DAY = 86400000;
