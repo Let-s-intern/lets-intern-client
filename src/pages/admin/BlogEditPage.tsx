@@ -44,7 +44,6 @@ const initialBlog = {
   content: '',
   ctaLink: '',
   ctaText: '',
-  // isDisplayed: false,
   tagList: [],
 };
 
@@ -56,7 +55,6 @@ interface EditBlog {
   content: string;
   ctaLink: string;
   ctaText: string;
-  isDisplayed?: boolean;
   tagList: TagDetail[];
 }
 
@@ -209,7 +207,6 @@ export default function BlogEditPage() {
       content: blogData.blogDetailInfo.content || '',
       ctaLink: blogData.blogDetailInfo.ctaLink || '',
       ctaText: blogData.blogDetailInfo.ctaText || '',
-      // isDisplayed: blogData.blogDetailInfo.isDisplayed!,
       tagList: blogData.tagDetailInfos!,
     });
   }, [isLoading, blogData]);
@@ -322,17 +319,14 @@ export default function BlogEditPage() {
           {/* 버튼 */}
           <footer>
             <div className="flex items-center justify-end gap-4">
-              {/* 노출된 블로그는 임시 저장 불가능 */}
-              {!value.isDisplayed && (
-                <ActionButton
-                  onClick={saveBlog}
-                  type="button"
-                  bgColor="gray"
-                  width="6rem"
-                >
-                  임시 저장
-                </ActionButton>
-              )}
+              <ActionButton
+                onClick={saveBlog}
+                type="button"
+                bgColor="gray"
+                width="6rem"
+              >
+                임시 저장
+              </ActionButton>
               <ActionButton onClick={submitBlog} type="button">
                 발행
               </ActionButton>
