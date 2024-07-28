@@ -197,7 +197,7 @@ const MobileApplySection = ({
     });
 
     if (isFree) {
-      navigate(`/order/${orderId}/result?${searchParams.toString()}`);
+      navigate(`/order/result?${searchParams.toString()}`);
     } else {
       navigate(`/payment?${searchParams.toString()}`);
     }

@@ -60,8 +60,8 @@ const Router = () => {
           />
 
           <Route path="payment" element={<Payment />} />
-          <Route path="order/:orderId/result" element={<PaymentResult />} />
-          <Route path="order/:orderId/fail" element={<PaymentFail />} />
+          <Route path="order/result" element={<PaymentResult />} />
+          <Route path="order/fail" element={<PaymentFail />} />
 
           {/* /program */}
           <Route path="program" element={<Programs />} />

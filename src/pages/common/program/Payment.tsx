@@ -99,6 +99,7 @@ const Payment = () => {
 
     const paymentMethod = await methods?.getSelectedPaymentMethod();
 
+    // TOSS 에서 넘겨받을 때 orderId가 추가로 붙어서 넘어올 수 있어 배열 케이스도 처리 TODO: 내부용 orderId 이름 변경
     const orderId =
       typeof params.orderId === 'string' ? params.orderId : params.orderId[0];
 
@@ -114,11 +115,9 @@ const Payment = () => {
         orderId,
         orderName: params.programTitle,
         successUrl:
-          window.location.origin +
-          `/order/${orderId}/result?${searchParams.toString()}`,
+          window.location.origin + `/order/result?${searchParams.toString()}`,
         failUrl:
-          window.location.origin +
-          `/order/${orderId}/fail?${searchParams.toString()}`,
+          window.location.origin + `/order/fail?${searchParams.toString()}`,
         customerEmail: params.email,
         customerName: params.name,
         customerMobilePhone: params.phone.replace(/[^0-9]/g, ''),
