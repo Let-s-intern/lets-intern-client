@@ -5,10 +5,12 @@ import MenuLink from './MenuLink';
 
 const CUSTOEMR_CENTER = {
   title: '고객센터',
-  content:
-    '홈페이지 좌측 하단의 [이메일] 이나 우측 하단 [채팅문의]를 통해 1:1 채팅상담을 이용하실 수 있습니다.',
-  time: '* 채팅 상담 운영시간 : 평일, 주말 09:00-21:00',
-  notice: '(전화상담을 원하시는 경우, 채팅상담을 통해 신청 부탁드립니다.)',
+  content: [
+    '1:1 채팅 상담: 우측 하단 [문의하기] 클릭',
+    '- 평일 및 주말 09:00-21:00 상담 가능',
+    '전화 상담: 채팅 상담을 통해 신청 가능',
+    '이메일 상담: official@letscareer.co.kr',
+  ],
 };
 
 const BUSINESS_INFORMATION = {
@@ -19,7 +21,7 @@ const BUSINESS_INFORMATION = {
   address: '주소: 서울특별시 마포구 독막로 9길 18, 서홍빌딩 3층 A9호',
   email: '이메일: official@letscareer.co.kr',
   call: '고객센터: 0507-0178-8541',
-  copyright: 'Copyright ©2024 아이엔지. All rights reserved.',
+  copyright: 'Copyright ©2024 아이엔지. All rights reserved',
 };
 
 const Footer = () => {
@@ -37,17 +39,29 @@ const Footer = () => {
 
             {/* 기타 */}
             <div className="flex flex-col gap-3">
-              <MenuLink to="/about">공지사항</MenuLink>
-              <MenuLink to="/program">자주 묻는 질문</MenuLink>
+              <MenuLink
+                to="https://letscareer.oopy.io"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="notice_cta"
+              >
+                공지사항
+              </MenuLink>
+              <MenuLink
+                to="https://letscareer.oopy.io"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="q&a_cta"
+              >
+                자주 묻는 질문
+              </MenuLink>
               {/* 고객센터 */}
-              <div>
+              <div className="text-0.875 w-80">
                 <span className="text-neutral-0">{CUSTOEMR_CENTER.title}</span>
-                <p className="text-0.875 mt-2 w-80 text-neutral-0/65">
-                  {CUSTOEMR_CENTER.content}
-                  <br />
-                  {CUSTOEMR_CENTER.time}
-                  <br />
-                  <span className="text-0.75">{CUSTOEMR_CENTER.notice}</span>
+                <p className="mt-2 flex flex-col text-neutral-0/65">
+                  {CUSTOEMR_CENTER.content.map((item) => (
+                    <span key={item}>{item}</span>
+                  ))}
                 </p>
               </div>
             </div>
