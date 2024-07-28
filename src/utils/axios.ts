@@ -2,14 +2,14 @@ import Axios, { AxiosError } from 'axios';
 import useAuthStore from '../store/useAuthStore';
 
 const reissuer = Axios.create({
-  baseURL: process.env.REACT_APP_SERVER_API,
+  baseURL: import.meta.env.VITE_SERVER_API,
   headers: {
     'Content-Type': 'application/json',
   },
 });
 
 const axios = Axios.create({
-  baseURL: process.env.REACT_APP_SERVER_API,
+  baseURL: import.meta.env.VITE_SERVER_API,
   headers: {
     'Content-Type': 'application/json',
   },

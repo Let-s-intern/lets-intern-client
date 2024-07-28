@@ -217,7 +217,7 @@ export default function BlogEditPage() {
   }, [isLoading, blogData]);
 
   return (
-    <div className="mx-auto my-12 w-[36rem]">
+    <div>
       <header>
         <h1 className="text-2xl font-semibold">블로그 등록</h1>
       </header>

@@ -37,7 +37,7 @@ const InfoContainer = ({ isSocial }: { isSocial: boolean }) => {
   const patchEmailUserInfo = useMutation({
     mutationFn: async () => {
       const res = await axios.patch(`/user/additional-info`, {
-        email: email,
+        email,
         university: value.university,
         major: value.major,
         grade: value.grade,

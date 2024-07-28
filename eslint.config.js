@@ -5,7 +5,9 @@ import globals from 'globals';
 import tseslint from 'typescript-eslint';
 
 export default [
-  { files: ['**/*.{js,mjs,cjs,ts,jsx,tsx}'] },
+  {
+    files: ['src/**/*.{js,mjs,cjs,ts,jsx,tsx}'],
+  },
   {
     languageOptions: {
       parserOptions: {

@@ -17,9 +17,9 @@ import {
 } from '../../api/blog';
 import { PostBlogReqBody, TagDetail } from '../../api/blogSchema';
 import { usePostFileMutation } from '../../api/file';
-import BlogPostEditor from '../../components/admin/blog/BlogPostEditor';
 import TagSelector from '../../components/admin/blog/TagSelector';
 import TextFieldLimit from '../../components/admin/blog/TextFieldLimit';
+import EditorApp from '../../components/admin/lexical/EditorApp';
 import ImageUpload from '../../components/admin/program/ui/form/ImageUpload';
 import ActionButton from '../../components/admin/ui/button/ActionButton';
 import { blogCategory } from '../../utils/convert';
@@ -156,7 +156,7 @@ const BlogCreatePage = () => {
   };
 
   return (
-    <div className="mx-auto my-12 w-[36rem]">
+    <div>
       <header>
         <h1 className="text-2xl font-semibold">블로그 등록</h1>
       </header>
@@ -220,7 +220,7 @@ const BlogCreatePage = () => {
             image={value.thumbnail as string}
             onChange={handleChange}
           />
-          <BlogPostEditor getJSONFromLexical={getJSONFromLexical} />
+          <EditorApp getJSONFromLexical={getJSONFromLexical} />
           <TextField
             type="text"
             label="CTA 링크"
