@@ -93,7 +93,7 @@ const UserEdit = () => {
   };
 
   const handleGradeChange = (grade: string) => {
-    setUserForm({ ...userForm, grade: grade });
+    setUserForm({ ...userForm, grade });
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
