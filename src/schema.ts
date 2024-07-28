@@ -385,6 +385,7 @@ export const getChallengeIdApplications = z
         grade: grade.nullable().optional(),
         major: z.string().nullable().optional(),
         couponName: z.string().nullable().optional(),
+        /** @deprecated */
         totalCost: z.number().nullable().optional(),
         /** @deprecated */
         isConfirmed: z.boolean().nullable().optional(),
@@ -900,7 +901,7 @@ export const challengeApplicationsSchema = z
         grade: grade.nullable().optional(),
         major: z.string().nullable().optional(),
         couponName: z.string().nullable().optional(),
-        totalCost: z.number().nullable().optional(),
+        couponPrice: z.number().nullable().optional(),
         isCanceled: z.boolean().nullable().optional(),
         wishJob: z.string().nullable().optional(),
         wishCompany: z.string().nullable().optional(),
@@ -908,6 +909,10 @@ export const challengeApplicationsSchema = z
         createDate: z.string().nullable().optional(),
         accountType: accountType.nullable().optional(),
         accountNum: z.string().nullable().optional(),
+        orderId: z.string().nullable().optional(),
+        finalPrice: z.number().nullable().optional(),
+        programDiscount: z.number().nullable().optional(),
+        programPrice: z.number().nullable().optional(),
       }),
     ),
   })
@@ -924,7 +929,7 @@ export type ChallengeApplication = z.infer<
   typeof challengeApplicationsSchema
 >['applicationList'][number];
 
-/** GET /api/v1/live/{id}/applications */
+/** GET /api/v1/live/{id}/applications 어드민 신청자 조회 LIVE 클래스 */
 export const liveApplicationsSchema = z
   .object({
     applicationList: z.array(
@@ -940,9 +945,13 @@ export const liveApplicationsSchema = z
         motivate: z.string().nullable().optional(),
         question: z.string().nullable().optional(),
         couponName: z.string().nullable().optional(),
-        totalCost: z.number().nullable().optional(),
+        couponPrice: z.number().nullable().optional(),
         isCanceled: z.boolean().nullable().optional(),
         created_date: z.string().nullable().optional(),
+        orderId: z.string().nullable().optional(),
+        finalPrice: z.number().nullable().optional(),
+        programDiscount: z.number().nullable().optional(),
+        programPrice: z.number().nullable().optional(),
       }),
     ),
   })

@@ -26,6 +26,9 @@ const TableHead = ({ filter, setFilter, programType }: UserTableHeadProps) => {
   return (
     <thead>
       <tr>
+        <TH>
+          주문번호
+        </TH>
         <TH inOrder={filter.name} onClick={handleNameHeadClick}>
           이름
         </TH>
