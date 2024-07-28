@@ -155,7 +155,14 @@ const NavBar = () => {
               <span>
                 환영합니다, <span className="text-primary">{user?.name}</span>님
               </span>
-              <button className="text-primary" onClick={logout}>
+              <button
+                className="text-primary"
+                onClick={() => {
+                  logout();
+                  navigate('/');
+                  closeMenu();
+                }}
+              >
                 로그아웃
               </button>
             </span>

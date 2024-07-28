@@ -1,12 +1,11 @@
-import { useEffect, useState } from 'react';
 import cn from 'classnames';
-
-import StartContent from '../content/StartContent';
-import MemberSelect from '../content/MemberSelect';
-import InputContent from '../content/InputContent';
-import CautionContent from '../content/CautionContent';
-import ResultContent from '../content/ResultContent';
+import { useEffect, useState } from 'react';
 import AlertModal from '../../../../../../../ui/alert/AlertModal';
+import CautionContent from '../content/CautionContent';
+import InputContent from '../content/InputContent';
+import MemberSelect from '../content/MemberSelect';
+import ResultContent from '../content/ResultContent';
+import StartContent from '../content/StartContent';
 import styles from './ApplyAside.module.scss';
 
 interface ApplyAsdieProps {
@@ -17,6 +16,7 @@ interface ApplyAsdieProps {
   setCouponDiscount: (couponDiscount: number) => void;
 }
 
+/** @deprecated */
 const ApplyAside = ({
   program,
   participated,

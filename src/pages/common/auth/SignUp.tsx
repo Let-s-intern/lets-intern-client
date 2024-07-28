@@ -35,11 +35,9 @@ const SignUp = () => {
       return undefined;
     }
     const token = JSON.parse(result);
-    localStorage.setItem('access-token', token.accessToken);
-    localStorage.setItem('refresh-token', token.refreshToken);
     if (!token.isNew) {
-      const redirect = searchParams.get('redirect') || '/';
-      login(token.accessToken, token.refreshToken, redirect);
+      login(token.accessToken, token.refreshToken);
+      navigate(searchParams.get('redirect') || '/');
       return;
     }
     setIsSocial(true);
@@ -118,7 +116,6 @@ const SignUp = () => {
       return res.data;
     },
     onSuccess: () => {
-      localStorage.setItem('email', value.email);
       setIsSignupSuccess(true);
     },
     onError: (error) => {
@@ -136,17 +133,7 @@ const SignUp = () => {
 
   const patchSocialUserContactEmail = useMutation({
     mutationFn: async () => {
-      const res = await axios.patch(
-        '/user',
-        {
-          contactEmail: value.email,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('access-token')}`,
-          },
-        },
-      );
+      const res = await axios.patch('/user', { contactEmail: value.email });
       return res.data;
     },
     onSuccess: () => {
