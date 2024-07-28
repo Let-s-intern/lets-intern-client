@@ -31,6 +31,12 @@ const initialPageInfo = {
 export default function BlogTable() {
   const [pageable, setPageable] = useState(initialPageable);
 
+  const { data, isLoading } = useBlogListQuery({
+    pageable,
+  });
+  const deleteBlogMutation = useDeleteBlogMutation();
+  const patchBlogMutation = usePatchBlogMutation();
+
   const deleteBlog = (blogId: number) => {
     const isDelete = window.confirm('정말로 삭제하시겠습니까?');
     if (isDelete) {
@@ -45,13 +51,13 @@ export default function BlogTable() {
     if (event.target.checked) {
       const reqBody: PatchBlogReqBody = {
         id: checkedBlog.id,
-        isDisplayed: false,
+        isDisplayed: true,
       };
       patchBlogMutation.mutate(reqBody);
     } else {
       const reqBody: PatchBlogReqBody = {
         id: checkedBlog.id,
-        isDisplayed: true,
+        isDisplayed: false,
       };
       patchBlogMutation.mutate(reqBody);
     }
@@ -64,12 +70,6 @@ export default function BlogTable() {
     },
     [],
   );
-
-  const { data, isLoading } = useBlogListQuery({
-    pageable,
-  });
-  const deleteBlogMutation = useDeleteBlogMutation();
-  const patchBlogMutation = usePatchBlogMutation();
 
   return (
     <div className="mt-3 min-w-[60rem]">
