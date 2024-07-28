@@ -172,9 +172,12 @@ const ProgramDetail = ({ programType }: ProgramDetailProps) => {
                     />
                     <div className="flex w-full flex-col text-xsmall14 text-neutral-0">
                       <p className="font-bold">
-                        결제 오류 방지를 위해 외부 브라우저로 접속해주세요
+                        [결제오류 방지] 외부 브라우저로 접속해주세요
                       </p>
-                      <p>상단 더보기 버튼 혹은 하단 공유 버튼을 누르면 돼요.</p>
+                      <p>
+                        상단 더보기 버튼 혹은 하단 공유 버튼을 누르면 외부
+                        브라우저로 이동할 수 있어요.
+                      </p>
                     </div>
                   </div>
                 )}
