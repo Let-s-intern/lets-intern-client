@@ -1,5 +1,5 @@
-import { useState } from 'react';
 import cn from 'classnames';
+import { useState } from 'react';
 
 import TextField from '@mui/material/TextField';
 
@@ -17,6 +17,7 @@ interface InputProps {
   error?: boolean;
   fullWidth?: boolean;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
 }
 
 const Input = ({
@@ -33,6 +34,7 @@ const Input = ({
   error,
   fullWidth = true,
   onChange,
+  onKeyDown,
 }: InputProps) => {
   const [focused, setFocused] = useState(false);
 
@@ -70,6 +72,7 @@ const Input = ({
       multiline={multiline}
       rows={rows}
       onChange={onChange}
+      onKeyDownCapture={(e) => e.key === 'Enter' && e.preventDefault()}
       autoComplete="off"
       fullWidth={fullWidth}
       className={className}
@@ -78,7 +81,7 @@ const Input = ({
       onFocus={() => setFocused(true)}
       onBlur={() => setFocused(false)}
       error={error}
-      onKeyDown={(e) => e.key === 'Enter' && e.preventDefault()}
+      onKeyDown={onKeyDown}
     />
   );
 
