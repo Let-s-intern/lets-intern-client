@@ -13,7 +13,7 @@ const MenuLink = ({ to, children, target, rel, className }: MenuLinkProps) => {
   return (
     <Link
       to={to}
-      className={clsx('text-1-medium', className)}
+      className={clsx('text-0.875-medium', className)}
       target={target}
       rel={rel}
     >
