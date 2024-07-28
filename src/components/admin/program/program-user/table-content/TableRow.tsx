@@ -14,12 +14,15 @@ const TableRow = ({ application, programType }: Props) => {
       ? application.createDate
       : application.created_date;
 
-  const amount = application.isCanceled
-    ? (application.programPrice ?? 0) -
-      (application.programDiscount ?? 0) -
-      (application.finalPrice ?? 0) -
-      (application.couponPrice ?? 0)
-    : application.finalPrice ?? 0;
+  const amount =
+    application.couponDiscount === -1
+      ? 0
+      : application.isCanceled
+        ? (application.programPrice ?? 0) -
+          (application.programDiscount ?? 0) -
+          (application.finalPrice ?? 0) -
+          (application.couponDiscount ?? 0)
+        : application.finalPrice ?? 0;
 
   return (
     <tr>
