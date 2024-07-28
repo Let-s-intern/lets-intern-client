@@ -44,7 +44,6 @@ const initialBlog = {
   content: '',
   ctaLink: '',
   ctaText: '',
-  // isDisplayed: false,
   tagList: [],
 };
 
@@ -56,7 +55,6 @@ interface EditBlog {
   content: string;
   ctaLink: string;
   ctaText: string;
-  isDisplayed?: boolean;
   tagList: TagDetail[];
 }
 
@@ -150,13 +148,16 @@ export default function BlogEditPage() {
     setValue({ ...value, [event.target.name]: event.target.value });
   };
 
-  const deleteTag = useCallback((id: number) => {
-    const j = value.tagList.findIndex((tag) => tag.id === id);
-    setValue((prev) => ({
-      ...prev,
-      tagList: [...prev.tagList.slice(0, j), ...prev.tagList.slice(j + 1)],
-    }));
-  }, []);
+  const deleteTag = useCallback(
+    (id: number) => {
+      const j = value.tagList.findIndex((tag) => tag.id === id);
+      setValue((prev) => ({
+        ...prev,
+        tagList: [...prev.tagList.slice(0, j), ...prev.tagList.slice(j + 1)],
+      }));
+    },
+    [value.tagList],
+  );
 
   const handleChangeTag = useCallback(
     (event: ChangeEvent<HTMLInputElement>) => {
@@ -175,7 +176,9 @@ export default function BlogEditPage() {
       if (event.key !== 'Enter' || isEmpty) return;
       if (isExist) {
         alert('이미 존재하는 태그입니다.');
-      } else blogTagMutation.mutate(newTag);
+      } else {
+        blogTagMutation.mutate(newTag);
+      }
     },
     [newTag, blogTagData?.tagDetailInfos],
   );
@@ -209,7 +212,6 @@ export default function BlogEditPage() {
       content: blogData.blogDetailInfo.content || '',
       ctaLink: blogData.blogDetailInfo.ctaLink || '',
       ctaText: blogData.blogDetailInfo.ctaText || '',
-      // isDisplayed: blogData.blogDetailInfo.isDisplayed!,
       tagList: blogData.tagDetailInfos!,
     });
   }, [isLoading, blogData]);
@@ -322,17 +324,14 @@ export default function BlogEditPage() {
           {/* 버튼 */}
           <footer>
             <div className="flex items-center justify-end gap-4">
-              {/* 노출된 블로그는 임시 저장 불가능 */}
-              {!value.isDisplayed && (
-                <ActionButton
-                  onClick={saveBlog}
-                  type="button"
-                  bgColor="gray"
-                  width="6rem"
-                >
-                  임시 저장
-                </ActionButton>
-              )}
+              <ActionButton
+                onClick={saveBlog}
+                type="button"
+                bgColor="gray"
+                width="6rem"
+              >
+                임시 저장
+              </ActionButton>
               <ActionButton onClick={submitBlog} type="button">
                 발행
               </ActionButton>
