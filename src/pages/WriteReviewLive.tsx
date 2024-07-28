@@ -65,7 +65,7 @@ const WriteReviewLive = () => {
           ? false
           : hasRecommendationExperience,
       nps: tenScore,
-      content: content,
+      content,
       score: starScore,
     });
   };

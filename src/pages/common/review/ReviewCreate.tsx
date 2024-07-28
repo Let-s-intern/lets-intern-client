@@ -59,19 +59,19 @@ const ReviewCreate = ({ isEdit }: { isEdit: boolean }) => {
       const res = await axios.post(
         '/review',
         {
-          programId: programId,
+          programId,
           npsAns,
           npsCheckAns:
             hasRecommendationExperience === null
               ? false
               : hasRecommendationExperience,
           nps: tenScore,
-          content: content,
+          content,
           score: starScore,
         },
         {
           params: {
-            applicationId: applicationId,
+            applicationId,
           },
         },
       );
@@ -91,7 +91,7 @@ const ReviewCreate = ({ isEdit }: { isEdit: boolean }) => {
             ? false
             : hasRecommendationExperience,
         nps: tenScore,
-        content: content,
+        content,
         score: starScore,
       });
       return res.data;
