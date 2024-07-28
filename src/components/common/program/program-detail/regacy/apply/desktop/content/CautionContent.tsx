@@ -1,17 +1,12 @@
-import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useQueryClient } from '@tanstack/react-query';
 import cn from 'classnames';
-
+import clsx from 'clsx';
+import { useState } from 'react';
+import { useParams } from 'react-router-dom';
 import axios from '../../../../../../../../utils/axios';
 import { typeToText } from '../../../../../../../../utils/converTypeToText';
-
-import styles from './CautionContent.module.scss';
-import PriceView from '../../../ui/price/PriceView';
-import { calculateProgramPrice } from '../../../../../../../../utils/programPrice';
-import clsx from 'clsx';
-import { bankTypeToText } from '../../../../../../../../utils/convert';
 import CautionPriceContent from '../../../ui/price/CautionPriceContent';
+import styles from './CautionContent.module.scss';
 
 interface CautionContentProps {
   program: any;
@@ -22,6 +17,7 @@ interface CautionContentProps {
   couponDiscount: number;
 }
 
+/** @deprecated */
 const CautionContent = ({
   program,
   formData,

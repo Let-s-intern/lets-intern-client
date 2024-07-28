@@ -13,6 +13,7 @@ interface SubmitButtonProps {
   $disabled?: boolean;
 }
 
+/** @deprecated */
 const ReviewCreateRegacy = () => {
   const navigate = useNavigate();
   const params = useParams();

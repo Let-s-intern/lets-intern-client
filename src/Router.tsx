@@ -30,8 +30,6 @@ import PaymentFail from './pages/common/program/PaymentFail';
 import PaymentResult from './pages/common/program/PaymentResult';
 import ProgramDetail from './pages/common/program/ProgramDetail';
 import Programs from './pages/common/program/Programs';
-import ProgramDetailRegacy from './pages/common/program/regacy/ProgramDetailRegacy';
-import ReviewCreateRegacy from './pages/common/review/regacy/ReviewCreateRegacy';
 import ReviewCreate from './pages/common/review/ReviewCreate';
 import ReviewDetail from './pages/common/review/ReviewDetail';
 import Maintenance from './pages/maintenance/Maintenance';
@@ -69,16 +67,11 @@ const Router = () => {
           {/* /program */}
           <Route path="program" element={<Programs />} />
           {/* /program/detail/:programId */}
-          <Route
+          {/* <Route
             path="program/detail/:programId"
             element={<ProgramDetailRegacy />}
-          />
+          /> */}
 
-          {/* /program/:programId/application/:applicationId/review/create */}
-          <Route
-            path="program/:programId/application/:applicationId/review/create"
-            element={<ReviewCreateRegacy />}
-          />
           {/* /program/:programId/review/new */}
           <Route
             path="program/:programId/review/new"
