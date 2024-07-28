@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import DocumentLink from './DocumentLink';
 import Icon from './Icon';
 import MenuLink from './MenuLink';
@@ -24,80 +25,81 @@ const BUSINESS_INFORMATION = {
 const Footer = () => {
   return (
     <footer className="border-t-1 w-full border-neutral-80 bg-neutral-85 px-5 pb-6 pt-10 lg:px-10 xl:px-52">
-      <div className="mb-7 flex flex-col gap-5 lg:flex-row lg:items-start xl:gap-16">
-        <img className="w-[7.5rem]" src="/logo/logo.svg" alt="Logo" />
-        <div className="flex flex-col gap-8">
-          <div className="flex w-80 items-center gap-8">
-            <MenuLink to="/about">렛츠커리어 스토리</MenuLink>
-            <MenuLink to="/program">프로그램</MenuLink>
-            {/* <MenuLink to="/blog">블로그</MenuLink> */}
+      <div className="flex flex-col gap-[3.25rem] lg:justify-between lg:gap-7">
+        <div className="flex flex-col gap-[3.25rem] lg:flex-row-reverse lg:justify-between">
+          <div className="flex flex-col gap-[3.25rem] lg:flex-row lg:items-start lg:gap-[6.25rem]">
+            {/* 사이트맵 */}
+            <div className="flex flex-col gap-3">
+              <MenuLink to="/about">렛츠커리어 스토리</MenuLink>
+              <MenuLink to="/program">프로그램</MenuLink>
+              {/* <MenuLink to="/blog">블로그</MenuLink> */}
+            </div>
+
+            {/* 기타 */}
+            <div className="flex flex-col gap-3">
+              <MenuLink to="/about">공지사항</MenuLink>
+              <MenuLink to="/program">자주 묻는 질문</MenuLink>
+              {/* 고객센터 */}
+              <div>
+                <span className="text-neutral-0">{CUSTOEMR_CENTER.title}</span>
+                <p className="text-0.875 mt-2 w-80 text-neutral-0/65">
+                  {CUSTOEMR_CENTER.content}
+                  <br />
+                  {CUSTOEMR_CENTER.time}
+                  <br />
+                  <span className="text-0.75">{CUSTOEMR_CENTER.notice}</span>
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div className="text-0.75-medium flex flex-col gap-5 text-neutral-45">
+            {/* 로고 */}
+            <Link to="/" className="w-[7.5rem]">
+              <img className="h-auto w-full" src="/logo/logo.svg" alt="Logo" />
+            </Link>
+            {/* 사업자 정보 */}
+            <div className="text-0.75-medium flex flex-col gap-2 text-neutral-45">
+              <span>{BUSINESS_INFORMATION.title}</span>
+              <span>
+                {BUSINESS_INFORMATION.owner} |{' '}
+                {BUSINESS_INFORMATION.registrationNumber}
+              </span>
+              <span>{BUSINESS_INFORMATION.mailOrderSales} |</span>
+              <span>{BUSINESS_INFORMATION.address} |</span>
+              <span>{BUSINESS_INFORMATION.email} |</span>
+              <span>{BUSINESS_INFORMATION.call} |</span>
+              <span>{BUSINESS_INFORMATION.copyright}</span>
+            </div>
           </div>
         </div>
-        <div>
-          <div className="mb-1.5 flex items-center gap-10">
-            <span className="text-neutral-0">{CUSTOEMR_CENTER.title}</span>
+
+        <div className="flex items-center justify-between lg:justify-start lg:gap-5">
+          <div className="flex items-center gap-4">
+            <Icon
+              src="/icons/instagram.svg"
+              alt="인스타그램 아이콘"
+              to="https://www.instagram.com/letscareer.official/"
+              className="instagram_cta"
+            />
+            <Icon
+              src="/icons/blog.png"
+              alt="네이버 블로그 아이콘"
+              to="https://blog.naver.com/PostList.naver?blogId=letsintern"
+              className="blog_cta"
+            />
           </div>
-          <p className="text-0.875 w-80 text-neutral-0/[.65]">
-            {CUSTOEMR_CENTER.content}
-            <br />
-            {CUSTOEMR_CENTER.time}
-            <br />
-            <span className="text-0.75">{CUSTOEMR_CENTER.notice}</span>
-          </p>
+          <div className="flex items-center gap-6 text-neutral-0/[.65]">
+            <DocumentLink to="https://letscareer.oopy.io/241b2e74-7ddf-4747-8012-a68f7c03f9e1">
+              서비스 이용약관
+            </DocumentLink>
+            <DocumentLink to="https://letscareer.oopy.io/4e21a3c6-f42a-409d-a877-a7b5d926f158">
+              개인정보처리방침
+            </DocumentLink>
+          </div>
         </div>
       </div>
 
-      <div className="text-0.75-medium my-7 flex flex-col gap-2 text-neutral-45">
-        <span>{BUSINESS_INFORMATION.title}</span>
-        <p className="flex flex-wrap gap-2">
-          <span>{BUSINESS_INFORMATION.owner}</span>
-          <span>|</span>
-          <span>{BUSINESS_INFORMATION.registrationNumber}</span>
-          <span>|</span>
-          <span>{BUSINESS_INFORMATION.mailOrderSales}</span>
-          <span className="block md:hidden">|</span>
-        </p>
-        <div className="flex flex-col gap-2 md:flex-row">
-          <p className="flex gap-2">
-            <span>{BUSINESS_INFORMATION.address}</span>
-            <span>|</span>
-          </p>
-          <p className="flex gap-2">
-            <span>{BUSINESS_INFORMATION.email}</span>
-            <span>|</span>
-          </p>
-          <p className="flex gap-2">
-            <span>{BUSINESS_INFORMATION.call}</span>
-            <span className="block md:hidden">|</span>
-          </p>
-        </div>
-        <span>{BUSINESS_INFORMATION.copyright}</span>
-      </div>
-
-      <div className="mb-8 flex items-center justify-between">
-        <div className="flex items-center gap-4">
-          <Icon
-            src="/icons/instagram.svg"
-            alt="인스타그램 아이콘"
-            to="https://www.instagram.com/letscareer.official/"
-            className="instagram_cta"
-          />
-          <Icon
-            src="/icons/blog.png"
-            alt="네이버 블로그 아이콘"
-            to="https://blog.naver.com/PostList.naver?blogId=letsintern"
-            className="blog_cta"
-          />
-        </div>
-        <div className="flex items-center gap-6 text-neutral-0/[.65]">
-          <DocumentLink to="https://letsintern.notion.site/a121a038f72f42d7bde747624ecc0943?pvs=4">
-            서비스 이용약관
-          </DocumentLink>
-          <DocumentLink to="https://letsintern.notion.site/c3af485bfced49ab9601f2d7bf07657d?pvs=4">
-            개인정보처리방침
-          </DocumentLink>
-        </div>
-      </div>
       <hr className="mb-10 mt-8" />
     </footer>
   );
