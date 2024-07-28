@@ -164,13 +164,13 @@ const ProgramDetail = ({ programType }: ProgramDetailProps) => {
                   />
                 </div>
                 {isInstagramAlertOpen && (
-                  <div className="flex w-full items-center gap-x-2 bg-[#FEFFC8] p-4">
+                  <div className="flex w-full items-start gap-x-2 bg-[#FEFFC8] p-4">
                     <img
                       src="/icons/warning.svg"
                       alt="warning"
                       className="h-6 w-6"
                     />
-                    <div className="flex w-full flex-col text-xsmall14 text-neutral-0">
+                    <div className="text-xsmall14 flex w-full flex-col text-neutral-0">
                       <p className="font-bold">
                         [결제오류 방지] 외부 브라우저로 접속해주세요
                       </p>
