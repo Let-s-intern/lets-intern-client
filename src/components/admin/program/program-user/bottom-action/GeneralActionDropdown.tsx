@@ -14,11 +14,9 @@ const GeneralActionDropdown = ({ applications, programTitle }: Props) => {
     isConfirmed: boolean,
     column: 'EMAIL' | 'PHONE',
   ) => {
-    const emailList = applications
-      .filter((application) => application.isConfirmed === isConfirmed)
-      .map((application) =>
-        column === 'EMAIL' ? application.email : application.phoneNum,
-      );
+    const emailList = applications.map((application) =>
+      column === 'EMAIL' ? application.email : application.phoneNum,
+    );
     const label =
       column === 'EMAIL' ? '이메일' : column === 'PHONE' && '전화번호';
     const subject =
@@ -48,9 +46,7 @@ const GeneralActionDropdown = ({ applications, programTitle }: Props) => {
 
   const getCSV = () => {
     const csv: any = [];
-    csv.push(
-      `이름,이메일,휴대폰 번호,쿠폰명,입금 예정 금액,입금 여부,신청일자`,
-    );
+    csv.push(`이름,이메일,휴대폰 번호,쿠폰명,결제금액,환불여부,신청일자`);
     applications.forEach((application) => {
       const row = [];
       const createDate =
@@ -58,13 +54,23 @@ const GeneralActionDropdown = ({ applications, programTitle }: Props) => {
           ? application.createDate
           : application.created_date;
 
+      const amount =
+        application.couponDiscount === -1
+          ? 0
+          : application.isCanceled
+            ? (application.programPrice ?? 0) -
+              (application.programDiscount ?? 0) -
+              (application.finalPrice ?? 0) -
+              (application.couponDiscount ?? 0)
+            : application.finalPrice ?? 0;
+
       row.push(
         application.name,
         application.email,
         application.phoneNum,
         application.couponName || '없음',
-        application.totalCost,
-        application.isConfirmed ? '입금완료' : '입금대기',
+        amount,
+        application.isCanceled ? 'Y' : 'N',
         createDate.format('YYYY년 MM월 DD일 a h시 m분'),
       );
 

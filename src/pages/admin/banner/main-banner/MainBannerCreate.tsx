@@ -1,11 +1,11 @@
-import { useState } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import MainBannerInputContent from '../../../../components/admin/banner/main-banner/MainBannerInputContent';
 import EditorTemplate from '../../../../components/admin/program/ui/editor/EditorTemplate';
+import { IBannerForm } from '../../../../types/Banner.interface';
 import axios from '../../../../utils/axios';
-import { IBannerForm } from '../../../../interfaces/Banner.interface';
 
 const MainBannerCreate = () => {
   const queryClient = useQueryClient();

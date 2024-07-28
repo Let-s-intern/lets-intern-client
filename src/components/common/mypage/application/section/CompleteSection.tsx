@@ -1,10 +1,10 @@
 import { useState } from 'react';
-import { ApplicationType } from '../../../../../pages/common/mypage/Application';
+import { MypageApplication } from '../../../../../api/application';
 import Button from '../../ui/button/Button';
 import ApplicationCard from '../../ui/card/root/ApplicationCard';
 
 interface CompleteSectionProps {
-  applicationList: ApplicationType[];
+  applicationList: MypageApplication[];
 }
 
 const CompleteSection = ({ applicationList }: CompleteSectionProps) => {
@@ -18,7 +18,7 @@ const CompleteSection = ({ applicationList }: CompleteSectionProps) => {
       {applicationList.length === 0 ? (
         <div className="flex w-full flex-col items-center gap-4 py-20">
           <p className="text-neutral-0 text-opacity-[36%]">
-            참여 완료한 내역이 아직 없어요.
+            참여 완료한 프로그램이 아직 없어요.
           </p>
         </div>
       ) : (
@@ -33,17 +33,16 @@ const CompleteSection = ({ applicationList }: CompleteSectionProps) => {
           ))}
         </div>
       )}
-      {applicationList.length > 3 &&
-        !showMore && (
-          <Button
-            className="hidden md:flex"
-            onClick={() => {
-              setShowMore(true);
-            }}
-          >
-            더보기
-          </Button>
-        )}
+      {applicationList.length > 3 && !showMore && (
+        <Button
+          className="hidden md:flex"
+          onClick={() => {
+            setShowMore(true);
+          }}
+        >
+          더보기
+        </Button>
+      )}
     </section>
   );
 };

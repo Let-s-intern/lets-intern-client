@@ -11,12 +11,6 @@ import EmptyCardList from '../../../components/common/program/programs/card/Empt
 import ProgramCard from '../../../components/common/program/programs/card/ProgramCard';
 import LoadingContainer from '../../../components/common/ui/loading/LoadingContainer';
 import {
-  filterClassificationkey,
-  filterStatuskey,
-  filterTypekey,
-  IProgram,
-} from '../../../interfaces/interface';
-import {
   filterClassificationReducer,
   filterStatusReducer,
   filterTypeReducer,
@@ -24,6 +18,12 @@ import {
   initialFilterStatus,
   initialFilterType,
 } from '../../../reducers/filterReducer';
+import {
+  filterClassificationkey,
+  filterStatuskey,
+  filterTypekey,
+  IProgram,
+} from '../../../types/interface';
 import axios from '../../../utils/axios';
 import { getKeyByValue } from '../../../utils/convert';
 import {
@@ -224,6 +224,14 @@ const Programs = () => {
     resetPageable();
     setSearchParams(searchParams);
   };
+
+  const handlePageChange = useCallback(
+    (event: React.ChangeEvent<unknown>, page: number) => {
+      setPageable((prev) => ({ ...prev, page }));
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    },
+    [],
+  );
 
   // 페이지 상태 관리
   const [pageable, setPageable] = useState(initialPageable);
@@ -427,7 +435,7 @@ const Programs = () => {
               <MuiPagination
                 page={pageable.page}
                 pageInfo={pageInfo}
-                setPageable={setPageable}
+                onChange={handlePageChange}
               />
             </>
           ))

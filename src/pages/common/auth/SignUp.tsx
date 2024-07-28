@@ -11,8 +11,8 @@ import PrivacyLink from '../../../components/common/auth/ui/PrivacyLink';
 import SocialLogin from '../../../components/common/auth/ui/SocialLogin';
 import Button from '../../../components/common/ui/button/Button';
 import Input from '../../../components/ui/input/Input';
-import { ErrorResonse } from '../../../interfaces/interface';
 import useAuthStore from '../../../store/useAuthStore';
+import { ErrorResonse } from '../../../types/interface';
 import axios from '../../../utils/axios';
 import {
   isValidEmail,
@@ -442,7 +442,7 @@ const SignUp = () => {
                         onClick={(e) => {
                           e.stopPropagation();
                           window.open(
-                            'https://letsintern.notion.site/241b2e747ddf47478012a68f7c03f9e1?pvs=25',
+                            'https://letsintern.notion.site/a121a038f72f42d7bde747624ecc0943?pvs=4',
                             '_blank',
                           );
                         }}

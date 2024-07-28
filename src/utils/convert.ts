@@ -1,6 +1,13 @@
 import { AttendanceResult, AttendanceStatus } from '../schema';
 
+/** @deprecated use `newProgramTypeText` instead. */
 export const newProgramTypeToText: Record<string, string> = {
+  CHALLENGE: '챌린지',
+  LIVE: 'LIVE 클래스',
+  VOD: 'VOD 클래스',
+};
+
+const newProgramTypeText: Record<'CHALLENGE' | 'LIVE' | 'VOD', string> = {
   CHALLENGE: '챌린지',
   LIVE: 'LIVE 클래스',
   VOD: 'VOD 클래스',
@@ -56,7 +63,7 @@ const challengeTopicToText: Record<string, string> = {
   DEVELOPMENT: '개발',
 };
 
-export const applicationStatusToText: Record<string, string> = {
+const applicationStatusToText: Record<string, string> = {
   APPLIED: '대기',
   IN_PROGRESS: '참가확정',
   APPLIED_NOT_APPROVED: '미선발',
@@ -335,4 +342,13 @@ export const TABLE_CONTENT = {
 
 export const getKeyByValue = (obj: any, value: string) => {
   return Object.keys(obj).find((key) => obj[key] === value);
+};
+
+export const blogCategory: Record<string, string> = {
+  JOB_PREPARATION_TIPS: '취준 TIP ',
+  PROGRAM_REVIEWS: '프로그램 후기',
+  JOB_SUCCESS_STORIES: '취뽀 후기',
+  WORK_EXPERIENCES: '근무 후기',
+  JUNIOR_STORIES: '주니어 이야기',
+  LETSCAREER_NEWS: '렛츠커리어 소식',
 };

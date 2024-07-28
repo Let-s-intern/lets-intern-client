@@ -5,6 +5,19 @@ module.exports = {
   content: ['./src/**/*.{js,jsx,ts,tsx}'],
   theme: {
     extend: {
+      fontSize: {
+        xxlarge36: ['2.25rem', { lineHeight: '3rem' }],
+        xxlarge32: ['2rem', { lineHeight: '2.625rem' }],
+        xlarge28: ['1.75rem', { lineHeight: '2.375rem' }],
+        large26: ['1.625rem', { lineHeight: '2.125rem' }],
+        medium24: ['1.5rem', { lineHeight: '2rem' }],
+        medium22: ['1.375rem', { lineHeight: '1.875rem' }],
+        small20: ['1.25rem', { lineHeight: '1.75rem' }],
+        small18: ['1.125rem', { lineHeight: '1.625rem' }],
+        xsmall16: ['1rem', { lineHeight: '1.5rem' }],
+        xsmall14: ['0.875rem', { lineHeight: '1.25rem' }],
+        xxsmall12: ['0.75rem', { lineHeight: '1rem' }],
+      },
       screens: {
         xs: '390px',
         sm: '640px',
@@ -26,6 +39,7 @@ module.exports = {
           10: '#EDEEFE',
           20: '#DBDDFD',
           30: '#CACCFC',
+          40: '#B8BBFB',
         },
         secondary: {
           DEFAULT: '#1BC47D',
@@ -103,6 +117,9 @@ module.exports = {
           'linear-gradient(165deg, #667FFF 10.2%, #4D55F5 80.95%)',
         'gradient-desc':
           'linear-gradient(180deg, rgba(77, 85, 245, 0.00) 0%, rgba(77, 85, 245, 0.70) 100%)',
+        'blog-banner-sm': 'url("../public/images/blog_banner_bg_sm.png")',
+        'blog-banner-md': 'url("../public/images/blog_banner_bg_md.png")',
+        'blog-banner-lg': 'url("../public/images/blog_banner_bg_lg.png")',
       },
       keyframes: {
         fadeInDown: {
@@ -130,6 +147,10 @@ module.exports = {
       xl: '1.25rem',
       xxl: '1.5rem',
       full: '9999px',
+    },
+    boxShadow: {
+      button:
+        '0px 16px 20px 0px rgba(0, 0, 0, 0.12), 0px 8px 16px 0px rgba(0, 0, 0, 0.08), 0px 0px 8px 0px rgba(0, 0, 0, 0.08)',
     },
   },
   plugins: [require('tailwind-scrollbar-hide')],

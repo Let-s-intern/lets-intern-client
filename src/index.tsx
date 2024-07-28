@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom/client';
 import App from './App';
 import './index.css';
 import './styles/apply.scss';
+import './styles/blog.css';
 import './styles/card.scss';
 import './styles/github-markdown-light.css';
 import './styles/modal.scss';

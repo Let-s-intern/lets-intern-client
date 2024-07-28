@@ -92,6 +92,15 @@ const AdminLayout = () => {
       ],
     },
     {
+      title: '블로그',
+      itemList: [
+        {
+          name: '블로그 글 관리/등록',
+          url: '/admin/blog/list',
+        },
+      ],
+    },
+    {
       title: '나가기',
       itemList: [
         {

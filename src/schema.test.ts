@@ -9,8 +9,13 @@ import {
   getChallengeIdSchema,
   getContentsAdmin,
   getContentsAdminSimple,
-  missionAdmin,
+  missionAdmin
 } from './schema';
+
+/********************************
+ * TODO: 아직 제대로 테스트 프로세스 정립되지 않았습니다.
+ * 본 파일은 아직 미완임
+ *****************************/
 
 const requestPromise = (async () => {
   const res = await fetch(`${process.env.REACT_APP_SERVER_API}/user/signin`, {

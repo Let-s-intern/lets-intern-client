@@ -11,16 +11,11 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
+import { AxiosError } from 'axios';
 import axios from '../../../utils/axios';
-import {
-  couponTypeToText,
-  couponProgramTypeEnum,
-  couponTypeEnum,
-  newProgramTypeToText,
-} from '../../../utils/convert';
+import { couponTypeToText, newProgramTypeToText } from '../../../utils/convert';
 import Input from '../../ui/input/Input';
 import ActionButton from '../ui/button/ActionButton';
-import { AxiosError } from 'axios';
 
 interface CouponEditorProps {
   editorMode: 'create' | 'edit';
