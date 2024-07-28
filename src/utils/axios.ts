@@ -45,6 +45,7 @@ axios.interceptors.response.use(
         useAuthStore.setState({
           accessToken: undefined,
           refreshToken: undefined,
+          isLoggedIn: false,
         });
         return Promise.reject(error);
       }
@@ -54,6 +55,7 @@ axios.interceptors.response.use(
         useAuthStore.setState({
           accessToken: res.data.data.accessToken,
           refreshToken: res.data.data.refreshToken,
+          isLoggedIn: true,
         });
         return axios(originalRequest);
       } catch (error) {
