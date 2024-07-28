@@ -14,8 +14,16 @@ const TableRow = ({ application, programType }: Props) => {
       ? application.createDate
       : application.created_date;
 
+  const amount = application.isCanceled
+    ? (application.programPrice ?? 0) -
+      (application.programDiscount ?? 0) -
+      (application.finalPrice ?? 0) -
+      (application.couponPrice ?? 0)
+    : application.finalPrice ?? 0;
+
   return (
     <tr>
+      <TD>{application.orderId}</TD>
       <TD>
         {/* {application.optionalInfo ? (
           <Link
@@ -44,7 +52,7 @@ const TableRow = ({ application, programType }: Props) => {
         </>
       )}
       <TD>{application.couponName || '없음'}</TD>
-      <TD>{application.totalCost?.toLocaleString()}원</TD>
+      <TD>{amount.toLocaleString()}원</TD>
       <TD whiteSpace="wrap">
         {application.isCanceled ? (
           <span className="font-bold">Y</span>
