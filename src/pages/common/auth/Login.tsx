@@ -144,12 +144,6 @@ const Login = () => {
           label="비밀번호"
           value={password}
           onChange={(e: any) => setPassword(e.target.value)}
-          onKeyDown={(e) => {
-            if (e.key === 'Enter') {
-              if (buttonDisabled) return;
-              fetchLogin.mutate();
-            }
-          }}
         />
         {errorMessage && (
           <span className="text-center text-sm font-medium text-red-600">

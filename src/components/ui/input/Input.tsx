@@ -72,7 +72,6 @@ const Input = ({
       multiline={multiline}
       rows={rows}
       onChange={onChange}
-      onKeyDownCapture={(e) => e.key === 'Enter' && e.preventDefault()}
       autoComplete="off"
       fullWidth={fullWidth}
       className={className}
@@ -81,7 +80,6 @@ const Input = ({
       onFocus={() => setFocused(true)}
       onBlur={() => setFocused(false)}
       error={error}
-      onKeyDown={onKeyDown}
     />
   );
 
