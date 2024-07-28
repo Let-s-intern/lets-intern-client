@@ -10,7 +10,8 @@ const Review = () => {
     return (
       applications?.filter(
         (application) =>
-          application.status !== 'WAITING' && application.reviewId !== null,
+          application.programStatusType !== 'PREV' &&
+          application.reviewId !== null,
       ) || []
     );
   }, [applications]);
@@ -19,7 +20,8 @@ const Review = () => {
     return (
       applications?.filter(
         (application) =>
-          application.status !== 'WAITING' && application.reviewId === null,
+          application.programStatusType !== 'PREV' &&
+          application.reviewId === null,
       ) || []
     );
   }, [applications]);

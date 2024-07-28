@@ -1,27 +1,42 @@
 import { FaCheck } from 'react-icons/fa6';
 import { twMerge } from 'tailwind-merge';
 
+import { useEffect, useState } from 'react';
 import Input from '../../../../ui/input/Input';
 import { UserInfo } from '../../section/ApplySection';
 
 interface UserInputSectionProps {
   userInfo: UserInfo;
   setUserInfo: (userInfo: UserInfo) => void;
+  contactEmail: string;
+  setContactEmail: (contactEmail: string) => void;
 }
 
-const UserInputSection = ({ userInfo, setUserInfo }: UserInputSectionProps) => {
+const UserInputSection = ({
+  userInfo,
+  setUserInfo,
+  contactEmail,
+  setContactEmail,
+}: UserInputSectionProps) => {
+  const [isSameEmail, setIsSameEmail] = useState(
+    contactEmail === userInfo.email,
+  );
+
+  useEffect(() => {
+    console.log('userInfo email', userInfo.email);
+    console.log('userInfo contactEmail', userInfo.contactEmail);
+    console.log(isSameEmail);
+    console.log('contactEmail', contactEmail);
+  }, [userInfo, contactEmail]);
+
   const handleSameEmail = () => {
     if (isSameEmail) {
-      setUserInfo({
-        ...userInfo,
-        contactEmail: '',
-      });
+      setContactEmail(userInfo.contactEmail);
     } else {
-      setUserInfo({
-        ...userInfo,
-        contactEmail: userInfo.email,
-      });
+      setContactEmail(userInfo.email);
     }
+
+    setIsSameEmail((prev) => !prev);
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -31,7 +46,14 @@ const UserInputSection = ({ userInfo, setUserInfo }: UserInputSectionProps) => {
     });
   };
 
-  const isSameEmail = userInfo.email === userInfo.contactEmail;
+  const handleContactEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setContactEmail(e.target.value);
+    if (e.target.value === userInfo.email) {
+      setIsSameEmail(true);
+    } else {
+      setIsSameEmail(false);
+    }
+  };
 
   return (
     <div className="flex flex-col gap-2.5">
@@ -93,8 +115,8 @@ const UserInputSection = ({ userInfo, setUserInfo }: UserInputSectionProps) => {
           id="contactEmail"
           name="contactEmail"
           placeholder="example@example.com"
-          value={userInfo.contactEmail}
-          onChange={handleInputChange}
+          value={contactEmail}
+          onChange={handleContactEmailChange}
         />
       </div>
     </div>

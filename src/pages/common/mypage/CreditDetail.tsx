@@ -256,7 +256,7 @@ const CreditDetail = () => {
                           *환불 규정은{' '}
                           <a
                             className="underline underline-offset-2"
-                            href="https://letscareer.oopy.io"
+                            href="https://letscareer.oopy.io/5eb0ebdd-e10c-4aa1-b28a-8bd0964eca0b"
                             target="_blank"
                             rel="noreferrer"
                           >

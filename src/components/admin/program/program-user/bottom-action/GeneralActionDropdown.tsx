@@ -54,12 +54,22 @@ const GeneralActionDropdown = ({ applications, programTitle }: Props) => {
           ? application.createDate
           : application.created_date;
 
+      const amount =
+        application.couponDiscount === -1
+          ? 0
+          : application.isCanceled
+            ? (application.programPrice ?? 0) -
+              (application.programDiscount ?? 0) -
+              (application.finalPrice ?? 0) -
+              (application.couponDiscount ?? 0)
+            : application.finalPrice ?? 0;
+
       row.push(
         application.name,
         application.email,
         application.phoneNum,
         application.couponName || '없음',
-        application.totalCost,
+        amount,
         application.isCanceled ? 'Y' : 'N',
         createDate.format('YYYY년 MM월 DD일 a h시 m분'),
       );

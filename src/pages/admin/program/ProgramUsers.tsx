@@ -38,7 +38,13 @@ const ProgramUsers = () => {
     queryFn: async () => {
       const res = await axios.get(`/challenge/${programId}/applications`);
 
-      return challengeApplicationsSchema.parse(res.data.data).applicationList;
+      const list = challengeApplicationsSchema.parse(
+        res.data.data,
+      ).applicationList;
+      list.sort((a, b) => {
+        return a.isCanceled === b.isCanceled ? 0 : a.isCanceled ? -1 : 1;
+      });
+      return list;
     },
   });
 
@@ -48,7 +54,13 @@ const ProgramUsers = () => {
       queryKey: ['live', programId, 'applications'],
       queryFn: async () => {
         const res = await axios.get(`/live/${programId}/applications`);
-        return liveApplicationsSchema.parse(res.data.data).applicationList;
+        const list = liveApplicationsSchema.parse(
+          res.data.data,
+        ).applicationList;
+        list.sort((a, b) => {
+          return a.isCanceled === b.isCanceled ? 0 : a.isCanceled ? -1 : 1;
+        });
+        return list;
       },
     });
 

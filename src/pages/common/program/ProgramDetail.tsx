@@ -31,6 +31,8 @@ const ProgramDetail = ({ programType }: ProgramDetailProps) => {
   const programId = Number(params.programId);
   const isDesktop = useMediaQuery('(min-width: 991px)');
   const [isDrawerOpen, dispatchIsDrawerOpen] = useReducer(drawerReducer, false);
+  const isInstagram = navigator.userAgent.includes('Instagram');
+  const [isInstagramAlertOpen, setIsInstagramAlertOpen] = useState(false);
 
   useRunOnce(() => {
     const searchParams = new URLSearchParams(window.location.search);
@@ -78,6 +80,11 @@ const ProgramDetail = ({ programType }: ProgramDetailProps) => {
       : false;
 
   const toggleDrawer = () => {
+    if (isInstagram && !isInstagramAlertOpen) {
+      setIsInstagramAlertOpen(true);
+      return;
+    }
+
     if (!isLoggedIn) {
       alert('로그인 후 이용해주세요.');
       navigate(`/login?redirect=${window.location.pathname}`);
@@ -143,10 +150,10 @@ const ProgramDetail = ({ programType }: ProgramDetailProps) => {
             ) : (
               <div
                 className={twMerge(
-                  'fixed bottom-0 left-0 right-0 z-30 w-screen rounded-t-lg bg-static-100 px-5 pb-3 shadow-05',
+                  'fixed bottom-0 left-0 right-0 z-30 flex w-screen flex-col gap-y-2.5 rounded-t-lg bg-static-100 px-5 pb-2.5 pt-3 shadow-05',
                 )}
               >
-                <div className="flex w-full justify-center bg-static-100 py-3">
+                <div className="flex w-full justify-center bg-static-100">
                   <div
                     onClick={() =>
                       dispatchIsDrawerOpen({
@@ -156,6 +163,24 @@ const ProgramDetail = ({ programType }: ProgramDetailProps) => {
                     className="h-[5px] w-[70px] shrink-0 cursor-pointer rounded-full bg-neutral-80"
                   />
                 </div>
+                {isInstagramAlertOpen && (
+                  <div className="flex w-full items-center gap-x-2 bg-[#FEFFC8] p-4">
+                    <img
+                      src="/icons/warning.svg"
+                      alt="warning"
+                      className="h-6 w-6"
+                    />
+                    <div className="flex w-full flex-col text-xsmall14 text-neutral-0">
+                      <p className="font-bold">
+                        [결제오류 방지] 외부 브라우저로 접속해주세요
+                      </p>
+                      <p>
+                        상단 더보기 버튼 혹은 하단 공유 버튼을 누르면 외부
+                        브라우저로 이동할 수 있어요.
+                      </p>
+                    </div>
+                  </div>
+                )}
                 {loading ? (
                   <FilledButton
                     onClick={() => {}}

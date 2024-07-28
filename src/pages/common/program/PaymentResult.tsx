@@ -50,6 +50,7 @@ const PaymentResult = () => {
             ? null
             : params.paymentKey,
         orderId:
+          // TOSS 에서 넘겨받을 때 orderId가 추가로 붙어서 넘어올 수 있어 배열 케이스도 처리 TODO: 내부용 orderId 이름 변경
           typeof params.orderId === 'string'
             ? params.orderId
             : params.orderId[0],
