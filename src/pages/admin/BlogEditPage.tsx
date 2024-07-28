@@ -148,13 +148,16 @@ export default function BlogEditPage() {
     setValue({ ...value, [event.target.name]: event.target.value });
   };
 
-  const deleteTag = useCallback((id: number) => {
-    const j = value.tagList.findIndex((tag) => tag.id === id);
-    setValue((prev) => ({
-      ...prev,
-      tagList: [...prev.tagList.slice(0, j), ...prev.tagList.slice(j + 1)],
-    }));
-  }, []);
+  const deleteTag = useCallback(
+    (id: number) => {
+      const j = value.tagList.findIndex((tag) => tag.id === id);
+      setValue((prev) => ({
+        ...prev,
+        tagList: [...prev.tagList.slice(0, j), ...prev.tagList.slice(j + 1)],
+      }));
+    },
+    [value.tagList],
+  );
 
   const handleChangeTag = useCallback(
     (event: ChangeEvent<HTMLInputElement>) => {
@@ -173,7 +176,9 @@ export default function BlogEditPage() {
       if (event.key !== 'Enter' || isEmpty) return;
       if (isExist) {
         alert('이미 존재하는 태그입니다.');
-      } else blogTagMutation.mutate(newTag);
+      } else {
+        blogTagMutation.mutate(newTag);
+      }
     },
     [newTag, blogTagData?.tagDetailInfos],
   );
