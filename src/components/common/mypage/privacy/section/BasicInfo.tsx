@@ -131,7 +131,7 @@ const BasicInfo = () => {
               user.authProvider === 'KAKAO'
                 ? '/images/social_kakao.svg'
                 : user.authProvider === 'NAVER'
-                  ? '/images/social_naver.png'
+                  ? '/images/social_naver.svg'
                   : ''
             }
             alt="profile"
@@ -208,7 +208,15 @@ const BasicInfo = () => {
                 className="flex cursor-pointer items-center gap-1"
                 onClick={handleSameEmail}
               >
-                <img src={isSameEmail ? '/icons/checkbox-checked.svg' : '/icons/checkbox-unchecked.svg'} alt="check" className="w-6 h-6" />
+                <img
+                  src={
+                    isSameEmail
+                      ? '/icons/checkbox-checked.svg'
+                      : '/icons/checkbox-unchecked.svg'
+                  }
+                  alt="check"
+                  className="h-6 w-6"
+                />
                 <span className="text-xs font-medium text-neutral-0 text-opacity-[74%]">
                   가입한 이메일과 동일
                 </span>
