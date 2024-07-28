@@ -5,6 +5,7 @@
  * LICENSE file in the root directory of this source tree.
  *
  */
+import { $isLinkNode } from '@lexical/link';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { mergeRegister } from '@lexical/utils';
 import {
@@ -18,7 +19,9 @@ import {
   SELECTION_CHANGE_COMMAND,
   UNDO_COMMAND,
 } from 'lexical';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { memo, useCallback, useEffect, useRef, useState } from 'react';
+
+import { getSelectedNode } from '../../../utils/getSelectedNode';
 
 const LowPriority = 1;
 
@@ -26,15 +29,18 @@ function Divider() {
   return <div className="divider" />;
 }
 
-export default function ToolbarPlugin() {
-  const [editor] = useLexicalComposerContext();
+const ToolbarPlugin = () => {
   const toolbarRef = useRef(null);
+
+  const [editor] = useLexicalComposerContext();
+
   const [canUndo, setCanUndo] = useState(false);
   const [canRedo, setCanRedo] = useState(false);
   const [isBold, setIsBold] = useState(false);
   const [isItalic, setIsItalic] = useState(false);
   const [isUnderline, setIsUnderline] = useState(false);
   const [isStrikethrough, setIsStrikethrough] = useState(false);
+  const [isLink, setIsLink] = useState(false);
 
   const $updateToolbar = useCallback(() => {
     const selection = $getSelection();
@@ -44,8 +50,29 @@ export default function ToolbarPlugin() {
       setIsItalic(selection.hasFormat('italic'));
       setIsUnderline(selection.hasFormat('underline'));
       setIsStrikethrough(selection.hasFormat('strikethrough'));
+
+      // Update links
+      const node = getSelectedNode(selection);
+      const parent = node.getParent();
+      if ($isLinkNode(parent) || $isLinkNode(node)) {
+        setIsLink(true);
+      } else {
+        setIsLink(false);
+      }
     }
   }, []);
+
+  const insertLink = useCallback(() => {
+    if (!isLink) {
+      //setIsLinkEditMode(true);
+      //editor.dispatchCommand(TOGGLE_LINK_COMMAND, sanitizeUrl('https://'));
+      console.log('Insert link');
+    } else {
+      //setIsLinkEditMode(false);
+      //editor.dispatchCommand(TOGGLE_LINK_COMMAND, null);
+      console.log('remove link');
+    }
+  }, [editor, isLink]);
 
   useEffect(() => {
     return mergeRegister(
@@ -84,6 +111,7 @@ export default function ToolbarPlugin() {
   return (
     <div className="toolbar" ref={toolbarRef}>
       <button
+        type="button"
         disabled={!canUndo}
         onClick={() => {
           editor.dispatchCommand(UNDO_COMMAND, undefined);
@@ -94,6 +122,7 @@ export default function ToolbarPlugin() {
         <i className="format undo" />
       </button>
       <button
+        type="button"
         disabled={!canRedo}
         onClick={() => {
           editor.dispatchCommand(REDO_COMMAND, undefined);
@@ -105,6 +134,7 @@ export default function ToolbarPlugin() {
       </button>
       <Divider />
       <button
+        type="button"
         onClick={() => {
           editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'bold');
         }}
@@ -114,6 +144,7 @@ export default function ToolbarPlugin() {
         <i className="format bold" />
       </button>
       <button
+        type="button"
         onClick={() => {
           editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'italic');
         }}
@@ -123,6 +154,7 @@ export default function ToolbarPlugin() {
         <i className="format italic" />
       </button>
       <button
+        type="button"
         onClick={() => {
           editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'underline');
         }}
@@ -132,6 +164,7 @@ export default function ToolbarPlugin() {
         <i className="format underline" />
       </button>
       <button
+        type="button"
         onClick={() => {
           editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'strikethrough');
         }}
@@ -140,8 +173,18 @@ export default function ToolbarPlugin() {
       >
         <i className="format strikethrough" />
       </button>
+      <button
+        onClick={insertLink}
+        className={'toolbar-item spaced ' + (isLink ? 'active' : '')}
+        aria-label="Insert link"
+        title="Insert link"
+        type="button"
+      >
+        <i className="format link" />
+      </button>
       <Divider />
       <button
+        type="button"
         onClick={() => {
           editor.dispatchCommand(FORMAT_ELEMENT_COMMAND, 'left');
         }}
@@ -151,6 +194,7 @@ export default function ToolbarPlugin() {
         <i className="format left-align" />
       </button>
       <button
+        type="button"
         onClick={() => {
           editor.dispatchCommand(FORMAT_ELEMENT_COMMAND, 'center');
         }}
@@ -160,6 +204,7 @@ export default function ToolbarPlugin() {
         <i className="format center-align" />
       </button>
       <button
+        type="button"
         onClick={() => {
           editor.dispatchCommand(FORMAT_ELEMENT_COMMAND, 'right');
         }}
@@ -169,6 +214,7 @@ export default function ToolbarPlugin() {
         <i className="format right-align" />
       </button>
       <button
+        type="button"
         onClick={() => {
           editor.dispatchCommand(FORMAT_ELEMENT_COMMAND, 'justify');
         }}
@@ -176,7 +222,9 @@ export default function ToolbarPlugin() {
         aria-label="Justify Align"
       >
         <i className="format justify-align" />
-      </button>{' '}
+      </button>
     </div>
   );
-}
+};
+
+export default memo(ToolbarPlugin);

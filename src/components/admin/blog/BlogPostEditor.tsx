@@ -5,12 +5,19 @@
  * LICENSE file in the root directory of this source tree.
  *
  */
+import { LinkNode } from '@lexical/link';
 import { AutoFocusPlugin } from '@lexical/react/LexicalAutoFocusPlugin';
 import { LexicalComposer } from '@lexical/react/LexicalComposer';
 import { ContentEditable } from '@lexical/react/LexicalContentEditable';
 import { LexicalErrorBoundary } from '@lexical/react/LexicalErrorBoundary';
 import { HistoryPlugin } from '@lexical/react/LexicalHistoryPlugin';
+import { LinkPlugin } from '@lexical/react/LexicalLinkPlugin';
+import { OnChangePlugin } from '@lexical/react/LexicalOnChangePlugin';
 import { RichTextPlugin } from '@lexical/react/LexicalRichTextPlugin';
+import { EditorState } from 'lexical';
+import { useCallback } from 'react';
+
+import ContextPlugin from './ContextPlugin';
 import ToolbarPlugin from './ToolbarPlugin';
 import TreeViewPlugin from './TreeViewPlugin';
 
@@ -57,11 +64,11 @@ const ExampleTheme = {
   },
 };
 
-const placeholder = 'Enter some rich text...';
+const placeholder = '내용을 입력하세요';
 
 const editorConfig = {
   namespace: 'React.js Demo',
-  nodes: [],
+  nodes: [LinkNode],
   // Handling of errors during update
   onError(error: Error) {
     throw error;
@@ -70,7 +77,29 @@ const editorConfig = {
   theme: ExampleTheme,
 };
 
-export default function BlogPostEditor() {
+const validateUrl = (url: string) => {
+  const urlRegExp = new RegExp(
+    /((([A-Za-z]{3,9}:(?:\/\/)?)(?:[-;:&=+$,\w]+@)?[A-Za-z0-9.-]+|(?:www.|[-;:&=+$,\w]+@)[A-Za-z0-9.-]+)((?:\/[+~%/.\w-_]*)?\??(?:[-+=&;%@.\w_]*)#?(?:[\w]*))?)/,
+  );
+  return urlRegExp.test(url);
+};
+
+interface BlogPostEditorProps {
+  editorStateJsonString?: string;
+  getJSONFromLexical: (jsonString: string) => void;
+}
+
+export default function BlogPostEditor({
+  editorStateJsonString = '',
+  getJSONFromLexical,
+}: BlogPostEditorProps) {
+  const handleChange = useCallback((editorState: EditorState) => {
+    editorState.read(() => {
+      const jsonString = JSON.stringify(editorState);
+      getJSONFromLexical(jsonString);
+    });
+  }, []);
+
   return (
     <LexicalComposer initialConfig={editorConfig}>
       <div className="editor-container">
@@ -88,9 +117,12 @@ export default function BlogPostEditor() {
             }
             ErrorBoundary={LexicalErrorBoundary}
           />
+          <OnChangePlugin onChange={handleChange} />
           <HistoryPlugin />
           <AutoFocusPlugin />
           <TreeViewPlugin />
+          <LinkPlugin validateUrl={validateUrl} />
+          <ContextPlugin editorStateJsonString={editorStateJsonString} />
         </div>
       </div>
     </LexicalComposer>

@@ -1,23 +1,178 @@
-import { useQuery } from '@tanstack/react-query';
+import {
+  useInfiniteQuery,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from '@tanstack/react-query';
 
-import { blogSchema } from '../schema';
 import { IPageable } from '../types/interface';
 import axios from '../utils/axios';
+import {
+  blogListSchema,
+  blogSchema,
+  blogTagSchema,
+  PatchBlogReqBody,
+  PostBlogReqBody,
+  TagDetail,
+} from './blogSchema';
 
-interface IBlogQuery {
-  type?: string;
-  tagId?: number;
+const blogListQueryKey = 'BlogListQueryKey';
+const blogQueryKey = 'BlogQueryKey';
+const blogTagQueryKey = 'BlogTagQueryKey';
+
+interface BlogQueryParams {
   pageable: IPageable;
+  type?: string | null;
+  tagId?: number | null;
 }
 
-const useBlogQueryKey = 'useBlogQueryKey';
-
-export const useBlogQuery = ({ type, tagId, pageable }: IBlogQuery) => {
+export const useBlogListQuery = ({
+  type,
+  tagId,
+  pageable,
+}: BlogQueryParams) => {
   return useQuery({
-    queryKey: [useBlogQueryKey, pageable],
+    queryKey: [blogListQueryKey, pageable],
     queryFn: async () => {
       const res = await axios.get(`/blog`, { params: pageable });
+      return blogListSchema.parse(res.data.data);
+    },
+  });
+};
+
+export const useInfiniteBlogListQuery = ({
+  type,
+  tagId,
+  pageable,
+}: BlogQueryParams) => {
+  return useInfiniteQuery({
+    queryKey: [blogListQueryKey, pageable, type, tagId],
+    queryFn: async ({ pageParam = pageable }) => {
+      const res = await axios.get('/blog', {
+        params: {
+          ...pageParam,
+          type,
+          tagId,
+        },
+      });
+      return blogListSchema.parse(res.data.data);
+    },
+    initialPageParam: pageable,
+    getNextPageParam: (lastPage) => {
+      return lastPage.pageInfo.totalElements === 0 ||
+        lastPage.pageInfo.totalPages - 1 === lastPage.pageInfo.pageNum
+        ? undefined
+        : { page: lastPage.pageInfo.pageNum + 1, size: pageable.size };
+    },
+  });
+};
+
+export const useBlogQuery = (blogId: string) => {
+  return useQuery({
+    queryKey: [blogQueryKey, blogId],
+    queryFn: async () => {
+      const res = await axios.get(`/blog/${blogId}`);
       return blogSchema.parse(res.data.data);
+    },
+  });
+};
+
+export const usePostBlogMutation = (
+  onSuccessCallback?: () => void,
+  onErrorCallback?: () => void,
+) => {
+  const client = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (newBlog: PostBlogReqBody) => {
+      return await axios.post('/blog', newBlog);
+    },
+    onSuccess: async () => {
+      await client.invalidateQueries({ queryKey: [blogListQueryKey] });
+      console.log('success');
+      onSuccessCallback && onSuccessCallback();
+    },
+    onError: (error) => {
+      console.error(error);
+      onErrorCallback && onErrorCallback();
+    },
+  });
+};
+
+export const useDeleteBlogMutation = (
+  onSuccessCallback?: () => void,
+  onErrorCallback?: () => void,
+) => {
+  const client = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (blogId: number) => {
+      return await axios.delete(`/blog/${blogId}`);
+    },
+    onSuccess: async () => {
+      await client.invalidateQueries({ queryKey: [blogListQueryKey] });
+      onSuccessCallback && onSuccessCallback();
+    },
+    onError: (error) => {
+      console.error(error);
+      onErrorCallback && onErrorCallback();
+    },
+  });
+};
+
+// PATCH: request body에 isDisplayed 속성을 필수로 넣어야 함
+export const usePatchBlogMutation = (
+  onSuccessCallback?: () => void,
+  onErrorCallback?: () => void,
+) => {
+  const client = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (blog: PatchBlogReqBody) => {
+      const reqBody: any = { ...blog };
+      delete reqBody.id;
+      const res = await axios.patch(`/blog/${blog.id}`, reqBody);
+      return res;
+    },
+    onSuccess: async () => {
+      await client.invalidateQueries({ queryKey: [blogListQueryKey] });
+      onSuccessCallback && onSuccessCallback();
+    },
+    onError: (error) => {
+      console.error(error);
+      onErrorCallback && onErrorCallback();
+    },
+  });
+};
+
+/* 해시태그 */
+export const useBlogTagQuery = () => {
+  return useQuery({
+    queryKey: [blogTagQueryKey],
+    queryFn: async () => {
+      const res = await axios.get(`/blog-tag`);
+      return blogTagSchema.parse(res.data.data);
+    },
+  });
+};
+
+export const usePostBlogTagMutation = (
+  onSuccessCallback?: () => void,
+  onErrorCallback?: () => void,
+) => {
+  const client = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (title: TagDetail['title']) => {
+      return await axios.post('/blog-tag', { title });
+    },
+    onSuccess: async () => {
+      await client.invalidateQueries({ queryKey: [blogTagQueryKey] });
+      onSuccessCallback && onSuccessCallback();
+    },
+    onError: (error) => {
+      console.error(error);
+      onErrorCallback && onErrorCallback();
     },
   });
 };

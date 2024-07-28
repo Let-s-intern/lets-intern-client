@@ -225,6 +225,14 @@ const Programs = () => {
     setSearchParams(searchParams);
   };
 
+  const handlePageChange = useCallback(
+    (event: React.ChangeEvent<unknown>, page: number) => {
+      setPageable((prev) => ({ ...prev, page }));
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    },
+    [],
+  );
+
   // 페이지 상태 관리
   const [pageable, setPageable] = useState(initialPageable);
   const [pageInfo, setPageInfo] = useState(initialPageInfo);
@@ -427,7 +435,7 @@ const Programs = () => {
               <MuiPagination
                 page={pageable.page}
                 pageInfo={pageInfo}
-                setPageable={setPageable}
+                onChange={handlePageChange}
               />
             </>
           ))

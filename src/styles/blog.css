@@ -57,7 +57,6 @@ h1 {
 }
 
 .editor-container {
-  margin: 20px auto 20px auto;
   border-radius: 2px;
   max-width: 600px;
   color: #000;
@@ -451,4 +450,8 @@ i.right-align {
 
 i.justify-align {
   background-image: url('/public/icons/justify.svg');
+}
+
+i.link {
+  background-image: url('/public/icons/link.svg');
 }
