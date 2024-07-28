@@ -83,7 +83,7 @@ const CreditDelete = () => {
   };
 
   const isPartialRefund = (): boolean => {
-    if (getRefundPercent() === 66 || getRefundPercent() === 50) {
+    if (getRefundPercent() !== 1 && getRefundPercent() !== 0) {
       return true;
     }
     return false;
