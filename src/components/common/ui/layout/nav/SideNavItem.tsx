@@ -22,17 +22,14 @@ const SideNavItem = ({
     <Link
       to={to}
       className={clsx(
-        'flex w-full cursor-pointer justify-between rounded-md bg-gray-100 px-7 py-5 text-neutral-30',
+        'mx-5 flex w-full cursor-pointer justify-between rounded-md px-2.5 py-3 text-neutral-30',
         className,
       )}
       onClick={onClick}
       target={target}
       rel={rel}
     >
-      <span>{children}</span>
-      <i>
-        <img src="/icons/arrow-right.svg" alt="오른쪽 화살표" />
-      </i>
+      <span className="text-1.125-bold">{children}</span>
     </Link>
   );
 };

@@ -1,5 +1,5 @@
-import { Link } from 'react-router-dom';
 import clsx from 'clsx';
+import { Link } from 'react-router-dom';
 
 interface NavItemProps {
   to?: string;
@@ -16,7 +16,10 @@ const NavItem = ({ to, active, as, children }: NavItemProps) => {
   };
 
   return (
-    <Wrapper to={to || '#'} className={clsx(style, 'cursor-pointer')}>
+    <Wrapper
+      to={to || '#'}
+      className={clsx(style, 'hidden cursor-pointer md:block')}
+    >
       {children}
     </Wrapper>
   );

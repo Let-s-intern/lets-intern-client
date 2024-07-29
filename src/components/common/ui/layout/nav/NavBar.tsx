@@ -76,16 +76,11 @@ const NavBar = () => {
       <div className="lg:p-30 fixed top-0 z-30 w-screen border-b border-neutral-80 bg-static-100 px-5 sm:px-20 lg:px-28">
         <div className="flex h-[3.75rem] items-center justify-between md:h-[4.375rem] lg:h-[4.75rem]">
           <div className="flex items-center gap-4 sm:gap-9">
-            <Link to="/" className="h-[34px] w-auto md:h-[2.2rem]">
+            <Link to="/" className="h-[1.75rem] md:h-[2.2rem]">
               <img
-                src="/logo/logo-simple.svg"
+                src="/logo/logo-gradient-text.svg"
                 alt="렛츠커리어 로고"
-                className="w-full md:hidden"
-              />
-              <img
-                src="/logo/logo.svg"
-                alt="렛츠커리어 로고"
-                className="hidden w-full md:block"
+                className="h-full w-auto"
               />
             </Link>
             {/* 메뉴 아이템 */}
@@ -94,6 +89,9 @@ const NavBar = () => {
             </NavItem>
             <NavItem to="/program" active={activeLink === 'PROGRAM'}>
               프로그램
+            </NavItem>
+            <NavItem to="/blog" active={activeLink === 'BLOG'}>
+              블로그
             </NavItem>
           </div>
           <div className="flex items-center gap-4">
@@ -104,7 +102,7 @@ const NavBar = () => {
               >
                 <span className="text-1.125-medium block">{user?.name} 님</span>
                 <img
-                  src="/icons/user-circle.svg"
+                  src="/icons/user-user-circle-black.svg"
                   alt="User icon"
                   className="w-1.75"
                 />
@@ -123,7 +121,10 @@ const NavBar = () => {
               </div>
             )}
             <button type="button" onClick={toggleMenu}>
-              <img src="/icons/nav-icon.svg" alt="네비게이션 아이콘" />
+              <img
+                src="/icons/hamburger-md-black.svg"
+                alt="네비게이션 아이콘"
+              />
             </button>
           </div>
         </div>
@@ -140,79 +141,96 @@ const NavBar = () => {
       ></div>
       {/* 사이드 네비게이션 바 */}
       <div
-        className={`fixed right-0 top-0 z-50 h-screen w-full bg-white p-5 shadow-md transition-all duration-300 sm:w-80 ${
+        className={`shadow-md fixed right-0 top-0 z-50 h-screen w-full bg-white transition-all duration-300 sm:w-80 ${
           isOpen ? 'translate-x-0' : 'translate-x-full'
         }`}
       >
-        <div className="flex w-full justify-end">
-          <i className="cursor-pointer" onClick={closeMenu}>
-            <img src="/icons/x.svg" alt="X" />
+        <div className="flex w-full items-center justify-between p-5">
+          <div className="h-[1.75rem]">
+            <img
+              className="h-full w-auto"
+              src="/logo/logo-gradient-text.svg"
+              alt="렛츠커리어 로고"
+            />
+          </div>
+          <i className="h-6 w-6 cursor-pointer" onClick={closeMenu}>
+            <img
+              className="h-auto w-full"
+              src="/icons/x-close.svg"
+              alt="닫기 아이콘"
+            />
           </i>
         </div>
-        <div className="mt-4 flex justify-between">
-          {isLoggedIn ? (
-            <span className="flex w-full items-center justify-between gap-4 px-4 text-neutral-0 sm:p-0">
-              <span>
-                환영합니다, <span className="text-primary">{user?.name}</span>님
+        <hr />
+        <div className="flex flex-col gap-5 py-10">
+          <div className="mx-5 flex justify-between">
+            {isLoggedIn ? (
+              <span className="flex w-full items-center justify-between gap-4 text-neutral-0 sm:p-0">
+                <span>
+                  환영합니다, <span className="text-primary">{user?.name}</span>
+                  님
+                </span>
+                <button
+                  className="text-primary"
+                  onClick={() => {
+                    logout();
+                    navigate('/');
+                    closeMenu();
+                  }}
+                >
+                  로그아웃
+                </button>
               </span>
-              <button
-                className="text-primary"
-                onClick={() => {
-                  logout();
-                  navigate('/');
-                  closeMenu();
-                }}
-              >
-                로그아웃
-              </button>
-            </span>
-          ) : (
-            <div className="text-0.875 flex gap-6">
-              <Link className="text-primary" to="/login" onClick={closeMenu}>
-                로그인
-              </Link>
-              <Link to="/signup" onClick={closeMenu}>
-                회원가입
-              </Link>
-            </div>
-          )}
-        </div>
-        <div className="mt-5 flex flex-col gap-2">
-          <SideNavItem to="/" onClick={closeMenu}>
-            홈
-          </SideNavItem>
-          <SideNavItem to="/about" onClick={closeMenu}>
-            렛츠커리어 스토리
-          </SideNavItem>
-          <SideNavItem to="/program" onClick={closeMenu}>
-            프로그램
-          </SideNavItem>
-          <SideNavItem to="/mypage/application" onClick={closeMenu}>
-            마이페이지
-          </SideNavItem>
-          {isAdmin && (
-            <SideNavItem to="/admin" onClick={closeMenu}>
-              관리자 페이지
+            ) : (
+              <div className="text-0.875 flex gap-6">
+                <Link className="text-primary" to="/login" onClick={closeMenu}>
+                  로그인
+                </Link>
+                <Link to="/signup" onClick={closeMenu}>
+                  회원가입
+                </Link>
+              </div>
+            )}
+          </div>
+          <div className="flex flex-col gap-2">
+            <SideNavItem to="/mypage/application" onClick={closeMenu}>
+              마이페이지
             </SideNavItem>
-          )}
-          <SideNavItem
-            to="https://letscareer.oopy.io"
-            target="_blank"
-            rel="noopener noreferrer"
-            onClick={closeMenu}
-            className="q&a_gnb"
-          >
-            자주 묻는 질문
-          </SideNavItem>
-          <SideNavItem
-            to="https://letscareer.oopy.io"
-            target="_blank"
-            rel="noopener noreferrer"
-            onClick={closeMenu}
-            className="notice_gnb"
-          >
-            공지사항
-          </SideNavItem>
+            <hr className="h-1 bg-neutral-80" />
+            <SideNavItem to="/about" onClick={closeMenu}>
+              렛츠커리어 스토리
+            </SideNavItem>
+            <SideNavItem to="/program" onClick={closeMenu}>
+              프로그램
+            </SideNavItem>
+            <SideNavItem to="/blog" onClick={closeMenu}>
+              블로그
+            </SideNavItem>
+            <hr className="h-1 bg-neutral-80" />
+            {isAdmin && (
+              <SideNavItem to="/admin" onClick={closeMenu}>
+                관리자 페이지
+              </SideNavItem>
+            )}
+            <SideNavItem
+              to="https://letscareer.oopy.io"
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={closeMenu}
+              className="notice_gnb"
+            >
+              공지사항
+            </SideNavItem>
+            <SideNavItem
+              to="https://letscareer.oopy.io"
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={closeMenu}
+              className="q&a_gnb"
+            >
+              자주 묻는 질문
+            </SideNavItem>
+          </div>
         </div>
       </div>
       {/* 네비게이션 바 공간 차지 */}
