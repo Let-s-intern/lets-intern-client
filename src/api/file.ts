@@ -1,9 +1,20 @@
 import { useMutation } from '@tanstack/react-query';
 import { AxiosResponse } from 'axios';
 import axios from '../utils/axios';
+import invariant from '../utils/invariant';
+import { generateRandomString } from '../utils/random';
+
+export type FileType =
+  | 'BANNER_MAIN'
+  | 'BANNER_PROGRAM'
+  | 'BANNER_POPUP'
+  | 'CHALLENGE'
+  | 'LIVE'
+  | 'VOD'
+  | 'BLOG';
 
 interface PostFileMutation {
-  type: string;
+  type: FileType;
   file: File;
 }
 
@@ -34,3 +45,29 @@ export const usePostFileMutation = (
     },
   });
 };
+
+export async function uploadFile({
+  file,
+  type,
+}: {
+  file: File;
+  type: FileType;
+}) {
+  const formData = new FormData();
+  formData.append('file', file, `${generateRandomString(10)}_${file.name}`);
+
+  const res = await axios.post('/file', formData, {
+    params: { type },
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  });
+
+  const fileUrl = res?.data?.data?.fileUrl;
+  invariant(
+    typeof fileUrl === 'string',
+    'fileUrl 의 값이 올바르지 않습니다: ' + res.data.data.fileUrl,
+  );
+
+  return fileUrl;
+}

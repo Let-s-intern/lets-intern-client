@@ -68,7 +68,7 @@ export default function BlogEditPage() {
   const [isTitleValid, setIsTitleValid] = useState(true);
   const [isCategoryValid, setIsCategoryValid] = useState(true);
 
-  const { data: blogTagData } = useBlogTagQuery();
+  const { data: blogTagData = [] } = useBlogTagQuery();
   const { data: blogData, isLoading } = useBlogQuery(id!);
   const blogTagMutation = usePostBlogTagMutation(function resetTag() {
     setNewTag('');
@@ -169,9 +169,7 @@ export default function BlogEditPage() {
   const handleKeyDown = useCallback(
     (event: React.KeyboardEvent<HTMLInputElement>) => {
       const isEmpty = newTag === '';
-      const isExist = blogTagData?.tagDetailInfos.some(
-        (tag) => tag.title === newTag,
-      );
+      const isExist = blogTagData.some((tag) => tag.title === newTag);
 
       if (event.key !== 'Enter' || isEmpty) return;
       if (isExist) {
@@ -180,7 +178,7 @@ export default function BlogEditPage() {
         blogTagMutation.mutate(newTag);
       }
     },
-    [newTag, blogTagData?.tagDetailInfos],
+    [newTag, blogTagData, blogTagMutation],
   );
 
   const getJSONFromLexical = (jsonString: string) => {
@@ -212,7 +210,7 @@ export default function BlogEditPage() {
       content: blogData.blogDetailInfo.content || '',
       ctaLink: blogData.blogDetailInfo.ctaLink || '',
       ctaText: blogData.blogDetailInfo.ctaText || '',
-      tagList: blogData.tagDetailInfos!,
+      tagList: blogData.tagDetailInfos,
     });
   }, [isLoading, blogData]);
 
@@ -312,7 +310,7 @@ export default function BlogEditPage() {
               />
               <TagSelector
                 selectedTagList={value.tagList}
-                tagList={blogTagData?.tagDetailInfos || []}
+                tagList={blogTagData}
                 value={newTag}
                 deleteTag={deleteTag}
                 selectTag={selectTag}

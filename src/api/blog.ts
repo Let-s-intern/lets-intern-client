@@ -151,7 +151,7 @@ export const useBlogTagQuery = () => {
     queryKey: [blogTagQueryKey],
     queryFn: async () => {
       const res = await axios.get(`/blog-tag`);
-      return blogTagSchema.parse(res.data.data);
+      return blogTagSchema.parse(res.data.data).tagDetailInfos;
     },
   });
 };

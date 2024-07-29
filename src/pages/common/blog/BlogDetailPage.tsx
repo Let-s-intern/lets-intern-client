@@ -1,7 +1,8 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useBlogListQuery, useBlogQuery } from '../../../api/blog';
 import BlogHashtag from '../../../components/common/blog/BlogHashtag';
+import LexicalContent from '../../../components/common/blog/LexicalContent';
 import RecommendBlogCard from '../../../components/common/blog/RecommendBlogCard';
 import { blogCategory } from '../../../utils/convert';
 
@@ -19,6 +20,10 @@ const BlogDetailPage = () => {
     type: data?.blogDetailInfo.category,
     pageable: { page: 0, size: 3 },
   });
+
+  useEffect(() => {
+    console.log('data.blogDetailInfo.content', data?.blogDetailInfo.content);
+  }, [data?.blogDetailInfo.content]);
 
   return (
     <div className="mx-auto w-full max-w-[1200px] flex-1 flex-col items-center px-5 md:px-10 md:py-10">
@@ -54,7 +59,14 @@ const BlogDetailPage = () => {
               </div>
             </div>
             <div className="w-full break-all text-xsmall16">
-              {data.blogDetailInfo.content}
+              <LexicalContent
+                node={
+                  !data.blogDetailInfo.content
+                    ? { type: 'root', children: [] }
+                    : JSON.parse(data.blogDetailInfo.content)?.root
+                }
+                index={0}
+              />
             </div>
             <div className="flex w-full items-center justify-center gap-x-3 py-10">
               <div className="flex items-center justify-center rounded-full border border-primary-20 p-[9px]">
@@ -186,7 +198,7 @@ const BlogDetailPage = () => {
                 )}
               </div>
             </div>
-            <div className="shadow-button fixed bottom-0 left-0 flex w-full items-center justify-center bg-neutral-100 px-[5px] py-3">
+            <div className="fixed bottom-0 left-0 flex w-full items-center justify-center bg-neutral-100 px-[5px] py-3 shadow-button">
               <button className="w-full max-w-[1200px] rounded-md bg-primary px-6 py-3 text-small18 font-medium text-neutral-100">
                 {data.blogDetailInfo.ctaText}
               </button>

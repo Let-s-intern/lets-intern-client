@@ -12,7 +12,7 @@ import * as http from 'http';
 import { $getRoot, $isElementNode, LexicalNode } from 'lexical';
 import * as url from 'url';
 
-import PlaygroundNodes from '../nodes';
+import nodes from '../nodes';
 
 const hostname = 'localhost';
 const port = 1235;
@@ -23,7 +23,7 @@ let stringifiedEditorStateJSON = '';
 
 const editor = createHeadlessEditor({
   namespace: 'validation',
-  nodes: [...PlaygroundNodes],
+  nodes: [...nodes],
   onError: (error) => {
     console.error(error);
   },

@@ -13,6 +13,7 @@ import { blogCategory } from '../../../utils/convert';
 import MuiPagination from '../../common/program/pagination/MuiPagination';
 
 const blogColumnWidth = {
+  id: 'w-20',
   displayDate: 'w-40',
   category: 'w-40',
   title: 'flex-1',
@@ -75,6 +76,9 @@ export default function BlogTable() {
     <div className="mt-3 min-w-[60rem]">
       {/* TableHeader */}
       <div className="flex rounded-sm bg-[#E5E5E5]">
+        <TableHeaderCell widthClassName={blogColumnWidth.id}>
+          id
+        </TableHeaderCell>
         <TableHeaderCell widthClassName={blogColumnWidth.displayDate}>
           게시일자
         </TableHeaderCell>
@@ -107,6 +111,14 @@ export default function BlogTable() {
               key={blogInfo.blogThumbnailInfo.id}
               className="flex rounded-md border border-neutral-200"
             >
+              <TableBodyCell widthClassName={blogColumnWidth.id}>
+                <Link
+                  to={`/blog/${blogInfo.blogThumbnailInfo.id}`}
+                  className="underline"
+                >
+                  {blogInfo.blogThumbnailInfo.id}
+                </Link>
+              </TableBodyCell>
               <TableBodyCell widthClassName={blogColumnWidth.displayDate}>
                 {blogInfo.blogThumbnailInfo.displayDate?.format(
                   'YYYY년 M월 D일',
