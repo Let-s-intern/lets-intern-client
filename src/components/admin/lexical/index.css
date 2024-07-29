@@ -7,13 +7,10 @@
  */
 
 .editor-shell {
-  margin: 20px auto;
-  max-width: 1100px;
-  @apply border;
   color: #000;
   position: relative;
   line-height: 1.7;
-  font-weight: 400;
+  @apply my-5 block font-normal;
 }
 
 .editor-shell .editor-container {
@@ -22,6 +19,7 @@
   display: block;
   border-bottom-left-radius: 10px;
   border-bottom-right-radius: 10px;
+  border: 1px solid #ddd;
 }
 
 .editor-shell .editor-container.tree-view {
@@ -1398,6 +1396,7 @@ button.action-button:disabled {
 }
 
 .toolbar {
+  @apply border;
   display: flex;
   margin-bottom: 1px;
   background: #fff;

@@ -25,13 +25,7 @@ export default function LexicalContentEditable({
     <ContentEditable
       className={className ?? 'ContentEditable__root'}
       aria-placeholder={placeholder}
-      placeholder={
-        ''
-        // TODO: 검토
-        // <div className={placeholderClassName ?? 'ContentEditable__placeholder'}>
-        //   {placeholder}
-        // </div>
-      }
+      placeholder={'내용을 작성하세요'}
     />
   );
 }
