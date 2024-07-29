@@ -48,10 +48,10 @@ const BlogCreatePage = () => {
 
   const { data: tags = [] } = useBlogTagQuery();
   const blogTagMutation = usePostBlogTagMutation();
-  // const fileMutation = usePostFileMutation();
   const blogMutation = usePostBlogMutation();
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
     const intent = (event.nativeEvent as SubmitEvent).submitter?.getAttribute(
       'value',
     );
@@ -60,16 +60,9 @@ const BlogCreatePage = () => {
       return;
     }
 
-    event.preventDefault();
-    console.log('event', event);
-    const formData = new FormData(event.currentTarget);
-    // Object.fromEntries(formData.entries());
-    console.log('event entries', Object.fromEntries(formData.entries()));
-    console.log('event.currentTarget.value', event.currentTarget.value);
-
     await blogMutation.mutateAsync({
       ...editingValue,
-      isDisplayed: event.currentTarget.intent.value === 'publish',
+      isDisplayed: intent === 'publish',
     });
 
     setSnackbar({
