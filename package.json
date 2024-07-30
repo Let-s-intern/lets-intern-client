@@ -65,7 +65,7 @@
     "build": "tsc -b && vite build",
     "start": "vite",
     "test": "vitest",
-    "lint": "eslint src"
+    "lint": "eslint ."
   },
   "proxy": "https://api.letsintern.co.kr",
   "devDependencies": {

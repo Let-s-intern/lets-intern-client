@@ -3,12 +3,10 @@
 // import pluginJs from '@eslint/js';
 import hooksPlugin from 'eslint-plugin-react-hooks';
 // import pluginReactConfig from 'eslint-plugin-react/configs/recommended.js';
+import eslint from '@eslint/js';
+import react from 'eslint-plugin-react/configs/recommended.js';
 import globals from 'globals';
 import tseslint from 'typescript-eslint';
-
-import eslint from '@eslint/js';
-import prettier from 'eslint-plugin-prettier/recommended';
-import react from 'eslint-plugin-react/configs/recommended.js';
 
 export default tseslint.config(
   {
@@ -31,6 +29,7 @@ export default tseslint.config(
       parserOptions: {
         sourceType: 'module',
         ecmaVersion: 'latest',
+        project: './tsconfig.json',
       },
     },
   },
@@ -77,29 +76,13 @@ export default tseslint.config(
       'react/react-in-jsx-scope': 'off',
       'object-shorthand': ['warn', 'always'],
       'no-useless-rename': 'warn',
+      'react/jsx-key': 'warn',
       // switch
       '@typescript-eslint/switch-exhaustiveness-check': 'warn',
+
+      // lexical
+      '@typescript-eslint/ban-ts-comment': 'warn',
+      'react/prop-types': 'warn',
     },
   },
-
-  prettier,
 );
-
-// export default [
-//   {
-//     files: ['src/**/*.{js,mjs,cjs,ts,jsx,tsx}'],
-//   },
-//   {
-//     languageOptions: {
-//       parserOptions: {
-//         ecmaFeatures: { jsx: true },
-//         project: './tsconfig.json',
-//       },
-//     },
-//   },
-//   { languageOptions: { globals: globals.browser } },
-//   pluginJs.configs.recommended,
-//   ...tseslint.configs.recommended,
-//   pluginReactConfig,
-
-// ];
