@@ -18,7 +18,7 @@ import TopBarBanners from './pages/admin/banner/top-bar-banner/TopBarBanners';
 import BlogCreatePage from './pages/admin/BlogCreatePage';
 import BlogEditPage from './pages/admin/BlogEditPage';
 import BlogPostListPage from './pages/admin/BlogPostListPage';
-import BlogReviewListPage from './pages/admin/BlogReviewListPage';
+import BlogRatingListPage from './pages/admin/BlogRatingListPage';
 import ChallengeContents from './pages/admin/challenge/ChallengeContents';
 import ChallengeMissionManagement from './pages/admin/challenge/ChallengeMissionManagement';
 import ChallengeOperationAttendances from './pages/admin/challenge/ChallengeOperationAttendances';
@@ -179,7 +179,7 @@ export const getAdminRoutes = () => {
       <Route path="blog/list" element={<BlogPostListPage />} />
       <Route path="blog/create" element={<BlogCreatePage />} />
       <Route path="blog/edit/:id" element={<BlogEditPage />} />
-      <Route path="blog/reviews" element={<BlogReviewListPage />} />
+      <Route path="blog/reviews" element={<BlogRatingListPage />} />
     </Route>
   );
 };
