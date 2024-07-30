@@ -12,7 +12,8 @@ const BlogHashtagListPage = () => {
   const [selectedTag, setSelectedTag] = useState<TagType | null>(
     location.state as TagType,
   );
-  const { data: tagListData, isLoading: tagListIsLoading } = useBlogTagQuery();
+  const { data: tagListData = [], isLoading: tagListIsLoading } =
+    useBlogTagQuery();
   const {
     data: blogListData,
     fetchNextPage,
@@ -75,12 +76,12 @@ const BlogHashtagListPage = () => {
               <div
                 className={`absolute bottom-[-10px] left-0 z-10 flex w-full translate-y-full flex-col overflow-y-scroll rounded-md transition-all duration-150 ${isToggle ? 'max-h-96' : 'max-h-0'}`}
               >
-                {tagListIsLoading && !tagListData ? (
+                {tagListIsLoading ? (
                   <div className="w-full bg-neutral-90 px-4 py-[14px] text-xsmall16 text-primary">
                     로딩중입니다.
                   </div>
                 ) : (
-                  tagListData?.tagDetailInfos.map((tag) => (
+                  tagListData.map((tag) => (
                     <div
                       key={tag.id}
                       className="w-full bg-neutral-90 px-4 py-[14px] text-xsmall16 text-primary"

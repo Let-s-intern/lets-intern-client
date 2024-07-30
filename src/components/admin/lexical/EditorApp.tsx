@@ -18,6 +18,7 @@ import {
   EditorState,
 } from 'lexical';
 import { useCallback, useEffect } from 'react';
+import ContextPlugin from '../blog/ContextPlugin';
 import { isDevPlayground } from './appSettings';
 import { FlashMessageContext } from './context/FlashMessageContext';
 import { SettingsContext, useSettings } from './context/SettingsContext';
@@ -133,8 +134,10 @@ function $prepopulatedRichText() {
 }
 
 function App({
+  editorStateJsonString,
   getJSONFromLexical,
 }: {
+  editorStateJsonString: string;
   getJSONFromLexical: (jsonString: string) => void;
 }): JSX.Element {
   useEffect(() => {
@@ -195,9 +198,9 @@ function App({
             {isDevPlayground ? <DocsPlugin /> : null}
             {isDevPlayground ? <PasteLogPlugin /> : null}
             {isDevPlayground ? <TestRecorderPlugin /> : null}
-
             {measureTypingPerf ? <TypingPerfPlugin /> : null}
             <OnChangePlugin onChange={handleChange} />
+            <ContextPlugin editorStateJsonString={editorStateJsonString} />
           </SharedAutocompleteContext>
         </TableContext>
       </SharedHistoryContext>
@@ -206,14 +209,19 @@ function App({
 }
 
 export default function EditorApp({
+  editorStateJsonString = '',
   getJSONFromLexical,
 }: {
+  editorStateJsonString?: string;
   getJSONFromLexical: (jsonString: string) => void;
 }): JSX.Element {
   return (
     <SettingsContext>
       <FlashMessageContext>
-        <App getJSONFromLexical={getJSONFromLexical} />
+        <App
+          editorStateJsonString={editorStateJsonString}
+          getJSONFromLexical={getJSONFromLexical}
+        />
       </FlashMessageContext>
     </SettingsContext>
   );

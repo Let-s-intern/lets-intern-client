@@ -19,6 +19,7 @@ import {
 const blogListQueryKey = 'BlogListQueryKey';
 const blogQueryKey = 'BlogQueryKey';
 const blogTagQueryKey = 'BlogTagQueryKey';
+const blogRatingQueryKey = 'blogRatingQueryKey';
 
 interface BlogQueryParams {
   pageable: IPageable;
@@ -26,11 +27,7 @@ interface BlogQueryParams {
   tagId?: number | null;
 }
 
-export const useBlogListQuery = ({
-  type,
-  tagId,
-  pageable,
-}: BlogQueryParams) => {
+export const useBlogListQuery = ({ pageable }: BlogQueryParams) => {
   return useQuery({
     queryKey: [blogListQueryKey, pageable],
     queryFn: async () => {
@@ -77,10 +74,7 @@ export const useBlogQuery = (blogId: string) => {
   });
 };
 
-export const usePostBlogMutation = (
-  onSuccessCallback?: () => void,
-  onErrorCallback?: () => void,
-) => {
+export const usePostBlogMutation = (onErrorCallback?: () => void) => {
   const client = useQueryClient();
 
   return useMutation({
@@ -89,8 +83,6 @@ export const usePostBlogMutation = (
     },
     onSuccess: async () => {
       await client.invalidateQueries({ queryKey: [blogListQueryKey] });
-      console.log('success');
-      onSuccessCallback && onSuccessCallback();
     },
     onError: (error) => {
       console.error(error);
@@ -99,10 +91,7 @@ export const usePostBlogMutation = (
   });
 };
 
-export const useDeleteBlogMutation = (
-  onSuccessCallback?: () => void,
-  onErrorCallback?: () => void,
-) => {
+export const useDeleteBlogMutation = (onErrorCallback?: () => void) => {
   const client = useQueryClient();
 
   return useMutation({
@@ -111,7 +100,6 @@ export const useDeleteBlogMutation = (
     },
     onSuccess: async () => {
       await client.invalidateQueries({ queryKey: [blogListQueryKey] });
-      onSuccessCallback && onSuccessCallback();
     },
     onError: (error) => {
       console.error(error);
@@ -121,10 +109,7 @@ export const useDeleteBlogMutation = (
 };
 
 // PATCH: request body에 isDisplayed 속성을 필수로 넣어야 함
-export const usePatchBlogMutation = (
-  onSuccessCallback?: () => void,
-  onErrorCallback?: () => void,
-) => {
+export const usePatchBlogMutation = (onErrorCallback?: () => void) => {
   const client = useQueryClient();
 
   return useMutation({
@@ -136,7 +121,7 @@ export const usePatchBlogMutation = (
     },
     onSuccess: async () => {
       await client.invalidateQueries({ queryKey: [blogListQueryKey] });
-      onSuccessCallback && onSuccessCallback();
+      await client.invalidateQueries({ queryKey: [blogQueryKey] });
     },
     onError: (error) => {
       console.error(error);
@@ -151,15 +136,12 @@ export const useBlogTagQuery = () => {
     queryKey: [blogTagQueryKey],
     queryFn: async () => {
       const res = await axios.get(`/blog-tag`);
-      return blogTagSchema.parse(res.data.data);
+      return blogTagSchema.parse(res.data.data).tagDetailInfos;
     },
   });
 };
 
-export const usePostBlogTagMutation = (
-  onSuccessCallback?: () => void,
-  onErrorCallback?: () => void,
-) => {
+export const usePostBlogTagMutation = (onErrorCallback?: () => void) => {
   const client = useQueryClient();
 
   return useMutation({
@@ -168,7 +150,6 @@ export const usePostBlogTagMutation = (
     },
     onSuccess: async () => {
       await client.invalidateQueries({ queryKey: [blogTagQueryKey] });
-      onSuccessCallback && onSuccessCallback();
     },
     onError: (error) => {
       console.error(error);

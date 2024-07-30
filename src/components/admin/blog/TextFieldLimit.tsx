@@ -1,5 +1,5 @@
 import { TextField } from '@mui/material';
-import { ChangeEvent, memo, useEffect, useRef } from 'react';
+import { ChangeEvent, memo } from 'react';
 
 interface TextFieldLimitProps {
   type: string;
@@ -16,6 +16,8 @@ interface TextFieldLimitProps {
   helperText?: string;
   focused?: boolean;
   error?: boolean;
+  required?: boolean;
+  size?: 'small' | 'medium';
 }
 
 const TextFieldLimit = ({
@@ -33,24 +35,19 @@ const TextFieldLimit = ({
   helperText = '',
   focused = false,
   error = false,
+  required,
+  size = 'small',
 }: TextFieldLimitProps) => {
-  const ref = useRef<HTMLInputElement>(null);
-
-  useEffect(() => {
-    // maxlength 설정
-    if (ref.current) {
-      ref.current.maxLength = maxLength;
-    }
-  });
-
   return (
     <div className="flex flex-col items-end gap-1">
       <TextField
-        inputRef={ref}
+        inputProps={{ maxLength }}
         type={type}
         label={label}
         placeholder={placeholder}
         name={name}
+        size={size}
+        required={required}
         value={value}
         onChange={onChange}
         autoComplete={autoComplete}

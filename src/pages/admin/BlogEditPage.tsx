@@ -1,19 +1,14 @@
 import {
+  Button,
   FormControl,
   FormHelperText,
   InputLabel,
   MenuItem,
   Select,
-  SelectChangeEvent,
+  Snackbar,
   TextField,
 } from '@mui/material';
-import {
-  ChangeEvent,
-  FormEvent,
-  useCallback,
-  useEffect,
-  useState,
-} from 'react';
+import { ChangeEvent, MouseEvent, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import {
@@ -23,19 +18,16 @@ import {
   usePostBlogTagMutation,
 } from '../../api/blog';
 import { TagDetail } from '../../api/blogSchema';
-import { usePostFileMutation } from '../../api/file';
-import BlogPostEditor from '../../components/admin/blog/BlogPostEditor';
+import { uploadFile } from '../../api/file';
 import TagSelector from '../../components/admin/blog/TagSelector';
 import TextFieldLimit from '../../components/admin/blog/TextFieldLimit';
+import EditorApp from '../../components/admin/lexical/EditorApp';
 import ImageUpload from '../../components/admin/program/ui/form/ImageUpload';
-import ActionButton from '../../components/admin/ui/button/ActionButton';
 import { blogCategory } from '../../utils/convert';
 
 const maxCtaTextLength = 23;
 const maxTitleLength = 49;
 const maxDescriptionLength = 100;
-const titleHelperText = '제목을 입력해주세요';
-const categoryHelperText = '카테고리를 선택주세요';
 const initialBlog = {
   title: '',
   category: '',
@@ -44,6 +36,7 @@ const initialBlog = {
   content: '',
   ctaLink: '',
   ctaText: '',
+  isDisplayed: false,
   tagList: [],
 };
 
@@ -58,153 +51,79 @@ interface EditBlog {
   tagList: TagDetail[];
 }
 
-export default function BlogEditPage() {
+const BlogEditPage = () => {
   const navgiate = useNavigate();
   const { id } = useParams();
 
-  const [value, setValue] = useState<EditBlog>(initialBlog);
-  const [newTag, setNewTag] = useState('');
-  const [file, setFile] = useState<File | null>(null);
-  const [isTitleValid, setIsTitleValid] = useState(true);
-  const [isCategoryValid, setIsCategoryValid] = useState(true);
-
-  const { data: blogTagData } = useBlogTagQuery();
+  const { data: tags = [] } = useBlogTagQuery();
   const { data: blogData, isLoading } = useBlogQuery(id!);
-  const blogTagMutation = usePostBlogTagMutation(function resetTag() {
-    setNewTag('');
-  });
-  const fileMutation = usePostFileMutation();
+  const blogTagMutation = usePostBlogTagMutation();
   const patchBlogMutation = usePatchBlogMutation();
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
+  const [editingValue, setEditingValue] = useState<EditBlog>(initialBlog);
+  const [newTag, setNewTag] = useState('');
+  const [snackbar, setSnackbar] = useState<{
+    open: boolean;
+    message: string;
+  }>({
+    open: false,
+    message: '',
+  });
+
+  const onChange = (event: ChangeEvent<HTMLInputElement>) => {
+    setEditingValue({
+      ...editingValue,
+      [event.target.name]: event.target.value,
+    });
   };
 
-  const saveBlog = async () => {
-    if (!validate()) return;
-
-    const thumbnail = await convertFiletoUrl(file);
-    const reqBody = {
-      ...value,
-      id: Number(id),
-      thumbnail,
-      isDisplayed: false,
-      tagList: value.tagList.map((tag) => tag.id),
-    };
-    patchBlogMutation.mutate(reqBody);
-
-    navgiate('/admin/blog/list');
+  const onChangeTag = (event: ChangeEvent<HTMLInputElement>) => {
+    setNewTag(event.target.value);
   };
 
-  const submitBlog = async () => {
-    if (!validate()) return;
-
-    const thumbnail = await convertFiletoUrl(file);
-    const reqBody = {
-      ...value,
-      id: Number(id),
-      thumbnail,
-      isDisplayed: true,
-      tagList: value.tagList.map((tag) => tag.id),
-    };
-    patchBlogMutation.mutate(reqBody);
-
-    navgiate('/admin/blog/list');
-  };
-
-  const convertFiletoUrl = async (file: File | null) => {
-    if (!file) return value.thumbnail;
-    const res = await fileMutation.mutateAsync({ type: 'BLOG', file });
-    return res.data.data.fileUrl;
-  };
-
-  const validate = () => {
-    // 제목, 카테고리는 필수값
-    let isValid = true;
-
-    if (value.category === '') {
-      setIsCategoryValid(false);
-      isValid = false;
-    }
-    if (value.title === '') {
-      setIsTitleValid(false);
-      isValid = false;
-    }
-    if (!isValid) scrollTo(0, 0);
-
-    return isValid;
-  };
-
-  const handleChange = (
-    event:
-      | ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-      | SelectChangeEvent<string>,
-  ) => {
-    const target = event.target as HTMLInputElement;
-    if (target.files) {
-      setFile(target.files[0]);
+  const onKeyDown = async (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key !== 'Enter' || newTag === '') {
       return;
     }
-    setValue({ ...value, [event.target.name]: event.target.value });
+
+    const isExist = tags?.some((tag) => tag.title === newTag);
+    if (isExist) {
+      setSnackbar({ open: true, message: '이미 존재하는 태그입니다.' });
+      return;
+    }
+
+    await blogTagMutation.mutateAsync(newTag);
+    setSnackbar({ open: true, message: `태그가 생성되었습니다: ${newTag}` });
+    setNewTag('');
   };
 
-  const deleteTag = useCallback(
-    (id: number) => {
-      const j = value.tagList.findIndex((tag) => tag.id === id);
-      setValue((prev) => ({
-        ...prev,
-        tagList: [...prev.tagList.slice(0, j), ...prev.tagList.slice(j + 1)],
-      }));
-    },
-    [value.tagList],
-  );
-
-  const handleChangeTag = useCallback(
-    (event: ChangeEvent<HTMLInputElement>) => {
-      setNewTag(event.target.value);
-    },
-    [],
-  );
-
-  const handleKeyDown = useCallback(
-    (event: React.KeyboardEvent<HTMLInputElement>) => {
-      const isEmpty = newTag === '';
-      const isExist = blogTagData?.tagDetailInfos.some(
-        (tag) => tag.title === newTag,
-      );
-
-      if (event.key !== 'Enter' || isEmpty) return;
-      if (isExist) {
-        alert('이미 존재하는 태그입니다.');
-      } else {
-        blogTagMutation.mutate(newTag);
-      }
-    },
-    [newTag, blogTagData?.tagDetailInfos],
-  );
-
-  const getJSONFromLexical = (jsonString: string) => {
-    setValue((prev) => ({ ...prev, content: jsonString }));
+  const onChangeEditor = (jsonString: string) => {
+    setEditingValue((prev) => ({ ...prev, content: jsonString }));
   };
 
-  const selectTag = useCallback(
-    (tag: TagDetail) => {
-      const isAlreadySelected = value.tagList.some(
-        (item) => item.id === tag.id,
-      );
-      if (isAlreadySelected) return;
+  const patchBlog = async (event: MouseEvent<HTMLButtonElement>) => {
+    const { name } = event.target as HTMLButtonElement;
+    await patchBlogMutation.mutateAsync({
+      ...editingValue,
+      id: Number(id),
+      isDisplayed: name === 'publish',
+      tagList: editingValue.tagList.map((tag) => tag.id),
+    });
 
-      setValue((prev) => ({
-        ...prev,
-        tagList: [...prev.tagList, tag],
-      }));
-    },
-    [value.tagList],
-  );
+    setSnackbar({
+      open: true,
+      message: '블로그가 수정되었습니다.',
+    });
+    navgiate('/admin/blog/list');
+  };
+
+  useEffect(() => {
+    console.log('editingValue', editingValue);
+  }, [editingValue]);
 
   useEffect(() => {
     if (isLoading || !blogData) return;
-    setValue({
+    setEditingValue({
       title: blogData.blogDetailInfo.title!,
       category: blogData.blogDetailInfo.category!,
       thumbnail: blogData.blogDetailInfo.thumbnail || '',
@@ -212,34 +131,36 @@ export default function BlogEditPage() {
       content: blogData.blogDetailInfo.content || '',
       ctaLink: blogData.blogDetailInfo.ctaLink || '',
       ctaText: blogData.blogDetailInfo.ctaText || '',
-      tagList: blogData.tagDetailInfos!,
+      tagList: blogData.tagDetailInfos,
     });
   }, [isLoading, blogData]);
 
   return (
-    <div>
+    <div className="mx-3 mb-40 mt-3">
       <header>
-        <h1 className="text-2xl font-semibold">블로그 등록</h1>
+        <h1 className="text-2xl font-semibold">블로그 수정</h1>
       </header>
       {isLoading ? (
         <span>로딩 중...</span>
       ) : blogData ? (
-        <>
-          <main>
-            <form className="mt-4 flex flex-col gap-4" onSubmit={handleSubmit}>
-              <FormControl
-                focused={!isCategoryValid}
-                error={!isCategoryValid}
-                fullWidth
-              >
-                <InputLabel id="category">카테고리</InputLabel>
+        <main className="max-w-screen-xl">
+          <div className="mt-4 flex flex-col gap-4">
+            <div className="flex-no-wrap flex items-center gap-4">
+              <FormControl size="small" required>
+                <InputLabel id="category-label">카테고리</InputLabel>
                 <Select
-                  labelId="category"
+                  className="w-60"
                   id="category"
-                  label="구분"
+                  size="small"
+                  label="카테고리"
                   name="category"
-                  value={value.category}
-                  onChange={handleChange}
+                  value={editingValue.category}
+                  onChange={(e) => {
+                    setEditingValue({
+                      ...editingValue,
+                      category: e.target.value,
+                    });
+                  }}
                 >
                   {Object.entries(blogCategory).map(([key, value]) => (
                     <MenuItem key={key} value={key}>
@@ -248,102 +169,159 @@ export default function BlogEditPage() {
                   ))}
                 </Select>
                 <FormHelperText>
-                  {!isCategoryValid ? categoryHelperText : ''}
+                  카테고리는 하나만 설정할 수 있습니다.
                 </FormHelperText>
               </FormControl>
-              <TextFieldLimit
-                type="text"
-                label="제목"
-                placeholder="제목"
-                name="title"
-                value={value.title}
-                onChange={handleChange}
-                autoComplete="off"
-                fullWidth
-                maxLength={maxTitleLength}
-                focused={!isTitleValid}
-                error={!isTitleValid}
-                helperText={!isTitleValid ? titleHelperText : ''}
-              />
-              <TextFieldLimit
-                type="text"
-                label="메타 디스크립션"
-                placeholder="설명"
-                name="description"
-                value={value.description}
-                onChange={handleChange}
-                multiline
-                minRows={3}
-                autoComplete="off"
-                fullWidth
-                maxLength={maxDescriptionLength}
-              />
-              <ImageUpload
-                label="블로그 썸네일"
-                id="file"
-                name="file"
-                image={value.thumbnail}
-                onChange={handleChange}
-              />
-              <BlogPostEditor
-                editorStateJsonString={blogData.blogDetailInfo.content!}
-                getJSONFromLexical={getJSONFromLexical}
-              />
-              <TextField
-                type="text"
-                label="CTA 링크"
-                placeholder="CTA 링크"
-                name="ctaLink"
-                value={value.ctaLink}
-                onChange={handleChange}
-                autoComplete="off"
-                fullWidth
-              />
-              <TextFieldLimit
-                type="text"
-                label="CTA 텍스트"
-                placeholder="CTA 텍스트"
-                name="ctaText"
-                value={value.ctaText}
-                onChange={handleChange}
-                autoComplete="off"
-                fullWidth
-                maxLength={maxCtaTextLength}
-              />
+            </div>
+            <TextFieldLimit
+              type="text"
+              label="제목"
+              placeholder="제목"
+              name="title"
+              required
+              value={editingValue.title}
+              onChange={onChange}
+              autoComplete="off"
+              fullWidth
+              maxLength={maxTitleLength}
+            />
+            <TextFieldLimit
+              type="text"
+              label="메타 디스크립션"
+              placeholder="설명"
+              name="description"
+              value={editingValue.description}
+              onChange={onChange}
+              multiline
+              minRows={3}
+              autoComplete="off"
+              fullWidth
+              maxLength={maxDescriptionLength}
+            />
+            <div className="flex gap-4">
+              <div className="w-56">
+                <ImageUpload
+                  label="블로그 썸네일"
+                  id="file"
+                  image={editingValue.thumbnail}
+                  onChange={async (e) => {
+                    const file = e.target.files?.item(0);
+                    if (!file) {
+                      setSnackbar({ open: true, message: '파일이 없습니다.' });
+                      return;
+                    }
+                    const url = await uploadFile({ file, type: 'BLOG' });
+
+                    setEditingValue({ ...editingValue, thumbnail: url });
+                  }}
+                />
+              </div>
+              <div className="flex-1">
+                <div className="mb-5">
+                  <TextField
+                    type="text"
+                    label="CTA 링크"
+                    placeholder="CTA 링크"
+                    size="small"
+                    name="ctaLink"
+                    value={editingValue.ctaLink}
+                    onChange={onChange}
+                    fullWidth
+                    autoComplete="off"
+                  />
+                </div>
+                <TextFieldLimit
+                  type="text"
+                  label="CTA 텍스트"
+                  placeholder="CTA 텍스트"
+                  size="small"
+                  name="ctaText"
+                  value={editingValue.ctaText}
+                  onChange={onChange}
+                  autoComplete="off"
+                  fullWidth
+                  maxLength={maxCtaTextLength}
+                />
+              </div>
+            </div>
+
+            <div className="border px-6 py-10">
+              <h2 className="mb-4">태그 설정</h2>
               <TagSelector
-                selectedTagList={value.tagList}
-                tagList={blogTagData?.tagDetailInfos || []}
+                selectedTagList={editingValue.tagList}
+                tagList={tags}
                 value={newTag}
-                deleteTag={deleteTag}
-                selectTag={selectTag}
-                onChange={handleChangeTag}
-                onKeyDown={handleKeyDown}
+                deleteTag={(id) => {
+                  setEditingValue((prev) => ({
+                    ...prev,
+                    tagList: prev.tagList.filter((tag) => tag.id !== id),
+                  }));
+                }}
+                selectTag={(tag) => {
+                  const isExist = editingValue.tagList.some(
+                    (item) => item.id === tag.id,
+                  );
+                  if (isExist) {
+                    return;
+                  }
+                  setEditingValue((prev) => ({
+                    ...prev,
+                    tagList: [...editingValue.tagList, tag],
+                  }));
+                }}
+                onChange={onChangeTag}
+                onKeyDown={onKeyDown}
               />
-            </form>
-          </main>
-          {/* 버튼 */}
-          <footer>
+            </div>
+
+            <h2 className="mt-20">콘텐츠 편집</h2>
+            <EditorApp
+              editorStateJsonString={blogData.blogDetailInfo.content!}
+              getJSONFromLexical={onChangeEditor}
+            />
+
             <div className="flex items-center justify-end gap-4">
-              <ActionButton
-                onClick={saveBlog}
+              <Button
+                variant="outlined"
                 type="button"
-                bgColor="gray"
-                width="6rem"
+                onClick={() => {
+                  navgiate('/admin/blog/list');
+                }}
+              >
+                취소 (리스트로 돌아가기)
+              </Button>
+              <Button
+                variant="outlined"
+                color="primary"
+                type="button"
+                name="save_temp"
+                onClick={patchBlog}
               >
                 임시 저장
-              </ActionButton>
-              <ActionButton onClick={submitBlog} type="button">
+              </Button>
+              <Button
+                variant="contained"
+                color="primary"
+                type="button"
+                name="publish"
+                onClick={patchBlog}
+              >
                 발행
-              </ActionButton>
-              <ActionButton type="button" to="/admin/blog/list" bgColor="gray">
-                취소
-              </ActionButton>
+              </Button>
             </div>
-          </footer>
-        </>
+          </div>
+        </main>
       ) : (
         <span>블로그를 불러오지 못했습니다.</span>
       )}
+      <Snackbar
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+        open={snackbar.open}
+        onClose={() => setSnackbar({ ...snackbar, open: false })}
+        message={snackbar.message}
+      />
     </div>
   );
-}
+};
+
+export default BlogEditPage;

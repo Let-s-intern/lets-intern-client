@@ -28,6 +28,7 @@ export interface PatchBlogReqBody {
 
 export type TagDetail = z.infer<typeof tagDetailSchema>[0];
 export type BlogThumbnail = z.infer<typeof blogThumbnailSchema>;
+export type BlogRating = z.infer<typeof blogRatingSchema>['ratingInfos'][0];
 
 export const pageSchema = z.object({
   pageNum: z.number(),
@@ -152,3 +153,28 @@ export const blogListSchema = z
 export const blogTagSchema = z.object({
   tagDetailInfos: tagDetailSchema,
 });
+
+export const blogRatingSchema = z
+  .object({
+    ratingInfos: z.array(
+      z.object({
+        id: z.number(),
+        title: z.string().nullable().optional(),
+        content: z.string().nullable().optional(),
+        score: z.number().nullable().optional(),
+        createDate: z.string().nullable().optional(),
+        lastModifiedDate: z.string().nullable().optional(),
+      }),
+    ),
+  })
+  .transform((data) => {
+    return {
+      ratingInfos: data.ratingInfos.map((ratingInfo) => ({
+        ...ratingInfo,
+        createDate: ratingInfo.createDate ? dayjs(ratingInfo.createDate) : null,
+        lastModifiedDate: ratingInfo.lastModifiedDate
+          ? dayjs(ratingInfo.lastModifiedDate)
+          : null,
+      })),
+    };
+  });
