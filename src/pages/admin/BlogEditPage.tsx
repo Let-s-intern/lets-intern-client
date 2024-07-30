@@ -55,14 +55,13 @@ const BlogEditPage = () => {
   const navgiate = useNavigate();
   const { id } = useParams();
 
-  const [editingValue, setEditingValue] = useState<EditBlog>(initialBlog);
-  const [newTag, setNewTag] = useState('');
-
   const { data: tags = [] } = useBlogTagQuery();
   const { data: blogData, isLoading } = useBlogQuery(id!);
   const blogTagMutation = usePostBlogTagMutation();
   const patchBlogMutation = usePatchBlogMutation();
 
+  const [editingValue, setEditingValue] = useState<EditBlog>(initialBlog);
+  const [newTag, setNewTag] = useState('');
   const [snackbar, setSnackbar] = useState<{
     open: boolean;
     message: string;
@@ -141,171 +140,180 @@ const BlogEditPage = () => {
       <header>
         <h1 className="text-2xl font-semibold">블로그 수정</h1>
       </header>
-      <main className="max-w-screen-xl">
-        <div className="mt-4 flex flex-col gap-4">
-          <div className="flex-no-wrap flex items-center gap-4">
-            <FormControl size="small" required>
-              <InputLabel id="category-label">카테고리</InputLabel>
-              <Select
-                className="w-60"
-                id="category"
-                size="small"
-                label="카테고리"
-                name="category"
-                value={editingValue.category}
-                onChange={(e) => {
-                  setEditingValue({
-                    ...editingValue,
-                    category: e.target.value,
-                  });
-                }}
-              >
-                {Object.entries(blogCategory).map(([key, value]) => (
-                  <MenuItem key={key} value={key}>
-                    {value}
-                  </MenuItem>
-                ))}
-              </Select>
-              <FormHelperText>
-                카테고리는 하나만 설정할 수 있습니다.
-              </FormHelperText>
-            </FormControl>
-          </div>
-          <TextFieldLimit
-            type="text"
-            label="제목"
-            placeholder="제목"
-            name="title"
-            required
-            value={editingValue.title}
-            onChange={onChange}
-            autoComplete="off"
-            fullWidth
-            maxLength={maxTitleLength}
-          />
-          <TextFieldLimit
-            type="text"
-            label="메타 디스크립션"
-            placeholder="설명"
-            name="description"
-            value={editingValue.description}
-            onChange={onChange}
-            multiline
-            minRows={3}
-            autoComplete="off"
-            fullWidth
-            maxLength={maxDescriptionLength}
-          />
-          <div className="flex gap-4">
-            <div className="w-56">
-              <ImageUpload
-                label="블로그 썸네일"
-                id="file"
-                image={editingValue.thumbnail}
-                onChange={async (e) => {
-                  const file = e.target.files?.item(0);
-                  if (!file) {
-                    setSnackbar({ open: true, message: '파일이 없습니다.' });
-                    return;
-                  }
-                  const url = await uploadFile({ file, type: 'BLOG' });
-
-                  setEditingValue({ ...editingValue, thumbnail: url });
-                }}
-              />
-            </div>
-            <div className="flex-1">
-              <div className="mb-5">
-                <TextField
-                  type="text"
-                  label="CTA 링크"
-                  placeholder="CTA 링크"
+      {isLoading ? (
+        <span>로딩 중...</span>
+      ) : blogData ? (
+        <main className="max-w-screen-xl">
+          <div className="mt-4 flex flex-col gap-4">
+            <div className="flex-no-wrap flex items-center gap-4">
+              <FormControl size="small" required>
+                <InputLabel id="category-label">카테고리</InputLabel>
+                <Select
+                  className="w-60"
+                  id="category"
                   size="small"
-                  name="ctaLink"
-                  value={editingValue.ctaLink}
-                  onChange={onChange}
-                  fullWidth
-                  autoComplete="off"
+                  label="카테고리"
+                  name="category"
+                  value={editingValue.category}
+                  onChange={(e) => {
+                    setEditingValue({
+                      ...editingValue,
+                      category: e.target.value,
+                    });
+                  }}
+                >
+                  {Object.entries(blogCategory).map(([key, value]) => (
+                    <MenuItem key={key} value={key}>
+                      {value}
+                    </MenuItem>
+                  ))}
+                </Select>
+                <FormHelperText>
+                  카테고리는 하나만 설정할 수 있습니다.
+                </FormHelperText>
+              </FormControl>
+            </div>
+            <TextFieldLimit
+              type="text"
+              label="제목"
+              placeholder="제목"
+              name="title"
+              required
+              value={editingValue.title}
+              onChange={onChange}
+              autoComplete="off"
+              fullWidth
+              maxLength={maxTitleLength}
+            />
+            <TextFieldLimit
+              type="text"
+              label="메타 디스크립션"
+              placeholder="설명"
+              name="description"
+              value={editingValue.description}
+              onChange={onChange}
+              multiline
+              minRows={3}
+              autoComplete="off"
+              fullWidth
+              maxLength={maxDescriptionLength}
+            />
+            <div className="flex gap-4">
+              <div className="w-56">
+                <ImageUpload
+                  label="블로그 썸네일"
+                  id="file"
+                  image={editingValue.thumbnail}
+                  onChange={async (e) => {
+                    const file = e.target.files?.item(0);
+                    if (!file) {
+                      setSnackbar({ open: true, message: '파일이 없습니다.' });
+                      return;
+                    }
+                    const url = await uploadFile({ file, type: 'BLOG' });
+
+                    setEditingValue({ ...editingValue, thumbnail: url });
+                  }}
                 />
               </div>
-              <TextFieldLimit
-                type="text"
-                label="CTA 텍스트"
-                placeholder="CTA 텍스트"
-                size="small"
-                name="ctaText"
-                value={editingValue.ctaText}
-                onChange={onChange}
-                autoComplete="off"
-                fullWidth
-                maxLength={maxCtaTextLength}
+              <div className="flex-1">
+                <div className="mb-5">
+                  <TextField
+                    type="text"
+                    label="CTA 링크"
+                    placeholder="CTA 링크"
+                    size="small"
+                    name="ctaLink"
+                    value={editingValue.ctaLink}
+                    onChange={onChange}
+                    fullWidth
+                    autoComplete="off"
+                  />
+                </div>
+                <TextFieldLimit
+                  type="text"
+                  label="CTA 텍스트"
+                  placeholder="CTA 텍스트"
+                  size="small"
+                  name="ctaText"
+                  value={editingValue.ctaText}
+                  onChange={onChange}
+                  autoComplete="off"
+                  fullWidth
+                  maxLength={maxCtaTextLength}
+                />
+              </div>
+            </div>
+
+            <div className="border px-6 py-10">
+              <h2 className="mb-4">태그 설정</h2>
+              <TagSelector
+                selectedTagList={editingValue.tagList}
+                tagList={tags}
+                value={newTag}
+                deleteTag={(id) => {
+                  setEditingValue((prev) => ({
+                    ...prev,
+                    tagList: prev.tagList.filter((tag) => tag.id !== id),
+                  }));
+                }}
+                selectTag={(tag) => {
+                  const isExist = editingValue.tagList.some(
+                    (tag) => tag.id === tag.id,
+                  );
+                  if (isExist) {
+                    return;
+                  }
+                  setEditingValue((prev) => ({
+                    ...prev,
+                    tagList: [...editingValue.tagList, tag],
+                  }));
+                }}
+                onChange={onChangeTag}
+                onKeyDown={onKeyDown}
               />
             </div>
-          </div>
 
-          <div className="border px-6 py-10">
-            <h2>태그 설정</h2>
-            <TagSelector
-              selectedTagList={editingValue.tagList}
-              tagList={tags}
-              value={newTag}
-              deleteTag={(id) => {
-                setEditingValue((prev) => ({
-                  ...prev,
-                  tagList: prev.tagList.filter((tag) => tag.id !== id),
-                }));
-              }}
-              selectTag={(tag) => {
-                const isExist = editingValue.tagList.some(
-                  (tag) => tag.id === tag.id,
-                );
-                if (isExist) {
-                  return;
-                }
-                setEditingValue((prev) => ({
-                  ...prev,
-                  tagList: [...editingValue.tagList, tag],
-                }));
-              }}
-              onChange={onChangeTag}
-              onKeyDown={onKeyDown}
+            <h2 className="mt-20">콘텐츠 편집</h2>
+            <EditorApp
+              editorStateJsonString={blogData.blogDetailInfo.content!}
+              getJSONFromLexical={onChangeEditor}
             />
-          </div>
 
-          <h2 className="mt-20">콘텐츠 편집</h2>
-          <EditorApp getJSONFromLexical={onChangeEditor} />
-
-          <div className="flex items-center justify-end gap-4">
-            <Button
-              variant="outlined"
-              type="button"
-              onClick={() => {
-                navgiate('/admin/blog/list');
-              }}
-            >
-              취소 (리스트로 돌아가기)
-            </Button>
-            <Button
-              variant="outlined"
-              color="primary"
-              type="button"
-              name="save_temp"
-              onClick={patchBlog}
-            >
-              임시 저장
-            </Button>
-            <Button
-              variant="contained"
-              color="primary"
-              type="button"
-              name="publish"
-              onClick={patchBlog}
-            >
-              발행
-            </Button>
+            <div className="flex items-center justify-end gap-4">
+              <Button
+                variant="outlined"
+                type="button"
+                onClick={() => {
+                  navgiate('/admin/blog/list');
+                }}
+              >
+                취소 (리스트로 돌아가기)
+              </Button>
+              <Button
+                variant="outlined"
+                color="primary"
+                type="button"
+                name="save_temp"
+                onClick={patchBlog}
+              >
+                임시 저장
+              </Button>
+              <Button
+                variant="contained"
+                color="primary"
+                type="button"
+                name="publish"
+                onClick={patchBlog}
+              >
+                발행
+              </Button>
+            </div>
           </div>
-        </div>
-      </main>
+        </main>
+      ) : (
+        <span>블로그를 불러오지 못했습니다.</span>
+      )}
       <Snackbar
         anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
         open={snackbar.open}

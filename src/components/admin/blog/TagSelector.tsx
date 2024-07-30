@@ -25,7 +25,7 @@ const TagSelector = ({
   onKeyDown,
 }: TagSelectorProps) => {
   return (
-    <div className="my-4">
+    <>
       <div className="mb-4 flex flex-wrap gap-4">
         {selectedTagList.map((tag) => (
           <TagDelete
@@ -59,7 +59,7 @@ const TagSelector = ({
           ))}
         </div>
       </div>
-    </div>
+    </>
   );
 };
 
