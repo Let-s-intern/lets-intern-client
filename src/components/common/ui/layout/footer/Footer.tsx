@@ -104,10 +104,10 @@ const Footer = () => {
             />
           </div>
           <div className="flex items-center gap-6 text-neutral-0/[.65]">
-            <DocumentLink to="https://letscareer.oopy.io/241b2e74-7ddf-4747-8012-a68f7c03f9e1">
+            <DocumentLink to="https://letscareer.oopy.io/a121a038-f72f-42d7-bde7-47624ecc0943">
               서비스 이용약관
             </DocumentLink>
-            <DocumentLink to="https://letscareer.oopy.io/4e21a3c6-f42a-409d-a877-a7b5d926f158">
+            <DocumentLink to="https://letscareer.oopy.io/c3af485b-fced-49ab-9601-f2d7bf07657d">
               개인정보처리방침
             </DocumentLink>
           </div>
