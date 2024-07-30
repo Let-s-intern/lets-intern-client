@@ -1,5 +1,7 @@
 import clsx from 'clsx';
 
+import { useBlogListQuery } from '../../../api/blog';
+
 const reviewColumnWidth = {
   createdDate: 'w-32',
   category: 'w-30',
@@ -9,6 +11,10 @@ const reviewColumnWidth = {
 };
 
 export default function BlogRatingTable() {
+  const { data: blogData } = useBlogListQuery({
+    pageable: { page: 1, size: 10 },
+  });
+
   return (
     <div className="mt-3 min-w-[60rem]">
       {/* TableHeader */}
