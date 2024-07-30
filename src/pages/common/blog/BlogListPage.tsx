@@ -13,7 +13,7 @@ const BlogListPage = () => {
   const { data, fetchNextPage, hasNextPage, isLoading } =
     useInfiniteBlogListQuery({
       type: category,
-      pageable: { page: 0, size: 5 },
+      pageable: { page: 1, size: 5 },
     });
 
   useEffect(() => {
@@ -29,7 +29,7 @@ const BlogListPage = () => {
 
   return (
     <div className="flex w-full flex-1 flex-col items-center">
-      <div className="bg-blog-banner-sm md:bg-blog-banner-md lg:bg-blog-banner-lg flex w-full items-center justify-center gap-y-1 py-10">
+      <div className="flex w-full items-center justify-center gap-y-1 bg-blog-banner-sm py-10 md:bg-blog-banner-md lg:bg-blog-banner-lg">
         <div className="flex w-full max-w-[1200px] flex-col gap-y-1 px-[25px] md:gap-y-2 md:px-[140px]">
           <h1 className="text-xl font-bold text-neutral-100">
             렛츠커리어 블로그

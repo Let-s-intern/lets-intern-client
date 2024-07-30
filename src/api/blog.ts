@@ -62,7 +62,7 @@ export const useInfiniteBlogListQuery = ({
       return lastPage.pageInfo.totalElements === 0 ||
         lastPage.pageInfo.totalPages - 1 === lastPage.pageInfo.pageNum
         ? undefined
-        : { page: lastPage.pageInfo.pageNum + 1, size: pageable.size };
+        : { page: lastPage.pageInfo.pageNum + 2, size: pageable.size };
     },
   });
 };
