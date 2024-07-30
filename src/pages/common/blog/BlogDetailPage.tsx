@@ -209,11 +209,13 @@ const BlogDetailPage = () => {
               </div>
             </div>
           </div>
-          <div className="fixed bottom-0 left-0 flex w-full items-center justify-center bg-neutral-100 px-[5px] py-3 shadow-button">
-            <button className="w-full max-w-[1200px] rounded-md bg-primary px-6 py-3 text-small18 font-medium text-neutral-100">
-              {data.blogDetailInfo.ctaText}
-            </button>
-          </div>
+          {data.blogDetailInfo.ctaText && data.blogDetailInfo.ctaLink && (
+            <div className="fixed bottom-0 left-0 flex w-full items-center justify-center bg-neutral-100 px-[5px] py-3 shadow-button">
+              <button className="w-full max-w-[1200px] rounded-md bg-primary px-6 py-3 text-small18 font-medium text-neutral-100">
+                {data.blogDetailInfo.ctaText}
+              </button>
+            </div>
+          )}
         </>
       )}
     </div>
