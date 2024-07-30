@@ -259,7 +259,7 @@ const BlogEditPage = () => {
                 }}
                 selectTag={(tag) => {
                   const isExist = editingValue.tagList.some(
-                    (tag) => tag.id === tag.id,
+                    (item) => item.id === tag.id,
                   );
                   if (isExist) {
                     return;
