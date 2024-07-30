@@ -1,4 +1,5 @@
 import { customAlphabet } from 'nanoid';
+
 export const generateRandomString = customAlphabet(
   'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz',
   2,
