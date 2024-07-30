@@ -9,7 +9,6 @@ import { IPageable } from '../types/interface';
 import axios from '../utils/axios';
 import {
   blogListSchema,
-  blogRatingSchema,
   blogSchema,
   blogTagSchema,
   PatchBlogReqBody,
@@ -155,16 +154,6 @@ export const usePostBlogTagMutation = (onErrorCallback?: () => void) => {
     onError: (error) => {
       console.error(error);
       onErrorCallback && onErrorCallback();
-    },
-  });
-};
-
-export const useBlogRatingQuery = (blogId: string) => {
-  return useQuery({
-    queryKey: [blogRatingQueryKey, blogId],
-    queryFn: async () => {
-      const res = await axios.get(`/blog-rating/${blogId}`);
-      return blogRatingSchema.parse(res.data.data).ratingInfos;
     },
   });
 };

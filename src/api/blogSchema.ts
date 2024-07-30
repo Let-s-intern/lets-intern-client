@@ -28,6 +28,7 @@ export interface PatchBlogReqBody {
 
 export type TagDetail = z.infer<typeof tagDetailSchema>[0];
 export type BlogThumbnail = z.infer<typeof blogThumbnailSchema>;
+export type BlogRating = z.infer<typeof blogRatingSchema>['ratingInfos'][0];
 
 export const pageSchema = z.object({
   pageNum: z.number(),
@@ -171,6 +172,9 @@ export const blogRatingSchema = z
       ratingInfos: data.ratingInfos.map((ratingInfo) => ({
         ...ratingInfo,
         createDate: ratingInfo.createDate ? dayjs(ratingInfo.createDate) : null,
+        lastModifiedDate: ratingInfo.lastModifiedDate
+          ? dayjs(ratingInfo.lastModifiedDate)
+          : null,
       })),
     };
   });
