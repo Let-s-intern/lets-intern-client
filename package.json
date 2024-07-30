@@ -41,6 +41,7 @@
     "lexical": "^0.16.1",
     "lodash-es": "^4.17.21",
     "nanoid": "^5.0.7",
+    "node-fetch": "^3.3.2",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-error-boundary": "^4.0.13",

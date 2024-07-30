@@ -2,19 +2,16 @@
 export { onRenderClient };
 
 import { createRoot, hydrateRoot, Root } from 'react-dom/client';
-import { PageLayout } from './PageLayout';
+import { PageContextClient } from 'vike/types';
 
 let root: Root;
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-async function onRenderClient(pageContext: any) {
-  const { Page } = pageContext;
+async function onRenderClient(pageContext: PageContextClient) {
+  const Page = pageContext.Page as React.ComponentType<{ data: unknown }>;
+  const data = pageContext.data;
 
-  const page = (
-    <PageLayout>
-      <Page />
-    </PageLayout>
-  );
+  const page = <Page data={data} />;
   const container = document.getElementById('root')!;
 
   if (pageContext.isHydration) {
