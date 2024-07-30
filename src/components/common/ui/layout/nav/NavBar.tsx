@@ -90,9 +90,9 @@ const NavBar = () => {
             <NavItem to="/program" active={activeLink === 'PROGRAM'}>
               프로그램
             </NavItem>
-            <NavItem to="/blog" active={activeLink === 'BLOG'}>
+            {/* <NavItem to="/blog" active={activeLink === 'BLOG'}>
               블로그
-            </NavItem>
+            </NavItem> */}
           </div>
           <div className="flex items-center gap-4">
             {isLoggedIn ? (
@@ -203,9 +203,9 @@ const NavBar = () => {
             <SideNavItem to="/program" onClick={closeMenu}>
               프로그램
             </SideNavItem>
-            <SideNavItem to="/blog" onClick={closeMenu}>
+            {/* <SideNavItem to="/blog" onClick={closeMenu}>
               블로그
-            </SideNavItem>
+            </SideNavItem> */}
             <hr className="h-1 bg-neutral-80" />
             {isAdmin && (
               <SideNavItem to="/admin" onClick={closeMenu}>
