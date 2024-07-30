@@ -8,26 +8,26 @@ import vercel from 'vite-plugin-vercel';
 
 export default defineConfig({
   plugins: [
-    vike({
-      // prerender: true,
-    }),
-    react(),
-    svgrPlugin(),
     cjsInterop({
       // Add broken npm package here
       dependencies: [
         // Apply patch to root import:
         //   import someImport from 'some-package'
-        'react-icons',
+        // 'react-icons',
 
         // Apply patch to all sub imports:
         //   import someImport from 'some-package/path'
         //   import someImport from 'some-package/sub/path'
         //   ...
-        'react-icons/**',
+        // 'react-icons/im/**',
         'styled-components',
       ],
     }),
+    vike({
+      prerender: true,
+    }),
+    react(),
+    svgrPlugin(),
     vercel(),
   ],
   server: {
