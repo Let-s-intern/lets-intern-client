@@ -52,6 +52,8 @@
     "styled-components": "^6.1.11",
     "tailwind-merge": "^2.3.0",
     "tailwind-scrollbar-hide": "^1.1.7",
+    "vike": "^0.4.182",
+    "vite-plugin-vercel": "^8.0.0",
     "y-websocket": "^2.0.4",
     "yjs": "^13.6.18",
     "zod": "^3.23.8",
@@ -71,6 +73,7 @@
     "@types/katex": "^0.16.7",
     "@types/lodash-es": "^4.17.12",
     "@types/react-helmet": "^6.1.11",
+    "@vercel/node": "^3.2.7",
     "@vitejs/plugin-react": "^4.3.1",
     "autoprefixer": "^10.4.19",
     "dotenv": "^16.4.5",
@@ -85,7 +88,9 @@
     "tailwindcss": "^3.4.7",
     "typescript": "^5.5.4",
     "typescript-eslint": "^7.15.0",
+    "vike-react": "^0.4.18",
     "vite": "^5.3.5",
+    "vite-plugin-cjs-interop": "^2.1.1",
     "vite-plugin-svgr": "^4.2.0",
     "vitest": "^1.6.0"
   }

@@ -1,4 +1,23 @@
-<!doctype html>
+// https://vike.dev/onRenderHtml
+export { onRenderHtml };
+
+import { renderToString } from 'react-dom/server';
+import { dangerouslySkipEscape, escapeInject } from 'vike/server';
+import { PageLayout } from './PageLayout';
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+async function onRenderHtml(pageContext: any) {
+  const { Page } = pageContext;
+  const pageHtml = dangerouslySkipEscape(
+    renderToString(
+      <PageLayout>
+        <Page />
+      </PageLayout>,
+    ),
+  );
+
+  return escapeInject`
+ <!doctype html>
 <html lang="ko">
   <head>
     <!-- Google Tag Manager -->
@@ -153,9 +172,8 @@
     ></noscript>
     <!-- End Google Tag Manager (noscript) -->
     <noscript>You need to enable JavaScript to run this app.</noscript>
-    <div id="root"></div>
+    <div id="root">${pageHtml}</div>
     <div id="modal"></div>
-    <script type="module" src="/src/index.tsx"></script>
     <!--
       This HTML file is a template.
       If you open it directly in the browser, you will see an empty page.
@@ -163,8 +181,10 @@
       You can add webfonts, meta tags, or analytics to this file.
       The build step will place the bundled scripts into the <body> tag.
 
-      To begin the development, run `npm start` or `yarn start`.
-      To create a production bundle, use `npm run build` or `yarn build`.
+      To begin the development, run \`npm start\` or \`yarn start\`.
+      To create a production bundle, use \`npm run build\` or \`yarn build\`.
     -->
   </body>
 </html>
+`;
+}

@@ -10,6 +10,14 @@ import { Helmet } from 'react-helmet';
 import { ZodError } from 'zod';
 import Router from './Router';
 
+import './index.css';
+import './styles/apply.scss';
+import './styles/blog.css';
+import './styles/card.scss';
+import './styles/github-markdown-light.css';
+import './styles/modal.scss';
+import './styles/mypage.scss';
+
 dayjs.locale('ko');
 
 const queryClient = new QueryClient({

@@ -1,6 +1,10 @@
+// @ts-nocheck
+
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-  content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
+  content: [
+    './{pages,renderer,layouts,components,src}/**/*.{html,js,jsx,ts,tsx,vue}',
+  ],
   theme: {
     extend: {
       fontSize: {
