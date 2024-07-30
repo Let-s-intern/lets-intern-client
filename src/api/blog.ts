@@ -89,7 +89,6 @@ export const usePostBlogMutation = (
     },
     onSuccess: async () => {
       await client.invalidateQueries({ queryKey: [blogListQueryKey] });
-      console.log('success');
       onSuccessCallback && onSuccessCallback();
     },
     onError: (error) => {
