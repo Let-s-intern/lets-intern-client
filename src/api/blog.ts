@@ -120,6 +120,7 @@ export const usePatchBlogMutation = (onErrorCallback?: () => void) => {
     },
     onSuccess: async () => {
       await client.invalidateQueries({ queryKey: [blogListQueryKey] });
+      await client.invalidateQueries({ queryKey: [blogQueryKey] });
     },
     onError: (error) => {
       console.error(error);
