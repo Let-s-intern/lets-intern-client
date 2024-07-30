@@ -19,6 +19,7 @@ import {
 const blogListQueryKey = 'BlogListQueryKey';
 const blogQueryKey = 'BlogQueryKey';
 const blogTagQueryKey = 'BlogTagQueryKey';
+const blogRatingQueryKey = 'blogRatingQueryKey';
 
 interface BlogQueryParams {
   pageable: IPageable;

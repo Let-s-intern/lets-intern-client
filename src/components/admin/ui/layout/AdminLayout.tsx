@@ -98,6 +98,10 @@ const AdminLayout = () => {
           name: '블로그 글 관리/등록',
           url: '/admin/blog/list',
         },
+        {
+          name: '블로그 후기',
+          url: '/admin/blog/reviews',
+        },
       ],
     },
     {
