@@ -299,6 +299,7 @@ const ProgramInputContent = ({
               type="text"
               name="title"
               placeholder="제목을 입력해주세요"
+              maxLength={14}
               value={value?.title || ''}
               onChange={(e) => {
                 setValue({ ...value, [e.target.name]: e.target.value });
