@@ -29,8 +29,10 @@ const SignUp = () => {
   const [errorMessage, setErrorMessage] = useState('');
   const [showPrivacyModal, setShowPrivacyModal] = useState<boolean>(false);
   const [showMarketingModal, setShowMarketingModal] = useState<boolean>(false);
+  const [accessTokenForSocialSignup, setAccessTokenForSocialSignup] =
+    useState('');
 
-  const resultToToken = (result: string) => {
+  const resultToToken = (result: string): string | undefined => {
     if (result === '') {
       return undefined;
     }
@@ -42,7 +44,7 @@ const SignUp = () => {
     }
     setIsSocial(true);
 
-    return token;
+    return token.accessToken;
   };
 
   useEffect(() => {
@@ -54,7 +56,10 @@ const SignUp = () => {
       return;
     }
     if (result) {
-      resultToToken(result);
+      const accessTokenForSocialSignup = resultToToken(result);
+      if (accessTokenForSocialSignup) {
+        setAccessTokenForSocialSignup(accessTokenForSocialSignup);
+      }
     }
   }, [searchParams]);
 
@@ -133,7 +138,17 @@ const SignUp = () => {
 
   const patchSocialUserContactEmail = useMutation({
     mutationFn: async () => {
-      const res = await axios.patch('/user', { contactEmail: value.email });
+      // const res = await axios.patch('/user', { contactEmail: value.email });
+      console.log('!@!#');
+      const res = await axios({
+        method: 'PATCH',
+        url: '/user',
+        data: { contactEmail: value.email },
+        headers: {
+          Authorization: `Bearer ${accessTokenForSocialSignup}`,
+          'Content-Type': 'application/json',
+        },
+      });
       return res.data;
     },
     onSuccess: () => {
