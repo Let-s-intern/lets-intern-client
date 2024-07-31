@@ -33,6 +33,12 @@ const InfoContainer = ({ isSocial }: { isSocial: boolean }) => {
   const [searchParams] = useSearchParams();
   const redirect = searchParams.get('redirect');
   const { logout } = useAuthStore();
+  let accessToken = '';
+  try {
+    accessToken = JSON.parse(String(searchParams.get('result'))).accessToken;
+  } catch {
+    // empty
+  }
 
   const patchEmailUserInfo = useMutation({
     mutationFn: async () => {
@@ -59,13 +65,20 @@ const InfoContainer = ({ isSocial }: { isSocial: boolean }) => {
 
   const patchSocialUserInfo = useMutation({
     mutationFn: async () => {
-      const res = await axios.patch('/user', {
-        inflowPath: value.inflow,
-        university: value.university,
-        grade: value.grade,
-        major: value.major,
-        wishJob: value.wishJob,
-        wishCompany: value.wishCompany,
+      const res = await axios({
+        method: 'patch',
+        url: '/user',
+        data: {
+          inflowPath: value.inflow,
+          university: value.university,
+          grade: value.grade,
+          major: value.major,
+          wishJob: value.wishJob,
+          wishCompany: value.wishCompany,
+        },
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
       });
       return res.data;
     },

@@ -21,8 +21,11 @@ axios.interceptors.request.use(
     // Do something before request is sent
     const accessToken = useAuthStore.getState().accessToken;
     const refreshToken = useAuthStore.getState().refreshToken;
-    config.headers.Authorization =
-      accessToken && refreshToken ? `Bearer ${accessToken}` : '';
+    config.headers.Authorization = config.headers.Authorization
+      ? config.headers.Authorization
+      : accessToken && refreshToken
+        ? `Bearer ${accessToken}`
+        : '';
     return config;
   },
   function (error) {
