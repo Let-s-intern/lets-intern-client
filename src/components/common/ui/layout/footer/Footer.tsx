@@ -48,6 +48,14 @@ const Footer = () => {
                 공지사항
               </MenuLink>
               <MenuLink
+                to="https://docs.google.com/forms/d/e/1FAIpQLSeHM_d3yd0cOiH2aSqhprtSFmidIYFziyIxf5-9j7rgZCobvA/viewform"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inquiry_cta"
+              >
+                광고/제휴 문의
+              </MenuLink>
+              <MenuLink
                 to="https://letscareer.oopy.io"
                 target="_blank"
                 rel="noopener noreferrer"
