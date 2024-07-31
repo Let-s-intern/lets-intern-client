@@ -3,7 +3,9 @@ import { persist } from 'zustand/middleware';
 
 interface AuthStore {
   isLoggedIn: boolean;
-  login: (accessToken: string, refreshToken: string, redirect: string) => void;
+  accessToken?: string;
+  refreshToken?: string;
+  login: (accessToken: string, refreshToken: string) => void;
   logout: () => void;
 }
 
@@ -11,17 +13,15 @@ const useAuthStore = create(
   persist<AuthStore>(
     (set) => ({
       isLoggedIn: false,
-      login: (accessToken, refreshToken, redirect) => {
-        localStorage.setItem('access-token', accessToken);
-        localStorage.setItem('refresh-token', refreshToken);
-        set({ isLoggedIn: true });
-        window.location.href = redirect;
+      login: (accessToken, refreshToken) => {
+        set({ accessToken, refreshToken, isLoggedIn: true });
       },
       logout: () => {
-        localStorage.removeItem('access-token');
-        localStorage.removeItem('refresh-token');
-        set({ isLoggedIn: false });
-        window.location.href = '/';
+        set({
+          accessToken: undefined,
+          refreshToken: undefined,
+          isLoggedIn: false,
+        });
       },
     }),
     {

@@ -1,6 +1,7 @@
 import { useMutation } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+import useAuthStore from '../../../../store/useAuthStore';
 import axios from '../../../../utils/axios';
 import AlertModal from '../../../ui/alert/AlertModal';
 import Input from '../../../ui/input/Input';
@@ -31,11 +32,12 @@ const InfoContainer = ({ isSocial }: { isSocial: boolean }) => {
   const [successModalOpen, setSuccessModalOpen] = useState(false);
   const [searchParams] = useSearchParams();
   const redirect = searchParams.get('redirect');
+  const { logout } = useAuthStore();
 
   const patchEmailUserInfo = useMutation({
     mutationFn: async () => {
       const res = await axios.patch(`/user/additional-info`, {
-        email: email,
+        email,
         university: value.university,
         major: value.major,
         grade: value.grade,
@@ -57,28 +59,18 @@ const InfoContainer = ({ isSocial }: { isSocial: boolean }) => {
 
   const patchSocialUserInfo = useMutation({
     mutationFn: async () => {
-      const res = await axios.patch(
-        '/user',
-        {
-          inflowPath: value.inflow,
-          university: value.university,
-          grade: value.grade,
-          major: value.major,
-          wishJob: value.wishJob,
-          wishCompany: value.wishCompany,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('access-token')}`,
-          },
-        },
-      );
+      const res = await axios.patch('/user', {
+        inflowPath: value.inflow,
+        university: value.university,
+        grade: value.grade,
+        major: value.major,
+        wishJob: value.wishJob,
+        wishCompany: value.wishCompany,
+      });
       return res.data;
     },
     onSuccess: () => {
-      localStorage.removeItem('access-token');
-      localStorage.removeItem('refresh-token');
-      localStorage.removeItem('email');
+      logout();
       setSuccessModalOpen(true);
     },
     onError: (error) => {

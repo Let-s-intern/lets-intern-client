@@ -9,21 +9,19 @@ interface SocialLoginProps {
 const SocialLogin = ({ type }: SocialLoginProps) => {
   const [searchParams] = useSearchParams();
 
-  const handleSocialLogin = (socialType: 'KAKAO' | 'NAVER') => {
-    const redirectPath = `${window.location.protocol}//${
-      window.location.hostname
-    }:${window.location.port}/${type === 'LOGIN' ? 'login' : 'signup'}${
+  const getSocialLink = (socialType: 'KAKAO' | 'NAVER') => {
+    const redirectPath = `${window.location.origin}/${type === 'LOGIN' ? 'login' : 'signup'}${
       searchParams.get('redirect')
         ? `?redirect=${searchParams.get('redirect')}`
         : ''
     }`;
 
     const basePath =
-      process.env.REACT_APP_API_BASE_PATH || 'https://letscareer-test.shop';
+      import.meta.env.VITE_API_BASE_PATH || 'https://letscareer-test.shop';
     const path = `${basePath}/oauth2/authorize/${
       socialType === 'KAKAO' ? 'kakao' : 'naver'
     }?redirect_uri=${redirectPath}`;
-    window.location.href = path;
+    return path;
   };
 
   return (
@@ -32,9 +30,10 @@ const SocialLogin = ({ type }: SocialLoginProps) => {
       <div className={styles.content}>
         <h2>SNS 계정으로 {type === 'LOGIN' ? '로그인' : '회원가입'}하기</h2>
         <div className={styles.buttons}>
-          <button
+          <a
             className="flex h-[43px] w-[43px] items-center justify-center rounded-full bg-[#FEE500]"
-            onClick={() => handleSocialLogin('KAKAO')}
+            href={getSocialLink('KAKAO')}
+            rel="noopener noreferrer"
           >
             <div className="w-[20px]">
               <img
@@ -43,10 +42,11 @@ const SocialLogin = ({ type }: SocialLoginProps) => {
                 alt="카카오톡 아이콘"
               />
             </div>
-          </button>
-          <button
+          </a>
+          <a
             className="flex h-[43px] w-[43px] items-center justify-center rounded-full bg-[#2db400]"
-            onClick={() => handleSocialLogin('NAVER')}
+            href={getSocialLink('NAVER')}
+            rel="noopener noreferrer"
           >
             <div className="h-4 w-4">
               <img
@@ -55,7 +55,7 @@ const SocialLogin = ({ type }: SocialLoginProps) => {
                 alt="네이버 아이콘"
               />
             </div>
-          </button>
+          </a>
         </div>
       </div>
     </div>

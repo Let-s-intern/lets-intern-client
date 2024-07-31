@@ -1,10 +1,10 @@
-import { useEffect, useState } from 'react';
-import { Link, Outlet, useNavigate } from 'react-router-dom';
+import { useEffect } from 'react';
 import { ImExit } from 'react-icons/im';
 import { IoIosArrowDown } from 'react-icons/io';
+import { Link, Outlet, useNavigate } from 'react-router-dom';
 
-import axios from '../../../../utils/axios';
 import { useQuery } from '@tanstack/react-query';
+import axios from '../../../../utils/axios';
 
 const AdminLayout = () => {
   const navigate = useNavigate();
@@ -25,51 +25,6 @@ const AdminLayout = () => {
       navigate('/');
     }
   }, [data, isAdmin, isLoading]);
-
-  // const [challengeId, setChallengeId] = useState<number>(0);
-
-  // useQuery({
-  //   queryKey: ['program', 'admin', { type: 'CHALLENGE' }, 'admin_layout'],
-  //   queryFn: async () => {
-  //     const res = await axios.get('/program/admin', {
-  //       params: { type: 'CHALLENGE' },
-  //     });
-  //     const challengeId =
-  //       Number(localStorage.getItem('admin-challenge-id')) || 0;
-  //     if (challengeId) {
-  //       res.data.programList
-  //         .filter((challenge: any) => challenge.th !== 0)
-  //         .forEach((challenge: any) => {
-  //           if (challenge.id === challengeId) {
-  //             setChallengeId(challenge.id);
-  //             return;
-  //           }
-  //         });
-  //     }
-  //     return res.data;
-  //   },
-  // });
-
-  // useEffect(() => {
-  //   const accessToken = localStorage.getItem('access-token');
-  //   const refreshToken = localStorage.getItem('refresh-token');
-
-  //   if (!accessToken || !refreshToken) {
-  //     navigate('/login');
-  //   }
-
-  //   const fetchIsAdmin = async () => {
-  //     try {
-  //       const res = await axios.get('/user/is-admin');
-  //       if (!res.data) {
-  //         navigate('/');
-  //       }
-  //     } catch (error) {
-  //       console.error(error);
-  //     }
-  //   };
-  //   fetchIsAdmin();
-  // }, [navigate]);
 
   const navData = [
     {
@@ -133,6 +88,19 @@ const AdminLayout = () => {
         {
           name: '팝업 관리',
           url: '/admin/banner/pop-up',
+        },
+      ],
+    },
+    {
+      title: '블로그',
+      itemList: [
+        {
+          name: '블로그 글 관리/등록',
+          url: '/admin/blog/list',
+        },
+        {
+          name: '블로그 후기',
+          url: '/admin/blog/reviews',
         },
       ],
     },

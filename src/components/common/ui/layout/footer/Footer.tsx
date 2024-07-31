@@ -21,7 +21,7 @@ const BUSINESS_INFORMATION = {
   address: '주소: 서울특별시 마포구 독막로 9길 18, 서홍빌딩 3층 A9호',
   email: '이메일: official@letscareer.co.kr',
   call: '고객센터: 0507-0178-8541',
-  copyright: 'Copyright ©2024 아이엔지. All rights reserved',
+  copyright: 'Copyright ©2024 아이엔지. All rights reserved.',
 };
 
 const Footer = () => {

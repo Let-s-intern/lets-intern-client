@@ -1,6 +1,6 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
-import { getAdminRoutes } from './AdminRoutes';
 
+import { getAdminRoutes } from './AdminRoutes';
 import ChallengeLayout from './components/common/challenge/ui/layout/ChallengeLayout';
 import Layout from './components/common/ui/layout/Layout';
 import ScrollToTop from './components/ui/scroll-to-top/ScrollToTop';
@@ -9,6 +9,9 @@ import About from './pages/common/about/About';
 import FindPassword from './pages/common/auth/FindPassword';
 import Login from './pages/common/auth/Login';
 import SignUp from './pages/common/auth/SignUp';
+import BlogDetailPage from './pages/common/blog/BlogDetailPage';
+import BlogHashtagListPage from './pages/common/blog/BlogHashtagListPage';
+import BlogListPage from './pages/common/blog/BlogListPage';
 import ChallengeDashboard from './pages/common/challenge/ChallengeDashboard';
 import ChallengeUserInfo from './pages/common/challenge/ChallengeUserInfo';
 import MyChallengeDashboard from './pages/common/challenge/MyChallengeDashboard';
@@ -27,8 +30,6 @@ import PaymentFail from './pages/common/program/PaymentFail';
 import PaymentResult from './pages/common/program/PaymentResult';
 import ProgramDetail from './pages/common/program/ProgramDetail';
 import Programs from './pages/common/program/Programs';
-import ProgramDetailRegacy from './pages/common/program/regacy/ProgramDetailRegacy';
-import ReviewCreateRegacy from './pages/common/review/regacy/ReviewCreateRegacy';
 import ReviewCreate from './pages/common/review/ReviewCreate';
 import ReviewDetail from './pages/common/review/ReviewDetail';
 import Maintenance from './pages/maintenance/Maintenance';
@@ -66,16 +67,11 @@ const Router = () => {
           {/* /program */}
           <Route path="program" element={<Programs />} />
           {/* /program/detail/:programId */}
-          <Route
+          {/* <Route
             path="program/detail/:programId"
             element={<ProgramDetailRegacy />}
-          />
+          /> */}
 
-          {/* /program/:programId/application/:applicationId/review/create */}
-          <Route
-            path="program/:programId/application/:applicationId/review/create"
-            element={<ReviewCreateRegacy />}
-          />
           {/* /program/:programId/review/new */}
           <Route
             path="program/:programId/review/new"
@@ -86,6 +82,14 @@ const Router = () => {
             path="program/:programId/review/:reviewId"
             element={<ReviewDetail />}
           />
+
+          {/* 블로그 */}
+          {/* /blog?category=:category */}
+          <Route path="blog" element={<BlogListPage />} />
+          {/* blog/hashtag?tag=:tag */}
+          <Route path="blog/hashtag" element={<BlogHashtagListPage />} />
+          {/* blog/:id */}
+          <Route path="blog/:id" element={<BlogDetailPage />} />
 
           {/* 마이페이지 */}
           <Route path="mypage" element={<MyPage />}>

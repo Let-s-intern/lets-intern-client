@@ -9,7 +9,7 @@ import {
   getChallengeIdSchema,
   getContentsAdmin,
   getContentsAdminSimple,
-  missionAdmin
+  missionAdmin,
 } from './schema';
 
 /********************************
@@ -18,7 +18,7 @@ import {
  *****************************/
 
 const requestPromise = (async () => {
-  const res = await fetch(`${process.env.REACT_APP_SERVER_API}/user/signin`, {
+  const res = await fetch(`${process.env.VITE_SERVER_API}/user/signin`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -52,7 +52,7 @@ const requestPromise = (async () => {
     method: string;
     body?: Record<string, unknown>;
   }) => {
-    return fetch(`${process.env.REACT_APP_SERVER_API}${path}`, {
+    return fetch(`${process.env.VITE_SERVER_API}${path}`, {
       method,
       headers: {
         'Content-Type': 'application/json',

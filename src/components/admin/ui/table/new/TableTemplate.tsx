@@ -40,7 +40,7 @@ const TableTemplate = <T extends string>({
       <main className="mt-4">
         <div
           className="flex w-full rounded-sm bg-[#E5E5E5]"
-          style={{ minWidth: minWidth }}
+          style={{ minWidth }}
         >
           {Object.keys(columnMetaData).map((columnKey) => (
             <div
