@@ -29,7 +29,6 @@ module.exports = {
         '2xl': '1440px',
       },
       fontFamily: {
-        notosans: ['NotoSansKR', 'sans-serif'],
         pretendard: ['Pretendard', 'sans-serif'],
       },
       colors: {
