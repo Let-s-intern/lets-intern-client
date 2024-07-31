@@ -8,7 +8,6 @@
 
 import './Select.css';
 
-import * as React from 'react';
 
 type SelectIntrinsicProps = JSX.IntrinsicElements['select'];
 interface SelectProps extends SelectIntrinsicProps {
@@ -26,7 +25,7 @@ export default function Select({
       <label style={{marginTop: '-1em'}} className="Input__label">
         {label}
       </label>
-      <select {...other} className={className || 'select'}>
+      <select {...other} className={`lexical-select ${className || 'select'}`}>
         {children}
       </select>
     </div>
