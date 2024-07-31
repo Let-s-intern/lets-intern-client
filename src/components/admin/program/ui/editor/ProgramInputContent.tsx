@@ -107,7 +107,7 @@ const ProgramInputContent = ({
   );
 
   return (
-    <div className="mx-auto max-w-xl p-8 font-notosans">
+    <div className="mx-auto max-w-xl p-8">
       <header className="my-5 text-2xl font-bold">프로그램 개설</header>
       <form className="space-y-5" onSubmit={handleSubmit}>
         <FormControl fullWidth>

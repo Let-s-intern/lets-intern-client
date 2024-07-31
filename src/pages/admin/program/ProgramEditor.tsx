@@ -478,11 +478,11 @@ const ProgramEditor = ({ mode }: ProgramEditorProps) => {
   };
 
   if (loading) {
-    return <div className="mx-auto max-w-xl font-notosans">로딩중</div>;
+    return <div className="mx-auto max-w-xl">로딩중</div>;
   }
 
   if (error) {
-    return <div className="mx-auto max-w-xl font-notosans">에러 발생</div>;
+    return <div className="mx-auto max-w-xl">에러 발생</div>;
   }
 
   return (
