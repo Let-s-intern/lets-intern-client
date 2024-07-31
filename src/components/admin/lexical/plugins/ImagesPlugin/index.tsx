@@ -27,6 +27,8 @@ import {
 } from 'lexical';
 import { useEffect, useRef, useState } from 'react';
 
+import { Snackbar } from '@mui/material';
+import { uploadFile } from '../../../../../api/file';
 import landscapeImage from '../../images/landscape.jpg';
 import yellowFlowerImage from '../../images/yellow-flower.jpg';
 import {
@@ -94,20 +96,26 @@ export function InsertImageUploadedDialogBody({
 }) {
   const [src, setSrc] = useState('');
   const [altText, setAltText] = useState('');
+  const [snackbar, setSnackbar] = useState<{
+    open: boolean;
+    message: string;
+  }>({
+    open: false,
+    message: '',
+  });
 
   const isDisabled = src === '';
 
-  const loadImage = (files: FileList | null) => {
-    const reader = new FileReader();
-    reader.onload = function () {
-      if (typeof reader.result === 'string') {
-        setSrc(reader.result);
-      }
-      return '';
-    };
-    if (files !== null) {
-      reader.readAsDataURL(files[0]);
+  const loadImage = async (files: FileList | null) => {
+    const file = files?.[0];
+    if (!file) {
+      setSnackbar({ open: true, message: '파일이 없습니다.' });
+      return;
     }
+    const url = await uploadFile({ file, type: 'BLOG' });
+
+    setSrc(url);
+    setSnackbar({ open: true, message: `파일이 업로드되었습니다: ${url}` });
   };
 
   return (
@@ -134,6 +142,12 @@ export function InsertImageUploadedDialogBody({
           Confirm
         </Button>
       </DialogActions>
+      <Snackbar
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+        open={snackbar.open}
+        onClose={() => setSnackbar({ ...snackbar, open: false })}
+        message={snackbar.message}
+      />
     </>
   );
 }

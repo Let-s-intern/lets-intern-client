@@ -8,24 +8,16 @@ import {
   SerializedTextNode,
 } from 'lexical';
 import { SerializedEmojiNode } from '../../admin/lexical/nodes/EmojiNode';
+import { SerializedImageNode } from '../../admin/lexical/nodes/ImageNode';
 
-const LexicalContent = ({
-  node,
-  index,
-}: {
-  node: SerializedLexicalNode;
-
-  index: number;
-}) => {
-  const key = `node-${index}-${node.type}`;
-
+const LexicalContent = ({ node }: { node: SerializedLexicalNode }) => {
   switch (node.type) {
     case 'root': {
       const _node = node as SerializedRootNode;
       return (
-        <div key={key} className="mx-auto max-w-3xl">
+        <div className="mx-auto max-w-3xl">
           {_node.children.map((child, childIndex) => (
-            <LexicalContent key={childIndex} node={child} index={childIndex} />
+            <LexicalContent key={childIndex} node={child} />
           ))}
         </div>
       );
@@ -35,9 +27,9 @@ const LexicalContent = ({
       const HeadingTag =
         `h${_node.tag ? _node.tag.slice(1) : '1'}` as keyof JSX.IntrinsicElements;
       return (
-        <HeadingTag key={key} className="mb-2 mt-4 text-2xl font-bold">
+        <HeadingTag className="mb-2 mt-4 text-2xl font-bold">
           {_node.children.map((child, childIndex) => (
-            <LexicalContent key={childIndex} node={child} index={childIndex} />
+            <LexicalContent key={childIndex} node={child} />
           ))}
         </HeadingTag>
       );
@@ -45,12 +37,9 @@ const LexicalContent = ({
     case 'quote': {
       const _node = node as SerializedQuoteNode;
       return (
-        <blockquote
-          key={key}
-          className="my-4 border-l-4 border-gray-300 pl-4 italic"
-        >
+        <blockquote className="my-4 border-l-4 border-gray-300 pl-4 italic">
           {_node.children.map((child, childIndex) => (
-            <LexicalContent key={childIndex} node={child} index={childIndex} />
+            <LexicalContent key={childIndex} node={child} />
           ))}
         </blockquote>
       );
@@ -58,9 +47,9 @@ const LexicalContent = ({
     case 'paragraph': {
       const _node = node as SerializedParagraphNode;
       return (
-        <p key={key} className="my-2">
+        <p className="my-2">
           {_node.children.map((child, childIndex) => (
-            <LexicalContent key={childIndex} node={child} index={childIndex} />
+            <LexicalContent key={childIndex} node={child} />
           ))}
         </p>
       );
@@ -73,12 +62,11 @@ const LexicalContent = ({
           : ('ol' as keyof JSX.IntrinsicElements);
       return (
         <ListTag
-          key={key}
           className={_node.listType === 'bullet' ? 'list-disc' : 'list-decimal'}
           start={_node.start}
         >
           {_node.children.map((child, childIndex) => (
-            <LexicalContent key={childIndex} node={child} index={childIndex} />
+            <LexicalContent key={childIndex} node={child} />
           ))}
         </ListTag>
       );
@@ -86,9 +74,9 @@ const LexicalContent = ({
     case 'listitem': {
       const _node = node as SerializedListItemNode;
       return (
-        <li key={key} className="ml-4">
+        <li className="ml-4">
           {_node.children.map((child, childIndex) => (
-            <LexicalContent key={childIndex} node={child} index={childIndex} />
+            <LexicalContent key={childIndex} node={child} />
           ))}
         </li>
       );
@@ -97,9 +85,9 @@ const LexicalContent = ({
       const _node = node as SerializedLinkNode;
 
       return (
-        <a key={key} href={_node.url} className="text-blue-600 hover:underline">
+        <a href={_node.url} className="text-blue-600 hover:underline">
           {_node.children.map((child, childIndex) => (
-            <LexicalContent key={childIndex} node={child} index={childIndex} />
+            <LexicalContent key={childIndex} node={child} />
           ))}
         </a>
       );
@@ -112,22 +100,39 @@ const LexicalContent = ({
       if (_node.format & 2) className += 'italic ';
       if (_node.format & 8) className += 'underline ';
       if (_node.format & 16) className += 'font-mono bg-gray-100 px-1 ';
-      return (
-        <span key={key} className={className.trim()}>
-          {_node.text}
-        </span>
-      );
+      return <span className={className.trim()}>{_node.text}</span>;
     }
     case 'emoji': {
       const _node = node as SerializedEmojiNode;
       return (
-        <span
-          key={key}
-          className="emoji"
-          role="img"
-          aria-label={_node.text || ''}
-        >
+        <span className="emoji" role="img" aria-label={_node.text || ''}>
           {_node.text || ''}
+        </span>
+      );
+    }
+    case 'image': {
+      const _node = node as SerializedImageNode;
+
+      return (
+        <span className="image">
+          <div draggable="false">
+            <img
+              src={_node.src}
+              alt={_node.altText}
+              style={{
+                height: _node.height ? _node.height : 'inherit',
+                maxWidth: _node.maxWidth,
+                width: _node.width ? _node.width : 'inherit',
+              }}
+            />
+          </div>
+          {_node.showCaption ? (
+            <div className="image-caption-container">
+              <div role="textbox" className="whitespace-pre-wrap break-keep">
+                <LexicalContent node={_node.caption.editorState.root} />
+              </div>
+            </div>
+          ) : null}
         </span>
       );
     }
