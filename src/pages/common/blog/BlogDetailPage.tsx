@@ -66,7 +66,6 @@ const BlogDetailPage = () => {
                       ? { type: 'root', children: [] }
                       : JSON.parse(data.blogDetailInfo.content)?.root
                   }
-                  index={0}
                 />
               </div>
               <div className="flex w-full items-center justify-center gap-x-3 py-10">
