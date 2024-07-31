@@ -8,8 +8,8 @@
 
 import './fontSize.css';
 
-import {$patchStyleText} from '@lexical/selection';
-import {$getSelection, LexicalEditor} from 'lexical';
+import { $patchStyleText } from '@lexical/selection';
+import { $getSelection, LexicalEditor } from 'lexical';
 import * as React from 'react';
 
 const MIN_ALLOWED_FONT_SIZE = 8;
@@ -195,7 +195,8 @@ export default function FontSize({
             Number(inputValue) <= MIN_ALLOWED_FONT_SIZE)
         }
         onClick={() => handleButtonClick(updateFontSizeType.decrement)}
-        className="toolbar-item font-decrement">
+        className="toolbar-item font-decrement"
+      >
         <i className="format minus-icon" />
       </button>
 
@@ -219,7 +220,8 @@ export default function FontSize({
             Number(inputValue) >= MAX_ALLOWED_FONT_SIZE)
         }
         onClick={() => handleButtonClick(updateFontSizeType.increment)}
-        className="toolbar-item font-increment">
+        className="toolbar-item font-increment"
+      >
         <i className="format add-icon" />
       </button>
     </>
