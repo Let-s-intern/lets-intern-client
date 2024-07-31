@@ -138,8 +138,6 @@ const SignUp = () => {
 
   const patchSocialUserContactEmail = useMutation({
     mutationFn: async () => {
-      // const res = await axios.patch('/user', { contactEmail: value.email });
-      console.log('!@!#');
       const res = await axios({
         method: 'PATCH',
         url: '/user',
