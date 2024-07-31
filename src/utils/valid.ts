@@ -14,4 +14,4 @@ const isValidPassword = (password: string) => {
   return regex.test(password);
 };
 
-export { isValidPhoneNumber, isValidEmail, isValidPassword };
+export { isValidEmail, isValidPassword, isValidPhoneNumber };

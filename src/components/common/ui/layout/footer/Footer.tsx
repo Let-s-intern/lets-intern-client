@@ -48,6 +48,14 @@ const Footer = () => {
                 공지사항
               </MenuLink>
               <MenuLink
+                to="https://docs.google.com/forms/d/e/1FAIpQLSeHM_d3yd0cOiH2aSqhprtSFmidIYFziyIxf5-9j7rgZCobvA/viewform"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inquiry_cta"
+              >
+                광고/제휴 문의
+              </MenuLink>
+              <MenuLink
                 to="https://letscareer.oopy.io"
                 target="_blank"
                 rel="noopener noreferrer"
@@ -104,10 +112,10 @@ const Footer = () => {
             />
           </div>
           <div className="flex items-center gap-6 text-neutral-0/[.65]">
-            <DocumentLink to="https://letscareer.oopy.io/241b2e74-7ddf-4747-8012-a68f7c03f9e1">
+            <DocumentLink to="https://letscareer.oopy.io/a121a038-f72f-42d7-bde7-47624ecc0943">
               서비스 이용약관
             </DocumentLink>
-            <DocumentLink to="https://letscareer.oopy.io/4e21a3c6-f42a-409d-a877-a7b5d926f158">
+            <DocumentLink to="https://letscareer.oopy.io/c3af485b-fced-49ab-9601-f2d7bf07657d">
               개인정보처리방침
             </DocumentLink>
           </div>

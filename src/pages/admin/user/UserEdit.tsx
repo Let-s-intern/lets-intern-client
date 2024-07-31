@@ -216,7 +216,11 @@ const UserEdit = () => {
               </div>
             </div>
             <div className="col-span-2 mt-9 flex w-full items-center justify-center gap-x-5">
-              <ActionButton bgColor="gray" onClick={handleCancelButtonClick}>
+              <ActionButton
+                bgColor="gray"
+                type="button"
+                onClick={handleCancelButtonClick}
+              >
                 닫기
               </ActionButton>
               <ActionButton bgColor="green" type={'submit'}>
