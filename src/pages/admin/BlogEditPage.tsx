@@ -19,6 +19,7 @@ import {
 } from '../../api/blog';
 import { TagDetail } from '../../api/blogSchema';
 import { uploadFile } from '../../api/file';
+import DateTimePicker from '../../components/admin/blog/DateTimePicker';
 import TagSelector from '../../components/admin/blog/TagSelector';
 import TextFieldLimit from '../../components/admin/blog/TextFieldLimit';
 import EditorApp from '../../components/admin/lexical/EditorApp';
@@ -173,6 +174,7 @@ const BlogEditPage = () => {
                 </FormHelperText>
               </FormControl>
             </div>
+
             <TextFieldLimit
               type="text"
               label="제목"
@@ -198,6 +200,7 @@ const BlogEditPage = () => {
               fullWidth
               maxLength={maxDescriptionLength}
             />
+
             <div className="flex gap-4">
               <div className="w-56">
                 <ImageUpload
@@ -274,7 +277,11 @@ const BlogEditPage = () => {
               />
             </div>
 
-            <h2 className="mt-20">콘텐츠 편집</h2>
+            <div className="border px-6 py-10">
+              <DateTimePicker onChange={() => console.log('날짜 선택')} />
+            </div>
+
+            <h2 className="mt-10">콘텐츠 편집</h2>
             <EditorApp
               editorStateJsonString={blogData.blogDetailInfo.content!}
               getJSONFromLexical={onChangeEditor}
@@ -314,6 +321,7 @@ const BlogEditPage = () => {
       ) : (
         <span>블로그를 불러오지 못했습니다.</span>
       )}
+
       <Snackbar
         anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
         open={snackbar.open}
