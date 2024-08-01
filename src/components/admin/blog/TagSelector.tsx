@@ -1,6 +1,5 @@
 import { TextField } from '@mui/material';
 
-import { memo } from 'react';
 import { TagDetail } from '../../../api/blogSchema';
 import Tag from './Tag';
 import TagDelete from './TagDelete';
@@ -63,4 +62,4 @@ const TagSelector = ({
   );
 };
 
-export default memo(TagSelector);
+export default TagSelector;
