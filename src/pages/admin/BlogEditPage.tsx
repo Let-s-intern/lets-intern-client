@@ -174,6 +174,7 @@ const BlogEditPage = () => {
                 </FormHelperText>
               </FormControl>
             </div>
+
             <TextFieldLimit
               type="text"
               label="제목"
@@ -199,6 +200,7 @@ const BlogEditPage = () => {
               fullWidth
               maxLength={maxDescriptionLength}
             />
+
             <div className="flex gap-4">
               <div className="w-56">
                 <ImageUpload
@@ -319,6 +321,7 @@ const BlogEditPage = () => {
       ) : (
         <span>블로그를 불러오지 못했습니다.</span>
       )}
+
       <Snackbar
         anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
         open={snackbar.open}
