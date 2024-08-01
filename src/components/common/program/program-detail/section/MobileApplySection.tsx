@@ -111,7 +111,7 @@ const MobileApplySection = ({
     window.history.replaceState(
       {},
       '',
-      `${window.location.pathname}${newSearchParams.toString()}`,
+      `${window.location.pathname}?${newSearchParams.toString()}`,
     );
   });
 
