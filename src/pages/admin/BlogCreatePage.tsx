@@ -8,7 +8,7 @@ import {
   Snackbar,
   TextField,
 } from '@mui/material';
-import { ChangeEvent, FormEvent, useEffect, useState } from 'react';
+import { ChangeEvent, MouseEvent, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import {
@@ -18,6 +18,7 @@ import {
 } from '../../api/blog';
 import { PostBlogReqBody } from '../../api/blogSchema';
 import { uploadFile } from '../../api/file';
+import DateTimePicker from '../../components/admin/blog/DateTimePicker';
 import TagSelector from '../../components/admin/blog/TagSelector';
 import TextFieldLimit from '../../components/admin/blog/TextFieldLimit';
 import EditorApp from '../../components/admin/lexical/EditorApp';
@@ -50,19 +51,12 @@ const BlogCreatePage = () => {
   const blogTagMutation = usePostBlogTagMutation();
   const blogMutation = usePostBlogMutation();
 
-  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    const intent = (event.nativeEvent as SubmitEvent).submitter?.getAttribute(
-      'value',
-    );
-
-    if (!intent) {
-      return;
-    }
+  const postBlog = async (event: MouseEvent<HTMLButtonElement>) => {
+    const { name } = event.target as HTMLButtonElement;
 
     await blogMutation.mutateAsync({
       ...editingValue,
-      isDisplayed: intent === 'publish',
+      isDisplayed: name === 'publish',
     });
 
     setSnackbar({
@@ -80,14 +74,12 @@ const BlogCreatePage = () => {
     message: '',
   });
 
-  const handleChangeTag = (event: ChangeEvent<HTMLInputElement>) => {
+  const onChangeTag = (event: ChangeEvent<HTMLInputElement>) => {
     setNewTag(event.target.value);
   };
 
-  const handleKeyDown = async (
-    event: React.KeyboardEvent<HTMLInputElement>,
-  ) => {
-    if (event.key !== 'Enter') {
+  const onKeyDown = async (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key !== 'Enter' || newTag === '') {
       return;
     }
 
@@ -121,7 +113,7 @@ const BlogCreatePage = () => {
         <h1 className="text-2xl font-semibold">블로그 등록</h1>
       </header>
       <main className="max-w-screen-xl">
-        <form className="mt-4 flex flex-col gap-4" onSubmit={handleSubmit}>
+        <div className="mt-4 flex flex-col gap-4">
           <div className="flex-no-wrap flex items-center gap-4">
             <FormControl size="small" required>
               <InputLabel id="category-label">카테고리</InputLabel>
@@ -150,6 +142,7 @@ const BlogCreatePage = () => {
               </FormHelperText>
             </FormControl>
           </div>
+
           <TextFieldLimit
             type="text"
             label="제목"
@@ -179,6 +172,7 @@ const BlogCreatePage = () => {
             fullWidth
             maxLength={maxDescriptionLength}
           />
+
           <div className="flex gap-4">
             <div className="w-56">
               <ImageUpload
@@ -233,7 +227,7 @@ const BlogCreatePage = () => {
           </div>
 
           <div className="border px-6 py-10">
-            <h2>태그 설정</h2>
+            <h2 className="mb-2">태그 설정</h2>
             <TagSelector
               selectedTagList={selectedTagList}
               tagList={tags}
@@ -250,12 +244,16 @@ const BlogCreatePage = () => {
                   tagList: [...new Set([...editingValue.tagList, tag.id])],
                 }));
               }}
-              onChange={handleChangeTag}
-              onKeyDown={handleKeyDown}
+              onChange={onChangeTag}
+              onKeyDown={onKeyDown}
             />
           </div>
 
-          <h2 className="mt-20">콘텐츠 편집</h2>
+          <div className="border px-6 py-10">
+            <DateTimePicker onChange={() => console.log('날짜 선택')} />
+          </div>
+
+          <h2 className="mt-10">콘텐츠 편집</h2>
           <EditorApp getJSONFromLexical={onChangeEditor} />
 
           <div className="flex items-center justify-end gap-4">
@@ -271,24 +269,25 @@ const BlogCreatePage = () => {
             <Button
               variant="outlined"
               color="primary"
-              type="submit"
-              name="intent"
-              value="save_temp"
+              type="button"
+              name="save_temp"
+              onClick={postBlog}
             >
               임시 저장
             </Button>
             <Button
               variant="contained"
               color="primary"
-              type="submit"
-              name="intent"
-              value="publish"
+              type="button"
+              name="publish"
+              onClick={postBlog}
             >
               발행
             </Button>
           </div>
-        </form>
+        </div>
       </main>
+
       <Snackbar
         anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
         open={snackbar.open}
