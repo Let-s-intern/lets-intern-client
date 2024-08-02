@@ -1,6 +1,10 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useBlogListQuery, useBlogQuery } from '../../../api/blog';
+import {
+  useBlogListQuery,
+  useBlogQuery,
+  usePostBlogRatingMutation,
+} from '../../../api/blog';
 import BlogHashtag from '../../../components/common/blog/BlogHashtag';
 import LexicalContent from '../../../components/common/blog/LexicalContent';
 import RecommendBlogCard from '../../../components/common/blog/RecommendBlogCard';
@@ -12,6 +16,7 @@ const BlogDetailPage = () => {
   const { data, isLoading } = useBlogQuery(id || '');
   const [starRating, setStarRating] = useState<number | null>(null);
   const [formValue, setFormValue] = useState<string>('');
+  const [isPostedRating, setIsPostedRating] = useState<boolean>(false);
   const {
     data: recommendData,
     isLoading: recommendIsLoading,
@@ -20,6 +25,23 @@ const BlogDetailPage = () => {
     type: data?.blogDetailInfo.category,
     pageable: { page: 0, size: 3 },
   });
+
+  const { mutate: postRating } = usePostBlogRatingMutation({
+    successCallback: () => {
+      setIsPostedRating(true);
+    },
+  });
+
+  const handlePostRating = () => {
+    if (!id) return;
+
+    if (!starRating) return;
+    postRating({
+      blogId: id,
+      title: formValue,
+      score: starRating,
+    });
+  };
 
   useEffect(() => {
     console.log('data.blogDetailInfo.content', data?.blogDetailInfo.content);
@@ -133,9 +155,10 @@ const BlogDetailPage = () => {
                       />
                     </div>
                     <button
-                      className={`flex w-full items-center justify-center rounded-sm border-2 border-primary px-4 py-1.5 text-primary-dark ${formValue.length === 0 ? 'cursor-not-allowed opacity-40' : ''}`}
+                      className={`flex w-full items-center justify-center rounded-sm border-2 border-primary px-4 py-1.5 text-primary-dark ${formValue.length === 0 || isPostedRating ? 'cursor-not-allowed opacity-40' : ''}`}
+                      onClick={handlePostRating}
                     >
-                      제출하기
+                      {isPostedRating ? '제출완료' : '제출하기'}
                     </button>
                   </div>
                 )}

@@ -100,8 +100,12 @@ const BlogCreatePage = () => {
   };
 
   useEffect(() => {
-    console.log('editingValue', editingValue);
-  }, [editingValue]);
+    try {
+      console.log('content', JSON.parse(editingValue.content));
+    } catch {
+      // empty
+    }
+  }, [editingValue.content]);
 
   const selectedTagList = tags.filter((tag) =>
     editingValue.tagList.includes(tag.id),
@@ -254,7 +258,7 @@ const BlogCreatePage = () => {
           </div>
 
           <h2 className="mt-10">콘텐츠 편집</h2>
-          <EditorApp getJSONFromLexical={onChangeEditor} />
+          <EditorApp onChange={onChangeEditor} />
 
           <div className="flex items-center justify-end gap-4">
             <Button

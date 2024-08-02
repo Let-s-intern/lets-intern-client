@@ -119,8 +119,12 @@ const BlogEditPage = () => {
   };
 
   useEffect(() => {
-    console.log('editingValue', editingValue);
-  }, [editingValue]);
+    try {
+      console.log('content', JSON.parse(editingValue.content));
+    } catch {
+      // empty
+    }
+  }, [editingValue.content]);
 
   useEffect(() => {
     if (isLoading || !blogData) return;
@@ -284,7 +288,7 @@ const BlogEditPage = () => {
             <h2 className="mt-10">콘텐츠 편집</h2>
             <EditorApp
               editorStateJsonString={blogData.blogDetailInfo.content!}
-              getJSONFromLexical={onChangeEditor}
+              onChange={onChangeEditor}
             />
 
             <div className="flex items-center justify-end gap-4">

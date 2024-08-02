@@ -50,7 +50,6 @@ import {
 import {
   $createParagraphNode,
   $getNodeByKey,
-  $getRoot,
   $getSelection,
   $isElementNode,
   $isRangeSelection,
@@ -75,41 +74,34 @@ import {
 import { Dispatch, useCallback, useEffect, useState } from 'react';
 import { sanitizeUrl } from '../../../../../utils/url';
 import useModal from '../../hooks/useModal';
-import catTypingGif from '../../images/cat-typing.gif';
-import { $createStickyNode } from '../../nodes/StickyNode';
 import DropDown, { DropDownItem } from '../../ui/DropDown';
 import DropdownColorPicker from '../../ui/DropdownColorPicker';
 import { getSelectedNode } from '../../utils/getSelectedNode';
 import { EmbedConfigs } from '../AutoEmbedPlugin';
 import { INSERT_COLLAPSIBLE_COMMAND } from '../CollapsiblePlugin';
-import { InsertEquationDialog } from '../EquationsPlugin';
-import { INSERT_EXCALIDRAW_COMMAND } from '../ExcalidrawPlugin';
 import {
   INSERT_IMAGE_COMMAND,
   InsertImageDialog,
   InsertImagePayload,
 } from '../ImagesPlugin';
-import { InsertInlineImageDialog } from '../InlineImagePlugin';
 import InsertLayoutDialog from '../LayoutPlugin/InsertLayoutDialog';
-import { INSERT_PAGE_BREAK } from '../PageBreakPlugin';
-import { InsertPollDialog } from '../PollPlugin';
 import { InsertTableDialog } from '../TablePlugin';
 import FontSize from './fontSize';
 
 const blockTypeToBlockName = {
-  bullet: 'Bulleted List',
-  check: 'Check List',
-  code: 'Code Block',
-  h1: 'Heading 1',
-  h2: 'Heading 2',
-  h3: 'Heading 3',
-  h4: 'Heading 4',
-  h5: 'Heading 5',
-  h6: 'Heading 6',
-  number: 'Numbered List',
-  paragraph: 'Normal',
-  quote: 'Quote',
-};
+  bullet: '글머리 기호 목록',
+  check: '체크리스트',
+  code: '코드 블록',
+  h1: '제목 1',
+  h2: '제목 2',
+  h3: '제목 3',
+  h4: '제목 4',
+  h5: '제목 5',
+  h6: '제목 6',
+  number: '숫자 목록',
+  paragraph: '문단',
+  quote: '인용구',
+} as const;
 
 const rootTypeToRootName = {
   root: 'Root',
@@ -143,14 +135,15 @@ const FONT_SIZE_OPTIONS: [string, string][] = [
   ['10px', '10px'],
   ['11px', '11px'],
   ['12px', '12px'],
-  ['13px', '13px'],
   ['14px', '14px'],
   ['15px', '15px'],
   ['16px', '16px'],
-  ['17px', '17px'],
   ['18px', '18px'],
-  ['19px', '19px'],
   ['20px', '20px'],
+  ['24px', '24px'],
+  ['28px', '28px'],
+  ['32px', '32px'],
+  ['40px', '40px'],
 ];
 
 const ELEMENT_FORMAT_OPTIONS: {
@@ -163,32 +156,32 @@ const ELEMENT_FORMAT_OPTIONS: {
   center: {
     icon: 'center-align',
     iconRTL: 'center-align',
-    name: 'Center Align',
+    name: '가운데 정렬',
   },
   end: {
     icon: 'right-align',
     iconRTL: 'left-align',
-    name: 'End Align',
+    name: '끝 정렬',
   },
   justify: {
     icon: 'justify-align',
     iconRTL: 'justify-align',
-    name: 'Justify Align',
+    name: '양쪽 정렬',
   },
   left: {
     icon: 'left-align',
     iconRTL: 'left-align',
-    name: 'Left Align',
+    name: '왼쪽 정렬',
   },
   right: {
     icon: 'right-align',
     iconRTL: 'right-align',
-    name: 'Right Align',
+    name: '오른쪽 정렬',
   },
   start: {
     icon: 'left-align',
     iconRTL: 'right-align',
-    name: 'Start Align',
+    name: '시작 정렬',
   },
 };
 
@@ -297,63 +290,63 @@ function BlockFormatDropDown({
         onClick={formatParagraph}
       >
         <i className="icon paragraph" />
-        <span className="text">Normal</span>
+        <span className="text">{blockTypeToBlockName['paragraph']}</span>
       </DropDownItem>
-      <DropDownItem
+      {/* <DropDownItem
         className={'item ' + dropDownActiveClass(blockType === 'h1')}
         onClick={() => formatHeading('h1')}
       >
         <i className="icon h1" />
         <span className="text">Heading 1</span>
-      </DropDownItem>
+      </DropDownItem> */}
       <DropDownItem
         className={'item ' + dropDownActiveClass(blockType === 'h2')}
         onClick={() => formatHeading('h2')}
       >
         <i className="icon h2" />
-        <span className="text">Heading 2</span>
+        <span className="text">{blockTypeToBlockName['h2']}</span>
       </DropDownItem>
       <DropDownItem
         className={'item ' + dropDownActiveClass(blockType === 'h3')}
         onClick={() => formatHeading('h3')}
       >
         <i className="icon h3" />
-        <span className="text">Heading 3</span>
+        <span className="text">{blockTypeToBlockName['h3']}</span>
       </DropDownItem>
       <DropDownItem
         className={'item ' + dropDownActiveClass(blockType === 'bullet')}
         onClick={formatBulletList}
       >
         <i className="icon bullet-list" />
-        <span className="text">Bullet List</span>
+        <span className="text">{blockTypeToBlockName['bullet']}</span>
       </DropDownItem>
       <DropDownItem
         className={'item ' + dropDownActiveClass(blockType === 'number')}
         onClick={formatNumberedList}
       >
         <i className="icon numbered-list" />
-        <span className="text">Numbered List</span>
+        <span className="text">{blockTypeToBlockName['number']}</span>
       </DropDownItem>
       <DropDownItem
         className={'item ' + dropDownActiveClass(blockType === 'check')}
         onClick={formatCheckList}
       >
         <i className="icon check-list" />
-        <span className="text">Check List</span>
+        <span className="text">{blockTypeToBlockName['check']}</span>
       </DropDownItem>
       <DropDownItem
         className={'item ' + dropDownActiveClass(blockType === 'quote')}
         onClick={formatQuote}
       >
         <i className="icon quote" />
-        <span className="text">Quote</span>
+        <span className="text">{blockTypeToBlockName['quote']}</span>
       </DropDownItem>
       <DropDownItem
         className={'item ' + dropDownActiveClass(blockType === 'code')}
         onClick={formatCode}
       >
         <i className="icon code" />
-        <span className="text">Code Block</span>
+        <span className="text">{blockTypeToBlockName['code']}</span>
       </DropDownItem>
     </DropDown>
   );
@@ -450,7 +443,7 @@ function ElementFormatDropdown({
         className="item"
       >
         <i className="icon left-align" />
-        <span className="text">Left Align</span>
+        <span className="text">왼쪽 정렬</span>
       </DropDownItem>
       <DropDownItem
         onClick={() => {
@@ -459,7 +452,7 @@ function ElementFormatDropdown({
         className="item"
       >
         <i className="icon center-align" />
-        <span className="text">Center Align</span>
+        <span className="text">가운데 정렬</span>
       </DropDownItem>
       <DropDownItem
         onClick={() => {
@@ -468,7 +461,7 @@ function ElementFormatDropdown({
         className="item"
       >
         <i className="icon right-align" />
-        <span className="text">Right Align</span>
+        <span className="text">오른쪽 정렬</span>
       </DropDownItem>
       <DropDownItem
         onClick={() => {
@@ -477,7 +470,7 @@ function ElementFormatDropdown({
         className="item"
       >
         <i className="icon justify-align" />
-        <span className="text">Justify Align</span>
+        <span className="text">양쪽 정렬</span>
       </DropDownItem>
       <DropDownItem
         onClick={() => {
@@ -492,7 +485,7 @@ function ElementFormatDropdown({
               : ELEMENT_FORMAT_OPTIONS.start.icon
           }`}
         />
-        <span className="text">Start Align</span>
+        <span className="text">시작 정렬</span>
       </DropDownItem>
       <DropDownItem
         onClick={() => {
@@ -507,7 +500,7 @@ function ElementFormatDropdown({
               : ELEMENT_FORMAT_OPTIONS.end.icon
           }`}
         />
-        <span className="text">End Align</span>
+        <span className="text">끝 정렬</span>
       </DropDownItem>
       <Divider />
       <DropDownItem
@@ -517,7 +510,7 @@ function ElementFormatDropdown({
         className="item"
       >
         <i className={'icon ' + (isRTL ? 'indent' : 'outdent')} />
-        <span className="text">Outdent</span>
+        <span className="text">내어쓰기</span>
       </DropDownItem>
       <DropDownItem
         onClick={() => {
@@ -526,7 +519,7 @@ function ElementFormatDropdown({
         className="item"
       >
         <i className={'icon ' + (isRTL ? 'outdent' : 'indent')} />
-        <span className="text">Indent</span>
+        <span className="text">들여쓰기</span>
       </DropDownItem>
     </DropDown>
   );
@@ -546,7 +539,7 @@ export default function ToolbarPlugin({
   const [selectedElementKey, setSelectedElementKey] = useState<NodeKey | null>(
     null,
   );
-  const [fontSize, setFontSize] = useState<string>('15px');
+  const [fontSize, setFontSize] = useState<string>('16px');
   const [fontColor, setFontColor] = useState<string>('#000');
   const [bgColor, setBgColor] = useState<string>('#fff');
   const [fontFamily, setFontFamily] = useState<string>('Arial');
@@ -685,7 +678,7 @@ export default function ToolbarPlugin({
     }
     if ($isRangeSelection(selection) || $isTableSelection(selection)) {
       setFontSize(
-        $getSelectionStyleValueForProperty(selection, 'font-size', '15px'),
+        $getSelectionStyleValueForProperty(selection, 'font-size', '16px'),
       );
     }
   }, [activeEditor, editor]);
@@ -941,13 +934,13 @@ export default function ToolbarPlugin({
         </DropDown>
       ) : (
         <>
-          <FontDropDown
+          {/* <FontDropDown
             disabled={!isEditable}
             style={'font-family'}
             value={fontFamily}
             editor={activeEditor}
-          />
-          <Divider />
+          /> */}
+          {/* <Divider /> */}
           <FontSize
             selectionFontSize={fontSize.slice(0, -2)}
             editor={activeEditor}
@@ -1057,7 +1050,7 @@ export default function ToolbarPlugin({
               aria-label="Format text with a strikethrough"
             >
               <i className="icon strikethrough" />
-              <span className="text">Strikethrough</span>
+              <span className="text">취소선</span>
             </DropDownItem>
             <DropDownItem
               onClick={() => {
@@ -1068,7 +1061,7 @@ export default function ToolbarPlugin({
               aria-label="Format text with a subscript"
             >
               <i className="icon subscript" />
-              <span className="text">Subscript</span>
+              <span className="text">아래 첨자</span>
             </DropDownItem>
             <DropDownItem
               onClick={() => {
@@ -1082,25 +1075,24 @@ export default function ToolbarPlugin({
               aria-label="Format text with a superscript"
             >
               <i className="icon superscript" />
-              <span className="text">Superscript</span>
-            </DropDownItem>
-            <DropDownItem
-              onClick={clearFormatting}
-              className="item"
-              title="Clear text formatting"
-              aria-label="Clear all text formatting"
-            >
-              <i className="icon clear" />
-              <span className="text">Clear Formatting</span>
+              <span className="text">윗 첨자</span>
             </DropDownItem>
           </DropDown>
+          <button
+            onClick={clearFormatting}
+            className={'toolbar-item spaced'}
+            type="button"
+          >
+            <i className="icon clear" />
+            <span className="text">포맷 초기화</span>
+          </button>
           {canViewerSeeInsertDropdown && (
             <>
               <Divider />
               <DropDown
                 disabled={!isEditable}
                 buttonClassName="toolbar-item spaced"
-                buttonLabel="Insert"
+                buttonLabel="삽입"
                 buttonAriaLabel="Insert specialized editor node"
                 buttonIconClassName="icon plus"
               >
@@ -1114,9 +1106,9 @@ export default function ToolbarPlugin({
                   className="item"
                 >
                   <i className="icon horizontal-rule" />
-                  <span className="text">Horizontal Rule</span>
+                  <span className="text">가로선</span>
                 </DropDownItem>
-                <DropDownItem
+                {/* <DropDownItem
                   onClick={() => {
                     activeEditor.dispatchCommand(INSERT_PAGE_BREAK, undefined);
                   }}
@@ -1124,7 +1116,7 @@ export default function ToolbarPlugin({
                 >
                   <i className="icon page-break" />
                   <span className="text">Page Break</span>
-                </DropDownItem>
+                </DropDownItem> */}
                 <DropDownItem
                   onClick={() => {
                     showModal('Insert Image', (onClose) => (
@@ -1137,9 +1129,9 @@ export default function ToolbarPlugin({
                   className="item"
                 >
                   <i className="icon image" />
-                  <span className="text">Image</span>
+                  <span className="text">이미지</span>
                 </DropDownItem>
-                <DropDownItem
+                {/* <DropDownItem
                   onClick={() => {
                     showModal('Insert Inline Image', (onClose) => (
                       <InsertInlineImageDialog
@@ -1152,8 +1144,8 @@ export default function ToolbarPlugin({
                 >
                   <i className="icon image" />
                   <span className="text">Inline Image</span>
-                </DropDownItem>
-                <DropDownItem
+                </DropDownItem> */}
+                {/* <DropDownItem
                   onClick={() =>
                     insertGifOnClick({
                       altText: 'Cat typing on a laptop',
@@ -1164,8 +1156,8 @@ export default function ToolbarPlugin({
                 >
                   <i className="icon gif" />
                   <span className="text">GIF</span>
-                </DropDownItem>
-                <DropDownItem
+                </DropDownItem> */}
+                {/* <DropDownItem
                   onClick={() => {
                     activeEditor.dispatchCommand(
                       INSERT_EXCALIDRAW_COMMAND,
@@ -1176,7 +1168,7 @@ export default function ToolbarPlugin({
                 >
                   <i className="icon diagram-2" />
                   <span className="text">Excalidraw</span>
-                </DropDownItem>
+                </DropDownItem> */}
                 <DropDownItem
                   onClick={() => {
                     showModal('Insert Table', (onClose) => (
@@ -1189,9 +1181,9 @@ export default function ToolbarPlugin({
                   className="item"
                 >
                   <i className="icon table" />
-                  <span className="text">Table</span>
+                  <span className="text">표 (개발중)</span>
                 </DropDownItem>
-                <DropDownItem
+                {/* <DropDownItem
                   onClick={() => {
                     showModal('Insert Poll', (onClose) => (
                       <InsertPollDialog
@@ -1204,7 +1196,7 @@ export default function ToolbarPlugin({
                 >
                   <i className="icon poll" />
                   <span className="text">Poll</span>
-                </DropDownItem>
+                </DropDownItem> */}
                 <DropDownItem
                   onClick={() => {
                     showModal('Insert Columns Layout', (onClose) => (
@@ -1217,10 +1209,10 @@ export default function ToolbarPlugin({
                   className="item"
                 >
                   <i className="icon columns" />
-                  <span className="text">Columns Layout</span>
+                  <span className="text">열 레이아웃 (개발중)</span>
                 </DropDownItem>
 
-                <DropDownItem
+                {/* <DropDownItem
                   onClick={() => {
                     showModal('Insert Equation', (onClose) => (
                       <InsertEquationDialog
@@ -1232,9 +1224,10 @@ export default function ToolbarPlugin({
                   className="item"
                 >
                   <i className="icon equation" />
-                  <span className="text">Equation</span>
-                </DropDownItem>
-                <DropDownItem
+                  <span className="text">Equation  (개발중)</span>
+                </DropDownItem> */}
+
+                {/* <DropDownItem
                   onClick={() => {
                     editor.update(() => {
                       const root = $getRoot();
@@ -1246,7 +1239,7 @@ export default function ToolbarPlugin({
                 >
                   <i className="icon sticky" />
                   <span className="text">Sticky Note</span>
-                </DropDownItem>
+                </DropDownItem> */}
                 <DropDownItem
                   onClick={() => {
                     editor.dispatchCommand(
@@ -1257,7 +1250,7 @@ export default function ToolbarPlugin({
                   className="item"
                 >
                   <i className="icon caret-right" />
-                  <span className="text">Collapsible container</span>
+                  <span className="text">토글 (개발중)</span>
                 </DropDownItem>
                 {EmbedConfigs.map((embedConfig) => (
                   <DropDownItem
@@ -1271,7 +1264,9 @@ export default function ToolbarPlugin({
                     className="item"
                   >
                     {embedConfig.icon}
-                    <span className="text">{embedConfig.contentName}</span>
+                    <span className="text">
+                      {embedConfig.contentName} (개발중)
+                    </span>
                   </DropDownItem>
                 ))}
               </DropDown>

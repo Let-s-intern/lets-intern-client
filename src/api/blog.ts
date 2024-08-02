@@ -157,3 +157,34 @@ export const usePostBlogTagMutation = (onErrorCallback?: () => void) => {
     },
   });
 };
+
+export const usePostBlogRatingMutation = ({
+  successCallback,
+  errorCallback,
+}: {
+  successCallback?: () => void;
+  errorCallback?: () => void;
+}) => {
+  const client = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({
+      blogId,
+      title,
+      score,
+    }: {
+      blogId: string;
+      title: string;
+      score: number;
+    }) => {
+      return await axios.post(`/blog-rating/${blogId}`, { title, score });
+    },
+    onSuccess: async () => {
+      client.invalidateQueries({ queryKey: [blogRatingQueryKey] });
+      successCallback && successCallback();
+    },
+    onError: (error) => {
+      console.error(error);
+    },
+  });
+};

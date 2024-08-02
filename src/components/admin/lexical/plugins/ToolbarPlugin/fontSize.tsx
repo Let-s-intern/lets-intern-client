@@ -14,7 +14,7 @@ import * as React from 'react';
 
 const MIN_ALLOWED_FONT_SIZE = 8;
 const MAX_ALLOWED_FONT_SIZE = 72;
-const DEFAULT_FONT_SIZE = 15;
+const DEFAULT_FONT_SIZE = 16;
 
 // eslint-disable-next-line no-shadow
 enum updateFontSizeType {
@@ -223,6 +223,16 @@ export default function FontSize({
         className="toolbar-item font-increment"
       >
         <i className="format add-icon" />
+      </button>
+
+      <button
+        type="button"
+        className="toolbar-item spaced text-sm"
+        onClick={() => {
+          updateFontSizeInSelection(`${DEFAULT_FONT_SIZE}px`, null);
+        }}
+      >
+        기본
       </button>
     </>
   );
