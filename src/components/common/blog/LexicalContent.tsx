@@ -50,7 +50,7 @@ const LexicalContent = ({ node }: { node: SerializedLexicalNode }) => {
     case 'paragraph': {
       const _node = node as SerializedParagraphNode;
       return (
-        <p className="my-2">
+        <p className="mb-4">
           {_node.children.map((child, childIndex) => (
             <LexicalContent key={childIndex} node={child} />
           ))}
