@@ -97,19 +97,19 @@ import { InsertTableDialog } from '../TablePlugin';
 import FontSize from './fontSize';
 
 const blockTypeToBlockName = {
-  bullet: 'Bulleted List',
-  check: 'Check List',
-  code: 'Code Block',
-  h1: 'Heading 1',
-  h2: 'Heading 2',
-  h3: 'Heading 3',
-  h4: 'Heading 4',
-  h5: 'Heading 5',
-  h6: 'Heading 6',
-  number: 'Numbered List',
-  paragraph: 'Normal',
-  quote: 'Quote',
-};
+  bullet: '글머리 기호 목록',
+  check: '체크리스트',
+  code: '코드 블록',
+  h1: '제목 1',
+  h2: '제목 2',
+  h3: '제목 3',
+  h4: '제목 4',
+  h5: '제목 5',
+  h6: '제목 6',
+  number: '숫자 목록',
+  paragraph: '문단',
+  quote: '인용구',
+} as const;
 
 const rootTypeToRootName = {
   root: 'Root',
@@ -143,14 +143,15 @@ const FONT_SIZE_OPTIONS: [string, string][] = [
   ['10px', '10px'],
   ['11px', '11px'],
   ['12px', '12px'],
-  ['13px', '13px'],
   ['14px', '14px'],
   ['15px', '15px'],
   ['16px', '16px'],
-  ['17px', '17px'],
   ['18px', '18px'],
-  ['19px', '19px'],
   ['20px', '20px'],
+  ['24px', '24px'],
+  ['28px', '28px'],
+  ['32px', '32px'],
+  ['40px', '40px'],
 ];
 
 const ELEMENT_FORMAT_OPTIONS: {
@@ -163,32 +164,32 @@ const ELEMENT_FORMAT_OPTIONS: {
   center: {
     icon: 'center-align',
     iconRTL: 'center-align',
-    name: 'Center Align',
+    name: '가운데 정렬',
   },
   end: {
     icon: 'right-align',
     iconRTL: 'left-align',
-    name: 'End Align',
+    name: '끝 정렬',
   },
   justify: {
     icon: 'justify-align',
     iconRTL: 'justify-align',
-    name: 'Justify Align',
+    name: '양쪽 맞춤 정렬',
   },
   left: {
     icon: 'left-align',
     iconRTL: 'left-align',
-    name: 'Left Align',
+    name: '왼쪽 정렬',
   },
   right: {
     icon: 'right-align',
     iconRTL: 'right-align',
-    name: 'Right Align',
+    name: '오른쪽 정렬',
   },
   start: {
     icon: 'left-align',
     iconRTL: 'right-align',
-    name: 'Start Align',
+    name: '시작 정렬',
   },
 };
 
@@ -297,63 +298,63 @@ function BlockFormatDropDown({
         onClick={formatParagraph}
       >
         <i className="icon paragraph" />
-        <span className="text">Normal</span>
+        <span className="text">{blockTypeToBlockName['paragraph']}</span>
       </DropDownItem>
-      <DropDownItem
+      {/* <DropDownItem
         className={'item ' + dropDownActiveClass(blockType === 'h1')}
         onClick={() => formatHeading('h1')}
       >
         <i className="icon h1" />
         <span className="text">Heading 1</span>
-      </DropDownItem>
+      </DropDownItem> */}
       <DropDownItem
         className={'item ' + dropDownActiveClass(blockType === 'h2')}
         onClick={() => formatHeading('h2')}
       >
         <i className="icon h2" />
-        <span className="text">Heading 2</span>
+        <span className="text">{blockTypeToBlockName['h2']}</span>
       </DropDownItem>
       <DropDownItem
         className={'item ' + dropDownActiveClass(blockType === 'h3')}
         onClick={() => formatHeading('h3')}
       >
         <i className="icon h3" />
-        <span className="text">Heading 3</span>
+        <span className="text">{blockTypeToBlockName['h3']}</span>
       </DropDownItem>
       <DropDownItem
         className={'item ' + dropDownActiveClass(blockType === 'bullet')}
         onClick={formatBulletList}
       >
         <i className="icon bullet-list" />
-        <span className="text">Bullet List</span>
+        <span className="text">{blockTypeToBlockName['bullet']}</span>
       </DropDownItem>
       <DropDownItem
         className={'item ' + dropDownActiveClass(blockType === 'number')}
         onClick={formatNumberedList}
       >
         <i className="icon numbered-list" />
-        <span className="text">Numbered List</span>
+        <span className="text">{blockTypeToBlockName['number']}</span>
       </DropDownItem>
       <DropDownItem
         className={'item ' + dropDownActiveClass(blockType === 'check')}
         onClick={formatCheckList}
       >
         <i className="icon check-list" />
-        <span className="text">Check List</span>
+        <span className="text">{blockTypeToBlockName['check']}</span>
       </DropDownItem>
       <DropDownItem
         className={'item ' + dropDownActiveClass(blockType === 'quote')}
         onClick={formatQuote}
       >
         <i className="icon quote" />
-        <span className="text">Quote</span>
+        <span className="text">{blockTypeToBlockName['quote']}</span>
       </DropDownItem>
       <DropDownItem
         className={'item ' + dropDownActiveClass(blockType === 'code')}
         onClick={formatCode}
       >
         <i className="icon code" />
-        <span className="text">Code Block</span>
+        <span className="text">{blockTypeToBlockName['code']}</span>
       </DropDownItem>
     </DropDown>
   );
@@ -941,13 +942,13 @@ export default function ToolbarPlugin({
         </DropDown>
       ) : (
         <>
-          <FontDropDown
+          {/* <FontDropDown
             disabled={!isEditable}
             style={'font-family'}
             value={fontFamily}
             editor={activeEditor}
-          />
-          <Divider />
+          /> */}
+          {/* <Divider /> */}
           <FontSize
             selectionFontSize={fontSize.slice(0, -2)}
             editor={activeEditor}
