@@ -26,8 +26,11 @@ const LexicalContent = ({ node }: { node: SerializedLexicalNode }) => {
       const _node = node as SerializedHeadingNode;
       const HeadingTag =
         `h${_node.tag ? _node.tag.slice(1) : '1'}` as keyof JSX.IntrinsicElements;
+
       return (
-        <HeadingTag className="mb-2 mt-4 text-2xl font-bold">
+        <HeadingTag
+          className={`mb-3 mt-6 font-bold ${HeadingTag === 'h1' ? 'text-xlarge28' : HeadingTag === 'h2' ? 'text-medium24' : 'text-small20'}`}
+        >
           {_node.children.map((child, childIndex) => (
             <LexicalContent key={childIndex} node={child} />
           ))}
