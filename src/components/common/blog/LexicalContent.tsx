@@ -88,7 +88,10 @@ const LexicalContent = ({ node }: { node: SerializedLexicalNode }) => {
       const _node = node as SerializedLinkNode;
 
       return (
-        <a href={_node.url} className="text-blue-600 hover:underline">
+        <a
+          href={_node.url}
+          className="text-system-positive-blue hover:underline"
+        >
           {_node.children.map((child, childIndex) => (
             <LexicalContent key={childIndex} node={child} />
           ))}
@@ -118,8 +121,13 @@ const LexicalContent = ({ node }: { node: SerializedLexicalNode }) => {
 
       return (
         <span className="image">
-          <div draggable="false">
+          <div className="w-full" draggable="false">
             <img
+              className="h-auto w-full"
+              src={_node.src}
+              alt={_node.altText}
+            />
+            {/* <img
               src={_node.src}
               alt={_node.altText}
               style={{
@@ -127,10 +135,10 @@ const LexicalContent = ({ node }: { node: SerializedLexicalNode }) => {
                 maxWidth: _node.maxWidth,
                 width: _node.width ? _node.width : 'inherit',
               }}
-            />
+            /> */}
           </div>
           {_node.showCaption ? (
-            <div className="image-caption-container">
+            <div className="image-caption-container mb-4 mt-3 w-full text-xsmall14">
               <div role="textbox" className="whitespace-pre-wrap break-keep">
                 <LexicalContent node={_node.caption.editorState.root} />
               </div>
