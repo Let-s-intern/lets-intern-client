@@ -40,7 +40,7 @@ const LexicalContent = ({ node }: { node: SerializedLexicalNode }) => {
     case 'quote': {
       const _node = node as SerializedQuoteNode;
       return (
-        <blockquote className="my-4 border-l-4 border-gray-300 pl-4 italic">
+        <blockquote className="mb-4 border-l-2 border-neutral-80 pl-4 text-neutral-40">
           {_node.children.map((child, childIndex) => (
             <LexicalContent key={childIndex} node={child} />
           ))}
