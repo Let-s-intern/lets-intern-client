@@ -1,3 +1,5 @@
+// 블로그 개발 완료하고 삭제할 파일
+
 /**
  * Copyright (c) Meta Platforms, Inc. and affiliates.
  *
