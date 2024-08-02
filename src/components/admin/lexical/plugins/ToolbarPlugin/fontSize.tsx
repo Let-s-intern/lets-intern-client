@@ -224,6 +224,16 @@ export default function FontSize({
       >
         <i className="format add-icon" />
       </button>
+
+      <button
+        type="button"
+        className="toolbar-item spaced text-sm"
+        onClick={() => {
+          updateFontSizeInSelection(`${DEFAULT_FONT_SIZE}px`, null);
+        }}
+      >
+        기본
+      </button>
     </>
   );
 }
