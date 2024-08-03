@@ -90,7 +90,7 @@ const Router = () => {
           <Route path="blog/hashtag" element={<BlogHashtagListPage />} />
           {/* blog/:id */}
           {/* <Route path="blog/:id" element={<BlogDetailPage />} /> */}
-          <Route path="blog/:id" element={<BlogDetailSSRPage />} />
+          <Route path="blog/:id/:title?" element={<BlogDetailSSRPage />} />
 
           {/* 마이페이지 */}
           <Route path="mypage" element={<MyPage />}>
