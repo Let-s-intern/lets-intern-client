@@ -101,24 +101,6 @@ export const blogSchema = z
     };
   });
 
-export const transformedBlogSchema = blogSchema.transform((data) => {
-  return {
-    blogDetailInfo: {
-      ...data.blogDetailInfo,
-      displayDate: data.blogDetailInfo.displayDate
-        ? dayjs(data.blogDetailInfo.displayDate)
-        : null,
-      createDate: data.blogDetailInfo.createDate
-        ? dayjs(data.blogDetailInfo.createDate)
-        : null,
-      lastModifiedDate: data.blogDetailInfo.lastModifiedDate
-        ? dayjs(data.blogDetailInfo.lastModifiedDate)
-        : null,
-    },
-    tagDetailInfos: data.tagDetailInfos,
-  };
-});
-
 export const blogInfoSchema = z.object({
   blogThumbnailInfo: blogThumbnailSchema,
   tagDetailInfos: tagDetailSchema,
