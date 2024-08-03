@@ -21,6 +21,7 @@ import { SerializedEmojiNode } from '../../admin/lexical/nodes/EmojiNode';
 import { SerializedImageNode } from '../../admin/lexical/nodes/ImageNode';
 import { SerializedLayoutContainerNode } from '../../admin/lexical/nodes/LayoutContainerNode';
 import { SerializedLayoutItemNode } from '../../admin/lexical/nodes/LayoutItemNode';
+import { SerializedYouTubeNode } from '../../admin/lexical/nodes/YouTubeNode';
 
 const parseStyle = (styleString: string) =>
   styleString
@@ -327,6 +328,24 @@ const LexicalContent = ({ node }: { node: SerializedLexicalNode }) => {
             </div>
           ) : null}
         </span>
+      );
+    }
+    case 'youtube': {
+      const _node = node as SerializedYouTubeNode;
+      return (
+        <div className="youtube my-4 flex w-full items-center justify-center">
+          <div className="relative w-full" style={{ paddingTop: '56.25%' }}>
+            {/* 16:9 비율 */}
+            <iframe
+              className="absolute left-0 top-0 h-full w-full"
+              src={`https://www.youtube.com/embed/${_node.videoID}?autoplay=0&controls=1&showinfo=0&rel=0&modestbranding=1`}
+              title="YouTube video player"
+              frameBorder="0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+            ></iframe>
+          </div>
+        </div>
       );
     }
     default:
