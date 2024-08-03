@@ -10,6 +10,10 @@ import LexicalContent from '../../../components/common/blog/LexicalContent';
 import RecommendBlogCard from '../../../components/common/blog/RecommendBlogCard';
 import { blogCategory } from '../../../utils/convert';
 
+interface Window {
+  Kakao: any;
+}
+
 const BlogDetailPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -26,6 +30,40 @@ const BlogDetailPage = () => {
     type: data?.blogDetailInfo.category,
     pageable: { page: 0, size: 3 },
   });
+
+  useEffect(() => {
+    if (!window.Kakao.isInitialized()) {
+      window.Kakao.init(import.meta.env.VITE_KAKAO_JS_KEY);
+    }
+  }, []);
+
+  const handleShareKakaoClick = () => {
+    if (window.Kakao) {
+      const kakao = window.Kakao;
+
+      kakao.Share.sendDefault({
+        objectType: 'feed',
+        content: {
+          title: data?.blogDetailInfo.title,
+          description: data?.blogDetailInfo.content?.substring(0, 30) + '...',
+          imageUrl: data?.blogDetailInfo.thumbnail,
+          link: {
+            mobileWebUrl: `${import.meta.env.VITE_API_BASE_PATH}/blog/${id}`,
+            webUrl: `${import.meta.env.VITE_API_BASE_PATH}/blog/${id}`,
+          },
+        },
+        buttons: [
+          {
+            title: '글 확인하기',
+            link: {
+              mobileWebUrl: `${import.meta.env.VITE_API_BASE_PATH}/blog/${id}`,
+              webUrl: `${import.meta.env.VITE_API_BASE_PATH}/blog/${id}`,
+            },
+          },
+        ],
+      });
+    }
+  };
 
   const { mutate: postRating } = usePostBlogRatingMutation({
     successCallback: () => {
@@ -204,7 +242,10 @@ const BlogDetailPage = () => {
                       className="h-4 w-4"
                     />
                   </div>
-                  <div className="flex h-[60px] w-[60px] cursor-pointer items-center justify-center rounded-full bg-primary-10">
+                  <div
+                    className="flex h-[60px] w-[60px] cursor-pointer items-center justify-center rounded-full bg-primary-10"
+                    onClick={handleShareKakaoClick}
+                  >
                     <img src="/icons/kakao_path.svg" alt="kakao" />
                   </div>
                 </div>
