@@ -90,6 +90,9 @@ const NavBar = () => {
             <NavItem to="/program" active={activeLink === 'PROGRAM'}>
               프로그램
             </NavItem>
+            <NavItem to="/blog" active={activeLink === 'BLOG'}>
+              블로그
+            </NavItem>
             {/* 테스트용 */}
             <NavItem to="/blog-test/14" active={activeLink === 'BLOG'}>
               블로그 (테스트용)
@@ -204,9 +207,9 @@ const NavBar = () => {
             <SideNavItem to="/program" onClick={closeMenu}>
               프로그램
             </SideNavItem>
-            {/* <SideNavItem to="/blog" onClick={closeMenu}>
+            <SideNavItem to="/blog" onClick={closeMenu}>
               블로그
-            </SideNavItem> */}
+            </SideNavItem>
             <hr className="h-1 bg-neutral-80" />
             {isAdmin && (
               <SideNavItem to="/admin" onClick={closeMenu}>
