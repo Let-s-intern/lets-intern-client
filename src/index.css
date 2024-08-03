@@ -269,7 +269,7 @@ body.non-scroll {
   }
 }
 
-.Collapsible__title > p {
+.Collapsible__title > div {
   margin: 0;
 }
 
