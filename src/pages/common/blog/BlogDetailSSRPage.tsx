@@ -1,7 +1,11 @@
 import dayjs from 'dayjs';
 import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useBlogListQuery, usePostBlogRatingMutation } from '../../../api/blog';
+import {
+  useBlogListQuery,
+  useBlogQuery,
+  usePostBlogRatingMutation,
+} from '../../../api/blog';
 import BlogHashtag from '../../../components/common/blog/BlogHashtag';
 import LexicalContent from '../../../components/common/blog/LexicalContent';
 import RecommendBlogCard from '../../../components/common/blog/RecommendBlogCard';
@@ -11,10 +15,12 @@ import { blogCategory } from '../../../utils/convert';
 const BlogDetailSSRPage = () => {
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
+  const { data } = useBlogQuery(id || '');
   const [starRating, setStarRating] = useState<number | null>(null);
   const [formValue, setFormValue] = useState<string>('');
   const [isPostedRating, setIsPostedRating] = useState<boolean>(false);
-  const blog = useBlog();
+  const blogFromServer = useBlog();
+  const blog = data || blogFromServer;
 
   const { data: recommendData, isLoading: recommendIsLoading } =
     useBlogListQuery({

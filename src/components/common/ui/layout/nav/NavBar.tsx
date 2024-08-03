@@ -93,10 +93,6 @@ const NavBar = () => {
             <NavItem to="/blog" active={activeLink === 'BLOG'}>
               블로그
             </NavItem>
-            {/* 테스트용 */}
-            <NavItem to="/blog-test/14" active={activeLink === 'BLOG'}>
-              블로그 (테스트용)
-            </NavItem>
           </div>
           <div className="flex items-center gap-4">
             {isLoggedIn ? (

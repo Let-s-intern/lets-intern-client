@@ -8,7 +8,6 @@ import About from './pages/common/about/About';
 import FindPassword from './pages/common/auth/FindPassword';
 import Login from './pages/common/auth/Login';
 import SignUp from './pages/common/auth/SignUp';
-import BlogDetailPage from './pages/common/blog/BlogDetailPage';
 import BlogDetailSSRPage from './pages/common/blog/BlogDetailSSRPage';
 import BlogHashtagListPage from './pages/common/blog/BlogHashtagListPage';
 import BlogListPage from './pages/common/blog/BlogListPage';
@@ -68,8 +67,8 @@ export const createRoutes = () => {
         },
         { path: 'blog', element: <BlogListPage /> },
         { path: 'blog/hashtag', element: <BlogHashtagListPage /> },
-        { path: 'blog/:id', element: <BlogDetailPage /> },
-        { path: 'blog-test/:id', element: <BlogDetailSSRPage /> },
+        { path: 'blog/:id', element: <BlogDetailSSRPage /> },
+        // { path: 'blog-test/:id', element: <BlogDetailSSRPage /> },
         {
           path: 'mypage',
           element: <MyPage />,
@@ -157,7 +156,7 @@ export const routes: RouteObject[] = [
       },
       { path: 'blog', element: <BlogListPage /> },
       { path: 'blog/hashtag', element: <BlogHashtagListPage /> },
-      { path: 'blog/:id', element: <BlogDetailPage /> },
+      { path: 'blog/:id', element: <BlogDetailSSRPage /> },
       { path: 'blog-test/:id', element: <BlogDetailSSRPage /> },
       {
         path: 'mypage',
