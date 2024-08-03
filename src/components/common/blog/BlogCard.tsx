@@ -25,6 +25,11 @@ const BlogCard = (blogInfo: TransformedBlogInfoType) => {
             <p className="line-clamp-6 text-xsmall16 text-neutral-20">
               {blogInfo.blogThumbnailInfo.description}
             </p>
+            <p className="w-full text-xsmall14 text-neutral-45">
+              {blogInfo.blogThumbnailInfo.createDate?.format(
+                'YYYY년 MM월 DD일',
+              )}
+            </p>
           </div>
           <img
             className="h-[60px] w-[100px] overflow-hidden rounded-md md:h-[90px] md:w-[130px]"
