@@ -48,13 +48,13 @@ const BlogCreatePage = () => {
   const [newTag, setNewTag] = useState('');
 
   const { data: tags = [] } = useBlogTagQuery();
-  const blogTagMutation = usePostBlogTagMutation();
-  const blogMutation = usePostBlogMutation();
+  const createBlogTagMutation = usePostBlogTagMutation();
+  const createBlogMutation = usePostBlogMutation();
 
   const postBlog = async (event: MouseEvent<HTMLButtonElement>) => {
     const { name } = event.target as HTMLButtonElement;
 
-    await blogMutation.mutateAsync({
+    await createBlogMutation.mutateAsync({
       ...editingValue,
       isDisplayed: name === 'publish',
     });
@@ -83,15 +83,14 @@ const BlogCreatePage = () => {
       return;
     }
 
-    // 이미 존재하는 태그인지 체크
     const isExist = tags?.some((tag) => tag.title === newTag);
     if (isExist) {
       setSnackbar({ open: true, message: '이미 존재하는 태그입니다.' });
       return;
     }
 
-    // 태그 생성
-    await blogTagMutation.mutateAsync(newTag);
+    const res = await createBlogTagMutation.mutateAsync(newTag);
+    console.log('res', res);
     setSnackbar({ open: true, message: `태그가 생성되었습니다: ${newTag}` });
   };
 
