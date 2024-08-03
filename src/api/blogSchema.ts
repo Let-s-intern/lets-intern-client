@@ -163,18 +163,18 @@ export const blogTagSchema = z.object({
   tagDetailInfos: tagDetailSchema,
 });
 
+export const ratingSchema = z.object({
+  id: z.number(),
+  title: z.string().nullable().optional(),
+  content: z.string().nullable().optional(),
+  score: z.number().nullable().optional(),
+  createDate: z.string().nullable().optional(),
+  lastModifiedDate: z.string().nullable().optional(),
+});
+
 export const blogRatingSchema = z
   .object({
-    ratingInfos: z.array(
-      z.object({
-        id: z.number(),
-        title: z.string().nullable().optional(),
-        content: z.string().nullable().optional(),
-        score: z.number().nullable().optional(),
-        createDate: z.string().nullable().optional(),
-        lastModifiedDate: z.string().nullable().optional(),
-      }),
-    ),
+    ratingInfos: z.array(ratingSchema),
   })
   .transform((data) => {
     return {
@@ -185,5 +185,22 @@ export const blogRatingSchema = z
           ? dayjs(ratingInfo.lastModifiedDate)
           : null,
       })),
+    };
+  });
+
+export const blogRatingListSchema = z
+  .object({
+    ratingInfos: z.array(
+      ratingSchema.extend({ category: z.string().nullable().optional() }),
+    ),
+    pageInfo: pageSchema,
+  })
+  .transform((data) => {
+    return {
+      ratingInfos: data.ratingInfos.map((ratingInfo) => ({
+        ...ratingInfo,
+        createDate: ratingInfo.createDate ? dayjs(ratingInfo.createDate) : null,
+      })),
+      pageInfo: data.pageInfo,
     };
   });
