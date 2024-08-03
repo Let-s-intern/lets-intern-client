@@ -5,11 +5,13 @@ export default function getServerHtml({
   title = '렛츠커리어 | 인턴/신입, 커리어의 첫 걸음을 함께 해요',
   description = '커리어 탐색, 서류 준비, 면접 준비까지 취업 준비생 관점에서 함께 하는 커리어 플랫폼, 렛츠커리어',
   keywords = '렛츠커리어, 렛츠인턴, 챌린지, 인턴, 신입, 취업, 취업준비, 취뽀, 인턴합격, 신입합격, 서류합격, 면접합격',
+  image = 'https://letsintern-bucket.s3.ap-northeast-2.amazonaws.com/banner/popup/%E1%84%85%E1%85%A6%E1%86%BA%E1%84%8E%E1%85%B3%E1%84%8F%E1%85%A5%E1%84%85%E1%85%B5%E1%84%8B%E1%85%A5%20%E1%84%85%E1%85%A9%E1%84%80%E1%85%A9%20og_image%201200_630.png',
 }: {
   pageHtml: string | { _escaped: string };
   title?: string;
   description?: string;
   keywords?: string;
+  image?: string;
 }) {
   return escapeInject`
   <!doctype html>
@@ -76,14 +78,14 @@ export default function getServerHtml({
      <meta
        data-react-helmet="true"
        property="og:image"
-       content="https://letsintern-bucket.s3.ap-northeast-2.amazonaws.com/banner/popup/%E1%84%85%E1%85%A6%E1%86%BA%E1%84%8E%E1%85%B3%E1%84%8F%E1%85%A5%E1%84%85%E1%85%B5%E1%84%8B%E1%85%A5%20%E1%84%85%E1%85%A9%E1%84%80%E1%85%A9%20og_image%201200_630.png"
+       content="${image}"
      />
      <meta
        data-react-helmet="true"
        property="og:url"
        content="https://www.letscareer.co.kr/"
      />
-     <!-- TODO: og:type, product, og:image, twitter:site, twitter:creator, keywords, price 관련된 것, product 관련된 것 등 채워넣기 -->
+     <!-- TODO: og:type, product, twitter:site, twitter:creator, keywords, price 관련된 것, product 관련된 것 등 채워넣기 -->
      <!-- SEO End -->
  
      <meta property="og:locale" content="ko-KR" />

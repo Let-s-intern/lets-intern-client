@@ -16,6 +16,7 @@ import getServerHtml from '../../../renderer/getServerHtml';
 import { BlogProvider } from '../../../src/context/Post';
 import Provider from '../../../src/Provider';
 import { routes } from '../../../src/routes';
+import { blogCategory } from '../../../src/utils/convert';
 import { Data } from './+data';
 
 const onRenderHtml: OnRenderHtmlAsync = async (pageContext) => {
@@ -45,6 +46,8 @@ const onRenderHtml: OnRenderHtmlAsync = async (pageContext) => {
 
   return getServerHtml({
     pageHtml,
-    title: data.blogDetailInfo.title || '',
+    title: `${data.blogDetailInfo.title} | ${blogCategory[data.blogDetailInfo.category || '']} - 렛츠커리어`,
+    description: data.blogDetailInfo.description || undefined,
+    image: data.blogDetailInfo.thumbnail || undefined,
   });
 };
