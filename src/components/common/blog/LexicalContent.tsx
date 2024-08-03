@@ -22,7 +22,7 @@ const LexicalContent = ({ node }: { node: SerializedLexicalNode }) => {
     case 'root': {
       const _node = node as SerializedRootNode;
       return (
-        <div className="mx-auto max-w-3xl">
+        <div className="w-full">
           {_node.children.map((child, childIndex) => (
             <LexicalContent key={childIndex} node={child} />
           ))}
@@ -263,8 +263,11 @@ const LexicalContent = ({ node }: { node: SerializedLexicalNode }) => {
             /> */}
           </div>
           {_node.showCaption ? (
-            <div className="image-caption-container mb-4 mt-3 w-full text-xsmall14">
-              <div role="textbox" className="whitespace-pre-wrap break-keep">
+            <div className="image-caption-container mb-4 mt-3 w-full text-center text-xsmall14 text-neutral-50">
+              <div
+                role="textbox"
+                className="w-full whitespace-pre-wrap break-keep"
+              >
                 <LexicalContent node={_node.caption.editorState.root} />
               </div>
             </div>
