@@ -28,22 +28,20 @@
   padding-left: 16px;
 }
 .PlaygroundEditorTheme__h1 {
-  font-size: 24px;
+  font-size: 32px;
   color: rgb(5, 5, 5);
   font-weight: 400;
   margin: 0;
 }
 .PlaygroundEditorTheme__h2 {
-  font-size: 15px;
+  font-size: 24px;
   color: rgb(101, 103, 107);
   font-weight: 700;
   margin: 0;
-  text-transform: uppercase;
 }
 .PlaygroundEditorTheme__h3 {
-  font-size: 12px;
+  font-size: 18px;
   margin: 0;
-  text-transform: uppercase;
 }
 .PlaygroundEditorTheme__indent {
   --lexical-indent-base-value: 40px;
