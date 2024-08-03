@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet';
 import { useNavigate, useParams } from 'react-router-dom';
 import {
-  useBlogListQuery,
+  useBlogListTypeQuery,
   useBlogQuery,
   usePostBlogRatingMutation,
 } from '../../../api/blog';
@@ -32,9 +32,9 @@ const BlogDetailSSRPage = () => {
   const blog = data || blogFromServer;
 
   const { data: recommendData, isLoading: recommendIsLoading } =
-    useBlogListQuery({
+    useBlogListTypeQuery({
       type: blog?.blogDetailInfo.category,
-      pageable: { page: 0, size: 3 },
+      pageable: { page: 0, size: 4 },
     });
 
   const { mutate: postRating } = usePostBlogRatingMutation({
@@ -215,15 +215,20 @@ const BlogDetailSSRPage = () => {
                     더 필요한 콘텐츠가 있다면 알려주세요!
                   </h3>
                   <input
-                    className={`w-full rounded-md border-none text-xsmall14 ${formValue.length === 0 ? 'bg-neutral-95' : 'bg-[#5177FF]/10'} p-3 outline-none placeholder:text-black/35`}
+                    className={`w-full rounded-md border-none text-xsmall14 ${formValue.length === 0 ? 'bg-neutral-95' : 'bg-[#5177FF]/10'} p-3 outline-none placeholder:text-black/35 ${isPostedRating ? 'cursor-not-allowed text-neutral-45' : ''}`}
                     placeholder="예시. 포트폴리오 꿀팁, 영문레쥬메 작성방법"
                     value={formValue}
                     onChange={(e) => setFormValue(e.target.value)}
+                    readOnly={isPostedRating}
                   />
                 </div>
                 <button
                   className={`flex w-full items-center justify-center rounded-sm border-2 border-primary px-4 py-1.5 text-primary-dark ${formValue.length === 0 || isPostedRating ? 'cursor-not-allowed opacity-40' : ''}`}
-                  onClick={handlePostRating}
+                  onClick={
+                    formValue.length === 0 || isPostedRating
+                      ? () => {}
+                      : handlePostRating
+                  }
                 >
                   {isPostedRating ? '제출완료' : '제출하기'}
                 </button>
@@ -295,12 +300,17 @@ const BlogDetailSSRPage = () => {
                     </div>
                   )
                 ) : (
-                  recommendData.blogInfos.map((blog) => (
-                    <RecommendBlogCard
-                      key={blog.blogThumbnailInfo.id}
-                      {...blog}
-                    />
-                  ))
+                  recommendData.blogInfos
+                    .filter(
+                      (blog) =>
+                        blog.blogThumbnailInfo.id !== data?.blogDetailInfo.id,
+                    )
+                    .map((blog) => (
+                      <RecommendBlogCard
+                        key={blog.blogThumbnailInfo.id}
+                        {...blog}
+                      />
+                    ))
                 )}
               </div>
             </div>
