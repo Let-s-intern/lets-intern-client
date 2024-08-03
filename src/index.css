@@ -273,7 +273,7 @@ body.non-scroll {
   margin: 0;
 }
 
-.image-caption-container > div > div > p {
+.image-caption-container > div > div > div {
   display: flex;
   justify-content: center;
   align-items: center;
