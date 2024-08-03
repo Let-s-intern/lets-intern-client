@@ -32,7 +32,7 @@ const BlogListPage = () => {
       <div className="flex w-full items-center justify-center gap-y-1 bg-blog-banner-sm py-10 md:bg-blog-banner-md lg:bg-blog-banner-lg">
         <div className="flex w-full max-w-[1200px] flex-col gap-y-1 px-[25px] md:gap-y-2 md:px-[140px]">
           <h1 className="text-xl font-bold text-neutral-100">
-            렛츠커리어 블로그
+            {category !== null ? blogCategory[category] : '렛츠커리어 블로그'}
           </h1>
           <p className="text-xsmall14 text-white/85">
             렛츠커리어의 독자적인 커리어 교육 콘텐츠를 확인해보세요.
