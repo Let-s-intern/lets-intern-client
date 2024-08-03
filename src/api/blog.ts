@@ -148,8 +148,9 @@ export const usePostBlogTagMutation = (onErrorCallback?: () => void) => {
     mutationFn: async (title: TagDetail['title']) => {
       return await axios.post('/blog-tag', { title });
     },
-    onSuccess: async () => {
+    onSuccess: async (data) => {
       await client.invalidateQueries({ queryKey: [blogTagQueryKey] });
+      return data;
     },
     onError: (error) => {
       console.error(error);

@@ -16,7 +16,12 @@ import {
   usePostBlogMutation,
   usePostBlogTagMutation,
 } from '../../api/blog';
-import { PostBlogReqBody } from '../../api/blogSchema';
+import {
+  PostBlogReqBody,
+  PostTag,
+  postTagSchema,
+  TagDetail,
+} from '../../api/blogSchema';
 import { uploadFile } from '../../api/file';
 import DateTimePicker from '../../components/admin/blog/DateTimePicker';
 import TagSelector from '../../components/admin/blog/TagSelector';
@@ -46,15 +51,22 @@ const BlogCreatePage = () => {
   const [editingValue, setEditingValue] =
     useState<PostBlogReqBody>(initialBlog);
   const [newTag, setNewTag] = useState('');
+  const [snackbar, setSnackbar] = useState<{
+    open: boolean;
+    message: string;
+  }>({
+    open: false,
+    message: '',
+  });
 
   const { data: tags = [] } = useBlogTagQuery();
-  const blogTagMutation = usePostBlogTagMutation();
-  const blogMutation = usePostBlogMutation();
+  const createBlogTagMutation = usePostBlogTagMutation();
+  const createBlogMutation = usePostBlogMutation();
 
   const postBlog = async (event: MouseEvent<HTMLButtonElement>) => {
     const { name } = event.target as HTMLButtonElement;
 
-    await blogMutation.mutateAsync({
+    await createBlogMutation.mutateAsync({
       ...editingValue,
       isDisplayed: name === 'publish',
     });
@@ -66,33 +78,31 @@ const BlogCreatePage = () => {
     navgiate('/admin/blog/list');
   };
 
-  const [snackbar, setSnackbar] = useState<{
-    open: boolean;
-    message: string;
-  }>({
-    open: false,
-    message: '',
-  });
-
   const onChangeTag = (event: ChangeEvent<HTMLInputElement>) => {
     setNewTag(event.target.value);
   };
 
   const onKeyDown = async (event: React.KeyboardEvent<HTMLInputElement>) => {
-    if (event.key !== 'Enter' || newTag === '') {
-      return;
-    }
+    if (event.key !== 'Enter' || newTag === '') return;
 
-    // 이미 존재하는 태그인지 체크
     const isExist = tags?.some((tag) => tag.title === newTag);
     if (isExist) {
       setSnackbar({ open: true, message: '이미 존재하는 태그입니다.' });
       return;
     }
 
-    // 태그 생성
-    await blogTagMutation.mutateAsync(newTag);
+    const res = await createBlogTagMutation.mutateAsync(newTag);
+    const createdTag = postTagSchema.parse(res.data.data);
+    selectTag(createdTag);
+    setNewTag('');
     setSnackbar({ open: true, message: `태그가 생성되었습니다: ${newTag}` });
+  };
+
+  const selectTag = (tag: TagDetail | PostTag) => {
+    setEditingValue((prev) => ({
+      ...prev,
+      tagList: [...new Set([...editingValue.tagList, tag.id])],
+    }));
   };
 
   const onChangeEditor = (jsonString: string) => {
@@ -242,12 +252,7 @@ const BlogCreatePage = () => {
                   tagList: prev.tagList.filter((tag) => tag !== id),
                 }));
               }}
-              selectTag={(tag) => {
-                setEditingValue((prev) => ({
-                  ...prev,
-                  tagList: [...new Set([...editingValue.tagList, tag.id])],
-                }));
-              }}
+              selectTag={selectTag}
               onChange={onChangeTag}
               onKeyDown={onKeyDown}
             />

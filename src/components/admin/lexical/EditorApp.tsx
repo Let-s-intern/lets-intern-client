@@ -35,6 +35,27 @@ import Settings from './Settings';
 import setupEnv from './setupEnv';
 import PlaygroundEditorTheme from './themes/PlaygroundEditorTheme';
 
+const emptyEditorState = JSON.stringify({
+  root: {
+    children: [
+      {
+        children: [],
+        direction: null,
+        format: '',
+        indent: 0,
+        type: 'paragraph',
+        version: 1,
+        textFormat: 0,
+      },
+    ],
+    direction: null,
+    format: '',
+    indent: 0,
+    type: 'root',
+    version: 1,
+  },
+});
+
 if (setupEnv.disableBeforeInput) {
   // vite is really aggressive about tree-shaking, this
   // ensures that the side-effects of importing setupEnv happens
@@ -203,7 +224,7 @@ function App({
 }
 
 export default function EditorApp({
-  editorStateJsonString = '',
+  editorStateJsonString = emptyEditorState,
   onChange,
 }: {
   editorStateJsonString?: string;
