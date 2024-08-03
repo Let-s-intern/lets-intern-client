@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import InfiniteScroll from 'react-infinite-scroller';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useBlogTagQuery, useInfiniteBlogListQuery } from '../../../api/blog';
@@ -114,7 +114,7 @@ const BlogHashtagListPage = () => {
                 ) : (
                   blogListData.pages.map((page, pageIdx) =>
                     page.blogInfos.map((blogInfo, blogIdx) => (
-                      <>
+                      <React.Fragment key={blogInfo.blogThumbnailInfo.id}>
                         <BlogCard
                           key={blogInfo.blogThumbnailInfo.id}
                           {...blogInfo}
@@ -125,7 +125,7 @@ const BlogHashtagListPage = () => {
                         ) && (
                           <hr className="h-0.5 w-full border-t border-neutral-80" />
                         )}
-                      </>
+                      </React.Fragment>
                     )),
                   )
                 )}

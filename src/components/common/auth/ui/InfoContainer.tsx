@@ -8,9 +8,14 @@ import Input from '../../../ui/input/Input';
 import GradeDropdown from '../../mypage/privacy/form-control/GradeDropdown';
 import Button from '../../ui/button/Button';
 
-const InfoContainer = ({ isSocial }: { isSocial: boolean }) => {
+const InfoContainer = ({
+  isSocial,
+  email,
+}: {
+  isSocial: boolean;
+  email: string;
+}) => {
   const navigate = useNavigate();
-  const email = localStorage.getItem('email');
   const [buttonDisabled, setButtonDisabled] = useState(false);
   const [value, setValue] = useState<{
     inflow: string;

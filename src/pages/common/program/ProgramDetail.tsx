@@ -87,7 +87,9 @@ const ProgramDetail = ({ programType }: ProgramDetailProps) => {
 
     if (!isLoggedIn) {
       alert('로그인 후 이용해주세요.');
-      navigate(`/login?redirect=${window.location.pathname}`);
+      const params = new URLSearchParams();
+      params.set('redirect', window.location.pathname);
+      navigate(`/login?${params.toString()}`);
       return;
     }
     dispatchIsDrawerOpen({ type: 'toggle' });

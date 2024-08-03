@@ -1,6 +1,6 @@
 import dayjs from 'dayjs';
 import { useMemo, useState } from 'react';
-import { Link, useSearchParams } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { PostApplicationInterface } from '../../../api/application';
 import { useProgramQuery } from '../../../api/program';
 import DescriptionBox from '../../../components/common/program/paymentSuccess/DescriptionBox';
@@ -15,9 +15,11 @@ import axios from '../../../utils/axios';
 import { searchParamsToObject } from '../../../utils/network';
 
 const PaymentResult = () => {
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const navigate = useNavigate();
   // TODO: any 타입을 사용하지 않도록 수정
   const [result, setResult] = useState<any>(null);
+  const [redirectTo, setRedirectTo] = useState<string | null>(null);
 
   const params = useMemo(() => {
     const obj = searchParamsToObject(
@@ -38,6 +40,17 @@ const PaymentResult = () => {
 
   useRunOnce(() => {
     if (!params) {
+      return;
+    }
+
+    if (
+      new URL(window.location.href).searchParams.get('postApplicationDone') ===
+      'true'
+    ) {
+      // 즉시 리다이렉트 하면 알 수 없는 이유로 제대로 navigate 되지 않음. SSR 관련 이슈로 추정
+      setTimeout(() => {
+        navigate(`/program/${params.programType}/${params.programId}`);
+      }, 100);
       return;
     }
 
@@ -73,7 +86,19 @@ const PaymentResult = () => {
         setResult(res.data.data);
       })
       .catch((e) => {
+        // eslint-disable-next-line no-console
+        console.error(e);
         setResult('error');
+      })
+      .finally(() => {
+        // postApplicationDone 를 true로 설정하여 추후 뒤로가기로 왔을 때 api를 타지 않도록 함
+        setSearchParams(
+          (prev) => {
+            prev.set('postApplicationDone', 'true');
+            return prev;
+          },
+          { replace: true },
+        );
       });
   });
 
