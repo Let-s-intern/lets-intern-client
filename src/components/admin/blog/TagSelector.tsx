@@ -40,7 +40,7 @@ const TagSelector = ({
         </span>
         <TextField
           type="text"
-          placeholder="등록할 태그를 입력하세요"
+          placeholder="# 없이 입력 후 엔터"
           name="tag"
           value={value}
           onChange={onChange}

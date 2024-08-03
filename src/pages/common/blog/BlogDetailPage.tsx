@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import {
   useBlogListQuery,
   useBlogQuery,
@@ -10,8 +10,13 @@ import LexicalContent from '../../../components/common/blog/LexicalContent';
 import RecommendBlogCard from '../../../components/common/blog/RecommendBlogCard';
 import { blogCategory } from '../../../utils/convert';
 
+interface Window {
+  Kakao: any;
+}
+
 const BlogDetailPage = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { id } = useParams<{ id: string }>();
   const { data, isLoading } = useBlogQuery(id || '');
   const [starRating, setStarRating] = useState<number | null>(null);
@@ -25,6 +30,41 @@ const BlogDetailPage = () => {
     type: data?.blogDetailInfo.category,
     pageable: { page: 0, size: 3 },
   });
+
+  useEffect(() => {
+    if (!window.Kakao.isInitialized()) {
+      window.Kakao.init(import.meta.env.VITE_KAKAO_JS_KEY);
+    }
+  }, []);
+
+  const handleShareKakaoClick = () => {
+    if (window.Kakao) {
+      const kakao = window.Kakao;
+
+      kakao.Share.sendDefault({
+        objectType: 'feed',
+        content: {
+          title: data?.blogDetailInfo.title,
+          description:
+            data?.blogDetailInfo.description?.substring(0, 30) + '...',
+          imageUrl: data?.blogDetailInfo.thumbnail,
+          link: {
+            mobileWebUrl: `${window.location.origin}${location.pathname}`,
+            webUrl: `${window.location.origin}${location.pathname}`,
+          },
+        },
+        buttons: [
+          {
+            title: '글 확인하기',
+            link: {
+              mobileWebUrl: `${window.location.origin}${location.pathname}`,
+              webUrl: `${window.location.origin}${location.pathname}`,
+            },
+          },
+        ],
+      });
+    }
+  };
 
   const { mutate: postRating } = usePostBlogRatingMutation({
     successCallback: () => {
@@ -46,6 +86,14 @@ const BlogDetailPage = () => {
   useEffect(() => {
     console.log('data.blogDetailInfo.content', data?.blogDetailInfo.content);
   }, [data?.blogDetailInfo.content]);
+
+  const handleCopyClipBoard = async (text: string) => {
+    try {
+      await navigator.clipboard.writeText(text);
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
   return (
     <div className="mx-auto flex w-full flex-1 flex-col items-center">
@@ -180,14 +228,24 @@ const BlogDetailPage = () => {
                   나만 보기 아깝다면 공유하기
                 </p>
                 <div className="flex items-center gap-x-5">
-                  <div className="flex h-[60px] w-[60px] items-center justify-center rounded-full bg-primary-10">
+                  <div
+                    className="flex h-[60px] w-[60px] cursor-pointer items-center justify-center rounded-full bg-primary-10"
+                    onClick={() =>
+                      handleCopyClipBoard(
+                        `${window.location.origin}${location.pathname}`,
+                      )
+                    }
+                  >
                     <img
                       src="/icons/link-01.svg"
                       alt="link"
                       className="h-4 w-4"
                     />
                   </div>
-                  <div className="flex h-[60px] w-[60px] items-center justify-center rounded-full bg-primary-10">
+                  <div
+                    className="flex h-[60px] w-[60px] cursor-pointer items-center justify-center rounded-full bg-primary-10"
+                    onClick={handleShareKakaoClick}
+                  >
                     <img src="/icons/kakao_path.svg" alt="kakao" />
                   </div>
                 </div>

@@ -9,7 +9,7 @@ export interface PostBlogReqBody {
   content: string;
   ctaLink: string;
   ctaText: string;
-  isDisplayed?: boolean;
+  displayDate: string;
   tagList: number[];
 }
 
@@ -27,6 +27,7 @@ export interface PatchBlogReqBody {
 }
 
 export type TagDetail = z.infer<typeof tagDetailSchema>[0];
+export type PostTag = z.infer<typeof postTagSchema>;
 export type BlogThumbnail = z.infer<typeof blogThumbnailSchema>;
 export type BlogRating = z.infer<typeof blogRatingSchema>['ratingInfos'][0];
 
@@ -80,6 +81,11 @@ export const blogRawSchema = z.object({
   tagDetailInfos: tagDetailSchema,
 });
 
+export const postTagSchema = z.object({
+  id: z.number(),
+  title: z.string().nullable().optional(),
+});
+
 export const blogSchema = z
   .object({
     blogDetailInfo: blogDetailSchema,
@@ -89,9 +95,6 @@ export const blogSchema = z
     return {
       blogDetailInfo: {
         ...data.blogDetailInfo,
-        displayDate: data.blogDetailInfo.displayDate
-          ? dayjs(data.blogDetailInfo.displayDate)
-          : null,
         createDate: data.blogDetailInfo.createDate
           ? dayjs(data.blogDetailInfo.createDate)
           : null,

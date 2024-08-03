@@ -16,7 +16,12 @@ import {
   usePostBlogMutation,
   usePostBlogTagMutation,
 } from '../../api/blog';
-import { PostBlogReqBody } from '../../api/blogSchema';
+import {
+  PostBlogReqBody,
+  PostTag,
+  postTagSchema,
+  TagDetail,
+} from '../../api/blogSchema';
 import { uploadFile } from '../../api/file';
 import DateTimePicker from '../../components/admin/blog/DateTimePicker';
 import TagSelector from '../../components/admin/blog/TagSelector';
@@ -36,7 +41,7 @@ const initialBlog = {
   content: '',
   ctaLink: '',
   ctaText: '',
-  isDisplayed: false,
+  displayDate: '',
   tagList: [],
 };
 
@@ -46,26 +51,6 @@ const BlogCreatePage = () => {
   const [editingValue, setEditingValue] =
     useState<PostBlogReqBody>(initialBlog);
   const [newTag, setNewTag] = useState('');
-
-  const { data: tags = [] } = useBlogTagQuery();
-  const blogTagMutation = usePostBlogTagMutation();
-  const blogMutation = usePostBlogMutation();
-
-  const postBlog = async (event: MouseEvent<HTMLButtonElement>) => {
-    const { name } = event.target as HTMLButtonElement;
-
-    await blogMutation.mutateAsync({
-      ...editingValue,
-      isDisplayed: name === 'publish',
-    });
-
-    setSnackbar({
-      open: true,
-      message: '블로그가 생성되었습니다.',
-    });
-    navgiate('/admin/blog/list');
-  };
-
   const [snackbar, setSnackbar] = useState<{
     open: boolean;
     message: string;
@@ -74,25 +59,58 @@ const BlogCreatePage = () => {
     message: '',
   });
 
+  const { data: tags = [] } = useBlogTagQuery();
+  const createBlogTagMutation = usePostBlogTagMutation();
+  const createBlogMutation = usePostBlogMutation();
+
+  const postBlog = async (event: MouseEvent<HTMLButtonElement>) => {
+    const { name } = event.target as HTMLButtonElement;
+    await createBlogMutation.mutateAsync({
+      ...editingValue,
+      displayDate:
+        name === 'publish'
+          ? new Date().toISOString()
+          : editingValue.displayDate,
+    });
+    setSnackbar({
+      open: true,
+      message: '블로그가 생성되었습니다.',
+    });
+    navgiate('/admin/blog/list');
+  };
+
+  const onChange = (event: ChangeEvent<HTMLInputElement>) => {
+    setEditingValue({
+      ...editingValue,
+      [event.target.name]: event.target.value,
+    });
+  };
+
   const onChangeTag = (event: ChangeEvent<HTMLInputElement>) => {
     setNewTag(event.target.value);
   };
 
   const onKeyDown = async (event: React.KeyboardEvent<HTMLInputElement>) => {
-    if (event.key !== 'Enter' || newTag === '') {
-      return;
-    }
+    if (event.key !== 'Enter' || newTag === '') return;
 
-    // 이미 존재하는 태그인지 체크
     const isExist = tags?.some((tag) => tag.title === newTag);
     if (isExist) {
       setSnackbar({ open: true, message: '이미 존재하는 태그입니다.' });
       return;
     }
 
-    // 태그 생성
-    await blogTagMutation.mutateAsync(newTag);
+    const res = await createBlogTagMutation.mutateAsync(newTag);
+    const createdTag = postTagSchema.parse(res.data.data);
+    selectTag(createdTag);
+    setNewTag('');
     setSnackbar({ open: true, message: `태그가 생성되었습니다: ${newTag}` });
+  };
+
+  const selectTag = (tag: TagDetail | PostTag) => {
+    setEditingValue((prev) => ({
+      ...prev,
+      tagList: [...new Set([...editingValue.tagList, tag.id])],
+    }));
   };
 
   const onChangeEditor = (jsonString: string) => {
@@ -154,9 +172,7 @@ const BlogCreatePage = () => {
             name="title"
             required
             value={editingValue.title}
-            onChange={(e) => {
-              setEditingValue({ ...editingValue, title: e.target.value });
-            }}
+            onChange={onChange}
             autoComplete="off"
             fullWidth
             maxLength={maxTitleLength}
@@ -167,9 +183,7 @@ const BlogCreatePage = () => {
             placeholder="설명"
             name="description"
             value={editingValue.description}
-            onChange={(e) => {
-              setEditingValue({ ...editingValue, description: e.target.value });
-            }}
+            onChange={onChange}
             multiline
             minRows={3}
             autoComplete="off"
@@ -203,12 +217,7 @@ const BlogCreatePage = () => {
                   size="small"
                   name="ctaLink"
                   value={editingValue.ctaLink}
-                  onChange={(e) => {
-                    setEditingValue({
-                      ...editingValue,
-                      ctaLink: e.target.value,
-                    });
-                  }}
+                  onChange={onChange}
                   fullWidth
                   autoComplete="off"
                 />
@@ -220,9 +229,7 @@ const BlogCreatePage = () => {
                 size="small"
                 name="ctaText"
                 value={editingValue.ctaText}
-                onChange={(e) => {
-                  setEditingValue({ ...editingValue, ctaText: e.target.value });
-                }}
+                onChange={onChange}
                 autoComplete="off"
                 fullWidth
                 maxLength={maxCtaTextLength}
@@ -242,52 +249,66 @@ const BlogCreatePage = () => {
                   tagList: prev.tagList.filter((tag) => tag !== id),
                 }));
               }}
-              selectTag={(tag) => {
-                setEditingValue((prev) => ({
-                  ...prev,
-                  tagList: [...new Set([...editingValue.tagList, tag.id])],
-                }));
-              }}
+              selectTag={selectTag}
               onChange={onChangeTag}
               onKeyDown={onKeyDown}
             />
           </div>
 
           <div className="border px-6 py-10">
-            <DateTimePicker onChange={() => console.log('날짜 선택')} />
+            <DateTimePicker
+              value={editingValue.displayDate}
+              onChange={(event) => {
+                if (new Date(event.target.value) < new Date()) {
+                  setSnackbar({
+                    open: true,
+                    message: '미래 날짜를 선택해주세요.',
+                  });
+                  setEditingValue((prev) => ({ ...prev, displayDate: '' }));
+                  return;
+                }
+                setSnackbar({ open: false, message: '' });
+                onChange(event);
+              }}
+            />
           </div>
 
           <h2 className="mt-10">콘텐츠 편집</h2>
           <EditorApp onChange={onChangeEditor} />
 
-          <div className="flex items-center justify-end gap-4">
-            <Button
-              variant="outlined"
-              type="button"
-              onClick={() => {
-                navgiate('/admin/blog/list');
-              }}
-            >
-              취소 (리스트로 돌아가기)
-            </Button>
-            <Button
-              variant="outlined"
-              color="primary"
-              type="button"
-              name="save_temp"
-              onClick={postBlog}
-            >
-              임시 저장
-            </Button>
-            <Button
-              variant="contained"
-              color="primary"
-              type="button"
-              name="publish"
-              onClick={postBlog}
-            >
-              발행
-            </Button>
+          <div className="text-right">
+            <div className="mb-1 flex items-center justify-end gap-4">
+              <Button
+                variant="outlined"
+                type="button"
+                onClick={() => {
+                  navgiate('/admin/blog/list');
+                }}
+              >
+                취소 (리스트로 돌아가기)
+              </Button>
+              <Button
+                variant="outlined"
+                color="primary"
+                type="button"
+                name="save_temp"
+                onClick={postBlog}
+              >
+                임시 저장
+              </Button>
+              <Button
+                variant="contained"
+                color="primary"
+                type="button"
+                name="publish"
+                onClick={postBlog}
+              >
+                발행
+              </Button>
+            </div>
+            <span className="text-0.875 text-neutral-35">
+              *발행: 블로그가 바로 게시됩니다.
+            </span>
           </div>
         </div>
       </main>
