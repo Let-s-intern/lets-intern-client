@@ -2,15 +2,8 @@
 export { onRenderClient };
 
 import React from 'react';
-import { createRoot, hydrateRoot, Root } from 'react-dom/client';
+import { createRoot, hydrateRoot } from 'react-dom/client';
 import { PageContextClient } from 'vike/types';
-
-declare global {
-  interface Window {
-    __root: Root;
-    __lastRenderMode: 'blog' | 'catch_all';
-  }
-}
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 // const router = createBrowserRouter(routes);
@@ -44,6 +37,11 @@ async function onRenderClient(pageContext: PageContextClient) {
     }
     window.__root.render(page);
   }
+
+  // if (!window.__root) {
+  //   window.__root = createRoot(container);
+  // }
+  // window.__root.render(page);
 
   // if (pageContext.isHydration) {
   //   window.__root = hydrateRoot(container, page);

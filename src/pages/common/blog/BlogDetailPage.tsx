@@ -10,10 +10,6 @@ import LexicalContent from '../../../components/common/blog/LexicalContent';
 import RecommendBlogCard from '../../../components/common/blog/RecommendBlogCard';
 import { blogCategory } from '../../../utils/convert';
 
-interface Window {
-  Kakao: any;
-}
-
 const BlogDetailPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -90,6 +86,7 @@ const BlogDetailPage = () => {
   const handleCopyClipBoard = async (text: string) => {
     try {
       await navigator.clipboard.writeText(text);
+      alert('클립보드에 복사되었습니다.');
     } catch (err) {
       console.log(err);
     }

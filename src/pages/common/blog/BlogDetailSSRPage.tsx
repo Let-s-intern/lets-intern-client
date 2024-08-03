@@ -39,6 +39,43 @@ const BlogDetailSSRPage = () => {
     });
   };
 
+  const handleShareKakaoClick = () => {
+    if (window.Kakao) {
+      const kakao = window.Kakao;
+      kakao.Share.sendDefault({
+        objectType: 'feed',
+        content: {
+          title: blog.blogDetailInfo.title,
+          description:
+            blog.blogDetailInfo.description?.substring(0, 30) + '...',
+          imageUrl: blog.blogDetailInfo.thumbnail,
+          link: {
+            mobileWebUrl: `${window.location.origin}${location.pathname}`,
+            webUrl: `${window.location.origin}${location.pathname}`,
+          },
+        },
+        buttons: [
+          {
+            title: '글 확인하기',
+            link: {
+              mobileWebUrl: `${window.location.origin}${location.pathname}`,
+              webUrl: `${window.location.origin}${location.pathname}`,
+            },
+          },
+        ],
+      });
+    }
+  };
+
+  const handleCopyClipBoard = async (text: string) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      alert('클립보드에 복사되었습니다.');
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   return (
     <div className="mx-auto flex w-full flex-1 flex-col items-center">
       <div className="flex w-full max-w-[1200px] flex-col items-center px-5 md:px-10 md:pt-10">
@@ -162,12 +199,24 @@ const BlogDetailSSRPage = () => {
               나만 보기 아깝다면 공유하기
             </p>
             <div className="flex items-center gap-x-5">
-              <div className="flex h-[60px] w-[60px] items-center justify-center rounded-full bg-primary-10">
+              <button
+                type="button"
+                className="flex h-[60px] w-[60px] cursor-pointer items-center justify-center rounded-full bg-primary-10"
+                onClick={() =>
+                  handleCopyClipBoard(
+                    `${window.location.origin}${location.pathname}`,
+                  )
+                }
+              >
                 <img src="/icons/link-01.svg" alt="link" className="h-4 w-4" />
-              </div>
-              <div className="flex h-[60px] w-[60px] items-center justify-center rounded-full bg-primary-10">
+              </button>
+              <button
+                type="button"
+                className="flex h-[60px] w-[60px] cursor-pointer items-center justify-center rounded-full bg-primary-10"
+                onClick={handleShareKakaoClick}
+              >
                 <img src="/icons/kakao_path.svg" alt="kakao" />
-              </div>
+              </button>
             </div>
           </div>
           <button
