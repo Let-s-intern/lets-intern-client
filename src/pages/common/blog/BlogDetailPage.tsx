@@ -231,9 +231,9 @@ const BlogDetailPage = () => {
                   <div
                     className="flex h-[60px] w-[60px] cursor-pointer items-center justify-center rounded-full bg-primary-10"
                     onClick={() =>
-                      handleCopyClipBoard(`
-                      ${import.meta.env.VITE_API_BASE_PATH}/blog/${id}
-                    `)
+                      handleCopyClipBoard(
+                        `${window.location.origin}${location.pathname}`,
+                      )
                     }
                   >
                     <img
