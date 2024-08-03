@@ -276,34 +276,39 @@ const BlogCreatePage = () => {
           <h2 className="mt-10">콘텐츠 편집</h2>
           <EditorApp onChange={onChangeEditor} />
 
-          <div className="flex items-center justify-end gap-4">
-            <Button
-              variant="outlined"
-              type="button"
-              onClick={() => {
-                navgiate('/admin/blog/list');
-              }}
-            >
-              취소 (리스트로 돌아가기)
-            </Button>
-            <Button
-              variant="outlined"
-              color="primary"
-              type="button"
-              name="save_temp"
-              onClick={postBlog}
-            >
-              임시 저장
-            </Button>
-            <Button
-              variant="contained"
-              color="primary"
-              type="button"
-              name="publish"
-              onClick={postBlog}
-            >
-              발행
-            </Button>
+          <div className="text-right">
+            <div className="mb-1 flex items-center justify-end gap-4">
+              <Button
+                variant="outlined"
+                type="button"
+                onClick={() => {
+                  navgiate('/admin/blog/list');
+                }}
+              >
+                취소 (리스트로 돌아가기)
+              </Button>
+              <Button
+                variant="outlined"
+                color="primary"
+                type="button"
+                name="save_temp"
+                onClick={postBlog}
+              >
+                임시 저장
+              </Button>
+              <Button
+                variant="contained"
+                color="primary"
+                type="button"
+                name="publish"
+                onClick={postBlog}
+              >
+                발행
+              </Button>
+            </div>
+            <span className="text-0.875 text-neutral-35">
+              *발행: 블로그가 바로 게시됩니다.
+            </span>
           </div>
         </div>
       </main>
