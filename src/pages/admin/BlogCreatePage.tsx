@@ -8,7 +8,7 @@ import {
   Snackbar,
   TextField,
 } from '@mui/material';
-import { ChangeEvent, MouseEvent, useEffect, useState } from 'react';
+import { ChangeEvent, FormEvent, MouseEvent, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import {
@@ -63,6 +63,10 @@ const BlogCreatePage = () => {
   const createBlogTagMutation = usePostBlogTagMutation();
   const createBlogMutation = usePostBlogMutation();
 
+  const selectedTagList = tags.filter((tag) =>
+    editingValue.tagList.includes(tag.id),
+  );
+
   const postBlog = async (event: MouseEvent<HTMLButtonElement>) => {
     const { name } = event.target as HTMLButtonElement;
     await createBlogMutation.mutateAsync({
@@ -90,8 +94,9 @@ const BlogCreatePage = () => {
     setNewTag(event.target.value);
   };
 
-  const onKeyDown = async (event: React.KeyboardEvent<HTMLInputElement>) => {
-    if (event.key !== 'Enter' || newTag === '') return;
+  const onSubmitTag = async (event: FormEvent) => {
+    event.preventDefault();
+    if (newTag.trim() === '') return;
 
     const isExist = tags?.some((tag) => tag.title === newTag);
     if (isExist) {
@@ -124,10 +129,6 @@ const BlogCreatePage = () => {
       // empty
     }
   }, [editingValue.content]);
-
-  const selectedTagList = tags.filter((tag) =>
-    editingValue.tagList.includes(tag.id),
-  );
 
   return (
     <div className="mx-3 mb-40 mt-3">
@@ -251,25 +252,14 @@ const BlogCreatePage = () => {
               }}
               selectTag={selectTag}
               onChange={onChangeTag}
-              onKeyDown={onKeyDown}
+              onSubmit={onSubmitTag}
             />
           </div>
 
           <div className="border px-6 py-10">
             <DateTimePicker
               value={editingValue.displayDate}
-              onChange={(event) => {
-                if (new Date(event.target.value) < new Date()) {
-                  setSnackbar({
-                    open: true,
-                    message: '미래 날짜를 선택해주세요.',
-                  });
-                  setEditingValue((prev) => ({ ...prev, displayDate: '' }));
-                  return;
-                }
-                setSnackbar({ open: false, message: '' });
-                onChange(event);
-              }}
+              onChange={onChange}
             />
           </div>
 
