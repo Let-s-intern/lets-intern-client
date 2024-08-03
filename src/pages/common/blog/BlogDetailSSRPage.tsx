@@ -235,7 +235,10 @@ const BlogDetailSSRPage = () => {
               <BlogHashtag
                 key={tag.id}
                 text={tag.title || ''}
-                onClick={() => {}}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  navigate('/blog/hashtag', { state: tag });
+                }}
               />
             ))}
           </div>
