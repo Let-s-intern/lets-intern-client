@@ -8,7 +8,7 @@ import {
   Snackbar,
   TextField,
 } from '@mui/material';
-import { ChangeEvent, MouseEvent, useEffect, useState } from 'react';
+import { ChangeEvent, FormEvent, MouseEvent, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import {
@@ -94,8 +94,9 @@ const BlogCreatePage = () => {
     setNewTag(event.target.value);
   };
 
-  const onKeyDown = async (event: React.KeyboardEvent<HTMLInputElement>) => {
-    if (event.key !== 'Enter' || newTag.trim() === '') return;
+  const onSubmitTag = async (event: FormEvent) => {
+    event.preventDefault();
+    if (newTag.trim() === '') return;
 
     const isExist = tags?.some((tag) => tag.title === newTag);
     if (isExist) {
@@ -251,7 +252,7 @@ const BlogCreatePage = () => {
               }}
               selectTag={selectTag}
               onChange={onChangeTag}
-              onKeyDown={onKeyDown}
+              onSubmit={onSubmitTag}
             />
           </div>
 
