@@ -37,7 +37,8 @@ const initialBlog = {
   content: '',
   ctaLink: '',
   ctaText: '',
-  isDisplayed: false,
+  displayDate: '',
+  isDisplayed: '',
   tagList: [],
 };
 
@@ -49,6 +50,7 @@ interface EditBlog {
   content: string;
   ctaLink: string;
   ctaText: string;
+  displayDate: string;
   tagList: TagDetail[];
 }
 
@@ -116,6 +118,12 @@ const BlogEditPage = () => {
 
   const patchBlog = async (event: MouseEvent<HTMLButtonElement>) => {
     const { name } = event.target as HTMLButtonElement;
+    // console.log({
+    //   ...editingValue,
+    //   id: Number(id),
+    //   isDisplayed: name === 'publish',
+    //   tagList: editingValue.tagList.map((tag) => tag.id),
+    // });
     await patchBlogMutation.mutateAsync({
       ...editingValue,
       id: Number(id),
@@ -148,6 +156,7 @@ const BlogEditPage = () => {
       content: blogData.blogDetailInfo.content || '',
       ctaLink: blogData.blogDetailInfo.ctaLink || '',
       ctaText: blogData.blogDetailInfo.ctaText || '',
+      displayDate: blogData.blogDetailInfo.displayDate || '',
       tagList: blogData.tagDetailInfos,
     });
   }, [isLoading, blogData]);
@@ -283,7 +292,10 @@ const BlogEditPage = () => {
             </div>
 
             <div className="border px-6 py-10">
-              <DateTimePicker onChange={() => console.log('날짜 선택')} />
+              <DateTimePicker
+                value={editingValue.displayDate}
+                onChange={() => console.log('날짜 선택')}
+              />
             </div>
 
             <h2 className="mt-10">콘텐츠 편집</h2>

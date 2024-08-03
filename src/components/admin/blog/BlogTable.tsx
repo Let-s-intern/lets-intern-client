@@ -134,10 +134,7 @@ export default function BlogTable() {
                 <input
                   type="checkbox"
                   data-blog-id={blogInfo.blogThumbnailInfo.id}
-                  checked={
-                    // isDisplayed로 교체해야 함
-                    blogInfo.blogThumbnailInfo.displayDate ? true : false
-                  }
+                  checked={blogInfo.blogThumbnailInfo.isDisplayed!}
                   onChange={(event) =>
                     handleCheck(
                       event,
@@ -147,7 +144,7 @@ export default function BlogTable() {
                 />
               </TableBodyCell>
               <TableBodyCell widthClassName={blogColumnWidth.status}>
-                {blogInfo.blogThumbnailInfo.displayDate ? '발행' : '임시저장'}
+                {blogInfo.blogThumbnailInfo.isDisplayed ? '발행' : '임시저장'}
               </TableBodyCell>
               <TableBodyCell widthClassName={blogColumnWidth.management}>
                 <div className="flex items-center gap-4">
