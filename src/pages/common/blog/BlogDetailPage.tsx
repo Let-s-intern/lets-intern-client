@@ -48,16 +48,16 @@ const BlogDetailPage = () => {
           description: data?.blogDetailInfo.content?.substring(0, 30) + '...',
           imageUrl: data?.blogDetailInfo.thumbnail,
           link: {
-            mobileWebUrl: `${import.meta.env.VITE_API_BASE_PATH}/blog/${id}`,
-            webUrl: `${import.meta.env.VITE_API_BASE_PATH}/blog/${id}`,
+            mobileWebUrl: `${window.location.origin}${location.pathname}`,
+            webUrl: `${window.location.origin}${location.pathname}`,
           },
         },
         buttons: [
           {
             title: '글 확인하기',
             link: {
-              mobileWebUrl: `${import.meta.env.VITE_API_BASE_PATH}/blog/${id}`,
-              webUrl: `${import.meta.env.VITE_API_BASE_PATH}/blog/${id}`,
+              mobileWebUrl: `${window.location.origin}${location.pathname}`,
+              webUrl: `${window.location.origin}${location.pathname}`,
             },
           },
         ],
