@@ -32,7 +32,7 @@ const BlogCard = (blogInfo: TransformedBlogInfoType) => {
             </p>
           </div>
           <img
-            className="h-[60px] w-[100px] overflow-hidden rounded-md md:h-[90px] md:w-[130px]"
+            className="h-[68px] w-[100px] overflow-hidden rounded-md md:h-[90px] md:w-[130px]"
             src={blogInfo.blogThumbnailInfo.thumbnail || ''}
             alt="thumbnail"
           />
