@@ -37,6 +37,22 @@ export const useBlogListQuery = ({ pageable }: BlogQueryParams) => {
   });
 };
 
+export const useBlogListTypeQuery = ({ pageable, type }: BlogQueryParams) => {
+  return useQuery({
+    queryKey: [blogListQueryKey, pageable],
+    queryFn: async () => {
+      const res = await axios.get(`/blog`, {
+        params: {
+          ...pageable,
+          type,
+        },
+      });
+      return blogListSchema.parse(res.data.data);
+    },
+    enabled: !!type,
+  });
+};
+
 export const useInfiniteBlogListQuery = ({
   type,
   tagId,
