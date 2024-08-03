@@ -243,9 +243,11 @@ const LexicalContent = ({ node }: { node: SerializedLexicalNode }) => {
       const _node = node as SerializedTableNode;
       return (
         <table className="my-4 w-full table-auto">
-          {_node.children.map((child, childIndex) => (
-            <LexicalContent key={childIndex} node={child} />
-          ))}
+          <tbody>
+            {_node.children.map((child, childIndex) => (
+              <LexicalContent key={childIndex} node={child} />
+            ))}
+          </tbody>
         </table>
       );
     }
