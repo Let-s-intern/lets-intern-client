@@ -49,6 +49,12 @@ const BlogDetailSSRPage = () => {
     }
   }, [blog.blogDetailInfo, titleFromUrl]);
 
+  useEffect(() => {
+    if (!window.Kakao.isInitialized()) {
+      window.Kakao.init(import.meta.env.VITE_KAKAO_JS_KEY);
+    }
+  }, []);
+
   const handlePostRating = () => {
     if (!id) return;
 
