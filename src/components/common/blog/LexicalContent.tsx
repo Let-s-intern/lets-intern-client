@@ -1,3 +1,4 @@
+import { SerializedCodeNode } from '@lexical/code';
 import { SerializedLinkNode } from '@lexical/link';
 import { SerializedListItemNode, SerializedListNode } from '@lexical/list';
 import { SerializedHeadingNode, SerializedQuoteNode } from '@lexical/rich-text';
@@ -7,6 +8,7 @@ import {
   SerializedRootNode,
   SerializedTextNode,
 } from 'lexical';
+import { SerializedCodeHighlightNode } from '../../admin/lexical/nodes/CodeHighlightNode';
 import { SerializedEmojiNode } from '../../admin/lexical/nodes/EmojiNode';
 import { SerializedImageNode } from '../../admin/lexical/nodes/ImageNode';
 
@@ -49,8 +51,20 @@ const LexicalContent = ({ node }: { node: SerializedLexicalNode }) => {
     }
     case 'paragraph': {
       const _node = node as SerializedParagraphNode;
+      let textAlign = '';
+      switch (_node.format) {
+        case 'center':
+          textAlign = 'text-center';
+          break;
+        case 'right':
+          textAlign = 'text-right';
+          break;
+        default:
+          textAlign = 'text-left';
+          break;
+      }
       return (
-        <p className="mb-4">
+        <p className={`mb-4 ${textAlign}`}>
           {_node.children.map((child, childIndex) => (
             <LexicalContent key={childIndex} node={child} />
           ))}
@@ -98,6 +112,49 @@ const LexicalContent = ({ node }: { node: SerializedLexicalNode }) => {
         </a>
       );
     }
+    case 'code': {
+      const _node = node as SerializedCodeNode;
+      return (
+        <div className="mb-4 mt-3 w-full bg-gray-100 p-4 font-mono">
+          <code className="whitespace-pre-wrap break-keep">
+            {_node.children.map((child, childIndex) => (
+              <LexicalContent key={childIndex} node={child} />
+            ))}
+          </code>
+        </div>
+      );
+    }
+    case 'code-highlight': {
+      const _node = node as SerializedCodeHighlightNode;
+      let textColor = '';
+      switch (_node.highlightType) {
+        case 'keyword':
+          textColor = 'text-[#07a]';
+          break;
+        case 'string':
+          textColor = 'text-[#690]';
+          break;
+        case 'punctuation':
+          textColor = 'text-[#999]';
+          break;
+        case 'operator':
+          textColor = 'text-[##9a6e3a]';
+          break;
+        case 'comment':
+          textColor = 'text-[#777]';
+          break;
+        case 'class-name':
+          textColor = 'text-[#dd4a68]';
+          break;
+        default:
+          textColor = '';
+          break;
+      }
+      return <span className={`${textColor}`}>{_node.text}</span>;
+    }
+    case 'linebreak': {
+      return <br />;
+    }
     case 'text': {
       const _node = node as SerializedTextNode;
 
@@ -106,6 +163,7 @@ const LexicalContent = ({ node }: { node: SerializedLexicalNode }) => {
       if (_node.format & 2) className += 'italic ';
       if (_node.format & 8) className += 'underline ';
       if (_node.format & 16) className += 'font-mono bg-gray-100 px-1 ';
+
       return <span className={className.trim()}>{_node.text}</span>;
     }
     case 'emoji': {
