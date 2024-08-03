@@ -41,7 +41,7 @@ const initialBlog = {
   content: '',
   ctaLink: '',
   ctaText: '',
-  isDisplayed: false,
+  displayDate: '',
   tagList: [],
 };
 
@@ -65,17 +65,25 @@ const BlogCreatePage = () => {
 
   const postBlog = async (event: MouseEvent<HTMLButtonElement>) => {
     const { name } = event.target as HTMLButtonElement;
-
     await createBlogMutation.mutateAsync({
       ...editingValue,
-      isDisplayed: name === 'publish',
+      displayDate:
+        name === 'publish'
+          ? new Date().toISOString()
+          : editingValue.displayDate,
     });
-
     setSnackbar({
       open: true,
       message: '블로그가 생성되었습니다.',
     });
     navgiate('/admin/blog/list');
+  };
+
+  const onChange = (event: ChangeEvent<HTMLInputElement>) => {
+    setEditingValue({
+      ...editingValue,
+      [event.target.name]: event.target.value,
+    });
   };
 
   const onChangeTag = (event: ChangeEvent<HTMLInputElement>) => {
@@ -164,9 +172,7 @@ const BlogCreatePage = () => {
             name="title"
             required
             value={editingValue.title}
-            onChange={(e) => {
-              setEditingValue({ ...editingValue, title: e.target.value });
-            }}
+            onChange={onChange}
             autoComplete="off"
             fullWidth
             maxLength={maxTitleLength}
@@ -177,9 +183,7 @@ const BlogCreatePage = () => {
             placeholder="설명"
             name="description"
             value={editingValue.description}
-            onChange={(e) => {
-              setEditingValue({ ...editingValue, description: e.target.value });
-            }}
+            onChange={onChange}
             multiline
             minRows={3}
             autoComplete="off"
@@ -213,12 +217,7 @@ const BlogCreatePage = () => {
                   size="small"
                   name="ctaLink"
                   value={editingValue.ctaLink}
-                  onChange={(e) => {
-                    setEditingValue({
-                      ...editingValue,
-                      ctaLink: e.target.value,
-                    });
-                  }}
+                  onChange={onChange}
                   fullWidth
                   autoComplete="off"
                 />
@@ -230,9 +229,7 @@ const BlogCreatePage = () => {
                 size="small"
                 name="ctaText"
                 value={editingValue.ctaText}
-                onChange={(e) => {
-                  setEditingValue({ ...editingValue, ctaText: e.target.value });
-                }}
+                onChange={onChange}
                 autoComplete="off"
                 fullWidth
                 maxLength={maxCtaTextLength}
@@ -259,7 +256,21 @@ const BlogCreatePage = () => {
           </div>
 
           <div className="border px-6 py-10">
-            <DateTimePicker onChange={() => console.log('날짜 선택')} />
+            <DateTimePicker
+              value={editingValue.displayDate}
+              onChange={(event) => {
+                if (new Date(event.target.value) < new Date()) {
+                  setSnackbar({
+                    open: true,
+                    message: '미래 날짜를 선택해주세요.',
+                  });
+                  setEditingValue((prev) => ({ ...prev, displayDate: '' }));
+                  return;
+                }
+                setSnackbar({ open: false, message: '' });
+                onChange(event);
+              }}
+            />
           </div>
 
           <h2 className="mt-10">콘텐츠 편집</h2>

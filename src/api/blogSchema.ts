@@ -9,7 +9,7 @@ export interface PostBlogReqBody {
   content: string;
   ctaLink: string;
   ctaText: string;
-  isDisplayed?: boolean;
+  displayDate: string;
   tagList: number[];
 }
 
@@ -90,9 +90,6 @@ export const blogSchema = z
     return {
       blogDetailInfo: {
         ...data.blogDetailInfo,
-        displayDate: data.blogDetailInfo.displayDate
-          ? dayjs(data.blogDetailInfo.displayDate)
-          : null,
         createDate: data.blogDetailInfo.createDate
           ? dayjs(data.blogDetailInfo.createDate)
           : null,
@@ -103,6 +100,24 @@ export const blogSchema = z
       tagDetailInfos: data.tagDetailInfos,
     };
   });
+
+export const transformedBlogSchema = blogSchema.transform((data) => {
+  return {
+    blogDetailInfo: {
+      ...data.blogDetailInfo,
+      displayDate: data.blogDetailInfo.displayDate
+        ? dayjs(data.blogDetailInfo.displayDate)
+        : null,
+      createDate: data.blogDetailInfo.createDate
+        ? dayjs(data.blogDetailInfo.createDate)
+        : null,
+      lastModifiedDate: data.blogDetailInfo.lastModifiedDate
+        ? dayjs(data.blogDetailInfo.lastModifiedDate)
+        : null,
+    },
+    tagDetailInfos: data.tagDetailInfos,
+  };
+});
 
 export const blogInfoSchema = z.object({
   blogThumbnailInfo: blogThumbnailSchema,
