@@ -22,6 +22,7 @@ export interface PatchBlogReqBody {
   content?: string;
   ctaLink?: string;
   ctaText?: string;
+  displayDate?: string;
   isDisplayed?: boolean;
   tagList?: number[];
 }
