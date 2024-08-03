@@ -3,6 +3,11 @@ import { SerializedLinkNode } from '@lexical/link';
 import { SerializedListItemNode, SerializedListNode } from '@lexical/list';
 import { SerializedHeadingNode, SerializedQuoteNode } from '@lexical/rich-text';
 import {
+  SerializedTableCellNode,
+  SerializedTableNode,
+  SerializedTableRowNode,
+} from '@lexical/table';
+import {
   SerializedLexicalNode,
   SerializedParagraphNode,
   SerializedRootNode,
@@ -16,6 +21,18 @@ import { SerializedEmojiNode } from '../../admin/lexical/nodes/EmojiNode';
 import { SerializedImageNode } from '../../admin/lexical/nodes/ImageNode';
 import { SerializedLayoutContainerNode } from '../../admin/lexical/nodes/LayoutContainerNode';
 import { SerializedLayoutItemNode } from '../../admin/lexical/nodes/LayoutItemNode';
+
+const parseStyle = (styleString: string) =>
+  styleString
+    .split(';')
+    .filter((s) => s.trim().length > 0)
+    .reduce((acc, curr) => {
+      const [key, value] = curr.split(':').map((str) => str.trim());
+      const camelCaseKey = key.replace(/-([a-z])/g, (match, p1) =>
+        p1.toUpperCase(),
+      );
+      return { ...acc, [camelCaseKey]: value };
+    }, {});
 
 const LexicalContent = ({ node }: { node: SerializedLexicalNode }) => {
   switch (node.type) {
@@ -69,11 +86,11 @@ const LexicalContent = ({ node }: { node: SerializedLexicalNode }) => {
           break;
       }
       return (
-        <p className={`mb-4 ${textAlign}`}>
+        <div className={`mb-4 ${textAlign}`}>
           {_node.children.map((child, childIndex) => (
             <LexicalContent key={childIndex} node={child} />
           ))}
-        </p>
+        </div>
       );
     }
     case 'list': {
@@ -222,6 +239,36 @@ const LexicalContent = ({ node }: { node: SerializedLexicalNode }) => {
         </div>
       );
     }
+    case 'table': {
+      const _node = node as SerializedTableNode;
+      return (
+        <table className="my-4 w-full table-auto">
+          {_node.children.map((child, childIndex) => (
+            <LexicalContent key={childIndex} node={child} />
+          ))}
+        </table>
+      );
+    }
+    case 'tablerow': {
+      const _node = node as SerializedTableRowNode;
+      return (
+        <tr>
+          {_node.children.map((child, childIndex) => (
+            <LexicalContent key={childIndex} node={child} />
+          ))}
+        </tr>
+      );
+    }
+    case 'tablecell': {
+      const _node = node as SerializedTableCellNode;
+      return (
+        <td className="border border-neutral-80 p-2">
+          {_node.children.map((child, childIndex) => (
+            <LexicalContent key={childIndex} node={child} />
+          ))}
+        </td>
+      );
+    }
     case 'text': {
       const _node = node as SerializedTextNode;
 
@@ -231,7 +278,13 @@ const LexicalContent = ({ node }: { node: SerializedLexicalNode }) => {
       if (_node.format & 8) className += 'underline ';
       if (_node.format & 16) className += 'font-mono bg-gray-100 px-1 ';
 
-      return <span className={className.trim()}>{_node.text}</span>;
+      const style = parseStyle(_node.style);
+
+      return (
+        <span className={className.trim()} style={style}>
+          {_node.text}
+        </span>
+      );
     }
     case 'emoji': {
       const _node = node as SerializedEmojiNode;
@@ -246,13 +299,13 @@ const LexicalContent = ({ node }: { node: SerializedLexicalNode }) => {
 
       return (
         <span className="image">
-          <div className="w-full" draggable="false">
-            <img
-              className="h-auto w-full"
-              src={_node.src}
-              alt={_node.altText}
-            />
-            {/* <img
+          <img
+            className="h-auto w-full"
+            src={_node.src}
+            alt={_node.altText}
+            draggable={false}
+          />
+          {/* <img
               src={_node.src}
               alt={_node.altText}
               style={{
@@ -261,7 +314,6 @@ const LexicalContent = ({ node }: { node: SerializedLexicalNode }) => {
                 width: _node.width ? _node.width : 'inherit',
               }}
             /> */}
-          </div>
           {_node.showCaption ? (
             <div className="image-caption-container mb-4 mt-3 w-full text-center text-xsmall14 text-neutral-50">
               <div
