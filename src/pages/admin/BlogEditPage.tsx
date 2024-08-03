@@ -290,18 +290,7 @@ const BlogEditPage = () => {
               <div className="border px-6 py-10">
                 <DateTimePicker
                   value={editingValue.displayDate}
-                  onChange={(event) => {
-                    if (new Date(event.target.value) < new Date()) {
-                      setSnackbar({
-                        open: true,
-                        message: '미래 날짜를 선택해주세요.',
-                      });
-                      setEditingValue((prev) => ({ ...prev, displayDate: '' }));
-                      return;
-                    }
-                    setSnackbar({ open: false, message: '' });
-                    onChange(event);
-                  }}
+                  onChange={onChange}
                 />
               </div>
             )}
