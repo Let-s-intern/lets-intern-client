@@ -302,7 +302,7 @@ const BlogDetailSSRPage = () => {
       <div className="mt-8 flex w-full flex-col items-center bg-neutral-100 py-10 md:py-[60px] md:pb-10">
         <div className="flex w-full max-w-[1200px] flex-col px-5 md:px-10">
           <div className="flex w-full flex-col items-center md:px-[100px]">
-            <div className="flex w-full flex-col gap-y-5 px-5">
+            <div className="flex w-full flex-col gap-y-5">
               <h3 className="text-xl font-semibold">함께 읽어보면 좋아요</h3>
               <div className="flex w-full flex-col gap-y-5">
                 {!recommendData ? (
