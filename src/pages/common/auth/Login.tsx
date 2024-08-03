@@ -63,13 +63,7 @@ const Login = () => {
     },
   });
 
-  useEffect(() => {
-    setErrorMessage('');
-    if (!searchParams.get('error') && isLoggedIn) {
-      navigate('/');
-    }
-  }, [isLoggedIn, navigate, searchParams]);
-
+  // 비밀번호, 이메일 입력 시 버튼 활성화
   useEffect(() => {
     if (!email || !password) {
       setButtonDisabled(true);
@@ -83,12 +77,19 @@ const Login = () => {
       setErrorMessage('이미 가입된 휴대폰 번호입니다.');
       return;
     }
+
     if (searchParams.get('result')) {
       const parsedToken = JSON.parse(searchParams.get('result') || '');
       const newSearchParams = new URLSearchParams(searchParams);
       newSearchParams.delete('result');
       setSearchParams(newSearchParams);
       handleLoginSuccess(parsedToken);
+      return;
+    }
+
+    if (isLoggedIn) {
+      navigate('/');
+      return;
     }
     // } else if (searchParams.get('error')) {
     //   const errorParam = JSON.parse(searchParams.get('error') || '');
