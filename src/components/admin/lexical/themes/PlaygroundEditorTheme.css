@@ -274,6 +274,7 @@
 .PlaygroundEditorTheme__ol1 {
   padding: 0;
   margin: 0;
+  list-style-type: decimal;
   list-style-position: outside;
 }
 .PlaygroundEditorTheme__ol2 {
@@ -304,6 +305,7 @@
   padding: 0;
   margin: 0;
   list-style-position: outside;
+  list-style-type: disc;
 }
 .PlaygroundEditorTheme__listItem {
   margin: 0 32px;
