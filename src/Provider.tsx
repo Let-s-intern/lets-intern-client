@@ -1,4 +1,3 @@
-/** @deprecated */
 import {
   QueryCache,
   QueryClient,
@@ -9,7 +8,6 @@ import dayjs from 'dayjs';
 import 'dayjs/locale/ko';
 import { Helmet } from 'react-helmet';
 import { ZodError } from 'zod';
-import Router from './Router';
 
 import { useState } from 'react';
 import './index.css';
@@ -22,12 +20,18 @@ import './styles/mypage.scss';
 
 dayjs.locale('ko');
 
-const App = () => {
+const Provider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  // Instead do this, which ensures each request has its own cache:
   const [queryClient] = useState(
     () =>
       new QueryClient({
         defaultOptions: {
-          queries: { retry: 0 },
+          queries: {
+            retry: 0,
+            // With SSR, we usually want to set some default staleTime
+            // above 0 to avoid refetching immediately on the client
+            staleTime: 60 * 1000,
+          },
         },
 
         queryCache: new QueryCache({
@@ -42,7 +46,6 @@ const App = () => {
         }),
       }),
   );
-
   return (
     <QueryClientProvider client={queryClient}>
       <Helmet>
@@ -79,10 +82,10 @@ const App = () => {
         />
         <meta property="og:url" content="https://www.letscareer.co.kr/" />
       </Helmet>
-      <Router />
+      {children}
       <ReactQueryDevtools />
     </QueryClientProvider>
   );
 };
 
-export default App;
+export default Provider;

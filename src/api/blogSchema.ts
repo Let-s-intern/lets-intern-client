@@ -9,7 +9,7 @@ export interface PostBlogReqBody {
   content: string;
   ctaLink: string;
   ctaText: string;
-  isDisplayed?: boolean;
+  displayDate: string;
   tagList: number[];
 }
 
@@ -76,6 +76,11 @@ export type TagType = z.infer<typeof tagSchema>;
 
 export const tagDetailSchema = z.array(tagSchema);
 
+export const blogRawSchema = z.object({
+  blogDetailInfo: blogDetailSchema,
+  tagDetailInfos: tagDetailSchema,
+});
+
 export const postTagSchema = z.object({
   id: z.number(),
   title: z.string().nullable().optional(),
@@ -90,9 +95,6 @@ export const blogSchema = z
     return {
       blogDetailInfo: {
         ...data.blogDetailInfo,
-        displayDate: data.blogDetailInfo.displayDate
-          ? dayjs(data.blogDetailInfo.displayDate)
-          : null,
         createDate: data.blogDetailInfo.createDate
           ? dayjs(data.blogDetailInfo.createDate)
           : null,

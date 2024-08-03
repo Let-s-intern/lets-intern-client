@@ -3,17 +3,48 @@ export { onRenderHtml };
 
 import { renderToString } from 'react-dom/server';
 // import { dangerouslySkipEscape, escapeInject } from 'vike/server';
+import React from 'react';
+import {
+  createStaticHandler,
+  createStaticRouter,
+  StaticHandlerContext,
+  StaticRouterProvider,
+} from 'react-router-dom/server';
 import { dangerouslySkipEscape } from 'vike/server';
-import { PageContextServer } from 'vike/types';
+import { OnRenderHtmlAsync } from 'vike/types';
 import getServerHtml from '../../../renderer/getServerHtml';
+import { BlogProvider } from '../../../src/context/Post';
+import Provider from '../../../src/Provider';
+import { routes } from '../../../src/routes';
+import { Data } from './+data';
 
-async function onRenderHtml(pageContext: PageContextServer) {
+const onRenderHtml: OnRenderHtmlAsync = async (pageContext) => {
   const Page = pageContext.Page as React.ComponentType<{ data: unknown }>;
-  const data = pageContext.data as any;
-  const pageHtml = dangerouslySkipEscape(renderToString(<Page data={data} />));
+  const data = pageContext.data as Data;
+
+  const { query, dataRoutes } = createStaticHandler(routes);
+  // TODO: 임시로 처리
+  const mockRequest = new Request(
+    `https://localhost:3000${pageContext.urlOriginal}`,
+  );
+  const context = (await query(mockRequest)) as StaticHandlerContext;
+  const router = createStaticRouter(dataRoutes, context);
+  const pageHtml = dangerouslySkipEscape(
+    renderToString(
+      <BlogProvider blog={data}>
+        <Provider>
+          <StaticRouterProvider
+            router={router}
+            hydrate={true}
+            context={context}
+          />
+        </Provider>
+      </BlogProvider>,
+    ),
+  );
 
   return getServerHtml({
     pageHtml,
-    title: data.movie.title,
+    title: data.blogDetailInfo.title || '',
   });
-}
+};

@@ -8,7 +8,7 @@ import { blogCategory } from '../../../utils/convert';
 
 const ratingColumnWidth = {
   createdDate: 'w-32',
-  category: 'w-30',
+  category: 'w-32',
   title: 'flex-1',
   score: 'w-40',
   content: 'w-40',
@@ -46,6 +46,10 @@ export default function BlogRatingTable() {
         setIsLoading(false);
       });
     }
+
+    return () => {
+      setRatingList([]);
+    };
   }, [blogData]);
 
   return (
@@ -72,7 +76,7 @@ export default function BlogRatingTable() {
       {/* TableBody */}
       <div className="mb-16 mt-3 flex flex-col gap-2">
         {isLoading ? (
-          <span>로딩 중...</span>
+          <></>
         ) : ratingList.length === 0 ? (
           <span>작성된 후기가 없습니다.</span>
         ) : (

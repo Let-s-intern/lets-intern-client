@@ -19,7 +19,6 @@ import {
 } from '../../api/blog';
 import { PostTag, postTagSchema, TagDetail } from '../../api/blogSchema';
 import { uploadFile } from '../../api/file';
-import DateTimePicker from '../../components/admin/blog/DateTimePicker';
 import TagSelector from '../../components/admin/blog/TagSelector';
 import TextFieldLimit from '../../components/admin/blog/TextFieldLimit';
 import EditorApp from '../../components/admin/lexical/EditorApp';
@@ -37,7 +36,8 @@ const initialBlog = {
   content: '',
   ctaLink: '',
   ctaText: '',
-  isDisplayed: false,
+  displayDate: '',
+  isDisplayed: '',
   tagList: [],
 };
 
@@ -49,6 +49,7 @@ interface EditBlog {
   content: string;
   ctaLink: string;
   ctaText: string;
+  displayDate: string;
   tagList: TagDetail[];
 }
 
@@ -116,6 +117,7 @@ const BlogEditPage = () => {
 
   const patchBlog = async (event: MouseEvent<HTMLButtonElement>) => {
     const { name } = event.target as HTMLButtonElement;
+
     await patchBlogMutation.mutateAsync({
       ...editingValue,
       id: Number(id),
@@ -148,6 +150,7 @@ const BlogEditPage = () => {
       content: blogData.blogDetailInfo.content || '',
       ctaLink: blogData.blogDetailInfo.ctaLink || '',
       ctaText: blogData.blogDetailInfo.ctaText || '',
+      displayDate: blogData.blogDetailInfo.displayDate || '',
       tagList: blogData.tagDetailInfos,
     });
   }, [isLoading, blogData]);
@@ -282,44 +285,62 @@ const BlogEditPage = () => {
               />
             </div>
 
-            <div className="border px-6 py-10">
-              <DateTimePicker onChange={() => console.log('날짜 선택')} />
-            </div>
+            {/* <div className="border px-6 py-10">
+              <DateTimePicker
+                value={editingValue.displayDate}
+                onChange={(event) => {
+                  if (new Date(event.target.value) < new Date()) {
+                    setSnackbar({
+                      open: true,
+                      message: '미래 날짜를 선택해주세요.',
+                    });
+                    setEditingValue((prev) => ({ ...prev, displayDate: '' }));
+                    return;
+                  }
+                  setSnackbar({ open: false, message: '' });
+                  onChange(event);
+                }}
+              />
+            </div> */}
 
             <h2 className="mt-10">콘텐츠 편집</h2>
             <EditorApp
               editorStateJsonString={blogData.blogDetailInfo.content!}
               onChange={onChangeEditor}
             />
-
-            <div className="flex items-center justify-end gap-4">
-              <Button
-                variant="outlined"
-                type="button"
-                onClick={() => {
-                  navgiate('/admin/blog/list');
-                }}
-              >
-                취소 (리스트로 돌아가기)
-              </Button>
-              <Button
-                variant="outlined"
-                color="primary"
-                type="button"
-                name="save_temp"
-                onClick={patchBlog}
-              >
-                임시 저장
-              </Button>
-              <Button
-                variant="contained"
-                color="primary"
-                type="button"
-                name="publish"
-                onClick={patchBlog}
-              >
-                발행
-              </Button>
+            <div className="text-right">
+              <div className="mb-1 flex items-center justify-end gap-4">
+                <Button
+                  variant="outlined"
+                  type="button"
+                  onClick={() => {
+                    navgiate('/admin/blog/list');
+                  }}
+                >
+                  취소 (리스트로 돌아가기)
+                </Button>
+                <Button
+                  variant="outlined"
+                  color="primary"
+                  type="button"
+                  name="save_temp"
+                  onClick={patchBlog}
+                >
+                  임시 저장
+                </Button>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  type="button"
+                  name="publish"
+                  onClick={patchBlog}
+                >
+                  발행
+                </Button>
+              </div>
+              <span className="text-0.875 text-neutral-35">
+                *임시 저장: 블로그가 숨겨집니다.
+              </span>
             </div>
           </div>
         </main>

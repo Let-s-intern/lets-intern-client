@@ -6,10 +6,10 @@
  *
  */
 
-import type {ElementNode, RangeSelection} from 'lexical';
+import type { ElementNode, RangeSelection } from 'lexical';
 
-import {$getListDepth, $isListItemNode, $isListNode} from '@lexical/list';
-import {useLexicalComposerContext} from '@lexical/react/LexicalComposerContext';
+import { $getListDepth, $isListItemNode, $isListNode } from '@lexical/list';
+import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import {
   $getSelection,
   $isElementNode,
@@ -17,7 +17,7 @@ import {
   COMMAND_PRIORITY_CRITICAL,
   INDENT_CONTENT_COMMAND,
 } from 'lexical';
-import {useEffect} from 'react';
+import { useEffect } from 'react';
 
 function getElementNodesInSelection(
   selection: RangeSelection,
