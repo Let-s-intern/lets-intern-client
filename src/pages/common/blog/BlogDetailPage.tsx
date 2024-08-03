@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import {
-  useBlogListQuery,
+  useBlogListTypeQuery,
   useBlogQuery,
   usePostBlogRatingMutation,
 } from '../../../api/blog';
@@ -26,9 +26,9 @@ const BlogDetailPage = () => {
     data: recommendData,
     isLoading: recommendIsLoading,
     isError: recommendIsError,
-  } = useBlogListQuery({
+  } = useBlogListTypeQuery({
     type: data?.blogDetailInfo.category,
-    pageable: { page: 0, size: 3 },
+    pageable: { page: 0, size: 4 },
   });
 
   useEffect(() => {
@@ -216,7 +216,10 @@ const BlogDetailPage = () => {
                   <BlogHashtag
                     key={tag.id}
                     text={tag.title || ''}
-                    onClick={() => {}}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      navigate('/blog/hashtag', { state: tag });
+                    }}
                   />
                 ))}
               </div>
@@ -277,12 +280,19 @@ const BlogDetailPage = () => {
                         </div>
                       )
                     ) : (
-                      recommendData.blogInfos.map((blog) => (
-                        <RecommendBlogCard
-                          key={blog.blogThumbnailInfo.id}
-                          {...blog}
-                        />
-                      ))
+                      recommendData.blogInfos
+                        .filter(
+                          (blog) =>
+                            blog.blogThumbnailInfo.id !==
+                            data.blogDetailInfo.id,
+                        )
+                        .slice(0, 3)
+                        .map((blog) => (
+                          <RecommendBlogCard
+                            key={blog.blogThumbnailInfo.id}
+                            {...blog}
+                          />
+                        ))
                     )}
                   </div>
                 </div>

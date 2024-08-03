@@ -84,7 +84,7 @@ const BlogHashtagListPage = () => {
                   tagListData.map((tag) => (
                     <div
                       key={tag.id}
-                      className="w-full bg-neutral-90 px-4 py-[14px] text-xsmall16 text-primary"
+                      className="w-full cursor-pointer bg-neutral-90 px-4 py-[14px] text-xsmall16 text-primary"
                       onClick={() => handleTagClick(tag)}
                     >
                       #{tag.title}
