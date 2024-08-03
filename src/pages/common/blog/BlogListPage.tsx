@@ -80,7 +80,7 @@ const BlogListPage = () => {
               />
             </div>
             <InfiniteScroll
-              className="flex-1 gap-y-[30px]"
+              className="w-full flex-1 gap-y-[30px]"
               hasMore={hasNextPage}
               loadMore={() => {
                 fetchNextPage();
@@ -91,7 +91,7 @@ const BlogListPage = () => {
                   블로그를 가져오는 중입니다..
                 </div>
               ) : (
-                <div className="flex flex-wrap gap-4">
+                <div className="flex w-full flex-wrap gap-4">
                   {!data || data.pages[0].blogInfos.length < 1 ? (
                     <div className="w-full py-6 text-center text-neutral-40">
                       등록된 글이 없습니다.
