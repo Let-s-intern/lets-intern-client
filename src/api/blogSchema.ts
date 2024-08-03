@@ -27,6 +27,7 @@ export interface PatchBlogReqBody {
 }
 
 export type TagDetail = z.infer<typeof tagDetailSchema>[0];
+export type PostTag = z.infer<typeof postTagSchema>;
 export type BlogThumbnail = z.infer<typeof blogThumbnailSchema>;
 export type BlogRating = z.infer<typeof blogRatingSchema>['ratingInfos'][0];
 
@@ -74,6 +75,11 @@ export const tagSchema = z.object({
 export type TagType = z.infer<typeof tagSchema>;
 
 export const tagDetailSchema = z.array(tagSchema);
+
+export const postTagSchema = z.object({
+  id: z.number(),
+  title: z.string().nullable().optional(),
+});
 
 export const blogSchema = z
   .object({

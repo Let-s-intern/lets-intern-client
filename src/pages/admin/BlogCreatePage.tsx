@@ -16,7 +16,12 @@ import {
   usePostBlogMutation,
   usePostBlogTagMutation,
 } from '../../api/blog';
-import { PostBlogReqBody } from '../../api/blogSchema';
+import {
+  PostBlogReqBody,
+  PostTag,
+  postTagSchema,
+  TagDetail,
+} from '../../api/blogSchema';
 import { uploadFile } from '../../api/file';
 import DateTimePicker from '../../components/admin/blog/DateTimePicker';
 import TagSelector from '../../components/admin/blog/TagSelector';
@@ -46,6 +51,13 @@ const BlogCreatePage = () => {
   const [editingValue, setEditingValue] =
     useState<PostBlogReqBody>(initialBlog);
   const [newTag, setNewTag] = useState('');
+  const [snackbar, setSnackbar] = useState<{
+    open: boolean;
+    message: string;
+  }>({
+    open: false,
+    message: '',
+  });
 
   const { data: tags = [] } = useBlogTagQuery();
   const createBlogTagMutation = usePostBlogTagMutation();
@@ -66,22 +78,12 @@ const BlogCreatePage = () => {
     navgiate('/admin/blog/list');
   };
 
-  const [snackbar, setSnackbar] = useState<{
-    open: boolean;
-    message: string;
-  }>({
-    open: false,
-    message: '',
-  });
-
   const onChangeTag = (event: ChangeEvent<HTMLInputElement>) => {
     setNewTag(event.target.value);
   };
 
   const onKeyDown = async (event: React.KeyboardEvent<HTMLInputElement>) => {
-    if (event.key !== 'Enter' || newTag === '') {
-      return;
-    }
+    if (event.key !== 'Enter' || newTag === '') return;
 
     const isExist = tags?.some((tag) => tag.title === newTag);
     if (isExist) {
@@ -90,8 +92,17 @@ const BlogCreatePage = () => {
     }
 
     const res = await createBlogTagMutation.mutateAsync(newTag);
-    console.log('res', res);
+    const createdTag = postTagSchema.parse(res.data.data);
+    selectTag(createdTag);
+    setNewTag('');
     setSnackbar({ open: true, message: `태그가 생성되었습니다: ${newTag}` });
+  };
+
+  const selectTag = (tag: TagDetail | PostTag) => {
+    setEditingValue((prev) => ({
+      ...prev,
+      tagList: [...new Set([...editingValue.tagList, tag.id])],
+    }));
   };
 
   const onChangeEditor = (jsonString: string) => {
@@ -241,12 +252,7 @@ const BlogCreatePage = () => {
                   tagList: prev.tagList.filter((tag) => tag !== id),
                 }));
               }}
-              selectTag={(tag) => {
-                setEditingValue((prev) => ({
-                  ...prev,
-                  tagList: [...new Set([...editingValue.tagList, tag.id])],
-                }));
-              }}
+              selectTag={selectTag}
               onChange={onChangeTag}
               onKeyDown={onKeyDown}
             />

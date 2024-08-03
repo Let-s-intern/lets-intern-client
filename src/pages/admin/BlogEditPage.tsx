@@ -17,7 +17,7 @@ import {
   usePatchBlogMutation,
   usePostBlogTagMutation,
 } from '../../api/blog';
-import { TagDetail } from '../../api/blogSchema';
+import { PostTag, postTagSchema, TagDetail } from '../../api/blogSchema';
 import { uploadFile } from '../../api/file';
 import DateTimePicker from '../../components/admin/blog/DateTimePicker';
 import TagSelector from '../../components/admin/blog/TagSelector';
@@ -93,9 +93,21 @@ const BlogEditPage = () => {
       return;
     }
 
-    await blogTagMutation.mutateAsync(newTag);
-    setSnackbar({ open: true, message: `태그가 생성되었습니다: ${newTag}` });
+    const res = await blogTagMutation.mutateAsync(newTag);
+    const createdTag = postTagSchema.parse(res.data.data);
+    selectTag(createdTag);
     setNewTag('');
+    setSnackbar({ open: true, message: `태그가 생성되었습니다: ${newTag}` });
+  };
+
+  const selectTag = (tag: TagDetail | PostTag) => {
+    const isExist = editingValue.tagList.some((item) => item.id === tag.id);
+    if (isExist) return;
+
+    setEditingValue((prev) => ({
+      ...prev,
+      tagList: [...editingValue.tagList, tag],
+    }));
   };
 
   const onChangeEditor = (jsonString: string) => {
@@ -264,18 +276,7 @@ const BlogEditPage = () => {
                     tagList: prev.tagList.filter((tag) => tag.id !== id),
                   }));
                 }}
-                selectTag={(tag) => {
-                  const isExist = editingValue.tagList.some(
-                    (item) => item.id === tag.id,
-                  );
-                  if (isExist) {
-                    return;
-                  }
-                  setEditingValue((prev) => ({
-                    ...prev,
-                    tagList: [...editingValue.tagList, tag],
-                  }));
-                }}
+                selectTag={selectTag}
                 onChange={onChangeTag}
                 onKeyDown={onKeyDown}
               />
