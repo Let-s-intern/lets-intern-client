@@ -22,6 +22,14 @@ import './styles/mypage.scss';
 
 dayjs.locale('ko');
 
+import { Root } from 'react-dom/client';
+declare global {
+  interface Window {
+    __root: Root;
+    __lastRenderMode: 'blog' | 'catch_all';
+  }
+}
+
 const App = () => {
   const [queryClient] = useState(
     () =>

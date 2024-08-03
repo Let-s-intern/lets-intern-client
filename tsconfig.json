@@ -17,6 +17,5 @@
     "jsxImportSource": "react",
     "noFallthroughCasesInSwitch": true
   },
-  "exclude": ["build", "dist"],
-  "include": ["src", "renderer", "custom.d.ts"]
+  "exclude": ["build", "dist"]
 }
