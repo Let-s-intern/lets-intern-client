@@ -11,6 +11,8 @@ import {
 import { SerializedCodeHighlightNode } from '../../admin/lexical/nodes/CodeHighlightNode';
 import { SerializedEmojiNode } from '../../admin/lexical/nodes/EmojiNode';
 import { SerializedImageNode } from '../../admin/lexical/nodes/ImageNode';
+import { SerializedLayoutContainerNode } from '../../admin/lexical/nodes/LayoutContainerNode';
+import { SerializedLayoutItemNode } from '../../admin/lexical/nodes/LayoutItemNode';
 
 const LexicalContent = ({ node }: { node: SerializedLexicalNode }) => {
   switch (node.type) {
@@ -154,6 +156,32 @@ const LexicalContent = ({ node }: { node: SerializedLexicalNode }) => {
     }
     case 'linebreak': {
       return <br />;
+    }
+    case 'horizontalrule': {
+      return <hr className="my-4" />;
+    }
+    case 'layout-container': {
+      const _node = node as SerializedLayoutContainerNode;
+      return (
+        <div
+          className="grid grid-cols-1 gap-4"
+          style={{ gridTemplateColumns: _node.templateColumns }}
+        >
+          {_node.children.map((child, childIndex) => (
+            <LexicalContent key={childIndex} node={child} />
+          ))}
+        </div>
+      );
+    }
+    case 'layout-item': {
+      const _node = node as SerializedLayoutItemNode;
+      return (
+        <div className="w-full border border-dashed p-3">
+          {_node.children.map((child, childIndex) => (
+            <LexicalContent key={childIndex} node={child} />
+          ))}
+        </div>
+      );
     }
     case 'text': {
       const _node = node as SerializedTextNode;
