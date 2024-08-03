@@ -9,6 +9,7 @@ import { IPageable } from '../types/interface';
 import axios from '../utils/axios';
 import {
   blogListSchema,
+  blogRatingListSchema,
   blogSchema,
   blogTagSchema,
   PatchBlogReqBody,
@@ -171,6 +172,17 @@ export const usePostBlogTagMutation = (onErrorCallback?: () => void) => {
     onError: (error) => {
       console.error(error);
       onErrorCallback && onErrorCallback();
+    },
+  });
+};
+
+/* 블로그 후기 */
+export const useBlogRatingListQuery = (pageable: IPageable) => {
+  return useQuery({
+    queryKey: [blogRatingQueryKey, pageable],
+    queryFn: async () => {
+      const res = await axios.get('/blog-rating', { params: pageable });
+      return blogRatingListSchema.parse(res.data.data);
     },
   });
 };
