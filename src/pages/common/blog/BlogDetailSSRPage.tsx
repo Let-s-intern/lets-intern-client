@@ -280,14 +280,22 @@ const BlogDetailSSRPage = () => {
                   )
                 }
               >
-                <img src="/icons/link-01.svg" alt="link" className="h-4 w-4" />
+                <img
+                  src="/icons/link-01.svg"
+                  alt="link"
+                  className="h-6 w-6 shrink-0"
+                />
               </button>
               <button
                 type="button"
                 className="flex h-[60px] w-[60px] cursor-pointer items-center justify-center rounded-full bg-primary-10"
                 onClick={handleShareKakaoClick}
               >
-                <img src="/icons/kakao_path.svg" alt="kakao" />
+                <img
+                  src="/icons/kakao_path.svg"
+                  alt="kakao"
+                  className="h-6 w-6 shrink-0"
+                />
               </button>
             </div>
           </div>
