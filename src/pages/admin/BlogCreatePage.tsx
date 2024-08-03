@@ -63,6 +63,10 @@ const BlogCreatePage = () => {
   const createBlogTagMutation = usePostBlogTagMutation();
   const createBlogMutation = usePostBlogMutation();
 
+  const selectedTagList = tags.filter((tag) =>
+    editingValue.tagList.includes(tag.id),
+  );
+
   const postBlog = async (event: MouseEvent<HTMLButtonElement>) => {
     const { name } = event.target as HTMLButtonElement;
     await createBlogMutation.mutateAsync({
@@ -91,7 +95,7 @@ const BlogCreatePage = () => {
   };
 
   const onKeyDown = async (event: React.KeyboardEvent<HTMLInputElement>) => {
-    if (event.key !== 'Enter' || newTag === '') return;
+    if (event.key !== 'Enter' || newTag.trim() === '') return;
 
     const isExist = tags?.some((tag) => tag.title === newTag);
     if (isExist) {
@@ -124,10 +128,6 @@ const BlogCreatePage = () => {
       // empty
     }
   }, [editingValue.content]);
-
-  const selectedTagList = tags.filter((tag) =>
-    editingValue.tagList.includes(tag.id),
-  );
 
   return (
     <div className="mx-3 mb-40 mt-3">
