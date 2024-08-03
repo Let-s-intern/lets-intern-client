@@ -1,20 +1,35 @@
 import dayjs from 'dayjs';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { Helmet } from 'react-helmet';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useBlogListQuery, usePostBlogRatingMutation } from '../../../api/blog';
+import {
+  useBlogListQuery,
+  useBlogQuery,
+  usePostBlogRatingMutation,
+} from '../../../api/blog';
 import BlogHashtag from '../../../components/common/blog/BlogHashtag';
 import LexicalContent from '../../../components/common/blog/LexicalContent';
 import RecommendBlogCard from '../../../components/common/blog/RecommendBlogCard';
 import { useBlog } from '../../../context/Post';
 import { blogCategory } from '../../../utils/convert';
+import {
+  getBaseUrlFromServer,
+  getBlogPathname,
+  getBlogTitle,
+} from '../../../utils/url';
 
 const BlogDetailSSRPage = () => {
   const navigate = useNavigate();
-  const { id } = useParams<{ id: string }>();
+  const { id, title: titleFromUrl } = useParams<{
+    id: string;
+    title?: string;
+  }>();
+  const { data } = useBlogQuery(id || '');
   const [starRating, setStarRating] = useState<number | null>(null);
   const [formValue, setFormValue] = useState<string>('');
   const [isPostedRating, setIsPostedRating] = useState<boolean>(false);
-  const blog = useBlog();
+  const blogFromServer = useBlog();
+  const blog = data || blogFromServer;
 
   const { data: recommendData, isLoading: recommendIsLoading } =
     useBlogListQuery({
@@ -27,6 +42,12 @@ const BlogDetailSSRPage = () => {
       setIsPostedRating(true);
     },
   });
+
+  useEffect(() => {
+    if (!titleFromUrl) {
+      window.history.replaceState({}, '', getBlogPathname(blog.blogDetailInfo));
+    }
+  }, [blog.blogDetailInfo, titleFromUrl]);
 
   const handlePostRating = () => {
     if (!id) return;
@@ -72,12 +93,33 @@ const BlogDetailSSRPage = () => {
       await navigator.clipboard.writeText(text);
       alert('클립보드에 복사되었습니다.');
     } catch (err) {
+      // eslint-disable-next-line no-console
       console.log(err);
     }
   };
 
+  const title = getBlogTitle(blog.blogDetailInfo);
+  const url = `${typeof window !== 'undefined' ? window.location.origin : getBaseUrlFromServer()}${getBlogPathname(blog.blogDetailInfo)}`;
+  const description = blog.blogDetailInfo.description;
+
   return (
     <div className="mx-auto flex w-full flex-1 flex-col items-center">
+      <Helmet>
+        <title>{title}</title>
+        <link rel="canonical" href={url} />
+        {description ? <meta name="description" content={description} /> : null}
+        <meta property="og:title" content={title} />
+        <meta property="og:url" content={url} />
+
+        {description ? (
+          <meta property="og:description" content={description} />
+        ) : null}
+        <meta name="twitter:title" content={title} />
+        <meta name="twitter:url" content={url} />
+        {description ? (
+          <meta name="twitter:description" content={description} />
+        ) : null}
+      </Helmet>
       <div className="flex w-full max-w-[1200px] flex-col items-center px-5 md:px-10 md:pt-10">
         <div className="flex w-full flex-col items-center gap-y-8 pt-8 md:px-[100px] md:pt-8">
           <div className="flex w-full flex-col gap-y-3 py-3">

@@ -1,6 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import { TransformedBlogInfoType } from '../../../api/blogSchema';
 import { blogCategory } from '../../../utils/convert';
+import { getBlogPathname } from '../../../utils/url';
 import BlogHashtag from './BlogHashtag';
 
 const BlogCard = (blogInfo: TransformedBlogInfoType) => {
@@ -9,7 +10,7 @@ const BlogCard = (blogInfo: TransformedBlogInfoType) => {
     <div
       className="flex w-full cursor-pointer flex-col gap-y-2 py-3"
       onClick={() => {
-        navigate(`/blog/${blogInfo.blogThumbnailInfo.id}`);
+        navigate(getBlogPathname(blogInfo.blogThumbnailInfo));
       }}
     >
       <span className="w-full text-xsmall16 font-bold text-primary">

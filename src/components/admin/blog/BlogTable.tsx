@@ -53,7 +53,11 @@ export default function BlogTable() {
       const reqBody: PatchBlogReqBody = {
         id: checkedBlog.id,
         isDisplayed: true,
+        displayDate: checkedBlog.displayDate
+          ? checkedBlog.displayDate
+          : new Date().toISOString(),
       };
+      console.log(reqBody);
       patchBlogMutation.mutate(reqBody);
     } else {
       const reqBody: PatchBlogReqBody = {

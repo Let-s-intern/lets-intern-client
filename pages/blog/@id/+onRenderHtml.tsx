@@ -16,6 +16,11 @@ import getServerHtml from '../../../renderer/getServerHtml';
 import { BlogProvider } from '../../../src/context/Post';
 import Provider from '../../../src/Provider';
 import { routes } from '../../../src/routes';
+import {
+  getBaseUrlFromServer,
+  getBlogPathname,
+  getBlogTitle,
+} from '../../../src/utils/url';
 import { Data } from './+data';
 
 const onRenderHtml: OnRenderHtmlAsync = async (pageContext) => {
@@ -45,6 +50,9 @@ const onRenderHtml: OnRenderHtmlAsync = async (pageContext) => {
 
   return getServerHtml({
     pageHtml,
-    title: data.blogDetailInfo.title || '',
+    title: getBlogTitle(data.blogDetailInfo),
+    description: data.blogDetailInfo.description || undefined,
+    image: data.blogDetailInfo.thumbnail || undefined,
+    url: `${getBaseUrlFromServer()}${getBlogPathname(data.blogDetailInfo)}`,
   });
 };
