@@ -45,7 +45,8 @@ const BlogDetailPage = () => {
         objectType: 'feed',
         content: {
           title: data?.blogDetailInfo.title,
-          description: data?.blogDetailInfo.content?.substring(0, 30) + '...',
+          description:
+            data?.blogDetailInfo.description?.substring(0, 30) + '...',
           imageUrl: data?.blogDetailInfo.thumbnail,
           link: {
             mobileWebUrl: `${window.location.origin}${location.pathname}`,
