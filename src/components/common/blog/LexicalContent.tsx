@@ -9,6 +9,9 @@ import {
   SerializedTextNode,
 } from 'lexical';
 import { SerializedCodeHighlightNode } from '../../admin/lexical/nodes/CodeHighlightNode';
+import { SerializedCollapsibleContainerNode } from '../../admin/lexical/nodes/CollapsibleContainerNode';
+import { SerializedCollapsibleContentNode } from '../../admin/lexical/nodes/CollapsibleContentNode';
+import { SerializedCollapsibleTitleNode } from '../../admin/lexical/nodes/CollapsibleTitleNode';
 import { SerializedEmojiNode } from '../../admin/lexical/nodes/EmojiNode';
 import { SerializedImageNode } from '../../admin/lexical/nodes/ImageNode';
 import { SerializedLayoutContainerNode } from '../../admin/lexical/nodes/LayoutContainerNode';
@@ -177,6 +180,42 @@ const LexicalContent = ({ node }: { node: SerializedLexicalNode }) => {
       const _node = node as SerializedLayoutItemNode;
       return (
         <div className="w-full border border-dashed p-3">
+          {_node.children.map((child, childIndex) => (
+            <LexicalContent key={childIndex} node={child} />
+          ))}
+        </div>
+      );
+    }
+    case 'collapsible-container': {
+      const _node = node as SerializedCollapsibleContainerNode;
+      return (
+        <details
+          className="Collapsible__container"
+          open={_node.open}
+          onToggle={() => {
+            _node.open = !_node.open;
+          }}
+        >
+          {_node.children.map((child, childIndex) => (
+            <LexicalContent key={childIndex} node={child} />
+          ))}
+        </details>
+      );
+    }
+    case 'collapsible-title': {
+      const _node = node as SerializedCollapsibleTitleNode;
+      return (
+        <summary className="Collapsible__title py-2">
+          {_node.children.map((child, childIndex) => (
+            <LexicalContent key={childIndex} node={child} />
+          ))}
+        </summary>
+      );
+    }
+    case 'collapsible-content': {
+      const _node = node as SerializedCollapsibleContentNode;
+      return (
+        <div className="Collapsible__content">
           {_node.children.map((child, childIndex) => (
             <LexicalContent key={childIndex} node={child} />
           ))}
