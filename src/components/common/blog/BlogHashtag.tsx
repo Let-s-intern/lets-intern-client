@@ -3,7 +3,7 @@ const BlogHashtag = ({
   onClick,
 }: {
   text: string;
-  onClick: () => void;
+  onClick: (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
 }) => {
   return (
     <div
