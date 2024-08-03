@@ -19,6 +19,7 @@ import {
 } from '../../api/blog';
 import { PostTag, postTagSchema, TagDetail } from '../../api/blogSchema';
 import { uploadFile } from '../../api/file';
+import DateTimePicker from '../../components/admin/blog/DateTimePicker';
 import TagSelector from '../../components/admin/blog/TagSelector';
 import TextFieldLimit from '../../components/admin/blog/TextFieldLimit';
 import EditorApp from '../../components/admin/lexical/EditorApp';
@@ -59,7 +60,7 @@ const BlogEditPage = () => {
 
   const { data: tags = [] } = useBlogTagQuery();
   const { data: blogData, isLoading } = useBlogQuery(id!);
-  const blogTagMutation = usePostBlogTagMutation();
+  const createBlogTagMutation = usePostBlogTagMutation();
   const patchBlogMutation = usePatchBlogMutation();
 
   const [editingValue, setEditingValue] = useState<EditBlog>(initialBlog);
@@ -84,7 +85,7 @@ const BlogEditPage = () => {
   };
 
   const onKeyDown = async (event: React.KeyboardEvent<HTMLInputElement>) => {
-    if (event.key !== 'Enter' || newTag === '') {
+    if (event.key !== 'Enter' || newTag.trim() === '') {
       return;
     }
 
@@ -94,7 +95,7 @@ const BlogEditPage = () => {
       return;
     }
 
-    const res = await blogTagMutation.mutateAsync(newTag);
+    const res = await createBlogTagMutation.mutateAsync(newTag);
     const createdTag = postTagSchema.parse(res.data.data);
     selectTag(createdTag);
     setNewTag('');
@@ -285,23 +286,25 @@ const BlogEditPage = () => {
               />
             </div>
 
-            {/* <div className="border px-6 py-10">
-              <DateTimePicker
-                value={editingValue.displayDate}
-                onChange={(event) => {
-                  if (new Date(event.target.value) < new Date()) {
-                    setSnackbar({
-                      open: true,
-                      message: '미래 날짜를 선택해주세요.',
-                    });
-                    setEditingValue((prev) => ({ ...prev, displayDate: '' }));
-                    return;
-                  }
-                  setSnackbar({ open: false, message: '' });
-                  onChange(event);
-                }}
-              />
-            </div> */}
+            {!blogData.blogDetailInfo.displayDate && (
+              <div className="border px-6 py-10">
+                <DateTimePicker
+                  value={editingValue.displayDate}
+                  onChange={(event) => {
+                    if (new Date(event.target.value) < new Date()) {
+                      setSnackbar({
+                        open: true,
+                        message: '미래 날짜를 선택해주세요.',
+                      });
+                      setEditingValue((prev) => ({ ...prev, displayDate: '' }));
+                      return;
+                    }
+                    setSnackbar({ open: false, message: '' });
+                    onChange(event);
+                  }}
+                />
+              </div>
+            )}
 
             <h2 className="mt-10">콘텐츠 편집</h2>
             <EditorApp
