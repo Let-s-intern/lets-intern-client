@@ -272,3 +272,9 @@ body.non-scroll {
 .Collapsible__title > p {
   margin: 0;
 }
+
+.image-caption-container > div > div > p {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}

@@ -1,9 +1,9 @@
 import dayjs from 'dayjs';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Helmet } from 'react-helmet';
 import { useNavigate, useParams } from 'react-router-dom';
 import {
-  useBlogListQuery,
+  useBlogListTypeQuery,
   useBlogQuery,
   usePostBlogRatingMutation,
 } from '../../../api/blog';
@@ -27,14 +27,16 @@ const BlogDetailSSRPage = () => {
   const { data } = useBlogQuery(id || '');
   const [starRating, setStarRating] = useState<number | null>(null);
   const [formValue, setFormValue] = useState<string>('');
+  const [showCTA, setShowCTA] = useState<boolean>(false);
+  const contentRef = useRef<HTMLDivElement>(null);
   const [isPostedRating, setIsPostedRating] = useState<boolean>(false);
   const blogFromServer = useBlog();
   const blog = data || blogFromServer;
 
   const { data: recommendData, isLoading: recommendIsLoading } =
-    useBlogListQuery({
+    useBlogListTypeQuery({
       type: blog?.blogDetailInfo.category,
-      pageable: { page: 0, size: 3 },
+      pageable: { page: 0, size: 4 },
     });
 
   const { mutate: postRating } = usePostBlogRatingMutation({
@@ -48,6 +50,20 @@ const BlogDetailSSRPage = () => {
       window.history.replaceState({}, '', getBlogPathname(blog.blogDetailInfo));
     }
   }, [blog.blogDetailInfo, titleFromUrl]);
+
+  useEffect(() => {
+    const showCTA = () => {
+      if (window.scrollY > window.innerHeight) {
+        setShowCTA(true);
+      } else {
+        setShowCTA(false);
+      }
+    };
+    window.addEventListener('scroll', showCTA);
+    return () => {
+      window.removeEventListener('scroll', showCTA);
+    };
+  }, []);
 
   useEffect(() => {
     if (!window.Kakao.isInitialized()) {
@@ -152,7 +168,7 @@ const BlogDetailSSRPage = () => {
               />
             </div>
           </div>
-          <div className="w-full break-all text-xsmall16">
+          <div className="w-full break-all text-xsmall16" ref={contentRef}>
             <LexicalContent
               node={JSON.parse(blog.blogDetailInfo?.content || '{}')?.root}
             />
@@ -215,15 +231,20 @@ const BlogDetailSSRPage = () => {
                     더 필요한 콘텐츠가 있다면 알려주세요!
                   </h3>
                   <input
-                    className={`w-full rounded-md border-none text-xsmall14 ${formValue.length === 0 ? 'bg-neutral-95' : 'bg-[#5177FF]/10'} p-3 outline-none placeholder:text-black/35`}
+                    className={`w-full rounded-md border-none text-xsmall14 ${formValue.length === 0 ? 'bg-neutral-95' : 'bg-[#5177FF]/10'} p-3 outline-none placeholder:text-black/35 ${isPostedRating ? 'cursor-not-allowed text-neutral-45' : ''}`}
                     placeholder="예시. 포트폴리오 꿀팁, 영문레쥬메 작성방법"
                     value={formValue}
                     onChange={(e) => setFormValue(e.target.value)}
+                    readOnly={isPostedRating}
                   />
                 </div>
                 <button
                   className={`flex w-full items-center justify-center rounded-sm border-2 border-primary px-4 py-1.5 text-primary-dark ${formValue.length === 0 || isPostedRating ? 'cursor-not-allowed opacity-40' : ''}`}
-                  onClick={handlePostRating}
+                  onClick={
+                    formValue.length === 0 || isPostedRating
+                      ? () => {}
+                      : handlePostRating
+                  }
                 >
                   {isPostedRating ? '제출완료' : '제출하기'}
                 </button>
@@ -259,14 +280,22 @@ const BlogDetailSSRPage = () => {
                   )
                 }
               >
-                <img src="/icons/link-01.svg" alt="link" className="h-4 w-4" />
+                <img
+                  src="/icons/link-01.svg"
+                  alt="link"
+                  className="h-6 w-6 shrink-0"
+                />
               </button>
               <button
                 type="button"
                 className="flex h-[60px] w-[60px] cursor-pointer items-center justify-center rounded-full bg-primary-10"
                 onClick={handleShareKakaoClick}
               >
-                <img src="/icons/kakao_path.svg" alt="kakao" />
+                <img
+                  src="/icons/kakao_path.svg"
+                  alt="kakao"
+                  className="h-6 w-6 shrink-0"
+                />
               </button>
             </div>
           </div>
@@ -281,7 +310,7 @@ const BlogDetailSSRPage = () => {
       <div className="mt-8 flex w-full flex-col items-center bg-neutral-100 py-10 md:py-[60px] md:pb-10">
         <div className="flex w-full max-w-[1200px] flex-col px-5 md:px-10">
           <div className="flex w-full flex-col items-center md:px-[100px]">
-            <div className="flex w-full flex-col gap-y-5 px-5">
+            <div className="flex w-full flex-col gap-y-5">
               <h3 className="text-xl font-semibold">함께 읽어보면 좋아요</h3>
               <div className="flex w-full flex-col gap-y-5">
                 {!recommendData ? (
@@ -295,12 +324,17 @@ const BlogDetailSSRPage = () => {
                     </div>
                   )
                 ) : (
-                  recommendData.blogInfos.map((blog) => (
-                    <RecommendBlogCard
-                      key={blog.blogThumbnailInfo.id}
-                      {...blog}
-                    />
-                  ))
+                  recommendData.blogInfos
+                    .filter(
+                      (blog) =>
+                        blog.blogThumbnailInfo.id !== data?.blogDetailInfo.id,
+                    )
+                    .map((blog) => (
+                      <RecommendBlogCard
+                        key={blog.blogThumbnailInfo.id}
+                        {...blog}
+                      />
+                    ))
                 )}
               </div>
             </div>
@@ -308,7 +342,9 @@ const BlogDetailSSRPage = () => {
         </div>
       </div>
       {blog.blogDetailInfo.ctaText && blog.blogDetailInfo.ctaLink && (
-        <div className="fixed bottom-0 left-0 flex w-full items-center justify-center bg-neutral-100 py-3 shadow-button">
+        <div
+          className={`fixed bottom-0 left-0 flex w-full items-center justify-center bg-neutral-100 pb-6 pt-3 shadow-button transition-all duration-150 ${showCTA ? 'visible opacity-100' : 'invisible opacity-0'}`}
+        >
           <div className="flex w-full max-w-[1200px] flex-col items-center px-5 md:px-10">
             <div className="flex w-full flex-col items-center md:px-[100px]">
               <button
