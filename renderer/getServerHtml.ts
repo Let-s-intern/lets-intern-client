@@ -32,7 +32,9 @@ export default function getServerHtml({
        })(window, document, 'script', 'dataLayer', 'GTM-NX4BG8CV');
      </script>
      <!-- End Google Tag Manager -->
- 
+    <!-- Kakao Javascript -->
+    <script src="https://t1.kakaocdn.net/kakao_js_sdk/2.7.2/kakao.min.js" integrity=${import.meta.env.VITE_KAKAO_SDK_INTERGRITY} crossorigin="anonymous"></script>
+    <!-- Kakao Javascript End -->
      <!-- SEO Start -->
      <meta name="robots" content="index,follow" data-react-helmet="true" />
      <meta
