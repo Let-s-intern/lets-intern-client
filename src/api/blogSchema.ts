@@ -75,6 +75,11 @@ export type TagType = z.infer<typeof tagSchema>;
 
 export const tagDetailSchema = z.array(tagSchema);
 
+export const blogRawSchema = z.object({
+  blogDetailInfo: blogDetailSchema,
+  tagDetailInfos: tagDetailSchema,
+});
+
 export const blogSchema = z
   .object({
     blogDetailInfo: blogDetailSchema,
