@@ -1,5 +1,5 @@
 import dayjs from 'dayjs';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Helmet } from 'react-helmet';
 import { useNavigate, useParams } from 'react-router-dom';
 import {
@@ -27,6 +27,8 @@ const BlogDetailSSRPage = () => {
   const { data } = useBlogQuery(id || '');
   const [starRating, setStarRating] = useState<number | null>(null);
   const [formValue, setFormValue] = useState<string>('');
+  const [showCTA, setShowCTA] = useState<boolean>(false);
+  const contentRef = useRef<HTMLDivElement>(null);
   const [isPostedRating, setIsPostedRating] = useState<boolean>(false);
   const blogFromServer = useBlog();
   const blog = data || blogFromServer;
@@ -48,6 +50,20 @@ const BlogDetailSSRPage = () => {
       window.history.replaceState({}, '', getBlogPathname(blog.blogDetailInfo));
     }
   }, [blog.blogDetailInfo, titleFromUrl]);
+
+  useEffect(() => {
+    const showCTA = () => {
+      if (window.scrollY > window.innerHeight) {
+        setShowCTA(true);
+      } else {
+        setShowCTA(false);
+      }
+    };
+    window.addEventListener('scroll', showCTA);
+    return () => {
+      window.removeEventListener('scroll', showCTA);
+    };
+  }, []);
 
   useEffect(() => {
     if (!window.Kakao.isInitialized()) {
@@ -152,7 +168,7 @@ const BlogDetailSSRPage = () => {
               />
             </div>
           </div>
-          <div className="w-full break-all text-xsmall16">
+          <div className="w-full break-all text-xsmall16" ref={contentRef}>
             <LexicalContent
               node={JSON.parse(blog.blogDetailInfo?.content || '{}')?.root}
             />
@@ -318,7 +334,9 @@ const BlogDetailSSRPage = () => {
         </div>
       </div>
       {blog.blogDetailInfo.ctaText && blog.blogDetailInfo.ctaLink && (
-        <div className="fixed bottom-0 left-0 flex w-full items-center justify-center bg-neutral-100 py-3 shadow-button">
+        <div
+          className={`fixed bottom-0 left-0 flex w-full items-center justify-center bg-neutral-100 pb-6 pt-3 shadow-button transition-all duration-150 ${showCTA ? 'visible opacity-100' : 'invisible opacity-0'}`}
+        >
           <div className="flex w-full max-w-[1200px] flex-col items-center px-5 md:px-10">
             <div className="flex w-full flex-col items-center md:px-[100px]">
               <button
