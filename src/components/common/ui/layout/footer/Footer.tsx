@@ -34,7 +34,7 @@ const Footer = () => {
             <div className="flex flex-col gap-3">
               <MenuLink to="/about">렛츠커리어 스토리</MenuLink>
               <MenuLink to="/program">프로그램</MenuLink>
-              <MenuLink to="/blog">블로그</MenuLink>
+              {/* <MenuLink to="/blog">블로그</MenuLink> */}
             </div>
 
             {/* 기타 */}

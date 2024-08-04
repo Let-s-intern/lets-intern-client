@@ -90,9 +90,9 @@ const NavBar = () => {
             <NavItem to="/program" active={activeLink === 'PROGRAM'}>
               프로그램
             </NavItem>
-            <NavItem to="/blog" active={activeLink === 'BLOG'}>
+            {/* <NavItem to="/blog" active={activeLink === 'BLOG'}>
               블로그
-            </NavItem>
+            </NavItem> */}
           </div>
           <div className="flex items-center gap-4">
             {isLoggedIn ? (
