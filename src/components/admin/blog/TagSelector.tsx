@@ -9,6 +9,7 @@ interface TagSelectorProps {
   selectedTagList: TagDetail[];
   tagList: TagDetail[];
   value: string;
+  deleteSelectedTag: (id: number) => void;
   deleteTag: (id: number) => void;
   selectTag: (tag: TagDetail) => void;
   onChange: ChangeEventHandler<HTMLInputElement | HTMLTextAreaElement>;
@@ -19,6 +20,7 @@ const TagSelector = ({
   selectedTagList,
   tagList,
   value,
+  deleteSelectedTag,
   deleteTag,
   selectTag,
   onChange,
@@ -31,7 +33,7 @@ const TagSelector = ({
           <TagDelete
             key={tag.title}
             title={tag.title}
-            onClick={() => deleteTag(tag.id)}
+            onClick={() => deleteSelectedTag(tag.id)}
           />
         ))}
       </div>
@@ -56,6 +58,7 @@ const TagSelector = ({
               id={tag.id}
               title={tag.title!}
               onClick={() => selectTag(tag)}
+              onDelete={() => deleteTag(tag.id)}
             />
           ))}
         </div>

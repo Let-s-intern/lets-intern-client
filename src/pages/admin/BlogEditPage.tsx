@@ -8,12 +8,14 @@ import {
   Snackbar,
   TextField,
 } from '@mui/material';
+import { isAxiosError } from 'axios';
 import { ChangeEvent, FormEvent, MouseEvent, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import {
   useBlogQuery,
   useBlogTagQuery,
+  useDeleteBlogTagMutation,
   usePatchBlogMutation,
   usePostBlogTagMutation,
 } from '../../api/blog';
@@ -58,11 +60,6 @@ const BlogEditPage = () => {
   const navgiate = useNavigate();
   const { id } = useParams();
 
-  const { data: tags = [] } = useBlogTagQuery();
-  const { data: blogData, isLoading } = useBlogQuery(id!);
-  const createBlogTagMutation = usePostBlogTagMutation();
-  const patchBlogMutation = usePatchBlogMutation();
-
   const [editingValue, setEditingValue] = useState<EditBlog>(initialBlog);
   const [newTag, setNewTag] = useState('');
   const [snackbar, setSnackbar] = useState<{
@@ -71,6 +68,21 @@ const BlogEditPage = () => {
   }>({
     open: false,
     message: '',
+  });
+
+  const { data: tags = [] } = useBlogTagQuery();
+  const { data: blogData, isLoading } = useBlogQuery(id!);
+  const createBlogTagMutation = usePostBlogTagMutation();
+  const patchBlogMutation = usePatchBlogMutation();
+  const deleteBlogTagMutation = useDeleteBlogTagMutation({
+    onError: (error) => {
+      if (isAxiosError(error) && error.response?.status === 400) {
+        setSnackbar({
+          open: true,
+          message: '블로그에 연결된 태그는 삭제할 수 없습니다.',
+        });
+      }
+    },
   });
 
   const onChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -266,11 +278,20 @@ const BlogEditPage = () => {
                 selectedTagList={editingValue.tagList}
                 tagList={tags}
                 value={newTag}
-                deleteTag={(id) => {
+                deleteSelectedTag={(id) => {
                   setEditingValue((prev) => ({
                     ...prev,
                     tagList: prev.tagList.filter((tag) => tag.id !== id),
                   }));
+                }}
+                deleteTag={async (tagId) => {
+                  const res = await deleteBlogTagMutation.mutateAsync(tagId);
+                  if (res?.status === 200) {
+                    setSnackbar({
+                      open: true,
+                      message: '태그를 삭제했습니다.',
+                    });
+                  }
                 }}
                 selectTag={selectTag}
                 onChange={onChangeTag}

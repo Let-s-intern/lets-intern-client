@@ -176,6 +176,30 @@ export const usePostBlogTagMutation = (onErrorCallback?: () => void) => {
   });
 };
 
+export const useDeleteBlogTagMutation = ({
+  onError,
+}: {
+  onError?: (error: Error) => void;
+}) => {
+  const client = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (blogId: number) => {
+      try {
+        return await axios.delete(`/blog-tag/${blogId}`);
+      } catch (error) {
+        onError && onError(error as Error);
+      }
+    },
+    onSuccess: async () => {
+      await client.invalidateQueries({ queryKey: [blogTagQueryKey] });
+    },
+    onError: (error) => {
+      console.error(error);
+    },
+  });
+};
+
 /* 블로그 후기 */
 export const useBlogRatingListQuery = (pageable: IPageable) => {
   return useQuery({
