@@ -1,15 +1,22 @@
-import { useNavigate } from 'react-router-dom';
-import { TransformedBlogInfoType } from '../../../api/blogSchema';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { TagType, TransformedBlogInfoType } from '../../../api/blogSchema';
 import { blogCategory } from '../../../utils/convert';
+import { getBlogPathname } from '../../../utils/url';
 import BlogHashtag from './BlogHashtag';
 
-const BlogCard = (blogInfo: TransformedBlogInfoType) => {
+interface BlogCardProps {
+  blogInfo: TransformedBlogInfoType;
+  setSelectedTag: (tag: TagType | null) => void;
+}
+
+const BlogCard = ({ blogInfo, setSelectedTag }: BlogCardProps) => {
   const navigate = useNavigate();
+  const location = useLocation();
   return (
     <div
       className="flex w-full cursor-pointer flex-col gap-y-2 py-3"
       onClick={() => {
-        navigate(`/blog/${blogInfo.blogThumbnailInfo.id}`);
+        navigate(getBlogPathname(blogInfo.blogThumbnailInfo));
       }}
     >
       <span className="w-full text-xsmall16 font-bold text-primary">
@@ -19,14 +26,24 @@ const BlogCard = (blogInfo: TransformedBlogInfoType) => {
         <div className="flex w-full gap-x-5">
           <div className="flex flex-1 flex-col gap-y-2">
             <h2 className="line-clamp-3 font-bold text-neutral-0">
-              {blogInfo.blogThumbnailInfo.title}
+              {blogInfo.blogThumbnailInfo.title}{' '}
+              {!blogInfo.blogThumbnailInfo.isDisplayed && (
+                <span className="text-xsmall14 text-system-error">
+                  (비공개)
+                </span>
+              )}
             </h2>
             <p className="line-clamp-6 text-xsmall16 text-neutral-20">
               {blogInfo.blogThumbnailInfo.description}
             </p>
+            <p className="w-full text-xsmall14 text-neutral-45">
+              {blogInfo.blogThumbnailInfo.displayDate?.format(
+                'YYYY년 MM월 DD일',
+              )}
+            </p>
           </div>
           <img
-            className="h-[60px] w-[100px] overflow-hidden rounded-md md:h-[90px] md:w-[130px]"
+            className="h-[68px] w-[100px] overflow-hidden rounded-md object-cover md:h-[90px] md:w-[130px]"
             src={blogInfo.blogThumbnailInfo.thumbnail || ''}
             alt="thumbnail"
           />
@@ -36,7 +53,12 @@ const BlogCard = (blogInfo: TransformedBlogInfoType) => {
             <BlogHashtag
               key={tag.id}
               text={tag.title || ''}
-              onClick={() => {
+              onClick={(e) => {
+                e.stopPropagation();
+                if (location.pathname === '/blog/hashtag') {
+                  setSelectedTag(tag || null);
+                  return;
+                }
                 navigate(`/blog/hashtag`, { state: tag });
               }}
             />

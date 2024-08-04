@@ -1,3 +1,4 @@
+/** @deprecated */
 import {
   QueryCache,
   QueryClient,
@@ -10,6 +11,7 @@ import { Helmet } from 'react-helmet';
 import { ZodError } from 'zod';
 import Router from './Router';
 
+import { useState } from 'react';
 import './index.css';
 import './styles/apply.scss';
 import './styles/blog.css';
@@ -20,24 +22,35 @@ import './styles/mypage.scss';
 
 dayjs.locale('ko');
 
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: { retry: 0 },
-  },
-
-  queryCache: new QueryCache({
-    onError: (error) => {
-      // eslint-disable-next-line no-console
-      console.error(error);
-      if (error instanceof ZodError) {
-        // eslint-disable-next-line no-console
-        console.log(error.issues);
-      }
-    },
-  }),
-});
+import { Root } from 'react-dom/client';
+declare global {
+  interface Window {
+    __root: Root;
+    __lastRenderMode: 'blog' | 'catch_all';
+  }
+}
 
 const App = () => {
+  const [queryClient] = useState(
+    () =>
+      new QueryClient({
+        defaultOptions: {
+          queries: { retry: 0 },
+        },
+
+        queryCache: new QueryCache({
+          onError: (error) => {
+            // eslint-disable-next-line no-console
+            console.error(error);
+            if (error instanceof ZodError) {
+              // eslint-disable-next-line no-console
+              console.log(error.issues);
+            }
+          },
+        }),
+      }),
+  );
+
   return (
     <QueryClientProvider client={queryClient}>
       <Helmet>

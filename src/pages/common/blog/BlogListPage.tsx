@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import InfiniteScroll from 'react-infinite-scroller';
 import { useInfiniteBlogListQuery } from '../../../api/blog';
 import BlogCard from '../../../components/common/blog/BlogCard';
@@ -32,7 +32,7 @@ const BlogListPage = () => {
       <div className="flex w-full items-center justify-center gap-y-1 bg-blog-banner-sm py-10 md:bg-blog-banner-md lg:bg-blog-banner-lg">
         <div className="flex w-full max-w-[1200px] flex-col gap-y-1 px-[25px] md:gap-y-2 md:px-[140px]">
           <h1 className="text-xl font-bold text-neutral-100">
-            렛츠커리어 블로그
+            {category !== null ? blogCategory[category] : '렛츠커리어 블로그'}
           </h1>
           <p className="text-xsmall14 text-white/85">
             렛츠커리어의 독자적인 커리어 교육 콘텐츠를 확인해보세요.
@@ -42,7 +42,7 @@ const BlogListPage = () => {
       <div className="mx-auto flex w-full max-w-[1200px] flex-col items-center px-5 md:px-20 lg:px-10">
         <div className="flex w-full flex-1 flex-col items-center md:px-[100px] md:pb-10">
           <div className="flex w-full flex-col items-center gap-y-8 pb-8 pt-5 md:py-8">
-            <div className="flex w-full flex-wrap gap-2 py-2">
+            <div className="blog_category flex w-full flex-wrap gap-2 py-2">
               <BlogCategoryTag
                 category="전체"
                 isClicked={!category}
@@ -80,7 +80,7 @@ const BlogListPage = () => {
               />
             </div>
             <InfiniteScroll
-              className="flex-1 gap-y-[30px]"
+              className="w-full flex-1 gap-y-[30px]"
               hasMore={hasNextPage}
               loadMore={() => {
                 fetchNextPage();
@@ -91,7 +91,7 @@ const BlogListPage = () => {
                   블로그를 가져오는 중입니다..
                 </div>
               ) : (
-                <div className="flex flex-wrap gap-4">
+                <div className="flex w-full flex-wrap gap-4">
                   {!data || data.pages[0].blogInfos.length < 1 ? (
                     <div className="w-full py-6 text-center text-neutral-40">
                       등록된 글이 없습니다.
@@ -99,10 +99,11 @@ const BlogListPage = () => {
                   ) : (
                     data.pages.map((page, pageIdx) =>
                       page.blogInfos.map((blogInfo, blogIdx) => (
-                        <>
+                        <React.Fragment key={blogInfo.blogThumbnailInfo.id}>
                           <BlogCard
                             key={blogInfo.blogThumbnailInfo.id}
-                            {...blogInfo}
+                            blogInfo={blogInfo}
+                            setSelectedTag={() => {}}
                           />
                           {!(
                             pageIdx === data.pages.length - 1 &&
@@ -110,7 +111,7 @@ const BlogListPage = () => {
                           ) && (
                             <hr className="h-0.5 w-full border-t border-neutral-80" />
                           )}
-                        </>
+                        </React.Fragment>
                       )),
                     )
                   )}

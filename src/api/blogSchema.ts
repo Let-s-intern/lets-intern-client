@@ -9,7 +9,7 @@ export interface PostBlogReqBody {
   content: string;
   ctaLink: string;
   ctaText: string;
-  isDisplayed?: boolean;
+  displayDate: string;
   tagList: number[];
 }
 
@@ -22,11 +22,13 @@ export interface PatchBlogReqBody {
   content?: string;
   ctaLink?: string;
   ctaText?: string;
+  displayDate?: string;
   isDisplayed?: boolean;
   tagList?: number[];
 }
 
 export type TagDetail = z.infer<typeof tagDetailSchema>[0];
+export type PostTag = z.infer<typeof postTagSchema>;
 export type BlogThumbnail = z.infer<typeof blogThumbnailSchema>;
 export type BlogRating = z.infer<typeof blogRatingSchema>['ratingInfos'][0];
 
@@ -75,6 +77,16 @@ export type TagType = z.infer<typeof tagSchema>;
 
 export const tagDetailSchema = z.array(tagSchema);
 
+export const blogRawSchema = z.object({
+  blogDetailInfo: blogDetailSchema,
+  tagDetailInfos: tagDetailSchema,
+});
+
+export const postTagSchema = z.object({
+  id: z.number(),
+  title: z.string().nullable().optional(),
+});
+
 export const blogSchema = z
   .object({
     blogDetailInfo: blogDetailSchema,
@@ -84,9 +96,6 @@ export const blogSchema = z
     return {
       blogDetailInfo: {
         ...data.blogDetailInfo,
-        displayDate: data.blogDetailInfo.displayDate
-          ? dayjs(data.blogDetailInfo.displayDate)
-          : null,
         createDate: data.blogDetailInfo.createDate
           ? dayjs(data.blogDetailInfo.createDate)
           : null,
@@ -154,18 +163,18 @@ export const blogTagSchema = z.object({
   tagDetailInfos: tagDetailSchema,
 });
 
+export const ratingSchema = z.object({
+  id: z.number(),
+  title: z.string().nullable().optional(),
+  content: z.string().nullable().optional(),
+  score: z.number().nullable().optional(),
+  createDate: z.string().nullable().optional(),
+  lastModifiedDate: z.string().nullable().optional(),
+});
+
 export const blogRatingSchema = z
   .object({
-    ratingInfos: z.array(
-      z.object({
-        id: z.number(),
-        title: z.string().nullable().optional(),
-        content: z.string().nullable().optional(),
-        score: z.number().nullable().optional(),
-        createDate: z.string().nullable().optional(),
-        lastModifiedDate: z.string().nullable().optional(),
-      }),
-    ),
+    ratingInfos: z.array(ratingSchema),
   })
   .transform((data) => {
     return {
@@ -176,5 +185,22 @@ export const blogRatingSchema = z
           ? dayjs(ratingInfo.lastModifiedDate)
           : null,
       })),
+    };
+  });
+
+export const blogRatingListSchema = z
+  .object({
+    ratingInfos: z.array(
+      ratingSchema.extend({ category: z.string().nullable().optional() }),
+    ),
+    pageInfo: pageSchema,
+  })
+  .transform((data) => {
+    return {
+      ratingInfos: data.ratingInfos.map((ratingInfo) => ({
+        ...ratingInfo,
+        createDate: ratingInfo.createDate ? dayjs(ratingInfo.createDate) : null,
+      })),
+      pageInfo: data.pageInfo,
     };
   });

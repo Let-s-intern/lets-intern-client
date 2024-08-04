@@ -6,6 +6,8 @@
  *
  */
 
+import { blogCategory } from './convert';
+
 const SUPPORTED_URL_PROTOCOLS = new Set([
   'http:',
   'https:',
@@ -35,4 +37,28 @@ export function validateUrl(url: string): boolean {
   // TODO Fix UI for link insertion; it should never default to an invalid URL such as https://.
   // Maybe show a dialog where they user can type the URL before inserting it.
   return url === 'https://' || urlRegExp.test(url);
+}
+
+export function getBlogPathname({
+  id,
+  title,
+}: {
+  id?: string | number | null;
+  title?: string | null;
+}): string {
+  return `/blog/${id}/${title?.replace(/ /g, '-')}`;
+}
+
+export function getBlogTitle({
+  title,
+  category,
+}: {
+  title?: string | null;
+  category?: string | null;
+}) {
+  return `${title} | ${blogCategory[category || '']} - 렛츠커리어`;
+}
+
+export function getBaseUrlFromServer(): string {
+  return process.env.BASE_URL || 'http://localhost:3000';
 }

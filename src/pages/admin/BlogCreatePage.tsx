@@ -8,7 +8,7 @@ import {
   Snackbar,
   TextField,
 } from '@mui/material';
-import { ChangeEvent, FormEvent, useEffect, useState } from 'react';
+import { ChangeEvent, FormEvent, MouseEvent, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import {
@@ -16,8 +16,14 @@ import {
   usePostBlogMutation,
   usePostBlogTagMutation,
 } from '../../api/blog';
-import { PostBlogReqBody } from '../../api/blogSchema';
+import {
+  PostBlogReqBody,
+  PostTag,
+  postTagSchema,
+  TagDetail,
+} from '../../api/blogSchema';
 import { uploadFile } from '../../api/file';
+import DateTimePicker from '../../components/admin/blog/DateTimePicker';
 import TagSelector from '../../components/admin/blog/TagSelector';
 import TextFieldLimit from '../../components/admin/blog/TextFieldLimit';
 import EditorApp from '../../components/admin/lexical/EditorApp';
@@ -35,7 +41,7 @@ const initialBlog = {
   content: '',
   ctaLink: '',
   ctaText: '',
-  isDisplayed: false,
+  displayDate: '',
   tagList: [],
 };
 
@@ -45,33 +51,6 @@ const BlogCreatePage = () => {
   const [editingValue, setEditingValue] =
     useState<PostBlogReqBody>(initialBlog);
   const [newTag, setNewTag] = useState('');
-
-  const { data: tags = [] } = useBlogTagQuery();
-  const blogTagMutation = usePostBlogTagMutation();
-  const blogMutation = usePostBlogMutation();
-
-  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    const intent = (event.nativeEvent as SubmitEvent).submitter?.getAttribute(
-      'value',
-    );
-
-    if (!intent) {
-      return;
-    }
-
-    await blogMutation.mutateAsync({
-      ...editingValue,
-      isDisplayed: intent === 'publish',
-    });
-
-    setSnackbar({
-      open: true,
-      message: '블로그가 생성되었습니다.',
-    });
-    navgiate('/admin/blog/list');
-  };
-
   const [snackbar, setSnackbar] = useState<{
     open: boolean;
     message: string;
@@ -80,27 +59,63 @@ const BlogCreatePage = () => {
     message: '',
   });
 
-  const handleChangeTag = (event: ChangeEvent<HTMLInputElement>) => {
+  const { data: tags = [] } = useBlogTagQuery();
+  const createBlogTagMutation = usePostBlogTagMutation();
+  const createBlogMutation = usePostBlogMutation();
+
+  const selectedTagList = tags.filter((tag) =>
+    editingValue.tagList.includes(tag.id),
+  );
+
+  const postBlog = async (event: MouseEvent<HTMLButtonElement>) => {
+    const { name } = event.target as HTMLButtonElement;
+    await createBlogMutation.mutateAsync({
+      ...editingValue,
+      displayDate:
+        name === 'publish'
+          ? new Date().toISOString()
+          : editingValue.displayDate,
+    });
+    setSnackbar({
+      open: true,
+      message: '블로그가 생성되었습니다.',
+    });
+    navgiate('/admin/blog/list');
+  };
+
+  const onChange = (event: ChangeEvent<HTMLInputElement>) => {
+    setEditingValue({
+      ...editingValue,
+      [event.target.name]: event.target.value,
+    });
+  };
+
+  const onChangeTag = (event: ChangeEvent<HTMLInputElement>) => {
     setNewTag(event.target.value);
   };
 
-  const handleKeyDown = async (
-    event: React.KeyboardEvent<HTMLInputElement>,
-  ) => {
-    if (event.key !== 'Enter') {
-      return;
-    }
+  const onSubmitTag = async (event: FormEvent) => {
+    event.preventDefault();
+    if (newTag.trim() === '') return;
 
-    // 이미 존재하는 태그인지 체크
     const isExist = tags?.some((tag) => tag.title === newTag);
     if (isExist) {
       setSnackbar({ open: true, message: '이미 존재하는 태그입니다.' });
       return;
     }
 
-    // 태그 생성
-    await blogTagMutation.mutateAsync(newTag);
+    const res = await createBlogTagMutation.mutateAsync(newTag);
+    const createdTag = postTagSchema.parse(res.data.data);
+    selectTag(createdTag);
+    setNewTag('');
     setSnackbar({ open: true, message: `태그가 생성되었습니다: ${newTag}` });
+  };
+
+  const selectTag = (tag: TagDetail | PostTag) => {
+    setEditingValue((prev) => ({
+      ...prev,
+      tagList: [...new Set([...editingValue.tagList, tag.id])],
+    }));
   };
 
   const onChangeEditor = (jsonString: string) => {
@@ -108,12 +123,12 @@ const BlogCreatePage = () => {
   };
 
   useEffect(() => {
-    console.log('editingValue', editingValue);
-  }, [editingValue]);
-
-  const selectedTagList = tags.filter((tag) =>
-    editingValue.tagList.includes(tag.id),
-  );
+    try {
+      console.log('content', JSON.parse(editingValue.content));
+    } catch {
+      // empty
+    }
+  }, [editingValue.content]);
 
   return (
     <div className="mx-3 mb-40 mt-3">
@@ -121,7 +136,7 @@ const BlogCreatePage = () => {
         <h1 className="text-2xl font-semibold">블로그 등록</h1>
       </header>
       <main className="max-w-screen-xl">
-        <form className="mt-4 flex flex-col gap-4" onSubmit={handleSubmit}>
+        <div className="mt-4 flex flex-col gap-4">
           <div className="flex-no-wrap flex items-center gap-4">
             <FormControl size="small" required>
               <InputLabel id="category-label">카테고리</InputLabel>
@@ -150,6 +165,7 @@ const BlogCreatePage = () => {
               </FormHelperText>
             </FormControl>
           </div>
+
           <TextFieldLimit
             type="text"
             label="제목"
@@ -157,9 +173,7 @@ const BlogCreatePage = () => {
             name="title"
             required
             value={editingValue.title}
-            onChange={(e) => {
-              setEditingValue({ ...editingValue, title: e.target.value });
-            }}
+            onChange={onChange}
             autoComplete="off"
             fullWidth
             maxLength={maxTitleLength}
@@ -170,15 +184,14 @@ const BlogCreatePage = () => {
             placeholder="설명"
             name="description"
             value={editingValue.description}
-            onChange={(e) => {
-              setEditingValue({ ...editingValue, description: e.target.value });
-            }}
+            onChange={onChange}
             multiline
             minRows={3}
             autoComplete="off"
             fullWidth
             maxLength={maxDescriptionLength}
           />
+
           <div className="flex gap-4">
             <div className="w-56">
               <ImageUpload
@@ -205,12 +218,7 @@ const BlogCreatePage = () => {
                   size="small"
                   name="ctaLink"
                   value={editingValue.ctaLink}
-                  onChange={(e) => {
-                    setEditingValue({
-                      ...editingValue,
-                      ctaLink: e.target.value,
-                    });
-                  }}
+                  onChange={onChange}
                   fullWidth
                   autoComplete="off"
                 />
@@ -222,9 +230,7 @@ const BlogCreatePage = () => {
                 size="small"
                 name="ctaText"
                 value={editingValue.ctaText}
-                onChange={(e) => {
-                  setEditingValue({ ...editingValue, ctaText: e.target.value });
-                }}
+                onChange={onChange}
                 autoComplete="off"
                 fullWidth
                 maxLength={maxCtaTextLength}
@@ -233,7 +239,7 @@ const BlogCreatePage = () => {
           </div>
 
           <div className="border px-6 py-10">
-            <h2>태그 설정</h2>
+            <h2 className="mb-2">태그 설정</h2>
             <TagSelector
               selectedTagList={selectedTagList}
               tagList={tags}
@@ -244,51 +250,59 @@ const BlogCreatePage = () => {
                   tagList: prev.tagList.filter((tag) => tag !== id),
                 }));
               }}
-              selectTag={(tag) => {
-                setEditingValue((prev) => ({
-                  ...prev,
-                  tagList: [...new Set([...editingValue.tagList, tag.id])],
-                }));
-              }}
-              onChange={handleChangeTag}
-              onKeyDown={handleKeyDown}
+              selectTag={selectTag}
+              onChange={onChangeTag}
+              onSubmit={onSubmitTag}
             />
           </div>
 
-          <h2 className="mt-20">콘텐츠 편집</h2>
-          <EditorApp getJSONFromLexical={onChangeEditor} />
-
-          <div className="flex items-center justify-end gap-4">
-            <Button
-              variant="outlined"
-              type="button"
-              onClick={() => {
-                navgiate('/admin/blog/list');
-              }}
-            >
-              취소 (리스트로 돌아가기)
-            </Button>
-            <Button
-              variant="outlined"
-              color="primary"
-              type="submit"
-              name="intent"
-              value="save_temp"
-            >
-              임시 저장
-            </Button>
-            <Button
-              variant="contained"
-              color="primary"
-              type="submit"
-              name="intent"
-              value="publish"
-            >
-              발행
-            </Button>
+          <div className="border px-6 py-10">
+            <DateTimePicker
+              value={editingValue.displayDate}
+              onChange={onChange}
+            />
           </div>
-        </form>
+
+          <h2 className="mt-10">콘텐츠 편집</h2>
+          <EditorApp onChange={onChangeEditor} />
+
+          <div className="text-right">
+            <div className="mb-1 flex items-center justify-end gap-4">
+              <Button
+                variant="outlined"
+                type="button"
+                onClick={() => {
+                  navgiate('/admin/blog/list');
+                }}
+              >
+                취소 (리스트로 돌아가기)
+              </Button>
+              <Button
+                variant="outlined"
+                color="primary"
+                type="button"
+                name="save_temp"
+                onClick={postBlog}
+              >
+                임시 저장
+              </Button>
+              <Button
+                variant="contained"
+                color="primary"
+                type="button"
+                name="publish"
+                onClick={postBlog}
+              >
+                발행
+              </Button>
+            </div>
+            <span className="text-0.875 text-neutral-35">
+              *발행: 블로그가 바로 게시됩니다.
+            </span>
+          </div>
+        </div>
       </main>
+
       <Snackbar
         anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
         open={snackbar.open}

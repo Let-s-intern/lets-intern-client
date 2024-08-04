@@ -18,7 +18,6 @@ import {
   EditorState,
 } from 'lexical';
 import { useCallback, useEffect } from 'react';
-import ContextPlugin from '../blog/ContextPlugin';
 import { isDevPlayground } from './appSettings';
 import { FlashMessageContext } from './context/FlashMessageContext';
 import { SettingsContext, useSettings } from './context/SettingsContext';
@@ -35,6 +34,27 @@ import TypingPerfPlugin from './plugins/TypingPerfPlugin';
 import Settings from './Settings';
 import setupEnv from './setupEnv';
 import PlaygroundEditorTheme from './themes/PlaygroundEditorTheme';
+
+const emptyEditorState = JSON.stringify({
+  root: {
+    children: [
+      {
+        children: [],
+        direction: null,
+        format: '',
+        indent: 0,
+        type: 'paragraph',
+        version: 1,
+        textFormat: 0,
+      },
+    ],
+    direction: null,
+    format: '',
+    indent: 0,
+    type: 'root',
+    version: 1,
+  },
+});
 
 if (setupEnv.disableBeforeInput) {
   // vite is really aggressive about tree-shaking, this
@@ -135,10 +155,10 @@ function $prepopulatedRichText() {
 
 function App({
   editorStateJsonString,
-  getJSONFromLexical,
+  onChange,
 }: {
   editorStateJsonString: string;
-  getJSONFromLexical: (jsonString: string) => void;
+  onChange: (jsonString: string) => void;
 }): JSX.Element {
   useEffect(() => {
     const handleError = (error: Event) => {
@@ -164,20 +184,16 @@ function App({
   const handleChange = useCallback((editorState: EditorState) => {
     editorState.read(() => {
       const jsonString = JSON.stringify(editorState);
-      getJSONFromLexical(jsonString);
+      onChange(jsonString);
     });
   }, []);
 
   const {
-    settings: { isCollab, emptyEditor, measureTypingPerf },
+    settings: { measureTypingPerf },
   } = useSettings();
 
   const initialConfig = {
-    editorState: isCollab
-      ? null
-      : emptyEditor
-        ? undefined
-        : $prepopulatedRichText,
+    editorState: editorStateJsonString,
     namespace: 'LetsCareerBlog',
     nodes: [...nodes],
     onError: (error: Error) => {
@@ -200,7 +216,6 @@ function App({
             {isDevPlayground ? <TestRecorderPlugin /> : null}
             {measureTypingPerf ? <TypingPerfPlugin /> : null}
             <OnChangePlugin onChange={handleChange} />
-            <ContextPlugin editorStateJsonString={editorStateJsonString} />
           </SharedAutocompleteContext>
         </TableContext>
       </SharedHistoryContext>
@@ -209,18 +224,18 @@ function App({
 }
 
 export default function EditorApp({
-  editorStateJsonString = '',
-  getJSONFromLexical,
+  editorStateJsonString = emptyEditorState,
+  onChange,
 }: {
   editorStateJsonString?: string;
-  getJSONFromLexical: (jsonString: string) => void;
+  onChange: (jsonString: string) => void;
 }): JSX.Element {
   return (
     <SettingsContext>
       <FlashMessageContext>
         <App
           editorStateJsonString={editorStateJsonString}
-          getJSONFromLexical={getJSONFromLexical}
+          onChange={onChange}
         />
       </FlashMessageContext>
     </SettingsContext>

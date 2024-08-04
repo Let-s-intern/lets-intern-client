@@ -87,7 +87,9 @@ const ProgramDetail = ({ programType }: ProgramDetailProps) => {
 
     if (!isLoggedIn) {
       alert('로그인 후 이용해주세요.');
-      navigate(`/login?redirect=${window.location.pathname}`);
+      const params = new URLSearchParams();
+      params.set('redirect', window.location.pathname);
+      navigate(`/login?${params.toString()}`);
       return;
     }
     dispatchIsDrawerOpen({ type: 'toggle' });
@@ -120,7 +122,6 @@ const ProgramDetail = ({ programType }: ProgramDetailProps) => {
         {description ? (
           <meta name="twitter:description" content={description} />
         ) : null}
-        <meta name="twitter:card" content="summary" />
       </Helmet>
       <div className="mx-auto max-w-5xl">
         <Header programTitle={programTitle} />
@@ -170,7 +171,7 @@ const ProgramDetail = ({ programType }: ProgramDetailProps) => {
                       alt="warning"
                       className="h-6 w-6"
                     />
-                    <div className="text-xsmall14 flex w-full flex-col text-neutral-0">
+                    <div className="flex w-full flex-col text-xsmall14 text-neutral-0">
                       <p className="font-bold">
                         [결제오류 방지] 외부 브라우저로 접속해주세요
                       </p>

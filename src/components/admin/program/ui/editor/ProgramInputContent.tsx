@@ -4,7 +4,7 @@ import {
   InputLabel,
   MenuItem,
   OutlinedInput,
-  Select
+  Select,
 } from '@mui/material';
 import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
 import { useMemo, useRef } from 'react';

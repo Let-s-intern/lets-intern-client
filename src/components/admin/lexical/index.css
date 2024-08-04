@@ -948,7 +948,6 @@ i.page-break,
 
 .editor-shell .editor-image .image-caption-container {
   display: block;
-  position: absolute;
   bottom: 4px;
   left: 0;
   right: 0;
@@ -957,8 +956,23 @@ i.page-break,
   border-top: 1px solid #fff;
   background-color: rgba(255, 255, 255, 0.9);
   min-width: 100px;
-  color: #000;
+  color: #000000b6;
   overflow: hidden;
+}
+
+.editor-shell
+  .editor-image
+  .image-caption-container
+  .ImageNode__contentEditable {
+  width: 100%;
+}
+
+.editor-shell
+  .editor-image
+  .image-caption-container
+  .ImageNode__contentEditable
+  p {
+  text-align: center;
 }
 
 .editor-shell .editor-image .image-caption-button {

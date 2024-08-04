@@ -17,7 +17,7 @@ import {
   Spread,
 } from 'lexical';
 import * as React from 'react';
-import {Suspense} from 'react';
+import { Suspense } from 'react';
 
 export type Options = ReadonlyArray<Option>;
 
@@ -69,7 +69,7 @@ function $convertPollElement(domNode: HTMLElement): DOMConversionOutput | null {
   const options = domNode.getAttribute('data-lexical-poll-options');
   if (question !== null && options !== null) {
     const node = $createPollNode(question, JSON.parse(options));
-    return {node};
+    return { node };
   }
   return null;
 }
@@ -91,7 +91,7 @@ export class PollNode extends DecoratorNode<JSX.Element> {
       serializedNode.question,
       serializedNode.options,
     );
-    serializedNode.options.forEach(node.addOption);
+
     return node;
   }
 
@@ -172,7 +172,7 @@ export class PollNode extends DecoratorNode<JSX.Element> {
       'data-lexical-poll-options',
       JSON.stringify(this.__options),
     );
-    return {element};
+    return { element };
   }
 
   createDOM(): HTMLElement {

@@ -1,6 +1,6 @@
 import { TextField } from '@mui/material';
+import { ChangeEventHandler, FormEventHandler } from 'react';
 
-import { memo } from 'react';
 import { TagDetail } from '../../../api/blogSchema';
 import Tag from './Tag';
 import TagDelete from './TagDelete';
@@ -11,8 +11,8 @@ interface TagSelectorProps {
   value: string;
   deleteTag: (id: number) => void;
   selectTag: (tag: TagDetail) => void;
-  onChange: React.ChangeEventHandler<HTMLInputElement | HTMLTextAreaElement>;
-  onKeyDown: React.KeyboardEventHandler<HTMLInputElement>;
+  onChange: ChangeEventHandler<HTMLInputElement | HTMLTextAreaElement>;
+  onSubmit: FormEventHandler<HTMLFormElement>;
 }
 
 const TagSelector = ({
@@ -22,7 +22,7 @@ const TagSelector = ({
   deleteTag,
   selectTag,
   onChange,
-  onKeyDown,
+  onSubmit,
 }: TagSelectorProps) => {
   return (
     <>
@@ -39,15 +39,16 @@ const TagSelector = ({
         <span className="text-0.875 text-neutral-40">
           자유 태그등록하기 (중복되지 않은 태그만 등록됩니다)
         </span>
-        <TextField
-          type="text"
-          placeholder="등록할 태그를 입력하세요"
-          name="tag"
-          value={value}
-          onChange={onChange}
-          onKeyDown={onKeyDown}
-          fullWidth
-        />
+        <form onSubmit={onSubmit}>
+          <TextField
+            type="text"
+            placeholder="# 없이 입력 후 엔터"
+            name="tag"
+            value={value}
+            onChange={onChange}
+            fullWidth
+          />
+        </form>
         <div className="mt-2 flex flex-wrap gap-4">
           {tagList.map((tag: TagDetail) => (
             <Tag
@@ -63,4 +64,4 @@ const TagSelector = ({
   );
 };
 
-export default memo(TagSelector);
+export default TagSelector;

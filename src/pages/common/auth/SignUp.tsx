@@ -236,7 +236,7 @@ const SignUp = () => {
   return (
     <>
       {isSignupSuccess ? (
-        <InfoContainer isSocial={isSocial} />
+        <InfoContainer isSocial={isSocial} email={value.email} />
       ) : (
         <>
           <div className="container mx-auto mt-8 p-5">

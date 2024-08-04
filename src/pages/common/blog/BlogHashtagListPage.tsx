@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import InfiniteScroll from 'react-infinite-scroller';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useBlogTagQuery, useInfiniteBlogListQuery } from '../../../api/blog';
@@ -84,7 +84,7 @@ const BlogHashtagListPage = () => {
                   tagListData.map((tag) => (
                     <div
                       key={tag.id}
-                      className="w-full bg-neutral-90 px-4 py-[14px] text-xsmall16 text-primary"
+                      className="w-full cursor-pointer bg-neutral-90 px-4 py-[14px] text-xsmall16 text-primary"
                       onClick={() => handleTagClick(tag)}
                     >
                       #{tag.title}
@@ -95,18 +95,18 @@ const BlogHashtagListPage = () => {
             </div>
           </div>
           <InfiniteScroll
-            className="flex-1 gap-y-8"
+            className="w-full flex-1 gap-y-8"
             hasMore={hasNextPage}
             loadMore={() => {
               fetchNextPage();
             }}
           >
             {blogListIsLoading ? (
-              <div className="py-6 text-center">
+              <div className="w-full py-6 text-center">
                 블로그를 가져오는 중입니다..
               </div>
             ) : (
-              <div className="flex flex-wrap gap-4">
+              <div className="flex w-full flex-wrap gap-4">
                 {!blogListData || blogListData.pages[0].blogInfos.length < 1 ? (
                   <div className="w-full py-6 text-center text-neutral-40">
                     등록된 글이 없습니다.
@@ -114,10 +114,11 @@ const BlogHashtagListPage = () => {
                 ) : (
                   blogListData.pages.map((page, pageIdx) =>
                     page.blogInfos.map((blogInfo, blogIdx) => (
-                      <>
+                      <React.Fragment key={blogInfo.blogThumbnailInfo.id}>
                         <BlogCard
                           key={blogInfo.blogThumbnailInfo.id}
-                          {...blogInfo}
+                          blogInfo={blogInfo}
+                          setSelectedTag={setSelectedTag}
                         />
                         {!(
                           pageIdx === blogListData.pages.length - 1 &&
@@ -125,7 +126,7 @@ const BlogHashtagListPage = () => {
                         ) && (
                           <hr className="h-0.5 w-full border-t border-neutral-80" />
                         )}
-                      </>
+                      </React.Fragment>
                     )),
                   )
                 )}

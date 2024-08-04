@@ -9,6 +9,7 @@ import { IPageable } from '../types/interface';
 import axios from '../utils/axios';
 import {
   blogListSchema,
+  blogRatingListSchema,
   blogSchema,
   blogTagSchema,
   PatchBlogReqBody,
@@ -34,6 +35,22 @@ export const useBlogListQuery = ({ pageable }: BlogQueryParams) => {
       const res = await axios.get(`/blog`, { params: pageable });
       return blogListSchema.parse(res.data.data);
     },
+  });
+};
+
+export const useBlogListTypeQuery = ({ pageable, type }: BlogQueryParams) => {
+  return useQuery({
+    queryKey: [blogListQueryKey, pageable],
+    queryFn: async () => {
+      const res = await axios.get(`/blog`, {
+        params: {
+          ...pageable,
+          type,
+        },
+      });
+      return blogListSchema.parse(res.data.data);
+    },
+    enabled: !!type,
   });
 };
 
@@ -148,12 +165,55 @@ export const usePostBlogTagMutation = (onErrorCallback?: () => void) => {
     mutationFn: async (title: TagDetail['title']) => {
       return await axios.post('/blog-tag', { title });
     },
-    onSuccess: async () => {
+    onSuccess: async (data) => {
       await client.invalidateQueries({ queryKey: [blogTagQueryKey] });
+      return data;
     },
     onError: (error) => {
       console.error(error);
       onErrorCallback && onErrorCallback();
+    },
+  });
+};
+
+/* 블로그 후기 */
+export const useBlogRatingListQuery = (pageable: IPageable) => {
+  return useQuery({
+    queryKey: [blogRatingQueryKey, pageable],
+    queryFn: async () => {
+      const res = await axios.get('/blog-rating', { params: pageable });
+      return blogRatingListSchema.parse(res.data.data);
+    },
+  });
+};
+
+export const usePostBlogRatingMutation = ({
+  successCallback,
+  errorCallback,
+}: {
+  successCallback?: () => void;
+  errorCallback?: () => void;
+}) => {
+  const client = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({
+      blogId,
+      title,
+      score,
+    }: {
+      blogId: string;
+      title: string;
+      score: number;
+    }) => {
+      return await axios.post(`/blog-rating/${blogId}`, { title, score });
+    },
+    onSuccess: async () => {
+      client.invalidateQueries({ queryKey: [blogRatingQueryKey] });
+      successCallback && successCallback();
+    },
+    onError: (error) => {
+      console.error(error);
     },
   });
 };

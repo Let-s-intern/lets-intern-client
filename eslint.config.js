@@ -76,13 +76,14 @@ export default tseslint.config(
       'react/react-in-jsx-scope': 'off',
       'object-shorthand': ['warn', 'always'],
       'no-useless-rename': 'warn',
-      'react/jsx-key': 'warn',
+      'react/jsx-key': ['warn', { checkFragmentShorthand: true }],
+      'react/prop-types': 'off',
+
       // switch
       '@typescript-eslint/switch-exhaustiveness-check': 'warn',
 
       // lexical
       '@typescript-eslint/ban-ts-comment': 'warn',
-      'react/prop-types': 'warn',
     },
   },
 );
