@@ -8,7 +8,14 @@ import {
   Snackbar,
   TextField,
 } from '@mui/material';
-import { ChangeEvent, FormEvent, MouseEvent, useEffect, useState } from 'react';
+import {
+  ChangeEvent,
+  FormEvent,
+  MouseEvent,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import {
@@ -57,6 +64,7 @@ interface EditBlog {
 const BlogEditPage = () => {
   const navgiate = useNavigate();
   const { id } = useParams();
+  const titleRef = useRef<HTMLInputElement>(null);
 
   const { data: tags = [] } = useBlogTagQuery();
   const { data: blogData, isLoading } = useBlogQuery(id!);
@@ -197,6 +205,7 @@ const BlogEditPage = () => {
               autoComplete="off"
               fullWidth
               maxLength={maxTitleLength}
+              autoFocus={true}
             />
             <TextFieldLimit
               type="text"
