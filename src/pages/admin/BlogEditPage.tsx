@@ -285,14 +285,12 @@ const BlogEditPage = () => {
               />
             </div>
 
-            {!blogData.blogDetailInfo.displayDate && (
-              <div className="border px-6 py-10">
-                <DateTimePicker
-                  value={editingValue.displayDate}
-                  onChange={onChange}
-                />
-              </div>
-            )}
+            <div className="border px-6 py-10">
+              <DateTimePicker
+                value={editingValue.displayDate}
+                onChange={onChange}
+              />
+            </div>
 
             <h2 className="mt-10">콘텐츠 편집</h2>
             <EditorApp
