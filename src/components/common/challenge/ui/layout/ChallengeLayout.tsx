@@ -38,7 +38,10 @@ const ChallengeLayout = () => {
 
   useEffect(() => {
     if (!isLoggedIn) {
-      navigate('/program');
+      const newUrl = new URL(window.location.href);
+      const searchParams = new URLSearchParams();
+      searchParams.set('redirect', `${newUrl.pathname}?${newUrl.search}`);
+      navigate(`/login?${searchParams.toString()}`);
       return;
     }
 
