@@ -301,24 +301,66 @@ const LexicalContent = ({ node }: { node: SerializedLexicalNode }) => {
     }
     case 'image': {
       const _node = node as SerializedImageNode;
+      const imageSources: {
+        media: string;
+        srcSet: string;
+        type: string;
+      }[] = [];
+
+      if (_node.jpegDesktop) {
+        imageSources.push({
+          media: '(min-width: 768px)',
+          srcSet: `${_node.jpegDesktop}`,
+          type: 'image/jpeg',
+        });
+      }
+
+      if (_node.webpDesktop) {
+        imageSources.push({
+          media: '(min-width: 768px)',
+          srcSet: `${_node.webpDesktop}`,
+          type: 'image/webp',
+        });
+      }
+
+      if (_node.jpegMobile) {
+        imageSources.push({
+          media: '(max-width: 767px)',
+          srcSet: `${_node.jpegMobile}`,
+          type: 'image/jpeg',
+        });
+      }
+
+      if (_node.webpMobile) {
+        imageSources.push({
+          media: '(max-width: 767px)',
+          srcSet: `${_node.webpMobile}`,
+          type: 'image/webp',
+        });
+      }
 
       return (
         <span className="image">
-          <img
-            className="h-auto w-full"
-            src={_node.src}
-            alt={_node.altText}
-            draggable={false}
-          />
-          {/* <img
+          <picture className="inline-block">
+            {imageSources.map((source, index) => (
+              <source
+                key={index}
+                media={source.media}
+                srcSet={source.srcSet}
+                type={source.type}
+              />
+            ))}
+            <img
               src={_node.src}
               alt={_node.altText}
               style={{
-                height: _node.height ? _node.height : 'inherit',
-                maxWidth: _node.maxWidth,
-                width: _node.width ? _node.width : 'inherit',
+                maxWidth: _node.width ? `${_node.width}px` : undefined,
               }}
-            /> */}
+              draggable={false}
+              className="h-auto w-full"
+            />
+          </picture>
+
           {_node.showCaption ? (
             <div className="image-caption-container mb-4 mt-3 w-full text-center text-xsmall14 text-neutral-50">
               <div

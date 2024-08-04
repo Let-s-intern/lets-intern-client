@@ -35,6 +35,10 @@ export interface ImagePayload {
   src: string;
   width?: number;
   captionsEnabled?: boolean;
+  webpMobile?: string;
+  webpDesktop?: string;
+  jpegMobile?: string;
+  jpegDesktop?: string;
 }
 
 function isGoogleDocCheckboxImg(img: HTMLImageElement): boolean {
@@ -65,6 +69,10 @@ export type SerializedImageNode = Spread<
     showCaption: boolean;
     src: string;
     width?: number;
+    webpMobile?: string;
+    webpDesktop?: string;
+    jpegMobile?: string;
+    jpegDesktop?: string;
   },
   SerializedLexicalNode
 >;
@@ -79,6 +87,11 @@ export class ImageNode extends DecoratorNode<JSX.Element> {
   __caption: LexicalEditor;
   // Captions cannot yet be used within editor cells
   __captionsEnabled: boolean;
+
+  __webpMobile?: string;
+  __webpDesktop?: string;
+  __jpegMobile?: string;
+  __jpegDesktop?: string;
 
   static getType(): string {
     return 'image';
@@ -95,12 +108,27 @@ export class ImageNode extends DecoratorNode<JSX.Element> {
       node.__caption,
       node.__captionsEnabled,
       node.__key,
+      node.__webpMobile,
+      node.__webpDesktop,
+      node.__jpegMobile,
+      node.__jpegDesktop,
     );
   }
 
   static importJSON(serializedNode: SerializedImageNode): ImageNode {
-    const { altText, height, width, maxWidth, caption, src, showCaption } =
-      serializedNode;
+    const {
+      altText,
+      height,
+      width,
+      maxWidth,
+      caption,
+      src,
+      showCaption,
+      jpegDesktop,
+      jpegMobile,
+      webpDesktop,
+      webpMobile,
+    } = serializedNode;
     const node = $createImageNode({
       altText,
       height,
@@ -108,6 +136,10 @@ export class ImageNode extends DecoratorNode<JSX.Element> {
       showCaption,
       src,
       width,
+      webpMobile,
+      webpDesktop,
+      jpegMobile,
+      jpegDesktop,
     });
     const nestedEditor = node.__caption;
     const editorState = nestedEditor.parseEditorState(caption.editorState);
@@ -145,6 +177,10 @@ export class ImageNode extends DecoratorNode<JSX.Element> {
     caption?: LexicalEditor,
     captionsEnabled?: boolean,
     key?: NodeKey,
+    webpMobile?: string,
+    webpDesktop?: string,
+    jpegMobile?: string,
+    jpegDesktop?: string,
   ) {
     super(key);
     this.__src = src;
@@ -159,6 +195,10 @@ export class ImageNode extends DecoratorNode<JSX.Element> {
         nodes: [],
       });
     this.__captionsEnabled = captionsEnabled || captionsEnabled === undefined;
+    this.__webpMobile = webpMobile;
+    this.__webpDesktop = webpDesktop;
+    this.__jpegMobile = jpegMobile;
+    this.__jpegDesktop = jpegDesktop;
   }
 
   exportJSON(): SerializedImageNode {
@@ -172,6 +212,10 @@ export class ImageNode extends DecoratorNode<JSX.Element> {
       type: 'image',
       version: 1,
       width: this.__width === 'inherit' ? 0 : this.__width,
+      webpMobile: this.__webpMobile,
+      webpDesktop: this.__webpDesktop,
+      jpegMobile: this.__jpegMobile,
+      jpegDesktop: this.__jpegDesktop,
     };
   }
 
@@ -243,6 +287,10 @@ export function $createImageNode({
   showCaption,
   caption,
   key,
+  jpegDesktop,
+  jpegMobile,
+  webpDesktop,
+  webpMobile,
 }: ImagePayload): ImageNode {
   return $applyNodeReplacement(
     new ImageNode(
@@ -255,6 +303,10 @@ export function $createImageNode({
       caption,
       captionsEnabled,
       key,
+      webpMobile,
+      webpDesktop,
+      jpegMobile,
+      jpegDesktop,
     ),
   );
 }

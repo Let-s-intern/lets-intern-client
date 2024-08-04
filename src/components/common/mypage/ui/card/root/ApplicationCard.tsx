@@ -90,9 +90,9 @@ const ApplicationCard = ({
         <LinkButton
           to={`/mypage/review/${
             reviewType === 'CREATE' ? 'new' : 'edit'
-          }/program/${application.programType}/${application.programId}/${
+          }/program/${application.programType}/${application.programId}${
             application.reviewId
-              ? application.reviewId
+              ? `/${application.reviewId}`
               : `?application=${application.id}`
           }`}
           className={clsx(reviewType === 'CREATE' && 'review_button')}

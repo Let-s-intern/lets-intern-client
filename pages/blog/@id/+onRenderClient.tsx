@@ -1,13 +1,13 @@
 // https://vike.dev/onRenderClient
 export { onRenderClient };
 
-import React from 'react';
-import { createRoot } from 'react-dom/client';
-import { PageContextClient } from 'vike/types';
+  import React from 'react';
+  import { createRoot, hydrateRoot } from 'react-dom/client';
+  import { PageContextClient } from 'vike/types';
 // import { BrowserApp } from '../../../src/BrowserApp';
-import App from '../../../src/App';
 import { BlogProvider } from '../../../src/context/Post';
 import Provider from '../../../src/Provider';
+import Router from '../../../src/Router';
 import { Data } from './+data';
 // const BrowserApp = clientOnly(() => import('../../../src/BrowserApp'));
 // const Provider = clientOnly(() => import('../../../src/Provider'));
@@ -22,11 +22,13 @@ async function onRenderClient(pageContext: PageContextClient) {
 
   // const page = <Page data={data} />;
   const page = (
-    <BlogProvider blog={data}>
-      <Provider>
-        <App />
-      </Provider>
-    </BlogProvider>
+    <React.StrictMode>
+      <BlogProvider blog={data}>
+        <Provider>
+          <Router />
+        </Provider>
+      </BlogProvider>
+    </React.StrictMode>
   );
   const container = document.getElementById('root')!;
 
@@ -37,12 +39,12 @@ async function onRenderClient(pageContext: PageContextClient) {
   //   stack: new Error().stack,
   // });
 
-  // if (pageContext.isHydration) {
-  //   window.__root = hydrateRoot(container, page);
-  // } else {
-  if (!window.__root) {
-    window.__root = createRoot(container);
+  if (pageContext.isHydration) {
+    window.__root = hydrateRoot(container, page);
+  } else {
+    if (!window.__root) {
+      window.__root = createRoot(container);
+    }
+    window.__root.render(page);
   }
-  window.__root.render(page);
-  // }
 }
