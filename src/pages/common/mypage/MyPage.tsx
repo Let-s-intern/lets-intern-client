@@ -11,7 +11,10 @@ const MyPage = () => {
 
   useEffect(() => {
     if (!isLoggedIn) {
-      navigate('/login');
+      const newUrl = new URL(window.location.href);
+      const searchParams = new URLSearchParams();
+      searchParams.set('redirect', `${newUrl.pathname}?${newUrl.search}`);
+      navigate(`/login?${searchParams.toString()}`);
     }
   }, [isLoggedIn, navigate]);
 
