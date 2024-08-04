@@ -85,7 +85,7 @@ const Router = () => {
 
           {/* 블로그 */}
           {/* /blog?category=:category */}
-          <Route path="blog" element={<BlogListPage />} />
+          <Route path="blog/list" element={<BlogListPage />} />
           {/* blog/hashtag?tag=:tag */}
           <Route path="blog/hashtag" element={<BlogHashtagListPage />} />
           {/* blog/:id */}
