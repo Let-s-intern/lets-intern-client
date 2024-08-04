@@ -36,15 +36,17 @@ const onRenderHtml: OnRenderHtmlAsync = async (pageContext) => {
   const router = createStaticRouter(dataRoutes, context);
   const pageHtml = dangerouslySkipEscape(
     renderToString(
-      <BlogProvider blog={data}>
-        <Provider>
-          <StaticRouterProvider
-            router={router}
-            hydrate={true}
-            context={context}
-          />
-        </Provider>
-      </BlogProvider>,
+      <React.StrictMode>
+        <BlogProvider blog={data}>
+          <Provider>
+            <StaticRouterProvider
+              router={router}
+              hydrate={true}
+              context={context}
+            />
+          </Provider>
+        </BlogProvider>
+      </React.StrictMode>,
     ),
   );
 
