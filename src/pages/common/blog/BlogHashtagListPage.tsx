@@ -117,7 +117,8 @@ const BlogHashtagListPage = () => {
                       <React.Fragment key={blogInfo.blogThumbnailInfo.id}>
                         <BlogCard
                           key={blogInfo.blogThumbnailInfo.id}
-                          {...blogInfo}
+                          blogInfo={blogInfo}
+                          setSelectedTag={setSelectedTag}
                         />
                         {!(
                           pageIdx === blogListData.pages.length - 1 &&
