@@ -13,6 +13,7 @@ import {
   SerializedRootNode,
   SerializedTextNode,
 } from 'lexical';
+import { twMerge } from 'tailwind-merge';
 import { SerializedCodeHighlightNode } from '../../admin/lexical/nodes/CodeHighlightNode';
 import { SerializedCollapsibleContainerNode } from '../../admin/lexical/nodes/CollapsibleContainerNode';
 import { SerializedCollapsibleContentNode } from '../../admin/lexical/nodes/CollapsibleContentNode';
@@ -113,8 +114,9 @@ const LexicalContent = ({ node }: { node: SerializedLexicalNode }) => {
     }
     case 'listitem': {
       const _node = node as SerializedListItemNode;
+      const isNested = _node.children.some((child) => child.type === 'list');
       return (
-        <li className="ml-4">
+        <li className={twMerge('ml-4', isNested && 'list-none')}>
           {_node.children.map((child, childIndex) => (
             <LexicalContent key={childIndex} node={child} />
           ))}
