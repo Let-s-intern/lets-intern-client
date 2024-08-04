@@ -70,9 +70,9 @@ const ReviewCreate = ({ isEdit }: { isEdit: boolean }) => {
           score: starScore,
         },
         {
-          params: {
-            applicationId,
-          },
+          // params: {
+          //   applicationId,
+          // },
         },
       );
       return res.data;
