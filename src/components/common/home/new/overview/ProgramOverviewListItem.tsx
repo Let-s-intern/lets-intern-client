@@ -104,6 +104,20 @@ const ProgramOverviewListItem = () => {
   });
 
   useEffect(() => {
+    if (data && current.year === now.year && current.month === now.month) {
+      let isAllEnded = 0;
+      data.map((program) => {
+        if (program.programInfo.programStatusType === 'POST') {
+          isAllEnded += 1;
+        }
+      });
+      if (isAllEnded === data.length) {
+        setCurrent(nextMonth());
+      }
+    }
+  }, [data, current, now]);
+
+  useEffect(() => {
     if (isLoading) {
       setLoading(true);
     }
