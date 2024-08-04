@@ -53,7 +53,7 @@ const BlogDetailSSRPage = () => {
   const { mutate: postRating } = usePostBlogRatingMutation({
     successCallback: () => {
       setIsPostedRating(true);
-      alert('의견을 주셔서 감사합니다.');
+      alert('소중한 의견 감사합니다.');
     },
   });
 
