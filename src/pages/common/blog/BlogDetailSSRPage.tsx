@@ -151,7 +151,12 @@ const BlogDetailSSRPage = () => {
             <div className="flex w-full flex-col gap-y-5">
               <div className="flex w-full flex-col gap-y-4">
                 <h1 className="line-clamp-4 text-xlarge28 font-bold text-neutral-0">
-                  {blog.blogDetailInfo.title}
+                  {blog.blogDetailInfo.title}{' '}
+                  {!blog.blogDetailInfo.isDisplayed && (
+                    <span className="text-xsmall14 text-system-error">
+                      (비공개)
+                    </span>
+                  )}
                 </h1>
                 {blog.blogDetailInfo.displayDate ? (
                   <p>
@@ -343,7 +348,7 @@ const BlogDetailSSRPage = () => {
       </div>
       {blog.blogDetailInfo.ctaText && blog.blogDetailInfo.ctaLink && (
         <div
-          className={`fixed bottom-0 left-0 flex w-full items-center justify-center bg-neutral-100 pb-6 pt-3 shadow-button transition-all duration-150 ${showCTA ? 'visible opacity-100' : 'invisible opacity-0'}`}
+          className={`fixed bottom-0 left-0 flex w-full items-center justify-center pb-6 pt-3 transition-all duration-150 ${showCTA ? 'translate-y-0' : 'translate-y-full'}`}
         >
           <div className="flex w-full max-w-[1200px] flex-col items-center px-5 md:px-10">
             <div className="flex w-full flex-col items-center md:px-[100px]">
