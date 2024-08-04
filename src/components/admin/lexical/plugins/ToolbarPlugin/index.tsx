@@ -1181,7 +1181,7 @@ export default function ToolbarPlugin({
                   className="item"
                 >
                   <i className="icon table" />
-                  <span className="text">표 (개발중)</span>
+                  <span className="text">표</span>
                 </DropDownItem>
                 {/* <DropDownItem
                   onClick={() => {
@@ -1209,7 +1209,7 @@ export default function ToolbarPlugin({
                   className="item"
                 >
                   <i className="icon columns" />
-                  <span className="text">열 레이아웃 (개발중)</span>
+                  <span className="text">열 레이아웃</span>
                 </DropDownItem>
 
                 {/* <DropDownItem
@@ -1224,7 +1224,7 @@ export default function ToolbarPlugin({
                   className="item"
                 >
                   <i className="icon equation" />
-                  <span className="text">Equation  (개발중)</span>
+                  <span className="text">Equation</span>
                 </DropDownItem> */}
 
                 {/* <DropDownItem
@@ -1250,7 +1250,7 @@ export default function ToolbarPlugin({
                   className="item"
                 >
                   <i className="icon caret-right" />
-                  <span className="text">토글 (개발중)</span>
+                  <span className="text">토글</span>
                 </DropDownItem>
                 {EmbedConfigs.map((embedConfig) => (
                   <DropDownItem
@@ -1264,9 +1264,7 @@ export default function ToolbarPlugin({
                     className="item"
                   >
                     {embedConfig.icon}
-                    <span className="text">
-                      {embedConfig.contentName} (개발중)
-                    </span>
+                    <span className="text">{embedConfig.contentName}</span>
                   </DropDownItem>
                 ))}
               </DropDown>
