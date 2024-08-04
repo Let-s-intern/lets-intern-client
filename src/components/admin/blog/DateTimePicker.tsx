@@ -1,4 +1,5 @@
 import { FormHelperText } from '@mui/material';
+import dayjs from 'dayjs';
 
 interface DateTimePickerProps {
   value: string;
@@ -6,6 +7,8 @@ interface DateTimePickerProps {
 }
 
 const DateTimePicker = ({ value, onChange }: DateTimePickerProps) => {
+  const dateTime = dayjs(value).format('YYYY-MM-DDTHH:mm');
+
   return (
     <div className="flex flex-col">
       <label htmlFor="displayDate" className="font-medium">
@@ -18,7 +21,7 @@ const DateTimePicker = ({ value, onChange }: DateTimePickerProps) => {
         type="datetime-local"
         name="displayDate"
         required
-        value={value}
+        value={dateTime}
         onChange={onChange}
       />
     </div>

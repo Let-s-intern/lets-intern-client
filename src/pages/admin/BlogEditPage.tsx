@@ -133,14 +133,6 @@ const BlogEditPage = () => {
   };
 
   useEffect(() => {
-    try {
-      console.log('content', JSON.parse(editingValue.content));
-    } catch {
-      // empty
-    }
-  }, [editingValue.content]);
-
-  useEffect(() => {
     if (isLoading || !blogData) return;
     setEditingValue({
       title: blogData.blogDetailInfo.title!,
@@ -205,6 +197,7 @@ const BlogEditPage = () => {
               autoComplete="off"
               fullWidth
               maxLength={maxTitleLength}
+              autoFocus={true}
             />
             <TextFieldLimit
               type="text"

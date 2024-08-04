@@ -18,6 +18,7 @@ interface TextFieldLimitProps {
   error?: boolean;
   required?: boolean;
   size?: 'small' | 'medium';
+  autoFocus?: boolean;
 }
 
 const TextFieldLimit = ({
@@ -37,10 +38,12 @@ const TextFieldLimit = ({
   error = false,
   required,
   size = 'small',
+  autoFocus,
 }: TextFieldLimitProps) => {
   return (
     <div className="flex flex-col items-end gap-1">
       <TextField
+        autoFocus={autoFocus}
         inputProps={{ maxLength }}
         type={type}
         label={label}
