@@ -191,7 +191,7 @@ const BlogDetailSSRPage = () => {
               <h3 className="text-xsmall16 font-bold text-black">
                 블로그 글은 어떠셨나요?
               </h3>
-              <div className="flex items-center justify-center gap-x-2">
+              <div className="blog_star flex items-center justify-center gap-x-2">
                 <img
                   className="h-6 w-6 cursor-pointer"
                   src={`/icons/star-${!starRating ? 'null' : starRating >= 1 ? 'fill' : 'unfill'}.svg`}
@@ -239,7 +239,7 @@ const BlogDetailSSRPage = () => {
                   />
                 </div>
                 <button
-                  className={`flex w-full items-center justify-center rounded-sm border-2 border-primary px-4 py-1.5 text-primary-dark ${formValue.length === 0 || isPostedRating ? 'cursor-not-allowed opacity-40' : ''}`}
+                  className={`blog_form flex w-full items-center justify-center rounded-sm border-2 border-primary px-4 py-1.5 text-primary-dark ${formValue.length === 0 || isPostedRating ? 'cursor-not-allowed opacity-40' : ''}`}
                   onClick={
                     formValue.length === 0 || isPostedRating
                       ? () => {}
@@ -270,7 +270,7 @@ const BlogDetailSSRPage = () => {
             <p className="text-xsmall14 text-black">
               나만 보기 아깝다면 공유하기
             </p>
-            <div className="flex items-center gap-x-5">
+            <div className="blog_share flex items-center gap-x-5">
               <button
                 type="button"
                 className="flex h-[60px] w-[60px] cursor-pointer items-center justify-center rounded-full bg-primary-10"
@@ -300,7 +300,7 @@ const BlogDetailSSRPage = () => {
             </div>
           </div>
           <button
-            className="rounded-full bg-neutral-90 px-6 py-5 font-bold text-neutral-0"
+            className="blog_home rounded-full bg-neutral-90 px-6 py-5 font-bold text-neutral-0"
             onClick={() => navigate('/blog')}
           >
             블로그 홈
@@ -312,7 +312,7 @@ const BlogDetailSSRPage = () => {
           <div className="flex w-full flex-col items-center md:px-[100px]">
             <div className="flex w-full flex-col gap-y-5">
               <h3 className="text-xl font-semibold">함께 읽어보면 좋아요</h3>
-              <div className="flex w-full flex-col gap-y-5">
+              <div className="blog_recommend flex w-full flex-col gap-y-5">
                 {!recommendData ? (
                   recommendIsLoading ? (
                     <div className="w-full text-center">
@@ -348,7 +348,7 @@ const BlogDetailSSRPage = () => {
           <div className="flex w-full max-w-[1200px] flex-col items-center px-5 md:px-10">
             <div className="flex w-full flex-col items-center md:px-[100px]">
               <button
-                className="w-full rounded-md bg-primary px-6 py-3 text-small18 font-medium text-neutral-100"
+                className="blog_cta w-full rounded-md bg-primary px-6 py-3 text-small18 font-medium text-neutral-100"
                 onClick={() =>
                   window.open(blog.blogDetailInfo.ctaLink || '', '_blank')
                 }
