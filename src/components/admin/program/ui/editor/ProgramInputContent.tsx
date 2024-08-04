@@ -4,8 +4,7 @@ import {
   InputLabel,
   MenuItem,
   OutlinedInput,
-  Select,
-  TextField,
+  Select
 } from '@mui/material';
 import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
 import { useMemo, useRef } from 'react';
@@ -598,7 +597,7 @@ const ProgramInputContent = ({
                 }}
               />
             )}
-            {(value.program === 'CHALLENGE' || value.program === 'LIVE') && (
+            {/* {(value.program === 'CHALLENGE' || value.program === 'LIVE') && (
               <TextField
                 label="필독사항"
                 name="criticalNotice"
@@ -614,7 +613,7 @@ const ProgramInputContent = ({
                 multiline
                 rows={4}
               />
-            )}
+            )} */}
             {(value.program === 'CHALLENGE' || value.program === 'LIVE') && (
               <FAQEditor
                 programType={value.program}
