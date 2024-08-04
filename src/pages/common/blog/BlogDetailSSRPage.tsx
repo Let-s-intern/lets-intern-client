@@ -33,16 +33,7 @@ const BlogDetailSSRPage = () => {
   const [isPostedRating, setIsPostedRating] = useState<boolean>(false);
   const blogFromServer = useBlog();
   const blog = data || blogFromServer;
-  const [blogIsLoading, setBlogIsLoading] = useState<boolean>(true);
-
-  useEffect(() => {
-    if (blog.blogDetailInfo.id !== 0) {
-      const timer = setTimeout(() => {
-        setBlogIsLoading(false);
-      }, 300);
-      return () => clearTimeout(timer);
-    }
-  }, [blog.blogDetailInfo.id]);
+  const isLoading = blog.blogDetailInfo.id === 0;
 
   const { data: recommendData, isLoading: recommendIsLoading } =
     useBlogListTypeQuery({
@@ -58,10 +49,10 @@ const BlogDetailSSRPage = () => {
   });
 
   useEffect(() => {
-    if (!titleFromUrl) {
+    if (!titleFromUrl && !isLoading) {
       window.history.replaceState({}, '', getBlogPathname(blog.blogDetailInfo));
     }
-  }, [blog.blogDetailInfo, titleFromUrl]);
+  }, [blog.blogDetailInfo, isLoading, titleFromUrl]);
 
   useEffect(() => {
     const showCTA = () => {
@@ -136,7 +127,7 @@ const BlogDetailSSRPage = () => {
   const url = `${typeof window !== 'undefined' ? window.location.origin : getBaseUrlFromServer()}${getBlogPathname(blog.blogDetailInfo)}`;
   const description = blog.blogDetailInfo.description;
 
-  if (blogIsLoading) {
+  if (isLoading) {
     return (
       <div className="mt-40 flex h-full w-full items-center justify-center">
         <LoadingContainer text="게시글 조회 중" />;

@@ -29,6 +29,7 @@ import { useEffect, useRef, useState } from 'react';
 
 import { Snackbar } from '@mui/material';
 import { uploadFile } from '../../../../../api/file';
+import { createImageSet } from '../../../../../lib/image';
 import landscapeImage from '../../images/landscape.jpg';
 import yellowFlowerImage from '../../images/yellow-flower.jpg';
 import {
@@ -43,7 +44,7 @@ import FileInput from '../../ui/FileInput';
 import TextInput from '../../ui/TextInput';
 
 export type InsertImagePayload = Readonly<ImagePayload>;
-
+InsertImageUriDialogBody;
 const getDOMSelection = (targetWindow: Window | null): Selection | null =>
   CAN_USE_DOM ? (targetWindow || window).getSelection() : null;
 
@@ -94,7 +95,20 @@ export function InsertImageUploadedDialogBody({
 }: {
   onClick: (payload: InsertImagePayload) => void;
 }) {
-  const [src, setSrc] = useState('');
+  const [urls, setUrls] = useState<{
+    src: string;
+    webMobile: string;
+    webDesktop: string;
+    jpegMobile: string;
+    jpegDesktop: string;
+  }>({
+    src: '',
+    webMobile: '',
+    webDesktop: '',
+    jpegMobile: '',
+    jpegDesktop: '',
+  });
+
   const [altText, setAltText] = useState('');
   const [snackbar, setSnackbar] = useState<{
     open: boolean;
@@ -104,7 +118,7 @@ export function InsertImageUploadedDialogBody({
     message: '',
   });
 
-  const isDisabled = src === '';
+  const isDisabled = urls.src === '';
 
   const loadImage = async (files: FileList | null) => {
     const file = files?.[0];
@@ -112,9 +126,29 @@ export function InsertImageUploadedDialogBody({
       setSnackbar({ open: true, message: '파일이 없습니다.' });
       return;
     }
-    const url = await uploadFile({ file, type: 'BLOG' });
+    const {
+      webpMobile: webpMobileFile,
+      webpDesktop: webpDesktopFile,
+      jpegMobile: jpegMobileFile,
+      jpegDesktop: jpegDesktopFile,
+    } = await createImageSet(file);
+    const [url, webpMobileUrl, webpDesktopUrl, jpegMobileUrl, jpegDesktopUrl] =
+      await Promise.all([
+        uploadFile({ file, type: 'BLOG' }),
+        uploadFile({ file: webpMobileFile, type: 'BLOG' }),
+        uploadFile({ file: webpDesktopFile, type: 'BLOG' }),
+        uploadFile({ file: jpegMobileFile, type: 'BLOG' }),
+        uploadFile({ file: jpegDesktopFile, type: 'BLOG' }),
+      ]);
 
-    setSrc(url);
+    setUrls({
+      src: url,
+      webMobile: webpMobileUrl,
+      webDesktop: webpDesktopUrl,
+      jpegMobile: jpegMobileUrl,
+      jpegDesktop: jpegDesktopUrl,
+    });
+
     setSnackbar({ open: true, message: `파일이 업로드되었습니다: ${url}` });
   };
 
@@ -137,7 +171,16 @@ export function InsertImageUploadedDialogBody({
         <Button
           data-test-id="image-modal-file-upload-btn"
           disabled={isDisabled}
-          onClick={() => onClick({ altText, src })}
+          onClick={() =>
+            onClick({
+              altText,
+              src: urls.src,
+              webpMobile: urls.webMobile,
+              webpDesktop: urls.webDesktop,
+              jpegMobile: urls.jpegMobile,
+              jpegDesktop: urls.jpegDesktop,
+            })
+          }
         >
           Confirm
         </Button>
