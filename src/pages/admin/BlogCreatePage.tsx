@@ -8,11 +8,13 @@ import {
   Snackbar,
   TextField,
 } from '@mui/material';
+import { isAxiosError } from 'axios';
 import { ChangeEvent, FormEvent, MouseEvent, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import {
   useBlogTagQuery,
+  useDeleteBlogTagMutation,
   usePostBlogMutation,
   usePostBlogTagMutation,
 } from '../../api/blog';
@@ -61,6 +63,16 @@ const BlogCreatePage = () => {
 
   const { data: tags = [] } = useBlogTagQuery();
   const createBlogTagMutation = usePostBlogTagMutation();
+  const deleteBlogTagMutation = useDeleteBlogTagMutation({
+    onError: (error) => {
+      if (isAxiosError(error) && error.response?.status === 400) {
+        setSnackbar({
+          open: true,
+          message: '블로그에 연결된 태그는 삭제할 수 없습니다.',
+        });
+      }
+    },
+  });
   const createBlogMutation = usePostBlogMutation();
 
   const selectedTagList = tags.filter((tag) =>
@@ -244,11 +256,20 @@ const BlogCreatePage = () => {
               selectedTagList={selectedTagList}
               tagList={tags}
               value={newTag}
-              deleteTag={(id) => {
+              deleteSelectedTag={(id) => {
                 setEditingValue((prev) => ({
                   ...prev,
                   tagList: prev.tagList.filter((tag) => tag !== id),
                 }));
+              }}
+              deleteTag={async (tagId) => {
+                const res = await deleteBlogTagMutation.mutateAsync(tagId);
+                if (res?.status === 200) {
+                  setSnackbar({
+                    open: true,
+                    message: '태그를 삭제했습니다.',
+                  });
+                }
               }}
               selectTag={selectTag}
               onChange={onChangeTag}
