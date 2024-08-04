@@ -326,7 +326,7 @@ const BlogDetailSSRPage = () => {
           </div>
           <button
             className="blog_home rounded-full bg-neutral-90 px-6 py-5 font-bold text-neutral-0"
-            onClick={() => navigate('/blog')}
+            onClick={() => navigate('/blog/list')}
           >
             블로그 홈
           </button>
