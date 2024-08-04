@@ -10,6 +10,7 @@ import {
 import BlogHashtag from '../../../components/common/blog/BlogHashtag';
 import LexicalContent from '../../../components/common/blog/LexicalContent';
 import RecommendBlogCard from '../../../components/common/blog/RecommendBlogCard';
+import LoadingContainer from '../../../components/common/ui/loading/LoadingContainer';
 import { useBlog } from '../../../context/Post';
 import { blogCategory } from '../../../utils/convert';
 import {
@@ -32,6 +33,16 @@ const BlogDetailSSRPage = () => {
   const [isPostedRating, setIsPostedRating] = useState<boolean>(false);
   const blogFromServer = useBlog();
   const blog = data || blogFromServer;
+  const [blogIsLoading, setBlogIsLoading] = useState<boolean>(true);
+
+  useEffect(() => {
+    if (blog.blogDetailInfo.id !== 0) {
+      const timer = setTimeout(() => {
+        setBlogIsLoading(false);
+      }, 300);
+      return () => clearTimeout(timer);
+    }
+  }, [blog.blogDetailInfo.id]);
 
   const { data: recommendData, isLoading: recommendIsLoading } =
     useBlogListTypeQuery({
@@ -123,6 +134,14 @@ const BlogDetailSSRPage = () => {
   const title = getBlogTitle(blog.blogDetailInfo);
   const url = `${typeof window !== 'undefined' ? window.location.origin : getBaseUrlFromServer()}${getBlogPathname(blog.blogDetailInfo)}`;
   const description = blog.blogDetailInfo.description;
+
+  if (blogIsLoading) {
+    return (
+      <div className="mt-40 flex h-full w-full items-center justify-center">
+        <LoadingContainer text="게시글 조회 중" />;
+      </div>
+    );
+  }
 
   return (
     <div className="mx-auto flex w-full flex-1 flex-col items-center">
