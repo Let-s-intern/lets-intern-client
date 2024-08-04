@@ -17,7 +17,6 @@ import './ImageNode.css';
 
 import { HashtagNode } from '@lexical/hashtag';
 import { LinkNode } from '@lexical/link';
-import { AutoFocusPlugin } from '@lexical/react/LexicalAutoFocusPlugin';
 import { useCollaborationContext } from '@lexical/react/LexicalCollaborationContext';
 import { CollaborationPlugin } from '@lexical/react/LexicalCollaborationPlugin';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
@@ -434,7 +433,6 @@ export default function ImageComponent({
                 KeywordNode,
               ]}
             >
-              <AutoFocusPlugin />
               <MentionsPlugin />
               <LinkPlugin />
               <EmojisPlugin />
