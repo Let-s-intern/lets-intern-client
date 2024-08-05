@@ -42,7 +42,7 @@ const BlogListPage = () => {
       <div className="mx-auto flex w-full max-w-[1200px] flex-col items-center px-5 md:px-20 lg:px-10">
         <div className="flex w-full flex-1 flex-col items-center md:px-[100px] md:pb-10">
           <div className="flex w-full flex-col items-center gap-y-8 pb-8 pt-5 md:py-8">
-            <div className="blog_category flex w-full flex-wrap gap-2 py-2">
+            <div className="flex w-full flex-wrap gap-2 py-2">
               <BlogCategoryTag
                 category="전체"
                 isClicked={!category}
