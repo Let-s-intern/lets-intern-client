@@ -65,7 +65,7 @@ const BlogHashtagListPage = () => {
                 {!selectedTag ? (
                   <span>전체</span>
                 ) : (
-                  <span>#{selectedTag.title}</span>
+                  <span className="blog_hashtag">#{selectedTag.title}</span>
                 )}
                 <img
                   src="/icons/Caret_Down_MD.svg"
