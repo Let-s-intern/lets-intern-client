@@ -1,7 +1,7 @@
 import clsx from 'clsx';
 import { bankTypeToText } from '../../../../../../../utils/convert';
-import PriceView from './PriceView';
 import { calculateProgramPrice } from '../../../../../../../utils/programPrice';
+import PriceView from './PriceView';
 
 interface CautionPriceContentProps {
   program: {
@@ -51,7 +51,7 @@ const CautionPriceContent = ({
       {program.feeType !== 'FREE' && price !== 0 && (
         <div className={clsx(className)}>
           <hr />
-          <section className="mt-4 font-pretendard">
+          <section className="mt-4">
             <h3 className="font-semibold text-zinc-600">결제 방법</h3>
             <div className="mt-3 flex flex-col gap-2">
               <div className="flex items-center justify-between">

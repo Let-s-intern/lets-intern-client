@@ -18,7 +18,7 @@ const PriceView = ({
   totalPrice,
 }: PriceView) => {
   return (
-    <Wrapper className={clsx('font-pretendard', className)}>
+    <Wrapper className={clsx(className)}>
       <h3 className="font-semibold">결제 금액</h3>
       <div className="mt-3 flex flex-col gap-3">
         <div className="flex items-center justify-between">

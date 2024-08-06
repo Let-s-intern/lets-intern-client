@@ -13,7 +13,7 @@ const ScoreSection = ({ totalScore, currentScore }: Props) => {
           <h2 className="font-semibold text-[#4A495C]">미션 점수 현황</h2>
           <ScoreTooltipQuestion />
         </div>
-        <div className="flex flex-1 items-center justify-start font-pretendard">
+        <div className="flex flex-1 items-center justify-start">
           <div className="flex items-end">
             <span className="text-3xl font-bold text-primary">
               {currentScore}
