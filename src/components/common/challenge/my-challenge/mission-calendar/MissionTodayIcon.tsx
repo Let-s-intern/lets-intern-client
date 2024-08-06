@@ -1,9 +1,9 @@
 import clsx from 'clsx';
+import { FaCheck } from 'react-icons/fa6';
 import { Link, useParams } from 'react-router-dom';
-import { FaCheck, FaPlus } from 'react-icons/fa6';
 
-import { missionSubmitToBadge } from '../../../../../utils/convert';
 import { Schedule, ScheduleMission } from '../../../../../schema';
+import { missionSubmitToBadge } from '../../../../../utils/convert';
 
 interface Props {
   mission: ScheduleMission;
@@ -74,7 +74,7 @@ const MissionTodayIcon = ({
 
           // mission.missionType === 'GENERAL' &&
         }
-        <span className="font-pretendard text-sm font-semibold text-primary">
+        <span className="text-sm font-semibold text-primary">
           {mission.th}회차
         </span>
       </Link>

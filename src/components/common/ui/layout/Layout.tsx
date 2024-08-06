@@ -6,14 +6,14 @@ import NavBar from './nav/NavBar';
 
 const Layout = () => {
   return (
-    <div className="font-pretendard">
+    <>
       <NavBar />
       <div className="min-h-screen w-full">
         <Outlet />
       </div>
       <Footer />
       <ChannelTalkBtn />
-    </div>
+    </>
   );
 };
 

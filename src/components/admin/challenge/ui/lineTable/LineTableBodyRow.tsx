@@ -122,7 +122,7 @@ const LineTableBodyRow = <T extends ItemWithStatus>({
   return (
     <div
       className={twMerge(
-        'flex gap-px rounded-md border border-neutral-200 p-1 font-pretendard',
+        'flex gap-px rounded-md border border-neutral-200 p-1',
         onClick && 'cursor-pointer hover:bg-slate-50',
       )}
       onClick={() => onClick?.(values)}
@@ -146,7 +146,7 @@ const LineTableBodyRow = <T extends ItemWithStatus>({
                     onChange={handleChange}
                   />
                 ) : formatter?.[i] ? (
-                  formatter?.[i]?.(value) ?? value
+                  (formatter?.[i]?.(value) ?? value)
                 ) : (
                   value
                 )}

@@ -5,9 +5,8 @@ import { missionStatusToBadge } from '../../../../../utils/convert';
 
 const MissionResultItem = ({ mission }: { mission: Mission }) => {
   return (
-    <div className="font-pretendard">
-      <div className="relative flex items-center">
-      </div>
+    <div>
+      <div className="relative flex items-center"></div>
       <div className="mt-2 max-w-[80px] text-center text-sm">
         {dayjs(mission.startDate).format('MM/DD(dd)') +
           ' ~ ' +
@@ -25,7 +24,7 @@ const MissionResultItem = ({ mission }: { mission: Mission }) => {
       <div className="mt-2 flex items-center justify-center">
         <span
           className={twMerge(
-            'rounded-md px-2 py-[0.125rem] text-xs ',
+            'rounded-md px-2 py-[0.125rem] text-xs',
             missionStatusToBadge[mission.missionStatusType].style,
           )}
         >

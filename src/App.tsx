@@ -35,7 +35,6 @@ const materialUiTheme = createTheme({
   typography: {
     fontFamily: [
       'Pretendard Variable',
-      'Pretendard',
       '-apple-system',
       'BlinkMacSystemFont',
       'system-ui',
