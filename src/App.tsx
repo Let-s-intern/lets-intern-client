@@ -13,7 +13,7 @@ import { Helmet } from 'react-helmet';
 import { ZodError } from 'zod';
 
 import Router from './Router';
-
+import './fonts/font.css';
 import './index.css';
 import './styles/apply.scss';
 import './styles/blog.css';
