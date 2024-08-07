@@ -28,9 +28,6 @@ module.exports = {
         xl: '1280px',
         '2xl': '1440px',
       },
-      fontFamily: {
-        pretendard: ['Pretendard', 'sans-serif'],
-      },
       colors: {
         primary: {
           DEFAULT: '#4D55F5',

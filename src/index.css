@@ -3,6 +3,16 @@
 @tailwind utilities;
 
 @layer base {
+  html {
+    font-family:
+      'Pretendard Variable',
+      -apple-system,
+      BlinkMacSystemFont,
+      system-ui,
+      Roboto,
+      sans-serif;
+  }
+
   .text-2\.25-bold {
     font-size: 2.25rem;
     font-weight: 600;

@@ -1,4 +1,5 @@
 /** @deprecated */
+import { createTheme, ThemeProvider } from '@mui/material';
 import {
   QueryCache,
   QueryClient,
@@ -6,11 +7,13 @@ import {
 } from '@tanstack/react-query';
 import dayjs from 'dayjs';
 import 'dayjs/locale/ko';
+import { useState } from 'react';
+import { Root } from 'react-dom/client';
 import { Helmet } from 'react-helmet';
 import { ZodError } from 'zod';
-import Router from './Router';
 
-import { useState } from 'react';
+import Router from './Router';
+import './fonts/font.css';
 import './index.css';
 import './styles/apply.scss';
 import './styles/blog.css';
@@ -21,13 +24,25 @@ import './styles/mypage.scss';
 
 dayjs.locale('ko');
 
-import { Root } from 'react-dom/client';
 declare global {
   interface Window {
     __root: Root;
     __lastRenderMode: 'blog' | 'catch_all';
   }
 }
+
+const materialUiTheme = createTheme({
+  typography: {
+    fontFamily: [
+      'Pretendard Variable',
+      '-apple-system',
+      'BlinkMacSystemFont',
+      'system-ui',
+      'Roboto',
+      'sans-serif',
+    ].join(','),
+  },
+});
 
 const App = () => {
   const [queryClient] = useState(
@@ -86,7 +101,9 @@ const App = () => {
         />
         <meta property="og:url" content="https://www.letscareer.co.kr/" />
       </Helmet>
-      <Router />
+      <ThemeProvider theme={materialUiTheme}>
+        <Router />
+      </ThemeProvider>
     </QueryClientProvider>
   );
 };

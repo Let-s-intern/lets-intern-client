@@ -69,9 +69,7 @@ const MissionIcon = ({ className, schedule, isDone }: Props) => {
             />
           </i>
         )}
-        <span className="font-pretendard text-sm font-semibold">
-          {mission.th}회차
-        </span>
+        <span className="text-sm font-semibold">{mission.th}회차</span>
       </Link>
       <div className="mt-2 flex items-center justify-center">
         <span

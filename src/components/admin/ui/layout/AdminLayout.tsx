@@ -119,7 +119,7 @@ const AdminLayout = () => {
   if (!isAdmin) return null;
 
   return (
-    <div className="flex font-pretendard">
+    <div className="flex">
       <aside>
         <nav className="fixed left-0 top-0 z-50 flex h-screen w-64 flex-col gap-8 overflow-y-auto bg-[#353535] py-20 text-white">
           {navData.map((navSection, index) => (

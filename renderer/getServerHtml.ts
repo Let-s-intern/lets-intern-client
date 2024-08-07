@@ -155,7 +155,6 @@ export default function getServerHtml({
        content="15caf82243b739e694f52cc6a5527956db0cd4a0"
      />
  
-     <link rel="stylesheet" href="/styles/font.css" />
      <link
        rel="stylesheet"
        href="https://unpkg.com/react-quill@1.3.3/dist/quill.snow.css"

@@ -6,7 +6,7 @@ import NavBar from './nav/NavBar';
 
 const Layout = () => {
   return (
-    <div className="font-pretendard">
+    <div>
       <NavBar />
       <div className="min-h-screen w-full">
         <Outlet />
