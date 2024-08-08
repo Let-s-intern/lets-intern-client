@@ -1162,3 +1162,29 @@ export const userAdminDetailType = z.object({
 });
 
 export type UserAdminDetail = z.infer<typeof userAdminDetailType>;
+
+/** GET /api/v1/program */
+export const programSchema = z.object({
+  programList: z.array(
+    z.object({
+      programInfo: z.object({
+        id: z.number(),
+        programType,
+        programStatusType: programStatus,
+        title: z.string().nullable().optional(),
+        thumbnail: z.string().nullable().optional(),
+        shortDesc: z.string().nullable().optional(),
+        startDate: z.string().nullable().optional(),
+        endDate: z.string().nullable().optional(),
+        beginning: z.string().nullable().optional(),
+        deadline: z.string().nullable().optional(),
+      }),
+      classificationList: z.array(
+        z.object({
+          programClassification: programClassification.nullable().optional(),
+        }),
+      ),
+    }),
+  ),
+  pageInfo: pageinfo,
+});
