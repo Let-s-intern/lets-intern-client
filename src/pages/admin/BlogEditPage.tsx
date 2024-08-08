@@ -26,6 +26,8 @@ import TagSelector from '../../components/admin/blog/TagSelector';
 import TextFieldLimit from '../../components/admin/blog/TextFieldLimit';
 import EditorApp from '../../components/admin/lexical/EditorApp';
 import ImageUpload from '../../components/admin/program/ui/form/ImageUpload';
+import { programSchema } from '../../schema';
+import axios from '../../utils/axios';
 import { blogCategory } from '../../utils/convert';
 
 const maxCtaTextLength = 23;
@@ -129,9 +131,20 @@ const BlogEditPage = () => {
 
   const patchBlog = async (event: MouseEvent<HTMLButtonElement>) => {
     const { name } = event.target as HTMLButtonElement;
+    let ctaLink = editingValue.ctaLink;
+
+    if (editingValue.ctaLink.startsWith('latest:')) {
+      const keyword = editingValue.ctaLink.split('latest:')[1].trim();
+      const program = await findProgramIncludingKeyword(keyword);
+      ctaLink =
+        program === undefined
+          ? ''
+          : `/program/challenge/${program?.programInfo?.id}`;
+    }
 
     await patchBlogMutation.mutateAsync({
       ...editingValue,
+      ctaLink,
       id: Number(id),
       isDisplayed: name === 'publish',
       tagList: editingValue.tagList.map((tag) => tag.id),
@@ -142,6 +155,16 @@ const BlogEditPage = () => {
       message: '블로그가 수정되었습니다.',
     });
     navgiate('/admin/blog/list');
+  };
+
+  const findProgramIncludingKeyword = async (keyword: string) => {
+    const res = await axios.get('/program/admin', {
+      params: { pageable: { page: 1, size: 10000 }, status: 'PROCEEDING' },
+    });
+    const program = programSchema
+      .parse(res.data.data)
+      .programList.find((item) => item.programInfo.title?.includes(keyword));
+    return program;
   };
 
   useEffect(() => {
