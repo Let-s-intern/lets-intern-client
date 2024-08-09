@@ -152,20 +152,20 @@ const BlogDetailSSRPage = () => {
     }
   };
 
-  const clickCtaButton = async () => {
+  const clickCtaButton = () => {
     let ctaLink = blog.blogDetailInfo.ctaLink;
 
     if (ctaLink!.startsWith('latest:')) {
       const keyword = ctaLink!.split('latest:')[1].trim();
-      const program = await findProgramIncludingKeyword(keyword);
-      ctaLink =
-        program === undefined
-          ? ''
-          : window.location.origin +
-            `/program/challenge/${program?.programInfo?.id}`;
+      findProgramIncludingKeyword(keyword).then((program) => {
+        ctaLink =
+          program === undefined
+            ? ''
+            : window.location.origin +
+              `/program/challenge/${program?.programInfo?.id}`;
+        window.open(ctaLink!, '_blank');
+      });
     }
-
-    window.open(ctaLink!, '_blank');
   };
 
   const title = getBlogTitle(blog.blogDetailInfo);
