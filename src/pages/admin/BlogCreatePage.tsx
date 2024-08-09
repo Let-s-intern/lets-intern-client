@@ -81,6 +81,7 @@ const BlogCreatePage = () => {
 
   const postBlog = async (event: MouseEvent<HTMLButtonElement>) => {
     const { name } = event.target as HTMLButtonElement;
+
     await createBlogMutation.mutateAsync({
       ...editingValue,
       displayDate:
@@ -88,6 +89,7 @@ const BlogCreatePage = () => {
           ? new Date().toISOString()
           : editingValue.displayDate,
     });
+
     setSnackbar({
       open: true,
       message: '블로그가 생성되었습니다.',

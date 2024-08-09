@@ -1,9 +1,11 @@
 import { useQuery } from '@tanstack/react-query';
+
 import { getLiveIdSchema } from '../schema';
 import axios from '../utils/axios';
 import { useChallengeQuery } from './challenge';
 
 const useLiveQueryKey = 'useLiveQueryKey';
+const useProgramAdminQueryKey = 'useProgramAdminQueryKey';
 
 export const useLiveQuery = ({
   liveId,
