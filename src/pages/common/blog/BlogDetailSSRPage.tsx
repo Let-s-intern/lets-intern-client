@@ -154,6 +154,7 @@ const BlogDetailSSRPage = () => {
 
   const clickCtaButton = () => {
     let ctaLink = blog.blogDetailInfo.ctaLink;
+    const open = window.open(); // 이슈: iOS에서 비동기 함수 내의 window.open() 차단
 
     if (ctaLink!.startsWith('latest:')) {
       const keyword = ctaLink!.split('latest:')[1].trim();
@@ -163,7 +164,7 @@ const BlogDetailSSRPage = () => {
             ? ''
             : window.location.origin +
               `/program/challenge/${program?.programInfo?.id}`;
-        window.open(ctaLink!, '_blank');
+        open?.location.assign(ctaLink);
       });
     }
   };
