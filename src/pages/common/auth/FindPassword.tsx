@@ -3,8 +3,8 @@ import { useNavigate } from 'react-router-dom';
 
 import Button from '../../../components/common/ui/button/Button';
 import Input from '../../../components/ui/input/Input';
-import axios from '../../../utils/axios';
 import useAuthStore from '../../../store/useAuthStore';
+import axios from '../../../utils/axios';
 
 const FindPassword = () => {
   const { isLoggedIn } = useAuthStore();
@@ -20,6 +20,33 @@ const FindPassword = () => {
       navigate('/');
     }
   }, [navigate, isLoggedIn]);
+
+  const handlePhoneNum = (e: React.ChangeEvent<HTMLInputElement>) => {
+    let phone = e.target.value.replace(/[^0-9]/g, '');
+
+    if (phone.length > 11) {
+      phone = phone.slice(0, 11);
+    }
+
+    if (phone.length <= 6) {
+      phone = phone.replace(/(\d{0,3})(\d{0,3})/, (match, p1, p2) => {
+        return p2 ? `${p1}-${p2}` : `${p1}`;
+      });
+    } else if (phone.length <= 10) {
+      phone = phone.replace(
+        /(\d{0,3})(\d{0,3})(\d{0,4})/,
+        (match, p1, p2, p3) => {
+          return p3 ? `${p1}-${p2}-${p3}` : `${p1}-${p2}`;
+        },
+      );
+    } else {
+      phone = phone.replace(/(\d{3})(\d{4})(\d+)/, (match, p1, p2, p3) => {
+        return `${p1}-${p2}-${p3}`;
+      });
+    }
+
+    setPhoneNum(phone);
+  };
 
   const handleOnSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -72,7 +99,7 @@ const FindPassword = () => {
               label="휴대폰 번호"
               placeholder="010-1234-4567"
               value={phoneNum}
-              onChange={(e) => setPhoneNum(e.target.value)}
+              onChange={(e) => handlePhoneNum(e)}
             />
           </div>
           <div className="space-y-3">
