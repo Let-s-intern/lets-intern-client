@@ -1,7 +1,7 @@
 import dayjs from 'dayjs';
 import { z } from 'zod';
 
-const pageinfo = z.object({
+const pageInfo = z.object({
   pageNum: z.number().gte(0),
   pageSize: z.number().gte(0),
   totalElements: z.number().gte(0),
@@ -24,7 +24,7 @@ export const challenges = z
         createDate: z.string(),
       }),
     ),
-    pageInfo: pageinfo,
+    pageInfo,
   })
   .transform((data) => {
     return {
@@ -429,7 +429,7 @@ export const getChallengeIdApplicationsPayback = z
         isRefunded: z.boolean().nullable(),
       }),
     ),
-    pageInfo: pageinfo,
+    pageInfo,
   })
   .transform((data) => {
     return {
@@ -568,7 +568,7 @@ export const getContentsAdmin = z
         createDate: z.string(),
       }),
     ),
-    pageInfo: pageinfo,
+    pageInfo,
   })
   .transform((data) => {
     return {
@@ -606,7 +606,7 @@ export const challengeNotices = z
         createDate: z.string().nullable(),
       }),
     ),
-    pageInfo: pageinfo,
+    pageInfo,
   })
   .transform((data) => {
     return {
@@ -1075,7 +1075,7 @@ export const userAdminType = z.object({
       ),
     }),
   ),
-  pageInfo: pageinfo,
+  pageInfo,
 });
 
 export type UserAdmin = z.infer<typeof userAdminType>['userAdminList'];
@@ -1131,5 +1131,34 @@ export const programSchema = z.object({
       ),
     }),
   ),
-  pageInfo: pageinfo,
+  pageInfo,
+});
+
+/** GET /api/v1/program/admin */
+export const programAdminSchema = z.object({
+  programList: z.array(
+    z.object({
+      programInfo: z.object({
+        id: z.number(),
+        programType,
+        programStatusType: programStatus,
+        title: z.string().nullable(),
+        startDate: z.string().nullable().optional(),
+        endDate: z.string().nullable().optional(),
+        beginning: z.string().nullable().optional(),
+        deadline: z.string().nullable().optional(),
+        currentCount: z.number().nullable().optional(),
+        participationCount: z.number().nullable().optional(),
+        zoomLink: z.string().nullable().optional(),
+        zoomPassword: z.string().nullable().optional(),
+        isVisible: z.boolean().nullable(),
+      }),
+      classificationList: z.array(
+        z.object({
+          programClassification: programClassification.nullable().optional(),
+        }),
+      ),
+    }),
+  ),
+  pageInfo,
 });

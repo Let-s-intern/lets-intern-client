@@ -1,7 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 
-import { getLiveIdSchema, programSchema } from '../schema';
-import { IPageable } from '../types/interface';
+import { getLiveIdSchema } from '../schema';
 import axios from '../utils/axios';
 import { useChallengeQuery } from './challenge';
 
@@ -59,29 +58,3 @@ export const useProgramQuery = ({
 };
 
 export type ProgramQuery = ReturnType<typeof useProgramQuery>;
-
-export const useProgramListQeury = ({
-  pageable,
-  type,
-  classification,
-  status,
-}: {
-  pageable: IPageable;
-  type?: 'LIVE' | 'VOD' | 'CHALLENGE';
-  classification?:
-    | 'CAREER_SEARCH'
-    | 'DOCUMENT_PREPARATION'
-    | 'MEETING_PREPARATION'
-    | 'PASS';
-  status?: 'PREV' | 'PROCEEDING' | 'POST';
-}) => {
-  return useQuery({
-    queryKey: [useProgramAdminQueryKey, pageable],
-    queryFn: async () => {
-      const res = await axios.get('/program/admin', {
-        params: { pageable, type, classification, status },
-      });
-      return programSchema.parse(res.data.data);
-    },
-  });
-};
