@@ -166,6 +166,8 @@ const BlogDetailSSRPage = () => {
               `/program/challenge/${program?.programInfo?.id}`;
         open?.location.assign(ctaLink);
       });
+    } else {
+      open?.location.assign(ctaLink!);
     }
   };
 
