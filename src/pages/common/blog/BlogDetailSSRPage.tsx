@@ -2,6 +2,7 @@ import dayjs from 'dayjs';
 import { useEffect, useRef, useState } from 'react';
 import { Helmet } from 'react-helmet';
 import { useNavigate, useParams } from 'react-router-dom';
+
 import {
   useBlogListTypeQuery,
   useBlogQuery,
@@ -12,12 +13,40 @@ import LexicalContent from '../../../components/common/blog/LexicalContent';
 import RecommendBlogCard from '../../../components/common/blog/RecommendBlogCard';
 import LoadingContainer from '../../../components/common/ui/loading/LoadingContainer';
 import { useBlog } from '../../../context/Post';
+import { programSchema } from '../../../schema';
+import axios from '../../../utils/axios';
 import { blogCategory } from '../../../utils/convert';
+import {
+  PROGRAM_STATUS_KEY,
+  PROGRAM_TYPE_KEY,
+} from '../../../utils/programConst';
 import {
   getBaseUrlFromServer,
   getBlogPathname,
   getBlogTitle,
 } from '../../../utils/url';
+
+const findProgramIncludingKeyword = async (keyword: string) => {
+  const res = await axios.get('/program', {
+    params: {
+      pageable: { page: 1, size: 10000 },
+      type: PROGRAM_TYPE_KEY.CHALLENGE,
+      status: PROGRAM_STATUS_KEY.PROCEEDING,
+    },
+  });
+  const programList = programSchema
+    .parse(res.data.data)
+    .programList.filter((item) => item.programInfo.title?.includes(keyword));
+  console.log(programList);
+  // 마감일이 가장 빠른 프로그램을 찾아서 반환
+  return programList.reduce(
+    (latest, program) =>
+      program.programInfo.deadline! < latest.programInfo.deadline!
+        ? program
+        : latest,
+    programList[0],
+  );
+};
 
 const BlogDetailSSRPage = () => {
   const navigate = useNavigate();
@@ -121,6 +150,22 @@ const BlogDetailSSRPage = () => {
       // eslint-disable-next-line no-console
       console.log(err);
     }
+  };
+
+  const clickCtaButton = async () => {
+    let ctaLink = blog.blogDetailInfo.ctaLink;
+
+    if (ctaLink!.startsWith('latest:')) {
+      const keyword = ctaLink!.split('latest:')[1].trim();
+      const program = await findProgramIncludingKeyword(keyword);
+      ctaLink =
+        program === undefined
+          ? ''
+          : window.location.origin +
+            `/program/challenge/${program?.programInfo?.id}`;
+    }
+
+    window.open(ctaLink!, '_blank');
   };
 
   const title = getBlogTitle(blog.blogDetailInfo);
@@ -365,9 +410,7 @@ const BlogDetailSSRPage = () => {
             <div className="flex w-full flex-col items-center md:px-[100px]">
               <button
                 className="blog_cta w-full rounded-md bg-primary px-6 py-3 text-small18 font-medium text-neutral-100"
-                onClick={() =>
-                  window.open(blog.blogDetailInfo.ctaLink || '', '_blank')
-                }
+                onClick={clickCtaButton}
               >
                 {blog.blogDetailInfo.ctaText}
               </button>

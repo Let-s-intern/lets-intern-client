@@ -31,7 +31,6 @@ import TextFieldLimit from '../../components/admin/blog/TextFieldLimit';
 import EditorApp from '../../components/admin/lexical/EditorApp';
 import ImageUpload from '../../components/admin/program/ui/form/ImageUpload';
 import { blogCategory } from '../../utils/convert';
-import { findProgramIncludingKeyword } from './BlogEditPage';
 
 const maxCtaTextLength = 23;
 const maxTitleLength = 49;
@@ -82,21 +81,9 @@ const BlogCreatePage = () => {
 
   const postBlog = async (event: MouseEvent<HTMLButtonElement>) => {
     const { name } = event.target as HTMLButtonElement;
-    let ctaLink = editingValue.ctaLink;
-
-    if (editingValue.ctaLink.startsWith('latest:')) {
-      const keyword = editingValue.ctaLink.split('latest:')[1].trim();
-      const program = await findProgramIncludingKeyword(keyword);
-      ctaLink =
-        program === undefined
-          ? ''
-          : window.location.origin +
-            `/program/challenge/${program?.programInfo?.id}`;
-    }
 
     await createBlogMutation.mutateAsync({
       ...editingValue,
-      ctaLink,
       displayDate:
         name === 'publish'
           ? new Date().toISOString()
