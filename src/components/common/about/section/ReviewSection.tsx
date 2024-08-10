@@ -1,4 +1,6 @@
+import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { twMerge } from 'tailwind-merge';
 import AboutTitleDark from '../ui/AboutTitleDark';
 
 const title = {
@@ -25,16 +27,52 @@ const reviewList = [
   },
 ];
 
+const throttle = (callback: () => void, delay: number) => {
+  let timeId: NodeJS.Timeout | null;
+
+  return () => {
+    if (timeId) return;
+    timeId = setTimeout(() => {
+      callback();
+      timeId = null;
+    }, delay);
+  };
+};
+
 const ReviewSection = () => {
+  const slideRef = useRef<HTMLDivElement>(null);
+  const [hasScroll, setHasScroll] = useState(true);
+
+  useEffect(() => {
+    const onResize = () => {
+      setHasScroll(
+        slideRef.current?.scrollWidth === slideRef.current?.offsetWidth
+          ? false
+          : true,
+      );
+    };
+    window.addEventListener('resize', throttle(onResize, 100));
+
+    return () => {
+      window.removeEventListener('resize', throttle(onResize, 100));
+    };
+  }, []);
+
   return (
     <section className="bg-[#101348] px-5 py-[3.75rem] sm:px-10 sm:py-[6.25rem] xl:py-[8.75rem]">
       <AboutTitleDark {...title} />
-      <div className="custom-scrollbar mt-10 flex w-auto flex-row flex-nowrap gap-4 overflow-x-auto xl:pl-16">
+      <div
+        ref={slideRef}
+        className={twMerge(
+          'custom-scrollbar mt-10 flex w-auto flex-nowrap gap-4 overflow-x-auto xl:pl-16',
+          !hasScroll && 'justify-center',
+        )}
+      >
         {reviewList.map((review) => (
           <Link
             to={review.url}
             key={review.url}
-            className="w-80 flex-shrink-0 overflow-hidden rounded-md lg:w-96 lg:min-w-96"
+            className="w-72 flex-shrink-0 overflow-hidden rounded-md lg:w-96 lg:min-w-96"
             target="_blank"
             rel="noreferrer noopener"
           >
