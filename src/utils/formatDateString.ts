@@ -1,5 +1,3 @@
-import { Dayjs } from "dayjs";
-
 const formatDateString = (
   dateString: string,
   format?: { date: boolean; weekday: boolean; time: boolean },
@@ -55,24 +53,6 @@ const formatDateString = (
 
 export default formatDateString;
 
-const formatMentorDateString = (dateString: string) => {
-  const date = new Date(dateString);
-  const weekdayList = ['일', '월', '화', '수', '목', '금', '토'];
-  const isAm = date.getHours() < 12;
-  let hours = date.getHours();
-  hours = hours % 12;
-  hours = hours ? hours : 12;
-  const hoursStr = hours < 10 ? '0' + hours : hours;
-  const formattedString = `${date.getFullYear()}.${
-    date.getMonth() + 1
-  }.${date.getDate()} (${weekdayList[date.getDay()]}) ${
-    isAm ? '오전' : '오후'
-  } ${hoursStr}:${
-    date.getMinutes() > 9 ? date.getMinutes() : '0' + date.getMinutes()
-  }`;
-  return formattedString;
-};
-
 export const formatMissionDateString = (dateString: string) => {
   const endDate = new Date(dateString);
   const weekdayList = ['일', '월', '화', '수', '목', '금', '토'];
@@ -85,33 +65,3 @@ export const formatMissionDateString = (dateString: string) => {
   }`;
   return formattedString;
 };
-
-const formatMissionTableDateString = (
-  dateString: string,
-  time: string,
-) => {
-  const endDate = new Date(dateString);
-  const weekdayList = ['일', '월', '화', '수', '목', '금', '토'];
-  const formattedString = `${endDate.getMonth() + 1}/${endDate.getDate()}(${
-    weekdayList[endDate.getDay()]
-  }) ${time}`;
-  return formattedString;
-};
-
-const formatToMonthDate = (dateString: string) => {
-  const date = new Date(dateString);
-  const weekdayList = ['일', '월', '화', '수', '목', '금', '토'];
-  const formattedString = `${date.getMonth() + 1}/${date.getDate()}(${
-    weekdayList[date.getDay()]
-  })`;
-  return formattedString;
-};
-
-const weekdayList = ['일', '월', '화', '수', '목', '금', '토'];
-const formatToMonthDateFromDayjs = (dayjsDate: Dayjs) => {
-  return dayjsDate?.format('MM/DD(ddd)') ?? "";
-  // const formattedString = `${dayjsDate.month() + 1}/${dayjsDate.date()}(${
-  //   weekdayList[dayjsDate.day()]
-  // })`;
-  // return formattedString;
-}

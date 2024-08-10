@@ -6,13 +6,6 @@ export const newProgramTypeToText: Record<string, string> = {
   LIVE: 'LIVE 클래스',
   VOD: 'VOD 클래스',
 };
-
-const newProgramTypeText: Record<'CHALLENGE' | 'LIVE' | 'VOD', string> = {
-  CHALLENGE: '챌린지',
-  LIVE: 'LIVE 클래스',
-  VOD: 'VOD 클래스',
-};
-
 export const newProgramFeeTypeToText: Record<string, string> = {
   FREE: '무료',
   CHARGE: '이용료',
@@ -48,27 +41,6 @@ export const programPriceTypeToText: Record<string, string> = {
 export const programParticipationTypeToText: Record<string, string> = {
   LIVE: 'LIVE',
   FREE: '자율일정',
-};
-
-const programTypeToText: Record<string, string> = {
-  CHALLENGE_FULL: '챌린지',
-  CHALLENGE_HALF: '챌린지',
-  BOOTCAMP: '챌린지',
-  LETS_CHAT: '클래스',
-};
-
-const challengeTopicToText: Record<string, string> = {
-  ALL: '전체',
-  MARKETING: '마케팅',
-  DEVELOPMENT: '개발',
-};
-
-const applicationStatusToText: Record<string, string> = {
-  APPLIED: '대기',
-  IN_PROGRESS: '참가확정',
-  APPLIED_NOT_APPROVED: '미선발',
-  FEE_NOT_APPROVED: '미입금 미선발',
-  DONE: '참가완료',
 };
 
 export const feeTypeToText: Record<string, string> = {
@@ -330,8 +302,6 @@ export const TABLE_STATUS = {
   SAVE: 0,
   INSERT: 1,
 } as const;
-
-type TableStatus = (typeof TABLE_STATUS)[keyof typeof TABLE_STATUS];
 
 export const TABLE_CONTENT = {
   INPUT: 0,
