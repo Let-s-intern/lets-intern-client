@@ -96,7 +96,7 @@ const Banner = () => {
               style={bannerStyle}
             >
               <img
-                onClick={() => window.open(banner.link)}
+                onClick={() => clickImg(banner.link)}
                 key={banner.id}
                 className="main_banner h-full w-full object-cover"
                 src={banner.mobileImgUrl}

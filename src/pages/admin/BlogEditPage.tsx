@@ -159,6 +159,10 @@ const BlogEditPage = () => {
     });
   }, [isLoading, blogData]);
 
+  useEffect(() => {
+    console.log(editingValue.content);
+  }, [editingValue.content]);
+
   return (
     <div className="mx-3 mb-40 mt-3">
       <header>
