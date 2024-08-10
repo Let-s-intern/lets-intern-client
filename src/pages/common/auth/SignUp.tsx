@@ -1,8 +1,8 @@
 import { useMutation } from '@tanstack/react-query';
-import { useEffect, useState } from 'react';
+import { AxiosError } from 'axios';
+import { FormEvent, useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 
-import { AxiosError } from 'axios';
 import MarketingModal from '../../../components/common/auth/modal/MarketingModal';
 import PrivacyPolicyModal from '../../../components/common/auth/modal/PrivacyPolicyModal';
 import CheckBox from '../../../components/common/auth/ui/CheckBox';
@@ -141,7 +141,7 @@ const SignUp = () => {
       const res = await axios({
         method: 'PATCH',
         url: '/user',
-        data: { contactEmail: value.email },
+        data: { contactEmail: value.email, inflowPath: value.inflow },
         headers: {
           Authorization: `Bearer ${accessTokenForSocialSignup}`,
           'Content-Type': 'application/json',
@@ -169,7 +169,7 @@ const SignUp = () => {
     }
   }, [navigate, isLoggedIn]);
 
-  const handleOnSubmit = (e: any) => {
+  const onSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (buttonDisabled) return;
     if (!isValidEmail(value.email)) {
@@ -206,6 +206,7 @@ const SignUp = () => {
     if (isSocial) {
       if (
         value.email === '' ||
+        value.inflow === '' ||
         value.acceptedAge === false ||
         value.agreeToTerms === false ||
         value.agreeToPrivacy === false
@@ -249,10 +250,7 @@ const SignUp = () => {
                   입력하세요
                 </h1>
               )}
-              <form
-                onSubmit={handleOnSubmit}
-                className="flex flex-col space-y-3"
-              >
+              <form onSubmit={onSubmit} className="flex flex-col space-y-3">
                 {isSocial ? (
                   <div className="flex flex-col gap-2">
                     <div>
@@ -273,6 +271,13 @@ const SignUp = () => {
                       onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                         setValue({ ...value, email: e.target.value });
                       }}
+                    />
+                    <Input
+                      label="유입경로"
+                      value={value.inflow}
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                        setValue({ ...value, inflow: e.target.value })
+                      }
                     />
                   </div>
                 ) : (
