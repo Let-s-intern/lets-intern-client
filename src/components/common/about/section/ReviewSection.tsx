@@ -51,6 +51,7 @@ const ReviewSection = () => {
           : true,
       );
     };
+    onResize(); // 최초 실행
     window.addEventListener('resize', throttle(onResize, 100));
 
     return () => {
