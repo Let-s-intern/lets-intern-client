@@ -1,6 +1,7 @@
 import { useMutation } from '@tanstack/react-query';
-import { useEffect, useState } from 'react';
+import { ChangeEvent, FormEvent, useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+
 import useAuthStore from '../../../../store/useAuthStore';
 import axios from '../../../../utils/axios';
 import AlertModal from '../../../ui/alert/AlertModal';
@@ -101,10 +102,9 @@ const InfoContainer = ({
     setValue({ ...value, grade });
   };
 
-  const handleOnSubmit = (e: any) => {
+  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (
-      (isSocial && !value.inflow) ||
       !value.university ||
       !value.major ||
       !value.grade ||
@@ -114,8 +114,8 @@ const InfoContainer = ({
       setError(true);
       setErrorMessage('모든 항목을 입력해주세요.');
       return;
-      // eslint-disable-next-line no-dupe-else-if
-    } else if (!value.grade) {
+    }
+    if (!value.grade) {
       setError(true);
       setErrorMessage('학년을 선택해주세요.');
       return;
@@ -152,18 +152,7 @@ const InfoContainer = ({
           <br />
           상세 정보를 입력해주세요
         </h1>
-        <form onSubmit={handleOnSubmit} className="flex flex-col space-y-3">
-          {isSocial && (
-            <div>
-              <Input
-                label="유입경로"
-                value={value.inflow}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                  setValue({ ...value, inflow: e.target.value })
-                }
-              />
-            </div>
-          )}
+        <form onSubmit={handleSubmit} className="flex flex-col space-y-3">
           <div>
             <Input
               label="학교"
@@ -193,7 +182,7 @@ const InfoContainer = ({
             <Input
               label="희망직무"
               value={value.wishJob}
-              onChange={(e: any) => {
+              onChange={(e: ChangeEvent<HTMLInputElement>) => {
                 setValue({ ...value, wishJob: e.target.value });
               }}
             />
