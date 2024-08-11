@@ -66,11 +66,10 @@ const FindPassword = () => {
         return;
       }
       if (isAxiosError(error) && error.response?.status === 400) {
-        setMessage(
-          '카카오 또는 네이버로 회원가입된 사용자입니다.\n카카오 또는 네이버로 로그인해주세요.',
-        );
+        const social = error.response.data.message.slice(0, 3);
+        setMessage(`${social}로 로그인해주세요.`);
         alert(
-          '카카오 또는 네이버로 회원가입된 사용자입니다.\n카카오 또는 네이버로 로그인해주세요.',
+          `${social}로 회원가입된 사용자입니다.\n${social}로 로그인해주세요.`,
         );
         return;
       }
