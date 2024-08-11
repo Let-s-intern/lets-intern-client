@@ -52,13 +52,11 @@ export const useDeleteUserMutation = (
       await axios.delete(`/user/admin?number=${phoneNumber}`);
     },
     onSuccess: () => {
-      console.log('onSuccess');
       client
         .invalidateQueries({
           queryKey: [UseUserAdminQueryKey],
         })
         .then(() => {
-          console.log('invalidateQueries success');
           successCallback && successCallback();
         });
     },
