@@ -65,6 +65,15 @@ const FindPassword = () => {
         setMessage('입력하신 정보로 가입된 계정 정보를 찾을 수 없습니다.');
         return;
       }
+      if (isAxiosError(error) && error.response?.status === 400) {
+        setMessage(
+          '카카오 또는 네이버로 회원가입된 사용자입니다.\n카카오 또는 네이버로 로그인해주세요.',
+        );
+        alert(
+          '카카오 또는 네이버로 회원가입된 사용자입니다.\n카카오 또는 네이버로 로그인해주세요.',
+        );
+        return;
+      }
       setMessage(
         '비밀번호 재설정 링크 전송에 실패했습니다.\n하단 채팅문의를 통해 문의해주세요.',
       );
