@@ -344,37 +344,43 @@ const LexicalContent = ({ node }: { node: SerializedLexicalNode }) => {
       }
 
       return (
-        <span className="image">
-          <picture className="inline-block">
-            {imageSources.map((source, index) => (
-              <source
-                key={index}
-                media={source.media}
-                srcSet={source.srcSet}
-                type={source.type}
+        <span
+          className="image"
+          style={{
+            maxWidth: _node.width ? `${_node.width}px` : undefined,
+          }}
+        >
+          <div
+            className="inline-block"
+            style={{ maxWidth: _node.width ? `${_node.width}px` : undefined }}
+          >
+            <picture>
+              {imageSources.map((source, index) => (
+                <source
+                  key={index}
+                  media={source.media}
+                  srcSet={source.srcSet}
+                  type={source.type}
+                />
+              ))}
+              <img
+                src={_node.src}
+                alt={_node.altText}
+                draggable={false}
+                className="h-auto w-full"
               />
-            ))}
-            <img
-              src={_node.src}
-              alt={_node.altText}
-              style={{
-                maxWidth: _node.width ? `${_node.width}px` : undefined,
-              }}
-              draggable={false}
-              className="h-auto w-full"
-            />
-          </picture>
-
-          {_node.showCaption ? (
-            <div className="image-caption-container mb-4 mt-3 w-full text-center text-xsmall14 text-neutral-50">
-              <div
-                role="textbox"
-                className="w-full whitespace-pre-wrap break-keep"
-              >
-                <LexicalContent node={_node.caption.editorState.root} />
+            </picture>
+            {_node.showCaption ? (
+              <div className="image-caption-container mb-4 mt-3 w-full text-center text-xsmall14 text-neutral-50">
+                <div
+                  role="textbox"
+                  className="w-full whitespace-pre-wrap break-keep"
+                >
+                  <LexicalContent node={_node.caption.editorState.root} />
+                </div>
               </div>
-            </div>
-          ) : null}
+            ) : null}
+          </div>
         </span>
       );
     }
