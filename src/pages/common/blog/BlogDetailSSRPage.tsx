@@ -99,7 +99,7 @@ const BlogDetailSSRPage = () => {
 
   useEffect(() => {
     if (!window.Kakao.isInitialized()) {
-      window.Kakao.init(import.meta.env.VITE_KAKAO_JS_KEY);
+      window.Kakao.init('fe2307dd60e05ff8cbb06d777a13e31c');
     }
   }, []);
 
