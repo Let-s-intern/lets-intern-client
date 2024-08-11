@@ -1,5 +1,7 @@
+import { isAxiosError } from 'axios';
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { twMerge } from 'tailwind-merge';
 
 import Button from '../../../components/common/ui/button/Button';
 import Input from '../../../components/ui/input/Input';
@@ -7,8 +9,9 @@ import useAuthStore from '../../../store/useAuthStore';
 import axios from '../../../utils/axios';
 
 const FindPassword = () => {
-  const { isLoggedIn } = useAuthStore();
   const navigate = useNavigate();
+  const { isLoggedIn } = useAuthStore();
+
   const [email, setEmail] = useState('');
   const [name, setName] = useState('');
   const [phoneNum, setPhoneNum] = useState('');
@@ -16,9 +19,7 @@ const FindPassword = () => {
   const [isError, setIsError] = useState(false);
 
   useEffect(() => {
-    if (isLoggedIn) {
-      navigate('/');
-    }
+    if (isLoggedIn) navigate('/');
   }, [navigate, isLoggedIn]);
 
   const handlePhoneNum = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -54,28 +55,26 @@ const FindPassword = () => {
     try {
       setIsError(false);
       setMessage('이메일을 전송 중입니다. 잠시만 기다려주세요.');
-      await axios.post(
-        '/user/password',
-        { name, email, phoneNum },
-        { headers: { Authorization: '' } },
-      );
+      await axios.post('/user/password', { name, email, phoneNum });
       setMessage('비밀번호 재설정 이메일을 전송하였습니다.');
       alert('입력하신 이메일로 임시 비밀번호가 전송되었습니다.');
       navigate('/login');
     } catch (error) {
-      if ((error as any).response?.status === 404) {
-        setIsError(true);
+      setIsError(true);
+      if (isAxiosError(error) && error.response?.status === 404) {
         setMessage('입력하신 정보로 가입된 계정 정보를 찾을 수 없습니다.');
         return;
       }
-      setIsError(true);
-      setMessage('비밀번호 재설정 링크 전송에 실패했습니다.');
+      setMessage(
+        '비밀번호 재설정 링크 전송에 실패했습니다.\n하단 채팅문의를 통해 문의해주세요.',
+      );
     }
   };
 
-  const submitDisabled = useMemo(() => {
-    return !email || !name || !phoneNum;
-  }, [email, name, phoneNum]);
+  const submitDisabled = useMemo(
+    () => !email || !name || !phoneNum,
+    [email, name, phoneNum],
+  );
 
   return (
     <div className="mx-auto mt-8 min-h-screen p-5 sm:mt-12">
@@ -105,9 +104,10 @@ const FindPassword = () => {
           <div className="space-y-3">
             {message && (
               <span
-                className={`block text-center text-sm ${
-                  isError ? 'text-red-500' : 'text-gray-500'
-                }`}
+                className={twMerge(
+                  'block whitespace-pre text-center text-sm',
+                  isError ? 'text-red-500' : 'text-gray-500',
+                )}
               >
                 {message}
               </span>
