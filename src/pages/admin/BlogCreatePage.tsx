@@ -236,6 +236,11 @@ const BlogCreatePage = () => {
                   fullWidth
                   autoComplete="off"
                 />
+                <span className="text-0.875 text-neutral-35">
+                  {
+                    '*latest:{text}으로 설정하면, 텍스트를 제목에 포함하는 챌린지 상세페이지로 이동합니다. (예시) latest:인턴'
+                  }
+                </span>
               </div>
               <TextFieldLimit
                 type="text"
