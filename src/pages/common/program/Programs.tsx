@@ -255,7 +255,7 @@ const Programs = () => {
   }, [loading]);
 
   useEffect(() => {
-    alert(ERROR_MESSAGE);
+    if (isError) alert(ERROR_MESSAGE);
   }, [isError]);
 
   return (
