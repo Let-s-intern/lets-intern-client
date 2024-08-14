@@ -1,9 +1,9 @@
-import { useQuery } from '@tanstack/react-query';
 import clsx from 'clsx';
 import { useCallback, useEffect, useReducer, useState } from 'react';
 import { Helmet } from 'react-helmet';
 import { useSearchParams } from 'react-router-dom';
 
+import { useUserProgramQuery } from '../../../api/program';
 import Banner from '../../../components/common/program/banner/Banner';
 import FilterItem from '../../../components/common/program/filter/FilterItem';
 import FilterSideBar from '../../../components/common/program/filter/FilterSideBar';
@@ -23,7 +23,6 @@ import {
   filterClassificationkey,
   filterStatuskey,
   filterTypekey,
-  IProgram,
 } from '../../../types/interface';
 import axios from '../../../utils/axios';
 import { getKeyByValue } from '../../../utils/convert';
@@ -45,19 +44,19 @@ const ERROR_MESSAGE =
   "프로그램 조회 중 오류가 발생했습니다.\n문제가 지속되면 아래 '채팅문의'를 통해 문의해주세요.";
 
 const Programs = () => {
-  // 필터링 상태 관리
   const [searchParams, setSearchParams] = useSearchParams();
 
   const [isOpen, setIsOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   const [pageable, setPageable] = useState(initialPageable);
   const [pageInfo, setPageInfo] = useState(initialPageInfo);
-  const [programList, setProgramList] = useState<IProgram[]>([]);
 
-  const { isSuccess, isFetching, isLoading } = useQuery({
-    queryKey: ['program', pageable.page, searchParams.toString()],
-    queryFn: getProgramList,
-  });
+  const {
+    isSuccess,
+    isFetching,
+    isLoading,
+    data: programData,
+  } = useUserProgramQuery({ pageable, searchParams });
 
   const [filterClassification, classificationDispatch] = useReducer(
     filterClassificationReducer,
@@ -233,11 +232,6 @@ const Programs = () => {
       const res = await axios.get(
         `/program?${pageableQuery.join('&')}&${searchParams.toString()}`,
       );
-      if (res.status === 200) {
-        setProgramList(res.data.data.programList);
-        setPageInfo(res.data.data.pageInfo);
-        return res.data.data;
-      }
     } catch (error) {
       alert(ERROR_MESSAGE);
     }
@@ -402,8 +396,8 @@ const Programs = () => {
           <LoadingContainer text="프로그램 조회 중" />
         ) : (
           isSuccess &&
-          programList &&
-          (programList.length < 1 ? (
+          programData &&
+          (programData.programList.length < 1 ? (
             <>
               <p className="text-1 py-2 text-center text-neutral-0/40">
                 혹시, 찾으시는 프로그램이 없으신가요?
@@ -421,7 +415,7 @@ const Programs = () => {
           ) : (
             <>
               <section className="min-h-2/4 mb-4 grid grid-cols-2 gap-x-4 gap-y-5 md:mb-0 md:grid-cols-3 md:gap-4 xl:grid-cols-4">
-                {programList.map((program: IProgram) => (
+                {programData.programList.map((program) => (
                   <ProgramCard
                     key={
                       program.programInfo.programType + program.programInfo.id
