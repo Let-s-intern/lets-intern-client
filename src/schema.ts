@@ -1163,6 +1163,10 @@ export const userAdminDetailType = z.object({
 
 export type UserAdminDetail = z.infer<typeof userAdminDetailType>;
 
+export const classificationSchema = z.object({
+  programClassification: programClassification.nullable().optional(),
+});
+
 /** GET /api/v1/program */
 export const programSchema = z.object({
   programList: z.array(
@@ -1179,15 +1183,12 @@ export const programSchema = z.object({
         beginning: z.string().nullable().optional(),
         deadline: z.string().nullable().optional(),
       }),
-      classificationList: z.array(
-        z.object({
-          programClassification: programClassification.nullable().optional(),
-        }),
-      ),
+      classificationList: z.array(classificationSchema),
     }),
   ),
   pageInfo,
 });
+export type ProgramInfo = z.infer<typeof programSchema>["programList"][0];
 
 /** GET /api/v1/program/admin */
 export const programAdminSchema = z.object({
@@ -1208,11 +1209,7 @@ export const programAdminSchema = z.object({
         zoomPassword: z.string().nullable().optional(),
         isVisible: z.boolean().nullable(),
       }),
-      classificationList: z.array(
-        z.object({
-          programClassification: programClassification.nullable().optional(),
-        }),
-      ),
+      classificationList: z.array(classificationSchema),
     }),
   ),
   pageInfo,
