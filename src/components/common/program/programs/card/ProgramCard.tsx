@@ -2,10 +2,9 @@ import clsx from 'clsx';
 import dayjs from 'dayjs';
 import { memo, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import {
-  IProgram,
-  ProgramClassificationKey,
-} from '../../../../../types/interface';
+
+import { ProgramInfo } from '../../../../../schema';
+import { ProgramClassificationKey } from '../../../../../types/interface';
 import axios from '../../../../../utils/axios';
 import {
   PROGRAM_CLASSIFICATION,
@@ -17,7 +16,7 @@ import ProgramClassificationTag from './ProgramClassificationTag';
 import ProgramStatusTag from './ProgramStatusTag';
 
 interface ProgramCardProps {
-  program: IProgram;
+  program: ProgramInfo;
 }
 
 const ProgramCard = ({ program }: ProgramCardProps) => {
@@ -60,7 +59,7 @@ const ProgramCard = ({ program }: ProgramCardProps) => {
     >
       <img
         className="h-32 w-full bg-neutral-80 object-cover md:h-44 md:rounded-xs"
-        src={program.programInfo.thumbnail}
+        src={program.programInfo.thumbnail!}
         alt="프로그램 썸네일 배경"
       />
       <div className="flex flex-col gap-2 py-2">
@@ -92,11 +91,12 @@ const ProgramCard = ({ program }: ProgramCardProps) => {
           {program.programInfo.title}
         </h2>
         <p
-          className={`text-0.875 max-h-11 overflow-hidden ${
+          className={clsx(
             program.programInfo.programStatusType === PROGRAM_STATUS_KEY.POST
               ? 'text-neutral-50'
-              : 'text-neutral-30'
-          }`}
+              : 'text-neutral-30',
+            'text-0.875 max-h-11 overflow-hidden',
+          )}
         >
           {program.programInfo.shortDesc}
         </p>
@@ -141,4 +141,3 @@ const isEqual = (prevProps: ProgramCardProps, nextProps: ProgramCardProps) =>
     nextProps.program.programInfo.programType;
 
 export default memo(ProgramCard, isEqual);
-//export default ProgramCard;
