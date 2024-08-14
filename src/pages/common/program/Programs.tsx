@@ -3,6 +3,7 @@ import clsx from 'clsx';
 import { useCallback, useEffect, useReducer, useState } from 'react';
 import { Helmet } from 'react-helmet';
 import { useSearchParams } from 'react-router-dom';
+
 import Banner from '../../../components/common/program/banner/Banner';
 import FilterItem from '../../../components/common/program/filter/FilterItem';
 import FilterSideBar from '../../../components/common/program/filter/FilterSideBar';
@@ -46,31 +47,17 @@ const ERROR_MESSAGE =
 const Programs = () => {
   // 필터링 상태 관리
   const [searchParams, setSearchParams] = useSearchParams();
+
   const [isOpen, setIsOpen] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [pageable, setPageable] = useState(initialPageable);
+  const [pageInfo, setPageInfo] = useState(initialPageInfo);
+  const [programList, setProgramList] = useState<IProgram[]>([]);
 
-  // 필터  초기화 (URL 기준 필터 설정)
-  const setFilterClassification = () => {
-    const initial = { ...initialFilterClassification };
-    searchParams.getAll(PROGRAM_QUERY_KEY.CLASSIFICATION).forEach((item) => {
-      initial[item as filterClassificationkey] = true;
-    });
-    return initial;
-  };
-  const setFilterType = () => {
-    const initial = { ...initialFilterType };
-    searchParams.getAll(PROGRAM_QUERY_KEY.TYPE).forEach((item) => {
-      initial[item as filterTypekey] = true;
-    });
-    return initial;
-  };
-  const setFilterStatus = () => {
-    const initial = { ...initialFilterStatus };
-    searchParams.getAll(PROGRAM_QUERY_KEY.STATUS).forEach((item) => {
-      initial[item as filterStatuskey] = true;
-    });
-    return initial;
-  };
+  const { isSuccess, isFetching, isLoading } = useQuery({
+    queryKey: ['program', pageable.page, searchParams.toString()],
+    queryFn: getProgramList,
+  });
 
   const [filterClassification, classificationDispatch] = useReducer(
     filterClassificationReducer,
@@ -88,28 +75,32 @@ const Programs = () => {
     setFilterStatus,
   ); // 모집 현황
 
-  useEffect(() => {
-    // 필터 초기화
-    typeDispatch({ type: 'init' });
-    classificationDispatch({ type: 'init' });
-    statusDispatch({ type: 'init' });
-
-    // URL 파라미터로 필터 설정
+  // 필터  초기화 (URL 기준 필터 설정)
+  function setFilterClassification() {
+    const initial = { ...initialFilterClassification };
     searchParams.getAll(PROGRAM_QUERY_KEY.CLASSIFICATION).forEach((item) => {
-      classificationDispatch({ type: 'check', value: item });
+      initial[item as filterClassificationkey] = true;
     });
+    return initial;
+  }
+  function setFilterType() {
+    const initial = { ...initialFilterType };
     searchParams.getAll(PROGRAM_QUERY_KEY.TYPE).forEach((item) => {
-      typeDispatch({ type: 'check', value: item });
+      initial[item as filterTypekey] = true;
     });
+    return initial;
+  }
+  function setFilterStatus() {
+    const initial = { ...initialFilterStatus };
     searchParams.getAll(PROGRAM_QUERY_KEY.STATUS).forEach((item) => {
-      statusDispatch({ type: 'check', value: item });
+      initial[item as filterStatuskey] = true;
     });
-  }, [searchParams]);
+    return initial;
+  }
 
   const resetPageable = () => {
     setPageable(initialPageable);
   };
-
   // 필터링 체크박스 클릭 이벤트
   const handleClickCheckbox = useCallback(
     (programType: string, value: string) => {
@@ -233,15 +224,8 @@ const Programs = () => {
     [],
   );
 
-  // 페이지 상태 관리
-  const [pageable, setPageable] = useState(initialPageable);
-  const [pageInfo, setPageInfo] = useState(initialPageInfo);
-
-  // 프로그램 리스트 상태 관리
-  const [programList, setProgramList] = useState<IProgram[]>([]);
-
   // 프로그램 리스트 가져오기
-  const getProgramList = async () => {
+  async function getProgramList() {
     const pageableQuery = Object.entries({
       ...pageable,
     })?.map(([key, value]) => `${key}=${value}`);
@@ -257,11 +241,25 @@ const Programs = () => {
     } catch (error) {
       alert(ERROR_MESSAGE);
     }
-  };
-  const { isSuccess, isFetching, isLoading } = useQuery({
-    queryKey: ['program', pageable.page, searchParams.toString()],
-    queryFn: getProgramList,
-  });
+  }
+
+  useEffect(() => {
+    // 필터 초기화
+    typeDispatch({ type: 'init' });
+    classificationDispatch({ type: 'init' });
+    statusDispatch({ type: 'init' });
+
+    // URL 파라미터로 필터 설정
+    searchParams.getAll(PROGRAM_QUERY_KEY.CLASSIFICATION).forEach((item) => {
+      classificationDispatch({ type: 'check', value: item });
+    });
+    searchParams.getAll(PROGRAM_QUERY_KEY.TYPE).forEach((item) => {
+      typeDispatch({ type: 'check', value: item });
+    });
+    searchParams.getAll(PROGRAM_QUERY_KEY.STATUS).forEach((item) => {
+      statusDispatch({ type: 'check', value: item });
+    });
+  }, [searchParams]);
 
   useEffect(() => {
     if (isLoading || isFetching) {
