@@ -24,7 +24,6 @@ import {
   filterStatuskey,
   filterTypekey,
 } from '../../../types/interface';
-import axios from '../../../utils/axios';
 import { getKeyByValue } from '../../../utils/convert';
 import {
   PROGRAM_FILTER_CLASSIFICATION,
@@ -49,12 +48,13 @@ const Programs = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   const [pageable, setPageable] = useState(initialPageable);
-  const [pageInfo, setPageInfo] = useState(initialPageInfo);
+  const [pageInfo] = useState(initialPageInfo);
 
   const {
     isSuccess,
     isFetching,
     isLoading,
+    isError,
     data: programData,
   } = useUserProgramQuery({ pageable, searchParams });
 
@@ -223,20 +223,6 @@ const Programs = () => {
     [],
   );
 
-  // 프로그램 리스트 가져오기
-  async function getProgramList() {
-    const pageableQuery = Object.entries({
-      ...pageable,
-    })?.map(([key, value]) => `${key}=${value}`);
-    try {
-      const res = await axios.get(
-        `/program?${pageableQuery.join('&')}&${searchParams.toString()}`,
-      );
-    } catch (error) {
-      alert(ERROR_MESSAGE);
-    }
-  }
-
   useEffect(() => {
     // 필터 초기화
     typeDispatch({ type: 'init' });
@@ -267,6 +253,10 @@ const Programs = () => {
       return () => clearTimeout(timer);
     }
   }, [loading]);
+
+  useEffect(() => {
+    alert(ERROR_MESSAGE);
+  }, [isError]);
 
   return (
     <div className={clsx('flex', { 'overflow-hidden': isOpen })}>
