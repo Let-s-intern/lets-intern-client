@@ -30,7 +30,7 @@ const PaymentResult = () => {
     // console.log(result);
     if (!result.success) {
       // eslint-disable-next-line no-console
-      console.log(result.error);
+      console.error(result.error);
       alert('잘못된 접근입니다.');
       return;
     }

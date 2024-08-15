@@ -20,9 +20,9 @@ const ReviewCreate = ({ isEdit }: { isEdit: boolean }) => {
     useState<boolean | null>(null);
   const [npsAns, setNpsAns] = useState('');
 
-  const reviewId = Number(params.reviewId);
-  const applicationId = Number(searchParams.get('application'));
-  const programId = Number(params.programId);
+  const reviewId = params.reviewId;
+  const applicationId = searchParams.get('application');
+  const programId = params.programId;
   const programType = params.programType?.toLowerCase();
 
   const { data: reviewDetailData } = useQuery({
@@ -110,7 +110,7 @@ const ReviewCreate = ({ isEdit }: { isEdit: boolean }) => {
   };
 
   return (
-    <div className="z-40 flex w-full flex-col items-center bg-neutral-0/50 md:fixed md:left-0 md:top-0 md:h-screen md:w-screen md:justify-center">
+    <div className="flex w-full flex-col items-center bg-neutral-0/50 md:fixed md:left-0 md:top-0 md:h-screen md:w-screen md:justify-center">
       <main className="flex w-full max-w-3xl flex-col gap-16 bg-white px-5 md:relative md:max-h-[45rem] md:w-[40rem] md:overflow-y-scroll md:rounded-xl md:px-14 md:pb-6 md:pt-12">
         <img
           src="/icons/menu_close_md.svg"

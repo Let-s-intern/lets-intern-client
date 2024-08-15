@@ -26,7 +26,7 @@ const Payment = () => {
     );
     const result = paymentSearchParamsSchema.safeParse(obj);
     if (!result.success) {
-      console.log(result.error);
+      console.error(result.error);
 
       alert('잘못된 접근입니다.');
       navigate('/');
