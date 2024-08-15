@@ -20,9 +20,9 @@ const ReviewCreate = ({ isEdit }: { isEdit: boolean }) => {
     useState<boolean | null>(null);
   const [npsAns, setNpsAns] = useState('');
 
-  const reviewId = Number(params.reviewId);
-  const applicationId = Number(searchParams.get('application'));
-  const programId = Number(params.programId);
+  const reviewId = params.reviewId;
+  const applicationId = searchParams.get('application');
+  const programId = params.programId;
   const programType = params.programType?.toLowerCase();
 
   const { data: reviewDetailData } = useQuery({
