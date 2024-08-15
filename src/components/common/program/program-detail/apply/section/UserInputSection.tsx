@@ -1,7 +1,7 @@
 import { FaCheck } from 'react-icons/fa6';
 import { twMerge } from 'tailwind-merge';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import Input from '../../../../ui/input/Input';
 import { UserInfo } from '../../section/ApplySection';
 
@@ -21,13 +21,6 @@ const UserInputSection = ({
   const [isSameEmail, setIsSameEmail] = useState(
     contactEmail === userInfo.email,
   );
-
-  useEffect(() => {
-    console.log('userInfo email', userInfo.email);
-    console.log('userInfo contactEmail', userInfo.contactEmail);
-    console.log(isSameEmail);
-    console.log('contactEmail', contactEmail);
-  }, [userInfo, contactEmail]);
 
   const handleSameEmail = () => {
     if (isSameEmail) {
