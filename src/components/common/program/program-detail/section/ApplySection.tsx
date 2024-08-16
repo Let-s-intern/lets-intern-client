@@ -6,9 +6,9 @@ import {
   useProgramApplicationQuery,
 } from '../../../../../api/application';
 import { useProgramQuery } from '../../../../../api/program';
-import { getPaymentSearchParams } from '../../../../../data/getPaymentSearchParams';
 import useRunOnce from '../../../../../hooks/useRunOnce';
 import { AccountType } from '../../../../../schema';
+import useProgramStore from '../../../../../store/useProgramStore';
 import { ProgramType } from '../../../../../types/common';
 import { ICouponForm } from '../../../../../types/interface';
 import {
@@ -102,6 +102,8 @@ const ApplySection = ({
   programTitle,
 }: ApplySectionProps) => {
   const navigate = useNavigate();
+  const { data: programApplicationForm, setProgramApplicationForm } =
+    useProgramStore();
   const [contentIndex, setContentIndex] = useState(0);
   const [userInfo, setUserInfo] = useState<UserInfo>({
     name: '',
@@ -126,13 +128,13 @@ const ApplySection = ({
     const searchParams = new URLSearchParams(window.location.search);
 
     const contentIndex = searchParams.get('contentIndex');
-    const couponId = searchParams.get('couponId');
-    const couponPrice = searchParams.get('couponPrice');
-    const contactEmail = searchParams.get('contactEmail');
-    const question = searchParams.get('question');
-    const email = searchParams.get('email');
-    const phone = searchParams.get('phone');
-    const name = searchParams.get('name');
+    const couponId = programApplicationForm.couponId;
+    const couponPrice = programApplicationForm.couponPrice;
+    const contactEmail = programApplicationForm.contactEmail;
+    const question = programApplicationForm.question;
+    const email = programApplicationForm.email;
+    const phone = programApplicationForm.phone;
+    const name = programApplicationForm.name;
 
     if (
       typeof contactEmail === 'string' &&
@@ -165,13 +167,6 @@ const ApplySection = ({
 
     const newSearchParams = new URLSearchParams(searchParams);
     newSearchParams.delete('contentIndex');
-    newSearchParams.delete('couponId');
-    newSearchParams.delete('couponPrice');
-    newSearchParams.delete('contactEmail');
-    newSearchParams.delete('question');
-    newSearchParams.delete('email');
-    newSearchParams.delete('phone');
-    newSearchParams.delete('name');
 
     window.history.replaceState(
       {},
@@ -246,25 +241,31 @@ const ApplySection = ({
     if (!payInfo || !userInfo) {
       return;
     }
-    const searchParams = getPaymentSearchParams({
-      payInfo,
-      coupon,
-      userInfo,
+    setProgramApplicationForm({
       priceId,
+      price: payInfo.price,
+      discount: payInfo.discount,
+      couponId: coupon.id,
+      couponPrice: coupon.price,
       totalPrice,
+      contactEmail: userInfo.contactEmail,
+      question: userInfo.question,
+      email: userInfo.email,
+      phone: userInfo.phoneNumber,
+      name: userInfo.name,
       programTitle,
       programType,
       progressType,
       programId,
-      orderId,
+      programOrderId: orderId,
       isFree,
     });
 
     if (isFree) {
-      navigate(`/order/result?${searchParams.toString()}`);
+      navigate(`/order/result?orderId=${orderId}`);
       return;
     } else {
-      navigate(`/payment?${searchParams.toString()}`);
+      navigate(`/payment`);
       return;
     }
   };
@@ -298,15 +299,6 @@ const ApplySection = ({
           programType={programType}
         />
       ) : null}
-      {/* {contentIndex === 3 && (
-        <CautionContent
-          criticalNotice={criticalNotice}
-          contentIndex={contentIndex}
-          setContentIndex={setContentIndex}
-          isCautionChecked={isCautionChecked}
-          setIsCautionChecked={setIsCautionChecked}
-        />
-      )} */}
       {contentIndex === 4 && payInfo && programDate ? (
         <PayContent
           payInfo={payInfo}

@@ -4,10 +4,13 @@ import { useProgramQuery } from '../../../api/program';
 import PaymentInfoRow from '../../../components/common/program/paymentSuccess/PaymentInfoRow';
 import ProgramCard from '../../../components/common/program/ProgramCard';
 import { paymentFailSearchParamsSchema } from '../../../data/getPaymentSearchParams';
+import useProgramStore from '../../../store/useProgramStore';
 import { searchParamsToObject } from '../../../utils/network';
 
 /** 처음부터 결제 실패 케이스일 시 이 페이지로 옵니다. 검증 단계에서의 실패는 PaymentResult 에서 진행함. */
 const PaymentFail = () => {
+  const { data: programApplicationData } = useProgramStore();
+
   const params = useMemo(() => {
     const obj = searchParamsToObject(
       new URL(window.location.href).searchParams,
@@ -24,24 +27,17 @@ const PaymentFail = () => {
   }, []);
 
   const program = useProgramQuery({
-    programId: params?.programId ?? -1,
-    type: params?.programType ?? 'live',
+    programId: programApplicationData.programId ?? 0,
+    type: programApplicationData.programType ?? 'live',
   });
 
   const returnLink = useMemo(() => {
-    const base = `/program/${params?.programType}/${params?.programId}`;
+    const base = `/program/${programApplicationData.programType}/${programApplicationData.programId}`;
     if (!params) {
       return base;
     }
     const searchParams = new URLSearchParams();
     searchParams.set('contentIndex', 'pay');
-    searchParams.set('couponId', String(params.couponId));
-    searchParams.set('couponPrice', String(params.couponPrice));
-    searchParams.set('contactEmail', params.contactEmail);
-    searchParams.set('question', params.question);
-    searchParams.set('email', params.email);
-    searchParams.set('phone', params.phone);
-    searchParams.set('name', params.name);
     return `${base}?${searchParams.toString()}`;
   }, [params]);
 
@@ -67,15 +63,15 @@ const PaymentFail = () => {
             </div>
             {params ? (
               <ProgramCard
-                type={params.programType}
-                id={params.programId}
+                type={programApplicationData.programType || 'live'}
+                id={programApplicationData.programId || 0}
                 title={program.query.data?.title ?? ''}
                 thumbnail={program.query.data?.thumbnail ?? ''}
                 startDate={program.query.data?.startDate}
                 endDate={program.query.data?.endDate}
                 thumbnailLinkClassName="max-w-32"
-                progressType={params.progressType}
-                showType={params.programType === 'live'}
+                progressType={programApplicationData.progressType ?? 'none'}
+                showType={programApplicationData.programType === 'live'}
               />
             ) : null}
           </div>
@@ -84,21 +80,28 @@ const PaymentFail = () => {
             <div className="flex w-full items-center justify-between gap-x-4 bg-neutral-90 px-3 py-5">
               <div className="font-bold">총 결제금액</div>
               <div className="font-bold">
-                {params?.totalPrice.toLocaleString() + '원'}
+                {(programApplicationData.totalPrice || 0).toLocaleString() +
+                  '원'}
               </div>
             </div>
             <div className="flex w-full flex-col items-center justify-center">
               <PaymentInfoRow
                 title="참여비용"
-                content={params?.price.toLocaleString() + '원'}
+                content={
+                  (programApplicationData.price || 0).toLocaleString() + '원'
+                }
               />
               <PaymentInfoRow
-                title={`할인 (${params?.price === 0 ? 0 : Math.floor(((params?.discount ?? 0) / (params?.price ?? 1)) * 100)}%)`}
-                content={'-' + (params?.discount ?? 0).toLocaleString() + '원'}
+                title={`할인 (${programApplicationData.price === 0 ? 0 : Math.floor(((programApplicationData.discount ?? 0) / (programApplicationData.price ?? 1)) * 100)}%)`}
+                content={
+                  '-' +
+                  (programApplicationData.discount ?? 0).toLocaleString() +
+                  '원'
+                }
               />
               <PaymentInfoRow
                 title={`쿠폰할인`}
-                content={`-${(params?.couponPrice === -1 ? params.price - params.discount : params?.couponPrice)?.toLocaleString()}원`}
+                content={`-${(programApplicationData.couponId === -1 ? (programApplicationData.price || 0) - (programApplicationData.discount || 0) : programApplicationData.couponPrice || 0)?.toLocaleString()}원`}
               />
             </div>
             <hr className="border-neutral-85" />
