@@ -11,10 +11,13 @@ import {
   paymentResultSearchParamsSchema,
 } from '../../../data/getPaymentSearchParams';
 import useRunOnce from '../../../hooks/useRunOnce';
+import useProgramStore from '../../../store/useProgramStore';
 import axios from '../../../utils/axios';
 import { searchParamsToObject } from '../../../utils/network';
 
 const PaymentResult = () => {
+  const { data: programApplicationData, initProgramApplicationForm } =
+    useProgramStore();
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
   // TODO: any 타입을 사용하지 않도록 수정
@@ -39,7 +42,7 @@ const PaymentResult = () => {
   }, []);
 
   useRunOnce(() => {
-    if (!params) {
+    if (!params || !programApplicationData) {
       return;
     }
 
@@ -49,37 +52,35 @@ const PaymentResult = () => {
     ) {
       // 즉시 리다이렉트 하면 알 수 없는 이유로 제대로 navigate 되지 않음. SSR 관련 이슈로 추정
       setTimeout(() => {
-        navigate(`/program/${params.programType}/${params.programId}`);
+        navigate(
+          `/program/${programApplicationData.programType}/${programApplicationData.programId}`,
+        );
       }, 100);
       return;
     }
 
     const body: PostApplicationInterface = {
       paymentInfo: {
-        couponId: params.couponId === '' ? null : params.couponId,
-        priceId: params.priceId,
+        couponId: programApplicationData.couponId,
+        priceId: programApplicationData.priceId ?? -1,
         paymentKey:
-          params.isFree === 'true' || !params.paymentKey
+          programApplicationData.isFree === true || !params.paymentKey
             ? null
             : params.paymentKey,
-        orderId:
-          // TOSS 에서 넘겨받을 때 orderId가 추가로 붙어서 넘어올 수 있어 배열 케이스도 처리 TODO: 내부용 orderId 이름 변경
-          typeof params.orderId === 'string'
-            ? params.orderId
-            : params.orderId[0],
+        orderId: params.orderId,
         amount:
-          params.isFree === 'true' || !params.amount
-            ? params.totalPrice.toString()
-            : params.amount.toString(),
+          programApplicationData.isFree === true || !params.amount
+            ? (programApplicationData.totalPrice?.toString() ?? '0')
+            : (params.amount?.toString() ?? '0'),
       },
-      contactEmail: params.contactEmail,
+      contactEmail: programApplicationData.contactEmail ?? '',
       motivate: '',
-      question: params.question,
+      question: programApplicationData.question ?? '',
     };
 
     axios
       .post(
-        `/application/${params.programId}?type=${params.programType.toUpperCase()}`,
+        `/application/${programApplicationData.programId}?type=${programApplicationData.programType?.toUpperCase()}`,
         body,
       )
       .then((res) => {
@@ -103,26 +104,18 @@ const PaymentResult = () => {
   });
 
   const program = useProgramQuery({
-    programId: params?.programId ?? -1,
-    type: params?.programType ?? 'live',
+    programId: programApplicationData.programId ?? -1,
+    type: programApplicationData.programType ?? 'live',
   });
 
   const isSuccess = typeof result === 'object' && result !== null;
 
   const returnLink = useMemo(() => {
-    const base = `/program/${params?.programType}/${params?.programId}`;
+    const base = `/program/${programApplicationData.programType}/${programApplicationData.programId}`;
     if (!params) {
       return base;
     }
-    const searchParams = new URLSearchParams();
-    searchParams.set('contentIndex', 'pay');
-    searchParams.set('couponId', String(params.couponId));
-    searchParams.set('couponPrice', String(params.couponPrice));
-    searchParams.set('contactEmail', params.contactEmail);
-    searchParams.set('question', params.question);
-    searchParams.set('email', params.email);
-    searchParams.set('phone', params.phone);
-    searchParams.set('name', params.name);
+
     return `${base}?${searchParams.toString()}`;
   }, [params]);
 
@@ -148,8 +141,8 @@ const PaymentResult = () => {
                   </div>
                   {params ? (
                     <ProgramCard
-                      type={params.programType}
-                      id={params.programId}
+                      type={programApplicationData.programType || 'live'}
+                      id={programApplicationData.programId || 0}
                       title={program.query.data?.title ?? ''}
                       thumbnail={program.query.data?.thumbnail ?? ''}
                       startDate={program.query.data?.startDate}
@@ -162,7 +155,7 @@ const PaymentResult = () => {
                           ? program.query.data.progressType
                           : 'none'
                       }
-                      showType={params.programType === 'live'}
+                      showType={programApplicationData.programType === 'live'}
                     />
                   ) : null}
 
@@ -187,22 +180,28 @@ const PaymentResult = () => {
                   <div className="flex w-full flex-col items-center justify-center">
                     <PaymentInfoRow
                       title="참여비용"
-                      content={params?.price.toLocaleString() + '원'}
+                      content={
+                        programApplicationData.price?.toLocaleString() + '원'
+                      }
                     />
                     <PaymentInfoRow
-                      title={`할인 (${params?.price === 0 ? 0 : Math.floor(((params?.discount ?? 0) / (params?.price ?? 1)) * 100)}%)`}
+                      title={`할인 (${programApplicationData.price === 0 ? 0 : Math.floor(((programApplicationData.discount ?? 0) / (programApplicationData.price ?? 1)) * 100)}%)`}
                       content={
-                        '-' + (params?.discount ?? 0).toLocaleString() + '원'
+                        '-' +
+                        (
+                          programApplicationData.discount ?? 0
+                        ).toLocaleString() +
+                        '원'
                       }
                     />
                     <PaymentInfoRow
                       title={`쿠폰할인`}
-                      content={`-${(params?.couponPrice === -1 ? params.price - params.discount : params?.couponPrice)?.toLocaleString()}원`}
+                      content={`-${(programApplicationData.couponPrice === -1 ? (programApplicationData.price || 0) - (programApplicationData.discount || 0) : programApplicationData.couponPrice)?.toLocaleString()}원`}
                     />
                   </div>
                   <hr className="border-neutral-85" />
                   <div className="flex w-full flex-col items-center justify-center">
-                    {params?.isFree === 'true' ? (
+                    {programApplicationData.isFree === true ? (
                       <PaymentInfoRow
                         title="결제일자"
                         content={dayjs(new Date()).format(
