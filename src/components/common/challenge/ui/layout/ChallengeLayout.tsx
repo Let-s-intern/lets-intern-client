@@ -49,16 +49,16 @@ const ChallengeLayout = () => {
       return;
     }
 
-    if (!isValidUserAccess) {
-      navigate('/program');
-      return;
-    }
+    // if (!isValidUserAccess) {
+    //   navigate('/program');
+    //   return;
+    // }
 
     if (!isValidUserInfo) {
       navigate(`/challenge/${params.programId}/user/info`);
       return;
     }
-  }, [isValidUserAccess, isValidUserInfo]);
+  }, [isLoading, isLoggedIn, isValidUserInfo, navigate, params.programId]);
 
   return (
     <div className="min-h-[calc(100vh-4rem)] sm:min-h-[calc(100vh-6rem)]">
