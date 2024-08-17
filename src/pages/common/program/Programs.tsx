@@ -48,7 +48,7 @@ const Programs = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   const [pageable, setPageable] = useState(initialPageable);
-  const [pageInfo] = useState(initialPageInfo);
+  const [pageInfo, setPageInfo] = useState(initialPageInfo);
 
   const {
     isSuccess,
@@ -242,9 +242,8 @@ const Programs = () => {
   }, [searchParams]);
 
   useEffect(() => {
-    if (isLoading || isFetching) {
-      setLoading(true);
-    }
+    if (isLoading || isFetching) setLoading(true);
+    setPageInfo(programData?.pageInfo || initialPageInfo);
   }, [isLoading, isFetching]);
 
   useEffect(() => {
