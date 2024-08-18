@@ -101,7 +101,7 @@ const PaymentFail = () => {
               />
               <PaymentInfoRow
                 title={`쿠폰할인`}
-                content={`-${(programApplicationData.couponId === -1 ? (programApplicationData.price || 0) - (programApplicationData.discount || 0) : programApplicationData.couponPrice || 0)?.toLocaleString()}원`}
+                content={`-${(Number(programApplicationData.couponId) === -1 ? (programApplicationData.price || 0) - (programApplicationData.discount || 0) : programApplicationData.couponPrice || 0)?.toLocaleString()}원`}
               />
             </div>
             <hr className="border-neutral-85" />
