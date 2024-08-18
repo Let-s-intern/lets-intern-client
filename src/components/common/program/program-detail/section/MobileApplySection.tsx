@@ -35,8 +35,11 @@ const MobileApplySection = ({
   dispatchDrawerIsOpen: drawerDispatch,
 }: MobileApplySectionProps) => {
   const navigate = useNavigate();
-  const { data: programApplicationForm, setProgramApplicationForm } =
-    useProgramStore();
+  const {
+    data: programApplicationForm,
+    setProgramApplicationForm,
+    initProgramApplicationForm,
+  } = useProgramStore();
   const scrollRef = useRef<HTMLDivElement>(null);
   const [contentIndex, setContentIndex] = useState(0);
   const [userInfo, setUserInfo] = useState<UserInfo>({
@@ -63,6 +66,11 @@ const MobileApplySection = ({
     const searchParams = new URLSearchParams(window.location.search);
 
     const contentIndex = searchParams.get('contentIndex');
+    if (!contentIndex) {
+      initProgramApplicationForm();
+      return;
+    }
+
     const couponId = searchParams.get('couponId');
     const couponPrice = searchParams.get('couponPrice');
     const contactEmail = searchParams.get('contactEmail');
