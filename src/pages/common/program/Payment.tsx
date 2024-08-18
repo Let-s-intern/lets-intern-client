@@ -17,7 +17,15 @@ const clientKey = import.meta.env.VITE_TOSS_CLIENT_KEY || '';
 
 const Payment = () => {
   const navigate = useNavigate();
-  const { data: programApplicationData } = useProgramStore();
+  const { data: programApplicationData, checkInvalidate } = useProgramStore();
+
+  if (checkInvalidate()) {
+    console.error(programApplicationData);
+
+    alert('잘못된 접근입니다.');
+    navigate('/');
+  }
+
   const { data: user } = useUserQuery();
 
   const [ready, setReady] = useState(false);

@@ -6,7 +6,7 @@ interface ProgramApplicationFormStore {
     priceId: number | null;
     price: number | null;
     discount: number | null;
-    couponId: number | null;
+    couponId: string | null;
     couponPrice: number | null;
     totalPrice: number | null;
     contactEmail: string | null;
@@ -25,6 +25,7 @@ interface ProgramApplicationFormStore {
     params: Partial<ProgramApplicationFormStore['data']>,
   ) => void;
   initProgramApplicationForm: () => void;
+  checkInvalidate: () => boolean;
 }
 
 const useProgramStore = create(
@@ -80,6 +81,10 @@ const useProgramStore = create(
             isFree: null,
           },
         });
+      },
+      checkInvalidate: () => {
+        const currentData = get().data;
+        return Object.values(currentData).some((value) => value === null);
       },
     }),
     {

@@ -71,13 +71,13 @@ const MobileApplySection = ({
       return;
     }
 
-    const couponId = searchParams.get('couponId');
-    const couponPrice = searchParams.get('couponPrice');
-    const contactEmail = searchParams.get('contactEmail');
-    const question = searchParams.get('question');
-    const email = searchParams.get('email');
-    const phone = searchParams.get('phone');
-    const name = searchParams.get('name');
+    const couponId = programApplicationForm.couponId;
+    const couponPrice = programApplicationForm.couponPrice;
+    const contactEmail = programApplicationForm.contactEmail;
+    const question = programApplicationForm.question;
+    const email = programApplicationForm.email;
+    const phone = programApplicationForm.phone;
+    const name = programApplicationForm.name;
 
     if (
       typeof contactEmail === 'string' &&
@@ -196,7 +196,7 @@ const MobileApplySection = ({
       priceId,
       price: payInfo.price,
       discount: payInfo.discount,
-      couponId: coupon.id,
+      couponId: coupon.id ? coupon.id.toString() : '',
       couponPrice: coupon.price,
       totalPrice,
       contactEmail: userInfo.contactEmail,
