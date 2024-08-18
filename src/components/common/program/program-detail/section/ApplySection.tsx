@@ -102,8 +102,11 @@ const ApplySection = ({
   programTitle,
 }: ApplySectionProps) => {
   const navigate = useNavigate();
-  const { data: programApplicationForm, setProgramApplicationForm } =
-    useProgramStore();
+  const {
+    data: programApplicationForm,
+    setProgramApplicationForm,
+    initProgramApplicationForm,
+  } = useProgramStore();
   const [contentIndex, setContentIndex] = useState(0);
   const [userInfo, setUserInfo] = useState<UserInfo>({
     name: '',
@@ -128,6 +131,11 @@ const ApplySection = ({
     const searchParams = new URLSearchParams(window.location.search);
 
     const contentIndex = searchParams.get('contentIndex');
+    if (!contentIndex) {
+      initProgramApplicationForm();
+      return;
+    }
+
     const couponId = programApplicationForm.couponId;
     const couponPrice = programApplicationForm.couponPrice;
     const contactEmail = programApplicationForm.contactEmail;
