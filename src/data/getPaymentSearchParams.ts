@@ -142,14 +142,16 @@ const base = {
 export const paymentSearchParamsSchema = z.object(base);
 
 export const paymentResultSearchParamsSchema = z.object({
-  ...base,
+  // ...base,
+  orderId: z.string(),
   paymentKey: z.string().nullable().optional(),
   amount: z.coerce.number().nullable().optional(),
   paymentMethodKey: paymentMethodKeySchema.nullable().optional(),
 });
 
 export const paymentFailSearchParamsSchema = z.object({
-  ...base,
+  // ...base,
+  orderId: z.string(),
   code: z.string(),
   message: z.string(),
 });

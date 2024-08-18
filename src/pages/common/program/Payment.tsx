@@ -2,15 +2,12 @@ import {
   loadTossPayments,
   WidgetPaymentMethodWidget,
 } from '@tosspayments/tosspayments-sdk';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useProgramQuery } from '../../../api/program';
 import { useUserQuery } from '../../../api/user';
-import {
-  PaymentMethodKey,
-  paymentSearchParamsSchema,
-} from '../../../data/getPaymentSearchParams';
-import { searchParamsToObject } from '../../../utils/network';
+import { PaymentMethodKey } from '../../../data/getPaymentSearchParams';
+import useProgramStore from '../../../store/useProgramStore';
 
 type TossPaymentsWidgets = ReturnType<
   Awaited<ReturnType<typeof loadTossPayments>>['widgets']
@@ -20,20 +17,15 @@ const clientKey = import.meta.env.VITE_TOSS_CLIENT_KEY || '';
 
 const Payment = () => {
   const navigate = useNavigate();
-  const params = useMemo(() => {
-    const obj = searchParamsToObject(
-      new URL(window.location.href).searchParams,
-    );
-    const result = paymentSearchParamsSchema.safeParse(obj);
-    if (!result.success) {
-      console.error(result.error);
+  const { data: programApplicationData, checkInvalidate } = useProgramStore();
 
-      alert('잘못된 접근입니다.');
-      navigate('/');
-    }
+  if (checkInvalidate()) {
+    console.error(programApplicationData);
 
-    return result.data;
-  }, []);
+    alert('잘못된 접근입니다.');
+    navigate('/');
+  }
+
   const { data: user } = useUserQuery();
 
   const [ready, setReady] = useState(false);
@@ -45,12 +37,12 @@ const Payment = () => {
   const tossInitialized = useRef(false);
 
   const program = useProgramQuery({
-    programId: params?.programId ?? -1,
-    type: params?.programType ?? 'live',
+    programId: programApplicationData.programId ?? 0,
+    type: programApplicationData.programType ?? 'live',
   });
 
   useEffect(() => {
-    if (!user || !params) {
+    if (!user || !programApplicationData) {
       return;
     }
 
@@ -70,7 +62,7 @@ const Payment = () => {
       // ------ 주문의 결제 금액 설정 ------
       await widgets.setAmount({
         currency: 'KRW',
-        value: params.totalPrice,
+        value: programApplicationData.totalPrice ?? 0,
       });
 
       // ------  결제 UI 렌더링 ------
@@ -90,18 +82,17 @@ const Payment = () => {
     };
 
     init();
-  }, [params, user]);
+  }, [programApplicationData, user]);
 
   const handleButtonClick = async () => {
-    if (!widgets || !params) {
+    if (!widgets) {
       return;
     }
 
     const paymentMethod = await methods?.getSelectedPaymentMethod();
 
     // TOSS 에서 넘겨받을 때 orderId가 추가로 붙어서 넘어올 수 있어 배열 케이스도 처리 TODO: 내부용 orderId 이름 변경
-    const orderId =
-      typeof params.orderId === 'string' ? params.orderId : params.orderId[0];
+    const orderId = programApplicationData.programOrderId ?? '';
 
     const searchParams = new URLSearchParams(window.location.search);
     searchParams.set(
@@ -113,14 +104,17 @@ const Payment = () => {
     try {
       await widgets.requestPayment({
         orderId,
-        orderName: params.programTitle,
+        orderName: programApplicationData.programTitle ?? '',
         successUrl:
           window.location.origin + `/order/result?${searchParams.toString()}`,
         failUrl:
           window.location.origin + `/order/fail?${searchParams.toString()}`,
-        customerEmail: params.email,
-        customerName: params.name,
-        customerMobilePhone: params.phone.replace(/[^0-9]/g, ''),
+        customerEmail: programApplicationData.email ?? '',
+        customerName: programApplicationData.name ?? '',
+        customerMobilePhone: (programApplicationData.phone ?? '').replace(
+          /[^0-9]/g,
+          '',
+        ),
       });
     } catch (error) {
       // 에러 처리하기
@@ -143,7 +137,8 @@ const Payment = () => {
           disabled={!ready}
           onClick={handleButtonClick}
         >
-          결제하기 {params?.totalPrice.toLocaleString()}원
+          결제하기 {(programApplicationData.totalPrice ?? '').toLocaleString()}
+          원
         </button>
       </div>
     </div>

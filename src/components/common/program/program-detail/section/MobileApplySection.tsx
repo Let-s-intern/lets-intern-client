@@ -3,8 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { twMerge } from 'tailwind-merge';
 import { useProgramApplicationQuery } from '../../../../../api/application';
 import { useProgramQuery } from '../../../../../api/program';
-import { getPaymentSearchParams } from '../../../../../data/getPaymentSearchParams';
 import useRunOnce from '../../../../../hooks/useRunOnce';
+import useProgramStore from '../../../../../store/useProgramStore';
 import { ProgramType } from '../../../../../types/common';
 import {
   IApplyDrawerAction,
@@ -35,6 +35,11 @@ const MobileApplySection = ({
   dispatchDrawerIsOpen: drawerDispatch,
 }: MobileApplySectionProps) => {
   const navigate = useNavigate();
+  const {
+    data: programApplicationForm,
+    setProgramApplicationForm,
+    initProgramApplicationForm,
+  } = useProgramStore();
   const scrollRef = useRef<HTMLDivElement>(null);
   const [contentIndex, setContentIndex] = useState(0);
   const [userInfo, setUserInfo] = useState<UserInfo>({
@@ -61,13 +66,18 @@ const MobileApplySection = ({
     const searchParams = new URLSearchParams(window.location.search);
 
     const contentIndex = searchParams.get('contentIndex');
-    const couponId = searchParams.get('couponId');
-    const couponPrice = searchParams.get('couponPrice');
-    const contactEmail = searchParams.get('contactEmail');
-    const question = searchParams.get('question');
-    const email = searchParams.get('email');
-    const phone = searchParams.get('phone');
-    const name = searchParams.get('name');
+    if (!contentIndex) {
+      initProgramApplicationForm();
+      return;
+    }
+
+    const couponId = programApplicationForm.couponId;
+    const couponPrice = programApplicationForm.couponPrice;
+    const contactEmail = programApplicationForm.contactEmail;
+    const question = programApplicationForm.question;
+    const email = programApplicationForm.email;
+    const phone = programApplicationForm.phone;
+    const name = programApplicationForm.name;
 
     if (
       typeof contactEmail === 'string' &&
@@ -182,24 +192,30 @@ const MobileApplySection = ({
       return;
     }
 
-    const searchParams = getPaymentSearchParams({
-      payInfo,
-      coupon,
-      userInfo,
+    setProgramApplicationForm({
       priceId,
+      price: payInfo.price,
+      discount: payInfo.discount,
+      couponId: coupon.id ? coupon.id.toString() : '',
+      couponPrice: coupon.price,
       totalPrice,
+      contactEmail: userInfo.contactEmail,
+      question: userInfo.question,
+      email: userInfo.email,
+      phone: userInfo.phoneNumber,
+      name: userInfo.name,
       programTitle,
       programType,
       progressType,
       programId,
-      orderId,
+      programOrderId: orderId,
       isFree,
     });
 
     if (isFree) {
-      navigate(`/order/result?${searchParams.toString()}`);
+      navigate(`/order/result?orderId=${orderId}`);
     } else {
-      navigate(`/payment?${searchParams.toString()}`);
+      navigate(`/payment`);
     }
 
     toggleDrawer();
