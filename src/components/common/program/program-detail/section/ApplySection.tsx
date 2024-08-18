@@ -253,7 +253,7 @@ const ApplySection = ({
       priceId,
       price: payInfo.price,
       discount: payInfo.discount,
-      couponId: coupon.id,
+      couponId: coupon.id ? coupon.id.toString() : '',
       couponPrice: coupon.price,
       totalPrice,
       contactEmail: userInfo.contactEmail,

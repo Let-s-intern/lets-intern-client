@@ -61,7 +61,9 @@ const PaymentResult = () => {
 
     const body: PostApplicationInterface = {
       paymentInfo: {
-        couponId: programApplicationData.couponId,
+        couponId: programApplicationData.couponId
+          ? Number(programApplicationData.couponId)
+          : null,
         priceId: programApplicationData.priceId ?? -1,
         paymentKey:
           programApplicationData.isFree === true || !params.paymentKey
