@@ -114,9 +114,13 @@ const ChallengeDashboard = () => {
           )}
           <div className="flex w-[12rem] flex-col gap-4">
             <ScoreSection
-              // refundInfo={refundInfo}
-              // isLoading={isLoading}
-              // todayTh={todayTh}
+              programName={currentChallenge?.title || ''}
+              desc={currentChallenge?.shortDesc || ''}
+              startDate={
+                currentChallenge?.startDate?.format('YYYY.MM.DD') || ''
+              }
+              endDate={currentChallenge?.endDate?.format('YYYY.MM.DD') || ''}
+              userName={user?.name || ''}
               totalScore={totalScore}
               currentScore={currentScore}
             />

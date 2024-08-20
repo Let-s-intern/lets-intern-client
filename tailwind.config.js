@@ -118,6 +118,7 @@ module.exports = {
         'blog-banner-sm': 'url("../public/images/blog_banner_bg_sm.png")',
         'blog-banner-md': 'url("../public/images/blog_banner_bg_md.png")',
         'blog-banner-lg': 'url("../public/images/blog_banner_bg_lg.png")',
+        'certificate-bg': 'url("../public/images/certificate_bg.png")',
       },
       keyframes: {
         fadeInDown: {
