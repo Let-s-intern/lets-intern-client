@@ -1432,3 +1432,19 @@ http://scripts.sil.org/OFL
     U+201c-201d, U+2122, U+ac00, U+ace0, U+ae30, U+b2e4, U+b85c, U+b9ac, U+c0ac,
     U+c2a4, U+c2dc, U+c774, U+c778, U+c9c0, U+d558;
 }
+
+@font-face {
+  font-family: 'Bookk Myungjo Variable';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 45 920;
+  src: url(./bookk-myungjo/bookk_myungjo_light.ttf) format('truetype');
+}
+
+@font-face {
+  font-family: 'Bookk Myungjo Variable';
+  font-style: bold;
+  font-display: swap;
+  font-weight: 45 920;
+  src: url(./bookk-myungjo/bookk_myungjo_bold.ttf) format('truetype');
+}
