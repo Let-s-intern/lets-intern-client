@@ -1,9 +1,9 @@
 import { useNavigate } from 'react-router-dom';
-import { TransformedBlogInfoType } from '../../../api/blogSchema';
+import { BlogInfoSchema } from '../../../api/blogSchema';
 import { blogCategory } from '../../../utils/convert';
 import BlogHashtag from './BlogHashtag';
 
-const RecommendBlogCard = (blogInfo: TransformedBlogInfoType) => {
+const RecommendBlogCard = (blogInfo: BlogInfoSchema) => {
   const navigate = useNavigate();
   return (
     <div

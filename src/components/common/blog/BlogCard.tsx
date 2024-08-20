@@ -1,11 +1,11 @@
 import { useLocation, useNavigate } from 'react-router-dom';
-import { TagType, TransformedBlogInfoType } from '../../../api/blogSchema';
+import { BlogInfoSchema, TagType } from '../../../api/blogSchema';
 import { blogCategory } from '../../../utils/convert';
 import { getBlogPathname } from '../../../utils/url';
 import BlogHashtag from './BlogHashtag';
 
 interface BlogCardProps {
-  blogInfo: TransformedBlogInfoType;
+  blogInfo: BlogInfoSchema;
   setSelectedTag: (tag: TagType | null) => void;
 }
 
