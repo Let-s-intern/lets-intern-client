@@ -50,6 +50,7 @@
     "react-infinite-scroller": "^1.2.6",
     "react-quill": "^2.0.0",
     "react-router-dom": "^6.26.0",
+    "react-to-print": "^2.15.1",
     "styled-components": "^6.1.11",
     "tailwind-merge": "^2.3.0",
     "tailwind-scrollbar-hide": "^1.1.7",
