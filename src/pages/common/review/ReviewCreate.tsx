@@ -74,6 +74,7 @@ const ReviewCreate = ({ isEdit }: { isEdit: boolean }) => {
       return res.data;
     },
     onSuccess: () => {
+      alert('리뷰가 등록되었습니다.');
       navigate(-1);
     },
   });
@@ -93,6 +94,7 @@ const ReviewCreate = ({ isEdit }: { isEdit: boolean }) => {
       return res.data;
     },
     onSuccess: () => {
+      alert('리뷰가 수정되었습니다.');
       navigate(-1);
     },
   });

@@ -22,8 +22,6 @@ const ApplicationCard = ({
   hasReviewButton,
   reviewType,
   grayscale,
-  showDeleteMenu,
-  refetch,
   showChallengeButton,
 }: ApplicationCardProps) => {
   const [isPriceInfoOpen, setPriceInfoOpen] = useState({
@@ -35,9 +33,7 @@ const ApplicationCard = ({
 
   return (
     <div
-      className={clsx(
-        'flex w-full flex-col items-start gap-4 overflow-hidden rounded-xs md:flex-row md:border md:border-neutral-85 md:p-2.5',
-      )}
+      className="flex w-full flex-col items-start gap-4 overflow-hidden rounded-xs md:flex-row md:border md:border-neutral-85 md:p-2.5"
       data-program-text={application.programTitle}
     >
       <div
