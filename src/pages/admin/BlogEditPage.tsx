@@ -10,10 +10,10 @@ import {
 } from '@mui/material';
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 import { isAxiosError } from 'axios';
+import dayjs, { Dayjs } from 'dayjs';
 import { ChangeEvent, FormEvent, MouseEvent, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
-import dayjs, { Dayjs } from 'dayjs';
 import {
   useBlogQuery,
   useBlogTagQuery,
@@ -40,7 +40,7 @@ const initialBlog = {
   content: '',
   ctaLink: '',
   ctaText: '',
-  displayDate: '',
+  displayDate: null,
   isDisplayed: '',
   tagList: [],
 };
@@ -53,7 +53,7 @@ interface EditBlog {
   content: string;
   ctaLink: string;
   ctaText: string;
-  displayDate: string;
+  displayDate: Dayjs | null;
   tagList: TagDetail[];
 }
 
@@ -137,7 +137,10 @@ const BlogEditPage = () => {
       id: Number(id),
       isDisplayed: name === 'publish',
       tagList: editingValue.tagList.map((tag) => tag.id),
-      displayDate: dateTime?.format('YYYY-MM-DDTHH:mm') || '',
+      displayDate:
+        name === 'publish'
+          ? dayjs().format('YYYY-MM-DDTHH:mm')
+          : dateTime?.format('YYYY-MM-DDTHH:mm') || '',
     });
 
     setSnackbar({
@@ -157,12 +160,11 @@ const BlogEditPage = () => {
       content: blogData.blogDetailInfo.content || '',
       ctaLink: blogData.blogDetailInfo.ctaLink || '',
       ctaText: blogData.blogDetailInfo.ctaText || '',
-      displayDate: blogData.blogDetailInfo.displayDate || '',
+      displayDate: blogData.blogDetailInfo.displayDate || null,
       tagList: blogData.tagDetailInfos,
     });
-    setDateTime(dayjs(blogData.blogDetailInfo.displayDate));
+    setDateTime(blogData.blogDetailInfo.displayDate);
   }, [isLoading, blogData]);
-
 
   return (
     <div className="mx-3 mb-40 mt-3">

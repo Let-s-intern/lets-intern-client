@@ -4,7 +4,7 @@ export { data };
 
 import fetch from 'node-fetch';
 import { PageContextServer } from 'vike/types';
-import { blogRawSchema } from '../../../src/api/blogSchema';
+import { blogSchema } from '../../../src/api/blogSchema';
 
 async function data(pageContext: PageContextServer) {
   const { id } = pageContext.routeParams;
@@ -13,7 +13,7 @@ async function data(pageContext: PageContextServer) {
     const res = await fetch(`${import.meta.env.VITE_SERVER_API}/blog/${id}`);
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const data = (await res.json()) as any;
-    return blogRawSchema.parse(data.data);
+    return blogSchema.parse(data.data);
   } catch (e) {
     // eslint-disable-next-line no-console
     console.error(e);

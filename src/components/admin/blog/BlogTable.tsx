@@ -2,6 +2,7 @@ import clsx from 'clsx';
 import { CiTrash } from 'react-icons/ci';
 import { Link } from 'react-router-dom';
 
+import dayjs from 'dayjs';
 import { ChangeEvent, useCallback, useState } from 'react';
 import {
   useBlogListQuery,
@@ -53,9 +54,7 @@ export default function BlogTable() {
       const reqBody: PatchBlogReqBody = {
         id: checkedBlog.id,
         isDisplayed: true,
-        displayDate: checkedBlog.displayDate
-          ? checkedBlog.displayDate
-          : new Date().toISOString(),
+        displayDate: dayjs().format('YYYY-MM-DDTHH:mm'),
       };
       patchBlogMutation.mutate(reqBody);
     } else {
