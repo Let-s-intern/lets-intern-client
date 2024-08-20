@@ -8,10 +8,12 @@ import {
   Snackbar,
   TextField,
 } from '@mui/material';
+import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 import { isAxiosError } from 'axios';
 import { ChangeEvent, FormEvent, MouseEvent, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
+import dayjs, { Dayjs } from 'dayjs';
 import {
   useBlogQuery,
   useBlogTagQuery,
@@ -21,7 +23,6 @@ import {
 } from '../../api/blog';
 import { PostTag, postTagSchema, TagDetail } from '../../api/blogSchema';
 import { uploadFile } from '../../api/file';
-import DateTimePicker from '../../components/admin/blog/DateTimePicker';
 import TagSelector from '../../components/admin/blog/TagSelector';
 import TextFieldLimit from '../../components/admin/blog/TextFieldLimit';
 import EditorApp from '../../components/admin/lexical/EditorApp';
@@ -69,6 +70,7 @@ const BlogEditPage = () => {
     open: false,
     message: '',
   });
+  const [dateTime, setDateTime] = useState<Dayjs | null>(null);
 
   const { data: tags = [] } = useBlogTagQuery();
   const { data: blogData, isLoading } = useBlogQuery(id!);
@@ -135,6 +137,7 @@ const BlogEditPage = () => {
       id: Number(id),
       isDisplayed: name === 'publish',
       tagList: editingValue.tagList.map((tag) => tag.id),
+      displayDate: dateTime?.format('YYYY-MM-DDTHH:mm') || '',
     });
 
     setSnackbar({
@@ -157,7 +160,9 @@ const BlogEditPage = () => {
       displayDate: blogData.blogDetailInfo.displayDate || '',
       tagList: blogData.tagDetailInfos,
     });
+    setDateTime(dayjs(blogData.blogDetailInfo.displayDate));
   }, [isLoading, blogData]);
+
 
   return (
     <div className="mx-3 mb-40 mt-3">
@@ -305,9 +310,11 @@ const BlogEditPage = () => {
             </div>
 
             <div className="border px-6 py-10">
+              <h2 className="mb-2">게시 일자</h2>
               <DateTimePicker
-                value={editingValue.displayDate}
-                onChange={onChange}
+                label="게시 일자"
+                value={dateTime}
+                onChange={setDateTime}
               />
             </div>
 

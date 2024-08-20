@@ -68,7 +68,7 @@ const App = () => {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <LocalizationProvider dateAdapter={AdapterDayjs}>
+      <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="ko">
         <Helmet>
           <meta name="robots" content="index,follow" />
           <meta property="og:site_name" content="렛츠커리어" />
