@@ -12,22 +12,22 @@ interface Props {
 const DailyMissionSubmitSection = ({ myDailyMission }: Props) => {
   const queryClient = useQueryClient();
 
-  const attendanceLink = myDailyMission.attendanceInfo.link;
-  const attended = myDailyMission.attendanceInfo.submitted;
-  const attendanceId = myDailyMission.attendanceInfo.id;
+  const attendanceLink = myDailyMission.attendanceInfo?.link;
+  const attended = myDailyMission.attendanceInfo?.submitted;
+  const attendanceId = myDailyMission.attendanceInfo?.id;
 
   const [value, setValue] = useState(attendanceLink ?? '');
   const [isLinkChecked, setIsLinkChecked] = useState(false);
   const [isValidLinkValue, setIsValidLinkValue] = useState(attended);
   const [isStartedHttp, setIsStartedHttp] = useState(false);
   const [isEditing, setIsEditing] = useState(
-    !myDailyMission.attendanceInfo.submitted,
+    !myDailyMission.attendanceInfo?.submitted,
   );
   const [isAlertShown, setIsAlertShown] = useState(false);
 
   useEffect(() => {
     const handleBeforeunload = (e: BeforeUnloadEvent) => {
-      if (!isEditing || value === myDailyMission.attendanceInfo.link) {
+      if (!isEditing || value === myDailyMission.attendanceInfo?.link) {
         return;
       }
       e.preventDefault();
@@ -37,7 +37,7 @@ const DailyMissionSubmitSection = ({ myDailyMission }: Props) => {
     return () => {
       window.removeEventListener('beforeunload', handleBeforeunload);
     };
-  }, [isEditing, myDailyMission.attendanceInfo.link, value]);
+  }, [isEditing, myDailyMission.attendanceInfo?.link, value]);
 
   const onConfirm = () => {
     setValue(attendanceLink ?? '');
@@ -56,7 +56,7 @@ const DailyMissionSubmitSection = ({ myDailyMission }: Props) => {
       }
 
       const res = await axios.post(
-        `/attendance/${myDailyMission.dailyMission.id}`,
+        `/attendance/${myDailyMission.dailyMission?.id}`,
         {
           link: linkValue,
         },
