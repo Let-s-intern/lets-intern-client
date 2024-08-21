@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react';
-import { ReactToPrint } from 'react-to-print';
+import ReactToPrint from 'react-to-print';
 import ScoreTooltipQuestion from '../../ui/tooltip-question/ScoreTooltipQuestion';
 import CertificatePaper from '../CertificatePaper';
 
