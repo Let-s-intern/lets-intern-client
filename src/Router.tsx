@@ -30,6 +30,7 @@ import PaymentFail from './pages/common/program/PaymentFail';
 import PaymentResult from './pages/common/program/PaymentResult';
 import ProgramDetail from './pages/common/program/ProgramDetail';
 import Programs from './pages/common/program/Programs';
+import ReportApplyPage from './pages/common/report/ReportApplyPage';
 import ReportPage from './pages/common/report/ReportPage';
 import ReviewCreate from './pages/common/review/ReviewCreate';
 import ReviewDetail from './pages/common/review/ReviewDetail';
@@ -138,7 +139,12 @@ const Router = () => {
           </Route>
 
           {/* 서류진단 */}
-          <Route path="report" element={<ReportPage />} />
+          {/* /report */}
+          <Route path="report">
+            <Route path="" element={<ReportPage />} />
+            {/* /report/apply/:type/:id */}
+            <Route path="apply/:type/:id" element={<ReportApplyPage />} />
+          </Route>
 
           {/* 비로그인 리뷰 작성 페이지 */}
           <Route
