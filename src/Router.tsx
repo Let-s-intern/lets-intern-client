@@ -30,6 +30,7 @@ import PaymentFail from './pages/common/program/PaymentFail';
 import PaymentResult from './pages/common/program/PaymentResult';
 import ProgramDetail from './pages/common/program/ProgramDetail';
 import Programs from './pages/common/program/Programs';
+import ReportPage from './pages/common/report/ReportPage';
 import ReviewCreate from './pages/common/review/ReviewCreate';
 import ReviewDetail from './pages/common/review/ReviewDetail';
 import Maintenance from './pages/maintenance/Maintenance';
@@ -49,18 +50,9 @@ const Router = () => {
           <Route path="" element={<Home />} />
           {/* /about */}
           <Route path="about" element={<About />} />
-          {/* /program/challenge/:programId */}
-          <Route
-            path="program/challenge/:programId"
-            element={<ProgramDetail programType="challenge" />}
-          />
-          {/* /program/live/:programId */}
-          <Route
-            path="program/live/:programId"
-            element={<ProgramDetail programType="live" />}
-          />
-
+          {/* /payment */}
           <Route path="payment" element={<Payment />} />
+          {/* /order */}
           <Route path="order/result" element={<PaymentResult />} />
           <Route path="order/fail" element={<PaymentFail />} />
 
@@ -71,7 +63,16 @@ const Router = () => {
             path="program/detail/:programId"
             element={<ProgramDetailRegacy />}
           /> */}
-
+          {/* /program/challenge/:programId */}
+          <Route
+            path="program/challenge/:programId"
+            element={<ProgramDetail programType="challenge" />}
+          />
+          {/* /program/live/:programId */}
+          <Route
+            path="program/live/:programId"
+            element={<ProgramDetail programType="live" />}
+          />
           {/* /program/:programId/review/new */}
           <Route
             path="program/:programId/review/new"
@@ -96,10 +97,8 @@ const Router = () => {
           <Route path="mypage" element={<MyPage />}>
             {/* /mypage/application */}
             <Route path="application" element={<Application />} />
-
             {/* /mypage/review */}
             <Route path="review" element={<Review />} />
-
             {/* /mypage/review/new/program/:programId */}
             <Route
               path="review/new/program/:programType/:programId"
@@ -137,6 +136,9 @@ const Router = () => {
             <Route path="" element={<ChallengeDashboard />} />
             <Route path="me" element={<MyChallengeDashboard />} />
           </Route>
+
+          {/* 서류진단 */}
+          <Route path="report" element={<ReportPage />} />
 
           {/* 비로그인 리뷰 작성 페이지 */}
           <Route
