@@ -1,6 +1,8 @@
 import { FormControl, InputLabel, MenuItem, Select } from '@mui/material';
 import { DatePicker } from '@mui/x-date-pickers';
 
+import './date-pickers-toolbar.scss';
+
 const timeOptions = [10, 11, 12, 13, 14];
 const dateTimePickerSx = {
   width: '50%',
