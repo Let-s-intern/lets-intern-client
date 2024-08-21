@@ -15,7 +15,7 @@ const NavBar = () => {
   const [user, setUser] = useState<any>(null);
   const [isAdmin, setIsAdmin] = useState(false);
   const [activeLink, setActiveLink] = useState<
-    'HOME' | 'ABOUT' | 'PROGRAM' | 'ADMIN' | 'BLOG' | ''
+    'HOME' | 'ABOUT' | 'PROGRAM' | 'ADMIN' | 'BLOG' | 'REPORT' | ''
   >('');
 
   const toggleMenu = () => {
@@ -25,20 +25,6 @@ const NavBar = () => {
   const closeMenu = () => {
     setIsOpen(false);
   };
-
-  useEffect(() => {
-    if (location.pathname.startsWith('/about')) {
-      setActiveLink('ABOUT');
-    } else if (location.pathname.startsWith('/program')) {
-      setActiveLink('PROGRAM');
-    } else if (location.pathname.startsWith('/admin')) {
-      setActiveLink('ADMIN');
-    } else if (location.pathname.startsWith('/blog')) {
-      setActiveLink('BLOG');
-    } else if (location.pathname.startsWith('/')) {
-      setActiveLink('HOME');
-    }
-  }, [location]);
 
   const { data: userData } = useQuery({
     queryKey: ['mainUser'],
@@ -59,6 +45,22 @@ const NavBar = () => {
     enabled: isLoggedIn,
     retry: 1,
   });
+
+  useEffect(() => {
+    if (location.pathname.startsWith('/about')) {
+      setActiveLink('ABOUT');
+    } else if (location.pathname.startsWith('/program')) {
+      setActiveLink('PROGRAM');
+    } else if (location.pathname.startsWith('/admin')) {
+      setActiveLink('ADMIN');
+    } else if (location.pathname.startsWith('/blog')) {
+      setActiveLink('BLOG');
+    } else if (location.pathname.startsWith('/report')) {
+      setActiveLink('REPORT');
+    } else if (location.pathname.startsWith('/')) {
+      setActiveLink('HOME');
+    }
+  }, [location]);
 
   useEffect(() => {
     if (userData) {
@@ -92,6 +94,9 @@ const NavBar = () => {
             </NavItem>
             <NavItem to="/blog/list" active={activeLink === 'BLOG'}>
               블로그
+            </NavItem>
+            <NavItem to="/report" active={activeLink === 'REPORT'}>
+              서류 진단 서비스
             </NavItem>
           </div>
           <div className="flex items-center gap-4">
@@ -205,6 +210,9 @@ const NavBar = () => {
             </SideNavItem>
             <SideNavItem to="/blog/list" onClick={closeMenu}>
               블로그
+            </SideNavItem>
+            <SideNavItem to="/report" onClick={closeMenu}>
+              서류 진단 서비스
             </SideNavItem>
             <hr className="h-1 bg-neutral-80" />
             {isAdmin && (
