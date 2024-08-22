@@ -115,6 +115,9 @@ const ChallengeDashboard = () => {
           <div className="flex w-[12rem] flex-col gap-4">
             <ScoreSection
               programName={currentChallenge?.title || ''}
+              isProgramDone={dayjs(new Date()).isAfter(
+                currentChallenge?.endDate,
+              )}
               desc={currentChallenge?.shortDesc || ''}
               startDate={
                 currentChallenge?.startDate?.format('YYYY.MM.DD') || ''
