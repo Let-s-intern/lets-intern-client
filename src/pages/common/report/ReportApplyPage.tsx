@@ -14,7 +14,7 @@ const type = '포트폴리오';
 
 const ReportApplyPage = () => {
   return (
-    <div className="px-5">
+    <div className="px-5 md:px-32 md:py-10">
       <header>
         <h1 className="py-6 text-small20 font-bold">진단서 신청하기</h1>
         <div className="rounded-md bg-neutral-100 px-6 py-6">
@@ -60,7 +60,7 @@ const ProgramInfoSection = () => {
         </Tooltip>
       </div>
       <div className="flex items-center gap-4">
-        <div className="h-20 w-1/3 rounded-sm bg-neutral-60">
+        <div className="h-20 w-28 rounded-sm bg-neutral-60">
           <img className="h-auto w-full" src="" alt="" />
         </div>
         <div>
@@ -89,8 +89,8 @@ const DocumentSection = () => {
   const [value, setValue] = useState('file');
 
   return (
-    <div>
-      <div className="mb-5 flex items-center">
+    <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:gap-5">
+      <div className="flex w-[8.75rem] shrink-0 items-center lg:mt-2">
         <Heading2>진단용 {type}</Heading2>
         <RequiredStar />
       </div>
@@ -125,71 +125,71 @@ const PremiumSection = () => {
   const [value, setValue] = useState('file');
 
   return (
-    <div>
-      <div className="mb-5">
-        <div className="flex items-center">
-          <Heading2>(프리미엄) 채용공고</Heading2>
-          <RequiredStar />
-        </div>
-        <span className="mt-1 inline-block text-xsmall14">
+    <div className="flex flex-col gap-1 lg:flex-row lg:items-start lg:gap-5">
+      <div className="flex w-[8.75rem] shrink-0 items-center">
+        <Heading2>(프리미엄) 채용공고</Heading2>
+        <RequiredStar />
+      </div>
+      <div className="w-full">
+        <span className="mb-3 inline-block text-xsmall14 lg:mb-4">
           희망하는 기업의 채용공고를 첨부해주세요.
         </span>
+        <FormControl fullWidth>
+          <RadioGroup
+            defaultValue="file"
+            value={value}
+            onChange={(event) => {
+              event.target.value !== undefined && setValue(event.target.value);
+            }}
+            name="radio-buttons-group"
+          >
+            <div className="mb-4">
+              <ControlLabel
+                label="파일 첨부"
+                value="file"
+                subText="(pdf, doc, docx 형식 지원)"
+              />
+              <span className="-mt-1 mb-2 block text-xxsmall12 text-neutral-45">
+                *업무, 지원자격, 우대사항이 보이게 채용공고를 캡처해주세요.
+              </span>
+              {value === 'file' && <OutlinedButton caption="파일 업로드" />}
+            </div>
+            <div>
+              <ControlLabel label="URL" value="url" />
+              {value === 'url' && <FilledInput placeholder="https://" />}
+            </div>
+          </RadioGroup>
+        </FormControl>
       </div>
-      <FormControl fullWidth>
-        <RadioGroup
-          defaultValue="file"
-          value={value}
-          onChange={(event) => {
-            event.target.value !== undefined && setValue(event.target.value);
-          }}
-          name="radio-buttons-group"
-        >
-          <div className="mb-4">
-            <ControlLabel
-              label="파일 첨부"
-              value="file"
-              subText="(pdf, doc, docx 형식 지원)"
-            />
-            <span className="-mt-1 mb-2 block text-xxsmall12 text-neutral-45">
-              *업무, 지원자격, 우대사항이 보이게 채용공고를 캡처해주세요.
-            </span>
-            {value === 'file' && <OutlinedButton caption="파일 업로드" />}
-          </div>
-          <div>
-            <ControlLabel label="URL" value="url" />
-            {value === 'url' && <FilledInput placeholder="https://" />}
-          </div>
-        </RadioGroup>
-      </FormControl>
     </div>
   );
 };
 
 const ScheduleSection = () => {
   return (
-    <div className="flex flex-col gap-5">
-      <div>
-        <div className="flex items-center gap-1">
-          <Heading2>맞춤 첨삭 일정</Heading2>
-          <Tooltip alt="맞춤 첨삭 일정 도움말">
-            1:1 첨삭은 서류 진단서 발급 이후에 진행됩니다.
-          </Tooltip>
-        </div>
+    <div className="flex flex-col gap-1 lg:flex-row lg:items-start lg:gap-5">
+      <div className="flex w-[8.75rem] shrink-0 items-center gap-1">
+        <Heading2>맞춤 첨삭 일정</Heading2>
+        <Tooltip alt="맞춤 첨삭 일정 도움말">
+          1:1 첨삭은 서류 진단서 발급 이후에 진행됩니다.
+        </Tooltip>
+      </div>
+      <div className="flex w-full flex-col gap-5">
         <span className="text-xsmall14">
           희망하시는 맞춤 첨삭(40분) 일정을 1개 이상 선택해주세요.
         </span>
-      </div>
-      <div>
-        <Heading3>희망순위1*</Heading3>
-        <DateTimePicker />
-      </div>
-      <div>
-        <Heading3>희망순위2</Heading3>
-        <DateTimePicker />
-      </div>
-      <div>
-        <Heading3>희망순위3</Heading3>
-        <DateTimePicker />
+        <div>
+          <Heading3>희망순위1*</Heading3>
+          <DateTimePicker />
+        </div>
+        <div>
+          <Heading3>희망순위2</Heading3>
+          <DateTimePicker />
+        </div>
+        <div>
+          <Heading3>희망순위3</Heading3>
+          <DateTimePicker />
+        </div>
       </div>
     </div>
   );
