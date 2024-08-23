@@ -40,6 +40,13 @@ const ReportApplyPage = () => {
 export default ReportApplyPage;
 
 const ProgramInfoSection = () => {
+  /** 다음 정보 필요
+   * 1. 어떤 유형인지 (포폴, 자소서, 이력서)
+   * 2. 제목이 무엇인지
+   * 3. 유형별 정적 썸네일이 무엇인지
+   * 4. 베이직인지 프리미엄인지
+   * 5. 1:1 첨삭을 신청했는지 안 했는지
+   */
   return (
     <div>
       <div className="mb-6 flex items-center gap-1">
