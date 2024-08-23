@@ -3,7 +3,6 @@ import { useEffect, useRef } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useCurrentChallenge } from '../../../../../context/CurrentChallengeProvider';
 import {
-  myDailyMission,
   MyDailyMission,
   userChallengeMissionDetail,
 } from '../../../../../schema';
@@ -44,7 +43,7 @@ const DailyMissionSection = ({ myDailyMission }: Props) => {
     ],
     queryFn: async () => {
       const res = await axios.get(
-        `challenge/${currentChallenge?.id}/missions/${myDailyMission.dailyMission.id}`,
+        `challenge/${currentChallenge?.id}/missions/${myDailyMission.dailyMission?.id}`,
       );
       return userChallengeMissionDetail.parse(res.data.data).missionInfo;
     },
