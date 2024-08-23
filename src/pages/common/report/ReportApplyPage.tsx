@@ -47,7 +47,9 @@ const ProgramInfoSection = () => {
         <Tooltip alt="프로그램 도움말 아이콘" />
       </div>
       <div className="flex items-center gap-4">
-        {/* <img src="" alt="" /> */}
+        <div className="h-20 w-1/3 rounded-sm bg-neutral-60">
+          <img className="h-auto w-full" src="" alt="" />
+        </div>
         <div>
           <span className="font-semibold">{programName}</span>
           <div className="mt-3">
