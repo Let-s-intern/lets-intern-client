@@ -61,17 +61,10 @@ const MyChallengeDashboard = () => {
         todayTh={todayTh}
         isDone={isChallengeDone}
       />
-      {myDailyMission?.attendanceInfo &&
-        myDailyMission.dailyMission &&
-        dayjs().isBefore(programEndDate) && (
-          <>
-            <DailyMissionSection myDailyMission={myDailyMission} />
-            <OtherMissionSection
-              todayTh={todayTh}
-              isDone={isChallengeSubmitDone}
-            />
-          </>
-        )}
+      {myDailyMission?.attendanceInfo && myDailyMission.dailyMission && (
+        <DailyMissionSection myDailyMission={myDailyMission} />
+      )}
+      <OtherMissionSection todayTh={todayTh} isDone={isChallengeSubmitDone} />
     </main>
   );
 };
