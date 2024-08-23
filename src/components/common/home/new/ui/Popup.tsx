@@ -61,21 +61,21 @@ const Popup = () => {
   }
 
   return showPopup && data ? (
-    <div className="fixed bottom-0 top-0 z-50 flex h-full w-screen items-center justify-center bg-neutral-0/60 px-8">
-      <div className="relative w-80 rounded-xl bg-static-100 px-4 py-6 shadow-05">
+    <div className="fixed bottom-0 top-0 z-50 flex h-full w-screen items-center justify-center bg-neutral-0/60 p-5">
+      <div className="relative h-fit max-w-[600px] overflow-hidden rounded-xl bg-static-100 pb-5 shadow-05">
         <img
-          className="popup_banner cursor-pointer"
+          className="popup_banner h-auto w-full cursor-pointer"
           src={data?.imgUrl}
           onClick={clickPopup}
           alt="홈 화면 팝업 이미지"
         />
         <img
           onClick={close}
-          className="absolute right-5 top-7 h-6 w-6 cursor-pointer"
+          className="absolute right-4 top-5 h-6 w-6 cursor-pointer md:h-8 md:w-8"
           src="/icons/Close_SM.svg"
           alt="팝업 닫기 아이콘"
         />
-        <div className="mt-4 flex gap-1 pl-2">
+        <div className="ml-4 mt-4 flex gap-1 pl-2">
           <input type="checkbox" onChange={toggle} />
           <span className="text-0.75">오늘 하루 보지 않기</span>
         </div>
