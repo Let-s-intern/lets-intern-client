@@ -51,7 +51,12 @@ const ProgramInfoSection = () => {
     <div>
       <div className="mb-6 flex items-center gap-1">
         <Heading2>프로그램 정보</Heading2>
-        <Tooltip alt="프로그램 도움말 아이콘" />
+        <Tooltip alt="프로그램 도움말 아이콘">
+          <span className="font-semibold">진단서 발급 예상 소요기간</span>
+          <li>서류 진단서 (베이직): 최대 2일</li>
+          <li>서류 진단서 (프리미엄) 최대 3일</li>
+          <li>옵션 (현직자 피드백): 최대 5일</li>
+        </Tooltip>
       </div>
       <div className="flex items-center gap-4">
         <div className="h-20 w-1/3 rounded-sm bg-neutral-60">
@@ -149,7 +154,9 @@ const ScheduleSection = () => {
       <div>
         <div className="flex items-center gap-1">
           <Heading2>맞춤 첨삭 일정</Heading2>
-          <Tooltip alt="맞춤 첨삭 일정 도움말" />
+          <Tooltip alt="맞춤 첨삭 일정 도움말">
+            1:1 첨삭은 서류 진단서 발급 이후에 진행됩니다.
+          </Tooltip>
         </div>
         <span className="text-xsmall14">
           희망하시는 맞춤 첨삭(40분) 일정을 1개 이상 선택해주세요.
