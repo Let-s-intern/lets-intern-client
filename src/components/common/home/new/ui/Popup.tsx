@@ -62,7 +62,7 @@ const Popup = () => {
 
   return showPopup && data ? (
     <div className="fixed bottom-0 top-0 z-50 flex h-full w-screen items-center justify-center bg-neutral-0/60 p-5">
-      <div className="relative h-fit max-w-[550px] overflow-hidden rounded-xl bg-static-100 pb-5 shadow-05">
+      <div className="relative h-fit max-w-[450px] overflow-hidden rounded-md bg-static-100 pb-5 shadow-05">
         <img
           className="popup_banner h-auto w-full cursor-pointer"
           src={data?.imgUrl}
