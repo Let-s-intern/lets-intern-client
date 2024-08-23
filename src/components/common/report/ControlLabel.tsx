@@ -14,15 +14,13 @@ const labelSx = {
   },
 };
 
-const ControlLabel = ({
-  label,
-  value,
-  subText,
-}: {
+interface ControlLabelProps {
   label: string;
   value: string;
   subText?: string;
-}) => {
+}
+
+const ControlLabel = ({ label, value, subText }: ControlLabelProps) => {
   return (
     <div className="flex items-center">
       <FormControlLabel
