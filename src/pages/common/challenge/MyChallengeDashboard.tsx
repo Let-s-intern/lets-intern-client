@@ -34,7 +34,7 @@ const MyChallengeDashboard = () => {
 
   const { schedules, myDailyMission } = useCurrentChallenge();
 
-  const todayTh = myDailyMission?.dailyMission.th ?? schedules.length + 1;
+  const todayTh = myDailyMission?.dailyMission?.th ?? schedules.length + 1;
 
   const { data: programData } = useQuery({
     queryKey: ['challenge', params.programId, 'application'],

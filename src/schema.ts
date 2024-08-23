@@ -817,53 +817,59 @@ export const challengeScore = z.object({
 /** GET /api/v1/challenge/{id}/my/daily-mission 챌린지 나의 기록장 데일리 미션 */
 export const myDailyMission = z
   .object({
-    dailyMission: z.object({
-      id: z.number(),
-      th: z.number().nullable(),
-      title: z.string().nullable(),
-      startDate: z.string().nullable(),
-      endDate: z.string().nullable(),
-      essentialContentsList: z.array(
-        z.object({
-          id: z.number(),
-          title: z.string().nullable(),
-          link: z.string().nullable(),
-        }),
-      ),
-      additionalContentsList: z.array(
-        z.object({
-          id: z.number(),
-          title: z.string().nullable(),
-          link: z.string().nullable(),
-        }),
-      ),
-      status: missionStatusType,
-      missionTag: z.string().nullable(),
-      description: z.string().nullable(),
-      guide: z.string().nullable(),
-      templateLink: z.string().nullable(),
-    }),
-    attendanceInfo: z.object({
-      submitted: z.boolean(),
-      id: z.number().nullable(),
-      link: z.string().nullable(),
-      comments: z.string().nullable(),
-      status: attendanceStatus.nullable(),
-      result: attendanceResult.nullable(),
-    }),
+    dailyMission: z
+      .object({
+        id: z.number(),
+        th: z.number().nullable(),
+        title: z.string().nullable(),
+        startDate: z.string().nullable(),
+        endDate: z.string().nullable(),
+        essentialContentsList: z.array(
+          z.object({
+            id: z.number(),
+            title: z.string().nullable(),
+            link: z.string().nullable(),
+          }),
+        ),
+        additionalContentsList: z.array(
+          z.object({
+            id: z.number(),
+            title: z.string().nullable(),
+            link: z.string().nullable(),
+          }),
+        ),
+        status: missionStatusType,
+        missionTag: z.string().nullable(),
+        description: z.string().nullable(),
+        guide: z.string().nullable(),
+        templateLink: z.string().nullable(),
+      })
+      .nullable(),
+    attendanceInfo: z
+      .object({
+        submitted: z.boolean(),
+        id: z.number().nullable(),
+        link: z.string().nullable(),
+        comments: z.string().nullable(),
+        status: attendanceStatus.nullable(),
+        result: attendanceResult.nullable(),
+      })
+      .nullable(),
   })
   .transform((data) => {
     return {
       ...data,
-      dailyMission: {
-        ...data.dailyMission,
-        startDate: data.dailyMission.startDate
-          ? dayjs(data.dailyMission.startDate)
-          : null,
-        endDate: data.dailyMission.endDate
-          ? dayjs(data.dailyMission.endDate)
-          : null,
-      },
+      dailyMission: data.dailyMission
+        ? {
+            ...data.dailyMission,
+            startDate: data.dailyMission.startDate
+              ? dayjs(data.dailyMission.startDate)
+              : null,
+            endDate: data.dailyMission.endDate
+              ? dayjs(data.dailyMission.endDate)
+              : null,
+          }
+        : null,
     };
   });
 
