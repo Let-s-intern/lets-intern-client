@@ -61,7 +61,7 @@ const MyChallengeDashboard = () => {
         todayTh={todayTh}
         isDone={isChallengeDone}
       />
-      {myDailyMission && (
+      {myDailyMission?.attendanceInfo && myDailyMission.dailyMission && (
         <DailyMissionSection myDailyMission={myDailyMission} />
       )}
       <OtherMissionSection todayTh={todayTh} isDone={isChallengeSubmitDone} />
