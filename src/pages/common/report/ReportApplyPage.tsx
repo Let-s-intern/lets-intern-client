@@ -1,5 +1,6 @@
 import { FormControl, RadioGroup } from '@mui/material';
 
+import { useState } from 'react';
 import ControlLabel from '../../../components/common/report/ControlLabel';
 import DateTimePicker from '../../../components/common/report/DateTimePicker';
 import FilledInput from '../../../components/common/report/FilledInput';
@@ -85,6 +86,8 @@ const ProgramInfoSection = () => {
 };
 
 const DocumentSection = () => {
+  const [value, setValue] = useState('file');
+
   return (
     <div>
       <div className="mb-5 flex items-center">
@@ -92,7 +95,12 @@ const DocumentSection = () => {
         <RequiredStar />
       </div>
       <FormControl fullWidth>
-        <RadioGroup defaultValue="file" name="radio-buttons-group">
+        <RadioGroup
+          defaultValue="file"
+          name="radio-buttons-group"
+          value={value}
+          onChange={(event) => setValue(event.target.value)}
+        >
           {/* 파일 첨부 */}
           <div className="mb-4">
             <ControlLabel
@@ -100,12 +108,12 @@ const DocumentSection = () => {
               value="file"
               subText="(pdf, doc, docx 형식 지원)"
             />
-            <OutlinedButton caption="파일 업로드" />
+            {value === 'file' && <OutlinedButton caption="파일 업로드" />}
           </div>
           {/* URL */}
           <div>
             <ControlLabel label="URL" value="url" />
-            <FilledInput placeholder="https://" />
+            {value === 'url' && <FilledInput placeholder="https://" />}
           </div>
         </RadioGroup>
       </FormControl>
@@ -114,6 +122,8 @@ const DocumentSection = () => {
 };
 
 const PremiumSection = () => {
+  const [value, setValue] = useState('file');
+
   return (
     <div>
       <div className="mb-5">
@@ -126,7 +136,14 @@ const PremiumSection = () => {
         </span>
       </div>
       <FormControl fullWidth>
-        <RadioGroup defaultValue="file" name="radio-buttons-group">
+        <RadioGroup
+          defaultValue="file"
+          value={value}
+          onChange={(event) => {
+            event.target.value !== undefined && setValue(event.target.value);
+          }}
+          name="radio-buttons-group"
+        >
           <div className="mb-4">
             <ControlLabel
               label="파일 첨부"
@@ -136,11 +153,11 @@ const PremiumSection = () => {
             <span className="-mt-1 mb-2 block text-xxsmall12 text-neutral-45">
               *업무, 지원자격, 우대사항이 보이게 채용공고를 캡처해주세요.
             </span>
-            <OutlinedButton caption="파일 업로드" />
+            {value === 'file' && <OutlinedButton caption="파일 업로드" />}
           </div>
           <div>
             <ControlLabel label="URL" value="url" />
-            <FilledInput placeholder="https://" />
+            {value === 'url' && <FilledInput placeholder="https://" />}
           </div>
         </RadioGroup>
       </FormControl>
