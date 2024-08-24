@@ -1,5 +1,11 @@
+import Heading1 from '../../../components/common/report/Heading1';
+
 const ReportPaymentPage = () => {
-  return <h1>서류 진단 결제하기</h1>;
+  return (
+    <div>
+      <Heading1>결제하기</Heading1>
+    </div>
+  );
 };
 
 export default ReportPaymentPage;

@@ -6,6 +6,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import ControlLabel from '../../../components/common/report/ControlLabel';
 import DateTimePicker from '../../../components/common/report/DateTimePicker';
 import FilledInput from '../../../components/common/report/FilledInput';
+import Heading1 from '../../../components/common/report/Heading1';
 import Heading2 from '../../../components/common/report/Heading2';
 import Heading3 from '../../../components/common/report/Heading3';
 import OutlinedButton from '../../../components/common/report/OutlinedButton';
@@ -22,7 +23,7 @@ const ReportApplyPage = () => {
   return (
     <div className="px-5 md:px-32 md:py-10">
       <header>
-        <h1 className="py-6 text-small20 font-bold">진단서 신청하기</h1>
+        <Heading1>진단서 신청하기</Heading1>
         <div className="rounded-md bg-neutral-100 px-6 py-6">
           <span className="-ml-1 text-xsmall16 font-semibold text-primary">
             ❗신청 전 꼭 읽어주세요
@@ -73,7 +74,7 @@ const ProgramInfoSection = () => {
    * 5. 1:1 첨삭을 신청했는지 안 했는지
    */
   return (
-    <div>
+    <section>
       <div className="mb-6 flex items-center gap-1">
         <Heading2>프로그램 정보</Heading2>
         <Tooltip alt="프로그램 도움말 아이콘">
@@ -105,7 +106,7 @@ const ProgramInfoSection = () => {
           </div>
         </div>
       </div>
-    </div>
+    </section>
   );
 };
 
@@ -115,7 +116,7 @@ const DocumentSection = () => {
   const [value, setValue] = useState('file');
 
   return (
-    <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:gap-5">
+    <section className="flex flex-col gap-3 lg:flex-row lg:items-start lg:gap-5">
       <div className="flex w-[8.75rem] shrink-0 items-center lg:mt-2">
         <Heading2>진단용 {reportType}</Heading2>
         <RequiredStar />
@@ -143,7 +144,7 @@ const DocumentSection = () => {
           </div>
         </RadioGroup>
       </FormControl>
-    </div>
+    </section>
   );
 };
 
@@ -151,7 +152,7 @@ const PremiumSection = () => {
   const [value, setValue] = useState('file');
 
   return (
-    <div className="flex flex-col gap-1 lg:flex-row lg:items-start lg:gap-5">
+    <section className="flex flex-col gap-1 lg:flex-row lg:items-start lg:gap-5">
       <div className="flex w-[8.75rem] shrink-0 items-center">
         <Heading2>(프리미엄) 채용공고</Heading2>
         <RequiredStar />
@@ -187,13 +188,13 @@ const PremiumSection = () => {
           </RadioGroup>
         </FormControl>
       </div>
-    </div>
+    </section>
   );
 };
 
 const ScheduleSection = () => {
   return (
-    <div className="flex flex-col gap-1 lg:flex-row lg:items-start lg:gap-5">
+    <section className="flex flex-col gap-1 lg:flex-row lg:items-start lg:gap-5">
       <div className="flex w-[8.75rem] shrink-0 items-center gap-1">
         <Heading2>맞춤 첨삭 일정</Heading2>
         <Tooltip alt="맞춤 첨삭 일정 도움말">
@@ -217,13 +218,13 @@ const ScheduleSection = () => {
           <DateTimePicker />
         </div>
       </div>
-    </div>
+    </section>
   );
 };
 
 const AdditionalInfoSection = () => {
   return (
-    <div className="flex flex-col gap-5">
+    <section className="flex flex-col gap-5">
       <Heading2>추가 정보</Heading2>
       <div>
         <Heading3>
@@ -241,7 +242,7 @@ const AdditionalInfoSection = () => {
           rows={2}
         />
       </div>
-    </div>
+    </section>
   );
 };
 
