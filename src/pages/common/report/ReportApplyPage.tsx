@@ -8,7 +8,7 @@ import DateTimePicker from '../../../components/common/report/DateTimePicker';
 import FilledInput from '../../../components/common/report/FilledInput';
 import Heading1 from '../../../components/common/report/Heading1';
 import Heading2 from '../../../components/common/report/Heading2';
-import Heading3 from '../../../components/common/report/Heading3';
+import Label from '../../../components/common/report/Label';
 import OutlinedButton from '../../../components/common/report/OutlinedButton';
 import Tooltip from '../../../components/common/report/Tooltip';
 import BottomSheet from '../../../components/common/ui/BottomSheeet';
@@ -206,15 +206,15 @@ const ScheduleSection = () => {
           희망하시는 맞춤 첨삭(40분) 일정을 1개 이상 선택해주세요.
         </span>
         <div>
-          <Heading3>희망순위1*</Heading3>
+          <Label>희망순위1*</Label>
           <DateTimePicker />
         </div>
         <div>
-          <Heading3>희망순위2</Heading3>
+          <Label>희망순위2</Label>
           <DateTimePicker />
         </div>
         <div>
-          <Heading3>희망순위3</Heading3>
+          <Label>희망순위3</Label>
           <DateTimePicker />
         </div>
       </div>
@@ -227,15 +227,16 @@ const AdditionalInfoSection = () => {
     <section className="flex flex-col gap-5">
       <Heading2>추가 정보</Heading2>
       <div>
-        <Heading3>
+        <Label htmlFor="job">
           희망직무
           <RequiredStar />
-        </Heading3>
-        <FilledInput placeholder="희망하는 직무를 알려주세요" />
+        </Label>
+        <FilledInput id="job" placeholder="희망하는 직무를 알려주세요" />
       </div>
       <div>
-        <Heading3>서류 작성 고민</Heading3>
+        <Label htmlFor="concern">서류 작성 고민</Label>
         <textarea
+          id="concern"
           className="w-full resize-none rounded-md bg-neutral-95 p-3 text-xsmall14"
           name="concern"
           placeholder="진단에 참고할 수 있도록 서류 작성에 대한 고민을 적어주세요"
