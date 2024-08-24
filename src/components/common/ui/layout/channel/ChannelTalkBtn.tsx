@@ -9,7 +9,8 @@ const programDetailPathRegex = /^\/program\/(live|challenge|vod)\/\d+$/; // /pro
 
 const ChannelTalkBtn = () => {
   const location = useLocation();
-  const matches = useMediaQuery('(max-width: 991px)');
+  const isUpTo991 = useMediaQuery('(max-width: 991px)');
+  const isUpTo1280 = useMediaQuery('(max-width: 1280px)');
 
   const [isHidden, setIsHidden] = useState(false);
   const [alert, setAlert] = useState(0);
@@ -36,7 +37,8 @@ const ChannelTalkBtn = () => {
     <button
       id="custom-channel-button"
       className={clsx(
-        programDetailPathRegex.test(location.pathname) && matches
+        (programDetailPathRegex.test(location.pathname) && isUpTo991) ||
+          (location.pathname.startsWith('/report') && isUpTo1280)
           ? 'bottom-32'
           : 'bottom-20',
         {

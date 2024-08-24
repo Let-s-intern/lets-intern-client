@@ -32,6 +32,7 @@ import ProgramDetail from './pages/common/program/ProgramDetail';
 import Programs from './pages/common/program/Programs';
 import ReportApplyPage from './pages/common/report/ReportApplyPage';
 import ReportPage from './pages/common/report/ReportPage';
+import ReportPaymentPage from './pages/common/report/ReportPaymentPage';
 import ReviewCreate from './pages/common/review/ReviewCreate';
 import ReviewDetail from './pages/common/review/ReviewDetail';
 import Maintenance from './pages/maintenance/Maintenance';
@@ -142,8 +143,15 @@ const Router = () => {
           {/* /report */}
           <Route path="report">
             <Route path="" element={<ReportPage />} />
-            {/* /report/apply/:type/:id */}
-            <Route path="apply/:type/:id" element={<ReportApplyPage />} />
+            <Route
+              path="apply/:reportType/:reportId"
+              element={<ReportApplyPage />}
+            />
+            {/* 모바일 전용 서류진단 결제 페이지*/}
+            <Route
+              path="payment/:reportType/:reportId"
+              element={<ReportPaymentPage />}
+            />
           </Route>
 
           {/* 비로그인 리뷰 작성 페이지 */}

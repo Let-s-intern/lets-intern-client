@@ -1,12 +1,16 @@
-const FilledInput = ({ placeholder }: { placeholder?: string }) => {
+interface FilledInputProps {
+  placeholder?: string;
+  id?: string;
+}
+
+const FilledInput = ({ placeholder, id }: FilledInputProps) => {
   return (
-    <div className="flex items-center">
-      <input
-        className="w-full rounded-md bg-neutral-95 p-3 text-xsmall14"
-        type="text"
-        placeholder={placeholder}
-      />
-    </div>
+    <input
+      id={id}
+      className="w-full rounded-md bg-neutral-95 p-3 text-xsmall14"
+      type="text"
+      placeholder={placeholder}
+    />
   );
 };
 

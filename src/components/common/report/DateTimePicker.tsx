@@ -22,7 +22,7 @@ const dateTimePickerSx = {
 
 const DateTimePicker = () => {
   return (
-    <div className="flex items-center gap-4">
+    <div className="mt-3 flex items-center gap-4">
       <DatePicker
         sx={dateTimePickerSx}
         format="YY년 M월 D일(dd)"
