@@ -1,8 +1,8 @@
 import { FormControl, RadioGroup, useMediaQuery } from '@mui/material';
 import { useState } from 'react';
 import { FaArrowLeft } from 'react-icons/fa6';
+import { useNavigate, useParams } from 'react-router-dom';
 
-import { useNavigate } from 'react-router-dom';
 import ControlLabel from '../../../components/common/report/ControlLabel';
 import DateTimePicker from '../../../components/common/report/DateTimePicker';
 import FilledInput from '../../../components/common/report/FilledInput';
@@ -13,11 +13,11 @@ import Tooltip from '../../../components/common/report/Tooltip';
 import BottomSheet from '../../../components/common/ui/BottomSheeet';
 
 const programName = '포트폴리오 조지기';
-const type = '포트폴리오';
 
 const ReportApplyPage = () => {
   const isDesktop = useMediaQuery('(min-width: 991px)');
   const navigate = useNavigate();
+  const { reportType, reportId } = useParams();
 
   return (
     <div className="px-5 md:px-32 md:py-10">
@@ -44,13 +44,14 @@ const ReportApplyPage = () => {
         <BottomSheet>
           <button
             onClick={() => navigate(-1)}
-            className="flex h-14 w-14 items-center justify-center rounded-md border-2 border-primary bg-neutral-100"
+            className="flex h-14 w-14 shrink-0 items-center justify-center rounded-md border-2 border-primary bg-neutral-100"
           >
             <FaArrowLeft size={20} />
           </button>
-
           <button
-            onClick={() => console.log('결제페이지로 이동')}
+            onClick={() =>
+              navigate(`/report/payment/${reportType}/${reportId}`)
+            }
             className="text-1.125-medium w-full rounded-md bg-primary py-3 text-center font-medium text-neutral-100"
           >
             다음
@@ -109,12 +110,14 @@ const ProgramInfoSection = () => {
 };
 
 const DocumentSection = () => {
+  const { reportType } = useParams();
+
   const [value, setValue] = useState('file');
 
   return (
     <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:gap-5">
       <div className="flex w-[8.75rem] shrink-0 items-center lg:mt-2">
-        <Heading2>진단용 {type}</Heading2>
+        <Heading2>진단용 {reportType}</Heading2>
         <RequiredStar />
       </div>
       <FormControl fullWidth>
