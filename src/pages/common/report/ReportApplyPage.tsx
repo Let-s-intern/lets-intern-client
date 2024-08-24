@@ -85,7 +85,7 @@ const ProgramInfoSection = () => {
         </Tooltip>
       </div>
       <div className="flex items-center gap-4">
-        <div className="h-20 w-28 rounded-sm bg-neutral-60">
+        <div className="h-20 w-28 rounded-sm bg-neutral-90">
           <img className="h-auto w-full" src="" alt="" />
         </div>
         <div>
