@@ -10,6 +10,7 @@ import Heading2 from '../../../components/common/report/Heading2';
 import Heading3 from '../../../components/common/report/Heading3';
 import OutlinedButton from '../../../components/common/report/OutlinedButton';
 import Tooltip from '../../../components/common/report/Tooltip';
+import BottomSheet from '../../../components/common/ui/BottomSheeet';
 
 const programName = '포트폴리오 조지기';
 const type = '포트폴리오';
@@ -40,7 +41,7 @@ const ReportApplyPage = () => {
         <AdditionalInfoSection />
       </main>
       {!isDesktop && (
-        <div className="fixed bottom-0 left-0 right-0 z-50 flex items-center gap-3 bg-static-100 p-3">
+        <BottomSheet>
           <button
             onClick={() => navigate(-1)}
             className="flex h-14 w-14 items-center justify-center rounded-md border-2 border-primary bg-neutral-100"
@@ -54,7 +55,7 @@ const ReportApplyPage = () => {
           >
             다음
           </button>
-        </div>
+        </BottomSheet>
       )}
     </div>
   );

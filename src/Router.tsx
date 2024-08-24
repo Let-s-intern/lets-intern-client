@@ -144,6 +144,7 @@ const Router = () => {
             <Route path="" element={<ReportPage />} />
             {/* /report/apply/:type/:id */}
             <Route path="apply/:type/:id" element={<ReportApplyPage />} />
+            <Route path="apply/:type/:id" element={<ReportApplyPage />} />
           </Route>
 
           {/* 비로그인 리뷰 작성 페이지 */}
