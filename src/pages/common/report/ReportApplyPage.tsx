@@ -1,6 +1,8 @@
-import { FormControl, RadioGroup } from '@mui/material';
-
+import { FormControl, RadioGroup, useMediaQuery } from '@mui/material';
 import { useState } from 'react';
+import { FaArrowLeft } from 'react-icons/fa6';
+
+import { useNavigate } from 'react-router-dom';
 import ControlLabel from '../../../components/common/report/ControlLabel';
 import DateTimePicker from '../../../components/common/report/DateTimePicker';
 import FilledInput from '../../../components/common/report/FilledInput';
@@ -13,6 +15,9 @@ const programName = '포트폴리오 조지기';
 const type = '포트폴리오';
 
 const ReportApplyPage = () => {
+  const isDesktop = useMediaQuery('(min-width: 991px)');
+  const navigate = useNavigate();
+
   return (
     <div className="px-5 md:px-32 md:py-10">
       <header>
@@ -34,6 +39,23 @@ const ReportApplyPage = () => {
         <ScheduleSection />
         <AdditionalInfoSection />
       </main>
+      {!isDesktop && (
+        <div className="fixed bottom-0 left-0 right-0 z-50 flex items-center gap-3 bg-static-100 p-3">
+          <button
+            onClick={() => navigate(-1)}
+            className="flex h-14 w-14 items-center justify-center rounded-md border-2 border-primary bg-neutral-100"
+          >
+            <FaArrowLeft size={20} />
+          </button>
+
+          <button
+            onClick={() => console.log('결제페이지로 이동')}
+            className="text-1.125-medium w-full rounded-md bg-primary py-3 text-center font-medium text-neutral-100"
+          >
+            다음
+          </button>
+        </div>
+      )}
     </div>
   );
 };
