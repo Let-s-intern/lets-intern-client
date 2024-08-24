@@ -1,6 +1,7 @@
 import { FaArrowLeft } from 'react-icons/fa6';
 import { useNavigate } from 'react-router-dom';
 
+import { useMediaQuery } from '@mui/material';
 import Heading1 from '../../../components/common/report/Heading1';
 import Heading2 from '../../../components/common/report/Heading2';
 import Label from '../../../components/common/report/Label';
@@ -11,29 +12,32 @@ const programName = '포트폴리오 조지기';
 
 const ReportPaymentPage = () => {
   const navigate = useNavigate();
+  const isUpTo1280 = useMediaQuery('(max-width: 1280px)');
 
   return (
-    <div className="px-5">
+    <div className="px-5 md:px-32">
       <Heading1>결제하기</Heading1>
       <main className="mb-8 flex flex-col gap-10">
         <ProgramInfoSection />
         <UsereInfoSection />
         <PaymentSection />
       </main>
-      <BottomSheet>
-        <button
-          onClick={() => navigate(-1)}
-          className="flex h-14 w-14 shrink-0 items-center justify-center rounded-md border-2 border-primary bg-neutral-100"
-        >
-          <FaArrowLeft size={20} />
-        </button>
-        <button
-          onClick={() => console.log('토스페이먼츠 실행')}
-          className="text-1.125-medium w-full rounded-md bg-primary py-3 text-center font-medium text-neutral-100"
-        >
-          결제하기
-        </button>
-      </BottomSheet>
+      {isUpTo1280 && (
+        <BottomSheet>
+          <button
+            onClick={() => navigate(-1)}
+            className="flex h-14 w-14 shrink-0 items-center justify-center rounded-md border-2 border-primary bg-neutral-100"
+          >
+            <FaArrowLeft size={20} />
+          </button>
+          <button
+            onClick={() => console.log('토스페이먼츠 실행')}
+            className="text-1.125-medium w-full rounded-md bg-primary py-3 text-center font-medium text-neutral-100"
+          >
+            결제하기
+          </button>
+        </BottomSheet>
+      )}
     </div>
   );
 };

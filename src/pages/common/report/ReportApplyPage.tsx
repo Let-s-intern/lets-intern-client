@@ -16,7 +16,7 @@ import BottomSheet from '../../../components/common/ui/BottomSheeet';
 const programName = '포트폴리오 조지기';
 
 const ReportApplyPage = () => {
-  const isDesktop = useMediaQuery('(min-width: 991px)');
+  const isUpTo1280 = useMediaQuery('(max-width: 1280px)');
   const navigate = useNavigate();
   const { reportType, reportId } = useParams();
 
@@ -41,7 +41,7 @@ const ReportApplyPage = () => {
         <ScheduleSection />
         <AdditionalInfoSection />
       </main>
-      {!isDesktop && (
+      {isUpTo1280 && (
         <BottomSheet>
           <button
             onClick={() => navigate(-1)}
