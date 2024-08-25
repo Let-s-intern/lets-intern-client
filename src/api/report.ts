@@ -58,9 +58,9 @@ const getReportsForAdminSchema = z
     })),
   }));
 
-export const useGetReportsForAdmin = (pageNumber: number, pageSize: number) => {
+export const useGetReportsForAdmin = () => {
   return useQuery({
-    queryKey: ['getReportsForAdmin', pageNumber, pageSize],
+    queryKey: ['getReportsForAdmin'],
     queryFn: async () => {
       // Mock data
       const mockData = {
@@ -87,7 +87,7 @@ export const useGetReportsForAdmin = (pageNumber: number, pageSize: number) => {
         pageInfo: {
           totalElements: 10,
           totalPages: 5,
-          currentPage: pageNumber,
+          currentPage: 1,
           currentElements: 2,
         },
       };
