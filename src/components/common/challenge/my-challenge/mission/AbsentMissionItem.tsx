@@ -84,8 +84,8 @@ const AbsentMissionItem = ({ mission, isDone }: Props) => {
                 'bg-[#E3E3E3] text-[#9B9B9B]',
               )}
             >
-              {mission.attendanceResult === 'WRONG' &&
-              mission.attendanceStatus === 'PRESENT'
+              {mission.attendanceStatus === 'PRESENT' ||
+              mission.attendanceStatus === 'LATE'
                 ? '반려'
                 : '결석'}
             </span>

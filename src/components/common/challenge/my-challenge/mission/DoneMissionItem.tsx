@@ -35,7 +35,6 @@ const DoneMissionItem = ({ mission }: Props) => {
       'mission',
       mission.id,
       'detail',
-      // { status: schedule.attendanceInfo.status },
     ],
     queryFn: async () => {
       const res = await axios.get(

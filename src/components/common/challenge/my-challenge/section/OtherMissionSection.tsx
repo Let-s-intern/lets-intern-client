@@ -96,10 +96,7 @@ const OtherMissionSection = ({ isDone }: Props) => {
             ) : (
               <ul className="flex flex-col gap-4">
                 {submittedMissions.map((mission) => {
-                  if (
-                    mission.attendanceResult === 'WRONG' &&
-                    mission.attendanceStatus !== 'PRESENT'
-                  ) {
+                  if (mission.attendanceResult === 'WRONG' && !isDone) {
                     return (
                       <AbsentMissionItem
                         key={mission.id}
