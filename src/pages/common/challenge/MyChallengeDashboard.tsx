@@ -49,7 +49,9 @@ const MyChallengeDashboard = () => {
   const programEndDate = programData?.data?.endDate;
 
   const isChallengeDone = getIsChallengeDone(programEndDate);
-  const isChallengeSubmitDone = getIsChallengeSubmitDone(programEndDate);
+  const isChallengeSubmitDone = programEndDate
+    ? getIsChallengeSubmitDone(programEndDate)
+    : undefined;
 
   return (
     <main className="px-6">
@@ -64,7 +66,9 @@ const MyChallengeDashboard = () => {
       {myDailyMission?.attendanceInfo && myDailyMission.dailyMission && (
         <DailyMissionSection myDailyMission={myDailyMission} />
       )}
-      <OtherMissionSection todayTh={todayTh} isDone={isChallengeSubmitDone} />
+      {typeof isChallengeSubmitDone === 'boolean' && (
+        <OtherMissionSection todayTh={todayTh} isDone={isChallengeSubmitDone} />
+      )}
     </main>
   );
 };
