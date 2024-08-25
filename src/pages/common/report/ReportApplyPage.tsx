@@ -12,6 +12,7 @@ import Label from '../../../components/common/report/Label';
 import OutlinedButton from '../../../components/common/report/OutlinedButton';
 import Tooltip from '../../../components/common/report/Tooltip';
 import BottomSheet from '../../../components/common/ui/BottomSheeet';
+import Input from '../../../components/common/ui/input/Input';
 
 const programName = '포트폴리오 조지기';
 
@@ -21,26 +22,36 @@ const ReportApplyPage = () => {
   const { reportType, reportId } = useParams();
 
   return (
-    <div className="px-5 md:px-32 md:py-10">
-      <header>
-        <Heading1>진단서 신청하기</Heading1>
-        <div className="rounded-md bg-neutral-100 px-6 py-6">
-          <span className="-ml-1 text-xsmall16 font-semibold text-primary">
-            ❗신청 전 꼭 읽어주세요
-          </span>
-          <p className="mt-1 text-xsmall14 text-neutral-20">
-            내용내용내용 내용내용내용 내용내용내용 내용내용내용내용내용
-            내용내용내용 내용내용내용
-          </p>
+    <div className="px-5 md:px-32 md:py-10 xl:flex xl:gap-16 xl:px-48">
+      <div className="w-full">
+        <header>
+          <Heading1>진단서 신청하기</Heading1>
+          <CallOut />
+        </header>
+        <main className="my-8 flex flex-col gap-10">
+          <ProgramInfoSection />
+          <DocumentSection />
+          <PremiumSection />
+          <ScheduleSection />
+          <AdditionalInfoSection />
+        </main>
+      </div>
+      <aside className="h-fit w-96 shrink-0 rounded-lg bg-static-100 px-5 pb-6 shadow-03">
+        <Heading1>결제하기</Heading1>
+        <div className="flex flex-col gap-10">
+          <UsereInfoSection />
+          <PaymentSection />
+          <button
+            onClick={() =>
+              navigate(`/report/payment/${reportType}/${reportId}`)
+            }
+            className="text-1.125-medium w-full rounded-md bg-primary py-3 text-center font-medium text-neutral-100"
+          >
+            결제하기
+          </button>
         </div>
-      </header>
-      <main className="my-8 flex flex-col gap-10">
-        <ProgramInfoSection />
-        <DocumentSection />
-        <PremiumSection />
-        <ScheduleSection />
-        <AdditionalInfoSection />
-      </main>
+      </aside>
+
       {isUpTo1280 && (
         <BottomSheet>
           <button
@@ -64,6 +75,20 @@ const ReportApplyPage = () => {
 };
 
 export default ReportApplyPage;
+
+const CallOut = () => {
+  return (
+    <div className="rounded-md bg-neutral-100 px-6 py-6">
+      <span className="-ml-1 text-xsmall16 font-semibold text-primary">
+        ❗신청 전 꼭 읽어주세요
+      </span>
+      <p className="mt-1 text-xsmall14 text-neutral-20">
+        내용내용내용 내용내용내용 내용내용내용 내용내용내용내용내용 내용내용내용
+        내용내용내용
+      </p>
+    </div>
+  );
+};
 
 const ProgramInfoSection = () => {
   /** 다음 정보 필요
@@ -210,11 +235,11 @@ const ScheduleSection = () => {
           <DateTimePicker />
         </div>
         <div>
-          <Label>희망순위2</Label>
+          <Label>희망순위2*</Label>
           <DateTimePicker />
         </div>
         <div>
-          <Label>희망순위3</Label>
+          <Label>희망순위3*</Label>
           <DateTimePicker />
         </div>
       </div>
@@ -242,6 +267,86 @@ const AdditionalInfoSection = () => {
           placeholder="진단에 참고할 수 있도록 서류 작성에 대한 고민을 적어주세요"
           rows={2}
         />
+      </div>
+    </section>
+  );
+};
+
+const UsereInfoSection = () => {
+  return (
+    <section>
+      {/* TODO: 서류 진단 application 정보 불러오기 */}
+      <Heading2>참여자 정보</Heading2>
+      <div className="mb-4 mt-6 flex flex-col gap-3">
+        <div className="flex flex-col gap-1">
+          <Label>이름</Label>
+          <Input disabled readOnly className="text-sm" />
+        </div>
+        <div className="flex flex-col gap-1">
+          <Label>휴대폰 번호</Label>
+          <Input disabled readOnly className="text-sm" />
+        </div>
+        <div className="flex flex-col gap-1">
+          <label className="ml-3 text-xsmall14 font-semibold">
+            가입한 이메일
+          </label>
+          <Input disabled readOnly className="text-sm" />
+        </div>
+        <div className="flex flex-col gap-1">
+          <Label htmlFor="contactEmail">렛츠커리어 정보 수신용 이메일</Label>
+          <p className="text-[0.5625rem] font-light text-neutral-0 text-opacity-[52%]">
+            * 결제정보 및 프로그램 신청 관련 알림 수신을 위해,
+            <br />
+            &nbsp;&nbsp; 자주 사용하는 이메일 주소를 입력해주세요!
+          </p>
+          <label className="flex cursor-pointer items-center gap-1 text-xxsmall12 font-medium">
+            <img className="h-auto w-5" src="/icons/checkbox-fill.svg" />
+            가입한 이메일과 동일
+          </label>
+          <Input name="contactEmail" placeholder="example@example.com" />
+        </div>
+      </div>
+    </section>
+  );
+};
+
+const PaymentSection = () => {
+  return (
+    <section>
+      <Heading2>결제 정보</Heading2>
+      <div className="mt-6 flex gap-2.5">
+        <Input
+          className="w-full"
+          type="text"
+          placeholder="쿠폰 번호를 입력해주세요."
+        />
+        <button className="shrink-0 rounded-sm bg-primary px-4 py-1.5 text-xsmall14 font-medium text-neutral-100">
+          쿠폰 등록
+        </button>
+      </div>
+      <hr className="my-5" />
+      <div className="flex flex-col">
+        <div className="flex h-10 items-center justify-between px-3 text-neutral-0">
+          <span>서류 진단서 (베이직 + 옵션)</span>
+          <span>30,000원</span>
+        </div>
+        <div className="flex h-10 items-center justify-between px-3 text-neutral-0">
+          <span>맞춤첨삭</span>
+          <span>15,000원</span>
+        </div>
+        <div className="flex h-10 items-center justify-between px-3 text-neutral-0">
+          <span>20% 할인</span>
+          <span>-9,000원</span>
+        </div>
+        <div className="flex h-10 items-center justify-between px-3 text-primary">
+          <span>쿠폰할인</span>
+          <span className="font-bold">-10,000원</span>
+        </div>
+        <hr className="my-5" />
+        <div className="flex h-10 items-center justify-between px-3 font-semibold text-neutral-0">
+          <span>결제금액</span>
+          <span>26,000원</span>
+        </div>
       </div>
     </section>
   );
