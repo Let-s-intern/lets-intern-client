@@ -14,6 +14,7 @@ interface Props {
 const OtherMissionSection = ({ isDone }: Props) => {
   const { absentMissions, remainingMissions, submittedMissions } =
     useCurrentChallenge();
+
   const [searchParams, setSearchParams] = useSearchParams();
 
   const sectionRef = useRef<HTMLElement>(null);
@@ -95,7 +96,7 @@ const OtherMissionSection = ({ isDone }: Props) => {
             ) : (
               <ul className="flex flex-col gap-4">
                 {submittedMissions.map((mission) => {
-                  if (mission.attendanceResult === 'WRONG') {
+                  if (mission.attendanceResult === 'WRONG' && !isDone) {
                     return (
                       <AbsentMissionItem
                         key={mission.id}
