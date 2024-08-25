@@ -34,7 +34,7 @@ const MyChallengeDashboard = () => {
 
   const { schedules, myDailyMission } = useCurrentChallenge();
 
-  const todayTh = myDailyMission?.dailyMission.th ?? schedules.length + 1;
+  const todayTh = myDailyMission?.dailyMission?.th ?? schedules.length + 1;
 
   const { data: programData } = useQuery({
     queryKey: ['challenge', params.programId, 'application'],
@@ -49,7 +49,9 @@ const MyChallengeDashboard = () => {
   const programEndDate = programData?.data?.endDate;
 
   const isChallengeDone = getIsChallengeDone(programEndDate);
-  const isChallengeSubmitDone = getIsChallengeSubmitDone(programEndDate);
+  const isChallengeSubmitDone = programEndDate
+    ? getIsChallengeSubmitDone(programEndDate)
+    : undefined;
 
   return (
     <main className="px-6">
@@ -61,10 +63,12 @@ const MyChallengeDashboard = () => {
         todayTh={todayTh}
         isDone={isChallengeDone}
       />
-      {myDailyMission && (
+      {myDailyMission?.attendanceInfo && myDailyMission.dailyMission && (
         <DailyMissionSection myDailyMission={myDailyMission} />
       )}
-      <OtherMissionSection todayTh={todayTh} isDone={isChallengeSubmitDone} />
+      {typeof isChallengeSubmitDone === 'boolean' && (
+        <OtherMissionSection todayTh={todayTh} isDone={isChallengeSubmitDone} />
+      )}
     </main>
   );
 };

@@ -1,7 +1,6 @@
 import { Link } from 'react-router-dom';
 // import RewardContentsLink from '../link/RewardContentsLink';
 import {
-  DailyMission,
   MyChallengeMissionByType,
   Schedule,
   UserChallengeMissionDetail,
@@ -37,16 +36,8 @@ const DoneMissionDetailMenu = ({
           </p>
         </div>
         {(additionalContentsLink || essentialContentsLink) && (
-          // ||
-          // missionDetail.limitedContentsLink
           <div className="mt-4 flex flex-col gap-2">
-            {/* {(missionDetail.essentialContentsLink ||
-              missionDetail.additionalContentsLink) && ( */}
             <MenuContentsDropdown missionDetail={missionDetail} />
-            {/* // )} */}
-            {/* {missionDetail.limitedContentsLink && (
-              <RewardContentsLink missionDetail={missionDetail} />
-            )} */}
           </div>
         )}
       </div>
@@ -63,23 +54,6 @@ const DoneMissionDetailMenu = ({
             {missionByType.attendanceLink}
           </Link>
         </div>
-
-        {/* {missionDetail.type === 'GENERAL' && missionDetail.missionComments && (
-          <div className="mt-4">
-            <div className="rounded-md bg-[#F2F2F2] px-8 py-6 text-sm">
-            
-              {missionDetail.missionComments}
-            </div>
-          </div>
-        )} */}
-        {/* {missionByType. && (
-          <div className="mt-4">
-            <div className="rounded-md bg-[#F2F2F2] px-8 py-6 text-sm">
-            
-              {missionDetail.}
-            </div>
-          </div>
-        )} */}
         {schedule.attendanceInfo.comments && (
           <div className="mt-4">
             <div className="rounded-md bg-[#F2F2F2] px-8 py-6 text-sm">

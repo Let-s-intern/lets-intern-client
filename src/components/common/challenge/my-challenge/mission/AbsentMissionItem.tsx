@@ -9,7 +9,6 @@ import {
   userChallengeMissionDetail,
 } from '../../../../../schema';
 import axios from '../../../../../utils/axios';
-import { absent } from '../../../../../utils/convert';
 import AbsentMissionDetailMenu from './AbsentMissionDetailMenu';
 
 interface Props {
@@ -82,10 +81,13 @@ const AbsentMissionItem = ({ mission, isDone }: Props) => {
             <span
               className={clsx(
                 'rounded-md px-2 py-[0.125rem] text-xs',
-                absent.style,
+                'bg-[#E3E3E3] text-[#9B9B9B]',
               )}
             >
-              {absent.text}
+              {mission.attendanceStatus === 'PRESENT' ||
+              mission.attendanceStatus === 'LATE'
+                ? '반려'
+                : '결석'}
             </span>
           </div>
           <button onClick={() => setIsDetailShown(!isDetailShown)}>
