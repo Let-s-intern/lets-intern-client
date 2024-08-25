@@ -42,6 +42,7 @@ import Reminders from './pages/admin/reminder/Reminders';
 import RemindersBootcamp from './pages/admin/reminder/RemindersBootcamp';
 import RemindersChallenge from './pages/admin/reminder/RemindersChallenge';
 import RemindersLetsChat from './pages/admin/reminder/RemindersLetsChat';
+import ReportApplicationsPage from './pages/admin/report/ReportApplicationsPage';
 import AdminReviews from './pages/admin/review/Reviews';
 import AdminReviewsDetail from './pages/admin/review/ReviewsDetail';
 import UserCreate from './pages/admin/user/UserCreate';
@@ -180,6 +181,11 @@ export const getAdminRoutes = () => {
       <Route path="blog/create" element={<BlogCreatePage />} />
       <Route path="blog/edit/:id" element={<BlogEditPage />} />
       <Route path="blog/reviews" element={<BlogRatingListPage />} />
+
+      {/* 서류진단 */}
+      <Route path="report">
+        <Route path="applications" element={<ReportApplicationsPage />} />
+      </Route>
     </Route>
   );
 };
