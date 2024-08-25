@@ -4,7 +4,6 @@ import {
   useQuery,
   useQueryClient,
 } from '@tanstack/react-query';
-
 import { IPageable } from '../types/interface';
 import axios from '../utils/axios';
 import {
