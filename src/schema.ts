@@ -1,7 +1,7 @@
 import dayjs from 'dayjs';
 import { z } from 'zod';
 
-const pageInfo = z.object({
+export const pageInfo = z.object({
   pageNum: z.number().gte(0),
   pageSize: z.number().gte(0),
   totalElements: z.number().gte(0),
@@ -1139,7 +1139,7 @@ export const programSchema = z.object({
   ),
   pageInfo,
 });
-export type ProgramInfo = z.infer<typeof programSchema>["programList"][0];
+export type ProgramInfo = z.infer<typeof programSchema>['programList'][0];
 
 /** GET /api/v1/program/admin */
 export const programAdminSchema = z.object({
