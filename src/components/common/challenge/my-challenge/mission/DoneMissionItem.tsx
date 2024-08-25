@@ -73,6 +73,7 @@ const DoneMissionItem = ({ mission }: Props) => {
           className={clsx('h-12 w-[5px] rounded-lg', {
             'bg-[#fff961]': mission.attendanceResult === 'WAITING',
             'bg-primary': mission.attendanceResult === 'PASS',
+            'bg-[#CECECE]': mission.attendanceResult === 'WRONG',
           })}
         />
         <div className="flex flex-1 items-center justify-between">
