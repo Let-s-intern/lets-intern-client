@@ -32,7 +32,9 @@ import ProgramDetail from './pages/common/program/ProgramDetail';
 import Programs from './pages/common/program/Programs';
 import ReportApplyPage from './pages/common/report/ReportApplyPage';
 import ReportPage from './pages/common/report/ReportPage';
+import ReportPaymentFail from './pages/common/report/ReportPaymentFail';
 import ReportPaymentPage from './pages/common/report/ReportPaymentPage';
+import ReportPaymentResult from './pages/common/report/ReportPaymentResult';
 import ReviewCreate from './pages/common/review/ReviewCreate';
 import ReviewDetail from './pages/common/review/ReviewDetail';
 import Maintenance from './pages/maintenance/Maintenance';
@@ -152,6 +154,8 @@ const Router = () => {
               path="payment/:reportType/:reportId"
               element={<ReportPaymentPage />}
             />
+            <Route path="order/result" element={<ReportPaymentResult />} />
+            <Route path="order/fail" element={<ReportPaymentFail />} />
           </Route>
 
           {/* 비로그인 리뷰 작성 페이지 */}

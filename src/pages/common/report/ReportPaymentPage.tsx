@@ -1,18 +1,51 @@
+import { useEffect, useState } from 'react';
 import { FaArrowLeft } from 'react-icons/fa6';
 import { useNavigate } from 'react-router-dom';
 
-import { useMediaQuery } from '@mui/material';
+import { UserInfo } from '../../../components/common/program/program-detail/section/ApplySection';
 import Heading1 from '../../../components/common/report/Heading1';
 import Heading2 from '../../../components/common/report/Heading2';
 import Label from '../../../components/common/report/Label';
 import BottomSheet from '../../../components/common/ui/BottomSheeet';
 import Input from '../../../components/common/ui/input/Input';
+import useProgramStore from '../../../store/useProgramStore';
+import { ICouponForm } from '../../../types/interface';
 
 const programName = '포트폴리오 조지기';
 
 const ReportPaymentPage = () => {
   const navigate = useNavigate();
-  const isUpTo1280 = useMediaQuery('(max-width: 1280px)');
+
+  const [userInfo, setUserInfo] = useState<UserInfo>({
+    name: '',
+    email: '',
+    phoneNumber: '',
+    contactEmail: '',
+    question: '',
+  });
+  const [coupon, setCoupon] = useState<ICouponForm>({
+    id: null,
+    price: 0,
+  });
+
+  const {
+    data: programApplicationForm,
+    setProgramApplicationForm,
+    initProgramApplicationForm,
+  } = useProgramStore();
+
+  const onClickPayButton = () => {
+    //  payInfo 결제정보: application 정보로부터 가져오기
+    // 프로그램 신청 정보 가져오기
+    // setProgramApplicationForm({});
+
+    navigate(`/payment`);
+  };
+
+  /** application으로부터 user 정보 초기화 */
+  useEffect(() => {
+    console.log('get user info');
+  }, []);
 
   return (
     <div className="px-5 md:px-32">
@@ -22,22 +55,20 @@ const ReportPaymentPage = () => {
         <UsereInfoSection />
         <PaymentSection />
       </main>
-      {isUpTo1280 && (
-        <BottomSheet>
-          <button
-            onClick={() => navigate(-1)}
-            className="flex h-14 w-14 shrink-0 items-center justify-center rounded-md border-2 border-primary bg-neutral-100"
-          >
-            <FaArrowLeft size={20} />
-          </button>
-          <button
-            onClick={() => console.log('토스페이먼츠 실행')}
-            className="text-1.125-medium w-full rounded-md bg-primary py-3 text-center font-medium text-neutral-100"
-          >
-            결제하기
-          </button>
-        </BottomSheet>
-      )}
+      <BottomSheet>
+        <button
+          onClick={() => navigate(-1)}
+          className="flex h-14 w-14 shrink-0 items-center justify-center rounded-md border-2 border-primary bg-neutral-100"
+        >
+          <FaArrowLeft size={20} />
+        </button>
+        <button
+          onClick={onClickPayButton}
+          className="text-1.125-medium w-full rounded-md bg-primary py-3 text-center font-medium text-neutral-100"
+        >
+          결제하기
+        </button>
+      </BottomSheet>
     </div>
   );
 };

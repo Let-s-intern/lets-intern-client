@@ -1,8 +1,10 @@
 import { FormControl, RadioGroup, useMediaQuery } from '@mui/material';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { FaArrowLeft } from 'react-icons/fa6';
 import { useNavigate, useParams } from 'react-router-dom';
 
+import { UserInfo } from '../../../components/common/program/program-detail/section/ApplySection';
+import Card from '../../../components/common/report/Card';
 import ControlLabel from '../../../components/common/report/ControlLabel';
 import DateTimePicker from '../../../components/common/report/DateTimePicker';
 import FilledInput from '../../../components/common/report/FilledInput';
@@ -13,6 +15,8 @@ import OutlinedButton from '../../../components/common/report/OutlinedButton';
 import Tooltip from '../../../components/common/report/Tooltip';
 import BottomSheet from '../../../components/common/ui/BottomSheeet';
 import Input from '../../../components/common/ui/input/Input';
+import useProgramStore from '../../../store/useProgramStore';
+import { ICouponForm } from '../../../types/interface';
 
 const programName = '포트폴리오 조지기';
 
@@ -20,6 +24,37 @@ const ReportApplyPage = () => {
   const isUpTo1280 = useMediaQuery('(max-width: 1280px)');
   const navigate = useNavigate();
   const { reportType, reportId } = useParams();
+
+  const [userInfo, setUserInfo] = useState<UserInfo>({
+    name: '',
+    email: '',
+    phoneNumber: '',
+    contactEmail: '',
+    question: '',
+  });
+  const [coupon, setCoupon] = useState<ICouponForm>({
+    id: null,
+    price: 0,
+  });
+
+  const {
+    data: programApplicationForm,
+    setProgramApplicationForm,
+    initProgramApplicationForm,
+  } = useProgramStore();
+
+  const onClickPayButton = () => {
+    //  payInfo 결제정보: application 정보로부터 가져오기
+    // 프로그램 신청 정보 가져오기
+    // setProgramApplicationForm({});
+
+    navigate(`/payment`);
+  };
+
+  /* application으로부터 user 정보 초기화 */
+  useEffect(() => {
+    console.log('get user info');
+  }, []);
 
   return (
     <div className="px-5 md:px-32 md:py-10 xl:flex xl:gap-16 xl:px-48">
@@ -36,21 +71,22 @@ const ReportApplyPage = () => {
           <AdditionalInfoSection />
         </main>
       </div>
-      <aside className="h-fit w-96 shrink-0 rounded-lg bg-static-100 px-5 pb-6 shadow-03">
-        <Heading1>결제하기</Heading1>
-        <div className="flex flex-col gap-10">
-          <UsereInfoSection />
-          <PaymentSection />
-          <button
-            onClick={() =>
-              navigate(`/report/payment/${reportType}/${reportId}`)
-            }
-            className="text-1.125-medium w-full rounded-md bg-primary py-3 text-center font-medium text-neutral-100"
-          >
-            결제하기
-          </button>
-        </div>
-      </aside>
+
+      {!isUpTo1280 && (
+        <aside className="h-fit w-96 shrink-0 rounded-lg bg-static-100 px-5 pb-6 shadow-03">
+          <Heading1>결제하기</Heading1>
+          <div className="flex flex-col gap-10">
+            <UsereInfoSection />
+            <PaymentSection />
+            <button
+              onClick={onClickPayButton}
+              className="text-1.125-medium w-full rounded-md bg-primary py-3 text-center font-medium text-neutral-100"
+            >
+              결제하기
+            </button>
+          </div>
+        </aside>
+      )}
 
       {isUpTo1280 && (
         <BottomSheet>
@@ -109,28 +145,15 @@ const ProgramInfoSection = () => {
           <li>옵션 (현직자 피드백): 최대 5일</li>
         </Tooltip>
       </div>
-      <div className="flex items-center gap-4">
-        <div className="h-20 w-28 rounded-sm bg-neutral-90">
-          <img className="h-auto w-full" src="" alt="" />
-        </div>
-        <div>
-          <span className="font-semibold">{programName}</span>
-          <div className="mt-3">
-            <div className="flex gap-4">
-              <span className="text-xxsmall12 font-medium">상품</span>
-              <span className="text-xxsmall12 font-medium text-primary-dark">
-                서류 진단서 (베이직), 맞춤 첨삭
-              </span>
-            </div>
-            <div className="flex gap-4">
-              <span className="text-xxsmall12 font-medium">옵션</span>
-              <span className="text-xxsmall12 font-medium text-primary-dark">
-                현직자 피드백
-              </span>
-            </div>
-          </div>
-        </div>
-      </div>
+      <Card
+        imgSrc=""
+        imgAlt=""
+        title={programName}
+        content={[
+          { label: '상품', text: '서류 진단서 (베이직), 맞춤 첨삭' },
+          { label: '옵션', text: '현직자 피드백' },
+        ]}
+      />
     </section>
   );
 };
