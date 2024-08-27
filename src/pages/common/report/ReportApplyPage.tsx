@@ -4,6 +4,7 @@ import { FaArrowLeft } from 'react-icons/fa6';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import { UserInfo } from '../../../components/common/program/program-detail/section/ApplySection';
+import Card from '../../../components/common/report/Card';
 import ControlLabel from '../../../components/common/report/ControlLabel';
 import DateTimePicker from '../../../components/common/report/DateTimePicker';
 import FilledInput from '../../../components/common/report/FilledInput';
@@ -144,28 +145,15 @@ const ProgramInfoSection = () => {
           <li>옵션 (현직자 피드백): 최대 5일</li>
         </Tooltip>
       </div>
-      <div className="flex items-center gap-4">
-        <div className="h-20 w-28 rounded-sm bg-neutral-90">
-          <img className="h-auto w-full" src="" alt="" />
-        </div>
-        <div>
-          <span className="font-semibold">{programName}</span>
-          <div className="mt-3">
-            <div className="flex gap-4">
-              <span className="text-xxsmall12 font-medium">상품</span>
-              <span className="text-xxsmall12 font-medium text-primary-dark">
-                서류 진단서 (베이직), 맞춤 첨삭
-              </span>
-            </div>
-            <div className="flex gap-4">
-              <span className="text-xxsmall12 font-medium">옵션</span>
-              <span className="text-xxsmall12 font-medium text-primary-dark">
-                현직자 피드백
-              </span>
-            </div>
-          </div>
-        </div>
-      </div>
+      <Card
+        imgSrc=""
+        imgAlt=""
+        title={programName}
+        content={[
+          { label: '상품', text: '서류 진단서 (베이직), 맞춤 첨삭' },
+          { label: '옵션', text: '현직자 피드백' },
+        ]}
+      />
     </section>
   );
 };
