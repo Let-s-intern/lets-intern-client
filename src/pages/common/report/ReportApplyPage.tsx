@@ -1,6 +1,7 @@
 import { FormControl, RadioGroup, useMediaQuery } from '@mui/material';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { FaArrowLeft } from 'react-icons/fa6';
+import { IoCloseOutline } from 'react-icons/io5';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import { UserInfo } from '../../../components/common/program/program-detail/section/ApplySection';
@@ -11,7 +12,6 @@ import FilledInput from '../../../components/common/report/FilledInput';
 import Heading1 from '../../../components/common/report/Heading1';
 import Heading2 from '../../../components/common/report/Heading2';
 import Label from '../../../components/common/report/Label';
-import OutlinedButton from '../../../components/common/report/OutlinedButton';
 import Tooltip from '../../../components/common/report/Tooltip';
 import BottomSheet from '../../../components/common/ui/BottomSheeet';
 import Input from '../../../components/common/ui/input/Input';
@@ -53,7 +53,7 @@ const ReportApplyPage = () => {
 
   /* application으로부터 user 정보 초기화 */
   useEffect(() => {
-    console.log('get user info');
+    // console.log('get user info');
   }, []);
 
   return (
@@ -72,23 +72,7 @@ const ReportApplyPage = () => {
         </main>
       </div>
 
-      {!isUpTo1280 && (
-        <aside className="h-fit w-96 shrink-0 rounded-lg bg-static-100 px-5 pb-6 shadow-03">
-          <Heading1>결제하기</Heading1>
-          <div className="flex flex-col gap-10">
-            <UsereInfoSection />
-            <PaymentSection />
-            <button
-              onClick={onClickPayButton}
-              className="text-1.125-medium w-full rounded-md bg-primary py-3 text-center font-medium text-neutral-100"
-            >
-              결제하기
-            </button>
-          </div>
-        </aside>
-      )}
-
-      {isUpTo1280 && (
+      {isUpTo1280 ? (
         <BottomSheet>
           <button
             onClick={() => navigate(-1)}
@@ -105,6 +89,20 @@ const ReportApplyPage = () => {
             다음
           </button>
         </BottomSheet>
+      ) : (
+        <aside className="h-fit w-96 shrink-0 rounded-lg bg-static-100 px-5 pb-6 shadow-03">
+          <Heading1>결제하기</Heading1>
+          <div className="flex flex-col gap-10">
+            <UsereInfoSection />
+            <PaymentSection />
+            <button
+              onClick={onClickPayButton}
+              className="text-1.125-medium w-full rounded-md bg-primary py-3 text-center font-medium text-neutral-100"
+            >
+              결제하기
+            </button>
+          </div>
+        </aside>
       )}
     </div>
   );
@@ -162,6 +160,7 @@ const DocumentSection = () => {
   const { reportType } = useParams();
 
   const [value, setValue] = useState('file');
+  const [file, setFile] = useState<File | null>(null);
 
   return (
     <section className="flex flex-col gap-3 lg:flex-row lg:items-start lg:gap-5">
@@ -183,7 +182,9 @@ const DocumentSection = () => {
               value="file"
               subText="(pdf, doc, docx 형식 지원)"
             />
-            {value === 'file' && <OutlinedButton caption="파일 업로드" />}
+            {value === 'file' && (
+              <FileUploadButton file={file} dispatch={setFile} />
+            )}
           </div>
           {/* URL */}
           <div>
@@ -198,6 +199,7 @@ const DocumentSection = () => {
 
 const PremiumSection = () => {
   const [value, setValue] = useState('file');
+  const [file, setFile] = useState<File | null>(null);
 
   return (
     <section className="flex flex-col gap-1 lg:flex-row lg:items-start lg:gap-5">
@@ -227,7 +229,9 @@ const PremiumSection = () => {
               <span className="-mt-1 mb-2 block text-xxsmall12 text-neutral-45">
                 *업무, 지원자격, 우대사항이 보이게 채용공고를 캡처해주세요.
               </span>
-              {value === 'file' && <OutlinedButton caption="파일 업로드" />}
+              {value === 'file' && (
+                <FileUploadButton file={file} dispatch={setFile} />
+              )}
             </div>
             <div>
               <ControlLabel label="URL" value="url" />
@@ -377,4 +381,48 @@ const PaymentSection = () => {
 
 const RequiredStar = () => {
   return <span className="text-[#7B61FF]">*</span>;
+};
+
+const FileUploadButton = ({
+  file,
+  dispatch,
+}: {
+  file: File | null;
+  dispatch: React.Dispatch<React.SetStateAction<File | null>>;
+}) => {
+  const ref = useRef<HTMLInputElement>(null);
+
+  return (
+    <>
+      <button
+        className="rounded-md border border-neutral-60 bg-neutral-100 px-3 py-1.5 text-xsmall14 text-neutral-40"
+        onClick={() => {
+          ref.current?.click();
+        }}
+      >
+        {file ? (
+          <div className="flex items-center gap-1">
+            <span>{`${file.name} (${(file.size / 1000).toFixed(1)}KB)`}</span>
+            <IoCloseOutline
+              size={16}
+              color="#7a7d84"
+              onClick={(e) => {
+                e.stopPropagation();
+                dispatch(null);
+              }}
+            />
+          </div>
+        ) : (
+          '파일 업로드'
+        )}
+      </button>
+      <input
+        onChange={(e) => dispatch(e.target.files![0])}
+        className="hidden"
+        ref={ref}
+        type="file"
+        name="file"
+      />
+    </>
+  );
 };
