@@ -1,17 +1,29 @@
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import dayjs from 'dayjs';
 import { z } from 'zod';
 
 // Common schemas
 const pageInfoSchema = z.object({
-  totalElements: z.number().nullable().optional(),
-  totalPages: z.number().nullable().optional(),
-  currentPage: z.number().nullable().optional(),
-  currentElements: z.number().nullable().optional(),
+  totalElements: z.number(),
+  totalPages: z.number(),
+  currentPage: z.number(),
+  currentElements: z.number(),
 });
 
 const reportTypeSchema = z.enum(['RESUME', 'PERSONAL_STATEMENT', 'PORTFOLIO']);
 const reportPriceTypeSchema = z.enum(['BASIC', 'PREMIUM']);
+
+export const convertReportPriceType = (type: string) => {
+  switch (type) {
+    case 'BASIC':
+      return '베이직';
+    case 'PREMIUM':
+      return '프리미엄';
+    default:
+      return '-';
+  }
+};
+
 const reportFeedbackStatusSchema = z.enum([
   'APPLIED',
   'PENDING',
@@ -30,6 +42,21 @@ const reportApplicationStatusSchema = z.enum([
   'REPORTED',
   'COMPLETED',
 ]);
+
+export const convertReportApplicationsStatus = (status: string) => {
+  switch (status) {
+    case 'APPLIED':
+      return '신청완료';
+    case 'REPORTING':
+      return '진단중';
+    case 'REPORTED':
+      return '진단서 업로드';
+    case 'COMPLETED':
+      return '진단완료';
+    default:
+      return '-';
+  }
+};
 
 // GET /api/v1/report
 const getReportsForAdminSchema = z
@@ -449,76 +476,83 @@ export const useGetMyReportFeedbacks = (
   });
 };
 
-// GET /api/v1/report/applications
-const getReportApplicationsForAdminSchema = z
-  .object({
-    reportApplicationsForAdminInfos: z.array(
-      z.object({
-        applicationId: z.number(),
-        name: z.string(),
-        contactEmail: z.string(),
-        phoneNumber: z.string(),
-        wishJob: z.string().nullable(),
-        message: z.string().nullable(),
-        reportApplicationStatus: reportApplicationStatusSchema,
-        applyFileUrl: z.string().nullable(),
-        reportFileUrl: z.string().nullable(),
-        recruitmentFileUrl: z.string().nullable(),
-        reportFeedbackStatus: reportFeedbackStatusSchema.nullable(),
-        zoomLink: z.string().nullable(),
-        desiredDate1: z.string().nullable(),
-        desiredDate2: z.string().nullable(),
-        desiredDate3: z.string().nullable(),
-        desiredDateAdmin: z.string().nullable(),
-        desiredDateType: desiredDateTypeSchema.nullable(),
-        createDate: z.string(),
-        paymentId: z.number(),
-        orderId: z.string(),
-        reportPriceType: reportPriceTypeSchema,
-        couponTitle: z.string().nullable(),
-        finalPrice: z.number(),
-        isRefunded: z.boolean(),
-      }),
-    ),
-    pageInfo: pageInfoSchema,
-  })
-  .transform((data) => ({
-    ...data,
-    reportApplicationsForAdminInfos: data.reportApplicationsForAdminInfos.map(
-      (application) => ({
-        ...application,
-        desiredDate1: application.desiredDate1
-          ? dayjs(application.desiredDate1)
-          : null,
-        desiredDate2: application.desiredDate2
-          ? dayjs(application.desiredDate2)
-          : null,
-        desiredDate3: application.desiredDate3
-          ? dayjs(application.desiredDate3)
-          : null,
-        desiredDateAdmin: application.desiredDateAdmin
-          ? dayjs(application.desiredDateAdmin)
-          : null,
-        createDate: dayjs(application.createDate),
-      }),
-    ),
-  }));
+const reportApplicationsForAdminInfoSchema = z.object({
+  applicationId: z.number(),
+  name: z.string(),
+  contactEmail: z.string(),
+  phoneNumber: z.string(),
+  wishJob: z.string().nullable(),
+  message: z.string().nullable(),
+  reportApplicationStatus: reportApplicationStatusSchema,
+  applyFileUrl: z.string().nullable(),
+  reportFileUrl: z.string().nullable(),
+  recruitmentFileUrl: z.string().nullable(),
+  reportFeedbackStatus: reportFeedbackStatusSchema.nullable(),
+  zoomLink: z.string().nullable(),
+  desiredDate1: z.string().nullable(),
+  desiredDate2: z.string().nullable(),
+  desiredDate3: z.string().nullable(),
+  desiredDateAdmin: z.string().nullable(),
+  desiredDateType: desiredDateTypeSchema.nullable(),
+  createDate: z.string(),
+  paymentId: z.number(),
+  orderId: z.string(),
+  reportPriceType: reportPriceTypeSchema,
+  couponTitle: z.string().nullable(),
+  finalPrice: z.number(),
+  isRefunded: z.boolean(),
+});
 
-export const useGetReportApplicationsForAdmin = (
-  reportId?: number,
-  priceType?: string,
-  pageNumber: number = 0,
-  pageSize: number = 10,
-) => {
+export type reportApplicationsForAdminInfoType = z.infer<
+  typeof reportApplicationsForAdminInfoSchema
+>;
+
+// GET /api/v1/report/applications
+const getReportApplicationsForAdminSchema = z.object({
+  reportApplicationsForAdminInfos: z.array(
+    reportApplicationsForAdminInfoSchema,
+  ),
+  pageInfo: pageInfoSchema,
+});
+
+export const useGetReportApplicationsForAdminQueryKey =
+  'getReportApplicationsForAdmin';
+
+export const useGetReportApplicationsForAdmin = ({
+  reportId,
+  reportType,
+  priceType,
+  pageable: { page = 0, size = 10 },
+}: {
+  reportId?: number;
+  reportType?: 'RESUME' | 'PERSONAL_STATEMENT' | 'PORTFOLIO';
+  priceType?: 'BASIC' | 'PREMIUM';
+  pageable: {
+    page?: number;
+    size?: number;
+  };
+}) => {
   return useQuery({
     queryKey: [
-      'getReportApplicationsForAdmin',
+      useGetReportApplicationsForAdminQueryKey,
       reportId,
+      reportType,
       priceType,
-      pageNumber,
-      pageSize,
+      page,
+      size,
     ],
     queryFn: async () => {
+      // const res = await axios.get('/report/applications', {
+      //   params: {
+      //     reportId,
+      //     reportType,
+      //     priceType,
+      //     page,
+      //     size,
+      //   },
+      // });
+      // return getReportApplicationsForAdminSchema.parse(res.data.data);
+
       // Mock data
       const mockData = {
         reportApplicationsForAdminInfos: [
@@ -528,7 +562,8 @@ export const useGetReportApplicationsForAdmin = (
             contactEmail: 'chulsoo.kim@example.com',
             phoneNumber: '010-1234-5678',
             wishJob: '소프트웨어 엔지니어',
-            message: '경력 3년차 개발자입니다. 피드백 부탁드립니다.',
+            message:
+              '경력 3년차 개발자입니다. 피드백 부탁드립니다.경력 3년차 개발자입니다. 피드백 부탁드립니다.경력 3년차 개발자입니다. 피드백 부탁드립니다.경력 3년차 개발자입니다. 피드백 부탁드립니다.경력 3년차 개발자입니다. 피드백 부탁드립니다.경력 3년차 개발자입니다. 피드백 부탁드립니다.',
             reportApplicationStatus: 'COMPLETED',
             applyFileUrl: 'https://example.com/apply/101.pdf',
             reportFileUrl: 'https://example.com/report/101.pdf',
@@ -578,7 +613,7 @@ export const useGetReportApplicationsForAdmin = (
         pageInfo: {
           totalElements: 10,
           totalPages: 1,
-          currentPage: pageNumber,
+          currentPage: page,
           currentElements: 2,
         },
       };
@@ -601,6 +636,9 @@ const getReportApplicationOptionsForAdminSchema = z.object({
   ),
 });
 
+export const useGetReportApplicationOptionsForAdminQueryKey =
+  'getReportApplicationOptionsForAdmin';
+
 export const useGetReportApplicationOptionsForAdmin = ({
   applicationId,
   code,
@@ -614,7 +652,7 @@ export const useGetReportApplicationOptionsForAdmin = ({
 } = {}) => {
   return useQuery({
     queryKey: [
-      'getReportApplicationOptionsForAdmin',
+      useGetReportApplicationOptionsForAdminQueryKey,
       reportId,
       applicationId,
       priceType,
@@ -642,6 +680,43 @@ export const useGetReportApplicationOptionsForAdmin = ({
       };
 
       return getReportApplicationOptionsForAdminSchema.parse(mockData);
+    },
+  });
+};
+
+export const usePatchApplicationDocument = ({
+  successCallback,
+  errorCallback,
+}: {
+  successCallback?: () => void;
+  errorCallback?: (error: Error) => void;
+}) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({
+      applicationId,
+      reportUrl,
+    }: {
+      applicationId: number;
+      reportUrl: string;
+    }) => {
+      // const res = await axios.patch(
+      //   `/report/application/${applicationId}/document`,
+      //   {
+      //     reportUrl,
+      //   },
+      // );
+      // Mock API call
+      return { success: true, message: 'Document uploaded successfully' };
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: [useGetReportApplicationsForAdminQueryKey],
+      });
+      successCallback && successCallback();
+    },
+    onError: (error: Error) => {
+      errorCallback && errorCallback(error);
     },
   });
 };
