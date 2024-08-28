@@ -195,7 +195,11 @@ const ReportApplicationsPage = () => {
                       )}
                     </TD>
                     <TD>
-                      {dayjs(application.createDate).format('YYYY.MM.DD (dd)')}
+                      {application.createDate
+                        ? dayjs(application.createDate).format(
+                            'YYYY.MM.DD (dd)',
+                          )
+                        : '-'}
                     </TD>
                   </tr>
                 ))}
