@@ -36,6 +36,7 @@ const ReportApplicationsPage = () => {
       page: currentPage,
       size: 10,
     },
+    enabled: !!reportId,
   });
 
   const {
@@ -44,6 +45,7 @@ const ReportApplicationsPage = () => {
     isError: optionsDataIsError,
   } = useGetReportApplicationOptionsForAdmin({
     applicationId: applicationModal?.application.applicationId,
+    enabled: !!applicationModal?.application.applicationId,
   });
 
   const { mutate: patchDocument } = usePatchApplicationDocument({
@@ -102,7 +104,7 @@ const ReportApplicationsPage = () => {
                   <TH>고민지점</TH>
                   <TH>서류</TH>
                   <TH>채용공고</TH>
-                  <TH>채용공고</TH>
+                  <TH>관리</TH>
                   <TH>상태</TH>
                   <TH>신청일자</TH>
                 </tr>
@@ -208,7 +210,7 @@ const ReportApplicationsPage = () => {
                   <h2 className="w-20 text-neutral-40">결제상품</h2>
                   <p>
                     {convertReportPriceType(
-                      applicationModal.application.reportPriceType,
+                      applicationModal.application.reportPriceType || '-',
                     )}
                   </p>
                 </div>
@@ -248,7 +250,8 @@ const ReportApplicationsPage = () => {
                 <div className="flex w-full gap-x-2">
                   <h2 className="w-20 text-neutral-40">결제금액</h2>
                   <p>
-                    {applicationModal.application.finalPrice.toLocaleString()}
+                    {applicationModal.application.finalPrice?.toLocaleString() ||
+                      '-'}
                   </p>
                 </div>
                 <div className="flex w-full gap-x-2">
