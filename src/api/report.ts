@@ -750,6 +750,52 @@ export const usePatchApplicationDocument = ({
   });
 };
 
+export const usePatchReportApplicationSchedule = ({
+  successCallback,
+  errorCallback,
+}: {
+  successCallback?: () => void;
+  errorCallback?: (error: Error) => void;
+}) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({
+      reportId,
+      applicationId,
+      desiredDateType,
+      desiredDate,
+    }: {
+      reportId: number;
+      applicationId: number;
+      desiredDateType:
+        | 'DESIRED_DATE_1'
+        | 'DESIRED_DATE_2'
+        | 'DESIRED_DATE_3'
+        | 'DESIRED_DATE_ADMIN';
+      desiredDate: string;
+    }) => {
+      const res = await axios.patch(
+        `/report/${reportId}/application/${applicationId}/schedule`,
+        {
+          desiredDateType,
+          desiredDate,
+        },
+      );
+
+      return res.data.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: [useGetReportApplicationsForAdminQueryKey],
+      });
+      successCallback && successCallback();
+    },
+    onError: (error: Error) => {
+      errorCallback && errorCallback(error);
+    },
+  });
+};
+
 // POST /api/v1/report/application
 const createReportApplicationSchema = z.object({
   reportId: z.number(),
