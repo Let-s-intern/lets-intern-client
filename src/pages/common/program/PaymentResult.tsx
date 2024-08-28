@@ -87,6 +87,11 @@ const PaymentResult = () => {
       )
       .then((res) => {
         setResult(res.data.data);
+        window.dataLayer?.push({
+          event: 'payment_success',
+          program_name: programApplicationData.programTitle,
+          program_id: programApplicationData.programId,
+        });
       })
       .catch((e) => {
         // eslint-disable-next-line no-console
