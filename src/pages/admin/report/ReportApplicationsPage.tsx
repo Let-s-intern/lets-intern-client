@@ -1,5 +1,5 @@
 import dayjs from 'dayjs';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { uploadFile } from '../../../api/file';
 import {
@@ -76,10 +76,6 @@ const ReportApplicationsPage = () => {
       reportUrl: uploadedFile,
     });
   };
-
-  useEffect(() => {
-    console.log(uploadedFile);
-  }, [uploadedFile]);
 
   return (
     <div className="p-8 pt-16">
