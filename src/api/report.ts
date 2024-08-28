@@ -1,13 +1,14 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import dayjs from 'dayjs';
 import { z } from 'zod';
+import axios from '../utils/axios';
 
 // Common schemas
 const pageInfoSchema = z.object({
   totalElements: z.number(),
   totalPages: z.number(),
-  currentPage: z.number(),
-  currentElements: z.number(),
+  pageNum: z.number(),
+  pageSize: z.number(),
 });
 
 const reportTypeSchema = z.enum(['RESUME', 'PERSONAL_STATEMENT', 'PORTFOLIO']);
@@ -53,6 +54,21 @@ export const convertReportApplicationsStatus = (status: string) => {
       return '진단서 업로드';
     case 'COMPLETED':
       return '진단완료';
+    default:
+      return '-';
+  }
+};
+
+export const convertReportFeedbackStatus = (status: string) => {
+  switch (status) {
+    case 'APPLIED':
+      return '신청완료';
+    case 'PENDING':
+      return '일정확인중';
+    case 'CONFIRMED':
+      return '일정확정';
+    case 'COMPLETED':
+      return '진행완료';
     default:
       return '-';
   }
@@ -487,6 +503,7 @@ const reportApplicationsForAdminInfoSchema = z.object({
   applyFileUrl: z.string().nullable(),
   reportFileUrl: z.string().nullable(),
   recruitmentFileUrl: z.string().nullable(),
+  reportFeedbackApplicationId: z.number().nullable(),
   reportFeedbackStatus: reportFeedbackStatusSchema.nullable(),
   zoomLink: z.string().nullable(),
   desiredDate1: z.string().nullable(),
@@ -494,13 +511,13 @@ const reportApplicationsForAdminInfoSchema = z.object({
   desiredDate3: z.string().nullable(),
   desiredDateAdmin: z.string().nullable(),
   desiredDateType: desiredDateTypeSchema.nullable(),
-  createDate: z.string(),
-  paymentId: z.number(),
-  orderId: z.string(),
-  reportPriceType: reportPriceTypeSchema,
+  createDate: z.string().nullable(),
+  paymentId: z.number().nullable(),
+  orderId: z.string().nullable(),
+  reportPriceType: reportPriceTypeSchema.nullable(),
   couponTitle: z.string().nullable(),
-  finalPrice: z.number(),
-  isRefunded: z.boolean(),
+  finalPrice: z.number().nullable(),
+  isRefunded: z.boolean().nullable(),
 });
 
 export type reportApplicationsForAdminInfoType = z.infer<
@@ -522,15 +539,19 @@ export const useGetReportApplicationsForAdmin = ({
   reportId,
   reportType,
   priceType,
+  isApplyFeedback,
   pageable: { page = 0, size = 10 },
+  enabled = true,
 }: {
   reportId?: number;
   reportType?: 'RESUME' | 'PERSONAL_STATEMENT' | 'PORTFOLIO';
   priceType?: 'BASIC' | 'PREMIUM';
+  isApplyFeedback?: boolean;
   pageable: {
     page?: number;
     size?: number;
   };
+  enabled?: boolean;
 }) => {
   return useQuery({
     queryKey: [
@@ -538,88 +559,93 @@ export const useGetReportApplicationsForAdmin = ({
       reportId,
       reportType,
       priceType,
+      isApplyFeedback,
       page,
       size,
     ],
     queryFn: async () => {
-      // const res = await axios.get('/report/applications', {
-      //   params: {
-      //     reportId,
-      //     reportType,
-      //     priceType,
-      //     page,
-      //     size,
-      //   },
-      // });
-      // return getReportApplicationsForAdminSchema.parse(res.data.data);
+      const res = await axios.get('/report/applications', {
+        params: {
+          reportId,
+          reportType,
+          priceType,
+          isApplyFeedback,
+          page,
+          size,
+        },
+      });
+      return getReportApplicationsForAdminSchema.parse(res.data.data);
 
       // Mock data
-      const mockData = {
-        reportApplicationsForAdminInfos: [
-          {
-            applicationId: 101,
-            name: '김철수',
-            contactEmail: 'chulsoo.kim@example.com',
-            phoneNumber: '010-1234-5678',
-            wishJob: '소프트웨어 엔지니어',
-            message:
-              '경력 3년차 개발자입니다. 피드백 부탁드립니다.경력 3년차 개발자입니다. 피드백 부탁드립니다.경력 3년차 개발자입니다. 피드백 부탁드립니다.경력 3년차 개발자입니다. 피드백 부탁드립니다.경력 3년차 개발자입니다. 피드백 부탁드립니다.경력 3년차 개발자입니다. 피드백 부탁드립니다.',
-            reportApplicationStatus: 'COMPLETED',
-            applyFileUrl: 'https://example.com/apply/101.pdf',
-            reportFileUrl: 'https://example.com/report/101.pdf',
-            recruitmentFileUrl: 'https://example.com/recruitment/101.pdf',
-            reportFeedbackStatus: 'COMPLETED',
-            zoomLink: 'https://zoom.us/j/1234567890',
-            desiredDate1: '2024-08-15T10:00:00',
-            desiredDate2: '2024-08-16T14:00:00',
-            desiredDate3: '2024-08-17T16:00:00',
-            desiredDateAdmin: '2024-08-15T10:00:00',
-            desiredDateType: 'DESIRED_DATE_1',
-            createDate: '2024-08-01T10:00:00',
-            paymentId: 1001,
-            orderId: 'ORDER-1001',
-            reportPriceType: 'PREMIUM',
-            couponTitle: '여름 할인 10%',
-            finalPrice: 90000,
-            isRefunded: false,
-          },
-          {
-            applicationId: 102,
-            name: '이영희',
-            contactEmail: 'younghee.lee@example.com',
-            phoneNumber: '010-9876-5432',
-            wishJob: '마케팅 매니저',
-            message: '마케팅 분야로 전직을 고민 중입니다.',
-            reportApplicationStatus: 'APPLIED',
-            applyFileUrl: 'https://example.com/apply/102.pdf',
-            reportFileUrl: null,
-            recruitmentFileUrl: 'https://example.com/recruitment/102.pdf',
-            reportFeedbackStatus: 'APPLIED',
-            zoomLink: null,
-            desiredDate1: '2024-08-20T11:00:00',
-            desiredDate2: '2024-08-21T15:00:00',
-            desiredDate3: '2024-08-22T17:00:00',
-            desiredDateAdmin: null,
-            desiredDateType: null,
-            createDate: '2024-08-10T14:00:00',
-            paymentId: 1002,
-            orderId: 'ORDER-1002',
-            reportPriceType: 'BASIC',
-            couponTitle: null,
-            finalPrice: 50000,
-            isRefunded: false,
-          },
-        ],
-        pageInfo: {
-          totalElements: 10,
-          totalPages: 1,
-          currentPage: page,
-          currentElements: 2,
-        },
-      };
+      // const mockData = {
+      //   reportApplicationsForAdminInfos: [
+      //     {
+      //       applicationId: 101,
+      //       name: '김철수',
+      //       contactEmail: 'chulsoo.kim@example.com',
+      //       phoneNumber: '010-1234-5678',
+      //       wishJob: '소프트웨어 엔지니어',
+      //       message:
+      //         '경력 3년차 개발자입니다. 피드백 부탁드립니다.경력 3년차 개발자입니다. 피드백 부탁드립니다.경력 3년차 개발자입니다. 피드백 부탁드립니다.경력 3년차 개발자입니다. 피드백 부탁드립니다.경력 3년차 개발자입니다. 피드백 부탁드립니다.경력 3년차 개발자입니다. 피드백 부탁드립니다.',
+      //       reportApplicationStatus: 'COMPLETED',
+      //       applyFileUrl: 'https://example.com/apply/101.pdf',
+      //       reportFileUrl: 'https://example.com/report/101.pdf',
+      //       recruitmentFileUrl: 'https://example.com/recruitment/101.pdf',
+      //       reportFeedbackApplicationId: 1,
+      //       reportFeedbackStatus: 'COMPLETED',
+      //       zoomLink: 'https://zoom.us/j/1234567890',
+      //       desiredDate1: '2024-08-15T10:00:00',
+      //       desiredDate2: '2024-08-16T14:00:00',
+      //       desiredDate3: '2024-08-17T16:00:00',
+      //       desiredDateAdmin: '2024-08-15T10:00:00',
+      //       desiredDateType: 'DESIRED_DATE_1',
+      //       createDate: '2024-08-01T10:00:00',
+      //       paymentId: 1001,
+      //       orderId: 'ORDER-1001',
+      //       reportPriceType: 'PREMIUM',
+      //       couponTitle: '여름 할인 10%',
+      //       finalPrice: 90000,
+      //       isRefunded: false,
+      //     },
+      //     {
+      //       applicationId: 102,
+      //       name: '이영희',
+      //       contactEmail: 'younghee.lee@example.com',
+      //       phoneNumber: '010-9876-5432',
+      //       wishJob: '마케팅 매니저',
+      //       message: '마케팅 분야로 전직을 고민 중입니다.',
+      //       reportApplicationStatus: 'APPLIED',
+      //       applyFileUrl: 'https://example.com/apply/102.pdf',
+      //       reportFileUrl: null,
+      //       recruitmentFileUrl: 'https://example.com/recruitment/102.pdf',
+      //       reportFeedbackApplicationId: 2,
+      //       reportFeedbackStatus: 'APPLIED',
+      //       zoomLink: null,
+      //       desiredDate1: '2024-08-20T11:00:00',
+      //       desiredDate2: '2024-08-21T15:00:00',
+      //       desiredDate3: '2024-08-22T17:00:00',
+      //       desiredDateAdmin: null,
+      //       desiredDateType: null,
+      //       createDate: '2024-08-10T14:00:00',
+      //       paymentId: 1002,
+      //       orderId: 'ORDER-1002',
+      //       reportPriceType: 'BASIC',
+      //       couponTitle: null,
+      //       finalPrice: 50000,
+      //       isRefunded: false,
+      //     },
+      //   ],
+      //   pageInfo: {
+      //     totalElements: 10,
+      //     totalPages: 1,
+      //     currentPage: page,
+      //     currentElements: 2,
+      //   },
+      // };
 
-      return getReportApplicationsForAdminSchema.parse(mockData);
+      // return getReportApplicationsForAdminSchema.parse(mockData);
     },
+    enabled,
   });
 };
 
@@ -644,11 +670,13 @@ export const useGetReportApplicationOptionsForAdmin = ({
   code,
   priceType,
   reportId,
+  enabled,
 }: {
   reportId?: number;
   applicationId?: number;
   priceType?: string;
   code?: string;
+  enabled?: boolean;
 } = {}) => {
   return useQuery({
     queryKey: [
@@ -681,6 +709,7 @@ export const useGetReportApplicationOptionsForAdmin = ({
 
       return getReportApplicationOptionsForAdminSchema.parse(mockData);
     },
+    enabled,
   });
 };
 
@@ -700,14 +729,61 @@ export const usePatchApplicationDocument = ({
       applicationId: number;
       reportUrl: string;
     }) => {
-      // const res = await axios.patch(
-      //   `/report/application/${applicationId}/document`,
-      //   {
-      //     reportUrl,
-      //   },
-      // );
+      const res = await axios.patch(
+        `/report/application/${applicationId}/document`,
+        {
+          reportUrl,
+        },
+      );
       // Mock API call
-      return { success: true, message: 'Document uploaded successfully' };
+      // return { success: true, message: 'Document uploaded successfully' };
+      return res.data.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: [useGetReportApplicationsForAdminQueryKey],
+      });
+      successCallback && successCallback();
+    },
+    onError: (error: Error) => {
+      errorCallback && errorCallback(error);
+    },
+  });
+};
+
+export const usePatchReportApplicationSchedule = ({
+  successCallback,
+  errorCallback,
+}: {
+  successCallback?: () => void;
+  errorCallback?: (error: Error) => void;
+}) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({
+      reportId,
+      applicationId,
+      desiredDateType,
+      desiredDateAdmin,
+    }: {
+      reportId: number;
+      applicationId: number;
+      desiredDateType:
+        | 'DESIRED_DATE_1'
+        | 'DESIRED_DATE_2'
+        | 'DESIRED_DATE_3'
+        | 'DESIRED_DATE_ADMIN';
+      desiredDateAdmin: string;
+    }) => {
+      const res = await axios.patch(
+        `/report/${reportId}/application/${applicationId}/schedule`,
+        {
+          desiredDateType,
+          desiredDateAdmin,
+        },
+      );
+
+      return res.data.data;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({

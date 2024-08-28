@@ -1,5 +1,5 @@
 import dayjs from 'dayjs';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { uploadFile } from '../../../api/file';
 import {
@@ -36,6 +36,7 @@ const ReportApplicationsPage = () => {
       page: currentPage,
       size: 10,
     },
+    enabled: !!reportId,
   });
 
   const {
@@ -44,6 +45,7 @@ const ReportApplicationsPage = () => {
     isError: optionsDataIsError,
   } = useGetReportApplicationOptionsForAdmin({
     applicationId: applicationModal?.application.applicationId,
+    enabled: !!applicationModal?.application.applicationId,
   });
 
   const { mutate: patchDocument } = usePatchApplicationDocument({
@@ -62,7 +64,7 @@ const ReportApplicationsPage = () => {
     const url = await uploadFile({
       file: newFile,
       type: 'REPORT',
-      name: `${applicationModal?.application.name}_${applicationModal?.application.applicationId}_진단서.pdf`,
+      name: `${applicationModal?.application.applicationId}_report.pdf`,
     });
 
     setUploadedFile(url);
@@ -76,10 +78,6 @@ const ReportApplicationsPage = () => {
       reportUrl: uploadedFile,
     });
   };
-
-  useEffect(() => {
-    console.log(uploadedFile);
-  }, [uploadedFile]);
 
   return (
     <div className="p-8 pt-16">
@@ -106,7 +104,7 @@ const ReportApplicationsPage = () => {
                   <TH>고민지점</TH>
                   <TH>서류</TH>
                   <TH>채용공고</TH>
-                  <TH>채용공고</TH>
+                  <TH>관리</TH>
                   <TH>상태</TH>
                   <TH>신청일자</TH>
                 </tr>
@@ -118,10 +116,10 @@ const ReportApplicationsPage = () => {
                     <TD>{application.name}</TD>
                     <TD>{application.contactEmail}</TD>
                     <TD>{application.phoneNumber}</TD>
-                    <TD>{application.wishJob}</TD>
+                    <TD>{application.wishJob || '-'}</TD>
                     <TD>
                       <p className="whitespace-normal break-all">
-                        {application.message}
+                        {application.message || '-'}
                       </p>
                     </TD>
                     <TD>
@@ -135,7 +133,7 @@ const ReportApplicationsPage = () => {
                           서류
                         </a>
                       ) : (
-                        '없음'
+                        '-'
                       )}
                     </TD>
                     <TD>
@@ -149,7 +147,7 @@ const ReportApplicationsPage = () => {
                           채용공고
                         </a>
                       ) : (
-                        '없음'
+                        '-'
                       )}
                     </TD>
                     <TD>
@@ -176,6 +174,19 @@ const ReportApplicationsPage = () => {
                         >
                           진단서 업로드
                         </ActionButton>
+                        {application.reportFileUrl && (
+                          <ActionButton
+                            bgColor="blue"
+                            onClick={() => {
+                              window.open(
+                                application.reportFileUrl || '',
+                                '_blank',
+                              );
+                            }}
+                          >
+                            진단서 확인
+                          </ActionButton>
+                        )}
                       </div>
                     </TD>
                     <TD>
@@ -184,7 +195,11 @@ const ReportApplicationsPage = () => {
                       )}
                     </TD>
                     <TD>
-                      {dayjs(application.createDate).format('YYYY.MM.DD (dd)')}
+                      {application.createDate
+                        ? dayjs(application.createDate).format(
+                            'YYYY.MM.DD (dd)',
+                          )
+                        : '-'}
                     </TD>
                   </tr>
                 ))}
@@ -206,13 +221,13 @@ const ReportApplicationsPage = () => {
               <div className="mt-5 flex w-full flex-col gap-y-3 text-xsmall14">
                 <div className="flex w-full gap-x-2">
                   <h2 className="w-20 text-neutral-40">주문번호</h2>
-                  <p>{applicationModal.application.orderId}</p>
+                  <p>{applicationModal.application.orderId || '-'}</p>
                 </div>
                 <div className="flex w-full gap-x-2">
                   <h2 className="w-20 text-neutral-40">결제상품</h2>
                   <p>
                     {convertReportPriceType(
-                      applicationModal.application.reportPriceType,
+                      applicationModal.application.reportPriceType || '-',
                     )}
                   </p>
                 </div>
@@ -252,7 +267,8 @@ const ReportApplicationsPage = () => {
                 <div className="flex w-full gap-x-2">
                   <h2 className="w-20 text-neutral-40">결제금액</h2>
                   <p>
-                    {applicationModal.application.finalPrice.toLocaleString()}
+                    {applicationModal.application.finalPrice?.toLocaleString() ||
+                      '-'}
                   </p>
                 </div>
                 <div className="flex w-full gap-x-2">
