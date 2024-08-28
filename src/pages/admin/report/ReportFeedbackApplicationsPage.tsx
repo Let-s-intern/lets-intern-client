@@ -1,5 +1,6 @@
-import dayjs from 'dayjs';
-import { useState } from 'react';
+import { DatePicker, TimePicker } from '@mui/x-date-pickers';
+import dayjs, { Dayjs } from 'dayjs';
+import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import {
   convertReportFeedbackStatus,
@@ -7,6 +8,7 @@ import {
   reportApplicationsForAdminInfoType,
   useGetReportApplicationOptionsForAdmin,
   useGetReportApplicationsForAdmin,
+  usePatchReportApplicationSchedule,
 } from '../../../api/report';
 import ActionButton from '../../../components/admin/ui/button/ActionButton';
 import Header from '../../../components/admin/ui/header/Header';
@@ -15,9 +17,42 @@ import AdminPagination from '../../../components/admin/ui/pagination/AdminPagina
 import Table from '../../../components/admin/ui/table/regacy/Table';
 import TD from '../../../components/admin/ui/table/regacy/TD';
 import TH from '../../../components/admin/ui/table/regacy/TH';
+import CheckBox from '../../../components/common/auth/ui/CheckBox';
 
-const dateConverter = (date: string) => {
+const totalDateConverter = (date: string) => {
   return dayjs(date).format('YYYY.MM.DD (dd) A HH:mm');
+};
+const dateConverter = (date: string) => {
+  return dayjs(date).format('YYYY.MM.DD');
+};
+
+const timeConverter = (date: string) => {
+  return dayjs(date).format('A HH:00');
+};
+
+const getProgressDate = (application: reportApplicationsForAdminInfoType) => {
+  const desiredDateType = application.desiredDateType;
+
+  switch (desiredDateType) {
+    case 'DESIRED_DATE_1':
+      return application.desiredDate1
+        ? totalDateConverter(application.desiredDate1)
+        : '-';
+    case 'DESIRED_DATE_2':
+      return application.desiredDate2
+        ? totalDateConverter(application.desiredDate2)
+        : '-';
+    case 'DESIRED_DATE_3':
+      return application.desiredDate3
+        ? totalDateConverter(application.desiredDate3)
+        : '-';
+    case 'DESIRED_DATE_ADMIN':
+      return application.desiredDateAdmin
+        ? totalDateConverter(application.desiredDateAdmin)
+        : '-';
+    default:
+      return '-';
+  }
 };
 
 const ReportFeedbackApplicationsPage = () => {
@@ -29,7 +64,16 @@ const ReportFeedbackApplicationsPage = () => {
   } | null>(null);
 
   const [currentPage, setCurrentPage] = useState(1);
-  const [selectedDate, setSelectedDate] = useState<string | null>(null);
+  const [adminChangeDate, setAdminChangeDate] = useState<Dayjs>(dayjs());
+  const [adminChangeTime, setAdminChangeTime] = useState<Dayjs>(dayjs());
+  const [selectedDate, setSelectedDate] = useState<{
+    type:
+      | 'DESIRED_DATE_1'
+      | 'DESIRED_DATE_2'
+      | 'DESIRED_DATE_3'
+      | 'DESIRED_DATE_ADMIN';
+    date: string;
+  } | null>(null);
 
   const { data, isLoading, isError } = useGetReportApplicationsForAdmin({
     reportId: Number(reportId),
@@ -50,30 +94,37 @@ const ReportFeedbackApplicationsPage = () => {
     enabled: !!modal?.application.applicationId,
   });
 
-  const getProgressDate = (application: reportApplicationsForAdminInfoType) => {
-    const desiredDateType = application.desiredDateType;
+  const { mutate: trySubmitSchedule } = usePatchReportApplicationSchedule({
+    successCallback: () => {
+      setAdminChangeDate(dayjs());
+      setAdminChangeTime(dayjs());
+      setSelectedDate(null);
+      alert('일정이 저장되었습니다.');
+      setModal(null);
+    },
+    errorCallback: (error: Error) => {
+      console.error(error);
+      alert('일정 저장에 실패했습니다.');
+    },
+  });
 
-    switch (desiredDateType) {
-      case 'DESIRED_DATE_1':
-        return application.desiredDate1
-          ? dateConverter(application.desiredDate1)
-          : '-';
-      case 'DESIRED_DATE_2':
-        return application.desiredDate2
-          ? dateConverter(application.desiredDate2)
-          : '-';
-      case 'DESIRED_DATE_3':
-        return application.desiredDate3
-          ? dateConverter(application.desiredDate3)
-          : '-';
-      case 'DESIRED_DATE_ADMIN':
-        return application.desiredDateAdmin
-          ? dateConverter(application.desiredDateAdmin)
-          : '-';
-      default:
-        return '-';
+  const handleSubmitSchedule = () => {
+    if (!selectedDate) {
+      alert('일정을 선택해주세요.');
+      return;
     }
+
+    trySubmitSchedule({
+      reportId: Number(reportId),
+      applicationId: modal?.application.applicationId || 0,
+      desiredDateType: selectedDate.type,
+      desiredDate: selectedDate.date,
+    });
   };
+
+  useEffect(() => {
+    console.log(selectedDate);
+  }, [selectedDate]);
 
   return (
     <div className="p-8 pt-16">
@@ -273,6 +324,231 @@ const ReportFeedbackApplicationsPage = () => {
                   className="text-xxsmall12 text-neutral-40"
                 >
                   닫기
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+        {modal?.type === 'SCHEDULE' && (
+          <div className="fixed left-0 top-0 z-10 flex h-screen w-screen items-center justify-center bg-black/10">
+            <div className="flex min-h-64 min-w-96 flex-col justify-center gap-y-5 rounded-sm bg-white px-8 py-6">
+              <h1 className="text-lg font-bold">일정 선택</h1>
+              <div className="mt-5 flex w-full flex-col gap-y-5 text-xsmall14">
+                <h2 className="w-20 font-semibold">제출 일정</h2>
+                <div className="flex grow flex-col gap-y-4">
+                  {modal.application.desiredDate1 && (
+                    <div className="flex items-center justify-center gap-x-10">
+                      <h3 className="w-20 text-xsmall16 font-medium text-neutral-40">
+                        희망 1순위
+                      </h3>
+                      <div className="flex items-center justify-center gap-x-2.5">
+                        <p className="w-[180px] rounded-xs border border-primary-10 px-4 py-3 text-center">
+                          {dateConverter(modal.application.desiredDate1)}
+                        </p>
+                        <p className="w-[180px] rounded-xs border border-primary-10 px-4 py-3 text-center">
+                          {timeConverter(modal.application.desiredDate1)}
+                        </p>
+                      </div>
+                      <CheckBox
+                        checked={
+                          selectedDate?.type === 'DESIRED_DATE_1' &&
+                          selectedDate.date === modal.application.desiredDate1
+                        }
+                        onClick={() =>
+                          setSelectedDate({
+                            type: 'DESIRED_DATE_1',
+                            date: modal.application.desiredDate1 || '',
+                          })
+                        }
+                      />
+                    </div>
+                  )}
+                  {modal.application.desiredDate2 && (
+                    <div className="flex items-center justify-center gap-x-10">
+                      <h3 className="w-20 text-xsmall16 font-medium text-neutral-40">
+                        희망 2순위
+                      </h3>
+                      <div className="flex items-center justify-center gap-x-2.5">
+                        <p className="w-[180px] rounded-xs border border-primary-10 px-4 py-3 text-center">
+                          {dateConverter(modal.application.desiredDate2)}
+                        </p>
+                        <p className="w-[180px] rounded-xs border border-primary-10 px-4 py-3 text-center">
+                          {timeConverter(modal.application.desiredDate2)}
+                        </p>
+                      </div>
+                      <CheckBox
+                        checked={
+                          selectedDate?.type === 'DESIRED_DATE_2' &&
+                          selectedDate.date === modal.application.desiredDate2
+                        }
+                        onClick={() =>
+                          setSelectedDate({
+                            type: 'DESIRED_DATE_2',
+                            date: modal.application.desiredDate2 || '',
+                          })
+                        }
+                      />
+                    </div>
+                  )}
+                  {modal.application.desiredDate3 && (
+                    <div className="flex items-center justify-center gap-x-10">
+                      <h3 className="w-20 text-xsmall16 font-medium text-neutral-40">
+                        희망 3순위
+                      </h3>
+                      <div className="flex items-center justify-center gap-x-2.5">
+                        <p className="w-[180px] rounded-xs border border-primary-10 px-4 py-3 text-center">
+                          {dateConverter(modal.application.desiredDate3)}
+                        </p>
+                        <p className="w-[180px] rounded-xs border border-primary-10 px-4 py-3 text-center">
+                          {timeConverter(modal.application.desiredDate3)}
+                        </p>
+                      </div>
+                      <CheckBox
+                        checked={
+                          selectedDate?.type === 'DESIRED_DATE_3' &&
+                          selectedDate.date === modal.application.desiredDate3
+                        }
+                        onClick={() =>
+                          setSelectedDate({
+                            type: 'DESIRED_DATE_3',
+                            date: modal.application.desiredDate3 || '',
+                          })
+                        }
+                      />
+                    </div>
+                  )}
+                  {(modal.application.desiredDate1 ||
+                    modal.application.desiredDate2 ||
+                    modal.application.desiredDate3) && <hr />}
+
+                  <div className="flex items-center justify-center gap-x-10">
+                    <h3 className="w-20 text-xsmall16 font-medium text-neutral-40">
+                      운영진 변경
+                    </h3>
+                    <div className="flex items-center justify-center gap-x-2.5">
+                      <DatePicker
+                        format="YYYY.MM.DD"
+                        sx={{
+                          width: '180px',
+                          height: '3rem',
+                          '& .MuiOutlinedInput-root': {
+                            '& fieldset': {
+                              borderColor: '#EDEEFE', // 기본 상태의 border 색상 설정
+                            },
+                            '&:hover fieldset': {
+                              borderColor: '#A9C1FF', // 마우스 오버 상태의 border 색상 설정
+                            },
+                            '&.Mui-focused fieldset': {
+                              borderColor: '#757BFF', // 포커스 상태의 border 색상 설정
+                            },
+                          },
+                          '& .MuiInputBase-input': {
+                            paddingLeft: '1rem',
+                            paddingRight: '1rem',
+                            paddingTop: '0.75rem',
+                            paddingBottom: '0.75rem',
+                            fontSize: '0.875rem',
+                            fontWeight: 400,
+                            textAlign: 'center',
+                          },
+                        }}
+                        slotProps={{
+                          textField: {
+                            InputProps: {
+                              sx: {
+                                width: '180px',
+                                height: '3rem',
+                              },
+                            },
+                          },
+                        }}
+                        value={adminChangeDate}
+                        onChange={(date) => {
+                          if (!date) return;
+                          setAdminChangeDate(date);
+                        }}
+                      />
+                      <TimePicker
+                        format="A hh:00"
+                        views={['hours']}
+                        sx={{
+                          width: '180px',
+                          height: '3rem',
+                          '& .MuiOutlinedInput-root': {
+                            '& fieldset': {
+                              borderColor: '#EDEEFE', // 기본 상태의 border 색상 설정
+                            },
+                            '&:hover fieldset': {
+                              borderColor: '#A9C1FF', // 마우스 오버 상태의 border 색상 설정
+                            },
+                            '&.Mui-focused fieldset': {
+                              borderColor: '#757BFF', // 포커스 상태의 border 색상 설정
+                            },
+                          },
+                          '& .MuiInputBase-input': {
+                            paddingLeft: '1rem',
+                            paddingRight: '1rem',
+                            paddingTop: '0.75rem',
+                            paddingBottom: '0.75rem',
+                            fontSize: '0.875rem',
+                            fontWeight: 400,
+                          },
+                        }}
+                        slotProps={{
+                          textField: {
+                            InputProps: {
+                              sx: {
+                                width: '180px',
+                                height: '3rem',
+                              },
+                            },
+                          },
+                        }}
+                        value={adminChangeTime}
+                        onChange={(time) => {
+                          if (!time) return;
+                          setAdminChangeTime(time);
+                        }}
+                      />
+                    </div>
+                    <CheckBox
+                      checked={
+                        selectedDate?.type === 'DESIRED_DATE_ADMIN' &&
+                        selectedDate.date ===
+                          adminChangeDate.format('YYYY-MM-DD') +
+                            'T' +
+                            adminChangeTime.format('HH:00:00.000')
+                      }
+                      onClick={() => {
+                        setSelectedDate({
+                          type: 'DESIRED_DATE_ADMIN',
+                          date:
+                            adminChangeDate.format('YYYY-MM-DD') +
+                            'T' +
+                            adminChangeTime.format('HH:00:00.000'),
+                        });
+                      }}
+                    />
+                  </div>
+                </div>
+              </div>
+              <div className="mt-5 flex w-full items-center justify-end gap-x-4">
+                <button
+                  onClick={() => {
+                    setModal(null);
+                    setAdminChangeDate(dayjs());
+                    setAdminChangeTime(dayjs());
+                    setSelectedDate(null);
+                  }}
+                  className="rounded-sm bg-neutral-80 px-4 py-2 text-xxsmall12 font-bold text-neutral-40"
+                >
+                  닫기
+                </button>
+                <button
+                  onClick={handleSubmitSchedule}
+                  className="rounded-sm bg-primary px-4 py-2 text-xxsmall12 font-bold text-white"
+                >
+                  저장
                 </button>
               </div>
             </div>
