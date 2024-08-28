@@ -2,6 +2,11 @@ import { z } from 'zod';
 
 export const programInfoType = z.object({
   paymentId: z.number().nullable().optional(),
+  applicationId: z.number().nullable().optional(),
+  programType: z
+    .enum(['CHALLENGE', 'LIVE', 'VOD', 'REPORT'])
+    .nullable()
+    .optional(),
   title: z.string().nullable().optional(),
   thumbnail: z.string().nullable().optional(),
   price: z.number().nullable().optional(),

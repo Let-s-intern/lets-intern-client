@@ -7,7 +7,11 @@ const CreditListItem = ({ payment }: { payment: PaymentType }) => {
   return (
     <Link
       className="flex w-full flex-col items-start justify-center gap-y-2"
-      to={`/mypage/credit/${payment.programInfo.paymentId}`}
+      to={
+        payment.programInfo.programType === 'REPORT'
+          ? `/mypage/credit/report/${payment.programInfo.paymentId}?applicationId=${payment.programInfo.applicationId}`
+          : `/mypage/credit/${payment.programInfo.paymentId}`
+      }
       data-program-text={payment.programInfo.title}
     >
       <CardStatus
