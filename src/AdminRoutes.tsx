@@ -44,6 +44,7 @@ import RemindersChallenge from './pages/admin/reminder/RemindersChallenge';
 import RemindersLetsChat from './pages/admin/reminder/RemindersLetsChat';
 import AdminReportPage from './pages/admin/report/AdminReportPage';
 import ReportApplicationsPage from './pages/admin/report/ReportApplicationsPage';
+import ReportFeedbackApplicationsPage from './pages/admin/report/ReportFeedbackApplicationsPage';
 import AdminReviews from './pages/admin/review/Reviews';
 import AdminReviewsDetail from './pages/admin/review/ReviewsDetail';
 import UserCreate from './pages/admin/user/UserCreate';
@@ -186,6 +187,10 @@ export const getAdminRoutes = () => {
       {/* 서류진단 */}
       <Route path="report" element={<AdminReportPage />} />
       <Route path="report/applications" element={<ReportApplicationsPage />} />
+      <Route
+        path="report/applications/feedback"
+        element={<ReportFeedbackApplicationsPage />}
+      />
     </Route>
   );
 };

@@ -15,7 +15,7 @@ const AdminReportPage = () => {
   const { data: getReportApplicationOptionsForAdmin } =
     useGetReportApplicationOptionsForAdmin();
   const { data: getReportApplicationsForAdmin } =
-    useGetReportApplicationsForAdmin();
+    useGetReportApplicationsForAdmin({ pageable: { page: 1, size: 10 } });
   const { data: getReportDetail } = useGetReportDetail(12);
   const { data: getReportDetailForAdmin } = useGetReportDetailForAdmin(12);
   const { data: getReportPriceDetail } = useGetReportPriceDetail(12);
