@@ -729,14 +729,15 @@ export const usePatchApplicationDocument = ({
       applicationId: number;
       reportUrl: string;
     }) => {
-      // const res = await axios.patch(
-      //   `/report/application/${applicationId}/document`,
-      //   {
-      //     reportUrl,
-      //   },
-      // );
+      const res = await axios.patch(
+        `/report/application/${applicationId}/document`,
+        {
+          reportUrl,
+        },
+      );
       // Mock API call
-      return { success: true, message: 'Document uploaded successfully' };
+      // return { success: true, message: 'Document uploaded successfully' };
+      return res.data.data;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
@@ -763,7 +764,7 @@ export const usePatchReportApplicationSchedule = ({
       reportId,
       applicationId,
       desiredDateType,
-      desiredDate,
+      desiredDateAdmin,
     }: {
       reportId: number;
       applicationId: number;
@@ -772,13 +773,13 @@ export const usePatchReportApplicationSchedule = ({
         | 'DESIRED_DATE_2'
         | 'DESIRED_DATE_3'
         | 'DESIRED_DATE_ADMIN';
-      desiredDate: string;
+      desiredDateAdmin: string;
     }) => {
       const res = await axios.patch(
         `/report/${reportId}/application/${applicationId}/schedule`,
         {
           desiredDateType,
-          desiredDate,
+          desiredDateAdmin,
         },
       );
 
