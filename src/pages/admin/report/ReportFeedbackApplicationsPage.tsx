@@ -20,7 +20,7 @@ import TH from '../../../components/admin/ui/table/regacy/TH';
 import CheckBox from '../../../components/common/auth/ui/CheckBox';
 
 const totalDateConverter = (date: string) => {
-  return dayjs(date).format('YYYY.MM.DD (dd) A HH:mm');
+  return dayjs(date).format('YYYY.MM.DD (dd) A hh:mm');
 };
 const dateConverter = (date: string) => {
   return dayjs(date).format('YYYY.MM.DD');
@@ -118,7 +118,7 @@ const ReportFeedbackApplicationsPage = () => {
       reportId: Number(reportId),
       applicationId: modal?.application.applicationId || 0,
       desiredDateType: selectedDate.type,
-      desiredDate: selectedDate.date,
+      desiredDateAdmin: selectedDate.date + 'Z',
     });
   };
 
@@ -213,12 +213,20 @@ const ReportFeedbackApplicationsPage = () => {
                         </ActionButton>
                         <ActionButton
                           bgColor="green"
-                          onClick={() =>
+                          onClick={() => {
                             setModal({
                               application,
                               type: 'SCHEDULE',
-                            })
-                          }
+                            });
+                            if (application.desiredDateAdmin) {
+                              setAdminChangeDate(
+                                dayjs(application.desiredDateAdmin),
+                              );
+                              setAdminChangeTime(
+                                dayjs(application.desiredDateAdmin),
+                              );
+                            }
+                          }}
                         >
                           일정선택
                         </ActionButton>
