@@ -24,6 +24,8 @@ import CreditDelete from './pages/common/mypage/CreditDelete';
 import CreditDetail from './pages/common/mypage/CreditDetail';
 import MyPage from './pages/common/mypage/MyPage';
 import Privacy from './pages/common/mypage/Privacy';
+import ReportCreditDelete from './pages/common/mypage/ReportCreditDelete';
+import ReportCreditDetail from './pages/common/mypage/ReportCreditDetail';
 import Review from './pages/common/mypage/Review';
 import Payment from './pages/common/program/Payment';
 import PaymentFail from './pages/common/program/PaymentFail';
@@ -113,11 +115,17 @@ const Router = () => {
               path="review/edit/program/:programType/:programId/:reviewId"
               element={<ReviewCreate isEdit={true} />}
             />
-            <Route path="credit">
-              <Route path="" element={<Credit />} />
-              <Route path=":paymentId" element={<CreditDetail />} />
-              <Route path=":paymentId/delete" element={<CreditDelete />} />
-            </Route>
+            <Route path="credit" element={<Credit />} />
+            <Route path="credit/:paymentId" element={<CreditDetail />} />
+            <Route path="credit/:paymentId/delete" element={<CreditDelete />} />
+            <Route
+              path="credit/report/:paymentId"
+              element={<ReportCreditDetail />}
+            />
+            <Route
+              path="credit/report/:paymentId/delete"
+              element={<ReportCreditDelete />}
+            />
             <Route path="privacy" element={<Privacy />} />
           </Route>
           {/* /login */}
