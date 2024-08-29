@@ -88,9 +88,13 @@ const PaymentResult = () => {
       .then((res) => {
         setResult(res.data.data);
         window.dataLayer?.push({
-          event: 'payment_success',
+          event: 'program_payment_success',
           program_name: programApplicationData.programTitle,
           program_id: programApplicationData.programId,
+          program_type: programApplicationData.programType,
+          payment_method: params.paymentMethodKey,
+          payment_amount: params.amount,
+          order_id: params.orderId,
         });
       })
       .catch((e) => {
