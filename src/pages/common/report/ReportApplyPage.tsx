@@ -1,10 +1,11 @@
 import { FormControl, RadioGroup, useMediaQuery } from '@mui/material';
-import { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { FaArrowLeft } from 'react-icons/fa6';
 import { IoCloseOutline } from 'react-icons/io5';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import {
+  convertReportPriceType,
   convertReportTypeStatus,
   useGetReportDetail,
 } from '../../../api/report';
@@ -19,10 +20,8 @@ import Label from '../../../components/common/report/Label';
 import Tooltip from '../../../components/common/report/Tooltip';
 import BottomSheet from '../../../components/common/ui/BottomSheeet';
 import Input from '../../../components/common/ui/input/Input';
-import useProgramStore from '../../../store/useProgramStore';
+import useReportApplicationStore from '../../../store/useReportApplicationStore';
 import { ICouponForm } from '../../../types/interface';
-
-const programName = '포트폴리오 조지기';
 
 const ReportApplyPage = () => {
   const isUpTo1280 = useMediaQuery('(max-width: 1280px)');
@@ -40,24 +39,47 @@ const ReportApplyPage = () => {
     id: null,
     price: 0,
   });
+  const [applyFile, setApplyFile] = useState<File | null>(null);
+  const [recruitmentFile, setRecruitmentFile] = useState<File | null>(null);
 
   const {
-    data: programApplicationForm,
-    setProgramApplicationForm,
-    initProgramApplicationForm,
-  } = useProgramStore();
+    data: reportApplication,
+    setReportApplication,
+    initReportApplication,
+  } = useReportApplicationStore();
+
+  const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setReportApplication({ [e.target.name]: e.target.value });
+  };
 
   const onClickPayButton = () => {
     //  payInfo 결제정보: application 정보로부터 가져오기
     // 프로그램 신청 정보 가져오기
-    // setProgramApplicationForm({});
+    // setReportApplication({...});
 
     navigate(`/payment`);
   };
 
-  /* application으로부터 user 정보 초기화 */
   useEffect(() => {
-    // console.log('get user info');
+    // application으로부터 user 정보 초기화
+    setReportApplication({
+      reportId: 1,
+      reportPriceType: 'PREMIUM',
+      optionIds: [],
+      isFeedbackApplied: true,
+      couponId: null,
+      paymentKey: null,
+      orderId: null,
+      amount: null,
+      discountPrice: null,
+      applyUrl: null,
+      recruitmentUrl: null,
+      desiredDate1: null,
+      desiredDate2: null,
+      desiredDate3: null,
+      wishJob: null,
+      message: null,
+    });
   }, []);
 
   return (
@@ -68,10 +90,19 @@ const ReportApplyPage = () => {
           <CallOut />
         </header>
         <main className="my-8 flex flex-col gap-10">
-          <ProgramInfoSection />
-          <DocumentSection />
-          <PremiumSection />
-          <ScheduleSection />
+          <ProgramInfoSection
+            reportPriceType={reportApplication.reportPriceType}
+            isFeedbackApplied={reportApplication.isFeedbackApplied!}
+            optionIds={reportApplication.optionIds}
+          />
+          <DocumentSection file={applyFile} dispatch={setApplyFile} />
+          {reportApplication.reportPriceType === 'PREMIUM' && (
+            <PremiumSection
+              file={recruitmentFile}
+              dispatch={setRecruitmentFile}
+            />
+          )}
+          {reportApplication.isFeedbackApplied && <ScheduleSection />}
           <AdditionalInfoSection />
         </main>
       </div>
@@ -129,7 +160,15 @@ const CallOut = () => {
   );
 };
 
-const ProgramInfoSection = () => {
+const ProgramInfoSection = ({
+  reportPriceType,
+  isFeedbackApplied,
+  optionIds,
+}: {
+  reportPriceType: 'BASIC' | 'PREMIUM';
+  isFeedbackApplied: boolean;
+  optionIds: number[];
+}) => {
   /** 다음 정보 필요
    * 1. 어떤 유형인지 (포폴, 자소서, 이력서)
    * 2. 제목이 무엇인지
@@ -137,9 +176,19 @@ const ProgramInfoSection = () => {
    * 4. 베이직인지 프리미엄인지
    * 5. 1:1 첨삭을 신청했는지 안 했는지
    */
+  const product = isFeedbackApplied
+    ? `서류 진단서 (${convertReportPriceType(reportPriceType)}), 맞춤 첨삭`
+    : `서류 진단서 (${convertReportPriceType(reportPriceType)})`;
+
   const { reportId } = useParams();
 
+  const [options, setOptions] = useState<string[]>([]);
+
   const { data } = useGetReportDetail(Number(reportId));
+
+  useEffect(() => {
+    // optionIds로 옵션 정보 불러오기
+  }, []);
 
   return (
     <section>
@@ -157,19 +206,30 @@ const ProgramInfoSection = () => {
         imgAlt="서류 진단서 프로그램 썸네일"
         title={data?.title || ''}
         content={[
-          { label: '상품', text: '서류 진단서 (베이직), 맞춤 첨삭' },
-          { label: '옵션', text: '현직자 피드백' },
+          {
+            label: '상품',
+            text: product,
+          },
+          {
+            label: '옵션',
+            text: optionIds.length === 0 ? '없음' : options.join(', '),
+          },
         ]}
       />
     </section>
   );
 };
 
-const DocumentSection = () => {
+const DocumentSection = ({
+  file,
+  dispatch,
+}: {
+  file: File | null;
+  dispatch: React.Dispatch<React.SetStateAction<File | null>>;
+}) => {
   const { reportType } = useParams();
 
   const [value, setValue] = useState('file');
-  const [file, setFile] = useState<File | null>(null);
 
   return (
     <section className="flex flex-col gap-3 lg:flex-row lg:items-start lg:gap-5">
@@ -192,7 +252,7 @@ const DocumentSection = () => {
               subText="(pdf, doc, docx 형식 지원)"
             />
             {value === 'file' && (
-              <FileUploadButton file={file} dispatch={setFile} />
+              <FileUploadButton file={file} dispatch={dispatch} />
             )}
           </div>
           {/* URL */}
@@ -206,9 +266,14 @@ const DocumentSection = () => {
   );
 };
 
-const PremiumSection = () => {
+const PremiumSection = ({
+  file,
+  dispatch,
+}: {
+  file: File | null;
+  dispatch: React.Dispatch<React.SetStateAction<File | null>>;
+}) => {
   const [value, setValue] = useState('file');
-  const [file, setFile] = useState<File | null>(null);
 
   return (
     <section className="flex flex-col gap-1 lg:flex-row lg:items-start lg:gap-5">
@@ -239,12 +304,14 @@ const PremiumSection = () => {
                 *업무, 지원자격, 우대사항이 보이게 채용공고를 캡처해주세요.
               </span>
               {value === 'file' && (
-                <FileUploadButton file={file} dispatch={setFile} />
+                <FileUploadButton file={file} dispatch={dispatch} />
               )}
             </div>
             <div>
               <ControlLabel label="URL" value="url" />
-              {value === 'url' && <FilledInput placeholder="https://" />}
+              {value === 'url' && (
+                <FilledInput name="recruitmentUrl" placeholder="https://" />
+              )}
             </div>
           </RadioGroup>
         </FormControl>
@@ -292,14 +359,18 @@ const AdditionalInfoSection = () => {
           희망직무
           <RequiredStar />
         </Label>
-        <FilledInput id="job" placeholder="희망하는 직무를 알려주세요" />
+        <FilledInput
+          name="wishJob"
+          id="job"
+          placeholder="희망하는 직무를 알려주세요"
+        />
       </div>
       <div>
         <Label htmlFor="concern">서류 작성 고민</Label>
         <textarea
           id="concern"
           className="w-full resize-none rounded-md bg-neutral-95 p-3 text-xsmall14"
-          name="concern"
+          name="message"
           placeholder="진단에 참고할 수 있도록 서류 작성에 대한 고민을 적어주세요"
           rows={2}
         />

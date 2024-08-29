@@ -5,7 +5,7 @@ interface ReportApplicationStore {
   data: {
     reportId: number | null;
     reportPriceType: 'BASIC' | 'PREMIUM';
-    optionIds: number[] | null;
+    optionIds: number[];
     isFeedbackApplied: boolean;
     couponId: number | null;
     paymentKey: string | null;
@@ -33,7 +33,7 @@ const useReportApplicationStore = create(
       data: {
         reportId: null,
         reportPriceType: 'BASIC',
-        optionIds: null,
+        optionIds: [],
         isFeedbackApplied: false,
         couponId: null,
         paymentKey: null,
@@ -62,7 +62,7 @@ const useReportApplicationStore = create(
           data: {
             reportId: null,
             reportPriceType: 'BASIC',
-            optionIds: null,
+            optionIds: [],
             isFeedbackApplied: false,
             couponId: null,
             paymentKey: null,
