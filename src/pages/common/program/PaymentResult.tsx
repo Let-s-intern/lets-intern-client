@@ -91,6 +91,9 @@ const PaymentResult = () => {
           event: 'payment_success',
           program_name: programApplicationData.programTitle,
           program_id: programApplicationData.programId,
+          program_type: programApplicationData.programType,
+          payment_method: params.paymentMethodKey,
+          payment_amount: params.amount,
         });
       })
       .catch((e) => {
