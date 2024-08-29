@@ -1,9 +1,15 @@
-import { FormControl, RadioGroup, useMediaQuery } from '@mui/material';
+import {
+  FormControl,
+  RadioGroup,
+  SelectChangeEvent,
+  useMediaQuery,
+} from '@mui/material';
 import React, { useEffect, useRef, useState } from 'react';
 import { FaArrowLeft } from 'react-icons/fa6';
 import { IoCloseOutline } from 'react-icons/io5';
 import { useNavigate, useParams } from 'react-router-dom';
 
+import { Dayjs } from 'dayjs';
 import {
   convertReportPriceType,
   convertReportTypeStatus,
@@ -42,11 +48,8 @@ const ReportApplyPage = () => {
   const [applyFile, setApplyFile] = useState<File | null>(null);
   const [recruitmentFile, setRecruitmentFile] = useState<File | null>(null);
 
-  const {
-    data: reportApplication,
-    setReportApplication,
-    initReportApplication,
-  } = useReportApplicationStore();
+  const { data: reportApplication, setReportApplication } =
+    useReportApplicationStore();
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setReportApplication({ [e.target.name]: e.target.value });
@@ -82,6 +85,10 @@ const ReportApplyPage = () => {
     });
   }, []);
 
+  useEffect(() => {
+    console.log(reportApplication);
+  }, [reportApplication]);
+
   return (
     <div className="px-5 md:px-32 md:py-10 xl:flex xl:gap-16 xl:px-48">
       <div className="w-full">
@@ -90,11 +97,7 @@ const ReportApplyPage = () => {
           <CallOut />
         </header>
         <main className="my-8 flex flex-col gap-10">
-          <ProgramInfoSection
-            reportPriceType={reportApplication.reportPriceType}
-            isFeedbackApplied={reportApplication.isFeedbackApplied!}
-            optionIds={reportApplication.optionIds}
-          />
+          <ProgramInfoSection />
           <DocumentSection file={applyFile} dispatch={setApplyFile} />
           {reportApplication.reportPriceType === 'PREMIUM' && (
             <PremiumSection
@@ -160,15 +163,7 @@ const CallOut = () => {
   );
 };
 
-const ProgramInfoSection = ({
-  reportPriceType,
-  isFeedbackApplied,
-  optionIds,
-}: {
-  reportPriceType: 'BASIC' | 'PREMIUM';
-  isFeedbackApplied: boolean;
-  optionIds: number[];
-}) => {
+const ProgramInfoSection = () => {
   /** 다음 정보 필요
    * 1. 어떤 유형인지 (포폴, 자소서, 이력서)
    * 2. 제목이 무엇인지
@@ -176,15 +171,17 @@ const ProgramInfoSection = ({
    * 4. 베이직인지 프리미엄인지
    * 5. 1:1 첨삭을 신청했는지 안 했는지
    */
-  const product = isFeedbackApplied
-    ? `서류 진단서 (${convertReportPriceType(reportPriceType)}), 맞춤 첨삭`
-    : `서류 진단서 (${convertReportPriceType(reportPriceType)})`;
 
   const { reportId } = useParams();
 
   const [options, setOptions] = useState<string[]>([]);
 
-  const { data } = useGetReportDetail(Number(reportId));
+  const { data: reportDetailData } = useGetReportDetail(Number(reportId));
+  const { data: reportApplication } = useReportApplicationStore();
+
+  const product = reportApplication.isFeedbackApplied
+    ? `서류 진단서 (${convertReportPriceType(reportApplication.reportPriceType)}), 맞춤 첨삭`
+    : `서류 진단서 (${convertReportPriceType(reportApplication.reportPriceType)})`;
 
   useEffect(() => {
     // optionIds로 옵션 정보 불러오기
@@ -204,7 +201,7 @@ const ProgramInfoSection = ({
       <Card
         imgSrc="/images/report-thumbnail.png"
         imgAlt="서류 진단서 프로그램 썸네일"
-        title={data?.title || ''}
+        title={reportDetailData?.title || ''}
         content={[
           {
             label: '상품',
@@ -212,7 +209,10 @@ const ProgramInfoSection = ({
           },
           {
             label: '옵션',
-            text: optionIds.length === 0 ? '없음' : options.join(', '),
+            text:
+              reportApplication.optionIds.length === 0
+                ? '없음'
+                : options.join(', '),
           },
         ]}
       />
@@ -231,6 +231,8 @@ const DocumentSection = ({
 
   const [value, setValue] = useState('file');
 
+  const { data, setReportApplication } = useReportApplicationStore();
+
   return (
     <section className="flex flex-col gap-3 lg:flex-row lg:items-start lg:gap-5">
       <div className="flex w-[8.75rem] shrink-0 items-center lg:mt-2">
@@ -242,7 +244,11 @@ const DocumentSection = ({
           defaultValue="file"
           name="radio-buttons-group"
           value={value}
-          onChange={(event) => setValue(event.target.value)}
+          onChange={(e) => {
+            setValue(e.target.value);
+            if (e.target.value === 'url') dispatch(null);
+            else setReportApplication({ applyUrl: null });
+          }}
         >
           {/* 파일 첨부 */}
           <div className="mb-4">
@@ -258,7 +264,16 @@ const DocumentSection = ({
           {/* URL */}
           <div>
             <ControlLabel label="URL" value="url" />
-            {value === 'url' && <FilledInput placeholder="https://" />}
+            {value === 'url' && (
+              <FilledInput
+                name="applyUrl"
+                placeholder="https://"
+                value={data.applyUrl as string}
+                onChange={(e) =>
+                  setReportApplication({ applyUrl: e.target.value })
+                }
+              />
+            )}
           </div>
         </RadioGroup>
       </FormControl>
@@ -274,6 +289,7 @@ const PremiumSection = ({
   dispatch: React.Dispatch<React.SetStateAction<File | null>>;
 }) => {
   const [value, setValue] = useState('file');
+  const { data, setReportApplication } = useReportApplicationStore();
 
   return (
     <section className="flex flex-col gap-1 lg:flex-row lg:items-start lg:gap-5">
@@ -289,8 +305,10 @@ const PremiumSection = ({
           <RadioGroup
             defaultValue="file"
             value={value}
-            onChange={(event) => {
-              event.target.value !== undefined && setValue(event.target.value);
+            onChange={(e) => {
+              setValue(e.target.value);
+              if (e.target.value === 'url') dispatch(null);
+              else setReportApplication({ recruitmentUrl: null });
             }}
             name="radio-buttons-group"
           >
@@ -310,7 +328,14 @@ const PremiumSection = ({
             <div>
               <ControlLabel label="URL" value="url" />
               {value === 'url' && (
-                <FilledInput name="recruitmentUrl" placeholder="https://" />
+                <FilledInput
+                  name="recruitmentUrl"
+                  placeholder="https://"
+                  value={data.recruitmentUrl as string}
+                  onChange={(e) =>
+                    setReportApplication({ recruitmentUrl: e.target.value })
+                  }
+                />
               )}
             </div>
           </RadioGroup>
@@ -321,6 +346,28 @@ const PremiumSection = ({
 };
 
 const ScheduleSection = () => {
+  const { data, setReportApplication } = useReportApplicationStore();
+  type Key = keyof typeof data;
+
+  const onChangeDate = (date: Dayjs | null, name?: string) => {
+    const prev = data[name as Key];
+    if (prev)
+      setReportApplication({
+        [name as Key]: `${date?.format('YYYY-MM-DD')}T${(prev as string).split('T')[1]}`,
+      });
+    else setReportApplication({ [name!]: date?.format('YYYY-MM-DDTHH:mm') });
+  };
+
+  const onChangeTime = (e: SelectChangeEvent<unknown>) => {
+    const prev = data[e.target.name as Key];
+    if (prev)
+      setReportApplication({
+        [e.target.name]:
+          `${(prev as string).split('T')[0]}T${e.target.value}:00`,
+      });
+    else setReportApplication({ [e.target.name]: `T${e.target.value}:00` });
+  };
+
   return (
     <section className="flex flex-col gap-1 lg:flex-row lg:items-start lg:gap-5">
       <div className="flex w-[8.75rem] shrink-0 items-center gap-1">
@@ -335,15 +382,27 @@ const ScheduleSection = () => {
         </span>
         <div>
           <Label>희망순위1*</Label>
-          <DateTimePicker />
+          <DateTimePicker
+            name="desiredDate1"
+            onChangeDate={onChangeDate}
+            onChangeTime={onChangeTime}
+          />
         </div>
         <div>
           <Label>희망순위2*</Label>
-          <DateTimePicker />
+          <DateTimePicker
+            name="desiredDate2"
+            onChangeDate={onChangeDate}
+            onChangeTime={onChangeTime}
+          />
         </div>
         <div>
           <Label>희망순위3*</Label>
-          <DateTimePicker />
+          <DateTimePicker
+            name="desiredDate3"
+            onChangeDate={onChangeDate}
+            onChangeTime={onChangeTime}
+          />
         </div>
       </div>
     </section>
@@ -351,6 +410,14 @@ const ScheduleSection = () => {
 };
 
 const AdditionalInfoSection = () => {
+  const { data, setReportApplication } = useReportApplicationStore();
+
+  const onChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
+    setReportApplication({ [e.target.name]: e.target.value });
+  };
+
   return (
     <section className="flex flex-col gap-5">
       <Heading2>추가 정보</Heading2>
@@ -363,6 +430,8 @@ const AdditionalInfoSection = () => {
           name="wishJob"
           id="job"
           placeholder="희망하는 직무를 알려주세요"
+          value={data.wishJob as string}
+          onChange={onChange}
         />
       </div>
       <div>
@@ -373,6 +442,8 @@ const AdditionalInfoSection = () => {
           name="message"
           placeholder="진단에 참고할 수 있도록 서류 작성에 대한 고민을 적어주세요"
           rows={2}
+          value={data.message as string}
+          onChange={onChange}
         />
       </div>
     </section>
