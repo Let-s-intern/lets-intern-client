@@ -4,6 +4,10 @@ import { FaArrowLeft } from 'react-icons/fa6';
 import { IoCloseOutline } from 'react-icons/io5';
 import { useNavigate, useParams } from 'react-router-dom';
 
+import {
+  convertReportTypeStatus,
+  useGetReportDetail,
+} from '../../../api/report';
 import { UserInfo } from '../../../components/common/program/program-detail/section/ApplySection';
 import Card from '../../../components/common/report/Card';
 import ControlLabel from '../../../components/common/report/ControlLabel';
@@ -111,15 +115,16 @@ const ReportApplyPage = () => {
 export default ReportApplyPage;
 
 const CallOut = () => {
+  const { reportId } = useParams();
+
+  const { data } = useGetReportDetail(Number(reportId));
+
   return (
     <div className="rounded-md bg-neutral-100 px-6 py-6">
       <span className="-ml-1 text-xsmall16 font-semibold text-primary">
         ❗신청 전 꼭 읽어주세요
       </span>
-      <p className="mt-1 text-xsmall14 text-neutral-20">
-        내용내용내용 내용내용내용 내용내용내용 내용내용내용내용내용 내용내용내용
-        내용내용내용
-      </p>
+      <p className="mt-1 text-xsmall14 text-neutral-20">{data?.notice}</p>
     </div>
   );
 };
@@ -132,6 +137,10 @@ const ProgramInfoSection = () => {
    * 4. 베이직인지 프리미엄인지
    * 5. 1:1 첨삭을 신청했는지 안 했는지
    */
+  const { reportId } = useParams();
+
+  const { data } = useGetReportDetail(Number(reportId));
+
   return (
     <section>
       <div className="mb-6 flex items-center gap-1">
@@ -146,7 +155,7 @@ const ProgramInfoSection = () => {
       <Card
         imgSrc=""
         imgAlt=""
-        title={programName}
+        title={data?.title || ''}
         content={[
           { label: '상품', text: '서류 진단서 (베이직), 맞춤 첨삭' },
           { label: '옵션', text: '현직자 피드백' },
@@ -165,7 +174,7 @@ const DocumentSection = () => {
   return (
     <section className="flex flex-col gap-3 lg:flex-row lg:items-start lg:gap-5">
       <div className="flex w-[8.75rem] shrink-0 items-center lg:mt-2">
-        <Heading2>진단용 {reportType}</Heading2>
+        <Heading2>진단용 {convertReportTypeStatus(reportType!)}</Heading2>
         <RequiredStar />
       </div>
       <FormControl fullWidth>

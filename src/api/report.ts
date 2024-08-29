@@ -74,6 +74,17 @@ export const convertReportFeedbackStatus = (status: string) => {
   }
 };
 
+export const convertReportTypeStatus = (type: string) => {
+  switch (type.toUpperCase()) {
+    case 'RESUME':
+      return '이력서';
+    case 'PORTFOLIO':
+      return '포트폴리오';
+    default:
+      return '자기소개서';
+  }
+};
+
 // GET /api/v1/report
 const getReportsForAdminSchema = z
   .object({
@@ -817,9 +828,13 @@ const createReportApplicationSchema = z.object({
   message: z.string(),
 });
 
+export type CreateReportApplication = z.infer<
+  typeof createReportApplicationSchema
+>;
+
 export const useCreateReportApplication = () => {
   return useMutation({
-    mutationFn: async (data: z.infer<typeof createReportApplicationSchema>) => {
+    mutationFn: async (data: CreateReportApplication) => {
       // Mock API call
       console.log('Creating report application:', data);
       return {
