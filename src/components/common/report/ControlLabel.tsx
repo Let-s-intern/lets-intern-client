@@ -17,10 +17,11 @@ const labelSx = {
 interface ControlLabelProps {
   label: string;
   value: string;
+  name?: string;
   subText?: string;
 }
 
-const ControlLabel = ({ label, value, subText }: ControlLabelProps) => {
+const ControlLabel = ({ label, value, name, subText }: ControlLabelProps) => {
   return (
     <div className="flex items-center">
       <FormControlLabel
@@ -28,6 +29,7 @@ const ControlLabel = ({ label, value, subText }: ControlLabelProps) => {
         value={value}
         control={<Radio size="small" sx={radioSx} />}
         label={label}
+        name={name}
       />
       {subText && (
         <span className="-ml-2 inline-block text-xsmall14 font-medium text-neutral-50">
