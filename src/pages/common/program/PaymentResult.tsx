@@ -94,6 +94,7 @@ const PaymentResult = () => {
           program_type: programApplicationData.programType,
           payment_method: params.paymentMethodKey,
           payment_amount: params.amount,
+          order_id: params.orderId,
         });
       })
       .catch((e) => {
