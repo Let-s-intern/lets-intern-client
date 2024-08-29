@@ -153,8 +153,8 @@ const ProgramInfoSection = () => {
         </Tooltip>
       </div>
       <Card
-        imgSrc=""
-        imgAlt=""
+        imgSrc="/images/report-thumbnail.png"
+        imgAlt="서류 진단서 프로그램 썸네일"
         title={data?.title || ''}
         content={[
           { label: '상품', text: '서류 진단서 (베이직), 맞춤 첨삭' },
