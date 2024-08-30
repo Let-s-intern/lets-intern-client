@@ -24,7 +24,7 @@ interface ReportApplicationStore {
     params: Partial<ReportApplicationStore['data']>,
   ) => void;
   initReportApplication: () => void;
-  checkInvalidate: () => boolean;
+  validate: () => { isValid: boolean; message: string | null };
 }
 
 const useReportApplicationStore = create(
@@ -79,9 +79,31 @@ const useReportApplicationStore = create(
           },
         });
       },
-      checkInvalidate: () => {
+      validate: () => {
         const currentData = get().data;
-        return Object.values(currentData).some((value) => value === null);
+        if (!currentData.applyUrl)
+          return { isValid: false, message: '진단용 이력서를 등록해주세요.' };
+
+        if (
+          currentData.reportPriceType === 'PREMIUM' &&
+          !currentData.recruitmentUrl
+        )
+          return { isValid: false, message: '채용공고를 등록해주세요.' };
+
+        if (
+          !currentData.desiredDate1 ||
+          !currentData.desiredDate2 ||
+          !currentData.desiredDate3
+        )
+          return {
+            isValid: false,
+            message: '맞춤 첨삭 일정 모두 선택해주세요.',
+          };
+
+        if (!currentData.wishJob)
+          return { isValid: false, message: '희망직무를 입력해주세요.' };
+
+        return { isValid: true, message: null };
       },
     }),
     {

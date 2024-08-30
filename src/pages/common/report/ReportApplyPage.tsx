@@ -4,12 +4,13 @@ import {
   SelectChangeEvent,
   useMediaQuery,
 } from '@mui/material';
+import { Dayjs } from 'dayjs';
 import React, { useEffect, useRef, useState } from 'react';
 import { FaArrowLeft } from 'react-icons/fa6';
 import { IoCloseOutline } from 'react-icons/io5';
 import { useNavigate, useParams } from 'react-router-dom';
 
-import { Dayjs } from 'dayjs';
+import { uploadFile } from '../../../api/file';
 import {
   convertReportPriceType,
   convertReportTypeStatus,
@@ -48,11 +49,33 @@ const ReportApplyPage = () => {
   const [applyFile, setApplyFile] = useState<File | null>(null);
   const [recruitmentFile, setRecruitmentFile] = useState<File | null>(null);
 
-  const { data: reportApplication, setReportApplication } =
-    useReportApplicationStore();
+  const {
+    data: reportApplication,
+    setReportApplication,
+    validate,
+  } = useReportApplicationStore();
 
-  const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setReportApplication({ [e.target.name]: e.target.value });
+  const onClickNext = () => {
+    // 파일 변환
+    if (applyFile) {
+      uploadFile({ file: applyFile, type: 'REPORT' }).then((url: string) => {
+        setReportApplication({ applyUrl: url });
+      });
+    }
+    if (recruitmentFile) {
+      uploadFile({ file: recruitmentFile, type: 'REPORT' }).then(
+        (url: string) => {
+          setReportApplication({ recruitmentUrl: url });
+        },
+      );
+    }
+
+    const { isValid, message } = validate();
+    if (!isValid) {
+      alert(message);
+      return;
+    }
+    navigate(`/report/payment/${reportType}/${reportId}`);
   };
 
   const onClickPayButton = () => {
@@ -64,7 +87,7 @@ const ReportApplyPage = () => {
   };
 
   useEffect(() => {
-    // application으로부터 user 정보 초기화
+    // mock data
     setReportApplication({
       reportId: 1,
       reportPriceType: 'PREMIUM',
@@ -119,9 +142,7 @@ const ReportApplyPage = () => {
             <FaArrowLeft size={20} />
           </button>
           <button
-            onClick={() =>
-              navigate(`/report/payment/${reportType}/${reportId}`)
-            }
+            onClick={onClickNext}
             className="text-1.125-medium w-full rounded-md bg-primary py-3 text-center font-medium text-neutral-100"
           >
             다음
@@ -182,6 +203,8 @@ const ProgramInfoSection = () => {
   const product = reportApplication.isFeedbackApplied
     ? `서류 진단서 (${convertReportPriceType(reportApplication.reportPriceType)}), 맞춤 첨삭`
     : `서류 진단서 (${convertReportPriceType(reportApplication.reportPriceType)})`;
+  const option =
+    reportApplication.optionIds.length === 0 ? '없음' : options.join(', ');
 
   useEffect(() => {
     // optionIds로 옵션 정보 불러오기
@@ -209,10 +232,7 @@ const ProgramInfoSection = () => {
           },
           {
             label: '옵션',
-            text:
-              reportApplication.optionIds.length === 0
-                ? '없음'
-                : options.join(', '),
+            text: option,
           },
         ]}
       />
