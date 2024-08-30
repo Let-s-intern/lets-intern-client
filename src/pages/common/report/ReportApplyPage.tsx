@@ -1,9 +1,21 @@
-import { FormControl, RadioGroup, useMediaQuery } from '@mui/material';
-import { useEffect, useState } from 'react';
+import {
+  FormControl,
+  RadioGroup,
+  SelectChangeEvent,
+  useMediaQuery,
+} from '@mui/material';
+import dayjs, { Dayjs } from 'dayjs';
+import React, { useEffect, useRef, useState } from 'react';
 import { FaArrowLeft } from 'react-icons/fa6';
+import { IoCloseOutline } from 'react-icons/io5';
 import { useNavigate, useParams } from 'react-router-dom';
 
-import { UserInfo } from '../../../components/common/program/program-detail/section/ApplySection';
+import { uploadFile } from '../../../api/file';
+import {
+  convertReportPriceType,
+  convertReportTypeStatus,
+  useGetReportDetail,
+} from '../../../api/report';
 import Card from '../../../components/common/report/Card';
 import ControlLabel from '../../../components/common/report/ControlLabel';
 import DateTimePicker from '../../../components/common/report/DateTimePicker';
@@ -11,50 +23,83 @@ import FilledInput from '../../../components/common/report/FilledInput';
 import Heading1 from '../../../components/common/report/Heading1';
 import Heading2 from '../../../components/common/report/Heading2';
 import Label from '../../../components/common/report/Label';
-import OutlinedButton from '../../../components/common/report/OutlinedButton';
 import Tooltip from '../../../components/common/report/Tooltip';
 import BottomSheet from '../../../components/common/ui/BottomSheeet';
 import Input from '../../../components/common/ui/input/Input';
-import useProgramStore from '../../../store/useProgramStore';
-import { ICouponForm } from '../../../types/interface';
-
-const programName = '포트폴리오 조지기';
+import useReportPayment from '../../../hooks/useReportPayment';
+import useReportProgramInfo from '../../../hooks/useReportProgramInfo';
+import useReportApplicationStore from '../../../store/useReportApplicationStore';
 
 const ReportApplyPage = () => {
   const isUpTo1280 = useMediaQuery('(max-width: 1280px)');
   const navigate = useNavigate();
   const { reportType, reportId } = useParams();
 
-  const [userInfo, setUserInfo] = useState<UserInfo>({
-    name: '',
-    email: '',
-    phoneNumber: '',
-    contactEmail: '',
-    question: '',
-  });
-  const [coupon, setCoupon] = useState<ICouponForm>({
-    id: null,
-    price: 0,
-  });
+  const [applyFile, setApplyFile] = useState<File | null>(null);
+  const [recruitmentFile, setRecruitmentFile] = useState<File | null>(null);
 
   const {
-    data: programApplicationForm,
-    setProgramApplicationForm,
-    initProgramApplicationForm,
-  } = useProgramStore();
+    data: reportApplication,
+    setReportApplication,
+    validate,
+  } = useReportApplicationStore();
+
+  const onClickNext = () => {
+    // 파일 변환
+    if (applyFile) {
+      uploadFile({ file: applyFile, type: 'REPORT' }).then((url: string) => {
+        setReportApplication({ applyUrl: url });
+      });
+    }
+    if (recruitmentFile) {
+      uploadFile({ file: recruitmentFile, type: 'REPORT' }).then(
+        (url: string) => {
+          setReportApplication({ recruitmentUrl: url });
+        },
+      );
+    }
+
+    const { isValid, message } = validate();
+    if (!isValid) {
+      alert(message);
+      return;
+    }
+    navigate(`/report/payment/${reportType}/${reportId}`);
+  };
 
   const onClickPayButton = () => {
     //  payInfo 결제정보: application 정보로부터 가져오기
     // 프로그램 신청 정보 가져오기
-    // setProgramApplicationForm({});
+    // setReportApplication({...});
 
     navigate(`/payment`);
   };
 
-  /* application으로부터 user 정보 초기화 */
+  // useEffect(() => {
+  //   // mock data
+  //   setReportApplication({
+  //     reportId: 1,
+  //     reportPriceType: 'PREMIUM',
+  //     optionIds: [],
+  //     isFeedbackApplied: true,
+  //     couponId: null,
+  //     paymentKey: null,
+  //     orderId: null,
+  //     amount: null,
+  //     discountPrice: null,
+  //     applyUrl: null,
+  //     recruitmentUrl: null,
+  //     desiredDate1: null,
+  //     desiredDate2: null,
+  //     desiredDate3: null,
+  //     wishJob: null,
+  //     message: null,
+  //   });
+  // }, []);
+
   useEffect(() => {
-    console.log('get user info');
-  }, []);
+    console.log(reportApplication);
+  }, [reportApplication]);
 
   return (
     <div className="px-5 md:px-32 md:py-10 xl:flex xl:gap-16 xl:px-48">
@@ -65,19 +110,39 @@ const ReportApplyPage = () => {
         </header>
         <main className="my-8 flex flex-col gap-10">
           <ProgramInfoSection />
-          <DocumentSection />
-          <PremiumSection />
-          <ScheduleSection />
+          <DocumentSection file={applyFile} dispatch={setApplyFile} />
+          {reportApplication.reportPriceType === 'PREMIUM' && (
+            <PremiumSection
+              file={recruitmentFile}
+              dispatch={setRecruitmentFile}
+            />
+          )}
+          {reportApplication.isFeedbackApplied && <ScheduleSection />}
           <AdditionalInfoSection />
         </main>
       </div>
 
-      {!isUpTo1280 && (
+      {isUpTo1280 ? (
+        <BottomSheet>
+          <button
+            onClick={() => navigate(-1)}
+            className="flex h-14 w-14 shrink-0 items-center justify-center rounded-md border-2 border-primary bg-neutral-100"
+          >
+            <FaArrowLeft size={20} />
+          </button>
+          <button
+            onClick={onClickNext}
+            className="text-1.125-medium w-full rounded-md bg-primary py-3 text-center font-medium text-neutral-100"
+          >
+            다음
+          </button>
+        </BottomSheet>
+      ) : (
         <aside className="h-fit w-96 shrink-0 rounded-lg bg-static-100 px-5 pb-6 shadow-03">
           <Heading1>결제하기</Heading1>
           <div className="flex flex-col gap-10">
             <UsereInfoSection />
-            <PaymentSection />
+            <ReportPaymentSection />
             <button
               onClick={onClickPayButton}
               className="text-1.125-medium w-full rounded-md bg-primary py-3 text-center font-medium text-neutral-100"
@@ -87,25 +152,6 @@ const ReportApplyPage = () => {
           </div>
         </aside>
       )}
-
-      {isUpTo1280 && (
-        <BottomSheet>
-          <button
-            onClick={() => navigate(-1)}
-            className="flex h-14 w-14 shrink-0 items-center justify-center rounded-md border-2 border-primary bg-neutral-100"
-          >
-            <FaArrowLeft size={20} />
-          </button>
-          <button
-            onClick={() =>
-              navigate(`/report/payment/${reportType}/${reportId}`)
-            }
-            className="text-1.125-medium w-full rounded-md bg-primary py-3 text-center font-medium text-neutral-100"
-          >
-            다음
-          </button>
-        </BottomSheet>
-      )}
     </div>
   );
 };
@@ -113,27 +159,23 @@ const ReportApplyPage = () => {
 export default ReportApplyPage;
 
 const CallOut = () => {
+  const { reportId } = useParams();
+
+  const { data } = useGetReportDetail(Number(reportId));
+
   return (
     <div className="rounded-md bg-neutral-100 px-6 py-6">
       <span className="-ml-1 text-xsmall16 font-semibold text-primary">
         ❗신청 전 꼭 읽어주세요
       </span>
-      <p className="mt-1 text-xsmall14 text-neutral-20">
-        내용내용내용 내용내용내용 내용내용내용 내용내용내용내용내용 내용내용내용
-        내용내용내용
-      </p>
+      <p className="mt-1 text-xsmall14 text-neutral-20">{data?.notice}</p>
     </div>
   );
 };
 
 const ProgramInfoSection = () => {
-  /** 다음 정보 필요
-   * 1. 어떤 유형인지 (포폴, 자소서, 이력서)
-   * 2. 제목이 무엇인지
-   * 3. 유형별 정적 썸네일이 무엇인지
-   * 4. 베이직인지 프리미엄인지
-   * 5. 1:1 첨삭을 신청했는지 안 했는지
-   */
+  const { title, product, option } = useReportProgramInfo();
+
   return (
     <section>
       <div className="mb-6 flex items-center gap-1">
@@ -146,27 +188,41 @@ const ProgramInfoSection = () => {
         </Tooltip>
       </div>
       <Card
-        imgSrc=""
-        imgAlt=""
-        title={programName}
+        imgSrc="/images/report-thumbnail.png"
+        imgAlt="서류 진단서 프로그램 썸네일"
+        title={title!}
         content={[
-          { label: '상품', text: '서류 진단서 (베이직), 맞춤 첨삭' },
-          { label: '옵션', text: '현직자 피드백' },
+          {
+            label: '상품',
+            text: product,
+          },
+          {
+            label: '옵션',
+            text: option,
+          },
         ]}
       />
     </section>
   );
 };
 
-const DocumentSection = () => {
+const DocumentSection = ({
+  file,
+  dispatch,
+}: {
+  file: File | null;
+  dispatch: React.Dispatch<React.SetStateAction<File | null>>;
+}) => {
   const { reportType } = useParams();
 
   const [value, setValue] = useState('file');
 
+  const { data, setReportApplication } = useReportApplicationStore();
+
   return (
     <section className="flex flex-col gap-3 lg:flex-row lg:items-start lg:gap-5">
       <div className="flex w-[8.75rem] shrink-0 items-center lg:mt-2">
-        <Heading2>진단용 {reportType}</Heading2>
+        <Heading2>진단용 {convertReportTypeStatus(reportType!)}</Heading2>
         <RequiredStar />
       </div>
       <FormControl fullWidth>
@@ -174,7 +230,11 @@ const DocumentSection = () => {
           defaultValue="file"
           name="radio-buttons-group"
           value={value}
-          onChange={(event) => setValue(event.target.value)}
+          onChange={(e) => {
+            setValue(e.target.value);
+            if (e.target.value === 'url') dispatch(null);
+            else setReportApplication({ applyUrl: null });
+          }}
         >
           {/* 파일 첨부 */}
           <div className="mb-4">
@@ -183,12 +243,23 @@ const DocumentSection = () => {
               value="file"
               subText="(pdf, doc, docx 형식 지원)"
             />
-            {value === 'file' && <OutlinedButton caption="파일 업로드" />}
+            {value === 'file' && (
+              <FileUploadButton file={file} dispatch={dispatch} />
+            )}
           </div>
           {/* URL */}
           <div>
             <ControlLabel label="URL" value="url" />
-            {value === 'url' && <FilledInput placeholder="https://" />}
+            {value === 'url' && (
+              <FilledInput
+                name="applyUrl"
+                placeholder="https://"
+                value={data.applyUrl as string}
+                onChange={(e) =>
+                  setReportApplication({ applyUrl: e.target.value })
+                }
+              />
+            )}
           </div>
         </RadioGroup>
       </FormControl>
@@ -196,8 +267,15 @@ const DocumentSection = () => {
   );
 };
 
-const PremiumSection = () => {
+const PremiumSection = ({
+  file,
+  dispatch,
+}: {
+  file: File | null;
+  dispatch: React.Dispatch<React.SetStateAction<File | null>>;
+}) => {
   const [value, setValue] = useState('file');
+  const { data, setReportApplication } = useReportApplicationStore();
 
   return (
     <section className="flex flex-col gap-1 lg:flex-row lg:items-start lg:gap-5">
@@ -213,8 +291,10 @@ const PremiumSection = () => {
           <RadioGroup
             defaultValue="file"
             value={value}
-            onChange={(event) => {
-              event.target.value !== undefined && setValue(event.target.value);
+            onChange={(e) => {
+              setValue(e.target.value);
+              if (e.target.value === 'url') dispatch(null);
+              else setReportApplication({ recruitmentUrl: null });
             }}
             name="radio-buttons-group"
           >
@@ -227,11 +307,22 @@ const PremiumSection = () => {
               <span className="-mt-1 mb-2 block text-xxsmall12 text-neutral-45">
                 *업무, 지원자격, 우대사항이 보이게 채용공고를 캡처해주세요.
               </span>
-              {value === 'file' && <OutlinedButton caption="파일 업로드" />}
+              {value === 'file' && (
+                <FileUploadButton file={file} dispatch={dispatch} />
+              )}
             </div>
             <div>
               <ControlLabel label="URL" value="url" />
-              {value === 'url' && <FilledInput placeholder="https://" />}
+              {value === 'url' && (
+                <FilledInput
+                  name="recruitmentUrl"
+                  placeholder="https://"
+                  value={data.recruitmentUrl as string}
+                  onChange={(e) =>
+                    setReportApplication({ recruitmentUrl: e.target.value })
+                  }
+                />
+              )}
             </div>
           </RadioGroup>
         </FormControl>
@@ -241,6 +332,28 @@ const PremiumSection = () => {
 };
 
 const ScheduleSection = () => {
+  const { data, setReportApplication } = useReportApplicationStore();
+  type Key = keyof typeof data;
+
+  const onChangeDate = (date: Dayjs | null, name?: string) => {
+    const prev = data[name as Key];
+    if (prev)
+      setReportApplication({
+        [name as Key]: `${date?.format('YYYY-MM-DD')}T${(prev as string).split('T')[1]}`,
+      });
+    else setReportApplication({ [name!]: date?.format('YYYY-MM-DDTHH:mm') });
+  };
+
+  const onChangeTime = (e: SelectChangeEvent<unknown>) => {
+    const prev = data[e.target.name as Key];
+    if (prev)
+      setReportApplication({
+        [e.target.name]:
+          `${(prev as string).split('T')[0]}T${e.target.value}:00`,
+      });
+    else setReportApplication({ [e.target.name]: `T${e.target.value}:00` });
+  };
+
   return (
     <section className="flex flex-col gap-1 lg:flex-row lg:items-start lg:gap-5">
       <div className="flex w-[8.75rem] shrink-0 items-center gap-1">
@@ -255,15 +368,33 @@ const ScheduleSection = () => {
         </span>
         <div>
           <Label>희망순위1*</Label>
-          <DateTimePicker />
+          <DateTimePicker
+            date={dayjs(data.desiredDate1)}
+            time={dayjs(data.desiredDate1).hour()}
+            name="desiredDate1"
+            onChangeDate={onChangeDate}
+            onChangeTime={onChangeTime}
+          />
         </div>
         <div>
           <Label>희망순위2*</Label>
-          <DateTimePicker />
+          <DateTimePicker
+            date={dayjs(data.desiredDate2)}
+            time={dayjs(data.desiredDate1).hour()}
+            name="desiredDate2"
+            onChangeDate={onChangeDate}
+            onChangeTime={onChangeTime}
+          />
         </div>
         <div>
           <Label>희망순위3*</Label>
-          <DateTimePicker />
+          <DateTimePicker
+            date={dayjs(data.desiredDate3)}
+            time={dayjs(data.desiredDate1).hour()}
+            name="desiredDate3"
+            onChangeDate={onChangeDate}
+            onChangeTime={onChangeTime}
+          />
         </div>
       </div>
     </section>
@@ -271,6 +402,14 @@ const ScheduleSection = () => {
 };
 
 const AdditionalInfoSection = () => {
+  const { data, setReportApplication } = useReportApplicationStore();
+
+  const onChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
+    setReportApplication({ [e.target.name]: e.target.value });
+  };
+
   return (
     <section className="flex flex-col gap-5">
       <Heading2>추가 정보</Heading2>
@@ -279,16 +418,24 @@ const AdditionalInfoSection = () => {
           희망직무
           <RequiredStar />
         </Label>
-        <FilledInput id="job" placeholder="희망하는 직무를 알려주세요" />
+        <FilledInput
+          name="wishJob"
+          id="job"
+          placeholder="희망하는 직무를 알려주세요"
+          value={data.wishJob as string}
+          onChange={onChange}
+        />
       </div>
       <div>
         <Label htmlFor="concern">서류 작성 고민</Label>
         <textarea
           id="concern"
           className="w-full resize-none rounded-md bg-neutral-95 p-3 text-xsmall14"
-          name="concern"
+          name="message"
           placeholder="진단에 참고할 수 있도록 서류 작성에 대한 고민을 적어주세요"
           rows={2}
+          value={data.message as string}
+          onChange={onChange}
         />
       </div>
     </section>
@@ -333,11 +480,14 @@ const UsereInfoSection = () => {
   );
 };
 
-const PaymentSection = () => {
+export const ReportPaymentSection = () => {
+  const { data: reportApplication } = useReportApplicationStore();
+  const { data: priceInfo } = useReportPayment();
+
   return (
     <section>
       <Heading2>결제 정보</Heading2>
-      <div className="mt-6 flex gap-2.5">
+      {/* <div className="mt-6 flex gap-2.5">
         <Input
           className="w-full"
           type="text"
@@ -346,29 +496,46 @@ const PaymentSection = () => {
         <button className="shrink-0 rounded-sm bg-primary px-4 py-1.5 text-xsmall14 font-medium text-neutral-100">
           쿠폰 등록
         </button>
-      </div>
+      </div> */}
       <hr className="my-5" />
       <div className="flex flex-col">
         <div className="flex h-10 items-center justify-between px-3 text-neutral-0">
-          <span>서류 진단서 (베이직 + 옵션)</span>
-          <span>30,000원</span>
+          <span>
+            서류 진단서 (
+            {reportApplication.optionIds.length === 0
+              ? convertReportPriceType(reportApplication.reportPriceType)
+              : `${convertReportPriceType(reportApplication.reportPriceType)} + 옵션`}
+            )
+          </span>
+          {/* 서류 진단 + 사용자가 선택한 모든 옵션 가격을 더한 값 */}
+          <span>{priceInfo.report.toLocaleString()}원</span>
         </div>
         <div className="flex h-10 items-center justify-between px-3 text-neutral-0">
-          <span>맞춤첨삭</span>
-          <span>15,000원</span>
+          <span>1:1 피드백</span>
+          {/* 1:1 피드백 가격 */}
+          <span>{priceInfo.feedback.toLocaleString()}원</span>
         </div>
         <div className="flex h-10 items-center justify-between px-3 text-neutral-0">
-          <span>20% 할인</span>
-          <span>-9,000원</span>
+          {/* 서류진단 + 사용자가 선택한 모든 옵션 + 1:1 피드백의 할인 가격을 모두 더한 값 */}
+          <span>
+            {Math.ceil(
+              (priceInfo.discount / (priceInfo.report + priceInfo.feedback)) *
+                100,
+            )}
+            % 할인
+          </span>
+          <span>-{priceInfo.discount.toLocaleString()}원</span>
         </div>
-        <div className="flex h-10 items-center justify-between px-3 text-primary">
+        {/* <div className="flex h-10 items-center justify-between px-3 text-primary">
           <span>쿠폰할인</span>
-          <span className="font-bold">-10,000원</span>
-        </div>
+          <span className="font-bold">
+            -{priceInfo.coupon.toLocaleString()}원
+          </span>
+        </div> */}
         <hr className="my-5" />
         <div className="flex h-10 items-center justify-between px-3 font-semibold text-neutral-0">
           <span>결제금액</span>
-          <span>26,000원</span>
+          <span>{priceInfo.total.toLocaleString()}원</span>
         </div>
       </div>
     </section>
@@ -377,4 +544,48 @@ const PaymentSection = () => {
 
 const RequiredStar = () => {
   return <span className="text-[#7B61FF]">*</span>;
+};
+
+const FileUploadButton = ({
+  file,
+  dispatch,
+}: {
+  file: File | null;
+  dispatch: React.Dispatch<React.SetStateAction<File | null>>;
+}) => {
+  const ref = useRef<HTMLInputElement>(null);
+
+  return (
+    <>
+      <button
+        className="rounded-md border border-neutral-60 bg-neutral-100 px-3 py-1.5 text-xsmall14 text-neutral-40"
+        onClick={() => {
+          ref.current?.click();
+        }}
+      >
+        {file ? (
+          <div className="flex items-center gap-1">
+            <span>{`${file.name} (${(file.size / 1000).toFixed(1)}KB)`}</span>
+            <IoCloseOutline
+              size={16}
+              color="#7a7d84"
+              onClick={(e) => {
+                e.stopPropagation();
+                dispatch(null);
+              }}
+            />
+          </div>
+        ) : (
+          '파일 업로드'
+        )}
+      </button>
+      <input
+        onChange={(e) => dispatch(e.target.files![0])}
+        className="hidden"
+        ref={ref}
+        type="file"
+        name="file"
+      />
+    </>
+  );
 };

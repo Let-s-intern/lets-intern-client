@@ -1,38 +1,18 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { FaArrowLeft } from 'react-icons/fa6';
 import { useNavigate } from 'react-router-dom';
 
-import { UserInfo } from '../../../components/common/program/program-detail/section/ApplySection';
+import Card from '../../../components/common/report/Card';
 import Heading1 from '../../../components/common/report/Heading1';
 import Heading2 from '../../../components/common/report/Heading2';
 import Label from '../../../components/common/report/Label';
 import BottomSheet from '../../../components/common/ui/BottomSheeet';
 import Input from '../../../components/common/ui/input/Input';
-import useProgramStore from '../../../store/useProgramStore';
-import { ICouponForm } from '../../../types/interface';
-
-const programName = '포트폴리오 조지기';
+import useReportProgramInfo from '../../../hooks/useReportProgramInfo';
+import { ReportPaymentSection } from './ReportApplyPage';
 
 const ReportPaymentPage = () => {
   const navigate = useNavigate();
-
-  const [userInfo, setUserInfo] = useState<UserInfo>({
-    name: '',
-    email: '',
-    phoneNumber: '',
-    contactEmail: '',
-    question: '',
-  });
-  const [coupon, setCoupon] = useState<ICouponForm>({
-    id: null,
-    price: 0,
-  });
-
-  const {
-    data: programApplicationForm,
-    setProgramApplicationForm,
-    initProgramApplicationForm,
-  } = useProgramStore();
 
   const onClickPayButton = () => {
     //  payInfo 결제정보: application 정보로부터 가져오기
@@ -42,9 +22,9 @@ const ReportPaymentPage = () => {
     navigate(`/payment`);
   };
 
-  /** application으로부터 user 정보 초기화 */
+  /* application으로부터 user 정보 초기화 */
   useEffect(() => {
-    console.log('get user info');
+    // console.log('get user info');
   }, []);
 
   return (
@@ -53,7 +33,7 @@ const ReportPaymentPage = () => {
       <main className="mb-8 flex flex-col gap-10">
         <ProgramInfoSection />
         <UsereInfoSection />
-        <PaymentSection />
+        <ReportPaymentSection />
       </main>
       <BottomSheet>
         <button
@@ -76,31 +56,26 @@ const ReportPaymentPage = () => {
 export default ReportPaymentPage;
 
 const ProgramInfoSection = () => {
+  const { title, product, option } = useReportProgramInfo();
+
   return (
     <section>
       <Heading2>프로그램 정보</Heading2>
-      <div className="mt-6 flex items-center gap-4">
-        <div className="h-20 w-28 rounded-sm bg-neutral-90">
-          <img className="h-auto w-full" src="" alt="" />
-        </div>
-        <div>
-          <span className="font-semibold">{programName}</span>
-          <div className="mt-3">
-            <div className="flex gap-4">
-              <span className="text-xxsmall12 font-medium">상품</span>
-              <span className="text-xxsmall12 font-medium text-primary-dark">
-                서류 진단서 (베이직), 맞춤 첨삭
-              </span>
-            </div>
-            <div className="flex gap-4">
-              <span className="text-xxsmall12 font-medium">옵션</span>
-              <span className="text-xxsmall12 font-medium text-primary-dark">
-                현직자 피드백
-              </span>
-            </div>
-          </div>
-        </div>
-      </div>
+      <Card
+        imgSrc="/images/report-thumbnail.png"
+        imgAlt="서류 진단서 프로그램 썸네일"
+        title={title!}
+        content={[
+          {
+            label: '상품',
+            text: product,
+          },
+          {
+            label: '옵션',
+            text: option,
+          },
+        ]}
+      />
     </section>
   );
 };
@@ -137,48 +112,6 @@ const UsereInfoSection = () => {
             가입한 이메일과 동일
           </label>
           <Input name="contactEmail" placeholder="example@example.com" />
-        </div>
-      </div>
-    </section>
-  );
-};
-
-const PaymentSection = () => {
-  return (
-    <section>
-      <Heading2>결제 정보</Heading2>
-      <div className="mt-6 flex gap-2.5">
-        <Input
-          className="w-full"
-          type="text"
-          placeholder="쿠폰 번호를 입력해주세요."
-        />
-        <button className="shrink-0 rounded-sm bg-primary px-4 py-1.5 text-xsmall14 font-medium text-neutral-100">
-          쿠폰 등록
-        </button>
-      </div>
-      <hr className="my-5" />
-      <div className="flex flex-col">
-        <div className="flex h-10 items-center justify-between px-3 text-neutral-0">
-          <span>서류 진단서 (베이직 + 옵션)</span>
-          <span>30,000원</span>
-        </div>
-        <div className="flex h-10 items-center justify-between px-3 text-neutral-0">
-          <span>맞춤첨삭</span>
-          <span>15,000원</span>
-        </div>
-        <div className="flex h-10 items-center justify-between px-3 text-neutral-0">
-          <span>20% 할인</span>
-          <span>-9,000원</span>
-        </div>
-        <div className="flex h-10 items-center justify-between px-3 text-primary">
-          <span>쿠폰할인</span>
-          <span className="font-bold">-10,000원</span>
-        </div>
-        <hr className="my-5" />
-        <div className="flex h-10 items-center justify-between px-3 font-semibold text-neutral-0">
-          <span>결제금액</span>
-          <span>26,000원</span>
         </div>
       </div>
     </section>

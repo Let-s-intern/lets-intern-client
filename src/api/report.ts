@@ -74,6 +74,17 @@ export const convertReportFeedbackStatus = (status: string) => {
   }
 };
 
+export const convertReportTypeStatus = (type: string) => {
+  switch (type.toUpperCase()) {
+    case 'RESUME':
+      return '이력서';
+    case 'PORTFOLIO':
+      return '포트폴리오';
+    default:
+      return '자기소개서';
+  }
+};
+
 // GET /api/v1/report
 const getReportsForAdminSchema = z
   .object({
@@ -231,8 +242,10 @@ const getReportPriceDetailSchema = z.object({
     .optional(),
   feedbackPriceInfo: z
     .object({
-      price: z.number().nullable().optional(),
-      discountPrice: z.number().nullable().optional(),
+      reportFeedbackId: z.number(),
+      reportPriceType: reportPriceTypeSchema.nullable().optional(),
+      feedbackPrice: z.number().nullable().optional(),
+      feedbackDiscountPrice: z.number().nullable().optional(),
     })
     .nullable()
     .optional(),
@@ -263,7 +276,12 @@ export const useGetReportPriceDetail = (reportId: number) => {
             title: '심층 분석',
           },
         ],
-        feedbackPriceInfo: { price: 80000, discountPrice: 72000 },
+        feedbackPriceInfo: {
+          reportFeedbackId: 1,
+          reportPriceType: 'PREMIUM',
+          feedbackPrice: 80000,
+          feedbackDiscountPrice: 72000,
+        },
       };
 
       return getReportPriceDetailSchema.parse(mockData);
@@ -817,9 +835,13 @@ const createReportApplicationSchema = z.object({
   message: z.string(),
 });
 
+export type CreateReportApplication = z.infer<
+  typeof createReportApplicationSchema
+>;
+
 export const useCreateReportApplication = () => {
   return useMutation({
-    mutationFn: async (data: z.infer<typeof createReportApplicationSchema>) => {
+    mutationFn: async (data: CreateReportApplication) => {
       // Mock API call
       console.log('Creating report application:', data);
       return {
