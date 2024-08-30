@@ -4,7 +4,7 @@ import {
   SelectChangeEvent,
   useMediaQuery,
 } from '@mui/material';
-import { Dayjs } from 'dayjs';
+import dayjs, { Dayjs } from 'dayjs';
 import React, { useEffect, useRef, useState } from 'react';
 import { FaArrowLeft } from 'react-icons/fa6';
 import { IoCloseOutline } from 'react-icons/io5';
@@ -15,6 +15,7 @@ import {
   convertReportPriceType,
   convertReportTypeStatus,
   useGetReportDetail,
+  useGetReportPriceDetail,
 } from '../../../api/report';
 import { UserInfo } from '../../../components/common/program/program-detail/section/ApplySection';
 import Card from '../../../components/common/report/Card';
@@ -86,27 +87,27 @@ const ReportApplyPage = () => {
     navigate(`/payment`);
   };
 
-  useEffect(() => {
-    // mock data
-    setReportApplication({
-      reportId: 1,
-      reportPriceType: 'PREMIUM',
-      optionIds: [],
-      isFeedbackApplied: true,
-      couponId: null,
-      paymentKey: null,
-      orderId: null,
-      amount: null,
-      discountPrice: null,
-      applyUrl: null,
-      recruitmentUrl: null,
-      desiredDate1: null,
-      desiredDate2: null,
-      desiredDate3: null,
-      wishJob: null,
-      message: null,
-    });
-  }, []);
+  // useEffect(() => {
+  //   // mock data
+  //   setReportApplication({
+  //     reportId: 1,
+  //     reportPriceType: 'PREMIUM',
+  //     optionIds: [],
+  //     isFeedbackApplied: true,
+  //     couponId: null,
+  //     paymentKey: null,
+  //     orderId: null,
+  //     amount: null,
+  //     discountPrice: null,
+  //     applyUrl: null,
+  //     recruitmentUrl: null,
+  //     desiredDate1: null,
+  //     desiredDate2: null,
+  //     desiredDate3: null,
+  //     wishJob: null,
+  //     message: null,
+  //   });
+  // }, []);
 
   useEffect(() => {
     console.log(reportApplication);
@@ -185,19 +186,14 @@ const CallOut = () => {
 };
 
 const ProgramInfoSection = () => {
-  /** 다음 정보 필요
-   * 1. 어떤 유형인지 (포폴, 자소서, 이력서)
-   * 2. 제목이 무엇인지
-   * 3. 유형별 정적 썸네일이 무엇인지
-   * 4. 베이직인지 프리미엄인지
-   * 5. 1:1 첨삭을 신청했는지 안 했는지
-   */
-
   const { reportId } = useParams();
 
   const [options, setOptions] = useState<string[]>([]);
 
   const { data: reportDetailData } = useGetReportDetail(Number(reportId));
+  const { data: reportPriceDetailData } = useGetReportPriceDetail(
+    Number(reportId),
+  );
   const { data: reportApplication } = useReportApplicationStore();
 
   const product = reportApplication.isFeedbackApplied
@@ -207,7 +203,16 @@ const ProgramInfoSection = () => {
     reportApplication.optionIds.length === 0 ? '없음' : options.join(', ');
 
   useEffect(() => {
-    // optionIds로 옵션 정보 불러오기
+    // optionIds로 옵션 제목 불러오기
+    const optionIds = reportApplication.optionIds;
+    if (optionIds.length === 0) return;
+
+    optionIds.forEach((id) => {
+      const optionInfo = reportPriceDetailData?.reportOptionInfos?.find(
+        (info) => info.reportOptionId === id,
+      );
+      setOptions((prev) => [...prev, optionInfo?.title as string]);
+    });
   }, []);
 
   return (
@@ -403,6 +408,8 @@ const ScheduleSection = () => {
         <div>
           <Label>희망순위1*</Label>
           <DateTimePicker
+            date={dayjs(data.desiredDate1)}
+            time={dayjs(data.desiredDate1).hour()}
             name="desiredDate1"
             onChangeDate={onChangeDate}
             onChangeTime={onChangeTime}
@@ -411,6 +418,8 @@ const ScheduleSection = () => {
         <div>
           <Label>희망순위2*</Label>
           <DateTimePicker
+            date={dayjs(data.desiredDate2)}
+            time={dayjs(data.desiredDate1).hour()}
             name="desiredDate2"
             onChangeDate={onChangeDate}
             onChangeTime={onChangeTime}
@@ -419,6 +428,8 @@ const ScheduleSection = () => {
         <div>
           <Label>희망순위3*</Label>
           <DateTimePicker
+            date={dayjs(data.desiredDate3)}
+            time={dayjs(data.desiredDate1).hour()}
             name="desiredDate3"
             onChangeDate={onChangeDate}
             onChangeTime={onChangeTime}

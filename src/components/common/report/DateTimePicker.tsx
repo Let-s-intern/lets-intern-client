@@ -6,7 +6,7 @@ import {
   SelectChangeEvent,
 } from '@mui/material';
 import { DatePicker } from '@mui/x-date-pickers';
-import { Dayjs } from 'dayjs';
+import dayjs, { Dayjs } from 'dayjs';
 
 import './date-pickers-toolbar.scss';
 
@@ -29,12 +29,16 @@ const dateTimePickerSx = {
 
 interface DateTimePickerProps {
   name?: string;
+  date?: Dayjs | null;
+  time?: number | null;
   onChangeDate?: (date: Dayjs | null, name?: string) => void;
   onChangeTime?: (e: SelectChangeEvent<unknown>) => void;
 }
 
 const DateTimePicker = ({
   name,
+  date,
+  time,
   onChangeDate,
   onChangeTime,
 }: DateTimePickerProps) => {
@@ -45,6 +49,8 @@ const DateTimePicker = ({
         format="YY년 M월 D일(dd)"
         label="날짜 선택"
         name={name}
+        value={date}
+        minDate={dayjs()}
         onChange={(date) => onChangeDate && onChangeDate(date, name)}
       />
       <FormControl sx={dateTimePickerSx}>
@@ -53,6 +59,7 @@ const DateTimePicker = ({
           labelId="time-select-label"
           label="시간 선택"
           name={name}
+          value={time}
           onChange={onChangeTime}
         >
           {timeOptions.map((option) => (
