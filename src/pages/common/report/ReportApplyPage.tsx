@@ -186,6 +186,39 @@ const CallOut = () => {
 };
 
 const ProgramInfoSection = () => {
+  const { title, product, option } = useReportProgramInfo();
+
+  return (
+    <section>
+      <div className="mb-6 flex items-center gap-1">
+        <Heading2>프로그램 정보</Heading2>
+        <Tooltip alt="프로그램 도움말 아이콘">
+          <span className="font-semibold">진단서 발급 예상 소요기간</span>
+          <li>서류 진단서 (베이직): 최대 2일</li>
+          <li>서류 진단서 (프리미엄) 최대 3일</li>
+          <li>옵션 (현직자 피드백): 최대 5일</li>
+        </Tooltip>
+      </div>
+      <Card
+        imgSrc="/images/report-thumbnail.png"
+        imgAlt="서류 진단서 프로그램 썸네일"
+        title={title!}
+        content={[
+          {
+            label: '상품',
+            text: product,
+          },
+          {
+            label: '옵션',
+            text: option,
+          },
+        ]}
+      />
+    </section>
+  );
+};
+
+const useReportProgramInfo = () => {
   const { reportId } = useParams();
 
   const [options, setOptions] = useState<string[]>([]);
@@ -215,34 +248,7 @@ const ProgramInfoSection = () => {
     });
   }, []);
 
-  return (
-    <section>
-      <div className="mb-6 flex items-center gap-1">
-        <Heading2>프로그램 정보</Heading2>
-        <Tooltip alt="프로그램 도움말 아이콘">
-          <span className="font-semibold">진단서 발급 예상 소요기간</span>
-          <li>서류 진단서 (베이직): 최대 2일</li>
-          <li>서류 진단서 (프리미엄) 최대 3일</li>
-          <li>옵션 (현직자 피드백): 최대 5일</li>
-        </Tooltip>
-      </div>
-      <Card
-        imgSrc="/images/report-thumbnail.png"
-        imgAlt="서류 진단서 프로그램 썸네일"
-        title={reportDetailData?.title || ''}
-        content={[
-          {
-            label: '상품',
-            text: product,
-          },
-          {
-            label: '옵션',
-            text: option,
-          },
-        ]}
-      />
-    </section>
-  );
+  return { title: reportDetailData?.title, product, option };
 };
 
 const DocumentSection = ({

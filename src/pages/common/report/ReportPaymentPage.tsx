@@ -1,11 +1,7 @@
 import { useEffect, useState } from 'react';
 import { FaArrowLeft } from 'react-icons/fa6';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
-import {
-  convertReportPriceType,
-  useGetReportDetail,
-} from '../../../api/report';
 import { UserInfo } from '../../../components/common/program/program-detail/section/ApplySection';
 import Card from '../../../components/common/report/Card';
 import Heading1 from '../../../components/common/report/Heading1';
@@ -15,6 +11,7 @@ import BottomSheet from '../../../components/common/ui/BottomSheeet';
 import Input from '../../../components/common/ui/input/Input';
 import useReportApplicationStore from '../../../store/useReportApplicationStore';
 import { ICouponForm } from '../../../types/interface';
+import useReportProgramInfo from './useProgramInfo';
 
 const programName = '포트폴리오 조지기';
 
@@ -81,18 +78,7 @@ const ReportPaymentPage = () => {
 export default ReportPaymentPage;
 
 const ProgramInfoSection = () => {
-  const { reportId } = useParams();
-
-  const [options, setOptions] = useState<string[]>([]);
-
-  const { data: reportDetailData } = useGetReportDetail(Number(reportId));
-  const { data: reportApplication } = useReportApplicationStore();
-
-  const product = reportApplication.isFeedbackApplied
-    ? `서류 진단서 (${convertReportPriceType(reportApplication.reportPriceType)}), 맞춤 첨삭`
-    : `서류 진단서 (${convertReportPriceType(reportApplication.reportPriceType)})`;
-  const option =
-    reportApplication.optionIds.length === 0 ? '없음' : options.join(', ');
+  const { title, product, option } = useReportProgramInfo();
 
   return (
     <section>
@@ -100,7 +86,7 @@ const ProgramInfoSection = () => {
       <Card
         imgSrc="/images/report-thumbnail.png"
         imgAlt="서류 진단서 프로그램 썸네일"
-        title={reportDetailData?.title || ''}
+        title={title!}
         content={[
           {
             label: '상품',
