@@ -1,4 +1,3 @@
-import { useEffect } from 'react';
 import { FaArrowLeft } from 'react-icons/fa6';
 import { useNavigate } from 'react-router-dom';
 
@@ -9,10 +8,13 @@ import Label from '../../../components/common/report/Label';
 import BottomSheet from '../../../components/common/ui/BottomSheeet';
 import Input from '../../../components/common/ui/input/Input';
 import useReportProgramInfo from '../../../hooks/useReportProgramInfo';
+import useReportApplicationStore from '../../../store/useReportApplicationStore';
 import { ReportPaymentSection } from './ReportApplyPage';
 
 const ReportPaymentPage = () => {
   const navigate = useNavigate();
+
+  const { setReportApplication } = useReportApplicationStore();
 
   const onClickPayButton = () => {
     //  payInfo 결제정보: application 정보로부터 가져오기
@@ -21,11 +23,6 @@ const ReportPaymentPage = () => {
 
     navigate(`/payment`);
   };
-
-  /* application으로부터 user 정보 초기화 */
-  useEffect(() => {
-    // console.log('get user info');
-  }, []);
 
   return (
     <div className="px-5 md:px-32">
@@ -37,7 +34,10 @@ const ReportPaymentPage = () => {
       </main>
       <BottomSheet>
         <button
-          onClick={() => navigate(-1)}
+          onClick={() => {
+            setReportApplication({ applyUrl: null, recruitmentUrl: null }); // 이력서, 채용공고 초기화
+            navigate(-1);
+          }}
           className="flex h-14 w-14 shrink-0 items-center justify-center rounded-md border-2 border-primary bg-neutral-100"
         >
           <FaArrowLeft size={20} />
