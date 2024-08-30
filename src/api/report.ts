@@ -242,8 +242,10 @@ const getReportPriceDetailSchema = z.object({
     .optional(),
   feedbackPriceInfo: z
     .object({
-      price: z.number().nullable().optional(),
-      discountPrice: z.number().nullable().optional(),
+      reportFeedbackId: z.number(),
+      reportPriceType: reportPriceTypeSchema.nullable().optional(),
+      feedbackPrice: z.number().nullable().optional(),
+      feedbackDiscountPrice: z.number().nullable().optional(),
     })
     .nullable()
     .optional(),
@@ -274,7 +276,12 @@ export const useGetReportPriceDetail = (reportId: number) => {
             title: '심층 분석',
           },
         ],
-        feedbackPriceInfo: { price: 80000, discountPrice: 72000 },
+        feedbackPriceInfo: {
+          reportFeedbackId: 1,
+          reportPriceType: 'PREMIUM',
+          feedbackPrice: 80000,
+          feedbackDiscountPrice: 72000,
+        },
       };
 
       return getReportPriceDetailSchema.parse(mockData);

@@ -1,8 +1,11 @@
 import { useEffect, useState } from 'react';
 import { FaArrowLeft } from 'react-icons/fa6';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
-import { UserInfo } from '../../../components/common/program/program-detail/section/ApplySection';
+import {
+  convertReportPriceType,
+  useGetReportPriceDetail,
+} from '../../../api/report';
 import Card from '../../../components/common/report/Card';
 import Heading1 from '../../../components/common/report/Heading1';
 import Heading2 from '../../../components/common/report/Heading2';
@@ -10,31 +13,10 @@ import Label from '../../../components/common/report/Label';
 import BottomSheet from '../../../components/common/ui/BottomSheeet';
 import Input from '../../../components/common/ui/input/Input';
 import useReportApplicationStore from '../../../store/useReportApplicationStore';
-import { ICouponForm } from '../../../types/interface';
 import useReportProgramInfo from './useProgramInfo';
-
-const programName = '포트폴리오 조지기';
 
 const ReportPaymentPage = () => {
   const navigate = useNavigate();
-
-  const [userInfo, setUserInfo] = useState<UserInfo>({
-    name: '',
-    email: '',
-    phoneNumber: '',
-    contactEmail: '',
-    question: '',
-  });
-  const [coupon, setCoupon] = useState<ICouponForm>({
-    id: null,
-    price: 0,
-  });
-
-  const {
-    data: reportApplication,
-    setReportApplication,
-    validate,
-  } = useReportApplicationStore();
 
   const onClickPayButton = () => {
     //  payInfo 결제정보: application 정보로부터 가져오기
@@ -44,9 +26,9 @@ const ReportPaymentPage = () => {
     navigate(`/payment`);
   };
 
-  /** application으로부터 user 정보 초기화 */
+  /* application으로부터 user 정보 초기화 */
   useEffect(() => {
-    console.log('get user info');
+    // console.log('get user info');
   }, []);
 
   return (
@@ -141,10 +123,56 @@ const UsereInfoSection = () => {
 };
 
 const PaymentSection = () => {
+  const { reportId } = useParams();
+
+  const [priceInfo, setPriceInfo] = useState({
+    report: 0,
+    feedback: 0,
+    discount: 0,
+    coupon: 0,
+    total: 0,
+  });
+
+  const { data: reportApplication } = useReportApplicationStore();
+  const { data: reportPriceDetail } = useGetReportPriceDetail(Number(reportId));
+
+  // 결제 가격 계산
+  useEffect(() => {
+    const reportPriceInfo = reportPriceDetail?.reportPriceInfos?.find(
+      (info) => info.reportPriceType === reportApplication.reportPriceType,
+    );
+    const feedbackPriceInfo = reportPriceDetail?.feedbackPriceInfo;
+
+    const report = reportPriceInfo?.price as number;
+    const feedback = feedbackPriceInfo?.feedbackPrice as number;
+    let discount = 0;
+    let total = 0;
+
+    discount += reportPriceInfo?.discountPrice as number;
+    reportApplication.optionIds.forEach((optionId) => {
+      discount += reportPriceDetail?.reportOptionInfos?.find(
+        (info) => info.reportOptionId === optionId,
+      )?.discountPrice as number;
+    });
+
+    if (reportApplication.isFeedbackApplied)
+      discount += feedbackPriceInfo?.feedbackDiscountPrice as number;
+
+    total = report + feedback - discount;
+
+    setPriceInfo({
+      report,
+      feedback,
+      discount,
+      coupon: 0,
+      total,
+    });
+  }, [reportPriceDetail]);
+
   return (
     <section>
       <Heading2>결제 정보</Heading2>
-      <div className="mt-6 flex gap-2.5">
+      {/* <div className="mt-6 flex gap-2.5">
         <Input
           className="w-full"
           type="text"
@@ -153,29 +181,46 @@ const PaymentSection = () => {
         <button className="shrink-0 rounded-sm bg-primary px-4 py-1.5 text-xsmall14 font-medium text-neutral-100">
           쿠폰 등록
         </button>
-      </div>
+      </div> */}
       <hr className="my-5" />
       <div className="flex flex-col">
         <div className="flex h-10 items-center justify-between px-3 text-neutral-0">
-          <span>서류 진단서 (베이직 + 옵션)</span>
-          <span>30,000원</span>
+          <span>
+            서류 진단서 (
+            {reportApplication.optionIds.length === 0
+              ? convertReportPriceType(reportApplication.reportPriceType)
+              : `${convertReportPriceType(reportApplication.reportPriceType)} + 옵션`}
+            )
+          </span>
+          {/* 서류 진단 + 사용자가 선택한 모든 옵션 가격을 더한 값 */}
+          <span>{priceInfo.report.toLocaleString()}원</span>
         </div>
         <div className="flex h-10 items-center justify-between px-3 text-neutral-0">
-          <span>맞춤첨삭</span>
-          <span>15,000원</span>
+          <span>1:1 피드백</span>
+          {/* 1:1 피드백 가격 */}
+          <span>{priceInfo.feedback.toLocaleString()}원</span>
         </div>
         <div className="flex h-10 items-center justify-between px-3 text-neutral-0">
-          <span>20% 할인</span>
-          <span>-9,000원</span>
+          {/* 서류진단 + 사용자가 선택한 모든 옵션 + 1:1 피드백의 할인 가격을 모두 더한 값 */}
+          <span>
+            {Math.ceil(
+              (priceInfo.discount / (priceInfo.report + priceInfo.feedback)) *
+                100,
+            )}
+            % 할인
+          </span>
+          <span>-{priceInfo.discount.toLocaleString()}원</span>
         </div>
-        <div className="flex h-10 items-center justify-between px-3 text-primary">
+        {/* <div className="flex h-10 items-center justify-between px-3 text-primary">
           <span>쿠폰할인</span>
-          <span className="font-bold">-10,000원</span>
-        </div>
+          <span className="font-bold">
+            -{priceInfo.coupon.toLocaleString()}원
+          </span>
+        </div> */}
         <hr className="my-5" />
         <div className="flex h-10 items-center justify-between px-3 font-semibold text-neutral-0">
           <span>결제금액</span>
-          <span>26,000원</span>
+          <span>{priceInfo.total.toLocaleString()}원</span>
         </div>
       </div>
     </section>
