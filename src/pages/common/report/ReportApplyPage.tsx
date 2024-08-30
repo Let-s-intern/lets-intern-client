@@ -15,7 +15,6 @@ import {
   convertReportTypeStatus,
   useGetReportDetail,
 } from '../../../api/report';
-import { UserInfo } from '../../../components/common/program/program-detail/section/ApplySection';
 import Card from '../../../components/common/report/Card';
 import ControlLabel from '../../../components/common/report/ControlLabel';
 import DateTimePicker from '../../../components/common/report/DateTimePicker';
@@ -26,26 +25,14 @@ import Label from '../../../components/common/report/Label';
 import Tooltip from '../../../components/common/report/Tooltip';
 import BottomSheet from '../../../components/common/ui/BottomSheeet';
 import Input from '../../../components/common/ui/input/Input';
+import useReportProgramInfo from '../../../hooks/useProgramInfo';
 import useReportApplicationStore from '../../../store/useReportApplicationStore';
-import { ICouponForm } from '../../../types/interface';
-import useReportProgramInfo from './useProgramInfo';
 
 const ReportApplyPage = () => {
   const isUpTo1280 = useMediaQuery('(max-width: 1280px)');
   const navigate = useNavigate();
   const { reportType, reportId } = useParams();
 
-  const [userInfo, setUserInfo] = useState<UserInfo>({
-    name: '',
-    email: '',
-    phoneNumber: '',
-    contactEmail: '',
-    question: '',
-  });
-  const [coupon, setCoupon] = useState<ICouponForm>({
-    id: null,
-    price: 0,
-  });
   const [applyFile, setApplyFile] = useState<File | null>(null);
   const [recruitmentFile, setRecruitmentFile] = useState<File | null>(null);
 

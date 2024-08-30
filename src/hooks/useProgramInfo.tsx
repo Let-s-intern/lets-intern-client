@@ -5,8 +5,8 @@ import {
   convertReportPriceType,
   useGetReportDetail,
   useGetReportPriceDetail,
-} from '../../../api/report';
-import useReportApplicationStore from '../../../store/useReportApplicationStore';
+} from '../api/report';
+import useReportApplicationStore from '../store/useReportApplicationStore';
 
 const useReportProgramInfo = () => {
   const { reportId } = useParams();
