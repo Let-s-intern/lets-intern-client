@@ -210,6 +210,7 @@ export const useGetReportDetail = (reportId: number) => {
         contents: '이력서 진단 프로그램 상세 내용',
         reportType: 'RESUME',
       };
+      const res = await axios.get(`/report/${reportId}`);
 
       return getReportDetailSchema.parse(mockData);
     },
@@ -283,6 +284,8 @@ export const useGetReportPriceDetail = (reportId: number) => {
           feedbackDiscountPrice: 72000,
         },
       };
+
+      const res = await axios.get(`/report/${reportId}/price`);
 
       return getReportPriceDetailSchema.parse(mockData);
     },
