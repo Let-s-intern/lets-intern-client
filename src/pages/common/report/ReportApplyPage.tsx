@@ -380,7 +380,7 @@ const ScheduleSection = () => {
           <Label>희망순위2*</Label>
           <DateTimePicker
             date={dayjs(data.desiredDate2)}
-            time={dayjs(data.desiredDate1).hour()}
+            time={dayjs(data.desiredDate2).hour()}
             name="desiredDate2"
             onChangeDate={onChangeDate}
             onChangeTime={onChangeTime}
@@ -390,7 +390,7 @@ const ScheduleSection = () => {
           <Label>희망순위3*</Label>
           <DateTimePicker
             date={dayjs(data.desiredDate3)}
-            time={dayjs(data.desiredDate1).hour()}
+            time={dayjs(data.desiredDate3).hour()}
             name="desiredDate3"
             onChangeDate={onChangeDate}
             onChangeTime={onChangeTime}
@@ -480,9 +480,10 @@ const UsereInfoSection = () => {
   );
 };
 
+/* 모바일 전용 결제 페이지(ReportPaymentPage)에서 같이 사용 */
 export const ReportPaymentSection = () => {
   const { data: reportApplication } = useReportApplicationStore();
-  const { data: priceInfo } = useReportPayment();
+  const { state: priceInfo } = useReportPayment();
 
   return (
     <section>

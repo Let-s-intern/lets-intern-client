@@ -15,6 +15,7 @@ export interface ReportPriceInfo {
 export default function useReportPayment() {
   const { reportId } = useParams();
 
+  // Sprint7 서류 진단 쿠폰 기능 없음
   const [priceInfo, setPriceInfo] = useState({
     report: 0,
     feedback: 0,
@@ -37,16 +38,17 @@ export default function useReportPayment() {
     let discount = 0;
     let total = 0;
 
+    // 할인 금액
     discount += reportPriceInfo?.discountPrice as number;
     reportApplication.optionIds.forEach((optionId) => {
       discount += reportPriceDetail?.reportOptionInfos?.find(
         (info) => info.reportOptionId === optionId,
       )?.discountPrice as number;
     });
-
+    // 1:1 피드백 가격
     if (reportApplication.isFeedbackApplied)
       discount += feedbackPriceInfo?.feedbackDiscountPrice as number;
-
+    // 총 결제금액
     total = report + feedback - discount;
 
     setPriceInfo({
@@ -58,5 +60,5 @@ export default function useReportPayment() {
     });
   }, [reportPriceDetail]);
 
-  return { data: priceInfo, dispatch: setPriceInfo };
+  return { state: priceInfo, dispatch: setPriceInfo };
 }

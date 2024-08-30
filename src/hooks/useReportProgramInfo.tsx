@@ -20,7 +20,7 @@ const useReportProgramInfo = () => {
   const { data: reportApplication } = useReportApplicationStore();
 
   const product = reportApplication.isFeedbackApplied
-    ? `서류 진단서 (${convertReportPriceType(reportApplication.reportPriceType)}), 맞춤 첨삭`
+    ? `서류 진단서 (${convertReportPriceType(reportApplication.reportPriceType)}), 1:1 피드백`
     : `서류 진단서 (${convertReportPriceType(reportApplication.reportPriceType)})`;
   const option =
     reportApplication.optionIds.length === 0 ? '없음' : options.join(', ');
