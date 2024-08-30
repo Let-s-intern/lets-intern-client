@@ -4,6 +4,14 @@ import { useParams } from 'react-router-dom';
 import { useGetReportPriceDetail } from '../api/report';
 import useReportApplicationStore from '../store/useReportApplicationStore';
 
+export interface ReportPriceInfo {
+  report: number;
+  feedback: number;
+  discount: number;
+  coupon: number;
+  total: number;
+}
+
 export default function useReportPayment() {
   const { reportId } = useParams();
 
@@ -50,5 +58,5 @@ export default function useReportPayment() {
     });
   }, [reportPriceDetail]);
 
-  return [priceInfo, setPriceInfo];
+  return { data: priceInfo, dispatch: setPriceInfo };
 }

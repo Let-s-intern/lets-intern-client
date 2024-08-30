@@ -12,6 +12,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 
 import { uploadFile } from '../../../api/file';
 import {
+  convertReportPriceType,
   convertReportTypeStatus,
   useGetReportDetail,
 } from '../../../api/report';
@@ -25,6 +26,7 @@ import Label from '../../../components/common/report/Label';
 import Tooltip from '../../../components/common/report/Tooltip';
 import BottomSheet from '../../../components/common/ui/BottomSheeet';
 import Input from '../../../components/common/ui/input/Input';
+import useReportPayment from '../../../hooks/useReportPayment';
 import useReportProgramInfo from '../../../hooks/useReportProgramInfo';
 import useReportApplicationStore from '../../../store/useReportApplicationStore';
 
@@ -140,7 +142,7 @@ const ReportApplyPage = () => {
           <Heading1>결제하기</Heading1>
           <div className="flex flex-col gap-10">
             <UsereInfoSection />
-            <PaymentSection />
+            <ReportPaymentSection />
             <button
               onClick={onClickPayButton}
               className="text-1.125-medium w-full rounded-md bg-primary py-3 text-center font-medium text-neutral-100"
@@ -478,11 +480,14 @@ const UsereInfoSection = () => {
   );
 };
 
-const PaymentSection = () => {
+export const ReportPaymentSection = () => {
+  const { data: reportApplication } = useReportApplicationStore();
+  const { data: priceInfo } = useReportPayment();
+
   return (
     <section>
       <Heading2>결제 정보</Heading2>
-      <div className="mt-6 flex gap-2.5">
+      {/* <div className="mt-6 flex gap-2.5">
         <Input
           className="w-full"
           type="text"
@@ -491,29 +496,46 @@ const PaymentSection = () => {
         <button className="shrink-0 rounded-sm bg-primary px-4 py-1.5 text-xsmall14 font-medium text-neutral-100">
           쿠폰 등록
         </button>
-      </div>
+      </div> */}
       <hr className="my-5" />
       <div className="flex flex-col">
         <div className="flex h-10 items-center justify-between px-3 text-neutral-0">
-          <span>서류 진단서 (베이직 + 옵션)</span>
-          <span>30,000원</span>
+          <span>
+            서류 진단서 (
+            {reportApplication.optionIds.length === 0
+              ? convertReportPriceType(reportApplication.reportPriceType)
+              : `${convertReportPriceType(reportApplication.reportPriceType)} + 옵션`}
+            )
+          </span>
+          {/* 서류 진단 + 사용자가 선택한 모든 옵션 가격을 더한 값 */}
+          <span>{priceInfo.report.toLocaleString()}원</span>
         </div>
         <div className="flex h-10 items-center justify-between px-3 text-neutral-0">
-          <span>맞춤첨삭</span>
-          <span>15,000원</span>
+          <span>1:1 피드백</span>
+          {/* 1:1 피드백 가격 */}
+          <span>{priceInfo.feedback.toLocaleString()}원</span>
         </div>
         <div className="flex h-10 items-center justify-between px-3 text-neutral-0">
-          <span>20% 할인</span>
-          <span>-9,000원</span>
+          {/* 서류진단 + 사용자가 선택한 모든 옵션 + 1:1 피드백의 할인 가격을 모두 더한 값 */}
+          <span>
+            {Math.ceil(
+              (priceInfo.discount / (priceInfo.report + priceInfo.feedback)) *
+                100,
+            )}
+            % 할인
+          </span>
+          <span>-{priceInfo.discount.toLocaleString()}원</span>
         </div>
-        <div className="flex h-10 items-center justify-between px-3 text-primary">
+        {/* <div className="flex h-10 items-center justify-between px-3 text-primary">
           <span>쿠폰할인</span>
-          <span className="font-bold">-10,000원</span>
-        </div>
+          <span className="font-bold">
+            -{priceInfo.coupon.toLocaleString()}원
+          </span>
+        </div> */}
         <hr className="my-5" />
         <div className="flex h-10 items-center justify-between px-3 font-semibold text-neutral-0">
           <span>결제금액</span>
-          <span>26,000원</span>
+          <span>{priceInfo.total.toLocaleString()}원</span>
         </div>
       </div>
     </section>
