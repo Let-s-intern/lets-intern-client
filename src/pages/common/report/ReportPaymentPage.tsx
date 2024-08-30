@@ -12,7 +12,7 @@ import Heading2 from '../../../components/common/report/Heading2';
 import Label from '../../../components/common/report/Label';
 import BottomSheet from '../../../components/common/ui/BottomSheeet';
 import Input from '../../../components/common/ui/input/Input';
-import useReportProgramInfo from '../../../hooks/useProgramInfo';
+import useReportProgramInfo from '../../../hooks/useReportProgramInfo';
 import useReportApplicationStore from '../../../store/useReportApplicationStore';
 
 const ReportPaymentPage = () => {

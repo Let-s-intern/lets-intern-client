@@ -25,7 +25,7 @@ import Label from '../../../components/common/report/Label';
 import Tooltip from '../../../components/common/report/Tooltip';
 import BottomSheet from '../../../components/common/ui/BottomSheeet';
 import Input from '../../../components/common/ui/input/Input';
-import useReportProgramInfo from '../../../hooks/useProgramInfo';
+import useReportProgramInfo from '../../../hooks/useReportProgramInfo';
 import useReportApplicationStore from '../../../store/useReportApplicationStore';
 
 const ReportApplyPage = () => {
