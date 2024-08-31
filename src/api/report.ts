@@ -148,7 +148,7 @@ export type AdminReportListItem = z.infer<
 // POST /api/v1/report
 const createReportSchema = z.object({
   reportType: reportTypeSchema,
-  visibleDate: z.string(),
+  visibleDate: z.string().nullable().optional(),
   title: z.string(),
   contents: z.string(),
   notice: z.string(),
@@ -173,11 +173,12 @@ const createReportSchema = z.object({
   }),
 });
 
-export const useCreateReport = () => {
+export type CreateReportData = z.infer<typeof createReportSchema>;
+
+export const usePostReportMutation = () => {
   return useMutation({
-    mutationFn: async (data: z.infer<typeof createReportSchema>) => {
-      // Mock API call
-      console.log('Creating report:', data);
+    mutationFn: async (data: CreateReportData) => {
+      await axios.post('/report', data);
       return { success: true, message: 'Report created successfully' };
     },
   });
