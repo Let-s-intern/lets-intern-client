@@ -150,21 +150,22 @@ const Router = () => {
           </Route>
 
           {/* 서류진단 */}
-          {/* /report */}
-          <Route path="report">
-            <Route path="" element={<ReportPage />} />
-            <Route
-              path="apply/:reportType/:reportId"
-              element={<ReportApplyPage />}
-            />
-            {/* 모바일 전용 서류진단 결제 페이지*/}
-            <Route
-              path="payment/:reportType/:reportId"
-              element={<ReportPaymentPage />}
-            />
-            <Route path="order/result" element={<ReportPaymentResult />} />
-            <Route path="order/fail" element={<ReportPaymentFail />} />
-          </Route>
+
+          <Route path="report" element={<ReportPage />} />
+
+          <Route
+            path="report/apply/:reportType/:reportId"
+            element={<ReportApplyPage />}
+          />
+          {/* 모바일 전용 서류진단 결제 페이지*/}
+          <Route
+            path="report/payment/:reportType/:reportId"
+            element={<ReportPaymentPage />}
+          />
+          <Route path="report/order/result" element={<ReportPaymentResult />} />
+          <Route path="report/order/fail" element={<ReportPaymentFail />} />
+
+          <Route path="report/management" element={<></>} />
 
           {/* 비로그인 리뷰 작성 페이지 */}
           <Route
