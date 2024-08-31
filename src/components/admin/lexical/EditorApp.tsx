@@ -190,6 +190,7 @@ function App({
 
   const {
     settings: { measureTypingPerf },
+    setOption,
   } = useSettings();
 
   const initialConfig = {
@@ -201,6 +202,15 @@ function App({
     },
     theme: PlaygroundEditorTheme,
   };
+
+  const debug =
+    new URLSearchParams(window.location.search).get('debug') === 'true';
+
+  useEffect(() => {
+    if (debug) {
+      setOption('showTreeView', true);
+    }
+  }, [debug, setOption]);
 
   return (
     <LexicalComposer initialConfig={initialConfig}>

@@ -1,9 +1,17 @@
 // https://vike.dev/onRenderClient
 export { onRenderClient };
 
+import dayjs from 'dayjs';
+import timezone from 'dayjs/plugin/timezone';
+import utc from 'dayjs/plugin/utc';
 import React from 'react';
 import { createRoot, hydrateRoot } from 'react-dom/client';
 import { PageContextClient } from 'vike/types';
+
+dayjs.locale('ko');
+dayjs.extend(utc);
+dayjs.extend(timezone);
+dayjs.tz.setDefault('Asia/Seoul');
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 // const router = createBrowserRouter(routes);
