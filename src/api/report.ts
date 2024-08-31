@@ -12,6 +12,22 @@ const pageInfoSchema = z.object({
 });
 
 const reportTypeSchema = z.enum(['RESUME', 'PERSONAL_STATEMENT', 'PORTFOLIO']);
+
+export type ReportType = z.infer<typeof reportTypeSchema>;
+
+export function convertReportTypeToDisplayName(type: ReportType) {
+  switch (type) {
+    case 'RESUME':
+      return '이력서';
+    case 'PERSONAL_STATEMENT':
+      return '자기소개서';
+    case 'PORTFOLIO':
+      return '포트폴리오';
+    default:
+      return '-';
+  }
+}
+
 const reportPriceTypeSchema = z.enum(['BASIC', 'PREMIUM']);
 
 export const convertReportPriceType = (type: string) => {
@@ -31,6 +47,7 @@ const reportFeedbackStatusSchema = z.enum([
   'CONFIRMED',
   'COMPLETED',
 ]);
+
 const desiredDateTypeSchema = z.enum([
   'DESIRED_DATE_1',
   'DESIRED_DATE_2',
@@ -112,44 +129,21 @@ const getReportsForAdminSchema = z
     })),
   }));
 
+export const getReportsForAdminQueryKey = 'getReportsForAdmin';
+
 export const useGetReportsForAdmin = () => {
   return useQuery({
-    queryKey: ['getReportsForAdmin'],
+    queryKey: [getReportsForAdminQueryKey],
     queryFn: async () => {
-      // Mock data
-      const mockData = {
-        reportForAdminInfos: [
-          {
-            reportId: 1,
-            reportType: 'RESUME',
-            title: '이력서 진단 프로그램',
-            applicationCount: 50,
-            feedbackApplicationCount: 30,
-            visibleDate: '2024-08-01T00:00:00',
-            createDateTime: '2024-07-15T10:30:00',
-          },
-          {
-            reportId: 2,
-            reportType: 'PERSONAL_STATEMENT',
-            title: '자기소개서 진단 프로그램',
-            applicationCount: 75,
-            feedbackApplicationCount: 45,
-            visibleDate: '2024-08-15T00:00:00',
-            createDateTime: '2024-07-20T14:45:00',
-          },
-        ],
-        pageInfo: {
-          totalElements: 10,
-          totalPages: 5,
-          currentPage: 1,
-          currentElements: 2,
-        },
-      };
-
-      return getReportsForAdminSchema.parse(mockData);
+      const res = await axios.get('/report?size=9999');
+      return getReportsForAdminSchema.parse(res.data.data);
     },
   });
 };
+
+export type AdminReportListItem = z.infer<
+  typeof getReportsForAdminSchema
+>['reportForAdminInfos'][0];
 
 // POST /api/v1/report
 const createReportSchema = z.object({
