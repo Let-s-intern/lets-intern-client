@@ -434,9 +434,19 @@ const AdditionalInfoSection = () => {
 };
 
 const UsereInfoSection = () => {
-  const [checked, setChecked] = useState(false);
+  const [checked, setChecked] = useState(true);
+  const [contactEmail, setContactEmail] = useState('');
 
   const { data } = useGetParticipationInfo();
+
+  useEffect(() => {
+    setContactEmail(data?.email || '');
+  }, [data]);
+
+  useEffect(() => {
+    if (contactEmail !== data?.email) setChecked(false);
+    else setChecked(true);
+  }, [contactEmail]);
 
   return (
     <section>
@@ -482,14 +492,25 @@ const UsereInfoSection = () => {
             <br />
             &nbsp;&nbsp; 자주 사용하는 이메일 주소를 입력해주세요!
           </p>
-          <label className="flex cursor-pointer items-center gap-1 text-xxsmall12 font-medium">
-            <img className="h-auto w-5" src="/icons/checkbox-fill.svg" />
+          <label
+            onClick={() => {
+              setChecked(!checked);
+              if (checked) setContactEmail('');
+              else setContactEmail(data?.email || '');
+            }}
+            className="flex cursor-pointer items-center gap-1 text-xxsmall12 font-medium"
+          >
+            <img
+              className="h-auto w-5"
+              src={`/icons/${checked ? 'checkbox-fill.svg' : 'checkbox-unchecked.svg'}`}
+            />
             가입한 이메일과 동일
           </label>
           <Input
             name="contactEmail"
             placeholder="example@example.com"
-            value={data?.contactEmail || ''}
+            value={contactEmail}
+            onChange={(e) => setContactEmail(e.target.value)}
           />
         </div>
       </div>
