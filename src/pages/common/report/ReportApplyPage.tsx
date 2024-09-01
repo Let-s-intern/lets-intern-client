@@ -10,6 +10,7 @@ import { FaArrowLeft } from 'react-icons/fa6';
 import { IoCloseOutline } from 'react-icons/io5';
 import { useNavigate, useParams } from 'react-router-dom';
 
+import { useGetParticipationInfo } from '../../../api/application';
 import { uploadFile } from '../../../api/file';
 import {
   convertReportPriceType,
@@ -244,7 +245,7 @@ const DocumentSection = ({
               <FilledInput
                 name="applyUrl"
                 placeholder="https://"
-                value={data.applyUrl as string}
+                value={data.applyUrl || ''}
                 onChange={(e) =>
                   setReportApplication({ applyUrl: e.target.value })
                 }
@@ -307,7 +308,7 @@ const PremiumSection = ({
                 <FilledInput
                   name="recruitmentUrl"
                   placeholder="https://"
-                  value={data.recruitmentUrl as string}
+                  value={data.recruitmentUrl || ''}
                   onChange={(e) =>
                     setReportApplication({ recruitmentUrl: e.target.value })
                   }
@@ -412,7 +413,7 @@ const AdditionalInfoSection = () => {
           name="wishJob"
           id="job"
           placeholder="희망하는 직무를 알려주세요"
-          value={data.wishJob as string}
+          value={data.wishJob || ''}
           onChange={onChange}
         />
       </div>
@@ -424,7 +425,7 @@ const AdditionalInfoSection = () => {
           name="message"
           placeholder="진단에 참고할 수 있도록 서류 작성에 대한 고민을 적어주세요"
           rows={2}
-          value={data.message as string}
+          value={data.message || ''}
           onChange={onChange}
         />
       </div>
@@ -433,6 +434,8 @@ const AdditionalInfoSection = () => {
 };
 
 const UsereInfoSection = () => {
+  const { data } = useGetParticipationInfo();
+
   return (
     <section>
       {/* TODO: 서류 진단 application 정보 불러오기 */}
@@ -440,17 +443,35 @@ const UsereInfoSection = () => {
       <div className="mb-4 mt-6 flex flex-col gap-3">
         <div className="flex flex-col gap-1">
           <Label>이름</Label>
-          <Input disabled readOnly className="text-sm" />
+          <Input
+            disabled
+            readOnly
+            className="text-sm"
+            value={data?.name || ''}
+            name="name"
+          />
         </div>
         <div className="flex flex-col gap-1">
           <Label>휴대폰 번호</Label>
-          <Input disabled readOnly className="text-sm" />
+          <Input
+            disabled
+            readOnly
+            className="text-sm"
+            value={data?.phoneNumber || ''}
+            name="phoneNumber"
+          />
         </div>
         <div className="flex flex-col gap-1">
           <label className="ml-3 text-xsmall14 font-semibold">
             가입한 이메일
           </label>
-          <Input disabled readOnly className="text-sm" />
+          <Input
+            disabled
+            readOnly
+            className="text-sm"
+            value={data?.email || ''}
+            name="email"
+          />
         </div>
         <div className="flex flex-col gap-1">
           <Label htmlFor="contactEmail">렛츠커리어 정보 수신용 이메일</Label>
@@ -463,7 +484,11 @@ const UsereInfoSection = () => {
             <img className="h-auto w-5" src="/icons/checkbox-fill.svg" />
             가입한 이메일과 동일
           </label>
-          <Input name="contactEmail" placeholder="example@example.com" />
+          <Input
+            name="contactEmail"
+            placeholder="example@example.com"
+            value={data?.contactEmail || ''}
+          />
         </div>
       </div>
     </section>

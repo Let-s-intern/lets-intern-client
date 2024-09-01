@@ -203,3 +203,20 @@ export const useMypageApplicationsQuery = () => {
     },
   });
 };
+
+const participationInfoSchema = z.object({
+  name: z.string().nullable().optional(),
+  phoneNumber: z.string().nullable().optional(),
+  email: z.string().nullable().optional(),
+  contactEmail: z.string().nullable().optional(),
+});
+
+export const useGetParticipationInfo = () => {
+  return useQuery({
+    queryKey: ['getParticipationInfo'],
+    queryFn: async () => {
+      const res = await axios.get('/user/participation-info');
+      return participationInfoSchema.parse(res.data.data);
+    },
+  });
+};
