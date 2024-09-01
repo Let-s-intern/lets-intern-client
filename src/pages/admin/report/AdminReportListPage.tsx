@@ -122,6 +122,23 @@ function Toolbar() {
 
 const AdminReportListPage = () => {
   const { data: reportsData } = useGetReportsForAdmin();
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  useEffect(() => {
+    const message = searchParams.get('message');
+    if (message) {
+      setSnackbar({ open: true, message });
+      setSearchParams(
+        (prev) => {
+          prev.delete('message');
+          return prev;
+        },
+        {
+          replace: true,
+        },
+      );
+    }
+  }, [searchParams, setSearchParams]);
 
   const columns = useMemo(() => {
     return createColumns({
