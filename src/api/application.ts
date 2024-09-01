@@ -9,6 +9,7 @@ import {
 } from '../schema';
 import { UsePaymentDetailQueryKey, UsePaymentQueryKey } from './payment';
 
+import { isAxiosError } from 'axios';
 import { ProgramType } from '../types/common';
 import axios from '../utils/axios';
 
@@ -215,8 +216,20 @@ export const useGetParticipationInfo = () => {
   return useQuery({
     queryKey: ['getParticipationInfo'],
     queryFn: async () => {
-      const res = await axios.get('/user/participation-info');
-      return participationInfoSchema.parse(res.data.data);
+      try {
+        const res = await axios.get('/user/participation-info', {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('access-token')}`,
+          },
+        });
+
+        return participationInfoSchema.parse(res.data.data);
+      } catch (error) {
+        if (isAxiosError(error) && error.response?.status === 401) {
+          alert('로그인이 필요합니다.');
+          window.location.href = '/login';
+        }
+      }
     },
   });
 };

@@ -434,6 +434,8 @@ const AdditionalInfoSection = () => {
 };
 
 const UsereInfoSection = () => {
+  const [checked, setChecked] = useState(false);
+
   const { data } = useGetParticipationInfo();
 
   return (
