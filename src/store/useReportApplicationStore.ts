@@ -10,15 +10,16 @@ interface ReportApplicationStore {
     couponId: number | null;
     paymentKey: string | null;
     orderId: string | null;
-    amount: string | null;
-    discountPrice: number | null;
-    applyUrl: string | null;
-    recruitmentUrl: string | null;
+    amount: string;
+    programPrice: number;
+    programDiscount: number;
+    applyUrl: string;
+    recruitmentUrl: string;
     desiredDate1: string | null;
     desiredDate2: string | null;
     desiredDate3: string | null;
-    wishJob: string | null;
-    message: string | null;
+    wishJob: string;
+    message: string;
   };
   setReportApplication: (
     params: Partial<ReportApplicationStore['data']>,
@@ -38,15 +39,16 @@ const useReportApplicationStore = create(
         couponId: null,
         paymentKey: null,
         orderId: null,
-        amount: null,
-        discountPrice: null,
-        applyUrl: null,
-        recruitmentUrl: null,
+        amount: '',
+        programPrice: 0,
+        programDiscount: 0,
+        applyUrl: '',
+        recruitmentUrl: '',
         desiredDate1: null,
         desiredDate2: null,
         desiredDate3: null,
-        wishJob: null,
-        message: null,
+        wishJob: '',
+        message: '',
       },
       setReportApplication: (params) => {
         const currentData = get().data;
@@ -67,15 +69,16 @@ const useReportApplicationStore = create(
             couponId: null,
             paymentKey: null,
             orderId: null,
-            amount: null,
-            discountPrice: null,
-            applyUrl: null,
-            recruitmentUrl: null,
+            amount: '',
+            programPrice: 0,
+            programDiscount: 0,
+            applyUrl: '',
+            recruitmentUrl: '',
             desiredDate1: null,
             desiredDate2: null,
             desiredDate3: null,
-            wishJob: null,
-            message: null,
+            wishJob: '',
+            message: '',
           },
         });
       },

@@ -233,7 +233,7 @@ const DocumentSection = ({
           onChange={(e) => {
             setValue(e.target.value);
             if (e.target.value === 'url') dispatch(null);
-            else setReportApplication({ applyUrl: null });
+            else setReportApplication({ applyUrl: '' });
           }}
         >
           {/* 파일 첨부 */}
@@ -294,7 +294,7 @@ const PremiumSection = ({
             onChange={(e) => {
               setValue(e.target.value);
               if (e.target.value === 'url') dispatch(null);
-              else setReportApplication({ recruitmentUrl: null });
+              else setReportApplication({ recruitmentUrl: '' });
             }}
             name="radio-buttons-group"
           >

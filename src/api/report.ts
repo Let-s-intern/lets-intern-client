@@ -212,7 +212,7 @@ export const useGetReportDetail = (reportId: number) => {
       };
       const res = await axios.get(`/report/${reportId}`);
 
-      return getReportDetailSchema.parse(mockData);
+      return getReportDetailSchema.parse(res.data.data);
     },
   });
 };
@@ -287,7 +287,7 @@ export const useGetReportPriceDetail = (reportId: number) => {
 
       const res = await axios.get(`/report/${reportId}/price`);
 
-      return getReportPriceDetailSchema.parse(mockData);
+      return getReportPriceDetailSchema.parse(res.data.data);
     },
   });
 };
