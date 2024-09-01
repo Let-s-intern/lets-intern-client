@@ -326,22 +326,22 @@ const ScheduleSection = () => {
   type Key = keyof typeof data;
 
   const onChangeDate = (date: Dayjs | null, name?: string) => {
-    const prev = data[name as Key];
-    if (prev)
-      setReportApplication({
-        [name as Key]: `${date?.format('YYYY-MM-DD')}T${(prev as string).split('T')[1]}`,
-      });
-    else setReportApplication({ [name!]: date?.format('YYYY-MM-DDTHH:mm') });
+    const hour = dayjs(data[name as Key] as dayjs.ConfigType).hour();
+
+    date?.set('hour', hour);
+    setReportApplication({
+      [name as Key]: date?.format('YYYY-MM-DDTHH:00'),
+    });
   };
 
   const onChangeTime = (e: SelectChangeEvent<unknown>) => {
     const prev = data[e.target.name as Key];
-    if (prev)
-      setReportApplication({
-        [e.target.name]:
-          `${(prev as string).split('T')[0]}T${e.target.value}:00`,
-      });
-    else setReportApplication({ [e.target.name]: `T${e.target.value}:00` });
+
+    setReportApplication({
+      [e.target.name]: dayjs(prev as dayjs.ConfigType)
+        .set('hour', e.target.value as number)
+        .format('YYYY-MM-DDTHH:00'),
+    });
   };
 
   return (

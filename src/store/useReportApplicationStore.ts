@@ -1,3 +1,4 @@
+import dayjs from 'dayjs';
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
@@ -44,9 +45,9 @@ const useReportApplicationStore = create(
         programDiscount: 0,
         applyUrl: '',
         recruitmentUrl: '',
-        desiredDate1: new Date().toString(),
-        desiredDate2: new Date().toString(),
-        desiredDate3: new Date().toString(),
+        desiredDate1: dayjs().format('YYYY-MM-DDTHH:00'),
+        desiredDate2: dayjs().format('YYYY-MM-DDTHH:00'),
+        desiredDate3: dayjs().format('YYYY-MM-DDTHH:00'),
         wishJob: '',
         message: '',
       },
@@ -74,9 +75,9 @@ const useReportApplicationStore = create(
             programDiscount: 0,
             applyUrl: '',
             recruitmentUrl: '',
-            desiredDate1: new Date().toString(),
-            desiredDate2: new Date().toString(),
-            desiredDate3: new Date().toString(),
+            desiredDate1: dayjs().format('YYYY-MM-DDTHH:00'),
+            desiredDate2: dayjs().format('YYYY-MM-DDTHH:00'),
+            desiredDate3: dayjs().format('YYYY-MM-DDTHH:00'),
             wishJob: '',
             message: '',
           },
