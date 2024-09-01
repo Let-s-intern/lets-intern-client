@@ -96,6 +96,10 @@ const AdminReportEditPage = () => {
   }, [editingOptions]);
 
   useEffect(() => {
+    console.log('editingValue', editingValue);
+  }, [editingValue]);
+
+  useEffect(() => {
     if (reportDetail) {
       setEditingValue({
         // 기본값
@@ -108,11 +112,6 @@ const AdminReportEditPage = () => {
           discountPrice:
             reportDetail.feedbackPriceInfo.feedbackDiscountPrice ?? 0,
         },
-
-        // TODO: 추가
-        // visibleDate: reportDetail.visibleDate
-        //   ? dayjs(reportDetail.visibleDate).toISOString()
-        //   : undefined,
       });
 
       const premiumPrice = reportDetail.reportPriceInfos.find(
@@ -145,9 +144,15 @@ const AdminReportEditPage = () => {
         });
       }
 
-      // TODO: as 제거
       setEditingOptions(
-        reportDetail.reportOptionInfos as unknown as EditingOptions,
+        reportDetail.reportOptionForAdminInfos.map((option) => {
+          return {
+            code: option.code ?? '',
+            discountPrice: option.discountPrice ?? 0,
+            price: option.price ?? 0,
+            title: option.title ?? '',
+          };
+        }),
       );
     }
   }, [reportDetail]);
@@ -308,7 +313,7 @@ const AdminReportEditPage = () => {
               onClick={() => {
                 setEditingValue((prev) => {
                   if (prev.visibleDate) {
-                    return { ...prev, visibleDate: undefined };
+                    return { ...prev, visibleDate: null };
                   }
                   return prev;
                 });

@@ -294,12 +294,13 @@ const getReportDetailForAdminSchema = z.object({
       discountPrice: z.number(),
     }),
   ),
-  reportOptionInfos: z.array(
+  reportOptionForAdminInfos: z.array(
     z.object({
       reportOptionId: z.number().nullable().optional(),
       price: z.number().nullable().optional(),
       discountPrice: z.number().nullable().optional(),
       title: z.string().nullable().optional(),
+      code: z.string().nullable().optional(),
     }),
   ),
   feedbackPriceInfo: z.object({
@@ -308,6 +309,7 @@ const getReportDetailForAdminSchema = z.object({
     feedbackPrice: z.number(),
     feedbackDiscountPrice: z.number(),
   }),
+  visibleDate: z.string().nullable().optional(),
 });
 
 export type ReportDetailAdmin = z.infer<typeof getReportDetailForAdminSchema>;
@@ -837,7 +839,7 @@ export const useDeleteReport = () => {
 // PATCH /api/v1/report/{reportId}
 const updateReportSchema = z.object({
   reportType: reportTypeSchema.optional(),
-  visibleDate: z.string().optional(),
+  visibleDate: z.string().optional().nullable(),
   title: z.string().optional(),
   contents: z.string().optional(),
   notice: z.string().optional(),
