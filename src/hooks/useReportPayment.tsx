@@ -44,9 +44,11 @@ export default function useReportPayment() {
     // 할인 금액
     discount += reportPriceInfo?.discountPrice as number;
     reportApplication.optionIds.forEach((optionId) => {
-      discount += reportPriceDetail.reportOptionInfos?.find(
+      const optionInfo = reportPriceDetail.reportOptionInfos?.find(
         (info) => info.reportOptionId === optionId,
-      )?.discountPrice as number;
+      );
+      if (optionInfo !== undefined)
+        discount += optionInfo.discountPrice as number;
     });
     // 1:1 피드백 가격
     if (reportApplication.isFeedbackApplied)
