@@ -41,6 +41,7 @@ const ReportApplyPage = () => {
   const {
     data: reportApplication,
     setReportApplication,
+    initReportApplication,
     validate,
   } = useReportApplicationStore();
 
@@ -75,27 +76,29 @@ const ReportApplyPage = () => {
     navigate(`/payment`);
   };
 
-  // useEffect(() => {
-  //   // mock data
-  //   setReportApplication({
-  //     reportId: 1,
-  //     reportPriceType: 'PREMIUM',
-  //     optionIds: [],
-  //     isFeedbackApplied: true,
-  //     couponId: null,
-  //     paymentKey: null,
-  //     orderId: null,
-  //     amount: null,
-  //     discountPrice: null,
-  //     applyUrl: null,
-  //     recruitmentUrl: null,
-  //     desiredDate1: null,
-  //     desiredDate2: null,
-  //     desiredDate3: null,
-  //     wishJob: null,
-  //     message: null,
-  //   });
-  // }, []);
+  useEffect(() => {
+    // mock data
+    initReportApplication();
+    setReportApplication({
+      reportId: 5,
+      reportPriceType: 'BASIC',
+      optionIds: [3, 4],
+      isFeedbackApplied: false,
+      couponId: null,
+      paymentKey: null,
+      orderId: null,
+      amount: '',
+      programPrice: 0,
+      programDiscount: 0,
+      applyUrl: '',
+      recruitmentUrl: '',
+      desiredDate1: null,
+      desiredDate2: null,
+      desiredDate3: null,
+      wishJob: '',
+      message: '',
+    });
+  }, []);
 
   useEffect(() => {
     console.log(reportApplication);
