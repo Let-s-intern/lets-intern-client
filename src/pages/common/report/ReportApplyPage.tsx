@@ -73,10 +73,6 @@ const ReportApplyPage = () => {
     });
   }, []);
 
-  useEffect(() => {
-    console.log(reportApplication);
-  }, [reportApplication]);
-
   return (
     <div className="px-5 md:px-32 md:py-10 xl:flex xl:gap-16 xl:px-48">
       <div className="w-full">
