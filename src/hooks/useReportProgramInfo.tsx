@@ -21,15 +21,18 @@ export default function useReportProgramInfo() {
 
   // optionIds로 옵션 제목 불러오기
   useEffect(() => {
+    setOptions(() => []); // 초기화
+
     const optionIds = reportApplication.optionIds;
     if (optionIds.length === 0) return;
 
-    optionIds.forEach((id) => {
+    for (const id of optionIds) {
       const optionInfo = reportPriceDetailData?.reportOptionInfos?.find(
         (info) => info.reportOptionId === id,
       );
+      if (optionInfo === undefined) continue;
       setOptions((prev) => [...prev, optionInfo?.title as string]);
-    });
+    }
   }, [reportPriceDetailData, reportApplication]);
 
   return {
