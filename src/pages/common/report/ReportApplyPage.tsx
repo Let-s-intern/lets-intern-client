@@ -46,7 +46,7 @@ const ReportApplyPage = () => {
     validate,
   } = useReportApplicationStore();
 
-  const onClickNext = () => {
+  const convertFile = () => {
     // 파일 변환
     if (applyFile) {
       uploadFile({ file: applyFile, type: 'REPORT' }).then((url: string) => {
@@ -60,21 +60,6 @@ const ReportApplyPage = () => {
         },
       );
     }
-
-    const { isValid, message } = validate();
-    if (!isValid) {
-      alert(message);
-      return;
-    }
-    navigate(`/report/payment/${reportType}/${reportId}`);
-  };
-
-  const onClickPayButton = () => {
-    //  payInfo 결제정보: application 정보로부터 가져오기
-    // 프로그램 신청 정보 가져오기
-    // setReportApplication({...});
-
-    navigate(`/payment`);
   };
 
   useEffect(() => {
@@ -122,7 +107,15 @@ const ReportApplyPage = () => {
             <FaArrowLeft size={20} />
           </button>
           <button
-            onClick={onClickNext}
+            onClick={() => {
+              convertFile();
+              const { isValid, message } = validate();
+              if (!isValid) {
+                alert(message);
+                return;
+              }
+              navigate(`/report/payment/${reportType}/${reportId}`);
+            }}
             className="text-1.125-medium w-full rounded-md bg-primary py-3 text-center font-medium text-neutral-100"
           >
             다음
@@ -135,7 +128,15 @@ const ReportApplyPage = () => {
             <UsereInfoSection />
             <ReportPaymentSection />
             <button
-              onClick={onClickPayButton}
+              onClick={() => {
+                convertFile();
+                const { isValid, message } = validate();
+                if (!isValid) {
+                  alert(message);
+                  return;
+                }
+                navigate(`/payment`);
+              }}
               className="text-1.125-medium w-full rounded-md bg-primary py-3 text-center font-medium text-neutral-100"
             >
               결제하기
