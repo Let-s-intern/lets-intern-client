@@ -12,7 +12,7 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 import dayjs from 'dayjs';
 import 'dayjs/locale/ko';
-import { ChangeEvent, MouseEvent, useEffect, useState } from 'react';
+import { ChangeEvent, useState } from 'react';
 import { FaTrashCan } from 'react-icons/fa6';
 import { useNavigate } from 'react-router-dom';
 import {
@@ -83,25 +83,18 @@ const AdminReportCreatePage = () => {
     premiumDiscount: 0,
   });
 
-  const [editingFeedbackPrice, setEditingFeedbackPrice] =
-    useState<EditingFeedbackPrice>({
-      type: 'basic',
-      price: 0,
-      discount: 0,
-    });
-
   const [editingOptions, setEditingOptions] = useState<
     CreateReportData['optionInfo']
   >([]);
 
   const createReportMutation = usePostReportMutation();
 
-  useEffect(() => {
-    console.log('editingValue', editingValue);
-  }, [editingValue]);
-
-  const postReport = async (event: MouseEvent<HTMLButtonElement>) => {
-    const { name } = event.target as HTMLButtonElement;
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const form = e.currentTarget;
+    if (!form.checkValidity()) {
+      return;
+    }
 
     const body = {
       ...editingValue,
@@ -145,9 +138,6 @@ const AdminReportCreatePage = () => {
         break;
     }
 
-    // body.visibleDate =
-    //   name === 'publish' ? dayjs().format('YYYY-MM-DDTHH:mm') : null;
-
     if (!body.visibleDate) {
       delete body.visibleDate;
     }
@@ -161,7 +151,7 @@ const AdminReportCreatePage = () => {
       message: '서류 진단이 생성되었습니다.',
     });
 
-    // navgiate('/admin/report/list');
+    navgiate('/admin/report/list');
   };
 
   const onChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -181,7 +171,7 @@ const AdminReportCreatePage = () => {
         <h1 className="text-2xl font-semibold">서류 진단 등록</h1>
       </header>
       <main className="max-w-screen-xl">
-        <div className="mt-4 flex flex-col gap-4">
+        <form onSubmit={handleSubmit} className="mt-4 flex flex-col gap-4">
           <div className="flex-no-wrap flex items-center gap-4"></div>
 
           <div className="flex items-center gap-2">
@@ -211,6 +201,7 @@ const AdminReportCreatePage = () => {
               variant="outlined"
               name="title"
               size="small"
+              required
               label="제목"
               placeholder="서류 진단 제목을 입력하세요"
               className="w-96"
@@ -228,13 +219,14 @@ const AdminReportCreatePage = () => {
                     : null
                 }
                 onChange={(value) => {
-                  setEditingValue({
-                    ...editingValue,
-                    visibleDate: value?.toISOString(),
-                  });
+                  value?.isValid() &&
+                    setEditingValue({
+                      ...editingValue,
+                      visibleDate: value?.toISOString(),
+                    });
                 }}
                 ampm={false}
-                format="YYYY년 MM월 DD일 HH:mm"
+                format="YYYY.MM.DD HH:mm"
                 slotProps={{
                   textField: {
                     variant: 'outlined',
@@ -242,6 +234,7 @@ const AdminReportCreatePage = () => {
                     size: 'small',
                   },
                 }}
+                closeOnSelect
               />
             </LocalizationProvider>
             <Button
@@ -625,21 +618,12 @@ const AdminReportCreatePage = () => {
               >
                 취소 (리스트로 돌아가기)
               </Button>
-              <Button
-                variant="contained"
-                color="primary"
-                type="button"
-                name="publish"
-                onClick={postReport}
-              >
+              <Button variant="contained" color="primary" type="submit">
                 등록
               </Button>
             </div>
-            <span className="text-0.875 text-neutral-35">
-              *발행: 서류 진단이 바로 게시됩니다.
-            </span>
           </div>
-        </div>
+        </form>
       </main>
 
       <Snackbar
