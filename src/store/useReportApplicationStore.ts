@@ -21,6 +21,7 @@ interface ReportApplicationStore {
     desiredDate3: string;
     wishJob: string;
     message: string;
+    contactEmail: string;
   };
   setReportApplication: (
     params: Partial<ReportApplicationStore['data']>,
@@ -50,6 +51,7 @@ const useReportApplicationStore = create(
         desiredDate3: dayjs().format('YYYY-MM-DDTHH:00'),
         wishJob: '',
         message: '',
+        contactEmail: '',
       },
       setReportApplication: (params) => {
         const currentData = get().data;
@@ -80,31 +82,33 @@ const useReportApplicationStore = create(
             desiredDate3: dayjs().format('YYYY-MM-DDTHH:00'),
             wishJob: '',
             message: '',
+            contactEmail: '',
           },
         });
       },
       validate: () => {
+        const isEmpty = (value: string) => value === '' || !value;
         const currentData = get().data;
-        if (!currentData.applyUrl)
+        if (isEmpty(currentData.applyUrl))
           return { isValid: false, message: '진단용 이력서를 등록해주세요.' };
 
         if (
           currentData.reportPriceType === 'PREMIUM' &&
-          !currentData.recruitmentUrl
+          isEmpty(currentData.recruitmentUrl)
         )
           return { isValid: false, message: '채용공고를 등록해주세요.' };
 
         if (
-          !currentData.desiredDate1 ||
-          !currentData.desiredDate2 ||
-          !currentData.desiredDate3
+          isEmpty(currentData.desiredDate1) ||
+          isEmpty(currentData.desiredDate2) ||
+          isEmpty(currentData.desiredDate3)
         )
           return {
             isValid: false,
             message: '맞춤 첨삭 일정 모두 선택해주세요.',
           };
 
-        if (!currentData.wishJob)
+        if (isEmpty(currentData.wishJob))
           return { isValid: false, message: '희망직무를 입력해주세요.' };
 
         return { isValid: true, message: null };

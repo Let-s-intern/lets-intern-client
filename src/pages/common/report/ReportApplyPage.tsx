@@ -135,6 +135,10 @@ const ReportApplyPage = () => {
                   alert(message);
                   return;
                 }
+                if (reportApplication.contactEmail === '') {
+                  alert('정보 수신용 이메일을 입력해주세요.');
+                  return;
+                }
                 navigate(`/payment`);
               }}
               className="text-1.125-medium w-full rounded-md bg-primary py-3 text-center font-medium text-neutral-100"
@@ -436,18 +440,22 @@ const AdditionalInfoSection = () => {
 
 const UsereInfoSection = () => {
   const [checked, setChecked] = useState(true);
-  const [contactEmail, setContactEmail] = useState('');
 
-  const { data } = useGetParticipationInfo();
-
-  useEffect(() => {
-    setContactEmail(data?.email || '');
-  }, [data]);
+  const { data: participationInfoData } = useGetParticipationInfo();
+  const { data: reportApplicationData, setReportApplication } =
+    useReportApplicationStore();
 
   useEffect(() => {
-    if (contactEmail !== data?.email) setChecked(false);
+    setReportApplication({
+      contactEmail: reportApplicationData?.contactEmail || '',
+    });
+  }, [participationInfoData]);
+
+  useEffect(() => {
+    if (reportApplicationData.contactEmail !== participationInfoData?.email)
+      setChecked(false);
     else setChecked(true);
-  }, [contactEmail]);
+  }, [reportApplicationData.contactEmail]);
 
   return (
     <section>
@@ -460,7 +468,7 @@ const UsereInfoSection = () => {
             disabled
             readOnly
             className="text-sm"
-            value={data?.name || ''}
+            value={participationInfoData?.name || ''}
             name="name"
           />
         </div>
@@ -470,7 +478,7 @@ const UsereInfoSection = () => {
             disabled
             readOnly
             className="text-sm"
-            value={data?.phoneNumber || ''}
+            value={participationInfoData?.phoneNumber || ''}
             name="phoneNumber"
           />
         </div>
@@ -482,7 +490,7 @@ const UsereInfoSection = () => {
             disabled
             readOnly
             className="text-sm"
-            value={data?.email || ''}
+            value={participationInfoData?.email || ''}
             name="email"
           />
         </div>
@@ -496,8 +504,14 @@ const UsereInfoSection = () => {
           <label
             onClick={() => {
               setChecked(!checked);
-              if (checked) setContactEmail('');
-              else setContactEmail(data?.email || '');
+              if (checked)
+                setReportApplication({
+                  contactEmail: '',
+                });
+              else
+                setReportApplication({
+                  contactEmail: participationInfoData?.email || '',
+                });
             }}
             className="flex cursor-pointer items-center gap-1 text-xxsmall12 font-medium"
           >
@@ -510,8 +524,10 @@ const UsereInfoSection = () => {
           <Input
             name="contactEmail"
             placeholder="example@example.com"
-            value={contactEmail}
-            onChange={(e) => setContactEmail(e.target.value)}
+            value={reportApplicationData.contactEmail}
+            onChange={(e) =>
+              setReportApplication({ contactEmail: e.target.value })
+            }
           />
         </div>
       </div>
