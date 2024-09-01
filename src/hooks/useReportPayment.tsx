@@ -35,7 +35,9 @@ export default function useReportPayment() {
     );
     const feedbackPriceInfo = reportPriceDetail.feedbackPriceInfo;
     const report = reportPriceInfo?.price as number;
-    const feedback = feedbackPriceInfo?.feedbackPrice as number;
+    const feedback = reportApplication.isFeedbackApplied
+      ? (feedbackPriceInfo?.feedbackPrice as number)
+      : 0;
     let discount = 0;
     let total = 0;
 

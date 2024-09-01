@@ -15,9 +15,9 @@ interface ReportApplicationStore {
     programDiscount: number;
     applyUrl: string;
     recruitmentUrl: string;
-    desiredDate1: string | null;
-    desiredDate2: string | null;
-    desiredDate3: string | null;
+    desiredDate1: string;
+    desiredDate2: string;
+    desiredDate3: string;
     wishJob: string;
     message: string;
   };
@@ -44,9 +44,9 @@ const useReportApplicationStore = create(
         programDiscount: 0,
         applyUrl: '',
         recruitmentUrl: '',
-        desiredDate1: null,
-        desiredDate2: null,
-        desiredDate3: null,
+        desiredDate1: new Date().toString(),
+        desiredDate2: new Date().toString(),
+        desiredDate3: new Date().toString(),
         wishJob: '',
         message: '',
       },
@@ -74,9 +74,9 @@ const useReportApplicationStore = create(
             programDiscount: 0,
             applyUrl: '',
             recruitmentUrl: '',
-            desiredDate1: null,
-            desiredDate2: null,
-            desiredDate3: null,
+            desiredDate1: new Date().toString(),
+            desiredDate2: new Date().toString(),
+            desiredDate3: new Date().toString(),
             wishJob: '',
             message: '',
           },
