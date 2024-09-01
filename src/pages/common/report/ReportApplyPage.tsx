@@ -63,13 +63,8 @@ const ReportApplyPage = () => {
   };
 
   useEffect(() => {
-    // mock data
-    initReportApplication();
     setReportApplication({
-      reportId: 5,
-      reportPriceType: 'BASIC',
-      optionIds: [3, 4],
-      isFeedbackApplied: true,
+      reportId: Number(reportId),
     });
   }, []);
 
@@ -406,22 +401,22 @@ const AdditionalInfoSection = () => {
     <section className="flex flex-col gap-5">
       <Heading2>추가 정보</Heading2>
       <div>
-        <Label htmlFor="job">
+        <Label htmlFor="wishJob">
           희망직무
           <RequiredStar />
         </Label>
         <FilledInput
           name="wishJob"
-          id="job"
+          id="wishJob"
           placeholder="희망하는 직무를 알려주세요"
           value={data.wishJob || ''}
           onChange={onChange}
         />
       </div>
       <div>
-        <Label htmlFor="concern">서류 작성 고민</Label>
+        <Label htmlFor="message">서류 작성 고민</Label>
         <textarea
-          id="concern"
+          id="message"
           className="w-full resize-none rounded-md bg-neutral-95 p-3 text-xsmall14"
           name="message"
           placeholder="진단에 참고할 수 있도록 서류 작성에 대한 고민을 적어주세요"
@@ -434,28 +429,30 @@ const AdditionalInfoSection = () => {
   );
 };
 
-const UsereInfoSection = () => {
+/* 모바일 전용 결제 페이지(ReportPaymentPage)에서 같이 사용 */
+export const UsereInfoSection = () => {
   const [checked, setChecked] = useState(true);
 
-  const { data: participationInfoData } = useGetParticipationInfo();
-  const { data: reportApplicationData, setReportApplication } =
+  const { data: participationInfo } = useGetParticipationInfo();
+  const { data: reportApplication, setReportApplication } =
     useReportApplicationStore();
 
   useEffect(() => {
+    // 가입한 이메일을 정보 수신용 이메일로 설정
     setReportApplication({
-      contactEmail: reportApplicationData?.contactEmail || '',
+      contactEmail: participationInfo?.email || '',
     });
-  }, [participationInfoData]);
+  }, [participationInfo]);
 
   useEffect(() => {
-    if (reportApplicationData.contactEmail !== participationInfoData?.email)
+    // 정보 수신용 이메일과 가입한 이메일이 다르면 체크 해제
+    if (reportApplication.contactEmail !== participationInfo?.email)
       setChecked(false);
     else setChecked(true);
-  }, [reportApplicationData.contactEmail]);
+  }, [reportApplication]);
 
   return (
     <section>
-      {/* TODO: 서류 진단 application 정보 불러오기 */}
       <Heading2>참여자 정보</Heading2>
       <div className="mb-4 mt-6 flex flex-col gap-3">
         <div className="flex flex-col gap-1">
@@ -464,7 +461,7 @@ const UsereInfoSection = () => {
             disabled
             readOnly
             className="text-sm"
-            value={participationInfoData?.name || ''}
+            value={participationInfo?.name || ''}
             name="name"
           />
         </div>
@@ -474,7 +471,7 @@ const UsereInfoSection = () => {
             disabled
             readOnly
             className="text-sm"
-            value={participationInfoData?.phoneNumber || ''}
+            value={participationInfo?.phoneNumber || ''}
             name="phoneNumber"
           />
         </div>
@@ -486,7 +483,7 @@ const UsereInfoSection = () => {
             disabled
             readOnly
             className="text-sm"
-            value={participationInfoData?.email || ''}
+            value={participationInfo?.email || ''}
             name="email"
           />
         </div>
@@ -506,7 +503,7 @@ const UsereInfoSection = () => {
                 });
               else
                 setReportApplication({
-                  contactEmail: participationInfoData?.email || '',
+                  contactEmail: participationInfo?.email || '',
                 });
             }}
             className="flex cursor-pointer items-center gap-1 text-xxsmall12 font-medium"
@@ -520,7 +517,7 @@ const UsereInfoSection = () => {
           <Input
             name="contactEmail"
             placeholder="example@example.com"
-            value={reportApplicationData.contactEmail}
+            value={reportApplication.contactEmail}
             onChange={(e) =>
               setReportApplication({ contactEmail: e.target.value })
             }
@@ -537,9 +534,9 @@ export const ReportPaymentSection = () => {
   const { state: priceInfo } = useReportPayment();
 
   return (
-    <section>
+    <section className="flex flex-col gap-6">
       <Heading2>결제 정보</Heading2>
-      {/* <div className="mt-6 flex gap-2.5">
+      {/* <div className="flex gap-2.5">
         <Input
           className="w-full"
           type="text"
@@ -548,8 +545,8 @@ export const ReportPaymentSection = () => {
         <button className="shrink-0 rounded-sm bg-primary px-4 py-1.5 text-xsmall14 font-medium text-neutral-100">
           쿠폰 등록
         </button>
-      </div> */}
-      <hr className="my-5" />
+      </div>
+      <hr className="my-5" /> */}
       <div className="flex flex-col">
         <div className="flex h-10 items-center justify-between px-3 text-neutral-0">
           <span>
