@@ -108,8 +108,8 @@ const AdminLayout = () => {
       title: '서류 진단',
       itemList: [
         {
-          name: '진단 프로그램 관리',
-          url: '/admin/report',
+          name: '서류 진단 프로그램 관리',
+          url: '/admin/report/list',
         },
       ],
     },

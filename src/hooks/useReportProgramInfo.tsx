@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom';
 
 import {
   convertReportPriceType,
-  useGetReportDetail,
+  useGetReportDetailQuery,
   useGetReportPriceDetail,
 } from '../api/report';
 import useReportApplicationStore from '../store/useReportApplicationStore';
@@ -13,7 +13,7 @@ export default function useReportProgramInfo() {
 
   const [options, setOptions] = useState<string[]>([]);
 
-  const { data: reportDetailData } = useGetReportDetail(Number(reportId));
+  const { data: reportDetailData } = useGetReportDetailQuery(Number(reportId));
   const { data: reportPriceDetailData } = useGetReportPriceDetail(
     Number(reportId),
   );
