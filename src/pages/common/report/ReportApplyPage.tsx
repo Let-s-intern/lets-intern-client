@@ -14,7 +14,7 @@ import { uploadFile } from '../../../api/file';
 import {
   convertReportPriceType,
   convertReportTypeStatus,
-  useGetReportDetail,
+  useGetReportDetailQuery,
 } from '../../../api/report';
 import Card from '../../../components/common/report/Card';
 import ControlLabel from '../../../components/common/report/ControlLabel';
@@ -161,7 +161,7 @@ export default ReportApplyPage;
 const CallOut = () => {
   const { reportId } = useParams();
 
-  const { data } = useGetReportDetail(Number(reportId));
+  const { data } = useGetReportDetailQuery(Number(reportId));
 
   return (
     <div className="rounded-md bg-neutral-100 px-6 py-6">

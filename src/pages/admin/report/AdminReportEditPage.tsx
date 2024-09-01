@@ -13,14 +13,16 @@ import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 import { useQueryClient } from '@tanstack/react-query';
 import dayjs from 'dayjs';
 import 'dayjs/locale/ko';
-import { ChangeEvent, useState } from 'react';
+import { ChangeEvent, useEffect, useState } from 'react';
 import { FaTrashCan } from 'react-icons/fa6';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import {
-  CreateReportData,
+  getReportDetailForAdminQueryKey,
   getReportsForAdminQueryKey,
   ReportType,
-  usePostReportMutation,
+  UpdateReportData,
+  useGetReportDetailAdminQuery,
+  usePatchReportMutation,
 } from '../../../api/report';
 import EditorApp from '../../../components/admin/lexical/EditorApp';
 import {
@@ -28,7 +30,7 @@ import {
   ReportEditingPrice,
 } from '../../../types/interface';
 
-const initialReport: CreateReportData = {
+const initialReport: UpdateReportData = {
   reportType: 'PERSONAL_STATEMENT',
   title: '',
   contents: '',
@@ -39,14 +41,22 @@ const initialReport: CreateReportData = {
     price: 0,
     discountPrice: 0,
   },
-  visibleDate: null,
+  visibleDate: undefined,
 };
 
-const AdminReportCreatePage = () => {
+type EditingOptions = Exclude<UpdateReportData['optionInfo'], undefined | null>;
+
+const AdminReportEditPage = () => {
+  const params = useParams();
+  const reportId = params.id;
+  if (!reportId) {
+    throw new Error('reportId is required');
+  }
+
   const navgiate = useNavigate();
 
   const [editingValue, setEditingValue] =
-    useState<CreateReportData>(initialReport);
+    useState<UpdateReportData>(initialReport);
 
   const [snackbar, setSnackbar] = useState<{
     open: boolean;
@@ -64,12 +74,83 @@ const AdminReportCreatePage = () => {
     premiumDiscount: 0,
   });
 
-  const [editingOptions, setEditingOptions] = useState<
-    CreateReportData['optionInfo']
-  >([]);
-
-  const createReportMutation = usePostReportMutation();
   const queryClient = useQueryClient();
+
+  const [editingOptions, setEditingOptions] = useState<EditingOptions>([]);
+
+  const editReportMutation = usePatchReportMutation();
+
+  const { data: reportDetail, isError: isLoadError } =
+    useGetReportDetailAdminQuery(Number(reportId));
+
+  useEffect(() => {
+    if (isLoadError) {
+      const s = new URLSearchParams();
+      s.set('message', '해당 서류 진단이 존재하지 않습니다.');
+      navgiate(`/admin/report/list?${s.toString()}`);
+    }
+  }, [isLoadError, navgiate]);
+
+  useEffect(() => {
+    console.log('editingOptions', editingOptions);
+  }, [editingOptions]);
+
+  useEffect(() => {
+    if (reportDetail) {
+      setEditingValue({
+        // 기본값
+        ...initialReport,
+
+        ...reportDetail,
+
+        feedbackInfo: {
+          price: reportDetail.feedbackPriceInfo.feedbackPrice ?? 0,
+          discountPrice:
+            reportDetail.feedbackPriceInfo.feedbackDiscountPrice ?? 0,
+        },
+
+        // TODO: 추가
+        // visibleDate: reportDetail.visibleDate
+        //   ? dayjs(reportDetail.visibleDate).toISOString()
+        //   : undefined,
+      });
+
+      const premiumPrice = reportDetail.reportPriceInfos.find(
+        (price) => price.reportPriceType === 'PREMIUM',
+      );
+
+      const basicPrice = reportDetail.reportPriceInfos.find(
+        (price) => price.reportPriceType === 'BASIC',
+      );
+
+      if (premiumPrice && basicPrice) {
+        setEditingPrice({
+          type: 'all',
+          basicPrice: basicPrice.price,
+          basicDiscount: basicPrice.discountPrice,
+          premiumPrice: premiumPrice.price,
+          premiumDiscount: premiumPrice.discountPrice,
+        });
+      } else if (premiumPrice) {
+        setEditingPrice({
+          type: 'premium',
+          premiumPrice: premiumPrice.price,
+          premiumDiscount: premiumPrice.discountPrice,
+        });
+      } else if (basicPrice) {
+        setEditingPrice({
+          type: 'basic',
+          basicPrice: basicPrice.price,
+          basicDiscount: basicPrice.discountPrice,
+        });
+      }
+
+      // TODO: as 제거
+      setEditingOptions(
+        reportDetail.reportOptionInfos as unknown as EditingOptions,
+      );
+    }
+  }, [reportDetail]);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -120,24 +201,22 @@ const AdminReportCreatePage = () => {
         break;
     }
 
-    if (!body.visibleDate) {
-      delete body.visibleDate;
-    }
-
-    await createReportMutation.mutateAsync({
-      ...body,
+    await editReportMutation.mutateAsync({
+      reportId: Number(reportId),
+      data: body,
     });
 
+    queryClient.invalidateQueries({
+      queryKey: [getReportDetailForAdminQueryKey, Number(reportId)],
+    });
     queryClient.invalidateQueries({
       queryKey: [getReportsForAdminQueryKey],
     });
 
     setSnackbar({
       open: true,
-      message: '서류 진단이 생성되었습니다.',
+      message: '서류 진단이 수정되었습니다.',
     });
-
-    navgiate('/admin/report/list');
   };
 
   const onChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -229,7 +308,7 @@ const AdminReportCreatePage = () => {
               onClick={() => {
                 setEditingValue((prev) => {
                   if (prev.visibleDate) {
-                    return { ...prev, visibleDate: null };
+                    return { ...prev, visibleDate: undefined };
                   }
                   return prev;
                 });
@@ -461,7 +540,7 @@ const AdminReportCreatePage = () => {
                   />
 
                   <TextField
-                    value={option.code}
+                    value={option.code ?? ''}
                     onChange={(e) => {
                       setEditingOptions((prev) => {
                         return prev.map((item, i) => {
@@ -529,12 +608,13 @@ const AdminReportCreatePage = () => {
             </FormControl>
             <div className="flex flex-col items-start gap-2">
               <TextField
-                value={editingValue.feedbackInfo.price}
+                value={editingValue.feedbackInfo?.price || 0}
                 onChange={(e) => {
                   setEditingValue((prev) => {
                     return {
                       ...prev,
                       feedbackInfo: {
+                        discountPrice: 0,
                         ...prev.feedbackInfo,
                         price: Number(e.target.value),
                       },
@@ -552,12 +632,13 @@ const AdminReportCreatePage = () => {
                 }}
               />
               <TextField
-                value={editingValue.feedbackInfo.discountPrice}
+                value={editingValue.feedbackInfo?.discountPrice}
                 onChange={(e) => {
                   setEditingValue((prev) => {
                     return {
                       ...prev,
                       feedbackInfo: {
+                        price: 0,
                         ...prev.feedbackInfo,
                         discountPrice: Number(e.target.value),
                       },
@@ -622,4 +703,4 @@ const AdminReportCreatePage = () => {
   );
 };
 
-export default AdminReportCreatePage;
+export default AdminReportEditPage;

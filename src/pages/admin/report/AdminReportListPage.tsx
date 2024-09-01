@@ -1,7 +1,7 @@
 import { Button, Snackbar } from '@mui/material';
 import { DataGrid, GridColDef, GridToolbarContainer } from '@mui/x-data-grid';
-import { useMemo, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useEffect, useMemo, useState } from 'react';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import {
   AdminReportListItem,
   convertReportTypeToDisplayName,
@@ -14,7 +14,6 @@ function createColumns({
   handleEdit,
 }: {
   handleEdit: (id: number) => void;
-  handleDelete: (id: number) => void;
 }): GridColDef<Row>[] {
   return [
     { field: 'id', headerName: 'ID', width: 50 },
@@ -40,7 +39,7 @@ function createColumns({
         return (
           <div className="flex flex-col items-center justify-center">
             <p className="m-0">신청인원</p>
-            <p className="m-0 text-xs text-gray-500">서류진단/1:1첨삭</p>
+            <p className="m-0 text-xs text-gray-500">서류진단/1:1피드백</p>
           </div>
         );
       },
@@ -80,7 +79,7 @@ function createColumns({
             variant="outlined"
             color="info"
             size="small"
-            onClick={() => handleEdit(params.row.id)}
+            onClick={() => {}}
           >
             서류 진단
           </Button>
@@ -88,9 +87,11 @@ function createColumns({
             variant="outlined"
             color="info"
             size="small"
-            onClick={() => handleEdit(params.row.id)}
+            onClick={() => {
+              console.log('1:1 피드백');
+            }}
           >
-            1:1첨삭
+            1:1피드백
           </Button>
         </div>
       ),
@@ -123,6 +124,7 @@ function Toolbar() {
 const AdminReportListPage = () => {
   const { data: reportsData } = useGetReportsForAdmin();
   const [searchParams, setSearchParams] = useSearchParams();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const message = searchParams.get('message');
@@ -142,14 +144,11 @@ const AdminReportListPage = () => {
 
   const columns = useMemo(() => {
     return createColumns({
-      handleDelete: (id) => {
-        console.log('delete', id);
-      },
-      handleEdit: (id) => {
-        console.log('edit', id);
+      handleEdit(id) {
+        navigate(`/admin/report/edit/${id}`);
       },
     });
-  }, []);
+  }, [navigate]);
 
   const rows = useMemo(() => {
     return (

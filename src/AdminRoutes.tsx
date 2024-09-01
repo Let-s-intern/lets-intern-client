@@ -43,6 +43,7 @@ import RemindersBootcamp from './pages/admin/reminder/RemindersBootcamp';
 import RemindersChallenge from './pages/admin/reminder/RemindersChallenge';
 import RemindersLetsChat from './pages/admin/reminder/RemindersLetsChat';
 import AdminReportCreatePage from './pages/admin/report/AdminReportCreatePage';
+import AdminReportEditPage from './pages/admin/report/AdminReportEditPage';
 import AdminReportListPage from './pages/admin/report/AdminReportListPage';
 import ReportApplicationsPage from './pages/admin/report/ReportApplicationsPage';
 import ReportFeedbackApplicationsPage from './pages/admin/report/ReportFeedbackApplicationsPage';
@@ -188,7 +189,7 @@ export const getAdminRoutes = () => {
       {/* 서류진단 */}
       <Route path="report/list" element={<AdminReportListPage />} />
       <Route path="report/create" element={<AdminReportCreatePage />} />
-      <Route path="report/edit/:id" element={<></>} />
+      <Route path="report/edit/:id" element={<AdminReportEditPage />} />
       <Route path="report/applications" element={<ReportApplicationsPage />} />
       <Route
         path="report/applications/feedback"

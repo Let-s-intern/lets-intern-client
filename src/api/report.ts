@@ -193,21 +193,14 @@ const getReportDetailSchema = z.object({
   reportType: reportTypeSchema.nullable().optional(),
 });
 
-export const useGetReportDetail = (reportId: number) => {
-  return useQuery({
-    queryKey: ['getReportDetail', reportId],
-    queryFn: async () => {
-      // Mock data
-      const mockData = {
-        reportId,
-        title: '이력서 진단 프로그램',
-        notice: '이력서 작성 시 주의사항',
-        contents: '이력서 진단 프로그램 상세 내용',
-        reportType: 'RESUME',
-      };
-      const res = await axios.get(`/report/${reportId}`);
+export const getReportDetailQueryKey = 'getReportDetail';
 
-      return getReportDetailSchema.parse(mockData);
+export const useGetReportDetailQuery = (reportId: number) => {
+  return useQuery({
+    queryKey: [getReportDetailQueryKey, reportId],
+    queryFn: async () => {
+      const res = await axios.get(`/report/${reportId}`);
+      return getReportDetailSchema.parse(res.data.data);
     },
   });
 };
@@ -303,51 +296,30 @@ const getReportDetailForAdminSchema = z.object({
   ),
   reportOptionInfos: z.array(
     z.object({
-      reportOptionId: z.number(),
-      price: z.number(),
-      discountPrice: z.number(),
-      title: z.string(),
+      reportOptionId: z.number().nullable().optional(),
+      price: z.number().nullable().optional(),
+      discountPrice: z.number().nullable().optional(),
+      title: z.string().nullable().optional(),
     }),
   ),
   feedbackPriceInfo: z.object({
-    price: z.number(),
-    discountPrice: z.number(),
+    reportFeedbackId: z.number(),
+    reportPriceType: reportPriceTypeSchema,
+    feedbackPrice: z.number(),
+    feedbackDiscountPrice: z.number(),
   }),
 });
 
-export const useGetReportDetailForAdmin = (reportId: number) => {
+export type ReportDetailAdmin = z.infer<typeof getReportDetailForAdminSchema>;
+
+export const getReportDetailForAdminQueryKey = 'getReportDetailForAdmin';
+
+export const useGetReportDetailAdminQuery = (reportId: number) => {
   return useQuery({
     queryKey: ['getReportDetailForAdmin', reportId],
     queryFn: async () => {
-      // Mock data
-      const mockData = {
-        reportId,
-        reportType: 'RESUME',
-        title: '이력서 진단 프로그램',
-        contents: '이력서 진단 프로그램 상세 내용',
-        notice: '이력서 작성 시 주의사항',
-        reportPriceInfos: [
-          { reportPriceType: 'BASIC', price: 50000, discountPrice: 45000 },
-          { reportPriceType: 'PREMIUM', price: 100000, discountPrice: 90000 },
-        ],
-        reportOptionInfos: [
-          {
-            reportOptionId: 1,
-            price: 20000,
-            discountPrice: 18000,
-            title: '추가 피드백',
-          },
-          {
-            reportOptionId: 2,
-            price: 30000,
-            discountPrice: 27000,
-            title: '심층 분석',
-          },
-        ],
-        feedbackPriceInfo: { price: 80000, discountPrice: 72000 },
-      };
-
-      return getReportDetailForAdminSchema.parse(mockData);
+      const data = await axios.get(`/report/${reportId}/admin`);
+      return getReportDetailForAdminSchema.parse(data.data.data);
     },
   });
 };
@@ -896,7 +868,9 @@ const updateReportSchema = z.object({
     .optional(),
 });
 
-export const useUpdateReport = () => {
+export type UpdateReportData = z.infer<typeof updateReportSchema>;
+
+export const usePatchReportMutation = () => {
   return useMutation({
     mutationFn: async ({
       reportId,
@@ -905,8 +879,7 @@ export const useUpdateReport = () => {
       reportId: number;
       data: z.infer<typeof updateReportSchema>;
     }) => {
-      // Mock API call
-      console.log('Updating report:', reportId, data);
+      await axios.patch(`/report/${reportId}`, data);
       return { success: true, message: 'Report updated successfully' };
     },
   });

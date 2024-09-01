@@ -30,3 +30,28 @@ export interface ICouponForm {
   id: number | null;
   price: number;
 }
+
+export type ReportEditingPrice =
+  | {
+      type: 'premium';
+      premiumPrice: number;
+      premiumDiscount: number;
+    }
+  | {
+      type: 'basic';
+      basicPrice: number;
+      basicDiscount: number;
+    }
+  | {
+      type: 'all';
+      basicPrice: number;
+      basicDiscount: number;
+      premiumPrice: number;
+      premiumDiscount: number;
+    };
+
+export type ReportEditingFeedbackPrice = {
+  type: 'basic';
+  price: number;
+  discount: number;
+};
