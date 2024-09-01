@@ -272,10 +272,9 @@ export const useGetReportPriceDetail = (reportId: number) => {
           feedbackDiscountPrice: 72000,
         },
       };
-
       const res = await axios.get(`/report/${reportId}/price`);
 
-      return getReportPriceDetailSchema.parse(mockData);
+      return getReportPriceDetailSchema.parse(res.data.data);
     },
   });
 };

@@ -1,3 +1,4 @@
+import dayjs from 'dayjs';
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
@@ -10,15 +11,17 @@ interface ReportApplicationStore {
     couponId: number | null;
     paymentKey: string | null;
     orderId: string | null;
-    amount: string | null;
-    discountPrice: number | null;
-    applyUrl: string | null;
-    recruitmentUrl: string | null;
-    desiredDate1: string | null;
-    desiredDate2: string | null;
-    desiredDate3: string | null;
-    wishJob: string | null;
-    message: string | null;
+    amount: string;
+    programPrice: number;
+    programDiscount: number;
+    applyUrl: string;
+    recruitmentUrl: string;
+    desiredDate1: string;
+    desiredDate2: string;
+    desiredDate3: string;
+    wishJob: string;
+    message: string;
+    contactEmail: string;
   };
   setReportApplication: (
     params: Partial<ReportApplicationStore['data']>,
@@ -38,15 +41,17 @@ const useReportApplicationStore = create(
         couponId: null,
         paymentKey: null,
         orderId: null,
-        amount: null,
-        discountPrice: null,
-        applyUrl: null,
-        recruitmentUrl: null,
-        desiredDate1: null,
-        desiredDate2: null,
-        desiredDate3: null,
-        wishJob: null,
-        message: null,
+        amount: '',
+        programPrice: 0,
+        programDiscount: 0,
+        applyUrl: '',
+        recruitmentUrl: '',
+        desiredDate1: dayjs().format('YYYY-MM-DDTHH:00'),
+        desiredDate2: dayjs().format('YYYY-MM-DDTHH:00'),
+        desiredDate3: dayjs().format('YYYY-MM-DDTHH:00'),
+        wishJob: '',
+        message: '',
+        contactEmail: '',
       },
       setReportApplication: (params) => {
         const currentData = get().data;
@@ -67,40 +72,43 @@ const useReportApplicationStore = create(
             couponId: null,
             paymentKey: null,
             orderId: null,
-            amount: null,
-            discountPrice: null,
-            applyUrl: null,
-            recruitmentUrl: null,
-            desiredDate1: null,
-            desiredDate2: null,
-            desiredDate3: null,
-            wishJob: null,
-            message: null,
+            amount: '',
+            programPrice: 0,
+            programDiscount: 0,
+            applyUrl: '',
+            recruitmentUrl: '',
+            desiredDate1: dayjs().format('YYYY-MM-DDTHH:00'),
+            desiredDate2: dayjs().format('YYYY-MM-DDTHH:00'),
+            desiredDate3: dayjs().format('YYYY-MM-DDTHH:00'),
+            wishJob: '',
+            message: '',
+            contactEmail: '',
           },
         });
       },
       validate: () => {
+        const isEmpty = (value: string) => value === '' || !value;
         const currentData = get().data;
-        if (!currentData.applyUrl)
+        if (isEmpty(currentData.applyUrl))
           return { isValid: false, message: '진단용 이력서를 등록해주세요.' };
 
         if (
           currentData.reportPriceType === 'PREMIUM' &&
-          !currentData.recruitmentUrl
+          isEmpty(currentData.recruitmentUrl)
         )
           return { isValid: false, message: '채용공고를 등록해주세요.' };
 
         if (
-          !currentData.desiredDate1 ||
-          !currentData.desiredDate2 ||
-          !currentData.desiredDate3
+          isEmpty(currentData.desiredDate1) ||
+          isEmpty(currentData.desiredDate2) ||
+          isEmpty(currentData.desiredDate3)
         )
           return {
             isValid: false,
             message: '맞춤 첨삭 일정 모두 선택해주세요.',
           };
 
-        if (!currentData.wishJob)
+        if (isEmpty(currentData.wishJob))
           return { isValid: false, message: '희망직무를 입력해주세요.' };
 
         return { isValid: true, message: null };

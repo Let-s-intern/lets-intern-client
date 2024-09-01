@@ -10,6 +10,7 @@ import { FaArrowLeft } from 'react-icons/fa6';
 import { IoCloseOutline } from 'react-icons/io5';
 import { useNavigate, useParams } from 'react-router-dom';
 
+import { useGetParticipationInfo } from '../../../api/application';
 import { uploadFile } from '../../../api/file';
 import {
   convertReportPriceType,
@@ -41,10 +42,11 @@ const ReportApplyPage = () => {
   const {
     data: reportApplication,
     setReportApplication,
+    initReportApplication,
     validate,
   } = useReportApplicationStore();
 
-  const onClickNext = () => {
+  const convertFile = () => {
     // 파일 변환
     if (applyFile) {
       uploadFile({ file: applyFile, type: 'REPORT' }).then((url: string) => {
@@ -58,48 +60,18 @@ const ReportApplyPage = () => {
         },
       );
     }
-
-    const { isValid, message } = validate();
-    if (!isValid) {
-      alert(message);
-      return;
-    }
-    navigate(`/report/payment/${reportType}/${reportId}`);
   };
-
-  const onClickPayButton = () => {
-    //  payInfo 결제정보: application 정보로부터 가져오기
-    // 프로그램 신청 정보 가져오기
-    // setReportApplication({...});
-
-    navigate(`/payment`);
-  };
-
-  // useEffect(() => {
-  //   // mock data
-  //   setReportApplication({
-  //     reportId: 1,
-  //     reportPriceType: 'PREMIUM',
-  //     optionIds: [],
-  //     isFeedbackApplied: true,
-  //     couponId: null,
-  //     paymentKey: null,
-  //     orderId: null,
-  //     amount: null,
-  //     discountPrice: null,
-  //     applyUrl: null,
-  //     recruitmentUrl: null,
-  //     desiredDate1: null,
-  //     desiredDate2: null,
-  //     desiredDate3: null,
-  //     wishJob: null,
-  //     message: null,
-  //   });
-  // }, []);
 
   useEffect(() => {
-    console.log(reportApplication);
-  }, [reportApplication]);
+    // mock data
+    initReportApplication();
+    setReportApplication({
+      reportId: 5,
+      reportPriceType: 'BASIC',
+      optionIds: [3, 4],
+      isFeedbackApplied: true,
+    });
+  }, []);
 
   return (
     <div className="px-5 md:px-32 md:py-10 xl:flex xl:gap-16 xl:px-48">
@@ -131,7 +103,15 @@ const ReportApplyPage = () => {
             <FaArrowLeft size={20} />
           </button>
           <button
-            onClick={onClickNext}
+            onClick={() => {
+              convertFile();
+              const { isValid, message } = validate();
+              if (!isValid) {
+                alert(message);
+                return;
+              }
+              navigate(`/report/payment/${reportType}/${reportId}`);
+            }}
             className="text-1.125-medium w-full rounded-md bg-primary py-3 text-center font-medium text-neutral-100"
           >
             다음
@@ -144,7 +124,19 @@ const ReportApplyPage = () => {
             <UsereInfoSection />
             <ReportPaymentSection />
             <button
-              onClick={onClickPayButton}
+              onClick={() => {
+                convertFile();
+                const { isValid, message } = validate();
+                if (!isValid) {
+                  alert(message);
+                  return;
+                }
+                if (reportApplication.contactEmail === '') {
+                  alert('정보 수신용 이메일을 입력해주세요.');
+                  return;
+                }
+                navigate(`/payment`);
+              }}
               className="text-1.125-medium w-full rounded-md bg-primary py-3 text-center font-medium text-neutral-100"
             >
               결제하기
@@ -233,7 +225,7 @@ const DocumentSection = ({
           onChange={(e) => {
             setValue(e.target.value);
             if (e.target.value === 'url') dispatch(null);
-            else setReportApplication({ applyUrl: null });
+            else setReportApplication({ applyUrl: '' });
           }}
         >
           {/* 파일 첨부 */}
@@ -254,7 +246,7 @@ const DocumentSection = ({
               <FilledInput
                 name="applyUrl"
                 placeholder="https://"
-                value={data.applyUrl as string}
+                value={data.applyUrl || ''}
                 onChange={(e) =>
                   setReportApplication({ applyUrl: e.target.value })
                 }
@@ -294,7 +286,7 @@ const PremiumSection = ({
             onChange={(e) => {
               setValue(e.target.value);
               if (e.target.value === 'url') dispatch(null);
-              else setReportApplication({ recruitmentUrl: null });
+              else setReportApplication({ recruitmentUrl: '' });
             }}
             name="radio-buttons-group"
           >
@@ -317,7 +309,7 @@ const PremiumSection = ({
                 <FilledInput
                   name="recruitmentUrl"
                   placeholder="https://"
-                  value={data.recruitmentUrl as string}
+                  value={data.recruitmentUrl || ''}
                   onChange={(e) =>
                     setReportApplication({ recruitmentUrl: e.target.value })
                   }
@@ -336,22 +328,22 @@ const ScheduleSection = () => {
   type Key = keyof typeof data;
 
   const onChangeDate = (date: Dayjs | null, name?: string) => {
-    const prev = data[name as Key];
-    if (prev)
-      setReportApplication({
-        [name as Key]: `${date?.format('YYYY-MM-DD')}T${(prev as string).split('T')[1]}`,
-      });
-    else setReportApplication({ [name!]: date?.format('YYYY-MM-DDTHH:mm') });
+    const hour = dayjs(data[name as Key] as dayjs.ConfigType).hour();
+
+    date?.set('hour', hour);
+    setReportApplication({
+      [name as Key]: date?.format('YYYY-MM-DDTHH:00'),
+    });
   };
 
   const onChangeTime = (e: SelectChangeEvent<unknown>) => {
     const prev = data[e.target.name as Key];
-    if (prev)
-      setReportApplication({
-        [e.target.name]:
-          `${(prev as string).split('T')[0]}T${e.target.value}:00`,
-      });
-    else setReportApplication({ [e.target.name]: `T${e.target.value}:00` });
+
+    setReportApplication({
+      [e.target.name]: dayjs(prev as dayjs.ConfigType)
+        .set('hour', e.target.value as number)
+        .format('YYYY-MM-DDTHH:00'),
+    });
   };
 
   return (
@@ -422,7 +414,7 @@ const AdditionalInfoSection = () => {
           name="wishJob"
           id="job"
           placeholder="희망하는 직무를 알려주세요"
-          value={data.wishJob as string}
+          value={data.wishJob || ''}
           onChange={onChange}
         />
       </div>
@@ -434,7 +426,7 @@ const AdditionalInfoSection = () => {
           name="message"
           placeholder="진단에 참고할 수 있도록 서류 작성에 대한 고민을 적어주세요"
           rows={2}
-          value={data.message as string}
+          value={data.message || ''}
           onChange={onChange}
         />
       </div>
@@ -443,6 +435,24 @@ const AdditionalInfoSection = () => {
 };
 
 const UsereInfoSection = () => {
+  const [checked, setChecked] = useState(true);
+
+  const { data: participationInfoData } = useGetParticipationInfo();
+  const { data: reportApplicationData, setReportApplication } =
+    useReportApplicationStore();
+
+  useEffect(() => {
+    setReportApplication({
+      contactEmail: reportApplicationData?.contactEmail || '',
+    });
+  }, [participationInfoData]);
+
+  useEffect(() => {
+    if (reportApplicationData.contactEmail !== participationInfoData?.email)
+      setChecked(false);
+    else setChecked(true);
+  }, [reportApplicationData.contactEmail]);
+
   return (
     <section>
       {/* TODO: 서류 진단 application 정보 불러오기 */}
@@ -450,17 +460,35 @@ const UsereInfoSection = () => {
       <div className="mb-4 mt-6 flex flex-col gap-3">
         <div className="flex flex-col gap-1">
           <Label>이름</Label>
-          <Input disabled readOnly className="text-sm" />
+          <Input
+            disabled
+            readOnly
+            className="text-sm"
+            value={participationInfoData?.name || ''}
+            name="name"
+          />
         </div>
         <div className="flex flex-col gap-1">
           <Label>휴대폰 번호</Label>
-          <Input disabled readOnly className="text-sm" />
+          <Input
+            disabled
+            readOnly
+            className="text-sm"
+            value={participationInfoData?.phoneNumber || ''}
+            name="phoneNumber"
+          />
         </div>
         <div className="flex flex-col gap-1">
           <label className="ml-3 text-xsmall14 font-semibold">
             가입한 이메일
           </label>
-          <Input disabled readOnly className="text-sm" />
+          <Input
+            disabled
+            readOnly
+            className="text-sm"
+            value={participationInfoData?.email || ''}
+            name="email"
+          />
         </div>
         <div className="flex flex-col gap-1">
           <Label htmlFor="contactEmail">렛츠커리어 정보 수신용 이메일</Label>
@@ -469,11 +497,34 @@ const UsereInfoSection = () => {
             <br />
             &nbsp;&nbsp; 자주 사용하는 이메일 주소를 입력해주세요!
           </p>
-          <label className="flex cursor-pointer items-center gap-1 text-xxsmall12 font-medium">
-            <img className="h-auto w-5" src="/icons/checkbox-fill.svg" />
+          <label
+            onClick={() => {
+              setChecked(!checked);
+              if (checked)
+                setReportApplication({
+                  contactEmail: '',
+                });
+              else
+                setReportApplication({
+                  contactEmail: participationInfoData?.email || '',
+                });
+            }}
+            className="flex cursor-pointer items-center gap-1 text-xxsmall12 font-medium"
+          >
+            <img
+              className="h-auto w-5"
+              src={`/icons/${checked ? 'checkbox-fill.svg' : 'checkbox-unchecked.svg'}`}
+            />
             가입한 이메일과 동일
           </label>
-          <Input name="contactEmail" placeholder="example@example.com" />
+          <Input
+            name="contactEmail"
+            placeholder="example@example.com"
+            value={reportApplicationData.contactEmail}
+            onChange={(e) =>
+              setReportApplication({ contactEmail: e.target.value })
+            }
+          />
         </div>
       </div>
     </section>

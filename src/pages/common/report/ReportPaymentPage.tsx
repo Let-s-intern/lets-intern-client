@@ -35,7 +35,7 @@ const ReportPaymentPage = () => {
       <BottomSheet>
         <button
           onClick={() => {
-            setReportApplication({ applyUrl: null, recruitmentUrl: null }); // 이력서, 채용공고 초기화
+            setReportApplication({ applyUrl: '', recruitmentUrl: '' }); // 이력서, 채용공고 초기화
             navigate(-1);
           }}
           className="flex h-14 w-14 shrink-0 items-center justify-center rounded-md border-2 border-primary bg-neutral-100"

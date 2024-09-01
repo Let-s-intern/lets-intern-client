@@ -28,20 +28,23 @@ export default function useReportPayment() {
   const { data: reportPriceDetail } = useGetReportPriceDetail(Number(reportId));
 
   useEffect(() => {
-    const reportPriceInfo = reportPriceDetail?.reportPriceInfos?.find(
+    if (reportPriceDetail === undefined) return;
+
+    const reportPriceInfo = reportPriceDetail.reportPriceInfos?.find(
       (info) => info.reportPriceType === reportApplication.reportPriceType,
     );
-    const feedbackPriceInfo = reportPriceDetail?.feedbackPriceInfo;
-
+    const feedbackPriceInfo = reportPriceDetail.feedbackPriceInfo;
     const report = reportPriceInfo?.price as number;
-    const feedback = feedbackPriceInfo?.feedbackPrice as number;
+    const feedback = reportApplication.isFeedbackApplied
+      ? (feedbackPriceInfo?.feedbackPrice as number)
+      : 0;
     let discount = 0;
     let total = 0;
 
     // 할인 금액
     discount += reportPriceInfo?.discountPrice as number;
     reportApplication.optionIds.forEach((optionId) => {
-      discount += reportPriceDetail?.reportOptionInfos?.find(
+      discount += reportPriceDetail.reportOptionInfos?.find(
         (info) => info.reportOptionId === optionId,
       )?.discountPrice as number;
     });
@@ -58,7 +61,7 @@ export default function useReportPayment() {
       coupon: 0,
       total,
     });
-  }, [reportPriceDetail]);
+  }, [reportApplication, reportPriceDetail]);
 
   return { state: priceInfo, dispatch: setPriceInfo };
 }
