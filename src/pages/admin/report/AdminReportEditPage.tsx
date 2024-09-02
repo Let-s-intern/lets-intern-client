@@ -664,7 +664,12 @@ const AdminReportEditPage = () => {
           </div>
 
           <h2 className="mt-10">콘텐츠 편집</h2>
-          <EditorApp onChange={onChangeEditor} />
+          {reportDetail ? (
+            <EditorApp
+              editorStateJsonString={reportDetail.contents}
+              onChange={onChangeEditor}
+            />
+          ) : null}
           <TextField
             value={editingValue.notice}
             onChange={onChange}
