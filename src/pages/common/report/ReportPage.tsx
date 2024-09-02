@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
 import { Helmet } from 'react-helmet';
 import { twMerge } from 'tailwind-merge';
+import { useGetActiveReports } from '../../../api/report';
+import LexicalContent from '../../../components/common/blog/LexicalContent';
 import { ReportHeader } from '../../../components/common/report/ReportHeader';
 
 type SectionId =
@@ -14,27 +16,6 @@ const sections: { id: SectionId; title: string }[] = [
   { id: 'section_portfolio', title: '포트폴리오' },
 ];
 
-const Section = ({
-  id,
-  title,
-  children,
-}: {
-  id: string;
-  title: string;
-  children?: React.ReactNode;
-}) => (
-  <section
-    id={id}
-    className="flex h-screen items-center justify-center text-4xl"
-    style={{
-      backgroundColor: `hsl(0, 0%, ${90 - sections.findIndex((s) => s.id === id) * 10}%)`,
-    }}
-  >
-    <h2>{title}</h2>
-    {children}
-  </section>
-);
-
 const ReportPage = () => {
   const title = `서류 진단 프로그램 - 렛츠커리어`;
   const url = `${window.location.origin}/report`;
@@ -46,9 +27,17 @@ const ReportPage = () => {
   const observerRefs = useRef<(HTMLElement | null)[]>([]);
   const [isDrawerOpen, setIsDrawerOpen] = useState<null | SectionId>(null);
 
+  const { data } = useGetActiveReports();
+
+  const roots = [
+    JSON.parse(data?.resumeInfo.contents || '{"root":{}}').root,
+    JSON.parse(data?.personalStatementInfo.contents || '{"root":{}}').root,
+    JSON.parse(data?.portfolioInfo.contents || '{"root":{}}').root,
+  ];
+
   useEffect(() => {
-    console.log('activeSection', activeSection);
-  }, [activeSection]);
+    console.log('data', data);
+  }, [data]);
 
   useEffect(() => {
     const observerOptions = {
@@ -58,7 +47,6 @@ const ReportPage = () => {
     };
 
     const observerCallback: IntersectionObserverCallback = (entries) => {
-      console.log('entries', entries);
       entries.forEach((entry) => {
         if (entry.isIntersecting) {
           setActiveSection(entry.target.id as SectionId);
@@ -74,7 +62,6 @@ const ReportPage = () => {
     sections.forEach((_, index) => {
       if (observerRefs.current[index]) {
         observer.observe(observerRefs.current[index]);
-        console.log('akdlfjsa11');
       }
     });
 
@@ -82,7 +69,6 @@ const ReportPage = () => {
       sections.forEach((_, index) => {
         if (observerRefs.current[index]) {
           observer.unobserve(observerRefs.current[index]);
-          console.log('akdlfjsa22');
         }
       });
     };
@@ -138,7 +124,7 @@ const ReportPage = () => {
         </div>
       </section>
       <div>
-        <header className="sticky top-[60px] -mx-5 mb-4 flex items-center bg-neutral-10 md:top-[70px] lg:top-[76px]">
+        <header className="sticky top-[60px] mb-4 flex items-center bg-neutral-10 md:top-[70px] lg:top-[76px]">
           {sections.map((section) => {
             return (
               <a
@@ -159,44 +145,29 @@ const ReportPage = () => {
         </header>
 
         <div className="mx-auto max-w-5xl px-5">
-          <button
-            onClick={() => {
-              console.log('observerRefs.current', observerRefs.current);
-              setIsDrawerOpen(true);
-            }}
-          >
-            12341234
-          </button>
-
-          <div
+          <section
             ref={(el) => (observerRefs.current[0] = el)}
             id={sections[0]?.id}
             className="pt-20"
           >
-            <Section id="11" title={sections[0]?.title}>
-              askldfjasdfjkl
-            </Section>
-          </div>
+            <LexicalContent node={roots[0]} />
+          </section>
 
-          <div
+          <section
             ref={(el) => (observerRefs.current[1] = el)}
             id={sections[1]?.id}
             className="pt-20"
           >
-            <Section id="22" title={sections[1]?.title}>
-              askjfalsdf
-            </Section>
-          </div>
+            <LexicalContent node={roots[1]} />
+          </section>
 
-          <div
+          <section
             ref={(el) => (observerRefs.current[2] = el)}
             id={sections[2]?.id}
             className="pt-20"
           >
-            <Section id="44" title={sections[2]?.title}>
-              askdjflasjdkf
-            </Section>
-          </div>
+            <LexicalContent node={roots[2]} />
+          </section>
         </div>
       </div>
       {/* Drawer */}

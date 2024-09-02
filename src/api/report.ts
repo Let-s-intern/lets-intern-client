@@ -279,6 +279,26 @@ export const useGetReportPriceDetail = (reportId: number) => {
   });
 };
 
+// GET /api/v1/report/active
+
+export const getActiveReportsSchema = z.object({
+  resumeInfo: getReportDetailSchema,
+  personalStatementInfo: getReportDetailSchema,
+  portfolioInfo: getReportDetailSchema,
+});
+
+export const getActiveReportsQueryKey = 'getActiveReports';
+
+export const useGetActiveReports = () => {
+  return useQuery({
+    queryKey: [getActiveReportsQueryKey],
+    queryFn: async () => {
+      const res = await axios.get('/report/active');
+      return getActiveReportsSchema.parse(res.data.data);
+    },
+  });
+};
+
 // GET /api/v1/report/{reportId}/admin
 const getReportDetailForAdminSchema = z.object({
   reportId: z.number(),
