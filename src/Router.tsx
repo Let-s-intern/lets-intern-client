@@ -33,6 +33,7 @@ import PaymentResult from './pages/common/program/PaymentResult';
 import ProgramDetail from './pages/common/program/ProgramDetail';
 import Programs from './pages/common/program/Programs';
 import ReportApplyPage from './pages/common/report/ReportApplyPage';
+import ReportManagementPage from './pages/common/report/ReportManagementPage';
 import ReportPage from './pages/common/report/ReportPage';
 import ReportPaymentFail from './pages/common/report/ReportPaymentFail';
 import ReportPaymentPage from './pages/common/report/ReportPaymentPage';
@@ -151,13 +152,14 @@ const Router = () => {
 
           {/* 서류진단 */}
 
-          <Route path="report" element={<ReportPage />} />
+          <Route path="report/landing" element={<ReportPage />} />
 
           <Route
             path="report/apply/:reportType/:reportId"
             element={<ReportApplyPage />}
           />
-          {/* 모바일 전용 서류진단 결제 페이지*/}
+
+          {/* 모바일 전용 서류진단 결제 페이지. 화면 구성이 많이 달라 모바일만 한 단계 추가함 */}
           <Route
             path="report/payment/:reportType/:reportId"
             element={<ReportPaymentPage />}
@@ -165,7 +167,7 @@ const Router = () => {
           <Route path="report/order/result" element={<ReportPaymentResult />} />
           <Route path="report/order/fail" element={<ReportPaymentFail />} />
 
-          <Route path="report/management" element={<></>} />
+          <Route path="report/management" element={<ReportManagementPage />} />
 
           {/* 비로그인 리뷰 작성 페이지 */}
           <Route
