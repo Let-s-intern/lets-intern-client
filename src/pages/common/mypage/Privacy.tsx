@@ -1,7 +1,7 @@
 import { useMutation } from '@tanstack/react-query';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import AccountInfo from '../../../components/common/mypage/privacy/section/AccountInfo';
+
 import BasicInfo from '../../../components/common/mypage/privacy/section/BasicInfo';
 import ChangePassword from '../../../components/common/mypage/privacy/section/ChangePassword';
 import MarketingAgree from '../../../components/common/mypage/privacy/section/MarketingAgree';
@@ -10,9 +10,11 @@ import useAuthStore from '../../../store/useAuthStore';
 import axios from '../../../utils/axios';
 
 const Privacy = () => {
-  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-  const { logout } = useAuthStore();
   const navigate = useNavigate();
+
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+
+  const { logout } = useAuthStore();
   const { mutate: tryDeleteUser } = useMutation({
     mutationFn: async () => {
       const res = await axios.delete('/user');
@@ -31,7 +33,7 @@ const Privacy = () => {
   return (
     <main className="flex w-full flex-col gap-16 px-5 pb-16 md:w-4/5">
       <BasicInfo />
-      <AccountInfo />
+      {/* <AccountInfo /> */}
       <ChangePassword />
       <MarketingAgree />
       <button
