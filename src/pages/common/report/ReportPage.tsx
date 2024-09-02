@@ -40,12 +40,6 @@ const ReportPage = () => {
   }, [data]);
 
   useEffect(() => {
-    const observerOptions = {
-      root: null,
-      rootMargin: '0px',
-      threshold: 0.7,
-    };
-
     const observerCallback: IntersectionObserverCallback = (entries) => {
       entries.forEach((entry) => {
         if (entry.isIntersecting) {
@@ -54,10 +48,11 @@ const ReportPage = () => {
       });
     };
 
-    const observer = new IntersectionObserver(
-      observerCallback,
-      observerOptions,
-    );
+    const observer = new IntersectionObserver(observerCallback, {
+      root: null,
+      rootMargin: '-50% 0px -50% 0px',
+      threshold: 0,
+    });
 
     sections.forEach((_, index) => {
       if (observerRefs.current[index]) {
