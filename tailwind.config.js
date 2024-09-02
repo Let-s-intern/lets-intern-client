@@ -120,21 +120,6 @@ module.exports = {
         'blog-banner-lg': 'url("../public/images/blog_banner_bg_lg.png")',
         'certificate-bg': 'url("/images/certificate_bg.png")',
       },
-      keyframes: {
-        fadeInDown: {
-          '0%': {
-            opacity: '0',
-            transform: 'translateY(-60%) translateX(-50%)',
-          },
-          '100%': {
-            opacity: '1',
-            transform: 'translateY(-50%) translateX(-50%)',
-          },
-        },
-      },
-      animation: {
-        fadeInDown: 'fadeInDown 1s ease-in-out',
-      },
     },
     borderRadius: {
       none: '0',

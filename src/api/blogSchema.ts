@@ -1,5 +1,6 @@
 import dayjs from 'dayjs';
 import { z } from 'zod';
+import { pageInfo } from '../schema';
 
 export interface PostBlogReqBody {
   title: string;
@@ -31,13 +32,6 @@ export type TagDetail = z.infer<typeof tagDetailInfos>[0];
 export type PostTag = z.infer<typeof postTagSchema>;
 export type BlogThumbnail = z.infer<typeof blogThumbnailInfo>;
 export type BlogRating = z.infer<typeof blogRatingSchema>['ratingInfos'][0];
-
-export const pageInfo = z.object({
-  pageNum: z.number(),
-  pageSize: z.number(),
-  totalElements: z.number(),
-  totalPages: z.number(),
-});
 
 export const blogThumbnailInfo = z
   .object({
