@@ -155,7 +155,6 @@ const ReportCreditDetail = () => {
                       <div className="shrink-0 text-neutral-30">옵션</div>
                       <div className="text-primary-dark">{getOptionTitleList()}</div>
                     </div>
-                    
                   </div>
                 </div>
               </div>
