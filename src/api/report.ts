@@ -2,6 +2,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import dayjs from 'dayjs';
 import { z } from 'zod';
 import axios from '../utils/axios';
+import { tossInfoType } from './paymentSchema';
 
 // Common schemas
 const pageInfoSchema = z.object({
@@ -30,7 +31,9 @@ export function convertReportTypeToDisplayName(type: ReportType) {
 
 const reportPriceTypeSchema = z.enum(['BASIC', 'PREMIUM']);
 
-export const convertReportPriceType = (type: string) => {
+export type ReportPriceType = z.infer<typeof reportPriceTypeSchema>;
+
+export const convertReportPriceType = (type: ReportPriceType) => {
   switch (type) {
     case 'BASIC':
       return '베이직';
@@ -41,19 +44,13 @@ export const convertReportPriceType = (type: string) => {
   }
 };
 
-const reportFeedbackStatusSchema = z.enum([
-  'APPLIED',
-  'PENDING',
-  'CONFIRMED',
-  'COMPLETED',
-]);
-
 const desiredDateTypeSchema = z.enum([
   'DESIRED_DATE_1',
   'DESIRED_DATE_2',
   'DESIRED_DATE_3',
   'DESIRED_DATE_ADMIN',
 ]);
+
 const reportApplicationStatusSchema = z.enum([
   'APPLIED',
   'REPORTING',
@@ -61,7 +58,9 @@ const reportApplicationStatusSchema = z.enum([
   'COMPLETED',
 ]);
 
-export const convertReportApplicationsStatus = (status: string) => {
+export type ReportApplicationStatus = z.infer<typeof reportApplicationStatusSchema>;
+
+export const convertReportApplicationsStatus = (status: ReportApplicationStatus) => {
   switch (status) {
     case 'APPLIED':
       return '신청완료';
@@ -76,7 +75,16 @@ export const convertReportApplicationsStatus = (status: string) => {
   }
 };
 
-export const convertReportFeedbackStatus = (status: string) => {
+const reportFeedbackStatusSchema = z.enum([
+  'APPLIED',
+  'PENDING',
+  'CONFIRMED',
+  'COMPLETED',
+]);
+
+export type ReportFeedbackStatus = z.infer<typeof reportFeedbackStatusSchema>;
+
+export const convertReportFeedbackStatus = (status: ReportFeedbackStatus) => {
   switch (status) {
     case 'APPLIED':
       return '신청완료';
@@ -676,27 +684,11 @@ export const useGetReportApplicationOptionsForAdmin = ({
       code,
     ],
     queryFn: async () => {
-      // Mock data
-      const mockData = {
-        reportApplicationOptionForAdminInfos: [
-          {
-            reportApplicationOptionId: 1,
-            price: 20000,
-            discountPrice: 18000,
-            title: '추가 피드백',
-            code: 'EXTRA_FEEDBACK',
-          },
-          {
-            reportApplicationOptionId: 2,
-            price: 30000,
-            discountPrice: 27000,
-            title: '심층 분석',
-            code: 'DEEP_ANALYSIS',
-          },
-        ],
-      };
-
-      return getReportApplicationOptionsForAdminSchema.parse(mockData);
+      const res = await axios.get('/report/application/options', {
+        params: { reportId, applicationId, priceType, code },
+      });
+      
+      return getReportApplicationOptionsForAdminSchema.parse(res.data.data);
     },
     enabled,
   });
@@ -885,6 +877,74 @@ export const usePatchReportMutation = () => {
     },
   });
 };
+
+const reportApplicationInfoSchema = z.object({
+  reportApplicationId: z.number(),
+  reportFeedbackApplicationId: z.number().nullable(),
+  title: z.string(),
+  reportPriceType: reportPriceTypeSchema,
+  options: z.array(z.string()),
+  isCanceled: z.boolean(),
+  reportApplicationStatus: reportApplicationStatusSchema,
+  reportFeedbackStatus: reportFeedbackStatusSchema.nullable(),
+  reportFeedbackDesiredDate: z.string().nullable(),
+});
+
+const reportPaymentInfoSchema = z.object({
+  paymentId: z.number(),
+  finalPrice: z.number(),
+  couponDiscount: z.number().nullable(),
+  programPrice: z.number(),
+  programDiscount: z.number(),
+  reportRefundPrice: z.number().nullable(),
+  feedbackRefundPrice: z.number().nullable(),
+  reportPriceInfo: z.object({
+    reportPriceType: reportPriceTypeSchema,
+    price: z.number(),
+    discountPrice: z.number(),
+  }),
+  reportOptionInfos: z.array(
+    z.object({
+      reportOptionId: z.number(),
+      price: z.number(),
+      discountPrice: z.number(),
+      title: z.string(),
+    }),
+  ),
+  feedbackPriceInfo: z.object({
+    reportFeedbackId: z.number(),
+    reportPriceType: reportPriceTypeSchema,
+    feedbackPrice: z.number(),
+    feedbackDiscountPrice: z.number(),
+  }).nullable(),
+  createDate: z.string(),
+  lastModifiedDate: z.string(),
+});
+
+const reportPaymentDetailSchema = z.object({
+  reportApplicationInfo: reportApplicationInfoSchema,
+  reportPaymentInfo: reportPaymentInfoSchema,
+  tossInfo: tossInfoType.nullable().optional(),
+})
+
+export const useGetReportPaymentDetailQueryKey = 'getReportPayment';
+
+export const useGetReportPaymentDetailQuery = ({
+  applicationId,
+  enabled
+}:{
+  applicationId: number;
+  enabled?: boolean;
+}) => {
+  return useQuery({
+    queryKey: [useGetReportPaymentDetailQueryKey],
+    queryFn: async () => {
+      const res = await axios.get(`/report/application/${applicationId}/payment`);
+      return reportPaymentDetailSchema.parse(res.data.data);
+    },
+    enabled
+  });
+}
 
 // Utility function to generate mock data (for demonstration purposes)
 // const generateMockData = <T extends z.ZodType>(schema: T): z.infer<T> => {
