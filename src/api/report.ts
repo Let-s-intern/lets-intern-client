@@ -592,75 +592,6 @@ export const useGetReportApplicationsForAdmin = ({
         },
       });
       return getReportApplicationsForAdminSchema.parse(res.data.data);
-
-      // Mock data
-      // const mockData = {
-      //   reportApplicationsForAdminInfos: [
-      //     {
-      //       applicationId: 101,
-      //       name: '김철수',
-      //       contactEmail: 'chulsoo.kim@example.com',
-      //       phoneNumber: '010-1234-5678',
-      //       wishJob: '소프트웨어 엔지니어',
-      //       message:
-      //         '경력 3년차 개발자입니다. 피드백 부탁드립니다.경력 3년차 개발자입니다. 피드백 부탁드립니다.경력 3년차 개발자입니다. 피드백 부탁드립니다.경력 3년차 개발자입니다. 피드백 부탁드립니다.경력 3년차 개발자입니다. 피드백 부탁드립니다.경력 3년차 개발자입니다. 피드백 부탁드립니다.',
-      //       reportApplicationStatus: 'COMPLETED',
-      //       applyFileUrl: 'https://example.com/apply/101.pdf',
-      //       reportFileUrl: 'https://example.com/report/101.pdf',
-      //       recruitmentFileUrl: 'https://example.com/recruitment/101.pdf',
-      //       reportFeedbackApplicationId: 1,
-      //       reportFeedbackStatus: 'COMPLETED',
-      //       zoomLink: 'https://zoom.us/j/1234567890',
-      //       desiredDate1: '2024-08-15T10:00:00',
-      //       desiredDate2: '2024-08-16T14:00:00',
-      //       desiredDate3: '2024-08-17T16:00:00',
-      //       desiredDateAdmin: '2024-08-15T10:00:00',
-      //       desiredDateType: 'DESIRED_DATE_1',
-      //       createDate: '2024-08-01T10:00:00',
-      //       paymentId: 1001,
-      //       orderId: 'ORDER-1001',
-      //       reportPriceType: 'PREMIUM',
-      //       couponTitle: '여름 할인 10%',
-      //       finalPrice: 90000,
-      //       isRefunded: false,
-      //     },
-      //     {
-      //       applicationId: 102,
-      //       name: '이영희',
-      //       contactEmail: 'younghee.lee@example.com',
-      //       phoneNumber: '010-9876-5432',
-      //       wishJob: '마케팅 매니저',
-      //       message: '마케팅 분야로 전직을 고민 중입니다.',
-      //       reportApplicationStatus: 'APPLIED',
-      //       applyFileUrl: 'https://example.com/apply/102.pdf',
-      //       reportFileUrl: null,
-      //       recruitmentFileUrl: 'https://example.com/recruitment/102.pdf',
-      //       reportFeedbackApplicationId: 2,
-      //       reportFeedbackStatus: 'APPLIED',
-      //       zoomLink: null,
-      //       desiredDate1: '2024-08-20T11:00:00',
-      //       desiredDate2: '2024-08-21T15:00:00',
-      //       desiredDate3: '2024-08-22T17:00:00',
-      //       desiredDateAdmin: null,
-      //       desiredDateType: null,
-      //       createDate: '2024-08-10T14:00:00',
-      //       paymentId: 1002,
-      //       orderId: 'ORDER-1002',
-      //       reportPriceType: 'BASIC',
-      //       couponTitle: null,
-      //       finalPrice: 50000,
-      //       isRefunded: false,
-      //     },
-      //   ],
-      //   pageInfo: {
-      //     totalElements: 10,
-      //     totalPages: 1,
-      //     currentPage: page,
-      //     currentElements: 2,
-      //   },
-      // };
-
-      // return getReportApplicationsForAdminSchema.parse(mockData);
     },
     enabled,
   });
@@ -963,6 +894,31 @@ export const useGetReportPaymentDetailQuery = ({
       return reportPaymentDetailSchema.parse(res.data.data);
     },
     enabled
+  });
+}
+
+export const useDeleteReportApplication = ({
+  successCallback,
+  errorCallback,
+}:{
+  successCallback?: () => void;
+  errorCallback?: (error: Error) => void;
+}) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (reportApplicationId: number) => {
+      const res = await axios.delete(`/report/application/${reportApplicationId}`);
+      return res.data.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: [useGetReportApplicationsForAdminQueryKey, useGetReportPaymentDetailQueryKey],
+      });
+      successCallback && successCallback();
+    },
+    onError: (error: Error) => {
+      errorCallback && errorCallback(error);
+    },
   });
 }
 
