@@ -6,6 +6,8 @@ import {
   convertReportFeedbackStatus,
   convertReportPriceType,
   reportApplicationsForAdminInfoType,
+  ReportFeedbackStatus,
+  ReportPriceType,
   useGetReportApplicationOptionsForAdmin,
   useGetReportApplicationsForAdmin,
   usePatchReportApplicationSchedule,
@@ -247,7 +249,7 @@ const ReportFeedbackApplicationsPage = () => {
                     </TD>
                     <TD>
                       {convertReportFeedbackStatus(
-                        application.reportFeedbackStatus || '-',
+                        application.reportFeedbackStatus as ReportFeedbackStatus || '-',
                       )}
                     </TD>
                     <TD>
@@ -284,7 +286,7 @@ const ReportFeedbackApplicationsPage = () => {
                   <h2 className="w-20 text-neutral-40">결제상품</h2>
                   <p>
                     {convertReportPriceType(
-                      modal.application.reportPriceType || '-',
+                      modal.application.reportPriceType as ReportPriceType || '-',
                     )}
                   </p>
                 </div>
