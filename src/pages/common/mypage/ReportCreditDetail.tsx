@@ -274,6 +274,20 @@ const ReportCreditDetail = () => {
                         changedPrice: reportPaymentDetail.reportPaymentInfo.reportRefundPrice ?? 0
                       })}%)`}
                       content={`-${reportPaymentDetail.reportPaymentInfo.reportRefundPrice?.toLocaleString() || 0}원`}
+                      subInfo={
+                        <div className="text-xs font-medium text-primary-dark">
+                          *환불 규정은{' '}
+                          <a
+                            className="underline underline-offset-2"
+                            href="https://letscareer.oopy.io/5eb0ebdd-e10c-4aa1-b28a-8bd0964eca0b"
+                            target="_blank"
+                            rel="noreferrer"
+                          >
+                            자주 묻는 질문
+                          </a>
+                          을 참고해주세요
+                        </div>
+                      }
                     />
                     {
                       reportPaymentDetail.reportApplicationInfo.reportFeedbackApplicationId && (
