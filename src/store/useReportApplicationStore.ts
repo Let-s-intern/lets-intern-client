@@ -30,6 +30,8 @@ interface ReportApplicationStore {
   validate: () => { isValid: boolean; message: string | null };
 }
 
+const initialDate = dayjs().add(1, 'day').hour(9).format('YYYY-MM-DDTHH:00');
+
 const useReportApplicationStore = create(
   persist<ReportApplicationStore>(
     (set, get) => ({
@@ -46,9 +48,9 @@ const useReportApplicationStore = create(
         programDiscount: null,
         applyUrl: '',
         recruitmentUrl: '',
-        desiredDate1: dayjs().format('YYYY-MM-DDTHH:00'),
-        desiredDate2: dayjs().format('YYYY-MM-DDTHH:00'),
-        desiredDate3: dayjs().format('YYYY-MM-DDTHH:00'),
+        desiredDate1: initialDate,
+        desiredDate2: initialDate,
+        desiredDate3: initialDate,
         wishJob: '',
         message: '',
         contactEmail: '',
@@ -77,9 +79,9 @@ const useReportApplicationStore = create(
             programDiscount: null,
             applyUrl: '',
             recruitmentUrl: '',
-            desiredDate1: dayjs().format('YYYY-MM-DDTHH:00'),
-            desiredDate2: dayjs().format('YYYY-MM-DDTHH:00'),
-            desiredDate3: dayjs().format('YYYY-MM-DDTHH:00'),
+            desiredDate1: initialDate,
+            desiredDate2: initialDate,
+            desiredDate3: initialDate,
             wishJob: '',
             message: '',
             contactEmail: '',

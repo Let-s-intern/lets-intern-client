@@ -1,7 +1,6 @@
 import { FaArrowLeft } from 'react-icons/fa6';
 import { useNavigate } from 'react-router-dom';
 
-import { useEffect } from 'react';
 import Card from '../../../components/common/report/Card';
 import Heading1 from '../../../components/common/report/Heading1';
 import Heading2 from '../../../components/common/report/Heading2';
@@ -14,10 +13,6 @@ const ReportPaymentPage = () => {
   const navigate = useNavigate();
 
   const { data, setReportApplication, validate } = useReportApplicationStore();
-
-  useEffect(() => {
-    console.log(data);
-  }, [data]);
 
   return (
     <div className="px-5 md:px-32">
