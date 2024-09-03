@@ -11,9 +11,9 @@ interface ReportApplicationStore {
     couponId: number | null;
     paymentKey: string | null;
     orderId: string | null;
-    amount: string;
-    programPrice: number;
-    programDiscount: number;
+    amount: number | null;
+    programPrice: number | null;
+    programDiscount: number | null;
     applyUrl: string;
     recruitmentUrl: string;
     desiredDate1: string;
@@ -41,9 +41,9 @@ const useReportApplicationStore = create(
         couponId: null,
         paymentKey: null,
         orderId: null,
-        amount: '',
-        programPrice: 0,
-        programDiscount: 0,
+        amount: null,
+        programPrice: null,
+        programDiscount: null,
         applyUrl: '',
         recruitmentUrl: '',
         desiredDate1: dayjs().format('YYYY-MM-DDTHH:00'),
@@ -72,9 +72,9 @@ const useReportApplicationStore = create(
             couponId: null,
             paymentKey: null,
             orderId: null,
-            amount: '',
-            programPrice: 0,
-            programDiscount: 0,
+            amount: null,
+            programPrice: null,
+            programDiscount: null,
             applyUrl: '',
             recruitmentUrl: '',
             desiredDate1: dayjs().format('YYYY-MM-DDTHH:00'),

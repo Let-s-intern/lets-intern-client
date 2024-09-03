@@ -38,6 +38,7 @@ import ReportPage from './pages/common/report/ReportPage';
 import ReportPaymentFail from './pages/common/report/ReportPaymentFail';
 import ReportPaymentPage from './pages/common/report/ReportPaymentPage';
 import ReportPaymentResult from './pages/common/report/ReportPaymentResult';
+import ReportTossPage from './pages/common/report/ReportTossPage';
 import ReviewCreate from './pages/common/review/ReviewCreate';
 import ReviewDetail from './pages/common/review/ReviewDetail';
 import Maintenance from './pages/maintenance/Maintenance';
@@ -164,6 +165,7 @@ const Router = () => {
             path="report/payment/:reportType/:reportId"
             element={<ReportPaymentPage />}
           />
+          <Route path="report/toss/payment" element={<ReportTossPage />} />
           <Route path="report/order/result" element={<ReportPaymentResult />} />
           <Route path="report/order/fail" element={<ReportPaymentFail />} />
 

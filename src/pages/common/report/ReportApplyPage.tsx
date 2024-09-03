@@ -63,8 +63,10 @@ const ReportApplyPage = () => {
   };
 
   useEffect(() => {
+    initReportApplication();
     setReportApplication({
       reportId: Number(reportId),
+      isFeedbackApplied: true,
     });
   }, []);
 
@@ -130,7 +132,7 @@ const ReportApplyPage = () => {
                   alert('정보 수신용 이메일을 입력해주세요.');
                   return;
                 }
-                navigate(`/payment`);
+                navigate(`/report/toss/payment`);
               }}
               className="text-1.125-medium w-full rounded-md bg-primary py-3 text-center font-medium text-neutral-100"
             >
@@ -531,7 +533,7 @@ export const UsereInfoSection = () => {
 /* 모바일 전용 결제 페이지(ReportPaymentPage)에서 같이 사용 */
 export const ReportPaymentSection = () => {
   const { data: reportApplication } = useReportApplicationStore();
-  const { state: priceInfo } = useReportPayment();
+  const payment = useReportPayment();
 
   return (
     <section className="flex flex-col gap-6">
@@ -557,34 +559,33 @@ export const ReportPaymentSection = () => {
             )
           </span>
           {/* 서류 진단 + 사용자가 선택한 모든 옵션 가격을 더한 값 */}
-          <span>{priceInfo.report.toLocaleString()}원</span>
+          <span>{payment.report.toLocaleString()}원</span>
         </div>
         <div className="flex h-10 items-center justify-between px-3 text-neutral-0">
           <span>1:1 피드백</span>
           {/* 1:1 피드백 가격 */}
-          <span>{priceInfo.feedback.toLocaleString()}원</span>
+          <span>{payment.feedback.toLocaleString()}원</span>
         </div>
         <div className="flex h-10 items-center justify-between px-3 text-neutral-0">
           {/* 서류진단 + 사용자가 선택한 모든 옵션 + 1:1 피드백의 할인 가격을 모두 더한 값 */}
           <span>
             {Math.ceil(
-              (priceInfo.discount / (priceInfo.report + priceInfo.feedback)) *
-                100,
+              (payment.discount / (payment.report + payment.feedback)) * 100,
             )}
             % 할인
           </span>
-          <span>-{priceInfo.discount.toLocaleString()}원</span>
+          <span>-{payment.discount.toLocaleString()}원</span>
         </div>
         {/* <div className="flex h-10 items-center justify-between px-3 text-primary">
           <span>쿠폰할인</span>
           <span className="font-bold">
-            -{priceInfo.coupon.toLocaleString()}원
+            -{payment.coupon.toLocaleString()}원
           </span>
         </div> */}
         <hr className="my-5" />
         <div className="flex h-10 items-center justify-between px-3 font-semibold text-neutral-0">
           <span>결제금액</span>
-          <span>{priceInfo.total.toLocaleString()}원</span>
+          <span>{payment.total.toLocaleString()}원</span>
         </div>
       </div>
     </section>
