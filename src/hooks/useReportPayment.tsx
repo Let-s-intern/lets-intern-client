@@ -3,7 +3,6 @@ import { useParams } from 'react-router-dom';
 
 import { useGetReportPriceDetail } from '../api/report';
 import useReportApplicationStore from '../store/useReportApplicationStore';
-import { generateRandomNumber, generateRandomString } from '../utils/random';
 
 export interface ReportPriceInfo {
   report: number;
@@ -67,7 +66,6 @@ export default function useReportPayment() {
       total,
     });
     setReportApplication({
-      orderId: 'lets' + generateRandomString() + generateRandomNumber(),
       amount: total,
       programPrice: report,
       programDiscount: discount,

@@ -30,6 +30,10 @@ import Input from '../../../components/common/ui/input/Input';
 import useReportPayment from '../../../hooks/useReportPayment';
 import useReportProgramInfo from '../../../hooks/useReportProgramInfo';
 import useReportApplicationStore from '../../../store/useReportApplicationStore';
+import {
+  generateRandomNumber,
+  generateRandomString,
+} from '../../../utils/random';
 
 const ReportApplyPage = () => {
   const isUpTo1280 = useMediaQuery('(max-width: 1280px)');
@@ -65,6 +69,7 @@ const ReportApplyPage = () => {
   useEffect(() => {
     initReportApplication();
     setReportApplication({
+      orderId: 'lets' + generateRandomString() + generateRandomNumber(),
       reportId: Number(reportId),
       isFeedbackApplied: true,
     });

@@ -72,7 +72,6 @@ const ReportTossPage = () => {
 
   useEffect(() => {
     const result = validate();
-    console.log(reportApplication);
 
     if (!result.isValid) {
       console.error(result);
@@ -107,7 +106,6 @@ const ReportTossPage = () => {
         selector: '#payment-method',
         variantKey: 'widgetA',
       });
-
       setMethods(methods);
 
       // ------  이용약관 UI 렌더링 ------
