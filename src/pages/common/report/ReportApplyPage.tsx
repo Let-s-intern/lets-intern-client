@@ -75,7 +75,6 @@ const ReportApplyPage = () => {
     setReportApplication({
       orderId: 'lets' + generateRandomString() + generateRandomNumber(),
       reportId: Number(reportId),
-      isFeedbackApplied: true, // 임시
       // 파일만 초기화
       applyUrl: '',
       recruitmentUrl: '',
