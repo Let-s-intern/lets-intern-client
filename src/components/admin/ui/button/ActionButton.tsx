@@ -72,4 +72,9 @@ const ActionButtonBlock = styled.button<ActionButtonBlockProps>`
       : props.$bgColor === 'gray'
       ? 'background-color: #718096;'
       : ''}
+
+  &:disabled {
+    background-color: #e2e8f0;
+    color: #a0aec0;
+  }
 `;
