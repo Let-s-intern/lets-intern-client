@@ -230,3 +230,9 @@ export const paymentDetailType = z.object({
 });
 
 export type PaymentDetailType = z.infer<typeof paymentDetailType>;
+
+export const applicationResultType = z.object({
+  tossInfo: tossInfoType,
+});
+
+export type ApplicationResult = z.infer<typeof applicationResultType>;

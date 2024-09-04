@@ -3,6 +3,7 @@ import dayjs from 'dayjs';
 import { useMemo, useState } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 
+import { ApplicationResult } from '../../../api/paymentSchema';
 import {
   convertReportPriceType,
   useGetReportDetailQuery,
@@ -28,7 +29,7 @@ const ReportPaymentResult = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const isUpTo1280 = useMediaQuery('(max-width: 1280px)');
 
-  const [result, setResult] = useState<any>(null);
+  const [result, setResult] = useState<ApplicationResult | null>(null);
 
   const { data: reportApplication } = useReportApplicationStore();
   const { title, product, option } = useReportProgramInfo();
@@ -53,15 +54,12 @@ const ReportPaymentResult = () => {
   }, []);
 
   const paymentLink = useMemo(() => {
-    // 여기서 왜 쿼리 파라미터를 붙이지?
-    const base = isUpTo1280
+    const link = isUpTo1280
       ? `report/payment/${reportDetail?.reportType?.toLocaleLowerCase()}/${reportApplication.reportId}`
       : `/report/apply/${reportDetail?.reportType?.toLocaleLowerCase()}/${reportApplication.reportId}`;
 
-    // if (!params) return base;
-    // return `${base}?${searchParams.toString()}`;
-    return base;
-  }, [params]);
+    return link;
+  }, [reportDetail]);
 
   const subTitle =
     reportApplication.optionIds.length === 0
@@ -91,7 +89,7 @@ const ReportPaymentResult = () => {
       .catch((e) => {
         // eslint-disable-next-line no-console
         console.error(e);
-        setResult('error');
+        setResult(null);
       })
       .finally(() => {
         // postApplicationDone 를 true로 설정하여 추후 뒤로가기로 왔을 때 api를 타지 않도록 함
@@ -165,7 +163,7 @@ const ReportPaymentResult = () => {
                     <PaymentInfoRow
                       title="결제수단"
                       content={
-                        result?.tossInfo?.method ??
+                        result!.tossInfo.method ??
                         (params
                           ? getPaymentMethodLabel(params.paymentMethodKey)
                           : '')
@@ -193,7 +191,7 @@ const ReportPaymentResult = () => {
                         <div className="text-neutral-40">영수증</div>
                         <div className="flex grow items-center justify-end text-neutral-0">
                           <Link
-                            to={result?.tossInfo.receipt.url ?? '#'}
+                            to={result!.tossInfo?.receipt?.url ?? '#'}
                             target="_blank"
                             rel="noreferrer"
                             className="flex items-center justify-center rounded-sm border border-neutral-60 bg-white px-3 py-2 text-sm font-medium"
