@@ -143,11 +143,15 @@ const ReportPaymentResult = () => {
                       (payment.discount / (payment.report + payment.feedback)) *
                         100,
                     )}%)`}
-                    content={`-${payment.discount}원`}
+                    content={
+                      payment.discount === 0 ? '0원' : `-${payment.discount}원`
+                    }
                   />
                   <PaymentInfoRow
                     title="쿠폰할인"
-                    content={`-${payment.coupon}원`}
+                    content={
+                      payment.coupon === 0 ? '0원' : `-${payment.coupon}원`
+                    }
                   />
                 </div>
                 <hr className="border-neutral-85" />
