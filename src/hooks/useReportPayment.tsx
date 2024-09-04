@@ -66,7 +66,7 @@ export default function useReportPayment() {
     });
     setReportApplication({
       amount: total,
-      programPrice: report,
+      programPrice: report + feedback,
       programDiscount: discount,
     });
   }, [reportPriceDetail]);
