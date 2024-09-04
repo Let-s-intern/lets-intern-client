@@ -37,7 +37,7 @@ const ReportCreditDelete = () => {
 
   const { mutate: tryCancelReportApplication } = useDeleteReportApplication({
     successCallback: () => {
-      navigate(`/mypage/credit/report/${paymentId}`);
+      navigate(`/mypage/credit/report/${paymentId}?applicationId=${applicationId}`);
     },
     errorCallback: (error) => {
       const err = error as AxiosError<{ status: number; message: string }>;
@@ -49,6 +49,8 @@ const ReportCreditDelete = () => {
 
   const getOptionTitleList = () => {
     if (!reportPaymentDetail) return [];
+
+    if (!reportPaymentDetail.reportPaymentInfo.reportOptionInfos || reportPaymentDetail.reportPaymentInfo.reportOptionInfos.length === 0) return '없음';
 
     return reportPaymentDetail.reportPaymentInfo.reportOptionInfos.map(option => option.title).join(', ');
   }
@@ -201,7 +203,7 @@ const ReportCreditDelete = () => {
                   <div className="flex w-full flex-col gap-y-1">
                     <div className="flex w-full items-center justify-start gap-x-4 text-xs font-medium">
                       <div className="shrink-0 text-neutral-30">상품</div>
-                      <div className="text-primary-dark">{`서류 진단서 (${convertReportPriceType(reportPaymentDetail.reportApplicationInfo.reportPriceType)}${reportPaymentDetail.reportApplicationInfo.reportFeedbackApplicationId ? ', 1:1 피드백' : ''}`}</div>
+                      <div className="text-primary-dark">{`서류 진단서 (${convertReportPriceType(reportPaymentDetail.reportApplicationInfo.reportPriceType)}${reportPaymentDetail.reportApplicationInfo.reportFeedbackApplicationId ? ', 1:1 피드백' : ''})`}</div>
                     </div>
                     <div className="flex w-full items-center justify-start gap-x-4 text-xs font-medium">
                       <div className="shrink-0 text-neutral-30">옵션</div>
