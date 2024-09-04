@@ -35,6 +35,8 @@ const ReportCreditDetail = () => {
   const getOptionTitleList = () => {
     if (!reportPaymentDetail) return [];
 
+    if (!reportPaymentDetail.reportPaymentInfo.reportOptionInfos || reportPaymentDetail.reportPaymentInfo.reportOptionInfos.length === 0) return '없음';
+
     return reportPaymentDetail.reportPaymentInfo.reportOptionInfos.map(option => option.title).join(', ');
   }
 
@@ -149,7 +151,7 @@ const ReportCreditDetail = () => {
                   <div className="flex w-full flex-col gap-y-1">
                     <div className="flex w-full items-center justify-start gap-x-4 text-xs font-medium">
                       <div className="shrink-0 text-neutral-30">상품</div>
-                      <div className="text-primary-dark">{`서류 진단서 (${convertReportPriceType(reportPaymentDetail.reportApplicationInfo.reportPriceType)}${reportPaymentDetail.reportApplicationInfo.reportFeedbackApplicationId ? ', 1:1 피드백' : ''}`}</div>
+                      <div className="text-primary-dark">{`서류 진단서 (${convertReportPriceType(reportPaymentDetail.reportApplicationInfo.reportPriceType)}${reportPaymentDetail.reportApplicationInfo.reportFeedbackApplicationId ? ', 1:1 피드백' : ''})`}</div>
                     </div>
                     <div className="flex w-full items-center justify-start gap-x-4 text-xs font-medium">
                       <div className="shrink-0 text-neutral-30">옵션</div>
@@ -373,7 +375,7 @@ const ReportCreditDetail = () => {
                 <button
                   className="flex w-full items-center justify-center rounded-sm bg-neutral-80 px-5 py-2.5 font-medium text-neutral-40"
                   onClick={() => {
-                    navigate(`/mypage/credit/report/${paymentId}/delete`);
+                    navigate(`/mypage/credit/report/${paymentId}/delete?applicationId=${applicationId}`);
                   }}
                 >
                   결제 취소하기
@@ -382,7 +384,7 @@ const ReportCreditDetail = () => {
                 <MoreButton
                   className="other_program w-full md:flex"
                   onClick={() => {
-                    navigate('/report');
+                    navigate('/report/landing');
                   }}
                 >
                   진단 서비스 더 둘러보기
