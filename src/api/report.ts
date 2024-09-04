@@ -695,24 +695,29 @@ export const usePatchReportApplicationSchedule = ({
     mutationFn: async ({
       reportId,
       applicationId,
+      reportFeedbackStatus = 'PENDING',
       desiredDateType,
       desiredDateAdmin,
     }: {
       reportId: number;
       applicationId: number;
-      desiredDateType:
+      reportFeedbackStatus?: ReportFeedbackStatus;
+      desiredDateType?:
         | 'DESIRED_DATE_1'
         | 'DESIRED_DATE_2'
         | 'DESIRED_DATE_3'
         | 'DESIRED_DATE_ADMIN';
-      desiredDateAdmin: string;
+      desiredDateAdmin?: string;
     }) => {
+      const payload = {
+        reportFeedbackStatus,
+        ...(desiredDateType !== undefined && { desiredDateType }),
+        ...(desiredDateAdmin !== undefined && { desiredDateAdmin }),
+      };
+  
       const res = await axios.patch(
         `/report/${reportId}/application/${applicationId}/schedule`,
-        {
-          desiredDateType,
-          desiredDateAdmin,
-        },
+        payload,
       );
 
       return res.data.data;
