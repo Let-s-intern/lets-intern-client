@@ -139,7 +139,7 @@ const ReportCreditDetail = () => {
               <div className="flex w-full items-start justify-center gap-x-4">
                 <img
                   className="h-[97px] w-[137px] rounded-sm object-cover"
-                  src='https://t4.ftcdn.net/jpg/02/10/66/59/360_F_210665913_6LIIyfklG04cxtPcIjNfQDHBv3FHf7bb.jpg'
+                  src="/images/report-banner.png"
                   alt="thumbnail"
                 />
                 <div className="flex grow flex-col items-start justify-center gap-y-3">
