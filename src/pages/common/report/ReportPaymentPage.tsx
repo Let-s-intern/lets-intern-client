@@ -43,7 +43,7 @@ const ReportPaymentPage = () => {
               alert('정보 수신용 이메일을 입력해주세요.');
               return;
             }
-            navigate(`/payment`);
+            navigate(`/report/toss/payment`);
           }}
           className="text-1.125-medium w-full rounded-md bg-primary py-3 text-center font-medium text-neutral-100"
         >
