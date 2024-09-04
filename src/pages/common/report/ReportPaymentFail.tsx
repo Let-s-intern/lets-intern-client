@@ -43,11 +43,13 @@ const ReportPaymentFail = () => {
   }, []);
 
   const paymentLink = useMemo(() => {
-    const link = isUpTo1280
-      ? `report/payment/${reportDetail?.reportType?.toLocaleLowerCase()}/${reportApplication.reportId}`
-      : `/report/apply/${reportDetail?.reportType?.toLocaleLowerCase()}/${reportApplication.reportId}`;
+    if (isUpTo1280)
+      return `/report/payment/${reportDetail?.reportType?.toLocaleLowerCase()}/${reportApplication.reportId}`;
 
-    return link;
+    const searchParams = new URLSearchParams();
+    searchParams.set('init', 'false');
+
+    return `/report/apply/${reportDetail?.reportType?.toLocaleLowerCase()}/${reportApplication.reportId}?${searchParams.toString()}`;
   }, [reportDetail]);
 
   const subTitle =

@@ -67,11 +67,18 @@ const ReportApplyPage = () => {
   };
 
   useEffect(() => {
-    initReportApplication();
+    // 모두 초기화
+    const searchParams = new URLSearchParams();
+    const init = searchParams.get('init');
+    if (!init || searchParams.get('init') === 'true') initReportApplication();
+
     setReportApplication({
       orderId: 'lets' + generateRandomString() + generateRandomNumber(),
       reportId: Number(reportId),
-      isFeedbackApplied: true,
+      isFeedbackApplied: true, // 임시
+      // 파일만 초기화
+      applyUrl: '',
+      recruitmentUrl: '',
     });
   }, []);
 
@@ -283,7 +290,6 @@ const PremiumSection = ({
         </span>
         <FormControl fullWidth>
           <RadioGroup
-            defaultValue="file"
             value={value}
             onChange={(e) => {
               setValue(e.target.value);
