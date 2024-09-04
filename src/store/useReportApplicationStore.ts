@@ -92,7 +92,7 @@ const useReportApplicationStore = create(
         const isEmpty = (value: string) => value === '' || !value;
         const currentData = get().data;
         if (isEmpty(currentData.applyUrl))
-          return { isValid: false, message: '진단용 이력서를 등록해주세요.' };
+          return { isValid: false, message: '진단용 서류를 등록해주세요.' };
 
         if (
           currentData.reportPriceType === 'PREMIUM' &&

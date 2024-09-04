@@ -8,7 +8,7 @@ import dayjs, { Dayjs } from 'dayjs';
 import React, { useEffect, useRef, useState } from 'react';
 import { FaArrowLeft } from 'react-icons/fa6';
 import { IoCloseOutline } from 'react-icons/io5';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 
 import { useGetParticipationInfo } from '../../../api/application';
 import { uploadFile } from '../../../api/file';
@@ -39,6 +39,7 @@ const ReportApplyPage = () => {
   const isUpTo1280 = useMediaQuery('(max-width: 1280px)');
   const navigate = useNavigate();
   const { reportType, reportId } = useParams();
+  const [searchParams] = useSearchParams();
 
   const [applyFile, setApplyFile] = useState<File | null>(null);
   const [recruitmentFile, setRecruitmentFile] = useState<File | null>(null);
@@ -67,11 +68,17 @@ const ReportApplyPage = () => {
   };
 
   useEffect(() => {
-    initReportApplication();
+    // 모두 초기화
+    const init = searchParams.get('init');
+    if (!init || init === 'true') initReportApplication();
+
     setReportApplication({
       orderId: 'lets' + generateRandomString() + generateRandomNumber(),
       reportId: Number(reportId),
-      isFeedbackApplied: true,
+      isFeedbackApplied: true, // 임시
+      // 파일만 초기화
+      applyUrl: '',
+      recruitmentUrl: '',
     });
   }, []);
 
@@ -283,7 +290,6 @@ const PremiumSection = ({
         </span>
         <FormControl fullWidth>
           <RadioGroup
-            defaultValue="file"
             value={value}
             onChange={(e) => {
               setValue(e.target.value);
