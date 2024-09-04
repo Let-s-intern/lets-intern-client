@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
 
 import {
   convertReportPriceType,
@@ -9,15 +8,15 @@ import {
 import useReportApplicationStore from '../store/useReportApplicationStore';
 
 export default function useReportProgramInfo() {
-  const { reportId } = useParams();
-
   const [options, setOptions] = useState<string[]>([]);
 
-  const { data: reportDetailData } = useGetReportDetailQuery(Number(reportId));
-  const { data: reportPriceDetailData } = useGetReportPriceDetail(
-    Number(reportId),
-  );
   const { data: reportApplication } = useReportApplicationStore();
+  const { data: reportDetailData } = useGetReportDetailQuery(
+    reportApplication.reportId!,
+  );
+  const { data: reportPriceDetailData } = useGetReportPriceDetail(
+    reportApplication.reportId!,
+  );
 
   // optionIds로 옵션 제목 불러오기
   useEffect(() => {

@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
 
 import { useGetReportPriceDetail } from '../api/report';
 import useReportApplicationStore from '../store/useReportApplicationStore';
@@ -13,8 +12,6 @@ export interface ReportPriceInfo {
 }
 
 export default function useReportPayment() {
-  const { reportId } = useParams();
-
   // Sprint7 서류 진단 쿠폰 기능 없음
   const [payment, setPayment] = useState({
     report: 0,
@@ -26,7 +23,9 @@ export default function useReportPayment() {
 
   const { data: reportApplication, setReportApplication } =
     useReportApplicationStore();
-  const { data: reportPriceDetail } = useGetReportPriceDetail(Number(reportId));
+  const { data: reportPriceDetail } = useGetReportPriceDetail(
+    reportApplication.reportId!,
+  );
 
   useEffect(() => {
     if (reportPriceDetail === undefined) return;

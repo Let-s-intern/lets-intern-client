@@ -1,8 +1,8 @@
+import { useMediaQuery } from '@mui/material';
 import dayjs from 'dayjs';
 import { useMemo, useState } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 
-import { useMediaQuery } from '@mui/material';
 import {
   convertReportPriceType,
   useGetReportDetailQuery,
@@ -18,7 +18,9 @@ import {
 } from '../../../data/getPaymentSearchParams';
 import useReportPayment from '../../../hooks/useReportPayment';
 import useReportProgramInfo from '../../../hooks/useReportProgramInfo';
+import useRunOnce from '../../../hooks/useRunOnce';
 import useReportApplicationStore from '../../../store/useReportApplicationStore';
+import axios from '../../../utils/axios';
 import { searchParamsToObject } from '../../../utils/network';
 
 const ReportPaymentResult = () => {
@@ -27,7 +29,6 @@ const ReportPaymentResult = () => {
   const isUpTo1280 = useMediaQuery('(max-width: 1280px)');
 
   const [result, setResult] = useState<any>(null);
-  const [urlRedirect, setUrlRedirect] = useState<string | null>(null);
 
   const { data: reportApplication } = useReportApplicationStore();
   const { title, product, option } = useReportProgramInfo();
@@ -67,6 +68,42 @@ const ReportPaymentResult = () => {
       ? convertReportPriceType(reportApplication.reportPriceType)
       : `${convertReportPriceType(reportApplication.reportPriceType)} + 옵션`;
   const isSuccess = typeof result === 'object' && result !== null;
+
+  useRunOnce(() => {
+    if (!params) return;
+    if (
+      new URL(window.location.href).searchParams.get('postApplicationDone') ===
+      'true'
+    ) {
+      // 즉시 리다이렉트 하면 알 수 없는 이유로 제대로 navigate 되지 않음. SSR 관련 이슈로 추정
+      setTimeout(() => {
+        navigate('report/landing');
+      }, 100);
+      return;
+    }
+
+    const body = { ...reportApplication, paymentKey: params.paymentKey };
+    axios
+      .post(`/report/${reportApplication.reportId}/application`, body)
+      .then((res) => {
+        setResult(res.data.data);
+      })
+      .catch((e) => {
+        // eslint-disable-next-line no-console
+        console.error(e);
+        setResult('error');
+      })
+      .finally(() => {
+        // postApplicationDone 를 true로 설정하여 추후 뒤로가기로 왔을 때 api를 타지 않도록 함
+        setSearchParams(
+          (prev) => {
+            prev.set('postApplicationDone', 'true');
+            return prev;
+          },
+          { replace: true },
+        );
+      });
+  });
 
   return (
     <div className="w-full px-5" data-program-text={title}>
