@@ -245,7 +245,7 @@ const ReportCreditDelete = () => {
                   />
                   {reportRefundPercent() !== 1 && (
                     <PaymentInfoRow
-                      title={`서류 진단서 (부분 환불 ${(1 - reportRefundPercent()) * 100}%)`}
+                      title={`서류 진단서 (부분 환불 ${Math.ceil((1 - reportRefundPercent()) * 100)}%)`}
                       content={`-${
                         (getReportDiscountedPrice() * (1 - reportRefundPercent())).toLocaleString()
                       }원`}
@@ -267,7 +267,7 @@ const ReportCreditDelete = () => {
                   )}
                   {feedbackRefundPercent() !== 1 && (
                     <PaymentInfoRow
-                      title={`1:1 피드백 (부분 환불 ${(1 - feedbackRefundPercent()) * 100}%)`}
+                      title={`1:1 피드백 (부분 환불 ${Math.ceil((1 - feedbackRefundPercent()) * 100)}%)`}
                       content={`-${
                         (getFeedbackDiscountedPrice() * (1 - feedbackRefundPercent())).toLocaleString()
                       }원`}
