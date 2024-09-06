@@ -38,6 +38,66 @@ export function convertReportTypeToLandingPath(type: ReportType) {
   }
 }
 
+export function convertReportStatusToDisplayName(
+  status: ReportApplicationStatus,
+) {
+  switch (status) {
+    case 'APPLIED':
+      return '확인중';
+    case 'REPORTING':
+      return '진단중';
+    case 'REPORTED':
+      return '진단완료';
+    case 'COMPLETED':
+      return '진단완료';
+  }
+}
+
+export function convertReportStatusToBadgeStatus(
+  status: ReportApplicationStatus,
+): 'info' | 'success' {
+  switch (status) {
+    case 'APPLIED':
+      return 'info';
+    case 'REPORTING':
+      return 'info';
+    case 'REPORTED':
+      return 'success';
+    case 'COMPLETED':
+      return 'success';
+  }
+}
+
+export function convertFeedbackStatusToDisplayName(
+  status: ReportFeedbackStatus,
+) {
+  switch (status) {
+    case 'APPLIED':
+      return '확인중';
+    case 'PENDING':
+      return '확인중';
+    case 'CONFIRMED':
+      return '일정확정';
+    case 'COMPLETED':
+      return '진행완료';
+  }
+}
+
+export function convertFeedbackStatusToBadgeStatus(
+  status: ReportFeedbackStatus,
+): 'info' | 'success' {
+  switch (status) {
+    case 'APPLIED':
+      return 'info';
+    case 'PENDING':
+      return 'info';
+    case 'CONFIRMED':
+      return 'success';
+    case 'COMPLETED':
+      return 'success';
+  }
+}
+
 const reportPriceTypeSchema = z.enum(['BASIC', 'PREMIUM']);
 
 export type ReportPriceType = z.infer<typeof reportPriceTypeSchema>;

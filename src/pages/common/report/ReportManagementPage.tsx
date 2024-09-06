@@ -1,10 +1,13 @@
 import { useEffect } from 'react';
 import { Link, NavLink, useSearchParams } from 'react-router-dom';
 import {
+  convertReportStatusToBadgeStatus,
+  convertReportStatusToDisplayName,
   convertReportTypeToDisplayName,
   useGetMyReports,
 } from '../../../api/report';
 import { ReportHeader } from '../../../components/common/report/ReportIntroSection';
+import Badge from '../../../components/common/ui/Badge';
 
 type ReportFilter = {
   status: 'all' | 'active' | 'inactive';
@@ -116,7 +119,13 @@ const ReportManagementPage = () => {
             >
               <div>
                 <header className="mb-3 flex items-center gap-2">
-                  <span>{item.applicationStatus}</span>
+                  <Badge
+                    status={convertReportStatusToBadgeStatus(
+                      item.applicationStatus,
+                    )}
+                  >
+                    {convertReportStatusToDisplayName(item.applicationStatus)}
+                  </Badge>
                   <h2>{item.title}</h2>
                 </header>
                 <table className="mb-5">
