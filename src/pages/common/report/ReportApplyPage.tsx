@@ -10,6 +10,7 @@ import { FaArrowLeft } from 'react-icons/fa6';
 import { IoCloseOutline } from 'react-icons/io5';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 
+import { twJoin } from 'tailwind-merge';
 import { useGetParticipationInfo } from '../../../api/application';
 import { uploadFile } from '../../../api/file';
 import {
@@ -132,6 +133,7 @@ const ReportApplyPage = () => {
             <UsereInfoSection />
             <ReportPaymentSection />
             <button
+              className="w-full rounded-md bg-primary py-3 text-center text-small18 font-medium text-neutral-100"
               onClick={() => {
                 convertFile();
                 const { isValid, message } = validate();
@@ -145,7 +147,6 @@ const ReportApplyPage = () => {
                 }
                 navigate(`/report/toss/payment`);
               }}
-              className="text-1.125-medium w-full rounded-md bg-primary py-3 text-center font-medium text-neutral-100"
             >
               결제하기
             </button>
@@ -466,7 +467,7 @@ export const UsereInfoSection = () => {
   return (
     <section>
       <Heading2>참여자 정보</Heading2>
-      <div className="mb-4 mt-6 flex flex-col gap-3">
+      <div className="mt-6 flex flex-col gap-3">
         <div className="flex flex-col gap-1">
           <Label>이름</Label>
           <Input
@@ -542,23 +543,63 @@ export const UsereInfoSection = () => {
 
 /* 모바일 전용 결제 페이지(ReportPaymentPage)에서 같이 사용 */
 export const ReportPaymentSection = () => {
+  const [couponCode, setCouponCode] = useState('');
+  const [message, setMessage] = useState('');
+
   const { data: reportApplication } = useReportApplicationStore();
-  const payment = useReportPayment();
+  const { payment, applyCoupon, cancelCoupon } = useReportPayment();
 
   return (
-    <section className="flex flex-col gap-6">
+    <section className="flex flex-col">
       <Heading2>결제 정보</Heading2>
-      {/* <div className="flex gap-2.5">
-        <Input
-          className="w-full"
-          type="text"
-          placeholder="쿠폰 번호를 입력해주세요."
-        />
-        <button className="shrink-0 rounded-sm bg-primary px-4 py-1.5 text-xsmall14 font-medium text-neutral-100">
-          쿠폰 등록
-        </button>
+      <div className="mt-6">
+        <div className="flex gap-2.5">
+          <Input
+            className="w-full"
+            value={couponCode}
+            type="text"
+            placeholder="쿠폰 번호를 입력해주세요."
+            disabled={payment.coupon !== 0}
+            onChange={(e) => setCouponCode(e.target.value)}
+          />
+          <button
+            className={twJoin(
+              payment.coupon === 0
+                ? 'bg-primary text-neutral-100'
+                : 'border-2 border-primary bg-neutral-100 text-primary',
+              'shrink-0 rounded-sm px-4 py-1.5 text-xsmall14 font-medium',
+            )}
+            onClick={async () => {
+              if (couponCode === '') return;
+              // 쿠폰이 등록된 상태면 쿠폰 취소
+              if (payment.coupon !== 0 && couponCode !== '') {
+                cancelCoupon();
+                setMessage('');
+                setCouponCode('');
+                return;
+              }
+
+              const data = await applyCoupon(couponCode);
+              if (data.status === 404 || data.status === 400)
+                setMessage(data.message);
+              else setMessage('쿠폰이 등록되었습니다.');
+            }}
+          >
+            {payment.coupon === 0 ? '쿠폰 등록' : '쿠폰 취소'}
+          </button>
+        </div>
+        <span
+          className={twJoin(
+            payment.coupon === 0
+              ? 'text-system-error'
+              : 'text-system-positive-blue',
+            'h-3 text-xsmall14',
+          )}
+        >
+          {message}
+        </span>
       </div>
-      <hr className="my-5" /> */}
+      <hr className="my-5" />
       <div className="flex flex-col">
         <div className="flex h-10 items-center justify-between px-3 text-neutral-0">
           <span>
@@ -586,12 +627,14 @@ export const ReportPaymentSection = () => {
           </span>
           <span>-{payment.discount.toLocaleString()}원</span>
         </div>
-        {/* <div className="flex h-10 items-center justify-between px-3 text-primary">
+        <div className="flex h-10 items-center justify-between px-3 text-primary">
           <span>쿠폰할인</span>
           <span className="font-bold">
-            -{payment.coupon.toLocaleString()}원
+            {payment.coupon === 0
+              ? '0원'
+              : `-${payment.coupon.toLocaleString()}원`}
           </span>
-        </div> */}
+        </div>
         <hr className="my-5" />
         <div className="flex h-10 items-center justify-between px-3 font-semibold text-neutral-0">
           <span>결제금액</span>

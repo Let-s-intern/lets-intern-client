@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react';
 
+import { isAxiosError } from 'axios';
 import { useGetReportPriceDetail } from '../api/report';
 import useReportApplicationStore from '../store/useReportApplicationStore';
+import axios from '../utils/axios';
 
 export interface ReportPriceInfo {
   report: number;
@@ -26,6 +28,36 @@ export default function useReportPayment() {
   const { data: reportPriceDetail } = useGetReportPriceDetail(
     reportApplication.reportId!,
   );
+
+  const applyCoupon = async (code: string) => {
+    try {
+      const res = await axios.get(`/coupon`, {
+        params: {
+          code,
+          programType: 'REPORT',
+        },
+      });
+      setPayment((prev) => ({
+        ...prev,
+        coupon: res.data.data.discount,
+      }));
+      return res.data.data;
+    } catch (error) {
+      if (
+        isAxiosError(error) &&
+        (error.response?.status === 404 || error.response?.status === 400)
+      )
+        return error.response?.data;
+      console.error(error);
+    }
+  };
+
+  const cancelCoupon = () => {
+    setPayment((prev) => ({
+      ...prev,
+      coupon: 0,
+    }));
+  };
 
   useEffect(() => {
     if (reportPriceDetail === undefined) return;
@@ -71,5 +103,5 @@ export default function useReportPayment() {
     });
   }, [reportPriceDetail]);
 
-  return payment;
+  return { payment, applyCoupon, cancelCoupon };
 }

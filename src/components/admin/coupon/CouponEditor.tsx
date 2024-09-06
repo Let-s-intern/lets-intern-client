@@ -8,12 +8,15 @@ import {
   SelectChangeEvent,
 } from '@mui/material';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { AxiosError } from 'axios';
 import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
-import { AxiosError } from 'axios';
 import axios from '../../../utils/axios';
-import { couponTypeToText, newProgramTypeToText } from '../../../utils/convert';
+import {
+  couponTypeToText,
+  newProgramTypeToText
+} from '../../../utils/convert';
 import Input from '../../ui/input/Input';
 import ActionButton from '../ui/button/ActionButton';
 
@@ -150,11 +153,8 @@ const CouponEditor = ({ editorMode }: CouponEditorProps) => {
       time: isUnlimited ? -1 : Number(value.time),
       startDate: value.startDate,
       endDate: value.endDate,
-      // programTypeList: value.programTypeList.map((type) => ({
-      //   programType:
-      //     couponProgramTypeEnum[type as keyof typeof couponProgramTypeEnum].id,
-      // })),
     };
+
     if (editorMode === 'create') {
       addCoupon.mutate(newValue);
     } else if (editorMode === 'edit') {
@@ -173,15 +173,10 @@ const CouponEditor = ({ editorMode }: CouponEditorProps) => {
   };
 
   return (
-    <main className="mx-auto mt-12 w-[36rem]">
+    <main className="mx-auto mt-12 w-[48rem]">
       <header>
         <h1 className="text-2xl font-semibold">
-          쿠폰{' '}
-          {editorMode === 'create' ? (
-            <>등록</>
-          ) : (
-            editorMode === 'edit' && <>수정</>
-          )}
+          {editorMode === 'create' ? '쿠폰 등록' : '쿠폰 수정'}
         </h1>
       </header>
       <form className="mt-4" onSubmit={handleSubmit}>
@@ -230,6 +225,51 @@ const CouponEditor = ({ editorMode }: CouponEditorProps) => {
               />
             ))}
           </div>
+          {/* <div className="ml-4 flex items-center">
+            <label className="w-[8rem] font-medium">프로그램 분류</label>
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={value.programTypeList.includes('ALL')}
+                  onChange={(e) => handleProgramTypeChange(e, 'ALL')}
+                />
+              }
+              label="전체"
+            />
+            {Object.keys(newProgramTypeDetailToText).map((programType) => (
+              <FormControlLabel
+                key={programType}
+                value={programType}
+                control={
+                  <Checkbox
+                    checked={value.programTypeList.includes(programType)}
+                    onChange={(e) => handleProgramTypeChange(e, programType)}
+                  />
+                }
+                label={newProgramTypeDetailToText[programType]}
+              />
+            ))}
+          </div>
+          <div className="ml-4 flex items-center">
+            <label className="w-[8rem] font-medium">id</label>
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={value.programTypeList.includes('ALL')}
+                  onChange={(e) => handleProgramTypeChange(e, 'ALL')}
+                />
+              }
+              label="전체"
+            />
+            <Input
+              label="id"
+              name="id"
+              value={''}
+              fullWidth={false}
+              className="flex-1"
+              // onChange={handleChange}
+            />
+          </div> */}
           <Input
             label="쿠폰명"
             name="name"
