@@ -1,76 +1,107 @@
-import dayjs from "dayjs";
-import { useNavigate, useParams, useSearchParams } from "react-router-dom";
-import { convertReportPriceType, useGetReportPaymentDetailQuery } from "../../../api/report";
-import { useUserQuery } from "../../../api/user";
-import MoreButton from "../../../components/common/mypage/ui/button/MoreButton";
-import PaymentInfoRow from "../../../components/common/program/paymentSuccess/PaymentInfoRow";
-import Input from "../../../components/common/ui/input/Input";
+import dayjs from 'dayjs';
+import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
+import {
+  convertReportPriceType,
+  useGetReportPaymentDetailQuery,
+} from '../../../api/report';
+import { useUserQuery } from '../../../api/user';
+import MoreButton from '../../../components/common/mypage/ui/button/MoreButton';
+import PaymentInfoRow from '../../../components/common/program/paymentSuccess/PaymentInfoRow';
+import Input from '../../../components/common/ui/input/Input';
 
 const convertDateFormat = (date: string) => {
   return dayjs(date).format('YYYY.MM.DD');
 };
 
 const getPercent = ({
-  originalPrice, changedPrice
-}:{
-  originalPrice: number,
-  changedPrice: number
+  originalPrice,
+  changedPrice,
+}: {
+  originalPrice: number;
+  changedPrice: number;
 }) => {
   return Math.floor((changedPrice / originalPrice) * 100);
-}
+};
 
 const ReportCreditDetail = () => {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
-  const applicationId = searchParams.get("applicationId");
-  const {paymentId} = useParams<{paymentId: string}>();
+  const applicationId = searchParams.get('applicationId');
+  const { paymentId } = useParams<{ paymentId: string }>();
 
-  const {data: reportPaymentDetail, isLoading: reportPaymentDetailIsLoading, isError: reportPaymentDetailIsError} = useGetReportPaymentDetailQuery({
+  const {
+    data: reportPaymentDetail,
+    isLoading: reportPaymentDetailIsLoading,
+    isError: reportPaymentDetailIsError,
+  } = useGetReportPaymentDetailQuery({
     applicationId: Number(applicationId),
     enabled: applicationId !== null,
   });
 
-  const {data: userData, isLoading: userDataIsLoading, isError: userDataIsError} = useUserQuery();
+  const {
+    data: userData,
+    isLoading: userDataIsLoading,
+    isError: userDataIsError,
+  } = useUserQuery();
 
   const getOptionTitleList = () => {
     if (!reportPaymentDetail) return [];
 
-    if (!reportPaymentDetail.reportPaymentInfo.reportOptionInfos || reportPaymentDetail.reportPaymentInfo.reportOptionInfos.length === 0) return '없음';
+    if (
+      !reportPaymentDetail.reportPaymentInfo.reportOptionInfos ||
+      reportPaymentDetail.reportPaymentInfo.reportOptionInfos.length === 0
+    )
+      return '없음';
 
-    return reportPaymentDetail.reportPaymentInfo.reportOptionInfos.map(option => option.title).join(', ');
-  }
+    return reportPaymentDetail.reportPaymentInfo.reportOptionInfos
+      .map((option) => option.title)
+      .join(', ');
+  };
 
   const getReportPrice = () => {
     if (!reportPaymentDetail) return 0;
 
-    const defaultReportPrice = reportPaymentDetail.reportPaymentInfo.reportPriceInfo.price;
-    const optionsPrice = reportPaymentDetail.reportPaymentInfo.reportOptionInfos.reduce((acc, option) => {
-      return acc + option.price;
-    }, 0);
+    const defaultReportPrice =
+      reportPaymentDetail.reportPaymentInfo.reportPriceInfo.price;
+    const optionsPrice =
+      reportPaymentDetail.reportPaymentInfo.reportOptionInfos.reduce(
+        (acc, option) => {
+          return acc + option.price;
+        },
+        0,
+      );
 
     return defaultReportPrice + optionsPrice;
-  }
+  };
 
   const getDiscountPercent = () => {
     if (!reportPaymentDetail) return 0;
 
-    const originalPrice = reportPaymentDetail.reportPaymentInfo.reportPriceInfo.price;
+    const originalPrice =
+      reportPaymentDetail.reportPaymentInfo.reportPriceInfo.price;
     const discountPrice = reportPaymentDetail.reportPaymentInfo.programDiscount;
 
-    return getPercent({originalPrice, changedPrice: discountPrice});
-  }
+    return getPercent({ originalPrice, changedPrice: discountPrice });
+  };
 
   const getCouponDiscountPrice = () => {
-    if (!reportPaymentDetail || !reportPaymentDetail.reportPaymentInfo.couponDiscount) return 0;
+    if (
+      !reportPaymentDetail ||
+      !reportPaymentDetail.reportPaymentInfo.couponDiscount
+    )
+      return 0;
 
     return reportPaymentDetail.reportPaymentInfo.couponDiscount === -1
-      ? reportPaymentDetail.reportPaymentInfo.programPrice - reportPaymentDetail.reportPaymentInfo.programDiscount
+      ? reportPaymentDetail.reportPaymentInfo.programPrice -
+          reportPaymentDetail.reportPaymentInfo.programDiscount
       : reportPaymentDetail.reportPaymentInfo.couponDiscount;
-  }
+  };
 
   const isCancelable = () => {
-    if (!reportPaymentDetail ||
-      (reportPaymentDetail.tossInfo && reportPaymentDetail.tossInfo.status !== 'DONE') ||
+    if (
+      !reportPaymentDetail ||
+      (reportPaymentDetail.tossInfo &&
+        reportPaymentDetail.tossInfo.status !== 'DONE') ||
       reportPaymentDetail.reportApplicationInfo.isCanceled
     ) {
       return false;
@@ -78,14 +109,29 @@ const ReportCreditDetail = () => {
 
     const now = dayjs();
     // 진단서 수령 후 - 환불 불가
-    const isAfterReportIssued = reportPaymentDetail.reportApplicationInfo.reportApplicationStatus === 'REPORTED' || reportPaymentDetail.reportApplicationInfo.reportApplicationStatus === 'COMPLETED';
+    const isAfterReportIssued =
+      reportPaymentDetail.reportApplicationInfo.reportApplicationStatus ===
+        'REPORTED' ||
+      reportPaymentDetail.reportApplicationInfo.reportApplicationStatus ===
+        'COMPLETED';
 
     // 1:1 첨삭 일정 확정 후 - 확정된 시간 이후 - 환불 불가
-    const isAfterFeedbackConfirmed = reportPaymentDetail.reportApplicationInfo.reportFeedbackStatus === 'COMPLETED' || (reportPaymentDetail.reportApplicationInfo.reportFeedbackStatus === 'CONFIRMED' && reportPaymentDetail.reportApplicationInfo.reportFeedbackDesiredDate && (now.isAfter(reportPaymentDetail.reportApplicationInfo.reportFeedbackDesiredDate) || now.isSame(reportPaymentDetail.reportApplicationInfo.reportFeedbackDesiredDate)));
+    const isAfterFeedbackConfirmed =
+      reportPaymentDetail.reportApplicationInfo.reportFeedbackStatus ===
+        'COMPLETED' ||
+      (reportPaymentDetail.reportApplicationInfo.reportFeedbackStatus ===
+        'CONFIRMED' &&
+        reportPaymentDetail.reportApplicationInfo.reportFeedbackDesiredDate &&
+        (now.isAfter(
+          reportPaymentDetail.reportApplicationInfo.reportFeedbackDesiredDate,
+        ) ||
+          now.isSame(
+            reportPaymentDetail.reportApplicationInfo.reportFeedbackDesiredDate,
+          )));
 
     // 환불 가능한지 확인
     return !isAfterReportIssued || !isAfterFeedbackConfirmed;
-  }
+  };
 
   return (
     <section
@@ -130,8 +176,10 @@ const ReportCreditDetail = () => {
                         ? reportPaymentDetail.tossInfo.cancels[0].canceledAt
                           ? reportPaymentDetail.tossInfo.cancels[0].canceledAt
                           : ''
-                        : reportPaymentDetail.reportPaymentInfo?.lastModifiedDate
-                          ? reportPaymentDetail.reportPaymentInfo.lastModifiedDate
+                        : reportPaymentDetail.reportPaymentInfo
+                              ?.lastModifiedDate
+                          ? reportPaymentDetail.reportPaymentInfo
+                              .lastModifiedDate
                           : '',
                     )}
                   </div>
@@ -155,7 +203,9 @@ const ReportCreditDetail = () => {
                     </div>
                     <div className="flex w-full items-center justify-start gap-x-4 text-xs font-medium">
                       <div className="shrink-0 text-neutral-30">옵션</div>
-                      <div className="text-primary-dark">{getOptionTitleList()}</div>
+                      <div className="text-primary-dark">
+                        {getOptionTitleList()}
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -224,7 +274,7 @@ const ReportCreditDetail = () => {
               <div className="font-semibold text-neutral-0">
                 {(reportPaymentDetail.tossInfo &&
                   reportPaymentDetail.tossInfo.status !== 'DONE') ||
-                  reportPaymentDetail.reportApplicationInfo.isCanceled
+                reportPaymentDetail.reportApplicationInfo.isCanceled
                   ? '환불 정보'
                   : '결제 정보'}
               </div>
@@ -233,7 +283,8 @@ const ReportCreditDetail = () => {
                   <div>
                     {(reportPaymentDetail.tossInfo &&
                       reportPaymentDetail.tossInfo.status !== 'DONE') ||
-                      reportPaymentDetail.reportApplicationInfo.isCanceled === true
+                    reportPaymentDetail.reportApplicationInfo.isCanceled ===
+                      true
                       ? '총 환불금액'
                       : '총 결제금액'}
                   </div>
@@ -252,14 +303,13 @@ const ReportCreditDetail = () => {
                     title={`서류 진단서 (${convertReportPriceType(reportPaymentDetail.reportApplicationInfo.reportPriceType)}+옵션)`}
                     content={`${getReportPrice().toLocaleString()}원`}
                   />
-                  {
-                    reportPaymentDetail.reportApplicationInfo.reportFeedbackApplicationId && (
-                      <PaymentInfoRow
-                        title='1:1 피드백'
-                        content={`${reportPaymentDetail.reportPaymentInfo.feedbackPriceInfo?.feedbackPrice.toLocaleString() || 0}원`}
-                      />
-                    )
-                  }
+                  {reportPaymentDetail.reportApplicationInfo
+                    .reportFeedbackApplicationId && (
+                    <PaymentInfoRow
+                      title="1:1 피드백"
+                      content={`${reportPaymentDetail.reportPaymentInfo.feedbackPriceInfo?.feedbackPrice.toLocaleString() || 0}원`}
+                    />
+                  )}
                   <PaymentInfoRow
                     title={`할인 (${getDiscountPercent()}%)`}
                     content={`-${reportPaymentDetail.reportPaymentInfo.programDiscount.toLocaleString()}원`}
@@ -268,37 +318,17 @@ const ReportCreditDetail = () => {
                     title={`쿠폰할인`}
                     content={`-${getCouponDiscountPrice().toLocaleString()}원`}
                   />
-                  {reportPaymentDetail.tossInfo?.status === 'PARTIAL_CANCELED' && (
+                  {reportPaymentDetail.tossInfo?.status ===
+                    'PARTIAL_CANCELED' && (
                     <>
-                    <PaymentInfoRow
-                      title={`서류 진단서 (부분 환불 ${getPercent({
-                        originalPrice: getReportPrice(),
-                        changedPrice: reportPaymentDetail.reportPaymentInfo.reportRefundPrice ?? 0
-                      })}%)`}
-                      content={`-${reportPaymentDetail.reportPaymentInfo.reportRefundPrice?.toLocaleString() || 0}원`}
-                      subInfo={
-                        <div className="text-xs font-medium text-primary-dark">
-                          *환불 규정은{' '}
-                          <a
-                            className="underline underline-offset-2"
-                            href="https://letscareer.oopy.io/5eb0ebdd-e10c-4aa1-b28a-8bd0964eca0b"
-                            target="_blank"
-                            rel="noreferrer"
-                          >
-                            자주 묻는 질문
-                          </a>
-                          을 참고해주세요
-                        </div>
-                      }
-                    />
-                    {
-                      reportPaymentDetail.reportApplicationInfo.reportFeedbackApplicationId && (
-                        <PaymentInfoRow
-                        title={`1:1 피드백 (부분 환불 ${getPercent({
-                          originalPrice: reportPaymentDetail.reportPaymentInfo.feedbackPriceInfo?.feedbackPrice || 0,
-                          changedPrice: reportPaymentDetail.reportPaymentInfo.feedbackRefundPrice || 0
+                      <PaymentInfoRow
+                        title={`서류 진단서 (부분 환불 ${getPercent({
+                          originalPrice: getReportPrice(),
+                          changedPrice:
+                            reportPaymentDetail.reportPaymentInfo
+                              .reportRefundPrice ?? 0,
                         })}%)`}
-                        content={`-${reportPaymentDetail.reportPaymentInfo.feedbackRefundPrice?.toLocaleString() || 0}원`}
+                        content={`-${reportPaymentDetail.reportPaymentInfo.reportRefundPrice?.toLocaleString() || 0}원`}
                         subInfo={
                           <div className="text-xs font-medium text-primary-dark">
                             *환불 규정은{' '}
@@ -314,8 +344,34 @@ const ReportCreditDetail = () => {
                           </div>
                         }
                       />
-                      )
-                    }
+                      {reportPaymentDetail.reportApplicationInfo
+                        .reportFeedbackApplicationId && (
+                        <PaymentInfoRow
+                          title={`1:1 피드백 (부분 환불 ${getPercent({
+                            originalPrice:
+                              reportPaymentDetail.reportPaymentInfo
+                                .feedbackPriceInfo?.feedbackPrice || 0,
+                            changedPrice:
+                              reportPaymentDetail.reportPaymentInfo
+                                .feedbackRefundPrice || 0,
+                          })}%)`}
+                          content={`-${reportPaymentDetail.reportPaymentInfo.feedbackRefundPrice?.toLocaleString() || 0}원`}
+                          subInfo={
+                            <div className="text-xs font-medium text-primary-dark">
+                              *환불 규정은{' '}
+                              <a
+                                className="underline underline-offset-2"
+                                href="https://letscareer.oopy.io/5eb0ebdd-e10c-4aa1-b28a-8bd0964eca0b"
+                                target="_blank"
+                                rel="noreferrer"
+                              >
+                                자주 묻는 질문
+                              </a>
+                              을 참고해주세요
+                            </div>
+                          }
+                        />
+                      )}
                     </>
                   )}
                 </div>
@@ -324,7 +380,8 @@ const ReportCreditDetail = () => {
                   <PaymentInfoRow
                     title={
                       reportPaymentDetail.tossInfo?.status === 'CANCELED' ||
-                      reportPaymentDetail.tossInfo?.status === 'PARTIAL_CANCELED'
+                      reportPaymentDetail.tossInfo?.status ===
+                        'PARTIAL_CANCELED'
                         ? '환불일자'
                         : '결제일자'
                     }
@@ -333,14 +390,15 @@ const ReportCreditDetail = () => {
                         ? reportPaymentDetail.tossInfo?.status === 'CANCELED' &&
                           reportPaymentDetail.tossInfo.cancels
                           ? convertDateFormat(
-                              reportPaymentDetail.tossInfo?.cancels[0].canceledAt ||
-                                '',
+                              reportPaymentDetail.tossInfo?.cancels[0]
+                                .canceledAt || '',
                             )
                           : convertDateFormat(
                               reportPaymentDetail.tossInfo?.requestedAt || '',
                             )
                         : convertDateFormat(
-                            reportPaymentDetail.reportPaymentInfo.lastModifiedDate || '',
+                            reportPaymentDetail.reportPaymentInfo
+                              .lastModifiedDate || '',
                           )
                     }
                   />
@@ -358,7 +416,8 @@ const ReportCreditDetail = () => {
                             onClick={() => {
                               reportPaymentDetail.tossInfo?.receipt &&
                                 window.open(
-                                  reportPaymentDetail.tossInfo.receipt.url || '',
+                                  reportPaymentDetail.tossInfo.receipt.url ||
+                                    '',
                                   '_blank',
                                 );
                             }}
@@ -375,7 +434,9 @@ const ReportCreditDetail = () => {
                 <button
                   className="flex w-full items-center justify-center rounded-sm bg-neutral-80 px-5 py-2.5 font-medium text-neutral-40"
                   onClick={() => {
-                    navigate(`/mypage/credit/report/${paymentId}/delete?applicationId=${applicationId}`);
+                    navigate(
+                      `/mypage/credit/report/${paymentId}/delete?applicationId=${applicationId}`,
+                    );
                   }}
                 >
                   결제 취소하기
@@ -384,7 +445,7 @@ const ReportCreditDetail = () => {
                 <MoreButton
                   className="other_program w-full md:flex"
                   onClick={() => {
-                    navigate('/report/landing');
+                    navigate('/report/landing/resume');
                   }}
                 >
                   진단 서비스 더 둘러보기
@@ -395,7 +456,7 @@ const ReportCreditDetail = () => {
         )}
       </div>
     </section>
-  )
+  );
 };
 
 export default ReportCreditDetail;

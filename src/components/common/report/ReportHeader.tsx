@@ -26,7 +26,9 @@ export const HeaderButton = ({
 export const ReportHeader = () => {
   return (
     <div className="sticky top-[60px] -mx-5 mb-4 flex items-center gap-2 bg-white/90 px-5 pb-2 pt-2 sm:pb-5 md:top-[70px] lg:top-[76px]">
-      <HeaderButton to="/report/landing">서류 진단 신청하기</HeaderButton>
+      <HeaderButton to="/report/landing/resume">
+        서류 진단 신청하기
+      </HeaderButton>
       <HeaderButton to="/report/management">MY 진단서 보기</HeaderButton>
     </div>
   );

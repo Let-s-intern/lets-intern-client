@@ -34,10 +34,10 @@ import ProgramDetail from './pages/common/program/ProgramDetail';
 import Programs from './pages/common/program/Programs';
 import ReportApplyPage from './pages/common/report/ReportApplyPage';
 import ReportManagementPage from './pages/common/report/ReportManagementPage';
-import ReportPage from './pages/common/report/ReportPage';
 import ReportPaymentFail from './pages/common/report/ReportPaymentFail';
 import ReportPaymentPage from './pages/common/report/ReportPaymentPage';
 import ReportPaymentResult from './pages/common/report/ReportPaymentResult';
+import ReportResumePage from './pages/common/report/ReportResumePage';
 import ReportTossPage from './pages/common/report/ReportTossPage';
 import ReviewCreate from './pages/common/review/ReviewCreate';
 import ReviewDetail from './pages/common/review/ReviewDetail';
@@ -153,7 +153,17 @@ const Router = () => {
 
           {/* 서류진단 */}
 
-          <Route path="report/landing" element={<ReportPage />} />
+          <Route path="report/landing/resume" element={<ReportResumePage />} />
+          {/* TODO: 수정 */}
+          <Route
+            path="report/landing/personal-statement"
+            element={<ReportResumePage />}
+          />
+          {/* TODO: 수정 */}
+          <Route
+            path="report/landing/portfolio"
+            element={<ReportResumePage />}
+          />
 
           <Route
             path="report/apply/:reportType/:reportId"
