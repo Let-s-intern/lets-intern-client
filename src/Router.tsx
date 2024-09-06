@@ -1,4 +1,4 @@
-import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
 
 import { getAdminRoutes } from './AdminRoutes';
 import ChallengeLayout from './components/common/challenge/ui/layout/ChallengeLayout';
@@ -34,6 +34,7 @@ import ProgramDetail from './pages/common/program/ProgramDetail';
 import Programs from './pages/common/program/Programs';
 import ReportApplyPage from './pages/common/report/ReportApplyPage';
 import ReportManagementPage from './pages/common/report/ReportManagementPage';
+import ReportPage from './pages/common/report/ReportPage';
 import ReportPaymentFail from './pages/common/report/ReportPaymentFail';
 import ReportPaymentPage from './pages/common/report/ReportPaymentPage';
 import ReportPaymentResult from './pages/common/report/ReportPaymentResult';
@@ -156,10 +157,7 @@ const Router = () => {
           {/* 서류진단 */}
 
           {/* <Route element={<ReportLayout />}> */}
-          <Route
-            path="report/landing"
-            element={<Navigate to="/report/landing/resume" replace />}
-          />
+          <Route path="report/landing" element={<ReportPage />} />
           <Route path="report/landing/resume" element={<ReportResumePage />} />
           <Route
             path="report/landing/personal-statement"
