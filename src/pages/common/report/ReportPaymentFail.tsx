@@ -25,7 +25,7 @@ const ReportPaymentFail = () => {
   const { data: reportDetail } = useGetReportDetailQuery(
     reportApplication.reportId!,
   );
-  const payment = useReportPayment();
+  const { payment } = useReportPayment();
 
   const params = useMemo(() => {
     const obj = searchParamsToObject(

@@ -15,8 +15,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import axios from '../../../utils/axios';
 import {
   couponTypeToText,
-  newProgramTypeDetailToText,
-  newProgramTypeToText,
+  newProgramTypeToText
 } from '../../../utils/convert';
 import Input from '../../ui/input/Input';
 import ActionButton from '../ui/button/ActionButton';
@@ -226,7 +225,7 @@ const CouponEditor = ({ editorMode }: CouponEditorProps) => {
               />
             ))}
           </div>
-          <div className="ml-4 flex items-center">
+          {/* <div className="ml-4 flex items-center">
             <label className="w-[8rem] font-medium">프로그램 분류</label>
             <FormControlLabel
               control={
@@ -270,7 +269,7 @@ const CouponEditor = ({ editorMode }: CouponEditorProps) => {
               className="flex-1"
               // onChange={handleChange}
             />
-          </div>
+          </div> */}
           <Input
             label="쿠폰명"
             name="name"
