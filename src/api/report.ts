@@ -301,11 +301,10 @@ export const useGetReportPriceDetail = (reportId: number) => {
 };
 
 // GET /api/v1/report/active
-
 export const getActiveReportsSchema = z.object({
-  resumeInfo: getReportDetailSchema,
-  personalStatementInfo: getReportDetailSchema,
-  portfolioInfo: getReportDetailSchema,
+  resumeInfo: getReportDetailSchema.nullable().optional(),
+  personalStatementInfo: getReportDetailSchema.nullable().optional(),
+  portfolioInfo: getReportDetailSchema.nullable().optional(),
 });
 
 export type ActiveReport = z.infer<typeof getReportDetailSchema>;
@@ -373,22 +372,6 @@ const getMyReportsSchema = z
   .object({
     myReportInfos: z.array(
       z.object({
-        // "reportId": 0,
-        // "applicationId": 0,
-        // "title": "string",
-        // "reportType": "RESUME",
-        // "applicationStatus": "APPLIED",
-        // "feedbackStatus": "APPLIED",
-        // "reportUrl": "string",
-        // "applyUrl": "string",
-        // "recruitmentUrl": "string",
-        // "zoomLink": "string",
-        // "zoomPassword": "string",
-        // "desiredDate1": "2024-09-06T13:41:47.404Z",
-        // "desiredDate2": "2024-09-06T13:41:47.404Z",
-        // "desiredDate3": "2024-09-06T13:41:47.404Z",
-        // "applicationTime": "2024-09-06T13:41:47.404Z",
-        // "confirmedTime": "2024-09-06T13:41:47.404Z"
         reportId: z.number(),
         applicationId: z.number(),
         title: z.string().nullable().optional(),
