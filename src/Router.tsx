@@ -158,7 +158,7 @@ const Router = () => {
           {/* <Route element={<ReportLayout />}> */}
           <Route
             path="report/landing"
-            element={<Navigate to="/reporot/landing/resume" replace />}
+            element={<Navigate to="/report/landing/resume" replace />}
           />
           <Route path="report/landing/resume" element={<ReportResumePage />} />
           <Route
