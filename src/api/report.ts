@@ -373,13 +373,38 @@ const getMyReportsSchema = z
   .object({
     myReportInfos: z.array(
       z.object({
+        // "reportId": 0,
+        // "applicationId": 0,
+        // "title": "string",
+        // "reportType": "RESUME",
+        // "applicationStatus": "APPLIED",
+        // "feedbackStatus": "APPLIED",
+        // "reportUrl": "string",
+        // "applyUrl": "string",
+        // "recruitmentUrl": "string",
+        // "zoomLink": "string",
+        // "zoomPassword": "string",
+        // "desiredDate1": "2024-09-06T13:41:47.404Z",
+        // "desiredDate2": "2024-09-06T13:41:47.404Z",
+        // "desiredDate3": "2024-09-06T13:41:47.404Z",
+        // "applicationTime": "2024-09-06T13:41:47.404Z",
+        // "confirmedTime": "2024-09-06T13:41:47.404Z"
         reportId: z.number(),
         applicationId: z.number(),
-        title: z.string(),
-        type: reportTypeSchema,
-        reportApplicationStatus: reportApplicationStatusSchema,
-        applicationTime: z.string(),
-        completedTime: z.string().nullable(),
+        title: z.string().nullable().optional(),
+        reportType: reportTypeSchema,
+        applicationStatus: reportApplicationStatusSchema,
+        feedbackStatus: reportFeedbackStatusSchema,
+        reportUrl: z.string().nullable().optional(),
+        applyUrl: z.string().nullable().optional(),
+        recruitmentUrl: z.string().nullable().optional(),
+        zoomLink: z.string().nullable().optional(),
+        zoomPassword: z.string().nullable().optional(),
+        desiredDate1: z.string().nullable().optional(),
+        desiredDate2: z.string().nullable().optional(),
+        desiredDate3: z.string().nullable().optional(),
+        applicationTime: z.string().nullable().optional(),
+        confirmedTime: z.string().nullable().optional(),
       }),
     ),
     pageInfo: pageInfoSchema,
@@ -388,50 +413,93 @@ const getMyReportsSchema = z
     ...data,
     myReportInfos: data.myReportInfos.map((report) => ({
       ...report,
+      desiredDate1: report.desiredDate1 ? dayjs(report.desiredDate1) : null,
+      desiredDate2: report.desiredDate2 ? dayjs(report.desiredDate2) : null,
+      desiredDate3: report.desiredDate3 ? dayjs(report.desiredDate3) : null,
       applicationTime: dayjs(report.applicationTime),
-      completedTime: report.completedTime ? dayjs(report.completedTime) : null,
+      confirmedTime: report.confirmedTime ? dayjs(report.confirmedTime) : null,
     })),
   }));
 
-export const useGetMyReports = (
-  reportType?: string,
-  pageNumber: number = 0,
-  pageSize: number = 10,
-) => {
+export const useGetMyReports = (reportType?: ReportType) => {
   return useQuery({
-    queryKey: ['getMyReports', reportType, pageNumber, pageSize],
+    queryKey: ['getMyReports', reportType],
     queryFn: async () => {
-      // Mock data
-      const mockData = {
+      // const res = await axios.get('/report/my', {
+      //   params: {
+      //     reportType,
+      //     size: 1000,
+      //   },
+      // });
+
+      // return getMyReportsSchema.parse(res.data.data);
+
+      const mockMyReportsData: z.infer<typeof getMyReportsSchema> = {
         myReportInfos: [
           {
             reportId: 1,
-            applicationId: 101,
-            title: '이력서 진단 프로그램',
-            type: 'RESUME',
-            reportApplicationStatus: 'COMPLETED',
-            applicationTime: '2024-08-01T10:00:00',
-            completedTime: '2024-08-05T15:30:00',
+            applicationId: 1001,
+            title: 'Software Engineer Application',
+            reportType: 'RESUME',
+            applicationStatus: 'REPORTING',
+            feedbackStatus: 'PENDING',
+            reportUrl: 'https://example.com/report/1',
+            applyUrl: 'https://example.com/apply/1001',
+            recruitmentUrl: 'https://example.com/job/se001',
+            zoomLink: 'https://zoom.us/j/123456789',
+            zoomPassword: '987654',
+            desiredDate1: dayjs('2024-09-10T14:00:00.000Z'),
+            desiredDate2: dayjs('2024-09-11T15:00:00.000Z'),
+            desiredDate3: dayjs('2024-09-12T16:00:00.000Z'),
+            applicationTime: dayjs('2024-09-06T13:41:47.404Z'),
+            confirmedTime: dayjs('2024-09-07T10:30:00.000Z'),
           },
           {
             reportId: 2,
-            applicationId: 102,
-            title: '자기소개서 진단 프로그램',
-            type: 'PERSONAL_STATEMENT',
-            reportApplicationStatus: 'APPLIED',
-            applicationTime: '2024-08-10T14:00:00',
-            completedTime: null,
+            applicationId: 1002,
+            title: 'Data Scientist Position',
+            reportType: 'PORTFOLIO',
+            applicationStatus: 'APPLIED',
+            feedbackStatus: 'APPLIED',
+            reportUrl: 'https://example.com/report/2',
+            applyUrl: 'https://example.com/apply/1002',
+            recruitmentUrl: 'https://example.com/job/ds001',
+            zoomLink: 'https://zoom.us/j/987654321',
+            zoomPassword: '123456',
+            desiredDate1: dayjs('2024-09-15T10:00:00.000Z'),
+            desiredDate2: dayjs('2024-09-16T11:00:00.000Z'),
+            desiredDate3: null,
+            applicationTime: dayjs('2024-09-05T09:30:00.000Z'),
+            confirmedTime: null,
+          },
+          {
+            reportId: 3,
+            applicationId: 1003,
+            title: 'UX Designer Opening',
+            reportType: 'RESUME',
+            applicationStatus: 'COMPLETED',
+            feedbackStatus: 'COMPLETED',
+            reportUrl: 'https://example.com/report/3',
+            applyUrl: 'https://example.com/apply/1003',
+            recruitmentUrl: 'https://example.com/job/ux001',
+            zoomLink: null,
+            zoomPassword: null,
+            desiredDate1: null,
+            desiredDate2: null,
+            desiredDate3: null,
+            applicationTime: dayjs('2024-09-01T11:15:00.000Z'),
+            confirmedTime: dayjs('2024-09-03T16:45:00.000Z'),
           },
         ],
         pageInfo: {
-          totalElements: 5,
+          pageNum: 0,
+          pageSize: 10,
+          totalElements: 3,
           totalPages: 1,
-          currentPage: pageNumber,
-          currentElements: 2,
         },
       };
 
-      return getMyReportsSchema.parse(mockData);
+      return mockMyReportsData;
     },
   });
 };
