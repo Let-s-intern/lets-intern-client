@@ -2,6 +2,7 @@ import { Helmet } from 'react-helmet';
 import { useGetActiveReports } from '../../../api/report';
 import LexicalContent from '../../../components/common/blog/LexicalContent';
 import ReportApplyBottomSheet from '../../../components/common/report/ReportApplyBottomSheet';
+import ReportContentContainer from '../../../components/common/report/ReportContentContainer';
 import {
   ReportHeader,
   ReportLandingIntroSection,
@@ -42,9 +43,9 @@ const ReportResumePage = () => {
       <div id="content">
         <ReportLandingHeader />
 
-        <div className="mx-auto max-w-5xl px-5">
+        <ReportContentContainer>
           <LexicalContent node={root} />
-        </div>
+        </ReportContentContainer>
       </div>
       {report ? <ReportApplyBottomSheet report={report} /> : null}
     </>
