@@ -95,10 +95,7 @@ const NavBar = () => {
             <NavItem to="/blog/list" active={activeLink === 'BLOG'}>
               블로그
             </NavItem>
-            <NavItem
-              to="/report/landing/resume"
-              active={activeLink === 'REPORT'}
-            >
+            <NavItem to="/report/landing" active={activeLink === 'REPORT'}>
               서류 진단 서비스
             </NavItem>
           </div>
@@ -214,7 +211,7 @@ const NavBar = () => {
             <SideNavItem to="/blog/list" onClick={closeMenu}>
               블로그
             </SideNavItem>
-            <SideNavItem to="/report/landing/resume" onClick={closeMenu}>
+            <SideNavItem to="/report/landing" onClick={closeMenu}>
               서류 진단 서비스
             </SideNavItem>
             <hr className="h-1 bg-neutral-80" />

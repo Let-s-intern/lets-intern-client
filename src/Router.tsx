@@ -37,6 +37,8 @@ import ReportManagementPage from './pages/common/report/ReportManagementPage';
 import ReportPaymentFail from './pages/common/report/ReportPaymentFail';
 import ReportPaymentPage from './pages/common/report/ReportPaymentPage';
 import ReportPaymentResult from './pages/common/report/ReportPaymentResult';
+import ReportPersonalStatementPage from './pages/common/report/ReportPersonalStatementPage';
+import ReportPortfolioPage from './pages/common/report/ReportPortfolioPage';
 import ReportResumePage from './pages/common/report/ReportResumePage';
 import ReportTossPage from './pages/common/report/ReportTossPage';
 import ReviewCreate from './pages/common/review/ReviewCreate';
@@ -159,17 +161,14 @@ const Router = () => {
             element={<Navigate to="/reporot/landing/resume" replace />}
           />
           <Route path="report/landing/resume" element={<ReportResumePage />} />
-          {/* TODO: 수정 */}
           <Route
             path="report/landing/personal-statement"
-            element={<ReportResumePage />}
+            element={<ReportPersonalStatementPage />}
           />
-          {/* TODO: 수정 */}
           <Route
             path="report/landing/portfolio"
-            element={<ReportResumePage />}
+            element={<ReportPortfolioPage />}
           />
-
           <Route
             path="report/apply/:reportType/:reportId"
             element={<ReportApplyPage />}

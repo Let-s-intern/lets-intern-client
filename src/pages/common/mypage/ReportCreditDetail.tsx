@@ -445,7 +445,7 @@ const ReportCreditDetail = () => {
                 <MoreButton
                   className="other_program w-full md:flex"
                   onClick={() => {
-                    navigate('/report/landing/resume');
+                    navigate('/report/landing');
                   }}
                 >
                   진단 서비스 더 둘러보기

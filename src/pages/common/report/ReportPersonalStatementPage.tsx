@@ -8,15 +8,15 @@ import {
 } from '../../../components/common/report/ReportIntroSection';
 import ReportLandingHeader from '../../../components/common/report/ReportLandingHeader';
 
-const ReportResumePage = () => {
-  const title = `이력서 | 서류 진단 - 렛츠커리어`;
-  const url = `${window.location.origin}/report/landing/resume`;
+const ReportPersonalStatementPage = () => {
+  const title = `자기소개서 | 서류 진단 - 렛츠커리어`;
+  const url = `${window.location.origin}/report/landing/personal-statement`;
   // TODO: 설명 추가
   const description = '서류 진단 프로그램입니다. ...';
 
   const { data } = useGetActiveReports();
 
-  const report = data?.resumeInfo;
+  const report = data?.personalStatementInfo;
 
   const root = JSON.parse(report?.contents || '{"root":{}}').root;
 
@@ -51,4 +51,4 @@ const ReportResumePage = () => {
   );
 };
 
-export default ReportResumePage;
+export default ReportPersonalStatementPage;
