@@ -1,4 +1,4 @@
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 
 import { getAdminRoutes } from './AdminRoutes';
 import ChallengeLayout from './components/common/challenge/ui/layout/ChallengeLayout';
@@ -153,6 +153,11 @@ const Router = () => {
 
           {/* 서류진단 */}
 
+          {/* <Route element={<ReportLayout />}> */}
+          <Route
+            path="report/landing"
+            element={<Navigate to="/reporot/landing/resume" replace />}
+          />
           <Route path="report/landing/resume" element={<ReportResumePage />} />
           {/* TODO: 수정 */}
           <Route
@@ -169,6 +174,7 @@ const Router = () => {
             path="report/apply/:reportType/:reportId"
             element={<ReportApplyPage />}
           />
+          {/* </Route> */}
 
           {/* 모바일 전용 서류진단 결제 페이지. 화면 구성이 많이 달라 모바일만 한 단계 추가함 */}
           <Route

@@ -24,8 +24,17 @@ export function convertReportTypeToDisplayName(type: ReportType) {
       return '자기소개서';
     case 'PORTFOLIO':
       return '포트폴리오';
-    default:
-      return '-';
+  }
+}
+
+export function convertReportTypeToLandingPath(type: ReportType) {
+  switch (type) {
+    case 'RESUME':
+      return '/report/landing/resume';
+    case 'PERSONAL_STATEMENT':
+      return '/report/landing/personal-statement';
+    case 'PORTFOLIO':
+      return '/report/landing/portfolio';
   }
 }
 
@@ -58,9 +67,13 @@ const reportApplicationStatusSchema = z.enum([
   'COMPLETED',
 ]);
 
-export type ReportApplicationStatus = z.infer<typeof reportApplicationStatusSchema>;
+export type ReportApplicationStatus = z.infer<
+  typeof reportApplicationStatusSchema
+>;
 
-export const convertReportApplicationsStatus = (status: ReportApplicationStatus) => {
+export const convertReportApplicationsStatus = (
+  status: ReportApplicationStatus,
+) => {
   switch (status) {
     case 'APPLIED':
       return '신청완료';
@@ -294,6 +307,8 @@ export const getActiveReportsSchema = z.object({
   personalStatementInfo: getReportDetailSchema,
   portfolioInfo: getReportDetailSchema,
 });
+
+export type ActiveReport = z.infer<typeof getReportDetailSchema>;
 
 export const getActiveReportsQueryKey = 'getActiveReports';
 
@@ -638,7 +653,7 @@ export const useGetReportApplicationOptionsForAdmin = ({
       const res = await axios.get('/report/application/options', {
         params: { reportId, applicationId, priceType, code },
       });
-      
+
       return getReportApplicationOptionsForAdminSchema.parse(res.data.data);
     },
     enabled,
@@ -714,7 +729,7 @@ export const usePatchReportApplicationSchedule = ({
         ...(desiredDateType !== undefined && { desiredDateType }),
         ...(desiredDateAdmin !== undefined && { desiredDateAdmin }),
       };
-  
+
       const res = await axios.patch(
         `/report/${reportId}/application/${applicationId}/schedule`,
         payload,
@@ -867,12 +882,14 @@ const reportPaymentInfoSchema = z.object({
       title: z.string(),
     }),
   ),
-  feedbackPriceInfo: z.object({
-    reportFeedbackId: z.number(),
-    reportPriceType: reportPriceTypeSchema,
-    feedbackPrice: z.number(),
-    feedbackDiscountPrice: z.number(),
-  }).nullable(),
+  feedbackPriceInfo: z
+    .object({
+      reportFeedbackId: z.number(),
+      reportPriceType: reportPriceTypeSchema,
+      feedbackPrice: z.number(),
+      feedbackDiscountPrice: z.number(),
+    })
+    .nullable(),
   createDate: z.string(),
   lastModifiedDate: z.string(),
 });
@@ -881,43 +898,50 @@ const reportPaymentDetailSchema = z.object({
   reportApplicationInfo: reportApplicationInfoSchema,
   reportPaymentInfo: reportPaymentInfoSchema,
   tossInfo: tossInfoType.nullable().optional(),
-})
+});
 
 export const useGetReportPaymentDetailQueryKey = 'getReportPayment';
 
 export const useGetReportPaymentDetailQuery = ({
   applicationId,
-  enabled
-}:{
+  enabled,
+}: {
   applicationId: number;
   enabled?: boolean;
 }) => {
   return useQuery({
     queryKey: [useGetReportPaymentDetailQueryKey],
     queryFn: async () => {
-      const res = await axios.get(`/report/application/${applicationId}/payment`);
+      const res = await axios.get(
+        `/report/application/${applicationId}/payment`,
+      );
       return reportPaymentDetailSchema.parse(res.data.data);
     },
-    enabled
+    enabled,
   });
-}
+};
 
 export const useDeleteReportApplication = ({
   successCallback,
   errorCallback,
-}:{
+}: {
   successCallback?: () => void;
   errorCallback?: (error: Error) => void;
 }) => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (reportApplicationId: number) => {
-      const res = await axios.delete(`/report/application/${reportApplicationId}`);
+      const res = await axios.delete(
+        `/report/application/${reportApplicationId}`,
+      );
       return res.data.data;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: [useGetReportApplicationsForAdminQueryKey, useGetReportPaymentDetailQueryKey],
+        queryKey: [
+          useGetReportApplicationsForAdminQueryKey,
+          useGetReportPaymentDetailQueryKey,
+        ],
       });
       successCallback && successCallback();
     },
@@ -925,7 +949,7 @@ export const useDeleteReportApplication = ({
       errorCallback && errorCallback(error);
     },
   });
-}
+};
 
 // Utility function to generate mock data (for demonstration purposes)
 // const generateMockData = <T extends z.ZodType>(schema: T): z.infer<T> => {
