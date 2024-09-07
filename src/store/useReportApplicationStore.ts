@@ -37,7 +37,7 @@ const useReportApplicationStore = create(
     (set, get) => ({
       data: {
         reportId: null,
-        reportPriceType: 'BASIC',
+        reportPriceType: 'BASIC' as const,
         optionIds: [],
         isFeedbackApplied: false,
         couponId: null,
