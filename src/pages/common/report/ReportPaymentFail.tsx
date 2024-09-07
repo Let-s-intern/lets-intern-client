@@ -97,7 +97,7 @@ const ReportPaymentFail = () => {
               />
               <PaymentInfoRow
                 title="1:1 피드백"
-                content={payment.feedback + '원'}
+                content={payment.feedback.toLocaleString() + '원'}
               />
               <PaymentInfoRow
                 title={`할인  (${Math.ceil(
@@ -105,12 +105,18 @@ const ReportPaymentFail = () => {
                     100,
                 )}%)`}
                 content={
-                  payment.discount === 0 ? '0원' : `-${payment.discount}원`
+                  payment.discount === 0
+                    ? '0원'
+                    : `-${payment.discount.toLocaleString()}원`
                 }
               />
               <PaymentInfoRow
                 title="쿠폰할인"
-                content={payment.coupon === 0 ? '0원' : `-${payment.coupon}원`}
+                content={
+                  payment.coupon === 0
+                    ? '0원'
+                    : `-${payment.coupon.toLocaleString()}원`
+                }
               />
             </div>
             <Link

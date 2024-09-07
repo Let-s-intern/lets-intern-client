@@ -1,6 +1,7 @@
+import { isAxiosError } from 'axios';
 import { useEffect, useState } from 'react';
 
-import { isAxiosError } from 'axios';
+import { couponInfoSchema } from '@/api/coupon';
 import { useGetReportPriceDetail } from '../api/report';
 import useReportApplicationStore from '../store/useReportApplicationStore';
 import axios from '../utils/axios';
@@ -37,25 +38,34 @@ export default function useReportPayment() {
           programType: 'REPORT',
         },
       });
+      const data = res.data.data;
+
       setPayment((prev) => ({
         ...prev,
-        coupon: res.data.data.discount,
+        coupon: data.discount,
+        total: prev.total - data.discount,
       }));
-      return res.data.data;
+      setReportApplication({ couponId: data.couponId });
+
+      return data;
     } catch (error) {
       if (
         isAxiosError(error) &&
         (error.response?.status === 404 || error.response?.status === 400)
-      )
+      ) {
         return error.response?.data;
-      console.error(error);
+      } else {
+        console.error(error);
+      }
     }
   };
 
   const cancelCoupon = () => {
+    const prevCoupon = payment.coupon;
     setPayment((prev) => ({
       ...prev,
       coupon: 0,
+      total: prev.total + prevCoupon,
     }));
   };
 
@@ -66,42 +76,58 @@ export default function useReportPayment() {
       (info) => info.reportPriceType === reportApplication.reportPriceType,
     );
     const feedbackPriceInfo = reportPriceDetail.feedbackPriceInfo;
-    const feedback = reportApplication.isFeedbackApplied
-      ? (feedbackPriceInfo?.feedbackPrice as number)
-      : 0;
-    let report = reportPriceInfo?.price as number; // 진단서 + 선택한 옵션 가격
+    let report = reportPriceInfo?.price ?? 0; // 진단서 + 선택한 옵션 가격
     let discount = 0;
 
-    discount += reportPriceInfo?.discountPrice as number;
+    discount += reportPriceInfo?.discountPrice ?? 0;
     // 사용자가 선택한 옵션 가격 책정
     reportApplication.optionIds.forEach((optionId) => {
       const optionInfo = reportPriceDetail.reportOptionInfos?.find(
         (info) => info.reportOptionId === optionId,
       );
       if (optionInfo !== undefined) {
-        discount += optionInfo.discountPrice as number;
-        report += optionInfo.price as number;
+        discount += optionInfo.discountPrice ?? 0;
+        report += optionInfo.price ?? 0;
       }
     });
+
     // 1:1 피드백 가격 책정
     if (reportApplication.isFeedbackApplied)
-      discount += feedbackPriceInfo?.feedbackDiscountPrice as number;
-    // 결제 금액 책정
-    const total = report + feedback - discount;
+      discount += feedbackPriceInfo?.feedbackDiscountPrice ?? 0;
 
-    setPayment({
-      report,
-      feedback,
+    setPayment((prev) => ({
+      ...prev,
       discount,
-      coupon: 0,
-      total,
-    });
-    setReportApplication({
-      amount: total,
-      programPrice: report + feedback,
-      programDiscount: discount,
-    });
+      report,
+      feedback: reportApplication.isFeedbackApplied
+        ? (feedbackPriceInfo?.feedbackPrice ?? 0)
+        : 0,
+    }));
+
+    // 쿠폰 가격 책정
+    if (reportApplication.couponId !== null) {
+      axios.get(`/coupon/admin/${reportApplication.couponId}`).then((res) => {
+        const data = couponInfoSchema.parse(res.data.data.couponInfo);
+        setPayment((prev) => ({
+          ...prev,
+          coupon: data.discount ?? 0,
+        }));
+      });
+    }
+
+    setPayment((prev) => ({
+      ...prev,
+      total: prev.report + prev.feedback - prev.discount - prev.coupon,
+    }));
   }, [reportPriceDetail]);
+
+  useEffect(() => {
+    setReportApplication({
+      amount: payment.total,
+      programPrice: payment.report + payment.feedback,
+      programDiscount: payment.discount,
+    });
+  }, [payment]);
 
   return { payment, applyCoupon, cancelCoupon };
 }

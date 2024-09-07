@@ -528,6 +528,7 @@ export const ReportPaymentSection = () => {
 
   const { data: reportApplication } = useReportApplicationStore();
   const { payment, applyCoupon, cancelCoupon } = useReportPayment();
+  console.log(reportApplication);
 
   return (
     <section className="flex flex-col">
