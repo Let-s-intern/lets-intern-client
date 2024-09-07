@@ -9,8 +9,8 @@ import React, { useEffect, useRef, useState } from 'react';
 import { FaArrowLeft } from 'react-icons/fa6';
 import { IoCloseOutline } from 'react-icons/io5';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
-
 import { twJoin } from 'tailwind-merge';
+
 import { useGetParticipationInfo } from '../../../api/application';
 import { uploadFile } from '../../../api/file';
 import {
@@ -112,6 +112,7 @@ const ReportApplyPage = () => {
             <FaArrowLeft size={20} />
           </button>
           <button
+            className="next_button_click text-1.125-medium w-full rounded-md bg-primary py-3 text-center font-medium text-neutral-100"
             onClick={() => {
               convertFile();
               const { isValid, message } = validate();
@@ -121,7 +122,6 @@ const ReportApplyPage = () => {
               }
               navigate(`/report/payment/${reportType}/${reportId}`);
             }}
-            className="text-1.125-medium w-full rounded-md bg-primary py-3 text-center font-medium text-neutral-100"
           >
             다음
           </button>
@@ -133,7 +133,7 @@ const ReportApplyPage = () => {
             <UsereInfoSection />
             <ReportPaymentSection />
             <button
-              className="w-full rounded-md bg-primary py-3 text-center text-small18 font-medium text-neutral-100"
+              className="complete_button_click w-full rounded-md bg-primary py-3 text-center text-small18 font-medium text-neutral-100"
               onClick={() => {
                 convertFile();
                 const { isValid, message } = validate();

@@ -211,7 +211,7 @@ const ReportPaymentResult = () => {
                 {isSuccess && (
                   <Link
                     to="/report/management"
-                    className="mypage_button flex w-full flex-1 justify-center rounded-md border-2 border-primary bg-primary px-6 py-3 text-lg font-medium text-neutral-100"
+                    className="myreport_button_click flex w-full flex-1 justify-center rounded-md border-2 border-primary bg-primary px-6 py-3 text-lg font-medium text-neutral-100"
                   >
                     서류 진단서 확인하기
                   </Link>

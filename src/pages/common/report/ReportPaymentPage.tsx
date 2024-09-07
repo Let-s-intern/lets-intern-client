@@ -40,6 +40,7 @@ const ReportPaymentPage = () => {
           <FaArrowLeft size={20} />
         </button>
         <button
+          className="complete_button_click text-1.125-medium w-full rounded-md bg-primary py-3 text-center font-medium text-neutral-100"
           onClick={() => {
             const { isValid, message } = validate();
             if (!isValid) {
@@ -52,7 +53,6 @@ const ReportPaymentPage = () => {
             }
             navigate(`/report/toss/payment`);
           }}
-          className="text-1.125-medium w-full rounded-md bg-primary py-3 text-center font-medium text-neutral-100"
         >
           결제하기
         </button>
