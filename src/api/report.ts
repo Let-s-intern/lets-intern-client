@@ -1,3 +1,4 @@
+import useAuthStore from '@/store/useAuthStore';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import dayjs from 'dayjs';
 import { z } from 'zod';
@@ -465,7 +466,10 @@ const getMyReportsSchema = z
   }));
 
 export const useGetMyReports = (reportType?: ReportType) => {
+  const { isLoggedIn } = useAuthStore();
+
   return useQuery({
+    enabled: isLoggedIn,
     queryKey: ['getMyReports', reportType],
     queryFn: async () => {
       // const res = await axios.get('/report/my', {

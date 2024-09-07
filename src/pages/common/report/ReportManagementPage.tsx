@@ -8,6 +8,7 @@ import {
 } from '@/api/report';
 import { handleDownload } from '@/lib/download';
 import { twMerge } from '@/lib/twMerge';
+import useAuthStore from '@/store/useAuthStore';
 import { ReportHeader } from '@components/common/report/ReportIntroSection';
 import Badge from '@components/common/ui/Badge';
 import {
@@ -17,7 +18,7 @@ import {
   MouseEvent,
   useEffect,
 } from 'react';
-import { Link, NavLink, useSearchParams } from 'react-router-dom';
+import { Link, NavLink, useNavigate, useSearchParams } from 'react-router-dom';
 
 type ReportFilter = {
   status: 'all' | 'active' | 'inactive';
@@ -121,9 +122,20 @@ export const ReportManagementButton: ReportManageButtonComponent = forwardRef(
 ReportManagementButton.displayName = 'ReportManagementButton';
 
 const ReportManagementPage = () => {
-  // TODO: 설명 추가
-
   const [searchParams] = useSearchParams();
+  const { isLoggedIn } = useAuthStore();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!isLoggedIn) {
+      // TODO: Router 구조 리팩토링 후 setTimeout 제거
+      setTimeout(() => {
+        const searchParams = new URLSearchParams();
+        searchParams.set('redirect', '/report/management');
+        navigate('/login?' + searchParams.toString());
+      }, 100);
+    }
+  }, [isLoggedIn, navigate]);
 
   const filterStatus = (searchParams.get('status') ??
     'all') as ReportFilter['status'];
@@ -189,22 +201,24 @@ const ReportManagementPage = () => {
                   <h2 className="text-xsmall14 font-medium">{item.title}</h2>
                 </header>
                 <table className="mb-5">
-                  <tr>
-                    <td className="py-0.5 text-xxsmall12 font-medium text-neutral-30">
-                      진단유형
-                    </td>
-                    <td className="py-0.5 pl-4 text-xxsmall12 font-medium text-neutral-50">
-                      {convertReportTypeToDisplayName(item.reportType)}
-                    </td>
-                  </tr>
-                  <tr>
-                    <td className="py-0.5 text-xxsmall12 font-medium text-neutral-30">
-                      신청일자
-                    </td>
-                    <td className="py-0.5 pl-4 text-xxsmall12 font-medium text-neutral-50">
-                      {item.applicationTime.format('YYYY.MM.DD HH:mm')}
-                    </td>
-                  </tr>
+                  <tbody>
+                    <tr>
+                      <td className="py-0.5 text-xxsmall12 font-medium text-neutral-30">
+                        진단유형
+                      </td>
+                      <td className="py-0.5 pl-4 text-xxsmall12 font-medium text-neutral-50">
+                        {convertReportTypeToDisplayName(item.reportType)}
+                      </td>
+                    </tr>
+                    <tr>
+                      <td className="py-0.5 text-xxsmall12 font-medium text-neutral-30">
+                        신청일자
+                      </td>
+                      <td className="py-0.5 pl-4 text-xxsmall12 font-medium text-neutral-50">
+                        {item.applicationTime.format('YYYY.MM.DD HH:mm')}
+                      </td>
+                    </tr>
+                  </tbody>
                 </table>
                 <div className="flex items-center justify-between gap-4">
                   <div className="-ml-1 flex items-center gap-1">
@@ -283,50 +297,52 @@ const ReportManagementPage = () => {
                       </h3>
                     </header>
                     <table className="mb-5">
-                      {/* 확인중 단계 일정 확인 */}
-                      {item.feedbackStatus === 'PENDING' ||
-                      item.feedbackStatus === 'APPLIED' ? (
-                        <tr>
-                          <td className="py-0.5 align-top text-xxsmall12 font-medium leading-5 text-neutral-30">
-                            희망일자
-                          </td>
-                          <td className="py-0.5 pl-4 text-xxsmall12 font-medium leading-5 text-neutral-50">
-                            {item.desiredDate1 ? (
-                              <p>
-                                (1순위){' '}
-                                {item.desiredDate1.format('YYYY.MM.DD HH:mm')}
-                              </p>
-                            ) : null}
-                            {item.desiredDate2 ? (
-                              <p>
-                                (2순위){' '}
-                                {item.desiredDate2.format('YYYY.MM.DD HH:mm')}
-                              </p>
-                            ) : null}
+                      <tbody>
+                        {/* 확인중 단계 일정 확인 */}
+                        {item.feedbackStatus === 'PENDING' ||
+                        item.feedbackStatus === 'APPLIED' ? (
+                          <tr>
+                            <td className="py-0.5 align-top text-xxsmall12 font-medium leading-5 text-neutral-30">
+                              희망일자
+                            </td>
+                            <td className="py-0.5 pl-4 text-xxsmall12 font-medium leading-5 text-neutral-50">
+                              {item.desiredDate1 ? (
+                                <p>
+                                  (1순위){' '}
+                                  {item.desiredDate1.format('YYYY.MM.DD HH:mm')}
+                                </p>
+                              ) : null}
+                              {item.desiredDate2 ? (
+                                <p>
+                                  (2순위){' '}
+                                  {item.desiredDate2.format('YYYY.MM.DD HH:mm')}
+                                </p>
+                              ) : null}
 
-                            {item.desiredDate3 ? (
-                              <p>
-                                (3순위){' '}
-                                {item.desiredDate3.format('YYYY.MM.DD HH:mm')}
-                              </p>
-                            ) : null}
-                          </td>
-                        </tr>
-                      ) : null}
+                              {item.desiredDate3 ? (
+                                <p>
+                                  (3순위){' '}
+                                  {item.desiredDate3.format('YYYY.MM.DD HH:mm')}
+                                </p>
+                              ) : null}
+                            </td>
+                          </tr>
+                        ) : null}
 
-                      {item.feedbackStatus === 'CONFIRMED' ||
-                      item.feedbackStatus === 'COMPLETED' ? (
-                        <tr>
-                          <td className="py-0.5 align-top text-xxsmall12 font-medium leading-5 text-neutral-30">
-                            {item.feedbackStatus === 'CONFIRMED'
-                              ? '확정일자'
-                              : '완료일자'}
-                          </td>
-                          <td className="py-0.5 pl-4 text-xxsmall12 font-medium leading-5 text-neutral-50">
-                            {item.confirmedTime?.format('YYYY.MM.DD HH:mm')}
-                          </td>
-                        </tr>
-                      ) : null}
+                        {item.feedbackStatus === 'CONFIRMED' ||
+                        item.feedbackStatus === 'COMPLETED' ? (
+                          <tr>
+                            <td className="py-0.5 align-top text-xxsmall12 font-medium leading-5 text-neutral-30">
+                              {item.feedbackStatus === 'CONFIRMED'
+                                ? '확정일자'
+                                : '완료일자'}
+                            </td>
+                            <td className="py-0.5 pl-4 text-xxsmall12 font-medium leading-5 text-neutral-50">
+                              {item.confirmedTime?.format('YYYY.MM.DD HH:mm')}
+                            </td>
+                          </tr>
+                        ) : null}
+                      </tbody>
                     </table>
                     {item.feedbackStatus === 'APPLIED' ||
                     item.feedbackStatus === 'PENDING' ||
