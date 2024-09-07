@@ -45,7 +45,7 @@ export function convertReportTypeToLandingPath(type: ReportType) {
   }
 }
 
-export function convertReportStatusToDisplayName(
+export function convertReportStatusToUserDisplayName(
   status: ReportApplicationStatus | null | undefined,
 ) {
   if (!status) {
@@ -952,6 +952,8 @@ const reportPaymentDetailSchema = z.object({
   reportPaymentInfo: reportPaymentInfoSchema,
   tossInfo: tossInfoType.nullable().optional(),
 });
+
+export type ReportPaymentInfo = z.infer<typeof reportPaymentInfoSchema>;
 
 export const useGetReportPaymentDetailQueryKey = 'getReportPayment';
 

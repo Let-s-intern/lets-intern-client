@@ -2,7 +2,7 @@ import {
   convertFeedbackStatusToBadgeStatus,
   convertFeedbackStatusToDisplayName,
   convertReportStatusToBadgeStatus,
-  convertReportStatusToDisplayName,
+  convertReportStatusToUserDisplayName,
   convertReportTypeToDisplayName,
   useGetMyReports,
 } from '@/api/report';
@@ -263,7 +263,9 @@ const ReportManagementPage = () => {
                       item.applicationStatus,
                     )}
                   >
-                    {convertReportStatusToDisplayName(item.applicationStatus)}
+                    {convertReportStatusToUserDisplayName(
+                      item.applicationStatus,
+                    )}
                   </Badge>
                   <h2 className="text-xsmall14 font-medium">{item.title}</h2>
                 </header>
