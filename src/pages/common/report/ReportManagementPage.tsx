@@ -6,6 +6,7 @@ import {
   convertReportTypeToDisplayName,
   useGetMyReports,
 } from '@/api/report';
+import { handleDownload } from '@/lib/download';
 import { twMerge } from '@/lib/twMerge';
 import { ReportHeader } from '@components/common/report/ReportIntroSection';
 import Badge from '@components/common/ui/Badge';
@@ -13,6 +14,7 @@ import {
   ComponentPropsWithoutRef,
   ElementType,
   forwardRef,
+  MouseEvent,
   useEffect,
 } from 'react';
 import { Link, NavLink, useSearchParams } from 'react-router-dom';
@@ -100,7 +102,7 @@ export const ReportManagementButton: ReportManageButtonComponent = forwardRef(
       <Component
         ref={ref}
         className={twMerge(
-          'shadow-sm flex h-10 w-full items-center justify-center rounded-sm bg-primary-light text-xsmall14 font-semibold text-white outline-none outline-2 outline-offset-2 transition-all hover:bg-primary focus:outline focus:outline-primary',
+          'flex h-10 w-full items-center justify-center rounded-sm bg-primary-light text-xsmall14 font-semibold text-white shadow-sm outline-none outline-2 outline-offset-2 transition-all hover:bg-primary focus:outline focus:outline-primary',
 
           disabled &&
             'cursor-not-allowed bg-neutral-95 text-neutral-60 hover:bg-neutral-95 focus:outline-none',
@@ -207,39 +209,59 @@ const ReportManagementPage = () => {
                 <div className="flex items-center justify-between gap-4">
                   <div className="-ml-1 flex items-center gap-1">
                     {item.applyUrl ? (
-                      <a
-                        target="_blank"
-                        href={item.applyUrl || undefined}
-                        rel="noreferrer"
+                      <Link
+                        to={item.applyUrl}
+                        onClick={(e: MouseEvent<HTMLAnchorElement>) => {
+                          e.preventDefault();
+                          handleDownload(item.applyUrl!);
+                        }}
                         className="flex flex-col items-center gap-1 rounded-sm px-1 py-0.5 text-xxsmall12 text-neutral-40 transition hover:bg-neutral-0/5"
                       >
                         <DocIcon />
                         <span>제출서류</span>
-                      </a>
+                      </Link>
                     ) : null}
 
                     {item.recruitmentUrl ? (
-                      <a
-                        target="_blank"
-                        href={item.recruitmentUrl || undefined}
-                        rel="noreferrer"
+                      <Link
+                        to={item.recruitmentUrl}
+                        onClick={(e: MouseEvent<HTMLAnchorElement>) => {
+                          e.preventDefault();
+                          handleDownload(item.recruitmentUrl!);
+                        }}
                         className="flex flex-col items-center gap-1 rounded-sm px-1 py-0.5 text-xxsmall12 text-neutral-40 transition hover:bg-neutral-0/5"
                       >
                         <CompanyBagIcon />
                         <span>채용공고</span>
-                      </a>
+                      </Link>
                     ) : null}
                   </div>
-                  {/* TODO: 다운로드 기능 추가 */}
-                  <ReportManagementButton
-                    className="max-w-40 flex-1"
-                    disabled={
-                      item.applicationStatus === 'APPLIED' ||
-                      item.applicationStatus === 'REPORTING'
-                    }
-                  >
-                    진단서 확인하기
-                  </ReportManagementButton>
+                  {item.applicationStatus === 'APPLIED' ||
+                  item.applicationStatus === 'REPORTING' ? (
+                    <ReportManagementButton
+                      className="max-w-40 flex-1"
+                      disabled
+                    >
+                      진단서 확인하기
+                    </ReportManagementButton>
+                  ) : (
+                    <ReportManagementButton
+                      as={Link}
+                      to={item.reportUrl || ''}
+                      onClick={(e: MouseEvent<HTMLAnchorElement>) => {
+                        e.preventDefault();
+                        if (item.reportUrl) {
+                          handleDownload(item.reportUrl);
+                        } else {
+                          window.alert('오류: 진단서가 없습니다.');
+                        }
+                      }}
+                      download
+                      className="max-w-40 flex-1"
+                    >
+                      진단서 확인하기
+                    </ReportManagementButton>
+                  )}
                 </div>
               </div>
               {item.feedbackStatus ? (
