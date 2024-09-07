@@ -130,7 +130,7 @@ const ReportTossPage = () => {
       <div id="agreement" />
       <div className="px-5">
         <button
-          className="payment_button text-1.125-medium block w-full rounded-md bg-primary px-6 py-3 font-medium text-neutral-100"
+          className="payment_button_click text-1.125-medium block w-full rounded-md bg-primary px-6 py-3 font-medium text-neutral-100"
           disabled={!ready}
           onClick={handleButtonClick}
         >

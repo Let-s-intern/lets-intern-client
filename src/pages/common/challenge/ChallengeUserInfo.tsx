@@ -1,14 +1,10 @@
 import { useEffect, useState } from 'react';
 
-import Input from '../../../components/common/ui/input/Input';
-import GradeDropdown from '../../../components/common/mypage/privacy/form-control/GradeDropdown';
-import Button from '../../../components/common/ui/button/Button';
-import BankDropdown from '../../../components/common/mypage/privacy/form-control/BankDropdown';
-import { accountType } from '../../../schema';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import axios from '../../../utils/axios';
-import { isValidEmail, isValidPhoneNumber } from '../../../utils/valid';
 import { useNavigate, useParams } from 'react-router-dom';
+import GradeDropdown from '../../../components/common/mypage/privacy/form-control/GradeDropdown';
+import Input from '../../../components/common/ui/input/Input';
+import axios from '../../../utils/axios';
 
 const ChallengeUserInfo = () => {
   const queryClient = useQueryClient();
@@ -201,7 +197,7 @@ const ChallengeUserInfo = () => {
             </div>
           </div>
         </section>
-        <section className="flex flex-col gap-6">
+        {/* <section className="flex flex-col gap-6">
           <div className="flex flex-col gap-1">
             <h1 className="text-lg font-semibold">계좌 정보</h1>
             <p className="text-neutral-40">
@@ -229,7 +225,7 @@ const ChallengeUserInfo = () => {
               />
             </div>
           </div>
-        </section>
+        </section> */}
         <button
           className="rounded-md bg-primary px-4 py-3 font-medium text-white disabled:bg-neutral-60"
           onClick={handleSubmit}
