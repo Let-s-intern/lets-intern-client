@@ -19,7 +19,7 @@ import {
   useGetReportDetailQuery,
 } from '../../../api/report';
 import Card from '../../../components/common/report/Card';
-import ControlLabel from '../../../components/common/report/ControlLabel';
+import { ReportFormRadioControlLabel } from '../../../components/common/report/ControlLabel';
 import DateTimePicker from '../../../components/common/report/DateTimePicker';
 import FilledInput from '../../../components/common/report/FilledInput';
 import Heading1 from '../../../components/common/report/Heading1';
@@ -239,7 +239,7 @@ const DocumentSection = ({
         >
           {/* 파일 첨부 */}
           <div className="mb-4">
-            <ControlLabel
+            <ReportFormRadioControlLabel
               label="파일 첨부"
               value="file"
               subText="(pdf, doc, docx 형식 지원)"
@@ -250,7 +250,7 @@ const DocumentSection = ({
           </div>
           {/* URL */}
           <div>
-            <ControlLabel label="URL" value="url" />
+            <ReportFormRadioControlLabel label="URL" value="url" />
             {value === 'url' && (
               <FilledInput
                 name="applyUrl"
@@ -299,7 +299,7 @@ const PremiumSection = ({
             name="radio-buttons-group"
           >
             <div className="mb-4">
-              <ControlLabel
+              <ReportFormRadioControlLabel
                 label="파일 첨부"
                 value="file"
                 subText="(pdf, doc, docx 형식 지원)"
@@ -312,7 +312,7 @@ const PremiumSection = ({
               )}
             </div>
             <div>
-              <ControlLabel label="URL" value="url" />
+              <ReportFormRadioControlLabel label="URL" value="url" />
               {value === 'url' && (
                 <FilledInput
                   name="recruitmentUrl"

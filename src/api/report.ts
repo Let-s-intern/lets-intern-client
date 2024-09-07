@@ -17,7 +17,13 @@ const reportTypeSchema = z.enum(['RESUME', 'PERSONAL_STATEMENT', 'PORTFOLIO']);
 
 export type ReportType = z.infer<typeof reportTypeSchema>;
 
-export function convertReportTypeToDisplayName(type: ReportType) {
+export function convertReportTypeToDisplayName(
+  type: ReportType | null | undefined,
+) {
+  if (!type) {
+    return '';
+  }
+
   switch (type) {
     case 'RESUME':
       return '이력서';
@@ -51,6 +57,21 @@ export function convertReportStatusToDisplayName(
       return '진단완료';
     case 'COMPLETED':
       return '진단완료';
+  }
+}
+
+export function convertReportPriceTypeToDisplayName(
+  type: ReportPriceType | null | undefined,
+): string {
+  if (!type) {
+    return '';
+  }
+
+  switch (type) {
+    case 'BASIC':
+      return '베이직';
+    case 'PREMIUM':
+      return '프리미엄';
   }
 }
 
@@ -326,36 +347,7 @@ export const useGetReportPriceDetail = (reportId: number) => {
   return useQuery({
     queryKey: ['getReportPriceDetail', reportId],
     queryFn: async () => {
-      // Mock data
-      const mockData = {
-        reportId,
-        reportPriceInfos: [
-          { reportPriceType: 'BASIC', price: 50000, discountPrice: 45000 },
-          { reportPriceType: 'PREMIUM', price: 100000, discountPrice: 90000 },
-        ],
-        reportOptionInfos: [
-          {
-            reportOptionId: 1,
-            price: 20000,
-            discountPrice: 18000,
-            title: '추가 피드백',
-          },
-          {
-            reportOptionId: 2,
-            price: 30000,
-            discountPrice: 27000,
-            title: '심층 분석',
-          },
-        ],
-        feedbackPriceInfo: {
-          reportFeedbackId: 1,
-          reportPriceType: 'PREMIUM',
-          feedbackPrice: 80000,
-          feedbackDiscountPrice: 72000,
-        },
-      };
       const res = await axios.get(`/report/${reportId}/price`);
-
       return getReportPriceDetailSchema.parse(res.data.data);
     },
   });
