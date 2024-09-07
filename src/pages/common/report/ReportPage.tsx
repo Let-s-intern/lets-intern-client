@@ -171,7 +171,7 @@ const ReportPage = () => {
           {!isDrawerOpen ? (
             <button
               type="button"
-              className="flex w-full flex-1 justify-center rounded-md border-2 border-primary bg-primary px-6 py-3 text-lg font-medium text-neutral-100 transition hover:bg-primary-light disabled:border-neutral-70 disabled:bg-neutral-70"
+              className="apply_button_click flex w-full flex-1 justify-center rounded-md border-2 border-primary bg-primary px-6 py-3 text-lg font-medium text-neutral-100 transition hover:bg-primary-light disabled:border-neutral-70 disabled:bg-neutral-70"
               onClick={() => setIsDrawerOpen('section_personal_statement')}
             >
               {sections.find(({ id }) => id === activeSection)?.title} 서류 진단
