@@ -87,7 +87,6 @@ const ReportPaymentResult = () => {
       .post(`/report/${reportApplication.reportId}/application`, body)
       .then((res) => {
         setResult(res.data.data);
-        console.log(res);
         window.dataLayer?.push({
           event: 'report_payment_success',
           report_name: reportDetail?.title,
