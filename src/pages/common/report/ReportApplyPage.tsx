@@ -88,7 +88,7 @@ const ReportApplyPage = () => {
       {isUpTo1280 ? (
         <BottomSheet>
           <button
-            onClick={() => navigate(-1)}
+            onClick={() => navigate(`/report/landing/${reportType}`)}
             className="flex h-14 w-14 shrink-0 items-center justify-center rounded-md border-2 border-primary bg-neutral-100"
           >
             <FaArrowLeft size={20} />
