@@ -105,6 +105,15 @@ const AdminLayout = () => {
       ],
     },
     {
+      title: '서류 진단',
+      itemList: [
+        {
+          name: '서류 진단 프로그램 관리',
+          url: '/admin/report/list',
+        },
+      ],
+    },
+    {
       title: '나가기',
       itemList: [
         {

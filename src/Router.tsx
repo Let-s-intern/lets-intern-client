@@ -24,12 +24,24 @@ import CreditDelete from './pages/common/mypage/CreditDelete';
 import CreditDetail from './pages/common/mypage/CreditDetail';
 import MyPage from './pages/common/mypage/MyPage';
 import Privacy from './pages/common/mypage/Privacy';
+import ReportCreditDelete from './pages/common/mypage/ReportCreditDelete';
+import ReportCreditDetail from './pages/common/mypage/ReportCreditDetail';
 import Review from './pages/common/mypage/Review';
 import Payment from './pages/common/program/Payment';
 import PaymentFail from './pages/common/program/PaymentFail';
 import PaymentResult from './pages/common/program/PaymentResult';
 import ProgramDetail from './pages/common/program/ProgramDetail';
 import Programs from './pages/common/program/Programs';
+import ReportApplyPage from './pages/common/report/ReportApplyPage';
+import ReportManagementPage from './pages/common/report/ReportManagementPage';
+import ReportPage from './pages/common/report/ReportPage';
+import ReportPaymentFail from './pages/common/report/ReportPaymentFail';
+import ReportPaymentPage from './pages/common/report/ReportPaymentPage';
+import ReportPaymentResult from './pages/common/report/ReportPaymentResult';
+import ReportPersonalStatementPage from './pages/common/report/ReportPersonalStatementPage';
+import ReportPortfolioPage from './pages/common/report/ReportPortfolioPage';
+import ReportResumePage from './pages/common/report/ReportResumePage';
+import ReportTossPage from './pages/common/report/ReportTossPage';
 import ReviewCreate from './pages/common/review/ReviewCreate';
 import ReviewDetail from './pages/common/review/ReviewDetail';
 import Maintenance from './pages/maintenance/Maintenance';
@@ -49,18 +61,9 @@ const Router = () => {
           <Route path="" element={<Home />} />
           {/* /about */}
           <Route path="about" element={<About />} />
-          {/* /program/challenge/:programId */}
-          <Route
-            path="program/challenge/:programId"
-            element={<ProgramDetail programType="challenge" />}
-          />
-          {/* /program/live/:programId */}
-          <Route
-            path="program/live/:programId"
-            element={<ProgramDetail programType="live" />}
-          />
-
+          {/* /payment */}
           <Route path="payment" element={<Payment />} />
+          {/* /order */}
           <Route path="order/result" element={<PaymentResult />} />
           <Route path="order/fail" element={<PaymentFail />} />
 
@@ -71,7 +74,16 @@ const Router = () => {
             path="program/detail/:programId"
             element={<ProgramDetailRegacy />}
           /> */}
-
+          {/* /program/challenge/:programId */}
+          <Route
+            path="program/challenge/:programId"
+            element={<ProgramDetail programType="challenge" />}
+          />
+          {/* /program/live/:programId */}
+          <Route
+            path="program/live/:programId"
+            element={<ProgramDetail programType="live" />}
+          />
           {/* /program/:programId/review/new */}
           <Route
             path="program/:programId/review/new"
@@ -96,10 +108,8 @@ const Router = () => {
           <Route path="mypage" element={<MyPage />}>
             {/* /mypage/application */}
             <Route path="application" element={<Application />} />
-
             {/* /mypage/review */}
             <Route path="review" element={<Review />} />
-
             {/* /mypage/review/new/program/:programId */}
             <Route
               path="review/new/program/:programType/:programId"
@@ -110,11 +120,17 @@ const Router = () => {
               path="review/edit/program/:programType/:programId/:reviewId"
               element={<ReviewCreate isEdit={true} />}
             />
-            <Route path="credit">
-              <Route path="" element={<Credit />} />
-              <Route path=":paymentId" element={<CreditDetail />} />
-              <Route path=":paymentId/delete" element={<CreditDelete />} />
-            </Route>
+            <Route path="credit" element={<Credit />} />
+            <Route path="credit/:paymentId" element={<CreditDetail />} />
+            <Route path="credit/:paymentId/delete" element={<CreditDelete />} />
+            <Route
+              path="credit/report/:paymentId"
+              element={<ReportCreditDetail />}
+            />
+            <Route
+              path="credit/report/:paymentId/delete"
+              element={<ReportCreditDelete />}
+            />
             <Route path="privacy" element={<Privacy />} />
           </Route>
           {/* /login */}
@@ -137,6 +153,37 @@ const Router = () => {
             <Route path="" element={<ChallengeDashboard />} />
             <Route path="me" element={<MyChallengeDashboard />} />
           </Route>
+
+          {/* 서류진단 */}
+
+          <Route path="report/landing" element={<ReportPage />} />
+          <Route path="report/landing/resume" element={<ReportResumePage />} />
+          <Route
+            path="report/landing/personal-statement"
+            element={<ReportPersonalStatementPage />}
+          />
+          <Route
+            path="report/landing/portfolio"
+            element={<ReportPortfolioPage />}
+          />
+
+          {/* :reportType은 RESUME, PERSONAL_STATEMENT, PORTFOLIO (대문자) TODO: 소문자로 옮기기 */}
+          <Route
+            path="report/apply/:reportType/:reportId"
+            element={<ReportApplyPage />}
+          />
+
+          {/* 모바일 전용 서류진단 결제 페이지. 화면 구성이 많이 달라 모바일만 한 단계 추가함 */}
+          {/* :reportType은 RESUME, PERSONAL_STATEMENT, PORTFOLIO (대문자) TODO: 소문자로 옮기기 */}
+          <Route
+            path="report/payment/:reportType/:reportId"
+            element={<ReportPaymentPage />}
+          />
+          <Route path="report/toss/payment" element={<ReportTossPage />} />
+          <Route path="report/order/result" element={<ReportPaymentResult />} />
+          <Route path="report/order/fail" element={<ReportPaymentFail />} />
+
+          <Route path="report/management" element={<ReportManagementPage />} />
 
           {/* 비로그인 리뷰 작성 페이지 */}
           <Route

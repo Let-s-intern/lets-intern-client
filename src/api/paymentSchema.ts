@@ -2,6 +2,11 @@ import { z } from 'zod';
 
 export const programInfoType = z.object({
   paymentId: z.number().nullable().optional(),
+  applicationId: z.number().nullable().optional(),
+  programType: z
+    .enum(['CHALLENGE', 'LIVE', 'VOD', 'REPORT'])
+    .nullable()
+    .optional(),
   title: z.string().nullable().optional(),
   thumbnail: z.string().nullable().optional(),
   price: z.number().nullable().optional(),
@@ -225,3 +230,9 @@ export const paymentDetailType = z.object({
 });
 
 export type PaymentDetailType = z.infer<typeof paymentDetailType>;
+
+export const applicationResultType = z.object({
+  tossInfo: tossInfoType,
+});
+
+export type ApplicationResult = z.infer<typeof applicationResultType>;

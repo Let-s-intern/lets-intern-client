@@ -9,17 +9,24 @@ export type FileType =
   | 'CHALLENGE'
   | 'LIVE'
   | 'VOD'
-  | 'BLOG';
+  | 'BLOG'
+  | 'REPORT';
 
 export async function uploadFile({
   file,
   type,
+  name,
 }: {
   file: File;
   type: FileType;
+  name?: string;
 }) {
   const formData = new FormData();
-  formData.append('file', file, `${generateRandomString(10)}_${file.name}`);
+  formData.append(
+    'file',
+    file,
+    name ?? `${generateRandomString(10)}_${file.name}`,
+  );
 
   const res = await axios.post('/file', formData, {
     params: { type },

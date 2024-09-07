@@ -34,7 +34,6 @@ const Input = ({
   error,
   fullWidth = true,
   onChange,
-  onKeyDown,
 }: InputProps) => {
   const [focused, setFocused] = useState(false);
 

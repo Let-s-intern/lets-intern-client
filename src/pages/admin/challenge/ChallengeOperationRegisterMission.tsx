@@ -16,8 +16,6 @@ import {
 } from '@mui/x-data-grid';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import dayjs from 'dayjs';
-import timezone from 'dayjs/plugin/timezone';
-import utc from 'dayjs/plugin/utc';
 import React, { useCallback, useMemo, useState } from 'react';
 import { FaCheck, FaTrashCan, FaX } from 'react-icons/fa6';
 import { z } from 'zod';
@@ -35,10 +33,6 @@ import {
   UpdateMissionReq,
 } from '../../../schema';
 import axios from '../../../utils/axios';
-
-dayjs.extend(utc);
-dayjs.extend(timezone);
-dayjs.tz.setDefault('Asia/Seoul');
 
 type Content = z.infer<
   typeof getContentsAdminSimple
