@@ -5,8 +5,10 @@ import {
   ReportPriceType,
   useGetReportPriceDetail,
 } from '@/api/report';
+import useReportApplicationStore from '@/store/useReportApplicationStore';
 import { FormControl, RadioGroup } from '@mui/material';
-import { useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import {
   ReportFormCheckboxControlLabel,
   ReportFormRadioControlLabel,
@@ -14,10 +16,42 @@ import {
 
 const ReportApplyBottomSheet = ({ report }: { report: ActiveReport }) => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-  const [priceType, setPriceType] = useState<ReportPriceType>('BASIC');
-  const [selectedOptionIds, setSelectedOptionIds] = useState<number[]>([]);
-  const [doFeedbackService, setDoFeedbackService] = useState<boolean>(false);
   const { data: priceInfo } = useGetReportPriceDetail(report.reportId);
+  const { data: reportApplication, setReportApplication } =
+    useReportApplicationStore();
+
+  useEffect(() => {
+    console.log('data', reportApplication);
+  }, [reportApplication]);
+
+  useEffect(() => {
+    if (isDrawerOpen) {
+      setReportApplication({ reportId: report.reportId });
+    }
+  }, [isDrawerOpen, report.reportId, setReportApplication]);
+
+  const { reportPriceType, optionIds, isFeedbackApplied } = reportApplication;
+
+  const setSelectedOptionIds = useCallback(
+    (optionIds: number[]) => {
+      setReportApplication({ optionIds });
+    },
+    [setReportApplication],
+  );
+
+  const setPriceType = useCallback(
+    (reportPriceType: ReportPriceType) => {
+      setReportApplication({ reportPriceType });
+    },
+    [setReportApplication],
+  );
+
+  const setDoFeedbackService = useCallback(
+    (isFeedbackApplied: boolean) => {
+      setReportApplication({ isFeedbackApplied });
+    },
+    [setReportApplication],
+  );
 
   if (!priceInfo || !report.reportType) {
     return null;
@@ -47,7 +81,7 @@ const ReportApplyBottomSheet = ({ report }: { report: ActiveReport }) => {
               </p>
               <RadioGroup
                 defaultValue="BASIC"
-                value={priceType}
+                value={reportPriceType}
                 className="my-4"
                 onChange={(e) => {
                   setPriceType(e.target.value as ReportPriceType);
@@ -92,7 +126,7 @@ const ReportApplyBottomSheet = ({ report }: { report: ActiveReport }) => {
                   const price = option.price ?? 0;
                   const discount = option.discountPrice ?? 0;
                   const checked = Boolean(
-                    selectedOptionIds.find(
+                    optionIds.find(
                       (selectedOption) =>
                         selectedOption === option.reportOptionId,
                     ),
@@ -105,12 +139,12 @@ const ReportApplyBottomSheet = ({ report }: { report: ActiveReport }) => {
                       onChange={(e, checked) => {
                         if (checked) {
                           setSelectedOptionIds([
-                            ...selectedOptionIds,
+                            ...optionIds,
                             option.reportOptionId,
                           ]);
                         } else {
                           setSelectedOptionIds(
-                            selectedOptionIds.filter(
+                            optionIds.filter(
                               (selectedOption) =>
                                 selectedOption !== option.reportOptionId,
                             ),
@@ -139,7 +173,7 @@ const ReportApplyBottomSheet = ({ report }: { report: ActiveReport }) => {
                 커리어 전문가와 함께 나만의 맞춤형 서류를 완성할 수 있어요.
               </p>
               <ReportFormCheckboxControlLabel
-                checked={doFeedbackService}
+                checked={isFeedbackApplied}
                 onChange={(e, checked) => {
                   setDoFeedbackService(checked);
                 }}
@@ -180,14 +214,12 @@ const ReportApplyBottomSheet = ({ report }: { report: ActiveReport }) => {
             >
               이전 단계로
             </button>
-            <button
-              type="button"
+            <Link
+              to={`/report/apply/${report.reportType}/${report.reportId}`}
               className="flex w-full flex-1 justify-center rounded-md border-2 border-primary bg-primary px-6 py-3 text-lg font-medium text-neutral-100 transition hover:bg-primary-light disabled:border-neutral-70 disabled:bg-neutral-70"
-              // onClick={handleNextButtonClick}
-              // disabled={buttonDisabled}
             >
               결제하기
-            </button>
+            </Link>
           </div>
         ) : null}
       </div>
