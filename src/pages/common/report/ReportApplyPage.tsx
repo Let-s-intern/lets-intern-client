@@ -11,6 +11,8 @@ import { IoCloseOutline } from 'react-icons/io5';
 import { useNavigate, useParams } from 'react-router-dom';
 import { twJoin } from 'tailwind-merge';
 
+import { couponInfoSchema } from '@/api/coupon';
+import axios from '@/utils/axios';
 import { useGetParticipationInfo } from '../../../api/application';
 import { uploadFile } from '../../../api/file';
 import {
@@ -86,7 +88,7 @@ const ReportApplyPage = () => {
       {isUpTo1280 ? (
         <BottomSheet>
           <button
-            onClick={() => navigate(-1)}
+            onClick={() => navigate(`/report/landing/${reportType}`)}
             className="flex h-14 w-14 shrink-0 items-center justify-center rounded-md border-2 border-primary bg-neutral-100"
           >
             <FaArrowLeft size={20} />
@@ -528,6 +530,17 @@ export const ReportPaymentSection = () => {
 
   const { data: reportApplication } = useReportApplicationStore();
   const { payment, applyCoupon, cancelCoupon } = useReportPayment();
+
+  // 쿠폰 코드 가져오기
+  useEffect(() => {
+    const couponId = reportApplication.couponId;
+    if (!couponId) return;
+
+    axios.get(`/coupon/admin/${couponId}`).then((res) => {
+      const data = couponInfoSchema.parse(res.data.data.couponInfo);
+      setCouponCode(data.code ?? '');
+    });
+  }, []);
 
   return (
     <section className="flex flex-col">
