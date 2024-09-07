@@ -87,6 +87,15 @@ const ReportPaymentResult = () => {
       .post(`/report/${reportApplication.reportId}/application`, body)
       .then((res) => {
         setResult(res.data.data);
+        window.dataLayer?.push({
+          event: 'report_payment_success',
+          report_name: reportDetail?.title,
+          report_id: reportApplication.reportId,
+          report_type: reportDetail?.reportType,
+          payment_method: params.paymentMethodKey,
+          payment_amount: params.amount,
+          order_id: params.orderId,
+        });
       })
       .catch((e) => {
         // eslint-disable-next-line no-console
