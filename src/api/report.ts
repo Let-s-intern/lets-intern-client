@@ -92,7 +92,7 @@ export function convertFeedbackStatusToBadgeStatus(
     case 'PENDING':
       return 'info';
     case 'CONFIRMED':
-      return 'success';
+      return 'info';
     case 'COMPLETED':
       return 'success';
   }
@@ -503,17 +503,17 @@ export const useGetMyReports = (reportType?: ReportType) => {
             title: 'Data Scientist Position',
             reportType: 'PORTFOLIO',
             applicationStatus: 'APPLIED',
-            feedbackStatus: 'APPLIED',
+            feedbackStatus: 'CONFIRMED',
             reportUrl: 'https://example.com/report/2',
             applyUrl: 'https://example.com/apply/1002',
-            recruitmentUrl: 'https://example.com/job/ds001',
+            recruitmentUrl: null,
             zoomLink: 'https://zoom.us/j/987654321',
             zoomPassword: '123456',
             desiredDate1: dayjs('2024-09-15T10:00:00.000Z'),
             desiredDate2: dayjs('2024-09-16T11:00:00.000Z'),
             desiredDate3: null,
             applicationTime: dayjs('2024-09-05T09:30:00.000Z'),
-            confirmedTime: null,
+            confirmedTime: dayjs('2024-09-06T14:00:00.000Z'),
           },
           {
             reportId: 3,

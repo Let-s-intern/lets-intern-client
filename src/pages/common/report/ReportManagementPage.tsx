@@ -1,13 +1,21 @@
-import { useEffect } from 'react';
-import { Link, NavLink, useSearchParams } from 'react-router-dom';
 import {
+  convertFeedbackStatusToBadgeStatus,
+  convertFeedbackStatusToDisplayName,
   convertReportStatusToBadgeStatus,
   convertReportStatusToDisplayName,
   convertReportTypeToDisplayName,
   useGetMyReports,
-} from '../../../api/report';
-import { ReportHeader } from '../../../components/common/report/ReportIntroSection';
-import Badge from '../../../components/common/ui/Badge';
+} from '@/api/report';
+import { twMerge } from '@/lib/twMerge';
+import { ReportHeader } from '@components/common/report/ReportIntroSection';
+import Badge from '@components/common/ui/Badge';
+import {
+  ComponentPropsWithoutRef,
+  ElementType,
+  forwardRef,
+  useEffect,
+} from 'react';
+import { Link, NavLink, useSearchParams } from 'react-router-dom';
 
 type ReportFilter = {
   status: 'all' | 'active' | 'inactive';
@@ -60,6 +68,56 @@ const CompanyBagIcon = () => (
   </svg>
 );
 
+type ReportManagementButtonProps<T extends ElementType> = {
+  as?: T;
+  children: React.ReactNode;
+  className?: string;
+  disabled?: boolean;
+  type?: 'button' | 'submit' | 'reset';
+} & Omit<ComponentPropsWithoutRef<T>, 'disabled' | 'type'>;
+
+type ReportManageButtonComponent = {
+  <T extends ElementType = 'button'>(
+    props: ReportManagementButtonProps<T>,
+  ): React.ReactNode;
+  displayName?: string | undefined;
+};
+
+export const ReportManagementButton: ReportManageButtonComponent = forwardRef(
+  <T extends ElementType = 'button'>(
+    {
+      as,
+      children,
+      className,
+      disabled = false,
+      type = 'button',
+      ...props
+    }: ReportManagementButtonProps<T>,
+    ref: React.Ref<Element>,
+  ) => {
+    const Component = (as || 'button') as JSX.ElementType;
+    return (
+      <Component
+        ref={ref}
+        className={twMerge(
+          'shadow-sm flex h-10 w-full items-center justify-center rounded-sm bg-primary-light text-xsmall14 font-semibold text-white outline-none outline-2 outline-offset-2 transition-all hover:bg-primary focus:outline focus:outline-primary',
+
+          disabled &&
+            'cursor-not-allowed bg-neutral-95 text-neutral-60 hover:bg-neutral-95 focus:outline-none',
+          className,
+        )}
+        disabled={disabled}
+        type={type}
+        {...props}
+      >
+        {children}
+      </Component>
+    );
+  },
+);
+
+ReportManagementButton.displayName = 'ReportManagementButton';
+
 const ReportManagementPage = () => {
   // TODO: 설명 추가
 
@@ -90,7 +148,7 @@ const ReportManagementPage = () => {
   });
 
   return (
-    <div className="mx-auto max-w-5xl px-5">
+    <div className="mx-auto max-w-5xl px-5 pb-10">
       <ReportHeader />
       <header className="flex items-center gap-2">
         <h1>서류 진단서</h1>
@@ -126,20 +184,28 @@ const ReportManagementPage = () => {
                   >
                     {convertReportStatusToDisplayName(item.applicationStatus)}
                   </Badge>
-                  <h2>{item.title}</h2>
+                  <h2 className="text-xsmall14 font-medium">{item.title}</h2>
                 </header>
                 <table className="mb-5">
                   <tr>
-                    <td>진단유형</td>
-                    <td>{convertReportTypeToDisplayName(item.reportType)}</td>
+                    <td className="py-0.5 text-xxsmall12 font-medium text-neutral-30">
+                      진단유형
+                    </td>
+                    <td className="py-0.5 pl-4 text-xxsmall12 font-medium text-neutral-50">
+                      {convertReportTypeToDisplayName(item.reportType)}
+                    </td>
                   </tr>
                   <tr>
-                    <td>신청일자</td>
-                    <td>{item.applicationTime.format('YYYY-MM-DD HH:mm')}</td>
+                    <td className="py-0.5 text-xxsmall12 font-medium text-neutral-30">
+                      신청일자
+                    </td>
+                    <td className="py-0.5 pl-4 text-xxsmall12 font-medium text-neutral-50">
+                      {item.applicationTime.format('YYYY.MM.DD HH:mm')}
+                    </td>
                   </tr>
                 </table>
-                <div className="flex items-center justify-between">
-                  <div className="-ml-1 flex items-center gap-2">
+                <div className="flex items-center justify-between gap-4">
+                  <div className="-ml-1 flex items-center gap-1">
                     {item.applyUrl ? (
                       <a
                         target="_blank"
@@ -164,9 +230,16 @@ const ReportManagementPage = () => {
                       </a>
                     ) : null}
                   </div>
-                  <button className="flex h-10 w-40 items-center justify-center bg-slate-100">
+                  {/* TODO: 다운로드 기능 추가 */}
+                  <ReportManagementButton
+                    className="max-w-40 flex-1"
+                    disabled={
+                      item.applicationStatus === 'APPLIED' ||
+                      item.applicationStatus === 'REPORTING'
+                    }
+                  >
                     진단서 확인하기
-                  </button>
+                  </ReportManagementButton>
                 </div>
               </div>
               {item.feedbackStatus ? (
@@ -174,43 +247,81 @@ const ReportManagementPage = () => {
                   <hr className="my-4 border-dashed border-neutral-80" />
                   <div>
                     <header className="mb-3 flex items-center gap-2">
-                      <span>{item.feedbackStatus}</span>
-                      <h2>1:1 피드백 현황</h2>
+                      <Badge
+                        status={convertFeedbackStatusToBadgeStatus(
+                          item.feedbackStatus,
+                        )}
+                      >
+                        {convertFeedbackStatusToDisplayName(
+                          item.feedbackStatus,
+                        )}
+                      </Badge>
+                      <h3 className="text-xsmall14 font-medium text-primary-dark">
+                        1:1 피드백 현황
+                      </h3>
                     </header>
                     <table className="mb-5">
-                      <tr>
-                        <td className="align-top">희망일자</td>
-                        <td>
-                          {item.desiredDate1 ? (
-                            <p>
-                              (1순위){' '}
-                              {item.desiredDate1.format('YYYY-MM-DD HH:mm')}
-                            </p>
-                          ) : null}
-                          {item.desiredDate2 ? (
-                            <p>
-                              (2순위){' '}
-                              {item.desiredDate2.format('YYYY-MM-DD HH:mm')}
-                            </p>
-                          ) : null}
+                      {/* 확인중 단계 일정 확인 */}
+                      {item.feedbackStatus === 'PENDING' ||
+                      item.feedbackStatus === 'APPLIED' ? (
+                        <tr>
+                          <td className="py-0.5 align-top text-xxsmall12 font-medium leading-5 text-neutral-30">
+                            희망일자
+                          </td>
+                          <td className="py-0.5 pl-4 text-xxsmall12 font-medium leading-5 text-neutral-50">
+                            {item.desiredDate1 ? (
+                              <p>
+                                (1순위){' '}
+                                {item.desiredDate1.format('YYYY.MM.DD HH:mm')}
+                              </p>
+                            ) : null}
+                            {item.desiredDate2 ? (
+                              <p>
+                                (2순위){' '}
+                                {item.desiredDate2.format('YYYY.MM.DD HH:mm')}
+                              </p>
+                            ) : null}
 
-                          {item.desiredDate3 ? (
-                            <p>
-                              (3순위){' '}
-                              {item.desiredDate3.format('YYYY-MM-DD HH:mm')}
-                            </p>
-                          ) : null}
-                        </td>
-                      </tr>
+                            {item.desiredDate3 ? (
+                              <p>
+                                (3순위){' '}
+                                {item.desiredDate3.format('YYYY.MM.DD HH:mm')}
+                              </p>
+                            ) : null}
+                          </td>
+                        </tr>
+                      ) : null}
+
+                      {item.feedbackStatus === 'CONFIRMED' ||
+                      item.feedbackStatus === 'COMPLETED' ? (
+                        <tr>
+                          <td className="py-0.5 align-top text-xxsmall12 font-medium leading-5 text-neutral-30">
+                            {item.feedbackStatus === 'CONFIRMED'
+                              ? '확정일자'
+                              : '완료일자'}
+                          </td>
+                          <td className="py-0.5 pl-4 text-xxsmall12 font-medium leading-5 text-neutral-50">
+                            {item.confirmedTime?.format('YYYY.MM.DD HH:mm')}
+                          </td>
+                        </tr>
+                      ) : null}
                     </table>
-                    <a
-                      target="_blank"
-                      href={item.applyUrl || undefined}
-                      rel="noreferrer"
-                      className="flex h-10 w-full items-center justify-center bg-slate-100"
-                    >
-                      피드백 참여하기
-                    </a>
+                    {item.feedbackStatus === 'APPLIED' ||
+                    item.feedbackStatus === 'PENDING' ||
+                    item.feedbackStatus === 'COMPLETED' ? (
+                      <ReportManagementButton disabled>
+                        피드백 참여하기
+                      </ReportManagementButton>
+                    ) : (
+                      <ReportManagementButton
+                        as={Link}
+                        target="_blank"
+                        to={item.applyUrl || ''}
+                        rel="noreferrer"
+                      >
+                        피드백 참여하기
+                      </ReportManagementButton>
+                    )}
                   </div>
                 </>
               ) : null}
@@ -218,7 +329,14 @@ const ReportManagementPage = () => {
           );
         })}
       </div>
-      <Link to="/report/landing">추가 신청하기</Link>
+      <div className="my-3">
+        <Link
+          to="/report/landing"
+          className="flex h-12 w-full items-center justify-center rounded-md border-2 border-primary bg-neutral-100 font-medium text-primary-dark transition hover:border-primary-light hover:bg-white"
+        >
+          추가 신청하기
+        </Link>
+      </div>
     </div>
   );
 };

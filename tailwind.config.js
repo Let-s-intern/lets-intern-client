@@ -115,6 +115,8 @@ module.exports = {
           '0px 0px 12px 0px rgba(255, 255, 255, 0.45)',
           '4px 4px 8px 0px rgba(0, 0, 0, 0.04)',
         ],
+        button:
+          '0px 16px 20px 0px rgba(0, 0, 0, 0.12), 0px 8px 16px 0px rgba(0, 0, 0, 0.08), 0px 0px 8px 0px rgba(0, 0, 0, 0.08)',
       },
       backgroundImage: {
         'gradient-start':
@@ -142,10 +144,6 @@ module.exports = {
       xl: '1.25rem',
       xxl: '1.5rem',
       full: '9999px',
-    },
-    boxShadow: {
-      button:
-        '0px 16px 20px 0px rgba(0, 0, 0, 0.12), 0px 8px 16px 0px rgba(0, 0, 0, 0.08), 0px 0px 8px 0px rgba(0, 0, 0, 0.08)',
     },
   },
   plugins: [require('tailwind-scrollbar-hide')],
