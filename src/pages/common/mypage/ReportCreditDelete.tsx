@@ -1,6 +1,16 @@
+import {
+  getCouponDiscountPrice,
+  getDiscountPercent,
+  getFeedbackDiscountedPrice,
+  getFeedbackRefundPercent,
+  getReportDiscountedPrice,
+  getReportPrice,
+  getReportRefundPercent,
+  getTotalRefund,
+} from '@/lib/refund';
 import { AxiosError } from 'axios';
 import dayjs from 'dayjs';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import {
   convertReportPriceType,
@@ -12,20 +22,6 @@ import PaymentInfoRow from '../../../components/common/program/paymentSuccess/Pa
 
 const convertDateFormat = (date: string) => {
   return dayjs(date).format('YYYY.MM.DD');
-};
-
-const getPercent = ({
-  originalPrice,
-  changedPrice,
-}: {
-  originalPrice: number;
-  changedPrice: number;
-}) => {
-  return Math.floor((changedPrice / originalPrice) * 100);
-};
-
-const nearestTen = (amount: number): number => {
-  return Math.floor(amount / 10) * 10;
 };
 
 const ReportCreditDelete = () => {
@@ -72,209 +68,70 @@ const ReportCreditDelete = () => {
       .join(', ');
   };
 
-  const getReportPrice = () => {
-    if (!reportPaymentDetail) return 0;
+  const paymentInfo = reportPaymentDetail?.reportPaymentInfo;
 
-    const defaultReportPrice =
-      reportPaymentDetail.reportPaymentInfo.reportPriceInfo.price;
-    const optionsPrice =
-      reportPaymentDetail.reportPaymentInfo.reportOptionInfos.reduce(
-        (acc, option) => {
-          return acc + option.price;
-        },
-        0,
-      );
+  const reportPrice = useMemo(() => {
+    return getReportPrice(paymentInfo);
+  }, [paymentInfo]);
 
-    return defaultReportPrice + optionsPrice;
-  };
+  const reportDiscountedPrice = useMemo(() => {
+    return getReportDiscountedPrice(paymentInfo);
+  }, [paymentInfo]);
 
-  const getReportDiscountedPrice = () => {
-    if (!reportPaymentDetail) return 0;
+  const discountPercent = useMemo(() => {
+    return getDiscountPercent(paymentInfo);
+  }, [paymentInfo]);
 
-    const originalPrice = getReportPrice();
-    const discountPrice =
-      reportPaymentDetail.reportPaymentInfo.reportPriceInfo.discountPrice;
-    const optionsDiscountPrice =
-      reportPaymentDetail.reportPaymentInfo.reportOptionInfos.reduce(
-        (acc, option) => {
-          return acc + option.discountPrice;
-        },
-        0,
-      );
+  const couponDiscountPrice = useMemo(() => {
+    return getCouponDiscountPrice(paymentInfo);
+  }, [paymentInfo]);
 
-    return originalPrice - (discountPrice + optionsDiscountPrice);
-  };
+  const feedbackRefundPercent = useMemo(() => {
+    return getFeedbackRefundPercent({
+      now: dayjs(),
+      paymentInfo,
+      reportFeedbackStatus:
+        reportPaymentDetail?.reportApplicationInfo.reportFeedbackStatus,
+      reportFeedbackDesiredDate: dayjs(
+        reportPaymentDetail?.reportApplicationInfo.reportFeedbackDesiredDate,
+      ),
+    });
+  }, [paymentInfo, reportPaymentDetail]);
 
-  const getFeedbackDiscountedPrice = () => {
-    if (
-      !reportPaymentDetail ||
-      !reportPaymentDetail.reportApplicationInfo.reportFeedbackApplicationId ||
-      !reportPaymentDetail.reportPaymentInfo.feedbackPriceInfo
-    )
-      return 0;
+  const feedbackDiscountPrice = useMemo(() => {
+    return getFeedbackDiscountedPrice(paymentInfo);
+  }, [paymentInfo]);
 
-    return (
-      reportPaymentDetail.reportPaymentInfo.feedbackPriceInfo.feedbackPrice -
-      reportPaymentDetail.reportPaymentInfo.feedbackPriceInfo
-        .feedbackDiscountPrice
-    );
-  };
-
-  const getDiscountPercent = () => {
-    if (!reportPaymentDetail) return 0;
-
-    const originalPrice =
-      reportPaymentDetail.reportPaymentInfo.reportPriceInfo.price;
-    const discountPrice = reportPaymentDetail.reportPaymentInfo.programDiscount;
-
-    return getPercent({ originalPrice, changedPrice: discountPrice });
-  };
-
-  const getCouponDiscountPrice = () => {
-    if (
-      !reportPaymentDetail ||
-      !reportPaymentDetail.reportPaymentInfo.couponDiscount
-    )
-      return 0;
-
-    return reportPaymentDetail.reportPaymentInfo.couponDiscount === -1
-      ? reportPaymentDetail.reportPaymentInfo.programPrice -
-          reportPaymentDetail.reportPaymentInfo.programDiscount
-      : reportPaymentDetail.reportPaymentInfo.couponDiscount;
-  };
-
-  const reportRefundPercent = () => {
-    if (!reportPaymentDetail) return 0;
-
-    const now = dayjs();
-
-    // 결제 후 3시간 이내 : 100% 환불
-    if (
-      now.diff(
-        dayjs(reportPaymentDetail.reportPaymentInfo.lastModifiedDate),
-        'hour',
-      ) < 3
-    ) {
-      return 1;
-    }
-    // 결제 후 3시간 후 ~ 진단서 수령(발급완료) 전 : 80% 환불
-    if (
-      now.diff(
-        dayjs(reportPaymentDetail.reportPaymentInfo.lastModifiedDate),
-        'hour',
-      ) >= 3 &&
-      reportPaymentDetail.reportApplicationInfo.reportApplicationStatus !==
-        'COMPLETED' &&
-      reportPaymentDetail.reportApplicationInfo.reportApplicationStatus !==
-        'REPORTED'
-    ) {
-      return 0.8;
-    }
-    // 진단서 수령(발급완료) 후 : 환불 불가
-    if (
-      reportPaymentDetail.reportApplicationInfo.reportApplicationStatus ===
-        'COMPLETED' ||
-      reportPaymentDetail.reportApplicationInfo.reportApplicationStatus ===
-        'REPORTED'
-    ) {
-      return 0;
-    }
-    return 0;
-  };
-
-  const feedbackRefundPercent = () => {
-    if (
-      !reportPaymentDetail ||
-      !reportPaymentDetail.reportApplicationInfo.reportFeedbackApplicationId
-    )
-      return 0;
-
-    const now = dayjs();
-
-    // 일정 확정 전 : 100% 환불
-    if (
-      reportPaymentDetail.reportApplicationInfo.reportFeedbackStatus !==
-        'CONFIRMED' &&
-      reportPaymentDetail.reportApplicationInfo.reportFeedbackStatus !==
-        'COMPLETED'
-    ) {
-      return 1;
-    }
-    // 일정 확정 후 ~ 확정된 일정 24시간 전 : 80% 환불
-    if (
-      reportPaymentDetail.reportApplicationInfo.reportFeedbackStatus !==
-        'COMPLETED' &&
-      reportPaymentDetail.reportApplicationInfo.reportFeedbackStatus ===
-        'CONFIRMED' &&
-      now.diff(
-        dayjs(
-          reportPaymentDetail.reportApplicationInfo.reportFeedbackDesiredDate,
-        ),
-        'hour',
-      ) > 24
-    ) {
-      return 0.8;
-    }
-    // 확정된 일정 전 24시간 이내 : 50% 환불
-    if (
-      reportPaymentDetail.reportApplicationInfo.reportFeedbackStatus !==
-        'COMPLETED' &&
-      reportPaymentDetail.reportApplicationInfo.reportFeedbackStatus ===
-        'CONFIRMED' &&
-      now.diff(
-        dayjs(
-          reportPaymentDetail.reportApplicationInfo.reportFeedbackDesiredDate,
-        ),
-        'hour',
-      ) <= 24 &&
-      now.diff(
-        dayjs(
-          reportPaymentDetail.reportApplicationInfo.reportFeedbackDesiredDate,
-        ),
-        'hour',
-      ) > 0
-    ) {
-      return 0.5;
-    }
-    // 확정된 일정 시간 이후 : 환불 불가
-    if (
-      reportPaymentDetail.reportApplicationInfo.reportFeedbackStatus ===
-        'COMPLETED' ||
-      (reportPaymentDetail.reportApplicationInfo.reportFeedbackStatus ===
-        'CONFIRMED' &&
-        now.diff(
-          dayjs(
-            reportPaymentDetail.reportApplicationInfo.reportFeedbackDesiredDate,
-          ),
-          'hour',
-        ) <= 0)
-    ) {
+  const totalRefund = useMemo(() => {
+    if (!reportPaymentDetail) {
       return 0;
     }
 
-    return 0;
-  };
+    return getTotalRefund({
+      now: dayjs(),
+      paymentInfo,
+      reportApplicationStatus:
+        reportPaymentDetail.reportApplicationInfo.reportApplicationStatus,
+      reportFeedbackStatus:
+        reportPaymentDetail.reportApplicationInfo.reportFeedbackStatus,
+      reportFeedbackDesiredDate: dayjs(
+        reportPaymentDetail.reportApplicationInfo.reportFeedbackDesiredDate,
+      ),
+    });
+  }, [paymentInfo, reportPaymentDetail]);
 
-  const getTotalRefund = (): number => {
-    if (
-      !reportPaymentDetail ||
-      reportPaymentDetail.reportPaymentInfo.finalPrice === 0 ||
-      !reportPaymentDetail.tossInfo?.balanceAmount ||
-      reportPaymentDetail.tossInfo.status !== 'DONE'
-    ) {
+  const reportRefundPercent = useMemo(() => {
+    if (!reportPaymentDetail) {
       return 0;
     }
 
-    const couponPrice =
-      reportPaymentDetail.reportPaymentInfo.couponDiscount || 0;
-    const refundPrice = nearestTen(
-      getReportDiscountedPrice() * reportRefundPercent() +
-        getFeedbackDiscountedPrice() * feedbackRefundPercent() -
-        couponPrice,
-    );
-
-    return Math.max(0, refundPrice);
-  };
+    return getReportRefundPercent({
+      now: dayjs(),
+      paymentInfo,
+      reportApplicationStatus:
+        reportPaymentDetail.reportApplicationInfo.reportApplicationStatus,
+    });
+  }, [paymentInfo, reportPaymentDetail]);
 
   return (
     <section
@@ -328,13 +185,13 @@ const ReportCreditDelete = () => {
                 <div className="flex w-full items-center justify-start gap-3 border-y-[1.5px] border-neutral-0 px-3 py-5 font-bold text-neutral-0">
                   <div>예정 환불금액</div>
                   <div className="flex grow items-center justify-end">
-                    {getTotalRefund().toLocaleString()}원
+                    {totalRefund.toLocaleString()}원
                   </div>
                 </div>
                 <div className="flex w-full flex-col">
                   <PaymentInfoRow
                     title={`서류 진단서 (${convertReportPriceType(reportPaymentDetail.reportApplicationInfo.reportPriceType)}+옵션)`}
-                    content={`${getReportPrice().toLocaleString()}원`}
+                    content={`${reportPrice.toLocaleString()}원`}
                   />
                   {reportPaymentDetail.reportApplicationInfo
                     .reportFeedbackApplicationId && (
@@ -344,19 +201,19 @@ const ReportCreditDelete = () => {
                     />
                   )}
                   <PaymentInfoRow
-                    title={`할인 (${getDiscountPercent()}%)`}
+                    title={`할인 (${discountPercent}%)`}
                     content={`-${reportPaymentDetail.reportPaymentInfo.programDiscount.toLocaleString()}원`}
                   />
                   <PaymentInfoRow
                     title={`쿠폰할인`}
-                    content={`-${getCouponDiscountPrice().toLocaleString()}원`}
+                    content={`-${couponDiscountPrice.toLocaleString()}원`}
                   />
-                  {reportRefundPercent() !== 1 && (
+                  {reportRefundPercent !== 1 && (
                     <PaymentInfoRow
-                      title={`서류 진단서 (부분 환불 ${Math.ceil((1 - reportRefundPercent()) * 100)}%)`}
+                      title={`서류 진단서 (부분 환불 ${Math.ceil((1 - reportRefundPercent) * 100)}%)`}
                       content={`-${(
-                        getReportDiscountedPrice() *
-                        (1 - reportRefundPercent())
+                        reportDiscountedPrice *
+                        (1 - reportRefundPercent)
                       ).toLocaleString()}원`}
                       subInfo={
                         <div className="text-xs font-medium text-primary-dark">
@@ -374,12 +231,12 @@ const ReportCreditDelete = () => {
                       }
                     />
                   )}
-                  {feedbackRefundPercent() !== 1 && (
+                  {feedbackRefundPercent !== 1 && (
                     <PaymentInfoRow
-                      title={`1:1 피드백 (부분 환불 ${Math.ceil((1 - feedbackRefundPercent()) * 100)}%)`}
+                      title={`1:1 피드백 (부분 환불 ${Math.ceil((1 - feedbackRefundPercent) * 100)}%)`}
                       content={`-${(
-                        getFeedbackDiscountedPrice() *
-                        (1 - feedbackRefundPercent())
+                        feedbackDiscountPrice *
+                        (1 - feedbackRefundPercent)
                       ).toLocaleString()}원`}
                       subInfo={
                         <div className="text-xs font-medium text-primary-dark">

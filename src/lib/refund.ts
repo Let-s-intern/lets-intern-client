@@ -93,7 +93,7 @@ export const getCouponDiscountPrice = (
     : paymentInfo.couponDiscount;
 };
 
-export const reportRefundPercent = ({
+export const getReportRefundPercent = ({
   now,
   paymentInfo,
   reportApplicationStatus,
@@ -131,7 +131,7 @@ export const reportRefundPercent = ({
   return 0;
 };
 
-export const feedbackRefundPercent = ({
+export const getFeedbackRefundPercent = ({
   now,
   paymentInfo,
   reportFeedbackStatus,
@@ -211,11 +211,11 @@ export const getTotalRefund = ({
 
   const refundReportPrice =
     getReportDiscountedPrice(paymentInfo) *
-    reportRefundPercent({ now, paymentInfo, reportApplicationStatus });
+    getReportRefundPercent({ now, paymentInfo, reportApplicationStatus });
 
   const refundFeedbackPrice =
     getFeedbackDiscountedPrice(paymentInfo) *
-    feedbackRefundPercent({
+    getFeedbackRefundPercent({
       now,
       paymentInfo,
       reportFeedbackStatus,
