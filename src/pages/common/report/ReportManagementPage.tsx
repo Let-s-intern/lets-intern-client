@@ -10,6 +10,7 @@ import { handleDownload } from '@/lib/download';
 import { twMerge } from '@/lib/twMerge';
 import useAuthStore from '@/store/useAuthStore';
 import { ReportHeader } from '@components/common/report/ReportIntroSection';
+import Tooltip from '@components/common/report/Tooltip';
 import Badge from '@components/common/ui/Badge';
 import {
   ComponentPropsWithoutRef,
@@ -35,6 +36,7 @@ const filters: {
   { label: '포트폴리오', value: 'portfolio' },
 ];
 
+// TODO: 공통화
 const DocIcon = () => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
@@ -53,6 +55,7 @@ const DocIcon = () => (
   </svg>
 );
 
+// TODO: 공통화
 const CompanyBagIcon = () => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
@@ -63,8 +66,27 @@ const CompanyBagIcon = () => (
   >
     <path
       d="M7.16675 17.5V5.83333C7.16675 5.05836 7.16675 4.67087 7.25193 4.35295C7.4831 3.49022 8.15697 2.81635 9.0197 2.58519C9.33762 2.5 9.72511 2.5 10.5001 2.5C11.2751 2.5 11.6625 2.5 11.9805 2.58519C12.8432 2.81635 13.5171 3.49022 13.7482 4.35295C13.8334 4.67087 13.8334 5.05836 13.8334 5.83333V17.5M4.83342 17.5H16.1667C17.1002 17.5 17.5669 17.5 17.9234 17.3183C18.237 17.1586 18.492 16.9036 18.6518 16.59C18.8334 16.2335 18.8334 15.7668 18.8334 14.8333V8.5C18.8334 7.56658 18.8334 7.09987 18.6518 6.74335C18.492 6.42975 18.237 6.17478 17.9234 6.01499C17.5669 5.83333 17.1002 5.83333 16.1667 5.83333H4.83341C3.89999 5.83333 3.43328 5.83333 3.07676 6.01499C2.76316 6.17478 2.50819 6.42975 2.3484 6.74335C2.16675 7.09987 2.16675 7.56658 2.16675 8.5V14.8333C2.16675 15.7668 2.16675 16.2335 2.3484 16.59C2.50819 16.9036 2.76316 17.1586 3.07676 17.3183C3.43328 17.5 3.89999 17.5 4.83342 17.5Z"
-      stroke="#7A7D84"
+      stroke="currentColor"
       strokeWidth="1.25"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </svg>
+);
+
+// TODO: 공통화
+const QuestionIcon = () => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="20"
+    height="20"
+    viewBox="0 0 20 20"
+    fill="none"
+  >
+    <path
+      d="M8.74961 7.50186C8.89644 7.08447 9.18625 6.7325 9.56772 6.50831C9.94918 6.28412 10.3977 6.20217 10.8338 6.27697C11.2699 6.35177 11.6654 6.57851 11.9504 6.917C12.2353 7.2555 12.3913 7.68393 12.3906 8.1264C12.3906 9.37547 10.517 10 10.517 10M10.5412 12.5H10.5495M10.4163 16.6667C14.3283 16.6667 17.4996 13.4953 17.4996 9.58333C17.4996 5.67132 14.3283 2.5 10.4163 2.5C6.50426 2.5 3.33294 5.67132 3.33294 9.58333C3.33294 10.375 3.46281 11.1363 3.70241 11.8472C3.79258 12.1147 3.83766 12.2484 3.8458 12.3512C3.85383 12.4527 3.84776 12.5238 3.82265 12.6225C3.79723 12.7223 3.7411 12.8262 3.62885 13.034L2.2658 15.557C2.07138 15.9168 1.97416 16.0968 1.99592 16.2356C2.01487 16.3566 2.08606 16.4631 2.19058 16.5269C2.31059 16.6001 2.51402 16.579 2.92089 16.537L7.18841 16.0958C7.31764 16.0825 7.38226 16.0758 7.44116 16.0781C7.49908 16.0803 7.53998 16.0857 7.59647 16.0987C7.6539 16.112 7.72612 16.1398 7.87057 16.1954C8.66061 16.4998 9.51896 16.6667 10.4163 16.6667Z"
+      stroke="currentColor"
+      strokeWidth="1.5"
       strokeLinecap="round"
       strokeLinejoin="round"
     />
@@ -164,18 +186,30 @@ const ReportManagementPage = () => {
   return (
     <div className="mx-auto max-w-5xl px-5 pb-10">
       <ReportHeader />
-      <header className="flex items-center gap-2">
+      <header className="my-3 flex items-center gap-2 text-xsmall16 font-bold">
         <h1>서류 진단서</h1>
-        <span>?</span>
+        <Tooltip className="text-xxsmall12 font-normal">
+          <p className="mb-1">진단서 발급 예상 소요기간</p>
+          <ul className="mb-3 list-disc pl-4">
+            <li>서류 진단서 (베이직): 최대 2일</li>
+            <li>서류 진단서 (프리미엄) 최대 3일</li>
+            <li>옵션 (현직자 피드백): 최대 5일</li>
+          </ul>
+          <p>
+            *1:1 피드백은 진단서 발급 이후 진행됩니다. 일정확정 이후 변경이
+            필요하실 경우, 우측 아래 &lt;채팅문의&gt;로 연락 주시길 바랍니다.
+          </p>
+        </Tooltip>
       </header>
-      <div className="flex gap-2">
+      <div className="my-3 -ml-2 flex gap-2">
         {filters.map((filter) => (
           <NavLink
             key={filter.value}
             to={`?status=${filterStatus}&type=${filter.value}`}
-            className={`${
-              filterType === filter.value ? 'bg-primary-10 text-primary' : ''
-            }`}
+            className={twMerge(
+              'inline-flex h-9 items-center justify-center px-2 text-xsmall14 text-neutral-0/45 transition hover:text-neutral-0/85 active:text-neutral-0/85',
+              filterType === filter.value && 'font-medium text-neutral-0',
+            )}
           >
             {filter.label}
           </NavLink>
@@ -337,7 +371,7 @@ const ReportManagementPage = () => {
                                 ? '확정일자'
                                 : '완료일자'}
                             </td>
-                            <td className="py-0.5 pl-4 text-xxsmall12 font-medium leading-5 text-neutral-50">
+                            <td className="py-0.5 pl-4 text-xxsmall12 font-medium leading-5 text-primary">
                               {item.confirmedTime?.format('YYYY.MM.DD HH:mm')}
                             </td>
                           </tr>
