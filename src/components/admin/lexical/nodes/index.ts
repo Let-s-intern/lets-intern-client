@@ -24,7 +24,7 @@ import { CollapsibleTitleNode } from '../plugins/CollapsiblePlugin/CollapsibleTi
 import { AutocompleteNode } from './AutocompleteNode';
 import { EmojiNode } from './EmojiNode';
 import { EquationNode } from './EquationNode';
-import { ExcalidrawNode } from './ExcalidrawNode';
+// import { ExcalidrawNode } from './ExcalidrawNode';
 import { FigmaNode } from './FigmaNode';
 import { ImageNode } from './ImageNode';
 import { InlineImageNode } from './InlineImageNode/InlineImageNode';
@@ -58,7 +58,7 @@ const nodes: Array<Klass<LexicalNode>> = [
   InlineImageNode,
   MentionNode,
   EmojiNode,
-  ExcalidrawNode,
+  // ExcalidrawNode,
   EquationNode,
   AutocompleteNode,
   KeywordNode,
