@@ -43,20 +43,10 @@ const CreditDetail = () => {
       const start = dayjs(paymentDetail.programInfo.startDate);
       const end = dayjs(paymentDetail.programInfo.endDate);
       const now = dayjs();
-      // console.log('-----DETAIL-----');
-      // console.log('start: ', start.format('YYYY-MM-DD HH:mm:ss'));
-      // console.log('end: ', end.format('YYYY-MM-DD HH:mm:ss'));
-      // console.log('now: ', now.format('YYYY-MM-DD HH:mm:ss'));
 
       const duration = end.diff(start, 'day') + 1;
       const mid = Math.ceil(duration / 2);
-      // console.log('duration: ', duration);
-      // console.log('mid: ', mid);
-      // console.log(
-      //   'midDate: ',
-      //   start.add(mid, 'day').format('YYYY-MM-DD HH:mm:ss'),
-      // );
-      // console.log('now is before mid :', now.isBefore(start.add(mid, 'day')));
+      
       return now.isBefore(start.add(mid, 'day'));
     } else {
       return dayjs().isBefore(dayjs(paymentDetail.programInfo.startDate));

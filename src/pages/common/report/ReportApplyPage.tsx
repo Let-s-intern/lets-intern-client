@@ -8,8 +8,9 @@ import dayjs, { Dayjs } from 'dayjs';
 import React, { useEffect, useRef, useState } from 'react';
 import { FaArrowLeft } from 'react-icons/fa6';
 import { IoCloseOutline } from 'react-icons/io5';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 
+import { twJoin } from 'tailwind-merge';
 import { useGetParticipationInfo } from '../../../api/application';
 import { uploadFile } from '../../../api/file';
 import {
@@ -18,7 +19,7 @@ import {
   useGetReportDetailQuery,
 } from '../../../api/report';
 import Card from '../../../components/common/report/Card';
-import ControlLabel from '../../../components/common/report/ControlLabel';
+import { ReportFormRadioControlLabel } from '../../../components/common/report/ControlLabel';
 import DateTimePicker from '../../../components/common/report/DateTimePicker';
 import FilledInput from '../../../components/common/report/FilledInput';
 import Heading1 from '../../../components/common/report/Heading1';
@@ -30,11 +31,16 @@ import Input from '../../../components/common/ui/input/Input';
 import useReportPayment from '../../../hooks/useReportPayment';
 import useReportProgramInfo from '../../../hooks/useReportProgramInfo';
 import useReportApplicationStore from '../../../store/useReportApplicationStore';
+import {
+  generateRandomNumber,
+  generateRandomString,
+} from '../../../utils/random';
 
 const ReportApplyPage = () => {
   const isUpTo1280 = useMediaQuery('(max-width: 1280px)');
   const navigate = useNavigate();
   const { reportType, reportId } = useParams();
+  const [searchParams] = useSearchParams();
 
   const [applyFile, setApplyFile] = useState<File | null>(null);
   const [recruitmentFile, setRecruitmentFile] = useState<File | null>(null);
@@ -63,8 +69,16 @@ const ReportApplyPage = () => {
   };
 
   useEffect(() => {
+    // 모두 초기화
+    const init = searchParams.get('init');
+    if (!init || init === 'true') initReportApplication();
+
     setReportApplication({
+      orderId: 'lets' + generateRandomString() + generateRandomNumber(),
       reportId: Number(reportId),
+      // 파일만 초기화
+      applyUrl: '',
+      recruitmentUrl: '',
     });
   }, []);
 
@@ -119,6 +133,7 @@ const ReportApplyPage = () => {
             <UsereInfoSection />
             <ReportPaymentSection />
             <button
+              className="w-full rounded-md bg-primary py-3 text-center text-small18 font-medium text-neutral-100"
               onClick={() => {
                 convertFile();
                 const { isValid, message } = validate();
@@ -130,9 +145,8 @@ const ReportApplyPage = () => {
                   alert('정보 수신용 이메일을 입력해주세요.');
                   return;
                 }
-                navigate(`/payment`);
+                navigate(`/report/toss/payment`);
               }}
-              className="text-1.125-medium w-full rounded-md bg-primary py-3 text-center font-medium text-neutral-100"
             >
               결제하기
             </button>
@@ -225,7 +239,7 @@ const DocumentSection = ({
         >
           {/* 파일 첨부 */}
           <div className="mb-4">
-            <ControlLabel
+            <ReportFormRadioControlLabel
               label="파일 첨부"
               value="file"
               subText="(pdf, doc, docx 형식 지원)"
@@ -236,7 +250,7 @@ const DocumentSection = ({
           </div>
           {/* URL */}
           <div>
-            <ControlLabel label="URL" value="url" />
+            <ReportFormRadioControlLabel label="URL" value="url" />
             {value === 'url' && (
               <FilledInput
                 name="applyUrl"
@@ -276,7 +290,6 @@ const PremiumSection = ({
         </span>
         <FormControl fullWidth>
           <RadioGroup
-            defaultValue="file"
             value={value}
             onChange={(e) => {
               setValue(e.target.value);
@@ -286,7 +299,7 @@ const PremiumSection = ({
             name="radio-buttons-group"
           >
             <div className="mb-4">
-              <ControlLabel
+              <ReportFormRadioControlLabel
                 label="파일 첨부"
                 value="file"
                 subText="(pdf, doc, docx 형식 지원)"
@@ -299,7 +312,7 @@ const PremiumSection = ({
               )}
             </div>
             <div>
-              <ControlLabel label="URL" value="url" />
+              <ReportFormRadioControlLabel label="URL" value="url" />
               {value === 'url' && (
                 <FilledInput
                   name="recruitmentUrl"
@@ -454,7 +467,7 @@ export const UsereInfoSection = () => {
   return (
     <section>
       <Heading2>참여자 정보</Heading2>
-      <div className="mb-4 mt-6 flex flex-col gap-3">
+      <div className="mt-6 flex flex-col gap-3">
         <div className="flex flex-col gap-1">
           <Label>이름</Label>
           <Input
@@ -530,23 +543,63 @@ export const UsereInfoSection = () => {
 
 /* 모바일 전용 결제 페이지(ReportPaymentPage)에서 같이 사용 */
 export const ReportPaymentSection = () => {
+  const [couponCode, setCouponCode] = useState('');
+  const [message, setMessage] = useState('');
+
   const { data: reportApplication } = useReportApplicationStore();
-  const { state: priceInfo } = useReportPayment();
+  const { payment, applyCoupon, cancelCoupon } = useReportPayment();
 
   return (
-    <section className="flex flex-col gap-6">
+    <section className="flex flex-col">
       <Heading2>결제 정보</Heading2>
-      {/* <div className="flex gap-2.5">
-        <Input
-          className="w-full"
-          type="text"
-          placeholder="쿠폰 번호를 입력해주세요."
-        />
-        <button className="shrink-0 rounded-sm bg-primary px-4 py-1.5 text-xsmall14 font-medium text-neutral-100">
-          쿠폰 등록
-        </button>
+      <div className="mt-6">
+        <div className="flex gap-2.5">
+          <Input
+            className="w-full"
+            value={couponCode}
+            type="text"
+            placeholder="쿠폰 번호를 입력해주세요."
+            disabled={payment.coupon !== 0}
+            onChange={(e) => setCouponCode(e.target.value)}
+          />
+          <button
+            className={twJoin(
+              payment.coupon === 0
+                ? 'bg-primary text-neutral-100'
+                : 'border-2 border-primary bg-neutral-100 text-primary',
+              'shrink-0 rounded-sm px-4 py-1.5 text-xsmall14 font-medium',
+            )}
+            onClick={async () => {
+              if (couponCode === '') return;
+              // 쿠폰이 등록된 상태면 쿠폰 취소
+              if (payment.coupon !== 0 && couponCode !== '') {
+                cancelCoupon();
+                setMessage('');
+                setCouponCode('');
+                return;
+              }
+
+              const data = await applyCoupon(couponCode);
+              if (data.status === 404 || data.status === 400)
+                setMessage(data.message);
+              else setMessage('쿠폰이 등록되었습니다.');
+            }}
+          >
+            {payment.coupon === 0 ? '쿠폰 등록' : '쿠폰 취소'}
+          </button>
+        </div>
+        <span
+          className={twJoin(
+            payment.coupon === 0
+              ? 'text-system-error'
+              : 'text-system-positive-blue',
+            'h-3 text-xsmall14',
+          )}
+        >
+          {message}
+        </span>
       </div>
-      <hr className="my-5" /> */}
+      <hr className="my-5" />
       <div className="flex flex-col">
         <div className="flex h-10 items-center justify-between px-3 text-neutral-0">
           <span>
@@ -557,34 +610,35 @@ export const ReportPaymentSection = () => {
             )
           </span>
           {/* 서류 진단 + 사용자가 선택한 모든 옵션 가격을 더한 값 */}
-          <span>{priceInfo.report.toLocaleString()}원</span>
+          <span>{payment.report.toLocaleString()}원</span>
         </div>
         <div className="flex h-10 items-center justify-between px-3 text-neutral-0">
           <span>1:1 피드백</span>
           {/* 1:1 피드백 가격 */}
-          <span>{priceInfo.feedback.toLocaleString()}원</span>
+          <span>{payment.feedback.toLocaleString()}원</span>
         </div>
         <div className="flex h-10 items-center justify-between px-3 text-neutral-0">
           {/* 서류진단 + 사용자가 선택한 모든 옵션 + 1:1 피드백의 할인 가격을 모두 더한 값 */}
           <span>
             {Math.ceil(
-              (priceInfo.discount / (priceInfo.report + priceInfo.feedback)) *
-                100,
+              (payment.discount / (payment.report + payment.feedback)) * 100,
             )}
             % 할인
           </span>
-          <span>-{priceInfo.discount.toLocaleString()}원</span>
+          <span>-{payment.discount.toLocaleString()}원</span>
         </div>
-        {/* <div className="flex h-10 items-center justify-between px-3 text-primary">
+        <div className="flex h-10 items-center justify-between px-3 text-primary">
           <span>쿠폰할인</span>
           <span className="font-bold">
-            -{priceInfo.coupon.toLocaleString()}원
+            {payment.coupon === 0
+              ? '0원'
+              : `-${payment.coupon.toLocaleString()}원`}
           </span>
-        </div> */}
+        </div>
         <hr className="my-5" />
         <div className="flex h-10 items-center justify-between px-3 font-semibold text-neutral-0">
           <span>결제금액</span>
-          <span>{priceInfo.total.toLocaleString()}원</span>
+          <span>{payment.total.toLocaleString()}원</span>
         </div>
       </div>
     </section>

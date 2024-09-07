@@ -11,9 +11,9 @@ interface ReportApplicationStore {
     couponId: number | null;
     paymentKey: string | null;
     orderId: string | null;
-    amount: string;
-    programPrice: number;
-    programDiscount: number;
+    amount: number | null;
+    programPrice: number | null;
+    programDiscount: number | null;
     applyUrl: string;
     recruitmentUrl: string;
     desiredDate1: string;
@@ -30,25 +30,27 @@ interface ReportApplicationStore {
   validate: () => { isValid: boolean; message: string | null };
 }
 
+const initialDate = dayjs().add(1, 'day').hour(9).format('YYYY-MM-DDTHH:00');
+
 const useReportApplicationStore = create(
   persist<ReportApplicationStore>(
     (set, get) => ({
       data: {
         reportId: null,
-        reportPriceType: 'BASIC',
+        reportPriceType: 'BASIC' as const,
         optionIds: [],
         isFeedbackApplied: false,
         couponId: null,
         paymentKey: null,
         orderId: null,
-        amount: '',
-        programPrice: 0,
-        programDiscount: 0,
+        amount: null,
+        programPrice: null,
+        programDiscount: null,
         applyUrl: '',
         recruitmentUrl: '',
-        desiredDate1: dayjs().format('YYYY-MM-DDTHH:00'),
-        desiredDate2: dayjs().format('YYYY-MM-DDTHH:00'),
-        desiredDate3: dayjs().format('YYYY-MM-DDTHH:00'),
+        desiredDate1: initialDate,
+        desiredDate2: initialDate,
+        desiredDate3: initialDate,
         wishJob: '',
         message: '',
         contactEmail: '',
@@ -72,14 +74,14 @@ const useReportApplicationStore = create(
             couponId: null,
             paymentKey: null,
             orderId: null,
-            amount: '',
-            programPrice: 0,
-            programDiscount: 0,
+            amount: null,
+            programPrice: null,
+            programDiscount: null,
             applyUrl: '',
             recruitmentUrl: '',
-            desiredDate1: dayjs().format('YYYY-MM-DDTHH:00'),
-            desiredDate2: dayjs().format('YYYY-MM-DDTHH:00'),
-            desiredDate3: dayjs().format('YYYY-MM-DDTHH:00'),
+            desiredDate1: initialDate,
+            desiredDate2: initialDate,
+            desiredDate3: initialDate,
             wishJob: '',
             message: '',
             contactEmail: '',
@@ -90,7 +92,7 @@ const useReportApplicationStore = create(
         const isEmpty = (value: string) => value === '' || !value;
         const currentData = get().data;
         if (isEmpty(currentData.applyUrl))
-          return { isValid: false, message: '진단용 이력서를 등록해주세요.' };
+          return { isValid: false, message: '진단용 서류를 등록해주세요.' };
 
         if (
           currentData.reportPriceType === 'PREMIUM' &&

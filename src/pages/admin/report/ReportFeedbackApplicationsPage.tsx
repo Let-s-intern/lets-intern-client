@@ -6,6 +6,8 @@ import {
   convertReportFeedbackStatus,
   convertReportPriceType,
   reportApplicationsForAdminInfoType,
+  ReportFeedbackStatus,
+  ReportPriceType,
   useGetReportApplicationOptionsForAdmin,
   useGetReportApplicationsForAdmin,
   usePatchReportApplicationSchedule,
@@ -27,7 +29,7 @@ const dateConverter = (date: string) => {
 };
 
 const timeConverter = (date: string) => {
-  return dayjs(date).format('A HH:00');
+  return dayjs(date).format('A hh:00');
 };
 
 const getProgressDate = (application: reportApplicationsForAdminInfoType) => {
@@ -118,7 +120,7 @@ const ReportFeedbackApplicationsPage = () => {
       reportId: Number(reportId),
       applicationId: modal?.application.applicationId || 0,
       desiredDateType: selectedDate.type,
-      desiredDateAdmin: selectedDate.date + 'Z',
+      desiredDateAdmin: selectedDate.type === 'DESIRED_DATE_ADMIN' ? selectedDate.date + 'Z' : undefined,
     });
   };
 
@@ -247,8 +249,23 @@ const ReportFeedbackApplicationsPage = () => {
                     </TD>
                     <TD>
                       {convertReportFeedbackStatus(
-                        application.reportFeedbackStatus || '-',
+                        application.reportFeedbackStatus as ReportFeedbackStatus || '-',
                       )}
+                      <div className='flex items-center justify-center mt-2'>
+                        <ActionButton
+                          bgColor="blue"
+                          onClick={() => {
+                            trySubmitSchedule({
+                              reportId: Number(reportId),
+                              applicationId: application.applicationId,
+                              reportFeedbackStatus: 'CONFIRMED',
+                            })
+                          }}
+                          disabled={application.reportFeedbackStatus !== 'PENDING'}
+                        >
+                          일정 확정하기
+                        </ActionButton>
+                      </div>
                     </TD>
                     <TD>
                       {application.createDate
@@ -284,7 +301,7 @@ const ReportFeedbackApplicationsPage = () => {
                   <h2 className="w-20 text-neutral-40">결제상품</h2>
                   <p>
                     {convertReportPriceType(
-                      modal.application.reportPriceType || '-',
+                      modal.application.reportPriceType as ReportPriceType || '-',
                     )}
                   </p>
                 </div>

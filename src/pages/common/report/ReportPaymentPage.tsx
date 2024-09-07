@@ -1,6 +1,7 @@
 import { FaArrowLeft } from 'react-icons/fa6';
 import { useNavigate } from 'react-router-dom';
 
+import { useGetReportDetailQuery } from '../../../api/report';
 import Card from '../../../components/common/report/Card';
 import Heading1 from '../../../components/common/report/Heading1';
 import Heading2 from '../../../components/common/report/Heading2';
@@ -12,7 +13,10 @@ import { ReportPaymentSection, UsereInfoSection } from './ReportApplyPage';
 const ReportPaymentPage = () => {
   const navigate = useNavigate();
 
-  const { data, setReportApplication, validate } = useReportApplicationStore();
+  const { data: reportApplication, validate } = useReportApplicationStore();
+  const { data: reportDetail } = useGetReportDetailQuery(
+    reportApplication.reportId!,
+  );
 
   return (
     <div className="px-5 md:px-32">
@@ -25,8 +29,11 @@ const ReportPaymentPage = () => {
       <BottomSheet>
         <button
           onClick={() => {
-            setReportApplication({ applyUrl: '', recruitmentUrl: '' }); // 이력서, 채용공고 초기화
-            navigate(-1);
+            const searchParams = new URLSearchParams();
+            searchParams.set('init', 'false');
+            navigate(
+              `/report/apply/${reportDetail?.reportType}/${reportApplication.reportId}?${searchParams.toString()}`,
+            );
           }}
           className="flex h-14 w-14 shrink-0 items-center justify-center rounded-md border-2 border-primary bg-neutral-100"
         >
@@ -39,11 +46,11 @@ const ReportPaymentPage = () => {
               alert(message);
               return;
             }
-            if (data.contactEmail === '') {
+            if (reportApplication.contactEmail === '') {
               alert('정보 수신용 이메일을 입력해주세요.');
               return;
             }
-            navigate(`/payment`);
+            navigate(`/report/toss/payment`);
           }}
           className="text-1.125-medium w-full rounded-md bg-primary py-3 text-center font-medium text-neutral-100"
         >

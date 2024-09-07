@@ -663,6 +663,8 @@ const AdminReportEditPage = () => {
             </div>
           </div>
 
+          <p className="text-sm">피드백 결제금액 = 가격 - 할인 가격</p>
+
           <h2 className="mt-10">콘텐츠 편집</h2>
           {reportDetail ? (
             <EditorApp

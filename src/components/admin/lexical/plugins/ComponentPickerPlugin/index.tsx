@@ -6,23 +6,23 @@
  *
  */
 
-import {$createCodeNode} from '@lexical/code';
+import { $createCodeNode } from '@lexical/code';
 import {
   INSERT_CHECK_LIST_COMMAND,
   INSERT_ORDERED_LIST_COMMAND,
   INSERT_UNORDERED_LIST_COMMAND,
 } from '@lexical/list';
-import {INSERT_EMBED_COMMAND} from '@lexical/react/LexicalAutoEmbedPlugin';
-import {useLexicalComposerContext} from '@lexical/react/LexicalComposerContext';
-import {INSERT_HORIZONTAL_RULE_COMMAND} from '@lexical/react/LexicalHorizontalRuleNode';
+import { INSERT_EMBED_COMMAND } from '@lexical/react/LexicalAutoEmbedPlugin';
+import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
+import { INSERT_HORIZONTAL_RULE_COMMAND } from '@lexical/react/LexicalHorizontalRuleNode';
 import {
   LexicalTypeaheadMenuPlugin,
   MenuOption,
   useBasicTypeaheadTriggerMatch,
 } from '@lexical/react/LexicalTypeaheadMenuPlugin';
-import {$createHeadingNode, $createQuoteNode} from '@lexical/rich-text';
-import {$setBlocksType} from '@lexical/selection';
-import {INSERT_TABLE_COMMAND} from '@lexical/table';
+import { $createHeadingNode, $createQuoteNode } from '@lexical/rich-text';
+import { $setBlocksType } from '@lexical/selection';
+import { INSERT_TABLE_COMMAND } from '@lexical/table';
 import {
   $createParagraphNode,
   $getSelection,
@@ -31,21 +31,20 @@ import {
   LexicalEditor,
   TextNode,
 } from 'lexical';
-import {useCallback, useMemo, useState} from 'react';
-import * as React from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import * as ReactDOM from 'react-dom';
 
 import useModal from '../../hooks/useModal';
 import catTypingGif from '../../images/cat-typing.gif';
-import {EmbedConfigs} from '../AutoEmbedPlugin';
-import {INSERT_COLLAPSIBLE_COMMAND} from '../CollapsiblePlugin';
-import {InsertEquationDialog} from '../EquationsPlugin';
-import {INSERT_EXCALIDRAW_COMMAND} from '../ExcalidrawPlugin';
-import {INSERT_IMAGE_COMMAND, InsertImageDialog} from '../ImagesPlugin';
+import { EmbedConfigs } from '../AutoEmbedPlugin';
+import { INSERT_COLLAPSIBLE_COMMAND } from '../CollapsiblePlugin';
+import { InsertEquationDialog } from '../EquationsPlugin';
+// import {INSERT_EXCALIDRAW_COMMAND} from '../ExcalidrawPlugin';
+import { INSERT_IMAGE_COMMAND, InsertImageDialog } from '../ImagesPlugin';
 import InsertLayoutDialog from '../LayoutPlugin/InsertLayoutDialog';
-import {INSERT_PAGE_BREAK} from '../PageBreakPlugin';
-import {InsertPollDialog} from '../PollPlugin';
-import {InsertTableDialog} from '../TablePlugin';
+import { INSERT_PAGE_BREAK } from '../PageBreakPlugin';
+import { InsertPollDialog } from '../PollPlugin';
+import { InsertTableDialog } from '../TablePlugin';
 
 class ComponentPickerOption extends MenuOption {
   // What shows up in the editor
@@ -104,7 +103,8 @@ function ComponentPickerMenuItem({
       aria-selected={isSelected}
       id={'typeahead-item-' + index}
       onMouseEnter={onMouseEnter}
-      onClick={onClick}>
+      onClick={onClick}
+    >
       {option.icon}
       <span className="text">{option.title}</span>
     </li>
@@ -133,7 +133,7 @@ function getDynamicOptions(editor: LexicalEditor, queryString: string) {
             icon: <i className="icon table" />,
             keywords: ['table'],
             onSelect: () =>
-              editor.dispatchCommand(INSERT_TABLE_COMMAND, {columns, rows}),
+              editor.dispatchCommand(INSERT_TABLE_COMMAND, { columns, rows }),
           }),
       ),
     );
@@ -239,12 +239,12 @@ function getBaseOptions(editor: LexicalEditor, showModal: ShowModal) {
       keywords: ['page break', 'divider'],
       onSelect: () => editor.dispatchCommand(INSERT_PAGE_BREAK, undefined),
     }),
-    new ComponentPickerOption('Excalidraw', {
-      icon: <i className="icon diagram-2" />,
-      keywords: ['excalidraw', 'diagram', 'drawing'],
-      onSelect: () =>
-        editor.dispatchCommand(INSERT_EXCALIDRAW_COMMAND, undefined),
-    }),
+    // new ComponentPickerOption('Excalidraw', {
+    //   icon: <i className="icon diagram-2" />,
+    //   keywords: ['excalidraw', 'diagram', 'drawing'],
+    //   onSelect: () =>
+    //     editor.dispatchCommand(INSERT_EXCALIDRAW_COMMAND, undefined),
+    // }),
     new ComponentPickerOption('Poll', {
       icon: <i className="icon poll" />,
       keywords: ['poll', 'vote'],
@@ -367,7 +367,7 @@ export default function ComponentPickerMenuPlugin(): JSX.Element {
         options={options}
         menuRenderFn={(
           anchorElementRef,
-          {selectedIndex, selectOptionAndCleanUp, setHighlightedIndex},
+          { selectedIndex, selectOptionAndCleanUp, setHighlightedIndex },
         ) =>
           anchorElementRef.current && options.length
             ? ReactDOM.createPortal(
