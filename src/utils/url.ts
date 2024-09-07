@@ -59,6 +59,10 @@ export function getBlogTitle({
   return `${title} | ${blogCategory[category || '']} - 렛츠커리어`;
 }
 
+export function getReportLandingTitle(title: string) {
+  return `${title} | 서류 진단 - 렛츠커리어`;
+}
+
 export function getBaseUrlFromServer(): string {
   return process.env.BASE_URL || 'http://localhost:3000';
 }

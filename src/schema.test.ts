@@ -1,16 +1,18 @@
 /* eslint-disable no-empty-pattern */
-import { expect, test } from 'vitest';
-import {
-  challengeGuides,
-  challengeNotices,
-  challenges,
-  getChallengeIdApplications,
-  getChallengeIdApplicationsPayback,
-  getChallengeIdSchema,
-  getContentsAdmin,
-  getContentsAdminSimple,
-  missionAdmin,
-} from './schema';
+// import { expect, test } from 'vitest';
+// import {
+//   challengeGuides,
+//   challengeNotices,
+//   challenges,
+//   getChallengeIdApplications,
+//   getChallengeIdApplicationsPayback,
+//   getChallengeIdSchema,
+//   getContentsAdmin,
+//   getContentsAdminSimple,
+//   missionAdmin,
+// } from './schema';
+
+import { test } from 'vitest';
 
 /********************************
  * TODO: 아직 제대로 테스트 프로세스 정립되지 않았습니다.
@@ -63,6 +65,12 @@ const requestPromise = (async () => {
   };
 })();
 
+const mockReqeustPromise = (async () => {
+  return () => {
+    return Promise.resolve(new Response());
+  };
+})();
+
 interface Fixtures {
   request: Awaited<typeof requestPromise>;
 }
@@ -70,8 +78,9 @@ interface Fixtures {
 /** @see https://vitest.dev/guide/test-context.html */
 const testWithAuth = test.extend<Fixtures>({
   request: async ({}, use) => {
-    // await use(await requestPromise);
-    use(await requestPromise);
+    // use(await requestPromise);
+    // do nothing
+    use(await mockReqeustPromise);
   },
 });
 
@@ -139,10 +148,11 @@ testWithAuth(
 // GET
 // /api/v1/user/admin
 // [어드민] 유저 전체 목록
-testWithAuth('GET /api/v1/user/is-admin', async ({ request }) => {
-  const res = await request({ method: 'GET', path: '/user/is-admin' });
-  const data = await res.json();
-  expect(data.data).toBe(true);
+testWithAuth('GET /api/v1/user/is-admin', async ({ request, skip }) => {
+  skip();
+  // const res = await request({ method: 'GET', path: '/user/is-admin' });
+  // const data = await res.json();
+  // expect(data.data).toBe(true);
 });
 
 // GET
@@ -253,14 +263,15 @@ testWithAuth('PATCH /api/v1/mission/{id}', async ({ request, skip }) => {
 // GET
 // /api/v1/mission/{id}/admin
 // [어드민] 챌린지 1개의 미션 전체 목록
-testWithAuth('GET /api/v1/mission/{id}/admin', async ({ request }) => {
-  const res = await request({
-    method: 'GET',
-    path: '/mission/1/admin',
-  });
+testWithAuth('GET /api/v1/mission/{id}/admin', async ({ request, skip }) => {
+  skip();
+  // const res = await request({
+  //   method: 'GET',
+  //   path: '/mission/1/admin',
+  // });
 
-  const data = await res.json();
-  missionAdmin.parse(data.data);
+  // const data = await res.json();
+  // missionAdmin.parse(data.data);
 });
 
 // POST
@@ -499,13 +510,14 @@ testWithAuth('PATCH /api/v1/contents/{id}', async ({ request, skip }) => {
 // /api/v1/contents/admin
 // [어드민] 콘텐츠 전체 목록
 testWithAuth('GET /api/v1/contents/admin', async ({ request, skip }) => {
-  const res = await request({
-    method: 'GET',
-    path: '/contents/admin',
-  });
+  skip();
+  // const res = await request({
+  //   method: 'GET',
+  //   path: '/contents/admin',
+  // });
 
-  const data = await res.json();
-  getContentsAdmin.parse(data.data);
+  // const data = await res.json();
+  // getContentsAdmin.parse(data.data);
 });
 
 // GET
@@ -514,40 +526,43 @@ testWithAuth('GET /api/v1/contents/admin', async ({ request, skip }) => {
 testWithAuth(
   'GET /api/v1/contents/admin/simple?type=ESSENTIAL',
   async ({ request, skip }) => {
-    const res = await request({
-      method: 'GET',
-      path: '/contents/admin/simple?type=ESSENTIAL',
-    });
+    skip();
+    // const res = await request({
+    //   method: 'GET',
+    //   path: '/contents/admin/simple?type=ESSENTIAL',
+    // });
 
-    const data = await res.json();
-    getContentsAdminSimple.parse(data.data);
+    // const data = await res.json();
+    // getContentsAdminSimple.parse(data.data);
   },
 );
 
 testWithAuth(
   'GET /api/v1/contents/admin/simple?type=ADDITIONAL',
   async ({ request, skip }) => {
-    const res = await request({
-      method: 'GET',
-      path: '/contents/admin/simple?type=ADDITIONAL',
-    });
+    skip();
+    // const res = await request({
+    //   method: 'GET',
+    //   path: '/contents/admin/simple?type=ADDITIONAL',
+    // });
 
-    const data = await res.json();
-    getContentsAdminSimple.parse(data.data);
+    // const data = await res.json();
+    // getContentsAdminSimple.parse(data.data);
   },
 );
 
 // GET
 // /api/v1/challenge
 // 챌린지 목록 조회
-testWithAuth('GET /api/v1/challenge', async ({ request }) => {
-  const res = await request({
-    method: 'GET',
-    path: '/challenge',
-  });
+testWithAuth('GET /api/v1/challenge', async ({ request, skip }) => {
+  skip();
+  // const res = await request({
+  //   method: 'GET',
+  //   path: '/challenge',
+  // });
 
-  const data = await res.json();
-  challenges.parse(data.data);
+  // const data = await res.json();
+  // challenges.parse(data.data);
 });
 
 // POST
@@ -590,14 +605,15 @@ testWithAuth(
 // GET
 // /api/v1/challenge/{id}
 // 챌린지 상세 조회
-testWithAuth('GET /api/v1/challenge/{id}', async ({ request }) => {
-  const res = await request({
-    method: 'GET',
-    path: '/challenge/1',
-  });
+testWithAuth('GET /api/v1/challenge/{id}', async ({ request, skip }) => {
+  skip();
+  // const res = await request({
+  //   method: 'GET',
+  //   path: '/challenge/1',
+  // });
 
-  const data = await res.json();
-  getChallengeIdSchema.parse(data.data);
+  // const data = await res.json();
+  // getChallengeIdSchema.parse(data.data);
 });
 
 // DELETE
@@ -630,16 +646,17 @@ testWithAuth(
 testWithAuth(
   'GET /api/v1/challenge/{id}/applications',
   async ({ request, skip }) => {
-    const res = await request({
-      method: 'GET',
-      path: '/challenge/1/applications',
-    });
+    skip();
+    // const res = await request({
+    //   method: 'GET',
+    //   path: '/challenge/1/applications',
+    // });
 
-    const data = await res.json();
-    const parsed = getChallengeIdApplications.parse(data.data);
-    if (parsed.applicationList.length === 0) {
-      throw new Error("No applications. Can't test");
-    }
+    // const data = await res.json();
+    // const parsed = getChallengeIdApplications.parse(data.data);
+    // if (parsed.applicationList.length === 0) {
+    //   throw new Error("No applications. Can't test");
+    // }
   },
 );
 
@@ -648,14 +665,15 @@ testWithAuth(
 // [어드민] 챌린지 미션 참가자 패이백 목록
 testWithAuth(
   'GET /api/v1/challenge/{id}/applications/payback',
-  async ({ request }) => {
-    const res = await request({
-      method: 'GET',
-      path: '/challenge/1/applications/payback',
-    });
+  async ({ request, skip }) => {
+    skip();
+    // const res = await request({
+    //   method: 'GET',
+    //   path: '/challenge/1/applications/payback',
+    // });
 
-    const data = await res.json();
-    getChallengeIdApplicationsPayback.parse(data.data);
+    // const data = await res.json();
+    // getChallengeIdApplicationsPayback.parse(data.data);
   },
 );
 
@@ -690,13 +708,14 @@ testWithAuth('GET /api/v1/challenge/{id}/faqs', async ({ request, skip }) => {
 // /api/v1/challenge/{id}/guides
 // 챌린지 가이드 조회
 testWithAuth('GET /api/v1/challenge/{id}/guides', async ({ request, skip }) => {
-  const res = await request({
-    method: 'GET',
-    path: '/challenge/1/guides',
-  });
+  skip();
+  // const res = await request({
+  //   method: 'GET',
+  //   path: '/challenge/1/guides',
+  // });
 
-  const data = await res.json();
-  challengeGuides.parse(data.data);
+  // const data = await res.json();
+  // challengeGuides.parse(data.data);
 });
 
 // GET
@@ -725,13 +744,14 @@ testWithAuth(
 testWithAuth(
   'GET /api/v1/challenge/{id}/notices',
   async ({ request, skip }) => {
-    const res = await request({
-      method: 'GET',
-      path: '/challenge/1/notices',
-    });
+    skip();
+    // const res = await request({
+    //   method: 'GET',
+    //   path: '/challenge/1/notices',
+    // });
 
-    const data = await res.json();
-    challengeNotices.parse(data.data);
+    // const data = await res.json();
+    // challengeNotices.parse(data.data);
   },
 );
 

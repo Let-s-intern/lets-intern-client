@@ -45,9 +45,13 @@ export function convertReportTypeToLandingPath(type: ReportType) {
   }
 }
 
-export function convertReportStatusToDisplayName(
-  status: ReportApplicationStatus,
+export function convertReportStatusToUserDisplayName(
+  status: ReportApplicationStatus | null | undefined,
 ) {
+  if (!status) {
+    return '';
+  }
+
   switch (status) {
     case 'APPLIED':
       return '확인중';
@@ -76,8 +80,12 @@ export function convertReportPriceTypeToDisplayName(
 }
 
 export function convertReportStatusToBadgeStatus(
-  status: ReportApplicationStatus,
+  status: ReportApplicationStatus | null | undefined,
 ): 'info' | 'success' {
+  if (!status) {
+    return 'info';
+  }
+
   switch (status) {
     case 'APPLIED':
       return 'info';
@@ -91,8 +99,12 @@ export function convertReportStatusToBadgeStatus(
 }
 
 export function convertFeedbackStatusToDisplayName(
-  status: ReportFeedbackStatus,
+  status: ReportFeedbackStatus | null | undefined,
 ) {
+  if (!status) {
+    return '';
+  }
+
   switch (status) {
     case 'APPLIED':
       return '확인중';
@@ -360,6 +372,8 @@ export const getActiveReportsSchema = z.object({
   portfolioInfo: getReportDetailSchema.nullable().optional(),
 });
 
+export type ActiveReports = z.infer<typeof getActiveReportsSchema>;
+
 export type ActiveReport = z.infer<typeof getReportDetailSchema>;
 
 export const getActiveReportsQueryKey = 'getActiveReports';
@@ -429,8 +443,8 @@ const getMyReportsSchema = z
         applicationId: z.number(),
         title: z.string().nullable().optional(),
         reportType: reportTypeSchema,
-        applicationStatus: reportApplicationStatusSchema,
-        feedbackStatus: reportFeedbackStatusSchema,
+        applicationStatus: reportApplicationStatusSchema.nullable().optional(),
+        feedbackStatus: reportFeedbackStatusSchema.nullable().optional(),
         reportUrl: z.string().nullable().optional(),
         applyUrl: z.string().nullable().optional(),
         recruitmentUrl: z.string().nullable().optional(),
@@ -464,81 +478,14 @@ export const useGetMyReports = (reportType?: ReportType) => {
     enabled: isLoggedIn,
     queryKey: ['getMyReports', reportType],
     queryFn: async () => {
-      // const res = await axios.get('/report/my', {
-      //   params: {
-      //     reportType,
-      //     size: 1000,
-      //   },
-      // });
-
-      // return getMyReportsSchema.parse(res.data.data);
-
-      const mockMyReportsData: z.infer<typeof getMyReportsSchema> = {
-        myReportInfos: [
-          {
-            reportId: 1,
-            applicationId: 1001,
-            title: 'Software Engineer Application',
-            reportType: 'RESUME',
-            applicationStatus: 'REPORTING',
-            feedbackStatus: 'PENDING',
-            reportUrl: 'https://pdfobject.com/pdf/sample.pdf',
-            applyUrl: 'https://pdfobject.com/pdf/sample.pdf',
-            recruitmentUrl: 'https://pdfobject.com/pdf/sample.pdf',
-            zoomLink: 'https://zoom.us/j/123456789',
-            zoomPassword: '987654',
-            desiredDate1: dayjs('2024-09-10T14:00:00.000Z'),
-            desiredDate2: dayjs('2024-09-11T15:00:00.000Z'),
-            desiredDate3: dayjs('2024-09-12T16:00:00.000Z'),
-            applicationTime: dayjs('2024-09-06T13:41:47.404Z'),
-            confirmedTime: dayjs('2024-09-07T10:30:00.000Z'),
-          },
-          {
-            reportId: 2,
-            applicationId: 1002,
-            title: 'Data Scientist Position',
-            reportType: 'PORTFOLIO',
-            applicationStatus: 'APPLIED',
-            feedbackStatus: 'CONFIRMED',
-            reportUrl: 'https://pdfobject.com/pdf/sample.pdf',
-            applyUrl: 'https://pdfobject.com/pdf/sample.pdf',
-            recruitmentUrl: null,
-            zoomLink: 'https://zoom.us/j/987654321',
-            zoomPassword: '123456',
-            desiredDate1: dayjs('2024-09-15T10:00:00.000Z'),
-            desiredDate2: dayjs('2024-09-16T11:00:00.000Z'),
-            desiredDate3: null,
-            applicationTime: dayjs('2024-09-05T09:30:00.000Z'),
-            confirmedTime: dayjs('2024-09-06T14:00:00.000Z'),
-          },
-          {
-            reportId: 3,
-            applicationId: 1003,
-            title: 'UX Designer Opening',
-            reportType: 'RESUME',
-            applicationStatus: 'COMPLETED',
-            feedbackStatus: 'COMPLETED',
-            reportUrl: 'https://naver.com',
-            applyUrl: 'https://naver.com',
-            recruitmentUrl: 'https://naver.com',
-            zoomLink: null,
-            zoomPassword: null,
-            desiredDate1: null,
-            desiredDate2: null,
-            desiredDate3: null,
-            applicationTime: dayjs('2024-09-01T11:15:00.000Z'),
-            confirmedTime: dayjs('2024-09-03T16:45:00.000Z'),
-          },
-        ],
-        pageInfo: {
-          pageNum: 0,
-          pageSize: 10,
-          totalElements: 3,
-          totalPages: 1,
+      const res = await axios.get('/report/my', {
+        params: {
+          reportType,
+          size: 1000,
         },
-      };
+      });
 
-      return mockMyReportsData;
+      return getMyReportsSchema.parse(res.data.data);
     },
   });
 };
@@ -578,6 +525,7 @@ const getMyReportFeedbacksSchema = z
     })),
   }));
 
+/** @deprecated `useGetMyReports` 에서 모두 사용함. */
 export const useGetMyReportFeedbacks = (
   reportType?: string,
   pageNumber: number = 0,
@@ -1006,6 +954,8 @@ const reportPaymentDetailSchema = z.object({
   reportPaymentInfo: reportPaymentInfoSchema,
   tossInfo: tossInfoType.nullable().optional(),
 });
+
+export type ReportPaymentInfo = z.infer<typeof reportPaymentInfoSchema>;
 
 export const useGetReportPaymentDetailQueryKey = 'getReportPayment';
 

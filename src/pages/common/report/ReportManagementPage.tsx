@@ -2,7 +2,7 @@ import {
   convertFeedbackStatusToBadgeStatus,
   convertFeedbackStatusToDisplayName,
   convertReportStatusToBadgeStatus,
-  convertReportStatusToDisplayName,
+  convertReportStatusToUserDisplayName,
   convertReportTypeToDisplayName,
   useGetMyReports,
 } from '@/api/report';
@@ -263,7 +263,9 @@ const ReportManagementPage = () => {
                       item.applicationStatus,
                     )}
                   >
-                    {convertReportStatusToDisplayName(item.applicationStatus)}
+                    {convertReportStatusToUserDisplayName(
+                      item.applicationStatus,
+                    )}
                   </Badge>
                   <h2 className="text-xsmall14 font-medium">{item.title}</h2>
                 </header>
@@ -320,7 +322,7 @@ const ReportManagementPage = () => {
                   {item.applicationStatus === 'APPLIED' ||
                   item.applicationStatus === 'REPORTING' ? (
                     <ReportManagementButton
-                      className="max-w-40 flex-1"
+                      className="report_button_click max-w-40 flex-1"
                       disabled
                     >
                       진단서 확인하기
@@ -334,7 +336,7 @@ const ReportManagementPage = () => {
                         handleDownloadOrOpen(item.applyUrl);
                       }}
                       download
-                      className="max-w-40 flex-1"
+                      className="report_button_click max-w-40 flex-1"
                     >
                       진단서 확인하기
                     </ReportManagementButton>
@@ -410,11 +412,15 @@ const ReportManagementPage = () => {
                     {item.feedbackStatus === 'APPLIED' ||
                     item.feedbackStatus === 'PENDING' ||
                     item.feedbackStatus === 'COMPLETED' ? (
-                      <ReportManagementButton disabled>
+                      <ReportManagementButton
+                        className="feedback_button_click"
+                        disabled
+                      >
                         피드백 참여하기
                       </ReportManagementButton>
                     ) : (
                       <ReportManagementButton
+                        className="feedback_button_click"
                         as={Link}
                         target="_blank"
                         to={item.applyUrl || ''}
@@ -433,7 +439,7 @@ const ReportManagementPage = () => {
       <div className="my-3">
         <Link
           to="/report/landing"
-          className="flex h-12 w-full items-center justify-center rounded-md border-2 border-primary bg-neutral-100 font-medium text-primary-dark transition hover:border-primary-light hover:bg-white"
+          className="add_button_click flex h-12 w-full items-center justify-center rounded-md border-2 border-primary bg-neutral-100 font-medium text-primary-dark transition hover:border-primary-light hover:bg-white"
         >
           추가 신청하기
         </Link>

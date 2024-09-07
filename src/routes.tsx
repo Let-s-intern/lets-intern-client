@@ -29,6 +29,16 @@ import PaymentFail from './pages/common/program/PaymentFail';
 import PaymentResult from './pages/common/program/PaymentResult';
 import ProgramDetail from './pages/common/program/ProgramDetail';
 import Programs from './pages/common/program/Programs';
+import ReportApplyPage from './pages/common/report/ReportApplyPage';
+import ReportManagementPage from './pages/common/report/ReportManagementPage';
+import ReportPage from './pages/common/report/ReportPage';
+import ReportPaymentFail from './pages/common/report/ReportPaymentFail';
+import ReportPaymentPage from './pages/common/report/ReportPaymentPage';
+import ReportPaymentResult from './pages/common/report/ReportPaymentResult';
+import ReportPersonalStatementPage from './pages/common/report/ReportPersonalStatementPage';
+import ReportPortfolioPage from './pages/common/report/ReportPortfolioPage';
+import ReportResumePage from './pages/common/report/ReportResumePage';
+import ReportTossPage from './pages/common/report/ReportTossPage';
 import ReviewCreate from './pages/common/review/ReviewCreate';
 import ReviewDetail from './pages/common/review/ReviewDetail';
 import Maintenance from './pages/maintenance/Maintenance';
@@ -103,6 +113,30 @@ export const routes: RouteObject[] = [
           { path: 'me', element: <MyChallengeDashboard /> },
         ],
       },
+
+      { path: 'report/landing', element: <ReportPage /> },
+      { path: 'report/landing/resume', element: <ReportResumePage /> },
+      {
+        path: 'report/landing/personal-statement',
+        element: <ReportPersonalStatementPage />,
+      },
+      { path: 'report/landing/portfolio', element: <ReportPortfolioPage /> },
+      // {/* :reportType은 RESUME, PERSONAL_STATEMENT, PORTFOLIO (대문자) TODO: 소문자로 옮기기 */}
+      {
+        path: 'report/apply/:reportType/:reportId',
+        element: <ReportApplyPage />,
+      },
+      // {/* 모바일 전용 서류진단 결제 페이지. 화면 구성이 많이 달라 모바일만 한 단계 추가함 */}
+      // {/* :reportType은 RESUME, PERSONAL_STATEMENT, PORTFOLIO (대문자) TODO: 소문자로 옮기기 */}
+      {
+        path: 'report/payment/:reportType/:reportId',
+        element: <ReportPaymentPage />,
+      },
+      { path: 'report/toss/payment', element: <ReportTossPage /> },
+      { path: 'report/order/result', element: <ReportPaymentResult /> },
+      { path: 'report/order/fail', element: <ReportPaymentFail /> },
+      { path: 'report/management', element: <ReportManagementPage /> },
+
       { path: 'write-review/challenge/:id', element: <WriteReviewChallenge /> },
       { path: 'write-review/live/:id', element: <WriteReviewLive /> },
       {

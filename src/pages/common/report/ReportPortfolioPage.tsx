@@ -1,3 +1,8 @@
+import { useActiveReports } from '@/context/ActiveReports';
+import { portfolioReportDescription } from '@/data/description';
+import useReportApplicationStore from '@/store/useReportApplicationStore';
+import { getBaseUrlFromServer, getReportLandingTitle } from '@/utils/url';
+import { useEffect } from 'react';
 import { Helmet } from 'react-helmet';
 import { useGetActiveReports } from '../../../api/report';
 import LexicalContent from '../../../components/common/blog/LexicalContent';
@@ -10,16 +15,21 @@ import {
 import ReportLandingHeader from '../../../components/common/report/ReportLandingHeader';
 
 const ReportPortfolioPage = () => {
-  const title = `포트폴리오 | 서류 진단 - 렛츠커리어`;
-  const url = `${window.location.origin}/report/landing/portfolio`;
-  // TODO: 설명 추가
-  const description = '서류 진단 프로그램입니다. ...';
-
+  const title = getReportLandingTitle('포트폴리오');
+  const url = `${typeof window !== 'undefined' ? window.location.origin : getBaseUrlFromServer()}/report/landing/portfolio`;
+  const description = portfolioReportDescription;
+  const activeReportsFromServer = useActiveReports();
   const { data } = useGetActiveReports();
-
-  const report = data?.portfolioInfo;
+  const activeReports = data || activeReportsFromServer;
+  const report = activeReports?.portfolioInfo;
 
   const root = JSON.parse(report?.contents || '{"root":{}}').root;
+
+  const { initReportApplication } = useReportApplicationStore();
+  useEffect(() => {
+    initReportApplication();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <>
