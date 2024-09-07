@@ -1,3 +1,4 @@
+import useAuthStore from '@/store/useAuthStore';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import dayjs from 'dayjs';
 import { z } from 'zod';
@@ -16,7 +17,13 @@ const reportTypeSchema = z.enum(['RESUME', 'PERSONAL_STATEMENT', 'PORTFOLIO']);
 
 export type ReportType = z.infer<typeof reportTypeSchema>;
 
-export function convertReportTypeToDisplayName(type: ReportType) {
+export function convertReportTypeToDisplayName(
+  type: ReportType | null | undefined,
+) {
+  if (!type) {
+    return '';
+  }
+
   switch (type) {
     case 'RESUME':
       return '이력서';
@@ -24,8 +31,92 @@ export function convertReportTypeToDisplayName(type: ReportType) {
       return '자기소개서';
     case 'PORTFOLIO':
       return '포트폴리오';
-    default:
-      return '-';
+  }
+}
+
+export function convertReportTypeToLandingPath(type: ReportType) {
+  switch (type) {
+    case 'RESUME':
+      return '/report/landing/resume';
+    case 'PERSONAL_STATEMENT':
+      return '/report/landing/personal-statement';
+    case 'PORTFOLIO':
+      return '/report/landing/portfolio';
+  }
+}
+
+export function convertReportStatusToDisplayName(
+  status: ReportApplicationStatus,
+) {
+  switch (status) {
+    case 'APPLIED':
+      return '확인중';
+    case 'REPORTING':
+      return '진단중';
+    case 'REPORTED':
+      return '진단완료';
+    case 'COMPLETED':
+      return '진단완료';
+  }
+}
+
+export function convertReportPriceTypeToDisplayName(
+  type: ReportPriceType | null | undefined,
+): string {
+  if (!type) {
+    return '';
+  }
+
+  switch (type) {
+    case 'BASIC':
+      return '베이직';
+    case 'PREMIUM':
+      return '프리미엄';
+  }
+}
+
+export function convertReportStatusToBadgeStatus(
+  status: ReportApplicationStatus,
+): 'info' | 'success' {
+  switch (status) {
+    case 'APPLIED':
+      return 'info';
+    case 'REPORTING':
+      return 'info';
+    case 'REPORTED':
+      return 'success';
+    case 'COMPLETED':
+      return 'success';
+  }
+}
+
+export function convertFeedbackStatusToDisplayName(
+  status: ReportFeedbackStatus,
+) {
+  switch (status) {
+    case 'APPLIED':
+      return '확인중';
+    case 'PENDING':
+      return '확인중';
+    case 'CONFIRMED':
+      return '일정확정';
+    case 'COMPLETED':
+      return '진행완료';
+  }
+}
+
+export function convertFeedbackStatusToBadgeStatus(
+  status: ReportFeedbackStatus,
+): 'info' | 'success' {
+  switch (status) {
+    case 'APPLIED':
+      return 'info';
+    case 'PENDING':
+      return 'info';
+    case 'CONFIRMED':
+      return 'info';
+    case 'COMPLETED':
+      return 'success';
   }
 }
 
@@ -58,9 +149,13 @@ const reportApplicationStatusSchema = z.enum([
   'COMPLETED',
 ]);
 
-export type ReportApplicationStatus = z.infer<typeof reportApplicationStatusSchema>;
+export type ReportApplicationStatus = z.infer<
+  typeof reportApplicationStatusSchema
+>;
 
-export const convertReportApplicationsStatus = (status: ReportApplicationStatus) => {
+export const convertReportApplicationsStatus = (
+  status: ReportApplicationStatus,
+) => {
   switch (status) {
     case 'APPLIED':
       return '신청완료';
@@ -252,48 +347,20 @@ export const useGetReportPriceDetail = (reportId: number) => {
   return useQuery({
     queryKey: ['getReportPriceDetail', reportId],
     queryFn: async () => {
-      // Mock data
-      const mockData = {
-        reportId,
-        reportPriceInfos: [
-          { reportPriceType: 'BASIC', price: 50000, discountPrice: 45000 },
-          { reportPriceType: 'PREMIUM', price: 100000, discountPrice: 90000 },
-        ],
-        reportOptionInfos: [
-          {
-            reportOptionId: 1,
-            price: 20000,
-            discountPrice: 18000,
-            title: '추가 피드백',
-          },
-          {
-            reportOptionId: 2,
-            price: 30000,
-            discountPrice: 27000,
-            title: '심층 분석',
-          },
-        ],
-        feedbackPriceInfo: {
-          reportFeedbackId: 1,
-          reportPriceType: 'PREMIUM',
-          feedbackPrice: 80000,
-          feedbackDiscountPrice: 72000,
-        },
-      };
       const res = await axios.get(`/report/${reportId}/price`);
-
       return getReportPriceDetailSchema.parse(res.data.data);
     },
   });
 };
 
 // GET /api/v1/report/active
-
 export const getActiveReportsSchema = z.object({
-  resumeInfo: getReportDetailSchema,
-  personalStatementInfo: getReportDetailSchema,
-  portfolioInfo: getReportDetailSchema,
+  resumeInfo: getReportDetailSchema.nullable().optional(),
+  personalStatementInfo: getReportDetailSchema.nullable().optional(),
+  portfolioInfo: getReportDetailSchema.nullable().optional(),
 });
+
+export type ActiveReport = z.infer<typeof getReportDetailSchema>;
 
 export const getActiveReportsQueryKey = 'getActiveReports';
 
@@ -360,11 +427,20 @@ const getMyReportsSchema = z
       z.object({
         reportId: z.number(),
         applicationId: z.number(),
-        title: z.string(),
-        type: reportTypeSchema,
-        reportApplicationStatus: reportApplicationStatusSchema,
-        applicationTime: z.string(),
-        completedTime: z.string().nullable(),
+        title: z.string().nullable().optional(),
+        reportType: reportTypeSchema,
+        applicationStatus: reportApplicationStatusSchema,
+        feedbackStatus: reportFeedbackStatusSchema,
+        reportUrl: z.string().nullable().optional(),
+        applyUrl: z.string().nullable().optional(),
+        recruitmentUrl: z.string().nullable().optional(),
+        zoomLink: z.string().nullable().optional(),
+        zoomPassword: z.string().nullable().optional(),
+        desiredDate1: z.string().nullable().optional(),
+        desiredDate2: z.string().nullable().optional(),
+        desiredDate3: z.string().nullable().optional(),
+        applicationTime: z.string().nullable().optional(),
+        confirmedTime: z.string().nullable().optional(),
       }),
     ),
     pageInfo: pageInfoSchema,
@@ -373,50 +449,96 @@ const getMyReportsSchema = z
     ...data,
     myReportInfos: data.myReportInfos.map((report) => ({
       ...report,
+      desiredDate1: report.desiredDate1 ? dayjs(report.desiredDate1) : null,
+      desiredDate2: report.desiredDate2 ? dayjs(report.desiredDate2) : null,
+      desiredDate3: report.desiredDate3 ? dayjs(report.desiredDate3) : null,
       applicationTime: dayjs(report.applicationTime),
-      completedTime: report.completedTime ? dayjs(report.completedTime) : null,
+      confirmedTime: report.confirmedTime ? dayjs(report.confirmedTime) : null,
     })),
   }));
 
-export const useGetMyReports = (
-  reportType?: string,
-  pageNumber: number = 0,
-  pageSize: number = 10,
-) => {
+export const useGetMyReports = (reportType?: ReportType) => {
+  const { isLoggedIn } = useAuthStore();
+
   return useQuery({
-    queryKey: ['getMyReports', reportType, pageNumber, pageSize],
+    enabled: isLoggedIn,
+    queryKey: ['getMyReports', reportType],
     queryFn: async () => {
-      // Mock data
-      const mockData = {
+      // const res = await axios.get('/report/my', {
+      //   params: {
+      //     reportType,
+      //     size: 1000,
+      //   },
+      // });
+
+      // return getMyReportsSchema.parse(res.data.data);
+
+      const mockMyReportsData: z.infer<typeof getMyReportsSchema> = {
         myReportInfos: [
           {
             reportId: 1,
-            applicationId: 101,
-            title: '이력서 진단 프로그램',
-            type: 'RESUME',
-            reportApplicationStatus: 'COMPLETED',
-            applicationTime: '2024-08-01T10:00:00',
-            completedTime: '2024-08-05T15:30:00',
+            applicationId: 1001,
+            title: 'Software Engineer Application',
+            reportType: 'RESUME',
+            applicationStatus: 'REPORTING',
+            feedbackStatus: 'PENDING',
+            reportUrl: 'https://pdfobject.com/pdf/sample.pdf',
+            applyUrl: 'https://pdfobject.com/pdf/sample.pdf',
+            recruitmentUrl: 'https://pdfobject.com/pdf/sample.pdf',
+            zoomLink: 'https://zoom.us/j/123456789',
+            zoomPassword: '987654',
+            desiredDate1: dayjs('2024-09-10T14:00:00.000Z'),
+            desiredDate2: dayjs('2024-09-11T15:00:00.000Z'),
+            desiredDate3: dayjs('2024-09-12T16:00:00.000Z'),
+            applicationTime: dayjs('2024-09-06T13:41:47.404Z'),
+            confirmedTime: dayjs('2024-09-07T10:30:00.000Z'),
           },
           {
             reportId: 2,
-            applicationId: 102,
-            title: '자기소개서 진단 프로그램',
-            type: 'PERSONAL_STATEMENT',
-            reportApplicationStatus: 'APPLIED',
-            applicationTime: '2024-08-10T14:00:00',
-            completedTime: null,
+            applicationId: 1002,
+            title: 'Data Scientist Position',
+            reportType: 'PORTFOLIO',
+            applicationStatus: 'APPLIED',
+            feedbackStatus: 'CONFIRMED',
+            reportUrl: 'https://pdfobject.com/pdf/sample.pdf',
+            applyUrl: 'https://pdfobject.com/pdf/sample.pdf',
+            recruitmentUrl: null,
+            zoomLink: 'https://zoom.us/j/987654321',
+            zoomPassword: '123456',
+            desiredDate1: dayjs('2024-09-15T10:00:00.000Z'),
+            desiredDate2: dayjs('2024-09-16T11:00:00.000Z'),
+            desiredDate3: null,
+            applicationTime: dayjs('2024-09-05T09:30:00.000Z'),
+            confirmedTime: dayjs('2024-09-06T14:00:00.000Z'),
+          },
+          {
+            reportId: 3,
+            applicationId: 1003,
+            title: 'UX Designer Opening',
+            reportType: 'RESUME',
+            applicationStatus: 'COMPLETED',
+            feedbackStatus: 'COMPLETED',
+            reportUrl: 'https://naver.com',
+            applyUrl: 'https://naver.com',
+            recruitmentUrl: 'https://naver.com',
+            zoomLink: null,
+            zoomPassword: null,
+            desiredDate1: null,
+            desiredDate2: null,
+            desiredDate3: null,
+            applicationTime: dayjs('2024-09-01T11:15:00.000Z'),
+            confirmedTime: dayjs('2024-09-03T16:45:00.000Z'),
           },
         ],
         pageInfo: {
-          totalElements: 5,
+          pageNum: 0,
+          pageSize: 10,
+          totalElements: 3,
           totalPages: 1,
-          currentPage: pageNumber,
-          currentElements: 2,
         },
       };
 
-      return getMyReportsSchema.parse(mockData);
+      return mockMyReportsData;
     },
   });
 };
@@ -638,7 +760,7 @@ export const useGetReportApplicationOptionsForAdmin = ({
       const res = await axios.get('/report/application/options', {
         params: { reportId, applicationId, priceType, code },
       });
-      
+
       return getReportApplicationOptionsForAdminSchema.parse(res.data.data);
     },
     enabled,
@@ -714,7 +836,7 @@ export const usePatchReportApplicationSchedule = ({
         ...(desiredDateType !== undefined && { desiredDateType }),
         ...(desiredDateAdmin !== undefined && { desiredDateAdmin }),
       };
-  
+
       const res = await axios.patch(
         `/report/${reportId}/application/${applicationId}/schedule`,
         payload,
@@ -867,12 +989,14 @@ const reportPaymentInfoSchema = z.object({
       title: z.string(),
     }),
   ),
-  feedbackPriceInfo: z.object({
-    reportFeedbackId: z.number(),
-    reportPriceType: reportPriceTypeSchema,
-    feedbackPrice: z.number(),
-    feedbackDiscountPrice: z.number(),
-  }).nullable(),
+  feedbackPriceInfo: z
+    .object({
+      reportFeedbackId: z.number(),
+      reportPriceType: reportPriceTypeSchema,
+      feedbackPrice: z.number(),
+      feedbackDiscountPrice: z.number(),
+    })
+    .nullable(),
   createDate: z.string(),
   lastModifiedDate: z.string(),
 });
@@ -881,43 +1005,50 @@ const reportPaymentDetailSchema = z.object({
   reportApplicationInfo: reportApplicationInfoSchema,
   reportPaymentInfo: reportPaymentInfoSchema,
   tossInfo: tossInfoType.nullable().optional(),
-})
+});
 
 export const useGetReportPaymentDetailQueryKey = 'getReportPayment';
 
 export const useGetReportPaymentDetailQuery = ({
   applicationId,
-  enabled
-}:{
+  enabled,
+}: {
   applicationId: number;
   enabled?: boolean;
 }) => {
   return useQuery({
     queryKey: [useGetReportPaymentDetailQueryKey],
     queryFn: async () => {
-      const res = await axios.get(`/report/application/${applicationId}/payment`);
+      const res = await axios.get(
+        `/report/application/${applicationId}/payment`,
+      );
       return reportPaymentDetailSchema.parse(res.data.data);
     },
-    enabled
+    enabled,
   });
-}
+};
 
 export const useDeleteReportApplication = ({
   successCallback,
   errorCallback,
-}:{
+}: {
   successCallback?: () => void;
   errorCallback?: (error: Error) => void;
 }) => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (reportApplicationId: number) => {
-      const res = await axios.delete(`/report/application/${reportApplicationId}`);
+      const res = await axios.delete(
+        `/report/application/${reportApplicationId}`,
+      );
       return res.data.data;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: [useGetReportApplicationsForAdminQueryKey, useGetReportPaymentDetailQueryKey],
+        queryKey: [
+          useGetReportApplicationsForAdminQueryKey,
+          useGetReportPaymentDetailQueryKey,
+        ],
       });
       successCallback && successCallback();
     },
@@ -925,7 +1056,7 @@ export const useDeleteReportApplication = ({
       errorCallback && errorCallback(error);
     },
   });
-}
+};
 
 // Utility function to generate mock data (for demonstration purposes)
 // const generateMockData = <T extends z.ZodType>(schema: T): z.infer<T> => {

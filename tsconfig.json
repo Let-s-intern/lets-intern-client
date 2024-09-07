@@ -15,7 +15,11 @@
     "lib": ["DOM", "DOM.Iterable", "ESNext"],
     "jsx": "preserve",
     "jsxImportSource": "react",
-    "noFallthroughCasesInSwitch": true
+    "noFallthroughCasesInSwitch": true,
+    "paths": {
+      "@components/*": ["./src/components/*"],
+      "@/*": ["./src/*"]
+    }
   },
   "exclude": ["build", "dist"]
 }
