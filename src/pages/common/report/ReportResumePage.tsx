@@ -1,3 +1,5 @@
+import useReportApplicationStore from '@/store/useReportApplicationStore';
+import { useEffect } from 'react';
 import { Helmet } from 'react-helmet';
 import { useGetActiveReports } from '../../../api/report';
 import LexicalContent from '../../../components/common/blog/LexicalContent';
@@ -20,6 +22,12 @@ const ReportResumePage = () => {
   const report = data?.resumeInfo;
 
   const root = JSON.parse(report?.contents || '{"root":{}}').root;
+
+  const { initReportApplication } = useReportApplicationStore();
+  useEffect(() => {
+    initReportApplication();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <>
