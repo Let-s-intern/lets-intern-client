@@ -33,7 +33,6 @@ const ReportTossPage = () => {
     reportApplication.reportId!,
   );
   const { data: participationInfo } = useGetParticipationInfo();
-  console.log(reportApplication);
 
   const handleButtonClick = async () => {
     if (!widgets) return;
