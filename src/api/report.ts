@@ -372,6 +372,8 @@ export const getActiveReportsSchema = z.object({
   portfolioInfo: getReportDetailSchema.nullable().optional(),
 });
 
+export type ActiveReports = z.infer<typeof getActiveReportsSchema>;
+
 export type ActiveReport = z.infer<typeof getReportDetailSchema>;
 
 export const getActiveReportsQueryKey = 'getActiveReports';
