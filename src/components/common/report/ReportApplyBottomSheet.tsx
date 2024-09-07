@@ -8,8 +8,24 @@ const ReportApplyBottomSheet = ({ report }: { report: ActiveReport }) => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
   return (
-    <div className="shadow-lg rounded-t-2xl fixed bottom-0 left-0 right-0 bg-white transition">
-      <div className="mx-auto max-w-5xl px-5 pb-2">
+    <div className="rounded-t-2xl fixed bottom-0 left-0 right-0 bg-white shadow-lg transition">
+      <div className="mx-auto max-w-5xl px-5 py-2">
+        <div className="mx-auto mb-2.5 h-[5px] w-16 rounded-full bg-neutral-80"></div>
+
+        {/* 본문 */}
+        {isDrawerOpen ? (
+          <div>
+            <p>asdf</p>
+            <p>zxcv</p>
+            <p>asdf</p>
+            <p>zxcv</p>
+            <p>asdf</p>
+            <p>zxcv</p>
+            <p>asdf</p>
+            <p>zxcv</p>
+          </div>
+        ) : null}
+
         {!isDrawerOpen ? (
           <button
             type="button"

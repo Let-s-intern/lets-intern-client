@@ -12,7 +12,7 @@ const getMimeType = (extension: string): string => {
   return mimeTypes[extension] || 'application/octet-stream';
 };
 
-export const handleDownload = (fileUrl: string) => {
+export const download = (fileUrl: string) => {
   const fileName = fileUrl.split('/').pop() || 'download';
   const fileExtension = fileName.split('.').pop()?.toLowerCase() || '';
   const mimeType = getMimeType(fileExtension);

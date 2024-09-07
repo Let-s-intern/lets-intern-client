@@ -6,7 +6,7 @@ import {
   convertReportTypeToDisplayName,
   useGetMyReports,
 } from '@/api/report';
-import { handleDownload } from '@/lib/download';
+import { download } from '@/lib/download';
 import { twMerge } from '@/lib/twMerge';
 import useAuthStore from '@/store/useAuthStore';
 import { ReportHeader } from '@components/common/report/ReportIntroSection';
@@ -35,6 +35,39 @@ const filters: {
   { label: '자기소개서', value: 'personal_statement' },
   { label: '포트폴리오', value: 'portfolio' },
 ];
+
+function isDownloadable(url: string | null | undefined): url is string {
+  if (!url) {
+    return false;
+  }
+
+  try {
+    const urlObject = new URL(url);
+    const pathname = urlObject.pathname;
+
+    if (
+      pathname.endsWith('.pdf') ||
+      pathname.endsWith('.doc') ||
+      pathname.endsWith('.docx')
+    ) {
+      return true;
+    }
+
+    return false;
+  } catch (e) {
+    return false;
+  }
+}
+
+function handleDownloadOrOpen(url: string | null | undefined) {
+  if (isDownloadable(url)) {
+    download(url);
+  } else if (url) {
+    window.open(url, '_blank');
+  } else {
+    window.alert('오류: 파일이 없습니다.');
+  }
+}
 
 // TODO: 공통화
 const DocIcon = () => (
@@ -261,7 +294,7 @@ const ReportManagementPage = () => {
                         to={item.applyUrl}
                         onClick={(e: MouseEvent<HTMLAnchorElement>) => {
                           e.preventDefault();
-                          handleDownload(item.applyUrl!);
+                          handleDownloadOrOpen(item.applyUrl);
                         }}
                         className="flex flex-col items-center gap-1 rounded-sm px-1 py-0.5 text-xxsmall12 text-neutral-40 transition hover:bg-neutral-0/5"
                       >
@@ -275,7 +308,7 @@ const ReportManagementPage = () => {
                         to={item.recruitmentUrl}
                         onClick={(e: MouseEvent<HTMLAnchorElement>) => {
                           e.preventDefault();
-                          handleDownload(item.recruitmentUrl!);
+                          handleDownloadOrOpen(item.applyUrl);
                         }}
                         className="flex flex-col items-center gap-1 rounded-sm px-1 py-0.5 text-xxsmall12 text-neutral-40 transition hover:bg-neutral-0/5"
                       >
@@ -298,11 +331,7 @@ const ReportManagementPage = () => {
                       to={item.reportUrl || ''}
                       onClick={(e: MouseEvent<HTMLAnchorElement>) => {
                         e.preventDefault();
-                        if (item.reportUrl) {
-                          handleDownload(item.reportUrl);
-                        } else {
-                          window.alert('오류: 진단서가 없습니다.');
-                        }
+                        handleDownloadOrOpen(item.applyUrl);
                       }}
                       download
                       className="max-w-40 flex-1"
