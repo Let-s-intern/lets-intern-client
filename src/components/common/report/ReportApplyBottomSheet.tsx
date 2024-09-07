@@ -25,7 +25,7 @@ const ReportApplyBottomSheet = ({ report }: { report: ActiveReport }) => {
 
   return (
     <div className="rounded-t-2xl fixed bottom-0 left-0 right-0 z-20 bg-white shadow-lg transition">
-      <div className="mx-auto max-h-[500px] max-w-5xl overflow-y-auto px-5 py-2">
+      <div className="mx-auto max-h-[500px] max-w-5xl overflow-y-auto px-5 py-2 sm:max-h-none">
         <div
           className="sticky top-2 z-10 mx-auto mb-2.5 h-[5px] w-16 rounded-full bg-neutral-80"
           onClick={() => {
