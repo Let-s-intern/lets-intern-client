@@ -352,7 +352,7 @@ const ReportManagementPage = () => {
                       to={item.reportUrl || ''}
                       onClick={(e: MouseEvent<HTMLAnchorElement>) => {
                         e.preventDefault();
-                        handleDownloadOrOpen(item.applyUrl);
+                        handleDownloadOrOpen(item.reportUrl);
                       }}
                       download
                       className="report_button_click max-w-40 flex-1"
