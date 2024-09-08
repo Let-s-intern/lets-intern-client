@@ -87,7 +87,7 @@ const ReportPaymentFail = () => {
             <div className="flex w-full items-center justify-between gap-x-4 bg-neutral-90 px-3 py-5">
               <div className="font-bold">예상 결제금액</div>
               <div className="font-bold">
-                {reportApplication.amount?.toLocaleString()}원
+                {payment.total?.toLocaleString()}원
               </div>
             </div>
             <div className="flex w-full flex-col items-center justify-center">
