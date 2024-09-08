@@ -439,7 +439,7 @@ const ReportManagementPage = () => {
                         className="feedback_button_click"
                         as={Link}
                         target="_blank"
-                        to={item.applyUrl || ''}
+                        to={item.zoomLink || ''}
                         rel="noreferrer"
                       >
                         피드백 참여하기
