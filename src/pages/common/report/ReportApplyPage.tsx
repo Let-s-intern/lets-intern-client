@@ -48,19 +48,15 @@ const ReportApplyPage = () => {
     validate,
   } = useReportApplicationStore();
 
-  const convertFile = () => {
+  const convertFile = async () => {
     // 파일 변환
     if (applyFile) {
-      uploadFile({ file: applyFile, type: 'REPORT' }).then((url: string) => {
-        setReportApplication({ applyUrl: url });
-      });
+      const url = await uploadFile({ file: applyFile, type: 'REPORT' });
+      setReportApplication({ applyUrl: url });
     }
     if (recruitmentFile) {
-      uploadFile({ file: recruitmentFile, type: 'REPORT' }).then(
-        (url: string) => {
-          setReportApplication({ recruitmentUrl: url });
-        },
-      );
+      const url = await uploadFile({ file: recruitmentFile, type: 'REPORT' });
+      setReportApplication({ recruitmentUrl: url });
     }
   };
 
@@ -95,8 +91,8 @@ const ReportApplyPage = () => {
           </button>
           <button
             className="next_button_click text-1.125-medium w-full rounded-md bg-primary py-3 text-center font-medium text-neutral-100"
-            onClick={() => {
-              convertFile();
+            onClick={async () => {
+              await convertFile();
               const { isValid, message } = validate();
               if (!isValid) {
                 alert(message);
@@ -116,8 +112,8 @@ const ReportApplyPage = () => {
             <ReportPaymentSection />
             <button
               className="complete_button_click w-full rounded-md bg-primary py-3 text-center text-small18 font-medium text-neutral-100"
-              onClick={() => {
-                convertFile();
+              onClick={async () => {
+                await convertFile();
                 const { isValid, message } = validate();
                 if (!isValid) {
                   alert(message);
