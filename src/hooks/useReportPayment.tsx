@@ -12,16 +12,18 @@ export interface ReportPriceInfo {
   discount: number;
   coupon: number;
   total: number;
+  isFeedbackApplied: boolean;
 }
 
 export default function useReportPayment() {
   // Sprint7 서류 진단 쿠폰 기능 없음
-  const [payment, setPayment] = useState({
+  const [payment, setPayment] = useState<ReportPriceInfo>({
     report: 0,
     feedback: 0,
     discount: 0,
     coupon: 0,
     total: 0,
+    isFeedbackApplied: false,
   });
 
   const { data: reportApplication, setReportApplication } =
@@ -70,7 +72,9 @@ export default function useReportPayment() {
   };
 
   useEffect(() => {
-    if (reportPriceDetail === undefined) return;
+    if (reportPriceDetail === undefined) {
+      return;
+    }
 
     const reportPriceInfo = reportPriceDetail.reportPriceInfos?.find(
       (info) => info.reportPriceType === reportApplication.reportPriceType,
@@ -102,6 +106,7 @@ export default function useReportPayment() {
       feedback: reportApplication.isFeedbackApplied
         ? (feedbackPriceInfo?.feedbackPrice ?? 0)
         : 0,
+      isFeedbackApplied: reportApplication.isFeedbackApplied,
     }));
 
     // 쿠폰 가격 책정

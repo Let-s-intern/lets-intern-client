@@ -95,10 +95,12 @@ const ReportPaymentFail = () => {
                 title={`서류 진단서 (${subTitle})`}
                 content={payment.report.toLocaleString() + '원'}
               />
-              <PaymentInfoRow
-                title="1:1 피드백"
-                content={payment.feedback.toLocaleString() + '원'}
-              />
+              {payment.isFeedbackApplied ? (
+                <PaymentInfoRow
+                  title="1:1 피드백"
+                  content={payment.feedback.toLocaleString() + '원'}
+                />
+              ) : null}
               <PaymentInfoRow
                 title={`할인  (${Math.ceil(
                   (payment.discount / (payment.report + payment.feedback)) *
