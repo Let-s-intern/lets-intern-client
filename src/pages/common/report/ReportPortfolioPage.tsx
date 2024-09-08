@@ -1,4 +1,4 @@
-import { useActiveReports } from '@/context/ActiveReports';
+import { useServerActiveReports } from '@/context/ActiveReports';
 import { portfolioReportDescription } from '@/data/description';
 import useReportApplicationStore from '@/store/useReportApplicationStore';
 import { getBaseUrlFromServer, getReportLandingTitle } from '@/utils/url';
@@ -18,7 +18,7 @@ const ReportPortfolioPage = () => {
   const title = getReportLandingTitle('포트폴리오');
   const url = `${typeof window !== 'undefined' ? window.location.origin : getBaseUrlFromServer()}/report/landing/portfolio`;
   const description = portfolioReportDescription;
-  const activeReportsFromServer = useActiveReports();
+  const activeReportsFromServer = useServerActiveReports();
   const { data } = useGetActiveReports();
   const activeReports = data || activeReportsFromServer;
   const report = activeReports?.portfolioInfo;

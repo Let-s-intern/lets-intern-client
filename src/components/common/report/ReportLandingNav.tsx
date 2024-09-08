@@ -4,6 +4,7 @@ import {
   convertReportTypeToDisplayName,
   convertReportTypeToLandingPath,
   ReportType,
+  useGetActiveReports,
 } from '../../../api/report';
 
 export const ReportLandingNavButton = ({
@@ -31,13 +32,23 @@ export const ReportLandingNavButton = ({
 };
 
 export const ReportLandingNav = () => {
-  return (
+  const { data, isSuccess } = useGetActiveReports();
+
+  const showResume = isSuccess ? data?.resumeInfo : true;
+  const showPersonalStatement = isSuccess ? data?.personalStatementInfo : true;
+  const showPortfolio = isSuccess ? data?.portfolioInfo : true;
+
+  const showNav = showResume || showPersonalStatement || showPortfolio;
+
+  return showNav ? (
     <nav className="sticky top-[60px] mb-4 flex items-center bg-neutral-10 md:top-[70px] lg:top-[76px]">
-      <ReportLandingNavButton reportType="RESUME" />
-      <ReportLandingNavButton reportType="PERSONAL_STATEMENT" />
-      <ReportLandingNavButton reportType="PORTFOLIO" />
+      {showResume ? <ReportLandingNavButton reportType="RESUME" /> : null}
+      {showPersonalStatement ? (
+        <ReportLandingNavButton reportType="PERSONAL_STATEMENT" />
+      ) : null}
+      {showPortfolio ? <ReportLandingNavButton reportType="PORTFOLIO" /> : null}
     </nav>
-  );
+  ) : null;
 };
 
 export default ReportLandingNav;

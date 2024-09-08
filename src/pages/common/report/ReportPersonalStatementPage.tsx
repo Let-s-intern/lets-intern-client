@@ -1,4 +1,4 @@
-import { useActiveReports } from '@/context/ActiveReports';
+import { useServerActiveReports } from '@/context/ActiveReports';
 import { personalStatementReportDescription } from '@/data/description';
 import useReportApplicationStore from '@/store/useReportApplicationStore';
 import { getBaseUrlFromServer, getReportLandingTitle } from '@/utils/url';
@@ -18,7 +18,7 @@ const ReportPersonalStatementPage = () => {
   const title = getReportLandingTitle('자기소개서');
   const url = `${typeof window !== 'undefined' ? window.location.origin : getBaseUrlFromServer()}/report/landing/personal-statement`;
   const description = personalStatementReportDescription;
-  const activeReportsFromServer = useActiveReports();
+  const activeReportsFromServer = useServerActiveReports();
   const { data } = useGetActiveReports();
   const activeReports = data || activeReportsFromServer;
   const report = activeReports?.personalStatementInfo;
