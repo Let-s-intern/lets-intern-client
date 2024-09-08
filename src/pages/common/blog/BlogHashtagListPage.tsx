@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import InfiniteScroll from 'react-infinite-scroller';
-import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 
 import { useBlogTagQuery, useInfiniteBlogListQuery } from '../../../api/blog';
 import { TagType } from '../../../api/blogSchema';
@@ -8,13 +8,10 @@ import BlogCard from '../../../components/common/blog/BlogCard';
 
 const BlogHashtagListPage = () => {
   const navigate = useNavigate();
-  const location = useLocation();
   const [searchParams, setSearchParams] = useSearchParams();
 
   const [isToggle, setIsToggle] = useState(false);
-  const [selectedTag, setSelectedTag] = useState<TagType | null>(
-    location.state as TagType,
-  );
+  const [selectedTag, setSelectedTag] = useState<TagType | null>(null);
 
   const { data: tagListData = [], isLoading: tagListIsLoading } =
     useBlogTagQuery();
@@ -39,6 +36,11 @@ const BlogHashtagListPage = () => {
     if (tagListData.length === 0) return;
 
     const tagId = searchParams.get('tagId');
+    if (!tagId) {
+      setSelectedTag(null);
+      return;
+    }
+
     const item = tagListData.find((tag) => tag.id === Number(tagId));
     setSelectedTag(item ?? null);
   }, [searchParams, tagListData]);
@@ -53,7 +55,15 @@ const BlogHashtagListPage = () => {
                 src="/icons/x-close.svg"
                 alt="hashtag"
                 className="h-6 w-6 cursor-pointer"
-                onClick={() => navigate(-1)}
+                onClick={() => {
+                  // 선택한 해시태그가 없으면 블로그 목록으로 이동
+                  if (!searchParams.has('tagId')) {
+                    navigate('/blog/list');
+                    return;
+                  }
+                  searchParams.delete('tagId');
+                  setSearchParams(searchParams);
+                }}
               />
               <h2 className="text-small18 font-bold text-neutral-0">
                 해시태그 검색
