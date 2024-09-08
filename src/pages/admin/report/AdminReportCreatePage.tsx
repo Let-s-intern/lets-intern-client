@@ -152,7 +152,7 @@ const AdminReportCreatePage = () => {
   };
 
   return (
-    <div className="mx-3 mb-40 mt-3 min-w-[1200px]">
+    <div className="mx-3 mb-40 mt-3 min-w-[800px]">
       <header>
         <h1 className="text-2xl font-semibold">서류 진단 등록</h1>
       </header>
