@@ -24,6 +24,8 @@ const BlogHashtagListPage = () => {
     pageable: { page: 0, size: 5 },
   });
 
+  console.log(blogListData);
+
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     if (selectedTag) {
@@ -55,7 +57,9 @@ const BlogHashtagListPage = () => {
               <h2 className="text-small18 font-bold text-neutral-0">
                 해시태그 검색
               </h2>
-              <span className="text-small18 text-primary">3건</span>
+              <span className="text-small18 text-primary">
+                {blogListData?.pages[0].pageInfo.totalElements}건
+              </span>
             </div>
             <div className="relative flex flex-col">
               <div
@@ -113,7 +117,7 @@ const BlogHashtagListPage = () => {
                   </div>
                 ) : (
                   blogListData.pages.map((page, pageIdx) =>
-                    page.blogInfos.map((blogInfo, blogIdx) => (
+                    page.blogInfos?.map((blogInfo, blogIdx) => (
                       <React.Fragment key={blogInfo.blogThumbnailInfo.id}>
                         <BlogCard
                           key={blogInfo.blogThumbnailInfo.id}
