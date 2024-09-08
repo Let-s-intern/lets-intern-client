@@ -103,7 +103,6 @@ const BlogListPage = () => {
                           <BlogCard
                             key={blogInfo.blogThumbnailInfo.id}
                             blogInfo={blogInfo}
-                            setSelectedTag={() => {}}
                           />
                           {!(
                             pageIdx === data.pages.length - 1 &&
