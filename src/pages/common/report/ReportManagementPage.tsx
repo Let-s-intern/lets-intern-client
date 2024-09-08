@@ -271,6 +271,9 @@ const ReportManagementPage = () => {
             <div
               className="flex flex-col rounded-md border border-neutral-80 p-4"
               key={item.applicationId}
+              data-application-id={item.applicationId}
+              data-report-id={item.reportId}
+              data-report-name={item.title}
             >
               <div>
                 <header className="mb-3 flex items-center gap-2">
