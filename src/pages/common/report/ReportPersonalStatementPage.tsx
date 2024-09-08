@@ -12,7 +12,7 @@ import {
   ReportHeader,
   ReportLandingIntroSection,
 } from '../../../components/common/report/ReportIntroSection';
-import ReportLandingHeader from '../../../components/common/report/ReportLandingHeader';
+import ReportLandingNav from '../../../components/common/report/ReportLandingNav';
 
 const ReportPersonalStatementPage = () => {
   const title = getReportLandingTitle('자기소개서');
@@ -50,8 +50,24 @@ const ReportPersonalStatementPage = () => {
         ) : null}
       </Helmet>
       <ReportLandingIntroSection header={<ReportHeader />} />
-      <div id="content">
-        <ReportLandingHeader />
+      <div
+        id="content"
+        ref={(element) => {
+          if (element) {
+            const url = new URL(window.location.href);
+
+            const from = url.searchParams.get('from');
+            if (!from) {
+              return;
+            }
+
+            if (from === 'nav') {
+              element.scrollIntoView();
+            }
+          }
+        }}
+      >
+        <ReportLandingNav />
         <ReportContentContainer>
           <LexicalContent node={root} />
         </ReportContentContainer>

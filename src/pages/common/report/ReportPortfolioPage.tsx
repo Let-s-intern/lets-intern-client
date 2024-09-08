@@ -12,7 +12,7 @@ import {
   ReportHeader,
   ReportLandingIntroSection,
 } from '../../../components/common/report/ReportIntroSection';
-import ReportLandingHeader from '../../../components/common/report/ReportLandingHeader';
+import ReportLandingNav from '../../../components/common/report/ReportLandingNav';
 
 const ReportPortfolioPage = () => {
   const title = getReportLandingTitle('포트폴리오');
@@ -28,6 +28,15 @@ const ReportPortfolioPage = () => {
   const { initReportApplication } = useReportApplicationStore();
   useEffect(() => {
     initReportApplication();
+    // const url = new URL(window.location.href);
+    // const from = url.searchParams.get('from');
+    // if (from === 'nav') {
+    //   document
+    //     .getElementById('content')
+    //     ?.scrollIntoView({ behavior: 'instant' });
+    // }
+    // url.searchParams.delete('from');
+    // window.history.replaceState({}, '', url.toString());
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -50,8 +59,24 @@ const ReportPortfolioPage = () => {
         ) : null}
       </Helmet>
       <ReportLandingIntroSection header={<ReportHeader />} />
-      <div id="content">
-        <ReportLandingHeader />
+      <div
+        id="content"
+        ref={(element) => {
+          if (element) {
+            const url = new URL(window.location.href);
+
+            const from = url.searchParams.get('from');
+            if (!from) {
+              return;
+            }
+
+            if (from === 'nav') {
+              element.scrollIntoView();
+            }
+          }
+        }}
+      >
+        <ReportLandingNav />
 
         <ReportContentContainer>
           <LexicalContent node={root} />

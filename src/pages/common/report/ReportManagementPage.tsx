@@ -18,6 +18,7 @@ import {
   forwardRef,
   MouseEvent,
   useEffect,
+  useRef,
 } from 'react';
 import { Link, NavLink, useNavigate, useSearchParams } from 'react-router-dom';
 
@@ -197,11 +198,7 @@ const ReportManagementPage = () => {
   const filterType = (searchParams.get('type') ??
     'all') as ReportFilter['type'];
 
-  const { data } = useGetMyReports();
-
-  useEffect(() => {
-    console.log('data', data);
-  }, [data]);
+  const { data, status } = useGetMyReports();
 
   const filteredApplications = data?.myReportInfos.filter((report) => {
     switch (filterType) {
@@ -215,6 +212,25 @@ const ReportManagementPage = () => {
         return report.reportType === 'PORTFOLIO';
     }
   });
+
+  useEffect(() => {
+    console.log('status', status);
+  }, [status]);
+
+  const alerted = useRef(false);
+
+  useEffect(() => {
+    if (status === 'success' && data.myReportInfos.length === 0) {
+      if (alerted.current) {
+        return;
+      }
+      alerted.current = true;
+      window.alert(
+        '서류 진단서 신청내역이 없습니다. 서류 진단서 신청페이지로 이동합니다.',
+      );
+      navigate('/report/landing');
+    }
+  }, [data?.myReportInfos.length, navigate, status]);
 
   return (
     <div className="mx-auto max-w-5xl px-5 pb-10">
