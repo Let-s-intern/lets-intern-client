@@ -111,14 +111,16 @@ export default function useReportPayment() {
         setPayment((prev) => ({
           ...prev,
           coupon: data.discount ?? 0,
+          total:
+            prev.report + prev.feedback - prev.discount - (data.discount ?? 0),
         }));
       });
+    } else {
+      setPayment((prev) => ({
+        ...prev,
+        total: prev.report + prev.feedback - prev.discount,
+      }));
     }
-
-    setPayment((prev) => ({
-      ...prev,
-      total: prev.report + prev.feedback - prev.discount - prev.coupon,
-    }));
   }, [reportPriceDetail]);
 
   useEffect(() => {
