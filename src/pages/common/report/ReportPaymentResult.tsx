@@ -100,6 +100,9 @@ const ReportPaymentResult = () => {
       .catch((e) => {
         // eslint-disable-next-line no-console
         console.error(e);
+        alert(
+          "결제 진행 중 문제가 발생했습니다. 아래 '채팅문의'로 문의 해주세요.",
+        );
         setResult(null);
       })
       .finally(() => {
