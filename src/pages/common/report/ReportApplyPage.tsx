@@ -337,7 +337,7 @@ const ScheduleSection = () => {
       <div className="flex w-[8.75rem] shrink-0 items-center gap-1">
         <Heading2>맞춤 첨삭 일정</Heading2>
         <Tooltip alt="맞춤 첨삭 일정 도움말">
-          1:1 첨삭은 서류 진단서 발급 이후에 진행됩니다.
+          1:1 피드백은 서류 진단서 발급 이후에 진행됩니다.
         </Tooltip>
       </div>
       <div className="flex w-full flex-col gap-5">

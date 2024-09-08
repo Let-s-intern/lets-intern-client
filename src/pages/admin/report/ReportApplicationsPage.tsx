@@ -257,7 +257,7 @@ const ReportApplicationsPage = () => {
                   </div>
                 </div>
                 <div className="flex w-full gap-x-2">
-                  <h2 className="w-20 text-neutral-40">1:1 첨삭</h2>
+                  <h2 className="w-20 text-neutral-40">1:1 피드백</h2>
                   <p>
                     {applicationModal.application.reportFeedbackStatus
                       ? 'O'
