@@ -169,7 +169,7 @@ const ProgramInfoSection = () => {
       <Card
         imgSrc="/images/report-thumbnail.png"
         imgAlt="서류 진단서 프로그램 썸네일"
-        title={title!}
+        title={title ?? ''}
         content={[
           {
             label: '상품',
