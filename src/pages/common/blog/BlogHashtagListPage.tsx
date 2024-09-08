@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import InfiniteScroll from 'react-infinite-scroller';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
+
 import { useBlogTagQuery, useInfiniteBlogListQuery } from '../../../api/blog';
 import { TagType } from '../../../api/blogSchema';
 import BlogCard from '../../../components/common/blog/BlogCard';
@@ -8,10 +9,13 @@ import BlogCard from '../../../components/common/blog/BlogCard';
 const BlogHashtagListPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const [searchParams, setSearchParams] = useSearchParams();
+
   const [isToggle, setIsToggle] = useState(false);
   const [selectedTag, setSelectedTag] = useState<TagType | null>(
     location.state as TagType,
   );
+
   const { data: tagListData = [], isLoading: tagListIsLoading } =
     useBlogTagQuery();
   const {
@@ -24,23 +28,20 @@ const BlogHashtagListPage = () => {
     pageable: { page: 0, size: 5 },
   });
 
-  console.log(blogListData);
-
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    if (selectedTag) {
-      params.set('tagId', selectedTag.id.toString());
-    } else {
-      params.delete('tagId');
-    }
-    const newUrl = `${window.location.pathname}?${params.toString()}`;
-    window.history.replaceState({}, '', newUrl);
-  }, [selectedTag]);
-
   const handleTagClick = (tag: TagType) => {
-    setSelectedTag(tag);
+    searchParams.set('tagId', tag.id.toString());
+    setSearchParams(searchParams);
     setIsToggle(false);
   };
+
+  useEffect(() => {
+    // 쿼리 파라미터에 tagId가 있을 경우 해시 태그 검색
+    if (tagListData.length === 0) return;
+
+    const tagId = searchParams.get('tagId');
+    const item = tagListData.find((tag) => tag.id === Number(tagId));
+    setSelectedTag(item ?? null);
+  }, [searchParams, tagListData]);
 
   return (
     <div className="mx-auto w-full max-w-[1200px] flex-1 flex-col items-center px-5 md:px-10">
@@ -122,7 +123,6 @@ const BlogHashtagListPage = () => {
                         <BlogCard
                           key={blogInfo.blogThumbnailInfo.id}
                           blogInfo={blogInfo}
-                          setSelectedTag={setSelectedTag}
                         />
                         {!(
                           pageIdx === blogListData.pages.length - 1 &&

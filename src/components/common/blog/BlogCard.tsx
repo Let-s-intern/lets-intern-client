@@ -1,17 +1,19 @@
-import { useLocation, useNavigate } from 'react-router-dom';
-import { BlogInfoSchema, TagType } from '../../../api/blogSchema';
+import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
+
+import { BlogInfoSchema } from '../../../api/blogSchema';
 import { blogCategory } from '../../../utils/convert';
 import { getBlogPathname } from '../../../utils/url';
 import BlogHashtag from './BlogHashtag';
 
 interface BlogCardProps {
   blogInfo: BlogInfoSchema;
-  setSelectedTag: (tag: TagType | null) => void;
 }
 
-const BlogCard = ({ blogInfo, setSelectedTag }: BlogCardProps) => {
+const BlogCard = ({ blogInfo }: BlogCardProps) => {
   const navigate = useNavigate();
   const location = useLocation();
+  const [searchParams, setSearchParams] = useSearchParams();
+
   return (
     <div
       className="flex w-full cursor-pointer flex-col gap-y-2 py-3"
@@ -56,7 +58,8 @@ const BlogCard = ({ blogInfo, setSelectedTag }: BlogCardProps) => {
               onClick={(e) => {
                 e.stopPropagation();
                 if (location.pathname === '/blog/hashtag') {
-                  setSelectedTag(tag || null);
+                  searchParams.set('tagId', tag.id.toString());
+                  setSearchParams(searchParams);
                   return;
                 }
                 navigate(`/blog/hashtag`, { state: tag });
