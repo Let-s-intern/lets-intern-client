@@ -19,6 +19,7 @@ if (isProd) {
       '@mui/material',
       '@mui/system',
       '@mui/utils',
+      '@mui/styled-engine',
     ],
   );
 }
@@ -54,6 +55,8 @@ export default defineConfig({
     alias: {
       '@': path.resolve(__dirname, './src'),
       '@components': path.resolve(__dirname, './src/components'),
+      '@renderer': path.resolve(__dirname, './renderer'),
+      '@pages': path.resolve(__dirname, './pages'),
     },
   },
 });

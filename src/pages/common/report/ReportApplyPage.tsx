@@ -8,7 +8,7 @@ import dayjs, { Dayjs } from 'dayjs';
 import React, { useEffect, useRef, useState } from 'react';
 import { FaArrowLeft } from 'react-icons/fa6';
 import { IoCloseOutline } from 'react-icons/io5';
-import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { twJoin } from 'tailwind-merge';
 
 import { useGetParticipationInfo } from '../../../api/application';
@@ -31,16 +31,11 @@ import Input from '../../../components/common/ui/input/Input';
 import useReportPayment from '../../../hooks/useReportPayment';
 import useReportProgramInfo from '../../../hooks/useReportProgramInfo';
 import useReportApplicationStore from '../../../store/useReportApplicationStore';
-import {
-  generateRandomNumber,
-  generateRandomString,
-} from '../../../utils/random';
 
 const ReportApplyPage = () => {
   const isUpTo1280 = useMediaQuery('(max-width: 1280px)');
   const navigate = useNavigate();
   const { reportType, reportId } = useParams();
-  const [searchParams] = useSearchParams();
 
   const [applyFile, setApplyFile] = useState<File | null>(null);
   const [recruitmentFile, setRecruitmentFile] = useState<File | null>(null);
@@ -48,7 +43,6 @@ const ReportApplyPage = () => {
   const {
     data: reportApplication,
     setReportApplication,
-    initReportApplication,
     validate,
   } = useReportApplicationStore();
 
@@ -67,20 +61,6 @@ const ReportApplyPage = () => {
       );
     }
   };
-
-  useEffect(() => {
-    // 모두 초기화
-    const init = searchParams.get('init');
-    if (!init || init === 'true') initReportApplication();
-
-    setReportApplication({
-      orderId: 'lets' + generateRandomString() + generateRandomNumber(),
-      reportId: Number(reportId),
-      // 파일만 초기화
-      applyUrl: '',
-      recruitmentUrl: '',
-    });
-  }, []);
 
   return (
     <div className="px-5 md:px-32 md:py-10 xl:flex xl:gap-16 xl:px-48">

@@ -18,7 +18,9 @@
     "noFallthroughCasesInSwitch": true,
     "paths": {
       "@components/*": ["./src/components/*"],
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "@renderer/*": ["./renderer/*"],
+      "@pages/*": ["./pages/*"]
     }
   },
   "exclude": ["build", "dist"]

@@ -5,10 +5,11 @@ import {
   ReportPriceType,
   useGetReportPriceDetail,
 } from '@/api/report';
+import { generateOrderId } from '@/lib/order';
 import useReportApplicationStore from '@/store/useReportApplicationStore';
 import { FormControl, RadioGroup } from '@mui/material';
 import { useCallback, useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import {
   ReportFormCheckboxControlLabel,
   ReportFormRadioControlLabel,
@@ -52,6 +53,20 @@ const ReportApplyBottomSheet = ({ report }: { report: ActiveReport }) => {
     },
     [setReportApplication],
   );
+
+  const navigate = useNavigate();
+
+  const handleApply = useCallback(() => {
+    setReportApplication({
+      orderId: generateOrderId(),
+      reportId: report.reportId,
+      // 파일만 초기화
+      applyUrl: '',
+      recruitmentUrl: '',
+    });
+
+    navigate(`/report/apply/${report.reportType}/${report.reportId}`);
+  }, [navigate, report.reportId, report.reportType, setReportApplication]);
 
   if (!priceInfo || !report.reportType) {
     return null;
@@ -193,7 +208,7 @@ const ReportApplyBottomSheet = ({ report }: { report: ActiveReport }) => {
         {!isDrawerOpen ? (
           <button
             type="button"
-            className="flex w-full flex-1 justify-center rounded-md border-2 border-primary bg-primary px-6 py-3 text-lg font-medium text-neutral-100 transition hover:bg-primary-light disabled:border-neutral-70 disabled:bg-neutral-70"
+            className="apply_button_click flex w-full flex-1 justify-center rounded-md border-2 border-primary bg-primary px-6 py-3 text-lg font-medium text-neutral-100 transition hover:bg-primary-light disabled:border-neutral-70 disabled:bg-neutral-70"
             onClick={() => setIsDrawerOpen(true)}
           >
             {report.reportType
@@ -209,17 +224,16 @@ const ReportApplyBottomSheet = ({ report }: { report: ActiveReport }) => {
               type="button"
               className="flex w-full flex-1 justify-center rounded-md border-2 border-primary bg-neutral-100 px-6 py-3 text-lg font-medium text-primary-dark transition hover:border-primary-light disabled:border-neutral-70 disabled:bg-neutral-70 disabled:text-white"
               onClick={() => setIsDrawerOpen(false)}
-              // disabled={contentIndex === 0}
-              // TODO: 초기화까지 진행
             >
               이전 단계로
             </button>
-            <Link
-              to={`/report/apply/${report.reportType}/${report.reportId}`}
+            <button
+              type="button"
+              onClick={handleApply}
               className="flex w-full flex-1 justify-center rounded-md border-2 border-primary bg-primary px-6 py-3 text-lg font-medium text-neutral-100 transition hover:bg-primary-light disabled:border-neutral-70 disabled:bg-neutral-70"
             >
               결제하기
-            </Link>
+            </button>
           </div>
         ) : null}
       </div>
