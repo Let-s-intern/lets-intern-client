@@ -208,7 +208,7 @@ const AdminReportCreatePage = () => {
                   value?.isValid() &&
                     setEditingValue({
                       ...editingValue,
-                      visibleDate: value?.toISOString(),
+                      visibleDate: value?.format('YYYY-MM-DDTHH:mm:ss'),
                     });
                 }}
                 ampm={false}
