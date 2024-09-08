@@ -341,7 +341,7 @@ const ReportManagementPage = () => {
                   {item.applicationStatus === 'APPLIED' ||
                   item.applicationStatus === 'REPORTING' ? (
                     <ReportManagementButton
-                      className="report_button_click max-w-40 flex-1"
+                      className="max-w-40 flex-1"
                       disabled
                     >
                       진단서 확인하기
