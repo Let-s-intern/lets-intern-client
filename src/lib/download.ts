@@ -13,23 +13,29 @@ const getMimeType = (extension: string): string => {
 };
 
 export const download = (fileUrl: string) => {
-  const fileName = fileUrl.split('/').pop() || 'download';
-  const fileExtension = fileName.split('.').pop()?.toLowerCase() || '';
-  const mimeType = getMimeType(fileExtension);
+  window.open(fileUrl, '_blank');
 
-  fetch(fileUrl)
-    .then((response) => response.blob())
-    .then((blob) => {
-      const url = window.URL.createObjectURL(
-        new Blob([blob], { type: mimeType }),
-      );
-      const link = document.createElement('a');
-      link.href = url;
-      link.setAttribute('download', fileName);
-      document.body.appendChild(link);
-      link.click();
-      link.parentNode?.removeChild(link);
-    })
-    // eslint-disable-next-line no-console
-    .catch((error) => console.error('Download failed:', error));
+  // const fileName = fileUrl.split('/').pop() || 'download';
+  // const fileExtension = fileName.split('.').pop()?.toLowerCase() || '';
+  // const mimeType = getMimeType(fileExtension);
+
+  // fetch(fileUrl)
+  //   .then((response) => response.blob())
+  //   .then((blob) => {
+  //     const url = window.URL.createObjectURL(
+  //       new Blob([blob], { type: mimeType }),
+  //     );
+  //     const link = document.createElement('a');
+  //     link.href = url;
+  //     link.setAttribute('download', fileName);
+  //     document.body.appendChild(link);
+  //     link.click();
+  //     link.parentNode?.removeChild(link);
+  //   })
+  //   // eslint-disable-next-line no-console
+  //   .catch((error) => {
+  //     console.error('Download failed:', error)
+  //     console.log("opening in new tab");
+
+  //   });
 };
