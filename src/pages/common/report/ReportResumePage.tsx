@@ -12,7 +12,7 @@ import {
   ReportHeader,
   ReportLandingIntroSection,
 } from '../../../components/common/report/ReportIntroSection';
-import ReportLandingHeader from '../../../components/common/report/ReportLandingHeader';
+import ReportLandingNav from '../../../components/common/report/ReportLandingNav';
 
 const ReportResumePage = () => {
   const title = getReportLandingTitle('이력서');
@@ -51,7 +51,7 @@ const ReportResumePage = () => {
       </Helmet>
       <ReportLandingIntroSection header={<ReportHeader />} />
       <div id="content">
-        <ReportLandingHeader />
+        <ReportLandingNav />
 
         <ReportContentContainer>
           <LexicalContent node={root} />

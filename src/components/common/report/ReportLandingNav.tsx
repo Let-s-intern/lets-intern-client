@@ -29,14 +29,14 @@ export const ReportLandingNavButton = ({
   );
 };
 
-export const ReportLandingHeader = () => {
+export const ReportLandingNav = () => {
   return (
-    <header className="sticky top-[60px] mb-4 flex items-center bg-neutral-10 md:top-[70px] lg:top-[76px]">
+    <nav className="sticky top-[60px] mb-4 flex items-center bg-neutral-10 md:top-[70px] lg:top-[76px]">
       <ReportLandingNavButton reportType="RESUME" />
       <ReportLandingNavButton reportType="PERSONAL_STATEMENT" />
       <ReportLandingNavButton reportType="PORTFOLIO" />
-    </header>
+    </nav>
   );
 };
 
-export default ReportLandingHeader;
+export default ReportLandingNav;
