@@ -166,6 +166,13 @@ const ReportApplyBottomSheet = ({ report }: { report: ActiveReport }) => {
     return null;
   }
 
+  const optionsAvailable =
+    priceInfo.reportOptionInfos && priceInfo.reportOptionInfos.length > 0;
+
+  const feedbackAvailable =
+    !priceInfo.feedbackPriceInfo ||
+    priceInfo.feedbackPriceInfo.feedbackPrice !== -1;
+
   return (
     <div className="fixed bottom-0 left-0 right-0 z-40 rounded-t-xl border-t border-neutral-0/5 bg-white shadow-lg transition">
       <div className="mx-auto max-h-screen max-w-5xl overflow-y-auto px-5 py-2 sm:max-h-none">
@@ -220,8 +227,7 @@ const ReportApplyBottomSheet = ({ report }: { report: ActiveReport }) => {
             </FormControl>
 
             {/* 기본 서비스 옵션 */}
-            {priceInfo.reportOptionInfos &&
-            priceInfo.reportOptionInfos.length > 0 ? (
+            {optionsAvailable ? (
               <FormControl fullWidth>
                 <h2 className="mb-2 text-xsmall14 font-semibold text-static-0">
                   기본 서비스 옵션 (현직자 피드백)
@@ -273,7 +279,7 @@ const ReportApplyBottomSheet = ({ report }: { report: ActiveReport }) => {
             ) : null}
 
             {/* 1:1 피드백 서비스 */}
-            {priceInfo.feedbackPriceInfo?.feedbackPrice !== -1 ? (
+            {feedbackAvailable ? (
               <FormControl fullWidth>
                 <h2 className="mb-2 text-xsmall14 font-semibold text-static-0">
                   1:1 피드백 서비스
@@ -315,15 +321,18 @@ const ReportApplyBottomSheet = ({ report }: { report: ActiveReport }) => {
                 />
               </div>
 
-              <div className="flex items-end justify-between py-2">
-                <span className="text-xsmall14 font-medium text-neutral-0/75">
-                  1:1 피드백
-                </span>
-                <ReportPriceView
-                  price={feedbackFinalPrice}
-                  discount={feedbackFinalDiscountPrice}
-                />
-              </div>
+              {feedbackAvailable ? (
+                <div className="flex items-end justify-between py-2">
+                  <span className="text-xsmall14 font-medium text-neutral-0/75">
+                    1:1 피드백
+                  </span>
+                  <ReportPriceView
+                    price={feedbackFinalPrice}
+                    discount={feedbackFinalDiscountPrice}
+                  />
+                </div>
+              ) : null}
+
               <hr className="my-4 border-neutral-0/5" />
               <div className="flex items-end justify-between py-2">
                 <span></span>

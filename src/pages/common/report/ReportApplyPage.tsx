@@ -538,6 +538,8 @@ export const ReportPaymentSection = () => {
     });
   }, []);
 
+  const showFeedback = reportApplication.isFeedbackApplied;
+
   return (
     <section className="flex flex-col">
       <Heading2>결제 정보</Heading2>
@@ -601,11 +603,13 @@ export const ReportPaymentSection = () => {
           {/* 서류 진단 + 사용자가 선택한 모든 옵션 가격을 더한 값 */}
           <span>{payment.report.toLocaleString()}원</span>
         </div>
-        <div className="flex h-10 items-center justify-between px-3 text-neutral-0">
-          <span>1:1 피드백</span>
-          {/* 1:1 피드백 가격 */}
-          <span>{payment.feedback.toLocaleString()}원</span>
-        </div>
+        {showFeedback ? (
+          <div className="flex h-10 items-center justify-between px-3 text-neutral-0">
+            <span>1:1 피드백</span>
+            {/* 1:1 피드백 가격 */}
+            <span>{payment.feedback.toLocaleString()}원</span>
+          </div>
+        ) : null}
         <div className="flex h-10 items-center justify-between px-3 text-neutral-0">
           {/* 서류진단 + 사용자가 선택한 모든 옵션 + 1:1 피드백의 할인 가격을 모두 더한 값 */}
           <span>
