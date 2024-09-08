@@ -220,54 +220,57 @@ const ReportApplyBottomSheet = ({ report }: { report: ActiveReport }) => {
             </FormControl>
 
             {/* 기본 서비스 옵션 */}
-            <FormControl fullWidth>
-              <h2 className="mb-2 text-xsmall14 font-semibold text-static-0">
-                기본 서비스 옵션 (현직자 피드백)
-              </h2>
-              <p className="text-xxsmall12 text-neutral-45">
-                *현직자 피드백 선택시, 현직자 멘토에게 쏠쏠한 서류 작성 꿀팁을
-                듣거나 앞으로의 커리어 조언까지 얻어갈 수 있어요.
-              </p>
-              <div className="my-2 flex flex-col">
-                {priceInfo.reportOptionInfos?.map((option) => {
-                  const price = option.price ?? 0;
-                  const discount = option.discountPrice ?? 0;
-                  const checked = Boolean(
-                    optionIds.find(
-                      (selectedOption) =>
-                        selectedOption === option.reportOptionId,
-                    ),
-                  );
+            {priceInfo.reportOptionInfos &&
+            priceInfo.reportOptionInfos.length > 0 ? (
+              <FormControl fullWidth>
+                <h2 className="mb-2 text-xsmall14 font-semibold text-static-0">
+                  기본 서비스 옵션 (현직자 피드백)
+                </h2>
+                <p className="text-xxsmall12 text-neutral-45">
+                  *현직자 피드백 선택시, 현직자 멘토에게 쏠쏠한 서류 작성 꿀팁을
+                  듣거나 앞으로의 커리어 조언까지 얻어갈 수 있어요.
+                </p>
+                <div className="my-2 flex flex-col">
+                  {priceInfo.reportOptionInfos?.map((option) => {
+                    const price = option.price ?? 0;
+                    const discount = option.discountPrice ?? 0;
+                    const checked = Boolean(
+                      optionIds.find(
+                        (selectedOption) =>
+                          selectedOption === option.reportOptionId,
+                      ),
+                    );
 
-                  return (
-                    <ReportFormCheckboxControlLabel
-                      key={option.reportOptionId}
-                      checked={checked}
-                      onChange={(e, checked) => {
-                        if (checked) {
-                          setSelectedOptionIds([
-                            ...optionIds,
-                            option.reportOptionId,
-                          ]);
-                        } else {
-                          setSelectedOptionIds(
-                            optionIds.filter(
-                              (selectedOption) =>
-                                selectedOption !== option.reportOptionId,
-                            ),
-                          );
+                    return (
+                      <ReportFormCheckboxControlLabel
+                        key={option.reportOptionId}
+                        checked={checked}
+                        onChange={(e, checked) => {
+                          if (checked) {
+                            setSelectedOptionIds([
+                              ...optionIds,
+                              option.reportOptionId,
+                            ]);
+                          } else {
+                            setSelectedOptionIds(
+                              optionIds.filter(
+                                (selectedOption) =>
+                                  selectedOption !== option.reportOptionId,
+                              ),
+                            );
+                          }
+                        }}
+                        wrapperClassName="items-end py-2"
+                        label={option.title}
+                        right={
+                          <ReportPriceView price={price} discount={discount} />
                         }
-                      }}
-                      wrapperClassName="items-end py-2"
-                      label={option.title}
-                      right={
-                        <ReportPriceView price={price} discount={discount} />
-                      }
-                    />
-                  );
-                })}
-              </div>
-            </FormControl>
+                      />
+                    );
+                  })}
+                </div>
+              </FormControl>
+            ) : null}
 
             {/* 1:1 피드백 서비스 */}
             {priceInfo.feedbackPriceInfo?.feedbackPrice !== -1 ? (
