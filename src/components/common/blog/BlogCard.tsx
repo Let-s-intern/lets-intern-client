@@ -57,12 +57,16 @@ const BlogCard = ({ blogInfo }: BlogCardProps) => {
               text={tag.title || ''}
               onClick={(e) => {
                 e.stopPropagation();
+
                 if (location.pathname === '/blog/hashtag') {
                   searchParams.set('tagId', tag.id.toString());
                   setSearchParams(searchParams);
                   return;
                 }
-                navigate(`/blog/hashtag`, { state: tag });
+
+                const params = new URLSearchParams();
+                params.set('tagId', tag.id.toString());
+                navigate(`/blog/hashtag?${params.toString()}`);
               }}
             />
           ))}
