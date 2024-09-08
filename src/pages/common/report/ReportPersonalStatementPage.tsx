@@ -1,4 +1,4 @@
-import { useActiveReports } from '@/context/ActiveReports';
+import { useServerActiveReports } from '@/context/ActiveReports';
 import { personalStatementReportDescription } from '@/data/description';
 import useReportApplicationStore from '@/store/useReportApplicationStore';
 import { getBaseUrlFromServer, getReportLandingTitle } from '@/utils/url';
@@ -12,13 +12,13 @@ import {
   ReportHeader,
   ReportLandingIntroSection,
 } from '../../../components/common/report/ReportIntroSection';
-import ReportLandingHeader from '../../../components/common/report/ReportLandingHeader';
+import ReportLandingNav from '../../../components/common/report/ReportLandingNav';
 
 const ReportPersonalStatementPage = () => {
   const title = getReportLandingTitle('자기소개서');
   const url = `${typeof window !== 'undefined' ? window.location.origin : getBaseUrlFromServer()}/report/landing/personal-statement`;
   const description = personalStatementReportDescription;
-  const activeReportsFromServer = useActiveReports();
+  const activeReportsFromServer = useServerActiveReports();
   const { data } = useGetActiveReports();
   const activeReports = data || activeReportsFromServer;
   const report = activeReports?.personalStatementInfo;
@@ -50,8 +50,24 @@ const ReportPersonalStatementPage = () => {
         ) : null}
       </Helmet>
       <ReportLandingIntroSection header={<ReportHeader />} />
-      <div id="content">
-        <ReportLandingHeader />
+      <div
+        id="content"
+        ref={(element) => {
+          if (element) {
+            const url = new URL(window.location.href);
+
+            const from = url.searchParams.get('from');
+            if (!from) {
+              return;
+            }
+
+            if (from === 'nav') {
+              element.scrollIntoView();
+            }
+          }
+        }}
+      >
+        <ReportLandingNav />
         <ReportContentContainer>
           <LexicalContent node={root} />
         </ReportContentContainer>

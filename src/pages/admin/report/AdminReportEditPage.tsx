@@ -1,3 +1,4 @@
+import AdminReportFeedback from '@components/admin/report/AdminReportFeedback';
 import {
   Button,
   FormControl,
@@ -25,10 +26,7 @@ import {
   usePatchReportMutation,
 } from '../../../api/report';
 import EditorApp from '../../../components/admin/lexical/EditorApp';
-import {
-  ReportEditingFeedbackPrice,
-  ReportEditingPrice,
-} from '../../../types/interface';
+import { ReportEditingPrice } from '../../../types/interface';
 
 const initialReport: UpdateReportData = {
   reportType: 'PERSONAL_STATEMENT',
@@ -236,7 +234,7 @@ const AdminReportEditPage = () => {
   };
 
   return (
-    <div className="mx-3 mb-40 mt-3">
+    <div className="mx-3 mb-40 mt-3 min-w-[800px]">
       <header>
         <h1 className="text-2xl font-semibold">서류 진단 등록</h1>
       </header>
@@ -292,7 +290,7 @@ const AdminReportEditPage = () => {
                   value?.isValid() &&
                     setEditingValue({
                       ...editingValue,
-                      visibleDate: value?.toISOString(),
+                      visibleDate: value?.format('YYYY-MM-DDTHH:mm:ss'),
                     });
                 }}
                 ampm={false}
@@ -586,84 +584,25 @@ const AdminReportEditPage = () => {
           </div>
 
           <hr></hr>
-          <div className="flex gap-4">
-            <FormControl size="small" className="w-48">
-              <InputLabel id="feedback-price-type-label">
-                1:1 피드백 가격설정
-              </InputLabel>
-              <Select<ReportEditingFeedbackPrice['type']>
-                id="feedback-price-type"
-                className="w-48"
-                name="feedback-price-type"
-                label="1:1 피드백 가격설정"
-                labelId="feedback-price-type-label"
-                value="basic"
-                // onChange={(value) => {
-                //   setEditingFeedbackPrice((prev) => {
-                //     return {
-                //       type: value.target.value as EditingFeedbackPrice['type'],
-                //       price: 0,
-                //       discount: 0,
-                //     };
-                //   });
-                // }}
-              >
-                <MenuItem value="basic">기본</MenuItem>
-              </Select>
-            </FormControl>
-            <div className="flex flex-col items-start gap-2">
-              <TextField
-                value={editingValue.feedbackInfo?.price || 0}
-                onChange={(e) => {
-                  setEditingValue((prev) => {
-                    return {
-                      ...prev,
-                      feedbackInfo: {
-                        discountPrice: 0,
-                        ...prev.feedbackInfo,
-                        price: Number(e.target.value),
-                      },
-                    };
-                  });
-                }}
-                variant="outlined"
-                name="feedbackPrice"
-                size="small"
-                label="피드백 가격"
-                placeholder="가격을 입력하세요"
-                InputLabelProps={{
-                  shrink: true,
-                  style: { fontSize: '14px' },
-                }}
-              />
-              <TextField
-                value={editingValue.feedbackInfo?.discountPrice}
-                onChange={(e) => {
-                  setEditingValue((prev) => {
-                    return {
-                      ...prev,
-                      feedbackInfo: {
-                        price: 0,
-                        ...prev.feedbackInfo,
-                        discountPrice: Number(e.target.value),
-                      },
-                    };
-                  });
-                }}
-                variant="outlined"
-                name="feedbackDiscountPrice"
-                size="small"
-                label="피드백 할인 가격"
-                placeholder="할인 가격을 입력하세요"
-                InputLabelProps={{
-                  shrink: true,
-                  style: { fontSize: '14px' },
-                }}
-              />
-            </div>
-          </div>
-
-          <p className="text-sm">피드백 결제금액 = 가격 - 할인 가격</p>
+          {reportDetail?.feedbackPriceInfo ? (
+            <AdminReportFeedback
+              initialValue={{
+                price: reportDetail.feedbackPriceInfo.feedbackPrice,
+                discount: reportDetail.feedbackPriceInfo.feedbackDiscountPrice,
+              }}
+              onChange={(value) => {
+                setEditingValue((prev) => {
+                  return {
+                    ...prev,
+                    feedbackInfo: {
+                      price: value.price,
+                      discountPrice: value.discount,
+                    },
+                  };
+                });
+              }}
+            />
+          ) : null}
 
           <h2 className="mt-10">콘텐츠 편집</h2>
           {reportDetail ? (

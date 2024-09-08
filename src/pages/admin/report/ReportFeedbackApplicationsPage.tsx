@@ -120,7 +120,10 @@ const ReportFeedbackApplicationsPage = () => {
       reportId: Number(reportId),
       applicationId: modal?.application.applicationId || 0,
       desiredDateType: selectedDate.type,
-      desiredDateAdmin: selectedDate.type === 'DESIRED_DATE_ADMIN' ? selectedDate.date + 'Z' : undefined,
+      desiredDateAdmin:
+        selectedDate.type === 'DESIRED_DATE_ADMIN'
+          ? selectedDate.date + 'Z'
+          : undefined,
     });
   };
 
@@ -131,7 +134,7 @@ const ReportFeedbackApplicationsPage = () => {
   return (
     <div className="p-8 pt-16">
       <Header>
-        <Heading>1:1 첨삭 참여자</Heading>
+        <Heading>1:1 피드백 참여자</Heading>
       </Header>
       <main>
         {isLoading ? (
@@ -249,9 +252,10 @@ const ReportFeedbackApplicationsPage = () => {
                     </TD>
                     <TD>
                       {convertReportFeedbackStatus(
-                        application.reportFeedbackStatus as ReportFeedbackStatus || '-',
+                        (application.reportFeedbackStatus as ReportFeedbackStatus) ||
+                          '-',
                       )}
-                      <div className='flex items-center justify-center mt-2'>
+                      <div className="mt-2 flex items-center justify-center">
                         <ActionButton
                           bgColor="blue"
                           onClick={() => {
@@ -259,9 +263,11 @@ const ReportFeedbackApplicationsPage = () => {
                               reportId: Number(reportId),
                               applicationId: application.applicationId,
                               reportFeedbackStatus: 'CONFIRMED',
-                            })
+                            });
                           }}
-                          disabled={application.reportFeedbackStatus !== 'PENDING'}
+                          disabled={
+                            application.reportFeedbackStatus !== 'PENDING'
+                          }
                         >
                           일정 확정하기
                         </ActionButton>
@@ -301,7 +307,8 @@ const ReportFeedbackApplicationsPage = () => {
                   <h2 className="w-20 text-neutral-40">결제상품</h2>
                   <p>
                     {convertReportPriceType(
-                      modal.application.reportPriceType as ReportPriceType || '-',
+                      (modal.application.reportPriceType as ReportPriceType) ||
+                        '-',
                     )}
                   </p>
                 </div>
@@ -326,7 +333,7 @@ const ReportFeedbackApplicationsPage = () => {
                   </div>
                 </div>
                 <div className="flex w-full gap-x-2">
-                  <h2 className="w-20 text-neutral-40">1:1 첨삭</h2>
+                  <h2 className="w-20 text-neutral-40">1:1 피드백</h2>
                   <p>{modal.application.reportFeedbackStatus ? 'O' : 'X'}</p>
                 </div>
                 <hr />

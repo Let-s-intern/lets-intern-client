@@ -87,7 +87,7 @@ const ReportPaymentFail = () => {
             <div className="flex w-full items-center justify-between gap-x-4 bg-neutral-90 px-3 py-5">
               <div className="font-bold">예상 결제금액</div>
               <div className="font-bold">
-                {reportApplication.amount?.toLocaleString()}원
+                {payment.total?.toLocaleString()}원
               </div>
             </div>
             <div className="flex w-full flex-col items-center justify-center">
@@ -95,22 +95,30 @@ const ReportPaymentFail = () => {
                 title={`서류 진단서 (${subTitle})`}
                 content={payment.report.toLocaleString() + '원'}
               />
-              <PaymentInfoRow
-                title="1:1 피드백"
-                content={payment.feedback + '원'}
-              />
+              {payment.isFeedbackApplied ? (
+                <PaymentInfoRow
+                  title="1:1 피드백"
+                  content={payment.feedback.toLocaleString() + '원'}
+                />
+              ) : null}
               <PaymentInfoRow
                 title={`할인  (${Math.ceil(
                   (payment.discount / (payment.report + payment.feedback)) *
                     100,
                 )}%)`}
                 content={
-                  payment.discount === 0 ? '0원' : `-${payment.discount}원`
+                  payment.discount === 0
+                    ? '0원'
+                    : `-${payment.discount.toLocaleString()}원`
                 }
               />
               <PaymentInfoRow
                 title="쿠폰할인"
-                content={payment.coupon === 0 ? '0원' : `-${payment.coupon}원`}
+                content={
+                  payment.coupon === 0
+                    ? '0원'
+                    : `-${payment.coupon.toLocaleString()}원`
+                }
               />
             </div>
             <Link

@@ -6,7 +6,10 @@ import {
   SelectChangeEvent,
 } from '@mui/material';
 import { DatePicker } from '@mui/x-date-pickers';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import dayjs, { Dayjs } from 'dayjs';
+import 'dayjs/locale/ko';
 
 import './date-pickers-toolbar.scss';
 
@@ -43,15 +46,17 @@ const DateTimePicker = ({
 }: DateTimePickerProps) => {
   return (
     <div className="mt-3 flex items-center gap-4">
-      <DatePicker
-        sx={dateTimePickerSx}
-        format="YY년 M월 D일(dd)"
-        label="날짜 선택"
-        name={name}
-        value={date}
-        minDate={dayjs()}
-        onChange={(date) => onChangeDate && onChangeDate(date, name)}
-      />
+      <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="ko">
+        <DatePicker
+          sx={dateTimePickerSx}
+          format="YY년 M월 D일(dd)"
+          label="날짜 선택"
+          name={name}
+          value={date}
+          minDate={dayjs()}
+          onChange={(date) => onChangeDate && onChangeDate(date, name)}
+        />
+      </LocalizationProvider>
       <FormControl sx={dateTimePickerSx}>
         <InputLabel id="time-select-label">시간 선택</InputLabel>
         <Select

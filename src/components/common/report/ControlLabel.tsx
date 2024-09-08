@@ -5,6 +5,7 @@ import {
   Radio,
 } from '@mui/material';
 import React from 'react';
+import { twMerge } from 'tailwind-merge';
 
 const radioSx = {
   color: '#E7E7E7',
@@ -32,14 +33,20 @@ interface ExtendedControlLabelProps
   extends Omit<FormControlLabelProps, 'control'> {
   subText?: string;
   right?: React.ReactNode;
+  wrapperClassName?: string;
 }
 
 export const ReportFormRadioControlLabel: React.FC<
   ExtendedControlLabelProps
-> = ({ subText, sx, ...restProps }) => {
+> = ({ subText, sx, right, wrapperClassName, ...restProps }) => {
   return (
-    <div className="flex items-center justify-between">
-      <div className="flex items-center">
+    <div
+      className={twMerge(
+        'flex items-center justify-between py-2',
+        wrapperClassName,
+      )}
+    >
+      <div className="flex h-5 items-center">
         <FormControlLabel
           sx={{ ...labelSx, ...sx }}
           control={<Radio size="small" sx={radioSx} />}
@@ -51,17 +58,22 @@ export const ReportFormRadioControlLabel: React.FC<
           </span>
         )}
       </div>
-      {restProps.right ? restProps.right : <div>{/* empty */}</div>}
+      {right ? right : <div>{/* empty */}</div>}
     </div>
   );
 };
 
 export const ReportFormCheckboxControlLabel: React.FC<
   ExtendedControlLabelProps
-> = ({ subText, sx, ...restProps }) => {
+> = ({ subText, sx, right, wrapperClassName, ...restProps }) => {
   return (
-    <div className="flex items-center justify-between">
-      <div className="flex items-center">
+    <div
+      className={twMerge(
+        'flex items-center justify-between py-2',
+        wrapperClassName,
+      )}
+    >
+      <div className="flex h-5 items-center">
         <FormControlLabel
           sx={{ ...labelSx, ...sx }}
           control={<Checkbox size="small" sx={checkboxSx} />}
@@ -73,7 +85,7 @@ export const ReportFormCheckboxControlLabel: React.FC<
           </span>
         )}
       </div>
-      {restProps.right ? restProps.right : <div>{/* empty */}</div>}
+      {right ? right : <div>{/* empty */}</div>}
     </div>
   );
 };

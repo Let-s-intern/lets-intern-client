@@ -250,7 +250,11 @@ export const useGetReportsForAdmin = () => {
   return useQuery({
     queryKey: [getReportsForAdminQueryKey],
     queryFn: async () => {
-      const res = await axios.get('/report?size=9999');
+      const res = await axios.get('/report', {
+        params: {
+          size: 10000,
+        },
+      });
       return getReportsForAdminSchema.parse(res.data.data);
     },
   });

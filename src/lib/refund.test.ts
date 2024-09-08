@@ -278,7 +278,6 @@ createTest(
   timings['진단서 수령 후 (피드백 일정 확정 후)'],
   40000,
   '서류 0%, 피드백 80%',
-  true,
 );
 
 createTest(

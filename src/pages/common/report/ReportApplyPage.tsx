@@ -11,6 +11,8 @@ import { IoCloseOutline } from 'react-icons/io5';
 import { useNavigate, useParams } from 'react-router-dom';
 import { twJoin } from 'tailwind-merge';
 
+import { couponInfoSchema } from '@/api/coupon';
+import axios from '@/utils/axios';
 import { useGetParticipationInfo } from '../../../api/application';
 import { uploadFile } from '../../../api/file';
 import {
@@ -46,19 +48,15 @@ const ReportApplyPage = () => {
     validate,
   } = useReportApplicationStore();
 
-  const convertFile = () => {
+  const convertFile = async () => {
     // 파일 변환
     if (applyFile) {
-      uploadFile({ file: applyFile, type: 'REPORT' }).then((url: string) => {
-        setReportApplication({ applyUrl: url });
-      });
+      const url = await uploadFile({ file: applyFile, type: 'REPORT' });
+      setReportApplication({ applyUrl: url });
     }
     if (recruitmentFile) {
-      uploadFile({ file: recruitmentFile, type: 'REPORT' }).then(
-        (url: string) => {
-          setReportApplication({ recruitmentUrl: url });
-        },
-      );
+      const url = await uploadFile({ file: recruitmentFile, type: 'REPORT' });
+      setReportApplication({ recruitmentUrl: url });
     }
   };
 
@@ -86,15 +84,15 @@ const ReportApplyPage = () => {
       {isUpTo1280 ? (
         <BottomSheet>
           <button
-            onClick={() => navigate(-1)}
+            onClick={() => navigate(`/report/landing/${reportType}`)}
             className="flex h-14 w-14 shrink-0 items-center justify-center rounded-md border-2 border-primary bg-neutral-100"
           >
             <FaArrowLeft size={20} />
           </button>
           <button
             className="next_button_click text-1.125-medium w-full rounded-md bg-primary py-3 text-center font-medium text-neutral-100"
-            onClick={() => {
-              convertFile();
+            onClick={async () => {
+              await convertFile();
               const { isValid, message } = validate();
               if (!isValid) {
                 alert(message);
@@ -114,8 +112,8 @@ const ReportApplyPage = () => {
             <ReportPaymentSection />
             <button
               className="complete_button_click w-full rounded-md bg-primary py-3 text-center text-small18 font-medium text-neutral-100"
-              onClick={() => {
-                convertFile();
+              onClick={async () => {
+                await convertFile();
                 const { isValid, message } = validate();
                 if (!isValid) {
                   alert(message);
@@ -171,7 +169,7 @@ const ProgramInfoSection = () => {
       <Card
         imgSrc="/images/report-thumbnail.png"
         imgAlt="서류 진단서 프로그램 썸네일"
-        title={title!}
+        title={title ?? ''}
         content={[
           {
             label: '상품',
@@ -339,7 +337,7 @@ const ScheduleSection = () => {
       <div className="flex w-[8.75rem] shrink-0 items-center gap-1">
         <Heading2>맞춤 첨삭 일정</Heading2>
         <Tooltip alt="맞춤 첨삭 일정 도움말">
-          1:1 첨삭은 서류 진단서 발급 이후에 진행됩니다.
+          1:1 피드백은 서류 진단서 발급 이후에 진행됩니다.
         </Tooltip>
       </div>
       <div className="flex w-full flex-col gap-5">
@@ -529,6 +527,19 @@ export const ReportPaymentSection = () => {
   const { data: reportApplication } = useReportApplicationStore();
   const { payment, applyCoupon, cancelCoupon } = useReportPayment();
 
+  // 쿠폰 코드 가져오기
+  useEffect(() => {
+    const couponId = reportApplication.couponId;
+    if (!couponId) return;
+
+    axios.get(`/coupon/admin/${couponId}`).then((res) => {
+      const data = couponInfoSchema.parse(res.data.data.couponInfo);
+      setCouponCode(data.code ?? '');
+    });
+  }, []);
+
+  const showFeedback = reportApplication.isFeedbackApplied;
+
   return (
     <section className="flex flex-col">
       <Heading2>결제 정보</Heading2>
@@ -592,11 +603,13 @@ export const ReportPaymentSection = () => {
           {/* 서류 진단 + 사용자가 선택한 모든 옵션 가격을 더한 값 */}
           <span>{payment.report.toLocaleString()}원</span>
         </div>
-        <div className="flex h-10 items-center justify-between px-3 text-neutral-0">
-          <span>1:1 피드백</span>
-          {/* 1:1 피드백 가격 */}
-          <span>{payment.feedback.toLocaleString()}원</span>
-        </div>
+        {showFeedback ? (
+          <div className="flex h-10 items-center justify-between px-3 text-neutral-0">
+            <span>1:1 피드백</span>
+            {/* 1:1 피드백 가격 */}
+            <span>{payment.feedback.toLocaleString()}원</span>
+          </div>
+        ) : null}
         <div className="flex h-10 items-center justify-between px-3 text-neutral-0">
           {/* 서류진단 + 사용자가 선택한 모든 옵션 + 1:1 피드백의 할인 가격을 모두 더한 값 */}
           <span>

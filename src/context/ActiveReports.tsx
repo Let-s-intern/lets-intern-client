@@ -20,7 +20,11 @@ export const ActiveReportsProvider: React.FC<{
   );
 };
 
-export const useActiveReports = () => {
+/**
+ * 서버사이드에서 active reports 데이터 내려줄 때 사용하는 훅.
+ * 일반적인 경우에는 useGetActiveReports를 사용해야 함.
+ */
+export const useServerActiveReports = () => {
   const blog = useContext(context).activeReports;
 
   return blog;

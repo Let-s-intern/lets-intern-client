@@ -9,6 +9,7 @@ import {
   ReportPriceType,
   useGetReportApplicationOptionsForAdmin,
   useGetReportApplicationsForAdmin,
+  useGetReportDetailAdminQuery,
   usePatchApplicationDocument,
 } from '../../../api/report';
 import DragDropModule from '../../../components/admin/report/DragDropModule';
@@ -49,6 +50,8 @@ const ReportApplicationsPage = () => {
     enabled: !!applicationModal?.application.applicationId,
   });
 
+  const { data: reportDetail } = useGetReportDetailAdminQuery(Number(reportId));
+
   const { mutate: patchDocument } = usePatchApplicationDocument({
     successCallback: () => {
       setApplicationModal(null);
@@ -83,7 +86,7 @@ const ReportApplicationsPage = () => {
   return (
     <div className="p-8 pt-16">
       <Header>
-        <Heading>서류 진단서 참여자</Heading>
+        <Heading>[{reportDetail?.title}] 서류 진단서 참여자</Heading>
       </Header>
       <main>
         {isLoading ? (
@@ -97,6 +100,7 @@ const ReportApplicationsPage = () => {
             <Table>
               <thead>
                 <tr>
+                  <TH>신청일자</TH>
                   <TH>환불여부</TH>
                   <TH>이름</TH>
                   <TH>이메일</TH>
@@ -107,12 +111,18 @@ const ReportApplicationsPage = () => {
                   <TH>채용공고</TH>
                   <TH>관리</TH>
                   <TH>상태</TH>
-                  <TH>신청일자</TH>
                 </tr>
               </thead>
               <tbody>
                 {data.reportApplicationsForAdminInfos.map((application) => (
                   <tr key={application.applicationId}>
+                    <TD>
+                      {application.createDate
+                        ? dayjs(application.createDate).format(
+                            'YYYY.MM.DD (dd) HH:mm',
+                          )
+                        : '-'}
+                    </TD>
                     <TD>{application.isRefunded ? 'O' : 'X'}</TD>
                     <TD>{application.name}</TD>
                     <TD>{application.contactEmail}</TD>
@@ -195,13 +205,6 @@ const ReportApplicationsPage = () => {
                         application.reportApplicationStatus,
                       )}
                     </TD>
-                    <TD>
-                      {application.createDate
-                        ? dayjs(application.createDate).format(
-                            'YYYY.MM.DD (dd)',
-                          )
-                        : '-'}
-                    </TD>
                   </tr>
                 ))}
               </tbody>
@@ -228,7 +231,8 @@ const ReportApplicationsPage = () => {
                   <h2 className="w-20 text-neutral-40">결제상품</h2>
                   <p>
                     {convertReportPriceType(
-                      applicationModal.application.reportPriceType as ReportPriceType || '-',
+                      (applicationModal.application
+                        .reportPriceType as ReportPriceType) || '-',
                     )}
                   </p>
                 </div>
@@ -253,7 +257,7 @@ const ReportApplicationsPage = () => {
                   </div>
                 </div>
                 <div className="flex w-full gap-x-2">
-                  <h2 className="w-20 text-neutral-40">1:1 첨삭</h2>
+                  <h2 className="w-20 text-neutral-40">1:1 피드백</h2>
                   <p>
                     {applicationModal.application.reportFeedbackStatus
                       ? 'O'
