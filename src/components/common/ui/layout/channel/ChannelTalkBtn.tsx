@@ -38,7 +38,8 @@ const ChannelTalkBtn = () => {
       id="custom-channel-button"
       className={clsx(
         (programDetailPathRegex.test(location.pathname) && isUpTo991) ||
-          (location.pathname.startsWith('/report') && isUpTo1280)
+          (location.pathname.startsWith('/report') && isUpTo1280) ||
+          location.pathname.startsWith('/report/landing')
           ? 'bottom-32'
           : 'bottom-20',
         {
