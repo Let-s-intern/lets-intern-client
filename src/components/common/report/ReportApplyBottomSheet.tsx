@@ -270,31 +270,34 @@ const ReportApplyBottomSheet = ({ report }: { report: ActiveReport }) => {
             </FormControl>
 
             {/* 1:1 피드백 서비스 */}
-            <FormControl fullWidth>
-              <h2 className="mb-2 text-xsmall14 font-semibold text-static-0">
-                1:1 피드백 서비스
-              </h2>
-              <p className="text-xxsmall12 text-neutral-45">
-                *1:1 피드백 선택시, 발급된 진단서를 바탕으로 온라인 미팅에서
-                커리어 전문가와 함께 나만의 맞춤형 서류를 완성할 수 있어요.
-              </p>
-              <ReportFormCheckboxControlLabel
-                checked={isFeedbackApplied}
-                onChange={(e, checked) => {
-                  setDoFeedbackService(checked);
-                }}
-                wrapperClassName="items-end py-2"
-                label="1:1 피드백 (40분)"
-                right={
-                  <ReportPriceView
-                    price={priceInfo.feedbackPriceInfo?.feedbackPrice}
-                    discount={
-                      priceInfo.feedbackPriceInfo?.feedbackDiscountPrice
-                    }
-                  />
-                }
-              />
-            </FormControl>
+            {priceInfo.feedbackPriceInfo?.feedbackPrice !== -1 ? (
+              <FormControl fullWidth>
+                <h2 className="mb-2 text-xsmall14 font-semibold text-static-0">
+                  1:1 피드백 서비스
+                </h2>
+                <p className="text-xxsmall12 text-neutral-45">
+                  *1:1 피드백 선택시, 발급된 진단서를 바탕으로 온라인 미팅에서
+                  커리어 전문가와 함께 나만의 맞춤형 서류를 완성할 수 있어요.
+                </p>
+                <ReportFormCheckboxControlLabel
+                  checked={isFeedbackApplied}
+                  onChange={(e, checked) => {
+                    setDoFeedbackService(checked);
+                  }}
+                  wrapperClassName="items-end py-2"
+                  label="1:1 피드백 (40분)"
+                  right={
+                    <ReportPriceView
+                      price={priceInfo.feedbackPriceInfo?.feedbackPrice}
+                      discount={
+                        priceInfo.feedbackPriceInfo?.feedbackDiscountPrice
+                      }
+                    />
+                  }
+                />
+              </FormControl>
+            ) : null}
+
             <div>
               <h2 className="mb-2 text-xsmall14 font-semibold text-static-0">
                 총 결제 금액
