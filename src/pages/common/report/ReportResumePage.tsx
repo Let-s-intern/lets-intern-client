@@ -50,7 +50,23 @@ const ReportResumePage = () => {
         ) : null}
       </Helmet>
       <ReportLandingIntroSection header={<ReportHeader />} />
-      <div id="content">
+      <div
+        id="content"
+        ref={(element) => {
+          if (element) {
+            const url = new URL(window.location.href);
+
+            const from = url.searchParams.get('from');
+            if (!from) {
+              return;
+            }
+
+            if (from === 'nav') {
+              element.scrollIntoView();
+            }
+          }
+        }}
+      >
         <ReportLandingNav />
 
         <ReportContentContainer>

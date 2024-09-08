@@ -12,7 +12,8 @@ export const ReportLandingNavButton = ({
   reportType: ReportType;
 }) => {
   const title = convertReportTypeToDisplayName(reportType);
-  const to = convertReportTypeToLandingPath(reportType) + '#content';
+  const to = convertReportTypeToLandingPath(reportType) + '?from=nav';
+
   return (
     <NavLink
       to={to}
