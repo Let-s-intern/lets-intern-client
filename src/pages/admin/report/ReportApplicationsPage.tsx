@@ -1,3 +1,4 @@
+import { MenuItem, Select } from '@mui/material';
 import dayjs from 'dayjs';
 import { useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
@@ -6,11 +7,13 @@ import {
   convertReportApplicationsStatus,
   convertReportPriceType,
   reportApplicationsForAdminInfoType,
+  ReportApplicationStatus,
   ReportPriceType,
   useGetReportApplicationOptionsForAdmin,
   useGetReportApplicationsForAdmin,
   useGetReportDetailAdminQuery,
   usePatchApplicationDocument,
+  usePatchApplicationStatus,
 } from '../../../api/report';
 import DragDropModule from '../../../components/admin/report/DragDropModule';
 import ActionButton from '../../../components/admin/ui/button/ActionButton';
@@ -21,8 +24,31 @@ import Table from '../../../components/admin/ui/table/regacy/Table';
 import TD from '../../../components/admin/ui/table/regacy/TD';
 import TH from '../../../components/admin/ui/table/regacy/TH';
 
+const reportApplicatoinsStatusList: {
+  value: ReportApplicationStatus;
+  label: string;
+}[] = [
+  {
+    value: 'APPLIED',
+    label: '1.' + convertReportApplicationsStatus('APPLIED'),
+  },
+  {
+    value: 'REPORTING',
+    label: '2.' + convertReportApplicationsStatus('REPORTING'),
+  },
+  {
+    value: 'REPORTED',
+    label: '3.' + convertReportApplicationsStatus('REPORTED'),
+  },
+  {
+    value: 'COMPLETED',
+    label: '4.' + convertReportApplicationsStatus('COMPLETED'),
+  },
+];
+
 const ReportApplicationsPage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
+
   const reportId = searchParams.get('reportId');
   const [applicationModal, setApplicationModal] = useState<{
     application: reportApplicationsForAdminInfoType;
@@ -58,6 +84,12 @@ const ReportApplicationsPage = () => {
       setUploadedFile(null);
     },
     errorCallback: (error: Error) => {
+      alert(error);
+    },
+  });
+
+  const { mutateAsync: patchStatus } = usePatchApplicationStatus({
+    errorCallback(error) {
       alert(error);
     },
   });
@@ -110,7 +142,7 @@ const ReportApplicationsPage = () => {
                   <TH>고민지점</TH>
                   <TH>서류</TH>
                   <TH>채용공고</TH>
-                  <TH>관리</TH>
+                  <TH>진단서 관리</TH>
                   <TH>상태</TH>
                 </tr>
               </thead>
@@ -203,15 +235,48 @@ const ReportApplicationsPage = () => {
                               );
                             }}
                           >
-                            진단서 확인
+                            진단서 보기
                           </ActionButton>
                         )}
                       </div>
                     </TD>
                     <TD>
-                      {convertReportApplicationsStatus(
-                        application.reportApplicationStatus,
-                      )}
+                      <Select
+                        value={application.reportApplicationStatus}
+                        onChange={async (event) => {
+                          const newStatus = event.target
+                            .value as ReportApplicationStatus;
+                          if (
+                            window.confirm(
+                              `
+                              ${application.name} 님의 상태를 변경합니다. \n정말로 ${convertReportApplicationsStatus(application.reportApplicationStatus)} → ${convertReportApplicationsStatus(
+                                newStatus,
+                              )}로 바꾸시겠습니까?`,
+                            )
+                          ) {
+                            await patchStatus({
+                              applicationId: application.applicationId,
+                              reportApplicationStatus: newStatus,
+                            });
+                          } else {
+                            event.target.value =
+                              application.reportApplicationStatus;
+                          }
+                        }}
+                        variant="outlined"
+                        sx={{
+                          '&': {
+                            fontSize: '0.825rem',
+                          },
+                        }}
+                        size="small"
+                      >
+                        {reportApplicatoinsStatusList.map((status) => (
+                          <MenuItem key={status.value} value={status.value}>
+                            {status.label}
+                          </MenuItem>
+                        ))}
+                      </Select>
                     </TD>
                   </tr>
                 ))}
