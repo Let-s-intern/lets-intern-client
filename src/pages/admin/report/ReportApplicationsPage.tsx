@@ -100,7 +100,8 @@ const ReportApplicationsPage = () => {
             <Table>
               <thead>
                 <tr>
-                  <TH>신청일자</TH>
+                  <TH>ID</TH>
+                  <TH>신청일시</TH>
                   <TH>환불여부</TH>
                   <TH>이름</TH>
                   <TH>이메일</TH>
@@ -116,12 +117,19 @@ const ReportApplicationsPage = () => {
               <tbody>
                 {data.reportApplicationsForAdminInfos.map((application) => (
                   <tr key={application.applicationId}>
+                    <TD>{application.applicationId}</TD>
                     <TD>
-                      {application.createDate
-                        ? dayjs(application.createDate).format(
-                            'YYYY.MM.DD (dd) HH:mm',
-                          )
-                        : '-'}
+                      {application.createDate ? (
+                        <p>
+                          {dayjs(application.createDate).format(
+                            'YYYY.MM.DD (dd)',
+                          )}
+                          <br></br>
+                          {dayjs(application.createDate).format('HH:mm')}
+                        </p>
+                      ) : (
+                        '-'
+                      )}
                     </TD>
                     <TD>{application.isRefunded ? 'O' : 'X'}</TD>
                     <TD>{application.name}</TD>

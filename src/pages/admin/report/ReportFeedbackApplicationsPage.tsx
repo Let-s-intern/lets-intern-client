@@ -10,6 +10,7 @@ import {
   ReportPriceType,
   useGetReportApplicationOptionsForAdmin,
   useGetReportApplicationsForAdmin,
+  useGetReportDetailAdminQuery,
   usePatchReportApplicationSchedule,
 } from '../../../api/report';
 import ActionButton from '../../../components/admin/ui/button/ActionButton';
@@ -131,10 +132,12 @@ const ReportFeedbackApplicationsPage = () => {
     console.log(selectedDate);
   }, [selectedDate]);
 
+  const { data: reportDetail } = useGetReportDetailAdminQuery(Number(reportId));
+
   return (
     <div className="p-8 pt-16">
       <Header>
-        <Heading>1:1 피드백 참여자</Heading>
+        <Heading>[{reportDetail?.title}] 1:1 피드백 참여자</Heading>
       </Header>
       <main>
         {isLoading ? (
@@ -148,6 +151,8 @@ const ReportFeedbackApplicationsPage = () => {
             <Table>
               <thead>
                 <tr>
+                  <TH>ID</TH>
+                  <TH>신청일시</TH>
                   <TH>환불여부</TH>
                   <TH>이름</TH>
                   <TH>이메일</TH>
@@ -158,13 +163,26 @@ const ReportFeedbackApplicationsPage = () => {
                   <TH>채용공고</TH>
                   <TH>관리</TH>
                   <TH>상태</TH>
-                  <TH>신청일자</TH>
                   <TH>진행일자</TH>
                 </tr>
               </thead>
               <tbody>
                 {data.reportApplicationsForAdminInfos.map((application) => (
                   <tr key={application.applicationId}>
+                    <TD>{application.applicationId}</TD>
+                    <TD>
+                      {application.createDate ? (
+                        <p>
+                          {dayjs(application.createDate).format(
+                            'YYYY.MM.DD (dd)',
+                          )}
+                          <br></br>
+                          {dayjs(application.createDate).format('HH:mm')}
+                        </p>
+                      ) : (
+                        '-'
+                      )}
+                    </TD>
                     <TD>{application.isRefunded ? 'O' : 'X'}</TD>
                     <TD>{application.name}</TD>
                     <TD>{application.contactEmail}</TD>
@@ -272,13 +290,6 @@ const ReportFeedbackApplicationsPage = () => {
                           일정 확정하기
                         </ActionButton>
                       </div>
-                    </TD>
-                    <TD>
-                      {application.createDate
-                        ? dayjs(application.createDate).format(
-                            'YYYY.MM.DD (dd)',
-                          )
-                        : '-'}
                     </TD>
                     <TD>{getProgressDate(application)}</TD>
                   </tr>
