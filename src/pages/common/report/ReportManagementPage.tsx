@@ -108,25 +108,6 @@ const CompanyBagIcon = () => (
   </svg>
 );
 
-// TODO: 공통화
-const QuestionIcon = () => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    width="20"
-    height="20"
-    viewBox="0 0 20 20"
-    fill="none"
-  >
-    <path
-      d="M8.74961 7.50186C8.89644 7.08447 9.18625 6.7325 9.56772 6.50831C9.94918 6.28412 10.3977 6.20217 10.8338 6.27697C11.2699 6.35177 11.6654 6.57851 11.9504 6.917C12.2353 7.2555 12.3913 7.68393 12.3906 8.1264C12.3906 9.37547 10.517 10 10.517 10M10.5412 12.5H10.5495M10.4163 16.6667C14.3283 16.6667 17.4996 13.4953 17.4996 9.58333C17.4996 5.67132 14.3283 2.5 10.4163 2.5C6.50426 2.5 3.33294 5.67132 3.33294 9.58333C3.33294 10.375 3.46281 11.1363 3.70241 11.8472C3.79258 12.1147 3.83766 12.2484 3.8458 12.3512C3.85383 12.4527 3.84776 12.5238 3.82265 12.6225C3.79723 12.7223 3.7411 12.8262 3.62885 13.034L2.2658 15.557C2.07138 15.9168 1.97416 16.0968 1.99592 16.2356C2.01487 16.3566 2.08606 16.4631 2.19058 16.5269C2.31059 16.6001 2.51402 16.579 2.92089 16.537L7.18841 16.0958C7.31764 16.0825 7.38226 16.0758 7.44116 16.0781C7.49908 16.0803 7.53998 16.0857 7.59647 16.0987C7.6539 16.112 7.72612 16.1398 7.87057 16.1954C8.66061 16.4998 9.51896 16.6667 10.4163 16.6667Z"
-      stroke="currentColor"
-      strokeWidth="1.5"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    />
-  </svg>
-);
-
 type ReportManagementButtonProps<T extends ElementType> = {
   as?: T;
   children: React.ReactNode;
@@ -212,10 +193,6 @@ const ReportManagementPage = () => {
         return report.reportType === 'PORTFOLIO';
     }
   });
-
-  useEffect(() => {
-    console.log('status', status);
-  }, [status]);
 
   const alerted = useRef(false);
 
@@ -339,7 +316,8 @@ const ReportManagementPage = () => {
                     ) : null}
                   </div>
                   {item.applicationStatus === 'APPLIED' ||
-                  item.applicationStatus === 'REPORTING' ? (
+                  item.applicationStatus === 'REPORTING' ||
+                  item.applicationStatus === 'REPORTED' ? (
                     <ReportManagementButton
                       className="max-w-40 flex-1"
                       disabled

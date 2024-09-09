@@ -58,7 +58,7 @@ export function convertReportStatusToUserDisplayName(
     case 'REPORTING':
       return '진단중';
     case 'REPORTED':
-      return '진단완료';
+      return '진단중'; // ADMIN: 진단서 업로드. 확정되지 않은 상태임
     case 'COMPLETED':
       return '진단완료';
   }
