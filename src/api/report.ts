@@ -359,9 +359,11 @@ const getReportPriceDetailSchema = z.object({
     .optional(),
 });
 
+export const getReportPriceDetailQueryKey = 'getReportPriceDetail';
+
 export const useGetReportPriceDetail = (reportId: number) => {
   return useQuery({
-    queryKey: ['getReportPriceDetail', reportId],
+    queryKey: [getReportPriceDetailQueryKey, reportId],
     queryFn: async () => {
       const res = await axios.get(`/report/${reportId}/price`);
       return getReportPriceDetailSchema.parse(res.data.data);
@@ -430,7 +432,7 @@ export const getReportDetailForAdminQueryKey = 'getReportDetailForAdmin';
 
 export const useGetReportDetailAdminQuery = (reportId: number) => {
   return useQuery({
-    queryKey: ['getReportDetailForAdmin', reportId],
+    queryKey: [getReportDetailForAdminQueryKey, reportId],
     queryFn: async () => {
       const data = await axios.get(`/report/${reportId}/admin`);
       return getReportDetailForAdminSchema.parse(data.data.data);
@@ -475,12 +477,14 @@ const getMyReportsSchema = z
     })),
   }));
 
+export const getMyReportsQueryKey = 'getMyReports';
+
 export const useGetMyReports = (reportType?: ReportType) => {
   const { isLoggedIn } = useAuthStore();
 
   return useQuery({
     enabled: isLoggedIn,
-    queryKey: ['getMyReports', reportType],
+    queryKey: [getMyReportsQueryKey, reportType],
     queryFn: async () => {
       const res = await axios.get('/report/my', {
         params: {
@@ -528,60 +532,6 @@ const getMyReportFeedbacksSchema = z
         : null,
     })),
   }));
-
-/** @deprecated `useGetMyReports` 에서 모두 사용함. */
-export const useGetMyReportFeedbacks = (
-  reportType?: string,
-  pageNumber: number = 0,
-  pageSize: number = 10,
-) => {
-  return useQuery({
-    queryKey: ['getMyReportFeedbacks', reportType, pageNumber, pageSize],
-    queryFn: async () => {
-      // Mock data
-      const mockData = {
-        myReportFeedbackInfos: [
-          {
-            reportId: 1,
-            applicationId: 101,
-            title: '이력서 1:1 첨삭',
-            type: 'RESUME',
-            reportFeedbackStatus: 'COMPLETED',
-            zoomLink: 'https://zoom.us/j/1234567890',
-            zoomPassword: '123456',
-            desiredDate1: '2024-08-15T10:00:00',
-            desiredDate2: '2024-08-16T14:00:00',
-            desiredDate3: '2024-08-17T16:00:00',
-            applicationTime: '2024-08-01T10:00:00',
-            confirmedTime: '2024-08-15T10:00:00',
-          },
-          {
-            reportId: 2,
-            applicationId: 102,
-            title: '자기소개서 1:1 첨삭',
-            type: 'PERSONAL_STATEMENT',
-            reportFeedbackStatus: 'PENDING',
-            zoomLink: null,
-            zoomPassword: null,
-            desiredDate1: '2024-08-20T11:00:00',
-            desiredDate2: '2024-08-21T15:00:00',
-            desiredDate3: '2024-08-22T17:00:00',
-            applicationTime: '2024-08-10T14:00:00',
-            confirmedTime: null,
-          },
-        ],
-        pageInfo: {
-          totalElements: 5,
-          totalPages: 1,
-          currentPage: pageNumber,
-          currentElements: 2,
-        },
-      };
-
-      return getMyReportFeedbacksSchema.parse(mockData);
-    },
-  });
-};
 
 const reportApplicationsForAdminInfoSchema = z.object({
   applicationId: z.number(),
@@ -971,7 +921,7 @@ export const useGetReportPaymentDetailQuery = ({
   enabled?: boolean;
 }) => {
   return useQuery({
-    queryKey: [useGetReportPaymentDetailQueryKey],
+    queryKey: [useGetReportPaymentDetailQueryKey, applicationId],
     queryFn: async () => {
       const res = await axios.get(
         `/report/application/${applicationId}/payment`,
@@ -999,10 +949,10 @@ export const useDeleteReportApplication = ({
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: [
-          useGetReportApplicationsForAdminQueryKey,
-          useGetReportPaymentDetailQueryKey,
-        ],
+        queryKey: [useGetReportApplicationsForAdminQueryKey],
+      });
+      queryClient.invalidateQueries({
+        queryKey: [useGetReportPaymentDetailQueryKey],
       });
       successCallback && successCallback();
     },
