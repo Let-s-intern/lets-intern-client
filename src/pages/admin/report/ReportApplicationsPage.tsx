@@ -1,4 +1,5 @@
-import { MenuItem, Select } from '@mui/material';
+import { generateRandomString } from '@/utils/random';
+import { MenuItem, Select, Snackbar } from '@mui/material';
 import dayjs from 'dayjs';
 import { useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
@@ -48,6 +49,13 @@ const reportApplicatoinsStatusList: {
 
 const ReportApplicationsPage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
+  const [snackbar, setSnackbar] = useState<{
+    open: boolean;
+    message: string;
+  }>({
+    open: false,
+    message: '',
+  });
 
   const reportId = searchParams.get('reportId');
   const [applicationModal, setApplicationModal] = useState<{
@@ -82,6 +90,10 @@ const ReportApplicationsPage = () => {
     successCallback: () => {
       setApplicationModal(null);
       setUploadedFile(null);
+      setSnackbar({
+        open: true,
+        message: '진단서가 업로드되었습니다.',
+      });
     },
     errorCallback: (error: Error) => {
       alert(error);
@@ -89,6 +101,12 @@ const ReportApplicationsPage = () => {
   });
 
   const { mutateAsync: patchStatus } = usePatchApplicationStatus({
+    successCallback() {
+      setSnackbar({
+        open: true,
+        message: '상태가 변경되었습니다.',
+      });
+    },
     errorCallback(error) {
       alert(error);
     },
@@ -100,7 +118,7 @@ const ReportApplicationsPage = () => {
     const url = await uploadFile({
       file: newFile,
       type: 'REPORT',
-      name: `${applicationModal?.application.applicationId}_report.pdf`,
+      name: `${generateRandomString(7)}_${applicationModal?.application.applicationId}_report.pdf`,
     });
 
     setUploadedFile(url);
@@ -409,6 +427,12 @@ const ReportApplicationsPage = () => {
           </div>
         )}
       </main>
+      <Snackbar
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+        open={snackbar.open}
+        onClose={() => setSnackbar({ ...snackbar, open: false })}
+        message={snackbar.message}
+      />
     </div>
   );
 };
