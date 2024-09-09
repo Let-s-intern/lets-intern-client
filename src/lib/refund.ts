@@ -106,25 +106,32 @@ export const getReportRefundPercent = ({
     return 0;
   }
 
-  // 결제 후 3시간 이내 : 100% 환불
-  if (now.diff(dayjs(paymentInfo.createDate), 'hour') < 3) {
+  // 상태가 "신청완료"일 때 결제 후 3시간 이내 : 100% 환불
+  if (
+    reportApplicationStatus === 'APPLIED' &&
+    now.diff(dayjs(paymentInfo.createDate), 'hour') < 3
+  ) {
     return 1;
   }
 
-  // 결제 후 3시간 후 ~ 진단서 수령(발급완료) 전 : 80% 환불
+  /**
+   * 아래와 같은 케이스일 시 80% 환불
+   *
+   * 1. 상태가 "신청완료"이면서 결제 후 3시간 이후일 때
+   * 2. 상태가 "진단중"일 때
+   * 3. 상태가 "진단서 업로드"일 때
+   */
   if (
-    now.diff(dayjs(paymentInfo.createDate), 'hour') >= 3 &&
-    reportApplicationStatus !== 'COMPLETED' &&
-    reportApplicationStatus !== 'REPORTED'
+    (reportApplicationStatus === 'APPLIED' &&
+      now.diff(dayjs(paymentInfo.createDate), 'hour') >= 3) ||
+    reportApplicationStatus === 'REPORTING' ||
+    reportApplicationStatus === 'REPORTED'
   ) {
     return 0.8;
   }
 
   // 진단서 수령(발급완료) 후 : 환불 불가
-  if (
-    reportApplicationStatus === 'COMPLETED' ||
-    reportApplicationStatus === 'REPORTED'
-  ) {
+  if (reportApplicationStatus === 'COMPLETED') {
     return 0;
   }
 
@@ -148,8 +155,8 @@ export const getFeedbackRefundPercent = ({
 
   // 일정 확정 전 : 100% 환불
   if (
-    reportFeedbackStatus !== 'CONFIRMED' &&
-    reportFeedbackStatus !== 'COMPLETED'
+    reportFeedbackStatus === 'APPLIED' ||
+    reportFeedbackStatus === 'PENDING'
   ) {
     return 1;
   }
@@ -158,20 +165,14 @@ export const getFeedbackRefundPercent = ({
     throw new Error('일정이 확정되었는데 일정이 없습니다.');
   }
 
-  // 일정 확정 후 ~ 확정된 일정 24시간 전 : 80% 환불
   const remainingHours = reportFeedbackDesiredDate.diff(now, 'hour');
-
-  if (
-    reportFeedbackStatus !== 'COMPLETED' &&
-    reportFeedbackStatus === 'CONFIRMED' &&
-    remainingHours >= 24
-  ) {
+  // 일정 확정 후 ~ 확정된 일정 24시간 전 : 80% 환불
+  if (reportFeedbackStatus === 'CONFIRMED' && remainingHours >= 24) {
     return 0.8;
   }
 
   // 확정된 일정 전 24시간 이내 : 50% 환불
   if (
-    reportFeedbackStatus !== 'COMPLETED' &&
     reportFeedbackStatus === 'CONFIRMED' &&
     remainingHours < 24 &&
     remainingHours >= 0
