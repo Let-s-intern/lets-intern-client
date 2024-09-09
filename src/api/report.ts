@@ -498,41 +498,6 @@ export const useGetMyReports = (reportType?: ReportType) => {
   });
 };
 
-// GET /api/v1/report/my/feedback
-const getMyReportFeedbacksSchema = z
-  .object({
-    myReportFeedbackInfos: z.array(
-      z.object({
-        reportId: z.number(),
-        applicationId: z.number(),
-        title: z.string(),
-        type: reportTypeSchema,
-        reportFeedbackStatus: reportFeedbackStatusSchema,
-        zoomLink: z.string().nullable(),
-        zoomPassword: z.string().nullable(),
-        desiredDate1: z.string().nullable(),
-        desiredDate2: z.string().nullable(),
-        desiredDate3: z.string().nullable(),
-        applicationTime: z.string(),
-        confirmedTime: z.string().nullable(),
-      }),
-    ),
-    pageInfo: pageInfoSchema,
-  })
-  .transform((data) => ({
-    ...data,
-    myReportFeedbackInfos: data.myReportFeedbackInfos.map((feedback) => ({
-      ...feedback,
-      desiredDate1: feedback.desiredDate1 ? dayjs(feedback.desiredDate1) : null,
-      desiredDate2: feedback.desiredDate2 ? dayjs(feedback.desiredDate2) : null,
-      desiredDate3: feedback.desiredDate3 ? dayjs(feedback.desiredDate3) : null,
-      applicationTime: dayjs(feedback.applicationTime),
-      confirmedTime: feedback.confirmedTime
-        ? dayjs(feedback.confirmedTime)
-        : null,
-    })),
-  }));
-
 const reportApplicationsForAdminInfoSchema = z.object({
   applicationId: z.number(),
   name: z.string(),
@@ -675,7 +640,7 @@ export const usePatchApplicationDocument = ({
 }: {
   successCallback?: () => void;
   errorCallback?: (error: Error) => void;
-}) => {
+} = {}) => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async ({
@@ -683,7 +648,7 @@ export const usePatchApplicationDocument = ({
       reportUrl,
     }: {
       applicationId: number;
-      reportUrl: string;
+      reportUrl?: string;
     }) => {
       const res = await axios.patch(
         `/report/application/${applicationId}/document`,
@@ -691,8 +656,6 @@ export const usePatchApplicationDocument = ({
           reportUrl,
         },
       );
-      // Mock API call
-      // return { success: true, message: 'Document uploaded successfully' };
       return res.data.data;
     },
     onSuccess: () => {
@@ -703,6 +666,42 @@ export const usePatchApplicationDocument = ({
     },
     onError: (error: Error) => {
       errorCallback && errorCallback(error);
+    },
+  });
+};
+
+export const usePatchApplicationStatus = ({
+  successCallback,
+  errorCallback,
+}: {
+  successCallback?: () => void;
+  errorCallback?: (error: Error) => void;
+} = {}) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({
+      applicationId,
+      reportApplicationStatus,
+    }: {
+      applicationId: number;
+      reportApplicationStatus: ReportApplicationStatus;
+    }) => {
+      const res = await axios.patch(
+        `/report/application/${applicationId}/status`,
+        {
+          status: reportApplicationStatus,
+        },
+      );
+      return res.data.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: [useGetReportApplicationsForAdminQueryKey],
+      });
+      successCallback?.();
+    },
+    onError: (error: Error) => {
+      errorCallback?.(error);
     },
   });
 };

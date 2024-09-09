@@ -20,7 +20,7 @@ if (isProd) {
       '@mui/system',
       '@mui/utils',
       '@mui/styled-engine',
-      '@mui/x-date-pickers'
+      '@mui/x-date-pickers',
     ],
   );
 }
