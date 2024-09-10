@@ -325,7 +325,11 @@ const ReportCreditDetail = () => {
                   />
                   <PaymentInfoRow
                     title={`쿠폰할인`}
-                    content={`-${getCouponDiscountPrice().toLocaleString()}원`}
+                    content={
+                      getCouponDiscountPrice() === 0
+                        ? '0원'
+                        : `-${getCouponDiscountPrice().toLocaleString()}원`
+                    }
                   />
                   {reportPaymentDetail.tossInfo?.status ===
                     'PARTIAL_CANCELED' && (

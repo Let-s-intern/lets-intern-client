@@ -237,33 +237,35 @@ const ReportCreditDelete = () => {
                       }
                     />
                   )}
-                  {feedbackRefundPercent !== 1 && (
-                    <PaymentInfoRow
-                      title={`1:1 피드백 (부분 환불 ${Math.ceil((1 - feedbackRefundPercent) * 100)}%)`}
-                      content={
-                        feedbackDiscountPrice === 0
-                          ? '0원'
-                          : `-${(
-                              feedbackDiscountPrice *
-                              (1 - feedbackRefundPercent)
-                            ).toLocaleString()}원`
-                      }
-                      subInfo={
-                        <div className="text-xs font-medium text-primary-dark">
-                          *환불 규정은{' '}
-                          <a
-                            className="underline underline-offset-2"
-                            href="https://letscareer.oopy.io/5eb0ebdd-e10c-4aa1-b28a-8bd0964eca0b"
-                            target="_blank"
-                            rel="noreferrer"
-                          >
-                            자주 묻는 질문
-                          </a>
-                          을 참고해주세요
-                        </div>
-                      }
-                    />
-                  )}
+                  {reportPaymentDetail.reportApplicationInfo
+                    .reportFeedbackApplicationId &&
+                    feedbackRefundPercent !== 1 && (
+                      <PaymentInfoRow
+                        title={`1:1 피드백 (부분 환불 ${Math.ceil((1 - feedbackRefundPercent) * 100)}%)`}
+                        content={
+                          feedbackDiscountPrice === 0
+                            ? '0원'
+                            : `-${(
+                                feedbackDiscountPrice *
+                                (1 - feedbackRefundPercent)
+                              ).toLocaleString()}원`
+                        }
+                        subInfo={
+                          <div className="text-xs font-medium text-primary-dark">
+                            *환불 규정은{' '}
+                            <a
+                              className="underline underline-offset-2"
+                              href="https://letscareer.oopy.io/5eb0ebdd-e10c-4aa1-b28a-8bd0964eca0b"
+                              target="_blank"
+                              rel="noreferrer"
+                            >
+                              자주 묻는 질문
+                            </a>
+                            을 참고해주세요
+                          </div>
+                        }
+                      />
+                    )}
                 </div>
                 <hr className="w-full border-neutral-85" />
                 <div className="flex w-full flex-col">
