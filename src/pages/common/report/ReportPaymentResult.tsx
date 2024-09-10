@@ -57,10 +57,7 @@ const ReportPaymentResult = () => {
     if (isUpTo1280)
       return `/report/payment/${reportDetail?.reportType?.toLocaleLowerCase()}/${reportApplication.reportId}`;
 
-    const searchParams = new URLSearchParams();
-    searchParams.set('init', 'false');
-
-    return `/report/apply/${reportDetail?.reportType?.toLocaleLowerCase()}/${reportApplication.reportId}?${searchParams.toString()}`;
+    return `/report/apply/${reportDetail?.reportType?.toLocaleLowerCase()}/${reportApplication.reportId}`;
   }, [reportDetail]);
 
   const subTitle =
