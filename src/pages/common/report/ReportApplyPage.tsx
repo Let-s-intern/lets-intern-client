@@ -335,14 +335,14 @@ const ScheduleSection = () => {
   return (
     <section className="flex flex-col gap-1 lg:flex-row lg:items-start lg:gap-5">
       <div className="flex w-[8.75rem] shrink-0 items-center gap-1">
-        <Heading2>맞춤 첨삭 일정</Heading2>
-        <Tooltip alt="맞춤 첨삭 일정 도움말">
+        <Heading2>1:1 피드백 일정</Heading2>
+        <Tooltip alt="1:1 피드백 일정 도움말">
           1:1 피드백은 서류 진단서 발급 이후에 진행됩니다.
         </Tooltip>
       </div>
       <div className="flex w-full flex-col gap-5">
         <span className="text-xsmall14">
-          희망하시는 맞춤 첨삭(40분) 일정을 1개 이상 선택해주세요.
+          희망하시는 1:1 피드백(40분) 일정을 1개 이상 선택해주세요.
         </span>
         <div>
           <Label>희망순위1*</Label>
