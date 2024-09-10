@@ -92,12 +92,12 @@ const ReportApplyPage = () => {
           <button
             className="next_button_click text-1.125-medium w-full rounded-md bg-primary py-3 text-center font-medium text-neutral-100"
             onClick={async () => {
-              await convertFile();
               const { isValid, message } = validate();
               if (!isValid) {
                 alert(message);
                 return;
               }
+              await convertFile();
               navigate(`/report/payment/${reportType}/${reportId}`);
             }}
           >
@@ -113,7 +113,6 @@ const ReportApplyPage = () => {
             <button
               className="complete_button_click w-full rounded-md bg-primary py-3 text-center text-small18 font-medium text-neutral-100"
               onClick={async () => {
-                await convertFile();
                 const { isValid, message } = validate();
                 if (!isValid) {
                   alert(message);
@@ -123,6 +122,7 @@ const ReportApplyPage = () => {
                   alert('정보 수신용 이메일을 입력해주세요.');
                   return;
                 }
+                await convertFile();
                 navigate(`/report/toss/payment`);
               }}
             >
