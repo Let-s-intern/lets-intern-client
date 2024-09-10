@@ -11,7 +11,9 @@ import { IoCloseOutline } from 'react-icons/io5';
 import { useNavigate, useParams } from 'react-router-dom';
 import { twJoin } from 'tailwind-merge';
 
+import useRunOnce from '@/hooks/useRunOnce';
 import { generateOrderId } from '@/lib/order';
+import useAuthStore from '@/store/useAuthStore';
 import { useGetParticipationInfo } from '../../../api/application';
 import { uploadFile } from '../../../api/file';
 import {
@@ -42,6 +44,7 @@ const ReportApplyPage = () => {
   const [recruitmentFile, setRecruitmentFile] = useState<File | null>(null);
 
   const { payment } = useReportPayment();
+  const { isLoggedIn } = useAuthStore();
   const {
     data: reportApplication,
     setReportApplication,
@@ -79,6 +82,14 @@ const ReportApplyPage = () => {
     }
     return true;
   };
+
+  useRunOnce(() => {
+    if (isLoggedIn) return;
+
+    const searchParams = new URLSearchParams();
+    searchParams.set('redirect', window.location.pathname);
+    navigate(`/login?${searchParams.toString()}`);
+  });
 
   return (
     <div className="px-5 md:px-32 md:py-10 xl:flex xl:gap-16 xl:px-48">
