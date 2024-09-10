@@ -871,31 +871,34 @@ const reportApplicationInfoSchema = z.object({
 
 const reportPaymentInfoSchema = z.object({
   paymentId: z.number(),
-  finalPrice: z.number(),
+  finalPrice: z.number().nullable(),
   couponDiscount: z.number().nullable(),
-  programPrice: z.number(),
-  programDiscount: z.number(),
+  programPrice: z.number().nullable(),
+  programDiscount: z.number().nullable(),
   reportRefundPrice: z.number().nullable(),
   feedbackRefundPrice: z.number().nullable(),
   reportPriceInfo: z.object({
     reportPriceType: reportPriceTypeSchema,
-    price: z.number(),
-    discountPrice: z.number(),
+    price: z.number().nullable(),
+    discountPrice: z.number().nullable(),
   }),
   reportOptionInfos: z.array(
-    z.object({
-      reportOptionId: z.number(),
-      price: z.number(),
-      discountPrice: z.number(),
-      title: z.string(),
-    }),
+    z
+      .object({
+        reportOptionId: z.number(),
+        price: z.number(),
+        discountPrice: z.number(),
+        title: z.string(),
+      })
+      .nullable()
+      .optional(),
   ),
   feedbackPriceInfo: z
     .object({
-      reportFeedbackId: z.number(),
-      reportPriceType: reportPriceTypeSchema,
-      feedbackPrice: z.number(),
-      feedbackDiscountPrice: z.number(),
+      reportFeedbackId: z.number().nullable().optional(),
+      reportPriceType: reportPriceTypeSchema.nullable().optional(),
+      feedbackPrice: z.number().nullable().optional(),
+      feedbackDiscountPrice: z.number().nullable().optional(),
     })
     .nullable(),
   createDate: z.string(),

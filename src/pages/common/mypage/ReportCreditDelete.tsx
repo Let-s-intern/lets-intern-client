@@ -1,3 +1,8 @@
+import { AxiosError } from 'axios';
+import dayjs from 'dayjs';
+import { useMemo, useState } from 'react';
+import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
+
 import {
   getCouponDiscountPrice,
   getDiscountPercent,
@@ -8,10 +13,6 @@ import {
   getReportRefundPercent,
   getTotalRefund,
 } from '@/lib/refund';
-import { AxiosError } from 'axios';
-import dayjs from 'dayjs';
-import { useMemo, useState } from 'react';
-import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import {
   convertReportPriceType,
   useDeleteReportApplication,
@@ -27,7 +28,7 @@ const convertDateFormat = (date: string) => {
 const ReportCreditDelete = () => {
   const navigate = useNavigate();
   const [isChecked, setIsChecked] = useState(false);
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchParams] = useSearchParams();
   const applicationId = searchParams.get('applicationId');
   const { paymentId } = useParams<{ paymentId: string }>();
 
@@ -64,7 +65,7 @@ const ReportCreditDelete = () => {
       return '없음';
 
     return reportPaymentDetail.reportPaymentInfo.reportOptionInfos
-      .map((option) => option.title)
+      .map((option) => option?.title)
       .join(', ');
   };
 
@@ -197,12 +198,17 @@ const ReportCreditDelete = () => {
                     .reportFeedbackApplicationId && (
                     <PaymentInfoRow
                       title="1:1 피드백"
-                      content={`${reportPaymentDetail.reportPaymentInfo.feedbackPriceInfo?.feedbackPrice.toLocaleString() || 0}원`}
+                      content={`${reportPaymentDetail.reportPaymentInfo.feedbackPriceInfo?.feedbackPrice?.toLocaleString() || 0}원`}
                     />
                   )}
                   <PaymentInfoRow
                     title={`할인 (${discountPercent}%)`}
-                    content={`-${reportPaymentDetail.reportPaymentInfo.programDiscount.toLocaleString()}원`}
+                    content={
+                      reportPaymentDetail.reportPaymentInfo.programDiscount ===
+                      0
+                        ? '0원'
+                        : `-${reportPaymentDetail.reportPaymentInfo.programDiscount?.toLocaleString()}원`
+                    }
                   />
                   <PaymentInfoRow
                     title={`쿠폰할인`}
@@ -234,10 +240,14 @@ const ReportCreditDelete = () => {
                   {feedbackRefundPercent !== 1 && (
                     <PaymentInfoRow
                       title={`1:1 피드백 (부분 환불 ${Math.ceil((1 - feedbackRefundPercent) * 100)}%)`}
-                      content={`-${(
-                        feedbackDiscountPrice *
-                        (1 - feedbackRefundPercent)
-                      ).toLocaleString()}원`}
+                      content={
+                        feedbackDiscountPrice === 0
+                          ? '0원'
+                          : `-${(
+                              feedbackDiscountPrice *
+                              (1 - feedbackRefundPercent)
+                            ).toLocaleString()}원`
+                      }
                       subInfo={
                         <div className="text-xs font-medium text-primary-dark">
                           *환불 규정은{' '}
