@@ -1,5 +1,6 @@
 import dayjs from 'dayjs';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
+
 import {
   convertReportPriceType,
   useGetReportPaymentDetailQuery,
@@ -25,7 +26,7 @@ const getPercent = ({
 
 const ReportCreditDetail = () => {
   const navigate = useNavigate();
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchParams] = useSearchParams();
   const applicationId = searchParams.get('applicationId');
   const { paymentId } = useParams<{ paymentId: string }>();
 
@@ -54,7 +55,7 @@ const ReportCreditDetail = () => {
       return '없음';
 
     return reportPaymentDetail.reportPaymentInfo.reportOptionInfos
-      .map((option) => option.title)
+      .map((option) => option?.title)
       .join(', ');
   };
 
@@ -66,12 +67,12 @@ const ReportCreditDetail = () => {
     const optionsPrice =
       reportPaymentDetail.reportPaymentInfo.reportOptionInfos.reduce(
         (acc, option) => {
-          return acc + option.price;
+          return acc + (option?.price ?? 0);
         },
         0,
       );
 
-    return defaultReportPrice + optionsPrice;
+    return (defaultReportPrice ?? 0) + optionsPrice;
   };
 
   const getDiscountPercent = () => {
@@ -81,7 +82,10 @@ const ReportCreditDetail = () => {
       reportPaymentDetail.reportPaymentInfo.reportPriceInfo.price;
     const discountPrice = reportPaymentDetail.reportPaymentInfo.programDiscount;
 
-    return getPercent({ originalPrice, changedPrice: discountPrice });
+    return getPercent({
+      originalPrice: originalPrice ?? 0,
+      changedPrice: discountPrice ?? 0,
+    });
   };
 
   const getCouponDiscountPrice = () => {
@@ -92,8 +96,8 @@ const ReportCreditDetail = () => {
       return 0;
 
     return reportPaymentDetail.reportPaymentInfo.couponDiscount === -1
-      ? reportPaymentDetail.reportPaymentInfo.programPrice -
-          reportPaymentDetail.reportPaymentInfo.programDiscount
+      ? (reportPaymentDetail.reportPaymentInfo.programPrice ?? 0) -
+          (reportPaymentDetail.reportPaymentInfo.programDiscount ?? 0)
       : reportPaymentDetail.reportPaymentInfo.couponDiscount;
   };
 
@@ -307,12 +311,17 @@ const ReportCreditDetail = () => {
                     .reportFeedbackApplicationId && (
                     <PaymentInfoRow
                       title="1:1 피드백"
-                      content={`${reportPaymentDetail.reportPaymentInfo.feedbackPriceInfo?.feedbackPrice.toLocaleString() || 0}원`}
+                      content={`${reportPaymentDetail.reportPaymentInfo.feedbackPriceInfo?.feedbackPrice?.toLocaleString() || 0}원`}
                     />
                   )}
                   <PaymentInfoRow
                     title={`할인 (${getDiscountPercent()}%)`}
-                    content={`-${reportPaymentDetail.reportPaymentInfo.programDiscount.toLocaleString()}원`}
+                    content={
+                      reportPaymentDetail.reportPaymentInfo.programDiscount ===
+                      0
+                        ? '0원'
+                        : `-${reportPaymentDetail.reportPaymentInfo.programDiscount?.toLocaleString()}원`
+                    }
                   />
                   <PaymentInfoRow
                     title={`쿠폰할인`}
@@ -328,7 +337,12 @@ const ReportCreditDetail = () => {
                             reportPaymentDetail.reportPaymentInfo
                               .reportRefundPrice ?? 0,
                         })}%)`}
-                        content={`-${reportPaymentDetail.reportPaymentInfo.reportRefundPrice?.toLocaleString() || 0}원`}
+                        content={
+                          !reportPaymentDetail.reportPaymentInfo
+                            .reportRefundPrice
+                            ? '0원'
+                            : `-${reportPaymentDetail.reportPaymentInfo.reportRefundPrice?.toLocaleString()}원`
+                        }
                         subInfo={
                           <div className="text-xs font-medium text-primary-dark">
                             *환불 규정은{' '}

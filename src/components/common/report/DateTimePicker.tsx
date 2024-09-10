@@ -53,7 +53,7 @@ const DateTimePicker = ({
           label="날짜 선택"
           name={name}
           value={date}
-          minDate={dayjs()}
+          minDate={dayjs().add(3, 'day')}
           onChange={(date) => onChangeDate && onChangeDate(date, name)}
         />
       </LocalizationProvider>
