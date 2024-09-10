@@ -19,10 +19,10 @@ export const getReportPrice = (
 
   const defaultReportPrice = paymentInfo.reportPriceInfo.price;
   const optionsPrice = paymentInfo.reportOptionInfos.reduce((acc, option) => {
-    return acc + option.price;
+    return acc + (option?.price ?? 0);
   }, 0);
 
-  return defaultReportPrice + optionsPrice;
+  return (defaultReportPrice ?? 0) + optionsPrice;
 };
 
 export const getReportDiscountedPrice = (
@@ -36,12 +36,12 @@ export const getReportDiscountedPrice = (
   const discountPrice = paymentInfo.reportPriceInfo.discountPrice;
   const optionsDiscountPrice = paymentInfo.reportOptionInfos.reduce(
     (acc, option) => {
-      return acc + option.discountPrice;
+      return acc + (option?.discountPrice ?? 0);
     },
     0,
   );
 
-  return originalPrice - (discountPrice + optionsDiscountPrice);
+  return originalPrice - ((discountPrice ?? 0) + optionsDiscountPrice);
 };
 
 export const getFeedbackDiscountedPrice = (
@@ -52,8 +52,8 @@ export const getFeedbackDiscountedPrice = (
   }
 
   return (
-    paymentInfo.feedbackPriceInfo.feedbackPrice -
-    paymentInfo.feedbackPriceInfo.feedbackDiscountPrice
+    (paymentInfo.feedbackPriceInfo.feedbackPrice ?? 0) -
+    (paymentInfo.feedbackPriceInfo.feedbackDiscountPrice ?? 0)
   );
 };
 
@@ -78,7 +78,10 @@ export const getDiscountPercent = (
   const discountPrice =
     paymentInfo.programDiscount ?? paymentInfo.reportPriceInfo.price;
 
-  return getPercent({ originalPrice, changedPrice: discountPrice });
+  return getPercent({
+    originalPrice: originalPrice ?? 0,
+    changedPrice: discountPrice ?? 0,
+  });
 };
 
 export const getCouponDiscountPrice = (
@@ -89,7 +92,7 @@ export const getCouponDiscountPrice = (
   }
 
   return paymentInfo.couponDiscount === -1
-    ? paymentInfo.programPrice - paymentInfo.programDiscount
+    ? (paymentInfo.programPrice ?? 0) - (paymentInfo.programDiscount ?? 0)
     : paymentInfo.couponDiscount;
 };
 
