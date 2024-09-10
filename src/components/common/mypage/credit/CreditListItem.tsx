@@ -25,7 +25,11 @@ const CreditListItem = ({ payment }: { payment: PaymentType }) => {
       />
       <div className="flex w-full items-center gap-x-[14px]">
         <img
-          src={payment.programInfo.programType === 'REPORT' ? "/images/report-banner.png" : payment.programInfo.thumbnail || ''}
+          src={
+            payment.programInfo.programType === 'REPORT'
+              ? '/images/report-banner.png'
+              : payment.programInfo.thumbnail || ''
+          }
           className={twMerge(
             'h-[97px] w-[137px] rounded-sm object-cover',
             ((payment.tossInfo && payment.tossInfo?.status !== 'DONE') ||
