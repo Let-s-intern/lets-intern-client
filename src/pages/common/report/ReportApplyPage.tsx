@@ -11,10 +11,9 @@ import { IoCloseOutline } from 'react-icons/io5';
 import { useNavigate, useParams } from 'react-router-dom';
 import { twJoin } from 'tailwind-merge';
 
-import { couponInfoSchema } from '@/api/coupon';
 import useRunOnce from '@/hooks/useRunOnce';
+import { generateOrderId } from '@/lib/order';
 import useAuthStore from '@/store/useAuthStore';
-import axios from '@/utils/axios';
 import { useGetParticipationInfo } from '../../../api/application';
 import { uploadFile } from '../../../api/file';
 import {
@@ -44,6 +43,7 @@ const ReportApplyPage = () => {
   const [applyFile, setApplyFile] = useState<File | null>(null);
   const [recruitmentFile, setRecruitmentFile] = useState<File | null>(null);
 
+  const { payment } = useReportPayment();
   const { isLoggedIn } = useAuthStore();
   const {
     data: reportApplication,
@@ -63,13 +63,13 @@ const ReportApplyPage = () => {
     }
   };
 
-  const validateFile = () => {
+  const isValidFile = () => {
     const isEmpty = (value: string | File | null) =>
       value === '' || value === null;
 
     if (isEmpty(reportApplication.applyUrl) && isEmpty(applyFile)) {
       alert('진단용 서류를 등록해주세요.');
-      return;
+      return false;
     }
 
     if (
@@ -78,7 +78,9 @@ const ReportApplyPage = () => {
       isEmpty(recruitmentFile)
     ) {
       alert('채용공고를 등록해주세요.');
+      return false;
     }
+    return true;
   };
 
   useRunOnce(() => {
@@ -121,12 +123,12 @@ const ReportApplyPage = () => {
           <button
             className="next_button_click text-1.125-medium w-full rounded-md bg-primary py-3 text-center font-medium text-neutral-100"
             onClick={async () => {
+              if (!isValidFile()) return;
               const { isValid, message } = validate();
               if (!isValid) {
                 alert(message);
                 return;
               }
-              validateFile();
               await convertFile();
               navigate(`/report/payment/${reportType}/${reportId}`);
             }}
@@ -144,17 +146,21 @@ const ReportApplyPage = () => {
               className="complete_button_click w-full rounded-md bg-primary py-3 text-center text-small18 font-medium text-neutral-100"
               onClick={async () => {
                 const { isValid, message } = validate();
+                if (!isValidFile()) return;
                 if (!isValid) {
                   alert(message);
                   return;
                 }
-                validateFile();
                 if (reportApplication.contactEmail === '') {
                   alert('정보 수신용 이메일을 입력해주세요.');
                   return;
                 }
                 await convertFile();
-                navigate(`/report/toss/payment`);
+                if (payment.total === 0) {
+                  navigate(`/report/order/result?orderId=${generateOrderId()}`);
+                  return;
+                }
+                navigate(`/report/toss/payment`, { replace: true });
               }}
             >
               결제하기
@@ -555,18 +561,15 @@ export const ReportPaymentSection = () => {
   const [couponCode, setCouponCode] = useState('');
   const [message, setMessage] = useState('');
 
-  const { data: reportApplication } = useReportApplicationStore();
+  const { data: reportApplication, setReportApplication } =
+    useReportApplicationStore();
   const { payment, applyCoupon, cancelCoupon } = useReportPayment();
 
-  // 쿠폰 코드 가져오기
+  // 기존에 입력한 쿠폰 코드 초기화
   useEffect(() => {
-    const couponId = reportApplication.couponId;
-    if (!couponId) return;
-
-    axios.get(`/coupon/admin/${couponId}`).then((res) => {
-      const data = couponInfoSchema.parse(res.data.data.couponInfo);
-      setCouponCode(data.code ?? '');
-    });
+    setReportApplication({ couponId: null });
+    setMessage('');
+    setCouponCode('');
   }, []);
 
   const showFeedback = reportApplication.isFeedbackApplied;
@@ -581,12 +584,12 @@ export const ReportPaymentSection = () => {
             value={couponCode}
             type="text"
             placeholder="쿠폰 번호를 입력해주세요."
-            disabled={payment.coupon !== 0}
+            disabled={reportApplication.couponId === null ? false : true}
             onChange={(e) => setCouponCode(e.target.value)}
           />
           <button
             className={twJoin(
-              payment.coupon === 0
+              reportApplication.couponId === null
                 ? 'bg-primary text-neutral-100'
                 : 'border-2 border-primary bg-neutral-100 text-primary',
               'shrink-0 rounded-sm px-4 py-1.5 text-xsmall14 font-medium',
@@ -594,7 +597,7 @@ export const ReportPaymentSection = () => {
             onClick={async () => {
               if (couponCode === '') return;
               // 쿠폰이 등록된 상태면 쿠폰 취소
-              if (payment.coupon !== 0 && couponCode !== '') {
+              if (reportApplication.couponId !== null && couponCode !== '') {
                 cancelCoupon();
                 setMessage('');
                 setCouponCode('');
@@ -602,17 +605,18 @@ export const ReportPaymentSection = () => {
               }
 
               const data = await applyCoupon(couponCode);
+
               if (data.status === 404 || data.status === 400)
                 setMessage(data.message);
               else setMessage('쿠폰이 등록되었습니다.');
             }}
           >
-            {payment.coupon === 0 ? '쿠폰 등록' : '쿠폰 취소'}
+            {reportApplication.couponId === null ? '쿠폰 등록' : '쿠폰 취소'}
           </button>
         </div>
         <span
           className={twJoin(
-            payment.coupon === 0
+            reportApplication.couponId === null
               ? 'text-system-error'
               : 'text-system-positive-blue',
             'h-3 text-xsmall14',
@@ -634,13 +638,13 @@ export const ReportPaymentSection = () => {
           {/* 서류 진단 + 사용자가 선택한 모든 옵션 가격을 더한 값 */}
           <span>{payment.report.toLocaleString()}원</span>
         </div>
-        {showFeedback ? (
+        {showFeedback && (
           <div className="flex h-10 items-center justify-between px-3 text-neutral-0">
             <span>1:1 피드백</span>
             {/* 1:1 피드백 가격 */}
             <span>{payment.feedback.toLocaleString()}원</span>
           </div>
-        ) : null}
+        )}
         <div className="flex h-10 items-center justify-between px-3 text-neutral-0">
           {/* 서류진단 + 사용자가 선택한 모든 옵션 + 1:1 피드백의 할인 가격을 모두 더한 값 */}
           <span>
@@ -649,7 +653,11 @@ export const ReportPaymentSection = () => {
             )}
             % 할인
           </span>
-          <span>-{payment.discount.toLocaleString()}원</span>
+          <span>
+            {payment.discount === 0
+              ? '0원'
+              : `-${payment.discount.toLocaleString()}원`}
+          </span>
         </div>
         <div className="flex h-10 items-center justify-between px-3 text-primary">
           <span>쿠폰할인</span>
