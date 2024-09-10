@@ -60,6 +60,24 @@ const ReportApplyPage = () => {
     }
   };
 
+  const validateFile = () => {
+    const isEmpty = (value: string | File | null) =>
+      value === '' || value === null;
+
+    if (isEmpty(reportApplication.applyUrl) && isEmpty(applyFile)) {
+      alert('진단용 서류를 등록해주세요.');
+      return;
+    }
+
+    if (
+      reportApplication.reportPriceType === 'PREMIUM' &&
+      isEmpty(reportApplication.recruitmentUrl) &&
+      isEmpty(recruitmentFile)
+    ) {
+      alert('채용공고를 등록해주세요.');
+    }
+  };
+
   return (
     <div className="px-5 md:px-32 md:py-10 xl:flex xl:gap-16 xl:px-48">
       <div className="w-full">
@@ -97,6 +115,7 @@ const ReportApplyPage = () => {
                 alert(message);
                 return;
               }
+              validateFile();
               await convertFile();
               navigate(`/report/payment/${reportType}/${reportId}`);
             }}
@@ -118,6 +137,7 @@ const ReportApplyPage = () => {
                   alert(message);
                   return;
                 }
+                validateFile();
                 if (reportApplication.contactEmail === '') {
                   alert('정보 수신용 이메일을 입력해주세요.');
                   return;

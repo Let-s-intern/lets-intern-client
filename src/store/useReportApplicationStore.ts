@@ -91,14 +91,6 @@ const useReportApplicationStore = create(
       validate: () => {
         const isEmpty = (value: string) => value === '' || !value;
         const currentData = get().data;
-        if (isEmpty(currentData.applyUrl))
-          return { isValid: false, message: '진단용 서류를 등록해주세요.' };
-
-        if (
-          currentData.reportPriceType === 'PREMIUM' &&
-          isEmpty(currentData.recruitmentUrl)
-        )
-          return { isValid: false, message: '채용공고를 등록해주세요.' };
 
         if (
           isEmpty(currentData.desiredDate1) ||
