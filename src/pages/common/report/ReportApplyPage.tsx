@@ -12,6 +12,8 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { twJoin } from 'tailwind-merge';
 
 import { couponInfoSchema } from '@/api/coupon';
+import useRunOnce from '@/hooks/useRunOnce';
+import useAuthStore from '@/store/useAuthStore';
 import axios from '@/utils/axios';
 import { useGetParticipationInfo } from '../../../api/application';
 import { uploadFile } from '../../../api/file';
@@ -42,6 +44,7 @@ const ReportApplyPage = () => {
   const [applyFile, setApplyFile] = useState<File | null>(null);
   const [recruitmentFile, setRecruitmentFile] = useState<File | null>(null);
 
+  const { isLoggedIn } = useAuthStore();
   const {
     data: reportApplication,
     setReportApplication,
@@ -77,6 +80,14 @@ const ReportApplyPage = () => {
       alert('채용공고를 등록해주세요.');
     }
   };
+
+  useRunOnce(() => {
+    if (isLoggedIn) return;
+
+    const searchParams = new URLSearchParams();
+    searchParams.set('redirect', window.location.pathname);
+    navigate(`/login?${searchParams.toString()}`);
+  });
 
   return (
     <div className="px-5 md:px-32 md:py-10 xl:flex xl:gap-16 xl:px-48">
