@@ -13,7 +13,11 @@ import { ReportPaymentSection, UsereInfoSection } from './ReportApplyPage';
 const ReportPaymentPage = () => {
   const navigate = useNavigate();
 
-  const { data: reportApplication, validate } = useReportApplicationStore();
+  const {
+    data: reportApplication,
+    setReportApplication,
+    validate,
+  } = useReportApplicationStore();
   const { data: reportDetail } = useGetReportDetailQuery(
     reportApplication.reportId!,
   );
@@ -29,10 +33,9 @@ const ReportPaymentPage = () => {
       <BottomSheet>
         <button
           onClick={() => {
-            const searchParams = new URLSearchParams();
-            searchParams.set('init', 'false');
+            setReportApplication({ applyUrl: '', recruitmentUrl: '' }); // url 초기화
             navigate(
-              `/report/apply/${reportDetail?.reportType}/${reportApplication.reportId}?${searchParams.toString()}`,
+              `/report/apply/${reportDetail?.reportType}/${reportApplication.reportId}`,
             );
           }}
           className="flex h-14 w-14 shrink-0 items-center justify-center rounded-md border-2 border-primary bg-neutral-100"
