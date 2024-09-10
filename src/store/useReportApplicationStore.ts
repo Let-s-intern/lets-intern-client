@@ -30,7 +30,7 @@ interface ReportApplicationStore {
   validate: () => { isValid: boolean; message: string | null };
 }
 
-const initialDate = dayjs().add(1, 'day').hour(9).format('YYYY-MM-DDTHH:00');
+const initialDate = dayjs().add(3, 'day').format('YYYY-MM-DDTHH:00');
 
 const useReportApplicationStore = create(
   persist<ReportApplicationStore>(
