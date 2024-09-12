@@ -7,9 +7,9 @@ const initialTimeOption = [9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21];
 
 export default function useMinDate(data: ReportApplication) {
   const [timeOptions, setTimeOptions] = useState({
-    desiredDate1: initialTimeOption,
-    desiredDate2: initialTimeOption,
-    desiredDate3: initialTimeOption,
+    desiredDate1: [] as number[],
+    desiredDate2: [] as number[],
+    desiredDate3: [] as number[],
   });
   const [minDate, setMinDate] = useState<Dayjs>(dayjs());
 
@@ -31,6 +31,8 @@ export default function useMinDate(data: ReportApplication) {
 
   /* 선택 가능한 시간 설정 */
   useEffect(() => {
+    if (data.desiredDate1 === undefined) return;
+
     if (minDate.isSame(data.desiredDate1, 'day')) {
       setTimeOptions((prev) => ({
         ...prev,
@@ -44,6 +46,8 @@ export default function useMinDate(data: ReportApplication) {
   }, [data.desiredDate1, minDate]);
 
   useEffect(() => {
+    if (data.desiredDate2 === undefined) return;
+
     if (minDate.isSame(data.desiredDate2, 'day')) {
       setTimeOptions((prev) => ({
         ...prev,
@@ -57,6 +61,8 @@ export default function useMinDate(data: ReportApplication) {
   }, [data.desiredDate2, minDate]);
 
   useEffect(() => {
+    if (data.desiredDate3 === undefined) return;
+
     if (minDate.isSame(data.desiredDate3, 'day')) {
       setTimeOptions((prev) => ({
         ...prev,

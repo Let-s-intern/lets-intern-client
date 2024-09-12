@@ -395,6 +395,7 @@ const ScheduleSection = () => {
 
   const onChangeTime = (e: SelectChangeEvent<unknown>) => {
     const prev = data[e.target.name as Key];
+
     setReportApplication({
       [e.target.name]: dayjs(prev as dayjs.ConfigType)
         .set('hour', e.target.value as number)
@@ -421,6 +422,11 @@ const ScheduleSection = () => {
               data.desiredDate1 === undefined
                 ? undefined
                 : dayjs(data.desiredDate1)
+            }
+            time={
+              data.desiredDate1 === undefined
+                ? undefined
+                : dayjs(data.desiredDate1).hour()
             }
             name="desiredDate1"
             minDate={minDate}
