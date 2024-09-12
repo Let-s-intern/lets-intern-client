@@ -65,22 +65,35 @@ const ReportApplyPage = () => {
   };
 
   const isValidFile = () => {
+    const { applyUrl, reportPriceType, recruitmentUrl } = reportApplication;
+
     const isEmpty = (value: string | File | null) =>
       value === '' || value === null;
 
-    if (isEmpty(reportApplication.applyUrl) && isEmpty(applyFile)) {
+    if (isEmpty(applyUrl) && isEmpty(applyFile)) {
       alert('진단용 서류를 등록해주세요.');
       return false;
     }
 
     if (
-      reportApplication.reportPriceType === 'PREMIUM' &&
-      isEmpty(reportApplication.recruitmentUrl) &&
+      reportPriceType === 'PREMIUM' &&
+      isEmpty(recruitmentUrl) &&
       isEmpty(recruitmentFile)
     ) {
       alert('채용공고를 등록해주세요.');
       return false;
     }
+
+    if (!isEmpty(applyUrl) || !isEmpty(recruitmentUrl)) {
+      try {
+        new URL(applyUrl);
+        new URL(recruitmentUrl);
+      } catch (error) {
+        alert('올바른 주소를 입력해주세요.');
+        return false;
+      }
+    }
+
     return true;
   };
 
