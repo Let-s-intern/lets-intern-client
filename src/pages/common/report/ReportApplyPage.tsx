@@ -239,6 +239,7 @@ const DocumentSection = ({
   const { data, setReportApplication } = useReportApplicationStore();
 
   useEffect(() => {
+    if (data.applyUrl === '') return;
     try {
       new URL(data.applyUrl);
       setIsValidUrl(true);
@@ -313,6 +314,7 @@ const PremiumSection = ({
   const { data, setReportApplication } = useReportApplicationStore();
 
   useEffect(() => {
+    if (data.applyUrl === '') return;
     try {
       new URL(data.applyUrl);
       setIsValidUrl(true);
