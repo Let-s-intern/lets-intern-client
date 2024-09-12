@@ -12,6 +12,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { twJoin } from 'tailwind-merge';
 
 import useRunOnce from '@/hooks/useRunOnce';
+import useValidateUrl from '@/hooks/useValidateUrl';
 import { generateOrderId } from '@/lib/order';
 import useAuthStore from '@/store/useAuthStore';
 import { useGetParticipationInfo } from '../../../api/application';
@@ -234,19 +235,9 @@ const DocumentSection = ({
   const { reportType } = useParams();
 
   const [value, setValue] = useState('file');
-  const [isValidUrl, setIsValidUrl] = useState(true);
 
   const { data, setReportApplication } = useReportApplicationStore();
-
-  useEffect(() => {
-    if (data.applyUrl === '') return;
-    try {
-      new URL(data.applyUrl);
-      setIsValidUrl(true);
-    } catch (error) {
-      setIsValidUrl(false);
-    }
-  }, [data.applyUrl]);
+  const isValidUrl = useValidateUrl(data.applyUrl);
 
   return (
     <section className="flex flex-col gap-3 lg:flex-row lg:items-start lg:gap-5">
@@ -309,19 +300,9 @@ const PremiumSection = ({
   dispatch: React.Dispatch<React.SetStateAction<File | null>>;
 }) => {
   const [value, setValue] = useState('file');
-  const [isValidUrl, setIsValidUrl] = useState(true);
 
   const { data, setReportApplication } = useReportApplicationStore();
-
-  useEffect(() => {
-    if (data.applyUrl === '') return;
-    try {
-      new URL(data.applyUrl);
-      setIsValidUrl(true);
-    } catch (error) {
-      setIsValidUrl(false);
-    }
-  }, [data.applyUrl]);
+  const isValidUrl = useValidateUrl(data.recruitmentUrl);
 
   return (
     <section className="flex flex-col gap-1 lg:flex-row lg:items-start lg:gap-5">
