@@ -124,6 +124,7 @@ const ReportApplyPage = () => {
             className="next_button_click text-1.125-medium w-full rounded-md bg-primary py-3 text-center font-medium text-neutral-100"
             onClick={async () => {
               if (!isValidFile()) return;
+
               const { isValid, message } = validate();
               if (!isValid) {
                 alert(message);
@@ -145,8 +146,9 @@ const ReportApplyPage = () => {
             <button
               className="complete_button_click w-full rounded-md bg-primary py-3 text-center text-small18 font-medium text-neutral-100"
               onClick={async () => {
-                const { isValid, message } = validate();
                 if (!isValidFile()) return;
+
+                const { isValid, message } = validate();
                 if (!isValid) {
                   alert(message);
                   return;
@@ -232,8 +234,18 @@ const DocumentSection = ({
   const { reportType } = useParams();
 
   const [value, setValue] = useState('file');
+  const [isValidUrl, setIsValidUrl] = useState(true);
 
   const { data, setReportApplication } = useReportApplicationStore();
+
+  useEffect(() => {
+    try {
+      new URL(data.applyUrl);
+      setIsValidUrl(true);
+    } catch (error) {
+      setIsValidUrl(false);
+    }
+  }, [data.applyUrl]);
 
   return (
     <section className="flex flex-col gap-3 lg:flex-row lg:items-start lg:gap-5">
@@ -276,6 +288,11 @@ const DocumentSection = ({
                 }
               />
             )}
+            {!isValidUrl && (
+              <span className="h-3 text-xsmall14 text-system-error">
+                올바른 주소를 입력해주세요
+              </span>
+            )}
           </div>
         </RadioGroup>
       </FormControl>
@@ -291,7 +308,18 @@ const PremiumSection = ({
   dispatch: React.Dispatch<React.SetStateAction<File | null>>;
 }) => {
   const [value, setValue] = useState('file');
+  const [isValidUrl, setIsValidUrl] = useState(true);
+
   const { data, setReportApplication } = useReportApplicationStore();
+
+  useEffect(() => {
+    try {
+      new URL(data.applyUrl);
+      setIsValidUrl(true);
+    } catch (error) {
+      setIsValidUrl(false);
+    }
+  }, [data.applyUrl]);
 
   return (
     <section className="flex flex-col gap-1 lg:flex-row lg:items-start lg:gap-5">
@@ -337,6 +365,11 @@ const PremiumSection = ({
                     setReportApplication({ recruitmentUrl: e.target.value })
                   }
                 />
+              )}
+              {!isValidUrl && (
+                <span className="h-3 text-xsmall14 text-system-error">
+                  올바른 주소를 입력해주세요
+                </span>
               )}
             </div>
           </RadioGroup>
