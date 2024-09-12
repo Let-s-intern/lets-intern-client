@@ -53,6 +53,9 @@ const ReportPaymentFail = () => {
     reportApplication.optionIds.length === 0
       ? convertReportPriceType(reportApplication.reportPriceType)
       : `${convertReportPriceType(reportApplication.reportPriceType)} + 옵션`;
+  const discount =
+    payment.reportDiscount + payment.optionDiscount + payment.feedbackDiscount;
+  const total = payment.report + payment.option + payment.feedback;
 
   return (
     <div className="mx-auto max-w-5xl px-5" data-program-text={title}>
@@ -84,7 +87,7 @@ const ReportPaymentFail = () => {
             <div className="flex w-full items-center justify-between gap-x-4 bg-neutral-90 px-3 py-5">
               <div className="font-bold">예상 결제금액</div>
               <div className="font-bold">
-                {payment.total?.toLocaleString()}원
+                {payment.amount?.toLocaleString()}원
               </div>
             </div>
             <div className="flex w-full flex-col items-center justify-center">
@@ -99,14 +102,9 @@ const ReportPaymentFail = () => {
                 />
               ) : null}
               <PaymentInfoRow
-                title={`할인  (${Math.ceil(
-                  (payment.discount / (payment.report + payment.feedback)) *
-                    100,
-                )}%)`}
+                title={`할인  (${Math.ceil((discount / total) * 100)}%)`}
                 content={
-                  payment.discount === 0
-                    ? '0원'
-                    : `-${payment.discount.toLocaleString()}원`
+                  discount === 0 ? '0원' : `-${discount.toLocaleString()}원`
                 }
               />
               <PaymentInfoRow
