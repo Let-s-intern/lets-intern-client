@@ -78,8 +78,11 @@ const ReportPaymentResult = () => {
       }, 100);
       return;
     }
-
-    const body = { ...reportApplication, paymentKey: params.paymentKey };
+    const body = {
+      ...reportApplication,
+      paymentKey: params.paymentKey ?? '',
+      amount: reportApplication.amount?.toString(),
+    };
     axios
       .post(`/report/${reportApplication.reportId}/application`, body)
       .then((res) => {
