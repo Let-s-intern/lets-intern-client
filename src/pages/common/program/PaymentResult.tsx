@@ -1,6 +1,7 @@
 import dayjs from 'dayjs';
 import { useMemo, useState } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
+
 import { PostApplicationInterface } from '../../../api/application';
 import { useProgramQuery } from '../../../api/program';
 import DescriptionBox from '../../../components/common/program/paymentSuccess/DescriptionBox';
@@ -16,21 +17,18 @@ import axios from '../../../utils/axios';
 import { searchParamsToObject } from '../../../utils/network';
 
 const PaymentResult = () => {
-  const { data: programApplicationData, initProgramApplicationForm } =
-    useProgramStore();
+  const { data: programApplicationData } = useProgramStore();
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
   // TODO: any 타입을 사용하지 않도록 수정
   const [result, setResult] = useState<any>(null);
-  const [redirectTo, setRedirectTo] = useState<string | null>(null);
 
   const params = useMemo(() => {
     const obj = searchParamsToObject(
       new URL(window.location.href).searchParams,
     );
-    // console.log(obj);
     const result = paymentResultSearchParamsSchema.safeParse(obj);
-    // console.log(result);
+
     if (!result.success) {
       // eslint-disable-next-line no-console
       console.error(result.error);
