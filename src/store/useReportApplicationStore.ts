@@ -1,3 +1,4 @@
+import dayjs from 'dayjs';
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
@@ -93,13 +94,38 @@ const useReportApplicationStore = create(
         const currentData = get().data;
 
         if (
+          !isEmpty(currentData.applyUrl) ||
+          !isEmpty(currentData.recruitmentUrl)
+        ) {
+          try {
+            new URL(currentData.applyUrl);
+            new URL(currentData.recruitmentUrl);
+          } catch (error) {
+            return {
+              isValid: false,
+              message: '올바른 주소를 입력해주세요.',
+            };
+          }
+        }
+
+        if (
           isEmpty(currentData.desiredDate1) ||
           isEmpty(currentData.desiredDate2) ||
           isEmpty(currentData.desiredDate3)
         )
           return {
             isValid: false,
-            message: '맞춤 첨삭 일정 모두 선택해주세요.',
+            message: '1:1 피드백 일정을 모두 선택해주세요.',
+          };
+
+        if (
+          dayjs(currentData.desiredDate1).hour() === 0 ||
+          dayjs(currentData.desiredDate2).hour() === 0 ||
+          dayjs(currentData.desiredDate3).hour() === 0
+        )
+          return {
+            isValid: false,
+            message: '시간을 선택해주세요.',
           };
 
         if (isEmpty(currentData.wishJob))

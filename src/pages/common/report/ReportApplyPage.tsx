@@ -87,48 +87,7 @@ const ReportApplyPage = () => {
       return false;
     }
 
-    if (!isEmpty(applyUrl) || !isEmpty(recruitmentUrl)) {
-      try {
-        new URL(applyUrl);
-        new URL(recruitmentUrl);
-      } catch (error) {
-        alert('올바른 주소를 입력해주세요.');
-        return false;
-      }
-    }
-
-    if (
-      reportApplication.isFeedbackApplied &&
-      (notSelectDate() || notSelectTime())
-    ) {
-      alert('1:1 피드백 일정을 모두 선택해주세요.');
-      return false;
-    }
-
     return true;
-  };
-
-  const notSelectDate = () => {
-    if (
-      reportApplication.desiredDate1 === undefined ||
-      reportApplication.desiredDate2 === undefined ||
-      reportApplication.desiredDate3 === undefined
-    ) {
-      return true;
-    }
-    return false;
-  };
-
-  const notSelectTime = () => {
-    const { desiredDate1, desiredDate2, desiredDate3 } = reportApplication;
-    if (
-      dayjs(desiredDate1).hour() === 0 ||
-      dayjs(desiredDate2).hour() === 0 ||
-      dayjs(desiredDate3).hour() === 0
-    ) {
-      return true;
-    }
-    return false;
   };
 
   useRunOnce(() => {
@@ -444,7 +403,7 @@ const ScheduleSection = () => {
       </div>
       <div className="flex w-full flex-col gap-5">
         <span className="text-xsmall14">
-          희망하시는 1:1 피드백(40분) 일정을 1개 이상 선택해주세요.
+          희망하시는 1:1 피드백(40분) 일정을 모두 선택해주세요.
         </span>
         <div>
           <Label>희망순위1*</Label>
