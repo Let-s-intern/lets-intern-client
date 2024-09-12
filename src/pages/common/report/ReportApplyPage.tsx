@@ -9,7 +9,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { FaArrowLeft } from 'react-icons/fa6';
 import { IoCloseOutline } from 'react-icons/io5';
 import { useNavigate, useParams } from 'react-router-dom';
-import { twJoin } from 'tailwind-merge';
+import { twJoin, twMerge } from 'tailwind-merge';
 
 import useRunOnce from '@/hooks/useRunOnce';
 import useValidateUrl from '@/hooks/useValidateUrl';
@@ -20,7 +20,9 @@ import { uploadFile } from '../../../api/file';
 import {
   convertReportPriceType,
   convertReportTypeStatus,
+  ReportOptionInfo,
   useGetReportDetailQuery,
+  useGetReportPriceDetail,
 } from '../../../api/report';
 import Card from '../../../components/common/report/Card';
 import { ReportFormRadioControlLabel } from '../../../components/common/report/ControlLabel';
@@ -172,7 +174,7 @@ const ReportApplyPage = () => {
                   return;
                 }
                 await convertFile();
-                if (payment.total === 0) {
+                if (payment.amount === 0) {
                   navigate(`/report/order/result?orderId=${generateOrderId()}`);
                   return;
                 }
@@ -293,7 +295,7 @@ const DocumentSection = ({
                 }
               />
             )}
-            {!isValidUrl && (
+            {value === 'url' && !isValidUrl && (
               <span className="h-3 text-xsmall14 text-system-error">
                 올바른 주소를 입력해주세요
               </span>
@@ -362,7 +364,7 @@ const PremiumSection = ({
                   }
                 />
               )}
-              {!isValidUrl && (
+              {value === 'url' && !isValidUrl && (
                 <span className="h-3 text-xsmall14 text-system-error">
                   올바른 주소를 입력해주세요
                 </span>
@@ -554,14 +556,15 @@ export const UsereInfoSection = () => {
           <label
             onClick={() => {
               setChecked(!checked);
-              if (checked)
+              if (checked) {
                 setReportApplication({
                   contactEmail: '',
                 });
-              else
+              } else {
                 setReportApplication({
                   contactEmail: participationInfo?.email || '',
                 });
+              }
             }}
             className="flex cursor-pointer items-center gap-1 text-xxsmall12 font-medium"
           >
@@ -589,10 +592,14 @@ export const UsereInfoSection = () => {
 export const ReportPaymentSection = () => {
   const [couponCode, setCouponCode] = useState('');
   const [message, setMessage] = useState('');
+  const [options, setOptions] = useState<ReportOptionInfo[]>([]);
 
   const { data: reportApplication, setReportApplication } =
     useReportApplicationStore();
   const { payment, applyCoupon, cancelCoupon } = useReportPayment();
+  const { data: reportPriceDetail } = useGetReportPriceDetail(
+    reportApplication.reportId!,
+  );
 
   // 기존에 입력한 쿠폰 코드 초기화
   useEffect(() => {
@@ -601,7 +608,26 @@ export const ReportPaymentSection = () => {
     setCouponCode('');
   }, []);
 
+  useEffect(() => {
+    if (reportPriceDetail === undefined) return;
+    // 옵션 타이틀 불러오기
+    const result = [];
+    for (const optionId of reportApplication.optionIds) {
+      const reportOptionInfo = reportPriceDetail.reportOptionInfos?.find(
+        (info) => info.reportOptionId === optionId,
+      );
+      if (reportOptionInfo === undefined) continue;
+      result.push(reportOptionInfo);
+    }
+
+    setOptions(result);
+  }, [reportPriceDetail]);
+
   const showFeedback = reportApplication.isFeedbackApplied;
+  const discount =
+    payment.reportDiscount + payment.optionDiscount + payment.feedbackDiscount;
+  const total = payment.report + payment.option + payment.feedback;
+  const optionTitle = options.map((option) => option.title).join(', ');
 
   return (
     <section className="flex flex-col">
@@ -656,53 +682,107 @@ export const ReportPaymentSection = () => {
       </div>
       <hr className="my-5" />
       <div className="flex flex-col">
-        <div className="flex h-10 items-center justify-between px-3 text-neutral-0">
+        <PaymentRowMain>
+          <span>서류 진단서</span>
+          <span>{(payment.report + payment.option).toLocaleString()}원</span>
+        </PaymentRowMain>
+        <PaymentRowSub>
           <span>
-            서류 진단서 (
-            {reportApplication.optionIds.length === 0
-              ? convertReportPriceType(reportApplication.reportPriceType)
-              : `${convertReportPriceType(reportApplication.reportPriceType)} + 옵션`}
-            )
+            └ {convertReportPriceType(reportApplication.reportPriceType)}
           </span>
-          {/* 서류 진단 + 사용자가 선택한 모든 옵션 가격을 더한 값 */}
-          <span>{payment.report.toLocaleString()}원</span>
-        </div>
-        {showFeedback && (
-          <div className="flex h-10 items-center justify-between px-3 text-neutral-0">
-            <span>1:1 피드백</span>
-            {/* 1:1 피드백 가격 */}
-            <span>{payment.feedback.toLocaleString()}원</span>
-          </div>
+          <span>{`${payment.report.toLocaleString()}원`}</span>
+        </PaymentRowSub>
+        {options.length > 0 && (
+          <PaymentRowSub>
+            <span>└ {optionTitle}</span>
+            <span>{`${payment.option.toLocaleString()}원`}</span>
+          </PaymentRowSub>
         )}
-        <div className="flex h-10 items-center justify-between px-3 text-neutral-0">
-          {/* 서류진단 + 사용자가 선택한 모든 옵션 + 1:1 피드백의 할인 가격을 모두 더한 값 */}
+        {showFeedback && (
+          <PaymentRowMain>
+            <span>1:1 피드백</span>
+            <span>{payment.feedback.toLocaleString()}원</span>
+          </PaymentRowMain>
+        )}
+        <PaymentRowMain>
+          <span>{Math.ceil((discount / total) * 100)}% 할인</span>
           <span>
-            {Math.ceil(
-              (payment.discount / (payment.report + payment.feedback)) * 100,
-            )}
-            % 할인
+            {discount === 0 ? '0원' : `-${discount.toLocaleString()}원`}
+          </span>
+        </PaymentRowMain>
+        <PaymentRowSub>
+          <span>
+            └ {convertReportPriceType(reportApplication.reportPriceType)}
           </span>
           <span>
-            {payment.discount === 0
+            {payment.reportDiscount === 0
               ? '0원'
-              : `-${payment.discount.toLocaleString()}원`}
+              : `-${payment.reportDiscount.toLocaleString()}원`}
           </span>
-        </div>
-        <div className="flex h-10 items-center justify-between px-3 text-primary">
+        </PaymentRowSub>
+        {options.length > 0 && (
+          <PaymentRowSub>
+            <span>└ {optionTitle}</span>
+            <span>
+              {payment.optionDiscount === 0
+                ? '0원'
+                : `-${payment.optionDiscount.toLocaleString()}원`}
+            </span>
+          </PaymentRowSub>
+        )}
+        <PaymentRowMain className="text-primary">
           <span>쿠폰할인</span>
           <span className="font-bold">
             {payment.coupon === 0
               ? '0원'
               : `-${payment.coupon.toLocaleString()}원`}
           </span>
-        </div>
+        </PaymentRowMain>
         <hr className="my-5" />
-        <div className="flex h-10 items-center justify-between px-3 font-semibold text-neutral-0">
+        <PaymentRowMain className="font-semibold">
           <span>결제금액</span>
-          <span>{payment.total.toLocaleString()}원</span>
-        </div>
+          <span>{payment.amount.toLocaleString()}원</span>
+        </PaymentRowMain>
       </div>
     </section>
+  );
+};
+
+const PaymentRowMain = ({
+  children,
+  className,
+}: {
+  children?: React.ReactNode;
+  className?: string;
+}) => {
+  return (
+    <div
+      className={twMerge(
+        'flex h-10 items-center justify-between px-3 text-neutral-0',
+        className,
+      )}
+    >
+      {children}
+    </div>
+  );
+};
+
+const PaymentRowSub = ({
+  children,
+  className,
+}: {
+  children?: React.ReactNode;
+  className?: string;
+}) => {
+  return (
+    <div
+      className={twJoin(
+        'flex h-10 items-center justify-between pl-6 pr-3 text-xsmall14 text-neutral-50',
+        className,
+      )}
+    >
+      {children}
+    </div>
   );
 };
 

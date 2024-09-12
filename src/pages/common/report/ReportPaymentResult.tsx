@@ -65,6 +65,9 @@ const ReportPaymentResult = () => {
       ? convertReportPriceType(reportApplication.reportPriceType)
       : `${convertReportPriceType(reportApplication.reportPriceType)} + 옵션`;
   const isSuccess = typeof result === 'object' && result !== null;
+  const discount =
+    payment.reportDiscount + payment.optionDiscount + payment.feedbackDiscount;
+  const total = payment.report + payment.option + payment.feedback;
 
   useRunOnce(() => {
     if (!params) return;
@@ -149,7 +152,10 @@ const ReportPaymentResult = () => {
                   <div className="flex w-full flex-col items-center justify-center">
                     <PaymentInfoRow
                       title={`서류 진단서 (${subTitle})`}
-                      content={payment.report.toLocaleString() + '원'}
+                      content={
+                        (payment.report + payment.option).toLocaleString() +
+                        '원'
+                      }
                     />
                     {payment.isFeedbackApplied ? (
                       <PaymentInfoRow
@@ -158,15 +164,11 @@ const ReportPaymentResult = () => {
                       />
                     ) : null}
                     <PaymentInfoRow
-                      title={`할인 (${Math.ceil(
-                        (payment.discount /
-                          (payment.report + payment.feedback)) *
-                          100,
-                      )}%)`}
+                      title={`할인 (${Math.ceil((discount / total) * 100)}%)`}
                       content={
-                        payment.discount === 0
+                        discount === 0
                           ? '0원'
-                          : `-${payment.discount.toLocaleString()}원`
+                          : `-${discount.toLocaleString()}원`
                       }
                     />
                     <PaymentInfoRow
@@ -180,7 +182,7 @@ const ReportPaymentResult = () => {
                   </div>
                   <hr className="border-neutral-85" />
                   <div className="flex w-full flex-col items-center justify-center">
-                    {payment.total === 0 ? (
+                    {payment.amount === 0 ? (
                       <PaymentInfoRow
                         title="결제일자"
                         content={dayjs(new Date()).format(
