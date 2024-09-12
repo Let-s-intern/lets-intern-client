@@ -118,14 +118,16 @@ const useReportApplicationStore = create(
             message: '1:1 피드백 일정을 모두 선택해주세요.',
           };
 
-        if (
-          dayjs(currentData.desiredDate1).hour() === 0 ||
-          dayjs(currentData.desiredDate2).hour() === 0 ||
-          dayjs(currentData.desiredDate3).hour() === 0
-        )
+        if (notSelectTime(currentData))
           return {
             isValid: false,
             message: '시간을 선택해주세요.',
+          };
+
+        if (isDuplicateDate(currentData))
+          return {
+            isValid: false,
+            message: '1:1 피드백 일정을 중복되지 않게 선택해주세요.',
           };
 
         if (isEmpty(currentData.wishJob))
@@ -139,5 +141,24 @@ const useReportApplicationStore = create(
     },
   ),
 );
+
+const notSelectTime = (reportApplication: ReportApplication) => {
+  const { desiredDate1, desiredDate2, desiredDate3 } = reportApplication;
+  if (
+    dayjs(desiredDate1).hour() === 0 ||
+    dayjs(desiredDate2).hour() === 0 ||
+    dayjs(desiredDate3).hour() === 0
+  )
+    return true;
+
+  return false;
+};
+
+const isDuplicateDate = (reportApplication: ReportApplication) => {
+  const { desiredDate1, desiredDate2, desiredDate3 } = reportApplication;
+  const set = new Set([desiredDate1, desiredDate2, desiredDate3]);
+
+  return set.size === 3 ? false : true;
+};
 
 export default useReportApplicationStore;
