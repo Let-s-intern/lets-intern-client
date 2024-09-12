@@ -152,7 +152,10 @@ const ReportPaymentResult = () => {
                   <div className="flex w-full flex-col items-center justify-center">
                     <PaymentInfoRow
                       title={`서류 진단서 (${subTitle})`}
-                      content={payment.report.toLocaleString() + '원'}
+                      content={
+                        (payment.report + payment.option).toLocaleString() +
+                        '원'
+                      }
                     />
                     {payment.isFeedbackApplied ? (
                       <PaymentInfoRow
