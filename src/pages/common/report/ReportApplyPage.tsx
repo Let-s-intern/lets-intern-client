@@ -11,6 +11,7 @@ import { IoCloseOutline } from 'react-icons/io5';
 import { useNavigate, useParams } from 'react-router-dom';
 import { twJoin, twMerge } from 'tailwind-merge';
 
+import useMinDate from '@/hooks/useMinDate';
 import useRunOnce from '@/hooks/useRunOnce';
 import useValidateUrl from '@/hooks/useValidateUrl';
 import { generateOrderId } from '@/lib/order';
@@ -379,6 +380,8 @@ const PremiumSection = ({
 
 const ScheduleSection = () => {
   const { data, setReportApplication } = useReportApplicationStore();
+  const { minDate, timeOptions } = useMinDate(data);
+
   type Key = keyof typeof data;
 
   const onChangeDate = (date: Dayjs | null, name?: string) => {
@@ -392,7 +395,6 @@ const ScheduleSection = () => {
 
   const onChangeTime = (e: SelectChangeEvent<unknown>) => {
     const prev = data[e.target.name as Key];
-
     setReportApplication({
       [e.target.name]: dayjs(prev as dayjs.ConfigType)
         .set('hour', e.target.value as number)
@@ -415,9 +417,14 @@ const ScheduleSection = () => {
         <div>
           <Label>희망순위1*</Label>
           <DateTimePicker
-            date={dayjs(data.desiredDate1)}
-            time={dayjs(data.desiredDate1).hour()}
+            date={
+              data.desiredDate1 === undefined
+                ? undefined
+                : dayjs(data.desiredDate1)
+            }
             name="desiredDate1"
+            minDate={minDate}
+            timeOption={timeOptions.desiredDate1}
             onChangeDate={onChangeDate}
             onChangeTime={onChangeTime}
           />
@@ -425,9 +432,14 @@ const ScheduleSection = () => {
         <div>
           <Label>희망순위2*</Label>
           <DateTimePicker
-            date={dayjs(data.desiredDate2)}
-            time={dayjs(data.desiredDate2).hour()}
+            date={
+              data.desiredDate2 === undefined
+                ? undefined
+                : dayjs(data.desiredDate2)
+            }
             name="desiredDate2"
+            minDate={minDate}
+            timeOption={timeOptions.desiredDate2}
             onChangeDate={onChangeDate}
             onChangeTime={onChangeTime}
           />
@@ -435,9 +447,14 @@ const ScheduleSection = () => {
         <div>
           <Label>희망순위3*</Label>
           <DateTimePicker
-            date={dayjs(data.desiredDate3)}
-            time={dayjs(data.desiredDate3).hour()}
+            date={
+              data.desiredDate3 === undefined
+                ? undefined
+                : dayjs(data.desiredDate3)
+            }
             name="desiredDate3"
+            minDate={minDate}
+            timeOption={timeOptions.desiredDate3}
             onChangeDate={onChangeDate}
             onChangeTime={onChangeTime}
           />

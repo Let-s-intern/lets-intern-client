@@ -1,36 +1,35 @@
-import dayjs from 'dayjs';
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
+export interface ReportApplication {
+  reportId: number | null;
+  reportPriceType: 'BASIC' | 'PREMIUM';
+  optionIds: number[];
+  isFeedbackApplied: boolean;
+  couponId: number | null;
+  paymentKey: string | null;
+  orderId: string | null;
+  amount: number | null;
+  programPrice: number | null;
+  programDiscount: number | null;
+  applyUrl: string;
+  recruitmentUrl: string;
+  desiredDate1: string | undefined;
+  desiredDate2: string | undefined;
+  desiredDate3: string | undefined;
+  wishJob: string;
+  message: string;
+  contactEmail: string;
+}
+
 interface ReportApplicationStore {
-  data: {
-    reportId: number | null;
-    reportPriceType: 'BASIC' | 'PREMIUM';
-    optionIds: number[];
-    isFeedbackApplied: boolean;
-    couponId: number | null;
-    paymentKey: string | null;
-    orderId: string | null;
-    amount: number | null;
-    programPrice: number | null;
-    programDiscount: number | null;
-    applyUrl: string;
-    recruitmentUrl: string;
-    desiredDate1: string;
-    desiredDate2: string;
-    desiredDate3: string;
-    wishJob: string;
-    message: string;
-    contactEmail: string;
-  };
+  data: ReportApplication;
   setReportApplication: (
     params: Partial<ReportApplicationStore['data']>,
   ) => void;
   initReportApplication: () => void;
   validate: () => { isValid: boolean; message: string | null };
 }
-
-const initialDate = dayjs().add(3, 'day').format('YYYY-MM-DDTHH:00');
 
 const useReportApplicationStore = create(
   persist<ReportApplicationStore>(
@@ -48,9 +47,9 @@ const useReportApplicationStore = create(
         programDiscount: null,
         applyUrl: '',
         recruitmentUrl: '',
-        desiredDate1: initialDate,
-        desiredDate2: initialDate,
-        desiredDate3: initialDate,
+        desiredDate1: undefined,
+        desiredDate2: undefined,
+        desiredDate3: undefined,
         wishJob: '',
         message: '',
         contactEmail: '',
@@ -79,9 +78,9 @@ const useReportApplicationStore = create(
             programDiscount: null,
             applyUrl: '',
             recruitmentUrl: '',
-            desiredDate1: initialDate,
-            desiredDate2: initialDate,
-            desiredDate3: initialDate,
+            desiredDate1: undefined,
+            desiredDate2: undefined,
+            desiredDate3: undefined,
             wishJob: '',
             message: '',
             contactEmail: '',
@@ -89,7 +88,8 @@ const useReportApplicationStore = create(
         });
       },
       validate: () => {
-        const isEmpty = (value: string) => value === '' || !value;
+        const isEmpty = (value: string | null | undefined) =>
+          value === '' || !value || value === undefined;
         const currentData = get().data;
 
         if (
