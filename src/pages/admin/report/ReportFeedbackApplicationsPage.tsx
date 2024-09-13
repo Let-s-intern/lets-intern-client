@@ -3,10 +3,9 @@ import dayjs, { Dayjs } from 'dayjs';
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import {
-  convertReportFeedbackStatus,
+  convertFeedbackStatusToDisplayName,
   convertReportPriceType,
   reportApplicationsForAdminInfoType,
-  ReportFeedbackStatus,
   ReportPriceType,
   useGetReportApplicationOptionsForAdmin,
   useGetReportApplicationsForAdmin,
@@ -269,10 +268,13 @@ const ReportFeedbackApplicationsPage = () => {
                       </div>
                     </TD>
                     <TD>
-                      {convertReportFeedbackStatus(
-                        (application.reportFeedbackStatus as ReportFeedbackStatus) ||
-                          '-',
-                      )}
+                      {convertFeedbackStatusToDisplayName({
+                        status: application.reportFeedbackStatus,
+                        now: dayjs(),
+                        // TODO: reportApplicationsForAdminInfos에 reportDesiredDate 추가
+                        reportFeedback: null,
+                        isAdmin: true,
+                      })}
                       <div className="mt-2 flex items-center justify-center">
                         <ActionButton
                           bgColor="blue"

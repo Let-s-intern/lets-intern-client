@@ -12,6 +12,7 @@ import useAuthStore from '@/store/useAuthStore';
 import { ReportHeader } from '@components/common/report/ReportIntroSection';
 import Tooltip from '@components/common/report/Tooltip';
 import Badge from '@components/common/ui/Badge';
+import dayjs from 'dayjs';
 import {
   ComponentPropsWithoutRef,
   ElementType,
@@ -346,13 +347,17 @@ const ReportManagementPage = () => {
                   <div>
                     <header className="mb-3 flex items-center gap-2">
                       <Badge
-                        status={convertFeedbackStatusToBadgeStatus(
-                          item.feedbackStatus,
-                        )}
+                        status={convertFeedbackStatusToBadgeStatus({
+                          now: dayjs(),
+                          reportFeedback: item.confirmedTime,
+                          status: item.feedbackStatus,
+                        })}
                       >
-                        {convertFeedbackStatusToDisplayName(
-                          item.feedbackStatus,
-                        )}
+                        {convertFeedbackStatusToDisplayName({
+                          now: dayjs(),
+                          reportFeedback: item.confirmedTime,
+                          status: item.feedbackStatus,
+                        })}
                       </Badge>
                       <h3 className="text-xsmall14 font-medium text-primary-dark">
                         1:1 피드백 현황
