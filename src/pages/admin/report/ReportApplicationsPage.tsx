@@ -1,5 +1,5 @@
 import { generateRandomString } from '@/utils/random';
-import { MenuItem, Select, Snackbar } from '@mui/material';
+import { Button, MenuItem, Select, Snackbar } from '@mui/material';
 import { DatePicker, TimePicker } from '@mui/x-date-pickers';
 import dayjs from 'dayjs';
 import { useState } from 'react';
@@ -269,6 +269,7 @@ const ReportApplicationsPage = () => {
                     <TD>
                       <p>{application.orderId}</p>
                       <p>
+                        {/* 운영기준 */}
                         <a
                           href={`https://dashboard.tosspayments.com/payments-browse/tm/963616/card?keyword=${application.orderId}`}
                           className="text-gray-400 underline transition hover:text-gray-300"
@@ -341,8 +342,10 @@ const ReportApplicationsPage = () => {
                       )}
                     </TD>
                     <TD>
-                      <ActionButton
-                        bgColor="lightBlue"
+                      <Button
+                        variant="outlined"
+                        color="primary"
+                        size="small"
                         onClick={() =>
                           setApplicationModal({
                             application,
@@ -351,10 +354,10 @@ const ReportApplicationsPage = () => {
                         }
                       >
                         보기
-                      </ActionButton>
+                      </Button>
                     </TD>
                     <TD>
-                      <div className="flex justify-center gap-2">
+                      <div className="flex gap-2">
                         <ActionButton
                           bgColor="green"
                           onClick={() =>
@@ -366,7 +369,7 @@ const ReportApplicationsPage = () => {
                         >
                           진단서 업로드
                         </ActionButton>
-                        {application.reportFileUrl && (
+                        {application.reportFileUrl ? (
                           <ActionButton
                             bgColor="blue"
                             onClick={() => {
@@ -378,6 +381,8 @@ const ReportApplicationsPage = () => {
                           >
                             진단서 보기
                           </ActionButton>
+                        ) : (
+                          <ActionButton disabled>진단서 보기</ActionButton>
                         )}
                       </div>
                     </TD>
@@ -441,7 +446,7 @@ const ReportApplicationsPage = () => {
                         >
                           일정선택
                         </ActionButton>
-                        {application.zoomLink !== null && (
+                        {application.zoomLink !== null ? (
                           <ActionButton
                             bgColor="blue"
                             onClick={() => {
@@ -453,6 +458,8 @@ const ReportApplicationsPage = () => {
                           >
                             ZOOM
                           </ActionButton>
+                        ) : (
+                          <ActionButton disabled>ZOOM</ActionButton>
                         )}
                       </div>
                     </TD>
