@@ -46,7 +46,6 @@ import AdminReportCreatePage from './pages/admin/report/AdminReportCreatePage';
 import AdminReportEditPage from './pages/admin/report/AdminReportEditPage';
 import AdminReportListPage from './pages/admin/report/AdminReportListPage';
 import ReportApplicationsPage from './pages/admin/report/ReportApplicationsPage';
-import ReportFeedbackApplicationsPage from './pages/admin/report/ReportFeedbackApplicationsPage';
 import AdminReviews from './pages/admin/review/Reviews';
 import AdminReviewsDetail from './pages/admin/review/ReviewsDetail';
 import UserCreate from './pages/admin/user/UserCreate';
@@ -191,10 +190,6 @@ export const getAdminRoutes = () => {
       <Route path="report/create" element={<AdminReportCreatePage />} />
       <Route path="report/edit/:id" element={<AdminReportEditPage />} />
       <Route path="report/applications" element={<ReportApplicationsPage />} />
-      <Route
-        path="report/applications/feedback"
-        element={<ReportFeedbackApplicationsPage />}
-      />
     </Route>
   );
 };

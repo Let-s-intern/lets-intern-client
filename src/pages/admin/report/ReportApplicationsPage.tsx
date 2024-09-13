@@ -1,10 +1,12 @@
 import { generateRandomString } from '@/utils/random';
 import { MenuItem, Select, Snackbar } from '@mui/material';
+import { DatePicker, TimePicker } from '@mui/x-date-pickers';
 import dayjs from 'dayjs';
 import { useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { uploadFile } from '../../../api/file';
 import {
+  convertFeedbackStatusToDisplayName,
   convertReportApplicationsStatus,
   convertReportPriceType,
   reportApplicationsForAdminInfoType,
@@ -15,6 +17,7 @@ import {
   useGetReportDetailAdminQuery,
   usePatchApplicationDocument,
   usePatchApplicationStatus,
+  usePatchReportApplicationSchedule,
 } from '../../../api/report';
 import DragDropModule from '../../../components/admin/report/DragDropModule';
 import ActionButton from '../../../components/admin/ui/button/ActionButton';
@@ -24,6 +27,43 @@ import AdminPagination from '../../../components/admin/ui/pagination/AdminPagina
 import Table from '../../../components/admin/ui/table/regacy/Table';
 import TD from '../../../components/admin/ui/table/regacy/TD';
 import TH from '../../../components/admin/ui/table/regacy/TH';
+import CheckBox from '../../../components/common/auth/ui/CheckBox';
+
+const totalDateConverter = (date: string) => {
+  return dayjs(date).format('YYYY.MM.DD (dd) A hh:mm');
+};
+const dateConverter = (date: string) => {
+  return dayjs(date).format('YYYY.MM.DD');
+};
+
+const timeConverter = (date: string) => {
+  return dayjs(date).format('A hh:00');
+};
+
+const getProgressDate = (application: reportApplicationsForAdminInfoType) => {
+  const desiredDateType = application.desiredDateType;
+
+  switch (desiredDateType) {
+    case 'DESIRED_DATE_1':
+      return application.desiredDate1
+        ? totalDateConverter(application.desiredDate1)
+        : '-';
+    case 'DESIRED_DATE_2':
+      return application.desiredDate2
+        ? totalDateConverter(application.desiredDate2)
+        : '-';
+    case 'DESIRED_DATE_3':
+      return application.desiredDate3
+        ? totalDateConverter(application.desiredDate3)
+        : '-';
+    case 'DESIRED_DATE_ADMIN':
+      return application.desiredDateAdmin
+        ? totalDateConverter(application.desiredDateAdmin)
+        : '-';
+    default:
+      return '-';
+  }
+};
 
 const reportApplicatoinsStatusList: {
   value: ReportApplicationStatus;
@@ -60,7 +100,7 @@ const ReportApplicationsPage = () => {
   const reportId = searchParams.get('reportId');
   const [applicationModal, setApplicationModal] = useState<{
     application: reportApplicationsForAdminInfoType;
-    type: 'PAYMENT_INFO' | 'UPLOAD';
+    type: 'PAYMENT_INFO' | 'UPLOAD' | 'SCHEDULE';
   } | null>(null);
 
   const [currentPage, setCurrentPage] = useState(1);
@@ -133,6 +173,48 @@ const ReportApplicationsPage = () => {
     });
   };
 
+  const [adminChangeDate, setAdminChangeDate] = useState(dayjs());
+  const [adminChangeTime, setAdminChangeTime] = useState(dayjs());
+  const [selectedDate, setSelectedDate] = useState<{
+    type:
+      | 'DESIRED_DATE_1'
+      | 'DESIRED_DATE_2'
+      | 'DESIRED_DATE_3'
+      | 'DESIRED_DATE_ADMIN';
+    date: string;
+  } | null>(null);
+
+  const { mutate: trySubmitSchedule } = usePatchReportApplicationSchedule({
+    successCallback: () => {
+      setAdminChangeDate(dayjs());
+      setAdminChangeTime(dayjs());
+      setSelectedDate(null);
+      alert('일정이 저장되었습니다.');
+      setApplicationModal(null);
+    },
+    errorCallback: (error: Error) => {
+      console.error(error);
+      alert('일정 저장에 실패했습니다.');
+    },
+  });
+
+  const handleSubmitSchedule = () => {
+    if (!selectedDate) {
+      alert('일정을 선택해주세요.');
+      return;
+    }
+
+    trySubmitSchedule({
+      reportId: Number(reportId),
+      applicationId: applicationModal?.application.applicationId || 0,
+      desiredDateType: selectedDate.type,
+      desiredDateAdmin:
+        selectedDate.type === 'DESIRED_DATE_ADMIN'
+          ? selectedDate.date + 'Z'
+          : undefined,
+    });
+  };
+
   return (
     <div className="p-8 pt-16">
       <Header>
@@ -150,9 +232,20 @@ const ReportApplicationsPage = () => {
             <Table>
               <thead>
                 <tr>
+                  <TH colspan={12}>공통</TH>
+                  <TH colspan={2} backgroundColor="#ffff00">
+                    서류진단
+                  </TH>
+                  <TH colspan={3} backgroundColor="#00ffff">
+                    1:1피드백
+                  </TH>
+                </tr>
+                <tr>
+                  <TH>주문ID</TH>
+                  {/* TODO: 환불여부를 서류진단과 1:1피드백 각각 표시 */}
+                  <TH>환불여부</TH>
                   <TH>ID</TH>
                   <TH>신청일시</TH>
-                  <TH>환불여부</TH>
                   <TH>이름</TH>
                   <TH>이메일</TH>
                   <TH>전화번호</TH>
@@ -160,13 +253,21 @@ const ReportApplicationsPage = () => {
                   <TH>고민지점</TH>
                   <TH>서류</TH>
                   <TH>채용공고</TH>
-                  <TH>진단서 관리</TH>
-                  <TH>상태</TH>
+                  <TH>결제정보</TH>
+                  {/* 서류진단 전용 */}
+                  <TH backgroundColor="#ffff00">관리</TH>
+                  <TH backgroundColor="#ffff00">상태</TH>
+                  {/* 1:1피드백 전용 */}
+                  <TH backgroundColor="#00ffff">관리</TH>
+                  <TH backgroundColor="#00ffff">상태</TH>
+                  <TH backgroundColor="#00ffff">진행일시</TH>
                 </tr>
               </thead>
               <tbody>
                 {data.reportApplicationsForAdminInfos.map((application) => (
                   <tr key={application.applicationId}>
+                    <TD>{application.orderId}</TD>
+                    <TD>{application.isRefunded ? 'O' : 'X'}</TD>
                     <TD>{application.applicationId}</TD>
                     <TD>
                       {application.createDate ? (
@@ -181,7 +282,7 @@ const ReportApplicationsPage = () => {
                         '-'
                       )}
                     </TD>
-                    <TD>{application.isRefunded ? 'O' : 'X'}</TD>
+
                     <TD>{application.name}</TD>
                     <TD>{application.contactEmail}</TD>
                     <TD>{application.phoneNumber}</TD>
@@ -220,18 +321,20 @@ const ReportApplicationsPage = () => {
                       )}
                     </TD>
                     <TD>
+                      <ActionButton
+                        bgColor="lightBlue"
+                        onClick={() =>
+                          setApplicationModal({
+                            application,
+                            type: 'PAYMENT_INFO',
+                          })
+                        }
+                      >
+                        보기
+                      </ActionButton>
+                    </TD>
+                    <TD>
                       <div className="flex justify-center gap-2">
-                        <ActionButton
-                          bgColor="lightBlue"
-                          onClick={() =>
-                            setApplicationModal({
-                              application,
-                              type: 'PAYMENT_INFO',
-                            })
-                          }
-                        >
-                          결제정보
-                        </ActionButton>
                         <ActionButton
                           bgColor="green"
                           onClick={() =>
@@ -296,6 +399,70 @@ const ReportApplicationsPage = () => {
                         ))}
                       </Select>
                     </TD>
+
+                    <TD>
+                      <div className="flex justify-center gap-2">
+                        <ActionButton
+                          bgColor="green"
+                          onClick={() => {
+                            setApplicationModal({
+                              application,
+                              type: 'SCHEDULE',
+                            });
+                            if (application.desiredDateAdmin) {
+                              setAdminChangeDate(
+                                dayjs(application.desiredDateAdmin),
+                              );
+                              setAdminChangeTime(
+                                dayjs(application.desiredDateAdmin),
+                              );
+                            }
+                          }}
+                        >
+                          일정선택
+                        </ActionButton>
+                        {application.zoomLink !== null && (
+                          <ActionButton
+                            bgColor="blue"
+                            onClick={() => {
+                              navigator.clipboard.writeText(
+                                application.zoomLink || '',
+                              );
+                              alert('클립보드에 복사되었습니다.');
+                            }}
+                          >
+                            ZOOM
+                          </ActionButton>
+                        )}
+                      </div>
+                    </TD>
+                    <TD>
+                      {convertFeedbackStatusToDisplayName({
+                        status: application.reportFeedbackStatus,
+                        now: dayjs(),
+                        // TODO: reportApplicationsForAdminInfos에 reportDesiredDate 추가
+                        reportFeedback: null,
+                        isAdmin: true,
+                      })}
+                      <div className="mt-2 flex items-center justify-center">
+                        <ActionButton
+                          bgColor="blue"
+                          onClick={() => {
+                            trySubmitSchedule({
+                              reportId: Number(reportId),
+                              applicationId: application.applicationId,
+                              reportFeedbackStatus: 'CONFIRMED',
+                            });
+                          }}
+                          disabled={
+                            application.reportFeedbackStatus !== 'PENDING'
+                          }
+                        >
+                          일정 확정하기
+                        </ActionButton>
+                      </div>
+                    </TD>
+                    <TD>{getProgressDate(application)}</TD>
                   </tr>
                 ))}
               </tbody>
@@ -418,6 +585,250 @@ const ReportApplicationsPage = () => {
                 </button>
                 <button
                   onClick={handleDocumentPatch}
+                  className="rounded-sm bg-primary px-4 py-2 text-xxsmall12 font-bold text-white"
+                >
+                  저장
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {applicationModal?.type === 'SCHEDULE' && (
+          <div className="fixed left-0 top-0 z-10 flex h-screen w-screen items-center justify-center bg-black/10">
+            <div className="flex min-h-64 min-w-96 flex-col justify-center gap-y-5 rounded-sm bg-white px-8 py-6">
+              <h1 className="text-lg font-bold">일정 선택</h1>
+              <div className="mt-5 flex w-full flex-col gap-y-5 text-xsmall14">
+                <h2 className="w-20 font-semibold">제출 일정</h2>
+                <div className="flex grow flex-col gap-y-4">
+                  {applicationModal.application.desiredDate1 && (
+                    <div className="flex items-center justify-center gap-x-10">
+                      <h3 className="w-20 text-xsmall16 font-medium text-neutral-40">
+                        희망 1순위
+                      </h3>
+                      <div className="flex items-center justify-center gap-x-2.5">
+                        <p className="w-[180px] rounded-xs border border-primary-10 px-4 py-3 text-center">
+                          {dateConverter(
+                            applicationModal.application.desiredDate1,
+                          )}
+                        </p>
+                        <p className="w-[180px] rounded-xs border border-primary-10 px-4 py-3 text-center">
+                          {timeConverter(
+                            applicationModal.application.desiredDate1,
+                          )}
+                        </p>
+                      </div>
+                      <CheckBox
+                        checked={
+                          selectedDate?.type === 'DESIRED_DATE_1' &&
+                          selectedDate.date ===
+                            applicationModal.application.desiredDate1
+                        }
+                        onClick={() =>
+                          setSelectedDate({
+                            type: 'DESIRED_DATE_1',
+                            date:
+                              applicationModal.application.desiredDate1 || '',
+                          })
+                        }
+                      />
+                    </div>
+                  )}
+                  {applicationModal.application.desiredDate2 && (
+                    <div className="flex items-center justify-center gap-x-10">
+                      <h3 className="w-20 text-xsmall16 font-medium text-neutral-40">
+                        희망 2순위
+                      </h3>
+                      <div className="flex items-center justify-center gap-x-2.5">
+                        <p className="w-[180px] rounded-xs border border-primary-10 px-4 py-3 text-center">
+                          {dateConverter(
+                            applicationModal.application.desiredDate2,
+                          )}
+                        </p>
+                        <p className="w-[180px] rounded-xs border border-primary-10 px-4 py-3 text-center">
+                          {timeConverter(
+                            applicationModal.application.desiredDate2,
+                          )}
+                        </p>
+                      </div>
+                      <CheckBox
+                        checked={
+                          selectedDate?.type === 'DESIRED_DATE_2' &&
+                          selectedDate.date ===
+                            applicationModal.application.desiredDate2
+                        }
+                        onClick={() =>
+                          setSelectedDate({
+                            type: 'DESIRED_DATE_2',
+                            date:
+                              applicationModal.application.desiredDate2 || '',
+                          })
+                        }
+                      />
+                    </div>
+                  )}
+                  {applicationModal.application.desiredDate3 && (
+                    <div className="flex items-center justify-center gap-x-10">
+                      <h3 className="w-20 text-xsmall16 font-medium text-neutral-40">
+                        희망 3순위
+                      </h3>
+                      <div className="flex items-center justify-center gap-x-2.5">
+                        <p className="w-[180px] rounded-xs border border-primary-10 px-4 py-3 text-center">
+                          {dateConverter(
+                            applicationModal.application.desiredDate3,
+                          )}
+                        </p>
+                        <p className="w-[180px] rounded-xs border border-primary-10 px-4 py-3 text-center">
+                          {timeConverter(
+                            applicationModal.application.desiredDate3,
+                          )}
+                        </p>
+                      </div>
+                      <CheckBox
+                        checked={
+                          selectedDate?.type === 'DESIRED_DATE_3' &&
+                          selectedDate.date ===
+                            applicationModal.application.desiredDate3
+                        }
+                        onClick={() =>
+                          setSelectedDate({
+                            type: 'DESIRED_DATE_3',
+                            date:
+                              applicationModal.application.desiredDate3 || '',
+                          })
+                        }
+                      />
+                    </div>
+                  )}
+                  {(applicationModal.application.desiredDate1 ||
+                    applicationModal.application.desiredDate2 ||
+                    applicationModal.application.desiredDate3) && <hr />}
+
+                  <div className="flex items-center justify-center gap-x-10">
+                    <h3 className="w-20 text-xsmall16 font-medium text-neutral-40">
+                      운영진 변경
+                    </h3>
+                    <div className="flex items-center justify-center gap-x-2.5">
+                      <DatePicker
+                        format="YYYY.MM.DD"
+                        sx={{
+                          width: '180px',
+                          height: '3rem',
+                          '& .MuiOutlinedInput-root': {
+                            '& fieldset': {
+                              borderColor: '#EDEEFE', // 기본 상태의 border 색상 설정
+                            },
+                            '&:hover fieldset': {
+                              borderColor: '#A9C1FF', // 마우스 오버 상태의 border 색상 설정
+                            },
+                            '&.Mui-focused fieldset': {
+                              borderColor: '#757BFF', // 포커스 상태의 border 색상 설정
+                            },
+                          },
+                          '& .MuiInputBase-input': {
+                            paddingLeft: '1rem',
+                            paddingRight: '1rem',
+                            paddingTop: '0.75rem',
+                            paddingBottom: '0.75rem',
+                            fontSize: '0.875rem',
+                            fontWeight: 400,
+                            textAlign: 'center',
+                          },
+                        }}
+                        slotProps={{
+                          textField: {
+                            InputProps: {
+                              sx: {
+                                width: '180px',
+                                height: '3rem',
+                              },
+                            },
+                          },
+                        }}
+                        value={adminChangeDate}
+                        onChange={(date) => {
+                          if (!date) return;
+                          setAdminChangeDate(date);
+                        }}
+                      />
+                      <TimePicker
+                        format="A hh:00"
+                        views={['hours']}
+                        sx={{
+                          width: '180px',
+                          height: '3rem',
+                          '& .MuiOutlinedInput-root': {
+                            '& fieldset': {
+                              borderColor: '#EDEEFE', // 기본 상태의 border 색상 설정
+                            },
+                            '&:hover fieldset': {
+                              borderColor: '#A9C1FF', // 마우스 오버 상태의 border 색상 설정
+                            },
+                            '&.Mui-focused fieldset': {
+                              borderColor: '#757BFF', // 포커스 상태의 border 색상 설정
+                            },
+                          },
+                          '& .MuiInputBase-input': {
+                            paddingLeft: '1rem',
+                            paddingRight: '1rem',
+                            paddingTop: '0.75rem',
+                            paddingBottom: '0.75rem',
+                            fontSize: '0.875rem',
+                            fontWeight: 400,
+                          },
+                        }}
+                        slotProps={{
+                          textField: {
+                            InputProps: {
+                              sx: {
+                                width: '180px',
+                                height: '3rem',
+                              },
+                            },
+                          },
+                        }}
+                        value={adminChangeTime}
+                        onChange={(time) => {
+                          if (!time) return;
+                          setAdminChangeTime(time);
+                        }}
+                      />
+                    </div>
+                    <CheckBox
+                      checked={
+                        selectedDate?.type === 'DESIRED_DATE_ADMIN' &&
+                        selectedDate.date ===
+                          adminChangeDate.format('YYYY-MM-DD') +
+                            'T' +
+                            adminChangeTime.format('HH:00:00.000')
+                      }
+                      onClick={() => {
+                        setSelectedDate({
+                          type: 'DESIRED_DATE_ADMIN',
+                          date:
+                            adminChangeDate.format('YYYY-MM-DD') +
+                            'T' +
+                            adminChangeTime.format('HH:00:00.000'),
+                        });
+                      }}
+                    />
+                  </div>
+                </div>
+              </div>
+              <div className="mt-5 flex w-full items-center justify-end gap-x-4">
+                <button
+                  onClick={() => {
+                    setApplicationModal(null);
+                    setAdminChangeDate(dayjs());
+                    setAdminChangeTime(dayjs());
+                    setSelectedDate(null);
+                  }}
+                  className="rounded-sm bg-neutral-80 px-4 py-2 text-xxsmall12 font-bold text-neutral-40"
+                >
+                  닫기
+                </button>
+                <button
+                  onClick={handleSubmitSchedule}
                   className="rounded-sm bg-primary px-4 py-2 text-xxsmall12 font-bold text-white"
                 >
                   저장
