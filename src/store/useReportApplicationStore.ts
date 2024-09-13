@@ -93,12 +93,22 @@ const useReportApplicationStore = create(
           value === '' || !value || value === undefined;
         const currentData = get().data;
 
+        if (!isEmpty(currentData.applyUrl)) {
+          try {
+            new URL(currentData.applyUrl);
+          } catch (error) {
+            return {
+              isValid: false,
+              message: '올바른 주소를 입력해주세요.',
+            };
+          }
+        }
+
         if (
-          !isEmpty(currentData.applyUrl) ||
+          currentData.reportPriceType === 'PREMIUM' &&
           !isEmpty(currentData.recruitmentUrl)
         ) {
           try {
-            new URL(currentData.applyUrl);
             new URL(currentData.recruitmentUrl);
           } catch (error) {
             return {
@@ -109,22 +119,23 @@ const useReportApplicationStore = create(
         }
 
         if (
-          isEmpty(currentData.desiredDate1) ||
-          isEmpty(currentData.desiredDate2) ||
-          isEmpty(currentData.desiredDate3)
+          currentData.isFeedbackApplied &&
+          (isEmpty(currentData.desiredDate1) ||
+            isEmpty(currentData.desiredDate2) ||
+            isEmpty(currentData.desiredDate3))
         )
           return {
             isValid: false,
             message: '1:1 피드백 일정을 모두 선택해주세요.',
           };
 
-        if (notSelectTime(currentData))
+        if (currentData.isFeedbackApplied && notSelectTime(currentData))
           return {
             isValid: false,
             message: '시간을 선택해주세요.',
           };
 
-        if (isDuplicateDate(currentData))
+        if (currentData.isFeedbackApplied && isDuplicateDate(currentData))
           return {
             isValid: false,
             message: '1:1 피드백 일정을 중복되지 않게 선택해주세요.',
