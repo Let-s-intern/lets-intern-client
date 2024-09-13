@@ -241,7 +241,7 @@ const ReportApplicationsPage = () => {
                   </TH>
                 </tr>
                 <tr>
-                  <TH>주문ID</TH>
+                  <TH>주문번호</TH>
                   {/* TODO: 환불여부를 서류진단과 1:1피드백 각각 표시 */}
                   <TH>환불여부</TH>
                   <TH>ID</TH>
@@ -266,7 +266,27 @@ const ReportApplicationsPage = () => {
               <tbody>
                 {data.reportApplicationsForAdminInfos.map((application) => (
                   <tr key={application.applicationId}>
-                    <TD>{application.orderId}</TD>
+                    <TD>
+                      <p>{application.orderId}</p>
+                      <p>
+                        <a
+                          href={`https://dashboard.tosspayments.com/payments-browse/tm/963616/card?keyword=${application.orderId}`}
+                          className="text-gray-400 underline transition hover:text-gray-300"
+                          target="_blank"
+                          rel="noreferrer"
+                        >
+                          카드검색
+                        </a>{' '}
+                        <a
+                          href={`https://dashboard.tosspayments.com/payments-browse/tm/963616/transfer?keyword=${application.orderId}`}
+                          target="_blank"
+                          className="text-gray-400 underline transition hover:text-gray-300"
+                          rel="noreferrer"
+                        >
+                          이체검색
+                        </a>
+                      </p>
+                    </TD>
                     <TD>{application.isRefunded ? 'O' : 'X'}</TD>
                     <TD>{application.applicationId}</TD>
                     <TD>
