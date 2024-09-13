@@ -57,7 +57,7 @@ const ReportPaymentPage = () => {
               alert('정보 수신용 이메일을 입력해주세요.');
               return;
             }
-            if (payment.total === 0) {
+            if (payment.amount === 0) {
               navigate(`/report/order/result?orderId=${generateOrderId()}`);
               return;
             }

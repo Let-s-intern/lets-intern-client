@@ -8,12 +8,11 @@ import {
 import { DatePicker } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import dayjs, { Dayjs } from 'dayjs';
+import { Dayjs } from 'dayjs';
 import 'dayjs/locale/ko';
 
 import './date-pickers-toolbar.scss';
 
-const timeOptions = [9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21];
 const dateTimePickerSx = {
   width: '50%',
   label: {
@@ -21,7 +20,6 @@ const dateTimePickerSx = {
     color: '#4C4F56',
   },
   '.MuiInputBase-formControl': {
-    // backgroundColor: '#FAFAFA',
     borderRadius: '0.75rem',
     fontSize: '0.875rem',
     color: '#5177FF',
@@ -31,8 +29,10 @@ const dateTimePickerSx = {
 
 interface DateTimePickerProps {
   name?: string;
-  date?: Dayjs | null;
-  time?: number | null;
+  date?: Dayjs | null | undefined;
+  time?: number | null | undefined;
+  minDate?: Dayjs;
+  timeOption: number[];
   onChangeDate?: (date: Dayjs | null, name?: string) => void;
   onChangeTime?: (e: SelectChangeEvent<unknown>) => void;
 }
@@ -41,6 +41,8 @@ const DateTimePicker = ({
   name,
   date,
   time,
+  minDate,
+  timeOption,
   onChangeDate,
   onChangeTime,
 }: DateTimePickerProps) => {
@@ -53,8 +55,8 @@ const DateTimePicker = ({
           label="날짜 선택"
           name={name}
           value={date}
-          minDate={dayjs().add(3, 'day')}
           onChange={(date) => onChangeDate && onChangeDate(date, name)}
+          minDate={minDate}
         />
       </LocalizationProvider>
       <FormControl sx={dateTimePickerSx}>
@@ -66,7 +68,7 @@ const DateTimePicker = ({
           value={time}
           onChange={onChangeTime}
         >
-          {timeOptions.map((option) => (
+          {timeOption.map((option) => (
             <MenuItem key={option} value={option}>
               {`${option < 12 ? '오전' : '오후'} ${option < 13 ? option : option - 12}:00`}
             </MenuItem>

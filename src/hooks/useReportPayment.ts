@@ -8,19 +8,25 @@ import axios from '../utils/axios';
 
 export interface ReportPriceInfo {
   report: number;
+  option: number;
   feedback: number;
-  discount: number;
+  reportDiscount: number;
+  optionDiscount: number;
+  feedbackDiscount: number;
   coupon: number;
-  total: number;
+  amount: number;
   isFeedbackApplied: boolean;
 }
 
 const initialPayment = {
   report: 0,
+  option: 0,
   feedback: 0,
-  discount: 0,
+  reportDiscount: 0,
+  optionDiscount: 0,
+  feedbackDiscount: 0,
   coupon: 0,
-  total: 0,
+  amount: 0,
   isFeedbackApplied: false,
 };
 
@@ -43,7 +49,6 @@ export default function useReportPayment() {
         },
       });
       const data = res.data.data;
-
       setReportApplication({ couponId: data.couponId });
       return data;
     } catch (error) {
@@ -72,8 +77,11 @@ export default function useReportPayment() {
     const reportPriceInfo = reportPriceInfos?.find(
       (info) => info.reportPriceType === reportPriceType,
     );
-    let report = reportPriceInfo?.price ?? 0; // 진단서 + 선택한 옵션 가격
-    let discount = reportPriceInfo?.discountPrice ?? 0;
+    const report = reportPriceInfo?.price ?? 0;
+    let option = 0;
+    const reportDiscount = reportPriceInfo?.discountPrice ?? 0;
+    let optionDiscount = 0;
+    let feedbackDiscount = 0;
     const feedback = isFeedbackApplied
       ? (feedbackPriceInfo?.feedbackPrice ?? 0)
       : 0;
@@ -84,20 +92,27 @@ export default function useReportPayment() {
         (info) => info.reportOptionId === optionId,
       );
       if (optionInfo === undefined) continue;
-      discount += optionInfo.discountPrice ?? 0;
-      report += optionInfo.price ?? 0;
+      optionDiscount += optionInfo.discountPrice ?? 0;
+      option += optionInfo.price ?? 0;
     }
 
     // 1:1 피드백 가격 책정
     if (isFeedbackApplied)
-      discount += feedbackPriceInfo?.feedbackDiscountPrice ?? 0;
+      feedbackDiscount = feedbackPriceInfo?.feedbackDiscountPrice ?? 0;
 
     setPayment((prev) => ({
       ...prev,
-      discount,
       report,
+      option,
       feedback,
-      total: report + feedback - discount,
+      reportDiscount,
+      optionDiscount,
+      feedbackDiscount,
+      amount:
+        report +
+        option +
+        feedback -
+        (reportDiscount + optionDiscount + feedbackDiscount),
       isFeedbackApplied,
     }));
 
@@ -108,8 +123,8 @@ export default function useReportPayment() {
       const { discount } = couponInfoSchema.parse(res.data.data.couponInfo);
       setPayment((prev) => ({
         ...prev,
-        coupon: discount === -1 ? (prev.total ?? 0) : (discount ?? 0),
-        total: discount === -1 ? 0 : prev.total - (discount ?? 0),
+        coupon: discount === -1 ? (prev.amount ?? 0) : (discount ?? 0),
+        amount: discount === -1 ? 0 : prev.amount - (discount ?? 0),
       }));
     });
   }, [reportPriceDetail, reportApplication.couponId]);
@@ -117,9 +132,12 @@ export default function useReportPayment() {
   useEffect(() => {
     // 진단서 정보 업데이트
     setReportApplication({
-      amount: payment.total,
+      amount: payment.amount,
       programPrice: payment.report + payment.feedback,
-      programDiscount: payment.discount,
+      programDiscount:
+        payment.reportDiscount +
+        payment.feedbackDiscount +
+        payment.optionDiscount,
     });
   }, [payment]);
 

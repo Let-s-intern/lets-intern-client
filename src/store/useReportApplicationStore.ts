@@ -2,35 +2,35 @@ import dayjs from 'dayjs';
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
+export interface ReportApplication {
+  reportId: number | null;
+  reportPriceType: 'BASIC' | 'PREMIUM';
+  optionIds: number[];
+  isFeedbackApplied: boolean;
+  couponId: number | null;
+  paymentKey: string | null;
+  orderId: string | null;
+  amount: number | null;
+  programPrice: number | null;
+  programDiscount: number | null;
+  applyUrl: string;
+  recruitmentUrl: string;
+  desiredDate1: string | undefined;
+  desiredDate2: string | undefined;
+  desiredDate3: string | undefined;
+  wishJob: string;
+  message: string;
+  contactEmail: string;
+}
+
 interface ReportApplicationStore {
-  data: {
-    reportId: number | null;
-    reportPriceType: 'BASIC' | 'PREMIUM';
-    optionIds: number[];
-    isFeedbackApplied: boolean;
-    couponId: number | null;
-    paymentKey: string | null;
-    orderId: string | null;
-    amount: number | null;
-    programPrice: number | null;
-    programDiscount: number | null;
-    applyUrl: string;
-    recruitmentUrl: string;
-    desiredDate1: string;
-    desiredDate2: string;
-    desiredDate3: string;
-    wishJob: string;
-    message: string;
-    contactEmail: string;
-  };
+  data: ReportApplication;
   setReportApplication: (
     params: Partial<ReportApplicationStore['data']>,
   ) => void;
   initReportApplication: () => void;
   validate: () => { isValid: boolean; message: string | null };
 }
-
-const initialDate = dayjs().add(3, 'day').format('YYYY-MM-DDTHH:00');
 
 const useReportApplicationStore = create(
   persist<ReportApplicationStore>(
@@ -48,9 +48,9 @@ const useReportApplicationStore = create(
         programDiscount: null,
         applyUrl: '',
         recruitmentUrl: '',
-        desiredDate1: initialDate,
-        desiredDate2: initialDate,
-        desiredDate3: initialDate,
+        desiredDate1: undefined,
+        desiredDate2: undefined,
+        desiredDate3: undefined,
         wishJob: '',
         message: '',
         contactEmail: '',
@@ -79,9 +79,9 @@ const useReportApplicationStore = create(
             programDiscount: null,
             applyUrl: '',
             recruitmentUrl: '',
-            desiredDate1: initialDate,
-            desiredDate2: initialDate,
-            desiredDate3: initialDate,
+            desiredDate1: undefined,
+            desiredDate2: undefined,
+            desiredDate3: undefined,
             wishJob: '',
             message: '',
             contactEmail: '',
@@ -89,8 +89,24 @@ const useReportApplicationStore = create(
         });
       },
       validate: () => {
-        const isEmpty = (value: string) => value === '' || !value;
+        const isEmpty = (value: string | null | undefined) =>
+          value === '' || !value || value === undefined;
         const currentData = get().data;
+
+        if (
+          !isEmpty(currentData.applyUrl) ||
+          !isEmpty(currentData.recruitmentUrl)
+        ) {
+          try {
+            new URL(currentData.applyUrl);
+            new URL(currentData.recruitmentUrl);
+          } catch (error) {
+            return {
+              isValid: false,
+              message: '올바른 주소를 입력해주세요.',
+            };
+          }
+        }
 
         if (
           isEmpty(currentData.desiredDate1) ||
@@ -99,7 +115,19 @@ const useReportApplicationStore = create(
         )
           return {
             isValid: false,
-            message: '맞춤 첨삭 일정 모두 선택해주세요.',
+            message: '1:1 피드백 일정을 모두 선택해주세요.',
+          };
+
+        if (notSelectTime(currentData))
+          return {
+            isValid: false,
+            message: '시간을 선택해주세요.',
+          };
+
+        if (isDuplicateDate(currentData))
+          return {
+            isValid: false,
+            message: '1:1 피드백 일정을 중복되지 않게 선택해주세요.',
           };
 
         if (isEmpty(currentData.wishJob))
@@ -113,5 +141,24 @@ const useReportApplicationStore = create(
     },
   ),
 );
+
+const notSelectTime = (reportApplication: ReportApplication) => {
+  const { desiredDate1, desiredDate2, desiredDate3 } = reportApplication;
+  if (
+    dayjs(desiredDate1).hour() === 0 ||
+    dayjs(desiredDate2).hour() === 0 ||
+    dayjs(desiredDate3).hour() === 0
+  )
+    return true;
+
+  return false;
+};
+
+const isDuplicateDate = (reportApplication: ReportApplication) => {
+  const { desiredDate1, desiredDate2, desiredDate3 } = reportApplication;
+  const set = new Set([desiredDate1, desiredDate2, desiredDate3]);
+
+  return set.size === 3 ? false : true;
+};
 
 export default useReportApplicationStore;

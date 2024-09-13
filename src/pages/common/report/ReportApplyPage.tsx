@@ -9,9 +9,11 @@ import React, { useEffect, useRef, useState } from 'react';
 import { FaArrowLeft } from 'react-icons/fa6';
 import { IoCloseOutline } from 'react-icons/io5';
 import { useNavigate, useParams } from 'react-router-dom';
-import { twJoin } from 'tailwind-merge';
+import { twJoin, twMerge } from 'tailwind-merge';
 
+import useMinDate from '@/hooks/useMinDate';
 import useRunOnce from '@/hooks/useRunOnce';
+import useValidateUrl from '@/hooks/useValidateUrl';
 import { generateOrderId } from '@/lib/order';
 import useAuthStore from '@/store/useAuthStore';
 import { useGetParticipationInfo } from '../../../api/application';
@@ -19,7 +21,9 @@ import { uploadFile } from '../../../api/file';
 import {
   convertReportPriceType,
   convertReportTypeStatus,
+  ReportOptionInfo,
   useGetReportDetailQuery,
+  useGetReportPriceDetail,
 } from '../../../api/report';
 import Card from '../../../components/common/report/Card';
 import { ReportFormRadioControlLabel } from '../../../components/common/report/ControlLabel';
@@ -64,22 +68,25 @@ const ReportApplyPage = () => {
   };
 
   const isValidFile = () => {
+    const { applyUrl, reportPriceType, recruitmentUrl } = reportApplication;
+
     const isEmpty = (value: string | File | null) =>
       value === '' || value === null;
 
-    if (isEmpty(reportApplication.applyUrl) && isEmpty(applyFile)) {
+    if (isEmpty(applyUrl) && isEmpty(applyFile)) {
       alert('진단용 서류를 등록해주세요.');
       return false;
     }
 
     if (
-      reportApplication.reportPriceType === 'PREMIUM' &&
-      isEmpty(reportApplication.recruitmentUrl) &&
+      reportPriceType === 'PREMIUM' &&
+      isEmpty(recruitmentUrl) &&
       isEmpty(recruitmentFile)
     ) {
       alert('채용공고를 등록해주세요.');
       return false;
     }
+
     return true;
   };
 
@@ -124,6 +131,7 @@ const ReportApplyPage = () => {
             className="next_button_click text-1.125-medium w-full rounded-md bg-primary py-3 text-center font-medium text-neutral-100"
             onClick={async () => {
               if (!isValidFile()) return;
+
               const { isValid, message } = validate();
               if (!isValid) {
                 alert(message);
@@ -145,8 +153,9 @@ const ReportApplyPage = () => {
             <button
               className="complete_button_click w-full rounded-md bg-primary py-3 text-center text-small18 font-medium text-neutral-100"
               onClick={async () => {
-                const { isValid, message } = validate();
                 if (!isValidFile()) return;
+
+                const { isValid, message } = validate();
                 if (!isValid) {
                   alert(message);
                   return;
@@ -156,7 +165,7 @@ const ReportApplyPage = () => {
                   return;
                 }
                 await convertFile();
-                if (payment.total === 0) {
+                if (payment.amount === 0) {
                   navigate(`/report/order/result?orderId=${generateOrderId()}`);
                   return;
                 }
@@ -234,6 +243,7 @@ const DocumentSection = ({
   const [value, setValue] = useState('file');
 
   const { data, setReportApplication } = useReportApplicationStore();
+  const isValidUrl = useValidateUrl(data.applyUrl);
 
   return (
     <section className="flex flex-col gap-3 lg:flex-row lg:items-start lg:gap-5">
@@ -276,6 +286,11 @@ const DocumentSection = ({
                 }
               />
             )}
+            {value === 'url' && !isValidUrl && (
+              <span className="h-3 text-xsmall14 text-system-error">
+                올바른 주소를 입력해주세요
+              </span>
+            )}
           </div>
         </RadioGroup>
       </FormControl>
@@ -291,7 +306,9 @@ const PremiumSection = ({
   dispatch: React.Dispatch<React.SetStateAction<File | null>>;
 }) => {
   const [value, setValue] = useState('file');
+
   const { data, setReportApplication } = useReportApplicationStore();
+  const isValidUrl = useValidateUrl(data.recruitmentUrl);
 
   return (
     <section className="flex flex-col gap-1 lg:flex-row lg:items-start lg:gap-5">
@@ -338,6 +355,11 @@ const PremiumSection = ({
                   }
                 />
               )}
+              {value === 'url' && !isValidUrl && (
+                <span className="h-3 text-xsmall14 text-system-error">
+                  올바른 주소를 입력해주세요
+                </span>
+              )}
             </div>
           </RadioGroup>
         </FormControl>
@@ -348,6 +370,8 @@ const PremiumSection = ({
 
 const ScheduleSection = () => {
   const { data, setReportApplication } = useReportApplicationStore();
+  const { minDate, timeOptions } = useMinDate(data);
+
   type Key = keyof typeof data;
 
   const onChangeDate = (date: Dayjs | null, name?: string) => {
@@ -379,14 +403,24 @@ const ScheduleSection = () => {
       </div>
       <div className="flex w-full flex-col gap-5">
         <span className="text-xsmall14">
-          희망하시는 1:1 피드백(40분) 일정을 1개 이상 선택해주세요.
+          희망하시는 1:1 피드백(40분) 일정을 모두 선택해주세요.
         </span>
         <div>
           <Label>희망순위1*</Label>
           <DateTimePicker
-            date={dayjs(data.desiredDate1)}
-            time={dayjs(data.desiredDate1).hour()}
+            date={
+              data.desiredDate1 === undefined
+                ? undefined
+                : dayjs(data.desiredDate1)
+            }
+            time={
+              data.desiredDate1 === undefined
+                ? undefined
+                : dayjs(data.desiredDate1).hour()
+            }
             name="desiredDate1"
+            minDate={minDate}
+            timeOption={timeOptions.desiredDate1}
             onChangeDate={onChangeDate}
             onChangeTime={onChangeTime}
           />
@@ -394,9 +428,14 @@ const ScheduleSection = () => {
         <div>
           <Label>희망순위2*</Label>
           <DateTimePicker
-            date={dayjs(data.desiredDate2)}
-            time={dayjs(data.desiredDate2).hour()}
+            date={
+              data.desiredDate2 === undefined
+                ? undefined
+                : dayjs(data.desiredDate2)
+            }
             name="desiredDate2"
+            minDate={minDate}
+            timeOption={timeOptions.desiredDate2}
             onChangeDate={onChangeDate}
             onChangeTime={onChangeTime}
           />
@@ -404,9 +443,14 @@ const ScheduleSection = () => {
         <div>
           <Label>희망순위3*</Label>
           <DateTimePicker
-            date={dayjs(data.desiredDate3)}
-            time={dayjs(data.desiredDate3).hour()}
+            date={
+              data.desiredDate3 === undefined
+                ? undefined
+                : dayjs(data.desiredDate3)
+            }
             name="desiredDate3"
+            minDate={minDate}
+            timeOption={timeOptions.desiredDate3}
             onChangeDate={onChangeDate}
             onChangeTime={onChangeTime}
           />
@@ -525,14 +569,15 @@ export const UsereInfoSection = () => {
           <label
             onClick={() => {
               setChecked(!checked);
-              if (checked)
+              if (checked) {
                 setReportApplication({
                   contactEmail: '',
                 });
-              else
+              } else {
                 setReportApplication({
                   contactEmail: participationInfo?.email || '',
                 });
+              }
             }}
             className="flex cursor-pointer items-center gap-1 text-xxsmall12 font-medium"
           >
@@ -560,10 +605,14 @@ export const UsereInfoSection = () => {
 export const ReportPaymentSection = () => {
   const [couponCode, setCouponCode] = useState('');
   const [message, setMessage] = useState('');
+  const [options, setOptions] = useState<ReportOptionInfo[]>([]);
 
   const { data: reportApplication, setReportApplication } =
     useReportApplicationStore();
   const { payment, applyCoupon, cancelCoupon } = useReportPayment();
+  const { data: reportPriceDetail } = useGetReportPriceDetail(
+    reportApplication.reportId!,
+  );
 
   // 기존에 입력한 쿠폰 코드 초기화
   useEffect(() => {
@@ -572,7 +621,26 @@ export const ReportPaymentSection = () => {
     setCouponCode('');
   }, []);
 
+  useEffect(() => {
+    if (reportPriceDetail === undefined) return;
+    // 옵션 타이틀 불러오기
+    const result = [];
+    for (const optionId of reportApplication.optionIds) {
+      const reportOptionInfo = reportPriceDetail.reportOptionInfos?.find(
+        (info) => info.reportOptionId === optionId,
+      );
+      if (reportOptionInfo === undefined) continue;
+      result.push(reportOptionInfo);
+    }
+
+    setOptions(result);
+  }, [reportPriceDetail]);
+
   const showFeedback = reportApplication.isFeedbackApplied;
+  const discount =
+    payment.reportDiscount + payment.optionDiscount + payment.feedbackDiscount;
+  const total = payment.report + payment.option + payment.feedback;
+  const optionTitle = options.map((option) => option.title).join(', ');
 
   return (
     <section className="flex flex-col">
@@ -627,53 +695,107 @@ export const ReportPaymentSection = () => {
       </div>
       <hr className="my-5" />
       <div className="flex flex-col">
-        <div className="flex h-10 items-center justify-between px-3 text-neutral-0">
+        <PaymentRowMain>
+          <span>서류 진단서</span>
+          <span>{(payment.report + payment.option).toLocaleString()}원</span>
+        </PaymentRowMain>
+        <PaymentRowSub>
           <span>
-            서류 진단서 (
-            {reportApplication.optionIds.length === 0
-              ? convertReportPriceType(reportApplication.reportPriceType)
-              : `${convertReportPriceType(reportApplication.reportPriceType)} + 옵션`}
-            )
+            └ {convertReportPriceType(reportApplication.reportPriceType)}
           </span>
-          {/* 서류 진단 + 사용자가 선택한 모든 옵션 가격을 더한 값 */}
-          <span>{payment.report.toLocaleString()}원</span>
-        </div>
-        {showFeedback && (
-          <div className="flex h-10 items-center justify-between px-3 text-neutral-0">
-            <span>1:1 피드백</span>
-            {/* 1:1 피드백 가격 */}
-            <span>{payment.feedback.toLocaleString()}원</span>
-          </div>
+          <span>{`${payment.report.toLocaleString()}원`}</span>
+        </PaymentRowSub>
+        {options.length > 0 && (
+          <PaymentRowSub>
+            <span>└ {optionTitle}</span>
+            <span>{`${payment.option.toLocaleString()}원`}</span>
+          </PaymentRowSub>
         )}
-        <div className="flex h-10 items-center justify-between px-3 text-neutral-0">
-          {/* 서류진단 + 사용자가 선택한 모든 옵션 + 1:1 피드백의 할인 가격을 모두 더한 값 */}
+        {showFeedback && (
+          <PaymentRowMain>
+            <span>1:1 피드백</span>
+            <span>{payment.feedback.toLocaleString()}원</span>
+          </PaymentRowMain>
+        )}
+        <PaymentRowMain>
+          <span>{Math.ceil((discount / total) * 100)}% 할인</span>
           <span>
-            {Math.ceil(
-              (payment.discount / (payment.report + payment.feedback)) * 100,
-            )}
-            % 할인
+            {discount === 0 ? '0원' : `-${discount.toLocaleString()}원`}
+          </span>
+        </PaymentRowMain>
+        <PaymentRowSub>
+          <span>
+            └ {convertReportPriceType(reportApplication.reportPriceType)}
           </span>
           <span>
-            {payment.discount === 0
+            {payment.reportDiscount === 0
               ? '0원'
-              : `-${payment.discount.toLocaleString()}원`}
+              : `-${payment.reportDiscount.toLocaleString()}원`}
           </span>
-        </div>
-        <div className="flex h-10 items-center justify-between px-3 text-primary">
+        </PaymentRowSub>
+        {options.length > 0 && (
+          <PaymentRowSub>
+            <span>└ {optionTitle}</span>
+            <span>
+              {payment.optionDiscount === 0
+                ? '0원'
+                : `-${payment.optionDiscount.toLocaleString()}원`}
+            </span>
+          </PaymentRowSub>
+        )}
+        <PaymentRowMain className="text-primary">
           <span>쿠폰할인</span>
           <span className="font-bold">
             {payment.coupon === 0
               ? '0원'
               : `-${payment.coupon.toLocaleString()}원`}
           </span>
-        </div>
+        </PaymentRowMain>
         <hr className="my-5" />
-        <div className="flex h-10 items-center justify-between px-3 font-semibold text-neutral-0">
+        <PaymentRowMain className="font-semibold">
           <span>결제금액</span>
-          <span>{payment.total.toLocaleString()}원</span>
-        </div>
+          <span>{payment.amount.toLocaleString()}원</span>
+        </PaymentRowMain>
       </div>
     </section>
+  );
+};
+
+const PaymentRowMain = ({
+  children,
+  className,
+}: {
+  children?: React.ReactNode;
+  className?: string;
+}) => {
+  return (
+    <div
+      className={twMerge(
+        'flex h-10 items-center justify-between px-3 text-neutral-0',
+        className,
+      )}
+    >
+      {children}
+    </div>
+  );
+};
+
+const PaymentRowSub = ({
+  children,
+  className,
+}: {
+  children?: React.ReactNode;
+  className?: string;
+}) => {
+  return (
+    <div
+      className={twJoin(
+        'flex h-10 items-center justify-between pl-6 pr-3 text-xsmall14 text-neutral-50',
+        className,
+      )}
+    >
+      {children}
+    </div>
   );
 };
 

@@ -324,6 +324,14 @@ export const useGetReportDetailQuery = (reportId: number) => {
   });
 };
 
+const reportOptionInfo = z.object({
+  reportOptionId: z.number(),
+  price: z.number().nullable().optional(),
+  discountPrice: z.number().nullable().optional(),
+  title: z.string().nullable().optional(),
+});
+export type ReportOptionInfo = z.infer<typeof reportOptionInfo>;
+
 // GET /api/v1/report/{reportId}/price
 const getReportPriceDetailSchema = z.object({
   reportId: z.number(),
@@ -337,17 +345,7 @@ const getReportPriceDetailSchema = z.object({
     )
     .nullable()
     .optional(),
-  reportOptionInfos: z
-    .array(
-      z.object({
-        reportOptionId: z.number(),
-        price: z.number().nullable().optional(),
-        discountPrice: z.number().nullable().optional(),
-        title: z.string().nullable().optional(),
-      }),
-    )
-    .nullable()
-    .optional(),
+  reportOptionInfos: z.array(reportOptionInfo).nullable().optional(),
   feedbackPriceInfo: z
     .object({
       reportFeedbackId: z.number(),
