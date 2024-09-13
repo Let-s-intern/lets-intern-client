@@ -176,12 +176,14 @@ const ReportApplyBottomSheet = ({ report }: { report: ActiveReport }) => {
   return (
     <div className="fixed bottom-0 left-0 right-0 z-40 rounded-t-xl border-t border-neutral-0/5 bg-white shadow-lg transition">
       <div className="mx-auto max-h-screen max-w-5xl overflow-y-auto px-5 py-2 sm:max-h-none">
-        <div
-          className="sticky top-2 z-10 mx-auto mb-2.5 h-[5px] w-16 rounded-full bg-neutral-80"
-          onClick={() => {
-            setIsDrawerOpen(false);
-          }}
-        ></div>
+        {isDrawerOpen ? (
+          <div
+            className="sticky top-2 z-10 mx-auto mb-2.5 h-[5px] w-16 rounded-full bg-neutral-80"
+            onClick={() => {
+              setIsDrawerOpen(false);
+            }}
+          ></div>
+        ) : null}
 
         {/* 본문 */}
         {isDrawerOpen ? (
