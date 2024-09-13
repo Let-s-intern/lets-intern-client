@@ -48,9 +48,9 @@ const ReportApplyBottomSheet = ({ report }: { report: ActiveReport }) => {
   const { data: reportApplication, setReportApplication } =
     useReportApplicationStore();
 
-  useEffect(() => {
-    console.log('data', reportApplication);
-  }, [reportApplication]);
+  // useEffect(() => {
+  //   console.log('data', reportApplication);
+  // }, [reportApplication]);
 
   useEffect(() => {
     if (isDrawerOpen) {
@@ -375,7 +375,7 @@ const ReportApplyBottomSheet = ({ report }: { report: ActiveReport }) => {
             <button
               type="button"
               onClick={handleApply}
-              className="flex w-full flex-1 justify-center rounded-md border-2 border-primary bg-primary px-6 py-3 text-lg font-medium text-neutral-100 transition hover:bg-primary-light disabled:border-neutral-70 disabled:bg-neutral-70"
+              className="next_button_click flex w-full flex-1 justify-center rounded-md border-2 border-primary bg-primary px-6 py-3 text-lg font-medium text-neutral-100 transition hover:bg-primary-light disabled:border-neutral-70 disabled:bg-neutral-70"
             >
               결제하기
             </button>

@@ -130,7 +130,7 @@ const ReportApplyPage = () => {
             <FaArrowLeft size={20} />
           </button>
           <button
-            className="next_button_click text-1.125-medium w-full rounded-md bg-primary py-3 text-center font-medium text-neutral-100"
+            className="text-1.125-medium w-full rounded-md bg-primary py-3 text-center font-medium text-neutral-100"
             onClick={async () => {
               if (!isValidFile()) return;
 
