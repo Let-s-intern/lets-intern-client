@@ -212,7 +212,11 @@ const ReportCreditDelete = () => {
                   />
                   <PaymentInfoRow
                     title={`쿠폰할인`}
-                    content={`-${couponDiscountPrice.toLocaleString()}원`}
+                    content={
+                      couponDiscountPrice === 0
+                        ? '0원'
+                        : `-${couponDiscountPrice.toLocaleString()}원`
+                    }
                   />
                   {reportRefundPercent !== 1 && (
                     <PaymentInfoRow

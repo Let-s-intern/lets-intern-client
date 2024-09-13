@@ -11,6 +11,7 @@ import { IoCloseOutline } from 'react-icons/io5';
 import { useNavigate, useParams } from 'react-router-dom';
 import { twJoin, twMerge } from 'tailwind-merge';
 
+import { usePatchUser } from '@/api/user';
 import useMinDate from '@/hooks/useMinDate';
 import useRunOnce from '@/hooks/useRunOnce';
 import useValidateUrl from '@/hooks/useValidateUrl';
@@ -49,6 +50,7 @@ const ReportApplyPage = () => {
 
   const { payment } = useReportPayment();
   const { isLoggedIn } = useAuthStore();
+  const patchUserMutation = usePatchUser();
   const {
     data: reportApplication,
     setReportApplication,
@@ -137,6 +139,7 @@ const ReportApplyPage = () => {
                 alert(message);
                 return;
               }
+
               await convertFile();
               navigate(`/report/payment/${reportType}/${reportId}`);
             }}
@@ -164,7 +167,12 @@ const ReportApplyPage = () => {
                   alert('정보 수신용 이메일을 입력해주세요.');
                   return;
                 }
+
+                patchUserMutation.mutateAsync({
+                  contactEmail: reportApplication.contactEmail,
+                });
                 await convertFile();
+
                 if (payment.amount === 0) {
                   navigate(`/report/order/result?orderId=${generateOrderId()}`);
                   return;

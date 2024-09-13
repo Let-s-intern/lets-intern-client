@@ -155,3 +155,25 @@ export const useUserQuery = ({ enabled }: { enabled?: boolean } = {}) => {
     },
   });
 };
+
+export type PatchUserBody = {
+  name?: string;
+  email?: string;
+  contactEmail?: string | null;
+  phoneNum?: string;
+  university?: string | null;
+  inflowPath?: string | null;
+  grade?: string | null;
+  major?: string | null;
+  wishJob?: string | null;
+  wishCompany?: string | null;
+  marketingAgree?: boolean;
+};
+
+export const usePatchUser = () => {
+  return useMutation({
+    mutationFn: async (body: PatchUserBody) => {
+      return await axios.patch('/user', body);
+    },
+  });
+};

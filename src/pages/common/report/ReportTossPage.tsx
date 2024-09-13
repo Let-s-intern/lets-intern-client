@@ -70,15 +70,15 @@ const ReportTossPage = () => {
     }
   };
 
-  useEffect(() => {
-    const result = validate();
+  // useEffect(() => {
+  //   const result = validate();
 
-    if (!result.isValid) {
-      console.error(result);
-      alert('잘못된 접근입니다.');
-      navigate('/');
-    }
-  }, []);
+  //   if (!result.isValid) {
+  //     console.error(result);
+  //     alert('잘못된 접근입니다.');
+  //     navigate('/');
+  //   }
+  // }, []);
 
   useEffect(() => {
     if (!user) return;
