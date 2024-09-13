@@ -1,6 +1,7 @@
 import { FaArrowLeft } from 'react-icons/fa6';
 import { useNavigate } from 'react-router-dom';
 
+import { usePatchUser } from '@/api/user';
 import useReportPayment from '@/hooks/useReportPayment';
 import { generateOrderId } from '@/lib/order';
 import { useGetReportDetailQuery } from '../../../api/report';
@@ -24,6 +25,7 @@ const ReportPaymentPage = () => {
     reportApplication.reportId!,
   );
   const { payment } = useReportPayment();
+  const patchUserMutation = usePatchUser();
 
   return (
     <div className="px-5 md:px-32">
@@ -57,6 +59,11 @@ const ReportPaymentPage = () => {
               alert('정보 수신용 이메일을 입력해주세요.');
               return;
             }
+
+            patchUserMutation.mutateAsync({
+              contactEmail: reportApplication.contactEmail,
+            });
+
             if (payment.amount === 0) {
               navigate(`/report/order/result?orderId=${generateOrderId()}`);
               return;
