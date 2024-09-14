@@ -53,6 +53,7 @@ const ReportApplyBottomSheet = React.forwardRef<
   IReportApplyBottomSheetProps
 >(({ report, show = true }, ref) => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+
   const { data: priceInfo } = useGetReportPriceDetail(report.reportId);
   const { data: reportApplication, setReportApplication } =
     useReportApplicationStore();
@@ -178,11 +179,13 @@ const ReportApplyBottomSheet = React.forwardRef<
     !priceInfo.feedbackPriceInfo ||
     priceInfo.feedbackPriceInfo.feedbackPrice !== -1;
 
+  const reportType = window.location.pathname.split('/')[3];
+
   return (
     <div
       ref={ref}
       className={twMerge(
-        'fixed bottom-0 left-1/2 z-40 mx-auto w-full max-w-5xl -translate-x-1/2 rounded-t-xl border-t border-neutral-0/5 bg-white shadow-lg transition',
+        'shadow-lg fixed bottom-0 left-1/2 z-40 mx-auto w-full max-w-5xl -translate-x-1/2 rounded-t-xl border-t border-neutral-0/5 bg-white transition',
         !show && 'hidden',
       )}
     >
