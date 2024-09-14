@@ -416,7 +416,7 @@ const ReportManagementPage = () => {
                     item.feedbackStatus === 'COMPLETED' ||
                     (item.feedbackStatus === 'CONFIRMED' &&
                       item.confirmedTime &&
-                      dayjs().isAfter(item.confirmedTime.add(1, 'day'))) ? (
+                      dayjs().isAfter(item.confirmedTime.add(1, 'hour'))) ? (
                       <ReportManagementButton
                         className="feedback_button_click"
                         disabled
