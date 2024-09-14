@@ -6,9 +6,18 @@ export interface THProps {
   children: React.ReactNode;
   inOrder?: 'ASCENDING' | 'DESCENDING' | null;
   inBoolFilter?: boolean | null;
+  colspan?: number;
+  backgroundColor?: string;
 }
 
-const TH = ({ onClick, inOrder, inBoolFilter, children }: THProps) => {
+const TH = ({
+  onClick,
+  inOrder,
+  inBoolFilter,
+  children,
+  colspan,
+  backgroundColor,
+}: THProps) => {
   return (
     <th
       className={clsx(
@@ -16,6 +25,8 @@ const TH = ({ onClick, inOrder, inBoolFilter, children }: THProps) => {
         onClick && 'cursor-pointer',
       )}
       onClick={onClick}
+      colSpan={colspan}
+      style={{ backgroundColor }}
     >
       <span className="flex items-center justify-center gap-1">
         <span>{children}</span>

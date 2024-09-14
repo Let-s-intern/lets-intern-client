@@ -19,6 +19,7 @@ export const ReportLandingNavButton = ({
     <NavLink
       to={to}
       title={title}
+      preventScrollReset
       className={({ isActive }) =>
         twMerge(
           'flex h-14 flex-1 items-center justify-center border-b-2 border-transparent text-center text-white/30 transition hover:text-primary-light',

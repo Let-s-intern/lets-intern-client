@@ -2,7 +2,7 @@ import { useServerActiveReports } from '@/context/ActiveReports';
 import { personalStatementReportDescription } from '@/data/description';
 import useReportApplicationStore from '@/store/useReportApplicationStore';
 import { getBaseUrlFromServer, getReportLandingTitle } from '@/utils/url';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { Helmet } from 'react-helmet';
 import { useGetActiveReports } from '../../../api/report';
 import LexicalContent from '../../../components/common/blog/LexicalContent';
@@ -26,8 +26,35 @@ const ReportPersonalStatementPage = () => {
   const root = JSON.parse(report?.contents || '{"root":{}}').root;
 
   const { initReportApplication } = useReportApplicationStore();
+
+  const contentRef = useRef<HTMLDivElement | null>();
+  const bottomSheetRef = useRef<HTMLDivElement | null>(null);
+
   useEffect(() => {
     initReportApplication();
+
+    if (contentRef.current) {
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (bottomSheetRef.current) {
+              bottomSheetRef.current.style.display = entry.isIntersecting
+                ? 'block'
+                : 'none';
+            }
+          });
+        },
+        {
+          root: null,
+          rootMargin: '0px',
+          threshold: 0,
+        },
+      );
+      observer.observe(contentRef.current);
+      return () => {
+        observer.disconnect();
+      };
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -53,6 +80,7 @@ const ReportPersonalStatementPage = () => {
       <div
         id="content"
         ref={(element) => {
+          contentRef.current = element;
           if (element) {
             const url = new URL(window.location.href);
 
@@ -72,7 +100,9 @@ const ReportPersonalStatementPage = () => {
           <LexicalContent node={root} />
         </ReportContentContainer>
       </div>
-      {report ? <ReportApplyBottomSheet report={report} /> : null}
+      {report ? (
+        <ReportApplyBottomSheet report={report} ref={bottomSheetRef} />
+      ) : null}
     </>
   );
 };
