@@ -8,8 +8,9 @@ import {
 import { generateOrderId } from '@/lib/order';
 import useReportApplicationStore from '@/store/useReportApplicationStore';
 import { FormControl, RadioGroup } from '@mui/material';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { twMerge } from 'tailwind-merge';
 import {
   ReportFormCheckboxControlLabel,
   ReportFormRadioControlLabel,
@@ -42,15 +43,19 @@ const ReportPriceView = (props: {
   );
 };
 
-const ReportApplyBottomSheet = ({ report }: { report: ActiveReport }) => {
+interface IReportApplyBottomSheetProps {
+  report: ActiveReport;
+  show?: boolean;
+}
+
+const ReportApplyBottomSheet = React.forwardRef<
+  HTMLDivElement,
+  IReportApplyBottomSheetProps
+>(({ report, show = true }, ref) => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const { data: priceInfo } = useGetReportPriceDetail(report.reportId);
   const { data: reportApplication, setReportApplication } =
     useReportApplicationStore();
-
-  // useEffect(() => {
-  //   console.log('data', reportApplication);
-  // }, [reportApplication]);
 
   useEffect(() => {
     if (isDrawerOpen) {
@@ -174,7 +179,13 @@ const ReportApplyBottomSheet = ({ report }: { report: ActiveReport }) => {
     priceInfo.feedbackPriceInfo.feedbackPrice !== -1;
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-40 rounded-t-xl border-t border-neutral-0/5 bg-white shadow-lg transition">
+    <div
+      ref={ref}
+      className={twMerge(
+        'fixed bottom-0 left-0 right-0 z-40 rounded-t-xl border-t border-neutral-0/5 bg-white shadow-lg transition',
+        !show && 'hidden',
+      )}
+    >
       <div className="mx-auto max-h-screen max-w-5xl overflow-y-auto px-5 py-2 sm:max-h-none">
         {isDrawerOpen ? (
           <div
@@ -386,6 +397,8 @@ const ReportApplyBottomSheet = ({ report }: { report: ActiveReport }) => {
       </div>
     </div>
   );
-};
+});
+
+ReportApplyBottomSheet.displayName = 'ReportApplyBottomSheet';
 
 export default ReportApplyBottomSheet;

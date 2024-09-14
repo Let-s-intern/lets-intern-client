@@ -2,7 +2,7 @@ import { useServerActiveReports } from '@/context/ActiveReports';
 import { portfolioReportDescription } from '@/data/description';
 import useReportApplicationStore from '@/store/useReportApplicationStore';
 import { getBaseUrlFromServer, getReportLandingTitle } from '@/utils/url';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import { Helmet } from 'react-helmet';
 import { useGetActiveReports } from '../../../api/report';
 import LexicalContent from '../../../components/common/blog/LexicalContent';
@@ -24,8 +24,8 @@ const ReportPortfolioPage = () => {
   const report = activeReports?.portfolioInfo;
 
   const root = JSON.parse(report?.contents || '{"root":{}}').root;
-  const [showCtaButton, setShowCtaButton] = useState(false);
   const contentRef = useRef<HTMLDivElement | null>();
+  const bottomSheetRef = useRef<HTMLDivElement | null>(null);
 
   const { initReportApplication } = useReportApplicationStore();
   useEffect(() => {
@@ -35,7 +35,11 @@ const ReportPortfolioPage = () => {
       const observer = new IntersectionObserver(
         (entries) => {
           entries.forEach((entry) => {
-            setShowCtaButton(entry.isIntersecting);
+            if (bottomSheetRef.current) {
+              bottomSheetRef.current.style.display = entry.isIntersecting
+                ? 'block'
+                : 'none';
+            }
           });
         },
         {
@@ -96,8 +100,8 @@ const ReportPortfolioPage = () => {
           <LexicalContent node={root} />
         </ReportContentContainer>
       </div>
-      {report && showCtaButton ? (
-        <ReportApplyBottomSheet report={report} />
+      {report ? (
+        <ReportApplyBottomSheet report={report} ref={bottomSheetRef} />
       ) : null}
     </>
   );
