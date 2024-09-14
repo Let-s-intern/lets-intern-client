@@ -64,7 +64,7 @@ export const getPercent = ({
   originalPrice: number;
   changedPrice: number;
 }) => {
-  return Math.ceil((changedPrice / originalPrice) * 100);
+  return Math.floor((changedPrice / originalPrice) * 100);
 };
 
 export const getDiscountPercent = (
