@@ -1,6 +1,7 @@
 import dayjs from 'dayjs';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 
+import { useEffect, useRef } from 'react';
 import {
   convertReportPriceType,
   useGetReportPaymentDetailQuery,
@@ -21,7 +22,9 @@ const getPercent = ({
   originalPrice: number;
   changedPrice: number;
 }) => {
-  return Math.floor((changedPrice / originalPrice) * 100);
+  return originalPrice === 0
+    ? 0
+    : Math.ceil((changedPrice / originalPrice) * 100);
 };
 
 const ReportCreditDetail = () => {
@@ -29,6 +32,7 @@ const ReportCreditDetail = () => {
   const [searchParams] = useSearchParams();
   const applicationId = searchParams.get('applicationId');
   const { paymentId } = useParams<{ paymentId: string }>();
+  const payment = useRef<{ total: number; discount: number } | null>(null);
 
   const {
     data: reportPaymentDetail,
@@ -44,6 +48,26 @@ const ReportCreditDetail = () => {
     isLoading: userDataIsLoading,
     isError: userDataIsError,
   } = useUserQuery();
+
+  const calculateTotalAndDiscount = () => {
+    if (!reportPaymentDetail) return { total: 0, discount: 0 };
+
+    const { reportPriceInfo, reportOptionInfos, feedbackPriceInfo } =
+      reportPaymentDetail.reportPaymentInfo;
+
+    let total =
+      (reportPriceInfo.price ?? 0) + (feedbackPriceInfo?.feedbackPrice ?? 0);
+    let discount =
+      (reportPriceInfo.discountPrice ?? 0) +
+      (feedbackPriceInfo?.feedbackDiscountPrice ?? 0);
+
+    for (const optionInfo of reportOptionInfos) {
+      total += optionInfo?.price ?? 0;
+      discount += optionInfo?.discountPrice ?? 0;
+    }
+
+    return { total, discount };
+  };
 
   const getOptionTitleList = () => {
     if (!reportPaymentDetail) return [];
@@ -77,14 +101,13 @@ const ReportCreditDetail = () => {
 
   const getDiscountPercent = () => {
     if (!reportPaymentDetail) return 0;
+    if (!payment.current) return 0;
 
-    const originalPrice =
-      reportPaymentDetail.reportPaymentInfo.reportPriceInfo.price;
-    const discountPrice = reportPaymentDetail.reportPaymentInfo.programDiscount;
+    const { total, discount } = payment.current;
 
     return getPercent({
-      originalPrice: originalPrice ?? 0,
-      changedPrice: discountPrice ?? 0,
+      originalPrice: total,
+      changedPrice: discount,
     });
   };
 
@@ -95,10 +118,14 @@ const ReportCreditDetail = () => {
     )
       return 0;
 
-    return reportPaymentDetail.reportPaymentInfo.couponDiscount === -1
-      ? (reportPaymentDetail.reportPaymentInfo.programPrice ?? 0) -
-          (reportPaymentDetail.reportPaymentInfo.programDiscount ?? 0)
-      : reportPaymentDetail.reportPaymentInfo.couponDiscount;
+    const { couponDiscount, finalPrice, feedbackPriceInfo } =
+      reportPaymentDetail.reportPaymentInfo;
+
+    return couponDiscount === -1
+      ? (finalPrice ?? 0) -
+          ((feedbackPriceInfo?.feedbackPrice ?? 0) -
+            (feedbackPriceInfo?.feedbackDiscountPrice ?? 0))
+      : couponDiscount;
   };
 
   const isCancelable = () => {
@@ -132,6 +159,11 @@ const ReportCreditDetail = () => {
     // 환불 가능한지 확인
     return !isAfterReportIssued || !isAfterFeedbackConfirmed;
   };
+
+  useEffect(() => {
+    if (!reportPaymentDetail) return;
+    payment.current = calculateTotalAndDiscount();
+  }, [reportPaymentDetail]);
 
   return (
     <section
