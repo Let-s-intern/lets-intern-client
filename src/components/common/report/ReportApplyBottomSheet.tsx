@@ -182,11 +182,11 @@ const ReportApplyBottomSheet = React.forwardRef<
     <div
       ref={ref}
       className={twMerge(
-        'fixed bottom-0 left-0 right-0 z-40 rounded-t-xl border-t border-neutral-0/5 bg-white shadow-lg transition',
+        'fixed bottom-0 left-1/2 z-40 mx-auto w-full max-w-5xl -translate-x-1/2 rounded-t-xl border-t border-neutral-0/5 bg-white shadow-lg transition',
         !show && 'hidden',
       )}
     >
-      <div className="mx-auto max-h-screen max-w-5xl overflow-y-auto px-5 py-2 sm:max-h-none">
+      <div className="max-h-[calc(100vh-60px)] overflow-y-auto px-5 py-2">
         {isDrawerOpen ? (
           <div
             className="sticky top-2 z-10 mx-auto mb-2.5 h-[5px] w-16 rounded-full bg-neutral-80"

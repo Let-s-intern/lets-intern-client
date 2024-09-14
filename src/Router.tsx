@@ -1,5 +1,4 @@
 import ScrollToTop from '@components/ui/scroll-to-top/ScrollToTop';
-import { useEffect } from 'react';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { getAdminRoutes } from './AdminRoutes';
 import ChallengeLayout from './components/common/challenge/ui/layout/ChallengeLayout';
@@ -50,10 +49,6 @@ import WriteReviewChallenge from './pages/WriteReviewChallenge';
 import WriteReviewLive from './pages/WriteReviewLive';
 
 const Router = () => {
-  useEffect(() => {
-    console.log('routerman');
-  }, []);
-
   return (
     <BrowserRouter>
       <ScrollToTop />

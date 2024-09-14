@@ -189,7 +189,7 @@ const ReportCreditDetail = () => {
               <div className="flex w-full items-start justify-center gap-x-4">
                 <img
                   className="h-[97px] w-[137px] rounded-sm object-cover"
-                  src="/images/report-banner.png"
+                  src="/images/report-banner.jpg"
                   alt="thumbnail"
                 />
                 <div className="flex grow flex-col items-start justify-center gap-y-3">

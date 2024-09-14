@@ -40,8 +40,8 @@ export const ReportLandingIntroSection = ({
   return (
     <section className="mx-auto max-w-5xl px-5">
       {header}
-      <div className="flex h-[218px] justify-center rounded-xs bg-[#4138A3]">
-        <img src="/images/report-banner.png" />
+      <div className="flex max-h-[218px] justify-center overflow-hidden rounded-xs bg-[#4138A3]">
+        <img src="/images/report-banner.jpg" width={320} height={218} />
       </div>
       <div className="rounded my-4 flex h-80 items-center justify-center bg-slate-100">
         서류 진단 서비스 간략 소개 ...
