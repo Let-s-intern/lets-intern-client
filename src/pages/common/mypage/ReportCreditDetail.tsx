@@ -114,7 +114,7 @@ const ReportCreditDetail = () => {
 
     return (
       (reportPaymentDetail.reportPaymentInfo.reportRefundPrice ?? 0) +
-      (reportPaymentDetail.reportPaymentInfo.couponDiscount ?? 0)
+      (getCouponDiscountPrice() ?? 0)
     );
   };
 

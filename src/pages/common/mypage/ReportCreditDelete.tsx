@@ -10,6 +10,7 @@ import {
   getReportDiscountedPrice,
   getReportPrice,
   getReportRefundPercent,
+  getTotalRefund,
 } from '@/lib/refund';
 import {
   convertReportPriceType,
@@ -58,32 +59,6 @@ const ReportCreditDelete = () => {
     },
   });
 
-  const reportRetail = useMemo(() => {
-    if (!reportPaymentDetail) return 0;
-
-    const { feedbackPriceInfo } = reportPaymentDetail.reportPaymentInfo;
-    const { total, discount } = payment;
-
-    return (
-      total -
-      (feedbackPriceInfo?.feedbackPrice ?? 0) -
-      (discount - (feedbackPriceInfo?.feedbackDiscountPrice ?? 0))
-    );
-  }, [reportPaymentDetail, payment]);
-
-  const reportRefund = useMemo(() => {
-    if (!reportPaymentDetail) return 0;
-
-    return (
-      (reportPaymentDetail.reportPaymentInfo.reportRefundPrice ?? 0) +
-      (reportPaymentDetail.reportPaymentInfo.couponDiscount ?? 0)
-    );
-  }, [reportPaymentDetail]);
-
-  const getReportDeduction = () => {
-    return reportRetail - reportRefund;
-  };
-
   const getOptionTitleList = () => {
     if (!reportPaymentDetail) return [];
 
@@ -100,7 +75,7 @@ const ReportCreditDelete = () => {
 
   const paymentInfo = reportPaymentDetail?.reportPaymentInfo;
 
-  const totalAndDiscount = useMemo(() => {
+  const getTotalAndDiscount = () => {
     if (!reportPaymentDetail) return { total: 0, discount: 0 };
 
     const { reportPriceInfo, reportOptionInfos, feedbackPriceInfo } =
@@ -118,7 +93,7 @@ const ReportCreditDelete = () => {
     }
 
     return { total, discount };
-  }, [reportPaymentDetail]);
+  };
 
   const reportPrice = useMemo(() => {
     return getReportPrice(paymentInfo);
@@ -137,9 +112,9 @@ const ReportCreditDelete = () => {
       originalPrice: total,
       changedPrice: discount,
     });
-  }, [paymentInfo]);
+  }, [reportPaymentDetail, payment]);
 
-  const couponDiscountPrice = useMemo(() => {
+  const getCouponDiscountPrice = () => {
     if (!reportPaymentDetail) return 0;
 
     const { couponDiscount, feedbackPriceInfo } =
@@ -151,8 +126,8 @@ const ReportCreditDelete = () => {
           discount -
           ((feedbackPriceInfo?.feedbackPrice ?? 0) -
             (feedbackPriceInfo?.feedbackDiscountPrice ?? 0))
-      : couponDiscount;
-  }, [reportPaymentDetail, payment]);
+      : (couponDiscount ?? 0);
+  };
 
   const feedbackRefundPercent = useMemo(() => {
     return getFeedbackRefundPercent({
@@ -175,13 +150,18 @@ const ReportCreditDelete = () => {
       return 0;
     }
 
-    return reportPaymentDetail.tossInfo
-      ? reportPaymentDetail.tossInfo.status !== 'DONE' &&
-        reportPaymentDetail.tossInfo.cancels
-        ? reportPaymentDetail.tossInfo.cancels[0].cancelAmount?.toLocaleString()
-        : reportPaymentDetail.tossInfo.balanceAmount?.toLocaleString()
-      : reportPaymentDetail.reportPaymentInfo.finalPrice?.toLocaleString();
-  }, [reportPaymentDetail]);
+    return getTotalRefund({
+      now: dayjs(),
+      paymentInfo,
+      reportApplicationStatus:
+        reportPaymentDetail.reportApplicationInfo.reportApplicationStatus,
+      reportFeedbackStatus:
+        reportPaymentDetail.reportApplicationInfo.reportFeedbackStatus,
+      reportFeedbackDesiredDate: dayjs(
+        reportPaymentDetail.reportApplicationInfo.reportFeedbackDesiredDate,
+      ),
+    });
+  }, [paymentInfo, reportPaymentDetail]);
 
   const reportRefundPercent = useMemo(() => {
     if (!reportPaymentDetail) {
@@ -207,7 +187,7 @@ const ReportCreditDelete = () => {
 
   useEffect(() => {
     if (!reportPaymentDetail) return;
-    setPayment(totalAndDiscount);
+    setPayment(getTotalAndDiscount());
   }, [reportPaymentDetail]);
 
   return (
@@ -289,22 +269,18 @@ const ReportCreditDelete = () => {
                   <PaymentInfoRow
                     title={`쿠폰할인`}
                     content={
-                      couponDiscountPrice === 0
+                      getCouponDiscountPrice() === 0
                         ? '0원'
-                        : `-${couponDiscountPrice?.toLocaleString()}원`
+                        : `-${getCouponDiscountPrice()?.toLocaleString()}원`
                     }
                   />
                   {reportRefundPercent !== 1 && (
                     <PaymentInfoRow
-                      title={`서류 진단서 (부분 환불 ${getPercent({
-                        originalPrice: reportRetail,
-                        changedPrice: reportRefund,
-                      })}%)`}
-                      content={
-                        getReportDeduction() === 0
-                          ? '0원'
-                          : `-${getReportDeduction().toLocaleString()}원`
-                      }
+                      title={`서류 진단서 (부분 환불 ${Math.ceil(reportRefundPercent * 100)}%)`}
+                      content={`-${(
+                        reportDiscountedPrice *
+                        (1 - reportRefundPercent)
+                      ).toLocaleString()}원`}
                       subInfo={
                         <div className="text-xs font-medium text-primary-dark">
                           *환불 규정은{' '}
@@ -325,18 +301,14 @@ const ReportCreditDelete = () => {
                     .reportFeedbackApplicationId &&
                     feedbackRefundPercent !== 1 && (
                       <PaymentInfoRow
-                        title={`1:1 피드백 (부분 환불 ${getPercent({
-                          originalPrice:
-                            reportPaymentDetail.reportPaymentInfo
-                              .feedbackPriceInfo?.feedbackPrice || 0,
-                          changedPrice:
-                            reportPaymentDetail.reportPaymentInfo
-                              .feedbackRefundPrice || 0,
-                        })}%)`}
+                        title={`1:1 피드백 (부분 환불 ${Math.ceil((1 - feedbackRefundPercent) * 100)}%)`}
                         content={
-                          feedbackDeduction === 0
+                          feedbackDiscountPrice === 0
                             ? '0원'
-                            : `-${feedbackDeduction.toLocaleString()}원`
+                            : `-${(
+                                feedbackDiscountPrice *
+                                (1 - feedbackRefundPercent)
+                              ).toLocaleString()}원`
                         }
                         subInfo={
                           <div className="text-xs font-medium text-primary-dark">
