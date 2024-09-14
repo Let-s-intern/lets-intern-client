@@ -112,26 +112,22 @@ const ReportCreditDetail = () => {
     }
 
     const now = dayjs();
+    const {
+      reportApplicationStatus,
+      reportFeedbackDesiredDate,
+      reportFeedbackStatus,
+    } = reportPaymentDetail.reportApplicationInfo;
+
     // 진단서 수령 후 - 환불 불가
-    const isAfterReportIssued =
-      reportPaymentDetail.reportApplicationInfo.reportApplicationStatus ===
-        'REPORTED' ||
-      reportPaymentDetail.reportApplicationInfo.reportApplicationStatus ===
-        'COMPLETED';
+    const isAfterReportIssued = reportApplicationStatus === 'COMPLETED';
 
     // 1:1 첨삭 일정 확정 후 - 확정된 시간 이후 - 환불 불가
     const isAfterFeedbackConfirmed =
-      reportPaymentDetail.reportApplicationInfo.reportFeedbackStatus ===
-        'COMPLETED' ||
-      (reportPaymentDetail.reportApplicationInfo.reportFeedbackStatus ===
-        'CONFIRMED' &&
-        reportPaymentDetail.reportApplicationInfo.reportFeedbackDesiredDate &&
-        (now.isAfter(
-          reportPaymentDetail.reportApplicationInfo.reportFeedbackDesiredDate,
-        ) ||
-          now.isSame(
-            reportPaymentDetail.reportApplicationInfo.reportFeedbackDesiredDate,
-          )));
+      reportFeedbackStatus === 'COMPLETED' ||
+      (reportFeedbackStatus === 'CONFIRMED' &&
+        reportFeedbackDesiredDate &&
+        (now.isAfter(reportFeedbackDesiredDate) ||
+          now.isSame(reportFeedbackDesiredDate)));
 
     // 환불 가능한지 확인
     return !isAfterReportIssued || !isAfterFeedbackConfirmed;

@@ -77,7 +77,7 @@ const ReportPaymentResult = () => {
     ) {
       // 즉시 리다이렉트 하면 알 수 없는 이유로 제대로 navigate 되지 않음. SSR 관련 이슈로 추정
       setTimeout(() => {
-        navigate('report/landing');
+        navigate('/report/landing');
       }, 100);
       return;
     }

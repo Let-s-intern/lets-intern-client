@@ -1,5 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
+import { twMerge } from 'tailwind-merge';
 
 type BackgroundColor = 'red' | 'green' | 'blue' | 'lightBlue' | 'gray';
 
@@ -34,7 +35,11 @@ const ActionButton = ({
   return (
     <ActionButtonBlock
       type={type}
-      className={className}
+      className={twMerge(
+        'transition',
+        !disabled && 'hover:opacity-80',
+        className,
+      )}
       $bgColor={bgColor}
       $width={width}
       onClick={() => {
@@ -64,14 +69,14 @@ const ActionButtonBlock = styled.button<ActionButtonBlockProps>`
     props.$bgColor === 'green'
       ? 'background-color: #48bb78;'
       : props.$bgColor === 'red'
-      ? 'background-color: #f56565;'
-      : props.$bgColor === 'blue'
-      ? 'background-color: #4f46e5;'
-      : props.$bgColor === 'lightBlue'
-      ? 'background-color: #4299e1;'
-      : props.$bgColor === 'gray'
-      ? 'background-color: #718096;'
-      : ''}
+        ? 'background-color: #f56565;'
+        : props.$bgColor === 'blue'
+          ? 'background-color: #4f46e5;'
+          : props.$bgColor === 'lightBlue'
+            ? 'background-color: #4299e1;'
+            : props.$bgColor === 'gray'
+              ? 'background-color: #718096;'
+              : ''}
 
   &:disabled {
     background-color: #e2e8f0;

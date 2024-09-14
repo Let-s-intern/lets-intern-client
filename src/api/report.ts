@@ -98,35 +98,61 @@ export function convertReportStatusToBadgeStatus(
   }
 }
 
-export function convertFeedbackStatusToDisplayName(
-  status: ReportFeedbackStatus | null | undefined,
-) {
+export function convertFeedbackStatusToDisplayName({
+  now,
+  reportFeedback,
+  status,
+  isAdmin = false,
+}: {
+  status: ReportFeedbackStatus | null | undefined;
+  reportFeedback: dayjs.Dayjs | null | undefined;
+  now: dayjs.Dayjs;
+  isAdmin?: boolean;
+}) {
   if (!status) {
     return '';
   }
 
   switch (status) {
     case 'APPLIED':
-      return '확인중';
+      return isAdmin ? '신청완료' : '확인중';
     case 'PENDING':
       return '확인중';
     case 'CONFIRMED':
-      return '일정확정';
+      if (!reportFeedback || now.isBefore(reportFeedback.add(1, 'hour'))) {
+        return '일정확정';
+      } else {
+        return '진행완료';
+      }
     case 'COMPLETED':
       return '진행완료';
   }
 }
 
-export function convertFeedbackStatusToBadgeStatus(
-  status: ReportFeedbackStatus,
-): 'info' | 'success' {
+export function convertFeedbackStatusToBadgeStatus({
+  now,
+  reportFeedback,
+  status,
+}: {
+  status: ReportFeedbackStatus | null | undefined;
+  reportFeedback: dayjs.Dayjs | null | undefined;
+  now: dayjs.Dayjs;
+}): 'info' | 'success' {
+  if (!status) {
+    return 'info';
+  }
+
   switch (status) {
     case 'APPLIED':
       return 'info';
     case 'PENDING':
       return 'info';
     case 'CONFIRMED':
-      return 'info';
+      if (!reportFeedback || now.isBefore(reportFeedback.add(1, 'hour'))) {
+        return 'info';
+      } else {
+        return 'success';
+      }
     case 'COMPLETED':
       return 'success';
   }
@@ -191,20 +217,6 @@ const reportFeedbackStatusSchema = z.enum([
 
 export type ReportFeedbackStatus = z.infer<typeof reportFeedbackStatusSchema>;
 
-export const convertReportFeedbackStatus = (status: ReportFeedbackStatus) => {
-  switch (status) {
-    case 'APPLIED':
-      return '신청완료';
-    case 'PENDING':
-      return '일정확인중';
-    case 'CONFIRMED':
-      return '일정확정';
-    case 'COMPLETED':
-      return '진행완료';
-    default:
-      return '-';
-  }
-};
 
 export const convertReportTypeStatus = (type: string) => {
   switch (type.toUpperCase()) {

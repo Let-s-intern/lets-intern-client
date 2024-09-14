@@ -2,7 +2,7 @@ import { useServerActiveReports } from '@/context/ActiveReports';
 import { portfolioReportDescription } from '@/data/description';
 import useReportApplicationStore from '@/store/useReportApplicationStore';
 import { getBaseUrlFromServer, getReportLandingTitle } from '@/utils/url';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { Helmet } from 'react-helmet';
 import { useGetActiveReports } from '../../../api/report';
 import LexicalContent from '../../../components/common/blog/LexicalContent';
@@ -24,19 +24,36 @@ const ReportPortfolioPage = () => {
   const report = activeReports?.portfolioInfo;
 
   const root = JSON.parse(report?.contents || '{"root":{}}').root;
+  const contentRef = useRef<HTMLDivElement | null>();
+  const bottomSheetRef = useRef<HTMLDivElement | null>(null);
 
   const { initReportApplication } = useReportApplicationStore();
   useEffect(() => {
     initReportApplication();
-    // const url = new URL(window.location.href);
-    // const from = url.searchParams.get('from');
-    // if (from === 'nav') {
-    //   document
-    //     .getElementById('content')
-    //     ?.scrollIntoView({ behavior: 'instant' });
-    // }
-    // url.searchParams.delete('from');
-    // window.history.replaceState({}, '', url.toString());
+
+    if (contentRef.current) {
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (bottomSheetRef.current) {
+              bottomSheetRef.current.style.display = entry.isIntersecting
+                ? 'block'
+                : 'none';
+            }
+          });
+        },
+        {
+          root: null,
+          rootMargin: '0px',
+          threshold: 0,
+        },
+      );
+      observer.observe(contentRef.current);
+      return () => {
+        observer.disconnect();
+      };
+    }
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -62,6 +79,7 @@ const ReportPortfolioPage = () => {
       <div
         id="content"
         ref={(element) => {
+          contentRef.current = element;
           if (element) {
             const url = new URL(window.location.href);
 
@@ -82,7 +100,9 @@ const ReportPortfolioPage = () => {
           <LexicalContent node={root} />
         </ReportContentContainer>
       </div>
-      {report ? <ReportApplyBottomSheet report={report} /> : null}
+      {report ? (
+        <ReportApplyBottomSheet report={report} ref={bottomSheetRef} />
+      ) : null}
     </>
   );
 };

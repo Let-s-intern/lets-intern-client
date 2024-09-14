@@ -177,6 +177,7 @@ const ReportApplyPage = () => {
                   navigate(`/report/order/result?orderId=${generateOrderId()}`);
                   return;
                 }
+                // 토스 페이지에서 이전 버튼 누르면 서류 진단 페이지로 이동한다는 confrim 표시하면 좋을 거 같음
                 navigate(`/report/toss/payment`, { replace: true });
               }}
             >
@@ -520,7 +521,7 @@ export const UsereInfoSection = () => {
   useEffect(() => {
     // 가입한 이메일을 정보 수신용 이메일로 설정
     setReportApplication({
-      contactEmail: participationInfo?.email || '',
+      contactEmail: participationInfo?.contactEmail || '',
     });
   }, [participationInfo]);
 

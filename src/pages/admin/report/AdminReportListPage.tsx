@@ -13,11 +13,9 @@ type Row = AdminReportListItem & { id: number };
 function createColumns({
   handleEdit,
   moveApplicationPage,
-  moveFeedbackPage,
 }: {
   handleEdit: (id: number) => void;
   moveApplicationPage: (reportId: number) => void;
-  moveFeedbackPage: (reportId: number) => void;
 }): GridColDef<Row>[] {
   return [
     { field: 'id', headerName: 'ID', width: 50 },
@@ -87,17 +85,7 @@ function createColumns({
               moveApplicationPage(params.row.id);
             }}
           >
-            서류 진단
-          </Button>
-          <Button
-            variant="outlined"
-            color="info"
-            size="small"
-            onClick={() => {
-              moveFeedbackPage(params.row.id);
-            }}
-          >
-            1:1피드백
+            참여자 목록
           </Button>
         </div>
       ),
@@ -156,9 +144,6 @@ const AdminReportListPage = () => {
       moveApplicationPage(reportId) {
         navigate(`/admin/report/applications?reportId=${reportId}`);
       },
-      moveFeedbackPage(reportId) {
-        navigate(`/admin/report/applications/feedback?reportId=${reportId}`);
-      }
     });
   }, [navigate]);
 
