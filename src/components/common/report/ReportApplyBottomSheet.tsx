@@ -53,6 +53,7 @@ const ReportApplyBottomSheet = React.forwardRef<
   IReportApplyBottomSheetProps
 >(({ report, show = true }, ref) => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+
   const { data: priceInfo } = useGetReportPriceDetail(report.reportId);
   const { data: reportApplication, setReportApplication } =
     useReportApplicationStore();
@@ -97,7 +98,9 @@ const ReportApplyBottomSheet = React.forwardRef<
       recruitmentUrl: '',
     });
 
-    navigate(`/report/apply/${report.reportType}/${report.reportId}`);
+    navigate(
+      `/report/apply/${report.reportType?.toLowerCase()}/${report.reportId}`,
+    );
   }, [navigate, report.reportId, report.reportType, setReportApplication]);
 
   const reportFinalPrice = useMemo(() => {
@@ -178,11 +181,13 @@ const ReportApplyBottomSheet = React.forwardRef<
     !priceInfo.feedbackPriceInfo ||
     priceInfo.feedbackPriceInfo.feedbackPrice !== -1;
 
+  const reportType = window.location.pathname.split('/')[3];
+
   return (
     <div
       ref={ref}
       className={twMerge(
-        'fixed bottom-0 left-1/2 z-40 mx-auto w-full max-w-5xl -translate-x-1/2 rounded-t-xl border-t border-neutral-0/5 bg-white shadow-lg transition',
+        'shadow-lg fixed bottom-0 left-1/2 z-40 mx-auto w-full max-w-5xl -translate-x-1/2 rounded-t-xl border-t border-neutral-0/5 bg-white transition',
         !show && 'hidden',
       )}
     >
@@ -204,14 +209,16 @@ const ReportApplyBottomSheet = React.forwardRef<
               <h2 className="mb-2 text-xsmall14 font-semibold text-static-0">
                 기본 서비스
               </h2>
-              <p className="text-xxsmall12 text-neutral-45">
-                *프리미엄 선택시, 희망하는 채용공고에 맞춤화된 진단을 추가로
-                받아볼 수 있어요.
-              </p>
+              {reportType !== 'personal-statement' && (
+                <p className="mb-2 text-xxsmall12 text-neutral-45">
+                  *프리미엄 선택시, 희망하는 채용공고에 맞춤화된 진단을 추가로
+                  받아볼 수 있어요.
+                </p>
+              )}
               <RadioGroup
                 defaultValue="BASIC"
                 value={reportPriceType}
-                className="my-2"
+                className="mb-2"
                 onChange={(e) => {
                   setPriceType(e.target.value as ReportPriceType);
                 }}
@@ -243,13 +250,19 @@ const ReportApplyBottomSheet = React.forwardRef<
             {optionsAvailable ? (
               <FormControl fullWidth>
                 <h2 className="mb-2 text-xsmall14 font-semibold text-static-0">
-                  기본 서비스 옵션 (현직자 피드백)
+                  기본 서비스 옵션 (
+                  {reportType !== 'personal-statement'
+                    ? '현직자 피드백'
+                    : '문항 추가'}
+                  )
                 </h2>
-                <p className="text-xxsmall12 text-neutral-45">
-                  *현직자 피드백 선택시, 현직자 멘토에게 쏠쏠한 서류 작성 꿀팁을
-                  듣거나 앞으로의 커리어 조언까지 얻어갈 수 있어요.
-                </p>
-                <div className="my-2 flex flex-col">
+                {reportType !== 'personal-statement' && (
+                  <p className="mb-2 text-xxsmall12 text-neutral-45">
+                    *현직자 피드백 선택시, 현직자 멘토에게 쏠쏠한 서류 작성
+                    꿀팁을 듣거나 앞으로의 커리어 조언까지 얻어갈 수 있어요.
+                  </p>
+                )}
+                <div className="mb-2 flex flex-col">
                   {priceInfo.reportOptionInfos?.map((option) => {
                     const price = option.price ?? 0;
                     const discount = option.discountPrice ?? 0;
