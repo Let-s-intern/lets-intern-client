@@ -143,17 +143,15 @@ const ReportCreditDetail = () => {
   };
 
   const getCouponDiscountPrice = () => {
-    if (
-      !reportPaymentDetail ||
-      !reportPaymentDetail.reportPaymentInfo.couponDiscount
-    )
-      return 0;
+    if (!reportPaymentDetail) return 0;
 
-    const { couponDiscount, finalPrice, feedbackPriceInfo } =
+    const { couponDiscount, feedbackPriceInfo } =
       reportPaymentDetail.reportPaymentInfo;
+    const { total, discount } = payment;
 
     return couponDiscount === -1
-      ? (finalPrice ?? 0) -
+      ? total -
+          discount -
           ((feedbackPriceInfo?.feedbackPrice ?? 0) -
             (feedbackPriceInfo?.feedbackDiscountPrice ?? 0))
       : couponDiscount;
@@ -389,7 +387,7 @@ const ReportCreditDetail = () => {
                     content={
                       getCouponDiscountPrice() === 0
                         ? '0원'
-                        : `-${getCouponDiscountPrice().toLocaleString()}원`
+                        : `-${getCouponDiscountPrice()?.toLocaleString()}원`
                     }
                   />
                   {reportPaymentDetail.tossInfo?.status ===
