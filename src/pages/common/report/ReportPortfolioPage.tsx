@@ -101,7 +101,15 @@ const ReportPortfolioPage = () => {
         </ReportContentContainer>
       </div>
       {report ? (
-        <ReportApplyBottomSheet report={report} ref={bottomSheetRef} />
+        <ReportApplyBottomSheet
+          report={report}
+          ref={(ref) => {
+            if (ref) {
+              ref.style.display = 'none';
+              bottomSheetRef.current = ref;
+            }
+          }}
+        />
       ) : null}
     </>
   );

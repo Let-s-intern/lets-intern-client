@@ -38,6 +38,7 @@ const ReportResumePage = () => {
         (entries) => {
           entries.forEach((entry) => {
             if (bottomSheetRef.current) {
+              console.log('entry', entry);
               bottomSheetRef.current.style.display = entry.isIntersecting
                 ? 'block'
                 : 'none';
@@ -103,7 +104,15 @@ const ReportResumePage = () => {
         </ReportContentContainer>
       </div>
       {report ? (
-        <ReportApplyBottomSheet report={report} ref={bottomSheetRef} />
+        <ReportApplyBottomSheet
+          report={report}
+          ref={(ref) => {
+            if (ref) {
+              ref.style.display = 'none';
+              bottomSheetRef.current = ref;
+            }
+          }}
+        />
       ) : null}
     </>
   );
