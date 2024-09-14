@@ -276,7 +276,7 @@ const ReportCreditDelete = () => {
                   />
                   {reportRefundPercent !== 1 && (
                     <PaymentInfoRow
-                      title={`서류 진단서 (부분 환불 ${Math.ceil((1 - reportRefundPercent) * 100)}%)`}
+                      title={`서류 진단서 (부분 환불 ${Math.ceil(reportRefundPercent * 100)}%)`}
                       content={`-${(
                         reportDiscountedPrice *
                         (1 - reportRefundPercent)
