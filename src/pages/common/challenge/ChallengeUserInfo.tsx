@@ -17,8 +17,6 @@ const ChallengeUserInfo = () => {
     major: '',
     wishJob: '',
     wishCompany: '',
-    accountNum: '',
-    accountType: '',
   });
   const [buttonDisabled, setButtonDisabled] = useState(false);
 
@@ -32,8 +30,6 @@ const ChallengeUserInfo = () => {
         major: res.data.data.major,
         wishJob: res.data.data.wishJob,
         wishCompany: res.data.data.wishCompany,
-        accountNum: res.data.data.accountNum,
-        accountType: res.data.data.accountType,
       });
       return res.data;
     },
