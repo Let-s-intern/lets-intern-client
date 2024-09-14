@@ -105,9 +105,7 @@ const ChallengeUserInfo = () => {
         !value.grade ||
         !value.major ||
         !value.wishJob ||
-        !value.wishCompany ||
-        !value.accountNum ||
-        !value.accountType,
+        !value.wishCompany,
     );
   }, [value]);
 
