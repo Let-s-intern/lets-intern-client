@@ -27,7 +27,7 @@ const CreditListItem = ({ payment }: { payment: PaymentType }) => {
         <img
           src={
             payment.programInfo.programType === 'REPORT'
-              ? '/images/report-banner.png'
+              ? '/images/report-banner.jpg'
               : payment.programInfo.thumbnail || ''
           }
           className={twMerge(
