@@ -143,7 +143,11 @@ const ReportCreditDetail = () => {
   };
 
   const getCouponDiscountPrice = () => {
-    if (!reportPaymentDetail) return 0;
+    if (
+      !reportPaymentDetail ||
+      !reportPaymentDetail.reportPaymentInfo.couponDiscount
+    )
+      return 0;
 
     const { couponDiscount, feedbackPriceInfo } =
       reportPaymentDetail.reportPaymentInfo;
