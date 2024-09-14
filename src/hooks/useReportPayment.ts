@@ -116,15 +116,21 @@ export default function useReportPayment() {
       isFeedbackApplied,
     }));
 
-    // 쿠폰 가격 책정
+    // 쿠폰 가격 책정 (쿠폰은 1:1 피드백에 적용되지 않음)
     if (couponId === null) return;
 
     axios.get(`/coupon/admin/${couponId}`).then(async (res) => {
       const { discount } = couponInfoSchema.parse(res.data.data.couponInfo);
       setPayment((prev) => ({
         ...prev,
-        coupon: discount === -1 ? (prev.amount ?? 0) : (discount ?? 0),
-        amount: discount === -1 ? 0 : prev.amount - (discount ?? 0),
+        coupon:
+          discount === -1
+            ? prev.amount - (prev.feedback - prev.feedbackDiscount)
+            : (discount ?? 0),
+        amount:
+          discount === -1
+            ? prev.feedback - prev.feedbackDiscount
+            : prev.amount - (discount ?? 0),
       }));
     });
   }, [reportPriceDetail, reportApplication.couponId]);
