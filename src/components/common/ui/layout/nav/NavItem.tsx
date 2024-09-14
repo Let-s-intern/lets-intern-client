@@ -18,7 +18,7 @@ const NavItem = ({ to, active, as, children }: NavItemProps) => {
   return (
     <Wrapper
       to={to || '#'}
-      className={clsx(style, 'hidden cursor-pointer lg:block')}
+      className={clsx(style, 'hidden cursor-pointer xl:block')}
     >
       {children}
     </Wrapper>
