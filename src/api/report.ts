@@ -217,7 +217,6 @@ const reportFeedbackStatusSchema = z.enum([
 
 export type ReportFeedbackStatus = z.infer<typeof reportFeedbackStatusSchema>;
 
-
 export const convertReportTypeStatus = (type: string) => {
   switch (type.toUpperCase()) {
     case 'RESUME':
@@ -471,6 +470,8 @@ const getMyReportsSchema = z
         desiredDate3: z.string().nullable().optional(),
         applicationTime: z.string().nullable().optional(),
         confirmedTime: z.string().nullable().optional(),
+        isCanceled: z.boolean().nullable().optional(),
+        feedbackIsCanceled: z.boolean().nullable().optional(),
       }),
     ),
     pageInfo: pageInfoSchema,

@@ -341,7 +341,7 @@ const ReportManagementPage = () => {
                   )}
                 </div>
               </div>
-              {item.feedbackStatus ? (
+              {item.feedbackStatus && !item.feedbackIsCanceled ? (
                 <>
                   <hr className="my-4 border-dashed border-neutral-80" />
                   <div>
