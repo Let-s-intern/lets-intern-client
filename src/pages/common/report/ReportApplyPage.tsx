@@ -82,6 +82,7 @@ const ReportApplyPage = () => {
 
     if (
       reportPriceType === 'PREMIUM' &&
+      reportType?.toUpperCase() !== 'PERSONAL_STATEMENT' &&
       isEmpty(recruitmentUrl) &&
       isEmpty(recruitmentFile)
     ) {
