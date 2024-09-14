@@ -3,7 +3,6 @@ import {
   WidgetPaymentMethodWidget,
 } from '@tosspayments/tosspayments-sdk';
 import { useEffect, useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 
 import { useGetParticipationInfo } from '../../../api/application';
 import { useGetReportDetailQuery } from '../../../api/report';
@@ -18,7 +17,6 @@ type TossPaymentsWidgets = ReturnType<
 const clientKey = import.meta.env.VITE_TOSS_CLIENT_KEY || '';
 
 const ReportTossPage = () => {
-  const navigate = useNavigate();
   const tossInitialized = useRef(false);
 
   const [ready, setReady] = useState(false);
@@ -27,7 +25,7 @@ const ReportTossPage = () => {
     null,
   );
 
-  const { data: reportApplication, validate } = useReportApplicationStore();
+  const { data: reportApplication } = useReportApplicationStore();
   const { data: user } = useUserQuery();
   const { data: reportDetail } = useGetReportDetailQuery(
     reportApplication.reportId!,
@@ -69,16 +67,6 @@ const ReportTossPage = () => {
       console.error(error);
     }
   };
-
-  // useEffect(() => {
-  //   const result = validate();
-
-  //   if (!result.isValid) {
-  //     console.error(result);
-  //     alert('잘못된 접근입니다.');
-  //     navigate('/');
-  //   }
-  // }, []);
 
   useEffect(() => {
     if (!user) return;

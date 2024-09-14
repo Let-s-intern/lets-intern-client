@@ -1,4 +1,5 @@
 import dayjs from 'dayjs';
+import { useEffect, useState } from 'react';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 
 import {
@@ -21,7 +22,9 @@ const getPercent = ({
   originalPrice: number;
   changedPrice: number;
 }) => {
-  return Math.floor((changedPrice / originalPrice) * 100);
+  return originalPrice === 0
+    ? 0
+    : Math.ceil((changedPrice / originalPrice) * 100);
 };
 
 const ReportCreditDetail = () => {
@@ -29,6 +32,11 @@ const ReportCreditDetail = () => {
   const [searchParams] = useSearchParams();
   const applicationId = searchParams.get('applicationId');
   const { paymentId } = useParams<{ paymentId: string }>();
+
+  const [payment, setPayment] = useState<{ total: number; discount: number }>({
+    total: 0,
+    discount: 0,
+  });
 
   const {
     data: reportPaymentDetail,
@@ -45,6 +53,26 @@ const ReportCreditDetail = () => {
     isError: userDataIsError,
   } = useUserQuery();
 
+  const calculateTotalAndDiscount = () => {
+    if (!reportPaymentDetail) return { total: 0, discount: 0 };
+
+    const { reportPriceInfo, reportOptionInfos, feedbackPriceInfo } =
+      reportPaymentDetail.reportPaymentInfo;
+
+    let total =
+      (reportPriceInfo.price ?? 0) + (feedbackPriceInfo?.feedbackPrice ?? 0);
+    let discount =
+      (reportPriceInfo.discountPrice ?? 0) +
+      (feedbackPriceInfo?.feedbackDiscountPrice ?? 0);
+
+    for (const optionInfo of reportOptionInfos) {
+      total += optionInfo?.price ?? 0;
+      discount += optionInfo?.discountPrice ?? 0;
+    }
+
+    return { total, discount };
+  };
+
   const getOptionTitleList = () => {
     if (!reportPaymentDetail) return [];
 
@@ -59,46 +87,74 @@ const ReportCreditDetail = () => {
       .join(', ');
   };
 
-  const getReportPrice = () => {
+  const getReportOriginal = () => {
     if (!reportPaymentDetail) return 0;
 
-    const defaultReportPrice =
-      reportPaymentDetail.reportPaymentInfo.reportPriceInfo.price;
-    const optionsPrice =
-      reportPaymentDetail.reportPaymentInfo.reportOptionInfos.reduce(
-        (acc, option) => {
-          return acc + (option?.price ?? 0);
-        },
-        0,
-      );
+    const { feedbackPriceInfo } = reportPaymentDetail.reportPaymentInfo;
+    const { total } = payment;
 
-    return (defaultReportPrice ?? 0) + optionsPrice;
+    return total - (feedbackPriceInfo?.feedbackPrice ?? 0);
+  };
+
+  const getReportRetail = () => {
+    if (!reportPaymentDetail) return 0;
+
+    const { feedbackPriceInfo } = reportPaymentDetail.reportPaymentInfo;
+    const { total, discount } = payment;
+
+    return (
+      total -
+      (feedbackPriceInfo?.feedbackPrice ?? 0) -
+      (discount - (feedbackPriceInfo?.feedbackDiscountPrice ?? 0))
+    );
+  };
+
+  const getReportRefund = () => {
+    if (!reportPaymentDetail) return 0;
+
+    return (
+      (reportPaymentDetail.reportPaymentInfo.reportRefundPrice ?? 0) +
+      (reportPaymentDetail.reportPaymentInfo.couponDiscount ?? 0)
+    );
+  };
+
+  const getReportDeduction = () => {
+    return getReportRetail() - getReportRefund();
+  };
+
+  const getFeedbackDeduction = () => {
+    if (!reportPaymentDetail) return 0;
+
+    const { feedbackPriceInfo, feedbackRefundPrice } =
+      reportPaymentDetail.reportPaymentInfo;
+
+    return (feedbackPriceInfo?.feedbackPrice ?? 0) - (feedbackRefundPrice ?? 0);
   };
 
   const getDiscountPercent = () => {
     if (!reportPaymentDetail) return 0;
 
-    const originalPrice =
-      reportPaymentDetail.reportPaymentInfo.reportPriceInfo.price;
-    const discountPrice = reportPaymentDetail.reportPaymentInfo.programDiscount;
+    const { total, discount } = payment;
 
     return getPercent({
-      originalPrice: originalPrice ?? 0,
-      changedPrice: discountPrice ?? 0,
+      originalPrice: total,
+      changedPrice: discount,
     });
   };
 
   const getCouponDiscountPrice = () => {
-    if (
-      !reportPaymentDetail ||
-      !reportPaymentDetail.reportPaymentInfo.couponDiscount
-    )
-      return 0;
+    if (!reportPaymentDetail) return 0;
 
-    return reportPaymentDetail.reportPaymentInfo.couponDiscount === -1
-      ? (reportPaymentDetail.reportPaymentInfo.programPrice ?? 0) -
-          (reportPaymentDetail.reportPaymentInfo.programDiscount ?? 0)
-      : reportPaymentDetail.reportPaymentInfo.couponDiscount;
+    const { couponDiscount, feedbackPriceInfo } =
+      reportPaymentDetail.reportPaymentInfo;
+    const { total, discount } = payment;
+
+    return couponDiscount === -1
+      ? total -
+          discount -
+          ((feedbackPriceInfo?.feedbackPrice ?? 0) -
+            (feedbackPriceInfo?.feedbackDiscountPrice ?? 0))
+      : couponDiscount;
   };
 
   const isCancelable = () => {
@@ -132,6 +188,13 @@ const ReportCreditDetail = () => {
     // 환불 가능한지 확인
     return !isAfterReportIssued || !isAfterFeedbackConfirmed;
   };
+
+  useEffect(() => {
+    if (!reportPaymentDetail) return;
+
+    const result = calculateTotalAndDiscount();
+    setPayment(result);
+  }, [reportPaymentDetail]);
 
   return (
     <section
@@ -301,7 +364,7 @@ const ReportCreditDetail = () => {
                 <div className="flex w-full flex-col">
                   <PaymentInfoRow
                     title={`서류 진단서 (${convertReportPriceType(reportPaymentDetail.reportApplicationInfo.reportPriceType)}+옵션)`}
-                    content={`${getReportPrice().toLocaleString()}원`}
+                    content={`${getReportOriginal().toLocaleString()}원`}
                   />
                   {reportPaymentDetail.reportApplicationInfo
                     .reportFeedbackApplicationId && (
@@ -324,7 +387,7 @@ const ReportCreditDetail = () => {
                     content={
                       getCouponDiscountPrice() === 0
                         ? '0원'
-                        : `-${getCouponDiscountPrice().toLocaleString()}원`
+                        : `-${getCouponDiscountPrice()?.toLocaleString()}원`
                     }
                   />
                   {reportPaymentDetail.tossInfo?.status ===
@@ -332,16 +395,13 @@ const ReportCreditDetail = () => {
                     <>
                       <PaymentInfoRow
                         title={`서류 진단서 (부분 환불 ${getPercent({
-                          originalPrice: getReportPrice(),
-                          changedPrice:
-                            reportPaymentDetail.reportPaymentInfo
-                              .reportRefundPrice ?? 0,
+                          originalPrice: getReportRetail(),
+                          changedPrice: getReportRefund(),
                         })}%)`}
                         content={
-                          !reportPaymentDetail.reportPaymentInfo
-                            .reportRefundPrice
+                          getReportDeduction() === 0
                             ? '0원'
-                            : `-${reportPaymentDetail.reportPaymentInfo.reportRefundPrice?.toLocaleString()}원`
+                            : `-${getReportDeduction().toLocaleString()}원`
                         }
                         subInfo={
                           <div className="text-xs font-medium text-primary-dark">
@@ -369,7 +429,11 @@ const ReportCreditDetail = () => {
                               reportPaymentDetail.reportPaymentInfo
                                 .feedbackRefundPrice || 0,
                           })}%)`}
-                          content={`-${reportPaymentDetail.reportPaymentInfo.feedbackRefundPrice?.toLocaleString() || 0}원`}
+                          content={
+                            getFeedbackDeduction() === 0
+                              ? '0원'
+                              : `-${getFeedbackDeduction().toLocaleString()}원`
+                          }
                           subInfo={
                             <div className="text-xs font-medium text-primary-dark">
                               *환불 규정은{' '}
