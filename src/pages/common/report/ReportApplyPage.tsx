@@ -110,12 +110,13 @@ const ReportApplyPage = () => {
         <main className="my-8 flex flex-col gap-10">
           <ProgramInfoSection />
           <DocumentSection file={applyFile} dispatch={setApplyFile} />
-          {reportApplication.reportPriceType === 'PREMIUM' && (
-            <PremiumSection
-              file={recruitmentFile}
-              dispatch={setRecruitmentFile}
-            />
-          )}
+          {reportApplication.reportPriceType === 'PREMIUM' &&
+            reportType?.toUpperCase() !== 'PERSONAL_STATEMENT' && (
+              <PremiumSection
+                file={recruitmentFile}
+                dispatch={setRecruitmentFile}
+              />
+            )}
           {reportApplication.isFeedbackApplied && <ScheduleSection />}
           <AdditionalInfoSection />
         </main>
@@ -321,10 +322,12 @@ const PremiumSection = ({
 
   return (
     <section className="flex flex-col gap-1 lg:flex-row lg:items-start lg:gap-5">
-      <div className="flex w-[8.75rem] shrink-0 items-center">
-        <Heading2>(프리미엄) 채용공고</Heading2>
-        <RequiredStar />
-      </div>
+      {
+        <div className="flex w-[8.75rem] shrink-0 items-center">
+          <Heading2>(프리미엄) 채용공고</Heading2>
+          <RequiredStar />
+        </div>
+      }
       <div className="w-full">
         <span className="mb-3 inline-block text-xsmall14 lg:mb-4">
           희망하는 기업의 채용공고를 첨부해주세요.

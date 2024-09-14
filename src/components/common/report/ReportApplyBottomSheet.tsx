@@ -98,7 +98,9 @@ const ReportApplyBottomSheet = React.forwardRef<
       recruitmentUrl: '',
     });
 
-    navigate(`/report/apply/${report.reportType}/${report.reportId}`);
+    navigate(
+      `/report/apply/${report.reportType?.toLowerCase()}/${report.reportId}`,
+    );
   }, [navigate, report.reportId, report.reportType, setReportApplication]);
 
   const reportFinalPrice = useMemo(() => {
