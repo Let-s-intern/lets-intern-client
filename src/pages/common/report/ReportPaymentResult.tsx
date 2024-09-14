@@ -1,6 +1,6 @@
 import { useMediaQuery } from '@mui/material';
 import dayjs from 'dayjs';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 
 import { ApplicationResult } from '../../../api/paymentSchema';
@@ -81,6 +81,7 @@ const ReportPaymentResult = () => {
       }, 100);
       return;
     }
+
     const body = {
       ...reportApplication,
       paymentKey: params.paymentKey ?? '',
@@ -119,6 +120,22 @@ const ReportPaymentResult = () => {
         );
       });
   });
+
+  useEffect(() => {
+    if (!params) return;
+    if (reportDetail === undefined) return;
+    if (!result) return;
+
+    window.dataLayer?.push({
+      event: 'report_payment_success',
+      report_name: reportDetail.title,
+      report_id: reportApplication.reportId,
+      report_type: reportDetail.reportType,
+      payment_method: params.paymentMethodKey,
+      payment_amount: params.amount,
+      order_id: params.orderId,
+    });
+  }, [reportDetail, params, result]);
 
   return (
     <div className="w-full px-5" data-program-text={title}>

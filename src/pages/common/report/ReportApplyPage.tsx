@@ -731,7 +731,9 @@ export const ReportPaymentSection = () => {
           </PaymentRowMain>
         )}
         <PaymentRowMain>
-          <span>{Math.ceil((discount / total) * 100)}% 할인</span>
+          <span>
+            {total === 0 ? 0 : Math.ceil((discount / total) * 100)}% 할인
+          </span>
           <span>
             {discount === 0 ? '0원' : `-${discount.toLocaleString()}원`}
           </span>
