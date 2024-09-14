@@ -15,12 +15,12 @@ const SocialLogin = ({ type }: SocialLoginProps) => {
         ? `?redirect=${searchParams.get('redirect')}`
         : ''
     }`;
-
     const basePath =
-      import.meta.env.VITE_API_BASE_PATH || 'https://letscareer-test.shop';
+      import.meta.env.VITE_API_BASE_PATH || 'https://letscareer.store';
     const path = `${basePath}/oauth2/authorize/${
       socialType === 'KAKAO' ? 'kakao' : 'naver'
     }?redirect_uri=${redirectPath}`;
+
     return path;
   };
 
