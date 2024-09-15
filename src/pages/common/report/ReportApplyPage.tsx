@@ -347,7 +347,7 @@ const PremiumSection = ({
               <ReportFormRadioControlLabel
                 label="파일 첨부"
                 value="file"
-                subText="(pdf, doc, docx 형식 지원)"
+                subText="(pdf, doc, docx 형식 지원, 50MB 이하)"
               />
               <span className="-mt-1 mb-2 block text-xxsmall12 text-neutral-45">
                 *업무, 지원자격, 우대사항이 보이게 채용공고를 캡처해주세요.
@@ -826,6 +826,14 @@ const FileUploadButton = ({
   dispatch: React.Dispatch<React.SetStateAction<File | null>>;
 }) => {
   const ref = useRef<HTMLInputElement>(null);
+
+  if (file) {
+    // 파일 사이즈가 50MB 초과일 경우
+    if (file.size > 50 * 1024 * 1024) {
+      alert('50MB 이하의 파일만 업로드 가능합니다.');
+      dispatch(null);
+    }
+  }
 
   return (
     <>
