@@ -47,6 +47,7 @@ const ReportApplyPage = () => {
 
   const [applyFile, setApplyFile] = useState<File | null>(null);
   const [recruitmentFile, setRecruitmentFile] = useState<File | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   const { payment } = useReportPayment();
   const { isLoggedIn } = useAuthStore();
@@ -58,14 +59,17 @@ const ReportApplyPage = () => {
   } = useReportApplicationStore();
 
   const convertFile = async () => {
+    setIsLoading(true);
     // 파일 변환
     if (applyFile) {
       const url = await uploadFile({ file: applyFile, type: 'REPORT' });
       setReportApplication({ applyUrl: url });
+      setIsLoading(false);
     }
     if (recruitmentFile) {
       const url = await uploadFile({ file: recruitmentFile, type: 'REPORT' });
       setReportApplication({ recruitmentUrl: url });
+      setIsLoading(false);
     }
   };
 
@@ -185,6 +189,13 @@ const ReportApplyPage = () => {
             >
               결제하기
             </button>
+            {
+              isLoading && (
+                <div className="fixed top-0 left-0 w-screen h-screen flex items-center justify-center bg-neutral-10/30 text-white">
+                  <div>진단서 접수 중...</div>
+                </div>
+              )
+            }
           </div>
         </aside>
       )}
