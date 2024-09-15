@@ -1,14 +1,10 @@
-import { useEffect, useState } from 'react';
-
-import Input from '../../../components/common/ui/input/Input';
-import GradeDropdown from '../../../components/common/mypage/privacy/form-control/GradeDropdown';
-import Button from '../../../components/common/ui/button/Button';
-import BankDropdown from '../../../components/common/mypage/privacy/form-control/BankDropdown';
-import { accountType } from '../../../schema';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import axios from '../../../utils/axios';
-import { isValidEmail, isValidPhoneNumber } from '../../../utils/valid';
+import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+
+import GradeDropdown from '../../../components/common/mypage/privacy/form-control/GradeDropdown';
+import Input from '../../../components/common/ui/input/Input';
+import axios from '../../../utils/axios';
 
 const ChallengeUserInfo = () => {
   const queryClient = useQueryClient();
@@ -21,8 +17,6 @@ const ChallengeUserInfo = () => {
     major: '',
     wishJob: '',
     wishCompany: '',
-    accountNum: '',
-    accountType: '',
   });
   const [buttonDisabled, setButtonDisabled] = useState(false);
 
@@ -36,8 +30,6 @@ const ChallengeUserInfo = () => {
         major: res.data.data.major,
         wishJob: res.data.data.wishJob,
         wishCompany: res.data.data.wishCompany,
-        accountNum: res.data.data.accountNum,
-        accountType: res.data.data.accountType,
       });
       return res.data;
     },
@@ -109,9 +101,7 @@ const ChallengeUserInfo = () => {
         !value.grade ||
         !value.major ||
         !value.wishJob ||
-        !value.wishCompany ||
-        !value.accountNum ||
-        !value.accountType,
+        !value.wishCompany,
     );
   }, [value]);
 
@@ -201,35 +191,7 @@ const ChallengeUserInfo = () => {
             </div>
           </div>
         </section>
-        <section className="flex flex-col gap-6">
-          <div className="flex flex-col gap-1">
-            <h1 className="text-lg font-semibold">계좌 정보</h1>
-            <p className="text-neutral-40">
-              * 미션을 성공하여, 페이백 점수를 달성하면 아래 계좌 정보를 통해
-              환급금이 지급될 예정이에요!
-            </p>
-          </div>
-          <div className="flex flex-col gap-3">
-            <div className="flex flex-col gap-1">
-              <label htmlFor="bank" className="text-1-medium">
-                거래 은행
-              </label>
-              <BankDropdown value={value} setValue={setValue} />
-            </div>
-            <div className="flex flex-col gap-1">
-              <label htmlFor="accountNum" className="text-1-medium">
-                계좌번호
-              </label>
-              <Input
-                id="accountNum"
-                name="accountNum"
-                placeholder="계좌번호를 입력해주세요."
-                value={value.accountNum}
-                onChange={handleInputChange}
-              />
-            </div>
-          </div>
-        </section>
+
         <button
           className="rounded-md bg-primary px-4 py-3 font-medium text-white disabled:bg-neutral-60"
           onClick={handleSubmit}
