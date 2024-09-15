@@ -75,6 +75,7 @@ export const programType = z.union([
   z.literal('CHALLENGE'),
   z.literal('LIVE'),
   z.literal('VOD'),
+  z.literal('REPORT'),
 ]);
 
 export const accountType = z.union([
