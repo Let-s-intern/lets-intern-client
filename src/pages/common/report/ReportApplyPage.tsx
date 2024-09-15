@@ -59,17 +59,14 @@ const ReportApplyPage = () => {
   } = useReportApplicationStore();
 
   const convertFile = async () => {
-    setIsLoading(true);
     // 파일 변환
     if (applyFile) {
       const url = await uploadFile({ file: applyFile, type: 'REPORT' });
       setReportApplication({ applyUrl: url });
-      setIsLoading(false);
     }
     if (recruitmentFile) {
       const url = await uploadFile({ file: recruitmentFile, type: 'REPORT' });
       setReportApplication({ recruitmentUrl: url });
-      setIsLoading(false);
     }
   };
 
@@ -146,6 +143,7 @@ const ReportApplyPage = () => {
                 return;
               }
 
+              setIsLoading(true);
               await convertFile();
               navigate(`/report/payment/${reportType}/${reportId}`);
             }}
@@ -174,6 +172,7 @@ const ReportApplyPage = () => {
                   return;
                 }
 
+                setIsLoading(true);
                 patchUserMutation.mutateAsync({
                   contactEmail: reportApplication.contactEmail,
                 });
@@ -189,13 +188,11 @@ const ReportApplyPage = () => {
             >
               결제하기
             </button>
-            {
-              isLoading && (
-                <div className="fixed top-0 left-0 w-screen h-screen flex items-center justify-center bg-neutral-10/30 text-white">
-                  <div>진단서 접수 중...</div>
-                </div>
-              )
-            }
+            {isLoading && (
+              <div className="fixed left-0 top-0 flex h-screen w-screen items-center justify-center bg-neutral-10/30 text-white">
+                <div>진단서 접수 중...</div>
+              </div>
+            )}
           </div>
         </aside>
       )}
@@ -289,7 +286,7 @@ const DocumentSection = ({
             <ReportFormRadioControlLabel
               label="파일 첨부"
               value="file"
-              subText="(pdf, doc, docx 형식 지원)"
+              subText="(pdf, doc, docx 형식 지원, 50MB 이하)"
             />
             {value === 'file' && (
               <FileUploadButton file={file} dispatch={dispatch} />
@@ -358,7 +355,7 @@ const PremiumSection = ({
               <ReportFormRadioControlLabel
                 label="파일 첨부"
                 value="file"
-                subText="(pdf, doc, docx 형식 지원, 50MB 이하)"
+                subText="(png, jpg, jpeg, pdf 형식 지원, 50MB 이하)"
               />
               <span className="-mt-1 mb-2 block text-xxsmall12 text-neutral-45">
                 *업무, 지원자격, 우대사항이 보이게 채용공고를 캡처해주세요.
