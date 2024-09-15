@@ -616,7 +616,6 @@ export const UsereInfoSection = () => {
 
 /* 모바일 전용 결제 페이지(ReportPaymentPage)에서 같이 사용 */
 export const ReportPaymentSection = () => {
-  const [couponCode, setCouponCode] = useState('');
   const [message, setMessage] = useState('');
   const [options, setOptions] = useState<ReportOptionInfo[]>([]);
 
@@ -629,9 +628,8 @@ export const ReportPaymentSection = () => {
 
   // 기존에 입력한 쿠폰 코드 초기화
   useEffect(() => {
-    setReportApplication({ couponId: null });
+    setReportApplication({ couponId: null, couponCode: '' });
     setMessage('');
-    setCouponCode('');
   }, []);
 
   useEffect(() => {
@@ -662,11 +660,13 @@ export const ReportPaymentSection = () => {
         <div className="flex gap-2.5">
           <Input
             className="w-full"
-            value={couponCode}
+            value={reportApplication.couponCode ?? ''}
             type="text"
             placeholder="쿠폰 번호를 입력해주세요."
             disabled={reportApplication.couponId === null ? false : true}
-            onChange={(e) => setCouponCode(e.target.value)}
+            onChange={(e) =>
+              setReportApplication({ couponCode: e.target.value })
+            }
           />
           <button
             className={twJoin(
@@ -676,16 +676,19 @@ export const ReportPaymentSection = () => {
               'shrink-0 rounded-sm px-4 py-1.5 text-xsmall14 font-medium',
             )}
             onClick={async () => {
-              if (couponCode === '') return;
+              if (reportApplication.couponCode === '') return;
               // 쿠폰이 등록된 상태면 쿠폰 취소
-              if (reportApplication.couponId !== null && couponCode !== '') {
+              if (
+                reportApplication.couponId !== null &&
+                reportApplication.couponCode !== ''
+              ) {
                 cancelCoupon();
                 setMessage('');
-                setCouponCode('');
+                setReportApplication({ couponCode: '' });
                 return;
               }
 
-              const data = await applyCoupon(couponCode);
+              const data = await applyCoupon(reportApplication.couponCode);
 
               if (data.status === 404 || data.status === 400)
                 setMessage(data.message);
