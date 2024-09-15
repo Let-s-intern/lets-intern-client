@@ -46,10 +46,10 @@ const ChallengeLayout = () => {
       return;
     }
 
-    if (!isValidUserInfo) {
-      navigate(`/challenge/${params.programId}/user/info`);
-      return;
-    }
+    // if (!isValidUserInfo) {
+    //   navigate(`/challenge/${params.programId}/user/info`);
+    //   return;
+    // }
   }, [isLoading, isLoggedIn, isValidUserInfo, navigate, params.programId]);
 
   return (
