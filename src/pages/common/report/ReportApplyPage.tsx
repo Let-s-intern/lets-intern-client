@@ -826,15 +826,13 @@ const FileUploadButton = ({
   dispatch: React.Dispatch<React.SetStateAction<File | null>>;
 }) => {
   const ref = useRef<HTMLInputElement>(null);
-
-  if (file) {
-    // 파일 사이즈가 50MB 초과일 경우
-    if (file.size > 50 * 1024 * 1024) {
+  useEffect(() => {
+    if (file && file.size > 50 * 1024 * 1024) {
+      // 파일 사이즈가 50MB 초과일 경우
       alert('50MB 이하의 파일만 업로드 가능합니다.');
       dispatch(null);
     }
-  }
-
+  }, [file]);
   return (
     <>
       <button
@@ -845,7 +843,7 @@ const FileUploadButton = ({
       >
         {file ? (
           <div className="flex items-center gap-1">
-            <span>{`${file.name} (${(file.size / 1000).toFixed(1)}KB)`}</span>
+            <span>{`${file.name} (${(file.size / 1024).toFixed(1)}KB)`}</span>
             <IoCloseOutline
               size={16}
               color="#7a7d84"
