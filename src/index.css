@@ -265,7 +265,7 @@ body.non-scroll {
   .custom-scrollbar {
     &::-webkit-scrollbar {
       width: 8px;
-      height: 8px;
+      height: 10px;
     }
 
     &::-webkit-scrollbar-track {
@@ -273,7 +273,7 @@ body.non-scroll {
     }
 
     &::-webkit-scrollbar-thumb {
-      background: #888;
+      background: #c2c2c2;
       border-radius: 24px;
     }
   }

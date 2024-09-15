@@ -43,6 +43,17 @@ module.exports = {
           DEFAULT: '#1BC47D',
           dark: '#009C89',
           light: '#43EC91',
+          0: '#FFFFFF',
+          10: '#E8F9F2',
+          20: '#D1F3E5',
+          30: '#BBEDD8',
+          40: '#A4E7CB',
+          50: '#8DE1BE',
+          60: '#76DCB1',
+          70: '#5FD6A4',
+          80: '#49D097',
+          90: '#32CA8A',
+          100: '#1BC47D',
         },
         tertiary: '#CB81F2',
         point: '#DAFF7C',
@@ -104,6 +115,8 @@ module.exports = {
           '0px 0px 12px 0px rgba(255, 255, 255, 0.45)',
           '4px 4px 8px 0px rgba(0, 0, 0, 0.04)',
         ],
+        button:
+          '0px 16px 20px 0px rgba(0, 0, 0, 0.12), 0px 8px 16px 0px rgba(0, 0, 0, 0.08), 0px 0px 8px 0px rgba(0, 0, 0, 0.08)',
       },
       backgroundImage: {
         'gradient-start':
@@ -120,21 +133,6 @@ module.exports = {
         'blog-banner-lg': 'url("../public/images/blog_banner_bg_lg.png")',
         'certificate-bg': 'url("/images/certificate_bg.png")',
       },
-      keyframes: {
-        fadeInDown: {
-          '0%': {
-            opacity: '0',
-            transform: 'translateY(-60%) translateX(-50%)',
-          },
-          '100%': {
-            opacity: '1',
-            transform: 'translateY(-50%) translateX(-50%)',
-          },
-        },
-      },
-      animation: {
-        fadeInDown: 'fadeInDown 1s ease-in-out',
-      },
     },
     borderRadius: {
       none: '0',
@@ -146,10 +144,6 @@ module.exports = {
       xl: '1.25rem',
       xxl: '1.5rem',
       full: '9999px',
-    },
-    boxShadow: {
-      button:
-        '0px 16px 20px 0px rgba(0, 0, 0, 0.12), 0px 8px 16px 0px rgba(0, 0, 0, 0.08), 0px 0px 8px 0px rgba(0, 0, 0, 0.08)',
     },
   },
   plugins: [require('tailwind-scrollbar-hide')],

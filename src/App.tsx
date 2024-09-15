@@ -8,11 +8,13 @@ import {
 } from '@tanstack/react-query';
 import dayjs from 'dayjs';
 import 'dayjs/locale/ko';
+import utc from 'dayjs/plugin/utc';
 import { useState } from 'react';
 import { Root } from 'react-dom/client';
 import { Helmet } from 'react-helmet';
 import { ZodError } from 'zod';
 
+import timezone from 'dayjs/plugin/timezone';
 import Router from './Router';
 import './fonts/font.css';
 import './index.css';
@@ -24,6 +26,9 @@ import './styles/modal.scss';
 import './styles/mypage.scss';
 
 dayjs.locale('ko');
+dayjs.extend(utc);
+dayjs.extend(timezone);
+dayjs.tz.setDefault('Asia/Seoul');
 
 declare global {
   interface Window {

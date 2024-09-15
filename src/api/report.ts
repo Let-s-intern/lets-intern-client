@@ -1,0 +1,1004 @@
+import useAuthStore from '@/store/useAuthStore';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import dayjs from 'dayjs';
+import { z } from 'zod';
+import axios from '../utils/axios';
+import { tossInfoType } from './paymentSchema';
+
+// Common schemas
+const pageInfoSchema = z.object({
+  totalElements: z.number(),
+  totalPages: z.number(),
+  pageNum: z.number(),
+  pageSize: z.number(),
+});
+
+const reportTypeSchema = z.enum(['RESUME', 'PERSONAL_STATEMENT', 'PORTFOLIO']);
+
+export type ReportType = z.infer<typeof reportTypeSchema>;
+
+export function convertReportTypeToDisplayName(
+  type: ReportType | null | undefined,
+) {
+  if (!type) {
+    return '';
+  }
+
+  switch (type) {
+    case 'RESUME':
+      return '이력서';
+    case 'PERSONAL_STATEMENT':
+      return '자기소개서';
+    case 'PORTFOLIO':
+      return '포트폴리오';
+  }
+}
+
+export function convertReportTypeToLandingPath(type: ReportType) {
+  switch (type) {
+    case 'RESUME':
+      return '/report/landing/resume';
+    case 'PERSONAL_STATEMENT':
+      return '/report/landing/personal-statement';
+    case 'PORTFOLIO':
+      return '/report/landing/portfolio';
+  }
+}
+
+export function convertReportStatusToUserDisplayName(
+  status: ReportApplicationStatus | null | undefined,
+) {
+  if (!status) {
+    return '';
+  }
+
+  switch (status) {
+    case 'APPLIED':
+      return '확인중';
+    case 'REPORTING':
+      return '진단중';
+    case 'REPORTED':
+      return '진단중'; // ADMIN: 진단서 업로드. 확정되지 않은 상태임
+    case 'COMPLETED':
+      return '진단완료';
+  }
+}
+
+export function convertReportPriceTypeToDisplayName(
+  type: ReportPriceType | null | undefined,
+): string {
+  if (!type) {
+    return '';
+  }
+
+  switch (type) {
+    case 'BASIC':
+      return '베이직';
+    case 'PREMIUM':
+      return '프리미엄';
+  }
+}
+
+export function convertReportStatusToBadgeStatus(
+  status: ReportApplicationStatus | null | undefined,
+): 'info' | 'success' {
+  if (!status) {
+    return 'info';
+  }
+
+  switch (status) {
+    case 'APPLIED':
+      return 'info';
+    case 'REPORTING':
+      return 'info';
+    case 'REPORTED':
+      return 'success';
+    case 'COMPLETED':
+      return 'success';
+  }
+}
+
+export function convertFeedbackStatusToDisplayName({
+  now,
+  reportFeedback,
+  status,
+  isAdmin = false,
+}: {
+  status: ReportFeedbackStatus | null | undefined;
+  reportFeedback: dayjs.Dayjs | null | undefined;
+  now: dayjs.Dayjs;
+  isAdmin?: boolean;
+}) {
+  if (!status) {
+    return '';
+  }
+
+  switch (status) {
+    case 'APPLIED':
+      return isAdmin ? '신청완료' : '확인중';
+    case 'PENDING':
+      return '확인중';
+    case 'CONFIRMED':
+      if (!reportFeedback || now.isBefore(reportFeedback.add(1, 'hour'))) {
+        return '일정확정';
+      } else {
+        return '진행완료';
+      }
+    case 'COMPLETED':
+      return '진행완료';
+  }
+}
+
+export function convertFeedbackStatusToBadgeStatus({
+  now,
+  reportFeedback,
+  status,
+}: {
+  status: ReportFeedbackStatus | null | undefined;
+  reportFeedback: dayjs.Dayjs | null | undefined;
+  now: dayjs.Dayjs;
+}): 'info' | 'success' {
+  if (!status) {
+    return 'info';
+  }
+
+  switch (status) {
+    case 'APPLIED':
+      return 'info';
+    case 'PENDING':
+      return 'info';
+    case 'CONFIRMED':
+      if (!reportFeedback || now.isBefore(reportFeedback.add(1, 'hour'))) {
+        return 'info';
+      } else {
+        return 'success';
+      }
+    case 'COMPLETED':
+      return 'success';
+  }
+}
+
+const reportPriceTypeSchema = z.enum(['BASIC', 'PREMIUM']);
+
+export type ReportPriceType = z.infer<typeof reportPriceTypeSchema>;
+
+export const convertReportPriceType = (type: ReportPriceType) => {
+  switch (type) {
+    case 'BASIC':
+      return '베이직';
+    case 'PREMIUM':
+      return '프리미엄';
+    default:
+      return '-';
+  }
+};
+
+const desiredDateTypeSchema = z.enum([
+  'DESIRED_DATE_1',
+  'DESIRED_DATE_2',
+  'DESIRED_DATE_3',
+  'DESIRED_DATE_ADMIN',
+]);
+
+const reportApplicationStatusSchema = z.enum([
+  'APPLIED',
+  'REPORTING',
+  'REPORTED',
+  'COMPLETED',
+]);
+
+export type ReportApplicationStatus = z.infer<
+  typeof reportApplicationStatusSchema
+>;
+
+export const convertReportApplicationsStatus = (
+  status: ReportApplicationStatus,
+) => {
+  switch (status) {
+    case 'APPLIED':
+      return '신청완료';
+    case 'REPORTING':
+      return '진단중';
+    case 'REPORTED':
+      return '진단서 업로드';
+    case 'COMPLETED':
+      return '진단완료';
+    default:
+      return '-';
+  }
+};
+
+const reportFeedbackStatusSchema = z.enum([
+  'APPLIED',
+  'PENDING',
+  'CONFIRMED',
+  'COMPLETED',
+]);
+
+export type ReportFeedbackStatus = z.infer<typeof reportFeedbackStatusSchema>;
+
+export const convertReportTypeStatus = (type: string) => {
+  switch (type.toUpperCase()) {
+    case 'RESUME':
+      return '이력서';
+    case 'PORTFOLIO':
+      return '포트폴리오';
+    default:
+      return '자기소개서';
+  }
+};
+
+// GET /api/v1/report
+const getReportsForAdminSchema = z
+  .object({
+    reportForAdminInfos: z.array(
+      z.object({
+        reportId: z.number().nullable().optional(),
+        reportType: reportTypeSchema.nullable().optional(),
+        title: z.string().nullable().optional(),
+        applicationCount: z.number().nullable().optional(),
+        feedbackApplicationCount: z.number().nullable().optional(),
+        visibleDate: z.string().nullable().optional(),
+        createDateTime: z.string().nullable().optional(),
+      }),
+    ),
+    pageInfo: pageInfoSchema,
+  })
+  .transform((data) => ({
+    ...data,
+    reportForAdminInfos: data.reportForAdminInfos.map((report) => ({
+      ...report,
+      visibleDate: report.visibleDate ? dayjs(report.visibleDate) : null,
+      createDateTime: report.createDateTime
+        ? dayjs(report.createDateTime)
+        : null,
+    })),
+  }));
+
+export const getReportsForAdminQueryKey = 'getReportsForAdmin';
+
+export const useGetReportsForAdmin = () => {
+  return useQuery({
+    queryKey: [getReportsForAdminQueryKey],
+    queryFn: async () => {
+      const res = await axios.get('/report', {
+        params: {
+          size: 10000,
+        },
+      });
+      return getReportsForAdminSchema.parse(res.data.data);
+    },
+  });
+};
+
+export type AdminReportListItem = z.infer<
+  typeof getReportsForAdminSchema
+>['reportForAdminInfos'][0];
+
+// POST /api/v1/report
+const createReportSchema = z.object({
+  reportType: reportTypeSchema,
+  visibleDate: z.string().nullable().optional(),
+  title: z.string(),
+  contents: z.string(),
+  notice: z.string(),
+  priceInfo: z.array(
+    z.object({
+      reportPriceType: reportPriceTypeSchema,
+      price: z.number(),
+      discountPrice: z.number(),
+    }),
+  ),
+  optionInfo: z.array(
+    z.object({
+      price: z.number(),
+      discountPrice: z.number(),
+      title: z.string(),
+      code: z.string(),
+    }),
+  ),
+  feedbackInfo: z.object({
+    price: z.number(),
+    discountPrice: z.number(),
+  }),
+});
+
+export type CreateReportData = z.infer<typeof createReportSchema>;
+
+export const usePostReportMutation = () => {
+  return useMutation({
+    mutationFn: async (data: CreateReportData) => {
+      await axios.post('/report', data);
+      return { success: true, message: 'Report created successfully' };
+    },
+  });
+};
+
+// GET /api/v1/report/{reportId}
+const getReportDetailSchema = z.object({
+  reportId: z.number(),
+  title: z.string().nullable().optional(),
+  notice: z.string().nullable().optional(),
+  contents: z.string().nullable().optional(),
+  reportType: reportTypeSchema.nullable().optional(),
+});
+
+export const getReportDetailQueryKey = 'getReportDetail';
+
+export const useGetReportDetailQuery = (reportId: number) => {
+  return useQuery({
+    queryKey: [getReportDetailQueryKey, reportId],
+    queryFn: async () => {
+      const res = await axios.get(`/report/${reportId}`);
+      return getReportDetailSchema.parse(res.data.data);
+    },
+  });
+};
+
+const reportOptionInfo = z.object({
+  reportOptionId: z.number(),
+  price: z.number().nullable().optional(),
+  discountPrice: z.number().nullable().optional(),
+  title: z.string().nullable().optional(),
+});
+export type ReportOptionInfo = z.infer<typeof reportOptionInfo>;
+
+// GET /api/v1/report/{reportId}/price
+const getReportPriceDetailSchema = z.object({
+  reportId: z.number(),
+  reportPriceInfos: z
+    .array(
+      z.object({
+        reportPriceType: reportPriceTypeSchema.nullable().optional(),
+        price: z.number().nullable().optional(),
+        discountPrice: z.number().nullable().optional(),
+      }),
+    )
+    .nullable()
+    .optional(),
+  reportOptionInfos: z.array(reportOptionInfo).nullable().optional(),
+  feedbackPriceInfo: z
+    .object({
+      reportFeedbackId: z.number(),
+      reportPriceType: reportPriceTypeSchema.nullable().optional(),
+      feedbackPrice: z.number().nullable().optional(),
+      feedbackDiscountPrice: z.number().nullable().optional(),
+    })
+    .nullable()
+    .optional(),
+});
+
+export const getReportPriceDetailQueryKey = 'getReportPriceDetail';
+
+export const useGetReportPriceDetail = (reportId: number) => {
+  return useQuery({
+    queryKey: [getReportPriceDetailQueryKey, reportId],
+    queryFn: async () => {
+      const res = await axios.get(`/report/${reportId}/price`);
+      return getReportPriceDetailSchema.parse(res.data.data);
+    },
+  });
+};
+
+// GET /api/v1/report/active
+export const getActiveReportsSchema = z.object({
+  resumeInfo: getReportDetailSchema.nullable().optional(),
+  personalStatementInfo: getReportDetailSchema.nullable().optional(),
+  portfolioInfo: getReportDetailSchema.nullable().optional(),
+});
+
+export type ActiveReports = z.infer<typeof getActiveReportsSchema>;
+
+export type ActiveReport = z.infer<typeof getReportDetailSchema>;
+
+export const getActiveReportsQueryKey = 'getActiveReports';
+
+export const useGetActiveReports = () => {
+  return useQuery({
+    queryKey: [getActiveReportsQueryKey],
+    queryFn: async () => {
+      const res = await axios.get('/report/active');
+      return getActiveReportsSchema.parse(res.data.data);
+    },
+  });
+};
+
+// GET /api/v1/report/{reportId}/admin
+const getReportDetailForAdminSchema = z.object({
+  reportId: z.number(),
+  reportType: reportTypeSchema,
+  title: z.string(),
+  contents: z.string(),
+  notice: z.string(),
+  reportPriceInfos: z.array(
+    z.object({
+      reportPriceType: reportPriceTypeSchema,
+      price: z.number(),
+      discountPrice: z.number(),
+    }),
+  ),
+  reportOptionForAdminInfos: z.array(
+    z.object({
+      reportOptionId: z.number().nullable().optional(),
+      price: z.number().nullable().optional(),
+      discountPrice: z.number().nullable().optional(),
+      title: z.string().nullable().optional(),
+      code: z.string().nullable().optional(),
+    }),
+  ),
+  feedbackPriceInfo: z.object({
+    reportFeedbackId: z.number(),
+    reportPriceType: reportPriceTypeSchema,
+    feedbackPrice: z.number(),
+    feedbackDiscountPrice: z.number(),
+  }),
+  visibleDate: z.string().nullable().optional(),
+});
+
+export type ReportDetailAdmin = z.infer<typeof getReportDetailForAdminSchema>;
+
+export const getReportDetailForAdminQueryKey = 'getReportDetailForAdmin';
+
+export const useGetReportDetailAdminQuery = (reportId: number) => {
+  return useQuery({
+    queryKey: [getReportDetailForAdminQueryKey, reportId],
+    queryFn: async () => {
+      const data = await axios.get(`/report/${reportId}/admin`);
+      return getReportDetailForAdminSchema.parse(data.data.data);
+    },
+  });
+};
+
+// GET /api/v1/report/my
+const getMyReportsSchema = z
+  .object({
+    myReportInfos: z.array(
+      z.object({
+        reportId: z.number(),
+        applicationId: z.number(),
+        title: z.string().nullable().optional(),
+        reportType: reportTypeSchema,
+        applicationStatus: reportApplicationStatusSchema.nullable().optional(),
+        feedbackStatus: reportFeedbackStatusSchema.nullable().optional(),
+        reportUrl: z.string().nullable().optional(),
+        applyUrl: z.string().nullable().optional(),
+        recruitmentUrl: z.string().nullable().optional(),
+        zoomLink: z.string().nullable().optional(),
+        zoomPassword: z.string().nullable().optional(),
+        desiredDate1: z.string().nullable().optional(),
+        desiredDate2: z.string().nullable().optional(),
+        desiredDate3: z.string().nullable().optional(),
+        applicationTime: z.string().nullable().optional(),
+        confirmedTime: z.string().nullable().optional(),
+        isCanceled: z.boolean().nullable().optional(),
+        feedbackIsCanceled: z.boolean().nullable().optional(),
+      }),
+    ),
+    pageInfo: pageInfoSchema,
+  })
+  .transform((data) => ({
+    ...data,
+    myReportInfos: data.myReportInfos.map((report) => ({
+      ...report,
+      desiredDate1: report.desiredDate1 ? dayjs(report.desiredDate1) : null,
+      desiredDate2: report.desiredDate2 ? dayjs(report.desiredDate2) : null,
+      desiredDate3: report.desiredDate3 ? dayjs(report.desiredDate3) : null,
+      applicationTime: dayjs(report.applicationTime),
+      confirmedTime: report.confirmedTime ? dayjs(report.confirmedTime) : null,
+    })),
+  }));
+
+export const getMyReportsQueryKey = 'getMyReports';
+
+export const useGetMyReports = (reportType?: ReportType) => {
+  const { isLoggedIn } = useAuthStore();
+
+  return useQuery({
+    enabled: isLoggedIn,
+    queryKey: [getMyReportsQueryKey, reportType],
+    queryFn: async () => {
+      const res = await axios.get('/report/my', {
+        params: {
+          reportType,
+          size: 1000,
+        },
+      });
+
+      return getMyReportsSchema.parse(res.data.data);
+    },
+  });
+};
+
+const reportApplicationsForAdminInfoSchema = z.object({
+  applicationId: z.number(),
+  name: z.string(),
+  contactEmail: z.string(),
+  phoneNumber: z.string(),
+  wishJob: z.string().nullable(),
+  message: z.string().nullable(),
+  reportApplicationStatus: reportApplicationStatusSchema,
+  applyFileUrl: z.string().nullable(),
+  reportFileUrl: z.string().nullable(),
+  recruitmentFileUrl: z.string().nullable(),
+  reportFeedbackApplicationId: z.number().nullable(),
+  reportFeedbackStatus: reportFeedbackStatusSchema.nullable(),
+  zoomLink: z.string().nullable(),
+  desiredDate1: z.string().nullable(),
+  desiredDate2: z.string().nullable(),
+  desiredDate3: z.string().nullable(),
+  desiredDateAdmin: z.string().nullable(),
+  desiredDateType: desiredDateTypeSchema.nullable(),
+  createDate: z.string().nullable(),
+  paymentId: z.number().nullable(),
+  orderId: z.string().nullable(),
+  reportPriceType: reportPriceTypeSchema.nullable(),
+  couponTitle: z.string().nullable(),
+  finalPrice: z.number().nullable(),
+  isRefunded: z.boolean().nullable(),
+});
+
+export type reportApplicationsForAdminInfoType = z.infer<
+  typeof reportApplicationsForAdminInfoSchema
+>;
+
+// GET /api/v1/report/applications
+const getReportApplicationsForAdminSchema = z.object({
+  reportApplicationsForAdminInfos: z.array(
+    reportApplicationsForAdminInfoSchema,
+  ),
+  pageInfo: pageInfoSchema,
+});
+
+export const useGetReportApplicationsForAdminQueryKey =
+  'getReportApplicationsForAdmin';
+
+export const useGetReportApplicationsForAdmin = ({
+  reportId,
+  reportType,
+  priceType,
+  isApplyFeedback,
+  pageable: { page = 0, size = 10 },
+  enabled = true,
+}: {
+  reportId?: number;
+  reportType?: 'RESUME' | 'PERSONAL_STATEMENT' | 'PORTFOLIO';
+  priceType?: 'BASIC' | 'PREMIUM';
+  isApplyFeedback?: boolean;
+  pageable: {
+    page?: number;
+    size?: number;
+  };
+  enabled?: boolean;
+}) => {
+  return useQuery({
+    queryKey: [
+      useGetReportApplicationsForAdminQueryKey,
+      reportId,
+      reportType,
+      priceType,
+      isApplyFeedback,
+      page,
+      size,
+    ],
+    queryFn: async () => {
+      const res = await axios.get('/report/applications', {
+        params: {
+          reportId,
+          reportType,
+          priceType,
+          isApplyFeedback,
+          page,
+          size,
+        },
+      });
+      return getReportApplicationsForAdminSchema.parse(res.data.data);
+    },
+    enabled,
+  });
+};
+
+// GET /api/v1/report/application/options
+const getReportApplicationOptionsForAdminSchema = z.object({
+  reportApplicationOptionForAdminInfos: z.array(
+    z.object({
+      reportApplicationOptionId: z.number(),
+      price: z.number(),
+      discountPrice: z.number(),
+      title: z.string(),
+      code: z.string(),
+    }),
+  ),
+});
+
+export const useGetReportApplicationOptionsForAdminQueryKey =
+  'getReportApplicationOptionsForAdmin';
+
+export const useGetReportApplicationOptionsForAdmin = ({
+  applicationId,
+  code,
+  priceType,
+  reportId,
+  enabled,
+}: {
+  reportId?: number;
+  applicationId?: number;
+  priceType?: string;
+  code?: string;
+  enabled?: boolean;
+} = {}) => {
+  return useQuery({
+    queryKey: [
+      useGetReportApplicationOptionsForAdminQueryKey,
+      reportId,
+      applicationId,
+      priceType,
+      code,
+    ],
+    queryFn: async () => {
+      const res = await axios.get('/report/application/options', {
+        params: { reportId, applicationId, priceType, code },
+      });
+
+      return getReportApplicationOptionsForAdminSchema.parse(res.data.data);
+    },
+    enabled,
+  });
+};
+
+export const usePatchApplicationDocument = ({
+  successCallback,
+  errorCallback,
+}: {
+  successCallback?: () => void;
+  errorCallback?: (error: Error) => void;
+} = {}) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({
+      applicationId,
+      reportUrl,
+    }: {
+      applicationId: number;
+      reportUrl?: string;
+    }) => {
+      const res = await axios.patch(
+        `/report/application/${applicationId}/document`,
+        {
+          reportUrl,
+        },
+      );
+      return res.data.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: [useGetReportApplicationsForAdminQueryKey],
+      });
+      successCallback && successCallback();
+    },
+    onError: (error: Error) => {
+      errorCallback && errorCallback(error);
+    },
+  });
+};
+
+export const usePatchApplicationStatus = ({
+  successCallback,
+  errorCallback,
+}: {
+  successCallback?: () => void;
+  errorCallback?: (error: Error) => void;
+} = {}) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({
+      applicationId,
+      reportApplicationStatus,
+    }: {
+      applicationId: number;
+      reportApplicationStatus: ReportApplicationStatus;
+    }) => {
+      const res = await axios.patch(
+        `/report/application/${applicationId}/status`,
+        {
+          status: reportApplicationStatus,
+        },
+      );
+      return res.data.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: [useGetReportApplicationsForAdminQueryKey],
+      });
+      successCallback?.();
+    },
+    onError: (error: Error) => {
+      errorCallback?.(error);
+    },
+  });
+};
+
+export const usePatchReportApplicationSchedule = ({
+  successCallback,
+  errorCallback,
+}: {
+  successCallback?: () => void;
+  errorCallback?: (error: Error) => void;
+}) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({
+      reportId,
+      applicationId,
+      reportFeedbackStatus = 'PENDING',
+      desiredDateType,
+      desiredDateAdmin,
+    }: {
+      reportId: number;
+      applicationId: number;
+      reportFeedbackStatus?: ReportFeedbackStatus;
+      desiredDateType?:
+        | 'DESIRED_DATE_1'
+        | 'DESIRED_DATE_2'
+        | 'DESIRED_DATE_3'
+        | 'DESIRED_DATE_ADMIN';
+      desiredDateAdmin?: string;
+    }) => {
+      const payload = {
+        reportFeedbackStatus,
+        ...(desiredDateType !== undefined && { desiredDateType }),
+        ...(desiredDateAdmin !== undefined && { desiredDateAdmin }),
+      };
+
+      const res = await axios.patch(
+        `/report/${reportId}/application/${applicationId}/schedule`,
+        payload,
+      );
+
+      return res.data.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: [useGetReportApplicationsForAdminQueryKey],
+      });
+      successCallback && successCallback();
+    },
+    onError: (error: Error) => {
+      errorCallback && errorCallback(error);
+    },
+  });
+};
+
+// POST /api/v1/report/application
+const createReportApplicationSchema = z.object({
+  reportId: z.number(),
+  reportPriceType: reportPriceTypeSchema,
+  optionIds: z.array(z.number()),
+  isFeedbackApplied: z.boolean(),
+  couponId: z.number().nullable(),
+  paymentKey: z.string(),
+  orderId: z.string(),
+  amount: z.string(),
+  discountPrice: z.number(),
+  applyUrl: z.string(),
+  recruitmentUrl: z.string(),
+  desiredDate1: z.string(),
+  desiredDate2: z.string(),
+  desiredDate3: z.string(),
+  wishJob: z.string(),
+  message: z.string(),
+});
+
+export type CreateReportApplication = z.infer<
+  typeof createReportApplicationSchema
+>;
+
+export const useCreateReportApplication = () => {
+  return useMutation({
+    mutationFn: async (data: CreateReportApplication) => {
+      // Mock API call
+      console.log('Creating report application:', data);
+      return {
+        success: true,
+        message: 'Report application created successfully',
+        applicationId: 103,
+      };
+    },
+  });
+};
+
+// DELETE /api/v1/report/{reportId}
+export const useDeleteReport = () => {
+  return useMutation({
+    mutationFn: async (reportId: number) => {
+      // Mock API call
+      console.log('Deleting report:', reportId);
+      return { success: true, message: 'Report deleted successfully' };
+    },
+  });
+};
+
+// PATCH /api/v1/report/{reportId}
+const updateReportSchema = z.object({
+  reportType: reportTypeSchema.optional(),
+  visibleDate: z.string().optional().nullable(),
+  title: z.string().optional(),
+  contents: z.string().optional(),
+  notice: z.string().optional(),
+  priceInfo: z
+    .array(
+      z.object({
+        reportPriceType: reportPriceTypeSchema,
+        price: z.number(),
+        discountPrice: z.number(),
+      }),
+    )
+    .optional(),
+  optionInfo: z
+    .array(
+      z.object({
+        price: z.number(),
+        discountPrice: z.number(),
+        title: z.string(),
+        code: z.string(),
+      }),
+    )
+    .optional(),
+  feedbackInfo: z
+    .object({
+      price: z.number(),
+      discountPrice: z.number(),
+    })
+    .optional(),
+});
+
+export type UpdateReportData = z.infer<typeof updateReportSchema>;
+
+export const usePatchReportMutation = () => {
+  return useMutation({
+    mutationFn: async ({
+      reportId,
+      data,
+    }: {
+      reportId: number;
+      data: z.infer<typeof updateReportSchema>;
+    }) => {
+      await axios.patch(`/report/${reportId}`, data);
+      return { success: true, message: 'Report updated successfully' };
+    },
+  });
+};
+
+const reportApplicationInfoSchema = z.object({
+  reportApplicationId: z.number(),
+  reportFeedbackApplicationId: z.number().nullable(),
+  title: z.string(),
+  reportPriceType: reportPriceTypeSchema,
+  options: z.array(z.string()),
+  isCanceled: z.boolean(),
+  reportApplicationStatus: reportApplicationStatusSchema,
+  reportFeedbackStatus: reportFeedbackStatusSchema.nullable(),
+  reportFeedbackDesiredDate: z.string().nullable(),
+});
+
+const reportPaymentInfoSchema = z.object({
+  paymentId: z.number(),
+  finalPrice: z.number().nullable(),
+  couponDiscount: z.number().nullable(),
+  programPrice: z.number().nullable(),
+  programDiscount: z.number().nullable(),
+  reportRefundPrice: z.number().nullable(),
+  feedbackRefundPrice: z.number().nullable(),
+  reportPriceInfo: z.object({
+    reportPriceType: reportPriceTypeSchema,
+    price: z.number().nullable(),
+    discountPrice: z.number().nullable(),
+  }),
+  reportOptionInfos: z.array(
+    z
+      .object({
+        reportOptionId: z.number(),
+        price: z.number(),
+        discountPrice: z.number(),
+        title: z.string(),
+      })
+      .nullable()
+      .optional(),
+  ),
+  feedbackPriceInfo: z
+    .object({
+      reportFeedbackId: z.number().nullable().optional(),
+      reportPriceType: reportPriceTypeSchema.nullable().optional(),
+      feedbackPrice: z.number().nullable().optional(),
+      feedbackDiscountPrice: z.number().nullable().optional(),
+    })
+    .nullable(),
+  createDate: z.string(),
+  lastModifiedDate: z.string(),
+});
+
+const reportPaymentDetailSchema = z.object({
+  reportApplicationInfo: reportApplicationInfoSchema,
+  reportPaymentInfo: reportPaymentInfoSchema,
+  tossInfo: tossInfoType.nullable().optional(),
+});
+
+export type ReportPaymentInfo = z.infer<typeof reportPaymentInfoSchema>;
+
+export const useGetReportPaymentDetailQueryKey = 'getReportPayment';
+
+export const useGetReportPaymentDetailQuery = ({
+  applicationId,
+  enabled,
+}: {
+  applicationId: number;
+  enabled?: boolean;
+}) => {
+  return useQuery({
+    queryKey: [useGetReportPaymentDetailQueryKey, applicationId],
+    queryFn: async () => {
+      const res = await axios.get(
+        `/report/application/${applicationId}/payment`,
+      );
+      return reportPaymentDetailSchema.parse(res.data.data);
+    },
+    enabled,
+  });
+};
+
+export const useDeleteReportApplication = ({
+  successCallback,
+  errorCallback,
+}: {
+  successCallback?: () => void;
+  errorCallback?: (error: Error) => void;
+}) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (reportApplicationId: number) => {
+      const res = await axios.delete(
+        `/report/application/${reportApplicationId}`,
+      );
+      return res.data.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: [useGetReportApplicationsForAdminQueryKey],
+      });
+      queryClient.invalidateQueries({
+        queryKey: [useGetReportPaymentDetailQueryKey],
+      });
+      successCallback && successCallback();
+    },
+    onError: (error: Error) => {
+      errorCallback && errorCallback(error);
+    },
+  });
+};
+
+// Utility function to generate mock data (for demonstration purposes)
+// const generateMockData = <T extends z.ZodType>(schema: T): z.infer<T> => {
+//   const shape = schema._def.shape();
+//   const mockData: any = {};
+
+//   for (const [key, value] of Object.entries(shape)) {
+//     if (value instanceof z.ZodString) {
+//       mockData[key] = 'mock string';
+//     } else if (value instanceof z.ZodNumber) {
+//       mockData[key] = 123;
+//     } else if (value instanceof z.ZodBoolean) {
+//       mockData[key] = true;
+//     } else if (value instanceof z.ZodArray) {
+//       mockData[key] = [generateMockData(value.element)];
+//     } else if (value instanceof z.ZodObject) {
+//       mockData[key] = generateMockData(value);
+//     } else if (value instanceof z.ZodEnum) {
+//       mockData[key] = value.options[0];
+//     } else if (value instanceof z.ZodNullable) {
+//       mockData[key] = null;
+//     } else {
+//       mockData[key] = undefined;
+//     }
+//   }
+
+//   return schema.parse(mockData);
+// };

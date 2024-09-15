@@ -7,7 +7,11 @@ const CreditListItem = ({ payment }: { payment: PaymentType }) => {
   return (
     <Link
       className="flex w-full flex-col items-start justify-center gap-y-2"
-      to={`/mypage/credit/${payment.programInfo.paymentId}`}
+      to={
+        payment.programInfo.programType === 'REPORT'
+          ? `/mypage/credit/report/${payment.programInfo.paymentId}?applicationId=${payment.programInfo.applicationId}`
+          : `/mypage/credit/${payment.programInfo.paymentId}`
+      }
       data-program-text={payment.programInfo.title}
     >
       <CardStatus
@@ -21,7 +25,11 @@ const CreditListItem = ({ payment }: { payment: PaymentType }) => {
       />
       <div className="flex w-full items-center gap-x-[14px]">
         <img
-          src={payment.programInfo.thumbnail || ''}
+          src={
+            payment.programInfo.programType === 'REPORT'
+              ? '/images/report-banner.jpg'
+              : payment.programInfo.thumbnail || ''
+          }
           className={twMerge(
             'h-[97px] w-[137px] rounded-sm object-cover',
             ((payment.tossInfo && payment.tossInfo?.status !== 'DONE') ||

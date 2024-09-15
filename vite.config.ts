@@ -19,6 +19,8 @@ if (isProd) {
       '@mui/material',
       '@mui/system',
       '@mui/utils',
+      '@mui/styled-engine',
+      '@mui/x-date-pickers',
     ],
   );
 }
@@ -53,6 +55,9 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
+      '@components': path.resolve(__dirname, './src/components'),
+      '@renderer': path.resolve(__dirname, './renderer'),
+      '@pages': path.resolve(__dirname, './pages'),
     },
   },
 });

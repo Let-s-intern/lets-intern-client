@@ -11,7 +11,7 @@ import {
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 import { isAxiosError } from 'axios';
 import dayjs, { Dayjs } from 'dayjs';
-import { ChangeEvent, FormEvent, MouseEvent, useEffect, useState } from 'react';
+import { ChangeEvent, FormEvent, MouseEvent, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import {
@@ -137,10 +137,6 @@ const BlogCreatePage = () => {
   const onChangeEditor = (jsonString: string) => {
     setEditingValue((prev) => ({ ...prev, content: jsonString }));
   };
-
-  useEffect(() => {
-    console.log(dateTime?.format('YYYY-MM-DDTHH:mm'));
-  }, [dateTime]);
 
   return (
     <div className="mx-3 mb-40 mt-3">

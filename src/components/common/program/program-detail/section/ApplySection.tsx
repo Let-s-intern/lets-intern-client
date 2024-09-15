@@ -1,3 +1,4 @@
+import { generateOrderId } from '@/lib/order';
 import { Dayjs } from 'dayjs';
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -11,10 +12,6 @@ import { AccountType } from '../../../../../schema';
 import useProgramStore from '../../../../../store/useProgramStore';
 import { ProgramType } from '../../../../../types/common';
 import { ICouponForm } from '../../../../../types/interface';
-import {
-  generateRandomNumber,
-  generateRandomString,
-} from '../../../../../utils/random';
 import ChoicePayPlanContent from '../apply/content/ChoicePayPlanContent';
 import InputContent from '../apply/content/InputContent';
 import OverviewContent from '../apply/content/OverviewContent';
@@ -210,7 +207,7 @@ const ApplySection = ({
   const priceId =
     application?.priceList?.[0]?.priceId ?? application?.price?.priceId ?? -1;
 
-  const orderId = 'lets' + generateRandomString() + generateRandomNumber();
+  const orderId = generateOrderId();
 
   const program = useProgramQuery({ programId, type: programType });
 

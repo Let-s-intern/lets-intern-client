@@ -1,3 +1,4 @@
+import { generateOrderId } from '@/lib/order';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { twMerge } from 'tailwind-merge';
@@ -10,10 +11,6 @@ import {
   IApplyDrawerAction,
   ICouponForm,
 } from '../../../../../types/interface';
-import {
-  generateRandomNumber,
-  generateRandomString,
-} from '../../../../../utils/random';
 import InputContent from '../apply/content/InputContent';
 import PayContent from '../apply/content/PayContent';
 import ScheduleContent from '../apply/content/ScheduleContent';
@@ -152,7 +149,7 @@ const MobileApplySection = ({
   const priceId =
     application?.priceList?.[0]?.priceId ?? application?.price?.priceId ?? -1;
 
-  const orderId = 'lets' + generateRandomString() + generateRandomNumber();
+  const orderId = generateOrderId();
 
   const program = useProgramQuery({ programId, type: programType });
 

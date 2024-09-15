@@ -22,14 +22,14 @@ const ReviewSection = () => {
   ];
 
   return (
-    <section className=" px-5 ">
+    <section className="px-5">
       <Heading>생생한 참여 후기</Heading>
-      <div className="mt-6 flex w-full flex-col flex-nowrap gap-4 overflow-x-auto md:w-auto md:flex-row">
+      <div className="custom-scrollbar mt-6 flex w-full flex-col flex-nowrap gap-4 overflow-x-auto md:w-auto md:flex-row">
         {reviewList.map((review, index) => (
           <Link
             to={review.url}
             key={index}
-            className="review_card lg:min-w-96 w-full flex-shrink-0 md:w-80 lg:w-96"
+            className="review_card w-full flex-shrink-0 md:w-80 lg:w-96 lg:min-w-96"
             target="_blank"
             rel="noreferrer noopener"
           >

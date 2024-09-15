@@ -42,6 +42,10 @@ import Reminders from './pages/admin/reminder/Reminders';
 import RemindersBootcamp from './pages/admin/reminder/RemindersBootcamp';
 import RemindersChallenge from './pages/admin/reminder/RemindersChallenge';
 import RemindersLetsChat from './pages/admin/reminder/RemindersLetsChat';
+import AdminReportCreatePage from './pages/admin/report/AdminReportCreatePage';
+import AdminReportEditPage from './pages/admin/report/AdminReportEditPage';
+import AdminReportListPage from './pages/admin/report/AdminReportListPage';
+import ReportApplicationsPage from './pages/admin/report/ReportApplicationsPage';
 import AdminReviews from './pages/admin/review/Reviews';
 import AdminReviewsDetail from './pages/admin/review/ReviewsDetail';
 import UserCreate from './pages/admin/user/UserCreate';
@@ -180,6 +184,12 @@ export const getAdminRoutes = () => {
       <Route path="blog/create" element={<BlogCreatePage />} />
       <Route path="blog/edit/:id" element={<BlogEditPage />} />
       <Route path="blog/reviews" element={<BlogRatingListPage />} />
+
+      {/* 서류진단 */}
+      <Route path="report/list" element={<AdminReportListPage />} />
+      <Route path="report/create" element={<AdminReportCreatePage />} />
+      <Route path="report/edit/:id" element={<AdminReportEditPage />} />
+      <Route path="report/applications" element={<ReportApplicationsPage />} />
     </Route>
   );
 };

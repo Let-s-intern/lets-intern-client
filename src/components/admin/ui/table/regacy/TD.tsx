@@ -27,7 +27,7 @@ export default TD;
 
 const TDBlock = styled.td<TDBlockProps>`
   border: 1px solid #cbd5e0;
-  padding: 0.5rem 1rem;
+  padding: 0.5rem;
   font-size: 0.75rem;
   ${({ $textAlign }) =>
     $textAlign &&
