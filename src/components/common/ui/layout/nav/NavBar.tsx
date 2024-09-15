@@ -95,9 +95,9 @@ const NavBar = () => {
             <NavItem to="/blog/list" active={activeLink === 'BLOG'}>
               블로그
             </NavItem>
-            <NavItem to="/report/landing" active={activeLink === 'REPORT'}>
+            {/* <NavItem to="/report/landing" active={activeLink === 'REPORT'}>
               🔥 서류 진단받고 합격하기
-            </NavItem>
+            </NavItem> */}
           </div>
           <div className="flex items-center gap-4">
             {isLoggedIn ? (
@@ -211,9 +211,9 @@ const NavBar = () => {
             <SideNavItem to="/blog/list" onClick={closeMenu}>
               블로그
             </SideNavItem>
-            <SideNavItem to="/report/landing" onClick={closeMenu}>
+            {/* <SideNavItem to="/report/landing" onClick={closeMenu}>
               🔥 서류 진단받고 합격하기
-            </SideNavItem>
+            </SideNavItem> */}
             <hr className="h-1 bg-neutral-80" />
             {isAdmin && (
               <SideNavItem to="/admin" onClick={closeMenu}>
