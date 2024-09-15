@@ -347,7 +347,7 @@ const PremiumSection = ({
               <ReportFormRadioControlLabel
                 label="파일 첨부"
                 value="file"
-                subText="(pdf, doc, docx 형식 지원)"
+                subText="(png, jpg, jpeg, pdf 형식 지원)"
               />
               <span className="-mt-1 mb-2 block text-xxsmall12 text-neutral-45">
                 *업무, 지원자격, 우대사항이 보이게 채용공고를 캡처해주세요.
