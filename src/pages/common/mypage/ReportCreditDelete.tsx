@@ -1,12 +1,13 @@
 import { AxiosError } from 'axios';
 import dayjs from 'dayjs';
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 
 import {
+  getCouponDiscountPrice,
+  getDiscountPercent,
   getFeedbackDiscountedPrice,
   getFeedbackRefundPercent,
-  getPercent,
   getReportDiscountedPrice,
   getReportPrice,
   getReportRefundPercent,
@@ -30,11 +31,6 @@ const ReportCreditDelete = () => {
   const [searchParams] = useSearchParams();
   const applicationId = searchParams.get('applicationId');
   const { paymentId } = useParams<{ paymentId: string }>();
-
-  const [payment, setPayment] = useState<{ total: number; discount: number }>({
-    total: 0,
-    discount: 0,
-  });
 
   const {
     data: reportPaymentDetail,
@@ -75,26 +71,6 @@ const ReportCreditDelete = () => {
 
   const paymentInfo = reportPaymentDetail?.reportPaymentInfo;
 
-  const getTotalAndDiscount = () => {
-    if (!reportPaymentDetail) return { total: 0, discount: 0 };
-
-    const { reportPriceInfo, reportOptionInfos, feedbackPriceInfo } =
-      reportPaymentDetail.reportPaymentInfo;
-
-    let total =
-      (reportPriceInfo.price ?? 0) + (feedbackPriceInfo?.feedbackPrice ?? 0);
-    let discount =
-      (reportPriceInfo.discountPrice ?? 0) +
-      (feedbackPriceInfo?.feedbackDiscountPrice ?? 0);
-
-    for (const optionInfo of reportOptionInfos) {
-      total += optionInfo?.price ?? 0;
-      discount += optionInfo?.discountPrice ?? 0;
-    }
-
-    return { total, discount };
-  };
-
   const reportPrice = useMemo(() => {
     return getReportPrice(paymentInfo);
   }, [paymentInfo]);
@@ -104,30 +80,12 @@ const ReportCreditDelete = () => {
   }, [paymentInfo]);
 
   const discountPercent = useMemo(() => {
-    if (!reportPaymentDetail) return 0;
+    return getDiscountPercent(paymentInfo);
+  }, [paymentInfo]);
 
-    const { total, discount } = payment;
-
-    return getPercent({
-      originalPrice: total,
-      changedPrice: discount,
-    });
-  }, [reportPaymentDetail, payment]);
-
-  const getCouponDiscountPrice = () => {
-    if (!reportPaymentDetail) return 0;
-
-    const { couponDiscount, feedbackPriceInfo } =
-      reportPaymentDetail.reportPaymentInfo;
-    const { total, discount } = payment;
-
-    return couponDiscount === -1
-      ? total -
-          discount -
-          ((feedbackPriceInfo?.feedbackPrice ?? 0) -
-            (feedbackPriceInfo?.feedbackDiscountPrice ?? 0))
-      : (couponDiscount ?? 0);
-  };
+  const couponDiscountPrice = useMemo(() => {
+    return getCouponDiscountPrice(paymentInfo);
+  }, [paymentInfo]);
 
   const feedbackRefundPercent = useMemo(() => {
     return getFeedbackRefundPercent({
@@ -175,20 +133,6 @@ const ReportCreditDelete = () => {
         reportPaymentDetail.reportApplicationInfo.reportApplicationStatus,
     });
   }, [paymentInfo, reportPaymentDetail]);
-
-  const feedbackDeduction = useMemo(() => {
-    if (!reportPaymentDetail) return 0;
-
-    const { feedbackPriceInfo, feedbackRefundPrice } =
-      reportPaymentDetail.reportPaymentInfo;
-
-    return (feedbackPriceInfo?.feedbackPrice ?? 0) - (feedbackRefundPrice ?? 0);
-  }, [reportPaymentDetail]);
-
-  useEffect(() => {
-    if (!reportPaymentDetail) return;
-    setPayment(getTotalAndDiscount());
-  }, [reportPaymentDetail]);
 
   return (
     <section
@@ -242,7 +186,7 @@ const ReportCreditDelete = () => {
                 <div className="flex w-full items-center justify-start gap-3 border-y-[1.5px] border-neutral-0 px-3 py-5 font-bold text-neutral-0">
                   <div>예정 환불금액</div>
                   <div className="flex grow items-center justify-end">
-                    {totalRefund?.toLocaleString()}원
+                    {totalRefund.toLocaleString()}원
                   </div>
                 </div>
                 <div className="flex w-full flex-col">
@@ -269,14 +213,14 @@ const ReportCreditDelete = () => {
                   <PaymentInfoRow
                     title={`쿠폰할인`}
                     content={
-                      getCouponDiscountPrice() === 0
+                      couponDiscountPrice === 0
                         ? '0원'
-                        : `-${getCouponDiscountPrice()?.toLocaleString()}원`
+                        : `-${couponDiscountPrice.toLocaleString()}원`
                     }
                   />
                   {reportRefundPercent !== 1 && (
                     <PaymentInfoRow
-                      title={`서류 진단서 (부분 환불 ${Math.ceil(reportRefundPercent * 100)}%)`}
+                      title={`서류 진단서 (부분 환불 ${Math.ceil((1 - reportRefundPercent) * 100)}%)`}
                       content={`-${(
                         reportDiscountedPrice *
                         (1 - reportRefundPercent)
