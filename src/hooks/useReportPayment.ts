@@ -1,7 +1,6 @@
 import { isAxiosError } from 'axios';
 import { useEffect, useState } from 'react';
 
-import { couponInfoSchema } from '@/api/coupon';
 import { useGetReportPriceDetail } from '../api/report';
 import useReportApplicationStore from '../store/useReportApplicationStore';
 import axios from '../utils/axios';
@@ -49,7 +48,10 @@ export default function useReportPayment() {
         },
       });
       const data = res.data.data;
-      setReportApplication({ couponId: data.couponId });
+      setReportApplication({
+        couponId: data.couponId,
+        couponDiscount: data.discount,
+      });
       return data;
     } catch (error) {
       if (
@@ -63,7 +65,8 @@ export default function useReportPayment() {
     }
   };
 
-  const cancelCoupon = () => setReportApplication({ couponId: null });
+  const cancelCoupon = () =>
+    setReportApplication({ couponId: null, couponDiscount: 0, couponCode: '' });
 
   useEffect(() => {
     if (reportPriceDetail === undefined) return;
@@ -119,20 +122,17 @@ export default function useReportPayment() {
     // 쿠폰 가격 책정 (쿠폰은 1:1 피드백에 적용되지 않음)
     if (couponId === null) return;
 
-    axios.get(`/coupon/admin/${couponId}`).then(async (res) => {
-      const { discount } = couponInfoSchema.parse(res.data.data.couponInfo);
-      setPayment((prev) => ({
-        ...prev,
-        coupon:
-          discount === -1
-            ? prev.amount - (prev.feedback - prev.feedbackDiscount)
-            : (discount ?? 0),
-        amount:
-          discount === -1
-            ? prev.feedback - prev.feedbackDiscount
-            : prev.amount - (discount ?? 0),
-      }));
-    });
+    setPayment((prev) => ({
+      ...prev,
+      coupon:
+        reportApplication.couponDiscount === -1
+          ? prev.amount - (prev.feedback - prev.feedbackDiscount)
+          : (reportApplication.couponDiscount ?? 0),
+      amount:
+        reportApplication.couponDiscount === -1
+          ? prev.feedback - prev.feedbackDiscount
+          : prev.amount - (reportApplication.couponDiscount ?? 0),
+    }));
   }, [reportPriceDetail, reportApplication.couponId]);
 
   useEffect(() => {
