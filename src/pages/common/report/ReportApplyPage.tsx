@@ -47,6 +47,7 @@ const ReportApplyPage = () => {
 
   const [applyFile, setApplyFile] = useState<File | null>(null);
   const [recruitmentFile, setRecruitmentFile] = useState<File | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   const { payment } = useReportPayment();
   const { isLoggedIn } = useAuthStore();
@@ -142,6 +143,7 @@ const ReportApplyPage = () => {
                 return;
               }
 
+              setIsLoading(true);
               await convertFile();
               navigate(`/report/payment/${reportType}/${reportId}`);
             }}
@@ -170,6 +172,7 @@ const ReportApplyPage = () => {
                   return;
                 }
 
+                setIsLoading(true);
                 patchUserMutation.mutateAsync({
                   contactEmail: reportApplication.contactEmail,
                 });
@@ -185,6 +188,11 @@ const ReportApplyPage = () => {
             >
               결제하기
             </button>
+            {isLoading && (
+              <div className="fixed left-0 top-0 flex h-screen w-screen items-center justify-center bg-neutral-10/30 text-white">
+                <div>진단서 접수 중...</div>
+              </div>
+            )}
           </div>
         </aside>
       )}
@@ -278,7 +286,7 @@ const DocumentSection = ({
             <ReportFormRadioControlLabel
               label="파일 첨부"
               value="file"
-              subText="(pdf, doc, docx 형식 지원)"
+              subText="(pdf, doc, docx 형식 지원, 50MB 이하)"
             />
             {value === 'file' && (
               <FileUploadButton file={file} dispatch={dispatch} />
@@ -347,7 +355,7 @@ const PremiumSection = ({
               <ReportFormRadioControlLabel
                 label="파일 첨부"
                 value="file"
-                subText="(pdf, doc, docx 형식 지원)"
+                subText="(png, jpg, jpeg, pdf 형식 지원, 50MB 이하)"
               />
               <span className="-mt-1 mb-2 block text-xxsmall12 text-neutral-45">
                 *업무, 지원자격, 우대사항이 보이게 채용공고를 캡처해주세요.
@@ -616,7 +624,6 @@ export const UsereInfoSection = () => {
 
 /* 모바일 전용 결제 페이지(ReportPaymentPage)에서 같이 사용 */
 export const ReportPaymentSection = () => {
-  const [couponCode, setCouponCode] = useState('');
   const [message, setMessage] = useState('');
   const [options, setOptions] = useState<ReportOptionInfo[]>([]);
 
@@ -629,9 +636,8 @@ export const ReportPaymentSection = () => {
 
   // 기존에 입력한 쿠폰 코드 초기화
   useEffect(() => {
-    setReportApplication({ couponId: null });
+    setReportApplication({ couponId: null, couponCode: '' });
     setMessage('');
-    setCouponCode('');
   }, []);
 
   useEffect(() => {
@@ -662,11 +668,13 @@ export const ReportPaymentSection = () => {
         <div className="flex gap-2.5">
           <Input
             className="w-full"
-            value={couponCode}
+            value={reportApplication.couponCode ?? ''}
             type="text"
             placeholder="쿠폰 번호를 입력해주세요."
             disabled={reportApplication.couponId === null ? false : true}
-            onChange={(e) => setCouponCode(e.target.value)}
+            onChange={(e) =>
+              setReportApplication({ couponCode: e.target.value })
+            }
           />
           <button
             className={twJoin(
@@ -676,16 +684,19 @@ export const ReportPaymentSection = () => {
               'shrink-0 rounded-sm px-4 py-1.5 text-xsmall14 font-medium',
             )}
             onClick={async () => {
-              if (couponCode === '') return;
+              if (reportApplication.couponCode === '') return;
               // 쿠폰이 등록된 상태면 쿠폰 취소
-              if (reportApplication.couponId !== null && couponCode !== '') {
+              if (
+                reportApplication.couponId !== null &&
+                reportApplication.couponCode !== ''
+              ) {
                 cancelCoupon();
                 setMessage('');
-                setCouponCode('');
+                setReportApplication({ couponCode: '' });
                 return;
               }
 
-              const data = await applyCoupon(couponCode);
+              const data = await applyCoupon(reportApplication.couponCode);
 
               if (data.status === 404 || data.status === 400)
                 setMessage(data.message);
@@ -826,7 +837,13 @@ const FileUploadButton = ({
   dispatch: React.Dispatch<React.SetStateAction<File | null>>;
 }) => {
   const ref = useRef<HTMLInputElement>(null);
-
+  useEffect(() => {
+    if (file && file.size > 50 * 1024 * 1024) {
+      // 파일 사이즈가 50MB 초과일 경우
+      alert('50MB 이하의 파일만 업로드 가능합니다.');
+      dispatch(null);
+    }
+  }, [file]);
   return (
     <>
       <button
@@ -837,7 +854,7 @@ const FileUploadButton = ({
       >
         {file ? (
           <div className="flex items-center gap-1">
-            <span>{`${file.name} (${(file.size / 1000).toFixed(1)}KB)`}</span>
+            <span>{`${file.name} (${(file.size / 1024).toFixed(1)}KB)`}</span>
             <IoCloseOutline
               size={16}
               color="#7a7d84"

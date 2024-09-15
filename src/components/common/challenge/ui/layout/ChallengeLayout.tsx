@@ -1,7 +1,7 @@
+import { useQuery } from '@tanstack/react-query';
 import { useEffect } from 'react';
 import { Outlet, useNavigate, useParams } from 'react-router-dom';
 
-import { useQuery } from '@tanstack/react-query';
 import useAuthStore from '../../../../../store/useAuthStore';
 import axios from '../../../../../utils/axios';
 import NavBar from './NavBar';
@@ -11,15 +11,14 @@ const ChallengeLayout = () => {
   const navigate = useNavigate();
   const { isLoggedIn } = useAuthStore();
 
-  const { data: isValidUserAccessData, isLoading: isValidUserAccessLoading } =
-    useQuery({
-      enabled: isLoggedIn,
-      queryKey: ['challenge', params.programId, 'access'],
-      queryFn: async () => {
-        const res = await axios.get(`/challenge/${params.programId}/access`);
-        return res.data as { data: { isAccessible?: boolean | null } };
-      },
-    });
+  const { isLoading: isValidUserAccessLoading } = useQuery({
+    enabled: isLoggedIn,
+    queryKey: ['challenge', params.programId, 'access'],
+    queryFn: async () => {
+      const res = await axios.get(`/challenge/${params.programId}/access`);
+      return res.data as { data: { isAccessible?: boolean | null } };
+    },
+  });
 
   const { data: isValidUserInfoData, isLoading: isValidUserInfoLoading } =
     useQuery({
@@ -31,9 +30,7 @@ const ChallengeLayout = () => {
       },
     });
 
-  const isValidUserAccess = isValidUserAccessData?.data?.isAccessible;
   const isValidUserInfo = isValidUserInfoData?.data?.pass;
-
   const isLoading = isValidUserInfoLoading || isValidUserAccessLoading;
 
   useEffect(() => {
@@ -49,15 +46,10 @@ const ChallengeLayout = () => {
       return;
     }
 
-    // if (!isValidUserAccess) {
-    //   navigate('/program');
+    // if (!isValidUserInfo) {
+    //   navigate(`/challenge/${params.programId}/user/info`);
     //   return;
     // }
-
-    if (!isValidUserInfo) {
-      navigate(`/challenge/${params.programId}/user/info`);
-      return;
-    }
   }, [isLoading, isLoggedIn, isValidUserInfo, navigate, params.programId]);
 
   return (
