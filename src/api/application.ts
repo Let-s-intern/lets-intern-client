@@ -199,7 +199,11 @@ export const useMypageApplicationsQuery = () => {
     queryKey: [useMypageApplicationsQueryKey],
     queryFn: async () => {
       const res = await axios.get('/user/applications');
-      return mypageApplicationsSchema.parse(res.data.data).applicationList;
+      return mypageApplicationsSchema
+        .parse(res.data.data)
+        .applicationList.filter(
+          (application) => application.programType !== 'REPORT',
+        );
     },
   });
 };
