@@ -213,7 +213,7 @@ export const getTotalRefund = ({
     return 0;
   }
 
-  const couponPrice = paymentInfo.couponDiscount || 0;
+  const couponPrice = getCouponDiscountPrice(paymentInfo);
 
   const refundReportPrice =
     getReportDiscountedPrice(paymentInfo) *
@@ -228,9 +228,9 @@ export const getTotalRefund = ({
       reportFeedbackDesiredDate,
     });
 
-  const refundPrice = nearestTen(
-    Math.max(0, refundReportPrice - couponPrice) + refundFeedbackPrice,
-  );
+  const refundPrice =
+    Math.max(0, nearestTen(refundReportPrice) - couponPrice) +
+    nearestTen(refundFeedbackPrice);
 
   return refundPrice;
 };
