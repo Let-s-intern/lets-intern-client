@@ -1,3 +1,9 @@
+import { usePatchUser } from '@/api/user';
+import useMinDate from '@/hooks/useMinDate';
+import useRunOnce from '@/hooks/useRunOnce';
+import useValidateUrl from '@/hooks/useValidateUrl';
+import { generateOrderId } from '@/lib/order';
+import useAuthStore from '@/store/useAuthStore';
 import {
   FormControl,
   RadioGroup,
@@ -6,17 +12,11 @@ import {
 } from '@mui/material';
 import dayjs, { Dayjs } from 'dayjs';
 import React, { useEffect, useRef, useState } from 'react';
+import { FaSpinner } from 'react-icons/fa';
 import { FaArrowLeft } from 'react-icons/fa6';
 import { IoCloseOutline } from 'react-icons/io5';
 import { useNavigate, useParams } from 'react-router-dom';
 import { twJoin, twMerge } from 'tailwind-merge';
-
-import { usePatchUser } from '@/api/user';
-import useMinDate from '@/hooks/useMinDate';
-import useRunOnce from '@/hooks/useRunOnce';
-import useValidateUrl from '@/hooks/useValidateUrl';
-import { generateOrderId } from '@/lib/order';
-import useAuthStore from '@/store/useAuthStore';
 import { useGetParticipationInfo } from '../../../api/application';
 import { uploadFile } from '../../../api/file';
 import {
@@ -189,7 +189,8 @@ const ReportApplyPage = () => {
               결제하기
             </button>
             {isLoading && (
-              <div className="fixed left-0 top-0 flex h-screen w-screen items-center justify-center bg-neutral-10/30 text-white">
+              <div className="fixed left-0 top-0 flex h-screen w-screen flex-col items-center justify-center gap-y-5 bg-neutral-10/30 text-white">
+                <FaSpinner className="animate-spin" size={40} />
                 <div>진단서 접수 중...</div>
               </div>
             )}
