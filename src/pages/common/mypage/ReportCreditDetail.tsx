@@ -10,6 +10,7 @@ import {
 } from '@/lib/refund';
 import ReportCreditRow from '@components/common/mypage/credit/ReportCreditRow';
 import ReportCreditSubRow from '@components/common/mypage/credit/ReportCreditSubRow';
+import { useMemo } from 'react';
 import {
   convertReportPriceType,
   useGetReportPaymentDetailQuery,
@@ -58,18 +59,7 @@ const ReportCreditDetail = () => {
       .join(', ');
   };
 
-  const getDiscountPercent = () => {
-    if (!reportPaymentDetail) return 0;
-
-    const originalPrice =
-      reportPaymentDetail.reportPaymentInfo.reportPriceInfo.price;
-    const discountPrice = reportPaymentDetail.reportPaymentInfo.programDiscount;
-
-    return getPercent({
-      originalPrice: originalPrice ?? 0,
-      changedPrice: discountPrice ?? 0,
-    });
-  };
+  const paymentInfo = reportPaymentDetail?.reportPaymentInfo;
 
   const isCancelable = () => {
     if (
@@ -123,6 +113,22 @@ const ReportCreditDetail = () => {
     ? (reportPaymentDetail.reportPaymentInfo.reportRefundPrice ?? 0) +
       (reportPaymentDetail.reportPaymentInfo.feedbackRefundPrice ?? 0)
     : 0;
+
+  const reportPrice = useMemo(() => {
+    return getReportPrice(paymentInfo);
+  }, [paymentInfo]);
+
+  const reportDiscountedPrice = useMemo(() => {
+    return getReportDiscountedPrice(paymentInfo);
+  }, [paymentInfo]);
+
+  const couponDiscountPrice = useMemo(() => {
+    return getCouponDiscountPrice(paymentInfo);
+  }, [paymentInfo]);
+
+  const feedbackDiscountedPrice = useMemo(() => {
+    return getFeedbackDiscountedPrice(paymentInfo);
+  }, [paymentInfo]);
 
   return (
     <section
@@ -290,7 +296,7 @@ const ReportCreditDetail = () => {
                     </div>
                   )}
                 </div>
-                <div className="flex w-full flex-col px-3 py-3">
+                <div className="flex w-full flex-col p-3">
                   <div className="flex w-full flex-col">
                     <ReportCreditRow
                       title={`서류 진단서 (${convertReportPriceType(reportPaymentDetail.reportApplicationInfo.reportPriceType)}+옵션) ${isCanceled ? '환불' : '결제'}금액`}
@@ -301,12 +307,7 @@ const ReportCreditDetail = () => {
                                 .reportRefundPrice ?? 0
                             ).toLocaleString()
                           : (
-                              getReportDiscountedPrice(
-                                reportPaymentDetail.reportPaymentInfo,
-                              ) -
-                              getCouponDiscountPrice(
-                                reportPaymentDetail.reportPaymentInfo,
-                              )
+                              reportDiscountedPrice - couponDiscountPrice
                             ).toLocaleString()
                       }원`}
                     />
@@ -315,69 +316,44 @@ const ReportCreditDetail = () => {
                         <ReportCreditSubRow
                           title="결제금액"
                           content={`${(
-                            getReportDiscountedPrice(
-                              reportPaymentDetail.reportPaymentInfo,
-                            ) -
-                            getCouponDiscountPrice(
-                              reportPaymentDetail.reportPaymentInfo,
-                            )
+                            reportDiscountedPrice - couponDiscountPrice
                           ).toLocaleString()}원`}
                         />
-                        <ReportCreditSubRow
-                          title={`환불 차감 금액 (${getPercent({
-                            originalPrice:
-                              getReportDiscountedPrice(
-                                reportPaymentDetail.reportPaymentInfo,
-                              ) -
-                              getCouponDiscountPrice(
-                                reportPaymentDetail.reportPaymentInfo,
-                              ),
-                            changedPrice:
-                              getReportDiscountedPrice(
-                                reportPaymentDetail.reportPaymentInfo,
-                              ) -
-                              getCouponDiscountPrice(
-                                reportPaymentDetail.reportPaymentInfo,
-                              ) -
+                        {reportDiscountedPrice - couponDiscountPrice > 0 && (
+                          <ReportCreditSubRow
+                            title={`환불 차감 금액 (${getPercent({
+                              originalPrice:
+                                reportDiscountedPrice - couponDiscountPrice,
+                              changedPrice:
+                                reportDiscountedPrice -
+                                couponDiscountPrice -
+                                (reportPaymentDetail.reportPaymentInfo
+                                  .reportRefundPrice ?? 0),
+                            })}%)`}
+                            content={`-${(
+                              reportDiscountedPrice -
+                              couponDiscountPrice -
                               (reportPaymentDetail.reportPaymentInfo
-                                .reportRefundPrice ?? 0),
-                          })}%)`}
-                          content={`-${(
-                            getReportDiscountedPrice(
-                              reportPaymentDetail.reportPaymentInfo,
-                            ) -
-                            getCouponDiscountPrice(
-                              reportPaymentDetail.reportPaymentInfo,
-                            ) -
-                            (reportPaymentDetail.reportPaymentInfo
-                              .reportRefundPrice ?? 0)
-                          ).toLocaleString()}원`}
-                        />
+                                .reportRefundPrice ?? 0)
+                            ).toLocaleString()}원`}
+                          />
+                        )}
                       </div>
                     ) : (
                       <div className="flex w-full flex-col">
                         <ReportCreditSubRow
                           title="정가"
-                          content={`${getReportPrice(
-                            reportPaymentDetail.reportPaymentInfo,
-                          ).toLocaleString()}원`}
+                          content={`${reportPrice.toLocaleString()}원`}
                         />
                         <ReportCreditSubRow
                           title="할인 금액"
                           content={`-${(
-                            getReportPrice(
-                              reportPaymentDetail.reportPaymentInfo,
-                            ) -
-                            getReportDiscountedPrice(
-                              reportPaymentDetail.reportPaymentInfo,
-                            )
+                            reportPrice - reportDiscountedPrice
                           ).toLocaleString()}원`}
                         />
                         <ReportCreditSubRow
                           title="쿠폰 할인 금액"
-                          content={`-${getCouponDiscountPrice(
-                            reportPaymentDetail.reportPaymentInfo,
-                          ).toLocaleString()}원`}
+                          content={`-${couponDiscountPrice.toLocaleString()}원`}
                         />
                       </div>
                     )}
@@ -393,37 +369,31 @@ const ReportCreditDetail = () => {
                                 reportPaymentDetail.reportPaymentInfo
                                   .feedbackRefundPrice ?? 0
                               ).toLocaleString()
-                            : getFeedbackDiscountedPrice(
-                                reportPaymentDetail.reportPaymentInfo,
-                              ).toLocaleString()
+                            : feedbackDiscountedPrice.toLocaleString()
                         }원`}
                       />
                       {isCanceled ? (
                         <div className="flex w-full flex-col">
                           <ReportCreditSubRow
                             title="결제금액"
-                            content={`${getFeedbackDiscountedPrice(reportPaymentDetail.reportPaymentInfo).toLocaleString()}원`}
+                            content={`${feedbackDiscountedPrice.toLocaleString()}원`}
                           />
-                          <ReportCreditSubRow
-                            title={`환불 차감 금액 (${getPercent({
-                              originalPrice: getFeedbackDiscountedPrice(
-                                reportPaymentDetail.reportPaymentInfo,
-                              ),
-                              changedPrice:
-                                getFeedbackDiscountedPrice(
-                                  reportPaymentDetail.reportPaymentInfo,
-                                ) -
+                          {feedbackDiscountedPrice > 0 && (
+                            <ReportCreditSubRow
+                              title={`환불 차감 금액 (${getPercent({
+                                originalPrice: feedbackDiscountedPrice,
+                                changedPrice:
+                                  feedbackDiscountedPrice -
+                                  (reportPaymentDetail.reportPaymentInfo
+                                    .feedbackRefundPrice ?? 0),
+                              })}%)`}
+                              content={`-${(
+                                feedbackDiscountedPrice -
                                 (reportPaymentDetail.reportPaymentInfo
-                                  .feedbackRefundPrice ?? 0),
-                            })}%)`}
-                            content={`-${(
-                              getFeedbackDiscountedPrice(
-                                reportPaymentDetail.reportPaymentInfo,
-                              ) -
-                              (reportPaymentDetail.reportPaymentInfo
-                                .feedbackRefundPrice ?? 0)
-                            ).toLocaleString()}원`}
-                          />
+                                  .feedbackRefundPrice ?? 0)
+                              ).toLocaleString()}원`}
+                            />
+                          )}
                         </div>
                       ) : (
                         <div className="flex w-full flex-col">
