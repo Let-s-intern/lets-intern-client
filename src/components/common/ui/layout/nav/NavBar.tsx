@@ -95,9 +95,9 @@ const NavBar = () => {
             <NavItem to="/blog/list" active={activeLink === 'BLOG'}>
               블로그
             </NavItem>
-            {/* <NavItem to="/report/landing" active={activeLink === 'REPORT'}>
+            <NavItem to="/report/landing" active={activeLink === 'REPORT'}>
               🔥 서류 진단받고 합격하기
-            </NavItem> */}
+            </NavItem>
           </div>
           <div className="flex items-center gap-4">
             {isLoggedIn ? (
@@ -146,7 +146,7 @@ const NavBar = () => {
       ></div>
       {/* 사이드 네비게이션 바 */}
       <div
-        className={`shadow-md fixed right-0 top-0 z-50 h-screen w-full bg-white transition-all duration-300 sm:w-80 ${
+        className={`fixed right-0 top-0 z-50 h-screen w-full bg-white shadow-md transition-all duration-300 sm:w-80 ${
           isOpen ? 'translate-x-0' : 'translate-x-full'
         }`}
       >
@@ -211,9 +211,9 @@ const NavBar = () => {
             <SideNavItem to="/blog/list" onClick={closeMenu}>
               블로그
             </SideNavItem>
-            {/* <SideNavItem to="/report/landing" onClick={closeMenu}>
+            <SideNavItem to="/report/landing" onClick={closeMenu}>
               🔥 서류 진단받고 합격하기
-            </SideNavItem> */}
+            </SideNavItem>
             <hr className="h-1 bg-neutral-80" />
             {isAdmin && (
               <SideNavItem to="/admin" onClick={closeMenu}>
