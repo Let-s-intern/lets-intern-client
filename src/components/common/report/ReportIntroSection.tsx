@@ -40,23 +40,29 @@ export const ReportLandingIntroSection = ({
   return (
     <section className="mx-auto max-w-5xl px-5">
       {header}
-      <div className="flex max-h-[218px] justify-center overflow-hidden rounded-xs bg-[#4138A3]">
+      <div className="mb-4 flex justify-center rounded-xs bg-[#4138A3]">
         <img src="/images/report-banner.jpg" width={320} height={218} />
       </div>
-      <div className="rounded my-4 flex h-80 items-center justify-center bg-slate-100">
-        서류 진단 서비스 간략 소개 ...
+      <div className="rounded flex items-center justify-center bg-slate-100">
+        <img
+          className="h-auto w-full"
+          src="/images/report-detail-page-web-1.png"
+          alt="서류 첨삭 서비스 소개, 서류 피드백을 렛츠커리어에서 받아야 하는 이유"
+        />
       </div>
-      <div className="rounded my-4 flex h-80 items-center justify-center bg-slate-100">
-        서류 진단 서비스 간략 소개 ...
-      </div>
-      <div className="rounded my-4 flex h-80 items-center justify-center bg-slate-100">
-        서류 진단 서비스 간략 소개 ...
-      </div>
-      <div className="rounded my-4 flex h-80 items-center justify-center bg-slate-100">
-        서류 진단 서비스 간략 소개 ...
-      </div>
-      <div className="rounded my-4 flex h-80 items-center justify-center bg-slate-100">
-        서류 진단 서비스 간략 소개 ...
+      <div className="rounded flex items-center justify-center bg-slate-100">
+        <img
+          className="h-auto w-full"
+          src="/images/report-detail-page-web-2.png"
+          alt="피드백 리포트를 통해 개인 맞춤형 서류 진단 제공"
+        />
+      </div>{' '}
+      <div className="rounded flex items-center justify-center bg-slate-100">
+        <img
+          className="h-auto w-full"
+          src="/images/report-detail-page-web-3.png"
+          alt="검증된 서류 진단과 피드백 효과, 서류 진단 신청 방법"
+        />
       </div>
     </section>
   );
