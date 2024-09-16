@@ -12,7 +12,10 @@ import {
   getReportPrice,
   getReportRefundPercent,
   getTotalRefund,
+  nearestTen,
 } from '@/lib/refund';
+import ReportCreditRow from '@components/common/mypage/credit/ReportCreditRow';
+import ReportCreditSubRow from '@components/common/mypage/credit/ReportCreditSubRow';
 import {
   convertReportPriceType,
   useDeleteReportApplication,
@@ -182,94 +185,90 @@ const ReportCreditDelete = () => {
             </div>
             <div className="flex w-full flex-col items-start justify-center gap-y-6">
               <div className="font-semibold text-neutral-0">환불 정보</div>
-              <div className="flex w-full flex-col items-start justify-start gap-y-3">
-                <div className="flex w-full items-center justify-start gap-3 border-y-[1.5px] border-neutral-0 px-3 py-5 font-bold text-neutral-0">
-                  <div>예정 환불금액</div>
-                  <div className="flex grow items-center justify-end">
-                    {totalRefund.toLocaleString()}원
+              <div className="flex w-full flex-col items-start justify-start">
+                <div className="flex w-full items-center justify-start gap-3 border-y-[1.5px] border-neutral-0 px-3 py-5">
+                  <div className="flex w-full items-center justify-start gap-3 font-bold text-neutral-0">
+                    <div>예정 환불금액</div>
+                    <div className="flex grow items-center justify-end">
+                      {totalRefund.toLocaleString()}원
+                    </div>
                   </div>
                 </div>
-                <div className="flex w-full flex-col">
-                  <PaymentInfoRow
-                    title={`서류 진단서 (${convertReportPriceType(reportPaymentDetail.reportApplicationInfo.reportPriceType)}+옵션)`}
-                    content={`${reportPrice.toLocaleString()}원`}
-                  />
-                  {reportPaymentDetail.reportApplicationInfo
-                    .reportFeedbackApplicationId && (
-                    <PaymentInfoRow
-                      title="1:1 피드백"
-                      content={`${reportPaymentDetail.reportPaymentInfo.feedbackPriceInfo?.feedbackPrice?.toLocaleString() || 0}원`}
-                    />
-                  )}
-                  <PaymentInfoRow
-                    title={`할인 (${discountPercent}%)`}
-                    content={
-                      reportPaymentDetail.reportPaymentInfo.programDiscount ===
-                      0
-                        ? '0원'
-                        : `-${reportPaymentDetail.reportPaymentInfo.programDiscount?.toLocaleString()}원`
-                    }
-                  />
-                  <PaymentInfoRow
-                    title={`쿠폰할인`}
-                    content={
-                      couponDiscountPrice === 0
-                        ? '0원'
-                        : `-${couponDiscountPrice.toLocaleString()}원`
-                    }
-                  />
-                  {reportRefundPercent !== 1 && (
-                    <PaymentInfoRow
-                      title={`서류 진단서 (부분 환불 ${Math.ceil((1 - reportRefundPercent) * 100)}%)`}
-                      content={`-${(
-                        reportDiscountedPrice *
-                        (1 - reportRefundPercent)
-                      ).toLocaleString()}원`}
-                      subInfo={
-                        <div className="text-xs font-medium text-primary-dark">
-                          *환불 규정은{' '}
-                          <a
-                            className="underline underline-offset-2"
-                            href="https://letscareer.oopy.io/5eb0ebdd-e10c-4aa1-b28a-8bd0964eca0b"
-                            target="_blank"
-                            rel="noreferrer"
-                          >
-                            자주 묻는 질문
-                          </a>
-                          을 참고해주세요
-                        </div>
+                <div className="flex w-full flex-col p-3">
+                  <div className="flex w-full flex-col">
+                    <ReportCreditRow
+                      title={`서류 진단서 (${convertReportPriceType(reportPaymentDetail.reportApplicationInfo.reportPriceType)}+옵션) 예정 환불 금액`}
+                      content={
+                        Math.max(
+                          0,
+                          nearestTen(
+                            reportDiscountedPrice * reportRefundPercent,
+                          ) - couponDiscountPrice,
+                        ).toLocaleString() + '원'
                       }
                     />
-                  )}
+                    <div className="flex w-full flex-col">
+                      <ReportCreditSubRow
+                        title="결제금액"
+                        content={`${(reportDiscountedPrice - couponDiscountPrice).toLocaleString()}원`}
+                      />
+                      {reportDiscountedPrice - couponDiscountPrice > 0 && (
+                        <ReportCreditSubRow
+                          title={`환불 차감 금액 (${Math.ceil((1 - reportRefundPercent) * 100)}%)`}
+                          content={`-${(
+                            reportDiscountedPrice -
+                            couponDiscountPrice -
+                            Math.max(
+                              0,
+                              nearestTen(
+                                reportDiscountedPrice * reportRefundPercent,
+                              ) - couponDiscountPrice,
+                            )
+                          ).toLocaleString()}원`}
+                        />
+                      )}
+                    </div>
+                  </div>
                   {reportPaymentDetail.reportApplicationInfo
-                    .reportFeedbackApplicationId &&
-                    feedbackRefundPercent !== 1 && (
-                      <PaymentInfoRow
-                        title={`1:1 피드백 (부분 환불 ${Math.ceil((1 - feedbackRefundPercent) * 100)}%)`}
+                    .reportFeedbackApplicationId && (
+                    <div className="flex w-full flex-col">
+                      <ReportCreditRow
+                        title={`1:1 피드백 예정 환불 금액`}
                         content={
-                          feedbackDiscountPrice === 0
-                            ? '0원'
-                            : `-${(
-                                feedbackDiscountPrice *
-                                (1 - feedbackRefundPercent)
-                              ).toLocaleString()}원`
-                        }
-                        subInfo={
-                          <div className="text-xs font-medium text-primary-dark">
-                            *환불 규정은{' '}
-                            <a
-                              className="underline underline-offset-2"
-                              href="https://letscareer.oopy.io/5eb0ebdd-e10c-4aa1-b28a-8bd0964eca0b"
-                              target="_blank"
-                              rel="noreferrer"
-                            >
-                              자주 묻는 질문
-                            </a>
-                            을 참고해주세요
-                          </div>
+                          nearestTen(
+                            feedbackDiscountPrice * feedbackRefundPercent,
+                          ).toLocaleString() + '원'
                         }
                       />
-                    )}
+                      <div className="flex w-full flex-col">
+                        <ReportCreditSubRow
+                          title="결제금액"
+                          content={`${feedbackDiscountPrice.toLocaleString()}원`}
+                        />
+                        <ReportCreditSubRow
+                          title={`환불 차감 금액 (${Math.ceil((1 - feedbackRefundPercent) * 100)}%)`}
+                          content={`-${(
+                            feedbackDiscountPrice -
+                            nearestTen(
+                              feedbackDiscountPrice * feedbackRefundPercent,
+                            )
+                          ).toLocaleString()}원`}
+                        />
+                      </div>
+                    </div>
+                  )}
+                  <div className="py-2 text-xs font-medium text-primary-dark">
+                    *환불 규정은{' '}
+                    <a
+                      className="underline underline-offset-2"
+                      href="https://letscareer.oopy.io/5eb0ebdd-e10c-4aa1-b28a-8bd0964eca0b"
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      자주 묻는 질문
+                    </a>
+                    을 참고해주세요
+                  </div>
                 </div>
                 <hr className="w-full border-neutral-85" />
                 <div className="flex w-full flex-col">
