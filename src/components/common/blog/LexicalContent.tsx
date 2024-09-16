@@ -284,6 +284,7 @@ const LexicalContent = ({ node }: { node: SerializedLexicalNode }) => {
       let className = '';
       if (_node.format & 1) className += 'font-bold ';
       if (_node.format & 2) className += 'italic ';
+      if (_node.format & 4) className += 'line-through ';
       if (_node.format & 8) className += 'underline ';
       if (_node.format & 16) className += 'font-mono bg-gray-100 px-1';
 

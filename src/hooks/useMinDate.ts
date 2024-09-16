@@ -16,15 +16,15 @@ export default function useMinDate(data: ReportApplication) {
   /* 최소 날짜 설정 */
   useEffect(() => {
     if (data.optionIds.length !== 0) {
-      setMinDate(dayjs().add(5, 'day'));
+      setMinDate(dayjs().add(6, 'day'));
       return;
     }
     if (data.reportPriceType === 'BASIC') {
-      setMinDate(dayjs().add(2, 'day'));
+      setMinDate(dayjs().add(3, 'day'));
       return;
     }
     if (data.reportPriceType === 'PREMIUM') {
-      setMinDate(dayjs().add(3, 'day'));
+      setMinDate(dayjs().add(4, 'day'));
       return;
     }
   }, []);
@@ -36,9 +36,10 @@ export default function useMinDate(data: ReportApplication) {
     if (minDate.isSame(data.desiredDate1, 'day')) {
       setTimeOptions((prev) => ({
         ...prev,
-        desiredDate1: initialTimeOption.filter(
-          (option) => option > minDate.hour(),
-        ),
+        desiredDate1: initialTimeOption,
+        // .filter(
+        //   (option) => option > minDate.hour(),
+        // ),
       }));
     } else {
       setTimeOptions((prev) => ({ ...prev, desiredDate1: initialTimeOption }));
@@ -51,9 +52,10 @@ export default function useMinDate(data: ReportApplication) {
     if (minDate.isSame(data.desiredDate2, 'day')) {
       setTimeOptions((prev) => ({
         ...prev,
-        desiredDate2: initialTimeOption.filter(
-          (option) => option > minDate.hour(),
-        ),
+        desiredDate2: initialTimeOption,
+        // .filter(
+        //   (option) => option > minDate.hour(),
+        // ),
       }));
     } else {
       setTimeOptions((prev) => ({ ...prev, desiredDate2: initialTimeOption }));
@@ -66,9 +68,10 @@ export default function useMinDate(data: ReportApplication) {
     if (minDate.isSame(data.desiredDate3, 'day')) {
       setTimeOptions((prev) => ({
         ...prev,
-        desiredDate3: initialTimeOption.filter(
-          (option) => option > minDate.hour(),
-        ),
+        desiredDate3: initialTimeOption,
+        // .filter(
+        //   (option) => option > minDate.hour(),
+        // ),
       }));
     } else {
       setTimeOptions((prev) => ({ ...prev, desiredDate3: initialTimeOption }));

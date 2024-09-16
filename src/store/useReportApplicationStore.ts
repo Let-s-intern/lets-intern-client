@@ -8,6 +8,8 @@ export interface ReportApplication {
   optionIds: number[];
   isFeedbackApplied: boolean;
   couponId: number | null;
+  couponCode: string;
+  couponDiscount: number;
   paymentKey: string | null;
   orderId: string | null;
   amount: number | null;
@@ -41,6 +43,8 @@ const useReportApplicationStore = create(
         optionIds: [],
         isFeedbackApplied: false,
         couponId: null,
+        couponDiscount: 0,
+        couponCode: '',
         paymentKey: null,
         orderId: null,
         amount: null,
@@ -72,6 +76,8 @@ const useReportApplicationStore = create(
             optionIds: [],
             isFeedbackApplied: false,
             couponId: null,
+            couponDiscount: 0,
+            couponCode: '',
             paymentKey: null,
             orderId: null,
             amount: null,

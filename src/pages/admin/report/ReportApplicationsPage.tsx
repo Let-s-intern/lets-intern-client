@@ -426,68 +426,78 @@ const ReportApplicationsPage = () => {
                     </TD>
 
                     <TD>
-                      <div className="flex justify-center gap-2">
-                        <ActionButton
-                          bgColor="green"
-                          onClick={() => {
-                            setApplicationModal({
-                              application,
-                              type: 'SCHEDULE',
-                            });
-                            if (application.desiredDateAdmin) {
-                              setAdminChangeDate(
-                                dayjs(application.desiredDateAdmin),
-                              );
-                              setAdminChangeTime(
-                                dayjs(application.desiredDateAdmin),
-                              );
-                            }
-                          }}
-                        >
-                          일정선택
-                        </ActionButton>
-                        {application.zoomLink !== null ? (
+                      {application.reportFeedbackStatus ? (
+                        <div className="flex justify-center gap-2">
+                          <ActionButton
+                            bgColor="green"
+                            onClick={() => {
+                              setApplicationModal({
+                                application,
+                                type: 'SCHEDULE',
+                              });
+                              if (application.desiredDateAdmin) {
+                                setAdminChangeDate(
+                                  dayjs(application.desiredDateAdmin),
+                                );
+                                setAdminChangeTime(
+                                  dayjs(application.desiredDateAdmin),
+                                );
+                              }
+                            }}
+                          >
+                            일정선택
+                          </ActionButton>
+                          {application.zoomLink !== null ? (
+                            <ActionButton
+                              bgColor="blue"
+                              onClick={() => {
+                                navigator.clipboard.writeText(
+                                  application.zoomLink || '',
+                                );
+                                alert('클립보드에 복사되었습니다.');
+                              }}
+                            >
+                              ZOOM
+                            </ActionButton>
+                          ) : (
+                            <ActionButton disabled>ZOOM</ActionButton>
+                          )}
+                        </div>
+                      ) : (
+                        '-'
+                      )}
+                    </TD>
+                    <TD>
+                      {application.reportFeedbackStatus
+                        ? convertFeedbackStatusToDisplayName({
+                            status: application.reportFeedbackStatus,
+                            now: dayjs(),
+                            // TODO: reportApplicationsForAdminInfos에 reportDesiredDate 추가
+                            reportFeedback: null,
+                            isAdmin: true,
+                          })
+                        : null}
+                      {application.reportFeedbackStatus ? (
+                        <div className="mt-2 flex items-center justify-center">
                           <ActionButton
                             bgColor="blue"
                             onClick={() => {
-                              navigator.clipboard.writeText(
-                                application.zoomLink || '',
-                              );
-                              alert('클립보드에 복사되었습니다.');
+                              trySubmitSchedule({
+                                reportId: Number(reportId),
+                                applicationId: application.applicationId,
+                                reportFeedbackStatus: 'CONFIRMED',
+                              });
                             }}
+                            disabled={
+                              application.reportFeedbackStatus !== 'PENDING'
+                            }
                           >
-                            ZOOM
+                            일정 확정하기
                           </ActionButton>
-                        ) : (
-                          <ActionButton disabled>ZOOM</ActionButton>
-                        )}
-                      </div>
-                    </TD>
-                    <TD>
-                      {convertFeedbackStatusToDisplayName({
-                        status: application.reportFeedbackStatus,
-                        now: dayjs(),
-                        // TODO: reportApplicationsForAdminInfos에 reportDesiredDate 추가
-                        reportFeedback: null,
-                        isAdmin: true,
-                      })}
-                      <div className="mt-2 flex items-center justify-center">
-                        <ActionButton
-                          bgColor="blue"
-                          onClick={() => {
-                            trySubmitSchedule({
-                              reportId: Number(reportId),
-                              applicationId: application.applicationId,
-                              reportFeedbackStatus: 'CONFIRMED',
-                            });
-                          }}
-                          disabled={
-                            application.reportFeedbackStatus !== 'PENDING'
-                          }
-                        >
-                          일정 확정하기
-                        </ActionButton>
-                      </div>
+                        </div>
+                      ) : (
+                        '-'
+                      )}
                     </TD>
                     <TD>{getProgressDate(application)}</TD>
                   </tr>

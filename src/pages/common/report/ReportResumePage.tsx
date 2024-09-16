@@ -59,6 +59,10 @@ const ReportResumePage = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  useEffect(() => {
+    console.log(root);
+  }, [root]);
+
   return (
     <>
       <Helmet>
@@ -98,10 +102,13 @@ const ReportResumePage = () => {
       >
         <ReportLandingNav />
 
-        <ReportContentContainer>
-          <LexicalContent node={root} />
-        </ReportContentContainer>
+        {Object.keys(root).length !== 0 && (
+          <ReportContentContainer>
+            <LexicalContent node={root} />
+          </ReportContentContainer>
+        )}
       </div>
+
       {report ? (
         <ReportApplyBottomSheet report={report} ref={bottomSheetRef} />
       ) : null}

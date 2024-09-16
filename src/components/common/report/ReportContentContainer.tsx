@@ -13,7 +13,7 @@ export const ReportContentContainer = forwardRef<
   return (
     <div
       ref={ref}
-      className={twMerge('mx-auto mt-24 max-w-5xl px-5', className)}
+      className={twMerge('mx-auto mt-24 max-w-3xl px-5', className)}
       {...props}
     >
       {children}
