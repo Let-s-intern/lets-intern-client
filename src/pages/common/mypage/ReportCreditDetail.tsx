@@ -316,10 +316,7 @@ const ReportCreditDetail = () => {
                         </div>
                       </div>
                       <div className="flex w-full items-center justify-between gap-3 py-2 text-xsmall14 text-neutral-45">
-                        <div>{`환불 차감 금액 (${getPercent({
-                          originalPrice: totalPayment,
-                          changedPrice: totalPayment - totalRefund,
-                        })}%)`}</div>
+                        <div>환불 차감 금액</div>
                         <div className="flex grow items-center justify-end">
                           {(totalPayment - totalRefund).toLocaleString()}원
                         </div>
