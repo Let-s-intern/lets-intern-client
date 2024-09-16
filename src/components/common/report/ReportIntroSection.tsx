@@ -38,7 +38,7 @@ export const ReportLandingIntroSection = ({
   header: React.ReactNode;
 }) => {
   return (
-    <section className="mx-auto max-w-5xl px-5">
+    <section className="mx-auto max-w-3xl px-5">
       {header}
       <div className="mb-4 flex justify-center rounded-xs bg-[#4138A3]">
         <img src="/images/report-banner.jpg" width={320} height={218} />
@@ -56,7 +56,7 @@ export const ReportLandingIntroSection = ({
           src="/images/report-detail-page-web-2.png"
           alt="피드백 리포트를 통해 개인 맞춤형 서류 진단 제공"
         />
-      </div>{' '}
+      </div>
       <div className="rounded flex items-center justify-center bg-slate-100">
         <img
           className="h-auto w-full"
