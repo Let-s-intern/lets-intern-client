@@ -187,7 +187,7 @@ const ReportApplyBottomSheet = React.forwardRef<
     <div
       ref={ref}
       className={twMerge(
-        'shadow-lg fixed bottom-0 left-1/2 z-40 mx-auto w-full max-w-5xl -translate-x-1/2 rounded-t-xl border-t border-neutral-0/5 bg-white transition',
+        'fixed bottom-0 left-1/2 z-40 mx-auto w-full max-w-3xl -translate-x-1/2 rounded-t-xl border-t border-neutral-0/5 bg-white shadow-lg transition',
         !show && 'hidden',
       )}
     >
