@@ -59,6 +59,10 @@ const ReportResumePage = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  useEffect(() => {
+    console.log(root);
+  }, [root]);
+
   return (
     <>
       <Helmet>
