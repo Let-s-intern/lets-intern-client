@@ -1,17 +1,18 @@
 import React, { useEffect, useState } from 'react';
 import InfiniteScroll from 'react-infinite-scroller';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
+
 import { useBlogTagQuery, useInfiniteBlogListQuery } from '../../../api/blog';
 import { TagType } from '../../../api/blogSchema';
 import BlogCard from '../../../components/common/blog/BlogCard';
 
 const BlogHashtagListPage = () => {
   const navigate = useNavigate();
-  const location = useLocation();
+  const [searchParams, setSearchParams] = useSearchParams();
+
   const [isToggle, setIsToggle] = useState(false);
-  const [selectedTag, setSelectedTag] = useState<TagType | null>(
-    location.state as TagType,
-  );
+  const [selectedTag, setSelectedTag] = useState<TagType | null>(null);
+
   const { data: tagListData = [], isLoading: tagListIsLoading } =
     useBlogTagQuery();
   const {
@@ -24,21 +25,25 @@ const BlogHashtagListPage = () => {
     pageable: { page: 0, size: 5 },
   });
 
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    if (selectedTag) {
-      params.set('tagId', selectedTag.id.toString());
-    } else {
-      params.delete('tagId');
-    }
-    const newUrl = `${window.location.pathname}?${params.toString()}`;
-    window.history.replaceState({}, '', newUrl);
-  }, [selectedTag]);
-
   const handleTagClick = (tag: TagType) => {
-    setSelectedTag(tag);
+    searchParams.set('tagId', tag.id.toString());
+    setSearchParams(searchParams);
     setIsToggle(false);
   };
+
+  useEffect(() => {
+    // 쿼리 파라미터에 tagId가 있을 경우 해시 태그 검색
+    if (tagListData.length === 0) return;
+
+    const tagId = searchParams.get('tagId');
+    if (!tagId) {
+      setSelectedTag(null);
+      return;
+    }
+
+    const item = tagListData.find((tag) => tag.id === Number(tagId));
+    setSelectedTag(item ?? null);
+  }, [searchParams, tagListData]);
 
   return (
     <div className="mx-auto w-full max-w-[1200px] flex-1 flex-col items-center px-5 md:px-10">
@@ -50,12 +55,22 @@ const BlogHashtagListPage = () => {
                 src="/icons/x-close.svg"
                 alt="hashtag"
                 className="h-6 w-6 cursor-pointer"
-                onClick={() => navigate(-1)}
+                onClick={() => {
+                  // 선택한 해시태그가 없으면 블로그 목록으로 이동
+                  if (!searchParams.has('tagId')) {
+                    navigate('/blog/list');
+                    return;
+                  }
+                  searchParams.delete('tagId');
+                  setSearchParams(searchParams);
+                }}
               />
               <h2 className="text-small18 font-bold text-neutral-0">
                 해시태그 검색
               </h2>
-              <span className="text-small18 text-primary">3건</span>
+              <span className="text-small18 text-primary">
+                {blogListData?.pages[0].pageInfo.totalElements}건
+              </span>
             </div>
             <div className="relative flex flex-col">
               <div
@@ -113,12 +128,11 @@ const BlogHashtagListPage = () => {
                   </div>
                 ) : (
                   blogListData.pages.map((page, pageIdx) =>
-                    page.blogInfos.map((blogInfo, blogIdx) => (
+                    page.blogInfos?.map((blogInfo, blogIdx) => (
                       <React.Fragment key={blogInfo.blogThumbnailInfo.id}>
                         <BlogCard
                           key={blogInfo.blogThumbnailInfo.id}
                           blogInfo={blogInfo}
-                          setSelectedTag={setSelectedTag}
                         />
                         {!(
                           pageIdx === blogListData.pages.length - 1 &&
