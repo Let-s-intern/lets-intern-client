@@ -96,10 +96,13 @@ const ReportPortfolioPage = () => {
       >
         <ReportLandingNav />
 
-        <ReportContentContainer>
-          <LexicalContent node={root} />
-        </ReportContentContainer>
+        {Object.keys(root).length !== 0 && (
+          <ReportContentContainer>
+            <LexicalContent node={root} />
+          </ReportContentContainer>
+        )}
       </div>
+
       {report ? (
         <ReportApplyBottomSheet report={report} ref={bottomSheetRef} />
       ) : null}

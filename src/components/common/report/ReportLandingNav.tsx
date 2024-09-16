@@ -47,7 +47,7 @@ export const ReportLandingNav = () => {
       {showPersonalStatement ? (
         <ReportLandingNavButton reportType="PERSONAL_STATEMENT" />
       ) : null}
-      {showPortfolio ? <ReportLandingNavButton reportType="PORTFOLIO" /> : null}
+      {/* {showPortfolio ? <ReportLandingNavButton reportType="PORTFOLIO" /> : null} */}
     </nav>
   ) : null;
 };
