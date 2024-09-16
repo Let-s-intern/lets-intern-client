@@ -94,7 +94,7 @@ export const getCouponDiscountPrice = (
   }
 
   return paymentInfo.couponDiscount === -1
-    ? (paymentInfo.programPrice ?? 0) - (paymentInfo.programDiscount ?? 0)
+    ? getReportDiscountedPrice(paymentInfo)
     : paymentInfo.couponDiscount;
 };
 
