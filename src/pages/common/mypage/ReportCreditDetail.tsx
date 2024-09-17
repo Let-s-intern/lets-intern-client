@@ -2,6 +2,16 @@ import dayjs from 'dayjs';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 
 import {
+  getCouponDiscountPrice,
+  getFeedbackDiscountedPrice,
+  getPercent,
+  getReportDiscountedPrice,
+  getReportPrice,
+} from '@/lib/refund';
+import ReportCreditRow from '@components/common/mypage/credit/ReportCreditRow';
+import ReportCreditSubRow from '@components/common/mypage/credit/ReportCreditSubRow';
+import { useMemo } from 'react';
+import {
   convertReportPriceType,
   useGetReportPaymentDetailQuery,
 } from '../../../api/report';
@@ -12,16 +22,6 @@ import Input from '../../../components/common/ui/input/Input';
 
 const convertDateFormat = (date: string) => {
   return dayjs(date).format('YYYY.MM.DD');
-};
-
-const getPercent = ({
-  originalPrice,
-  changedPrice,
-}: {
-  originalPrice: number;
-  changedPrice: number;
-}) => {
-  return Math.floor((changedPrice / originalPrice) * 100);
 };
 
 const ReportCreditDetail = () => {
@@ -59,47 +59,7 @@ const ReportCreditDetail = () => {
       .join(', ');
   };
 
-  const getReportPrice = () => {
-    if (!reportPaymentDetail) return 0;
-
-    const defaultReportPrice =
-      reportPaymentDetail.reportPaymentInfo.reportPriceInfo.price;
-    const optionsPrice =
-      reportPaymentDetail.reportPaymentInfo.reportOptionInfos.reduce(
-        (acc, option) => {
-          return acc + (option?.price ?? 0);
-        },
-        0,
-      );
-
-    return (defaultReportPrice ?? 0) + optionsPrice;
-  };
-
-  const getDiscountPercent = () => {
-    if (!reportPaymentDetail) return 0;
-
-    const originalPrice =
-      reportPaymentDetail.reportPaymentInfo.reportPriceInfo.price;
-    const discountPrice = reportPaymentDetail.reportPaymentInfo.programDiscount;
-
-    return getPercent({
-      originalPrice: originalPrice ?? 0,
-      changedPrice: discountPrice ?? 0,
-    });
-  };
-
-  const getCouponDiscountPrice = () => {
-    if (
-      !reportPaymentDetail ||
-      !reportPaymentDetail.reportPaymentInfo.couponDiscount
-    )
-      return 0;
-
-    return reportPaymentDetail.reportPaymentInfo.couponDiscount === -1
-      ? (reportPaymentDetail.reportPaymentInfo.programPrice ?? 0) -
-          (reportPaymentDetail.reportPaymentInfo.programDiscount ?? 0)
-      : reportPaymentDetail.reportPaymentInfo.couponDiscount;
-  };
+  const paymentInfo = reportPaymentDetail?.reportPaymentInfo;
 
   const isCancelable = () => {
     if (
@@ -133,6 +93,43 @@ const ReportCreditDetail = () => {
     return !isAfterReportIssued || !isAfterFeedbackConfirmed;
   };
 
+  const isCanceled =
+    reportPaymentDetail &&
+    ((reportPaymentDetail.tossInfo &&
+      reportPaymentDetail.tossInfo.status !== 'DONE') ||
+      reportPaymentDetail.reportApplicationInfo.isCanceled === true)
+      ? true
+      : false;
+
+  const totalPayment = reportPaymentDetail
+    ? getReportPrice(reportPaymentDetail.reportPaymentInfo) +
+      (reportPaymentDetail.reportPaymentInfo.feedbackPriceInfo?.feedbackPrice ||
+        0) -
+      (reportPaymentDetail.reportPaymentInfo.programDiscount || 0) -
+      getCouponDiscountPrice(reportPaymentDetail.reportPaymentInfo)
+    : 0;
+
+  const totalRefund = reportPaymentDetail
+    ? (reportPaymentDetail.reportPaymentInfo.reportRefundPrice ?? 0) +
+      (reportPaymentDetail.reportPaymentInfo.feedbackRefundPrice ?? 0)
+    : 0;
+
+  const reportPrice = useMemo(() => {
+    return getReportPrice(paymentInfo);
+  }, [paymentInfo]);
+
+  const reportDiscountedPrice = useMemo(() => {
+    return getReportDiscountedPrice(paymentInfo);
+  }, [paymentInfo]);
+
+  const couponDiscountPrice = useMemo(() => {
+    return getCouponDiscountPrice(paymentInfo);
+  }, [paymentInfo]);
+
+  const feedbackDiscountedPrice = useMemo(() => {
+    return getFeedbackDiscountedPrice(paymentInfo);
+  }, [paymentInfo]);
+
   return (
     <section
       className="flex w-full flex-col px-5 md:px-0"
@@ -163,9 +160,7 @@ const ReportCreditDetail = () => {
         ) : (
           <>
             <div className="flex w-full flex-col items-start justify-center gap-y-6">
-              {reportPaymentDetail.tossInfo?.status === 'CANCELED' ||
-              reportPaymentDetail.tossInfo?.status === 'PARTIAL_CANCELED' ||
-              reportPaymentDetail.reportApplicationInfo.isCanceled ? (
+              {isCanceled ? (
                 <div className="flex w-full gap-2 rounded-xxs bg-neutral-90 px-4 py-3">
                   <div className="text-sm font-semibold text-system-error">
                     결제 취소
@@ -272,125 +267,168 @@ const ReportCreditDetail = () => {
             </div>
             <div className="flex w-full flex-col items-start justify-center gap-y-6">
               <div className="font-semibold text-neutral-0">
-                {(reportPaymentDetail.tossInfo &&
-                  reportPaymentDetail.tossInfo.status !== 'DONE') ||
-                reportPaymentDetail.reportApplicationInfo.isCanceled
-                  ? '환불 정보'
-                  : '결제 정보'}
+                {isCanceled ? '환불 정보' : '결제 정보'}
               </div>
-              <div className="flex w-full flex-col items-start justify-start gap-y-3">
-                <div className="flex w-full items-center justify-start gap-3 border-y-[1.5px] border-neutral-0 px-3 py-5 font-bold text-neutral-0">
-                  <div>
-                    {(reportPaymentDetail.tossInfo &&
-                      reportPaymentDetail.tossInfo.status !== 'DONE') ||
-                    reportPaymentDetail.reportApplicationInfo.isCanceled ===
-                      true
-                      ? '총 환불금액'
-                      : '총 결제금액'}
+              <div className="flex w-full flex-col items-start justify-start">
+                <div className="flex w-full flex-col items-center justify-start gap-y-2 border-y-[1.5px] border-neutral-0 px-3 py-5">
+                  <div className="flex w-full items-center justify-start gap-3 font-bold text-neutral-0">
+                    <div>{isCanceled ? '총 환불금액' : '총 결제금액'}</div>
+                    <div className="flex grow items-center justify-end">
+                      {reportPaymentDetail.tossInfo
+                        ? reportPaymentDetail.tossInfo.status !== 'DONE' &&
+                          reportPaymentDetail.tossInfo.cancels
+                          ? reportPaymentDetail.tossInfo.cancels[0].cancelAmount?.toLocaleString()
+                          : reportPaymentDetail.tossInfo.balanceAmount?.toLocaleString()
+                        : reportPaymentDetail.reportPaymentInfo.finalPrice?.toLocaleString()}
+                      원
+                    </div>
                   </div>
-                  <div className="flex grow items-center justify-end">
-                    {reportPaymentDetail.tossInfo
-                      ? reportPaymentDetail.tossInfo.status !== 'DONE' &&
-                        reportPaymentDetail.tossInfo.cancels
-                        ? reportPaymentDetail.tossInfo.cancels[0].cancelAmount?.toLocaleString()
-                        : reportPaymentDetail.tossInfo.balanceAmount?.toLocaleString()
-                      : reportPaymentDetail.reportPaymentInfo.finalPrice?.toLocaleString()}
-                    원
-                  </div>
+                  {isCanceled && (
+                    <div className="flex w-full flex-col">
+                      <ReportCreditSubRow
+                        title="총 결제금액"
+                        content={`${totalPayment.toLocaleString()}원`}
+                      />
+                      <ReportCreditSubRow
+                        title="환불 차감 금액"
+                        content={`-${(totalPayment - totalRefund).toLocaleString()}원`}
+                      />
+                    </div>
+                  )}
                 </div>
-                <div className="flex w-full flex-col">
-                  <PaymentInfoRow
-                    title={`서류 진단서 (${convertReportPriceType(reportPaymentDetail.reportApplicationInfo.reportPriceType)}+옵션)`}
-                    content={`${getReportPrice().toLocaleString()}원`}
-                  />
+                <div className="flex w-full flex-col p-3">
+                  <div className="flex w-full flex-col">
+                    <ReportCreditRow
+                      title={`서류 진단서 (${convertReportPriceType(reportPaymentDetail.reportApplicationInfo.reportPriceType)}+옵션) ${isCanceled ? '환불' : '결제'}금액`}
+                      content={`${
+                        isCanceled
+                          ? (
+                              reportPaymentDetail.reportPaymentInfo
+                                .reportRefundPrice ?? 0
+                            ).toLocaleString()
+                          : (
+                              reportDiscountedPrice - couponDiscountPrice
+                            ).toLocaleString()
+                      }원`}
+                    />
+                    {isCanceled ? (
+                      <div className="flex w-full flex-col">
+                        <ReportCreditSubRow
+                          title="결제금액"
+                          content={`${(
+                            reportDiscountedPrice - couponDiscountPrice
+                          ).toLocaleString()}원`}
+                        />
+                        {reportDiscountedPrice - couponDiscountPrice > 0 && (
+                          <ReportCreditSubRow
+                            title={`환불 차감 금액 (${getPercent({
+                              originalPrice:
+                                reportDiscountedPrice - couponDiscountPrice,
+                              changedPrice:
+                                reportDiscountedPrice -
+                                couponDiscountPrice -
+                                (reportPaymentDetail.reportPaymentInfo
+                                  .reportRefundPrice ?? 0),
+                            })}%)`}
+                            content={`-${(
+                              reportDiscountedPrice -
+                              couponDiscountPrice -
+                              (reportPaymentDetail.reportPaymentInfo
+                                .reportRefundPrice ?? 0)
+                            ).toLocaleString()}원`}
+                          />
+                        )}
+                      </div>
+                    ) : (
+                      <div className="flex w-full flex-col">
+                        <ReportCreditSubRow
+                          title="정가"
+                          content={`${reportPrice.toLocaleString()}원`}
+                        />
+                        <ReportCreditSubRow
+                          title="할인 금액"
+                          content={`-${(
+                            reportPrice - reportDiscountedPrice
+                          ).toLocaleString()}원`}
+                        />
+                        <ReportCreditSubRow
+                          title="쿠폰 할인 금액"
+                          content={`-${couponDiscountPrice.toLocaleString()}원`}
+                        />
+                      </div>
+                    )}
+                  </div>
                   {reportPaymentDetail.reportApplicationInfo
                     .reportFeedbackApplicationId && (
-                    <PaymentInfoRow
-                      title="1:1 피드백"
-                      content={`${reportPaymentDetail.reportPaymentInfo.feedbackPriceInfo?.feedbackPrice?.toLocaleString() || 0}원`}
-                    />
-                  )}
-                  <PaymentInfoRow
-                    title={`할인 (${getDiscountPercent()}%)`}
-                    content={
-                      reportPaymentDetail.reportPaymentInfo.programDiscount ===
-                      0
-                        ? '0원'
-                        : `-${reportPaymentDetail.reportPaymentInfo.programDiscount?.toLocaleString()}원`
-                    }
-                  />
-                  <PaymentInfoRow
-                    title={`쿠폰할인`}
-                    content={
-                      getCouponDiscountPrice() === 0
-                        ? '0원'
-                        : `-${getCouponDiscountPrice().toLocaleString()}원`
-                    }
-                  />
-                  {reportPaymentDetail.tossInfo?.status ===
-                    'PARTIAL_CANCELED' && (
-                    <>
-                      <PaymentInfoRow
-                        title={`서류 진단서 (부분 환불 ${getPercent({
-                          originalPrice: getReportPrice(),
-                          changedPrice:
-                            reportPaymentDetail.reportPaymentInfo
-                              .reportRefundPrice ?? 0,
-                        })}%)`}
-                        content={
-                          !reportPaymentDetail.reportPaymentInfo
-                            .reportRefundPrice
-                            ? '0원'
-                            : `-${reportPaymentDetail.reportPaymentInfo.reportRefundPrice?.toLocaleString()}원`
-                        }
-                        subInfo={
-                          <div className="text-xs font-medium text-primary-dark">
-                            *환불 규정은{' '}
-                            <a
-                              className="underline underline-offset-2"
-                              href="https://letscareer.oopy.io/5eb0ebdd-e10c-4aa1-b28a-8bd0964eca0b"
-                              target="_blank"
-                              rel="noreferrer"
-                            >
-                              자주 묻는 질문
-                            </a>
-                            을 참고해주세요
-                          </div>
-                        }
+                    <div className="flex w-full flex-col">
+                      <ReportCreditRow
+                        title={`1:1 피드백 ${isCanceled ? '환불' : '결제'}금액`}
+                        content={`${
+                          isCanceled
+                            ? (
+                                reportPaymentDetail.reportPaymentInfo
+                                  .feedbackRefundPrice ?? 0
+                              ).toLocaleString()
+                            : feedbackDiscountedPrice.toLocaleString()
+                        }원`}
                       />
-                      {reportPaymentDetail.reportApplicationInfo
-                        .reportFeedbackApplicationId && (
-                        <PaymentInfoRow
-                          title={`1:1 피드백 (부분 환불 ${getPercent({
-                            originalPrice:
+                      {isCanceled ? (
+                        <div className="flex w-full flex-col">
+                          <ReportCreditSubRow
+                            title="결제금액"
+                            content={`${feedbackDiscountedPrice.toLocaleString()}원`}
+                          />
+                          {feedbackDiscountedPrice > 0 && (
+                            <ReportCreditSubRow
+                              title={`환불 차감 금액 (${getPercent({
+                                originalPrice: feedbackDiscountedPrice,
+                                changedPrice:
+                                  feedbackDiscountedPrice -
+                                  (reportPaymentDetail.reportPaymentInfo
+                                    .feedbackRefundPrice ?? 0),
+                              })}%)`}
+                              content={`-${(
+                                feedbackDiscountedPrice -
+                                (reportPaymentDetail.reportPaymentInfo
+                                  .feedbackRefundPrice ?? 0)
+                              ).toLocaleString()}원`}
+                            />
+                          )}
+                        </div>
+                      ) : (
+                        <div className="flex w-full flex-col">
+                          <ReportCreditSubRow
+                            title="정가"
+                            content={`${(reportPaymentDetail.reportPaymentInfo.feedbackPriceInfo?.feedbackPrice ?? 0).toLocaleString()}원`}
+                          />
+                          <ReportCreditSubRow
+                            title="할인 금액"
+                            content={`-${(
                               reportPaymentDetail.reportPaymentInfo
-                                .feedbackPriceInfo?.feedbackPrice || 0,
-                            changedPrice:
-                              reportPaymentDetail.reportPaymentInfo
-                                .feedbackRefundPrice || 0,
-                          })}%)`}
-                          content={`-${reportPaymentDetail.reportPaymentInfo.feedbackRefundPrice?.toLocaleString() || 0}원`}
-                          subInfo={
-                            <div className="text-xs font-medium text-primary-dark">
-                              *환불 규정은{' '}
-                              <a
-                                className="underline underline-offset-2"
-                                href="https://letscareer.oopy.io/5eb0ebdd-e10c-4aa1-b28a-8bd0964eca0b"
-                                target="_blank"
-                                rel="noreferrer"
-                              >
-                                자주 묻는 질문
-                              </a>
-                              을 참고해주세요
-                            </div>
-                          }
-                        />
+                                .feedbackPriceInfo?.feedbackDiscountPrice ?? 0
+                            ).toLocaleString()}원`}
+                          />
+                        </div>
                       )}
-                    </>
+                    </div>
+                  )}
+                  {isCanceled && (
+                    <div className="py-2 text-xs font-medium text-primary-dark">
+                      *환불 규정은{' '}
+                      <a
+                        className="underline underline-offset-2"
+                        href="https://letscareer.oopy.io/5eb0ebdd-e10c-4aa1-b28a-8bd0964eca0b"
+                        target="_blank"
+                        rel="noreferrer"
+                      >
+                        자주 묻는 질문
+                      </a>
+                      을 참고해주세요
+                    </div>
                   )}
                 </div>
                 <hr className="w-full border-neutral-85" />
-                <div className="flex w-full flex-col">
+                <div className="flex w-full flex-col py-3">
                   <PaymentInfoRow
                     title={
                       reportPaymentDetail.tossInfo?.status === 'CANCELED' ||

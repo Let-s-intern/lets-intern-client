@@ -10,5 +10,6 @@
     "className",
     "ngClass",
     ".+ClassName"
-  ]
+  ],
+  "editor.defaultFormatter": "esbenp.prettier-vscode"
 }

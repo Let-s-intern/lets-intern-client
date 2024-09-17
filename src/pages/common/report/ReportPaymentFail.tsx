@@ -2,11 +2,12 @@ import { useMediaQuery } from '@mui/material';
 import { useMemo } from 'react';
 import { Link } from 'react-router-dom';
 
+import ReportCreditRow from '@components/common/mypage/credit/ReportCreditRow';
+import ReportCreditSubRow from '@components/common/mypage/credit/ReportCreditSubRow';
 import {
   convertReportPriceType,
   useGetReportDetailQuery,
 } from '../../../api/report';
-import PaymentInfoRow from '../../../components/common/program/paymentSuccess/PaymentInfoRow';
 import Card from '../../../components/common/report/Card';
 import Heading1 from '../../../components/common/report/Heading1';
 import Heading2 from '../../../components/common/report/Heading2';
@@ -90,33 +91,57 @@ const ReportPaymentFail = () => {
                 {payment.amount?.toLocaleString()}원
               </div>
             </div>
-            <div className="flex w-full flex-col items-center justify-center">
-              <PaymentInfoRow
-                title={`서류 진단서 (${subTitle})`}
-                content={
-                  (payment.report + payment.option).toLocaleString() + '원'
-                }
-              />
-              {payment.isFeedbackApplied ? (
-                <PaymentInfoRow
-                  title="1:1 피드백"
-                  content={payment.feedback.toLocaleString() + '원'}
+            <div className="flex w-full flex-col items-center justify-center px-3">
+              <div className="flex w-full flex-col">
+                <ReportCreditRow
+                  title={`서류진단서 (${subTitle})`}
+                  content={
+                    (
+                      payment.report +
+                      payment.option -
+                      payment.reportDiscount -
+                      payment.optionDiscount -
+                      payment.coupon
+                    ).toLocaleString() + '원'
+                  }
                 />
-              ) : null}
-              <PaymentInfoRow
-                title={`할인  (${Math.ceil((discount / total) * 100)}%)`}
-                content={
-                  discount === 0 ? '0원' : `-${discount.toLocaleString()}원`
-                }
-              />
-              <PaymentInfoRow
-                title="쿠폰할인"
-                content={
-                  payment.coupon === 0
-                    ? '0원'
-                    : `-${payment.coupon.toLocaleString()}원`
-                }
-              />
+                <div className="flex w-full flex-col">
+                  <ReportCreditSubRow
+                    title="정가"
+                    content={`${(payment.report + payment.option).toLocaleString()}원`}
+                  />
+                  <ReportCreditSubRow
+                    title="할인 금액"
+                    content={`-${(payment.reportDiscount + payment.optionDiscount).toLocaleString()}원`}
+                  />
+                  <ReportCreditSubRow
+                    title="쿠폰 할인 금액"
+                    content={`-${payment.coupon.toLocaleString()}원`}
+                  />
+                </div>
+              </div>
+              {payment.isFeedbackApplied && (
+                <div className="flex w-full flex-col">
+                  <ReportCreditRow
+                    title={`1:1 피드백`}
+                    content={
+                      (
+                        payment.feedback - payment.feedbackDiscount
+                      ).toLocaleString() + '원'
+                    }
+                  />
+                  <div className="flex w-full flex-col">
+                    <ReportCreditSubRow
+                      title="정가"
+                      content={`${payment.feedback.toLocaleString()}원`}
+                    />
+                    <ReportCreditSubRow
+                      title="할인 금액"
+                      content={`-${payment.feedbackDiscount.toLocaleString()}원`}
+                    />
+                  </div>
+                </div>
+              )}
             </div>
             <Link
               to={paymentLink}
