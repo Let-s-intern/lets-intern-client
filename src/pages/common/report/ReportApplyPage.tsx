@@ -770,6 +770,16 @@ export const ReportPaymentSection = () => {
             </span>
           </PaymentRowSub>
         )}
+        {showFeedback && (
+          <PaymentRowSub>
+            <span>└ 1:1 피드백</span>
+            <span>
+              {payment.feedbackDiscount === 0
+                ? '0원'
+                : `-${payment.feedbackDiscount.toLocaleString()}원`}
+            </span>
+          </PaymentRowSub>
+        )}
         <PaymentRowMain className="text-primary">
           <span>쿠폰할인</span>
           <span className="font-bold">
