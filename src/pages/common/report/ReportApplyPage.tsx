@@ -737,12 +737,10 @@ export const ReportPaymentSection = () => {
           </PaymentRowSub>
         )}
         {showFeedback && (
-          <>
-            <PaymentRowMain>
-              <span>1:1 피드백</span>
-              <span>{payment.feedback.toLocaleString()}원</span>
-            </PaymentRowMain>
-          </>
+          <PaymentRowMain>
+            <span>1:1 피드백</span>
+            <span>{payment.feedback.toLocaleString()}원</span>
+          </PaymentRowMain>
         )}
         <PaymentRowMain>
           <span>
