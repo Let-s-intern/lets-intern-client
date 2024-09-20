@@ -737,10 +737,12 @@ export const ReportPaymentSection = () => {
           </PaymentRowSub>
         )}
         {showFeedback && (
-          <PaymentRowMain>
-            <span>1:1 피드백</span>
-            <span>{payment.feedback.toLocaleString()}원</span>
-          </PaymentRowMain>
+          <>
+            <PaymentRowMain>
+              <span>1:1 피드백</span>
+              <span>{payment.feedback.toLocaleString()}원</span>
+            </PaymentRowMain>
+          </>
         )}
         <PaymentRowMain>
           <span>
@@ -767,6 +769,16 @@ export const ReportPaymentSection = () => {
               {payment.optionDiscount === 0
                 ? '0원'
                 : `-${payment.optionDiscount.toLocaleString()}원`}
+            </span>
+          </PaymentRowSub>
+        )}
+        {showFeedback && (
+          <PaymentRowSub>
+            <span>└ 1:1 피드백</span>
+            <span>
+              {payment.feedbackDiscount === 0
+                ? '0원'
+                : `-${payment.feedbackDiscount.toLocaleString()}원`}
             </span>
           </PaymentRowSub>
         )}
