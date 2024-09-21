@@ -657,9 +657,6 @@ export const ReportPaymentSection = () => {
   }, [reportPriceDetail]);
 
   const showFeedback = reportApplication.isFeedbackApplied;
-  const discount =
-    payment.reportDiscount + payment.optionDiscount + payment.feedbackDiscount; // 총 할인 금액
-  const total = payment.report + payment.option + payment.feedback; // 할인 금액을 포함하지 않은 총 금액 (비싼 금액)
   const optionTitle = options.map((option) => option.title).join(', ');
   const reportAndOptionsDiscount =
     payment.reportDiscount + payment.optionDiscount; // 진단서와 옵션 할인 금액
@@ -738,7 +735,7 @@ export const ReportPaymentSection = () => {
         {options.length > 0 && (
           <PaymentRowSub>
             <span>└ {optionTitle}</span>
-            <span>{`${payment.option.toLocaleString()}원`}</span>
+            <span className="shrink-0">{`${payment.option.toLocaleString()}원`}</span>
           </PaymentRowSub>
         )}
         <PaymentRowSub>
@@ -828,7 +825,7 @@ const PaymentRowSub = ({
   return (
     <div
       className={twJoin(
-        'flex h-10 items-center justify-between pl-6 pr-3 text-xsmall14 text-neutral-50',
+        'flex h-10 items-center justify-between gap-1 pl-6 pr-3 text-xsmall14 text-neutral-50',
         className,
       )}
     >
