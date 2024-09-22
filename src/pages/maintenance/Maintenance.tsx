@@ -10,7 +10,7 @@ const Maintenance = () => {
           alt="렛츠커리어 아이콘"
         />
         <h1 className="text-neutral-black text-center text-medium22 font-semibold sm:text-medium24">
-          렛츠커리어 서버 점검 안내
+          렛츠커리어 서버점검 안내
         </h1>
         <p className="mt-2 text-center text-xsmall14 sm:text-xsmall16">
           안정적인 서비스를 제공하기 위해 아래 일정동안,
