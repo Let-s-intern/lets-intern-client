@@ -274,11 +274,15 @@ const ReportCreditDetail = () => {
                   <div className="flex w-full items-center justify-start gap-3 font-bold text-neutral-0">
                     <div>{isCanceled ? '총 환불금액' : '총 결제금액'}</div>
                     <div className="flex grow items-center justify-end">
-                      {reportPaymentDetail.tossInfo
-                        ? reportPaymentDetail.tossInfo.status !== 'DONE' &&
-                          reportPaymentDetail.tossInfo.cancels
-                          ? reportPaymentDetail.tossInfo.cancels[0].cancelAmount?.toLocaleString()
-                          : reportPaymentDetail.tossInfo.balanceAmount?.toLocaleString()
+                      {reportPaymentDetail.tossInfo &&
+                      typeof reportPaymentDetail.tossInfo.totalAmount ===
+                        'number' &&
+                      typeof reportPaymentDetail.tossInfo.balanceAmount ===
+                        'number'
+                        ? (
+                            reportPaymentDetail.tossInfo.totalAmount -
+                            reportPaymentDetail.tossInfo.balanceAmount
+                          ).toLocaleString()
                         : reportPaymentDetail.reportPaymentInfo.finalPrice?.toLocaleString()}
                       원
                     </div>
@@ -291,7 +295,7 @@ const ReportCreditDetail = () => {
                       />
                       <ReportCreditSubRow
                         title="환불 차감 금액"
-                        content={`-${(totalPayment - totalRefund).toLocaleString()}원`}
+                        content={`-${(reportPaymentDetail.tossInfo?.balanceAmount ?? 0).toLocaleString()}원`}
                       />
                     </div>
                   )}
@@ -412,6 +416,45 @@ const ReportCreditDetail = () => {
                       )}
                     </div>
                   )}
+                  {reportPaymentDetail.tossInfo &&
+                    typeof reportPaymentDetail.tossInfo.totalAmount ===
+                      'number' &&
+                    typeof reportPaymentDetail.tossInfo.balanceAmount ===
+                      'number' &&
+                    reportPaymentDetail.tossInfo.totalAmount -
+                      reportPaymentDetail.tossInfo.balanceAmount !==
+                      (reportPaymentDetail.reportPaymentInfo
+                        .reportRefundPrice ?? 0) +
+                        (reportPaymentDetail.reportPaymentInfo
+                          .feedbackRefundPrice ?? 0) && (
+                      <>
+                        <ReportCreditRow
+                          title={`관리자 환불금액`}
+                          content={`${(
+                            reportPaymentDetail.tossInfo.totalAmount -
+                            reportPaymentDetail.tossInfo.balanceAmount -
+                            (reportPaymentDetail.reportPaymentInfo
+                              .reportRefundPrice ?? 0) -
+                            (reportPaymentDetail.reportPaymentInfo
+                              .feedbackRefundPrice ?? 0)
+                          ).toLocaleString()}원`}
+                        />
+                        <div className="flex w-full flex-col">
+                          {reportPaymentDetail.tossInfo.cancels &&
+                            reportPaymentDetail.tossInfo.cancels
+                              .filter(
+                                (cancel) => cancel.cancelAmount !== totalRefund,
+                              )
+                              .map((cancel, index) => (
+                                <ReportCreditSubRow
+                                  key={index}
+                                  title={`${cancel.cancelReason}`}
+                                  content={`${(cancel.cancelAmount ?? 0).toLocaleString()}원`}
+                                />
+                              ))}
+                        </div>
+                      </>
+                    )}
                   {isCanceled && (
                     <div className="py-2 text-xs font-medium text-primary-dark">
                       *환불 규정은{' '}
