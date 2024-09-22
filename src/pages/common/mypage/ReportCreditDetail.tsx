@@ -276,9 +276,10 @@ const ReportCreditDetail = () => {
                         'number' &&
                       typeof reportPaymentDetail.tossInfo.balanceAmount ===
                         'number'
-                        ? (
-                            reportPaymentDetail.tossInfo.totalAmount -
-                            reportPaymentDetail.tossInfo.balanceAmount
+                        ? (isCanceled
+                            ? reportPaymentDetail.tossInfo.totalAmount -
+                              reportPaymentDetail.tossInfo.balanceAmount
+                            : reportPaymentDetail.tossInfo.totalAmount
                           ).toLocaleString()
                         : reportPaymentDetail.reportPaymentInfo.finalPrice?.toLocaleString()}
                       원
