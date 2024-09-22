@@ -225,6 +225,7 @@ export const paymentDetailType = z.object({
     finalPrice: z.number().nullable().optional(),
     couponDiscount: z.number().nullable().optional(),
     lastModifiedDate: z.string().nullable().optional(),
+    createDate: z.string().nullable().optional(),
   }),
   tossInfo: tossInfoType.nullable().optional(),
 });
