@@ -381,13 +381,11 @@ export const useGetReportPriceDetail = (reportId: number) => {
 };
 
 // GET /api/v1/report/active
-export const getActiveReportsSchema = z
-  .object({
-    resumeInfo: getReportDetailSchema.nullable().optional(),
-    personalStatementInfo: getReportDetailSchema.nullable().optional(),
-    portfolioInfo: getReportDetailSchema.nullable().optional(),
-  })
-  .optional();
+export const getActiveReportsSchema = z.object({
+  resumeInfo: getReportDetailSchema.nullable().optional(),
+  personalStatementInfo: getReportDetailSchema.nullable().optional(),
+  portfolioInfo: getReportDetailSchema.nullable().optional(),
+});
 
 export type ActiveReports = z.infer<typeof getActiveReportsSchema>;
 
