@@ -154,11 +154,11 @@ const CreditDelete = () => {
                 </div>
                 <div className="flex w-full flex-col">
                   <PaymentInfoRow
-                    title="참여비용"
+                    title="정가"
                     content={`${paymentDetail.priceInfo.price?.toLocaleString()}원`}
                   />
                   <PaymentInfoRow
-                    title={`할인 (${paymentDetail.priceInfo.price && paymentDetail.priceInfo.discount ? calPercent(paymentDetail.priceInfo.price, paymentDetail.priceInfo.discount) : 0}%)`}
+                    title={`할인`}
                     content={`-${paymentDetail.priceInfo.discount?.toLocaleString()}원`}
                   />
                   <PaymentInfoRow
@@ -167,7 +167,7 @@ const CreditDelete = () => {
                   />
                   {isPartialRefund() && (
                     <PaymentInfoRow
-                      title={`부분 환불 (${paymentDetail.programInfo.programType === 'CHALLENGE' ? '챌린지' : '라이브'})`}
+                      title={`환불 차감 금액 (${paymentDetail.programInfo.programType === 'CHALLENGE' ? '챌린지' : '라이브'})`}
                       content={`-${paymentDetail.tossInfo?.balanceAmount ? (paymentDetail.tossInfo.balanceAmount - getTotalRefund()).toLocaleString() : 0}원`}
                       subInfo={
                         <div className="text-xs font-medium text-primary-dark">
