@@ -18,7 +18,7 @@ const Maintenance = () => {
           <br />
           <br />
           <span className="font-bold">
-            작업시간: 2024.09.15(일) 00:00 ~ 06:00
+            작업시간: 2024.09.23(월) 00:00 ~ 06:00
           </span>
           <br />
           <br />
