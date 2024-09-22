@@ -46,7 +46,7 @@ const CreditDetail = () => {
 
       const duration = end.diff(start, 'day') + 1;
       const mid = Math.ceil(duration / 2);
-      
+
       return now.isBefore(start.add(mid, 'day'));
     } else {
       return dayjs().isBefore(dayjs(paymentDetail.programInfo.startDate));
@@ -279,7 +279,7 @@ const CreditDetail = () => {
                               paymentDetail.tossInfo?.requestedAt || '',
                             )
                         : convertDateFormat(
-                            paymentDetail.paymentInfo.lastModifiedDate || '',
+                            paymentDetail.paymentInfo.createDate || '',
                           )
                     }
                   />
