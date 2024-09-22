@@ -48,7 +48,7 @@ import NotFound from './pages/NotFound';
 import WriteReviewChallenge from './pages/WriteReviewChallenge';
 import WriteReviewLive from './pages/WriteReviewLive';
 
-const isMaintenance = true;
+const isMaintenance = false;
 
 const Router = () => {
   return (
