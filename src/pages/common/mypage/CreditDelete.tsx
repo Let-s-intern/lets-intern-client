@@ -1,3 +1,4 @@
+import ReportCreditSubRow from '@components/common/mypage/credit/ReportCreditSubRow';
 import { AxiosError } from 'axios';
 import dayjs from 'dayjs';
 import { useState } from 'react';
@@ -82,6 +83,25 @@ const CreditDelete = () => {
     return Math.max(0, refundPrice);
   };
 
+  const getTotalPayment = (): number => {
+    if (!paymentDetail) return 0;
+
+    return paymentDetail.tossInfo && paymentDetail.tossInfo.totalAmount
+      ? paymentDetail.tossInfo.totalAmount
+      : (paymentDetail.priceInfo.price ?? 0) -
+          (paymentDetail.priceInfo.discount ?? 0) -
+          (paymentDetail.paymentInfo?.couponDiscount === -1
+            ? (paymentDetail.priceInfo.price
+                ? paymentDetail.priceInfo.price
+                : 0) -
+              (paymentDetail.priceInfo.discount
+                ? paymentDetail.priceInfo.discount
+                : 0)
+            : paymentDetail.paymentInfo?.couponDiscount
+              ? paymentDetail.paymentInfo.couponDiscount
+              : 0);
+  };
+
   const isPartialRefund = (): boolean => {
     if (getRefundPercent() !== 1 && getRefundPercent() !== 0) {
       return true;
@@ -152,39 +172,29 @@ const CreditDelete = () => {
                     {getTotalRefund().toLocaleString()}원
                   </div>
                 </div>
-                <div className="flex w-full flex-col">
-                  <PaymentInfoRow
-                    title="정가"
-                    content={`${paymentDetail.priceInfo.price?.toLocaleString()}원`}
+                <div className="flex w-full flex-col px-3">
+                  <ReportCreditSubRow
+                    title="결제금액"
+                    content={getTotalPayment().toLocaleString() + '원'}
                   />
-                  <PaymentInfoRow
-                    title={`할인`}
-                    content={`-${paymentDetail.priceInfo.discount?.toLocaleString()}원`}
+                  <ReportCreditSubRow
+                    title="환불 차감 금액"
+                    content={`-${(
+                      getTotalPayment() - getTotalRefund()
+                    ).toLocaleString()}원`}
                   />
-                  <PaymentInfoRow
-                    title={`쿠폰할인`}
-                    content={`-${(paymentDetail.paymentInfo?.couponDiscount === -1 ? (paymentDetail.priceInfo.price ? paymentDetail.priceInfo.price : 0) - (paymentDetail.priceInfo.discount ? paymentDetail.priceInfo.discount : 0) : paymentDetail.paymentInfo?.couponDiscount ? paymentDetail.paymentInfo.couponDiscount : 0)?.toLocaleString()}원`}
-                  />
-                  {isPartialRefund() && (
-                    <PaymentInfoRow
-                      title={`환불 차감 금액 (${paymentDetail.programInfo.programType === 'CHALLENGE' ? '챌린지' : '라이브'})`}
-                      content={`-${paymentDetail.tossInfo?.balanceAmount ? (paymentDetail.tossInfo.balanceAmount - getTotalRefund()).toLocaleString() : 0}원`}
-                      subInfo={
-                        <div className="text-xs font-medium text-primary-dark">
-                          *환불 규정은{' '}
-                          <a
-                            className="underline underline-offset-2"
-                            href="https://letscareer.oopy.io/5eb0ebdd-e10c-4aa1-b28a-8bd0964eca0b"
-                            target="_blank"
-                            rel="noreferrer"
-                          >
-                            자주 묻는 질문
-                          </a>
-                          을 참고해주세요
-                        </div>
-                      }
-                    />
-                  )}
+                </div>
+                <div className="py-2 text-xs font-medium text-primary-dark">
+                  *환불 규정은{' '}
+                  <a
+                    className="underline underline-offset-2"
+                    href="https://letscareer.oopy.io/5eb0ebdd-e10c-4aa1-b28a-8bd0964eca0b"
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    자주 묻는 질문
+                  </a>
+                  을 참고해주세요
                 </div>
                 <hr className="w-full border-neutral-85" />
                 <div className="flex w-full flex-col">
