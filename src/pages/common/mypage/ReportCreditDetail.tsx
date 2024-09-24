@@ -171,11 +171,8 @@ const ReportCreditDetail = () => {
                         ? reportPaymentDetail.tossInfo.cancels[0].canceledAt
                           ? reportPaymentDetail.tossInfo.cancels[0].canceledAt
                           : ''
-                        : reportPaymentDetail.reportPaymentInfo
-                              ?.lastModifiedDate
-                          ? reportPaymentDetail.reportPaymentInfo
-                              .lastModifiedDate
-                          : '',
+                        : (reportPaymentDetail.reportPaymentInfo?.createDate ??
+                            ''),
                     )}
                   </div>
                 </div>
