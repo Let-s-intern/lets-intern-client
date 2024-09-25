@@ -62,6 +62,8 @@ const CreditDetail = () => {
       ? true
       : false;
 
+  const isRefunded = paymentDetail && paymentDetail.paymentInfo.isRefunded;
+
   return (
     <section
       className="flex w-full flex-col px-5 md:px-0"
@@ -92,7 +94,25 @@ const CreditDetail = () => {
         ) : (
           <>
             <div className="flex w-full flex-col items-start justify-center gap-y-6">
-              {isCanceled ? (
+              {isRefunded && (
+                <div className="flex w-full gap-2 rounded-xxs bg-neutral-90 px-4 py-3">
+                  <div className="text-sm font-semibold text-primary-dark">
+                    페이백 완료
+                  </div>
+                  <div className="flex grow items-center justify-end">
+                    {convertDateFormat(
+                      paymentDetail.tossInfo?.cancels
+                        ? paymentDetail.tossInfo.cancels[0].canceledAt
+                          ? paymentDetail.tossInfo.cancels[0].canceledAt
+                          : ''
+                        : paymentDetail.paymentInfo?.lastModifiedDate
+                          ? paymentDetail.paymentInfo.lastModifiedDate
+                          : '',
+                    )}
+                  </div>
+                </div>
+              )}
+              {isCanceled && (
                 <div className="flex w-full gap-2 rounded-xxs bg-neutral-90 px-4 py-3">
                   <div className="text-sm font-semibold text-system-error">
                     결제 취소
@@ -109,7 +129,7 @@ const CreditDetail = () => {
                     )}
                   </div>
                 </div>
-              ) : null}
+              )}
               <div className="font-semibold text-neutral-0">프로그램 정보</div>
               <div className="flex w-full items-start justify-center gap-x-4">
                 <img

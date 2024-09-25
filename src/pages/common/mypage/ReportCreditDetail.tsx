@@ -101,6 +101,9 @@ const ReportCreditDetail = () => {
       ? true
       : false;
 
+  const isRefunded =
+    reportPaymentDetail && reportPaymentDetail.reportPaymentInfo.isRefunded;
+
   const totalPayment = reportPaymentDetail
     ? getReportPrice(reportPaymentDetail.reportPaymentInfo) +
       (reportPaymentDetail.reportPaymentInfo.feedbackPriceInfo?.feedbackPrice ||
@@ -160,7 +163,27 @@ const ReportCreditDetail = () => {
         ) : (
           <>
             <div className="flex w-full flex-col items-start justify-center gap-y-6">
-              {isCanceled ? (
+              {isRefunded && (
+                <div className="flex w-full gap-2 rounded-xxs bg-neutral-90 px-4 py-3">
+                  <div className="text-sm font-semibold text-primary-dark">
+                    페이백 완료
+                  </div>
+                  <div className="flex grow items-center justify-end">
+                    {convertDateFormat(
+                      reportPaymentDetail.tossInfo?.cancels
+                        ? reportPaymentDetail.tossInfo.cancels[0].canceledAt
+                          ? reportPaymentDetail.tossInfo.cancels[0].canceledAt
+                          : ''
+                        : reportPaymentDetail.reportPaymentInfo
+                              ?.lastModifiedDate
+                          ? reportPaymentDetail.reportPaymentInfo
+                              .lastModifiedDate
+                          : '',
+                    )}
+                  </div>
+                </div>
+              )}
+              {isCanceled && (
                 <div className="flex w-full gap-2 rounded-xxs bg-neutral-90 px-4 py-3">
                   <div className="text-sm font-semibold text-system-error">
                     결제 취소
@@ -176,7 +199,7 @@ const ReportCreditDetail = () => {
                     )}
                   </div>
                 </div>
-              ) : null}
+              )}
               <div className="font-semibold text-neutral-0">결제 프로그램</div>
               <div className="flex w-full items-start justify-center gap-x-4">
                 <img
