@@ -191,6 +191,8 @@ export type PaymentType = z.infer<typeof paymentType>;
 
 export const convertPaymentStatus = (status: string) => {
   switch (status) {
+    case 'REFUNDED':
+      return '페이백완료';
     case 'DONE':
       return '결제완료';
     case 'CANCELED':
@@ -225,6 +227,8 @@ export const paymentDetailType = z.object({
     id: z.number().nullable().optional(),
     finalPrice: z.number().nullable().optional(),
     couponDiscount: z.number().nullable().optional(),
+    isRefunded: z.boolean().nullable().optional(),
+    createDate: z.string().nullable().optional(),
     lastModifiedDate: z.string().nullable().optional(),
     createDate: z.string().nullable().optional(),
   }),
