@@ -1,4 +1,3 @@
-import ReportCreditRow from '@components/common/mypage/credit/ReportCreditRow';
 import ReportCreditSubRow from '@components/common/mypage/credit/ReportCreditSubRow';
 import dayjs from 'dayjs';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -63,6 +62,36 @@ const CreditDetail = () => {
       : false;
 
   const isRefunded = paymentDetail && paymentDetail.paymentInfo.isRefunded;
+
+  const getTotalPayment = (): number => {
+    if (!paymentDetail) return 0;
+
+    return paymentDetail.tossInfo && paymentDetail.tossInfo.totalAmount
+      ? paymentDetail.tossInfo.totalAmount
+      : (paymentDetail.priceInfo.price ?? 0) -
+          (paymentDetail.priceInfo.discount ?? 0) -
+          (paymentDetail.paymentInfo?.couponDiscount === -1
+            ? (paymentDetail.priceInfo.price
+                ? paymentDetail.priceInfo.price
+                : 0) -
+              (paymentDetail.priceInfo.discount
+                ? paymentDetail.priceInfo.discount
+                : 0)
+            : paymentDetail.paymentInfo?.couponDiscount
+              ? paymentDetail.paymentInfo.couponDiscount
+              : 0);
+  };
+
+  const getTotalRefund = (): number => {
+    if (!paymentDetail) return 0;
+
+    return paymentDetail.tossInfo &&
+      typeof paymentDetail.tossInfo.totalAmount === 'number' &&
+      typeof paymentDetail.tossInfo.balanceAmount === 'number'
+      ? paymentDetail.tossInfo.totalAmount -
+          paymentDetail.tossInfo.balanceAmount
+      : 0;
+  };
 
   return (
     <section
@@ -245,88 +274,37 @@ const CreditDetail = () => {
                   </div>
                 </div>
                 <div className="flex w-full flex-col px-3">
-                  <div className="flex w-full flex-col">
-                    <ReportCreditRow
-                      title="결제금액"
-                      content={
-                        (paymentDetail.tossInfo &&
-                        paymentDetail.tossInfo.totalAmount
-                          ? paymentDetail.tossInfo.totalAmount
-                          : (
-                              (paymentDetail.priceInfo.price ?? 0) -
-                              (paymentDetail.priceInfo.discount ?? 0) -
-                              (paymentDetail.paymentInfo?.couponDiscount === -1
-                                ? (paymentDetail.priceInfo.price
-                                    ? paymentDetail.priceInfo.price
-                                    : 0) -
-                                  (paymentDetail.priceInfo.discount
-                                    ? paymentDetail.priceInfo.discount
-                                    : 0)
-                                : paymentDetail.paymentInfo?.couponDiscount
-                                  ? paymentDetail.paymentInfo.couponDiscount
-                                  : 0)
-                            ).toLocaleString()
-                        ).toLocaleString() + '원'
-                      }
-                    />
-                    <div className="flex w-full flex-col">
-                      <ReportCreditSubRow
-                        title="정가"
-                        content={`${paymentDetail.priceInfo.price?.toLocaleString()}원`}
-                      />
-                      <ReportCreditSubRow
-                        title={`할인`}
-                        content={`-${paymentDetail.priceInfo.discount?.toLocaleString()}원`}
-                      />
-                      <ReportCreditSubRow
-                        title={`쿠폰할인`}
-                        content={`-${(paymentDetail.paymentInfo?.couponDiscount === -1 ? (paymentDetail.priceInfo.price ? paymentDetail.priceInfo.price : 0) - (paymentDetail.priceInfo.discount ? paymentDetail.priceInfo.discount : 0) : paymentDetail.paymentInfo?.couponDiscount ? paymentDetail.paymentInfo.couponDiscount : 0)?.toLocaleString()}원`}
-                      />
-                    </div>
-                  </div>
+                  <ReportCreditSubRow
+                    title="결제금액"
+                    content={getTotalPayment().toLocaleString() + '원'}
+                  />
                   {isCanceled && (
-                    <div className="flex w-full flex-col">
-                      <ReportCreditRow
-                        title="환불금액"
-                        content={
-                          (paymentDetail.tossInfo &&
-                          typeof paymentDetail.tossInfo.totalAmount ===
-                            'number' &&
-                          typeof paymentDetail.tossInfo.balanceAmount ===
-                            'number'
-                            ? paymentDetail.tossInfo.totalAmount -
-                              paymentDetail.tossInfo.balanceAmount
-                            : 0
-                          ).toLocaleString() + '원'
-                        }
-                      />
+                    <>
                       <div className="flex w-full flex-col">
-                        {paymentDetail.tossInfo?.cancels &&
-                          paymentDetail.tossInfo.cancels.map(
-                            (cancel, index) => (
-                              <ReportCreditSubRow
-                                key={index}
-                                title={`${cancel.cancelReason === '고객이 취소를 원함' ? (cancel.cancelAmount === paymentDetail.tossInfo?.totalAmount ? '전액 환불' : `부분 환불 (${paymentDetail.programInfo.programType === 'CHALLENGE' ? '챌린지' : '라이브'})`) : cancel.cancelReason}`}
-                                content={`${cancel.cancelAmount?.toLocaleString()}원`}
-                              />
-                            ),
-                          )}
+                        <ReportCreditSubRow
+                          title={`환불 차감 금액${paymentDetail.tossInfo?.cancels && paymentDetail.tossInfo.cancels.find((cancel) => cancel.cancelReason === '페이백') ? ' (페이백 포함)' : ''}`}
+                          content={
+                            '-' +
+                            (
+                              getTotalPayment() - getTotalRefund()
+                            ).toLocaleString() +
+                            '원'
+                          }
+                        />
                       </div>
-                    </div>
-                  )}
-                  {isCanceled && (
-                    <div className="py-2 text-xs font-medium text-primary-dark">
-                      *환불 규정은{' '}
-                      <a
-                        className="underline underline-offset-2"
-                        href="https://letscareer.oopy.io/5eb0ebdd-e10c-4aa1-b28a-8bd0964eca0b"
-                        target="_blank"
-                        rel="noreferrer"
-                      >
-                        자주 묻는 질문
-                      </a>
-                      을 참고해주세요
-                    </div>
+                      <div className="py-2 text-xs font-medium text-primary-dark">
+                        *환불 규정은{' '}
+                        <a
+                          className="underline underline-offset-2"
+                          href="https://letscareer.oopy.io/5eb0ebdd-e10c-4aa1-b28a-8bd0964eca0b"
+                          target="_blank"
+                          rel="noreferrer"
+                        >
+                          자주 묻는 질문
+                        </a>
+                        을 참고해주세요
+                      </div>
+                    </>
                   )}
                 </div>
                 <hr className="w-full border-neutral-85" />
