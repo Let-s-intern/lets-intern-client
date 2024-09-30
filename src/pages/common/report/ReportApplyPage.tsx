@@ -657,10 +657,12 @@ export const ReportPaymentSection = () => {
   }, [reportPriceDetail]);
 
   const showFeedback = reportApplication.isFeedbackApplied;
-  const discount =
-    payment.reportDiscount + payment.optionDiscount + payment.feedbackDiscount;
-  const total = payment.report + payment.option + payment.feedback;
   const optionTitle = options.map((option) => option.title).join(', ');
+  const reportAndOptionsDiscount =
+    payment.reportDiscount + payment.optionDiscount; // 진단서와 옵션 할인 금액
+  const reportAndOptionsAmount =
+    payment.report + payment.option - reportAndOptionsDiscount; // 진단서와 옵션 결제 금액
+  const feedbackAmount = payment.feedback - payment.feedbackDiscount; // 1:1 피드백 결제 금액
 
   return (
     <section className="flex flex-col">
@@ -721,8 +723,8 @@ export const ReportPaymentSection = () => {
       <hr className="my-5" />
       <div className="flex flex-col">
         <PaymentRowMain>
-          <span>서류 진단서</span>
-          <span>{(payment.report + payment.option).toLocaleString()}원</span>
+          <span>서류 진단서 결제금액</span>
+          <span>{reportAndOptionsAmount.toLocaleString()}원</span>
         </PaymentRowMain>
         <PaymentRowSub>
           <span>
@@ -733,43 +735,49 @@ export const ReportPaymentSection = () => {
         {options.length > 0 && (
           <PaymentRowSub>
             <span>└ {optionTitle}</span>
-            <span>{`${payment.option.toLocaleString()}원`}</span>
+            <span className="shrink-0">{`${payment.option.toLocaleString()}원`}</span>
           </PaymentRowSub>
         )}
-        {showFeedback && (
-          <PaymentRowMain>
-            <span>1:1 피드백</span>
-            <span>{payment.feedback.toLocaleString()}원</span>
-          </PaymentRowMain>
-        )}
-        <PaymentRowMain>
-          <span>
-            {total === 0 ? 0 : Math.ceil((discount / total) * 100)}% 할인
-          </span>
-          <span>
-            {discount === 0 ? '0원' : `-${discount.toLocaleString()}원`}
-          </span>
-        </PaymentRowMain>
         <PaymentRowSub>
           <span>
-            └ {convertReportPriceType(reportApplication.reportPriceType)}
+            └{' '}
+            {Math.ceil(
+              (reportAndOptionsDiscount / (payment.report + payment.option)) *
+                100,
+            )}
+            % 할인
           </span>
           <span>
-            {payment.reportDiscount === 0
+            {reportAndOptionsDiscount === 0
               ? '0원'
-              : `-${payment.reportDiscount.toLocaleString()}원`}
+              : `-${reportAndOptionsDiscount.toLocaleString()}원`}
           </span>
         </PaymentRowSub>
-        {options.length > 0 && (
-          <PaymentRowSub>
-            <span>└ {optionTitle}</span>
-            <span>
-              {payment.optionDiscount === 0
-                ? '0원'
-                : `-${payment.optionDiscount.toLocaleString()}원`}
-            </span>
-          </PaymentRowSub>
+        {showFeedback && (
+          <>
+            <PaymentRowMain>
+              <span>1:1 피드백 결제금액</span>
+              <span>{feedbackAmount.toLocaleString()}원</span>
+            </PaymentRowMain>
+            <PaymentRowSub>
+              <span>└ 정가</span>
+              <span>{`${payment.feedback.toLocaleString()}원`}</span>
+            </PaymentRowSub>
+            <PaymentRowSub>
+              <span>
+                └{' '}
+                {Math.ceil((payment.feedbackDiscount / payment.feedback) * 100)}
+                % 할인
+              </span>
+              <span>
+                {payment.feedbackDiscount === 0
+                  ? '0원'
+                  : `-${payment.feedbackDiscount.toLocaleString()}원`}
+              </span>
+            </PaymentRowSub>
+          </>
         )}
+
         <PaymentRowMain className="text-primary">
           <span>쿠폰할인</span>
           <span className="font-bold">
@@ -817,7 +825,7 @@ const PaymentRowSub = ({
   return (
     <div
       className={twJoin(
-        'flex h-10 items-center justify-between pl-6 pr-3 text-xsmall14 text-neutral-50',
+        'flex h-10 items-center justify-between gap-1 pl-6 pr-3 text-xsmall14 text-neutral-50',
         className,
       )}
     >

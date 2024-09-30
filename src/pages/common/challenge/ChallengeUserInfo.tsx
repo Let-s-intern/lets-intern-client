@@ -191,7 +191,6 @@ const ChallengeUserInfo = () => {
             </div>
           </div>
         </section>
-
         <button
           className="rounded-md bg-primary px-4 py-3 font-medium text-white disabled:bg-neutral-60"
           onClick={handleSubmit}

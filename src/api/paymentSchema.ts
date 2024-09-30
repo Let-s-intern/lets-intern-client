@@ -12,6 +12,7 @@ export const programInfoType = z.object({
   price: z.number().nullable().optional(),
   isCanceled: z.boolean().nullable().optional(),
   isRefunded: z.boolean().nullable().optional(),
+  createDate: z.string().nullable().optional(),
 });
 
 // CardInfo schema
@@ -230,6 +231,7 @@ export const paymentDetailType = z.object({
     isRefunded: z.boolean().nullable().optional(),
     createDate: z.string().nullable().optional(),
     lastModifiedDate: z.string().nullable().optional(),
+    createDate: z.string().nullable().optional(),
   }),
   tossInfo: tossInfoType.nullable().optional(),
 });

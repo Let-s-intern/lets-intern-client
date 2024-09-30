@@ -328,7 +328,7 @@ const CreditDetail = () => {
                               paymentDetail.tossInfo?.requestedAt || '',
                             )
                         : convertDateFormat(
-                            paymentDetail.paymentInfo.lastModifiedDate || '',
+                            paymentDetail.paymentInfo.createDate || '',
                           )
                     }
                   />
