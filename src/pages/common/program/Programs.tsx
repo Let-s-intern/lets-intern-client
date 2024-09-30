@@ -39,8 +39,6 @@ const initialPageInfo = {
   totalElements: 0,
   totalPages: 0,
 };
-const ERROR_MESSAGE =
-  "프로그램 조회 중 오류가 발생했습니다.\n새로고침 후에도 문제가 지속되면 아래 '채팅문의'를 통해 문의해주세요.";
 
 const Programs = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -252,10 +250,6 @@ const Programs = () => {
       return () => clearTimeout(timer);
     }
   }, [loading]);
-
-  useEffect(() => {
-    if (isError) alert(ERROR_MESSAGE);
-  }, [isError]);
 
   return (
     <div className={clsx('flex', { 'overflow-hidden': isOpen })}>
