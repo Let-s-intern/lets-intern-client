@@ -229,7 +229,6 @@ export const paymentDetailType = z.object({
     finalPrice: z.number().nullable().optional(),
     couponDiscount: z.number().nullable().optional(),
     isRefunded: z.boolean().nullable().optional(),
-    createDate: z.string().nullable().optional(),
     lastModifiedDate: z.string().nullable().optional(),
     createDate: z.string().nullable().optional(),
   }),
