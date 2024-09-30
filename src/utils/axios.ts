@@ -1,5 +1,8 @@
+import { Limiter } from '@/lib/Limiter';
 import Axios, { AxiosError } from 'axios';
 import useAuthStore from '../store/useAuthStore';
+
+const limiter = new Limiter();
 
 const reissuer = Axios.create({
   baseURL: import.meta.env.VITE_SERVER_API,
@@ -54,13 +57,17 @@ axios.interceptors.response.use(
       }
 
       try {
-        const res = await reissuer.patch('/user/token', { refreshToken });
-        useAuthStore.setState({
-          accessToken: res.data.data.accessToken,
-          refreshToken: res.data.data.refreshToken,
-          isLoggedIn: true,
-        });
-        return axios(originalRequest);
+        if (limiter.check()) {
+          const res = await reissuer.patch('/user/token', { refreshToken });
+          useAuthStore.setState({
+            accessToken: res.data.data.accessToken,
+            refreshToken: res.data.data.refreshToken,
+            isLoggedIn: true,
+          });
+          return axios(originalRequest);
+        } else {
+          return Promise.reject(error);
+        }
       } catch (error) {
         useAuthStore.setState({
           accessToken: undefined,
