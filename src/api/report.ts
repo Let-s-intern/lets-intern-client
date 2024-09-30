@@ -912,6 +912,7 @@ const reportPaymentInfoSchema = z.object({
       feedbackDiscountPrice: z.number().nullable().optional(),
     })
     .nullable(),
+  isRefunded: z.boolean(),
   createDate: z.string(),
   lastModifiedDate: z.string(),
 });
