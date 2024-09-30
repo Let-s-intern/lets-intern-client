@@ -52,6 +52,7 @@ function createMockPaymentInfo({
       finalPrice: 100000,
       couponDiscount: coupon ? 50000 : null,
       createDate: '2024-09-07T10:00:00Z',
+      isRefunded: false,
       lastModifiedDate: '2024-09-07T12:00:00Z', // unused
       feedbackRefundPrice: -1, // unused
       reportRefundPrice: -1, // unused
