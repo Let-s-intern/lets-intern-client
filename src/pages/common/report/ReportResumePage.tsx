@@ -2,7 +2,7 @@ import { useServerActiveReports } from '@/context/ActiveReports';
 import { resumeReportDescription } from '@/data/description';
 import useReportApplicationStore from '@/store/useReportApplicationStore';
 import { getBaseUrlFromServer, getReportLandingTitle } from '@/utils/url';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Helmet } from 'react-helmet';
 import { useGetActiveReports } from '../../../api/report';
 import LexicalContent from '../../../components/common/blog/LexicalContent';
@@ -27,8 +27,9 @@ const ReportResumePage = () => {
 
   const { initReportApplication } = useReportApplicationStore();
 
-  const contentRef = useRef<HTMLDivElement | null>();
-  const bottomSheetRef = useRef<HTMLDivElement | null>(null);
+  const contentRef = useRef<HTMLDivElement>(null);
+  // const bottomSheetRef = useRef<HTMLDivElement | null>(null);
+  const [showBottomSheet, setShowBottomSheet] = useState(false);
 
   useEffect(() => {
     initReportApplication();
@@ -36,13 +37,18 @@ const ReportResumePage = () => {
     if (contentRef.current) {
       const observer = new IntersectionObserver(
         (entries) => {
-          entries.forEach((entry) => {
-            if (bottomSheetRef.current) {
-              bottomSheetRef.current.style.display = entry.isIntersecting
-                ? 'block'
-                : 'none';
-            }
-          });
+          // entries.forEach((entry) => {
+          //   if (bottomSheetRef.current) {
+          //     bottomSheetRef.current.style.display = entry.isIntersecting
+          //       ? 'block'
+          //       : 'none';
+          //   }
+          // });
+
+          const entry = entries[0];
+          if (entry) {
+            setShowBottomSheet(entry.isIntersecting);
+          }
         },
         {
           root: null,
@@ -55,13 +61,8 @@ const ReportResumePage = () => {
         observer.disconnect();
       };
     }
-
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  useEffect(() => {
-    console.log(root);
-  }, [root]);
 
   return (
     <>
@@ -84,21 +85,22 @@ const ReportResumePage = () => {
       <ReportLandingIntroSection header={<ReportHeader />} />
       <div
         id="content"
-        ref={(element) => {
-          contentRef.current = element;
-          if (element) {
-            const url = new URL(window.location.href);
+        ref={contentRef}
+        // ref={(element) => {
+        //   contentRef.current = element;
+        //   if (element) {
+        //     const url = new URL(window.location.href);
 
-            const from = url.searchParams.get('from');
-            if (!from) {
-              return;
-            }
+        //     const from = url.searchParams.get('from');
+        //     if (!from) {
+        //       return;
+        //     }
 
-            if (from === 'nav') {
-              element.scrollIntoView();
-            }
-          }
-        }}
+        //     if (from === 'nav') {
+        //       element.scrollIntoView();
+        //     }
+        //   }
+        // }}
       >
         <ReportLandingNav />
 
@@ -109,9 +111,10 @@ const ReportResumePage = () => {
         )}
       </div>
 
-      {report ? (
-        <ReportApplyBottomSheet report={report} ref={bottomSheetRef} />
-      ) : null}
+      {report && showBottomSheet ? (
+        <ReportApplyBottomSheet report={report} />
+      ) : // <ReportApplyBottomSheet report={report} ref={bottomSheetRef} />
+      null}
     </>
   );
 };
