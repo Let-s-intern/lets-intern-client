@@ -40,7 +40,7 @@ const initialPageInfo = {
   totalPages: 0,
 };
 const ERROR_MESSAGE =
-  "프로그램 조회 중 오류가 발생했습니다.\n문제가 지속되면 아래 '채팅문의'를 통해 문의해주세요.";
+  "프로그램 조회 중 오류가 발생했습니다.\n새로고침 후에도 문제가 지속되면 아래 '채팅문의'를 통해 문의해주세요.";
 
 const Programs = () => {
   const [searchParams, setSearchParams] = useSearchParams();
