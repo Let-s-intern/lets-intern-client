@@ -38,7 +38,7 @@ const TopBanner = () => {
 
   return isShow ? (
     <section
-      className="band_banner cursor-pointer bg-neutral-0 py-3 md:px-5"
+      className="band_banner fixed top-[3.75rem] z-30 w-screen cursor-pointer bg-neutral-0 py-3 md:top-[4.375rem] md:px-5 lg:top-[4.75rem]"
       style={{
         backgroundColor: data?.colorCode,
         color: data?.textColorCode,
