@@ -11,9 +11,7 @@ const KakaoChannel = () => {
     window.Kakao.Channel.followChannel({
       channelPublicId: '_tCeHG',
     })
-      .then((response: any) => {
-        console.log('채널 추가 성공');
-      })
+      .then((response: any) => {})
       .catch((error: any) => {
         console.log(error);
       });
