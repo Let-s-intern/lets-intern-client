@@ -4,6 +4,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 
 import useAuthStore from '../../../../../store/useAuthStore';
 import axios from '../../../../../utils/axios';
+import KakaoChannel from './KakaoChannel';
 import NavItem from './NavItem';
 import SideNavItem from './SideNavItem';
 
@@ -168,6 +169,7 @@ const NavBar = () => {
         </div>
         <hr />
         <div className="flex flex-col gap-5 py-10">
+          <KakaoChannel />
           <div className="mx-5 flex justify-between">
             {isLoggedIn ? (
               <span className="flex w-full items-center justify-between gap-4 text-neutral-0 sm:p-0">
