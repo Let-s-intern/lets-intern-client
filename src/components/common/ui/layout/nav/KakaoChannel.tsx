@@ -26,7 +26,9 @@ const KakaoChannel = () => {
         onClick={onClickAddChannel}
       >
         <img src="/images/kakao_channel.png" alt="카카오 채널 추가" />
-        <p className="font-medium">채널 추가하고, 프로그램 모집 알림 받기</p>
+        <p className="break-keep font-medium">
+          채널 추가하고, 프로그램 모집 알림 받기
+        </p>
       </button>
     </div>
   );
