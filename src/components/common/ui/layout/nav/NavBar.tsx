@@ -147,7 +147,7 @@ const NavBar = () => {
       ></div>
       {/* 사이드 네비게이션 바 */}
       <div
-        className={`fixed right-0 top-0 z-50 h-screen w-full bg-white shadow-md transition-all duration-300 sm:w-80 ${
+        className={`fixed right-0 top-0 z-50 h-screen w-full bg-white shadow-md transition-all duration-300 sm:w-[22rem] ${
           isOpen ? 'translate-x-0' : 'translate-x-full'
         }`}
       >
