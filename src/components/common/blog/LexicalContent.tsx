@@ -129,13 +129,12 @@ const LexicalContent = ({ node }: { node: SerializedLexicalNode }) => {
     }
     case 'link': {
       const _node = node as SerializedLinkNode;
+      const origin = window.location.origin;
 
       return (
         <a
           href={_node.url}
-          target={
-            _node.url.includes(window.location.origin) ? '_self' : '_blank'
-          }
+          target={_node.url.includes(origin) ? '_self' : '_blank'}
           rel="noreferrer"
           className="text-system-positive-blue hover:underline"
         >
