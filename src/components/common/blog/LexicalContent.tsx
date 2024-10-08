@@ -133,7 +133,9 @@ const LexicalContent = ({ node }: { node: SerializedLexicalNode }) => {
       return (
         <a
           href={_node.url}
-          target={_node.url.includes(location.origin) ? '_self' : '_blank'}
+          target={
+            _node.url.includes(window.location.origin) ? '_self' : '_blank'
+          }
           rel="noreferrer"
           className="text-system-positive-blue hover:underline"
         >
