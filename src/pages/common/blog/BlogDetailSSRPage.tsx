@@ -154,8 +154,10 @@ const BlogDetailSSRPage = () => {
 
   const clickCtaButton = () => {
     let ctaLink = blog.blogDetailInfo.ctaLink;
-    const open = window.open(); // 이슈: iOS에서 비동기 함수 내의 window.open() 차단
+    // [이슈] iOS에서 비동기 함수 내의 window.open() 차단 이슈로 open() 함수를 미리 선언
+    const open = window.open('', '_self');
 
+    // 모집 중인 챌린지 상세 페이지로 이동
     if (ctaLink!.startsWith('latest:')) {
       const keyword = ctaLink!.split('latest:')[1].trim();
       findProgramIncludingKeyword(keyword).then((program) => {
@@ -167,7 +169,10 @@ const BlogDetailSSRPage = () => {
         open?.location.assign(ctaLink);
       });
     } else {
-      open?.location.assign(ctaLink!);
+      window.open(
+        ctaLink!,
+        ctaLink?.includes(window.location.origin) ? '_self' : '_blank',
+      );
     }
   };
 

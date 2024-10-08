@@ -129,10 +129,13 @@ const LexicalContent = ({ node }: { node: SerializedLexicalNode }) => {
     }
     case 'link': {
       const _node = node as SerializedLinkNode;
+      const origin = 'https://www.letscareer.co.kr'; // SSR으로 window 객체 사용 불가
 
       return (
         <a
           href={_node.url}
+          target={_node.url.includes(origin) ? '_self' : '_blank'}
+          rel="noreferrer"
           className="text-system-positive-blue hover:underline"
         >
           {_node.children.map((child, childIndex) => (
