@@ -1,3 +1,4 @@
+import { GoArrowRight } from 'react-icons/go';
 import { Link } from 'react-router-dom';
 
 import { useBlogListQuery } from '@/api/blog';
@@ -12,7 +13,16 @@ const ReviewSection = () => {
 
   return (
     <section className="px-5">
-      <Heading>생생한 참여 후기</Heading>
+      <div className="flex items-center justify-between">
+        <Heading>생생한 참여 후기</Heading>
+        <Link
+          className="flex cursor-pointer items-center gap-1 text-neutral-40"
+          to="/blog/list"
+        >
+          <span>더보기</span>
+          <GoArrowRight size={20} />
+        </Link>
+      </div>
       <div className="custom-scrollbar mt-6 flex w-full flex-col flex-nowrap gap-4 overflow-x-auto md:w-auto md:flex-row">
         {data?.blogInfos?.map(({ blogThumbnailInfo }) => (
           <Link
