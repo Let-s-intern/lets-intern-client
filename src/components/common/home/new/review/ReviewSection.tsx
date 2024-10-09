@@ -6,9 +6,25 @@ import { getBlogPathname } from '@/utils/url';
 import Heading from '../ui/Heading';
 
 const ReviewSection = () => {
-  const { data } = useBlogListQuery({
+  const { data: programReviewsData } = useBlogListQuery({
     pageable: { page: 1, size: 5 },
-    type: ['PROGRAM_REVIEWS', 'JOB_SUCCESS_STORIES'],
+    type: 'PROGRAM_REVIEWS',
+  });
+  const { data: jobSuccessStoriesData } = useBlogListQuery({
+    pageable: { page: 1, size: 5 },
+    type: 'JOB_SUCCESS_STORIES',
+  });
+
+  const data = [
+    ...(programReviewsData?.blogInfos ?? []),
+    ...(jobSuccessStoriesData?.blogInfos ?? []),
+  ].toSorted((a, b) => {
+    const displayDateA = a.blogThumbnailInfo.displayDate ?? '';
+    const displayDateB = b.blogThumbnailInfo.displayDate ?? '';
+
+    if (displayDateA > displayDateB) return -1;
+    if (displayDateA < displayDateB) return 1;
+    return 0;
   });
 
   return (
@@ -24,7 +40,7 @@ const ReviewSection = () => {
         </Link>
       </div>
       <div className="custom-scrollbar mt-6 flex w-full flex-col flex-nowrap gap-4 overflow-x-auto md:w-auto md:flex-row">
-        {data?.blogInfos?.map(({ blogThumbnailInfo }) => (
+        {data.slice(0, 5).map(({ blogThumbnailInfo }) => (
           <Link
             to={getBlogPathname(blogThumbnailInfo)}
             key={blogThumbnailInfo.id}
