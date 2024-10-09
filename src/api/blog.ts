@@ -23,15 +23,17 @@ const blogRatingQueryKey = 'blogRatingQueryKey';
 
 interface BlogQueryParams {
   pageable: IPageable;
-  type?: string | null;
+  type?: string[];
   tagId?: number | null;
 }
 
-export const useBlogListQuery = ({ pageable }: BlogQueryParams) => {
+export const useBlogListQuery = ({ pageable, type = [] }: BlogQueryParams) => {
+  const typeQuery = type.map((item) => `type=${item}`).join('&');
+
   return useQuery({
     queryKey: [blogListQueryKey, pageable],
     queryFn: async () => {
-      const res = await axios.get(`/blog`, { params: pageable });
+      const res = await axios.get(`/blog?${typeQuery}`, { params: pageable });
       return blogListSchema.parse(res.data.data);
     },
   });
@@ -212,7 +214,6 @@ export const useBlogRatingListQuery = (pageable: IPageable) => {
 
 export const usePostBlogRatingMutation = ({
   successCallback,
-  errorCallback,
 }: {
   successCallback?: () => void;
   errorCallback?: () => void;
