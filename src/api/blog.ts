@@ -23,7 +23,7 @@ const blogRatingQueryKey = 'blogRatingQueryKey';
 
 interface BlogQueryParams {
   pageable: IPageable;
-  type?: string;
+  type?: string | null;
   tagId?: number | null;
 }
 
