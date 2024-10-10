@@ -141,7 +141,7 @@ const CreditDetail = () => {
                   </div>
                 </div>
               )}
-              {isCanceled && (
+              {!isRefunded && isCanceled && (
                 <div className="flex w-full gap-2 rounded-xxs bg-neutral-90 px-4 py-3">
                   <div className="text-sm font-semibold text-system-error">
                     결제 취소
@@ -282,7 +282,7 @@ const CreditDetail = () => {
                     <>
                       <div className="flex w-full flex-col">
                         <ReportCreditSubRow
-                          title={`환불 차감 금액${paymentDetail.tossInfo?.cancels && paymentDetail.tossInfo.cancels.find((cancel) => cancel.cancelReason === '페이백') ? ' (페이백 포함)' : ''}`}
+                          title={`환불 차감 금액${paymentDetail.tossInfo?.cancels && paymentDetail.tossInfo.cancels.find((cancel) => cancel.cancelReason === '챌린지 페이백') ? ' (페이백 포함)' : ''}`}
                           content={
                             '-' +
                             (
