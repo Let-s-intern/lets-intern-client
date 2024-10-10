@@ -74,6 +74,10 @@ export const useAdminMissionsOfCurrentChallenge = () => {
   );
 };
 
+export const useAdminChallengeTitle = () => {
+  return useContext(currentChallengeContext).currentChallenge?.title ?? '';
+};
+
 /** TODO: [나중에...] queryKey 방식으로 수정 */
 export const useMissionsOfCurrentChallengeRefetch = () => {
   return useContext(currentChallengeContext).missionsOfCurrentChallengeRefetch;
