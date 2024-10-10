@@ -192,7 +192,7 @@ export type PaymentType = z.infer<typeof paymentType>;
 export const convertPaymentStatus = (status: string) => {
   switch (status) {
     case 'REFUNDED':
-      return '페이백완료';
+      return '페이백 완료';
     case 'DONE':
       return '결제완료';
     case 'CANCELED':
