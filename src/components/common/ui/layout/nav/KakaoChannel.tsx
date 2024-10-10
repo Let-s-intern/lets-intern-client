@@ -18,17 +18,15 @@ const KakaoChannel = () => {
   };
 
   return (
-    <div className="w-full px-1.5 py-2">
-      <button
-        className="flex w-full items-center justify-center gap-x-3 rounded-md bg-[#FEE500] px-6 py-3"
-        onClick={onClickAddChannel}
-      >
-        <img src="/images/kakao_channel.png" alt="카카오 채널 추가" />
-        <p className="break-keep font-medium">
-          채널 추가하고, 프로그램 모집 알림 받기
-        </p>
-      </button>
-    </div>
+    <button
+      className="flex w-full items-center justify-center gap-x-3 bg-[#FEE500] px-6 py-3"
+      onClick={onClickAddChannel}
+    >
+      <img src="/images/kakao_channel.png" alt="카카오 채널 추가" />
+      <p className="break-keep font-medium">
+        채널 추가하고, 프로그램 모집 알림 받기
+      </p>
+    </button>
   );
 };
 
