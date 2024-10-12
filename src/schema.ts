@@ -354,9 +354,9 @@ export type CreateLiveReq = {
     priceInfo: {
       price: number;
       discount: number;
-      accountNumber: string;
-      deadline: string; // "2024-10-12T06:48:27.339"
-      accountType: AccountType;
+      accountNumber?: string;
+      deadline?: string; // "2024-10-12T06:48:27.339"
+      accountType?: AccountType;
     };
     livePriceType: LivePriceType;
   };
