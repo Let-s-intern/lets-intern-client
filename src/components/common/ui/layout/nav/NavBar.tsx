@@ -4,6 +4,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 
 import useAuthStore from '../../../../../store/useAuthStore';
 import axios from '../../../../../utils/axios';
+import KakaoChannel from './KakaoChannel';
 import NavItem from './NavItem';
 import SideNavItem from './SideNavItem';
 
@@ -146,7 +147,7 @@ const NavBar = () => {
       ></div>
       {/* 사이드 네비게이션 바 */}
       <div
-        className={`fixed right-0 top-0 z-50 h-screen w-full bg-white shadow-md transition-all duration-300 sm:w-80 ${
+        className={`fixed right-0 top-0 z-50 h-screen w-full bg-white shadow-md transition-all duration-300 sm:w-[22rem] ${
           isOpen ? 'translate-x-0' : 'translate-x-full'
         }`}
       >
@@ -167,6 +168,7 @@ const NavBar = () => {
           </i>
         </div>
         <hr />
+        <KakaoChannel />
         <div className="flex flex-col gap-5 py-10">
           <div className="mx-5 flex justify-between">
             {isLoggedIn ? (
