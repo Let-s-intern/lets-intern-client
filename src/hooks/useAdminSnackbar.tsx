@@ -1,5 +1,5 @@
 import { Snackbar } from '@mui/material';
-import { createContext, useContext, useState } from 'react';
+import { createContext, useCallback, useContext, useState } from 'react';
 
 type SnackBarState = {
   open: boolean;
@@ -24,9 +24,9 @@ export const AdminSnackbarProvider: React.FC<{
     message: '',
   });
 
-  const setMessage = (message: string) => {
+  const setMessage = useCallback((message: string) => {
     setSnackbarState({ open: true, message });
-  };
+  }, []);
 
   return (
     <adminSnackbarContext.Provider value={{ snackbar: setMessage }}>

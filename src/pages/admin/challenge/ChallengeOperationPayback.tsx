@@ -1,4 +1,5 @@
-import { Button, Snackbar, Switch } from '@mui/material';
+import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
+import { Button, Switch } from '@mui/material';
 import {
   DataGrid,
   GridColDef,
@@ -8,7 +9,7 @@ import {
 } from '@mui/x-data-grid';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import dayjs from 'dayjs';
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 import { z } from 'zod';
 import {
@@ -181,6 +182,7 @@ function Toolbar({ onMakeRefundedClick }: ToolbarPropsOverrides) {
 const ChallengeOperationPayback = () => {
   const params = useParams();
   const challengeId = params.programId;
+  const { snackbar: setSnackbar } = useAdminSnackbar();
 
   const { data: paybackRes, refetch } = useQuery({
     queryKey: ['admin', 'challenge', challengeId, 'participants'],
@@ -240,11 +242,6 @@ const ChallengeOperationPayback = () => {
     );
   }, [paybackRes?.missionApplications]);
 
-  const [snackbar, setSnackbar] = useState({
-    open: false,
-    message: '',
-  });
-
   return (
     <main className="pt-3">
       <DataGrid
@@ -273,16 +270,15 @@ const ChallengeOperationPayback = () => {
                 }
               });
 
-              setSnackbar({
-                open: true,
-                message: `${
+              setSnackbar(
+                `${
                   success.length !== 0
                     ? `환급 완료: ${success.join(', ')}${
                         failed.length !== 0 ? ', ' : ''
                       }`
                     : ''
                 }${failed.length !== 0 ? `실패: ${failed.join(', ')}` : ''}`,
-              });
+              );
 
               refetch();
             },
@@ -311,22 +307,12 @@ const ChallengeOperationPayback = () => {
           }
 
           await updateMutation.mutateAsync({ ...payload, id: updatedRow.id });
-          setSnackbar({
-            open: true,
-            message: '점수 정보가 업데이트 되었습니다.',
-          });
+          setSnackbar('점수 정보가 업데이트 되었습니다.');
           refetch();
 
           return updatedRow;
         }}
         onProcessRowUpdateError={console.error}
-      />
-
-      <Snackbar
-        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-        open={snackbar.open}
-        onClose={() => setSnackbar({ ...snackbar, open: false })}
-        message={snackbar.message}
       />
     </main>
   );

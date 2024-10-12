@@ -1,3 +1,4 @@
+import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
 import AdminReportFeedback from '@components/admin/report/AdminReportFeedback';
 import {
   Button,
@@ -5,7 +6,6 @@ import {
   InputLabel,
   MenuItem,
   Select,
-  Snackbar,
   TextField,
 } from '@mui/material';
 import { LocalizationProvider } from '@mui/x-date-pickers';
@@ -43,16 +43,10 @@ const initialReport: CreateReportData = {
 const AdminReportCreatePage = () => {
   const navgiate = useNavigate();
 
+  const { snackbar: setSnackbar } = useAdminSnackbar();
+
   const [editingValue, setEditingValue] =
     useState<CreateReportData>(initialReport);
-
-  const [snackbar, setSnackbar] = useState<{
-    open: boolean;
-    message: string;
-  }>({
-    open: false,
-    message: '',
-  });
 
   const [editingPrice, setEditingPrice] = useState<ReportEditingPrice>({
     type: 'all',
@@ -130,10 +124,7 @@ const AdminReportCreatePage = () => {
       queryKey: [getReportsForAdminQueryKey],
     });
 
-    setSnackbar({
-      open: true,
-      message: '서류 진단이 생성되었습니다.',
-    });
+    setSnackbar('서류 진단이 생성되었습니다.');
 
     navgiate('/admin/report/list');
   };
@@ -556,13 +547,6 @@ const AdminReportCreatePage = () => {
           </div>
         </form>
       </main>
-
-      <Snackbar
-        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-        open={snackbar.open}
-        onClose={() => setSnackbar({ ...snackbar, open: false })}
-        message={snackbar.message}
-      />
     </div>
   );
 };
