@@ -1,10 +1,11 @@
 import {
-  useDeleteProgramMutation,
   useGetProgramAdminQuery,
   useGetProgramAdminQueryKey,
-  usePatchVisibleProgramMutation,
 } from '@/api/program';
 import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
+import { useDeleteProgram } from '@/hooks/useDeleteProgram';
+import { useDuplicateProgram } from '@/hooks/useDuplicateProgram';
+import { usePatchVisibleProgram } from '@/hooks/usePatchVisibleProgram';
 import { ProgramAdminListItem } from '@/schema';
 import TD from '@components/admin/ui/table/regacy/TD';
 import TH from '@components/admin/ui/table/regacy/TH';
@@ -72,7 +73,10 @@ const Programs = () => {
               </thead>
               <tbody>
                 {programList.map((program) => (
-                  <Row key={program.programInfo.id} program={program} />
+                  <Row
+                    key={`${program.programInfo.programType}:${program.programInfo.id}`}
+                    program={program}
+                  />
                 ))}
               </tbody>
             </Table>
@@ -96,17 +100,18 @@ const Row = ({ program }: { program: ProgramAdminListItem }) => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const { snackbar } = useAdminSnackbar();
-  const deleteProgram = useDeleteProgramMutation({
+  const deleteProgram = useDeleteProgram({
     successCallback: () => {
       queryClient.invalidateQueries({ queryKey: [useGetProgramAdminQueryKey] });
     },
   });
-  const editVisible = usePatchVisibleProgramMutation({
+  const editVisible = usePatchVisibleProgram({
     successCallback: () => {
       queryClient.invalidateQueries({ queryKey: [useGetProgramAdminQueryKey] });
     },
   });
   const [visibleLoading, setVisibleLoading] = useState(false);
+  const duplicateProgram = useDuplicateProgram();
 
   return (
     <tr key={`${program.programInfo.programType}${program.programInfo.id}`}>
@@ -179,7 +184,19 @@ const Row = ({ program }: { program: ProgramAdminListItem }) => {
             variant="outlined"
             color="info"
             startIcon={<FaCopy size={12} />}
-            onClick={() => {
+            onClick={async () => {
+              if (
+                !window.confirm(
+                  `<${program.programInfo.title}>  정말로 복제하시겠습니까?`,
+                )
+              ) {
+                return;
+              }
+              await duplicateProgram({
+                id: program.programInfo.id,
+                type: program.programInfo.programType,
+              });
+
               snackbar('준비중입니다.');
             }}
             size="small"
@@ -192,7 +209,11 @@ const Row = ({ program }: { program: ProgramAdminListItem }) => {
             size="small"
             startIcon={<FaTrashCan size={12} />}
             onClick={async () => {
-              if (window.confirm('정말로 삭제하시겠습니까?')) {
+              if (
+                window.confirm(
+                  `<${program.programInfo.title}> 정말로 삭제하시겠습니까?`,
+                )
+              ) {
                 await deleteProgram({
                   type: program.programInfo.programType,
                   id: program.programInfo.id,
