@@ -5,7 +5,6 @@ import {
   InputLabel,
   MenuItem,
   Select,
-  Snackbar,
   TextField,
 } from '@mui/material';
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
@@ -14,6 +13,7 @@ import dayjs, { Dayjs } from 'dayjs';
 import { ChangeEvent, FormEvent, MouseEvent, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
+import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
 import {
   useBlogQuery,
   useBlogTagQuery,
@@ -63,13 +63,9 @@ const BlogEditPage = () => {
 
   const [editingValue, setEditingValue] = useState<EditBlog>(initialBlog);
   const [newTag, setNewTag] = useState('');
-  const [snackbar, setSnackbar] = useState<{
-    open: boolean;
-    message: string;
-  }>({
-    open: false,
-    message: '',
-  });
+
+  const { snackbar: setSnackbar } = useAdminSnackbar();
+
   const [dateTime, setDateTime] = useState<Dayjs | null>(null);
 
   const { data: tags = [] } = useBlogTagQuery();
@@ -79,10 +75,7 @@ const BlogEditPage = () => {
   const deleteBlogTagMutation = useDeleteBlogTagMutation({
     onError: (error) => {
       if (isAxiosError(error) && error.response?.status === 400) {
-        setSnackbar({
-          open: true,
-          message: '블로그에 연결된 태그는 삭제할 수 없습니다.',
-        });
+        setSnackbar('블로그에 연결된 태그는 삭제할 수 없습니다.');
       }
     },
   });
@@ -104,7 +97,7 @@ const BlogEditPage = () => {
 
     const isExist = tags?.some((tag) => tag.title === newTag);
     if (isExist) {
-      setSnackbar({ open: true, message: '이미 존재하는 태그입니다.' });
+      setSnackbar('이미 존재하는 태그입니다.');
       return;
     }
 
@@ -112,7 +105,7 @@ const BlogEditPage = () => {
     const createdTag = postTagSchema.parse(res.data.data);
     selectTag(createdTag);
     setNewTag('');
-    setSnackbar({ open: true, message: `태그가 생성되었습니다: ${newTag}` });
+    setSnackbar(`태그가 생성되었습니다: ${newTag}`);
   };
 
   const selectTag = (tag: TagDetail | PostTag) => {
@@ -143,10 +136,7 @@ const BlogEditPage = () => {
           : dateTime?.format('YYYY-MM-DDTHH:mm') || '',
     });
 
-    setSnackbar({
-      open: true,
-      message: '블로그가 수정되었습니다.',
-    });
+    setSnackbar('블로그가 수정되었습니다.');
     navgiate('/admin/blog/list');
   };
 
@@ -241,7 +231,7 @@ const BlogEditPage = () => {
                   onChange={async (e) => {
                     const file = e.target.files?.item(0);
                     if (!file) {
-                      setSnackbar({ open: true, message: '파일이 없습니다.' });
+                      setSnackbar('파일이 없습니다.');
                       return;
                     }
                     const url = await uploadFile({ file, type: 'BLOG' });
@@ -299,10 +289,7 @@ const BlogEditPage = () => {
                 deleteTag={async (tagId) => {
                   const res = await deleteBlogTagMutation.mutateAsync(tagId);
                   if (res?.status === 200) {
-                    setSnackbar({
-                      open: true,
-                      message: '태그를 삭제했습니다.',
-                    });
+                    setSnackbar('태그를 삭제했습니다.');
                   }
                 }}
                 selectTag={selectTag}
@@ -364,13 +351,6 @@ const BlogEditPage = () => {
       ) : (
         <span>블로그를 불러오지 못했습니다.</span>
       )}
-
-      <Snackbar
-        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-        open={snackbar.open}
-        onClose={() => setSnackbar({ ...snackbar, open: false })}
-        message={snackbar.message}
-      />
     </div>
   );
 };

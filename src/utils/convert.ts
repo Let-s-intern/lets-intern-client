@@ -1,4 +1,8 @@
-import { AttendanceResult, AttendanceStatus } from '../schema';
+import {
+  AttendanceResult,
+  AttendanceStatus,
+  ProgramClassification,
+} from '../schema';
 
 export const newProgramTypeToText: Record<string, string> = {
   CHALLENGE: '챌린지',
@@ -12,7 +16,18 @@ export const newProgramFeeTypeToText: Record<string, string> = {
   REFUND: '보증금',
 };
 
+/** @deprecated use programClassificationToText instead */
 export const newProgramTypeDetailToText: Record<string, string> = {
+  CAREER_SEARCH: '커리어 탐색',
+  DOCUMENT_PREPARATION: '서류 준비',
+  MEETING_PREPARATION: '면접 준비',
+  PASS: '합격 후 성장',
+};
+
+export const programClassificationToText: Record<
+  ProgramClassification,
+  string
+> = {
   CAREER_SEARCH: '커리어 탐색',
   DOCUMENT_PREPARATION: '서류 준비',
   MEETING_PREPARATION: '면접 준비',
