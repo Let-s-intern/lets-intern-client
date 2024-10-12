@@ -4,8 +4,10 @@ import {
   getVod,
   usePostChallengeMutation,
 } from '@/api/program';
-import { ProgramTypeUpperCase } from '@/schema';
+import { CreateChallengeReq, ProgramAdminListItem } from '@/schema';
 import { useCallback } from 'react';
+
+type CreateReqPriceInfo = CreateChallengeReq['priceInfo'][0];
 
 export const useDuplicateProgram = ({
   errorCallback,
@@ -30,11 +32,48 @@ export const useDuplicateProgram = ({
   });
 
   return useCallback(
-    async ({ id, type }: { id: number; type: ProgramTypeUpperCase }) => {
-      switch (type) {
+    async ({
+      programInfo: { programType, id },
+      classificationList,
+    }: ProgramAdminListItem) => {
+      switch (programType) {
         case 'CHALLENGE': {
           const challenge = await getChallenge(id);
-          console.log(challenge);
+          await postChallenge.mutateAsync({
+            challengeType: challenge.challengeType,
+            title: challenge.title + ' - 사본',
+            beginning: challenge.beginning?.format('YYYY-MM-DDTHH:mm:ss') ?? '',
+            chatLink: '',
+            chatPassword: '',
+            criticalNotice: challenge.criticalNotice ?? '',
+            desc: challenge.desc ?? '',
+            endDate: challenge.endDate?.format('YYYY-MM-DDTHH:mm:ss') ?? '',
+            faqInfo: challenge.faqInfo.map((faq) => ({ faqId: faq.id })),
+            participationCount: challenge.participationCount ?? 0,
+            priceInfo: challenge.priceInfo.map(
+              (price): CreateReqPriceInfo => ({
+                challengeParticipationType:
+                  price.challengeParticipationType ?? 'LIVE',
+                challengePriceType: price.challengePriceType ?? 'CHARGE',
+                challengeUserType: price.challengeUserType ?? 'BASIC',
+                charge: price.price ?? 0,
+                priceInfo: {
+                  price: price.price ?? 0,
+                  discount: price.discount ?? 0,
+                },
+                refund: 0,
+              }),
+            ),
+            programTypeInfo: classificationList.map((value) => ({
+              classificationInfo: {
+                programClassification: value.programClassification ?? 'PASS',
+              },
+            })),
+            shortDesc: challenge.shortDesc ?? '',
+            startDate: challenge.startDate?.format('YYYY-MM-DDTHH:mm:ss') ?? '',
+            deadline: challenge.deadline?.format('YYYY-MM-DDTHH:mm:ss') ?? '',
+            thumbnail: challenge.thumbnail ?? '',
+          });
           return;
         }
 

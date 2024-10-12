@@ -110,8 +110,13 @@ const Row = ({ program }: { program: ProgramAdminListItem }) => {
       queryClient.invalidateQueries({ queryKey: [useGetProgramAdminQueryKey] });
     },
   });
+
+  const duplicateProgram = useDuplicateProgram({
+    successCallback: () => {
+      queryClient.invalidateQueries({ queryKey: [useGetProgramAdminQueryKey] });
+    },
+  });
   const [visibleLoading, setVisibleLoading] = useState(false);
-  const duplicateProgram = useDuplicateProgram();
 
   return (
     <tr key={`${program.programInfo.programType}${program.programInfo.id}`}>
@@ -192,12 +197,12 @@ const Row = ({ program }: { program: ProgramAdminListItem }) => {
               ) {
                 return;
               }
-              await duplicateProgram({
-                id: program.programInfo.id,
-                type: program.programInfo.programType,
-              });
-
-              snackbar('준비중입니다.');
+              try {
+                await duplicateProgram(program);
+                snackbar('복제가 완료되었습니다.');
+              } catch (e: unknown) {
+                snackbar('복제에 실패하였습니다: ' + e);
+              }
             }}
             size="small"
           >

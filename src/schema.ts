@@ -127,6 +127,7 @@ export const getChallengeIdSchema = z
     title: z.string().nullable().optional(),
     shortDesc: z.string().nullable().optional(),
     desc: z.string().nullable().optional(),
+    criticalNotice: z.string().nullable().optional(),
     participationCount: z.number().nullable().optional(),
     thumbnail: z.string().nullable().optional(),
     startDate: z.string().nullable().optional(),
@@ -205,9 +206,9 @@ export type CreateChallengeReq = {
     priceInfo: {
       price: number;
       discount: number;
-      accountNumber: string;
-      deadline: string; // "2024-10-12T06:24:10.873"
-      accountType: AccountType;
+      accountNumber?: string;
+      accountType?: AccountType;
+      deadline?: string; // "2024-10-12T06:24:10.873"
     };
     charge: number;
     refund: number;
@@ -245,9 +246,9 @@ export type UpdateChallengeReq = {
     priceInfo: {
       price: number;
       discount: number;
-      accountNumber: string;
-      deadline: string; // "2024-10-12T08:03:17.016Z"
-      accountType: AccountType;
+      accountNumber?: string;
+      deadline?: string; // "2024-10-12T08:03:17.016Z"
+      accountType?: AccountType;
     };
     charge: number;
     refund: number;
