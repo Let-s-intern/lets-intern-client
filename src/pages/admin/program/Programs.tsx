@@ -1,33 +1,26 @@
-import { useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
 
-import TableBody from '../../../components/admin/program/programs/table-content/TableBody';
-import TableHead from '../../../components/admin/program/programs/table-content/TableHead';
+import TableBody from '../../../components/admin/program/AdminProgramTableBody';
+import TableHead from '../../../components/admin/program/AdminProgramTableHead';
 import Table from '../../../components/admin/ui/table/regacy/Table';
 
+import { useGetProgramAdminQuery } from '@/api/program';
 import ActionButton from '../../../components/admin/ui/button/ActionButton';
 import Header from '../../../components/admin/ui/header/Header';
 import Heading from '../../../components/admin/ui/heading/Heading';
 import AdminPagination from '../../../components/admin/ui/pagination/AdminPagination';
-import axios from '../../../utils/axios';
 
 const Programs = () => {
   const [pageNum, setPageNum] = useState<number>(1);
 
   const sizePerPage = 10;
 
-  const { data, isLoading, error } = useQuery({
-    queryKey: ['program', 'admin', { page: pageNum, size: sizePerPage }],
-    queryFn: async () => {
-      const res = await axios.get('/program/admin', {
-        params: { page: pageNum, size: sizePerPage },
-      });
-      return res.data;
-    },
+  const { data, isLoading, error } = useGetProgramAdminQuery({
+    pageable: { page: pageNum, size: sizePerPage },
   });
 
-  const programList = data?.data?.programList || [];
-  const maxPage = data?.data?.pageInfo?.totalPages || 1;
+  const programList = data?.programList || [];
+  const maxPage = data?.pageInfo?.totalPages || 1;
 
   return (
     <div className="p-8">

@@ -4,36 +4,19 @@ import dayjs from 'dayjs';
 import { useState } from 'react';
 import styled from 'styled-components';
 
-import axios from '../../../../../utils/axios';
+import { ProgramAdminList } from '@/schema';
+import axios from '../../../utils/axios';
 import {
-  newProgramTypeDetailToText,
   newProgramTypeToText,
+  programClassificationToText,
   programStatusToText,
-} from '../../../../../utils/convert';
-import AlertModal from '../../../../ui/alert/AlertModal';
-import ActionButton from '../../../ui/button/ActionButton';
-import TD from '../../../ui/table/regacy/TD';
+} from '../../../utils/convert';
+import AlertModal from '../../ui/alert/AlertModal';
+import ActionButton from '../ui/button/ActionButton';
+import TD from '../ui/table/regacy/TD';
 
 interface ProgramTableBodyProps {
-  programList: {
-    programInfo: {
-      id: number;
-      title: string;
-      programType: string;
-      isVisible: boolean;
-      currentCount: number;
-      participationCount: number;
-      deadline: string;
-      startDate: string;
-      endDate: string;
-      zoomLink: string;
-      zoomPassword: string;
-      programStatusType: string;
-    };
-    classificationList: {
-      programClassification: string;
-    }[];
-  }[];
+  programList: ProgramAdminList;
 }
 
 const ActionButtonGroup = styled.div`
@@ -116,9 +99,10 @@ const TableBody = ({ programList }: ProgramTableBodyProps) => {
             <TD>
               <span className="flex justify-center">
                 {program.classificationList
-                  .map(
-                    (type) =>
-                      newProgramTypeDetailToText[type.programClassification],
+                  .map((type) =>
+                    type.programClassification
+                      ? programClassificationToText[type.programClassification]
+                      : '',
                   )
                   .join(', ')}
               </span>
@@ -182,7 +166,7 @@ const TableBody = ({ programList }: ProgramTableBodyProps) => {
             </TD>
             <TD>
               <Checkbox
-                checked={program.programInfo.isVisible}
+                checked={program.programInfo.isVisible ?? false}
                 onChange={() => {
                   handleEditProgramVisible(
                     program.programInfo.programType,

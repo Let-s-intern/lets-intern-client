@@ -1,12 +1,35 @@
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 
-import { getLiveIdSchema, programSchema } from '../schema';
+import {
+  CreateChallengeReq,
+  getChallengeIdSchema,
+  getLiveIdSchema,
+  programAdminSchema,
+  programSchema,
+} from '../schema';
 import { IPageable } from '../types/interface';
 import axios from '../utils/axios';
-import { useChallengeQuery } from './challenge';
 
 const useLiveQueryKey = 'useLiveQueryKey';
-const useUserProgramQueryKey = 'useUserProgramQueryKey';
+
+const useChallengeQueryKey = 'useChallengeQueryKey';
+
+export const useChallengeQuery = ({
+  challengeId,
+  enabled,
+}: {
+  challengeId: number;
+  enabled?: boolean;
+}) => {
+  return useQuery({
+    enabled,
+    queryKey: [useChallengeQueryKey, challengeId],
+    queryFn: async () => {
+      const res = await axios.get(`/challenge/${challengeId}`);
+      return getChallengeIdSchema.parse(res.data.data);
+    },
+  });
+};
 
 export const useLiveQuery = ({
   liveId,
@@ -80,5 +103,38 @@ export const useUserProgramQuery = ({
 
       return programSchema.parse(res.data.data);
     },
+  });
+};
+
+export const useGetProgramAdminQueryKey = 'useGetProgramAdminQueryKey';
+
+export const useGetProgramAdminQuery = ({
+  pageable,
+}: {
+  pageable: IPageable;
+}) => {
+  return useQuery({
+    queryKey: [useGetProgramAdminQueryKey, pageable],
+    queryFn: async () => {
+      const res = await axios.get(`/program/admin`, { params: pageable });
+      return programAdminSchema.parse(res.data.data);
+    },
+  });
+};
+
+export const usePostChallengeMutation = ({
+  errorCallback,
+  successCallback,
+}: {
+  successCallback?: () => void;
+  errorCallback?: (error: Error) => void;
+} = {}) => {
+  return useMutation({
+    mutationFn: async (data: CreateChallengeReq) => {
+      const res = await axios.post(`/challenge`, data);
+      return res.data;
+    },
+    onSuccess: successCallback,
+    onError: errorCallback,
   });
 };
