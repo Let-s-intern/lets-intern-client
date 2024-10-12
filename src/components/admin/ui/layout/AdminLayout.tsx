@@ -3,6 +3,7 @@ import { ImExit } from 'react-icons/im';
 import { IoIosArrowDown } from 'react-icons/io';
 import { Link, Outlet, useNavigate } from 'react-router-dom';
 
+import { AdminSnackbarProvider } from '@/hooks/useAdminSnackbar';
 import { useQuery } from '@tanstack/react-query';
 import axios from '../../../../utils/axios';
 
@@ -163,7 +164,9 @@ const AdminLayout = () => {
         </nav>
       </aside>
       <section className="relative min-h-screen min-w-[800px] flex-1">
-        <Outlet />
+        <AdminSnackbarProvider>
+          <Outlet />
+        </AdminSnackbarProvider>
       </section>
     </div>
   );

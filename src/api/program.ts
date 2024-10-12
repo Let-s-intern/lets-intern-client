@@ -1,11 +1,18 @@
 import { useMutation, useQuery } from '@tanstack/react-query';
 
+import { useCallback } from 'react';
 import {
   CreateChallengeReq,
+  CreateLiveReq,
+  CreateVodReq,
   getChallengeIdSchema,
   getLiveIdSchema,
   programAdminSchema,
   programSchema,
+  ProgramTypeUpperCase,
+  UpdateChallengeReq,
+  UpdateLiveReq,
+  UpdateVodReq,
 } from '../schema';
 import { IPageable } from '../types/interface';
 import axios from '../utils/axios';
@@ -132,9 +139,230 @@ export const usePostChallengeMutation = ({
   return useMutation({
     mutationFn: async (data: CreateChallengeReq) => {
       const res = await axios.post(`/challenge`, data);
-      return res.data;
+      return res.data as unknown;
     },
     onSuccess: successCallback,
     onError: errorCallback,
   });
+};
+
+export const usePatchChallengeMutation = ({
+  errorCallback,
+  successCallback,
+}: {
+  successCallback?: () => void;
+  errorCallback?: (error: Error) => void;
+} = {}) => {
+  return useMutation({
+    mutationFn: async (data: UpdateChallengeReq & { challengeId: number }) => {
+      const { challengeId, ...rest } = data;
+      const res = await axios.patch(`/challenge/${challengeId}`, rest);
+      return res.data as unknown;
+    },
+    onSuccess: successCallback,
+    onError: errorCallback,
+  });
+};
+
+export const useDeleteChallengeMutation = ({
+  errorCallback,
+  successCallback,
+}: {
+  successCallback?: () => void;
+  errorCallback?: (error: Error) => void;
+} = {}) => {
+  return useMutation({
+    mutationFn: async (challengeId: number) => {
+      const res = await axios.delete(`/challenge/${challengeId}`);
+      return res.data as unknown;
+    },
+    onSuccess: successCallback,
+    onError: errorCallback,
+  });
+};
+
+export const usePostLiveMutation = ({
+  errorCallback,
+  successCallback,
+}: {
+  successCallback?: () => void;
+  errorCallback?: (error: Error) => void;
+} = {}) => {
+  return useMutation({
+    mutationFn: async (data: CreateLiveReq) => {
+      const res = await axios.post(`/live`, data);
+      return res.data as unknown;
+    },
+    onSuccess: successCallback,
+    onError: errorCallback,
+  });
+};
+
+export const usePatchLiveMutation = ({
+  errorCallback,
+  successCallback,
+}: {
+  successCallback?: () => void;
+  errorCallback?: (error: Error) => void;
+} = {}) => {
+  return useMutation({
+    mutationFn: async (data: UpdateLiveReq & { liveId: number }) => {
+      const { liveId, ...rest } = data;
+      const res = await axios.post(`/liveId/${liveId}`, rest);
+      return res.data as unknown;
+    },
+    onSuccess: successCallback,
+    onError: errorCallback,
+  });
+};
+
+export const useDeleteLiveMutation = ({
+  errorCallback,
+  successCallback,
+}: {
+  successCallback?: () => void;
+  errorCallback?: (error: Error) => void;
+} = {}) => {
+  return useMutation({
+    mutationFn: async (liveId: number) => {
+      const res = await axios.delete(`/live/${liveId}`);
+      return res.data as unknown;
+    },
+    onSuccess: successCallback,
+    onError: errorCallback,
+  });
+};
+
+export const usePostVodMutation = ({
+  errorCallback,
+  successCallback,
+}: {
+  successCallback?: () => void;
+  errorCallback?: (error: Error) => void;
+} = {}) => {
+  return useMutation({
+    mutationFn: async (data: CreateVodReq) => {
+      const res = await axios.post(`/vod`, data);
+      return res.data as unknown;
+    },
+    onSuccess: successCallback,
+    onError: errorCallback,
+  });
+};
+
+export const usePatchVodMutation = ({
+  errorCallback,
+  successCallback,
+}: {
+  successCallback?: () => void;
+  errorCallback?: (error: Error) => void;
+} = {}) => {
+  return useMutation({
+    mutationFn: async (data: UpdateVodReq & { vodId: number }) => {
+      const { vodId, ...rest } = data;
+      const res = await axios.post(`/vodId/${vodId}`, rest);
+      return res.data as unknown;
+    },
+    onSuccess: successCallback,
+    onError: errorCallback,
+  });
+};
+
+export const useDeleteVodMutation = ({
+  errorCallback,
+  successCallback,
+}: {
+  successCallback?: () => void;
+  errorCallback?: (error: Error) => void;
+} = {}) => {
+  return useMutation({
+    mutationFn: async (vodId: number) => {
+      const res = await axios.delete(`/vod/${vodId}`);
+      return res.data as unknown;
+    },
+    onSuccess: successCallback,
+    onError: errorCallback,
+  });
+};
+
+export const useDeleteProgramMutation = ({
+  errorCallback,
+  successCallback,
+}: {
+  successCallback?: () => void;
+  errorCallback?: (error: Error) => void;
+} = {}) => {
+  const deleteChallenge = useDeleteChallengeMutation({
+    successCallback,
+    errorCallback,
+  });
+  const deleteLive = useDeleteLiveMutation({
+    successCallback,
+    errorCallback,
+  });
+  const deleteVod = useDeleteVodMutation({
+    successCallback,
+    errorCallback,
+  });
+  return useCallback(
+    (arg: { type: ProgramTypeUpperCase; id: number }) => {
+      switch (arg.type) {
+        case 'CHALLENGE':
+          return deleteChallenge.mutateAsync(arg.id);
+        case 'LIVE':
+          return deleteLive.mutateAsync(arg.id);
+        case 'VOD':
+          return deleteVod.mutateAsync(arg.id);
+        case 'REPORT':
+          throw new Error('Not implemented');
+      }
+    },
+    [deleteChallenge, deleteLive, deleteVod],
+  );
+};
+
+export const usePatchVisibleProgramMutation = ({
+  errorCallback,
+  successCallback,
+}: {
+  successCallback?: () => void;
+  errorCallback?: (error: Error) => void;
+} = {}) => {
+  const patchChallenge = usePatchChallengeMutation({
+    successCallback,
+    errorCallback,
+  });
+  const patchLive = usePatchLiveMutation({
+    successCallback,
+    errorCallback,
+  });
+  const patchVod = usePatchVodMutation({
+    successCallback,
+    errorCallback,
+  });
+
+  return useCallback(
+    (arg: { type: ProgramTypeUpperCase; id: number; isVisible: boolean }) => {
+      switch (arg.type) {
+        case 'CHALLENGE':
+          return patchChallenge.mutateAsync({
+            challengeId: arg.id,
+            isVisible: arg.isVisible,
+          });
+        case 'LIVE':
+          return patchLive.mutateAsync({
+            liveId: arg.id,
+            isVisible: arg.isVisible,
+          });
+        case 'VOD':
+          return patchVod.mutateAsync({
+            vodId: arg.id,
+            isVisible: arg.isVisible,
+          });
+        case 'REPORT':
+          throw new Error('Not implemented');
+      }
+    },
+    [patchChallenge, patchLive, patchVod],
+  );
 };

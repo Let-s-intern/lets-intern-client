@@ -98,6 +98,8 @@ export const programType = z.union([
   z.literal('REPORT'),
 ]);
 
+export type ProgramTypeUpperCase = z.infer<typeof programType>;
+
 export const accountType = z.union([
   z.literal('KB'),
   z.literal('HANA'),
@@ -219,7 +221,44 @@ export type CreateChallengeReq = {
 };
 
 /** PATCH /api/v1/challenge/{challengeId} 챌린지 수정 */
-export type UpdateChallengeReq = Partial<CreateChallengeReq>;
+export type UpdateChallengeReq = {
+  title?: string;
+  shortDesc?: string;
+  desc?: string;
+  criticalNotice?: string;
+  participationCount?: number;
+  thumbnail?: string;
+  startDate?: string; // "2024-10-12T08:03:17.016Z"
+  endDate?: string; // "2024-10-12T08:03:17.016Z"
+  beginning?: string; // "2024-10-12T08:03:17.016Z"
+  deadline?: string; // "2024-10-12T08:03:17.016Z"
+  chatLink?: string;
+  chatPassword?: string;
+  challengeType?: ChallengeType;
+  isVisible?: boolean;
+  programTypeInfo?: {
+    classificationInfo: {
+      programClassification: ProgramClassification;
+    };
+  }[];
+  priceInfo?: {
+    priceInfo: {
+      price: number;
+      discount: number;
+      accountNumber: string;
+      deadline: string; // "2024-10-12T08:03:17.016Z"
+      accountType: AccountType;
+    };
+    charge: number;
+    refund: number;
+    challengePriceType: ChallengePriceType;
+    challengeUserType: ChallengeUserType;
+    challengeParticipationType: ChallengeParticipationType;
+  }[];
+  faqInfo?: {
+    faqId: number;
+  }[];
+};
 
 // DELETE /api/v1/challenge/{challengeId} 챌린지 삭제
 
@@ -400,7 +439,19 @@ export type CreateVodReq = {
 };
 
 /** PATCH /api/v1/vod VOD 수정 */
-export type UpdateVodReq = Partial<CreateVodReq>;
+export type UpdateVodReq = {
+  title?: string;
+  shortDesc?: string;
+  thumbnail?: string;
+  job?: string;
+  link?: string;
+  isVisible?: boolean;
+  programTypeInfo?: {
+    classificationInfo: {
+      programClassification: ProgramClassification;
+    };
+  }[];
+};
 
 // /**  DELETE /api/v1/vod/{vodId} vod 삭제 */
 
