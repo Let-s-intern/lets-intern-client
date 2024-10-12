@@ -251,19 +251,25 @@ const Row = ({ program }: { program: ProgramAdminListItem }) => {
         />
       </TD>
       <TD>
-        <Button
-          className="rounded-xxs border border-gray-300 bg-white px-2 py-1"
-          onClick={async () => {
-            if (!program.programInfo.zoomLink) {
-              snackbar('링크가 없습니다.');
-              return;
-            }
-            await navigator.clipboard.writeText(program.programInfo.zoomLink);
-            snackbar('링크가 클립보드에 복사되었습니다.');
-          }}
-        >
-          {program.programInfo.zoomLink ? '복사' : '없음'}
-        </Button>
+        {program.programInfo.zoomLink ? (
+          <Button
+            className="rounded-xxs border border-gray-300 bg-white px-2 py-1"
+            variant="outlined"
+            size="small"
+            onClick={async () => {
+              if (!program.programInfo.zoomLink) {
+                snackbar('링크가 없습니다.');
+                return;
+              }
+              await navigator.clipboard.writeText(program.programInfo.zoomLink);
+              snackbar('링크가 클립보드에 복사되었습니다.');
+            }}
+          >
+            {program.programInfo.zoomLink ? '복사' : '없음'}
+          </Button>
+        ) : (
+          '-'
+        )}
       </TD>
       <TD>{program.programInfo.zoomPassword || '없음'}</TD>
     </tr>

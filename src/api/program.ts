@@ -219,7 +219,7 @@ export const usePatchLiveMutation = ({
   return useMutation({
     mutationFn: async (data: UpdateLiveReq & { liveId: number }) => {
       const { liveId, ...rest } = data;
-      const res = await axios.post(`/liveId/${liveId}`, rest);
+      const res = await axios.patch(`/live/${liveId}`, rest);
       return res.data as unknown;
     },
     onSuccess: successCallback,
@@ -296,7 +296,7 @@ export const usePatchVodMutation = ({
   return useMutation({
     mutationFn: async (data: UpdateVodReq & { vodId: number }) => {
       const { vodId, ...rest } = data;
-      const res = await axios.post(`/vodId/${vodId}`, rest);
+      const res = await axios.patch(`/vod/${vodId}`, rest);
       return res.data as unknown;
     },
     onSuccess: successCallback,
