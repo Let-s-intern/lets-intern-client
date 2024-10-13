@@ -1,16 +1,19 @@
-import ProgramSection from '../../../components/common/home/new/program/ProgramSection';
-import ProgramOverviewSection from '../../../components/common/home/new/overview/ProgramOverviewSection';
+import { useState } from 'react';
 import AdvantageSection from '../../../components/common/home/new/advantage/AdvantageSection';
-import PassReviewSection from '../../../components/common/home/new/pass-review/PassReviewSection';
-import ReviewSection from '../../../components/common/home/new/review/ReviewSection';
 import Banner from '../../../components/common/home/new/banner/Banner';
-import Popup from '../../../components/common/home/new/ui/Popup';
 import TopBanner from '../../../components/common/home/new/banner/TopBanner';
+import ProgramOverviewSection from '../../../components/common/home/new/overview/ProgramOverviewSection';
+import PassReviewSection from '../../../components/common/home/new/pass-review/PassReviewSection';
+import ProgramSection from '../../../components/common/home/new/program/ProgramSection';
+import ReviewSection from '../../../components/common/home/new/review/ReviewSection';
+import Popup from '../../../components/common/home/new/ui/Popup';
 
 const Home = () => {
+  const [isShow, setIsShow] = useState(false);
   return (
     <>
-      <TopBanner />
+      <TopBanner isShow={isShow} setIsShow={setIsShow} />
+      {isShow && <div className="h-10 w-full" />}
       <div className="flex justify-center py-5">
         <div className="mb-6 flex w-full max-w-[1080px] flex-col gap-16 lg:gap-20">
           <Banner />

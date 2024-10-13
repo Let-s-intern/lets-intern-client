@@ -1,12 +1,16 @@
 import { useQuery } from '@tanstack/react-query';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 
 import { ILineBanner } from '../../../../../types/Banner.interface';
 import axios from '../../../../../utils/axios';
 
-const TopBanner = () => {
-  const [isShow, setIsShow] = useState(false);
-
+const TopBanner = ({
+  isShow,
+  setIsShow,
+}: {
+  isShow: boolean;
+  setIsShow: (isShow: boolean) => void;
+}) => {
   const { data } = useQuery<ILineBanner>({
     queryKey: ['LineBanner'],
     queryFn: async () => {
