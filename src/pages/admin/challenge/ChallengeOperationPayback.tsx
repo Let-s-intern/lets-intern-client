@@ -583,7 +583,7 @@ const ChallengeOperationPayback = () => {
                   취소
                 </Button>
                 <Button variant="contained" onClick={handlePaybackConfirm}>
-                  완료
+                  진행
                 </Button>
               </div>
             </>
@@ -597,18 +597,18 @@ const ChallengeOperationPayback = () => {
               <div className="flex w-full gap-x-4">
                 <h4 className="w-52 font-semibold">페이백 금액</h4>
                 <p className="grow text-end">
-                  {paybackInfo.price?.toLocaleString() || '0' + '원'}
+                  {(paybackInfo.price?.toLocaleString() || '0') + '원'}
                 </p>
               </div>
               <div className="flex w-full gap-x-4">
                 <h4 className="w-52 font-semibold">인원 수(페이백/전체)</h4>
                 <p className="grow text-end">
-                  {selectedIds.length + '/' + rows.length}
+                  {selectedIds.length + '명/' + rows.length + '명'}
                 </p>
               </div>
               <hr />
               <div className="flex w-full gap-x-4">
-                <h4 className="w-52 font-semibold">페이백 총액</h4>
+                <h4 className="w-52 font-semibold">전체 페이백 금액</h4>
                 <p className="grow text-end">
                   {(
                     selectedIds.length * (paybackInfo.price || 0)
@@ -626,7 +626,7 @@ const ChallengeOperationPayback = () => {
                   취소
                 </Button>
                 <Button variant="contained" onClick={handlePayback}>
-                  진행
+                  완료
                 </Button>
               </div>
             </>
