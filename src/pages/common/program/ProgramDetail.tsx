@@ -224,8 +224,18 @@ const ProgramDetail = ({ programType }: ProgramDetailProps) => {
                 </span>
               </div>
             </div>
-            <button className="w-2/6 rounded-full bg-slate-600 py-3 text-static-100">
-              신청하고 취뽀하기
+            <button
+              className="w-2/6 rounded-full bg-slate-600 py-3 text-static-100"
+              disabled={isAlreadyApplied}
+              onClick={() => {
+                if (!isLoggedIn) {
+                  navigate(`/login?redirect=${window.location.pathname}`);
+                  return;
+                }
+                // 결제 페이지로 이동
+              }}
+            >
+              {isAlreadyApplied ? '신청완료' : '신청하기'}
             </button>
           </div>
         </div>
