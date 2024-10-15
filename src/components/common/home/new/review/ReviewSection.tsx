@@ -44,7 +44,7 @@ const ReviewSection = () => {
           <Link
             to={getBlogPathname(blogThumbnailInfo)}
             key={blogThumbnailInfo.id}
-            className="review_card h-[180px] flex-shrink-0 sm:h-[250px]"
+            className="review_card h-[180px] w-auto flex-shrink-0 sm:h-[250px]"
           >
             <img
               className="h-full w-full rounded-xs object-cover"
