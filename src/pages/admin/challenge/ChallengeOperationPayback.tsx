@@ -166,7 +166,7 @@ function Toolbar({
     <div>
       <p>운영진 점수와 환급여부 수정 가능합니다. 수정하려면 더블클릭 하세요</p>
       <GridToolbarContainer>
-        <Button variant="contained" onClick={handleOpenPaybackModal}>
+        <Button variant="outlined" onClick={handleOpenPaybackModal}>
           페이백
         </Button>
         <Button
