@@ -101,6 +101,9 @@ const ReportCreditDetail = () => {
       ? true
       : false;
 
+  const isRefunded =
+    reportPaymentDetail && reportPaymentDetail.reportPaymentInfo.isRefunded;
+
   const totalPayment = reportPaymentDetail
     ? getReportPrice(reportPaymentDetail.reportPaymentInfo) +
       (reportPaymentDetail.reportPaymentInfo.feedbackPriceInfo?.feedbackPrice ||
@@ -160,7 +163,27 @@ const ReportCreditDetail = () => {
         ) : (
           <>
             <div className="flex w-full flex-col items-start justify-center gap-y-6">
-              {isCanceled ? (
+              {isRefunded && (
+                <div className="flex w-full gap-2 rounded-xxs bg-neutral-90 px-4 py-3">
+                  <div className="text-sm font-semibold text-primary-dark">
+                    페이백 완료
+                  </div>
+                  <div className="flex grow items-center justify-end">
+                    {convertDateFormat(
+                      reportPaymentDetail.tossInfo?.cancels
+                        ? reportPaymentDetail.tossInfo.cancels[0].canceledAt
+                          ? reportPaymentDetail.tossInfo.cancels[0].canceledAt
+                          : ''
+                        : reportPaymentDetail.reportPaymentInfo
+                              ?.lastModifiedDate
+                          ? reportPaymentDetail.reportPaymentInfo
+                              .lastModifiedDate
+                          : '',
+                    )}
+                  </div>
+                </div>
+              )}
+              {!isRefunded && isCanceled && (
                 <div className="flex w-full gap-2 rounded-xxs bg-neutral-90 px-4 py-3">
                   <div className="text-sm font-semibold text-system-error">
                     결제 취소
@@ -176,7 +199,7 @@ const ReportCreditDetail = () => {
                     )}
                   </div>
                 </div>
-              ) : null}
+              )}
               <div className="font-semibold text-neutral-0">결제 프로그램</div>
               <div className="flex w-full items-start justify-center gap-x-4">
                 <img
@@ -271,11 +294,16 @@ const ReportCreditDetail = () => {
                   <div className="flex w-full items-center justify-start gap-3 font-bold text-neutral-0">
                     <div>{isCanceled ? '총 환불금액' : '총 결제금액'}</div>
                     <div className="flex grow items-center justify-end">
-                      {reportPaymentDetail.tossInfo
-                        ? reportPaymentDetail.tossInfo.status !== 'DONE' &&
-                          reportPaymentDetail.tossInfo.cancels
-                          ? reportPaymentDetail.tossInfo.cancels[0].cancelAmount?.toLocaleString()
-                          : reportPaymentDetail.tossInfo.balanceAmount?.toLocaleString()
+                      {reportPaymentDetail.tossInfo &&
+                      typeof reportPaymentDetail.tossInfo.totalAmount ===
+                        'number' &&
+                      typeof reportPaymentDetail.tossInfo.balanceAmount ===
+                        'number'
+                        ? (isCanceled
+                            ? reportPaymentDetail.tossInfo.totalAmount -
+                              reportPaymentDetail.tossInfo.balanceAmount
+                            : reportPaymentDetail.tossInfo.totalAmount
+                          ).toLocaleString()
                         : reportPaymentDetail.reportPaymentInfo.finalPrice?.toLocaleString()}
                       원
                     </div>
@@ -288,7 +316,7 @@ const ReportCreditDetail = () => {
                       />
                       <ReportCreditSubRow
                         title="환불 차감 금액"
-                        content={`-${(totalPayment - totalRefund).toLocaleString()}원`}
+                        content={`-${(reportPaymentDetail.tossInfo?.balanceAmount ?? 0).toLocaleString()}원`}
                       />
                     </div>
                   )}
@@ -409,6 +437,45 @@ const ReportCreditDetail = () => {
                       )}
                     </div>
                   )}
+                  {reportPaymentDetail.tossInfo &&
+                    typeof reportPaymentDetail.tossInfo.totalAmount ===
+                      'number' &&
+                    typeof reportPaymentDetail.tossInfo.balanceAmount ===
+                      'number' &&
+                    reportPaymentDetail.tossInfo.totalAmount -
+                      reportPaymentDetail.tossInfo.balanceAmount !==
+                      (reportPaymentDetail.reportPaymentInfo
+                        .reportRefundPrice ?? 0) +
+                        (reportPaymentDetail.reportPaymentInfo
+                          .feedbackRefundPrice ?? 0) && (
+                      <>
+                        <ReportCreditRow
+                          title={`관리자 환불금액`}
+                          content={`${(
+                            reportPaymentDetail.tossInfo.totalAmount -
+                            reportPaymentDetail.tossInfo.balanceAmount -
+                            (reportPaymentDetail.reportPaymentInfo
+                              .reportRefundPrice ?? 0) -
+                            (reportPaymentDetail.reportPaymentInfo
+                              .feedbackRefundPrice ?? 0)
+                          ).toLocaleString()}원`}
+                        />
+                        <div className="flex w-full flex-col">
+                          {reportPaymentDetail.tossInfo.cancels &&
+                            reportPaymentDetail.tossInfo.cancels
+                              .filter(
+                                (cancel) => cancel.cancelAmount !== totalRefund,
+                              )
+                              .map((cancel, index) => (
+                                <ReportCreditSubRow
+                                  key={index}
+                                  title={`${cancel.cancelReason}`}
+                                  content={`${(cancel.cancelAmount ?? 0).toLocaleString()}원`}
+                                />
+                              ))}
+                        </div>
+                      </>
+                    )}
                   {isCanceled && (
                     <div className="py-2 text-xs font-medium text-primary-dark">
                       *환불 규정은{' '}

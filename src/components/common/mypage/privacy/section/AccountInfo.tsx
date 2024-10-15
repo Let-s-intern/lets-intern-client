@@ -1,16 +1,17 @@
-import { useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useState } from 'react';
 
+import axios from '../../../../../utils/axios';
+import Input from '../../../ui/input/Input';
 import Button from '../../ui/button/Button';
 import BankDropdown from '../form-control/BankDropdown';
-import Input from '../../../ui/input/Input';
-import axios from '../../../../../utils/axios';
 
 export interface AccountInfoValue {
   accountType: string;
   accountNum: string;
 }
 
+/* 마이페이지 > 개인정보에서 더 이상 사용 안 함 */
 const AccountInfo = () => {
   const queryClient = useQueryClient();
 
