@@ -39,15 +39,15 @@ const ReviewSection = () => {
           <GoArrowRight size={20} />
         </Link>
       </div>
-      <div className="custom-scrollbar mt-6 flex w-auto flex-nowrap gap-4 overflow-x-auto">
+      <div className="custom-scrollbar mt-6 flex flex-nowrap gap-4 overflow-x-auto">
         {data.slice(0, 5).map(({ blogThumbnailInfo }) => (
           <Link
             to={getBlogPathname(blogThumbnailInfo)}
             key={blogThumbnailInfo.id}
-            className="review_card flex-shrink-0"
+            className="review_card shrink-0"
           >
             <img
-              className="h-[180px] w-auto rounded-xs object-cover sm:h-[250px]"
+              className="h-[180px] w-auto rounded-xs sm:h-[250px]"
               src={blogThumbnailInfo.thumbnail ?? ''}
               alt="참여 후기 썸네일"
             />
