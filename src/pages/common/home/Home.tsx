@@ -13,7 +13,7 @@ const Home = () => {
   return (
     <>
       <TopBanner isShow={isShow} setIsShow={setIsShow} />
-      {isShow && <div className="h-10 w-full" />}
+      {isShow && <div className="h-20 w-full md:h-10" />}
       <div className="flex justify-center py-5">
         <div className="mb-6 flex w-full max-w-[1080px] flex-col gap-16 lg:gap-20">
           <Banner />
