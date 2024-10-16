@@ -1,3 +1,4 @@
+import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
 import {
   Button,
   Dialog,
@@ -7,10 +8,9 @@ import {
   DialogTitle,
   IconButton,
   Link,
-  Snackbar,
 } from '@mui/material';
 import { useMutation, useQuery } from '@tanstack/react-query';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { FaEdit } from 'react-icons/fa';
 import { FaTrashCan } from 'react-icons/fa6';
 import { twMerge } from 'tailwind-merge';
@@ -25,6 +25,7 @@ import RoundedBox from '../box/RoundedBox';
 import SectionHeading from '../heading/SectionHeading';
 
 const GuideSection = ({ className }: { className?: string }) => {
+  const { snackbar } = useAdminSnackbar();
   const { currentChallenge } = useAdminCurrentChallenge();
   const [modalStatus, setModalStatus] = useState<
     | {
@@ -39,14 +40,6 @@ const GuideSection = ({ className }: { className?: string }) => {
   >({
     open: false,
     mode: 'create',
-  });
-
-  const [snackbar, setSnackbar] = useState<{
-    open: boolean;
-    message: string;
-  }>({
-    open: false,
-    message: '',
   });
 
   // const [pageNum, setPageNum] = useState<number>(1);
@@ -142,10 +135,7 @@ const GuideSection = ({ className }: { className?: string }) => {
                   color="error"
                   onClick={async () => {
                     await deleteGuideMutation.mutateAsync(guide.id);
-                    setSnackbar({
-                      open: true,
-                      message: '가이드가 성공적으로 삭제되었습니다.',
-                    });
+                    snackbar('가이드가 성공적으로 삭제되었습니다.');
                     refetch();
                   }}
                 >
@@ -251,19 +241,13 @@ const GuideSection = ({ className }: { className?: string }) => {
             onClick={async () => {
               if (modalStatus.mode === 'create') {
                 await createGuideMutation.mutateAsync(editingGuide);
-                setSnackbar({
-                  open: true,
-                  message: '가이드가 성공적으로 등록되었습니다.',
-                });
+                snackbar('가이드가 성공적으로 등록되었습니다.');
               } else if (modalStatus.mode === 'edit') {
                 await updateGuideMutation.mutateAsync({
                   ...editingGuide,
                   guideId: modalStatus.guideId,
                 });
-                setSnackbar({
-                  open: true,
-                  message: '가이드가 성공적으로 수정되었습니다.',
-                });
+                snackbar('가이드가 성공적으로 수정되었습니다.');
               }
               refetch();
               setModalStatus((prev) => ({ ...prev, open: false }));
@@ -278,12 +262,6 @@ const GuideSection = ({ className }: { className?: string }) => {
           </Button>
         </DialogActions>
       </Dialog>
-      <Snackbar
-        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-        open={snackbar.open}
-        onClose={() => setSnackbar({ ...snackbar, open: false })}
-        message={snackbar.message}
-      />
     </>
   );
 };

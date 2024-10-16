@@ -27,7 +27,7 @@ import {
 } from 'lexical';
 import { useEffect, useRef, useState } from 'react';
 
-import { Snackbar } from '@mui/material';
+import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
 import { uploadFile } from '../../../../../api/file';
 import { createImageSet } from '../../../../../lib/image';
 import landscapeImage from '../../images/landscape.jpg';
@@ -95,6 +95,7 @@ export function InsertImageUploadedDialogBody({
 }: {
   onClick: (payload: InsertImagePayload) => void;
 }) {
+  const { snackbar: setSnackbar } = useAdminSnackbar();
   const [urls, setUrls] = useState<{
     src: string;
     webMobile: string;
@@ -110,20 +111,13 @@ export function InsertImageUploadedDialogBody({
   });
 
   const [altText, setAltText] = useState('');
-  const [snackbar, setSnackbar] = useState<{
-    open: boolean;
-    message: string;
-  }>({
-    open: false,
-    message: '',
-  });
 
   const isDisabled = urls.src === '';
 
   const loadImage = async (files: FileList | null) => {
     const file = files?.[0];
     if (!file) {
-      setSnackbar({ open: true, message: '파일이 없습니다.' });
+      setSnackbar('파일이 없습니다.');
       return;
     }
     const {
@@ -149,7 +143,7 @@ export function InsertImageUploadedDialogBody({
       jpegDesktop: jpegDesktopUrl,
     });
 
-    setSnackbar({ open: true, message: `파일이 업로드되었습니다: ${url}` });
+    setSnackbar(`파일이 업로드되었습니다: ${url}`);
   };
 
   return (
@@ -185,12 +179,6 @@ export function InsertImageUploadedDialogBody({
           Confirm
         </Button>
       </DialogActions>
-      <Snackbar
-        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-        open={snackbar.open}
-        onClose={() => setSnackbar({ ...snackbar, open: false })}
-        message={snackbar.message}
-      />
     </>
   );
 }
