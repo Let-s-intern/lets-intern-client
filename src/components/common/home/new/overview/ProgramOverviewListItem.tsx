@@ -103,33 +103,10 @@ const ProgramOverviewListItem = () => {
     },
   });
 
-  const { isLoading: isLoadingVOD, data: dataVOD } = useQuery<IProgram[]>({
-    queryKey: ['HomeProgramVOD'],
-    queryFn: async () => {
-      const res = await axios.get(`/program`, {
-        params: {
-          size: 4,
-          type: 'VOD',
-        },
-      });
-      return res.data.data.programList;
-    },
-  });
-
   useEffect(() => {
-    if (
-      data &&
-      dataVOD &&
-      current.year === now.year &&
-      current.month === now.month
-    ) {
+    if (data && current.year === now.year && current.month === now.month) {
       let isAllEnded = 0;
       data.map((program) => {
-        if (program.programInfo.programStatusType === 'POST') {
-          isAllEnded += 1;
-        }
-      });
-      dataVOD.map((program) => {
         if (program.programInfo.programStatusType === 'POST') {
           isAllEnded += 1;
         }
@@ -138,13 +115,13 @@ const ProgramOverviewListItem = () => {
         setCurrent(nextMonth());
       }
     }
-  }, [data, dataVOD, current, now]);
+  }, [data, current, now]);
 
   useEffect(() => {
-    if (isLoading || isLoadingVOD) {
+    if (isLoading) {
       setLoading(true);
     }
-  }, [isLoading, isLoadingVOD]);
+  }, [isLoading]);
 
   useEffect(() => {
     if (loading) {
@@ -218,11 +195,11 @@ const ProgramOverviewListItem = () => {
         )}
       </div>
       <ul className="grid w-full grid-cols-1 gap-4 overflow-y-auto md:grid-cols-2">
-        {loading || isLoading || isLoadingVOD ? (
+        {loading || isLoading ? (
           <div className="row-span-4 flex h-[172px] items-center justify-center md:col-span-2">
             <LoadingContainer text="프로그램 조회 중" />
           </div>
-        ) : !data || !dataVOD ? (
+        ) : !data ? (
           emptyList.map((emptyItem) => (
             <EmptyListItemContainer
               key={emptyItem.title}
@@ -234,7 +211,7 @@ const ProgramOverviewListItem = () => {
               buttonColor={emptyItem.buttonColor}
             />
           ))
-        ) : data.length + dataVOD.length < 1 ? (
+        ) : data.length < 1 ? (
           emptyList.map((emptyItem) => (
             <EmptyListItemContainer
               key={emptyItem.title}
@@ -247,20 +224,12 @@ const ProgramOverviewListItem = () => {
             />
           ))
         ) : (
-          <>
-            {data.map((program) => (
-              <ProgramListItemContainer
-                key={program.programInfo.programType + program.programInfo.id}
-                program={program}
-              />
-            ))}
-            {dataVOD.map((program) => (
-              <ProgramListItemContainer
-                key={program.programInfo.programType + program.programInfo.id}
-                program={program}
-              />
-            ))}
-          </>
+          data.map((program) => (
+            <ProgramListItemContainer
+              key={program.programInfo.programType + program.programInfo.id}
+              program={program}
+            />
+          ))
         )}
       </ul>
     </div>

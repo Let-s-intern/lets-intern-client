@@ -40,9 +40,7 @@ const ProgramListItemContainer = ({ program }: { program: IProgram }) => {
               </div>
             </div>
           </div>
-          <div
-            className={`flex w-full items-center justify-start gap-x-1 ${program.programInfo.programType === 'VOD' ? 'hidden' : ''}`}
-          >
+          <div className="flex w-full items-center justify-start gap-x-1">
             <div className="text-xs font-medium text-neutral-0">진행기간</div>
             <div className="text-xs font-medium text-primary-dark">
               {`${formatDate(program.programInfo.startDate)} ~ ${formatDate(
