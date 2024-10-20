@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import DocumentLink from './DocumentLink';
 import Icon from './Icon';
@@ -18,13 +19,28 @@ const BUSINESS_INFORMATION = {
   owner: '대표자: 송다예',
   registrationNumber: '사업자 등록번호: 871-11-02629',
   mailOrderSales: '통신판매업신고번호 제 2024-서울마포-2221호',
-  address: '주소: 서울특별시 마포구 독막로 9길 18, 서홍빌딩 3층 A9호',
+  address: '주소: 서울특별시 광나루로 190 B동 611호',
   email: '이메일: official@letscareer.co.kr',
   call: '고객센터: 0507-0178-8541',
   copyright: 'Copyright ©2024 아이엔지. All rights reserved.',
 };
 
 const Footer = () => {
+  useEffect(() => {
+    if (!window.Kakao.isInitialized()) {
+      window.Kakao.init('fe2307dd60e05ff8cbb06d777a13e31c');
+    }
+  }, []);
+
+  const onClickAddChannel = () => {
+    window.Kakao.Channel.followChannel({
+      channelPublicId: '_tCeHG',
+    })
+      .then((response: any) => {})
+      .catch((error: any) => {
+        console.log(error);
+      });
+  };
   return (
     <footer className="border-t-1 w-full border-neutral-80 bg-neutral-85 px-5 pb-6 pt-10 lg:px-10 xl:px-52">
       <div className="flex flex-col gap-[3.25rem] lg:justify-between lg:gap-7">
@@ -110,6 +126,14 @@ const Footer = () => {
               alt="네이버 블로그 아이콘"
               to="https://blog.naver.com/PostList.naver?blogId=letsintern"
               className="blog_cta"
+            />
+            <img
+              src="/icons/icon-kakao.svg"
+              width={20}
+              height={20}
+              alt="카카오톡 채널 아이콘"
+              onClick={onClickAddChannel}
+              className="cursor-pointer"
             />
           </div>
           <div className="flex items-center gap-6 text-neutral-0/[.65]">

@@ -660,8 +660,6 @@ export const getChallengeIdApplicationsPayback = z
         name: z.string().nullable(),
         email: z.string().nullable(),
         phoneNum: z.string().nullable(),
-        accountNum: z.string().nullable(),
-        accountType: accountType.nullable(),
         scores: z.array(
           z
             .object({
@@ -670,6 +668,10 @@ export const getChallengeIdApplicationsPayback = z
             })
             .nullable(),
         ),
+        orderId: z.string().nullable(),
+        couponName: z.string().nullable(),
+        finalPrice: z.number().nullable(),
+        paybackPrice: z.number().nullable(),
         isRefunded: z.boolean().nullable(),
       }),
     ),

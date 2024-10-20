@@ -4,6 +4,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 
 import useAuthStore from '../../../../../store/useAuthStore';
 import axios from '../../../../../utils/axios';
+import KakaoChannel from './KakaoChannel';
 import NavItem from './NavItem';
 import SideNavItem from './SideNavItem';
 
@@ -75,8 +76,8 @@ const NavBar = () => {
   return (
     <>
       {/* 상단 네비게이션 바 */}
-      <div className="lg:p-30 fixed top-0 z-30 w-screen border-b border-neutral-80 bg-static-100 px-5 sm:px-20 lg:px-28">
-        <div className="flex h-[3.75rem] items-center justify-between md:h-[4.375rem] lg:h-[4.75rem]">
+      <div className="lg:p-30 fixed top-0 z-30 h-[3.75rem] md:h-[4.375rem] lg:h-[4.75rem] w-screen border-b border-neutral-80 bg-static-100 px-5 sm:px-20 lg:px-28">
+        <div className="flex h-full items-center justify-between">
           <div className="flex items-center gap-4 sm:gap-9">
             <Link to="/" className="h-[1.75rem] md:h-[2.2rem]">
               <img
@@ -146,7 +147,7 @@ const NavBar = () => {
       ></div>
       {/* 사이드 네비게이션 바 */}
       <div
-        className={`fixed right-0 top-0 z-50 h-screen w-full bg-white shadow-md transition-all duration-300 sm:w-80 ${
+        className={`fixed right-0 top-0 z-50 h-screen w-full bg-white shadow-md transition-all duration-300 sm:w-[22rem] ${
           isOpen ? 'translate-x-0' : 'translate-x-full'
         }`}
       >
@@ -167,6 +168,7 @@ const NavBar = () => {
           </i>
         </div>
         <hr />
+        <KakaoChannel />
         <div className="flex flex-col gap-5 py-10">
           <div className="mx-5 flex justify-between">
             {isLoggedIn ? (

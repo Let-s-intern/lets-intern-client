@@ -2,6 +2,7 @@ import { useMutation } from '@tanstack/react-query';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import MyPageKakaoChannel from '@components/common/mypage/privacy/section/MyPageKakaoChannel';
 import BasicInfo from '../../../components/common/mypage/privacy/section/BasicInfo';
 import ChangePassword from '../../../components/common/mypage/privacy/section/ChangePassword';
 import MarketingAgree from '../../../components/common/mypage/privacy/section/MarketingAgree';
@@ -35,7 +36,10 @@ const Privacy = () => {
       <BasicInfo />
       {/* <AccountInfo /> */}
       <ChangePassword />
-      <MarketingAgree />
+      <div className="flex w-full flex-col gap-y-6">
+        <MyPageKakaoChannel />
+        <MarketingAgree />
+      </div>
       <button
         className="mt-[24px] flex w-full items-center justify-center text-neutral-0/40"
         onClick={() => setIsDeleteModalOpen(true)}

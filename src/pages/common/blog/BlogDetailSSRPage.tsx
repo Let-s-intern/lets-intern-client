@@ -37,7 +37,6 @@ const findProgramIncludingKeyword = async (keyword: string) => {
   const programList = programSchema
     .parse(res.data.data)
     .programList.filter((item) => item.programInfo.title?.includes(keyword));
-  console.log(programList);
   // 마감일이 가장 빠른 프로그램을 찾아서 반환
   return programList.reduce(
     (latest, program) =>
