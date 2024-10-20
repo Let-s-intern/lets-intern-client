@@ -70,23 +70,33 @@ const Router = () => {
               <Route path="order/result" element={<PaymentResult />} />
               <Route path="order/fail" element={<PaymentFail />} />
 
-              {/* /program */}
+              {/* /program 프로그램 목록 */}
               <Route path="program" element={<Programs />} />
-              {/* /program/detail/:programId */}
-              {/* <Route
-              path="program/detail/:programId"
-              element={<ProgramDetailRegacy />}
-            /> */}
-              {/* /program/challenge/:programId */}
+
+              {/* 챌린지 상세 페이지 (Deprecated) */}
+              <Route
+                path="program/challenge/old/:programId"
+                element={<ProgramDetail programType="challenge" />}
+              />
+
+              {/* 챌린지 상세 페이지 */}
               <Route
                 path="program/challenge/:programId"
                 element={<ProgramDetail programType="challenge" />}
               />
-              {/* /program/live/:programId */}
+
+              {/* LIVE 클래스 상세 페이지 (Deprecated) */}
+              <Route
+                path="program/live/old/:programId"
+                element={<ProgramDetail programType="live" />}
+              />
+
+              {/* LIVE 클래스 상세 페이지 */}
               <Route
                 path="program/live/:programId"
                 element={<ProgramDetail programType="live" />}
               />
+
               {/* /program/:programId/review/new */}
               <Route
                 path="program/:programId/review/new"
