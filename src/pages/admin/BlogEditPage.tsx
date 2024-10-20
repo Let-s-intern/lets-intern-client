@@ -309,7 +309,7 @@ const BlogEditPage = () => {
 
             <h2 className="mt-10">콘텐츠 편집</h2>
             <EditorApp
-              editorStateJsonString={blogData.blogDetailInfo.content!}
+              initialEditorStateJsonString={blogData.blogDetailInfo.content!}
               onChange={onChangeEditor}
             />
             <div className="text-right">

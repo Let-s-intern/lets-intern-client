@@ -45,7 +45,7 @@ const Programs = () => {
   const maxPage = data?.pageInfo?.totalPages || 1;
 
   return (
-    <div className="p-8">
+    <div className="mx-3 mb-40 mt-3">
       <Header>
         <Heading>프로그램 관리</Heading>
         <div className="flex items-center justify-center gap-2">
@@ -200,11 +200,21 @@ const Row = ({ program }: { program: ProgramAdminListItem }) => {
             color="primary"
             size="small"
             startIcon={<FaPenToSquare size={12} />}
-            // endIcon={<FaArrowRight size={10} />}
             onClick={() => {
-              navigate(
-                `/admin/programs/${program.programInfo.id}/edit?programType=${program.programInfo.programType}`,
-              );
+              // navigate(
+              //   `/admin/programs/${program.programInfo.id}/edit?programType=${program.programInfo.programType}`,
+              // );
+              switch (program.programInfo.programType) {
+                case 'CHALLENGE':
+                  navigate(`/admin/challenge/${program.programInfo.id}/edit`);
+                  break;
+                case 'LIVE':
+                  navigate(`/admin/live/${program.programInfo.id}/edit`);
+                  break;
+                case 'VOD':
+                case 'REPORT':
+                  throw new Error("Don't use this page");
+              }
             }}
           >
             수정

@@ -242,23 +242,25 @@ export type UpdateChallengeReq = {
       programClassification: ProgramClassification;
     };
   }[];
-  priceInfo?: {
-    priceInfo: {
-      price: number;
-      discount: number;
-      accountNumber?: string;
-      deadline?: string; // "2024-10-12T08:03:17.016Z"
-      accountType?: AccountType;
-    };
-    charge: number;
-    refund: number;
-    challengePriceType: ChallengePriceType;
-    challengeUserType: ChallengeUserType;
-    challengeParticipationType: ChallengeParticipationType;
-  }[];
+  priceInfo?: UpdateChallengeUpdatePriceInfoReq[];
   faqInfo?: {
     faqId: number;
   }[];
+};
+
+export type UpdateChallengeUpdatePriceInfoReq = {
+  priceInfo: {
+    price: number;
+    discount: number;
+    accountNumber?: string;
+    deadline?: string; // "2024-10-12T08:03:17.016Z"
+    accountType?: AccountType;
+  };
+  charge: number;
+  refund: number;
+  challengePriceType: ChallengePriceType;
+  challengeUserType: ChallengeUserType;
+  challengeParticipationType: ChallengeParticipationType;
 };
 
 // DELETE /api/v1/challenge/{challengeId} 챌린지 삭제

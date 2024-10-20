@@ -1,3 +1,4 @@
+import { SerializedEditorState } from 'lexical';
 import { TABLE_STATUS } from '../utils/convert';
 
 export * from './Banner.interface';
@@ -9,6 +10,20 @@ export type StatusKey = keyof typeof TABLE_STATUS;
 export interface IApplyDrawerAction {
   type: 'toggle' | 'close' | 'open';
 }
+
+/** 챌린지 또는 LIVE 클래스의 JSON 버전 (desc에 통쨰로 JSON 형태로 들어감) */
+export type ChallengeContent = {
+  /* 상세 설명*/
+  mainDescription?: SerializedEditorState;
+  /* 커리큘럼 */
+  curriculum: unknown;
+  /* 커리큘럼 추가 설명 */
+  curriculumDesc: unknown;
+  /* 블로그 후기 */
+  blogReview: unknown;
+  /*  후기 */
+  challengeReview: unknown;
+};
 
 export interface IPageable {
   page: number;
