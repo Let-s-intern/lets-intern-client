@@ -13,9 +13,14 @@ import { Button, Switch } from '@mui/material';
 import { useQueryClient } from '@tanstack/react-query';
 import dayjs from 'dayjs';
 import { useState } from 'react';
-import { FaCopy, FaList, FaPencil, FaTrashCan } from 'react-icons/fa6';
+import {
+  FaCopy,
+  FaList,
+  FaPenToSquare,
+  FaPlus,
+  FaTrashCan,
+} from 'react-icons/fa6';
 import { useNavigate } from 'react-router-dom';
-import ActionButton from '../../../components/admin/ui/button/ActionButton';
 import Header from '../../../components/admin/ui/header/Header';
 import Heading from '../../../components/admin/ui/heading/Heading';
 import AdminPagination from '../../../components/admin/ui/pagination/AdminPagination';
@@ -28,6 +33,7 @@ import {
 
 const Programs = () => {
   const [pageNum, setPageNum] = useState<number>(1);
+  const navigate = useNavigate();
 
   const sizePerPage = 10;
 
@@ -42,9 +48,40 @@ const Programs = () => {
     <div className="p-8">
       <Header>
         <Heading>프로그램 관리</Heading>
-        <ActionButton to="/admin/programs/create" bgColor="blue">
-          등록
-        </ActionButton>
+        <div className="flex items-center justify-center gap-2">
+          <Button
+            variant="outlined"
+            color="primary"
+            startIcon={<FaPlus size={12} />}
+            onClick={() => navigate(`/admin/programs/create`)}
+          >
+            등록(old version)
+          </Button>
+          <Button
+            variant="contained"
+            color="primary"
+            startIcon={<FaPlus size={12} />}
+            onClick={() => navigate(`/admin/challenge/create`)}
+          >
+            챌린지 등록
+          </Button>
+          <Button
+            variant="contained"
+            color="primary"
+            startIcon={<FaPlus size={12} />}
+            onClick={() => navigate(`/admin/live/create`)}
+          >
+            LIVE 클래스 등록
+          </Button>
+          <Button
+            variant="contained"
+            color="primary"
+            startIcon={<FaPlus size={12} />}
+            onClick={() => navigate(`/admin/vod/create`)}
+          >
+            VOD 클래스 등록
+          </Button>
+        </div>
       </Header>
       <main>
         {isLoading ? (
@@ -162,7 +199,7 @@ const Row = ({ program }: { program: ProgramAdminListItem }) => {
             variant="outlined"
             color="primary"
             size="small"
-            startIcon={<FaPencil size={12} />}
+            startIcon={<FaPenToSquare size={12} />}
             // endIcon={<FaArrowRight size={10} />}
             onClick={() => {
               navigate(
