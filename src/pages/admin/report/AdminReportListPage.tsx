@@ -1,6 +1,7 @@
-import { Button, Snackbar } from '@mui/material';
+import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
+import { Button } from '@mui/material';
 import { DataGrid, GridColDef, GridToolbarContainer } from '@mui/x-data-grid';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import {
   AdminReportListItem,
@@ -119,11 +120,12 @@ const AdminReportListPage = () => {
   const { data: reportsData } = useGetReportsForAdmin();
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
+  const { snackbar: setSnackbar } = useAdminSnackbar();
 
   useEffect(() => {
     const message = searchParams.get('message');
     if (message) {
-      setSnackbar({ open: true, message });
+      setSnackbar(message);
       setSearchParams(
         (prev) => {
           prev.delete('message');
@@ -134,7 +136,7 @@ const AdminReportListPage = () => {
         },
       );
     }
-  }, [searchParams, setSearchParams]);
+  }, [searchParams, setSearchParams, setSnackbar]);
 
   const columns = useMemo(() => {
     return createColumns({
@@ -158,11 +160,6 @@ const AdminReportListPage = () => {
     );
   }, [reportsData?.reportForAdminInfos]);
 
-  const [snackbar, setSnackbar] = useState({
-    open: false,
-    message: '',
-  });
-
   return (
     <main className="pt-3">
       <p className="mb-2">서류 진단 프로그램 관리</p>
@@ -174,13 +171,6 @@ const AdminReportListPage = () => {
         disableRowSelectionOnClick
         autoHeight
         hideFooter
-      />
-
-      <Snackbar
-        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-        open={snackbar.open}
-        onClose={() => setSnackbar({ ...snackbar, open: false })}
-        message={snackbar.message}
       />
     </main>
   );

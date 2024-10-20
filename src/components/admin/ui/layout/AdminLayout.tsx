@@ -3,6 +3,7 @@ import { ImExit } from 'react-icons/im';
 import { IoIosArrowDown } from 'react-icons/io';
 import { Link, Outlet, useNavigate } from 'react-router-dom';
 
+import { AdminSnackbarProvider } from '@/hooks/useAdminSnackbar';
 import { useQuery } from '@tanstack/react-query';
 import axios from '../../../../utils/axios';
 
@@ -130,11 +131,13 @@ const AdminLayout = () => {
   return (
     <div className="flex">
       <aside>
-        <nav className="fixed left-0 top-0 z-50 flex h-screen w-64 flex-col gap-8 overflow-y-auto bg-[#353535] py-20 text-white">
+        <nav className="sticky left-0 top-0 z-50 flex h-screen w-48 flex-col gap-4 overflow-y-auto bg-[#353535] py-20 pt-4 text-white shadow-xl">
           {navData.map((navSection, index) => (
             <div key={index}>
-              <div className="flex items-center justify-between border-b border-b-neutral-600 pb-3 pl-12 pr-8">
-                <h3 className="text-lg font-medium">{navSection.title}</h3>
+              <div className="flex items-center justify-between border-b border-b-neutral-600 pb-3 pl-4 pr-8">
+                <h3 className="text-xsmall16 font-medium">
+                  {navSection.title}
+                </h3>
                 <i className="text-xl text-neutral-600">
                   <IoIosArrowDown />
                 </i>
@@ -144,7 +147,7 @@ const AdminLayout = () => {
                   <li key={index}>
                     <Link
                       to={navItem.url}
-                      className="flex items-center gap-1 py-3 pl-12 hover:bg-[#2A2A2A]"
+                      className="flex items-center gap-1 py-2 pl-6 text-xsmall14 hover:bg-[#2A2A2A]"
                     >
                       {navItem.name}
                       {'isExit' in navItem && (
@@ -159,10 +162,11 @@ const AdminLayout = () => {
             </div>
           ))}
         </nav>
-        <div className="w-64" />
       </aside>
-      <section className="relative min-h-screen w-[calc(100%-16rem)] flex-1">
-        <Outlet />
+      <section className="relative min-h-screen min-w-[800px] flex-1">
+        <AdminSnackbarProvider>
+          <Outlet />
+        </AdminSnackbarProvider>
       </section>
     </div>
   );

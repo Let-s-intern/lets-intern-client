@@ -1,3 +1,4 @@
+import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
 import {
   Button,
   Dialog,
@@ -7,11 +8,10 @@ import {
   DialogTitle,
   IconButton,
   Link,
-  Snackbar,
 } from '@mui/material';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import clsx from 'clsx';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { FaEdit } from 'react-icons/fa';
 import { FaTrashCan } from 'react-icons/fa6';
 import { twMerge } from 'tailwind-merge';
@@ -27,6 +27,7 @@ import SectionHeading from '../heading/SectionHeading';
 
 const NoticeSection = ({ className }: { className?: string }) => {
   const { currentChallenge } = useAdminCurrentChallenge();
+  const { snackbar: setSnackbar } = useAdminSnackbar();
   const [modalStatus, setModalStatus] = useState<
     | {
         open: boolean;
@@ -40,14 +41,6 @@ const NoticeSection = ({ className }: { className?: string }) => {
   >({
     open: false,
     mode: 'create',
-  });
-
-  const [snackbar, setSnackbar] = useState<{
-    open: boolean;
-    message: string;
-  }>({
-    open: false,
-    message: '',
   });
 
   const [pageNum, setPageNum] = useState<number>(1);
@@ -157,10 +150,7 @@ const NoticeSection = ({ className }: { className?: string }) => {
                   color="error"
                   onClick={async () => {
                     await deleteNoticeMutation.mutateAsync(notice.id);
-                    setSnackbar({
-                      open: true,
-                      message: '공지사항이 성공적으로 삭제되었습니다.',
-                    });
+                    setSnackbar('공지사항이 성공적으로 삭제되었습니다.');
                     refetch();
                   }}
                 >
@@ -268,19 +258,13 @@ const NoticeSection = ({ className }: { className?: string }) => {
             onClick={async () => {
               if (modalStatus.mode === 'create') {
                 await createNoticeMutation.mutateAsync(editingNotice);
-                setSnackbar({
-                  open: true,
-                  message: '공지사항이 성공적으로 등록되었습니다.',
-                });
+                setSnackbar('공지사항이 성공적으로 등록되었습니다.');
               } else if (modalStatus.mode === 'edit') {
                 await updateNoticeMutation.mutateAsync({
                   ...editingNotice,
                   noticeId: modalStatus.noticeId,
                 });
-                setSnackbar({
-                  open: true,
-                  message: '공지사항이 성공적으로 수정되었습니다.',
-                });
+                setSnackbar('공지사항이 성공적으로 수정되었습니다.');
               }
               refetch();
               setModalStatus((prev) => ({ ...prev, open: false }));
@@ -296,12 +280,6 @@ const NoticeSection = ({ className }: { className?: string }) => {
           </Button>
         </DialogActions>
       </Dialog>
-      <Snackbar
-        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-        open={snackbar.open}
-        onClose={() => setSnackbar({ ...snackbar, open: false })}
-        message={snackbar.message}
-      />
     </>
   );
 };

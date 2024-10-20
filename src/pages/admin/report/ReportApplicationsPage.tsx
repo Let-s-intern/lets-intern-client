@@ -1,5 +1,6 @@
+import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
 import { generateRandomString } from '@/utils/random';
-import { Button, MenuItem, Select, Snackbar } from '@mui/material';
+import { Button, MenuItem, Select } from '@mui/material';
 import { DatePicker, TimePicker } from '@mui/x-date-pickers';
 import dayjs from 'dayjs';
 import { useState } from 'react';
@@ -89,13 +90,7 @@ const reportApplicatoinsStatusList: {
 
 const ReportApplicationsPage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
-  const [snackbar, setSnackbar] = useState<{
-    open: boolean;
-    message: string;
-  }>({
-    open: false,
-    message: '',
-  });
+  const { snackbar: setSnackbar } = useAdminSnackbar();
 
   const reportId = searchParams.get('reportId');
   const [applicationModal, setApplicationModal] = useState<{
@@ -130,10 +125,7 @@ const ReportApplicationsPage = () => {
     successCallback: () => {
       setApplicationModal(null);
       setUploadedFile(null);
-      setSnackbar({
-        open: true,
-        message: '진단서가 업로드되었습니다.',
-      });
+      setSnackbar('진단서가 업로드되었습니다.');
     },
     errorCallback: (error: Error) => {
       alert(error);
@@ -142,10 +134,7 @@ const ReportApplicationsPage = () => {
 
   const { mutateAsync: patchStatus } = usePatchApplicationStatus({
     successCallback() {
-      setSnackbar({
-        open: true,
-        message: '상태가 변경되었습니다.',
-      });
+      setSnackbar('상태가 변경되었습니다.');
     },
     errorCallback(error) {
       alert(error);
@@ -875,12 +864,6 @@ const ReportApplicationsPage = () => {
           </div>
         )}
       </main>
-      <Snackbar
-        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-        open={snackbar.open}
-        onClose={() => setSnackbar({ ...snackbar, open: false })}
-        message={snackbar.message}
-      />
     </div>
   );
 };
