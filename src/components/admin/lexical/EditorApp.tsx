@@ -8,7 +8,10 @@
 
 import { $createLinkNode } from '@lexical/link';
 import { $createListItemNode, $createListNode } from '@lexical/list';
-import { LexicalComposer } from '@lexical/react/LexicalComposer';
+import {
+  InitialConfigType,
+  LexicalComposer,
+} from '@lexical/react/LexicalComposer';
 import { OnChangePlugin } from '@lexical/react/LexicalOnChangePlugin';
 import { $createHeadingNode, $createQuoteNode } from '@lexical/rich-text';
 import {
@@ -16,6 +19,7 @@ import {
   $createTextNode,
   $getRoot,
   EditorState,
+  SerializedEditorState,
 } from 'lexical';
 import { useCallback, useEffect } from 'react';
 import { isDevPlayground } from './appSettings';
@@ -154,11 +158,13 @@ function $prepopulatedRichText() {
 }
 
 function App({
-  editorStateJsonString,
+  initialEditorStateJsonString,
   onChange,
+  onChangeSerializedEditorState,
 }: {
-  editorStateJsonString: string;
+  initialEditorStateJsonString: string;
   onChange: (jsonString: string) => void;
+  onChangeSerializedEditorState?: (serialized: SerializedEditorState) => void;
 }): JSX.Element {
   useEffect(() => {
     const handleError = (error: Event) => {
@@ -181,20 +187,22 @@ function App({
     };
   }, []);
 
-  const handleChange = useCallback((editorState: EditorState) => {
-    editorState.read(() => {
-      const jsonString = JSON.stringify(editorState);
-      onChange(jsonString);
-    });
-  }, []);
+  const handleChange = useCallback(
+    (editorState: EditorState) => {
+      const json = editorState.toJSON();
+      onChangeSerializedEditorState?.(json);
+      onChange(JSON.stringify(json));
+    },
+    [onChange, onChangeSerializedEditorState],
+  );
 
   const {
     settings: { measureTypingPerf },
     setOption,
   } = useSettings();
 
-  const initialConfig = {
-    editorState: editorStateJsonString,
+  const initialConfig: InitialConfigType = {
+    editorState: initialEditorStateJsonString,
     namespace: 'LetsCareerBlog',
     nodes: [...nodes],
     onError: (error: Error) => {
@@ -234,17 +242,20 @@ function App({
 }
 
 export default function EditorApp({
-  editorStateJsonString = emptyEditorState,
-  onChange,
+  initialEditorStateJsonString = emptyEditorState,
+  onChange = () => {},
+  onChangeSerializedEditorState,
 }: {
-  editorStateJsonString?: string;
-  onChange: (jsonString: string) => void;
+  initialEditorStateJsonString?: string;
+  onChange?: (jsonString: string) => void;
+  onChangeSerializedEditorState?: (serialized: SerializedEditorState) => void;
 }): JSX.Element {
   return (
     <SettingsContext>
       <FlashMessageContext>
         <App
-          editorStateJsonString={editorStateJsonString}
+          initialEditorStateJsonString={initialEditorStateJsonString}
+          onChangeSerializedEditorState={onChangeSerializedEditorState}
           onChange={onChange}
         />
       </FlashMessageContext>

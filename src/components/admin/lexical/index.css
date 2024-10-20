@@ -1418,7 +1418,6 @@ button.action-button:disabled {
   border-top-left-radius: 10px;
   border-top-right-radius: 10px;
   vertical-align: middle;
-  overflow: auto;
   height: 36px;
   position: sticky;
   top: 0;
@@ -1430,7 +1429,7 @@ button.toolbar-item {
   display: flex;
   background: none;
   border-radius: 10px;
-  padding: 8px;
+  padding: 8px 4px;
   cursor: pointer;
   vertical-align: middle;
   flex-shrink: 0;
@@ -1443,7 +1442,7 @@ button.toolbar-item:disabled {
 }
 
 button.toolbar-item.spaced {
-  margin-right: 2px;
+  margin-right: 1px;
 }
 
 button.toolbar-item i.format {

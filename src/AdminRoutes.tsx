@@ -27,9 +27,13 @@ import ChallengeOperationOnboarding from './pages/admin/challenge/ChallengeOpera
 import ChallengeOperationParticipants from './pages/admin/challenge/ChallengeOperationParticipants';
 import ChallengeOperationPayback from './pages/admin/challenge/ChallengeOperationPayback';
 import ChallengeOperationRegisterMission from './pages/admin/challenge/ChallengeOperationRegisterMission';
+import ChallengeCreate from './pages/admin/ChallengeCreate';
+import ChallengeEdit from './pages/admin/ChallengeEdit';
 import CouponCreate from './pages/admin/coupon/CouponCreate';
 import CouponEdit from './pages/admin/coupon/CouponEdit';
 import Coupons from './pages/admin/coupon/Coupons';
+import LiveCreate from './pages/admin/LiveCreate';
+import LiveEdit from './pages/admin/LiveEdit';
 import OnlineContents from './pages/admin/online-contents/OnlineContents';
 import OnlineContentsCreate from './pages/admin/online-contents/OnlineContentsCreate';
 import OnlineContentsEdit from './pages/admin/online-contents/OnlineContentsEdit';
@@ -53,6 +57,8 @@ import UserDetail from './pages/admin/user/UserDetail';
 import UserEdit from './pages/admin/user/UserEdit';
 import UserMemo from './pages/admin/user/UserMemo';
 import Users from './pages/admin/user/Users';
+import VodCreate from './pages/admin/VodCreate';
+import VodEdit from './pages/admin/VodEdit';
 
 // TODO: 평탄화(flatten) 작업 하기
 export const getAdminRoutes = () => {
@@ -190,6 +196,14 @@ export const getAdminRoutes = () => {
       <Route path="report/create" element={<AdminReportCreatePage />} />
       <Route path="report/edit/:id" element={<AdminReportEditPage />} />
       <Route path="report/applications" element={<ReportApplicationsPage />} />
+
+      {/* 프로그램 생성/편집 NEW버전 */}
+      <Route path="challenge/create" element={<ChallengeCreate />} />
+      <Route path="challenge/:challengeId/edit" element={<ChallengeEdit />} />
+      <Route path="live/create" element={<LiveCreate />} />
+      <Route path="live/:liveId/edit" element={<LiveEdit />} />
+      <Route path="vod/create" element={<VodCreate />} />
+      <Route path="vod/:vodId/edit" element={<VodEdit />} />
     </Route>
   );
 };
