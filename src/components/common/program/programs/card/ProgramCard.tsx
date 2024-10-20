@@ -54,11 +54,11 @@ const ProgramCard = ({ program }: ProgramCardProps) => {
           ? window.open(link)
           : navigate(link);
       }}
-      className="program_card flex w-[152px] cursor-pointer flex-col overflow-hidden rounded-xs md:w-[180px] md:gap-4 md:rounded-md md:border md:border-neutral-85 md:p-2.5 2xl:w-[250px]"
+      className="program_card flex w-[152px] cursor-pointer flex-col overflow-hidden rounded-xs md:w-[180px] md:gap-4 md:rounded-md md:border md:border-neutral-85 md:p-2.5 2xl:w-[210px]"
       data-program-text={program.programInfo.title}
     >
       <img
-        className="h-32 w-full bg-neutral-80 object-cover md:h-44 md:rounded-xs"
+        className="h-[120px] w-full bg-neutral-80 object-cover md:h-[125px] md:rounded-xs 2xl:h-[150px]"
         src={program.programInfo.thumbnail!}
         alt="프로그램 썸네일 배경"
       />
