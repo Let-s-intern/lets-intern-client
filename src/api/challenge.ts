@@ -6,7 +6,7 @@ const useChallengeQueryKey = 'useChallengeQueryKey';
 
 export const useChallengeQuery = ({
   challengeId,
-  enabled,
+  enabled = true,
 }: {
   challengeId: number;
   enabled?: boolean;

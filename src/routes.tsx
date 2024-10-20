@@ -24,10 +24,12 @@ import CreditDetail from './pages/common/mypage/CreditDetail';
 import MyPage from './pages/common/mypage/MyPage';
 import Privacy from './pages/common/mypage/Privacy';
 import Review from './pages/common/mypage/Review';
+import ChallengeDetailSSRPage from './pages/common/program/ChallengeDetailSSRPage';
+import LiveDetailSSRPage from './pages/common/program/LiveDetailSSRPage';
 import Payment from './pages/common/program/Payment';
 import PaymentFail from './pages/common/program/PaymentFail';
 import PaymentResult from './pages/common/program/PaymentResult';
-import ProgramDetail from './pages/common/program/ProgramDetail';
+import ProgramDetailLegacy from './pages/common/program/ProgramDetailLegacy';
 import Programs from './pages/common/program/Programs';
 import ReportApplyPage from './pages/common/report/ReportApplyPage';
 import ReportManagementPage from './pages/common/report/ReportManagementPage';
@@ -55,13 +57,18 @@ export const routes: RouteObject[] = [
       { index: true, element: <Home /> },
       { path: 'about', element: <About /> },
       {
-        path: 'program/challenge/:programId',
-        element: <ProgramDetail programType="challenge" />,
+        path: 'program/challenge/old/:programId',
+        element: <ProgramDetailLegacy programType="challenge" />,
       },
       {
-        path: 'program/live/:programId',
-        element: <ProgramDetail programType="live" />,
+        path: 'program/live/old/:programId',
+        element: <ProgramDetailLegacy programType="live" />,
       },
+      {
+        path: 'program/challenge/:id/:title?',
+        element: <ChallengeDetailSSRPage />,
+      },
+      { path: 'program/live/:id/:title?', element: <LiveDetailSSRPage /> },
       { path: 'payment', element: <Payment /> },
       { path: 'order/result', element: <PaymentResult /> },
       { path: 'order/fail', element: <PaymentFail /> },

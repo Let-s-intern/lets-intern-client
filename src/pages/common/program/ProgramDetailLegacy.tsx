@@ -25,7 +25,7 @@ interface ProgramDetailProps {
   programType: ProgramType;
 }
 
-const ProgramDetail = ({ programType }: ProgramDetailProps) => {
+const ProgramDetailLegacy = ({ programType }: ProgramDetailProps) => {
   const params = useParams<{ programId: string }>();
   const navigate = useNavigate();
 
@@ -259,4 +259,4 @@ const ProgramDetail = ({ programType }: ProgramDetailProps) => {
   );
 };
 
-export default ProgramDetail;
+export default ProgramDetailLegacy;
