@@ -54,7 +54,7 @@ const ProgramCard = ({ program }: ProgramCardProps) => {
           ? window.open(link)
           : navigate(link);
       }}
-      className="program_card flex w-full cursor-pointer flex-col overflow-hidden rounded-xs md:gap-4 md:rounded-md md:border md:border-neutral-85 md:p-2.5"
+      className="program_card flex w-[152px] cursor-pointer flex-col overflow-hidden rounded-xs md:w-[180px] md:gap-4 md:rounded-md md:border md:border-neutral-85 md:p-2.5 2xl:w-[250px]"
       data-program-text={program.programInfo.title}
     >
       <img
