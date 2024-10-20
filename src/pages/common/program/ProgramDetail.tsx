@@ -75,7 +75,7 @@ const ProgramDetail = ({ programType }: ProgramDetailProps) => {
       programType &&
       program &&
       program.query.data &&
-      isDeprecatedProgram({ description: program.query.data.desc })
+      isDeprecatedProgram({ desc: program.query.data.desc })
     ) {
       navigate(`/program/${programType}/old/${programId}`);
     }

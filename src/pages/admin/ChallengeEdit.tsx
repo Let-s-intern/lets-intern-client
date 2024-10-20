@@ -1,4 +1,5 @@
 import { useGetChallengeQuery, usePatchChallengeMutation } from '@/api/program';
+import isDeprecatedProgram from '@/lib/isDeprecatedProgram';
 import {
   ChallengeType,
   UpdateChallengeReq,
@@ -22,7 +23,7 @@ import {
 } from '@mui/material';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { FaSave } from 'react-icons/fa';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 const ChallengeEdit: React.FC = () => {
   const [content, setContent] = useState<ChallengeContent>({
@@ -33,7 +34,7 @@ const ChallengeEdit: React.FC = () => {
   });
 
   const { mutateAsync: patchChallenge } = usePatchChallengeMutation();
-
+  const navigate = useNavigate();
   const { challengeId: challengeIdString } = useParams();
 
   const { data: challenge } = useGetChallengeQuery({
@@ -45,13 +46,24 @@ const ChallengeEdit: React.FC = () => {
     if (!challenge?.desc) {
       return {};
     }
-
-    return JSON.parse(challenge.desc);
+    try {
+      return JSON.parse(challenge.desc);
+    } catch (e) {
+      console.error(e);
+      return {};
+    }
   }, [challenge?.desc]);
 
   useEffect(() => {
-    console.log('receivedContent', receivedContent);
-  }, [receivedContent]);
+    if (challenge && isDeprecatedProgram(challenge)) {
+      navigate(
+        `/admin/programs/${challengeIdString}/edit?programType=CHALLENGE`,
+        {
+          replace: true,
+        },
+      );
+    }
+  }, [challenge, challengeIdString, navigate]);
 
   const [input, setInput] = useState<Omit<UpdateChallengeReq, 'desc'>>({});
 
