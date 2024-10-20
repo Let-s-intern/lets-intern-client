@@ -6,13 +6,12 @@
  *
  */
 
+import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { DRAG_DROP_PASTE } from '@lexical/rich-text';
 import { isMimeType, mediaFileReader } from '@lexical/utils';
 import { COMMAND_PRIORITY_LOW } from 'lexical';
-import { useEffect, useState } from 'react';
-
-import { Snackbar } from '@mui/material';
+import { useEffect } from 'react';
 import { uploadFile } from '../../../../../api/file';
 import { INSERT_IMAGE_COMMAND } from '../ImagesPlugin';
 
@@ -26,13 +25,7 @@ const ACCEPTABLE_IMAGE_TYPES = [
 
 export default function DragDropPaste() {
   const [editor] = useLexicalComposerContext();
-  const [snackbar, setSnackbar] = useState<{
-    open: boolean;
-    message: string;
-  }>({
-    open: false,
-    message: '',
-  });
+  const { snackbar: setSnackbar } = useAdminSnackbar();
 
   useEffect(() => {
     return editor.registerCommand(
@@ -46,10 +39,7 @@ export default function DragDropPaste() {
           for (const { file, result } of filesResult) {
             if (isMimeType(file, ACCEPTABLE_IMAGE_TYPES)) {
               uploadFile({ file, type: 'BLOG' }).then((src) => {
-                setSnackbar({
-                  open: true,
-                  message: `${file.name} 이미지가 업로드되었습니다.`,
-                });
+                setSnackbar(`${file.name} 이미지가 업로드되었습니다.`);
                 editor.dispatchCommand(INSERT_IMAGE_COMMAND, {
                   altText: file.name,
                   src,
@@ -62,14 +52,7 @@ export default function DragDropPaste() {
       },
       COMMAND_PRIORITY_LOW,
     );
-  }, [editor]);
+  }, [editor, setSnackbar]);
 
-  return (
-    <Snackbar
-      anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-      open={snackbar.open}
-      onClose={() => setSnackbar({ ...snackbar, open: false })}
-      message={snackbar.message}
-    />
-  );
+  return null;
 }

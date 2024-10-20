@@ -1,3 +1,4 @@
+import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
 import {
   Button,
   Dialog,
@@ -6,7 +7,6 @@ import {
   DialogContentText,
   DialogTitle,
   IconButton,
-  Snackbar,
 } from '@mui/material';
 import {
   DataGrid,
@@ -380,10 +380,7 @@ const ChallengeOperationRegisterMission = () => {
   const missions = useAdminMissionsOfCurrentChallenge();
   const { currentChallenge } = useAdminCurrentChallenge();
   const refetchMissions = useMissionsOfCurrentChallengeRefetch();
-  const [snackbar, setSnackbar] = useState({
-    open: false,
-    message: '',
-  });
+  const { snackbar: setSnackbar } = useAdminSnackbar();
 
   const [editingMission, setEditingMission] = useState<Mission | null>(null);
 
@@ -392,10 +389,7 @@ const ChallengeOperationRegisterMission = () => {
       return axios.post(`/mission/${currentChallenge?.id}`, mission);
     },
     onError(error) {
-      setSnackbar({
-        open: true,
-        message: '미션 생성에 실패했습니다. ' + error,
-      });
+      setSnackbar('미션 생성에 실패했습니다. ' + error);
     },
   });
 
@@ -407,10 +401,7 @@ const ChallengeOperationRegisterMission = () => {
       return axios.patch(`/mission/${id}`, payload);
     },
     onError(error) {
-      setSnackbar({
-        open: true,
-        message: '미션 수정에 실패했습니다. ' + error,
-      });
+      setSnackbar('미션 수정에 실패했습니다. ' + error);
     },
   });
 
@@ -419,10 +410,7 @@ const ChallengeOperationRegisterMission = () => {
       return axios.delete(`/mission/${id}`);
     },
     onError(error) {
-      setSnackbar({
-        open: true,
-        message: '미션 삭제에 실패했습니다. ' + error,
-      });
+      setSnackbar('미션 삭제에 실패했습니다. ' + error);
     },
   });
 
@@ -507,7 +495,7 @@ const ChallengeOperationRegisterMission = () => {
               id: row.id,
             });
           }
-          setSnackbar({ open: true, message: '미션을 생성했습니다.' });
+          setSnackbar('미션을 생성했습니다.');
           setEditingMission(null);
           refetchMissions();
           apiRef.current?.forceUpdate();
@@ -542,14 +530,14 @@ const ChallengeOperationRegisterMission = () => {
               id: row.id,
             });
           }
-          setSnackbar({ open: true, message: '미션을 수정했습니다.' });
+          setSnackbar('미션을 수정했습니다.');
           setEditingMission(null);
           refetchMissions();
           apiRef.current?.forceUpdate();
           return;
         case 'delete':
           await deleteMission.mutateAsync(row.id);
-          setSnackbar({ open: true, message: '미션을 삭제했습니다.' });
+          setSnackbar('미션을 삭제했습니다.');
           refetchMissions();
           apiRef.current?.forceUpdate();
           return;
@@ -570,6 +558,7 @@ const ChallengeOperationRegisterMission = () => {
       createMissionMutation,
       deleteMission,
       refetchMissions,
+      setSnackbar,
       updateMission,
     ],
   );
@@ -648,12 +637,6 @@ const ChallengeOperationRegisterMission = () => {
         processRowUpdate={(updatedRow, originalRow) => {
           return originalRow;
         }}
-      />
-      <Snackbar
-        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-        open={snackbar.open}
-        onClose={() => setSnackbar({ ...snackbar, open: false })}
-        message={snackbar.message}
       />
     </main>
   );

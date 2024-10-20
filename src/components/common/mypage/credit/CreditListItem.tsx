@@ -16,11 +16,13 @@ const CreditListItem = ({ payment }: { payment: PaymentType }) => {
     >
       <CardStatus
         status={
-          payment.tossInfo && payment.tossInfo.status
-            ? payment.tossInfo.status
-            : payment.programInfo.isCanceled
-              ? 'ZERO'
-              : 'DONE'
+          payment.programInfo.isRefunded
+            ? 'REFUNDED'
+            : payment.tossInfo && payment.tossInfo.status
+              ? payment.tossInfo.status
+              : payment.programInfo.isCanceled
+                ? 'ZERO'
+                : 'DONE'
         }
       />
       <div className="flex w-full items-center gap-x-[14px]">

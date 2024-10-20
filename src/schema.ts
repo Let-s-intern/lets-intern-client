@@ -40,30 +40,50 @@ export const challenges = z
     };
   });
 
-const challengeType = z.union([
+export const challengeTypeSchema = z.union([
   z.literal('CAREER_START'),
   z.literal('DOCUMENT_PREPARATION'),
   z.literal('MEETING_PREPARATION'),
   z.literal('ETC'),
 ]);
 
-const programClassification = z.union([
+export type ChallengeType = z.infer<typeof challengeTypeSchema>;
+
+export const programClassificationSchema = z.union([
   z.literal('CAREER_SEARCH'),
   z.literal('DOCUMENT_PREPARATION'),
   z.literal('MEETING_PREPARATION'),
   z.literal('PASS'),
 ]);
 
-const challengePriceType = z.union([z.literal('CHARGE'), z.literal('REFUND')]);
+export type ProgramClassification = z.infer<typeof programClassificationSchema>;
 
-const challengeUserType = z.union([z.literal('BASIC'), z.literal('PREMIUM')]);
+export const challengePriceType = z.union([
+  z.literal('CHARGE'),
+  z.literal('REFUND'),
+]);
+
+export type ChallengePriceType = z.infer<typeof challengePriceType>;
+
+export const challengeUserType = z.union([
+  z.literal('BASIC'),
+  z.literal('PREMIUM'),
+]);
+
+export type ChallengeUserType = z.infer<typeof challengeUserType>;
 
 const challengeParticipationType = z.union([
   z.literal('LIVE'),
   z.literal('FREE'),
 ]);
 
-const livePriceType = z.union([z.literal('CHARGE'), z.literal('FREE')]);
+export type ChallengeParticipationType = z.infer<
+  typeof challengeParticipationType
+>;
+
+const livePriceTypeSchema = z.union([z.literal('CHARGE'), z.literal('FREE')]);
+
+export type LivePriceType = z.infer<typeof livePriceTypeSchema>;
 
 const faqProgramType = z.union([
   z.literal('CHALLENGE'),
@@ -77,6 +97,8 @@ export const programType = z.union([
   z.literal('VOD'),
   z.literal('REPORT'),
 ]);
+
+export type ProgramTypeUpperCase = z.infer<typeof programType>;
 
 export const accountType = z.union([
   z.literal('KB'),
@@ -99,12 +121,13 @@ const missionStatusType = z.union([
   z.literal('REFUND_DONE'),
 ]);
 
-/** GET /api/v1/challenge/{id} */
+/** GET /api/v1/challenge/{id} 챌린지 상세 조회 (어드민, 유저 겸용) */
 export const getChallengeIdSchema = z
   .object({
     title: z.string().nullable().optional(),
     shortDesc: z.string().nullable().optional(),
     desc: z.string().nullable().optional(),
+    criticalNotice: z.string().nullable().optional(),
     participationCount: z.number().nullable().optional(),
     thumbnail: z.string().nullable().optional(),
     startDate: z.string().nullable().optional(),
@@ -113,10 +136,12 @@ export const getChallengeIdSchema = z
     deadline: z.string().nullable().optional(),
     chatLink: z.string().nullable().optional(),
     chatPassword: z.string().nullable().optional(),
-    challengeType,
+    challengeType: challengeTypeSchema,
     classificationInfo: z.array(
       z.object({
-        programClassification: programClassification.nullable().optional(),
+        programClassification: programClassificationSchema
+          .nullable()
+          .optional(),
       }),
     ),
     priceInfo: z.array(
@@ -157,7 +182,96 @@ export const getChallengeIdSchema = z
     };
   });
 
-/** GET /api/v1/live/{id} 라이브 상세 조회 */
+/** POST /api/v1/challenge 챌린지 생성 */
+export type CreateChallengeReq = {
+  title: string;
+  shortDesc: string;
+  desc: string;
+  criticalNotice: string;
+  participationCount: number;
+  thumbnail: string;
+  startDate: string; // "2024-10-12T06:24:10.873"
+  endDate: string; // "2024-10-12T06:24:10.873"
+  beginning: string; // "2024-10-12T06:24:10.873"
+  deadline: string; // "2024-10-12T06:24:10.873"
+  chatLink: string;
+  chatPassword: string;
+  challengeType: ChallengeType;
+  programTypeInfo: {
+    classificationInfo: {
+      programClassification: ProgramClassification;
+    };
+  }[];
+  priceInfo: {
+    priceInfo: {
+      price: number;
+      discount: number;
+      accountNumber?: string;
+      accountType?: AccountType;
+      deadline?: string; // "2024-10-12T06:24:10.873"
+    };
+    charge: number;
+    refund: number;
+    challengePriceType: ChallengePriceType;
+    challengeUserType: ChallengeUserType;
+    challengeParticipationType: ChallengeParticipationType;
+  }[];
+  faqInfo: {
+    faqId: number;
+  }[];
+};
+
+/** PATCH /api/v1/challenge/{challengeId} 챌린지 수정 */
+export type UpdateChallengeReq = {
+  title?: string;
+  shortDesc?: string;
+  desc?: string;
+  criticalNotice?: string;
+  participationCount?: number;
+  thumbnail?: string;
+  startDate?: string; // "2024-10-12T08:03:17.016Z"
+  endDate?: string; // "2024-10-12T08:03:17.016Z"
+  beginning?: string; // "2024-10-12T08:03:17.016Z"
+  deadline?: string; // "2024-10-12T08:03:17.016Z"
+  chatLink?: string;
+  chatPassword?: string;
+  challengeType?: ChallengeType;
+  isVisible?: boolean;
+  programTypeInfo?: {
+    classificationInfo: {
+      programClassification: ProgramClassification;
+    };
+  }[];
+  priceInfo?: {
+    priceInfo: {
+      price: number;
+      discount: number;
+      accountNumber?: string;
+      deadline?: string; // "2024-10-12T08:03:17.016Z"
+      accountType?: AccountType;
+    };
+    charge: number;
+    refund: number;
+    challengePriceType: ChallengePriceType;
+    challengeUserType: ChallengeUserType;
+    challengeParticipationType: ChallengeParticipationType;
+  }[];
+  faqInfo?: {
+    faqId: number;
+  }[];
+};
+
+// DELETE /api/v1/challenge/{challengeId} 챌린지 삭제
+
+export const liveProgressSchema = z.union([
+  z.literal('ALL'),
+  z.literal('ONLINE'),
+  z.literal('OFFLINE'),
+]);
+
+export type LiveProgressType = z.infer<typeof liveProgressSchema>;
+
+/** GET /api/v1/live/{id} 라이브 상세 조회 (어드민, 유저 겸용) */
 export const getLiveIdSchema = z
   .object({
     title: z.string().nullable().optional(),
@@ -173,10 +287,12 @@ export const getLiveIdSchema = z
     endDate: z.string().nullable().optional(),
     beginning: z.string().nullable().optional(),
     deadline: z.string().nullable().optional(),
-    progressType: z.string().nullable().optional(),
+    progressType: liveProgressSchema.nullable().optional(),
     classificationInfo: z.array(
       z.object({
-        programClassification: programClassification.nullable().optional(),
+        programClassification: programClassificationSchema
+          .nullable()
+          .optional(),
       }),
     ),
     priceInfo: z.object({
@@ -186,7 +302,7 @@ export const getLiveIdSchema = z
       accountNumber: z.string().nullable().optional(),
       deadline: z.string().nullable().optional(),
       accountType: accountType.nullable().optional(),
-      livePriceType: livePriceType.nullable().optional(),
+      livePriceType: livePriceTypeSchema.nullable().optional(),
     }),
     faqInfo: z.array(
       z.object({
@@ -212,6 +328,133 @@ export const getLiveIdSchema = z
       },
     };
   });
+
+/** POST /api/v1/live LIVE 생성 */
+export type CreateLiveReq = {
+  title: string;
+  shortDesc: string;
+  desc: string;
+  criticalNotice: string;
+  participationCount: number;
+  thumbnail: string;
+  mentorName: string;
+  job: string;
+  place: string;
+  startDate: string; // "2024-10-12T06:48:27.339"
+  endDate: string; // "2024-10-12T06:48:27.339"
+  beginning: string; // "2024-10-12T06:48:27.339"
+  deadline: string; // "2024-10-12T06:48:27.339"
+  progressType: LiveProgressType;
+  programTypeInfo: {
+    classificationInfo: {
+      programClassification: ProgramClassification;
+    };
+  }[];
+  priceInfo: {
+    priceInfo: {
+      price: number;
+      discount: number;
+      accountNumber?: string;
+      deadline?: string; // "2024-10-12T06:48:27.339"
+      accountType?: AccountType;
+    };
+    livePriceType: LivePriceType;
+  };
+  faqInfo: {
+    faqId: number;
+  }[];
+};
+
+/** PATCH /api/v1/live/{id} LIVE 수정 */
+export type UpdateLiveReq = {
+  title?: string;
+  shortDesc?: string;
+  desc?: string;
+  criticalNotice?: string;
+  participationCount?: number;
+  thumbnail?: string;
+  mentorName?: string;
+  job?: string;
+  place?: string;
+  startDate?: string; // "2024-10-12T06:48:27.339"
+  endDate?: string; // "2024-10-12T06:48:27.339"
+  beginning?: string; // "2024-10-12T06:48:27.339"
+  deadline?: string; // "2024-10-12T06:48:27.339"
+  progressType?: LiveProgressType;
+  isVisible?: boolean;
+  programTypeInfo?: {
+    classificationInfo: {
+      programClassification: ProgramClassification;
+    };
+  }[];
+  priceInfo?: {
+    priceInfo: {
+      price: number;
+      discount: number;
+      accountNumber: string;
+      deadline: string; // "2024-10-12T06:48:27.339"
+      accountType: AccountType;
+    };
+    livePriceType: LivePriceType;
+  };
+  faqInfo?: {
+    faqId: number;
+  }[];
+};
+
+/** GET /api/v1/vod/{id} VOD 상세 조회 (어드민, 유저 겸용) */
+export const getVodIdSchema = z.object({
+  vodInfo: z.object({
+    id: z.number(),
+    title: z.string().nullable().optional(),
+    shortDesc: z.string().nullable().optional(),
+    thumbnail: z.string().nullable().optional(),
+    job: z.string().nullable().optional(),
+    link: z.string().nullable().optional(),
+    isVisible: z.boolean().nullable().optional(),
+  }),
+  programTypeInfo: z
+    .array(
+      z.object({
+        programClassification: programClassificationSchema
+          .nullable()
+          .optional(),
+      }),
+    )
+    .nullable()
+    .optional(),
+});
+
+/** POST /api/v1/vod VOD 생성 */
+export type CreateVodReq = {
+  title: string;
+  shortDesc: string;
+  thumbnail: string;
+  job: string;
+  link: string;
+  programTypeInfo: {
+    classificationInfo: {
+      programClassification: ProgramClassification;
+    };
+  }[];
+};
+
+/** PATCH /api/v1/vod VOD 수정 */
+export type UpdateVodReq = {
+  title?: string;
+  shortDesc?: string;
+  thumbnail?: string;
+  job?: string;
+  link?: string;
+  isVisible?: boolean;
+  programTypeInfo?: {
+    classificationInfo: {
+      programClassification: ProgramClassification;
+    };
+  }[];
+};
+
+// /**  DELETE /api/v1/vod/{vodId} vod 삭제 */
 
 /** GET /api/v1/mission/{id}/admin */
 export const missionAdmin = z
@@ -324,7 +567,7 @@ export type UpdateAttendanceReq = {
 };
 
 /** GET /challenge/{id}/application */
-const getChallengeIdApplication = z
+export const getChallengeIdApplication = z
   .object({
     applied: z.boolean(),
     name: z.string(),
@@ -417,8 +660,6 @@ export const getChallengeIdApplicationsPayback = z
         name: z.string().nullable(),
         email: z.string().nullable(),
         phoneNum: z.string().nullable(),
-        accountNum: z.string().nullable(),
-        accountType: accountType.nullable(),
         scores: z.array(
           z
             .object({
@@ -427,6 +668,10 @@ export const getChallengeIdApplicationsPayback = z
             })
             .nullable(),
         ),
+        orderId: z.string().nullable(),
+        couponName: z.string().nullable(),
+        finalPrice: z.number().nullable(),
+        paybackPrice: z.number().nullable(),
         isRefunded: z.boolean().nullable(),
       }),
     ),
@@ -1056,7 +1301,7 @@ export const liveApplicationPriceType = z.object({
   accountNumber: z.string().nullable().optional(),
   deadline: z.string().nullable().optional(),
   accountType: accountType.nullable().optional(),
-  livePriceType,
+  livePriceType: livePriceTypeSchema,
 });
 
 /** GET /api/v1/user/admin */
@@ -1116,7 +1361,7 @@ export const userAdminDetailType = z.object({
 export type UserAdminDetail = z.infer<typeof userAdminDetailType>;
 
 export const classificationSchema = z.object({
-  programClassification: programClassification.nullable().optional(),
+  programClassification: programClassificationSchema.nullable().optional(),
 });
 
 /** GET /api/v1/program */
@@ -1143,26 +1388,58 @@ export const programSchema = z.object({
 export type ProgramInfo = z.infer<typeof programSchema>['programList'][0];
 
 /** GET /api/v1/program/admin */
-export const programAdminSchema = z.object({
-  programList: z.array(
-    z.object({
-      programInfo: z.object({
-        id: z.number(),
-        programType,
-        programStatusType: programStatus,
-        title: z.string().nullable(),
-        startDate: z.string().nullable().optional(),
-        endDate: z.string().nullable().optional(),
-        beginning: z.string().nullable().optional(),
-        deadline: z.string().nullable().optional(),
-        currentCount: z.number().nullable().optional(),
-        participationCount: z.number().nullable().optional(),
-        zoomLink: z.string().nullable().optional(),
-        zoomPassword: z.string().nullable().optional(),
-        isVisible: z.boolean().nullable(),
+export const programAdminSchema = z
+  .object({
+    programList: z.array(
+      z.object({
+        programInfo: z.object({
+          id: z.number(),
+          programType,
+          programStatusType: programStatus,
+          title: z.string().nullable().optional(),
+          startDate: z.string().nullable().optional(),
+          endDate: z.string().nullable().optional(),
+          beginning: z.string().nullable().optional(),
+          deadline: z.string().nullable().optional(),
+          currentCount: z.number().nullable().optional(),
+          participationCount: z.number().nullable().optional(),
+          zoomLink: z.string().nullable().optional(),
+          zoomPassword: z.string().nullable().optional(),
+          isVisible: z.boolean().nullable().optional(),
+        }),
+        classificationList: z.array(classificationSchema),
       }),
-      classificationList: z.array(classificationSchema),
-    }),
-  ),
-  pageInfo,
-});
+    ),
+    pageInfo,
+  })
+  .transform((data) => {
+    return {
+      programList: data.programList.map((program) => ({
+        ...program,
+        programInfo: {
+          ...program.programInfo,
+          startDate: program.programInfo.startDate
+            ? dayjs(program.programInfo.startDate)
+            : null,
+          endDate: program.programInfo.endDate
+            ? dayjs(program.programInfo.endDate)
+            : null,
+          beginning: program.programInfo.beginning
+            ? dayjs(program.programInfo.beginning)
+            : null,
+          deadline: program.programInfo.deadline
+            ? dayjs(program.programInfo.deadline)
+            : null,
+        },
+      })),
+      pageInfo: data.pageInfo,
+    };
+  });
+
+export type ProgramAdminList = z.infer<
+  typeof programAdminSchema
+>['programList'];
+
+export type ProgramAdminListItem = z.infer<
+  typeof programAdminSchema
+>['programList'][0];
