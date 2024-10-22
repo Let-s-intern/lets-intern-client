@@ -14,9 +14,21 @@ const ChallengeDetailSSRPage = () => {
   const [starRating, setStarRating] = useState<number | null>(null);
   const [formValue, setFormValue] = useState<string>('');
   const [isPostedRating, setIsPostedRating] = useState<boolean>(false);
+  const [isJson, setIsJson] = useState(false);
+
   const challengeFromServer = useServerChallenge();
   const challenge = data || challengeFromServer;
   const isLoading = challenge.title === '로딩중...';
+
+  useEffect(() => {
+    try {
+      JSON.parse(challenge.desc || '{}');
+      setIsJson(true);
+    } catch (error) {
+      setIsJson(false);
+      navigate(`/program/challenge/old/${id}`);
+    }
+  }, [challenge.desc]);
 
   useEffect(() => {
     if (!titleFromUrl && !isLoading) {
@@ -30,7 +42,9 @@ const ChallengeDetailSSRPage = () => {
         }),
       );
     }
-  }, [challenge.title, id, isLoading, titleFromUrl]);
+  }, [challenge.title, id, isLoading, titleFromUrl, isJson]);
+
+  if (!isJson) return <></>;
 
   return (
     <pre>{JSON.stringify(JSON.parse(challenge.desc || '{}'), null, 2)}</pre>
