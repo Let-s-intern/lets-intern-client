@@ -79,7 +79,7 @@ const ProgramDetailLegacy = ({ programType }: ProgramDetailProps) => {
     ) {
       navigate(`/program/${programType}/old/${programId}`);
     }
-  }, [navigate, program, programId, programType]);
+  }, [navigate, program.query.data, programId, programType]);
 
   const programDate =
     program && program.query.data
