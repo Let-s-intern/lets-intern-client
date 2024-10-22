@@ -221,38 +221,6 @@ const ProgramDetailLegacy = ({ programType }: ProgramDetailProps) => {
                 )}
               </div>
             ))}
-
-          {/* 하단 신청하기 CTA */}
-          <div className="fixed bottom-4 left-0 right-0 z-10 mx-auto flex max-w-[56rem] items-center justify-between rounded-sm bg-white p-4 shadow-04">
-            <div>
-              <span>
-                {programDate?.deadline?.format('M월 D일 (dd) A h시')}까지 모집
-              </span>
-              <div>
-                <span>모집 마감</span>{' '}
-                <span>
-                  {programDate?.deadline
-                    ? dayjs
-                        .duration(programDate.deadline.diff(dayjs()))
-                        .format('DD:HH:mm:ss')
-                    : '00:00:00:00'}
-                </span>
-              </div>
-            </div>
-            <button
-              className="w-2/6 rounded-full bg-slate-600 py-3 text-static-100"
-              disabled={isAlreadyApplied}
-              onClick={() => {
-                if (!isLoggedIn) {
-                  navigate(`/login?redirect=${window.location.pathname}`);
-                  return;
-                }
-                // 결제 페이지로 이동
-              }}
-            >
-              {isAlreadyApplied ? '신청완료' : '신청하기'}
-            </button>
-          </div>
         </div>
       </div>
     </div>
