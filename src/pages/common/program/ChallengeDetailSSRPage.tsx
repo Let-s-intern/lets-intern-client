@@ -14,20 +14,14 @@ const ChallengeDetailSSRPage = () => {
   const [starRating, setStarRating] = useState<number | null>(null);
   const [formValue, setFormValue] = useState<string>('');
   const [isPostedRating, setIsPostedRating] = useState<boolean>(false);
-  const [isJson, setIsJson] = useState(false);
 
   const challengeFromServer = useServerChallenge();
   const challenge = data || challengeFromServer;
   const isLoading = challenge.title === '로딩중...';
+  const isNotValidJson = challenge.desc && challenge.desc.startsWith('<');
 
   useEffect(() => {
-    try {
-      JSON.parse(challenge.desc || '{}');
-      setIsJson(true);
-    } catch (error) {
-      setIsJson(false);
-      navigate(`/program/challenge/old/${id}`);
-    }
+    if (isNotValidJson) navigate(`/program/challenge/old/${id}`);
   }, [challenge.desc]);
 
   useEffect(() => {
@@ -42,9 +36,9 @@ const ChallengeDetailSSRPage = () => {
         }),
       );
     }
-  }, [challenge.title, id, isLoading, titleFromUrl, isJson]);
+  }, [challenge.title, id, isLoading, titleFromUrl]);
 
-  if (!isJson) return <></>;
+  if (isNotValidJson) return <></>;
 
   return (
     <pre>{JSON.stringify(JSON.parse(challenge.desc || '{}'), null, 2)}</pre>
