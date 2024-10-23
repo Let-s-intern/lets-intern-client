@@ -141,7 +141,7 @@ export function DesktopApplyCTA({ programType }: ApplyCTAProps) {
 
   const { isLoggedIn } = useAuthStore();
   const {
-    query: { data: program },
+    query: { data: program, isLoading },
   } = useProgramQuery({ programId: Number(id), type: programType });
   const { data: application } = useProgramApplicationQuery(
     programType,
@@ -178,6 +178,7 @@ export function DesktopApplyCTA({ programType }: ApplyCTAProps) {
               program={program}
             />
             <GradientButton
+              disabled={isLoading}
               onClick={() => {
                 if (!isLoggedIn) {
                   navigate(`/login?redirect=${window.location.pathname}`);
@@ -186,7 +187,7 @@ export function DesktopApplyCTA({ programType }: ApplyCTAProps) {
                 // 결제 페이지로 이동
               }}
             >
-              지금 바로 신청
+              {isLoading ? '로딩 중..' : '지금 바로 신청'}
             </GradientButton>
           </>
         )}
