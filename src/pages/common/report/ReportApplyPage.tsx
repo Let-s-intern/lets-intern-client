@@ -22,7 +22,9 @@ import { uploadFile } from '../../../api/file';
 import {
   convertReportPriceType,
   convertReportTypeStatus,
+  convertReportTypeToLandingPath,
   ReportOptionInfo,
+  ReportType,
   useGetReportDetailQuery,
   useGetReportPriceDetail,
 } from '../../../api/report';
@@ -127,7 +129,10 @@ const ReportApplyPage = () => {
       {isUpTo1280 ? (
         <BottomSheet>
           <button
-            onClick={() => navigate(`/report/landing/${reportType}`)}
+            onClick={() => {
+              const to = `${convertReportTypeToLandingPath(reportType?.toUpperCase() as ReportType)}#content`;
+              navigate(to);
+            }}
             className="flex h-14 w-14 shrink-0 items-center justify-center rounded-md border-2 border-primary bg-neutral-100"
           >
             <FaArrowLeft size={20} />
