@@ -7,6 +7,7 @@ import { useChallengeQuery } from '@/api/challenge';
 import { useProgramQuery } from '@/api/program';
 import { useServerChallenge } from '@/context/ServerChallenge';
 import useAuthStore from '@/store/useAuthStore';
+import { getProgramPathname } from '@/utils/url';
 import FilledButton from '@components/common/program/program-detail/button/FilledButton';
 import NotiButton from '@components/common/program/program-detail/button/NotiButton';
 
@@ -28,19 +29,19 @@ const ChallengeDetailSSRPage = () => {
     if (isNotValidJson) navigate(`/program/challenge/old/${id}`);
   }, [challenge.desc]);
 
-  // useEffect(() => {
-  //   if (!titleFromUrl && !isLoading) {
-  //     window.history.replaceState(
-  //       {},
-  //       '',
-  //       getProgramPathname({
-  //         programType: 'challenge',
-  //         title: challenge.title,
-  //         id,
-  //       }),
-  //     );
-  //   }
-  // }, [challenge.title, id, isLoading, titleFromUrl]);
+  useEffect(() => {
+    if (!titleFromUrl && !isLoading) {
+      window.history.replaceState(
+        {},
+        '',
+        getProgramPathname({
+          programType: 'challenge',
+          title: challenge.title,
+          id,
+        }),
+      );
+    }
+  }, [challenge.title, id, isLoading, titleFromUrl]);
 
   if (isNotValidJson) return <></>;
 
@@ -53,7 +54,7 @@ const ChallengeDetailSSRPage = () => {
   );
 };
 
-/* 프로그램 상세페이지에서 공동으로 사용 */
+/* CTA는 프로그램 상세페이지에서 공동으로 사용 */
 interface ProgramDetailCTAProps {
   programType: 'live' | 'challenge';
 }
