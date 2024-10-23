@@ -1,11 +1,12 @@
+import dayjs from 'dayjs';
+import { useEffect, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+
 import { useProgramApplicationQuery } from '@/api/application';
 import { useGetLiveQuery, useProgramQuery } from '@/api/program';
 import { useServerLive } from '@/context/ServerLive';
 import useAuthStore from '@/store/useAuthStore';
 import { getProgramPathname } from '@/utils/url';
-import dayjs from 'dayjs';
-import { useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
 
 const LiveDetailSSRPage = () => {
   const navigate = useNavigate();
