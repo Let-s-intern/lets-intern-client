@@ -204,9 +204,8 @@ const ProgramDetailLegacy = ({ programType }: ProgramDetailProps) => {
                 )}
                 {loading ? (
                   <FilledButton
-                    onClick={() => {}}
                     caption={'로딩 중 ...'}
-                    isAlreadyApplied={false}
+                    disabled={false}
                     className="opacity-0"
                   />
                 ) : isOutOfDate ? (
@@ -215,7 +214,7 @@ const ProgramDetailLegacy = ({ programType }: ProgramDetailProps) => {
                   <FilledButton
                     onClick={toggleDrawer}
                     caption={isAlreadyApplied ? '신청완료' : '신청하기'}
-                    isAlreadyApplied={isAlreadyApplied}
+                    disabled={isAlreadyApplied}
                     className="apply_button"
                   />
                 )}

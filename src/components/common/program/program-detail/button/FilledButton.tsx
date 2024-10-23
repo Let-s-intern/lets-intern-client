@@ -1,22 +1,22 @@
 interface FilledButtonProps {
   caption: string;
-  onClick: React.MouseEventHandler<HTMLButtonElement>;
-  isAlreadyApplied?: boolean;
+  onClick?: React.MouseEventHandler<HTMLButtonElement>;
+  disabled?: boolean;
   className?: string;
 }
 
 const FilledButton = ({
   caption,
   onClick,
-  isAlreadyApplied,
+  disabled,
   className,
 }: FilledButtonProps) => {
   return (
     <button
       onClick={onClick}
-      disabled={isAlreadyApplied}
+      disabled={disabled}
       className={`text-1.125-medium w-full rounded-md ${
-        isAlreadyApplied ? ' bg-neutral-0/50' : 'bg-primary'
+        disabled ? 'bg-neutral-0/50' : 'bg-primary'
       } px-6 py-3 text-neutral-100 ${className}`}
     >
       {caption}
