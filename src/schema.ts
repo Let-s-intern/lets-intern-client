@@ -182,6 +182,8 @@ export const getChallengeIdSchema = z
     };
   });
 
+export type ChallengeIdSchema = z.infer<typeof getChallengeIdSchema>;
+
 /** POST /api/v1/challenge 챌린지 생성 */
 export type CreateChallengeReq = {
   title: string;
@@ -330,6 +332,8 @@ export const getLiveIdSchema = z
       },
     };
   });
+
+export type LiveIdSchema = z.infer<typeof getLiveIdSchema>;
 
 /** POST /api/v1/live LIVE 생성 */
 export type CreateLiveReq = {

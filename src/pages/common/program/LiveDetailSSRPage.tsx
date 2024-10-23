@@ -1,10 +1,11 @@
+import { useMediaQuery } from '@mui/material';
 import { useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import { useGetLiveQuery } from '@/api/program';
 import { useServerLive } from '@/context/ServerLive';
 import { getProgramPathname } from '@/utils/url';
-import { ProgramDetailCTA } from './ChallengeDetailSSRPage';
+import { ApplyCTA, DesktopApplyCTA } from './ChallengeDetailSSRPage';
 
 const LiveDetailSSRPage = () => {
   const navigate = useNavigate();
@@ -12,6 +13,7 @@ const LiveDetailSSRPage = () => {
     id: string;
     title?: string;
   }>();
+  const isMobile = useMediaQuery('(max-width:991px)');
 
   const liveFromServer = useServerLive();
   const { data } = useGetLiveQuery({ liveId: Number(id || '') });
@@ -44,7 +46,11 @@ const LiveDetailSSRPage = () => {
     <>
       <pre>{JSON.stringify(JSON.parse(live.desc || '{}'), null, 2)}</pre>
 
-      <ProgramDetailCTA programType="live" />
+      {isMobile ? (
+        <ApplyCTA programType="live" />
+      ) : (
+        <DesktopApplyCTA programType="live" />
+      )}
     </>
   );
 };
