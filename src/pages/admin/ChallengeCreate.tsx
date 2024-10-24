@@ -13,6 +13,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { FaSave } from 'react-icons/fa';
 import ChallengeBasic from './program/ChallengeBasic';
 import ChallengePrice from './program/ChallengePrice';
+import ChallengeSchedule from './program/ChallengeSchedule';
 
 /**
  * 챌린지 생성 페이지
@@ -95,8 +96,8 @@ const ChallengeCreate: React.FC = () => {
       </Header>
 
       <Heading2>기본 정보</Heading2>
-      <section className="my-3">
-        <div className="grid w-full grid-cols-2 gap-3">
+      <section className="mb-6 mt-3">
+        <div className="mb-6 grid w-full grid-cols-2 gap-3">
           <ChallengeBasic input={input} setInput={setInput} />
           <ImageUpload
             label="챌린지 썸네일 이미지 업로드"
@@ -109,6 +110,7 @@ const ChallengeCreate: React.FC = () => {
           {/* 가격 정보 */}
           <ChallengePrice input={input} setInput={setInput} />
           {/* 일정 */}
+          <ChallengeSchedule setInput={setInput} />
         </div>
       </section>
 
