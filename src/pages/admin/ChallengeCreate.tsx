@@ -1,28 +1,14 @@
 import { usePostChallengeMutation } from '@/api/program';
-import {
-  ChallengeParticipationType,
-  ChallengeType,
-  CreateChallengeReq,
-} from '@/schema';
+import { CreateChallengeReq } from '@/schema';
 import { ChallengeContent } from '@/types/interface';
-import {
-  challengeTypes,
-  challengeTypeToText,
-  programParticipationTypeToText,
-} from '@/utils/convert';
 import EditorApp from '@components/admin/lexical/EditorApp';
 import Header from '@components/admin/ui/header/Header';
 import Heading from '@components/admin/ui/heading/Heading';
-import {
-  Button,
-  FormControl,
-  InputLabel,
-  MenuItem,
-  Select,
-} from '@mui/material';
+import { Button } from '@mui/material';
 import dayjs from 'dayjs';
 import { useCallback, useEffect, useState } from 'react';
 import { FaSave } from 'react-icons/fa';
+import ChallengeBasic from './program/ChallengeBasic';
 
 /**
  * 챌린지 생성 페이지
@@ -97,77 +83,7 @@ const ChallengeCreate: React.FC = () => {
 
       <div className="mb-3 flex gap-6">
         <div className="flex flex-1 flex-col gap-3">
-          <FormControl fullWidth size="small">
-            <InputLabel>챌린지 구분</InputLabel>
-            <Select
-              label="챌린지 구분"
-              defaultValue={input.challengeType}
-              onChange={(e) => {
-                setInput({
-                  ...input,
-                  challengeType: e.target.value as ChallengeType,
-                });
-              }}
-            >
-              {challengeTypes.map((type) => (
-                <MenuItem key={type} value={type}>
-                  {challengeTypeToText[type]}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-          {/* <FormControl fullWidth>
-          <InputLabel>가격 구분</InputLabel>
-          <Select
-            label="가격 구분"  
-            value={input.priceInfo[0].challengeUserType}
-            onChange={(e) => {
-              setInput({
-                ...input,
-                priceInfo: [
-                  {
-                    ...input.priceInfo[0],
-                    challengeUserType: e.target.value as ChallengeUserType,
-                  },
-                ],
-              });
-            }}
-          >
-            {programPriceTypes.map((type) => (
-              <MenuItem key={type} value={type}>
-                {programPriceTypeToText[type]}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl> */}
-          <FormControl fullWidth>
-            <InputLabel>참여 형태</InputLabel>
-            <Select
-              label="참여 형태"
-              size="small"
-              defaultValue={input.priceInfo[0].challengeParticipationType}
-              onChange={(e) => {
-                setInput({
-                  ...input,
-                  priceInfo: [
-                    {
-                      ...input.priceInfo[0],
-                      challengeParticipationType: e.target
-                        .value as ChallengeParticipationType,
-                    },
-                  ],
-                });
-              }}
-            >
-              {Object.keys(programParticipationTypeToText).map(
-                (type: string) => (
-                  <MenuItem key={type} value={type}>
-                    {programParticipationTypeToText[type]}
-                  </MenuItem>
-                ),
-              )}
-            </Select>
-          </FormControl>
+          <ChallengeBasic input={input} setInput={setInput} />
         </div>
         <div className="flex-1">썸네일</div>
       </div>
