@@ -66,7 +66,11 @@ const ChallengeCreate: React.FC = () => {
 
   const onChangeImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files) return;
-    uploadFile({ file: e.target.files[0], type: fileType.enum.CHALLENGE });
+    const url = await uploadFile({
+      file: e.target.files[0],
+      type: fileType.enum.CHALLENGE,
+    });
+    setInput((prev) => ({ ...prev, [e.target.name]: url }));
   };
 
   const onClickSave = useCallback(async () => {
