@@ -94,11 +94,9 @@ const ChallengeCreate: React.FC = () => {
       </Header>
 
       <Heading2>기본 정보</Heading2>
-      <section className="my-3 flex gap-6">
-        <div className="flex w-full gap-3">
-          <div className="flex flex-1 flex-col gap-3">
-            <ChallengeBasic input={input} setInput={setInput} />
-          </div>
+      <section className="my-3">
+        <div className="grid w-full grid-cols-2 gap-3">
+          <ChallengeBasic input={input} setInput={setInput} />
           <ImageUpload
             label="챌린지 썸네일 이미지 업로드"
             id="thumbnail"
@@ -106,7 +104,7 @@ const ChallengeCreate: React.FC = () => {
             onChange={onChangeImage}
           />
         </div>
-        <div>
+        <div className="grid w-full grid-cols-2 gap-3">
           {/* 가격 정보 */}
           {/* 일정 */}
         </div>

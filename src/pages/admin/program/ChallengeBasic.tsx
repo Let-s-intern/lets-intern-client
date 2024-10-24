@@ -36,7 +36,7 @@ export default function ChallengeBasic({
   };
 
   return (
-    <>
+    <div className="flex w-full flex-col gap-3">
       <FormControl size="small">
         <InputLabel id="programType">프로그램 분류</InputLabel>
         <Select
@@ -166,6 +166,6 @@ export default function ChallengeBasic({
         placeholder="카카오톡 오픈채팅 비밀번호를 입력하세요"
         onChange={onChange}
       />
-    </>
+    </div>
   );
 }
