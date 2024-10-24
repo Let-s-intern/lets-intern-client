@@ -4,6 +4,7 @@ import useReportApplicationStore from '@/store/useReportApplicationStore';
 import { getBaseUrlFromServer, getReportLandingTitle } from '@/utils/url';
 import { useEffect, useRef, useState } from 'react';
 import { Helmet } from 'react-helmet';
+import { useLocation } from 'react-router-dom';
 import { useGetActiveReports } from '../../../api/report';
 import LexicalContent from '../../../components/common/blog/LexicalContent';
 import ReportApplyBottomSheet from '../../../components/common/report/ReportApplyBottomSheet';
@@ -15,6 +16,8 @@ import {
 import ReportLandingNav from '../../../components/common/report/ReportLandingNav';
 
 const ReportPortfolioPage = () => {
+  const location = useLocation();
+
   const title = getReportLandingTitle('포트폴리오');
   const url = `${typeof window !== 'undefined' ? window.location.origin : getBaseUrlFromServer()}/report/landing/portfolio`;
   const description = portfolioReportDescription;
@@ -61,6 +64,12 @@ const ReportPortfolioPage = () => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    const { hash } = location;
+
+    if (hash === '#content') contentRef.current?.scrollIntoView();
+  }, [contentRef.current]);
 
   return (
     <>

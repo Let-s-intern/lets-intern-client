@@ -13,7 +13,11 @@ const pageInfoSchema = z.object({
   pageSize: z.number(),
 });
 
-const reportTypeSchema = z.enum(['RESUME', 'PERSONAL_STATEMENT', 'PORTFOLIO']);
+export const reportTypeSchema = z.enum([
+  'RESUME',
+  'PERSONAL_STATEMENT',
+  'PORTFOLIO',
+]);
 
 export type ReportType = z.infer<typeof reportTypeSchema>;
 
