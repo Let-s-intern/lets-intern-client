@@ -1,28 +1,19 @@
+import { fileType, uploadFile } from '@/api/file';
 import { usePostChallengeMutation } from '@/api/program';
-import {
-  ChallengeParticipationType,
-  ChallengeType,
-  CreateChallengeReq,
-} from '@/schema';
+import { CreateChallengeReq } from '@/schema';
 import { ChallengeContent } from '@/types/interface';
-import {
-  challengeTypes,
-  challengeTypeToText,
-  programParticipationTypeToText,
-} from '@/utils/convert';
 import EditorApp from '@components/admin/lexical/EditorApp';
+import ImageUpload from '@components/admin/program/ui/form/ImageUpload';
 import Header from '@components/admin/ui/header/Header';
 import Heading from '@components/admin/ui/heading/Heading';
-import {
-  Button,
-  FormControl,
-  InputLabel,
-  MenuItem,
-  Select,
-} from '@mui/material';
+import { Heading2 } from '@components/admin/ui/heading/Heading2';
+import { Button } from '@mui/material';
 import dayjs from 'dayjs';
 import { useCallback, useEffect, useState } from 'react';
 import { FaSave } from 'react-icons/fa';
+import ChallengeBasic from './program/ChallengeBasic';
+import ChallengePrice from './program/ChallengePrice';
+import ChallengeSchedule from './program/ChallengeSchedule';
 
 /**
  * 챌린지 생성 페이지
@@ -76,6 +67,15 @@ const ChallengeCreate: React.FC = () => {
 
   const [loading, setLoading] = useState(false);
 
+  const onChangeImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!e.target.files) return;
+    const url = await uploadFile({
+      file: e.target.files[0],
+      type: fileType.enum.CHALLENGE,
+    });
+    setInput((prev) => ({ ...prev, [e.target.name]: url }));
+  };
+
   const onClickSave = useCallback(async () => {
     setLoading(true);
     const req: CreateChallengeReq = {
@@ -87,7 +87,7 @@ const ChallengeCreate: React.FC = () => {
     console.log('res', res);
 
     setLoading(false);
-  }, []);
+  }, [input]);
 
   return (
     <div className="mx-3 mb-40 mt-3">
@@ -95,83 +95,26 @@ const ChallengeCreate: React.FC = () => {
         <Heading>챌린지 생성</Heading>
       </Header>
 
-      <div className="mb-3 flex gap-6">
-        <div className="flex flex-1 flex-col gap-3">
-          <FormControl fullWidth size="small">
-            <InputLabel>챌린지 구분</InputLabel>
-            <Select
-              label="챌린지 구분"
-              defaultValue={input.challengeType}
-              onChange={(e) => {
-                setInput({
-                  ...input,
-                  challengeType: e.target.value as ChallengeType,
-                });
-              }}
-            >
-              {challengeTypes.map((type) => (
-                <MenuItem key={type} value={type}>
-                  {challengeTypeToText[type]}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-          {/* <FormControl fullWidth>
-          <InputLabel>가격 구분</InputLabel>
-          <Select
-            label="가격 구분"  
-            value={input.priceInfo[0].challengeUserType}
-            onChange={(e) => {
-              setInput({
-                ...input,
-                priceInfo: [
-                  {
-                    ...input.priceInfo[0],
-                    challengeUserType: e.target.value as ChallengeUserType,
-                  },
-                ],
-              });
-            }}
-          >
-            {programPriceTypes.map((type) => (
-              <MenuItem key={type} value={type}>
-                {programPriceTypeToText[type]}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl> */}
-          <FormControl fullWidth>
-            <InputLabel>참여 형태</InputLabel>
-            <Select
-              label="참여 형태"
-              size="small"
-              defaultValue={input.priceInfo[0].challengeParticipationType}
-              onChange={(e) => {
-                setInput({
-                  ...input,
-                  priceInfo: [
-                    {
-                      ...input.priceInfo[0],
-                      challengeParticipationType: e.target
-                        .value as ChallengeParticipationType,
-                    },
-                  ],
-                });
-              }}
-            >
-              {Object.keys(programParticipationTypeToText).map(
-                (type: string) => (
-                  <MenuItem key={type} value={type}>
-                    {programParticipationTypeToText[type]}
-                  </MenuItem>
-                ),
-              )}
-            </Select>
-          </FormControl>
+      <Heading2>기본 정보</Heading2>
+      <section className="mb-6 mt-3">
+        <div className="mb-6 grid w-full grid-cols-2 gap-3">
+          <ChallengeBasic input={input} setInput={setInput} />
+          <ImageUpload
+            label="챌린지 썸네일 이미지 업로드"
+            id="thumbnail"
+            name="thumbnail"
+            onChange={onChangeImage}
+          />
         </div>
-        <div className="flex-1">썸네일</div>
-      </div>
-      <h2>프로그램 소개</h2>
+        <div className="grid w-full grid-cols-2 gap-3">
+          {/* 가격 정보 */}
+          <ChallengePrice input={input} setInput={setInput} />
+          {/* 일정 */}
+          <ChallengeSchedule setInput={setInput} />
+        </div>
+      </section>
+
+      <Heading2>프로그램 소개</Heading2>
       <section>
         <header>
           <h3>상세 설명</h3>
