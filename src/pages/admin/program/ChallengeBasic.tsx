@@ -10,6 +10,7 @@ import {
   programClassificationToText,
   programParticipationTypeToText,
 } from '@/utils/convert';
+import Input from '@components/ui/input/Input';
 import {
   Chip,
   FormControl,
@@ -30,30 +31,13 @@ export default function ChallengeBasic({
   input,
   setInput,
 }: ChallengeBasicProps) {
-  console.log(input);
+  const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setInput((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+  };
 
   return (
     <>
-      <FormControl fullWidth size="small">
-        <InputLabel>챌린지 구분</InputLabel>
-        <Select
-          label="챌린지 구분"
-          defaultValue={input.challengeType}
-          onChange={(e) => {
-            setInput({
-              ...input,
-              challengeType: e.target.value as ChallengeType,
-            });
-          }}
-        >
-          {challengeTypes.map((type) => (
-            <MenuItem key={type} value={type}>
-              {challengeTypeToText[type]}
-            </MenuItem>
-          ))}
-        </Select>
-      </FormControl>
-      <FormControl fullWidth>
+      <FormControl size="small">
         <InputLabel id="programType">프로그램 분류</InputLabel>
         <Select
           labelId="programTypeInfo"
@@ -99,12 +83,31 @@ export default function ChallengeBasic({
           ))}
         </Select>
       </FormControl>
-      <FormControl fullWidth>
+      <FormControl size="small">
+        <InputLabel>챌린지 구분</InputLabel>
+        <Select
+          label="챌린지 구분"
+          value={input.challengeType}
+          onChange={(e) => {
+            setInput({
+              ...input,
+              challengeType: e.target.value as ChallengeType,
+            });
+          }}
+        >
+          {challengeTypes.map((type) => (
+            <MenuItem key={type} value={type}>
+              {challengeTypeToText[type]}
+            </MenuItem>
+          ))}
+        </Select>
+      </FormControl>
+      {/* (임시) 가격 구분 삭제 */}
+      <FormControl size="small">
         <InputLabel>참여 형태</InputLabel>
         <Select
           label="참여 형태"
-          size="small"
-          defaultValue={input.priceInfo[0].challengeParticipationType}
+          value={input.priceInfo[0].challengeParticipationType}
           onChange={(e) => {
             setInput({
               ...input,
@@ -125,6 +128,44 @@ export default function ChallengeBasic({
           ))}
         </Select>
       </FormControl>
+      <Input
+        label="제목"
+        type="text"
+        name="title"
+        placeholder="제목을 입력해주세요"
+        size="small"
+        onChange={onChange}
+      />
+      <Input
+        label="한 줄 설명"
+        type="text"
+        name="shortDesc"
+        size="small"
+        placeholder="한 줄 설명을 입력해주세요"
+        onChange={onChange}
+      />
+      <Input
+        label="정원"
+        type="number"
+        name="participationCount"
+        size="small"
+        placeholder="총 정원 수를 입력해주세요"
+        onChange={onChange}
+      />
+      <Input
+        label="카카오톡 오픈채팅 링크"
+        name="chatLink"
+        size="small"
+        placeholder="카카오톡 오픈채팅 링크를 입력하세요"
+        onChange={onChange}
+      />
+      <Input
+        label="카카오톡 오픈채팅 비밀번호"
+        name="chatPassword"
+        size="small"
+        placeholder="카카오톡 오픈채팅 비밀번호를 입력하세요"
+        onChange={onChange}
+      />
     </>
   );
 }

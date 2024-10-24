@@ -1,7 +1,9 @@
+import { fileType, uploadFile } from '@/api/file';
 import { usePostChallengeMutation } from '@/api/program';
 import { CreateChallengeReq } from '@/schema';
 import { ChallengeContent } from '@/types/interface';
 import EditorApp from '@components/admin/lexical/EditorApp';
+import ImageUpload from '@components/admin/program/ui/form/ImageUpload';
 import Header from '@components/admin/ui/header/Header';
 import Heading from '@components/admin/ui/heading/Heading';
 import { Button } from '@mui/material';
@@ -62,6 +64,11 @@ const ChallengeCreate: React.FC = () => {
 
   const [loading, setLoading] = useState(false);
 
+  const onChangeImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!e.target.files) return;
+    uploadFile({ file: e.target.files[0], type: fileType.enum.CHALLENGE });
+  };
+
   const onClickSave = useCallback(async () => {
     setLoading(true);
     const req: CreateChallengeReq = {
@@ -81,12 +88,19 @@ const ChallengeCreate: React.FC = () => {
         <Heading>챌린지 생성</Heading>
       </Header>
 
-      <div className="mb-3 flex gap-6">
+      {/* 기본 정보 */}
+      <section className="mb-3 flex gap-6">
         <div className="flex flex-1 flex-col gap-3">
           <ChallengeBasic input={input} setInput={setInput} />
         </div>
-        <div className="flex-1">썸네일</div>
-      </div>
+        <ImageUpload
+          label="챌린지 썸네일 이미지 업로드"
+          id="thumbnail"
+          name="thumbnail"
+          onChange={onChangeImage}
+        />
+      </section>
+
       <h2>프로그램 소개</h2>
       <section>
         <header>
