@@ -6,6 +6,7 @@ import EditorApp from '@components/admin/lexical/EditorApp';
 import ImageUpload from '@components/admin/program/ui/form/ImageUpload';
 import Header from '@components/admin/ui/header/Header';
 import Heading from '@components/admin/ui/heading/Heading';
+import { Heading2 } from '@components/admin/ui/heading/Heading2';
 import { Button } from '@mui/material';
 import dayjs from 'dayjs';
 import { useCallback, useEffect, useState } from 'react';
@@ -92,20 +93,26 @@ const ChallengeCreate: React.FC = () => {
         <Heading>챌린지 생성</Heading>
       </Header>
 
-      {/* 기본 정보 */}
-      <section className="mb-3 flex gap-6">
-        <div className="flex flex-1 flex-col gap-3">
-          <ChallengeBasic input={input} setInput={setInput} />
+      <Heading2>기본 정보</Heading2>
+      <section className="my-3 flex gap-6">
+        <div className="flex w-full gap-3">
+          <div className="flex flex-1 flex-col gap-3">
+            <ChallengeBasic input={input} setInput={setInput} />
+          </div>
+          <ImageUpload
+            label="챌린지 썸네일 이미지 업로드"
+            id="thumbnail"
+            name="thumbnail"
+            onChange={onChangeImage}
+          />
         </div>
-        <ImageUpload
-          label="챌린지 썸네일 이미지 업로드"
-          id="thumbnail"
-          name="thumbnail"
-          onChange={onChangeImage}
-        />
+        <div>
+          {/* 가격 정보 */}
+          {/* 일정 */}
+        </div>
       </section>
 
-      <h2>프로그램 소개</h2>
+      <Heading2>프로그램 소개</Heading2>
       <section>
         <header>
           <h3>상세 설명</h3>
