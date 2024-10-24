@@ -34,8 +34,8 @@ const EmptyCardList = () => {
       {emptyList.map((program, i) => (
         <div
           key={i}
-          onClick={() => window.open(program.link, '_blank')}
           className="early_button flex max-w-72 cursor-pointer flex-col overflow-hidden rounded-xs md:gap-4 md:rounded-md md:border md:border-neutral-85 md:p-2.5"
+          onClick={() => window.open(program.link, '_blank')}
         >
           <img
             className="h-32 object-cover md:h-36 md:rounded-xs lg:h-48"

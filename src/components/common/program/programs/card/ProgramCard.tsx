@@ -58,7 +58,7 @@ const ProgramCard = ({ program }: ProgramCardProps) => {
       data-program-text={program.programInfo.title}
     >
       <img
-        className="h-32 w-full bg-neutral-80 object-cover md:h-44 md:rounded-xs"
+        className="aspect-[540/421] h-auto w-full bg-neutral-80 object-cover md:rounded-xs"
         src={program.programInfo.thumbnail!}
         alt="프로그램 썸네일 배경"
       />
