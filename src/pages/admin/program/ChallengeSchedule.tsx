@@ -4,12 +4,12 @@ import { ReactNode } from 'react';
 interface ChallengeScheduleProps<
   T extends CreateChallengeReq | UpdateChallengeReq,
 > {
+  input: Omit<T, 'desc'>;
   setInput: React.Dispatch<React.SetStateAction<Omit<T, 'desc'>>>;
 }
-
 export default function ChallengeSchedule<
   T extends CreateChallengeReq | UpdateChallengeReq,
->({ setInput }: ChallengeScheduleProps<T>) {
+>({ input, setInput }: ChallengeScheduleProps<T>) {
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInput((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
@@ -22,6 +22,7 @@ export default function ChallengeSchedule<
           id="startDate"
           type="datetime-local"
           name="startDate"
+          value={input.startDate}
           onChange={onChange}
           step={600}
         />
@@ -32,6 +33,7 @@ export default function ChallengeSchedule<
           id="endDate"
           type="datetime-local"
           name="endDate"
+          value={input.endDate}
           onChange={onChange}
         />
       </DateTimeControl>
@@ -41,6 +43,7 @@ export default function ChallengeSchedule<
           id="beginning"
           type="datetime-local"
           name="beginning"
+          value={input.beginning}
           onChange={onChange}
         />
       </DateTimeControl>
@@ -50,6 +53,7 @@ export default function ChallengeSchedule<
           id="deadline"
           type="datetime-local"
           name="deadline"
+          value={input.deadline}
           onChange={onChange}
         />
       </DateTimeControl>

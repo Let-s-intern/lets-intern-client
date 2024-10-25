@@ -27,16 +27,14 @@ interface ChallengeBasicProps<
   setInput: React.Dispatch<React.SetStateAction<Omit<T, 'desc'>>>;
 }
 
-/** challenge가 없으면 input 사용 (같은 챌린지지만 타입 다름 주의)
- * @param challenge 챌린지 수정할 때 기존 챌린지 정보 (API: /challenge/{challengeId})
- * @param input POST, PATCH 입력 폼
- */
 export default function ChallengeBasic<
   T extends CreateChallengeReq | UpdateChallengeReq,
 >({ input, setInput }: ChallengeBasicProps<T>) {
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInput((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
+
+  console.log(input);
 
   return (
     <div className="flex w-full flex-col gap-3">

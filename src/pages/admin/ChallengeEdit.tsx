@@ -13,6 +13,8 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { FaSave } from 'react-icons/fa';
 import { useNavigate, useParams } from 'react-router-dom';
 import ChallengeBasic from './program/ChallengeBasic';
+import ChallengePrice from './program/ChallengePrice';
+import ChallengeSchedule from './program/ChallengeSchedule';
 
 const ChallengeEdit: React.FC = () => {
   const [content, setContent] = useState<ChallengeContent>({
@@ -123,10 +125,10 @@ const ChallengeEdit: React.FC = () => {
       criticalNotice,
       participationCount,
       thumbnail,
-      startDate: startDate?.format('YYYY-MM-DDTHH:mm:ss.SSS[Z]'),
-      endDate: endDate?.format('YYYY-MM-DDTHH:mm:ss.SSS[Z]'),
-      beginning: beginning?.format('YYYY-MM-DDTHH:mm:ss.SSS[Z]'),
-      deadline: deadline?.format('YYYY-MM-DDTHH:mm:ss.SSS[Z]'),
+      startDate: startDate?.format('YYYY-MM-DDTHH:mm:ss'),
+      endDate: endDate?.format('YYYY-MM-DDTHH:mm:ss'),
+      beginning: beginning?.format('YYYY-MM-DDTHH:mm:ss'),
+      deadline: deadline?.format('YYYY-MM-DDTHH:mm:ss'),
       chatLink,
       chatPassword,
       challengeType,
@@ -179,6 +181,12 @@ const ChallengeEdit: React.FC = () => {
             name="thumbnail"
             onChange={onChangeImage}
           />
+        </div>
+        <div className="grid w-full grid-cols-2 gap-3">
+          {/* 가격 정보 */}
+          <ChallengePrice input={input} setInput={setInput} />
+          {/* 일정 */}
+          <ChallengeSchedule input={input} setInput={setInput} />
         </div>
       </section>
 

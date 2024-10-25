@@ -50,6 +50,7 @@ export default function ChallengePrice<
         name="basicPrice"
         size="small"
         placeholder="이용료 금액을 입력해주세요"
+        value={String(input.priceInfo[0].charge)}
         onChange={(e) => {
           const value = e.target.value;
           const priceInfo = [
@@ -76,6 +77,7 @@ export default function ChallengePrice<
           name="refund"
           size="small"
           placeholder="보증금 금액을 입력해주세요"
+          value={String(input.priceInfo[0].refund)}
           onChange={(e) => {
             setInput((prev) => ({
               ...prev,
@@ -92,6 +94,7 @@ export default function ChallengePrice<
         name="discount"
         size="small"
         placeholder="할인 금액을 입력해주세요"
+        value={String(input.priceInfo[0].priceInfo.discount)}
         onChange={(e) => {
           const priceInfo = [
             {
