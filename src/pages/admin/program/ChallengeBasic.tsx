@@ -34,8 +34,6 @@ export default function ChallengeBasic<
     setInput((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
-  console.log(input);
-
   return (
     <div className="flex w-full flex-col gap-3">
       <FormControl size="small">

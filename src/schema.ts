@@ -263,7 +263,6 @@ export type UpdateChallengeUpdatePriceInfoReq = {
 };
 
 // DELETE /api/v1/challenge/{challengeId} 챌린지 삭제
-
 export const liveProgressSchema = z.union([
   z.literal('ALL'),
   z.literal('ONLINE'),
