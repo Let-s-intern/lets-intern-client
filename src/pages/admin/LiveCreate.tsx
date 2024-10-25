@@ -7,6 +7,7 @@ import Header from '@components/admin/ui/header/Header';
 import Heading from '@components/admin/ui/heading/Heading';
 import { Heading2 } from '@components/admin/ui/heading/Heading2';
 import dayjs from 'dayjs';
+import LiveeBasic from '../common/program/LiveBasic';
 
 const LiveCreate: React.FC = () => {
   const [loading, setLoading] = useState(false);
@@ -53,7 +54,7 @@ const LiveCreate: React.FC = () => {
       <Heading2>기본 정보</Heading2>
       <section className="mb-6 mt-3">
         <div className="mb-6 grid w-full grid-cols-2 gap-3">
-          {/* 기본 정보 */}
+          <LiveeBasic input={input} setInput={setInput} />
           {/* 썸네일 */}
         </div>
         <div className="grid w-full grid-cols-2 gap-3">

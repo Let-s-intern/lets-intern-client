@@ -404,6 +404,23 @@ export type UpdateLiveReq = {
   }[];
 };
 
+// ADMIN LIVE 프로그램 직무
+export const liveJob = z.enum([
+  '경영관리',
+  '금융',
+  '마케팅',
+  '광고',
+  '디자인',
+  '방송',
+  '개발',
+  '영업',
+  '서비스기획',
+  '사업전략',
+  '컨설팅',
+  '유통',
+  '공정연구',
+]);
+
 /** GET /api/v1/vod/{id} VOD 상세 조회 (어드민, 유저 겸용) */
 export const getVodIdSchema = z.object({
   vodInfo: z.object({
