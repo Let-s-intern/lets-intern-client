@@ -143,9 +143,7 @@ const ChallengeEdit: React.FC = () => {
             price: price ?? 0,
             discount: discount ?? 0,
             accountNumber: accountNumber ?? '',
-            deadline: priceInfo[0].deadline?.format(
-              'YYYY-MM-DDTHH:mm:ss.SSS[Z]',
-            ),
+            deadline: priceInfo[0].deadline?.format('YYYY-MM-DDTHH:mm:ss'),
             accountType: accountType ?? undefined,
           },
           charge: price ?? 0,
