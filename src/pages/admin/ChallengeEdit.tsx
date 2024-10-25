@@ -179,6 +179,7 @@ const ChallengeEdit: React.FC = () => {
             label="챌린지 썸네일 이미지 업로드"
             id="thumbnail"
             name="thumbnail"
+            image={input.thumbnail}
             onChange={onChangeImage}
           />
         </div>
