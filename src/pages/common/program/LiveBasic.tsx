@@ -20,15 +20,15 @@ import {
   SelectChangeEvent,
 } from '@mui/material';
 
-interface LiveeBasicProps<T extends CreateLiveReq | UpdateLiveReq> {
+interface LiveBasicProps<T extends CreateLiveReq | UpdateLiveReq> {
   input: Omit<T, 'desc'>;
   setInput: React.Dispatch<React.SetStateAction<Omit<T, 'desc'>>>;
 }
 
-export default function LiveeBasic<T extends CreateLiveReq | UpdateLiveReq>({
+export default function LiveBasic<T extends CreateLiveReq | UpdateLiveReq>({
   input,
   setInput,
-}: LiveeBasicProps<T>) {
+}: LiveBasicProps<T>) {
   const onChange = (
     e: React.ChangeEvent<HTMLInputElement> | SelectChangeEvent,
   ) => {

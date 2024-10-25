@@ -9,8 +9,9 @@ import Header from '@components/admin/ui/header/Header';
 import Heading from '@components/admin/ui/heading/Heading';
 import { Heading2 } from '@components/admin/ui/heading/Heading2';
 import dayjs from 'dayjs';
-import LiveeBasic from '../common/program/LiveBasic';
+import LiveBasic from '../common/program/LiveBasic';
 import LivePrice from './program/LivePrice';
+import LiveSchedule from './program/LiveSchedule';
 
 const LiveCreate: React.FC = () => {
   const [loading, setLoading] = useState(false);
@@ -67,7 +68,7 @@ const LiveCreate: React.FC = () => {
       <Heading2>기본 정보</Heading2>
       <section className="mb-6 mt-3">
         <div className="mb-6 grid w-full grid-cols-2 gap-3">
-          <LiveeBasic input={input} setInput={setInput} />
+          <LiveBasic input={input} setInput={setInput} />
           <ImageUpload
             label="라이브 썸네일 이미지 업로드"
             id="thumbnail"
@@ -76,8 +77,14 @@ const LiveCreate: React.FC = () => {
           />
         </div>
         <div className="grid w-full grid-cols-2 gap-3">
-          <LivePrice input={input} setInput={setInput} />
-          {/* 일정 */}
+          <div className="flex flex-col gap-3">
+            <LivePrice input={input} setInput={setInput} />
+            <LiveSchedule input={input} setInput={setInput} />
+          </div>
+          <div className="flex flex-col gap-3">
+            {/* 멘토 사진 */}
+            {/* 멘토 정보 */}
+          </div>
         </div>
       </section>
 
