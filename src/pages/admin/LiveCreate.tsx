@@ -2,7 +2,9 @@ import { Button } from '@mui/material';
 import { useCallback, useState } from 'react';
 import { FaSave } from 'react-icons/fa';
 
+import { fileType, uploadFile } from '@/api/file';
 import { CreateLiveReq } from '@/schema';
+import ImageUpload from '@components/admin/program/ui/form/ImageUpload';
 import Header from '@components/admin/ui/header/Header';
 import Heading from '@components/admin/ui/heading/Heading';
 import { Heading2 } from '@components/admin/ui/heading/Heading2';
@@ -39,6 +41,16 @@ const LiveCreate: React.FC = () => {
     faqInfo: [],
   });
 
+  const onChangeImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!e.target.files) return;
+
+    const url = await uploadFile({
+      file: e.target.files[0],
+      type: fileType.enum.LIVE,
+    });
+    setInput((prev) => ({ ...prev, [e.target.name]: url }));
+  };
+
   const onClickSave = useCallback(async () => {
     setLoading(true);
     // 라이브 생성
@@ -55,7 +67,12 @@ const LiveCreate: React.FC = () => {
       <section className="mb-6 mt-3">
         <div className="mb-6 grid w-full grid-cols-2 gap-3">
           <LiveeBasic input={input} setInput={setInput} />
-          {/* 썸네일 */}
+          <ImageUpload
+            label="라이브 썸네일 이미지 업로드"
+            id="thumbnail"
+            name="thumbnail"
+            onChange={onChangeImage}
+          />
         </div>
         <div className="grid w-full grid-cols-2 gap-3">
           {/* 가격 정보 */}
