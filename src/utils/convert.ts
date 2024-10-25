@@ -3,6 +3,7 @@ import {
   AttendanceStatus,
   ChallengeType,
   ChallengeUserType,
+  LiveProgressType,
   ProgramClassification,
 } from '../schema';
 
@@ -100,6 +101,12 @@ export const gradeToText: Record<string, string> = {
   FOURTH: '4학년',
   ETC: '5학년 이상',
   GRADUATE: '졸업생',
+};
+
+export const liveProgressTypeToText: Record<LiveProgressType, string> = {
+  ALL: '온오프라인 병행',
+  ONLINE: '온라인',
+  OFFLINE: '오프라인',
 };
 
 export const wishJobToText: any = {

@@ -263,7 +263,6 @@ export type UpdateChallengeUpdatePriceInfoReq = {
 };
 
 // DELETE /api/v1/challenge/{challengeId} 챌린지 삭제
-
 export const liveProgressSchema = z.union([
   z.literal('ALL'),
   z.literal('ONLINE'),
@@ -341,6 +340,11 @@ export type CreateLiveReq = {
   participationCount: number;
   thumbnail: string;
   mentorName: string;
+  mentorImg: string;
+  mentorCompany: string;
+  mentorJob: string;
+  mentorCareer: string;
+  mentorIntroduction: string;
   job: string;
   place: string;
   startDate: string; // "2024-10-12T06:48:27.339"
@@ -377,6 +381,11 @@ export type UpdateLiveReq = {
   participationCount?: number;
   thumbnail?: string;
   mentorName?: string;
+  mentorImg?: string;
+  mentorCompany?: string;
+  mentorJob?: string;
+  mentorCareer?: string;
+  mentorIntroduction?: string;
   job?: string;
   place?: string;
   startDate?: string; // "2024-10-12T06:48:27.339"
@@ -404,6 +413,23 @@ export type UpdateLiveReq = {
     faqId: number;
   }[];
 };
+
+// ADMIN LIVE 프로그램 직무
+export const liveJob = z.enum([
+  '경영관리',
+  '금융',
+  '마케팅',
+  '광고',
+  '디자인',
+  '방송',
+  '개발',
+  '영업',
+  '서비스기획',
+  '사업전략',
+  '컨설팅',
+  '유통',
+  '공정연구',
+]);
 
 /** GET /api/v1/vod/{id} VOD 상세 조회 (어드민, 유저 겸용) */
 export const getVodIdSchema = z.object({
