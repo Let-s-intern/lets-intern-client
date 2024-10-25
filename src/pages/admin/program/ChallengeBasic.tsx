@@ -37,7 +37,6 @@ export default function ChallengeBasic<
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInput((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
-  console.log(input);
 
   return (
     <div className="flex w-full flex-col gap-3">
@@ -144,7 +143,7 @@ export default function ChallengeBasic<
         type="text"
         name="title"
         placeholder="제목을 입력해주세요"
-        defaultValue={input.title}
+        value={input.title}
         size="small"
         onChange={onChange}
       />
@@ -153,7 +152,7 @@ export default function ChallengeBasic<
         type="text"
         name="shortDesc"
         size="small"
-        defaultValue={input.shortDesc}
+        value={input.shortDesc}
         placeholder="한 줄 설명을 입력해주세요"
         onChange={onChange}
       />
@@ -162,7 +161,7 @@ export default function ChallengeBasic<
         type="number"
         name="participationCount"
         size="small"
-        defaultValue={String(input.participationCount)}
+        value={String(input.participationCount)}
         placeholder="총 정원 수를 입력해주세요"
         onChange={onChange}
       />
@@ -171,7 +170,7 @@ export default function ChallengeBasic<
         name="chatLink"
         size="small"
         placeholder="카카오톡 오픈채팅 링크를 입력하세요"
-        defaultValue={input.chatLink}
+        value={input.chatLink}
         onChange={onChange}
       />
       <Input
@@ -179,7 +178,7 @@ export default function ChallengeBasic<
         name="chatPassword"
         size="small"
         placeholder="카카오톡 오픈채팅 비밀번호를 입력하세요"
-        defaultValue={input.chatPassword}
+        value={input.chatPassword}
         onChange={onChange}
       />
     </div>

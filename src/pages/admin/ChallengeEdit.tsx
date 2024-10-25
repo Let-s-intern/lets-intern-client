@@ -140,11 +140,11 @@ const ChallengeEdit: React.FC = () => {
           priceInfo: {
             price: price ?? 0,
             discount: discount ?? 0,
-            accountNumber,
+            accountNumber: accountNumber ?? '',
             deadline: priceInfo[0].deadline?.format(
               'YYYY-MM-DDTHH:mm:ss.SSS[Z]',
             ),
-            accountType,
+            accountType: accountType ?? undefined,
           },
           charge: price ?? 0,
           refund: refund ?? 0,
