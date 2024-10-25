@@ -13,11 +13,13 @@ import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import storage from '../../../../../Firebase';
 import {
+  challengeTypes,
   challengeTypeToText,
   newProgramFeeTypeToText,
   newProgramTypeDetailToText,
   newProgramTypeToText,
   programParticipationTypeToText,
+  programPriceTypes,
   programPriceTypeToText,
 } from '../../../../../utils/convert';
 import Input from '../../../../ui/input/Input';
@@ -237,7 +239,7 @@ const ProgramInputContent = ({
                       setValue({ ...value, [e.target.name]: e.target.value });
                     }}
                   >
-                    {Object.keys(challengeTypeToText).map((type: string) => (
+                    {challengeTypes.map((type) => (
                       <MenuItem key={type} value={type}>
                         {challengeTypeToText[type]}
                       </MenuItem>
@@ -256,7 +258,7 @@ const ProgramInputContent = ({
                       setValue({ ...value, [e.target.name]: e.target.value });
                     }}
                   >
-                    {Object.keys(programPriceTypeToText).map((type: string) => (
+                    {programPriceTypes.map((type) => (
                       <MenuItem key={type} value={type}>
                         {programPriceTypeToText[type]}
                       </MenuItem>

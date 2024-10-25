@@ -49,7 +49,7 @@ const ImageUpload = ({
   }, [image, imageInputRef]);
 
   return (
-    <div className="flex flex-col gap-4 rounded-xxs bg-neutral-90 px-6 py-4">
+    <div className="flex h-fit flex-col gap-4 rounded-xxs bg-neutral-90 px-6 py-4">
       <div>
         <label htmlFor={id} className="text-1-medium block">
           {label}{' '}

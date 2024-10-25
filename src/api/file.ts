@@ -1,16 +1,20 @@
+import { z } from 'zod';
 import axios from '../utils/axios';
 import invariant from '../utils/invariant';
 import { generateRandomString } from '../utils/random';
 
-export type FileType =
-  | 'BANNER_MAIN'
-  | 'BANNER_PROGRAM'
-  | 'BANNER_POPUP'
-  | 'CHALLENGE'
-  | 'LIVE'
-  | 'VOD'
-  | 'BLOG'
-  | 'REPORT';
+export const fileType = z.enum([
+  'BANNER_MAIN',
+  'BANNER_PROGRAM',
+  'BANNER_POPUP',
+  'CHALLENGE',
+  'LIVE',
+  'VOD',
+  'BLOG',
+  'REPORT',
+]);
+
+export type FileType = z.infer<typeof fileType>;
 
 export async function uploadFile({
   file,

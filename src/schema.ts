@@ -182,6 +182,8 @@ export const getChallengeIdSchema = z
     };
   });
 
+export type ChallengeIdSchema = z.infer<typeof getChallengeIdSchema>;
+
 /** POST /api/v1/challenge 챌린지 생성 */
 export type CreateChallengeReq = {
   title: string;
@@ -242,23 +244,25 @@ export type UpdateChallengeReq = {
       programClassification: ProgramClassification;
     };
   }[];
-  priceInfo?: {
-    priceInfo: {
-      price: number;
-      discount: number;
-      accountNumber?: string;
-      deadline?: string; // "2024-10-12T08:03:17.016Z"
-      accountType?: AccountType;
-    };
-    charge: number;
-    refund: number;
-    challengePriceType: ChallengePriceType;
-    challengeUserType: ChallengeUserType;
-    challengeParticipationType: ChallengeParticipationType;
-  }[];
+  priceInfo?: UpdateChallengeUpdatePriceInfoReq[];
   faqInfo?: {
     faqId: number;
   }[];
+};
+
+export type UpdateChallengeUpdatePriceInfoReq = {
+  priceInfo: {
+    price: number;
+    discount: number;
+    accountNumber?: string;
+    deadline?: string; // "2024-10-12T08:03:17.016Z"
+    accountType?: AccountType;
+  };
+  charge: number;
+  refund: number;
+  challengePriceType: ChallengePriceType;
+  challengeUserType: ChallengeUserType;
+  challengeParticipationType: ChallengeParticipationType;
 };
 
 // DELETE /api/v1/challenge/{challengeId} 챌린지 삭제
@@ -328,6 +332,8 @@ export const getLiveIdSchema = z
       },
     };
   });
+
+export type LiveIdSchema = z.infer<typeof getLiveIdSchema>;
 
 /** POST /api/v1/live LIVE 생성 */
 export type CreateLiveReq = {

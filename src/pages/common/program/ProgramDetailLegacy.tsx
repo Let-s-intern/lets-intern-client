@@ -1,10 +1,12 @@
 import { useMediaQuery } from '@mui/material';
 import { useQuery } from '@tanstack/react-query';
 import dayjs from 'dayjs';
-import { useReducer, useState } from 'react';
+import { useEffect, useReducer, useState } from 'react';
 import { Helmet } from 'react-helmet';
 import { useNavigate, useParams } from 'react-router-dom';
 import { twMerge } from 'tailwind-merge';
+
+import isDeprecatedProgram from '@/lib/isDeprecatedProgram';
 import { useProgramApplicationQuery } from '../../../api/application';
 import { useProgramQuery } from '../../../api/program';
 import FilledButton from '../../../components/common/program/program-detail/button/FilledButton';
@@ -23,16 +25,20 @@ interface ProgramDetailProps {
   programType: ProgramType;
 }
 
-const ProgramDetail = ({ programType }: ProgramDetailProps) => {
+const ProgramDetailLegacy = ({ programType }: ProgramDetailProps) => {
   const params = useParams<{ programId: string }>();
   const navigate = useNavigate();
-  const { isLoggedIn } = useAuthStore();
+
   const [programTitle, setProgramTitle] = useState('');
-  const programId = Number(params.programId);
+  const [isInstagramAlertOpen, setIsInstagramAlertOpen] = useState(false);
+
   const isDesktop = useMediaQuery('(min-width: 991px)');
   const [isDrawerOpen, dispatchIsDrawerOpen] = useReducer(drawerReducer, false);
+
+  const programId = Number(params.programId);
   const isInstagram = navigator.userAgent.includes('Instagram');
-  const [isInstagramAlertOpen, setIsInstagramAlertOpen] = useState(false);
+
+  const { isLoggedIn } = useAuthStore();
 
   useRunOnce(() => {
     const searchParams = new URLSearchParams(window.location.search);
@@ -61,6 +67,20 @@ const ProgramDetail = ({ programType }: ProgramDetailProps) => {
   });
 
   const program = useProgramQuery({ programId, type: programType });
+
+  // 프로그램이 옛 버전일 경우 옛 링크로 이동
+  useEffect(() => {
+    if (
+      programId &&
+      programType &&
+      program &&
+      program.query.data &&
+      isDeprecatedProgram({ desc: program.query.data.desc })
+    ) {
+      navigate(`/program/${programType}/old/${programId}`);
+    }
+  }, [navigate, program.query.data, programId, programType]);
+
   const programDate =
     program && program.query.data
       ? {
@@ -184,9 +204,8 @@ const ProgramDetail = ({ programType }: ProgramDetailProps) => {
                 )}
                 {loading ? (
                   <FilledButton
-                    onClick={() => {}}
                     caption={'로딩 중 ...'}
-                    isAlreadyApplied={false}
+                    disabled={false}
                     className="opacity-0"
                   />
                 ) : isOutOfDate ? (
@@ -195,7 +214,7 @@ const ProgramDetail = ({ programType }: ProgramDetailProps) => {
                   <FilledButton
                     onClick={toggleDrawer}
                     caption={isAlreadyApplied ? '신청완료' : '신청하기'}
-                    isAlreadyApplied={isAlreadyApplied}
+                    disabled={isAlreadyApplied}
                     className="apply_button"
                   />
                 )}
@@ -207,4 +226,4 @@ const ProgramDetail = ({ programType }: ProgramDetailProps) => {
   );
 };
 
-export default ProgramDetail;
+export default ProgramDetailLegacy;
