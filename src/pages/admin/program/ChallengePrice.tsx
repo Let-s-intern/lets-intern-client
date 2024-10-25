@@ -71,28 +71,40 @@ export default function ChallengePrice({
         <Input
           label="베이직 보증금 금액"
           type="number"
-          name="basicRefund"
+          name="refund"
           size="small"
           placeholder="보증금 금액을 입력해주세요"
           onChange={(e) => {
-            setInput({
-              ...input,
-              [e.target.name]: e.target.value,
-            });
+            setInput((prev) => ({
+              ...prev,
+              priceInfo: [
+                { ...prev.priceInfo[0], refund: Number(e.target.value) },
+              ],
+            }));
           }}
         />
       )}
       <Input
         label="베이직 할인 금액"
         type="number"
-        name="basicDiscount"
+        name="discount"
         size="small"
         placeholder="할인 금액을 입력해주세요"
         onChange={(e) => {
-          setInput({
-            ...input,
-            [e.target.name]: e.target.value,
-          });
+          const priceInfo = [
+            {
+              ...input.priceInfo[0],
+              priceInfo: {
+                ...input.priceInfo[0].priceInfo,
+                discount: Number(e.target.value),
+              },
+            },
+          ];
+
+          setInput((prev) => ({
+            ...prev,
+            priceInfo,
+          }));
         }}
       />
     </div>
