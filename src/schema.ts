@@ -340,6 +340,11 @@ export type CreateLiveReq = {
   participationCount: number;
   thumbnail: string;
   mentorName: string;
+  mentorImg: string;
+  mentorCompany: string;
+  mentorJob: string;
+  mentorCareer: string;
+  mentorIntroduction: string;
   job: string;
   place: string;
   startDate: string; // "2024-10-12T06:48:27.339"
@@ -376,6 +381,11 @@ export type UpdateLiveReq = {
   participationCount?: number;
   thumbnail?: string;
   mentorName?: string;
+  mentorImg?: string;
+  mentorCompany?: string;
+  mentorJob?: string;
+  mentorCareer?: string;
+  mentorIntroduction?: string;
   job?: string;
   place?: string;
   startDate?: string; // "2024-10-12T06:48:27.339"

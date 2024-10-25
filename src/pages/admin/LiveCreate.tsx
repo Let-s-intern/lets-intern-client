@@ -9,7 +9,8 @@ import Header from '@components/admin/ui/header/Header';
 import Heading from '@components/admin/ui/heading/Heading';
 import { Heading2 } from '@components/admin/ui/heading/Heading2';
 import dayjs from 'dayjs';
-import LiveBasic from '../common/program/LiveBasic';
+import LiveBasic from './program/LiveBasic';
+import LiveMentor from './program/LiveMentor';
 import LivePrice from './program/LivePrice';
 import LiveSchedule from './program/LiveSchedule';
 
@@ -22,6 +23,11 @@ const LiveCreate: React.FC = () => {
     participationCount: 0,
     thumbnail: '',
     mentorName: '',
+    mentorImg: '',
+    mentorCompany: '',
+    mentorJob: '',
+    mentorCareer: '',
+    mentorIntroduction: '',
     job: '',
     place: '',
     startDate: dayjs().format('YYYY-MM-DDTHH:mm'),
@@ -82,7 +88,7 @@ const LiveCreate: React.FC = () => {
           />
         </div>
         <div className="grid w-full grid-cols-2 gap-3">
-          <div className="flex flex-col gap-3">
+          <div className="flex flex-col gap-6">
             <LivePrice input={input} setInput={setInput} />
             <LiveSchedule input={input} setInput={setInput} />
           </div>
@@ -93,7 +99,7 @@ const LiveCreate: React.FC = () => {
               name="mentorImg"
               onChange={onChangeMentorImg}
             />
-            {/* 멘토 정보 */}
+            <LiveMentor input={input} setInput={setInput} />
           </div>
         </div>
       </section>
