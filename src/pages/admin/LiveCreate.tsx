@@ -1,4 +1,5 @@
 import { Button } from '@mui/material';
+import dayjs from 'dayjs';
 import { useCallback, useState } from 'react';
 import { FaSave } from 'react-icons/fa';
 
@@ -8,7 +9,6 @@ import ImageUpload from '@components/admin/program/ui/form/ImageUpload';
 import Header from '@components/admin/ui/header/Header';
 import Heading from '@components/admin/ui/heading/Heading';
 import { Heading2 } from '@components/admin/ui/heading/Heading2';
-import dayjs from 'dayjs';
 import LiveBasic from './program/LiveBasic';
 import LiveMentor from './program/LiveMentor';
 import LivePrice from './program/LivePrice';
@@ -66,7 +66,7 @@ const LiveCreate: React.FC = () => {
 
   const onClickSave = useCallback(async () => {
     setLoading(true);
-    // 라이브 생성
+    console.log('라이브 생성');
     setLoading(false);
   }, []);
 
@@ -91,6 +91,7 @@ const LiveCreate: React.FC = () => {
           <div className="flex flex-col gap-6">
             <LivePrice input={input} setInput={setInput} />
             <LiveSchedule input={input} setInput={setInput} />
+            {/* VOD 제공 여부 */}
           </div>
           <div className="flex flex-col gap-3">
             <ImageUpload
