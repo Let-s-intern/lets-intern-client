@@ -124,39 +124,36 @@ const missionStatusType = z.union([
 /** GET /api/v1/challenge/{id} 챌린지 상세 조회 (어드민, 유저 겸용) */
 export const getChallengeIdSchema = z
   .object({
-    title: z.string().nullable().optional(),
-    shortDesc: z.string().nullable().optional(),
-    desc: z.string().nullable().optional(),
-    criticalNotice: z.string().nullable().optional(),
-    participationCount: z.number().nullable().optional(),
-    thumbnail: z.string().nullable().optional(),
-    startDate: z.string().nullable().optional(),
-    endDate: z.string().nullable().optional(),
-    beginning: z.string().nullable().optional(),
-    deadline: z.string().nullable().optional(),
-    chatLink: z.string().nullable().optional(),
-    chatPassword: z.string().nullable().optional(),
+    title: z.string().optional(),
+    shortDesc: z.string().optional(),
+    desc: z.string().optional(),
+    criticalNotice: z.string().optional(),
+    participationCount: z.number().optional(),
+    thumbnail: z.string().optional(),
+    startDate: z.string().optional(),
+    endDate: z.string().optional(),
+    beginning: z.string().optional(),
+    deadline: z.string().optional(),
+    chatLink: z.string().optional(),
+    chatPassword: z.string().optional(),
     challengeType: challengeTypeSchema,
     classificationInfo: z.array(
       z.object({
-        programClassification: programClassificationSchema
-          .nullable()
-          .optional(),
+        programClassification: programClassificationSchema,
       }),
     ),
     priceInfo: z.array(
       z.object({
         priceId: z.number(),
-        price: z.number().nullable().optional(),
-        discount: z.number().nullable().optional(),
-        accountNumber: z.string().nullable().optional(),
-        deadline: z.string().nullable().optional(),
-        accountType: accountType.nullable().optional(),
-        challengePriceType: challengePriceType.nullable().optional(),
-        challengeUserType: challengeUserType.nullable().optional(),
-        challengeParticipationType: challengeParticipationType
-          .nullable()
-          .optional(),
+        price: z.number().optional(),
+        refund: z.number().optional(),
+        discount: z.number().optional(),
+        accountNumber: z.string().optional(),
+        deadline: z.string().optional(),
+        accountType: accountType.optional(),
+        challengePriceType: challengePriceType.optional(),
+        challengeUserType: challengeUserType.optional(),
+        challengeParticipationType: challengeParticipationType.optional(),
       }),
     ),
     faqInfo: z.array(

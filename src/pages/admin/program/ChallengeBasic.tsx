@@ -1,6 +1,5 @@
 import {
   ChallengeParticipationType,
-  ChallengeType,
   CreateChallengeReq,
   ProgramClassification,
   UpdateChallengeReq,
@@ -28,12 +27,17 @@ interface ChallengeBasicProps<
   setInput: React.Dispatch<React.SetStateAction<Omit<T, 'desc'>>>;
 }
 
+/** challenge가 없으면 input 사용 (같은 챌린지지만 타입 다름 주의)
+ * @param challenge 챌린지 수정할 때 기존 챌린지 정보 (API: /challenge/{challengeId})
+ * @param input POST, PATCH 입력 폼
+ */
 export default function ChallengeBasic<
   T extends CreateChallengeReq | UpdateChallengeReq,
 >({ input, setInput }: ChallengeBasicProps<T>) {
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInput((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
+  console.log(input);
 
   return (
     <div className="flex w-full flex-col gap-3">
@@ -45,9 +49,13 @@ export default function ChallengeBasic<
           id="programTypeInfo"
           name="programTypeInfo"
           multiple
-          value={input.programTypeInfo?.map(
-            (info) => info.classificationInfo.programClassification,
-          )}
+          value={
+            input.programTypeInfo
+              ? input.programTypeInfo.map(
+                  (info) => info.classificationInfo.programClassification,
+                )
+              : []
+          }
           onChange={(e) =>
             setInput((prev) => ({
               ...prev,
@@ -87,12 +95,13 @@ export default function ChallengeBasic<
         <InputLabel>챌린지 구분</InputLabel>
         <Select
           label="챌린지 구분"
+          name="challengeType"
           value={input.challengeType}
           onChange={(e) => {
-            setInput({
-              ...input,
-              challengeType: e.target.value as ChallengeType,
-            });
+            setInput((prev) => ({
+              ...prev,
+              [e.target.name]: e.target.value,
+            }));
           }}
         >
           {challengeTypes.map((type) => (
@@ -135,6 +144,7 @@ export default function ChallengeBasic<
         type="text"
         name="title"
         placeholder="제목을 입력해주세요"
+        defaultValue={input.title}
         size="small"
         onChange={onChange}
       />
@@ -143,6 +153,7 @@ export default function ChallengeBasic<
         type="text"
         name="shortDesc"
         size="small"
+        defaultValue={input.shortDesc}
         placeholder="한 줄 설명을 입력해주세요"
         onChange={onChange}
       />
@@ -151,6 +162,7 @@ export default function ChallengeBasic<
         type="number"
         name="participationCount"
         size="small"
+        defaultValue={String(input.participationCount)}
         placeholder="총 정원 수를 입력해주세요"
         onChange={onChange}
       />
@@ -159,6 +171,7 @@ export default function ChallengeBasic<
         name="chatLink"
         size="small"
         placeholder="카카오톡 오픈채팅 링크를 입력하세요"
+        defaultValue={input.chatLink}
         onChange={onChange}
       />
       <Input
@@ -166,6 +179,7 @@ export default function ChallengeBasic<
         name="chatPassword"
         size="small"
         placeholder="카카오톡 오픈채팅 비밀번호를 입력하세요"
+        defaultValue={input.chatPassword}
         onChange={onChange}
       />
     </div>

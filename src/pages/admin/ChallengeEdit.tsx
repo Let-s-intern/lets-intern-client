@@ -4,12 +4,15 @@ import isDeprecatedProgram from '@/lib/isDeprecatedProgram';
 import { UpdateChallengeReq } from '@/schema';
 import { ChallengeContent } from '@/types/interface';
 import EditorApp from '@components/admin/lexical/EditorApp';
+import ImageUpload from '@components/admin/program/ui/form/ImageUpload';
 import Header from '@components/admin/ui/header/Header';
 import Heading from '@components/admin/ui/heading/Heading';
+import { Heading2 } from '@components/admin/ui/heading/Heading2';
 import { Button } from '@mui/material';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { FaSave } from 'react-icons/fa';
 import { useNavigate, useParams } from 'react-router-dom';
+import ChallengeBasic from './program/ChallengeBasic';
 
 const ChallengeEdit: React.FC = () => {
   const [content, setContent] = useState<ChallengeContent>({
@@ -81,6 +84,81 @@ const ChallengeEdit: React.FC = () => {
     setLoading(false);
   }, [challengeIdString, content, input, patchChallenge]);
 
+  /* challenge로 Input 초기화 */
+  useEffect(() => {
+    if (!challenge) return;
+
+    const {
+      title,
+      shortDesc,
+      criticalNotice,
+      participationCount,
+      thumbnail,
+      startDate,
+      endDate,
+      beginning,
+      deadline,
+      chatLink,
+      chatPassword,
+      challengeType,
+      classificationInfo,
+      priceInfo,
+      faqInfo,
+    } = challenge;
+
+    const {
+      discount,
+      price,
+      refund,
+      challengePriceType,
+      challengeUserType,
+      challengeParticipationType,
+      accountNumber,
+      accountType,
+    } = priceInfo[0];
+
+    const initial = {
+      title,
+      shortDesc,
+      criticalNotice,
+      participationCount,
+      thumbnail,
+      startDate: startDate?.format('YYYY-MM-DDTHH:mm:ss.SSS[Z]'),
+      endDate: endDate?.format('YYYY-MM-DDTHH:mm:ss.SSS[Z]'),
+      beginning: beginning?.format('YYYY-MM-DDTHH:mm:ss.SSS[Z]'),
+      deadline: deadline?.format('YYYY-MM-DDTHH:mm:ss.SSS[Z]'),
+      chatLink,
+      chatPassword,
+      challengeType,
+      programTypeInfo: classificationInfo.map((info) => ({
+        classificationInfo: {
+          programClassification: info.programClassification,
+        },
+      })),
+      priceInfo: [
+        {
+          priceInfo: {
+            price: price ?? 0,
+            discount: discount ?? 0,
+            accountNumber,
+            deadline: priceInfo[0].deadline?.format(
+              'YYYY-MM-DDTHH:mm:ss.SSS[Z]',
+            ),
+            accountType,
+          },
+          charge: price ?? 0,
+          refund: refund ?? 0,
+          challengePriceType: challengePriceType ?? 'CHARGE',
+          challengeUserType: challengeUserType ?? 'BASIC',
+          challengeParticipationType: challengeParticipationType ?? 'LIVE',
+        },
+      ],
+      faqInfo: faqInfo.map((info) => ({ faqId: info.id })),
+    };
+
+    setInput(initial);
+  }, [challenge]);
+
   if (!challenge) {
     return <div>loading...</div>;
   }
@@ -90,6 +168,19 @@ const ChallengeEdit: React.FC = () => {
       <Header>
         <Heading>챌린지 생성</Heading>
       </Header>
+
+      <Heading2>기본 정보</Heading2>
+      <section className="mb-6 mt-3">
+        <div className="mb-6 grid w-full grid-cols-2 gap-3">
+          <ChallengeBasic input={input} setInput={setInput} />
+          <ImageUpload
+            label="챌린지 썸네일 이미지 업로드"
+            id="thumbnail"
+            name="thumbnail"
+            onChange={onChangeImage}
+          />
+        </div>
+      </section>
 
       <h2>프로그램 소개</h2>
       <section>
