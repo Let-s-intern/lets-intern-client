@@ -10,6 +10,7 @@ import Heading from '@components/admin/ui/heading/Heading';
 import { Heading2 } from '@components/admin/ui/heading/Heading2';
 import dayjs from 'dayjs';
 import LiveeBasic from '../common/program/LiveBasic';
+import LivePrice from './program/LivePrice';
 
 const LiveCreate: React.FC = () => {
   const [loading, setLoading] = useState(false);
@@ -75,8 +76,7 @@ const LiveCreate: React.FC = () => {
           />
         </div>
         <div className="grid w-full grid-cols-2 gap-3">
-          {/* 가격 정보 */}
-
+          <LivePrice input={input} setInput={setInput} />
           {/* 일정 */}
         </div>
       </section>
