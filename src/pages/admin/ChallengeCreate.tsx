@@ -110,7 +110,7 @@ const ChallengeCreate: React.FC = () => {
           {/* 가격 정보 */}
           <ChallengePrice input={input} setInput={setInput} />
           {/* 일정 */}
-          <ChallengeSchedule setInput={setInput} />
+          <ChallengeSchedule input={input} setInput={setInput} />
         </div>
       </section>
 
