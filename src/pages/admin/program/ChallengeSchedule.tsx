@@ -1,15 +1,15 @@
-import { CreateChallengeReq } from '@/schema';
+import { CreateChallengeReq, UpdateChallengeReq } from '@/schema';
 import { ReactNode } from 'react';
 
-interface ChallengeScheduleProps {
-  setInput: React.Dispatch<
-    React.SetStateAction<Omit<CreateChallengeReq, 'desc'>>
-  >;
+interface ChallengeScheduleProps<
+  T extends CreateChallengeReq | UpdateChallengeReq,
+> {
+  setInput: React.Dispatch<React.SetStateAction<Omit<T, 'desc'>>>;
 }
 
-export default function ChallengeSchedule({
-  setInput,
-}: ChallengeScheduleProps) {
+export default function ChallengeSchedule<
+  T extends CreateChallengeReq | UpdateChallengeReq,
+>({ setInput }: ChallengeScheduleProps<T>) {
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInput((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };

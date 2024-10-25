@@ -1,26 +1,12 @@
+import { fileType, uploadFile } from '@/api/file';
 import { useGetChallengeQuery, usePatchChallengeMutation } from '@/api/program';
 import isDeprecatedProgram from '@/lib/isDeprecatedProgram';
-import {
-  ChallengeType,
-  UpdateChallengeReq,
-  UpdateChallengeUpdatePriceInfoReq,
-} from '@/schema';
+import { UpdateChallengeReq } from '@/schema';
 import { ChallengeContent } from '@/types/interface';
-import {
-  challengeTypes,
-  challengeTypeToText,
-  programParticipationTypeToText,
-} from '@/utils/convert';
 import EditorApp from '@components/admin/lexical/EditorApp';
 import Header from '@components/admin/ui/header/Header';
 import Heading from '@components/admin/ui/heading/Heading';
-import {
-  Button,
-  FormControl,
-  InputLabel,
-  MenuItem,
-  Select,
-} from '@mui/material';
+import { Button } from '@mui/material';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { FaSave } from 'react-icons/fa';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -66,8 +52,16 @@ const ChallengeEdit: React.FC = () => {
   }, [challenge, challengeIdString, navigate]);
 
   const [input, setInput] = useState<Omit<UpdateChallengeReq, 'desc'>>({});
-
   const [loading, setLoading] = useState(false);
+
+  const onChangeImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!e.target.files) return;
+    const url = await uploadFile({
+      file: e.target.files[0],
+      type: fileType.enum.CHALLENGE,
+    });
+    setInput((prev) => ({ ...prev, [e.target.name]: url }));
+  };
 
   const onClickSave = useCallback(async () => {
     if (!challengeIdString) {
@@ -97,81 +91,6 @@ const ChallengeEdit: React.FC = () => {
         <Heading>챌린지 생성</Heading>
       </Header>
 
-      <div className="mb-3 flex gap-6">
-        <div className="flex flex-1 flex-col gap-3">
-          <FormControl fullWidth size="small">
-            <InputLabel>챌린지 구분</InputLabel>
-            <Select
-              label="챌린지 구분"
-              value={input.challengeType}
-              onChange={(e) => {
-                setInput({
-                  ...input,
-                  challengeType: e.target.value as ChallengeType,
-                });
-              }}
-            >
-              {challengeTypes.map((type) => (
-                <MenuItem key={type} value={type}>
-                  {challengeTypeToText[type]}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-          {/* <FormControl fullWidth>
-          <InputLabel>가격 구분</InputLabel>
-          <Select
-            label="가격 구분"  
-            value={input.priceInfo[0].challengeUserType}
-            onChange={(e) => {
-              setInput({
-                ...input,
-                priceInfo: [
-                  {
-                    ...input.priceInfo[0],
-                    challengeUserType: e.target.value as ChallengeUserType,
-                  },
-                ],
-              });
-            }}
-          >
-            {programPriceTypes.map((type) => (
-              <MenuItem key={type} value={type}>
-                {programPriceTypeToText[type]}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl> */}
-          <FormControl fullWidth>
-            <InputLabel>참여 형태</InputLabel>
-            <Select
-              label="참여 형태"
-              size="small"
-              defaultValue={challenge.priceInfo[0]?.challengeParticipationType}
-              onChange={(e) => {
-                setInput((prev) => ({
-                  ...prev,
-                  priceInfo: [
-                    {
-                      ...prev.priceInfo?.[0],
-                      challengeParticipationType: e.target.value,
-                    } as UpdateChallengeUpdatePriceInfoReq,
-                  ],
-                }));
-              }}
-            >
-              {Object.keys(programParticipationTypeToText).map(
-                (type: string) => (
-                  <MenuItem key={type} value={type}>
-                    {programParticipationTypeToText[type]}
-                  </MenuItem>
-                ),
-              )}
-            </Select>
-          </FormControl>
-        </div>
-        <div className="flex-1">썸네일</div>
-      </div>
       <h2>프로그램 소개</h2>
       <section>
         <header>

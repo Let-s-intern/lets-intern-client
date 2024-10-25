@@ -3,6 +3,7 @@ import {
   ChallengeType,
   CreateChallengeReq,
   ProgramClassification,
+  UpdateChallengeReq,
 } from '@/schema';
 import {
   challengeTypes,
@@ -20,17 +21,16 @@ import {
   Select,
 } from '@mui/material';
 
-interface ChallengeBasicProps {
-  input: Omit<CreateChallengeReq, 'desc'>;
-  setInput: React.Dispatch<
-    React.SetStateAction<Omit<CreateChallengeReq, 'desc'>>
-  >;
+interface ChallengeBasicProps<
+  T extends CreateChallengeReq | UpdateChallengeReq,
+> {
+  input: Omit<T, 'desc'>;
+  setInput: React.Dispatch<React.SetStateAction<Omit<T, 'desc'>>>;
 }
 
-export default function ChallengeBasic({
-  input,
-  setInput,
-}: ChallengeBasicProps) {
+export default function ChallengeBasic<
+  T extends CreateChallengeReq | UpdateChallengeReq,
+>({ input, setInput }: ChallengeBasicProps<T>) {
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInput((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
@@ -45,7 +45,7 @@ export default function ChallengeBasic({
           id="programTypeInfo"
           name="programTypeInfo"
           multiple
-          value={input.programTypeInfo.map(
+          value={input.programTypeInfo?.map(
             (info) => info.classificationInfo.programClassification,
           )}
           onChange={(e) =>
@@ -103,31 +103,33 @@ export default function ChallengeBasic({
         </Select>
       </FormControl>
       {/* (임시) 가격 구분 삭제 */}
-      <FormControl size="small">
-        <InputLabel>참여 형태</InputLabel>
-        <Select
-          label="참여 형태"
-          value={input.priceInfo[0].challengeParticipationType}
-          onChange={(e) => {
-            setInput({
-              ...input,
-              priceInfo: [
-                {
-                  ...input.priceInfo[0],
-                  challengeParticipationType: e.target
-                    .value as ChallengeParticipationType,
-                },
-              ],
-            });
-          }}
-        >
-          {Object.keys(programParticipationTypeToText).map((type: string) => (
-            <MenuItem key={type} value={type}>
-              {programParticipationTypeToText[type]}
-            </MenuItem>
-          ))}
-        </Select>
-      </FormControl>
+      {input.priceInfo !== undefined && input.priceInfo.length > 0 && (
+        <FormControl size="small">
+          <InputLabel>참여 형태</InputLabel>
+          <Select
+            label="참여 형태"
+            value={input.priceInfo[0].challengeParticipationType}
+            onChange={(e) => {
+              setInput({
+                ...input,
+                priceInfo: [
+                  {
+                    ...input.priceInfo![0],
+                    challengeParticipationType: e.target
+                      .value as ChallengeParticipationType,
+                  },
+                ],
+              });
+            }}
+          >
+            {Object.keys(programParticipationTypeToText).map((type: string) => (
+              <MenuItem key={type} value={type}>
+                {programParticipationTypeToText[type]}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+      )}
       <Input
         label="제목"
         type="text"

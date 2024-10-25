@@ -1,20 +1,22 @@
 import { FormControl, InputLabel, MenuItem, Select } from '@mui/material';
 
-import { CreateChallengeReq } from '@/schema';
+import { CreateChallengeReq, UpdateChallengeReq } from '@/schema';
 import { newProgramFeeTypeToText } from '@/utils/convert';
 import Input from '@components/ui/input/Input';
 
-interface ChallengePriceProps {
-  input: Omit<CreateChallengeReq, 'desc'>;
-  setInput: React.Dispatch<
-    React.SetStateAction<Omit<CreateChallengeReq, 'desc'>>
-  >;
+interface ChallengePriceProps<
+  T extends CreateChallengeReq | UpdateChallengeReq,
+> {
+  input: Omit<T, 'desc'>;
+  setInput: React.Dispatch<React.SetStateAction<Omit<T, 'desc'>>>;
 }
 
-export default function ChallengePrice({
-  input,
-  setInput,
-}: ChallengePriceProps) {
+export default function ChallengePrice<
+  T extends CreateChallengeReq | UpdateChallengeReq,
+>({ input, setInput }: ChallengePriceProps<T>) {
+  if (input.priceInfo === undefined || input.priceInfo.length === 0)
+    return <></>;
+
   return (
     <div className="flex flex-col gap-3">
       <FormControl fullWidth size="small">
@@ -29,7 +31,7 @@ export default function ChallengePrice({
             setInput((prev) => ({
               ...prev,
               priceInfo: [
-                { ...prev.priceInfo[0], [e.target.name]: e.target.value },
+                { ...prev.priceInfo![0], [e.target.name]: e.target.value },
               ],
             }));
           }}
@@ -52,10 +54,10 @@ export default function ChallengePrice({
           const value = e.target.value;
           const priceInfo = [
             {
-              ...input.priceInfo[0],
+              ...input.priceInfo![0],
               charge: Number(value),
               priceInfo: {
-                ...input.priceInfo[0].priceInfo,
+                ...input.priceInfo![0].priceInfo,
                 price: Number(value),
               },
             },
@@ -78,7 +80,7 @@ export default function ChallengePrice({
             setInput((prev) => ({
               ...prev,
               priceInfo: [
-                { ...prev.priceInfo[0], refund: Number(e.target.value) },
+                { ...prev.priceInfo![0], refund: Number(e.target.value) },
               ],
             }));
           }}
@@ -93,9 +95,9 @@ export default function ChallengePrice({
         onChange={(e) => {
           const priceInfo = [
             {
-              ...input.priceInfo[0],
+              ...input.priceInfo![0],
               priceInfo: {
-                ...input.priceInfo[0].priceInfo,
+                ...input.priceInfo![0].priceInfo,
                 discount: Number(e.target.value),
               },
             },
