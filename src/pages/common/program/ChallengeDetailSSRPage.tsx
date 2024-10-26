@@ -106,7 +106,7 @@ export function ApplyCTA({ programType }: ApplyCTAProps) {
         ) : (
           <>
             <div>
-              <span>
+              <span className="mb-2 block">
                 {program?.deadline?.format('M월 D일 (dd)')} 마감까지 🚀
               </span>
               <DurationSection
