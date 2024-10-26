@@ -331,7 +331,7 @@ const Programs = () => {
               </span>
             </div>
           </div>
-          <div className="flex h-fit w-full flex-nowrap items-center gap-4 overflow-auto py-4 md:min-h-[4.6rem] md:rounded-lg md:bg-neutral-90 md:px-5 md:py-2">
+          <div className="mx-auto flex h-fit w-full items-center gap-4 overflow-auto py-4 md:min-h-[4.6rem] md:rounded-lg md:bg-neutral-90 md:px-5 md:py-2">
             {/* 초기화 버튼 */}
             <div
               onClick={resetFilter}
