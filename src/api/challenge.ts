@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { getChallengeIdSchema } from '../schema';
+import { challengeTitleSchema, getChallengeIdSchema } from '../schema';
 import axios from '../utils/axios';
 
 const useChallengeQueryKey = 'useChallengeQueryKey';
@@ -66,6 +66,16 @@ export const usePatchChallengePayback = ({
       alert('페이백에 실패했습니다.');
       setPaybackModalClose();
       console.error(error);
+    },
+  });
+};
+
+export const useGetChallengeTitle = (challengeId: number | string) => {
+  return useQuery({
+    queryKey: [challengeId, 'useGetChallengeTitle'],
+    queryFn: async () => {
+      const res = await axios.get(`/challenge/${challengeId}/title`);
+      return challengeTitleSchema.parse(res.data.data);
     },
   });
 };

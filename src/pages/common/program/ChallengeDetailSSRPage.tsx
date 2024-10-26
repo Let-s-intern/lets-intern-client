@@ -4,7 +4,7 @@ import { ReactNode, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import { useProgramApplicationQuery } from '@/api/application';
-import { useChallengeQuery } from '@/api/challenge';
+import { useChallengeQuery, useGetChallengeTitle } from '@/api/challenge';
 import { useProgramQuery } from '@/api/program';
 import { useServerChallenge } from '@/context/ServerChallenge';
 import useAuthStore from '@/store/useAuthStore';
@@ -12,6 +12,7 @@ import { getProgramPathname } from '@/utils/url';
 import FilledButton from '@components/common/program/program-detail/button/FilledButton';
 import GradientButton from '@components/common/program/program-detail/button/GradientButton';
 import NotiButton from '@components/common/program/program-detail/button/NotiButton';
+import Header from '@components/common/program/program-detail/header/Header';
 
 const ChallengeDetailSSRPage = () => {
   const navigate = useNavigate();
@@ -21,9 +22,9 @@ const ChallengeDetailSSRPage = () => {
   }>();
   const isMobile = useMediaQuery('(max-width:991px)');
 
-  const { data } = useChallengeQuery({ challengeId: Number(id || '') });
-
   const challengeFromServer = useServerChallenge();
+  const { data } = useChallengeQuery({ challengeId: Number(id || '') });
+  const { data: titleData } = useGetChallengeTitle(id ?? '');
 
   const challenge = data || challengeFromServer;
   const isLoading = challenge.title === '로딩중...';
@@ -52,6 +53,9 @@ const ChallengeDetailSSRPage = () => {
   return (
     <>
       <pre>{JSON.stringify(JSON.parse(challenge.desc || '{}'), null, 2)}</pre>
+      <div className="px-5 lg:px-10 xl:px-52">
+        <Header programTitle={titleData?.title ?? ''} />
+      </div>
 
       {isMobile ? (
         <ApplyCTA programType="challenge" />

@@ -590,6 +590,11 @@ export const attendances = z
 
 export type Attendance = z.infer<typeof attendances>['attendanceList'][number];
 
+/** GET /api/v1/challenge/{challengeId}/title */
+export const challengeTitleSchema = z.object({
+  title: z.string().optional().nullable(),
+});
+
 /** PATCH /api/v1/attendance/{id} */
 export type UpdateAttendanceReq = {
   link?: string;
