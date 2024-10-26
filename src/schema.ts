@@ -595,6 +595,11 @@ export const challengeTitleSchema = z.object({
   title: z.string().optional().nullable(),
 });
 
+/** GET /api/v1/live/{liveId}/title */
+export const liveTitleSchema = z.object({
+  title: z.string().optional().nullable(),
+});
+
 /** PATCH /api/v1/attendance/{id} */
 export type UpdateAttendanceReq = {
   link?: string;
