@@ -36,29 +36,29 @@ export default function LiveMentor<T extends CreateLiveReq | UpdateLiveReq>({
       />
       <Input
         label="멘토직무"
-        type="number"
+        type="text"
         name="mentorJob"
         size="small"
         value={input.mentorJob}
-        placeholder="총 정원 수를 입력해주세요"
+        placeholder="멘토 직무를 입력해주세요"
         onChange={onChange}
       />
       <Input
         label="멘토경력"
-        type="number"
+        type="text"
         name="mentorCareer"
         size="small"
         value={input.mentorCareer}
-        placeholder="총 정원 수를 입력해주세요"
+        placeholder="멘토 경력을 입력해주세요"
         onChange={onChange}
       />
       <Input
         label="멘토 한 줄 소개"
-        type="number"
+        type="text"
         name="mentorIntroduction"
         size="small"
         value={input.mentorIntroduction}
-        placeholder="총 정원 수를 입력해주세요"
+        placeholder="한 줄 소개를 입력해주세요"
         onChange={onChange}
       />
     </div>
