@@ -27,7 +27,7 @@ const LiveEdit: React.FC = () => {
     enabled: Boolean(liveIdString),
   });
 
-  const onChangeThumbnail = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const onChangeImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files) return;
 
     const url = await uploadFile({
@@ -35,11 +35,6 @@ const LiveEdit: React.FC = () => {
       type: fileType.enum.LIVE,
     });
     setInput((prev) => ({ ...prev, [e.target.name]: url }));
-  };
-
-  const onChangeMentorImg = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (!e.target.files) return;
-    console.log('멘토 사진 업로드');
   };
 
   const onClickSave = useCallback(async () => {
@@ -134,7 +129,8 @@ const LiveEdit: React.FC = () => {
             label="라이브 썸네일 이미지 업로드"
             id="thumbnail"
             name="thumbnail"
-            onChange={onChangeThumbnail}
+            image={input.thumbnail}
+            onChange={onChangeImage}
           />
         </div>
         <div className="grid w-full grid-cols-2 gap-3">
@@ -148,7 +144,8 @@ const LiveEdit: React.FC = () => {
               label="멘토 사진"
               id="mentorImg"
               name="mentorImg"
-              onChange={onChangeMentorImg}
+              image={input.mentorImg}
+              onChange={onChangeImage}
             />
             <LiveMentor input={input} setInput={setInput} />
           </div>

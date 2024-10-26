@@ -49,7 +49,7 @@ const LiveCreate: React.FC = () => {
     faqInfo: [],
   });
 
-  const onChangeThumbnail = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const onChangeImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files) return;
 
     const url = await uploadFile({
@@ -58,12 +58,6 @@ const LiveCreate: React.FC = () => {
     });
     setInput((prev) => ({ ...prev, [e.target.name]: url }));
   };
-
-  const onChangeMentorImg = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (!e.target.files) return;
-    console.log('멘토 사진 업로드');
-  };
-
   const onClickSave = useCallback(async () => {
     setLoading(true);
     console.log('라이브 생성');
@@ -84,7 +78,7 @@ const LiveCreate: React.FC = () => {
             label="라이브 썸네일 이미지 업로드"
             id="thumbnail"
             name="thumbnail"
-            onChange={onChangeThumbnail}
+            onChange={onChangeImage}
           />
         </div>
         <div className="grid w-full grid-cols-2 gap-3">
@@ -98,7 +92,7 @@ const LiveCreate: React.FC = () => {
               label="멘토 사진"
               id="mentorImg"
               name="mentorImg"
-              onChange={onChangeMentorImg}
+              onChange={onChangeImage}
             />
             <LiveMentor input={input} setInput={setInput} />
           </div>
