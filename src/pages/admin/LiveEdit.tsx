@@ -1,11 +1,11 @@
-import { Button } from '@mui/material';
+import { Button, Snackbar, SnackbarOrigin } from '@mui/material';
 import dayjs from 'dayjs';
 import { useCallback, useEffect, useState } from 'react';
 import { FaSave } from 'react-icons/fa';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 import { fileType, uploadFile } from '@/api/file';
-import { useGetLiveQuery } from '@/api/program';
+import { useGetLiveQuery, usePatchLiveMutation } from '@/api/program';
 import { UpdateLiveReq } from '@/schema';
 import ImageUpload from '@components/admin/program/ui/form/ImageUpload';
 import Header from '@components/admin/ui/header/Header';
@@ -16,18 +16,31 @@ import LiveMentor from './program/LiveMentor';
 import LivePrice from './program/LivePrice';
 import LiveSchedule from './program/LiveSchedule';
 
+interface Snack extends SnackbarOrigin {
+  open: boolean;
+}
+
 const LiveEdit: React.FC = () => {
+  const navigate = useNavigate();
   const { liveId: liveIdString } = useParams();
 
   const [loading, setLoading] = useState(false);
   const [input, setInput] = useState<Omit<UpdateLiveReq, 'desc'>>({});
+  const [snack, setSnack] = useState<Snack>({
+    open: false,
+    vertical: 'top',
+    horizontal: 'center',
+  });
+
+  const { vertical, horizontal, open } = snack;
 
   const { data: live } = useGetLiveQuery({
     liveId: Number(liveIdString),
     enabled: Boolean(liveIdString),
   });
+  const { mutateAsync: patchLive } = usePatchLiveMutation();
 
-  const onChangeThumbnail = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const onChangeImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files) return;
 
     const url = await uploadFile({
@@ -37,16 +50,22 @@ const LiveEdit: React.FC = () => {
     setInput((prev) => ({ ...prev, [e.target.name]: url }));
   };
 
-  const onChangeMentorImg = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (!e.target.files) return;
-    console.log('멘토 사진 업로드');
-  };
-
   const onClickSave = useCallback(async () => {
     setLoading(true);
-    console.log('라이브 수정');
+    const req: Parameters<typeof patchLive>[0] = {
+      ...input,
+      liveId: Number(liveIdString),
+      desc: JSON.stringify({}),
+    };
+    console.log('req:', req);
+
+    const res = await patchLive(req);
+    console.log('res:', res);
+
     setLoading(false);
-  }, []);
+    setSnack((prev) => ({ ...prev, open: true }));
+    navigate('/admin/programs');
+  }, [input]);
 
   /* live로 Input 초기화 */
   useEffect(() => {
@@ -134,7 +153,8 @@ const LiveEdit: React.FC = () => {
             label="라이브 썸네일 이미지 업로드"
             id="thumbnail"
             name="thumbnail"
-            onChange={onChangeThumbnail}
+            image={input.thumbnail}
+            onChange={onChangeImage}
           />
         </div>
         <div className="grid w-full grid-cols-2 gap-3">
@@ -148,7 +168,8 @@ const LiveEdit: React.FC = () => {
               label="멘토 사진"
               id="mentorImg"
               name="mentorImg"
-              onChange={onChangeMentorImg}
+              image={input.mentorImg}
+              onChange={onChangeImage}
             />
             <LiveMentor input={input} setInput={setInput} />
           </div>
@@ -165,6 +186,13 @@ const LiveEdit: React.FC = () => {
         >
           저장
         </Button>
+        <Snackbar
+          anchorOrigin={{ vertical, horizontal }}
+          open={open}
+          onClose={() => setSnack({ ...snack, open: false })}
+          message="라이브를 수정했습니다"
+          key={vertical + horizontal}
+        />
       </footer>
     </div>
   );

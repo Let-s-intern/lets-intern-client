@@ -1,21 +1,34 @@
-import { Button } from '@mui/material';
+import { Button, Snackbar, SnackbarOrigin } from '@mui/material';
 import dayjs from 'dayjs';
 import { useCallback, useState } from 'react';
 import { FaSave } from 'react-icons/fa';
 
 import { fileType, uploadFile } from '@/api/file';
+import { usePostLiveMutation } from '@/api/program';
 import { CreateLiveReq } from '@/schema';
 import ImageUpload from '@components/admin/program/ui/form/ImageUpload';
 import Header from '@components/admin/ui/header/Header';
 import Heading from '@components/admin/ui/heading/Heading';
 import { Heading2 } from '@components/admin/ui/heading/Heading2';
+import { useNavigate } from 'react-router-dom';
 import LiveBasic from './program/LiveBasic';
 import LiveMentor from './program/LiveMentor';
 import LivePrice from './program/LivePrice';
 import LiveSchedule from './program/LiveSchedule';
 
+interface Snack extends SnackbarOrigin {
+  open: boolean;
+}
+
 const LiveCreate: React.FC = () => {
+  const navigate = useNavigate();
+
   const [loading, setLoading] = useState(false);
+  const [snack, setSnack] = useState<Snack>({
+    open: false,
+    vertical: 'top',
+    horizontal: 'center',
+  });
   const [input, setInput] = useState<Omit<CreateLiveReq, 'desc'>>({
     title: '',
     shortDesc: '',
@@ -49,7 +62,11 @@ const LiveCreate: React.FC = () => {
     faqInfo: [],
   });
 
-  const onChangeThumbnail = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const { vertical, horizontal, open } = snack;
+
+  const { mutateAsync: postLive } = usePostLiveMutation();
+
+  const onChangeImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files) return;
 
     const url = await uploadFile({
@@ -59,16 +76,21 @@ const LiveCreate: React.FC = () => {
     setInput((prev) => ({ ...prev, [e.target.name]: url }));
   };
 
-  const onChangeMentorImg = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (!e.target.files) return;
-    console.log('멘토 사진 업로드');
-  };
-
   const onClickSave = useCallback(async () => {
     setLoading(true);
-    console.log('라이브 생성');
+    const req: CreateLiveReq = {
+      ...input,
+      desc: JSON.stringify({}),
+    };
+    console.log('req:', req);
+
+    const res = await postLive(req);
+    console.log('res:', res);
+
     setLoading(false);
-  }, []);
+    setSnack((prev) => ({ ...prev, open: true }));
+    navigate('/admin/programs');
+  }, [input]);
 
   return (
     <div className="mx-3 mb-40 mt-3">
@@ -84,7 +106,7 @@ const LiveCreate: React.FC = () => {
             label="라이브 썸네일 이미지 업로드"
             id="thumbnail"
             name="thumbnail"
-            onChange={onChangeThumbnail}
+            onChange={onChangeImage}
           />
         </div>
         <div className="grid w-full grid-cols-2 gap-3">
@@ -98,7 +120,7 @@ const LiveCreate: React.FC = () => {
               label="멘토 사진"
               id="mentorImg"
               name="mentorImg"
-              onChange={onChangeMentorImg}
+              onChange={onChangeImage}
             />
             <LiveMentor input={input} setInput={setInput} />
           </div>
@@ -115,6 +137,13 @@ const LiveCreate: React.FC = () => {
         >
           저장
         </Button>
+        <Snackbar
+          anchorOrigin={{ vertical, horizontal }}
+          open={open}
+          onClose={() => setSnack({ ...snack, open: false })}
+          message="라이브를 생성했습니다"
+          key={vertical + horizontal}
+        />
       </footer>
     </div>
   );
