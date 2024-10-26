@@ -1,18 +1,18 @@
 import { useMediaQuery } from '@mui/material';
-import dayjs from 'dayjs';
+import dayjs, { Dayjs } from 'dayjs';
 import { ReactNode, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import { useProgramApplicationQuery } from '@/api/application';
-import { useChallengeQuery } from '@/api/challenge';
+import { useChallengeQuery, useGetChallengeTitle } from '@/api/challenge';
 import { useProgramQuery } from '@/api/program';
 import { useServerChallenge } from '@/context/ServerChallenge';
-import { ChallengeIdSchema, LiveIdSchema } from '@/schema';
 import useAuthStore from '@/store/useAuthStore';
 import { getProgramPathname } from '@/utils/url';
 import FilledButton from '@components/common/program/program-detail/button/FilledButton';
 import GradientButton from '@components/common/program/program-detail/button/GradientButton';
 import NotiButton from '@components/common/program/program-detail/button/NotiButton';
+import Header from '@components/common/program/program-detail/header/Header';
 
 const ChallengeDetailSSRPage = () => {
   const navigate = useNavigate();
@@ -22,9 +22,10 @@ const ChallengeDetailSSRPage = () => {
   }>();
   const isMobile = useMediaQuery('(max-width:991px)');
 
-  const { data } = useChallengeQuery({ challengeId: Number(id || '') });
-
   const challengeFromServer = useServerChallenge();
+  const { data } = useChallengeQuery({ challengeId: Number(id || '') });
+  const { data: titleData } = useGetChallengeTitle(id ?? '');
+
   const challenge = data || challengeFromServer;
   const isLoading = challenge.title === '로딩중...';
   const isNotValidJson = challenge.desc && challenge.desc.startsWith('<');
@@ -52,6 +53,9 @@ const ChallengeDetailSSRPage = () => {
   return (
     <>
       <pre>{JSON.stringify(JSON.parse(challenge.desc || '{}'), null, 2)}</pre>
+      <div className="px-5 lg:px-10 xl:px-52">
+        <Header programTitle={titleData?.title ?? ''} />
+      </div>
 
       {isMobile ? (
         <ApplyCTA programType="challenge" />
@@ -106,12 +110,12 @@ export function ApplyCTA({ programType }: ApplyCTAProps) {
         ) : (
           <>
             <div>
-              <span>
+              <span className="mb-2 block">
                 {program?.deadline?.format('M월 D일 (dd)')} 마감까지 🚀
               </span>
               <DurationSection
                 disabled={isAlreadyApplied || isOutOfDate}
-                program={program}
+                deadline={program?.deadline ?? dayjs()}
               />
             </div>
             <GradientButton
@@ -174,8 +178,8 @@ export function DesktopApplyCTA({ programType }: ApplyCTAProps) {
         ) : (
           <>
             <DurationSection
-              disabled={isAlreadyApplied || isOutOfDate}
-              program={program}
+              disabled={isAlreadyApplied || isOutOfDate || isLoading}
+              deadline={program?.deadline ?? dayjs()}
             />
             <GradientButton
               disabled={isLoading}
@@ -197,28 +201,32 @@ export function DesktopApplyCTA({ programType }: ApplyCTAProps) {
 }
 
 function DurationSection({
-  program,
+  deadline,
   disabled = false,
 }: {
-  program?: LiveIdSchema | ChallengeIdSchema;
+  deadline: Dayjs;
   disabled?: boolean;
 }) {
-  const [diff, setDiff] = useState(
-    program?.deadline ? program?.deadline.diff(dayjs()) : 0,
-  );
+  const [diff, setDiff] = useState(deadline.diff(dayjs()));
+
+  const duration = dayjs.duration(diff);
+
+  /* 응답 딜레이로 한 번 더 setState */
+  useEffect(() => {
+    setDiff(deadline.diff(dayjs()));
+  }, [deadline]);
 
   /* 마감 일자 타이머 설정 */
   useEffect(() => {
-    if (disabled) return;
+    if (disabled || !deadline) return;
 
     const timer = setInterval(() => {
       setDiff((prev) => prev - 1000);
     }, 1000);
 
     return () => clearInterval(timer);
-  }, []);
+  }, [deadline, disabled]);
 
-  const duration = dayjs.duration(diff);
   return (
     <div className="flex items-center gap-2">
       <div className="flex items-center gap-2">
