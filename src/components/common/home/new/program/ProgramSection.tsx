@@ -5,7 +5,7 @@ import Heading from '../ui/Heading';
 import ProgramGridItem from './ProgramGridItem';
 
 const PROGRAM_SECTION = {
-  title: ['내 커리어 단계에 딱 맞는 프로그램을 찾아보세요'],
+  title: ['내 커리어 단계에', '딱 맞는 프로그램을 찾아보세요'],
   description: '취업준비가 처음이라면, 커리어 탐색부터 시작해보세요!',
 };
 
