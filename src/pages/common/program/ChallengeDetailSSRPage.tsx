@@ -210,9 +210,11 @@ function DurationSection({
   deadline: Dayjs;
   disabled?: boolean;
 }) {
-  const [duration, setDuration] = useState<Duration>(
-    dayjs.duration(deadline.diff(dayjs())),
-  );
+  const [duration, setDuration] = useState<Duration>();
+
+  useEffect(() => {
+    setDuration(dayjs.duration(deadline.diff(dayjs())));
+  }, [deadline]);
 
   /* 마감 일자 타이머 설정 */
   useEffect(() => {
@@ -228,10 +230,10 @@ function DurationSection({
   return (
     <div className="flex items-center gap-2">
       <div className="flex items-center gap-2">
-        <DurationBox>{duration.days()}일</DurationBox>
-        <DurationBox>{duration.hours()}시간</DurationBox>
-        <DurationBox>{duration.minutes()}분</DurationBox>
-        <DurationBox>{duration.seconds()}초</DurationBox>
+        <DurationBox>{duration?.days() ?? '--'}일</DurationBox>
+        <DurationBox>{duration?.hours() ?? '--'}시간</DurationBox>
+        <DurationBox>{duration?.minutes() ?? '--'}분</DurationBox>
+        <DurationBox>{duration?.seconds() ?? '--'}초</DurationBox>
       </div>
       <span className="text-xxsmall12 text-neutral-80">남음</span>
     </div>
