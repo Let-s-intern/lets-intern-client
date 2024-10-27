@@ -45,11 +45,9 @@ export type LiveContent = {
     content: string; // 내용
   }[];
   /* 커리큘럼 추가 설명 */
-  curriculumDesc: unknown;
+  curriculumDesc?: unknown;
   /* 블로그 후기 */
   blogReview: unknown;
-  /*  후기 */
-  challengeReview: unknown;
 };
 
 export interface IPageable {

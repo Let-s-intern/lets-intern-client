@@ -1,11 +1,12 @@
 import { Button, Snackbar, SnackbarOrigin } from '@mui/material';
 import dayjs from 'dayjs';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { FaSave } from 'react-icons/fa';
 
 import { fileType, uploadFile } from '@/api/file';
 import { usePostLiveMutation } from '@/api/program';
 import { CreateLiveReq } from '@/schema';
+import { LiveContent } from '@/types/interface';
 import ImageUpload from '@components/admin/program/ui/form/ImageUpload';
 import Header from '@components/admin/ui/header/Header';
 import Heading from '@components/admin/ui/heading/Heading';
@@ -28,6 +29,11 @@ const LiveCreate: React.FC = () => {
     open: false,
     vertical: 'top',
     horizontal: 'center',
+  });
+  const [content, setContent] = useState<LiveContent>({
+    // mainDescription: ,
+    curriculum: [],
+    blogReview: '',
   });
   const [input, setInput] = useState<Omit<CreateLiveReq, 'desc'>>({
     title: '',
@@ -80,7 +86,7 @@ const LiveCreate: React.FC = () => {
     setLoading(true);
     const req: CreateLiveReq = {
       ...input,
-      desc: JSON.stringify({}),
+      desc: JSON.stringify(content),
     };
     console.log('req:', req);
 
@@ -90,7 +96,11 @@ const LiveCreate: React.FC = () => {
     setLoading(false);
     setSnack((prev) => ({ ...prev, open: true }));
     navigate('/admin/programs');
-  }, [input]);
+  }, [input, content]);
+
+  useEffect(() => {
+    console.log('content', content);
+  }, [content]);
 
   return (
     <div className="mx-3 mb-40 mt-3">
