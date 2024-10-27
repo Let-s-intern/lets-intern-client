@@ -52,7 +52,7 @@ function ChallengeCurriculum({
   };
 
   const onChange = (
-    e: React.ChangeEvent<HTMLInputElement>,
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
     target: ChallengeContent['curriculum'][0],
   ) => {
     const newCurr = [...curriculum];
@@ -91,29 +91,25 @@ function ChallengeCurriculum({
               <Input
                 label="회차"
                 name="session"
-                placeholder="회차를 입력하세요"
+                placeholder="회차를 입력하세요(예:2회차)"
                 value={item.session}
                 onChange={(e) => onChange(e, item)}
               />
             </div>
-            <div>
-              <Input
-                label="제목"
-                name="title"
-                placeholder="제목을 입력하세요"
-                value={item.title}
-                onChange={(e) => onChange(e, item)}
-              />
-            </div>
-            <div className="min-w-[40%]">
-              <Input
-                label="내용"
-                name="content"
-                placeholder="내용을 입력하세요"
-                value={item.content}
-                onChange={(e) => onChange(e, item)}
-              />
-            </div>
+            <textarea
+              className="h-[60px] rounded-sm border p-2"
+              name="title"
+              placeholder="제목을 입력하세요"
+              value={item.title}
+              onChange={(e) => onChange(e, item)}
+            />
+            <textarea
+              className="h-[60px] flex-1 rounded-sm border p-2"
+              name="content"
+              placeholder="내용을 입력하세요"
+              value={item.content}
+              onChange={(e) => onChange(e, item)}
+            />
             <IconButton
               aria-label="delete"
               color="error"
