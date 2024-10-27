@@ -24,8 +24,11 @@ export type ChallengeContent = {
     title: string;
     content: string; // 내용
   }[];
-  /* 커리큘럼 추가 설명 */
-  curriculumDesc: unknown;
+  /* 챌린지 POINT */
+  challengePoint: {
+    id: string;
+    content: string;
+  }[];
   /* 블로그 후기 */
   blogReview: unknown;
   /*  후기 */
