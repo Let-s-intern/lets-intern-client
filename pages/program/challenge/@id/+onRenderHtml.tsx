@@ -12,6 +12,10 @@ import {
   getProgramPathname,
 } from '@/utils/url';
 import getServerHtml from '@renderer/getServerHtml';
+import dayjs from 'dayjs';
+import duration from 'dayjs/plugin/duration';
+import timezone from 'dayjs/plugin/timezone';
+import utc from 'dayjs/plugin/utc';
 import React from 'react';
 import {
   createStaticHandler,
@@ -22,6 +26,12 @@ import {
 import { dangerouslySkipEscape } from 'vike/server';
 import { OnRenderHtmlAsync } from 'vike/types';
 import { Data } from './+data';
+
+dayjs.locale('ko');
+dayjs.extend(utc);
+dayjs.extend(timezone);
+dayjs.extend(duration);
+dayjs.tz.setDefault('Asia/Seoul');
 
 const onRenderHtml: OnRenderHtmlAsync = async (pageContext) => {
   const data = pageContext.data as Data;
