@@ -1,13 +1,16 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { useState } from 'react';
+import {
+  useEditProgramBannerMutation,
+  useGetProgramBannerDetailQuery,
+} from '@/api/program';
+import { useQueryClient } from '@tanstack/react-query';
+import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import ProgramBannerInputContent from '../../../../components/admin/banner/program-banner/ProgramBannerInputContent';
 import EditorTemplate from '../../../../components/admin/program/ui/editor/EditorTemplate';
 import { IBannerForm } from '../../../../types/interface';
-import axios from '../../../../utils/axios';
 
 const ProgramBannerEdit = () => {
-  const params = useParams();
+  const { bannerId } = useParams();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
@@ -17,48 +20,36 @@ const ProgramBannerEdit = () => {
     startDate: '',
     endDate: '',
     imgUrl: '',
+    mobileImgUrl: '',
     file: null,
     mobileFile: null,
   });
 
-  const bannerId = Number(params.bannerId);
+  const { data } = useGetProgramBannerDetailQuery(Number(bannerId));
 
-  useQuery({
-    queryKey: [
-      'banner',
-      'admin',
-      bannerId,
-      {
-        type: 'PROGRAM',
-      },
-    ],
-    queryFn: async () => {
-      const res = await axios.get(`/banner/admin/${bannerId}`, {
-        params: {
-          type: 'PROGRAM',
-        },
+  useEffect(() => {
+    if (data) {
+      const value = data.bannerAdminDetailVo;
+      setValue({
+        title: value.title,
+        link: value.link,
+        startDate: value.startDate,
+        endDate: value.endDate,
+        imgUrl: value.imgUrl,
+        mobileImgUrl: value.mobileImgUrl,
+        file: null,
+        mobileFile: null,
       });
-      setValue(res.data.data.bannerAdminDetailVo);
-      return res.data;
-    },
-    refetchOnWindowFocus: false,
-  });
+    }
+  }, [data]);
 
-  const editProgramBanner = useMutation({
-    mutationFn: async (formData: FormData) => {
-      const res = await axios.patch(`/banner/${bannerId}`, formData, {
-        params: {
-          type: 'PROGRAM',
-        },
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
-      return res.data;
-    },
+  const { mutate: tryEditProgramBanner } = useEditProgramBannerMutation({
     onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: ['banner'] });
-      navigate('/admin/banner/program-banners');
+      navigate('/admin/banner/program-banners', { replace: true });
+    },
+    onError: (error) => {
+      console.error(error);
+      alert('프로그램 배너 수정에 실패했습니다.');
     },
   });
 
@@ -97,7 +88,10 @@ const ProgramBannerEdit = () => {
       formData.append('mobileFile', value.mobileFile);
     }
 
-    editProgramBanner.mutate(formData);
+    tryEditProgramBanner({
+      bannerId: Number(bannerId),
+      formData,
+    });
   };
 
   return (
