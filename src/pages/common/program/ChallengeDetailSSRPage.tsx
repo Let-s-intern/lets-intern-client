@@ -1,6 +1,5 @@
 import { useProgramApplicationQuery } from '@/api/application';
-import { useChallengeQuery, useGetChallengeTitle } from '@/api/challenge';
-import { useProgramQuery } from '@/api/program';
+import { useChallengeQuery } from '@/api/challenge';
 import { useServerChallenge } from '@/context/ServerChallenge';
 import useAuthStore from '@/store/useAuthStore';
 import { getProgramPathname } from '@/utils/url';
@@ -24,7 +23,7 @@ const ChallengeDetailSSRPage = () => {
 
   const challengeFromServer = useServerChallenge();
   const { data } = useChallengeQuery({ challengeId: Number(id || '') });
-  const { data: titleData } = useGetChallengeTitle(id ?? '');
+  // const { data: titleData } = useGetChallengeTitle(id ?? '');
 
   const challenge = data || challengeFromServer;
   const isLoading = challenge.title === '로딩중...';
@@ -54,13 +53,13 @@ const ChallengeDetailSSRPage = () => {
     <>
       <pre>{JSON.stringify(JSON.parse(challenge.desc || '{}'), null, 2)}</pre>
       <div className="px-5 lg:px-10 xl:px-52">
-        <Header programTitle={titleData?.title ?? ''} />
+        <Header programTitle={challenge.title ?? ''} />
       </div>
 
       {isMobile ? (
-        <ApplyCTA programType="challenge" />
+        <ApplyCTA programType="challenge" program={challenge} />
       ) : (
-        <DesktopApplyCTA programType="challenge" />
+        <DesktopApplyCTA programType="challenge" program={challenge} />
       )}
     </>
   );
@@ -69,9 +68,14 @@ const ChallengeDetailSSRPage = () => {
 /* CTA는 프로그램 상세페이지에서 공동으로 사용 */
 interface ApplyCTAProps {
   programType: 'live' | 'challenge';
+  program: {
+    title?: string | null;
+    deadline: Dayjs | null;
+    beginning: Dayjs | null;
+  };
 }
 
-export function ApplyCTA({ programType }: ApplyCTAProps) {
+export function ApplyCTA({ programType, program }: ApplyCTAProps) {
   const navigate = useNavigate();
   const { id } = useParams<{
     id: string;
@@ -79,9 +83,9 @@ export function ApplyCTA({ programType }: ApplyCTAProps) {
   }>();
 
   const { isLoggedIn } = useAuthStore();
-  const {
-    query: { data: program },
-  } = useProgramQuery({ programId: Number(id), type: programType });
+  // const {
+  //   query: { data: program },
+  // } = useProgramQuery({ programId: Number(id), type: programType });
   const { data: application } = useProgramApplicationQuery(
     programType,
     Number(id),
@@ -136,7 +140,7 @@ export function ApplyCTA({ programType }: ApplyCTAProps) {
   );
 }
 
-export function DesktopApplyCTA({ programType }: ApplyCTAProps) {
+export function DesktopApplyCTA({ programType, program }: ApplyCTAProps) {
   const { id } = useParams<{
     id: string;
     title?: string;
@@ -144,9 +148,9 @@ export function DesktopApplyCTA({ programType }: ApplyCTAProps) {
   const navigate = useNavigate();
 
   const { isLoggedIn } = useAuthStore();
-  const {
-    query: { data: program, isLoading },
-  } = useProgramQuery({ programId: Number(id), type: programType });
+  // const {
+  //   query: { data: program, isLoading },
+  // } = useProgramQuery({ programId: Number(id), type: programType });
   const { data: application } = useProgramApplicationQuery(
     programType,
     Number(id),
@@ -163,7 +167,7 @@ export function DesktopApplyCTA({ programType }: ApplyCTAProps) {
       <div className="flex flex-col gap-1">
         <span className="font-bold text-neutral-100">{program?.title}</span>
         <span className="text-xxsmall12 text-neutral-80">
-          {program?.deadline?.format('M월 D일 (dd)')} 마감까지 🚀
+          {program?.deadline?.format?.('M월 D일 (dd)')} 마감까지 🚀
         </span>
       </div>
       <div className="flex min-w-80 max-w-[60rem] items-center gap-8">
@@ -178,11 +182,10 @@ export function DesktopApplyCTA({ programType }: ApplyCTAProps) {
         ) : (
           <>
             <DurationSection
-              disabled={isAlreadyApplied || isOutOfDate || isLoading}
+              disabled={isAlreadyApplied || isOutOfDate}
               deadline={program?.deadline ?? dayjs()}
             />
             <GradientButton
-              disabled={isLoading}
               onClick={() => {
                 if (!isLoggedIn) {
                   navigate(`/login?redirect=${window.location.pathname}`);
@@ -191,7 +194,7 @@ export function DesktopApplyCTA({ programType }: ApplyCTAProps) {
                 // 결제 페이지로 이동
               }}
             >
-              {isLoading ? '로딩 중..' : '지금 바로 신청'}
+              {'지금 바로 신청'}
             </GradientButton>
           </>
         )}
@@ -207,11 +210,9 @@ function DurationSection({
   deadline: Dayjs;
   disabled?: boolean;
 }) {
-  const [duration, setDuration] = useState<Duration | null>(null);
-
-  useEffect(() => {
-    setDuration(dayjs.duration(deadline.diff(dayjs())));
-  }, [deadline]);
+  const [duration, setDuration] = useState<Duration>(
+    dayjs.duration(deadline.diff(dayjs())),
+  );
 
   /* 마감 일자 타이머 설정 */
   useEffect(() => {
@@ -227,10 +228,10 @@ function DurationSection({
   return (
     <div className="flex items-center gap-2">
       <div className="flex items-center gap-2">
-        <DurationBox>{duration?.days()}일</DurationBox>
-        <DurationBox>{duration?.hours()}시간</DurationBox>
-        <DurationBox>{duration?.minutes()}분</DurationBox>
-        <DurationBox>{duration?.seconds()}초</DurationBox>
+        <DurationBox>{duration.days()}일</DurationBox>
+        <DurationBox>{duration.hours()}시간</DurationBox>
+        <DurationBox>{duration.minutes()}분</DurationBox>
+        <DurationBox>{duration.seconds()}초</DurationBox>
       </div>
       <span className="text-xxsmall12 text-neutral-80">남음</span>
     </div>
