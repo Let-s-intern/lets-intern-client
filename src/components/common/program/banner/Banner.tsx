@@ -1,18 +1,15 @@
-import { useQuery } from '@tanstack/react-query';
 import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 
-import { IBanner } from '../../../../types/interface';
-import axios from '../../../../utils/axios';
+import { useGetUserProgramBannerListQuery } from '@/api/program';
 
 const Banner = () => {
   const imgRef = useRef<HTMLImageElement>(null);
   const innerRef = useRef<HTMLDivElement>(null);
 
-  const [bannerList, setBannerList] = useState<IBanner[]>([]);
   const [bannerIndex, setBannerIndex] = useState(0);
   const [isPlay, setIsPlay] = useState(true);
-  const [isMobile, setIsMobile] = useState(window.innerWidth < 350);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 420);
 
   useEffect(() => {
     const handleResize = () => {
@@ -26,30 +23,16 @@ const Banner = () => {
     };
   }, []);
 
-  const getBannerList = async () => {
-    try {
-      const res = await axios.get(`/banner?type=PROGRAM`);
-      if (res.status === 200) {
-        const bannerList = res.data.data.bannerList as IBanner[];
-        const filtered = bannerList.filter((banner: IBanner) => banner.isValid);
-        setBannerList(filtered);
-        return res.data;
-      }
-    } catch (error) {
-      console.error(error);
-    }
-  };
-  const { isLoading } = useQuery({
-    queryKey: ['banner', 'admin', 'PROGRAM'],
-    queryFn: getBannerList,
-  });
+  const { data, isLoading } = useGetUserProgramBannerListQuery();
 
   useEffect(() => {
     if (!isPlay) return;
     // 배너 슬라이드 애니메이션
     const timer = setInterval(() => {
+      if (!data) return;
+
       const distance = imgRef.current?.offsetWidth;
-      const nextIndex = (bannerIndex + 1) % bannerList.length;
+      const nextIndex = (bannerIndex + 1) % data.bannerList.length;
 
       setBannerIndex(nextIndex);
       innerRef.current?.style.setProperty(
@@ -61,9 +44,9 @@ const Banner = () => {
     return () => {
       clearInterval(timer);
     };
-  }, [bannerIndex, bannerList.length, isPlay]);
+  }, [bannerIndex, data, isPlay]);
 
-  if (isLoading || bannerList.length === 0) return <></>;
+  if (isLoading || !data || data.bannerList.length === 0) return <></>;
 
   return (
     <div className="relative flex h-40 w-full max-w-[59rem] items-center overflow-hidden rounded-sm bg-static-0 text-static-100 md:h-44 lg:h-56 xl:h-72">
@@ -71,7 +54,7 @@ const Banner = () => {
         ref={innerRef}
         className="flex flex-nowrap items-center transition-transform duration-300 ease-in-out"
       >
-        {bannerList.map((banner) => (
+        {data.bannerList.map((banner) => (
           <Link
             to={banner.link}
             key={banner.id}
@@ -98,7 +81,9 @@ const Banner = () => {
         />
         <span className="text-0.75-medium md:text-0.875-medium">
           {bannerIndex + 1 < 10 ? `0${bannerIndex + 1}` : bannerIndex + 1} /{' '}
-          {bannerList.length < 10 ? `0${bannerList.length}` : bannerList.length}
+          {data.bannerList.length < 10
+            ? `0${data.bannerList.length}`
+            : data.bannerList.length}
         </span>
       </div>
     </div>
