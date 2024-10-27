@@ -32,7 +32,7 @@ import ChallengeEdit from './pages/admin/ChallengeEdit';
 import CouponCreate from './pages/admin/coupon/CouponCreate';
 import CouponEdit from './pages/admin/coupon/CouponEdit';
 import Coupons from './pages/admin/coupon/Coupons';
-import LiveCreate from './pages/admin/LiveCreate';
+import LiveCreate from './pages/admin/FaqSection';
 import LiveEdit from './pages/admin/LiveEdit';
 import OnlineContents from './pages/admin/online-contents/OnlineContents';
 import OnlineContentsCreate from './pages/admin/online-contents/OnlineContentsCreate';

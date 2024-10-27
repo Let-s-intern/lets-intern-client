@@ -8,6 +8,7 @@ import {
 import dayjs from 'dayjs';
 import { useCallback, useEffect, useState } from 'react';
 import { FaSave } from 'react-icons/fa';
+import { useNavigate } from 'react-router-dom';
 
 import { fileType, uploadFile } from '@/api/file';
 import { usePostLiveMutation } from '@/api/program';
@@ -17,9 +18,9 @@ import ImageUpload from '@components/admin/program/ui/form/ImageUpload';
 import Header from '@components/admin/ui/header/Header';
 import Heading from '@components/admin/ui/heading/Heading';
 import { Heading2 } from '@components/admin/ui/heading/Heading2';
-import { useNavigate } from 'react-router-dom';
 import LiveBasic from './program/LiveBasic';
 import LiveCurriculum from './program/LiveCurriculum';
+import FaqSection from './program/LiveFaq';
 import LiveMentor from './program/LiveMentor';
 import LivePrice from './program/LivePrice';
 import LiveSchedule from './program/LiveSchedule';
@@ -158,6 +159,14 @@ const LiveCreate: React.FC = () => {
       </section>
 
       <LiveCurriculum curriculum={content.curriculum} setContent={setContent} />
+
+      <div className="my-6">
+        <FaqSection
+          programType="LIVE"
+          faqInfo={input.faqInfo}
+          setInput={setInput}
+        />
+      </div>
 
       <footer className="flex items-center justify-end gap-3">
         <Button

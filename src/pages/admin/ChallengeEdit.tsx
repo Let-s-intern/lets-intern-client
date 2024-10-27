@@ -14,9 +14,9 @@ import { FaSave } from 'react-icons/fa';
 import { useNavigate, useParams } from 'react-router-dom';
 import ChallengeBasic from './program/ChallengeBasic';
 import ChallengeCurriculum from './program/ChallengeCurriculum';
-import ChallengeFaq from './program/ChallengeFaq';
 import ChallengePrice from './program/ChallengePrice';
 import ChallengeSchedule from './program/ChallengeSchedule';
+import FaqSection from './program/LiveFaq';
 
 const ChallengeEdit: React.FC = () => {
   const [content, setContent] = useState<ChallengeContent>({
@@ -219,7 +219,11 @@ const ChallengeEdit: React.FC = () => {
       />
 
       <div className="my-6">
-        <ChallengeFaq faqInfo={input.faqInfo} setInput={setInput} />
+        <FaqSection
+          programType="CHALLENGE"
+          faqInfo={input.faqInfo}
+          setInput={setInput}
+        />
       </div>
 
       <footer className="flex items-center justify-end gap-3">
