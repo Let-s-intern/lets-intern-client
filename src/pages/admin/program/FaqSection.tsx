@@ -1,16 +1,32 @@
 import { useDeleteFaq, useGetFaq, usePatchFaq, usePostFaq } from '@/api/faq';
-import { CreateChallengeReq, UpdateChallengeReq } from '@/schema';
+import {
+  CreateChallengeReq,
+  CreateLiveReq,
+  FaqProgramType,
+  UpdateChallengeReq,
+  UpdateLiveReq,
+} from '@/schema';
 
-interface ChallengeFaqProps<T extends CreateChallengeReq | UpdateChallengeReq> {
+interface FaqSectionProps<
+  T extends
+    | CreateChallengeReq
+    | UpdateChallengeReq
+    | CreateLiveReq
+    | UpdateLiveReq,
+> {
+  programType: FaqProgramType;
   faqInfo: T['faqInfo'];
   setInput: React.Dispatch<React.SetStateAction<Omit<T, 'desc'>>>;
 }
 
-function ChallengeFaq<T extends CreateChallengeReq | UpdateChallengeReq>({
-  faqInfo,
-  setInput,
-}: ChallengeFaqProps<T>) {
-  const { data } = useGetFaq('CHALLENGE');
+function FaqSection<
+  T extends
+    | CreateChallengeReq
+    | UpdateChallengeReq
+    | CreateLiveReq
+    | UpdateLiveReq,
+>({ programType, faqInfo, setInput }: FaqSectionProps<T>) {
+  const { data } = useGetFaq(programType);
   const { mutateAsync: deleteFaq } = useDeleteFaq();
   const { mutateAsync: patchFaq } = usePatchFaq();
   const { mutateAsync: postFaq } = usePostFaq();
@@ -92,7 +108,7 @@ function ChallengeFaq<T extends CreateChallengeReq | UpdateChallengeReq>({
         <button
           type="button"
           className="rounded-sm bg-[#e0e0e0] px-4 py-2 font-medium"
-          onClick={async () => await postFaq('CHALLENGE')}
+          onClick={async () => await postFaq(programType)}
         >
           추가
         </button>
@@ -101,4 +117,4 @@ function ChallengeFaq<T extends CreateChallengeReq | UpdateChallengeReq>({
   );
 }
 
-export default ChallengeFaq;
+export default FaqSection;

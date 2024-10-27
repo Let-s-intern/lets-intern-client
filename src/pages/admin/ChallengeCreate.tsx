@@ -13,9 +13,9 @@ import { useCallback, useEffect, useState } from 'react';
 import { FaSave } from 'react-icons/fa';
 import ChallengeBasic from './program/ChallengeBasic';
 import ChallengeCurriculum from './program/ChallengeCurriculum';
-import ChallengeFaq from './program/ChallengeFaq';
 import ChallengePrice from './program/ChallengePrice';
 import ChallengeSchedule from './program/ChallengeSchedule';
+import FaqSection from './program/FaqSection';
 
 /**
  * 챌린지 생성 페이지
@@ -109,9 +109,7 @@ const ChallengeCreate: React.FC = () => {
           />
         </div>
         <div className="grid w-full grid-cols-2 gap-3">
-          {/* 가격 정보 */}
           <ChallengePrice input={input} setInput={setInput} />
-          {/* 일정 */}
           <ChallengeSchedule input={input} setInput={setInput} />
         </div>
       </section>
@@ -139,7 +137,11 @@ const ChallengeCreate: React.FC = () => {
       />
 
       <div className="my-6">
-        <ChallengeFaq faqInfo={input.faqInfo} setInput={setInput} />
+        <FaqSection
+          programType="CHALLENGE"
+          faqInfo={input.faqInfo}
+          setInput={setInput}
+        />
       </div>
 
       <footer className="flex items-center justify-end gap-3">
