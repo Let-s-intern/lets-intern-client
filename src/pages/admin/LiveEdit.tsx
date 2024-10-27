@@ -173,7 +173,7 @@ const LiveEdit: React.FC = () => {
           />
         </div>
         <div className="grid w-full grid-cols-2 gap-3">
-          <div className="flex flex-col gap-6">
+          <div className="flex flex-col items-start gap-6">
             <LivePrice input={input} setInput={setInput} />
             <LiveSchedule input={input} setInput={setInput} />
             <FormControlLabel

@@ -91,6 +91,8 @@ const faqProgramType = z.union([
   z.literal('VOD'),
 ]);
 
+export type FaqProgramType = z.infer<typeof faqProgramType>;
+
 export const programType = z.union([
   z.literal('CHALLENGE'),
   z.literal('LIVE'),
@@ -114,6 +116,17 @@ export const accountType = z.union([
 ]);
 
 export type AccountType = z.infer<typeof accountType>;
+
+const faq = z.object({
+  id: z.number(),
+  question: z.string().nullable().optional(),
+  answer: z.string().nullable().optional(),
+  faqProgramType: faqProgramType.nullable().optional(),
+});
+
+export type Faq = z.infer<typeof faq>;
+
+export const faqSchema = z.object({ faqList: z.array(faq) });
 
 const missionStatusType = z.union([
   z.literal('WAITING'),
@@ -156,14 +169,7 @@ export const getChallengeIdSchema = z
         challengeParticipationType: challengeParticipationType.optional(),
       }),
     ),
-    faqInfo: z.array(
-      z.object({
-        id: z.number(),
-        question: z.string().nullable().optional(),
-        answer: z.string().nullable().optional(),
-        faqProgramType: faqProgramType.nullable().optional(),
-      }),
-    ),
+    faqInfo: z.array(faq),
   })
   .transform((data) => {
     return {
@@ -307,14 +313,7 @@ export const getLiveIdSchema = z
       accountType: accountType.optional(),
       livePriceType: livePriceTypeSchema.optional(),
     }),
-    faqInfo: z.array(
-      z.object({
-        id: z.number(),
-        question: z.string().nullable().optional(),
-        answer: z.string().nullable().optional(),
-        faqProgramType: faqProgramType.nullable().optional(),
-      }),
-    ),
+    faqInfo: z.array(faq),
   })
   .transform((data) => {
     return {

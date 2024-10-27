@@ -13,6 +13,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { FaSave } from 'react-icons/fa';
 import ChallengeBasic from './program/ChallengeBasic';
 import ChallengeCurriculum from './program/ChallengeCurriculum';
+import ChallengeFaq from './program/ChallengeFaq';
 import ChallengePrice from './program/ChallengePrice';
 import ChallengeSchedule from './program/ChallengeSchedule';
 
@@ -136,6 +137,10 @@ const ChallengeCreate: React.FC = () => {
         curriculum={content.curriculum}
         setContent={setContent}
       />
+
+      <div className="my-6">
+        <ChallengeFaq faqInfo={input.faqInfo} setInput={setInput} />
+      </div>
 
       <footer className="flex items-center justify-end gap-3">
         <Button
