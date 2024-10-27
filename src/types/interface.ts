@@ -16,7 +16,14 @@ export type ChallengeContent = {
   /* 상세 설명*/
   mainDescription?: SerializedEditorState;
   /* 커리큘럼 */
-  curriculum: unknown;
+  curriculum: {
+    id: string;
+    startDate: string;
+    endDate: string;
+    session: string; // 회차
+    title: string;
+    content: string; // 내용
+  }[];
   /* 커리큘럼 추가 설명 */
   curriculumDesc: unknown;
   /* 블로그 후기 */

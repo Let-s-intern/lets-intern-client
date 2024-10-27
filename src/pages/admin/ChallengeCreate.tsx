@@ -12,6 +12,7 @@ import dayjs from 'dayjs';
 import { useCallback, useEffect, useState } from 'react';
 import { FaSave } from 'react-icons/fa';
 import ChallengeBasic from './program/ChallengeBasic';
+import ChallengeCurriculum from './program/ChallengeCurriculum';
 import ChallengePrice from './program/ChallengePrice';
 import ChallengeSchedule from './program/ChallengeSchedule';
 
@@ -23,7 +24,7 @@ import ChallengeSchedule from './program/ChallengeSchedule';
 const ChallengeCreate: React.FC = () => {
   const [content, setContent] = useState<ChallengeContent>({
     // mainDescription: ,
-    curriculum: '',
+    curriculum: [],
     curriculumDesc: '',
     blogReview: '',
     challengeReview: '',
@@ -130,6 +131,12 @@ const ChallengeCreate: React.FC = () => {
           ></EditorApp>
         </main>
       </section>
+
+      <ChallengeCurriculum
+        curriculum={content.curriculum}
+        setContent={setContent}
+      />
+
       <footer className="flex items-center justify-end gap-3">
         <Button
           variant="contained"

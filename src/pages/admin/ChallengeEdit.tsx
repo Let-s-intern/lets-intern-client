@@ -13,12 +13,13 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { FaSave } from 'react-icons/fa';
 import { useNavigate, useParams } from 'react-router-dom';
 import ChallengeBasic from './program/ChallengeBasic';
+import ChallengeCurriculum from './program/ChallengeCurriculum';
 import ChallengePrice from './program/ChallengePrice';
 import ChallengeSchedule from './program/ChallengeSchedule';
 
 const ChallengeEdit: React.FC = () => {
   const [content, setContent] = useState<ChallengeContent>({
-    curriculum: '',
+    curriculum: [],
     curriculumDesc: '',
     blogReview: '',
     challengeReview: '',
@@ -86,12 +87,13 @@ const ChallengeEdit: React.FC = () => {
     setLoading(false);
   }, [challengeIdString, content, input, patchChallenge]);
 
-  /* challenge로 Input 초기화 */
+  /* challenge로 Input, content 초기화 */
   useEffect(() => {
     if (!challenge) return;
 
     const {
       title,
+      desc,
       shortDesc,
       criticalNotice,
       participationCount,
@@ -157,6 +159,7 @@ const ChallengeEdit: React.FC = () => {
     };
 
     setInput(initial);
+    setContent(JSON.parse(desc ?? '{}'));
   }, [challenge]);
 
   if (!challenge) {
@@ -208,6 +211,12 @@ const ChallengeEdit: React.FC = () => {
           />
         </main>
       </section>
+
+      <ChallengeCurriculum
+        curriculum={content.curriculum}
+        setContent={setContent}
+      />
+
       <footer className="flex items-center justify-end gap-3">
         <Button
           variant="contained"
