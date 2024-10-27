@@ -10,12 +10,14 @@ import ImageUpload from '@components/admin/program/ui/form/ImageUpload';
 import Header from '@components/admin/ui/header/Header';
 import Heading from '@components/admin/ui/heading/Heading';
 import { Heading2 } from '@components/admin/ui/heading/Heading2';
+import Heading3 from '@components/admin/ui/heading/Heading3';
 import { Button } from '@mui/material';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { FaSave } from 'react-icons/fa';
 import { useNavigate, useParams } from 'react-router-dom';
 import ChallengeBasic from './program/ChallengeBasic';
 import ChallengeCurriculum from './program/ChallengeCurriculum';
+import ChallengePoint from './program/ChallengePoint';
 import ChallengePrice from './program/ChallengePrice';
 import FaqSection from './program/FaqSection';
 import ProgramSchedule from './program/ProgramSchedule';
@@ -23,7 +25,7 @@ import ProgramSchedule from './program/ProgramSchedule';
 const ChallengeEdit: React.FC = () => {
   const [content, setContent] = useState<ChallengeContent>({
     curriculum: [],
-    curriculumDesc: '',
+    challengePoint: [],
     blogReview: '',
     challengeReview: '',
   });
@@ -127,11 +129,14 @@ const ChallengeEdit: React.FC = () => {
         </div>
       </section>
 
-      <h2>프로그램 소개</h2>
+      <Heading2>프로그램 소개</Heading2>
       <section>
-        <header>
-          <h3>상세 설명</h3>
-        </header>
+        <ChallengePoint
+          challengePoint={content.challengePoint}
+          setContent={setContent}
+        />
+
+        <Heading3>상세 설명</Heading3>
         <main>
           <EditorApp
             initialEditorStateJsonString={JSON.stringify(
@@ -156,7 +161,8 @@ const ChallengeEdit: React.FC = () => {
         <FaqSection
           programType="CHALLENGE"
           faqInfo={
-            input.faqInfo ?? challenge.faqInfo.map((info) => ({ faqId: info.id }))
+            input.faqInfo ??
+            challenge.faqInfo.map((info) => ({ faqId: info.id }))
           }
           setInput={setInput}
         />

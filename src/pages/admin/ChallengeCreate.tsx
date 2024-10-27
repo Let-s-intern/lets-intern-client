@@ -8,12 +8,14 @@ import ImageUpload from '@components/admin/program/ui/form/ImageUpload';
 import Header from '@components/admin/ui/header/Header';
 import Heading from '@components/admin/ui/heading/Heading';
 import { Heading2 } from '@components/admin/ui/heading/Heading2';
+import Heading3 from '@components/admin/ui/heading/Heading3';
 import { Button } from '@mui/material';
 import dayjs from 'dayjs';
 import { useCallback, useEffect, useState } from 'react';
 import { FaSave } from 'react-icons/fa';
 import ChallengeBasic from './program/ChallengeBasic';
 import ChallengeCurriculum from './program/ChallengeCurriculum';
+import ChallengePoint from './program/ChallengePoint';
 import ChallengePrice from './program/ChallengePrice';
 import FaqSection from './program/FaqSection';
 import ProgramSchedule from './program/ProgramSchedule';
@@ -25,9 +27,8 @@ import ProgramSchedule from './program/ProgramSchedule';
  */
 const ChallengeCreate: React.FC = () => {
   const [content, setContent] = useState<ChallengeContent>({
-    // mainDescription: ,
     curriculum: [],
-    curriculumDesc: '',
+    challengePoint: [],
     blogReview: '',
     challengeReview: '',
   });
@@ -133,9 +134,13 @@ const ChallengeCreate: React.FC = () => {
 
       <Heading2>프로그램 소개</Heading2>
       <section>
-        <header>
-          <h3>상세 설명</h3>
-        </header>
+        <ChallengePoint
+          challengePoint={content.challengePoint}
+          setContent={setContent}
+        />
+
+        <Heading3>상세 설명</Heading3>
+
         <main>
           <EditorApp
             onChangeSerializedEditorState={(json) =>
