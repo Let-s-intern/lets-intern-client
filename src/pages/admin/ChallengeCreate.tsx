@@ -88,7 +88,7 @@ const ChallengeCreate: React.FC = () => {
     console.log('res', res);
 
     setLoading(false);
-  }, [input]);
+  }, [input, content]);
 
   return (
     <div className="mx-3 mb-40 mt-3">

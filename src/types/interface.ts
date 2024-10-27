@@ -32,6 +32,22 @@ export type ChallengeContent = {
   challengeReview: unknown;
 };
 
+export type LiveContent = {
+  /* 상세 설명*/
+  mainDescription?: SerializedEditorState;
+  /* 커리큘럼 */
+  curriculum: {
+    id: string;
+    time: string; // 시간
+    title: string;
+    content: string; // 내용
+  }[];
+  /* 커리큘럼 추가 설명 */
+  curriculumDesc?: unknown;
+  /* 블로그 후기 */
+  blogReview: unknown;
+};
+
 export interface IPageable {
   page: number;
   size: number;
