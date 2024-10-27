@@ -1,12 +1,12 @@
 import { Button, IconButton } from '@mui/material';
 import { DatePicker } from '@mui/x-date-pickers';
+import dayjs, { Dayjs } from 'dayjs';
 import { MdDelete } from 'react-icons/md';
 
 import { ChallengeContent } from '@/types/interface';
 import { generateRandomNumber } from '@/utils/random';
 import { Heading2 } from '@components/admin/ui/heading/Heading2';
 import Input from '@components/ui/input/Input';
-import dayjs, { Dayjs } from 'dayjs';
 
 interface ChallengeCurriculumProps {
   curriculum: ChallengeContent['curriculum'];
