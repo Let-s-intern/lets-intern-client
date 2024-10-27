@@ -1,9 +1,8 @@
 import dayjs from 'dayjs';
 import { createContext, useContext } from 'react';
-import { z } from 'zod';
-import { getChallengeIdSchema } from '../schema';
+import { ChallengeIdSchema } from '../schema';
 
-export const mockChallenge: z.infer<typeof getChallengeIdSchema> = {
+export const mockChallenge: ChallengeIdSchema = {
   beginning: dayjs(),
   challengeType: 'CAREER_START',
   classificationInfo: [],
@@ -20,14 +19,14 @@ const context = createContext({
 });
 
 export const ServerChallengeProvider: React.FC<{
-  challenge: z.infer<typeof getChallengeIdSchema>;
+  challenge: ChallengeIdSchema;
   children: React.ReactNode;
 }> = ({ children, challenge }) => {
   return <context.Provider value={{ challenge }}>{children}</context.Provider>;
 };
 
 // TODO: Server로부터 넘어온 데이터는 모두 Serialized된 데이터임. 근간부터 수정해야 함. 일단 임시로 변환하여 넘겨주기.
-export const useServerChallenge = (): z.infer<typeof getChallengeIdSchema> => {
+export const useServerChallenge = (): ChallengeIdSchema => {
   const challenge = useContext(context).challenge;
 
   return {

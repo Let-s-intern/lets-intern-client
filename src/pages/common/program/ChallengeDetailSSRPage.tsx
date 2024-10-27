@@ -3,10 +3,10 @@ import { useChallengeQuery } from '@/api/challenge';
 import { useServerChallenge } from '@/context/ServerChallenge';
 import useAuthStore from '@/store/useAuthStore';
 import { getProgramPathname } from '@/utils/url';
+import ChallengeView from '@components/ChallengeView';
 import FilledButton from '@components/common/program/program-detail/button/FilledButton';
 import GradientButton from '@components/common/program/program-detail/button/GradientButton';
 import NotiButton from '@components/common/program/program-detail/button/NotiButton';
-import Header from '@components/common/program/program-detail/header/Header';
 import { useMediaQuery } from '@mui/material';
 import dayjs, { Dayjs } from 'dayjs';
 import { Duration } from 'dayjs/plugin/duration';
@@ -30,7 +30,9 @@ const ChallengeDetailSSRPage = () => {
   const isNotValidJson = challenge.desc && challenge.desc.startsWith('<');
 
   useEffect(() => {
-    if (isNotValidJson) navigate(`/program/challenge/old/${id}`);
+    if (isNotValidJson) {
+      navigate(`/program/challenge/old/${id}`);
+    }
   }, [challenge.desc]);
 
   useEffect(() => {
@@ -47,14 +49,13 @@ const ChallengeDetailSSRPage = () => {
     }
   }, [challenge.title, id, isLoading, titleFromUrl]);
 
-  if (isNotValidJson) return <></>;
+  if (isNotValidJson) {
+    return <></>;
+  }
 
   return (
     <>
-      <pre>{JSON.stringify(JSON.parse(challenge.desc || '{}'), null, 2)}</pre>
-      <div className="px-5 lg:px-10 xl:px-52">
-        <Header programTitle={challenge.title ?? ''} />
-      </div>
+      <ChallengeView challenge={challenge} />
 
       {isMobile ? (
         <ApplyCTA programType="challenge" program={challenge} />
