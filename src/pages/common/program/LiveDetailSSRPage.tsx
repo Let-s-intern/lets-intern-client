@@ -52,9 +52,9 @@ const LiveDetailSSRPage = () => {
       </div>
 
       {isMobile ? (
-        <ApplyCTA programType="live" />
+        <ApplyCTA programType="live" program={live} />
       ) : (
-        <DesktopApplyCTA programType="live" />
+        <DesktopApplyCTA programType="live" program={live} />
       )}
     </>
   );
