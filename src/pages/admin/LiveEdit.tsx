@@ -7,11 +7,13 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { fileType, uploadFile } from '@/api/file';
 import { useGetLiveQuery, usePatchLiveMutation } from '@/api/program';
 import { UpdateLiveReq } from '@/schema';
+import { LiveContent } from '@/types/interface';
 import ImageUpload from '@components/admin/program/ui/form/ImageUpload';
 import Header from '@components/admin/ui/header/Header';
 import Heading from '@components/admin/ui/heading/Heading';
 import { Heading2 } from '@components/admin/ui/heading/Heading2';
 import LiveBasic from './program/LiveBasic';
+import LiveCurriculum from './program/LiveCurriculum';
 import LiveMentor from './program/LiveMentor';
 import LivePrice from './program/LivePrice';
 import LiveSchedule from './program/LiveSchedule';
@@ -26,6 +28,11 @@ const LiveEdit: React.FC = () => {
 
   const [loading, setLoading] = useState(false);
   const [input, setInput] = useState<Omit<UpdateLiveReq, 'desc'>>({});
+  const [content, setContent] = useState<LiveContent>({
+    // mainDescription: ,
+    curriculum: [],
+    blogReview: '',
+  });
   const [snack, setSnack] = useState<Snack>({
     open: false,
     vertical: 'top',
@@ -74,6 +81,7 @@ const LiveEdit: React.FC = () => {
     const {
       title,
       shortDesc,
+      desc,
       criticalNotice,
       participationCount,
       thumbnail,
@@ -135,6 +143,7 @@ const LiveEdit: React.FC = () => {
     };
 
     setInput(initial);
+    setContent(JSON.parse(desc ?? '{}'));
   }, [live]);
 
   if (!live) return <div>loading...</div>;
@@ -175,6 +184,8 @@ const LiveEdit: React.FC = () => {
           </div>
         </div>
       </section>
+
+      <LiveCurriculum curriculum={content.curriculum} setContent={setContent} />
 
       <footer className="flex items-center justify-end gap-3">
         <Button
