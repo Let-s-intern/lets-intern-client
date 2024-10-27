@@ -2,6 +2,7 @@ import { fileType, uploadFile } from '@/api/file';
 import { usePostChallengeMutation } from '@/api/program';
 import { CreateChallengeReq } from '@/schema';
 import { ChallengeContent } from '@/types/interface';
+import ChallengePreviewButton from '@components/admin/ChallengePreviewButton';
 import EditorApp from '@components/admin/lexical/EditorApp';
 import ImageUpload from '@components/admin/program/ui/form/ImageUpload';
 import Header from '@components/admin/ui/header/Header';
@@ -145,6 +146,11 @@ const ChallengeCreate: React.FC = () => {
       </div>
 
       <footer className="flex items-center justify-end gap-3">
+        <ChallengePreviewButton
+          input={input}
+          content={content}
+          existing={null}
+        />
         <Button
           variant="contained"
           color="primary"

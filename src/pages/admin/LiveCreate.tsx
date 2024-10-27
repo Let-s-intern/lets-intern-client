@@ -14,6 +14,7 @@ import { fileType, uploadFile } from '@/api/file';
 import { usePostLiveMutation } from '@/api/program';
 import { CreateLiveReq } from '@/schema';
 import { LiveContent } from '@/types/interface';
+import LivePreviewButton from '@components/admin/LivePreviewButton';
 import ImageUpload from '@components/admin/program/ui/form/ImageUpload';
 import Header from '@components/admin/ui/header/Header';
 import Heading from '@components/admin/ui/heading/Heading';
@@ -169,6 +170,7 @@ const LiveCreate: React.FC = () => {
       </div>
 
       <footer className="flex items-center justify-end gap-3">
+        <LivePreviewButton input={input} existing={null} content={content} />
         <Button
           variant="contained"
           color="primary"

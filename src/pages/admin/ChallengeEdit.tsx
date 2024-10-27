@@ -3,6 +3,7 @@ import { useGetChallengeQuery, usePatchChallengeMutation } from '@/api/program';
 import isDeprecatedProgram from '@/lib/isDeprecatedProgram';
 import { UpdateChallengeReq } from '@/schema';
 import { ChallengeContent } from '@/types/interface';
+import ChallengePreviewButton from '@components/admin/ChallengePreviewButton';
 import EditorApp from '@components/admin/lexical/EditorApp';
 import ImageUpload from '@components/admin/program/ui/form/ImageUpload';
 import Header from '@components/admin/ui/header/Header';
@@ -227,6 +228,7 @@ const ChallengeEdit: React.FC = () => {
       </div>
 
       <footer className="flex items-center justify-end gap-3">
+        <ChallengePreviewButton input={input} content={content} existing={challenge} />
         <Button
           variant="contained"
           color="primary"

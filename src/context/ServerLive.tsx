@@ -1,9 +1,8 @@
 import dayjs from 'dayjs';
 import { createContext, useContext } from 'react';
-import { z } from 'zod';
-import { getLiveIdSchema } from '../schema';
+import { LiveIdSchema } from '../schema';
 
-export const mockLive: z.infer<typeof getLiveIdSchema> = {
+export const mockLive: LiveIdSchema = {
   beginning: dayjs(),
   classificationInfo: [],
   deadline: dayjs(),
@@ -25,14 +24,14 @@ const context = createContext({
 });
 
 export const ServerLiveProvider: React.FC<{
-  live: z.infer<typeof getLiveIdSchema>;
+  live: LiveIdSchema;
   children: React.ReactNode;
 }> = ({ children, live }) => {
   return <context.Provider value={{ live }}>{children}</context.Provider>;
 };
 
 // TODO: Server로부터 넘어온 데이터는 모두 Serialized된 데이터임. 근간부터 수정해야 함. 일단 임시로 변환하여 넘겨주기.
-export const useServerLive = () => {
+export const useServerLive = (): LiveIdSchema => {
   const live = useContext(context).live;
 
   return {
