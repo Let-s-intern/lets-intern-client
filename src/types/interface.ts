@@ -38,8 +38,6 @@ export type LiveContent = {
   /* 커리큘럼 */
   curriculum: {
     id: string;
-    startDate: string;
-    endDate: string;
     time: string; // 시간
     title: string;
     content: string; // 내용
