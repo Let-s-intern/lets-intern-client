@@ -350,6 +350,7 @@ export type CreateLiveReq = {
   mentorIntroduction: string;
   job: string;
   place: string;
+  vod: boolean;
   startDate: string; // "2024-10-12T06:48:27.339"
   endDate: string; // "2024-10-12T06:48:27.339"
   beginning: string; // "2024-10-12T06:48:27.339"
@@ -391,6 +392,7 @@ export type UpdateLiveReq = {
   mentorIntroduction?: string;
   job?: string;
   place?: string;
+  vod?: boolean;
   startDate?: string; // "2024-10-12T06:48:27.339"
   endDate?: string; // "2024-10-12T06:48:27.339"
   beginning?: string; // "2024-10-12T06:48:27.339"

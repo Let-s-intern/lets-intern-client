@@ -1,4 +1,10 @@
-import { Button, Snackbar, SnackbarOrigin } from '@mui/material';
+import {
+  Button,
+  Checkbox,
+  FormControlLabel,
+  Snackbar,
+  SnackbarOrigin,
+} from '@mui/material';
 import dayjs from 'dayjs';
 import { useCallback, useEffect, useState } from 'react';
 import { FaSave } from 'react-icons/fa';
@@ -170,7 +176,15 @@ const LiveEdit: React.FC = () => {
           <div className="flex flex-col gap-6">
             <LivePrice input={input} setInput={setInput} />
             <LiveSchedule input={input} setInput={setInput} />
-            {/* VOD 제공 여부 */}
+            <FormControlLabel
+              value={input.vod}
+              control={<Checkbox />}
+              label="VOD 제공 여부"
+              labelPlacement="start"
+              onChange={(event, checked) =>
+                setInput((prev) => ({ ...prev, vod: checked }))
+              }
+            />
           </div>
           <div className="flex flex-col gap-3">
             <ImageUpload

@@ -1,4 +1,10 @@
-import { Button, Snackbar, SnackbarOrigin } from '@mui/material';
+import {
+  Button,
+  Checkbox,
+  FormControlLabel,
+  Snackbar,
+  SnackbarOrigin,
+} from '@mui/material';
 import dayjs from 'dayjs';
 import { useCallback, useEffect, useState } from 'react';
 import { FaSave } from 'react-icons/fa';
@@ -50,6 +56,7 @@ const LiveCreate: React.FC = () => {
     mentorIntroduction: '',
     job: '',
     place: '',
+    vod: false,
     startDate: dayjs().format('YYYY-MM-DDTHH:mm'),
     endDate: dayjs().format('YYYY-MM-DDTHH:mm'),
     beginning: dayjs().format('YYYY-MM-DDTHH:mm'),
@@ -103,6 +110,10 @@ const LiveCreate: React.FC = () => {
     console.log('content', content);
   }, [content]);
 
+  useEffect(() => {
+    console.log('input', input);
+  }, [input]);
+
   return (
     <div className="mx-3 mb-40 mt-3">
       <Header>
@@ -121,10 +132,18 @@ const LiveCreate: React.FC = () => {
           />
         </div>
         <div className="grid w-full grid-cols-2 gap-3">
-          <div className="flex flex-col gap-6">
+          <div className="flex flex-col items-start gap-6">
             <LivePrice input={input} setInput={setInput} />
             <LiveSchedule input={input} setInput={setInput} />
-            {/* VOD 제공 여부 */}
+            <FormControlLabel
+              value={input.vod}
+              control={<Checkbox />}
+              label="VOD 제공 여부"
+              labelPlacement="start"
+              onChange={(event, checked) =>
+                setInput((prev) => ({ ...prev, vod: checked }))
+              }
+            />
           </div>
           <div className="flex flex-col gap-3">
             <ImageUpload
