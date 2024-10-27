@@ -13,6 +13,7 @@ import Heading from '@components/admin/ui/heading/Heading';
 import { Heading2 } from '@components/admin/ui/heading/Heading2';
 import { useNavigate } from 'react-router-dom';
 import LiveBasic from './program/LiveBasic';
+import LiveCurriculum from './program/LiveCurriculum';
 import LiveMentor from './program/LiveMentor';
 import LivePrice from './program/LivePrice';
 import LiveSchedule from './program/LiveSchedule';
@@ -136,6 +137,8 @@ const LiveCreate: React.FC = () => {
           </div>
         </div>
       </section>
+
+      <LiveCurriculum curriculum={content.curriculum} setContent={setContent} />
 
       <footer className="flex items-center justify-end gap-3">
         <Button
