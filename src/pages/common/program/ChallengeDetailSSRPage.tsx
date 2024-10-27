@@ -1,8 +1,3 @@
-import { useMediaQuery } from '@mui/material';
-import dayjs, { Dayjs } from 'dayjs';
-import { ReactNode, useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
-
 import { useProgramApplicationQuery } from '@/api/application';
 import { useChallengeQuery, useGetChallengeTitle } from '@/api/challenge';
 import { useProgramQuery } from '@/api/program';
@@ -13,6 +8,11 @@ import FilledButton from '@components/common/program/program-detail/button/Fille
 import GradientButton from '@components/common/program/program-detail/button/GradientButton';
 import NotiButton from '@components/common/program/program-detail/button/NotiButton';
 import Header from '@components/common/program/program-detail/header/Header';
+import { useMediaQuery } from '@mui/material';
+import dayjs, { Dayjs } from 'dayjs';
+import { Duration } from 'dayjs/plugin/duration';
+import { ReactNode, useEffect, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 
 const ChallengeDetailSSRPage = () => {
   const navigate = useNavigate();
@@ -207,21 +207,18 @@ function DurationSection({
   deadline: Dayjs;
   disabled?: boolean;
 }) {
-  const [diff, setDiff] = useState(deadline.diff(dayjs()));
+  const [duration, setDuration] = useState<Duration | null>(null);
 
-  const duration = dayjs.duration(diff);
-
-  /* 응답 딜레이로 한 번 더 setState */
   useEffect(() => {
-    setDiff(deadline.diff(dayjs()));
+    setDuration(dayjs.duration(deadline.diff(dayjs())));
   }, [deadline]);
 
   /* 마감 일자 타이머 설정 */
   useEffect(() => {
-    if (disabled || !deadline) return;
+    if (disabled) return;
 
     const timer = setInterval(() => {
-      setDiff((prev) => prev - 1000);
+      setDuration((prev) => prev?.subtract(1, 'second') ?? prev);
     }, 1000);
 
     return () => clearInterval(timer);
@@ -230,10 +227,10 @@ function DurationSection({
   return (
     <div className="flex items-center gap-2">
       <div className="flex items-center gap-2">
-        <DurationBox>{duration.days()}일</DurationBox>
-        <DurationBox>{duration.hours()}시간</DurationBox>
-        <DurationBox>{duration.minutes()}분</DurationBox>
-        <DurationBox>{duration.seconds()}초</DurationBox>
+        <DurationBox>{duration?.days()}일</DurationBox>
+        <DurationBox>{duration?.hours()}시간</DurationBox>
+        <DurationBox>{duration?.minutes()}분</DurationBox>
+        <DurationBox>{duration?.seconds()}초</DurationBox>
       </div>
       <span className="text-xxsmall12 text-neutral-80">남음</span>
     </div>

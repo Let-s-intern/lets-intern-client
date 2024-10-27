@@ -2,6 +2,7 @@
 export { onRenderClient };
 
 import dayjs from 'dayjs';
+import duration from 'dayjs/plugin/duration';
 import timezone from 'dayjs/plugin/timezone';
 import utc from 'dayjs/plugin/utc';
 import React from 'react';
@@ -11,6 +12,7 @@ import { PageContextClient } from 'vike/types';
 dayjs.locale('ko');
 dayjs.extend(utc);
 dayjs.extend(timezone);
+dayjs.extend(duration);
 dayjs.tz.setDefault('Asia/Seoul');
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
