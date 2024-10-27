@@ -10,6 +10,7 @@ import {
 
 import {
   CreateLiveReq,
+  LiveIdSchema,
   liveJob,
   LiveProgressType,
   ProgramClassification,
@@ -22,12 +23,20 @@ import {
 import Input from '@components/ui/input/Input';
 
 interface LiveBasicProps<T extends CreateLiveReq | UpdateLiveReq> {
-  input: Omit<T, 'desc'>;
+  defaultValue?: Pick<
+    LiveIdSchema,
+    | 'classificationInfo'
+    | 'job'
+    | 'title'
+    | 'shortDesc'
+    | 'participationCount'
+    | 'progressType'
+  >;
   setInput: React.Dispatch<React.SetStateAction<Omit<T, 'desc'>>>;
 }
 
 export default function LiveBasic<T extends CreateLiveReq | UpdateLiveReq>({
-  input,
+  defaultValue,
   setInput,
 }: LiveBasicProps<T>) {
   const onChange = (
@@ -46,10 +55,10 @@ export default function LiveBasic<T extends CreateLiveReq | UpdateLiveReq>({
           id="programTypeInfo"
           name="programTypeInfo"
           multiple
-          value={
-            input.programTypeInfo
-              ? input.programTypeInfo.map(
-                  (info) => info.classificationInfo.programClassification,
+          defaultValue={
+            defaultValue?.classificationInfo
+              ? defaultValue.classificationInfo.map(
+                  (info) => info.programClassification,
                 )
               : []
           }
@@ -95,7 +104,7 @@ export default function LiveBasic<T extends CreateLiveReq | UpdateLiveReq>({
           id="progressType"
           label="온/오프라인 여부"
           name="progressType"
-          value={input.progressType}
+          defaultValue={defaultValue?.progressType ?? undefined}
           onChange={onChange}
         >
           {Object.keys(liveProgressTypeToText).map((key) => (
@@ -112,7 +121,7 @@ export default function LiveBasic<T extends CreateLiveReq | UpdateLiveReq>({
           id="job"
           label="직무"
           name="job"
-          value={input.job}
+          defaultValue={defaultValue?.job}
           onChange={onChange}
         >
           {Object.keys(liveJob.enum).map((key) => (
@@ -127,7 +136,7 @@ export default function LiveBasic<T extends CreateLiveReq | UpdateLiveReq>({
         type="text"
         name="title"
         placeholder="제목을 입력해주세요"
-        value={input.title}
+        defaultValue={defaultValue?.title}
         size="small"
         onChange={onChange}
       />
@@ -136,7 +145,7 @@ export default function LiveBasic<T extends CreateLiveReq | UpdateLiveReq>({
         type="text"
         name="shortDesc"
         size="small"
-        value={input.shortDesc}
+        defaultValue={defaultValue?.shortDesc}
         placeholder="한 줄 설명을 입력해주세요"
         onChange={onChange}
       />
@@ -145,7 +154,7 @@ export default function LiveBasic<T extends CreateLiveReq | UpdateLiveReq>({
         type="number"
         name="participationCount"
         size="small"
-        value={String(input.participationCount)}
+        defaultValue={String(defaultValue?.participationCount)}
         placeholder="총 정원 수를 입력해주세요"
         onChange={onChange}
       />

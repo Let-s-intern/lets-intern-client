@@ -207,20 +207,7 @@ export type CreateChallengeReq = {
       programClassification: ProgramClassification;
     };
   }[];
-  priceInfo: {
-    priceInfo: {
-      price: number;
-      discount: number;
-      accountNumber?: string;
-      accountType?: AccountType;
-      deadline?: string; // "2024-10-12T06:24:10.873"
-    };
-    charge: number;
-    refund: number;
-    challengePriceType: ChallengePriceType;
-    challengeUserType: ChallengeUserType;
-    challengeParticipationType: ChallengeParticipationType;
-  }[];
+  priceInfo: ChallengePriceReq[];
   faqInfo: {
     faqId: number;
   }[];
@@ -247,13 +234,13 @@ export type UpdateChallengeReq = {
       programClassification: ProgramClassification;
     };
   }[];
-  priceInfo?: UpdateChallengeUpdatePriceInfoReq[];
+  priceInfo?: ChallengePriceReq[];
   faqInfo?: {
     faqId: number;
   }[];
 };
 
-export type UpdateChallengeUpdatePriceInfoReq = {
+export type ChallengePriceReq = {
   priceInfo: {
     price: number;
     discount: number;
@@ -314,6 +301,7 @@ export const getLiveIdSchema = z
       livePriceType: livePriceTypeSchema.optional(),
     }),
     faqInfo: z.array(faq),
+    vod: z.boolean().nullable().optional(),
   })
   .transform((data) => {
     return {

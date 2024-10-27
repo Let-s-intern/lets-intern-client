@@ -1,13 +1,20 @@
-import { CreateLiveReq, UpdateLiveReq } from '@/schema';
+import { CreateLiveReq, LiveIdSchema, UpdateLiveReq } from '@/schema';
 import Input from '@components/ui/input/Input';
 
 interface LiveMentorProps<T extends CreateLiveReq | UpdateLiveReq> {
-  input: Omit<T, 'desc'>;
+  defaultValue: Pick<
+    LiveIdSchema,
+    | 'mentorName'
+    | 'mentorCompany'
+    | 'mentorJob'
+    | 'mentorCareer'
+    | 'mentorIntroduction'
+  >;
   setInput: React.Dispatch<React.SetStateAction<Omit<T, 'desc'>>>;
 }
 
 export default function LiveMentor<T extends CreateLiveReq | UpdateLiveReq>({
-  input,
+  defaultValue,
   setInput,
 }: LiveMentorProps<T>) {
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -21,7 +28,7 @@ export default function LiveMentor<T extends CreateLiveReq | UpdateLiveReq>({
         type="text"
         name="mentorName"
         placeholder="멘토 이름을 입력해주세요"
-        value={input.mentorName}
+        defaultValue={defaultValue.mentorName}
         size="small"
         onChange={onChange}
       />
@@ -30,7 +37,7 @@ export default function LiveMentor<T extends CreateLiveReq | UpdateLiveReq>({
         type="text"
         name="mentorCompany"
         size="small"
-        value={input.mentorCompany}
+        defaultValue={defaultValue.mentorCompany}
         placeholder="멘토 회사를 입력해주세요"
         onChange={onChange}
       />
@@ -39,7 +46,7 @@ export default function LiveMentor<T extends CreateLiveReq | UpdateLiveReq>({
         type="text"
         name="mentorJob"
         size="small"
-        value={input.mentorJob}
+        defaultValue={defaultValue.mentorJob}
         placeholder="멘토 직무를 입력해주세요"
         onChange={onChange}
       />
@@ -48,7 +55,7 @@ export default function LiveMentor<T extends CreateLiveReq | UpdateLiveReq>({
         type="text"
         name="mentorCareer"
         size="small"
-        value={input.mentorCareer}
+        defaultValue={defaultValue.mentorCareer}
         placeholder="멘토 경력을 입력해주세요"
         onChange={onChange}
       />
@@ -57,7 +64,7 @@ export default function LiveMentor<T extends CreateLiveReq | UpdateLiveReq>({
         type="text"
         name="mentorIntroduction"
         size="small"
-        value={input.mentorIntroduction}
+        defaultValue={defaultValue.mentorIntroduction}
         placeholder="한 줄 소개를 입력해주세요"
         onChange={onChange}
       />

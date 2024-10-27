@@ -56,7 +56,8 @@ function FaqSection<
               <input
                 type="checkbox"
                 checked={
-                  faqInfo?.findIndex((info) => info.faqId === faq.id) !== -1
+                  (faqInfo ?? []).findIndex((info) => info.faqId === faq.id) !==
+                  -1
                 }
                 onChange={(e) => checkFaq(e, faq.id)}
               />

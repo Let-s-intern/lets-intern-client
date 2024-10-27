@@ -109,6 +109,12 @@ export const useDuplicateProgram = ({
             mentorName: live.mentorName ?? '',
             place: live.place ?? '',
             progressType: live.progressType ?? 'ONLINE',
+            mentorCareer: live.mentorCareer ?? '',
+            mentorCompany: live.mentorCompany ?? '',
+            mentorImg: live.mentorImg ?? '',
+            mentorIntroduction: live.mentorIntroduction ?? '',
+            mentorJob: live.mentorJob ?? '',
+            vod: live.vod ?? false,
           });
           return;
         }

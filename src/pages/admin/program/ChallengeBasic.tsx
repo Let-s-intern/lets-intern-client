@@ -1,4 +1,5 @@
 import {
+  ChallengeIdSchema,
   ChallengeParticipationType,
   CreateChallengeReq,
   ProgramClassification,
@@ -18,20 +19,32 @@ import {
   MenuItem,
   OutlinedInput,
   Select,
+  SelectChangeEvent,
 } from '@mui/material';
 
 interface ChallengeBasicProps<
   T extends CreateChallengeReq | UpdateChallengeReq,
 > {
-  input: Omit<T, 'desc'>;
+  defaultValue?: Pick<
+    ChallengeIdSchema,
+    | 'classificationInfo'
+    | 'challengeType'
+    | 'priceInfo'
+    | 'title'
+    | 'shortDesc'
+    | 'participationCount'
+    | 'chatLink'
+    | 'chatPassword'
+  >;
+
   setInput: React.Dispatch<React.SetStateAction<Omit<T, 'desc'>>>;
 }
 
 export default function ChallengeBasic<
   T extends CreateChallengeReq | UpdateChallengeReq,
->({ input, setInput }: ChallengeBasicProps<T>) {
-  const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setInput((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+>({ defaultValue, setInput }: ChallengeBasicProps<T>) {
+  const onChange = (e: SelectChangeEvent) => {
+    setInput((prev) => ({ ...prev, [e.target!.name]: e.target!.value }));
   };
 
   return (
@@ -44,10 +57,10 @@ export default function ChallengeBasic<
           id="programTypeInfo"
           name="programTypeInfo"
           multiple
-          value={
-            input.programTypeInfo
-              ? input.programTypeInfo.map(
-                  (info) => info.classificationInfo.programClassification,
+          defaultValue={
+            defaultValue?.classificationInfo
+              ? defaultValue.classificationInfo.map(
+                  (info) => info.programClassification,
                 )
               : []
           }
@@ -91,13 +104,8 @@ export default function ChallengeBasic<
         <Select
           label="챌린지 구분"
           name="challengeType"
-          value={input.challengeType}
-          onChange={(e) => {
-            setInput((prev) => ({
-              ...prev,
-              [e.target.name]: e.target.value,
-            }));
-          }}
+          defaultValue={defaultValue?.challengeType}
+          onChange={onChange}
         >
           {challengeTypes.map((type) => (
             <MenuItem key={type} value={type}>
@@ -107,23 +115,23 @@ export default function ChallengeBasic<
         </Select>
       </FormControl>
       {/* (임시) 가격 구분 삭제 */}
-      {input.priceInfo !== undefined && input.priceInfo.length > 0 && (
+      {defaultValue?.priceInfo && defaultValue.priceInfo.length > 0 && (
         <FormControl size="small">
           <InputLabel>참여 형태</InputLabel>
           <Select
             label="참여 형태"
-            value={input.priceInfo[0].challengeParticipationType}
+            defaultValue={defaultValue.priceInfo[0].challengeParticipationType}
             onChange={(e) => {
-              setInput({
-                ...input,
+              setInput((prev) => ({
+                ...prev,
                 priceInfo: [
                   {
-                    ...input.priceInfo![0],
+                    ...prev.priceInfo?.[0],
                     challengeParticipationType: e.target
                       .value as ChallengeParticipationType,
                   },
                 ],
-              });
+              }));
             }}
           >
             {Object.keys(programParticipationTypeToText).map((type: string) => (
@@ -139,7 +147,7 @@ export default function ChallengeBasic<
         type="text"
         name="title"
         placeholder="제목을 입력해주세요"
-        value={input.title}
+        defaultValue={defaultValue?.title}
         size="small"
         onChange={onChange}
       />
@@ -148,7 +156,7 @@ export default function ChallengeBasic<
         type="text"
         name="shortDesc"
         size="small"
-        value={input.shortDesc}
+        defaultValue={defaultValue?.shortDesc}
         placeholder="한 줄 설명을 입력해주세요"
         onChange={onChange}
       />
@@ -157,7 +165,7 @@ export default function ChallengeBasic<
         type="number"
         name="participationCount"
         size="small"
-        value={String(input.participationCount)}
+        defaultValue={String(defaultValue?.participationCount)}
         placeholder="총 정원 수를 입력해주세요"
         onChange={onChange}
       />
@@ -166,7 +174,7 @@ export default function ChallengeBasic<
         name="chatLink"
         size="small"
         placeholder="카카오톡 오픈채팅 링크를 입력하세요"
-        value={input.chatLink}
+        defaultValue={defaultValue?.chatLink}
         onChange={onChange}
       />
       <Input
@@ -174,7 +182,7 @@ export default function ChallengeBasic<
         name="chatPassword"
         size="small"
         placeholder="카카오톡 오픈채팅 비밀번호를 입력하세요"
-        value={input.chatPassword}
+        defaultValue={defaultValue?.chatPassword}
         onChange={onChange}
       />
     </div>
