@@ -16,7 +16,7 @@ import ChallengeBasic from './program/ChallengeBasic';
 import ChallengeCurriculum from './program/ChallengeCurriculum';
 import ChallengePrice from './program/ChallengePrice';
 import ChallengeSchedule from './program/ChallengeSchedule';
-import FaqSection from './program/LiveFaq';
+import FaqSection from './program/FaqSection';
 
 const ChallengeEdit: React.FC = () => {
   const [content, setContent] = useState<ChallengeContent>({
