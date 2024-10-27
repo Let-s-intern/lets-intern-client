@@ -1,17 +1,11 @@
-import {
-  Button,
-  Checkbox,
-  FormControlLabel,
-  Snackbar,
-  SnackbarOrigin,
-} from '@mui/material';
-import dayjs from 'dayjs';
-import { useCallback, useEffect, useState } from 'react';
+import { Button, Checkbox, FormControlLabel } from '@mui/material';
+import { useCallback, useState } from 'react';
 import { FaSave } from 'react-icons/fa';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import { fileType, uploadFile } from '@/api/file';
 import { useGetLiveQuery, usePatchLiveMutation } from '@/api/program';
+import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
 import { UpdateLiveReq } from '@/schema';
 import { LiveContent } from '@/types/interface';
 import LivePreviewButton from '@components/admin/LivePreviewButton';
@@ -24,11 +18,7 @@ import LiveBasic from './program/LiveBasic';
 import LiveCurriculum from './program/LiveCurriculum';
 import LiveMentor from './program/LiveMentor';
 import LivePrice from './program/LivePrice';
-import LiveSchedule from './program/LiveSchedule';
-
-interface Snack extends SnackbarOrigin {
-  open: boolean;
-}
+import ProgramSchedule from './program/ProgramSchedule';
 
 const LiveEdit: React.FC = () => {
   const navigate = useNavigate();
@@ -41,13 +31,7 @@ const LiveEdit: React.FC = () => {
     curriculum: [],
     blogReview: '',
   });
-  const [snack, setSnack] = useState<Snack>({
-    open: false,
-    vertical: 'top',
-    horizontal: 'center',
-  });
-
-  const { vertical, horizontal, open } = snack;
+  const { snackbar } = useAdminSnackbar();
 
   const { data: live } = useGetLiveQuery({
     liveId: Number(liveIdString),
@@ -78,81 +62,9 @@ const LiveEdit: React.FC = () => {
     console.log('res:', res);
 
     setLoading(false);
-    setSnack((prev) => ({ ...prev, open: true }));
+    snackbar('저장되었습니다.');
     navigate('/admin/programs');
-  }, [input]);
-
-  /* live로 Input 초기화 */
-  useEffect(() => {
-    if (!live) return;
-
-    const {
-      title,
-      shortDesc,
-      desc,
-      criticalNotice,
-      participationCount,
-      thumbnail,
-      startDate,
-      endDate,
-      beginning,
-      deadline,
-      mentorName,
-      mentorImg,
-      mentorCompany,
-      mentorJob,
-      mentorCareer,
-      mentorIntroduction,
-      job,
-      progressType,
-      priceInfo,
-      faqInfo,
-    } = live;
-
-    const { price, discount, accountNumber, accountType, livePriceType } =
-      priceInfo;
-
-    const initial = {
-      title,
-      shortDesc,
-      criticalNotice,
-      participationCount,
-      thumbnail,
-      mentorName,
-      mentorImg,
-      mentorCompany,
-      mentorJob,
-      mentorCareer,
-      mentorIntroduction,
-      job,
-      startDate: startDate?.format('YYYY-MM-DDTHH:mm:ss'),
-      endDate: endDate?.format('YYYY-MM-DDTHH:mm:ss'),
-      beginning: beginning?.format('YYYY-MM-DDTHH:mm:ss'),
-      deadline: deadline?.format('YYYY-MM-DDTHH:mm:ss'),
-      progressType: progressType ?? 'ALL',
-      programTypeInfo: live.classificationInfo.map((info) => ({
-        classificationInfo: {
-          programClassification: info.programClassification,
-        },
-      })),
-      priceInfo: {
-        livePriceType: livePriceType ?? 'CHARGE',
-        priceInfo: {
-          price: price ?? 0,
-          discount: discount ?? 0,
-          accountNumber: accountNumber ?? '',
-          deadline:
-            priceInfo.deadline?.format('YYYY-MM-DDTHH:mm:ss') ??
-            dayjs().format('YYYY-MM-DDTHH:mm:ss'),
-          accountType: accountType ?? 'KB',
-        },
-      },
-      faqInfo: faqInfo.map((info) => ({ faqId: info.id })),
-    };
-
-    setInput(initial);
-    setContent(JSON.parse(desc ?? '{}'));
-  }, [live]);
+  }, [input, liveIdString, navigate, patchLive, snackbar]);
 
   if (!live) return <div>loading...</div>;
 
@@ -165,21 +77,21 @@ const LiveEdit: React.FC = () => {
       <Heading2>기본 정보</Heading2>
       <section className="mb-6 mt-3">
         <div className="mb-6 grid w-full grid-cols-2 gap-3">
-          <LiveBasic input={input} setInput={setInput} />
+          <LiveBasic defaultValue={live} setInput={setInput} />
           <ImageUpload
             label="라이브 썸네일 이미지 업로드"
             id="thumbnail"
             name="thumbnail"
-            image={input.thumbnail}
+            image={input.thumbnail ?? live.thumbnail}
             onChange={onChangeImage}
           />
         </div>
         <div className="grid w-full grid-cols-2 gap-3">
           <div className="flex flex-col items-start gap-6">
-            <LivePrice input={input} setInput={setInput} />
-            <LiveSchedule input={input} setInput={setInput} />
+            <LivePrice defaultValue={live.priceInfo} setInput={setInput} />
+            <ProgramSchedule defaultValue={live} setInput={setInput} />
             <FormControlLabel
-              value={input.vod}
+              defaultChecked={live.vod ?? false}
               control={<Checkbox />}
               label="VOD 제공 여부"
               labelPlacement="start"
@@ -193,10 +105,10 @@ const LiveEdit: React.FC = () => {
               label="멘토 사진"
               id="mentorImg"
               name="mentorImg"
-              image={input.mentorImg}
+              image={input.mentorImg ?? live.mentorImg}
               onChange={onChangeImage}
             />
-            <LiveMentor input={input} setInput={setInput} />
+            <LiveMentor defaultValue={live} setInput={setInput} />
           </div>
         </div>
       </section>
@@ -206,7 +118,9 @@ const LiveEdit: React.FC = () => {
       <div className="my-6">
         <FaqSection
           programType="LIVE"
-          faqInfo={input.faqInfo}
+          faqInfo={
+            input.faqInfo ?? live.faqInfo.map((info) => ({ faqId: info.id }))
+          }
           setInput={setInput}
         />
       </div>
@@ -222,13 +136,6 @@ const LiveEdit: React.FC = () => {
         >
           저장
         </Button>
-        <Snackbar
-          anchorOrigin={{ vertical, horizontal }}
-          open={open}
-          onClose={() => setSnack({ ...snack, open: false })}
-          message="라이브를 수정했습니다"
-          key={vertical + horizontal}
-        />
       </footer>
     </div>
   );

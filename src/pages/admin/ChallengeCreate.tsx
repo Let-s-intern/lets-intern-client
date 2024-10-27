@@ -17,8 +17,8 @@ import ChallengeBasic from './program/ChallengeBasic';
 import ChallengeCurriculum from './program/ChallengeCurriculum';
 import ChallengePoint from './program/ChallengePoint';
 import ChallengePrice from './program/ChallengePrice';
-import ChallengeSchedule from './program/ChallengeSchedule';
 import FaqSection from './program/FaqSection';
+import ProgramSchedule from './program/ProgramSchedule';
 
 /**
  * 챌린지 생성 페이지
@@ -91,7 +91,7 @@ const ChallengeCreate: React.FC = () => {
     console.log('res', res);
 
     setLoading(false);
-  }, [input, content]);
+  }, [input, content, postChallenge]);
 
   return (
     <div className="mx-3 mb-40 mt-3">
@@ -102,7 +102,23 @@ const ChallengeCreate: React.FC = () => {
       <Heading2>기본 정보</Heading2>
       <section className="mb-6 mt-3">
         <div className="mb-6 grid w-full grid-cols-2 gap-3">
-          <ChallengeBasic input={input} setInput={setInput} />
+          <ChallengeBasic
+            defaultValue={{
+              ...input,
+              classificationInfo: input.programTypeInfo.map((info) => ({
+                programClassification:
+                  info.classificationInfo.programClassification,
+              })),
+              priceInfo: input.priceInfo.map((info) => ({
+                ...info,
+                deadline: info.priceInfo.deadline
+                  ? dayjs(info.priceInfo.deadline)
+                  : null,
+                priceId: 0,
+              })),
+            }}
+            setInput={setInput}
+          />
           <ImageUpload
             label="챌린지 썸네일 이미지 업로드"
             id="thumbnail"
@@ -111,8 +127,8 @@ const ChallengeCreate: React.FC = () => {
           />
         </div>
         <div className="grid w-full grid-cols-2 gap-3">
-          <ChallengePrice input={input} setInput={setInput} />
-          <ChallengeSchedule input={input} setInput={setInput} />
+          <ChallengePrice setInput={setInput} />
+          <ProgramSchedule setInput={setInput} />
         </div>
       </section>
 

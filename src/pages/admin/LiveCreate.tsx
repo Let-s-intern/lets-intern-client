@@ -1,10 +1,4 @@
-import {
-  Button,
-  Checkbox,
-  FormControlLabel,
-  Snackbar,
-  SnackbarOrigin,
-} from '@mui/material';
+import { Button, Checkbox, FormControlLabel } from '@mui/material';
 import dayjs from 'dayjs';
 import { useCallback, useEffect, useState } from 'react';
 import { FaSave } from 'react-icons/fa';
@@ -12,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 
 import { fileType, uploadFile } from '@/api/file';
 import { usePostLiveMutation } from '@/api/program';
+import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
 import { CreateLiveReq } from '@/schema';
 import { LiveContent } from '@/types/interface';
 import LivePreviewButton from '@components/admin/LivePreviewButton';
@@ -24,26 +19,17 @@ import LiveBasic from './program/LiveBasic';
 import LiveCurriculum from './program/LiveCurriculum';
 import LiveMentor from './program/LiveMentor';
 import LivePrice from './program/LivePrice';
-import LiveSchedule from './program/LiveSchedule';
-
-interface Snack extends SnackbarOrigin {
-  open: boolean;
-}
-
+import ProgramSchedule from './program/ProgramSchedule';
 const LiveCreate: React.FC = () => {
   const navigate = useNavigate();
 
   const [loading, setLoading] = useState(false);
-  const [snack, setSnack] = useState<Snack>({
-    open: false,
-    vertical: 'top',
-    horizontal: 'center',
-  });
   const [content, setContent] = useState<LiveContent>({
     // mainDescription: ,
     curriculum: [],
     blogReview: '',
   });
+
   const [input, setInput] = useState<Omit<CreateLiveReq, 'desc'>>({
     title: '',
     shortDesc: '',
@@ -78,8 +64,6 @@ const LiveCreate: React.FC = () => {
     faqInfo: [],
   });
 
-  const { vertical, horizontal, open } = snack;
-
   const { mutateAsync: postLive } = usePostLiveMutation();
 
   const onChangeImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -91,6 +75,8 @@ const LiveCreate: React.FC = () => {
     });
     setInput((prev) => ({ ...prev, [e.target.name]: url }));
   };
+
+  const { snackbar } = useAdminSnackbar();
 
   const onClickSave = useCallback(async () => {
     setLoading(true);
@@ -104,7 +90,7 @@ const LiveCreate: React.FC = () => {
     console.log('res:', res);
 
     setLoading(false);
-    setSnack((prev) => ({ ...prev, open: true }));
+    snackbar('저장되었습니다.');
     navigate('/admin/programs');
   }, [input, content]);
 
@@ -125,7 +111,7 @@ const LiveCreate: React.FC = () => {
       <Heading2>기본 정보</Heading2>
       <section className="mb-6 mt-3">
         <div className="mb-6 grid w-full grid-cols-2 gap-3">
-          <LiveBasic input={input} setInput={setInput} />
+          <LiveBasic setInput={setInput} />
           <ImageUpload
             label="라이브 썸네일 이미지 업로드"
             id="thumbnail"
@@ -135,10 +121,10 @@ const LiveCreate: React.FC = () => {
         </div>
         <div className="grid w-full grid-cols-2 gap-3">
           <div className="flex flex-col items-start gap-6">
-            <LivePrice input={input} setInput={setInput} />
-            <LiveSchedule input={input} setInput={setInput} />
+            <LivePrice setInput={setInput} />
+            <ProgramSchedule setInput={setInput} />
             <FormControlLabel
-              value={input.vod}
+              defaultChecked={input.vod}
               control={<Checkbox />}
               label="VOD 제공 여부"
               labelPlacement="start"
@@ -154,7 +140,7 @@ const LiveCreate: React.FC = () => {
               name="mentorImg"
               onChange={onChangeImage}
             />
-            <LiveMentor input={input} setInput={setInput} />
+            <LiveMentor defaultValue={input} setInput={setInput} />
           </div>
         </div>
       </section>
@@ -180,13 +166,6 @@ const LiveCreate: React.FC = () => {
         >
           저장
         </Button>
-        <Snackbar
-          anchorOrigin={{ vertical, horizontal }}
-          open={open}
-          onClose={() => setSnack({ ...snack, open: false })}
-          message="라이브를 생성했습니다"
-          key={vertical + horizontal}
-        />
       </footer>
     </div>
   );

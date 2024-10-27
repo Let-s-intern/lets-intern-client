@@ -1,5 +1,6 @@
 import { fileType, uploadFile } from '@/api/file';
 import { useGetChallengeQuery, usePatchChallengeMutation } from '@/api/program';
+import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
 import isDeprecatedProgram from '@/lib/isDeprecatedProgram';
 import { UpdateChallengeReq } from '@/schema';
 import { ChallengeContent } from '@/types/interface';
@@ -18,8 +19,8 @@ import ChallengeBasic from './program/ChallengeBasic';
 import ChallengeCurriculum from './program/ChallengeCurriculum';
 import ChallengePoint from './program/ChallengePoint';
 import ChallengePrice from './program/ChallengePrice';
-import ChallengeSchedule from './program/ChallengeSchedule';
 import FaqSection from './program/FaqSection';
+import ProgramSchedule from './program/ProgramSchedule';
 
 const ChallengeEdit: React.FC = () => {
   const [content, setContent] = useState<ChallengeContent>({
@@ -63,6 +64,7 @@ const ChallengeEdit: React.FC = () => {
 
   const [input, setInput] = useState<Omit<UpdateChallengeReq, 'desc'>>({});
   const [loading, setLoading] = useState(false);
+  const { snackbar } = useAdminSnackbar();
 
   const onChangeImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files) return;
@@ -85,86 +87,14 @@ const ChallengeEdit: React.FC = () => {
       desc: JSON.stringify(content),
     };
 
+    console.log('req', req);
+
     const res = await patchChallenge(req);
     console.log('res', res);
 
     setLoading(false);
-  }, [challengeIdString, content, input, patchChallenge]);
-
-  /* challenge로 Input, content 초기화 */
-  useEffect(() => {
-    if (!challenge) return;
-
-    const {
-      title,
-      desc,
-      shortDesc,
-      criticalNotice,
-      participationCount,
-      thumbnail,
-      startDate,
-      endDate,
-      beginning,
-      deadline,
-      chatLink,
-      chatPassword,
-      challengeType,
-      classificationInfo,
-      priceInfo,
-      faqInfo,
-    } = challenge;
-
-    const {
-      discount,
-      price,
-      refund,
-      challengePriceType,
-      challengeUserType,
-      challengeParticipationType,
-      accountNumber,
-      accountType,
-    } = priceInfo[0];
-
-    const initial = {
-      title,
-      shortDesc,
-      criticalNotice,
-      participationCount,
-      thumbnail,
-      startDate: startDate?.format('YYYY-MM-DDTHH:mm:ss'),
-      endDate: endDate?.format('YYYY-MM-DDTHH:mm:ss'),
-      beginning: beginning?.format('YYYY-MM-DDTHH:mm:ss'),
-      deadline: deadline?.format('YYYY-MM-DDTHH:mm:ss'),
-      chatLink,
-      chatPassword,
-      challengeType,
-      programTypeInfo: classificationInfo.map((info) => ({
-        classificationInfo: {
-          programClassification: info.programClassification,
-        },
-      })),
-      priceInfo: [
-        {
-          priceInfo: {
-            price: price ?? 0,
-            discount: discount ?? 0,
-            accountNumber: accountNumber ?? '',
-            deadline: priceInfo[0].deadline?.format('YYYY-MM-DDTHH:mm:ss'),
-            accountType: accountType ?? undefined,
-          },
-          charge: price ?? 0,
-          refund: refund ?? 0,
-          challengePriceType: challengePriceType ?? 'CHARGE',
-          challengeUserType: challengeUserType ?? 'BASIC',
-          challengeParticipationType: challengeParticipationType ?? 'LIVE',
-        },
-      ],
-      faqInfo: faqInfo.map((info) => ({ faqId: info.id })),
-    };
-
-    setInput(initial);
-    setContent(JSON.parse(desc ?? '{}'));
-  }, [challenge]);
+    snackbar('저장되었습니다.');
+  }, [challengeIdString, content, input, patchChallenge, snackbar]);
 
   if (!challenge) {
     return <div>loading...</div>;
@@ -179,18 +109,23 @@ const ChallengeEdit: React.FC = () => {
       <Heading2>기본 정보</Heading2>
       <section className="mb-6 mt-3">
         <div className="mb-6 grid w-full grid-cols-2 gap-3">
-          <ChallengeBasic input={input} setInput={setInput} />
+          <ChallengeBasic defaultValue={challenge} setInput={setInput} />
           <ImageUpload
             label="챌린지 썸네일 이미지 업로드"
             id="thumbnail"
             name="thumbnail"
-            image={input.thumbnail}
+            image={input.thumbnail ?? challenge.thumbnail}
             onChange={onChangeImage}
           />
         </div>
         <div className="grid w-full grid-cols-2 gap-3">
-          <ChallengePrice input={input} setInput={setInput} />
-          <ChallengeSchedule input={input} setInput={setInput} />
+          {/* 가격 정보 */}
+          <ChallengePrice
+            defaultValue={challenge.priceInfo}
+            setInput={setInput}
+          />
+          {/* 일정 */}
+          <ProgramSchedule defaultValue={challenge} setInput={setInput} />
         </div>
       </section>
 
@@ -225,13 +160,20 @@ const ChallengeEdit: React.FC = () => {
       <div className="my-6">
         <FaqSection
           programType="CHALLENGE"
-          faqInfo={input.faqInfo}
+          faqInfo={
+            input.faqInfo ??
+            challenge.faqInfo.map((info) => ({ faqId: info.id }))
+          }
           setInput={setInput}
         />
       </div>
 
       <footer className="flex items-center justify-end gap-3">
-        <ChallengePreviewButton input={input} content={content} existing={challenge} />
+        <ChallengePreviewButton
+          input={input}
+          content={content}
+          existing={challenge}
+        />
         <Button
           variant="contained"
           color="primary"

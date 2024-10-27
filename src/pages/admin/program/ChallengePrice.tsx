@@ -1,21 +1,35 @@
 import { FormControl, InputLabel, MenuItem, Select } from '@mui/material';
 
-import { CreateChallengeReq, UpdateChallengeReq } from '@/schema';
+import {
+  ChallengeIdSchema,
+  CreateChallengeReq,
+  UpdateChallengeReq,
+} from '@/schema';
 import { newProgramFeeTypeToText } from '@/utils/convert';
 import Input from '@components/ui/input/Input';
 
-interface ChallengePriceProps<
+interface IChallengePriceProps<
   T extends CreateChallengeReq | UpdateChallengeReq,
 > {
-  input: Omit<T, 'desc'>;
+  defaultValue?: ChallengeIdSchema['priceInfo'];
   setInput: React.Dispatch<React.SetStateAction<Omit<T, 'desc'>>>;
 }
 
 export default function ChallengePrice<
   T extends CreateChallengeReq | UpdateChallengeReq,
->({ input, setInput }: ChallengePriceProps<T>) {
-  if (input.priceInfo === undefined || input.priceInfo.length === 0)
-    return <></>;
+>({ defaultValue, setInput }: IChallengePriceProps<T>) {
+  const priceInfo: ChallengeIdSchema['priceInfo'][0] = defaultValue?.[0] ?? {
+    priceId: 0,
+    accountType: 'HANA',
+    challengeParticipationType: 'LIVE',
+    challengePriceType: 'CHARGE',
+    challengeUserType: 'BASIC',
+    accountNumber: '',
+    refund: 0,
+    deadline: null,
+    discount: 4000,
+    price: 10000,
+  };
 
   return (
     <div className="flex flex-col gap-3">
@@ -26,12 +40,15 @@ export default function ChallengePrice<
           id="challengePriceType"
           name="challengePriceType"
           label="금액유형"
-          value={input.priceInfo[0].challengePriceType}
+          defaultValue={priceInfo.challengePriceType}
           onChange={(e) => {
             setInput((prev) => ({
               ...prev,
               priceInfo: [
-                { ...prev.priceInfo![0], [e.target.name]: e.target.value },
+                {
+                  ...prev.priceInfo?.[0],
+                  challengePriceType: e.target.value as 'CHARGE' | 'REFUND',
+                },
               ],
             }));
           }}
@@ -50,39 +67,39 @@ export default function ChallengePrice<
         name="basicPrice"
         size="small"
         placeholder="이용료 금액을 입력해주세요"
-        value={String(input.priceInfo[0].charge)}
+        defaultValue={String(priceInfo.price)}
         onChange={(e) => {
-          const value = e.target.value;
-          const priceInfo = [
-            {
-              ...input.priceInfo![0],
-              charge: Number(value),
-              priceInfo: {
-                ...input.priceInfo![0].priceInfo,
-                price: Number(value),
-              },
-            },
-          ];
-
           setInput((prev) => ({
             ...prev,
-            priceInfo,
+            priceInfo: [
+              {
+                ...prev.priceInfo?.[0],
+                charge: Number(e.target.value),
+                priceInfo: {
+                  ...prev.priceInfo?.[0].priceInfo,
+                  price: Number(e.target.value),
+                },
+              },
+            ],
           }));
         }}
       />
-      {input.priceInfo[0].challengePriceType === 'REFUND' && (
+      {priceInfo.challengePriceType === 'REFUND' && (
         <Input
           label="베이직 보증금 금액"
           type="number"
           name="refund"
           size="small"
           placeholder="보증금 금액을 입력해주세요"
-          value={String(input.priceInfo[0].refund)}
+          defaultValue={String(priceInfo.refund)}
           onChange={(e) => {
             setInput((prev) => ({
               ...prev,
               priceInfo: [
-                { ...prev.priceInfo![0], refund: Number(e.target.value) },
+                {
+                  ...prev.priceInfo?.[0],
+                  refund: Number(e.target.value),
+                },
               ],
             }));
           }}
@@ -94,21 +111,19 @@ export default function ChallengePrice<
         name="discount"
         size="small"
         placeholder="할인 금액을 입력해주세요"
-        value={String(input.priceInfo[0].priceInfo.discount)}
+        defaultValue={String(priceInfo.discount)}
         onChange={(e) => {
-          const priceInfo = [
-            {
-              ...input.priceInfo![0],
-              priceInfo: {
-                ...input.priceInfo![0].priceInfo,
-                discount: Number(e.target.value),
-              },
-            },
-          ];
-
           setInput((prev) => ({
             ...prev,
-            priceInfo,
+            priceInfo: [
+              {
+                ...prev.priceInfo?.[0],
+                priceInfo: {
+                  ...prev.priceInfo?.[0].priceInfo,
+                  discount: Number(e.target.value),
+                },
+              },
+            ],
           }));
         }}
       />

@@ -1,18 +1,29 @@
 import { FormControl, InputLabel, MenuItem, Select } from '@mui/material';
 
-import { CreateLiveReq, UpdateLiveReq } from '@/schema';
+import { CreateLiveReq, LiveIdSchema, UpdateLiveReq } from '@/schema';
 import { newProgramFeeTypeToText } from '@/utils/convert';
 import Input from '@components/ui/input/Input';
+import dayjs from 'dayjs';
 
 interface LivePriceProps<T extends CreateLiveReq | UpdateLiveReq> {
-  input: Omit<T, 'desc'>;
+  defaultValue?: LiveIdSchema['priceInfo'];
   setInput: React.Dispatch<React.SetStateAction<Omit<T, 'desc'>>>;
 }
 
 export default function LivePrice<T extends CreateLiveReq | UpdateLiveReq>({
-  input,
+  defaultValue,
   setInput,
 }: LivePriceProps<T>) {
+  const priceInfo: LiveIdSchema['priceInfo'] = defaultValue ?? {
+    priceId: 0,
+    accountType: 'HANA',
+    livePriceType: 'CHARGE',
+    accountNumber: '',
+    deadline: dayjs(),
+    discount: 4000,
+    price: 10000,
+  };
+
   return (
     <div className="flex flex-col gap-3">
       <FormControl fullWidth size="small">
@@ -22,7 +33,7 @@ export default function LivePrice<T extends CreateLiveReq | UpdateLiveReq>({
           id="livePriceType"
           name="livePriceType"
           label="금액유형"
-          value={input.priceInfo?.livePriceType}
+          defaultValue={priceInfo.livePriceType ?? 'CHARGE'}
           onChange={(e) => {
             setInput((prev) => ({
               ...prev,
@@ -45,7 +56,7 @@ export default function LivePrice<T extends CreateLiveReq | UpdateLiveReq>({
         name="price"
         size="small"
         placeholder="이용료 금액을 입력해주세요"
-        value={String(input.priceInfo?.priceInfo.price)}
+        defaultValue={String(priceInfo.price)}
         onChange={(e) => {
           setInput((prev) => ({
             ...prev,
@@ -65,7 +76,7 @@ export default function LivePrice<T extends CreateLiveReq | UpdateLiveReq>({
         name="discount"
         size="small"
         placeholder="할인 금액을 입력해주세요"
-        value={String(input.priceInfo?.priceInfo.discount)}
+        defaultValue={String(priceInfo.discount)}
         onChange={(e) => {
           setInput((prev) => ({
             ...prev,
