@@ -4,6 +4,7 @@ import { twMerge } from 'tailwind-merge';
 
 import Description from '@components/common/program/program-detail/Description';
 import Heading2 from '@components/common/program/program-detail/Heading2';
+import OutlinedBox from '@components/common/program/program-detail/OutlineBox';
 
 const STAR = {
   S: ['Situation', '상황'],
@@ -132,25 +133,6 @@ function ChallengeIntro() {
 function Badge({ children }: { children: ReactNode }) {
   return (
     <div className="gap-1.6 flex w-fit items-center gap-1 rounded-xxs bg-[#FFF7EF] px-2.5 py-1 text-small18 font-bold text-[#FB8100]">
-      {children}
-    </div>
-  );
-}
-
-function OutlinedBox({
-  children,
-  className,
-}: {
-  children: ReactNode;
-  className?: string;
-}) {
-  return (
-    <div
-      className={twMerge(
-        'flex items-center rounded-md border border-[#39C7FF] bg-[#EEFAFF] py-4',
-        className,
-      )}
-    >
       {children}
     </div>
   );
