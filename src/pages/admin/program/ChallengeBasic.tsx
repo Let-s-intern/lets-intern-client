@@ -21,6 +21,7 @@ import {
   Select,
   SelectChangeEvent,
 } from '@mui/material';
+import React from 'react';
 
 interface ChallengeBasicProps<
   T extends CreateChallengeReq | UpdateChallengeReq,
@@ -40,151 +41,162 @@ interface ChallengeBasicProps<
   setInput: React.Dispatch<React.SetStateAction<Omit<T, 'desc'>>>;
 }
 
-export default function ChallengeBasic<
-  T extends CreateChallengeReq | UpdateChallengeReq,
->({ defaultValue, setInput }: ChallengeBasicProps<T>) {
-  const onChange = (e: SelectChangeEvent) => {
-    setInput((prev) => ({ ...prev, [e.target!.name]: e.target!.value }));
-  };
+const ChallengeBasic = React.memo(
+  <T extends CreateChallengeReq | UpdateChallengeReq>({
+    defaultValue,
+    setInput,
+  }: ChallengeBasicProps<T>) => {
+    const onChange = (e: SelectChangeEvent) => {
+      setInput((prev) => ({ ...prev, [e.target!.name]: e.target!.value }));
+    };
 
-  return (
-    <div className="flex w-full flex-col gap-3">
-      <FormControl size="small">
-        <InputLabel id="programType">프로그램 분류</InputLabel>
-        <Select
-          labelId="programTypeInfo"
-          label="프로그램 분류"
-          id="programTypeInfo"
-          name="programTypeInfo"
-          multiple
-          defaultValue={
-            defaultValue?.classificationInfo
-              ? defaultValue.classificationInfo.map(
-                  (info) => info.programClassification,
-                )
-              : []
-          }
-          onChange={(e) =>
-            setInput((prev) => ({
-              ...prev,
-              programTypeInfo: (e.target.value as ProgramClassification[]).map(
-                (item) => ({
+    return (
+      <div className="flex w-full flex-col gap-3">
+        <FormControl size="small">
+          <InputLabel id="programType">프로그램 분류</InputLabel>
+          <Select
+            labelId="programTypeInfo"
+            label="프로그램 분류"
+            id="programTypeInfo"
+            name="programTypeInfo"
+            multiple
+            defaultValue={
+              defaultValue?.classificationInfo
+                ? defaultValue.classificationInfo.map(
+                    (info) => info.programClassification,
+                  )
+                : []
+            }
+            onChange={(e) =>
+              setInput((prev) => ({
+                ...prev,
+                programTypeInfo: (
+                  e.target.value as ProgramClassification[]
+                ).map((item) => ({
                   classificationInfo: {
                     programClassification: item,
                   },
-                }),
-              ),
-            }))
-          }
-          input={<OutlinedInput label="프로그램 분류" />}
-          renderValue={(selectedList) => (
-            <div className="flex flex-wrap gap-2">
-              {selectedList.map((selected) => (
-                <Chip
-                  key={selected}
-                  label={
-                    programClassificationToText[
-                      selected as ProgramClassification
-                    ]
-                  }
-                />
-              ))}
-            </div>
-          )}
-        >
-          {Object.keys(programClassificationToText).map((type) => (
-            <MenuItem key={type} value={type}>
-              {programClassificationToText[type as ProgramClassification]}
-            </MenuItem>
-          ))}
-        </Select>
-      </FormControl>
-      <FormControl size="small">
-        <InputLabel>챌린지 구분</InputLabel>
-        <Select
-          label="챌린지 구분"
-          name="challengeType"
-          defaultValue={defaultValue?.challengeType}
-          onChange={onChange}
-        >
-          {challengeTypes.map((type) => (
-            <MenuItem key={type} value={type}>
-              {challengeTypeToText[type]}
-            </MenuItem>
-          ))}
-        </Select>
-      </FormControl>
-      {/* (임시) 가격 구분 삭제 */}
-      {defaultValue?.priceInfo && defaultValue.priceInfo.length > 0 && (
-        <FormControl size="small">
-          <InputLabel>참여 형태</InputLabel>
-          <Select
-            label="참여 형태"
-            defaultValue={defaultValue.priceInfo[0].challengeParticipationType}
-            onChange={(e) => {
-              setInput((prev) => ({
-                ...prev,
-                priceInfo: [
-                  {
-                    ...prev.priceInfo?.[0],
-                    challengeParticipationType: e.target
-                      .value as ChallengeParticipationType,
-                  },
-                ],
-              }));
-            }}
+                })),
+              }))
+            }
+            input={<OutlinedInput label="프로그램 분류" />}
+            renderValue={(selectedList) => (
+              <div className="flex flex-wrap gap-2">
+                {selectedList.map((selected) => (
+                  <Chip
+                    key={selected}
+                    label={
+                      programClassificationToText[
+                        selected as ProgramClassification
+                      ]
+                    }
+                  />
+                ))}
+              </div>
+            )}
           >
-            {Object.keys(programParticipationTypeToText).map((type: string) => (
+            {Object.keys(programClassificationToText).map((type) => (
               <MenuItem key={type} value={type}>
-                {programParticipationTypeToText[type]}
+                {programClassificationToText[type as ProgramClassification]}
               </MenuItem>
             ))}
           </Select>
         </FormControl>
-      )}
-      <Input
-        label="제목"
-        type="text"
-        name="title"
-        placeholder="제목을 입력해주세요"
-        defaultValue={defaultValue?.title}
-        size="small"
-        onChange={onChange}
-      />
-      <Input
-        label="한 줄 설명"
-        type="text"
-        name="shortDesc"
-        size="small"
-        defaultValue={defaultValue?.shortDesc}
-        placeholder="한 줄 설명을 입력해주세요"
-        onChange={onChange}
-      />
-      <Input
-        label="정원"
-        type="number"
-        name="participationCount"
-        size="small"
-        defaultValue={String(defaultValue?.participationCount)}
-        placeholder="총 정원 수를 입력해주세요"
-        onChange={onChange}
-      />
-      <Input
-        label="카카오톡 오픈채팅 링크"
-        name="chatLink"
-        size="small"
-        placeholder="카카오톡 오픈채팅 링크를 입력하세요"
-        defaultValue={defaultValue?.chatLink}
-        onChange={onChange}
-      />
-      <Input
-        label="카카오톡 오픈채팅 비밀번호"
-        name="chatPassword"
-        size="small"
-        placeholder="카카오톡 오픈채팅 비밀번호를 입력하세요"
-        defaultValue={defaultValue?.chatPassword}
-        onChange={onChange}
-      />
-    </div>
-  );
-}
+        <FormControl size="small">
+          <InputLabel>챌린지 구분</InputLabel>
+          <Select
+            label="챌린지 구분"
+            name="challengeType"
+            defaultValue={defaultValue?.challengeType}
+            onChange={onChange}
+          >
+            {challengeTypes.map((type) => (
+              <MenuItem key={type} value={type}>
+                {challengeTypeToText[type]}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+        {/* (임시) 가격 구분 삭제 */}
+        {defaultValue?.priceInfo && defaultValue.priceInfo.length > 0 && (
+          <FormControl size="small">
+            <InputLabel>참여 형태</InputLabel>
+            <Select
+              label="참여 형태"
+              defaultValue={
+                defaultValue.priceInfo[0].challengeParticipationType
+              }
+              onChange={(e) => {
+                setInput((prev) => ({
+                  ...prev,
+                  priceInfo: [
+                    {
+                      ...prev.priceInfo?.[0],
+                      challengeParticipationType: e.target
+                        .value as ChallengeParticipationType,
+                    },
+                  ],
+                }));
+              }}
+            >
+              {Object.keys(programParticipationTypeToText).map(
+                (type: string) => (
+                  <MenuItem key={type} value={type}>
+                    {programParticipationTypeToText[type]}
+                  </MenuItem>
+                ),
+              )}
+            </Select>
+          </FormControl>
+        )}
+        <Input
+          label="제목"
+          type="text"
+          name="title"
+          placeholder="제목을 입력해주세요"
+          defaultValue={defaultValue?.title}
+          size="small"
+          onChange={onChange}
+        />
+        <Input
+          label="한 줄 설명"
+          type="text"
+          name="shortDesc"
+          size="small"
+          defaultValue={defaultValue?.shortDesc}
+          placeholder="한 줄 설명을 입력해주세요"
+          onChange={onChange}
+        />
+        <Input
+          label="정원"
+          type="number"
+          name="participationCount"
+          size="small"
+          defaultValue={String(defaultValue?.participationCount)}
+          placeholder="총 정원 수를 입력해주세요"
+          onChange={onChange}
+        />
+        <Input
+          label="카카오톡 오픈채팅 링크"
+          name="chatLink"
+          size="small"
+          placeholder="카카오톡 오픈채팅 링크를 입력하세요"
+          defaultValue={defaultValue?.chatLink}
+          onChange={onChange}
+        />
+        <Input
+          label="카카오톡 오픈채팅 비밀번호"
+          name="chatPassword"
+          size="small"
+          placeholder="카카오톡 오픈채팅 비밀번호를 입력하세요"
+          defaultValue={defaultValue?.chatPassword}
+          onChange={onChange}
+        />
+      </div>
+    );
+  },
+);
+
+ChallengeBasic.displayName = 'ChallengeBasic';
+
+export default ChallengeBasic;
