@@ -23,7 +23,6 @@ const ChallengeDetailSSRPage = () => {
 
   const challengeFromServer = useServerChallenge();
   const { data } = useChallengeQuery({ challengeId: Number(id || '') });
-  // const { data: titleData } = useGetChallengeTitle(id ?? '');
 
   const challenge = data || challengeFromServer;
   const isLoading = challenge.title === '로딩중...';
@@ -84,9 +83,6 @@ export function ApplyCTA({ programType, program }: ApplyCTAProps) {
   }>();
 
   const { isLoggedIn } = useAuthStore();
-  // const {
-  //   query: { data: program },
-  // } = useProgramQuery({ programId: Number(id), type: programType });
   const { data: application } = useProgramApplicationQuery(
     programType,
     Number(id),
@@ -149,9 +145,6 @@ export function DesktopApplyCTA({ programType, program }: ApplyCTAProps) {
   const navigate = useNavigate();
 
   const { isLoggedIn } = useAuthStore();
-  // const {
-  //   query: { data: program, isLoading },
-  // } = useProgramQuery({ programId: Number(id), type: programType });
   const { data: application } = useProgramApplicationQuery(
     programType,
     Number(id),
