@@ -32,9 +32,11 @@ const ChallengeView: React.FC<{ challenge: ChallengeIdSchema }> = ({
         />
 
         <div>특별 챌린지, 합격자 후기 (TODO: 본 제목 삭제)</div>
-        {receivedContent.mainDescription?.root ? (
-          <LexicalContent node={receivedContent.mainDescription?.root} />
-        ) : null}
+        <div className="mb-14 sm:mb-48">
+          {receivedContent.mainDescription?.root ? (
+            <LexicalContent node={receivedContent.mainDescription?.root} />
+          ) : null}
+        </div>
 
         <div>프로그램 소개 평균 10초</div>
         <div>평균 서류 합격률 28%</div>
