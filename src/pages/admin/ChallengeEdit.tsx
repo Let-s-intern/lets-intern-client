@@ -45,17 +45,20 @@ const ChallengeEdit: React.FC = () => {
 
   const receivedContent = useMemo<ChallengeContent>(() => {
     if (!challenge?.desc) {
-      return {};
+      return { initialized: false };
     }
     try {
       return JSON.parse(challenge.desc);
     } catch (e) {
       console.error(e);
-      return {};
+      return { initialized: false };
     }
   }, [challenge?.desc]);
 
   useEffect(() => {
+    if (!receivedContent.initialized) {
+      return;
+    }
     setContent((prev) => ({
       ...(prev.initialized ? prev : { ...receivedContent, initialized: true }),
     }));
@@ -106,7 +109,7 @@ const ChallengeEdit: React.FC = () => {
     snackbar('저장되었습니다.');
   }, [challengeIdString, content, input, patchChallenge, snackbar]);
 
-  if (!challenge) {
+  if (!challenge || !content.initialized) {
     return <div>loading...</div>;
   }
 
