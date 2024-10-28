@@ -140,17 +140,14 @@ const ChallengeCreate: React.FC = () => {
         />
 
         <Heading3>상세 설명</Heading3>
-
-        <main>
-          <EditorApp
-            onChangeSerializedEditorState={(json) =>
-              setContent((prev) => ({
-                ...prev,
-                mainDescription: json,
-              }))
-            }
-          ></EditorApp>
-        </main>
+        <EditorApp
+          onChangeSerializedEditorState={(json) =>
+            setContent((prev) => ({
+              ...prev,
+              mainDescription: json,
+            }))
+          }
+        ></EditorApp>
       </section>
 
       <ChallengeCurriculum
