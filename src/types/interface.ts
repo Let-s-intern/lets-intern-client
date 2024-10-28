@@ -11,27 +11,37 @@ export interface IApplyDrawerAction {
   type: 'toggle' | 'close' | 'open';
 }
 
+export type ChallengePoint = {
+  weekText?: string;
+  list?: {
+    id: string;
+    title: string;
+    subtitle: string;
+  }[];
+};
+
+export type ChallengeCurriculum = {
+  id: string;
+  startDate: string;
+  endDate: string;
+  session: string; // 회차
+  title: string;
+  content: string; // 내용
+};
+
 /** 챌린지 또는 LIVE 클래스의 JSON 버전 (desc에 통쨰로 JSON 형태로 들어감) */
 export type ChallengeContent = {
-  /* 상세 설명*/
+  /** 초기화 여부 알려주는 것 */
+  initialized: boolean;
+  /** 상세 설명*/
   mainDescription?: SerializedEditorState;
-  /* 커리큘럼 */
-  curriculum: {
-    id: string;
-    startDate: string;
-    endDate: string;
-    session: string; // 회차
-    title: string;
-    content: string; // 내용
-  }[];
-  /* 챌린지 POINT */
-  challengePoint: {
-    id: string;
-    content: string;
-  }[];
-  /* 블로그 후기 */
+  /** 커리큘럼 */
+  curriculum?: ChallengeCurriculum[];
+  /** 챌린지 POINT */
+  challengePoint: ChallengePoint;
+  /** 블로그 후기 */
   blogReview: unknown;
-  /*  후기 */
+  /**  후기 */
   challengeReview: unknown;
 };
 

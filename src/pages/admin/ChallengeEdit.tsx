@@ -16,16 +16,20 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { FaSave } from 'react-icons/fa';
 import { useNavigate, useParams } from 'react-router-dom';
 import ChallengeBasic from './program/ChallengeBasic';
-import ChallengeCurriculum from './program/ChallengeCurriculum';
-import ChallengePoint from './program/ChallengePoint';
+import ChallengeCurriculumEditor from './program/ChallengeCurriculum';
+import ChallengePointEditor from './program/ChallengePoint';
 import ChallengePrice from './program/ChallengePrice';
 import FaqSection from './program/FaqSection';
 import ProgramSchedule from './program/ProgramSchedule';
 
 const ChallengeEdit: React.FC = () => {
   const [content, setContent] = useState<ChallengeContent>({
+    initialized: false,
     curriculum: [],
-    challengePoint: [],
+    challengePoint: {
+      weekText: '2주',
+      list: [],
+    },
     blogReview: '',
     challengeReview: '',
   });
@@ -50,6 +54,12 @@ const ChallengeEdit: React.FC = () => {
       return {};
     }
   }, [challenge?.desc]);
+
+  useEffect(() => {
+    setContent((prev) => ({
+      ...(prev.initialized ? prev : { ...receivedContent, initialized: true }),
+    }));
+  }, [receivedContent]);
 
   useEffect(() => {
     if (challenge && isDeprecatedProgram(challenge)) {
@@ -131,16 +141,14 @@ const ChallengeEdit: React.FC = () => {
 
       <Heading2>프로그램 소개</Heading2>
       <section>
-        <ChallengePoint
+        <ChallengePointEditor
           challengePoint={content.challengePoint}
           setContent={setContent}
         />
 
         <Heading3>상세 설명</Heading3>
         <EditorApp
-          initialEditorStateJsonString={JSON.stringify(
-            receivedContent.mainDescription,
-          )}
+          initialEditorStateJsonString={JSON.stringify(content.mainDescription)}
           onChangeSerializedEditorState={(json) =>
             setContent((prev) => ({
               ...prev,
@@ -150,7 +158,7 @@ const ChallengeEdit: React.FC = () => {
         />
       </section>
 
-      <ChallengeCurriculum
+      <ChallengeCurriculumEditor
         curriculum={content.curriculum}
         setContent={setContent}
       />

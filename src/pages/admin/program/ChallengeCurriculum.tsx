@@ -3,7 +3,7 @@ import { DatePicker } from '@mui/x-date-pickers';
 import dayjs, { Dayjs } from 'dayjs';
 import { MdDelete } from 'react-icons/md';
 
-import { ChallengeContent } from '@/types/interface';
+import { ChallengeContent, ChallengeCurriculum } from '@/types/interface';
 import { generateRandomNumber } from '@/utils/random';
 import { Heading2 } from '@components/admin/ui/heading/Heading2';
 import Input from '@components/ui/input/Input';
@@ -13,15 +13,15 @@ interface ChallengeCurriculumProps {
   setContent: React.Dispatch<React.SetStateAction<ChallengeContent>>;
 }
 
-function ChallengeCurriculum({
-  curriculum,
+function ChallengeCurriculumEditor({
+  curriculum = [],
   setContent,
 }: ChallengeCurriculumProps) {
   const onClickAdd = () => {
     setContent((prev) => ({
       ...prev,
       curriculum: [
-        ...prev.curriculum,
+        ...(prev?.curriculum ?? []),
         {
           id: generateRandomNumber(),
           startDate: new Date().toString(),
@@ -36,7 +36,7 @@ function ChallengeCurriculum({
 
   const onChangeDate = (
     name: string,
-    target: ChallengeContent['curriculum'][0],
+    target: ChallengeCurriculum,
     value: Dayjs | null,
   ) => {
     const newCurr = [...curriculum];
@@ -53,7 +53,7 @@ function ChallengeCurriculum({
 
   const onChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-    target: ChallengeContent['curriculum'][0],
+    target: ChallengeCurriculum,
   ) => {
     const newCurr = [...curriculum];
     const index = curriculum.findIndex((curr) => curr.id === target.id);
@@ -116,7 +116,7 @@ function ChallengeCurriculum({
               onClick={() => {
                 setContent((prev) => ({
                   ...prev,
-                  curriculum: prev.curriculum.filter(
+                  curriculum: prev.curriculum?.filter(
                     (curr) => curr.id !== item.id,
                   ),
                 }));
@@ -131,4 +131,4 @@ function ChallengeCurriculum({
   );
 }
 
-export default ChallengeCurriculum;
+export default ChallengeCurriculumEditor;

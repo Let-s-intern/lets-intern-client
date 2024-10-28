@@ -1,63 +1,108 @@
 import { Button, IconButton } from '@mui/material';
 import { MdDelete } from 'react-icons/md';
 
-import { ChallengeContent } from '@/types/interface';
+import { ChallengeContent, ChallengePoint } from '@/types/interface';
 import { generateRandomNumber } from '@/utils/random';
 import Heading3 from '@components/admin/ui/heading/Heading3';
 import Input from '@components/ui/input/Input';
 
 interface ChallengePointProps {
-  challengePoint: ChallengeContent['challengePoint'];
+  challengePoint?: ChallengePoint;
   setContent: React.Dispatch<React.SetStateAction<ChallengeContent>>;
 }
 
-function ChallengePoint({ challengePoint, setContent }: ChallengePointProps) {
+function ChallengePointEditor({
+  challengePoint = {},
+  setContent,
+}: ChallengePointProps) {
   const onClickAdd = () => {
     setContent((prev) => ({
       ...prev,
-      challengePoint: [
-        ...(prev.challengePoint ?? []),
-        {
-          id: generateRandomNumber(),
-          content: '',
-        },
-      ],
+      challengePoint: {
+        ...prev?.challengePoint,
+        list: [
+          ...(prev?.challengePoint?.list ?? []),
+          {
+            id: generateRandomNumber(),
+            title: '제목',
+            subtitle: '내용',
+          },
+        ],
+      },
     }));
   };
 
-  const onChange = (
-    e: React.ChangeEvent<HTMLInputElement>,
-    target: ChallengeContent['challengePoint'][0],
-  ) => {
-    const newPoint = [...challengePoint];
-    const index = challengePoint.findIndex((curr) => curr.id === target.id);
-    if (index === -1) return;
-
-    newPoint[index] = {
-      ...newPoint[index],
-      [e.target.name]: e.target.value,
-    };
-    setContent((prev) => ({ ...prev, challengePoint: newPoint }));
-  };
-
   return (
-    <>
+    <div className="mb-6 border-b pb-6">
       <div className="my-3 flex items-center justify-between">
         <Heading3>챌린지 POINT</Heading3>
         <Button variant="outlined" onClick={onClickAdd}>
           추가
         </Button>
       </div>
+      <div className="my-3 flex items-center gap-2">
+        <span>하루 30분, </span>
+        <Input
+          label="텍스트"
+          defaultValue={challengePoint.weekText}
+          className="w-24"
+          fullWidth={false}
+          size="small"
+          onChange={(e) => {
+            setContent((prev) => ({
+              ...prev,
+              challengePoint: {
+                ...prev.challengePoint,
+                weekText: e.target.value,
+              },
+            }));
+          }}
+        ></Input>
+        <span>안에 얻을 수 있는 것</span>
+      </div>
 
       <div>
-        {challengePoint?.map((item) => (
-          <div className="mb-3 flex items-center" key={item.id}>
+        {challengePoint.list?.map((item) => (
+          <div className="mb-3 flex items-center gap-1" key={item.id}>
             <Input
               label="내용"
-              name="content"
-              value={item.content}
+              name="title"
+              size="small"
+              defaultValue={item.title}
               placeholder="내용을 입력하세요"
-              onChange={(e) => onChange(e, item)}
+              onChange={(e) => {
+                setContent((prev) => ({
+                  ...prev,
+                  challengePoint: {
+                    ...prev.challengePoint,
+                    list: prev.challengePoint.list?.map((point) =>
+                      point.id === item.id
+                        ? { ...point, title: e.target.value }
+                        : point,
+                    ),
+                  },
+                }));
+              }}
+            />
+            <Input
+              label="부내용"
+              name="subtitle"
+              size="small"
+              defaultValue={item.subtitle}
+              placeholder="내용을 입력하세요"
+              onChange={(e) => {
+                setContent((prev) => ({
+                  ...prev,
+                  challengePoint: {
+                    ...prev.challengePoint,
+                    list: prev.challengePoint.list?.map((point) =>
+                      point.id === item.id
+                        ? { ...point, subtitle: e.target.value }
+                        : point,
+                    ),
+                  },
+                }));
+              }}
             />
             <IconButton
               aria-label="delete"
@@ -65,19 +110,22 @@ function ChallengePoint({ challengePoint, setContent }: ChallengePointProps) {
               onClick={() => {
                 setContent((prev) => ({
                   ...prev,
-                  challengePoint: prev.challengePoint.filter(
-                    (point) => point.id !== item.id,
-                  ),
+                  challengePoint: {
+                    ...prev.challengePoint,
+                    list: prev.challengePoint.list?.filter(
+                      (point) => point.id !== item.id,
+                    ),
+                  },
                 }));
               }}
             >
-              <MdDelete />
+              <MdDelete size={16} />
             </IconButton>
           </div>
         ))}
       </div>
-    </>
+    </div>
   );
 }
 
-export default ChallengePoint;
+export default ChallengePointEditor;
