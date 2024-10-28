@@ -1,3 +1,4 @@
+import ChallengeIntro from '@/pages/common/program/ChallengeIntro';
 import { ChallengeIdSchema } from '@/schema';
 import { ChallengeContent } from '@/types/interface';
 import Header from '@components/common/program/program-detail/header/Header';
@@ -25,6 +26,7 @@ const ChallengeView: React.FC<{ challenge: ChallengeIdSchema }> = ({
       <pre>{JSON.stringify(JSON.parse(challenge.desc || '{}'), null, 2)}</pre>
       <div className="px-5 lg:px-10 xl:px-52">
         <Header programTitle={challenge.title ?? ''} />
+        <ChallengeIntro />
         <div>네비게이션 바</div>
         <ChallengePointView
           className="mb-14 sm:mb-44"
