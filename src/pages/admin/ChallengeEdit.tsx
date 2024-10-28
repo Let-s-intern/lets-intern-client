@@ -137,19 +137,17 @@ const ChallengeEdit: React.FC = () => {
         />
 
         <Heading3>상세 설명</Heading3>
-        <main>
-          <EditorApp
-            initialEditorStateJsonString={JSON.stringify(
-              receivedContent.mainDescription,
-            )}
-            onChangeSerializedEditorState={(json) =>
-              setContent((prev) => ({
-                ...prev,
-                mainDescription: json,
-              }))
-            }
-          />
-        </main>
+        <EditorApp
+          initialEditorStateJsonString={JSON.stringify(
+            receivedContent.mainDescription,
+          )}
+          onChangeSerializedEditorState={(json) =>
+            setContent((prev) => ({
+              ...prev,
+              mainDescription: json,
+            }))
+          }
+        />
       </section>
 
       <ChallengeCurriculum
