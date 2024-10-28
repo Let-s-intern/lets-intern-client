@@ -149,7 +149,7 @@ const ChallengeEdit: React.FC = () => {
           setContent={setContent}
         />
 
-        <Heading3>상세 설명</Heading3>
+        <Heading3>상세 설명 (특별 챌린지 및 합격자 후기)</Heading3>
         <EditorApp
           initialEditorStateJsonString={JSON.stringify(content.mainDescription)}
           onChangeSerializedEditorState={(json) =>

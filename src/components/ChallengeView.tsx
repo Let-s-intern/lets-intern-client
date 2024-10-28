@@ -3,6 +3,7 @@ import { ChallengeContent } from '@/types/interface';
 import Header from '@components/common/program/program-detail/header/Header';
 import { useMemo } from 'react';
 import ChallengePointView from './challenge-view/ChallengePointView';
+import LexicalContent from './common/blog/LexicalContent';
 
 const ChallengeView: React.FC<{ challenge: ChallengeIdSchema }> = ({
   challenge,
@@ -29,8 +30,12 @@ const ChallengeView: React.FC<{ challenge: ChallengeIdSchema }> = ({
           className="mb-14 sm:mb-44"
           point={receivedContent.challengePoint}
         />
-        <div>특별 챌린지</div>
-        <div>합격자 후기</div>
+
+        <div>특별 챌린지, 합격자 후기 (TODO: 본 제목 삭제)</div>
+        {receivedContent.mainDescription?.root ? (
+          <LexicalContent node={receivedContent.mainDescription?.root} />
+        ) : null}
+
         <div>프로그램 소개 평균 10초</div>
         <div>평균 서류 합격률 28%</div>
         <div>취업 준비 현황 체크리스트</div>
