@@ -1,7 +1,9 @@
 import { useProgramApplicationQuery } from '@/api/application';
 import { useChallengeQuery } from '@/api/challenge';
 import { useServerChallenge } from '@/context/ServerChallenge';
+import { generateOrderId, getPayInfo, UserInfo } from '@/lib/order';
 import useAuthStore from '@/store/useAuthStore';
+import useProgramStore from '@/store/useProgramStore';
 import { getProgramPathname } from '@/utils/url';
 import ChallengeView from '@components/ChallengeView';
 import FilledButton from '@components/common/program/program-detail/button/FilledButton';
@@ -10,7 +12,7 @@ import NotiButton from '@components/common/program/program-detail/button/NotiBut
 import { useMediaQuery } from '@mui/material';
 import dayjs, { Dayjs } from 'dayjs';
 import { Duration } from 'dayjs/plugin/duration';
-import { ReactNode, useEffect, useState } from 'react';
+import { ReactNode, useCallback, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 const ChallengeDetailSSRPage = () => {
@@ -20,9 +22,13 @@ const ChallengeDetailSSRPage = () => {
     title?: string;
   }>();
   const isMobile = useMediaQuery('(max-width:991px)');
+  const { isLoggedIn } = useAuthStore();
 
   const challengeFromServer = useServerChallenge();
   const { data } = useChallengeQuery({ challengeId: Number(id || '') });
+
+  const { initProgramApplicationForm, setProgramApplicationForm } =
+    useProgramStore();
 
   const challenge = data || challengeFromServer;
   const isLoading = challenge.title === '로딩중...';
@@ -32,7 +38,12 @@ const ChallengeDetailSSRPage = () => {
     if (isNotValidJson) {
       navigate(`/program/challenge/old/${id}`);
     }
-  }, [challenge.desc]);
+  }, [id, isNotValidJson, navigate]);
+
+  // 이 페이지 방문 시 프로그램 신청 폼 초기화
+  useEffect(() => {
+    initProgramApplicationForm();
+  }, [initProgramApplicationForm]);
 
   useEffect(() => {
     if (!titleFromUrl && !isLoading) {
@@ -48,6 +59,85 @@ const ChallengeDetailSSRPage = () => {
     }
   }, [challenge.title, id, isLoading, titleFromUrl]);
 
+  const { data: application } = useProgramApplicationQuery(
+    'challenge',
+    Number(id),
+  );
+
+  /** 이미 신청했는지 체크하는 정보 */
+  const isAlreadyApplied = application?.applied ?? false;
+
+  const onApplyClick = useCallback(() => {
+    if (!isLoggedIn) {
+      navigate(`/login?redirect=${window.location.pathname}`);
+      return;
+    }
+
+    const payInfo = application ? getPayInfo(application) : null;
+    if (!payInfo) {
+      window.alert('정보를 불러오는 중입니다. 잠시만 기다려주세요.');
+      return;
+    }
+
+    // TODO: 라이브는 직접 받아와야 함. 챌린지는 none임.
+
+    const progressType: 'none' | 'ALL' | 'ONLINE' | 'OFFLINE' = 'none';
+
+    const userInfo: UserInfo = {
+      name: application?.name ?? '',
+      email: application?.email ?? '',
+      phoneNumber: application?.phoneNumber ?? '',
+      contactEmail: application?.contactEmail ?? '',
+      question: '',
+      initialized: true,
+    };
+
+    const priceId =
+      application?.priceList?.[0]?.priceId ?? application?.price?.priceId ?? -1;
+
+    const orderId = generateOrderId();
+    const totalPrice = Math.max(payInfo.price - payInfo.discount, 0);
+
+    const isFree =
+      payInfo.challengePriceType === 'FREE' ||
+      payInfo.livePriceType === 'FREE' ||
+      payInfo.price === 0 ||
+      totalPrice === 0;
+
+    setProgramApplicationForm({
+      priceId,
+      price: payInfo.price,
+      discount: payInfo.discount,
+      couponId: '',
+      couponPrice: 0,
+      totalPrice,
+      contactEmail: userInfo.contactEmail,
+      question: userInfo.question,
+      email: userInfo.email,
+      phone: userInfo.phoneNumber,
+      name: userInfo.name,
+      programTitle: challenge.title,
+      programType: 'challenge',
+      progressType,
+      programId: Number(id),
+      programOrderId: orderId,
+      isFree,
+    });
+
+    if (isFree) {
+      navigate(`/order/result?orderId=${orderId}`);
+    } else {
+      navigate(`/payment-input`);
+    }
+  }, [
+    application,
+    challenge.title,
+    id,
+    isLoggedIn,
+    navigate,
+    setProgramApplicationForm,
+  ]);
+
   if (isNotValidJson) {
     return <></>;
   }
@@ -57,9 +147,17 @@ const ChallengeDetailSSRPage = () => {
       <ChallengeView challenge={challenge} />
 
       {isMobile ? (
-        <ApplyCTA programType="challenge" program={challenge} />
+        <ApplyCTA
+          program={challenge}
+          onApplyClick={onApplyClick}
+          isAlreadyApplied={isAlreadyApplied}
+        />
       ) : (
-        <DesktopApplyCTA programType="challenge" program={challenge} />
+        <DesktopApplyCTA
+          program={challenge}
+          onApplyClick={onApplyClick}
+          isAlreadyApplied={isAlreadyApplied}
+        />
       )}
     </>
   );
@@ -67,32 +165,24 @@ const ChallengeDetailSSRPage = () => {
 
 /* CTA는 프로그램 상세페이지에서 공동으로 사용 */
 interface ApplyCTAProps {
-  programType: 'live' | 'challenge';
   program: {
     title?: string | null;
     deadline: Dayjs | null;
     beginning: Dayjs | null;
   };
+  onApplyClick: () => void;
+  isAlreadyApplied: boolean;
 }
 
-export function ApplyCTA({ programType, program }: ApplyCTAProps) {
-  const navigate = useNavigate();
-  const { id } = useParams<{
-    id: string;
-    title?: string;
-  }>();
-
-  const { isLoggedIn } = useAuthStore();
-  const { data: application } = useProgramApplicationQuery(
-    programType,
-    Number(id),
-  );
-
+export function ApplyCTA({
+  program,
+  onApplyClick,
+  isAlreadyApplied,
+}: ApplyCTAProps) {
   const isOutOfDate =
     program?.beginning && program.deadline
       ? dayjs().isBefore(program.beginning) || dayjs().isAfter(program.deadline)
       : false;
-  const isAlreadyApplied = application?.applied ?? false;
 
   return (
     <div className="fixed bottom-0 left-0 right-0 z-10 flex w-full flex-col items-center overflow-hidden bg-neutral-0/65 text-xxsmall12">
@@ -119,15 +209,7 @@ export function ApplyCTA({ programType, program }: ApplyCTAProps) {
                 deadline={program?.deadline ?? dayjs()}
               />
             </div>
-            <GradientButton
-              onClick={() => {
-                if (!isLoggedIn) {
-                  navigate(`/login?redirect=${window.location.pathname}`);
-                  return;
-                }
-                // 결제 페이지로 이동
-              }}
-            >
+            <GradientButton onClick={onApplyClick}>
               지금 바로 신청
             </GradientButton>
           </>
@@ -137,24 +219,15 @@ export function ApplyCTA({ programType, program }: ApplyCTAProps) {
   );
 }
 
-export function DesktopApplyCTA({ programType, program }: ApplyCTAProps) {
-  const { id } = useParams<{
-    id: string;
-    title?: string;
-  }>();
-  const navigate = useNavigate();
-
-  const { isLoggedIn } = useAuthStore();
-  const { data: application } = useProgramApplicationQuery(
-    programType,
-    Number(id),
-  );
-
+export function DesktopApplyCTA({
+  program,
+  onApplyClick,
+  isAlreadyApplied,
+}: ApplyCTAProps) {
   const isOutOfDate =
     program?.beginning && program.deadline
       ? dayjs().isBefore(program.beginning) || dayjs().isAfter(program.deadline)
       : false;
-  const isAlreadyApplied = application?.applied ?? false;
 
   return (
     <div className="fixed bottom-4 left-0 right-0 z-10 mx-auto flex w-full max-w-[60rem] items-center justify-between overflow-hidden rounded-sm bg-neutral-0/65 px-5 py-4">
@@ -179,16 +252,8 @@ export function DesktopApplyCTA({ programType, program }: ApplyCTAProps) {
               disabled={isAlreadyApplied || isOutOfDate}
               deadline={program?.deadline ?? dayjs()}
             />
-            <GradientButton
-              onClick={() => {
-                if (!isLoggedIn) {
-                  navigate(`/login?redirect=${window.location.pathname}`);
-                  return;
-                }
-                // 결제 페이지로 이동
-              }}
-            >
-              {'지금 바로 신청'}
+            <GradientButton onClick={onApplyClick}>
+              지금 바로 신청
             </GradientButton>
           </>
         )}

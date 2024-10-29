@@ -1,4 +1,4 @@
-import { generateOrderId } from '@/lib/order';
+import { generateOrderId, getPayInfo, UserInfo } from '@/lib/order';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { twMerge } from 'tailwind-merge';
@@ -11,10 +11,9 @@ import {
   IApplyDrawerAction,
   ICouponForm,
 } from '../../../../../types/interface';
-import InputContent from '../apply/content/InputContent';
 import PayContent from '../apply/content/PayContent';
+import PaymentInputContent from '../apply/content/PaymentInputContent';
 import ScheduleContent from '../apply/content/ScheduleContent';
-import { getPayInfo, UserInfo } from './ApplySection';
 
 interface MobileApplySectionProps {
   programType: ProgramType;
@@ -258,7 +257,7 @@ const MobileApplySection = ({
           />
         ) : null}
         {contentIndex === 1 && (
-          <InputContent
+          <PaymentInputContent
             contentIndex={contentIndex}
             setContentIndex={setContentIndex}
             userInfo={userInfo}
