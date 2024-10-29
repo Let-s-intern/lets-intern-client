@@ -82,6 +82,7 @@ const useProgramStore = create(
           },
         });
       },
+      // data내에 하나라도 null이 있으면 true 반환
       checkInvalidate: () => {
         const currentData = get().data;
         return Object.values(currentData).some((value) => value === null);

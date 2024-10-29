@@ -39,7 +39,8 @@ const ChannelTalkBtn = () => {
       className={clsx(
         (programDetailPathRegex.test(location.pathname) && isUpTo991) ||
           (location.pathname.startsWith('/report') && isUpTo1280) ||
-          location.pathname.startsWith('/report/landing')
+          location.pathname.startsWith('/report/landing') ||
+          (location.pathname.startsWith('/payment-input') && isUpTo991)
           ? 'bottom-32'
           : 'bottom-20',
         {

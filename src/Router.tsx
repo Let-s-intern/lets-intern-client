@@ -30,6 +30,7 @@ import ChallengeDetailSSRPage from './pages/common/program/ChallengeDetailSSRPag
 import LiveDetailSSRPage from './pages/common/program/LiveDetailSSRPage';
 import Payment from './pages/common/program/Payment';
 import PaymentFail from './pages/common/program/PaymentFail';
+import PaymentInputPage from './pages/common/program/PaymentInputPage';
 import PaymentResult from './pages/common/program/PaymentResult';
 import ProgramDetailLegacy from './pages/common/program/ProgramDetailLegacy';
 import Programs from './pages/common/program/Programs';
@@ -66,11 +67,6 @@ const Router = () => {
               <Route path="" element={<Home />} />
               {/* /about */}
               <Route path="about" element={<About />} />
-              {/* /payment */}
-              <Route path="payment" element={<Payment />} />
-              {/* /order */}
-              <Route path="order/result" element={<PaymentResult />} />
-              <Route path="order/fail" element={<PaymentFail />} />
 
               {/* /program 프로그램 목록 */}
               <Route path="program" element={<Programs />} />
@@ -98,6 +94,14 @@ const Router = () => {
                 path="program/live/:id/:title?"
                 element={<LiveDetailSSRPage />}
               />
+
+              {/* 프로그램 결제 페이지 */}
+              <Route path="payment-input" element={<PaymentInputPage />} />
+              <Route path="payment" element={<Payment />} />
+
+              {/* 프로그램 결제 결과 페이지 */}
+              <Route path="order/result" element={<PaymentResult />} />
+              <Route path="order/fail" element={<PaymentFail />} />
 
               {/* /program/:programId/review/new */}
               <Route

@@ -1,5 +1,7 @@
 import { ChallengePoint } from '@/types/interface';
-import Balancer from 'react-wrap-balancer';
+// import Balancer from 'react-wrap-balancer';
+import { clientOnly } from 'vike-react/clientOnly';
+const Balancer = clientOnly(() => import('react-wrap-balancer'));
 
 const ChallengePointView = ({
   point,
@@ -31,10 +33,14 @@ const ChallengePointView = ({
             </div>
             <div>
               <h3 className="mb-2 break-keep text-center text-small20 font-bold text-neutral-0">
-                <Balancer>{item.title}</Balancer>
+                <Balancer fallback={<span>{item.title}</span>}>
+                  {item.title}
+                </Balancer>
               </h3>
               <p className="break-keep text-center text-xsmall16 font-medium text-neutral-40">
-                <Balancer>{item.subtitle}</Balancer>
+                <Balancer fallback={<span>{item.subtitle}</span>}>
+                  {item.subtitle}
+                </Balancer>
               </p>
             </div>
           </li>
