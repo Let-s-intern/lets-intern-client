@@ -8,6 +8,8 @@ const ChallengePointView = ({
   point: ChallengePoint;
   className?: string;
 }) => {
+  if (point === undefined) return <></>;
+
   return (
     <div className={className}>
       <h2 className="sr-only">챌린지 포인트</h2>
