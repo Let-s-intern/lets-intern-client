@@ -89,14 +89,12 @@ function ChallengeCheckList() {
             key={item.title[0]}
             className="flex w-full flex-col gap-6 lg:items-center lg:gap-10"
           >
-            <div className="relative w-full">
+            <Box className="relative flex w-full max-w-[860px] flex-col py-6 text-small18 font-bold lg:flex-row lg:justify-center lg:gap-1 lg:p-10 lg:text-medium24">
               <Badge>Check {index + 1}</Badge>
-              <Box className="flex max-w-[860px] flex-col py-6 text-small18 font-bold lg:flex-row lg:justify-center lg:gap-1 lg:p-10 lg:text-medium24">
-                {item.title.map((ele) => (
-                  <span key={ele}>{ele}</span>
-                ))}
-              </Box>
-            </div>
+              {item.title.map((ele) => (
+                <span key={ele}>{ele}</span>
+              ))}
+            </Box>
             <div className="flex flex-col gap-5">
               {item.content.map((group) => (
                 <CheckList key={group[0]}>
