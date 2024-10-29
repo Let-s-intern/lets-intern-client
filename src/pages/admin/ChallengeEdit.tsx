@@ -20,6 +20,7 @@ import ChallengeCurriculumEditor from './program/ChallengeCurriculum';
 import ChallengePointEditor from './program/ChallengePoint';
 import ChallengePrice from './program/ChallengePrice';
 import FaqSection from './program/FaqSection';
+import ProgramBlogReviewEditor from './program/ProgramBlogReviewEditor';
 import ProgramSchedule from './program/ProgramSchedule';
 
 const ChallengeEdit: React.FC = () => {
@@ -30,7 +31,7 @@ const ChallengeEdit: React.FC = () => {
       weekText: '2주',
       list: [],
     },
-    blogReview: '',
+    blogReview: { list: [] },
     challengeReview: '',
   });
 
@@ -164,6 +165,13 @@ const ChallengeEdit: React.FC = () => {
       <ChallengeCurriculumEditor
         curriculum={content.curriculum}
         setContent={setContent}
+      />
+
+      <ProgramBlogReviewEditor
+        blogReview={content.blogReview ?? { list: [] }}
+        setBlogReview={(blogReview) =>
+          setContent((prev) => ({ ...prev, blogReview }))
+        }
       />
 
       <div className="my-6">

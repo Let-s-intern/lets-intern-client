@@ -195,7 +195,9 @@ const ChallengeBasic = React.memo(
       </div>
     );
   },
-);
+) as (<T extends CreateChallengeReq | UpdateChallengeReq>(
+  props: ChallengeBasicProps<T>,
+) => React.ReactElement) & { displayName: string };
 
 ChallengeBasic.displayName = 'ChallengeBasic';
 

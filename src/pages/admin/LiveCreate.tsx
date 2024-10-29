@@ -19,6 +19,7 @@ import LiveBasic from './program/LiveBasic';
 import LiveCurriculum from './program/LiveCurriculum';
 import LiveMentor from './program/LiveMentor';
 import LivePrice from './program/LivePrice';
+import ProgramBlogReviewEditor from './program/ProgramBlogReviewEditor';
 import ProgramSchedule from './program/ProgramSchedule';
 const LiveCreate: React.FC = () => {
   const navigate = useNavigate();
@@ -27,7 +28,7 @@ const LiveCreate: React.FC = () => {
   const [content, setContent] = useState<LiveContent>({
     // mainDescription: ,
     curriculum: [],
-    blogReview: '',
+    blogReview: { list: [] },
   });
 
   const [input, setInput] = useState<Omit<CreateLiveReq, 'desc'>>({
@@ -147,6 +148,12 @@ const LiveCreate: React.FC = () => {
 
       <LiveCurriculum curriculum={content.curriculum} setContent={setContent} />
 
+      <ProgramBlogReviewEditor
+        blogReview={content.blogReview ?? { list: [] }}
+        setBlogReview={(blogReview) =>
+          setContent((prev) => ({ ...prev, blogReview }))
+        }
+      />
       <div className="my-6">
         <FaqSection
           programType="LIVE"
