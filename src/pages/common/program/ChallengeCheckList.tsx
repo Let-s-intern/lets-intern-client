@@ -1,3 +1,4 @@
+import { useMediaQuery } from '@mui/material';
 import { ReactNode } from 'react';
 import { RxCheckbox } from 'react-icons/rx';
 
@@ -6,7 +7,6 @@ import Description from '@components/common/program/program-detail/Description';
 import Heading2 from '@components/common/program/program-detail/Heading2';
 import OutlinedBox from '@components/common/program/program-detail/OutlineBox';
 import SuperTitle from '@components/common/program/program-detail/SuperTitle';
-import { useMediaQuery } from '@mui/material';
 
 const superTitle = '취업 준비 현황 체크리스트';
 const title = [
@@ -74,13 +74,13 @@ function ChallengeCheckList() {
   return (
     <section>
       <div className="mb-16 lg:mb-20">
-        <div className="mb-1 lg:text-center">
-          <SuperTitle className="text-[#00A8EB]">{superTitle}</SuperTitle>
-        </div>
+        <SuperTitle className="mb-1 text-[#00A8EB] lg:text-center">
+          {superTitle}
+        </SuperTitle>
         <Heading2>{title.join('\n')}</Heading2>
-        <div className="mt-3 lg:mt-8 lg:text-center">
-          <Description>{description.join('\n')}</Description>
-        </div>
+        <Description className="mt-3 lg:mt-8 lg:text-center">
+          {description.join('\n')}
+        </Description>
       </div>
 
       <div className="flex flex-col gap-16 lg:gap-32">
