@@ -26,13 +26,13 @@ const DESCRITION = [
 
 function ChallengeIntro() {
   return (
-    <section className="mt-15 mb-20">
-      <span className="mb-6 block text-xsmall14 font-semibold text-neutral-45">
+    <section className="mb-20 mt-16 lg:mb-[220px]">
+      <span className="mb-6 block text-xsmall14 font-semibold text-neutral-45 lg:text-center lg:text-small20">
         프로그램 소개
       </span>
 
-      <div className="mb-20">
-        <div className="flex flex-col gap-2">
+      <div className="mb-20 lg:mb-48 lg:text-center">
+        <div className="flex flex-col gap-2 lg:items-center lg:gap-3">
           <Badge>
             <LuAlarmClock size={24} />
             <span>평균 10초</span>
@@ -43,7 +43,7 @@ function ChallengeIntro() {
             눈에 띄는 자소서를 만들어야 해요
           </Heading2>
         </div>
-        <div className="mb-10 mt-3">
+        <div className="mb-10 mt-3 lg:mb-20 lg:mt-8">
           <Description>
             남들과 다른 임팩트 있는 자기소개서 작성을 위해서는{' '}
             <br className="lg:hidden" />
@@ -54,6 +54,9 @@ function ChallengeIntro() {
           </Description>
         </div>
         <OutlinedBox>
+          <div className="hidden lg:block">
+            <CircularBox>STAR 기법</CircularBox>
+          </div>
           {Object.entries(STAR).map(([key, value], index) => (
             <Fragment key={key}>
               <div className="flex-1 text-center">
@@ -63,7 +66,7 @@ function ChallengeIntro() {
                 {value.map((item) => (
                   <span
                     key={item}
-                    className="block text-xxsmall12 font-medium text-neutral-40"
+                    className="block text-xxsmall12 font-medium text-neutral-40 lg:text-small18"
                   >
                     {item}
                   </span>
@@ -75,6 +78,12 @@ function ChallengeIntro() {
         </OutlinedBox>
         <div className="mb-6" />
         <OutlinedBox>
+          <div className="hidden lg:block">
+            <CircularBox>
+              <span>두괄식</span>
+              <span>수치화</span>
+            </CircularBox>
+          </div>
           {POINT.map(({ title, desc }, index) => (
             <Fragment key={title}>
               <div className="flex-1 text-center">
@@ -84,7 +93,7 @@ function ChallengeIntro() {
                 {desc.map((item) => (
                   <span
                     key={item}
-                    className="block text-xxsmall12 font-medium text-neutral-40"
+                    className="block text-xxsmall12 font-medium text-neutral-40 lg:text-small18"
                   >
                     {item}
                   </span>
@@ -98,11 +107,11 @@ function ChallengeIntro() {
         </OutlinedBox>
       </div>
 
-      <div>
-        <div className="flex flex-col gap-3">
+      <div className="lg:flex lg:flex-col lg:items-center">
+        <div className="flex flex-col gap-3 lg:items-center lg:text-center">
           <div>
             <Badge>평균 서류 합격률 28%</Badge>
-            <span className="mt-1 block text-[10px] text-neutral-30">
+            <span className="mt-1 block text-[10px] text-neutral-30 lg:text-xxsmall12">
               *출처 : 한국경제인협회 설문조사
             </span>
           </div>
@@ -111,17 +120,19 @@ function ChallengeIntro() {
             <br />
             자소서 완성도 UP을 위한 5가지 기준
           </Heading2>
-          <Description>
-            {DESCRITION.map((item, index) => (
-              <Fragment key={item}>
-                {item}
-                {index !== DESCRITION.length - 1 && <br />}
-              </Fragment>
-            ))}
-          </Description>
+          <div className="lg:mt-8">
+            <Description>
+              {DESCRITION.map((item, index) => (
+                <Fragment key={item}>
+                  {item}
+                  {index !== DESCRITION.length - 1 && <br />}
+                </Fragment>
+              ))}
+            </Description>
+          </div>
         </div>
         <img
-          className="mt-10 h-auto w-full"
+          className="mt-10 h-auto w-full max-w-[660px] lg:mt-20"
           src="/images/challenge-chart.png"
           alt="자소서 완성도를 높이기 위한 5가지 기준을 나타낸 차트"
         />
@@ -132,7 +143,7 @@ function ChallengeIntro() {
 
 function Badge({ children }: { children: ReactNode }) {
   return (
-    <div className="gap-1.6 flex w-fit items-center gap-1 rounded-xxs bg-[#FFF7EF] px-2.5 py-1 text-small18 font-bold text-[#FB8100]">
+    <div className="gap-1.6 flex w-fit items-center gap-1 rounded-xxs bg-[#FFF7EF] px-2.5 py-1 text-small18 font-bold text-[#FB8100] lg:text-xlarge28">
       {children}
     </div>
   );
@@ -143,6 +154,14 @@ function VerticalLine({ heightClassName }: { heightClassName?: string }) {
     <div
       className={twMerge('h-16 border-r border-[#39C7FF]', heightClassName)}
     />
+  );
+}
+
+function CircularBox({ children }: { children: ReactNode }) {
+  return (
+    <div className="flex h-32 w-32 flex-col items-center justify-center rounded-full bg-[#4DCDFF] text-small20 font-bold text-static-100">
+      {children}
+    </div>
   );
 }
 

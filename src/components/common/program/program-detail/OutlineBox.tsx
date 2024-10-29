@@ -11,7 +11,7 @@ function OutlinedBox({
   return (
     <div
       className={twMerge(
-        'flex items-center rounded-md border border-[#39C7FF] bg-[#EEFAFF] py-4',
+        'flex items-center rounded-md border border-[#39C7FF] bg-[#EEFAFF] py-4 lg:px-[30px]',
         className,
       )}
     >
