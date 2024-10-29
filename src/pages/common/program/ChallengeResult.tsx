@@ -64,13 +64,13 @@ function CardList({ content }: { content: Content }) {
       key={content.before}
       className="flex flex-nowrap items-center gap-2 lg:gap-3"
     >
-      <div className="flex flex-col items-center gap-4">
+      <div className="flex flex-1 flex-col items-center gap-4">
         <BadgedBox badgeContent="Before" boxContent={content.before} />
         <span className="text-xsmall14 font-semibold text-neutral-0 lg:text-small20">
           {content.beforeCaption}
         </span>
       </div>
-      <div className="flex flex-col items-center gap-4">
+      <div className="flex flex-1 flex-col items-center gap-4">
         <BadgedBox
           badgeContent="After"
           boxContent={content.after}
