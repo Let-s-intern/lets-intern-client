@@ -1,3 +1,4 @@
+import ChallengeCheckList from '@/pages/common/program/ChallengeCheckList';
 import ChallengeIntro from '@/pages/common/program/ChallengeIntro';
 import { ChallengeIdSchema } from '@/schema';
 import { ChallengeContent } from '@/types/interface';
@@ -26,7 +27,7 @@ const ChallengeView: React.FC<{ challenge: ChallengeIdSchema }> = ({
       <pre>{JSON.stringify(JSON.parse(challenge.desc || '{}'), null, 2)}</pre>
       <div className="px-5 lg:px-10 xl:px-52">
         <Header programTitle={challenge.title ?? ''} />
-        <ChallengeIntro />
+
         <div>네비게이션 바</div>
         <ChallengePointView
           className="mb-14 sm:mb-44"
@@ -34,15 +35,17 @@ const ChallengeView: React.FC<{ challenge: ChallengeIdSchema }> = ({
         />
 
         <div>특별 챌린지, 합격자 후기 (TODO: 본 제목 삭제)</div>
-        <div className="mb-14 sm:mb-48">
+        <div>
           {receivedContent.mainDescription?.root ? (
             <LexicalContent node={receivedContent.mainDescription?.root} />
           ) : null}
         </div>
 
-        <div>프로그램 소개 평균 10초</div>
-        <div>평균 서류 합격률 28%</div>
-        <div>취업 준비 현황 체크리스트</div>
+        <section className="lg:py-50 lg:gap-50 flex flex-col gap-20 py-16">
+          <ChallengeIntro />
+          <ChallengeCheckList />
+        </section>
+
         <div>
           이 모든 고민을 한번에 해결! 서류 합격률을 300% 높일 수 있는 렛츠커리어
           챌린지

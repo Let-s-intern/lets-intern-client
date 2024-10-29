@@ -27,10 +27,10 @@ const DESCRITION = [
 
 function ChallengeIntro() {
   return (
-    <section className="mb-20 mt-16 lg:mb-[220px]">
+    <section>
       <SuperTitle className="text-neutral-45">프로그램 소개</SuperTitle>
 
-      <div className="mb-20 lg:mb-48 lg:text-center">
+      <div className="mb-20 mt-6 lg:mb-48 lg:text-center">
         <div className="flex flex-col gap-2 lg:items-center lg:gap-3">
           <Badge>
             <LuAlarmClock size={24} />

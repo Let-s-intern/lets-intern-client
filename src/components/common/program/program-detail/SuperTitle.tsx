@@ -12,7 +12,7 @@ function SuperTitle({
     <span
       className={twJoin(
         className,
-        'mb-6 block text-xsmall14 font-semibold lg:text-center lg:text-small20',
+        'text-xsmall14 font-semibold lg:text-center lg:text-small20',
       )}
     >
       {children}
