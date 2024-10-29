@@ -15,7 +15,6 @@ export interface UserInfo {
   initialized?: boolean;
 }
 
-// TODO: 다른 곳으로 옮기기
 export const getPayInfo = (
   application: ProgramApplicationFormInfo,
 ): null | {
