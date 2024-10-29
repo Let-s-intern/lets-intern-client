@@ -5,6 +5,7 @@ import { ChallengeIdSchema } from '@/schema';
 import { ChallengeContent } from '@/types/interface';
 import Header from '@components/common/program/program-detail/header/Header';
 import { useMemo } from 'react';
+import ChallengeBasicInfo from './challenge-view/ChallengeBasicInfo';
 import ChallengeNavigation, {
   challengeNavigateItems,
 } from './challenge-view/ChallengeNavigation';
@@ -30,9 +31,11 @@ const ChallengeView: React.FC<{ challenge: ChallengeIdSchema }> = ({
     <div className="flex w-full flex-col">
       <pre>{JSON.stringify(JSON.parse(challenge.desc || '{}'), null, 2)}</pre>
       <div>
-        <div className="flex w-full px-5 lg:px-10 xl:px-52">
+        <div className="flex w-full flex-col px-5 lg:px-10 xl:px-52">
           <Header programTitle={challenge.title ?? ''} />
+          <ChallengeBasicInfo challenge={challenge} />
         </div>
+
         <ChallengeNavigation navItems={challengeNavigateItems} />
         <div className="flex w-full flex-col overflow-x-hidden px-5 lg:px-10 xl:px-52">
           <ChallengePointView
