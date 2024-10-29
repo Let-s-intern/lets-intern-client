@@ -18,6 +18,7 @@ import ChallengeCurriculum from './program/ChallengeCurriculum';
 import ChallengePoint from './program/ChallengePoint';
 import ChallengePrice from './program/ChallengePrice';
 import FaqSection from './program/FaqSection';
+import ProgramBlogReviewEditor from './program/ProgramBlogReviewEditor';
 import ProgramSchedule from './program/ProgramSchedule';
 
 /**
@@ -28,9 +29,10 @@ import ProgramSchedule from './program/ProgramSchedule';
 const ChallengeCreate: React.FC = () => {
   const [content, setContent] = useState<ChallengeContent>({
     curriculum: [],
-    challengePoint: [],
-    blogReview: '',
+    challengePoint: { list: [] },
+    blogReview: { list: [] },
     challengeReview: '',
+    initialized: true,
   });
 
   useEffect(() => {
@@ -153,6 +155,13 @@ const ChallengeCreate: React.FC = () => {
       <ChallengeCurriculum
         curriculum={content.curriculum}
         setContent={setContent}
+      />
+
+      <ProgramBlogReviewEditor
+        blogReview={content.blogReview || { list: [] }}
+        setBlogReview={(blogReview) =>
+          setContent((prev) => ({ ...prev, blogReview }))
+        }
       />
 
       <div className="my-6">
