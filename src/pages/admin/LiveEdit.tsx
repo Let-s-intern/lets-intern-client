@@ -18,6 +18,7 @@ import LiveBasic from './program/LiveBasic';
 import LiveCurriculum from './program/LiveCurriculum';
 import LiveMentor from './program/LiveMentor';
 import LivePrice from './program/LivePrice';
+import ProgramBlogReviewEditor from './program/ProgramBlogReviewEditor';
 import ProgramSchedule from './program/ProgramSchedule';
 
 const LiveEdit: React.FC = () => {
@@ -29,7 +30,7 @@ const LiveEdit: React.FC = () => {
   const [content, setContent] = useState<LiveContent>({
     // mainDescription: ,
     curriculum: [],
-    blogReview: '',
+    blogReview: { list: [] },
   });
   const { snackbar } = useAdminSnackbar();
 
@@ -114,6 +115,13 @@ const LiveEdit: React.FC = () => {
       </section>
 
       <LiveCurriculum curriculum={content.curriculum} setContent={setContent} />
+
+      <ProgramBlogReviewEditor
+        blogReview={content.blogReview ?? { list: [] }}
+        setBlogReview={(blogReview) =>
+          setContent((prev) => ({ ...prev, blogReview }))
+        }
+      />
 
       <div className="my-6">
         <FaqSection
