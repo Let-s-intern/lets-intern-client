@@ -1,8 +1,22 @@
 import { ReactNode } from 'react';
+import { twMerge } from 'tailwind-merge';
 
-function Description({ children }: { children: ReactNode }) {
+function Description({
+  children,
+  className,
+}: {
+  children?: ReactNode;
+  className?: string;
+}) {
   return (
-    <p className="text-xsmall14 text-neutral-30 lg:text-small20">{children}</p>
+    <p
+      className={twMerge(
+        'whitespace-pre-line text-xsmall14 text-neutral-30 lg:text-small20',
+        className,
+      )}
+    >
+      {children}
+    </p>
   );
 }
 
