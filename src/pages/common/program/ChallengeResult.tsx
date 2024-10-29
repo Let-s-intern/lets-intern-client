@@ -113,7 +113,7 @@ function BadgedBox({
       >
         {badgeContent}
       </div>
-      <p className="h-full bg-white px-6 pt-7 text-[8px] font-medium md:text-xxsmall12 lg:px-12 lg:pt-16 lg:text-xsmall16">
+      <p className="h-full whitespace-pre-line bg-white px-6 pt-7 text-[8px] font-medium md:text-xxsmall12 lg:px-12 lg:pt-16 lg:text-xsmall16">
         {boxContent}
       </p>
     </OutlinedBox>
