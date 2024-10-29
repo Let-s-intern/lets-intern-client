@@ -6,6 +6,7 @@ import Description from '@components/common/program/program-detail/Description';
 import Heading2 from '@components/common/program/program-detail/Heading2';
 import OutlinedBox from '@components/common/program/program-detail/OutlineBox';
 import SuperTitle from '@components/common/program/program-detail/SuperTitle';
+import { useMediaQuery } from '@mui/material';
 
 const superTitle = '취업 준비 현황 체크리스트';
 const title = [
@@ -71,69 +72,76 @@ const CHECK_LIST = [
 
 function ChallengeCheckList() {
   return (
-    <section className="flex flex-col gap-16">
-      <div>
-        <div className="mb-1">
+    <section>
+      <div className="mb-16 lg:mb-20">
+        <div className="mb-1 lg:text-center">
           <SuperTitle className="text-[#00A8EB]">{superTitle}</SuperTitle>
         </div>
         <Heading2>{title.join('\n')}</Heading2>
-        <div className="mt-3">
+        <div className="mt-3 lg:mt-8 lg:text-center">
           <Description>{description.join('\n')}</Description>
         </div>
       </div>
 
-      {CHECK_LIST.map((item, index) => (
-        <div key={item.title[0]} className="flex flex-col gap-6">
-          <div className="relative">
-            <Badge>Check {index + 1}</Badge>
-            <Box className="py-6">
-              <div className="flex w-full flex-col text-center text-small18 font-bold lg:flex-row lg:gap-1">
+      <div className="flex flex-col gap-16 lg:gap-32">
+        {CHECK_LIST.map((item, index) => (
+          <div
+            key={item.title[0]}
+            className="flex w-full flex-col gap-6 lg:items-center lg:gap-10"
+          >
+            <div className="relative w-full">
+              <Badge>Check {index + 1}</Badge>
+              <Box className="flex max-w-[860px] flex-col py-6 text-small18 font-bold lg:flex-row lg:justify-center lg:gap-1 lg:p-10 lg:text-medium24">
                 {item.title.map((ele) => (
                   <span key={ele}>{ele}</span>
                 ))}
-              </div>
-            </Box>
-          </div>
-          <div className="flex flex-col gap-5">
-            {item.content.map((group) => (
-              <CheckList key={group[0]}>
-                {group.map((ele) => (
-                  <span
-                    key={ele}
-                    className="text-xsmall16 font-semibold text-neutral-35"
-                  >
-                    {ele}
-                  </span>
-                ))}
-              </CheckList>
-            ))}
-          </div>
-          <OutlinedBox className="border-[#E77700] bg-[#FFF7EF] text-[#E77700]">
-            <div className="flex w-full flex-col text-center text-xsmall16 font-semibold lg:flex-row lg:gap-1">
-              {item.solution.map((ele) => (
-                <span key={ele}>{ele}</span>
+              </Box>
+            </div>
+            <div className="flex flex-col gap-5">
+              {item.content.map((group) => (
+                <CheckList key={group[0]}>
+                  {group.map((ele) => (
+                    <span
+                      key={ele}
+                      className="text-xsmall16 font-semibold text-neutral-35 lg:text-small20"
+                    >
+                      {ele}
+                    </span>
+                  ))}
+                </CheckList>
               ))}
             </div>
-          </OutlinedBox>
-        </div>
-      ))}
+            <OutlinedBox className="flex w-full max-w-[860px] flex-col items-center border-[#E77700] bg-[#FFF7EF] text-[#E77700] lg:flex-row lg:justify-center lg:gap-1 lg:p-10">
+              {item.solution.map((ele) => (
+                <span
+                  className="text-center text-xsmall16 font-semibold lg:text-medium24"
+                  key={ele}
+                >
+                  {ele}
+                </span>
+              ))}
+            </OutlinedBox>
+          </div>
+        ))}
+      </div>
     </section>
   );
 }
 
 function Badge({ children }: { children?: ReactNode }) {
   return (
-    <span className="absolute -top-6 left-6 z-10 -rotate-12 rounded-sm bg-[#14BCFF] px-2.5 py-1 text-xsmall16 font-bold text-white">
+    <span className="absolute -top-6 left-6 z-10 -rotate-12 rounded-sm bg-[#14BCFF] px-2.5 py-1 text-xsmall16 font-bold text-white lg:px-4 lg:text-small20 lg:font-semibold">
       {children}
     </span>
   );
 }
 
 function CheckList({ children }: { children?: ReactNode }) {
+  const isDesktop = useMediaQuery('(min-width: 991px)');
   return (
-    <div className="flex gap-4">
+    <div className="flex gap-4 lg:items-center">
       <div className="pt-1 lg:pt-0">
-        <RxCheckbox color="#14BCFF" size={24} />
+        <RxCheckbox color="#14BCFF" size={isDesktop ? 36 : 24} />
       </div>
       <div className="flex flex-col lg:flex-row lg:gap-1">{children}</div>
     </div>
