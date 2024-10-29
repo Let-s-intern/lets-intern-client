@@ -1,5 +1,6 @@
 import ChallengeCheckList from '@/pages/common/program/ChallengeCheckList';
 import ChallengeIntro from '@/pages/common/program/ChallengeIntro';
+import ChallengeResult from '@/pages/common/program/ChallengeResult';
 import { ChallengeIdSchema } from '@/schema';
 import { ChallengeContent } from '@/types/interface';
 import Header from '@components/common/program/program-detail/header/Header';
@@ -25,7 +26,7 @@ const ChallengeView: React.FC<{ challenge: ChallengeIdSchema }> = ({
   return (
     <div>
       <pre>{JSON.stringify(JSON.parse(challenge.desc || '{}'), null, 2)}</pre>
-      <div className="px-5 lg:px-10 xl:px-52">
+      <div className="overflow-x-hidden px-5 lg:px-10 xl:px-52">
         <Header programTitle={challenge.title ?? ''} />
 
         <div>네비게이션 바</div>
@@ -44,6 +45,7 @@ const ChallengeView: React.FC<{ challenge: ChallengeIdSchema }> = ({
         <section className="lg:py-50 lg:gap-50 flex flex-col gap-20 py-16">
           <ChallengeIntro />
           <ChallengeCheckList />
+          <ChallengeResult />
         </section>
 
         <div>
