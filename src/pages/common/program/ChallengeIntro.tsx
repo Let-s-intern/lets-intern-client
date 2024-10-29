@@ -5,6 +5,7 @@ import { twMerge } from 'tailwind-merge';
 import Description from '@components/common/program/program-detail/Description';
 import Heading2 from '@components/common/program/program-detail/Heading2';
 import OutlinedBox from '@components/common/program/program-detail/OutlineBox';
+import SuperTitle from '@components/common/program/program-detail/SuperTitle';
 
 const STAR = {
   S: ['Situation', '상황'],
@@ -27,9 +28,7 @@ const DESCRITION = [
 function ChallengeIntro() {
   return (
     <section className="mb-20 mt-16 lg:mb-[220px]">
-      <span className="mb-6 block text-xsmall14 font-semibold text-neutral-45 lg:text-center lg:text-small20">
-        프로그램 소개
-      </span>
+      <SuperTitle className="text-neutral-45">프로그램 소개</SuperTitle>
 
       <div className="mb-20 lg:mb-48 lg:text-center">
         <div className="flex flex-col gap-2 lg:items-center lg:gap-3">
