@@ -3,7 +3,7 @@ import path from 'path';
 import vike from 'vike/plugin';
 import { defineConfig } from 'vite';
 import { cjsInterop } from 'vite-plugin-cjs-interop';
-import svgrPlugin from 'vite-plugin-svgr';
+import svgr from 'vite-plugin-svgr';
 import vercel from 'vite-plugin-vercel';
 
 const isProd = process.env.NODE_ENV === 'production';
@@ -45,7 +45,7 @@ export default defineConfig({
       prerender: true,
     }),
     react(),
-    svgrPlugin(),
+    svgr(),
     vercel(),
   ],
   server: {
