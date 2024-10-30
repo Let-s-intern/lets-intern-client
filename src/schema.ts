@@ -45,6 +45,8 @@ export const challengeTypeSchema = z.union([
   z.literal('DOCUMENT_PREPARATION'),
   z.literal('MEETING_PREPARATION'),
   z.literal('ETC'),
+  z.literal('PERSONAL_STATEMENT'),
+  z.literal('PORTFOLIO'),
 ]);
 
 export type ChallengeType = z.infer<typeof challengeTypeSchema>;
