@@ -36,6 +36,8 @@ declare global {
   interface Window {
     __root: Root;
     __lastRenderMode: 'blog' | 'catch_all';
+    dataLayout: any[];
+    Kakao: any;
   }
 }
 

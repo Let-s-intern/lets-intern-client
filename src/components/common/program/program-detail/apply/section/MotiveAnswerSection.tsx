@@ -1,5 +1,5 @@
+import { UserInfo } from '@/lib/order';
 import TextArea from '../../../../ui/input/TextArea';
-import { UserInfo } from '../../section/ApplySection';
 
 interface MotiveAnswerSectionProps {
   userInfo: UserInfo;
