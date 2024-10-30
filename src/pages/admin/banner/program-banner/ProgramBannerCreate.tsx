@@ -1,10 +1,10 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useCreateProgramBannerMutation } from '@/api/program';
+import { useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import ProgramBannerInputContent from '../../../../components/admin/banner/program-banner/ProgramBannerInputContent';
 import EditorTemplate from '../../../../components/admin/program/ui/editor/EditorTemplate';
 import { IBannerForm } from '../../../../types/interface';
-import axios from '../../../../utils/axios';
 
 const ProgramBannerCreate = () => {
   const queryClient = useQueryClient();
@@ -16,25 +16,19 @@ const ProgramBannerCreate = () => {
     startDate: '',
     endDate: '',
     imgUrl: '',
+    mobileImgUrl: '',
     file: null,
     mobileFile: null,
   });
 
-  const addProgramBanner = useMutation({
-    mutationFn: async (formData: FormData) => {
-      const res = await axios.post('/banner', formData, {
-        params: {
-          type: 'PROGRAM',
-        },
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
-      return res.data;
-    },
+  const { mutate: tryCreateProgramBanner } = useCreateProgramBannerMutation({
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ['banner'] });
       navigate('/admin/banner/program-banners');
+    },
+    onError: (error) => {
+      console.error(error);
+      alert('프로그램 배너 등록에 실패했습니다.');
     },
   });
 
@@ -71,7 +65,7 @@ const ProgramBannerCreate = () => {
     formData.append('file', value.file);
     formData.append('mobileFile', value.mobileFile);
 
-    addProgramBanner.mutate(formData);
+    tryCreateProgramBanner(formData);
   };
 
   return (

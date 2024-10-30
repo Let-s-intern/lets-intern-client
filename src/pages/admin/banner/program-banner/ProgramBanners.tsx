@@ -1,18 +1,22 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { useEffect, useState } from 'react';
 import { Checkbox } from '@mui/material';
+import { useQueryClient } from '@tanstack/react-query';
+import { useState } from 'react';
 
+import {
+  useDeleteProgramBannerMutation,
+  useEditProgramBannerMutation,
+  useGetProgramBannerListQuery,
+} from '@/api/program';
+import dayjs from 'dayjs';
+import { CiTrash } from 'react-icons/ci';
+import { Link } from 'react-router-dom';
+import TableCell from '../../../../components/admin/ui/table/new/TableCell';
+import TableManageContent from '../../../../components/admin/ui/table/new/TableManageContent';
+import TableRow from '../../../../components/admin/ui/table/new/TableRow';
 import TableTemplate, {
   TableTemplateProps,
 } from '../../../../components/admin/ui/table/new/TableTemplate';
-import axios from '../../../../utils/axios';
-import TableCell from '../../../../components/admin/ui/table/new/TableCell';
-import TableRow from '../../../../components/admin/ui/table/new/TableRow';
-import { Link } from 'react-router-dom';
-import { CiTrash } from 'react-icons/ci';
-import TableManageContent from '../../../../components/admin/ui/table/new/TableManageContent';
 import AlertModal from '../../../../components/ui/alert/AlertModal';
-import dayjs from 'dayjs';
 
 type ProgramBannersTableKey =
   | 'title'
@@ -51,63 +55,27 @@ const PopUpBanners = () => {
       },
     };
 
-  const { data, isLoading, error } = useQuery({
-    queryKey: [
-      'banner',
-      'admin',
-      {
-        type: 'PROGRAM',
-      },
-    ],
-    queryFn: async ({ queryKey }) => {
-      const res = await axios(`/${queryKey[0]}/${queryKey[1]}`, {
-        params: queryKey[2],
-      });
-      return res.data;
-    },
-  });
+  const {
+    data: programBannerList,
+    isLoading,
+    error,
+  } = useGetProgramBannerListQuery();
 
-  const programBannerList: {
-    id: number;
-    title: string;
-    link: string;
-    startDate: string;
-    endDate: string;
-    isValid: boolean;
-    isVisible: boolean;
-    imgUrl: string;
-  }[] = data?.data?.bannerList || [];
-
-  const deleteProgramBanner = useMutation({
-    mutationFn: async (bannerId: number) => {
-      const res = await axios.delete(`/banner/${bannerId}`, {
-        params: {
-          type: 'PROGRAM',
-        },
-      });
-      return res.data;
-    },
+  const { mutate: tryDeleteBanner } = useDeleteProgramBannerMutation({
     onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: ['banner'] });
+      setIsDeleteModalShown(false);
+    },
+    onError: (error) => {
+      console.error(error);
+      alert('프로그램 배너 삭제에 실패했습니다.');
       setIsDeleteModalShown(false);
     },
   });
 
-  const editProgramBannerVisible = useMutation({
-    mutationFn: async (params: { bannerId: number; formData: FormData }) => {
-      const { bannerId, formData } = params;
-      const res = await axios.patch(`/banner/${bannerId}`, formData, {
-        params: {
-          type: 'PROGRAM',
-        },
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
-      return res.data;
-    },
-    onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: ['banner'] });
+  const { mutate: tryEditVisible } = useEditProgramBannerMutation({
+    onError: (error) => {
+      console.error(error);
+      alert('프로그램 배너 노출 여부 수정에 실패했습니다.');
     },
   });
 
@@ -118,18 +86,10 @@ const PopUpBanners = () => {
     const formData = new FormData();
     formData.append(
       'requestDto',
-      new Blob(
-        [
-          JSON.stringify({
-            isVisible,
-          }),
-        ],
-        {
-          type: 'application/json',
-        },
-      ),
+      new Blob([JSON.stringify({ isVisible })], { type: 'application/json' }),
     );
-    editProgramBannerVisible.mutate({ bannerId, formData });
+
+    tryEditVisible({ bannerId, formData });
   };
 
   const handleDeleteButtonClicked = async (bannerId: number) => {
@@ -148,14 +108,18 @@ const PopUpBanners = () => {
         columnMetaData={columnMetaData}
         minWidth="60rem"
       >
-        {isLoading ? (
-          <div className="py-6 text-center">로딩 중...</div>
-        ) : error ? (
-          <div className="py-6 text-center">에러 발생</div>
-        ) : programBannerList.length === 0 ? (
+        {!programBannerList ? (
+          isLoading ? (
+            <div className="py-6 text-center">로딩 중...</div>
+          ) : error ? (
+            <div className="py-6 text-center">에러 발생</div>
+          ) : (
+            <div className="py-6 text-center">프로그램 배너가 없습니다.</div>
+          )
+        ) : programBannerList.bannerList.length === 0 ? (
           <div className="py-6 text-center">프로그램 배너가 없습니다.</div>
         ) : (
-          programBannerList.map((banner) => (
+          programBannerList.bannerList.map((banner) => (
             <TableRow key={banner.id} minWidth="60rem">
               <TableCell cellWidth={columnMetaData.title.cellWidth}>
                 {banner.title}
@@ -204,8 +168,7 @@ const PopUpBanners = () => {
         <AlertModal
           title="프로그램 배너 삭제"
           onConfirm={() =>
-            bannerIdForDeleting &&
-            deleteProgramBanner.mutate(bannerIdForDeleting)
+            bannerIdForDeleting && tryDeleteBanner(bannerIdForDeleting)
           }
           onCancel={() => setIsDeleteModalShown(false)}
         >
