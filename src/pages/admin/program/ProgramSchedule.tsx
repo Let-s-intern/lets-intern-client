@@ -4,24 +4,21 @@ import {
   UpdateChallengeReq,
   UpdateLiveReq,
 } from '@/schema';
-import { SxProps } from '@mui/material';
-import { DateTimePicker, LocalizationProvider } from '@mui/x-date-pickers';
+import {
+  DateTimePicker,
+  DateTimePickerSlotProps,
+  LocalizationProvider,
+} from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { Dayjs } from 'dayjs';
 
-const dateTimePickerSx: SxProps = {
-  width: '100%',
-  label: {
-    fontSize: '0.875rem',
-    // color: '#4C4F56',
-  },
-  '.MuiInputBase-formControl': {
-    fontSize: '0.875rem',
-  },
-
-  '& .MuiInputBase-input': {
-    padding: '8px 12px',
-    borderRadius: '0.25rem',
+const dateTimePickerSlotProps: DateTimePickerSlotProps<Dayjs, false> = {
+  textField: {
+    size: 'small',
+    sx: {
+      fontSize: '14px',
+      width: '100%',
+    },
   },
 };
 
@@ -53,8 +50,9 @@ export default function ProgramSchedule<
         <DateTimePicker
           label="시작 일자"
           name="startDate"
-          sx={dateTimePickerSx}
           format="YYYY.MM.DD(dd) HH:mm"
+          ampm={false}
+          slotProps={dateTimePickerSlotProps}
           defaultValue={defaultValue?.startDate}
           onChange={(value) =>
             setInput((prev) => ({
@@ -67,8 +65,9 @@ export default function ProgramSchedule<
         <DateTimePicker
           label="종료 일자"
           name="endDate"
-          sx={dateTimePickerSx}
           format="YYYY.MM.DD(dd) HH:mm"
+          ampm={false}
+          slotProps={dateTimePickerSlotProps}
           defaultValue={defaultValue?.endDate}
           onChange={(value) =>
             setInput((prev) => ({
@@ -81,8 +80,9 @@ export default function ProgramSchedule<
         <DateTimePicker
           label="모집 시작 일자"
           name="beginning"
-          sx={dateTimePickerSx}
           format="YYYY.MM.DD(dd) HH:mm"
+          ampm={false}
+          slotProps={dateTimePickerSlotProps}
           defaultValue={defaultValue?.beginning}
           onChange={(value) =>
             setInput((prev) => ({
@@ -95,8 +95,9 @@ export default function ProgramSchedule<
         <DateTimePicker
           label="모집 마감 일자"
           name="deadline"
-          sx={dateTimePickerSx}
           format="YYYY.MM.DD(dd) HH:mm"
+          ampm={false}
+          slotProps={dateTimePickerSlotProps}
           defaultValue={defaultValue?.deadline}
           onChange={(value) =>
             setInput((prev) => ({
