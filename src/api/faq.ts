@@ -33,10 +33,17 @@ export const usePatchFaq = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({ id, question, answer, faqProgramType }: Faq) => {
+    mutationFn: async ({
+      id,
+      question,
+      answer,
+      category,
+      faqProgramType,
+    }: Faq) => {
       const res = await axios.patch(`/faq/${id}`, {
         question,
         answer,
+        category,
         type: faqProgramType,
       });
       return res.data;
@@ -55,6 +62,7 @@ export const usePostFaq = () => {
       const res = await axios.post('/faq', {
         question: '',
         answer: '',
+        category: '',
         type: programType,
       });
       return res.data;
