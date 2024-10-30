@@ -12,7 +12,6 @@ function ChallengeFaq() {
 
   const faqList = data?.faqList;
   const categoryList = [...new Set(faqList?.map((faq) => faq.category))];
-  console.log(data);
 
   if (!faqList) return <></>;
 
