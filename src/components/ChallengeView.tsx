@@ -1,4 +1,5 @@
 import ChallengeCheckList from '@/pages/common/program/ChallengeCheckList';
+import ChallengeCurriculum from '@/pages/common/program/ChallengeCurriculum';
 import ChallengeIntro from '@/pages/common/program/ChallengeIntro';
 import ChallengeResult from '@/pages/common/program/ChallengeResult';
 import { ChallengeIdSchema } from '@/schema';
@@ -55,6 +56,10 @@ const ChallengeView: React.FC<{ challenge: ChallengeIdSchema }> = ({
             <ChallengeCheckList />
             <ChallengeResult />
           </section>
+
+          <ChallengeCurriculum
+            curriculum={JSON.parse(challenge.desc ?? '{}').curriculum}
+          />
 
           <div>
             이 모든 고민을 한번에 해결! 서류 합격률을 300% 높일 수 있는
