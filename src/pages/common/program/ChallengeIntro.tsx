@@ -44,7 +44,7 @@ const DESCRITION2 = [
 
 function ChallengeIntro() {
   return (
-    <section>
+    <section id="program-intro">
       <SuperTitle className="text-neutral-45">프로그램 소개</SuperTitle>
 
       <div className="mb-20 mt-6 lg:mb-48 lg:text-center">
