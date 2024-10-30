@@ -21,7 +21,9 @@
       "@/*": ["./src/*"],
       "@renderer/*": ["./renderer/*"],
       "@pages/*": ["./pages/*"]
-    }
+    },
+    "types": ["vite-plugin-svgr/client"]
   },
+  "include": ["svg.d.ts", "src/**/*.d.ts", "src/**/*.ts", "src/**/*.tsx"],
   "exclude": ["build", "dist"]
 }

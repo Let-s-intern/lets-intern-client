@@ -1,5 +1,4 @@
 import { ICouponForm } from '../../../../../../types/interface';
-import { PayInfo } from '../../section/ApplySection';
 
 interface DiscountResult {
   couponDiscount: number;
@@ -11,7 +10,10 @@ const handleCouponPrice = ({
   coupon,
   payInfo,
 }: {
-  payInfo: PayInfo;
+  payInfo: {
+    price: number;
+    discount: number;
+  };
   coupon: ICouponForm;
 }): DiscountResult => {
   let totalDiscount =
@@ -35,7 +37,10 @@ const PriceSection = ({
   payInfo,
   coupon,
 }: {
-  payInfo: PayInfo;
+  payInfo: {
+    price: number;
+    discount: number;
+  };
   coupon: ICouponForm;
 }) => {
   const discountInfo = handleCouponPrice({ payInfo, coupon });

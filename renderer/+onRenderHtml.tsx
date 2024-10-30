@@ -2,6 +2,7 @@
 export { onRenderHtml };
 
 import dayjs from 'dayjs';
+import duration from 'dayjs/plugin/duration';
 import timezone from 'dayjs/plugin/timezone';
 import utc from 'dayjs/plugin/utc';
 import React from 'react';
@@ -13,6 +14,7 @@ import getServerHtml from './getServerHtml';
 dayjs.locale('ko');
 dayjs.extend(utc);
 dayjs.extend(timezone);
+dayjs.extend(duration);
 dayjs.tz.setDefault('Asia/Seoul');
 
 async function onRenderHtml(pageContext: PageContextServer) {

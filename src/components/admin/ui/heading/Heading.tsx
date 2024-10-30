@@ -1,8 +1,7 @@
-import styled from 'styled-components';
+import React from 'react';
 
-const Heading = styled.h1`
-  font-size: 1.5rem;
-  font-weight: 700;
-`;
+const Heading: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  return <h1 className="text-2xl font-bold">{children}</h1>;
+};
 
 export default Heading;

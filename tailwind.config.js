@@ -38,6 +38,7 @@ module.exports = {
           20: '#DBDDFD',
           30: '#CACCFC',
           40: '#B8BBFB',
+          90: '#5F66F6',
         },
         secondary: {
           DEFAULT: '#1BC47D',
@@ -57,6 +58,7 @@ module.exports = {
         },
         tertiary: '#CB81F2',
         point: '#DAFF7C',
+        challenge: '#00A8EB',
         system: {
           'positive-green': '#1BC47D',
           'positive-blue': '#5177FF',

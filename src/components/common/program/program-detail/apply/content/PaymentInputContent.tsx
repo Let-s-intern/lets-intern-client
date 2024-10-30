@@ -1,11 +1,11 @@
+import { UserInfo } from '@/lib/order';
 import { useEffect, useState } from 'react';
 import { ProgramType } from '../../../../../../types/common';
 import { IApplyDrawerAction } from '../../../../../../types/interface';
-import { UserInfo } from '../../section/ApplySection';
 import MotiveAnswerSection from '../section/MotiveAnswerSection';
 import UserInputSection from '../section/UserInputSection';
 
-interface InputContentProps {
+interface PaymentInputContentProps {
   contentIndex: number;
   setContentIndex: (contentIndex: number) => void;
   userInfo: UserInfo;
@@ -14,13 +14,13 @@ interface InputContentProps {
   drawerDispatch?: (value: IApplyDrawerAction) => void;
 }
 
-const InputContent = ({
+const PaymentInputContent = ({
   contentIndex,
   setContentIndex,
   userInfo,
   setUserInfo,
   programType,
-}: InputContentProps) => {
+}: PaymentInputContentProps) => {
   const [buttonDisabled, setButtonDisabled] = useState(true);
   const [contactEmail, setContactEmail] = useState(userInfo.contactEmail);
 
@@ -97,4 +97,4 @@ const InputContent = ({
   );
 };
 
-export default InputContent;
+export default PaymentInputContent;

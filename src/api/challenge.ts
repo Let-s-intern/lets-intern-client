@@ -1,12 +1,16 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { getChallengeIdSchema } from '../schema';
+import {
+  challengeTitleSchema,
+  faqSchema,
+  getChallengeIdSchema,
+} from '../schema';
 import axios from '../utils/axios';
 
 const useChallengeQueryKey = 'useChallengeQueryKey';
 
 export const useChallengeQuery = ({
   challengeId,
-  enabled,
+  enabled = true,
 }: {
   challengeId: number;
   enabled?: boolean;
@@ -66,6 +70,26 @@ export const usePatchChallengePayback = ({
       alert('페이백에 실패했습니다.');
       setPaybackModalClose();
       console.error(error);
+    },
+  });
+};
+
+export const useGetChallengeTitle = (challengeId: number | string) => {
+  return useQuery({
+    queryKey: ['useGetChallengeTitle', challengeId],
+    queryFn: async () => {
+      const res = await axios.get(`/challenge/${challengeId}/title`);
+      return challengeTitleSchema.parse(res.data.data);
+    },
+  });
+};
+
+export const useGetChallengeFaq = (challengeId: number | string) => {
+  return useQuery({
+    queryKey: ['useGetChallengeFaq', challengeId],
+    queryFn: async () => {
+      const res = await axios.get(`/challenge/${challengeId}/faqs`);
+      return faqSchema.parse(res.data.data);
     },
   });
 };
