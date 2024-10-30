@@ -85,7 +85,7 @@ const PaymentResult = () => {
       )
       .then((res) => {
         setResult(res.data.data);
-        window.dataLayout?.push({
+        window.dataLayer?.push({
           event: 'program_payment_success',
           program_name: programApplicationData.programTitle,
           program_id: programApplicationData.programId,
