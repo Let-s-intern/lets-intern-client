@@ -1,5 +1,9 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { challengeTitleSchema, getChallengeIdSchema } from '../schema';
+import {
+  challengeTitleSchema,
+  faqSchema,
+  getChallengeIdSchema,
+} from '../schema';
 import axios from '../utils/axios';
 
 const useChallengeQueryKey = 'useChallengeQueryKey';
@@ -72,10 +76,20 @@ export const usePatchChallengePayback = ({
 
 export const useGetChallengeTitle = (challengeId: number | string) => {
   return useQuery({
-    queryKey: [challengeId, 'useGetChallengeTitle'],
+    queryKey: ['useGetChallengeTitle', challengeId],
     queryFn: async () => {
       const res = await axios.get(`/challenge/${challengeId}/title`);
       return challengeTitleSchema.parse(res.data.data);
+    },
+  });
+};
+
+export const useGetChallengeFaq = (challengeId: number | string) => {
+  return useQuery({
+    queryKey: ['useGetChallengeFaq', challengeId],
+    queryFn: async () => {
+      const res = await axios.get(`/challenge/${challengeId}/faqs`);
+      return faqSchema.parse(res.data.data);
     },
   });
 };
