@@ -1,12 +1,12 @@
+import { useMediaQuery } from '@mui/material';
 import dayjs from 'dayjs';
+import { useState } from 'react';
 import { IoIosArrowDown } from 'react-icons/io';
+import { twJoin } from 'tailwind-merge';
 
 import { ChallengeCurriculum as ChallengeCurriculumType } from '@/types/interface';
 import Heading2 from '@components/common/program/program-detail/Heading2';
 import SuperTitle from '@components/common/program/program-detail/SuperTitle';
-import { useMediaQuery } from '@mui/material';
-import { useState } from 'react';
-import { twJoin } from 'tailwind-merge';
 
 const superTitle = '취업 트랜드를 반영한 체계적인 커리큘럼';
 const title = ['기초부터 결과물까지 가져가는', '완벽한 취업 준비 2주 커리큘럼'];
