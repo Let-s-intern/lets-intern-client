@@ -34,6 +34,7 @@ function FaqSection<
   const { mutateAsync: deleteFaq } = useDeleteFaq();
   const { mutateAsync: patchFaq } = usePatchFaq();
   const { mutateAsync: postFaq } = usePostFaq();
+  console.log(data);
 
   const checkFaq = (e: React.ChangeEvent<HTMLInputElement>, faqId: number) => {
     if (e.target.checked)
@@ -123,9 +124,7 @@ function FaqSection<
           type="button"
           className="rounded-sm bg-[#e0e0e0] px-4 py-2 font-medium"
           onClick={() => {
-            if (!data?.faqList) return;
-
-            Promise.all(data.faqList.map((faq) => patchFaq(faq)))
+            Promise.all(faqList.map((faq) => patchFaq(faq)))
               .then(() => alert('FAQ가 저장되었습니다.'))
               .catch((err) => alert(`FAQ 저장에 실패했습니다.\n${err}`));
           }}

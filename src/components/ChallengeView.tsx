@@ -1,5 +1,6 @@
 import ChallengeCheckList from '@/pages/common/program/ChallengeCheckList';
 import ChallengeCurriculum from '@/pages/common/program/ChallengeCurriculum';
+import ChallengeFaq from '@/pages/common/program/ChallengeFaq';
 import ChallengeIntro from '@/pages/common/program/ChallengeIntro';
 import ChallengeResult from '@/pages/common/program/ChallengeResult';
 import { ChallengeIdSchema } from '@/schema';
@@ -62,16 +63,18 @@ const ChallengeView: React.FC<{ challenge: ChallengeIdSchema }> = ({
           />
 
           <div>
+            <ChallengeFaq />
+          </div>
+
+          <div>
             이 모든 고민을 한번에 해결! 서류 합격률을 300% 높일 수 있는
             렛츠커리어 챌린지
           </div>
-          <div>커리큘럼</div>
           <div>차별점</div>
           <div>여기서 끝이 아니죠 챌린지 참여자만을 위한 트리플 혜택!</div>
           <div>누적 참여자 1,900+명 참여 만족도 4.9점</div>
           <div>후기</div>
           <div>블로그 후기</div>
-          <div>faq</div>
           <div>모집 개요</div>
         </div>
       </div>
