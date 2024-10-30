@@ -121,6 +121,7 @@ const faq = z.object({
   id: z.number(),
   question: z.string().nullable().optional(),
   answer: z.string().nullable().optional(),
+  category: z.string().nullable().optional(),
   faqProgramType: faqProgramType.nullable().optional(),
 });
 
