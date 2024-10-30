@@ -1,9 +1,9 @@
+import { useState } from 'react';
 import { FaCheck } from 'react-icons/fa6';
 import { twMerge } from 'tailwind-merge';
 
-import { useState } from 'react';
+import { UserInfo } from '@/lib/order';
 import Input from '../../../../ui/input/Input';
-import { UserInfo } from '../../section/ApplySection';
 
 interface UserInputSectionProps {
   userInfo: UserInfo;
