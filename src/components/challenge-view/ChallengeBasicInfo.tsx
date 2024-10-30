@@ -38,7 +38,7 @@ const ChallengeBasicInfo = ({
       <div className="flex w-full flex-col gap-y-3 md:w-2/5">
         <div className="flex w-full items-center justify-center rounded-md bg-neutral-95 px-6 py-5">
           {isLive ? (
-            <div className="text-primary-90 flex w-full flex-col gap-y-5">
+            <div className="flex w-full flex-col gap-y-5 text-primary-90">
               <BasicInfoRow
                 icon={<ClockIcon />}
                 title="진행 기간"
@@ -61,7 +61,7 @@ const ChallengeBasicInfo = ({
               />
             </div>
           ) : (
-            <div className="text-challenge flex w-full flex-col gap-y-5">
+            <div className="flex w-full flex-col gap-y-5 text-challenge">
               <BasicInfoRow
                 icon={<CalendarIcon />}
                 title="진행 기간"
@@ -130,58 +130,62 @@ const ChallengeBasicInfo = ({
                   </div>
                 </div>
               </div>
-              <div>
-                <div className="flex w-full flex-col gap-y-2.5 border-b border-neutral-80 py-2.5 pb-[14px] text-neutral-0">
-                  <div className="flex w-full items-center justify-between gap-x-4 text-xsmall16">
-                    <span className="font-medium">정가</span>
-                    <span>
-                      {challenge.priceInfo[0].price?.toLocaleString()}원
-                    </span>
-                  </div>
-                  <div className="flex w-full items-center justify-between gap-x-4 text-xsmall16">
-                    <span className="text-challenge font-bold">
-                      {getDiscountPercent(
-                        challenge.priceInfo[0].price || 0,
-                        challenge.priceInfo[0].discount || 0,
-                      )}
-                      % 할인
-                    </span>
-                    <span>
-                      -{challenge.priceInfo[0].discount?.toLocaleString()}원
-                    </span>
-                  </div>
-                  <div className="flex w-full items-center justify-between gap-x-4 text-xsmall16">
-                    <span className="font-bold text-black">
-                      미션 모두 수행시, 환급
-                    </span>
-                    <span>
-                      -{challenge.priceInfo[0].refund?.toLocaleString()}원
-                    </span>
+              {challenge.priceInfo[0] && (
+                <div>
+                  <div className="flex w-full flex-col gap-y-2.5 border-b border-neutral-80 py-2.5 pb-[14px] text-neutral-0">
+                    <div className="flex w-full items-center justify-between gap-x-4 text-xsmall16">
+                      <span className="font-medium">정가</span>
+                      <span>
+                        {challenge.priceInfo[0].price?.toLocaleString()}원
+                      </span>
+                    </div>
+                    <div className="flex w-full items-center justify-between gap-x-4 text-xsmall16">
+                      <span className="font-bold text-challenge">
+                        {getDiscountPercent(
+                          challenge.priceInfo[0].price || 0,
+                          challenge.priceInfo[0].discount || 0,
+                        )}
+                        % 할인
+                      </span>
+                      <span>
+                        -{challenge.priceInfo[0].discount?.toLocaleString()}원
+                      </span>
+                    </div>
+                    <div className="flex w-full items-center justify-between gap-x-4 text-xsmall16">
+                      <span className="font-bold text-black">
+                        미션 모두 수행시, 환급
+                      </span>
+                      <span>
+                        -{challenge.priceInfo[0].refund?.toLocaleString()}원
+                      </span>
+                    </div>
                   </div>
                 </div>
-              </div>
+              )}
             </div>
-            <div className="flex w-full flex-col gap-y-4">
-              <div className="flex w-full items-center justify-between text-small20 font-medium text-neutral-0">
-                <p>할인 적용가</p>
-                <p className="text-xxlarge32 font-bold text-neutral-0">
-                  {(
-                    (challenge.priceInfo[0].price ?? 0) -
-                    (challenge.priceInfo[0].discount ?? 0)
-                  ).toLocaleString()}
-                  원
-                </p>
-              </div>
-              <div className="flex w-full flex-col items-end gap-y-2">
-                <div className="text-challenge">
-                  <span className="mr-1 text-medium22 font-semibold">월</span>
-                  <span className="text-xxlarge32 font-bold">9800원</span>
+            {challenge.priceInfo[0] && (
+              <div className="flex w-full flex-col gap-y-4">
+                <div className="flex w-full items-center justify-between text-small20 font-medium text-neutral-0">
+                  <p>할인 적용가</p>
+                  <p className="text-xxlarge32 font-bold text-neutral-0">
+                    {(
+                      (challenge.priceInfo[0].price ?? 0) -
+                      (challenge.priceInfo[0].discount ?? 0)
+                    ).toLocaleString()}
+                    원
+                  </p>
                 </div>
-                <p className="text-xsmall14 text-neutral-30">
-                  *우리은행 10개월 할부 시
-                </p>
+                <div className="flex w-full flex-col items-end gap-y-2">
+                  <div className="text-challenge">
+                    <span className="mr-1 text-medium22 font-semibold">월</span>
+                    <span className="text-xxlarge32 font-bold">9800원</span>
+                  </div>
+                  <p className="text-xsmall14 text-neutral-30">
+                    *우리은행 10개월 할부 시
+                  </p>
+                </div>
               </div>
-            </div>
+            )}
           </div>
         )}
       </div>
