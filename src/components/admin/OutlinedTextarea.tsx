@@ -5,6 +5,7 @@ interface OutlinedTextareaProps {
   name?: string;
   placeholder?: string;
   value?: string;
+  defaultValue?: string;
   onChange?: React.ChangeEventHandler<HTMLTextAreaElement>;
 }
 
@@ -13,6 +14,7 @@ function OutlinedTextarea({
   name,
   placeholder,
   value,
+  defaultValue,
   onChange,
 }: OutlinedTextareaProps) {
   return (
@@ -21,6 +23,7 @@ function OutlinedTextarea({
       name={name}
       placeholder={placeholder}
       value={value}
+      defaultValue={defaultValue}
       onChange={onChange}
     />
   );
