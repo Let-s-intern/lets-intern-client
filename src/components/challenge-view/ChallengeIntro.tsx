@@ -5,7 +5,6 @@ import { LuAlarmClock } from 'react-icons/lu';
 import Description from '@components/common/program/program-detail/Description';
 import Heading2 from '@components/common/program/program-detail/Heading2';
 import OutlinedBox from '@components/common/program/program-detail/OutlineBox';
-import SuperTitle from '@components/common/program/program-detail/SuperTitle';
 
 const TITLE1 = [
   '인사담당자가 서류를 보는 시간,',
@@ -45,8 +44,6 @@ const DESCRITION2 = [
 function ChallengeIntro() {
   return (
     <section id="program-intro">
-      <SuperTitle className="text-neutral-45">프로그램 소개</SuperTitle>
-
       <div className="mb-20 mt-6 lg:mb-48 lg:text-center">
         <div className="flex flex-col gap-2 lg:items-center lg:gap-3">
           <Badge>
