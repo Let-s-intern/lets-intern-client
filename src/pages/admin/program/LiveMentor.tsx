@@ -1,5 +1,7 @@
 import { CreateLiveReq, LiveIdSchema, UpdateLiveReq } from '@/schema';
+import OutlinedTextarea from '@components/admin/OutlinedTextarea';
 import Input from '@components/ui/input/Input';
+import { useState } from 'react';
 
 interface LiveMentorProps<T extends CreateLiveReq | UpdateLiveReq> {
   defaultValue: Pick<
@@ -17,8 +19,20 @@ export default function LiveMentor<T extends CreateLiveReq | UpdateLiveReq>({
   defaultValue,
   setInput,
 }: LiveMentorProps<T>) {
-  const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setInput((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+  const [mentorCareer, setMentorCareer] = useState(defaultValue.mentorCareer);
+  const [mentorIntroduction, setMentorIntroduction] = useState(
+    defaultValue.mentorIntroduction,
+  );
+
+  const onChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
+    const { name, value } = e.target;
+
+    if (name === 'mentorCareer') setMentorCareer(value);
+    else if (name === 'mentorIntroduction') setMentorIntroduction(value);
+
+    setInput((prev) => ({ ...prev, [name]: value }));
   };
 
   return (
@@ -50,21 +64,15 @@ export default function LiveMentor<T extends CreateLiveReq | UpdateLiveReq>({
         placeholder="멘토 직무를 입력해주세요"
         onChange={onChange}
       />
-      <Input
-        label="멘토경력"
-        type="text"
+      <OutlinedTextarea
         name="mentorCareer"
-        size="small"
-        defaultValue={defaultValue.mentorCareer}
+        value={mentorCareer}
         placeholder="멘토 경력을 입력해주세요"
         onChange={onChange}
       />
-      <Input
-        label="멘토 한 줄 소개"
-        type="text"
+      <OutlinedTextarea
         name="mentorIntroduction"
-        size="small"
-        defaultValue={defaultValue.mentorIntroduction}
+        value={mentorIntroduction}
         placeholder="한 줄 소개를 입력해주세요"
         onChange={onChange}
       />
