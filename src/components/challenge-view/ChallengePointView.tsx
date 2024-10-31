@@ -1,6 +1,8 @@
 import { ChallengePoint } from '@/types/interface';
+import Heading2 from '@components/common/program/program-detail/Heading2';
 // import Balancer from 'react-wrap-balancer';
 import { clientOnly } from 'vike-react/clientOnly';
+
 const Balancer = clientOnly(() => import('react-wrap-balancer'));
 
 const ChallengePointView = ({
@@ -13,13 +15,17 @@ const ChallengePointView = ({
   if (point === undefined) return <></>;
 
   return (
-    <div className={className}>
+    <section className={className}>
       <h2 className="sr-only">챌린지 포인트</h2>
-      <p className="mb-10 break-keep text-small20 font-bold text-neutral-0 sm:mb-20">
-        이력서 & 자기소개서 챌린지를 통해{' '}
+      <Heading2 className="mb-10 break-keep lg:mb-20">
+        이력서 & 자기소개서 챌린지를 통해
+        <br />
         <span className="text-[rgba(255,156,52,1)]">하루 30분</span>, 단{' '}
-        {point.weekText} 안에 이런걸 얻어갈 수 있어요
-      </p>
+        {point.weekText} 안에 이런걸
+        <br className="lg:hidden" />
+        얻어갈 수 있어요
+      </Heading2>
+
       <ul className="space-y-4">
         {point.list?.map((item, index) => (
           <li
@@ -46,7 +52,7 @@ const ChallengePointView = ({
           </li>
         ))}
       </ul>
-    </div>
+    </section>
   );
 };
 

@@ -1,11 +1,10 @@
+import { twMerge } from '@/lib/twMerge';
 import { Fragment, ReactNode } from 'react';
 import { LuAlarmClock } from 'react-icons/lu';
-import { twMerge } from 'tailwind-merge';
 
 import Description from '@components/common/program/program-detail/Description';
 import Heading2 from '@components/common/program/program-detail/Heading2';
 import OutlinedBox from '@components/common/program/program-detail/OutlineBox';
-import SuperTitle from '@components/common/program/program-detail/SuperTitle';
 
 const TITLE1 = [
   '인사담당자가 서류를 보는 시간,',
@@ -45,26 +44,24 @@ const DESCRITION2 = [
 function ChallengeIntro() {
   return (
     <section id="program-intro">
-      <SuperTitle className="text-neutral-45">프로그램 소개</SuperTitle>
-
-      <div className="mb-20 mt-6 lg:mb-48 lg:text-center">
-        <div className="flex flex-col gap-2 lg:items-center lg:gap-3">
+      <div className="mb-20 mt-6 md:mb-48 md:text-center">
+        <div className="flex flex-col gap-2 md:items-center md:gap-3">
           <Badge>
             <LuAlarmClock size={24} />
             <span>평균 10초</span>
           </Badge>
           <Heading2>{TITLE1.join('\n')}</Heading2>
         </div>
-        <Description className="mb-10 mt-3 lg:mb-20 lg:mt-8">
-          {DESCRITION1[0]} <br className="lg:hidden" />
+        <Description className="mb-10 mt-3 md:mb-20 md:mt-8">
+          {DESCRITION1[0]} <br className="md:hidden" />
           {DESCRITION1[1]}
           <br />
-          {DESCRITION1[2]} <br className="lg:hidden" />
+          {DESCRITION1[2]} <br className="md:hidden" />
           {DESCRITION1[3]}
         </Description>
 
         <OutlinedBox>
-          <CircularBox className="hidden lg:flex">STAR 기법</CircularBox>
+          <CircularBox className="hidden md:flex">STAR 기법</CircularBox>
 
           {Object.entries(STAR).map(([key, value], index) => (
             <Fragment key={key}>
@@ -81,7 +78,7 @@ function ChallengeIntro() {
         </OutlinedBox>
         <div className="mb-6" />
         <OutlinedBox>
-          <CircularBox className="hidden lg:flex">
+          <CircularBox className="hidden md:flex">
             <span>두괄식</span>
             <span>수치화</span>
           </CircularBox>
@@ -103,16 +100,16 @@ function ChallengeIntro() {
         </OutlinedBox>
       </div>
 
-      <div className="lg:flex lg:flex-col lg:items-center">
-        <div className="flex flex-col gap-3 lg:items-center lg:text-center">
+      <div className="md:flex md:flex-col md:items-center">
+        <div className="flex flex-col gap-3 md:items-center md:text-center">
           <div>
             <Badge>평균 서류 합격률 28%</Badge>
-            <span className="mt-1 block text-[10px] text-neutral-30 lg:text-xxsmall12">
+            <span className="mt-1 block text-[10px] text-neutral-30 md:text-xxsmall12">
               *출처 : 한국경제인협회 설문조사
             </span>
           </div>
           <Heading2>{TITLE2.join('\n')}</Heading2>
-          <div className="lg:mt-8">
+          <div className="md:mt-8">
             <Description>
               {DESCRITION2.map((item, index) => (
                 <Fragment key={item}>
@@ -124,7 +121,7 @@ function ChallengeIntro() {
           </div>
         </div>
         <img
-          className="mt-10 h-auto w-full max-w-[660px] lg:mt-20"
+          className="mt-10 h-auto w-full max-w-[660px] md:mt-20"
           src="/images/challenge-chart.png"
           alt="자소서 완성도를 높이기 위한 5가지 기준을 나타낸 차트"
         />
@@ -135,7 +132,7 @@ function ChallengeIntro() {
 
 function Badge({ children }: { children?: ReactNode }) {
   return (
-    <div className="gap-1.6 flex w-fit items-center gap-1 rounded-xxs bg-[#FFF7EF] px-2.5 py-1 text-small18 font-bold text-[#FB8100] lg:text-xlarge28">
+    <div className="gap-1.6 flex w-fit items-center gap-1 rounded-xxs bg-[#FFF7EF] px-2.5 py-1 text-small18 font-bold text-[#FB8100] md:text-xlarge28">
       {children}
     </div>
   );
@@ -147,7 +144,7 @@ function BoxItem({ title, children }: { title: string; children?: ReactNode }) {
       <span className="block text-xlarge28 font-bold text-[#008CC3]">
         {title}
       </span>
-      <p className="block text-xxsmall12 font-medium text-neutral-40 lg:text-small18">
+      <p className="block text-xxsmall12 font-medium text-neutral-40 md:text-small18">
         {children}
       </p>
     </div>

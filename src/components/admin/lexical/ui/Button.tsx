@@ -8,8 +8,8 @@
 
 import './Button.css';
 
+import { twMerge } from '@/lib/twMerge';
 import { ReactNode } from 'react';
-import { twMerge } from 'tailwind-merge';
 
 export default function Button({
   'data-test-id': dataTestId,

@@ -1,5 +1,5 @@
+import { twMerge } from '@/lib/twMerge';
 import { ReactNode } from 'react';
-import { twMerge } from 'tailwind-merge';
 
 function Box({
   children,

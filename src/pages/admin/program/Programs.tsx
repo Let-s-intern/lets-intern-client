@@ -20,7 +20,7 @@ import {
   FaPlus,
   FaTrashCan,
 } from 'react-icons/fa6';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import Header from '../../../components/admin/ui/header/Header';
 import Heading from '../../../components/admin/ui/heading/Heading';
 import AdminPagination from '../../../components/admin/ui/pagination/AdminPagination';
@@ -49,14 +49,6 @@ const Programs = () => {
       <Header>
         <Heading>프로그램 관리</Heading>
         <div className="flex items-center justify-center gap-2">
-          <Button
-            variant="outlined"
-            color="primary"
-            startIcon={<FaPlus size={12} />}
-            onClick={() => navigate(`/admin/programs/create`)}
-          >
-            등록(old version)
-          </Button>
           <Button
             variant="contained"
             color="primary"
@@ -169,7 +161,16 @@ const Row = ({ program }: { program: ProgramAdminListItem }) => {
         </span>
       </TD>
       <TD>{newProgramTypeToText[program.programInfo.programType]}</TD>
-      <TD>{program.programInfo.title}</TD>
+      <TD>
+        {program.programInfo.title} (
+        <Link
+          className="text-blue-500 underline transition hover:text-blue-300"
+          to={`/program/${program.programInfo.programType.toLowerCase()}/${program.programInfo.id}`}
+        >
+          보기
+        </Link>
+        )
+      </TD>
       <TD>{programStatusToText[program.programInfo.programStatusType]}</TD>
       <TD>
         {program.programInfo.programType === 'VOD' ? (
@@ -212,6 +213,11 @@ const Row = ({ program }: { program: ProgramAdminListItem }) => {
                   navigate(`/admin/live/${program.programInfo.id}/edit`);
                   break;
                 case 'VOD':
+                  // navigate(
+                  //   `/admin/programs/${program.programInfo.id}/edit?programType=VOD`,
+                  // );
+                  navigate(`/admin/vod/${program.programInfo.id}/edit`);
+                  break;
                 case 'REPORT':
                   throw new Error("Don't use this page");
               }

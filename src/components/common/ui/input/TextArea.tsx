@@ -1,5 +1,5 @@
+import { twMerge } from '@/lib/twMerge';
 import { useEffect, useState } from 'react';
-import { twMerge } from 'tailwind-merge';
 
 interface TextAreaProps
   extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {

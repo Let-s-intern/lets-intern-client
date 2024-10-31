@@ -1,6 +1,7 @@
 import { useProgramApplicationQuery } from '@/api/application';
 import { useChallengeQuery } from '@/api/challenge';
 import { useServerChallenge } from '@/context/ServerChallenge';
+import { isDeprecatedProgram } from '@/lib/isDeprecatedProgram';
 import { generateOrderId, getPayInfo, UserInfo } from '@/lib/order';
 import useAuthStore from '@/store/useAuthStore';
 import useProgramStore from '@/store/useProgramStore';
@@ -32,13 +33,13 @@ const ChallengeDetailSSRPage = () => {
 
   const challenge = data || challengeFromServer;
   const isLoading = challenge.title === '로딩중...';
-  const isNotValidJson = challenge.desc && challenge.desc.startsWith('<');
+  const isDeprecated = isDeprecatedProgram(challenge);
 
   useEffect(() => {
-    if (isNotValidJson) {
-      navigate(`/program/challenge/old/${id}`);
+    if (isDeprecated) {
+      navigate(`/program/old/challenge/${id}`, { replace: true });
     }
-  }, [id, isNotValidJson, navigate]);
+  }, [challenge, id, isDeprecated, navigate]);
 
   // 이 페이지 방문 시 프로그램 신청 폼 초기화
   useEffect(() => {
@@ -46,7 +47,7 @@ const ChallengeDetailSSRPage = () => {
   }, [initProgramApplicationForm]);
 
   useEffect(() => {
-    if (!titleFromUrl && !isLoading) {
+    if (!titleFromUrl && !isLoading && !isDeprecated) {
       window.history.replaceState(
         {},
         '',
@@ -57,7 +58,7 @@ const ChallengeDetailSSRPage = () => {
         }),
       );
     }
-  }, [challenge.title, id, isLoading, titleFromUrl]);
+  }, [challenge.title, id, isDeprecated, isLoading, titleFromUrl]);
 
   const { data: application } = useProgramApplicationQuery(
     'challenge',
@@ -138,7 +139,7 @@ const ChallengeDetailSSRPage = () => {
     setProgramApplicationForm,
   ]);
 
-  if (isNotValidJson) {
+  if (isDeprecated || isLoading) {
     return <></>;
   }
 

@@ -34,7 +34,6 @@ function FaqSection<
   const { mutateAsync: deleteFaq } = useDeleteFaq();
   const { mutateAsync: patchFaq } = usePatchFaq();
   const { mutateAsync: postFaq } = usePostFaq();
-  console.log(data);
 
   const checkFaq = (e: React.ChangeEvent<HTMLInputElement>, faqId: number) => {
     if (e.target.checked)
@@ -100,14 +99,16 @@ function FaqSection<
                   autoComplete="off"
                 />
               </div>
-              <input
-                type="text"
-                className="rounded-sm border border-[#cbd5e0] px-4 py-2 text-sm"
-                name="category"
-                placeholder="유형을 입력하세요."
-                value={faq.category ?? ''}
-                onChange={(e) => onChange(e, faq.id)}
-              />
+              {programType === 'CHALLENGE' && (
+                <input
+                  type="text"
+                  className="rounded-sm border border-[#cbd5e0] px-4 py-2 text-sm"
+                  name="category"
+                  placeholder="유형을 입력하세요."
+                  value={faq.category ?? ''}
+                  onChange={(e) => onChange(e, faq.id)}
+                />
+              )}
               <button
                 type="button"
                 className="w-[5rem] rounded-sm bg-[#e0e0e0] px-4 py-2 font-medium"

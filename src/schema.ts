@@ -296,12 +296,12 @@ export const getLiveIdSchema = z
     ),
     priceInfo: z.object({
       priceId: z.number(),
-      price: z.number().optional(),
-      discount: z.number().optional(),
-      accountNumber: z.string().optional(),
-      deadline: z.string().optional(),
-      accountType: accountType.optional(),
-      livePriceType: livePriceTypeSchema.optional(),
+      price: z.number().optional().nullable(),
+      discount: z.number().optional().nullable(),
+      accountNumber: z.string().optional().nullable(),
+      deadline: z.string().optional().nullable(),
+      accountType: accountType.optional().nullable(),
+      livePriceType: livePriceTypeSchema.optional().nullable(),
     }),
     faqInfo: z.array(faq),
     vod: z.boolean().nullable().optional(),
@@ -409,8 +409,8 @@ export type UpdateLiveReq = {
   }[];
 };
 
-// ADMIN LIVE 프로그램 직무
-export const liveJob = z.enum([
+// ADMIN LIVE 클래스 및 VOD 클래스 직무
+export const liveAndVodJob = z.enum([
   '경영관리',
   '금융',
   '마케팅',
@@ -448,6 +448,8 @@ export const getVodIdSchema = z.object({
     .nullable()
     .optional(),
 });
+
+export type VodIdSchema = z.infer<typeof getVodIdSchema>;
 
 /** POST /api/v1/vod VOD 생성 */
 export type CreateVodReq = {
@@ -613,15 +615,17 @@ export const getChallengeIdApplication = z
     deadline: z.string(),
     priceList: z.array(
       z.object({
-        priceId: z.number(),
-        price: z.number(),
-        discount: z.number(),
-        accountNumber: z.string(),
-        deadline: z.string(),
-        accountType,
-        challengePriceType,
-        challengeUserType,
-        challengeParticipationType,
+        priceId: z.number().optional().nullable(),
+        price: z.number().optional().nullable(),
+        discount: z.number().optional().nullable(),
+        accountNumber: z.string().optional().nullable(),
+        deadline: z.string().optional().nullable(),
+        accountType: accountType.optional().nullable(),
+        challengePriceType: challengePriceType.optional().nullable(),
+        challengeUserType: challengeUserType.optional().nullable(),
+        challengeParticipationType: challengeParticipationType
+          .optional()
+          .nullable(),
       }),
     ),
   })

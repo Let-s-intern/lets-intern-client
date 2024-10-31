@@ -6,6 +6,7 @@
  *
  */
 
+import { twMerge } from '@/lib/twMerge';
 import { useCollaborationContext } from '@lexical/react/LexicalCollaborationContext';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { useLexicalNodeSelection } from '@lexical/react/useLexicalNodeSelection';
@@ -22,7 +23,6 @@ import {
   NodeKey,
 } from 'lexical';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { twMerge } from 'tailwind-merge';
 import Button from '../ui/Button';
 import type { Option, Options, PollNode } from './PollNode';
 import { $isPollNode, createPollOption } from './PollNode';

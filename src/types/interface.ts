@@ -55,8 +55,12 @@ export type ChallengeContent = {
 };
 
 export type LiveContent = {
+  /** 초기화 여부 알려주는 것 */
+  initialized: boolean;
   /* 상세 설명*/
   mainDescription?: SerializedEditorState;
+  /* 커리큘럼 추가 입력 */
+  additionalCurriculum?: SerializedEditorState;
   /* 커리큘럼 */
   curriculum: {
     id: string;

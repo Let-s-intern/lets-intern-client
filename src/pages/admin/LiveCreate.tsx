@@ -9,6 +9,7 @@ import { usePostLiveMutation } from '@/api/program';
 import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
 import { CreateLiveReq } from '@/schema';
 import { LiveContent } from '@/types/interface';
+import EditorApp from '@components/admin/lexical/EditorApp';
 import LivePreviewButton from '@components/admin/LivePreviewButton';
 import ImageUpload from '@components/admin/program/ui/form/ImageUpload';
 import Header from '@components/admin/ui/header/Header';
@@ -26,7 +27,7 @@ const LiveCreate: React.FC = () => {
 
   const [loading, setLoading] = useState(false);
   const [content, setContent] = useState<LiveContent>({
-    // mainDescription: ,
+    initialized: true,
     curriculum: [],
     blogReview: { list: [] },
   });
@@ -147,6 +148,16 @@ const LiveCreate: React.FC = () => {
       </section>
 
       <LiveCurriculum curriculum={content.curriculum} setContent={setContent} />
+
+      <Heading2 className="mt-6">커리큘럼 추가 입력</Heading2>
+      <EditorApp
+        onChangeSerializedEditorState={(json) =>
+          setContent((prev) => ({
+            ...prev,
+            additionalCurriculum: json,
+          }))
+        }
+      />
 
       <ProgramBlogReviewEditor
         blogReview={content.blogReview ?? { list: [] }}

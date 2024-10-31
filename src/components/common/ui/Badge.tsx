@@ -1,5 +1,5 @@
+import { twMerge } from '@/lib/twMerge';
 import React, { forwardRef } from 'react';
-import { twMerge } from 'tailwind-merge';
 
 interface IBadgeProps extends React.HTMLAttributes<HTMLSpanElement> {
   children: React.ReactNode;
@@ -14,7 +14,7 @@ export const Badge = forwardRef<HTMLSpanElement, IBadgeProps>(
         className={twMerge(
           'inline-flex h-5 items-center justify-center rounded-xs border border-transparent px-2.5 text-xs font-semibold',
           status === 'success' &&
-            'bg-secondary-10 border-secondary text-secondary',
+            'border-secondary bg-secondary-10 text-secondary',
           status === 'warning' && '',
           status === 'error' && '',
           status === 'info' && 'border-primary bg-primary-20 text-primary',

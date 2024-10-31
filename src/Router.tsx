@@ -73,7 +73,7 @@ const Router = () => {
 
               {/* 챌린지 상세 페이지 (Deprecated) */}
               <Route
-                path="program/challenge/old/:programId"
+                path="program/old/challenge/:programId"
                 element={<ProgramDetailLegacy programType="challenge" />}
               />
 
@@ -85,7 +85,7 @@ const Router = () => {
 
               {/* LIVE 클래스 상세 페이지 (Deprecated) */}
               <Route
-                path="program/live/old/:programId"
+                path="program/old/live/:programId"
                 element={<ProgramDetailLegacy programType="live" />}
               />
 

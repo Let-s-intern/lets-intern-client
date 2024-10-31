@@ -1,5 +1,5 @@
+import { twMerge } from '@/lib/twMerge';
 import { ReactNode } from 'react';
-import { twJoin } from 'tailwind-merge';
 
 function SuperTitle({
   children,
@@ -10,8 +10,8 @@ function SuperTitle({
 }) {
   return (
     <span
-      className={twJoin(
-        'block text-xsmall14 font-semibold lg:text-center lg:text-small20',
+      className={twMerge(
+        'block text-xsmall14 font-semibold md:text-center md:text-small20',
         className,
       )}
     >

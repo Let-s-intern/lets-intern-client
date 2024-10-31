@@ -1,7 +1,11 @@
 import { fileType, uploadFile } from '@/api/file';
-import { useGetChallengeQuery, usePatchChallengeMutation } from '@/api/program';
+import {
+  useGetChallengeQuery,
+  useGetChallengeQueryKey,
+  usePatchChallengeMutation,
+} from '@/api/program';
 import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
-import isDeprecatedProgram from '@/lib/isDeprecatedProgram';
+import { isDeprecatedProgram } from '@/lib/isDeprecatedProgram';
 import { UpdateChallengeReq } from '@/schema';
 import { ChallengeContent } from '@/types/interface';
 import ChallengePreviewButton from '@components/admin/ChallengePreviewButton';
@@ -12,6 +16,7 @@ import Heading from '@components/admin/ui/heading/Heading';
 import { Heading2 } from '@components/admin/ui/heading/Heading2';
 import Heading3 from '@components/admin/ui/heading/Heading3';
 import { Button } from '@mui/material';
+import { useQueryClient } from '@tanstack/react-query';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { FaSave } from 'react-icons/fa';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -38,43 +43,44 @@ const ChallengeEdit: React.FC = () => {
   const { mutateAsync: patchChallenge } = usePatchChallengeMutation();
   const navigate = useNavigate();
   const { challengeId: challengeIdString } = useParams();
-
+  const client = useQueryClient();
   const { data: challenge } = useGetChallengeQuery({
     challengeId: Number(challengeIdString),
     enabled: Boolean(challengeIdString),
   });
 
-  const receivedContent = useMemo<ChallengeContent>(() => {
-    if (!challenge?.desc) {
-      return { initialized: false };
-    }
-    try {
-      return JSON.parse(challenge.desc);
-    } catch (e) {
-      console.error(e);
-      return { initialized: false };
-    }
-  }, [challenge?.desc]);
-
-  useEffect(() => {
-    if (!receivedContent.initialized) {
-      return;
-    }
-    setContent((prev) => ({
-      ...(prev.initialized ? prev : { ...receivedContent, initialized: true }),
-    }));
-  }, [receivedContent]);
-
   useEffect(() => {
     if (challenge && isDeprecatedProgram(challenge)) {
       navigate(
         `/admin/programs/${challengeIdString}/edit?programType=CHALLENGE`,
-        {
-          replace: true,
-        },
+        { replace: true },
       );
     }
   }, [challenge, challengeIdString, navigate]);
+
+  const receivedContent = useMemo<ChallengeContent | null>(() => {
+    if (!challenge?.desc) {
+      return null;
+    }
+
+    try {
+      return JSON.parse(challenge.desc);
+    } catch (e) {
+      console.error(e);
+      return null;
+    }
+  }, [challenge?.desc]);
+
+  // receivedConent가 초기화되면 content에 적용
+  useEffect(() => {
+    if (!receivedContent) {
+      return;
+    }
+
+    setContent((prev) => ({
+      ...(prev.initialized ? prev : { ...receivedContent, initialized: true }),
+    }));
+  }, [receivedContent]);
 
   const [input, setInput] = useState<Omit<UpdateChallengeReq, 'desc'>>({});
   const [loading, setLoading] = useState(false);
@@ -104,11 +110,14 @@ const ChallengeEdit: React.FC = () => {
     console.log('req', req);
 
     const res = await patchChallenge(req);
+    client.invalidateQueries({
+      queryKey: [useGetChallengeQueryKey, Number(challengeIdString)],
+    });
     console.log('res', res);
 
     setLoading(false);
     snackbar('저장되었습니다.');
-  }, [challengeIdString, content, input, patchChallenge, snackbar]);
+  }, [challengeIdString, client, content, input, patchChallenge, snackbar]);
 
   if (!challenge || !content.initialized) {
     return <div>loading...</div>;

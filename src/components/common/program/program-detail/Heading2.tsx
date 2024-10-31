@@ -1,5 +1,5 @@
+import { twMerge } from '@/lib/twMerge';
 import { ReactNode } from 'react';
-import { twMerge } from 'tailwind-merge';
 
 function Heading2({
   children,
@@ -11,7 +11,7 @@ function Heading2({
   return (
     <h2
       className={twMerge(
-        'whitespace-pre-line text-small20 font-bold lg:text-center lg:text-xlarge28',
+        'whitespace-pre-line text-small20 font-bold text-neutral-0 md:text-center md:text-xlarge28',
         className,
       )}
     >

@@ -8,7 +8,6 @@ import {
 } from '@mui/material';
 import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
 import { useMemo, useRef } from 'react';
-import ReactQuill from 'react-quill';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import storage from '../../../../../Firebase';
@@ -589,15 +588,21 @@ const ProgramInputContent = ({
               </>
             )}
             {(value.program === 'CHALLENGE' || value.program === 'LIVE') && (
-              <ReactQuill
-                modules={modules}
-                placeholder="상세 내용을 입력해주세요."
-                ref={quillRef}
-                value={content ? content : ''}
-                onChange={(value) => {
-                  setContent(value);
-                }}
-              />
+              <div>
+                <div>(수정불가)</div>
+                <hr />
+                <div dangerouslySetInnerHTML={{ __html: content }} />
+                <hr />
+              </div>
+              //  <ReactQuill
+              //    modules={modules}
+              //    placeholder="상세 내용을 입력해주세요."
+              //    ref={quillRef}
+              //    value={content ? content : ''}
+              //    onChange={(value) => {
+              //      setContent(value);
+              //    }}
+              //  />
             )}
             {/* {(value.program === 'CHALLENGE' || value.program === 'LIVE') && (
               <TextField

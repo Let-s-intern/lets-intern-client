@@ -1,8 +1,8 @@
+import { twMerge } from '@/lib/twMerge';
 import { useMediaQuery } from '@mui/material';
 import dayjs from 'dayjs';
 import { useState } from 'react';
 import { IoIosArrowDown } from 'react-icons/io';
-import { twJoin } from 'tailwind-merge';
 
 import { ChallengeCurriculum as ChallengeCurriculumType } from '@/types/interface';
 import Heading2 from '@components/common/program/program-detail/Heading2';
@@ -20,18 +20,20 @@ function ChallengeCurriculum({ curriculum }: ChallengeCurriculumProps) {
 
   const isDesktop = useMediaQuery('(min-width:991px)');
 
-  if (curriculum === undefined) return <></>;
+  if (!curriculum || !curriculum[0]) {
+    return <></>;
+  }
 
   return (
     <section
       id="curriculum"
-      className="-mx-5 bg-neutral-95 px-5 py-16 lg:-mx-10 lg:px-10 lg:pb-36 lg:pt-28 xl:-mx-52 xl:px-52"
+      className="-mx-5 bg-neutral-95 px-5 py-16 md:-mx-10 md:px-10 md:pb-36 md:pt-28 xl:-mx-52 xl:px-52"
     >
-      <SuperTitle className="mb-6 text-neutral-45 lg:mb-12">
+      <SuperTitle className="mb-6 text-neutral-45 md:mb-12">
         커리큘럼
       </SuperTitle>
       <SuperTitle className="mb-1 text-[#00A8EB]">{superTitle}</SuperTitle>
-      <Heading2 className="mb-10 lg:mb-20">{title.join('\n')}</Heading2>
+      <Heading2 className="mb-10 md:mb-20">{title.join('\n')}</Heading2>
 
       {isDesktop ? (
         // 데스크탑 커리큘럼
@@ -79,7 +81,7 @@ function SidebarMenu({
   return (
     <div
       key={item.id}
-      className={twJoin(
+      className={twMerge(
         'cursor-pointer rounded-md px-8 py-3',
         selected && 'bg-[#EEFAFF]',
       )}
@@ -93,7 +95,7 @@ function SidebarMenu({
         </span>
       </div>
       <span
-        className={twJoin(
+        className={twMerge(
           'text-medium22 font-bold',
           selected ? 'text-neutral-0' : 'text-neutral-50',
         )}
@@ -121,7 +123,7 @@ function CurriculumItem({ item }: { item: ChallengeCurriculumType }) {
           {item.title}
         </span>
         <IoIosArrowDown
-          className={twJoin('cursor-pointer', isOpen && 'rotate-180')}
+          className={twMerge('cursor-pointer', isOpen && 'rotate-180')}
           color="#ACAFB6"
           size={24}
           onClick={() => setIsOpen(!isOpen)}

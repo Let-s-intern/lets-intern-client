@@ -4,7 +4,7 @@ import { blogCategory } from '@/utils/convert';
 import { Heading2 } from '@components/admin/ui/heading/Heading2';
 import { Box, Button, Modal, Typography } from '@mui/material';
 import dayjs from 'dayjs';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 
 // 모달 스타일
 const modalStyle = {
@@ -65,10 +65,6 @@ const ProgramBlogReviewEditor: React.FC<{
     );
     return l;
   }, [res.data?.blogInfos]);
-
-  useEffect(() => {
-    console.log('list', list);
-  }, [list]);
 
   //       displayDate: Dayjs | null;
   //       createDate: Dayjs | null;

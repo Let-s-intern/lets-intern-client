@@ -1,3 +1,14 @@
+import { fileType, uploadFile } from '@/api/file';
+import {
+  CreateVodReq,
+  liveAndVodJob,
+  ProgramClassification,
+  UpdateVodReq,
+  VodIdSchema,
+} from '@/schema';
+import { programClassificationToText } from '@/utils/convert';
+import ImageUpload from '@components/admin/program/ui/form/ImageUpload';
+import Input from '@components/ui/input/Input';
 import {
   Chip,
   FormControl,
@@ -7,42 +18,37 @@ import {
   Select,
   SelectChangeEvent,
 } from '@mui/material';
+import { useCallback, useState } from 'react';
 
-import {
-  CreateLiveReq,
-  liveAndVodJob,
-  LiveIdSchema,
-  LiveProgressType,
-  ProgramClassification,
-  UpdateLiveReq,
-} from '@/schema';
-import {
-  liveProgressTypeToText,
-  programClassificationToText,
-} from '@/utils/convert';
-import Input from '@components/ui/input/Input';
-
-interface LiveBasicProps<T extends CreateLiveReq | UpdateLiveReq> {
-  defaultValue?: Pick<
-    LiveIdSchema,
-    | 'classificationInfo'
-    | 'job'
-    | 'title'
-    | 'shortDesc'
-    | 'participationCount'
-    | 'progressType'
-  >;
+interface LiveBasicProps<T extends CreateVodReq | UpdateVodReq> {
+  defaultValue?: VodIdSchema;
   setInput: React.Dispatch<React.SetStateAction<Omit<T, 'desc'>>>;
 }
 
-export default function LiveBasic<T extends CreateLiveReq | UpdateLiveReq>({
+export default function VodEditor<T extends CreateVodReq | UpdateVodReq>({
   defaultValue,
   setInput,
 }: LiveBasicProps<T>) {
-  const onChange = (
-    e: React.ChangeEvent<HTMLInputElement> | SelectChangeEvent,
-  ) => {
-    setInput((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+  const onChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement> | SelectChangeEvent) => {
+      setInput((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+    },
+    [setInput],
+  );
+
+  const [image, setImage] = useState<string | null | undefined>(
+    defaultValue?.vodInfo.thumbnail,
+  );
+
+  const onChangeImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!e.target.files) return;
+
+    const url = await uploadFile({
+      file: e.target.files[0],
+      type: fileType.enum.VOD,
+    });
+    setImage(url);
+    setInput((prev) => ({ ...prev, [e.target.name]: url }));
   };
 
   return (
@@ -56,8 +62,8 @@ export default function LiveBasic<T extends CreateLiveReq | UpdateLiveReq>({
           name="programTypeInfo"
           multiple
           defaultValue={
-            defaultValue?.classificationInfo
-              ? defaultValue.classificationInfo.map(
+            defaultValue?.programTypeInfo
+              ? defaultValue.programTypeInfo.map(
                   (info) => info.programClassification,
                 )
               : []
@@ -98,32 +104,16 @@ export default function LiveBasic<T extends CreateLiveReq | UpdateLiveReq>({
         </Select>
       </FormControl>
       <FormControl size="small">
-        <InputLabel id="progressType">온/오프라인 여부</InputLabel>
-        <Select
-          labelId="progressType"
-          id="progressType"
-          label="온/오프라인 여부"
-          name="progressType"
-          defaultValue={defaultValue?.progressType ?? undefined}
-          onChange={onChange}
-        >
-          {Object.keys(liveProgressTypeToText).map((key) => (
-            <MenuItem key={key} value={key}>
-              {liveProgressTypeToText[key as LiveProgressType]}
-            </MenuItem>
-          ))}
-        </Select>
-      </FormControl>
-      <FormControl size="small">
         <InputLabel id="job">직무</InputLabel>
         <Select
           labelId="job"
           id="job"
           label="직무"
           name="job"
-          defaultValue={defaultValue?.job}
+          defaultValue={defaultValue?.vodInfo.job ?? ''}
           onChange={onChange}
         >
+          <MenuItem value="">선택하세요</MenuItem>
           {Object.keys(liveAndVodJob.enum).map((key) => (
             <MenuItem key={key} value={key}>
               {key}
@@ -131,12 +121,19 @@ export default function LiveBasic<T extends CreateLiveReq | UpdateLiveReq>({
           ))}
         </Select>
       </FormControl>
+      <ImageUpload
+        label="프로그램 썸네일 이미지 업로드"
+        id="thumbnail"
+        name="thumbnail"
+        image={image ?? undefined}
+        onChange={onChangeImage}
+      />
       <Input
         label="제목"
         type="text"
         name="title"
         placeholder="제목을 입력해주세요"
-        defaultValue={defaultValue?.title}
+        defaultValue={defaultValue?.vodInfo.title ?? undefined}
         size="small"
         onChange={onChange}
       />
@@ -145,17 +142,17 @@ export default function LiveBasic<T extends CreateLiveReq | UpdateLiveReq>({
         type="text"
         name="shortDesc"
         size="small"
-        defaultValue={defaultValue?.shortDesc}
+        defaultValue={defaultValue?.vodInfo.shortDesc ?? undefined}
         placeholder="한 줄 설명을 입력해주세요"
         onChange={onChange}
       />
       <Input
-        label="정원"
-        type="number"
-        name="participationCount"
+        label="리틀리 링크"
+        type="text"
+        name="link"
         size="small"
-        defaultValue={String(defaultValue?.participationCount)}
-        placeholder="총 정원 수를 입력해주세요"
+        placeholder="리틀리 링크를 입력해주세요"
+        defaultValue={defaultValue?.vodInfo.link || ''}
         onChange={onChange}
       />
     </div>

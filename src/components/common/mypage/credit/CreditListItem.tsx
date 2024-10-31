@@ -1,5 +1,5 @@
+import { twMerge } from '@/lib/twMerge';
 import { Link } from 'react-router-dom';
-import { twMerge } from 'tailwind-merge';
 import { PaymentType } from '../../../../api/paymentSchema';
 import CardStatus from './CardStatus';
 

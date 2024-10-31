@@ -1,5 +1,5 @@
+import { twMerge } from '@/lib/twMerge';
 import dayjs from 'dayjs';
-import { twMerge } from 'tailwind-merge';
 import { Mission } from '../../../../../schema';
 import { missionStatusToBadge } from '../../../../../utils/convert';
 

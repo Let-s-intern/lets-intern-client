@@ -48,6 +48,7 @@ const ChannelTalkBtn = () => {
         },
         'fixed right-4 z-10 flex items-center rounded-[25rem] bg-neutral-100 shadow-05',
       )}
+      onClick={() => channelService.showMessenger()}
     >
       <div className="text-1-medium sm:text-1.125-medium flex w-20 items-center justify-center pl-2 sm:h-[4.25rem] sm:w-[105px]">
         채팅문의

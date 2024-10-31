@@ -1,7 +1,7 @@
+import { twMerge } from '@/lib/twMerge';
 import dayjs from 'dayjs';
 import React, { useState } from 'react';
 import { CiTrash } from 'react-icons/ci';
-import { twMerge } from 'tailwind-merge';
 import { TABLE_CONTENT, TABLE_STATUS } from '../../../../../utils/convert';
 import AlertModal from '../../../../ui/alert/AlertModal';
 import DropdownCell from './DropdownCell';

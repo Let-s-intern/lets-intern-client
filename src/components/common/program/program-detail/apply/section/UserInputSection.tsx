@@ -1,6 +1,6 @@
+import { twMerge } from '@/lib/twMerge';
 import { useState } from 'react';
 import { FaCheck } from 'react-icons/fa6';
-import { twMerge } from 'tailwind-merge';
 
 import { UserInfo } from '@/lib/order';
 import Input from '../../../../ui/input/Input';

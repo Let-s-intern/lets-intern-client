@@ -1,6 +1,6 @@
+import { twMerge } from '@/lib/twMerge';
 import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { twMerge } from 'tailwind-merge';
 import AboutTitleDark from '../ui/AboutTitleDark';
 
 const title = {
