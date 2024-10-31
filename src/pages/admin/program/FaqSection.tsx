@@ -34,7 +34,6 @@ function FaqSection<
   const { mutateAsync: deleteFaq } = useDeleteFaq();
   const { mutateAsync: patchFaq } = usePatchFaq();
   const { mutateAsync: postFaq } = usePostFaq();
-  console.log(data);
 
   const checkFaq = (e: React.ChangeEvent<HTMLInputElement>, faqId: number) => {
     if (e.target.checked)
