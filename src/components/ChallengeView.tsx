@@ -47,7 +47,9 @@ const ChallengeView: React.FC<{ challenge: ChallengeIdSchema }> = ({
         <ChallengeNavigation navItems={challengeNavigateItems} />
         <div className="flex w-full flex-col overflow-x-hidden px-5 lg:px-10 xl:px-52">
           <section className="py-16">
-            <SuperTitle className="text-neutral-45">프로그램 소개</SuperTitle>
+            <SuperTitle className="mb-6 text-neutral-45">
+              프로그램 소개
+            </SuperTitle>
             <ChallengePointView
               className="mb-14 sm:mb-44"
               point={receivedContent.challengePoint}
