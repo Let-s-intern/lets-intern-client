@@ -212,6 +212,11 @@ const Row = ({ program }: { program: ProgramAdminListItem }) => {
                   navigate(`/admin/live/${program.programInfo.id}/edit`);
                   break;
                 case 'VOD':
+                  // navigate(
+                  //   `/admin/programs/${program.programInfo.id}/edit?programType=VOD`,
+                  // );
+                  navigate(`/admin/vod/${program.programInfo.id}/edit`);
+                  break;
                 case 'REPORT':
                   throw new Error("Don't use this page");
               }

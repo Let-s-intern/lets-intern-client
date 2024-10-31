@@ -409,8 +409,8 @@ export type UpdateLiveReq = {
   }[];
 };
 
-// ADMIN LIVE 프로그램 직무
-export const liveJob = z.enum([
+// ADMIN LIVE 클래스 및 VOD 클래스 직무
+export const liveAndVodJob = z.enum([
   '경영관리',
   '금융',
   '마케팅',
@@ -448,6 +448,8 @@ export const getVodIdSchema = z.object({
     .nullable()
     .optional(),
 });
+
+export type VodIdSchema = z.infer<typeof getVodIdSchema>;
 
 /** POST /api/v1/vod VOD 생성 */
 export type CreateVodReq = {
