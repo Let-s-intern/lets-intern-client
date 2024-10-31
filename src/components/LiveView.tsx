@@ -48,7 +48,10 @@ const LiveView: React.FC<{ live: LiveIdSchema }> = ({ live }) => {
         )}
 
         {receivedContent.blogReview ? (
-          <ProgramDetailBlogReviewSection review={receivedContent.blogReview} />
+          <ProgramDetailBlogReviewSection
+            review={receivedContent.blogReview}
+            programType="live"
+          />
         ) : null}
 
         <section>

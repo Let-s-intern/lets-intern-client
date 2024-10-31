@@ -71,6 +71,13 @@ const ChallengeView: React.FC<{ challenge: ChallengeIdSchema }> = ({
             <ChallengeCurriculum curriculum={receivedContent.curriculum} />
           ) : null}
 
+          {receivedContent.blogReview ? (
+            <ProgramDetailBlogReviewSection
+              review={receivedContent.blogReview}
+              programType="challenge"
+            />
+          ) : null}
+
           <div>
             <ChallengeFaq />
           </div>
@@ -82,13 +89,6 @@ const ChallengeView: React.FC<{ challenge: ChallengeIdSchema }> = ({
           <div>차별점</div>
           <div>여기서 끝이 아니죠 챌린지 참여자만을 위한 트리플 혜택!</div>
           <div>누적 참여자 1,900+명 참여 만족도 4.9점</div>
-          <div>후기</div>
-
-          {receivedContent.blogReview ? (
-            <ProgramDetailBlogReviewSection
-              review={receivedContent.blogReview}
-            />
-          ) : null}
 
           <div>모집 개요</div>
         </div>
