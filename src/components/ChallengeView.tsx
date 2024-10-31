@@ -39,7 +39,7 @@ const ChallengeView: React.FC<{ challenge: ChallengeIdSchema }> = ({
   return (
     <div className="flex w-full flex-col">
       <div>
-        <div className="flex w-full flex-col px-5 lg:px-10 xl:px-52">
+        <div className="flex w-full flex-col px-5 md:px-10 xl:px-52">
           <Header programTitle={challenge.title ?? ''} />
           <ChallengeBasicInfo challenge={challenge} />
         </div>
