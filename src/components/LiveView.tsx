@@ -2,6 +2,7 @@ import { LiveIdSchema } from '@/schema';
 import { LiveContent } from '@/types/interface';
 import Header from '@components/common/program/program-detail/header/Header';
 import { useEffect, useMemo } from 'react';
+import LexicalContent from './common/blog/LexicalContent';
 import LiveCurriculum from './live-view/LiveCurriculum';
 import LiveFaq from './live-view/LiveFaq';
 import LiveMentor from './live-view/LiveMentor';
@@ -41,6 +42,10 @@ const LiveView: React.FC<{ live: LiveIdSchema }> = ({ live }) => {
           curriculum={receivedContent.curriculum}
           mentorJob={mentor.mentorJob}
         />
+
+        {receivedContent.additionalCurriculum && (
+          <LexicalContent node={receivedContent.additionalCurriculum.root} />
+        )}
 
         {receivedContent.blogReview ? (
           <ProgramDetailBlogReviewSection review={receivedContent.blogReview} />
