@@ -18,7 +18,7 @@ function LiveCurriculum({ curriculum, mentorJob }: LiveCurriculumProps) {
       <SuperTitle className="text-primary">{superTitle}</SuperTitle>
       <Heading2 className="mb-8">{title}</Heading2>
 
-      <div>
+      <div className="flex flex-col gap-5">
         {curriculum.map((item, index) => (
           <div key={item.id} className="overflow-hidden rounded-md">
             <div className="flex gap-3 bg-primary px-6 py-4">
