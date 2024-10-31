@@ -9,6 +9,7 @@ import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
 import { isDeprecatedProgram } from '@/lib/isDeprecatedProgram';
 import { UpdateLiveReq } from '@/schema';
 import { LiveContent } from '@/types/interface';
+import EditorApp from '@components/admin/lexical/EditorApp';
 import LivePreviewButton from '@components/admin/LivePreviewButton';
 import ImageUpload from '@components/admin/program/ui/form/ImageUpload';
 import Header from '@components/admin/ui/header/Header';
@@ -98,7 +99,7 @@ const LiveEdit: React.FC = () => {
     snackbar('저장되었습니다.');
   }, [input, liveIdString, content, patchLive, snackbar]);
 
-  // receivedConent가 초기화되면 content에 적용
+  // receivedContent가 초기화되면 content에 적용
   useEffect(() => {
     if (!receivedContent) {
       return;
@@ -158,6 +159,19 @@ const LiveEdit: React.FC = () => {
       </section>
 
       <LiveCurriculum curriculum={content.curriculum} setContent={setContent} />
+
+      <Heading2 className="mt-6">커리큘럼 추가 입력</Heading2>
+      <EditorApp
+        initialEditorStateJsonString={JSON.stringify(
+          content.additionalCurriculum,
+        )}
+        onChangeSerializedEditorState={(json) =>
+          setContent((prev) => ({
+            ...prev,
+            additionalCurriculum: json,
+          }))
+        }
+      />
 
       <ProgramBlogReviewEditor
         blogReview={content.blogReview ?? { list: [] }}
