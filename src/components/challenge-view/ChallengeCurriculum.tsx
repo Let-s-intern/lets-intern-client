@@ -20,7 +20,9 @@ function ChallengeCurriculum({ curriculum }: ChallengeCurriculumProps) {
 
   const isDesktop = useMediaQuery('(min-width:991px)');
 
-  if (curriculum === undefined) return <></>;
+  if (!curriculum || !curriculum[0]) {
+    return <></>;
+  }
 
   return (
     <section
