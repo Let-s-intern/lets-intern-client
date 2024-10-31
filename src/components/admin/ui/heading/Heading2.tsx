@@ -2,7 +2,7 @@ import { twMerge } from '@/lib/twMerge';
 import { ReactNode } from 'react';
 
 interface Heading2Props {
-  children: ReactNode;
+  children?: ReactNode;
   className?: string;
 }
 
