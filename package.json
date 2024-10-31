@@ -66,6 +66,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
+    "typecheck": "tsc --noEmit",
     "start": "vite",
     "test": "vitest",
     "lint": "eslint ."
