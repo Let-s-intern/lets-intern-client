@@ -32,6 +32,7 @@ const LiveEdit: React.FC = () => {
     curriculum: [],
     blogReview: { list: [] },
   });
+
   const { snackbar } = useAdminSnackbar();
 
   const { data: live } = useGetLiveQuery({
@@ -73,8 +74,8 @@ const LiveEdit: React.FC = () => {
 
     setLoading(false);
     snackbar('저장되었습니다.');
-    navigate('/admin/programs');
-  }, [input, liveIdString, navigate, patchLive, snackbar]);
+    //navigate('/admin/programs');
+  }, [input, liveIdString, content, navigate, patchLive, snackbar]);
 
   if (!live) return <div>loading...</div>;
 
@@ -101,8 +102,7 @@ const LiveEdit: React.FC = () => {
             <LivePrice defaultValue={live.priceInfo} setInput={setInput} />
             <ProgramSchedule defaultValue={live} setInput={setInput} />
             <FormControlLabel
-              defaultChecked={live.vod ?? false}
-              control={<Checkbox />}
+              control={<Checkbox defaultChecked={live.vod ?? true} />}
               label="VOD 제공 여부"
               labelPlacement="start"
               onChange={(event, checked) =>
