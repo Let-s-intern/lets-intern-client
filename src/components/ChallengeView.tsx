@@ -6,13 +6,14 @@ import ChallengeFaq from '@components/challenge-view/ChallengeFaq';
 import ChallengeIntro from '@components/challenge-view/ChallengeIntro';
 import ChallengeResult from '@components/challenge-view/ChallengeResult';
 import Header from '@components/common/program/program-detail/header/Header';
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import ChallengeBasicInfo from './challenge-view/ChallengeBasicInfo';
 import ChallengeNavigation, {
   challengeNavigateItems,
 } from './challenge-view/ChallengeNavigation';
 import ChallengePointView from './challenge-view/ChallengePointView';
 import LexicalContent from './common/blog/LexicalContent';
+import ProgramDetailBlogReviewSection from './ProgramDetailBlogReviewSection';
 
 const ChallengeView: React.FC<{ challenge: ChallengeIdSchema }> = ({
   challenge,
@@ -29,9 +30,13 @@ const ChallengeView: React.FC<{ challenge: ChallengeIdSchema }> = ({
     }
   }, [challenge.desc]);
 
+  // TODO: 운영 배포 시 제거
+  useEffect(() => {
+    console.log('receivedContent', receivedContent);
+  }, [receivedContent]);
+
   return (
     <div className="flex w-full flex-col">
-      <pre>{JSON.stringify(JSON.parse(challenge.desc || '{}'), null, 2)}</pre>
       <div>
         <div className="flex w-full flex-col px-5 lg:px-10 xl:px-52">
           <Header programTitle={challenge.title ?? ''} />
@@ -58,9 +63,9 @@ const ChallengeView: React.FC<{ challenge: ChallengeIdSchema }> = ({
             <ChallengeResult />
           </section>
 
-          <ChallengeCurriculum
-            curriculum={JSON.parse(challenge.desc ?? '{}').curriculum}
-          />
+          {receivedContent.curriculum ? (
+            <ChallengeCurriculum curriculum={receivedContent.curriculum} />
+          ) : null}
 
           <div>
             <ChallengeFaq />
@@ -74,7 +79,13 @@ const ChallengeView: React.FC<{ challenge: ChallengeIdSchema }> = ({
           <div>여기서 끝이 아니죠 챌린지 참여자만을 위한 트리플 혜택!</div>
           <div>누적 참여자 1,900+명 참여 만족도 4.9점</div>
           <div>후기</div>
-          <div>블로그 후기</div>
+
+          {receivedContent.blogReview ? (
+            <ProgramDetailBlogReviewSection
+              review={receivedContent.blogReview}
+            />
+          ) : null}
+
           <div>모집 개요</div>
         </div>
       </div>
