@@ -27,13 +27,13 @@ function ChallengeCurriculum({ curriculum }: ChallengeCurriculumProps) {
   return (
     <section
       id="curriculum"
-      className="-mx-5 bg-neutral-95 px-5 py-16 lg:-mx-10 lg:px-10 lg:pb-36 lg:pt-28 xl:-mx-52 xl:px-52"
+      className="-mx-5 bg-neutral-95 px-5 py-16 md:-mx-10 md:px-10 md:pb-36 md:pt-28 xl:-mx-52 xl:px-52"
     >
-      <SuperTitle className="mb-6 text-neutral-45 lg:mb-12">
+      <SuperTitle className="mb-6 text-neutral-45 md:mb-12">
         커리큘럼
       </SuperTitle>
       <SuperTitle className="mb-1 text-[#00A8EB]">{superTitle}</SuperTitle>
-      <Heading2 className="mb-10 lg:mb-20">{title.join('\n')}</Heading2>
+      <Heading2 className="mb-10 md:mb-20">{title.join('\n')}</Heading2>
 
       {isDesktop ? (
         // 데스크탑 커리큘럼

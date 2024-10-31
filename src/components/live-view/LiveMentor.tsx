@@ -18,14 +18,14 @@ function LiveMentor({ mentor }: LiveMentorProps) {
   return (
     <section
       id="mentor-intro"
-      className="mb-20 py-20 lg:flex lg:flex-col lg:items-center lg:py-36"
+      className="py-8 md:flex md:flex-col md:items-center"
     >
-      <Heading2 className="mb-8 lg:mb-20">
+      <Heading2 className="mb-8 md:mb-20">
         렛츠커리어 LIVE 클래스에서만
         <br />
         들을 수 있는 <span className="text-primary">요즘 PM 취업의 A to Z</span>
       </Heading2>
-      <SuperTitle className="mb-5 text-neutral-45 lg:mb-10">
+      <SuperTitle className="mb-5 text-neutral-45 md:mb-10">
         멘토 소개
       </SuperTitle>
 
@@ -40,22 +40,22 @@ function LiveMentor({ mentor }: LiveMentorProps) {
             <span className="text-small20 font-bold">
               {mentor.mentorName} 멘토
             </span>
-            <div className="mb-4 mt-1 text-xsmall16 font-semibold lg:text-small18">
+            <div className="mb-4 mt-1 text-xsmall16 font-semibold md:text-small18">
               <span>{mentor.mentorCompany}</span> |{' '}
               <span>{mentor.mentorJob}</span>
             </div>
-            <p className="whitespace-pre-line text-xxsmall12 font-semibold text-neutral-35 lg:text-small18">
+            <p className="whitespace-pre-line text-xxsmall12 font-semibold text-neutral-35 md:text-small18">
               {mentor.mentorCareer}
             </p>
           </div>
           <div className="flex flex-col gap-2 rounded-md bg-[#F4F5FF] p-4 pb-5">
-            <div className="flex items-center gap-1 lg:w-[470px]">
+            <div className="flex items-center gap-1">
               <img src="/icons/speech-bubble-icon.svg" alt="말풍선 아이콘" />
-              <span className="text-xxsmall12 font-semibold text-black lg:text-xsmall16">
+              <span className="text-xxsmall12 font-semibold text-black md:text-xsmall16">
                 멘토님의 한마디
               </span>
             </div>
-            <p className="whitespace-pre-line text-xxsmall12 text-black lg:text-xsmall16">
+            <p className="whitespace-pre-line text-xxsmall12 text-black md:text-xsmall16">
               {mentor.mentorIntroduction}
             </p>
           </div>

@@ -34,12 +34,12 @@ function ChallengeResult() {
     <section>
       <SuperTitle className="mb-1 text-[#00A8EB]">{superTitle}</SuperTitle>
       <Heading2>{title.join('\n')}</Heading2>
-      <Description className="mb-10 mt-3 lg:mb-20 lg:mt-9 lg:text-center">
+      <Description className="mb-10 mt-3 md:mb-20 md:mt-9 md:text-center">
         {description}
       </Description>
 
       <div className="z-10 -mx-5 overflow-x-auto pl-5 sm:mx-0 sm:pl-0">
-        <div className="flex w-fit flex-col gap-8 lg:gap-16">
+        <div className="flex w-fit flex-col gap-8 md:gap-16">
           {CONTENT.map((content) => (
             <CardList key={content.before} content={content} />
           ))}
@@ -62,11 +62,11 @@ function CardList({ content }: { content: Content }) {
   return (
     <div
       key={content.before}
-      className="flex flex-nowrap items-center gap-2 lg:gap-3"
+      className="flex flex-nowrap items-center gap-2 md:gap-3"
     >
       <div className="flex flex-1 flex-col items-center gap-4">
         <BadgedBox badgeContent="Before" boxContent={content.before} />
-        <span className="text-xsmall14 font-semibold text-neutral-0 lg:text-small20">
+        <span className="text-xsmall14 font-semibold text-neutral-0 md:text-small20">
           {content.beforeCaption}
         </span>
       </div>
@@ -78,7 +78,7 @@ function CardList({ content }: { content: Content }) {
         />
         <div className="flex items-center gap-1">
           <FaCheck color="#14BCFF" size={isDesktop ? 20 : 16} />
-          <span className="text-xsmall14 font-semibold text-neutral-0 lg:text-small20">
+          <span className="text-xsmall14 font-semibold text-neutral-0 md:text-small20">
             {content.afterCaption}
           </span>
         </div>
@@ -99,7 +99,7 @@ function BadgedBox({
   return (
     <OutlinedBox
       className={twMerge(
-        'relative h-48 min-w-[260px] overflow-hidden border-2 pb-0 pt-12 sm:w-full lg:h-[350px] lg:px-8 lg:pt-16',
+        'relative h-48 min-w-[260px] overflow-hidden border-2 pb-0 pt-12 sm:w-full md:h-[350px] md:px-8 md:pt-16',
         color === 'gray'
           ? 'border-neutral-50 bg-neutral-85'
           : 'border-[#39C7FF] bg-[#E1F6FF]',
@@ -107,13 +107,13 @@ function BadgedBox({
     >
       <div
         className={twMerge(
-          'absolute left-0 top-0 rounded-br-xxs px-2.5 py-1 text-center text-xsmall16 font-semibold text-white lg:w-28 lg:rounded-br-md lg:py-2.5 lg:text-small20',
+          'absolute left-0 top-0 rounded-br-xxs px-2.5 py-1 text-center text-xsmall16 font-semibold text-white md:w-28 md:rounded-br-md md:py-2.5 md:text-small20',
           color === 'gray' ? 'bg-neutral-50' : `bg-[#39C7FF]`,
         )}
       >
         {badgeContent}
       </div>
-      <p className="h-full whitespace-pre-line bg-white px-6 pt-7 text-[8px] font-medium md:text-xxsmall12 lg:px-12 lg:pt-16 lg:text-xsmall16">
+      <p className="h-full whitespace-pre-line bg-white px-6 pt-7 text-[8px] font-medium md:px-12 md:pt-16 md:text-xsmall16 md:text-xxsmall12">
         {boxContent}
       </p>
     </OutlinedBox>

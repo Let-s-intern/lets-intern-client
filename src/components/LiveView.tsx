@@ -31,7 +31,7 @@ const LiveView: React.FC<{ live: LiveIdSchema }> = ({ live }) => {
 
   return (
     <div>
-      <div className="flex w-full flex-col px-5 lg:px-10 xl:px-52">
+      <div className="flex w-full flex-col px-5 md:px-10 xl:px-52">
         <Header programTitle={live.title ?? ''} />
 
         {live.vod && <LiveVod />}
