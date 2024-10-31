@@ -1,10 +1,10 @@
-import ChallengeCheckList from '@/pages/common/program/ChallengeCheckList';
-import ChallengeCurriculum from '@/pages/common/program/ChallengeCurriculum';
-import ChallengeFaq from '@/pages/common/program/ChallengeFaq';
-import ChallengeIntro from '@/pages/common/program/ChallengeIntro';
-import ChallengeResult from '@/pages/common/program/ChallengeResult';
 import { ChallengeIdSchema } from '@/schema';
 import { ChallengeContent } from '@/types/interface';
+import ChallengeCheckList from '@components/challenge-view/ChallengeCheckList';
+import ChallengeCurriculum from '@components/challenge-view/ChallengeCurriculum';
+import ChallengeFaq from '@components/challenge-view/ChallengeFaq';
+import ChallengeIntro from '@components/challenge-view/ChallengeIntro';
+import ChallengeResult from '@components/challenge-view/ChallengeResult';
 import Header from '@components/common/program/program-detail/header/Header';
 import { useMemo } from 'react';
 import ChallengeBasicInfo from './challenge-view/ChallengeBasicInfo';
