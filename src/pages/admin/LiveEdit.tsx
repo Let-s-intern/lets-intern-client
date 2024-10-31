@@ -40,6 +40,15 @@ const LiveEdit: React.FC = () => {
   });
   const { mutateAsync: patchLive } = usePatchLiveMutation();
 
+  const mentorDefaultValue = {
+    mentorName: live?.mentorName,
+    mentorImg: live?.mentorImg,
+    mentorCompany: live?.mentorCompany,
+    mentorJob: live?.mentorJob,
+    mentorCareer: live?.mentorCareer,
+    mentorIntroduction: live?.mentorIntroduction,
+  };
+
   const onChangeImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files) return;
 
@@ -55,7 +64,7 @@ const LiveEdit: React.FC = () => {
     const req: Parameters<typeof patchLive>[0] = {
       ...input,
       liveId: Number(liveIdString),
-      desc: JSON.stringify({}),
+      desc: JSON.stringify(content),
     };
     console.log('req:', req);
 
@@ -109,7 +118,7 @@ const LiveEdit: React.FC = () => {
               image={input.mentorImg ?? live.mentorImg}
               onChange={onChangeImage}
             />
-            <LiveMentor defaultValue={live} setInput={setInput} />
+            <LiveMentor defaultValue={mentorDefaultValue} setInput={setInput} />
           </div>
         </div>
       </section>

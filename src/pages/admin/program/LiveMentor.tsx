@@ -1,7 +1,8 @@
+import { useState } from 'react';
+
 import { CreateLiveReq, LiveIdSchema, UpdateLiveReq } from '@/schema';
 import OutlinedTextarea from '@components/admin/OutlinedTextarea';
 import Input from '@components/ui/input/Input';
-import { useState } from 'react';
 
 interface LiveMentorProps<T extends CreateLiveReq | UpdateLiveReq> {
   defaultValue: Pick<
@@ -15,7 +16,7 @@ interface LiveMentorProps<T extends CreateLiveReq | UpdateLiveReq> {
   setInput: React.Dispatch<React.SetStateAction<Omit<T, 'desc'>>>;
 }
 
-export default function LiveMentor<T extends CreateLiveReq | UpdateLiveReq>({
+function LiveMentor<T extends CreateLiveReq | UpdateLiveReq>({
   defaultValue,
   setInput,
 }: LiveMentorProps<T>) {
@@ -79,3 +80,5 @@ export default function LiveMentor<T extends CreateLiveReq | UpdateLiveReq>({
     </div>
   );
 }
+
+export default LiveMentor;
