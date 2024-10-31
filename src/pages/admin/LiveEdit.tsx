@@ -1,7 +1,7 @@
 import { Button, Checkbox, FormControlLabel } from '@mui/material';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { FaSave } from 'react-icons/fa';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 
 import { fileType, uploadFile } from '@/api/file';
 import { useGetLiveQuery, usePatchLiveMutation } from '@/api/program';
@@ -22,16 +22,16 @@ import ProgramBlogReviewEditor from './program/ProgramBlogReviewEditor';
 import ProgramSchedule from './program/ProgramSchedule';
 
 const LiveEdit: React.FC = () => {
-  const navigate = useNavigate();
   const { liveId: liveIdString } = useParams();
 
   const [loading, setLoading] = useState(false);
   const [input, setInput] = useState<Omit<UpdateLiveReq, 'desc'>>({});
   const [content, setContent] = useState<LiveContent>({
-    // mainDescription: ,
+    initialized: false,
     curriculum: [],
     blogReview: { list: [] },
   });
+
   const { snackbar } = useAdminSnackbar();
 
   const { data: live } = useGetLiveQuery({
@@ -39,6 +39,26 @@ const LiveEdit: React.FC = () => {
     enabled: Boolean(liveIdString),
   });
   const { mutateAsync: patchLive } = usePatchLiveMutation();
+
+  const mentorDefaultValue = {
+    mentorName: live?.mentorName,
+    mentorImg: live?.mentorImg,
+    mentorCompany: live?.mentorCompany,
+    mentorJob: live?.mentorJob,
+    mentorCareer: live?.mentorCareer,
+    mentorIntroduction: live?.mentorIntroduction,
+  };
+
+  const receivedContent = useMemo<LiveContent>(() => {
+    if (!live?.desc) return { initialized: false };
+
+    try {
+      return JSON.parse(live.desc);
+    } catch (e) {
+      console.error(e);
+      return { initialized: false };
+    }
+  }, [live?.desc]);
 
   const onChangeImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files) return;
@@ -55,7 +75,7 @@ const LiveEdit: React.FC = () => {
     const req: Parameters<typeof patchLive>[0] = {
       ...input,
       liveId: Number(liveIdString),
-      desc: JSON.stringify({}),
+      desc: JSON.stringify(content),
     };
     console.log('req:', req);
 
@@ -64,8 +84,15 @@ const LiveEdit: React.FC = () => {
 
     setLoading(false);
     snackbar('저장되었습니다.');
-    navigate('/admin/programs');
-  }, [input, liveIdString, navigate, patchLive, snackbar]);
+  }, [input, liveIdString, content, patchLive, snackbar]);
+
+  useEffect(() => {
+    if (!receivedContent.initialized) return;
+
+    setContent((prev) => ({
+      ...(prev.initialized ? prev : { ...receivedContent, initialized: true }),
+    }));
+  }, [receivedContent]);
 
   if (!live) return <div>loading...</div>;
 
@@ -92,8 +119,7 @@ const LiveEdit: React.FC = () => {
             <LivePrice defaultValue={live.priceInfo} setInput={setInput} />
             <ProgramSchedule defaultValue={live} setInput={setInput} />
             <FormControlLabel
-              defaultChecked={live.vod ?? false}
-              control={<Checkbox />}
+              control={<Checkbox defaultChecked={live.vod ?? true} />}
               label="VOD 제공 여부"
               labelPlacement="start"
               onChange={(event, checked) =>
@@ -109,7 +135,7 @@ const LiveEdit: React.FC = () => {
               image={input.mentorImg ?? live.mentorImg}
               onChange={onChangeImage}
             />
-            <LiveMentor defaultValue={live} setInput={setInput} />
+            <LiveMentor defaultValue={mentorDefaultValue} setInput={setInput} />
           </div>
         </div>
       </section>

@@ -3,6 +3,7 @@ import { MdDelete } from 'react-icons/md';
 
 import { LiveContent } from '@/types/interface';
 import { generateRandomNumber } from '@/utils/random';
+import OutlinedTextarea from '@components/admin/OutlinedTextarea';
 import { Heading2 } from '@components/admin/ui/heading/Heading2';
 import Input from '@components/ui/input/Input';
 
@@ -31,7 +32,6 @@ function LiveCurriculum({ curriculum, setContent }: LiveCurriculumProps) {
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
     target: LiveContent['curriculum'][0],
   ) => {
-    console.log(e);
     const newCurr = [...curriculum];
     const index = curriculum.findIndex((curr) => curr.id === target.id);
     if (index === -1) return;
@@ -63,15 +63,15 @@ function LiveCurriculum({ curriculum, setContent }: LiveCurriculumProps) {
                 onChange={(e) => onChange(e, item)}
               />
             </div>
-            <textarea
-              className="h-[60px] w-3/12 rounded-sm border p-2"
+            <OutlinedTextarea
+              className="h-[60px] w-3/12"
               name="title"
               placeholder="제목을 입력하세요"
               value={item.title}
               onChange={(e) => onChange(e, item)}
             />
-            <textarea
-              className="h-[60px] flex-1 rounded-sm border p-2"
+            <OutlinedTextarea
+              className="h-[60px] flex-1"
               name="content"
               placeholder="내용을 입력하세요"
               value={item.content}
