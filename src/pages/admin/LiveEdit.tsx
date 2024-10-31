@@ -49,14 +49,14 @@ const LiveEdit: React.FC = () => {
     mentorIntroduction: live?.mentorIntroduction,
   };
 
-  const receivedContent = useMemo<LiveContent>(() => {
-    if (!live?.desc) return { initialized: false };
+  const receivedContent = useMemo<LiveContent | null>(() => {
+    if (!live?.desc) return null;
 
     try {
       return JSON.parse(live.desc);
     } catch (e) {
       console.error(e);
-      return { initialized: false };
+      return null;
     }
   }, [live?.desc]);
 
@@ -86,15 +86,20 @@ const LiveEdit: React.FC = () => {
     snackbar('저장되었습니다.');
   }, [input, liveIdString, content, patchLive, snackbar]);
 
+  // receivedConent가 초기화되면 content에 적용
   useEffect(() => {
-    if (!receivedContent.initialized) return;
+    if (!receivedContent) {
+      return;
+    }
 
     setContent((prev) => ({
       ...(prev.initialized ? prev : { ...receivedContent, initialized: true }),
     }));
   }, [receivedContent]);
 
-  if (!live) return <div>loading...</div>;
+  if (!live || !content.initialized) {
+    return <div>loading...</div>;
+  }
 
   return (
     <div className="mx-3 mb-40 mt-3">
