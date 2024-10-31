@@ -1,7 +1,7 @@
 import { Button, Checkbox, FormControlLabel } from '@mui/material';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { FaSave } from 'react-icons/fa';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 
 import { fileType, uploadFile } from '@/api/file';
 import { useGetLiveQuery, usePatchLiveMutation } from '@/api/program';
@@ -22,13 +22,12 @@ import ProgramBlogReviewEditor from './program/ProgramBlogReviewEditor';
 import ProgramSchedule from './program/ProgramSchedule';
 
 const LiveEdit: React.FC = () => {
-  const navigate = useNavigate();
   const { liveId: liveIdString } = useParams();
 
   const [loading, setLoading] = useState(false);
   const [input, setInput] = useState<Omit<UpdateLiveReq, 'desc'>>({});
   const [content, setContent] = useState<LiveContent>({
-    // mainDescription: ,
+    initialized: false,
     curriculum: [],
     blogReview: { list: [] },
   });
@@ -49,6 +48,17 @@ const LiveEdit: React.FC = () => {
     mentorCareer: live?.mentorCareer,
     mentorIntroduction: live?.mentorIntroduction,
   };
+
+  const receivedContent = useMemo<LiveContent>(() => {
+    if (!live?.desc) return { initialized: false };
+
+    try {
+      return JSON.parse(live.desc);
+    } catch (e) {
+      console.error(e);
+      return { initialized: false };
+    }
+  }, [live?.desc]);
 
   const onChangeImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files) return;
@@ -74,8 +84,15 @@ const LiveEdit: React.FC = () => {
 
     setLoading(false);
     snackbar('저장되었습니다.');
-    //navigate('/admin/programs');
-  }, [input, liveIdString, content, navigate, patchLive, snackbar]);
+  }, [input, liveIdString, content, patchLive, snackbar]);
+
+  useEffect(() => {
+    if (!receivedContent.initialized) return;
+
+    setContent((prev) => ({
+      ...(prev.initialized ? prev : { ...receivedContent, initialized: true }),
+    }));
+  }, [receivedContent]);
 
   if (!live) return <div>loading...</div>;
 

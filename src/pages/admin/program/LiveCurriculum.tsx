@@ -32,7 +32,6 @@ function LiveCurriculum({ curriculum, setContent }: LiveCurriculumProps) {
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
     target: LiveContent['curriculum'][0],
   ) => {
-    console.log(e);
     const newCurr = [...curriculum];
     const index = curriculum.findIndex((curr) => curr.id === target.id);
     if (index === -1) return;
