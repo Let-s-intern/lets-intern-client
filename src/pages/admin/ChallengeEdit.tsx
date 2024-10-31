@@ -1,7 +1,7 @@
 import { fileType, uploadFile } from '@/api/file';
 import { useGetChallengeQuery, usePatchChallengeMutation } from '@/api/program';
 import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
-import isDeprecatedProgram from '@/lib/isDeprecatedProgram';
+import { isDeprecatedProgram } from '@/lib/isDeprecatedProgram';
 import { UpdateChallengeReq } from '@/schema';
 import { ChallengeContent } from '@/types/interface';
 import ChallengePreviewButton from '@components/admin/ChallengePreviewButton';
@@ -44,10 +44,20 @@ const ChallengeEdit: React.FC = () => {
     enabled: Boolean(challengeIdString),
   });
 
+  useEffect(() => {
+    if (challenge && isDeprecatedProgram(challenge)) {
+      navigate(
+        `/admin/programs/${challengeIdString}/edit?programType=CHALLENGE`,
+        { replace: true },
+      );
+    }
+  }, [challenge, challengeIdString, navigate]);
+
   const receivedContent = useMemo<ChallengeContent | null>(() => {
     if (!challenge?.desc) {
       return null;
     }
+
     try {
       return JSON.parse(challenge.desc);
     } catch (e) {
@@ -66,17 +76,6 @@ const ChallengeEdit: React.FC = () => {
       ...(prev.initialized ? prev : { ...receivedContent, initialized: true }),
     }));
   }, [receivedContent]);
-
-  useEffect(() => {
-    if (challenge && isDeprecatedProgram(challenge)) {
-      navigate(
-        `/admin/programs/${challengeIdString}/edit?programType=CHALLENGE`,
-        {
-          replace: true,
-        },
-      );
-    }
-  }, [challenge, challengeIdString, navigate]);
 
   const [input, setInput] = useState<Omit<UpdateChallengeReq, 'desc'>>({});
   const [loading, setLoading] = useState(false);

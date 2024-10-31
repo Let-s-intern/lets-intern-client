@@ -37,7 +37,6 @@ import LiveEdit from './pages/admin/LiveEdit';
 import OnlineContents from './pages/admin/online-contents/OnlineContents';
 import OnlineContentsCreate from './pages/admin/online-contents/OnlineContentsCreate';
 import OnlineContentsEdit from './pages/admin/online-contents/OnlineContentsEdit';
-import AttendCheck from './pages/admin/program/AttendCheck';
 import ProgramCreate from './pages/admin/program/ProgramCreate';
 import ProgramEdit from './pages/admin/program/ProgramEdit';
 import AdminPrograms from './pages/admin/program/Programs';
@@ -65,21 +64,7 @@ export const getAdminRoutes = () => {
   return (
     <Route path="/admin" element={<AdminLayout />}>
       {/* /admin */}
-      <Route path="" element={<AdminPrograms />} />
-      <Route path="programs">
-        {/* /admin/programs */}
-        <Route path="" element={<AdminPrograms />} />
-        {/* /admin/programs/create */}
-        <Route path="create" element={<ProgramCreate />} />
-        <Route path=":programId">
-          {/* /admin/programs/1/edit */}
-          <Route path="edit" element={<ProgramEdit />} />
-          {/* /admin/programs/1/users */}
-          <Route path="users" element={<ProgramUsers />} />
-          {/* /admin/programs/1/check-attendance */}
-          <Route path="check-attendance" element={<AttendCheck />} />
-        </Route>
-      </Route>
+
       <Route path="reviews">
         {/* /admin/reviews */}
         <Route path="" element={<AdminReviews />} />
@@ -197,6 +182,13 @@ export const getAdminRoutes = () => {
       <Route path="report/edit/:id" element={<AdminReportEditPage />} />
       <Route path="report/applications" element={<ReportApplicationsPage />} />
 
+      {/* 프로그램 */}
+      <Route path="programs" element={<AdminPrograms />} />
+
+      {/* 프로그램 생성/편집 옛날 버전 */}
+      <Route path="programs/create" element={<ProgramCreate />} />
+      <Route path="programs/:programId/edit" element={<ProgramEdit />} />
+
       {/* 프로그램 생성/편집 NEW버전 */}
       <Route path="challenge/create" element={<ChallengeCreate />} />
       <Route path="challenge/:challengeId/edit" element={<ChallengeEdit />} />
@@ -204,6 +196,9 @@ export const getAdminRoutes = () => {
       <Route path="live/:liveId/edit" element={<LiveEdit />} />
       <Route path="vod/create" element={<VodCreate />} />
       <Route path="vod/:vodId/edit" element={<VodEdit />} />
+
+      {/* 프로그램 참여자 */}
+      <Route path="programs/:programId/users" element={<ProgramUsers />} />
     </Route>
   );
 };

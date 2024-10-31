@@ -57,11 +57,11 @@ export const routes: RouteObject[] = [
       { index: true, element: <Home /> },
       { path: 'about', element: <About /> },
       {
-        path: 'program/challenge/old/:programId',
+        path: 'program/old/challenge/:programId',
         element: <ProgramDetailLegacy programType="challenge" />,
       },
       {
-        path: 'program/live/old/:programId',
+        path: 'program/old/live/:programId',
         element: <ProgramDetailLegacy programType="live" />,
       },
       {

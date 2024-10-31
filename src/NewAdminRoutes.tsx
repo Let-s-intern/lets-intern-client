@@ -96,9 +96,7 @@ const OnlineContentsCreate = clientOnly(
 const OnlineContentsEdit = clientOnly(
   () => import('./pages/admin/online-contents/OnlineContentsEdit'),
 );
-const AttendCheck = clientOnly(
-  () => import('./pages/admin/program/AttendCheck'),
-);
+
 const ProgramCreate = clientOnly(
   () => import('./pages/admin/program/ProgramCreate'),
 );
@@ -146,7 +144,6 @@ export const adminRoute: RouteObject = {
           children: [
             { path: 'edit', element: <ProgramEdit /> },
             { path: 'users', element: <ProgramUsers /> },
-            { path: 'check-attendance', element: <AttendCheck /> },
           ],
         },
       ],

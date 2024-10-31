@@ -26,7 +26,6 @@ const LiveCreate: React.FC = () => {
 
   const [loading, setLoading] = useState(false);
   const [content, setContent] = useState<LiveContent>({
-    // mainDescription: ,
     initialized: true,
     curriculum: [],
     blogReview: { list: [] },

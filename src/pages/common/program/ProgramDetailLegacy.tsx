@@ -1,3 +1,4 @@
+import { isNewProgram } from '@/lib/isDeprecatedProgram';
 import { useMediaQuery } from '@mui/material';
 import { useQuery } from '@tanstack/react-query';
 import dayjs from 'dayjs';
@@ -5,8 +6,6 @@ import { useEffect, useReducer, useState } from 'react';
 import { Helmet } from 'react-helmet';
 import { useNavigate, useParams } from 'react-router-dom';
 import { twMerge } from 'tailwind-merge';
-
-import isDeprecatedProgram from '@/lib/isDeprecatedProgram';
 import { useProgramApplicationQuery } from '../../../api/application';
 import { useProgramQuery } from '../../../api/program';
 import FilledButton from '../../../components/common/program/program-detail/button/FilledButton';
@@ -68,16 +67,14 @@ const ProgramDetailLegacy = ({ programType }: ProgramDetailProps) => {
 
   const program = useProgramQuery({ programId, type: programType });
 
-  // 프로그램이 옛 버전일 경우 옛 링크로 이동
+  // 프로그램이 새로운 버전일 경우 기존 링크로 이동
   useEffect(() => {
     if (
-      programId &&
       programType &&
-      program &&
-      program.query.data &&
-      isDeprecatedProgram({ desc: program.query.data.desc })
+      program?.query.data &&
+      isNewProgram({ desc: program.query.data.desc })
     ) {
-      navigate(`/program/${programType}/old/${programId}`);
+      navigate(`/program/${programType}/${programId}`, { replace: true });
     }
   }, [navigate, program.query.data, programId, programType]);
 

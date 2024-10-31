@@ -1,6 +1,7 @@
 import { useProgramApplicationQuery } from '@/api/application';
 import { useGetLiveQuery } from '@/api/program';
 import { useServerLive } from '@/context/ServerLive';
+import { isDeprecatedProgram } from '@/lib/isDeprecatedProgram';
 import { generateOrderId, getPayInfo, UserInfo } from '@/lib/order';
 import useAuthStore from '@/store/useAuthStore';
 import useProgramStore from '@/store/useProgramStore';
@@ -28,11 +29,13 @@ const LiveDetailSSRPage = () => {
 
   const live = data || liveFromServer;
   const isLoading = live.title === '로딩중...';
-  const isNotValidJson = live.desc && live.desc.startsWith('<');
+  const isDeprecated = isDeprecatedProgram(live);
 
   useEffect(() => {
-    if (isNotValidJson) navigate(`/program/live/old/${id}`);
-  }, [id, isNotValidJson, navigate]);
+    if (isDeprecated) {
+      navigate(`/program/old/live/${id}`, { replace: true });
+    }
+  }, [id, isDeprecated, navigate]);
 
   // 이 페이지 방문 시 프로그램 신청 폼 초기화
   useEffect(() => {
@@ -40,7 +43,7 @@ const LiveDetailSSRPage = () => {
   }, [initProgramApplicationForm]);
 
   useEffect(() => {
-    if (!titleFromUrl && !isLoading) {
+    if (!titleFromUrl && !isLoading && !isDeprecated) {
       window.history.replaceState(
         {},
         '',
@@ -51,7 +54,7 @@ const LiveDetailSSRPage = () => {
         }),
       );
     }
-  }, [live.title, id, isLoading, titleFromUrl]);
+  }, [live.title, id, isLoading, titleFromUrl, isDeprecated]);
 
   const { data: application } = useProgramApplicationQuery('live', Number(id));
 
@@ -129,7 +132,7 @@ const LiveDetailSSRPage = () => {
     setProgramApplicationForm,
   ]);
 
-  if (isNotValidJson) {
+  if (isDeprecated) {
     return <></>;
   }
 

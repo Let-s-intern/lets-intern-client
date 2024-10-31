@@ -1,11 +1,12 @@
 import { Button, Checkbox, FormControlLabel } from '@mui/material';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { FaSave } from 'react-icons/fa';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 import { fileType, uploadFile } from '@/api/file';
 import { useGetLiveQuery, usePatchLiveMutation } from '@/api/program';
 import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
+import { isDeprecatedProgram } from '@/lib/isDeprecatedProgram';
 import { UpdateLiveReq } from '@/schema';
 import { LiveContent } from '@/types/interface';
 import LivePreviewButton from '@components/admin/LivePreviewButton';
@@ -23,6 +24,7 @@ import ProgramSchedule from './program/ProgramSchedule';
 
 const LiveEdit: React.FC = () => {
   const { liveId: liveIdString } = useParams();
+  const navigate = useNavigate();
 
   const [loading, setLoading] = useState(false);
   const [input, setInput] = useState<Omit<UpdateLiveReq, 'desc'>>({});
@@ -49,8 +51,18 @@ const LiveEdit: React.FC = () => {
     mentorIntroduction: live?.mentorIntroduction,
   };
 
+  useEffect(() => {
+    if (live && isDeprecatedProgram(live)) {
+      navigate(`/admin/programs/${liveIdString}/edit?programType=LIVE`, {
+        replace: true,
+      });
+    }
+  }, [live, liveIdString, navigate]);
+
   const receivedContent = useMemo<LiveContent | null>(() => {
-    if (!live?.desc) return null;
+    if (!live?.desc) {
+      return null;
+    }
 
     try {
       return JSON.parse(live.desc);
