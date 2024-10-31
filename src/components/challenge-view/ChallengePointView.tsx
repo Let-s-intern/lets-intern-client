@@ -17,7 +17,7 @@ const ChallengePointView = ({
   return (
     <section className={className}>
       <h2 className="sr-only">챌린지 포인트</h2>
-      <Heading2 className="mb-10 break-keep">
+      <Heading2 className="mb-10 break-keep lg:mb-20">
         이력서 & 자기소개서 챌린지를 통해
         <br />
         <span className="text-[rgba(255,156,52,1)]">하루 30분</span>, 단{' '}
