@@ -139,7 +139,7 @@ const ChallengeDetailSSRPage = () => {
     setProgramApplicationForm,
   ]);
 
-  if (isDeprecated) {
+  if (isDeprecated || isLoading) {
     return <></>;
   }
 

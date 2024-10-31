@@ -132,7 +132,7 @@ const LiveDetailSSRPage = () => {
     setProgramApplicationForm,
   ]);
 
-  if (isDeprecated) {
+  if (isDeprecated || isLoading) {
     return <></>;
   }
 
