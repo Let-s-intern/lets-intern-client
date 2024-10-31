@@ -1,6 +1,7 @@
 import { ChallengePoint } from '@/types/interface';
 // import Balancer from 'react-wrap-balancer';
 import { clientOnly } from 'vike-react/clientOnly';
+
 const Balancer = clientOnly(() => import('react-wrap-balancer'));
 
 const ChallengePointView = ({
@@ -13,7 +14,7 @@ const ChallengePointView = ({
   if (point === undefined) return <></>;
 
   return (
-    <div className={className}>
+    <section className={className}>
       <h2 className="sr-only">챌린지 포인트</h2>
       <p className="mb-10 break-keep text-small20 font-bold text-neutral-0 sm:mb-20">
         이력서 & 자기소개서 챌린지를 통해{' '}
@@ -46,7 +47,7 @@ const ChallengePointView = ({
           </li>
         ))}
       </ul>
-    </div>
+    </section>
   );
 };
 
