@@ -44,22 +44,24 @@ const ChallengeEdit: React.FC = () => {
     enabled: Boolean(challengeIdString),
   });
 
-  const receivedContent = useMemo<ChallengeContent>(() => {
+  const receivedContent = useMemo<ChallengeContent | null>(() => {
     if (!challenge?.desc) {
-      return { initialized: false };
+      return null;
     }
     try {
       return JSON.parse(challenge.desc);
     } catch (e) {
       console.error(e);
-      return { initialized: false };
+      return null;
     }
   }, [challenge?.desc]);
 
+  // receivedConent가 초기화되면 content에 적용
   useEffect(() => {
-    if (!receivedContent.initialized) {
+    if (!receivedContent) {
       return;
     }
+
     setContent((prev) => ({
       ...(prev.initialized ? prev : { ...receivedContent, initialized: true }),
     }));
