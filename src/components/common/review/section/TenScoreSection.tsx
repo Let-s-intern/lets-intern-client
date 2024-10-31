@@ -1,8 +1,8 @@
-import { josa } from '@toss/hangul';
 import { useEffect } from 'react';
 import TextArea from '../../ui/input/TextArea';
 import TenScore from '../score/TenScore';
 import YesNoScore from '../score/YesNoScore';
+import { josa } from 'es-hangul';
 
 interface TenScoreSectionProps {
   programTitle?: string | null;
