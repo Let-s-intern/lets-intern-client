@@ -4,6 +4,7 @@ import { useParams } from 'react-router-dom';
 import { twJoin } from 'tailwind-merge';
 
 import { useGetChallengeFaq } from '@/api/challenge';
+import channelService from '@/ChannelService';
 import { Faq } from '@/schema';
 import Heading2 from '@components/common/program/program-detail/Heading2';
 import SuperTitle from '@components/common/program/program-detail/SuperTitle';
@@ -53,7 +54,10 @@ function ChallengeFaq() {
         <span className="text-xsmall14 font-semibold text-neutral-35 lg:text-small20">
           아직 궁금증이 풀리이 않았다면?
         </span>
-        <button className="rounded-sm border border-neutral-70 bg-white px-5 py-3 text-xsmall14 font-medium lg:px-6 lg:text-small18">
+        <button
+          className="rounded-sm border border-neutral-70 bg-white px-5 py-3 text-xsmall14 font-medium lg:px-6 lg:text-small18"
+          onClick={() => channelService.showMessenger()}
+        >
           1:1 채팅 문의하기
         </button>
       </div>
@@ -85,7 +89,8 @@ function FaqCategory({
   );
 }
 
-function FaqCard({ faq }: { faq: Faq }) {
+/* LiveFaq에서 함께 사용 */
+export function FaqCard({ faq }: { faq: Faq }) {
   const [isOpen, setIsOpen] = useState(true);
 
   return (
@@ -93,7 +98,7 @@ function FaqCard({ faq }: { faq: Faq }) {
       key={faq.id}
       className="overflow-hidden rounded-xxs border border-neutral-80"
     >
-      <div className="flex items-center justify-between bg-neutral-100 px-4 py-5">
+      <div className="flex items-center justify-between bg-neutral-100 p-5">
         <span className="text-xsmall14 font-semibold text-neutral-0 lg:text-medium22">
           {faq.question}
         </span>
