@@ -59,6 +59,8 @@ export type LiveContent = {
   initialized: boolean;
   /* 상세 설명*/
   mainDescription?: SerializedEditorState;
+  /* 커리큘럼 추가 입력 */
+  additionalCurriculum?: SerializedEditorState;
   /* 커리큘럼 */
   curriculum: {
     id: string;
