@@ -2,6 +2,7 @@ import { LiveIdSchema } from '@/schema';
 import { LiveContent } from '@/types/interface';
 import Header from '@components/common/program/program-detail/header/Header';
 import LiveCurriculum from './live-view/LiveCurriculum';
+import LiveFaq from './live-view/LiveFaq';
 import LiveMentor from './live-view/LiveMentor';
 import LiveVod from './live-view/LiveVod';
 
@@ -31,6 +32,10 @@ const LiveView: React.FC<{ live: LiveIdSchema }> = ({ live }) => {
           curriculum={content.curriculum}
           mentorJob={mentor.mentorJob}
         />
+
+        <section>
+          <LiveFaq />
+        </section>
       </div>
     </div>
   );

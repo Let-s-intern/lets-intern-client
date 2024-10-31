@@ -85,7 +85,8 @@ function FaqCategory({
   );
 }
 
-function FaqCard({ faq }: { faq: Faq }) {
+/* LiveFaq에서 함께 사용 */
+export function FaqCard({ faq }: { faq: Faq }) {
   const [isOpen, setIsOpen] = useState(true);
 
   return (
@@ -93,7 +94,7 @@ function FaqCard({ faq }: { faq: Faq }) {
       key={faq.id}
       className="overflow-hidden rounded-xxs border border-neutral-80"
     >
-      <div className="flex items-center justify-between bg-neutral-100 px-4 py-5">
+      <div className="flex items-center justify-between bg-neutral-100 p-5">
         <span className="text-xsmall14 font-semibold text-neutral-0 lg:text-medium22">
           {faq.question}
         </span>

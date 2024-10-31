@@ -4,6 +4,7 @@ import {
   CreateChallengeReq,
   CreateLiveReq,
   CreateVodReq,
+  faqSchema,
   getChallengeIdSchema,
   getLiveIdSchema,
   getVodIdSchema,
@@ -242,6 +243,16 @@ export const useDeleteLiveMutation = ({
     },
     onSuccess: successCallback,
     onError: errorCallback,
+  });
+};
+
+export const useGetLiveFaq = (liveId: number | string) => {
+  return useQuery({
+    queryKey: ['useGetLiveFaq', liveId],
+    queryFn: async () => {
+      const res = await axios.get(`/live/${liveId}/faqs`);
+      return faqSchema.parse(res.data.data);
+    },
   });
 };
 
