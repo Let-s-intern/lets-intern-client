@@ -1,6 +1,6 @@
+import { twMerge } from '@/lib/twMerge';
 import { Dayjs } from 'dayjs';
 import { Link } from 'react-router-dom';
-import { twMerge } from 'tailwind-merge';
 
 const ProgramCard = ({
   endDate,

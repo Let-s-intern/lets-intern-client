@@ -1,5 +1,5 @@
+import { twMerge } from '@/lib/twMerge';
 import { FaCheck } from 'react-icons/fa6';
-import { twJoin } from 'tailwind-merge';
 
 import Description from '@components/common/program/program-detail/Description';
 import Heading2 from '@components/common/program/program-detail/Heading2';
@@ -98,7 +98,7 @@ function BadgedBox({
 }) {
   return (
     <OutlinedBox
-      className={twJoin(
+      className={twMerge(
         'relative h-48 min-w-[260px] overflow-hidden border-2 pb-0 pt-12 sm:w-full lg:h-[350px] lg:px-8 lg:pt-16',
         color === 'gray'
           ? 'border-neutral-50 bg-neutral-85'
@@ -106,7 +106,7 @@ function BadgedBox({
       )}
     >
       <div
-        className={twJoin(
+        className={twMerge(
           'absolute left-0 top-0 rounded-br-xxs px-2.5 py-1 text-center text-xsmall16 font-semibold text-white lg:w-28 lg:rounded-br-md lg:py-2.5 lg:text-small20',
           color === 'gray' ? 'bg-neutral-50' : `bg-[#39C7FF]`,
         )}

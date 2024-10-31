@@ -1,6 +1,6 @@
+import { twMerge } from '@/lib/twMerge';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
-import { twMerge } from 'tailwind-merge';
 
 type BackgroundColor = 'red' | 'green' | 'blue' | 'lightBlue' | 'gray';
 

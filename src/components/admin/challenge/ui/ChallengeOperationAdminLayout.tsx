@@ -1,12 +1,6 @@
+import { twMerge } from '@/lib/twMerge';
 import { useQuery } from '@tanstack/react-query';
-import {
-  NavLink,
-  Outlet,
-  useNavigate,
-  useParams,
-  useResolvedPath
-} from 'react-router-dom';
-import { twMerge } from 'tailwind-merge';
+import { NavLink, Outlet, useNavigate, useParams } from 'react-router-dom';
 import { z } from 'zod';
 import { useAdminCurrentChallenge } from '../../../../context/CurrentAdminChallengeProvider';
 import { challenges } from '../../../../schema';

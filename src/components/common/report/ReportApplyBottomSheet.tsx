@@ -6,11 +6,11 @@ import {
   useGetReportPriceDetail,
 } from '@/api/report';
 import { generateOrderId } from '@/lib/order';
+import { twMerge } from '@/lib/twMerge';
 import useReportApplicationStore from '@/store/useReportApplicationStore';
 import { FormControl, RadioGroup } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { twMerge } from 'tailwind-merge';
 import {
   ReportFormCheckboxControlLabel,
   ReportFormRadioControlLabel,

@@ -1,8 +1,8 @@
+import { twMerge } from '@/lib/twMerge';
 import { useMediaQuery } from '@mui/material';
 import dayjs from 'dayjs';
 import { useState } from 'react';
 import { IoIosArrowDown } from 'react-icons/io';
-import { twJoin } from 'tailwind-merge';
 
 import { ChallengeCurriculum as ChallengeCurriculumType } from '@/types/interface';
 import Heading2 from '@components/common/program/program-detail/Heading2';
@@ -81,7 +81,7 @@ function SidebarMenu({
   return (
     <div
       key={item.id}
-      className={twJoin(
+      className={twMerge(
         'cursor-pointer rounded-md px-8 py-3',
         selected && 'bg-[#EEFAFF]',
       )}
@@ -95,7 +95,7 @@ function SidebarMenu({
         </span>
       </div>
       <span
-        className={twJoin(
+        className={twMerge(
           'text-medium22 font-bold',
           selected ? 'text-neutral-0' : 'text-neutral-50',
         )}
@@ -123,7 +123,7 @@ function CurriculumItem({ item }: { item: ChallengeCurriculumType }) {
           {item.title}
         </span>
         <IoIosArrowDown
-          className={twJoin('cursor-pointer', isOpen && 'rotate-180')}
+          className={twMerge('cursor-pointer', isOpen && 'rotate-180')}
           color="#ACAFB6"
           size={24}
           onClick={() => setIsOpen(!isOpen)}

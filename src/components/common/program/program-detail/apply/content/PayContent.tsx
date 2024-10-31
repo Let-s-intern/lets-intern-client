@@ -1,6 +1,6 @@
+import { twMerge } from '@/lib/twMerge';
 import { useRef } from 'react';
 import { FaArrowLeft } from 'react-icons/fa6';
-import { twMerge } from 'tailwind-merge';
 
 import { UserInfo } from '@/lib/order';
 import { ProgramQuery } from '../../../../../../api/program';

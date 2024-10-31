@@ -1,4 +1,4 @@
-import { twMerge } from 'tailwind-merge';
+import { twMerge } from '@/lib/twMerge';
 import { REMINDER_LINK } from '../../../../../utils/programConst';
 
 interface NotiButtonProps {

@@ -1,4 +1,5 @@
 import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
+import { twMerge } from '@/lib/twMerge';
 import {
   Button,
   Dialog,
@@ -13,7 +14,6 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
 import { FaEdit } from 'react-icons/fa';
 import { FaTrashCan } from 'react-icons/fa6';
-import { twMerge } from 'tailwind-merge';
 import { useAdminCurrentChallenge } from '../../../../../context/CurrentAdminChallengeProvider';
 import {
   challengeGuides,

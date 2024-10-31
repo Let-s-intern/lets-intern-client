@@ -1,7 +1,7 @@
+import { twMerge } from '@/lib/twMerge';
 import { ReactNode, useState } from 'react';
 import { IoIosArrowDown } from 'react-icons/io';
 import { useParams } from 'react-router-dom';
-import { twJoin } from 'tailwind-merge';
 
 import { useGetChallengeFaq } from '@/api/challenge';
 import channelService from '@/ChannelService';
@@ -76,7 +76,7 @@ function FaqCategory({
 }) {
   return (
     <div
-      className={twJoin(
+      className={twMerge(
         'min-w-16 cursor-pointer rounded-full border px-5 py-2 text-center text-xxsmall12 font-semibold lg:min-w-36 lg:py-4 lg:text-medium22',
         selected
           ? 'border-[#A8E6FF] bg-[#EEFAFF] text-[#00A8EB]'
@@ -103,7 +103,7 @@ export function FaqCard({ faq }: { faq: Faq }) {
           {faq.question}
         </span>
         <IoIosArrowDown
-          className={twJoin('cursor-pointer', isOpen && 'rotate-180')}
+          className={twMerge('cursor-pointer', isOpen && 'rotate-180')}
           size={24}
           color="#7A7D84"
           onClick={() => setIsOpen(!isOpen)}

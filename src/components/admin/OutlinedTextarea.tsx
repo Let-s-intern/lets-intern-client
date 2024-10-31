@@ -1,4 +1,4 @@
-import { twMerge } from 'tailwind-merge';
+import { twMerge } from '@/lib/twMerge';
 
 interface OutlinedTextareaProps {
   className?: string;

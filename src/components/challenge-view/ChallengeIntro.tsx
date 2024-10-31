@@ -1,6 +1,6 @@
+import { twMerge } from '@/lib/twMerge';
 import { Fragment, ReactNode } from 'react';
 import { LuAlarmClock } from 'react-icons/lu';
-import { twMerge } from 'tailwind-merge';
 
 import Description from '@components/common/program/program-detail/Description';
 import Heading2 from '@components/common/program/program-detail/Heading2';

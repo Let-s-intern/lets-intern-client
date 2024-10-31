@@ -1,3 +1,4 @@
+import { twMerge } from '@/lib/twMerge';
 import {
   Checkbox,
   FormControlLabel,
@@ -5,7 +6,6 @@ import {
   Radio,
 } from '@mui/material';
 import React from 'react';
-import { twMerge } from 'tailwind-merge';
 
 const radioSx = {
   color: '#E7E7E7',

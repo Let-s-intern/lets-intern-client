@@ -1,11 +1,11 @@
 import { isNewProgram } from '@/lib/isDeprecatedProgram';
+import { twMerge } from '@/lib/twMerge';
 import { useMediaQuery } from '@mui/material';
 import { useQuery } from '@tanstack/react-query';
 import dayjs from 'dayjs';
 import { useEffect, useReducer, useState } from 'react';
 import { Helmet } from 'react-helmet';
 import { useNavigate, useParams } from 'react-router-dom';
-import { twMerge } from 'tailwind-merge';
 import { useProgramApplicationQuery } from '../../../api/application';
 import { useProgramQuery } from '../../../api/program';
 import FilledButton from '../../../components/common/program/program-detail/button/FilledButton';
