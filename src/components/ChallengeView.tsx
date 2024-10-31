@@ -50,12 +50,10 @@ const ChallengeView: React.FC<{ challenge: ChallengeIdSchema }> = ({
             point={receivedContent.challengePoint}
           />
 
-          <div>특별 챌린지, 합격자 후기 (TODO: 본 제목 삭제)</div>
-          <div>
-            {receivedContent.mainDescription?.root ? (
-              <LexicalContent node={receivedContent.mainDescription?.root} />
-            ) : null}
-          </div>
+          {/* 특별 챌린지, 합격자 후기 */}
+          {receivedContent.mainDescription?.root && (
+            <LexicalContent node={receivedContent.mainDescription?.root} />
+          )}
 
           <section className="lg:py-50 lg:gap-50 flex flex-col gap-20 py-16">
             <ChallengeIntro />
