@@ -1,5 +1,9 @@
 import { fileType, uploadFile } from '@/api/file';
-import { useGetChallengeQuery, usePatchChallengeMutation } from '@/api/program';
+import {
+  useGetChallengeQuery,
+  useGetChallengeQueryKey,
+  usePatchChallengeMutation,
+} from '@/api/program';
 import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
 import { isDeprecatedProgram } from '@/lib/isDeprecatedProgram';
 import { UpdateChallengeReq } from '@/schema';
@@ -12,6 +16,7 @@ import Heading from '@components/admin/ui/heading/Heading';
 import { Heading2 } from '@components/admin/ui/heading/Heading2';
 import Heading3 from '@components/admin/ui/heading/Heading3';
 import { Button } from '@mui/material';
+import { useQueryClient } from '@tanstack/react-query';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { FaSave } from 'react-icons/fa';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -38,7 +43,7 @@ const ChallengeEdit: React.FC = () => {
   const { mutateAsync: patchChallenge } = usePatchChallengeMutation();
   const navigate = useNavigate();
   const { challengeId: challengeIdString } = useParams();
-
+  const client = useQueryClient();
   const { data: challenge } = useGetChallengeQuery({
     challengeId: Number(challengeIdString),
     enabled: Boolean(challengeIdString),
@@ -105,11 +110,14 @@ const ChallengeEdit: React.FC = () => {
     console.log('req', req);
 
     const res = await patchChallenge(req);
+    client.invalidateQueries({
+      queryKey: [useGetChallengeQueryKey, Number(challengeIdString)],
+    });
     console.log('res', res);
 
     setLoading(false);
     snackbar('저장되었습니다.');
-  }, [challengeIdString, content, input, patchChallenge, snackbar]);
+  }, [challengeIdString, client, content, input, patchChallenge, snackbar]);
 
   if (!challenge || !content.initialized) {
     return <div>loading...</div>;

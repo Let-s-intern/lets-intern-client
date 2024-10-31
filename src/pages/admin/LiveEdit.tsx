@@ -4,7 +4,11 @@ import { FaSave } from 'react-icons/fa';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import { fileType, uploadFile } from '@/api/file';
-import { useGetLiveQuery, usePatchLiveMutation } from '@/api/program';
+import {
+  useGetLiveQuery,
+  useGetLiveQueryKey,
+  usePatchLiveMutation,
+} from '@/api/program';
 import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
 import { isDeprecatedProgram } from '@/lib/isDeprecatedProgram';
 import { UpdateLiveReq } from '@/schema';
@@ -14,6 +18,7 @@ import ImageUpload from '@components/admin/program/ui/form/ImageUpload';
 import Header from '@components/admin/ui/header/Header';
 import Heading from '@components/admin/ui/heading/Heading';
 import { Heading2 } from '@components/admin/ui/heading/Heading2';
+import { useQueryClient } from '@tanstack/react-query';
 import FaqSection from './program/FaqSection';
 import LiveBasic from './program/LiveBasic';
 import LiveCurriculum from './program/LiveCurriculum';
@@ -25,7 +30,7 @@ import ProgramSchedule from './program/ProgramSchedule';
 const LiveEdit: React.FC = () => {
   const { liveId: liveIdString } = useParams();
   const navigate = useNavigate();
-
+  const client = useQueryClient();
   const [loading, setLoading] = useState(false);
   const [input, setInput] = useState<Omit<UpdateLiveReq, 'desc'>>({});
   const [content, setContent] = useState<LiveContent>({
@@ -92,11 +97,14 @@ const LiveEdit: React.FC = () => {
     console.log('req:', req);
 
     const res = await patchLive(req);
+    client.invalidateQueries({
+      queryKey: [useGetLiveQueryKey, Number(liveIdString)],
+    });
     console.log('res:', res);
 
     setLoading(false);
     snackbar('저장되었습니다.');
-  }, [input, liveIdString, content, patchLive, snackbar]);
+  }, [input, liveIdString, content, patchLive, client, snackbar]);
 
   // receivedConent가 초기화되면 content에 적용
   useEffect(() => {

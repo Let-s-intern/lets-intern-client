@@ -1,9 +1,14 @@
-import { useGetVodQuery, usePatchVodMutation } from '@/api/program';
+import {
+  useGetVodQuery,
+  useGetVodQueryKey,
+  usePatchVodMutation,
+} from '@/api/program';
 import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
 import { UpdateVodReq } from '@/schema';
 import Header from '@components/admin/ui/header/Header';
 import Heading from '@components/admin/ui/heading/Heading';
 import { Button } from '@mui/material';
+import { useQueryClient } from '@tanstack/react-query';
 import { useCallback, useState } from 'react';
 import { FaSave } from 'react-icons/fa';
 import { useParams } from 'react-router-dom';
@@ -12,7 +17,7 @@ import VodEditor from './program/VodEditor';
 const VodEdit: React.FC = () => {
   const { mutateAsync: patchVod } = usePatchVodMutation();
   const { vodId: vodIdString } = useParams();
-
+  const client = useQueryClient();
   const { data: vod } = useGetVodQuery({
     vodId: Number(vodIdString),
     enabled: Boolean(vodIdString),
@@ -35,11 +40,14 @@ const VodEdit: React.FC = () => {
 
     console.log('req', req);
     const res = await patchVod(req);
+    client.invalidateQueries({
+      queryKey: [useGetVodQueryKey, Number(vodIdString)],
+    });
     console.log('res', res);
 
     setLoading(false);
     snackbar('저장되었습니다.');
-  }, [vodIdString, input, patchVod, snackbar]);
+  }, [vodIdString, input, patchVod, client, snackbar]);
 
   if (!vod) {
     return <div>loading...</div>;
