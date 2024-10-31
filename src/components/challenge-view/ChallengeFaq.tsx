@@ -4,6 +4,7 @@ import { useParams } from 'react-router-dom';
 import { twJoin } from 'tailwind-merge';
 
 import { useGetChallengeFaq } from '@/api/challenge';
+import channelService from '@/ChannelService';
 import { Faq } from '@/schema';
 import Heading2 from '@components/common/program/program-detail/Heading2';
 import SuperTitle from '@components/common/program/program-detail/SuperTitle';
@@ -53,7 +54,10 @@ function ChallengeFaq() {
         <span className="text-xsmall14 font-semibold text-neutral-35 lg:text-small20">
           아직 궁금증이 풀리이 않았다면?
         </span>
-        <button className="rounded-sm border border-neutral-70 bg-white px-5 py-3 text-xsmall14 font-medium lg:px-6 lg:text-small18">
+        <button
+          className="rounded-sm border border-neutral-70 bg-white px-5 py-3 text-xsmall14 font-medium lg:px-6 lg:text-small18"
+          onClick={() => channelService.showMessenger()}
+        >
           1:1 채팅 문의하기
         </button>
       </div>
