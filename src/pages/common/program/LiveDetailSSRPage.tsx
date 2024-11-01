@@ -78,9 +78,8 @@ const LiveDetailSSRPage = () => {
       return;
     }
 
-    // TODO: 라이브는 직접 받아와야 함. 챌린지는 none임.
-
-    const progressType: 'none' | 'ALL' | 'ONLINE' | 'OFFLINE' = 'none';
+    const progressType: 'none' | 'ALL' | 'ONLINE' | 'OFFLINE' =
+      live.progressType ?? 'none';
 
     const userInfo: UserInfo = {
       name: application?.name ?? '',
