@@ -1,5 +1,6 @@
 import { fileType, uploadFile } from '@/api/file';
 import { usePostChallengeMutation } from '@/api/program';
+import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
 import { CreateChallengeReq } from '@/schema';
 import { ChallengeContent } from '@/types/interface';
 import ChallengePreviewButton from '@components/admin/ChallengePreviewButton';
@@ -13,6 +14,7 @@ import { Button } from '@mui/material';
 import dayjs from 'dayjs';
 import { useCallback, useEffect, useState } from 'react';
 import { FaSave } from 'react-icons/fa';
+import { useNavigate } from 'react-router-dom';
 import ChallengeBasic from './program/ChallengeBasic';
 import ChallengeCurriculum from './program/ChallengeCurriculum';
 import ChallengePoint from './program/ChallengePoint';
@@ -34,6 +36,8 @@ const ChallengeCreate: React.FC = () => {
     challengeReview: '',
     initialized: true,
   });
+  const { snackbar } = useAdminSnackbar();
+  const navigate = useNavigate();
 
   useEffect(() => {
     console.log('content', content);
@@ -93,7 +97,9 @@ const ChallengeCreate: React.FC = () => {
     console.log('res', res);
 
     setLoading(false);
-  }, [input, content, postChallenge]);
+    snackbar('챌린지가 생성되었습니다.');
+    navigate('/admin/programs');
+  }, [input, content, postChallenge, snackbar, navigate]);
 
   return (
     <div className="mx-3 mb-40 mt-3">
