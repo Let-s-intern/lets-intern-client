@@ -41,7 +41,7 @@ const DESCRITION2 = [
   '체계적인 자소서 커리큘럼으로 차근차근 완성도를 높여봐요!',
 ];
 
-function ChallengeIntro() {
+function ChallengeIntroPersonalStatement() {
   return (
     <section id="program-intro">
       <div className="mb-20 mt-6 md:mb-48 md:text-center">
@@ -178,4 +178,4 @@ function CircularBox({
   );
 }
 
-export default ChallengeIntro;
+export default ChallengeIntroPersonalStatement;

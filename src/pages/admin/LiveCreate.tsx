@@ -92,9 +92,9 @@ const LiveCreate: React.FC = () => {
     console.log('res:', res);
 
     setLoading(false);
-    snackbar('저장되었습니다.');
+    snackbar('라이브가 생성되었습니다.');
     navigate('/admin/programs');
-  }, [input, content]);
+  }, [input, content, postLive, snackbar, navigate]);
 
   useEffect(() => {
     console.log('content', content);

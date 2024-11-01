@@ -10,10 +10,10 @@ import ChallengeView from '@components/ChallengeView';
 import FilledButton from '@components/common/program/program-detail/button/FilledButton';
 import GradientButton from '@components/common/program/program-detail/button/GradientButton';
 import NotiButton from '@components/common/program/program-detail/button/NotiButton';
+import { Duration } from '@components/Duration';
 import { useMediaQuery } from '@mui/material';
 import dayjs, { Dayjs } from 'dayjs';
-import { Duration } from 'dayjs/plugin/duration';
-import { ReactNode, useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 const ChallengeDetailSSRPage = () => {
@@ -125,11 +125,11 @@ const ChallengeDetailSSRPage = () => {
       isFree,
     });
 
-    if (isFree) {
-      navigate(`/order/result?orderId=${orderId}`);
-    } else {
-      navigate(`/payment-input`);
-    }
+    // if (isFree) {
+    //   navigate(`/order/result?orderId=${orderId}`);
+    // } else {
+    navigate(`/payment-input`);
+    // }
   }, [
     application,
     challenge.title,
@@ -148,7 +148,7 @@ const ChallengeDetailSSRPage = () => {
       <ChallengeView challenge={challenge} />
 
       {isMobile ? (
-        <ApplyCTA
+        <MobileApplyCTA
           program={challenge}
           onApplyClick={onApplyClick}
           isAlreadyApplied={isAlreadyApplied}
@@ -175,7 +175,7 @@ interface ApplyCTAProps {
   isAlreadyApplied: boolean;
 }
 
-export function ApplyCTA({
+export function MobileApplyCTA({
   program,
   onApplyClick,
   isAlreadyApplied,
@@ -186,7 +186,7 @@ export function ApplyCTA({
       : false;
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-10 flex w-full flex-col items-center overflow-hidden bg-neutral-0/65 text-xxsmall12">
+    <div className="fixed bottom-0 left-0 right-0 z-30 flex w-full flex-col items-center overflow-hidden bg-neutral-0/65 text-xxsmall12">
       <div className="w-full bg-neutral-0/95 py-1.5 text-center font-bold text-static-100">
         {program?.title}
       </div>
@@ -205,10 +205,13 @@ export function ApplyCTA({
               <span className="mb-2 block">
                 {program?.deadline?.format('M월 D일 (dd)')} 마감까지 🚀
               </span>
-              <DurationSection
-                disabled={isAlreadyApplied || isOutOfDate}
-                deadline={program?.deadline ?? dayjs()}
-              />
+              <div className="flex items-center gap-2">
+                <Duration
+                  disabled={isAlreadyApplied || isOutOfDate}
+                  deadline={program?.deadline ?? dayjs()}
+                />
+                <span className="text-xxsmall12 text-neutral-80">남음</span>
+              </div>
             </div>
             <GradientButton onClick={onApplyClick}>
               지금 바로 신청
@@ -249,61 +252,19 @@ export function DesktopApplyCTA({
           />
         ) : (
           <>
-            <DurationSection
-              disabled={isAlreadyApplied || isOutOfDate}
-              deadline={program?.deadline ?? dayjs()}
-            />
+            <div className="flex items-center gap-2">
+              <Duration
+                disabled={isAlreadyApplied || isOutOfDate}
+                deadline={program?.deadline ?? dayjs()}
+              />
+              <span className="text-xxsmall12 text-neutral-80">남음</span>
+            </div>
             <GradientButton onClick={onApplyClick}>
               지금 바로 신청
             </GradientButton>
           </>
         )}
       </div>
-    </div>
-  );
-}
-
-function DurationSection({
-  deadline,
-  disabled = false,
-}: {
-  deadline: Dayjs;
-  disabled?: boolean;
-}) {
-  const [duration, setDuration] = useState<Duration>();
-
-  useEffect(() => {
-    setDuration(dayjs.duration(deadline.diff(dayjs())));
-  }, [deadline]);
-
-  /* 마감 일자 타이머 설정 */
-  useEffect(() => {
-    if (disabled) return;
-
-    const timer = setInterval(() => {
-      setDuration((prev) => prev?.subtract(1, 'second') ?? prev);
-    }, 1000);
-
-    return () => clearInterval(timer);
-  }, [deadline, disabled]);
-
-  return (
-    <div className="flex items-center gap-2">
-      <div className="flex items-center gap-2">
-        <DurationBox>{duration?.days() ?? '--'}일</DurationBox>
-        <DurationBox>{duration?.hours() ?? '--'}시간</DurationBox>
-        <DurationBox>{duration?.minutes() ?? '--'}분</DurationBox>
-        <DurationBox>{duration?.seconds() ?? '--'}초</DurationBox>
-      </div>
-      <span className="text-xxsmall12 text-neutral-80">남음</span>
-    </div>
-  );
-}
-
-function DurationBox({ children }: { children: ReactNode }) {
-  return (
-    <div className="rounded-xxs bg-primary-10 p-1 text-xxsmall12 font-bold text-primary">
-      {children}
     </div>
   );
 }

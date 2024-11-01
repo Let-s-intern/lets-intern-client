@@ -11,6 +11,7 @@ import { UsePaymentDetailQueryKey, UsePaymentQueryKey } from './payment';
 
 import { ProgramType } from '../types/common';
 import axios from '../utils/axios';
+import { tossInfoType } from './paymentSchema';
 
 const programApplicationSchema = z
   .object({
@@ -118,6 +119,12 @@ export const usePostApplicationMutation = ({
     },
   });
 };
+
+export const postApplicationResultSchema = z.object({
+  tossInfo: tossInfoType.nullable().optional(),
+});
+
+export type PostApplicationResult = z.infer<typeof postApplicationResultSchema>;
 
 export const useCancelApplicationMutation = ({
   applicationId,

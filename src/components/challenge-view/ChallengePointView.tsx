@@ -1,47 +1,45 @@
-import { ChallengePoint } from '@/types/interface';
-import Heading2 from '@components/common/program/program-detail/Heading2';
 import { Dayjs } from 'dayjs';
-import { ReactNode } from 'react';
+import { ReactNode, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
-// import Balancer from 'react-wrap-balancer';
 import { clientOnly } from 'vike-react/clientOnly';
+
+import { ChallengeType, challengeTypeSchema } from '@/schema';
+import { ChallengePoint } from '@/types/interface';
+import { ChallengeColor } from '@components/ChallengeView';
+import Heading2 from '@components/common/program/program-detail/Heading2';
 
 const Balancer = clientOnly(() => import('react-wrap-balancer'));
 
 type ProgressItemType = {
   index: number;
-  title: string[];
-  subTitle?: string[];
+  title: string;
+  subTitle?: string;
 };
 
 const description = '*더 자세한 내용은 상단 메뉴에서 커리큘럼을 클릭해주세요.';
-
 const progress = [
   {
     index: 1,
-    title: ['신청 완료'],
+    title: '신청 완료',
   },
   {
     index: 2,
-    title: ['챌린지 대시보드 및', '오픈채팅방 초대'],
+    title: '챌린지 대시보드 및\n오픈채팅방 초대',
   },
   {
     index: 3,
-    title: ['OT'],
-    subTitle: ['*실시간 진행'],
+    title: 'OT',
+    subTitle: '*실시간 진행',
   },
   {
     index: 4,
-    title: ['회차별 미션 수행'],
-    subTitle: ['*2주간, 총 8개 미션'],
+    title: '회차별 미션 수행',
+    subTitle: '*2주간, 총 8개 미션',
   },
   {
     index: 5,
-    title: ['챌린지 종료 및 평가'],
-    subTitle: [
-      '*총 챌린지 참여 점수 80점 이상시,',
-      '3만원 페이백 및 수료증 발급',
-    ],
+    title: '챌린지 종료 및 평가',
+    subTitle: '*총 챌린지 참여 점수 80점 이상시,\n3만원 페이백 및 수료증 발급',
   },
 ];
 
@@ -64,6 +62,8 @@ const ChallengePointView = ({
   challengeTitle,
   startDate,
   endDate,
+  colors,
+  challengeType,
   className,
 }: {
   className?: string;
@@ -71,6 +71,8 @@ const ChallengePointView = ({
   challengeTitle: string;
   startDate: Dayjs;
   endDate: Dayjs;
+  colors: ChallengeColor;
+  challengeType: ChallengeType;
 }) => {
   const programSchedule = [
     {
@@ -87,6 +89,17 @@ const ChallengePointView = ({
     },
   ];
 
+  const imgSrc = useMemo(() => {
+    switch (challengeType) {
+      case challengeTypeSchema.enum.PORTFOLIO:
+        return '/images/payback-portfolio.svg';
+      case challengeTypeSchema.enum.PERSONAL_STATEMENT:
+        return '/images/payback-statement.svg';
+      default:
+        return '/images/payback-basic.svg';
+    }
+  }, [challengeType]);
+
   if (point === undefined) return <></>;
 
   return (
@@ -95,17 +108,32 @@ const ChallengePointView = ({
       <Heading2 className="mb-10 break-keep lg:mb-20">
         이력서 & 자기소개서 챌린지를 통해
         <br />
-        <span className="text-[rgba(255,156,52,1)]">하루 30분</span>, 단{' '}
+        <span style={{ color: colors.secondary }}>하루 30분</span>, 단{' '}
         {point.weekText} 안에 이런걸
         <br className="lg:hidden" />
         얻어갈 수 있어요
       </Heading2>
 
-      <ul className="mb-20 space-y-4">
-        {point.list?.map((item, index) => (
-          <PointList key={item.id} item={item} index={index} />
-        ))}
-      </ul>
+      <div className="mb-20 space-y-4">
+        <ul className="mb-10 space-y-4 md:mb-16">
+          {point.list?.map((item, index) => (
+            <PointList
+              key={item.id}
+              item={item}
+              index={index}
+              colors={colors}
+            />
+          ))}
+        </ul>
+        {challengeType === challengeTypeSchema.enum.CAREER_START && (
+          <p className="text-xsmall14 font-semibold text-neutral-40 md:text-center md:text-xsmall16">
+            본 프로그램은 취업의 기초가 되는 퍼스널 브랜딩과 마스터 이력서
+            작성을 다룹니다.
+            <br />
+            자기소개서 및 포트폴리오 완성 프로그램은 별도로 준비되어 있습니다.
+          </p>
+        )}
+      </div>
 
       <Heading2 className="mb-10 md:mb-8">
         {challengeTitle}은<br className="md:hidden" /> 2주간 아래와 같이
@@ -117,7 +145,7 @@ const ChallengePointView = ({
 
       <div className="mb-8 flex flex-col gap-5 md:flex-row md:justify-between md:px-8">
         {progress.map((item) => (
-          <ProgressItem key={item.index} item={item} />
+          <ProgressItem key={item.index} item={item} bgColor={colors.primary} />
         ))}
       </div>
 
@@ -144,7 +172,7 @@ const ChallengePointView = ({
           <BoxItem title={REWARD.title}>{REWARD.content}</BoxItem>
           <img
             className="absolute bottom-0 right-2 scale-110"
-            src="/images/payback.svg"
+            src={imgSrc}
             alt="페이백 3만원"
           />
         </Box>
@@ -156,6 +184,7 @@ const ChallengePointView = ({
 function PointList({
   item,
   index,
+  colors,
 }: {
   item: {
     id: string;
@@ -163,14 +192,19 @@ function PointList({
     subtitle: string;
   };
   index: number;
+  colors: ChallengeColor;
 }) {
   return (
     <li
       key={item.id}
-      className="flex flex-col items-center gap-4 self-stretch rounded-md bg-[#EEFAFF] px-8 pb-10 pt-8"
+      className="flex flex-col items-center gap-4 self-stretch rounded-md px-8 pb-10 pt-8"
+      style={{ backgroundColor: colors.primaryLight }}
     >
       <div className="break-keep text-center">
-        <span className="rounded-md bg-[#14BCFF] px-3.5 py-1.5 text-small18 font-semibold text-white">
+        <span
+          className="rounded-md px-3.5 py-1.5 text-small18 font-semibold text-white"
+          style={{ backgroundColor: colors.primary }}
+        >
           Point {index + 1}
         </span>
       </div>
@@ -188,20 +222,29 @@ function PointList({
   );
 }
 
-function ProgressItem({ item }: { item: ProgressItemType }) {
+function ProgressItem({
+  item,
+  bgColor,
+}: {
+  item: ProgressItemType;
+  bgColor?: string;
+}) {
   return (
     <div key={item.index}>
       <div className="flex gap-2">
-        <div className="mt-0.5 flex h-5 w-5 items-center justify-center rounded-full bg-[#14BCFF] text-xsmall14 font-semibold text-white">
+        <div
+          className="mt-0.5 flex h-5 w-5 items-center justify-center rounded-full bg-[#14BCFF] text-xsmall14 font-semibold text-white"
+          style={{ backgroundColor: bgColor }}
+        >
           {item.index}
         </div>
         <div className="flex flex-col gap-0.5">
           <span className="whitespace-pre-line text-small18 font-semibold text-neutral-0">
-            {item.title.join('\n')}
+            {item.title}
           </span>
           {item.subTitle && (
             <span className="whitespace-pre-line text-xsmall14 text-neutral-45">
-              {item.subTitle.join('\n')}
+              {item.subTitle}
             </span>
           )}
         </div>

@@ -69,7 +69,7 @@ const ChallengeNavigation = ({
   };
 
   return (
-    <nav className="sticky top-[3.65rem] z-20 flex w-full items-center justify-center gap-x-1 border-b-2 border-neutral-80 bg-white px-4 md:top-[4.275rem] md:gap-x-[100px] lg:top-[4.65rem]">
+    <nav className="sticky top-[3.65rem] z-30 flex w-full items-center justify-center gap-x-1 border-b-2 border-neutral-80 bg-white px-4 md:top-[4.275rem] md:gap-x-[100px] lg:top-[4.65rem]">
       {navItems.map((navItem) => (
         <button
           key={navItem.title}

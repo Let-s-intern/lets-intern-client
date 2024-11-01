@@ -10,7 +10,7 @@ import LiveView from '@components/LiveView';
 import { useMediaQuery } from '@mui/material';
 import { useCallback, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { ApplyCTA, DesktopApplyCTA } from './ChallengeDetailSSRPage';
+import { DesktopApplyCTA, MobileApplyCTA } from './ChallengeDetailSSRPage';
 
 const LiveDetailSSRPage = () => {
   const navigate = useNavigate();
@@ -118,11 +118,11 @@ const LiveDetailSSRPage = () => {
       isFree,
     });
 
-    if (isFree) {
-      navigate(`/order/result?orderId=${orderId}`);
-    } else {
-      navigate(`/payment-input`);
-    }
+    // if (isFree) {
+    //   navigate(`/order/result?orderId=${orderId}`);
+    // } else {
+    navigate(`/payment-input`);
+    // }
   }, [
     application,
     live.title,
@@ -141,7 +141,7 @@ const LiveDetailSSRPage = () => {
       <LiveView live={live} />
 
       {isMobile ? (
-        <ApplyCTA
+        <MobileApplyCTA
           program={live}
           onApplyClick={onApplyClick}
           isAlreadyApplied={isAlreadyApplied}
