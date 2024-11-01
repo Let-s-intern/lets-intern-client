@@ -13,7 +13,7 @@ interface ChallengeNavigationProps {
 export const challengeNavigateItems: NavItem[] = [
   { title: '프로그램 소개', to: 'program-intro' },
   { title: '커리큘럼', to: 'curriculum' },
-  { title: '차별점', to: 'special' },
+  { title: '차별점', to: 'different' },
   { title: '후기', to: 'review' },
   { title: 'FAQ', to: 'faq' },
 ];
@@ -69,7 +69,7 @@ const ChallengeNavigation = ({
   };
 
   return (
-    <nav className="sticky top-[3.65rem] z-10 flex w-full items-center justify-center gap-x-1 border-b-2 border-neutral-80 bg-white px-4 md:top-[4.275rem] md:gap-x-[100px] lg:top-[4.65rem]">
+    <nav className="sticky top-[3.65rem] z-20 flex w-full items-center justify-center gap-x-1 border-b-2 border-neutral-80 bg-white px-4 md:top-[4.275rem] md:gap-x-[100px] lg:top-[4.65rem]">
       {navItems.map((navItem) => (
         <button
           key={navItem.title}
