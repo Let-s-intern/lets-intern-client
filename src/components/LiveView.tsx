@@ -7,6 +7,7 @@ import LiveBasicInfo from './live-view/LiveBasicInfo';
 import LiveCurriculum from './live-view/LiveCurriculum';
 import LiveFaq from './live-view/LiveFaq';
 import LiveInfoBottom from './live-view/LiveInfoBottom';
+import LiveInformation from './live-view/LiveInformation';
 import LiveIntro from './live-view/LiveIntro';
 import LiveMentor from './live-view/LiveMentor';
 import LiveVod from './live-view/LiveVod';
@@ -44,6 +45,11 @@ const LiveView: React.FC<{ live: LiveIdSchema }> = ({ live }) => {
         <ProgramDetailNavigation isLive />
         <div className="flex w-full max-w-[1200px] flex-col overflow-x-hidden px-5 lg:px-10">
           <LiveMentor mentor={mentor} />
+          <LiveInformation
+            recommendFields={receivedContent.recommend}
+            reasonFields={receivedContent.reason}
+            editorContent={receivedContent.mainDescription}
+          />
 
           <LiveCurriculum
             curriculum={receivedContent.curriculum}

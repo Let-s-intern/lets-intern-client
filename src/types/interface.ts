@@ -57,6 +57,13 @@ export type ChallengeContent = {
 export type LiveContent = {
   /** 초기화 여부 알려주는 것 */
   initialized: boolean;
+  /* 이런분께 추천드려요 */
+  recommend?: string[];
+  /* 이번 클래스 꼭 들어야 하는 이유 */
+  reason?: {
+    title: string;
+    content: string;
+  }[];
   /* 상세 설명*/
   mainDescription?: SerializedEditorState;
   /* 커리큘럼 추가 입력 */

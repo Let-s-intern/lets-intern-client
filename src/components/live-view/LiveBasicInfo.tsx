@@ -51,9 +51,7 @@ const LiveBasicInfo = ({ live }: { live: LiveIdSchema }) => {
               content={
                 live.progressType === 'ONLINE'
                   ? 'LIVE/온라인'
-                  : live.progressType === 'OFFLINE'
-                    ? '오프라인'
-                    : '온라인/오프라인'
+                  : `오프라인/${live.place}`
               }
             />
           </div>
