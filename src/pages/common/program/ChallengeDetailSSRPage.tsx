@@ -5,8 +5,13 @@ import { isDeprecatedProgram } from '@/lib/isDeprecatedProgram';
 import { generateOrderId, getPayInfo, UserInfo } from '@/lib/order';
 import useAuthStore from '@/store/useAuthStore';
 import useProgramStore from '@/store/useProgramStore';
-import { getProgramPathname } from '@/utils/url';
+import {
+  getChallengeTitle,
+  getProgramPathname,
+  getUniversalLink,
+} from '@/utils/url';
 import ChallengeView from '@components/ChallengeView';
+import CommonHelmet from '@components/common/CommonHelmet';
 import FilledButton from '@components/common/program/program-detail/button/FilledButton';
 import GradientButton from '@components/common/program/program-detail/button/GradientButton';
 import NotiButton from '@components/common/program/program-detail/button/NotiButton';
@@ -125,11 +130,7 @@ const ChallengeDetailSSRPage = () => {
       isFree,
     });
 
-    // if (isFree) {
-    //   navigate(`/order/result?orderId=${orderId}`);
-    // } else {
     navigate(`/payment-input`);
-    // }
   }, [
     application,
     challenge.title,
@@ -145,6 +146,18 @@ const ChallengeDetailSSRPage = () => {
 
   return (
     <>
+      <CommonHelmet
+        title={getChallengeTitle(challenge)}
+        url={getUniversalLink(
+          getProgramPathname({
+            programType: 'challenge',
+            title: challenge.title,
+            id,
+          }),
+        )}
+        description={challenge.shortDesc}
+      />
+
       <ChallengeView challenge={challenge} />
 
       {isMobile ? (

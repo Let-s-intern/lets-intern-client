@@ -5,7 +5,12 @@ import { isDeprecatedProgram } from '@/lib/isDeprecatedProgram';
 import { generateOrderId, getPayInfo, UserInfo } from '@/lib/order';
 import useAuthStore from '@/store/useAuthStore';
 import useProgramStore from '@/store/useProgramStore';
-import { getProgramPathname } from '@/utils/url';
+import {
+  getLiveTitle,
+  getProgramPathname,
+  getUniversalLink,
+} from '@/utils/url';
+import CommonHelmet from '@components/common/CommonHelmet';
 import LiveView from '@components/LiveView';
 import { useMediaQuery } from '@mui/material';
 import { useCallback, useEffect } from 'react';
@@ -118,11 +123,7 @@ const LiveDetailSSRPage = () => {
       isFree,
     });
 
-    // if (isFree) {
-    //   navigate(`/order/result?orderId=${orderId}`);
-    // } else {
     navigate(`/payment-input`);
-    // }
   }, [
     application,
     live.title,
@@ -138,6 +139,18 @@ const LiveDetailSSRPage = () => {
 
   return (
     <>
+      <CommonHelmet
+        title={getLiveTitle(live)}
+        url={getUniversalLink(
+          getProgramPathname({
+            programType: 'live',
+            title: live.title,
+            id,
+          }),
+        )}
+        description={live.shortDesc}
+      />
+
       <LiveView live={live} />
 
       {isMobile ? (
