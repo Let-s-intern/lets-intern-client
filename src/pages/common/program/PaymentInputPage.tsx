@@ -6,6 +6,7 @@ import MotiveAnswerSection from '@components/common/program/program-detail/apply
 import PriceSection from '@components/common/program/program-detail/apply/section/PriceSection';
 import UserInputSection from '@components/common/program/program-detail/apply/section/UserInputSection';
 import Header from '@components/common/program/program-detail/header/Header';
+import { Duration } from '@components/Duration';
 import { AxiosError } from 'axios';
 import { useCallback, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -135,7 +136,7 @@ const PaymentInputPage = () => {
 
       <hr className="my-6 block h-2 border-none bg-neutral-95" />
 
-      <div className="mx-5 flex h-full flex-col gap-3">
+      <div className="mx-5">
         <OrderProgramInfo
           endDate={program?.endDate?.toISOString()}
           progressType={programApplicationData.progressType}
@@ -144,9 +145,18 @@ const PaymentInputPage = () => {
           title={program?.title}
         />
 
-        <div className="my-10">마감까지 ~분 남았어요.</div>
+        <div className="-mx-5 mb-10 mt-8 flex items-center justify-center gap-2 bg-primary-10 px-2.5 py-5 text-xsmall14 lg:rounded-sm">
+          <span>마감까지</span>
+          {program?.endDate ? (
+            <Duration
+              deadline={program.endDate}
+              numberBoxClassName="text-xsmall14 bg-white text-primary"
+            />
+          ) : null}
+          <span>남았어요!</span>
+        </div>
 
-        <p className="text-xsmall16 font-semibold text-neutral-0">
+        <p className="my-3 text-xsmall16 font-semibold text-neutral-0">
           신청 폼을 모두 입력해주세요.
         </p>
         <div className="flex flex-col gap-2.5">
