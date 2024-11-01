@@ -23,6 +23,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import FaqSection from './program/FaqSection';
 import LiveBasic from './program/LiveBasic';
 import LiveCurriculum from './program/LiveCurriculum';
+import LiveInformation from './program/LiveInformation';
 import LiveMentor from './program/LiveMentor';
 import LivePrice from './program/LivePrice';
 import ProgramBlogReviewEditor from './program/ProgramBlogReviewEditor';
@@ -36,6 +37,8 @@ const LiveEdit: React.FC = () => {
   const [input, setInput] = useState<Omit<UpdateLiveReq, 'desc'>>({});
   const [content, setContent] = useState<LiveContent>({
     initialized: false,
+    recommend: [''],
+    reason: [{ title: '', content: '' }],
     curriculum: [],
     blogReview: { list: [] },
   });
@@ -165,7 +168,11 @@ const LiveEdit: React.FC = () => {
           </div>
         </div>
       </section>
-
+      <LiveInformation
+        recommendFields={content.recommend || ['']}
+        reasonFields={content.reason || [{ title: '', content: '' }]}
+        setContent={setContent}
+      />
       <LiveCurriculum curriculum={content.curriculum} setContent={setContent} />
 
       <Heading2 className="mt-6">커리큘럼 추가 입력</Heading2>

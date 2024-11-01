@@ -2,7 +2,6 @@ import { useGetTossCardPromotion } from '@/api/payment';
 import CalendarIcon from '@/assets/icons/calendar.svg?react';
 import ChevronDown from '@/assets/icons/chevron-down.svg?react';
 import WalletIcon from '@/assets/icons/credit-card.svg?react';
-import LaptopIcon from '@/assets/icons/laptop.svg?react';
 import MentorIcon from '@/assets/icons/mentor.svg?react';
 import { ChallengeIdSchema } from '@/schema';
 import { formatFullDateTime } from '@/utils/formatDateString';
@@ -75,11 +74,6 @@ const ChallengeBasicInfo = ({
               title="진행 기간"
               content={`${formatFullDateTime(challenge.startDate, true)}\n- ${formatFullDateTime(challenge.endDate, true)}`}
             />{' '}
-            <BasicInfoRow
-              icon={<LaptopIcon />}
-              title="진행 방식"
-              content={`100% 온라인\n(챌린지 대시보드, 오픈채팅방)`}
-            />
             <BasicInfoRow
               icon={<WalletIcon />}
               title="모집 마감"
