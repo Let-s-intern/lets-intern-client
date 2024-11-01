@@ -10,6 +10,7 @@ import ChallengeResult from '@components/challenge-view/ChallengeResult';
 import Header from '@components/common/program/program-detail/header/Header';
 import dayjs from 'dayjs';
 import ChallengeBasicInfo from './challenge-view/ChallengeBasicInfo';
+import ChallengeBrand from './challenge-view/ChallengeBrand';
 import ChallengeDifferent from './challenge-view/ChallengeDifferent';
 import ChallengeNavigation, {
   challengeNavigateItems,
@@ -92,7 +93,7 @@ const ChallengeView: React.FC<{ challenge: ChallengeIdSchema }> = ({
             렛츠커리어 챌린지
           </div>
           <ChallengeDifferent payback={challenge.priceInfo[0].refund ?? 0} />
-          <div>누적 참여자 1,900+명 참여 만족도 4.9점</div>
+          <ChallengeBrand />
 
           <div>모집 개요</div>
         </div>
