@@ -125,11 +125,11 @@ const ChallengeDetailSSRPage = () => {
       isFree,
     });
 
-    if (isFree) {
-      navigate(`/order/result?orderId=${orderId}`);
-    } else {
-      navigate(`/payment-input`);
-    }
+    // if (isFree) {
+    //   navigate(`/order/result?orderId=${orderId}`);
+    // } else {
+    navigate(`/payment-input`);
+    // }
   }, [
     application,
     challenge.title,
