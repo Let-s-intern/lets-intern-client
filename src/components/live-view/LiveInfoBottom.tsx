@@ -19,16 +19,14 @@ export const getDiscountPercent = (
   return Math.round((discountPrice / originalPrice) * 100);
 };
 
-const LiveBasicInfo = ({ live }: { live: LiveIdSchema }) => {
+const LiveInfoBottom = ({ live }: { live: LiveIdSchema }) => {
   return (
-    <div className="flex flex-col gap-6 pb-10 pt-8 md:flex-row md:pb-20 md:pt-[50px]">
-      <img
-        src={live.thumbnail}
-        alt="챌린지 썸네일"
-        className="aspect-[4/3] w-full bg-neutral-45 object-cover md:w-3/5"
-      />
-      <div className="flex w-full flex-col gap-y-3 md:w-2/5">
-        <div className="flex w-full items-center justify-center rounded-md bg-neutral-95 px-6 py-5">
+    <div className="flex w-full flex-col gap-y-8 py-8 md:gap-y-[70px]">
+      <div className="w-full text-small20 font-bold text-neutral-0 md:text-center">
+        모집개요
+      </div>
+      <div className="flex w-full flex-col gap-3 md:flex-row">
+        <div className="flex flex-1 items-center justify-center rounded-md bg-neutral-95 px-6 py-5">
           <div className="flex w-full flex-col gap-y-5 text-primary-90">
             <BasicInfoRow
               icon={<ClockIcon />}
@@ -58,7 +56,7 @@ const LiveBasicInfo = ({ live }: { live: LiveIdSchema }) => {
             />
           </div>
         </div>
-        <div className="flex w-full flex-col items-center justify-center gap-y-3 rounded-md bg-neutral-95 px-6 py-5">
+        <div className="flex flex-1 flex-col items-center justify-center gap-y-3 rounded-md bg-neutral-95 px-6 py-5">
           <div className="flex w-full flex-col gap-y-2.5">
             <div className="flex w-full items-center gap-x-2">
               <WalletIcon className="text-primary-90" />
@@ -93,4 +91,4 @@ const LiveBasicInfo = ({ live }: { live: LiveIdSchema }) => {
   );
 };
 
-export default LiveBasicInfo;
+export default LiveInfoBottom;

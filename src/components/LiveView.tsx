@@ -6,6 +6,7 @@ import LexicalContent from './common/blog/LexicalContent';
 import LiveBasicInfo from './live-view/LiveBasicInfo';
 import LiveCurriculum from './live-view/LiveCurriculum';
 import LiveFaq from './live-view/LiveFaq';
+import LiveInfoBottom from './live-view/LiveInfoBottom';
 import LiveIntro from './live-view/LiveIntro';
 import LiveMentor from './live-view/LiveMentor';
 import LiveVod from './live-view/LiveVod';
@@ -65,6 +66,7 @@ const LiveView: React.FC<{ live: LiveIdSchema }> = ({ live }) => {
           <section>
             <LiveFaq />
           </section>
+          <LiveInfoBottom live={live} />
         </div>
       </div>
     </div>
