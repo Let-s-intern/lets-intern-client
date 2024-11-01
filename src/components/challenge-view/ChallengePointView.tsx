@@ -14,6 +14,8 @@ type ProgressItemType = {
   subTitle?: string[];
 };
 
+const description = '*더 자세한 내용은 상단 메뉴에서 커리큘럼을 클릭해주세요.';
+
 const progress = [
   {
     index: 1,
@@ -105,26 +107,29 @@ const ChallengePointView = ({
         ))}
       </ul>
 
-      <Heading2 className="mb-10">
-        {challengeTitle}은<br />
-        2주간 아래와 같이 진행돼요
+      <Heading2 className="mb-10 md:mb-8">
+        {challengeTitle}은<br className="md:hidden" /> 2주간 아래와 같이
+        진행돼요
       </Heading2>
+      <span className="mb-20 hidden text-center text-xsmall14 text-neutral-30 md:block">
+        {description}
+      </span>
 
-      <div className="mb-8 flex flex-col gap-5">
+      <div className="mb-8 flex flex-col gap-5 md:flex-row md:justify-between md:px-8">
         {progress.map((item) => (
           <ProgressItem key={item.index} item={item} />
         ))}
       </div>
 
-      <div className="flex flex-col gap-3">
-        <Box>
+      <div className="flex flex-col gap-3 md:flex-row">
+        <Box className="md:flex-1">
           {programSchedule.map((item) => (
             <BoxItem key={item.title} title={item.title}>
               {item.content}
             </BoxItem>
           ))}
         </Box>
-        <Box>
+        <Box className="md:flex-1">
           <BoxItem title={MISSION.title}>
             <ul className="flex flex-col gap-1 pl-6">
               {MISSION.content.map((item) => (
@@ -135,7 +140,7 @@ const ChallengePointView = ({
             </ul>
           </BoxItem>
         </Box>
-        <Box className="relative overflow-hidden">
+        <Box className="relative overflow-hidden md:flex-1">
           <BoxItem title={REWARD.title}>{REWARD.content}</BoxItem>
           <img
             className="absolute bottom-0 right-2 scale-110"
