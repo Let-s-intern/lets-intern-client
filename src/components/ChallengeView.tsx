@@ -105,7 +105,7 @@ const ChallengeView: React.FC<{ challenge: ChallengeIdSchema }> = ({
             <LexicalContent node={receivedContent.mainDescription?.root} />
           )}
 
-          <section className="lg:py-50 lg:gap-50 flex flex-col gap-20 py-16">
+          <section className="md:py-50 flex flex-col gap-20 py-16 md:gap-52">
             {challenge.challengeType ===
             challengeTypeSchema.enum.PERSONAL_STATEMENT ? (
               <ChallengeIntroPersonalStatement />

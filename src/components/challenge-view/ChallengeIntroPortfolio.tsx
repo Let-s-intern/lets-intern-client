@@ -1,155 +1,123 @@
-import { twMerge } from '@/lib/twMerge';
-import { Fragment, ReactNode } from 'react';
-import { LuAlarmClock } from 'react-icons/lu';
+import { FaCheck } from 'react-icons/fa6';
 
-import Badge from '@components/common/program/program-detail/Badge';
 import Description from '@components/common/program/program-detail/Description';
 import Heading2 from '@components/common/program/program-detail/Heading2';
-import OutlinedBox from '@components/common/program/program-detail/OutlineBox';
-import CircularBox from '@components/common/ui/CircularBox';
 
-const TITLE1 = [
-  '인사담당자가 서류를 보는 시간,',
-  '눈에 띄는 자소서를 만들어야 해요',
+const templates: Template[] = [
+  {
+    title: '포트폴리오 미션 템플릿 예시 1',
+    content: [
+      {
+        description: '핵심 역량과 강점 정리',
+        src: '/images/portfolio-mission-template1-1.png',
+      },
+      {
+        description: '문제 해결 과정부터 결과 정리',
+        src: '/images/portfolio-mission-template1-2.png',
+      },
+      {
+        description: '경험 브레인 스토밍',
+        src: '/images/portfolio-mission-template1-3.png',
+      },
+    ],
+  },
+  {
+    title: '포트폴리오 미션 템플릿 예시 2',
+    content: [
+      {
+        description: '기본 정보 정리하기',
+        src: '/images/portfolio-mission-template2-1.png',
+      },
+      {
+        description: '진행 단계별로 정리하기',
+        src: '/images/portfolio-mission-template2-2.png',
+      },
+      {
+        description: '성과로 보여주는 나의 경험 정리',
+        src: '/images/portfolio-mission-template2-3.png',
+      },
+    ],
+  },
 ];
 
-const TITLE2 = [
-  '내 자소서는 어디가 부족한 걸까?',
-  '자소서 완성도 UP을 위한 5가지 기준',
-];
-
-const STAR = {
-  S: ['Situation', '상황'],
-  T: ['Task', '문제'],
-  A: ['Action', '행동'],
-  R: ['Result', '결과'],
+type Template = {
+  title: string;
+  content: {
+    description: string;
+    src: string;
+  }[];
 };
-
-const POINT = [
-  { title: '두괄식', desc: ['핵심 내용을', '첫문단에 작성하는 방식'] },
-  { title: '수치화', desc: ['자신의 성과를 더 구체적이고', '객관적으로 표현'] },
-];
-
-const DESCRITION1 = [
-  '남들과 다른 임팩트 있는 자기소개서 작성을 위해서는',
-  '경험-역량-회사 FIT을 고려한 스토리텔링은 필수예요.',
-  '두괄식과 STAR 작성 기법으로 읽고 싶은',
-  '서류를 만들어봐요!',
-];
-
-const DESCRITION2 = [
-  '소재 적합성, 직무 연관성, 가독성, 구체성, 차별성을 고려해',
-  '내 자기소개서의 완성도를 셀프 점검 할 수 있어요.',
-  '체계적인 자소서 커리큘럼으로 차근차근 완성도를 높여봐요!',
-];
 
 function ChallengeIntroPortfolio() {
   return (
     <section id="program-intro">
-      <div className="mb-20 mt-6 md:mb-48 md:text-center">
-        <div className="flex flex-col gap-2 md:items-center md:gap-3">
-          <Badge>
-            <LuAlarmClock size={24} />
-            <span>평균 10초</span>
-          </Badge>
-          <Heading2>{TITLE1.join('\n')}</Heading2>
-        </div>
-        <Description className="mb-10 mt-3 md:mb-20 md:mt-8">
-          {DESCRITION1[0]} <br className="md:hidden" />
-          {DESCRITION1[1]}
-          <br />
-          {DESCRITION1[2]} <br className="md:hidden" />
-          {DESCRITION1[3]}
+      <div className="mb-20 md:mb-52">
+        <Heading2 className="mb-3 md:mb-8">
+          포트폴리오, 어떻게 시작해야 하나요? <br />
+          경험 정리와 백지 템플릿을 통한 <br />
+          <span className="text-[#4A76FF]">나만의 캐치프라이즈</span> 완성!
+        </Heading2>
+        <Description className="mb-10 md:mb-20 md:text-center">
+          경험 정리 템플릿, 백지 템플릿으로 <br />
+          미션을 수행하면서 나만의 차별화된 캐치프라이즈를{' '}
+          <br className="md:hidden" />
+          만들어 보세요!
         </Description>
-
-        <OutlinedBox>
-          <CircularBox className="hidden md:flex">STAR 기법</CircularBox>
-
-          {Object.entries(STAR).map(([key, value], index) => (
-            <Fragment key={key}>
-              <BoxItem title={key}>
-                {value.map((item) => (
-                  <span key={item} className="block">
-                    {item}
-                  </span>
-                ))}
-              </BoxItem>
-              {index !== 3 && <VerticalLine />}
-            </Fragment>
-          ))}
-        </OutlinedBox>
-        <div className="mb-6" />
-        <OutlinedBox>
-          <CircularBox className="hidden md:flex">
-            <span>두괄식</span>
-            <span>수치화</span>
-          </CircularBox>
-
-          {POINT.map(({ title, desc }, index) => (
-            <Fragment key={title}>
-              <BoxItem title={title}>
-                {desc.map((item) => (
-                  <span key={item} className="block">
-                    {item}
-                  </span>
-                ))}
-              </BoxItem>
-              {index !== POINT.length - 1 && (
-                <VerticalLine heightClassName="h-20" />
-              )}
-            </Fragment>
-          ))}
-        </OutlinedBox>
+        <TemplateItem template={templates[0]} />
       </div>
 
-      <div className="md:flex md:flex-col md:items-center">
-        <div className="flex flex-col gap-3 md:items-center md:text-center">
-          <div>
-            <Badge>평균 서류 합격률 28%</Badge>
-            <span className="mt-1 block text-[10px] text-neutral-30 md:text-xxsmall12">
-              *출처 : 한국경제인협회 설문조사
-            </span>
-          </div>
-          <Heading2>{TITLE2.join('\n')}</Heading2>
-          <div className="md:mt-8">
-            <Description>
-              {DESCRITION2.map((item, index) => (
-                <Fragment key={item}>
-                  <span>{item}</span>
-                  {index !== DESCRITION2.length - 1 && <br />}
-                </Fragment>
-              ))}
-            </Description>
-          </div>
-        </div>
-        <img
-          className="mt-10 h-auto w-full max-w-[660px] md:mt-20"
-          src="/images/challenge-chart.png"
-          alt="자소서 완성도를 높이기 위한 5가지 기준을 나타낸 차트"
-        />
+      <div>
+        <Heading2 className="mb-3 md:mb-8">
+          포트폴리오, <span className="text-[#4A76FF]">디자인보다 구조화</span>
+          입니다.
+          <br />
+          가독성과 구조화를 고려한 포트폴리오 가이드
+        </Heading2>
+        <Description className="mb-10 md:mb-20 md:text-center">
+          가장 중요한 건 핵심 내용을 어떻게 도식화 하는냐죠. <br />내 경험에
+          맞는 다양한 구조화 템플릿, 최소한의 디자인을 도와줄 폰트/디자인
+          가이드까지 모두 드려요!
+        </Description>
+        <TemplateItem template={templates[1]} />
       </div>
     </section>
   );
 }
 
-function BoxItem({ title, children }: { title: string; children?: ReactNode }) {
+function TemplateItem({ template }: { template: Template }) {
   return (
-    <div className="flex-1 text-center">
-      <span className="block text-xlarge28 font-bold text-[#008CC3]">
-        {title}
-      </span>
-      <p className="block text-xxsmall12 font-medium text-neutral-40 md:text-small18">
-        {children}
-      </p>
+    <div key={template.title}>
+      <div className="mb-5 flex items-center gap-2 md:mb-8 md:justify-center">
+        <img
+          className="h-auto w-8 md:w-10"
+          src="/icons/Folder.svg"
+          alt="폴더 아이콘"
+        />
+        <span className="text-xsmall16 font-semibold text-neutral-30 md:text-small20">
+          {template.title}
+        </span>
+      </div>
+      <div className="flex flex-col gap-5 md:flex-row md:gap-2.5">
+        {template.content.map((item) => (
+          <div
+            key={item.description}
+            className="relative h-[270px] overflow-hidden rounded-md bg-[#4A76FF] p-5 md:flex-1"
+          >
+            <div className="flex items-center gap-2">
+              <FaCheck size={20} color="#F8AE00" />
+              <span className="text-xsmall16 font-semibold text-white">
+                {item.description}
+              </span>
+            </div>
+            <img
+              className="absolute left-10 top-16 md:left-16"
+              src={item.src}
+              alt={item.description}
+            />
+          </div>
+        ))}
+      </div>
     </div>
-  );
-}
-
-function VerticalLine({ heightClassName }: { heightClassName?: string }) {
-  return (
-    <div
-      className={twMerge('h-16 border-r border-[#39C7FF]', heightClassName)}
-    />
   );
 }
 
