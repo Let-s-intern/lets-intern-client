@@ -2,7 +2,9 @@ import { usePatchUser } from '@/api/user';
 import { UserInfo } from '@/lib/order';
 import useAuthStore from '@/store/useAuthStore';
 import { isValidEmail } from '@/utils/valid';
-import CouponSection from '@components/common/program/program-detail/apply/section/CouponSection';
+import CouponSection, {
+  CouponSectionProps,
+} from '@components/common/program/program-detail/apply/section/CouponSection';
 import MotiveAnswerSection from '@components/common/program/program-detail/apply/section/MotiveAnswerSection';
 import PriceSection from '@components/common/program/program-detail/apply/section/PriceSection';
 import UserInputSection from '@components/common/program/program-detail/apply/section/UserInputSection';
@@ -115,18 +117,66 @@ const PaymentInputPage = () => {
 
   const patchUserMutation = usePatchUser();
 
+  const setCoupon = useCallback<CouponSectionProps['setCoupon']>(
+    (coupon) => {
+      const data =
+        typeof coupon === 'function'
+          ? coupon({
+              id: programApplicationData.couponId
+                ? Number(programApplicationData.couponId)
+                : null,
+              price: programApplicationData.couponPrice ?? 0,
+            })
+          : coupon;
+
+      const newTotalPrice = calculateTotalPrice({
+        price: programApplicationData.price ?? 0,
+        discount: programApplicationData.discount ?? 0,
+        couponPrice: data.price,
+      });
+
+      setProgramApplicationForm({
+        couponId: String(data.id),
+        couponPrice: data.price,
+        totalPrice: newTotalPrice,
+      });
+    },
+    [
+      programApplicationData.couponId,
+      programApplicationData.couponPrice,
+      programApplicationData.discount,
+      programApplicationData.price,
+      setProgramApplicationForm,
+    ],
+  );
+
   const onPaymentClick = useCallback(async () => {
     try {
       await patchUserMutation.mutateAsync({
         contactEmail: programApplicationData.contactEmail,
       });
-      navigate('/payment');
+
+      if (totalPrice !== 0) {
+        navigate('/payment');
+      } else {
+        navigate(
+          `/order/result?orderId=${programApplicationData.programOrderId}`,
+        );
+      }
     } catch (e) {
       if (e instanceof AxiosError) {
         alert(e.response?.data?.message);
       }
     }
-  }, [navigate, patchUserMutation, programApplicationData.contactEmail]);
+  }, [
+    navigate,
+    patchUserMutation,
+    programApplicationData.contactEmail,
+    programApplicationData.programOrderId,
+    totalPrice,
+  ]);
+
+  const buttonText = totalPrice === 0 ? '신청하기' : '결제하기';
 
   return (
     <div
@@ -186,27 +236,7 @@ const PaymentInputPage = () => {
           <div className="font-semibold text-neutral-0">결제 정보</div>
           <div className="flex flex-col gap-y-5">
             <CouponSection
-              setCoupon={(coupon) => {
-                const data =
-                  typeof coupon === 'function'
-                    ? coupon({
-                        id: programApplicationData.couponId
-                          ? Number(programApplicationData.couponId)
-                          : null,
-                        price: programApplicationData.couponPrice ?? 0,
-                      })
-                    : coupon;
-
-                setProgramApplicationForm({
-                  couponId: String(data.id),
-                  couponPrice: data.price,
-                  totalPrice: calculateTotalPrice({
-                    price: programApplicationData.price ?? 0,
-                    discount: programApplicationData.discount ?? 0,
-                    couponPrice: data.price,
-                  }),
-                });
-              }}
+              setCoupon={setCoupon}
               programType={programApplicationData.programType ?? 'live'}
             />
 

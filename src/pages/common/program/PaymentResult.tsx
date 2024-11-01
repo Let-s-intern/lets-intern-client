@@ -2,7 +2,10 @@ import dayjs from 'dayjs';
 import { useMemo, useState } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 
-import { PostApplicationInterface } from '../../../api/application';
+import {
+  PostApplicationInterface,
+  PostApplicationResult,
+} from '../../../api/application';
 import { useProgramQuery } from '../../../api/program';
 import DescriptionBox from '../../../components/common/program/paymentSuccess/DescriptionBox';
 import PaymentInfoRow from '../../../components/common/program/paymentSuccess/PaymentInfoRow';
@@ -20,8 +23,10 @@ const PaymentResult = () => {
   const { data: programApplicationData } = useProgramStore();
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
-  // TODO: any 타입을 사용하지 않도록 수정
-  const [result, setResult] = useState<any>(null);
+
+  const [result, setResult] = useState<PostApplicationResult | null | 'error'>(
+    null,
+  );
 
   const params = useMemo(() => {
     const obj = searchParamsToObject(
@@ -84,6 +89,8 @@ const PaymentResult = () => {
         body,
       )
       .then((res) => {
+        // TODO: 스키마 parse 적용하기. 로직을 바꾸기 부담스러워서 일단 parse를 실제로 진행하지는 않고
+        // 타입만 가져다 쓰는 중.
         setResult(res.data.data);
         window.dataLayer?.push({
           event: 'program_payment_success',
@@ -220,26 +227,22 @@ const PaymentResult = () => {
                     ) : !isSuccess ? (
                       <PaymentInfoRow
                         title="결제수단"
-                        // TODO: any 타입을 사용하지 않도록 수정
                         content={
-                          result?.tossInfo?.method ??
-                          (params
+                          params
                             ? getPaymentMethodLabel(params.paymentMethodKey)
-                            : '')
+                            : ''
                         }
                       />
                     ) : (
                       <>
                         <PaymentInfoRow
                           title="결제일자"
-                          content={dayjs(
-                            // TODO: any 타입을 사용하지 않도록 수정
-                            result?.tossInfo.approvedAt,
-                          ).format('YYYY.MM.DD(ddd) HH:mm')}
+                          content={dayjs(result?.tossInfo?.approvedAt).format(
+                            'YYYY.MM.DD(ddd) HH:mm',
+                          )}
                         />
                         <PaymentInfoRow
                           title="결제수단"
-                          // TODO: any 타입을 사용하지 않도록 수정
                           content={
                             result?.tossInfo?.method ??
                             (params
@@ -251,7 +254,7 @@ const PaymentResult = () => {
                           <div className="text-neutral-40">영수증</div>
                           <div className="flex grow items-center justify-end text-neutral-0">
                             <Link
-                              to={result?.tossInfo.receipt.url ?? '#'}
+                              to={result?.tossInfo?.receipt?.url ?? '#'}
                               target="_blank"
                               rel="noreferrer"
                               className="flex items-center justify-center rounded-sm border border-neutral-60 bg-white px-3 py-2 text-sm font-medium"
