@@ -1,6 +1,7 @@
 import { usePatchUser } from '@/api/user';
 import { UserInfo } from '@/lib/order';
 import useAuthStore from '@/store/useAuthStore';
+import { isValidEmail } from '@/utils/valid';
 import CouponSection from '@components/common/program/program-detail/apply/section/CouponSection';
 import MotiveAnswerSection from '@components/common/program/program-detail/apply/section/MotiveAnswerSection';
 import PriceSection from '@components/common/program/program-detail/apply/section/PriceSection';
@@ -181,7 +182,7 @@ const PaymentInputPage = () => {
       <hr className="my-10 block h-2 border-none bg-neutral-95" />
 
       {!programApplicationData.isFree && (
-        <div className="mx-5 flex flex-col gap-y-6">
+        <div className="mx-5 mb-10 flex flex-col gap-y-6">
           <div className="font-semibold text-neutral-0">결제 정보</div>
           <div className="flex flex-col gap-y-5">
             <CouponSection
@@ -232,10 +233,25 @@ const PaymentInputPage = () => {
         </div>
       )}
 
-      <div className="fixed bottom-0 left-0 right-0 block rounded-t-lg bg-white px-5 pb-[calc(env(safe-area-inset-bottom)+10px);] pt-3 shadow-05 sm:hidden">
+      <div className="fixed bottom-0 left-0 right-0 block rounded-t-lg bg-white px-5 pb-[calc(env(safe-area-inset-bottom)+10px);] pt-3 shadow-05 md:hidden">
         <button
-          className="next_button flex w-full flex-1 justify-center rounded-md border-2 border-primary bg-primary px-6 py-3 text-lg font-medium text-neutral-100 transition hover:opacity-90 disabled:border-neutral-70 disabled:bg-neutral-70"
+          className="next_button flex w-full flex-1 justify-center rounded-md border-2 border-primary bg-primary px-6 py-3 text-lg font-medium text-neutral-100 transition hover:opacity-90 disabled:border-neutral-70 disabled:bg-neutral-70 hover:disabled:opacity-100"
           onClick={onPaymentClick}
+          disabled={
+            !userInfo.initialized || !isValidEmail(userInfo.contactEmail)
+          }
+        >
+          결제하기
+        </button>
+      </div>
+
+      <div className="mx-5 hidden md:block">
+        <button
+          className="next_button block w-full justify-center rounded-md border-2 border-primary bg-primary px-6 py-3 text-lg font-medium text-neutral-100 transition hover:opacity-90 disabled:border-neutral-70 disabled:bg-neutral-70 hover:disabled:opacity-100"
+          onClick={onPaymentClick}
+          disabled={
+            !userInfo.initialized || !isValidEmail(userInfo.contactEmail)
+          }
         >
           결제하기
         </button>
