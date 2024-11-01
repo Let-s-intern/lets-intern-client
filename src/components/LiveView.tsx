@@ -3,6 +3,7 @@ import { LiveContent } from '@/types/interface';
 import Header from '@components/common/program/program-detail/header/Header';
 import { useEffect, useMemo } from 'react';
 import LexicalContent from './common/blog/LexicalContent';
+import LiveBasicInfo from './live-view/LiveBasicInfo';
 import LiveCurriculum from './live-view/LiveCurriculum';
 import LiveFaq from './live-view/LiveFaq';
 import LiveIntro from './live-view/LiveIntro';
@@ -37,6 +38,7 @@ const LiveView: React.FC<{ live: LiveIdSchema }> = ({ live }) => {
         <div className="flex w-full max-w-[1200px] flex-col px-5 md:px-10">
           <Header programTitle={live.title ?? ''} />
           {live.vod && <LiveVod />}
+          <LiveBasicInfo live={live} />
         </div>
         <ProgramDetailNavigation isLive />
         <div className="flex w-full max-w-[1200px] flex-col overflow-x-hidden px-5 lg:px-10">
