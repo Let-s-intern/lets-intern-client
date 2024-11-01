@@ -6,6 +6,7 @@ import Badge from '@components/common/program/program-detail/Badge';
 import Description from '@components/common/program/program-detail/Description';
 import Heading2 from '@components/common/program/program-detail/Heading2';
 import OutlinedBox from '@components/common/program/program-detail/OutlineBox';
+import CircularBox from '@components/common/ui/CircularBox';
 
 const TITLE1 = [
   '인사담당자가 서류를 보는 시간,',
@@ -149,25 +150,6 @@ function VerticalLine({ heightClassName }: { heightClassName?: string }) {
     <div
       className={twMerge('h-16 border-r border-[#39C7FF]', heightClassName)}
     />
-  );
-}
-
-function CircularBox({
-  children,
-  className,
-}: {
-  children?: ReactNode;
-  className?: string;
-}) {
-  return (
-    <div
-      className={twMerge(
-        'flex h-32 w-32 flex-col items-center justify-center rounded-full bg-[#4DCDFF] text-small20 font-bold text-static-100',
-        className,
-      )}
-    >
-      {children}
-    </div>
   );
 }
 
