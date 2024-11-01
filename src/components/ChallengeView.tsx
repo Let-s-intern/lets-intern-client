@@ -12,16 +12,15 @@ import dayjs from 'dayjs';
 import ChallengeBasicInfo from './challenge-view/ChallengeBasicInfo';
 import ChallengeBrand from './challenge-view/ChallengeBrand';
 import ChallengeDifferent from './challenge-view/ChallengeDifferent';
+import ChallengeInfoBottom from './challenge-view/ChallengeInfoBottom';
 import ChallengeIntroCareerStart from './challenge-view/ChallengeIntroCareerStart';
 import ChallengeIntroPersonalStatement from './challenge-view/ChallengeIntroPersonalStatement';
 import ChallengeIntroPortfolio from './challenge-view/ChallengeIntroPortfolio';
-import ChallengeNavigation, {
-  challengeNavigateItems,
-} from './challenge-view/ChallengeNavigation';
 import ChallengePointView from './challenge-view/ChallengePointView';
 import LexicalContent from './common/blog/LexicalContent';
 import SuperTitle from './common/program/program-detail/SuperTitle';
 import ProgramDetailBlogReviewSection from './ProgramDetailBlogReviewSection';
+import ProgramDetailNavigation from './ProgramDetailNavigation';
 
 export type ChallengeColor = {
   primary: string;
@@ -86,7 +85,7 @@ const ChallengeView: React.FC<{ challenge: ChallengeIdSchema }> = ({
           <ChallengeBasicInfo challenge={challenge} />
         </div>
 
-        <ChallengeNavigation navItems={challengeNavigateItems} />
+        <ProgramDetailNavigation />
         <div className="flex w-full max-w-[1200px] flex-col overflow-x-hidden px-5 lg:px-10">
           <section className="py-16 lg:py-48">
             <SuperTitle className="mb-6 text-neutral-45 lg:mb-10">
@@ -142,8 +141,7 @@ const ChallengeView: React.FC<{ challenge: ChallengeIdSchema }> = ({
           </div>
           <ChallengeDifferent payback={challenge.priceInfo[0].refund ?? 0} />
           <ChallengeBrand />
-
-          <div>모집 개요</div>
+          <ChallengeInfoBottom challenge={challenge} />
         </div>
       </div>
     </div>
