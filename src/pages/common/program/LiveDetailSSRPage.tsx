@@ -124,12 +124,13 @@ const LiveDetailSSRPage = () => {
 
     navigate(`/payment-input`);
   }, [
-    application,
-    live.title,
-    id,
     isLoggedIn,
-    navigate,
+    application,
+    live.progressType,
+    live.title,
     setProgramApplicationForm,
+    id,
+    navigate,
   ]);
 
   if (isDeprecated || isLoading) {
