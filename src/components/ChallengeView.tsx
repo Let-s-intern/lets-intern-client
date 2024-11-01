@@ -15,13 +15,11 @@ import ChallengeDifferent from './challenge-view/ChallengeDifferent';
 import ChallengeIntroCareerStart from './challenge-view/ChallengeIntroCareerStart';
 import ChallengeIntroPersonalStatement from './challenge-view/ChallengeIntroPersonalStatement';
 import ChallengeIntroPortfolio from './challenge-view/ChallengeIntroPortfolio';
-import ChallengeNavigation, {
-  challengeNavigateItems,
-} from './challenge-view/ChallengeNavigation';
 import ChallengePointView from './challenge-view/ChallengePointView';
 import LexicalContent from './common/blog/LexicalContent';
 import SuperTitle from './common/program/program-detail/SuperTitle';
 import ProgramDetailBlogReviewSection from './ProgramDetailBlogReviewSection';
+import ProgramDetailNavigation from './ProgramDetailNavigation';
 
 export type ChallengeColor = {
   primary: string;
@@ -86,7 +84,7 @@ const ChallengeView: React.FC<{ challenge: ChallengeIdSchema }> = ({
           <ChallengeBasicInfo challenge={challenge} />
         </div>
 
-        <ChallengeNavigation navItems={challengeNavigateItems} />
+        <ProgramDetailNavigation />
         <div className="flex w-full max-w-[1200px] flex-col overflow-x-hidden px-5 lg:px-10">
           <section className="py-16 lg:py-48">
             <SuperTitle className="mb-6 text-neutral-45 lg:mb-10">

@@ -5,8 +5,7 @@ interface NavItem {
   to: string;
 }
 
-interface ChallengeNavigationProps {
-  navItems: NavItem[];
+interface ProgramDetailNavigationProps {
   isLive?: boolean;
 }
 
@@ -26,22 +25,26 @@ export const liveNavigateItems: NavItem[] = [
   { title: 'FAQ', to: 'faq' },
 ];
 
-const ChallengeNavigation = ({
-  navItems,
-  isLive,
-}: ChallengeNavigationProps) => {
-  const [activeSection, setActiveSection] = useState<string>(navItems[0].to);
+const ProgramDetailNavigation = ({ isLive }: ProgramDetailNavigationProps) => {
+  const [activeSection, setActiveSection] = useState<string>(
+    isLive ? liveNavigateItems[0].to : challengeNavigateItems[0].to,
+  );
+  const navItems = isLive ? liveNavigateItems : challengeNavigateItems;
 
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
+            console.log(entry.target.id);
             setActiveSection(entry.target.id);
           }
         });
       },
-      { threshold: 0.5 },
+      {
+        threshold: 0.05,
+        rootMargin: '0px 0px -70% 0px',
+      },
     );
 
     navItems.forEach((navItem) => {
@@ -73,7 +76,13 @@ const ChallengeNavigation = ({
       {navItems.map((navItem) => (
         <button
           key={navItem.title}
-          className={`border-b-[2.4px] px-1.5 py-4 text-xsmall16 font-semibold ${navItem.to === activeSection ? (isLive ? 'border-primary text-primary' : 'border-challenge text-challenge') : 'border-transparent text-neutral-45'}`}
+          className={`border-b-[2.4px] px-1.5 py-4 text-xsmall16 font-semibold ${
+            navItem.to === activeSection
+              ? isLive
+                ? 'border-primary text-primary'
+                : 'border-challenge text-challenge'
+              : 'border-transparent text-neutral-45'
+          }`}
           onClick={() => handleScroll(navItem.to)}
         >
           {navItem.title}
@@ -83,4 +92,4 @@ const ChallengeNavigation = ({
   );
 };
 
-export default ChallengeNavigation;
+export default ProgramDetailNavigation;
