@@ -18,10 +18,11 @@ import LexicalContent from './common/blog/LexicalContent';
 import SuperTitle from './common/program/program-detail/SuperTitle';
 import ProgramDetailBlogReviewSection from './ProgramDetailBlogReviewSection';
 
-export type ChallengeColors = {
+export type ChallengeColor = {
   primary: string;
   primaryLight: string;
   secondary: string;
+  secondaryLight: string;
 };
 
 const ChallengeView: React.FC<{ challenge: ChallengeIdSchema }> = ({
