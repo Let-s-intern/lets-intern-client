@@ -1,9 +1,9 @@
 import { Dayjs } from 'dayjs';
-import { ReactNode } from 'react';
+import { ReactNode, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { clientOnly } from 'vike-react/clientOnly';
 
-import { ChallengeType } from '@/schema';
+import { ChallengeType, challengeTypeSchema } from '@/schema';
 import { ChallengePoint } from '@/types/interface';
 import { ChallengeColor } from '@components/ChallengeView';
 import Heading2 from '@components/common/program/program-detail/Heading2';
@@ -17,7 +17,6 @@ type ProgressItemType = {
 };
 
 const description = '*더 자세한 내용은 상단 메뉴에서 커리큘럼을 클릭해주세요.';
-
 const progress = [
   {
     index: 1,
@@ -90,6 +89,17 @@ const ChallengePointView = ({
     },
   ];
 
+  const imgSrc = useMemo(() => {
+    switch (challengeType) {
+      case challengeTypeSchema.enum.PORTFOLIO:
+        return '/images/payback-portfolio.svg';
+      case challengeTypeSchema.enum.PERSONAL_STATEMENT:
+        return '/images/payback-statement.svg';
+      default:
+        return '/images/payback-basic.svg';
+    }
+  }, [challengeType]);
+
   if (point === undefined) return <></>;
 
   return (
@@ -104,11 +114,26 @@ const ChallengePointView = ({
         얻어갈 수 있어요
       </Heading2>
 
-      <ul className="mb-20 space-y-4">
-        {point.list?.map((item, index) => (
-          <PointList key={item.id} item={item} index={index} colors={colors} />
-        ))}
-      </ul>
+      <div className="mb-20 space-y-4">
+        <ul className="mb-10 space-y-4 md:mb-16">
+          {point.list?.map((item, index) => (
+            <PointList
+              key={item.id}
+              item={item}
+              index={index}
+              colors={colors}
+            />
+          ))}
+        </ul>
+        {challengeType === challengeTypeSchema.enum.CAREER_START && (
+          <p className="text-xsmall14 font-semibold text-neutral-40 md:text-center md:text-xsmall16">
+            본 프로그램은 취업의 기초가 되는 퍼스널 브랜딩과 마스터 이력서
+            작성을 다룹니다.
+            <br />
+            자기소개서 및 포트폴리오 완성 프로그램은 별도로 준비되어 있습니다.
+          </p>
+        )}
+      </div>
 
       <Heading2 className="mb-10 md:mb-8">
         {challengeTitle}은<br className="md:hidden" /> 2주간 아래와 같이
@@ -147,7 +172,7 @@ const ChallengePointView = ({
           <BoxItem title={REWARD.title}>{REWARD.content}</BoxItem>
           <img
             className="absolute bottom-0 right-2 scale-110"
-            src="/images/payback.svg"
+            src={imgSrc}
             alt="페이백 3만원"
           />
         </Box>
