@@ -42,7 +42,7 @@ const LiveView: React.FC<{ live: LiveIdSchema }> = ({ live }) => {
           {live.vod && <LiveVod />}
           <LiveBasicInfo live={live} />
         </div>
-        <ProgramDetailNavigation isLive />
+        <ProgramDetailNavigation programType="live" />
         <div className="flex w-full max-w-[1200px] flex-col overflow-x-hidden px-5 lg:px-10">
           <LiveMentor mentor={mentor} />
           <LiveInformation

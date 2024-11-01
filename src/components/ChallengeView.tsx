@@ -85,7 +85,7 @@ const ChallengeView: React.FC<{ challenge: ChallengeIdSchema }> = ({
           <ChallengeBasicInfo challenge={challenge} />
         </div>
 
-        <ProgramDetailNavigation />
+        <ProgramDetailNavigation programType="challenge" />
         <div className="flex w-full max-w-[1200px] flex-col overflow-x-hidden px-5 lg:px-10">
           <section className="py-16 lg:py-48">
             <SuperTitle className="mb-6 text-neutral-45 lg:mb-10">

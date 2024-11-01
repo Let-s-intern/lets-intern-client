@@ -1,3 +1,4 @@
+import { ProgramType } from '@/types/common';
 import { useEffect, useState } from 'react';
 
 interface NavItem {
@@ -6,7 +7,7 @@ interface NavItem {
 }
 
 interface ProgramDetailNavigationProps {
-  isLive?: boolean;
+  programType: ProgramType;
 }
 
 export const challengeNavigateItems: NavItem[] = [
@@ -25,7 +26,10 @@ export const liveNavigateItems: NavItem[] = [
   { title: 'FAQ', to: 'faq' },
 ];
 
-const ProgramDetailNavigation = ({ isLive }: ProgramDetailNavigationProps) => {
+const ProgramDetailNavigation = ({
+  programType,
+}: ProgramDetailNavigationProps) => {
+  const isLive = programType === 'live';
   const [activeSection, setActiveSection] = useState<string>(
     isLive ? liveNavigateItems[0].to : challengeNavigateItems[0].to,
   );
