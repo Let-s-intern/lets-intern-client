@@ -1,3 +1,5 @@
+import { useEffect, useMemo } from 'react';
+
 import { ChallengeIdSchema } from '@/schema';
 import { ChallengeContent } from '@/types/interface';
 import ChallengeCheckList from '@components/challenge-view/ChallengeCheckList';
@@ -6,7 +8,7 @@ import ChallengeFaq from '@components/challenge-view/ChallengeFaq';
 import ChallengeIntro from '@components/challenge-view/ChallengeIntro';
 import ChallengeResult from '@components/challenge-view/ChallengeResult';
 import Header from '@components/common/program/program-detail/header/Header';
-import { useEffect, useMemo } from 'react';
+import dayjs from 'dayjs';
 import ChallengeBasicInfo from './challenge-view/ChallengeBasicInfo';
 import ChallengeNavigation, {
   challengeNavigateItems,
@@ -46,13 +48,15 @@ const ChallengeView: React.FC<{ challenge: ChallengeIdSchema }> = ({
 
         <ChallengeNavigation navItems={challengeNavigateItems} />
         <div className="flex w-full flex-col overflow-x-hidden px-5 lg:px-10 xl:px-52">
-          <section className="pt-16 lg:pt-48">
+          <section className="py-16 lg:py-48">
             <SuperTitle className="mb-6 text-neutral-45 lg:mb-10">
               프로그램 소개
             </SuperTitle>
             <ChallengePointView
-              className="mb-14 sm:mb-44"
               point={receivedContent.challengePoint}
+              challengeTitle={challenge.title ?? ''}
+              startDate={challenge.startDate ?? dayjs()}
+              endDate={challenge.endDate ?? dayjs()}
             />
           </section>
 
