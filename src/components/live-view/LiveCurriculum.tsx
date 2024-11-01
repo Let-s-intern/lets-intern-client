@@ -2,6 +2,7 @@ import { LiveIdSchema } from '@/schema';
 import { LiveContent } from '@/types/interface';
 import Heading2 from '@components/common/program/program-detail/Heading2';
 import SuperTitle from '@components/common/program/program-detail/SuperTitle';
+import { PROGRAM_CURRICULUM_ID } from '@components/ProgramDetailNavigation';
 
 const superTitle = '현직자 멘토가 들려주는 생생한 이야기';
 const title = 'PM이 되기 위한 모든 것을 알려드려요';
@@ -13,7 +14,7 @@ interface LiveCurriculumProps {
 
 function LiveCurriculum({ curriculum, mentorJob }: LiveCurriculumProps) {
   return (
-    <section className="py-16 md:py-32">
+    <section className="py-16 md:py-32" id={PROGRAM_CURRICULUM_ID}>
       <SuperTitle className="mb-6 text-neutral-45 md:mb-10">
         커리큘럼
       </SuperTitle>

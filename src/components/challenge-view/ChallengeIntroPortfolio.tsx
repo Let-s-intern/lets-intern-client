@@ -50,7 +50,7 @@ type Template = {
 
 function ChallengeIntroPortfolio() {
   return (
-    <section id="program-intro">
+    <section>
       <div className="mb-20 md:mb-52">
         <Heading2 className="mb-3 md:mb-8">
           포트폴리오, 어떻게 시작해야 하나요? <br />

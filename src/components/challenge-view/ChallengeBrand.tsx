@@ -1,3 +1,5 @@
+import { useMediaQuery } from '@mui/material';
+
 const brandInfo = {
   totalParticipants: 1900,
   satisfaction: 4.9,
@@ -9,7 +11,7 @@ const brandInfo = {
 };
 
 const ChallengeBrand = () => {
-  const isMobile = window.innerWidth < 768;
+  const isDesktop = useMediaQuery('(min-width: 991px)');
 
   return (
     <section className="flex w-full flex-col gap-y-8 py-8 md:gap-y-20">
@@ -69,7 +71,7 @@ const ChallengeBrand = () => {
       <div className="flex w-full flex-col items-center justify-center gap-y-6 md:gap-y-8">
         <iframe
           width="560"
-          height={isMobile ? '315' : '560'}
+          height={isDesktop ? '560' : '315'}
           src="https://www.youtube.com/embed/_xTOxSSqgzA"
           title="YouTube video player"
           frameBorder="0"

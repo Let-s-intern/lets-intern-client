@@ -10,20 +10,29 @@ interface ProgramDetailNavigationProps {
   programType: ProgramType;
 }
 
+// TODO: GA에 맞게 수정해야 함.
+
+export const PROGRAM_INTRO_ID = 'program-intro';
+export const PROGRAM_CURRICULUM_ID = 'curriculum';
+export const CHALLENGE_DIFFERENT_ID = 'different';
+export const PROGRAM_REVIEW_ID = 'review';
+export const PROGRAM_FAQ_ID = 'faq';
+export const LIVE_MENTOR_INTRO_ID = 'mentor-intro';
+
 export const challengeNavigateItems: NavItem[] = [
-  { title: '프로그램 소개', to: 'program-intro' },
-  { title: '커리큘럼', to: 'curriculum' },
-  { title: '차별점', to: 'different' },
-  { title: '후기', to: 'review' },
-  { title: 'FAQ', to: 'faq' },
+  { title: '프로그램 소개', to: PROGRAM_INTRO_ID },
+  { title: '커리큘럼', to: PROGRAM_CURRICULUM_ID },
+  { title: '차별점', to: CHALLENGE_DIFFERENT_ID },
+  { title: '후기', to: PROGRAM_REVIEW_ID },
+  { title: 'FAQ', to: PROGRAM_FAQ_ID },
 ];
 
 export const liveNavigateItems: NavItem[] = [
-  { title: '멘토 소개', to: 'mentor-intro' },
-  { title: '클래스 소개', to: 'class-checklist' },
-  { title: '커리큘럼', to: 'curriculum' },
-  { title: '후기', to: 'review' },
-  { title: 'FAQ', to: 'faq' },
+  { title: '멘토 소개', to: LIVE_MENTOR_INTRO_ID },
+  { title: '클래스 소개', to: PROGRAM_INTRO_ID },
+  { title: '커리큘럼', to: PROGRAM_CURRICULUM_ID },
+  { title: '후기', to: PROGRAM_REVIEW_ID },
+  { title: 'FAQ', to: PROGRAM_FAQ_ID },
 ];
 
 const ProgramDetailNavigation = ({

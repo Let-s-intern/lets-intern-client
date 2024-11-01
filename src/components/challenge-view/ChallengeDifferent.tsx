@@ -75,8 +75,6 @@ interface ChallengeDifferentProps {
 }
 
 const ChallengeDifferent = ({ payback }: ChallengeDifferentProps) => {
-  const isMobile = window.innerWidth < 768;
-
   return (
     <section id="different" className="flex w-full flex-col gap-y-[70px] py-8">
       <div className="flex w-full flex-col gap-y-8">
@@ -103,10 +101,11 @@ const ChallengeDifferent = ({ payback }: ChallengeDifferentProps) => {
           ))}
           <div className="flex w-full gap-x-2 rounded-md bg-[#EEFAFF] px-5 pb-10 pt-[30px] text-small18 font-bold md:px-10 md:py-[50px] md:text-medium22">
             <span className="text-challenge">혜택</span>
+
             <p className="whitespace-pre text-black">
-              {isMobile
-                ? `모든 커리큘럼을 따라오기만 하면,\n만원을 페이백해드려요!`
-                : `모든 커리큘럼을 따라오기만 하면, n만원을 페이백해드려요!`}
+              모든 커리큘럼을 따라오기만 하면,
+              <br className="md:hidden" />
+              {payback}만원을 페이백해드려요!
             </p>
           </div>
         </div>

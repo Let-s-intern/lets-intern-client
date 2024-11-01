@@ -43,7 +43,7 @@ const DESCRITION2 = [
 
 function ChallengeIntroPersonalStatement() {
   return (
-    <section id="program-intro">
+    <section>
       <div className="mb-20 mt-6 md:mb-48 md:text-center">
         <div className="flex flex-col gap-2 md:items-center md:gap-3">
           <Badge>

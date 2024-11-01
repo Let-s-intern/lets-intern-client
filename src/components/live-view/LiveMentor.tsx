@@ -16,10 +16,7 @@ interface LiveMentorProps {
 
 function LiveMentor({ mentor }: LiveMentorProps) {
   return (
-    <section
-      id="mentor-intro"
-      className="py-8 md:flex md:flex-col md:items-center"
-    >
+    <section className="py-8 md:flex md:flex-col md:items-center">
       <Heading2 className="mb-8 md:mb-20">
         렛츠커리어 LIVE 클래스에서만
         <br />

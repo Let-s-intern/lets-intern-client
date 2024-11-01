@@ -16,7 +16,7 @@ const bubbles = [
 
 function ChallengeIntroCareerStart() {
   return (
-    <section id="program-intro">
+    <section>
       <div className="mb-20 md:mb-56">
         <div className="mb-14 flex flex-col items-center md:mb-24">
           <SpeechBubble className="-translate-x-8 -rotate-6 md:-translate-x-16">

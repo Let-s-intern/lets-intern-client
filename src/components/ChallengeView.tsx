@@ -19,8 +19,15 @@ import ChallengeIntroPortfolio from './challenge-view/ChallengeIntroPortfolio';
 import ChallengePointView from './challenge-view/ChallengePointView';
 import LexicalContent from './common/blog/LexicalContent';
 import SuperTitle from './common/program/program-detail/SuperTitle';
+import ProgramBestReviewSection from './ProgramBestReviewSection';
 import ProgramDetailBlogReviewSection from './ProgramDetailBlogReviewSection';
-import ProgramDetailNavigation from './ProgramDetailNavigation';
+import ProgramDetailNavigation, {
+  CHALLENGE_DIFFERENT_ID,
+  PROGRAM_CURRICULUM_ID,
+  PROGRAM_FAQ_ID,
+  PROGRAM_INTRO_ID,
+  PROGRAM_REVIEW_ID,
+} from './ProgramDetailNavigation';
 
 export type ChallengeColor = {
   primary: string;
@@ -87,61 +94,72 @@ const ChallengeView: React.FC<{ challenge: ChallengeIdSchema }> = ({
 
         <ProgramDetailNavigation programType="challenge" />
         <div className="flex w-full max-w-[1200px] flex-col overflow-x-hidden px-5 lg:px-10">
-          <section className="py-16 lg:py-48">
-            <SuperTitle className="mb-6 text-neutral-45 lg:mb-10">
-              프로그램 소개
-            </SuperTitle>
-            <ChallengePointView
-              colors={colors}
-              challengeType={challenge.challengeType}
-              point={receivedContent.challengePoint}
-              challengeTitle={challenge.title ?? ''}
-              startDate={challenge.startDate ?? dayjs()}
-              endDate={challenge.endDate ?? dayjs()}
-            />
-          </section>
+          <div id={PROGRAM_INTRO_ID}>
+            <section className="py-16 lg:py-48">
+              <SuperTitle className="mb-6 text-neutral-45 lg:mb-10">
+                프로그램 소개
+              </SuperTitle>
+              <ChallengePointView
+                colors={colors}
+                challengeType={challenge.challengeType}
+                point={receivedContent.challengePoint}
+                challengeTitle={challenge.title ?? ''}
+                startDate={challenge.startDate ?? dayjs()}
+                endDate={challenge.endDate ?? dayjs()}
+              />
+            </section>
 
-          {/* 특별 챌린지, 합격자 후기 */}
-          {receivedContent.mainDescription?.root && (
-            <LexicalContent node={receivedContent.mainDescription?.root} />
-          )}
-
-          <section className="md:py-50 flex flex-col gap-20 py-16 md:gap-52">
-            {challenge.challengeType ===
-            challengeTypeSchema.enum.PERSONAL_STATEMENT ? (
-              <ChallengeIntroPersonalStatement />
-            ) : challenge.challengeType ===
-              challengeTypeSchema.enum.PORTFOLIO ? (
-              <ChallengeIntroPortfolio />
-            ) : (
-              <ChallengeIntroCareerStart />
+            {/* 특별 챌린지, 합격자 후기 */}
+            {receivedContent.mainDescription?.root && (
+              <LexicalContent node={receivedContent.mainDescription?.root} />
             )}
-            <ChallengeCheckList />
-            <ChallengeResult />
-          </section>
 
-          {receivedContent.curriculum ? (
-            <ChallengeCurriculum curriculum={receivedContent.curriculum} />
+            <section className="md:py-50 flex flex-col gap-20 py-16 md:gap-52">
+              {challenge.challengeType ===
+              challengeTypeSchema.enum.PERSONAL_STATEMENT ? (
+                <ChallengeIntroPersonalStatement />
+              ) : challenge.challengeType ===
+                challengeTypeSchema.enum.PORTFOLIO ? (
+                <ChallengeIntroPortfolio />
+              ) : (
+                <ChallengeIntroCareerStart />
+              )}
+              <ChallengeCheckList />
+              <ChallengeResult />
+            </section>
+          </div>
+
+          {receivedContent.curriculum &&
+          receivedContent.curriculum.length > 0 ? (
+            <div id={PROGRAM_CURRICULUM_ID}>
+              <ChallengeCurriculum curriculum={receivedContent.curriculum} />
+            </div>
           ) : null}
 
-          {receivedContent.blogReview ? (
-            <ProgramDetailBlogReviewSection
-              review={receivedContent.blogReview}
-              programType="challenge"
-            />
-          ) : null}
+          <div id={CHALLENGE_DIFFERENT_ID}>
+            <div>
+              이 모든 고민을 한번에 해결! 서류 합격률을 300% 높일 수 있는
+              렛츠커리어 챌린지
+            </div>
+            <ChallengeDifferent payback={challenge.priceInfo[0].refund ?? 0} />
+            <ChallengeBrand />
+          </div>
 
-          <div>
+          <div id={PROGRAM_REVIEW_ID}>
+            <ProgramBestReviewSection />
+
+            {receivedContent.blogReview ? (
+              <ProgramDetailBlogReviewSection
+                review={receivedContent.blogReview}
+                programType="challenge"
+              />
+            ) : null}
+          </div>
+
+          <div id={PROGRAM_FAQ_ID}>
             <ChallengeFaq />
+            <ChallengeInfoBottom challenge={challenge} />
           </div>
-
-          <div>
-            이 모든 고민을 한번에 해결! 서류 합격률을 300% 높일 수 있는
-            렛츠커리어 챌린지
-          </div>
-          <ChallengeDifferent payback={challenge.priceInfo[0].refund ?? 0} />
-          <ChallengeBrand />
-          <ChallengeInfoBottom challenge={challenge} />
         </div>
       </div>
     </div>
