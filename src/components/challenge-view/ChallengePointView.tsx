@@ -1,19 +1,19 @@
+import { Dayjs } from 'dayjs';
+import { ReactNode } from 'react';
+import { twMerge } from 'tailwind-merge';
+import { clientOnly } from 'vike-react/clientOnly';
+
 import { ChallengeType } from '@/schema';
 import { ChallengePoint } from '@/types/interface';
 import { ChallengeColor } from '@components/ChallengeView';
 import Heading2 from '@components/common/program/program-detail/Heading2';
-import { Dayjs } from 'dayjs';
-import { ReactNode } from 'react';
-import { twMerge } from 'tailwind-merge';
-// import Balancer from 'react-wrap-balancer';
-import { clientOnly } from 'vike-react/clientOnly';
 
 const Balancer = clientOnly(() => import('react-wrap-balancer'));
 
 type ProgressItemType = {
   index: number;
-  title: string[];
-  subTitle?: string[];
+  title: string;
+  subTitle?: string;
 };
 
 const description = '*더 자세한 내용은 상단 메뉴에서 커리큘럼을 클릭해주세요.';
@@ -21,29 +21,26 @@ const description = '*더 자세한 내용은 상단 메뉴에서 커리큘럼�
 const progress = [
   {
     index: 1,
-    title: ['신청 완료'],
+    title: '신청 완료',
   },
   {
     index: 2,
-    title: ['챌린지 대시보드 및', '오픈채팅방 초대'],
+    title: '챌린지 대시보드 및\n오픈채팅방 초대',
   },
   {
     index: 3,
-    title: ['OT'],
-    subTitle: ['*실시간 진행'],
+    title: 'OT',
+    subTitle: '*실시간 진행',
   },
   {
     index: 4,
-    title: ['회차별 미션 수행'],
-    subTitle: ['*2주간, 총 8개 미션'],
+    title: '회차별 미션 수행',
+    subTitle: '*2주간, 총 8개 미션',
   },
   {
     index: 5,
-    title: ['챌린지 종료 및 평가'],
-    subTitle: [
-      '*총 챌린지 참여 점수 80점 이상시,',
-      '3만원 페이백 및 수료증 발급',
-    ],
+    title: '챌린지 종료 및 평가',
+    subTitle: '*총 챌린지 참여 점수 80점 이상시,\n3만원 페이백 및 수료증 발급',
   },
 ];
 
@@ -109,7 +106,7 @@ const ChallengePointView = ({
 
       <ul className="mb-20 space-y-4">
         {point.list?.map((item, index) => (
-          <PointList key={item.id} item={item} index={index} />
+          <PointList key={item.id} item={item} index={index} colors={colors} />
         ))}
       </ul>
 
@@ -123,7 +120,7 @@ const ChallengePointView = ({
 
       <div className="mb-8 flex flex-col gap-5 md:flex-row md:justify-between md:px-8">
         {progress.map((item) => (
-          <ProgressItem key={item.index} item={item} />
+          <ProgressItem key={item.index} item={item} bgColor={colors.primary} />
         ))}
       </div>
 
@@ -162,6 +159,7 @@ const ChallengePointView = ({
 function PointList({
   item,
   index,
+  colors,
 }: {
   item: {
     id: string;
@@ -169,14 +167,19 @@ function PointList({
     subtitle: string;
   };
   index: number;
+  colors: ChallengeColor;
 }) {
   return (
     <li
       key={item.id}
-      className="flex flex-col items-center gap-4 self-stretch rounded-md bg-[#EEFAFF] px-8 pb-10 pt-8"
+      className="flex flex-col items-center gap-4 self-stretch rounded-md px-8 pb-10 pt-8"
+      style={{ backgroundColor: colors.primaryLight }}
     >
       <div className="break-keep text-center">
-        <span className="rounded-md bg-[#14BCFF] px-3.5 py-1.5 text-small18 font-semibold text-white">
+        <span
+          className="rounded-md px-3.5 py-1.5 text-small18 font-semibold text-white"
+          style={{ backgroundColor: colors.primary }}
+        >
           Point {index + 1}
         </span>
       </div>
@@ -194,20 +197,29 @@ function PointList({
   );
 }
 
-function ProgressItem({ item }: { item: ProgressItemType }) {
+function ProgressItem({
+  item,
+  bgColor,
+}: {
+  item: ProgressItemType;
+  bgColor?: string;
+}) {
   return (
     <div key={item.index}>
       <div className="flex gap-2">
-        <div className="mt-0.5 flex h-5 w-5 items-center justify-center rounded-full bg-[#14BCFF] text-xsmall14 font-semibold text-white">
+        <div
+          className="mt-0.5 flex h-5 w-5 items-center justify-center rounded-full bg-[#14BCFF] text-xsmall14 font-semibold text-white"
+          style={{ backgroundColor: bgColor }}
+        >
           {item.index}
         </div>
         <div className="flex flex-col gap-0.5">
           <span className="whitespace-pre-line text-small18 font-semibold text-neutral-0">
-            {item.title.join('\n')}
+            {item.title}
           </span>
           {item.subTitle && (
             <span className="whitespace-pre-line text-xsmall14 text-neutral-45">
-              {item.subTitle.join('\n')}
+              {item.subTitle}
             </span>
           )}
         </div>
