@@ -43,24 +43,28 @@ const ChallengeView: React.FC<{ challenge: ChallengeIdSchema }> = ({
     let primary = '';
     let primaryLight = '';
     let secondary = '';
+    let secondaryLight = '';
 
     switch (challenge.challengeType) {
       case challengeTypeSchema.enum.PERSONAL_STATEMENT:
         primary = '#14BCFF';
         secondary = '#FF9C34';
         primaryLight = '#EEFAFF';
+        secondaryLight = '#FF9C34';
         break;
       case challengeTypeSchema.enum.PORTFOLIO:
         primary = '#4A76FF';
         secondary = '#F8AE00';
         primaryLight = '#F0F4FF';
+        secondaryLight = '#FFF9EA';
         break;
       default:
         primary = '#4D55F5';
         secondary = '#E45BFF';
         primaryLight = '#F3F4FF';
+        secondaryLight = '#FDF6FF';
     }
-    return { primary, primaryLight, secondary };
+    return { primary, primaryLight, secondary, secondaryLight };
   }, [challenge.challengeType]);
 
   // TODO: 운영 배포 시 제거
@@ -84,6 +88,7 @@ const ChallengeView: React.FC<{ challenge: ChallengeIdSchema }> = ({
             </SuperTitle>
             <ChallengePointView
               colors={colors}
+              challengeType={challenge.challengeType}
               point={receivedContent.challengePoint}
               challengeTitle={challenge.title ?? ''}
               startDate={challenge.startDate ?? dayjs()}

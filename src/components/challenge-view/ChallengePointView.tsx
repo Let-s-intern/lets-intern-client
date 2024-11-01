@@ -1,4 +1,6 @@
+import { ChallengeType } from '@/schema';
 import { ChallengePoint } from '@/types/interface';
+import { ChallengeColors } from '@components/ChallengeView';
 import Heading2 from '@components/common/program/program-detail/Heading2';
 import { Dayjs } from 'dayjs';
 import { ReactNode } from 'react';
@@ -64,6 +66,8 @@ const ChallengePointView = ({
   challengeTitle,
   startDate,
   endDate,
+  colors,
+  challengeType,
   className,
 }: {
   className?: string;
@@ -71,6 +75,8 @@ const ChallengePointView = ({
   challengeTitle: string;
   startDate: Dayjs;
   endDate: Dayjs;
+  colors: ChallengeColors;
+  challengeType: ChallengeType;
 }) => {
   const programSchedule = [
     {
@@ -95,7 +101,7 @@ const ChallengePointView = ({
       <Heading2 className="mb-10 break-keep lg:mb-20">
         이력서 & 자기소개서 챌린지를 통해
         <br />
-        <span className="text-[rgba(255,156,52,1)]">하루 30분</span>, 단{' '}
+        <span style={{ color: colors.secondary }}>하루 30분</span>, 단{' '}
         {point.weekText} 안에 이런걸
         <br className="lg:hidden" />
         얻어갈 수 있어요
