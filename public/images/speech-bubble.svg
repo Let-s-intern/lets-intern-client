@@ -1,14 +1,14 @@
-<svg width="129" height="91" viewBox="0 0 129 91" fill="none" xmlns="http://www.w3.org/2000/svg">
-<g clip-path="url(#clip0_11035_15846)">
-<rect y="6.82227" width="137.676" height="72.0527" rx="36.0263" fill="#EFEFEF"/>
-<path d="M109.249 91.7952C119.88 82.2469 112.889 68.8713 104.762 60.2712C104.312 59.7959 103.608 59.6765 103.018 59.9596L87.1857 67.5634C86.0372 68.115 86.0338 69.7601 87.1539 70.3673C98.5399 76.5393 103.235 82.494 103.942 87.4961C104.194 89.2778 107.91 92.9976 109.249 91.7952Z" fill="#EFEFEF"/>
-<ellipse cx="40.8877" cy="44.3024" rx="6.8838" ry="6.88739" fill="white"/>
-<ellipse cx="68.4229" cy="44.3024" rx="6.8838" ry="6.88739" fill="white"/>
-<ellipse cx="95.958" cy="44.3024" rx="6.8838" ry="6.88739" fill="white"/>
+<svg width="177" height="140" viewBox="0 0 177 140" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g clip-path="url(#clip0_11035_15852)">
+<rect y="9.06445" width="190.938" height="99.875" rx="49.9375" fill="#EFEFEF"/>
+<path d="M147.81 129.707C167.848 116.299 157.23 95.6299 144.996 82.8449C144.544 82.3725 143.842 82.2544 143.252 82.5373L119.823 93.7835C118.674 94.335 118.666 95.9753 119.792 96.5709C140.16 107.337 145.742 117.665 143.979 125.53C143.585 127.286 146.315 130.708 147.81 129.707Z" fill="#EFEFEF"/>
+<circle cx="56.7031" cy="61.0176" r="9.54688" fill="white"/>
+<circle cx="94.8906" cy="61.0176" r="9.54688" fill="white"/>
+<circle cx="133.078" cy="61.0176" r="9.54688" fill="white"/>
 </g>
 <defs>
-<clipPath id="clip0_11035_15846">
-<rect width="129" height="91" fill="white"/>
+<clipPath id="clip0_11035_15852">
+<rect width="177" height="140" fill="white"/>
 </clipPath>
 </defs>
 </svg>

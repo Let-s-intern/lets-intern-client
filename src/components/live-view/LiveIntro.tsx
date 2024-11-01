@@ -51,32 +51,35 @@ function LiveIntro() {
     <section className="py-20">
       <SuperTitle className="mb-1 text-primary">{superTitle[0]}</SuperTitle>
       <Heading2>{title[0]}</Heading2>
-      <div className="mb-20 mt-10 flex flex-col items-center">
-        <SpeechBubble className="-translate-x-8 -rotate-6">
+      <div className="mb-20 mt-10 flex flex-col items-center md:mb-48 md:mt-20">
+        <SpeechBubble className="-translate-x-8 -rotate-6 md:-translate-x-16">
           {bubbles[0]}
         </SpeechBubble>
         <SpeechBubble
-          className="z-20 translate-x-8 translate-y-2 rotate-3 text-white"
+          className="z-20 translate-x-8 translate-y-2 rotate-3 text-white md:translate-x-16 md:translate-y-4"
           tailHidden={true}
           bgColor="#4D55F5"
         >
           {bubbles[1]}
         </SpeechBubble>
         <SpeechBubble
-          className="z-10 -translate-x-12 translate-y-2 -rotate-6 text-primary"
+          className="z-10 -translate-x-12 translate-y-2 -rotate-6 text-primary md:-translate-x-24 md:translate-y-6"
           tailPosition="left"
           bgColor="#E9EAFF"
         >
           {bubbles[2]}
         </SpeechBubble>
-        <SpeechBubble className="translate-x-10" tailHidden={true}>
+        <SpeechBubble
+          className="translate-x-10 md:translate-x-20 md:translate-y-4"
+          tailHidden={true}
+        >
           {bubbles[3]}
         </SpeechBubble>
       </div>
 
       <SuperTitle className="mb-1 text-primary">{superTitle[1]}</SuperTitle>
       <Heading2>{title[1]}</Heading2>
-      <div className="mb-20 mt-8 flex flex-col gap-3">
+      <div className="mb-20 mt-8 flex flex-col gap-3 md:mb-36 md:mt-20 md:flex-row">
         {points.map((point, index) => (
           <PointBox key={index} index={index} point={point} />
         ))}
@@ -84,12 +87,28 @@ function LiveIntro() {
 
       <SuperTitle className="mb-1 text-primary">{superTitle[2]}</SuperTitle>
       <Heading2>{title[2]}</Heading2>
-      <div className="-mx-5 mt-8 overflow-x-auto px-5 md:-mx-10 md:px-10 xl:-mx-52 xl:px-52">
+      <div className="custom-scrollbar -mx-5 mt-8 overflow-x-auto px-5 md:-mx-10 md:mt-20 md:px-10 xl:-mx-52 xl:px-52">
         <div className="flex w-fit gap-1.5">
-          <img className="h-56 w-56 bg-neutral-45" src="" alt="" />
-          <img className="h-56 w-56 bg-neutral-45" src="" alt="" />
-          <img className="h-56 w-56 bg-neutral-45" src="" alt="" />
-          <img className="h-56 w-56 bg-neutral-45" src="" alt="" />
+          <img
+            className="aspect-square h-auto w-56 bg-neutral-45 md:w-[360px]"
+            src=""
+            alt=""
+          />
+          <img
+            className="aspect-square h-auto w-56 bg-neutral-45 md:w-[360px]"
+            src=""
+            alt=""
+          />
+          <img
+            className="aspect-square h-auto w-56 bg-neutral-45 md:w-[360px]"
+            src=""
+            alt=""
+          />
+          <img
+            className="aspect-square h-auto w-56 bg-neutral-45 md:w-[360px]"
+            src=""
+            alt=""
+          />
         </div>
       </div>
     </section>
@@ -100,19 +119,19 @@ function PointBox({ point, index }: { point: Point; index: number }) {
   return (
     <div
       key={index}
-      className="relative flex flex-col rounded-md border border-primary-20 bg-neutral-95 px-4 pb-9 pt-6"
+      className="relative flex flex-col overflow-hidden rounded-md border border-primary-20 bg-neutral-95 px-4 pb-9 pt-6 md:h-72 md:w-full"
     >
-      <div className="mb-2.5 w-fit rounded-full bg-primary-90 px-2 py-1 text-xxsmall12 font-semibold text-white">
+      <div className="mb-2.5 w-fit rounded-full bg-primary-90 px-2 py-1 text-xxsmall12 font-semibold text-white md:text-xsmall14">
         Point {index + 1}
       </div>
-      <span className="mb-4 block whitespace-pre-line text-small18 font-semibold">
+      <span className="mb-4 block whitespace-pre-line text-small18 font-semibold md:text-medium24">
         {point.title}
       </span>
-      <span className="whitespace-pre-line text-xsmall14 font-medium text-neutral-30">
+      <span className="whitespace-pre-line text-xsmall14 font-medium text-neutral-30 md:text-xsmall16">
         {point.content}
       </span>
       <img
-        className="absolute bottom-0 right-0"
+        className="absolute -bottom-1 right-0 h-auto w-[130px] md:bottom-0 md:w-[180px]"
         src={point.src}
         alt={point.alt}
       />
