@@ -82,6 +82,7 @@ const useProgramStore = create(
           },
         });
       },
+
       // data내에 하나라도 null이 있으면 true 반환
       checkInvalidate: () => {
         const currentData = get().data;
@@ -93,5 +94,19 @@ const useProgramStore = create(
     },
   ),
 );
+
+export const checkInvalidate = () => {
+  return useProgramStore.getState().checkInvalidate();
+};
+
+export const initProgramApplicationForm = () => {
+  useProgramStore.getState().initProgramApplicationForm();
+};
+
+export const setProgramApplicationForm = (
+  params: Partial<ProgramApplicationFormStore['data']>,
+) => {
+  useProgramStore.getState().setProgramApplicationForm(params);
+};
 
 export default useProgramStore;

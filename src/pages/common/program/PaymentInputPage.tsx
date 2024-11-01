@@ -1,6 +1,12 @@
+import { useProgramQuery } from '@/api/program';
 import { usePatchUser } from '@/api/user';
 import { UserInfo } from '@/lib/order';
 import useAuthStore from '@/store/useAuthStore';
+import useProgramStore, {
+  checkInvalidate,
+  initProgramApplicationForm,
+  setProgramApplicationForm,
+} from '@/store/useProgramStore';
 import { isValidEmail } from '@/utils/valid';
 import CouponSection, {
   CouponSectionProps,
@@ -11,10 +17,8 @@ import UserInputSection from '@components/common/program/program-detail/apply/se
 import Header from '@components/common/program/program-detail/header/Header';
 import { Duration } from '@components/Duration';
 import { AxiosError } from 'axios';
-import { useCallback, useEffect, useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useProgramQuery } from '../../../api/program';
-import useProgramStore from '../../../store/useProgramStore';
 import OrderProgramInfo from './OrderProgramInfo';
 
 function calculateTotalPrice({
@@ -35,37 +39,17 @@ function calculateTotalPrice({
 
 const PaymentInputPage = () => {
   const navigate = useNavigate();
-  const {
-    data: programApplicationData,
-    checkInvalidate,
-    setProgramApplicationForm,
-    initProgramApplicationForm,
-  } = useProgramStore();
+  const { data: programApplicationData } = useProgramStore();
 
   const { isLoggedIn } = useAuthStore();
 
   useEffect(() => {
-    console.log('programApplicationData', programApplicationData);
-  }, [programApplicationData]);
-
-  useEffect(() => {
     if (checkInvalidate() || !isLoggedIn) {
-      console.log(
-        '잘못된 접근입니다. programApplicationData',
-        programApplicationData,
-      );
-
       alert('잘못된 접근입니다.');
+      navigate('/', { replace: true });
       initProgramApplicationForm();
-      navigate('/');
     }
-  }, [
-    checkInvalidate,
-    initProgramApplicationForm,
-    isLoggedIn,
-    navigate,
-    programApplicationData,
-  ]);
+  }, [isLoggedIn, navigate]);
 
   const {
     query: { data: program },
@@ -83,19 +67,16 @@ const PaymentInputPage = () => {
     initialized: true,
   };
 
-  const setUserInfo = useCallback(
-    (info: UserInfo) => {
-      const { contactEmail, email, name, phoneNumber, question } = info;
-      setProgramApplicationForm({
-        contactEmail,
-        email,
-        name,
-        phone: phoneNumber,
-        question,
-      });
-    },
-    [setProgramApplicationForm],
-  );
+  const setUserInfo = useCallback((info: UserInfo) => {
+    const { contactEmail, email, name, phoneNumber, question } = info;
+    setProgramApplicationForm({
+      contactEmail,
+      email,
+      name,
+      phone: phoneNumber,
+      question,
+    });
+  }, []);
 
   const totalPrice = useMemo(() => {
     const payInfo = {
@@ -146,9 +127,43 @@ const PaymentInputPage = () => {
       programApplicationData.couponPrice,
       programApplicationData.discount,
       programApplicationData.price,
-      setProgramApplicationForm,
     ],
   );
+
+  const [allowNavigation, setAllowNavigation] = useState(false);
+  const [nextPath, setNextPath] = useState('');
+
+  useEffect(() => {
+    // 페이지 이탈 시 실행될 함수
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      if (!allowNavigation) {
+        e.preventDefault();
+        e.returnValue = '';
+        return '';
+      }
+    };
+
+    // 이벤트 리스너 등록
+    window.addEventListener('beforeunload', handleBeforeUnload);
+
+    return () => {
+      // 컴포넌트 언마운트 시 이벤트 리스너 제거
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  }, [allowNavigation]);
+
+  // allowNavigation이 true로 변경되면 navigation 수행
+  useEffect(() => {
+    if (allowNavigation && nextPath) {
+      navigate(nextPath);
+      setAllowNavigation(false);
+    }
+  }, [allowNavigation, nextPath, navigate]);
+
+  const handleSafeNavigation = useCallback((path: string) => {
+    setNextPath(path);
+    setAllowNavigation(true);
+  }, []);
 
   const onPaymentClick = useCallback(async () => {
     try {
@@ -157,9 +172,9 @@ const PaymentInputPage = () => {
       });
 
       if (totalPrice !== 0) {
-        navigate('/payment');
+        handleSafeNavigation('/payment');
       } else {
-        navigate(
+        handleSafeNavigation(
           `/order/result?orderId=${programApplicationData.programOrderId}`,
         );
       }
@@ -169,14 +184,17 @@ const PaymentInputPage = () => {
       }
     }
   }, [
-    navigate,
+    handleSafeNavigation,
     patchUserMutation,
     programApplicationData.contactEmail,
     programApplicationData.programOrderId,
     totalPrice,
   ]);
 
-  const buttonText = totalPrice === 0 ? '신청하기' : '결제하기';
+  /** 쿠폰 적용이 아니라 애초부터 무료인 경우 다르게 보여주기? **/
+  const buttonText = programApplicationData.isFree
+    ? '0원 결제하기'
+    : '결제하기';
 
   return (
     <div
@@ -271,7 +289,7 @@ const PaymentInputPage = () => {
             !userInfo.initialized || !isValidEmail(userInfo.contactEmail)
           }
         >
-          결제하기
+          {buttonText}
         </button>
       </div>
 
@@ -283,7 +301,7 @@ const PaymentInputPage = () => {
             !userInfo.initialized || !isValidEmail(userInfo.contactEmail)
           }
         >
-          결제하기
+          {buttonText}
         </button>
       </div>
     </div>
