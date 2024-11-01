@@ -10,6 +10,7 @@ import ChallengeResult from '@components/challenge-view/ChallengeResult';
 import Header from '@components/common/program/program-detail/header/Header';
 import dayjs from 'dayjs';
 import ChallengeBasicInfo from './challenge-view/ChallengeBasicInfo';
+import ChallengeDifferent from './challenge-view/ChallengeDifferent';
 import ChallengeNavigation, {
   challengeNavigateItems,
 } from './challenge-view/ChallengeNavigation';
@@ -47,7 +48,7 @@ const ChallengeView: React.FC<{ challenge: ChallengeIdSchema }> = ({
         </div>
 
         <ChallengeNavigation navItems={challengeNavigateItems} />
-        <div className="flex w-full flex-col overflow-x-hidden px-5 lg:px-10 xl:px-52">
+        <div className="flex w-full max-w-[1200px] flex-col overflow-x-hidden px-5 lg:px-10">
           <section className="py-16 lg:py-48">
             <SuperTitle className="mb-6 text-neutral-45 lg:mb-10">
               프로그램 소개
@@ -90,8 +91,7 @@ const ChallengeView: React.FC<{ challenge: ChallengeIdSchema }> = ({
             이 모든 고민을 한번에 해결! 서류 합격률을 300% 높일 수 있는
             렛츠커리어 챌린지
           </div>
-          <div>차별점</div>
-          <div>여기서 끝이 아니죠 챌린지 참여자만을 위한 트리플 혜택!</div>
+          <ChallengeDifferent payback={challenge.priceInfo[0].refund ?? 0} />
           <div>누적 참여자 1,900+명 참여 만족도 4.9점</div>
 
           <div>모집 개요</div>
