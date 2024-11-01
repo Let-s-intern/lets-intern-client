@@ -1,3 +1,4 @@
+import { useGetTossCardPromotion } from '@/api/payment';
 import AnnouncementIcon from '@/assets/icons/announcement.svg?react';
 import CalendarIcon from '@/assets/icons/calendar.svg?react';
 import ChevronDown from '@/assets/icons/chevron-down.svg?react';
@@ -28,6 +29,38 @@ const ChallengeBasicInfo = ({
   challenge: ChallengeIdSchema;
   isLive?: boolean;
 }) => {
+  const { data, isLoading } = useGetTossCardPromotion();
+
+  const findCard = () => {
+    if (!data) return { months: null, banks: [] };
+
+    const allMonths = data.interestFreeCards.flatMap(
+      (card) => card.installmentFreeMonths,
+    );
+    const uniqueMonths = Array.from(new Set(allMonths)).sort((a, b) => b - a);
+
+    const targetMonth = uniqueMonths[1] ?? uniqueMonths[0] ?? null;
+    if (!targetMonth) return { months: null, banks: [] };
+
+    // 선택된 개월 수를 제공하는 은행 목록 필터링
+    const banks = data.interestFreeCards
+      .filter((card) => card.installmentFreeMonths.includes(targetMonth))
+      .map((card) => card.cardCompany);
+
+    return { months: targetMonth, banks };
+  };
+
+  const { months: installmentMonths, banks } = findCard();
+  const monthlyPrice =
+    installmentMonths && challenge.priceInfo[0]
+      ? Math.round(
+          ((challenge.priceInfo[0].price ?? 0) -
+            (challenge.priceInfo[0].discount ?? 0) -
+            (challenge.priceInfo[0].refund ?? 0)) /
+            installmentMonths,
+        )
+      : null;
+
   return (
     <div className="flex flex-col gap-6 pb-10 md:flex-row md:pb-20">
       <img
@@ -178,10 +211,16 @@ const ChallengeBasicInfo = ({
                 <div className="flex w-full flex-col items-end gap-y-2">
                   <div className="text-challenge">
                     <span className="mr-1 text-medium22 font-semibold">월</span>
-                    <span className="text-xxlarge32 font-bold">9800원</span>
+                    <span className="text-xxlarge32 font-bold">
+                      {monthlyPrice
+                        ? `${monthlyPrice.toLocaleString()}원`
+                        : '계산 중'}
+                    </span>
                   </div>
                   <p className="text-xsmall14 text-neutral-30">
-                    *우리은행 10개월 할부 시
+                    {!data || isLoading
+                      ? '무이자 할부 시'
+                      : `${banks.join(', ')} ${installmentMonths}개월 무이자 할부 시`}
                   </p>
                 </div>
               </div>
