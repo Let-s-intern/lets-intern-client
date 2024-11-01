@@ -128,7 +128,18 @@ const LiveEdit: React.FC = () => {
   return (
     <div className="mx-3 mb-40 mt-3">
       <Header>
-        <Heading>라이브 생성</Heading>
+        <Heading>라이브 수정</Heading>
+        <div className="flex items-center gap-3">
+          <Button
+            variant="outlined"
+            onClick={async () => {
+              await window.navigator.clipboard.writeText(JSON.stringify(live));
+              alert('복사되었습니다.');
+            }}
+          >
+            Export (복사)
+          </Button>
+        </div>
       </Header>
 
       <Heading2>기본 정보</Heading2>
