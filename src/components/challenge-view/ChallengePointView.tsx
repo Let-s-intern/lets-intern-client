@@ -1,6 +1,6 @@
 import { ChallengeType } from '@/schema';
 import { ChallengePoint } from '@/types/interface';
-import { ChallengeColors } from '@components/ChallengeView';
+import { ChallengeColor } from '@components/ChallengeView';
 import Heading2 from '@components/common/program/program-detail/Heading2';
 import { Dayjs } from 'dayjs';
 import { ReactNode } from 'react';
@@ -75,7 +75,7 @@ const ChallengePointView = ({
   challengeTitle: string;
   startDate: Dayjs;
   endDate: Dayjs;
-  colors: ChallengeColors;
+  colors: ChallengeColor;
   challengeType: ChallengeType;
 }) => {
   const programSchedule = [
