@@ -5,6 +5,7 @@ import { useEffect, useMemo } from 'react';
 import LexicalContent from './common/blog/LexicalContent';
 import LiveCurriculum from './live-view/LiveCurriculum';
 import LiveFaq from './live-view/LiveFaq';
+import LiveIntro from './live-view/LiveIntro';
 import LiveMentor from './live-view/LiveMentor';
 import LiveVod from './live-view/LiveVod';
 import ProgramDetailBlogReviewSection from './ProgramDetailBlogReviewSection';
@@ -42,6 +43,8 @@ const LiveView: React.FC<{ live: LiveIdSchema }> = ({ live }) => {
           curriculum={receivedContent.curriculum}
           mentorJob={mentor.mentorJob}
         />
+
+        <LiveIntro />
 
         {receivedContent.additionalCurriculum && (
           <LexicalContent node={receivedContent.additionalCurriculum.root} />
