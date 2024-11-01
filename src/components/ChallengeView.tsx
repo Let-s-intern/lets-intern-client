@@ -5,11 +5,14 @@ import { ChallengeContent } from '@/types/interface';
 import ChallengeCheckList from '@components/challenge-view/ChallengeCheckList';
 import ChallengeCurriculum from '@components/challenge-view/ChallengeCurriculum';
 import ChallengeFaq from '@components/challenge-view/ChallengeFaq';
-import ChallengeIntro from '@components/challenge-view/ChallengeIntro';
+
 import ChallengeResult from '@components/challenge-view/ChallengeResult';
 import Header from '@components/common/program/program-detail/header/Header';
 import dayjs from 'dayjs';
 import ChallengeBasicInfo from './challenge-view/ChallengeBasicInfo';
+import ChallengeIntroCareerStart from './challenge-view/ChallengeIntroCareerStart';
+import ChallengeIntroPersonalStatement from './challenge-view/ChallengeIntroPersonalStatement';
+import ChallengeIntroPortfolio from './challenge-view/ChallengeIntroPortfolio';
 import ChallengeNavigation, {
   challengeNavigateItems,
 } from './challenge-view/ChallengeNavigation';
@@ -102,8 +105,16 @@ const ChallengeView: React.FC<{ challenge: ChallengeIdSchema }> = ({
             <LexicalContent node={receivedContent.mainDescription?.root} />
           )}
 
-          <section className="lg:py-50 lg:gap-50 flex flex-col gap-20 py-16">
-            <ChallengeIntro />
+          <section className="md:py-50 flex flex-col gap-20 py-16 md:gap-52">
+            {challenge.challengeType ===
+            challengeTypeSchema.enum.PERSONAL_STATEMENT ? (
+              <ChallengeIntroPersonalStatement />
+            ) : challenge.challengeType ===
+              challengeTypeSchema.enum.PORTFOLIO ? (
+              <ChallengeIntroPortfolio />
+            ) : (
+              <ChallengeIntroCareerStart />
+            )}
             <ChallengeCheckList />
             <ChallengeResult />
           </section>
