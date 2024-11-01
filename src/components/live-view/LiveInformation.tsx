@@ -10,17 +10,22 @@ interface LiveInformationProps {
     content: string;
   }[];
   editorContent?: SerializedEditorState;
+  id?: string;
 }
 
 const LiveInformation = ({
   recommendFields,
   reasonFields,
   editorContent,
+  id,
 }: LiveInformationProps) => {
   if (!recommendFields && !reasonFields && !editorContent) return;
 
   return (
-    <div className="flex w-full flex-col gap-y-5 py-8 md:items-center md:gap-y-[50px] md:py-10">
+    <div
+      id={id}
+      className="flex w-full flex-col gap-y-5 py-8 md:items-center md:gap-y-[50px] md:py-10"
+    >
       <p className="text-xsmall14 font-semibold text-neutral-45 md:text-small20">
         클래스 소개
       </p>

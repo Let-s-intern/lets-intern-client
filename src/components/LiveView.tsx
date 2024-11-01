@@ -4,7 +4,6 @@ import Header from '@components/common/program/program-detail/header/Header';
 import { useEffect, useMemo } from 'react';
 import LexicalContent from './common/blog/LexicalContent';
 import LiveBasicInfo from './live-view/LiveBasicInfo';
-import LiveClassInfo from './live-view/LiveClassIntro';
 import LiveCurriculum from './live-view/LiveCurriculum';
 import LiveFaq from './live-view/LiveFaq';
 import LiveInfoBottom from './live-view/LiveInfoBottom';
@@ -53,18 +52,14 @@ const LiveView: React.FC<{ live: LiveIdSchema }> = ({ live }) => {
         <ProgramDetailNavigation programType="live" />
         {/* TODO: 어떤 콘텐츠가 full-width로 들어가게 되면 각 요소를 max-w-[1200px]로 해야 함. */}
         <div className="w-full max-w-[1200px] px-5 lg:px-10">
-          <div id={LIVE_MENTOR_INTRO_ID}>
-            <LiveMentor mentor={mentor} />
-            <LiveInformation
-              recommendFields={receivedContent.recommend}
-              reasonFields={receivedContent.reason}
-              editorContent={receivedContent.mainDescription}
-            />
-          </div>
+          <LiveMentor mentor={mentor} id={LIVE_MENTOR_INTRO_ID} />
 
-          <div id={PROGRAM_INTRO_ID}>
-            <LiveClassInfo />
-          </div>
+          <LiveInformation
+            id={PROGRAM_INTRO_ID}
+            recommendFields={receivedContent.recommend}
+            reasonFields={receivedContent.reason}
+            editorContent={receivedContent.mainDescription}
+          />
 
           <div id={PROGRAM_CURRICULUM_ID}>
             <LiveCurriculum
