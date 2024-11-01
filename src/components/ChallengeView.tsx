@@ -12,6 +12,7 @@ import dayjs from 'dayjs';
 import ChallengeBasicInfo from './challenge-view/ChallengeBasicInfo';
 import ChallengeBrand from './challenge-view/ChallengeBrand';
 import ChallengeDifferent from './challenge-view/ChallengeDifferent';
+import ChallengeInfoBottom from './challenge-view/ChallengeInfoBottom';
 import ChallengeIntroCareerStart from './challenge-view/ChallengeIntroCareerStart';
 import ChallengeIntroPersonalStatement from './challenge-view/ChallengeIntroPersonalStatement';
 import ChallengeIntroPortfolio from './challenge-view/ChallengeIntroPortfolio';
@@ -140,8 +141,7 @@ const ChallengeView: React.FC<{ challenge: ChallengeIdSchema }> = ({
           </div>
           <ChallengeDifferent payback={challenge.priceInfo[0].refund ?? 0} />
           <ChallengeBrand />
-
-          <div>모집 개요</div>
+          <ChallengeInfoBottom challenge={challenge} />
         </div>
       </div>
     </div>

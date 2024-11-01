@@ -6,14 +6,10 @@ import LaptopIcon from '@/assets/icons/laptop.svg?react';
 import MentorIcon from '@/assets/icons/mentor.svg?react';
 import { ChallengeIdSchema } from '@/schema';
 import { formatFullDateTime } from '@/utils/formatDateString';
+import BasicInfoBottomRow from '@components/common/program/program-detail/basicInfo/BasicInfoBottomRow';
 import BasicInfoRow from '@components/common/program/program-detail/basicInfo/BasicInfoRow';
-
-export const priceReason = [
-  `자기소개서 최다 빈출 문항 작성 가이드\n(무제한 업데이트)`,
-  `기업별 합격 자기소개서 예시 및 패턴 분석`,
-  `PDF 총 30페이지 분량 추가 자료`,
-  `렛츠커리어 공식 커뮤니티 참여`,
-];
+import { useMediaQuery } from '@mui/material';
+import { priceReason } from './ChallengeBasicInfo';
 
 export const getDiscountPercent = (
   originalPrice: number,
@@ -23,11 +19,12 @@ export const getDiscountPercent = (
   return Math.round((discountPrice / originalPrice) * 100);
 };
 
-const ChallengeBasicInfo = ({
+const ChallengeInfoBottom = ({
   challenge,
 }: {
   challenge: ChallengeIdSchema;
 }) => {
+  const isMobile = useMediaQuery('(max-width: 768px)');
   const { data, isLoading } = useGetTossCardPromotion();
 
   const findCard = () => {
@@ -61,38 +58,61 @@ const ChallengeBasicInfo = ({
       : null;
 
   return (
-    <div className="flex flex-col gap-6 pb-10 md:flex-row md:pb-20">
-      <img
-        src={challenge.thumbnail}
-        alt="챌린지 썸네일"
-        className="aspect-[4/3] w-full bg-neutral-45 object-cover md:w-3/5"
-      />
-      <div className="flex w-full flex-col gap-y-3 md:w-2/5">
-        <div className="flex w-full items-center justify-center rounded-md bg-neutral-95 px-6 py-5">
-          <div className="flex w-full flex-col gap-y-5 text-challenge">
-            <BasicInfoRow
+    <div className="flex w-full flex-col gap-y-8 py-8 md:gap-y-20">
+      <div className="w-full text-small20 font-bold text-neutral-0 md:text-center">
+        모집개요
+      </div>
+      <div className="flex w-full flex-col gap-3 md:flex-row">
+        {isMobile ? (
+          <div className="flex flex-1 items-center justify-center rounded-md bg-neutral-95 px-6 py-5">
+            <div className="flex w-full flex-col gap-y-5 text-challenge">
+              <BasicInfoRow
+                icon={<CalendarIcon />}
+                title="진행 기간"
+                content={`${formatFullDateTime(challenge.startDate, true)}\n- ${formatFullDateTime(challenge.endDate, true)}`}
+              />
+              <BasicInfoRow
+                icon={<LaptopIcon />}
+                title="진행 방식"
+                content={`100% 온라인\n(챌린지 대시보드, 오픈채팅방)`}
+              />
+              <BasicInfoRow
+                icon={<WalletIcon />}
+                title="모집 마감"
+                content={`${formatFullDateTime(challenge.deadline, true)}`}
+              />
+              <BasicInfoRow
+                icon={<MentorIcon />}
+                title="OT 일자"
+                content={`${formatFullDateTime(challenge.beginning, true)}`}
+              />
+            </div>
+          </div>
+        ) : (
+          <div className="flex flex-1 flex-col gap-y-4">
+            <BasicInfoBottomRow
               icon={<CalendarIcon />}
               title="진행 기간"
-              content={`${formatFullDateTime(challenge.startDate, true)}\n- ${formatFullDateTime(challenge.endDate, true)}`}
-            />{' '}
-            <BasicInfoRow
+              content={`${formatFullDateTime(challenge.startDate)}\n- ${formatFullDateTime(challenge.endDate)}`}
+            />
+            <BasicInfoBottomRow
               icon={<LaptopIcon />}
               title="진행 방식"
               content={`100% 온라인\n(챌린지 대시보드, 오픈채팅방)`}
             />
-            <BasicInfoRow
+            <BasicInfoBottomRow
               icon={<WalletIcon />}
               title="모집 마감"
               content={`${formatFullDateTime(challenge.deadline, true)}`}
             />
-            <BasicInfoRow
+            <BasicInfoBottomRow
               icon={<MentorIcon />}
               title="OT 일자"
               content={`${formatFullDateTime(challenge.beginning, true)}`}
             />
           </div>
-        </div>
-        <div className="flex w-full flex-col items-center justify-center gap-y-5 rounded-md bg-neutral-95 px-6 pb-9 pt-5">
+        )}
+        <div className="flex flex-1 flex-col items-center justify-center gap-y-5 rounded-md bg-neutral-95 px-6 pb-9 pt-5">
           <div className="flex w-full flex-col gap-y-6">
             <div className="flex w-full flex-col gap-y-[14px]">
               <p className="text-small18 font-bold">
@@ -179,4 +199,4 @@ const ChallengeBasicInfo = ({
   );
 };
 
-export default ChallengeBasicInfo;
+export default ChallengeInfoBottom;
