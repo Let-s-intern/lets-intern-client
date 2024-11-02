@@ -2,6 +2,7 @@ import BenefitCard from '@components/common/program/program-detail/different/Ben
 import DifferentCard, {
   DifferentCardProps,
 } from '@components/common/program/program-detail/different/DifferentCard';
+import { useMediaQuery } from '@mui/material';
 
 const differentList: DifferentCardProps[] = [
   {
@@ -70,11 +71,9 @@ export const tripleBenefits = [
   },
 ];
 
-interface ChallengeDifferentProps {
-  payback: number;
-}
+const ChallengeDifferent = () => {
+  const isMobile = useMediaQuery('(max-width: 768px)');
 
-const ChallengeDifferent = ({ payback }: ChallengeDifferentProps) => {
   return (
     <section id="different" className="flex w-full flex-col gap-y-[70px] py-8">
       <div className="flex w-full flex-col gap-y-8">
@@ -99,14 +98,22 @@ const ChallengeDifferent = ({ payback }: ChallengeDifferentProps) => {
               imageUrl={different.imageUrl}
             />
           ))}
-          <div className="flex w-full gap-x-2 rounded-md bg-[#EEFAFF] px-5 pb-10 pt-[30px] text-small18 font-bold md:px-10 md:py-[50px] md:text-medium22">
+          <div className="relative flex w-full gap-x-2 overflow-hidden rounded-md bg-[#EEFAFF] px-5 pb-10 pt-[30px] text-small18 font-bold md:px-10 md:py-[50px] md:text-medium22">
             <span className="text-challenge">혜택</span>
-
-            <p className="whitespace-pre text-black">
+            <p className="z-10 whitespace-pre text-black">
               모든 커리큘럼을 따라오기만 하면,
               <br className="md:hidden" />
-              {payback}만원을 페이백해드려요!
+              3만원을 페이백해드려요!
             </p>
+            <img
+              src={
+                isMobile
+                  ? '/challenge-detail/different/refund_mobile.png'
+                  : '/challenge-detail/different/refund_desktop.png'
+              }
+              alt="payback"
+              className="absolute bottom-0 right-0 h-auto w-1/2 md:right-2.5 md:top-0 md:h-full md:w-auto"
+            />
           </div>
         </div>
       </div>

@@ -93,8 +93,11 @@ const ChallengeView: React.FC<{ challenge: ChallengeIdSchema }> = ({
         </div>
 
         <ProgramDetailNavigation programType="challenge" />
-        <div className="flex w-full max-w-[1200px] flex-col overflow-x-hidden px-5 lg:px-10">
-          <div id={PROGRAM_INTRO_ID}>
+        <div className="flex w-full max-w-[1200px] flex-col overflow-x-hidden">
+          <div
+            id={PROGRAM_INTRO_ID}
+            className="flex w-full flex-col px-5 md:px-10"
+          >
             <section className="py-16 lg:py-48">
               <SuperTitle className="mb-6 text-neutral-45 lg:mb-10">
                 프로그램 소개
@@ -134,22 +137,31 @@ const ChallengeView: React.FC<{ challenge: ChallengeIdSchema }> = ({
 
           {receivedContent.curriculum &&
           receivedContent.curriculum.length > 0 ? (
-            <div id={PROGRAM_CURRICULUM_ID}>
+            <div
+              id={PROGRAM_CURRICULUM_ID}
+              className="flex w-full flex-col px-5 md:px-10"
+            >
               <ChallengeCurriculum curriculum={receivedContent.curriculum} />
             </div>
           ) : null}
 
-          <div id={CHALLENGE_DIFFERENT_ID}>
+          <div
+            id={CHALLENGE_DIFFERENT_ID}
+            className="flex w-full flex-col px-5 md:px-10"
+          >
             <div>
               이 모든 고민을 한번에 해결! 서류 합격률을 300% 높일 수 있는
               렛츠커리어 챌린지
             </div>
-            <ChallengeDifferent payback={challenge.priceInfo[0].refund ?? 0} />
+            <ChallengeDifferent />
             <ChallengeBrand />
           </div>
 
-          <div id={PROGRAM_REVIEW_ID}>
-            <ProgramBestReviewSection />
+          <div id={PROGRAM_REVIEW_ID} className="flex w-full flex-col">
+            <ProgramBestReviewSection
+              type="challenge"
+              reviews={receivedContent.challengeReview}
+            />
 
             {receivedContent.blogReview ? (
               <ProgramDetailBlogReviewSection
@@ -159,7 +171,10 @@ const ChallengeView: React.FC<{ challenge: ChallengeIdSchema }> = ({
             ) : null}
           </div>
 
-          <div id={PROGRAM_FAQ_ID}>
+          <div
+            id={PROGRAM_FAQ_ID}
+            className="flex w-full flex-col px-5 md:px-10"
+          >
             <ChallengeFaq />
             <ChallengeInfoBottom challenge={challenge} />
           </div>

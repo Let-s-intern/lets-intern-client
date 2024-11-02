@@ -51,17 +51,21 @@ const LiveView: React.FC<{ live: LiveIdSchema }> = ({ live }) => {
         </div>
         <ProgramDetailNavigation programType="live" />
         {/* TODO: 어떤 콘텐츠가 full-width로 들어가게 되면 각 요소를 max-w-[1200px]로 해야 함. */}
-        <div className="w-full max-w-[1200px] px-5 lg:px-10">
-          <LiveMentor mentor={mentor} id={LIVE_MENTOR_INTRO_ID} />
+        <div className="w-full max-w-[1200px]">
+          <div className="flex w-full flex-col px-5 md:px-10">
+            <LiveMentor mentor={mentor} id={LIVE_MENTOR_INTRO_ID} />
+            <LiveInformation
+              id={PROGRAM_INTRO_ID}
+              recommendFields={receivedContent.recommend}
+              reasonFields={receivedContent.reason}
+              editorContent={receivedContent.mainDescription}
+            />
+          </div>
 
-          <LiveInformation
-            id={PROGRAM_INTRO_ID}
-            recommendFields={receivedContent.recommend}
-            reasonFields={receivedContent.reason}
-            editorContent={receivedContent.mainDescription}
-          />
-
-          <div id={PROGRAM_CURRICULUM_ID}>
+          <div
+            id={PROGRAM_CURRICULUM_ID}
+            className="flex w-full flex-col px-5 md:px-10"
+          >
             <LiveCurriculum
               curriculum={receivedContent.curriculum}
               mentorJob={mentor.mentorJob}
@@ -76,9 +80,11 @@ const LiveView: React.FC<{ live: LiveIdSchema }> = ({ live }) => {
             )}
           </div>
 
-          <div id={PROGRAM_REVIEW_ID}>
-            <ProgramBestReviewSection />
-
+          <div id={PROGRAM_REVIEW_ID} className="flex w-full flex-col">
+            <ProgramBestReviewSection
+              reviews={receivedContent.liveReview}
+              type="live"
+            />
             {receivedContent.blogReview ? (
               <ProgramDetailBlogReviewSection
                 review={receivedContent.blogReview}
@@ -87,7 +93,10 @@ const LiveView: React.FC<{ live: LiveIdSchema }> = ({ live }) => {
             ) : null}
           </div>
 
-          <section id={PROGRAM_FAQ_ID}>
+          <section
+            id={PROGRAM_FAQ_ID}
+            className="flex w-full flex-col px-5 md:px-10"
+          >
             <LiveFaq />
             <LiveInfoBottom live={live} />
           </section>

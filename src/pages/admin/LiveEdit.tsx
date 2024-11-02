@@ -26,6 +26,7 @@ import LiveCurriculum from './program/LiveCurriculum';
 import LiveInformation from './program/LiveInformation';
 import LiveMentor from './program/LiveMentor';
 import LivePrice from './program/LivePrice';
+import ProgramBestReview from './program/ProgramBestReview';
 import ProgramBlogReviewEditor from './program/ProgramBlogReviewEditor';
 import ProgramSchedule from './program/ProgramSchedule';
 
@@ -198,7 +199,12 @@ const LiveEdit: React.FC = () => {
           }))
         }
       />
-
+      <ProgramBestReview
+        reviewFields={content.liveReview ?? []}
+        setReviewFields={(reviewFields) =>
+          setContent((prev) => ({ ...prev, liveReview: reviewFields }))
+        }
+      />
       <ProgramBlogReviewEditor
         blogReview={content.blogReview ?? { list: [] }}
         setBlogReview={(blogReview) =>
