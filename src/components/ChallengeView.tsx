@@ -29,6 +29,8 @@ import ProgramDetailNavigation, {
   PROGRAM_REVIEW_ID,
 } from './ProgramDetailNavigation';
 
+const { PERSONAL_STATEMENT, PORTFOLIO } = challengeTypeSchema.enum;
+
 export type ChallengeColor = {
   primary: string;
   primaryLight: string;
@@ -58,13 +60,13 @@ const ChallengeView: React.FC<{ challenge: ChallengeIdSchema }> = ({
     let secondaryLight = '';
 
     switch (challenge.challengeType) {
-      case challengeTypeSchema.enum.PERSONAL_STATEMENT:
+      case PERSONAL_STATEMENT:
         primary = '#14BCFF';
         secondary = '#FF9C34';
         primaryLight = '#EEFAFF';
         secondaryLight = '#FFF7EF';
         break;
-      case challengeTypeSchema.enum.PORTFOLIO:
+      case PORTFOLIO:
         primary = '#4A76FF';
         secondary = '#F8AE00';
         primaryLight = '#F0F4FF';
@@ -94,10 +96,7 @@ const ChallengeView: React.FC<{ challenge: ChallengeIdSchema }> = ({
 
         <ProgramDetailNavigation programType="challenge" />
         <div className="flex w-full max-w-[1200px] flex-col overflow-x-hidden">
-          <div
-            id={PROGRAM_INTRO_ID}
-            className="flex w-full flex-col px-5 md:px-10"
-          >
+          <div id={PROGRAM_INTRO_ID} className="flex w-full flex-col px-5">
             <section className="py-16 lg:py-48">
               <SuperTitle className="mb-6 text-neutral-45 lg:mb-10">
                 프로그램 소개
@@ -118,11 +117,9 @@ const ChallengeView: React.FC<{ challenge: ChallengeIdSchema }> = ({
             )}
 
             <section className="md:py-50 flex flex-col gap-20 py-16 md:gap-52">
-              {challenge.challengeType ===
-              challengeTypeSchema.enum.PERSONAL_STATEMENT ? (
+              {challenge.challengeType === PERSONAL_STATEMENT ? (
                 <ChallengeIntroPersonalStatement />
-              ) : challenge.challengeType ===
-                challengeTypeSchema.enum.PORTFOLIO ? (
+              ) : challenge.challengeType === PORTFOLIO ? (
                 <ChallengeIntroPortfolio />
               ) : (
                 <ChallengeIntroCareerStart />
@@ -144,7 +141,10 @@ const ChallengeView: React.FC<{ challenge: ChallengeIdSchema }> = ({
               id={PROGRAM_CURRICULUM_ID}
               className="flex w-full flex-col px-5 md:px-10"
             >
-              <ChallengeCurriculum curriculum={receivedContent.curriculum} />
+              <ChallengeCurriculum
+                curriculum={receivedContent.curriculum}
+                colors={colors}
+              />
             </div>
           ) : null}
 
