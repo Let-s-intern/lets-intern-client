@@ -21,6 +21,7 @@ import ChallengeCurriculum from './program/ChallengeCurriculum';
 import ChallengePoint from './program/ChallengePoint';
 import ChallengePrice from './program/ChallengePrice';
 import FaqSection from './program/FaqSection';
+import ProgramBestReview from './program/ProgramBestReview';
 import ProgramBlogReviewEditor from './program/ProgramBlogReviewEditor';
 import ProgramSchedule from './program/ProgramSchedule';
 
@@ -34,7 +35,7 @@ const ChallengeCreate: React.FC = () => {
     curriculum: [],
     challengePoint: { list: [] },
     blogReview: { list: [] },
-    challengeReview: '',
+    challengeReview: [],
     initialized: true,
   });
   const { snackbar } = useAdminSnackbar();
@@ -223,6 +224,13 @@ const ChallengeCreate: React.FC = () => {
       <ChallengeCurriculum
         curriculum={content.curriculum}
         setContent={setContent}
+      />
+
+      <ProgramBestReview
+        reviewFields={content.challengeReview ?? []}
+        setReviewFields={(reviewFields) =>
+          setContent((prev) => ({ ...prev, challengeReview: reviewFields }))
+        }
       />
 
       <ProgramBlogReviewEditor

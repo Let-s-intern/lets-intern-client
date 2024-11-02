@@ -25,6 +25,7 @@ import ChallengeCurriculumEditor from './program/ChallengeCurriculum';
 import ChallengePointEditor from './program/ChallengePoint';
 import ChallengePrice from './program/ChallengePrice';
 import FaqSection from './program/FaqSection';
+import ProgramBestReview from './program/ProgramBestReview';
 import ProgramBlogReviewEditor from './program/ProgramBlogReviewEditor';
 import ProgramSchedule from './program/ProgramSchedule';
 
@@ -37,7 +38,7 @@ const ChallengeEdit: React.FC = () => {
       list: [],
     },
     blogReview: { list: [] },
-    challengeReview: '',
+    challengeReview: [],
   });
 
   const { mutateAsync: patchChallenge } = usePatchChallengeMutation();
@@ -187,6 +188,13 @@ const ChallengeEdit: React.FC = () => {
       <ChallengeCurriculumEditor
         curriculum={content.curriculum}
         setContent={setContent}
+      />
+
+      <ProgramBestReview
+        reviewFields={content.challengeReview ?? []}
+        setReviewFields={(reviewFields) =>
+          setContent((prev) => ({ ...prev, challengeReview: reviewFields }))
+        }
       />
 
       <ProgramBlogReviewEditor
