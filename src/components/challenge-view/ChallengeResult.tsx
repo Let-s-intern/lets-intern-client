@@ -1,7 +1,7 @@
-import { twMerge } from '@/lib/twMerge';
 import { FaCheck } from 'react-icons/fa6';
 
-import Description from '@components/common/program/program-detail/Description';
+import { twMerge } from '@/lib/twMerge';
+import { ChallengeColor } from '@components/ChallengeView';
 import Heading2 from '@components/common/program/program-detail/Heading2';
 import OutlinedBox from '@components/common/program/program-detail/OutlineBox';
 import SuperTitle from '@components/common/program/program-detail/SuperTitle';
@@ -9,7 +9,6 @@ import { useMediaQuery } from '@mui/material';
 
 const superTitle = '이 모든 고민을 한번에 해결!';
 const title = ['서류 합격률을 300% 높일 수 있는', '렛츠커리어 챌린지'];
-const description = '디테일의 차이로 서류 합격률이 올라가요!';
 const CONTENT = [
   {
     before:
@@ -29,19 +28,25 @@ const CONTENT = [
   },
 ];
 
-function ChallengeResult() {
+interface ChallengeResultProps {
+  colors: ChallengeColor;
+}
+
+function ChallengeResult({ colors }: ChallengeResultProps) {
   return (
     <section>
-      <SuperTitle className="mb-1 text-[#00A8EB]">{superTitle}</SuperTitle>
-      <Heading2>{title.join('\n')}</Heading2>
-      <Description className="mb-10 mt-3 md:mb-20 md:mt-9 md:text-center">
-        {description}
-      </Description>
+      <SuperTitle
+        className="mb-1 text-[#00A8EB]"
+        style={{ color: colors.primary }}
+      >
+        {superTitle}
+      </SuperTitle>
+      <Heading2 className="mb-10 md:mb-20">{title.join('\n')}</Heading2>
 
       <div className="z-10 -mx-5 overflow-x-auto pl-5 sm:mx-0 sm:pl-0">
         <div className="flex w-fit flex-col gap-8 md:gap-16">
           {CONTENT.map((content) => (
-            <CardList key={content.before} content={content} />
+            <CardList key={content.before} content={content} colors={colors} />
           ))}
         </div>
       </div>
@@ -56,7 +61,13 @@ interface Content {
   afterCaption: string;
 }
 
-function CardList({ content }: { content: Content }) {
+function CardList({
+  content,
+  colors,
+}: {
+  content: Content;
+  colors: ChallengeColor;
+}) {
   const isDesktop = useMediaQuery('(min-width: 991px)');
 
   return (
@@ -74,10 +85,10 @@ function CardList({ content }: { content: Content }) {
         <BadgedBox
           badgeContent="After"
           boxContent={content.after}
-          color="blue"
+          colors={colors}
         />
         <div className="flex items-center gap-1">
-          <FaCheck color="#14BCFF" size={isDesktop ? 20 : 16} />
+          <FaCheck color={colors.primary} size={isDesktop ? 20 : 16} />
           <span className="text-xsmall14 font-semibold text-neutral-0 md:text-small20">
             {content.afterCaption}
           </span>
@@ -90,30 +101,31 @@ function CardList({ content }: { content: Content }) {
 function BadgedBox({
   badgeContent,
   boxContent,
-  color = 'gray',
+  colors,
 }: {
   badgeContent: string;
   boxContent: string;
-  color?: 'gray' | 'blue';
+  colors?: ChallengeColor;
 }) {
   return (
     <OutlinedBox
       className={twMerge(
-        'relative h-48 min-w-[260px] overflow-hidden border-2 pb-0 pt-12 sm:w-full md:h-[350px] md:px-8 md:pt-16',
-        color === 'gray'
-          ? 'border-neutral-50 bg-neutral-85'
-          : 'border-[#39C7FF] bg-[#E1F6FF]',
+        'relative h-48 min-w-[260px] overflow-hidden border-2 border-neutral-50 bg-neutral-85 pb-0 pt-12 sm:w-full md:h-[350px] md:px-8 md:pt-16',
       )}
+      style={{
+        backgroundColor: colors?.primaryLight,
+        borderColor: colors?.primary,
+      }}
     >
       <div
         className={twMerge(
-          'absolute left-0 top-0 rounded-br-xxs px-2.5 py-1 text-center text-xsmall16 font-semibold text-white md:w-28 md:rounded-br-md md:py-2.5 md:text-small20',
-          color === 'gray' ? 'bg-neutral-50' : `bg-[#39C7FF]`,
+          'absolute left-0 top-0 rounded-br-xxs bg-neutral-50 px-2.5 py-1 text-center text-xsmall16 font-semibold text-white md:w-28 md:rounded-br-md md:py-2.5 md:text-small20',
         )}
+        style={{ backgroundColor: colors?.primary }}
       >
         {badgeContent}
       </div>
-      <p className="h-full whitespace-pre-line bg-white px-6 pt-7 text-[8px] font-medium md:px-12 md:pt-16 md:text-xsmall16 md:text-xxsmall12">
+      <p className="h-full whitespace-pre-line bg-white px-6 pt-7 text-[8px] font-medium md:px-12 md:pt-16 md:text-xsmall16">
         {boxContent}
       </p>
     </OutlinedBox>
