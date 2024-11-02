@@ -13,51 +13,51 @@ const superTitle = '이 모든 고민을 한번에 해결!';
 const title = ['서류 합격률을 300% 높일 수 있는', '렛츠커리어 챌린지'];
 const PERSONAL_STATEMENT_CONTENT = [
   {
-    beforeImg: '',
+    beforeImg: '/images/personal-statement-before1.png',
     beforeCaption: '누구나 쓸 수 있는 추상적인 지원동기',
-    afterImg: '',
+    afterImg: '/images/personal-statement-after1.png',
     afterCaption: 'A사의 가치 기술과 관련된 경험 연결',
   },
   {
-    beforeImg: '',
+    beforeImg: '/images/personal-statement-before2.png',
     beforeCaption: '직무 경험을 구구절절 나열하는 방식',
-    afterImg: '',
+    afterImg: '/images/personal-statement-after2.png',
     afterCaption: '나만의 장단점 및 역량 키워드 도출',
   },
 ];
 
 const PORTFOLIO_CONTENT = [
   {
-    beforeImg: '',
+    beforeImg: '/images/portfolio-before1.png',
     beforeCaption: '마치 서비스 소개서처럼 솔루션만 설명',
-    afterImg: '',
+    afterImg: '/images/portfolio-after1.png',
     afterCaption: '유저 인터뷰 등을 통한 UX/UI 변경 부분 작성',
   },
   {
-    beforeImg: '',
+    beforeImg: '/images/portfolio-before2.png',
     beforeCaption: '어떤 콘텐츠를 만들었는지 경험만 나열',
-    afterImg: '',
+    afterImg: '/images/portfolio-after2.png',
     afterCaption: '문제점 → 전략 → 솔루션을 보여주는 구조화',
   },
 ];
 
 const CAREER_START_CONTENT = [
   {
-    beforeImg: '',
+    beforeImg: '/images/career-start-before1.png',
     beforeCaption: '매번 마감 기한 전까지 소재 고민하기',
-    afterImg: '',
+    afterImg: '/images/career-start-after1.png',
     afterCaption: '경험 서랍에서 바로 직무 FIT한 소재 뽑기',
   },
   {
-    beforeImg: '',
+    beforeImg: '/images/career-start-before2.png',
     beforeCaption: '주변 말만 듣고 직무 고르기',
-    afterImg: '',
+    afterImg: '/images/career-start-after2.png',
     afterCaption: '업무부터 역량까지 직무의 A to Z를 직접 찾고 결정하기',
   },
   {
-    beforeImg: '',
+    beforeImg: '/images/career-start-before3.png',
     beforeCaption: '양으로 승부 보는 이력서',
-    afterImg: '',
+    afterImg: '/images/career-start-after3.png',
     afterCaption: '핵심 역량과 매력만 깔끔하게 간추린 이력서',
   },
 ];
@@ -151,7 +151,7 @@ function BadgedBox({
   return (
     <OutlinedBox
       className={twMerge(
-        'flex h-48 min-w-[260px] flex-col overflow-hidden border-2 border-neutral-50 bg-neutral-85 p-0 sm:w-full md:h-[350px] md:p-0',
+        'flex min-w-[260px] flex-col overflow-hidden border-2 border-neutral-50 bg-neutral-85 p-0 sm:w-full md:h-[350px] md:p-0',
         className,
       )}
       style={{
@@ -179,7 +179,7 @@ function ResultImg({
   React.ImgHTMLAttributes<HTMLImageElement>,
   HTMLImageElement
 >) {
-  return <img className="aspect-video h-auto w-52" src={src} alt={alt} />;
+  return <img className="h-auto w-full" src={src} alt={alt} />;
 }
 
 export default ChallengeResult;
