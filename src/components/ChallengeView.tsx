@@ -62,7 +62,7 @@ const ChallengeView: React.FC<{ challenge: ChallengeIdSchema }> = ({
         primary = '#14BCFF';
         secondary = '#FF9C34';
         primaryLight = '#EEFAFF';
-        secondaryLight = '#FF9C34';
+        secondaryLight = '#FFF7EF';
         break;
       case challengeTypeSchema.enum.PORTFOLIO:
         primary = '#4A76FF';
