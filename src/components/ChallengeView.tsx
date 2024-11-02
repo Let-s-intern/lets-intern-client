@@ -178,7 +178,7 @@ const ChallengeView: React.FC<{ challenge: ChallengeIdSchema }> = ({
             id={PROGRAM_FAQ_ID}
             className="flex w-full flex-col px-5 md:px-10"
           >
-            <ChallengeFaq />
+            <ChallengeFaq colors={colors} />
             <ChallengeInfoBottom challenge={challenge} />
           </div>
         </div>
