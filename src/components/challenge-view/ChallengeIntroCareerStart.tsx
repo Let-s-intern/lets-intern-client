@@ -37,7 +37,7 @@ function ChallengeIntroCareerStart() {
             {bubbles[2]}
           </SpeechBubble>
           <SpeechBubble
-            className="translate-x-10 md:translate-x-20 md:translate-y-4"
+            className="translate-x-16 md:translate-x-20 md:translate-y-4"
             tailHidden={true}
           >
             {bubbles[3]}
