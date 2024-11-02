@@ -1,3 +1,5 @@
+import { useMediaQuery } from '@mui/material';
+import { ReactNode } from 'react';
 import { FaCheck } from 'react-icons/fa6';
 
 import { twMerge } from '@/lib/twMerge';
@@ -6,8 +8,6 @@ import { ChallengeColor } from '@components/ChallengeView';
 import Heading2 from '@components/common/program/program-detail/Heading2';
 import OutlinedBox from '@components/common/program/program-detail/OutlineBox';
 import SuperTitle from '@components/common/program/program-detail/SuperTitle';
-import { useMediaQuery } from '@mui/material';
-import { ReactNode } from 'react';
 
 const superTitle = '이 모든 고민을 한번에 해결!';
 const title = ['서류 합격률을 300% 높일 수 있는', '렛츠커리어 챌린지'];
