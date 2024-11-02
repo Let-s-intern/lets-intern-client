@@ -1,12 +1,15 @@
+import { CSSProperties, ReactNode } from 'react';
+
 import { twMerge } from '@/lib/twMerge';
-import { ReactNode } from 'react';
 
 function Box({
   children,
   className,
+  style,
 }: {
   children: ReactNode;
   className?: string;
+  style?: CSSProperties;
 }) {
   return (
     <div
@@ -14,6 +17,7 @@ function Box({
         'flex items-center rounded-md bg-[#EEFAFF] p-4',
         className,
       )}
+      style={style}
     >
       {children}
     </div>

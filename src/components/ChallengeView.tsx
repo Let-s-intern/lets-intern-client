@@ -124,7 +124,10 @@ const ChallengeView: React.FC<{ challenge: ChallengeIdSchema }> = ({
               ) : (
                 <ChallengeIntroCareerStart />
               )}
-              <ChallengeCheckList />
+              <ChallengeCheckList
+                colors={colors}
+                challengeType={challenge.challengeType}
+              />
               <ChallengeResult />
             </section>
           </div>
