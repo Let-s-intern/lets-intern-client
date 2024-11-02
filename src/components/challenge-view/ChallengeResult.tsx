@@ -110,7 +110,7 @@ function BadgedBox({
   return (
     <OutlinedBox
       className={twMerge(
-        'relative h-48 min-w-[260px] overflow-hidden border-2 border-neutral-50 bg-neutral-85 pb-0 pt-12 sm:w-full md:h-[350px] md:px-8 md:pt-16',
+        'flex h-48 min-w-[260px] flex-col overflow-hidden border-2 border-neutral-50 bg-neutral-85 p-0 sm:w-full md:h-[350px] md:p-0',
       )}
       style={{
         backgroundColor: colors?.primaryLight,
@@ -119,7 +119,7 @@ function BadgedBox({
     >
       <div
         className={twMerge(
-          'absolute left-0 top-0 rounded-br-xxs bg-neutral-50 px-2.5 py-1 text-center text-xsmall16 font-semibold text-white md:w-28 md:rounded-br-md md:py-2.5 md:text-small20',
+          'w-full bg-neutral-50 px-2.5 py-1 text-center text-xsmall16 font-semibold text-white md:py-2.5 md:text-small20',
         )}
         style={{ backgroundColor: colors?.primary }}
       >
