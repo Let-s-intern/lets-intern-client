@@ -1,4 +1,4 @@
-import { Button, Checkbox, FormControlLabel } from '@mui/material';
+import { Button, Checkbox, FormControlLabel, TextField } from '@mui/material';
 import dayjs from 'dayjs';
 import { useCallback, useEffect, useState } from 'react';
 import { FaSave } from 'react-icons/fa';
@@ -7,7 +7,8 @@ import { useNavigate } from 'react-router-dom';
 import { fileType, uploadFile } from '@/api/file';
 import { usePostLiveMutation } from '@/api/program';
 import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
-import { CreateLiveReq } from '@/schema';
+import { liveToCreateInput } from '@/hooks/useDuplicateProgram';
+import { CreateLiveReq, getLiveIdSchema } from '@/schema';
 import { LiveContent } from '@/types/interface';
 import EditorApp from '@components/admin/lexical/EditorApp';
 import LivePreviewButton from '@components/admin/LivePreviewButton';
@@ -18,8 +19,10 @@ import { Heading2 } from '@components/admin/ui/heading/Heading2';
 import FaqSection from './program/FaqSection';
 import LiveBasic from './program/LiveBasic';
 import LiveCurriculum from './program/LiveCurriculum';
+import LiveInformation from './program/LiveInformation';
 import LiveMentor from './program/LiveMentor';
 import LivePrice from './program/LivePrice';
+import ProgramBestReview from './program/ProgramBestReview';
 import ProgramBlogReviewEditor from './program/ProgramBlogReviewEditor';
 import ProgramSchedule from './program/ProgramSchedule';
 const LiveCreate: React.FC = () => {
@@ -28,6 +31,8 @@ const LiveCreate: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [content, setContent] = useState<LiveContent>({
     initialized: true,
+    recommend: [''],
+    reason: [{ title: '', content: '' }],
     curriculum: [],
     blogReview: { list: [] },
   });
@@ -92,9 +97,9 @@ const LiveCreate: React.FC = () => {
     console.log('res:', res);
 
     setLoading(false);
-    snackbar('저장되었습니다.');
+    snackbar('라이브가 생성되었습니다.');
     navigate('/admin/programs');
-  }, [input, content]);
+  }, [input, content, postLive, snackbar, navigate]);
 
   useEffect(() => {
     console.log('content', content);
@@ -104,27 +109,96 @@ const LiveCreate: React.FC = () => {
     console.log('input', input);
   }, [input]);
 
+  const [importJsonString, setImportJsonString] = useState('');
+  const [importProcessing, setImportProcessing] = useState(false);
+
+  if (importProcessing) {
+    return <div>Importing...</div>;
+  }
+
   return (
     <div className="mx-3 mb-40 mt-3">
       <Header>
         <Heading>라이브 생성</Heading>
+        <div className="flex items-center gap-3">
+          <TextField
+            size="small"
+            label="Export시 복사한 데이터 붙여넣기"
+            variant="outlined"
+            value={importJsonString}
+            onChange={(e) => setImportJsonString(e.target.value)}
+          ></TextField>
+          <Button
+            variant="outlined"
+            onClick={() => {
+              try {
+                const live = getLiveIdSchema.parse(
+                  JSON.parse(importJsonString),
+                );
+                setImportProcessing(true);
+                setInput(liveToCreateInput(live));
+                setContent(JSON.parse(live?.desc ?? '{}'));
+                setTimeout(() => {
+                  snackbar('Import 성공!');
+                  setImportJsonString('');
+                  setImportProcessing(false);
+                }, 200);
+              } catch (e) {
+                console.error(e);
+              }
+            }}
+          >
+            Import
+          </Button>
+        </div>
       </Header>
 
       <Heading2>기본 정보</Heading2>
       <section className="mb-6 mt-3">
         <div className="mb-6 grid w-full grid-cols-2 gap-3">
-          <LiveBasic setInput={setInput} />
+          <LiveBasic
+            defaultValue={{
+              ...input,
+              classificationInfo: input.programTypeInfo.map(
+                (info) => info.classificationInfo,
+              ),
+            }}
+            setInput={setInput}
+          />
           <ImageUpload
             label="라이브 썸네일 이미지 업로드"
             id="thumbnail"
             name="thumbnail"
+            image={input.thumbnail}
             onChange={onChangeImage}
           />
         </div>
         <div className="grid w-full grid-cols-2 gap-3">
           <div className="flex flex-col items-start gap-6">
-            <LivePrice setInput={setInput} />
-            <ProgramSchedule setInput={setInput} />
+            <LivePrice
+              defaultValue={{
+                deadline: dayjs.tz(
+                  input.priceInfo.priceInfo.deadline,
+                  'Asia/Seoul',
+                ),
+                discount: input.priceInfo.priceInfo.discount,
+                price: input.priceInfo.priceInfo.price,
+                accountNumber: input.priceInfo.priceInfo.accountNumber,
+                accountType: input.priceInfo.priceInfo.accountType,
+                priceId: 0,
+                livePriceType: input.priceInfo.livePriceType,
+              }}
+              setInput={setInput}
+            />
+            <ProgramSchedule
+              defaultValue={{
+                beginning: dayjs.tz(input.beginning, 'Asia/Seoul'),
+                deadline: dayjs.tz(input.deadline, 'Asia/Seoul'),
+                endDate: dayjs.tz(input.endDate, 'Asia/Seoul'),
+                startDate: dayjs.tz(input.startDate, 'Asia/Seoul'),
+              }}
+              setInput={setInput}
+            />
             <FormControlLabel
               defaultChecked={input.vod}
               control={<Checkbox />}
@@ -140,13 +214,18 @@ const LiveCreate: React.FC = () => {
               label="멘토 사진"
               id="mentorImg"
               name="mentorImg"
+              image={input.mentorImg}
               onChange={onChangeImage}
             />
             <LiveMentor defaultValue={input} setInput={setInput} />
           </div>
         </div>
       </section>
-
+      <LiveInformation
+        recommendFields={content.recommend ?? ['']}
+        reasonFields={content.reason ?? [{ title: '', content: '' }]}
+        setContent={setContent}
+      />
       <LiveCurriculum curriculum={content.curriculum} setContent={setContent} />
 
       <Heading2 className="mt-6">커리큘럼 추가 입력</Heading2>
@@ -158,7 +237,12 @@ const LiveCreate: React.FC = () => {
           }))
         }
       />
-
+      <ProgramBestReview
+        reviewFields={content.liveReview ?? []}
+        setReviewFields={(reviewFields) =>
+          setContent((prev) => ({ ...prev, liveReview: reviewFields }))
+        }
+      />
       <ProgramBlogReviewEditor
         blogReview={content.blogReview ?? { list: [] }}
         setBlogReview={(blogReview) =>

@@ -1,6 +1,8 @@
 import { fileType, uploadFile } from '@/api/file';
 import { usePostChallengeMutation } from '@/api/program';
-import { CreateChallengeReq } from '@/schema';
+import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
+import { challengeToCreateInput } from '@/hooks/useDuplicateProgram';
+import { CreateChallengeReq, getChallengeIdSchema } from '@/schema';
 import { ChallengeContent } from '@/types/interface';
 import ChallengePreviewButton from '@components/admin/ChallengePreviewButton';
 import EditorApp from '@components/admin/lexical/EditorApp';
@@ -9,15 +11,17 @@ import Header from '@components/admin/ui/header/Header';
 import Heading from '@components/admin/ui/heading/Heading';
 import { Heading2 } from '@components/admin/ui/heading/Heading2';
 import Heading3 from '@components/admin/ui/heading/Heading3';
-import { Button } from '@mui/material';
+import { Button, TextField } from '@mui/material';
 import dayjs from 'dayjs';
 import { useCallback, useEffect, useState } from 'react';
 import { FaSave } from 'react-icons/fa';
+import { useNavigate } from 'react-router-dom';
 import ChallengeBasic from './program/ChallengeBasic';
 import ChallengeCurriculum from './program/ChallengeCurriculum';
 import ChallengePoint from './program/ChallengePoint';
 import ChallengePrice from './program/ChallengePrice';
 import FaqSection from './program/FaqSection';
+import ProgramBestReview from './program/ProgramBestReview';
 import ProgramBlogReviewEditor from './program/ProgramBlogReviewEditor';
 import ProgramSchedule from './program/ProgramSchedule';
 
@@ -31,9 +35,11 @@ const ChallengeCreate: React.FC = () => {
     curriculum: [],
     challengePoint: { list: [] },
     blogReview: { list: [] },
-    challengeReview: '',
+    challengeReview: [],
     initialized: true,
   });
+  const { snackbar } = useAdminSnackbar();
+  const navigate = useNavigate();
 
   useEffect(() => {
     console.log('content', content);
@@ -93,12 +99,52 @@ const ChallengeCreate: React.FC = () => {
     console.log('res', res);
 
     setLoading(false);
-  }, [input, content, postChallenge]);
+    snackbar('챌린지가 생성되었습니다.');
+    navigate('/admin/programs');
+  }, [input, content, postChallenge, snackbar, navigate]);
+
+  const [importJsonString, setImportJsonString] = useState('');
+  const [importProcessing, setImportProcessing] = useState(false);
+
+  if (importProcessing) {
+    return <div>Importing...</div>;
+  }
 
   return (
     <div className="mx-3 mb-40 mt-3">
       <Header>
         <Heading>챌린지 생성</Heading>
+        <div className="flex items-center gap-3">
+          <TextField
+            size="small"
+            label="Export시 복사한 데이터 붙여넣기"
+            variant="outlined"
+            value={importJsonString}
+            onChange={(e) => setImportJsonString(e.target.value)}
+          ></TextField>
+          <Button
+            variant="outlined"
+            onClick={() => {
+              try {
+                const challenge = getChallengeIdSchema.parse(
+                  JSON.parse(importJsonString),
+                );
+                setImportProcessing(true);
+                setInput(challengeToCreateInput(challenge));
+                setContent(JSON.parse(challenge?.desc ?? '{}'));
+                setTimeout(() => {
+                  snackbar('Import 성공!');
+                  setImportJsonString('');
+                  setImportProcessing(false);
+                }, 200);
+              } catch (e) {
+                console.error(e);
+              }
+            }}
+          >
+            Import
+          </Button>
+        </div>
       </Header>
 
       <Heading2>기본 정보</Heading2>
@@ -125,12 +171,35 @@ const ChallengeCreate: React.FC = () => {
             label="챌린지 썸네일 이미지 업로드"
             id="thumbnail"
             name="thumbnail"
+            image={input.thumbnail}
             onChange={onChangeImage}
           />
         </div>
         <div className="grid w-full grid-cols-2 gap-3">
-          <ChallengePrice setInput={setInput} />
-          <ProgramSchedule setInput={setInput} />
+          <ChallengePrice
+            defaultValue={[
+              {
+                deadline: dayjs.tz(input.deadline, 'Asia/Seoul'),
+                priceId: 0,
+                challengeParticipationType:
+                  input.priceInfo[0].challengeParticipationType,
+                challengeUserType: input.priceInfo[0].challengeUserType,
+                challengePriceType: input.priceInfo[0].challengePriceType,
+                price: input.priceInfo[0].priceInfo.price,
+                discount: input.priceInfo[0].priceInfo.discount,
+              },
+            ]}
+            setInput={setInput}
+          />
+          <ProgramSchedule
+            defaultValue={{
+              beginning: dayjs.tz(input.beginning, 'Asia/Seoul'),
+              deadline: dayjs.tz(input.deadline, 'Asia/Seoul'),
+              endDate: dayjs.tz(input.endDate, 'Asia/Seoul'),
+              startDate: dayjs.tz(input.startDate, 'Asia/Seoul'),
+            }}
+            setInput={setInput}
+          />
         </div>
       </section>
 
@@ -155,6 +224,13 @@ const ChallengeCreate: React.FC = () => {
       <ChallengeCurriculum
         curriculum={content.curriculum}
         setContent={setContent}
+      />
+
+      <ProgramBestReview
+        reviewFields={content.challengeReview ?? []}
+        setReviewFields={(reviewFields) =>
+          setContent((prev) => ({ ...prev, challengeReview: reviewFields }))
+        }
       />
 
       <ProgramBlogReviewEditor

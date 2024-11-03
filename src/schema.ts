@@ -40,13 +40,13 @@ export const challenges = z
     };
   });
 
-export const challengeTypeSchema = z.union([
-  z.literal('CAREER_START'),
-  z.literal('DOCUMENT_PREPARATION'),
-  z.literal('MEETING_PREPARATION'),
-  z.literal('ETC'),
-  z.literal('PERSONAL_STATEMENT'),
-  z.literal('PORTFOLIO'),
+export const challengeTypeSchema = z.enum([
+  'CAREER_START',
+  'DOCUMENT_PREPARATION',
+  'MEETING_PREPARATION',
+  'ETC',
+  'PERSONAL_STATEMENT',
+  'PORTFOLIO',
 ]);
 
 export type ChallengeType = z.infer<typeof challengeTypeSchema>;

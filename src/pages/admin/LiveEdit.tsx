@@ -23,8 +23,10 @@ import { useQueryClient } from '@tanstack/react-query';
 import FaqSection from './program/FaqSection';
 import LiveBasic from './program/LiveBasic';
 import LiveCurriculum from './program/LiveCurriculum';
+import LiveInformation from './program/LiveInformation';
 import LiveMentor from './program/LiveMentor';
 import LivePrice from './program/LivePrice';
+import ProgramBestReview from './program/ProgramBestReview';
 import ProgramBlogReviewEditor from './program/ProgramBlogReviewEditor';
 import ProgramSchedule from './program/ProgramSchedule';
 
@@ -36,6 +38,8 @@ const LiveEdit: React.FC = () => {
   const [input, setInput] = useState<Omit<UpdateLiveReq, 'desc'>>({});
   const [content, setContent] = useState<LiveContent>({
     initialized: false,
+    recommend: [''],
+    reason: [{ title: '', content: '' }],
     curriculum: [],
     blogReview: { list: [] },
   });
@@ -125,7 +129,18 @@ const LiveEdit: React.FC = () => {
   return (
     <div className="mx-3 mb-40 mt-3">
       <Header>
-        <Heading>라이브 생성</Heading>
+        <Heading>라이브 수정</Heading>
+        <div className="flex items-center gap-3">
+          <Button
+            variant="outlined"
+            onClick={async () => {
+              await window.navigator.clipboard.writeText(JSON.stringify(live));
+              alert('복사되었습니다.');
+            }}
+          >
+            Export (복사)
+          </Button>
+        </div>
       </Header>
 
       <Heading2>기본 정보</Heading2>
@@ -165,7 +180,11 @@ const LiveEdit: React.FC = () => {
           </div>
         </div>
       </section>
-
+      <LiveInformation
+        recommendFields={content.recommend || ['']}
+        reasonFields={content.reason || [{ title: '', content: '' }]}
+        setContent={setContent}
+      />
       <LiveCurriculum curriculum={content.curriculum} setContent={setContent} />
 
       <Heading2 className="mt-6">커리큘럼 추가 입력</Heading2>
@@ -180,7 +199,12 @@ const LiveEdit: React.FC = () => {
           }))
         }
       />
-
+      <ProgramBestReview
+        reviewFields={content.liveReview ?? []}
+        setReviewFields={(reviewFields) =>
+          setContent((prev) => ({ ...prev, liveReview: reviewFields }))
+        }
+      />
       <ProgramBlogReviewEditor
         blogReview={content.blogReview ?? { list: [] }}
         setBlogReview={(blogReview) =>

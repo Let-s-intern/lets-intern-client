@@ -1,3 +1,4 @@
+import { twMerge } from '@/lib/twMerge';
 import { LiveIdSchema } from '@/schema';
 import Heading2 from '@components/common/program/program-detail/Heading2';
 import SuperTitle from '@components/common/program/program-detail/SuperTitle';
@@ -12,13 +13,15 @@ interface LiveMentorProps {
     | 'mentorCareer'
     | 'mentorIntroduction'
   >;
+  className?: string;
+  id?: string;
 }
 
-function LiveMentor({ mentor }: LiveMentorProps) {
+function LiveMentor({ mentor, className, id }: LiveMentorProps) {
   return (
     <section
-      id="mentor-intro"
-      className="py-8 md:flex md:flex-col md:items-center"
+      id={id}
+      className={twMerge('py-8 md:flex md:flex-col md:items-center', className)}
     >
       <Heading2 className="mb-8 md:mb-20">
         렛츠커리어 LIVE 클래스에서만

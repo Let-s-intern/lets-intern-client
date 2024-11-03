@@ -1,8 +1,8 @@
 import dayjs from 'dayjs';
 import { useEffect, useRef, useState } from 'react';
-import { Helmet } from 'react-helmet';
 import { useNavigate, useParams } from 'react-router-dom';
 
+import CommonHelmet from '@components/common/CommonHelmet';
 import {
   useBlogListTypeQuery,
   useBlogQuery,
@@ -21,9 +21,9 @@ import {
   PROGRAM_TYPE_KEY,
 } from '../../../utils/programConst';
 import {
-  getBaseUrlFromServer,
   getBlogPathname,
   getBlogTitle,
+  getUniversalLink,
 } from '../../../utils/url';
 
 const findProgramIncludingKeyword = async (keyword: string) => {
@@ -175,10 +175,6 @@ const BlogDetailSSRPage = () => {
     }
   };
 
-  const title = getBlogTitle(blog.blogDetailInfo);
-  const url = `${typeof window !== 'undefined' ? window.location.origin : getBaseUrlFromServer()}${getBlogPathname(blog.blogDetailInfo)}`;
-  const description = blog.blogDetailInfo.description;
-
   if (isLoading) {
     return (
       <div className="mt-40 flex h-full w-full items-center justify-center">
@@ -189,22 +185,12 @@ const BlogDetailSSRPage = () => {
 
   return (
     <div className="mx-auto flex w-full flex-1 flex-col items-center">
-      <Helmet>
-        <title>{title}</title>
-        <link rel="canonical" href={url} />
-        {description ? <meta name="description" content={description} /> : null}
-        <meta property="og:title" content={title} />
-        <meta property="og:url" content={url} />
+      <CommonHelmet
+        title={getBlogTitle(blog.blogDetailInfo)}
+        url={getUniversalLink(getBlogPathname(blog.blogDetailInfo))}
+        description={blog.blogDetailInfo.description}
+      />
 
-        {description ? (
-          <meta property="og:description" content={description} />
-        ) : null}
-        <meta name="twitter:title" content={title} />
-        <meta name="twitter:url" content={url} />
-        {description ? (
-          <meta name="twitter:description" content={description} />
-        ) : null}
-      </Helmet>
       <div className="flex w-full max-w-[1200px] flex-col items-center px-5 md:px-10 md:pt-10">
         <div className="flex w-full flex-col items-center gap-y-8 pt-8 md:px-[100px] md:pt-8">
           <div className="flex w-full flex-col gap-y-3 py-3">

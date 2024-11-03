@@ -5,7 +5,7 @@ import { ICouponForm } from '../../../../../../types/interface';
 import axios from '../../../../../../utils/axios';
 import Input from '../../../../ui/input/Input';
 
-interface CouponSectionProps {
+export interface CouponSectionProps {
   setCoupon: (
     coupon: ((prevCoupon: ICouponForm) => ICouponForm) | ICouponForm,
   ) => void;

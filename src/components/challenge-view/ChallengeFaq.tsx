@@ -6,13 +6,18 @@ import { useParams } from 'react-router-dom';
 import { useGetChallengeFaq } from '@/api/challenge';
 import channelService from '@/ChannelService';
 import { Faq } from '@/schema';
+import { ChallengeColor } from '@components/ChallengeView';
 import Heading2 from '@components/common/program/program-detail/Heading2';
 import SuperTitle from '@components/common/program/program-detail/SuperTitle';
 
 const superTitle = '자주 묻는 질문';
 const title = '궁금한 점이 있으신가요?';
 
-function ChallengeFaq() {
+interface ChallengeFaqProps {
+  colors: ChallengeColor;
+}
+
+function ChallengeFaq({ colors }: ChallengeFaqProps) {
   const { id } = useParams();
 
   const [selectedIndex, setSelectedIndex] = useState(0);
@@ -25,9 +30,9 @@ function ChallengeFaq() {
   if (!faqList) return <></>;
 
   return (
-    <section id="faq" className="py-8 md:flex md:flex-col md:items-center">
+    <section className="py-8 md:flex md:flex-col md:items-center">
       <SuperTitle className="mb-6 text-neutral-45 md:mb-12">FAQ</SuperTitle>
-      <SuperTitle className="text-[#00A8EB]">{superTitle}</SuperTitle>
+      <SuperTitle style={{ color: colors.primary }}>{superTitle}</SuperTitle>
       <Heading2 className="mb-10 md:mb-20">{title}</Heading2>
 
       {/* 카테고리 */}
@@ -35,6 +40,7 @@ function ChallengeFaq() {
         {categoryList?.map((category, index) => (
           <FaqCategory
             key={category}
+            colors={colors}
             selected={selectedIndex === index}
             onClick={() => setSelectedIndex(index)}
           >
@@ -66,10 +72,12 @@ function ChallengeFaq() {
 }
 
 function FaqCategory({
+  colors,
   children,
   selected,
   onClick,
 }: {
+  colors: ChallengeColor;
   children?: ReactNode;
   selected: boolean;
   onClick?: () => void;
@@ -77,11 +85,17 @@ function FaqCategory({
   return (
     <div
       className={twMerge(
-        'min-w-16 cursor-pointer rounded-full border px-5 py-2 text-center text-xxsmall12 font-semibold md:min-w-36 md:py-4 md:text-medium22',
-        selected
-          ? 'border-[#A8E6FF] bg-[#EEFAFF] text-[#00A8EB]'
-          : 'border-neutral-70 text-neutral-45',
+        'min-w-16 cursor-pointer rounded-full border border-neutral-70 px-5 py-2 text-center text-xxsmall12 font-semibold text-neutral-45 md:min-w-36 md:py-4 md:text-medium22',
       )}
+      style={
+        selected
+          ? {
+              borderColor: colors.primary,
+              backgroundColor: colors.primaryLight,
+              color: colors.primary,
+            }
+          : {}
+      }
       onClick={onClick}
     >
       {children}

@@ -38,6 +38,14 @@ export type ProgramBlogReview = {
   }[];
 };
 
+export type ContentReviewType = {
+  name: string;
+  programName: string;
+  passedState: string;
+  title: string;
+  content: string;
+};
+
 /** 챌린지 또는 LIVE 클래스의 JSON 버전 (desc에 통쨰로 JSON 형태로 들어감) */
 export type ChallengeContent = {
   /** 초기화 여부 알려주는 것 */
@@ -51,12 +59,19 @@ export type ChallengeContent = {
   /** 블로그 후기 */
   blogReview?: ProgramBlogReview;
   /**  후기 */
-  challengeReview: unknown;
+  challengeReview?: ContentReviewType[];
 };
 
 export type LiveContent = {
   /** 초기화 여부 알려주는 것 */
   initialized: boolean;
+  /* 이런분께 추천드려요 */
+  recommend?: string[];
+  /* 이번 클래스 꼭 들어야 하는 이유 */
+  reason?: {
+    title: string;
+    content: string;
+  }[];
   /* 상세 설명*/
   mainDescription?: SerializedEditorState;
   /* 커리큘럼 추가 입력 */
@@ -72,6 +87,7 @@ export type LiveContent = {
   curriculumDesc?: unknown;
   /* 블로그 후기 */
   blogReview?: ProgramBlogReview;
+  liveReview?: ContentReviewType[];
 };
 
 export interface IPageable {

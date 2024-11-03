@@ -46,7 +46,7 @@ const ChannelTalkBtn = () => {
         {
           hidden: isHidden,
         },
-        'fixed right-4 z-10 flex items-center rounded-[25rem] bg-neutral-100 shadow-05',
+        'fixed right-4 z-30 flex items-center rounded-[25rem] bg-neutral-100 shadow-05',
       )}
       onClick={() => channelService.showMessenger()}
     >

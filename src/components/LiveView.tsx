@@ -3,11 +3,23 @@ import { LiveContent } from '@/types/interface';
 import Header from '@components/common/program/program-detail/header/Header';
 import { useEffect, useMemo } from 'react';
 import LexicalContent from './common/blog/LexicalContent';
+import LiveBasicInfo from './live-view/LiveBasicInfo';
 import LiveCurriculum from './live-view/LiveCurriculum';
 import LiveFaq from './live-view/LiveFaq';
+import LiveInfoBottom from './live-view/LiveInfoBottom';
+import LiveInformation from './live-view/LiveInformation';
+import LiveIntro from './live-view/LiveIntro';
 import LiveMentor from './live-view/LiveMentor';
 import LiveVod from './live-view/LiveVod';
+import ProgramBestReviewSection from './ProgramBestReviewSection';
 import ProgramDetailBlogReviewSection from './ProgramDetailBlogReviewSection';
+import ProgramDetailNavigation, {
+  LIVE_MENTOR_INTRO_ID,
+  PROGRAM_CURRICULUM_ID,
+  PROGRAM_FAQ_ID,
+  PROGRAM_INTRO_ID,
+  PROGRAM_REVIEW_ID,
+} from './ProgramDetailNavigation';
 
 const LiveView: React.FC<{ live: LiveIdSchema }> = ({ live }) => {
   const mentor = {
@@ -30,33 +42,65 @@ const LiveView: React.FC<{ live: LiveIdSchema }> = ({ live }) => {
   }, [receivedContent]);
 
   return (
-    <div>
-      <div className="flex w-full flex-col px-5 md:px-10 xl:px-52">
-        <Header programTitle={live.title ?? ''} />
+    <div className="flex w-full flex-col">
+      <div className="flex w-full flex-col items-center">
+        <div className="flex w-full max-w-[1200px] flex-col px-5 md:px-10">
+          <Header programTitle={live.title ?? ''} />
+          {live.vod && <LiveVod />}
+          <LiveBasicInfo live={live} />
+        </div>
+        <ProgramDetailNavigation programType="live" />
+        {/* TODO: 어떤 콘텐츠가 full-width로 들어가게 되면 각 요소를 max-w-[1200px]로 해야 함. */}
+        <div className="w-full max-w-[1200px]">
+          <div className="flex w-full flex-col px-5 md:px-10">
+            <LiveMentor mentor={mentor} id={LIVE_MENTOR_INTRO_ID} />
+            <LiveInformation
+              id={PROGRAM_INTRO_ID}
+              recommendFields={receivedContent.recommend}
+              reasonFields={receivedContent.reason}
+              editorContent={receivedContent.mainDescription}
+            />
+          </div>
 
-        {live.vod && <LiveVod />}
+          <div
+            id={PROGRAM_CURRICULUM_ID}
+            className="flex w-full flex-col px-5 md:px-10"
+          >
+            <LiveCurriculum
+              curriculum={receivedContent.curriculum}
+              mentorJob={mentor.mentorJob}
+            />
 
-        <LiveMentor mentor={mentor} />
+            <LiveIntro />
 
-        <LiveCurriculum
-          curriculum={receivedContent.curriculum}
-          mentorJob={mentor.mentorJob}
-        />
+            {receivedContent.additionalCurriculum && (
+              <LexicalContent
+                node={receivedContent.additionalCurriculum.root}
+              />
+            )}
+          </div>
 
-        {receivedContent.additionalCurriculum && (
-          <LexicalContent node={receivedContent.additionalCurriculum.root} />
-        )}
+          <div id={PROGRAM_REVIEW_ID} className="flex w-full flex-col">
+            <ProgramBestReviewSection
+              reviews={receivedContent.liveReview}
+              type="live"
+            />
+            {receivedContent.blogReview ? (
+              <ProgramDetailBlogReviewSection
+                review={receivedContent.blogReview}
+                programType="live"
+              />
+            ) : null}
+          </div>
 
-        {receivedContent.blogReview ? (
-          <ProgramDetailBlogReviewSection
-            review={receivedContent.blogReview}
-            programType="live"
-          />
-        ) : null}
-
-        <section>
-          <LiveFaq />
-        </section>
+          <section
+            id={PROGRAM_FAQ_ID}
+            className="flex w-full flex-col px-5 md:px-10"
+          >
+            <LiveFaq />
+            <LiveInfoBottom live={live} />
+          </section>
+        </div>
       </div>
     </div>
   );

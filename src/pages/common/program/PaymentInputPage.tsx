@@ -1,16 +1,24 @@
+import { useProgramQuery } from '@/api/program';
 import { usePatchUser } from '@/api/user';
 import { UserInfo } from '@/lib/order';
 import useAuthStore from '@/store/useAuthStore';
-import CouponSection from '@components/common/program/program-detail/apply/section/CouponSection';
+import useProgramStore, {
+  checkInvalidate,
+  initProgramApplicationForm,
+  setProgramApplicationForm,
+} from '@/store/useProgramStore';
+import { isValidEmail } from '@/utils/valid';
+import CouponSection, {
+  CouponSectionProps,
+} from '@components/common/program/program-detail/apply/section/CouponSection';
 import MotiveAnswerSection from '@components/common/program/program-detail/apply/section/MotiveAnswerSection';
 import PriceSection from '@components/common/program/program-detail/apply/section/PriceSection';
 import UserInputSection from '@components/common/program/program-detail/apply/section/UserInputSection';
 import Header from '@components/common/program/program-detail/header/Header';
+import { Duration } from '@components/Duration';
 import { AxiosError } from 'axios';
-import { useCallback, useEffect, useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useProgramQuery } from '../../../api/program';
-import useProgramStore from '../../../store/useProgramStore';
 import OrderProgramInfo from './OrderProgramInfo';
 
 function calculateTotalPrice({
@@ -31,37 +39,17 @@ function calculateTotalPrice({
 
 const PaymentInputPage = () => {
   const navigate = useNavigate();
-  const {
-    data: programApplicationData,
-    checkInvalidate,
-    setProgramApplicationForm,
-    initProgramApplicationForm,
-  } = useProgramStore();
+  const { data: programApplicationData } = useProgramStore();
 
   const { isLoggedIn } = useAuthStore();
 
   useEffect(() => {
-    console.log('programApplicationData', programApplicationData);
-  }, [programApplicationData]);
-
-  useEffect(() => {
     if (checkInvalidate() || !isLoggedIn) {
-      console.log(
-        '잘못된 접근입니다. programApplicationData',
-        programApplicationData,
-      );
-
       alert('잘못된 접근입니다.');
+      navigate('/', { replace: true });
       initProgramApplicationForm();
-      navigate('/');
     }
-  }, [
-    checkInvalidate,
-    initProgramApplicationForm,
-    isLoggedIn,
-    navigate,
-    programApplicationData,
-  ]);
+  }, [isLoggedIn, navigate]);
 
   const {
     query: { data: program },
@@ -79,19 +67,16 @@ const PaymentInputPage = () => {
     initialized: true,
   };
 
-  const setUserInfo = useCallback(
-    (info: UserInfo) => {
-      const { contactEmail, email, name, phoneNumber, question } = info;
-      setProgramApplicationForm({
-        contactEmail,
-        email,
-        name,
-        phone: phoneNumber,
-        question,
-      });
-    },
-    [setProgramApplicationForm],
-  );
+  const setUserInfo = useCallback((info: UserInfo) => {
+    const { contactEmail, email, name, phoneNumber, question } = info;
+    setProgramApplicationForm({
+      contactEmail,
+      email,
+      name,
+      phone: phoneNumber,
+      question,
+    });
+  }, []);
 
   const totalPrice = useMemo(() => {
     const payInfo = {
@@ -113,18 +98,103 @@ const PaymentInputPage = () => {
 
   const patchUserMutation = usePatchUser();
 
+  const setCoupon = useCallback<CouponSectionProps['setCoupon']>(
+    (coupon) => {
+      const data =
+        typeof coupon === 'function'
+          ? coupon({
+              id: programApplicationData.couponId
+                ? Number(programApplicationData.couponId)
+                : null,
+              price: programApplicationData.couponPrice ?? 0,
+            })
+          : coupon;
+
+      const newTotalPrice = calculateTotalPrice({
+        price: programApplicationData.price ?? 0,
+        discount: programApplicationData.discount ?? 0,
+        couponPrice: data.price,
+      });
+
+      setProgramApplicationForm({
+        couponId: String(data.id),
+        couponPrice: data.price,
+        totalPrice: newTotalPrice,
+      });
+    },
+    [
+      programApplicationData.couponId,
+      programApplicationData.couponPrice,
+      programApplicationData.discount,
+      programApplicationData.price,
+    ],
+  );
+
+  const [allowNavigation, setAllowNavigation] = useState(false);
+  const [nextPath, setNextPath] = useState('');
+
+  useEffect(() => {
+    // 페이지 이탈 시 실행될 함수
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      if (!allowNavigation) {
+        e.preventDefault();
+        e.returnValue = '';
+        return '';
+      }
+    };
+
+    // 이벤트 리스너 등록
+    window.addEventListener('beforeunload', handleBeforeUnload);
+
+    return () => {
+      // 컴포넌트 언마운트 시 이벤트 리스너 제거
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  }, [allowNavigation]);
+
+  // allowNavigation이 true로 변경되면 navigation 수행
+  useEffect(() => {
+    if (allowNavigation && nextPath) {
+      navigate(nextPath);
+      setAllowNavigation(false);
+    }
+  }, [allowNavigation, nextPath, navigate]);
+
+  const handleSafeNavigation = useCallback((path: string) => {
+    setNextPath(path);
+    setAllowNavigation(true);
+  }, []);
+
   const onPaymentClick = useCallback(async () => {
     try {
       await patchUserMutation.mutateAsync({
         contactEmail: programApplicationData.contactEmail,
       });
-      navigate('/payment');
+
+      if (totalPrice !== 0) {
+        handleSafeNavigation('/payment');
+      } else {
+        handleSafeNavigation(
+          `/order/result?orderId=${programApplicationData.programOrderId}`,
+        );
+      }
     } catch (e) {
       if (e instanceof AxiosError) {
         alert(e.response?.data?.message);
       }
     }
-  }, [navigate, patchUserMutation, programApplicationData.contactEmail]);
+  }, [
+    handleSafeNavigation,
+    patchUserMutation,
+    programApplicationData.contactEmail,
+    programApplicationData.programOrderId,
+    totalPrice,
+  ]);
+
+  /** 쿠폰 적용이 아니라 애초부터 무료인 경우 다르게 보여주기? **/
+  const buttonText = programApplicationData.isFree
+    ? '0원 결제하기'
+    : '결제하기';
 
   return (
     <div
@@ -135,7 +205,7 @@ const PaymentInputPage = () => {
 
       <hr className="my-6 block h-2 border-none bg-neutral-95" />
 
-      <div className="mx-5 flex h-full flex-col gap-3">
+      <div className="mx-5">
         <OrderProgramInfo
           endDate={program?.endDate?.toISOString()}
           progressType={programApplicationData.progressType}
@@ -144,9 +214,18 @@ const PaymentInputPage = () => {
           title={program?.title}
         />
 
-        <div className="my-10">마감까지 ~분 남았어요.</div>
+        <div className="-mx-5 mb-10 mt-8 flex items-center justify-center gap-2 bg-primary-10 px-2.5 py-5 text-xsmall14 lg:rounded-sm">
+          <span>마감까지</span>
+          {program?.endDate ? (
+            <Duration
+              deadline={program.endDate}
+              numberBoxClassName="text-xsmall14 bg-white text-primary"
+            />
+          ) : null}
+          <span>남았어요!</span>
+        </div>
 
-        <p className="text-xsmall16 font-semibold text-neutral-0">
+        <p className="my-3 text-xsmall16 font-semibold text-neutral-0">
           신청 폼을 모두 입력해주세요.
         </p>
         <div className="flex flex-col gap-2.5">
@@ -171,31 +250,11 @@ const PaymentInputPage = () => {
       <hr className="my-10 block h-2 border-none bg-neutral-95" />
 
       {!programApplicationData.isFree && (
-        <div className="mx-5 flex flex-col gap-y-6">
+        <div className="mx-5 mb-10 flex flex-col gap-y-6">
           <div className="font-semibold text-neutral-0">결제 정보</div>
           <div className="flex flex-col gap-y-5">
             <CouponSection
-              setCoupon={(coupon) => {
-                const data =
-                  typeof coupon === 'function'
-                    ? coupon({
-                        id: programApplicationData.couponId
-                          ? Number(programApplicationData.couponId)
-                          : null,
-                        price: programApplicationData.couponPrice ?? 0,
-                      })
-                    : coupon;
-
-                setProgramApplicationForm({
-                  couponId: String(data.id),
-                  couponPrice: data.price,
-                  totalPrice: calculateTotalPrice({
-                    price: programApplicationData.price ?? 0,
-                    discount: programApplicationData.discount ?? 0,
-                    couponPrice: data.price,
-                  }),
-                });
-              }}
+              setCoupon={setCoupon}
               programType={programApplicationData.programType ?? 'live'}
             />
 
@@ -222,12 +281,27 @@ const PaymentInputPage = () => {
         </div>
       )}
 
-      <div className="fixed bottom-0 left-0 right-0 block rounded-t-lg bg-white px-5 pb-[calc(env(safe-area-inset-bottom)+10px);] pt-3 shadow-05 sm:hidden">
+      <div className="fixed bottom-0 left-0 right-0 block rounded-t-lg bg-white px-5 pb-[calc(env(safe-area-inset-bottom)+10px);] pt-3 shadow-05 md:hidden">
         <button
-          className="next_button flex w-full flex-1 justify-center rounded-md border-2 border-primary bg-primary px-6 py-3 text-lg font-medium text-neutral-100 transition hover:opacity-90 disabled:border-neutral-70 disabled:bg-neutral-70"
+          className="next_button flex w-full flex-1 justify-center rounded-md border-2 border-primary bg-primary px-6 py-3 text-lg font-medium text-neutral-100 transition hover:opacity-90 disabled:border-neutral-70 disabled:bg-neutral-70 hover:disabled:opacity-100"
           onClick={onPaymentClick}
+          disabled={
+            !userInfo.initialized || !isValidEmail(userInfo.contactEmail)
+          }
         >
-          결제하기
+          {buttonText}
+        </button>
+      </div>
+
+      <div className="mx-5 hidden md:block">
+        <button
+          className="next_button block w-full justify-center rounded-md border-2 border-primary bg-primary px-6 py-3 text-lg font-medium text-neutral-100 transition hover:opacity-90 disabled:border-neutral-70 disabled:bg-neutral-70 hover:disabled:opacity-100"
+          onClick={onPaymentClick}
+          disabled={
+            !userInfo.initialized || !isValidEmail(userInfo.contactEmail)
+          }
+        >
+          {buttonText}
         </button>
       </div>
     </div>

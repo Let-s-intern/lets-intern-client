@@ -242,3 +242,27 @@ export const applicationResultType = z.object({
 });
 
 export type ApplicationResult = z.infer<typeof applicationResultType>;
+
+export const DiscountCardSchema = z.object({
+  issuerCode: z.string(),
+  discountAmount: z.number(),
+  balance: z.number(),
+  discountCode: z.string(),
+  dueDate: z.string(),
+  minimumPaymentAmount: z.number(),
+  maximumPaymentAmount: z.number(),
+  currency: z.string(),
+});
+
+export const InterestFreeCardSchema = z.object({
+  cardCompany: z.string(),
+  issuerCode: z.string(),
+  minimumPaymentAmount: z.number(),
+  dueDate: z.string(),
+  installmentFreeMonths: z.array(z.number()),
+});
+
+export const CardPromotionSchema = z.object({
+  discountCards: z.array(DiscountCardSchema),
+  interestFreeCards: z.array(InterestFreeCardSchema),
+});

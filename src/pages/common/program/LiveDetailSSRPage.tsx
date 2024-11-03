@@ -5,12 +5,17 @@ import { isDeprecatedProgram } from '@/lib/isDeprecatedProgram';
 import { generateOrderId, getPayInfo, UserInfo } from '@/lib/order';
 import useAuthStore from '@/store/useAuthStore';
 import useProgramStore from '@/store/useProgramStore';
-import { getProgramPathname } from '@/utils/url';
+import {
+  getLiveTitle,
+  getProgramPathname,
+  getUniversalLink,
+} from '@/utils/url';
+import CommonHelmet from '@components/common/CommonHelmet';
 import LiveView from '@components/LiveView';
 import { useMediaQuery } from '@mui/material';
 import { useCallback, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { ApplyCTA, DesktopApplyCTA } from './ChallengeDetailSSRPage';
+import { DesktopApplyCTA, MobileApplyCTA } from './ChallengeDetailSSRPage';
 
 const LiveDetailSSRPage = () => {
   const navigate = useNavigate();
@@ -73,9 +78,8 @@ const LiveDetailSSRPage = () => {
       return;
     }
 
-    // TODO: 라이브는 직접 받아와야 함. 챌린지는 none임.
-
-    const progressType: 'none' | 'ALL' | 'ONLINE' | 'OFFLINE' = 'none';
+    const progressType: 'none' | 'ALL' | 'ONLINE' | 'OFFLINE' =
+      live.progressType ?? 'none';
 
     const userInfo: UserInfo = {
       name: application?.name ?? '',
@@ -118,18 +122,15 @@ const LiveDetailSSRPage = () => {
       isFree,
     });
 
-    if (isFree) {
-      navigate(`/order/result?orderId=${orderId}`);
-    } else {
-      navigate(`/payment-input`);
-    }
+    navigate(`/payment-input`);
   }, [
-    application,
-    live.title,
-    id,
     isLoggedIn,
-    navigate,
+    application,
+    live.progressType,
+    live.title,
     setProgramApplicationForm,
+    id,
+    navigate,
   ]);
 
   if (isDeprecated || isLoading) {
@@ -138,10 +139,22 @@ const LiveDetailSSRPage = () => {
 
   return (
     <>
+      <CommonHelmet
+        title={getLiveTitle(live)}
+        url={getUniversalLink(
+          getProgramPathname({
+            programType: 'live',
+            title: live.title,
+            id,
+          }),
+        )}
+        description={live.shortDesc}
+      />
+
       <LiveView live={live} />
 
       {isMobile ? (
-        <ApplyCTA
+        <MobileApplyCTA
           program={live}
           onApplyClick={onApplyClick}
           isAlreadyApplied={isAlreadyApplied}

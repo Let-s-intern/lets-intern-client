@@ -76,7 +76,7 @@ export const formatFullDateTime = (date: Dayjs | null, breakTime?: boolean) => {
 };
 
 export const formatDate = (date: Dayjs | null) => {
-  return dayjs(date).format('YYYY년 MM월 DD일');
+  return dayjs(date).format('YYYY년 MM월 DD일 (ddd)');
 };
 
 export const formatTime = (date: Dayjs | null) => {

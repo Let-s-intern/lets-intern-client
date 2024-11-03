@@ -25,6 +25,7 @@ import ChallengeCurriculumEditor from './program/ChallengeCurriculum';
 import ChallengePointEditor from './program/ChallengePoint';
 import ChallengePrice from './program/ChallengePrice';
 import FaqSection from './program/FaqSection';
+import ProgramBestReview from './program/ProgramBestReview';
 import ProgramBlogReviewEditor from './program/ProgramBlogReviewEditor';
 import ProgramSchedule from './program/ProgramSchedule';
 
@@ -37,7 +38,7 @@ const ChallengeEdit: React.FC = () => {
       list: [],
     },
     blogReview: { list: [] },
-    challengeReview: '',
+    challengeReview: [],
   });
 
   const { mutateAsync: patchChallenge } = usePatchChallengeMutation();
@@ -126,7 +127,20 @@ const ChallengeEdit: React.FC = () => {
   return (
     <div className="mx-3 mb-40 mt-3">
       <Header>
-        <Heading>챌린지 생성</Heading>
+        <Heading>챌린지 수정</Heading>
+        <div className="flex items-center gap-3">
+          <Button
+            variant="outlined"
+            onClick={async () => {
+              await window.navigator.clipboard.writeText(
+                JSON.stringify(challenge),
+              );
+              alert('복사되었습니다.');
+            }}
+          >
+            Export (복사)
+          </Button>
+        </div>
       </Header>
 
       <Heading2>기본 정보</Heading2>
@@ -174,6 +188,13 @@ const ChallengeEdit: React.FC = () => {
       <ChallengeCurriculumEditor
         curriculum={content.curriculum}
         setContent={setContent}
+      />
+
+      <ProgramBestReview
+        reviewFields={content.challengeReview ?? []}
+        setReviewFields={(reviewFields) =>
+          setContent((prev) => ({ ...prev, challengeReview: reviewFields }))
+        }
       />
 
       <ProgramBlogReviewEditor
