@@ -22,7 +22,6 @@ import {
   SerializedEditorState,
 } from 'lexical';
 import { useCallback, useEffect } from 'react';
-import { isDevPlayground } from './appSettings';
 import { FlashMessageContext } from './context/FlashMessageContext';
 import { SettingsContext, useSettings } from './context/SettingsContext';
 import { SharedAutocompleteContext } from './context/SharedAutocompleteContext';
@@ -30,12 +29,8 @@ import { SharedHistoryContext } from './context/SharedHistoryContext';
 import Editor from './Editor';
 import './index.css';
 import nodes from './nodes';
-import DocsPlugin from './plugins/DocsPlugin';
-import PasteLogPlugin from './plugins/PasteLogPlugin';
 import { TableContext } from './plugins/TablePlugin';
-import TestRecorderPlugin from './plugins/TestRecorderPlugin';
 import TypingPerfPlugin from './plugins/TypingPerfPlugin';
-import Settings from './Settings';
 import setupEnv from './setupEnv';
 import PlaygroundEditorTheme from './themes/PlaygroundEditorTheme';
 
@@ -228,10 +223,10 @@ function App({
             <div className="editor-shell">
               <Editor />
             </div>
-            <Settings />
-            {isDevPlayground ? <DocsPlugin /> : null}
-            {isDevPlayground ? <PasteLogPlugin /> : null}
-            {isDevPlayground ? <TestRecorderPlugin /> : null}
+            {/* <Settings /> */}
+            {/* {isDevPlayground ? <DocsPlugin /> : null} */}
+            {/* {isDevPlayground ? <PasteLogPlugin /> : null} */}
+            {/* {isDevPlayground ? <TestRecorderPlugin /> : null} */}
             {measureTypingPerf ? <TypingPerfPlugin /> : null}
             <OnChangePlugin onChange={handleChange} />
           </SharedAutocompleteContext>
