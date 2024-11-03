@@ -104,7 +104,7 @@ const ChallengeView: React.FC<{
         <div className="flex w-full flex-col items-center overflow-x-hidden">
           <div
             id={PROGRAM_INTRO_ID}
-            className="flex w-full max-w-[1200px] flex-col px-5 md:px-10"
+            className="challenge_program flex w-full max-w-[1200px] flex-col px-5 md:px-10"
           >
             <section className="py-16 md:pb-44 md:pt-52">
               <SuperTitle className="mb-6 text-neutral-45 lg:mb-10">
@@ -148,7 +148,7 @@ const ChallengeView: React.FC<{
           receivedContent.curriculum.length > 0 ? (
             <div
               id={PROGRAM_CURRICULUM_ID}
-              className="flex w-full flex-col items-center bg-neutral-95"
+              className="challenge_curriculum flex w-full flex-col items-center bg-neutral-95"
             >
               <ChallengeCurriculum
                 curriculum={receivedContent.curriculum}
@@ -159,7 +159,7 @@ const ChallengeView: React.FC<{
 
           <div
             id={CHALLENGE_DIFFERENT_ID}
-            className="flex w-full max-w-[1200px] flex-col px-5 md:px-10"
+            className="challenge_difference flex w-full max-w-[1200px] flex-col px-5 md:px-10"
           >
             <ChallengeDifferent colors={colors} />
             <ChallengeBrand colors={colors} />
@@ -167,7 +167,7 @@ const ChallengeView: React.FC<{
 
           <div
             id={PROGRAM_REVIEW_ID}
-            className="flex w-full flex-col items-center"
+            className="challenge_review flex w-full flex-col items-center"
           >
             <div className="flex w-full flex-col items-center bg-neutral-95">
               <ProgramBestReviewSection
@@ -186,7 +186,7 @@ const ChallengeView: React.FC<{
 
           <div
             id={PROGRAM_FAQ_ID}
-            className="flex w-full max-w-[1200px] flex-col px-5 md:px-10"
+            className="challenge_faq flex w-full max-w-[1200px] flex-col px-5 md:px-10"
           >
             <ChallengeFaq colors={colors} />
             <ChallengeInfoBottom challenge={challenge} colors={colors} />

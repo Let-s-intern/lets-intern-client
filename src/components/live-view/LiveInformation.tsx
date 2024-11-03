@@ -1,5 +1,6 @@
 import BubbleTail from '@/assets/bubble_tail.svg?react';
 import ChevronDownIcon from '@/assets/icons/chevron-down.svg?react';
+import { twMerge } from '@/lib/twMerge';
 import LexicalContent from '@components/common/blog/LexicalContent';
 import { SerializedEditorState } from 'lexical';
 
@@ -11,6 +12,7 @@ interface LiveInformationProps {
   }[];
   editorContent?: SerializedEditorState;
   id?: string;
+  className?: string;
 }
 
 const LiveInformation = ({
@@ -18,13 +20,17 @@ const LiveInformation = ({
   reasonFields,
   editorContent,
   id,
+  className,
 }: LiveInformationProps) => {
   if (!recommendFields && !reasonFields && !editorContent) return;
 
   return (
     <div
       id={id}
-      className="flex w-full flex-col gap-y-5 md:items-center md:gap-y-[50px]"
+      className={twMerge(
+        'flex w-full flex-col gap-y-5 md:items-center md:gap-y-[50px]',
+        className,
+      )}
     >
       <p className="text-xsmall14 font-semibold text-neutral-45 md:text-small20">
         클래스 소개

@@ -31,6 +31,7 @@ interface LiveBasicProps<T extends CreateLiveReq | UpdateLiveReq> {
     | 'shortDesc'
     | 'participationCount'
     | 'progressType'
+    | 'place'
   >;
   setInput: React.Dispatch<React.SetStateAction<Omit<T, 'desc'>>>;
 }
@@ -114,6 +115,15 @@ export default function LiveBasic<T extends CreateLiveReq | UpdateLiveReq>({
           ))}
         </Select>
       </FormControl>
+      <Input
+        label="장소 (오프라인일 경우)"
+        type="text"
+        name="place"
+        size="small"
+        defaultValue={defaultValue?.place}
+        placeholder="장소를 입력해주세요"
+        onChange={onChange}
+      />
       <FormControl size="small">
         <InputLabel id="job">직무</InputLabel>
         <Select

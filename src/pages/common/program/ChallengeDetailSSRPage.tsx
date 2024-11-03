@@ -207,11 +207,7 @@ export function MobileApplyCTA({
         {isOutOfDate ? (
           <NotiButton text={'출시알림신청'} className="early_button" />
         ) : isAlreadyApplied ? (
-          <FilledButton
-            caption="이미 신청이 완료되었습니다"
-            disabled={true}
-            className="apply_button"
-          />
+          <FilledButton caption="이미 신청이 완료되었습니다" disabled={true} />
         ) : (
           <>
             <div>
@@ -226,7 +222,7 @@ export function MobileApplyCTA({
                 <span className="text-xxsmall12 text-neutral-80">남음</span>
               </div>
             </div>
-            <GradientButton onClick={onApplyClick}>
+            <GradientButton onClick={onApplyClick} className="apply_button">
               지금 바로 신청
             </GradientButton>
           </>
@@ -258,11 +254,7 @@ export function DesktopApplyCTA({
         {isOutOfDate ? (
           <NotiButton text={'출시알림신청'} className="early_button" />
         ) : isAlreadyApplied ? (
-          <FilledButton
-            caption="이미 신청이 완료되었습니다"
-            disabled={true}
-            className="apply_button"
-          />
+          <FilledButton caption="이미 신청이 완료되었습니다" disabled={true} />
         ) : (
           <>
             <div className="flex items-center gap-2">
@@ -272,7 +264,7 @@ export function DesktopApplyCTA({
               />
               <span className="text-xxsmall12 text-neutral-80">남음</span>
             </div>
-            <GradientButton onClick={onApplyClick}>
+            <GradientButton onClick={onApplyClick} className="apply_button">
               지금 바로 신청
             </GradientButton>
           </>

@@ -59,9 +59,14 @@ const LiveView: React.FC<{ live: LiveIdSchema; isPreview?: boolean }> = ({
         />
         <div className="flex w-full flex-col items-center">
           <div className="flex w-full max-w-[1200px] flex-col px-5 md:px-10">
-            <LiveMentor mentor={mentor} id={LIVE_MENTOR_INTRO_ID} />
+            <LiveMentor
+              mentor={mentor}
+              id={LIVE_MENTOR_INTRO_ID}
+              className="live_mentor"
+            />
             <LiveInformation
               id={PROGRAM_INTRO_ID}
+              className="live_class"
               recommendFields={receivedContent.recommend}
               reasonFields={receivedContent.reason}
               editorContent={receivedContent.mainDescription}
@@ -70,7 +75,7 @@ const LiveView: React.FC<{ live: LiveIdSchema; isPreview?: boolean }> = ({
 
           <div
             id={PROGRAM_CURRICULUM_ID}
-            className="flex w-full max-w-[1200px] flex-col px-5 pb-16 md:px-10"
+            className="live_curriculum flex w-full max-w-[1200px] flex-col px-5 pb-16 md:px-10"
           >
             <LiveCurriculum
               curriculum={receivedContent.curriculum}
@@ -88,7 +93,7 @@ const LiveView: React.FC<{ live: LiveIdSchema; isPreview?: boolean }> = ({
 
           <div
             id={PROGRAM_REVIEW_ID}
-            className="flex w-full flex-col items-center"
+            className="live_review flex w-full flex-col items-center"
           >
             <div className="flex w-full flex-col items-center bg-neutral-95">
               <ProgramBestReviewSection
@@ -106,7 +111,7 @@ const LiveView: React.FC<{ live: LiveIdSchema; isPreview?: boolean }> = ({
 
           <section
             id={PROGRAM_FAQ_ID}
-            className="flex w-full max-w-[1200px] flex-col px-5 md:px-10"
+            className="live_faq flex w-full max-w-[1200px] flex-col px-5 md:px-10"
           >
             <LiveFaq />
             <LiveInfoBottom live={live} />
