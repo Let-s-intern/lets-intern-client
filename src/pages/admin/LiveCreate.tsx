@@ -197,6 +197,22 @@ const LiveCreate: React.FC = () => {
                 endDate: dayjs.tz(input.endDate, 'Asia/Seoul'),
                 startDate: dayjs.tz(input.startDate, 'Asia/Seoul'),
               }}
+              onDeadlineChange={(value) => {
+                if (!value) {
+                  return;
+                }
+
+                setInput((prev) => ({
+                  ...prev,
+                  priceInfo: {
+                    ...prev.priceInfo,
+                    priceInfo: {
+                      ...prev.priceInfo.priceInfo,
+                      deadline: value.format('YYYY-MM-DDTHH:mm'),
+                    },
+                  },
+                }));
+              }}
               setInput={setInput}
             />
             <FormControlLabel

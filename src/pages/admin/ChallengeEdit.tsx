@@ -162,7 +162,62 @@ const ChallengeEdit: React.FC = () => {
             setInput={setInput}
           />
           {/* 일정 */}
-          <ProgramSchedule defaultValue={challenge} setInput={setInput} />
+          <ProgramSchedule
+            defaultValue={challenge}
+            setInput={setInput}
+            onDeadlineChange={(value) => {
+              if (!value) {
+                return;
+              }
+
+              // TODO: 코드 정리
+              setInput((prev) => ({
+                ...prev,
+                priceInfo: prev.priceInfo
+                  ? prev.priceInfo.map((priceInfo, index) => ({
+                      ...challenge.priceInfo[index],
+                      ...priceInfo,
+                      priceInfo: {
+                        discount:
+                          challenge.priceInfo[index]?.discount ??
+                          priceInfo.priceInfo.discount,
+                        price:
+                          challenge.priceInfo[index]?.price ??
+                          priceInfo.priceInfo.price,
+                        accountNumber:
+                          challenge.priceInfo[index]?.accountNumber ??
+                          priceInfo.priceInfo.accountNumber,
+                        accountType:
+                          challenge.priceInfo[index]?.accountType ??
+                          priceInfo.priceInfo.accountType,
+                        deadline: value.format('YYYY-MM-DDTHH:mm'),
+                      },
+                    }))
+                  : [
+                      {
+                        challengeParticipationType:
+                          challenge.priceInfo[0].challengeParticipationType ??
+                          'LIVE',
+                        challengePriceType:
+                          challenge.priceInfo[0].challengePriceType ?? 'CHARGE',
+                        challengeUserType:
+                          challenge.priceInfo[0].challengeUserType ?? 'BASIC',
+                        charge: challenge.priceInfo[0].price ?? 0,
+                        priceInfo: {
+                          discount: challenge.priceInfo[0].discount ?? 0,
+                          price: challenge.priceInfo[0].price ?? 0,
+                          deadline: value.format('YYYY-MM-DDTHH:mm'),
+                          accountNumber:
+                            challenge.priceInfo[0].accountNumber ?? '',
+                          accountType:
+                            challenge.priceInfo[0].accountType ?? 'HANA',
+                        },
+                        refund: challenge.priceInfo[0].refund ?? 0,
+                      },
+                    ],
+              }));
+            }}
+          />
         </div>
       </section>
 

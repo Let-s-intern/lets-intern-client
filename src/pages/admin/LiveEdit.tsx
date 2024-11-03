@@ -25,7 +25,7 @@ import LiveBasic from './program/LiveBasic';
 import LiveCurriculum from './program/LiveCurriculum';
 import LiveInformation from './program/LiveInformation';
 import LiveMentor from './program/LiveMentor';
-import LivePrice from './program/LivePrice';
+import LivePrice, { initialLivePrice } from './program/LivePrice';
 import ProgramBestReview from './program/ProgramBestReview';
 import ProgramBlogReviewEditor from './program/ProgramBlogReviewEditor';
 import ProgramSchedule from './program/ProgramSchedule';
@@ -158,7 +158,28 @@ const LiveEdit: React.FC = () => {
         <div className="grid w-full grid-cols-2 gap-3">
           <div className="flex flex-col items-start gap-6">
             <LivePrice defaultValue={live.priceInfo} setInput={setInput} />
-            <ProgramSchedule defaultValue={live} setInput={setInput} />
+            <ProgramSchedule
+              defaultValue={live}
+              setInput={setInput}
+              onDeadlineChange={(value) => {
+                if (!value) {
+                  return;
+                }
+
+                setInput((prev) => ({
+                  ...prev,
+                  priceInfo: {
+                    ...initialLivePrice,
+                    ...prev.priceInfo,
+                    priceInfo: {
+                      ...initialLivePrice.priceInfo,
+                      ...prev.priceInfo?.priceInfo,
+                      deadline: value.format('YYYY-MM-DDTHH:mm'),
+                    },
+                  },
+                }));
+              }}
+            />
             <FormControlLabel
               control={<Checkbox defaultChecked={live.vod ?? true} />}
               label="VOD 제공 여부"
