@@ -13,7 +13,7 @@ const BasicInfoBottomRow = ({
 }: BasicInfoBottomRowProps) => {
   return (
     <div className="flex w-full flex-1 flex-col gap-y-[14px] bg-neutral-95 px-6 py-5">
-      <div className="flex shrink-0 items-center gap-2 text-challenge">
+      <div className="flex shrink-0 items-center gap-2">
         {icon}
         <span className="text-xsmall16 font-semibold text-neutral-0">
           {title}

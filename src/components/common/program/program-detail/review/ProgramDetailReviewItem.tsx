@@ -4,11 +4,13 @@ import { ContentReviewType } from '@/types/interface';
 interface ProgramDetailReviewItemProps {
   type: 'challenge' | 'live';
   review: ContentReviewType;
+  color: string;
 }
 
 const ProgramDetailReviewItem = ({
   type,
   review,
+  color,
 }: ProgramDetailReviewItemProps) => {
   const maskingName = (name: string) => {
     if (name === '익명') return name;
@@ -21,21 +23,19 @@ const ProgramDetailReviewItem = ({
   return (
     <div className="flex h-[340px] w-[300px] shrink-0 flex-col md:h-[366px] md:w-[371px]">
       <div
-        className={`flex w-full rounded-t-[10px] px-[22px] py-4 md:text-small18 ${type === 'challenge' ? 'bg-challenge' : 'bg-primary'} text-white`}
+        className={`flex w-full rounded-t-[10px] px-[22px] py-4 text-white md:text-small18`}
+        style={{ backgroundColor: color }}
       >
         {`${review.passedState} 합격`}
       </div>
       <div className="flex h-[152px] w-full flex-col gap-y-3 rounded-b-[10px] border-[1.5px] border-neutral-85 bg-white px-[22px] pb-9 pt-7 md:h-[160px]">
         <div
-          className={`flex w-fit items-center rounded-xs px-2 py-1.5 ${type === 'challenge' ? 'bg-[#EEFAFF]' : 'bg-primary-10'}`}
+          className={`flex w-fit items-center rounded-xs px-2 py-1.5 ${type === 'challenge' ? 'bg-[#F3F4FF]' : 'bg-primary-10'}`}
         >
           {Array(5)
             .fill(0)
             .map((_, index) => (
-              <StarIcon
-                key={index}
-                className={`h-4 w-4 ${type === 'challenge' ? 'text-challenge' : 'text-primary'}`}
-              />
+              <StarIcon key={index} className={`h-4 w-4`} style={{ color }} />
             ))}
         </div>
         <p className="line-clamp-2 break-keep text-xsmall16 font-bold md:text-small20">

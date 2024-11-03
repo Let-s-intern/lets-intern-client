@@ -28,7 +28,7 @@ const LiveInformation = ({
     <div
       id={id}
       className={twMerge(
-        'flex w-full flex-col gap-y-5 py-8 md:items-center md:gap-y-[50px] md:py-10',
+        'flex w-full flex-col gap-y-5 md:items-center md:gap-y-[50px]',
         className,
       )}
     >

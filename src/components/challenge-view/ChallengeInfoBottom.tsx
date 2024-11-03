@@ -6,6 +6,7 @@ import LaptopIcon from '@/assets/icons/laptop.svg?react';
 import MentorIcon from '@/assets/icons/mentor.svg?react';
 import { ChallengeIdSchema } from '@/schema';
 import { formatFullDateTime } from '@/utils/formatDateString';
+import { ChallengeColor } from '@components/ChallengeView';
 import BasicInfoBottomRow from '@components/common/program/program-detail/basicInfo/BasicInfoBottomRow';
 import BasicInfoRow from '@components/common/program/program-detail/basicInfo/BasicInfoRow';
 import { useMediaQuery } from '@mui/material';
@@ -21,8 +22,10 @@ export const getDiscountPercent = (
 
 const ChallengeInfoBottom = ({
   challenge,
+  colors,
 }: {
   challenge: ChallengeIdSchema;
+  colors: ChallengeColor;
 }) => {
   const isMobile = useMediaQuery('(max-width: 768px)');
   const { data, isLoading } = useGetTossCardPromotion();
@@ -58,14 +61,17 @@ const ChallengeInfoBottom = ({
       : null;
 
   return (
-    <div className="flex w-full flex-col gap-y-8 py-8 md:gap-y-20">
+    <div className="flex w-full flex-col gap-y-8 py-8 md:gap-y-20 md:pb-32 md:pt-52">
       <div className="w-full text-small20 font-bold text-neutral-0 md:text-center">
         모집개요
       </div>
-      <div className="flex w-full flex-col gap-3 md:flex-row">
+      <div
+        className="flex w-full flex-col gap-3 md:flex-row"
+        style={{ color: colors.primary }}
+      >
         {isMobile ? (
           <div className="flex flex-1 items-center justify-center rounded-md bg-neutral-95 px-6 py-5">
-            <div className="flex w-full flex-col gap-y-5 text-challenge">
+            <div className="flex w-full flex-col gap-y-5">
               <BasicInfoRow
                 icon={<CalendarIcon />}
                 title="진행 기간"
@@ -89,7 +95,10 @@ const ChallengeInfoBottom = ({
             </div>
           </div>
         ) : (
-          <div className="flex flex-1 flex-col gap-y-4">
+          <div
+            className="flex flex-1 flex-col gap-y-4"
+            style={{ color: colors.primary }}
+          >
             <BasicInfoBottomRow
               icon={<CalendarIcon />}
               title="진행 기간"
@@ -115,18 +124,12 @@ const ChallengeInfoBottom = ({
         <div className="flex flex-1 flex-col items-center justify-center gap-y-5 rounded-md bg-neutral-95 px-6 pb-9 pt-5">
           <div className="flex w-full flex-col gap-y-6">
             <div className="flex w-full flex-col gap-y-[14px]">
-              <p className="text-small18 font-bold">
-                이력서 & 자기소개서 2주 완성 챌린지
-              </p>
+              <p className="text-small18 font-bold">{challenge.title}</p>
               <div className="flex flex-col gap-y-0.5 text-xsmall14">
                 {priceReason.map((reason, index) => (
                   <div key={index} className="flex items-center gap-x-0.5">
-                    <ChevronDown
-                      className="text-neutral-0"
-                      width={24}
-                      height={24}
-                    />
-                    <p className="whitespace-pre">{reason}</p>
+                    <ChevronDown width={24} height={24} />
+                    <p className="whitespace-pre text-black">{reason}</p>
                   </div>
                 ))}
               </div>
@@ -141,7 +144,10 @@ const ChallengeInfoBottom = ({
                     </span>
                   </div>
                   <div className="flex w-full items-center justify-between gap-x-4 text-xsmall16">
-                    <span className="font-bold text-challenge">
+                    <span
+                      className="font-bold"
+                      style={{ color: colors.primary }}
+                    >
                       {getDiscountPercent(
                         challenge.priceInfo[0].price || 0,
                         challenge.priceInfo[0].discount || 0,
@@ -177,7 +183,7 @@ const ChallengeInfoBottom = ({
                 </p>
               </div>
               <div className="flex w-full flex-col items-end gap-y-2">
-                <div className="text-challenge">
+                <div style={{ color: colors.primary }}>
                   <span className="mr-1 text-medium22 font-semibold">월</span>
                   <span className="text-xxlarge32 font-bold">
                     {monthlyPrice

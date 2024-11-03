@@ -17,7 +17,7 @@ const ProgramDetailBlogReviewSection = ({
   programType: ProgramType;
 }) => {
   return (
-    <div className="px-5 py-8 md:px-10 md:py-20">
+    <div className="w-full max-w-[1200px] px-5 pb-8 pt-16 md:px-10 md:py-36">
       <div className="relative mb-3 flex items-start justify-between md:mb-7 md:block">
         <Heading2 className="text-small20 md:text-center md:text-xlarge28">
           {programType === 'live' ? '클래스 ' : ''}참여자들의
