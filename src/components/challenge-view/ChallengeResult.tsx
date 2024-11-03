@@ -45,19 +45,19 @@ const CAREER_START_CONTENT = [
   {
     beforeImg: '/images/career-start-before1.png',
     beforeCaption: '매번 마감 기한 전까지 소재 고민하기',
-    afterImg: '/images/career-start-after1.png',
+    afterImg: '/images/career-start-after1.jpg',
     afterCaption: '경험 서랍에서 바로 직무 FIT한 소재 뽑기',
   },
   {
     beforeImg: '/images/career-start-before2.png',
     beforeCaption: '주변 말만 듣고 직무 고르기',
-    afterImg: '/images/career-start-after2.png',
+    afterImg: '/images/career-start-after2.jpg',
     afterCaption: '업무부터 역량까지 직무의 A to Z를 직접 찾고 결정하기',
   },
   {
     beforeImg: '/images/career-start-before3.png',
     beforeCaption: '양으로 승부 보는 이력서',
-    afterImg: '/images/career-start-after3.png',
+    afterImg: '/images/career-start-after3.jpg',
     afterCaption: '핵심 역량과 매력만 깔끔하게 간추린 이력서',
   },
 ];
@@ -93,7 +93,7 @@ function ChallengeResult({ colors, challengeType }: ChallengeResultProps) {
       </SuperTitle>
       <Heading2 className="mb-10 md:mb-20">{title.join('\n')}</Heading2>
 
-      <div className="z-10 -mx-5 overflow-x-auto pl-5 sm:mx-0 sm:pl-0">
+      <div className="custom-scrollbar z-10 -mx-5 overflow-x-auto px-5 sm:px-0">
         <div className="flex min-w-fit flex-col gap-8 md:gap-16">
           {contents.map((content) => (
             <div
