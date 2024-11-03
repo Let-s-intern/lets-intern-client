@@ -48,7 +48,7 @@ type Point = {
 
 function LiveIntro() {
   return (
-    <section className="py-20">
+    <section className="pb-16 md:py-32">
       <SuperTitle className="mb-1 text-primary">{superTitle[0]}</SuperTitle>
       <Heading2>{title[0]}</Heading2>
       <div className="mb-20 mt-10 flex flex-col items-center md:mb-48 md:mt-20">

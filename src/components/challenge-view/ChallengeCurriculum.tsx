@@ -26,7 +26,7 @@ function ChallengeCurriculum({ curriculum, colors }: ChallengeCurriculumProps) {
   }
 
   return (
-    <section className="-mx-5 bg-neutral-95 px-5 py-16 md:-mx-10 md:px-10 md:pb-36 md:pt-28 xl:-mx-52 xl:px-52">
+    <section className="w-full max-w-[1200px] px-5 py-16 md:px-10 md:pb-36 md:pt-28">
       <SuperTitle className="mb-6 text-neutral-45 md:mb-12">
         커리큘럼
       </SuperTitle>

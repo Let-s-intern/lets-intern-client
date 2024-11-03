@@ -199,6 +199,22 @@ const ChallengeCreate: React.FC = () => {
               startDate: dayjs.tz(input.startDate, 'Asia/Seoul'),
             }}
             setInput={setInput}
+            onDeadlineChange={(value) => {
+              if (!value) {
+                return;
+              }
+
+              setInput((prev) => ({
+                ...prev,
+                priceInfo: prev.priceInfo.map((priceInfo) => ({
+                  ...priceInfo,
+                  priceInfo: {
+                    ...priceInfo.priceInfo,
+                    deadline: value.format('YYYY-MM-DDTHH:mm'),
+                  },
+                })),
+              }));
+            }}
           />
         </div>
       </section>

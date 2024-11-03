@@ -36,6 +36,7 @@ interface ScheduleProps<
     deadline: Dayjs | null;
   };
   setInput: React.Dispatch<React.SetStateAction<Omit<T, 'desc'>>>;
+  onDeadlineChange: (value: Dayjs | null) => void;
 }
 export default function ProgramSchedule<
   T extends
@@ -43,7 +44,7 @@ export default function ProgramSchedule<
     | UpdateChallengeReq
     | CreateLiveReq
     | UpdateLiveReq,
->({ defaultValue, setInput }: ScheduleProps<T>) {
+>({ defaultValue, setInput, onDeadlineChange }: ScheduleProps<T>) {
   return (
     <div className="flex flex-col items-center gap-3">
       <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="ko">
@@ -99,12 +100,13 @@ export default function ProgramSchedule<
           ampm={false}
           slotProps={dateTimePickerSlotProps}
           defaultValue={defaultValue?.deadline}
-          onChange={(value) =>
+          onChange={(value) => {
             setInput((prev) => ({
               ...prev,
               deadline: value?.format('YYYY-MM-DDTHH:mm'),
-            }))
-          }
+            }));
+            onDeadlineChange(value);
+          }}
         />
       </LocalizationProvider>
     </div>

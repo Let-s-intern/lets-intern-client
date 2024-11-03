@@ -5,6 +5,7 @@ import WalletIcon from '@/assets/icons/credit-card.svg?react';
 import MentorIcon from '@/assets/icons/mentor.svg?react';
 import { ChallengeIdSchema } from '@/schema';
 import { formatFullDateTime } from '@/utils/formatDateString';
+import { ChallengeColor } from '@components/ChallengeView';
 import BasicInfoRow from '@components/common/program/program-detail/basicInfo/BasicInfoRow';
 
 export const priceReason = [
@@ -24,8 +25,10 @@ export const getDiscountPercent = (
 
 const ChallengeBasicInfo = ({
   challenge,
+  colors,
 }: {
   challenge: ChallengeIdSchema;
+  colors: ChallengeColor;
 }) => {
   const { data, isLoading } = useGetTossCardPromotion();
 
@@ -68,7 +71,10 @@ const ChallengeBasicInfo = ({
       />
       <div className="flex w-full flex-col gap-y-3 md:w-2/5">
         <div className="flex w-full items-center justify-center rounded-md bg-neutral-95 px-6 py-5">
-          <div className="flex w-full flex-col gap-y-5 text-challenge">
+          <div
+            className="flex w-full flex-col gap-y-5"
+            style={{ color: colors.primary }}
+          >
             <BasicInfoRow
               icon={<CalendarIcon />}
               title="진행 기간"
@@ -115,7 +121,10 @@ const ChallengeBasicInfo = ({
                     </span>
                   </div>
                   <div className="flex w-full items-center justify-between gap-x-4 text-xsmall16">
-                    <span className="font-bold text-challenge">
+                    <span
+                      className="font-bold"
+                      style={{ color: colors.primary }}
+                    >
                       {getDiscountPercent(
                         challenge.priceInfo[0].price || 0,
                         challenge.priceInfo[0].discount || 0,
@@ -151,7 +160,7 @@ const ChallengeBasicInfo = ({
                 </p>
               </div>
               <div className="flex w-full flex-col items-end gap-y-2">
-                <div className="text-challenge">
+                <div style={{ color: colors.primary }}>
                   <span className="mr-1 text-medium22 font-semibold">월</span>
                   <span className="text-xxlarge32 font-bold">
                     {monthlyPrice

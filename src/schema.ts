@@ -161,15 +161,17 @@ export const getChallengeIdSchema = z
     priceInfo: z.array(
       z.object({
         priceId: z.number(),
-        price: z.number().optional(),
-        refund: z.number().optional(),
-        discount: z.number().optional(),
+        price: z.number().optional().nullable(),
+        refund: z.number().optional().nullable(),
+        discount: z.number().optional().nullable(),
         accountNumber: z.string().optional().nullable(),
         deadline: z.string().optional().nullable(),
         accountType: accountType.optional().nullable(),
-        challengePriceType: challengePriceType.optional(),
-        challengeUserType: challengeUserType.optional(),
-        challengeParticipationType: challengeParticipationType.optional(),
+        challengePriceType: challengePriceType.optional().nullable(),
+        challengeUserType: challengeUserType.optional().nullable(),
+        challengeParticipationType: challengeParticipationType
+          .optional()
+          .nullable(),
       }),
     ),
     faqInfo: z.array(faq),
