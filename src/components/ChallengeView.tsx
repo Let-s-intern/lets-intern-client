@@ -6,6 +6,7 @@ import ChallengeCheckList from '@components/challenge-view/ChallengeCheckList';
 import ChallengeCurriculum from '@components/challenge-view/ChallengeCurriculum';
 import ChallengeFaq from '@components/challenge-view/ChallengeFaq';
 
+import { twMerge } from '@/lib/twMerge';
 import ChallengeResult from '@components/challenge-view/ChallengeResult';
 import Header from '@components/common/program/program-detail/header/Header';
 import dayjs from 'dayjs';
@@ -38,9 +39,10 @@ export type ChallengeColor = {
   secondaryLight: string;
 };
 
-const ChallengeView: React.FC<{ challenge: ChallengeIdSchema }> = ({
-  challenge,
-}) => {
+const ChallengeView: React.FC<{
+  challenge: ChallengeIdSchema;
+  isPreview?: boolean;
+}> = ({ challenge, isPreview }) => {
   const receivedContent = useMemo<ChallengeContent>(() => {
     if (!challenge?.desc) {
       return { initialized: false };
@@ -94,7 +96,10 @@ const ChallengeView: React.FC<{ challenge: ChallengeIdSchema }> = ({
           <ChallengeBasicInfo challenge={challenge} />
         </div>
 
-        <ProgramDetailNavigation programType="challenge" />
+        <ProgramDetailNavigation
+          programType="challenge"
+          className={twMerge(isPreview && 'top-0 md:top-0 lg:top-0')}
+        />
         <div className="flex w-full max-w-[1200px] flex-col overflow-x-hidden">
           <div id={PROGRAM_INTRO_ID} className="flex w-full flex-col px-5">
             <section className="py-16 lg:py-48">
