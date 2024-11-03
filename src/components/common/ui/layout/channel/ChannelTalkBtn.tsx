@@ -1,8 +1,8 @@
 import { useMediaQuery } from '@mui/material';
-import clsx from 'clsx';
 import { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 
+import { twMerge } from '@/lib/twMerge';
 import channelService from '../../../../../ChannelService';
 
 const programDetailPathRegex = /^\/program\/(live|challenge|vod)\/\d+$/; // /program/live/:programId
@@ -36,17 +36,15 @@ const ChannelTalkBtn = () => {
   return (
     <button
       id="custom-channel-button"
-      className={clsx(
-        (programDetailPathRegex.test(location.pathname) && isUpTo991) ||
+      className={twMerge(
+        'fixed right-4 z-30 flex items-center rounded-[25rem] bg-neutral-100 shadow-05',
+        programDetailPathRegex.test(location.pathname) ||
           (location.pathname.startsWith('/report') && isUpTo1280) ||
           location.pathname.startsWith('/report/landing') ||
           (location.pathname.startsWith('/payment-input') && isUpTo991)
           ? 'bottom-32'
           : 'bottom-20',
-        {
-          hidden: isHidden,
-        },
-        'fixed right-4 z-30 flex items-center rounded-[25rem] bg-neutral-100 shadow-05',
+        isHidden && 'hidden',
       )}
       onClick={() => channelService.showMessenger()}
     >
