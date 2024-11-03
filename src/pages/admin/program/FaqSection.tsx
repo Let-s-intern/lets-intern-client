@@ -1,3 +1,5 @@
+import { useEffect, useState } from 'react';
+
 import { useDeleteFaq, useGetFaq, usePatchFaq, usePostFaq } from '@/api/faq';
 import {
   CreateChallengeReq,
@@ -7,7 +9,6 @@ import {
   UpdateChallengeReq,
   UpdateLiveReq,
 } from '@/schema';
-import { useEffect, useState } from 'react';
 
 interface FaqSectionProps<
   T extends
@@ -36,21 +37,25 @@ function FaqSection<
   const { mutateAsync: postFaq } = usePostFaq();
 
   const checkFaq = (e: React.ChangeEvent<HTMLInputElement>, faqId: number) => {
+    console.log(e.target.checked);
+    console.log(faqInfo);
+
     if (e.target.checked)
       setInput((prev) => ({
         ...prev,
-        faqInfo: [...(prev.faqInfo ?? []), { faqId }],
+        faqInfo: [...(faqInfo ?? []), { faqId }],
       }));
     else
       setInput((prev) => ({
         ...prev,
-        faqInfo: prev.faqInfo?.filter((info) => info.faqId !== faqId),
+        faqInfo: faqInfo?.filter((info) => info.faqId !== faqId),
       }));
   };
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>, faqId: number) => {
     const { name, value } = e.target;
     const index = faqList.findIndex((faq) => faq.id === faqId);
+
     setFaqList([
       ...faqList.slice(0, index),
       { ...faqList[index], [name]: value },
@@ -80,29 +85,21 @@ function FaqSection<
                 onChange={(e) => checkFaq(e, faq.id)}
               />
               <div className="flex w-full flex-col gap-2">
-                <input
-                  type="text"
-                  className="w-full rounded-sm border border-[#cbd5e0] px-4 py-2 text-sm"
+                <FaqInput
                   name="question"
                   placeholder="질문을 입력하세요."
                   value={faq.question ?? ''}
                   onChange={(e) => onChange(e, faq.id)}
-                  autoComplete="off"
                 />
-                <input
-                  type="text"
-                  className="w-full rounded-sm border border-[#cbd5e0] px-4 py-2 text-sm"
+                <FaqInput
                   name="answer"
                   placeholder="답변을 입력하세요."
                   value={faq.answer ?? ''}
                   onChange={(e) => onChange(e, faq.id)}
-                  autoComplete="off"
                 />
               </div>
               {programType === 'CHALLENGE' && (
-                <input
-                  type="text"
-                  className="rounded-sm border border-[#cbd5e0] px-4 py-2 text-sm"
+                <FaqInput
                   name="category"
                   placeholder="유형을 입력하세요."
                   value={faq.category ?? ''}
@@ -121,9 +118,7 @@ function FaqSection<
         </div>
       )}
       <div className="mt-4 flex justify-between">
-        <button
-          type="button"
-          className="rounded-sm bg-[#e0e0e0] px-4 py-2 font-medium"
+        <FaqButton
           onClick={() => {
             Promise.all(faqList.map((faq) => patchFaq(faq)))
               .then(() => alert('FAQ가 저장되었습니다.'))
@@ -131,16 +126,51 @@ function FaqSection<
           }}
         >
           저장
-        </button>
-        <button
-          type="button"
-          className="rounded-sm bg-[#e0e0e0] px-4 py-2 font-medium"
-          onClick={async () => await postFaq(programType)}
-        >
+        </FaqButton>
+        <FaqButton onClick={async () => await postFaq(programType)}>
           추가
-        </button>
+        </FaqButton>
       </div>
     </div>
+  );
+}
+
+function FaqInput({
+  name,
+  placeholder,
+  value,
+  onChange,
+}: React.DetailedHTMLProps<
+  React.InputHTMLAttributes<HTMLInputElement>,
+  HTMLInputElement
+>) {
+  return (
+    <input
+      type="text"
+      className="rounded-sm border border-[#cbd5e0] px-4 py-2 text-sm"
+      name={name}
+      placeholder={placeholder}
+      value={value}
+      onChange={onChange}
+    />
+  );
+}
+
+function FaqButton({
+  onClick,
+  children,
+}: React.DetailedHTMLProps<
+  React.ButtonHTMLAttributes<HTMLButtonElement>,
+  HTMLButtonElement
+>) {
+  return (
+    <button
+      type="button"
+      className="rounded-sm bg-[#e0e0e0] px-4 py-2 font-medium"
+      onClick={onClick}
+    >
+      {children}
+    </button>
   );
 }
 
