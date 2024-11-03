@@ -1,6 +1,7 @@
 import { twMerge } from '@/lib/twMerge';
 import { ProgramType } from '@/types/common';
 import { useEffect, useState } from 'react';
+import { ChallengeColor } from './ChallengeView';
 
 interface NavItem {
   title: string;
@@ -8,6 +9,7 @@ interface NavItem {
 }
 
 interface ProgramDetailNavigationProps {
+  color?: ChallengeColor;
   programType: ProgramType;
   className?: string;
 }
@@ -38,6 +40,7 @@ export const liveNavigateItems: NavItem[] = [
 ];
 
 const ProgramDetailNavigation = ({
+  color,
   programType,
   className,
 }: ProgramDetailNavigationProps) => {
@@ -97,13 +100,21 @@ const ProgramDetailNavigation = ({
       {navItems.map((navItem) => (
         <button
           key={navItem.title}
-          className={`border-b-[2.4px] px-1.5 py-4 text-xsmall16 font-semibold ${
-            navItem.to === activeSection
-              ? isLive
-                ? 'border-primary text-primary'
-                : 'border-challenge text-challenge'
-              : 'border-transparent text-neutral-45'
-          }`}
+          className={`border-b-[2.4px] px-1.5 py-4 text-xsmall16 font-semibold`}
+          style={{
+            borderBottomColor:
+              navItem.to === activeSection
+                ? isLive
+                  ? '#4d55f5'
+                  : color?.primary
+                : 'transparent',
+            color:
+              navItem.to === activeSection
+                ? isLive
+                  ? '#4d55f5'
+                  : color?.primary
+                : '#989ba2',
+          }}
           onClick={() => handleScroll(navItem.to)}
         >
           {navItem.title}

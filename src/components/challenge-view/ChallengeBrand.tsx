@@ -1,3 +1,4 @@
+import { ChallengeColor } from '@components/ChallengeView';
 import { useMediaQuery } from '@mui/material';
 
 const brandInfo = {
@@ -10,26 +11,31 @@ const brandInfo = {
   videoId: 'videoId',
 };
 
-const ChallengeBrand = () => {
+const ChallengeBrand = ({ colors }: { colors: ChallengeColor }) => {
   const isDesktop = useMediaQuery('(min-width: 991px)');
 
   return (
-    <section className="flex w-full flex-col gap-y-8 py-8 md:gap-y-20">
+    <section className="flex w-full flex-col gap-y-8 py-8 md:gap-y-20 md:pb-40 md:pt-10">
       <div className="flex w-full flex-col whitespace-pre text-small20 font-bold md:items-center md:text-xlarge28">
         <p>
           누적 참여자{' '}
-          <span className="text-challenge">
+          <span style={{ color: colors.primary }}>
             {brandInfo.totalParticipants.toLocaleString()}명
           </span>
         </p>
         <p>
           참여 만족도{' '}
-          <span className="text-challenge">{brandInfo.satisfaction}점</span>
+          <span style={{ color: colors.primary }}>
+            {brandInfo.satisfaction}점
+          </span>
         </p>
       </div>
       <div className="flex w-full flex-col gap-y-5 md:flex-row md:gap-x-[60px]">
         <div className="flex w-full gap-x-5 md:gap-x-[60px]">
-          <div className="flex h-full flex-1 flex-col gap-y-1 border-t-[3px] border-challenge pt-4">
+          <div
+            className="flex h-full flex-1 flex-col gap-y-1 border-t-[3px] pt-4"
+            style={{ borderTopColor: colors.primary }}
+          >
             <p className="text-xsmall14 font-semibold md:text-small18">
               프로그램 수
             </p>
@@ -37,7 +43,10 @@ const ChallengeBrand = () => {
               {brandInfo.programs.toLocaleString()}개
             </p>
           </div>
-          <div className="flex h-full flex-1 flex-col gap-y-1 border-t-[3px] border-challenge pt-4">
+          <div
+            className="flex h-full flex-1 flex-col gap-y-1 border-t-[3px] pt-4"
+            style={{ borderTopColor: colors.primary }}
+          >
             <p className="text-xsmall14 font-semibold md:text-small18">
               참여자 수
             </p>
@@ -47,7 +56,10 @@ const ChallengeBrand = () => {
           </div>
         </div>
         <div className="flex w-full gap-x-5 md:gap-x-[60px]">
-          <div className="flex h-full flex-1 flex-col gap-y-1 border-t-[3px] border-challenge pt-4">
+          <div
+            className="flex h-full flex-1 flex-col gap-y-1 border-t-[3px] pt-4"
+            style={{ borderTopColor: colors.primary }}
+          >
             <p className="text-xsmall14 font-semibold md:text-small18">
               합격자 수{' '}
               <span className="text-xxsmall12 font-normal text-neutral-40 md:text-xsmall14">
@@ -58,7 +70,10 @@ const ChallengeBrand = () => {
               {brandInfo.passers.toLocaleString()}명
             </p>
           </div>
-          <div className="flex h-full flex-1 flex-col gap-y-1 border-t-[3px] border-challenge pt-4">
+          <div
+            className="flex h-full flex-1 flex-col gap-y-1 border-t-[3px] pt-4"
+            style={{ borderTopColor: colors.primary }}
+          >
             <p className="text-xsmall14 font-semibold md:text-small18">
               참여자 만족도
             </p>
@@ -79,7 +94,10 @@ const ChallengeBrand = () => {
           allowFullScreen
           className="aspect-video w-full max-w-3xl"
         ></iframe>
-        <div className="flex w-full items-center justify-center rounded-md bg-[#EEFAFF] px-4 py-[14px] md:py-5">
+        <div
+          className="flex w-full items-center justify-center rounded-md px-4 py-[14px] md:py-5"
+          style={{ backgroundColor: colors.primaryLight }}
+        >
           설명
         </div>
       </div>

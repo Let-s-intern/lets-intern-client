@@ -57,9 +57,8 @@ const LiveView: React.FC<{ live: LiveIdSchema; isPreview?: boolean }> = ({
           programType="live"
           className={twMerge(isPreview && 'top-0 md:top-0 lg:top-0')}
         />
-        {/* TODO: 어떤 콘텐츠가 full-width로 들어가게 되면 각 요소를 max-w-[1200px]로 해야 함. */}
-        <div className="w-full max-w-[1200px]">
-          <div className="flex w-full flex-col px-5 md:px-10">
+        <div className="flex w-full flex-col items-center">
+          <div className="flex w-full max-w-[1200px] flex-col px-5 md:px-10">
             <LiveMentor mentor={mentor} id={LIVE_MENTOR_INTRO_ID} />
             <LiveInformation
               id={PROGRAM_INTRO_ID}
@@ -71,7 +70,7 @@ const LiveView: React.FC<{ live: LiveIdSchema; isPreview?: boolean }> = ({
 
           <div
             id={PROGRAM_CURRICULUM_ID}
-            className="flex w-full flex-col px-5 md:px-10"
+            className="flex w-full max-w-[1200px] flex-col px-5 md:px-10"
           >
             <LiveCurriculum
               curriculum={receivedContent.curriculum}
@@ -87,11 +86,16 @@ const LiveView: React.FC<{ live: LiveIdSchema; isPreview?: boolean }> = ({
             )}
           </div>
 
-          <div id={PROGRAM_REVIEW_ID} className="flex w-full flex-col">
-            <ProgramBestReviewSection
-              reviews={receivedContent.liveReview}
-              type="live"
-            />
+          <div
+            id={PROGRAM_REVIEW_ID}
+            className="flex w-full flex-col items-center"
+          >
+            <div className="flex w-full flex-col items-center bg-neutral-95">
+              <ProgramBestReviewSection
+                reviews={receivedContent.liveReview}
+                type="live"
+              />
+            </div>
             {receivedContent.blogReview ? (
               <ProgramDetailBlogReviewSection
                 review={receivedContent.blogReview}
@@ -102,7 +106,7 @@ const LiveView: React.FC<{ live: LiveIdSchema; isPreview?: boolean }> = ({
 
           <section
             id={PROGRAM_FAQ_ID}
-            className="flex w-full flex-col px-5 md:px-10"
+            className="flex w-full max-w-[1200px] flex-col px-5 md:px-10"
           >
             <LiveFaq />
             <LiveInfoBottom live={live} />

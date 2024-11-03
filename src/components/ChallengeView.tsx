@@ -93,16 +93,20 @@ const ChallengeView: React.FC<{
       <div className="flex w-full flex-col items-center">
         <div className="flex w-full max-w-[1200px] flex-col px-5 md:px-10">
           <Header programTitle={challenge.title ?? ''} />
-          <ChallengeBasicInfo challenge={challenge} />
+          <ChallengeBasicInfo colors={colors} challenge={challenge} />
         </div>
 
         <ProgramDetailNavigation
+          color={colors}
           programType="challenge"
           className={twMerge(isPreview && 'top-0 md:top-0 lg:top-0')}
         />
-        <div className="flex w-full max-w-[1200px] flex-col overflow-x-hidden">
-          <div id={PROGRAM_INTRO_ID} className="flex w-full flex-col px-5">
-            <section className="py-16 lg:py-48">
+        <div className="flex w-full flex-col items-center overflow-x-hidden">
+          <div
+            id={PROGRAM_INTRO_ID}
+            className="flex w-full max-w-[1200px] flex-col px-5 md:px-10"
+          >
+            <section className="py-16 md:pb-44 md:pt-52">
               <SuperTitle className="mb-6 text-neutral-45 lg:mb-10">
                 프로그램 소개
               </SuperTitle>
@@ -121,7 +125,7 @@ const ChallengeView: React.FC<{
               <LexicalContent node={receivedContent.mainDescription?.root} />
             )}
 
-            <section className="md:py-50 flex flex-col gap-20 py-16 md:gap-52">
+            <section className="flex flex-col gap-20 py-16 md:gap-52 md:py-52">
               {challenge.challengeType === PERSONAL_STATEMENT ? (
                 <ChallengeIntroPersonalStatement />
               ) : challenge.challengeType === PORTFOLIO ? (
@@ -144,7 +148,7 @@ const ChallengeView: React.FC<{
           receivedContent.curriculum.length > 0 ? (
             <div
               id={PROGRAM_CURRICULUM_ID}
-              className="flex w-full flex-col px-5 md:px-10"
+              className="flex w-full flex-col items-center bg-neutral-95"
             >
               <ChallengeCurriculum
                 curriculum={receivedContent.curriculum}
@@ -155,22 +159,23 @@ const ChallengeView: React.FC<{
 
           <div
             id={CHALLENGE_DIFFERENT_ID}
-            className="flex w-full flex-col px-5 md:px-10"
+            className="flex w-full max-w-[1200px] flex-col px-5 md:px-10"
           >
-            <div>
-              이 모든 고민을 한번에 해결! 서류 합격률을 300% 높일 수 있는
-              렛츠커리어 챌린지
-            </div>
-            <ChallengeDifferent />
-            <ChallengeBrand />
+            <ChallengeDifferent colors={colors} />
+            <ChallengeBrand colors={colors} />
           </div>
 
-          <div id={PROGRAM_REVIEW_ID} className="flex w-full flex-col">
-            <ProgramBestReviewSection
-              type="challenge"
-              reviews={receivedContent.challengeReview}
-            />
-
+          <div
+            id={PROGRAM_REVIEW_ID}
+            className="flex w-full flex-col items-center"
+          >
+            <div className="flex w-full flex-col items-center bg-neutral-95">
+              <ProgramBestReviewSection
+                type="challenge"
+                reviews={receivedContent.challengeReview}
+                colors={colors}
+              />
+            </div>
             {receivedContent.blogReview ? (
               <ProgramDetailBlogReviewSection
                 review={receivedContent.blogReview}
@@ -181,10 +186,10 @@ const ChallengeView: React.FC<{
 
           <div
             id={PROGRAM_FAQ_ID}
-            className="flex w-full flex-col px-5 md:px-10"
+            className="flex w-full max-w-[1200px] flex-col px-5 md:px-10"
           >
             <ChallengeFaq colors={colors} />
-            <ChallengeInfoBottom challenge={challenge} />
+            <ChallengeInfoBottom challenge={challenge} colors={colors} />
           </div>
         </div>
       </div>

@@ -114,7 +114,7 @@ const ChallengePointView = ({
         얻어갈 수 있어요
       </Heading2>
 
-      <div className="mb-20 space-y-4">
+      <div className="mb-[70px] space-y-4 md:mb-52">
         <ul className="mb-10 space-y-4 md:mb-16">
           {point.list?.map((item, index) => (
             <PointList
@@ -139,11 +139,11 @@ const ChallengePointView = ({
         {challengeTitle}은<br className="md:hidden" /> 2주간 아래와 같이
         진행돼요
       </Heading2>
-      <span className="mb-20 hidden text-center text-xsmall14 text-neutral-30 md:block">
+      <span className="hidden text-center text-xsmall14 text-neutral-30 md:mb-20 md:block">
         {description}
       </span>
 
-      <div className="mb-8 flex flex-col gap-5 md:flex-row md:justify-between md:px-8">
+      <div className="mb-8 flex flex-col gap-5 md:mb-14 md:flex-row md:justify-between md:px-8">
         {progress.map((item) => (
           <ProgressItem key={item.index} item={item} bgColor={colors.primary} />
         ))}
