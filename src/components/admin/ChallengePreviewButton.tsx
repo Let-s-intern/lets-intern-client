@@ -113,7 +113,7 @@ const ChallengePreviewButton: React.FC<{
         미리보기
       </Button>
       <PreviewModal open={open} onClose={handleClose}>
-        <ChallengeView challenge={challenge} />
+        <ChallengeView challenge={challenge} isPreview />
       </PreviewModal>
     </>
   );
