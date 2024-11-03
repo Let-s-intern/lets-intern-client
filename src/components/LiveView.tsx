@@ -70,7 +70,7 @@ const LiveView: React.FC<{ live: LiveIdSchema; isPreview?: boolean }> = ({
 
           <div
             id={PROGRAM_CURRICULUM_ID}
-            className="flex w-full max-w-[1200px] flex-col px-5 md:px-10"
+            className="flex w-full max-w-[1200px] flex-col px-5 pb-16 md:px-10"
           >
             <LiveCurriculum
               curriculum={receivedContent.curriculum}

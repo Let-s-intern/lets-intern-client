@@ -24,7 +24,7 @@ const LiveInformation = ({
   return (
     <div
       id={id}
-      className="flex w-full flex-col gap-y-5 py-8 md:items-center md:gap-y-[50px] md:py-10"
+      className="flex w-full flex-col gap-y-5 md:items-center md:gap-y-[50px]"
     >
       <p className="text-xsmall14 font-semibold text-neutral-45 md:text-small20">
         클래스 소개

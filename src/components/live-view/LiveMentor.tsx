@@ -21,7 +21,10 @@ function LiveMentor({ mentor, className, id }: LiveMentorProps) {
   return (
     <section
       id={id}
-      className={twMerge('py-8 md:flex md:flex-col md:items-center', className)}
+      className={twMerge(
+        'py-16 md:flex md:flex-col md:items-center md:py-36',
+        className,
+      )}
     >
       <Heading2 className="mb-8 md:mb-20">
         렛츠커리어 LIVE 클래스에서만
