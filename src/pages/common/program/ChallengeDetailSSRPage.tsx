@@ -199,7 +199,7 @@ export function MobileApplyCTA({
       : false;
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-30 flex w-full flex-col items-center overflow-hidden bg-neutral-0/65 text-xxsmall12">
+    <div className="fixed bottom-0 left-0 right-0 z-40 flex w-full flex-col items-center overflow-hidden bg-neutral-0/65 text-xxsmall12">
       <div className="w-full bg-neutral-0/95 py-1.5 text-center font-bold text-static-100">
         {program?.title}
       </div>
@@ -247,7 +247,7 @@ export function DesktopApplyCTA({
       : false;
 
   return (
-    <div className="fixed bottom-4 left-0 right-0 z-10 mx-auto flex w-full max-w-[60rem] items-center justify-between overflow-hidden rounded-sm bg-neutral-0/65 px-5 py-4">
+    <div className="fixed bottom-4 left-0 right-0 z-40 mx-auto flex w-full max-w-[60rem] items-center justify-between overflow-hidden rounded-sm bg-neutral-0/65 px-5 py-4">
       <div className="flex flex-col gap-1">
         <span className="font-bold text-neutral-100">{program?.title}</span>
         <span className="text-xxsmall12 text-neutral-80">
