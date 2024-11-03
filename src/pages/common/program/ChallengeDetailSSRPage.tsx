@@ -199,7 +199,7 @@ export function MobileApplyCTA({
       : false;
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-30 flex w-full flex-col items-center overflow-hidden bg-neutral-0/65 text-xxsmall12">
+    <div className="fixed bottom-0 left-0 right-0 z-40 flex w-full flex-col items-center overflow-hidden bg-neutral-0/65 text-xxsmall12">
       <div className="w-full bg-neutral-0/95 py-1.5 text-center font-bold text-static-100">
         {program?.title}
       </div>
@@ -207,11 +207,7 @@ export function MobileApplyCTA({
         {isOutOfDate ? (
           <NotiButton text={'출시알림신청'} className="early_button" />
         ) : isAlreadyApplied ? (
-          <FilledButton
-            caption="이미 신청이 완료되었습니다"
-            disabled={true}
-            className="apply_button"
-          />
+          <FilledButton caption="이미 신청이 완료되었습니다" disabled={true} />
         ) : (
           <>
             <div>
@@ -226,7 +222,7 @@ export function MobileApplyCTA({
                 <span className="text-xxsmall12 text-neutral-80">남음</span>
               </div>
             </div>
-            <GradientButton onClick={onApplyClick}>
+            <GradientButton onClick={onApplyClick} className="apply_button">
               지금 바로 신청
             </GradientButton>
           </>
@@ -247,7 +243,7 @@ export function DesktopApplyCTA({
       : false;
 
   return (
-    <div className="fixed bottom-4 left-0 right-0 z-10 mx-auto flex w-full max-w-[60rem] items-center justify-between overflow-hidden rounded-sm bg-neutral-0/65 px-5 py-4">
+    <div className="fixed bottom-4 left-0 right-0 z-40 mx-auto flex w-full max-w-[60rem] items-center justify-between overflow-hidden rounded-sm bg-neutral-0/65 px-5 py-4">
       <div className="flex flex-col gap-1">
         <span className="font-bold text-neutral-100">{program?.title}</span>
         <span className="text-xxsmall12 text-neutral-80">
@@ -258,11 +254,7 @@ export function DesktopApplyCTA({
         {isOutOfDate ? (
           <NotiButton text={'출시알림신청'} className="early_button" />
         ) : isAlreadyApplied ? (
-          <FilledButton
-            caption="이미 신청이 완료되었습니다"
-            disabled={true}
-            className="apply_button"
-          />
+          <FilledButton caption="이미 신청이 완료되었습니다" disabled={true} />
         ) : (
           <>
             <div className="flex items-center gap-2">
@@ -272,7 +264,7 @@ export function DesktopApplyCTA({
               />
               <span className="text-xxsmall12 text-neutral-80">남음</span>
             </div>
-            <GradientButton onClick={onApplyClick}>
+            <GradientButton onClick={onApplyClick} className="apply_button">
               지금 바로 신청
             </GradientButton>
           </>

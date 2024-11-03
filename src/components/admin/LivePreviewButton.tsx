@@ -119,7 +119,7 @@ const LivePreviewButton: React.FC<{
         미리보기
       </Button>
       <PreviewModal open={open} onClose={handleClose}>
-        <LiveView live={live} />
+        <LiveView live={live} isPreview />
       </PreviewModal>
     </>
   );

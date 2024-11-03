@@ -6,6 +6,7 @@ import ChallengeCheckList from '@components/challenge-view/ChallengeCheckList';
 import ChallengeCurriculum from '@components/challenge-view/ChallengeCurriculum';
 import ChallengeFaq from '@components/challenge-view/ChallengeFaq';
 
+import { twMerge } from '@/lib/twMerge';
 import ChallengeResult from '@components/challenge-view/ChallengeResult';
 import Header from '@components/common/program/program-detail/header/Header';
 import dayjs from 'dayjs';
@@ -38,9 +39,10 @@ export type ChallengeColor = {
   secondaryLight: string;
 };
 
-const ChallengeView: React.FC<{ challenge: ChallengeIdSchema }> = ({
-  challenge,
-}) => {
+const ChallengeView: React.FC<{
+  challenge: ChallengeIdSchema;
+  isPreview?: boolean;
+}> = ({ challenge, isPreview }) => {
   const receivedContent = useMemo<ChallengeContent>(() => {
     if (!challenge?.desc) {
       return { initialized: false };
@@ -94,9 +96,15 @@ const ChallengeView: React.FC<{ challenge: ChallengeIdSchema }> = ({
           <ChallengeBasicInfo challenge={challenge} />
         </div>
 
-        <ProgramDetailNavigation programType="challenge" />
+        <ProgramDetailNavigation
+          programType="challenge"
+          className={twMerge(isPreview && 'top-0 md:top-0 lg:top-0')}
+        />
         <div className="flex w-full max-w-[1200px] flex-col overflow-x-hidden">
-          <div id={PROGRAM_INTRO_ID} className="flex w-full flex-col px-5">
+          <div
+            id={PROGRAM_INTRO_ID}
+            className="challenge_program flex w-full flex-col px-5"
+          >
             <section className="py-16 lg:py-48">
               <SuperTitle className="mb-6 text-neutral-45 lg:mb-10">
                 프로그램 소개
@@ -139,7 +147,7 @@ const ChallengeView: React.FC<{ challenge: ChallengeIdSchema }> = ({
           receivedContent.curriculum.length > 0 ? (
             <div
               id={PROGRAM_CURRICULUM_ID}
-              className="flex w-full flex-col px-5 md:px-10"
+              className="challenge_curriculum flex w-full flex-col px-5 md:px-10"
             >
               <ChallengeCurriculum
                 curriculum={receivedContent.curriculum}
@@ -150,7 +158,7 @@ const ChallengeView: React.FC<{ challenge: ChallengeIdSchema }> = ({
 
           <div
             id={CHALLENGE_DIFFERENT_ID}
-            className="flex w-full flex-col px-5 md:px-10"
+            className="challenge_difference flex w-full flex-col px-5 md:px-10"
           >
             <div>
               이 모든 고민을 한번에 해결! 서류 합격률을 300% 높일 수 있는
@@ -160,7 +168,10 @@ const ChallengeView: React.FC<{ challenge: ChallengeIdSchema }> = ({
             <ChallengeBrand />
           </div>
 
-          <div id={PROGRAM_REVIEW_ID} className="flex w-full flex-col">
+          <div
+            id={PROGRAM_REVIEW_ID}
+            className="challenge_review flex w-full flex-col"
+          >
             <ProgramBestReviewSection
               type="challenge"
               reviews={receivedContent.challengeReview}
@@ -176,7 +187,7 @@ const ChallengeView: React.FC<{ challenge: ChallengeIdSchema }> = ({
 
           <div
             id={PROGRAM_FAQ_ID}
-            className="flex w-full flex-col px-5 md:px-10"
+            className="challenge_faq flex w-full flex-col px-5 md:px-10"
           >
             <ChallengeFaq colors={colors} />
             <ChallengeInfoBottom challenge={challenge} />

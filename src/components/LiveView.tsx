@@ -1,3 +1,4 @@
+import { twMerge } from '@/lib/twMerge';
 import { LiveIdSchema } from '@/schema';
 import { LiveContent } from '@/types/interface';
 import Header from '@components/common/program/program-detail/header/Header';
@@ -21,7 +22,10 @@ import ProgramDetailNavigation, {
   PROGRAM_REVIEW_ID,
 } from './ProgramDetailNavigation';
 
-const LiveView: React.FC<{ live: LiveIdSchema }> = ({ live }) => {
+const LiveView: React.FC<{ live: LiveIdSchema; isPreview?: boolean }> = ({
+  live,
+  isPreview,
+}) => {
   const mentor = {
     mentorName: live.mentorName,
     mentorImg: live.mentorImg,
@@ -49,13 +53,21 @@ const LiveView: React.FC<{ live: LiveIdSchema }> = ({ live }) => {
           {live.vod && <LiveVod />}
           <LiveBasicInfo live={live} />
         </div>
-        <ProgramDetailNavigation programType="live" />
+        <ProgramDetailNavigation
+          programType="live"
+          className={twMerge(isPreview && 'top-0 md:top-0 lg:top-0')}
+        />
         {/* TODO: 어떤 콘텐츠가 full-width로 들어가게 되면 각 요소를 max-w-[1200px]로 해야 함. */}
         <div className="w-full max-w-[1200px]">
           <div className="flex w-full flex-col px-5 md:px-10">
-            <LiveMentor mentor={mentor} id={LIVE_MENTOR_INTRO_ID} />
+            <LiveMentor
+              mentor={mentor}
+              id={LIVE_MENTOR_INTRO_ID}
+              className="live_mentor"
+            />
             <LiveInformation
               id={PROGRAM_INTRO_ID}
+              className="live_class"
               recommendFields={receivedContent.recommend}
               reasonFields={receivedContent.reason}
               editorContent={receivedContent.mainDescription}
@@ -64,7 +76,7 @@ const LiveView: React.FC<{ live: LiveIdSchema }> = ({ live }) => {
 
           <div
             id={PROGRAM_CURRICULUM_ID}
-            className="flex w-full flex-col px-5 md:px-10"
+            className="live_curriculum flex w-full flex-col px-5 md:px-10"
           >
             <LiveCurriculum
               curriculum={receivedContent.curriculum}
@@ -80,7 +92,10 @@ const LiveView: React.FC<{ live: LiveIdSchema }> = ({ live }) => {
             )}
           </div>
 
-          <div id={PROGRAM_REVIEW_ID} className="flex w-full flex-col">
+          <div
+            id={PROGRAM_REVIEW_ID}
+            className="live_review flex w-full flex-col"
+          >
             <ProgramBestReviewSection
               reviews={receivedContent.liveReview}
               type="live"
@@ -95,7 +110,7 @@ const LiveView: React.FC<{ live: LiveIdSchema }> = ({ live }) => {
 
           <section
             id={PROGRAM_FAQ_ID}
-            className="flex w-full flex-col px-5 md:px-10"
+            className="live_faq flex w-full flex-col px-5 md:px-10"
           >
             <LiveFaq />
             <LiveInfoBottom live={live} />
