@@ -37,9 +37,6 @@ function FaqSection<
   const { mutateAsync: postFaq } = usePostFaq();
 
   const checkFaq = (e: React.ChangeEvent<HTMLInputElement>, faqId: number) => {
-    console.log(e.target.checked);
-    console.log(faqInfo);
-
     if (e.target.checked)
       setInput((prev) => ({
         ...prev,
@@ -64,7 +61,21 @@ function FaqSection<
   };
 
   useEffect(() => {
-    setFaqList(data?.faqList ?? []);
+    const newFaqList = data?.faqList ?? [];
+    setFaqList(newFaqList);
+
+    // 새로 추가한 faq 바로 챌린지에 추가 (check)
+    if (newFaqList.length === 0) return;
+
+    const lastFaqId = newFaqList[newFaqList.length - 1].id;
+    const prevFaqIds = (faqInfo ?? []).map((item) => item.faqId);
+
+    if (prevFaqIds.includes(lastFaqId)) return;
+
+    setInput((prev) => ({
+      ...prev,
+      faqInfo: [...(faqInfo ?? []), { faqId: lastFaqId }],
+    }));
   }, [data]);
 
   return (
