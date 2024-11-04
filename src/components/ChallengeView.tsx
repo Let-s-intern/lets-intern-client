@@ -37,6 +37,7 @@ export type ChallengeColor = {
   primaryLight: string;
   secondary: string;
   secondaryLight: string;
+  gradient: string;
 };
 
 const ChallengeView: React.FC<{
@@ -60,6 +61,7 @@ const ChallengeView: React.FC<{
     let primaryLight = '';
     let secondary = '';
     let secondaryLight = '';
+    let gradient = '';
 
     switch (challenge.challengeType) {
       case PERSONAL_STATEMENT:
@@ -67,20 +69,23 @@ const ChallengeView: React.FC<{
         secondary = '#FF9C34';
         primaryLight = '#EEFAFF';
         secondaryLight = '#FFF7EF';
+        gradient = '#39DEFF';
         break;
       case PORTFOLIO:
         primary = '#4A76FF';
         secondary = '#F8AE00';
         primaryLight = '#F0F4FF';
         secondaryLight = '#FFF9EA';
+        gradient = '#4A56FF';
         break;
       default:
         primary = '#4D55F5';
         secondary = '#E45BFF';
         primaryLight = '#F3F4FF';
         secondaryLight = '#FDF6FF';
+        gradient = '#763CFF';
     }
-    return { primary, primaryLight, secondary, secondaryLight };
+    return { primary, primaryLight, secondary, secondaryLight, gradient };
   }, [challenge.challengeType]);
 
   // TODO: 운영 배포 시 제거
