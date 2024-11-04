@@ -138,15 +138,7 @@ function FaqSection<
         >
           저장
         </FaqButton>
-        <FaqButton
-          onClick={async () => {
-            await postFaq(programType);
-            if (data) {
-              const lastIndex = data.faqList.length;
-              console.log(data.faqList[lastIndex]);
-            }
-          }}
-        >
+        <FaqButton onClick={async () => await postFaq(programType)}>
           추가
         </FaqButton>
       </div>
