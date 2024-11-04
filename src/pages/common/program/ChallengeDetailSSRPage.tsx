@@ -1,3 +1,8 @@
+import { useMediaQuery } from '@mui/material';
+import dayjs, { Dayjs } from 'dayjs';
+import { useCallback, useEffect } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+
 import { useProgramApplicationQuery } from '@/api/application';
 import { useChallengeQuery } from '@/api/challenge';
 import { useServerChallenge } from '@/context/ServerChallenge';
@@ -16,10 +21,6 @@ import FilledButton from '@components/common/program/program-detail/button/Fille
 import GradientButton from '@components/common/program/program-detail/button/GradientButton';
 import NotiButton from '@components/common/program/program-detail/button/NotiButton';
 import { Duration } from '@components/Duration';
-import { useMediaQuery } from '@mui/material';
-import dayjs, { Dayjs } from 'dayjs';
-import { useCallback, useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
 
 const ChallengeDetailSSRPage = () => {
   const navigate = useNavigate();
@@ -199,7 +200,7 @@ export function MobileApplyCTA({
       : false;
 
   return (
-    <div className="fixed bottom-[0.5vh] left-0 right-0 z-40 flex w-full flex-col items-center overflow-hidden bg-neutral-0/65 text-xxsmall12">
+    <div className="safe-area-bottom fixed left-0 right-0 z-40 flex w-full flex-col items-center overflow-hidden bg-neutral-0/65 text-xxsmall12">
       <div className="w-full bg-neutral-0/95 py-1.5 text-center font-bold text-static-100">
         {program?.title}
       </div>
