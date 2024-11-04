@@ -61,7 +61,21 @@ function FaqSection<
   };
 
   useEffect(() => {
-    setFaqList(data?.faqList ?? []);
+    const newFaqList = data?.faqList ?? [];
+    setFaqList(newFaqList);
+
+    // 새로 추가한 faq 바로 챌린지에 추가 (check)
+    if (newFaqList.length === 0) return;
+
+    const lastFaqId = newFaqList[newFaqList.length - 1].id;
+    const prevFaqIds = (faqInfo ?? []).map((item) => item.faqId);
+
+    if (prevFaqIds.includes(lastFaqId)) return;
+
+    setInput((prev) => ({
+      ...prev,
+      faqInfo: [...(faqInfo ?? []), { faqId: lastFaqId }],
+    }));
   }, [data]);
 
   return (
@@ -124,7 +138,15 @@ function FaqSection<
         >
           저장
         </FaqButton>
-        <FaqButton onClick={async () => await postFaq(programType)}>
+        <FaqButton
+          onClick={async () => {
+            await postFaq(programType);
+            if (data) {
+              const lastIndex = data.faqList.length;
+              console.log(data.faqList[lastIndex]);
+            }
+          }}
+        >
           추가
         </FaqButton>
       </div>
