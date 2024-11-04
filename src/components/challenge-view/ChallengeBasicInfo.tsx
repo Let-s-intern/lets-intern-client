@@ -1,8 +1,9 @@
+import { LuCalendarDays } from 'react-icons/lu';
+
 import { useGetTossCardPromotion } from '@/api/payment';
-import CalendarIcon from '@/assets/icons/calendar.svg?react';
+import Announcement from '@/assets/icons/announcement.svg?react';
 import ChevronDown from '@/assets/icons/chevron-down.svg?react';
-import WalletIcon from '@/assets/icons/credit-card.svg?react';
-import MentorIcon from '@/assets/icons/mentor.svg?react';
+import ClockIcon from '@/assets/icons/clock.svg?react';
 import { ChallengeIdSchema } from '@/schema';
 import { formatFullDateTime } from '@/utils/formatDateString';
 import { ChallengeColor } from '@components/ChallengeView';
@@ -76,17 +77,17 @@ const ChallengeBasicInfo = ({
             style={{ color: colors.primary }}
           >
             <BasicInfoRow
-              icon={<CalendarIcon />}
+              icon={<Announcement />}
               title="진행 기간"
               content={`${formatFullDateTime(challenge.startDate, true)}\n- ${formatFullDateTime(challenge.endDate, true)}`}
-            />{' '}
+            />
             <BasicInfoRow
-              icon={<WalletIcon />}
+              icon={<ClockIcon />}
               title="모집 마감"
               content={`${formatFullDateTime(challenge.deadline, true)}`}
             />
             <BasicInfoRow
-              icon={<MentorIcon />}
+              icon={<LuCalendarDays size={20} />}
               title="OT 일자"
               content={`${formatFullDateTime(challenge.beginning, true)}`}
             />

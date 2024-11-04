@@ -31,12 +31,12 @@ const LiveBasicInfo = ({ live }: { live: LiveIdSchema }) => {
         <div className="flex w-full items-center justify-center rounded-md bg-neutral-95 px-6 py-5">
           <div className="flex w-full flex-col gap-y-5 text-primary-90">
             <BasicInfoRow
-              icon={<ClockIcon />}
+              icon={<AnnouncementIcon />}
               title="진행 기간"
               content={`${formatDate(live.startDate)}\n${formatTime(live.startDate)} - ${formatTime(live.endDate)}`}
             />
             <BasicInfoRow
-              icon={<AnnouncementIcon />}
+              icon={<ClockIcon />}
               title="모집 마감"
               content={`${formatFullDateTime(live.deadline, true)}`}
             />
