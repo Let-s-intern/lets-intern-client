@@ -7,6 +7,7 @@ import { ChallengeType, challengeTypeSchema } from '@/schema';
 import { ChallengePoint } from '@/types/interface';
 import { ChallengeColor } from '@components/ChallengeView';
 import Heading2 from '@components/common/program/program-detail/Heading2';
+import { josa } from '@toss/hangul';
 
 const Balancer = clientOnly(() => import('react-wrap-balancer'));
 
@@ -136,8 +137,8 @@ const ChallengePointView = ({
       </div>
 
       <Heading2 className="mb-10 md:mb-8">
-        {challengeTitle}은<br className="md:hidden" /> 2주간 아래와 같이
-        진행돼요
+        {josa(challengeTitle, '은/는')}
+        <br className="md:hidden" /> 2주간 아래와 같이 진행돼요
       </Heading2>
       <span className="hidden text-center text-xsmall14 text-neutral-30 md:mb-20 md:block">
         {description}
