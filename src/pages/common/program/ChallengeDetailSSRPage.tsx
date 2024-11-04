@@ -199,7 +199,7 @@ export function MobileApplyCTA({
       : false;
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-40 flex w-full flex-col items-center overflow-hidden bg-neutral-0/65 text-xxsmall12">
+    <div className="fixed bottom-[0.5vh] left-0 right-0 z-40 flex w-full flex-col items-center overflow-hidden bg-neutral-0/65 text-xxsmall12">
       <div className="w-full bg-neutral-0/95 py-1.5 text-center font-bold text-static-100">
         {program?.title}
       </div>
