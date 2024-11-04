@@ -38,6 +38,7 @@ module.exports = {
           20: '#DBDDFD',
           30: '#CACCFC',
           40: '#B8BBFB',
+          80: '#7177F7',
           90: '#5F66F6',
         },
         secondary: {
