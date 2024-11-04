@@ -59,7 +59,10 @@ function CurriculumItem({
   const [isOpen, setIsOpen] = useState(isDesktop ? true : false);
 
   return (
-    <div key={item.id} className="rounded-md bg-white p-5 pt-4 md:shadow-06">
+    <div
+      key={item.id}
+      className="h-fit rounded-md bg-white p-5 pt-4 md:shadow-06"
+    >
       <div
         className="mb-2 flex items-center gap-2.5 text-xsmall16 font-semibold md:text-small20"
         style={{ color: colors.primary }}
