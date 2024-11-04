@@ -177,7 +177,7 @@ const ChallengeDetailSSRPage = () => {
   );
 };
 
-/* CTA는 프로그램 상세페이지에서 공동으로 사용 */
+/* CTA는 모든 프로그램 상세페이지에서 공동으로 사용 */
 interface ApplyCTAProps {
   program: {
     title?: string | null;
@@ -203,7 +203,7 @@ export function MobileApplyCTA({
       <div className="w-full bg-neutral-0/95 py-1.5 text-center font-bold text-static-100">
         {program?.title}
       </div>
-      <div className="flex w-full items-center justify-between px-5 py-4 text-neutral-80">
+      <div className="flex w-full items-center justify-between px-5 py-4 text-neutral-80 backdrop-blur">
         {isOutOfDate ? (
           <NotiButton text={'출시알림신청'} className="early_button" />
         ) : isAlreadyApplied ? (
