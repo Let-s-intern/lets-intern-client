@@ -37,9 +37,6 @@ function FaqSection<
   const { mutateAsync: postFaq } = usePostFaq();
 
   const checkFaq = (e: React.ChangeEvent<HTMLInputElement>, faqId: number) => {
-    console.log(e.target.checked);
-    console.log(faqInfo);
-
     if (e.target.checked)
       setInput((prev) => ({
         ...prev,
