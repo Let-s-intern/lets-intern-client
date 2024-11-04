@@ -149,7 +149,7 @@ const ChallengeBasicInfo = ({
             <div className="flex w-full flex-col gap-y-4">
               <div className="flex w-full items-center justify-between text-small20 font-medium text-neutral-0">
                 <p>할인 적용가</p>
-                <p className="text-xxlarge32 font-bold text-neutral-0">
+                <p className="text-small20 font-medium text-neutral-0">
                   {(
                     (challenge.priceInfo[0].price ?? 0) -
                     (challenge.priceInfo[0].discount ?? 0)
