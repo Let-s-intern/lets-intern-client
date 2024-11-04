@@ -112,7 +112,7 @@ function ChallengeResult({ colors, challengeType }: ChallengeResultProps) {
                 </span>
               </div>
               <div className="flex flex-1 flex-col items-center gap-4">
-                <BadgedBox badgeContent="After" colors={colors}>
+                <BadgedBox badgeContent="After" colors={colors} isGradient>
                   <ResultImg
                     src={content.afterImg}
                     alt={content.afterCaption}
@@ -140,11 +140,13 @@ function ChallengeResult({ colors, challengeType }: ChallengeResultProps) {
 function BadgedBox({
   badgeContent,
   colors,
+  isGradient = false,
   className,
   children,
 }: {
   badgeContent: string;
   colors?: ChallengeColor;
+  isGradient?: boolean;
   className?: string;
   children?: ReactNode;
 }) {
@@ -163,7 +165,12 @@ function BadgedBox({
         className={twMerge(
           'w-full bg-neutral-50 px-2.5 py-1 text-center text-xsmall16 font-semibold text-white md:py-2.5 md:text-small20',
         )}
-        style={{ backgroundColor: colors?.primary }}
+        style={{
+          backgroundColor: colors?.primary,
+          background: isGradient
+            ? `linear-gradient(45deg, ${colors?.primary}, ${colors?.gradient})`
+            : undefined,
+        }}
       >
         {badgeContent}
       </div>
