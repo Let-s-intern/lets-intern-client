@@ -1,5 +1,3 @@
-import { LuAlarmClock } from 'react-icons/lu';
-
 import Badge from '@components/common/program/program-detail/Badge';
 import Description from '@components/common/program/program-detail/Description';
 import Heading2 from '@components/common/program/program-detail/Heading2';
@@ -47,7 +45,11 @@ function ChallengeIntroCareerStart() {
           <div className="mb-1 flex w-fit items-center gap-2.5">
             취업 준비 평균 기간이
             <Badge className="bg-[#F3F4FF]">
-              <LuAlarmClock size={24} color="#4D55F5" />
+              <img
+                className="h-auto w-6"
+                src="/icons/career-start-timer-icon.svg"
+                alt="타이머 아이콘"
+              />
               <span className="text-primary">11.5개월?</span>
             </Badge>
           </div>
