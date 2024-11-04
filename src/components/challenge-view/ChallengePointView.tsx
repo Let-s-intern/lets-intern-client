@@ -116,7 +116,7 @@ const ChallengePointView = ({
       </Heading2>
 
       <div className="mb-[70px] space-y-4 md:mb-52">
-        <ul className="mb-10 space-y-4 md:mb-16">
+        <ul className="space-y-4">
           {point.list?.map((item, index) => (
             <PointList
               key={item.id}
@@ -127,7 +127,7 @@ const ChallengePointView = ({
           ))}
         </ul>
         {challengeType === challengeTypeSchema.enum.CAREER_START && (
-          <p className="text-xsmall14 font-semibold text-neutral-40 md:text-center md:text-xsmall16">
+          <p className="mt-10 text-xsmall14 font-semibold text-neutral-40 md:mt-16 md:text-center md:text-xsmall16">
             본 프로그램은 취업의 기초가 되는 퍼스널 브랜딩과 마스터 이력서
             작성을 다룹니다.
             <br />
@@ -198,7 +198,7 @@ function PointList({
   return (
     <li
       key={item.id}
-      className="flex flex-col items-center gap-4 self-stretch rounded-md px-8 pb-10 pt-8"
+      className="mx-auto flex max-w-[886px] flex-col items-center gap-4 self-stretch rounded-md px-8 pb-10 pt-8"
       style={{ backgroundColor: colors.primaryLight }}
     >
       <div className="break-keep text-center">
