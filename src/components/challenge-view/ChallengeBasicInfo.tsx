@@ -95,9 +95,7 @@ const ChallengeBasicInfo = ({
         <div className="flex w-full flex-col items-center justify-center gap-y-5 rounded-md bg-neutral-95 px-6 pb-9 pt-5">
           <div className="flex w-full flex-col gap-y-6">
             <div className="flex w-full flex-col gap-y-[14px]">
-              <p className="text-small18 font-bold">
-                이력서 & 자기소개서 2주 완성 챌린지
-              </p>
+              <p className="text-small18 font-bold">{challenge.title}</p>
               <div className="flex flex-col gap-y-0.5 text-xsmall14">
                 {priceReason.map((reason, index) => (
                   <div key={index} className="flex items-center gap-x-0.5">
