@@ -1,3 +1,7 @@
+import { AxiosError } from 'axios';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+
 import { useProgramQuery } from '@/api/program';
 import { usePatchUser } from '@/api/user';
 import { UserInfo } from '@/lib/order';
@@ -16,9 +20,6 @@ import PriceSection from '@components/common/program/program-detail/apply/sectio
 import UserInputSection from '@components/common/program/program-detail/apply/section/UserInputSection';
 import Header from '@components/common/program/program-detail/header/Header';
 import { Duration } from '@components/Duration';
-import { AxiosError } from 'axios';
-import { useCallback, useEffect, useMemo, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import OrderProgramInfo from './OrderProgramInfo';
 
 function calculateTotalPrice({
