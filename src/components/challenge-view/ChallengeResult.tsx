@@ -153,7 +153,7 @@ function BadgedBox({
   return (
     <OutlinedBox
       className={twMerge(
-        'flex min-w-[260px] flex-col overflow-hidden border-2 border-neutral-50 bg-neutral-85 p-0 sm:w-full md:h-[350px] md:p-0',
+        'flex min-w-[260px] flex-col overflow-hidden border-2 border-neutral-50 bg-neutral-85 p-0 md:p-0',
         className,
       )}
       style={{
