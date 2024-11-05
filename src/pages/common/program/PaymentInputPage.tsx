@@ -217,9 +217,9 @@ const PaymentInputPage = () => {
 
         <div className="-mx-5 mb-10 mt-8 flex items-center justify-center gap-2 bg-primary-10 px-2.5 py-5 text-xsmall14 lg:rounded-sm">
           <span>마감까지</span>
-          {program?.endDate ? (
+          {program?.deadline ? (
             <Duration
-              deadline={program.endDate}
+              deadline={program.deadline}
               numberBoxClassName="text-xsmall14 bg-white text-primary"
             />
           ) : null}
