@@ -31,20 +31,13 @@ export const usePaymentDetailQuery = (paymentId: string | undefined) => {
   });
 };
 
-const clientKey = import.meta.env.VITE_TOSS_SECRET_KEY || '';
-const base64Key = btoa(`${clientKey}:`);
-
 export const useGetTossCardPromotion = () => {
   return useQuery({
     queryKey: ['tossCardPromotion'],
     queryFn: async () => {
-      const res = await axios.get(`/v1/promotions/card`, {
-        baseURL: 'https://api.tosspayments.com',
-        headers: {
-          Authorization: `Basic ${base64Key}`,
-        },
-      });
-      return CardPromotionSchema.parse(res.data);
+      const res = await axios.get('/pg/promotions/card');
+      console.log('res', res);
+      return CardPromotionSchema.parse(res.data.data);
     },
   });
 };

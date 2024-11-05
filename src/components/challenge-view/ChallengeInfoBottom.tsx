@@ -1,4 +1,5 @@
 import { useGetTossCardPromotion } from '@/api/payment';
+import { convertCodeToCardKorName } from '@/api/paymentSchema';
 import CalendarIcon from '@/assets/icons/calendar.svg?react';
 import ChevronDown from '@/assets/icons/chevron-down.svg?react';
 import WalletIcon from '@/assets/icons/credit-card.svg?react';
@@ -44,7 +45,7 @@ const ChallengeInfoBottom = ({
     // 선택된 개월 수를 제공하는 은행 목록 필터링
     const banks = data.interestFreeCards
       .filter((card) => card.installmentFreeMonths.includes(targetMonth))
-      .map((card) => card.cardCompany);
+      .map((card) => convertCodeToCardKorName[card.issuerCode]);
 
     return { months: targetMonth, banks };
   };
