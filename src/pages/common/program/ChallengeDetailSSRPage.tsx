@@ -212,7 +212,7 @@ export function MobileApplyCTA({
         ) : (
           <>
             <div>
-              <span className="mb-2 block text-xsmall14 font-medium">
+              <span className="mb-1 block text-xsmall14 font-medium">
                 {program?.deadline?.format('M월 D일 (dd)')} 마감까지 🚀
               </span>
               <div className="flex items-center gap-2">

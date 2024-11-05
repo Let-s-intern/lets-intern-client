@@ -1,6 +1,6 @@
+import { twMerge } from '@/lib/twMerge';
 import { Dayjs } from 'dayjs';
 import { ReactNode, useMemo } from 'react';
-import { twMerge } from 'tailwind-merge';
 import { clientOnly } from 'vike-react/clientOnly';
 
 import { ChallengeType, challengeTypeSchema } from '@/schema';
