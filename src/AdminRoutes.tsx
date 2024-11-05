@@ -3,6 +3,7 @@ import { Route } from 'react-router-dom';
 import ChallengeOperationAdminLayout from './components/admin/challenge/ui/ChallengeOperationAdminLayout';
 import AdminLayout from './components/admin/ui/layout/AdminLayout';
 import { CurrentAdminChallengeProvider } from './context/CurrentAdminChallengeProvider';
+import AdminHome from './pages/admin/AdminHome';
 import MainBannerCreate from './pages/admin/banner/main-banner/MainBannerCreate';
 import MainBannerEdit from './pages/admin/banner/main-banner/MainBannerEdit';
 import MainBanners from './pages/admin/banner/main-banner/MainBanners';
@@ -64,6 +65,7 @@ export const getAdminRoutes = () => {
   return (
     <Route path="/admin" element={<AdminLayout />}>
       {/* /admin */}
+      <Route path="" element={<AdminHome />} />
 
       <Route path="reviews">
         {/* /admin/reviews */}
