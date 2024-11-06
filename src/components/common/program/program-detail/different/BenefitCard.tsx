@@ -1,46 +1,20 @@
 import ChevronDown from '@/assets/icons/chevron-down.svg?react';
-import { twMerge } from '@/lib/twMerge';
 
 export interface BenefitCardProps {
-  type: 'single' | 'double';
   title: string;
   options: string[];
-  mobileUrl?: string;
-  desktopUrl?: string;
+  imgUrl: string;
 }
 
-const BenefitCard = ({
-  type,
-  title,
-  options,
-  mobileUrl,
-  desktopUrl,
-}: BenefitCardProps) => {
+const BenefitCard = ({ title, options, imgUrl }: BenefitCardProps) => {
   return (
-    <div
-      className={`flex w-full flex-col gap-y-6 rounded-md bg-neutral-95 px-4 pb-6 pt-5 md:flex-row md:gap-x-2.5 md:bg-white md:p-0 ${type === 'single' ? 'md:min-h-[160px]' : 'md:h-full md:basis-1/2'}`}
-    >
-      {mobileUrl ? (
-        <img
-          src={mobileUrl}
-          alt="different"
-          className="block h-[261px] w-full rounded-md object-cover md:hidden md:w-[484px]"
-        />
-      ) : null}
-
-      {desktopUrl ? (
-        <img
-          src={desktopUrl}
-          alt="different"
-          className={twMerge(
-            `hidden h-full rounded-md border border-neutral-80 object-cover md:block`,
-            type === 'single' ? 'w-1/4' : 'min-h-[302px] w-1/2',
-          )}
-        />
-      ) : null}
-
+    <div className={`flex w-full items-stretch gap-x-2.5`}>
+      <img
+        src={imgUrl}
+        className="h-[186px] w-[256px] shrink-0 rounded-md border border-neutral-70 object-cover"
+      />
       <div
-        className={`flex flex-1 flex-col gap-y-3 md:h-full md:rounded-md ${type === 'single' ? 'md:p-10' : 'md:min-h-[302px] md:px-4 md:py-10'} md:bg-neutral-95`}
+        className={`flex w-[734px] shrink-0 flex-col gap-y-3 rounded-md bg-neutral-95 px-[30px] py-10 md:flex-1 md:rounded-md`}
       >
         <div className="flex w-full flex-col gap-y-2.5 md:gap-y-6">
           <h4 className="whitespace-pre text-small18 font-bold text-black md:text-medium22">

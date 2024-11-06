@@ -129,7 +129,9 @@ const ChallengeInfoBottom = ({
         <div className="flex flex-1 flex-col items-center justify-center gap-y-5 rounded-md bg-neutral-95 px-6 pb-9 pt-5">
           <div className="flex w-full flex-col gap-y-6">
             <div className="flex w-full flex-col gap-y-[14px]">
-              <p className="text-small18 font-bold">{challenge.title}</p>
+              <p className="text-small18 font-bold text-black">
+                {challenge.title}
+              </p>
               <div className="flex flex-col gap-y-0.5 text-xsmall14">
                 {priceReason.map((reason, index) => (
                   <div key={index} className="flex items-center gap-x-0.5">
