@@ -47,7 +47,7 @@ export function getBlogPathname({
   id?: string | number | null;
   title?: string | null;
 }): string {
-  return `/blog/${id}/${title?.replace(/ /g, '-')}`;
+  return `/blog/${id}/${title?.replace(/[ /]/g, '-')}`;
 }
 
 export function getProgramPathname({

@@ -1483,3 +1483,38 @@ export type ProgramAdminList = z.infer<
 export type ProgramAdminListItem = z.infer<
   typeof programAdminSchema
 >['programList'][0];
+
+export const programBannerAdminSchema = z.object({
+  id: z.number(),
+  title: z.string(),
+  link: z.string(),
+  startDate: z.string(),
+  endDate: z.string(),
+  isValid: z.boolean(),
+  isVisible: z.boolean(),
+  imgUrl: z.string(),
+  mobileImgUrl: z.string(),
+});
+
+export const programBannerUserSchema = z.object({
+  id: z.number(),
+  title: z.string(),
+  link: z.string(),
+  startDate: z.string(),
+  endDate: z.string(),
+  isValid: z.boolean(),
+  imgUrl: z.string(),
+  mobileImgUrl: z.string(),
+});
+
+export const programBannerAdminListSchema = z.object({
+  bannerList: z.array(programBannerAdminSchema),
+});
+
+export const programBannerUserListSchema = z.object({
+  bannerList: z.array(programBannerUserSchema),
+});
+
+export const programBannerAdminDetailSchema = z.object({
+  bannerAdminDetailVo: programBannerAdminSchema,
+});

@@ -1,10 +1,41 @@
+import axios from '@/utils/axios';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { IProgram } from '../../../../../types/Program.interface';
-import { PROGRAM_STATUS } from '../../../../../utils/programConst';
+import {
+  PROGRAM_STATUS,
+  PROGRAM_TYPE,
+} from '../../../../../utils/programConst';
 import ProgramStatusTag from '../../../program/programs/card/ProgramStatusTag';
 
 const ProgramListItemContainer = ({ program }: { program: IProgram }) => {
   const navigate = useNavigate();
+  const [link, setLink] = useState(
+    `/program/${program.programInfo.programType.toLowerCase()}/${
+      program.programInfo.id
+    }`,
+  );
+
+  const getVodLink = async () => {
+    if (program.programInfo.programType !== PROGRAM_TYPE.VOD) return;
+    // VOD 상세 조회
+    try {
+      const res = await axios.get(`/vod/${program.programInfo.id}`);
+      if (res.status === 200) {
+        setLink(res.data.data.vodInfo.link);
+        return res.data.data;
+      }
+      throw new Error(`${res.status} ${res.statusText}`);
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.error(error);
+    }
+  };
+
+  useEffect(() => {
+    (async () => await getVodLink())();
+  }, []);
+
   const formatDate = (date: string) => {
     return new Date(date).toLocaleDateString().replaceAll(' ', '').slice(0, -1);
   };
@@ -12,13 +43,11 @@ const ProgramListItemContainer = ({ program }: { program: IProgram }) => {
     <div className="flex w-full items-center justify-center">
       <div
         className="calendar_program flex w-full cursor-pointer items-center justify-center gap-x-4 rounded-md border border-neutral-85 bg-neutral-100 p-2.5"
-        onClick={() =>
-          navigate(
-            `/program/${program.programInfo.programType.toLowerCase()}/${
-              program.programInfo.id
-            }`,
-          )
-        }
+        onClick={() => {
+          program.programInfo.programType === PROGRAM_TYPE.VOD
+            ? window.open(link)
+            : navigate(link);
+        }}
         data-program-text={program.programInfo.title}
       >
         <img
@@ -40,7 +69,9 @@ const ProgramListItemContainer = ({ program }: { program: IProgram }) => {
               </div>
             </div>
           </div>
-          <div className="flex w-full items-center justify-start gap-x-1">
+          <div
+            className={`flex w-full items-center justify-start gap-x-1 ${program.programInfo.programType === 'VOD' ? 'hidden' : ''}`}
+          >
             <div className="text-xs font-medium text-neutral-0">진행기간</div>
             <div className="text-xs font-medium text-primary-dark">
               {`${formatDate(program.programInfo.startDate)} ~ ${formatDate(
