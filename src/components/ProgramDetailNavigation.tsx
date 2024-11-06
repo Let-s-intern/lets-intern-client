@@ -69,6 +69,8 @@ const ProgramDetailNavigation = ({
         });
       },
       {
+        // 뷰포트 상단 10%부터 시작해서 뷰포트 하단 10%까지 보여지면 콜백
+        rootMargin: '-10% 0px 0px 0px',
         threshold: 0.05,
       },
     );
@@ -93,7 +95,12 @@ const ProgramDetailNavigation = ({
   const handleScroll = (id: string) => {
     const target = document.getElementById(id);
     if (target) {
-      target.scrollIntoView({ behavior: 'smooth' });
+      const elementPosition = target.getBoundingClientRect().top;
+      const offsetPosition = elementPosition - 70;
+      window.scrollBy({
+        top: offsetPosition,
+        behavior: 'smooth',
+      });
     }
   };
 
@@ -110,7 +117,7 @@ const ProgramDetailNavigation = ({
         {navItems.map((navItem) => (
           <button
             key={navItem.title}
-            className={`border-b-[2.4px] px-1.5 py-4 text-xsmall16 font-semibold`}
+            className={`border-b-[2.4px] px-1.5 py-4 text-xsmall16 font-semibold md:min-w-[100px]`}
             style={{
               borderBottomColor:
                 navItem.to === activeSection
