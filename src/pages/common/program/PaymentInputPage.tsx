@@ -1,3 +1,7 @@
+import { AxiosError } from 'axios';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+
 import { useProgramQuery } from '@/api/program';
 import { usePatchUser } from '@/api/user';
 import { UserInfo } from '@/lib/order';
@@ -16,9 +20,6 @@ import PriceSection from '@components/common/program/program-detail/apply/sectio
 import UserInputSection from '@components/common/program/program-detail/apply/section/UserInputSection';
 import Header from '@components/common/program/program-detail/header/Header';
 import { Duration } from '@components/Duration';
-import { AxiosError } from 'axios';
-import { useCallback, useEffect, useMemo, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import OrderProgramInfo from './OrderProgramInfo';
 
 function calculateTotalPrice({
@@ -216,9 +217,9 @@ const PaymentInputPage = () => {
 
         <div className="-mx-5 mb-10 mt-8 flex items-center justify-center gap-2 bg-primary-10 px-2.5 py-5 text-xsmall14 lg:rounded-sm">
           <span>마감까지</span>
-          {program?.endDate ? (
+          {program?.deadline ? (
             <Duration
-              deadline={program.endDate}
+              deadline={program.deadline}
               numberBoxClassName="text-xsmall14 bg-white text-primary"
             />
           ) : null}

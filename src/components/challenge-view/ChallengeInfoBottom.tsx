@@ -1,4 +1,5 @@
 import { useGetTossCardPromotion } from '@/api/payment';
+import { convertCodeToCardKorName } from '@/api/paymentSchema';
 import CalendarIcon from '@/assets/icons/calendar.svg?react';
 import ChevronDown from '@/assets/icons/chevron-down.svg?react';
 import WalletIcon from '@/assets/icons/credit-card.svg?react';
@@ -44,21 +45,25 @@ const ChallengeInfoBottom = ({
     // 선택된 개월 수를 제공하는 은행 목록 필터링
     const banks = data.interestFreeCards
       .filter((card) => card.installmentFreeMonths.includes(targetMonth))
-      .map((card) => card.cardCompany);
+      .map((card) => convertCodeToCardKorName[card.issuerCode]);
 
     return { months: targetMonth, banks };
   };
 
   const { months: installmentMonths, banks } = findCard();
+
+  const priceInfo = challenge.priceInfo[0];
+
   const monthlyPrice =
-    installmentMonths && challenge.priceInfo[0]
+    installmentMonths && priceInfo
       ? Math.round(
-          ((challenge.priceInfo[0].price ?? 0) -
-            (challenge.priceInfo[0].discount ?? 0) -
-            (challenge.priceInfo[0].refund ?? 0)) /
+          ((priceInfo.price ?? 0) - (priceInfo.discount ?? 0)) /
             installmentMonths,
         )
       : null;
+
+  const totalPrice = (priceInfo?.price || 0) - (priceInfo?.discount || 0);
+  const showMonthlyPrice = priceInfo && totalPrice >= 50000;
 
   return (
     <div className="flex w-full flex-col gap-y-8 py-8 md:gap-y-20 md:pb-32 md:pt-52">
@@ -90,7 +95,7 @@ const ChallengeInfoBottom = ({
               <BasicInfoRow
                 icon={<MentorIcon />}
                 title="OT 일자"
-                content={`${formatFullDateTime(challenge.beginning, true)}`}
+                content={`${formatFullDateTime(challenge.startDate, true)}`}
               />
             </div>
           </div>
@@ -117,7 +122,7 @@ const ChallengeInfoBottom = ({
             <BasicInfoBottomRow
               icon={<MentorIcon />}
               title="OT 일자"
-              content={`${formatFullDateTime(challenge.beginning, true)}`}
+              content={`${formatFullDateTime(challenge.startDate, true)}`}
             />
           </div>
         )}
@@ -134,69 +139,56 @@ const ChallengeInfoBottom = ({
                 ))}
               </div>
             </div>
-            {challenge.priceInfo[0] && (
-              <div>
-                <div className="flex w-full flex-col gap-y-2.5 border-b border-neutral-80 py-2.5 pb-[14px] text-neutral-0">
-                  <div className="flex w-full items-center justify-between gap-x-4 text-xsmall16">
-                    <span className="font-medium">정가</span>
-                    <span>
-                      {challenge.priceInfo[0].price?.toLocaleString()}원
-                    </span>
-                  </div>
-                  <div className="flex w-full items-center justify-between gap-x-4 text-xsmall16">
-                    <span
-                      className="font-bold"
-                      style={{ color: colors.primary }}
-                    >
-                      {getDiscountPercent(
-                        challenge.priceInfo[0].price || 0,
-                        challenge.priceInfo[0].discount || 0,
-                      )}
-                      % 할인
-                    </span>
-                    <span>
-                      -{challenge.priceInfo[0].discount?.toLocaleString()}원
-                    </span>
-                  </div>
-                  <div className="flex w-full items-center justify-between gap-x-4 text-xsmall16">
-                    <span className="font-bold text-black">
-                      미션 모두 수행시, 환급
-                    </span>
-                    <span>
-                      -{challenge.priceInfo[0].refund?.toLocaleString()}원
-                    </span>
-                  </div>
+            {priceInfo && (
+              <div className="flex w-full flex-col gap-y-2.5 border-b border-neutral-80 pb-[14px] pt-2.5 text-neutral-0">
+                <div className="flex w-full items-center justify-between gap-x-4 text-xsmall16">
+                  <span className="font-medium">정가</span>
+                  <span>{priceInfo.price?.toLocaleString()}원</span>
+                </div>
+                <div className="flex w-full items-center justify-between gap-x-4 text-xsmall16">
+                  <span className="font-bold" style={{ color: colors.primary }}>
+                    {getDiscountPercent(
+                      priceInfo.price || 0,
+                      priceInfo.discount || 0,
+                    )}
+                    % 할인
+                  </span>
+                  <span>-{priceInfo.discount?.toLocaleString()}원</span>
+                </div>
+                <div className="flex w-full items-center justify-between gap-x-4 text-xsmall16">
+                  <span className="font-bold text-black">
+                    미션 모두 수행시, 환급
+                  </span>
+                  <span>-{priceInfo.refund?.toLocaleString()}원</span>
                 </div>
               </div>
             )}
           </div>
-          {challenge.priceInfo[0] && (
+          {priceInfo && (
             <div className="flex w-full flex-col gap-y-4">
               <div className="flex w-full items-center justify-between text-small20 font-medium text-neutral-0">
                 <p>할인 적용가</p>
-                <p className="text-xxlarge32 font-bold text-neutral-0">
-                  {(
-                    (challenge.priceInfo[0].price ?? 0) -
-                    (challenge.priceInfo[0].discount ?? 0)
-                  ).toLocaleString()}
-                  원
+                <p className="text-small20 font-medium text-neutral-0">
+                  {totalPrice.toLocaleString()}원
                 </p>
               </div>
-              <div className="flex w-full flex-col items-end gap-y-2">
-                <div style={{ color: colors.primary }}>
-                  <span className="mr-1 text-medium22 font-semibold">월</span>
-                  <span className="text-xxlarge32 font-bold">
-                    {monthlyPrice
-                      ? `${monthlyPrice.toLocaleString()}원`
-                      : '계산 중'}
-                  </span>
+              {showMonthlyPrice && (
+                <div className="flex w-full flex-col items-end gap-y-2">
+                  <div style={{ color: colors.primary }}>
+                    <span className="mr-1 text-medium22 font-semibold">월</span>
+                    <span className="text-xxlarge32 font-bold">
+                      {monthlyPrice
+                        ? `${monthlyPrice.toLocaleString()}원`
+                        : '계산 중'}
+                    </span>
+                  </div>
+                  <p className="text-xsmall14 text-neutral-30">
+                    {!data || isLoading
+                      ? '무이자 할부 시'
+                      : `${banks.join(', ')} ${installmentMonths}개월 무이자 할부 시`}
+                  </p>
                 </div>
-                <p className="text-xsmall14 text-neutral-30">
-                  {!data || isLoading
-                    ? '무이자 할부 시'
-                    : `${banks.join(', ')} ${installmentMonths}개월 무이자 할부 시`}
-                </p>
-              </div>
+              )}
             </div>
           )}
         </div>

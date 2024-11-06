@@ -36,7 +36,7 @@ const OrderProgramInfo = ({
               <div className="shrink-0 text-neutral-30">진행 일정</div>
               <div className="text-primary-dark">{`${convertDateFormat(startDate || '')} - ${convertDateFormat(endDate || '')}`}</div>
             </div>
-            {progressType && (
+            {progressType !== 'none' && (
               <div className="flex w-full items-center justify-start gap-x-4 text-xs font-medium">
                 <div className="shrink-0 text-neutral-30">진행 방식</div>
                 <div className="text-primary-dark">{`${

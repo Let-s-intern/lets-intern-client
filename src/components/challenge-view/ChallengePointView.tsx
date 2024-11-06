@@ -1,12 +1,13 @@
+import { twMerge } from '@/lib/twMerge';
 import { Dayjs } from 'dayjs';
 import { ReactNode, useMemo } from 'react';
-import { twMerge } from 'tailwind-merge';
 import { clientOnly } from 'vike-react/clientOnly';
 
 import { ChallengeType, challengeTypeSchema } from '@/schema';
 import { ChallengePoint } from '@/types/interface';
 import { ChallengeColor } from '@components/ChallengeView';
 import Heading2 from '@components/common/program/program-detail/Heading2';
+import { josa } from '@toss/hangul';
 
 const Balancer = clientOnly(() => import('react-wrap-balancer'));
 
@@ -115,7 +116,7 @@ const ChallengePointView = ({
       </Heading2>
 
       <div className="mb-[70px] space-y-4 md:mb-52">
-        <ul className="mb-10 space-y-4 md:mb-16">
+        <ul className="space-y-4">
           {point.list?.map((item, index) => (
             <PointList
               key={item.id}
@@ -126,7 +127,7 @@ const ChallengePointView = ({
           ))}
         </ul>
         {challengeType === challengeTypeSchema.enum.CAREER_START && (
-          <p className="text-xsmall14 font-semibold text-neutral-40 md:text-center md:text-xsmall16">
+          <p className="mt-10 text-xsmall14 font-semibold text-neutral-40 md:mt-16 md:text-center md:text-xsmall16">
             본 프로그램은 취업의 기초가 되는 퍼스널 브랜딩과 마스터 이력서
             작성을 다룹니다.
             <br />
@@ -136,8 +137,8 @@ const ChallengePointView = ({
       </div>
 
       <Heading2 className="mb-10 md:mb-8">
-        {challengeTitle}은<br className="md:hidden" /> 2주간 아래와 같이
-        진행돼요
+        {josa(challengeTitle, '은/는')}
+        <br className="md:hidden" /> 2주간 아래와 같이 진행돼요
       </Heading2>
       <span className="hidden text-center text-xsmall14 text-neutral-30 md:mb-20 md:block">
         {description}
@@ -197,7 +198,7 @@ function PointList({
   return (
     <li
       key={item.id}
-      className="flex flex-col items-center gap-4 self-stretch rounded-md px-8 pb-10 pt-8"
+      className="mx-auto flex max-w-[886px] flex-col items-center gap-4 self-stretch rounded-md px-8 pb-10 pt-8"
       style={{ backgroundColor: colors.primaryLight }}
     >
       <div className="break-keep text-center">

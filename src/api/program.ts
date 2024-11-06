@@ -8,6 +8,7 @@ import {
   getChallengeIdSchema,
   getLiveIdSchema,
   getVodIdSchema,
+  liveTitleSchema,
   programAdminSchema,
   programBannerAdminDetailSchema,
   programBannerAdminListSchema,
@@ -332,6 +333,16 @@ export const useDeleteVodMutation = ({
     },
     onSuccess: successCallback,
     onError: errorCallback,
+  });
+};
+
+export const useGetLiveTitle = (liveId: number | string) => {
+  return useQuery({
+    queryKey: [liveId, 'useGetLiveTitle'],
+    queryFn: async () => {
+      const res = await axios.get(`/live/${liveId}/title`);
+      return liveTitleSchema.parse(res.data.data);
+    },
   });
 };
 

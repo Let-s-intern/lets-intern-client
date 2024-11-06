@@ -1,3 +1,8 @@
+import { useMediaQuery } from '@mui/material';
+import dayjs, { Dayjs } from 'dayjs';
+import { useCallback, useEffect } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+
 import { useProgramApplicationQuery } from '@/api/application';
 import { useChallengeQuery } from '@/api/challenge';
 import { useServerChallenge } from '@/context/ServerChallenge';
@@ -16,10 +21,6 @@ import FilledButton from '@components/common/program/program-detail/button/Fille
 import GradientButton from '@components/common/program/program-detail/button/GradientButton';
 import NotiButton from '@components/common/program/program-detail/button/NotiButton';
 import { Duration } from '@components/Duration';
-import { useMediaQuery } from '@mui/material';
-import dayjs, { Dayjs } from 'dayjs';
-import { useCallback, useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
 
 const ChallengeDetailSSRPage = () => {
   const navigate = useNavigate();
@@ -177,7 +178,7 @@ const ChallengeDetailSSRPage = () => {
   );
 };
 
-/* CTA는 프로그램 상세페이지에서 공동으로 사용 */
+/* CTA는 모든 프로그램 상세페이지에서 공동으로 사용 */
 interface ApplyCTAProps {
   program: {
     title?: string | null;
@@ -199,11 +200,11 @@ export function MobileApplyCTA({
       : false;
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-40 flex w-full flex-col items-center overflow-hidden bg-neutral-0/65 text-xxsmall12">
+    <div className="safe-area-bottom fixed left-0 right-0 z-40 flex w-full flex-col items-center overflow-hidden bg-neutral-0/65 text-xxsmall12">
       <div className="w-full bg-neutral-0/95 py-1.5 text-center font-bold text-static-100">
         {program?.title}
       </div>
-      <div className="flex w-full items-center justify-between px-5 py-4 text-neutral-80">
+      <div className="flex w-full items-center justify-between px-5 pb-5 pt-3 text-neutral-80 backdrop-blur">
         {isOutOfDate ? (
           <NotiButton text={'출시알림신청'} className="early_button" />
         ) : isAlreadyApplied ? (
@@ -211,7 +212,7 @@ export function MobileApplyCTA({
         ) : (
           <>
             <div>
-              <span className="mb-2 block">
+              <span className="mb-1 block text-xsmall14 font-medium">
                 {program?.deadline?.format('M월 D일 (dd)')} 마감까지 🚀
               </span>
               <div className="flex items-center gap-2">
@@ -243,10 +244,10 @@ export function DesktopApplyCTA({
       : false;
 
   return (
-    <div className="fixed bottom-4 left-0 right-0 z-40 mx-auto flex w-full max-w-[60rem] items-center justify-between overflow-hidden rounded-sm bg-neutral-0/65 px-5 py-4">
+    <div className="fixed bottom-4 left-0 right-0 z-40 mx-auto flex w-full max-w-[1000px] items-center justify-between overflow-hidden rounded-sm bg-neutral-0/65 px-5 py-4 backdrop-blur">
       <div className="flex flex-col gap-1">
         <span className="font-bold text-neutral-100">{program?.title}</span>
-        <span className="text-xxsmall12 text-neutral-80">
+        <span className="text-xsmall14 font-medium text-neutral-80">
           {program?.deadline?.format?.('M월 D일 (dd)')} 마감까지 🚀
         </span>
       </div>

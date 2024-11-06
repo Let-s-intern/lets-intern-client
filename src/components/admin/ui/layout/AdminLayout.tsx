@@ -7,6 +7,105 @@ import { AdminSnackbarProvider } from '@/hooks/useAdminSnackbar';
 import { useQuery } from '@tanstack/react-query';
 import axios from '../../../../utils/axios';
 
+const navData = [
+  {
+    title: '프로그램 관리',
+    itemList: [
+      {
+        name: '프로그램 개설',
+        url: '/admin/programs',
+      },
+      {
+        name: '후기 관리',
+        url: '/admin/reviews',
+      },
+    ],
+  },
+  {
+    title: '챌린지 관리',
+    itemList: [
+      {
+        name: '콘텐츠 관리',
+        url: '/admin/challenge/contents',
+      },
+      {
+        name: '미션 관리',
+        url: '/admin/challenge/missions',
+      },
+      {
+        name: '챌린지 운영',
+        url: '/admin/challenge/operation',
+      },
+    ],
+  },
+  {
+    title: '사용자 관리',
+    itemList: [
+      {
+        name: '회원 DB',
+        url: '/admin/users',
+      },
+      {
+        name: '쿠폰 관리',
+        url: '/admin/coupons',
+      },
+    ],
+  },
+  {
+    title: '홈페이지 관리',
+    itemList: [
+      {
+        name: '메인 배너 관리',
+        url: '/admin/banner/main-banners',
+      },
+      {
+        name: '상단 띠 배너 관리',
+        url: '/admin/banner/top-bar-banners',
+      },
+      {
+        name: '프로그램 배너 관리',
+        url: '/admin/banner/program-banners',
+      },
+      {
+        name: '팝업 관리',
+        url: '/admin/banner/pop-up',
+      },
+    ],
+  },
+  {
+    title: '블로그',
+    itemList: [
+      {
+        name: '블로그 글 관리/등록',
+        url: '/admin/blog/list',
+      },
+      {
+        name: '블로그 후기',
+        url: '/admin/blog/reviews',
+      },
+    ],
+  },
+  {
+    title: '서류 진단',
+    itemList: [
+      {
+        name: '서류 진단 프로그램 관리',
+        url: '/admin/report/list',
+      },
+    ],
+  },
+  {
+    title: '나가기',
+    itemList: [
+      {
+        name: '홈페이지로 이동',
+        url: '/',
+        isExit: true,
+      },
+    ],
+  },
+];
+
 const AdminLayout = () => {
   const navigate = useNavigate();
 
@@ -21,110 +120,14 @@ const AdminLayout = () => {
   const isAdmin = data?.data || false;
 
   useEffect(() => {
-    if (isLoading) return;
+    if (isLoading) {
+      return;
+    }
+
     if (!isAdmin) {
       navigate('/');
     }
-  }, [data, isAdmin, isLoading]);
-
-  const navData = [
-    {
-      title: '프로그램 관리',
-      itemList: [
-        {
-          name: '프로그램 개설',
-          url: '/admin/programs',
-        },
-        {
-          name: '후기 관리',
-          url: '/admin/reviews',
-        },
-      ],
-    },
-    {
-      title: '챌린지 관리',
-      itemList: [
-        {
-          name: '콘텐츠 관리',
-          url: '/admin/challenge/contents',
-        },
-        {
-          name: '미션 관리',
-          url: '/admin/challenge/missions',
-        },
-        {
-          name: '챌린지 운영',
-          url: '/admin/challenge/operation',
-        },
-      ],
-    },
-    {
-      title: '사용자 관리',
-      itemList: [
-        {
-          name: '회원 DB',
-          url: '/admin/users',
-        },
-        {
-          name: '쿠폰 관리',
-          url: '/admin/coupons',
-        },
-      ],
-    },
-    {
-      title: '홈페이지 관리',
-      itemList: [
-        {
-          name: '메인 배너 관리',
-          url: '/admin/banner/main-banners',
-        },
-        {
-          name: '상단 띠 배너 관리',
-          url: '/admin/banner/top-bar-banners',
-        },
-        {
-          name: '프로그램 배너 관리',
-          url: '/admin/banner/program-banners',
-        },
-        {
-          name: '팝업 관리',
-          url: '/admin/banner/pop-up',
-        },
-      ],
-    },
-    {
-      title: '블로그',
-      itemList: [
-        {
-          name: '블로그 글 관리/등록',
-          url: '/admin/blog/list',
-        },
-        {
-          name: '블로그 후기',
-          url: '/admin/blog/reviews',
-        },
-      ],
-    },
-    {
-      title: '서류 진단',
-      itemList: [
-        {
-          name: '서류 진단 프로그램 관리',
-          url: '/admin/report/list',
-        },
-      ],
-    },
-    {
-      title: '나가기',
-      itemList: [
-        {
-          name: '홈페이지로 이동',
-          url: '/',
-          isExit: true,
-        },
-      ],
-    },
-  ];
+  }, [data, isAdmin, isLoading, navigate]);
 
   if (!isAdmin) return null;
 
