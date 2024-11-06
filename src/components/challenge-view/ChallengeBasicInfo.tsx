@@ -5,7 +5,6 @@ import { convertCodeToCardKorName } from '@/api/paymentSchema';
 import Announcement from '@/assets/icons/announcement.svg?react';
 import ChevronDown from '@/assets/icons/chevron-down.svg?react';
 import ClockIcon from '@/assets/icons/clock.svg?react';
-import { twMerge } from '@/lib/twMerge';
 import { ChallengeIdSchema } from '@/schema';
 import { formatFullDateTime } from '@/utils/formatDateString';
 import { ChallengeColor } from '@components/ChallengeView';
@@ -61,9 +60,7 @@ const ChallengeBasicInfo = ({
   const monthlyPrice =
     installmentMonths && priceInfo
       ? Math.round(
-          ((priceInfo.price ?? 0) -
-            (priceInfo.discount ?? 0) -
-            (priceInfo.refund ?? 0)) /
+          ((priceInfo.price ?? 0) - (priceInfo.discount ?? 0)) /
             installmentMonths,
         )
       : null;
@@ -119,12 +116,7 @@ const ChallengeBasicInfo = ({
               </div>
             </div>
             {priceInfo && (
-              <div
-                className={twMerge(
-                  'flex w-full flex-col gap-y-2.5 border-neutral-80 pt-2.5 text-neutral-0',
-                  showMonthlyPrice && 'border-b pb-[14px]',
-                )}
-              >
+              <div className="flex w-full flex-col gap-y-2.5 border-b border-neutral-80 pb-[14px] pt-2.5 text-neutral-0">
                 <div className="flex w-full items-center justify-between gap-x-4 text-xsmall16">
                   <span className="font-medium">정가</span>
                   <span>{priceInfo.price?.toLocaleString()}원</span>
@@ -148,7 +140,7 @@ const ChallengeBasicInfo = ({
               </div>
             )}
           </div>
-          {showMonthlyPrice && (
+          {priceInfo && (
             <div className="flex w-full flex-col gap-y-4">
               <div className="flex w-full items-center justify-between text-small20 font-medium text-neutral-0">
                 <p>할인 적용가</p>
@@ -156,21 +148,23 @@ const ChallengeBasicInfo = ({
                   {totalPrice.toLocaleString()}원
                 </p>
               </div>
-              <div className="flex w-full flex-col items-end gap-y-2">
-                <div style={{ color: colors.primary }}>
-                  <span className="mr-1 text-medium22 font-semibold">월</span>
-                  <span className="text-xxlarge32 font-bold">
-                    {monthlyPrice
-                      ? `${monthlyPrice.toLocaleString()}원`
-                      : '계산 중'}
-                  </span>
+              {showMonthlyPrice && (
+                <div className="flex w-full flex-col items-end gap-y-2">
+                  <div style={{ color: colors.primary }}>
+                    <span className="mr-1 text-medium22 font-semibold">월</span>
+                    <span className="text-xxlarge32 font-bold">
+                      {monthlyPrice
+                        ? `${monthlyPrice.toLocaleString()}원`
+                        : '계산 중'}
+                    </span>
+                  </div>
+                  <p className="text-xsmall14 text-neutral-30">
+                    {!data || isLoading
+                      ? '무이자 할부 시'
+                      : `${banks.join(', ')} ${installmentMonths}개월 무이자 할부 시`}
+                  </p>
                 </div>
-                <p className="text-xsmall14 text-neutral-30">
-                  {!data || isLoading
-                    ? '무이자 할부 시'
-                    : `${banks.join(', ')} ${installmentMonths}개월 무이자 할부 시`}
-                </p>
-              </div>
+              )}
             </div>
           )}
         </div>
