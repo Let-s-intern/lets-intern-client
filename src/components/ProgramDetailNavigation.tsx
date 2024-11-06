@@ -54,15 +54,22 @@ const ProgramDetailNavigation = ({
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
+          // if (entry.target.id === PROGRAM_INTRO_ID) {
+          //   console.log(
+          //     'Intersection ratio for program-intro:',
+          //     entry.intersectionRatio,
+          //   );
+          // }
           if (entry.isIntersecting) {
-            console.log(entry.target.id);
+            // 얼마나 보여지는지 콘솔
+            // console.log(entry.target.id);
+            // console.log(entry.intersectionRatio);
             setActiveSection(entry.target.id);
           }
         });
       },
       {
         threshold: 0.05,
-        rootMargin: '0px 0px -70% 0px',
       },
     );
 
