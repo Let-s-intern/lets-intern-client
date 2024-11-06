@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import {
   CreateChallengeReq,
@@ -8,6 +8,9 @@ import {
   getLiveIdSchema,
   getVodIdSchema,
   programAdminSchema,
+  programBannerAdminDetailSchema,
+  programBannerAdminListSchema,
+  programBannerUserListSchema,
   programSchema,
   UpdateChallengeReq,
   UpdateLiveReq,
@@ -318,5 +321,167 @@ export const useDeleteVodMutation = ({
     },
     onSuccess: successCallback,
     onError: errorCallback,
+  });
+};
+
+// 프로그램 배너 목록 조회
+const getProgramBannerListQueryKey = ['useGetProgramBannerListQueryKey'];
+
+export const useGetProgramBannerListQuery = () => {
+  return useQuery({
+    queryKey: getProgramBannerListQueryKey,
+    queryFn: async () => {
+      const res = await axios.get('/banner/admin', {
+        params: {
+          type: 'PROGRAM',
+        },
+      });
+      return programBannerAdminListSchema.parse(res.data.data);
+    },
+  });
+};
+
+// 유저단 프로그램 배너 목록 조회
+const getUserProgramBannerListQueryKey = [
+  'useGetUserProgramBannerListQueryKey',
+];
+
+export const useGetUserProgramBannerListQuery = () => {
+  return useQuery({
+    queryKey: getUserProgramBannerListQueryKey,
+    queryFn: async () => {
+      const res = await axios.get('/banner', {
+        params: {
+          type: 'PROGRAM',
+        },
+      });
+      return programBannerUserListSchema.parse(res.data.data);
+    },
+  });
+};
+
+// 프로그램 배너 상세 조회
+export const getProgramBannerDetailQueryKey = (bannerId: number) => [
+  'banner',
+  'admin',
+  bannerId,
+];
+
+export const useGetProgramBannerDetailQuery = (bannerId: number) => {
+  return useQuery({
+    queryKey: getProgramBannerDetailQueryKey(bannerId),
+    queryFn: async () => {
+      const res = await axios.get(`/banner/admin/${bannerId}`, {
+        params: {
+          type: 'PROGRAM',
+        },
+      });
+      return programBannerAdminDetailSchema.parse(res.data.data);
+    },
+  });
+};
+
+// 프로그램 배너 등록
+export const useCreateProgramBannerMutation = ({
+  onSuccess,
+  onError,
+}: {
+  onSuccess?: () => void;
+  onError?: (error: Error) => void;
+}) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (formData: FormData) => {
+      const res = await axios.post('/banner', formData, {
+        params: {
+          type: 'PROGRAM',
+        },
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+      return res.data;
+    },
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({
+        queryKey: [...getProgramBannerListQueryKey],
+      });
+      onSuccess && onSuccess();
+    },
+    onError: (error) => {
+      onError && onError(error);
+    },
+  });
+};
+
+// 프로그램 배너 수정
+export const useEditProgramBannerMutation = ({
+  onSuccess,
+  onError,
+}: {
+  onSuccess?: () => void;
+  onError?: (error: Error) => void;
+}) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({
+      bannerId,
+      formData,
+    }: {
+      bannerId: number;
+      formData: FormData;
+    }) => {
+      const res = await axios.patch(`/banner/${bannerId}`, formData, {
+        params: {
+          type: 'PROGRAM',
+        },
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+      return { data: res.data, bannerId };
+    },
+    onSuccess: async (data) => {
+      await queryClient.invalidateQueries({
+        queryKey: getProgramBannerDetailQueryKey(data.bannerId),
+      });
+      await queryClient.invalidateQueries({
+        queryKey: getProgramBannerListQueryKey,
+      });
+      onSuccess && onSuccess();
+    },
+    onError: (error) => {
+      onError && onError(error);
+    },
+  });
+};
+
+// 프로그램 배너 삭제
+export const useDeleteProgramBannerMutation = ({
+  onSuccess,
+  onError,
+}: {
+  onSuccess?: () => void;
+  onError?: (error: Error) => void;
+}) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (bannerId: number) => {
+      const res = await axios.delete(`/banner/${bannerId}`, {
+        params: {
+          type: 'PROGRAM',
+        },
+      });
+      return res.data;
+    },
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({
+        queryKey: [...getProgramBannerListQueryKey],
+      });
+      onSuccess && onSuccess();
+    },
+    onError: (error) => {
+      onError && onError(error);
+    },
   });
 };
