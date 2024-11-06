@@ -94,7 +94,7 @@ const ChallengeBasicInfo = ({
             <BasicInfoRow
               icon={<LuCalendarDays size={20} />}
               title="OT 일자"
-              content={`${formatFullDateTime(challenge.beginning, true)}`}
+              content={`${formatFullDateTime(challenge.startDate, true)}`}
             />
           </div>
         </div>

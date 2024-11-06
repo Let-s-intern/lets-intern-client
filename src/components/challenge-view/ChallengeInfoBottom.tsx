@@ -95,7 +95,7 @@ const ChallengeInfoBottom = ({
               <BasicInfoRow
                 icon={<MentorIcon />}
                 title="OT 일자"
-                content={`${formatFullDateTime(challenge.beginning, true)}`}
+                content={`${formatFullDateTime(challenge.startDate, true)}`}
               />
             </div>
           </div>
@@ -122,7 +122,7 @@ const ChallengeInfoBottom = ({
             <BasicInfoBottomRow
               icon={<MentorIcon />}
               title="OT 일자"
-              content={`${formatFullDateTime(challenge.beginning, true)}`}
+              content={`${formatFullDateTime(challenge.startDate, true)}`}
             />
           </div>
         )}
