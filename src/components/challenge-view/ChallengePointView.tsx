@@ -1,14 +1,15 @@
 import { twMerge } from '@/lib/twMerge';
 import { Dayjs } from 'dayjs';
 import { ReactNode, useMemo } from 'react';
+import { FaCheck } from 'react-icons/fa6';
 import { clientOnly } from 'vike-react/clientOnly';
 
 import { ChallengeType, challengeTypeSchema } from '@/schema';
 import { ChallengePoint } from '@/types/interface';
+import { challengeTypeToText } from '@/utils/convert';
 import { ChallengeColor } from '@components/ChallengeView';
 import Heading2 from '@components/common/program/program-detail/Heading2';
 import SuperTitle from '@components/common/program/program-detail/SuperTitle';
-import { josa } from '@toss/hangul';
 
 const Balancer = clientOnly(() => import('react-wrap-balancer'));
 
@@ -59,16 +60,17 @@ const REWARD = {
   content: '챌린지 참여 점수 80점 이상시,\n3만원 페이백 및 수료증 발급',
 };
 
+const { PORTFOLIO, PERSONAL_STATEMENT, CAREER_START } =
+  challengeTypeSchema.enum;
+
 const ChallengePointView = ({
   point,
-  challengeTitle,
   startDate,
   endDate,
   colors,
   challengeType,
 }: {
   point: ChallengePoint;
-  challengeTitle: string;
   startDate: Dayjs;
   endDate: Dayjs;
   colors: ChallengeColor;
@@ -91,9 +93,9 @@ const ChallengePointView = ({
 
   const imgSrc = useMemo(() => {
     switch (challengeType) {
-      case challengeTypeSchema.enum.PORTFOLIO:
+      case PORTFOLIO:
         return '/images/payback-portfolio.svg';
-      case challengeTypeSchema.enum.PERSONAL_STATEMENT:
+      case PERSONAL_STATEMENT:
         return '/images/payback-statement.svg';
       default:
         return '/images/payback-basic.svg';
@@ -104,22 +106,35 @@ const ChallengePointView = ({
 
   return (
     <section className="flex w-full flex-col items-center">
-      <div className="flex w-full max-w-[1200px] flex-col px-5 md:items-center md:px-10">
+      <div className="flex w-full max-w-[1000px] flex-col px-5 md:items-center md:px-10">
         <h2 className="sr-only">챌린지 포인트</h2>
-        <SuperTitle className="mb-6 text-neutral-45 lg:mb-10">
+        <SuperTitle
+          className="mb-6 lg:mb-10"
+          style={{
+            color: colors.primary,
+          }}
+        >
           프로그램 소개
         </SuperTitle>
         <Heading2 className="mb-10 break-keep lg:mb-20">
           이력서 & 자기소개서 챌린지를 통해
           <br />
-          <span style={{ color: colors.primary }}>하루 30분</span>, 단{' '}
-          {point.weekText} 안에 이런걸
-          <br className="lg:hidden" />
-          얻어갈 수 있어요
+          <span
+            style={{
+              color:
+                challengeType === CAREER_START
+                  ? colors.primary
+                  : colors.subTitle,
+            }}
+          >
+            하루 30분
+          </span>
+          , 단 {point.weekText}만에 서류 준비를 <br className="lg:hidden" />
+          끝낼 수 있어요
         </Heading2>
 
         <div className="mb-[70px] w-full space-y-10 md:mb-[120px] md:space-y-[60px] md:px-14">
-          <ul className="space-y-4 md:space-y-6">
+          <ul className="max-w-[826px] space-y-4 md:space-y-6">
             {point.list?.map((item, index) => (
               <PointList
                 key={item.id}
@@ -129,7 +144,7 @@ const ChallengePointView = ({
               />
             ))}
           </ul>
-          {challengeType === challengeTypeSchema.enum.CAREER_START && (
+          {challengeType === CAREER_START && (
             <p className="text-xsmall14 font-semibold text-neutral-40 md:text-center md:text-xsmall16">
               본 프로그램은 취업의 기초가 되는 퍼스널 브랜딩과 마스터 이력서
               작성을 다룹니다.
@@ -149,12 +164,15 @@ const ChallengePointView = ({
           <div className="flex w-full flex-col md:items-center">
             <p
               className="text-xsmall16 font-bold md:text-small20"
-              style={{ color: colors.subTitle }}
+              style={{ color: colors.primary }}
             >
               진행 방식
             </p>
             <Heading2 className="py-3 pt-2 text-white md:pt-3">
-              {josa(challengeTitle, '은/는')}
+              {challengeType === CAREER_START
+                ? '기초'
+                : challengeTypeToText[challengeType]}{' '}
+              챌린지는
               <br className="md:hidden" /> 2주간 아래와 같이 진행돼요
             </Heading2>
             <span className="mb-10 text-xsmall14 text-neutral-50 md:mb-20">
@@ -164,7 +182,7 @@ const ChallengePointView = ({
           <div className="mb-[30px] flex w-full flex-col md:mb-[23px]">
             <div
               className="flex w-full items-center justify-center rounded-t-md px-4 py-2.5 text-xsmall14 font-semibold text-white md:px-2.5"
-              style={{ backgroundColor: colors.subBg }}
+              style={{ backgroundColor: colors.primary }}
             >
               2 Weeks
             </div>
@@ -188,9 +206,14 @@ const ChallengePointView = ({
             </Box>
             <Box className="md:flex-1">
               <BoxItem title={MISSION.title}>
-                <ul className="flex flex-col gap-1 pl-6">
+                <ul className="flex flex-col gap-1 pl-1">
                   {MISSION.content.map((item) => (
-                    <li className="list-disc" key={item}>
+                    <li key={item} className="flex items-start gap-2">
+                      <FaCheck
+                        size={16}
+                        className="mt-1 shrink-0"
+                        style={{ color: colors.primary }}
+                      />
                       {item}
                     </li>
                   ))}
@@ -228,12 +251,12 @@ function PointList({
   return (
     <li
       key={item.id}
-      className="mx-auto flex w-full flex-col items-center gap-4 self-stretch rounded-md px-8 pb-10 pt-8"
+      className="mx-auto flex w-full flex-col items-center gap-5 self-stretch rounded-md p-8 md:pb-10"
       style={{ backgroundColor: colors.primaryLight }}
     >
       <div className="break-keep text-center">
         <span
-          className="rounded-md px-3.5 py-1.5 text-small18 font-semibold text-white"
+          className="rounded-md px-3.5 py-1.5 text-xsmall14 font-semibold text-white md:text-small18"
           style={{ backgroundColor: colors.primary }}
         >
           Point {index + 1}
@@ -312,7 +335,7 @@ function BoxItem({
 }) {
   return (
     <div className="flex flex-col gap-2 text-xsmall16 text-neutral-0">
-      <span className="whitespace-pre-line font-semibold">{title}</span>
+      <span className="whitespace-pre-line font-bold">{title}</span>
       <span className="whitespace-pre-line">{children}</span>
     </div>
   );

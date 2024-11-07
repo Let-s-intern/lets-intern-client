@@ -77,7 +77,7 @@ const ChallengeView: React.FC<{
         primaryLight = '#EEFAFF';
         secondaryLight = '#FFF7EF';
         gradient = '#39DEFF';
-        dark = '#0A7DAD';
+        dark = '#20304F';
         subTitle = '#FF9C34';
         subBg = '#FFF7EF';
         gradientBg =
@@ -128,7 +128,7 @@ const ChallengeView: React.FC<{
   return (
     <div className="flex w-full flex-col">
       <div className="flex w-full flex-col items-center">
-        <div className="flex w-full max-w-[1200px] flex-col px-5 md:px-10">
+        <div className="flex w-full max-w-[1000px] flex-col px-5 md:px-10">
           <Header programTitle={challenge.title ?? ''} />
           <ChallengeBasicInfo colors={colors} challenge={challenge} />
         </div>
@@ -147,7 +147,6 @@ const ChallengeView: React.FC<{
                 colors={colors}
                 challengeType={challenge.challengeType}
                 point={receivedContent.challengePoint}
-                challengeTitle={challenge.title ?? ''}
                 startDate={challenge.startDate ?? dayjs()}
                 endDate={challenge.endDate ?? dayjs()}
               />
@@ -155,7 +154,7 @@ const ChallengeView: React.FC<{
 
             {/* 특별 챌린지, 합격자 후기 */}
             {receivedContent.mainDescription?.root && (
-              <div className="flex w-full max-w-[1200px] flex-col px-5 md:px-10">
+              <div className="flex w-full max-w-[1000px] flex-col px-5 md:px-10">
                 <LexicalContent node={receivedContent.mainDescription?.root} />
               </div>
             )}
