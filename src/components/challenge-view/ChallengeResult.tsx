@@ -2,7 +2,6 @@ import { useMediaQuery } from '@mui/material';
 import { ReactNode, useMemo } from 'react';
 import { FaCheck } from 'react-icons/fa6';
 
-import ArrowPersonalStatement from '@/assets/icons/result-arrow-icon-personal-statement.svg?react';
 import { twMerge } from '@/lib/twMerge';
 import { ChallengeType, challengeTypeSchema } from '@/schema';
 import { ChallengeColor } from '@components/ChallengeView';
@@ -82,6 +81,16 @@ function ChallengeResult({ colors, challengeType }: ChallengeResultProps) {
         return CAREER_START_CONTENT;
     }
   }, [challengeType]);
+  const iconName = useMemo(() => {
+    switch (challengeType) {
+      case PORTFOLIO:
+        return 'result-arrow-icon-portfolio.svg';
+      case PERSONAL_STATEMENT:
+        return 'result-arrow-icon-personal-statement.svg';
+      default:
+        return 'result-arrow-icon-career-start.svg';
+    }
+  }, [challengeType]);
 
   return (
     <section
@@ -99,7 +108,7 @@ function ChallengeResult({ colors, challengeType }: ChallengeResultProps) {
           <Heading2 className="text-white md:flex md:flex-col md:items-center">
             <div className="mb-2 flex items-center gap-1">
               서류 합격률을 300%{' '}
-              <ArrowPersonalStatement className="h-auto w-7 md:w-10" />{' '}
+              <img className="h-auto w-7 md:w-10" src={`/icons/${iconName}`} />{' '}
             </div>
             높일 수 있는 렛츠커리어 챌린지
           </Heading2>
