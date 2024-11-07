@@ -66,9 +66,11 @@ const ChallengeView: React.FC<{
     let secondaryLight = '';
     let gradient = '';
     let dark = '';
+
     let subTitle = '';
     let subBg = '';
     let gradientBg = '';
+    let curriculumBg = '';
 
     switch (challenge.challengeType) {
       case PERSONAL_STATEMENT:
@@ -76,12 +78,14 @@ const ChallengeView: React.FC<{
         secondary = '#FF9C34';
         primaryLight = '#EEFAFF';
         secondaryLight = '#FFF7EF';
-        gradient = '#39DEFF';
-        dark = '#0A7DAD';
+        gradient = '#39DEFF'; // After 배지 배경색에 사용
+        dark = '#20304F'; // 진행방식,결과물 배경색
+
         subTitle = '#FF9C34';
         subBg = '#FFF7EF';
         gradientBg =
-          'linear-gradient(180deg,#222A7E 0%,#111449 50%,#111449 100%)';
+          'linear-gradient(180deg,#222A7E 0%,#111449 50%,#111449 100%)'; // ??
+        curriculumBg = '#EFF4F7';
         break;
       case PORTFOLIO:
         primary = '#4A76FF';
@@ -90,10 +94,12 @@ const ChallengeView: React.FC<{
         secondaryLight = '#FFF9EA';
         gradient = '#4A56FF';
         dark = '#2D3A9D';
+
         subTitle = '#F8AE00';
         subBg = '#FFF9EA';
         gradientBg =
           'linear-gradient(180deg,#222A7E 0%,#111449 50%,#111449 100%)';
+        curriculumBg = '#F3F3F3';
         break;
       default:
         primary = '#4D55F5';
@@ -102,10 +108,12 @@ const ChallengeView: React.FC<{
         secondaryLight = '#FDF6FF';
         gradient = '#763CFF';
         dark = '#1A1D5F';
+
         subTitle = '#757BFF';
         subBg = '#5C63FF';
         gradientBg =
           'linear-gradient(180deg,#222A7E 0%,#111449 50%,#111449 100%)';
+        curriculumBg = '#F2F2F5';
     }
     return {
       primary,
@@ -117,6 +125,7 @@ const ChallengeView: React.FC<{
       subTitle,
       subBg,
       gradientBg,
+      curriculumBg,
     };
   }, [challenge.challengeType]);
 
@@ -128,7 +137,7 @@ const ChallengeView: React.FC<{
   return (
     <div className="flex w-full flex-col">
       <div className="flex w-full flex-col items-center">
-        <div className="flex w-full max-w-[1200px] flex-col px-5 md:px-10">
+        <div className="flex w-full max-w-[1000px] flex-col px-5 md:px-10">
           <Header programTitle={challenge.title ?? ''} />
           <ChallengeBasicInfo colors={colors} challenge={challenge} />
         </div>
@@ -147,7 +156,6 @@ const ChallengeView: React.FC<{
                 colors={colors}
                 challengeType={challenge.challengeType}
                 point={receivedContent.challengePoint}
-                challengeTitle={challenge.title ?? ''}
                 startDate={challenge.startDate ?? dayjs()}
                 endDate={challenge.endDate ?? dayjs()}
               />
@@ -155,7 +163,7 @@ const ChallengeView: React.FC<{
 
             {/* 특별 챌린지, 합격자 후기 */}
             {receivedContent.mainDescription?.root && (
-              <div className="flex w-full max-w-[1200px] flex-col px-5 md:px-10">
+              <div className="flex w-full max-w-[1000px] flex-col px-5 md:px-10">
                 <LexicalContent node={receivedContent.mainDescription?.root} />
               </div>
             )}
@@ -183,9 +191,11 @@ const ChallengeView: React.FC<{
             receivedContent.curriculum.length > 0 && (
               <div
                 id={PROGRAM_CURRICULUM_ID}
-                className="challenge_curriculum flex w-full flex-col items-center bg-neutral-95"
+                className="challenge_curriculum flex w-full flex-col items-center"
+                style={{ backgroundColor: colors.curriculumBg }}
               >
                 <ChallengeCurriculum
+                  challengeType={challenge.challengeType}
                   curriculum={receivedContent.curriculum}
                   colors={colors}
                 />

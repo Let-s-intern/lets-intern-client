@@ -1,45 +1,66 @@
-import CurriculumIcon from '@/assets/icons/curriculum.svg?react';
+import { useMediaQuery } from '@mui/material';
+import dayjs from 'dayjs';
+import { useMemo, useState } from 'react';
+import { IoIosArrowDown } from 'react-icons/io';
+
 import { twMerge } from '@/lib/twMerge';
+import { ChallengeType, challengeTypeSchema } from '@/schema';
 import { ChallengeCurriculum as ChallengeCurriculumType } from '@/types/interface';
 import { ChallengeColor } from '@components/ChallengeView';
 import Heading2 from '@components/common/program/program-detail/Heading2';
 import SuperTitle from '@components/common/program/program-detail/SuperTitle';
-import { useMediaQuery } from '@mui/material';
-import dayjs from 'dayjs';
-import { useState } from 'react';
-import { IoIosArrowDown } from 'react-icons/io';
 
 const superTitle = '취업 챌린지에서는 이런 걸 가져갈 수 있어요';
 const desktopTitle = '챌린지에서는 이런 걸 가져갈 수 있어요\n';
-const title = ['기초부터 결과물까지 가져가는', '완벽한 취업 준비 2주 커리큘럼'];
+const title = '기초부터 결과물까지 가져가는\n완벽한 취업 준비 2주 커리큘럼';
+const { PORTFOLIO, PERSONAL_STATEMENT, CAREER_START } =
+  challengeTypeSchema.enum;
 
 interface ChallengeCurriculumProps {
   curriculum: ChallengeCurriculumType[];
   colors: ChallengeColor;
+  challengeType: ChallengeType;
 }
 
-function ChallengeCurriculum({ curriculum, colors }: ChallengeCurriculumProps) {
+function ChallengeCurriculum({
+  curriculum,
+  colors,
+  challengeType,
+}: ChallengeCurriculumProps) {
   const isDesktop = useMediaQuery('(min-width: 768px)');
+
+  const iconName = useMemo(() => {
+    switch (challengeType) {
+      case PORTFOLIO:
+        return 'folder-icon-portfolio.svg';
+      case PERSONAL_STATEMENT:
+        return 'folder-icon-personal-statement.svg';
+      default:
+        return 'folder-icon-career-start.svg';
+    }
+  }, [challengeType]);
 
   if (!curriculum || !curriculum[0]) {
     return <></>;
   }
 
   return (
-    <section className="flex w-full max-w-[1200px] flex-col px-5 py-20 md:items-center md:px-10 md:py-40">
-      <SuperTitle className="mb-6 md:mb-12" style={{ color: colors.subTitle }}>
+    <section className="md:py-30 flex w-full max-w-[1000px] flex-col px-5 py-20 md:items-center md:pb-36 lg:px-0">
+      <SuperTitle className="mb-6 md:mb-12" style={{ color: colors.primary }}>
         커리큘럼
       </SuperTitle>
       <div
-        className="mb-4 flex w-fit items-center gap-x-2 rounded-sm px-2 py-1 text-xsmall14 font-bold md:gap-x-3 md:text-[18px]"
-        style={{ color: colors.primary, backgroundColor: colors.primaryLight }}
+        className="mb-4 flex w-fit items-center gap-x-2 rounded-sm bg-white px-2 py-1 text-xsmall14 font-bold md:gap-x-3 md:rounded-md md:px-4 md:py-2.5 md:text-[18px]"
+        style={{
+          color:
+            challengeType === CAREER_START ? colors.primary : colors.secondary,
+        }}
       >
-        <CurriculumIcon className="h-6 w-6 md:h-8 md:w-8" />
+        <img className="h-6 w-6 md:h-8 md:w-8" src={`/icons/${iconName}`} />
         {superTitle}
       </div>
-      <Heading2 className="mb-10 md:mb-20">
-        {isDesktop && desktopTitle}
-        {isDesktop ? title.join(' ') : title.join('\n')}
+      <Heading2 className="mb-10 whitespace-pre-line md:mb-16">
+        {title}
       </Heading2>
 
       <div className="flex w-full flex-col gap-4 md:grid md:grid-cols-2 md:gap-x-6 md:gap-y-8">
