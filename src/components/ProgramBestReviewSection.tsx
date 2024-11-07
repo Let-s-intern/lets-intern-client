@@ -35,7 +35,7 @@ const ProgramBestReviewSection = ({
           <p className="whitespace-pre text-small20 font-bold text-neutral-0 md:text-center md:text-xlarge28">{`참여자들의 진심이 담긴\n100% 솔직 후기`}</p>
         </div>
       </div>
-      <div className="flex w-full gap-x-3 overflow-x-auto px-10 md:px-[3.75rem] md:pt-5">
+      <div className="custom-scrollbar flex w-full gap-x-3 overflow-x-auto px-10 md:px-[3.75rem] md:pt-5">
         {reviews.map((review, index) => (
           <ProgramDetailReviewItem
             key={index}
