@@ -160,7 +160,7 @@ const ChallengePointView = ({
           backgroundColor: colors.dark,
         }}
       >
-        <div className="flex w-full max-w-[1200px] flex-col px-5 py-[60px] md:px-10 md:py-[120px]">
+        <div className="flex w-full max-w-[1000px] flex-col px-5 py-[60px] md:px-10 md:py-[120px]">
           <div className="flex w-full flex-col md:items-center">
             <p
               className="text-xsmall16 font-bold md:text-small20"

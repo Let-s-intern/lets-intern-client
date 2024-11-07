@@ -5,6 +5,7 @@ import { LuAlarmClock } from 'react-icons/lu';
 import Description from '@components/common/program/program-detail/Description';
 import Heading2 from '@components/common/program/program-detail/Heading2';
 import OutlinedBox from '@components/common/program/program-detail/OutlineBox';
+import { useMediaQuery } from '@mui/material';
 
 const TITLE1 = [
   '인사담당자가 서류를 보는 시간,',
@@ -25,7 +26,10 @@ const STAR = {
 
 const POINT = [
   { title: '두괄식', desc: ['핵심 내용을', '첫문단에 작성하는 방식'] },
-  { title: '수치화', desc: ['자신의 성과를 더 구체적이고', '객관적으로 표현'] },
+  {
+    title: '수치화',
+    desc: ['자신의 성과를 더 구체적이고', '객관적으로 표현하는 방식'],
+  },
 ];
 
 const DESCRITION1 = [
@@ -35,19 +39,15 @@ const DESCRITION1 = [
   '서류를 만들어봐요!',
 ];
 
-const DESCRITION2 = [
-  '소재 적합성, 직무 연관성, 가독성, 구체성, 차별성을 고려해',
-  '내 자기소개서의 완성도를 셀프 점검 할 수 있어요.',
-  '체계적인 자소서 커리큘럼으로 차근차근 완성도를 높여봐요!',
-];
-
 function ChallengeIntroPersonalStatement() {
+  const isDesktop = useMediaQuery('(min-width:991px)');
+
   return (
-    <section>
-      <div className="mb-20 mt-6 md:mb-48 md:text-center">
+    <section className="flex w-full flex-col items-center">
+      <div className="w-full max-w-[1000px] px-5 py-20 md:px-0 md:py-40 md:text-center">
         <div className="flex flex-col gap-2 md:items-center md:gap-3">
           <Badge>
-            <LuAlarmClock size={24} />
+            <LuAlarmClock size={isDesktop ? 32 : 24} />
             <span>평균 10초</span>
           </Badge>
           <Heading2>{TITLE1.join('\n')}</Heading2>
@@ -100,7 +100,7 @@ function ChallengeIntroPersonalStatement() {
         </OutlinedBox>
       </div>
 
-      <div className="md:flex md:flex-col md:items-center">
+      <div className="w-full bg-neutral-100 px-5 py-20 md:flex md:flex-col md:items-center md:px-0 md:py-24">
         <div className="flex flex-col gap-3 md:items-center md:text-center">
           <div>
             <Badge>평균 서류 합격률 28%</Badge>
@@ -111,12 +111,11 @@ function ChallengeIntroPersonalStatement() {
           <Heading2>{TITLE2.join('\n')}</Heading2>
           <div className="md:mt-8">
             <Description>
-              {DESCRITION2.map((item, index) => (
-                <Fragment key={item}>
-                  <span>{item}</span>
-                  {index !== DESCRITION2.length - 1 && <br />}
-                </Fragment>
-              ))}
+              5가지 기준을 고려해 자기소개서의 완성도를{' '}
+              <br className="md:hidden" />
+              셀프 점검 하고 <br className="hidden md:block" /> 체계적인 자소서
+              커리큘럼으로 <br className="md:hidden" />
+              차근차근 완성도를 높여봐요!
             </Description>
           </div>
         </div>
