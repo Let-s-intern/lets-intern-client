@@ -100,7 +100,7 @@ function ChallengeResult({ colors, challengeType }: ChallengeResultProps) {
           challengeType === CAREER_START ? colors.gradientBg : colors.dark,
       }}
     >
-      <div className="flex w-full max-w-[1200px] flex-col gap-y-10 px-5 py-20 md:gap-y-20 md:px-10 md:pb-[150px] md:pt-[140px]">
+      <div className="flex w-full max-w-[1000px] flex-col gap-y-10 px-5 py-20 md:gap-y-20 md:pb-[150px] md:pt-[140px] lg:px-0">
         <div className="flex w-full flex-col gap-y-3 md:items-center">
           <SuperTitle className="mb-1" style={{ color: colors.primary }}>
             {superTitle}
@@ -113,7 +113,7 @@ function ChallengeResult({ colors, challengeType }: ChallengeResultProps) {
             높일 수 있는 렛츠커리어 챌린지
           </Heading2>
         </div>
-        <div className="custom-scrollbar z-10 -mx-5 overflow-x-auto px-5 sm:px-0">
+        <div className="custom-scrollbar z-10 -mx-5 overflow-x-auto px-5 sm:mx-0 sm:px-0">
           <div className="flex min-w-fit flex-col gap-8 md:gap-16">
             {contents.map((content) => (
               <div
