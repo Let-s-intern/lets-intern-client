@@ -1,5 +1,6 @@
 import PaybackDesktop from '@/assets/different_payback_desktop.svg?react';
 import PaybackMobile from '@/assets/different_payback_mobile.svg?react';
+import DifferentIcon from '@/assets/icons/different.svg?react';
 import { ChallengeColor } from '@components/ChallengeView';
 import BenefitCard from '@components/common/program/program-detail/different/BenefitCard';
 import DifferentCard, {
@@ -14,22 +15,21 @@ export const tripleBenefits = [
       `챌린지 참여가 종료되어도, 참여했던 미션\n무한 열람 및 아카이빙`,
       `미션 현황과 기수별 주요 공지도\n함께 열람할 수 있어 몰입감 UP!`,
     ],
-    mobileUrl: '/challenge-detail/different/dashboard.png',
-    desktopUrl: '/challenge-detail/different/dashboard.png',
+    imgUrl: '/challenge-detail/different/dashboard.png',
   },
   {
     title: '프로그램 수료증 발급',
     options: [
       `프로그램 종료 시, 참여자분들께 렛츠커리어에서 인증하는 참여 수료증을 발급해드립니다.`,
     ],
-    desktopUrl: '/challenge-detail/different/certificate.png',
+    imgUrl: '/challenge-detail/different/certificate.png',
   },
   {
     title: '네트워킹 파티',
     options: [
       `주니어 PM, 제조업 대기업 재직자 등이 포함된 커리어 선배들과의 온/오프라인 네트워킹 파티에 초대합니다.`,
     ],
-    desktopUrl: '/challenge-detail/different/networking.png',
+    imgUrl: '/challenge-detail/different/networking.png',
   },
 ];
 
@@ -86,17 +86,32 @@ const ChallengeDifferent = ({ colors }: { colors: ChallengeColor }) => {
     >
       <div className="flex w-full flex-col gap-y-8 md:gap-y-20">
         <div className="flex w-full flex-col gap-y-6 md:gap-y-12">
-          <p className="w-full text-xsmall14 font-semibold text-neutral-45 md:text-center md:text-small20">
+          <p
+            className="w-full text-xsmall14 font-semibold md:text-center md:text-small20"
+            style={{ color: colors.subTitle }}
+          >
             차별점
           </p>
           <div className="flex flex-col gap-y-1 md:items-center">
             <p
-              className="text-xsmall14 font-semibold md:text-small18"
+              className="text-xsmall16 font-bold md:text-small18"
               style={{ color: colors.primary }}
             >
               비교 불가!
             </p>
-            <h4 className="whitespace-pre text-small20 font-bold text-black md:text-xlarge28">{`렛츠커리어 챌린지만의 차별점,\n이 모든걸 얻어가실 수 있어요!`}</h4>
+            <div className="whitespace-pre text-[22px] font-bold text-black md:text-xlarge28">
+              <span>렛츠커리어 챌린지만의 차별점,</span>
+              <br />
+              <span>
+                이 모든걸{' '}
+                <DifferentIcon
+                  width={38}
+                  hanging={38}
+                  className="inline-block"
+                />{' '}
+                얻어가실 수 있어요!
+              </span>
+            </div>
           </div>
         </div>
         <div className="flex w-full flex-col gap-y-6">
@@ -133,30 +148,21 @@ const ChallengeDifferent = ({ colors }: { colors: ChallengeColor }) => {
       </div>
       <div className="flex w-full flex-col gap-y-8">
         <p className="whitespace-pre text-small20 font-bold md:text-center md:text-xlarge28">{`여기서 끝이 아니죠\n챌린지 참여자만을 위한 트리플 혜택!`}</p>
-        <div className="flex w-full flex-col gap-y-4">
-          <div
-            className="flex w-full flex-col items-center gap-x-[14px] gap-y-4 md:min-h-[302px] md:flex-row"
-            style={{ color: colors.primary }}
-          >
-            <BenefitCard
-              type="double"
-              title={tripleBenefits[0].title}
-              options={tripleBenefits[0].options}
-              mobileUrl={tripleBenefits[0].mobileUrl}
-              desktopUrl={tripleBenefits[0].desktopUrl}
-            />
-            <BenefitCard
-              type="double"
-              title={tripleBenefits[1].title}
-              options={tripleBenefits[1].options}
-              desktopUrl={tripleBenefits[1].desktopUrl}
-            />
-          </div>
+        <div className="flex flex-col gap-y-4 overflow-x-auto md:w-full">
           <BenefitCard
-            type="single"
+            title={tripleBenefits[0].title}
+            options={tripleBenefits[0].options}
+            imgUrl={tripleBenefits[0].imgUrl}
+          />
+          <BenefitCard
+            title={tripleBenefits[1].title}
+            options={tripleBenefits[1].options}
+            imgUrl={tripleBenefits[1].imgUrl}
+          />
+          <BenefitCard
             title={tripleBenefits[2].title}
             options={tripleBenefits[2].options}
-            desktopUrl={tripleBenefits[2].desktopUrl}
+            imgUrl={tripleBenefits[2].imgUrl}
           />
         </div>
       </div>

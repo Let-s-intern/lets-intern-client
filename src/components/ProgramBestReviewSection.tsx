@@ -16,7 +16,7 @@ const ProgramBestReviewSection = ({
   if (!reviews || reviews.length === 0) return;
 
   return (
-    <section className="flex w-full max-w-[1200px] flex-col gap-y-8 py-14 md:items-center md:py-32">
+    <section className="flex w-full max-w-[1200px] flex-col gap-y-8 py-14 md:items-center md:py-40">
       <div className="flex w-full flex-col gap-y-6 px-10 md:items-center md:gap-y-[50px] md:px-[3.75rem]">
         <p className="text-xsmall14 font-semibold text-neutral-45 md:text-small20">
           후기

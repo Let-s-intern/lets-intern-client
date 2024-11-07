@@ -19,7 +19,6 @@ import ChallengeIntroPersonalStatement from './challenge-view/ChallengeIntroPers
 import ChallengeIntroPortfolio from './challenge-view/ChallengeIntroPortfolio';
 import ChallengePointView from './challenge-view/ChallengePointView';
 import LexicalContent from './common/blog/LexicalContent';
-import SuperTitle from './common/program/program-detail/SuperTitle';
 import ProgramBestReviewSection from './ProgramBestReviewSection';
 import ProgramDetailBlogReviewSection from './ProgramDetailBlogReviewSection';
 import ProgramDetailNavigation, {
@@ -38,6 +37,10 @@ export type ChallengeColor = {
   secondary: string;
   secondaryLight: string;
   gradient: string;
+  dark: string;
+  subTitle: string;
+  subBg: string;
+  gradientBg: string;
 };
 
 const ChallengeView: React.FC<{
@@ -62,6 +65,10 @@ const ChallengeView: React.FC<{
     let secondary = '';
     let secondaryLight = '';
     let gradient = '';
+    let dark = '';
+    let subTitle = '';
+    let subBg = '';
+    let gradientBg = '';
 
     switch (challenge.challengeType) {
       case PERSONAL_STATEMENT:
@@ -70,6 +77,11 @@ const ChallengeView: React.FC<{
         primaryLight = '#EEFAFF';
         secondaryLight = '#FFF7EF';
         gradient = '#39DEFF';
+        dark = '#0A7DAD';
+        subTitle = '#FF9C34';
+        subBg = '#FFF7EF';
+        gradientBg =
+          'linear-gradient(180deg,#222A7E 0%,#111449 50%,#111449 100%)';
         break;
       case PORTFOLIO:
         primary = '#4A76FF';
@@ -77,6 +89,11 @@ const ChallengeView: React.FC<{
         primaryLight = '#F0F4FF';
         secondaryLight = '#FFF9EA';
         gradient = '#4A56FF';
+        dark = '#2D3A9D';
+        subTitle = '#F8AE00';
+        subBg = '#FFF9EA';
+        gradientBg =
+          'linear-gradient(180deg,#222A7E 0%,#111449 50%,#111449 100%)';
         break;
       default:
         primary = '#4D55F5';
@@ -84,8 +101,23 @@ const ChallengeView: React.FC<{
         primaryLight = '#F3F4FF';
         secondaryLight = '#FDF6FF';
         gradient = '#763CFF';
+        dark = '#1A1D5F';
+        subTitle = '#757BFF';
+        subBg = '#5C63FF';
+        gradientBg =
+          'linear-gradient(180deg,#222A7E 0%,#111449 50%,#111449 100%)';
     }
-    return { primary, primaryLight, secondary, secondaryLight, gradient };
+    return {
+      primary,
+      primaryLight,
+      secondary,
+      secondaryLight,
+      gradient,
+      dark,
+      subTitle,
+      subBg,
+      gradientBg,
+    };
   }, [challenge.challengeType]);
 
   // TODO: 운영 배포 시 제거
@@ -100,7 +132,6 @@ const ChallengeView: React.FC<{
           <Header programTitle={challenge.title ?? ''} />
           <ChallengeBasicInfo colors={colors} challenge={challenge} />
         </div>
-
         <ProgramDetailNavigation
           color={colors}
           programType="challenge"
@@ -109,12 +140,9 @@ const ChallengeView: React.FC<{
         <div className="flex w-full flex-col items-center overflow-x-hidden">
           <div
             id={PROGRAM_INTRO_ID}
-            className="challenge_program flex w-full max-w-[1200px] flex-col px-5 md:px-10"
+            className="challenge_program flex w-full flex-col items-center"
           >
-            <section className="py-16 md:pb-44 md:pt-52">
-              <SuperTitle className="mb-6 text-neutral-45 lg:mb-10">
-                프로그램 소개
-              </SuperTitle>
+            <section className="flex w-full flex-col items-center pt-[70px] md:pt-40">
               <ChallengePointView
                 colors={colors}
                 challengeType={challenge.challengeType}
@@ -127,16 +155,18 @@ const ChallengeView: React.FC<{
 
             {/* 특별 챌린지, 합격자 후기 */}
             {receivedContent.mainDescription?.root && (
-              <LexicalContent node={receivedContent.mainDescription?.root} />
+              <div className="flex w-full max-w-[1200px] flex-col px-5 md:px-10">
+                <LexicalContent node={receivedContent.mainDescription?.root} />
+              </div>
             )}
 
-            <section className="flex flex-col gap-20 py-16 md:gap-52 md:py-52">
+            <section className="flex w-full flex-col md:items-center">
               {challenge.challengeType === PERSONAL_STATEMENT ? (
                 <ChallengeIntroPersonalStatement />
               ) : challenge.challengeType === PORTFOLIO ? (
                 <ChallengeIntroPortfolio />
               ) : (
-                <ChallengeIntroCareerStart />
+                <ChallengeIntroCareerStart colors={colors} />
               )}
               <ChallengeCheckList
                 colors={colors}
@@ -150,17 +180,17 @@ const ChallengeView: React.FC<{
           </div>
 
           {receivedContent.curriculum &&
-          receivedContent.curriculum.length > 0 ? (
-            <div
-              id={PROGRAM_CURRICULUM_ID}
-              className="challenge_curriculum flex w-full flex-col items-center bg-neutral-95"
-            >
-              <ChallengeCurriculum
-                curriculum={receivedContent.curriculum}
-                colors={colors}
-              />
-            </div>
-          ) : null}
+            receivedContent.curriculum.length > 0 && (
+              <div
+                id={PROGRAM_CURRICULUM_ID}
+                className="challenge_curriculum flex w-full flex-col items-center bg-neutral-95"
+              >
+                <ChallengeCurriculum
+                  curriculum={receivedContent.curriculum}
+                  colors={colors}
+                />
+              </div>
+            )}
 
           <div
             id={CHALLENGE_DIFFERENT_ID}

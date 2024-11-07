@@ -1,15 +1,15 @@
+import CurriculumIcon from '@/assets/icons/curriculum.svg?react';
 import { twMerge } from '@/lib/twMerge';
-import dayjs from 'dayjs';
-import { useState } from 'react';
-import { IoIosArrowDown } from 'react-icons/io';
-
 import { ChallengeCurriculum as ChallengeCurriculumType } from '@/types/interface';
 import { ChallengeColor } from '@components/ChallengeView';
 import Heading2 from '@components/common/program/program-detail/Heading2';
 import SuperTitle from '@components/common/program/program-detail/SuperTitle';
 import { useMediaQuery } from '@mui/material';
+import dayjs from 'dayjs';
+import { useState } from 'react';
+import { IoIosArrowDown } from 'react-icons/io';
 
-const superTitle = '취업 트랜드를 반영한 체계적인 커리큘럼';
+const superTitle = '취업 챌린지에서는 이런 걸 가져갈 수 있어요';
 const desktopTitle = '챌린지에서는 이런 걸 가져갈 수 있어요\n';
 const title = ['기초부터 결과물까지 가져가는', '완벽한 취업 준비 2주 커리큘럼'];
 
@@ -26,19 +26,23 @@ function ChallengeCurriculum({ curriculum, colors }: ChallengeCurriculumProps) {
   }
 
   return (
-    <section className="w-full max-w-[1200px] px-5 py-16 md:px-10 md:pb-36 md:pt-28">
-      <SuperTitle className="mb-6 text-neutral-45 md:mb-12">
+    <section className="flex w-full max-w-[1200px] flex-col px-5 py-20 md:items-center md:px-10 md:py-40">
+      <SuperTitle className="mb-6 md:mb-12" style={{ color: colors.subTitle }}>
         커리큘럼
       </SuperTitle>
-      <SuperTitle className="mb-1" style={{ color: colors.primary }}>
+      <div
+        className="mb-4 flex w-fit items-center gap-x-2 rounded-sm px-2 py-1 text-xsmall14 font-bold md:gap-x-3 md:text-[18px]"
+        style={{ color: colors.primary, backgroundColor: colors.primaryLight }}
+      >
+        <CurriculumIcon className="h-6 w-6 md:h-8 md:w-8" />
         {superTitle}
-      </SuperTitle>
+      </div>
       <Heading2 className="mb-10 md:mb-20">
         {isDesktop && desktopTitle}
         {isDesktop ? title.join(' ') : title.join('\n')}
       </Heading2>
 
-      <div className="flex flex-col gap-4 md:grid md:grid-cols-2 md:gap-x-6 md:gap-y-8">
+      <div className="flex w-full flex-col gap-4 md:grid md:grid-cols-2 md:gap-x-6 md:gap-y-8">
         {curriculum.map((item) => (
           <CurriculumItem key={item.id} item={item} colors={colors} />
         ))}

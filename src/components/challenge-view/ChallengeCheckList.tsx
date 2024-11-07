@@ -204,7 +204,7 @@ function ChallengeCheckList({
   }, [challengeType]);
 
   return (
-    <section>
+    <section className="flex w-full max-w-[1200px] flex-col px-5 py-20 md:px-10 md:pb-[140px] md:pt-[130px]">
       <div className="mb-16 md:mb-20">
         <SuperTitle
           className="mb-1 md:text-center"

@@ -84,53 +84,61 @@ function ChallengeResult({ colors, challengeType }: ChallengeResultProps) {
   }, [challengeType]);
 
   return (
-    <section>
-      <SuperTitle
-        className="mb-1 text-[#00A8EB]"
-        style={{ color: colors.primary }}
-      >
-        {superTitle}
-      </SuperTitle>
-      <Heading2 className="mb-10 md:mb-20">{title.join('\n')}</Heading2>
-
-      <div className="custom-scrollbar z-10 -mx-5 overflow-x-auto px-5 sm:px-0">
-        <div className="flex min-w-fit flex-col gap-8 md:gap-16">
-          {contents.map((content) => (
-            <div
-              key={content.beforeCaption}
-              className="flex flex-nowrap items-start gap-2 md:gap-3"
-            >
-              <div className="flex flex-1 flex-col items-center gap-4">
-                <BadgedBox badgeContent="Before">
-                  <ResultImg
-                    src={content.beforeImg}
-                    alt={content.beforeCaption}
-                  />
-                </BadgedBox>
-                <span className="text-xsmall14 font-semibold text-neutral-0 md:text-small20">
-                  {content.beforeCaption}
-                </span>
-              </div>
-              <div className="flex flex-1 flex-col items-center gap-4">
-                <BadgedBox badgeContent="After" colors={colors} isGradient>
-                  <ResultImg
-                    src={content.afterImg}
-                    alt={content.afterCaption}
-                  />
-                </BadgedBox>
-                <div className="flex items-start gap-1">
-                  <FaCheck
-                    className="mt-1"
-                    color={colors.primary}
-                    size={isDesktop ? 20 : 16}
-                  />
-                  <span className="text-xsmall14 font-semibold text-neutral-0 md:text-small20">
-                    {content.afterCaption}
+    <section
+      className="flex w-full flex-col items-center"
+      style={{
+        background: colors.gradientBg,
+      }}
+    >
+      <div className="flex w-full max-w-[1200px] flex-col gap-y-10 px-5 py-20 md:gap-y-20 md:px-10 md:pb-[150px] md:pt-[140px]">
+        <div className="flex w-full flex-col gap-y-3 md:items-center">
+          <SuperTitle
+            className="mb-1 text-[#00A8EB]"
+            style={{ color: colors.subTitle }}
+          >
+            {superTitle}
+          </SuperTitle>
+          <Heading2 className="text-white">{title.join('\n')}</Heading2>
+        </div>
+        <div className="custom-scrollbar z-10 -mx-5 overflow-x-auto px-5 sm:px-0">
+          <div className="flex min-w-fit flex-col gap-8 md:gap-16">
+            {contents.map((content) => (
+              <div
+                key={content.beforeCaption}
+                className="flex flex-nowrap items-start gap-2 md:gap-3"
+              >
+                <div className="flex flex-1 flex-col items-center gap-4">
+                  <BadgedBox badgeContent="Before">
+                    <ResultImg
+                      src={content.beforeImg}
+                      alt={content.beforeCaption}
+                    />
+                  </BadgedBox>
+                  <span className="text-xsmall14 font-semibold text-white md:text-small20">
+                    {content.beforeCaption}
                   </span>
                 </div>
+                <div className="flex flex-1 flex-col items-center gap-4">
+                  <BadgedBox badgeContent="After" colors={colors} isGradient>
+                    <ResultImg
+                      src={content.afterImg}
+                      alt={content.afterCaption}
+                    />
+                  </BadgedBox>
+                  <div className="flex items-start gap-1">
+                    <FaCheck
+                      className="mt-1"
+                      color={colors.gradient}
+                      size={isDesktop ? 20 : 16}
+                    />
+                    <span className="text-xsmall14 font-semibold text-white md:text-small20">
+                      {content.afterCaption}
+                    </span>
+                  </div>
+                </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       </div>
     </section>

@@ -7,6 +7,7 @@ import { ChallengeType, challengeTypeSchema } from '@/schema';
 import { ChallengePoint } from '@/types/interface';
 import { ChallengeColor } from '@components/ChallengeView';
 import Heading2 from '@components/common/program/program-detail/Heading2';
+import SuperTitle from '@components/common/program/program-detail/SuperTitle';
 import { josa } from '@toss/hangul';
 
 const Balancer = clientOnly(() => import('react-wrap-balancer'));
@@ -65,9 +66,7 @@ const ChallengePointView = ({
   endDate,
   colors,
   challengeType,
-  className,
 }: {
-  className?: string;
   point: ChallengePoint;
   challengeTitle: string;
   startDate: Dayjs;
@@ -104,79 +103,110 @@ const ChallengePointView = ({
   if (point === undefined) return <></>;
 
   return (
-    <section className={className}>
-      <h2 className="sr-only">챌린지 포인트</h2>
-      <Heading2 className="mb-10 break-keep lg:mb-20">
-        이력서 & 자기소개서 챌린지를 통해
-        <br />
-        <span style={{ color: colors.secondary }}>하루 30분</span>, 단{' '}
-        {point.weekText} 안에 이런걸
-        <br className="lg:hidden" />
-        얻어갈 수 있어요
-      </Heading2>
+    <section className="flex w-full flex-col items-center">
+      <div className="flex w-full max-w-[1200px] flex-col px-5 md:items-center md:px-10">
+        <h2 className="sr-only">챌린지 포인트</h2>
+        <SuperTitle className="mb-6 text-neutral-45 lg:mb-10">
+          프로그램 소개
+        </SuperTitle>
+        <Heading2 className="mb-10 break-keep lg:mb-20">
+          이력서 & 자기소개서 챌린지를 통해
+          <br />
+          <span style={{ color: colors.primary }}>하루 30분</span>, 단{' '}
+          {point.weekText} 안에 이런걸
+          <br className="lg:hidden" />
+          얻어갈 수 있어요
+        </Heading2>
 
-      <div className="mb-[70px] space-y-4 md:mb-52">
-        <ul className="space-y-4">
-          {point.list?.map((item, index) => (
-            <PointList
-              key={item.id}
-              item={item}
-              index={index}
-              colors={colors}
-            />
-          ))}
-        </ul>
-        {challengeType === challengeTypeSchema.enum.CAREER_START && (
-          <p className="mt-10 text-xsmall14 font-semibold text-neutral-40 md:mt-16 md:text-center md:text-xsmall16">
-            본 프로그램은 취업의 기초가 되는 퍼스널 브랜딩과 마스터 이력서
-            작성을 다룹니다.
-            <br />
-            자기소개서 및 포트폴리오 완성 프로그램은 별도로 준비되어 있습니다.
-          </p>
-        )}
+        <div className="mb-[70px] w-full space-y-10 md:mb-[120px] md:space-y-[60px] md:px-14">
+          <ul className="space-y-4 md:space-y-6">
+            {point.list?.map((item, index) => (
+              <PointList
+                key={item.id}
+                item={item}
+                index={index}
+                colors={colors}
+              />
+            ))}
+          </ul>
+          {challengeType === challengeTypeSchema.enum.CAREER_START && (
+            <p className="text-xsmall14 font-semibold text-neutral-40 md:text-center md:text-xsmall16">
+              본 프로그램은 취업의 기초가 되는 퍼스널 브랜딩과 마스터 이력서
+              작성을 다룹니다.
+              <br />
+              자기소개서 및 포트폴리오 완성 프로그램은 별도로 준비되어 있습니다.
+            </p>
+          )}
+        </div>
       </div>
-
-      <Heading2 className="mb-10 md:mb-8">
-        {josa(challengeTitle, '은/는')}
-        <br className="md:hidden" /> 2주간 아래와 같이 진행돼요
-      </Heading2>
-      <span className="hidden text-center text-xsmall14 text-neutral-30 md:mb-20 md:block">
-        {description}
-      </span>
-
-      <div className="mb-8 flex flex-col gap-5 md:mb-14 md:flex-row md:justify-between md:px-8">
-        {progress.map((item) => (
-          <ProgressItem key={item.index} item={item} bgColor={colors.primary} />
-        ))}
-      </div>
-
-      <div className="flex flex-col gap-3 md:flex-row">
-        <Box className="md:flex-1">
-          {programSchedule.map((item) => (
-            <BoxItem key={item.title} title={item.title}>
-              {item.content}
-            </BoxItem>
-          ))}
-        </Box>
-        <Box className="md:flex-1">
-          <BoxItem title={MISSION.title}>
-            <ul className="flex flex-col gap-1 pl-6">
-              {MISSION.content.map((item) => (
-                <li className="list-disc" key={item}>
-                  {item}
-                </li>
+      <div
+        className="flex w-full flex-col items-center"
+        style={{
+          backgroundColor: colors.dark,
+        }}
+      >
+        <div className="flex w-full max-w-[1200px] flex-col px-5 py-[60px] md:px-10 md:py-[120px]">
+          <div className="flex w-full flex-col md:items-center">
+            <p
+              className="text-xsmall16 font-bold md:text-small20"
+              style={{ color: colors.subTitle }}
+            >
+              진행 방식
+            </p>
+            <Heading2 className="py-3 pt-2 text-white md:pt-3">
+              {josa(challengeTitle, '은/는')}
+              <br className="md:hidden" /> 2주간 아래와 같이 진행돼요
+            </Heading2>
+            <span className="mb-10 text-xsmall14 text-neutral-50 md:mb-20">
+              {description}
+            </span>
+          </div>
+          <div className="mb-[30px] flex w-full flex-col md:mb-[23px]">
+            <div
+              className="flex w-full items-center justify-center rounded-t-md px-4 py-2.5 text-xsmall14 font-semibold text-white md:px-2.5"
+              style={{ backgroundColor: colors.subBg }}
+            >
+              2 Weeks
+            </div>
+            <div className="flex flex-col gap-5 rounded-b-md bg-white px-4 py-[30px] md:flex-row md:justify-between md:px-10 md:pb-[30px] md:pt-9">
+              {progress.map((item) => (
+                <ProgressItem
+                  key={item.index}
+                  item={item}
+                  bgColor={colors.primary}
+                />
               ))}
-            </ul>
-          </BoxItem>
-        </Box>
-        <Box className="relative overflow-hidden md:flex-1">
-          <BoxItem title={REWARD.title}>{REWARD.content}</BoxItem>
-          <img
-            className="absolute bottom-0 right-2 scale-110"
-            src={imgSrc}
-            alt="페이백 3만원"
-          />
-        </Box>
+            </div>
+          </div>
+          <div className="flex flex-col gap-3 md:flex-row">
+            <Box className="md:flex-1">
+              {programSchedule.map((item) => (
+                <BoxItem key={item.title} title={item.title}>
+                  {item.content}
+                </BoxItem>
+              ))}
+            </Box>
+            <Box className="md:flex-1">
+              <BoxItem title={MISSION.title}>
+                <ul className="flex flex-col gap-1 pl-6">
+                  {MISSION.content.map((item) => (
+                    <li className="list-disc" key={item}>
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+              </BoxItem>
+            </Box>
+            <Box className="relative overflow-hidden md:flex-1">
+              <BoxItem title={REWARD.title}>{REWARD.content}</BoxItem>
+              <img
+                className="absolute bottom-0 right-2 scale-110"
+                src={imgSrc}
+                alt="페이백 3만원"
+              />
+            </Box>
+          </div>
+        </div>
       </div>
     </section>
   );
@@ -198,7 +228,7 @@ function PointList({
   return (
     <li
       key={item.id}
-      className="mx-auto flex max-w-[886px] flex-col items-center gap-4 self-stretch rounded-md px-8 pb-10 pt-8"
+      className="mx-auto flex w-full flex-col items-center gap-4 self-stretch rounded-md px-8 pb-10 pt-8"
       style={{ backgroundColor: colors.primaryLight }}
     >
       <div className="break-keep text-center">
@@ -264,7 +294,7 @@ function Box({
   return (
     <div
       className={twMerge(
-        'flex min-h-60 flex-col gap-2.5 bg-neutral-95 p-5',
+        'flex min-h-60 flex-col gap-2.5 rounded-md bg-neutral-95 p-5',
         className,
       )}
     >

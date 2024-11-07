@@ -22,7 +22,13 @@ const DifferentCard = ({
 }: DifferentCardProps) => {
   const isDesktop = useMediaQuery('(min-width: 991px)');
   return (
-    <div className="flex w-full flex-col gap-x-[50px] gap-y-6 rounded-md bg-neutral-95 p-4 pb-[26px] text-black md:flex-row md:items-center md:px-10 md:py-[30px]">
+    <div
+      className="flex w-full flex-col gap-x-[50px] gap-y-6 rounded-md border p-4 pb-[26px] text-black md:flex-row md:items-center md:px-10 md:py-[30px]"
+      style={{
+        backgroundColor: colors.primaryLight,
+        borderColor: colors.subBg,
+      }}
+    >
       {imageUrl && (
         <img
           src={isDesktop ? imageUrl.desktop : imageUrl.mobile}
