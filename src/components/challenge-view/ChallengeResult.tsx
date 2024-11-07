@@ -2,15 +2,15 @@ import { useMediaQuery } from '@mui/material';
 import { ReactNode, useMemo } from 'react';
 import { FaCheck } from 'react-icons/fa6';
 
+import ArrowPersonalStatement from '@/assets/icons/result-arrow-icon-personal-statement.svg?react';
 import { twMerge } from '@/lib/twMerge';
 import { ChallengeType, challengeTypeSchema } from '@/schema';
 import { ChallengeColor } from '@components/ChallengeView';
+import Box from '@components/common/program/program-detail/Box';
 import Heading2 from '@components/common/program/program-detail/Heading2';
-import OutlinedBox from '@components/common/program/program-detail/OutlineBox';
 import SuperTitle from '@components/common/program/program-detail/SuperTitle';
 
 const superTitle = '이 모든 고민을 한번에 해결!';
-const title = ['서류 합격률을 300% 높일 수 있는', '렛츠커리어 챌린지'];
 const PERSONAL_STATEMENT_CONTENT = [
   {
     beforeImg: '/images/personal-statement-before1.png',
@@ -22,7 +22,7 @@ const PERSONAL_STATEMENT_CONTENT = [
     beforeImg: '/images/personal-statement-before2.png',
     beforeCaption: '직무 경험을 구구절절 나열하는 방식',
     afterImg: '/images/personal-statement-after2.png',
-    afterCaption: '나만의 장단점 및 역량 키워드 도출',
+    afterCaption: '직무 키워드 선정 후, 관련된 경험 구체화',
   },
 ];
 
@@ -61,6 +61,8 @@ const CAREER_START_CONTENT = [
     afterCaption: '핵심 역량과 매력만 깔끔하게 간추린 이력서',
   },
 ];
+const { PORTFOLIO, PERSONAL_STATEMENT, CAREER_START } =
+  challengeTypeSchema.enum;
 
 interface ChallengeResultProps {
   colors: ChallengeColor;
@@ -71,8 +73,6 @@ function ChallengeResult({ colors, challengeType }: ChallengeResultProps) {
   const isDesktop = useMediaQuery('(min-width: 991px)');
 
   const contents = useMemo(() => {
-    const { PORTFOLIO, PERSONAL_STATEMENT } = challengeTypeSchema.enum;
-
     switch (challengeType) {
       case PORTFOLIO:
         return PORTFOLIO_CONTENT;
@@ -87,18 +87,22 @@ function ChallengeResult({ colors, challengeType }: ChallengeResultProps) {
     <section
       className="flex w-full flex-col items-center"
       style={{
-        background: colors.gradientBg,
+        background:
+          challengeType === CAREER_START ? colors.gradientBg : colors.dark,
       }}
     >
       <div className="flex w-full max-w-[1200px] flex-col gap-y-10 px-5 py-20 md:gap-y-20 md:px-10 md:pb-[150px] md:pt-[140px]">
         <div className="flex w-full flex-col gap-y-3 md:items-center">
-          <SuperTitle
-            className="mb-1 text-[#00A8EB]"
-            style={{ color: colors.subTitle }}
-          >
+          <SuperTitle className="mb-1" style={{ color: colors.primary }}>
             {superTitle}
           </SuperTitle>
-          <Heading2 className="text-white">{title.join('\n')}</Heading2>
+          <Heading2 className="text-white md:flex md:flex-col md:items-center">
+            <div className="mb-2 flex items-center gap-1">
+              서류 합격률을 300%{' '}
+              <ArrowPersonalStatement className="h-auto w-7 md:w-10" />{' '}
+            </div>
+            높일 수 있는 렛츠커리어 챌린지
+          </Heading2>
         </div>
         <div className="custom-scrollbar z-10 -mx-5 overflow-x-auto px-5 sm:px-0">
           <div className="flex min-w-fit flex-col gap-8 md:gap-16">
@@ -108,7 +112,7 @@ function ChallengeResult({ colors, challengeType }: ChallengeResultProps) {
                 className="flex flex-nowrap items-start gap-2 md:gap-3"
               >
                 <div className="flex flex-1 flex-col items-center gap-4">
-                  <BadgedBox badgeContent="Before">
+                  <BadgedBox badgeContent="Before" badgeColor="#7A7D84">
                     <ResultImg
                       src={content.beforeImg}
                       alt={content.beforeCaption}
@@ -149,19 +153,21 @@ function BadgedBox({
   badgeContent,
   colors,
   isGradient = false,
+  badgeColor,
   className,
   children,
 }: {
   badgeContent: string;
   colors?: ChallengeColor;
   isGradient?: boolean;
+  badgeColor?: string;
   className?: string;
   children?: ReactNode;
 }) {
   return (
-    <OutlinedBox
+    <Box
       className={twMerge(
-        'flex min-w-[260px] flex-col overflow-hidden border-2 border-neutral-50 bg-neutral-85 p-0 md:p-0',
+        'flex min-w-[260px] flex-col overflow-hidden p-0 md:p-0',
         className,
       )}
       style={{
@@ -171,9 +177,10 @@ function BadgedBox({
     >
       <div
         className={twMerge(
-          'w-full bg-neutral-50 px-2.5 py-1 text-center text-xsmall16 font-semibold text-white md:py-2.5 md:text-small20',
+          'w-full bg-neutral-75 px-2.5 py-1 text-center text-xsmall16 font-semibold text-white md:py-2.5 md:text-small20',
         )}
         style={{
+          color: badgeColor,
           backgroundColor: colors?.primary,
           background: isGradient
             ? `linear-gradient(45deg, ${colors?.primary}, ${colors?.gradient})`
@@ -183,7 +190,7 @@ function BadgedBox({
         {badgeContent}
       </div>
       {children}
-    </OutlinedBox>
+    </Box>
   );
 }
 

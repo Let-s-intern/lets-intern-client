@@ -76,12 +76,12 @@ const ChallengeView: React.FC<{
         secondary = '#FF9C34';
         primaryLight = '#EEFAFF';
         secondaryLight = '#FFF7EF';
-        gradient = '#39DEFF';
-        dark = '#20304F';
+        gradient = '#39DEFF'; // After 배지 배경색에 사용
+        dark = '#20304F'; // 진행방식,결과물 배경색
         subTitle = '#FF9C34';
         subBg = '#FFF7EF';
         gradientBg =
-          'linear-gradient(180deg,#222A7E 0%,#111449 50%,#111449 100%)';
+          'linear-gradient(180deg,#222A7E 0%,#111449 50%,#111449 100%)'; // ??
         break;
       case PORTFOLIO:
         primary = '#4A76FF';
