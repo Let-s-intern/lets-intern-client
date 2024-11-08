@@ -224,18 +224,18 @@ const ChallengeView: React.FC<{
                 colors={colors}
               />
             </div>
+          </div>
+
+          <div
+            id={PROGRAM_FAQ_ID}
+            className="challenge_faq flex w-full flex-col gap-20 px-5 pb-8 pt-16 md:gap-40 md:px-10 md:pb-32 md:pt-36"
+          >
             {receivedContent.blogReview ? (
               <ProgramDetailBlogReviewSection
                 review={receivedContent.blogReview}
                 programType="challenge"
               />
             ) : null}
-          </div>
-
-          <div
-            id={PROGRAM_FAQ_ID}
-            className="challenge_faq flex w-full max-w-[1200px] flex-col px-5 md:px-10"
-          >
             <ChallengeFaq colors={colors} />
             <ChallengeInfoBottom challenge={challenge} colors={colors} />
           </div>

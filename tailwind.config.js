@@ -149,5 +149,8 @@ module.exports = {
       full: '9999px',
     },
   },
+  scrollPadding: {
+    '50%-minus-500px': 'calc(50% - 500px)',
+  },
   plugins: [require('tailwind-scrollbar-hide')],
 };
