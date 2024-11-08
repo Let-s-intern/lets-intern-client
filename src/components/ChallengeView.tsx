@@ -1,12 +1,11 @@
 import { useEffect, useMemo } from 'react';
 
+import { twMerge } from '@/lib/twMerge';
 import { ChallengeIdSchema, challengeTypeSchema } from '@/schema';
 import { ChallengeContent } from '@/types/interface';
 import ChallengeCheckList from '@components/challenge-view/ChallengeCheckList';
 import ChallengeCurriculum from '@components/challenge-view/ChallengeCurriculum';
 import ChallengeFaq from '@components/challenge-view/ChallengeFaq';
-
-import { twMerge } from '@/lib/twMerge';
 import ChallengeResult from '@components/challenge-view/ChallengeResult';
 import Header from '@components/common/program/program-detail/header/Header';
 import dayjs from 'dayjs';
@@ -204,9 +203,12 @@ const ChallengeView: React.FC<{
 
           <div
             id={CHALLENGE_DIFFERENT_ID}
-            className="challenge_difference flex w-full max-w-[1200px] flex-col px-5 md:px-10"
+            className="challenge_difference flex w-full max-w-[1000px] flex-col px-5 md:px-10 lg:px-0"
           >
-            <ChallengeDifferent colors={colors} />
+            <ChallengeDifferent
+              colors={colors}
+              challengeType={challenge.challengeType}
+            />
             <ChallengeBrand colors={colors} />
           </div>
 
@@ -214,25 +216,25 @@ const ChallengeView: React.FC<{
             id={PROGRAM_REVIEW_ID}
             className="challenge_review flex w-full flex-col items-center"
           >
-            <div className="flex w-full flex-col items-center bg-neutral-95">
+            <div className="flex w-full flex-col items-center bg-neutral-95 py-16 md:pb-32 md:pt-28">
               <ProgramBestReviewSection
                 type="challenge"
                 reviews={receivedContent.challengeReview}
                 colors={colors}
               />
             </div>
+          </div>
+
+          <div
+            id={PROGRAM_FAQ_ID}
+            className="challenge_faq flex w-full flex-col gap-20 px-5 pb-8 pt-16 md:items-center md:gap-40 md:px-10 md:pb-32 md:pt-36"
+          >
             {receivedContent.blogReview ? (
               <ProgramDetailBlogReviewSection
                 review={receivedContent.blogReview}
                 programType="challenge"
               />
             ) : null}
-          </div>
-
-          <div
-            id={PROGRAM_FAQ_ID}
-            className="challenge_faq flex w-full max-w-[1200px] flex-col px-5 md:px-10"
-          >
             <ChallengeFaq colors={colors} />
             <ChallengeInfoBottom challenge={challenge} colors={colors} />
           </div>

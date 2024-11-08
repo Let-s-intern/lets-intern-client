@@ -1,40 +1,55 @@
+import { useMediaQuery } from '@mui/material';
+import { useMemo } from 'react';
+
+import benefitImg1 from '@/assets/benefit1.jpg';
+import benefitImg2 from '@/assets/benefit2.jpg';
+import benefitImg3 from '@/assets/benefit3.jpg';
 import PaybackDesktop from '@/assets/different_payback_desktop.svg?react';
 import PaybackMobile from '@/assets/different_payback_mobile.svg?react';
-import DifferentIcon from '@/assets/icons/different.svg?react';
+import { ChallengeType, challengeTypeSchema } from '@/schema';
 import { ChallengeColor } from '@components/ChallengeView';
 import BenefitCard from '@components/common/program/program-detail/different/BenefitCard';
 import DifferentCard, {
   DifferentCardProps,
 } from '@components/common/program/program-detail/different/DifferentCard';
-import { useMediaQuery } from '@mui/material';
+import SuperTitle from '@components/common/program/program-detail/SuperTitle';
+
+const { PERSONAL_STATEMENT, PORTFOLIO } = challengeTypeSchema.enum;
 
 export const tripleBenefits = [
   {
     title: '온라인 대시보드',
     options: [
-      `챌린지 참여가 종료되어도, 참여했던 미션\n무한 열람 및 아카이빙`,
-      `미션 현황과 기수별 주요 공지도\n함께 열람할 수 있어 몰입감 UP!`,
+      `챌린지 참여가 종료되어도, 참여했던 미션 무한 열람 및 아카이빙`,
+      `미션 현황과 기수별 주요 공지도 함께 열람할 수 있어 몰입감 UP!`,
     ],
-    imgUrl: '/challenge-detail/different/dashboard.png',
+    imgUrl: benefitImg1,
   },
   {
     title: '프로그램 수료증 발급',
     options: [
       `프로그램 종료 시, 참여자분들께 렛츠커리어에서 인증하는 참여 수료증을 발급해드립니다.`,
     ],
-    imgUrl: '/challenge-detail/different/certificate.png',
+    imgUrl: benefitImg2,
   },
   {
     title: '네트워킹 파티',
     options: [
       `주니어 PM, 제조업 대기업 재직자 등이 포함된 커리어 선배들과의 온/오프라인 네트워킹 파티에 초대합니다.`,
     ],
-    imgUrl: '/challenge-detail/different/networking.png',
+    imgUrl: benefitImg3,
   },
 ];
 
-const ChallengeDifferent = ({ colors }: { colors: ChallengeColor }) => {
+const ChallengeDifferent = ({
+  colors,
+  challengeType,
+}: {
+  colors: ChallengeColor;
+  challengeType: ChallengeType;
+}) => {
   const isMobile = useMediaQuery('(max-width: 768px)');
+
   const differentList: DifferentCardProps[] = [
     {
       order: 1,
@@ -79,6 +94,17 @@ const ChallengeDifferent = ({ colors }: { colors: ChallengeColor }) => {
     },
   ];
 
+  const iconName = useMemo(() => {
+    switch (challengeType) {
+      case PORTFOLIO:
+        return 'different-icon-portfolio.svg';
+      case PERSONAL_STATEMENT:
+        return 'different-icon-personal-statement.svg';
+      default:
+        return 'different-icon-career-start.svg';
+    }
+  }, [challengeType]);
+
   return (
     <section
       id="different"
@@ -86,12 +112,7 @@ const ChallengeDifferent = ({ colors }: { colors: ChallengeColor }) => {
     >
       <div className="flex w-full flex-col gap-y-8 md:gap-y-20">
         <div className="flex w-full flex-col gap-y-6 md:gap-y-12">
-          <p
-            className="w-full text-xsmall14 font-semibold md:text-center md:text-small20"
-            style={{ color: colors.subTitle }}
-          >
-            차별점
-          </p>
+          <SuperTitle style={{ color: colors.primary }}>차별점</SuperTitle>
           <div className="flex flex-col gap-y-1 md:items-center">
             <p
               className="text-xsmall16 font-bold md:text-small18"
@@ -99,15 +120,14 @@ const ChallengeDifferent = ({ colors }: { colors: ChallengeColor }) => {
             >
               비교 불가!
             </p>
-            <div className="whitespace-pre text-[22px] font-bold text-black md:text-xlarge28">
+            <div className="whitespace-pre text-[22px] font-bold text-black md:text-center md:text-xlarge28">
               <span>렛츠커리어 챌린지만의 차별점,</span>
               <br />
               <span>
                 이 모든걸{' '}
-                <DifferentIcon
-                  width={38}
-                  hanging={38}
-                  className="inline-block"
+                <img
+                  className="inline-block h-auto w-8 md:w-10"
+                  src={`/icons/${iconName}`}
                 />{' '}
                 얻어가실 수 있어요!
               </span>
@@ -146,9 +166,9 @@ const ChallengeDifferent = ({ colors }: { colors: ChallengeColor }) => {
           </div>
         </div>
       </div>
-      <div className="flex w-full flex-col gap-y-8">
-        <p className="whitespace-pre text-small20 font-bold md:text-center md:text-xlarge28">{`여기서 끝이 아니죠\n챌린지 참여자만을 위한 트리플 혜택!`}</p>
-        <div className="flex flex-col gap-y-4 overflow-x-auto md:w-full">
+      <div className="flex w-full flex-col gap-y-8 md:items-center md:gap-y-16">
+        <p className="whitespace-pre-line text-small20 font-bold md:text-center md:text-xlarge28">{`여기서 끝이 아니죠\n챌린지 참여자만을 위한 트리플 혜택!`}</p>
+        <div className="-mx-5 flex w-fit flex-col gap-y-4 overflow-x-auto px-5 md:-mx-10 md:px-10 lg:px-0">
           <BenefitCard
             title={tripleBenefits[0].title}
             options={tripleBenefits[0].options}

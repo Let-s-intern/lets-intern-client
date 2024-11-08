@@ -30,8 +30,13 @@ function ChallengeFaq({ colors }: ChallengeFaqProps) {
   if (!faqList) return <></>;
 
   return (
-    <section className="py-20 md:flex md:flex-col md:items-center md:py-40">
-      <SuperTitle className="mb-6 text-neutral-45 md:mb-12">FAQ</SuperTitle>
+    <section className="md:flex md:flex-col md:items-center">
+      <SuperTitle
+        className="mb-6 text-neutral-45 md:mb-12"
+        style={{ color: colors.primary }}
+      >
+        FAQ
+      </SuperTitle>
       <SuperTitle style={{ color: colors.primary }}>{superTitle}</SuperTitle>
       <Heading2 className="mb-10 md:mb-20">{title}</Heading2>
 

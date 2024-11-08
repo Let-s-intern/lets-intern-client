@@ -44,7 +44,7 @@ function ChallengeIntroPersonalStatement() {
 
   return (
     <section className="flex w-full flex-col items-center">
-      <div className="w-full max-w-[1000px] px-5 py-20 md:px-0 md:py-40 md:text-center">
+      <div className="w-full max-w-[1000px] px-5 py-20 md:py-40 md:text-center xl:px-0">
         <div className="flex flex-col gap-2 md:items-center md:gap-3">
           <Badge>
             <LuAlarmClock size={isDesktop ? 32 : 24} />
