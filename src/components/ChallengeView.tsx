@@ -1,12 +1,11 @@
 import { useEffect, useMemo } from 'react';
 
+import { twMerge } from '@/lib/twMerge';
 import { ChallengeIdSchema, challengeTypeSchema } from '@/schema';
 import { ChallengeContent } from '@/types/interface';
 import ChallengeCheckList from '@components/challenge-view/ChallengeCheckList';
 import ChallengeCurriculum from '@components/challenge-view/ChallengeCurriculum';
 import ChallengeFaq from '@components/challenge-view/ChallengeFaq';
-
-import { twMerge } from '@/lib/twMerge';
 import ChallengeResult from '@components/challenge-view/ChallengeResult';
 import Header from '@components/common/program/program-detail/header/Header';
 import dayjs from 'dayjs';
@@ -228,7 +227,7 @@ const ChallengeView: React.FC<{
 
           <div
             id={PROGRAM_FAQ_ID}
-            className="challenge_faq flex w-full flex-col gap-20 px-5 pb-8 pt-16 md:gap-40 md:px-10 md:pb-32 md:pt-36"
+            className="challenge_faq flex w-full flex-col gap-20 px-5 pb-8 pt-16 md:items-center md:gap-40 md:px-10 md:pb-32 md:pt-36"
           >
             {receivedContent.blogReview ? (
               <ProgramDetailBlogReviewSection
