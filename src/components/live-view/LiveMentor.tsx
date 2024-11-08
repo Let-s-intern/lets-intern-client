@@ -22,11 +22,11 @@ function LiveMentor({ mentor, className, id }: LiveMentorProps) {
     <section
       id={id}
       className={twMerge(
-        'mb-36 md:flex md:flex-col md:items-center',
+        'flex w-full max-w-[1200px] flex-col px-5 pt-[70px] md:items-center md:px-10 md:pt-40',
         className,
       )}
     >
-      <Heading2 className="mb-8 md:mb-20">
+      <Heading2 className="mb-8 md:mb-20 md:text-center">
         렛츠커리어 LIVE 클래스에서만
         <br className="md:hidden" /> 들을 수 있는{' '}
         <br className="hidden md:block" />
