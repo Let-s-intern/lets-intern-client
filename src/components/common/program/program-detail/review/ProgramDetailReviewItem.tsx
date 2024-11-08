@@ -22,13 +22,17 @@ const ProgramDetailReviewItem = ({
 
   return (
     <div className="flex h-[340px] w-[300px] flex-col md:h-[366px] md:w-[371px]">
+      {type !== 'live' && (
+        <div
+          className={`flex w-full rounded-t-[10px] px-[22px] py-4 text-white md:text-small18`}
+          style={{ backgroundColor: color }}
+        >
+          {`${review.passedState} 합격`}
+        </div>
+      )}
       <div
-        className={`flex w-full rounded-t-[10px] px-[22px] py-4 text-white md:text-small18`}
-        style={{ backgroundColor: color }}
+        className={`flex h-[152px] w-full flex-col gap-y-3 rounded-b-[10px] border-[1.5px] border-neutral-85 bg-white px-[22px] pb-9 pt-7 md:h-[160px] ${type === 'live' ? 'rounded-t-[10px]' : ''}`}
       >
-        {`${review.passedState} 합격`}
-      </div>
-      <div className="flex h-[152px] w-full flex-col gap-y-3 rounded-b-[10px] border-[1.5px] border-neutral-85 bg-white px-[22px] pb-9 pt-7 md:h-[160px]">
         <div
           className={`flex w-fit items-center rounded-xs px-2 py-1.5 ${type === 'challenge' ? 'bg-[#F3F4FF]' : 'bg-primary-10'}`}
         >
