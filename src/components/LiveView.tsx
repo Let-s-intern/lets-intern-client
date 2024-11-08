@@ -49,7 +49,7 @@ const LiveView: React.FC<{ live: LiveIdSchema; isPreview?: boolean }> = ({
   return (
     <div className="flex w-full flex-col">
       <div className="flex w-full flex-col items-center">
-        <div className="flex w-full max-w-[1200px] flex-col px-5 md:px-10">
+        <div className="flex w-full max-w-[1000px] flex-col px-5 md:px-10 lg:px-0">
           <Header programTitle={live.title ?? ''} />
           {live.vod && <LiveVod />}
           <LiveBasicInfo live={live} />
@@ -58,8 +58,9 @@ const LiveView: React.FC<{ live: LiveIdSchema; isPreview?: boolean }> = ({
           programType="live"
           className={twMerge(isPreview && 'top-0 md:top-0 lg:top-0')}
         />
+
         <div className="flex w-full flex-col items-center">
-          <div className="flex w-full max-w-[1200px] flex-col px-5 md:px-10">
+          <div className="flex w-full max-w-[1000px] flex-col px-5 md:px-10 lg:px-0">
             <LiveMentor
               mentor={mentor}
               id={LIVE_MENTOR_INTRO_ID}
