@@ -89,9 +89,9 @@ const LiveView: React.FC<{ live: LiveIdSchema; isPreview?: boolean }> = ({
                 node={receivedContent.additionalCurriculum.root}
               />
             )}
-
-            <LiveIntro />
           </div>
+
+          <LiveIntro />
 
           <div
             id={PROGRAM_REVIEW_ID}

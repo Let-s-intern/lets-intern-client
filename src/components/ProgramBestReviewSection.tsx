@@ -42,7 +42,7 @@ const ProgramBestReviewSection = ({
         </div>
       </div>
       <div
-        className="custom-scrollbar flex w-screen gap-x-3 overflow-x-auto px-5 md:px-10 md:pt-5 lg:pl-0"
+        className="custom-scrollbar flex w-screen gap-x-3 overflow-x-auto px-5 md:px-10 md:pt-5"
         style={{ paddingLeft: isDesktop ? 'calc(50% - 500px)' : undefined }}
       >
         <div className="flex w-fit gap-x-3">
