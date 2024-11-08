@@ -21,7 +21,7 @@ const ProgramDetailReviewItem = ({
   };
 
   return (
-    <div className="flex h-[340px] w-[300px] shrink-0 flex-col md:h-[366px] md:w-[371px]">
+    <div className="flex h-[340px] w-[300px] flex-col md:h-[366px] md:w-[371px]">
       <div
         className={`flex w-full rounded-t-[10px] px-[22px] py-4 text-white md:text-small18`}
         style={{ backgroundColor: color }}

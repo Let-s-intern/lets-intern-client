@@ -217,7 +217,7 @@ const ChallengeView: React.FC<{
             id={PROGRAM_REVIEW_ID}
             className="challenge_review flex w-full flex-col items-center"
           >
-            <div className="flex w-full flex-col items-center bg-neutral-95">
+            <div className="flex w-full flex-col items-center bg-neutral-95 py-16 md:pb-32 md:pt-28">
               <ProgramBestReviewSection
                 type="challenge"
                 reviews={receivedContent.challengeReview}
