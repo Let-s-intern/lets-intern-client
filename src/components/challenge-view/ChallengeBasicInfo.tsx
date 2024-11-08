@@ -73,7 +73,7 @@ const ChallengeBasicInfo = ({
       <img
         src={challenge.thumbnail}
         alt="챌린지 썸네일"
-        className="aspect-[4/3] w-full rounded-md bg-neutral-45 object-contain md:w-3/5"
+        className="aspect-[4/3] w-full rounded-md object-contain md:w-3/5"
         style={{ backgroundColor: colors.primaryLight }}
       />
       <div className="flex w-full flex-col gap-y-3 md:w-2/5">

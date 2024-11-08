@@ -1,8 +1,11 @@
+import { SerializedEditorState } from 'lexical';
+
 import BubbleTail from '@/assets/bubble_tail.svg?react';
 import ChevronDownIcon from '@/assets/icons/chevron-down.svg?react';
 import { twMerge } from '@/lib/twMerge';
 import LexicalContent from '@components/common/blog/LexicalContent';
-import { SerializedEditorState } from 'lexical';
+
+const title1 = '이번 Live 클래스,\n이런 사람들에게 추천해요!';
 
 interface LiveInformationProps {
   recommendFields?: string[];
@@ -25,14 +28,14 @@ const LiveInformation = ({
   if (!recommendFields && !reasonFields && !editorContent) return;
 
   return (
-    <div
+    <section
       id={id}
       className={twMerge(
         'flex w-full flex-col gap-y-5 md:items-center md:gap-y-[50px]',
         className,
       )}
     >
-      <p className="text-xsmall14 font-semibold text-neutral-45 md:text-small20">
+      <p className="text-xsmall14 font-semibold text-primary md:text-small20">
         클래스 소개
       </p>
       <div className="flex w-full flex-col gap-y-[50px] md:gap-y-[140px]">
@@ -40,12 +43,14 @@ const LiveInformation = ({
           recommendFields.length > 0 &&
           recommendFields[0] !== '' && (
             <div className="flex w-full flex-col items-center">
-              <div className="flex w-full flex-col items-center justify-center gap-y-8 rounded-md bg-[#F4F5FF] px-4 pb-[46px] pt-[50px]">
+              <div className="flex w-full flex-col items-center justify-center gap-y-8 rounded-md bg-[#F4F5FF] px-4 pb-[46px] pt-[50px] md:px-12">
                 <div className="flex w-full flex-col gap-y-1 md:items-center">
                   <p className="text-xsmall14 font-semibold text-primary md:text-small18">
                     혼자서는 너무 막막한 취업 준비
                   </p>
-                  <p className="whitespace-pre text-small20 font-bold md:text-center md:text-xlarge28">{`커리어의 시작과 성장,\n어떻게 준비하고 계신가요?`}</p>
+                  <p className="whitespace-pre-line text-small20 font-bold md:text-center md:text-xlarge28">
+                    {title1}
+                  </p>
                 </div>
                 <div className="flex w-full flex-col gap-y-3">
                   {recommendFields.map((field, index) => (
@@ -74,8 +79,9 @@ const LiveInformation = ({
                 <p className="text-xsmall14 font-semibold text-primary md:text-small18">
                   더욱 특별한 LIVE 클래스
                 </p>
-                <p className="text-small20 font-bold text-neutral-0 md:text-xlarge28">
-                  이번 클래스 꼭 들어야하는 이유
+                <p className="text-small20 font-bold text-neutral-0 md:text-center md:text-xlarge28">
+                  이번 클래스 <br className="hidden md:block" />꼭 들어야하는
+                  이유
                 </p>
               </div>
               <div className="flex w-full flex-col gap-y-5">
@@ -98,7 +104,7 @@ const LiveInformation = ({
           )}
         {editorContent && <LexicalContent node={editorContent.root} />}
       </div>
-    </div>
+    </section>
   );
 };
 export default LiveInformation;

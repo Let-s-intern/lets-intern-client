@@ -140,11 +140,13 @@ const ChallengeView: React.FC<{
           <Header programTitle={challenge.title ?? ''} />
           <ChallengeBasicInfo colors={colors} challenge={challenge} />
         </div>
+
         <ProgramDetailNavigation
           color={colors}
           programType="challenge"
           className={twMerge(isPreview && 'top-0 md:top-0 lg:top-0')}
         />
+
         <div className="flex w-full flex-col items-center overflow-x-hidden">
           <div
             id={PROGRAM_INTRO_ID}
@@ -216,7 +218,7 @@ const ChallengeView: React.FC<{
 
           <section
             id={PROGRAM_REVIEW_ID}
-            className="challenge_review flex w-full flex-col items-center bg-neutral-95 py-16 md:pb-32 md:pt-28"
+            className="challenge_review flex flex-col items-center bg-neutral-95 py-16 md:pb-32 md:pt-28"
           >
             <ProgramBestReviewSection
               type="challenge"
