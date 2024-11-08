@@ -25,13 +25,13 @@ function LiveCurriculum({ curriculum, mentorJob }: LiveCurriculumProps) {
         {curriculum.map((item, index) => (
           <div
             key={item.id}
-            className="w-full max-w-[900px] overflow-hidden rounded-md md:flex md:h-[148px]"
+            className="w-full max-w-[900px] overflow-hidden rounded-md md:flex"
           >
-            <div className="flex gap-3 bg-primary px-6 py-4 md:w-2/5 md:p-6 md:pr-0">
+            <div className="flex gap-3 bg-primary px-6 py-4 md:w-2/5 md:p-6">
               <div className="flex h-5 w-5 items-center justify-center rounded-full bg-primary-30 text-xxsmall12 font-semibold text-primary">
                 {index + 1}
               </div>
-              <div className="flex justify-between md:w-3/5 md:flex-col">
+              <div className="flex w-full justify-between md:flex-col md:gap-y-4">
                 <div className="flex flex-col gap-1">
                   <span className="text-xxsmall12 font-medium text-primary-10 md:text-xsmall14">
                     {mentorJob}

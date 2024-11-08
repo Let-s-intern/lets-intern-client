@@ -1,10 +1,11 @@
+import { LuCalendarDays } from 'react-icons/lu';
+
 import { useGetTossCardPromotion } from '@/api/payment';
 import { convertCodeToCardKorName } from '@/api/paymentSchema';
-import CalendarIcon from '@/assets/icons/calendar.svg?react';
+import Announcement from '@/assets/icons/announcement.svg?react';
 import ChevronDown from '@/assets/icons/chevron-down.svg?react';
-import WalletIcon from '@/assets/icons/credit-card.svg?react';
+import ClockIcon from '@/assets/icons/clock.svg?react';
 import LaptopIcon from '@/assets/icons/laptop.svg?react';
-import MentorIcon from '@/assets/icons/mentor.svg?react';
 import { ChallengeIdSchema } from '@/schema';
 import { formatFullDateTime } from '@/utils/formatDateString';
 import { ChallengeColor } from '@components/ChallengeView';
@@ -66,7 +67,7 @@ const ChallengeInfoBottom = ({
   const showMonthlyPrice = priceInfo && totalPrice >= 50000;
 
   return (
-    <div className="flex w-full flex-col gap-y-8 py-8 md:gap-y-20 md:pb-32 md:pt-52">
+    <section className="flex w-full max-w-[1000px] flex-col gap-y-8 md:gap-y-20">
       <div className="w-full text-small20 font-bold text-neutral-0 md:text-center">
         모집개요
       </div>
@@ -78,7 +79,7 @@ const ChallengeInfoBottom = ({
           <div className="flex flex-1 items-center justify-center rounded-md bg-neutral-95 px-6 py-5">
             <div className="flex w-full flex-col gap-y-5">
               <BasicInfoRow
-                icon={<CalendarIcon />}
+                icon={<Announcement />}
                 title="진행 기간"
                 content={`${formatFullDateTime(challenge.startDate, true)}\n- ${formatFullDateTime(challenge.endDate, true)}`}
               />
@@ -88,12 +89,12 @@ const ChallengeInfoBottom = ({
                 content={`100% 온라인\n(챌린지 대시보드, 오픈채팅방)`}
               />
               <BasicInfoRow
-                icon={<WalletIcon />}
+                icon={<ClockIcon />}
                 title="모집 마감"
                 content={`${formatFullDateTime(challenge.deadline, true)}`}
               />
               <BasicInfoRow
-                icon={<MentorIcon />}
+                icon={<LuCalendarDays size={20} />}
                 title="OT 일자"
                 content={`${formatFullDateTime(challenge.startDate, true)}`}
               />
@@ -105,7 +106,7 @@ const ChallengeInfoBottom = ({
             style={{ color: colors.primary }}
           >
             <BasicInfoBottomRow
-              icon={<CalendarIcon />}
+              icon={<Announcement />}
               title="진행 기간"
               content={`${formatFullDateTime(challenge.startDate)}\n- ${formatFullDateTime(challenge.endDate)}`}
             />
@@ -115,12 +116,12 @@ const ChallengeInfoBottom = ({
               content={`100% 온라인\n(챌린지 대시보드, 오픈채팅방)`}
             />
             <BasicInfoBottomRow
-              icon={<WalletIcon />}
+              icon={<ClockIcon />}
               title="모집 마감"
               content={`${formatFullDateTime(challenge.deadline, true)}`}
             />
             <BasicInfoBottomRow
-              icon={<MentorIcon />}
+              icon={<LuCalendarDays size={20} />}
               title="OT 일자"
               content={`${formatFullDateTime(challenge.startDate, true)}`}
             />
@@ -195,7 +196,7 @@ const ChallengeInfoBottom = ({
           )}
         </div>
       </div>
-    </div>
+    </section>
   );
 };
 

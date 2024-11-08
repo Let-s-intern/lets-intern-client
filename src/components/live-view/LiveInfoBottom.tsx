@@ -21,7 +21,7 @@ export const getDiscountPercent = (
 
 const LiveInfoBottom = ({ live }: { live: LiveIdSchema }) => {
   return (
-    <div className="flex w-full flex-col gap-y-8 pb-8 md:gap-y-[70px] md:pb-32">
+    <section className="mx-auto flex w-full max-w-[1000px] flex-col gap-y-8 md:gap-y-[70px]">
       <div className="w-full text-small20 font-bold text-neutral-0 md:text-center">
         모집개요
       </div>
@@ -87,7 +87,7 @@ const LiveInfoBottom = ({ live }: { live: LiveIdSchema }) => {
           </div>
         </div>
       </div>
-    </div>
+    </section>
   );
 };
 

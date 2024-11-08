@@ -22,26 +22,26 @@ function LiveMentor({ mentor, className, id }: LiveMentorProps) {
     <section
       id={id}
       className={twMerge(
-        'py-16 md:flex md:flex-col md:items-center md:py-36',
+        'mb-36 md:flex md:flex-col md:items-center',
         className,
       )}
     >
       <Heading2 className="mb-8 md:mb-20">
         렛츠커리어 LIVE 클래스에서만
-        <br />
-        들을 수 있는 <span className="text-primary">요즘 PM 취업의 A to Z</span>
+        <br className="md:hidden" /> 들을 수 있는{' '}
+        <br className="hidden md:block" />
+        <span className="text-primary">요즘 PM 취업의 A to Z</span>
       </Heading2>
-      <SuperTitle className="mb-5 text-neutral-45 md:mb-10">
-        멘토 소개
-      </SuperTitle>
+      <SuperTitle className="mb-5 text-primary md:mb-10">멘토 소개</SuperTitle>
 
-      <div className="flex flex-col gap-6 md:flex-row">
+      <div className="flex w-full max-w-[800px] flex-col gap-6 md:flex-row">
         <img
           className="h-auto w-full rounded-md md:max-w-[342px]"
           src={mentor.mentorImg}
           alt="멘토 프로필 사진"
         />
-        <div className="flex flex-col justify-between gap-6 text-neutral-0">
+        {/* 멘토정보 */}
+        <div className="flex w-full flex-col justify-between gap-6 text-neutral-0">
           <div>
             <span className="text-small20 font-bold">
               {mentor.mentorName} 멘토

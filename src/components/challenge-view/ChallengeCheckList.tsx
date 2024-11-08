@@ -204,7 +204,7 @@ function ChallengeCheckList({
   }, [challengeType]);
 
   return (
-    <section className="flex w-full max-w-[1200px] flex-col px-5 py-20 md:px-10 md:pb-[140px] md:pt-[130px]">
+    <section className="flex w-full max-w-[1000px] flex-col px-5 py-20 md:px-10 md:pb-[140px] md:pt-[130px] lg:px-0">
       <div className="mb-16 md:mb-20">
         <SuperTitle
           className="mb-1 md:text-center"
@@ -250,7 +250,7 @@ function ChallengeCheckList({
               ))}
             </div>
             <OutlinedBox
-              className="flex w-full max-w-[860px] flex-col items-center md:flex-row md:justify-center md:gap-1 md:p-10"
+              className="flex w-full max-w-[860px] flex-col items-center md:p-10 lg:flex-row lg:justify-center lg:gap-1"
               style={{
                 backgroundColor: colors.secondaryLight,
                 borderColor: colors.secondary,

@@ -1,8 +1,9 @@
+import { useEffect, useMemo } from 'react';
+
 import { twMerge } from '@/lib/twMerge';
 import { LiveIdSchema } from '@/schema';
 import { LiveContent } from '@/types/interface';
 import Header from '@components/common/program/program-detail/header/Header';
-import { useEffect, useMemo } from 'react';
 import LexicalContent from './common/blog/LexicalContent';
 import LiveBasicInfo from './live-view/LiveBasicInfo';
 import LiveCurriculum from './live-view/LiveCurriculum';
@@ -48,17 +49,19 @@ const LiveView: React.FC<{ live: LiveIdSchema; isPreview?: boolean }> = ({
   return (
     <div className="flex w-full flex-col">
       <div className="flex w-full flex-col items-center">
-        <div className="flex w-full max-w-[1200px] flex-col px-5 md:px-10">
+        <div className="flex w-full max-w-[1000px] flex-col px-5 md:px-10 lg:px-0">
           <Header programTitle={live.title ?? ''} />
           {live.vod && <LiveVod />}
           <LiveBasicInfo live={live} />
         </div>
+
         <ProgramDetailNavigation
           programType="live"
           className={twMerge(isPreview && 'top-0 md:top-0 lg:top-0')}
         />
+
         <div className="flex w-full flex-col items-center">
-          <div className="flex w-full max-w-[1200px] flex-col px-5 md:px-10">
+          <div className="flex w-full max-w-[1000px] flex-col px-5 pt-20 md:px-10 md:pt-40 lg:px-0">
             <LiveMentor
               mentor={mentor}
               id={LIVE_MENTOR_INTRO_ID}
@@ -75,14 +78,12 @@ const LiveView: React.FC<{ live: LiveIdSchema; isPreview?: boolean }> = ({
 
           <div
             id={PROGRAM_CURRICULUM_ID}
-            className="live_curriculum flex w-full max-w-[1200px] flex-col px-5 pb-16 md:px-10"
+            className="live_curriculum flex w-full max-w-[1000px] flex-col px-5 pb-16 md:px-10 lg:px-0"
           >
             <LiveCurriculum
               curriculum={receivedContent.curriculum}
               mentorJob={mentor.mentorJob}
             />
-
-            <LiveIntro />
 
             {receivedContent.additionalCurriculum && (
               <LexicalContent
@@ -91,31 +92,30 @@ const LiveView: React.FC<{ live: LiveIdSchema; isPreview?: boolean }> = ({
             )}
           </div>
 
-          <div
+          <LiveIntro />
+
+          <section
             id={PROGRAM_REVIEW_ID}
-            className="live_review flex w-full flex-col items-center"
+            className="live_review flex w-full flex-col items-center bg-neutral-95 py-16 md:pb-32 md:pt-28"
           >
-            <div className="flex w-full flex-col items-center bg-neutral-95">
-              <ProgramBestReviewSection
-                reviews={receivedContent.liveReview}
-                type="live"
-              />
-            </div>
+            <ProgramBestReviewSection
+              reviews={receivedContent.liveReview}
+              type="live"
+            />
+          </section>
+
+          <div className="live_faq flex w-full flex-col gap-20 px-5 pb-8 pt-16 md:gap-40 md:px-10 md:pb-32 md:pt-36 lg:px-0">
             {receivedContent.blogReview ? (
               <ProgramDetailBlogReviewSection
                 review={receivedContent.blogReview}
                 programType="live"
               />
             ) : null}
-          </div>
-
-          <section
-            id={PROGRAM_FAQ_ID}
-            className="live_faq flex w-full max-w-[1200px] flex-col px-5 md:px-10"
-          >
-            <LiveFaq />
+            <section id={PROGRAM_FAQ_ID}>
+              <LiveFaq />
+            </section>
             <LiveInfoBottom live={live} />
-          </section>
+          </div>
         </div>
       </div>
     </div>
