@@ -54,6 +54,7 @@ const LiveView: React.FC<{ live: LiveIdSchema; isPreview?: boolean }> = ({
           {live.vod && <LiveVod />}
           <LiveBasicInfo live={live} />
         </div>
+
         <ProgramDetailNavigation
           programType="live"
           className={twMerge(isPreview && 'top-0 md:top-0 lg:top-0')}
@@ -93,31 +94,28 @@ const LiveView: React.FC<{ live: LiveIdSchema; isPreview?: boolean }> = ({
 
           <LiveIntro />
 
-          <div
+          <section
             id={PROGRAM_REVIEW_ID}
-            className="live_review flex w-full flex-col items-center"
+            className="live_review flex w-full flex-col items-center bg-neutral-95 py-16 md:pb-32 md:pt-28"
           >
-            <div className="flex w-full flex-col items-center bg-neutral-95">
-              <ProgramBestReviewSection
-                reviews={receivedContent.liveReview}
-                type="live"
-              />
-            </div>
+            <ProgramBestReviewSection
+              reviews={receivedContent.liveReview}
+              type="live"
+            />
+          </section>
+
+          <div className="live_faq flex w-full flex-col gap-20 px-5 pb-8 pt-16 md:gap-40 md:px-10 md:pb-32 md:pt-36 lg:px-0">
             {receivedContent.blogReview ? (
               <ProgramDetailBlogReviewSection
                 review={receivedContent.blogReview}
                 programType="live"
               />
             ) : null}
-          </div>
-
-          <section
-            id={PROGRAM_FAQ_ID}
-            className="live_faq flex w-full max-w-[1200px] flex-col px-5 md:px-10"
-          >
-            <LiveFaq />
+            <section id={PROGRAM_FAQ_ID}>
+              <LiveFaq />
+            </section>
             <LiveInfoBottom live={live} />
-          </section>
+          </div>
         </div>
       </div>
     </div>

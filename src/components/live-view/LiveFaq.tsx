@@ -18,17 +18,17 @@ function LiveFaq() {
   if (!faqList) return <></>;
 
   return (
-    <section id="faq" className="py-8 md:flex md:flex-col md:items-center">
+    <div id="faq" className="md:flex md:flex-col md:items-center">
       <SuperTitle className="mb-6 text-neutral-45 md:mb-12">FAQ</SuperTitle>
       <SuperTitle className="text-primary">{superTitle}</SuperTitle>
       <Heading2 className="mb-10 md:mb-20">{title}</Heading2>
 
-      <div className="mb-10 flex flex-col gap-3 md:mb-24 md:w-full md:max-w-[800px]">
+      <div className="flex flex-col gap-3 md:w-full md:max-w-[800px]">
         {faqList.map((faq) => (
           <FaqCard key={faq.id} faq={faq} />
         ))}
       </div>
-    </section>
+    </div>
   );
 }
 

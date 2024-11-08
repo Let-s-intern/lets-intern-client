@@ -19,8 +19,8 @@ const ProgramBestReviewSection = ({
   if (!reviews || reviews.length === 0) return;
 
   return (
-    <div className="flex w-full flex-col gap-y-8 md:items-center">
-      <div className="flex w-full flex-col gap-y-6 px-5 md:items-center md:gap-y-[50px]">
+    <div className="flex flex-col gap-y-8 md:items-center">
+      <div className="flex flex-col gap-y-6 px-5 md:items-center md:gap-y-[50px]">
         <p
           className="text-xsmall14 font-semibold text-neutral-45 md:text-small20"
           style={{ color: colors?.primary }}
@@ -28,7 +28,7 @@ const ProgramBestReviewSection = ({
           후기
         </p>
         <div
-          className={`flex w-full flex-col ${type === 'challenge' ? 'gap-y-1' : 'gap-y-2.5'} md:items-center md:gap-y-5`}
+          className={`flex flex-col ${type === 'challenge' ? 'gap-y-1' : 'gap-y-2.5'} md:items-center md:gap-y-5`}
         >
           <p
             className={`text-xsmall14 font-semibold md:text-small18 ${type === 'challenge' ? '' : 'w-fit rounded-[10px] bg-[#FFEACC] px-2 py-1'}`}
@@ -42,7 +42,7 @@ const ProgramBestReviewSection = ({
         </div>
       </div>
       <div
-        className="custom-scrollbar flex w-screen gap-x-3 overflow-x-auto px-5 md:px-10 md:pt-5"
+        className="custom-scrollbar w-[98vw] gap-x-3 overflow-x-auto px-5 md:px-10 md:pt-5 lg:pl-0"
         style={{ paddingLeft: isDesktop ? 'calc(50% - 500px)' : undefined }}
       >
         <div className="flex w-fit gap-x-3">

@@ -128,7 +128,7 @@ function LiveIntro() {
         <SuperTitle className="mb-1 text-primary">{superTitle[2]}</SuperTitle>
         <Heading2>{title[2]}</Heading2>
         <div
-          className="custom-scrollbar -mx-5 mt-8 overflow-x-auto px-5 md:-mx-10 md:mt-20 md:px-10 lg:mx-0"
+          className="custom-scrollbar -mx-5 mt-8 w-[98vw] overflow-x-auto px-5 md:-mx-10 md:mt-20 md:px-10 lg:mx-0"
           style={{ paddingLeft: isDesktop ? 'calc(50% - 500px)' : undefined }}
         >
           <div className="flex w-fit gap-1.5">
