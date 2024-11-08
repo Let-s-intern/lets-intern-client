@@ -92,7 +92,7 @@ const ChallengeView: React.FC<{
         primaryLight = '#F0F4FF';
         secondaryLight = '#FFF9EA';
         gradient = '#4A56FF';
-        dark = '#2D3A9D';
+        dark = '#1A2A5D';
 
         subTitle = '#F8AE00';
         subBg = '#FFF9EA';
@@ -218,7 +218,7 @@ const ChallengeView: React.FC<{
 
           <section
             id={PROGRAM_REVIEW_ID}
-            className="challenge_review flex flex-col items-center bg-neutral-95 py-16 md:pb-32 md:pt-28"
+            className="challenge_review flex w-full flex-col items-center bg-neutral-95 py-16 md:pb-32 md:pt-28"
           >
             <ProgramBestReviewSection
               type="challenge"

@@ -14,8 +14,8 @@ interface LiveCurriculumProps {
 
 function LiveCurriculum({ curriculum, mentorJob }: LiveCurriculumProps) {
   return (
-    <section className="py-16 md:py-32" id={PROGRAM_CURRICULUM_ID}>
-      <SuperTitle className="mb-6 text-neutral-45 md:mb-10">
+    <section className="py-20 md:pb-[130px]" id={PROGRAM_CURRICULUM_ID}>
+      <SuperTitle className="mb-6 font-bold text-primary md:mb-10">
         커리큘럼
       </SuperTitle>
       <SuperTitle className="mb-1 text-primary">{superTitle}</SuperTitle>

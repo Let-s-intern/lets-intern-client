@@ -18,8 +18,8 @@ function LiveFaq() {
   if (!faqList) return <></>;
 
   return (
-    <div id="faq" className="md:flex md:flex-col md:items-center">
-      <SuperTitle className="mb-6 text-neutral-45 md:mb-12">FAQ</SuperTitle>
+    <div id="faq" className="pt-20 md:flex md:flex-col md:items-center">
+      <SuperTitle className="mb-6 text-primary md:mb-12">FAQ</SuperTitle>
       <SuperTitle className="text-primary">{superTitle}</SuperTitle>
       <Heading2 className="mb-10 md:mb-20">{title}</Heading2>
 

@@ -7,7 +7,6 @@ import universityImg from '@/assets/live-university.jpg';
 import Heading2 from '@components/common/program/program-detail/Heading2';
 import SpeechBubble from '@components/common/program/program-detail/SpeechBubble';
 import SuperTitle from '@components/common/program/program-detail/SuperTitle';
-import { useMediaQuery } from '@mui/material';
 
 const superTitle = [
   '점점 어려워지는 채용 시장',
@@ -80,11 +79,9 @@ type Point = {
 };
 
 function LiveIntro() {
-  const isDesktop = useMediaQuery('(min-width: 991px)');
-
   return (
-    <section className="flex w-full flex-col gap-y-20 px-5 py-16 md:items-center md:gap-y-52 md:px-10 md:py-32 lg:px-0">
-      <div className="max-w-[1000px]">
+    <section className="flex w-full flex-col gap-y-20 pb-[70px] md:items-center md:gap-y-52 md:pb-40">
+      <div className="flex w-full max-w-[1200px] flex-col px-5 md:px-10">
         <SuperTitle className="mb-1 text-primary">{superTitle[0]}</SuperTitle>
         <Heading2>{title[0]}</Heading2>
         <div className="mt-10 flex flex-col items-center md:mt-20">
@@ -114,7 +111,7 @@ function LiveIntro() {
         </div>
       </div>
 
-      <div className="max-w-[1000px]">
+      <div className="flex w-full max-w-[1200px] flex-col px-5 md:px-10">
         <SuperTitle className="mb-1 text-primary">{superTitle[1]}</SuperTitle>
         <Heading2>{title[1]}</Heading2>
         <div className="mt-8 flex flex-col gap-3 md:mt-20 md:flex-row">
@@ -124,13 +121,10 @@ function LiveIntro() {
         </div>
       </div>
 
-      <div>
+      <div className="w-ful flex max-w-[1200px] flex-col px-5 md:px-10">
         <SuperTitle className="mb-1 text-primary">{superTitle[2]}</SuperTitle>
         <Heading2>{title[2]}</Heading2>
-        <div
-          className="custom-scrollbar -mx-5 mt-8 w-[98vw] overflow-x-auto px-5 md:-mx-10 md:mt-20 md:px-10 lg:mx-0"
-          style={{ paddingLeft: isDesktop ? 'calc(50% - 500px)' : undefined }}
-        >
+        <div className="custom-scrollbar mt-8 w-full overflow-x-auto md:mt-20">
           <div className="flex w-fit gap-1.5">
             {company.map((item) => (
               <img

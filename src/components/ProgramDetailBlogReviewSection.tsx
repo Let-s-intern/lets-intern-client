@@ -1,7 +1,6 @@
 import { MdChevronRight } from 'react-icons/md';
 import { Link } from 'react-router-dom';
 
-import { twMerge } from '@/lib/twMerge';
 import { ProgramType } from '@/types/common';
 import { ProgramBlogReview } from '@/types/interface';
 import Description from './common/program/program-detail/Description';
@@ -18,8 +17,8 @@ const ProgramDetailBlogReviewSection = ({
   programType: ProgramType;
 }) => {
   return (
-    <section className="w-full md:flex md:flex-col md:items-center">
-      <div className="mb-6 w-full max-w-[1000px] md:mb-16">
+    <section className="w-full max-w-[1200px] px-5 md:flex md:flex-col md:items-center md:px-10">
+      <div className="mb-6 w-full md:mb-16">
         <div className="relative mb-3 flex items-start justify-between md:mb-7 md:block">
           <Heading2 className="text-small20 md:text-center md:text-xlarge28">
             {programType === 'live' ? '클래스 ' : ''}참여자들의
@@ -40,12 +39,8 @@ const ProgramDetailBlogReviewSection = ({
       </div>
 
       {/* 슬라이드 */}
-      <div className="flex justify-center">
-        <div
-          className={twMerge(
-            'custom-scrollbar -mx-5 flex flex-nowrap gap-4 overflow-x-auto px-5 md:-mx-10 md:px-10 lg:px-0',
-          )}
-        >
+      <div className="custom-scrollbar w-full overflow-x-auto">
+        <div className="flex w-fit gap-4">
           {review.list.map((review) => (
             <Link
               to={`/blog/${review.id}`}
