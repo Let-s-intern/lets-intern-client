@@ -50,11 +50,11 @@ type Template = {
 
 function ChallengeIntroPortfolio() {
   return (
-    <section>
+    <section className="w-full bg-[#F3F7FF] px-5 py-20 md:px-10 md:py-32 lg:px-0">
       <div className="mb-20 md:mb-52">
         <Heading2 className="mb-3 md:mb-8">
           포트폴리오, 어떻게 시작해야 하나요? <br />
-          경험 정리와 백지 템플릿을 통한 <br />
+          경험 정리와 백지 템플릿을 통한 <br className="md:hidden" />
           <span className="text-[#4A76FF]">나만의 캐치프라이즈</span> 완성!
         </Heading2>
         <Description className="mb-10 md:mb-20 md:text-center">
@@ -86,7 +86,7 @@ function ChallengeIntroPortfolio() {
 
 function TemplateItem({ template }: { template: Template }) {
   return (
-    <div key={template.title}>
+    <div key={template.title} className="md:flex md:flex-col md:items-center">
       <div className="mb-5 flex items-center gap-2 md:mb-8 md:justify-center">
         <img
           className="h-auto w-8 md:w-10"
@@ -97,20 +97,20 @@ function TemplateItem({ template }: { template: Template }) {
           {template.title}
         </span>
       </div>
-      <div className="flex flex-col gap-5 md:flex-row md:gap-2.5">
+      <div className="flex w-full max-w-[1000px] flex-col gap-5 md:flex-row md:gap-2.5">
         {template.content.map((item) => (
           <div
             key={item.description}
-            className="relative h-[270px] overflow-hidden rounded-md bg-[#4A76FF] p-5 md:flex-1"
+            className="h-fit overflow-hidden rounded-md bg-[#4A76FF] pl-6 pt-5 md:flex-1"
           >
-            <div className="flex items-center gap-2">
+            <div className="mb-5 flex items-center gap-2">
               <FaCheck size={20} color="#F8AE00" />
               <span className="text-xsmall16 font-semibold text-white">
                 {item.description}
               </span>
             </div>
             <img
-              className="absolute left-10 top-16 md:left-16"
+              className="h-auto w-full"
               src={item.src}
               alt={item.description}
             />

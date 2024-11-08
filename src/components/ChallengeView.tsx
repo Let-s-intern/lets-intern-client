@@ -175,15 +175,16 @@ const ChallengeView: React.FC<{
               ) : (
                 <ChallengeIntroCareerStart colors={colors} />
               )}
-              <ChallengeCheckList
-                colors={colors}
-                challengeType={challenge.challengeType}
-              />
-              <ChallengeResult
-                challengeType={challenge.challengeType}
-                colors={colors}
-              />
             </section>
+
+            <ChallengeCheckList
+              colors={colors}
+              challengeType={challenge.challengeType}
+            />
+            <ChallengeResult
+              challengeType={challenge.challengeType}
+              colors={colors}
+            />
           </div>
 
           {receivedContent.curriculum &&
