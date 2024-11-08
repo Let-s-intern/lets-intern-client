@@ -60,7 +60,7 @@ const LiveView: React.FC<{ live: LiveIdSchema; isPreview?: boolean }> = ({
         />
 
         <div className="flex w-full flex-col items-center">
-          <div className="flex w-full max-w-[1000px] flex-col px-5 py-20 md:px-10 md:pb-32 md:pt-40 lg:px-0">
+          <div className="flex w-full max-w-[1000px] flex-col px-5 pt-20 md:px-10 md:pt-40 lg:px-0">
             <LiveMentor
               mentor={mentor}
               id={LIVE_MENTOR_INTRO_ID}
@@ -77,20 +77,20 @@ const LiveView: React.FC<{ live: LiveIdSchema; isPreview?: boolean }> = ({
 
           <div
             id={PROGRAM_CURRICULUM_ID}
-            className="live_curriculum flex w-full max-w-[1200px] flex-col px-5 pb-16 md:px-10"
+            className="live_curriculum flex w-full max-w-[1000px] flex-col px-5 pb-16 md:px-10 lg:px-0"
           >
             <LiveCurriculum
               curriculum={receivedContent.curriculum}
               mentorJob={mentor.mentorJob}
             />
 
-            <LiveIntro />
-
             {receivedContent.additionalCurriculum && (
               <LexicalContent
                 node={receivedContent.additionalCurriculum.root}
               />
             )}
+
+            <LiveIntro />
           </div>
 
           <div

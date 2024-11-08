@@ -28,7 +28,7 @@ const LiveInformation = ({
   if (!recommendFields && !reasonFields && !editorContent) return;
 
   return (
-    <div
+    <section
       id={id}
       className={twMerge(
         'flex w-full flex-col gap-y-5 md:items-center md:gap-y-[50px]',
@@ -104,7 +104,7 @@ const LiveInformation = ({
           )}
         {editorContent && <LexicalContent node={editorContent.root} />}
       </div>
-    </div>
+    </section>
   );
 };
 export default LiveInformation;
