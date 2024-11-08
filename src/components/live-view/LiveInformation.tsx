@@ -31,14 +31,14 @@ const LiveInformation = ({
     <section
       id={id}
       className={twMerge(
-        'flex w-full flex-col gap-y-5 md:items-center md:gap-y-[50px]',
+        'flex w-full max-w-[1200px] flex-col gap-y-5 px-5 pb-[70px] pt-[100px] md:items-center md:gap-y-[50px] md:px-10 md:pb-[130px] md:pt-[140px]',
         className,
       )}
     >
       <p className="text-xsmall14 font-semibold text-primary md:text-small20">
         클래스 소개
       </p>
-      <div className="flex w-full flex-col gap-y-[50px] md:gap-y-[140px]">
+      <div className="flex w-full flex-col gap-y-[70px] md:gap-y-[140px]">
         {recommendFields &&
           recommendFields.length > 0 &&
           recommendFields[0] !== '' && (
