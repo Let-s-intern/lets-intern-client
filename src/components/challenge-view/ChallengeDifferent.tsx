@@ -1,3 +1,9 @@
+import { useMediaQuery } from '@mui/material';
+import { useMemo } from 'react';
+
+import benefitImg1 from '@/assets/benefit1.jpg';
+import benefitImg2 from '@/assets/benefit2.jpg';
+import benefitImg3 from '@/assets/benefit3.jpg';
 import PaybackDesktop from '@/assets/different_payback_desktop.svg?react';
 import PaybackMobile from '@/assets/different_payback_mobile.svg?react';
 import { ChallengeType, challengeTypeSchema } from '@/schema';
@@ -7,11 +13,8 @@ import DifferentCard, {
   DifferentCardProps,
 } from '@components/common/program/program-detail/different/DifferentCard';
 import SuperTitle from '@components/common/program/program-detail/SuperTitle';
-import { useMediaQuery } from '@mui/material';
-import { useMemo } from 'react';
 
-const { CAREER_START, PERSONAL_STATEMENT, PORTFOLIO } =
-  challengeTypeSchema.enum;
+const { PERSONAL_STATEMENT, PORTFOLIO } = challengeTypeSchema.enum;
 
 export const tripleBenefits = [
   {
@@ -20,21 +23,21 @@ export const tripleBenefits = [
       `챌린지 참여가 종료되어도, 참여했던 미션\n무한 열람 및 아카이빙`,
       `미션 현황과 기수별 주요 공지도\n함께 열람할 수 있어 몰입감 UP!`,
     ],
-    imgUrl: '/challenge-detail/different/dashboard.png',
+    imgUrl: benefitImg1,
   },
   {
     title: '프로그램 수료증 발급',
     options: [
       `프로그램 종료 시, 참여자분들께 렛츠커리어에서 인증하는 참여 수료증을 발급해드립니다.`,
     ],
-    imgUrl: '/challenge-detail/different/certificate.png',
+    imgUrl: benefitImg2,
   },
   {
     title: '네트워킹 파티',
     options: [
       `주니어 PM, 제조업 대기업 재직자 등이 포함된 커리어 선배들과의 온/오프라인 네트워킹 파티에 초대합니다.`,
     ],
-    imgUrl: '/challenge-detail/different/networking.png',
+    imgUrl: benefitImg3,
   },
 ];
 
@@ -163,7 +166,7 @@ const ChallengeDifferent = ({
           </div>
         </div>
       </div>
-      <div className="flex w-full flex-col gap-y-8">
+      <div className="flex w-full flex-col gap-y-8 md:gap-y-16">
         <p className="whitespace-pre text-small20 font-bold md:text-center md:text-xlarge28">{`여기서 끝이 아니죠\n챌린지 참여자만을 위한 트리플 혜택!`}</p>
         <div className="-mx-5 flex w-fit flex-col gap-y-4 overflow-x-auto px-5 md:mx-0 md:px-0">
           <BenefitCard
