@@ -184,7 +184,7 @@ const ChallengePointView = ({
           </div>
           <div className="mb-[30px] flex w-full flex-col md:mb-[23px]">
             <div
-              className="flex w-full items-center justify-center rounded-t-md px-4 py-2.5 text-xsmall14 font-semibold text-white md:px-2.5"
+              className="flex w-full items-center rounded-t-md px-4 py-2.5 text-xsmall14 font-semibold text-white md:justify-center md:px-2.5"
               style={{ backgroundColor: colors.primary }}
             >
               2 Weeks
@@ -339,7 +339,7 @@ function BoxItem({
   return (
     <div className="flex flex-col gap-2 text-xsmall16 text-neutral-0">
       <span className="whitespace-pre-line font-bold">{title}</span>
-      <span className="whitespace-pre-line">{children}</span>
+      <span className="whitespace-pre-line break-keep">{children}</span>
     </div>
   );
 }
