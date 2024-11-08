@@ -110,6 +110,7 @@ const ChallengeDifferent = ({
       id="different"
       className="flex w-full flex-col gap-y-[70px] py-16 md:gap-y-40 md:py-40"
     >
+      {/* 차별점 */}
       <div className="flex w-full flex-col gap-y-8 md:gap-y-20">
         <div className="flex w-full flex-col gap-y-6 md:gap-y-12">
           <SuperTitle style={{ color: colors.primary }}>차별점</SuperTitle>
@@ -166,6 +167,8 @@ const ChallengeDifferent = ({
           </div>
         </div>
       </div>
+
+      {/* 혜택 */}
       <div className="flex w-full flex-col gap-y-8 md:items-center md:gap-y-16">
         <p className="whitespace-pre-line text-small20 font-bold md:text-center md:text-xlarge28">{`여기서 끝이 아니죠\n챌린지 참여자만을 위한 트리플 혜택!`}</p>
         <div className="-mx-5 flex w-fit flex-col gap-y-4 overflow-x-auto px-5 md:-mx-10 md:px-10 lg:px-0">

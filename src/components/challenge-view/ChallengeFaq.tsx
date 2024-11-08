@@ -30,7 +30,7 @@ function ChallengeFaq({ colors }: ChallengeFaqProps) {
   if (!faqList) return <></>;
 
   return (
-    <section className="md:flex md:flex-col md:items-center">
+    <div className="md:flex md:flex-col md:items-center">
       <SuperTitle
         className="mb-6 text-neutral-45 md:mb-12"
         style={{ color: colors.primary }}
@@ -72,7 +72,7 @@ function ChallengeFaq({ colors }: ChallengeFaqProps) {
           1:1 채팅 문의하기
         </button>
       </div>
-    </section>
+    </div>
   );
 }
 

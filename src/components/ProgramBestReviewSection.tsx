@@ -19,7 +19,7 @@ const ProgramBestReviewSection = ({
   if (!reviews || reviews.length === 0) return;
 
   return (
-    <section className="flex w-full flex-col gap-y-8 md:items-center">
+    <div className="flex w-full flex-col gap-y-8 md:items-center">
       <div className="flex w-full flex-col gap-y-6 px-5 md:items-center md:gap-y-[50px]">
         <p
           className="text-xsmall14 font-semibold text-neutral-45 md:text-small20"
@@ -58,7 +58,7 @@ const ProgramBestReviewSection = ({
           ))}
         </div>
       </div>
-    </section>
+    </div>
   );
 };
 

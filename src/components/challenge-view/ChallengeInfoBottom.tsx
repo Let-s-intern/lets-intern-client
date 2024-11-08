@@ -67,7 +67,7 @@ const ChallengeInfoBottom = ({
   const showMonthlyPrice = priceInfo && totalPrice >= 50000;
 
   return (
-    <div className="flex w-full max-w-[1000px] flex-col gap-y-8 md:gap-y-20">
+    <section className="flex w-full max-w-[1000px] flex-col gap-y-8 md:gap-y-20">
       <div className="w-full text-small20 font-bold text-neutral-0 md:text-center">
         모집개요
       </div>
@@ -196,7 +196,7 @@ const ChallengeInfoBottom = ({
           )}
         </div>
       </div>
-    </div>
+    </section>
   );
 };
 

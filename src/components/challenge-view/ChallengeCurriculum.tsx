@@ -45,7 +45,7 @@ function ChallengeCurriculum({
   }
 
   return (
-    <section className="md:py-30 flex w-full max-w-[1000px] flex-col px-5 py-20 md:items-center md:pb-36 lg:px-0">
+    <div className="md:py-30 flex w-full max-w-[1000px] flex-col px-5 py-20 md:items-center md:pb-36 lg:px-0">
       <SuperTitle className="mb-6 md:mb-12" style={{ color: colors.primary }}>
         커리큘럼
       </SuperTitle>
@@ -68,7 +68,7 @@ function ChallengeCurriculum({
           <CurriculumItem key={item.id} item={item} colors={colors} />
         ))}
       </div>
-    </section>
+    </div>
   );
 }
 
