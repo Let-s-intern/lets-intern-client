@@ -1,6 +1,5 @@
 import { ContentReviewType } from '@/types/interface';
 import ProgramDetailReviewItem from '@components/common/program/program-detail/review/ProgramDetailReviewItem';
-import { useMediaQuery } from '@mui/material';
 import { ChallengeColor } from './ChallengeView';
 
 interface ProgramBestReviewSectionProps {
@@ -14,15 +13,13 @@ const ProgramBestReviewSection = ({
   reviews,
   colors,
 }: ProgramBestReviewSectionProps) => {
-  const isDesktop = useMediaQuery('(min-width: 991px)');
-
   if (!reviews || reviews.length === 0) return;
 
   return (
-    <div className="flex flex-col gap-y-8 md:items-center">
-      <div className="flex flex-col gap-y-6 px-5 md:items-center md:gap-y-[50px]">
+    <div className="flex w-full max-w-[1200px] flex-col gap-y-8 md:items-center">
+      <div className="flex flex-col gap-y-6 px-5 md:items-center md:gap-y-[50px] md:px-10">
         <p
-          className="text-xsmall14 font-semibold text-neutral-45 md:text-small20"
+          className="text-xsmall14 font-semibold text-primary md:text-small20"
           style={{ color: colors?.primary }}
         >
           후기
@@ -41,10 +38,7 @@ const ProgramBestReviewSection = ({
           <p className="whitespace-pre text-small20 font-bold text-neutral-0 md:text-center md:text-xlarge28">{`참여자들의 진심이 담긴\n100% 솔직 후기`}</p>
         </div>
       </div>
-      <div
-        className="custom-scrollbar w-[98vw] gap-x-3 overflow-x-auto px-5 md:px-10 md:pt-5 lg:pl-0"
-        style={{ paddingLeft: isDesktop ? 'calc(50% - 500px)' : undefined }}
-      >
+      <div className="custom-scrollbar w-full gap-x-3 overflow-x-auto px-5 md:px-10 md:pt-5">
         <div className="flex w-fit gap-x-3">
           {reviews.map((review, index) => (
             <ProgramDetailReviewItem
