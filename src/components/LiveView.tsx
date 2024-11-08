@@ -1,8 +1,9 @@
+import { useEffect, useMemo } from 'react';
+
 import { twMerge } from '@/lib/twMerge';
 import { LiveIdSchema } from '@/schema';
 import { LiveContent } from '@/types/interface';
 import Header from '@components/common/program/program-detail/header/Header';
-import { useEffect, useMemo } from 'react';
 import LexicalContent from './common/blog/LexicalContent';
 import LiveBasicInfo from './live-view/LiveBasicInfo';
 import LiveCurriculum from './live-view/LiveCurriculum';
