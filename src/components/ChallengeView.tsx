@@ -136,7 +136,7 @@ const ChallengeView: React.FC<{
   return (
     <div className="flex w-full flex-col">
       <div className="flex w-full flex-col items-center">
-        <div className="flex w-full max-w-[1000px] flex-col px-5 md:px-10">
+        <div className="flex w-full max-w-[1000px] flex-col px-5 md:px-10 lg:px-0">
           <Header programTitle={challenge.title ?? ''} />
           <ChallengeBasicInfo colors={colors} challenge={challenge} />
         </div>
@@ -162,9 +162,9 @@ const ChallengeView: React.FC<{
 
             {/* 특별 챌린지, 합격자 후기 */}
             {receivedContent.mainDescription?.root && (
-              <div className="flex w-full max-w-[1000px] flex-col px-5 md:px-10">
+              <section className="flex w-full max-w-[1000px] flex-col px-5 md:px-10 lg:px-0">
                 <LexicalContent node={receivedContent.mainDescription?.root} />
-              </div>
+              </section>
             )}
 
             <section className="flex w-full flex-col md:items-center">
@@ -181,6 +181,7 @@ const ChallengeView: React.FC<{
               colors={colors}
               challengeType={challenge.challengeType}
             />
+
             <ChallengeResult
               challengeType={challenge.challengeType}
               colors={colors}
@@ -189,7 +190,7 @@ const ChallengeView: React.FC<{
 
           {receivedContent.curriculum &&
             receivedContent.curriculum.length > 0 && (
-              <div
+              <section
                 id={PROGRAM_CURRICULUM_ID}
                 className="challenge_curriculum flex w-full flex-col items-center"
                 style={{ backgroundColor: colors.curriculumBg }}
@@ -199,7 +200,7 @@ const ChallengeView: React.FC<{
                   curriculum={receivedContent.curriculum}
                   colors={colors}
                 />
-              </div>
+              </section>
             )}
 
           <div
@@ -213,30 +214,27 @@ const ChallengeView: React.FC<{
             <ChallengeBrand colors={colors} />
           </div>
 
-          <div
+          <section
             id={PROGRAM_REVIEW_ID}
-            className="challenge_review flex w-full flex-col items-center"
+            className="challenge_review flex w-full flex-col items-center bg-neutral-95 py-16 md:pb-32 md:pt-28"
           >
-            <div className="flex w-full flex-col items-center bg-neutral-95 py-16 md:pb-32 md:pt-28">
-              <ProgramBestReviewSection
-                type="challenge"
-                reviews={receivedContent.challengeReview}
-                colors={colors}
-              />
-            </div>
-          </div>
+            <ProgramBestReviewSection
+              type="challenge"
+              reviews={receivedContent.challengeReview}
+              colors={colors}
+            />
+          </section>
 
-          <div
-            id={PROGRAM_FAQ_ID}
-            className="challenge_faq flex w-full flex-col gap-20 px-5 pb-8 pt-16 md:items-center md:gap-40 md:px-10 md:pb-32 md:pt-36"
-          >
+          <div className="challenge_faq flex w-full flex-col gap-20 px-5 pb-8 pt-16 md:items-center md:gap-40 md:px-10 md:pb-32 md:pt-36">
             {receivedContent.blogReview ? (
               <ProgramDetailBlogReviewSection
                 review={receivedContent.blogReview}
                 programType="challenge"
               />
             ) : null}
-            <ChallengeFaq colors={colors} />
+            <section id={PROGRAM_FAQ_ID}>
+              <ChallengeFaq colors={colors} />
+            </section>
             <ChallengeInfoBottom challenge={challenge} colors={colors} />
           </div>
         </div>

@@ -105,7 +105,8 @@ const ChallengePointView = ({
   if (point === undefined) return <></>;
 
   return (
-    <section className="flex w-full flex-col items-center">
+    <div className="flex w-full flex-col items-center">
+      {/* 프로그램 소개 */}
       <div className="flex w-full max-w-[1000px] flex-col px-5 md:items-center md:px-10">
         <h2 className="sr-only">챌린지 포인트</h2>
         <SuperTitle
@@ -154,13 +155,15 @@ const ChallengePointView = ({
           )}
         </div>
       </div>
+
+      {/* 진행 방식 */}
       <div
         className="flex w-full flex-col items-center"
         style={{
           backgroundColor: colors.dark,
         }}
       >
-        <div className="flex w-full max-w-[1000px] flex-col px-5 py-[60px] md:px-10 md:py-[120px]">
+        <div className="flex w-full max-w-[1000px] flex-col px-5 py-[60px] md:px-10 md:py-[120px] lg:px-0">
           <div className="flex w-full flex-col md:items-center">
             <p
               className="text-xsmall16 font-bold md:text-small20"
@@ -231,7 +234,7 @@ const ChallengePointView = ({
           </div>
         </div>
       </div>
-    </section>
+    </div>
   );
 };
 

@@ -18,7 +18,7 @@ const ProgramDetailBlogReviewSection = ({
   programType: ProgramType;
 }) => {
   return (
-    <div className="w-full md:flex md:flex-col md:items-center">
+    <section className="w-full md:flex md:flex-col md:items-center">
       <div className="mb-6 w-full max-w-[1000px] md:mb-16">
         <div className="relative mb-3 flex items-start justify-between md:mb-7 md:block">
           <Heading2 className="text-small20 md:text-center md:text-xlarge28">
@@ -64,7 +64,7 @@ const ProgramDetailBlogReviewSection = ({
           ))}
         </div>
       </div>
-    </div>
+    </section>
   );
 };
 
