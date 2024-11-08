@@ -20,8 +20,8 @@ export const tripleBenefits = [
   {
     title: '온라인 대시보드',
     options: [
-      `챌린지 참여가 종료되어도, 참여했던 미션\n무한 열람 및 아카이빙`,
-      `미션 현황과 기수별 주요 공지도\n함께 열람할 수 있어 몰입감 UP!`,
+      `챌린지 참여가 종료되어도, 참여했던 미션 무한 열람 및 아카이빙`,
+      `미션 현황과 기수별 주요 공지도 함께 열람할 수 있어 몰입감 UP!`,
     ],
     imgUrl: benefitImg1,
   },
@@ -166,9 +166,9 @@ const ChallengeDifferent = ({
           </div>
         </div>
       </div>
-      <div className="flex w-full flex-col gap-y-8 md:gap-y-16">
-        <p className="whitespace-pre text-small20 font-bold md:text-center md:text-xlarge28">{`여기서 끝이 아니죠\n챌린지 참여자만을 위한 트리플 혜택!`}</p>
-        <div className="-mx-5 flex w-fit flex-col gap-y-4 overflow-x-auto px-5 md:mx-0 md:px-0">
+      <div className="flex w-full flex-col gap-y-8 md:items-center md:gap-y-16">
+        <p className="whitespace-pre-line text-small20 font-bold md:text-center md:text-xlarge28">{`여기서 끝이 아니죠\n챌린지 참여자만을 위한 트리플 혜택!`}</p>
+        <div className="-mx-5 flex w-fit flex-col gap-y-4 overflow-x-auto px-5 md:-mx-10 md:px-10 lg:px-0">
           <BenefitCard
             title={tripleBenefits[0].title}
             options={tripleBenefits[0].options}

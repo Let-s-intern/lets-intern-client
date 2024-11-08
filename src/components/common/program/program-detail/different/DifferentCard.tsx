@@ -37,7 +37,7 @@ const DifferentCard = ({
           className="w-full rounded-t-md md:w-[288px] md:rounded-md lg:w-[464px] lg:translate-y-[26px] lg:rounded-b-none"
         />
       )}
-      <div className="flex flex-1 flex-col gap-y-3">
+      <div className="flex w-full flex-col gap-y-3">
         {order && (
           <p
             className="flex w-fit rounded-md px-[14px] py-1.5 text-xsmall14 font-semibold text-white lg:text-small18"
@@ -47,7 +47,7 @@ const DifferentCard = ({
           >{`Point ${order}`}</p>
         )}
         <div className="flex w-full flex-col gap-y-4">
-          <h4 className="whitespace-pre text-small18 font-bold lg:text-medium22">
+          <h4 className="whitespace-pre-line text-small18 font-bold lg:text-medium22">
             {title}
           </h4>
           <div className="flex w-full flex-col gap-y-1">
