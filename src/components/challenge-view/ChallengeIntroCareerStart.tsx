@@ -20,7 +20,7 @@ const ChallengeIntroCareerStart = ({ colors }: { colors: ChallengeColor }) => {
   return (
     <section className="flex w-full flex-col md:items-center">
       <div className="flex w-full flex-col items-center bg-neutral-90">
-        <div className="flex w-full max-w-[1200px] flex-col gap-y-10 px-5 py-20 md:gap-y-[60px] md:px-10 md:py-[120px]">
+        <div className="flex w-full max-w-[1000px] flex-col gap-y-10 px-5 py-20 md:gap-y-[60px] md:px-10 md:py-[120px] lg:px-0">
           <div className="flex w-full flex-col gap-y-3 md:gap-y-[30px]">
             <Heading2 className="md:flex md:flex-col md:items-center">
               <div className="mb-1 flex w-fit items-center gap-2.5">
@@ -72,7 +72,7 @@ const ChallengeIntroCareerStart = ({ colors }: { colors: ChallengeColor }) => {
         className="flex w-full flex-col md:items-center"
         style={{ backgroundColor: colors.primaryLight }}
       >
-        <div className="flex w-full max-w-[1200px] flex-col gap-y-[50px] px-5 py-[70px] md:gap-y-20 md:px-10 md:py-[120px]">
+        <div className="flex w-full max-w-[1000px] flex-col gap-y-[50px] px-5 py-[70px] md:gap-y-20 md:px-10 md:py-[120px] lg:px-0">
           <div className="flex w-full flex-col gap-y-3 md:items-center">
             <p
               className="text-xsmall16 font-bold md:text-small20"
