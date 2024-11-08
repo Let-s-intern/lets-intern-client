@@ -8,13 +8,13 @@ export interface BenefitCardProps {
 
 const BenefitCard = ({ title, options, imgUrl }: BenefitCardProps) => {
   return (
-    <div className={`flex w-full items-stretch gap-x-2.5`}>
+    <div className={`flex h-[186px] items-stretch gap-x-2.5`}>
       <img
         src={imgUrl}
-        className="h-[186px] w-[256px] shrink-0 rounded-md border border-neutral-70 object-cover"
+        className="h-full w-[256px] shrink-0 rounded-md border border-neutral-70 object-cover"
       />
       <div
-        className={`flex w-[734px] shrink-0 flex-col gap-y-3 rounded-md bg-neutral-95 px-[30px] py-10 md:flex-1 md:rounded-md`}
+        className={`flex w-72 shrink-0 flex-col gap-y-3 rounded-md bg-neutral-95 px-5 py-8 md:w-[734px] md:flex-1 md:rounded-md md:px-[30px] md:py-10`}
       >
         <div className="flex w-full flex-col gap-y-2.5 md:gap-y-6">
           <h4 className="whitespace-pre text-small18 font-bold text-black md:text-medium22">

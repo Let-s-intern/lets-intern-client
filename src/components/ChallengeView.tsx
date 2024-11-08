@@ -204,9 +204,12 @@ const ChallengeView: React.FC<{
 
           <div
             id={CHALLENGE_DIFFERENT_ID}
-            className="challenge_difference flex w-full max-w-[1200px] flex-col px-5 md:px-10"
+            className="challenge_difference flex w-full max-w-[1000px] flex-col px-5 md:px-10"
           >
-            <ChallengeDifferent colors={colors} />
+            <ChallengeDifferent
+              colors={colors}
+              challengeType={challenge.challengeType}
+            />
             <ChallengeBrand colors={colors} />
           </div>
 

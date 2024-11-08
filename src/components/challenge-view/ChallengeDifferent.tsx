@@ -1,12 +1,17 @@
 import PaybackDesktop from '@/assets/different_payback_desktop.svg?react';
 import PaybackMobile from '@/assets/different_payback_mobile.svg?react';
-import DifferentIcon from '@/assets/icons/different.svg?react';
+import { ChallengeType, challengeTypeSchema } from '@/schema';
 import { ChallengeColor } from '@components/ChallengeView';
 import BenefitCard from '@components/common/program/program-detail/different/BenefitCard';
 import DifferentCard, {
   DifferentCardProps,
 } from '@components/common/program/program-detail/different/DifferentCard';
+import SuperTitle from '@components/common/program/program-detail/SuperTitle';
 import { useMediaQuery } from '@mui/material';
+import { useMemo } from 'react';
+
+const { CAREER_START, PERSONAL_STATEMENT, PORTFOLIO } =
+  challengeTypeSchema.enum;
 
 export const tripleBenefits = [
   {
@@ -33,8 +38,15 @@ export const tripleBenefits = [
   },
 ];
 
-const ChallengeDifferent = ({ colors }: { colors: ChallengeColor }) => {
+const ChallengeDifferent = ({
+  colors,
+  challengeType,
+}: {
+  colors: ChallengeColor;
+  challengeType: ChallengeType;
+}) => {
   const isMobile = useMediaQuery('(max-width: 768px)');
+
   const differentList: DifferentCardProps[] = [
     {
       order: 1,
@@ -79,6 +91,17 @@ const ChallengeDifferent = ({ colors }: { colors: ChallengeColor }) => {
     },
   ];
 
+  const iconName = useMemo(() => {
+    switch (challengeType) {
+      case PORTFOLIO:
+        return 'different-icon-portfolio.svg';
+      case PERSONAL_STATEMENT:
+        return 'different-icon-personal-statement.svg';
+      default:
+        return 'different-icon-career-start.svg';
+    }
+  }, [challengeType]);
+
   return (
     <section
       id="different"
@@ -86,12 +109,7 @@ const ChallengeDifferent = ({ colors }: { colors: ChallengeColor }) => {
     >
       <div className="flex w-full flex-col gap-y-8 md:gap-y-20">
         <div className="flex w-full flex-col gap-y-6 md:gap-y-12">
-          <p
-            className="w-full text-xsmall14 font-semibold md:text-center md:text-small20"
-            style={{ color: colors.subTitle }}
-          >
-            차별점
-          </p>
+          <SuperTitle style={{ color: colors.primary }}>차별점</SuperTitle>
           <div className="flex flex-col gap-y-1 md:items-center">
             <p
               className="text-xsmall16 font-bold md:text-small18"
@@ -99,15 +117,14 @@ const ChallengeDifferent = ({ colors }: { colors: ChallengeColor }) => {
             >
               비교 불가!
             </p>
-            <div className="whitespace-pre text-[22px] font-bold text-black md:text-xlarge28">
+            <div className="whitespace-pre text-[22px] font-bold text-black md:text-center md:text-xlarge28">
               <span>렛츠커리어 챌린지만의 차별점,</span>
               <br />
               <span>
                 이 모든걸{' '}
-                <DifferentIcon
-                  width={38}
-                  hanging={38}
-                  className="inline-block"
+                <img
+                  className="inline-block h-auto w-8 md:w-10"
+                  src={`/icons/${iconName}`}
                 />{' '}
                 얻어가실 수 있어요!
               </span>
@@ -148,7 +165,7 @@ const ChallengeDifferent = ({ colors }: { colors: ChallengeColor }) => {
       </div>
       <div className="flex w-full flex-col gap-y-8">
         <p className="whitespace-pre text-small20 font-bold md:text-center md:text-xlarge28">{`여기서 끝이 아니죠\n챌린지 참여자만을 위한 트리플 혜택!`}</p>
-        <div className="flex flex-col gap-y-4 overflow-x-auto md:w-full">
+        <div className="-mx-5 flex w-fit flex-col gap-y-4 overflow-x-auto px-5 md:mx-0 md:px-0">
           <BenefitCard
             title={tripleBenefits[0].title}
             options={tripleBenefits[0].options}
