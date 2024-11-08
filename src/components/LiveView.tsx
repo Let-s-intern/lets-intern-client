@@ -60,25 +60,23 @@ const LiveView: React.FC<{ live: LiveIdSchema; isPreview?: boolean }> = ({
           className={twMerge(isPreview && 'top-0 md:top-0 lg:top-0')}
         />
 
-        <div className="flex w-full flex-col items-center">
-          <div className="flex w-full max-w-[1000px] flex-col px-5 pt-20 md:px-10 md:pt-40 lg:px-0">
-            <LiveMentor
-              mentor={mentor}
-              id={LIVE_MENTOR_INTRO_ID}
-              className="live_mentor"
-            />
-            <LiveInformation
-              id={PROGRAM_INTRO_ID}
-              className="live_class"
-              recommendFields={receivedContent.recommend}
-              reasonFields={receivedContent.reason}
-              editorContent={receivedContent.mainDescription}
-            />
-          </div>
+        <div className="flex w-full flex-col items-center overflow-x-hidden">
+          <LiveMentor
+            mentor={mentor}
+            id={LIVE_MENTOR_INTRO_ID}
+            className="live_mentor"
+          />
+          <LiveInformation
+            id={PROGRAM_INTRO_ID}
+            className="live_class"
+            recommendFields={receivedContent.recommend}
+            reasonFields={receivedContent.reason}
+            editorContent={receivedContent.mainDescription}
+          />
 
           <div
             id={PROGRAM_CURRICULUM_ID}
-            className="live_curriculum flex w-full max-w-[1000px] flex-col px-5 pb-16 md:px-10 lg:px-0"
+            className="live_curriculum flex w-full max-w-[1200px] flex-col px-5 pb-[70px] md:px-10 md:pb-[140px]"
           >
             <LiveCurriculum
               curriculum={receivedContent.curriculum}
@@ -96,7 +94,7 @@ const LiveView: React.FC<{ live: LiveIdSchema; isPreview?: boolean }> = ({
 
           <section
             id={PROGRAM_REVIEW_ID}
-            className="live_review flex w-full flex-col items-center bg-neutral-95 py-16 md:pb-32 md:pt-28"
+            className="live_review flex w-full flex-col items-center bg-neutral-95 py-[70px] md:pb-[130px] md:pt-[110px]"
           >
             <ProgramBestReviewSection
               reviews={receivedContent.liveReview}
@@ -104,13 +102,13 @@ const LiveView: React.FC<{ live: LiveIdSchema; isPreview?: boolean }> = ({
             />
           </section>
 
-          <div className="live_faq flex w-full flex-col gap-20 px-5 pb-8 pt-16 md:gap-40 md:px-10 md:pb-32 md:pt-36 lg:px-0">
-            {receivedContent.blogReview ? (
+          <div className="live_faq flex w-full max-w-[1200px] flex-col px-5 pb-8 pt-[70px] md:gap-20 md:px-10 md:pb-[130px] md:pt-40">
+            {receivedContent.blogReview && (
               <ProgramDetailBlogReviewSection
                 review={receivedContent.blogReview}
                 programType="live"
               />
-            ) : null}
+            )}
             <section id={PROGRAM_FAQ_ID}>
               <LiveFaq />
             </section>
