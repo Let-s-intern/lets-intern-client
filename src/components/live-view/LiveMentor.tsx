@@ -22,7 +22,7 @@ function LiveMentor({ mentor, className, id }: LiveMentorProps) {
     <section
       id={id}
       className={twMerge(
-        'py-16 md:flex md:flex-col md:items-center md:py-36',
+        'mb-36 md:flex md:flex-col md:items-center',
         className,
       )}
     >

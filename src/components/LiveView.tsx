@@ -60,7 +60,7 @@ const LiveView: React.FC<{ live: LiveIdSchema; isPreview?: boolean }> = ({
         />
 
         <div className="flex w-full flex-col items-center">
-          <div className="flex w-full max-w-[1000px] flex-col px-5 md:px-10 lg:px-0">
+          <div className="flex w-full max-w-[1000px] flex-col px-5 py-20 md:px-10 md:pb-32 md:pt-40 lg:px-0">
             <LiveMentor
               mentor={mentor}
               id={LIVE_MENTOR_INTRO_ID}
