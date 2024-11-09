@@ -41,8 +41,7 @@ function ChallengeCurriculum({
     return <></>;
   }
 
-  const superTitle = `${challengeTitle}에서는 이런 걸 가져갈 수 있어요`;
-  const title = `기초부터 결과물까지 가져가는\n완벽한 ${challengeTitle} 커리큘럼`;
+  const title = `기초부터 결과물까지 가져가는 완벽한\n${challengeTitle} 커리큘럼`;
 
   return (
     <div className="md:py-30 flex w-full max-w-[1000px] flex-col px-5 py-20 md:items-center md:pb-36 lg:px-0">
@@ -57,7 +56,8 @@ function ChallengeCurriculum({
         }}
       >
         <img className="h-6 w-6 md:h-8 md:w-8" src={`/icons/${iconName}`} />
-        {superTitle}
+        {challengeTitle}에서는
+        <br className="md:hidden" /> 이런 걸 가져갈 수 있어요
       </div>
       <Heading2 className="mb-10 whitespace-pre-line md:mb-16">
         {title}
