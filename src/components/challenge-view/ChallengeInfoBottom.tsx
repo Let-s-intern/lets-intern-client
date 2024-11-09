@@ -1,11 +1,10 @@
 import { LuCalendarDays } from 'react-icons/lu';
 
-import { useGetTossCardPromotion } from '@/api/payment';
-import { convertCodeToCardKorName } from '@/api/paymentSchema';
 import Announcement from '@/assets/icons/announcement.svg?react';
 import ChevronDown from '@/assets/icons/chevron-down.svg?react';
 import ClockIcon from '@/assets/icons/clock.svg?react';
 import LaptopIcon from '@/assets/icons/laptop.svg?react';
+import { useInstallmentPayment } from '@/hooks/useInstallmentPayment';
 import { ChallengeIdSchema } from '@/schema';
 import { formatFullDateTime } from '@/utils/formatDateString';
 import { ChallengeColor } from '@components/ChallengeView';
@@ -30,28 +29,11 @@ const ChallengeInfoBottom = ({
   colors: ChallengeColor;
 }) => {
   const isMobile = useMediaQuery('(max-width: 768px)');
-  const { data, isLoading } = useGetTossCardPromotion();
-
-  const findCard = () => {
-    if (!data) return { months: null, banks: [] };
-
-    const allMonths = data.interestFreeCards.flatMap(
-      (card) => card.installmentFreeMonths,
-    );
-    const uniqueMonths = Array.from(new Set(allMonths)).sort((a, b) => b - a);
-
-    const targetMonth = uniqueMonths[1] ?? uniqueMonths[0] ?? null;
-    if (!targetMonth) return { months: null, banks: [] };
-
-    // 선택된 개월 수를 제공하는 은행 목록 필터링
-    const banks = data.interestFreeCards
-      .filter((card) => card.installmentFreeMonths.includes(targetMonth))
-      .map((card) => convertCodeToCardKorName[card.issuerCode]);
-
-    return { months: targetMonth, banks };
-  };
-
-  const { months: installmentMonths, banks } = findCard();
+  const {
+    isLoading,
+    months: installmentMonths,
+    banks,
+  } = useInstallmentPayment();
 
   const priceInfo = challenge.priceInfo[0];
 
@@ -189,7 +171,7 @@ const ChallengeInfoBottom = ({
                     </span>
                   </div>
                   <p className="text-xsmall14 text-neutral-30">
-                    {!data || isLoading
+                    {isLoading
                       ? '무이자 할부 시'
                       : `${banks.join(', ')} ${installmentMonths}개월 무이자 할부 시`}
                   </p>
