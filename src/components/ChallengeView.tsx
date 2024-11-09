@@ -242,7 +242,7 @@ const ChallengeView: React.FC<{
                 programType="challenge"
               />
             ) : null}
-            <section id={PROGRAM_FAQ_ID}>
+            <section id={PROGRAM_FAQ_ID} className="w-full">
               <ChallengeFaq colors={colors} />
             </section>
             <ChallengeInfoBottom challenge={challenge} colors={colors} />
