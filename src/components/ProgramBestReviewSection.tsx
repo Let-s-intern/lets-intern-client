@@ -48,6 +48,9 @@ const ProgramBestReviewSection = ({
               color={
                 type === 'challenge' && colors ? colors.primary : '#4d55f5'
               }
+              bgColor={
+                type === 'challenge' && colors ? colors.primaryLight : '#edeefe'
+              }
             />
           ))}
         </div>
