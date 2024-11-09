@@ -6,7 +6,10 @@ import ClockIcon from '@/assets/icons/clock.svg?react';
 import LaptopIcon from '@/assets/icons/laptop.svg?react';
 import { useInstallmentPayment } from '@/hooks/useInstallmentPayment';
 import { ChallengeIdSchema, challengeTypeSchema } from '@/schema';
-import { formatFullDateTime } from '@/utils/formatDateString';
+import {
+  formatFullDateTime,
+  formatFullDateTimeWithOutYear,
+} from '@/utils/formatDateString';
 import { ChallengeColor } from '@components/ChallengeView';
 import BasicInfoBottomRow from '@components/common/program/program-detail/basicInfo/BasicInfoBottomRow';
 import BasicInfoRow from '@components/common/program/program-detail/basicInfo/BasicInfoRow';
@@ -72,6 +75,12 @@ const ChallengeInfoBottom = ({
     }
   })();
 
+  const startDate = formatFullDateTime(challenge.startDate, true);
+  const endDate =
+    challenge.startDate?.year() === challenge.endDate?.year()
+      ? formatFullDateTimeWithOutYear(challenge.endDate, true)
+      : formatFullDateTime(challenge.endDate, true);
+
   return (
     <section className="flex w-full max-w-[1000px] flex-col gap-y-8 md:gap-y-20">
       <div className="w-full text-small20 font-bold text-neutral-0 md:text-center">
@@ -87,7 +96,7 @@ const ChallengeInfoBottom = ({
               <BasicInfoRow
                 icon={<Announcement />}
                 title="진행 기간"
-                content={`${formatFullDateTime(challenge.startDate, true)}\n- ${formatFullDateTime(challenge.endDate, true)}`}
+                content={`${startDate}\n-${endDate}`}
               />
               <BasicInfoRow
                 icon={<LaptopIcon />}
@@ -114,7 +123,7 @@ const ChallengeInfoBottom = ({
             <BasicInfoBottomRow
               icon={<Announcement />}
               title="진행 기간"
-              content={`${formatFullDateTime(challenge.startDate)}\n- ${formatFullDateTime(challenge.endDate)}`}
+              content={`${startDate}\n- ${endDate}`}
             />
             <BasicInfoBottomRow
               icon={<LaptopIcon />}
