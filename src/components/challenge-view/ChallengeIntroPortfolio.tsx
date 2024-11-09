@@ -72,6 +72,7 @@ function ChallengeIntroPortfolio() {
           입니다.
           <br />
           가독성과 구조화를 고려한 포트폴리오 가이드
+          <br className="md:hidden" /> 모두 제공!
         </Heading2>
         <Description className="mb-10 md:mb-20 md:text-center">
           가장 중요한 건 핵심 내용을 어떻게 도식화 하는냐죠. <br />내 경험에

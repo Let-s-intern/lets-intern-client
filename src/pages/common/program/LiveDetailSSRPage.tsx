@@ -23,7 +23,7 @@ const LiveDetailSSRPage = () => {
     id: string;
     title?: string;
   }>();
-  const isMobile = useMediaQuery('(max-width:991px)');
+  const isDesktop = useMediaQuery('(min-width:991px)');
   const { isLoggedIn } = useAuthStore();
 
   const liveFromServer = useServerLive();
@@ -153,14 +153,14 @@ const LiveDetailSSRPage = () => {
 
       <LiveView live={live} />
 
-      {isMobile ? (
-        <MobileApplyCTA
+      {isDesktop ? (
+        <DesktopApplyCTA
           program={live}
           onApplyClick={onApplyClick}
           isAlreadyApplied={isAlreadyApplied}
         />
       ) : (
-        <DesktopApplyCTA
+        <MobileApplyCTA
           program={live}
           onApplyClick={onApplyClick}
           isAlreadyApplied={isAlreadyApplied}
