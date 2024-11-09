@@ -179,6 +179,7 @@ const ChallengeView: React.FC<{
                 <ChallengeIntroCareerStart
                   colors={colors}
                   challengeTitle={challenge.title ?? ''}
+                  weekText={receivedContent.challengePoint.weekText}
                 />
               )}
             </section>
