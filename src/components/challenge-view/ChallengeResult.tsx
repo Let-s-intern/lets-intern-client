@@ -122,13 +122,13 @@ function ChallengeResult({
             {challengeTitle}
           </Heading2>
         </div>
-        <div className="custom-scrollbar z-10 -mx-5 overflow-x-auto px-5 sm:mx-0 sm:px-0">
-          <div className="flex min-w-fit flex-col gap-8 md:gap-16">
-            {contents.map((content) => (
-              <div
-                key={content.beforeCaption}
-                className="flex flex-nowrap items-start gap-2 md:gap-3"
-              >
+        {contents.map((content) => (
+          <div
+            key={content.beforeCaption}
+            className="custom-scrollbar z-10 -mx-5 overflow-x-auto px-5 sm:mx-0 sm:px-0"
+          >
+            <div className="flex min-w-fit flex-col gap-8 md:gap-16">
+              <div className="flex flex-nowrap items-start gap-2 md:gap-3">
                 <div className="flex flex-1 flex-col items-center gap-4">
                   <BadgedBox badgeContent="Before" badgeColor="#7A7D84">
                     <ResultImg
@@ -159,9 +159,9 @@ function ChallengeResult({
                   </div>
                 </div>
               </div>
-            ))}
+            </div>
           </div>
-        </div>
+        ))}
       </div>
     </section>
   );
