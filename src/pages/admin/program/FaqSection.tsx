@@ -20,6 +20,7 @@ interface FaqSectionProps<
   programType: FaqProgramType;
   faqInfo: T['faqInfo'];
   setInput: React.Dispatch<React.SetStateAction<Omit<T, 'desc'>>>;
+  isCreate?: boolean;
 }
 
 function FaqSection<
@@ -28,8 +29,9 @@ function FaqSection<
     | UpdateChallengeReq
     | CreateLiveReq
     | UpdateLiveReq,
->({ programType, faqInfo, setInput }: FaqSectionProps<T>) {
+>({ programType, faqInfo, setInput, isCreate }: FaqSectionProps<T>) {
   const [faqList, setFaqList] = useState<Faq[]>([]);
+  const [isInitialized, setIsInitialized] = useState(false);
 
   const { data } = useGetFaq(programType);
   const { mutateAsync: deleteFaq } = useDeleteFaq();
@@ -61,21 +63,57 @@ function FaqSection<
   };
 
   useEffect(() => {
-    const newFaqList = data?.faqList ?? [];
+    if (!data) return;
+
+    const newFaqList = data.faqList;
+
+    // 초기화 시에는 모든 faq 추가
+    if (isCreate && !isInitialized) {
+      setFaqList(newFaqList);
+      setInput((prev) => ({
+        ...prev,
+        faqInfo: newFaqList.map((faq) => ({ faqId: faq.id })),
+      }));
+      setIsInitialized(true);
+      return;
+    }
+
+    if (!isInitialized) {
+      setFaqList(newFaqList);
+      setIsInitialized(true);
+      return;
+    }
+
+    const type =
+      newFaqList.length > faqList.length
+        ? 'ADD'
+        : newFaqList.length < faqList.length
+          ? 'DELETE'
+          : 'EDIT';
     setFaqList(newFaqList);
 
-    // 새로 추가한 faq 바로 챌린지에 추가 (check)
-    if (newFaqList.length === 0) return;
+    if (type === 'ADD') {
+      const lastFaq = newFaqList[newFaqList.length - 1];
 
-    const lastFaqId = newFaqList[newFaqList.length - 1].id;
-    const prevFaqIds = (faqInfo ?? []).map((item) => item.faqId);
+      // 이미 추가된 faq인 경우 추가하지 않음
+      if (faqInfo?.findIndex((info) => info.faqId === lastFaq.id) !== -1)
+        return;
 
-    if (prevFaqIds.includes(lastFaqId)) return;
-
-    setInput((prev) => ({
-      ...prev,
-      faqInfo: [...(faqInfo ?? []), { faqId: lastFaqId }],
-    }));
+      setInput((prev) => ({
+        ...prev,
+        faqInfo: [...(faqInfo ?? []), { faqId: lastFaq.id }],
+      }));
+    } else if (type === 'DELETE') {
+      const existFaqIds = newFaqList.map((faq) => faq.id);
+      setInput((prev) => ({
+        ...prev,
+        faqInfo: (faqInfo ?? [])?.filter((info) =>
+          existFaqIds.includes(info.faqId),
+        ),
+      }));
+    } else {
+      return;
+    }
   }, [data]);
 
   return (
