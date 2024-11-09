@@ -65,7 +65,6 @@ const PaymentInputContent = ({
         <div className="flex flex-col gap-2.5">
           <UserInputSection
             userInfo={userInfo}
-            setUserInfo={setUserInfo}
             contactEmail={contactEmail}
             setContactEmail={setContactEmail}
           />
