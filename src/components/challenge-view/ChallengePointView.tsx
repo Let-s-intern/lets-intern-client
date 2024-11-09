@@ -215,7 +215,7 @@ const ChallengePointView = ({
                       <Check
                         width={24}
                         height={24}
-                        className="mt-1 shrink-0"
+                        className="shrink-0"
                         style={{ color: colors.primary }}
                       />
                       {item}
