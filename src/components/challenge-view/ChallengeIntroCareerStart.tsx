@@ -1,9 +1,11 @@
+import { ReactNode } from 'react';
+
+import { ChallengePoint } from '@/types/interface';
 import { ChallengeColor } from '@components/ChallengeView';
 import Badge from '@components/common/program/program-detail/Badge';
 import Description from '@components/common/program/program-detail/Description';
 import Heading2 from '@components/common/program/program-detail/Heading2';
 import CircularBox from '@components/common/ui/CircularBox';
-import { ReactNode } from 'react';
 
 const boxes = [
   `나의 경험을\n전략적으로\n서류에 녹일 수\n없을까?`,
@@ -19,9 +21,11 @@ const boxes = [
 const ChallengeIntroCareerStart = ({
   colors,
   challengeTitle,
+  weekText,
 }: {
   colors: ChallengeColor;
   challengeTitle: string;
+  weekText: ChallengePoint['weekText'];
 }) => {
   return (
     <section className="flex w-full flex-col md:items-center">
@@ -42,13 +46,13 @@ const ChallengeIntroCareerStart = ({
               </div>
               <div>
                 {challengeTitle}{' '}
-                <span className="text-primary">2주 커리큘럼</span>
+                <span className="text-primary">{weekText} 커리큘럼</span>
                 이면 충분해요!
               </div>
             </Heading2>
             <Description className="md:text-center">
               렛츠커리어의 체계적인 커리큘럼으로
-              <br className="hidden md:block" /> 2주 만에
+              <br className="hidden md:block" /> {weekText} 만에
               <br className="md:hidden" /> 서류 완성해서 취업씬으로 나갈 수
               있어요!
             </Description>

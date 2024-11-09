@@ -175,7 +175,8 @@ const ChallengePointView = ({
             </p>
             <Heading2 className="py-3 pt-2 text-white md:pt-3">
               {josa(challengeTitle, '은/는')}
-              <br className="md:hidden" /> 2주간 아래와 같이 진행돼요
+              <br className="md:hidden" /> {point.weekText}간 아래와 같이
+              진행돼요
             </Heading2>
             <span className="mb-10 text-xsmall14 text-neutral-50 md:mb-20">
               {description}
