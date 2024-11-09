@@ -17,7 +17,7 @@ const ProgramDetailBlogReviewSection = ({
   programType: ProgramType;
 }) => {
   return (
-    <section className="w-full max-w-[1200px] px-5 md:flex md:flex-col md:items-center md:px-10">
+    <section className="w-full max-w-[1000px] md:mx-auto md:flex md:flex-col md:items-center">
       <div className="mb-6 w-full md:mb-16">
         <div className="relative mb-3 flex items-start justify-between md:mb-7 md:block">
           <Heading2 className="text-small20 md:text-center md:text-xlarge28">
@@ -50,7 +50,7 @@ const ProgramDetailBlogReviewSection = ({
               rel="noreferrer noopener"
             >
               <img
-                className="h-28 w-auto md:h-64"
+                className="h-28 w-auto rounded-sm md:h-64"
                 style={{ aspectRatio: '864/627' }}
                 src={review.thumbnail}
                 alt="참여 후기 썸네일"

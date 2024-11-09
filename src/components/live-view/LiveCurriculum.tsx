@@ -5,21 +5,25 @@ import SuperTitle from '@components/common/program/program-detail/SuperTitle';
 import { PROGRAM_CURRICULUM_ID } from '@components/ProgramDetailNavigation';
 
 const superTitle = '현직자 멘토가 들려주는 생생한 이야기';
-const title = 'PM이 되기 위한 모든 것을 알려드려요';
 
 interface LiveCurriculumProps {
+  liveTitle: LiveIdSchema['title'];
   curriculum: LiveContent['curriculum'];
-  mentorJob: LiveIdSchema['mentorJob'];
+  curriculumTitle: LiveContent['curriculumTitle'];
 }
 
-function LiveCurriculum({ curriculum, mentorJob }: LiveCurriculumProps) {
+function LiveCurriculum({
+  liveTitle,
+  curriculum,
+  curriculumTitle,
+}: LiveCurriculumProps) {
   return (
     <section className="py-20 md:pb-[130px]" id={PROGRAM_CURRICULUM_ID}>
       <SuperTitle className="mb-6 font-bold text-primary md:mb-10">
         커리큘럼
       </SuperTitle>
       <SuperTitle className="mb-1 text-primary">{superTitle}</SuperTitle>
-      <Heading2 className="mb-8 md:mb-20">{title}</Heading2>
+      <Heading2 className="mb-8 md:mb-20">{curriculumTitle}</Heading2>
 
       <div className="flex flex-col gap-5 md:items-center">
         {curriculum.map((item, index) => (
@@ -34,7 +38,7 @@ function LiveCurriculum({ curriculum, mentorJob }: LiveCurriculumProps) {
               <div className="flex w-full justify-between md:flex-col md:gap-y-4">
                 <div className="flex flex-col gap-1">
                   <span className="text-xxsmall12 font-medium text-primary-10 md:text-xsmall14">
-                    {mentorJob}
+                    {liveTitle}
                   </span>
                   <span className="text-small18 font-semibold text-white md:text-small20">
                     {item.title}

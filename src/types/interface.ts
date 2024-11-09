@@ -77,6 +77,7 @@ export type LiveContent = {
   /* 커리큘럼 추가 입력 */
   additionalCurriculum?: SerializedEditorState;
   /* 커리큘럼 */
+  curriculumTitle: string; // 커리큘럼 섹션에 들어가는 제목
   curriculum: {
     id: string;
     time: string; // 시간

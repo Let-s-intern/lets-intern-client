@@ -232,7 +232,6 @@ const PaymentInputPage = () => {
         <div className="flex flex-col gap-2.5">
           <UserInputSection
             userInfo={userInfo}
-            setUserInfo={setUserInfo}
             contactEmail={programApplicationData.contactEmail ?? ''}
             setContactEmail={(contactEmail) =>
               setProgramApplicationForm({ contactEmail })
@@ -279,6 +278,16 @@ const PaymentInputPage = () => {
               <span>{totalPrice.toLocaleString()}원</span>
             </div>
           </div>
+          {programApplicationData.programType === 'challenge' && (
+            <div className="rounded-lg bg-[#F3F4FF] px-4 py-6 md:px-5">
+              <p className="font-semibold">
+                우리카드로 결제하면
+                <br className="md:hidden" />{' '}
+                <span className="text-primary">5개월</span> 무이자 할부 혜택!
+              </p>
+              {/* 그래픽 */}
+            </div>
+          )}
         </div>
       )}
 

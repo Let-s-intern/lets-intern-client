@@ -13,7 +13,7 @@ const ChallengeBrand = ({ colors }: { colors: ChallengeColor }) => {
       <div className="flex w-full flex-col whitespace-pre text-small20 font-bold md:items-center md:text-xlarge28">
         <p>취업 준비의 든든한 지원군,</p>
         <p>
-          <span style={{ color: colors.primary }}>렛츠 커리어</span> 와
+          <span style={{ color: colors.primary }}>렛츠 커리어</span>와
           함께하세요
         </p>
       </div>

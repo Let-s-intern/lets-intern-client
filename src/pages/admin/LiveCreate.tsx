@@ -33,6 +33,7 @@ const LiveCreate: React.FC = () => {
     initialized: true,
     recommend: [''],
     reason: [{ title: '', content: '' }],
+    curriculumTitle: '',
     curriculum: [],
     blogReview: { list: [] },
   });
@@ -242,7 +243,11 @@ const LiveCreate: React.FC = () => {
         reasonFields={content.reason ?? [{ title: '', content: '' }]}
         setContent={setContent}
       />
-      <LiveCurriculum curriculum={content.curriculum} setContent={setContent} />
+      <LiveCurriculum
+        curriculum={content.curriculum}
+        curriculumTitle={content.curriculumTitle}
+        setContent={setContent}
+      />
 
       <Heading2 className="mt-6">커리큘럼 추가 입력</Heading2>
       <EditorApp

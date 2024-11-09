@@ -31,7 +31,7 @@ const LiveInformation = ({
     <section
       id={id}
       className={twMerge(
-        'flex w-full max-w-[1000px] flex-col gap-y-5 px-5 pb-[70px] pt-[100px] md:items-center md:gap-y-[50px] md:px-10 md:pb-[130px] md:pt-[140px]',
+        'flex w-full max-w-[1000px] flex-col gap-y-5 px-5 pb-[70px] pt-[100px] md:items-center md:gap-y-[50px] md:px-10 md:pb-[130px] md:pt-[140px] lg:px-0',
         className,
       )}
     >

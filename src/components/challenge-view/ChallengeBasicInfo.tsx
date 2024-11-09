@@ -11,8 +11,8 @@ import { ChallengeColor } from '@components/ChallengeView';
 import BasicInfoRow from '@components/common/program/program-detail/basicInfo/BasicInfoRow';
 
 export const priceReason = [
-  `자기소개서 최다 빈출 문항 작성 가이드\n(무제한 업데이트)`,
-  `기업별 합격 자기소개서 예시 및 패턴 분석`,
+  `단계별 취업 준비 교육 자료 및 템플릿\n(무제한 업데이트)`,
+  `마스터 이력서 작성 가이드`,
   `PDF 총 30페이지 분량 추가 자료`,
   `렛츠커리어 공식 커뮤니티 참여`,
 ];
@@ -56,7 +56,6 @@ const ChallengeBasicInfo = ({
   const { months: installmentMonths, banks } = findCard();
 
   const priceInfo = challenge.priceInfo[0];
-
   const monthlyPrice =
     installmentMonths && priceInfo
       ? Math.round(
@@ -64,9 +63,12 @@ const ChallengeBasicInfo = ({
             installmentMonths,
         )
       : null;
-
   const totalPrice = (priceInfo?.price || 0) - (priceInfo?.discount || 0);
   const showMonthlyPrice = priceInfo && totalPrice >= 50000;
+  const regularPrice =
+    priceInfo.challengePriceType === 'CHARGE'
+      ? priceInfo.price
+      : (priceInfo.price ?? 0) + (priceInfo.refund ?? 0); // 정가
 
   return (
     <div className="flex flex-col gap-6 pb-10 md:flex-row md:pb-20">
@@ -105,9 +107,9 @@ const ChallengeBasicInfo = ({
               <p className="text-small18 font-bold">{challenge.title}</p>
               <div className="flex flex-col gap-y-0.5 text-xsmall14">
                 {priceReason.map((reason, index) => (
-                  <div key={index} className="flex items-center gap-x-0.5">
+                  <div key={index} className="flex gap-x-0.5">
                     <ChevronDown
-                      className="text-neutral-0"
+                      className="-mt-0.5 text-neutral-0"
                       width={24}
                       height={24}
                     />
@@ -120,7 +122,7 @@ const ChallengeBasicInfo = ({
               <div className="flex w-full flex-col gap-y-2.5 border-b border-neutral-80 pb-[14px] pt-2.5 text-neutral-0">
                 <div className="flex w-full items-center justify-between gap-x-4 text-xsmall16">
                   <span className="font-medium">정가</span>
-                  <span>{priceInfo.price?.toLocaleString()}원</span>
+                  <span>{regularPrice?.toLocaleString()}원</span>
                 </div>
                 <div className="flex w-full items-center justify-between gap-x-4 text-xsmall16">
                   <span className="font-bold" style={{ color: colors.primary }}>
@@ -132,12 +134,14 @@ const ChallengeBasicInfo = ({
                   </span>
                   <span>-{priceInfo.discount?.toLocaleString()}원</span>
                 </div>
-                <div className="flex w-full items-center justify-between gap-x-4 text-xsmall16">
-                  <span className="font-bold text-black">
-                    미션 모두 수행시, 환급
-                  </span>
-                  <span>-{priceInfo.refund?.toLocaleString()}원</span>
-                </div>
+                {priceInfo.challengePriceType === 'REFUND' && (
+                  <div className="flex w-full items-center justify-between gap-x-4 text-xsmall16">
+                    <span className="font-bold text-black">
+                      미션 모두 수행시, 환급
+                    </span>
+                    <span>-{priceInfo.refund?.toLocaleString()}원</span>
+                  </div>
+                )}
               </div>
             )}
           </div>

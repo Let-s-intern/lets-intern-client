@@ -8,11 +8,16 @@ import { Heading2 } from '@components/admin/ui/heading/Heading2';
 import Input from '@components/ui/input/Input';
 
 interface LiveCurriculumProps {
+  curriculumTitle: LiveContent['curriculumTitle'];
   curriculum: LiveContent['curriculum'];
   setContent: React.Dispatch<React.SetStateAction<LiveContent>>;
 }
 
-function LiveCurriculum({ curriculum, setContent }: LiveCurriculumProps) {
+function LiveCurriculum({
+  curriculum,
+  curriculumTitle,
+  setContent,
+}: LiveCurriculumProps) {
   const onClickAdd = () => {
     setContent((prev) => ({
       ...prev,
@@ -51,6 +56,21 @@ function LiveCurriculum({ curriculum, setContent }: LiveCurriculumProps) {
           추가
         </Button>
       </div>
+
+      <div className="mb-3 max-w-[450px]">
+        <Input
+          label="커리큘럼 제목"
+          type="text"
+          name="curriculumTitle"
+          placeholder="커리큘럼 제목을 입력해주세요"
+          defaultValue={curriculumTitle}
+          size="small"
+          onChange={(e) =>
+            setContent((prev) => ({ ...prev, [e.target.name]: e.target.value }))
+          }
+        />
+      </div>
+
       <div>
         {curriculum.map((item) => (
           <div className="mb-3 flex items-center gap-2" key={item.id}>
