@@ -65,7 +65,13 @@ const ChallengeBasicInfo = ({
         )
       : null;
 
-  const totalPrice = (priceInfo?.price || 0) - (priceInfo?.discount || 0);
+  // 보증금 챌린지일 경우 refund 가격도 총 가격에서 제외해야 함
+  const totalPrice =
+    priceInfo.challengePriceType === 'CHARGE'
+      ? (priceInfo?.price || 0) - (priceInfo?.discount || 0)
+      : (priceInfo?.price || 0) -
+        (priceInfo?.discount || 0) -
+        (priceInfo?.refund || 0);
   const showMonthlyPrice = priceInfo && totalPrice >= 50000;
 
   return (
@@ -132,12 +138,14 @@ const ChallengeBasicInfo = ({
                   </span>
                   <span>-{priceInfo.discount?.toLocaleString()}원</span>
                 </div>
-                <div className="flex w-full items-center justify-between gap-x-4 text-xsmall16">
-                  <span className="font-bold text-black">
-                    미션 모두 수행시, 환급
-                  </span>
-                  <span>-{priceInfo.refund?.toLocaleString()}원</span>
-                </div>
+                {priceInfo.challengePriceType === 'REFUND' && (
+                  <div className="flex w-full items-center justify-between gap-x-4 text-xsmall16">
+                    <span className="font-bold text-black">
+                      미션 모두 수행시, 환급
+                    </span>
+                    <span>-{priceInfo.refund?.toLocaleString()}원</span>
+                  </div>
+                )}
               </div>
             )}
           </div>
