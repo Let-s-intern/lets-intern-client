@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from 'react';
+import { useMemo } from 'react';
 
 import { twMerge } from '@/lib/twMerge';
 import { LiveIdSchema } from '@/schema';
@@ -40,11 +40,6 @@ const LiveView: React.FC<{ live: LiveIdSchema; isPreview?: boolean }> = ({
     () => JSON.parse(live.desc ?? '{}') as LiveContent,
     [live.desc],
   );
-
-  // TODO: 운영 배포 시 제거
-  useEffect(() => {
-    console.log('receivedContent', receivedContent);
-  }, [receivedContent]);
 
   return (
     <div className="flex w-full flex-col">

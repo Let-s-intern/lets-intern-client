@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from 'react';
+import { useMemo } from 'react';
 
 import { twMerge } from '@/lib/twMerge';
 import { ChallengeIdSchema, challengeTypeSchema } from '@/schema';
@@ -127,11 +127,6 @@ const ChallengeView: React.FC<{
       curriculumBg,
     };
   }, [challenge.challengeType]);
-
-  // TODO: 운영 배포 시 제거
-  useEffect(() => {
-    console.log('receivedContent', receivedContent);
-  }, [receivedContent]);
 
   return (
     <div className="flex w-full flex-col">
