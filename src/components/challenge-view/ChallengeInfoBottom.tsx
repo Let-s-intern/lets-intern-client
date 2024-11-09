@@ -5,13 +5,14 @@ import ChevronDown from '@/assets/icons/chevron-down.svg?react';
 import ClockIcon from '@/assets/icons/clock.svg?react';
 import LaptopIcon from '@/assets/icons/laptop.svg?react';
 import { useInstallmentPayment } from '@/hooks/useInstallmentPayment';
-import { ChallengeIdSchema } from '@/schema';
+import { ChallengeIdSchema, challengeTypeSchema } from '@/schema';
 import { formatFullDateTime } from '@/utils/formatDateString';
 import { ChallengeColor } from '@components/ChallengeView';
 import BasicInfoBottomRow from '@components/common/program/program-detail/basicInfo/BasicInfoBottomRow';
 import BasicInfoRow from '@components/common/program/program-detail/basicInfo/BasicInfoRow';
 import { useMediaQuery } from '@mui/material';
-import { priceReason } from './ChallengeBasicInfo';
+
+const { PERSONAL_STATEMENT } = challengeTypeSchema.enum;
 
 export const getDiscountPercent = (
   originalPrice: number,
@@ -50,6 +51,26 @@ const ChallengeInfoBottom = ({
     priceInfo.challengePriceType === 'CHARGE'
       ? priceInfo.price
       : (priceInfo.price ?? 0) + (priceInfo.refund ?? 0); // 정가
+
+  const priceReason = (() => {
+    switch (challenge.challengeType) {
+      case PERSONAL_STATEMENT:
+        return [
+          `자기소개서 최다 빈출 문항 작성 가이드\n(무제한 업데이트)`,
+          `기업별 합격 자기소개서 예시 및 패턴 분석`,
+          `PDF 총 30페이지 분량 추가 자료`,
+          `렛츠커리어 공식 커뮤니티 참여`,
+        ];
+
+      default:
+        return [
+          `단계별 취업 준비 교육 자료 및 템플릿\n(무제한 업데이트)`,
+          `마스터 이력서 작성 가이드`,
+          `PDF 총 30페이지 분량 추가 자료`,
+          `렛츠커리어 공식 커뮤니티 참여`,
+        ];
+    }
+  })();
 
   return (
     <section className="flex w-full max-w-[1000px] flex-col gap-y-8 md:gap-y-20">

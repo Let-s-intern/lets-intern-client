@@ -4,7 +4,7 @@ import Announcement from '@/assets/icons/announcement.svg?react';
 import ChevronDown from '@/assets/icons/chevron-down.svg?react';
 import ClockIcon from '@/assets/icons/clock.svg?react';
 import { useInstallmentPayment } from '@/hooks/useInstallmentPayment';
-import { ChallengeIdSchema } from '@/schema';
+import { ChallengeIdSchema, challengeTypeSchema } from '@/schema';
 import { formatFullDateTime } from '@/utils/formatDateString';
 import { ChallengeColor } from '@components/ChallengeView';
 import BasicInfoRow from '@components/common/program/program-detail/basicInfo/BasicInfoRow';
@@ -15,6 +15,8 @@ export const priceReason = [
   `PDF 총 30페이지 분량 추가 자료`,
   `렛츠커리어 공식 커뮤니티 참여`,
 ];
+
+const { PERSONAL_STATEMENT } = challengeTypeSchema.enum;
 
 export const getDiscountPercent = (
   originalPrice: number,
@@ -51,6 +53,26 @@ const ChallengeBasicInfo = ({
     priceInfo.challengePriceType === 'CHARGE'
       ? priceInfo.price
       : (priceInfo.price ?? 0) + (priceInfo.refund ?? 0); // 정가
+
+  const priceReason = (() => {
+    switch (challenge.challengeType) {
+      case PERSONAL_STATEMENT:
+        return [
+          `자기소개서 최다 빈출 문항 작성 가이드\n(무제한 업데이트)`,
+          `기업별 합격 자기소개서 예시 및 패턴 분석`,
+          `PDF 총 30페이지 분량 추가 자료`,
+          `렛츠커리어 공식 커뮤니티 참여`,
+        ];
+
+      default:
+        return [
+          `단계별 취업 준비 교육 자료 및 템플릿\n(무제한 업데이트)`,
+          `마스터 이력서 작성 가이드`,
+          `PDF 총 30페이지 분량 추가 자료`,
+          `렛츠커리어 공식 커뮤니티 참여`,
+        ];
+    }
+  })();
 
   return (
     <div className="flex flex-col gap-6 pb-10 md:flex-row md:pb-20">
