@@ -51,10 +51,10 @@ const ProgramDetailReviewItem = ({
       </div>
       <div className="flex w-full grow flex-col gap-y-2 rounded-[10px] border-[1.5px] border-t-0 border-neutral-85 bg-white px-[22px] pb-9 pt-7">
         <div className="flex w-full items-center gap-x-2">
-          <span className="text-xxsmall12 font-medium text-neutral-45 md:text-xsmall16">
+          <span className="text-xsmall14 font-medium text-neutral-45 md:text-xsmall16">
             {maskingName(review.name)}
           </span>
-          <p className="line-clamp-1 text-xxsmall12 font-semibold text-neutral-30 md:text-xsmall16">{`${review.programName} 수강`}</p>
+          <p className="line-clamp-1 text-xsmall14 font-semibold text-neutral-30 md:text-xsmall16">{`${review.programName} 수강`}</p>
         </div>
         <p className="line-clamp-2 w-full break-words text-xsmall14 text-neutral-35 md:text-xsmall16">
           {review.content}

@@ -2,7 +2,6 @@ import { ReactNode } from 'react';
 
 import { ChallengePoint } from '@/types/interface';
 import { ChallengeColor } from '@components/ChallengeView';
-import Badge from '@components/common/program/program-detail/Badge';
 import Description from '@components/common/program/program-detail/Description';
 import Heading2 from '@components/common/program/program-detail/Heading2';
 import CircularBox from '@components/common/ui/CircularBox';
@@ -35,14 +34,14 @@ const ChallengeIntroCareerStart = ({
             <Heading2 className="md:flex md:flex-col md:items-center">
               <div className="mb-1 flex w-fit flex-col gap-2.5 xs:flex-row xs:items-center">
                 취업 준비 평균 기간이
-                <Badge className="bg-[#F3F4FF]">
+                <div className="flex items-center gap-0.5">
                   <img
-                    className="h-auto w-6"
+                    className="h-auto w-6 md:w-8"
                     src="/icons/career-start-timer-icon.svg"
                     alt="타이머 아이콘"
                   />
                   <span className="text-primary">11.5개월?</span>
-                </Badge>
+                </div>
               </div>
               <div>
                 {challengeTitle}{' '}

@@ -203,7 +203,7 @@ function ChallengeCheckList({
     <section className="flex w-full max-w-[1000px] flex-col px-5 py-20 md:px-10 md:pb-[140px] md:pt-[130px] lg:px-0">
       <div className="mb-16 md:mb-20">
         <SuperTitle
-          className="mb-1 md:text-center"
+          className="mb-3 md:text-center"
           style={{ color: colors.primary }}
         >
           {superTitle}
