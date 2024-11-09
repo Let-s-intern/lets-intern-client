@@ -98,7 +98,7 @@ const LiveView: React.FC<{ live: LiveIdSchema; isPreview?: boolean }> = ({
             />
           </section>
 
-          <div className="live_faq flex w-full flex-col px-5 pb-8 pt-[70px] md:gap-20 md:px-10 md:pb-[130px] md:pt-40">
+          <div className="live_faq flex w-full flex-col px-5 pb-8 pt-[70px] md:px-10 md:pb-[130px] md:pt-40">
             {receivedContent.blogReview && (
               <ProgramDetailBlogReviewSection
                 review={receivedContent.blogReview}

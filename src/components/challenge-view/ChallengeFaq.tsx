@@ -30,7 +30,7 @@ function ChallengeFaq({ colors }: ChallengeFaqProps) {
   if (!faqList) return <></>;
 
   return (
-    <div className="w-full md:flex md:flex-col md:items-center">
+    <div className="w-full pt-20 md:flex md:flex-col md:items-center md:pt-40">
       <SuperTitle
         className="mb-6 text-neutral-45 md:mb-12"
         style={{ color: colors.primary }}
