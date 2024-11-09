@@ -129,7 +129,7 @@ function LiveIntro() {
             {company.map((item) => (
               <img
                 key={item.imgSrc}
-                className="aspect-square h-auto w-56 bg-neutral-45 md:w-[360px]"
+                className="aspect-square h-auto w-56 rounded-sm bg-neutral-45 md:w-[360px]"
                 src={item.imgSrc}
                 alt={item.alt}
               />
