@@ -110,7 +110,7 @@ function CurriculumItem({
         />
       </div>
       {isOpen && (
-        <div className="mt-3.5 whitespace-pre-line rounded-md bg-neutral-100 px-4 py-3 text-xsmall14 text-neutral-0 md:px-4 md:py-8 md:text-small20">
+        <div className="mt-3.5 whitespace-pre-line rounded-md bg-neutral-100 px-4 py-3 text-xsmall14 font-semibold text-neutral-0 md:px-4 md:py-8 md:text-small20">
           {item.content}
         </div>
       )}
