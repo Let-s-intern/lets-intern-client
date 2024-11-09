@@ -9,13 +9,6 @@ import { formatFullDateTime } from '@/utils/formatDateString';
 import { ChallengeColor } from '@components/ChallengeView';
 import BasicInfoRow from '@components/common/program/program-detail/basicInfo/BasicInfoRow';
 
-export const priceReason = [
-  `단계별 취업 준비 교육 자료 및 템플릿\n(무제한 업데이트)`,
-  `마스터 이력서 작성 가이드`,
-  `PDF 총 30페이지 분량 추가 자료`,
-  `렛츠커리어 공식 커뮤니티 참여`,
-];
-
 const { PERSONAL_STATEMENT } = challengeTypeSchema.enum;
 
 export const getDiscountPercent = (
