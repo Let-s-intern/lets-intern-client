@@ -1,11 +1,11 @@
 import { twMerge } from '@/lib/twMerge';
+import { useMediaQuery } from '@mui/material';
 import { Fragment, ReactNode } from 'react';
 import { LuAlarmClock } from 'react-icons/lu';
 
 import Description from '@components/common/program/program-detail/Description';
 import Heading2 from '@components/common/program/program-detail/Heading2';
 import OutlinedBox from '@components/common/program/program-detail/OutlineBox';
-import { useMediaQuery } from '@mui/material';
 
 const TITLE1 = [
   '인사담당자가 서류를 보는 시간,',

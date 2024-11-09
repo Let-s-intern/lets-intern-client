@@ -66,9 +66,14 @@ const { PORTFOLIO, PERSONAL_STATEMENT, CAREER_START } =
 interface ChallengeResultProps {
   colors: ChallengeColor;
   challengeType: ChallengeType;
+  challengeTitle: string;
 }
 
-function ChallengeResult({ colors, challengeType }: ChallengeResultProps) {
+function ChallengeResult({
+  colors,
+  challengeType,
+  challengeTitle,
+}: ChallengeResultProps) {
   const isDesktop = useMediaQuery('(min-width: 991px)');
 
   const contents = useMemo(() => {
@@ -114,7 +119,7 @@ function ChallengeResult({ colors, challengeType }: ChallengeResultProps) {
             />{' '}
             <br className="md:hidden" />
             높일 수 있는 <br className="hidden md:block" />
-            렛츠커리어 챌린지
+            {challengeTitle}
           </Heading2>
         </div>
         <div className="custom-scrollbar z-10 -mx-5 overflow-x-auto px-5 sm:mx-0 sm:px-0">

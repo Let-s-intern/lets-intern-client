@@ -16,7 +16,13 @@ const boxes = [
   `면접 전략까지\n세울 수 있는\n서류는 뭘까?`,
 ];
 
-const ChallengeIntroCareerStart = ({ colors }: { colors: ChallengeColor }) => {
+const ChallengeIntroCareerStart = ({
+  colors,
+  challengeTitle,
+}: {
+  colors: ChallengeColor;
+  challengeTitle: string;
+}) => {
   return (
     <section className="flex w-full flex-col md:items-center">
       <div className="flex w-full flex-col items-center bg-neutral-90">
@@ -35,7 +41,7 @@ const ChallengeIntroCareerStart = ({ colors }: { colors: ChallengeColor }) => {
                 </Badge>
               </div>
               <div>
-                서류 기초 다지기{' '}
+                {challengeTitle}{' '}
                 <span className="text-primary">2주 커리큘럼</span>
                 이면 충분해요!
               </div>

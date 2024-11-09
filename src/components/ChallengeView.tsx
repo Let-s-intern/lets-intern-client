@@ -159,6 +159,7 @@ const ChallengeView: React.FC<{
                 point={receivedContent.challengePoint}
                 startDate={challenge.startDate ?? dayjs()}
                 endDate={challenge.endDate ?? dayjs()}
+                challengeTitle={challenge.title ?? ''}
               />
             </section>
 
@@ -175,18 +176,23 @@ const ChallengeView: React.FC<{
               ) : challenge.challengeType === PORTFOLIO ? (
                 <ChallengeIntroPortfolio />
               ) : (
-                <ChallengeIntroCareerStart colors={colors} />
+                <ChallengeIntroCareerStart
+                  colors={colors}
+                  challengeTitle={challenge.title ?? ''}
+                />
               )}
             </section>
 
             <ChallengeCheckList
               colors={colors}
               challengeType={challenge.challengeType}
+              challengeTitle={challenge.title ?? ''}
             />
 
             <ChallengeResult
               challengeType={challenge.challengeType}
               colors={colors}
+              challengeTitle={challenge.title ?? ''}
             />
           </div>
 
@@ -200,6 +206,7 @@ const ChallengeView: React.FC<{
                 <ChallengeCurriculum
                   challengeType={challenge.challengeType}
                   curriculum={receivedContent.curriculum}
+                  challengeTitle={challenge.title ?? ''}
                   colors={colors}
                 />
               </section>
@@ -210,6 +217,7 @@ const ChallengeView: React.FC<{
             className="challenge_difference flex w-full max-w-[1000px] flex-col px-5 md:px-10 lg:px-0"
           >
             <ChallengeDifferent
+              challengeTitle={challenge.title ?? ''}
               colors={colors}
               challengeType={challenge.challengeType}
             />

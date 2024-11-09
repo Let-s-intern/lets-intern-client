@@ -6,10 +6,10 @@ import { clientOnly } from 'vike-react/clientOnly';
 
 import { ChallengeType, challengeTypeSchema } from '@/schema';
 import { ChallengePoint } from '@/types/interface';
-import { challengeTypeToText } from '@/utils/convert';
 import { ChallengeColor } from '@components/ChallengeView';
 import Heading2 from '@components/common/program/program-detail/Heading2';
 import SuperTitle from '@components/common/program/program-detail/SuperTitle';
+import { josa } from '@toss/hangul';
 
 const Balancer = clientOnly(() => import('react-wrap-balancer'));
 
@@ -69,12 +69,14 @@ const ChallengePointView = ({
   endDate,
   colors,
   challengeType,
+  challengeTitle,
 }: {
   point: ChallengePoint;
   startDate: Dayjs;
   endDate: Dayjs;
   colors: ChallengeColor;
   challengeType: ChallengeType;
+  challengeTitle: string;
 }) => {
   const programSchedule = [
     {
@@ -118,7 +120,7 @@ const ChallengePointView = ({
           프로그램 소개
         </SuperTitle>
         <Heading2 className="mb-10 break-keep lg:mb-20">
-          이력서 & 자기소개서 챌린지를 통해
+          {josa(challengeTitle, '을/를')} 통해
           <br />
           <span
             style={{
@@ -172,10 +174,7 @@ const ChallengePointView = ({
               진행 방식
             </p>
             <Heading2 className="py-3 pt-2 text-white md:pt-3">
-              {challengeType === CAREER_START
-                ? '기초'
-                : challengeTypeToText[challengeType]}{' '}
-              챌린지는
+              {josa(challengeTitle, '은/는')}
               <br className="md:hidden" /> 2주간 아래와 같이 진행돼요
             </Heading2>
             <span className="mb-10 text-xsmall14 text-neutral-50 md:mb-20">
@@ -189,7 +188,7 @@ const ChallengePointView = ({
             >
               2 Weeks
             </div>
-            <div className="flex flex-col gap-5 rounded-b-md bg-white px-4 py-[30px] md:flex-row md:justify-between md:px-10 md:pb-[30px] md:pt-9">
+            <div className="flex flex-col gap-5 rounded-b-md bg-white px-4 py-[30px] md:flex-row md:justify-between md:pb-[30px] md:pt-9 lg:px-10">
               {progress.map((item) => (
                 <ProgressItem
                   key={item.index}

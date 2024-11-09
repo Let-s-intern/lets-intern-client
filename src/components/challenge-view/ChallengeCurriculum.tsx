@@ -10,9 +10,6 @@ import { ChallengeColor } from '@components/ChallengeView';
 import Heading2 from '@components/common/program/program-detail/Heading2';
 import SuperTitle from '@components/common/program/program-detail/SuperTitle';
 
-const superTitle = '취업 챌린지에서는 이런 걸 가져갈 수 있어요';
-const desktopTitle = '챌린지에서는 이런 걸 가져갈 수 있어요\n';
-const title = '기초부터 결과물까지 가져가는\n완벽한 취업 준비 2주 커리큘럼';
 const { PORTFOLIO, PERSONAL_STATEMENT, CAREER_START } =
   challengeTypeSchema.enum;
 
@@ -20,15 +17,15 @@ interface ChallengeCurriculumProps {
   curriculum: ChallengeCurriculumType[];
   colors: ChallengeColor;
   challengeType: ChallengeType;
+  challengeTitle: string;
 }
 
 function ChallengeCurriculum({
   curriculum,
   colors,
   challengeType,
+  challengeTitle,
 }: ChallengeCurriculumProps) {
-  const isDesktop = useMediaQuery('(min-width: 768px)');
-
   const iconName = useMemo(() => {
     switch (challengeType) {
       case PORTFOLIO:
@@ -43,6 +40,9 @@ function ChallengeCurriculum({
   if (!curriculum || !curriculum[0]) {
     return <></>;
   }
+
+  const superTitle = `${challengeTitle}에서는 이런 걸 가져갈 수 있어요`;
+  const title = `기초부터 결과물까지 가져가는\n완벽한 ${challengeTitle} 커리큘럼`;
 
   return (
     <div className="md:py-30 flex w-full max-w-[1000px] flex-col px-5 py-20 md:items-center md:pb-36 lg:px-0">

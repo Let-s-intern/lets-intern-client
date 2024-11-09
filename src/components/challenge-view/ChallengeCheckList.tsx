@@ -9,6 +9,7 @@ import Description from '@components/common/program/program-detail/Description';
 import Heading2 from '@components/common/program/program-detail/Heading2';
 import OutlinedBox from '@components/common/program/program-detail/OutlineBox';
 import SuperTitle from '@components/common/program/program-detail/SuperTitle';
+import { josa } from '@toss/hangul';
 
 const superTitle = '취업 준비 현황 체크리스트';
 const title = [
@@ -173,23 +174,18 @@ const CAREER_START_CHECK_LIST = [
 interface ChallengeCheckListProps {
   colors: ChallengeColor;
   challengeType: ChallengeIdSchema['challengeType'];
+  challengeTitle: string;
 }
 
 function ChallengeCheckList({
   colors,
   challengeType,
+  challengeTitle,
 }: ChallengeCheckListProps) {
-  const description = useMemo(() => {
-    let challenge = '자소서';
-
-    if (challengeType === challengeTypeSchema.enum.PORTFOLIO)
-      challenge = '포트폴리오';
-
-    return [
-      '취업 준비를 하면서 어떤 고민들을 가지고 계셨나요?',
-      `아래 고민 중 1개라도 해당한다면 ${challenge} 챌린지를 추천해요!`,
-    ];
-  }, [challengeType]);
+  const description = [
+    '취업 준비를 하면서 어떤 고민들을 가지고 계셨나요?',
+    `아래 고민 중 1개라도 해당한다면 ${josa(challengeTitle, '을/를')} 추천해요!`,
+  ];
 
   const checkList = useMemo(() => {
     const { PERSONAL_STATEMENT, PORTFOLIO } = challengeTypeSchema.enum;
