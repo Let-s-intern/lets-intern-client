@@ -33,9 +33,7 @@ function calculateTotalPrice({
   couponPrice?: number;
 }) {
   const totalDiscount = couponPrice === -1 ? price : discount + couponPrice;
-  if (price <= totalDiscount) {
-    return 0;
-  }
+  if (price <= totalDiscount) return 0;
   return price - totalDiscount;
 }
 

@@ -28,10 +28,11 @@ export const getPayInfo = (
   livePriceType: string | undefined;
 } => {
   const item = application.priceList?.[0];
+  // 챌린지
   if (item) {
     return {
       priceId: item.priceId ? item.priceId : -1,
-      price: item.price ? item.price : 0,
+      price: item.price ? item.price + (item.refund ?? 0) : 0, // 결제금액에 보증금 포함해야 함
       discount: item.discount ? item.discount : 0,
       accountNumber: item.accountNumber ? item.accountNumber : '',
       deadline: item.deadline ? item.deadline : '',
@@ -40,7 +41,7 @@ export const getPayInfo = (
       livePriceType: undefined,
     };
   }
-
+  // 라이브
   if (application.price) {
     return {
       priceId: application.price.priceId ? application.price.priceId : -1,
