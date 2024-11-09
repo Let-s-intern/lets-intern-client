@@ -13,6 +13,7 @@ import {
 import { ChallengeColor } from '@components/ChallengeView';
 import BasicInfoBottomRow from '@components/common/program/program-detail/basicInfo/BasicInfoBottomRow';
 import BasicInfoRow from '@components/common/program/program-detail/basicInfo/BasicInfoRow';
+import Heading2 from '@components/common/program/program-detail/Heading2';
 import { useMediaQuery } from '@mui/material';
 
 const { PERSONAL_STATEMENT } = challengeTypeSchema.enum;
@@ -82,10 +83,8 @@ const ChallengeInfoBottom = ({
       : formatFullDateTime(challenge.endDate, true);
 
   return (
-    <section className="flex w-full max-w-[1000px] flex-col gap-y-8 md:gap-y-20">
-      <div className="w-full text-small20 font-bold text-neutral-0 md:text-center">
-        모집개요
-      </div>
+    <section className="flex w-full max-w-[1000px] flex-col gap-y-8 md:gap-y-16">
+      <Heading2>모집개요</Heading2>
       <div
         className="flex w-full flex-col gap-3 md:flex-row"
         style={{ color: colors.primary }}

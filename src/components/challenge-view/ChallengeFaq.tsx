@@ -37,7 +37,9 @@ function ChallengeFaq({ colors }: ChallengeFaqProps) {
       >
         FAQ
       </SuperTitle>
-      <SuperTitle style={{ color: colors.primary }}>{superTitle}</SuperTitle>
+      <SuperTitle className="mb-3" style={{ color: colors.primary }}>
+        {superTitle}
+      </SuperTitle>
       <Heading2 className="mb-10 md:mb-20">{title}</Heading2>
 
       {/* 카테고리 */}

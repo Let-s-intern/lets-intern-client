@@ -10,6 +10,7 @@ module.exports = {
       fontSize: {
         xxlarge36: ['2.25rem', { lineHeight: '3rem' }],
         xxlarge32: ['2rem', { lineHeight: '2.625rem' }],
+        xlarge30: ['1.875rem', { lineHeight: '2.625rem' }],
         xlarge28: ['1.75rem', { lineHeight: '2.375rem' }],
         large26: ['1.625rem', { lineHeight: '2.125rem' }],
         medium24: ['1.5rem', { lineHeight: '2rem' }],

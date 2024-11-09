@@ -18,7 +18,7 @@ const ChallengeBrand = ({ colors }: { colors: ChallengeColor }) => {
       </div>
       <div className="grid grid-cols-2 gap-5 md:grid-cols-3 md:gap-[60px]">
         <div
-          className="flex h-full flex-1 flex-col gap-y-1 border-t-[3px] pt-4"
+          className="flex h-full flex-col gap-y-1 border-t-[3px] pt-4"
           style={{ borderTopColor: colors.primary }}
         >
           <p className="text-xsmall14 font-semibold md:text-small18">
@@ -29,7 +29,7 @@ const ChallengeBrand = ({ colors }: { colors: ChallengeColor }) => {
           </p>
         </div>
         <div
-          className="flex h-full flex-1 flex-col gap-y-1 border-t-[3px] pt-4"
+          className="flex h-full flex-col gap-y-1 border-t-[3px] pt-4"
           style={{ borderTopColor: colors.primary }}
         >
           <p className="text-xsmall14 font-semibold md:text-small18">
@@ -40,7 +40,7 @@ const ChallengeBrand = ({ colors }: { colors: ChallengeColor }) => {
           </p>
         </div>
         <div
-          className="flex h-full flex-1 flex-col gap-y-1 border-t-[3px] pt-4"
+          className="flex h-full flex-col gap-y-1 border-t-[3px] pt-4"
           style={{ borderTopColor: colors.primary }}
         >
           <p className="text-xsmall14 font-semibold md:text-small18">
