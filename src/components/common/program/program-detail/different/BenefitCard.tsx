@@ -23,12 +23,7 @@ const BenefitCard = ({ title, options, imgUrl }: BenefitCardProps) => {
           <div className="flex w-full flex-col gap-y-1 md:gap-y-3">
             {options.map((option, index) => (
               <div key={index} className="flex items-start">
-                <ChevronDown
-                  className="shrink-0"
-                  color="#4D55F5"
-                  width={24}
-                  height={24}
-                />
+                <ChevronDown className="shrink-0" width={24} height={24} />
                 <p className="break-keep pt-px text-xsmall14 font-medium text-neutral-30 md:whitespace-normal md:pt-0 lg:text-small18">
                   {option}
                 </p>
