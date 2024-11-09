@@ -117,7 +117,7 @@ const ProgramDetailNavigation = ({
         {navItems.map((navItem) => (
           <button
             key={navItem.title}
-            className={`border-b-[2.4px] px-1.5 py-4 text-xsmall16 font-semibold md:min-w-[100px]`}
+            className={`border-b-[2.4px] px-1.5 py-4 text-[10px] font-semibold xs:text-xsmall16 md:min-w-[100px]`}
             style={{
               borderBottomColor:
                 navItem.to === activeSection

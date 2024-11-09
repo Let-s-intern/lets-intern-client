@@ -113,15 +113,17 @@ const ChallengeBasicInfo = ({
           <div className="flex w-full flex-col gap-y-6">
             <div className="flex w-full flex-col gap-y-[14px]">
               <p className="text-small18 font-bold">{challenge.title}</p>
-              <div className="flex flex-col gap-y-0.5 text-xsmall14">
+              <div className="flex w-full flex-col gap-y-0.5 text-xsmall14">
                 {priceReason.map((reason, index) => (
-                  <div key={index} className="flex gap-x-0.5">
+                  <div key={index} className="flex w-full gap-x-0.5">
                     <ChevronDown
-                      className="-mt-0.5 text-neutral-0"
+                      className="-mt-0.5 shrink-0 text-neutral-0"
                       width={24}
                       height={24}
                     />
-                    <p className="whitespace-pre">{reason}</p>
+                    <p className="grow whitespace-pre text-wrap break-keep text-black">
+                      {reason}
+                    </p>
                   </div>
                 ))}
               </div>
