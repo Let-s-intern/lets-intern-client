@@ -28,7 +28,7 @@ const ChallengeDetailSSRPage = () => {
     id: string;
     title?: string;
   }>();
-  const isMobile = useMediaQuery('(max-width:991px)');
+  const isDesktop = useMediaQuery('(min-width:991px)');
   const { isLoggedIn } = useAuthStore();
 
   const challengeFromServer = useServerChallenge();
@@ -161,14 +161,14 @@ const ChallengeDetailSSRPage = () => {
 
       <ChallengeView challenge={challenge} />
 
-      {isMobile ? (
-        <MobileApplyCTA
+      {isDesktop ? (
+        <DesktopApplyCTA
           program={challenge}
           onApplyClick={onApplyClick}
           isAlreadyApplied={isAlreadyApplied}
         />
       ) : (
-        <DesktopApplyCTA
+        <MobileApplyCTA
           program={challenge}
           onApplyClick={onApplyClick}
           isAlreadyApplied={isAlreadyApplied}
