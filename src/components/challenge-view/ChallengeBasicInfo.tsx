@@ -57,6 +57,8 @@ const ChallengeBasicInfo = ({
           `렛츠커리어 공식 커뮤니티 참여`,
         ];
 
+      // 포트폴리오 추가 예정
+
       default:
         return [
           `단계별 취업 준비 교육 자료 및 템플릿\n(무제한 업데이트)`,
