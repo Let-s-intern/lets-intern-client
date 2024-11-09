@@ -81,7 +81,7 @@ type Point = {
 function LiveIntro() {
   return (
     <section className="flex w-full flex-col gap-y-20 pb-[70px] md:items-center md:gap-y-52 md:pb-40">
-      <div className="flex w-full max-w-[1200px] flex-col px-5 md:px-10">
+      <div className="flex w-full max-w-[1000px] flex-col px-5 md:px-10">
         <SuperTitle className="mb-1 text-primary">{superTitle[0]}</SuperTitle>
         <Heading2>{title[0]}</Heading2>
         <div className="mt-10 flex flex-col items-center md:mt-20">
@@ -111,7 +111,7 @@ function LiveIntro() {
         </div>
       </div>
 
-      <div className="flex w-full max-w-[1200px] flex-col px-5 md:px-10">
+      <div className="flex w-full max-w-[1000px] flex-col px-5 md:px-10 lg:px-0">
         <SuperTitle className="mb-1 text-primary">{superTitle[1]}</SuperTitle>
         <Heading2>{title[1]}</Heading2>
         <div className="mt-8 flex flex-col gap-3 md:mt-20 md:flex-row">
@@ -121,7 +121,7 @@ function LiveIntro() {
         </div>
       </div>
 
-      <div className="w-ful flex max-w-[1200px] flex-col px-5 md:px-10">
+      <div className="w-ful flex max-w-[1000px] flex-col px-5 md:px-10 lg:px-0">
         <SuperTitle className="mb-1 text-primary">{superTitle[2]}</SuperTitle>
         <Heading2>{title[2]}</Heading2>
         <div className="custom-scrollbar mt-8 w-full overflow-x-auto md:mt-20">
