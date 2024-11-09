@@ -1,3 +1,4 @@
+import { twMerge } from '@/lib/twMerge';
 import { SerializedCodeNode } from '@lexical/code';
 import { SerializedLinkNode } from '@lexical/link';
 import { SerializedListItemNode, SerializedListNode } from '@lexical/list';
@@ -13,7 +14,6 @@ import {
   SerializedRootNode,
   SerializedTextNode,
 } from 'lexical';
-import { twMerge } from 'tailwind-merge';
 import { SerializedCodeHighlightNode } from '../../admin/lexical/nodes/CodeHighlightNode';
 import { SerializedCollapsibleContainerNode } from '../../admin/lexical/nodes/CollapsibleContainerNode';
 import { SerializedCollapsibleContentNode } from '../../admin/lexical/nodes/CollapsibleContentNode';

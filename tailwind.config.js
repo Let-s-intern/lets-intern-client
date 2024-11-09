@@ -38,6 +38,8 @@ module.exports = {
           20: '#DBDDFD',
           30: '#CACCFC',
           40: '#B8BBFB',
+          80: '#7177F7',
+          90: '#5F66F6',
         },
         secondary: {
           DEFAULT: '#1BC47D',
@@ -57,6 +59,7 @@ module.exports = {
         },
         tertiary: '#CB81F2',
         point: '#DAFF7C',
+        challenge: '#00A8EB',
         system: {
           'positive-green': '#1BC47D',
           'positive-blue': '#5177FF',
@@ -145,6 +148,9 @@ module.exports = {
       xxl: '1.5rem',
       full: '9999px',
     },
+  },
+  scrollPadding: {
+    '50%-minus-500px': 'calc(50% - 500px)',
   },
   plugins: [require('tailwind-scrollbar-hide')],
 };

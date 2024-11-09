@@ -6,6 +6,7 @@
  *
  */
 
+import { ProgramType } from '@/types/common';
 import { blogCategory } from './convert';
 
 const SUPPORTED_URL_PROTOCOLS = new Set([
@@ -49,6 +50,18 @@ export function getBlogPathname({
   return `/blog/${id}/${title?.replace(/[ /]/g, '-')}`;
 }
 
+export function getProgramPathname({
+  programType,
+  title,
+  id,
+}: {
+  programType?: ProgramType | null;
+  title?: string | null;
+  id?: string | number | null;
+}) {
+  return `/program/${programType}/${id}/${title?.replace(/ /g, '-')}`;
+}
+
 export function getBlogTitle({
   title,
   category,
@@ -59,10 +72,22 @@ export function getBlogTitle({
   return `${title} | ${blogCategory[category || '']} - 렛츠커리어`;
 }
 
+export function getChallengeTitle({ title }: { title?: string | null }) {
+  return `${title} | 챌린지 - 렛츠커리어`;
+}
+
+export function getLiveTitle({ title }: { title?: string | null }) {
+  return `${title} | LIVE 클래스 - 렛츠커리어`;
+}
+
 export function getReportLandingTitle(title: string) {
   return `${title} | 서류 진단 - 렛츠커리어`;
 }
 
 export function getBaseUrlFromServer(): string {
   return process.env.BASE_URL || 'http://localhost:3000';
+}
+
+export function getUniversalLink(pathname: string): string {
+  return `${typeof window !== 'undefined' ? window.location.origin : getBaseUrlFromServer()}${pathname}`;
 }

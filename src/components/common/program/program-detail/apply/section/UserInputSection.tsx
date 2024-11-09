@@ -1,20 +1,18 @@
-import { FaCheck } from 'react-icons/fa6';
-import { twMerge } from 'tailwind-merge';
-
+import { twMerge } from '@/lib/twMerge';
 import { useState } from 'react';
+import { FaCheck } from 'react-icons/fa6';
+
+import { UserInfo } from '@/lib/order';
 import Input from '../../../../ui/input/Input';
-import { UserInfo } from '../../section/ApplySection';
 
 interface UserInputSectionProps {
   userInfo: UserInfo;
-  setUserInfo: (userInfo: UserInfo) => void;
   contactEmail: string;
   setContactEmail: (contactEmail: string) => void;
 }
 
 const UserInputSection = ({
   userInfo,
-  setUserInfo,
   contactEmail,
   setContactEmail,
 }: UserInputSectionProps) => {
@@ -30,13 +28,6 @@ const UserInputSection = ({
     }
 
     setIsSameEmail((prev) => !prev);
-  };
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setUserInfo({
-      ...userInfo,
-      [e.target.name]: e.target.value,
-    });
   };
 
   const handleContactEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {

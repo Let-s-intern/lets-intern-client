@@ -3,6 +3,7 @@ import useMinDate from '@/hooks/useMinDate';
 import useRunOnce from '@/hooks/useRunOnce';
 import useValidateUrl from '@/hooks/useValidateUrl';
 import { generateOrderId } from '@/lib/order';
+import { twMerge } from '@/lib/twMerge';
 import useAuthStore from '@/store/useAuthStore';
 import {
   FormControl,
@@ -16,7 +17,6 @@ import { FaSpinner } from 'react-icons/fa';
 import { FaArrowLeft } from 'react-icons/fa6';
 import { IoCloseOutline } from 'react-icons/io5';
 import { useNavigate, useParams } from 'react-router-dom';
-import { twJoin, twMerge } from 'tailwind-merge';
 import { useGetParticipationInfo } from '../../../api/application';
 import { uploadFile } from '../../../api/file';
 import {
@@ -685,7 +685,7 @@ export const ReportPaymentSection = () => {
             }
           />
           <button
-            className={twJoin(
+            className={twMerge(
               reportApplication.couponId === null
                 ? 'bg-primary text-neutral-100'
                 : 'border-2 border-primary bg-neutral-100 text-primary',
@@ -715,7 +715,7 @@ export const ReportPaymentSection = () => {
           </button>
         </div>
         <span
-          className={twJoin(
+          className={twMerge(
             reportApplication.couponId === null
               ? 'text-system-error'
               : 'text-system-positive-blue',
@@ -829,7 +829,7 @@ const PaymentRowSub = ({
 }) => {
   return (
     <div
-      className={twJoin(
+      className={twMerge(
         'flex h-10 items-center justify-between gap-1 pl-6 pr-3 text-xsmall14 text-neutral-50',
         className,
       )}

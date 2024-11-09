@@ -1,7 +1,7 @@
+import { twMerge } from '@/lib/twMerge';
 import { isAxiosError } from 'axios';
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { twMerge } from 'tailwind-merge';
 
 import Button from '../../../components/common/ui/button/Button';
 import Input from '../../../components/ui/input/Input';

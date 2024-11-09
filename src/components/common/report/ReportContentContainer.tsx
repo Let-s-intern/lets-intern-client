@@ -1,5 +1,5 @@
+import { twMerge } from '@/lib/twMerge';
 import React, { forwardRef } from 'react';
-import { twMerge } from 'tailwind-merge';
 
 interface ReportContentContainerProps
   extends React.HTMLAttributes<HTMLDivElement> {

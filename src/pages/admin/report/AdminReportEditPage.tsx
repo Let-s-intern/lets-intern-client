@@ -597,7 +597,7 @@ const AdminReportEditPage = () => {
           <h2 className="mt-10">콘텐츠 편집</h2>
           {reportDetail ? (
             <EditorApp
-              editorStateJsonString={reportDetail.contents}
+              initialEditorStateJsonString={reportDetail.contents}
               onChange={onChangeEditor}
             />
           ) : null}

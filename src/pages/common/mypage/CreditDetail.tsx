@@ -6,6 +6,7 @@ import { useUserQuery } from '../../../api/user';
 import MoreButton from '../../../components/common/mypage/ui/button/MoreButton';
 import PaymentInfoRow from '../../../components/common/program/paymentSuccess/PaymentInfoRow';
 import Input from '../../../components/common/ui/input/Input';
+import OrderProgramInfo from '../program/OrderProgramInfo';
 
 const convertDateFormat = (date: string) => {
   return dayjs(date).format('YYYY.MM.DD');
@@ -159,40 +160,7 @@ const CreditDetail = () => {
                   </div>
                 </div>
               )}
-              <div className="font-semibold text-neutral-0">프로그램 정보</div>
-              <div className="flex w-full items-start justify-center gap-x-4">
-                <img
-                  className="h-[97px] w-[137px] rounded-sm object-cover"
-                  src={paymentDetail.programInfo.thumbnail || ''}
-                  alt="thumbnail"
-                />
-                <div className="flex grow flex-col items-start justify-center gap-y-3">
-                  <div className="font-semibold">
-                    {paymentDetail.programInfo.title}
-                  </div>
-                  <div className="flex w-full flex-col gap-y-1">
-                    <div className="flex w-full items-center justify-start gap-x-4 text-xs font-medium">
-                      <div className="shrink-0 text-neutral-30">진행 기간</div>
-                      <div className="text-primary-dark">{`${convertDateFormat(paymentDetail.programInfo.startDate || '')} - ${convertDateFormat(paymentDetail.programInfo.endDate || '')}`}</div>
-                    </div>
-                    {paymentDetail.programInfo.progressType && (
-                      <div className="flex w-full items-center justify-start gap-x-4 text-xs font-medium">
-                        <div className="shrink-0 text-neutral-30">
-                          진행 방식
-                        </div>
-                        <div className="text-primary-dark">{`${
-                          paymentDetail.programInfo.progressType === 'ALL'
-                            ? '온라인/오프라인'
-                            : paymentDetail.programInfo.progressType ===
-                                'ONLINE'
-                              ? '온라인'
-                              : '오프라인'
-                        }`}</div>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </div>
+              <OrderProgramInfo {...paymentDetail.programInfo} />
             </div>
             <div className="flex w-full flex-col items-start justify-center gap-y-6">
               <div className="font-semibold text-neutral-0">참여자 정보</div>

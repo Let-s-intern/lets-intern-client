@@ -242,3 +242,83 @@ export const applicationResultType = z.object({
 });
 
 export type ApplicationResult = z.infer<typeof applicationResultType>;
+
+export const DiscountCardSchema = z.object({
+  issuerCode: z.string(),
+  discountAmount: z.number(),
+  balance: z.number(),
+  discountCode: z.string(),
+  dueDate: z.string(),
+  minimumPaymentAmount: z.number(),
+  maximumPaymentAmount: z.number(),
+  currency: z.string(),
+});
+
+export const InterestFreeCardSchema = z.object({
+  issuerCode: z.string(),
+  minimumPaymentAmount: z.number(),
+  dueDate: z.string(),
+  installmentFreeMonths: z.array(z.number()),
+});
+
+export const CardPromotionSchema = z.object({
+  discountCards: z.array(DiscountCardSchema),
+  interestFreeCards: z.array(InterestFreeCardSchema),
+});
+
+/**
+ * |카드사 | 코드 | 한글 | 영문|
+ * | --- | --- | --- | --- |
+ * |기업 BC | 3K | 기업비씨 | IBK_BC|
+ * |광주은행 | 46 | 광주 | GWANGJUBANK|
+ * |롯데카드 | 71 | 롯데 | LOTTE|
+ * |KDB산업은행 | 30 | 산업 | KDBBANK|
+ * |BC카드 | 31 | - | BC|
+ * |삼성카드 | 51 | 삼성 | SAMSUNG|
+ * |새마을금고 | 38 | 새마을 | SAEMAUL|
+ * |신한카드 | 41 | 신한 | SHINHAN|
+ * |신협 | 62 | 신협 | SHINHYEOP|
+ * |씨티카드 | 36 | 씨티 | CITI|
+ * |우리BC카드(BC 매입) | 33 | 우리 | WOORI|
+ * |우리카드(우리 매입) | W1 | 우리 | WOORI|
+ * |우체국예금보험 | 37 | 우체국 | POST|
+ * |저축은행중앙회 | 39 | 저축 | SAVINGBANK|
+ * |전북은행 | 35 | 전북 | JEONBUKBANK|
+ * |제주은행 | 42 | 제주 | JEJUBANK|
+ * |카카오뱅크 | 15 | 카카오뱅크 | KAKAOBANK|
+ * |케이뱅크 | 3A | 케이뱅크 | KBANK|
+ * |토스뱅크 | 24 | 토스뱅크 | TOSSBANK|
+ * |하나카드 | 21 | 하나 | HANA|
+ * |현대카드 | 61 | 현대 | HYUNDAI|
+ * |KB국민카드 | 11 | 국민 | KOOKMIN|
+ * |NH농협카드 | 91 | 농협 | NONGHYEOP|
+ * |Sh수협은행 | 34 | 수협 | SUHYEOP|
+ * |페이코 | - | - | PCP|
+ * |KB증권 | - | - | KBS|
+ */
+export const convertCodeToCardKorName: Record<string, string> = {
+  '3K': '기업비씨',
+  '46': '광주',
+  '71': '롯데',
+  '30': '산업',
+  '31': 'BC',
+  '51': '삼성',
+  '38': '새마을',
+  '41': '신한',
+  '62': '신협',
+  '36': '씨티',
+  '33': '우리',
+  W1: '우리',
+  '37': '우체국',
+  '39': '저축',
+  '35': '전북',
+  '42': '제주',
+  '15': '카카오뱅크',
+  '3A': '케이뱅크',
+  '24': '토스뱅크',
+  '21': '하나',
+  '61': '현대',
+  '11': '국민',
+  '91': '농협',
+  '34': '수협',
+};

@@ -4,9 +4,11 @@ import {
   CreateChallengeReq,
   CreateLiveReq,
   CreateVodReq,
+  faqSchema,
   getChallengeIdSchema,
   getLiveIdSchema,
   getVodIdSchema,
+  liveTitleSchema,
   programAdminSchema,
   programBannerAdminDetailSchema,
   programBannerAdminListSchema,
@@ -247,6 +249,16 @@ export const useDeleteLiveMutation = ({
   });
 };
 
+export const useGetLiveFaq = (liveId: number | string) => {
+  return useQuery({
+    queryKey: ['useGetLiveFaq', liveId],
+    queryFn: async () => {
+      const res = await axios.get(`/live/${liveId}/faqs`);
+      return faqSchema.parse(res.data.data);
+    },
+  });
+};
+
 export const useGetVodQueryKey = 'useGetVodQueryKey';
 
 export const useGetVodQuery = ({
@@ -321,6 +333,16 @@ export const useDeleteVodMutation = ({
     },
     onSuccess: successCallback,
     onError: errorCallback,
+  });
+};
+
+export const useGetLiveTitle = (liveId: number | string) => {
+  return useQuery({
+    queryKey: [liveId, 'useGetLiveTitle'],
+    queryFn: async () => {
+      const res = await axios.get(`/live/${liveId}/title`);
+      return liveTitleSchema.parse(res.data.data);
+    },
   });
 };
 

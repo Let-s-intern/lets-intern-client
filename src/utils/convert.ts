@@ -1,6 +1,9 @@
 import {
   AttendanceResult,
   AttendanceStatus,
+  ChallengeType,
+  ChallengeUserType,
+  LiveProgressType,
   ProgramClassification,
 } from '../schema';
 
@@ -34,12 +37,23 @@ export const programClassificationToText: Record<
   PASS: '합격 후 성장',
 };
 
-export const challengeTypeToText: Record<string, string> = {
+export const challengeTypeToText: Record<ChallengeType, string> = {
   CAREER_START: '커리어 시작',
   DOCUMENT_PREPARATION: '서류 준비',
   MEETING_PREPARATION: '면접 준비',
   ETC: '기타',
+  PERSONAL_STATEMENT: '자기소개서',
+  PORTFOLIO: '포트폴리오',
 };
+
+export const challengeTypes: ChallengeType[] = [
+  'CAREER_START',
+  'DOCUMENT_PREPARATION',
+  'MEETING_PREPARATION',
+  'ETC',
+  'PERSONAL_STATEMENT',
+  'PORTFOLIO',
+];
 
 export const programStatusToText: Record<string, string> = {
   PREV: '모집 전',
@@ -47,11 +61,18 @@ export const programStatusToText: Record<string, string> = {
   POST: '모집 마감',
 };
 
-export const programPriceTypeToText: Record<string, string> = {
-  ALL: '전체',
-  BASIC: '베이직',
-  PREMIUM: '프리미엄',
-};
+export const programPriceTypeToText: Record<ChallengeUserType | 'ALL', string> =
+  {
+    ALL: '전체',
+    BASIC: '베이직',
+    PREMIUM: '프리미엄',
+  };
+
+export const programPriceTypes: (ChallengeUserType | 'ALL')[] = [
+  'ALL',
+  'BASIC',
+  'PREMIUM',
+];
 
 export const programParticipationTypeToText: Record<string, string> = {
   LIVE: 'LIVE',
@@ -84,6 +105,12 @@ export const gradeToText: Record<string, string> = {
   FOURTH: '4학년',
   ETC: '5학년 이상',
   GRADUATE: '졸업생',
+};
+
+export const liveProgressTypeToText: Record<LiveProgressType, string> = {
+  ALL: '온오프라인 병행',
+  ONLINE: '온라인',
+  OFFLINE: '오프라인',
 };
 
 export const wishJobToText: any = {

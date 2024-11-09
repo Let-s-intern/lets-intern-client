@@ -3,6 +3,7 @@ import { Route } from 'react-router-dom';
 import ChallengeOperationAdminLayout from './components/admin/challenge/ui/ChallengeOperationAdminLayout';
 import AdminLayout from './components/admin/ui/layout/AdminLayout';
 import { CurrentAdminChallengeProvider } from './context/CurrentAdminChallengeProvider';
+import AdminHome from './pages/admin/AdminHome';
 import MainBannerCreate from './pages/admin/banner/main-banner/MainBannerCreate';
 import MainBannerEdit from './pages/admin/banner/main-banner/MainBannerEdit';
 import MainBanners from './pages/admin/banner/main-banner/MainBanners';
@@ -27,13 +28,16 @@ import ChallengeOperationOnboarding from './pages/admin/challenge/ChallengeOpera
 import ChallengeOperationParticipants from './pages/admin/challenge/ChallengeOperationParticipants';
 import ChallengeOperationPayback from './pages/admin/challenge/ChallengeOperationPayback';
 import ChallengeOperationRegisterMission from './pages/admin/challenge/ChallengeOperationRegisterMission';
+import ChallengeCreate from './pages/admin/ChallengeCreate';
+import ChallengeEdit from './pages/admin/ChallengeEdit';
 import CouponCreate from './pages/admin/coupon/CouponCreate';
 import CouponEdit from './pages/admin/coupon/CouponEdit';
 import Coupons from './pages/admin/coupon/Coupons';
+import LiveCreate from './pages/admin/LiveCreate';
+import LiveEdit from './pages/admin/LiveEdit';
 import OnlineContents from './pages/admin/online-contents/OnlineContents';
 import OnlineContentsCreate from './pages/admin/online-contents/OnlineContentsCreate';
 import OnlineContentsEdit from './pages/admin/online-contents/OnlineContentsEdit';
-import AttendCheck from './pages/admin/program/AttendCheck';
 import ProgramCreate from './pages/admin/program/ProgramCreate';
 import ProgramEdit from './pages/admin/program/ProgramEdit';
 import AdminPrograms from './pages/admin/program/Programs';
@@ -53,27 +57,16 @@ import UserDetail from './pages/admin/user/UserDetail';
 import UserEdit from './pages/admin/user/UserEdit';
 import UserMemo from './pages/admin/user/UserMemo';
 import Users from './pages/admin/user/Users';
+import VodCreate from './pages/admin/VodCreate';
+import VodEdit from './pages/admin/VodEdit';
 
 // TODO: 평탄화(flatten) 작업 하기
 export const getAdminRoutes = () => {
   return (
     <Route path="/admin" element={<AdminLayout />}>
       {/* /admin */}
-      <Route path="" element={<AdminPrograms />} />
-      <Route path="programs">
-        {/* /admin/programs */}
-        <Route path="" element={<AdminPrograms />} />
-        {/* /admin/programs/create */}
-        <Route path="create" element={<ProgramCreate />} />
-        <Route path=":programId">
-          {/* /admin/programs/1/edit */}
-          <Route path="edit" element={<ProgramEdit />} />
-          {/* /admin/programs/1/users */}
-          <Route path="users" element={<ProgramUsers />} />
-          {/* /admin/programs/1/check-attendance */}
-          <Route path="check-attendance" element={<AttendCheck />} />
-        </Route>
-      </Route>
+      <Route path="" element={<AdminHome />} />
+
       <Route path="reviews">
         {/* /admin/reviews */}
         <Route path="" element={<AdminReviews />} />
@@ -190,6 +183,24 @@ export const getAdminRoutes = () => {
       <Route path="report/create" element={<AdminReportCreatePage />} />
       <Route path="report/edit/:id" element={<AdminReportEditPage />} />
       <Route path="report/applications" element={<ReportApplicationsPage />} />
+
+      {/* 프로그램 */}
+      <Route path="programs" element={<AdminPrograms />} />
+
+      {/* 프로그램 생성/편집 옛날 버전 */}
+      <Route path="programs/create" element={<ProgramCreate />} />
+      <Route path="programs/:programId/edit" element={<ProgramEdit />} />
+
+      {/* 프로그램 생성/편집 NEW버전 */}
+      <Route path="challenge/create" element={<ChallengeCreate />} />
+      <Route path="challenge/:challengeId/edit" element={<ChallengeEdit />} />
+      <Route path="live/create" element={<LiveCreate />} />
+      <Route path="live/:liveId/edit" element={<LiveEdit />} />
+      <Route path="vod/create" element={<VodCreate />} />
+      <Route path="vod/:vodId/edit" element={<VodEdit />} />
+
+      {/* 프로그램 참여자 */}
+      <Route path="programs/:programId/users" element={<ProgramUsers />} />
     </Route>
   );
 };

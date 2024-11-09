@@ -1,3 +1,5 @@
+import dayjs, { Dayjs } from 'dayjs';
+
 const formatDateString = (
   dateString: string,
   format?: { date: boolean; weekday: boolean; time: boolean },
@@ -64,4 +66,19 @@ export const formatMissionDateString = (dateString: string) => {
     endDate.getMinutes() > 9 ? endDate.getMinutes() : '0' + endDate.getMinutes()
   }`;
   return formattedString;
+};
+
+// yyyy년 mm월 dd일 (요일) hh시 mm분
+export const formatFullDateTime = (date: Dayjs | null, breakTime?: boolean) => {
+  const onlyDate = dayjs(date).format('YYYY년 MM월 DD일 (ddd)');
+  const onlyTime = dayjs(date).format('HH시 mm분');
+  return breakTime ? `${onlyDate}\n${onlyTime}` : `${onlyDate} ${onlyTime}`;
+};
+
+export const formatDate = (date: Dayjs | null) => {
+  return dayjs(date).format('YYYY년 MM월 DD일 (ddd)');
+};
+
+export const formatTime = (date: Dayjs | null) => {
+  return dayjs(date).format('HH시 mm분');
 };

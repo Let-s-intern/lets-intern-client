@@ -5,10 +5,12 @@ import TextField from '@mui/material/TextField';
 
 interface InputProps {
   type?: string;
+  size?: 'small' | 'medium';
   placeholder?: string;
   name?: string;
   label?: string;
   value?: string;
+  defaultValue?: string;
   disabled?: boolean;
   multiline?: boolean;
   rows?: number;
@@ -22,9 +24,11 @@ interface InputProps {
 
 const Input = ({
   type = 'text',
+  size,
   name,
   placeholder,
   value,
+  defaultValue,
   label,
   disabled,
   multiline,
@@ -63,10 +67,12 @@ const Input = ({
   const textField = (
     <TextField
       type={type}
+      size={size}
       label={label}
       placeholder={placeholder}
       name={name}
       value={value}
+      defaultValue={defaultValue}
       disabled={disabled}
       multiline={multiline}
       rows={rows}

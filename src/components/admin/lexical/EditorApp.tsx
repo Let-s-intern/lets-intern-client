@@ -8,7 +8,10 @@
 
 import { $createLinkNode } from '@lexical/link';
 import { $createListItemNode, $createListNode } from '@lexical/list';
-import { LexicalComposer } from '@lexical/react/LexicalComposer';
+import {
+  InitialConfigType,
+  LexicalComposer,
+} from '@lexical/react/LexicalComposer';
 import { OnChangePlugin } from '@lexical/react/LexicalOnChangePlugin';
 import { $createHeadingNode, $createQuoteNode } from '@lexical/rich-text';
 import {
@@ -16,9 +19,9 @@ import {
   $createTextNode,
   $getRoot,
   EditorState,
+  SerializedEditorState,
 } from 'lexical';
 import { useCallback, useEffect } from 'react';
-import { isDevPlayground } from './appSettings';
 import { FlashMessageContext } from './context/FlashMessageContext';
 import { SettingsContext, useSettings } from './context/SettingsContext';
 import { SharedAutocompleteContext } from './context/SharedAutocompleteContext';
@@ -26,12 +29,8 @@ import { SharedHistoryContext } from './context/SharedHistoryContext';
 import Editor from './Editor';
 import './index.css';
 import nodes from './nodes';
-import DocsPlugin from './plugins/DocsPlugin';
-import PasteLogPlugin from './plugins/PasteLogPlugin';
 import { TableContext } from './plugins/TablePlugin';
-import TestRecorderPlugin from './plugins/TestRecorderPlugin';
 import TypingPerfPlugin from './plugins/TypingPerfPlugin';
-import Settings from './Settings';
 import setupEnv from './setupEnv';
 import PlaygroundEditorTheme from './themes/PlaygroundEditorTheme';
 
@@ -154,11 +153,13 @@ function $prepopulatedRichText() {
 }
 
 function App({
-  editorStateJsonString,
+  initialEditorStateJsonString,
   onChange,
+  onChangeSerializedEditorState,
 }: {
-  editorStateJsonString: string;
+  initialEditorStateJsonString: string;
   onChange: (jsonString: string) => void;
+  onChangeSerializedEditorState?: (serialized: SerializedEditorState) => void;
 }): JSX.Element {
   useEffect(() => {
     const handleError = (error: Event) => {
@@ -181,20 +182,22 @@ function App({
     };
   }, []);
 
-  const handleChange = useCallback((editorState: EditorState) => {
-    editorState.read(() => {
-      const jsonString = JSON.stringify(editorState);
-      onChange(jsonString);
-    });
-  }, []);
+  const handleChange = useCallback(
+    (editorState: EditorState) => {
+      const json = editorState.toJSON();
+      onChangeSerializedEditorState?.(json);
+      onChange(JSON.stringify(json));
+    },
+    [onChange, onChangeSerializedEditorState],
+  );
 
   const {
     settings: { measureTypingPerf },
     setOption,
   } = useSettings();
 
-  const initialConfig = {
-    editorState: editorStateJsonString,
+  const initialConfig: InitialConfigType = {
+    editorState: initialEditorStateJsonString,
     namespace: 'LetsCareerBlog',
     nodes: [...nodes],
     onError: (error: Error) => {
@@ -220,10 +223,10 @@ function App({
             <div className="editor-shell">
               <Editor />
             </div>
-            <Settings />
-            {isDevPlayground ? <DocsPlugin /> : null}
-            {isDevPlayground ? <PasteLogPlugin /> : null}
-            {isDevPlayground ? <TestRecorderPlugin /> : null}
+            {/* <Settings /> */}
+            {/* {isDevPlayground ? <DocsPlugin /> : null} */}
+            {/* {isDevPlayground ? <PasteLogPlugin /> : null} */}
+            {/* {isDevPlayground ? <TestRecorderPlugin /> : null} */}
             {measureTypingPerf ? <TypingPerfPlugin /> : null}
             <OnChangePlugin onChange={handleChange} />
           </SharedAutocompleteContext>
@@ -234,17 +237,20 @@ function App({
 }
 
 export default function EditorApp({
-  editorStateJsonString = emptyEditorState,
-  onChange,
+  initialEditorStateJsonString = emptyEditorState,
+  onChange = () => {},
+  onChangeSerializedEditorState,
 }: {
-  editorStateJsonString?: string;
-  onChange: (jsonString: string) => void;
+  initialEditorStateJsonString?: string;
+  onChange?: (jsonString: string) => void;
+  onChangeSerializedEditorState?: (serialized: SerializedEditorState) => void;
 }): JSX.Element {
   return (
     <SettingsContext>
       <FlashMessageContext>
         <App
-          editorStateJsonString={editorStateJsonString}
+          initialEditorStateJsonString={initialEditorStateJsonString}
+          onChangeSerializedEditorState={onChangeSerializedEditorState}
           onChange={onChange}
         />
       </FlashMessageContext>

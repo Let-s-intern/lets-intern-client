@@ -1,5 +1,5 @@
+import { twMerge } from '@/lib/twMerge';
 import { NavLink } from 'react-router-dom';
-import { twMerge } from 'tailwind-merge';
 
 export const HeaderButton = ({
   children,

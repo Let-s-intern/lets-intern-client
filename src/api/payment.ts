@@ -1,6 +1,10 @@
 import { useQuery } from '@tanstack/react-query';
 import axios from '../utils/axios';
-import { paymentDetailType, paymentListType } from './paymentSchema';
+import {
+  CardPromotionSchema,
+  paymentDetailType,
+  paymentListType,
+} from './paymentSchema';
 
 export const UsePaymentQueryKey = 'usePaymentQueryKey';
 
@@ -24,5 +28,15 @@ export const usePaymentDetailQuery = (paymentId: string | undefined) => {
       return paymentDetailType.parse(res.data.data);
     },
     enabled: !!paymentId,
+  });
+};
+
+export const useGetTossCardPromotion = () => {
+  return useQuery({
+    queryKey: ['tossCardPromotion'],
+    queryFn: async () => {
+      const res = await axios.get('/pg/promotions/card');
+      return CardPromotionSchema.parse(res.data.data);
+    },
   });
 };

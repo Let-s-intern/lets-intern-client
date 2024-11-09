@@ -13,9 +13,14 @@ import { Button, Switch } from '@mui/material';
 import { useQueryClient } from '@tanstack/react-query';
 import dayjs from 'dayjs';
 import { useState } from 'react';
-import { FaCopy, FaList, FaPencil, FaTrashCan } from 'react-icons/fa6';
-import { useNavigate } from 'react-router-dom';
-import ActionButton from '../../../components/admin/ui/button/ActionButton';
+import {
+  FaCopy,
+  FaList,
+  FaPenToSquare,
+  FaPlus,
+  FaTrashCan,
+} from 'react-icons/fa6';
+import { Link, useNavigate } from 'react-router-dom';
 import Header from '../../../components/admin/ui/header/Header';
 import Heading from '../../../components/admin/ui/heading/Heading';
 import AdminPagination from '../../../components/admin/ui/pagination/AdminPagination';
@@ -28,6 +33,7 @@ import {
 
 const Programs = () => {
   const [pageNum, setPageNum] = useState<number>(1);
+  const navigate = useNavigate();
 
   const sizePerPage = 10;
 
@@ -39,12 +45,43 @@ const Programs = () => {
   const maxPage = data?.pageInfo?.totalPages || 1;
 
   return (
-    <div className="p-8">
+    <div className="mx-3 mb-40 mt-3">
       <Header>
         <Heading>프로그램 관리</Heading>
-        <ActionButton to="/admin/programs/create" bgColor="blue">
-          등록
-        </ActionButton>
+        <div className="flex items-center justify-center gap-2">
+          <Button
+            variant="outlined"
+            color="primary"
+            startIcon={<FaPlus size={12} />}
+            onClick={() => navigate(`/admin/programs/create`)}
+          >
+            등록(old version)
+          </Button>
+          <Button
+            variant="contained"
+            color="primary"
+            startIcon={<FaPlus size={12} />}
+            onClick={() => navigate(`/admin/challenge/create`)}
+          >
+            챌린지 등록
+          </Button>
+          <Button
+            variant="contained"
+            color="primary"
+            startIcon={<FaPlus size={12} />}
+            onClick={() => navigate(`/admin/live/create`)}
+          >
+            LIVE 클래스 등록
+          </Button>
+          <Button
+            variant="contained"
+            color="primary"
+            startIcon={<FaPlus size={12} />}
+            onClick={() => navigate(`/admin/vod/create`)}
+          >
+            VOD 클래스 등록
+          </Button>
+        </div>
       </Header>
       <main>
         {isLoading ? (
@@ -132,7 +169,16 @@ const Row = ({ program }: { program: ProgramAdminListItem }) => {
         </span>
       </TD>
       <TD>{newProgramTypeToText[program.programInfo.programType]}</TD>
-      <TD>{program.programInfo.title}</TD>
+      <TD>
+        {program.programInfo.title} (
+        <Link
+          className="text-blue-500 underline transition hover:text-blue-300"
+          to={`/program/${program.programInfo.programType.toLowerCase()}/${program.programInfo.id}`}
+        >
+          보기
+        </Link>
+        )
+      </TD>
       <TD>{programStatusToText[program.programInfo.programStatusType]}</TD>
       <TD>
         {program.programInfo.programType === 'VOD' ? (
@@ -162,12 +208,27 @@ const Row = ({ program }: { program: ProgramAdminListItem }) => {
             variant="outlined"
             color="primary"
             size="small"
-            startIcon={<FaPencil size={12} />}
-            // endIcon={<FaArrowRight size={10} />}
+            startIcon={<FaPenToSquare size={12} />}
             onClick={() => {
-              navigate(
-                `/admin/programs/${program.programInfo.id}/edit?programType=${program.programInfo.programType}`,
-              );
+              // navigate(
+              //   `/admin/programs/${program.programInfo.id}/edit?programType=${program.programInfo.programType}`,
+              // );
+              switch (program.programInfo.programType) {
+                case 'CHALLENGE':
+                  navigate(`/admin/challenge/${program.programInfo.id}/edit`);
+                  break;
+                case 'LIVE':
+                  navigate(`/admin/live/${program.programInfo.id}/edit`);
+                  break;
+                case 'VOD':
+                  // navigate(
+                  //   `/admin/programs/${program.programInfo.id}/edit?programType=VOD`,
+                  // );
+                  navigate(`/admin/vod/${program.programInfo.id}/edit`);
+                  break;
+                case 'REPORT':
+                  throw new Error("Don't use this page");
+              }
             }}
           >
             수정

@@ -26,10 +26,13 @@ import Privacy from './pages/common/mypage/Privacy';
 import ReportCreditDelete from './pages/common/mypage/ReportCreditDelete';
 import ReportCreditDetail from './pages/common/mypage/ReportCreditDetail';
 import Review from './pages/common/mypage/Review';
+import ChallengeDetailSSRPage from './pages/common/program/ChallengeDetailSSRPage';
+import LiveDetailSSRPage from './pages/common/program/LiveDetailSSRPage';
 import Payment from './pages/common/program/Payment';
 import PaymentFail from './pages/common/program/PaymentFail';
+import PaymentInputPage from './pages/common/program/PaymentInputPage';
 import PaymentResult from './pages/common/program/PaymentResult';
-import ProgramDetail from './pages/common/program/ProgramDetail';
+import ProgramDetailLegacy from './pages/common/program/ProgramDetailLegacy';
 import Programs from './pages/common/program/Programs';
 import ReportApplyPage from './pages/common/report/ReportApplyPage';
 import ReportManagementPage from './pages/common/report/ReportManagementPage';
@@ -64,29 +67,42 @@ const Router = () => {
               <Route path="" element={<Home />} />
               {/* /about */}
               <Route path="about" element={<About />} />
-              {/* /payment */}
+
+              {/* /program 프로그램 목록 */}
+              <Route path="program" element={<Programs />} />
+
+              {/* 챌린지 상세 페이지 (Deprecated) */}
+              <Route
+                path="program/old/challenge/:programId"
+                element={<ProgramDetailLegacy programType="challenge" />}
+              />
+
+              {/* 챌린지 상세 페이지 */}
+              <Route
+                path="program/challenge/:id/:title?"
+                element={<ChallengeDetailSSRPage />}
+              />
+
+              {/* LIVE 클래스 상세 페이지 (Deprecated) */}
+              <Route
+                path="program/old/live/:programId"
+                element={<ProgramDetailLegacy programType="live" />}
+              />
+
+              {/* LIVE 클래스 상세 페이지 */}
+              <Route
+                path="program/live/:id/:title?"
+                element={<LiveDetailSSRPage />}
+              />
+
+              {/* 프로그램 결제 페이지 */}
+              <Route path="payment-input" element={<PaymentInputPage />} />
               <Route path="payment" element={<Payment />} />
-              {/* /order */}
+
+              {/* 프로그램 결제 결과 페이지 */}
               <Route path="order/result" element={<PaymentResult />} />
               <Route path="order/fail" element={<PaymentFail />} />
 
-              {/* /program */}
-              <Route path="program" element={<Programs />} />
-              {/* /program/detail/:programId */}
-              {/* <Route
-              path="program/detail/:programId"
-              element={<ProgramDetailRegacy />}
-            /> */}
-              {/* /program/challenge/:programId */}
-              <Route
-                path="program/challenge/:programId"
-                element={<ProgramDetail programType="challenge" />}
-              />
-              {/* /program/live/:programId */}
-              <Route
-                path="program/live/:programId"
-                element={<ProgramDetail programType="live" />}
-              />
               {/* /program/:programId/review/new */}
               <Route
                 path="program/:programId/review/new"
