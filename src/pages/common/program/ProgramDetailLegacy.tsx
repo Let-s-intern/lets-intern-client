@@ -1,5 +1,6 @@
 import { isNewProgram } from '@/lib/isDeprecatedProgram';
 import { twMerge } from '@/lib/twMerge';
+import FloatingNotification from '@components/common/FloatingNotification';
 import { useMediaQuery } from '@mui/material';
 import { useQuery } from '@tanstack/react-query';
 import dayjs from 'dayjs';
@@ -181,24 +182,7 @@ const ProgramDetailLegacy = ({ programType }: ProgramDetailProps) => {
                     className="h-[5px] w-[70px] shrink-0 cursor-pointer rounded-full bg-neutral-80"
                   />
                 </div>
-                {isInstagramAlertOpen && (
-                  <div className="flex w-full items-start gap-x-2 bg-[#FEFFC8] p-4">
-                    <img
-                      src="/icons/warning.svg"
-                      alt="warning"
-                      className="h-6 w-6"
-                    />
-                    <div className="flex w-full flex-col text-xsmall14 text-neutral-0">
-                      <p className="font-bold">
-                        [결제오류 방지] 외부 브라우저로 접속해주세요
-                      </p>
-                      <p>
-                        상단 더보기 버튼 혹은 하단 공유 버튼을 누르면 외부
-                        브라우저로 이동할 수 있어요.
-                      </p>
-                    </div>
-                  </div>
-                )}
+                {isInstagramAlertOpen && <FloatingNotification />}
                 {loading ? (
                   <FilledButton
                     caption={'로딩 중 ...'}
