@@ -3,7 +3,10 @@
  * 새로운 버전의 프로그램은 description이 무조건 JSON Object 형식입니다.
  */
 export function isDeprecatedProgram(program: { desc?: string | null }) {
-  return program.desc && program.desc.startsWith('<');
+  return (
+    !program.desc ||
+    (program.desc && (program.desc === '' || program.desc.startsWith('<')))
+  );
 }
 
 /**

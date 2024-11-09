@@ -150,10 +150,10 @@ function PointBox({ point, index }: { point: Point; index: number }) {
       <div className="mb-2.5 w-fit rounded-full bg-primary-90 px-2 py-1 text-xxsmall12 font-semibold text-white lg:text-xsmall14">
         Point {index + 1}
       </div>
-      <span className="mb-4 block whitespace-pre-line text-small18 font-semibold lg:text-medium24">
+      <span className="mb-4 block whitespace-pre text-small18 font-semibold lg:text-medium24">
         {point.title}
       </span>
-      <span className="whitespace-pre-line text-xsmall14 font-medium text-neutral-30 lg:text-xsmall16">
+      <span className="whitespace-pre break-keep text-xsmall14 font-medium text-neutral-30 lg:text-xsmall16">
         {point.content}
       </span>
       <img

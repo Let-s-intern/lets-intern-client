@@ -5,7 +5,10 @@ import ChevronDown from '@/assets/icons/chevron-down.svg?react';
 import ClockIcon from '@/assets/icons/clock.svg?react';
 import { useInstallmentPayment } from '@/hooks/useInstallmentPayment';
 import { ChallengeIdSchema, challengeTypeSchema } from '@/schema';
-import { formatFullDateTime } from '@/utils/formatDateString';
+import {
+  formatFullDateTime,
+  formatFullDateTimeWithOutYear,
+} from '@/utils/formatDateString';
 import { ChallengeColor } from '@components/ChallengeView';
 import BasicInfoRow from '@components/common/program/program-detail/basicInfo/BasicInfoRow';
 
@@ -69,6 +72,12 @@ const ChallengeBasicInfo = ({
     }
   })();
 
+  const startDate = formatFullDateTime(challenge.startDate, true);
+  const endDate =
+    challenge.startDate?.year() === challenge.endDate?.year()
+      ? formatFullDateTimeWithOutYear(challenge.endDate, true)
+      : formatFullDateTime(challenge.endDate, true);
+
   return (
     <div className="flex flex-col gap-6 pb-10 md:flex-row md:pb-20">
       <img
@@ -86,7 +95,7 @@ const ChallengeBasicInfo = ({
             <BasicInfoRow
               icon={<Announcement />}
               title="진행 기간"
-              content={`${formatFullDateTime(challenge.startDate, true)}\n- ${formatFullDateTime(challenge.endDate, true)}`}
+              content={`${startDate}\n- ${endDate}`}
             />
             <BasicInfoRow
               icon={<ClockIcon />}
