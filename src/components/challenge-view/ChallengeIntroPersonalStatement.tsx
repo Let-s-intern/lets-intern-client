@@ -1,7 +1,7 @@
+import Clock from '@/assets/icons/personal-statement-clock.svg?react';
 import { twMerge } from '@/lib/twMerge';
 import { useMediaQuery } from '@mui/material';
 import { Fragment, ReactNode } from 'react';
-import { LuAlarmClock } from 'react-icons/lu';
 
 import Description from '@components/common/program/program-detail/Description';
 import Heading2 from '@components/common/program/program-detail/Heading2';
@@ -25,10 +25,10 @@ const STAR = {
 };
 
 const POINT = [
-  { title: '두괄식', desc: ['핵심 내용을', '첫문단에 작성하는 방식'] },
+  { title: '두괄식', desc: ['핵심 내용을\n첫문단에 작성하는 방식'] },
   {
     title: '수치화',
-    desc: ['자신의 성과를 더 구체적이고', '객관적으로 표현하는 방식'],
+    desc: ['자신의 성과를 더 구체적이고\n객관적으로 표현'],
   },
 ];
 
@@ -47,7 +47,7 @@ function ChallengeIntroPersonalStatement() {
       <div className="w-full max-w-[1000px] px-5 py-20 md:py-40 md:text-center xl:px-0">
         <div className="flex flex-col gap-2 md:items-center md:gap-3">
           <Badge>
-            <LuAlarmClock size={isDesktop ? 32 : 24} />
+            <Clock width={isDesktop ? 40 : 24} height={isDesktop ? 40 : 24} />
             <span>평균 10초</span>
           </Badge>
           <Heading2>{TITLE1.join('\n')}</Heading2>
@@ -85,7 +85,7 @@ function ChallengeIntroPersonalStatement() {
 
           {POINT.map(({ title, desc }, index) => (
             <Fragment key={title}>
-              <BoxItem title={title}>
+              <BoxItem title={title} padding>
                 {desc.map((item) => (
                   <span key={item} className="block">
                     {item}
@@ -131,19 +131,29 @@ function ChallengeIntroPersonalStatement() {
 
 function Badge({ children }: { children?: ReactNode }) {
   return (
-    <div className="gap-1.6 flex w-fit items-center gap-1 rounded-xxs bg-[#FFF7EF] px-2.5 py-1 text-small18 font-bold text-[#FB8100] md:text-xlarge28">
+    <div className="gap-1.6 flex w-fit items-center gap-1 rounded-xxs bg-[#FFF7EF] px-2.5 py-1 text-small18 font-bold text-[#FB8100] md:py-2 md:text-xlarge28">
       {children}
     </div>
   );
 }
 
-function BoxItem({ title, children }: { title: string; children?: ReactNode }) {
+function BoxItem({
+  title,
+  children,
+  padding,
+}: {
+  title: string;
+  children?: ReactNode;
+  padding?: boolean;
+}) {
   return (
-    <div className="flex-1 text-center">
-      <span className="block text-xlarge28 font-bold text-[#008CC3]">
+    <div
+      className={`flex flex-1 flex-col ${padding ? 'gap-y-2 md:gap-y-5' : ''} text-center`}
+    >
+      <span className="block text-small20 font-bold text-[#008CC3]">
         {title}
       </span>
-      <p className="block text-xxsmall12 font-medium text-neutral-40 md:text-small18">
+      <p className="block whitespace-pre text-xxsmall12 font-medium text-neutral-40 md:whitespace-normal md:text-small18">
         {children}
       </p>
     </div>
