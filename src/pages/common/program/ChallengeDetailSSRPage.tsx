@@ -17,7 +17,6 @@ import {
 } from '@/utils/url';
 import ChallengeView from '@components/ChallengeView';
 import CommonHelmet from '@components/common/CommonHelmet';
-import FilledButton from '@components/common/program/program-detail/button/FilledButton';
 import GradientButton from '@components/common/program/program-detail/button/GradientButton';
 import NotiButton from '@components/common/program/program-detail/button/NotiButton';
 import { Duration } from '@components/Duration';
@@ -208,7 +207,7 @@ export function MobileApplyCTA({
         {isOutOfDate ? (
           <NotiButton text={'출시알림신청'} className="early_button" />
         ) : isAlreadyApplied ? (
-          <FilledButton caption="이미 신청이 완료되었습니다" disabled={true} />
+          <DisabledButton />
         ) : (
           <>
             <div>
@@ -255,7 +254,7 @@ export function DesktopApplyCTA({
         {isOutOfDate ? (
           <NotiButton text={'출시알림신청'} className="early_button" />
         ) : isAlreadyApplied ? (
-          <FilledButton caption="이미 신청이 완료되었습니다" disabled={true} />
+          <DisabledButton />
         ) : (
           <>
             <div className="flex items-center gap-2">
@@ -272,6 +271,17 @@ export function DesktopApplyCTA({
         )}
       </div>
     </div>
+  );
+}
+
+function DisabledButton() {
+  return (
+    <button
+      disabled
+      className="w-full rounded-sm bg-neutral-80 px-6 py-3 text-xsmall14 font-medium text-neutral-40"
+    >
+      이미 신청이 완료되었습니다
+    </button>
   );
 }
 

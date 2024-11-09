@@ -13,7 +13,7 @@ const NotiButton = ({ text, className }: NotiButtonProps) => {
       target="_blank"
       rel="noreferrer"
       className={twMerge(
-        'flex w-full items-center justify-center gap-1 rounded-md border border-neutral-0 bg-point px-6 py-3',
+        'flex w-full items-center justify-center gap-1 rounded-sm border border-neutral-0 bg-point px-6 py-3',
         className,
       )}
     >

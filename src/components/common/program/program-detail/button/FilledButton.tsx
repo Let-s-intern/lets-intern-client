@@ -1,3 +1,5 @@
+import { twMerge } from '@/lib/twMerge';
+
 interface FilledButtonProps {
   caption: string;
   onClick?: React.MouseEventHandler<HTMLButtonElement>;
@@ -15,9 +17,11 @@ const FilledButton = ({
     <button
       onClick={onClick}
       disabled={disabled}
-      className={`text-1.125-medium w-full rounded-md ${
-        disabled ? 'bg-neutral-0/50' : 'bg-primary'
-      } px-6 py-3 text-neutral-100 ${className}`}
+      className={twMerge(
+        'w-full rounded-md px-6 py-3 text-small18 font-medium text-neutral-100',
+        disabled ? 'bg-neutral-0/50' : 'bg-primary',
+        className,
+      )}
     >
       {caption}
     </button>
