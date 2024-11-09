@@ -76,7 +76,7 @@ const LiveView: React.FC<{ live: LiveIdSchema; isPreview?: boolean }> = ({
 
           <div
             id={PROGRAM_CURRICULUM_ID}
-            className="live_curriculum flex w-full max-w-[1200px] flex-col px-5 pb-[70px] md:px-10 md:pb-[140px]"
+            className="live_curriculum flex w-full max-w-[1000px] flex-col px-5 pb-[70px] md:px-10 md:pb-[140px]"
           >
             <LiveCurriculum
               curriculum={receivedContent.curriculum}
@@ -102,7 +102,7 @@ const LiveView: React.FC<{ live: LiveIdSchema; isPreview?: boolean }> = ({
             />
           </section>
 
-          <div className="live_faq flex w-full max-w-[1200px] flex-col px-5 pb-8 pt-[70px] md:gap-20 md:px-10 md:pb-[130px] md:pt-40">
+          <div className="live_faq flex w-full max-w-[1000px] flex-col px-5 pb-8 pt-[70px] md:gap-20 md:px-10 md:pb-[130px] md:pt-40">
             {receivedContent.blogReview && (
               <ProgramDetailBlogReviewSection
                 review={receivedContent.blogReview}
