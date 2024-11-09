@@ -1,11 +1,10 @@
 import { LuCalendarDays } from 'react-icons/lu';
 
-import { useGetTossCardPromotion } from '@/api/payment';
-import { convertCodeToCardKorName } from '@/api/paymentSchema';
 import Announcement from '@/assets/icons/announcement.svg?react';
 import ChevronDown from '@/assets/icons/chevron-down.svg?react';
 import ClockIcon from '@/assets/icons/clock.svg?react';
 import LaptopIcon from '@/assets/icons/laptop.svg?react';
+import { useInstallmentPayment } from '@/hooks/useInstallmentPayment';
 import { ChallengeIdSchema } from '@/schema';
 import { formatFullDateTime } from '@/utils/formatDateString';
 import { ChallengeColor } from '@components/ChallengeView';
@@ -30,28 +29,11 @@ const ChallengeInfoBottom = ({
   colors: ChallengeColor;
 }) => {
   const isMobile = useMediaQuery('(max-width: 768px)');
-  const { data, isLoading } = useGetTossCardPromotion();
-
-  const findCard = () => {
-    if (!data) return { months: null, banks: [] };
-
-    const allMonths = data.interestFreeCards.flatMap(
-      (card) => card.installmentFreeMonths,
-    );
-    const uniqueMonths = Array.from(new Set(allMonths)).sort((a, b) => b - a);
-
-    const targetMonth = uniqueMonths[1] ?? uniqueMonths[0] ?? null;
-    if (!targetMonth) return { months: null, banks: [] };
-
-    // 선택된 개월 수를 제공하는 은행 목록 필터링
-    const banks = data.interestFreeCards
-      .filter((card) => card.installmentFreeMonths.includes(targetMonth))
-      .map((card) => convertCodeToCardKorName[card.issuerCode]);
-
-    return { months: targetMonth, banks };
-  };
-
-  const { months: installmentMonths, banks } = findCard();
+  const {
+    isLoading,
+    months: installmentMonths,
+    banks,
+  } = useInstallmentPayment();
 
   const priceInfo = challenge.priceInfo[0];
 
@@ -62,9 +44,12 @@ const ChallengeInfoBottom = ({
             installmentMonths,
         )
       : null;
-
   const totalPrice = (priceInfo?.price || 0) - (priceInfo?.discount || 0);
   const showMonthlyPrice = priceInfo && totalPrice >= 50000;
+  const regularPrice =
+    priceInfo.challengePriceType === 'CHARGE'
+      ? priceInfo.price
+      : (priceInfo.price ?? 0) + (priceInfo.refund ?? 0); // 정가
 
   return (
     <section className="flex w-full max-w-[1000px] flex-col gap-y-8 md:gap-y-20">
@@ -146,7 +131,7 @@ const ChallengeInfoBottom = ({
               <div className="flex w-full flex-col gap-y-2.5 border-b border-neutral-80 pb-[14px] pt-2.5 text-neutral-0">
                 <div className="flex w-full items-center justify-between gap-x-4 text-xsmall16">
                   <span className="font-medium">정가</span>
-                  <span>{priceInfo.price?.toLocaleString()}원</span>
+                  <span>{regularPrice?.toLocaleString()}원</span>
                 </div>
                 <div className="flex w-full items-center justify-between gap-x-4 text-xsmall16">
                   <span className="font-bold" style={{ color: colors.primary }}>
@@ -186,7 +171,7 @@ const ChallengeInfoBottom = ({
                     </span>
                   </div>
                   <p className="text-xsmall14 text-neutral-30">
-                    {!data || isLoading
+                    {isLoading
                       ? '무이자 할부 시'
                       : `${banks.join(', ')} ${installmentMonths}개월 무이자 할부 시`}
                   </p>

@@ -49,8 +49,8 @@ const ChallengeIntroCareerStart = ({
             <Description className="md:text-center">
               렛츠커리어의 체계적인 커리큘럼으로
               <br className="hidden md:block" /> 2주 만에
-              <br className="md:hidden" />
-              서류 완성해서 취업씬으로 나갈 수 있어요!
+              <br className="md:hidden" /> 서류 완성해서 취업씬으로 나갈 수
+              있어요!
             </Description>
           </div>
           <div className="relative flex w-full flex-col items-center">

@@ -36,7 +36,6 @@ export const useGetTossCardPromotion = () => {
     queryKey: ['tossCardPromotion'],
     queryFn: async () => {
       const res = await axios.get('/pg/promotions/card');
-      console.log('res', res);
       return CardPromotionSchema.parse(res.data.data);
     },
   });
