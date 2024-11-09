@@ -124,10 +124,10 @@ const ChallengeDifferent = ({
               비교 불가!
             </p>
             <div className="whitespace-pre text-[22px] font-bold text-black md:text-center md:text-xlarge28">
-              <span>{challengeTitle}만의 차별점,</span>
+              <span>{challengeTitle}만의</span>
               <br />
               <span>
-                이 모든걸{' '}
+                차별점, 이 모든걸{' '}
                 <img
                   className="inline-block h-auto w-8 md:w-10"
                   src={`/icons/${iconName}`}
@@ -172,7 +172,12 @@ const ChallengeDifferent = ({
 
       {/* 혜택 */}
       <div className="flex w-full flex-col gap-y-8 md:items-center md:gap-y-16">
-        <p className="whitespace-pre-line text-small20 font-bold md:text-center md:text-xlarge28">{`여기서 끝이 아니죠\n${challengeTitle} 참여자만을 위한 트리플 혜택!`}</p>
+        <p className="whitespace-pre-line text-small20 font-bold md:text-center md:text-xlarge28">
+          여기서 끝이 아니죠
+          <br />
+          {challengeTitle}
+          <br className="md:hidden" /> 참여자만을 위한 트리플 혜택!
+        </p>
         <div className="-mx-5 flex w-fit flex-col gap-y-4 overflow-x-auto px-5 md:-mx-10 md:px-10 lg:px-0">
           <BenefitCard
             title={tripleBenefits[0].title}
