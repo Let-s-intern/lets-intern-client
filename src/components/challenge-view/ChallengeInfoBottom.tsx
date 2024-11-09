@@ -150,8 +150,12 @@ const ChallengeInfoBottom = ({
               </p>
               <div className="flex flex-col gap-y-0.5 text-xsmall14">
                 {priceReason.map((reason, index) => (
-                  <div key={index} className="flex items-center gap-x-0.5">
-                    <ChevronDown width={24} height={24} />
+                  <div key={index} className="flex gap-x-0.5">
+                    <ChevronDown
+                      width={24}
+                      height={24}
+                      className="text-neutral-0"
+                    />
                     <p className="whitespace-pre text-black">{reason}</p>
                   </div>
                 ))}
