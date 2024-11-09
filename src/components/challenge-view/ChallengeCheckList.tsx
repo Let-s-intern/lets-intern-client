@@ -214,7 +214,7 @@ function ChallengeCheckList({
         </Description>
       </div>
 
-      <div className="flex flex-col gap-16 md:gap-32">
+      <div className="flex w-full flex-col gap-16 md:gap-32 md:px-16">
         {checkList.map((item, index) => (
           <div
             key={item.title[0]}
@@ -231,7 +231,7 @@ function ChallengeCheckList({
                 <span key={ele}>{ele}</span>
               ))}
             </Box>
-            <div className="flex flex-col gap-5">
+            <div className="flex w-full flex-col gap-5 px-5 md:px-28">
               {item.content.map((group) => (
                 <CheckList key={group[0]} colors={colors}>
                   {group.map((ele) => (

@@ -231,7 +231,7 @@ const ChallengeView: React.FC<{
             />
           </section>
 
-          <div className="challenge_faq flex w-full flex-col gap-20 px-5 pb-8 pt-16 md:items-center md:gap-40 md:px-10 md:pb-32 md:pt-36">
+          <div className="challenge_faq flex w-full flex-col px-5 pb-8 pt-16 md:items-center md:px-10 md:pb-32 md:pt-36">
             {receivedContent.blogReview ? (
               <ProgramDetailBlogReviewSection
                 review={receivedContent.blogReview}

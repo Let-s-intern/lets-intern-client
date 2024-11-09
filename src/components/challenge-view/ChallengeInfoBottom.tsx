@@ -90,7 +90,7 @@ const ChallengeInfoBottom = ({
         style={{ color: colors.primary }}
       >
         {isMobile ? (
-          <div className="flex flex-1 items-center justify-center rounded-md bg-neutral-95 px-6 py-5">
+          <div className="flex w-full flex-1 items-center justify-center rounded-md bg-neutral-95 px-6 py-5">
             <div className="flex w-full flex-col gap-y-5">
               <BasicInfoRow
                 icon={<Announcement />}
@@ -116,7 +116,7 @@ const ChallengeInfoBottom = ({
           </div>
         ) : (
           <div
-            className="flex flex-1 flex-col gap-y-4"
+            className="flex w-full flex-1 flex-col gap-y-4"
             style={{ color: colors.primary }}
           >
             <BasicInfoBottomRow
@@ -141,17 +141,23 @@ const ChallengeInfoBottom = ({
             />
           </div>
         )}
-        <div className="flex flex-1 flex-col items-center justify-center gap-y-5 rounded-md bg-neutral-95 px-6 pb-9 pt-5">
+        <div className="flex w-full flex-1 flex-col items-center justify-center gap-y-5 rounded-md bg-neutral-95 px-6 pb-9 pt-5">
           <div className="flex w-full flex-col gap-y-6">
             <div className="flex w-full flex-col gap-y-[14px]">
               <p className="text-small18 font-bold text-black">
                 {challenge.title}
               </p>
-              <div className="flex flex-col gap-y-0.5 text-xsmall14">
+              <div className="flex w-full flex-col gap-y-0.5 text-xsmall14">
                 {priceReason.map((reason, index) => (
-                  <div key={index} className="flex items-center gap-x-0.5">
-                    <ChevronDown width={24} height={24} />
-                    <p className="whitespace-pre text-black">{reason}</p>
+                  <div key={index} className="flex w-full gap-x-0.5">
+                    <ChevronDown
+                      width={24}
+                      height={24}
+                      className="shrink-0 text-neutral-0"
+                    />
+                    <p className="grow whitespace-pre text-wrap break-keep text-black">
+                      {reason}
+                    </p>
                   </div>
                 ))}
               </div>

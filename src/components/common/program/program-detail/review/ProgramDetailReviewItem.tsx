@@ -5,12 +5,14 @@ interface ProgramDetailReviewItemProps {
   type: 'challenge' | 'live';
   review: ContentReviewType;
   color: string;
+  bgColor: string;
 }
 
 const ProgramDetailReviewItem = ({
   type,
   review,
   color,
+  bgColor,
 }: ProgramDetailReviewItemProps) => {
   const maskingName = (name: string) => {
     if (name === '익명') return name;
@@ -34,7 +36,8 @@ const ProgramDetailReviewItem = ({
         className={`flex h-[152px] w-full flex-col gap-y-3 rounded-b-[10px] border-[1.5px] border-neutral-85 bg-white px-[22px] pb-9 pt-7 md:h-[160px] ${type === 'live' ? 'rounded-t-[10px]' : ''}`}
       >
         <div
-          className={`flex w-fit items-center rounded-xs px-2 py-1.5 ${type === 'challenge' ? 'bg-[#F3F4FF]' : 'bg-primary-10'}`}
+          className={`flex w-fit items-center rounded-xs px-2 py-1.5`}
+          style={{ backgroundColor: bgColor }}
         >
           {Array(5)
             .fill(0)

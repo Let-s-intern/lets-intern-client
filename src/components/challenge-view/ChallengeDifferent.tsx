@@ -18,7 +18,7 @@ const { PERSONAL_STATEMENT, PORTFOLIO } = challengeTypeSchema.enum;
 
 export const tripleBenefits = [
   {
-    title: '온라인 대시보드',
+    title: '나만의 챌린지 대시보드를 통해 참여',
     options: [
       `챌린지 참여가 종료되어도, 참여했던 미션 무한 열람 및 아카이빙`,
       `미션 현황과 기수별 주요 공지도 함께 열람할 수 있어 몰입감 UP!`,
@@ -178,7 +178,10 @@ const ChallengeDifferent = ({
           {challengeTitle}
           <br className="md:hidden" /> 참여자만을 위한 트리플 혜택!
         </p>
-        <div className="-mx-5 flex w-fit flex-col gap-y-4 overflow-x-auto px-5 md:-mx-10 md:px-10 lg:px-0">
+        <div
+          className="-mx-5 flex w-fit flex-col gap-y-4 overflow-x-auto px-5 md:-mx-10 md:px-10 lg:px-0"
+          style={{ color: colors.primary }}
+        >
           <BenefitCard
             title={tripleBenefits[0].title}
             options={tripleBenefits[0].options}

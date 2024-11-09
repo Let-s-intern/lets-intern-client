@@ -1,7 +1,7 @@
+import Check from '@/assets/icons/chevron-down.svg?react';
 import { twMerge } from '@/lib/twMerge';
 import { Dayjs } from 'dayjs';
 import { ReactNode, useMemo } from 'react';
-import { FaCheck } from 'react-icons/fa6';
 import { clientOnly } from 'vike-react/clientOnly';
 
 import { ChallengeType, challengeTypeSchema } from '@/schema';
@@ -212,8 +212,9 @@ const ChallengePointView = ({
                 <ul className="flex flex-col gap-1 pl-1">
                   {MISSION.content.map((item) => (
                     <li key={item} className="flex items-start gap-2">
-                      <FaCheck
-                        size={16}
+                      <Check
+                        width={24}
+                        height={24}
                         className="mt-1 shrink-0"
                         style={{ color: colors.primary }}
                       />
