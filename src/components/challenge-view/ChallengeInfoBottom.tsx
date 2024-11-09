@@ -62,9 +62,12 @@ const ChallengeInfoBottom = ({
             installmentMonths,
         )
       : null;
-
   const totalPrice = (priceInfo?.price || 0) - (priceInfo?.discount || 0);
   const showMonthlyPrice = priceInfo && totalPrice >= 50000;
+  const regularPrice =
+    priceInfo.challengePriceType === 'CHARGE'
+      ? priceInfo.price
+      : (priceInfo.price ?? 0) + (priceInfo.refund ?? 0); // 정가
 
   return (
     <section className="flex w-full max-w-[1000px] flex-col gap-y-8 md:gap-y-20">
@@ -146,7 +149,7 @@ const ChallengeInfoBottom = ({
               <div className="flex w-full flex-col gap-y-2.5 border-b border-neutral-80 pb-[14px] pt-2.5 text-neutral-0">
                 <div className="flex w-full items-center justify-between gap-x-4 text-xsmall16">
                   <span className="font-medium">정가</span>
-                  <span>{priceInfo.price?.toLocaleString()}원</span>
+                  <span>{regularPrice?.toLocaleString()}원</span>
                 </div>
                 <div className="flex w-full items-center justify-between gap-x-4 text-xsmall16">
                   <span className="font-bold" style={{ color: colors.primary }}>
