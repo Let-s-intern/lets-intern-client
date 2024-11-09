@@ -1,6 +1,6 @@
 import { Button, Checkbox, FormControlLabel, TextField } from '@mui/material';
 import dayjs from 'dayjs';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { FaSave } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 
@@ -101,14 +101,6 @@ const LiveCreate: React.FC = () => {
     snackbar('라이브가 생성되었습니다.');
     navigate('/admin/programs');
   }, [input, content, postLive, snackbar, navigate]);
-
-  useEffect(() => {
-    console.log('content', content);
-  }, [content]);
-
-  useEffect(() => {
-    console.log('input', input);
-  }, [input]);
 
   const [importJsonString, setImportJsonString] = useState('');
   const [importProcessing, setImportProcessing] = useState(false);
@@ -275,6 +267,7 @@ const LiveCreate: React.FC = () => {
           programType="LIVE"
           faqInfo={input.faqInfo}
           setInput={setInput}
+          isCreate
         />
       </div>
 

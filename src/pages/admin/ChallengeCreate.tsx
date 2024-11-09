@@ -13,7 +13,7 @@ import { Heading2 } from '@components/admin/ui/heading/Heading2';
 import Heading3 from '@components/admin/ui/heading/Heading3';
 import { Button, TextField } from '@mui/material';
 import dayjs from 'dayjs';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { FaSave } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import ChallengeBasic from './program/ChallengeBasic';
@@ -40,10 +40,6 @@ const ChallengeCreate: React.FC = () => {
   });
   const { snackbar } = useAdminSnackbar();
   const navigate = useNavigate();
-
-  useEffect(() => {
-    console.log('content', content);
-  }, [content]);
 
   const { mutateAsync: postChallenge } = usePostChallengeMutation();
 
@@ -261,6 +257,7 @@ const ChallengeCreate: React.FC = () => {
           programType="CHALLENGE"
           faqInfo={input.faqInfo}
           setInput={setInput}
+          isCreate
         />
       </div>
 
