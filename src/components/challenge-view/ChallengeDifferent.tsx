@@ -116,7 +116,7 @@ const ChallengeDifferent = ({
       <div className="flex w-full flex-col gap-y-8 md:gap-y-20">
         <div className="flex w-full flex-col gap-y-6 md:gap-y-12">
           <SuperTitle style={{ color: colors.primary }}>차별점</SuperTitle>
-          <div className="flex flex-col gap-y-1 md:items-center">
+          <div className="flex flex-col gap-y-3 md:items-center">
             <p
               className="text-xsmall16 font-bold md:text-small18"
               style={{ color: colors.primary }}
