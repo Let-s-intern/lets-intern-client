@@ -118,7 +118,7 @@ export function FaqCard({ faq }: { faq: Faq }) {
       className="overflow-hidden rounded-xxs border border-neutral-80"
     >
       <div className="flex items-center justify-between bg-neutral-100 p-5">
-        <span className="text-xsmall14 font-semibold text-neutral-0 md:text-medium22">
+        <span className="text-medium22 font-semibold text-neutral-0 md:text-medium22">
           {faq.question}
         </span>
         <IoIosArrowDown
@@ -129,7 +129,7 @@ export function FaqCard({ faq }: { faq: Faq }) {
         />
       </div>
       {isOpen && (
-        <div className="border-t border-neutral-80 px-5 py-3 text-xxsmall12 text-neutral-35 md:text-small18">
+        <div className="border-t border-neutral-80 px-5 py-3 text-small18 text-neutral-35 md:text-small18">
           {faq.answer}
         </div>
       )}
