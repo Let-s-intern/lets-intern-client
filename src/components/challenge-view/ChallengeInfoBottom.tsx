@@ -83,7 +83,7 @@ const ChallengeInfoBottom = ({
       : formatFullDateTime(challenge.endDate, true);
 
   return (
-    <section className="flex w-full max-w-[1000px] flex-col gap-y-8 md:gap-y-16">
+    <section className="flex w-full max-w-[1000px] flex-col gap-y-8 px-5 pb-8 md:gap-y-[70px] md:px-10 md:pb-[130px] lg:px-0">
       <Heading2>모집개요</Heading2>
       <div
         className="flex w-full flex-col gap-3 md:flex-row"

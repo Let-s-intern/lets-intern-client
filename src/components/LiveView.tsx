@@ -16,11 +16,10 @@ import LiveVod from './live-view/LiveVod';
 import ProgramBestReviewSection from './ProgramBestReviewSection';
 import ProgramDetailBlogReviewSection from './ProgramDetailBlogReviewSection';
 import ProgramDetailNavigation, {
+  LIVE_CURRICULUM_ID,
   LIVE_MENTOR_INTRO_ID,
-  PROGRAM_CURRICULUM_ID,
-  PROGRAM_FAQ_ID,
-  PROGRAM_INTRO_ID,
-  PROGRAM_REVIEW_ID,
+  LIVE_PROGRAM_INTRO_ID,
+  LIVE_REVIEW_ID,
 } from './ProgramDetailNavigation';
 
 const LiveView: React.FC<{ live: LiveIdSchema; isPreview?: boolean }> = ({
@@ -62,15 +61,15 @@ const LiveView: React.FC<{ live: LiveIdSchema; isPreview?: boolean }> = ({
             className="live_mentor"
           />
           <LiveInformation
-            id={PROGRAM_INTRO_ID}
+            id={LIVE_PROGRAM_INTRO_ID}
             className="live_class"
             recommendFields={receivedContent.recommend}
             reasonFields={receivedContent.reason}
             editorContent={receivedContent.mainDescription}
           />
 
-          <div
-            id={PROGRAM_CURRICULUM_ID}
+          <section
+            id={LIVE_CURRICULUM_ID}
             className="live_curriculum flex w-full max-w-[1000px] flex-col px-5 pb-[70px] md:px-10 md:pb-[140px]"
           >
             <LiveCurriculum
@@ -84,32 +83,29 @@ const LiveView: React.FC<{ live: LiveIdSchema; isPreview?: boolean }> = ({
                 node={receivedContent.additionalCurriculum.root}
               />
             )}
-          </div>
+          </section>
 
           <LiveIntro />
 
           <section
-            id={PROGRAM_REVIEW_ID}
-            className="live_review flex w-full flex-col items-center bg-neutral-95 py-[70px] md:pb-[130px] md:pt-[110px]"
+            id={LIVE_REVIEW_ID}
+            className="live_review flex w-full flex-col items-center gap-y-[70px] md:gap-y-40"
           >
-            <ProgramBestReviewSection
-              reviews={receivedContent.liveReview}
-              type="live"
-            />
-          </section>
-
-          <div className="live_faq flex w-full flex-col px-5 pb-8 pt-[70px] md:px-10 md:pb-[130px] md:pt-40">
+            <div className="flex w-full flex-col items-center bg-neutral-95 py-[70px] md:pb-[130px] md:pt-[110px]">
+              <ProgramBestReviewSection
+                reviews={receivedContent.liveReview}
+                type="live"
+              />
+            </div>
             {receivedContent.blogReview && (
               <ProgramDetailBlogReviewSection
                 review={receivedContent.blogReview}
                 programType="live"
               />
             )}
-            <section id={PROGRAM_FAQ_ID}>
-              <LiveFaq />
-            </section>
-            <LiveInfoBottom live={live} />
-          </div>
+          </section>
+          <LiveFaq />
+          <LiveInfoBottom live={live} />
         </div>
       </div>
     </div>

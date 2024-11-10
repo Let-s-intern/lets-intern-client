@@ -29,6 +29,8 @@ const ProgramDetailLegacy = ({ programType }: ProgramDetailProps) => {
   const params = useParams<{ programId: string }>();
   const navigate = useNavigate();
 
+  const [isNew, setIsNew] = useState(true);
+
   const [programTitle, setProgramTitle] = useState('');
   const [isInstagramAlertOpen, setIsInstagramAlertOpen] = useState(false);
 
@@ -70,12 +72,12 @@ const ProgramDetailLegacy = ({ programType }: ProgramDetailProps) => {
 
   // 프로그램이 새로운 버전일 경우 기존 링크로 이동
   useEffect(() => {
-    if (
-      programType &&
-      program?.query.data &&
-      isNewProgram({ desc: program.query.data.desc })
-    ) {
-      navigate(`/program/${programType}/${programId}`, { replace: true });
+    if (programType && program?.query.data) {
+      if (isNewProgram({ desc: program.query.data.desc })) {
+        navigate(`/program/${programType}/${programId}`, { replace: true });
+      } else {
+        setIsNew(false);
+      }
     }
   }, [navigate, program.query.data, programId, programType]);
 
@@ -141,68 +143,81 @@ const ProgramDetailLegacy = ({ programType }: ProgramDetailProps) => {
           <meta name="twitter:description" content={description} />
         ) : null}
       </Helmet>
-      <div className="mx-auto max-w-5xl">
-        <Header programTitle={programTitle} />
-        <div className="flex min-h-screen flex-col">
-          {/* 프로그램 상세 */}
-          <section className="flex items-start gap-10 md:mt-8">
-            <TabSection programId={programId} programType={programType} />
-            {isDesktop && (
-              <ApplySection
-                programType={programType}
-                programId={programId}
-                programTitle={programTitle}
-              />
-            )}
-          </section>
-
-          {/* 모바일 신청 세션 */}
-          {!isDesktop &&
-            (isDrawerOpen ? (
-              <MobileApplySection
-                programTitle={programTitle}
-                programType={programType}
-                programId={programId}
-                toggleDrawer={toggleDrawer}
-                dispatchDrawerIsOpen={dispatchIsDrawerOpen}
-              />
-            ) : (
-              <div
-                className={twMerge(
-                  'fixed bottom-0 left-0 right-0 z-30 flex w-screen flex-col gap-y-2.5 rounded-t-lg bg-static-100 px-5 pb-2.5 pt-3 shadow-05',
-                )}
-              >
-                <div className="flex w-full justify-center bg-static-100">
-                  <div
-                    onClick={() =>
-                      dispatchIsDrawerOpen({
-                        type: 'close',
-                      })
-                    }
-                    className="h-[5px] w-[70px] shrink-0 cursor-pointer rounded-full bg-neutral-80"
-                  />
-                </div>
-                {isInstagramAlertOpen && <FloatingNotification />}
-                {loading ? (
-                  <FilledButton
-                    caption={'로딩 중 ...'}
-                    disabled={false}
-                    className="opacity-0"
-                  />
-                ) : isOutOfDate ? (
-                  <NotiButton text={'출시알림신청'} className="early_button" />
-                ) : (
-                  <FilledButton
-                    onClick={toggleDrawer}
-                    caption={isAlreadyApplied ? '신청완료' : '신청하기'}
-                    disabled={isAlreadyApplied}
-                    className="apply_button"
-                  />
-                )}
-              </div>
-            ))}
+      {isNew ? (
+        <div className="flex min-h-screen items-center justify-center">
+          <div className="animate-spin h-32 w-32 rounded-full border-b-2 border-gray-900" />
         </div>
-      </div>
+      ) : (
+        <div className="mx-auto max-w-5xl">
+          <Header programTitle={programTitle} />
+          <div className="flex min-h-screen flex-col">
+            {/* 프로그램 상세 */}
+            <section className="flex items-start gap-10 md:mt-8">
+              <TabSection
+                programId={programId}
+                programType={programType}
+                isNewProgram={isNew}
+              />
+              {isDesktop && (
+                <ApplySection
+                  programType={programType}
+                  programId={programId}
+                  programTitle={programTitle}
+                />
+              )}
+            </section>
+
+            {/* 모바일 신청 세션 */}
+            {!isDesktop &&
+              (isDrawerOpen ? (
+                <MobileApplySection
+                  programTitle={programTitle}
+                  programType={programType}
+                  programId={programId}
+                  toggleDrawer={toggleDrawer}
+                  dispatchDrawerIsOpen={dispatchIsDrawerOpen}
+                />
+              ) : (
+                <div
+                  className={twMerge(
+                    'fixed bottom-0 left-0 right-0 z-30 flex w-screen flex-col gap-y-2.5 rounded-t-lg bg-static-100 px-5 pb-2.5 pt-3 shadow-05',
+                  )}
+                >
+                  <div className="flex w-full justify-center bg-static-100">
+                    <div
+                      onClick={() =>
+                        dispatchIsDrawerOpen({
+                          type: 'close',
+                        })
+                      }
+                      className="h-[5px] w-[70px] shrink-0 cursor-pointer rounded-full bg-neutral-80"
+                    />
+                  </div>
+                  {isInstagramAlertOpen && <FloatingNotification />}
+                  {loading ? (
+                    <FilledButton
+                      caption={'로딩 중 ...'}
+                      disabled={false}
+                      className="opacity-0"
+                    />
+                  ) : isOutOfDate ? (
+                    <NotiButton
+                      text={'출시알림신청'}
+                      className="early_button"
+                    />
+                  ) : (
+                    <FilledButton
+                      onClick={toggleDrawer}
+                      caption={isAlreadyApplied ? '신청완료' : '신청하기'}
+                      disabled={isAlreadyApplied}
+                      className="apply_button"
+                    />
+                  )}
+                </div>
+              ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 };
