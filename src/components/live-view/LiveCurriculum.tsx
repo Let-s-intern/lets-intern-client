@@ -2,7 +2,6 @@ import { LiveIdSchema } from '@/schema';
 import { LiveContent } from '@/types/interface';
 import Heading2 from '@components/common/program/program-detail/Heading2';
 import SuperTitle from '@components/common/program/program-detail/SuperTitle';
-import { PROGRAM_CURRICULUM_ID } from '@components/ProgramDetailNavigation';
 
 const superTitle = '현직자 멘토가 들려주는 생생한 이야기';
 
@@ -18,7 +17,7 @@ function LiveCurriculum({
   curriculumTitle,
 }: LiveCurriculumProps) {
   return (
-    <section className="py-20 md:pb-[130px]" id={PROGRAM_CURRICULUM_ID}>
+    <section className="py-20 md:pb-[130px]">
       <SuperTitle className="mb-6 font-bold text-primary md:mb-10">
         커리큘럼
       </SuperTitle>
