@@ -17,7 +17,7 @@ const ProgramDetailBlogReviewSection = ({
   programType: ProgramType;
 }) => {
   return (
-    <section className="w-full max-w-[1000px] md:mx-auto md:flex md:flex-col md:items-center">
+    <section className="flex w-full max-w-[1000px] flex-col px-5 md:items-center md:px-10 lg:px-0">
       <div className="mb-6 w-full md:mb-16">
         <div className="relative mb-3 flex items-start justify-between md:mb-7 md:block">
           <Heading2 className="text-small20 md:text-center md:text-xlarge28">
