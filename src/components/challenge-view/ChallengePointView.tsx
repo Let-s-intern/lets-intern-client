@@ -1,7 +1,7 @@
 import Check from '@/assets/icons/chevron-down.svg?react';
 import { twMerge } from '@/lib/twMerge';
 import { Dayjs } from 'dayjs';
-import { ReactNode, useMemo } from 'react';
+import { ReactNode } from 'react';
 import { clientOnly } from 'vike-react/clientOnly';
 
 import { ChallengeType, challengeTypeSchema } from '@/schema';
@@ -36,11 +36,14 @@ const progress = [
   },
   {
     index: 4,
-    title: '회차별 미션 수행',
-    subTitle: '*2주간, 총 8개 미션',
+    title: '회차별 챌린지 가이드북\n및 미션 템플릿 제공',
   },
   {
     index: 5,
+    title: '회차별 미션 수행',
+  },
+  {
+    index: 6,
     title: '챌린지 종료 및 평가',
     subTitle: '*총 챌린지 참여 점수 80점 이상시,\n3만원 페이백 및 수료증 발급',
   },
@@ -49,9 +52,9 @@ const progress = [
 const MISSION = {
   title: '미션 수행 방법',
   content: [
-    '렛츠커리어 챌린지 대시보드를 통해 미션 수행',
-    '매 회차별 미션 시작일 00시에 미션 공개',
-    '모든 미션은 시간과 장소에 구애받지 않고, 내 일정에 맞춰 미션별 마감일까지만 제출하면 미션 완료',
+    '챌린지 대시보드를 통해 미션수행',
+    '매 회차별 챌린지 가이드북 및\n미션 템플릿과 함께 미션 공개',
+    '모든 미션은 시간과 장소에 구애받지 않고, 나의 일정에 맞춰 미션 별 마감일까지만 제출하면 완료',
   ],
 };
 
@@ -60,7 +63,7 @@ const REWARD = {
   content: '챌린지 참여 점수 80점 이상시,\n3만원 페이백 및 수료증 발급',
 };
 
-const { PORTFOLIO, PERSONAL_STATEMENT, CAREER_START } =
+const { CAREER_START, PERSONAL_STATEMENT, PORTFOLIO } =
   challengeTypeSchema.enum;
 
 const ChallengePointView = ({
@@ -93,16 +96,16 @@ const ChallengePointView = ({
     },
   ];
 
-  const imgSrc = useMemo(() => {
+  const paypackImgSrc = (() => {
     switch (challengeType) {
       case PORTFOLIO:
-        return '/images/payback-portfolio.svg';
+        return '/images/payback-portfolio.png';
       case PERSONAL_STATEMENT:
-        return '/images/payback-statement.svg';
+        return '/images/payback-personal-statement.png';
       default:
-        return '/images/payback-basic.svg';
+        return '/images/payback-career-start.png';
     }
-  }, [challengeType]);
+  })();
 
   if (point === undefined) return <></>;
 
@@ -189,7 +192,7 @@ const ChallengePointView = ({
             >
               {point.weekText} 과정
             </div>
-            <div className="flex flex-col gap-5 rounded-b-md bg-white px-4 py-[30px] md:flex-row md:justify-between md:pb-[30px] md:pt-9 lg:px-10">
+            <div className="flex flex-col gap-5 rounded-b-md bg-white px-4 py-[30px] md:flex-row md:justify-between md:pb-[30px] md:pt-9">
               {progress.map((item) => (
                 <ProgressItem
                   key={item.index}
@@ -209,7 +212,7 @@ const ChallengePointView = ({
             </Box>
             <Box className="md:flex-1">
               <BoxItem title={MISSION.title}>
-                <ul className="flex flex-col gap-1 pl-1">
+                <ul className="flex flex-col gap-1">
                   {MISSION.content.map((item) => (
                     <li key={item} className="flex items-start gap-2">
                       <Check
@@ -227,8 +230,8 @@ const ChallengePointView = ({
             <Box className="relative overflow-hidden md:flex-1">
               <BoxItem title={REWARD.title}>{REWARD.content}</BoxItem>
               <img
-                className="absolute bottom-0 right-2 scale-110"
-                src={imgSrc}
+                className="absolute bottom-0 right-0 h-auto w-44 md:w-48"
+                src={paypackImgSrc}
                 alt="페이백 3만원"
               />
             </Box>
@@ -288,24 +291,22 @@ function ProgressItem({
   bgColor?: string;
 }) {
   return (
-    <div key={item.index}>
-      <div className="flex gap-2">
-        <div
-          className="mt-0.5 flex h-5 w-5 items-center justify-center rounded-full bg-[#14BCFF] text-xsmall14 font-semibold text-white"
-          style={{ backgroundColor: bgColor }}
-        >
-          {item.index}
-        </div>
-        <div className="flex flex-col gap-0.5">
-          <span className="whitespace-pre-line text-small18 font-semibold text-neutral-0">
-            {item.title}
+    <div key={item.index} className="flex gap-2">
+      <div
+        className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-xsmall14 font-semibold text-white"
+        style={{ backgroundColor: bgColor }}
+      >
+        {item.index}
+      </div>
+      <div className="flex flex-col gap-0.5">
+        <span className="whitespace-pre-line text-xsmall16 font-bold text-neutral-0">
+          {item.title}
+        </span>
+        {item.subTitle && (
+          <span className="whitespace-pre-line text-xsmall14 text-neutral-45">
+            {item.subTitle}
           </span>
-          {item.subTitle && (
-            <span className="whitespace-pre-line text-xsmall14 text-neutral-45">
-              {item.subTitle}
-            </span>
-          )}
-        </div>
+        )}
       </div>
     </div>
   );
