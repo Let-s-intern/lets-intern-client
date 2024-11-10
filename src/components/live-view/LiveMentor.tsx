@@ -35,36 +35,46 @@ function LiveMentor({ mentor, className, id }: LiveMentorProps) {
       <SuperTitle className="mb-5 text-primary md:mb-10">멘토 소개</SuperTitle>
 
       <div className="flex w-full max-w-[800px] flex-col gap-6 md:flex-row">
-        <img
-          className="h-auto w-full rounded-md md:max-w-[342px]"
-          src={mentor.mentorImg}
-          alt="멘토 프로필 사진"
-        />
+        {mentor.mentorImg && (
+          <img
+            className="h-auto w-full rounded-md md:max-w-[342px]"
+            src={mentor.mentorImg}
+            alt="멘토 프로필 사진"
+          />
+        )}
         {/* 멘토정보 */}
         <div className="flex w-full flex-col justify-between gap-6 text-neutral-0">
           <div>
-            <span className="text-small20 font-bold">
-              {mentor.mentorName} 멘토
-            </span>
-            <div className="mb-4 mt-1 text-xsmall16 font-semibold md:text-small18">
-              <span>{mentor.mentorCompany}</span> |{' '}
-              <span>{mentor.mentorJob}</span>
-            </div>
-            <p className="whitespace-pre-line text-xxsmall12 font-semibold text-neutral-35 md:text-small18">
-              {mentor.mentorCareer}
-            </p>
-          </div>
-          <div className="flex flex-col gap-2 rounded-md bg-[#F4F5FF] p-4 pb-5">
-            <div className="flex items-center gap-1">
-              <img src="/icons/speech-bubble-icon.svg" alt="말풍선 아이콘" />
-              <span className="text-xxsmall12 font-semibold text-black md:text-xsmall16">
-                멘토님의 한마디
+            {mentor.mentorName && (
+              <span className="text-small20 font-bold">
+                {mentor.mentorName}
               </span>
-            </div>
-            <p className="whitespace-pre-line text-xxsmall12 text-black md:text-xsmall16">
-              {mentor.mentorIntroduction}
-            </p>
+            )}
+            {mentor.mentorCompany && mentor.mentorJob && (
+              <div className="mb-4 mt-1 text-xsmall16 font-semibold md:text-small18">
+                <span>{mentor.mentorCompany}</span> |{' '}
+                <span>{mentor.mentorJob}</span>
+              </div>
+            )}
+            {mentor.mentorCareer && (
+              <p className="whitespace-pre-line text-xxsmall12 font-semibold text-neutral-35 md:text-small18">
+                {mentor.mentorCareer}
+              </p>
+            )}
           </div>
+          {mentor.mentorIntroduction && (
+            <div className="flex flex-col gap-2 rounded-md bg-[#F4F5FF] p-4 pb-5">
+              <div className="flex items-center gap-1">
+                <img src="/icons/speech-bubble-icon.svg" alt="말풍선 아이콘" />
+                <span className="text-xxsmall12 font-semibold text-black md:text-xsmall16">
+                  멘토님의 한마디
+                </span>
+              </div>
+              <p className="whitespace-pre-line text-xxsmall12 text-black md:text-xsmall16">
+                {mentor.mentorIntroduction ?? ''}
+              </p>
+            </div>
+          )}
         </div>
       </div>
     </section>
