@@ -38,12 +38,10 @@ const progress = [
   {
     index: 4,
     title: '회차별 챌린지 가이드북\n및 미션 템플릿 제공',
-    subTitle: '*2주간, 총 8개 미션',
   },
   {
     index: 5,
     title: '회차별 미션 수행',
-    subTitle: '*2주간, 총 8개 미션',
   },
   {
     index: 6,
@@ -55,9 +53,9 @@ const progress = [
 const MISSION = {
   title: '미션 수행 방법',
   content: [
-    '렛츠커리어 챌린지 대시보드를 통해 미션 수행',
-    '매 회차별 미션 시작일 00시에 미션 공개',
-    '모든 미션은 시간과 장소에 구애받지 않고, 내 일정에 맞춰 미션별 마감일까지만 제출하면 미션 완료',
+    '챌린지 대시보드를 통해 미션수행',
+    '매 회차별 챌린지 가이드북 및\n미션 템플릿과 함께 미션 공개',
+    '모든 미션은 시간과 장소에 구애받지 않고, 나의 일정에 맞춰 미션 별 마감일까지만 제출하면 완료',
   ],
 };
 
@@ -66,8 +64,7 @@ const REWARD = {
   content: '챌린지 참여 점수 80점 이상시,\n3만원 페이백 및 수료증 발급',
 };
 
-const { PORTFOLIO, PERSONAL_STATEMENT, CAREER_START } =
-  challengeTypeSchema.enum;
+const { CAREER_START } = challengeTypeSchema.enum;
 
 const ChallengePointView = ({
   point,
@@ -204,7 +201,7 @@ const ChallengePointView = ({
             </Box>
             <Box className="md:flex-1">
               <BoxItem title={MISSION.title}>
-                <ul className="flex flex-col gap-1 pl-1">
+                <ul className="flex flex-col gap-1">
                   {MISSION.content.map((item) => (
                     <li key={item} className="flex items-start gap-2">
                       <Check
