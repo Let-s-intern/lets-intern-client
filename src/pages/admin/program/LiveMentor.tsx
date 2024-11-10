@@ -43,7 +43,7 @@ function LiveMentor<T extends CreateLiveReq | UpdateLiveReq>({
         type="text"
         name="mentorName"
         placeholder="멘토 이름을 입력해주세요"
-        defaultValue={defaultValue.mentorName}
+        defaultValue={defaultValue.mentorName ?? undefined}
         size="small"
         onChange={onChange}
       />
@@ -52,7 +52,7 @@ function LiveMentor<T extends CreateLiveReq | UpdateLiveReq>({
         type="text"
         name="mentorCompany"
         size="small"
-        defaultValue={defaultValue.mentorCompany}
+        defaultValue={defaultValue.mentorCompany ?? undefined}
         placeholder="멘토 회사를 입력해주세요"
         onChange={onChange}
       />
@@ -61,19 +61,19 @@ function LiveMentor<T extends CreateLiveReq | UpdateLiveReq>({
         type="text"
         name="mentorJob"
         size="small"
-        defaultValue={defaultValue.mentorJob}
+        defaultValue={defaultValue.mentorJob ?? undefined}
         placeholder="멘토 직무를 입력해주세요"
         onChange={onChange}
       />
       <OutlinedTextarea
         name="mentorCareer"
-        value={mentorCareer}
+        value={mentorCareer ?? ''}
         placeholder="멘토 경력을 입력해주세요"
         onChange={onChange}
       />
       <OutlinedTextarea
         name="mentorIntroduction"
-        value={mentorIntroduction}
+        value={mentorIntroduction ?? undefined}
         placeholder="한 줄 소개를 입력해주세요"
         onChange={onChange}
       />
