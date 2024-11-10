@@ -124,21 +124,26 @@ function LiveIntro() {
       <div className="w-ful flex max-w-[1000px] flex-col px-5 md:px-10 lg:px-0">
         <SuperTitle className="mb-1 text-primary">{superTitle[2]}</SuperTitle>
         <Heading2>{title[2]}</Heading2>
-        <div className="custom-scrollbar mt-8 w-full overflow-x-auto md:mt-20">
-          <div className="flex w-fit gap-1.5">
-            {company.map((item) => (
-              <img
-                key={item.imgSrc}
-                className="aspect-square h-auto w-56 rounded-sm bg-neutral-45 md:w-[360px]"
-                src={item.imgSrc}
-                alt={item.alt}
-              />
-            ))}
+        <div className="mt-8 w-full overflow-x-hidden md:mt-20">
+          <div className="animate-live-infinite-scroll-mobile md:animate-live-infinite-scroll-desktop flex w-fit gap-1.5">
+            <ImageGroup />
+            <ImageGroup />
           </div>
         </div>
       </div>
     </section>
   );
+}
+
+function ImageGroup() {
+  return company.map((item) => (
+    <img
+      key={item.imgSrc}
+      className="aspect-square h-auto w-56 rounded-sm bg-neutral-45 md:w-[360px]"
+      src={item.imgSrc}
+      alt={item.alt}
+    />
+  ));
 }
 
 function PointBox({ point, index }: { point: Point; index: number }) {

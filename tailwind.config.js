@@ -149,9 +149,23 @@ module.exports = {
       xxl: '1.5rem',
       full: '9999px',
     },
+    keyframes: {
+      'live-infinite-scroll-desktop': {
+        '0%': { transform: 'translateX(0)' },
+        '100%': { transform: 'translateX(-2196px)' },
+      },
+      'live-infinite-scroll-mobile': {
+        '0%': { transform: 'translateX(0)' },
+        '100%': { transform: 'translateX(-1380px)' },
+      },
+    },
+    animation: {
+      'live-infinite-scroll-desktop':
+        'live-infinite-scroll-desktop 16s linear infinite',
+      'live-infinite-scroll-mobile':
+        'live-infinite-scroll-mobile 12s linear infinite',
+    },
   },
-  scrollPadding: {
-    '50%-minus-500px': 'calc(50% - 500px)',
-  },
+
   plugins: [require('tailwind-scrollbar-hide')],
 };
