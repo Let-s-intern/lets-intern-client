@@ -195,7 +195,7 @@ const LiveEdit: React.FC = () => {
               label="멘토 사진"
               id="mentorImg"
               name="mentorImg"
-              image={input.mentorImg ?? live.mentorImg}
+              image={input.mentorImg ?? live.mentorImg ?? undefined}
               onChange={onChangeImage}
             />
             <LiveMentor defaultValue={mentorDefaultValue} setInput={setInput} />
