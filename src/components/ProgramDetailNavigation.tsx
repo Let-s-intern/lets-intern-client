@@ -21,7 +21,12 @@ export const PROGRAM_CURRICULUM_ID = 'curriculum';
 export const CHALLENGE_DIFFERENT_ID = 'different';
 export const PROGRAM_REVIEW_ID = 'review';
 export const PROGRAM_FAQ_ID = 'faq';
-export const LIVE_MENTOR_INTRO_ID = 'mentor-intro';
+
+export const LIVE_MENTOR_INTRO_ID = 'live-mentor-intro';
+export const LIVE_PROGRAM_INTRO_ID = 'live-program-intro';
+export const LIVE_CURRICULUM_ID = 'live-curriculum';
+export const LIVE_REVIEW_ID = 'live-review';
+export const LIVE_FAQ_ID = 'live-faq';
 
 export const challengeNavigateItems: NavItem[] = [
   { title: '프로그램 소개', to: PROGRAM_INTRO_ID },
@@ -33,10 +38,10 @@ export const challengeNavigateItems: NavItem[] = [
 
 export const liveNavigateItems: NavItem[] = [
   { title: '멘토 소개', to: LIVE_MENTOR_INTRO_ID },
-  { title: '클래스 소개', to: PROGRAM_INTRO_ID },
-  { title: '커리큘럼', to: PROGRAM_CURRICULUM_ID },
-  { title: '후기', to: PROGRAM_REVIEW_ID },
-  { title: 'FAQ', to: PROGRAM_FAQ_ID },
+  { title: '클래스 소개', to: LIVE_PROGRAM_INTRO_ID },
+  { title: '커리큘럼', to: LIVE_CURRICULUM_ID },
+  { title: '후기', to: LIVE_REVIEW_ID },
+  { title: 'FAQ', to: LIVE_FAQ_ID },
 ];
 
 const ProgramDetailNavigation = ({
@@ -54,12 +59,12 @@ const ProgramDetailNavigation = ({
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
-          // if (entry.target.id === PROGRAM_INTRO_ID) {
-          //   console.log(
-          //     'Intersection ratio for program-intro:',
-          //     entry.intersectionRatio,
-          //   );
-          // }
+          if (entry.target.id === LIVE_FAQ_ID) {
+            console.log(
+              'Intersection ratio for program-intro:',
+              entry.intersectionRatio,
+            );
+          }
           if (entry.isIntersecting) {
             // 얼마나 보여지는지 콘솔
             // console.log(entry.target.id);
