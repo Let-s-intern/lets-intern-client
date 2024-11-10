@@ -187,7 +187,7 @@ const ChallengePointView = ({
               className="flex w-full items-center rounded-t-md px-4 py-2.5 text-xsmall14 font-semibold text-white md:justify-center md:px-2.5"
               style={{ backgroundColor: colors.primary }}
             >
-              2 Weeks
+              {point.weekText} 과정
             </div>
             <div className="flex flex-col gap-5 rounded-b-md bg-white px-4 py-[30px] md:flex-row md:justify-between md:pb-[30px] md:pt-9 lg:px-10">
               {progress.map((item) => (
