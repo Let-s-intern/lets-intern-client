@@ -1,10 +1,8 @@
-import { useMediaQuery } from '@mui/material';
 import { useMemo } from 'react';
 
 import benefitImg1 from '@/assets/benefit1.jpg';
 import benefitImg2 from '@/assets/benefit2.jpg';
 import benefitImg3 from '@/assets/benefit3.jpg';
-import paybackImg from '@/assets/challenge-payback.png';
 import { ChallengeType, challengeTypeSchema } from '@/schema';
 import { ChallengeColor } from '@components/ChallengeView';
 import BenefitCard from '@components/common/program/program-detail/different/BenefitCard';
@@ -49,8 +47,6 @@ const ChallengeDifferent = ({
   challengeType: ChallengeType;
   challengeTitle: string;
 }) => {
-  const isMobile = useMediaQuery('(max-width: 768px)');
-
   const differentList: DifferentCardProps[] = [
     {
       order: 1,
@@ -94,6 +90,17 @@ const ChallengeDifferent = ({
       colors,
     },
   ];
+
+  const paypackImgSrc = (() => {
+    switch (challengeType) {
+      case PORTFOLIO:
+        return '/images/payback-portfolio.png';
+      case PERSONAL_STATEMENT:
+        return '/images/payback-personal-statement.png';
+      default:
+        return '/images/payback-career-start.png';
+    }
+  })();
 
   const iconName = useMemo(() => {
     switch (challengeType) {
@@ -162,7 +169,7 @@ const ChallengeDifferent = ({
             </p>
             <img
               className="absolute bottom-0 right-0 h-auto w-28 md:-bottom-4 md:w-48"
-              src={paybackImg}
+              src={paypackImgSrc}
               alt="페이백 3만원"
             />
           </div>

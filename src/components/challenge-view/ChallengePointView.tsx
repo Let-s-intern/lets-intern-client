@@ -4,7 +4,6 @@ import { Dayjs } from 'dayjs';
 import { ReactNode } from 'react';
 import { clientOnly } from 'vike-react/clientOnly';
 
-import paybackImg from '@/assets/challenge-payback.png';
 import { ChallengeType, challengeTypeSchema } from '@/schema';
 import { ChallengePoint } from '@/types/interface';
 import { ChallengeColor } from '@components/ChallengeView';
@@ -64,7 +63,8 @@ const REWARD = {
   content: '챌린지 참여 점수 80점 이상시,\n3만원 페이백 및 수료증 발급',
 };
 
-const { CAREER_START } = challengeTypeSchema.enum;
+const { CAREER_START, PERSONAL_STATEMENT, PORTFOLIO } =
+  challengeTypeSchema.enum;
 
 const ChallengePointView = ({
   point,
@@ -95,6 +95,17 @@ const ChallengePointView = ({
       content: '100% 온라인(챌린지 대시보드, 오픈채팅방)',
     },
   ];
+
+  const paypackImgSrc = (() => {
+    switch (challengeType) {
+      case PORTFOLIO:
+        return '/images/payback-portfolio.png';
+      case PERSONAL_STATEMENT:
+        return '/images/payback-personal-statement.png';
+      default:
+        return '/images/payback-career-start.png';
+    }
+  })();
 
   if (point === undefined) return <></>;
 
@@ -220,7 +231,7 @@ const ChallengePointView = ({
               <BoxItem title={REWARD.title}>{REWARD.content}</BoxItem>
               <img
                 className="absolute bottom-0 right-0 h-auto w-44 md:w-48"
-                src={paybackImg}
+                src={paypackImgSrc}
                 alt="페이백 3만원"
               />
             </Box>
