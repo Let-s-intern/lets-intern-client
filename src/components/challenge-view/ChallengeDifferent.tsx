@@ -4,8 +4,7 @@ import { useMemo } from 'react';
 import benefitImg1 from '@/assets/benefit1.jpg';
 import benefitImg2 from '@/assets/benefit2.jpg';
 import benefitImg3 from '@/assets/benefit3.jpg';
-import PaybackDesktop from '@/assets/different_payback_desktop.svg?react';
-import PaybackMobile from '@/assets/different_payback_mobile.svg?react';
+import paybackImg from '@/assets/challenge-payback.png';
 import { ChallengeType, challengeTypeSchema } from '@/schema';
 import { ChallengeColor } from '@components/ChallengeView';
 import BenefitCard from '@components/common/program/program-detail/different/BenefitCard';
@@ -161,11 +160,11 @@ const ChallengeDifferent = ({
               <br className="md:hidden" />
               3만원을 페이백해드려요!
             </p>
-            {isMobile ? (
-              <PaybackMobile className="absolute bottom-0 right-0 h-auto w-1/2 md:right-2.5 md:top-0 md:h-full md:w-auto" />
-            ) : (
-              <PaybackDesktop className="absolute bottom-0 right-0 h-auto w-1/2 md:right-2.5 md:top-0 md:h-full md:w-auto" />
-            )}
+            <img
+              className="absolute bottom-0 right-0 h-auto w-28 md:-bottom-4 md:w-48"
+              src={paybackImg}
+              alt="페이백 3만원"
+            />
           </div>
         </div>
       </div>

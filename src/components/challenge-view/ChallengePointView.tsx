@@ -1,9 +1,10 @@
 import Check from '@/assets/icons/chevron-down.svg?react';
 import { twMerge } from '@/lib/twMerge';
 import { Dayjs } from 'dayjs';
-import { ReactNode, useMemo } from 'react';
+import { ReactNode } from 'react';
 import { clientOnly } from 'vike-react/clientOnly';
 
+import paybackImg from '@/assets/challenge-payback.png';
 import { ChallengeType, challengeTypeSchema } from '@/schema';
 import { ChallengePoint } from '@/types/interface';
 import { ChallengeColor } from '@components/ChallengeView';
@@ -36,11 +37,16 @@ const progress = [
   },
   {
     index: 4,
-    title: '회차별 미션 수행',
+    title: '회차별 챌린지 가이드북\n및 미션 템플릿 제공',
     subTitle: '*2주간, 총 8개 미션',
   },
   {
     index: 5,
+    title: '회차별 미션 수행',
+    subTitle: '*2주간, 총 8개 미션',
+  },
+  {
+    index: 6,
     title: '챌린지 종료 및 평가',
     subTitle: '*총 챌린지 참여 점수 80점 이상시,\n3만원 페이백 및 수료증 발급',
   },
@@ -92,17 +98,6 @@ const ChallengePointView = ({
       content: '100% 온라인(챌린지 대시보드, 오픈채팅방)',
     },
   ];
-
-  const imgSrc = useMemo(() => {
-    switch (challengeType) {
-      case PORTFOLIO:
-        return '/images/payback-portfolio.svg';
-      case PERSONAL_STATEMENT:
-        return '/images/payback-statement.svg';
-      default:
-        return '/images/payback-basic.svg';
-    }
-  }, [challengeType]);
 
   if (point === undefined) return <></>;
 
@@ -189,7 +184,7 @@ const ChallengePointView = ({
             >
               {point.weekText} 과정
             </div>
-            <div className="flex flex-col gap-5 rounded-b-md bg-white px-4 py-[30px] md:flex-row md:justify-between md:pb-[30px] md:pt-9 lg:px-10">
+            <div className="flex flex-col gap-5 rounded-b-md bg-white px-4 py-[30px] md:flex-row md:justify-between md:pb-[30px] md:pt-9">
               {progress.map((item) => (
                 <ProgressItem
                   key={item.index}
@@ -227,8 +222,8 @@ const ChallengePointView = ({
             <Box className="relative overflow-hidden md:flex-1">
               <BoxItem title={REWARD.title}>{REWARD.content}</BoxItem>
               <img
-                className="absolute bottom-0 right-2 scale-110"
-                src={imgSrc}
+                className="absolute bottom-0 right-0 h-auto w-44 md:w-48"
+                src={paybackImg}
                 alt="페이백 3만원"
               />
             </Box>
@@ -288,24 +283,22 @@ function ProgressItem({
   bgColor?: string;
 }) {
   return (
-    <div key={item.index}>
-      <div className="flex gap-2">
-        <div
-          className="mt-0.5 flex h-5 w-5 items-center justify-center rounded-full bg-[#14BCFF] text-xsmall14 font-semibold text-white"
-          style={{ backgroundColor: bgColor }}
-        >
-          {item.index}
-        </div>
-        <div className="flex flex-col gap-0.5">
-          <span className="whitespace-pre-line text-small18 font-semibold text-neutral-0">
-            {item.title}
+    <div key={item.index} className="flex gap-2">
+      <div
+        className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-xsmall14 font-semibold text-white"
+        style={{ backgroundColor: bgColor }}
+      >
+        {item.index}
+      </div>
+      <div className="flex flex-col gap-0.5">
+        <span className="whitespace-pre-line text-xsmall16 font-bold text-neutral-0">
+          {item.title}
+        </span>
+        {item.subTitle && (
+          <span className="whitespace-pre-line text-xsmall14 text-neutral-45">
+            {item.subTitle}
           </span>
-          {item.subTitle && (
-            <span className="whitespace-pre-line text-xsmall14 text-neutral-45">
-              {item.subTitle}
-            </span>
-          )}
-        </div>
+        )}
       </div>
     </div>
   );
