@@ -25,7 +25,7 @@ const ProgramBestReviewSection = ({
           후기
         </p>
         <div
-          className={`flex flex-col ${type === 'challenge' ? 'gap-y-1' : 'gap-y-2.5'} md:items-center md:gap-y-5`}
+          className={`flex flex-col ${type === 'challenge' ? 'gap-y-1' : 'gap-y-2.5'} md:items-center md:gap-y-3`}
         >
           <p
             className={`text-xsmall14 font-semibold md:text-small18 ${type === 'challenge' ? '' : 'w-fit rounded-[10px] bg-[#FFEACC] px-2 py-1'}`}
@@ -47,6 +47,9 @@ const ProgramBestReviewSection = ({
               review={review}
               color={
                 type === 'challenge' && colors ? colors.primary : '#4d55f5'
+              }
+              bgColor={
+                type === 'challenge' && colors ? colors.primaryLight : '#edeefe'
               }
             />
           ))}

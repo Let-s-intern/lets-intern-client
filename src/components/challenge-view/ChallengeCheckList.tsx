@@ -203,7 +203,7 @@ function ChallengeCheckList({
     <section className="flex w-full max-w-[1000px] flex-col px-5 py-20 md:px-10 md:pb-[140px] md:pt-[130px] lg:px-0">
       <div className="mb-16 md:mb-20">
         <SuperTitle
-          className="mb-1 md:text-center"
+          className="mb-3 md:text-center"
           style={{ color: colors.primary }}
         >
           {superTitle}
@@ -214,7 +214,7 @@ function ChallengeCheckList({
         </Description>
       </div>
 
-      <div className="flex flex-col gap-16 md:gap-32">
+      <div className="flex w-full flex-col gap-16 md:gap-32 md:px-16">
         {checkList.map((item, index) => (
           <div
             key={item.title[0]}
@@ -231,7 +231,7 @@ function ChallengeCheckList({
                 <span key={ele}>{ele}</span>
               ))}
             </Box>
-            <div className="flex flex-col gap-5">
+            <div className="flex w-full flex-col gap-5 px-5 md:px-28">
               {item.content.map((group) => (
                 <CheckList key={group[0]} colors={colors}>
                   {group.map((ele) => (

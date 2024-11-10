@@ -10,6 +10,7 @@ module.exports = {
       fontSize: {
         xxlarge36: ['2.25rem', { lineHeight: '3rem' }],
         xxlarge32: ['2rem', { lineHeight: '2.625rem' }],
+        xlarge30: ['1.875rem', { lineHeight: '2.625rem' }],
         xlarge28: ['1.75rem', { lineHeight: '2.375rem' }],
         large26: ['1.625rem', { lineHeight: '2.125rem' }],
         medium24: ['1.5rem', { lineHeight: '2rem' }],
@@ -148,9 +149,23 @@ module.exports = {
       xxl: '1.5rem',
       full: '9999px',
     },
+    keyframes: {
+      'live-infinite-scroll-desktop': {
+        '0%': { transform: 'translateX(0)' },
+        '100%': { transform: 'translateX(-2196px)' },
+      },
+      'live-infinite-scroll-mobile': {
+        '0%': { transform: 'translateX(0)' },
+        '100%': { transform: 'translateX(-1380px)' },
+      },
+    },
+    animation: {
+      'live-infinite-scroll-desktop':
+        'live-infinite-scroll-desktop 16s linear infinite',
+      'live-infinite-scroll-mobile':
+        'live-infinite-scroll-mobile 12s linear infinite',
+    },
   },
-  scrollPadding: {
-    '50%-minus-500px': 'calc(50% - 500px)',
-  },
+
   plugins: [require('tailwind-scrollbar-hide')],
 };

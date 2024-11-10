@@ -11,7 +11,7 @@ function Heading2({
   return (
     <h2
       className={twMerge(
-        'whitespace-pre-line text-small20 font-bold text-neutral-0 md:text-center md:text-xlarge28',
+        'md:text-xlarge30 whitespace-pre-line text-small20 font-bold text-neutral-0 md:text-center',
         className,
       )}
     >

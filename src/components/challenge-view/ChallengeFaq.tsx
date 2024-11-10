@@ -30,14 +30,16 @@ function ChallengeFaq({ colors }: ChallengeFaqProps) {
   if (!faqList) return <></>;
 
   return (
-    <div className="w-full md:flex md:flex-col md:items-center">
+    <div className="w-full pt-20 md:flex md:flex-col md:items-center md:pt-40">
       <SuperTitle
         className="mb-6 text-neutral-45 md:mb-12"
         style={{ color: colors.primary }}
       >
         FAQ
       </SuperTitle>
-      <SuperTitle style={{ color: colors.primary }}>{superTitle}</SuperTitle>
+      <SuperTitle className="mb-3" style={{ color: colors.primary }}>
+        {superTitle}
+      </SuperTitle>
       <Heading2 className="mb-10 md:mb-20">{title}</Heading2>
 
       {/* 카테고리 */}
@@ -118,7 +120,7 @@ export function FaqCard({ faq }: { faq: Faq }) {
       className="overflow-hidden rounded-xxs border border-neutral-80"
     >
       <div className="flex items-center justify-between bg-neutral-100 p-5">
-        <span className="text-xsmall14 font-semibold text-neutral-0 md:text-medium22">
+        <span className="text-medium22 font-semibold text-neutral-0 md:text-medium22">
           {faq.question}
         </span>
         <IoIosArrowDown
@@ -129,7 +131,7 @@ export function FaqCard({ faq }: { faq: Faq }) {
         />
       </div>
       {isOpen && (
-        <div className="border-t border-neutral-80 px-5 py-3 text-xxsmall12 text-neutral-35 md:text-small18">
+        <div className="border-t border-neutral-80 px-5 py-3 text-small18 text-neutral-35 md:text-small18">
           {faq.answer}
         </div>
       )}

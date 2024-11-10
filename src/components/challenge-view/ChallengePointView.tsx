@@ -1,7 +1,7 @@
+import Check from '@/assets/icons/chevron-down.svg?react';
 import { twMerge } from '@/lib/twMerge';
 import { Dayjs } from 'dayjs';
 import { ReactNode, useMemo } from 'react';
-import { FaCheck } from 'react-icons/fa6';
 import { clientOnly } from 'vike-react/clientOnly';
 
 import { ChallengeType, challengeTypeSchema } from '@/schema';
@@ -187,7 +187,7 @@ const ChallengePointView = ({
               className="flex w-full items-center rounded-t-md px-4 py-2.5 text-xsmall14 font-semibold text-white md:justify-center md:px-2.5"
               style={{ backgroundColor: colors.primary }}
             >
-              2 Weeks
+              {point.weekText} 과정
             </div>
             <div className="flex flex-col gap-5 rounded-b-md bg-white px-4 py-[30px] md:flex-row md:justify-between md:pb-[30px] md:pt-9 lg:px-10">
               {progress.map((item) => (
@@ -212,9 +212,10 @@ const ChallengePointView = ({
                 <ul className="flex flex-col gap-1 pl-1">
                   {MISSION.content.map((item) => (
                     <li key={item} className="flex items-start gap-2">
-                      <FaCheck
-                        size={16}
-                        className="mt-1 shrink-0"
+                      <Check
+                        width={24}
+                        height={24}
+                        className="shrink-0"
                         style={{ color: colors.primary }}
                       />
                       {item}
