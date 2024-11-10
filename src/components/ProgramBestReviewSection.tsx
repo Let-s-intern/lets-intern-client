@@ -17,7 +17,7 @@ const ProgramBestReviewSection = ({
 
   return (
     <div className="flex w-full max-w-[1000px] flex-col gap-y-8 md:items-center">
-      <div className="flex flex-col gap-y-6 px-5 md:items-center md:gap-y-[50px] md:px-10">
+      <div className="flex flex-col gap-y-6 px-5 md:items-center md:gap-y-[50px] md:px-10 lg:px-0">
         <p
           className="text-xsmall14 font-semibold text-primary md:text-small20"
           style={{ color: colors?.primary }}

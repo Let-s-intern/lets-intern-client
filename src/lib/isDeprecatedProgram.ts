@@ -12,6 +12,6 @@ export function isDeprecatedProgram(program: { desc?: string | null }) {
 /**
  * 새로운 버전의 프로그램인지 확인합니다. (챌린지, LIVE 클래스) 2024/11 기준.
  */
-export function isNewProgram(program: { desc?: string | null }) {
-  return program.desc && !program.desc.startsWith('<');
+export function isNewProgram(program: { desc?: string | null }): boolean {
+  return !!program.desc && !program.desc.startsWith('<');
 }

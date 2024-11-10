@@ -23,7 +23,6 @@ import ProgramDetailBlogReviewSection from './ProgramDetailBlogReviewSection';
 import ProgramDetailNavigation, {
   CHALLENGE_DIFFERENT_ID,
   PROGRAM_CURRICULUM_ID,
-  PROGRAM_FAQ_ID,
   PROGRAM_INTRO_ID,
   PROGRAM_REVIEW_ID,
 } from './ProgramDetailNavigation';
@@ -222,27 +221,24 @@ const ChallengeView: React.FC<{
 
           <section
             id={PROGRAM_REVIEW_ID}
-            className="challenge_review flex w-full flex-col items-center bg-neutral-95 py-16 md:pb-32 md:pt-28"
+            className="challenge_review flex w-full flex-col items-center gap-y-[70px] md:gap-y-40"
           >
-            <ProgramBestReviewSection
-              type="challenge"
-              reviews={receivedContent.challengeReview}
-              colors={colors}
-            />
-          </section>
-
-          <div className="challenge_faq flex w-full flex-col px-5 pb-8 pt-16 md:items-center md:px-10 md:pb-32 md:pt-36">
-            {receivedContent.blogReview ? (
+            <div className="flex w-full flex-col items-center bg-neutral-95 py-[70px] md:px-[130px] md:pt-[110px]">
+              <ProgramBestReviewSection
+                type="challenge"
+                reviews={receivedContent.challengeReview}
+                colors={colors}
+              />
+            </div>
+            {receivedContent.blogReview && (
               <ProgramDetailBlogReviewSection
                 review={receivedContent.blogReview}
                 programType="challenge"
               />
-            ) : null}
-            <section id={PROGRAM_FAQ_ID} className="w-full">
-              <ChallengeFaq colors={colors} />
-            </section>
-            <ChallengeInfoBottom challenge={challenge} colors={colors} />
-          </div>
+            )}
+          </section>
+          <ChallengeFaq colors={colors} />
+          <ChallengeInfoBottom challenge={challenge} colors={colors} />
         </div>
       </div>
     </div>

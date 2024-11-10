@@ -9,6 +9,7 @@ import { Faq } from '@/schema';
 import { ChallengeColor } from '@components/ChallengeView';
 import Heading2 from '@components/common/program/program-detail/Heading2';
 import SuperTitle from '@components/common/program/program-detail/SuperTitle';
+import { PROGRAM_FAQ_ID } from '@components/ProgramDetailNavigation';
 
 const superTitle = '자주 묻는 질문';
 const title = '궁금한 점이 있으신가요?';
@@ -30,7 +31,10 @@ function ChallengeFaq({ colors }: ChallengeFaqProps) {
   if (!faqList) return <></>;
 
   return (
-    <div className="w-full pt-20 md:flex md:flex-col md:items-center md:pt-40">
+    <section
+      id={PROGRAM_FAQ_ID}
+      className="challenge_faq flex w-full max-w-[1000px] flex-col px-5 py-20 pt-20 md:items-center md:px-10 md:py-40 lg:px-0"
+    >
       <SuperTitle
         className="mb-6 text-neutral-45 md:mb-12"
         style={{ color: colors.primary }}
@@ -74,7 +78,7 @@ function ChallengeFaq({ colors }: ChallengeFaqProps) {
           1:1 채팅 문의하기
         </button>
       </div>
-    </div>
+    </section>
   );
 }
 
