@@ -30,8 +30,6 @@ function ChallengeFaq({ colors, faqCategory }: ChallengeFaqProps) {
   const faqList = data?.faqList;
   const categoryList = [...new Set(faqCategory)];
 
-  if (categoryList.length === 0 || !faqList) return <></>;
-
   return (
     <section
       id={PROGRAM_FAQ_ID}
@@ -63,7 +61,7 @@ function ChallengeFaq({ colors, faqCategory }: ChallengeFaqProps) {
       </div>
 
       <div className="mb-10 flex flex-col gap-3 md:mb-24 md:w-full md:max-w-[800px]">
-        {faqList.map((faq) => {
+        {faqList?.map((faq) => {
           if (faq.category === categoryList[selectedIndex])
             return <FaqCard key={faq.id} faq={faq} />;
         })}

@@ -264,7 +264,14 @@ const ChallengeCreate: React.FC = () => {
         <div className="mb-6">
           <ChallengeFaqCategory
             faqCategory={content.faqCategory}
-            setContent={setContent}
+            onChange={(e) => {
+              setContent((prev) => ({
+                ...prev,
+                faqCategory: e.target.value
+                  .split(',')
+                  .map((item) => item.trim()),
+              }));
+            }}
           />
         </div>
         <FaqSection
