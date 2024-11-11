@@ -281,7 +281,7 @@ const PaymentInputPage = () => {
           </div>
           {programApplicationData.programType === 'challenge' && !isLoading && (
             <>
-              <div className="rounded-lg bg-[#F3F4FF] px-4 py-6 md:px-5">
+              <div className="rounded-sm bg-[#F3F4FF] px-4 py-6 md:px-5">
                 <p className="font-semibold">
                   {banks.join(', ')} 카드로 결제하면
                   <br className="md:hidden" />{' '}
