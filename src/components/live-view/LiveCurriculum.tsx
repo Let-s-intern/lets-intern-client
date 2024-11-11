@@ -1,4 +1,3 @@
-import { LiveIdSchema } from '@/schema';
 import { LiveContent } from '@/types/interface';
 import Heading2 from '@components/common/program/program-detail/Heading2';
 import SuperTitle from '@components/common/program/program-detail/SuperTitle';
@@ -6,16 +5,11 @@ import SuperTitle from '@components/common/program/program-detail/SuperTitle';
 const superTitle = '현직자 멘토가 들려주는 생생한 이야기';
 
 interface LiveCurriculumProps {
-  liveTitle: LiveIdSchema['title'];
   curriculum: LiveContent['curriculum'];
   curriculumTitle: LiveContent['curriculumTitle'];
 }
 
-function LiveCurriculum({
-  liveTitle,
-  curriculum,
-  curriculumTitle,
-}: LiveCurriculumProps) {
+function LiveCurriculum({ curriculum, curriculumTitle }: LiveCurriculumProps) {
   return (
     <section className="py-20 md:pb-[130px]">
       <SuperTitle className="mb-6 font-bold text-primary md:mb-10">
@@ -30,19 +24,14 @@ function LiveCurriculum({
             key={item.id}
             className="w-full max-w-[900px] overflow-hidden rounded-md md:flex"
           >
-            <div className="flex gap-3 bg-primary px-6 py-4 md:w-2/5 md:p-6">
-              <div className="flex h-5 w-5 items-center justify-center rounded-full bg-primary-30 text-xxsmall12 font-semibold text-primary">
+            <div className="flex items-center gap-3 bg-primary px-6 py-4 md:h-36 md:w-2/5 md:items-start md:p-6">
+              <div className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-primary-30 text-xxsmall12 font-semibold text-primary md:mt-1">
                 {index + 1}
               </div>
-              <div className="flex w-full justify-between md:flex-col md:gap-y-4">
-                <div className="flex flex-col gap-1">
-                  <span className="text-xxsmall12 font-medium text-primary-10 md:text-xsmall14">
-                    {liveTitle}
-                  </span>
-                  <span className="text-small18 font-semibold text-white md:text-small20">
-                    {item.title}
-                  </span>
-                </div>
+              <div className="flex w-full justify-between md:h-full md:flex-col">
+                <span className="text-small18 font-semibold text-white md:text-small20">
+                  {item.title}
+                </span>
                 <span className="text-xsmall16 font-medium text-white md:text-small20">
                   {item.time}
                 </span>

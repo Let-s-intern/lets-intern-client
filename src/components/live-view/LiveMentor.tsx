@@ -1,5 +1,6 @@
 import { twMerge } from '@/lib/twMerge';
 import { LiveIdSchema } from '@/schema';
+import { LiveContent } from '@/types/interface';
 import Heading2 from '@components/common/program/program-detail/Heading2';
 import SuperTitle from '@components/common/program/program-detail/SuperTitle';
 
@@ -13,11 +14,17 @@ interface LiveMentorProps {
     | 'mentorCareer'
     | 'mentorIntroduction'
   >;
+  curriculumTitle: LiveContent['curriculumTitle'];
   className?: string;
   id?: string;
 }
 
-function LiveMentor({ mentor, className, id }: LiveMentorProps) {
+function LiveMentor({
+  mentor,
+  className,
+  id,
+  curriculumTitle,
+}: LiveMentorProps) {
   return (
     <section
       id={id}
@@ -30,7 +37,7 @@ function LiveMentor({ mentor, className, id }: LiveMentorProps) {
         렛츠커리어 LIVE 클래스에서만
         <br className="md:hidden" /> 들을 수 있는{' '}
         <br className="hidden md:block" />
-        <span className="text-primary">요즘 PM 취업의 A to Z</span>
+        <span className="text-primary">{curriculumTitle}</span>
       </Heading2>
       <SuperTitle className="mb-5 text-primary md:mb-10">멘토 소개</SuperTitle>
 

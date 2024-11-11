@@ -56,8 +56,9 @@ const LiveView: React.FC<{ live: LiveIdSchema; isPreview?: boolean }> = ({
 
         <div className="flex w-full flex-col items-center overflow-x-hidden">
           <LiveMentor
-            mentor={mentor}
             id={LIVE_MENTOR_INTRO_ID}
+            mentor={mentor}
+            curriculumTitle={receivedContent.curriculumTitle}
             className="live_mentor"
           />
           <LiveInformation
@@ -73,7 +74,6 @@ const LiveView: React.FC<{ live: LiveIdSchema; isPreview?: boolean }> = ({
             className="live_curriculum flex w-full max-w-[1000px] flex-col px-5 pb-[70px] md:px-10 md:pb-[140px]"
           >
             <LiveCurriculum
-              liveTitle={live.title}
               curriculum={receivedContent.curriculum}
               curriculumTitle={receivedContent.curriculumTitle}
             />

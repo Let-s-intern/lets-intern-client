@@ -6,6 +6,7 @@ import { useParams } from 'react-router-dom';
 import { useGetChallengeFaq } from '@/api/challenge';
 import channelService from '@/ChannelService';
 import { Faq } from '@/schema';
+import { ChallengeContent } from '@/types/interface';
 import { ChallengeColor } from '@components/ChallengeView';
 import Heading2 from '@components/common/program/program-detail/Heading2';
 import SuperTitle from '@components/common/program/program-detail/SuperTitle';
@@ -16,9 +17,10 @@ const title = '궁금한 점이 있으신가요?';
 
 interface ChallengeFaqProps {
   colors: ChallengeColor;
+  faqCategory: ChallengeContent['faqCategory'];
 }
 
-function ChallengeFaq({ colors }: ChallengeFaqProps) {
+function ChallengeFaq({ colors, faqCategory }: ChallengeFaqProps) {
   const { id } = useParams();
 
   const [selectedIndex, setSelectedIndex] = useState(0);
@@ -26,9 +28,9 @@ function ChallengeFaq({ colors }: ChallengeFaqProps) {
   const { data } = useGetChallengeFaq(id ?? '');
 
   const faqList = data?.faqList;
-  const categoryList = [...new Set(faqList?.map((faq) => faq.category))];
+  const categoryList = [...new Set(faqCategory)];
 
-  if (!faqList) return <></>;
+  if (categoryList.length === 0 || !faqList) return <></>;
 
   return (
     <section
@@ -124,7 +126,7 @@ export function FaqCard({ faq }: { faq: Faq }) {
       className="overflow-hidden rounded-xxs border border-neutral-80"
     >
       <div className="flex items-center justify-between bg-neutral-100 p-5">
-        <span className="text-medium22 font-semibold text-neutral-0 md:text-medium22">
+        <span className="text-xsmall14 font-semibold text-neutral-0 md:text-medium22">
           {faq.question}
         </span>
         <IoIosArrowDown
@@ -135,7 +137,7 @@ export function FaqCard({ faq }: { faq: Faq }) {
         />
       </div>
       {isOpen && (
-        <div className="border-t border-neutral-80 px-5 py-3 text-small18 text-neutral-35 md:text-small18">
+        <div className="border-t border-neutral-80 px-5 py-3 text-xxsmall12 text-neutral-35 md:text-small18">
           {faq.answer}
         </div>
       )}

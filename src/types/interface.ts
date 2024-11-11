@@ -60,6 +60,8 @@ export type ChallengeContent = {
   blogReview?: ProgramBlogReview;
   /**  후기 */
   challengeReview?: ContentReviewType[];
+  /** FAQ 카테고리 순서 */
+  faqCategory: string[];
 };
 
 export type LiveContent = {
