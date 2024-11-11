@@ -265,14 +265,7 @@ const ChallengeEdit: React.FC = () => {
         <div className="mb-6">
           <ChallengeFaqCategory
             faqCategory={content.faqCategory}
-            onChange={(e) => {
-              setContent((prev) => ({
-                ...prev,
-                faqCategory: e.target.value
-                  .split(',')
-                  .map((item) => item.trim()),
-              }));
-            }}
+            setContent={setContent}
           />
         </div>
         <FaqSection

@@ -1,3 +1,4 @@
+import { useGetFaq } from '@/api/faq';
 import { fileType, uploadFile } from '@/api/file';
 import { usePostChallengeMutation } from '@/api/program';
 import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
@@ -44,6 +45,11 @@ const ChallengeCreate: React.FC = () => {
   const navigate = useNavigate();
 
   const { mutateAsync: postChallenge } = usePostChallengeMutation();
+  const { data: faqData } = useGetFaq('CHALLENGE');
+
+  const categoryList = [
+    ...new Set(faqData?.faqList.map((faq) => faq.category)),
+  ];
 
   const [input, setInput] = useState<Omit<CreateChallengeReq, 'desc'>>({
     beginning: dayjs().format('YYYY-MM-DDTHH:mm'),
@@ -258,14 +264,7 @@ const ChallengeCreate: React.FC = () => {
         <div className="mb-6">
           <ChallengeFaqCategory
             faqCategory={content.faqCategory}
-            onChange={(e) => {
-              setContent((prev) => ({
-                ...prev,
-                faqCategory: e.target.value
-                  .split(',')
-                  .map((item) => item.trim()),
-              }));
-            }}
+            setContent={setContent}
           />
         </div>
         <FaqSection
