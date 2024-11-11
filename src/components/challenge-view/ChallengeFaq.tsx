@@ -30,7 +30,7 @@ function ChallengeFaq({ colors, faqCategory }: ChallengeFaqProps) {
   const faqList = data?.faqList;
   const categoryList = [...new Set(faqCategory)];
 
-  if (!faqList) return <></>;
+  if (categoryList.length === 0 || !faqList) return <></>;
 
   return (
     <section
