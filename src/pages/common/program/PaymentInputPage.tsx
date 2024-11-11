@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 
 import { useProgramQuery } from '@/api/program';
 import { usePatchUser } from '@/api/user';
+import paybackImg from '@/assets/payback.png';
 import { useInstallmentPayment } from '@/hooks/useInstallmentPayment';
 import { UserInfo } from '@/lib/order';
 import useAuthStore from '@/store/useAuthStore';
@@ -279,14 +280,18 @@ const PaymentInputPage = () => {
             </div>
           </div>
           {programApplicationData.programType === 'challenge' && !isLoading && (
-            <div className="rounded-lg bg-[#F3F4FF] px-4 py-6 md:px-5">
-              <p className="font-semibold">
-                {banks.join(', ')} 카드로 결제하면
+            <div className="relative rounded-sm bg-[#E8F9F2] px-4 py-6 text-xsmall14 md:px-5">
+              <p className="font-medium">
+                모든 미션을 성공하면
                 <br className="md:hidden" />{' '}
-                <span className="text-primary">{months}개월</span> 무이자 할부
-                혜택!
+                <span className="text-secondary-dark">3만원 페이백</span>{' '}
+                해드려요!
               </p>
-              {/* 그래픽 */}
+              <img
+                className="absolute bottom-0 right-0 h-full w-auto"
+                src={paybackImg}
+                alt="3만원 페이백"
+              />
             </div>
           )}
         </div>
