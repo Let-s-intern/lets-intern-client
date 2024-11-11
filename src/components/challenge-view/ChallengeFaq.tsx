@@ -6,6 +6,7 @@ import { useParams } from 'react-router-dom';
 import { useGetChallengeFaq } from '@/api/challenge';
 import channelService from '@/ChannelService';
 import { Faq } from '@/schema';
+import { ChallengeContent } from '@/types/interface';
 import { ChallengeColor } from '@components/ChallengeView';
 import Heading2 from '@components/common/program/program-detail/Heading2';
 import SuperTitle from '@components/common/program/program-detail/SuperTitle';
@@ -16,9 +17,10 @@ const title = '궁금한 점이 있으신가요?';
 
 interface ChallengeFaqProps {
   colors: ChallengeColor;
+  faqCategory: ChallengeContent['faqCategory'];
 }
 
-function ChallengeFaq({ colors }: ChallengeFaqProps) {
+function ChallengeFaq({ colors, faqCategory }: ChallengeFaqProps) {
   const { id } = useParams();
 
   const [selectedIndex, setSelectedIndex] = useState(0);
@@ -26,7 +28,7 @@ function ChallengeFaq({ colors }: ChallengeFaqProps) {
   const { data } = useGetChallengeFaq(id ?? '');
 
   const faqList = data?.faqList;
-  const categoryList = [...new Set(faqList?.map((faq) => faq.category))];
+  const categoryList = [...new Set(faqCategory)];
 
   if (!faqList) return <></>;
 
