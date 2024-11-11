@@ -164,8 +164,7 @@ const ChallengeDifferent = ({
             <span style={{ color: colors.primary }}>혜택</span>
             <p className="z-10 whitespace-pre text-black">
               모든 커리큘럼을 따라오기만 하면,
-              <br className="md:hidden" />
-              3만원을 페이백해드려요!
+              <br className="md:hidden" /> 3만원을 페이백해드려요!
             </p>
             <img
               className="absolute bottom-0 right-0 h-auto w-28 md:-bottom-4 md:w-48"
