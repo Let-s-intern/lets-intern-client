@@ -51,7 +51,7 @@ const ChallengeBrand = ({ colors }: { colors: ChallengeColor }) => {
           </p>
         </div>
       </div>
-      <div className="flex w-full flex-col items-center justify-center gap-y-6 md:gap-y-8">
+      {/* <div className="flex w-full flex-col items-center justify-center gap-y-6 md:gap-y-8">
         <iframe
           src="https://www.youtube.com/embed/_xTOxSSqgzA"
           title="YouTube video player"
@@ -65,7 +65,7 @@ const ChallengeBrand = ({ colors }: { colors: ChallengeColor }) => {
         >
           설명
         </div>
-      </div>
+      </div> */}
     </section>
   );
 };
