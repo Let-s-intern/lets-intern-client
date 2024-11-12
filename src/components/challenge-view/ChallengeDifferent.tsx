@@ -167,7 +167,7 @@ const ChallengeDifferent = ({
               <br className="md:hidden" /> 3만원을 페이백해드려요!
             </p>
             <img
-              className="absolute bottom-0 right-0 h-auto w-28 md:-bottom-4 md:w-48"
+              className="absolute bottom-0 right-0 h-auto w-28 md:top-0 md:w-48"
               src={paypackImgSrc}
               alt="페이백 3만원"
             />
