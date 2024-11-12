@@ -192,7 +192,7 @@ const ChallengePointView = ({
             >
               {point.weekText} 과정
             </div>
-            <div className="flex flex-col gap-5 rounded-b-md bg-white px-4 py-[30px] md:flex-row md:justify-between md:pb-[30px] md:pt-9">
+            <div className="flex flex-col gap-5 rounded-b-md bg-white px-4 py-[30px] md:flex-row md:justify-between md:gap-0 md:pb-[30px] md:pt-9 lg:px-7">
               {progress.map((item) => (
                 <ProgressItem
                   key={item.index}
