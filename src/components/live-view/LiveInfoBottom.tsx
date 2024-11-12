@@ -10,6 +10,7 @@ import {
   formatTime,
 } from '@/utils/formatDateString';
 import BasicInfoRow from '@components/common/program/program-detail/basicInfo/BasicInfoRow';
+import Heading2 from '@components/common/program/program-detail/Heading2';
 
 export const getDiscountPercent = (
   originalPrice: number,
@@ -22,9 +23,7 @@ export const getDiscountPercent = (
 const LiveInfoBottom = ({ live }: { live: LiveIdSchema }) => {
   return (
     <section className="flex w-full max-w-[1000px] flex-col gap-y-8 px-5 pb-8 md:gap-y-[70px] md:px-10 md:pb-[130px] lg:px-0">
-      <div className="w-full text-small20 font-bold text-neutral-0 md:text-center">
-        모집개요
-      </div>
+      <Heading2>모집개요</Heading2>
       <div className="flex w-full flex-col gap-3 md:flex-row">
         <div className="flex flex-1 items-center justify-center rounded-md bg-neutral-95 px-6 py-5">
           <div className="flex w-full flex-col gap-y-5 text-primary-90">
