@@ -228,7 +228,9 @@ function ChallengeCheckList({
                 Check {index + 1}
               </Badge>
               {item.title.map((ele) => (
-                <span key={ele}>{ele}</span>
+                <span key={ele} className="shrink-0">
+                  {ele}
+                </span>
               ))}
             </Box>
             <div className="flex w-fit flex-col gap-5 px-5 md:items-center md:px-0">
