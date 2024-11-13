@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 
 import { useProgramQuery } from '@/api/program';
 import { usePatchUser } from '@/api/user';
+import CreditCardIcon from '@/assets/icons/credit-card.svg?react';
 import paybackImg from '@/assets/payback.png';
 import { useInstallmentPayment } from '@/hooks/useInstallmentPayment';
 import { UserInfo } from '@/lib/order';
@@ -260,6 +261,17 @@ const PaymentInputPage = () => {
             />
 
             <hr className="bg-neutral-85" />
+
+            {programApplicationData.programType === 'challenge' &&
+              !isLoading && (
+                <div className="flex items-center gap-2.5 px-3 text-primary">
+                  <CreditCardIcon className="h-auto w-5" />
+                  <p className="text-xsmall14 font-medium">
+                    {banks.join(', ')}카드로 결제하면{' '}
+                    <span className="font-bold">{months}개월 무이자</span> 혜택
+                  </p>
+                </div>
+              )}
 
             <PriceSection
               payInfo={{

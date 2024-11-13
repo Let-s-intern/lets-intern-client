@@ -56,7 +56,9 @@ const ProgramDetailReviewItem = ({
           </span>
           <p className="line-clamp-1 text-xsmall14 font-semibold text-neutral-30 md:text-xsmall16">{`${review.programName} 수강`}</p>
         </div>
-        <p className="line-clamp-2 w-full break-words text-xsmall14 text-neutral-35 md:text-xsmall16">
+        <p
+          className={`${type === 'live' ? 'line-clamp-4' : 'line-clamp-2'} w-full break-words text-xsmall14 text-neutral-35 md:text-xsmall16`}
+        >
           {review.content}
         </p>
       </div>

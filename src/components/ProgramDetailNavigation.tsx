@@ -59,12 +59,6 @@ const ProgramDetailNavigation = ({
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
-          if (entry.target.id === LIVE_FAQ_ID) {
-            console.log(
-              'Intersection ratio for program-intro:',
-              entry.intersectionRatio,
-            );
-          }
           if (entry.isIntersecting) {
             // 얼마나 보여지는지 콘솔
             // console.log(entry.target.id);
@@ -75,17 +69,19 @@ const ProgramDetailNavigation = ({
       },
       {
         // 뷰포트 상단 10%부터 시작해서 뷰포트 하단 10%까지 보여지면 콜백
-        rootMargin: '-10% 0px 0px 0px',
+        rootMargin: '0px 0px 0px 0px',
         threshold: 0.05,
       },
     );
 
-    navItems.forEach((navItem) => {
-      const target = document.getElementById(navItem.to);
-      if (target) {
-        observer.observe(target);
-      }
-    });
+    setTimeout(() => {
+      navItems.forEach((navItem) => {
+        const target = document.getElementById(navItem.to);
+        if (target) {
+          observer.observe(target);
+        }
+      });
+    }, 500);
 
     return () => {
       navItems.forEach((navItem) => {

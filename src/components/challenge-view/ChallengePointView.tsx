@@ -84,11 +84,11 @@ const ChallengePointView = ({
   const programSchedule = [
     {
       title: '진행 기간',
-      content: `${startDate.format('YYYY년 M월 D일(dd) H시 m분')} ~ ${endDate.format('YYYY년 M월 D일(dd) H시 m분')}`,
+      content: `${startDate.format('YYYY년 M월 D일(dd) HH시 mm분')}\n~ ${endDate.format('YYYY년 M월 D일(dd) HH시 mm분')}`,
     },
     {
       title: 'OT 일자',
-      content: `${startDate.format('YYYY년 M월 D일(dd) H시 m분')} *실시간 참여`,
+      content: `${startDate.format('YYYY년 M월 D일(dd) HH시 mm분')}\n*실시간 참여`,
     },
     {
       title: '진행 방식',
@@ -192,7 +192,7 @@ const ChallengePointView = ({
             >
               {point.weekText} 과정
             </div>
-            <div className="flex flex-col gap-5 rounded-b-md bg-white px-4 py-[30px] md:flex-row md:justify-between md:pb-[30px] md:pt-9">
+            <div className="flex flex-col gap-5 rounded-b-md bg-white px-4 py-[30px] md:flex-row md:justify-between md:gap-0 md:pb-[30px] md:pt-9 lg:px-7">
               {progress.map((item) => (
                 <ProgressItem
                   key={item.index}
