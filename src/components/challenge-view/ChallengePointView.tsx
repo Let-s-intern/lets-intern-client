@@ -84,11 +84,11 @@ const ChallengePointView = ({
   const programSchedule = [
     {
       title: '진행 기간',
-      content: `${startDate.format('YYYY년 M월 D일(dd) H시 m분')} ~ ${endDate.format('YYYY년 M월 D일(dd) H시 m분')}`,
+      content: `${startDate.format('YYYY년 M월 D일(dd) HH시 mm분')}\n~ ${endDate.format('YYYY년 M월 D일(dd) HH시 mm분')}`,
     },
     {
       title: 'OT 일자',
-      content: `${startDate.format('YYYY년 M월 D일(dd) H시 m분')} *실시간 참여`,
+      content: `${startDate.format('YYYY년 M월 D일(dd) HH시 mm분')}\n*실시간 참여`,
     },
     {
       title: '진행 방식',

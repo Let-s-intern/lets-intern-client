@@ -137,6 +137,22 @@ module.exports = {
         'blog-banner-lg': 'url("../public/images/blog_banner_bg_lg.png")',
         'certificate-bg': 'url("/images/certificate_bg.png")',
       },
+      keyframes: {
+        'live-infinite-scroll-desktop': {
+          '0%': { transform: 'translateX(0)' },
+          '100%': { transform: 'translateX(-2196px)' },
+        },
+        'live-infinite-scroll-mobile': {
+          '0%': { transform: 'translateX(0)' },
+          '100%': { transform: 'translateX(-1380px)' },
+        },
+      },
+      animation: {
+        'live-infinite-scroll-desktop':
+          'live-infinite-scroll-desktop 16s linear infinite',
+        'live-infinite-scroll-mobile':
+          'live-infinite-scroll-mobile 12s linear infinite',
+      },
     },
     borderRadius: {
       none: '0',
@@ -148,22 +164,6 @@ module.exports = {
       xl: '1.25rem',
       xxl: '1.5rem',
       full: '9999px',
-    },
-    keyframes: {
-      'live-infinite-scroll-desktop': {
-        '0%': { transform: 'translateX(0)' },
-        '100%': { transform: 'translateX(-2196px)' },
-      },
-      'live-infinite-scroll-mobile': {
-        '0%': { transform: 'translateX(0)' },
-        '100%': { transform: 'translateX(-1380px)' },
-      },
-    },
-    animation: {
-      'live-infinite-scroll-desktop':
-        'live-infinite-scroll-desktop 16s linear infinite',
-      'live-infinite-scroll-mobile':
-        'live-infinite-scroll-mobile 12s linear infinite',
     },
   },
 
