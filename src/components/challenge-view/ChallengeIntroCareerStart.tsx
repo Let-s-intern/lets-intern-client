@@ -105,7 +105,7 @@ const ChallengeIntroCareerStart = ({
             <div>
               <div className="mb-8 md:mb-20 md:flex md:items-center md:justify-between">
                 <div className="md:flex md:gap-3">
-                  <CircularBox className="mb-2 h-5 w-5 bg-primary text-xsmall14 font-semibold md:mt-0.5 md:h-8 md:w-8 md:text-small20">
+                  <CircularBox className="mb-2 h-5 w-5 shrink-0 bg-primary text-xsmall14 font-semibold md:mt-0.5 md:h-8 md:w-8 md:text-small20">
                     1
                   </CircularBox>
                   <div>
