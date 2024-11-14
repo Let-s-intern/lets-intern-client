@@ -1,5 +1,6 @@
 import { ReactNode } from 'react';
 
+import { twMerge } from '@/lib/twMerge';
 import { ChallengePoint } from '@/types/interface';
 import { ChallengeColor } from '@components/ChallengeView';
 import Description from '@components/common/program/program-detail/Description';
@@ -64,7 +65,10 @@ const ChallengeIntroCareerStart = ({
                 return (
                   <div
                     key={index}
-                    className={`h-20 whitespace-pre rounded-md bg-white px-2.5 py-3 ${box === '' ? 'hidden md:block' : ''} text-[10px] font-semibold md:h-40 md:px-5 md:py-6 md:text-small20`}
+                    className={twMerge(
+                      'h-20 whitespace-pre rounded-md bg-white px-2.5 py-3 text-[10px] font-semibold md:h-40 md:px-5 md:py-6 md:text-small20',
+                      box === '' && 'hidden md:invisible md:block',
+                    )}
                   >
                     {box}
                   </div>
