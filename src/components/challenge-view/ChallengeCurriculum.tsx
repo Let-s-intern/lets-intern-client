@@ -49,7 +49,7 @@ function ChallengeCurriculum({
         커리큘럼
       </SuperTitle>
       <div
-        className="mb-4 flex w-fit items-center gap-x-2 rounded-sm bg-white px-2 py-1 text-xsmall14 font-bold md:gap-x-3 md:rounded-md md:px-4 md:py-2.5 md:text-[18px]"
+        className="mb-4 flex w-fit gap-x-2 rounded-sm bg-white px-2 py-1 text-xsmall14 font-bold sm:items-center md:gap-x-3 md:rounded-md md:px-4 md:py-2.5 md:text-[18px]"
         style={{
           color:
             challengeType === CAREER_START ? colors.primary : colors.secondary,
@@ -57,7 +57,7 @@ function ChallengeCurriculum({
       >
         <img className="h-6 w-6 md:h-8 md:w-8" src={`/icons/${iconName}`} />
         {challengeTitle}에서는
-        <br className="md:hidden" /> 이런 걸 가져갈 수 있어요
+        <br className="sm:hidden" /> 이런 걸 가져갈 수 있어요
       </div>
       <Heading2 className="mb-10 whitespace-pre-line md:mb-16">
         {title}
