@@ -44,7 +44,7 @@ const ChallengeDetailSSRPage = () => {
     if (isDeprecated) {
       navigate(`/program/old/challenge/${id}`, { replace: true });
     }
-  }, [challenge, id, isDeprecated, navigate]);
+  }, [id, isDeprecated, navigate]);
 
   // 이 페이지 방문 시 프로그램 신청 폼 초기화
   useEffect(() => {
