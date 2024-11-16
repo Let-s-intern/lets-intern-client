@@ -36,16 +36,19 @@ const ChallengeBasicInfo = ({
   } = useInstallmentPayment();
 
   const priceInfo = challenge.priceInfo[0];
+  const monthlyPrice =
+    installmentMonths && priceInfo
+      ? Math.round(
+          ((priceInfo.price ?? 0) - (priceInfo.discount ?? 0)) /
+            installmentMonths,
+        )
+      : null;
+  const totalPrice = (priceInfo?.price || 0) - (priceInfo?.discount || 0);
+  const showMonthlyPrice = priceInfo && totalPrice >= 50000;
   const regularPrice =
     priceInfo.challengePriceType === 'CHARGE'
       ? priceInfo.price
       : (priceInfo.price ?? 0) + (priceInfo.refund ?? 0); // 정가
-  const totalPrice = (regularPrice || 0) - (priceInfo?.discount || 0);
-  const monthlyPrice =
-    installmentMonths && priceInfo
-      ? Math.round(totalPrice / installmentMonths)
-      : null;
-  const showMonthlyPrice = priceInfo && totalPrice >= 50000;
 
   const priceReason = (() => {
     switch (challenge.challengeType) {
@@ -134,7 +137,7 @@ const ChallengeBasicInfo = ({
                 <div className="flex w-full items-center justify-between gap-x-4 text-xsmall16">
                   <span className="font-bold" style={{ color: colors.primary }}>
                     {getDiscountPercent(
-                      regularPrice || 0,
+                      priceInfo.price || 0,
                       priceInfo.discount || 0,
                     )}
                     % 할인

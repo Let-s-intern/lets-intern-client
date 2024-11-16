@@ -81,7 +81,7 @@ const ProgramDetailNavigation = ({
           observer.observe(target);
         }
       });
-    }, 500);
+    }, 1000);
 
     return () => {
       navItems.forEach((navItem) => {
