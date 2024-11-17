@@ -1,4 +1,3 @@
-import { useMediaQuery } from '@mui/material';
 import { useCallback, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
@@ -24,7 +23,7 @@ const ChallengeDetailSSRPage = () => {
     id: string;
     title?: string;
   }>();
-  const isDesktop = useMediaQuery('(min-width:991px)');
+
   const { isLoggedIn } = useAuthStore();
 
   const challengeFromServer = useServerChallenge();
@@ -157,19 +156,17 @@ const ChallengeDetailSSRPage = () => {
 
       <ChallengeView challenge={challenge} />
 
-      {isDesktop ? (
-        <DesktopApplyCTA
-          program={challenge}
-          onApplyClick={onApplyClick}
-          isAlreadyApplied={isAlreadyApplied}
-        />
-      ) : (
-        <MobileApplyCTA
-          program={challenge}
-          onApplyClick={onApplyClick}
-          isAlreadyApplied={isAlreadyApplied}
-        />
-      )}
+      <DesktopApplyCTA
+        program={challenge}
+        onApplyClick={onApplyClick}
+        isAlreadyApplied={isAlreadyApplied}
+      />
+
+      <MobileApplyCTA
+        program={challenge}
+        onApplyClick={onApplyClick}
+        isAlreadyApplied={isAlreadyApplied}
+      />
     </>
   );
 };
