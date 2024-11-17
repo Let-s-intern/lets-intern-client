@@ -2,6 +2,8 @@ import GradientButton from '@components/common/program/program-detail/button/Gra
 import NotiButton from '@components/common/program/program-detail/button/NotiButton';
 import { Duration } from '@components/Duration';
 import dayjs, { Dayjs } from 'dayjs';
+import { useCallback, useState } from 'react';
+import PaymentErrorNotification from './PaymentErrorNotification';
 
 function DisabledButton() {
   return (
@@ -35,8 +37,30 @@ export function MobileApplyCTA({
       ? dayjs().isBefore(program.beginning) || dayjs().isAfter(program.deadline)
       : false;
 
+  const [showInstagramAlert, setShowInstagramAlert] = useState(false);
+
+  const isInstagram =
+    typeof window !== 'undefined'
+      ? window.navigator.userAgent.includes('Instagram')
+      : false;
+
+  const handleApplyClick = useCallback(() => {
+    if (!isInstagram) {
+      handleApplyClick();
+      return;
+    }
+
+    if (!showInstagramAlert) {
+      setShowInstagramAlert(true);
+      return;
+    }
+
+    onApplyClick();
+  }, [isInstagram, onApplyClick, showInstagramAlert]);
+
   return (
     <div className="safe-area-bottom fixed left-0 right-0 z-40 flex w-full flex-col items-center overflow-hidden bg-neutral-0/65 text-xxsmall12 lg:hidden">
+      {showInstagramAlert && <PaymentErrorNotification className="border-t" />}
       <div className="w-full bg-neutral-0/95 py-1.5 text-center font-bold text-static-100">
         {program?.title}
       </div>
@@ -59,7 +83,7 @@ export function MobileApplyCTA({
                 <span className="text-xxsmall12 text-neutral-80">남음</span>
               </div>
             </div>
-            <GradientButton onClick={onApplyClick} className="apply_button">
+            <GradientButton onClick={handleApplyClick} className="apply_button">
               지금 바로 신청
             </GradientButton>
           </>
