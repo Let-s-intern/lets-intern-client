@@ -264,7 +264,7 @@ const PaymentInputPage = () => {
 
             {programApplicationData.programType === 'challenge' &&
               !isLoading && (
-                <div className="flex items-center gap-2.5 px-3 text-primary">
+                <div className="flex items-start gap-2.5 px-3 text-primary">
                   <CreditCardIcon className="h-auto w-5" />
                   <p className="text-xsmall14 font-medium">
                     {banks.join(', ')}카드로 결제하면{' '}

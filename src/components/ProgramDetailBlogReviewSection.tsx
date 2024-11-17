@@ -51,8 +51,7 @@ const ProgramDetailBlogReviewSection = ({
               rel="noreferrer noopener"
             >
               <img
-                className="h-28 w-auto rounded-sm md:h-64"
-                style={{ aspectRatio: '864/627' }}
+                className="h-28 w-auto rounded-sm transition hover:opacity-85 md:h-64"
                 src={review.thumbnail}
                 alt="참여 후기 썸네일"
               />
