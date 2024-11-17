@@ -10,12 +10,12 @@ import {
   getProgramPathname,
   getUniversalLink,
 } from '@/utils/url';
+import { DesktopApplyCTA, MobileApplyCTA } from '@components/common/ApplyCTA';
 import CommonHelmet from '@components/common/CommonHelmet';
 import LiveView from '@components/LiveView';
 import { useMediaQuery } from '@mui/material';
 import { useCallback, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { DesktopApplyCTA, MobileApplyCTA } from './ChallengeDetailSSRPage';
 
 const LiveDetailSSRPage = () => {
   const navigate = useNavigate();
