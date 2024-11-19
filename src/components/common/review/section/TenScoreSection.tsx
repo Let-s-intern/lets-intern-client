@@ -1,4 +1,4 @@
-import { josa } from '@toss/hangul';
+import { josa } from 'es-hangul';
 import { useEffect } from 'react';
 import TextArea from '../../ui/input/TextArea';
 import TenScore from '../score/TenScore';
