@@ -9,7 +9,7 @@ import { ChallengePoint } from '@/types/interface';
 import { ChallengeColor } from '@components/ChallengeView';
 import Heading2 from '@components/common/program/program-detail/Heading2';
 import SuperTitle from '@components/common/program/program-detail/SuperTitle';
-import { josa } from '@toss/hangul';
+import { josa } from 'es-hangul';
 
 const Balancer = clientOnly(() => import('react-wrap-balancer'));
 

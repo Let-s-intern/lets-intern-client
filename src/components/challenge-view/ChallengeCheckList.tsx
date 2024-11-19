@@ -9,7 +9,7 @@ import Description from '@components/common/program/program-detail/Description';
 import Heading2 from '@components/common/program/program-detail/Heading2';
 import OutlinedBox from '@components/common/program/program-detail/OutlineBox';
 import SuperTitle from '@components/common/program/program-detail/SuperTitle';
-import { josa } from '@toss/hangul';
+import { josa } from 'es-hangul';
 
 const superTitle = '취업 준비 현황 체크리스트';
 const title = [
