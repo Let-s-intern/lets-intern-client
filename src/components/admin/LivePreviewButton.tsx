@@ -116,7 +116,7 @@ const LivePreviewButton: React.FC<{
         startIcon={<FaDesktop size={12} />}
         onClick={handleOpen}
       >
-        미리보기
+        미리보기 (작업중)
       </Button>
       <PreviewModal open={open} onClose={handleClose}>
         <LiveView live={live} isPreview />

@@ -10,12 +10,11 @@ import {
   getProgramPathname,
   getUniversalLink,
 } from '@/utils/url';
+import { DesktopApplyCTA, MobileApplyCTA } from '@components/common/ApplyCTA';
 import CommonHelmet from '@components/common/CommonHelmet';
 import LiveView from '@components/LiveView';
-import { useMediaQuery } from '@mui/material';
 import { useCallback, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { DesktopApplyCTA, MobileApplyCTA } from './ChallengeDetailSSRPage';
 
 const LiveDetailSSRPage = () => {
   const navigate = useNavigate();
@@ -23,7 +22,6 @@ const LiveDetailSSRPage = () => {
     id: string;
     title?: string;
   }>();
-  const isDesktop = useMediaQuery('(min-width:991px)');
   const { isLoggedIn } = useAuthStore();
 
   const liveFromServer = useServerLive();
@@ -153,19 +151,17 @@ const LiveDetailSSRPage = () => {
 
       <LiveView live={live} />
 
-      {isDesktop ? (
-        <DesktopApplyCTA
-          program={live}
-          onApplyClick={onApplyClick}
-          isAlreadyApplied={isAlreadyApplied}
-        />
-      ) : (
-        <MobileApplyCTA
-          program={live}
-          onApplyClick={onApplyClick}
-          isAlreadyApplied={isAlreadyApplied}
-        />
-      )}
+      <DesktopApplyCTA
+        program={live}
+        onApplyClick={onApplyClick}
+        isAlreadyApplied={isAlreadyApplied}
+      />
+
+      <MobileApplyCTA
+        program={live}
+        onApplyClick={onApplyClick}
+        isAlreadyApplied={isAlreadyApplied}
+      />
     </>
   );
 };
