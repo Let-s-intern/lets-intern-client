@@ -18,11 +18,13 @@ import ReportLandingNav from '../../../components/common/report/ReportLandingNav
 const ReportPortfolioPage = () => {
   const location = useLocation();
 
-  const title = getReportLandingTitle('포트폴리오');
   const url = `${typeof window !== 'undefined' ? window.location.origin : getBaseUrlFromServer()}/report/landing/portfolio`;
   const description = portfolioReportDescription;
   const activeReportsFromServer = useServerActiveReports();
   const { data } = useGetActiveReports();
+  const title = getReportLandingTitle(
+    data?.portfolioInfo?.title ?? '포트폴리오',
+  );
   const activeReports = data || activeReportsFromServer;
   const report = activeReports?.portfolioInfo;
   const root = JSON.parse(report?.contents || '{"root":{}}').root;
