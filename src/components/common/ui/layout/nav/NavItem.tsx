@@ -1,5 +1,5 @@
 import clsx from 'clsx';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 
 interface NavItemProps {
@@ -15,15 +15,38 @@ interface NavItemProps {
 
 const NavItem = ({ to, active, children, subChildren }: NavItemProps) => {
   const [isOpen, setIsOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
   const style = {
     'text-1.125-bold text-neutral-0': active || (subChildren && isOpen),
     'text-1.125-medium text-neutral-60': !active || (subChildren && !isOpen),
   };
 
+  useEffect(() => {
+    if (!subChildren) return;
+
+    const handleClickOutside = (event: MouseEvent) => {
+      if (ref.current && !ref.current.contains(event.target as Node)) {
+        setIsOpen(false);
+      }
+    };
+
+    subChildren && document.addEventListener('click', handleClickOutside);
+
+    return () => {
+      subChildren && document.removeEventListener('click', handleClickOutside);
+    };
+  }, [subChildren]);
+
+  const handleToggle = (e: React.MouseEvent<HTMLDivElement>) => {
+    e.stopPropagation();
+    setIsOpen(!isOpen);
+  };
+
   return subChildren ? (
     <div
+      ref={ref}
       className={clsx(style, 'relative hidden cursor-pointer xl:block')}
-      onClick={() => setIsOpen(!isOpen)}
+      onClick={handleToggle}
     >
       {children}
       {subChildren && isOpen && (
