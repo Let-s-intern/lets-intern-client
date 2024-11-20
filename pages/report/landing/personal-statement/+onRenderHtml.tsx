@@ -49,7 +49,9 @@ const onRenderHtml: OnRenderHtmlAsync = async (pageContext) => {
 
   return getServerHtml({
     pageHtml,
-    title: getReportLandingTitle('이력서'),
+    title: getReportLandingTitle(
+      data.personalStatementInfo?.title || '자기소개서',
+    ),
     description: personalStatementReportDescription,
     image: `${getBaseUrlFromServer()}/images/report-banner.jpg`,
     url: `${getBaseUrlFromServer()}/report/landing/personal-statement`,

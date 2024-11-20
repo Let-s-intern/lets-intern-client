@@ -18,11 +18,11 @@ import ReportLandingNav from '../../../components/common/report/ReportLandingNav
 const ReportResumePage = () => {
   const location = useLocation();
 
-  const title = getReportLandingTitle('이력서');
   const url = `${typeof window !== 'undefined' ? window.location.origin : getBaseUrlFromServer()}/report/landing/resume`;
   const description = resumeReportDescription;
   const activeReportsFromServer = useServerActiveReports();
   const { data } = useGetActiveReports();
+  const title = getReportLandingTitle(data?.resumeInfo?.title ?? '이력서');
   const activeReports = data || activeReportsFromServer;
   const report = activeReports?.resumeInfo;
 
