@@ -2,7 +2,7 @@ import GradientButton from '@components/common/program/program-detail/button/Gra
 import NotiButton from '@components/common/program/program-detail/button/NotiButton';
 import { Duration } from '@components/Duration';
 import dayjs, { Dayjs } from 'dayjs';
-import { useCallback, useState } from 'react';
+import { useState } from 'react';
 import PaymentErrorNotification from './PaymentErrorNotification';
 
 function DisabledButton() {
@@ -44,9 +44,9 @@ export function MobileApplyCTA({
       ? window.navigator.userAgent.includes('Instagram')
       : false;
 
-  const handleApplyClick = useCallback(() => {
+  const handleApplyClick = () => {
     if (!isInstagram) {
-      handleApplyClick();
+      onApplyClick();
       return;
     }
 
@@ -56,7 +56,7 @@ export function MobileApplyCTA({
     }
 
     onApplyClick();
-  }, [isInstagram, onApplyClick, showInstagramAlert]);
+  };
 
   return (
     <div className="safe-area-bottom fixed left-0 right-0 z-40 flex w-full flex-col items-center overflow-hidden bg-neutral-0/65 text-xxsmall12 lg:hidden">
