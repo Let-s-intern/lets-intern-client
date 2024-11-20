@@ -8,6 +8,17 @@ import KakaoChannel from './KakaoChannel';
 import NavItem from './NavItem';
 import SideNavItem from './SideNavItem';
 
+const reportSubChildren = [
+  {
+    to: 'https://s.tosspayments.com/BkzqF1s4Psc',
+    children: '이력서 진단 신청',
+  },
+  {
+    to: 'https://s.tosspayments.com/Bk0m4yZg56F',
+    children: '자기소개서 진단 신청',
+  },
+];
+
 const NavBar = () => {
   const navigate = useNavigate();
   const { isLoggedIn, logout } = useAuthStore();
@@ -106,7 +117,10 @@ const NavBar = () => {
             <NavItem to="/blog/list" active={activeLink === 'BLOG'}>
               블로그
             </NavItem>
-            <NavItem to="/report/landing" active={activeLink === 'REPORT'}>
+            <NavItem
+              active={activeLink === 'REPORT'}
+              subChildren={reportSubChildren}
+            >
               🔥 서류 진단받고 합격하기
             </NavItem>
           </div>
