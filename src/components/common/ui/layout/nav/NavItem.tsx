@@ -50,7 +50,7 @@ const NavItem = ({ to, active, children, subChildren }: NavItemProps) => {
     >
       {children}
       {subChildren && isOpen && (
-        <div className="absolute left-0 top-[calc(100%+25px)] z-10 flex w-full flex-col rounded-md bg-white py-1 shadow-lg">
+        <div className="absolute left-0 top-[calc(100%+25px)] z-40 flex w-full flex-col rounded-md bg-white py-1 shadow-lg">
           {subChildren.map((child) => (
             <Link
               key={child.to}
