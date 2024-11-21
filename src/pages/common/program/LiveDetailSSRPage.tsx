@@ -66,7 +66,12 @@ const LiveDetailSSRPage = () => {
 
   const onApplyClick = useCallback(() => {
     if (!isLoggedIn) {
-      navigate(`/login?redirect=${window.location.pathname}`);
+      const parts = window.location.pathname.split('/');
+      const isServerRendered = isNaN(Number(parts[parts.length - 1]));
+      const redirectPath = isServerRendered
+        ? parts.slice(0, -1).join('/')
+        : window.location.pathname;
+      navigate(`/login?redirect=${redirectPath}`);
       return;
     }
 
