@@ -50,7 +50,8 @@ const ChallengeInfoBottom = ({
         )
       : null;
   const totalPrice = (priceInfo?.price || 0) - (priceInfo?.discount || 0);
-  const showMonthlyPrice = priceInfo && totalPrice >= 50000;
+  const showMonthlyPrice =
+    priceInfo && totalPrice + (priceInfo.refund || 0) >= 50000;
   const regularPrice =
     priceInfo.challengePriceType === 'CHARGE'
       ? priceInfo.price
