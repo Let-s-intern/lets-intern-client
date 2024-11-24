@@ -1,22 +1,18 @@
 import { twMerge } from '@/lib/twMerge';
 import { MdOutlineArrowBack } from 'react-icons/md';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 interface HeaderProps {
+  to?: string;
   programTitle: string;
   className?: string;
+  onClick?: () => void;
 }
 
-const Header = ({ programTitle, className }: HeaderProps) => {
-  const navigate = useNavigate();
-
-  const handleBackLinkClick = () => {
-    navigate(-1);
-  };
-
+const Header = ({ programTitle, className, to, onClick }: HeaderProps) => {
   return (
     <header className={twMerge('my-5 flex items-center gap-3', className)}>
-      <Link to="#" className="text-[1.5rem]" onClick={handleBackLinkClick}>
+      <Link to={to ?? '#'} className="text-[1.5rem]" onClick={onClick}>
         <MdOutlineArrowBack />
       </Link>
       <h1 className="text-lg font-medium">{programTitle}</h1>

@@ -149,7 +149,7 @@ const ProgramDetailLegacy = ({ programType }: ProgramDetailProps) => {
         </div>
       ) : (
         <div className="mx-auto max-w-5xl">
-          <Header programTitle={programTitle} />
+          <Header to="/program" programTitle={programTitle} />
           <div className="flex min-h-screen flex-col">
             {/* 프로그램 상세 */}
             <section className="flex items-start gap-10 md:mt-8">

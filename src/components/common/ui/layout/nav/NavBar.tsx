@@ -8,17 +8,6 @@ import KakaoChannel from './KakaoChannel';
 import NavItem from './NavItem';
 import SideNavItem from './SideNavItem';
 
-const reportSubChildren = [
-  {
-    to: 'https://s.tosspayments.com/BkzqF1s4Psc',
-    children: '이력서 진단 신청',
-  },
-  {
-    to: 'https://s.tosspayments.com/Bk0m4yZg56F',
-    children: '자기소개서 진단 신청',
-  },
-];
-
 const NavBar = () => {
   const navigate = useNavigate();
   const { isLoggedIn, logout } = useAuthStore();
@@ -26,7 +15,6 @@ const NavBar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [user, setUser] = useState<any>(null);
   const [isAdmin, setIsAdmin] = useState(false);
-  const [isReportToggleOpen, setIsReportToggleOpen] = useState(false);
   const [activeLink, setActiveLink] = useState<
     'HOME' | 'ABOUT' | 'PROGRAM' | 'ADMIN' | 'BLOG' | 'REPORT' | ''
   >('');
@@ -37,15 +25,6 @@ const NavBar = () => {
 
   const closeMenu = () => {
     setIsOpen(false);
-  };
-
-  const handleReportToggle = () => {
-    setIsReportToggleOpen(!isReportToggleOpen);
-  };
-
-  const onClicikReportChildren = () => {
-    setIsReportToggleOpen(false);
-    closeMenu();
   };
 
   const { data: userData } = useQuery({
@@ -117,10 +96,7 @@ const NavBar = () => {
             <NavItem to="/blog/list" active={activeLink === 'BLOG'}>
               블로그
             </NavItem>
-            <NavItem
-              active={activeLink === 'REPORT'}
-              subChildren={reportSubChildren}
-            >
+            <NavItem to="/report/landing" active={activeLink === 'REPORT'}>
               🔥 서류 진단받고 합격하기
             </NavItem>
           </div>
@@ -243,40 +219,9 @@ const NavBar = () => {
             <SideNavItem to="/blog/list" onClick={closeMenu}>
               블로그
             </SideNavItem>
-            <div className="flex w-full flex-col">
-              <SideNavItem
-                to=""
-                onClick={handleReportToggle}
-                className="py-2.5"
-                disabled
-              >
-                🔥 서류 진단받고 합격하기
-              </SideNavItem>
-              <div
-                className={`w-full ${isReportToggleOpen ? 'max-h-40' : 'max-h-0'} overflow-hidden transition-all duration-300`}
-              >
-                <SideNavItem
-                  to="https://s.tosspayments.com/BkzqF1s4Psc"
-                  target="
-              _blank"
-                  rel="noopener noreferrer"
-                  onClick={onClicikReportChildren}
-                  isSub
-                >
-                  이력서 진단 신청
-                </SideNavItem>
-                <SideNavItem
-                  to="https://s.tosspayments.com/Bk0m4yZg56F"
-                  target="
-              _blank"
-                  rel="noopener noreferrer"
-                  onClick={onClicikReportChildren}
-                  isSub
-                >
-                  자기소개서 진단 신청
-                </SideNavItem>
-              </div>
-            </div>
+            <SideNavItem to="/report/landing" onClick={closeMenu}>
+              🔥 서류 진단받고 합격하기
+            </SideNavItem>
             <hr className="h-1 bg-neutral-80" />
             {isAdmin && (
               <SideNavItem to="/admin" onClick={closeMenu}>
