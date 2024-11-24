@@ -204,7 +204,11 @@ const PaymentInputPage = () => {
       className="mx-auto w-full max-w-5xl pb-6"
       data-program-text={program?.title}
     >
-      <Header className="mx-5" programTitle="결제하기" />
+      <Header
+        onClick={() => navigate(-1)}
+        className="mx-5"
+        programTitle="결제하기"
+      />
 
       <hr className="my-6 block h-2 border-none bg-neutral-95" />
 
