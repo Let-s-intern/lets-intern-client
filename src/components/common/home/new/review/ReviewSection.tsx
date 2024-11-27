@@ -18,7 +18,7 @@ const ReviewSection = () => {
   const data = [
     ...(programReviewsData?.blogInfos ?? []),
     ...(jobSuccessStoriesData?.blogInfos ?? []),
-  ].toSorted((a, b) => {
+  ].sort((a, b) => {
     const displayDateA = a.blogThumbnailInfo.displayDate ?? '';
     const displayDateB = b.blogThumbnailInfo.displayDate ?? '';
 

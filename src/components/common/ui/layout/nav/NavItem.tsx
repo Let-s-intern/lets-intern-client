@@ -55,8 +55,8 @@ const NavItem = ({ to, active, children, subChildren }: NavItemProps) => {
             <Link
               key={child.to}
               to={child.to}
-              target="_blank"
-              rel="noreferrer"
+              // target="_blank"
+              // rel="noreferrer"
               className="px-4 py-2.5 text-xsmall16 font-medium text-neutral-60 hover:text-black"
             >
               {child.children}
