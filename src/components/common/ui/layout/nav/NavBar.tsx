@@ -10,11 +10,11 @@ import SideNavItem from './SideNavItem';
 
 const reportSubChildren = [
   {
-    to: 'https://s.tosspayments.com/BkzqF1s4Psc',
+    to: '/report/landing/resume',
     children: '이력서 진단 신청',
   },
   {
-    to: 'https://s.tosspayments.com/Bk0m4yZg56F',
+    to: '/report/landing/personal-statement',
     children: '자기소개서 진단 신청',
   },
 ];
@@ -250,20 +250,20 @@ const NavBar = () => {
                 className={`w-full ${isReportToggleOpen ? 'max-h-40' : 'max-h-0'} overflow-hidden transition-all duration-300`}
               >
                 <SideNavItem
-                  to="https://s.tosspayments.com/BkzqF1s4Psc"
-                  target="
-              _blank"
-                  rel="noopener noreferrer"
+                  to="/report/landing/resume"
+                  //     target="
+                  // _blank"
+                  //     rel="noopener noreferrer"
                   onClick={onClicikReportChildren}
                   isSub
                 >
                   이력서 진단 신청
                 </SideNavItem>
                 <SideNavItem
-                  to="https://s.tosspayments.com/Bk0m4yZg56F"
-                  target="
-              _blank"
-                  rel="noopener noreferrer"
+                  to="/report/landing/personal-statement"
+                  //     target="
+                  // _blank"
+                  //     rel="noopener noreferrer"
                   onClick={onClicikReportChildren}
                   isSub
                 >
