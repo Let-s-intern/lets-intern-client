@@ -57,7 +57,8 @@ const ProgramRecommendEditor = ({
   const [selectModalOpen, setSelectModalOpen] = useState(false);
 
   const programAdminRes = useGetProgramAdminQuery({
-    pageable: { page: 1, size: 10000 },
+    page: 1,
+    size: 10000,
   });
 
   const onClose = () => setSelectModalOpen(false);

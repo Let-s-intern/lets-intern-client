@@ -13,13 +13,16 @@ import {
   programBannerAdminDetailSchema,
   programBannerAdminListSchema,
   programBannerUserListSchema,
+  ProgramClassification,
   programSchema,
+  ProgramStatus,
   UpdateChallengeReq,
   UpdateLiveReq,
   UpdateVodReq,
 } from '../schema';
 import { IPageable } from '../types/interface';
 import axios from '../utils/axios';
+import { ProgramType } from './paymentSchema';
 
 export const useProgramQuery = ({
   programId,
@@ -81,15 +84,19 @@ export const useUserProgramQuery = ({
 
 export const useGetProgramAdminQueryKey = 'useGetProgramAdminQueryKey';
 
-export const useGetProgramAdminQuery = ({
-  pageable,
-}: {
-  pageable: IPageable;
+export const useGetProgramAdminQuery = (params: {
+  type?: ProgramType;
+  classification?: ProgramClassification;
+  status?: ProgramStatus;
+  startDate?: string;
+  endDate?: string;
+  page: number | string;
+  size: number | string;
 }) => {
   return useQuery({
-    queryKey: [useGetProgramAdminQueryKey, pageable],
+    queryKey: [useGetProgramAdminQueryKey, params],
     queryFn: async () => {
-      const res = await axios.get(`/program/admin`, { params: pageable });
+      const res = await axios.get(`/program/admin`, { params });
       return programAdminSchema.parse(res.data.data);
     },
   });
