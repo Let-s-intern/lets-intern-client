@@ -8,20 +8,6 @@ import KakaoChannel from './KakaoChannel';
 import NavItem from './NavItem';
 import SideNavItem from './SideNavItem';
 
-<<<<<<< HEAD
-=======
-const reportSubChildren = [
-  {
-    to: '/report/landing/resume',
-    children: '이력서 진단 신청',
-  },
-  {
-    to: '/report/landing/personal-statement',
-    children: '자기소개서 진단 신청',
-  },
-];
-
->>>>>>> LC-1032-program
 const NavBar = () => {
   const navigate = useNavigate();
   const { isLoggedIn, logout } = useAuthStore();
@@ -233,46 +219,9 @@ const NavBar = () => {
             <SideNavItem to="/blog/list" onClick={closeMenu}>
               블로그
             </SideNavItem>
-<<<<<<< HEAD
             <SideNavItem to="/report/landing" onClick={closeMenu}>
               🔥 서류 진단받고 합격하기
             </SideNavItem>
-=======
-            <div className="flex w-full flex-col">
-              <SideNavItem
-                to=""
-                onClick={handleReportToggle}
-                className="py-2.5"
-                disabled
-              >
-                🔥 서류 진단받고 합격하기
-              </SideNavItem>
-              <div
-                className={`w-full ${isReportToggleOpen ? 'max-h-40' : 'max-h-0'} overflow-hidden transition-all duration-300`}
-              >
-                <SideNavItem
-                  to="/report/landing/resume"
-                  //     target="
-                  // _blank"
-                  //     rel="noopener noreferrer"
-                  onClick={onClicikReportChildren}
-                  isSub
-                >
-                  이력서 진단 신청
-                </SideNavItem>
-                <SideNavItem
-                  to="/report/landing/personal-statement"
-                  //     target="
-                  // _blank"
-                  //     rel="noopener noreferrer"
-                  onClick={onClicikReportChildren}
-                  isSub
-                >
-                  자기소개서 진단 신청
-                </SideNavItem>
-              </div>
-            </div>
->>>>>>> LC-1032-program
             <hr className="h-1 bg-neutral-80" />
             {isAdmin && (
               <SideNavItem to="/admin" onClick={closeMenu}>
