@@ -1,3 +1,5 @@
+import { ProgramType } from '@/api/paymentSchema';
+import { ProgramStatus } from '@/schema';
 import { SerializedEditorState } from 'lexical';
 import { TABLE_STATUS } from '../utils/convert';
 
@@ -46,6 +48,14 @@ export type ContentReviewType = {
   content: string;
 };
 
+export type ProgramRecommend = {
+  id: number;
+  programType: ProgramType;
+  programStatusType: ProgramStatus;
+  title: string;
+  isVisible: boolean;
+};
+
 /** 챌린지 또는 LIVE 클래스의 JSON 버전 (desc에 통쨰로 JSON 형태로 들어감) */
 export type ChallengeContent = {
   /** 초기화 여부 알려주는 것 */
@@ -60,6 +70,8 @@ export type ChallengeContent = {
   blogReview?: ProgramBlogReview;
   /**  후기 */
   challengeReview?: ContentReviewType[];
+  /** 프로그램 추천 리스트 */
+  programRecommendList?: ProgramRecommend[];
 };
 
 export type LiveContent = {
@@ -89,6 +101,8 @@ export type LiveContent = {
   /* 블로그 후기 */
   blogReview?: ProgramBlogReview;
   liveReview?: ContentReviewType[];
+  /** 프로그램 추천 리스트 */
+  programRecommendList?: ProgramRecommend[];
 };
 
 export interface IPageable {

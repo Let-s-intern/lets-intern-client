@@ -4,7 +4,7 @@ import { z } from 'zod';
 import {
   challengeApplicationPriceType,
   liveApplicationPriceType,
-  programStatus,
+  ProgramStatusEnum,
   programType,
 } from '../schema';
 import { UsePaymentDetailQueryKey, UsePaymentQueryKey } from './payment';
@@ -24,7 +24,7 @@ const programApplicationSchema = z
     startDate: z.string().nullable().optional(),
     endDate: z.string().nullable().optional(),
     deadline: z.string().nullable().optional(),
-    statusType: programStatus,
+    statusType: ProgramStatusEnum,
     priceList: z.array(challengeApplicationPriceType).nullable().optional(),
     price: liveApplicationPriceType.nullable().optional(),
   })
@@ -172,7 +172,7 @@ const mypageApplicationsSchema = z
         status: applicationStatus.nullable().optional(),
         programId: z.number().nullable().optional(),
         programType: programType.nullable().optional(),
-        programStatusType: programStatus.nullable().optional(),
+        programStatusType: ProgramStatusEnum.nullable().optional(),
         programTitle: z.string().nullable().optional(),
         programShortDesc: z.string().nullable().optional(),
         programThumbnail: z.string().nullable().optional(),

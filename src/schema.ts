@@ -1315,11 +1315,8 @@ export const adminMentorInfoSchema = z.object({
   mentorPassword: z.string().nullable().optional(),
 });
 
-export const programStatus = z.union([
-  z.literal('PREV'),
-  z.literal('PROCEEDING'),
-  z.literal('POST'),
-]);
+export const ProgramStatusEnum = z.enum(['PREV', 'PROCEEDING', 'POST']);
+export type ProgramStatus = z.infer<typeof ProgramStatusEnum>;
 
 export const challengeApplicationPriceType = z.object({
   priceId: z.number().nullable().optional(),
@@ -1411,7 +1408,7 @@ export const programSchema = z.object({
       programInfo: z.object({
         id: z.number(),
         programType,
-        programStatusType: programStatus,
+        programStatusType: ProgramStatusEnum,
         title: z.string().nullable().optional(),
         thumbnail: z.string().nullable().optional(),
         shortDesc: z.string().nullable().optional(),
@@ -1435,7 +1432,7 @@ export const programAdminSchema = z
         programInfo: z.object({
           id: z.number(),
           programType,
-          programStatusType: programStatus,
+          programStatusType: ProgramStatusEnum,
           title: z.string().nullable().optional(),
           startDate: z.string().nullable().optional(),
           endDate: z.string().nullable().optional(),
