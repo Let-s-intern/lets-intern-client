@@ -48,7 +48,10 @@ export type ContentReviewType = {
 };
 
 export type ProgramRecommend = {
-  list: ProgramAdminListItem[];
+  list: (ProgramAdminListItem & {
+    recommendTitle?: string;
+    recommendCTA?: string;
+  })[];
 };
 
 /** 챌린지 또는 LIVE 클래스의 JSON 버전 (desc에 통쨰로 JSON 형태로 들어감) */

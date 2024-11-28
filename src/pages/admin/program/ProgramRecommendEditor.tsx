@@ -1,9 +1,11 @@
+import { Box, Button, Modal, Typography } from '@mui/material';
+import { useState } from 'react';
+
 import { useGetProgramAdminQuery } from '@/api/program';
 import { ProgramRecommend } from '@/types/interface';
 import { newProgramTypeToText, programStatusToText } from '@/utils/convert';
 import { Heading2 } from '@components/admin/ui/heading/Heading2';
-import { Box, Button, Modal, Typography } from '@mui/material';
-import { useState } from 'react';
+import Input from '@components/ui/input/Input';
 
 // 모달 스타일
 const modalStyle = {
@@ -64,29 +66,72 @@ const ProgramRecommendEditor = ({
   const onClose = () => setSelectModalOpen(false);
   const onOpen = () => setSelectModalOpen(true);
 
+  const onChangeItem = (e: React.ChangeEvent<HTMLInputElement>, id: number) => {
+    const index = programRecommend.list.findIndex(
+      (ele) => ele.programInfo.id === id,
+    );
+
+    setProgramRecommend({
+      list: [
+        ...programRecommend.list.slice(0, index),
+        {
+          programInfo: {
+            ...programRecommend.list[index].programInfo,
+          },
+          classificationList: [
+            ...programRecommend.list[index].classificationList,
+          ],
+          [e.target.name]: e.target.value,
+        },
+        ...programRecommend.list.slice(index + 1),
+      ],
+    });
+  };
+
   return (
     <div className="my-10">
       <Heading2 className="mb-2">프로그램 추천</Heading2>
-      <div className="mb-2">
+      <div className="mb-4">
         <Button variant="outlined" onClick={onOpen}>
           프로그램 선택
         </Button>
       </div>
 
       <div className="w-full overflow-x-auto">
-        <div className="flex min-w-full gap-2">
+        <div className="flex min-w-full flex-col gap-2">
           {programRecommend.list.map((item) => (
-            <div
-              key={item.programInfo.id}
-              className="h-28 w-32 flex-none rounded-xs border"
-              style={{
-                backgroundImage: `url(${''})`,
-                backgroundSize: 'cover',
-                backgroundPosition: 'center',
-              }}
-            >
-              <div className="flex h-full items-center justify-center bg-black bg-opacity-30 p-2 text-xxsmall12">
-                <span className="text-white">{item.programInfo.title}</span>
+            <div key={item.programInfo.id} className="flex items-center gap-2">
+              <div
+                className="h-32 w-40 flex-none rounded-xs border bg-neutral-60"
+                style={{
+                  backgroundImage: `url(${''})`,
+                  backgroundSize: 'cover',
+                  backgroundPosition: 'center',
+                }}
+              >
+                <div className="flex h-full items-center justify-center bg-black bg-opacity-30 p-2 text-xxsmall12">
+                  <span className="text-white">{item.programInfo.title}</span>
+                </div>
+              </div>
+              <div className="flex w-full max-w-xl flex-col gap-2">
+                <Input
+                  label="제목"
+                  type="text"
+                  name="recommendTitle"
+                  placeholder="프로그램 추천 제목을 입력해주세요"
+                  defaultValue={item.recommendTitle}
+                  size="small"
+                  onChange={(e) => onChangeItem(e, item.programInfo.id)}
+                />
+                <Input
+                  label="CTA"
+                  type="text"
+                  name="recommendCTA"
+                  placeholder="프로그램 추천 CTA를 입력해주세요"
+                  defaultValue={item.recommendCTA}
+                  size="small"
+                  onChange={(e) => onChangeItem(e, item.programInfo.id)}
+                />
               </div>
             </div>
           ))}
