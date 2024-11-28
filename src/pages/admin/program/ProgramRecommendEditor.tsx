@@ -75,6 +75,7 @@ const ProgramRecommendEditor = ({
       list: [
         ...programRecommend.list.slice(0, index),
         {
+          ...programRecommend.list[index],
           programInfo: {
             ...programRecommend.list[index].programInfo,
           },
