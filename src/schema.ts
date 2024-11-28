@@ -51,14 +51,14 @@ export const challengeTypeSchema = z.enum([
 
 export type ChallengeType = z.infer<typeof challengeTypeSchema>;
 
-export const programClassificationSchema = z.union([
-  z.literal('CAREER_SEARCH'),
-  z.literal('DOCUMENT_PREPARATION'),
-  z.literal('MEETING_PREPARATION'),
-  z.literal('PASS'),
+export const ProgramClassificationEnum = z.enum([
+  'CAREER_SEARCH',
+  'DOCUMENT_PREPARATION',
+  'MEETING_PREPARATION',
+  'PASS',
 ]);
 
-export type ProgramClassification = z.infer<typeof programClassificationSchema>;
+export type ProgramClassification = z.infer<typeof ProgramClassificationEnum>;
 
 export const challengePriceType = z.union([
   z.literal('CHARGE'),
@@ -155,7 +155,7 @@ export const getChallengeIdSchema = z
     challengeType: challengeTypeSchema,
     classificationInfo: z.array(
       z.object({
-        programClassification: programClassificationSchema,
+        programClassification: ProgramClassificationEnum,
       }),
     ),
     priceInfo: z.array(
@@ -293,7 +293,7 @@ export const getLiveIdSchema = z
     progressType: liveProgressSchema.nullable().optional(),
     classificationInfo: z.array(
       z.object({
-        programClassification: programClassificationSchema,
+        programClassification: ProgramClassificationEnum,
       }),
     ),
     priceInfo: z.object({
@@ -442,9 +442,7 @@ export const getVodIdSchema = z.object({
   programTypeInfo: z
     .array(
       z.object({
-        programClassification: programClassificationSchema
-          .nullable()
-          .optional(),
+        programClassification: ProgramClassificationEnum.nullable().optional(),
       }),
     )
     .nullable()
@@ -1315,11 +1313,8 @@ export const adminMentorInfoSchema = z.object({
   mentorPassword: z.string().nullable().optional(),
 });
 
-export const programStatus = z.union([
-  z.literal('PREV'),
-  z.literal('PROCEEDING'),
-  z.literal('POST'),
-]);
+export const ProgramStatusEnum = z.enum(['PREV', 'PROCEEDING', 'POST']);
+export type ProgramStatus = z.infer<typeof ProgramStatusEnum>;
 
 export const challengeApplicationPriceType = z.object({
   priceId: z.number().nullable().optional(),
@@ -1401,7 +1396,7 @@ export const userAdminDetailType = z.object({
 export type UserAdminDetail = z.infer<typeof userAdminDetailType>;
 
 export const classificationSchema = z.object({
-  programClassification: programClassificationSchema.nullable().optional(),
+  programClassification: ProgramClassificationEnum.nullable().optional(),
 });
 
 /** GET /api/v1/program */
@@ -1411,7 +1406,7 @@ export const programSchema = z.object({
       programInfo: z.object({
         id: z.number(),
         programType,
-        programStatusType: programStatus,
+        programStatusType: ProgramStatusEnum,
         title: z.string().nullable().optional(),
         thumbnail: z.string().nullable().optional(),
         shortDesc: z.string().nullable().optional(),
@@ -1435,7 +1430,7 @@ export const programAdminSchema = z
         programInfo: z.object({
           id: z.number(),
           programType,
-          programStatusType: programStatus,
+          programStatusType: ProgramStatusEnum,
           title: z.string().nullable().optional(),
           startDate: z.string().nullable().optional(),
           endDate: z.string().nullable().optional(),

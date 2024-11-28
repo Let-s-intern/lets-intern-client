@@ -28,6 +28,7 @@ import ChallengePrice from './program/ChallengePrice';
 import FaqSection from './program/FaqSection';
 import ProgramBestReview from './program/ProgramBestReview';
 import ProgramBlogReviewEditor from './program/ProgramBlogReviewEditor';
+import ProgramRecommendEditor from './program/ProgramRecommendEditor';
 import ProgramSchedule from './program/ProgramSchedule';
 
 const ChallengeEdit: React.FC = () => {
@@ -241,6 +242,13 @@ const ChallengeEdit: React.FC = () => {
           }
         />
       </section>
+
+      <ProgramRecommendEditor
+        programRecommend={content.programRecommend ?? { list: [] }}
+        setProgramRecommend={(programRecommend) =>
+          setContent((prev) => ({ ...prev, programRecommend }))
+        }
+      />
 
       <ChallengeCurriculumEditor
         curriculum={content.curriculum}
