@@ -2,6 +2,7 @@ import { Box, Button, Modal, Typography } from '@mui/material';
 import { useState } from 'react';
 
 import { useGetProgramAdminQuery } from '@/api/program';
+import { ProgramStatusEnum } from '@/schema';
 import { ProgramRecommend } from '@/types/interface';
 import { newProgramTypeToText, programStatusToText } from '@/utils/convert';
 import { Heading2 } from '@components/admin/ui/heading/Heading2';
@@ -61,6 +62,7 @@ const ProgramRecommendEditor = ({
   const programAdminRes = useGetProgramAdminQuery({
     page: 1,
     size: 10000,
+    status: ProgramStatusEnum.enum.PROCEEDING,
   });
 
   const onClose = () => setSelectModalOpen(false);
@@ -105,7 +107,7 @@ const ProgramRecommendEditor = ({
               <div
                 className="h-32 w-40 flex-none rounded-xs border bg-neutral-60"
                 style={{
-                  backgroundImage: `url(${''})`,
+                  backgroundImage: `url(${item.programInfo.thumbnail})`,
                   backgroundSize: 'cover',
                   backgroundPosition: 'center',
                 }}
