@@ -1441,6 +1441,7 @@ export const programAdminSchema = z
           zoomLink: z.string().nullable().optional(),
           zoomPassword: z.string().nullable().optional(),
           isVisible: z.boolean().nullable().optional(),
+          thumbnail: z.string().nullable().optional(),
         }),
         classificationList: z.array(classificationSchema),
       }),
