@@ -181,10 +181,10 @@ const ChallengePointView = ({
       {/* 프로그램 추천 */}
       {programRecommend && (
         <div
-          className="relative w-full"
+          className="relative -z-20 w-full overflow-hidden"
           style={{ backgroundColor: colors.recommendBg }}
         >
-          <div className="mx-7 flex justify-between">
+          <div className="relative mx-7 flex justify-between">
             <HoleIcon className="h-auto w-4 md:w-5" />
             <HoleIcon className="h-auto w-4 md:w-5" />
             <HoleIcon className="h-auto w-4 md:w-5" />
@@ -205,7 +205,7 @@ const ChallengePointView = ({
             <HoleIcon className="hidden h-auto w-4 md:block md:w-5" />
           </div>
           <img
-            className="absolute -right-14 top-8 z-10 h-auto w-[362px]"
+            className="absolute -right-14 top-8 -z-10 h-auto w-[362px] md:-top-12 md:w-[838px] lg:right-48"
             src={recommendLogoSrc}
           />
 
