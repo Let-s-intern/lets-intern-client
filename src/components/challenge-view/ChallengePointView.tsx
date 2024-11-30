@@ -209,7 +209,7 @@ const ChallengePointView = ({
       )}
 
       {/* 프로그램 추천 */}
-      {programRecommend && (
+      {programRecommend && programRecommend.list.length > 0 && (
         <div
           className="relative w-full overflow-hidden"
           style={{ backgroundColor: colors.recommendBg }}
@@ -254,14 +254,14 @@ const ChallengePointView = ({
               )}
               ref={scrollRef}
             >
-              <div className="flex min-w-fit gap-4">
+              <div className="flex min-w-fit gap-4 md:gap-8">
                 {programRecommend.list.map((item) => (
                   <div
                     key={item.programInfo.id}
-                    className="flex w-[262px] flex-col items-center"
+                    className="flex w-[262px] flex-col items-center md:w-[312px]"
                   >
                     <div
-                      className="aspect-[4/3] h-[199px] w-auto overflow-hidden rounded-sm bg-neutral-50"
+                      className="aspect-[4/3] h-[199px] w-auto overflow-hidden rounded-sm bg-neutral-50 md:h-[235px]"
                       style={{
                         backgroundImage: `url(${item.programInfo.thumbnail})`,
                         backgroundSize: 'cover',
@@ -270,7 +270,7 @@ const ChallengePointView = ({
                     >
                       <div className="h-2/3 w-full bg-gradient-to-b from-[#161E31]/40 to-[#161E31]/0 px-5 pt-3">
                         <span
-                          className="block w-fit text-xsmall16 font-semibold text-white"
+                          className="block w-fit text-xsmall16 font-semibold text-white md:text-small18"
                           style={textShadowStyle}
                         >
                           {item.recommendTitle}
@@ -279,7 +279,7 @@ const ChallengePointView = ({
                     </div>
 
                     <button
-                      className="mt-3 w-full rounded-xs py-3 text-white"
+                      className="mt-3 w-full rounded-xs py-3 text-xsmall16 text-white md:mt-4 md:py-4 md:text-small18"
                       style={{ backgroundColor: colors.primary }}
                       onClick={async () => {
                         if (
