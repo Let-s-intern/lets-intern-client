@@ -40,7 +40,7 @@ const ChallengeDetailSSRPage = () => {
     if (isDeprecated) {
       navigate(`/program/old/challenge/${id}`, { replace: true });
     }
-  }, [id, isDeprecated, navigate]);
+  }, [id, isDeprecated]);
 
   // 이 페이지 방문 시 프로그램 신청 폼 초기화
   useEffect(() => {
@@ -82,7 +82,7 @@ const ChallengeDetailSSRPage = () => {
 
     const payInfo = application ? getPayInfo(application) : null;
     if (!payInfo) {
-      window.alert('정보를 불러오는 중입니다. 잠시만 기다려주세요.');
+      alert('정보를 불러오는 중입니다. 잠시만 기다려주세요.');
       return;
     }
 
