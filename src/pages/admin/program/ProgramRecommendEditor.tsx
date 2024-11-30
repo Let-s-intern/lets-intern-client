@@ -79,6 +79,8 @@ const ProgramRecommendEditor = ({
         ele.programInfo.programType === programType,
     );
 
+    if (index === -1) return;
+
     setProgramRecommend({
       list: [
         ...programRecommend.list.slice(0, index),
@@ -233,10 +235,9 @@ const ProgramRecommendEditor = ({
                                 setProgramRecommend({
                                   list: programRecommend.list.filter(
                                     (v) =>
-                                      v.programInfo.id !==
-                                        item.programInfo.id ||
                                       v.programInfo.programType !==
-                                        item.programInfo.programType,
+                                        item.programInfo.programType ||
+                                      v.programInfo.id !== item.programInfo.id,
                                   ),
                                 });
                               }
