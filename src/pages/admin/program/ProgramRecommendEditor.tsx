@@ -195,7 +195,10 @@ const ProgramRecommendEditor = ({
                 <tbody>
                   {programAdminRes.data?.programList.map((item) => {
                     const index = programRecommend.list.findIndex(
-                      (v) => v.programInfo.id === item.programInfo.id,
+                      (v) =>
+                        v.programInfo.id === item.programInfo.id &&
+                        v.programInfo.programType ===
+                          item.programInfo.programType,
                     );
                     const order = index === -1 ? '' : index + 1;
 
