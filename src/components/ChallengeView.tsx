@@ -18,6 +18,7 @@ import ChallengeIntroPersonalStatement from './challenge-view/ChallengeIntroPers
 import ChallengeIntroPortfolio from './challenge-view/ChallengeIntroPortfolio';
 import ChallengePointView from './challenge-view/ChallengePointView';
 import LexicalContent from './common/blog/LexicalContent';
+import MoreReviewButton from './common/review/MoreReviewButton';
 import ProgramBestReviewSection from './ProgramBestReviewSection';
 import ProgramDetailBlogReviewSection from './ProgramDetailBlogReviewSection';
 import ProgramDetailNavigation, {
@@ -237,11 +238,26 @@ const ChallengeView: React.FC<{
             id={PROGRAM_REVIEW_ID}
             className="challenge_review flex w-full flex-col items-center gap-y-[70px] md:gap-y-40"
           >
-            <div className="flex w-full flex-col items-center bg-neutral-95 py-[70px] md:pt-[110px]">
+            <div className="flex w-full flex-col items-center bg-neutral-95 py-[70px] md:py-[110px]">
               <ProgramBestReviewSection
                 type="challenge"
                 reviews={receivedContent.challengeReview}
                 colors={colors}
+              />
+              <MoreReviewButton
+                title={challenge.title ?? '-'}
+                thumbnail={challenge.thumbnail ?? ''}
+                startDate={challenge.startDate?.format('YYYY.MM.DD') ?? ''}
+                endDate={challenge.endDate?.format('YYYY.MM.DD') ?? ''}
+                deadline={challenge.deadline?.format('YYYY.MM.DD') ?? ''}
+                type={
+                  challenge.challengeType === 'PORTFOLIO' ||
+                  challenge.challengeType === 'PERSONAL_STATEMENT'
+                    ? 'REPORT'
+                    : 'CHALLENGE'
+                }
+                mainColor={colors.dark}
+                subColor={colors.secondary}
               />
             </div>
             {receivedContent.blogReview && (
