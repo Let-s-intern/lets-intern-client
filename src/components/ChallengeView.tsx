@@ -167,6 +167,7 @@ const ChallengeView: React.FC<{
                 startDate={challenge.startDate ?? dayjs()}
                 endDate={challenge.endDate ?? dayjs()}
                 challengeTitle={challenge.title ?? ''}
+                programRecommend={receivedContent.programRecommend}
               />
             </section>
 

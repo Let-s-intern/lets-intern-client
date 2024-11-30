@@ -1,15 +1,16 @@
 import Check from '@/assets/icons/chevron-down.svg?react';
 import { twMerge } from '@/lib/twMerge';
 import { Dayjs } from 'dayjs';
-import { ReactNode } from 'react';
+import { josa } from 'es-hangul';
+import { ReactNode, useMemo } from 'react';
 import { clientOnly } from 'vike-react/clientOnly';
 
+import HoleIcon from '@/assets/icons/hole.svg?react';
 import { ChallengeType, challengeTypeSchema } from '@/schema';
-import { ChallengePoint } from '@/types/interface';
+import { ChallengePoint, ProgramRecommend } from '@/types/interface';
 import { ChallengeColor } from '@components/ChallengeView';
 import Heading2 from '@components/common/program/program-detail/Heading2';
 import SuperTitle from '@components/common/program/program-detail/SuperTitle';
-import { josa } from 'es-hangul';
 
 const Balancer = clientOnly(() => import('react-wrap-balancer'));
 
@@ -66,6 +67,10 @@ const REWARD = {
 const { CAREER_START, PERSONAL_STATEMENT, PORTFOLIO } =
   challengeTypeSchema.enum;
 
+const textShadowStyle = {
+  textShadow: '0 0 8.4px rgba(33, 33, 37, 0.40)',
+};
+
 const ChallengePointView = ({
   point,
   startDate,
@@ -73,6 +78,7 @@ const ChallengePointView = ({
   colors,
   challengeType,
   challengeTitle,
+  programRecommend,
 }: {
   point: ChallengePoint;
   startDate: Dayjs;
@@ -80,6 +86,7 @@ const ChallengePointView = ({
   colors: ChallengeColor;
   challengeType: ChallengeType;
   challengeTitle: string;
+  programRecommend?: ProgramRecommend;
 }) => {
   const programSchedule = [
     {
@@ -96,16 +103,25 @@ const ChallengePointView = ({
     },
   ];
 
-  const paypackImgSrc = (() => {
+  const [paypackImgSrc, recommendLogoSrc] = useMemo(() => {
     switch (challengeType) {
       case PORTFOLIO:
-        return '/images/payback-portfolio.png';
+        return [
+          '/images/payback-portfolio.png',
+          '/icons/bg-logo-portfolio.svg',
+        ];
       case PERSONAL_STATEMENT:
-        return '/images/payback-personal-statement.png';
+        return [
+          '/images/payback-personal-statement.png',
+          '/icons/bg-logo-personal-statement.svg',
+        ];
       default:
-        return '/images/payback-career-start.png';
+        return [
+          '/images/payback-career-start.png',
+          '/icons/bg-logo-career-start.svg',
+        ];
     }
-  })();
+  }, [challengeType]);
 
   if (point === undefined) return <></>;
 
@@ -160,6 +176,71 @@ const ChallengePointView = ({
           )}
         </div>
       </div>
+
+      {/* 프로그램 추천 */}
+      {programRecommend && (
+        <div
+          className="relative -z-10 w-full"
+          style={{ backgroundColor: colors.recommendBg }}
+        >
+          <div className="mx-7 flex justify-between">
+            <HoleIcon className="h-auto w-4" />
+            <HoleIcon className="h-auto w-4" />
+            <HoleIcon className="h-auto w-4" />
+            <HoleIcon className="h-auto w-4" />
+            <HoleIcon className="h-auto w-4" />
+            <HoleIcon className="h-auto w-4" />
+          </div>
+          <img
+            className="absolute -right-14 top-8 -z-10 h-auto w-[362px]"
+            src={recommendLogoSrc}
+          />
+
+          {/* 본문 */}
+          <div className="px-5 py-16">
+            <Heading2>
+              잠깐, 다른 커리어 고민이 있으신가요?
+              <br /> 커리어 단계에 맞는 프로그램을
+              <br className="md:hidden" /> 추천드려요
+            </Heading2>
+
+            <div className="custom-scrollbar -mx-5 mt-8 overflow-x-auto px-5">
+              <div className="flex min-w-fit gap-4">
+                {programRecommend.list.map((item) => (
+                  <div
+                    key={item.programInfo.id}
+                    className="flex w-[262px] flex-col items-center"
+                  >
+                    <div
+                      className="aspect-[4/3] h-[199px] w-auto overflow-hidden rounded-sm bg-neutral-50"
+                      style={{
+                        backgroundImage: `url(${item.programInfo.thumbnail})`,
+                        backgroundSize: 'cover',
+                        backgroundPosition: 'center',
+                      }}
+                    >
+                      <div className="h-2/3 w-full bg-gradient-to-b from-[#161E31]/40 to-[#161E31]/0 px-5 pt-3">
+                        <span
+                          className="block w-fit text-xsmall16 font-semibold text-white"
+                          style={textShadowStyle}
+                        >
+                          {item.recommendTitle}
+                        </span>
+                      </div>
+                    </div>
+                    <button
+                      className="mt-3 w-full rounded-xs py-3 text-white"
+                      style={{ backgroundColor: colors.primary }}
+                    >
+                      {item.recommendCTA}
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* 진행 방식 */}
       <div
