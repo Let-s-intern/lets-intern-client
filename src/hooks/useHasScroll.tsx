@@ -23,9 +23,7 @@ export default function useHasScroll() {
   useEffect(() => {
     const onResize = () => {
       setHasScroll(
-        scrollRef.current?.scrollWidth === scrollRef.current?.offsetWidth
-          ? false
-          : true,
+        scrollRef.current?.scrollWidth !== scrollRef.current?.offsetWidth,
       );
     };
 
