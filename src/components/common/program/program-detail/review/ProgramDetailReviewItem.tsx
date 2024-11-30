@@ -7,6 +7,13 @@ interface ProgramDetailReviewItemProps {
   color: string;
   bgColor: string;
 }
+export const maskingName = (name: string) => {
+  if (name === '익명') return name;
+  if (name.length === 2) return name[0] + '*';
+  if (name.length >= 3) {
+    return name[0] + '*'.repeat(name.length - 2) + name[name.length - 1];
+  }
+};
 
 const ProgramDetailReviewItem = ({
   type,
@@ -14,14 +21,6 @@ const ProgramDetailReviewItem = ({
   color,
   bgColor,
 }: ProgramDetailReviewItemProps) => {
-  const maskingName = (name: string) => {
-    if (name === '익명') return name;
-    if (name.length === 2) return name[0] + '*';
-    if (name.length >= 3) {
-      return name[0] + '*'.repeat(name.length - 2) + name[name.length - 1];
-    }
-  };
-
   return (
     <div className="flex h-[340px] w-[300px] flex-col md:h-[366px] md:w-[371px]">
       {type !== 'live' && (
