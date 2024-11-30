@@ -122,6 +122,16 @@ export type Faq = z.infer<typeof faq>;
 
 export const faqSchema = z.object({ faqList: z.array(faq) });
 
+export const reviewSchema = z.object({
+  id: z.number(),
+  nps: z.number(),
+  npsAns: z.string(),
+  npsCheckAns: z.boolean(),
+  content: z.string(),
+  score: z.number(),
+  createdDate: z.string(),
+});
+
 const missionStatusType = z.union([
   z.literal('WAITING'),
   z.literal('CHECK_DONE'),

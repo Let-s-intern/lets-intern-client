@@ -1,8 +1,10 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { z } from 'zod';
 import {
   challengeTitleSchema,
   faqSchema,
   getChallengeIdSchema,
+  reviewSchema,
 } from '../schema';
 import axios from '../utils/axios';
 
@@ -91,5 +93,18 @@ export const useGetChallengeFaq = (challengeId: number | string) => {
       const res = await axios.get(`/challenge/${challengeId}/faqs`);
       return faqSchema.parse(res.data.data);
     },
+  });
+};
+
+export const useGetTotalReview = (
+  type: 'CHALLENGE' | 'LIVE' | 'VOD' | 'REPORT',
+) => {
+  return useQuery({
+    queryKey: ['useGetTotalReview', type],
+    queryFn: async () => {
+      const res = await axios.get('/review');
+      return z.array(reviewSchema).parse(res.data.data);
+    },
+    refetchOnWindowFocus: false,
   });
 };
