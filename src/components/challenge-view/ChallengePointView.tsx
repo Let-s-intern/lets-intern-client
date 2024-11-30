@@ -123,88 +123,101 @@ const ChallengePointView = ({
     }
   }, [challengeType]);
 
-  if (point === undefined) return <></>;
-
   return (
     <div className="flex w-full flex-col items-center">
       {/* 프로그램 소개 */}
-      <div className="flex w-full max-w-[1000px] flex-col px-5 md:items-center md:px-10">
-        <h2 className="sr-only">챌린지 포인트</h2>
-        <SuperTitle
-          className="mb-6 lg:mb-10"
-          style={{
-            color: colors.primary,
-          }}
-        >
-          프로그램 소개
-        </SuperTitle>
-        <Heading2 className="mb-10 break-keep lg:mb-20">
-          {josa(challengeTitle, '을/를')} 통해
-          <br />
-          <span
+      {point && (
+        <div className="flex w-full max-w-[1000px] flex-col px-5 md:items-center md:px-10">
+          <h2 className="sr-only">챌린지 포인트</h2>
+          <SuperTitle
+            className="mb-6 lg:mb-10"
             style={{
-              color:
-                challengeType === CAREER_START
-                  ? colors.primary
-                  : colors.subTitle,
+              color: colors.primary,
             }}
           >
-            하루 30분
-          </span>
-          , 단 {point.weekText}만에 서류 준비를 <br className="lg:hidden" />
-          끝낼 수 있어요
-        </Heading2>
+            프로그램 소개
+          </SuperTitle>
+          <Heading2 className="mb-10 break-keep lg:mb-20">
+            {josa(challengeTitle, '을/를')} 통해
+            <br />
+            <span
+              style={{
+                color:
+                  challengeType === CAREER_START
+                    ? colors.primary
+                    : colors.subTitle,
+              }}
+            >
+              하루 30분
+            </span>
+            , 단 {point.weekText}만에 서류 준비를 <br className="lg:hidden" />
+            끝낼 수 있어요
+          </Heading2>
 
-        <div className="mb-[70px] w-full space-y-10 md:mb-[120px] md:space-y-[60px] md:px-14">
-          <ul className="max-w-[826px] space-y-4 md:space-y-6">
-            {point.list?.map((item, index) => (
-              <PointList
-                key={item.id}
-                item={item}
-                index={index}
-                colors={colors}
-              />
-            ))}
-          </ul>
-          {challengeType === CAREER_START && (
-            <p className="text-xsmall14 font-semibold text-neutral-40 md:text-center md:text-xsmall16">
-              본 프로그램은 취업의 기초가 되는 퍼스널 브랜딩과 마스터 이력서
-              작성을 다룹니다.
-              <br />
-              자기소개서 및 포트폴리오 완성 프로그램은 별도로 준비되어 있습니다.
-            </p>
-          )}
+          <div className="mb-[70px] w-full space-y-10 md:mb-[120px] md:space-y-[60px] md:px-14">
+            <ul className="max-w-[826px] space-y-4 md:space-y-6">
+              {point.list?.map((item, index) => (
+                <PointList
+                  key={item.id}
+                  item={item}
+                  index={index}
+                  colors={colors}
+                />
+              ))}
+            </ul>
+            {challengeType === CAREER_START && (
+              <p className="text-xsmall14 font-semibold text-neutral-40 md:text-center md:text-xsmall16">
+                본 프로그램은 취업의 기초가 되는 퍼스널 브랜딩과 마스터 이력서
+                작성을 다룹니다.
+                <br />
+                자기소개서 및 포트폴리오 완성 프로그램은 별도로 준비되어
+                있습니다.
+              </p>
+            )}
+          </div>
         </div>
-      </div>
+      )}
 
       {/* 프로그램 추천 */}
       {programRecommend && (
         <div
-          className="relative -z-10 w-full"
+          className="relative w-full"
           style={{ backgroundColor: colors.recommendBg }}
         >
           <div className="mx-7 flex justify-between">
-            <HoleIcon className="h-auto w-4" />
-            <HoleIcon className="h-auto w-4" />
-            <HoleIcon className="h-auto w-4" />
-            <HoleIcon className="h-auto w-4" />
-            <HoleIcon className="h-auto w-4" />
-            <HoleIcon className="h-auto w-4" />
+            <HoleIcon className="h-auto w-4 md:w-5" />
+            <HoleIcon className="h-auto w-4 md:w-5" />
+            <HoleIcon className="h-auto w-4 md:w-5" />
+            <HoleIcon className="h-auto w-4 md:w-5" />
+            <HoleIcon className="h-auto w-4 md:w-5" />
+            <HoleIcon className="h-auto w-4 md:w-5" />
+            {/* Desktop */}
+            <HoleIcon className="hidden h-auto w-4 md:block md:w-5" />
+            <HoleIcon className="hidden h-auto w-4 md:block md:w-5" />
+            <HoleIcon className="hidden h-auto w-4 md:block md:w-5" />
+            <HoleIcon className="hidden h-auto w-4 md:block md:w-5" />
+            <HoleIcon className="hidden h-auto w-4 md:block md:w-5" />
+            <HoleIcon className="hidden h-auto w-4 md:block md:w-5" />
+            <HoleIcon className="hidden h-auto w-4 md:block md:w-5" />
+            <HoleIcon className="hidden h-auto w-4 md:block md:w-5" />
+            <HoleIcon className="hidden h-auto w-4 md:block md:w-5" />
+            <HoleIcon className="hidden h-auto w-4 md:block md:w-5" />
+            <HoleIcon className="hidden h-auto w-4 md:block md:w-5" />
           </div>
           <img
-            className="absolute -right-14 top-8 -z-10 h-auto w-[362px]"
+            className="absolute -right-14 top-8 z-10 h-auto w-[362px]"
             src={recommendLogoSrc}
           />
 
           {/* 본문 */}
-          <div className="px-5 py-16">
+          <div className="relative z-10 px-5 py-16 md:py-32 lg:px-0">
             <Heading2>
               잠깐, 다른 커리어 고민이 있으신가요?
               <br /> 커리어 단계에 맞는 프로그램을
               <br className="md:hidden" /> 추천드려요
             </Heading2>
 
-            <div className="custom-scrollbar -mx-5 mt-8 overflow-x-auto px-5">
+            <div className="custom-scrollbar -mx-5 mt-8 max-w-[1000px] overflow-x-auto px-5 md:mx-auto md:mt-16">
               <div className="flex min-w-fit gap-4">
                 {programRecommend.list.map((item) => (
                   <div
@@ -228,6 +241,7 @@ const ChallengePointView = ({
                         </span>
                       </div>
                     </div>
+
                     <button
                       className="mt-3 w-full rounded-xs py-3 text-white"
                       style={{ backgroundColor: colors.primary }}
@@ -243,82 +257,84 @@ const ChallengePointView = ({
       )}
 
       {/* 진행 방식 */}
-      <div
-        className="flex w-full flex-col items-center"
-        style={{
-          backgroundColor: colors.dark,
-        }}
-      >
-        <div className="flex w-full max-w-[1000px] flex-col px-5 py-[60px] md:px-10 md:py-[120px] lg:px-0">
-          <div className="flex w-full flex-col md:items-center">
-            <p
-              className="text-xsmall16 font-bold md:text-small20"
-              style={{ color: colors.primary }}
-            >
-              진행 방식
-            </p>
-            <Heading2 className="py-3 pt-2 text-white md:pt-3">
-              {josa(challengeTitle, '은/는')}
-              <br className="md:hidden" /> {point.weekText}간 아래와 같이
-              진행돼요
-            </Heading2>
-            <span className="mb-10 text-xsmall14 text-neutral-50 md:mb-20">
-              {description}
-            </span>
-          </div>
-          <div className="mb-[30px] flex w-full flex-col md:mb-[23px]">
-            <div
-              className="flex w-full items-center rounded-t-md px-4 py-2.5 text-xsmall14 font-semibold text-white md:justify-center md:px-2.5"
-              style={{ backgroundColor: colors.primary }}
-            >
-              {point.weekText} 과정
+      {point && (
+        <div
+          className="flex w-full flex-col items-center"
+          style={{
+            backgroundColor: colors.dark,
+          }}
+        >
+          <div className="flex w-full max-w-[1000px] flex-col px-5 py-[60px] md:px-10 md:py-[120px] lg:px-0">
+            <div className="flex w-full flex-col md:items-center">
+              <p
+                className="text-xsmall16 font-bold md:text-small20"
+                style={{ color: colors.primary }}
+              >
+                진행 방식
+              </p>
+              <Heading2 className="py-3 pt-2 text-white md:pt-3">
+                {josa(challengeTitle, '은/는')}
+                <br className="md:hidden" /> {point.weekText}간 아래와 같이
+                진행돼요
+              </Heading2>
+              <span className="mb-10 text-xsmall14 text-neutral-50 md:mb-20">
+                {description}
+              </span>
             </div>
-            <div className="flex flex-col gap-5 rounded-b-md bg-white px-4 py-[30px] md:flex-row md:justify-between md:gap-0 md:pb-[30px] md:pt-9 lg:px-7">
-              {progress.map((item) => (
-                <ProgressItem
-                  key={item.index}
-                  item={item}
-                  bgColor={colors.primary}
-                />
-              ))}
+            <div className="mb-[30px] flex w-full flex-col md:mb-[23px]">
+              <div
+                className="flex w-full items-center rounded-t-md px-4 py-2.5 text-xsmall14 font-semibold text-white md:justify-center md:px-2.5"
+                style={{ backgroundColor: colors.primary }}
+              >
+                {point.weekText} 과정
+              </div>
+              <div className="flex flex-col gap-5 rounded-b-md bg-white px-4 py-[30px] md:flex-row md:justify-between md:gap-0 md:pb-[30px] md:pt-9 lg:px-7">
+                {progress.map((item) => (
+                  <ProgressItem
+                    key={item.index}
+                    item={item}
+                    bgColor={colors.primary}
+                  />
+                ))}
+              </div>
             </div>
-          </div>
-          <div className="flex flex-col gap-3 md:flex-row">
-            <Box className="md:flex-1">
-              {programSchedule.map((item) => (
-                <BoxItem key={item.title} title={item.title}>
-                  {item.content}
+            <div className="flex flex-col gap-3 md:flex-row">
+              <Box className="md:flex-1">
+                {programSchedule.map((item) => (
+                  <BoxItem key={item.title} title={item.title}>
+                    {item.content}
+                  </BoxItem>
+                ))}
+              </Box>
+              <Box className="md:flex-1">
+                <BoxItem title={MISSION.title}>
+                  <ul className="flex flex-col gap-1">
+                    {MISSION.content.map((item) => (
+                      <li key={item} className="flex items-start gap-2">
+                        <Check
+                          width={24}
+                          height={24}
+                          className="shrink-0"
+                          style={{ color: colors.primary }}
+                        />
+                        {item}
+                      </li>
+                    ))}
+                  </ul>
                 </BoxItem>
-              ))}
-            </Box>
-            <Box className="md:flex-1">
-              <BoxItem title={MISSION.title}>
-                <ul className="flex flex-col gap-1">
-                  {MISSION.content.map((item) => (
-                    <li key={item} className="flex items-start gap-2">
-                      <Check
-                        width={24}
-                        height={24}
-                        className="shrink-0"
-                        style={{ color: colors.primary }}
-                      />
-                      {item}
-                    </li>
-                  ))}
-                </ul>
-              </BoxItem>
-            </Box>
-            <Box className="relative overflow-hidden md:flex-1">
-              <BoxItem title={REWARD.title}>{REWARD.content}</BoxItem>
-              <img
-                className="absolute bottom-0 right-0 h-auto w-44 md:w-48"
-                src={paypackImgSrc}
-                alt="페이백 3만원"
-              />
-            </Box>
+              </Box>
+              <Box className="relative overflow-hidden md:flex-1">
+                <BoxItem title={REWARD.title}>{REWARD.content}</BoxItem>
+                <img
+                  className="absolute bottom-0 right-0 h-auto w-44 md:w-48"
+                  src={paypackImgSrc}
+                  alt="페이백 3만원"
+                />
+              </Box>
+            </div>
           </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };
