@@ -11,6 +11,7 @@ import { ChallengePoint, ProgramRecommend } from '@/types/interface';
 import { ChallengeColor } from '@components/ChallengeView';
 import Heading2 from '@components/common/program/program-detail/Heading2';
 import SuperTitle from '@components/common/program/program-detail/SuperTitle';
+import { useNavigate } from 'react-router-dom';
 
 const Balancer = clientOnly(() => import('react-wrap-balancer'));
 
@@ -88,6 +89,8 @@ const ChallengePointView = ({
   challengeTitle: string;
   programRecommend?: ProgramRecommend;
 }) => {
+  const navigate = useNavigate();
+
   const programSchedule = [
     {
       title: '진행 기간',
@@ -181,10 +184,10 @@ const ChallengePointView = ({
       {/* 프로그램 추천 */}
       {programRecommend && (
         <div
-          className="relative -z-20 w-full overflow-hidden"
+          className="relative w-full overflow-hidden"
           style={{ backgroundColor: colors.recommendBg }}
         >
-          <div className="relative mx-7 flex justify-between">
+          <div className="relative z-10 mx-7 flex justify-between">
             <HoleIcon className="h-auto w-4 md:w-5" />
             <HoleIcon className="h-auto w-4 md:w-5" />
             <HoleIcon className="h-auto w-4 md:w-5" />
@@ -205,7 +208,7 @@ const ChallengePointView = ({
             <HoleIcon className="hidden h-auto w-4 md:block md:w-5" />
           </div>
           <img
-            className="absolute -right-14 top-8 -z-10 h-auto w-[362px] md:-top-12 md:w-[838px] lg:right-48"
+            className="absolute -right-14 top-8 h-auto w-[362px] md:-top-12 md:w-[838px] lg:right-48"
             src={recommendLogoSrc}
           />
 
@@ -245,6 +248,11 @@ const ChallengePointView = ({
                     <button
                       className="mt-3 w-full rounded-xs py-3 text-white"
                       style={{ backgroundColor: colors.primary }}
+                      onClick={() =>
+                        navigate(
+                          `/program/${item.programInfo.programType.toLowerCase()}/${item.programInfo.id}`,
+                        )
+                      }
                     >
                       {item.recommendCTA}
                     </button>
