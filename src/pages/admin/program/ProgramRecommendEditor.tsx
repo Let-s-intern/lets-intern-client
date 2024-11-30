@@ -2,7 +2,7 @@ import { Box, Button, Modal, Typography } from '@mui/material';
 import { useState } from 'react';
 
 import { useGetProgramAdminQuery } from '@/api/program';
-import { ProgramStatusEnum } from '@/schema';
+import { ProgramStatusEnum, ProgramTypeUpperCase } from '@/schema';
 import { ProgramRecommend } from '@/types/interface';
 import { newProgramTypeToText, programStatusToText } from '@/utils/convert';
 import { Heading2 } from '@components/admin/ui/heading/Heading2';
@@ -68,9 +68,15 @@ const ProgramRecommendEditor = ({
   const onClose = () => setSelectModalOpen(false);
   const onOpen = () => setSelectModalOpen(true);
 
-  const onChangeItem = (e: React.ChangeEvent<HTMLInputElement>, id: number) => {
+  const onChangeItem = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    id: number,
+    programType: ProgramTypeUpperCase,
+  ) => {
     const index = programRecommend.list.findIndex(
-      (ele) => ele.programInfo.id === id,
+      (ele) =>
+        ele.programInfo.id === id &&
+        ele.programInfo.programType === programType,
     );
 
     setProgramRecommend({
@@ -124,7 +130,13 @@ const ProgramRecommendEditor = ({
                   placeholder="프로그램 추천 제목을 입력해주세요"
                   defaultValue={item.recommendTitle}
                   size="small"
-                  onChange={(e) => onChangeItem(e, item.programInfo.id)}
+                  onChange={(e) =>
+                    onChangeItem(
+                      e,
+                      item.programInfo.id,
+                      item.programInfo.programType,
+                    )
+                  }
                 />
                 <Input
                   label="CTA"
@@ -133,7 +145,13 @@ const ProgramRecommendEditor = ({
                   placeholder="프로그램 추천 CTA를 입력해주세요"
                   defaultValue={item.recommendCTA}
                   size="small"
-                  onChange={(e) => onChangeItem(e, item.programInfo.id)}
+                  onChange={(e) =>
+                    onChangeItem(
+                      e,
+                      item.programInfo.id,
+                      item.programInfo.programType,
+                    )
+                  }
                 />
               </div>
             </div>
@@ -189,7 +207,10 @@ const ProgramRecommendEditor = ({
                             className="h-4 w-4"
                             type="checkbox"
                             checked={programRecommend.list.some(
-                              (v) => v.programInfo.id === item.programInfo.id,
+                              (v) =>
+                                v.programInfo.id === item.programInfo.id &&
+                                v.programInfo.programType ===
+                                  item.programInfo.programType,
                             )}
                             onChange={(e) => {
                               if (e.target.checked) {
@@ -212,7 +233,10 @@ const ProgramRecommendEditor = ({
                                 setProgramRecommend({
                                   list: programRecommend.list.filter(
                                     (v) =>
-                                      v.programInfo.id !== item.programInfo.id,
+                                      v.programInfo.id !==
+                                        item.programInfo.id ||
+                                      v.programInfo.programType !==
+                                        item.programInfo.programType,
                                   ),
                                 });
                               }
