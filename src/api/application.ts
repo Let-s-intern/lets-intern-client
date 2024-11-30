@@ -5,7 +5,7 @@ import {
   challengeApplicationPriceType,
   liveApplicationPriceType,
   ProgramStatusEnum,
-  programType,
+  ProgramTypeEnum,
 } from '../schema';
 import { UsePaymentDetailQueryKey, UsePaymentQueryKey } from './payment';
 
@@ -56,11 +56,9 @@ export const useProgramApplicationQuery = (
   });
 };
 
-const useProgramTitleQueryKey = 'useProgramTitleQueryKey';
-
 const useProgramTitleQuery = (programType: ProgramType, programId: number) => {
   return useQuery({
-    queryKey: [useProgramTitleQueryKey, programType, programId],
+    queryKey: ['useProgramTitleQueryKey', programType, programId],
     queryFn: async () => {
       const res = await axios.get(`/${programType}/${programId}/title`);
       return res.data.data;
@@ -171,7 +169,7 @@ const mypageApplicationsSchema = z
         id: z.number().nullable().optional(),
         status: applicationStatus.nullable().optional(),
         programId: z.number().nullable().optional(),
-        programType: programType.nullable().optional(),
+        programType: ProgramTypeEnum.nullable().optional(),
         programStatusType: ProgramStatusEnum.nullable().optional(),
         programTitle: z.string().nullable().optional(),
         programShortDesc: z.string().nullable().optional(),
