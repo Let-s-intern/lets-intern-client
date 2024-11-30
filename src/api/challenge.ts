@@ -1,10 +1,9 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { z } from 'zod';
 import {
   challengeTitleSchema,
   faqSchema,
   getChallengeIdSchema,
-  reviewSchema,
+  reviewTotalSchema,
 } from '../schema';
 import axios from '../utils/axios';
 
@@ -103,7 +102,7 @@ export const useGetTotalReview = (
     queryKey: ['useGetTotalReview', type],
     queryFn: async () => {
       const res = await axios.get('/review');
-      return z.array(reviewSchema).parse(res.data.data);
+      return reviewTotalSchema.parse(res.data.data);
     },
     refetchOnWindowFocus: false,
   });

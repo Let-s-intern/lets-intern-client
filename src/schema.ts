@@ -132,6 +132,12 @@ export const reviewSchema = z.object({
   createdDate: z.string(),
 });
 
+export const reviewTotalSchema = z.object({
+  revieweList: z.array(reviewSchema),
+});
+
+export type ReviewType = z.infer<typeof reviewSchema>;
+
 const missionStatusType = z.union([
   z.literal('WAITING'),
   z.literal('CHECK_DONE'),
