@@ -6,6 +6,7 @@ import { ReactNode, useMemo } from 'react';
 import { clientOnly } from 'vike-react/clientOnly';
 
 import HoleIcon from '@/assets/icons/hole.svg?react';
+import useHasScroll from '@/hooks/useHasScroll';
 import { ChallengeType, challengeTypeSchema } from '@/schema';
 import { ChallengePoint, ProgramRecommend } from '@/types/interface';
 import { ChallengeColor } from '@components/ChallengeView';
@@ -90,6 +91,8 @@ const ChallengePointView = ({
   programRecommend?: ProgramRecommend;
 }) => {
   const navigate = useNavigate();
+
+  const { scrollRef, hasScroll } = useHasScroll();
 
   const programSchedule = [
     {
@@ -220,7 +223,13 @@ const ChallengePointView = ({
               <br className="md:hidden" /> 추천드려요
             </Heading2>
 
-            <div className="custom-scrollbar -mx-5 mt-8 max-w-[1000px] overflow-x-auto px-5 md:mx-auto md:mt-16">
+            <div
+              className={twMerge(
+                'custom-scrollbar -mx-5 mt-8 max-w-[1000px] overflow-x-auto px-5 md:mx-auto md:mt-16',
+                !hasScroll && 'flex justify-center',
+              )}
+              ref={scrollRef}
+            >
               <div className="flex min-w-fit gap-4">
                 {programRecommend.list.map((item) => (
                   <div
