@@ -4,9 +4,15 @@ const ReviewsTableHead = () => {
   return (
     <thead>
       <tr>
-        <TH>프로그램 제목</TH>
-        <TH>등록 일자</TH>
-        <TH>관리</TH>
+        <TH>작성 일자</TH>
+        <TH>프로그램 명</TH>
+        <TH>이름</TH>
+        <TH>NPS 점수</TH>
+        <TH>NPS 이유</TH>
+        <TH>추천 경험</TH>
+        <TH>만족도</TH>
+        <TH>후기</TH>
+        <TH>노출여부</TH>
       </tr>
     </thead>
   );
