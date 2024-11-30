@@ -5,9 +5,10 @@ import { josa } from 'es-hangul';
 import { ReactNode, useMemo } from 'react';
 import { clientOnly } from 'vike-react/clientOnly';
 
+import { getVod } from '@/api/program';
 import HoleIcon from '@/assets/icons/hole.svg?react';
 import useHasScroll from '@/hooks/useHasScroll';
-import { ChallengeType, challengeTypeSchema } from '@/schema';
+import { ChallengeType, challengeTypeSchema, ProgramTypeEnum } from '@/schema';
 import { ChallengePoint, ProgramRecommend } from '@/types/interface';
 import { ChallengeColor } from '@components/ChallengeView';
 import Heading2 from '@components/common/program/program-detail/Heading2';
@@ -248,7 +249,7 @@ const ChallengePointView = ({
 
             <div
               className={twMerge(
-                'custom-scrollbar -mx-5 mt-8 max-w-[1000px] overflow-x-auto px-5 md:mx-auto md:mt-16',
+                'custom-scrollbar -mx-5 mt-8 max-w-[1000px] overflow-x-auto px-5 md:mx-auto md:mt-16 lg:px-0',
                 !hasScroll && 'flex justify-center',
               )}
               ref={scrollRef}
@@ -280,11 +281,21 @@ const ChallengePointView = ({
                     <button
                       className="mt-3 w-full rounded-xs py-3 text-white"
                       style={{ backgroundColor: colors.primary }}
-                      onClick={() =>
+                      onClick={async () => {
+                        if (
+                          item.programInfo.programType ===
+                          ProgramTypeEnum.enum.VOD
+                        ) {
+                          // VOD 링크로 이동
+                          const data = await getVod(item.programInfo.id);
+                          window.open(data.vodInfo.link ?? '');
+                          return;
+                        }
+
                         navigate(
                           `/program/${item.programInfo.programType.toLowerCase()}/${item.programInfo.id}`,
-                        )
-                      }
+                        );
+                      }}
                     >
                       {item.recommendCTA}
                     </button>

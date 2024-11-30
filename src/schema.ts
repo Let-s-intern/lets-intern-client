@@ -95,14 +95,9 @@ const faqProgramType = z.union([
 
 export type FaqProgramType = z.infer<typeof faqProgramType>;
 
-export const programType = z.union([
-  z.literal('CHALLENGE'),
-  z.literal('LIVE'),
-  z.literal('VOD'),
-  z.literal('REPORT'),
-]);
+export const ProgramTypeEnum = z.enum(['CHALLENGE', 'LIVE', 'VOD', 'REPORT']);
 
-export type ProgramTypeUpperCase = z.infer<typeof programType>;
+export type ProgramTypeUpperCase = z.infer<typeof ProgramTypeEnum>;
 
 export const accountType = z.union([
   z.literal('KB'),
@@ -1405,7 +1400,7 @@ export const programSchema = z.object({
     z.object({
       programInfo: z.object({
         id: z.number(),
-        programType,
+        programType: ProgramTypeEnum,
         programStatusType: ProgramStatusEnum,
         title: z.string().nullable().optional(),
         thumbnail: z.string().nullable().optional(),
@@ -1429,7 +1424,7 @@ export const programAdminSchema = z
       z.object({
         programInfo: z.object({
           id: z.number(),
-          programType,
+          programType: ProgramTypeEnum,
           programStatusType: ProgramStatusEnum,
           title: z.string().nullable().optional(),
           startDate: z.string().nullable().optional(),
