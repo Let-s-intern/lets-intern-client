@@ -4,8 +4,8 @@ import { z } from 'zod';
 import {
   challengeApplicationPriceType,
   liveApplicationPriceType,
-  programStatus,
-  programType,
+  ProgramStatusEnum,
+  ProgramTypeEnum,
 } from '../schema';
 import { UsePaymentDetailQueryKey, UsePaymentQueryKey } from './payment';
 
@@ -24,7 +24,7 @@ const programApplicationSchema = z
     startDate: z.string().nullable().optional(),
     endDate: z.string().nullable().optional(),
     deadline: z.string().nullable().optional(),
-    statusType: programStatus,
+    statusType: ProgramStatusEnum,
     priceList: z.array(challengeApplicationPriceType).nullable().optional(),
     price: liveApplicationPriceType.nullable().optional(),
   })
@@ -56,11 +56,9 @@ export const useProgramApplicationQuery = (
   });
 };
 
-const useProgramTitleQueryKey = 'useProgramTitleQueryKey';
-
 const useProgramTitleQuery = (programType: ProgramType, programId: number) => {
   return useQuery({
-    queryKey: [useProgramTitleQueryKey, programType, programId],
+    queryKey: ['useProgramTitleQueryKey', programType, programId],
     queryFn: async () => {
       const res = await axios.get(`/${programType}/${programId}/title`);
       return res.data.data;
@@ -171,8 +169,8 @@ const mypageApplicationsSchema = z
         id: z.number().nullable().optional(),
         status: applicationStatus.nullable().optional(),
         programId: z.number().nullable().optional(),
-        programType: programType.nullable().optional(),
-        programStatusType: programStatus.nullable().optional(),
+        programType: ProgramTypeEnum.nullable().optional(),
+        programStatusType: ProgramStatusEnum.nullable().optional(),
         programTitle: z.string().nullable().optional(),
         programShortDesc: z.string().nullable().optional(),
         programThumbnail: z.string().nullable().optional(),
