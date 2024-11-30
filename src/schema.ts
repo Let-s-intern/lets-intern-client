@@ -87,17 +87,13 @@ const livePriceTypeSchema = z.union([z.literal('CHARGE'), z.literal('FREE')]);
 
 export type LivePriceType = z.infer<typeof livePriceTypeSchema>;
 
-const faqProgramType = z.union([
-  z.literal('CHALLENGE'),
-  z.literal('LIVE'),
-  z.literal('VOD'),
-]);
-
-export type FaqProgramType = z.infer<typeof faqProgramType>;
-
 export const ProgramTypeEnum = z.enum(['CHALLENGE', 'LIVE', 'VOD', 'REPORT']);
 
 export type ProgramTypeUpperCase = z.infer<typeof ProgramTypeEnum>;
+
+const faqProgramType = ProgramTypeEnum.exclude(['REPORT']);
+
+export type FaqProgramType = z.infer<typeof faqProgramType>;
 
 export const accountType = z.union([
   z.literal('KB'),

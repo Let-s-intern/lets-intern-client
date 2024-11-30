@@ -16,13 +16,13 @@ import {
   ProgramClassification,
   programSchema,
   ProgramStatus,
+  ProgramTypeUpperCase,
   UpdateChallengeReq,
   UpdateLiveReq,
   UpdateVodReq,
 } from '../schema';
 import { IPageable } from '../types/interface';
 import axios from '../utils/axios';
-import { ProgramType } from './paymentSchema';
 
 export const useProgramQuery = ({
   programId,
@@ -85,7 +85,7 @@ export const useUserProgramQuery = ({
 export const useGetProgramAdminQueryKey = 'useGetProgramAdminQueryKey';
 
 export const useGetProgramAdminQuery = (params: {
-  type?: ProgramType;
+  type?: ProgramTypeUpperCase;
   classification?: ProgramClassification;
   status?: ProgramStatus;
   startDate?: string;

@@ -1,7 +1,6 @@
 import { z } from 'zod';
 
-const ProgramTypeEnum = z.enum(['CHALLENGE', 'LIVE', 'VOD', 'REPORT']);
-export type ProgramType = z.infer<typeof ProgramTypeEnum>;
+import { ProgramTypeEnum } from '@/schema';
 
 export const programInfoType = z.object({
   paymentId: z.number().nullable().optional(),
