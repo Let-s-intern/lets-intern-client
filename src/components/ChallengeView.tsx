@@ -1,3 +1,4 @@
+import dayjs from 'dayjs';
 import { useMemo } from 'react';
 
 import { twMerge } from '@/lib/twMerge';
@@ -8,7 +9,6 @@ import ChallengeCurriculum from '@components/challenge-view/ChallengeCurriculum'
 import ChallengeFaq from '@components/challenge-view/ChallengeFaq';
 import ChallengeResult from '@components/challenge-view/ChallengeResult';
 import Header from '@components/common/program/program-detail/header/Header';
-import dayjs from 'dayjs';
 import ChallengeBasicInfo from './challenge-view/ChallengeBasicInfo';
 import ChallengeBrand from './challenge-view/ChallengeBrand';
 import ChallengeDifferent from './challenge-view/ChallengeDifferent';
@@ -18,6 +18,7 @@ import ChallengeIntroPersonalStatement from './challenge-view/ChallengeIntroPers
 import ChallengeIntroPortfolio from './challenge-view/ChallengeIntroPortfolio';
 import ChallengePointView from './challenge-view/ChallengePointView';
 import LexicalContent from './common/blog/LexicalContent';
+import MoreReviewButton from './common/review/MoreReviewButton';
 import ProgramBestReviewSection from './ProgramBestReviewSection';
 import ProgramDetailBlogReviewSection from './ProgramDetailBlogReviewSection';
 import ProgramDetailNavigation, {
@@ -39,6 +40,9 @@ export type ChallengeColor = {
   subTitle: string;
   subBg: string;
   gradientBg: string;
+  curriculumBg: string;
+  recommendBg: string;
+  recommendLogo: string;
 };
 
 const ChallengeView: React.FC<{
@@ -62,13 +66,15 @@ const ChallengeView: React.FC<{
     let primaryLight = '';
     let secondary = '';
     let secondaryLight = '';
-    let gradient = '';
-    let dark = '';
+    let gradient = ''; // After 배지 배경색에 사용
+    let dark = ''; // 진행방식,결과물 배경색
 
     let subTitle = '';
     let subBg = '';
     let gradientBg = '';
-    let curriculumBg = '';
+    let curriculumBg = ''; // 커리큘럼 배경색
+    let recommendBg = ''; // 프로그램 추천 배경색
+    let recommendLogo = ''; // 프로그램 추천 로고색
 
     switch (challenge.challengeType) {
       case PERSONAL_STATEMENT:
@@ -76,14 +82,16 @@ const ChallengeView: React.FC<{
         secondary = '#FF9C34';
         primaryLight = '#EEFAFF';
         secondaryLight = '#FFF7EF';
-        gradient = '#39DEFF'; // After 배지 배경색에 사용
-        dark = '#20304F'; // 진행방식,결과물 배경색
+        gradient = '#39DEFF';
+        dark = '#20304F';
 
         subTitle = '#FF9C34';
         subBg = '#FFF7EF';
         gradientBg =
           'linear-gradient(180deg,#222A7E 0%,#111449 50%,#111449 100%)'; // ??
         curriculumBg = '#EFF4F7';
+        recommendBg = '#F1FBFF';
+        recommendLogo = '#DDF5FF';
         break;
       case PORTFOLIO:
         primary = '#4A76FF';
@@ -98,6 +106,8 @@ const ChallengeView: React.FC<{
         gradientBg =
           'linear-gradient(180deg,#222A7E 0%,#111449 50%,#111449 100%)';
         curriculumBg = '#F3F3F3';
+        recommendBg = '#F0F4FF';
+        recommendLogo = '#DEE7FF';
         break;
       default:
         primary = '#4D55F5';
@@ -112,6 +122,8 @@ const ChallengeView: React.FC<{
         gradientBg =
           'linear-gradient(180deg,#222A7E 0%,#111449 50%,#111449 100%)';
         curriculumBg = '#F2F2F5';
+        recommendBg = '#F3F4FF';
+        recommendLogo = '#E8EAFF';
     }
     return {
       primary,
@@ -124,6 +136,8 @@ const ChallengeView: React.FC<{
       subBg,
       gradientBg,
       curriculumBg,
+      recommendBg,
+      recommendLogo,
     };
   }, [challenge.challengeType]);
 
@@ -154,6 +168,7 @@ const ChallengeView: React.FC<{
                 startDate={challenge.startDate ?? dayjs()}
                 endDate={challenge.endDate ?? dayjs()}
                 challengeTitle={challenge.title ?? ''}
+                programRecommend={receivedContent.programRecommend}
               />
             </section>
 
@@ -223,11 +238,21 @@ const ChallengeView: React.FC<{
             id={PROGRAM_REVIEW_ID}
             className="challenge_review flex w-full flex-col items-center gap-y-[70px] md:gap-y-40"
           >
-            <div className="flex w-full flex-col items-center bg-neutral-95 py-[70px] md:pt-[110px]">
+            <div className="flex w-full flex-col items-center bg-neutral-95 py-[70px] md:py-[110px]">
               <ProgramBestReviewSection
                 type="challenge"
                 reviews={receivedContent.challengeReview}
                 colors={colors}
+              />
+              <MoreReviewButton
+                title={challenge.title ?? '-'}
+                thumbnail={challenge.thumbnail ?? ''}
+                startDate={challenge.startDate?.format('YYYY.MM.DD') ?? ''}
+                endDate={challenge.endDate?.format('YYYY.MM.DD') ?? ''}
+                deadline={challenge.deadline?.format('YYYY.MM.DD') ?? ''}
+                type={'CHALLENGE'}
+                mainColor={colors.dark}
+                subColor={colors.secondary}
               />
             </div>
             {receivedContent.blogReview && (

@@ -5,6 +5,7 @@ import { LiveIdSchema } from '@/schema';
 import { LiveContent } from '@/types/interface';
 import Header from '@components/common/program/program-detail/header/Header';
 import LexicalContent from './common/blog/LexicalContent';
+import MoreReviewButton from './common/review/MoreReviewButton';
 import LiveBasicInfo from './live-view/LiveBasicInfo';
 import LiveCurriculum from './live-view/LiveCurriculum';
 import LiveFaq from './live-view/LiveFaq';
@@ -95,6 +96,16 @@ const LiveView: React.FC<{ live: LiveIdSchema; isPreview?: boolean }> = ({
               <ProgramBestReviewSection
                 reviews={receivedContent.liveReview}
                 type="live"
+              />
+              <MoreReviewButton
+                title={live.title ?? '-'}
+                thumbnail={live.thumbnail ?? ''}
+                startDate={live.startDate?.format('YYYY.MM.DD') ?? ''}
+                endDate={live.endDate?.format('YYYY.MM.DD') ?? ''}
+                deadline={live.deadline?.format('YYYY.MM.DD') ?? ''}
+                type={'LIVE'}
+                mainColor={'#4D55F5'}
+                subColor={'#E45BFF'}
               />
             </div>
             {receivedContent.blogReview && (

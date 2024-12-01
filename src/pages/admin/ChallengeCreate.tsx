@@ -23,6 +23,7 @@ import ChallengePrice from './program/ChallengePrice';
 import FaqSection from './program/FaqSection';
 import ProgramBestReview from './program/ProgramBestReview';
 import ProgramBlogReviewEditor from './program/ProgramBlogReviewEditor';
+import ProgramRecommendEditor from './program/ProgramRecommendEditor';
 import ProgramSchedule from './program/ProgramSchedule';
 
 /**
@@ -37,6 +38,7 @@ const ChallengeCreate: React.FC = () => {
     blogReview: { list: [] },
     challengeReview: [],
     initialized: true,
+    programRecommend: { list: [] },
   });
   const { snackbar } = useAdminSnackbar();
   const navigate = useNavigate();
@@ -232,6 +234,13 @@ const ChallengeCreate: React.FC = () => {
           }
         ></EditorApp>
       </section>
+
+      <ProgramRecommendEditor
+        programRecommend={content.programRecommend ?? { list: [] }}
+        setProgramRecommend={(programRecommend) =>
+          setContent((prev) => ({ ...prev, programRecommend }))
+        }
+      />
 
       <ChallengeCurriculum
         curriculum={content.curriculum}

@@ -24,6 +24,7 @@ import LiveMentor from './program/LiveMentor';
 import LivePrice from './program/LivePrice';
 import ProgramBestReview from './program/ProgramBestReview';
 import ProgramBlogReviewEditor from './program/ProgramBlogReviewEditor';
+import ProgramRecommendEditor from './program/ProgramRecommendEditor';
 import ProgramSchedule from './program/ProgramSchedule';
 const LiveCreate: React.FC = () => {
   const navigate = useNavigate();
@@ -235,6 +236,14 @@ const LiveCreate: React.FC = () => {
         reasonFields={content.reason ?? [{ title: '', content: '' }]}
         setContent={setContent}
       />
+
+      <ProgramRecommendEditor
+        programRecommend={content.programRecommend ?? { list: [] }}
+        setProgramRecommend={(programRecommend) =>
+          setContent((prev) => ({ ...prev, programRecommend }))
+        }
+      />
+
       <LiveCurriculum
         curriculum={content.curriculum}
         curriculumTitle={content.curriculumTitle}

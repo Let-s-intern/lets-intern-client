@@ -3,6 +3,7 @@ import {
   challengeTitleSchema,
   faqSchema,
   getChallengeIdSchema,
+  reviewTotalSchema,
 } from '../schema';
 import axios from '../utils/axios';
 
@@ -90,6 +91,91 @@ export const useGetChallengeFaq = (challengeId: number | string) => {
     queryFn: async () => {
       const res = await axios.get(`/challenge/${challengeId}/faqs`);
       return faqSchema.parse(res.data.data);
+    },
+  });
+};
+
+const getTotalReviewQueryKey = (
+  type: string,
+  programTitle?: string | null,
+  createdDate?: string | null,
+) => {
+  return ['useGetTotalReview', type, programTitle, createdDate];
+};
+
+export const useGetTotalReview = ({
+  type,
+  programTitle,
+  createdDate,
+}: {
+  type: 'CHALLENGE' | 'LIVE' | 'VOD' | 'REPORT';
+  programTitle?: string | null;
+  createdDate?: string | null;
+}) => {
+  return useQuery({
+    queryKey: getTotalReviewQueryKey(type, programTitle, createdDate),
+    queryFn: async () => {
+      const sortParams: string[] = [];
+
+      if (programTitle) {
+        sortParams.push(
+          `programTitle;${programTitle === 'ASCENDING' ? 'ASC' : 'DESC'}`,
+        );
+      }
+
+      if (createdDate) {
+        sortParams.push(
+          `createDate;${createdDate === 'ASCENDING' ? 'ASC' : 'DESC'}`,
+        );
+      }
+
+      const res = await axios.get('/review', {
+        params: {
+          type,
+          sort: sortParams.join('&'),
+        },
+      });
+      return reviewTotalSchema.parse(res.data.data);
+    },
+    refetchOnWindowFocus: false,
+  });
+};
+
+export const useEditReviewVisible = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({
+      type,
+      programTitle,
+      createDate,
+      reviewId,
+      isVisible,
+    }: {
+      type: string;
+      programTitle?: string | null;
+      createDate?: string | null;
+      reviewId: number;
+      isVisible: boolean;
+    }) => {
+      const res = await axios.patch(
+        `/review/${reviewId}/status`,
+        {},
+        {
+          params: {
+            isVisible,
+          },
+        },
+      );
+      return { data: res.data, type, programTitle, createDate };
+    },
+    onSuccess: async (data) => {
+      await queryClient.invalidateQueries({
+        queryKey: getTotalReviewQueryKey(
+          data.type,
+          data.programTitle,
+          data.createDate,
+        ),
+      });
     },
   });
 };

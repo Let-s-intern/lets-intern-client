@@ -1,79 +1,62 @@
-import { useQuery } from '@tanstack/react-query';
-
-import { useCallback, useState } from 'react';
+import { useGetTotalReview } from '@/api/challenge';
+import { MenuItem, Select } from '@mui/material';
+import { useState } from 'react';
 import TableBody from '../../../components/admin/review/reviews/table-content/TableBody';
-import TableHead from '../../../components/admin/review/reviews/table-content/TableHead';
-import AdminPagination from '../../../components/admin/ui/pagination/AdminPagination';
+import TableHead, {
+  ReviewsTableHeadProps,
+} from '../../../components/admin/review/reviews/table-content/TableHead';
 import Table from '../../../components/admin/ui/table/regacy/Table';
-import axios from '../../../utils/axios';
 
 const Reviews = () => {
-  const [pageNum, setPageNum] = useState<number>(1);
-  const sizePerPage = 10;
-
-  const { data, isLoading, error } = useQuery({
-    queryKey: ['program', 'admin', { page: pageNum, size: sizePerPage }],
-    queryFn: async () => {
-      const res = await axios.get('/program/admin', {
-        params: { page: pageNum, size: sizePerPage },
-      });
-      return res.data;
-    },
+  const [type, setType] = useState<'CHALLENGE' | 'LIVE' | 'REPORT' | 'VOD'>(
+    'CHALLENGE',
+  );
+  const [filter, setFilter] = useState<ReviewsTableHeadProps['filter']>({
+    programTitle: null,
+    createdDate: null,
   });
 
-  const programList = data?.data?.programList || [];
-  const maxPage = data?.data?.pageInfo?.totalPages || 1;
-
-  const copyReviewCreateLink = useCallback(
-    (info: {
-      id: number;
-      title: string;
-      startDate: string;
-      programType: string;
-    }) => {
-      const url = `${window.location.protocol}//${window.location.host}/write-review/${info.programType.toLowerCase()}/${info.id}`;
-      navigator.clipboard
-        .writeText(url)
-        .then(() => {
-          alert('링크가 클립보드에 복사되었습니다.');
-        })
-        .catch((err) => {
-          console.error(err);
-          alert('링크 복사에 실패했습니다.');
-        });
-    },
-    [],
-  );
+  const { data, isLoading, error } = useGetTotalReview({
+    type,
+    programTitle: filter.programTitle,
+    createdDate: filter.createdDate,
+  });
 
   return (
     <div className="p-8">
-      <header className="mb-4">
+      <header className="mb-4 flex items-center justify-between">
         <h1 className="text-1.5-bold">후기 관리</h1>
+        <Select
+          value={type}
+          onChange={(e) =>
+            setType(e.target.value as 'CHALLENGE' | 'LIVE' | 'REPORT' | 'VOD')
+          }
+          className="mb-4"
+        >
+          <MenuItem value="CHALLENGE">챌린지</MenuItem>
+          <MenuItem value="LIVE">라이브</MenuItem>
+          <MenuItem value="VOD">VOD</MenuItem>
+          <MenuItem value="REPORT">리포트</MenuItem>
+        </Select>
       </header>
       <main>
         {isLoading ? (
           <div className="py-4 text-center">로딩 중...</div>
         ) : error ? (
           <div className="py-4 text-center">에러 발생</div>
-        ) : programList.length === 0 ? (
-          <div className="py-4 text-center">프로그램이 없습니다.</div>
+        ) : !data || data.reviewList.length === 0 ? (
+          <div className="py-4 text-center">후기가 없습니다.</div>
         ) : (
           <>
             <Table minWidth={1000}>
-              <TableHead />
+              <TableHead filter={filter} setFilter={setFilter} />
               <TableBody
-                programList={programList}
-                copyReviewCreateLink={copyReviewCreateLink}
+                type={type}
+                programTitle={filter.programTitle}
+                createDate={filter.createdDate}
+                reviewList={data.reviewList}
               />
             </Table>
-            {programList.length > 0 && (
-              <AdminPagination
-                className="mt-4"
-                maxPage={maxPage}
-                pageNum={pageNum}
-                setPageNum={setPageNum}
-              />
-            )}
           </>
         )}
       </main>

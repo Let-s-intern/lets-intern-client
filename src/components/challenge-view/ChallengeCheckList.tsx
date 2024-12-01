@@ -239,7 +239,7 @@ function ChallengeCheckList({
                   {group.map((ele) => (
                     <span
                       key={ele}
-                      className="shrink-0 text-xsmall16 font-semibold text-neutral-35 md:text-small20"
+                      className="shrink-0 text-xsmall14 font-semibold text-neutral-35 xs:text-xsmall16 md:text-small20"
                     >
                       {ele}
                     </span>

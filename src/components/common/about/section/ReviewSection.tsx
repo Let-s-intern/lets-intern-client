@@ -1,5 +1,5 @@
+import useHasScroll from '@/hooks/useHasScroll';
 import { twMerge } from '@/lib/twMerge';
-import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import AboutTitleDark from '../ui/AboutTitleDark';
 
@@ -27,45 +27,17 @@ const reviewList = [
   },
 ];
 
-const throttle = (callback: () => void, delay: number) => {
-  let timeId: NodeJS.Timeout | null;
-
-  return () => {
-    if (timeId) return;
-    timeId = setTimeout(() => {
-      callback();
-      timeId = null;
-    }, delay);
-  };
-};
-
 const ReviewSection = () => {
-  const slideRef = useRef<HTMLDivElement>(null);
-  const [hasScroll, setHasScroll] = useState(true);
-
-  useEffect(() => {
-    const onResize = () => {
-      setHasScroll(
-        slideRef.current?.scrollWidth === slideRef.current?.offsetWidth
-          ? false
-          : true,
-      );
-    };
-    onResize(); // 최초 실행
-    window.addEventListener('resize', throttle(onResize, 100));
-
-    return () => {
-      window.removeEventListener('resize', throttle(onResize, 100));
-    };
-  }, []);
+  const { scrollRef, hasScroll } = useHasScroll();
 
   return (
     <section className="bg-[#101348] px-5 py-[3.75rem] sm:px-10 sm:py-[6.25rem] xl:py-[8.75rem]">
       <AboutTitleDark {...title} />
+
       <div
-        ref={slideRef}
+        ref={scrollRef}
         className={twMerge(
-          'custom-scrollbar mt-10 flex w-auto flex-nowrap gap-4 overflow-x-auto xl:pl-16',
+          'custom-scrollbar -mx-5 mt-10 flex w-auto flex-nowrap gap-4 overflow-x-auto px-5 sm:-mx-10 sm:px-10 xl:pl-16',
           !hasScroll && 'justify-center',
         )}
       >

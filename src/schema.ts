@@ -51,14 +51,14 @@ export const challengeTypeSchema = z.enum([
 
 export type ChallengeType = z.infer<typeof challengeTypeSchema>;
 
-export const programClassificationSchema = z.union([
-  z.literal('CAREER_SEARCH'),
-  z.literal('DOCUMENT_PREPARATION'),
-  z.literal('MEETING_PREPARATION'),
-  z.literal('PASS'),
+export const ProgramClassificationEnum = z.enum([
+  'CAREER_SEARCH',
+  'DOCUMENT_PREPARATION',
+  'MEETING_PREPARATION',
+  'PASS',
 ]);
 
-export type ProgramClassification = z.infer<typeof programClassificationSchema>;
+export type ProgramClassification = z.infer<typeof ProgramClassificationEnum>;
 
 export const challengePriceType = z.union([
   z.literal('CHARGE'),
@@ -87,22 +87,13 @@ const livePriceTypeSchema = z.union([z.literal('CHARGE'), z.literal('FREE')]);
 
 export type LivePriceType = z.infer<typeof livePriceTypeSchema>;
 
-const faqProgramType = z.union([
-  z.literal('CHALLENGE'),
-  z.literal('LIVE'),
-  z.literal('VOD'),
-]);
+export const ProgramTypeEnum = z.enum(['CHALLENGE', 'LIVE', 'VOD', 'REPORT']);
+
+export type ProgramTypeUpperCase = z.infer<typeof ProgramTypeEnum>;
+
+const faqProgramType = ProgramTypeEnum.exclude(['REPORT']);
 
 export type FaqProgramType = z.infer<typeof faqProgramType>;
-
-export const programType = z.union([
-  z.literal('CHALLENGE'),
-  z.literal('LIVE'),
-  z.literal('VOD'),
-  z.literal('REPORT'),
-]);
-
-export type ProgramTypeUpperCase = z.infer<typeof programType>;
 
 export const accountType = z.union([
   z.literal('KB'),
@@ -131,6 +122,26 @@ export type Faq = z.infer<typeof faq>;
 
 export const faqSchema = z.object({ faqList: z.array(faq) });
 
+export const reviewSchema = z.object({
+  id: z.number(),
+  programTitle: z.string().nullable(),
+  programType: ProgramTypeEnum,
+  name: z.string().nullable(),
+  nps: z.number(),
+  npsAns: z.string(),
+  npsCheckAns: z.boolean(),
+  content: z.string(),
+  score: z.number(),
+  isVisible: z.boolean().nullable(),
+  createdDate: z.string(),
+});
+
+export const reviewTotalSchema = z.object({
+  reviewList: z.array(reviewSchema),
+});
+
+export type ReviewType = z.infer<typeof reviewSchema>;
+
 const missionStatusType = z.union([
   z.literal('WAITING'),
   z.literal('CHECK_DONE'),
@@ -155,7 +166,7 @@ export const getChallengeIdSchema = z
     challengeType: challengeTypeSchema,
     classificationInfo: z.array(
       z.object({
-        programClassification: programClassificationSchema,
+        programClassification: ProgramClassificationEnum,
       }),
     ),
     priceInfo: z.array(
@@ -293,7 +304,7 @@ export const getLiveIdSchema = z
     progressType: liveProgressSchema.nullable().optional(),
     classificationInfo: z.array(
       z.object({
-        programClassification: programClassificationSchema,
+        programClassification: ProgramClassificationEnum,
       }),
     ),
     priceInfo: z.object({
@@ -442,9 +453,7 @@ export const getVodIdSchema = z.object({
   programTypeInfo: z
     .array(
       z.object({
-        programClassification: programClassificationSchema
-          .nullable()
-          .optional(),
+        programClassification: ProgramClassificationEnum.nullable().optional(),
       }),
     )
     .nullable()
@@ -1315,11 +1324,8 @@ export const adminMentorInfoSchema = z.object({
   mentorPassword: z.string().nullable().optional(),
 });
 
-export const programStatus = z.union([
-  z.literal('PREV'),
-  z.literal('PROCEEDING'),
-  z.literal('POST'),
-]);
+export const ProgramStatusEnum = z.enum(['PREV', 'PROCEEDING', 'POST']);
+export type ProgramStatus = z.infer<typeof ProgramStatusEnum>;
 
 export const challengeApplicationPriceType = z.object({
   priceId: z.number().nullable().optional(),
@@ -1401,7 +1407,7 @@ export const userAdminDetailType = z.object({
 export type UserAdminDetail = z.infer<typeof userAdminDetailType>;
 
 export const classificationSchema = z.object({
-  programClassification: programClassificationSchema.nullable().optional(),
+  programClassification: ProgramClassificationEnum.nullable().optional(),
 });
 
 /** GET /api/v1/program */
@@ -1410,8 +1416,8 @@ export const programSchema = z.object({
     z.object({
       programInfo: z.object({
         id: z.number(),
-        programType,
-        programStatusType: programStatus,
+        programType: ProgramTypeEnum,
+        programStatusType: ProgramStatusEnum,
         title: z.string().nullable().optional(),
         thumbnail: z.string().nullable().optional(),
         shortDesc: z.string().nullable().optional(),
@@ -1434,8 +1440,8 @@ export const programAdminSchema = z
       z.object({
         programInfo: z.object({
           id: z.number(),
-          programType,
-          programStatusType: programStatus,
+          programType: ProgramTypeEnum,
+          programStatusType: ProgramStatusEnum,
           title: z.string().nullable().optional(),
           startDate: z.string().nullable().optional(),
           endDate: z.string().nullable().optional(),
@@ -1446,6 +1452,7 @@ export const programAdminSchema = z
           zoomLink: z.string().nullable().optional(),
           zoomPassword: z.string().nullable().optional(),
           isVisible: z.boolean().nullable().optional(),
+          thumbnail: z.string().nullable().optional(),
         }),
         classificationList: z.array(classificationSchema),
       }),
