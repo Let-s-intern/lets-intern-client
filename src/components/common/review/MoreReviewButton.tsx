@@ -98,7 +98,8 @@ const MoreReviewButton = ({
                         {review.content}
                       </p>
                       <div className={`flex w-fit items-center`}>
-                        {Array(5)
+                        {/* review.score만큼 별, 그리고 5-score만큼 빈 별 */}
+                        {Array(review.score)
                           .fill(0)
                           .map((_, index) => (
                             <StarIcon
@@ -106,6 +107,16 @@ const MoreReviewButton = ({
                               width={18}
                               height={18}
                               className="text-primary"
+                            />
+                          ))}
+                        {Array(5 - review.score)
+                          .fill(0)
+                          .map((_, index) => (
+                            <StarIcon
+                              key={index}
+                              width={18}
+                              height={18}
+                              className="text-neutral-75"
                             />
                           ))}
                       </div>
