@@ -56,77 +56,55 @@ const MoreReviewButton = ({
         onClose={handleClose}
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
-        className="flex items-center justify-center px-8 py-12"
+        className="flex items-center justify-center px-8 py-12 outline-none focus:outline-none"
       >
         <div
-          className="relative flex max-h-[80%] w-full max-w-3xl flex-col gap-y-5 overflow-hidden rounded-lg bg-white px-4 py-12 md:p-14"
+          className="relative flex max-h-[80%] w-full max-w-3xl flex-col gap-y-5 overflow-hidden rounded-lg bg-white p-4 outline-none focus:outline-none md:p-14"
           onClick={(e) => e.stopPropagation()}
         >
           <Close
             className="absolute right-4 top-4 h-6 w-6 cursor-pointer md:right-14 md:top-14 md:h-7 md:w-7"
             onClick={handleClose}
           />
-          <div className="flex w-full gap-x-4 overflow-auto scrollbar-hide">
-            <img
-              src={props.thumbnail}
-              alt="챌린지 썸네일"
-              className="h-[96px] w-auto"
-            />
-            <div className="flex grow flex-col gap-y-2 text-xxsmall12 font-medium">
-              <span className="w-full break-words text-xsmall16 font-semibold">
-                {props.title}
-              </span>
-              <div className="flex gap-x-4">
-                <span className="w-12 text-neutral-30">진행 기간</span>
-                <span className="whitespace-pre-wrap text-primary-dark md:whitespace-normal">{`${props.startDate}\n-\n${props.endDate}`}</span>
-              </div>
-              <div className="flex gap-x-4">
-                <span className="w-12 text-neutral-30">모집 마감</span>
-                <span className="whitespace-pre-wrap text-primary-dark md:whitespace-normal">{`${props.deadline}`}</span>
-              </div>
-              <div className="flex gap-x-4">
-                <span className="w-12 text-neutral-30">OT 일자</span>
-                <span className="whitespace-pre-wrap text-primary-dark md:whitespace-normal">{`${props.startDate}`}</span>
-              </div>
-            </div>
-          </div>
-          <div className="flex w-full flex-col gap-y-2">
+          <div className="flex h-full w-full flex-col gap-y-5 overflow-hidden">
             <div className="flex items-center gap-x-2 text-xsmall16 font-semibold">
               후기{' '}
               <span className="text-xsmall14 font-medium text-primary">
-                {reviews?.length ?? 0}개
+                {reviews?.reviewList?.length ?? 0}개
               </span>
             </div>
-            <div className="flex min-h-52 flex-col gap-y-3 overflow-y-auto">
-              {reviewIsLoading ? (
-                <div className="m-auto">로딩 중...</div>
-              ) : !reviews || reviews.length === 0 ? (
-                <div className="m-auto">후기가 없습니다.</div>
-              ) : (
-                reviews.map((review, index) => (
-                  <div
-                    key={index}
-                    className="flex w-full flex-col gap-y-2 bg-neutral-95 px-4 py-5"
-                  >
-                    <p className="text-xsmall14 font-semibold">{`${review.id} ${review.id}`}</p>
-                    <p className="w-full text-xsmall14 font-medium">
-                      {review.content}
-                    </p>
+            <div className="flex w-full flex-1 overflow-auto">
+              <div className="flex h-full w-full flex-col gap-y-3 overflow-auto">
+                {reviewIsLoading ? (
+                  <div className="m-auto">로딩 중...</div>
+                ) : !reviews || reviews.reviewList.length === 0 ? (
+                  <div className="m-auto">후기가 없습니다.</div>
+                ) : (
+                  reviews.reviewList.map((review, index) => (
+                    <div
+                      key={index}
+                      className="flex w-full flex-col gap-y-2 bg-neutral-95 px-4 py-5"
+                    >
+                      <p className="text-xsmall14 font-semibold">{`${review.id} ${review.id}`}</p>
+                      <p className="w-full text-xsmall14 font-medium">
+                        {review.content}
+                      </p>
 
-                    <div className={`flex w-fit items-center px-2 py-1.5`}>
-                      {Array(5)
-                        .fill(0)
-                        .map((_, index) => (
-                          <StarIcon
-                            key={index}
-                            className={`h-4 w-4`}
-                            style={{ color: mainColor }}
-                          />
-                        ))}
+                      <div className={`flex w-fit items-center px-2 py-1.5`}>
+                        {Array(5)
+                          .fill(0)
+                          .map((_, index) => (
+                            <StarIcon
+                              key={index}
+                              className={`h-4 w-4`}
+                              style={{ color: mainColor }}
+                            />
+                          ))}
+                      </div>
                     </div>
-                  </div>
-                ))
-              )}
+                  ))
+                )}
+              </div>
             </div>
           </div>
         </div>
