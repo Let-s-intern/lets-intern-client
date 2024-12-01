@@ -28,7 +28,7 @@ const PERSONAL_STATEMENT_CONTENT = [
 
 const PORTFOLIO_CONTENT = [
   {
-    beforeImg: '/images/portfolio-before1.jpg',
+    beforeImg: '/images/portfolio-before1.png',
     beforeCaption: '마치 서비스 소개서처럼 솔루션만 설명',
     afterImg: '/images/portfolio-after1.jpg',
     afterCaption: '유저 인터뷰 등을 통한 UX/UI 변경 부분 작성',
