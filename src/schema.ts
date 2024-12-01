@@ -133,7 +133,7 @@ export const reviewSchema = z.object({
 });
 
 export const reviewTotalSchema = z.object({
-  revieweList: z.array(reviewSchema),
+  reviewList: z.array(reviewSchema),
 });
 
 export type ReviewType = z.infer<typeof reviewSchema>;

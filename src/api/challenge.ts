@@ -101,7 +101,11 @@ export const useGetTotalReview = (
   return useQuery({
     queryKey: ['useGetTotalReview', type],
     queryFn: async () => {
-      const res = await axios.get('/review');
+      const res = await axios.get('/review', {
+        params: {
+          type,
+        },
+      });
       return reviewTotalSchema.parse(res.data.data);
     },
     refetchOnWindowFocus: false,
