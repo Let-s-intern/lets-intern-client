@@ -250,12 +250,7 @@ const ChallengeView: React.FC<{
                 startDate={challenge.startDate?.format('YYYY.MM.DD') ?? ''}
                 endDate={challenge.endDate?.format('YYYY.MM.DD') ?? ''}
                 deadline={challenge.deadline?.format('YYYY.MM.DD') ?? ''}
-                type={
-                  challenge.challengeType === 'PORTFOLIO' ||
-                  challenge.challengeType === 'PERSONAL_STATEMENT'
-                    ? 'REPORT'
-                    : 'CHALLENGE'
-                }
+                type={'CHALLENGE'}
                 mainColor={colors.dark}
                 subColor={colors.secondary}
               />
