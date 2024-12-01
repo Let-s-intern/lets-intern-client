@@ -34,13 +34,13 @@ const Reviews = () => {
           <div className="py-4 text-center">로딩 중...</div>
         ) : error ? (
           <div className="py-4 text-center">에러 발생</div>
-        ) : !data || data.revieweList.length === 0 ? (
+        ) : !data || data.reviewList.length === 0 ? (
           <div className="py-4 text-center">후기가 없습니다.</div>
         ) : (
           <>
             <Table minWidth={1000}>
               <TableHead />
-              <TableBody reviewList={data.revieweList} />
+              <TableBody reviewList={data.reviewList} />
             </Table>
           </>
         )}
