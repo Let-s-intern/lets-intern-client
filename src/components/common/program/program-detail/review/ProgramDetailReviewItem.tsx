@@ -13,6 +13,8 @@ export const maskingName = (name: string) => {
   if (name.length >= 3) {
     return name[0] + '*'.repeat(name.length - 2) + name[name.length - 1];
   }
+
+  return '**';
 };
 
 const ProgramDetailReviewItem = ({

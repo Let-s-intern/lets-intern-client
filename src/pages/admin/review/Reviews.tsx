@@ -2,15 +2,25 @@ import { useGetTotalReview } from '@/api/challenge';
 import { MenuItem, Select } from '@mui/material';
 import { useState } from 'react';
 import TableBody from '../../../components/admin/review/reviews/table-content/TableBody';
-import TableHead from '../../../components/admin/review/reviews/table-content/TableHead';
+import TableHead, {
+  ReviewsTableHeadProps,
+} from '../../../components/admin/review/reviews/table-content/TableHead';
 import Table from '../../../components/admin/ui/table/regacy/Table';
 
 const Reviews = () => {
   const [type, setType] = useState<'CHALLENGE' | 'LIVE' | 'REPORT' | 'VOD'>(
     'CHALLENGE',
   );
+  const [filter, setFilter] = useState<ReviewsTableHeadProps['filter']>({
+    programTitle: null,
+    createdDate: null,
+  });
 
-  const { data, isLoading, error } = useGetTotalReview(type);
+  const { data, isLoading, error } = useGetTotalReview({
+    type,
+    programTitle: filter.programTitle,
+    createdDate: filter.createdDate,
+  });
 
   return (
     <div className="p-8">
@@ -39,8 +49,13 @@ const Reviews = () => {
         ) : (
           <>
             <Table minWidth={1000}>
-              <TableHead />
-              <TableBody reviewList={data.reviewList} />
+              <TableHead filter={filter} setFilter={setFilter} />
+              <TableBody
+                type={type}
+                programTitle={filter.programTitle}
+                createDate={filter.createdDate}
+                reviewList={data.reviewList}
+              />
             </Table>
           </>
         )}

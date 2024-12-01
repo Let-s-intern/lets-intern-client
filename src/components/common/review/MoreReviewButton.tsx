@@ -4,6 +4,7 @@ import Close from '@/assets/icons/close.svg?react';
 import StarIcon from '@/assets/icons/star.svg?react';
 import { Modal } from '@mui/material';
 import { useState } from 'react';
+import { maskingName } from '../program/program-detail/review/ProgramDetailReviewItem';
 
 interface MoreReviewButtonProps {
   title: string;
@@ -25,9 +26,11 @@ const MoreReviewButton = ({
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
-  const { data: reviews, isLoading: reviewIsLoading } = useGetTotalReview(
-    props.type,
-  );
+  const { data, isLoading: reviewIsLoading } = useGetTotalReview({
+    type: props.type,
+  });
+
+  const reviews = data?.reviewList.filter((review) => review.isVisible);
 
   return (
     <>
@@ -70,34 +73,39 @@ const MoreReviewButton = ({
             <div className="flex items-center gap-x-2 text-xsmall16 font-semibold">
               후기{' '}
               <span className="text-xsmall14 font-medium text-primary">
-                {reviews?.reviewList?.length ?? 0}개
+                {reviews?.length ?? 0}개
               </span>
             </div>
             <div className="flex w-full flex-1 overflow-auto">
-              <div className="flex h-full w-full flex-col gap-y-3 overflow-auto">
+              <div className="flex h-full min-h-20 w-full flex-col gap-y-3 overflow-auto">
                 {reviewIsLoading ? (
                   <div className="m-auto">로딩 중...</div>
-                ) : !reviews || reviews.reviewList.length === 0 ? (
+                ) : !reviews || reviews.length === 0 ? (
                   <div className="m-auto">후기가 없습니다.</div>
                 ) : (
-                  reviews.reviewList.map((review, index) => (
+                  reviews.map((review, index) => (
                     <div
                       key={index}
-                      className="flex w-full flex-col gap-y-2 bg-neutral-95 px-4 py-5"
+                      className="flex w-full flex-col gap-y-2 rounded-[10px] bg-neutral-95 px-4 py-5"
                     >
-                      <p className="text-xsmall14 font-semibold">{`${review.id} ${review.id}`}</p>
-                      <p className="w-full text-xsmall14 font-medium">
+                      <p className="flex items-center gap-x-2 text-xsmall14 font-semibold">
+                        {review.programTitle ?? '프로그램 없음'}
+                        <span className="text-primary">
+                          {maskingName(review.name ?? '-')}
+                        </span>
+                      </p>
+                      <p className="w-full whitespace-pre-wrap break-words text-xsmall14 font-medium">
                         {review.content}
                       </p>
-
-                      <div className={`flex w-fit items-center px-2 py-1.5`}>
+                      <div className={`flex w-fit items-center`}>
                         {Array(5)
                           .fill(0)
                           .map((_, index) => (
                             <StarIcon
                               key={index}
-                              className={`h-4 w-4`}
-                              style={{ color: mainColor }}
+                              width={18}
+                              height={18}
+                              className="text-primary"
                             />
                           ))}
                       </div>
