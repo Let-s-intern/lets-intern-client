@@ -237,20 +237,6 @@ export const couponTypeToText: Record<string, string> = {
   GRADE: '등급별 할인',
 };
 
-const couponProgramTypeToText: Record<string, string> = {
-  ALL: '전체',
-  CHALLENGE: '챌린지',
-  BOOTCAMP: '부트캠프',
-  SESSION: '렛츠챗',
-};
-
-const idTocouponProgramTypeText: Record<string, string> = {
-  1: couponProgramTypeToText.ALL,
-  2: couponProgramTypeToText.CHALLENGE,
-  3: couponProgramTypeToText.BOOTCAMP,
-  4: couponProgramTypeToText.SESSION,
-};
-
 export const couponTypeEnum = {
   PARTNERSHIP: {
     id: 1,

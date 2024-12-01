@@ -1,4 +1,4 @@
-import { josa } from '@toss/hangul';
+import { josa } from 'es-hangul';
 import StarScore from '../score/StarScore';
 
 interface StarScoreSectionProps {

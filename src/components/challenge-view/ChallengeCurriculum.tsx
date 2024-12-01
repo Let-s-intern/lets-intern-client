@@ -44,12 +44,12 @@ function ChallengeCurriculum({
   const title = `기초부터 결과물까지 가져가는 완벽한\n${challengeTitle} 커리큘럼`;
 
   return (
-    <div className="md:py-30 flex w-full max-w-[1000px] flex-col px-5 py-20 md:items-center md:pb-36 lg:px-0">
+    <div className="flex w-full max-w-[1000px] flex-col px-5 py-20 md:items-center md:py-32 md:pb-36 lg:px-0">
       <SuperTitle className="mb-6 md:mb-12" style={{ color: colors.primary }}>
         커리큘럼
       </SuperTitle>
       <div
-        className="mb-4 flex w-fit items-center gap-x-2 rounded-sm bg-white px-2 py-1 text-xsmall14 font-bold md:gap-x-3 md:rounded-md md:px-4 md:py-2.5 md:text-[18px]"
+        className="mb-4 flex w-fit gap-x-2 rounded-sm bg-white px-2 py-1 text-xsmall14 font-bold sm:items-center md:gap-x-3 md:rounded-md md:px-4 md:py-2.5 md:text-[18px]"
         style={{
           color:
             challengeType === CAREER_START ? colors.primary : colors.secondary,
@@ -57,7 +57,7 @@ function ChallengeCurriculum({
       >
         <img className="h-6 w-6 md:h-8 md:w-8" src={`/icons/${iconName}`} />
         {challengeTitle}에서는
-        <br className="md:hidden" /> 이런 걸 가져갈 수 있어요
+        <br className="sm:hidden" /> 이런 걸 가져갈 수 있어요
       </div>
       <Heading2 className="mb-10 whitespace-pre-line md:mb-16">
         {title}

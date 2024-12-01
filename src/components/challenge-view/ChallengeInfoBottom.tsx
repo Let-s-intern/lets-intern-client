@@ -50,7 +50,8 @@ const ChallengeInfoBottom = ({
         )
       : null;
   const totalPrice = (priceInfo?.price || 0) - (priceInfo?.discount || 0);
-  const showMonthlyPrice = priceInfo && totalPrice >= 50000;
+  const showMonthlyPrice =
+    priceInfo && totalPrice + (priceInfo.refund || 0) >= 50000;
   const regularPrice =
     priceInfo.challengePriceType === 'CHARGE'
       ? priceInfo.price
@@ -171,7 +172,7 @@ const ChallengeInfoBottom = ({
                 <div className="flex w-full items-center justify-between gap-x-4 text-xsmall16">
                   <span className="font-bold" style={{ color: colors.primary }}>
                     {getDiscountPercent(
-                      priceInfo.price || 0,
+                      regularPrice || 0,
                       priceInfo.discount || 0,
                     )}
                     % 할인

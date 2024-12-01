@@ -4,6 +4,8 @@ import { useNavigate } from 'react-router-dom';
 
 import { useProgramQuery } from '@/api/program';
 import { usePatchUser } from '@/api/user';
+import CreditCardIcon from '@/assets/icons/credit-card.svg?react';
+import paybackImg from '@/assets/payback.png';
 import { useInstallmentPayment } from '@/hooks/useInstallmentPayment';
 import { UserInfo } from '@/lib/order';
 import useAuthStore from '@/store/useAuthStore';
@@ -202,7 +204,11 @@ const PaymentInputPage = () => {
       className="mx-auto w-full max-w-5xl pb-6"
       data-program-text={program?.title}
     >
-      <Header className="mx-5" programTitle="결제하기" />
+      <Header
+        onClick={() => navigate(-1)}
+        className="mx-5"
+        programTitle="결제하기"
+      />
 
       <hr className="my-6 block h-2 border-none bg-neutral-95" />
 
@@ -260,6 +266,17 @@ const PaymentInputPage = () => {
 
             <hr className="bg-neutral-85" />
 
+            {programApplicationData.programType === 'challenge' &&
+              !isLoading && (
+                <div className="flex items-start gap-2.5 px-3 text-primary">
+                  <CreditCardIcon className="h-auto w-5" />
+                  <p className="text-xsmall14 font-medium">
+                    {banks.join(', ')}카드로 결제하면{' '}
+                    <span className="font-bold">{months}개월 무이자</span> 혜택
+                  </p>
+                </div>
+              )}
+
             <PriceSection
               payInfo={{
                 price: programApplicationData.price ?? 0,
@@ -279,14 +296,18 @@ const PaymentInputPage = () => {
             </div>
           </div>
           {programApplicationData.programType === 'challenge' && !isLoading && (
-            <div className="rounded-lg bg-[#F3F4FF] px-4 py-6 md:px-5">
-              <p className="font-semibold">
-                {banks.join(', ')} 카드로 결제하면
+            <div className="relative rounded-sm bg-[#E8F9F2] px-4 py-6 text-xsmall14 md:px-5">
+              <p className="font-medium">
+                모든 미션을 성공하면
                 <br className="md:hidden" />{' '}
-                <span className="text-primary">{months}개월</span> 무이자 할부
-                혜택!
+                <span className="text-secondary-dark">3만원 페이백</span>{' '}
+                해드려요!
               </p>
-              {/* 그래픽 */}
+              <img
+                className="absolute bottom-0 right-0 h-full w-auto"
+                src={paybackImg}
+                alt="3만원 페이백"
+              />
             </div>
           )}
         </div>

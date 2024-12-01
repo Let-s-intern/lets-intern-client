@@ -1,6 +1,6 @@
 import { isNewProgram } from '@/lib/isDeprecatedProgram';
 import { twMerge } from '@/lib/twMerge';
-import FloatingNotification from '@components/common/FloatingNotification';
+import PaymentErrorNotification from '@components/common/PaymentErrorNotification';
 import { useMediaQuery } from '@mui/material';
 import { useQuery } from '@tanstack/react-query';
 import dayjs from 'dayjs';
@@ -145,11 +145,11 @@ const ProgramDetailLegacy = ({ programType }: ProgramDetailProps) => {
       </Helmet>
       {isNew ? (
         <div className="flex min-h-screen items-center justify-center">
-          <div className="animate-spin h-32 w-32 rounded-full border-b-2 border-gray-900" />
+          <div className="h-32 w-32 animate-spin rounded-full border-b-2 border-gray-900" />
         </div>
       ) : (
         <div className="mx-auto max-w-5xl">
-          <Header programTitle={programTitle} />
+          <Header to="/program" programTitle={programTitle} />
           <div className="flex min-h-screen flex-col">
             {/* 프로그램 상세 */}
             <section className="flex items-start gap-10 md:mt-8">
@@ -193,7 +193,7 @@ const ProgramDetailLegacy = ({ programType }: ProgramDetailProps) => {
                       className="h-[5px] w-[70px] shrink-0 cursor-pointer rounded-full bg-neutral-80"
                     />
                   </div>
-                  {isInstagramAlertOpen && <FloatingNotification />}
+                  {isInstagramAlertOpen && <PaymentErrorNotification />}
                   {loading ? (
                     <FilledButton
                       caption={'로딩 중 ...'}

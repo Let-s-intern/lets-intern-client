@@ -1,12 +1,11 @@
 import { z } from 'zod';
 
+import { ProgramTypeEnum } from '@/schema';
+
 export const programInfoType = z.object({
   paymentId: z.number().nullable().optional(),
   applicationId: z.number().nullable().optional(),
-  programType: z
-    .enum(['CHALLENGE', 'LIVE', 'VOD', 'REPORT'])
-    .nullable()
-    .optional(),
+  programType: ProgramTypeEnum.nullable().optional(),
   title: z.string().nullable().optional(),
   thumbnail: z.string().nullable().optional(),
   price: z.number().nullable().optional(),
@@ -212,7 +211,7 @@ export const paymentDetailType = z.object({
     id: z.number().nullable().optional(),
     title: z.string().nullable().optional(),
     thumbnail: z.string().nullable().optional(),
-    programType: z.enum(['CHALLENGE', 'LIVE', 'VOD']).nullable().optional(),
+    programType: ProgramTypeEnum.exclude(['REPORT']).nullable().optional(),
     progressType: z.string().nullable().optional(),
     isCanceled: z.boolean().nullable().optional(),
     startDate: z.string().nullable().optional(),

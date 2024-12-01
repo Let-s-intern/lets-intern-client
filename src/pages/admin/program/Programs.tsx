@@ -38,7 +38,8 @@ const Programs = () => {
   const sizePerPage = 10;
 
   const { data, isLoading, error } = useGetProgramAdminQuery({
-    pageable: { page: pageNum, size: sizePerPage },
+    page: pageNum,
+    size: sizePerPage,
   });
 
   const programList = data?.programList || [];

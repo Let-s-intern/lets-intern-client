@@ -9,7 +9,7 @@ import Description from '@components/common/program/program-detail/Description';
 import Heading2 from '@components/common/program/program-detail/Heading2';
 import OutlinedBox from '@components/common/program/program-detail/OutlineBox';
 import SuperTitle from '@components/common/program/program-detail/SuperTitle';
-import { josa } from '@toss/hangul';
+import { josa } from 'es-hangul';
 
 const superTitle = '취업 준비 현황 체크리스트';
 const title = [
@@ -228,16 +228,18 @@ function ChallengeCheckList({
                 Check {index + 1}
               </Badge>
               {item.title.map((ele) => (
-                <span key={ele}>{ele}</span>
+                <span key={ele} className="shrink-0">
+                  {ele}
+                </span>
               ))}
             </Box>
-            <div className="flex w-full flex-col gap-5 px-5 md:px-28">
+            <div className="flex w-fit flex-col gap-5 px-5 md:items-center md:px-0">
               {item.content.map((group) => (
                 <CheckList key={group[0]} colors={colors}>
                   {group.map((ele) => (
                     <span
                       key={ele}
-                      className="text-xsmall16 font-semibold text-neutral-35 md:text-small20"
+                      className="shrink-0 text-xsmall14 font-semibold text-neutral-35 xs:text-xsmall16 md:text-small20"
                     >
                       {ele}
                     </span>
@@ -255,7 +257,7 @@ function ChallengeCheckList({
             >
               {item.solution.map((ele) => (
                 <span
-                  className="text-center text-xsmall16 font-semibold md:text-medium24"
+                  className="shrink-0 text-center text-xsmall16 font-semibold md:text-medium24"
                   key={ele}
                 >
                   {ele}
@@ -294,8 +296,9 @@ function CheckList({
   colors: ChallengeColor;
 }) {
   const isDesktop = useMediaQuery('(min-width: 991px)');
+
   return (
-    <div className="flex gap-4 md:items-center">
+    <div className="flex w-full justify-start gap-4 md:items-center">
       <div className="pt-1 md:pt-0">
         <RxCheckbox color={colors.primary} size={isDesktop ? 36 : 24} />
       </div>

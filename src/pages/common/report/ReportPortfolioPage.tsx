@@ -18,11 +18,13 @@ import ReportLandingNav from '../../../components/common/report/ReportLandingNav
 const ReportPortfolioPage = () => {
   const location = useLocation();
 
-  const title = getReportLandingTitle('포트폴리오');
   const url = `${typeof window !== 'undefined' ? window.location.origin : getBaseUrlFromServer()}/report/landing/portfolio`;
   const description = portfolioReportDescription;
   const activeReportsFromServer = useServerActiveReports();
   const { data } = useGetActiveReports();
+  const title = getReportLandingTitle(
+    data?.portfolioInfo?.title ?? '포트폴리오',
+  );
   const activeReports = data || activeReportsFromServer;
   const report = activeReports?.portfolioInfo;
   const root = JSON.parse(report?.contents || '{"root":{}}').root;
@@ -77,6 +79,10 @@ const ReportPortfolioPage = () => {
         <title>{title}</title>
         <link rel="canonical" href={url} />
         {description ? <meta name="description" content={description} /> : null}
+        <meta
+          name="keywords"
+          content="렛츠커리어, 렛츠인턴, 챌린지, 인턴, 신입, 취업, 취업준비, 취뽀, 인턴합격, 신입합격, 서류합격, 면접합격, 서류 첨삭, 서류 피드백, 이력서, 자기소개서, 포트폴리오, 이력서 첨삭, 자기소개서 첨삭, 포트폴리오 첨삭, 이력서 피드백, 자기소개서 피드백, 포트폴리오 피드백"
+        />
         <meta property="og:title" content={title} />
         <meta property="og:url" content={url} />
 

@@ -16,7 +16,7 @@ const ProgramBestReviewSection = ({
   if (!reviews || reviews.length === 0) return;
 
   return (
-    <div className="flex w-full max-w-[1000px] flex-col gap-y-8 md:items-center">
+    <div className="flex w-full max-w-[1000px] flex-col gap-y-8">
       <div className="flex flex-col gap-y-6 px-5 md:items-center md:gap-y-[50px] md:px-10 lg:px-0">
         <p
           className="text-xsmall14 font-semibold text-primary md:text-small20"
@@ -38,7 +38,9 @@ const ProgramBestReviewSection = ({
           <p className="whitespace-pre text-small20 font-bold text-neutral-0 md:text-center md:text-xlarge28">{`참여자들의 진심이 담긴\n100% 솔직 후기`}</p>
         </div>
       </div>
-      <div className="custom-scrollbar w-full gap-x-3 overflow-x-auto px-5 md:px-10 md:pt-5 lg:px-0">
+
+      {/* 슬라이드 */}
+      <div className="custom-scrollbar w-full overflow-x-auto px-5 md:px-10 md:pt-5 lg:px-0">
         <div className="flex w-fit gap-x-3">
           {reviews.map((review, index) => (
             <ProgramDetailReviewItem

@@ -1,7 +1,13 @@
+import { twMerge } from "@/lib/twMerge";
+
+interface IPaymentErrorNotificationProps {
+  className?: string;
+}
+
 /* 일단 인스타그램 결제 방지 용도로만 사용하는 것 같아서 내용도 그대로 넣겠습니다 */
-function FloatingNotification() {
+function PaymentErrorNotification(props: IPaymentErrorNotificationProps) {
   return (
-    <div className="flex w-full items-start gap-x-2 bg-[#FEFFC8] p-4">
+    <div className={twMerge("flex w-full items-start gap-x-2 bg-[#FEFFC8] p-4", props.className)}>
       <img src="/icons/warning.svg" alt="warning" className="h-6 w-6" />
       <div className="flex w-full flex-col text-xsmall14 text-neutral-0">
         <p className="font-bold">
@@ -16,4 +22,4 @@ function FloatingNotification() {
   );
 }
 
-export default FloatingNotification;
+export default PaymentErrorNotification;

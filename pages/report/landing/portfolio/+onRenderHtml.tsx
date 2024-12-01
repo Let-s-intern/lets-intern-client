@@ -49,7 +49,7 @@ const onRenderHtml: OnRenderHtmlAsync = async (pageContext) => {
 
   return getServerHtml({
     pageHtml,
-    title: getReportLandingTitle('이력서'),
+    title: getReportLandingTitle(data.portfolioInfo?.title || '포트폴리오'),
     description: portfolioReportDescription,
     image: `${getBaseUrlFromServer()}/images/report-banner.jpg`,
     url: `${getBaseUrlFromServer()}/report/landing/portfolio`,
