@@ -122,6 +122,26 @@ export type Faq = z.infer<typeof faq>;
 
 export const faqSchema = z.object({ faqList: z.array(faq) });
 
+export const reviewSchema = z.object({
+  id: z.number(),
+  programTitle: z.string().nullable(),
+  programType: ProgramTypeEnum,
+  name: z.string().nullable(),
+  nps: z.number(),
+  npsAns: z.string(),
+  npsCheckAns: z.boolean(),
+  content: z.string(),
+  score: z.number(),
+  isVisible: z.boolean().nullable(),
+  createdDate: z.string(),
+});
+
+export const reviewTotalSchema = z.object({
+  reviewList: z.array(reviewSchema),
+});
+
+export type ReviewType = z.infer<typeof reviewSchema>;
+
 const missionStatusType = z.union([
   z.literal('WAITING'),
   z.literal('CHECK_DONE'),
