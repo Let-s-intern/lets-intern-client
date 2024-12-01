@@ -89,7 +89,7 @@ const ChallengeView: React.FC<{
         gradientBg =
           'linear-gradient(180deg,#222A7E 0%,#111449 50%,#111449 100%)'; // ??
         curriculumBg = '#EFF4F7';
-        recommendBg = '#F3F4F7';
+        recommendBg = '#F1FBFF';
         recommendLogo = '#DDF5FF';
         break;
       case PORTFOLIO:
@@ -121,7 +121,7 @@ const ChallengeView: React.FC<{
         gradientBg =
           'linear-gradient(180deg,#222A7E 0%,#111449 50%,#111449 100%)';
         curriculumBg = '#F2F2F5';
-        recommendBg = '#F3F4F7';
+        recommendBg = '#F3F4FF';
         recommendLogo = '#E8EAFF';
     }
     return {
