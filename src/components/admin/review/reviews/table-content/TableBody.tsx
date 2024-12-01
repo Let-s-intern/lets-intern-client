@@ -1,66 +1,29 @@
+import { ReviewType } from '@/schema';
 import dayjs from 'dayjs';
-
-import ActionButton from '../../../ui/button/ActionButton';
 import TD from '../../../ui/table/regacy/TD';
 
 interface ReviewTableBodyProps {
-  programList: {
-    programInfo: {
-      id: number;
-      title: string;
-      startDate: string;
-      programType: string;
-    };
-  }[];
-  copyReviewCreateLink: (info: {
-    id: number;
-    title: string;
-    startDate: string;
-    programType: string;
-  }) => void;
+  reviewList: ReviewType[];
 }
 
-const TableBody = ({
-  programList,
-  copyReviewCreateLink,
-}: ReviewTableBodyProps) => {
+const TableBody = ({ reviewList }: ReviewTableBodyProps) => {
   return (
     <thead>
-      {programList.map((program) => (
-        <tr key={`${program.programInfo.programType}${program.programInfo.id}`}>
-          <TD whiteSpace="wrap">{program.programInfo.title}</TD>
+      {reviewList.map((review) => (
+        <tr key={review.id}>
+          <TD>{dayjs(review.createdDate).format('YYYY.MM.DD')}</TD>
+          <TD>프로그램명</TD>
+          <TD>이름</TD>
+          <TD>{review.nps}</TD>
           <TD>
-            {program.programInfo.startDate
-              ? dayjs(program.programInfo.startDate).format(
-                  'YYYY년 MM월 DD일 (ddd) A hh:mm',
-                )
-              : '온라인'}
+            <p className="mx-auto w-full max-w-60 whitespace-pre-wrap break-words text-center">
+              {review.npsAns}
+            </p>
           </TD>
-          <TD>
-            <div className="flex justify-center gap-2">
-              <ActionButton
-                to={`/admin/reviews/${program.programInfo.id}?type=${program.programInfo.programType}`}
-                bgColor={
-                  program.programInfo.programType === 'VOD' ? 'gray' : 'blue'
-                }
-                disabled={program.programInfo.programType === 'VOD'}
-              >
-                상세
-              </ActionButton>
-              <ActionButton
-                width="6rem"
-                bgColor={
-                  program.programInfo.programType === 'VOD'
-                    ? 'gray'
-                    : 'lightBlue'
-                }
-                onClick={() => copyReviewCreateLink(program.programInfo)}
-                disabled={program.programInfo.programType === 'VOD'}
-              >
-                링크 복사하기
-              </ActionButton>
-            </div>
-          </TD>
+          <TD>{review.npsCheckAns ? '추천' : '비추천'}</TD>
+          <TD>{review.score}</TD>
+          <TD>{review.content}</TD>
+          <TD>노출여부</TD>
         </tr>
       ))}
     </thead>
