@@ -41,7 +41,11 @@ const TableBody = ({
           </TD>
           <TD>{review.npsCheckAns ? '추천' : '비추천'}</TD>
           <TD>{review.score}</TD>
-          <TD>{review.content}</TD>
+          <TD>
+            <p className="mx-auto w-full max-w-60 whitespace-pre-wrap break-words text-center">
+              {review.content}
+            </p>
+          </TD>
           <TD>
             <Checkbox
               checked={review.isVisible ?? false}
