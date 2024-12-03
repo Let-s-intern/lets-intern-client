@@ -30,7 +30,7 @@ const MoreReviewButton = ({
     type: props.type,
   });
 
-  const reviews = data?.reviewList.filter((review) => review.isVisible);
+  const reviews = data?.reviewList?.filter((review) => review.isVisible);
 
   return (
     <>
