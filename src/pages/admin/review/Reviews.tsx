@@ -44,7 +44,7 @@ const Reviews = () => {
           <div className="py-4 text-center">로딩 중...</div>
         ) : error ? (
           <div className="py-4 text-center">에러 발생</div>
-        ) : !data || data.reviewList.length === 0 ? (
+        ) : !data || data.reviewList?.length === 0 ? (
           <div className="py-4 text-center">후기가 없습니다.</div>
         ) : (
           <>
@@ -54,7 +54,7 @@ const Reviews = () => {
                 type={type}
                 programTitle={filter.programTitle}
                 createDate={filter.createdDate}
-                reviewList={data.reviewList}
+                reviewList={data.reviewList ?? []}
               />
             </Table>
           </>
