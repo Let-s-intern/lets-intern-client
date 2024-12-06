@@ -36,7 +36,7 @@ function ReportExample({ reportExample, setContent }: ReportExampleProps) {
 
       <div>
         {reportExample.list.map((item) => (
-          <div key={item.id} className="flex w-full items-start gap-3">
+          <div key={item.id} className="mb-5 flex w-full items-start gap-3">
             <Input
               label="부제목"
               name="subTitle"

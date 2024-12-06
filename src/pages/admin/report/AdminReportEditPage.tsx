@@ -29,6 +29,7 @@ import { ReportContent, ReportEditingPrice } from '@/types/interface';
 import EditorApp from '@components/admin/lexical/EditorApp';
 import AdminReportFeedback from '@components/admin/report/AdminReportFeedback';
 import ReportExample from '@components/admin/report/ReportExample';
+import ReportReview from '@components/admin/report/ReportReview';
 import { Heading2 } from '@components/admin/ui/heading/Heading2';
 
 const initialReport: Omit<UpdateReportData, 'contents'> = {
@@ -598,13 +599,20 @@ const AdminReportEditPage = () => {
           ) : null}
 
           {content.reportExample ? (
-            //  레포트 예시
-            <section className="mb-6">
-              <ReportExample
-                reportExample={content.reportExample}
-                setContent={setContent}
-              />
-            </section>
+            <>
+              {/* 레포트 예시 */}
+              <section className="mb-6">
+                <ReportExample
+                  reportExample={content.reportExample}
+                  setContent={setContent}
+                />
+              </section>
+
+              {/* 레포트 후기 */}
+              <section className="mb-6">
+                <ReportReview review={content.review} setContent={setContent} />
+              </section>
+            </>
           ) : (
             // 구버전은 수정 안됨
             <EditorApp initialEditorStateJsonString={reportDetail?.contents} />

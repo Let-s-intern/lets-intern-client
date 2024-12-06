@@ -19,6 +19,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
 import AdminReportFeedback from '@components/admin/report/AdminReportFeedback';
 import ReportExample from '@components/admin/report/ReportExample';
+import ReportReview from '@components/admin/report/ReportReview';
 import { Heading2 } from '@components/admin/ui/heading/Heading2';
 import {
   CreateReportData,
@@ -524,6 +525,11 @@ const AdminReportCreatePage = () => {
               reportExample={content.reportExample}
               setContent={setContent}
             />
+          </section>
+
+          {/* 레포트 후기 */}
+          <section className="mb-6">
+            <ReportReview review={content.review} setContent={setContent} />{' '}
           </section>
 
           <div className="text-right">
