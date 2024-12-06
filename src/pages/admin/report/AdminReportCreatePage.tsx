@@ -27,8 +27,8 @@ import {
   ReportType,
   usePostReportMutation,
 } from '../../../api/report';
+import ProgramRecommendEditor from '../../../components/ProgramRecommendEditor';
 import { ReportContent, ReportEditingPrice } from '../../../types/interface';
-import ProgramRecommendEditor from '../program/ProgramRecommendEditor';
 
 const initialReport: Omit<CreateReportData, 'contents'> = {
   reportType: 'PERSONAL_STATEMENT',

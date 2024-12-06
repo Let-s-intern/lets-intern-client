@@ -31,7 +31,7 @@ import AdminReportFeedback from '@components/admin/report/AdminReportFeedback';
 import ReportExampleEditor from '@components/admin/report/ReportExampleEditor';
 import ReportReviewEditor from '@components/admin/report/ReportReviewEditor';
 import { Heading2 } from '@components/admin/ui/heading/Heading2';
-import ProgramRecommendEditor from '../program/ProgramRecommendEditor';
+import ProgramRecommendEditor from '../../../components/ProgramRecommendEditor';
 
 const initialReport: Omit<UpdateReportData, 'contents'> = {
   reportType: 'PERSONAL_STATEMENT',
