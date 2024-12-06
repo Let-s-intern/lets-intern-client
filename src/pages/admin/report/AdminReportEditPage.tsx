@@ -31,6 +31,7 @@ import AdminReportFeedback from '@components/admin/report/AdminReportFeedback';
 import ReportExample from '@components/admin/report/ReportExample';
 import ReportReview from '@components/admin/report/ReportReview';
 import { Heading2 } from '@components/admin/ui/heading/Heading2';
+import ProgramRecommendEditor from '../program/ProgramRecommendEditor';
 
 const initialReport: Omit<UpdateReportData, 'contents'> = {
   reportType: 'PERSONAL_STATEMENT',
@@ -612,6 +613,14 @@ const AdminReportEditPage = () => {
               <section className="mb-6">
                 <ReportReview review={content.review} setContent={setContent} />
               </section>
+
+              {/* 프로그램 추천 */}
+              <ProgramRecommendEditor
+                programRecommend={content.programRecommend}
+                setProgramRecommend={(programRecommend) =>
+                  setContent((prev) => ({ ...prev, programRecommend }))
+                }
+              />
             </>
           ) : (
             // 구버전은 수정 안됨

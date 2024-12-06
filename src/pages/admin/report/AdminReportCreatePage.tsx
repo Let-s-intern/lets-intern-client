@@ -28,6 +28,7 @@ import {
   usePostReportMutation,
 } from '../../../api/report';
 import { ReportContent, ReportEditingPrice } from '../../../types/interface';
+import ProgramRecommendEditor from '../program/ProgramRecommendEditor';
 
 const initialReport: Omit<CreateReportData, 'contents'> = {
   reportType: 'PERSONAL_STATEMENT',
@@ -529,8 +530,16 @@ const AdminReportCreatePage = () => {
 
           {/* 레포트 후기 */}
           <section className="mb-6">
-            <ReportReview review={content.review} setContent={setContent} />{' '}
+            <ReportReview review={content.review} setContent={setContent} />
           </section>
+
+          {/* 프로그램 추천 */}
+          <ProgramRecommendEditor
+            programRecommend={content.programRecommend}
+            setProgramRecommend={(programRecommend) =>
+              setContent((prev) => ({ ...prev, programRecommend }))
+            }
+          />
 
           <div className="text-right">
             <div className="mb-1 flex items-center justify-end gap-4">
