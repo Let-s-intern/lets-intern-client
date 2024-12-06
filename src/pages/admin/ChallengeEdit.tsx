@@ -20,14 +20,14 @@ import { useQueryClient } from '@tanstack/react-query';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { FaSave } from 'react-icons/fa';
 import { useNavigate, useParams } from 'react-router-dom';
-import ChallengeBasic from './program/ChallengeBasic';
-import ChallengeCurriculumEditor from './program/ChallengeCurriculum';
-import ChallengePointEditor from './program/ChallengePoint';
-import ChallengePrice from './program/ChallengePrice';
-import FaqSection from './program/FaqSection';
-import ProgramBestReview from './program/ProgramBestReview';
-import ProgramBlogReviewEditor from './program/ProgramBlogReviewEditor';
-import ProgramRecommendEditor from './program/ProgramRecommendEditor';
+import ChallengeBasic from '../../components/admin/program/ChallengeBasic';
+import ChallengeCurriculumEditor from '../../components/admin/program/ChallengeCurriculum';
+import ChallengePointEditor from '../../components/admin/program/ChallengePoint';
+import ChallengePrice from '../../components/admin/program/ChallengePrice';
+import ProgramBestReview from '../../components/admin/program/ProgramBestReview';
+import ProgramBlogReviewEditor from '../../components/admin/program/ProgramBlogReviewEditor';
+import FaqSection from '../../components/FaqSection';
+import ProgramRecommendEditor from '../../components/ProgramRecommendEditor';
 import ProgramSchedule from './program/ProgramSchedule';
 
 const ChallengeEdit: React.FC = () => {
@@ -267,7 +267,7 @@ const ChallengeEdit: React.FC = () => {
         }
       />
 
-      <div className="my-6">
+      <section className="my-6">
         <FaqSection
           programType="CHALLENGE"
           faqInfo={
@@ -276,7 +276,7 @@ const ChallengeEdit: React.FC = () => {
           }
           setInput={setInput}
         />
-      </div>
+      </section>
 
       <footer className="flex items-center justify-end gap-3">
         <ChallengePreviewButton

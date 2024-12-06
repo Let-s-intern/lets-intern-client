@@ -81,19 +81,19 @@ const ProgramRecommendEditor = ({
 
     if (index === -1) return;
 
+    const item = {
+      ...programRecommend.list[index],
+      programInfo: {
+        ...programRecommend.list[index].programInfo,
+      },
+      classificationList: [...programRecommend.list[index].classificationList],
+      [e.target.name]: e.target.value,
+    };
+
     setProgramRecommend({
       list: [
         ...programRecommend.list.slice(0, index),
-        {
-          ...programRecommend.list[index],
-          programInfo: {
-            ...programRecommend.list[index].programInfo,
-          },
-          classificationList: [
-            ...programRecommend.list[index].classificationList,
-          ],
-          [e.target.name]: e.target.value,
-        },
+        item,
         ...programRecommend.list.slice(index + 1),
       ],
     });

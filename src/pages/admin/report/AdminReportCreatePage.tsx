@@ -1,5 +1,3 @@
-import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
-import AdminReportFeedback from '@components/admin/report/AdminReportFeedback';
 import {
   Button,
   FormControl,
@@ -17,19 +15,24 @@ import 'dayjs/locale/ko';
 import { ChangeEvent, useEffect, useState } from 'react';
 import { FaTrashCan } from 'react-icons/fa6';
 import { useNavigate } from 'react-router-dom';
+
+import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
+import AdminReportFeedback from '@components/admin/report/AdminReportFeedback';
+import ReportExampleEditor from '@components/admin/report/ReportExampleEditor';
+import ReportReviewEditor from '@components/admin/report/ReportReviewEditor';
+import { Heading2 } from '@components/admin/ui/heading/Heading2';
 import {
   CreateReportData,
   getReportsForAdminQueryKey,
   ReportType,
   usePostReportMutation,
 } from '../../../api/report';
-import EditorApp from '../../../components/admin/lexical/EditorApp';
-import { ReportEditingPrice } from '../../../types/interface';
+import ProgramRecommendEditor from '../../../components/ProgramRecommendEditor';
+import { ReportContent, ReportEditingPrice } from '../../../types/interface';
 
-const initialReport: CreateReportData = {
+const initialReport: Omit<CreateReportData, 'contents'> = {
   reportType: 'PERSONAL_STATEMENT',
   title: '',
-  contents: '',
   notice: '',
   priceInfo: [],
   optionInfo: [],
@@ -40,13 +43,17 @@ const initialReport: CreateReportData = {
   visibleDate: null,
 };
 
+const initialContent = {
+  reportExample: { list: [] },
+  review: { list: [] },
+  programRecommend: { list: [] },
+};
+
 const AdminReportCreatePage = () => {
   const navgiate = useNavigate();
 
-  const { snackbar: setSnackbar } = useAdminSnackbar();
-
   const [editingValue, setEditingValue] =
-    useState<CreateReportData>(initialReport);
+    useState<Omit<CreateReportData, 'contents'>>(initialReport);
 
   const [editingPrice, setEditingPrice] = useState<ReportEditingPrice>({
     type: 'all',
@@ -59,6 +66,9 @@ const AdminReportCreatePage = () => {
   const [editingOptions, setEditingOptions] = useState<
     CreateReportData['optionInfo']
   >([]);
+  const [content, setContent] = useState<ReportContent>(initialContent);
+
+  const { snackbar: setSnackbar } = useAdminSnackbar();
 
   const createReportMutation = usePostReportMutation();
   const queryClient = useQueryClient();
@@ -72,6 +82,7 @@ const AdminReportCreatePage = () => {
 
     const body = {
       ...editingValue,
+      contents: JSON.stringify(content),
     };
 
     body.optionInfo = [...editingOptions];
@@ -134,10 +145,6 @@ const AdminReportCreatePage = () => {
       ...editingValue,
       [event.target.name]: event.target.value,
     });
-  };
-
-  const onChangeEditor = (jsonString: string) => {
-    setEditingValue((prev) => ({ ...prev, contents: jsonString }));
   };
 
   useEffect(() => {
@@ -360,7 +367,7 @@ const AdminReportCreatePage = () => {
           </div>
           <hr></hr>
           <header className="mb-2 flex items-center justify-between">
-            <h2>옵션 설정</h2>
+            <Heading2>옵션 설정</Heading2>
             <Button
               variant="outlined"
               onClick={() => {
@@ -494,7 +501,7 @@ const AdminReportCreatePage = () => {
             })}
           </div>
 
-          <hr></hr>
+          <hr />
           <AdminReportFeedback
             initialValue={{
               price: 0,
@@ -513,20 +520,32 @@ const AdminReportCreatePage = () => {
             }}
           />
 
-          <h2 className="mt-10">콘텐츠 편집</h2>
-          <EditorApp onChange={onChangeEditor} />
-          <TextField
-            value={editingValue.notice}
-            onChange={onChange}
-            variant="outlined"
-            name="notice"
-            size="small"
-            label="필독사항"
-            placeholder="필독사항을 입력하세요"
-            InputLabelProps={{
-              shrink: true,
-              style: { fontSize: '14px' },
-            }}
+          {/* 레포트 예시 */}
+          <section className="mb-6">
+            <ReportExampleEditor
+              reportExample={content.reportExample}
+              setReportExample={(reportExample) =>
+                setContent((prev) => ({ ...prev, reportExample }))
+              }
+            />
+          </section>
+
+          {/* 레포트 후기 */}
+          <section>
+            <ReportReviewEditor
+              review={content.review}
+              setReview={(review) =>
+                setContent((prev) => ({ ...prev, review }))
+              }
+            />
+          </section>
+
+          {/* 프로그램 추천 */}
+          <ProgramRecommendEditor
+            programRecommend={content.programRecommend}
+            setProgramRecommend={(programRecommend) =>
+              setContent((prev) => ({ ...prev, programRecommend }))
+            }
           />
 
           <div className="text-right">

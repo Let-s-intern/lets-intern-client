@@ -16,14 +16,14 @@ import dayjs from 'dayjs';
 import { useCallback, useState } from 'react';
 import { FaSave } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
-import ChallengeBasic from './program/ChallengeBasic';
-import ChallengeCurriculum from './program/ChallengeCurriculum';
-import ChallengePoint from './program/ChallengePoint';
-import ChallengePrice from './program/ChallengePrice';
-import FaqSection from './program/FaqSection';
-import ProgramBestReview from './program/ProgramBestReview';
-import ProgramBlogReviewEditor from './program/ProgramBlogReviewEditor';
-import ProgramRecommendEditor from './program/ProgramRecommendEditor';
+import ChallengeBasic from '../../components/admin/program/ChallengeBasic';
+import ChallengeCurriculum from '../../components/admin/program/ChallengeCurriculum';
+import ChallengePoint from '../../components/admin/program/ChallengePoint';
+import ChallengePrice from '../../components/admin/program/ChallengePrice';
+import ProgramBestReview from '../../components/admin/program/ProgramBestReview';
+import ProgramBlogReviewEditor from '../../components/admin/program/ProgramBlogReviewEditor';
+import FaqSection from '../../components/FaqSection';
+import ProgramRecommendEditor from '../../components/ProgramRecommendEditor';
 import ProgramSchedule from './program/ProgramSchedule';
 
 /**
@@ -261,14 +261,14 @@ const ChallengeCreate: React.FC = () => {
         }
       />
 
-      <div className="my-6">
+      <section className="my-6">
         <FaqSection
           programType="CHALLENGE"
           faqInfo={input.faqInfo}
           setInput={setInput}
           isCreate
         />
-      </div>
+      </section>
 
       <footer className="flex items-center justify-end gap-3">
         <ChallengePreviewButton

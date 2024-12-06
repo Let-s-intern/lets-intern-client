@@ -20,15 +20,17 @@ import Header from '@components/admin/ui/header/Header';
 import Heading from '@components/admin/ui/heading/Heading';
 import { Heading2 } from '@components/admin/ui/heading/Heading2';
 import { useQueryClient } from '@tanstack/react-query';
-import FaqSection from './program/FaqSection';
-import LiveBasic from './program/LiveBasic';
-import LiveCurriculum from './program/LiveCurriculum';
-import LiveInformation from './program/LiveInformation';
-import LiveMentor from './program/LiveMentor';
-import LivePrice, { initialLivePrice } from './program/LivePrice';
-import ProgramBestReview from './program/ProgramBestReview';
-import ProgramBlogReviewEditor from './program/ProgramBlogReviewEditor';
-import ProgramRecommendEditor from './program/ProgramRecommendEditor';
+import LiveBasic from '../../components/admin/program/LiveBasic';
+import LiveCurriculum from '../../components/admin/program/LiveCurriculum';
+import LiveInformation from '../../components/admin/program/LiveInformation';
+import LiveMentor from '../../components/admin/program/LiveMentor';
+import LivePrice, {
+  initialLivePrice,
+} from '../../components/admin/program/LivePrice';
+import ProgramBestReview from '../../components/admin/program/ProgramBestReview';
+import ProgramBlogReviewEditor from '../../components/admin/program/ProgramBlogReviewEditor';
+import FaqSection from '../../components/FaqSection';
+import ProgramRecommendEditor from '../../components/ProgramRecommendEditor';
 import ProgramSchedule from './program/ProgramSchedule';
 
 const LiveEdit: React.FC = () => {
