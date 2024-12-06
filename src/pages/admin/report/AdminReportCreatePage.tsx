@@ -18,8 +18,8 @@ import { useNavigate } from 'react-router-dom';
 
 import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
 import AdminReportFeedback from '@components/admin/report/AdminReportFeedback';
-import ReportExample from '@components/admin/report/ReportExample';
-import ReportReview from '@components/admin/report/ReportReview';
+import ReportExampleEditor from '@components/admin/report/ReportExampleEditor';
+import ReportReviewEditor from '@components/admin/report/ReportReviewEditor';
 import { Heading2 } from '@components/admin/ui/heading/Heading2';
 import {
   CreateReportData,
@@ -522,15 +522,22 @@ const AdminReportCreatePage = () => {
 
           {/* 레포트 예시 */}
           <section className="mb-6">
-            <ReportExample
+            <ReportExampleEditor
               reportExample={content.reportExample}
-              setContent={setContent}
+              setReportExample={(reportExample) =>
+                setContent((prev) => ({ ...prev, reportExample }))
+              }
             />
           </section>
 
           {/* 레포트 후기 */}
-          <section className="mb-6">
-            <ReportReview review={content.review} setContent={setContent} />
+          <section>
+            <ReportReviewEditor
+              review={content.review}
+              setReview={(review) =>
+                setContent((prev) => ({ ...prev, review }))
+              }
+            />
           </section>
 
           {/* 프로그램 추천 */}

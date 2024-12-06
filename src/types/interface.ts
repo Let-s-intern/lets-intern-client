@@ -103,23 +103,27 @@ export type LiveContent = {
   programRecommend?: ProgramRecommend;
 };
 
+export type ReportReview = {
+  list: {
+    id: string | number;
+    title: string;
+    content: string;
+  }[];
+};
+
+export type ReportExample = {
+  list: {
+    id: string | number;
+    subTitle: string;
+    imgUrl: string;
+  }[];
+};
+
 export type ReportContent = {
   /** 레포트 예시 */
-  reportExample: {
-    list: {
-      id: string | number;
-      subTitle: string;
-      imgUrl: string;
-    }[];
-  };
+  reportExample: ReportExample;
   /** 후기 */
-  review: {
-    list: {
-      id: string | number;
-      title: string;
-      content: string;
-    }[];
-  };
+  review: ReportReview;
   /** 프로그램 추천 리스트 */
   programRecommend: ProgramRecommend;
 };

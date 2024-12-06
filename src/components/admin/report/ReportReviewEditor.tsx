@@ -1,44 +1,40 @@
 import { Button, IconButton } from '@mui/material';
 import { MdDelete } from 'react-icons/md';
 
-import { ReportContent } from '@/types/interface';
+import { ReportContent, ReportReview } from '@/types/interface';
 import Input from '@components/ui/input/Input';
 import { Heading2 } from '../ui/heading/Heading2';
 
-interface ReportReviewProps {
+interface ReportReviewEditorProps {
   review: ReportContent['review'];
-  setContent: React.Dispatch<React.SetStateAction<ReportContent>>;
+  setReview: (state: ReportReview) => void;
 }
 
-function ReportReview({ review, setContent }: ReportReviewProps) {
+function ReportReviewEditor({ review, setReview }: ReportReviewEditorProps) {
   const onClickAddButton = () => {
-    setContent((prev) => ({
-      ...prev,
-      review: {
-        list: [...prev.review.list, { id: Date.now(), title: '', content: '' }],
-      },
-    }));
+    setReview({
+      list: [...review.list, { id: Date.now(), title: '', content: '' }],
+    });
   };
 
   const onChange = (
     e: React.ChangeEvent<HTMLInputElement>,
     id: string | number,
   ) => {
-    setContent((prev) => {
-      const list = prev.review.list;
-      const index = list.findIndex((ele) => ele.id === id);
-      const newItem = {
-        ...list[index],
-        [e.target.name]: e.target.value,
-      };
+    const list = review.list;
+    const index = list.findIndex((ele) => ele.id === id);
+    const newItem = {
+      ...list[index],
+      [e.target.name]: e.target.value,
+    };
+    const newList = [
+      ...list.slice(0, index),
+      newItem,
+      ...list.slice(index + 1),
+    ];
 
-      const newList = [
-        ...list.slice(0, index),
-        newItem,
-        ...list.slice(index + 1),
-      ];
-
-      return { ...prev, review: { list: newList } };
+    setReview({
+      list: newList,
     });
   };
 
@@ -74,12 +70,9 @@ function ReportReview({ review, setContent }: ReportReviewProps) {
               color="error"
               onClick={() => {
                 // 후기 삭제
-                setContent((prev) => ({
-                  ...prev,
-                  review: {
-                    list: prev.review.list.filter((ele) => ele.id !== item.id),
-                  },
-                }));
+                setReview({
+                  list: review.list.filter((ele) => ele.id !== item.id),
+                });
               }}
             >
               <MdDelete />
@@ -91,4 +84,4 @@ function ReportReview({ review, setContent }: ReportReviewProps) {
   );
 }
 
-export default ReportReview;
+export default ReportReviewEditor;
