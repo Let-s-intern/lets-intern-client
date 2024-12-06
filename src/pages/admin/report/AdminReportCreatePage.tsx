@@ -1,6 +1,3 @@
-import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
-import AdminReportFeedback from '@components/admin/report/AdminReportFeedback';
-import ReportExample from '@components/admin/report/ReportExample';
 import {
   Button,
   FormControl,
@@ -18,6 +15,11 @@ import 'dayjs/locale/ko';
 import { ChangeEvent, useEffect, useState } from 'react';
 import { FaTrashCan } from 'react-icons/fa6';
 import { useNavigate } from 'react-router-dom';
+
+import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
+import AdminReportFeedback from '@components/admin/report/AdminReportFeedback';
+import ReportExample from '@components/admin/report/ReportExample';
+import { Heading2 } from '@components/admin/ui/heading/Heading2';
 import {
   CreateReportData,
   getReportsForAdminQueryKey,
@@ -78,7 +80,7 @@ const AdminReportCreatePage = () => {
 
     const body = {
       ...editingValue,
-      contents: JSON.stringify(initialContent),
+      contents: JSON.stringify(content),
     };
 
     body.optionInfo = [...editingOptions];
@@ -363,7 +365,7 @@ const AdminReportCreatePage = () => {
           </div>
           <hr></hr>
           <header className="mb-2 flex items-center justify-between">
-            <h2>옵션 설정</h2>
+            <Heading2>옵션 설정</Heading2>
             <Button
               variant="outlined"
               onClick={() => {
@@ -516,6 +518,7 @@ const AdminReportCreatePage = () => {
             }}
           />
 
+          {/* 레포트 예시 */}
           <section className="mb-6">
             <ReportExample
               reportExample={content.reportExample}

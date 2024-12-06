@@ -41,7 +41,7 @@ function ReportExample({ reportExample, setContent }: ReportExampleProps) {
               label="부제목"
               name="subTitle"
               placeholder="부제목을 입력하세요"
-              value={item.subTitle}
+              defaultValue={item.subTitle}
               onChange={(e) => {
                 setContent((prev) => {
                   const list = prev.reportExample.list;
