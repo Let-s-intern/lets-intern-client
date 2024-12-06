@@ -1,5 +1,6 @@
 import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
 import AdminReportFeedback from '@components/admin/report/AdminReportFeedback';
+import ReportExample from '@components/admin/report/ReportExample';
 import {
   Button,
   FormControl,
@@ -23,13 +24,11 @@ import {
   ReportType,
   usePostReportMutation,
 } from '../../../api/report';
-import EditorApp from '../../../components/admin/lexical/EditorApp';
-import { ReportEditingPrice } from '../../../types/interface';
+import { ReportContent, ReportEditingPrice } from '../../../types/interface';
 
-const initialReport: CreateReportData = {
+const initialReport: Omit<CreateReportData, 'contents'> = {
   reportType: 'PERSONAL_STATEMENT',
   title: '',
-  contents: '',
   notice: '',
   priceInfo: [],
   optionInfo: [],
@@ -40,13 +39,17 @@ const initialReport: CreateReportData = {
   visibleDate: null,
 };
 
+const initialContent = {
+  reportExample: { list: [] },
+  review: { list: [] },
+  programRecommend: { list: [] },
+};
+
 const AdminReportCreatePage = () => {
   const navgiate = useNavigate();
 
-  const { snackbar: setSnackbar } = useAdminSnackbar();
-
   const [editingValue, setEditingValue] =
-    useState<CreateReportData>(initialReport);
+    useState<Omit<CreateReportData, 'contents'>>(initialReport);
 
   const [editingPrice, setEditingPrice] = useState<ReportEditingPrice>({
     type: 'all',
@@ -59,6 +62,9 @@ const AdminReportCreatePage = () => {
   const [editingOptions, setEditingOptions] = useState<
     CreateReportData['optionInfo']
   >([]);
+  const [content, setContent] = useState<ReportContent>(initialContent);
+
+  const { snackbar: setSnackbar } = useAdminSnackbar();
 
   const createReportMutation = usePostReportMutation();
   const queryClient = useQueryClient();
@@ -72,6 +78,7 @@ const AdminReportCreatePage = () => {
 
     const body = {
       ...editingValue,
+      contents: JSON.stringify(initialContent),
     };
 
     body.optionInfo = [...editingOptions];
@@ -134,10 +141,6 @@ const AdminReportCreatePage = () => {
       ...editingValue,
       [event.target.name]: event.target.value,
     });
-  };
-
-  const onChangeEditor = (jsonString: string) => {
-    setEditingValue((prev) => ({ ...prev, contents: jsonString }));
   };
 
   useEffect(() => {
@@ -494,7 +497,7 @@ const AdminReportCreatePage = () => {
             })}
           </div>
 
-          <hr></hr>
+          <hr />
           <AdminReportFeedback
             initialValue={{
               price: 0,
@@ -513,21 +516,12 @@ const AdminReportCreatePage = () => {
             }}
           />
 
-          <h2 className="mt-10">콘텐츠 편집</h2>
-          <EditorApp onChange={onChangeEditor} />
-          <TextField
-            value={editingValue.notice}
-            onChange={onChange}
-            variant="outlined"
-            name="notice"
-            size="small"
-            label="필독사항"
-            placeholder="필독사항을 입력하세요"
-            InputLabelProps={{
-              shrink: true,
-              style: { fontSize: '14px' },
-            }}
-          />
+          <section className="mb-6">
+            <ReportExample
+              reportExample={content.reportExample}
+              setContent={setContent}
+            />
+          </section>
 
           <div className="text-right">
             <div className="mb-1 flex items-center justify-end gap-4">

@@ -103,6 +103,27 @@ export type LiveContent = {
   programRecommend?: ProgramRecommend;
 };
 
+export type ReportContent = {
+  /** 레포트 예시 */
+  reportExample: {
+    list: {
+      id: string | number;
+      subTitle: string;
+      imgUrl: string;
+    }[];
+  };
+  /** 후기 */
+  review: {
+    list: {
+      id: string | number;
+      title: string;
+      content: string;
+    }[];
+  };
+  /** 프로그램 추천 리스트 */
+  programRecommend: ProgramRecommend;
+};
+
 export interface IPageable {
   page: number;
   size: number;
