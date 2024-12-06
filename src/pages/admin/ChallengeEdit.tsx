@@ -267,7 +267,7 @@ const ChallengeEdit: React.FC = () => {
         }
       />
 
-      <div className="my-6">
+      <section className="my-6">
         <FaqSection
           programType="CHALLENGE"
           faqInfo={
@@ -276,7 +276,7 @@ const ChallengeEdit: React.FC = () => {
           }
           setInput={setInput}
         />
-      </div>
+      </section>
 
       <footer className="flex items-center justify-end gap-3">
         <ChallengePreviewButton

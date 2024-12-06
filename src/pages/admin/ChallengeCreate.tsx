@@ -261,14 +261,14 @@ const ChallengeCreate: React.FC = () => {
         }
       />
 
-      <div className="my-6">
+      <section className="my-6">
         <FaqSection
           programType="CHALLENGE"
           faqInfo={input.faqInfo}
           setInput={setInput}
           isCreate
         />
-      </div>
+      </section>
 
       <footer className="flex items-center justify-end gap-3">
         <ChallengePreviewButton
