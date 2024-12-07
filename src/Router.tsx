@@ -198,7 +198,6 @@ const Router = () => {
                 element={<ReportApplyPage />}
               />
 
-              {/* 모바일 전용 서류진단 결제 페이지. 화면 구성이 많이 달라 모바일만 한 단계 추가함 */}
               {/* :reportType은 RESUME, PERSONAL_STATEMENT, PORTFOLIO (대문자) TODO: 소문자로 옮기기 */}
               <Route
                 path="report/payment/:reportType/:reportId"
