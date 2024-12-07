@@ -1,10 +1,10 @@
+import { useGetAllApplicationsForReviewQuery } from '@/api/review';
 import { useMemo } from 'react';
-import { useMypageApplicationsQuery } from '../../../api/application';
 import DoneSection from '../../../components/common/mypage/review/section/DoneSection';
 import WaitingSection from '../../../components/common/mypage/review/section/WaitingSection';
 
 const Review = () => {
-  const { data: applications } = useMypageApplicationsQuery();
+  const { data: applications } = useGetAllApplicationsForReviewQuery();
 
   const doneList = useMemo(() => {
     return (
