@@ -116,26 +116,26 @@ const ReportApplyPage = () => {
           />
           <HorizontalRule className="-mx-5 md:-mx-32 lg:mx-0" />
 
-          <CallOut
-            className="bg-neutral-100"
-            header="❗ 제출 전 꼭 읽어주세요"
-            body="이력서 파일/링크가 잘 열리는 지 확인 후 첨부해주세요!"
-          />
-
           {/* 진단용 서류 */}
           {isSubmitNow === 'true' && (
-            <DocumentSection file={applyFile} dispatch={setApplyFile} />
-          )}
-
-          {/* 프리미엄 채용공고 */}
-          {reportApplication.reportPriceType === 'PREMIUM' &&
-            reportType?.toUpperCase() !== 'PERSONAL_STATEMENT' && (
-              <PremiumSection
-                file={recruitmentFile}
-                dispatch={setRecruitmentFile}
+            <>
+              <CallOut
+                className="bg-neutral-100"
+                header="❗ 제출 전 꼭 읽어주세요"
+                body="이력서 파일/링크가 잘 열리는 지 확인 후 첨부해주세요!"
               />
-            )}
-          <HorizontalRule className="-mx-5 md:-mx-32 lg:mx-0" />
+              <DocumentSection file={applyFile} dispatch={setApplyFile} />
+              {/* 프리미엄 채용공고 */}
+              {reportApplication.reportPriceType === 'PREMIUM' &&
+                reportType?.toUpperCase() !== 'PERSONAL_STATEMENT' && (
+                  <PremiumSection
+                    file={recruitmentFile}
+                    dispatch={setRecruitmentFile}
+                  />
+                )}
+              <HorizontalRule className="-mx-5 md:-mx-32 lg:mx-0" />
+            </>
+          )}
 
           {/* 1:1 피드백 일정 */}
           {reportApplication.isFeedbackApplied && <ScheduleSection />}
@@ -162,7 +162,7 @@ const ReportApplyPage = () => {
           className="text-1.125-medium w-full rounded-md bg-primary py-3 text-center font-medium text-neutral-100"
           onClick={async () => {
             // 지금 제출일 때만 파일 유효성 검사
-            if (isSubmitNow && !isValidFile()) return;
+            if (isSubmitNow === 'true' && !isValidFile()) return;
 
             const { isValid, message } = validate();
             if (!isValid) {
@@ -171,7 +171,7 @@ const ReportApplyPage = () => {
             }
 
             // 지금 제출일 때만 파일 업로드
-            if (isSubmitNow) await convertFile();
+            if (isSubmitNow === 'true') await convertFile();
             navigate(`/report/payment/${reportType}/${reportId}`);
           }}
         >

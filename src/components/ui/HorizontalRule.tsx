@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 interface HorizontalRuleProps {
@@ -12,4 +13,4 @@ function HorizontalRule({ className }: HorizontalRuleProps) {
   );
 }
 
-export default HorizontalRule;
+export default memo(HorizontalRule);
