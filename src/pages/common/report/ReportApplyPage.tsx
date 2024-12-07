@@ -5,7 +5,7 @@ import {
   useMediaQuery,
 } from '@mui/material';
 import dayjs, { Dayjs } from 'dayjs';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { memo, useEffect, useRef, useState } from 'react';
 import { FaArrowLeft } from 'react-icons/fa6';
 import { IoCloseOutline } from 'react-icons/io5';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -47,6 +47,7 @@ const ReportApplyPage = () => {
 
   const [applyFile, setApplyFile] = useState<File | null>(null);
   const [recruitmentFile, setRecruitmentFile] = useState<File | null>(null);
+  const [isSubmitNow, setIsSubmitNow] = useState('true');
 
   const { isLoggedIn } = useAuthStore();
 
@@ -110,17 +111,21 @@ const ReportApplyPage = () => {
 
         <main className="mb-8 mt-6 flex flex-col gap-10">
           {/* 프로그램 정보 */}
-          <ProgramInfoSection />
+          <ProgramInfoSection
+            onChangeRadio={(event, value) => setIsSubmitNow(value)}
+          />
           <HorizontalRule className="-mx-5 md:-mx-32 lg:mx-0" />
 
           <CallOut
             className="bg-neutral-100"
-            header="📄 제출 전 꼭 읽어주세요"
+            header="❗ 제출 전 꼭 읽어주세요"
             body="이력서 파일/링크가 잘 열리는 지 확인 후 첨부해주세요!"
           />
 
           {/* 진단용 서류 */}
-          <DocumentSection file={applyFile} dispatch={setApplyFile} />
+          {isSubmitNow === 'true' && (
+            <DocumentSection file={applyFile} dispatch={setApplyFile} />
+          )}
 
           {/* 프리미엄 채용공고 */}
           {reportApplication.reportPriceType === 'PREMIUM' &&
@@ -156,7 +161,8 @@ const ReportApplyPage = () => {
         <button
           className="text-1.125-medium w-full rounded-md bg-primary py-3 text-center font-medium text-neutral-100"
           onClick={async () => {
-            if (!isValidFile()) return;
+            // 지금 제출일 때만 파일 유효성 검사
+            if (isSubmitNow && !isValidFile()) return;
 
             const { isValid, message } = validate();
             if (!isValid) {
@@ -164,7 +170,8 @@ const ReportApplyPage = () => {
               return;
             }
 
-            await convertFile();
+            // 지금 제출일 때만 파일 업로드
+            if (isSubmitNow) await convertFile();
             navigate(`/report/payment/${reportType}/${reportId}`);
           }}
         >
@@ -177,7 +184,7 @@ const ReportApplyPage = () => {
 
 export default ReportApplyPage;
 
-const CallOut = ({
+const CallOut = memo(function Callout({
   header,
   body,
   className,
@@ -185,7 +192,7 @@ const CallOut = ({
   header?: string;
   body?: string;
   className?: string;
-}) => {
+}) {
   return (
     <div className={twMerge('rounded-md bg-neutral-100 px-6 py-6', className)}>
       <span className="-ml-1 text-xsmall16 font-semibold text-primary">
@@ -194,9 +201,16 @@ const CallOut = ({
       <p className="mt-1 text-xsmall14 text-neutral-20">{body}</p>
     </div>
   );
-};
+});
 
-const ProgramInfoSection = () => {
+const ProgramInfoSection = ({
+  onChangeRadio,
+}: {
+  onChangeRadio?: (
+    event: React.ChangeEvent<HTMLInputElement>,
+    value: string,
+  ) => void;
+}) => {
   const { title, product, option } = useReportProgramInfo();
 
   return (
@@ -236,9 +250,7 @@ const ProgramInfoSection = () => {
           <RadioGroup
             defaultValue="true"
             name="radio-buttons-group"
-            onChange={(e) => {
-              console.log('change radio');
-            }}
+            onChange={onChangeRadio}
           >
             <div className="flex flex-col gap-1">
               <ReportFormRadioControlLabel
