@@ -62,6 +62,7 @@ module.exports = {
         tertiary: '#CB81F2',
         point: '#DAFF7C',
         challenge: '#00A8EB',
+        requirement: '#FC5555',
         system: {
           'positive-green': '#1BC47D',
           'positive-blue': '#5177FF',

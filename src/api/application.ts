@@ -162,7 +162,7 @@ const applicationStatus = z.union([
   z.literal('DONE'),
 ]);
 
-const mypageApplicationsSchema = z
+export const mypageApplicationsSchema = z
   .object({
     applicationList: z.array(
       z.object({
