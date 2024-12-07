@@ -5,6 +5,7 @@ import useValidateUrl from '@/hooks/useValidateUrl';
 import { generateOrderId } from '@/lib/order';
 import { twMerge } from '@/lib/twMerge';
 import useAuthStore from '@/store/useAuthStore';
+import HorizontalRule from '@components/ui/HorizontalRule';
 import {
   FormControl,
   RadioGroup,
@@ -25,7 +26,6 @@ import {
   convertReportTypeToLandingPath,
   ReportOptionInfo,
   ReportType,
-  useGetReportDetailQuery,
   useGetReportPriceDetail,
 } from '../../../api/report';
 import Card from '../../../components/common/report/Card';
@@ -109,11 +109,24 @@ const ReportApplyPage = () => {
       <div className="w-full">
         <header>
           <Heading1>진단서 신청하기</Heading1>
-          <CallOut />
         </header>
-        <main className="my-8 flex flex-col gap-10">
+        <HorizontalRule className="-mx-5 md:-mx-32 xl:-mx-48" />
+
+        <main className="mb-8 mt-6 flex flex-col gap-10">
+          {/* 프로그램 정보 */}
           <ProgramInfoSection />
+          <HorizontalRule className="-mx-5 md:-mx-32 xl:-mx-48" />
+
+          <CallOut
+            className="bg-neutral-100"
+            header="📄 제출 전 꼭 읽어주세요"
+            body="이력서 파일/링크가 잘 열리는 지 확인 후 첨부해주세요!"
+          />
+
+          {/* 진단용 서류 */}
           <DocumentSection file={applyFile} dispatch={setApplyFile} />
+
+          {/* 프리미엄 채용공고 */}
           {reportApplication.reportPriceType === 'PREMIUM' &&
             reportType?.toUpperCase() !== 'PERSONAL_STATEMENT' && (
               <PremiumSection
@@ -121,7 +134,13 @@ const ReportApplyPage = () => {
                 dispatch={setRecruitmentFile}
               />
             )}
+          <HorizontalRule className="-mx-5 md:-mx-32 xl:-mx-48" />
+
+          {/* 1:1 피드백 일정 */}
           {reportApplication.isFeedbackApplied && <ScheduleSection />}
+          <HorizontalRule className="-mx-5 md:-mx-32 xl:-mx-48" />
+
+          {/* 추가 정보 */}
           <AdditionalInfoSection />
         </main>
       </div>
@@ -208,17 +227,21 @@ const ReportApplyPage = () => {
 
 export default ReportApplyPage;
 
-const CallOut = () => {
-  const { reportId } = useParams();
-
-  const { data } = useGetReportDetailQuery(Number(reportId));
-
+const CallOut = ({
+  header,
+  body,
+  className,
+}: {
+  header?: string;
+  body?: string;
+  className?: string;
+}) => {
   return (
-    <div className="rounded-md bg-neutral-100 px-6 py-6">
+    <div className={twMerge('rounded-md bg-neutral-100 px-6 py-6', className)}>
       <span className="-ml-1 text-xsmall16 font-semibold text-primary">
-        ❗신청 전 꼭 읽어주세요
+        {header}
       </span>
-      <p className="mt-1 text-xsmall14 text-neutral-20">{data?.notice}</p>
+      <p className="mt-1 text-xsmall14 text-neutral-20">{body}</p>
     </div>
   );
 };
@@ -252,6 +275,34 @@ const ProgramInfoSection = () => {
           },
         ]}
       />
+      <div className="mt-10">
+        <CallOut
+          className="mb-6 bg-primary-5"
+          header="📄 진단을 위한 서류를 제출해주세요"
+          body="결제 후 7일 이내 서류 미제출 시 자동 환불 처리되니 이 점 꼭 유의해
+        주세요."
+        />
+        <FormControl fullWidth>
+          <RadioGroup
+            defaultValue="true"
+            name="radio-buttons-group"
+            onChange={(e) => {
+              console.log('change radio');
+            }}
+          >
+            <div className="flex flex-col gap-1">
+              <ReportFormRadioControlLabel
+                label="지금 제출할래요."
+                value="true"
+              />
+              <ReportFormRadioControlLabel
+                label="결제 후 나중에 제출할래요."
+                value="false"
+              />
+            </div>
+          </RadioGroup>
+        </FormControl>
+      </div>
     </section>
   );
 };
@@ -271,8 +322,8 @@ const DocumentSection = ({
   const isValidUrl = useValidateUrl(data.applyUrl);
 
   return (
-    <section className="flex flex-col gap-3 lg:flex-row lg:items-start lg:gap-5">
-      <div className="flex w-[8.75rem] shrink-0 items-center lg:mt-2">
+    <section className="flex flex-col lg:flex-row lg:items-start lg:gap-5">
+      <div className="mb-3 flex w-[8.75rem] shrink-0 items-center">
         <Heading2>진단용 {convertReportTypeStatus(reportType!)}</Heading2>
         <RequiredStar />
       </div>
