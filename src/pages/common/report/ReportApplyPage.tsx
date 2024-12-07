@@ -20,7 +20,6 @@ import {
   ReportType,
   useGetReportPriceDetail,
 } from '@/api/report';
-import { usePatchUser } from '@/api/user';
 import useMinDate from '@/hooks/useMinDate';
 import useReportPayment from '@/hooks/useReportPayment';
 import useReportProgramInfo from '@/hooks/useReportProgramInfo';
@@ -42,17 +41,15 @@ import Input from '@components/common/ui/input/Input';
 import HorizontalRule from '@components/ui/HorizontalRule';
 
 const ReportApplyPage = () => {
-  const isUpTo1280 = useMediaQuery('(max-width: 1280px)');
   const navigate = useNavigate();
   const { reportType, reportId } = useParams();
+  const isMobile = useMediaQuery('(max-width: 991px)');
 
   const [applyFile, setApplyFile] = useState<File | null>(null);
   const [recruitmentFile, setRecruitmentFile] = useState<File | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
 
-  const { payment } = useReportPayment();
   const { isLoggedIn } = useAuthStore();
-  const patchUserMutation = usePatchUser();
+
   const {
     data: reportApplication,
     setReportApplication,
@@ -145,15 +142,17 @@ const ReportApplyPage = () => {
       </div>
 
       <BottomSheet>
-        <button
-          onClick={() => {
-            const to = `${convertReportTypeToLandingPath(reportType?.toUpperCase() as ReportType)}#content`;
-            navigate(to);
-          }}
-          className="flex h-14 w-14 shrink-0 items-center justify-center rounded-md border-2 border-primary bg-neutral-100"
-        >
-          <FaArrowLeft size={20} />
-        </button>
+        {isMobile && (
+          <button
+            onClick={() => {
+              const to = `${convertReportTypeToLandingPath(reportType?.toUpperCase() as ReportType)}#content`;
+              navigate(to);
+            }}
+            className="flex h-14 w-14 shrink-0 items-center justify-center rounded-md border-2 border-primary bg-neutral-100"
+          >
+            <FaArrowLeft size={20} />
+          </button>
+        )}
         <button
           className="text-1.125-medium w-full rounded-md bg-primary py-3 text-center font-medium text-neutral-100"
           onClick={async () => {
@@ -165,7 +164,6 @@ const ReportApplyPage = () => {
               return;
             }
 
-            setIsLoading(true);
             await convertFile();
             navigate(`/report/payment/${reportType}/${reportId}`);
           }}
