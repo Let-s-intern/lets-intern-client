@@ -1,11 +1,3 @@
-import { usePatchUser } from '@/api/user';
-import useMinDate from '@/hooks/useMinDate';
-import useRunOnce from '@/hooks/useRunOnce';
-import useValidateUrl from '@/hooks/useValidateUrl';
-import { generateOrderId } from '@/lib/order';
-import { twMerge } from '@/lib/twMerge';
-import useAuthStore from '@/store/useAuthStore';
-import HorizontalRule from '@components/ui/HorizontalRule';
 import {
   FormControl,
   RadioGroup,
@@ -14,12 +6,12 @@ import {
 } from '@mui/material';
 import dayjs, { Dayjs } from 'dayjs';
 import React, { useEffect, useRef, useState } from 'react';
-import { FaSpinner } from 'react-icons/fa';
 import { FaArrowLeft } from 'react-icons/fa6';
 import { IoCloseOutline } from 'react-icons/io5';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useGetParticipationInfo } from '../../../api/application';
-import { uploadFile } from '../../../api/file';
+
+import { useGetParticipationInfo } from '@/api/application';
+import { uploadFile } from '@/api/file';
 import {
   convertReportPriceType,
   convertReportTypeStatus,
@@ -27,20 +19,27 @@ import {
   ReportOptionInfo,
   ReportType,
   useGetReportPriceDetail,
-} from '../../../api/report';
-import Card from '../../../components/common/report/Card';
-import { ReportFormRadioControlLabel } from '../../../components/common/report/ControlLabel';
-import DateTimePicker from '../../../components/common/report/DateTimePicker';
-import FilledInput from '../../../components/common/report/FilledInput';
-import Heading1 from '../../../components/common/report/Heading1';
-import Heading2 from '../../../components/common/report/Heading2';
-import Label from '../../../components/common/report/Label';
-import Tooltip from '../../../components/common/report/Tooltip';
-import BottomSheet from '../../../components/common/ui/BottomSheeet';
-import Input from '../../../components/common/ui/input/Input';
-import useReportPayment from '../../../hooks/useReportPayment';
-import useReportProgramInfo from '../../../hooks/useReportProgramInfo';
-import useReportApplicationStore from '../../../store/useReportApplicationStore';
+} from '@/api/report';
+import { usePatchUser } from '@/api/user';
+import useMinDate from '@/hooks/useMinDate';
+import useReportPayment from '@/hooks/useReportPayment';
+import useReportProgramInfo from '@/hooks/useReportProgramInfo';
+import useRunOnce from '@/hooks/useRunOnce';
+import useValidateUrl from '@/hooks/useValidateUrl';
+import { twMerge } from '@/lib/twMerge';
+import useAuthStore from '@/store/useAuthStore';
+import useReportApplicationStore from '@/store/useReportApplicationStore';
+import Card from '@components/common/report/Card';
+import { ReportFormRadioControlLabel } from '@components/common/report/ControlLabel';
+import DateTimePicker from '@components/common/report/DateTimePicker';
+import FilledInput from '@components/common/report/FilledInput';
+import Heading1 from '@components/common/report/Heading1';
+import Heading2 from '@components/common/report/Heading2';
+import Label from '@components/common/report/Label';
+import Tooltip from '@components/common/report/Tooltip';
+import BottomSheet from '@components/common/ui/BottomSheeet';
+import Input from '@components/common/ui/input/Input';
+import HorizontalRule from '@components/ui/HorizontalRule';
 
 const ReportApplyPage = () => {
   const isUpTo1280 = useMediaQuery('(max-width: 1280px)');
@@ -110,12 +109,12 @@ const ReportApplyPage = () => {
         <header>
           <Heading1>진단서 신청하기</Heading1>
         </header>
-        <HorizontalRule className="-mx-5 md:-mx-32 xl:-mx-48" />
+        <HorizontalRule className="-mx-5 md:-mx-32 lg:mx-0" />
 
         <main className="mb-8 mt-6 flex flex-col gap-10">
           {/* 프로그램 정보 */}
           <ProgramInfoSection />
-          <HorizontalRule className="-mx-5 md:-mx-32 xl:-mx-48" />
+          <HorizontalRule className="-mx-5 md:-mx-32 lg:mx-0" />
 
           <CallOut
             className="bg-neutral-100"
@@ -134,93 +133,46 @@ const ReportApplyPage = () => {
                 dispatch={setRecruitmentFile}
               />
             )}
-          <HorizontalRule className="-mx-5 md:-mx-32 xl:-mx-48" />
+          <HorizontalRule className="-mx-5 md:-mx-32 lg:mx-0" />
 
           {/* 1:1 피드백 일정 */}
           {reportApplication.isFeedbackApplied && <ScheduleSection />}
-          <HorizontalRule className="-mx-5 md:-mx-32 xl:-mx-48" />
+          <HorizontalRule className="-mx-5 md:-mx-32 lg:mx-0" />
 
           {/* 추가 정보 */}
           <AdditionalInfoSection />
         </main>
       </div>
 
-      {isUpTo1280 ? (
-        <BottomSheet>
-          <button
-            onClick={() => {
-              const to = `${convertReportTypeToLandingPath(reportType?.toUpperCase() as ReportType)}#content`;
-              navigate(to);
-            }}
-            className="flex h-14 w-14 shrink-0 items-center justify-center rounded-md border-2 border-primary bg-neutral-100"
-          >
-            <FaArrowLeft size={20} />
-          </button>
-          <button
-            className="text-1.125-medium w-full rounded-md bg-primary py-3 text-center font-medium text-neutral-100"
-            onClick={async () => {
-              if (!isValidFile()) return;
+      <BottomSheet>
+        <button
+          onClick={() => {
+            const to = `${convertReportTypeToLandingPath(reportType?.toUpperCase() as ReportType)}#content`;
+            navigate(to);
+          }}
+          className="flex h-14 w-14 shrink-0 items-center justify-center rounded-md border-2 border-primary bg-neutral-100"
+        >
+          <FaArrowLeft size={20} />
+        </button>
+        <button
+          className="text-1.125-medium w-full rounded-md bg-primary py-3 text-center font-medium text-neutral-100"
+          onClick={async () => {
+            if (!isValidFile()) return;
 
-              const { isValid, message } = validate();
-              if (!isValid) {
-                alert(message);
-                return;
-              }
+            const { isValid, message } = validate();
+            if (!isValid) {
+              alert(message);
+              return;
+            }
 
-              setIsLoading(true);
-              await convertFile();
-              navigate(`/report/payment/${reportType}/${reportId}`);
-            }}
-          >
-            다음
-          </button>
-        </BottomSheet>
-      ) : (
-        <aside className="h-fit w-96 shrink-0 rounded-lg bg-static-100 px-5 pb-6 shadow-03">
-          <Heading1>결제하기</Heading1>
-          <div className="flex flex-col gap-10">
-            <UsereInfoSection />
-            <ReportPaymentSection />
-            <button
-              className="complete_button_click w-full rounded-md bg-primary py-3 text-center text-small18 font-medium text-neutral-100"
-              onClick={async () => {
-                if (!isValidFile()) return;
-
-                const { isValid, message } = validate();
-                if (!isValid) {
-                  alert(message);
-                  return;
-                }
-                if (reportApplication.contactEmail === '') {
-                  alert('정보 수신용 이메일을 입력해주세요.');
-                  return;
-                }
-
-                setIsLoading(true);
-                patchUserMutation.mutateAsync({
-                  contactEmail: reportApplication.contactEmail,
-                });
-                await convertFile();
-
-                if (payment.amount === 0) {
-                  navigate(`/report/order/result?orderId=${generateOrderId()}`);
-                  return;
-                }
-                // 토스 페이지에서 이전 버튼 누르면 서류 진단 페이지로 이동한다는 confrim 표시하면 좋을 거 같음
-                navigate(`/report/toss/payment`, { replace: true });
-              }}
-            >
-              결제하기
-            </button>
-            {isLoading && (
-              <div className="fixed left-0 top-0 flex h-screen w-screen flex-col items-center justify-center gap-y-5 bg-neutral-10/30 text-white">
-                <FaSpinner className="animate-spin" size={40} />
-                <div>진단서 접수 중...</div>
-              </div>
-            )}
-          </div>
-        </aside>
-      )}
+            setIsLoading(true);
+            await convertFile();
+            navigate(`/report/payment/${reportType}/${reportId}`);
+          }}
+        >
+          다음
+        </button>
+      </BottomSheet>
     </div>
   );
 };
