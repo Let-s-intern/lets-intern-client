@@ -410,7 +410,7 @@ const PremiumSection = ({
 
 const ScheduleSection = () => {
   const { data, setReportApplication } = useReportApplicationStore();
-  const { minDate, timeOptions } = useMinDate(data);
+  const minDate = useMinDate(data);
 
   type Key = keyof typeof data;
 
@@ -454,13 +454,13 @@ const ScheduleSection = () => {
                 : dayjs(data.desiredDate1)
             }
             time={
-              data.desiredDate1 === undefined
+              data.desiredDate1 === undefined ||
+              dayjs(data.desiredDate1).hour() === 0
                 ? undefined
                 : dayjs(data.desiredDate1).hour()
             }
             name="desiredDate1"
             minDate={minDate}
-            timeOption={timeOptions.desiredDate1}
             onChangeDate={onChangeDate}
             onChangeTime={onChangeTime}
           />
@@ -475,7 +475,6 @@ const ScheduleSection = () => {
             }
             name="desiredDate2"
             minDate={minDate}
-            timeOption={timeOptions.desiredDate2}
             onChangeDate={onChangeDate}
             onChangeTime={onChangeTime}
           />
@@ -490,7 +489,6 @@ const ScheduleSection = () => {
             }
             name="desiredDate3"
             minDate={minDate}
-            timeOption={timeOptions.desiredDate3}
             onChangeDate={onChangeDate}
             onChangeTime={onChangeTime}
           />

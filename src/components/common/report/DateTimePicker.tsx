@@ -29,20 +29,20 @@ const dateTimePickerSx = {
 
 interface DateTimePickerProps {
   name?: string;
-  date?: Dayjs | null | undefined;
-  time?: number | null | undefined;
+  date?: Dayjs;
+  time?: number;
   minDate?: Dayjs;
-  timeOption: number[];
   onChangeDate?: (date: Dayjs | null, name?: string) => void;
   onChangeTime?: (e: SelectChangeEvent<unknown>) => void;
 }
+
+const timeOption = [9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21];
 
 const DateTimePicker = ({
   name,
   date,
   time,
   minDate,
-  timeOption,
   onChangeDate,
   onChangeTime,
 }: DateTimePickerProps) => {
@@ -54,7 +54,7 @@ const DateTimePicker = ({
           format="YY년 M월 D일(dd)"
           label="날짜 선택"
           name={name}
-          value={date}
+          value={date ?? null}
           onChange={(date) => onChangeDate && onChangeDate(date, name)}
           minDate={minDate}
         />
@@ -65,10 +65,10 @@ const DateTimePicker = ({
           labelId="time-select-label"
           label="시간 선택"
           name={name}
-          value={time}
+          value={time ?? ''}
           onChange={onChangeTime}
         >
-          {timeOption.map((option) => (
+          {timeOption?.map((option) => (
             <MenuItem key={option} value={option}>
               {`${option < 12 ? '오전' : '오후'} ${option < 13 ? option : option - 12}:00`}
             </MenuItem>
