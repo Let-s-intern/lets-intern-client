@@ -265,7 +265,9 @@ const ChallengeCreate: React.FC = () => {
         <FaqSection
           programType="CHALLENGE"
           faqInfo={input.faqInfo}
-          setInput={setInput}
+          setFaqInfo={(faqInfo) =>
+            setInput((prev) => ({ ...prev, faqInfo: faqInfo ?? [] }))
+          }
           isCreate
         />
       </section>

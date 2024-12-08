@@ -44,6 +44,7 @@ const initialReport: Omit<UpdateReportData, 'contents'> = {
     discountPrice: 0,
   },
   visibleDate: undefined,
+  faqInfo: [],
 };
 
 const initialContent = {

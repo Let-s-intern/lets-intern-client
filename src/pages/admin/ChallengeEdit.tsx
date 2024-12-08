@@ -274,7 +274,9 @@ const ChallengeEdit: React.FC = () => {
             input.faqInfo ??
             challenge.faqInfo.map((info) => ({ faqId: info.id }))
           }
-          setInput={setInput}
+          setFaqInfo={(faqInfo) =>
+            setInput((prev) => ({ ...prev, faqInfo: faqInfo ?? [] }))
+          }
         />
       </section>
 

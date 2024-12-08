@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 
 import { useDeleteFaq, useGetFaq, usePatchFaq, usePostFaq } from '@/api/faq';
+import { CreateReportData, UpdateReportData } from '@/api/report';
 import {
   CreateChallengeReq,
   CreateLiveReq,
@@ -15,11 +16,13 @@ interface FaqSectionProps<
     | CreateChallengeReq
     | UpdateChallengeReq
     | CreateLiveReq
-    | UpdateLiveReq,
+    | UpdateLiveReq
+    | UpdateReportData
+    | CreateReportData,
 > {
   programType: FaqProgramType;
   faqInfo: T['faqInfo'];
-  setInput: React.Dispatch<React.SetStateAction<Omit<T, 'desc'>>>;
+  setFaqInfo: (value: T['faqInfo']) => void;
   isCreate?: boolean;
 }
 
@@ -29,7 +32,7 @@ function FaqSection<
     | UpdateChallengeReq
     | CreateLiveReq
     | UpdateLiveReq,
->({ programType, faqInfo, setInput, isCreate }: FaqSectionProps<T>) {
+>({ programType, faqInfo, setFaqInfo, isCreate }: FaqSectionProps<T>) {
   const [faqList, setFaqList] = useState<Faq[]>([]);
   const [isInitialized, setIsInitialized] = useState(false);
 
@@ -39,16 +42,8 @@ function FaqSection<
   const { mutateAsync: postFaq } = usePostFaq();
 
   const checkFaq = (e: React.ChangeEvent<HTMLInputElement>, faqId: number) => {
-    if (e.target.checked)
-      setInput((prev) => ({
-        ...prev,
-        faqInfo: [...(faqInfo ?? []), { faqId }],
-      }));
-    else
-      setInput((prev) => ({
-        ...prev,
-        faqInfo: faqInfo?.filter((info) => info.faqId !== faqId),
-      }));
+    if (e.target.checked) setFaqInfo([...(faqInfo ?? []), { faqId }]);
+    else setFaqInfo(faqInfo?.filter((info) => info.faqId !== faqId));
   };
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>, faqId: number) => {
@@ -70,10 +65,7 @@ function FaqSection<
     // 초기화 시에는 모든 faq 추가
     if (isCreate && !isInitialized) {
       setFaqList(newFaqList);
-      setInput((prev) => ({
-        ...prev,
-        faqInfo: newFaqList.map((faq) => ({ faqId: faq.id })),
-      }));
+      setFaqInfo(newFaqList.map((faq) => ({ faqId: faq.id })));
       setIsInitialized(true);
       return;
     }
@@ -99,18 +91,12 @@ function FaqSection<
       if (faqInfo?.findIndex((info) => info.faqId === lastFaq.id) !== -1)
         return;
 
-      setInput((prev) => ({
-        ...prev,
-        faqInfo: [...(faqInfo ?? []), { faqId: lastFaq.id }],
-      }));
+      setFaqInfo([...(faqInfo ?? []), { faqId: lastFaq.id }]);
     } else if (type === 'DELETE') {
       const existFaqIds = newFaqList.map((faq) => faq.id);
-      setInput((prev) => ({
-        ...prev,
-        faqInfo: (faqInfo ?? [])?.filter((info) =>
-          existFaqIds.includes(info.faqId),
-        ),
-      }));
+      setFaqInfo(
+        (faqInfo ?? [])?.filter((info) => existFaqIds.includes(info.faqId)),
+      );
     } else {
       return;
     }

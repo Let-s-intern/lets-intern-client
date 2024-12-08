@@ -305,6 +305,13 @@ const createReportSchema = z.object({
     price: z.number(),
     discountPrice: z.number(),
   }),
+  faqInfo: z
+    .array(
+      z.object({
+        faqId: z.number(),
+      }),
+    )
+    .nullable(),
 });
 
 export type CreateReportData = z.infer<typeof createReportSchema>;
@@ -853,6 +860,13 @@ const updateReportSchema = z.object({
       discountPrice: z.number(),
     })
     .optional(),
+  faqInfo: z
+    .array(
+      z.object({
+        faqId: z.number(),
+      }),
+    )
+    .nullable(),
 });
 
 export type UpdateReportData = z.infer<typeof updateReportSchema>;

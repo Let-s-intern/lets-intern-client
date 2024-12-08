@@ -21,6 +21,7 @@ import AdminReportFeedback from '@components/admin/report/AdminReportFeedback';
 import ReportExampleEditor from '@components/admin/report/ReportExampleEditor';
 import ReportReviewEditor from '@components/admin/report/ReportReviewEditor';
 import { Heading2 } from '@components/admin/ui/heading/Heading2';
+import FaqSection from '@components/FaqSection';
 import {
   CreateReportData,
   getReportsForAdminQueryKey,
@@ -41,6 +42,7 @@ const initialReport: Omit<CreateReportData, 'contents'> = {
     discountPrice: 0,
   },
   visibleDate: null,
+  faqInfo: [],
 };
 
 const initialContent = {
@@ -546,6 +548,15 @@ const AdminReportCreatePage = () => {
             setProgramRecommend={(programRecommend) =>
               setContent((prev) => ({ ...prev, programRecommend }))
             }
+          />
+
+          <FaqSection
+            programType="REPORT"
+            faqInfo={editingValue.faqInfo ?? []}
+            setFaqInfo={(faqInfo) =>
+              setContent((prev) => ({ ...prev, faqInfo }))
+            }
+            isCreate
           />
 
           <div className="text-right">

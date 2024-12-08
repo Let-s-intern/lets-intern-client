@@ -91,7 +91,7 @@ export const ProgramTypeEnum = z.enum(['CHALLENGE', 'LIVE', 'VOD', 'REPORT']);
 
 export type ProgramTypeUpperCase = z.infer<typeof ProgramTypeEnum>;
 
-const faqProgramType = ProgramTypeEnum.exclude(['REPORT']);
+const faqProgramType = ProgramTypeEnum;
 
 export type FaqProgramType = z.infer<typeof faqProgramType>;
 
