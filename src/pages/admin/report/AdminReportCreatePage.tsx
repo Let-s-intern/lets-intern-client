@@ -12,7 +12,7 @@ import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 import { useQueryClient } from '@tanstack/react-query';
 import dayjs from 'dayjs';
 import 'dayjs/locale/ko';
-import { ChangeEvent, useEffect, useState } from 'react';
+import { ChangeEvent, useState } from 'react';
 import { FaTrashCan } from 'react-icons/fa6';
 import { useNavigate } from 'react-router-dom';
 
@@ -20,8 +20,9 @@ import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
 import { ProgramTypeEnum } from '@/schema';
 import AdminReportFeedback from '@components/admin/report/AdminReportFeedback';
 import ReportExampleEditor from '@components/admin/report/ReportExampleEditor';
+import ReportProgramRecommendEditor from '@components/admin/report/ReportProgramRecommendEditor';
 import ReportReviewEditor from '@components/admin/report/ReportReviewEditor';
-import { Heading2 } from '@components/admin/ui/heading/Heading2';
+import Heading2 from '@components/admin/ui/heading/Heading2';
 import FaqSection from '@components/FaqSection';
 import {
   CreateReportData,
@@ -29,7 +30,6 @@ import {
   ReportType,
   usePostReportMutation,
 } from '../../../api/report';
-import ProgramRecommendEditor from '../../../components/ProgramRecommendEditor';
 import { ReportContent, ReportEditingPrice } from '../../../types/interface';
 
 const initialReport: Omit<CreateReportData, 'contents'> = {
@@ -49,7 +49,7 @@ const initialReport: Omit<CreateReportData, 'contents'> = {
 const initialContent = {
   reportExample: { list: [] },
   review: { list: [] },
-  programRecommend: { list: [] },
+  reportProgramRecommend: {},
 };
 
 const AdminReportCreatePage = () => {
@@ -151,20 +151,18 @@ const AdminReportCreatePage = () => {
     });
   };
 
-  useEffect(() => {
-    console.log('editingValue', editingValue);
-  }, [editingValue]);
-
   return (
     <div className="mx-3 mb-40 mt-3 min-w-[800px]">
       <header>
         <h1 className="text-2xl font-semibold">서류 진단 등록</h1>
       </header>
+
       <main className="max-w-screen-xl">
         <form onSubmit={handleSubmit} className="mt-4 flex flex-col gap-4">
           <div className="flex-no-wrap flex items-center gap-4"></div>
 
-          <div className="flex items-center gap-2">
+          {/* 기본 설정 */}
+          <section className="flex items-center gap-2">
             <FormControl size="small" className="w-60">
               <InputLabel id="reportType-label">서류 진단 타입</InputLabel>
               <Select<ReportType>
@@ -241,9 +239,12 @@ const AdminReportCreatePage = () => {
             >
               비공개 처리
             </Button>
-          </div>
-          <hr></hr>
-          <div>
+          </section>
+
+          <hr />
+
+          {/* 가격 설정 */}
+          <section>
             <div className="flex gap-4">
               <FormControl size="small" className="w-48">
                 <InputLabel id="priceType-label">가격 선택</InputLabel>
@@ -368,161 +369,170 @@ const AdminReportCreatePage = () => {
                 </div>
               ) : null}
             </div>
-          </div>
-          <hr></hr>
-          <header className="mb-2 flex items-center justify-between">
-            <Heading2>옵션 설정</Heading2>
-            <Button
-              variant="outlined"
-              onClick={() => {
-                setEditingOptions((prev) => {
-                  return [
-                    ...prev,
-                    { title: '', code: '', discountPrice: 0, price: 0 },
-                  ];
-                });
-              }}
-            >
-              옵션 추가
-            </Button>
-          </header>
-
-          <div className="flex flex-col items-start gap-4">
-            {editingOptions.map((option, index) => {
-              return (
-                <div className="flex items-center gap-2" key={index}>
-                  <span className="w-5">{index + 1}</span>
-                  <TextField
-                    value={option.title}
-                    onChange={(e) => {
-                      setEditingOptions((prev) => {
-                        return prev.map((item, i) => {
-                          if (i === index) {
-                            return { ...item, title: e.target.value };
-                          }
-                          return item;
-                        });
-                      });
-                    }}
-                    variant="outlined"
-                    size="small"
-                    label="옵션 제목"
-                    placeholder="옵션 제목을 입력하세요"
-                    InputLabelProps={{
-                      shrink: true,
-                      style: { fontSize: '14px' },
-                    }}
-                  />
-                  <TextField
-                    value={option.price}
-                    onChange={(e) => {
-                      setEditingOptions((prev) => {
-                        return prev.map((item, i) => {
-                          if (i === index) {
-                            return { ...item, price: Number(e.target.value) };
-                          }
-                          return item;
-                        });
-                      });
-                    }}
-                    variant="outlined"
-                    name="optionPrice"
-                    type="number"
-                    size="small"
-                    label="옵션 가격"
-                    placeholder="옵션 가격을 입력하세요"
-                    InputLabelProps={{
-                      shrink: true,
-                      style: { fontSize: '14px' },
-                    }}
-                  />
-
-                  <TextField
-                    type="number"
-                    value={option.discountPrice}
-                    onChange={(e) => {
-                      setEditingOptions((prev) => {
-                        return prev.map((item, i) => {
-                          if (i === index) {
-                            return {
-                              ...item,
-                              discountPrice: Number(e.target.value),
-                            };
-                          }
-                          return item;
-                        });
-                      });
-                    }}
-                    variant="outlined"
-                    name="optionDiscountPrice"
-                    size="small"
-                    label="옵션 할인 가격"
-                    placeholder="할인 가격을 입력하세요"
-                    InputLabelProps={{
-                      shrink: true,
-                      style: { fontSize: '14px' },
-                    }}
-                  />
-
-                  <TextField
-                    value={option.code}
-                    onChange={(e) => {
-                      setEditingOptions((prev) => {
-                        return prev.map((item, i) => {
-                          if (i === index) {
-                            return { ...item, code: e.target.value };
-                          }
-                          return item;
-                        });
-                      });
-                    }}
-                    variant="outlined"
-                    size="small"
-                    label="옵션 코드"
-                    placeholder="옵션 코드를 입력하세요"
-                    InputLabelProps={{
-                      shrink: true,
-                      style: { fontSize: '14px' },
-                    }}
-                  />
-
-                  {/* 옵션 삭제 with trash icon */}
-                  <Button
-                    variant="text"
-                    onClick={() => {
-                      setEditingOptions((prev) => {
-                        return prev.filter((_, i) => i !== index);
-                      });
-                    }}
-                    className="min-w-0"
-                    style={{ minWidth: 0, padding: 12 }}
-                    color="error"
-                  >
-                    <FaTrashCan />
-                  </Button>
-                </div>
-              );
-            })}
-          </div>
+          </section>
 
           <hr />
-          <AdminReportFeedback
-            initialValue={{
-              price: 0,
-              discount: 0,
-            }}
-            onChange={(value) => {
-              setEditingValue((prev) => {
-                return {
-                  ...prev,
-                  feedbackInfo: {
-                    price: value.price,
-                    discountPrice: value.discount,
-                  },
-                };
-              });
-            }}
-          />
+
+          <section>
+            <header className="mb-2 flex items-center justify-between">
+              <Heading2>옵션 설정</Heading2>
+              <Button
+                variant="outlined"
+                onClick={() => {
+                  setEditingOptions((prev) => {
+                    return [
+                      ...prev,
+                      { title: '', code: '', discountPrice: 0, price: 0 },
+                    ];
+                  });
+                }}
+              >
+                옵션 추가
+              </Button>
+            </header>
+            <div className="flex flex-col items-start gap-4">
+              {editingOptions.map((option, index) => {
+                return (
+                  <div className="flex items-center gap-2" key={index}>
+                    <span className="w-5">{index + 1}</span>
+                    <TextField
+                      value={option.title}
+                      onChange={(e) => {
+                        setEditingOptions((prev) => {
+                          return prev.map((item, i) => {
+                            if (i === index) {
+                              return { ...item, title: e.target.value };
+                            }
+                            return item;
+                          });
+                        });
+                      }}
+                      variant="outlined"
+                      size="small"
+                      label="옵션 제목"
+                      placeholder="옵션 제목을 입력하세요"
+                      InputLabelProps={{
+                        shrink: true,
+                        style: { fontSize: '14px' },
+                      }}
+                    />
+                    <TextField
+                      value={option.price}
+                      onChange={(e) => {
+                        setEditingOptions((prev) => {
+                          return prev.map((item, i) => {
+                            if (i === index) {
+                              return { ...item, price: Number(e.target.value) };
+                            }
+                            return item;
+                          });
+                        });
+                      }}
+                      variant="outlined"
+                      name="optionPrice"
+                      type="number"
+                      size="small"
+                      label="옵션 가격"
+                      placeholder="옵션 가격을 입력하세요"
+                      InputLabelProps={{
+                        shrink: true,
+                        style: { fontSize: '14px' },
+                      }}
+                    />
+
+                    <TextField
+                      type="number"
+                      value={option.discountPrice}
+                      onChange={(e) => {
+                        setEditingOptions((prev) => {
+                          return prev.map((item, i) => {
+                            if (i === index) {
+                              return {
+                                ...item,
+                                discountPrice: Number(e.target.value),
+                              };
+                            }
+                            return item;
+                          });
+                        });
+                      }}
+                      variant="outlined"
+                      name="optionDiscountPrice"
+                      size="small"
+                      label="옵션 할인 가격"
+                      placeholder="할인 가격을 입력하세요"
+                      InputLabelProps={{
+                        shrink: true,
+                        style: { fontSize: '14px' },
+                      }}
+                    />
+
+                    <TextField
+                      value={option.code}
+                      onChange={(e) => {
+                        setEditingOptions((prev) => {
+                          return prev.map((item, i) => {
+                            if (i === index) {
+                              return { ...item, code: e.target.value };
+                            }
+                            return item;
+                          });
+                        });
+                      }}
+                      variant="outlined"
+                      size="small"
+                      label="옵션 코드"
+                      placeholder="옵션 코드를 입력하세요"
+                      InputLabelProps={{
+                        shrink: true,
+                        style: { fontSize: '14px' },
+                      }}
+                    />
+
+                    {/* 옵션 삭제 with trash icon */}
+                    <Button
+                      variant="text"
+                      onClick={() => {
+                        setEditingOptions((prev) => {
+                          return prev.filter((_, i) => i !== index);
+                        });
+                      }}
+                      className="min-w-0"
+                      style={{ minWidth: 0, padding: 12 }}
+                      color="error"
+                    >
+                      <FaTrashCan />
+                    </Button>
+                  </div>
+                );
+              })}
+            </div>
+          </section>
+
+          <hr />
+
+          <section>
+            <Heading2>1:1 피드백 설정</Heading2>
+            <AdminReportFeedback
+              initialValue={{
+                price: 0,
+                discount: 0,
+              }}
+              onChange={(value) => {
+                setEditingValue((prev) => {
+                  return {
+                    ...prev,
+                    feedbackInfo: {
+                      price: value.price,
+                      discountPrice: value.discount,
+                    },
+                  };
+                });
+              }}
+            />
+          </section>
+
+          <hr />
 
           {/* 레포트 예시 */}
           <section className="mb-6">
@@ -534,6 +544,8 @@ const AdminReportCreatePage = () => {
             />
           </section>
 
+          <hr />
+
           {/* 레포트 후기 */}
           <section>
             <ReportReviewEditor
@@ -544,15 +556,19 @@ const AdminReportCreatePage = () => {
             />
           </section>
 
-          {/* 프로그램 추천 */}
-          <ProgramRecommendEditor
-            programRecommend={content.programRecommend}
-            setProgramRecommend={(programRecommend) =>
-              setContent((prev) => ({ ...prev, programRecommend }))
-            }
-          />
+          <hr />
 
-          <section>
+          {/* 프로그램 추천 */}
+          <section className="mb-6">
+            <ReportProgramRecommendEditor
+              reportProgramRecommend={content.reportProgramRecommend}
+              setReportProgramRecommend={(reportProgramRecommend) =>
+                setContent((prev) => ({ ...prev, reportProgramRecommend }))
+              }
+            />
+          </section>
+
+          <section className="mb-6">
             <FaqSection
               programType={ProgramTypeEnum.enum.REPORT}
               faqInfo={editingValue.faqInfo ?? []}
@@ -563,21 +579,19 @@ const AdminReportCreatePage = () => {
             />
           </section>
 
-          <div className="text-right">
-            <div className="mb-1 flex items-center justify-end gap-4">
-              <Button
-                variant="outlined"
-                type="button"
-                onClick={() => {
-                  navgiate('/admin/report/list');
-                }}
-              >
-                취소 (리스트로 돌아가기)
-              </Button>
-              <Button variant="contained" color="primary" type="submit">
-                등록
-              </Button>
-            </div>
+          <div className="mb-1 flex items-center justify-end gap-4 text-right">
+            <Button
+              variant="outlined"
+              type="button"
+              onClick={() => {
+                navgiate('/admin/report/list');
+              }}
+            >
+              취소 (리스트로 돌아가기)
+            </Button>
+            <Button variant="contained" color="primary" type="submit">
+              등록
+            </Button>
           </div>
         </form>
       </main>
