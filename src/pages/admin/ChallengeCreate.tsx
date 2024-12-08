@@ -1,3 +1,4 @@
+import { useGetFaq } from '@/api/faq';
 import { fileType, uploadFile } from '@/api/file';
 import { usePostChallengeMutation } from '@/api/program';
 import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
@@ -18,6 +19,7 @@ import { FaSave } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import ChallengeBasic from './program/ChallengeBasic';
 import ChallengeCurriculum from './program/ChallengeCurriculum';
+import ChallengeFaqCategory from './program/ChallengeFaqCategory';
 import ChallengePoint from './program/ChallengePoint';
 import ChallengePrice from './program/ChallengePrice';
 import FaqSection from './program/FaqSection';
@@ -38,12 +40,18 @@ const ChallengeCreate: React.FC = () => {
     blogReview: { list: [] },
     challengeReview: [],
     initialized: true,
+    faqCategory: [],
     programRecommend: { list: [] },
   });
   const { snackbar } = useAdminSnackbar();
   const navigate = useNavigate();
 
   const { mutateAsync: postChallenge } = usePostChallengeMutation();
+  const { data: faqData } = useGetFaq('CHALLENGE');
+
+  const categoryList = [
+    ...new Set(faqData?.faqList.map((faq) => faq.category)),
+  ];
 
   const [input, setInput] = useState<Omit<CreateChallengeReq, 'desc'>>({
     beginning: dayjs().format('YYYY-MM-DDTHH:mm'),
@@ -261,14 +269,27 @@ const ChallengeCreate: React.FC = () => {
         }
       />
 
-      <div className="my-6">
+      <section className="my-6">
+        <div className="mb-6">
+          <ChallengeFaqCategory
+            faqCategory={content.faqCategory}
+            onChange={(e) => {
+              setContent((prev) => ({
+                ...prev,
+                faqCategory: e.target.value
+                  .split(',')
+                  .map((item) => item.trim()),
+              }));
+            }}
+          />
+        </div>
         <FaqSection
           programType="CHALLENGE"
           faqInfo={input.faqInfo}
           setInput={setInput}
           isCreate
         />
-      </div>
+      </section>
 
       <footer className="flex items-center justify-end gap-3">
         <ChallengePreviewButton

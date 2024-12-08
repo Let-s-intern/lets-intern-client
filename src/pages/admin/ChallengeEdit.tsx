@@ -22,6 +22,7 @@ import { FaSave } from 'react-icons/fa';
 import { useNavigate, useParams } from 'react-router-dom';
 import ChallengeBasic from './program/ChallengeBasic';
 import ChallengeCurriculumEditor from './program/ChallengeCurriculum';
+import ChallengeFaqCategory from './program/ChallengeFaqCategory';
 import ChallengePointEditor from './program/ChallengePoint';
 import ChallengePrice from './program/ChallengePrice';
 import FaqSection from './program/FaqSection';
@@ -40,6 +41,7 @@ const ChallengeEdit: React.FC = () => {
     },
     blogReview: { list: [] },
     challengeReview: [],
+    faqCategory: [],
   });
 
   const { mutateAsync: patchChallenge } = usePatchChallengeMutation();
@@ -268,6 +270,19 @@ const ChallengeEdit: React.FC = () => {
       />
 
       <div className="my-6">
+        <div className="mb-6">
+          <ChallengeFaqCategory
+            faqCategory={content.faqCategory}
+            onChange={(e) => {
+              setContent((prev) => ({
+                ...prev,
+                faqCategory: e.target.value
+                  .split(',')
+                  .map((item) => item.trim()),
+              }));
+            }}
+          />
+        </div>
         <FaqSection
           programType="CHALLENGE"
           faqInfo={
