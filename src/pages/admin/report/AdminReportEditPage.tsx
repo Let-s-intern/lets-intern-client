@@ -96,12 +96,7 @@ const AdminReportEditPage = () => {
   }, [isLoadError, navigate]);
 
   useEffect(() => {
-    console.log('editingValue', editingValue);
-  }, [editingValue]);
-
-  useEffect(() => {
     if (reportDetail) {
-      console.dir(reportDetail);
       setEditingValue({
         // 기본값
         ...initialReport,
@@ -212,7 +207,7 @@ const AdminReportEditPage = () => {
         ];
         break;
     }
-    console.log('req:', body);
+    console.log('서류진단 수정 요청 body:', body);
 
     await editReportMutation.mutateAsync({
       reportId: Number(reportId),
