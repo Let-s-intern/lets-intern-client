@@ -424,6 +424,10 @@ const ScheduleSection = () => {
 
   const onChangeTime = (e: SelectChangeEvent<unknown>) => {
     const prev = data[e.target.name as Key];
+    if (prev === undefined) {
+      alert('날짜를 먼저 선택해주세요');
+      return;
+    }
 
     setReportApplication({
       [e.target.name]: dayjs(prev as dayjs.ConfigType)
@@ -538,7 +542,6 @@ const AdditionalInfoSection = () => {
   );
 };
 
-/* 모바일 전용 결제 페이지(ReportPaymentPage)에서 같이 사용 */
 export const UsereInfoSection = () => {
   const [checked, setChecked] = useState(true);
 
@@ -638,7 +641,6 @@ export const UsereInfoSection = () => {
   );
 };
 
-/* 모바일 전용 결제 페이지(ReportPaymentPage)에서 같이 사용 */
 export const ReportPaymentSection = () => {
   const [message, setMessage] = useState('');
   const [options, setOptions] = useState<ReportOptionInfo[]>([]);
