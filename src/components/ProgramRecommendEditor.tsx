@@ -5,7 +5,7 @@ import { useGetProgramAdminQuery } from '@/api/program';
 import { ProgramStatusEnum, ProgramTypeUpperCase } from '@/schema';
 import { ProgramRecommend } from '@/types/interface';
 import { newProgramTypeToText, programStatusToText } from '@/utils/convert';
-import { Heading2 } from '@components/admin/ui/heading/Heading2';
+import Heading2 from '@components/admin/ui/heading/Heading2';
 import Input from '@components/ui/input/Input';
 
 // 모달 스타일

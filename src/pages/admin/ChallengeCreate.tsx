@@ -13,7 +13,7 @@ import EditorApp from '@components/admin/lexical/EditorApp';
 import ImageUpload from '@components/admin/program/ui/form/ImageUpload';
 import Header from '@components/admin/ui/header/Header';
 import Heading from '@components/admin/ui/heading/Heading';
-import { Heading2 } from '@components/admin/ui/heading/Heading2';
+import Heading2 from '@components/admin/ui/heading/Heading2';
 import Heading3 from '@components/admin/ui/heading/Heading3';
 import { Button, TextField } from '@mui/material';
 import dayjs from 'dayjs';

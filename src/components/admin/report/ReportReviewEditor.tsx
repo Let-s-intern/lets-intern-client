@@ -3,7 +3,7 @@ import { MdDelete } from 'react-icons/md';
 
 import { ReportContent, ReportReview } from '@/types/interface';
 import Input from '@components/ui/input/Input';
-import { Heading2 } from '../ui/heading/Heading2';
+import Heading2 from '../ui/heading/Heading2';
 
 interface ReportReviewEditorProps {
   review: ReportContent['review'];

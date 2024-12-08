@@ -119,13 +119,48 @@ export type ReportExample = {
   }[];
 };
 
+export type ReportProgramRecommend = {
+  challengeCareerStart?: {
+    title: string;
+    cta: string;
+  };
+  challengePortfolio?: {
+    title: string;
+    cta: string;
+  };
+  challengePersonalStatement?: {
+    title: string;
+    cta: string;
+  };
+  live?: {
+    title: string;
+    cta: string;
+  };
+  vod?: {
+    title: string;
+    cta: string;
+  };
+  reportResume?: {
+    title: string;
+    cta: string;
+  };
+  reportPersonalStatement?: {
+    title: string;
+    cta: string;
+  };
+  reportPortfolio?: {
+    title: string;
+    cta: string;
+  };
+};
+
 export type ReportContent = {
   /** 레포트 예시 */
   reportExample: ReportExample;
   /** 후기 */
   review: ReportReview;
-  /** 프로그램 추천 리스트 */
-  programRecommend: ProgramRecommend;
+  /** 프로그램 추천 */
+  reportProgramRecommend: ReportProgramRecommend;
 };
 
 export interface IPageable {

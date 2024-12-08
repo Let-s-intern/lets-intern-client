@@ -31,7 +31,7 @@ import EditorApp from '@components/admin/lexical/EditorApp';
 import AdminReportFeedback from '@components/admin/report/AdminReportFeedback';
 import ReportExampleEditor from '@components/admin/report/ReportExampleEditor';
 import ReportReviewEditor from '@components/admin/report/ReportReviewEditor';
-import { Heading2 } from '@components/admin/ui/heading/Heading2';
+import Heading2 from '@components/admin/ui/heading/Heading2';
 import FaqSection from '@components/FaqSection';
 import ProgramRecommendEditor from '../../../components/ProgramRecommendEditor';
 

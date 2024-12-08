@@ -21,7 +21,7 @@ import { ProgramTypeEnum } from '@/schema';
 import AdminReportFeedback from '@components/admin/report/AdminReportFeedback';
 import ReportExampleEditor from '@components/admin/report/ReportExampleEditor';
 import ReportReviewEditor from '@components/admin/report/ReportReviewEditor';
-import { Heading2 } from '@components/admin/ui/heading/Heading2';
+import Heading2 from '@components/admin/ui/heading/Heading2';
 import FaqSection from '@components/FaqSection';
 import {
   CreateReportData,
@@ -29,7 +29,6 @@ import {
   ReportType,
   usePostReportMutation,
 } from '../../../api/report';
-import ProgramRecommendEditor from '../../../components/ProgramRecommendEditor';
 import { ReportContent, ReportEditingPrice } from '../../../types/interface';
 
 const initialReport: Omit<CreateReportData, 'contents'> = {
@@ -49,7 +48,7 @@ const initialReport: Omit<CreateReportData, 'contents'> = {
 const initialContent = {
   reportExample: { list: [] },
   review: { list: [] },
-  programRecommend: { list: [] },
+  reportProgramRecommend: {},
 };
 
 const AdminReportCreatePage = () => {
@@ -560,15 +559,10 @@ const AdminReportCreatePage = () => {
 
           {/* 프로그램 추천 */}
           <section className="mb-6">
-            <ProgramRecommendEditor
-              programRecommend={content.programRecommend}
-              setProgramRecommend={(programRecommend) =>
-                setContent((prev) => ({ ...prev, programRecommend }))
-              }
-            />
+            <Heading2>프로그램 추천</Heading2>
           </section>
 
-          <section>
+          <section className="mb-6">
             <FaqSection
               programType={ProgramTypeEnum.enum.REPORT}
               faqInfo={editingValue.faqInfo ?? []}
@@ -579,21 +573,19 @@ const AdminReportCreatePage = () => {
             />
           </section>
 
-          <div className="text-right">
-            <div className="mb-1 flex items-center justify-end gap-4">
-              <Button
-                variant="outlined"
-                type="button"
-                onClick={() => {
-                  navgiate('/admin/report/list');
-                }}
-              >
-                취소 (리스트로 돌아가기)
-              </Button>
-              <Button variant="contained" color="primary" type="submit">
-                등록
-              </Button>
-            </div>
+          <div className="mb-1 flex items-center justify-end gap-4 text-right">
+            <Button
+              variant="outlined"
+              type="button"
+              onClick={() => {
+                navgiate('/admin/report/list');
+              }}
+            >
+              취소 (리스트로 돌아가기)
+            </Button>
+            <Button variant="contained" color="primary" type="submit">
+              등록
+            </Button>
           </div>
         </form>
       </main>
