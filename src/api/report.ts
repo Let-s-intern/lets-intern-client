@@ -444,6 +444,17 @@ const getReportDetailForAdminSchema = z.object({
     feedbackDiscountPrice: z.number(),
   }),
   visibleDate: z.string().nullable().optional(),
+  faqInfo: z
+    .array(
+      z.object({
+        id: z.number(),
+        question: z.string().nullable(),
+        answer: z.string().nullable(),
+        category: z.string().nullable(),
+        faqProgramType: z.string().nullable(),
+      }),
+    )
+    .nullable(),
 });
 
 export type ReportDetailAdmin = z.infer<typeof getReportDetailForAdminSchema>;

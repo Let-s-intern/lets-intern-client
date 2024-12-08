@@ -17,6 +17,7 @@ import { FaTrashCan } from 'react-icons/fa6';
 import { useNavigate } from 'react-router-dom';
 
 import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
+import { ProgramTypeEnum } from '@/schema';
 import AdminReportFeedback from '@components/admin/report/AdminReportFeedback';
 import ReportExampleEditor from '@components/admin/report/ReportExampleEditor';
 import ReportReviewEditor from '@components/admin/report/ReportReviewEditor';
@@ -550,14 +551,16 @@ const AdminReportCreatePage = () => {
             }
           />
 
-          <FaqSection
-            programType="REPORT"
-            faqInfo={editingValue.faqInfo ?? []}
-            setFaqInfo={(faqInfo) =>
-              setContent((prev) => ({ ...prev, faqInfo }))
-            }
-            isCreate
-          />
+          <section>
+            <FaqSection
+              programType={ProgramTypeEnum.enum.REPORT}
+              faqInfo={editingValue.faqInfo ?? []}
+              setFaqInfo={(faqInfo) =>
+                setEditingValue((prev) => ({ ...prev, faqInfo: faqInfo ?? [] }))
+              }
+              isCreate
+            />
+          </section>
 
           <div className="text-right">
             <div className="mb-1 flex items-center justify-end gap-4">

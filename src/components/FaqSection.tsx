@@ -6,7 +6,7 @@ import {
   CreateChallengeReq,
   CreateLiveReq,
   Faq,
-  FaqProgramType,
+  ProgramTypeUpperCase,
   UpdateChallengeReq,
   UpdateLiveReq,
 } from '@/schema';
@@ -20,7 +20,7 @@ interface FaqSectionProps<
     | UpdateReportData
     | CreateReportData,
 > {
-  programType: FaqProgramType;
+  programType: ProgramTypeUpperCase;
   faqInfo: T['faqInfo'];
   setFaqInfo: (value: T['faqInfo']) => void;
   isCreate?: boolean;

@@ -2,7 +2,11 @@ import { fileType, uploadFile } from '@/api/file';
 import { usePostChallengeMutation } from '@/api/program';
 import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
 import { challengeToCreateInput } from '@/hooks/useDuplicateProgram';
-import { CreateChallengeReq, getChallengeIdSchema } from '@/schema';
+import {
+  CreateChallengeReq,
+  getChallengeIdSchema,
+  ProgramTypeEnum,
+} from '@/schema';
 import { ChallengeContent } from '@/types/interface';
 import ChallengePreviewButton from '@components/admin/ChallengePreviewButton';
 import EditorApp from '@components/admin/lexical/EditorApp';
@@ -263,7 +267,7 @@ const ChallengeCreate: React.FC = () => {
 
       <section className="my-6">
         <FaqSection
-          programType="CHALLENGE"
+          programType={ProgramTypeEnum.enum.CHALLENGE}
           faqInfo={input.faqInfo}
           setFaqInfo={(faqInfo) =>
             setInput((prev) => ({ ...prev, faqInfo: faqInfo ?? [] }))

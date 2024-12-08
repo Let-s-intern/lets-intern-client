@@ -91,10 +91,6 @@ export const ProgramTypeEnum = z.enum(['CHALLENGE', 'LIVE', 'VOD', 'REPORT']);
 
 export type ProgramTypeUpperCase = z.infer<typeof ProgramTypeEnum>;
 
-const faqProgramType = ProgramTypeEnum;
-
-export type FaqProgramType = z.infer<typeof faqProgramType>;
-
 export const accountType = z.union([
   z.literal('KB'),
   z.literal('HANA'),
@@ -115,7 +111,7 @@ const faq = z.object({
   question: z.string().nullable().optional(),
   answer: z.string().nullable().optional(),
   category: z.string().nullable().optional(),
-  faqProgramType: faqProgramType.nullable().optional(),
+  faqProgramType: ProgramTypeEnum.nullable().optional(),
 });
 
 export type Faq = z.infer<typeof faq>;

@@ -8,7 +8,7 @@ import { fileType, uploadFile } from '@/api/file';
 import { usePostLiveMutation } from '@/api/program';
 import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
 import { liveToCreateInput } from '@/hooks/useDuplicateProgram';
-import { CreateLiveReq, getLiveIdSchema } from '@/schema';
+import { CreateLiveReq, getLiveIdSchema, ProgramTypeEnum } from '@/schema';
 import { LiveContent } from '@/types/interface';
 import EditorApp from '@components/admin/lexical/EditorApp';
 import LivePreviewButton from '@components/admin/LivePreviewButton';
@@ -273,9 +273,11 @@ const LiveCreate: React.FC = () => {
       />
       <div className="my-6">
         <FaqSection
-          programType="LIVE"
+          programType={ProgramTypeEnum.enum.LIVE}
           faqInfo={input.faqInfo}
-          setInput={setInput}
+          setFaqInfo={(faqInfo) =>
+            setInput((prev) => ({ ...prev, faqInfo: faqInfo ?? [] }))
+          }
           isCreate
         />
       </div>
