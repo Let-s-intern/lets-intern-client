@@ -100,7 +100,7 @@ const ProgramRecommendEditor = ({
   };
 
   return (
-    <section className="my-10">
+    <>
       <Heading2 className="mb-2">프로그램 추천</Heading2>
       <div className="mb-4">
         <Button variant="outlined" onClick={onOpen}>
@@ -294,7 +294,7 @@ const ProgramRecommendEditor = ({
           </Box>
         </Box>
       </Modal>
-    </section>
+    </>
   );
 };
 

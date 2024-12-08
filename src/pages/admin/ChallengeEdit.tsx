@@ -241,12 +241,15 @@ const ChallengeEdit: React.FC = () => {
         />
       </section>
 
-      <ProgramRecommendEditor
-        programRecommend={content.programRecommend ?? { list: [] }}
-        setProgramRecommend={(programRecommend) =>
-          setContent((prev) => ({ ...prev, programRecommend }))
-        }
-      />
+      {/* 프로그램 추천 */}
+      <section className="mb-6">
+        <ProgramRecommendEditor
+          programRecommend={content.programRecommend ?? { list: [] }}
+          setProgramRecommend={(programRecommend) =>
+            setContent((prev) => ({ ...prev, programRecommend }))
+          }
+        />
+      </section>
 
       <ChallengeCurriculumEditor
         curriculum={content.curriculum}

@@ -625,12 +625,14 @@ const AdminReportEditPage = () => {
               </section>
 
               {/* 프로그램 추천 */}
-              <ProgramRecommendEditor
-                programRecommend={content.programRecommend}
-                setProgramRecommend={(programRecommend) =>
-                  setContent((prev) => ({ ...prev, programRecommend }))
-                }
-              />
+              <section className="mb-6">
+                <ProgramRecommendEditor
+                  programRecommend={content.programRecommend}
+                  setProgramRecommend={(programRecommend) =>
+                    setContent((prev) => ({ ...prev, programRecommend }))
+                  }
+                />
+              </section>
 
               <section>
                 <FaqSection
