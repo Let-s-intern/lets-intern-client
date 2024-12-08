@@ -71,10 +71,13 @@ const ApplicationCard = ({
             </p>
           </div>
           <div className="flex items-center gap-1.5 md:justify-start">
-            <span className="text-xs text-neutral-0">진행기간</span>
+            <span className="text-xs text-neutral-0">
+              {application.programType === 'REPORT' ? '신청일자' : '진행기간'}
+            </span>
             <span className="text-xs font-medium text-primary-dark">
-              {application.programStartDate?.format('YY.MM.DD')} ~{' '}
-              {application.programEndDate?.format('YY.MM.DD')}
+              {application.programType === 'REPORT'
+                ? application.createDate?.format('YY.MM.DD')
+                : `${application.programStartDate?.format('YY.MM.DD')} ~ ${application.programEndDate?.format('YY.MM.DD')}`}
             </span>
           </div>
         </div>
