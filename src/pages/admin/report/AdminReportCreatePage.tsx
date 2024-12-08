@@ -12,7 +12,7 @@ import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 import { useQueryClient } from '@tanstack/react-query';
 import dayjs from 'dayjs';
 import 'dayjs/locale/ko';
-import { ChangeEvent, useEffect, useState } from 'react';
+import { ChangeEvent, useState } from 'react';
 import { FaTrashCan } from 'react-icons/fa6';
 import { useNavigate } from 'react-router-dom';
 
@@ -150,10 +150,6 @@ const AdminReportCreatePage = () => {
       [event.target.name]: event.target.value,
     });
   };
-
-  useEffect(() => {
-    console.log('editingValue', editingValue);
-  }, [editingValue]);
 
   return (
     <div className="mx-3 mb-40 mt-3 min-w-[800px]">
