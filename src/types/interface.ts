@@ -119,39 +119,20 @@ export type ReportExample = {
   }[];
 };
 
+export type ReportProgramRecommendItem = {
+  title: string;
+  cta: string;
+};
+
 export type ReportProgramRecommend = {
-  challengeCareerStart?: {
-    title: string;
-    cta: string;
-  };
-  challengePortfolio?: {
-    title: string;
-    cta: string;
-  };
-  challengePersonalStatement?: {
-    title: string;
-    cta: string;
-  };
-  live?: {
-    title: string;
-    cta: string;
-  };
-  vod?: {
-    title: string;
-    cta: string;
-  };
-  reportResume?: {
-    title: string;
-    cta: string;
-  };
-  reportPersonalStatement?: {
-    title: string;
-    cta: string;
-  };
-  reportPortfolio?: {
-    title: string;
-    cta: string;
-  };
+  challengeCareerStart?: ReportProgramRecommendItem;
+  challengePortfolio?: ReportProgramRecommendItem;
+  challengePersonalStatement?: ReportProgramRecommendItem;
+  live?: ReportProgramRecommendItem;
+  vod?: ReportProgramRecommendItem;
+  reportResume?: ReportProgramRecommendItem;
+  reportPersonalStatement?: ReportProgramRecommendItem;
+  reportPortfolio?: ReportProgramRecommendItem;
 };
 
 export type ReportContent = {

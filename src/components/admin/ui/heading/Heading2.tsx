@@ -1,5 +1,6 @@
-import { twMerge } from '@/lib/twMerge';
 import { memo, ReactNode } from 'react';
+
+import { twMerge } from '@/lib/twMerge';
 
 interface Heading2Props {
   children?: ReactNode;

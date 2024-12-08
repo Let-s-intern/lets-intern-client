@@ -20,6 +20,7 @@ import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
 import { ProgramTypeEnum } from '@/schema';
 import AdminReportFeedback from '@components/admin/report/AdminReportFeedback';
 import ReportExampleEditor from '@components/admin/report/ReportExampleEditor';
+import ReportProgramRecommendEditor from '@components/admin/report/ReportProgramRecommendEditor';
 import ReportReviewEditor from '@components/admin/report/ReportReviewEditor';
 import Heading2 from '@components/admin/ui/heading/Heading2';
 import FaqSection from '@components/FaqSection';
@@ -559,7 +560,12 @@ const AdminReportCreatePage = () => {
 
           {/* 프로그램 추천 */}
           <section className="mb-6">
-            <Heading2>프로그램 추천</Heading2>
+            <ReportProgramRecommendEditor
+              reportProgramRecommend={content.reportProgramRecommend}
+              setReportProgramRecommend={(reportProgramRecommend) =>
+                setContent((prev) => ({ ...prev, reportProgramRecommend }))
+              }
+            />
           </section>
 
           <section className="mb-6">
