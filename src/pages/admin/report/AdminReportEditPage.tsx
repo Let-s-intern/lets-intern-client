@@ -25,12 +25,14 @@ import {
   usePatchReportMutation,
 } from '@/api/report';
 import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
+import { ProgramTypeEnum } from '@/schema';
 import { ReportContent, ReportEditingPrice } from '@/types/interface';
 import EditorApp from '@components/admin/lexical/EditorApp';
 import AdminReportFeedback from '@components/admin/report/AdminReportFeedback';
 import ReportExampleEditor from '@components/admin/report/ReportExampleEditor';
 import ReportReviewEditor from '@components/admin/report/ReportReviewEditor';
 import { Heading2 } from '@components/admin/ui/heading/Heading2';
+import FaqSection from '@components/FaqSection';
 import ProgramRecommendEditor from '../../../components/ProgramRecommendEditor';
 
 const initialReport: Omit<UpdateReportData, 'contents'> = {
@@ -44,6 +46,7 @@ const initialReport: Omit<UpdateReportData, 'contents'> = {
     discountPrice: 0,
   },
   visibleDate: undefined,
+  faqInfo: [],
 };
 
 const initialContent = {
@@ -93,10 +96,6 @@ const AdminReportEditPage = () => {
   }, [isLoadError, navigate]);
 
   useEffect(() => {
-    console.log('editingValue', editingValue);
-  }, [editingValue]);
-
-  useEffect(() => {
     if (reportDetail) {
       setEditingValue({
         // 기본값
@@ -108,6 +107,9 @@ const AdminReportEditPage = () => {
           discountPrice:
             reportDetail.feedbackPriceInfo.feedbackDiscountPrice ?? 0,
         },
+        faqInfo: reportDetail.faqInfo
+          ? reportDetail.faqInfo.map((faq) => ({ faqId: faq.id }))
+          : [],
       });
 
       const premiumPrice = reportDetail.reportPriceInfos.find(
@@ -205,6 +207,7 @@ const AdminReportEditPage = () => {
         ];
         break;
     }
+    console.log('서류진단 수정 요청 body:', body);
 
     await editReportMutation.mutateAsync({
       reportId: Number(reportId),
@@ -628,6 +631,19 @@ const AdminReportEditPage = () => {
                   setContent((prev) => ({ ...prev, programRecommend }))
                 }
               />
+
+              <section>
+                <FaqSection
+                  programType={ProgramTypeEnum.enum.REPORT}
+                  faqInfo={editingValue.faqInfo ?? []}
+                  setFaqInfo={(faqInfo) =>
+                    setEditingValue((prev) => ({
+                      ...prev,
+                      faqInfo: faqInfo ?? [],
+                    }))
+                  }
+                />
+              </section>
             </>
           ) : (
             // 구버전은 수정 안됨

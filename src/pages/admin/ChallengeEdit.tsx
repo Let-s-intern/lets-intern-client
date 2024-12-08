@@ -6,7 +6,7 @@ import {
 } from '@/api/program';
 import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
 import { isDeprecatedProgram } from '@/lib/isDeprecatedProgram';
-import { UpdateChallengeReq } from '@/schema';
+import { ProgramTypeEnum, UpdateChallengeReq } from '@/schema';
 import { ChallengeContent } from '@/types/interface';
 import ChallengePreviewButton from '@components/admin/ChallengePreviewButton';
 import EditorApp from '@components/admin/lexical/EditorApp';
@@ -269,12 +269,14 @@ const ChallengeEdit: React.FC = () => {
 
       <section className="my-6">
         <FaqSection
-          programType="CHALLENGE"
+          programType={ProgramTypeEnum.enum.CHALLENGE}
           faqInfo={
             input.faqInfo ??
             challenge.faqInfo.map((info) => ({ faqId: info.id }))
           }
-          setInput={setInput}
+          setFaqInfo={(faqInfo) =>
+            setInput((prev) => ({ ...prev, faqInfo: faqInfo ?? [] }))
+          }
         />
       </section>
 

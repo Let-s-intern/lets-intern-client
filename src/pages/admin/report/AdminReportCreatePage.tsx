@@ -17,10 +17,12 @@ import { FaTrashCan } from 'react-icons/fa6';
 import { useNavigate } from 'react-router-dom';
 
 import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
+import { ProgramTypeEnum } from '@/schema';
 import AdminReportFeedback from '@components/admin/report/AdminReportFeedback';
 import ReportExampleEditor from '@components/admin/report/ReportExampleEditor';
 import ReportReviewEditor from '@components/admin/report/ReportReviewEditor';
 import { Heading2 } from '@components/admin/ui/heading/Heading2';
+import FaqSection from '@components/FaqSection';
 import {
   CreateReportData,
   getReportsForAdminQueryKey,
@@ -41,6 +43,7 @@ const initialReport: Omit<CreateReportData, 'contents'> = {
     discountPrice: 0,
   },
   visibleDate: null,
+  faqInfo: [],
 };
 
 const initialContent = {
@@ -127,6 +130,7 @@ const AdminReportCreatePage = () => {
       delete body.visibleDate;
     }
 
+    console.log('서류진단 생성 요청 body:', body);
     await createReportMutation.mutateAsync({
       ...body,
     });
@@ -547,6 +551,17 @@ const AdminReportCreatePage = () => {
               setContent((prev) => ({ ...prev, programRecommend }))
             }
           />
+
+          <section>
+            <FaqSection
+              programType={ProgramTypeEnum.enum.REPORT}
+              faqInfo={editingValue.faqInfo ?? []}
+              setFaqInfo={(faqInfo) =>
+                setEditingValue((prev) => ({ ...prev, faqInfo: faqInfo ?? [] }))
+              }
+              isCreate
+            />
+          </section>
 
           <div className="text-right">
             <div className="mb-1 flex items-center justify-end gap-4">

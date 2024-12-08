@@ -305,6 +305,13 @@ const createReportSchema = z.object({
     price: z.number(),
     discountPrice: z.number(),
   }),
+  faqInfo: z
+    .array(
+      z.object({
+        faqId: z.number(),
+      }),
+    )
+    .nullable(),
 });
 
 export type CreateReportData = z.infer<typeof createReportSchema>;
@@ -437,6 +444,17 @@ const getReportDetailForAdminSchema = z.object({
     feedbackDiscountPrice: z.number(),
   }),
   visibleDate: z.string().nullable().optional(),
+  faqInfo: z
+    .array(
+      z.object({
+        id: z.number(),
+        question: z.string().nullable(),
+        answer: z.string().nullable(),
+        category: z.string().nullable(),
+        faqProgramType: z.string().nullable(),
+      }),
+    )
+    .nullable(),
 });
 
 export type ReportDetailAdmin = z.infer<typeof getReportDetailForAdminSchema>;
@@ -853,6 +871,13 @@ const updateReportSchema = z.object({
       discountPrice: z.number(),
     })
     .optional(),
+  faqInfo: z
+    .array(
+      z.object({
+        faqId: z.number(),
+      }),
+    )
+    .nullable(),
 });
 
 export type UpdateReportData = z.infer<typeof updateReportSchema>;

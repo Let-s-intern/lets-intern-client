@@ -11,7 +11,7 @@ import {
 } from '@/api/program';
 import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
 import { isDeprecatedProgram } from '@/lib/isDeprecatedProgram';
-import { UpdateLiveReq } from '@/schema';
+import { ProgramTypeEnum, UpdateLiveReq } from '@/schema';
 import { LiveContent } from '@/types/interface';
 import EditorApp from '@components/admin/lexical/EditorApp';
 import LivePreviewButton from '@components/admin/LivePreviewButton';
@@ -251,11 +251,11 @@ const LiveEdit: React.FC = () => {
 
       <div className="my-6">
         <FaqSection
-          programType="LIVE"
-          faqInfo={
-            input.faqInfo ?? live.faqInfo.map((info) => ({ faqId: info.id }))
+          programType={ProgramTypeEnum.enum.LIVE}
+          faqInfo={input.faqInfo}
+          setFaqInfo={(faqInfo) =>
+            setInput((prev) => ({ ...prev, faqInfo: faqInfo ?? [] }))
           }
-          setInput={setInput}
         />
       </div>
 
