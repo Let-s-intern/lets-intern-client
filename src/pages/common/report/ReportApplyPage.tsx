@@ -114,11 +114,11 @@ const ReportApplyPage = () => {
           <ProgramInfoSection
             onChangeRadio={(event, value) => setIsSubmitNow(value)}
           />
-          <HorizontalRule className="-mx-5 md:-mx-32 lg:mx-0" />
 
           {/* 진단용 서류 */}
           {isSubmitNow === 'true' && (
             <>
+              <HorizontalRule className="-mx-5 md:-mx-32 lg:mx-0" />
               <CallOut
                 className="bg-neutral-100"
                 header="❗ 제출 전 꼭 읽어주세요"
@@ -134,15 +134,14 @@ const ReportApplyPage = () => {
                   />
                 )}
               <HorizontalRule className="-mx-5 md:-mx-32 lg:mx-0" />
+              {/* 1:1 피드백 일정 */}
+              {reportApplication.isFeedbackApplied && <ScheduleSection />}
+              <HorizontalRule className="-mx-5 md:-mx-32 lg:mx-0" />
+
+              {/* 추가 정보 */}
+              <AdditionalInfoSection />
             </>
           )}
-
-          {/* 1:1 피드백 일정 */}
-          {reportApplication.isFeedbackApplied && <ScheduleSection />}
-          <HorizontalRule className="-mx-5 md:-mx-32 lg:mx-0" />
-
-          {/* 추가 정보 */}
-          <AdditionalInfoSection />
         </main>
       </div>
 
@@ -425,6 +424,10 @@ const ScheduleSection = () => {
 
   const onChangeTime = (e: SelectChangeEvent<unknown>) => {
     const prev = data[e.target.name as Key];
+    if (prev === undefined) {
+      alert('날짜를 먼저 선택해주세요');
+      return;
+    }
 
     setReportApplication({
       [e.target.name]: dayjs(prev as dayjs.ConfigType)
@@ -539,7 +542,6 @@ const AdditionalInfoSection = () => {
   );
 };
 
-/* 모바일 전용 결제 페이지(ReportPaymentPage)에서 같이 사용 */
 export const UsereInfoSection = () => {
   const [checked, setChecked] = useState(true);
 
@@ -639,7 +641,6 @@ export const UsereInfoSection = () => {
   );
 };
 
-/* 모바일 전용 결제 페이지(ReportPaymentPage)에서 같이 사용 */
 export const ReportPaymentSection = () => {
   const [message, setMessage] = useState('');
   const [options, setOptions] = useState<ReportOptionInfo[]>([]);
@@ -854,14 +855,15 @@ const RequiredStar = () => {
   return <span className="text-[#7B61FF]">*</span>;
 };
 
-const FileUploadButton = ({
+const FileUploadButton = React.memo(function FileUploadButton({
   file,
   dispatch,
 }: {
   file: File | null;
   dispatch: React.Dispatch<React.SetStateAction<File | null>>;
-}) => {
+}) {
   const ref = useRef<HTMLInputElement>(null);
+
   useEffect(() => {
     if (file && file.size > 50 * 1024 * 1024) {
       // 파일 사이즈가 50MB 초과일 경우
@@ -869,6 +871,7 @@ const FileUploadButton = ({
       dispatch(null);
     }
   }, [file]);
+
   return (
     <>
       <button
@@ -902,4 +905,4 @@ const FileUploadButton = ({
       />
     </>
   );
-};
+});
