@@ -13,10 +13,6 @@ const convertDateFormat = (date: string) => {
   return dayjs(date).format('YYYY.MM.DD');
 };
 
-const calPercent = (price: number, discount: number) => {
-  return Math.floor((discount / price) * 100);
-};
-
 const nearestTen = (amount: number): number => {
   return Math.floor(amount / 10) * 10;
 };
@@ -40,9 +36,9 @@ const CreditDelete = () => {
     errorCallback: (error) => {
       const err = error as AxiosError<{ status: number; message: string }>;
       alert(
-        err.response ? err.response.data.message : '결제 취소에 실패했습니다.',
+        '[결제 취소 실패]\n문제가 계속되는 경우 아래 채팅으로 문의 부탁드립니다.',
       );
-      // console.error(error);
+      console.error(err);
     },
   });
 
@@ -50,6 +46,8 @@ const CreditDelete = () => {
     const start = dayjs(paymentDetail?.programInfo.startDate);
     const end = dayjs(paymentDetail?.programInfo.endDate);
     const now = dayjs();
+
+    // 프로그램 시작 전이면 전액 환불
     if (now.isBefore(start)) {
       return 1;
     }
@@ -58,12 +56,18 @@ const CreditDelete = () => {
     const d3 = start.add(Math.ceil(duration / 3), 'day');
     const d2 = start.add(Math.ceil(duration / 2), 'day');
 
+    // 챌린지 진행 1/3 전이면: 2/3 부분환불
+    // 챌린지 진행 1/2 전이면: 1/2 부분환불
     if (now.isBefore(d3)) return 2 / 3;
     if (now.isBefore(d2)) return 1 / 2;
     return 0;
   };
 
   const getTotalRefund = (): number => {
+    /** 0원 환불
+     * 1. 무료 프로그램: 결제 금액이 0원인 경우
+     * 2. 프로그램 모두 수료한 경우
+     */
     if (
       paymentDetail?.paymentInfo.finalPrice === 0 ||
       !paymentDetail?.tossInfo?.balanceAmount ||
@@ -74,10 +78,13 @@ const CreditDelete = () => {
       return 0;
     }
 
+    /** 환불 로직
+     * 1. 전액 환불: 보증금 포함한 모든 결제 금액 환불
+     * 2. 부분 환불: 보증금 포함한 모든 결제 금액 * (환불 퍼센트)
+     */
     const couponPrice = paymentDetail.paymentInfo.couponDiscount || 0;
     const refundPrice = nearestTen(
-      (paymentDetail.priceInfo.price - paymentDetail.priceInfo.discount) *
-        getRefundPercent() -
+      (paymentDetail.paymentInfo.finalPrice ?? 0) * getRefundPercent() -
         couponPrice,
     );
 
@@ -103,12 +110,6 @@ const CreditDelete = () => {
               : 0);
   };
 
-  const isPartialRefund = (): boolean => {
-    if (getRefundPercent() !== 1 && getRefundPercent() !== 0) {
-      return true;
-    }
-    return false;
-  };
   return (
     <section
       className="flex w-full flex-col px-5 md:px-0"
