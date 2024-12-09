@@ -79,12 +79,14 @@ const CreditDelete = () => {
     }
 
     /** 환불 로직
-     * 1. 전액 환불: 보증금 포함한 모든 결제 금액 환불
-     * 2. 부분 환불: 보증금 포함한 모든 결제 금액 * (환불 퍼센트)
+     * 1. 전액 환불: 최종 결제 금액 환불
+     * 2. 부분 환불: (최종 결제 금액 + 쿠폰 금액) * (환불 퍼센트) - 쿠폰 금액
      */
     const couponPrice = paymentDetail.paymentInfo.couponDiscount || 0;
     const refundPrice = nearestTen(
-      (paymentDetail.paymentInfo.finalPrice ?? 0) * getRefundPercent() -
+      ((paymentDetail.paymentInfo.finalPrice ?? 0) +
+        (paymentDetail.paymentInfo.couponDiscount ?? 0)) *
+        getRefundPercent() -
         couponPrice,
     );
 
