@@ -1,10 +1,11 @@
-import ReportCreditSubRow from '@components/common/mypage/credit/ReportCreditSubRow';
 import { AxiosError } from 'axios';
 import dayjs from 'dayjs';
 import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+
+import useCredit from '@/hooks/useCredit';
+import CreditSubRow from '@components/common/mypage/credit/CreditSubRow';
 import { useCancelApplicationMutation } from '../../../api/application';
-import { usePaymentDetailQuery } from '../../../api/payment';
 import DescriptionBox from '../../../components/common/program/paymentSuccess/DescriptionBox';
 import PaymentInfoRow from '../../../components/common/program/paymentSuccess/PaymentInfoRow';
 import OrderProgramInfo from '../program/OrderProgramInfo';
@@ -13,20 +14,22 @@ const convertDateFormat = (date: string) => {
   return dayjs(date).format('YYYY.MM.DD');
 };
 
-const nearestTen = (amount: number): number => {
-  return Math.floor(amount / 10) * 10;
-};
-
 const CreditDelete = () => {
   const navigate = useNavigate();
-  const [isChecked, setIsChecked] = useState(false);
   const { paymentId } = useParams<{ paymentId: string }>();
+
+  const [isChecked, setIsChecked] = useState(false);
 
   const {
     data: paymentDetail,
     isLoading: paymentDetailIsLoading,
     isError: paymentDetailIsError,
-  } = usePaymentDetailQuery(paymentId);
+    discountPercent,
+    productAmount,
+    isPartialRefundExpected,
+    expectedPartialRefundDeductionAmount,
+    expectedTotalRefund,
+  } = useCredit(paymentId);
 
   const { mutate: tryCancelPayment } = useCancelApplicationMutation({
     applicationId: paymentDetail?.programInfo.applicationId || 0,
@@ -41,76 +44,6 @@ const CreditDelete = () => {
       console.error(err);
     },
   });
-
-  const getRefundPercent = (): number => {
-    const start = dayjs(paymentDetail?.programInfo.startDate);
-    const end = dayjs(paymentDetail?.programInfo.endDate);
-    const now = dayjs();
-
-    // 프로그램 시작 전이면 전액 환불
-    if (now.isBefore(start)) {
-      return 1;
-    }
-
-    const duration = end.diff(start, 'day') + 1;
-    const d3 = start.add(Math.ceil(duration / 3), 'day');
-    const d2 = start.add(Math.ceil(duration / 2), 'day');
-
-    // 챌린지 진행 1/3 전이면: 2/3 부분환불
-    // 챌린지 진행 1/2 전이면: 1/2 부분환불
-    if (now.isBefore(d3)) return 2 / 3;
-    if (now.isBefore(d2)) return 1 / 2;
-    return 0;
-  };
-
-  const getTotalRefund = (): number => {
-    /** 0원 환불
-     * 1. 무료 프로그램: 결제 금액이 0원인 경우
-     * 2. 프로그램 모두 수료한 경우
-     */
-    if (
-      paymentDetail?.paymentInfo.finalPrice === 0 ||
-      !paymentDetail?.tossInfo?.balanceAmount ||
-      paymentDetail.tossInfo.status !== 'DONE' ||
-      !paymentDetail.priceInfo.price ||
-      !paymentDetail.priceInfo.discount
-    ) {
-      return 0;
-    }
-
-    /** 환불 로직
-     * 1. 전액 환불: 최종 결제 금액 환불
-     * 2. 부분 환불: (최종 결제 금액 + 쿠폰 금액) * (환불 퍼센트) - 쿠폰 금액
-     */
-    const couponPrice = paymentDetail.paymentInfo.couponDiscount || 0;
-    const refundPrice = nearestTen(
-      ((paymentDetail.paymentInfo.finalPrice ?? 0) +
-        (paymentDetail.paymentInfo.couponDiscount ?? 0)) *
-        getRefundPercent() -
-        couponPrice,
-    );
-
-    return Math.max(0, refundPrice);
-  };
-
-  const getTotalPayment = (): number => {
-    if (!paymentDetail) return 0;
-
-    return paymentDetail.tossInfo && paymentDetail.tossInfo.totalAmount
-      ? paymentDetail.tossInfo.totalAmount
-      : (paymentDetail.priceInfo.price ?? 0) -
-          (paymentDetail.priceInfo.discount ?? 0) -
-          (paymentDetail.paymentInfo?.couponDiscount === -1
-            ? (paymentDetail.priceInfo.price
-                ? paymentDetail.priceInfo.price
-                : 0) -
-              (paymentDetail.priceInfo.discount
-                ? paymentDetail.priceInfo.discount
-                : 0)
-            : paymentDetail.paymentInfo?.couponDiscount
-              ? paymentDetail.paymentInfo.couponDiscount
-              : 0);
-  };
 
   return (
     <section
@@ -138,34 +71,49 @@ const CreditDelete = () => {
                 <div className="flex w-full items-center justify-start gap-3 border-y-[1.5px] border-neutral-0 px-3 py-5 font-bold text-neutral-0">
                   <div>예정 환불금액</div>
                   <div className="flex grow items-center justify-end">
-                    {getTotalRefund().toLocaleString()}원
+                    {expectedTotalRefund.toLocaleString()}원
                   </div>
                 </div>
                 <div className="flex w-full flex-col px-3">
-                  <ReportCreditSubRow
-                    title="결제금액"
-                    content={getTotalPayment().toLocaleString() + '원'}
+                  <CreditSubRow
+                    title="결제상품"
+                    content={productAmount.toLocaleString() + '원'}
                   />
-                  <ReportCreditSubRow
-                    title="환불 차감 금액"
+                  <CreditSubRow
+                    title={`할인 (${discountPercent}%)`}
                     content={`-${(
-                      getTotalPayment() - getTotalRefund()
+                      paymentDetail.priceInfo.discount ?? 0
                     ).toLocaleString()}원`}
                   />
+                  <CreditSubRow
+                    title="쿠폰"
+                    content={`-${(paymentDetail.paymentInfo.couponDiscount ?? 0).toLocaleString()}원`}
+                  />
+                  {isPartialRefundExpected && (
+                    <>
+                      <CreditSubRow
+                        title="부분환불 (챌린지)"
+                        content={`-${expectedPartialRefundDeductionAmount.toLocaleString()}원`}
+                      />
+                      {/* 부분 환불이면, 환불 규정 안내 */}
+                      <div className="py-2 text-xs font-medium text-primary-dark">
+                        *환불 규정은{' '}
+                        <a
+                          className="underline underline-offset-2"
+                          href="https://letscareer.oopy.io/5eb0ebdd-e10c-4aa1-b28a-8bd0964eca0b"
+                          target="_blank"
+                          rel="noreferrer"
+                        >
+                          자주 묻는 질문
+                        </a>
+                        을 참고해주세요
+                      </div>
+                    </>
+                  )}
                 </div>
-                <div className="py-2 text-xs font-medium text-primary-dark">
-                  *환불 규정은{' '}
-                  <a
-                    className="underline underline-offset-2"
-                    href="https://letscareer.oopy.io/5eb0ebdd-e10c-4aa1-b28a-8bd0964eca0b"
-                    target="_blank"
-                    rel="noreferrer"
-                  >
-                    자주 묻는 질문
-                  </a>
-                  을 참고해주세요
-                </div>
+
                 <hr className="w-full border-neutral-85" />
+
                 <div className="flex w-full flex-col">
                   <PaymentInfoRow
                     title="결제일자"
