@@ -363,7 +363,8 @@ const LexicalContent = ({ node }: { node: SerializedLexicalNode }) => {
                 src={_node.src}
                 alt={_node.altText}
                 draggable={false}
-                className="h-auto w-full"
+                className="h-auto"
+                style={{ width: _node.width }}
               />
             </picture>
             {_node.showCaption ? (
