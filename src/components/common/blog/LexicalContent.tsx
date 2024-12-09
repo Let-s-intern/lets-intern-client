@@ -309,6 +309,7 @@ const LexicalContent = ({ node }: { node: SerializedLexicalNode }) => {
     }
     case 'image': {
       const _node = node as SerializedImageNode;
+      console.dir(_node);
       const imageSources: {
         media: string;
         srcSet: string;
@@ -363,7 +364,8 @@ const LexicalContent = ({ node }: { node: SerializedLexicalNode }) => {
                 src={_node.src}
                 alt={_node.altText}
                 draggable={false}
-                className="h-auto w-full"
+                className="h-auto"
+                style={{ width: _node.width }}
               />
             </picture>
             {_node.showCaption ? (

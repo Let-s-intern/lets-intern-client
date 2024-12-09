@@ -137,7 +137,6 @@ const BlogEditPage = () => {
     });
 
     setSnackbar('블로그가 수정되었습니다.');
-    navgiate('/admin/blog/list');
   };
 
   useEffect(() => {
