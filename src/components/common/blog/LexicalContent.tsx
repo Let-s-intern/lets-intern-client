@@ -309,7 +309,6 @@ const LexicalContent = ({ node }: { node: SerializedLexicalNode }) => {
     }
     case 'image': {
       const _node = node as SerializedImageNode;
-      console.dir(_node);
       const imageSources: {
         media: string;
         srcSet: string;
