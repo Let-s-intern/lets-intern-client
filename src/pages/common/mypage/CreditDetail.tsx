@@ -37,8 +37,6 @@ const CreditDetail = () => {
     isError: userDataIsError,
   } = useUserQuery();
 
-  console.log('결제 상세 정보:', paymentDetail);
-
   return (
     <section
       className="flex w-full flex-col px-5 md:px-0"
