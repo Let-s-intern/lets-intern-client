@@ -85,7 +85,6 @@ const BlogCreatePage = () => {
     });
 
     setSnackbar('블로그가 생성되었습니다.');
-    navgiate('/admin/blog/list');
   };
 
   const onChange = (event: ChangeEvent<HTMLInputElement>) => {

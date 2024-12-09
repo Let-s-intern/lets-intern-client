@@ -132,12 +132,13 @@ const BlogEditPage = () => {
       tagList: editingValue.tagList.map((tag) => tag.id),
       displayDate:
         name === 'publish'
-          ? dayjs().format('YYYY-MM-DDTHH:mm')
-          : dateTime?.format('YYYY-MM-DDTHH:mm') || '',
+          ? dateTime
+            ? dateTime?.format('YYYY-MM-DDTHH:mm')
+            : dayjs().format('YYYY-MM-DDTHH:mm')
+          : (dateTime?.format('YYYY-MM-DDTHH:mm') ?? ''),
     });
 
     setSnackbar('블로그가 수정되었습니다.');
-    navgiate('/admin/blog/list');
   };
 
   useEffect(() => {

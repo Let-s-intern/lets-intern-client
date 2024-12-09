@@ -43,6 +43,7 @@ export type ChallengeColor = {
   curriculumBg: string;
   recommendBg: string;
   recommendLogo: string;
+  thumbnailBg: string;
 };
 
 const ChallengeView: React.FC<{
@@ -75,6 +76,7 @@ const ChallengeView: React.FC<{
     let curriculumBg = ''; // 커리큘럼 배경색
     let recommendBg = ''; // 프로그램 추천 배경색
     let recommendLogo = ''; // 프로그램 추천 로고색
+    let thumbnailBg = ''; // 썸네일 배경색
 
     switch (challenge.challengeType) {
       case PERSONAL_STATEMENT:
@@ -92,6 +94,7 @@ const ChallengeView: React.FC<{
         curriculumBg = '#EFF4F7';
         recommendBg = '#F1FBFF';
         recommendLogo = '#DDF5FF';
+        thumbnailBg = '#EEFAFF';
         break;
       case PORTFOLIO:
         primary = '#4A76FF';
@@ -108,6 +111,7 @@ const ChallengeView: React.FC<{
         curriculumBg = '#F3F3F3';
         recommendBg = '#F0F4FF';
         recommendLogo = '#DEE7FF';
+        thumbnailBg = '#FFF4DB';
         break;
       default:
         primary = '#4D55F5';
@@ -124,6 +128,7 @@ const ChallengeView: React.FC<{
         curriculumBg = '#F2F2F5';
         recommendBg = '#F3F4FF';
         recommendLogo = '#E8EAFF';
+        thumbnailBg = '#EDEEFE';
     }
     return {
       primary,
@@ -138,6 +143,7 @@ const ChallengeView: React.FC<{
       curriculumBg,
       recommendBg,
       recommendLogo,
+      thumbnailBg,
     };
   }, [challenge.challengeType]);
 

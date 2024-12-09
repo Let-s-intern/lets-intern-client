@@ -348,16 +348,8 @@ const LexicalContent = ({ node }: { node: SerializedLexicalNode }) => {
       }
 
       return (
-        <span
-          className="image"
-          style={{
-            maxWidth: _node.width ? `${_node.width}px` : undefined,
-          }}
-        >
-          <div
-            className="inline-block"
-            style={{ maxWidth: _node.width ? `${_node.width}px` : undefined }}
-          >
+        <span className="image">
+          <div className="inline-block">
             <picture>
               {imageSources.map((source, index) => (
                 <source
@@ -371,7 +363,8 @@ const LexicalContent = ({ node }: { node: SerializedLexicalNode }) => {
                 src={_node.src}
                 alt={_node.altText}
                 draggable={false}
-                className="h-auto w-full"
+                className="h-auto"
+                style={{ width: _node.width }}
               />
             </picture>
             {_node.showCaption ? (
