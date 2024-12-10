@@ -29,6 +29,7 @@ const CreditDetail = () => {
     isPayback,
     isPartialRefunded,
     partialRefundDeductionAmount,
+    couponDiscountAmount,
   } = useCredit(paymentId);
 
   const {
@@ -197,7 +198,7 @@ const CreditDetail = () => {
                   />
                   <CreditSubRow
                     title="쿠폰"
-                    content={`-${(paymentDetail.paymentInfo.couponDiscount ?? 0).toLocaleString()}원`}
+                    content={`-${(couponDiscountAmount ?? 0).toLocaleString()}원`}
                   />
                   {/* 부분환불된 내역이면 부분환불 차감 금액 표시 */}
                   {isCanceled && isPartialRefunded && (

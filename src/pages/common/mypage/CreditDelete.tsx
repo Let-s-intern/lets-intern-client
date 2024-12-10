@@ -29,6 +29,7 @@ const CreditDelete = () => {
     isPartialRefundExpected,
     expectedPartialRefundDeductionAmount,
     expectedTotalRefund,
+    couponDiscountAmount,
   } = useCredit(paymentId);
 
   const { mutate: tryCancelPayment } = useCancelApplicationMutation({
@@ -87,7 +88,7 @@ const CreditDelete = () => {
                   />
                   <CreditSubRow
                     title="쿠폰"
-                    content={`-${(paymentDetail.paymentInfo.couponDiscount ?? 0).toLocaleString()}원`}
+                    content={`-${(couponDiscountAmount ?? 0).toLocaleString()}원`}
                   />
                   {isPartialRefundExpected && (
                     <>

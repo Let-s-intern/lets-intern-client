@@ -6,6 +6,8 @@ import { usePaymentDetailQuery } from '@/api/payment';
 /** 프로그램 결제 내역 로직 */
 export default function useCredit(paymentId?: string | number) {
   const { data, isLoading, isError } = usePaymentDetailQuery(String(paymentId));
+  console.log(data);
+
   // 결제 취소 가능한 프로그램이면 true 아니면 false
   const isCancelable = useMemo(() => {
     if (
@@ -161,6 +163,13 @@ export default function useCredit(paymentId?: string | number) {
     [data?.tossInfo],
   );
 
+  const couponDiscountAmount = useMemo(() => {
+    if (data?.paymentInfo.couponDiscount === -1) {
+      return productAmount - (data.priceInfo.discount ?? 0);
+    }
+    return data?.paymentInfo.couponDiscount;
+  }, [data, productAmount]);
+
   return {
     data,
     isLoading,
@@ -174,6 +183,7 @@ export default function useCredit(paymentId?: string | number) {
     isPartialRefundExpected,
     expectedPartialRefundDeductionAmount,
     expectedTotalRefund,
+    couponDiscountAmount,
     isPayback,
     isPartialRefunded,
     partialRefundDeductionAmount,
