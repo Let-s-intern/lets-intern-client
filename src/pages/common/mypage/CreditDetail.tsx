@@ -1,5 +1,5 @@
 import useCredit from '@/hooks/useCredit';
-import CreditSubRow from '@components/common/mypage/credit/CreditSubRow';
+import ReportCreditSubRow from '@components/common/mypage/credit/ReportCreditSubRow';
 import dayjs from 'dayjs';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useUserQuery } from '../../../api/user';
@@ -29,6 +29,9 @@ const CreditDetail = () => {
     isPayback,
     isPartialRefunded,
     partialRefundDeductionAmount,
+    couponDiscountAmount,
+    totalPayment,
+    isFullAmountCouponUsed,
   } = useCredit(paymentId);
 
   const {
@@ -185,30 +188,47 @@ const CreditDetail = () => {
                 </div>
 
                 <div className="flex w-full flex-col px-3">
-                  <CreditSubRow
-                    title="결제상품"
-                    content={productAmount.toLocaleString() + '원'}
-                  />
-                  <CreditSubRow
-                    title={`할인 (${discountPercent}%)`}
-                    content={`-${(
-                      paymentDetail.priceInfo.discount ?? 0
-                    ).toLocaleString()}원`}
-                  />
-                  <CreditSubRow
-                    title="쿠폰"
-                    content={`-${(paymentDetail.paymentInfo.couponDiscount ?? 0).toLocaleString()}원`}
-                  />
+                  {/* 결제 내역에서는 정가 표시 */}
+                  {!isCanceled && (
+                    <ReportCreditSubRow
+                      title="정가"
+                      content={productAmount.toLocaleString() + '원'}
+                    />
+                  )}
+
+                  {/* 환불 내역에서는 결제금액 표시 */}
+                  {isCanceled && (
+                    <ReportCreditSubRow
+                      title="결제금액"
+                      content={totalPayment.toLocaleString() + '원'}
+                    />
+                  )}
+                  {/* 전액 쿠폰 사용한 환불 내역에서는 숨김 */}
+                  {!isCanceled && (
+                    <ReportCreditSubRow
+                      title="할인금액"
+                      content={`-${(
+                        paymentDetail.priceInfo.discount ?? 0
+                      ).toLocaleString()}원`}
+                    />
+                  )}
+                  {/* 전액 쿠폰 사용한 환불 내역에서는 숨김 */}
+                  {!isCanceled && (
+                    <ReportCreditSubRow
+                      title="쿠폰 할인 금액"
+                      content={`-${(couponDiscountAmount ?? 0).toLocaleString()}원`}
+                    />
+                  )}
                   {/* 부분환불된 내역이면 부분환불 차감 금액 표시 */}
                   {isCanceled && isPartialRefunded && (
-                    <CreditSubRow
-                      title={`부분환불 (${isPayback ? '페이백' : '챌린지'})`}
+                    <ReportCreditSubRow
+                      title={isPayback ? '페이백 금액' : '환불 차감 금액'}
                       content={`-${partialRefundDeductionAmount.toLocaleString()}원`}
                     />
                   )}
 
-                  {/* 부분환불된 내역이면 환불 규정 표시 */}
-                  {isCanceled && isPartialRefunded && (
+                  {/* 환불된 내역이면 환불 규정 표시 */}
+                  {isCanceled && (
                     <div className="py-2 text-xs font-medium text-primary-dark">
                       *환불 규정은{' '}
                       <a

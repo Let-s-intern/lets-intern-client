@@ -6,7 +6,7 @@ import { usePaymentDetailQuery } from '@/api/payment';
 /** 프로그램 결제 내역 로직 */
 export default function useCredit(paymentId?: string | number) {
   const { data, isLoading, isError } = usePaymentDetailQuery(String(paymentId));
-  console.log('결제 상세 내역:', data);
+  console.log(data);
 
   // 결제 취소 가능한 프로그램이면 true 아니면 false
   const isCancelable = useMemo(() => {
@@ -136,6 +136,9 @@ export default function useCredit(paymentId?: string | number) {
     return Math.max(0, refundPrice);
   }, [data, refundPercent]);
 
+  // 전액 쿠폰 사용 여부
+  const isFullAmountCouponUsed = data?.paymentInfo.couponDiscount === -1;
+
   /** CreditDelete 페이지에서 사용
    * isPartialRefundExpected: 부분 환불이 예상되면 true
    * expectedPartialRefundDeductionAmount: 부분 환불에서 차감될 금액 (렛츠커리어가 먹을 금액)
@@ -149,7 +152,9 @@ export default function useCredit(paymentId?: string | number) {
    * isPartialRefunded: 부분환불 한 내역이면 true
    * partialRefundDeductionAmount: 부분 환불에서 차감된 금액 (렛츠커리어가 먹은 금액)
    */
-  const isPartialRefunded = totalRefund !== data?.tossInfo?.totalAmount;
+
+  const isPartialRefunded =
+    !isFullAmountCouponUsed && totalRefund !== data?.tossInfo?.totalAmount;
   const partialRefundDeductionAmount =
     (data?.tossInfo?.totalAmount ?? 0) - totalRefund;
 
@@ -162,6 +167,14 @@ export default function useCredit(paymentId?: string | number) {
       ),
     [data?.tossInfo],
   );
+
+  // 쿠폰 할인 금액
+  const couponDiscountAmount = useMemo(() => {
+    if (data?.paymentInfo.couponDiscount === -1) {
+      return productAmount - (data.priceInfo.discount ?? 0);
+    }
+    return data?.paymentInfo.couponDiscount;
+  }, [data, productAmount]);
 
   return {
     data,
@@ -176,10 +189,13 @@ export default function useCredit(paymentId?: string | number) {
     isPartialRefundExpected,
     expectedPartialRefundDeductionAmount,
     expectedTotalRefund,
+    couponDiscountAmount,
     isPayback,
     isPartialRefunded,
     partialRefundDeductionAmount,
     totalRefund,
+    totalPayment,
+    isFullAmountCouponUsed,
   };
 }
 
