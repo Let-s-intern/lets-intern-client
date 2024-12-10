@@ -6,7 +6,6 @@ import { usePaymentDetailQuery } from '@/api/payment';
 /** 프로그램 결제 내역 로직 */
 export default function useCredit(paymentId?: string | number) {
   const { data, isLoading, isError } = usePaymentDetailQuery(String(paymentId));
-  console.log(data);
 
   // 결제 취소 가능한 프로그램이면 true 아니면 false
   const isCancelable = useMemo(() => {
@@ -75,12 +74,6 @@ export default function useCredit(paymentId?: string | number) {
     return (data.priceInfo.price ?? 0) + (data.priceInfo.refund ?? 0);
   }, [data]);
 
-  // 할인율
-  const discountPercent = useMemo(() => {
-    if (!data) return 0;
-    return (((data.priceInfo.discount ?? 0) / productAmount) * 100).toFixed(0);
-  }, [data, productAmount]);
-
   // 부분환불 비율
   const refundPercent = useMemo(() => {
     const start = dayjs(data?.programInfo.startDate);
@@ -136,25 +129,15 @@ export default function useCredit(paymentId?: string | number) {
     return Math.max(0, refundPrice);
   }, [data, refundPercent]);
 
-  // 전액 쿠폰 사용 여부
-  const isFullAmountCouponUsed = data?.paymentInfo.couponDiscount === -1;
-
   /** CreditDelete 페이지에서 사용
-   * isPartialRefundExpected: 부분 환불이 예상되면 true
    * expectedPartialRefundDeductionAmount: 부분 환불에서 차감될 금액 (렛츠커리어가 먹을 금액)
    */
-  const isPartialRefundExpected =
-    expectedTotalRefund !== data?.paymentInfo.finalPrice;
   const expectedPartialRefundDeductionAmount =
     totalPayment - expectedTotalRefund;
 
   /** CreditDetail 페이지에서 사용
-   * isPartialRefunded: 부분환불 한 내역이면 true
    * partialRefundDeductionAmount: 부분 환불에서 차감된 금액 (렛츠커리어가 먹은 금액)
    */
-
-  const isPartialRefunded =
-    !isFullAmountCouponUsed && totalRefund !== data?.tossInfo?.totalAmount;
   const partialRefundDeductionAmount =
     (data?.tossInfo?.totalAmount ?? 0) - totalRefund;
 
@@ -181,21 +164,16 @@ export default function useCredit(paymentId?: string | number) {
     isLoading,
     isError,
     productAmount,
-    discountPercent,
     isRefunded,
     isCanceled,
     isCancelable,
-    refundPercent,
-    isPartialRefundExpected,
     expectedPartialRefundDeductionAmount,
     expectedTotalRefund,
     couponDiscountAmount,
     isPayback,
-    isPartialRefunded,
     partialRefundDeductionAmount,
     totalRefund,
     totalPayment,
-    isFullAmountCouponUsed,
   };
 }
 
