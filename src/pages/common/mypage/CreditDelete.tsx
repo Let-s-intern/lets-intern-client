@@ -24,13 +24,8 @@ const CreditDelete = () => {
     data: paymentDetail,
     isLoading: paymentDetailIsLoading,
     isError: paymentDetailIsError,
-    discountPercent,
-    productAmount,
-    isPartialRefundExpected,
     expectedPartialRefundDeductionAmount,
     expectedTotalRefund,
-    couponDiscountAmount,
-    partialRefundDeductionAmount,
     totalPayment,
   } = useCredit(paymentId);
 

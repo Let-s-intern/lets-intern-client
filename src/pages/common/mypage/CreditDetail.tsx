@@ -20,18 +20,15 @@ const CreditDetail = () => {
     data: paymentDetail,
     isLoading: paymentDetailIsLoading,
     isError: paymentDetailIsError,
-    discountPercent,
-    productAmount,
     isRefunded,
     isCanceled,
     isCancelable,
     totalRefund,
     isPayback,
-    isPartialRefunded,
+    productAmount,
     partialRefundDeductionAmount,
     couponDiscountAmount,
     totalPayment,
-    isFullAmountCouponUsed,
   } = useCredit(paymentId);
 
   const {
@@ -203,7 +200,7 @@ const CreditDetail = () => {
                       content={totalPayment.toLocaleString() + '원'}
                     />
                   )}
-                  {/* 전액 쿠폰 사용한 환불 내역에서는 숨김 */}
+                  {/* 환불 내역에서는 숨김 */}
                   {!isCanceled && (
                     <ReportCreditSubRow
                       title="할인금액"
@@ -212,15 +209,15 @@ const CreditDetail = () => {
                       ).toLocaleString()}원`}
                     />
                   )}
-                  {/* 전액 쿠폰 사용한 환불 내역에서는 숨김 */}
+                  {/* 환불 내역에서는 숨김 */}
                   {!isCanceled && (
                     <ReportCreditSubRow
                       title="쿠폰 할인 금액"
                       content={`-${(couponDiscountAmount ?? 0).toLocaleString()}원`}
                     />
                   )}
-                  {/* 부분환불된 내역이면 부분환불 차감 금액 표시 */}
-                  {isCanceled && isPartialRefunded && (
+                  {/* 환불된 내역이면 환불 차감 금액 표시 */}
+                  {isCanceled && (
                     <ReportCreditSubRow
                       title={isPayback ? '페이백 금액' : '환불 차감 금액'}
                       content={`-${partialRefundDeductionAmount.toLocaleString()}원`}
