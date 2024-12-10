@@ -203,7 +203,7 @@ const CreditDetail = () => {
                   {isCanceled && isPartialRefunded && (
                     <CreditSubRow
                       title={`부분환불 (${isPayback ? '페이백' : '챌린지'})`}
-                      content={`-${partialRefundDeductionAmount}원`}
+                      content={`-${partialRefundDeductionAmount.toLocaleString()}원`}
                     />
                   )}
 

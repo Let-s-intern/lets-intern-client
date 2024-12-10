@@ -222,6 +222,7 @@ export const paymentDetailType = z.object({
     id: z.number().nullable().optional(),
     price: z.number().nullable().optional(),
     discount: z.number().nullable().optional(),
+    refund: z.number().nullable().optional(),
   }),
   paymentInfo: z.object({
     id: z.number().nullable().optional(),

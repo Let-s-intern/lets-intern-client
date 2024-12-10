@@ -6,6 +6,7 @@ import { usePaymentDetailQuery } from '@/api/payment';
 /** 프로그램 결제 내역 로직 */
 export default function useCredit(paymentId?: string | number) {
   const { data, isLoading, isError } = usePaymentDetailQuery(String(paymentId));
+  console.log('결제 상세 내역:', data);
 
   // 결제 취소 가능한 프로그램이면 true 아니면 false
   const isCancelable = useMemo(() => {
@@ -71,7 +72,7 @@ export default function useCredit(paymentId?: string | number) {
   const productAmount = useMemo(() => {
     if (!data) return 0;
 
-    return (data.priceInfo.price ?? 0) + (data.paymentInfo.paybackPrice ?? 0);
+    return (data.priceInfo.price ?? 0) + (data.priceInfo.refund ?? 0);
   }, [data]);
 
   // 할인율
