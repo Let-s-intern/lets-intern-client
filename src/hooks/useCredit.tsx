@@ -71,11 +71,7 @@ export default function useCredit(paymentId?: string | number) {
   const productAmount = useMemo(() => {
     if (!data) return 0;
 
-    return (
-      (data.priceInfo.price ?? 0) +
-      (data.priceInfo.discount ?? 0) +
-      (data.paymentInfo.couponDiscount ?? 0)
-    );
+    return (data.priceInfo.price ?? 0) + (data.paymentInfo.paybackPrice ?? 0);
   }, [data]);
 
   // 할인율
@@ -137,7 +133,7 @@ export default function useCredit(paymentId?: string | number) {
     );
 
     return Math.max(0, refundPrice);
-  }, [data]);
+  }, [data, refundPercent]);
 
   /** CreditDelete 페이지에서 사용
    * isPartialRefundExpected: 부분 환불이 예상되면 true
