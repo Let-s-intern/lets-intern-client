@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import useCredit from '@/hooks/useCredit';
-import CreditSubRow from '@components/common/mypage/credit/CreditSubRow';
+import ReportCreditSubRow from '@components/common/mypage/credit/ReportCreditSubRow';
 import { useCancelApplicationMutation } from '../../../api/application';
 import DescriptionBox from '../../../components/common/program/paymentSuccess/DescriptionBox';
 import PaymentInfoRow from '../../../components/common/program/paymentSuccess/PaymentInfoRow';
@@ -30,6 +30,8 @@ const CreditDelete = () => {
     expectedPartialRefundDeductionAmount,
     expectedTotalRefund,
     couponDiscountAmount,
+    partialRefundDeductionAmount,
+    totalPayment,
   } = useCredit(paymentId);
 
   const { mutate: tryCancelPayment } = useCancelApplicationMutation({
@@ -76,41 +78,26 @@ const CreditDelete = () => {
                   </div>
                 </div>
                 <div className="flex w-full flex-col px-3">
-                  <CreditSubRow
-                    title="결제상품"
-                    content={productAmount.toLocaleString() + '원'}
+                  <ReportCreditSubRow
+                    title="결제금액"
+                    content={totalPayment.toLocaleString() + '원'}
                   />
-                  <CreditSubRow
-                    title={`할인 (${discountPercent}%)`}
-                    content={`-${(
-                      paymentDetail.priceInfo.discount ?? 0
-                    ).toLocaleString()}원`}
+                  <ReportCreditSubRow
+                    title="환불 차감 금액"
+                    content={`-${(expectedPartialRefundDeductionAmount ?? 0).toLocaleString()}원`}
                   />
-                  <CreditSubRow
-                    title="쿠폰"
-                    content={`-${(couponDiscountAmount ?? 0).toLocaleString()}원`}
-                  />
-                  {isPartialRefundExpected && (
-                    <>
-                      <CreditSubRow
-                        title="부분환불 (챌린지)"
-                        content={`-${expectedPartialRefundDeductionAmount.toLocaleString()}원`}
-                      />
-                      {/* 부분 환불이면, 환불 규정 안내 */}
-                      <div className="py-2 text-xs font-medium text-primary-dark">
-                        *환불 규정은{' '}
-                        <a
-                          className="underline underline-offset-2"
-                          href="https://letscareer.oopy.io/5eb0ebdd-e10c-4aa1-b28a-8bd0964eca0b"
-                          target="_blank"
-                          rel="noreferrer"
-                        >
-                          자주 묻는 질문
-                        </a>
-                        을 참고해주세요
-                      </div>
-                    </>
-                  )}
+                  <div className="py-2 text-xs font-medium text-primary-dark">
+                    *환불 규정은{' '}
+                    <a
+                      className="underline underline-offset-2"
+                      href="https://letscareer.oopy.io/5eb0ebdd-e10c-4aa1-b28a-8bd0964eca0b"
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      자주 묻는 질문
+                    </a>
+                    을 참고해주세요
+                  </div>
                 </div>
 
                 <hr className="w-full border-neutral-85" />
