@@ -23,6 +23,7 @@ import { generateOrderId } from '@/lib/order';
 import { twMerge } from '@/lib/twMerge';
 import useReportApplicationStore from '@/store/useReportApplicationStore';
 import clsx from 'clsx';
+import { default as BaseButton } from '../ui/button/BaseButton';
 import {
   ReportFormCheckboxControlLabel,
   ReportFormRadioControlLabel,
@@ -67,7 +68,7 @@ const ReportApplyBottomSheet = React.forwardRef<
 
   console.log('신청서:', reportApplication);
 
-  const { reportPriceType, optionIds, isFeedbackApplied } = reportApplication;
+  const { optionIds, isFeedbackApplied } = reportApplication;
 
   useEffect(() => {
     if (isDrawerOpen) {
@@ -96,7 +97,7 @@ const ReportApplyBottomSheet = React.forwardRef<
     [setReportApplication],
   );
 
-  const handleApply = useCallback(() => {
+  const onClickApply = useCallback(() => {
     setReportApplication({
       orderId: generateOrderId(),
       reportId: report.reportId,
@@ -256,10 +257,6 @@ const ReportApplyBottomSheet = React.forwardRef<
   const optionsAvailable =
     priceInfo.reportOptionInfos && priceInfo.reportOptionInfos.length > 0;
 
-  const feedbackAvailable =
-    !priceInfo.feedbackPriceInfo ||
-    priceInfo.feedbackPriceInfo.feedbackPrice !== -1;
-
   const generateControlLabelClassName = (isLastChild: boolean) =>
     clsx('py-3 pl-2 pr-3', {
       // 마지막 아이템은 border 제외
@@ -276,18 +273,18 @@ const ReportApplyBottomSheet = React.forwardRef<
     >
       <div className="relative max-h-[calc(100vh-60px)] overflow-y-auto px-5">
         {/* 상단 닫기 버튼 */}
-        {isDrawerOpen && (
-          <div className="sticky top-0 z-10 mb-2 w-full bg-white py-2">
+        <div className="sticky top-0 z-10 w-full bg-white py-2">
+          {isDrawerOpen && (
             <div
-              className="mx-auto h-[5px] w-16 rounded-full bg-neutral-80"
+              className="mx-auto h-[5px] w-16 cursor-pointer rounded-full bg-neutral-80"
               onClick={() => setIsDrawerOpen(false)}
             />
-          </div>
-        )}
+          )}
+        </div>
 
         {/* 본문 */}
         {isDrawerOpen ? (
-          <div className="mb-5 flex flex-col gap-8">
+          <div className="mb-5 mt-2 flex flex-col gap-8">
             {/* 서류 진단 플랜 */}
             <FormControl fullWidth>
               <Heading2>{reportDisplayName} 진단 플랜 선택 (필수)*</Heading2>
@@ -462,35 +459,33 @@ const ReportApplyBottomSheet = React.forwardRef<
 
         {!isDrawerOpen ? (
           <div className="bg-white pb-2">
-            <button
-              type="button"
-              className="apply_button_click flex w-full flex-1 justify-center rounded-md border-2 border-primary bg-primary px-6 py-3 text-lg font-medium text-neutral-100 transition hover:bg-primary-light disabled:border-neutral-70 disabled:bg-neutral-70"
+            <BaseButton
+              className="apply_button_click w-full text-small18"
               onClick={() => setIsDrawerOpen(true)}
             >
               {report.reportType
                 ? convertReportTypeToDisplayName(report.reportType ?? RESUME)
                 : ''}{' '}
               서류 진단 신청하기
-            </button>
+            </BaseButton>
           </div>
         ) : null}
 
         {isDrawerOpen ? (
           <div className="sticky bottom-2 flex items-center gap-2">
-            <button
-              type="button"
-              className="flex w-full flex-1 justify-center rounded-md border-2 border-primary bg-neutral-100 px-6 py-3 text-lg font-medium text-primary-dark transition hover:border-primary-light disabled:border-neutral-70 disabled:bg-neutral-70 disabled:text-white"
+            <BaseButton
+              className="flex-1"
+              variant="outlined"
               onClick={() => setIsDrawerOpen(false)}
             >
               이전 단계로
-            </button>
-            <button
-              type="button"
-              onClick={handleApply}
-              className="next_button_click flex w-full flex-1 justify-center rounded-md border-2 border-primary bg-primary px-6 py-3 text-lg font-medium text-neutral-100 transition hover:bg-primary-light disabled:border-neutral-70 disabled:bg-neutral-70"
+            </BaseButton>
+            <BaseButton
+              className="next_button_click flex-1"
+              onClick={onClickApply}
             >
-              결제하기
-            </button>
+              신청하기
+            </BaseButton>
           </div>
         ) : null}
       </div>
