@@ -66,11 +66,10 @@ const ReportApplyBottomSheet = React.forwardRef<
   const { data: reportApplication, setReportApplication } =
     useReportApplicationStore();
 
-  console.log('신청서:', reportApplication);
-
   const { optionIds, isFeedbackApplied } = reportApplication;
 
   useEffect(() => {
+    // 드롭다운 열면 reportId 설정
     if (isDrawerOpen) {
       setReportApplication({ reportId: report.reportId });
     }
@@ -110,6 +109,12 @@ const ReportApplyBottomSheet = React.forwardRef<
       `/report/apply/${report.reportType?.toLowerCase()}/${report.reportId}`,
     );
   }, [navigate, report.reportId, report.reportType, setReportApplication]);
+
+  const generateControlLabelClassName = (isLastChild: boolean) =>
+    clsx('py-3 pl-2 pr-3', {
+      // 마지막 아이템은 border 제외
+      'border-b border-neutral-80': !isLastChild,
+    });
 
   const reportDisplayName = convertReportTypeToDisplayName(report.reportType); // 자기소개서, 이력서, 포트폴리오
 
@@ -256,12 +261,6 @@ const ReportApplyBottomSheet = React.forwardRef<
 
   const optionsAvailable =
     priceInfo.reportOptionInfos && priceInfo.reportOptionInfos.length > 0;
-
-  const generateControlLabelClassName = (isLastChild: boolean) =>
-    clsx('py-3 pl-2 pr-3', {
-      // 마지막 아이템은 border 제외
-      'border-b border-neutral-80': !isLastChild,
-    });
 
   return (
     <div
