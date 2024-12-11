@@ -1,12 +1,14 @@
 import { FormControl, FormGroup, RadioGroup } from '@mui/material';
 import React, {
   memo,
+  MouseEventHandler,
   ReactNode,
   useCallback,
   useEffect,
   useMemo,
   useState,
 } from 'react';
+import { IoCloseCircle } from 'react-icons/io5';
 import { useNavigate } from 'react-router-dom';
 
 import {
@@ -28,43 +30,23 @@ import {
 import ReportDropdown from './ReportDropdown';
 
 const { BASIC, PREMIUM } = reportPriceTypeEnum.enum;
+const { RESUME, PERSONAL_STATEMENT } = reportTypeSchema.enum;
+
+const REPORT_RADIO_VALUES = {
+  basicFeedback: 'basicFeedback',
+  premiumFeedback: 'premiumFeedback',
+  basic: 'basic',
+  premium: 'premium',
+} as const;
 
 const priceTypeByPlan = {
-  basicFeedback: BASIC,
-  premiumFeedback: PREMIUM,
-  basic: BASIC,
-  premium: PREMIUM,
+  [REPORT_RADIO_VALUES.basicFeedback]: BASIC,
+  [REPORT_RADIO_VALUES.premiumFeedback]: PREMIUM,
+  [REPORT_RADIO_VALUES.basic]: BASIC,
+  [REPORT_RADIO_VALUES.premium]: PREMIUM,
 } as Record<string, ReportPriceType>;
 
 const RADIO_CONTROL_LABEL_STYLE = { opacity: 0.75 };
-
-const ReportPriceView = memo(function ReportPriceView(props: {
-  price?: number | null;
-  discount?: number | null;
-}) {
-  const price = props.price ?? 0;
-  const discount = props.discount ?? 0;
-  const percent = ((discount / price) * 100).toFixed(0);
-  const discountedPrice = price - discount;
-  const hasDiscount = discount > 0;
-
-  return (
-    <div className="flex shrink-0 flex-col items-end">
-      {hasDiscount && (
-        <span className="inline-flex gap-1 text-xxsmall12 font-medium leading-none">
-          <span className="text-system-error/90">{percent}%</span>
-          <span className="text-neutral-50 line-through">
-            {price.toLocaleString()}원
-          </span>
-        </span>
-      )}
-
-      <span className="text-xsmall14 font-bold text-black/75">
-        {discountedPrice.toLocaleString()}원
-      </span>
-    </div>
-  );
-});
 
 interface ReportApplyBottomSheetProps {
   report: ActiveReport;
@@ -86,55 +68,6 @@ const ReportApplyBottomSheet = React.forwardRef<
   console.log('신청서:', reportApplication);
 
   const { reportPriceType, optionIds, isFeedbackApplied } = reportApplication;
-
-  const reportDisplayName = convertReportTypeToDisplayName(report.reportType);
-
-  // 이력서 진단 플랜 Radio 정보
-  const reportDiagnosisPlan = useMemo(() => {
-    const reportBasicInfo = priceInfo?.reportPriceInfos?.find(
-      (info) => info.reportPriceType === BASIC,
-    );
-    const reportPremiumInfo = priceInfo?.reportPriceInfos?.find(
-      (info) => info.reportPriceType === PREMIUM,
-    );
-    const feedbackInfo = priceInfo?.feedbackPriceInfo;
-
-    const basicLabel = `베이직 플랜${report.reportType === reportTypeSchema.enum.PERSONAL_STATEMENT ? '(1문항)' : ''}`;
-    const premiumLabel = `프리미엄 플랜(${report.reportType === reportTypeSchema.enum.PERSONAL_STATEMENT ? '4문항+총평 페이지 추가' : '채용 공고 맞춤 진단 추가'})`;
-
-    return [
-      {
-        value: 'basicFeedback',
-        label: '[추천] 베이직 + 1:1 피드백(40분) 패키지',
-        price:
-          (reportBasicInfo?.price ?? 0) + (feedbackInfo?.feedbackPrice ?? 0),
-        discount:
-          (reportBasicInfo?.discountPrice ?? 0) +
-          (feedbackInfo?.feedbackDiscountPrice ?? 0),
-      },
-      {
-        value: 'premiumFeedback',
-        label: '[추천] 프리미엄 + 1:1 피드백(40분) 패키지',
-        price:
-          (reportPremiumInfo?.price ?? 0) + (feedbackInfo?.feedbackPrice ?? 0),
-        discount:
-          (reportPremiumInfo?.discountPrice ?? 0) +
-          (feedbackInfo?.feedbackDiscountPrice ?? 0),
-      },
-      {
-        value: 'basic',
-        label: basicLabel,
-        price: reportBasicInfo?.price,
-        discount: reportBasicInfo?.discountPrice,
-      },
-      {
-        value: 'premium',
-        label: premiumLabel,
-        price: reportPremiumInfo?.price,
-        discount: reportPremiumInfo?.discountPrice,
-      },
-    ];
-  }, [priceInfo]);
 
   useEffect(() => {
     if (isDrawerOpen) {
@@ -176,6 +109,80 @@ const ReportApplyBottomSheet = React.forwardRef<
       `/report/apply/${report.reportType?.toLowerCase()}/${report.reportId}`,
     );
   }, [navigate, report.reportId, report.reportType, setReportApplication]);
+
+  const reportDisplayName = convertReportTypeToDisplayName(report.reportType); // 자기소개서, 이력서, 포트폴리오
+
+  // 이력서 진단 플랜 Radio 정보
+  const reportDiagnosisPlan = useMemo(() => {
+    const reportBasicInfo = priceInfo?.reportPriceInfos?.find(
+      (info) => info.reportPriceType === BASIC,
+    );
+    const reportPremiumInfo = priceInfo?.reportPriceInfos?.find(
+      (info) => info.reportPriceType === PREMIUM,
+    );
+    const feedbackInfo = priceInfo?.feedbackPriceInfo;
+
+    const basicLabel = `베이직 플랜${report.reportType === PERSONAL_STATEMENT ? '(1문항)' : ''}`;
+    const premiumLabel = `프리미엄 플랜(${report.reportType === PERSONAL_STATEMENT ? '4문항+총평 페이지 추가' : '채용 공고 맞춤 진단 추가'})`;
+
+    return [
+      {
+        value: REPORT_RADIO_VALUES.basicFeedback,
+        label: '[추천] 베이직 + 1:1 피드백(40분) 패키지',
+        price:
+          (reportBasicInfo?.price ?? 0) + (feedbackInfo?.feedbackPrice ?? 0),
+        discount:
+          (reportBasicInfo?.discountPrice ?? 0) +
+          (feedbackInfo?.feedbackDiscountPrice ?? 0),
+      },
+      {
+        value: REPORT_RADIO_VALUES.premiumFeedback,
+        label: '[추천] 프리미엄 + 1:1 피드백(40분) 패키지',
+        price:
+          (reportPremiumInfo?.price ?? 0) + (feedbackInfo?.feedbackPrice ?? 0),
+        discount:
+          (reportPremiumInfo?.discountPrice ?? 0) +
+          (feedbackInfo?.feedbackDiscountPrice ?? 0),
+      },
+      {
+        value: REPORT_RADIO_VALUES.basic,
+        label: basicLabel,
+        price: reportBasicInfo?.price,
+        discount: reportBasicInfo?.discountPrice,
+      },
+      {
+        value: REPORT_RADIO_VALUES.premium,
+        label: premiumLabel,
+        price: reportPremiumInfo?.price,
+        discount: reportPremiumInfo?.discountPrice,
+      },
+    ];
+  }, [priceInfo]);
+
+  const radioValue = useMemo(() => {
+    if (reportApplication.reportPriceType === undefined) return null;
+
+    const { reportPriceType, isFeedbackApplied } = reportApplication;
+
+    // 베이직 + 1:1 피드백
+    if (reportPriceType === BASIC && isFeedbackApplied) {
+      return REPORT_RADIO_VALUES.basicFeedback;
+    }
+    // 프리미엄 + 1:1 피드백
+    if (reportPriceType === PREMIUM && isFeedbackApplied) {
+      return REPORT_RADIO_VALUES.premiumFeedback;
+    }
+    // 베이직
+    if (reportPriceType === BASIC) return REPORT_RADIO_VALUES.basic;
+    // 프리미엄
+    if (reportPriceType === PREMIUM) return REPORT_RADIO_VALUES.premium;
+  }, [reportApplication.reportPriceType, reportApplication.isFeedbackApplied]);
+
+  const selectedReportPlan = useMemo(() => {
+    if (!radioValue) return null;
+
+    return reportDiagnosisPlan.find((item) => item.value === radioValue);
+  }, [radioValue, reportDiagnosisPlan]);
 
   const reportFinalPrice = useMemo(() => {
     let result = 0;
@@ -244,9 +251,7 @@ const ReportApplyBottomSheet = React.forwardRef<
     ? (priceInfo?.feedbackPriceInfo?.feedbackDiscountPrice ?? 0)
     : 0;
 
-  if (!priceInfo || !report.reportType) {
-    return null;
-  }
+  if (!priceInfo || !report.reportType) return null;
 
   const optionsAvailable =
     priceInfo.reportOptionInfos && priceInfo.reportOptionInfos.length > 0;
@@ -292,7 +297,7 @@ const ReportApplyBottomSheet = React.forwardRef<
               >
                 <RadioGroup
                   aria-labelledby="report-diagnosis-plan-group-label"
-                  defaultValue="basicFeedback"
+                  value={radioValue}
                   onChange={(e) => {
                     {
                       const isFeedbackApplied = e.target.value.endsWith(
@@ -336,6 +341,7 @@ const ReportApplyBottomSheet = React.forwardRef<
                 <ReportDropdown
                   title="현직자가 알려주는 합격의 디테일"
                   labelId="option-group-label"
+                  initialOpenState={false}
                 >
                   <FormGroup aria-labelledby="option-group-label">
                     {priceInfo.reportOptionInfos?.map((option, index) => {
@@ -387,45 +393,69 @@ const ReportApplyBottomSheet = React.forwardRef<
               </FormControl>
             ) : null}
 
+            {/* 총 결제 금액 */}
             <div>
-              <h2 className="mb-2 text-xsmall14 font-semibold text-static-0">
-                총 결제 금액
-              </h2>
-              <div className="flex items-end justify-between py-2">
-                <span className="text-xsmall14 font-medium text-neutral-0/75">
-                  서류 진단서
-                </span>
-                <ReportPriceView
-                  price={reportFinalPrice}
-                  discount={reportFinalDiscountPrice}
-                />
-              </div>
-
-              {feedbackAvailable ? (
-                <div className="flex items-end justify-between py-2">
-                  <span className="text-xsmall14 font-medium text-neutral-0/75">
-                    1:1 피드백
-                  </span>
-                  <ReportPriceView
-                    price={feedbackFinalPrice}
-                    discount={feedbackFinalDiscountPrice}
-                  />
-                </div>
-              ) : null}
-
-              <hr className="my-4 border-neutral-0/5" />
-              <div className="flex items-end justify-between py-2">
-                <span></span>
-                <span className="text-xsmall14 font-bold text-black/75">
-                  {(
-                    reportFinalPrice +
-                    feedbackFinalPrice -
-                    reportFinalDiscountPrice -
-                    feedbackFinalDiscountPrice
-                  ).toLocaleString()}
-                  원
-                </span>
-              </div>
+              <Heading2>총 결제 금액</Heading2>
+              {/* 선택한 상품 */}
+              {selectedReportPlan && (
+                <>
+                  <div className="mt-3 overflow-hidden rounded-xs border border-neutral-80">
+                    {/*  선택한 서류 진단 플랜 */}
+                    {selectedReportPlan && (
+                      <SelectedItemBox
+                        title={selectedReportPlan.label}
+                        onClickDelete={() =>
+                          setReportApplication({
+                            reportPriceType: undefined,
+                            isFeedbackApplied: false,
+                          })
+                        }
+                        rightElement={
+                          <ReportPriceView
+                            price={selectedReportPlan.price}
+                            discount={selectedReportPlan.discount}
+                          />
+                        }
+                      />
+                    )}
+                    {/* 선택한 옵션 (현직자 피드백) */}
+                    {priceInfo.reportOptionInfos?.map((info) => {
+                      if (optionIds.includes(info.reportOptionId))
+                        return (
+                          <SelectedItemBox
+                            key={info.reportOptionId}
+                            className="border-t border-neutral-80"
+                            title={info.title ?? ''}
+                            onClickDelete={() =>
+                              setReportApplication({
+                                optionIds: reportApplication.optionIds.filter(
+                                  (id) => id !== info.reportOptionId,
+                                ),
+                              })
+                            }
+                            rightElement={
+                              <ReportPriceView
+                                price={info.price}
+                                discount={info.discountPrice}
+                              />
+                            }
+                          />
+                        );
+                    })}
+                  </div>
+                  <hr className="mt-3 border-neutral-0/5" />
+                </>
+              )}
+              {/* 가격 */}
+              <span className="mt-3 block text-right text-small18 font-bold text-black/75">
+                {(
+                  reportFinalPrice +
+                  feedbackFinalPrice -
+                  reportFinalDiscountPrice -
+                  feedbackFinalDiscountPrice
+                ).toLocaleString()}
+                원
+              </span>
             </div>
           </div>
         ) : null}
@@ -438,7 +468,7 @@ const ReportApplyBottomSheet = React.forwardRef<
               onClick={() => setIsDrawerOpen(true)}
             >
               {report.reportType
-                ? convertReportTypeToDisplayName(report.reportType || 'RESUME')
+                ? convertReportTypeToDisplayName(report.reportType ?? RESUME)
                 : ''}{' '}
               서류 진단 신청하기
             </button>
@@ -471,6 +501,60 @@ const ReportApplyBottomSheet = React.forwardRef<
 const Heading2 = ({ children }: { children: ReactNode }) => (
   <h2 className="mb-4 text-xsmall14 font-semibold text-static-0">{children}</h2>
 );
+
+const ReportPriceView = memo(function ReportPriceView(props: {
+  price?: number | null;
+  discount?: number | null;
+}) {
+  const price = props.price ?? 0;
+  const discount = props.discount ?? 0;
+  const percent = ((discount / price) * 100).toFixed(0);
+  const discountedPrice = price - discount;
+  const hasDiscount = discount > 0;
+
+  return (
+    <div className="flex shrink-0 flex-col items-end">
+      {hasDiscount && (
+        <span className="inline-flex gap-1 text-xxsmall12 font-medium leading-none">
+          <span className="text-system-error/90">{percent}%</span>
+          <span className="text-neutral-50 line-through">
+            {price.toLocaleString()}원
+          </span>
+        </span>
+      )}
+
+      <span className="text-xsmall14 font-bold text-black/75">
+        {discountedPrice.toLocaleString()}원
+      </span>
+    </div>
+  );
+});
+
+const SelectedItemBox = ({
+  title,
+  rightElement,
+  className,
+  onClickDelete,
+}: {
+  title: string;
+  rightElement?: ReactNode;
+  className?: string;
+  onClickDelete?: MouseEventHandler<SVGElement>;
+}) => {
+  return (
+    <div className={twMerge('bg-neutral-100 p-3', className)}>
+      <div className="mb-2 flex items-center justify-between">
+        <span className="text-xsmall14 font-medium text-black/75">{title}</span>
+        <IoCloseCircle
+          className="h-6 w-6 cursor-pointer"
+          color="#D8D8D8"
+          onClick={onClickDelete}
+        />
+      </div>
+      <div>{rightElement}</div>
+    </div>
+  );
+};
 
 ReportApplyBottomSheet.displayName = 'ReportApplyBottomSheet';
 
