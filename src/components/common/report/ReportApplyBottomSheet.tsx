@@ -75,54 +75,26 @@ const ReportApplyBottomSheet = React.forwardRef<
     }
   }, [isDrawerOpen, report.reportId, setReportApplication]);
 
-  const setSelectedOptionIds = useCallback(
-    (optionIds: number[]) => {
-      setReportApplication({ optionIds });
-    },
-    [setReportApplication],
-  );
-
-  const setPriceType = useCallback(
-    (reportPriceType: ReportPriceType) => {
-      setReportApplication({ reportPriceType });
-    },
-    [setReportApplication],
-  );
-
-  const setFeedbackService = useCallback(
-    (isFeedbackApplied: boolean) => {
-      setReportApplication({ isFeedbackApplied });
-    },
-    [setReportApplication],
-  );
-
-  const onClickApply = useCallback(() => {
-    // 선택한 서류 진단 플랜이 없으면 신청 불가
-    if (!radioValue) {
-      alert('서류 진단 플랜을 선택해주세요');
-      return;
-    }
-
-    setReportApplication({
-      orderId: generateOrderId(),
-      reportId: report.reportId,
-      // 파일만 초기화
-      applyUrl: '',
-      recruitmentUrl: '',
-    });
-
-    navigate(
-      `/report/apply/${report.reportType?.toLowerCase()}/${report.reportId}`,
-    );
-  }, [navigate, report.reportId, report.reportType, setReportApplication]);
-
-  const generateControlLabelClassName = (isLastChild: boolean) =>
-    clsx('py-3 pl-2 pr-3', {
-      // 마지막 아이템은 border 제외
-      'border-b border-neutral-80': !isLastChild,
-    });
-
   const reportDisplayName = convertReportTypeToDisplayName(report.reportType); // 자기소개서, 이력서, 포트폴리오
+
+  const radioValue = useMemo(() => {
+    if (reportApplication.reportPriceType === undefined) return null;
+
+    const { reportPriceType, isFeedbackApplied } = reportApplication;
+
+    // 베이직 + 1:1 피드백
+    if (reportPriceType === BASIC && isFeedbackApplied) {
+      return REPORT_RADIO_VALUES.basicFeedback;
+    }
+    // 프리미엄 + 1:1 피드백
+    if (reportPriceType === PREMIUM && isFeedbackApplied) {
+      return REPORT_RADIO_VALUES.premiumFeedback;
+    }
+    // 베이직
+    if (reportPriceType === BASIC) return REPORT_RADIO_VALUES.basic;
+    // 프리미엄
+    if (reportPriceType === PREMIUM) return REPORT_RADIO_VALUES.premium;
+  }, [reportApplication.reportPriceType, reportApplication.isFeedbackApplied]);
 
   // 이력서 진단 플랜 Radio 정보
   const reportDiagnosisPlan = useMemo(() => {
@@ -171,30 +143,64 @@ const ReportApplyBottomSheet = React.forwardRef<
     ];
   }, [priceInfo]);
 
-  const radioValue = useMemo(() => {
-    if (reportApplication.reportPriceType === undefined) return null;
-
-    const { reportPriceType, isFeedbackApplied } = reportApplication;
-
-    // 베이직 + 1:1 피드백
-    if (reportPriceType === BASIC && isFeedbackApplied) {
-      return REPORT_RADIO_VALUES.basicFeedback;
-    }
-    // 프리미엄 + 1:1 피드백
-    if (reportPriceType === PREMIUM && isFeedbackApplied) {
-      return REPORT_RADIO_VALUES.premiumFeedback;
-    }
-    // 베이직
-    if (reportPriceType === BASIC) return REPORT_RADIO_VALUES.basic;
-    // 프리미엄
-    if (reportPriceType === PREMIUM) return REPORT_RADIO_VALUES.premium;
-  }, [reportApplication.reportPriceType, reportApplication.isFeedbackApplied]);
-
   const selectedReportPlan = useMemo(() => {
     if (!radioValue) return null;
 
     return reportDiagnosisPlan.find((item) => item.value === radioValue);
   }, [radioValue, reportDiagnosisPlan]);
+
+  const setSelectedOptionIds = useCallback(
+    (optionIds: number[]) => {
+      setReportApplication({ optionIds });
+    },
+    [setReportApplication],
+  );
+
+  const setPriceType = useCallback(
+    (reportPriceType: ReportPriceType) => {
+      setReportApplication({ reportPriceType });
+    },
+    [setReportApplication],
+  );
+
+  const setFeedbackService = useCallback(
+    (isFeedbackApplied: boolean) => {
+      setReportApplication({ isFeedbackApplied });
+    },
+    [setReportApplication],
+  );
+
+  const onClickApply = useCallback(() => {
+    // 선택한 서류 진단 플랜이 없으면 신청 불가
+    if (!radioValue) {
+      alert('서류 진단 플랜을 선택해주세요');
+      return;
+    }
+
+    setReportApplication({
+      orderId: generateOrderId(),
+      reportId: report.reportId,
+      // 파일만 초기화
+      applyUrl: '',
+      recruitmentUrl: '',
+    });
+
+    navigate(
+      `/report/apply/${report.reportType?.toLowerCase()}/${report.reportId}`,
+    );
+  }, [
+    navigate,
+    radioValue,
+    report.reportId,
+    report.reportType,
+    setReportApplication,
+  ]);
+
+  const generateControlLabelClassName = (isLastChild: boolean) =>
+    clsx('py-3 pl-2 pr-3', {
+      // 마지막 아이템은 border 제외
+      'border-b border-neutral-80': !isLastChild,
+    });
 
   const reportFinalPrice = useMemo(() => {
     let result = 0;
