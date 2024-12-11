@@ -97,6 +97,12 @@ const ReportApplyBottomSheet = React.forwardRef<
   );
 
   const onClickApply = useCallback(() => {
+    // 선택한 서류 진단 플랜이 없으면 신청 불가
+    if (!radioValue) {
+      alert('서류 진단 플랜을 선택해주세요');
+      return;
+    }
+
     setReportApplication({
       orderId: generateOrderId(),
       reportId: report.reportId,
@@ -286,7 +292,9 @@ const ReportApplyBottomSheet = React.forwardRef<
           <div className="mb-5 mt-2 flex flex-col gap-8">
             {/* 서류 진단 플랜 */}
             <FormControl fullWidth>
-              <Heading2>{reportDisplayName} 진단 플랜 선택 (필수)*</Heading2>
+              <Heading2 className="mb-4">
+                {reportDisplayName} 진단 플랜 선택 (필수)*
+              </Heading2>
               <ReportDropdown
                 title={`합격을 이끄는 ${reportDisplayName} 진단 플랜`}
                 labelId="report-diagnosis-plan-group-label"
@@ -332,7 +340,7 @@ const ReportApplyBottomSheet = React.forwardRef<
             {/* 현직자 피드백 (옵션) */}
             {optionsAvailable ? (
               <FormControl fullWidth>
-                <Heading2>현직자 피드백 (선택)</Heading2>
+                <Heading2 className="mb-4">현직자 피드백 (선택)</Heading2>
 
                 <ReportDropdown
                   title="현직자가 알려주는 합격의 디테일"
@@ -393,7 +401,7 @@ const ReportApplyBottomSheet = React.forwardRef<
             <div>
               <Heading2>총 결제 금액</Heading2>
               {/* 선택한 상품 */}
-              {selectedReportPlan && (
+              {(selectedReportPlan || optionIds.length > 0) && (
                 <>
                   <div className="mt-3 overflow-hidden rounded-xs border border-neutral-80">
                     {/*  선택한 서류 진단 플랜 */}
@@ -492,8 +500,18 @@ const ReportApplyBottomSheet = React.forwardRef<
   );
 });
 
-const Heading2 = ({ children }: { children: ReactNode }) => (
-  <h2 className="mb-4 text-xsmall14 font-semibold text-static-0">{children}</h2>
+const Heading2 = ({
+  children,
+  className,
+}: {
+  children?: ReactNode;
+  className?: string;
+}) => (
+  <h2
+    className={twMerge('text-xsmall14 font-semibold text-static-0', className)}
+  >
+    {children}
+  </h2>
 );
 
 const ReportPriceView = memo(function ReportPriceView(props: {
