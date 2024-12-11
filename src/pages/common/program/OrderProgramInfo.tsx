@@ -13,12 +13,14 @@ const OrderProgramInfo = ({
   startDate,
   thumbnail,
   title,
+  programType,
 }: {
   thumbnail?: ProgramInfo['thumbnail'];
   title?: ProgramInfo['title'];
   startDate?: ProgramInfo['startDate'];
   endDate?: ProgramInfo['endDate'];
   progressType?: ProgramInfo['progressType'];
+  programType?: ProgramInfo['programType'];
 }) => {
   return (
     <div className="flex w-full flex-col items-start justify-center gap-y-6">
@@ -36,7 +38,7 @@ const OrderProgramInfo = ({
               <div className="shrink-0 text-neutral-30">진행 일정</div>
               <div className="text-primary-dark">{`${convertDateFormat(startDate || '')} - ${convertDateFormat(endDate || '')}`}</div>
             </div>
-            {progressType !== 'none' && (
+            {progressType !== 'none' && programType !== 'CHALLENGE' && (
               <div className="flex w-full items-center justify-start gap-x-4 text-xs font-medium">
                 <div className="shrink-0 text-neutral-30">진행 방식</div>
                 <div className="text-primary-dark">{`${
