@@ -22,7 +22,7 @@ export const reportTypeSchema = z.enum([
 export type ReportType = z.infer<typeof reportTypeSchema>;
 
 export function convertReportTypeToDisplayName(
-  type?: ReportType | 'PERSONAL-STATEMENT' | null ,
+  type?: ReportType | 'PERSONAL-STATEMENT' | null,
 ) {
   if (!type) {
     return '';
@@ -168,7 +168,7 @@ export const reportPriceTypeEnum = z.enum(['BASIC', 'PREMIUM']);
 
 export type ReportPriceType = z.infer<typeof reportPriceTypeEnum>;
 
-export const convertReportPriceType = (type: ReportPriceType) => {
+export const convertReportPriceType = (type?: ReportPriceType) => {
   switch (type) {
     case 'BASIC':
       return '베이직';

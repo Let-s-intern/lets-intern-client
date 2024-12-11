@@ -54,9 +54,6 @@ const ReportPaymentFail = () => {
     reportApplication.optionIds.length === 0
       ? convertReportPriceType(reportApplication.reportPriceType)
       : `${convertReportPriceType(reportApplication.reportPriceType)} + 옵션`;
-  const discount =
-    payment.reportDiscount + payment.optionDiscount + payment.feedbackDiscount;
-  const total = payment.report + payment.option + payment.feedback;
 
   return (
     <div className="mx-auto max-w-5xl px-5" data-program-text={title}>
