@@ -6,7 +6,27 @@ import useAuthStore from '../../../../../store/useAuthStore';
 import axios from '../../../../../utils/axios';
 import KakaoChannel from './KakaoChannel';
 import NavItem from './NavItem';
+import { NavSubItemProps } from './NavSubItem';
 import SideNavItem from './SideNavItem';
+
+const reportHoverItem: NavSubItemProps[] = [
+  {
+    text: '이력서 진단 받기',
+    to: 'report/landing/resume',
+  },
+  {
+    text: '자기소개서 진단 받기',
+    to: 'report/landing/personal-statement',
+  },
+  {
+    text: '포트폴리오 진단 받기',
+    to: 'report/landing/portfolio',
+  },
+  {
+    text: 'MY 진단서 보기',
+    to: 'report/management',
+  },
+];
 
 const NavBar = () => {
   const navigate = useNavigate();
@@ -78,7 +98,7 @@ const NavBar = () => {
       {/* 상단 네비게이션 바 */}
       <div className="lg:p-30 fixed top-0 z-30 h-[3.75rem] w-screen border-b border-neutral-80 bg-static-100 px-5 sm:px-20 md:h-[4.375rem] lg:h-[4.75rem] lg:px-28">
         <div className="flex h-full items-center justify-between">
-          <div className="flex items-center gap-4 sm:gap-9">
+          <div className="flex h-full items-center gap-4 sm:gap-9">
             <Link to="/" className="h-[1.75rem] md:h-[2.2rem]">
               <img
                 src="/logo/logo-gradient-text.svg"
@@ -96,7 +116,11 @@ const NavBar = () => {
             <NavItem to="/blog/list" active={activeLink === 'BLOG'}>
               블로그
             </NavItem>
-            <NavItem to="/report/landing" active={activeLink === 'REPORT'}>
+            <NavItem
+              to={reportHoverItem[0].to}
+              active={activeLink === 'REPORT'}
+              hoverItem={reportHoverItem}
+            >
               🔥 서류 진단받고 합격하기
             </NavItem>
           </div>
