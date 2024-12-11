@@ -1,10 +1,11 @@
+import { ReportPriceType } from '@/api/report';
 import dayjs from 'dayjs';
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
 export interface ReportApplication {
   reportId: number | null;
-  reportPriceType: 'BASIC' | 'PREMIUM';
+  reportPriceType?: ReportPriceType;
   optionIds: number[];
   isFeedbackApplied: boolean;
   couponId: number | null;
@@ -39,7 +40,7 @@ const useReportApplicationStore = create(
     (set, get) => ({
       data: {
         reportId: null,
-        reportPriceType: 'BASIC' as const,
+        reportPriceType: undefined,
         optionIds: [],
         isFeedbackApplied: false,
         couponId: null,
@@ -72,7 +73,7 @@ const useReportApplicationStore = create(
         set({
           data: {
             reportId: null,
-            reportPriceType: 'BASIC',
+            reportPriceType: undefined,
             optionIds: [],
             isFeedbackApplied: false,
             couponId: null,
