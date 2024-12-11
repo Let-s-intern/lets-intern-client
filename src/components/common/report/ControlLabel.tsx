@@ -7,14 +7,14 @@ import {
 } from '@mui/material';
 import React, { CSSProperties } from 'react';
 
-const radioSx = {
+const RADIO_SX = {
   color: '#E7E7E7',
   '&.Mui-checked': {
     color: '#5177FF',
   },
 };
 
-const checkboxSx = {
+const CHECKBOX_SX = {
   color: '#E7E7E7',
   '&.Mui-checked': {
     color: '#5177FF',
@@ -40,7 +40,7 @@ interface ExtendedControlLabelProps
 export const ReportFormRadioControlLabel: React.FC<
   ExtendedControlLabelProps
 > = ({ subText, labelStyle, sx, right, wrapperClassName, ...restProps }) => {
-  const defaultSx = {
+  const extendedSx = {
     ...sx,
     '.MuiFormControlLabel-label': {
       ...DEFAULT_LABEL_SX['.MuiFormControlLabel-label'],
@@ -57,8 +57,8 @@ export const ReportFormRadioControlLabel: React.FC<
     >
       <div className="flex h-5 items-center">
         <FormControlLabel
-          sx={defaultSx}
-          control={<Radio size="small" sx={radioSx} />}
+          sx={extendedSx}
+          control={<Radio size="small" sx={RADIO_SX} />}
           {...restProps}
         />
         {subText && (
@@ -74,7 +74,15 @@ export const ReportFormRadioControlLabel: React.FC<
 
 export const ReportFormCheckboxControlLabel: React.FC<
   ExtendedControlLabelProps
-> = ({ subText, sx, right, wrapperClassName, ...restProps }) => {
+> = ({ subText, sx, right, labelStyle, wrapperClassName, ...restProps }) => {
+  const extendedSx = {
+    ...sx,
+    '.MuiFormControlLabel-label': {
+      ...DEFAULT_LABEL_SX['.MuiFormControlLabel-label'],
+      ...labelStyle,
+    },
+  };
+
   return (
     <div
       className={twMerge(
@@ -84,8 +92,8 @@ export const ReportFormCheckboxControlLabel: React.FC<
     >
       <div className="flex h-5 items-center">
         <FormControlLabel
-          sx={{ ...DEFAULT_LABEL_SX, ...sx }}
-          control={<Checkbox size="small" sx={checkboxSx} />}
+          sx={extendedSx}
+          control={<Checkbox size="small" sx={CHECKBOX_SX} />}
           {...restProps}
         />
         {subText && (

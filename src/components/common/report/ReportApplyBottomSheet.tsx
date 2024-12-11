@@ -1,4 +1,4 @@
-import { FormControl, RadioGroup } from '@mui/material';
+import { FormControl, FormGroup, RadioGroup } from '@mui/material';
 import React, {
   memo,
   ReactNode,
@@ -255,7 +255,11 @@ const ReportApplyBottomSheet = React.forwardRef<
     !priceInfo.feedbackPriceInfo ||
     priceInfo.feedbackPriceInfo.feedbackPrice !== -1;
 
-  const reportType = window.location.pathname.split('/')[3];
+  const generateControlLabelClassName = (isLastChild: boolean) =>
+    clsx('py-3 pl-2 pr-3', {
+      // 마지막 아이템은 border 제외
+      'border-b border-neutral-80': !isLastChild,
+    });
 
   return (
     <div
@@ -278,16 +282,16 @@ const ReportApplyBottomSheet = React.forwardRef<
 
         {/* 본문 */}
         {isDrawerOpen ? (
-          <div className="mb-5 flex flex-col gap-6">
-            {/* 이력서 진단 플랜 */}
+          <div className="mb-5 flex flex-col gap-8">
+            {/* 서류 진단 플랜 */}
             <FormControl fullWidth>
               <Heading2>{reportDisplayName} 진단 플랜 선택 (필수)*</Heading2>
               <ReportDropdown
                 title={`합격을 이끄는 ${reportDisplayName} 진단 플랜`}
-                labelId="resume-diagnosis-plan-group-label"
+                labelId="report-diagnosis-plan-group-label"
               >
                 <RadioGroup
-                  aria-labelledby="resume-diagnosis-plan-group-label"
+                  aria-labelledby="report-diagnosis-plan-group-label"
                   defaultValue="basicFeedback"
                   onChange={(e) => {
                     {
@@ -298,6 +302,7 @@ const ReportApplyBottomSheet = React.forwardRef<
                         : false;
                       // 서류진단 가격 유형 설정 (BASIC, PREMIUM)
                       setPriceType(priceTypeByPlan[e.target.value]);
+                      // 피드백 신청 여부
                       setFeedbackService(isFeedbackApplied);
                     }
                   }}
@@ -307,11 +312,9 @@ const ReportApplyBottomSheet = React.forwardRef<
                       key={item.label}
                       label={item.label}
                       value={item.value}
-                      wrapperClassName={clsx('py-3 pl-2 pr-3', {
-                        // 마지막 아이템은 border 제외
-                        'border-b border-neutral-80':
-                          index !== reportDiagnosisPlan.length - 1,
-                      })}
+                      wrapperClassName={generateControlLabelClassName(
+                        index === reportDiagnosisPlan.length - 1,
+                      )}
                       labelStyle={RADIO_CONTROL_LABEL_STYLE}
                       right={
                         <ReportPriceView
@@ -325,55 +328,62 @@ const ReportApplyBottomSheet = React.forwardRef<
               </ReportDropdown>
             </FormControl>
 
-            {/* 기본 서비스 옵션 */}
+            {/* 현직자 피드백 (옵션) */}
             {optionsAvailable ? (
               <FormControl fullWidth>
                 <Heading2>현직자 피드백 (선택)</Heading2>
-                {reportType !== 'personal-statement' && (
-                  <p className="mb-2 text-xxsmall12 text-neutral-45">
-                    *현직자 피드백 선택시, 현직자 멘토에게 쏠쏠한 서류 작성
-                    꿀팁을 듣거나 앞으로의 커리어 조언까지 얻어갈 수 있어요.
-                  </p>
-                )}
-                <div className="mb-2 flex flex-col">
-                  {priceInfo.reportOptionInfos?.map((option) => {
-                    const price = option.price ?? 0;
-                    const discount = option.discountPrice ?? 0;
-                    const checked = Boolean(
-                      optionIds.find(
-                        (selectedOption) =>
-                          selectedOption === option.reportOptionId,
-                      ),
-                    );
 
-                    return (
-                      <ReportFormCheckboxControlLabel
-                        key={option.reportOptionId}
-                        checked={checked}
-                        onChange={(e, checked) => {
-                          if (checked) {
-                            setSelectedOptionIds([
-                              ...optionIds,
-                              option.reportOptionId,
-                            ]);
-                          } else {
-                            setSelectedOptionIds(
-                              optionIds.filter(
-                                (selectedOption) =>
-                                  selectedOption !== option.reportOptionId,
-                              ),
-                            );
+                <ReportDropdown
+                  title="현직자가 알려주는 합격의 디테일"
+                  labelId="option-group-label"
+                >
+                  <FormGroup aria-labelledby="option-group-label">
+                    {priceInfo.reportOptionInfos?.map((option, index) => {
+                      const price = option.price ?? 0;
+                      const discount = option.discountPrice ?? 0;
+                      const checked = Boolean(
+                        optionIds.find(
+                          (selectedOption) =>
+                            selectedOption === option.reportOptionId,
+                        ),
+                      );
+
+                      return (
+                        <ReportFormCheckboxControlLabel
+                          key={option.reportOptionId}
+                          checked={checked}
+                          onChange={(e, checked) => {
+                            if (checked) {
+                              setSelectedOptionIds([
+                                ...optionIds,
+                                option.reportOptionId,
+                              ]);
+                            } else {
+                              setSelectedOptionIds(
+                                optionIds.filter(
+                                  (selectedOption) =>
+                                    selectedOption !== option.reportOptionId,
+                                ),
+                              );
+                            }
+                          }}
+                          wrapperClassName={generateControlLabelClassName(
+                            index ===
+                              (priceInfo.reportOptionInfos?.length ?? 0) - 1,
+                          )}
+                          label={option.title}
+                          labelStyle={RADIO_CONTROL_LABEL_STYLE}
+                          right={
+                            <ReportPriceView
+                              price={price}
+                              discount={discount}
+                            />
                           }
-                        }}
-                        wrapperClassName="items-end py-2"
-                        label={option.title}
-                        right={
-                          <ReportPriceView price={price} discount={discount} />
-                        }
-                      />
-                    );
-                  })}
-                </div>
+                        />
+                      );
+                    })}
+                  </FormGroup>
+                </ReportDropdown>
               </FormControl>
             ) : null}
 
