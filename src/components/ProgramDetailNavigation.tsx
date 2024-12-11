@@ -3,7 +3,7 @@ import { ProgramType } from '@/types/common';
 import { useEffect, useState } from 'react';
 import { ChallengeColor } from './ChallengeView';
 
-interface NavItem {
+export interface NavItem {
   title: string;
   to: string;
 }
@@ -108,7 +108,7 @@ const ProgramDetailNavigation = ({
   return (
     <nav
       className={twMerge(
-        'sticky top-[3.65rem] z-30 flex w-full justify-center gap-x-1 border-b-2 border-neutral-80 bg-white px-6 md:top-[4.275rem] md:gap-x-[100px] lg:top-[4.65rem]',
+        'sticky top-[3.65rem] z-20 flex w-full justify-center gap-x-1 border-b-2 border-neutral-80 bg-white px-6 md:top-[4.275rem] md:gap-x-[100px] lg:top-[4.65rem]',
         programType === 'challenge' && 'challenge_navigation',
         programType === 'live' && 'live_navigation',
         className,
