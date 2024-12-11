@@ -145,7 +145,7 @@ const ReportApplyPage = () => {
         </main>
       </div>
 
-      <BottomSheet>
+      <BottomSheet className="xl:mx-48">
         {isMobile && (
           <button
             onClick={() => {
