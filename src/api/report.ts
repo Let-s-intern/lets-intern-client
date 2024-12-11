@@ -22,7 +22,7 @@ export const reportTypeSchema = z.enum([
 export type ReportType = z.infer<typeof reportTypeSchema>;
 
 export function convertReportTypeToDisplayName(
-  type: ReportType | null | undefined,
+  type?: ReportType | 'PERSONAL-STATEMENT' | null ,
 ) {
   if (!type) {
     return '';
@@ -32,6 +32,8 @@ export function convertReportTypeToDisplayName(
     case 'RESUME':
       return '이력서';
     case 'PERSONAL_STATEMENT':
+      return '자기소개서';
+    case 'PERSONAL-STATEMENT':
       return '자기소개서';
     case 'PORTFOLIO':
       return '포트폴리오';
@@ -162,9 +164,9 @@ export function convertFeedbackStatusToBadgeStatus({
   }
 }
 
-const reportPriceTypeSchema = z.enum(['BASIC', 'PREMIUM']);
+export const reportPriceTypeEnum = z.enum(['BASIC', 'PREMIUM']);
 
-export type ReportPriceType = z.infer<typeof reportPriceTypeSchema>;
+export type ReportPriceType = z.infer<typeof reportPriceTypeEnum>;
 
 export const convertReportPriceType = (type: ReportPriceType) => {
   switch (type) {
@@ -288,7 +290,7 @@ const createReportSchema = z.object({
   notice: z.string(),
   priceInfo: z.array(
     z.object({
-      reportPriceType: reportPriceTypeSchema,
+      reportPriceType: reportPriceTypeEnum,
       price: z.number(),
       discountPrice: z.number(),
     }),
@@ -360,7 +362,7 @@ const getReportPriceDetailSchema = z.object({
   reportPriceInfos: z
     .array(
       z.object({
-        reportPriceType: reportPriceTypeSchema.nullable().optional(),
+        reportPriceType: reportPriceTypeEnum.nullable().optional(),
         price: z.number().nullable().optional(),
         discountPrice: z.number().nullable().optional(),
       }),
@@ -371,7 +373,7 @@ const getReportPriceDetailSchema = z.object({
   feedbackPriceInfo: z
     .object({
       reportFeedbackId: z.number(),
-      reportPriceType: reportPriceTypeSchema.nullable().optional(),
+      reportPriceType: reportPriceTypeEnum.nullable().optional(),
       feedbackPrice: z.number().nullable().optional(),
       feedbackDiscountPrice: z.number().nullable().optional(),
     })
@@ -423,7 +425,7 @@ const getReportDetailForAdminSchema = z.object({
   notice: z.string(),
   reportPriceInfos: z.array(
     z.object({
-      reportPriceType: reportPriceTypeSchema,
+      reportPriceType: reportPriceTypeEnum,
       price: z.number(),
       discountPrice: z.number(),
     }),
@@ -439,7 +441,7 @@ const getReportDetailForAdminSchema = z.object({
   ),
   feedbackPriceInfo: z.object({
     reportFeedbackId: z.number(),
-    reportPriceType: reportPriceTypeSchema,
+    reportPriceType: reportPriceTypeEnum,
     feedbackPrice: z.number(),
     feedbackDiscountPrice: z.number(),
   }),
@@ -553,7 +555,7 @@ const reportApplicationsForAdminInfoSchema = z.object({
   createDate: z.string().nullable(),
   paymentId: z.number().nullable(),
   orderId: z.string().nullable(),
-  reportPriceType: reportPriceTypeSchema.nullable(),
+  reportPriceType: reportPriceTypeEnum.nullable(),
   couponTitle: z.string().nullable(),
   finalPrice: z.number().nullable(),
   isRefunded: z.boolean().nullable(),
@@ -793,7 +795,7 @@ export const usePatchReportApplicationSchedule = ({
 // POST /api/v1/report/application
 const createReportApplicationSchema = z.object({
   reportId: z.number(),
-  reportPriceType: reportPriceTypeSchema,
+  reportPriceType: reportPriceTypeEnum,
   optionIds: z.array(z.number()),
   isFeedbackApplied: z.boolean(),
   couponId: z.number().nullable(),
@@ -849,7 +851,7 @@ const updateReportSchema = z.object({
   priceInfo: z
     .array(
       z.object({
-        reportPriceType: reportPriceTypeSchema,
+        reportPriceType: reportPriceTypeEnum,
         price: z.number(),
         discountPrice: z.number(),
       }),
@@ -901,7 +903,7 @@ const reportApplicationInfoSchema = z.object({
   reportApplicationId: z.number(),
   reportFeedbackApplicationId: z.number().nullable(),
   title: z.string(),
-  reportPriceType: reportPriceTypeSchema,
+  reportPriceType: reportPriceTypeEnum,
   options: z.array(z.string()),
   isCanceled: z.boolean(),
   reportApplicationStatus: reportApplicationStatusSchema,
@@ -918,7 +920,7 @@ const reportPaymentInfoSchema = z.object({
   reportRefundPrice: z.number().nullable(),
   feedbackRefundPrice: z.number().nullable(),
   reportPriceInfo: z.object({
-    reportPriceType: reportPriceTypeSchema,
+    reportPriceType: reportPriceTypeEnum,
     price: z.number().nullable(),
     discountPrice: z.number().nullable(),
   }),
@@ -936,7 +938,7 @@ const reportPaymentInfoSchema = z.object({
   feedbackPriceInfo: z
     .object({
       reportFeedbackId: z.number().nullable().optional(),
-      reportPriceType: reportPriceTypeSchema.nullable().optional(),
+      reportPriceType: reportPriceTypeEnum.nullable().optional(),
       feedbackPrice: z.number().nullable().optional(),
       feedbackDiscountPrice: z.number().nullable().optional(),
     })

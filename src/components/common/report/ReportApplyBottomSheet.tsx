@@ -1,25 +1,47 @@
+import { FormControl, RadioGroup } from '@mui/material';
+import React, {
+  memo,
+  ReactNode,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
+import { useNavigate } from 'react-router-dom';
+
 import {
   ActiveReport,
-  convertReportPriceTypeToDisplayName,
   convertReportTypeToDisplayName,
   ReportPriceType,
+  reportPriceTypeEnum,
+  reportTypeSchema,
   useGetReportPriceDetail,
 } from '@/api/report';
 import { generateOrderId } from '@/lib/order';
 import { twMerge } from '@/lib/twMerge';
 import useReportApplicationStore from '@/store/useReportApplicationStore';
-import { FormControl, RadioGroup } from '@mui/material';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import clsx from 'clsx';
 import {
   ReportFormCheckboxControlLabel,
   ReportFormRadioControlLabel,
 } from './ControlLabel';
+import ReportDropdown from './ReportDropdown';
 
-const ReportPriceView = (props: {
-  price?: number | null | undefined;
-  discount?: number | null | undefined;
-}) => {
+const { BASIC, PREMIUM } = reportPriceTypeEnum.enum;
+
+const priceTypeByPlan = {
+  basicFeedback: BASIC,
+  premiumFeedback: PREMIUM,
+  basic: BASIC,
+  premium: PREMIUM,
+} as Record<string, ReportPriceType>;
+
+const RADIO_CONTROL_LABEL_STYLE = { opacity: 0.75 };
+
+const ReportPriceView = memo(function ReportPriceView(props: {
+  price?: number | null;
+  discount?: number | null;
+}) {
   const price = props.price ?? 0;
   const discount = props.discount ?? 0;
   const percent = ((discount / price) * 100).toFixed(0);
@@ -27,44 +49,98 @@ const ReportPriceView = (props: {
   const hasDiscount = discount > 0;
 
   return (
-    <div className="flex flex-col items-end">
-      {hasDiscount ? (
+    <div className="flex shrink-0 flex-col items-end">
+      {hasDiscount && (
         <span className="inline-flex gap-1 text-xxsmall12 font-medium leading-none">
           <span className="text-system-error/90">{percent}%</span>
           <span className="text-neutral-50 line-through">
             {price.toLocaleString()}원
           </span>
         </span>
-      ) : null}
+      )}
+
       <span className="text-xsmall14 font-bold text-black/75">
         {discountedPrice.toLocaleString()}원
       </span>
     </div>
   );
-};
+});
 
-interface IReportApplyBottomSheetProps {
+interface ReportApplyBottomSheetProps {
   report: ActiveReport;
   show?: boolean;
 }
 
 const ReportApplyBottomSheet = React.forwardRef<
   HTMLDivElement,
-  IReportApplyBottomSheetProps
+  ReportApplyBottomSheetProps
 >(({ report, show = true }, ref) => {
+  const navigate = useNavigate();
+
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
   const { data: priceInfo } = useGetReportPriceDetail(report.reportId);
   const { data: reportApplication, setReportApplication } =
     useReportApplicationStore();
 
+  console.log('신청서:', reportApplication);
+
+  const { reportPriceType, optionIds, isFeedbackApplied } = reportApplication;
+
+  const reportDisplayName = convertReportTypeToDisplayName(report.reportType);
+
+  // 이력서 진단 플랜 Radio 정보
+  const reportDiagnosisPlan = useMemo(() => {
+    const reportBasicInfo = priceInfo?.reportPriceInfos?.find(
+      (info) => info.reportPriceType === BASIC,
+    );
+    const reportPremiumInfo = priceInfo?.reportPriceInfos?.find(
+      (info) => info.reportPriceType === PREMIUM,
+    );
+    const feedbackInfo = priceInfo?.feedbackPriceInfo;
+
+    const basicLabel = `베이직 플랜${report.reportType === reportTypeSchema.enum.PERSONAL_STATEMENT ? '(1문항)' : ''}`;
+    const premiumLabel = `프리미엄 플랜(${report.reportType === reportTypeSchema.enum.PERSONAL_STATEMENT ? '4문항+총평 페이지 추가' : '채용 공고 맞춤 진단 추가'})`;
+
+    return [
+      {
+        value: 'basicFeedback',
+        label: '[추천] 베이직 + 1:1 피드백(40분) 패키지',
+        price:
+          (reportBasicInfo?.price ?? 0) + (feedbackInfo?.feedbackPrice ?? 0),
+        discount:
+          (reportBasicInfo?.discountPrice ?? 0) +
+          (feedbackInfo?.feedbackDiscountPrice ?? 0),
+      },
+      {
+        value: 'premiumFeedback',
+        label: '[추천] 프리미엄 + 1:1 피드백(40분) 패키지',
+        price:
+          (reportPremiumInfo?.price ?? 0) + (feedbackInfo?.feedbackPrice ?? 0),
+        discount:
+          (reportPremiumInfo?.discountPrice ?? 0) +
+          (feedbackInfo?.feedbackDiscountPrice ?? 0),
+      },
+      {
+        value: 'basic',
+        label: basicLabel,
+        price: reportBasicInfo?.price,
+        discount: reportBasicInfo?.discountPrice,
+      },
+      {
+        value: 'premium',
+        label: premiumLabel,
+        price: reportPremiumInfo?.price,
+        discount: reportPremiumInfo?.discountPrice,
+      },
+    ];
+  }, [priceInfo]);
+
   useEffect(() => {
     if (isDrawerOpen) {
       setReportApplication({ reportId: report.reportId });
     }
   }, [isDrawerOpen, report.reportId, setReportApplication]);
-
-  const { reportPriceType, optionIds, isFeedbackApplied } = reportApplication;
 
   const setSelectedOptionIds = useCallback(
     (optionIds: number[]) => {
@@ -80,14 +156,12 @@ const ReportApplyBottomSheet = React.forwardRef<
     [setReportApplication],
   );
 
-  const setDoFeedbackService = useCallback(
+  const setFeedbackService = useCallback(
     (isFeedbackApplied: boolean) => {
       setReportApplication({ isFeedbackApplied });
     },
     [setReportApplication],
   );
-
-  const navigate = useNavigate();
 
   const handleApply = useCallback(() => {
     setReportApplication({
@@ -191,71 +265,70 @@ const ReportApplyBottomSheet = React.forwardRef<
         !show && 'hidden',
       )}
     >
-      <div className="max-h-[calc(100vh-60px)] overflow-y-auto px-5 py-2">
-        {isDrawerOpen ? (
-          <div
-            className="sticky top-2 z-10 mx-auto mb-2.5 h-[5px] w-16 rounded-full bg-neutral-80"
-            onClick={() => {
-              setIsDrawerOpen(false);
-            }}
-          ></div>
-        ) : null}
+      <div className="relative max-h-[calc(100vh-60px)] overflow-y-auto px-5">
+        {/* 상단 닫기 버튼 */}
+        {isDrawerOpen && (
+          <div className="sticky top-0 z-10 mb-2 w-full bg-white py-2">
+            <div
+              className="mx-auto h-[5px] w-16 rounded-full bg-neutral-80"
+              onClick={() => setIsDrawerOpen(false)}
+            />
+          </div>
+        )}
 
         {/* 본문 */}
         {isDrawerOpen ? (
           <div className="mb-5 flex flex-col gap-6">
-            {/* 기본 서비스 */}
+            {/* 이력서 진단 플랜 */}
             <FormControl fullWidth>
-              <h2 className="mb-2 text-xsmall14 font-semibold text-static-0">
-                기본 서비스
-              </h2>
-              {reportType !== 'personal-statement' && (
-                <p className="mb-2 text-xxsmall12 text-neutral-45">
-                  *프리미엄 선택시, 희망하는 채용공고에 맞춤화된 진단을 추가로
-                  받아볼 수 있어요.
-                </p>
-              )}
-              <RadioGroup
-                defaultValue="BASIC"
-                value={reportPriceType}
-                className="mb-2"
-                onChange={(e) => {
-                  setPriceType(e.target.value as ReportPriceType);
-                }}
+              <Heading2>{reportDisplayName} 진단 플랜 선택 (필수)*</Heading2>
+              <ReportDropdown
+                title={`합격을 이끄는 ${reportDisplayName} 진단 플랜`}
+                labelId="resume-diagnosis-plan-group-label"
               >
-                {priceInfo.reportPriceInfos?.map((item) => {
-                  if (!item.reportPriceType) {
-                    return null;
-                  }
-
-                  const price = item.price ?? 0;
-                  const discount = item.discountPrice ?? 0;
-
-                  return (
+                <RadioGroup
+                  aria-labelledby="resume-diagnosis-plan-group-label"
+                  defaultValue="basicFeedback"
+                  onChange={(e) => {
+                    {
+                      const isFeedbackApplied = e.target.value.endsWith(
+                        'Feedback',
+                      )
+                        ? true
+                        : false;
+                      // 서류진단 가격 유형 설정 (BASIC, PREMIUM)
+                      setPriceType(priceTypeByPlan[e.target.value]);
+                      setFeedbackService(isFeedbackApplied);
+                    }
+                  }}
+                >
+                  {reportDiagnosisPlan.map((item, index) => (
                     <ReportFormRadioControlLabel
-                      key={item.reportPriceType}
-                      label={`서류 진단서 (${convertReportPriceTypeToDisplayName(item.reportPriceType)})`}
-                      value={item.reportPriceType}
-                      wrapperClassName="items-end py-2"
+                      key={item.label}
+                      label={item.label}
+                      value={item.value}
+                      wrapperClassName={clsx('py-3 pl-2 pr-3', {
+                        // 마지막 아이템은 border 제외
+                        'border-b border-neutral-80':
+                          index !== reportDiagnosisPlan.length - 1,
+                      })}
+                      labelStyle={RADIO_CONTROL_LABEL_STYLE}
                       right={
-                        <ReportPriceView price={price} discount={discount} />
+                        <ReportPriceView
+                          price={item.price}
+                          discount={item.discount}
+                        />
                       }
                     />
-                  );
-                })}
-              </RadioGroup>
+                  ))}
+                </RadioGroup>
+              </ReportDropdown>
             </FormControl>
 
             {/* 기본 서비스 옵션 */}
             {optionsAvailable ? (
               <FormControl fullWidth>
-                <h2 className="mb-2 text-xsmall14 font-semibold text-static-0">
-                  기본 서비스 옵션 (
-                  {reportType !== 'personal-statement'
-                    ? '현직자 피드백'
-                    : '문항 추가'}
-                  )
-                </h2>
+                <Heading2>현직자 피드백 (선택)</Heading2>
                 {reportType !== 'personal-statement' && (
                   <p className="mb-2 text-xxsmall12 text-neutral-45">
                     *현직자 피드백 선택시, 현직자 멘토에게 쏠쏠한 서류 작성
@@ -304,35 +377,6 @@ const ReportApplyBottomSheet = React.forwardRef<
               </FormControl>
             ) : null}
 
-            {/* 1:1 피드백 서비스 */}
-            {feedbackAvailable ? (
-              <FormControl fullWidth>
-                <h2 className="mb-2 text-xsmall14 font-semibold text-static-0">
-                  1:1 피드백 서비스
-                </h2>
-                <p className="text-xxsmall12 text-neutral-45">
-                  *1:1 피드백 선택시, 발급된 진단서를 바탕으로 온라인 미팅에서
-                  커리어 전문가와 함께 나만의 맞춤형 서류를 완성할 수 있어요.
-                </p>
-                <ReportFormCheckboxControlLabel
-                  checked={isFeedbackApplied}
-                  onChange={(e, checked) => {
-                    setDoFeedbackService(checked);
-                  }}
-                  wrapperClassName="items-end py-2"
-                  label="1:1 피드백 (40분)"
-                  right={
-                    <ReportPriceView
-                      price={priceInfo.feedbackPriceInfo?.feedbackPrice}
-                      discount={
-                        priceInfo.feedbackPriceInfo?.feedbackDiscountPrice
-                      }
-                    />
-                  }
-                />
-              </FormControl>
-            ) : null}
-
             <div>
               <h2 className="mb-2 text-xsmall14 font-semibold text-static-0">
                 총 결제 금액
@@ -377,16 +421,18 @@ const ReportApplyBottomSheet = React.forwardRef<
         ) : null}
 
         {!isDrawerOpen ? (
-          <button
-            type="button"
-            className="apply_button_click flex w-full flex-1 justify-center rounded-md border-2 border-primary bg-primary px-6 py-3 text-lg font-medium text-neutral-100 transition hover:bg-primary-light disabled:border-neutral-70 disabled:bg-neutral-70"
-            onClick={() => setIsDrawerOpen(true)}
-          >
-            {report.reportType
-              ? convertReportTypeToDisplayName(report.reportType || 'RESUME')
-              : ''}{' '}
-            서류 진단 신청하기
-          </button>
+          <div className="bg-white pb-2">
+            <button
+              type="button"
+              className="apply_button_click flex w-full flex-1 justify-center rounded-md border-2 border-primary bg-primary px-6 py-3 text-lg font-medium text-neutral-100 transition hover:bg-primary-light disabled:border-neutral-70 disabled:bg-neutral-70"
+              onClick={() => setIsDrawerOpen(true)}
+            >
+              {report.reportType
+                ? convertReportTypeToDisplayName(report.reportType || 'RESUME')
+                : ''}{' '}
+              서류 진단 신청하기
+            </button>
+          </div>
         ) : null}
 
         {isDrawerOpen ? (
@@ -411,6 +457,10 @@ const ReportApplyBottomSheet = React.forwardRef<
     </div>
   );
 });
+
+const Heading2 = ({ children }: { children: ReactNode }) => (
+  <h2 className="mb-4 text-xsmall14 font-semibold text-static-0">{children}</h2>
+);
 
 ReportApplyBottomSheet.displayName = 'ReportApplyBottomSheet';
 

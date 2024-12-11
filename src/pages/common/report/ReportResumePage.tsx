@@ -1,19 +1,20 @@
+import { useEffect, useRef, useState } from 'react';
+import { Helmet } from 'react-helmet';
+import { useLocation } from 'react-router-dom';
+
+import { useGetActiveReports } from '@/api/report';
+import LexicalContent from '@/components/common/blog/LexicalContent';
+import ReportApplyBottomSheet from '@/components/common/report/ReportApplyBottomSheet';
+import ReportContentContainer from '@/components/common/report/ReportContentContainer';
+import {
+  ReportHeader,
+  ReportLandingIntroSection,
+} from '@/components/common/report/ReportIntroSection';
+import ReportLandingNav from '@/components/common/report/ReportLandingNav';
 import { useServerActiveReports } from '@/context/ActiveReports';
 import { resumeReportDescription } from '@/data/description';
 import useReportApplicationStore from '@/store/useReportApplicationStore';
 import { getBaseUrlFromServer, getReportLandingTitle } from '@/utils/url';
-import { useEffect, useRef, useState } from 'react';
-import { Helmet } from 'react-helmet';
-import { useLocation } from 'react-router-dom';
-import { useGetActiveReports } from '../../../api/report';
-import LexicalContent from '../../../components/common/blog/LexicalContent';
-import ReportApplyBottomSheet from '../../../components/common/report/ReportApplyBottomSheet';
-import ReportContentContainer from '../../../components/common/report/ReportContentContainer';
-import {
-  ReportHeader,
-  ReportLandingIntroSection,
-} from '../../../components/common/report/ReportIntroSection';
-import ReportLandingNav from '../../../components/common/report/ReportLandingNav';
 
 const ReportResumePage = () => {
   const location = useLocation();
@@ -31,7 +32,7 @@ const ReportResumePage = () => {
   const { initReportApplication } = useReportApplicationStore();
 
   const contentRef = useRef<HTMLDivElement>(null);
-  // const bottomSheetRef = useRef<HTMLDivElement | null>(null);
+
   const [showBottomSheet, setShowBottomSheet] = useState(false);
 
   useEffect(() => {
@@ -40,14 +41,6 @@ const ReportResumePage = () => {
     if (contentRef.current) {
       const observer = new IntersectionObserver(
         (entries) => {
-          // entries.forEach((entry) => {
-          //   if (bottomSheetRef.current) {
-          //     bottomSheetRef.current.style.display = entry.isIntersecting
-          //       ? 'block'
-          //       : 'none';
-          //   }
-          // });
-
           const entry = entries[0];
           if (entry) {
             setShowBottomSheet(entry.isIntersecting);
@@ -69,7 +62,6 @@ const ReportResumePage = () => {
 
   useEffect(() => {
     const { hash } = location;
-
     if (hash === '#content') contentRef.current?.scrollIntoView();
   }, [contentRef.current]);
 
@@ -95,26 +87,9 @@ const ReportResumePage = () => {
           <meta name="twitter:description" content={description} />
         ) : null}
       </Helmet>
+
       <ReportLandingIntroSection header={<ReportHeader />} />
-      <div
-        id="content"
-        ref={contentRef}
-        // ref={(element) => {
-        //   contentRef.current = element;
-        //   if (element) {
-        //     const url = new URL(window.location.href);
-
-        //     const from = url.searchParams.get('from');
-        //     if (!from) {
-        //       return;
-        //     }
-
-        //     if (from === 'nav') {
-        //       element.scrollIntoView();
-        //     }
-        //   }
-        // }}
-      >
+      <div id="content" ref={contentRef}>
         <ReportLandingNav />
 
         {Object.keys(root).length !== 0 && (
@@ -124,10 +99,7 @@ const ReportResumePage = () => {
         )}
       </div>
 
-      {report && showBottomSheet ? (
-        <ReportApplyBottomSheet report={report} />
-      ) : // <ReportApplyBottomSheet report={report} ref={bottomSheetRef} />
-      null}
+      {report && showBottomSheet && <ReportApplyBottomSheet report={report} />}
     </>
   );
 };
