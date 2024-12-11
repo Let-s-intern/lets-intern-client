@@ -145,7 +145,7 @@ const ReportApplyPage = () => {
         </main>
       </div>
 
-      <BottomSheet>
+      <BottomSheet className="xl:mx-48">
         {isMobile && (
           <button
             onClick={() => {
@@ -554,14 +554,14 @@ export const UsereInfoSection = () => {
     setReportApplication({
       contactEmail: participationInfo?.contactEmail || '',
     });
-  }, [participationInfo]);
+  }, [participationInfo?.contactEmail]);
 
   useEffect(() => {
     // 정보 수신용 이메일과 가입한 이메일이 다르면 체크 해제
     if (reportApplication.contactEmail !== participationInfo?.email)
       setChecked(false);
     else setChecked(true);
-  }, [reportApplication]);
+  }, [reportApplication.contactEmail, participationInfo?.email]);
 
   return (
     <section>

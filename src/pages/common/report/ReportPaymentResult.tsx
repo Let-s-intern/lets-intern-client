@@ -67,9 +67,6 @@ const ReportPaymentResult = () => {
       ? convertReportPriceType(reportApplication.reportPriceType)
       : `${convertReportPriceType(reportApplication.reportPriceType)} + 옵션`;
   const isSuccess = typeof result === 'object' && result !== null;
-  const discount =
-    payment.reportDiscount + payment.optionDiscount + payment.feedbackDiscount;
-  const total = payment.report + payment.option + payment.feedback;
 
   useRunOnce(() => {
     if (!params) return;
