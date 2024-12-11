@@ -336,6 +336,8 @@ const getReportDetailSchema = z.object({
   reportType: reportTypeSchema.nullable().optional(),
 });
 
+export type ReportDetail = z.infer<typeof getReportDetailSchema>;
+
 export const getReportDetailQueryKey = 'getReportDetail';
 
 export const useGetReportDetailQuery = (reportId: number) => {
