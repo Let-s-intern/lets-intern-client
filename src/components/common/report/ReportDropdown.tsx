@@ -18,20 +18,15 @@ function ReportDropdown({
 
   return (
     <div className="overflow-hidden rounded-xs border border-neutral-80">
-      <div className="flex items-center justify-between bg-neutral-100 p-3 text-xsmall14 font-semibold text-static-0">
+      <div
+        className="flex cursor-pointer items-center justify-between bg-neutral-100 p-3 text-xsmall14 font-semibold text-static-0"
+        onClick={() => setIsOpen(!isOpen)}
+      >
         <label id={labelId}>{title}</label>
         {isOpen ? (
-          <HiChevronUp
-            className="h-auto w-5"
-            color="#ACAFB6"
-            onClick={() => setIsOpen(!isOpen)}
-          />
+          <HiChevronUp className="h-auto w-5" color="#ACAFB6" />
         ) : (
-          <HiChevronDown
-            className="h-auto w-5"
-            color="#ACAFB6"
-            onClick={() => setIsOpen(!isOpen)}
-          />
+          <HiChevronDown className="h-auto w-5" color="#ACAFB6" />
         )}
       </div>
 
