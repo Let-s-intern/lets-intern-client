@@ -1,28 +1,24 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect } from 'react';
 import { Helmet } from 'react-helmet';
-import { useLocation } from 'react-router-dom';
 
 import { useGetActiveReports } from '@/api/report';
-import LexicalContent from '@/components/common/blog/LexicalContent';
 import ReportApplyBottomSheet from '@/components/common/report/ReportApplyBottomSheet';
-import ReportContentContainer from '@/components/common/report/ReportContentContainer';
-import {
-  ReportHeader,
-  ReportLandingIntroSection,
-} from '@/components/common/report/ReportIntroSection';
-import ReportLandingNav from '@/components/common/report/ReportLandingNav';
 import { useServerActiveReports } from '@/context/ActiveReports';
 import { resumeReportDescription } from '@/data/description';
 import useReportApplicationStore from '@/store/useReportApplicationStore';
 import { getBaseUrlFromServer, getReportLandingTitle } from '@/utils/url';
+import LexicalContent from '@components/common/blog/LexicalContent';
+import Header from '@components/common/program/program-detail/header/Header';
+import ReportBasicInfo from '@components/common/report/ReportBasicInfo';
+import ReportContentContainer from '@components/common/report/ReportContentContainer';
+import LoadingContainer from '@components/common/ui/loading/LoadingContainer';
+import ReportNavigation from './ReportNavigation';
 
 const ReportResumePage = () => {
-  const location = useLocation();
-
   const url = `${typeof window !== 'undefined' ? window.location.origin : getBaseUrlFromServer()}/report/landing/resume`;
   const description = resumeReportDescription;
   const activeReportsFromServer = useServerActiveReports();
-  const { data } = useGetActiveReports();
+  const { data, isLoading } = useGetActiveReports();
   const title = getReportLandingTitle(data?.resumeInfo?.title ?? '이력서');
   const activeReports = data || activeReportsFromServer;
   const report = activeReports?.resumeInfo;
@@ -31,40 +27,11 @@ const ReportResumePage = () => {
 
   const { initReportApplication } = useReportApplicationStore();
 
-  const contentRef = useRef<HTMLDivElement>(null);
-
-  const [showBottomSheet, setShowBottomSheet] = useState(false);
-
   useEffect(() => {
     initReportApplication();
 
-    if (contentRef.current) {
-      const observer = new IntersectionObserver(
-        (entries) => {
-          const entry = entries[0];
-          if (entry) {
-            setShowBottomSheet(entry.isIntersecting);
-          }
-        },
-        {
-          root: null,
-          rootMargin: '0px',
-          threshold: 0,
-        },
-      );
-      observer.observe(contentRef.current);
-      return () => {
-        observer.disconnect();
-      };
-    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  useEffect(() => {
-    const { hash } = location;
-    if (hash === '#content') contentRef.current?.scrollIntoView();
-  }, [contentRef.current]);
-
   return (
     <>
       <Helmet>
@@ -87,19 +54,23 @@ const ReportResumePage = () => {
           <meta name="twitter:description" content={description} />
         ) : null}
       </Helmet>
-
-      <ReportLandingIntroSection header={<ReportHeader />} />
-      <div id="content" ref={contentRef}>
-        <ReportLandingNav />
-
-        {Object.keys(root).length !== 0 && (
-          <ReportContentContainer>
-            <LexicalContent node={root} />
-          </ReportContentContainer>
-        )}
-      </div>
-
-      {report && showBottomSheet && <ReportApplyBottomSheet report={report} />}
+      {isLoading ? (
+        <LoadingContainer />
+      ) : (
+        <div className="flex w-full flex-col items-center gap-y-12 md:gap-y-6">
+          <div className="flex w-full max-w-[1000px] flex-col px-5 lg:px-0">
+            <Header programTitle={title} />
+            <ReportBasicInfo reportBasic={data?.resumeInfo} />
+          </div>
+          <ReportNavigation />
+          {Object.keys(root).length !== 0 && (
+            <ReportContentContainer>
+              <LexicalContent node={root} />
+            </ReportContentContainer>
+          )}
+        </div>
+      )}
+      {report && <ReportApplyBottomSheet report={report} />}
     </>
   );
 };
