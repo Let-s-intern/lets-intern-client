@@ -237,7 +237,11 @@ const NavBar = () => {
             <SideNavItem to="/blog/list" onClick={closeMenu}>
               블로그
             </SideNavItem>
-            <SideNavItem to="/report/landing" onClick={closeMenu}>
+            <SideNavItem
+              to="/report/landing"
+              onClick={closeMenu}
+              hoverItem={reportHoverItem}
+            >
               🔥 서류 진단받고 합격하기
             </SideNavItem>
             <hr className="h-1 bg-neutral-80" />
