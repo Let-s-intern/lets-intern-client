@@ -65,11 +65,6 @@ const ReportPaymentPage = () => {
         <BaseButton
           className="complete_button_click w-full text-small18"
           onClick={() => {
-            const { isValid, message } = validate();
-            if (!isValid) {
-              alert(message);
-              return;
-            }
             if (reportApplication.contactEmail === '') {
               alert('정보 수신용 이메일을 입력해주세요.');
               return;
