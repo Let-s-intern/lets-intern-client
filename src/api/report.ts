@@ -53,10 +53,10 @@ export function convertReportTypeToLandingPath(type: ReportType) {
 
 export function convertReportStatusToUserDisplayName(
   status: ReportApplicationStatus | null | undefined,
+  isSubmitted: boolean,
 ) {
-  if (!status) {
-    return '';
-  }
+  if (!status) return '';
+  if (!isSubmitted) return '제출필요';
 
   switch (status) {
     case 'APPLIED':
@@ -87,10 +87,11 @@ export function convertReportPriceTypeToDisplayName(
 
 export function convertReportStatusToBadgeStatus(
   status: ReportApplicationStatus | null | undefined,
-): 'info' | 'success' {
-  if (!status) {
-    return 'info';
-  }
+  isSubmitted: boolean,
+): 'info' | 'success' | 'warning' {
+  if (!status) return 'info';
+  // 서류를 제출하지 않았으면
+  if (!isSubmitted) return 'warning';
 
   switch (status) {
     case 'APPLIED':

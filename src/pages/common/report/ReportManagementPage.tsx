@@ -1,3 +1,14 @@
+import dayjs from 'dayjs';
+import {
+  ComponentPropsWithoutRef,
+  ElementType,
+  forwardRef,
+  MouseEvent,
+  useEffect,
+  useRef,
+} from 'react';
+import { Link, NavLink, useNavigate, useSearchParams } from 'react-router-dom';
+
 import {
   convertFeedbackStatusToBadgeStatus,
   convertFeedbackStatusToDisplayName,
@@ -12,16 +23,6 @@ import useAuthStore from '@/store/useAuthStore';
 import { ReportHeader } from '@components/common/report/ReportIntroSection';
 import Tooltip from '@components/common/report/Tooltip';
 import Badge from '@components/common/ui/Badge';
-import dayjs from 'dayjs';
-import {
-  ComponentPropsWithoutRef,
-  ElementType,
-  forwardRef,
-  MouseEvent,
-  useEffect,
-  useRef,
-} from 'react';
-import { Link, NavLink, useNavigate, useSearchParams } from 'react-router-dom';
 
 type ReportFilter = {
   status: 'all' | 'active' | 'inactive';
@@ -258,10 +259,12 @@ const ReportManagementPage = () => {
                   <Badge
                     status={convertReportStatusToBadgeStatus(
                       item.applicationStatus,
+                      item.applyUrl !== '',
                     )}
                   >
                     {convertReportStatusToUserDisplayName(
                       item.applicationStatus,
+                      item.applyUrl !== '',
                     )}
                   </Badge>
                   <h2 className="text-xsmall14 font-medium">{item.title}</h2>
@@ -316,9 +319,18 @@ const ReportManagementPage = () => {
                       </Link>
                     ) : null}
                   </div>
-                  {item.applicationStatus === 'APPLIED' ||
-                  item.applicationStatus === 'REPORTING' ||
-                  item.applicationStatus === 'REPORTED' ? (
+                  {/* 서류를 제출하지 않았으면 */}
+                  {item.applyUrl === '' ? (
+                    <ReportManagementButton
+                      className="max-w-40 flex-1"
+                      onClick={() => console.log('서류 제출 페이지로 이동')}
+                    >
+                      서류 제출하기
+                    </ReportManagementButton>
+                  ) : (item.applicationStatus === 'APPLIED' &&
+                      item.applyUrl !== '') ||
+                    item.applicationStatus === 'REPORTING' ||
+                    item.applicationStatus === 'REPORTED' ? (
                     <ReportManagementButton
                       className="max-w-40 flex-1"
                       disabled
