@@ -15,11 +15,13 @@ import {
   convertReportStatusToBadgeStatus,
   convertReportStatusToUserDisplayName,
   convertReportTypeToDisplayName,
+  convertReportTypeToPathname,
   useGetMyReports,
 } from '@/api/report';
 import { download } from '@/lib/download';
 import { twMerge } from '@/lib/twMerge';
 import useAuthStore from '@/store/useAuthStore';
+import useReportApplicationStore from '@/store/useReportApplicationStore';
 import { ReportHeader } from '@components/common/report/ReportIntroSection';
 import Tooltip from '@components/common/report/Tooltip';
 import Badge from '@components/common/ui/Badge';
@@ -162,8 +164,11 @@ ReportManagementButton.displayName = 'ReportManagementButton';
 
 const ReportManagementPage = () => {
   const [searchParams] = useSearchParams();
-  const { isLoggedIn } = useAuthStore();
   const navigate = useNavigate();
+
+  const { isLoggedIn } = useAuthStore();
+  const { initReportApplication, setReportApplication } =
+    useReportApplicationStore();
 
   useEffect(() => {
     if (!isLoggedIn) {
@@ -174,6 +179,7 @@ const ReportManagementPage = () => {
         navigate('/login?' + searchParams.toString());
       }, 100);
     }
+    initReportApplication(); // 서류 진단 전역 상태 초기화
   }, [isLoggedIn, navigate]);
 
   const filterStatus = (searchParams.get('status') ??
@@ -324,11 +330,16 @@ const ReportManagementPage = () => {
                   {item.applyUrl === '' ? (
                     <ReportManagementButton
                       className="max-w-40 flex-1"
-                      onClick={() =>
+                      onClick={() => {
+                        // 서류 제출 시 필요한 reportId, 피드백 신청 여부를 전역 상태에 저장하여 사용 (API에 없음)
+                        setReportApplication({
+                          reportId: item.reportId,
+                          isFeedbackApplied: item.feedbackStatus === 'APPLIED',
+                        });
                         navigate(
-                          `/report/submit/${item.reportType}/${item.reportId}`,
-                        )
-                      }
+                          `/report/${convertReportTypeToPathname(item.reportType)}/application/${item.applicationId}`,
+                        );
+                      }}
                     >
                       서류 제출하기
                     </ReportManagementButton>

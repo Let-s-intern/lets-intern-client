@@ -457,6 +457,7 @@ const ReportApplicationsPage = () => {
                       )}
                     </TD>
                     <TD>
+                      {/* TODO: 어드민 서류 제출 상태 반영하여 status 표시 */}
                       {application.reportFeedbackStatus
                         ? convertFeedbackStatusToDisplayName({
                             status: application.reportFeedbackStatus,
@@ -464,6 +465,7 @@ const ReportApplicationsPage = () => {
                             // TODO: reportApplicationsForAdminInfos에 reportDesiredDate 추가
                             reportFeedback: null,
                             isAdmin: true,
+                            isReportSubmitted: application.applyFileUrl !== '',
                           })
                         : null}
                       {application.reportFeedbackStatus ? (

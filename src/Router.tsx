@@ -211,8 +211,9 @@ const Router = () => {
                 path="report/management"
                 element={<ReportManagementPage />}
               />
+              {/* 서류 제출 페이지 */}
               <Route
-                path="report/submit/:reportType/:reportId"
+                path="report/:reportType/application/:applicationId"
                 element={<ReportSubmitPage />}
               />
 
