@@ -69,15 +69,15 @@ const ReportApplyPage = () => {
     }
   };
 
-  const isValidFile = () => {
+  // 파일 state 때문에 별도로 유효성 검사
+  const validateFile = () => {
     const { applyUrl, reportPriceType, recruitmentUrl } = reportApplication;
 
     const isEmpty = (value: string | File | null) =>
       value === '' || value === null;
 
     if (isEmpty(applyUrl) && isEmpty(applyFile)) {
-      alert('진단용 서류를 등록해주세요.');
-      return false;
+      return { message: '진단용 서류를 등록해주세요.', isValid: false };
     }
 
     if (
@@ -86,11 +86,9 @@ const ReportApplyPage = () => {
       isEmpty(recruitmentUrl) &&
       isEmpty(recruitmentFile)
     ) {
-      alert('채용공고를 등록해주세요.');
-      return false;
+      return { message: '채용공고를 등록해주세요.', isValid: false };
     }
-
-    return true;
+    return { message: '', isValid: true };
   };
 
   useRunOnce(() => {
@@ -167,16 +165,25 @@ const ReportApplyPage = () => {
           className="text-1.125-medium w-full rounded-md bg-primary py-3 text-center font-medium text-neutral-100"
           onClick={async () => {
             // 지금 제출일 때만 파일 유효성 검사
-            if (isSubmitNow === 'true' && !isValidFile()) return;
+            if (isSubmitNow === 'true') {
+              const { isValid: isValidFile, message: fileValidationMessage } =
+                validateFile();
 
-            const { isValid, message } = validate();
-            if (!isValid) {
-              alert(message);
-              return;
+              if (!isValidFile) {
+                alert(fileValidationMessage);
+                return;
+              }
+
+              const { isValid, message } = validate();
+              if (!isValid) {
+                alert(message);
+                return;
+              }
             }
 
             // 지금 제출일 때만 파일 업로드
             if (isSubmitNow === 'true') await convertFile();
+
             navigate(`/report/payment/${reportType}/${reportId}`);
           }}
         >

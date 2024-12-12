@@ -145,7 +145,7 @@ const useReportApplicationStore = create(
         if (currentData.isFeedbackApplied && isDuplicateDate(currentData))
           return {
             isValid: false,
-            message: '1:1 피드백 일정을 중복되지 않게 선택해주세요.',
+            message: '1:1 피드백 일정이 중복되지 않게 선택해주세요.',
           };
 
         if (isEmpty(currentData.wishJob))
