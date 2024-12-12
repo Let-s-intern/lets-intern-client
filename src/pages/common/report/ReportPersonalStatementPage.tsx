@@ -8,9 +8,7 @@ import LoadingContainer from '@components/common/ui/loading/LoadingContainer';
 import { useEffect } from 'react';
 import { Helmet } from 'react-helmet';
 import { useGetActiveReports } from '../../../api/report';
-import LexicalContent from '../../../components/common/blog/LexicalContent';
 import ReportApplyBottomSheet from '../../../components/common/report/ReportApplyBottomSheet';
-import ReportContentContainer from '../../../components/common/report/ReportContentContainer';
 import ReportNavigation from './ReportNavigation';
 
 const ReportPersonalStatementPage = () => {
@@ -65,11 +63,11 @@ const ReportPersonalStatementPage = () => {
             <ReportBasicInfo reportBasic={data?.personalStatementInfo} />
           </div>
           <ReportNavigation />
-          {Object.keys(root).length !== 0 && (
+          {/* {Object.keys(root).length !== 0 && (
             <ReportContentContainer>
               <LexicalContent node={root} />
             </ReportContentContainer>
-          )}
+          )} */}
         </div>
       )}
       {report && <ReportApplyBottomSheet report={report} />}

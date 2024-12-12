@@ -458,7 +458,8 @@ const getReportDetailForAdminSchema = z.object({
         faqProgramType: z.string().nullable(),
       }),
     )
-    .nullable(),
+    .nullable()
+    .optional(),
 });
 
 export type ReportDetailAdmin = z.infer<typeof getReportDetailForAdminSchema>;

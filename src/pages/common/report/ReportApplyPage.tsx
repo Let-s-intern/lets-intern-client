@@ -107,6 +107,7 @@ const ReportApplyPage = () => {
         <header>
           <Heading1>진단서 신청하기</Heading1>
         </header>
+
         <HorizontalRule className="-mx-5 md:-mx-32 lg:mx-0" />
 
         <main className="mb-8 mt-6 flex flex-col gap-10">
@@ -115,7 +116,7 @@ const ReportApplyPage = () => {
             onChangeRadio={(event, value) => setIsSubmitNow(value)}
           />
 
-          {/* 진단용 서류 */}
+          {/* '지금 제출할래요' 선택 시 표시 */}
           {isSubmitNow === 'true' && (
             <>
               <HorizontalRule className="-mx-5 md:-mx-32 lg:mx-0" />
@@ -124,6 +125,7 @@ const ReportApplyPage = () => {
                 header="❗ 제출 전 꼭 읽어주세요"
                 body="이력서 파일/링크가 잘 열리는 지 확인 후 첨부해주세요!"
               />
+              {/* 진단용 서류 */}
               <DocumentSection file={applyFile} dispatch={setApplyFile} />
               {/* 프리미엄 채용공고 */}
               {reportApplication.reportPriceType === 'PREMIUM' &&
@@ -135,8 +137,12 @@ const ReportApplyPage = () => {
                 )}
               <HorizontalRule className="-mx-5 md:-mx-32 lg:mx-0" />
               {/* 1:1 피드백 일정 */}
-              {reportApplication.isFeedbackApplied && <ScheduleSection />}
-              <HorizontalRule className="-mx-5 md:-mx-32 lg:mx-0" />
+              {reportApplication.isFeedbackApplied && (
+                <>
+                  <ScheduleSection />
+                  <HorizontalRule className="-mx-5 md:-mx-32 lg:mx-0" />
+                </>
+              )}
 
               {/* 추가 정보 */}
               <AdditionalInfoSection />
