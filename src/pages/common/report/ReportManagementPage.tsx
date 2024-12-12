@@ -195,6 +195,7 @@ const ReportManagementPage = () => {
         return report.reportType === 'PORTFOLIO';
     }
   });
+  console.log('진단서 목록:', filteredApplications);
 
   const alerted = useRef(false);
 
@@ -323,7 +324,11 @@ const ReportManagementPage = () => {
                   {item.applyUrl === '' ? (
                     <ReportManagementButton
                       className="max-w-40 flex-1"
-                      onClick={() => console.log('서류 제출 페이지로 이동')}
+                      onClick={() =>
+                        navigate(
+                          `/report/submit/${item.reportType}/${item.reportId}`,
+                        )
+                      }
                     >
                       서류 제출하기
                     </ReportManagementButton>
@@ -363,12 +368,14 @@ const ReportManagementPage = () => {
                           now: dayjs(),
                           reportFeedback: item.confirmedTime,
                           status: item.feedbackStatus,
+                          isReportSubmitted: item.applyUrl !== '',
                         })}
                       >
                         {convertFeedbackStatusToDisplayName({
                           now: dayjs(),
                           reportFeedback: item.confirmedTime,
                           status: item.feedbackStatus,
+                          isReportSubmitted: item.applyUrl !== '',
                         })}
                       </Badge>
                       <h3 className="text-xsmall14 font-medium text-primary-dark">
@@ -385,6 +392,7 @@ const ReportManagementPage = () => {
                               희망일자
                             </td>
                             <td className="py-0.5 pl-4 text-xxsmall12 font-medium leading-5 text-neutral-50">
+                              {item.applyUrl === '' && '미정'}
                               {item.desiredDate1 ? (
                                 <p>
                                   (1순위){' '}
