@@ -53,10 +53,10 @@ export function convertReportTypeToLandingPath(type: ReportType) {
 
 export function convertReportStatusToUserDisplayName(
   status: ReportApplicationStatus | null | undefined,
+  isSubmitted: boolean,
 ) {
-  if (!status) {
-    return '';
-  }
+  if (!status) return '';
+  if (!isSubmitted) return '제출필요';
 
   switch (status) {
     case 'APPLIED':
@@ -87,10 +87,11 @@ export function convertReportPriceTypeToDisplayName(
 
 export function convertReportStatusToBadgeStatus(
   status: ReportApplicationStatus | null | undefined,
-): 'info' | 'success' {
-  if (!status) {
-    return 'info';
-  }
+  isSubmitted: boolean,
+): 'info' | 'success' | 'warning' {
+  if (!status) return 'info';
+  // 서류를 제출하지 않았으면
+  if (!isSubmitted) return 'warning';
 
   switch (status) {
     case 'APPLIED':
@@ -109,15 +110,19 @@ export function convertFeedbackStatusToDisplayName({
   reportFeedback,
   status,
   isAdmin = false,
+  isReportSubmitted,
 }: {
   status: ReportFeedbackStatus | null | undefined;
   reportFeedback: dayjs.Dayjs | null | undefined;
   now: dayjs.Dayjs;
   isAdmin?: boolean;
+  isReportSubmitted: boolean;
 }) {
   if (!status) {
     return '';
   }
+
+  if (!isReportSubmitted) return '제출필요';
 
   switch (status) {
     case 'APPLIED':
@@ -139,14 +144,18 @@ export function convertFeedbackStatusToBadgeStatus({
   now,
   reportFeedback,
   status,
+  isReportSubmitted,
 }: {
   status: ReportFeedbackStatus | null | undefined;
   reportFeedback: dayjs.Dayjs | null | undefined;
   now: dayjs.Dayjs;
-}): 'info' | 'success' {
+  isReportSubmitted: boolean;
+}): 'info' | 'success' | 'warning' {
   if (!status) {
     return 'info';
   }
+
+  if (!isReportSubmitted) return 'warning';
 
   switch (status) {
     case 'APPLIED':

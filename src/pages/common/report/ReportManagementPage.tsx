@@ -1,3 +1,14 @@
+import dayjs from 'dayjs';
+import {
+  ComponentPropsWithoutRef,
+  ElementType,
+  forwardRef,
+  MouseEvent,
+  useEffect,
+  useRef,
+} from 'react';
+import { Link, NavLink, useNavigate, useSearchParams } from 'react-router-dom';
+
 import {
   convertFeedbackStatusToBadgeStatus,
   convertFeedbackStatusToDisplayName,
@@ -12,16 +23,6 @@ import useAuthStore from '@/store/useAuthStore';
 import { ReportHeader } from '@components/common/report/ReportIntroSection';
 import Tooltip from '@components/common/report/Tooltip';
 import Badge from '@components/common/ui/Badge';
-import dayjs from 'dayjs';
-import {
-  ComponentPropsWithoutRef,
-  ElementType,
-  forwardRef,
-  MouseEvent,
-  useEffect,
-  useRef,
-} from 'react';
-import { Link, NavLink, useNavigate, useSearchParams } from 'react-router-dom';
 
 type ReportFilter = {
   status: 'all' | 'active' | 'inactive';
@@ -194,6 +195,7 @@ const ReportManagementPage = () => {
         return report.reportType === 'PORTFOLIO';
     }
   });
+  console.log('진단서 목록:', filteredApplications);
 
   const alerted = useRef(false);
 
@@ -258,10 +260,12 @@ const ReportManagementPage = () => {
                   <Badge
                     status={convertReportStatusToBadgeStatus(
                       item.applicationStatus,
+                      item.applyUrl !== '',
                     )}
                   >
                     {convertReportStatusToUserDisplayName(
                       item.applicationStatus,
+                      item.applyUrl !== '',
                     )}
                   </Badge>
                   <h2 className="text-xsmall14 font-medium">{item.title}</h2>
@@ -316,9 +320,22 @@ const ReportManagementPage = () => {
                       </Link>
                     ) : null}
                   </div>
-                  {item.applicationStatus === 'APPLIED' ||
-                  item.applicationStatus === 'REPORTING' ||
-                  item.applicationStatus === 'REPORTED' ? (
+                  {/* 서류를 제출하지 않았으면 */}
+                  {item.applyUrl === '' ? (
+                    <ReportManagementButton
+                      className="max-w-40 flex-1"
+                      onClick={() =>
+                        navigate(
+                          `/report/submit/${item.reportType}/${item.reportId}`,
+                        )
+                      }
+                    >
+                      서류 제출하기
+                    </ReportManagementButton>
+                  ) : (item.applicationStatus === 'APPLIED' &&
+                      item.applyUrl !== '') ||
+                    item.applicationStatus === 'REPORTING' ||
+                    item.applicationStatus === 'REPORTED' ? (
                     <ReportManagementButton
                       className="max-w-40 flex-1"
                       disabled
@@ -351,12 +368,14 @@ const ReportManagementPage = () => {
                           now: dayjs(),
                           reportFeedback: item.confirmedTime,
                           status: item.feedbackStatus,
+                          isReportSubmitted: item.applyUrl !== '',
                         })}
                       >
                         {convertFeedbackStatusToDisplayName({
                           now: dayjs(),
                           reportFeedback: item.confirmedTime,
                           status: item.feedbackStatus,
+                          isReportSubmitted: item.applyUrl !== '',
                         })}
                       </Badge>
                       <h3 className="text-xsmall14 font-medium text-primary-dark">
@@ -373,6 +392,7 @@ const ReportManagementPage = () => {
                               희망일자
                             </td>
                             <td className="py-0.5 pl-4 text-xxsmall12 font-medium leading-5 text-neutral-50">
+                              {item.applyUrl === '' && '미정'}
                               {item.desiredDate1 ? (
                                 <p>
                                   (1순위){' '}
