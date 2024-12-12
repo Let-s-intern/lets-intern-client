@@ -1,4 +1,3 @@
-import { useMediaQuery } from '@mui/material';
 import dayjs from 'dayjs';
 import { useEffect, useMemo, useState } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
@@ -29,7 +28,6 @@ import { searchParamsToObject } from '../../../utils/network';
 const ReportPaymentResult = () => {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
-  const isUpTo1280 = useMediaQuery('(max-width: 1280px)');
 
   const [result, setResult] = useState<ApplicationResult | null>(null);
 
@@ -55,13 +53,6 @@ const ReportPaymentResult = () => {
     return result.data;
   }, []);
 
-  const paymentLink = useMemo(() => {
-    if (isUpTo1280)
-      return `/report/payment/${reportDetail?.reportType?.toLocaleLowerCase()}/${reportApplication.reportId}`;
-
-    return `/report/apply/${reportDetail?.reportType?.toLocaleLowerCase()}/${reportApplication.reportId}`;
-  }, [reportDetail]);
-
   const subTitle =
     reportApplication.optionIds.length === 0
       ? convertReportPriceType(reportApplication.reportPriceType)
@@ -86,6 +77,7 @@ const ReportPaymentResult = () => {
       paymentKey: params.paymentKey ?? '',
       amount: reportApplication.amount?.toString(),
     };
+
     axios
       .post(`/report/${reportApplication.reportId}/application`, body)
       .then((res) => {
@@ -104,12 +96,12 @@ const ReportPaymentResult = () => {
         // eslint-disable-next-line no-console
         console.error(e);
         alert(
-          "결제 진행 중 문제가 발생했습니다. 아래 '채팅문의'로 문의 해주세요.",
+          '결제 중 문제가 발생했습니다.\n문제가 계속되면 아래 채팅으로 문의해주세요.',
         );
         setResult(null);
       })
       .finally(() => {
-        // postApplicationDone 를 true로 설정하여 추후 뒤로가기로 왔을 때 api를 타지 않도록 함
+        // postApplicationDone를 true로 설정하여 추후 뒤로가기로 왔을 때 api를 타지 않도록 함
         setSearchParams(
           (prev) => {
             prev.set('postApplicationDone', 'true');
@@ -147,6 +139,7 @@ const ReportPaymentResult = () => {
             <>
               <DescriptionBox type={isSuccess ? 'SUCCESS' : 'FAIL'} />
               <div className="flex w-full flex-col items-center justify-start gap-y-10 py-8">
+                {/* 결제 프로그램 정보 */}
                 <div className="flex w-full flex-col items-start justify-center gap-6">
                   <Heading2>결제 프로그램</Heading2>
                   <Card
@@ -159,12 +152,16 @@ const ReportPaymentResult = () => {
                     ]}
                   />
                 </div>
+
+                {/* 결제 상세 */}
                 <div className="flex w-full flex-col justify-center gap-6">
                   <Heading2>결제 상세</Heading2>
                   <div className="flex w-full items-center justify-between gap-x-4 bg-neutral-90 px-3 py-5">
                     <div className="font-bold">총 결제금액</div>
                     {Number(searchParams.get('amount')).toLocaleString() + '원'}
                   </div>
+
+                  {/* 서류 진단 */}
                   <div className="flex w-full flex-col items-center justify-center px-3">
                     <div className="flex w-full flex-col">
                       <ReportCreditRow
@@ -194,6 +191,8 @@ const ReportPaymentResult = () => {
                         />
                       </div>
                     </div>
+
+                    {/* 1:1 피드백 */}
                     {payment.isFeedbackApplied && (
                       <div className="flex w-full flex-col">
                         <ReportCreditRow
@@ -218,6 +217,7 @@ const ReportPaymentResult = () => {
                     )}
                   </div>
                   <hr className="border-neutral-85" />
+
                   <div className="flex w-full flex-col items-center justify-center">
                     {payment.amount === 0 ? (
                       <PaymentInfoRow
@@ -269,6 +269,7 @@ const ReportPaymentResult = () => {
                       </>
                     )}
                   </div>
+
                   {isSuccess && (
                     <Link
                       to="/report/management"
@@ -281,7 +282,7 @@ const ReportPaymentResult = () => {
                   )}
                   {!isSuccess && (
                     <Link
-                      to={paymentLink}
+                      to={`/report/payment/${reportDetail?.reportType?.toLocaleLowerCase()}/${reportApplication.reportId}`}
                       className="flex w-full flex-1 justify-center rounded-md border-2 border-primary bg-primary px-6 py-3 text-lg font-medium text-neutral-100"
                     >
                       다시 결제하기
