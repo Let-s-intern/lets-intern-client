@@ -3,7 +3,7 @@ import { ButtonHTMLAttributes, memo, MouseEventHandler } from 'react';
 import { twMerge } from '@/lib/twMerge';
 
 const DEFAULT_STYLE =
-  'flex justify-center rounded-md border-2 border-primary px-6 py-3 text-xsmall16 font-medium transition disabled:border-neutral-70 disabled:bg-neutral-70';
+  'flex justify-center rounded-md border-2 border-primary items-center py-3 text-xsmall16 font-medium transition disabled:border-neutral-70 disabled:bg-neutral-70';
 
 const BUTTON_VARIANT_STYLE = {
   filled: 'bg-primary text-neutral-100 hover:bg-primary-light',

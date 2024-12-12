@@ -10,7 +10,6 @@ import { FaArrowLeft } from 'react-icons/fa6';
 import { IoCloseOutline } from 'react-icons/io5';
 import { useNavigate, useParams } from 'react-router-dom';
 
-import { useGetParticipationInfo } from '@/api/application';
 import { uploadFile } from '@/api/file';
 import {
   convertReportPriceType,
@@ -69,15 +68,15 @@ const ReportApplyPage = () => {
     }
   };
 
-  const isValidFile = () => {
+  // 파일 state 때문에 별도로 유효성 검사
+  const validateFile = () => {
     const { applyUrl, reportPriceType, recruitmentUrl } = reportApplication;
 
     const isEmpty = (value: string | File | null) =>
       value === '' || value === null;
 
     if (isEmpty(applyUrl) && isEmpty(applyFile)) {
-      alert('진단용 서류를 등록해주세요.');
-      return false;
+      return { message: '진단용 서류를 등록해주세요.', isValid: false };
     }
 
     if (
@@ -86,11 +85,9 @@ const ReportApplyPage = () => {
       isEmpty(recruitmentUrl) &&
       isEmpty(recruitmentFile)
     ) {
-      alert('채용공고를 등록해주세요.');
-      return false;
+      return { message: '채용공고를 등록해주세요.', isValid: false };
     }
-
-    return true;
+    return { message: '', isValid: true };
   };
 
   useRunOnce(() => {
@@ -107,6 +104,7 @@ const ReportApplyPage = () => {
         <header>
           <Heading1>진단서 신청하기</Heading1>
         </header>
+
         <HorizontalRule className="-mx-5 md:-mx-32 lg:mx-0" />
 
         <main className="mb-8 mt-6 flex flex-col gap-10">
@@ -115,7 +113,7 @@ const ReportApplyPage = () => {
             onChangeRadio={(event, value) => setIsSubmitNow(value)}
           />
 
-          {/* 진단용 서류 */}
+          {/* '지금 제출할래요' 선택 시 표시 */}
           {isSubmitNow === 'true' && (
             <>
               <HorizontalRule className="-mx-5 md:-mx-32 lg:mx-0" />
@@ -124,6 +122,7 @@ const ReportApplyPage = () => {
                 header="❗ 제출 전 꼭 읽어주세요"
                 body="이력서 파일/링크가 잘 열리는 지 확인 후 첨부해주세요!"
               />
+              {/* 진단용 서류 */}
               <DocumentSection file={applyFile} dispatch={setApplyFile} />
               {/* 프리미엄 채용공고 */}
               {reportApplication.reportPriceType === 'PREMIUM' &&
@@ -135,8 +134,12 @@ const ReportApplyPage = () => {
                 )}
               <HorizontalRule className="-mx-5 md:-mx-32 lg:mx-0" />
               {/* 1:1 피드백 일정 */}
-              {reportApplication.isFeedbackApplied && <ScheduleSection />}
-              <HorizontalRule className="-mx-5 md:-mx-32 lg:mx-0" />
+              {reportApplication.isFeedbackApplied && (
+                <>
+                  <ScheduleSection />
+                  <HorizontalRule className="-mx-5 md:-mx-32 lg:mx-0" />
+                </>
+              )}
 
               {/* 추가 정보 */}
               <AdditionalInfoSection />
@@ -161,16 +164,25 @@ const ReportApplyPage = () => {
           className="text-1.125-medium w-full rounded-md bg-primary py-3 text-center font-medium text-neutral-100"
           onClick={async () => {
             // 지금 제출일 때만 파일 유효성 검사
-            if (isSubmitNow === 'true' && !isValidFile()) return;
+            if (isSubmitNow === 'true') {
+              const { isValid: isValidFile, message: fileValidationMessage } =
+                validateFile();
 
-            const { isValid, message } = validate();
-            if (!isValid) {
-              alert(message);
-              return;
+              if (!isValidFile) {
+                alert(fileValidationMessage);
+                return;
+              }
+
+              const { isValid, message } = validate();
+              if (!isValid) {
+                alert(message);
+                return;
+              }
             }
 
             // 지금 제출일 때만 파일 업로드
             if (isSubmitNow === 'true') await convertFile();
+
             navigate(`/report/payment/${reportType}/${reportId}`);
           }}
         >
@@ -537,105 +549,6 @@ const AdditionalInfoSection = () => {
           value={data.message || ''}
           onChange={onChange}
         />
-      </div>
-    </section>
-  );
-};
-
-export const UsereInfoSection = () => {
-  const [checked, setChecked] = useState(true);
-
-  const { data: participationInfo } = useGetParticipationInfo();
-  const { data: reportApplication, setReportApplication } =
-    useReportApplicationStore();
-
-  useEffect(() => {
-    // 가입한 이메일을 정보 수신용 이메일로 설정
-    setReportApplication({
-      contactEmail: participationInfo?.contactEmail || '',
-    });
-  }, [participationInfo?.contactEmail]);
-
-  useEffect(() => {
-    // 정보 수신용 이메일과 가입한 이메일이 다르면 체크 해제
-    if (reportApplication.contactEmail !== participationInfo?.email)
-      setChecked(false);
-    else setChecked(true);
-  }, [reportApplication.contactEmail, participationInfo?.email]);
-
-  return (
-    <section>
-      <Heading2>참여자 정보</Heading2>
-      <div className="mt-6 flex flex-col gap-3">
-        <div className="flex flex-col gap-1">
-          <Label>이름</Label>
-          <Input
-            disabled
-            readOnly
-            className="text-sm"
-            value={participationInfo?.name || ''}
-            name="name"
-          />
-        </div>
-        <div className="flex flex-col gap-1">
-          <Label>휴대폰 번호</Label>
-          <Input
-            disabled
-            readOnly
-            className="text-sm"
-            value={participationInfo?.phoneNumber || ''}
-            name="phoneNumber"
-          />
-        </div>
-        <div className="flex flex-col gap-1">
-          <label className="ml-3 text-xsmall14 font-semibold">
-            가입한 이메일
-          </label>
-          <Input
-            disabled
-            readOnly
-            className="text-sm"
-            value={participationInfo?.email || ''}
-            name="email"
-          />
-        </div>
-        <div className="flex flex-col gap-1">
-          <Label htmlFor="contactEmail">렛츠커리어 정보 수신용 이메일</Label>
-          <p className="text-[0.5625rem] font-light text-neutral-0 text-opacity-[52%]">
-            * 결제정보 및 프로그램 신청 관련 알림 수신을 위해,
-            <br />
-            &nbsp;&nbsp; 자주 사용하는 이메일 주소를 입력해주세요!
-          </p>
-          <label
-            onClick={() => {
-              setChecked(!checked);
-              if (checked) {
-                setReportApplication({
-                  contactEmail: '',
-                });
-              } else {
-                setReportApplication({
-                  contactEmail: participationInfo?.email || '',
-                });
-              }
-            }}
-            className="flex cursor-pointer items-center gap-1 text-xxsmall12 font-medium"
-          >
-            <img
-              className="h-auto w-5"
-              src={`/icons/${checked ? 'checkbox-fill.svg' : 'checkbox-unchecked.svg'}`}
-            />
-            가입한 이메일과 동일
-          </label>
-          <Input
-            name="contactEmail"
-            placeholder="example@example.com"
-            value={reportApplication.contactEmail}
-            onChange={(e) =>
-              setReportApplication({ contactEmail: e.target.value })
-            }
-          />
-        </div>
       </div>
     </section>
   );
