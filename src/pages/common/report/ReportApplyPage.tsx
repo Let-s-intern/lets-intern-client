@@ -10,7 +10,6 @@ import { FaArrowLeft } from 'react-icons/fa6';
 import { IoCloseOutline } from 'react-icons/io5';
 import { useNavigate, useParams } from 'react-router-dom';
 
-import { useGetParticipationInfo } from '@/api/application';
 import { uploadFile } from '@/api/file';
 import {
   convertReportPriceType,
@@ -550,105 +549,6 @@ const AdditionalInfoSection = () => {
           value={data.message || ''}
           onChange={onChange}
         />
-      </div>
-    </section>
-  );
-};
-
-export const UsereInfoSection = () => {
-  const [checked, setChecked] = useState(true);
-
-  const { data: participationInfo } = useGetParticipationInfo();
-  const { data: reportApplication, setReportApplication } =
-    useReportApplicationStore();
-
-  useEffect(() => {
-    // 가입한 이메일을 정보 수신용 이메일로 설정
-    setReportApplication({
-      contactEmail: participationInfo?.contactEmail || '',
-    });
-  }, [participationInfo?.contactEmail]);
-
-  useEffect(() => {
-    // 정보 수신용 이메일과 가입한 이메일이 다르면 체크 해제
-    if (reportApplication.contactEmail !== participationInfo?.email)
-      setChecked(false);
-    else setChecked(true);
-  }, [reportApplication.contactEmail, participationInfo?.email]);
-
-  return (
-    <section>
-      <Heading2>참여자 정보</Heading2>
-      <div className="mt-6 flex flex-col gap-3">
-        <div className="flex flex-col gap-1">
-          <Label>이름</Label>
-          <Input
-            disabled
-            readOnly
-            className="text-sm"
-            value={participationInfo?.name || ''}
-            name="name"
-          />
-        </div>
-        <div className="flex flex-col gap-1">
-          <Label>휴대폰 번호</Label>
-          <Input
-            disabled
-            readOnly
-            className="text-sm"
-            value={participationInfo?.phoneNumber || ''}
-            name="phoneNumber"
-          />
-        </div>
-        <div className="flex flex-col gap-1">
-          <label className="ml-3 text-xsmall14 font-semibold">
-            가입한 이메일
-          </label>
-          <Input
-            disabled
-            readOnly
-            className="text-sm"
-            value={participationInfo?.email || ''}
-            name="email"
-          />
-        </div>
-        <div className="flex flex-col gap-1">
-          <Label htmlFor="contactEmail">렛츠커리어 정보 수신용 이메일</Label>
-          <p className="text-[0.5625rem] font-light text-neutral-0 text-opacity-[52%]">
-            * 결제정보 및 프로그램 신청 관련 알림 수신을 위해,
-            <br />
-            &nbsp;&nbsp; 자주 사용하는 이메일 주소를 입력해주세요!
-          </p>
-          <label
-            onClick={() => {
-              setChecked(!checked);
-              if (checked) {
-                setReportApplication({
-                  contactEmail: '',
-                });
-              } else {
-                setReportApplication({
-                  contactEmail: participationInfo?.email || '',
-                });
-              }
-            }}
-            className="flex cursor-pointer items-center gap-1 text-xxsmall12 font-medium"
-          >
-            <img
-              className="h-auto w-5"
-              src={`/icons/${checked ? 'checkbox-fill.svg' : 'checkbox-unchecked.svg'}`}
-            />
-            가입한 이메일과 동일
-          </label>
-          <Input
-            name="contactEmail"
-            placeholder="example@example.com"
-            value={reportApplication.contactEmail}
-            onChange={(e) =>
-              setReportApplication({ contactEmail: e.target.value })
-            }
-          />
-        </div>
       </div>
     </section>
   );
