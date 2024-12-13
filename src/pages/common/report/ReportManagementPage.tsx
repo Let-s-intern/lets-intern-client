@@ -335,6 +335,7 @@ const ReportManagementPage = () => {
                         setReportApplication({
                           reportId: item.reportId,
                           isFeedbackApplied: item.feedbackStatus === 'APPLIED',
+                          reportPriceType: item.reportPriceType ?? 'BASIC',
                         });
                         navigate(
                           `/report/${convertReportTypeToPathname(item.reportType)}/application/${item.applicationId}`,

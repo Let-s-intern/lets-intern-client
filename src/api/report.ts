@@ -505,6 +505,8 @@ const getMyReportsSchema = z
         applicationId: z.number(),
         title: z.string().nullable().optional(),
         reportType: reportTypeSchema,
+        reportPriceType: reportPriceTypeEnum.optional().nullable(),
+        reportFeedbackPriceType: reportPriceTypeEnum.optional().nullable(),
         applicationStatus: reportApplicationStatusSchema.nullable().optional(),
         feedbackStatus: reportFeedbackStatusSchema.nullable().optional(),
         reportUrl: z.string().nullable().optional(),

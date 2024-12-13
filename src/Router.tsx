@@ -34,6 +34,7 @@ import PaymentInputPage from './pages/common/program/PaymentInputPage';
 import PaymentResult from './pages/common/program/PaymentResult';
 import ProgramDetailLegacy from './pages/common/program/ProgramDetailLegacy';
 import Programs from './pages/common/program/Programs';
+import ReportApplicationPage from './pages/common/report/ReportApplicationPage';
 import ReportApplyPage from './pages/common/report/ReportApplyPage';
 import ReportManagementPage from './pages/common/report/ReportManagementPage';
 import ReportPage from './pages/common/report/ReportPage';
@@ -43,7 +44,6 @@ import ReportPaymentResult from './pages/common/report/ReportPaymentResult';
 import ReportPersonalStatementPage from './pages/common/report/ReportPersonalStatementPage';
 import ReportPortfolioPage from './pages/common/report/ReportPortfolioPage';
 import ReportResumePage from './pages/common/report/ReportResumePage';
-import ReportSubmitPage from './pages/common/report/ReportSubmitPage';
 import ReportTossPage from './pages/common/report/ReportTossPage';
 import ReviewCreate from './pages/common/review/ReviewCreate';
 import ReviewDetail from './pages/common/review/ReviewDetail';
@@ -214,7 +214,7 @@ const Router = () => {
               {/* 서류 제출 페이지 */}
               <Route
                 path="report/:reportType/application/:applicationId"
-                element={<ReportSubmitPage />}
+                element={<ReportApplicationPage />}
               />
 
               {/* 비로그인 리뷰 작성 페이지 */}

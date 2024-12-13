@@ -39,7 +39,7 @@ import BaseButton from '@components/common/ui/button/BaseButton';
 import Input from '@components/common/ui/input/Input';
 import HorizontalRule from '@components/ui/HorizontalRule';
 
-const ReportSubmitPage = () => {
+const ReportApplicationPage = () => {
   const navigate = useNavigate();
   const { reportType, applicationId } = useParams();
   const isMobile = useMediaQuery('(max-width: 991px)');
@@ -51,7 +51,6 @@ const ReportSubmitPage = () => {
   const { mutateAsync: patchMyApplication } = usePatchMyApplication();
 
   const { data: reportApplication, validate } = useReportApplicationStore();
-  // TODO: reportPriceType 필요
 
   const convertFile = async () => {
     let applyUrl = '';
@@ -202,7 +201,7 @@ const ReportSubmitPage = () => {
   );
 };
 
-export default ReportSubmitPage;
+export default ReportApplicationPage;
 
 const CallOut = memo(function Callout({
   header,
