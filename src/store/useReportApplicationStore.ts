@@ -60,12 +60,12 @@ const useReportApplicationStore = create(
         message: '',
         contactEmail: '',
       },
-      setReportApplication: (params) => {
+      setReportApplication: (newData) => {
         const currentData = get().data;
         set({
           data: {
             ...currentData,
-            ...params, // 전달된 값들만 업데이트
+            ...newData, // 전달된 값들만 업데이트
           },
         });
       },

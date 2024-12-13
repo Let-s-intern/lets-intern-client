@@ -70,6 +70,17 @@ export function convertReportStatusToUserDisplayName(
   }
 }
 
+export function convertReportTypeToPathname(reportType: ReportType) {
+  switch (reportType) {
+    case 'RESUME':
+      return 'resume';
+    case 'PERSONAL_STATEMENT':
+      return 'personal-statement';
+    case 'PORTFOLIO':
+      return 'portfolio';
+  }
+}
+
 export function convertReportPriceTypeToDisplayName(
   type: ReportPriceType | null | undefined,
 ): string {
@@ -494,6 +505,8 @@ const getMyReportsSchema = z
         applicationId: z.number(),
         title: z.string().nullable().optional(),
         reportType: reportTypeSchema,
+        reportPriceType: reportPriceTypeEnum.optional().nullable(),
+        reportFeedbackPriceType: reportPriceTypeEnum.optional().nullable(),
         applicationStatus: reportApplicationStatusSchema.nullable().optional(),
         feedbackStatus: reportFeedbackStatusSchema.nullable().optional(),
         reportUrl: z.string().nullable().optional(),
@@ -713,6 +726,52 @@ export const usePatchApplicationDocument = ({
     },
     onError: (error: Error) => {
       errorCallback && errorCallback(error);
+    },
+  });
+};
+
+// 진단서 신처 업데이트 /api/v1/report/application/{applicationId}/my
+export const usePatchMyApplication = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({
+      applicationId,
+      applyUrl,
+      recruitmentUrl,
+      desiredDate1,
+      desiredDate2,
+      desiredDate3,
+      wishJob,
+      message,
+    }: {
+      applicationId: number;
+      applyUrl: string;
+      recruitmentUrl: string;
+      desiredDate1: string;
+      desiredDate2: string;
+      desiredDate3: string;
+      wishJob: string;
+      message: string;
+    }) => {
+      const res = await axios.patch(`/report/application/${applicationId}/my`, {
+        applyUrl,
+        recruitmentUrl,
+        desiredDate1,
+        desiredDate2,
+        desiredDate3,
+        wishJob,
+        message,
+      });
+      return res.data.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: [getMyReportsQueryKey],
+      });
+    },
+    onError: (error: Error) => {
+      console.error(error);
     },
   });
 };

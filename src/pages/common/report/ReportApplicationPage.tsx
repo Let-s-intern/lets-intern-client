@@ -16,6 +16,7 @@ import {
   convertReportTypeStatus,
   ReportOptionInfo,
   useGetReportPriceDetail,
+  usePatchMyApplication,
 } from '@/api/report';
 import useMinDate from '@/hooks/useMinDate';
 import useReportPayment from '@/hooks/useReportPayment';
@@ -38,33 +39,34 @@ import BaseButton from '@components/common/ui/button/BaseButton';
 import Input from '@components/common/ui/input/Input';
 import HorizontalRule from '@components/ui/HorizontalRule';
 
-const ReportSubmitPage = () => {
+const ReportApplicationPage = () => {
   const navigate = useNavigate();
-  const { reportType, reportId } = useParams();
+  const { reportType, applicationId } = useParams();
   const isMobile = useMediaQuery('(max-width: 991px)');
 
   const [applyFile, setApplyFile] = useState<File | null>(null);
   const [recruitmentFile, setRecruitmentFile] = useState<File | null>(null);
 
   const { isLoggedIn } = useAuthStore();
+  const { mutateAsync: patchMyApplication } = usePatchMyApplication();
 
-  // [TODO] API에서 불러온 데이터로 제출해야 함
-  const {
-    data: reportApplication,
-    setReportApplication,
-    validate,
-  } = useReportApplicationStore();
+  const { data: reportApplication, validate } = useReportApplicationStore();
 
   const convertFile = async () => {
+    let applyUrl = '';
+    let recruitmentUrl = '';
+
     // 파일 변환
     if (applyFile) {
-      const url = await uploadFile({ file: applyFile, type: 'REPORT' });
-      setReportApplication({ applyUrl: url });
+      applyUrl = await uploadFile({ file: applyFile, type: 'REPORT' });
     }
     if (recruitmentFile) {
-      const url = await uploadFile({ file: recruitmentFile, type: 'REPORT' });
-      setReportApplication({ recruitmentUrl: url });
+      recruitmentUrl = await uploadFile({
+        file: recruitmentFile,
+        type: 'REPORT',
+      });
     }
+    return { applyUrl, recruitmentUrl };
   };
 
   // 파일 state 때문에 별도로 유효성 검사
@@ -175,7 +177,18 @@ const ReportSubmitPage = () => {
             );
 
             if (isSubmit) {
-              await convertFile();
+              const { applyUrl, recruitmentUrl } = await convertFile();
+
+              await patchMyApplication({
+                applicationId: Number(applicationId),
+                applyUrl,
+                recruitmentUrl,
+                desiredDate1: reportApplication.desiredDate1!,
+                desiredDate2: reportApplication.desiredDate2!,
+                desiredDate3: reportApplication.desiredDate3!,
+                wishJob: reportApplication.wishJob,
+                message: reportApplication.message,
+              });
               alert('제출이 완료되었습니다.');
               navigate('/report/management');
             }
@@ -188,7 +201,7 @@ const ReportSubmitPage = () => {
   );
 };
 
-export default ReportSubmitPage;
+export default ReportApplicationPage;
 
 const CallOut = memo(function Callout({
   header,
@@ -450,6 +463,12 @@ const ScheduleSection = () => {
                 ? undefined
                 : dayjs(data.desiredDate2)
             }
+            time={
+              data.desiredDate2 === undefined ||
+              dayjs(data.desiredDate2).hour() === 0
+                ? undefined
+                : dayjs(data.desiredDate2).hour()
+            }
             name="desiredDate2"
             minDate={minDate}
             onChangeDate={onChangeDate}
@@ -463,6 +482,12 @@ const ScheduleSection = () => {
               data.desiredDate3 === undefined
                 ? undefined
                 : dayjs(data.desiredDate3)
+            }
+            time={
+              data.desiredDate3 === undefined ||
+              dayjs(data.desiredDate3).hour() === 0
+                ? undefined
+                : dayjs(data.desiredDate3).hour()
             }
             name="desiredDate3"
             minDate={minDate}
