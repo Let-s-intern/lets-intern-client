@@ -1,29 +1,51 @@
 import { useEffect } from 'react';
 import { Helmet } from 'react-helmet';
 
-import { useGetActiveReports } from '@/api/report';
+import { reportTypeSchema, useGetActiveReports } from '@/api/report';
 import ReportApplyBottomSheet from '@/components/common/report/ReportApplyBottomSheet';
 import { useServerActiveReports } from '@/context/ActiveReports';
 import { resumeReportDescription } from '@/data/description';
 import useReportApplicationStore from '@/store/useReportApplicationStore';
+import { ReportColors, ReportContent } from '@/types/interface';
 import { getBaseUrlFromServer, getReportLandingTitle } from '@/utils/url';
-import LexicalContent from '@components/common/blog/LexicalContent';
 import Header from '@components/common/program/program-detail/header/Header';
 import ReportBasicInfo from '@components/common/report/ReportBasicInfo';
-import ReportContentContainer from '@components/common/report/ReportContentContainer';
+import ReportProgramRecommendSlider from '@components/common/report/ReportProgramRecommendSlider';
 import LoadingContainer from '@components/common/ui/loading/LoadingContainer';
 import ReportNavigation from './ReportNavigation';
 
+const colors: ReportColors = {
+  primary: {
+    DEFAULT: '#11AC5C',
+    50: '#E8FDF2',
+    100: '#B1FFD6',
+    200: '#A5FFCF',
+    300: '#4FDA46',
+    400: '#2CE282',
+  },
+  secondary: {
+    DEFAULT: '#D8E36C',
+    50: '#F7FFAB',
+  },
+  highlight: {
+    DEFAULT: '#14BCFF',
+    50: '#EEF9FF',
+    100: '#DDF5FF',
+  },
+};
+
 const ReportResumePage = () => {
-  const url = `${typeof window !== 'undefined' ? window.location.origin : getBaseUrlFromServer()}/report/landing/resume`;
-  const description = resumeReportDescription;
   const activeReportsFromServer = useServerActiveReports();
   const { data, isLoading } = useGetActiveReports();
   const title = getReportLandingTitle(data?.resumeInfo?.title ?? '이력서');
+
+  const url = `${typeof window !== 'undefined' ? window.location.origin : getBaseUrlFromServer()}/report/landing/resume`;
+  const description = resumeReportDescription;
   const activeReports = data || activeReportsFromServer;
   const report = activeReports?.resumeInfo;
-
-  const root = JSON.parse(report?.contents || '{"root":{}}').root;
+  const resumeContent: ReportContent = JSON.parse(
+    data?.resumeInfo?.contents ?? '{}',
+  );
 
   const { initReportApplication } = useReportApplicationStore();
 
@@ -32,6 +54,11 @@ const ReportResumePage = () => {
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // 구버전 서류진단
+  if (!resumeContent.reportExample)
+    return <p>구버전 서류 진단은 판매 종료되었습니다.</p>;
+
   return (
     <>
       <Helmet>
@@ -63,11 +90,15 @@ const ReportResumePage = () => {
             <ReportBasicInfo reportBasic={data?.resumeInfo} />
           </div>
           <ReportNavigation />
-          {Object.keys(root).length !== 0 && (
-            <ReportContentContainer>
-              <LexicalContent node={root} />
-            </ReportContentContainer>
-          )}
+
+          {/* 프로그램 추천 */}
+          <section>
+            <ReportProgramRecommendSlider
+              colors={colors}
+              reportProgramRecommend={resumeContent.reportProgramRecommend}
+              reportType={reportTypeSchema.enum.PORTFOLIO}
+            />
+          </section>
         </div>
       )}
       {report && <ReportApplyBottomSheet report={report} />}

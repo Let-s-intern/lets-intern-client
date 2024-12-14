@@ -3,9 +3,8 @@ import { useSearchParams } from 'react-router-dom';
 
 import { useUserProgramQuery } from '@/api/program';
 import { ReportType, useGetActiveReports } from '@/api/report';
-import { ReportPersonalStatementColors } from '@/pages/common/report/ReportPersonalStatementPage';
 import { ProgramInfo } from '@/schema';
-import { ReportProgramRecommend } from '@/types/interface';
+import { ReportColors, ReportProgramRecommend } from '@/types/interface';
 import {
   PROGRAM_QUERY_KEY,
   PROGRAM_STATUS_KEY,
@@ -19,7 +18,7 @@ const SUPER_TITLE = '서류 작성, 아직 고민이 남아있나요?';
 const HEADING = '합격률을 2배 올려주는\n맞춤형 챌린지를 추천해요';
 
 interface ReportProgramRecommendSliderProps {
-  colors: ReportPersonalStatementColors;
+  colors: ReportColors;
   reportProgramRecommend: ReportProgramRecommend;
   reportType: ReportType;
 }
@@ -30,7 +29,7 @@ const ReportProgramRecommendSlider = ({
   reportType,
 }: ReportProgramRecommendSliderProps) => {
   const superTitleStyle = {
-    color: colors.title,
+    color: colors.primary.DEFAULT,
   };
 
   const [challengeSearchParams, setChallengeSearchParams] = useSearchParams();

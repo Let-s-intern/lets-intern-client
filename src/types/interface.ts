@@ -144,6 +144,26 @@ export type ReportContent = {
   reportProgramRecommend: ReportProgramRecommend;
 };
 
+export type ReportColors = {
+  primary: {
+    DEFAULT: string;
+    50: string;
+    100: string;
+    200: string;
+    300: string;
+    400: string;
+  };
+  secondary: {
+    DEFAULT: string;
+    50: string;
+  };
+  highlight: {
+    DEFAULT: string;
+    50: string;
+    100: string;
+  };
+};
+
 export interface IPageable {
   page: number;
   size: number;
