@@ -364,7 +364,8 @@ const LexicalContent = ({ node }: { node: SerializedLexicalNode }) => {
                 alt={_node.altText}
                 draggable={false}
                 className="h-auto"
-                style={{ width: _node.width }}
+                // Lexical에서 이미지 크기를 조정하지 않으면 width가 0으로 넘어옴 --> 원본 크기대로 넣기
+                style={{ width: _node.width === 0 ? 'auto' : _node.width }}
               />
             </picture>
             {_node.showCaption ? (
