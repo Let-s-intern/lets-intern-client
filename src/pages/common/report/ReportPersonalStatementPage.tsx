@@ -47,8 +47,6 @@ const ReportPersonalStatementPage = () => {
     data?.personalStatementInfo?.contents ?? '{}',
   );
 
-  console.log('data:', data);
-
   useEffect(() => {
     initReportApplication();
     // eslint-disable-next-line react-hooks/exhaustive-deps
