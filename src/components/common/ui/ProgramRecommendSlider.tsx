@@ -1,5 +1,5 @@
 import useHasScroll from '@/hooks/useHasScroll';
-import { MouseEventHandler } from 'react';
+import { memo, MouseEventHandler } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 interface ProgramRecommendSliderProps {
@@ -72,4 +72,4 @@ function ProgramRecommendSlider({
   );
 }
 
-export default ProgramRecommendSlider;
+export default memo(ProgramRecommendSlider);

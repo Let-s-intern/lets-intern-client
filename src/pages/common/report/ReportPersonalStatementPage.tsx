@@ -4,6 +4,7 @@ import useReportApplicationStore from '@/store/useReportApplicationStore';
 import { getBaseUrlFromServer, getReportLandingTitle } from '@/utils/url';
 import Header from '@components/common/program/program-detail/header/Header';
 import ReportBasicInfo from '@components/common/report/ReportBasicInfo';
+import ReportProgramRecommend from '@components/common/report/ReportProgramRecommend';
 import LoadingContainer from '@components/common/ui/loading/LoadingContainer';
 import { useEffect } from 'react';
 import { Helmet } from 'react-helmet';
@@ -11,18 +12,28 @@ import { useGetActiveReports } from '../../../api/report';
 import ReportApplyBottomSheet from '../../../components/common/report/ReportApplyBottomSheet';
 import ReportNavigation from './ReportNavigation';
 
+const colors = {
+  title: '#11AC5C',
+  green: '#2CE282',
+  greenLight: '#E8FDF2',
+  blue: '#14BCFF',
+  blueLight: '#EEFAFF',
+};
+
 const ReportPersonalStatementPage = () => {
-  const url = `${typeof window !== 'undefined' ? window.location.origin : getBaseUrlFromServer()}/report/landing/personal-statement`;
-  const description = personalStatementReportDescription;
-  const activeReportsFromServer = useServerActiveReports();
   const { data, isLoading } = useGetActiveReports();
   const title = getReportLandingTitle(
     data?.personalStatementInfo?.title ?? '자기소개서',
   );
-  const activeReports = data || activeReportsFromServer;
-  const report = activeReports?.personalStatementInfo;
 
   const { initReportApplication } = useReportApplicationStore();
+
+  const activeReportsFromServer = useServerActiveReports();
+
+  const url = `${typeof window !== 'undefined' ? window.location.origin : getBaseUrlFromServer()}/report/landing/personal-statement`;
+  const description = personalStatementReportDescription;
+  const activeReports = data || activeReportsFromServer;
+  const report = activeReports?.personalStatementInfo;
 
   useEffect(() => {
     initReportApplication();
@@ -58,11 +69,14 @@ const ReportPersonalStatementPage = () => {
         <div className="flex w-full flex-col items-center gap-y-12 md:gap-y-6">
           <div className="flex w-full max-w-[1000px] flex-col px-5 lg:px-0">
             <Header programTitle={title} />
+
             <ReportBasicInfo reportBasic={data?.personalStatementInfo} />
+            <ReportProgramRecommend />
           </div>
           <ReportNavigation />
         </div>
       )}
+
       {report && <ReportApplyBottomSheet report={report} />}
     </>
   );

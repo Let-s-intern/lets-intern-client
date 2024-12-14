@@ -7,8 +7,8 @@ import { useGetChallengeFaq } from '@/api/challenge';
 import channelService from '@/ChannelService';
 import { Faq } from '@/schema';
 import { ChallengeColor } from '@components/ChallengeView';
-import Heading2 from '@components/common/program/program-detail/Heading2';
 import SuperTitle from '@components/common/program/program-detail/SuperTitle';
+import Heading2 from '@components/common/ui/Heading2';
 import { PROGRAM_FAQ_ID } from '@components/ProgramDetailNavigation';
 
 const superTitle = '자주 묻는 질문';

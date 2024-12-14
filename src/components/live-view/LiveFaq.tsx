@@ -2,8 +2,8 @@ import { useParams } from 'react-router-dom';
 
 import { useGetLiveFaq } from '@/api/program';
 import { FaqCard } from '@components/challenge-view/ChallengeFaq';
-import Heading2 from '@components/common/program/program-detail/Heading2';
 import SuperTitle from '@components/common/program/program-detail/SuperTitle';
+import Heading2 from '@components/common/ui/Heading2';
 import { LIVE_FAQ_ID } from '@components/ProgramDetailNavigation';
 
 const superTitle = '자주 묻는 질문';

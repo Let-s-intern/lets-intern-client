@@ -11,8 +11,8 @@ import useHasScroll from '@/hooks/useHasScroll';
 import { ChallengeType, challengeTypeSchema, ProgramTypeEnum } from '@/schema';
 import { ChallengePoint, ProgramRecommend } from '@/types/interface';
 import { ChallengeColor } from '@components/ChallengeView';
-import Heading2 from '@components/common/program/program-detail/Heading2';
 import SuperTitle from '@components/common/program/program-detail/SuperTitle';
+import Heading2 from '@components/common/ui/Heading2';
 import ProgramRecommendSlider from '@components/common/ui/ProgramRecommendSlider';
 import { useNavigate } from 'react-router-dom';
 
