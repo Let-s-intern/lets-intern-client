@@ -59,7 +59,7 @@ const ReportProgramRecommendSlider = ({
       const live = sortByDeadline(lives?.programList ?? [])[0];
 
       list.push({
-        id: live?.programInfo.id,
+        id: 'LIVE' + live?.programInfo.id,
         backgroundImage: live?.programInfo.thumbnail ?? '',
         title:
           reportProgramRecommend.live?.title ??
@@ -74,7 +74,7 @@ const ReportProgramRecommendSlider = ({
       const vod = sortByDeadline(vods?.programList ?? [])[0];
 
       list.push({
-        id: vod?.programInfo.id,
+        id: 'VOD' + vod?.programInfo.id,
         backgroundImage: vod?.programInfo.thumbnail ?? '',
         title:
           reportProgramRecommend.vod?.title ??
@@ -87,7 +87,7 @@ const ReportProgramRecommendSlider = ({
 
     if (reportType !== 'RESUME' && reports?.resumeInfo) {
       list.push({
-        id: reports?.resumeInfo.reportId,
+        id: 'RESUME' + reports?.resumeInfo.reportId,
         backgroundImage: '',
         title:
           reportProgramRecommend.reportResume?.title ??
@@ -101,7 +101,7 @@ const ReportProgramRecommendSlider = ({
 
     if (reportType !== 'PERSONAL_STATEMENT' && reports?.personalStatementInfo) {
       list.push({
-        id: reports?.personalStatementInfo.reportId,
+        id: 'PERSONAL_STATEMENT' + reports?.personalStatementInfo.reportId,
         backgroundImage: '',
         title:
           reportProgramRecommend.reportPersonalStatement?.title ??
@@ -116,7 +116,7 @@ const ReportProgramRecommendSlider = ({
 
     if (reportType !== 'PORTFOLIO' && reports?.portfolioInfo) {
       list.push({
-        id: reports?.portfolioInfo.reportId,
+        id: 'PORTFOLIO' + reports?.portfolioInfo.reportId,
         backgroundImage: '',
         title:
           reportProgramRecommend.reportPortfolio?.title ??
