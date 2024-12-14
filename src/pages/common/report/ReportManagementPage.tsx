@@ -201,7 +201,6 @@ const ReportManagementPage = () => {
         return report.reportType === 'PORTFOLIO';
     }
   });
-  console.log('진단서 목록:', filteredApplications);
 
   const alerted = useRef(false);
 

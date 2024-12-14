@@ -1,11 +1,10 @@
 import { useEffect, useMemo } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 
 import { useUserProgramQuery } from '@/api/program';
 import { ReportType, useGetActiveReports } from '@/api/report';
-import { ReportPersonalStatementColors } from '@/pages/common/report/ReportPersonalStatementPage';
 import { ProgramInfo } from '@/schema';
-import { ReportProgramRecommend } from '@/types/interface';
+import { ReportColors, ReportProgramRecommend } from '@/types/interface';
 import {
   PROGRAM_QUERY_KEY,
   PROGRAM_STATUS_KEY,
@@ -19,7 +18,7 @@ const SUPER_TITLE = '서류 작성, 아직 고민이 남아있나요?';
 const HEADING = '합격률을 2배 올려주는\n맞춤형 챌린지를 추천해요';
 
 interface ReportProgramRecommendSliderProps {
-  colors: ReportPersonalStatementColors;
+  colors: ReportColors;
   reportProgramRecommend: ReportProgramRecommend;
   reportType: ReportType;
 }
@@ -30,8 +29,10 @@ const ReportProgramRecommendSlider = ({
   reportType,
 }: ReportProgramRecommendSliderProps) => {
   const superTitleStyle = {
-    color: colors.title,
+    color: colors.primary.DEFAULT,
   };
+
+  const navigate = useNavigate();
 
   const [challengeSearchParams, setChallengeSearchParams] = useSearchParams();
   const [vodSearchParams, setVodSearchParams] = useSearchParams();
@@ -66,7 +67,7 @@ const ReportProgramRecommendSlider = ({
           live.programInfo.title ??
           '렛츠커리어 라이브',
         cta: reportProgramRecommend.live?.cta ?? '라이브 참여하러 가기',
-        onClickButton: () => console.log('click live'),
+        onClickButton: () => navigate(`/program/live/${live?.programInfo.id}`),
       });
     }
 
@@ -81,7 +82,7 @@ const ReportProgramRecommendSlider = ({
           vod?.programInfo.title ??
           '렛츠커리어 VOD',
         cta: reportProgramRecommend.vod?.cta ?? 'VOD 참여하러 가기',
-        onClickButton: () => console.log('click vod'),
+        onClickButton: () => console.log('vod 링크로 이동할 예정'),
       });
     }
 
@@ -95,7 +96,7 @@ const ReportProgramRecommendSlider = ({
           '렛츠커리어 이력서 진단 프로그램',
         cta:
           reportProgramRecommend.reportResume?.cta ?? '이력서 진단받으러 가기',
-        onClickButton: () => console.log('click resume'),
+        onClickButton: () => navigate('/report/landing/resume'),
       });
     }
 
@@ -110,7 +111,7 @@ const ReportProgramRecommendSlider = ({
         cta:
           reportProgramRecommend.reportPersonalStatement?.cta ??
           '자기소개서 진단받으러 가기',
-        onClickButton: () => console.log('click personal statement'),
+        onClickButton: () => navigate('/report/landing/personal-statement'),
       });
     }
 
@@ -125,7 +126,7 @@ const ReportProgramRecommendSlider = ({
         cta:
           reportProgramRecommend.reportPortfolio?.cta ??
           '포트폴리오 진단받으러 가기',
-        onClickButton: () => console.log('click portfolio'),
+        onClickButton: () => navigate('/report/landing/portfolio'),
       });
     }
 
@@ -160,7 +161,7 @@ const ReportProgramRecommendSlider = ({
     //setChallengeSearchParams(challengeSearchParams);
     setVodSearchParams(vodSearchParams);
     setLiveSearchParams(liveSearchParams);
-  }, []);
+  }, [setVodSearchParams, setLiveSearchParams]);
 
   return (
     <>

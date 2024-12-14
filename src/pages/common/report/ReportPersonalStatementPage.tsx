@@ -1,7 +1,7 @@
 import { useServerActiveReports } from '@/context/ActiveReports';
 import { personalStatementReportDescription } from '@/data/description';
 import useReportApplicationStore from '@/store/useReportApplicationStore';
-import { ReportContent } from '@/types/interface';
+import { ReportColors, ReportContent } from '@/types/interface';
 import { getBaseUrlFromServer, getReportLandingTitle } from '@/utils/url';
 import Header from '@components/common/program/program-detail/header/Header';
 import ReportBasicInfo from '@components/common/report/ReportBasicInfo';
@@ -13,20 +13,24 @@ import { reportTypeSchema, useGetActiveReports } from '../../../api/report';
 import ReportApplyBottomSheet from '../../../components/common/report/ReportApplyBottomSheet';
 import ReportNavigation from './ReportNavigation';
 
-export type ReportPersonalStatementColors = {
-  title: string;
-  green: string;
-  greenLight: string;
-  blue: string;
-  blueLight: string;
-};
-
-const colors = {
-  title: '#11AC5C',
-  green: '#2CE282',
-  greenLight: '#E8FDF2',
-  blue: '#14BCFF',
-  blueLight: '#EEFAFF',
+const colors: ReportColors = {
+  primary: {
+    DEFAULT: '#11AC5C',
+    50: '#E8FDF2',
+    100: '#B1FFD6',
+    200: '#A5FFCF',
+    300: '#4FDA46',
+    400: '#2CE282',
+  },
+  secondary: {
+    DEFAULT: '#D8E36C',
+    50: '#F7FFAB',
+  },
+  highlight: {
+    DEFAULT: '#14BCFF',
+    50: '#EEF9FF',
+    100: '#DDF5FF',
+  },
 };
 
 const ReportPersonalStatementPage = () => {
@@ -51,6 +55,10 @@ const ReportPersonalStatementPage = () => {
     initReportApplication();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // 구버전 서류진단
+  if (!personalStatementContent.reportExample)
+    return <p>구버전 서류 진단은 판매 종료되었습니다.</p>;
 
   return (
     <>
@@ -83,7 +91,11 @@ const ReportPersonalStatementPage = () => {
             <Header programTitle={title} />
 
             <ReportBasicInfo reportBasic={data?.personalStatementInfo} />
-            {/* 프로그램 추천 */}
+          </div>
+          <ReportNavigation />
+
+          {/* 프로그램 추천 */}
+          {personalStatementContent.reportProgramRecommend && (
             <section>
               <ReportProgramRecommendSlider
                 colors={colors}
@@ -93,8 +105,7 @@ const ReportPersonalStatementPage = () => {
                 reportType={reportTypeSchema.enum.PERSONAL_STATEMENT}
               />
             </section>
-          </div>
-          <ReportNavigation />
+          )}
         </div>
       )}
 
