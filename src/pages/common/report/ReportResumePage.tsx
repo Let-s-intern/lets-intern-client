@@ -55,10 +55,6 @@ const ReportResumePage = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // 구버전 서류진단
-  if (!resumeContent.reportExample)
-    return <p>구버전 서류 진단은 판매 종료되었습니다.</p>;
-
   return (
     <>
       <Helmet>
