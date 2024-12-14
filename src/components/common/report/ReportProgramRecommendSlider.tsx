@@ -1,4 +1,8 @@
+import { useEffect, useMemo } from 'react';
+import { useSearchParams } from 'react-router-dom';
+
 import { useUserProgramQuery } from '@/api/program';
+import { ReportType, useGetActiveReports } from '@/api/report';
 import { ReportPersonalStatementColors } from '@/pages/common/report/ReportPersonalStatementPage';
 import { ProgramInfo } from '@/schema';
 import { ReportProgramRecommend } from '@/types/interface';
@@ -7,20 +11,23 @@ import {
   PROGRAM_STATUS_KEY,
   PROGRAM_TYPE,
 } from '@/utils/programConst';
-import { useEffect, useMemo } from 'react';
-import { useSearchParams } from 'react-router-dom';
 import Heading2 from '../ui/Heading2';
 import ProgramRecommendSlider from '../ui/ProgramRecommendSlider';
 import SuperTitle from './SuperTitle';
 
+const SUPER_TITLE = '서류 작성, 아직 고민이 남아있나요?';
+const HEADING = '합격률을 2배 올려주는\n맞춤형 챌린지를 추천해요';
+
 interface ReportProgramRecommendSliderProps {
   colors: ReportPersonalStatementColors;
   reportProgramRecommend: ReportProgramRecommend;
+  reportType: ReportType;
 }
 
 const ReportProgramRecommendSlider = ({
   colors,
   reportProgramRecommend,
+  reportType,
 }: ReportProgramRecommendSliderProps) => {
   const superTitleStyle = {
     color: colors.title,
@@ -30,11 +37,11 @@ const ReportProgramRecommendSlider = ({
   const [vodSearchParams, setVodSearchParams] = useSearchParams();
   const [liveSearchParams, setLiveSearchParams] = useSearchParams();
 
-  // '챌린지 구분' 속성 필요
-  const { data: challenges } = useUserProgramQuery({
-    pageable: { page: 1, size: 8 },
-    searchParams: challengeSearchParams,
-  });
+  // '챌린지 구분' 속성 필요 -> challenge 목록 조회 API 사용하기
+  // const { data: challenges } = useUserProgramQuery({
+  //   pageable: { page: 1, size: 8 },
+  //   searchParams: challengeSearchParams,
+  // });
   const { data: vods } = useUserProgramQuery({
     pageable: { page: 1, size: 3 },
     searchParams: vodSearchParams,
@@ -43,6 +50,7 @@ const ReportProgramRecommendSlider = ({
     pageable: { page: 1, size: 3 },
     searchParams: liveSearchParams,
   });
+  const { data: reports } = useGetActiveReports();
 
   const slideList = useMemo(() => {
     const list = [];
@@ -77,8 +85,52 @@ const ReportProgramRecommendSlider = ({
       });
     }
 
+    if (reportType !== 'RESUME' && reports?.resumeInfo) {
+      list.push({
+        id: reports?.resumeInfo.reportId,
+        backgroundImage: '',
+        title:
+          reportProgramRecommend.reportResume?.title ??
+          reports?.resumeInfo.title ??
+          '렛츠커리어 이력서 진단 프로그램',
+        cta:
+          reportProgramRecommend.reportResume?.cta ?? '이력서 진단받으러 가기',
+        onClickButton: () => console.log('click resume'),
+      });
+    }
+
+    if (reportType !== 'PERSONAL_STATEMENT' && reports?.personalStatementInfo) {
+      list.push({
+        id: reports?.personalStatementInfo.reportId,
+        backgroundImage: '',
+        title:
+          reportProgramRecommend.reportPersonalStatement?.title ??
+          reports?.personalStatementInfo.title ??
+          '렛츠커리어 자기소개서 진단 프로그램',
+        cta:
+          reportProgramRecommend.reportPersonalStatement?.cta ??
+          '자기소개서 진단받으러 가기',
+        onClickButton: () => console.log('click personal statement'),
+      });
+    }
+
+    if (reportType !== 'PORTFOLIO' && reports?.portfolioInfo) {
+      list.push({
+        id: reports?.portfolioInfo.reportId,
+        backgroundImage: '',
+        title:
+          reportProgramRecommend.reportPortfolio?.title ??
+          reports?.portfolioInfo.title ??
+          '렛츠커리어 포트폴리오 진단 프로그램',
+        cta:
+          reportProgramRecommend.reportPortfolio?.cta ??
+          '포트폴리오 진단받으러 가기',
+        onClickButton: () => console.log('click portfolio'),
+      });
+    }
+
     return list;
-  }, [lives, vods, reportProgramRecommend]);
+  }, [lives, vods, reportProgramRecommend, reports]);
 
   function sortByDeadline(programList: ProgramInfo[]) {
     return programList.toSorted((a, b) => {
@@ -90,11 +142,11 @@ const ReportProgramRecommendSlider = ({
 
   // 검색 파라미터 설정
   useEffect(() => {
-    challengeSearchParams.set(PROGRAM_QUERY_KEY.TYPE, PROGRAM_TYPE.CHALLENGE);
-    challengeSearchParams.set(
-      PROGRAM_QUERY_KEY.STATUS,
-      PROGRAM_STATUS_KEY.PROCEEDING,
-    );
+    // challengeSearchParams.set(PROGRAM_QUERY_KEY.TYPE, PROGRAM_TYPE.CHALLENGE);
+    // challengeSearchParams.set(
+    //   PROGRAM_QUERY_KEY.STATUS,
+    //   PROGRAM_STATUS_KEY.PROCEEDING,
+    // );
     vodSearchParams.set(PROGRAM_QUERY_KEY.TYPE, PROGRAM_TYPE.VOD);
     vodSearchParams.set(
       PROGRAM_QUERY_KEY.STATUS,
@@ -105,25 +157,23 @@ const ReportProgramRecommendSlider = ({
       PROGRAM_QUERY_KEY.STATUS,
       PROGRAM_STATUS_KEY.PROCEEDING,
     );
-    setChallengeSearchParams(challengeSearchParams);
+    //setChallengeSearchParams(challengeSearchParams);
     setVodSearchParams(vodSearchParams);
     setLiveSearchParams(liveSearchParams);
   }, []);
 
   return (
-    <div>
-      <SuperTitle style={superTitleStyle}>
-        서류 작성, 아직 고민이 남아있나요?
+    <>
+      <SuperTitle className="mb-1 md:mb-3" style={superTitleStyle}>
+        {SUPER_TITLE}
       </SuperTitle>
-      <Heading2>합격률을 2배 올려주는 맞춤형 챌린지를 추천해요</Heading2>
+      <Heading2>{HEADING}</Heading2>
 
-      <section>
-        <ProgramRecommendSlider
-          className="mx-5 mt-8 max-w-[1000px] px-5 md:mx-auto md:mt-16 lg:px-0"
-          list={slideList}
-        />
-      </section>
-    </div>
+      <ProgramRecommendSlider
+        className="-mx-5 mt-8 max-w-[1000px] px-5 md:mt-14 lg:mx-0 lg:px-0"
+        list={slideList}
+      />
+    </>
   );
 };
 

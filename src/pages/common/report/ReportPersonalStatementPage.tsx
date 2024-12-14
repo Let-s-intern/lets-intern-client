@@ -9,7 +9,7 @@ import ReportProgramRecommendSlider from '@components/common/report/ReportProgra
 import LoadingContainer from '@components/common/ui/loading/LoadingContainer';
 import { useEffect } from 'react';
 import { Helmet } from 'react-helmet';
-import { useGetActiveReports } from '../../../api/report';
+import { reportTypeSchema, useGetActiveReports } from '../../../api/report';
 import ReportApplyBottomSheet from '../../../components/common/report/ReportApplyBottomSheet';
 import ReportNavigation from './ReportNavigation';
 
@@ -85,12 +85,16 @@ const ReportPersonalStatementPage = () => {
             <Header programTitle={title} />
 
             <ReportBasicInfo reportBasic={data?.personalStatementInfo} />
-            <ReportProgramRecommendSlider
-              colors={colors}
-              reportProgramRecommend={
-                personalStatementContent.reportProgramRecommend
-              }
-            />
+            {/* 프로그램 추천 */}
+            <section>
+              <ReportProgramRecommendSlider
+                colors={colors}
+                reportProgramRecommend={
+                  personalStatementContent.reportProgramRecommend
+                }
+                reportType={reportTypeSchema.enum.PERSONAL_STATEMENT}
+              />
+            </section>
           </div>
           <ReportNavigation />
         </div>
