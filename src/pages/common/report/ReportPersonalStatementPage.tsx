@@ -1,34 +1,54 @@
 import { useServerActiveReports } from '@/context/ActiveReports';
 import { personalStatementReportDescription } from '@/data/description';
 import useReportApplicationStore from '@/store/useReportApplicationStore';
+import { ReportContent } from '@/types/interface';
 import { getBaseUrlFromServer, getReportLandingTitle } from '@/utils/url';
 import Header from '@components/common/program/program-detail/header/Header';
 import ReportBasicInfo from '@components/common/report/ReportBasicInfo';
+import ReportProgramRecommendSlider from '@components/common/report/ReportProgramRecommendSlider';
 import LoadingContainer from '@components/common/ui/loading/LoadingContainer';
 import { useEffect } from 'react';
 import { Helmet } from 'react-helmet';
-import { useGetActiveReports } from '../../../api/report';
+import { reportTypeSchema, useGetActiveReports } from '../../../api/report';
 import ReportApplyBottomSheet from '../../../components/common/report/ReportApplyBottomSheet';
 import ReportNavigation from './ReportNavigation';
 
+export type ReportPersonalStatementColors = {
+  title: string;
+  green: string;
+  greenLight: string;
+  blue: string;
+  blueLight: string;
+};
+
+const colors = {
+  title: '#11AC5C',
+  green: '#2CE282',
+  greenLight: '#E8FDF2',
+  blue: '#14BCFF',
+  blueLight: '#EEFAFF',
+};
+
 const ReportPersonalStatementPage = () => {
-  const url = `${typeof window !== 'undefined' ? window.location.origin : getBaseUrlFromServer()}/report/landing/personal-statement`;
-  const description = personalStatementReportDescription;
-  const activeReportsFromServer = useServerActiveReports();
   const { data, isLoading } = useGetActiveReports();
   const title = getReportLandingTitle(
     data?.personalStatementInfo?.title ?? '자기소개서',
   );
-  const activeReports = data || activeReportsFromServer;
-  const report = activeReports?.personalStatementInfo;
-
-  const root = JSON.parse(report?.contents || '{"root":{}}').root;
 
   const { initReportApplication } = useReportApplicationStore();
 
+  const activeReportsFromServer = useServerActiveReports();
+
+  const url = `${typeof window !== 'undefined' ? window.location.origin : getBaseUrlFromServer()}/report/landing/personal-statement`;
+  const description = personalStatementReportDescription;
+  const activeReports = data || activeReportsFromServer;
+  const report = activeReports?.personalStatementInfo;
+  const personalStatementContent: ReportContent = JSON.parse(
+    data?.personalStatementInfo?.contents ?? '{}',
+  );
+
   useEffect(() => {
     initReportApplication();
-
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -54,22 +74,30 @@ const ReportPersonalStatementPage = () => {
           <meta name="twitter:description" content={description} />
         ) : null}
       </Helmet>
+
       {isLoading ? (
         <LoadingContainer />
       ) : (
         <div className="flex w-full flex-col items-center gap-y-12 md:gap-y-6">
           <div className="flex w-full max-w-[1000px] flex-col px-5 lg:px-0">
             <Header programTitle={title} />
+
             <ReportBasicInfo reportBasic={data?.personalStatementInfo} />
+            {/* 프로그램 추천 */}
+            <section>
+              <ReportProgramRecommendSlider
+                colors={colors}
+                reportProgramRecommend={
+                  personalStatementContent.reportProgramRecommend
+                }
+                reportType={reportTypeSchema.enum.PERSONAL_STATEMENT}
+              />
+            </section>
           </div>
           <ReportNavigation />
-          {/* {Object.keys(root).length !== 0 && (
-            <ReportContentContainer>
-              <LexicalContent node={root} />
-            </ReportContentContainer>
-          )} */}
         </div>
       )}
+
       {report && <ReportApplyBottomSheet report={report} />}
     </>
   );

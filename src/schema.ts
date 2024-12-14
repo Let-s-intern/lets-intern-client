@@ -9,7 +9,7 @@ export const pageInfo = z.object({
 });
 
 /** GET /api/v1/challenge */
-export const challenges = z
+export const challengeSchema = z
   .object({
     programList: z.array(
       z.object({
@@ -1427,6 +1427,7 @@ export const programSchema = z.object({
   ),
   pageInfo,
 });
+
 export type ProgramInfo = z.infer<typeof programSchema>['programList'][0];
 
 /** GET /api/v1/program/admin */

@@ -1,7 +1,7 @@
 import { FaCheck } from 'react-icons/fa6';
 
 import Description from '@components/common/program/program-detail/Description';
-import Heading2 from '@components/common/program/program-detail/Heading2';
+import Heading2 from '@components/common/ui/Heading2';
 
 const templates: Template[] = [
   {
