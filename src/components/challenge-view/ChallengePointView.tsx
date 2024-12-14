@@ -13,6 +13,7 @@ import { ChallengePoint, ProgramRecommend } from '@/types/interface';
 import { ChallengeColor } from '@components/ChallengeView';
 import Heading2 from '@components/common/program/program-detail/Heading2';
 import SuperTitle from '@components/common/program/program-detail/SuperTitle';
+import ProgramRecommendSlider from '@components/common/ui/ProgramRecommendSlider';
 import { useNavigate } from 'react-router-dom';
 
 const Balancer = clientOnly(() => import('react-wrap-balancer'));
@@ -246,63 +247,28 @@ const ChallengePointView = ({
               <br /> 커리어 단계에 맞는 프로그램을
               <br className="md:hidden" /> 추천드려요
             </Heading2>
+            <ProgramRecommendSlider
+              list={programRecommend.list.map((item) => ({
+                id: item.programInfo.id,
+                backgroundImage: item.programInfo.thumbnail ?? '',
+                title: item.recommendTitle ?? '',
+                cta: item.recommendCTA ?? '',
+                onClickButton: async () => {
+                  if (
+                    item.programInfo.programType === ProgramTypeEnum.enum.VOD
+                  ) {
+                    // VOD 링크로 이동
+                    const data = await getVod(item.programInfo.id);
+                    window.open(data.vodInfo.link ?? '');
+                    return;
+                  }
 
-            <div
-              className={twMerge(
-                'custom-scrollbar -mx-5 mt-8 max-w-[1000px] overflow-x-auto px-5 md:mx-auto md:mt-16 lg:px-0',
-                !hasScroll && 'flex justify-center',
-              )}
-              ref={scrollRef}
-            >
-              <div className="flex min-w-fit gap-4 md:gap-8">
-                {programRecommend.list.map((item) => (
-                  <div
-                    key={item.programInfo.id}
-                    className="flex w-[262px] flex-col items-center md:w-[312px]"
-                  >
-                    <div
-                      className="aspect-[4/3] h-[199px] w-auto overflow-hidden rounded-sm bg-neutral-50 md:h-[235px]"
-                      style={{
-                        backgroundImage: `url(${item.programInfo.thumbnail})`,
-                        backgroundSize: 'cover',
-                        backgroundPosition: 'center',
-                      }}
-                    >
-                      <div className="h-2/3 w-full bg-gradient-to-b from-[#161E31]/40 to-[#161E31]/0 px-5 pt-3">
-                        <span
-                          className="block w-fit text-xsmall16 font-semibold text-white md:text-small18"
-                          style={textShadowStyle}
-                        >
-                          {item.recommendTitle}
-                        </span>
-                      </div>
-                    </div>
-
-                    <button
-                      className="mt-3 w-full rounded-xs py-3 text-xsmall16 text-white md:mt-4 md:py-4 md:text-small18"
-                      style={{ backgroundColor: colors.primary }}
-                      onClick={async () => {
-                        if (
-                          item.programInfo.programType ===
-                          ProgramTypeEnum.enum.VOD
-                        ) {
-                          // VOD 링크로 이동
-                          const data = await getVod(item.programInfo.id);
-                          window.open(data.vodInfo.link ?? '');
-                          return;
-                        }
-
-                        navigate(
-                          `/program/${item.programInfo.programType.toLowerCase()}/${item.programInfo.id}`,
-                        );
-                      }}
-                    >
-                      {item.recommendCTA}
-                    </button>
-                  </div>
-                ))}
-              </div>
-            </div>
+                  navigate(
+                    `/program/${item.programInfo.programType.toLowerCase()}/${item.programInfo.id}`,
+                  );
+                },
+              }))}
+            />
           </div>
         </div>
       )}
