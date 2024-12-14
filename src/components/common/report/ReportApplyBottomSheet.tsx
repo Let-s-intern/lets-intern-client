@@ -141,7 +141,7 @@ const ReportApplyBottomSheet = React.forwardRef<
         discount: reportPremiumInfo?.discountPrice,
       },
     ];
-  }, [priceInfo]);
+  }, [priceInfo, report.reportType]);
 
   const selectedReportPlan = useMemo(() => {
     if (!radioValue) return null;
@@ -278,7 +278,7 @@ const ReportApplyBottomSheet = React.forwardRef<
     <div
       ref={ref}
       className={twMerge(
-        'fixed bottom-0 left-1/2 z-40 mx-auto w-full max-w-3xl -translate-x-1/2 rounded-t-xl border-t border-neutral-0/5 bg-white shadow-lg transition',
+        'fixed bottom-0 left-1/2 z-40 mx-auto w-full max-w-[1000px] -translate-x-1/2 rounded-t-xl border-t border-neutral-0/5 bg-white shadow-lg transition',
         !show && 'hidden',
       )}
     >

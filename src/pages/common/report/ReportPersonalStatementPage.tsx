@@ -22,13 +22,10 @@ const ReportPersonalStatementPage = () => {
   const activeReports = data || activeReportsFromServer;
   const report = activeReports?.personalStatementInfo;
 
-  const root = JSON.parse(report?.contents || '{"root":{}}').root;
-
   const { initReportApplication } = useReportApplicationStore();
 
   useEffect(() => {
     initReportApplication();
-
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -54,6 +51,7 @@ const ReportPersonalStatementPage = () => {
           <meta name="twitter:description" content={description} />
         ) : null}
       </Helmet>
+
       {isLoading ? (
         <LoadingContainer />
       ) : (
@@ -63,11 +61,6 @@ const ReportPersonalStatementPage = () => {
             <ReportBasicInfo reportBasic={data?.personalStatementInfo} />
           </div>
           <ReportNavigation />
-          {/* {Object.keys(root).length !== 0 && (
-            <ReportContentContainer>
-              <LexicalContent node={root} />
-            </ReportContentContainer>
-          )} */}
         </div>
       )}
       {report && <ReportApplyBottomSheet report={report} />}
