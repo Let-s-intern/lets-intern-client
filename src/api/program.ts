@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import {
+  challengeSchema,
   CreateChallengeReq,
   CreateLiveReq,
   CreateVodReq,
@@ -98,6 +99,23 @@ export const useGetProgramAdminQuery = (params: {
     queryFn: async () => {
       const res = await axios.get(`/program/admin`, { params });
       return programAdminSchema.parse(res.data.data);
+    },
+  });
+};
+
+export const useGetChallengeListQuery = ({
+  pageable,
+  enabled = true,
+}: {
+  pageable: IPageable;
+  enabled?: boolean;
+}) => {
+  return useQuery({
+    enabled,
+    queryKey: ['useGetChallengeListQuery'],
+    queryFn: async () => {
+      const res = await axios.get('/challenge', { params: pageable });
+      return challengeSchema.parse(res.data.data);
     },
   });
 };

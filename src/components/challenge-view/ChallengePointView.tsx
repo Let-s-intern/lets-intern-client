@@ -248,6 +248,7 @@ const ChallengePointView = ({
               <br className="md:hidden" /> 추천드려요
             </Heading2>
             <ProgramRecommendSlider
+              className="mx-5 mt-8 max-w-[1000px] px-5 md:mx-auto md:mt-16 lg:px-0"
               list={programRecommend.list.map((item) => ({
                 id: item.programInfo.id,
                 backgroundImage: item.programInfo.thumbnail ?? '',

@@ -1,16 +1,25 @@
 import { useServerActiveReports } from '@/context/ActiveReports';
 import { personalStatementReportDescription } from '@/data/description';
 import useReportApplicationStore from '@/store/useReportApplicationStore';
+import { ReportContent } from '@/types/interface';
 import { getBaseUrlFromServer, getReportLandingTitle } from '@/utils/url';
 import Header from '@components/common/program/program-detail/header/Header';
 import ReportBasicInfo from '@components/common/report/ReportBasicInfo';
-import ReportProgramRecommend from '@components/common/report/ReportProgramRecommend';
+import ReportProgramRecommendSlider from '@components/common/report/ReportProgramRecommendSlider';
 import LoadingContainer from '@components/common/ui/loading/LoadingContainer';
 import { useEffect } from 'react';
 import { Helmet } from 'react-helmet';
 import { useGetActiveReports } from '../../../api/report';
 import ReportApplyBottomSheet from '../../../components/common/report/ReportApplyBottomSheet';
 import ReportNavigation from './ReportNavigation';
+
+export type ReportPersonalStatementColors = {
+  title: string;
+  green: string;
+  greenLight: string;
+  blue: string;
+  blueLight: string;
+};
 
 const colors = {
   title: '#11AC5C',
@@ -34,6 +43,11 @@ const ReportPersonalStatementPage = () => {
   const description = personalStatementReportDescription;
   const activeReports = data || activeReportsFromServer;
   const report = activeReports?.personalStatementInfo;
+  const personalStatementContent: ReportContent = JSON.parse(
+    data?.personalStatementInfo?.contents ?? '{}',
+  );
+
+  console.log('data:', data);
 
   useEffect(() => {
     initReportApplication();
@@ -71,7 +85,12 @@ const ReportPersonalStatementPage = () => {
             <Header programTitle={title} />
 
             <ReportBasicInfo reportBasic={data?.personalStatementInfo} />
-            <ReportProgramRecommend />
+            <ReportProgramRecommendSlider
+              colors={colors}
+              reportProgramRecommend={
+                personalStatementContent.reportProgramRecommend
+              }
+            />
           </div>
           <ReportNavigation />
         </div>

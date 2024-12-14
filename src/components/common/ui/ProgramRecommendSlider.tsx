@@ -7,8 +7,8 @@ interface ProgramRecommendSliderProps {
     id?: number | string;
     backgroundImage: string;
     title: string;
-    onClickButton?: MouseEventHandler<HTMLButtonElement>;
     cta: string;
+    onClickButton?: MouseEventHandler<HTMLButtonElement>;
   }[];
   buttonColor?: string;
   className?: string;
@@ -28,7 +28,7 @@ function ProgramRecommendSlider({
   return (
     <div
       className={twMerge(
-        'custom-scrollbar -mx-5 mt-8 max-w-[1000px] overflow-x-auto px-5 md:mx-auto md:mt-16 lg:px-0',
+        'custom-scrollbar overflow-x-auto',
         !hasScroll && 'flex justify-center',
         className,
       )}
@@ -71,5 +71,7 @@ function ProgramRecommendSlider({
     </div>
   );
 }
+
+ProgramRecommendSlider.displayName = 'ProgramRecommendSlider';
 
 export default memo(ProgramRecommendSlider);
