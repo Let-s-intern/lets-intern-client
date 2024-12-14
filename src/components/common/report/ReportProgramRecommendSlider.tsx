@@ -1,5 +1,5 @@
 import { useEffect, useMemo } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 
 import { useUserProgramQuery } from '@/api/program';
 import { ReportType, useGetActiveReports } from '@/api/report';
@@ -31,6 +31,8 @@ const ReportProgramRecommendSlider = ({
   const superTitleStyle = {
     color: colors.primary.DEFAULT,
   };
+
+  const navigate = useNavigate();
 
   const [challengeSearchParams, setChallengeSearchParams] = useSearchParams();
   const [vodSearchParams, setVodSearchParams] = useSearchParams();
@@ -65,7 +67,7 @@ const ReportProgramRecommendSlider = ({
           live.programInfo.title ??
           '렛츠커리어 라이브',
         cta: reportProgramRecommend.live?.cta ?? '라이브 참여하러 가기',
-        onClickButton: () => console.log('click live'),
+        onClickButton: () => navigate(`/program/live/${live?.programInfo.id}`),
       });
     }
 
@@ -80,7 +82,7 @@ const ReportProgramRecommendSlider = ({
           vod?.programInfo.title ??
           '렛츠커리어 VOD',
         cta: reportProgramRecommend.vod?.cta ?? 'VOD 참여하러 가기',
-        onClickButton: () => console.log('click vod'),
+        onClickButton: () => console.log('vod 링크로 이동할 예정'),
       });
     }
 
@@ -94,7 +96,7 @@ const ReportProgramRecommendSlider = ({
           '렛츠커리어 이력서 진단 프로그램',
         cta:
           reportProgramRecommend.reportResume?.cta ?? '이력서 진단받으러 가기',
-        onClickButton: () => console.log('click resume'),
+        onClickButton: () => navigate('/report/landing/resume'),
       });
     }
 
@@ -109,7 +111,7 @@ const ReportProgramRecommendSlider = ({
         cta:
           reportProgramRecommend.reportPersonalStatement?.cta ??
           '자기소개서 진단받으러 가기',
-        onClickButton: () => console.log('click personal statement'),
+        onClickButton: () => navigate('/report/landing/personal-statement'),
       });
     }
 
@@ -124,7 +126,7 @@ const ReportProgramRecommendSlider = ({
         cta:
           reportProgramRecommend.reportPortfolio?.cta ??
           '포트폴리오 진단받으러 가기',
-        onClickButton: () => console.log('click portfolio'),
+        onClickButton: () => navigate('/report/landing/portfolio'),
       });
     }
 
@@ -159,7 +161,7 @@ const ReportProgramRecommendSlider = ({
     //setChallengeSearchParams(challengeSearchParams);
     setVodSearchParams(vodSearchParams);
     setLiveSearchParams(liveSearchParams);
-  }, []);
+  }, [setVodSearchParams, setLiveSearchParams]);
 
   return (
     <>

@@ -95,15 +95,17 @@ const ReportPersonalStatementPage = () => {
           <ReportNavigation />
 
           {/* 프로그램 추천 */}
-          <section>
-            <ReportProgramRecommendSlider
-              colors={colors}
-              reportProgramRecommend={
-                personalStatementContent.reportProgramRecommend
-              }
-              reportType={reportTypeSchema.enum.PERSONAL_STATEMENT}
-            />
-          </section>
+          {personalStatementContent.reportProgramRecommend && (
+            <section>
+              <ReportProgramRecommendSlider
+                colors={colors}
+                reportProgramRecommend={
+                  personalStatementContent.reportProgramRecommend
+                }
+                reportType={reportTypeSchema.enum.PERSONAL_STATEMENT}
+              />
+            </section>
+          )}
         </div>
       )}
 

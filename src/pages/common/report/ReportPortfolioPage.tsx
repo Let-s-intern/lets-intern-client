@@ -91,13 +91,15 @@ const ReportPortfolioPage = () => {
           <ReportNavigation />
 
           {/* 프로그램 추천 */}
-          <section>
-            <ReportProgramRecommendSlider
-              colors={colors}
-              reportProgramRecommend={portfolioContent.reportProgramRecommend}
-              reportType={reportTypeSchema.enum.PORTFOLIO}
-            />
-          </section>
+          {portfolioContent.reportProgramRecommend && (
+            <section>
+              <ReportProgramRecommendSlider
+                colors={colors}
+                reportProgramRecommend={portfolioContent.reportProgramRecommend}
+                reportType={reportTypeSchema.enum.PORTFOLIO}
+              />
+            </section>
+          )}
         </div>
       )}
       {report ? <ReportApplyBottomSheet report={report} /> : null}

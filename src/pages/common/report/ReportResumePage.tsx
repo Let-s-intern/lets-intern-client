@@ -92,13 +92,15 @@ const ReportResumePage = () => {
           <ReportNavigation />
 
           {/* 프로그램 추천 */}
-          <section>
-            <ReportProgramRecommendSlider
-              colors={colors}
-              reportProgramRecommend={resumeContent.reportProgramRecommend}
-              reportType={reportTypeSchema.enum.PORTFOLIO}
-            />
-          </section>
+          {resumeContent.reportProgramRecommend && (
+            <section>
+              <ReportProgramRecommendSlider
+                colors={colors}
+                reportProgramRecommend={resumeContent.reportProgramRecommend}
+                reportType={reportTypeSchema.enum.PORTFOLIO}
+              />
+            </section>
+          )}
         </div>
       )}
       {report && <ReportApplyBottomSheet report={report} />}
