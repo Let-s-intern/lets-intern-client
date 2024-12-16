@@ -352,6 +352,7 @@ const ReportApplicationsPage = () => {
                       <div className="flex gap-2">
                         <ActionButton
                           bgColor="green"
+                          // 선결제 후제출
                           disabled={application.applyFileUrl === ''}
                           onClick={() =>
                             setApplicationModal({
@@ -423,6 +424,7 @@ const ReportApplicationsPage = () => {
                         <div className="flex justify-center gap-2">
                           <ActionButton
                             bgColor="green"
+                            // 선결제 후제출
                             disabled={application.applyFileUrl === ''}
                             onClick={() => {
                               setApplicationModal({
