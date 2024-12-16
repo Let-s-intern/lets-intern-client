@@ -6,6 +6,7 @@ import { getBaseUrlFromServer, getReportLandingTitle } from '@/utils/url';
 import Header from '@components/common/program/program-detail/header/Header';
 import ReportBasicInfo from '@components/common/report/ReportBasicInfo';
 import ReportProgramRecommendSlider from '@components/common/report/ReportProgramRecommendSlider';
+import ResearchTeamSection from '@components/common/report/ResearchTeamSection';
 import LoadingContainer from '@components/common/ui/loading/LoadingContainer';
 import { useEffect } from 'react';
 import { Helmet } from 'react-helmet';
@@ -85,6 +86,9 @@ const ReportPortfolioPage = () => {
             <ReportBasicInfo reportBasic={data?.portfolioInfo} />
           </div>
           <ReportNavigation />
+
+          {/* 취업 연구팀 소개 */}
+          <ResearchTeamSection colors={colors} />
 
           {/* 프로그램 추천 */}
           {portfolioContent.reportProgramRecommend && (

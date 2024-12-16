@@ -6,6 +6,7 @@ import { getBaseUrlFromServer, getReportLandingTitle } from '@/utils/url';
 import Header from '@components/common/program/program-detail/header/Header';
 import ReportBasicInfo from '@components/common/report/ReportBasicInfo';
 import ReportProgramRecommendSlider from '@components/common/report/ReportProgramRecommendSlider';
+import ResearchTeamSection from '@components/common/report/ResearchTeamSection';
 import LoadingContainer from '@components/common/ui/loading/LoadingContainer';
 import { useEffect } from 'react';
 import { Helmet } from 'react-helmet';
@@ -82,13 +83,16 @@ const ReportPersonalStatementPage = () => {
       {isLoading ? (
         <LoadingContainer />
       ) : (
-        <div className="flex w-full flex-col items-center gap-y-12 md:gap-y-6">
-          <div className="flex w-full max-w-[1000px] flex-col px-5 lg:px-0">
+        <div className="flex w-full flex-col items-center">
+          <div className="mb-6 flex w-full max-w-[1000px] flex-col px-5 md:mb-12 lg:px-0">
             <Header programTitle={title} />
 
             <ReportBasicInfo reportBasic={data?.personalStatementInfo} />
           </div>
           <ReportNavigation />
+
+          {/* 취업 연구팀 소개 */}
+          <ResearchTeamSection colors={colors} />
 
           {/* 프로그램 추천 */}
           {personalStatementContent.reportProgramRecommend && (
