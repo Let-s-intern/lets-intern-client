@@ -16,11 +16,11 @@ import {
   convertReportTypeToDisplayName,
   ReportPriceType,
   reportPriceTypeEnum,
-  reportTypeSchema,
   useGetReportPriceDetail,
 } from '@/api/report';
 import { generateOrderId } from '@/lib/order';
 import { twMerge } from '@/lib/twMerge';
+import { reportTypeSchema } from '@/schema';
 import useReportApplicationStore from '@/store/useReportApplicationStore';
 import clsx from 'clsx';
 import { default as BaseButton } from '../ui/button/BaseButton';

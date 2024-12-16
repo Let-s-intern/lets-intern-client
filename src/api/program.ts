@@ -15,6 +15,7 @@ import {
   programBannerAdminListSchema,
   programBannerUserListSchema,
   ProgramClassification,
+  programRecommendSchema,
   programSchema,
   ProgramStatus,
   ProgramTypeUpperCase,
@@ -99,6 +100,16 @@ export const useGetProgramAdminQuery = (params: {
     queryFn: async () => {
       const res = await axios.get(`/program/admin`, { params });
       return programAdminSchema.parse(res.data.data);
+    },
+  });
+};
+
+export const useGetProgramRecommend = () => {
+  return useQuery({
+    queryKey: ['useGetProgramRecommend'],
+    queryFn: async () => {
+      const res = await axios.get(`/program/recommend`);
+      return programRecommendSchema.parse(res.data.data);
     },
   });
 };

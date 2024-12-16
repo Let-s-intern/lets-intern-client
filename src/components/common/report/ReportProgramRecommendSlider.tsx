@@ -1,15 +1,8 @@
-import { useEffect, useMemo } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 
-import { useUserProgramQuery } from '@/api/program';
-import { ReportType, useGetActiveReports } from '@/api/report';
-import { ProgramInfo } from '@/schema';
+import { useGetProgramRecommend } from '@/api/program';
 import { ReportColors, ReportProgramRecommend } from '@/types/interface';
-import {
-  PROGRAM_QUERY_KEY,
-  PROGRAM_STATUS_KEY,
-  PROGRAM_TYPE,
-} from '@/utils/programConst';
 import Heading2 from '../ui/Heading2';
 import ProgramRecommendSlider from '../ui/ProgramRecommendSlider';
 import SuperTitle from './SuperTitle';
@@ -20,13 +13,11 @@ const HEADING = '합격률을 2배 올려주는\n맞춤형 챌린지를 추천�
 interface ReportProgramRecommendSliderProps {
   colors: ReportColors;
   reportProgramRecommend: ReportProgramRecommend;
-  reportType: ReportType;
 }
 
 const ReportProgramRecommendSlider = ({
   colors,
   reportProgramRecommend,
-  reportType,
 }: ReportProgramRecommendSliderProps) => {
   const superTitleStyle = {
     color: colors.primary.DEFAULT,
@@ -34,65 +25,113 @@ const ReportProgramRecommendSlider = ({
 
   const navigate = useNavigate();
 
-  const [challengeSearchParams, setChallengeSearchParams] = useSearchParams();
-  const [vodSearchParams, setVodSearchParams] = useSearchParams();
-  const [liveSearchParams, setLiveSearchParams] = useSearchParams();
-
-  // '챌린지 구분' 속성 필요 -> challenge 목록 조회 API 사용하기
-  // const { data: challenges } = useUserProgramQuery({
-  //   pageable: { page: 1, size: 8 },
-  //   searchParams: challengeSearchParams,
-  // });
-  const { data: vods } = useUserProgramQuery({
-    pageable: { page: 1, size: 3 },
-    searchParams: vodSearchParams,
-  });
-  const { data: lives } = useUserProgramQuery({
-    pageable: { page: 1, size: 3 },
-    searchParams: liveSearchParams,
-  });
-  const { data: reports } = useGetActiveReports();
+  const { data: recommendData } = useGetProgramRecommend();
 
   const slideList = useMemo(() => {
     const list = [];
 
-    if ((lives?.programList ?? []).length > 0) {
-      const live = sortByDeadline(lives?.programList ?? [])[0];
+    /* 추천 챌린지 저장 */
+    if ((recommendData?.challengeList ?? []).length > 0) {
+      const careerStart = recommendData?.challengeList.find(
+        (item) => item.challengeType === 'CAREER_START',
+      );
 
+      if (careerStart) {
+        list.push({
+          id: 'CHALLENGE' + careerStart.id,
+          backgroundImage: careerStart.thumbnail ?? '',
+          title:
+            reportProgramRecommend.challengeCareerStart?.title ??
+            careerStart.title ??
+            '챌린지 커리어 시작 프로그램',
+          cta: reportProgramRecommend.reportResume?.cta ?? '경험정리 하러 가기',
+          onClickButton: () => navigate(`/program/challenge/${careerStart.id}`),
+        });
+      }
+
+      const personalStatement = recommendData?.challengeList.find(
+        (item) => item.challengeType === 'PERSONAL_STATEMENT',
+      );
+
+      if (personalStatement) {
+        list.push({
+          id: 'CHALLENGE' + personalStatement.id,
+          backgroundImage: personalStatement.thumbnail ?? '',
+          title:
+            reportProgramRecommend.challengeCareerStart?.title ??
+            personalStatement.title ??
+            '챌린지 자기소개서 프로그램',
+          cta:
+            reportProgramRecommend.reportResume?.cta ?? '자소서 완성하러 가기',
+          onClickButton: () =>
+            navigate(`/program/challenge/${personalStatement.id}`),
+        });
+      }
+
+      const portfolio = recommendData?.challengeList.find(
+        (item) => item.challengeType === 'PORTFOLIO',
+      );
+
+      if (portfolio) {
+        list.push({
+          id: 'CHALLENGE' + portfolio.id,
+          backgroundImage: portfolio.thumbnail ?? '',
+          title:
+            reportProgramRecommend.challengeCareerStart?.title ??
+            portfolio.title ??
+            '챌린지 포트폴리오 프로그램',
+          cta: reportProgramRecommend.reportResume?.cta ?? '포폴 완성하러 가기',
+          onClickButton: () => navigate(`/program/challenge/${portfolio.id}`),
+        });
+      }
+    }
+
+    /* 추천 라이브 저장 */
+    const live = recommendData?.live;
+
+    if (live) {
       list.push({
-        id: 'LIVE' + live?.programInfo.id,
-        backgroundImage: live?.programInfo.thumbnail ?? '',
+        id: 'LIVE' + live?.id,
+        backgroundImage: live?.thumbnail ?? '',
         title:
           reportProgramRecommend.live?.title ??
-          live.programInfo.title ??
+          live?.title ??
           '렛츠커리어 라이브',
         cta: reportProgramRecommend.live?.cta ?? '라이브 참여하러 가기',
-        onClickButton: () => navigate(`/program/live/${live?.programInfo.id}`),
+        onClickButton: () => navigate(`/program/live/${live?.id}`),
       });
     }
 
-    if ((vods?.programList ?? []).length > 0) {
-      const vod = sortByDeadline(vods?.programList ?? [])[0];
+    /* 추천 vod 저장 */
+    if ((recommendData?.vodList ?? []).length > 0) {
+      // 최근에 개설한 vod 하나 가져오기
+      const vod = recommendData?.vodList[recommendData?.vodList.length - 1];
 
       list.push({
-        id: 'VOD' + vod?.programInfo.id,
-        backgroundImage: vod?.programInfo.thumbnail ?? '',
+        id: 'VOD' + vod?.id,
+        backgroundImage: vod?.thumbnail ?? '',
         title:
-          reportProgramRecommend.vod?.title ??
-          vod?.programInfo.title ??
-          '렛츠커리어 VOD',
+          reportProgramRecommend.vod?.title ?? vod?.title ?? '렛츠커리어 VOD',
         cta: reportProgramRecommend.vod?.cta ?? 'VOD 참여하러 가기',
-        onClickButton: () => console.log('vod 링크로 이동할 예정'),
+        onClickButton: () => navigate(`/program/live/${vod?.link}`),
       });
     }
 
-    if (reportType !== 'RESUME' && reports?.resumeInfo) {
+    // 활성화된 서류 진단 없으면 종료
+    if ((recommendData?.reportList ?? []).length === 0) return list;
+
+    /* 추천 서류 진단 저장 */
+    const resumeReport = recommendData?.reportList.find(
+      (item) => item.reportType === 'RESUME',
+    );
+
+    if (resumeReport) {
       list.push({
-        id: 'RESUME' + reports?.resumeInfo.reportId,
+        id: 'RESUME' + resumeReport.id,
         backgroundImage: '',
         title:
           reportProgramRecommend.reportResume?.title ??
-          reports?.resumeInfo.title ??
+          resumeReport.title ??
           '렛츠커리어 이력서 진단 프로그램',
         cta:
           reportProgramRecommend.reportResume?.cta ?? '이력서 진단받으러 가기',
@@ -100,13 +139,17 @@ const ReportProgramRecommendSlider = ({
       });
     }
 
-    if (reportType !== 'PERSONAL_STATEMENT' && reports?.personalStatementInfo) {
+    const personalStatementReport = recommendData?.reportList.find(
+      (item) => item.reportType === 'PERSONAL_STATEMENT',
+    );
+
+    if (personalStatementReport) {
       list.push({
-        id: 'PERSONAL_STATEMENT' + reports?.personalStatementInfo.reportId,
+        id: 'PERSONAL_STATEMENT' + personalStatementReport.id,
         backgroundImage: '',
         title:
           reportProgramRecommend.reportPersonalStatement?.title ??
-          reports?.personalStatementInfo.title ??
+          personalStatementReport.title ??
           '렛츠커리어 자기소개서 진단 프로그램',
         cta:
           reportProgramRecommend.reportPersonalStatement?.cta ??
@@ -115,13 +158,17 @@ const ReportProgramRecommendSlider = ({
       });
     }
 
-    if (reportType !== 'PORTFOLIO' && reports?.portfolioInfo) {
+    const portfolioReport = recommendData?.reportList.find(
+      (item) => item.reportType === 'PORTFOLIO',
+    );
+
+    if (portfolioReport) {
       list.push({
-        id: 'PORTFOLIO' + reports?.portfolioInfo.reportId,
+        id: 'PORTFOLIO' + portfolioReport.id,
         backgroundImage: '',
         title:
           reportProgramRecommend.reportPortfolio?.title ??
-          reports?.portfolioInfo.title ??
+          portfolioReport.title ??
           '렛츠커리어 포트폴리오 진단 프로그램',
         cta:
           reportProgramRecommend.reportPortfolio?.cta ??
@@ -131,37 +178,7 @@ const ReportProgramRecommendSlider = ({
     }
 
     return list;
-  }, [lives, vods, reportProgramRecommend, reports]);
-
-  function sortByDeadline(programList: ProgramInfo[]) {
-    return programList.toSorted((a, b) => {
-      const dateA = new Date(a.programInfo.deadline ?? 0);
-      const dateB = new Date(b.programInfo.deadline ?? 0);
-      return dateA.getTime() - dateB.getTime();
-    });
-  }
-
-  // 검색 파라미터 설정
-  useEffect(() => {
-    // challengeSearchParams.set(PROGRAM_QUERY_KEY.TYPE, PROGRAM_TYPE.CHALLENGE);
-    // challengeSearchParams.set(
-    //   PROGRAM_QUERY_KEY.STATUS,
-    //   PROGRAM_STATUS_KEY.PROCEEDING,
-    // );
-    vodSearchParams.set(PROGRAM_QUERY_KEY.TYPE, PROGRAM_TYPE.VOD);
-    vodSearchParams.set(
-      PROGRAM_QUERY_KEY.STATUS,
-      PROGRAM_STATUS_KEY.PROCEEDING,
-    );
-    liveSearchParams.set(PROGRAM_QUERY_KEY.TYPE, PROGRAM_TYPE.LIVE);
-    liveSearchParams.set(
-      PROGRAM_QUERY_KEY.STATUS,
-      PROGRAM_STATUS_KEY.PROCEEDING,
-    );
-    //setChallengeSearchParams(challengeSearchParams);
-    setVodSearchParams(vodSearchParams);
-    setLiveSearchParams(liveSearchParams);
-  }, [setVodSearchParams, setLiveSearchParams]);
+  }, [recommendData, navigate, reportProgramRecommend]);
 
   return (
     <>
