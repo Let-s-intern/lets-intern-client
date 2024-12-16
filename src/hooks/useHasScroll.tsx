@@ -12,7 +12,7 @@ const throttle = (callback: () => void, delay: number) => {
   };
 };
 
-/** 스크롤이 있는지 없는지 판단하는
+/** 스크롤이 있는지 없는지 판단하는 커스텀 훅
  * scrollRef를 스크롤이 생길 수 있는 div element에 전달
  * 스크롤이 생기면 hasScroll을 true로 설정, 아니면 false로 설정
  */

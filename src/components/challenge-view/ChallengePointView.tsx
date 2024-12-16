@@ -1,20 +1,19 @@
-import Check from '@/assets/icons/chevron-down.svg?react';
 import { twMerge } from '@/lib/twMerge';
 import { Dayjs } from 'dayjs';
 import { josa } from 'es-hangul';
 import { ReactNode, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { clientOnly } from 'vike-react/clientOnly';
 
 import { getVod } from '@/api/program';
+import Check from '@/assets/icons/chevron-down.svg?react';
 import HoleIcon from '@/assets/icons/hole.svg?react';
-import useHasScroll from '@/hooks/useHasScroll';
 import { ChallengeType, challengeTypeSchema, ProgramTypeEnum } from '@/schema';
 import { ChallengePoint, ProgramRecommend } from '@/types/interface';
 import { ChallengeColor } from '@components/ChallengeView';
 import SuperTitle from '@components/common/program/program-detail/SuperTitle';
 import Heading2 from '@components/common/ui/Heading2';
 import ProgramRecommendSlider from '@components/common/ui/ProgramRecommendSlider';
-import { useNavigate } from 'react-router-dom';
 
 const Balancer = clientOnly(() => import('react-wrap-balancer'));
 
@@ -93,8 +92,6 @@ const ChallengePointView = ({
   programRecommend?: ProgramRecommend;
 }) => {
   const navigate = useNavigate();
-
-  const { scrollRef, hasScroll } = useHasScroll();
 
   const programSchedule = [
     {
@@ -248,7 +245,7 @@ const ChallengePointView = ({
               <br className="md:hidden" /> 추천드려요
             </Heading2>
             <ProgramRecommendSlider
-              className="mx-5 mt-8 max-w-[1000px] px-5 md:mx-auto md:mt-16 lg:px-0"
+              className="-mx-5 mt-8 max-w-[1000px] px-5 md:mx-auto md:mt-16 lg:px-0"
               list={programRecommend.list.map((item) => ({
                 id: item.programInfo.id,
                 backgroundImage: item.programInfo.thumbnail ?? '',

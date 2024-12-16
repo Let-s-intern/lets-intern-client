@@ -92,7 +92,7 @@ const ReportPersonalStatementPage = () => {
 
           {/* 프로그램 추천 */}
           {personalStatementContent.reportProgramRecommend && (
-            <section>
+            <section className="w-full">
               <ReportProgramRecommendSlider
                 colors={colors}
                 reportProgramRecommend={
