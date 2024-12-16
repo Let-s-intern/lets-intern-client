@@ -121,6 +121,9 @@ const ReportApplicationsPage = () => {
 
   const { data: reportDetail } = useGetReportDetailAdminQuery(Number(reportId));
 
+  console.log('서류 진단 상세:', reportDetail);
+  console.log('ADMIN 서류 신청:', data);
+
   const { mutate: patchDocument } = usePatchApplicationDocument({
     successCallback: () => {
       setApplicationModal(null);
@@ -349,6 +352,8 @@ const ReportApplicationsPage = () => {
                       <div className="flex gap-2">
                         <ActionButton
                           bgColor="green"
+                          // 선결제 후제출
+                          disabled={application.applyFileUrl === ''}
                           onClick={() =>
                             setApplicationModal({
                               application,
@@ -419,6 +424,8 @@ const ReportApplicationsPage = () => {
                         <div className="flex justify-center gap-2">
                           <ActionButton
                             bgColor="green"
+                            // 선결제 후제출
+                            disabled={application.applyFileUrl === ''}
                             onClick={() => {
                               setApplicationModal({
                                 application,
