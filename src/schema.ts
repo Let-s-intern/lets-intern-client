@@ -1,6 +1,12 @@
 import dayjs from 'dayjs';
 import { z } from 'zod';
 
+export const reportTypeSchema = z.enum([
+  'RESUME',
+  'PERSONAL_STATEMENT',
+  'PORTFOLIO',
+]);
+
 export const pageInfo = z.object({
   pageNum: z.number().gte(0),
   pageSize: z.number().gte(0),
@@ -435,17 +441,19 @@ export const liveAndVodJob = z.enum([
   '공정연구',
 ]);
 
+const vodInfoSchema = z.object({
+  id: z.number(),
+  title: z.string().nullable().optional(),
+  shortDesc: z.string().nullable().optional(),
+  thumbnail: z.string().nullable().optional(),
+  job: z.string().nullable().optional(),
+  link: z.string().nullable().optional(),
+  isVisible: z.boolean().nullable().optional(),
+});
+
 /** GET /api/v1/vod/{id} VOD 상세 조회 (어드민, 유저 겸용) */
 export const getVodIdSchema = z.object({
-  vodInfo: z.object({
-    id: z.number(),
-    title: z.string().nullable().optional(),
-    shortDesc: z.string().nullable().optional(),
-    thumbnail: z.string().nullable().optional(),
-    job: z.string().nullable().optional(),
-    link: z.string().nullable().optional(),
-    isVisible: z.boolean().nullable().optional(),
-  }),
+  vodInfo: vodInfoSchema,
   programTypeInfo: z
     .array(
       z.object({
@@ -744,12 +752,6 @@ export type UpdatePaybackReq = {
   adminScore?: number;
   isRefunded?: boolean;
 };
-
-// export const missionType = z.union([
-//   z.literal('GENERAL'),
-//   z.literal('REWARD'),
-//   z.literal('REFUND'),
-// ]);
 
 const contentsType = z.union([z.literal('ESSENTIAL'), z.literal('ADDITIONAL')]);
 
@@ -1406,22 +1408,24 @@ export const classificationSchema = z.object({
   programClassification: ProgramClassificationEnum.nullable().optional(),
 });
 
+const programInfoSchema = z.object({
+  id: z.number(),
+  programType: ProgramTypeEnum,
+  programStatusType: ProgramStatusEnum,
+  title: z.string().nullable().optional(),
+  thumbnail: z.string().nullable().optional(),
+  shortDesc: z.string().nullable().optional(),
+  startDate: z.string().nullable().optional(),
+  endDate: z.string().nullable().optional(),
+  beginning: z.string().nullable().optional(),
+  deadline: z.string().nullable().optional(),
+});
+
 /** GET /api/v1/program */
 export const programSchema = z.object({
   programList: z.array(
     z.object({
-      programInfo: z.object({
-        id: z.number(),
-        programType: ProgramTypeEnum,
-        programStatusType: ProgramStatusEnum,
-        title: z.string().nullable().optional(),
-        thumbnail: z.string().nullable().optional(),
-        shortDesc: z.string().nullable().optional(),
-        startDate: z.string().nullable().optional(),
-        endDate: z.string().nullable().optional(),
-        beginning: z.string().nullable().optional(),
-        deadline: z.string().nullable().optional(),
-      }),
+      programInfo: programInfoSchema,
       classificationList: z.array(classificationSchema),
     }),
   ),
@@ -1487,6 +1491,39 @@ export type ProgramAdminList = z.infer<
 export type ProgramAdminListItem = z.infer<
   typeof programAdminSchema
 >['programList'][0];
+
+export const programRecommendSchema = z.object({
+  challengeList: z.array(
+    z.object({
+      id: z.number(),
+      programType: ProgramTypeEnum.optional().nullable(),
+      programStatusType: ProgramStatusEnum.optional().nullable(),
+      challengeType: challengeTypeSchema.optional().nullable(),
+      title: z.string().optional().nullable(),
+      thumbnail: z.string().optional().nullable(),
+      shortDesc: z.string().optional().nullable(),
+      startDate: z.string().optional().nullable(),
+      endDate: z.string().optional().nullable(),
+      beginning: z.string().optional().nullable(),
+      deadline: z.string().optional().nullable(),
+    }),
+  ),
+  live: programInfoSchema.optional().nullable(),
+  vodList: z.array(vodInfoSchema),
+  reportList: z.array(
+    z.object({
+      id: z.number(),
+      programType: ProgramTypeEnum.optional().nullable(),
+      programStatusType: ProgramStatusEnum.optional().nullable(),
+      reportType: reportTypeSchema,
+      title: z.string().optional().nullable(),
+      notice: z.string().optional().nullable(),
+      visibleDate: z.string().optional().nullable(),
+    }),
+  ),
+});
+
+export type ProgramRecommend = z.infer<typeof programRecommendSchema>;
 
 export const programBannerAdminSchema = z.object({
   id: z.number(),
