@@ -1,7 +1,9 @@
-import useAuthStore from '@/store/useAuthStore';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import dayjs from 'dayjs';
 import { z } from 'zod';
+
+import { reportTypeSchema } from '@/schema';
+import useAuthStore from '@/store/useAuthStore';
 import axios from '../utils/axios';
 import { tossInfoType } from './paymentSchema';
 
@@ -12,12 +14,6 @@ const pageInfoSchema = z.object({
   pageNum: z.number(),
   pageSize: z.number(),
 });
-
-export const reportTypeSchema = z.enum([
-  'RESUME',
-  'PERSONAL_STATEMENT',
-  'PORTFOLIO',
-]);
 
 export type ReportType = z.infer<typeof reportTypeSchema>;
 

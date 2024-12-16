@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { Helmet } from 'react-helmet';
 
-import { reportTypeSchema, useGetActiveReports } from '@/api/report';
+import { useGetActiveReports } from '@/api/report';
 import ReportApplyBottomSheet from '@/components/common/report/ReportApplyBottomSheet';
 import { useServerActiveReports } from '@/context/ActiveReports';
 import { resumeReportDescription } from '@/data/description';
@@ -93,7 +93,6 @@ const ReportResumePage = () => {
               <ReportProgramRecommendSlider
                 colors={colors}
                 reportProgramRecommend={resumeContent.reportProgramRecommend}
-                reportType={reportTypeSchema.enum.PORTFOLIO}
               />
             </section>
           )}

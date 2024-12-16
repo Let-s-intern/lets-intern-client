@@ -9,7 +9,7 @@ import ReportProgramRecommendSlider from '@components/common/report/ReportProgra
 import LoadingContainer from '@components/common/ui/loading/LoadingContainer';
 import { useEffect } from 'react';
 import { Helmet } from 'react-helmet';
-import { reportTypeSchema, useGetActiveReports } from '../../../api/report';
+import { useGetActiveReports } from '../../../api/report';
 import ReportApplyBottomSheet from '../../../components/common/report/ReportApplyBottomSheet';
 import ReportNavigation from './ReportNavigation';
 
@@ -92,7 +92,6 @@ const ReportPortfolioPage = () => {
               <ReportProgramRecommendSlider
                 colors={colors}
                 reportProgramRecommend={portfolioContent.reportProgramRecommend}
-                reportType={reportTypeSchema.enum.PORTFOLIO}
               />
             </section>
           )}
