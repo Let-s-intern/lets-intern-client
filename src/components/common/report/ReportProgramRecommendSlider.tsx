@@ -26,12 +26,67 @@ const ReportProgramRecommendSlider = ({
   const navigate = useNavigate();
 
   const { data: recommendData } = useGetProgramRecommend();
-  console.log('추천 프로그램:', recommendData);
 
   const slideList = useMemo(() => {
     const list = [];
 
-    // 추천 라이브 저장
+    /* 추천 챌린지 저장 */
+    if ((recommendData?.challengeList ?? []).length > 0) {
+      const careerStart = recommendData?.challengeList.find(
+        (item) => item.challengeType === 'CAREER_START',
+      );
+
+      if (careerStart) {
+        list.push({
+          id: 'CHALLENGE' + careerStart.id,
+          backgroundImage: careerStart.thumbnail ?? '',
+          title:
+            reportProgramRecommend.challengeCareerStart?.title ??
+            careerStart.title ??
+            '챌린지 커리어 시작 프로그램',
+          cta: reportProgramRecommend.reportResume?.cta ?? '경험정리 하러 가기',
+          onClickButton: () => navigate(`/program/challenge/${careerStart.id}`),
+        });
+      }
+
+      const personalStatement = recommendData?.challengeList.find(
+        (item) => item.challengeType === 'PERSONAL_STATEMENT',
+      );
+
+      if (personalStatement) {
+        list.push({
+          id: 'CHALLENGE' + personalStatement.id,
+          backgroundImage: personalStatement.thumbnail ?? '',
+          title:
+            reportProgramRecommend.challengeCareerStart?.title ??
+            personalStatement.title ??
+            '챌린지 자기소개서 프로그램',
+          cta:
+            reportProgramRecommend.reportResume?.cta ?? '자소서 완성하러 가기',
+          onClickButton: () =>
+            navigate(`/program/challenge/${personalStatement.id}`),
+        });
+      }
+
+      const portfolio = recommendData?.challengeList.find(
+        (item) => item.challengeType === 'PORTFOLIO',
+      );
+
+      if (portfolio) {
+        list.push({
+          id: 'CHALLENGE' + portfolio.id,
+          backgroundImage: portfolio.thumbnail ?? '',
+          title:
+            reportProgramRecommend.challengeCareerStart?.title ??
+            portfolio.title ??
+            '챌린지 포트폴리오 프로그램',
+          cta: reportProgramRecommend.reportResume?.cta ?? '포폴 완성하러 가기',
+          onClickButton: () => navigate(`/program/challenge/${portfolio.id}`),
+        });
+      }
+    }
+
+    /* 추천 라이브 저장 */
     const live = recommendData?.live;
 
     if (live) {
@@ -47,7 +102,7 @@ const ReportProgramRecommendSlider = ({
       });
     }
 
-    // 추천 vod 저장
+    /* 추천 vod 저장 */
     if ((recommendData?.vodList ?? []).length > 0) {
       // 최근에 개설한 vod 하나 가져오기
       const vod = recommendData?.vodList[recommendData?.vodList.length - 1];
@@ -65,7 +120,7 @@ const ReportProgramRecommendSlider = ({
     // 활성화된 서류 진단 없으면 종료
     if ((recommendData?.reportList ?? []).length === 0) return list;
 
-    // 추천 서류 진단 저장
+    /* 추천 서류 진단 저장 */
     const resumeReport = recommendData?.reportList.find(
       (item) => item.reportType === 'RESUME',
     );
@@ -123,7 +178,7 @@ const ReportProgramRecommendSlider = ({
     }
 
     return list;
-  }, [recommendData]);
+  }, [recommendData, navigate, reportProgramRecommend]);
 
   return (
     <>
