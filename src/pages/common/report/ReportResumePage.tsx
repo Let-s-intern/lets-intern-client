@@ -11,6 +11,7 @@ import { getBaseUrlFromServer, getReportLandingTitle } from '@/utils/url';
 import Header from '@components/common/program/program-detail/header/Header';
 import ReportBasicInfo from '@components/common/report/ReportBasicInfo';
 import ReportProgramRecommendSlider from '@components/common/report/ReportProgramRecommendSlider';
+import ResearchTeamSection from '@components/common/report/ResearchTeamSection';
 import LoadingContainer from '@components/common/ui/loading/LoadingContainer';
 import ReportNavigation from './ReportNavigation';
 
@@ -86,6 +87,9 @@ const ReportResumePage = () => {
             <ReportBasicInfo reportBasic={data?.resumeInfo} />
           </div>
           <ReportNavigation />
+
+          {/* 취업 연구팀 소개 */}
+          <ResearchTeamSection colors={colors} />
 
           {/* 프로그램 추천 */}
           {resumeContent.reportProgramRecommend && (

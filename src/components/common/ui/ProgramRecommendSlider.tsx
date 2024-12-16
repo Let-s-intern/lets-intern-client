@@ -1,6 +1,7 @@
+import { CSSProperties, memo, MouseEventHandler } from 'react';
+
 import useHasScroll from '@/hooks/useHasScroll';
-import { memo, MouseEventHandler } from 'react';
-import { twMerge } from 'tailwind-merge';
+import { twMerge } from '@/lib/twMerge';
 
 interface ProgramRecommendSliderProps {
   list: {
@@ -10,8 +11,9 @@ interface ProgramRecommendSliderProps {
     cta: string;
     onClickButton?: MouseEventHandler<HTMLButtonElement>;
   }[];
-  buttonColor?: string;
+  buttonStyle?: CSSProperties;
   className?: string;
+  buttonClassName?: string;
 }
 
 const textShadowStyle = {
@@ -20,10 +22,13 @@ const textShadowStyle = {
 
 function ProgramRecommendSlider({
   list,
-  buttonColor,
+  buttonStyle,
   className,
+  buttonClassName,
 }: ProgramRecommendSliderProps) {
   const { scrollRef, hasScroll } = useHasScroll();
+
+  console.log(buttonClassName);
 
   return (
     <div
@@ -59,8 +64,11 @@ function ProgramRecommendSlider({
             </div>
 
             <button
-              className="mt-3 w-full rounded-xs bg-primary py-3 text-xsmall16 text-white md:mt-4 md:py-4 md:text-small18"
-              style={{ backgroundColor: buttonColor }}
+              className={twMerge(
+                'mt-3 w-full rounded-xs bg-primary py-3 text-xsmall16 text-white md:mt-4 md:py-4 md:text-small18',
+                buttonClassName,
+              )}
+              style={buttonStyle}
               onClick={item.onClickButton}
             >
               {item.cta}
