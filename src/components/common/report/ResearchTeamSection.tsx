@@ -27,12 +27,11 @@ const ResearchTeamSection = ({ colors }: ResearchTeamSectionProps) => {
       <DetailHeading2>{HEADING}</DetailHeading2>
       <p className="mb-8 mt-5 text-center text-xsmall14 md:mb-16 md:mt-8 md:text-small20">
         렛츠커리어 취업 연구팀은
-        <br className="md:hidden" />
-        대기업 및 IT 업계 다양한 직무 현직자들로 구성되어,
+        <br className="md:hidden" /> 대기업 및 IT 업계 다양한 직무 현직자들로
+        구성되어,
         <br />
         최신 채용 트렌드와 서류 심사 기준을 반영한
-        <br className="md:hidden" />
-        실질적이고 전문적인 피드백을 제공합니다.
+        <br className="md:hidden" /> 실질적이고 전문적인 피드백을 제공합니다.
       </p>
       <div className="w-full">
         <img
