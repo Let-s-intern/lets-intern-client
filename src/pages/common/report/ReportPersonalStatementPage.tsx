@@ -11,7 +11,10 @@ import ResearchTeamSection from '@components/common/report/ResearchTeamSection';
 import LoadingContainer from '@components/common/ui/loading/LoadingContainer';
 import { useEffect } from 'react';
 import { Helmet } from 'react-helmet';
-import { useGetActiveReports } from '../../../api/report';
+import {
+  useGetActiveReports,
+  useGetReportPriceDetail,
+} from '../../../api/report';
 import ReportApplyBottomSheet from '../../../components/common/report/ReportApplyBottomSheet';
 import ReportNavigation from './ReportNavigation';
 
@@ -52,6 +55,8 @@ const ReportPersonalStatementPage = () => {
   const personalStatementContent: ReportContent = JSON.parse(
     data?.personalStatementInfo?.contents ?? '{}',
   );
+
+  const { data: priceDetail } = useGetReportPriceDetail(report!.reportId);
 
   useEffect(() => {
     initReportApplication();
@@ -112,7 +117,12 @@ const ReportPersonalStatementPage = () => {
         </div>
       )}
 
-      {report && <ReportApplyBottomSheet report={report} />}
+      {report && priceDetail && (
+        <ReportApplyBottomSheet
+          report={report}
+          reportPriceDetail={priceDetail}
+        />
+      )}
     </>
   );
 };
