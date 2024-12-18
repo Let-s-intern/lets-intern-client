@@ -2,11 +2,13 @@ import { convertReportTypeToDisplayName, ReportType } from '@/api/report';
 import BubbleTail from '@/assets/icons/bubble-tail.svg?react';
 import UnderLine from '@/assets/icons/double-underline.svg?react';
 import GradientArrow from '@/assets/icons/gradient-arrow.svg?react';
+import NextButton from '@/assets/icons/next-button.svg?react';
 import Pencil from '@/assets/icons/pencil.svg?react';
+import PrevButton from '@/assets/icons/prev-button.svg?react';
 import Profile from '@/assets/icons/profile.svg?react';
 import { REPORT_EXAMPLE } from '@/data/reportConstant';
 import { ReportColors } from '@/types/interface';
-import { ReactNode } from 'react';
+import { ReactNode, useRef } from 'react';
 import ReportExampleCard from './ReportExampleCard';
 
 interface ReportExampleSectionProps {
@@ -37,7 +39,30 @@ const ReportExampleStep = ({
 };
 
 const ReportExampleSection = ({ colors, type }: ReportExampleSectionProps) => {
+  const scrollRef = useRef<HTMLDivElement>(null);
+
   const example = REPORT_EXAMPLE[type];
+  // scrollRef의 첫 번째 child의 width를 가져옴
+  const scrollWidth = scrollRef.current?.firstElementChild?.clientWidth ?? 0;
+
+  const handleScroll = (direction: 'left' | 'right') => {
+    if (!scrollRef.current) return;
+
+    const scrollLeft = scrollRef.current.scrollLeft;
+    const scrollMax =
+      scrollRef.current.scrollWidth - scrollRef.current.clientWidth;
+    const scrollAmount = scrollWidth + 12;
+
+    if (direction === 'left') {
+      scrollRef.current.scrollLeft = Math.max(scrollLeft - scrollAmount, 0);
+    } else {
+      scrollRef.current.scrollLeft = Math.min(
+        scrollLeft + scrollAmount,
+        scrollMax,
+      );
+    }
+  };
+
   return (
     <section className="flex w-full flex-col items-center">
       <div className="flex w-full flex-col">
@@ -158,17 +183,32 @@ const ReportExampleSection = ({ colors, type }: ReportExampleSectionProps) => {
                 {example.header}
               </h5>
             </div>
-            <div className="w-full overflow-x-hidden">
-              <div className="flex w-full items-stretch gap-x-3 overflow-auto">
-                {example.content.map((content, index) => (
-                  <ReportExampleCard
-                    key={index}
-                    {...content}
-                    mainColor={colors.primary.DEFAULT}
-                    subColor={colors.primary[100]}
-                  />
-                ))}
+            <div className="relative">
+              <div className="w-full overflow-x-hidden">
+                <div
+                  className="flex w-full items-stretch gap-x-3 overflow-auto scroll-smooth"
+                  ref={scrollRef}
+                >
+                  {example.content.map((content, index) => (
+                    <ReportExampleCard
+                      key={index}
+                      {...content}
+                      mainColor={colors.primary.DEFAULT}
+                      subColor={colors.primary[100]}
+                    />
+                  ))}
+                </div>
               </div>
+              <PrevButton
+                className="absolute left-0 top-1/2 z-10 hidden h-16 w-16 -translate-x-1/2 -translate-y-1/2 transform cursor-pointer md:block"
+                style={{ color: colors.primary.DEFAULT }}
+                onClick={() => handleScroll('left')}
+              />
+              <NextButton
+                className="absolute right-0 top-1/2 hidden h-16 w-16 -translate-y-1/2 translate-x-1/2 transform cursor-pointer md:block"
+                style={{ color: colors.primary.DEFAULT }}
+                onClick={() => handleScroll('right')}
+              />
             </div>
           </div>
         </div>
