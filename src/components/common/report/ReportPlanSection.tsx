@@ -27,11 +27,18 @@ const premiumPlan = [
   '공고별 적합 표현과 키워드로 합격 가능성 극대화',
 ];
 
-const feedbackEmployees = [
+const employees = [
   '컨설팅펌 현직자',
   '삼성/SK 현직자',
   '금융권 현직자',
   '스타트업 마케팅 현직자',
+];
+
+const feedback = [
+  '40분간의 심층 상담으로 나만의 강점과 경쟁력 발굴',
+  '지원 직무에 최적화된 실질적·구체적 개선 방향 제시',
+  '맞춤 전략으로 서류 경쟁력 강화 및 합격 가능성 극대화',
+  '"무한 질문" 가능! 이력서와 관련된 모든 궁금증을 마음껏 해결하세요',
 ];
 
 interface ReportPlanSectionProps {
@@ -51,6 +58,7 @@ const ReportPlanSection = ({ colors, priceDetail }: ReportPlanSectionProps) => {
     (info) => info.reportPriceType === 'PREMIUM',
   );
   const optionInfos = priceDetail.reportOptionInfos;
+  const feedbackInfo = priceDetail.feedbackPriceInfo;
 
   console.log('가격 정보:', priceDetail);
 
@@ -68,7 +76,7 @@ const ReportPlanSection = ({ colors, priceDetail }: ReportPlanSectionProps) => {
 
       <main className="mt-9 flex flex-col gap-4">
         {/* 베이직 플랜 */}
-        <PlanBox>
+        <PriceCard>
           <DropDown
             title="베이직 플랜"
             initialOpenState={isMobile ? false : true}
@@ -84,10 +92,10 @@ const ReportPlanSection = ({ colors, priceDetail }: ReportPlanSectionProps) => {
             originalPrice={basicPriceInfo?.price ?? 0}
             discountPrice={basicPriceInfo?.discountPrice ?? 0}
           />
-        </PlanBox>
+        </PriceCard>
 
         {/* 프리미엄 플랜 */}
-        <PlanBox
+        <PriceCard
           bannerText="채용 공고 맞춤형 이력서를 원한다면,"
           bannerColor={colors.primary[400]}
         >
@@ -110,21 +118,18 @@ const ReportPlanSection = ({ colors, priceDetail }: ReportPlanSectionProps) => {
             originalPrice={premiumPriceInfo?.price ?? 0}
             discountPrice={premiumPriceInfo?.discountPrice ?? 0}
           />
-        </PlanBox>
+        </PriceCard>
 
         <div className="border-t-2 border-dashed border-neutral-70" />
 
+        {/* 옵션 */}
         {optionInfos && (
-          <PlanBox>
-            <span className="text-xsmall16 font-medium text-neutral-45">
-              옵션
-            </span>
-            <span className="mb-2 mt-0.5 block text-xsmall16 font-semibold">
-              현직자 피드백
-            </span>
+          <PriceCard>
+            <CardSubHeader>옵션</CardSubHeader>
+            <CardMainHeader>현직자 피드백</CardMainHeader>
             <CheckListItem content="현직자가 제공하는 심층 서류 피드백 및 작성 노하우" />
             <div className="mb-1 mt-3 flex flex-col gap-1.5">
-              {feedbackEmployees.map((item, index) => (
+              {employees.map((item, index) => (
                 <div
                   key={index}
                   className="rounded-xs bg-[#EEFAFF] py-2 text-center text-xxsmall12 font-semibold"
@@ -144,8 +149,27 @@ const ReportPlanSection = ({ colors, priceDetail }: ReportPlanSectionProps) => {
             <span className="text-xxsmall12 font-medium text-neutral-45">
               현직자 택 1인 옵션 추가 금액
             </span>
-          </PlanBox>
+          </PriceCard>
         )}
+
+        {/* 1:1 피드백 */}
+        <PriceCard
+          bannerText="저렴한 가격으로 무한 질문&심층 피드백을 받고 싶다면, "
+          bannerColor={colors.primary[400]}
+        >
+          <CardSubHeader>옵션</CardSubHeader>
+          <CardMainHeader>1:1 피드백</CardMainHeader>
+          <div className="mb-4 flex flex-col gap-2">
+            {feedback.map((item, index) => (
+              <CheckListItem key={index} content={item} />
+            ))}
+          </div>
+
+          <PriceSection
+            originalPrice={feedbackInfo?.feedbackPrice ?? 0}
+            discountPrice={feedbackInfo?.feedbackDiscountPrice ?? 0}
+          />
+        </PriceCard>
       </main>
     </section>
   );
@@ -153,7 +177,7 @@ const ReportPlanSection = ({ colors, priceDetail }: ReportPlanSectionProps) => {
 
 export default ReportPlanSection;
 
-function PlanBox({
+function PriceCard({
   bannerText,
   bannerColor,
   children,
@@ -261,5 +285,21 @@ function PriceSection({
         {finalPrice.toLocaleString()}원
       </span>
     </div>
+  );
+}
+
+function CardSubHeader({ children }: { children?: ReactNode }) {
+  return (
+    <span className="text-xsmall16 font-medium text-neutral-45">
+      {children}
+    </span>
+  );
+}
+
+function CardMainHeader({ children }: { children?: ReactNode }) {
+  return (
+    <span className="mb-2 mt-0.5 block text-xsmall16 font-semibold">
+      {children}
+    </span>
   );
 }
