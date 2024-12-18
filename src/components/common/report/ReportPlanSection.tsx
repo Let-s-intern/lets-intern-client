@@ -76,7 +76,7 @@ const ReportPlanSection = ({ colors, priceDetail }: ReportPlanSectionProps) => {
           {/* 베이직 플랜 */}
           <PriceCard className="md:flex md:flex-col md:justify-between">
             <div>
-              <DropDown
+              <Dropdown
                 title="베이직 플랜"
                 initialOpenState={isMobile ? false : true}
               >
@@ -85,7 +85,7 @@ const ReportPlanSection = ({ colors, priceDetail }: ReportPlanSectionProps) => {
                     <CheckListItem key={index}>{item} </CheckListItem>
                   ))}
                 </div>
-              </DropDown>
+              </Dropdown>
               <hr className="mb-5 mt-4 md:my-6" />
             </div>
 
@@ -102,7 +102,7 @@ const ReportPlanSection = ({ colors, priceDetail }: ReportPlanSectionProps) => {
             isFloatingBanner={isMobile ? false : true}
             floatingBannerClassName="left-44 top-4"
           >
-            <DropDown
+            <Dropdown
               title="프리미엄 플랜"
               initialOpenState={isMobile ? false : true}
             >
@@ -116,7 +116,7 @@ const ReportPlanSection = ({ colors, priceDetail }: ReportPlanSectionProps) => {
                   </CheckListItem>
                 ))}
               </div>
-            </DropDown>
+            </Dropdown>
             <hr className="mb-5 mt-4 md:my-6" />
             <PriceSection
               originalPrice={premiumPriceInfo?.price ?? 0}
@@ -246,7 +246,7 @@ const PriceCard = memo(function PriceCard({
   );
 });
 
-function DropDown({
+const Dropdown = memo(function Dropdown({
   title,
   children,
   initialOpenState = true,
@@ -275,9 +275,9 @@ function DropDown({
       )}
     </>
   );
-}
+});
 
-function CheckListItem({
+const CheckListItem = memo(function CheckListItem({
   children,
   className,
 }: {
@@ -297,9 +297,9 @@ function CheckListItem({
       </span>
     </div>
   );
-}
+});
 
-function PriceSection({
+const PriceSection = memo(function PriceSection({
   originalPrice,
   discountPrice,
 }: {
@@ -324,20 +324,28 @@ function PriceSection({
       </span>
     </div>
   );
-}
+});
 
-function CardSubHeader({ children }: { children?: ReactNode }) {
+const CardSubHeader = memo(function CardSubHeader({
+  children,
+}: {
+  children?: ReactNode;
+}) {
   return (
     <span className="text-xsmall16 font-medium text-neutral-45 md:text-small18">
       {children}
     </span>
   );
-}
+});
 
-function CardMainHeader({ children }: { children?: ReactNode }) {
+const CardMainHeader = memo(function CardMainHeader({
+  children,
+}: {
+  children?: ReactNode;
+}) {
   return (
     <span className="mb-2 mt-0.5 block text-xsmall16 font-semibold md:mb-3 md:mt-2 md:text-small20">
       {children}
     </span>
   );
-}
+});

@@ -1,4 +1,4 @@
-import { CSSProperties, ReactNode } from 'react';
+import { CSSProperties, memo, ReactNode } from 'react';
 
 import { twMerge } from '@/lib/twMerge';
 
@@ -24,4 +24,4 @@ function SubHeader({
   );
 }
 
-export default SubHeader;
+export default memo(SubHeader);
