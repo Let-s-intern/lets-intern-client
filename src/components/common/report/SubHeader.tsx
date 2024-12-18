@@ -1,7 +1,8 @@
-import { twMerge } from '@/lib/twMerge';
 import { CSSProperties, ReactNode } from 'react';
 
-function SuperTitle({
+import { twMerge } from '@/lib/twMerge';
+
+function SubHeader({
   children,
   className,
   style,
@@ -23,4 +24,4 @@ function SuperTitle({
   );
 }
 
-export default SuperTitle;
+export default SubHeader;

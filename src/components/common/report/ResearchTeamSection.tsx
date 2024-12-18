@@ -1,8 +1,8 @@
 import { useMediaQuery } from '@mui/material';
 
 import { ReportColors } from '@/types/interface';
-import DetailHeading2 from './DetailHeading2';
-import SuperTitle from './SuperTitle';
+import MainHeader from './MainHeader';
+import SubHeader from './SubHeader';
 
 const SUPER_TITLE = '믿고 맡겨도 될까? 더이상 걱정마세요.';
 const HEADING =
@@ -15,16 +15,16 @@ interface ResearchTeamSectionProps {
 const ResearchTeamSection = ({ colors }: ResearchTeamSectionProps) => {
   const isMobile = useMediaQuery('(max-width:768px)');
 
-  const superTitleStyle = {
+  const subHeaderStyle = {
     color: colors.primary.DEFAULT,
   };
 
   return (
     <div className="max-w-[1000px] px-5 py-14 md:pb-36 md:pt-32 lg:px-0">
-      <SuperTitle className="mb-2 md:mb-3" style={superTitleStyle}>
+      <SubHeader className="mb-2 md:mb-3" style={subHeaderStyle}>
         {SUPER_TITLE}
-      </SuperTitle>
-      <DetailHeading2>{HEADING}</DetailHeading2>
+      </SubHeader>
+      <MainHeader>{HEADING}</MainHeader>
       <p className="mb-8 mt-5 text-center text-xsmall14 md:mb-16 md:mt-8 md:text-small20">
         렛츠커리어 취업 연구팀은
         <br className="md:hidden" /> 대기업 및 IT 업계 다양한 직무 현직자들로
