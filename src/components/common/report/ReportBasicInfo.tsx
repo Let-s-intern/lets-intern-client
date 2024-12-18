@@ -140,9 +140,9 @@ const ReportBasicRow = ({
       <span className="text-xsmall14 font-semibold text-primary md:text-xsmall16">
         {title}
       </span>
-      <p className="whitespace-pre-wrap break-words text-xsmall14 font-medium text-neutral-0 md:text-xsmall16">
+      <div className="whitespace-pre-wrap break-words text-xsmall14 font-medium text-neutral-0 md:text-xsmall16">
         {content}
-      </p>
+      </div>
     </div>
   );
 };

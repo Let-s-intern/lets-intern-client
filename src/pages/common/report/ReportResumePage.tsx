@@ -10,6 +10,7 @@ import { ReportColors, ReportContent } from '@/types/interface';
 import { getBaseUrlFromServer, getReportLandingTitle } from '@/utils/url';
 import Header from '@components/common/program/program-detail/header/Header';
 import ReportBasicInfo from '@components/common/report/ReportBasicInfo';
+import ReportExampleSection from '@components/common/report/ReportExampleSection';
 import ReportProgramRecommendSlider from '@components/common/report/ReportProgramRecommendSlider';
 import ResearchTeamSection from '@components/common/report/ResearchTeamSection';
 import LoadingContainer from '@components/common/ui/loading/LoadingContainer';
@@ -87,7 +88,12 @@ const ReportResumePage = () => {
             <ReportBasicInfo reportBasic={data?.resumeInfo} />
           </div>
           <ReportNavigation />
-
+          {/* 서비스 소개 */}
+          <div>서비스 소개</div>
+          {/* 리포트 예시 */}
+          <ReportExampleSection colors={colors} type="RESUME" />
+          {/* 후기 */}
+          <div>후기</div>
           {/* 취업 연구팀 소개 */}
           <ResearchTeamSection colors={colors} />
 
