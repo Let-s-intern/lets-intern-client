@@ -3,6 +3,7 @@ import BubbleTail from '@/assets/icons/bubble-tail.svg?react';
 import Profile from '@/assets/icons/profile.svg?react';
 import { REPORT_EXAMPLE } from '@/data/reportConstant';
 import { ReportColors } from '@/types/interface';
+import ReportExampleCard from './ReportExampleCard';
 
 interface ReportExampleSectionProps {
   colors: ReportColors;
@@ -16,29 +17,54 @@ const ReportExampleSection = ({ colors, type }: ReportExampleSectionProps) => {
       <h5 className="w-full text-center text-xsmall14 font-semibold text-neutral-45">
         리포트 예시
       </h5>
-      <div className="mx-auto flex w-fit flex-col px-5 md:px-24">
-        <div className="flex w-full flex-col gap-3 rounded-[10px] bg-neutral-90 p-5 text-xxsmall12 font-medium text-neutral-40 md:w-fit md:max-w-full md:flex-row md:items-stretch md:px-14 md:py-7">
-          <div className="flex shrink-0 items-center gap-x-4 md:min-h-full md:gap-x-8">
-            <div className="flex flex-col items-center justify-center md:h-full">
-              <Profile className="h-9 w-9" />
-              <span>{example.name}</span>
+      <div className="flex w-full flex-col gap-y-3 md:gap-y-6">
+        <div className="mx-auto flex w-fit flex-col px-5 md:px-24">
+          <div className="flex w-full flex-col gap-3 rounded-[10px] bg-neutral-90 p-5 text-xxsmall12 font-medium text-neutral-40 md:w-fit md:max-w-full md:flex-row md:items-stretch md:px-14 md:py-7">
+            <div className="flex shrink-0 items-center gap-x-4 md:min-h-full md:gap-x-8">
+              <div className="flex flex-col items-center justify-center md:h-full">
+                <Profile className="h-9 w-9" />
+                <span>{example.name}</span>
+              </div>
+              <div className="flex flex-col md:h-full md:justify-center md:gap-y-2">
+                <span>희망 직무</span>
+                <span className="text-xsmall14 font-semibold text-neutral-0">
+                  {example.hopeJob}
+                </span>
+              </div>
             </div>
-            <div className="flex flex-col md:h-full md:justify-center md:gap-y-2">
-              <span>희망 직무</span>
-              <span className="text-xsmall14 font-semibold text-neutral-0">
-                {example.hopeJob}
-              </span>
+            <div className="flex flex-col md:min-h-full md:justify-center md:gap-y-2">
+              <span>{convertReportTypeToDisplayName(type)} 작성 고민</span>
+              <p className="text-xsmall14 font-semibold text-neutral-0">
+                {example.problem}
+              </p>
             </div>
           </div>
-          <div className="flex flex-col md:min-h-full md:justify-center md:gap-y-2">
-            <span>{convertReportTypeToDisplayName(type)} 작성 고민</span>
-            <p className="text-xsmall14 font-semibold text-neutral-0">
-              {example.problem}
-            </p>
+          <div className="mx-[60px]">
+            <BubbleTail />
           </div>
         </div>
-        <div className="mx-[60px]">
-          <BubbleTail />
+        <div className="flex w-full flex-col gap-y-10 md:gap-y-[60px]">
+          <div className="flex w-full flex-col gap-x-3 gap-y-2 md:flex-row md:justify-center">
+            <div
+              className="h-9 w-9"
+              style={{ backgroundColor: colors.primary.DEFAULT }}
+            />
+            <h5 className="text-medium22 font-bold text-neutral-0 md:text-3xl">
+              {example.header}
+            </h5>
+          </div>
+          <div className="w-full overflow-x-auto">
+            <div className="flex w-fit items-stretch gap-x-3">
+              {example.content.map((content, index) => (
+                <ReportExampleCard
+                  key={index}
+                  {...content}
+                  mainColor={colors.primary.DEFAULT}
+                  subColor={colors.primary[100]}
+                />
+              ))}
+            </div>
+          </div>
         </div>
       </div>
     </section>
