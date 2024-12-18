@@ -1,15 +1,14 @@
 import { ReactNode, useState } from 'react';
 import { HiChevronDown, HiChevronUp } from 'react-icons/hi2';
 
+import { ReportPriceDetail } from '@/api/report';
+import CheckIcon from '@/assets/icons/chevron-down.svg?react';
+import { twMerge } from '@/lib/twMerge';
 import { ReportColors } from '@/types/interface';
 import { useMediaQuery } from '@mui/material';
 import MainHeader from './MainHeader';
 import SectionHeader from './SectionHeader';
 import SubHeader from './SubHeader';
-
-import { ReportPriceDetail } from '@/api/report';
-import CheckIcon from '@/assets/icons/chevron-down.svg?react';
-import { twMerge } from '@/lib/twMerge';
 
 const SECTION_HEADER = '가격 및 플랜';
 const SUB_HEADER = '자신있게 추천합니다!';
@@ -38,7 +37,6 @@ const feedback = [
   '40분간의 심층 상담으로 나만의 강점과 경쟁력 발굴',
   '지원 직무에 최적화된 실질적·구체적 개선 방향 제시',
   '맞춤 전략으로 서류 경쟁력 강화 및 합격 가능성 극대화',
-  '"무한 질문" 가능! 이력서와 관련된 모든 궁금증을 마음껏 해결하세요',
 ];
 
 interface ReportPlanSectionProps {
@@ -65,7 +63,7 @@ const ReportPlanSection = ({ colors, priceDetail }: ReportPlanSectionProps) => {
   const isMobile = useMediaQuery('(max-width: 768px)');
 
   return (
-    <section className="w-full bg-neutral-90 px-5 py-16 md:py-24">
+    <section className="w-full bg-neutral-90 px-5 py-16 md:pb-36 md:pt-28">
       <header>
         <SectionHeader className="mb-6">{SECTION_HEADER}</SectionHeader>
         <SubHeader className="mb-1 md:mb-3" style={SUB_HEADER_STYLE}>
@@ -74,51 +72,57 @@ const ReportPlanSection = ({ colors, priceDetail }: ReportPlanSectionProps) => {
         <MainHeader>{MAIN_HEADER}</MainHeader>
       </header>
 
-      <main className="mt-9 flex flex-col gap-4">
-        {/* 베이직 플랜 */}
-        <PriceCard>
-          <DropDown
-            title="베이직 플랜"
-            initialOpenState={isMobile ? false : true}
-          >
-            <div className="flex flex-col gap-3">
-              {basicPlan.map((item, index) => (
-                <CheckListItem key={index} content={item} />
-              ))}
+      <main className="mt-9 flex max-w-[1000px] flex-col gap-4 md:mt-5 md:gap-5 lg:mx-auto lg:px-0">
+        <div className="flex flex-col gap-4 md:flex-row md:gap-3">
+          {/* 베이직 플랜 */}
+          <PriceCard className="md:flex md:flex-col md:justify-between">
+            <div>
+              <DropDown
+                title="베이직 플랜"
+                initialOpenState={isMobile ? false : true}
+              >
+                <div className="flex flex-col gap-3">
+                  {basicPlan.map((item, index) => (
+                    <CheckListItem key={index}>{item} </CheckListItem>
+                  ))}
+                </div>
+              </DropDown>
+              <hr className="mb-5 mt-4 md:my-6" />
             </div>
-          </DropDown>
-          <hr className="mb-5 mt-4" />
-          <PriceSection
-            originalPrice={basicPriceInfo?.price ?? 0}
-            discountPrice={basicPriceInfo?.discountPrice ?? 0}
-          />
-        </PriceCard>
 
-        {/* 프리미엄 플랜 */}
-        <PriceCard
-          bannerText="채용 공고 맞춤형 이력서를 원한다면,"
-          bannerColor={colors.primary[400]}
-        >
-          <DropDown
-            title="프리미엄 플랜"
-            initialOpenState={isMobile ? false : true}
+            <PriceSection
+              originalPrice={basicPriceInfo?.price ?? 0}
+              discountPrice={basicPriceInfo?.discountPrice ?? 0}
+            />
+          </PriceCard>
+
+          {/* 프리미엄 플랜 */}
+          <PriceCard
+            bannerText="채용 공고 맞춤형 이력서를 원한다면,"
+            bannerColor={colors.primary[400]}
           >
-            <div className="flex flex-col gap-3">
-              {premiumPlan.map((item, index) => (
-                <CheckListItem
-                  key={index}
-                  content={item}
-                  className={index === 0 ? 'font-bold' : ''}
-                />
-              ))}
-            </div>
-          </DropDown>
-          <hr className="mb-5 mt-4" />
-          <PriceSection
-            originalPrice={premiumPriceInfo?.price ?? 0}
-            discountPrice={premiumPriceInfo?.discountPrice ?? 0}
-          />
-        </PriceCard>
+            <DropDown
+              title="프리미엄 플랜"
+              initialOpenState={isMobile ? false : true}
+            >
+              <div className="flex flex-col gap-3">
+                {premiumPlan.map((item, index) => (
+                  <CheckListItem
+                    key={index}
+                    className={index === 0 ? 'font-bold' : ''}
+                  >
+                    {item}
+                  </CheckListItem>
+                ))}
+              </div>
+            </DropDown>
+            <hr className="mb-5 mt-4 md:my-6" />
+            <PriceSection
+              originalPrice={premiumPriceInfo?.price ?? 0}
+              discountPrice={premiumPriceInfo?.discountPrice ?? 0}
+            />
+          </PriceCard>
+        </div>
 
         <div className="border-t-2 border-dashed border-neutral-70" />
 
@@ -127,28 +131,32 @@ const ReportPlanSection = ({ colors, priceDetail }: ReportPlanSectionProps) => {
           <PriceCard>
             <CardSubHeader>옵션</CardSubHeader>
             <CardMainHeader>현직자 피드백</CardMainHeader>
-            <CheckListItem content="현직자가 제공하는 심층 서류 피드백 및 작성 노하우" />
-            <div className="mb-1 mt-3 flex flex-col gap-1.5">
+            <CheckListItem>
+              현직자가 제공하는 심층 서류 피드백 및 작성 노하우
+            </CheckListItem>
+            <div className="mb-1 mt-3 flex flex-col gap-1.5 md:grid md:grid-cols-2 md:gap-2">
               {employees.map((item, index) => (
                 <div
                   key={index}
-                  className="rounded-xs bg-[#EEFAFF] py-2 text-center text-xxsmall12 font-semibold"
+                  className="rounded-xs bg-[#EEFAFF] py-2 text-center text-xxsmall12 font-semibold md:text-xsmall14"
                 >
                   {item}
                 </div>
               ))}
             </div>
-            <span className="mb-4 inline-block text-xxsmall12 text-neutral-35">
+            <span className="mb-4 inline-block text-xxsmall12 text-neutral-35 md:text-xsmall14">
               *피드백 받고 싶은 현직자 여러명 옵션 추가 가능
             </span>
 
-            <PriceSection
-              originalPrice={optionInfos[0].price ?? 0}
-              discountPrice={optionInfos[0].discountPrice ?? 0}
-            />
-            <span className="text-xxsmall12 font-medium text-neutral-45">
-              현직자 택 1인 옵션 추가 금액
-            </span>
+            <div className="md:flex md:items-end md:gap-1">
+              <PriceSection
+                originalPrice={optionInfos[0].price ?? 0}
+                discountPrice={optionInfos[0].discountPrice ?? 0}
+              />
+              <span className="text-xxsmall12 font-medium text-neutral-45 md:text-xsmall16">
+                현직자 택 1인 옵션 추가 금액
+              </span>
+            </div>
           </PriceCard>
         )}
 
@@ -159,10 +167,15 @@ const ReportPlanSection = ({ colors, priceDetail }: ReportPlanSectionProps) => {
         >
           <CardSubHeader>옵션</CardSubHeader>
           <CardMainHeader>1:1 피드백</CardMainHeader>
-          <div className="mb-4 flex flex-col gap-2">
+          <div className="mb-4 flex flex-col gap-2 md:grid md:grid-cols-2">
             {feedback.map((item, index) => (
-              <CheckListItem key={index} content={item} />
+              <CheckListItem key={index}>{item}</CheckListItem>
             ))}
+            <CheckListItem>
+              <span className="font-bold">&quot;무한 질문&quot; 가능!</span>
+              <br />
+              이력서와 관련된 모든 궁금증을 마음껏 해결하세요
+            </CheckListItem>
           </div>
 
           <PriceSection
@@ -181,17 +194,19 @@ function PriceCard({
   bannerText,
   bannerColor,
   children,
+  className,
 }: {
   bannerText?: string;
   bannerColor?: string;
   children?: ReactNode;
+  className?: string;
 }) {
   const BANNER_STYLE = {
     backgroundColor: bannerColor,
   };
 
   return (
-    <div className="overflow-hidden rounded-md">
+    <div className="w-full overflow-hidden rounded-md">
       {/* Banner */}
       {bannerText && (
         <div
@@ -201,7 +216,14 @@ function PriceCard({
           {bannerText}
         </div>
       )}
-      <div className="bg-white px-5 py-6">{children}</div>
+      <div
+        className={twMerge(
+          'h-full bg-white px-5 py-6 md:px-6 md:py-8',
+          className,
+        )}
+      >
+        {children}
+      </div>
     </div>
   );
 }
@@ -220,7 +242,7 @@ function DropDown({
   return (
     <>
       <div
-        className="flex cursor-pointer items-center justify-between rounded-md bg-black px-5 py-3 text-xsmall16 font-semibold text-white"
+        className="flex cursor-pointer items-center justify-between rounded-md bg-black px-5 py-3 text-xsmall16 font-semibold text-white md:py-4 md:text-small20"
         onClick={() => setIsOpen(!isOpen)}
       >
         {title}
@@ -231,19 +253,17 @@ function DropDown({
         )}
       </div>
       {isOpen && (
-        <div className="mt-4 rounded-md bg-neutral-95 px-4 py-5">
-          {children}
-        </div>
+        <div className="mt-4 bg-neutral-95 px-4 py-5 md:mt-6">{children}</div>
       )}
     </>
   );
 }
 
 function CheckListItem({
-  content,
+  children,
   className,
 }: {
-  content?: string;
+  children?: ReactNode;
   className?: string;
 }) {
   return (
@@ -251,11 +271,11 @@ function CheckListItem({
       <CheckIcon className="h-auto w-6" color="#27272D" />
       <span
         className={twMerge(
-          'text-xsmall14 font-medium text-neutral-0',
+          'whitespace-pre-line text-xsmall14 font-medium text-neutral-0 md:text-small18',
           className,
         )}
       >
-        {content}
+        {children}
       </span>
     </div>
   );
@@ -274,14 +294,14 @@ function PriceSection({
   return (
     <div>
       <div className="flex items-center gap-1">
-        <span className="text-small20 font-bold text-[#FC5555]">
+        <span className="text-small20 font-bold text-[#FC5555] md:text-xsmall16">
           {discountRate}%
         </span>
-        <s className="text-small20 font-bold text-neutral-45">
+        <s className="text-small20 font-bold text-neutral-45 md:text-xsmall16">
           {originalPrice.toLocaleString()}원
         </s>
       </div>
-      <span className="text-xlarge28 font-bold">
+      <span className="text-xlarge28 font-bold md:text-medium24">
         {finalPrice.toLocaleString()}원
       </span>
     </div>
@@ -290,7 +310,7 @@ function PriceSection({
 
 function CardSubHeader({ children }: { children?: ReactNode }) {
   return (
-    <span className="text-xsmall16 font-medium text-neutral-45">
+    <span className="text-xsmall16 font-medium text-neutral-45 md:text-small18">
       {children}
     </span>
   );
@@ -298,7 +318,7 @@ function CardSubHeader({ children }: { children?: ReactNode }) {
 
 function CardMainHeader({ children }: { children?: ReactNode }) {
   return (
-    <span className="mb-2 mt-0.5 block text-xsmall16 font-semibold">
+    <span className="mb-2 mt-0.5 block text-xsmall16 font-semibold md:mb-3 md:mt-2 md:text-small20">
       {children}
     </span>
   );
