@@ -111,14 +111,12 @@ const ReportPersonalStatementPage = () => {
 
           {/* 프로그램 추천 */}
           {personalStatementContent.reportProgramRecommend && (
-            <section className="w-full">
-              <ReportProgramRecommendSlider
-                colors={colors}
-                reportProgramRecommend={
-                  personalStatementContent.reportProgramRecommend
-                }
-              />
-            </section>
+            <ReportProgramRecommendSlider
+              colors={colors}
+              reportProgramRecommend={
+                personalStatementContent.reportProgramRecommend
+              }
+            />
           )}
         </div>
       )}
