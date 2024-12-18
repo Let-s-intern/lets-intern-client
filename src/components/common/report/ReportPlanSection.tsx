@@ -1,7 +1,11 @@
-import { memo, ReactNode, useState } from 'react';
+import { memo, ReactNode, useMemo, useState } from 'react';
 import { HiChevronDown, HiChevronUp } from 'react-icons/hi2';
 
-import { ReportPriceDetail } from '@/api/report';
+import {
+  convertReportTypeToDisplayName,
+  ReportPriceDetail,
+  ReportType,
+} from '@/api/report';
 import CheckIcon from '@/assets/icons/chevron-down.svg?react';
 import BubbleTail from '@/assets/icons/report-bubble-tail.svg?react';
 import { twMerge } from '@/lib/twMerge';
@@ -16,40 +20,94 @@ const SECTION_HEADER = '가격 및 플랜';
 const SUB_HEADER = '자신있게 추천합니다!';
 const MAIN_HEADER = '취업 성공을 위한\n맞춤형 피드백 플랜, 그리고 옵션까지';
 
-const basicPlan = [
-  '이력서 작성 고민을 해결하는 맞춤형 솔루션 제공',
-  '총 6가지 기준을 바탕으로 이력서 형식 및 내용 피드백',
-  '희망 직무/산업에 맞춘 합격자 예시 자료 제공',
-];
-
-const premiumPlan = [
-  '베이직 리포트 + 채용 공고 맞춤 직무 역량 및 태도 분석',
-  '지원 공고 핵심 요구사항 맞춤 피드백 2페이지 추가',
-  '공고별 적합 표현과 키워드로 합격 가능성 극대화',
-];
-
-const employees = [
-  '컨설팅펌 현직자',
-  '삼성/SK 현직자',
-  '금융권 현직자',
-  '스타트업 마케팅 현직자',
-];
-
-const feedback = [
-  '40분간의 심층 상담으로 나만의 강점과 경쟁력 발굴',
-  '지원 직무에 최적화된 실질적·구체적 개선 방향 제시',
-  '맞춤 전략으로 서류 경쟁력 강화 및 합격 가능성 극대화',
-];
-
 interface ReportPlanSectionProps {
   colors: ReportColors;
   priceDetail: ReportPriceDetail;
+  reportType: ReportType;
 }
 
-const ReportPlanSection = ({ colors, priceDetail }: ReportPlanSectionProps) => {
+const ReportPlanSection = ({
+  colors,
+  priceDetail,
+  reportType,
+}: ReportPlanSectionProps) => {
   const SUB_HEADER_STYLE = {
     color: colors.primary.DEFAULT,
   };
+
+  const basicPlan = useMemo(() => {
+    switch (reportType) {
+      case 'PERSONAL_STATEMENT':
+        return [
+          '자소서 문항 1개에 대해 피드백 제공',
+          '각 문항당 1,000자 제한',
+          '자소서 문항 추가는 옵션에서 선택 가능',
+        ];
+
+      default:
+        return [
+          '이력서 작성 고민을 해결하는 맞춤형 솔루션 제공',
+          '총 6가지 기준을 바탕으로 이력서 형식 및 내용 피드백',
+          '희망 직무/산업에 맞춘 합격자 예시 자료 제공',
+        ];
+    }
+  }, [reportType]);
+
+  const premiumPlan = useMemo(() => {
+    switch (reportType) {
+      case 'PERSONAL_STATEMENT':
+        return [
+          '최대 4문항, 총 글자수 4,000자 미만 제한',
+          '자소서 전체에 대한',
+          '자소서 문항 추가는 옵션에서 선택 가능',
+        ];
+
+      default:
+        return [
+          '베이직 리포트 + 채용 공고 맞춤 직무 역량 및 태도 분석',
+          '지원 공고 핵심 요구사항 맞춤 피드백 2페이지 추가',
+          '공고별 적합 표현과 키워드로 합격 가능성 극대화',
+        ];
+    }
+  }, [reportType]);
+
+  const employees = useMemo(() => {
+    switch (reportType) {
+      case 'PERSONAL_STATEMENT':
+        return ['컨설팅펌 현직자', '삼성계열사 현직자'];
+
+      default:
+        return [
+          '컨설팅펌 현직자',
+          '삼성/SK 현직자',
+          '금융권 현직자',
+          '스타트업 마케팅 현직자',
+        ];
+    }
+  }, [reportType]);
+
+  const employeeFeedbackContent =
+    reportType === 'PERSONAL_STATEMENT'
+      ? '현직자의 서류 피드백 & 서류 작성 꿀팁'
+      : '현직자가 제공하는 심층 서류 피드백 및 작성 노하우';
+
+  const feedback = useMemo(() => {
+    switch (reportType) {
+      case 'PERSONAL_STATEMENT':
+        return [
+          '발급된 진단서를 바탕으로 온라인 미팅 진행',
+          '커리어 전문가와 맞춤형 서류 완성',
+          '이력서와 관련된 모든 궁금증을 마음껏 해결하세요',
+        ];
+      default:
+        return [
+          '40분간의 심층 상담으로 나만의 강점과 경쟁력 발굴',
+          '지원 직무에switch(reportType) 최적화된 실질적·구체적 개선 방향 제시',
+          '맞춤 전략으로 서류 경쟁력 강화 및 합격 가능성 극대화',
+          '이력서와 관련된 모든 궁금증을 마음껏 해결하세요',
+        ];
+    }
+  }, [reportType]);
 
   const basicPriceInfo = priceDetail.reportPriceInfos?.find(
     (info) => info.reportPriceType === 'BASIC',
@@ -72,7 +130,7 @@ const ReportPlanSection = ({ colors, priceDetail }: ReportPlanSectionProps) => {
         <MainHeader>{MAIN_HEADER}</MainHeader>
       </header>
 
-      <main className="mt-9 flex max-w-[1000px] flex-col gap-4 md:mt-5 md:gap-5 lg:mx-auto lg:px-0">
+      <main className="mt-9 flex max-w-[832px] flex-col gap-4 md:mt-5 md:gap-5 lg:mx-auto lg:px-0">
         <div className="flex flex-col gap-4 md:flex-row md:gap-3">
           {/* 베이직 플랜 */}
           <PriceCard className="md:flex md:flex-col md:justify-between">
@@ -99,10 +157,10 @@ const ReportPlanSection = ({ colors, priceDetail }: ReportPlanSectionProps) => {
 
           {/* 프리미엄 플랜 */}
           <PriceCard
-            bannerText="채용 공고 맞춤형 이력서를 원한다면,"
+            bannerText={`채용 공고 맞춤형 ${convertReportTypeToDisplayName(reportType)}를 원한다면,`}
             bannerColor={colors.primary[400]}
             isFloatingBanner={isMobile ? false : true}
-            floatingBannerClassName="left-44 top-4"
+            floatingBannerClassName="left-36 top-4"
           >
             <Dropdown
               title="프리미엄 플랜"
@@ -113,9 +171,14 @@ const ReportPlanSection = ({ colors, priceDetail }: ReportPlanSectionProps) => {
                 {premiumPlan.map((item, index) => (
                   <CheckListItem
                     key={index}
+                    // 첫 줄만 bold
                     className={index === 0 ? 'font-bold' : ''}
                   >
                     {item}
+                    {/* 예외 문항 */}
+                    {reportType === 'PERSONAL_STATEMENT' && index === 1 && (
+                      <span className="font-bold"> ‘총평 페이지’ 추가</span>
+                    )}
                   </CheckListItem>
                 ))}
               </div>
@@ -135,9 +198,7 @@ const ReportPlanSection = ({ colors, priceDetail }: ReportPlanSectionProps) => {
           <PriceCard>
             <CardSubHeader>옵션</CardSubHeader>
             <CardMainHeader>현직자 피드백</CardMainHeader>
-            <CheckListItem>
-              현직자가 제공하는 심층 서류 피드백 및 작성 노하우
-            </CheckListItem>
+            <CheckListItem>{employeeFeedbackContent}</CheckListItem>
             <div className="mb-1 mt-3 flex flex-col gap-1.5 md:grid md:grid-cols-2 md:gap-2">
               {employees.map((item, index) => (
                 <div
@@ -153,6 +214,7 @@ const ReportPlanSection = ({ colors, priceDetail }: ReportPlanSectionProps) => {
             </span>
 
             <div className="md:flex md:items-end md:gap-1">
+              {/* 첫 번째 옵션 가격 표시 */}
               <PriceSection
                 originalPrice={optionInfos[0].price ?? 0}
                 discountPrice={optionInfos[0].discountPrice ?? 0}
@@ -173,15 +235,21 @@ const ReportPlanSection = ({ colors, priceDetail }: ReportPlanSectionProps) => {
         >
           <CardSubHeader>옵션</CardSubHeader>
           <CardMainHeader>1:1 피드백</CardMainHeader>
-          <div className="mb-4 flex flex-col gap-2 md:grid md:grid-cols-2">
+          <div className="mb-4 flex flex-col gap-2 md:grid md:grid-cols-2 md:gap-3">
             {feedback.map((item, index) => (
-              <CheckListItem key={index}>{item}</CheckListItem>
+              <CheckListItem key={index}>
+                {/* 예외 문항 */}
+                {index === feedback.length - 1 && (
+                  <>
+                    <span className="font-bold">
+                      &quot;무한 질문&quot; 가능!
+                    </span>
+                    <br />
+                  </>
+                )}
+                {item}
+              </CheckListItem>
             ))}
-            <CheckListItem>
-              <span className="font-bold">&quot;무한 질문&quot; 가능!</span>
-              <br />
-              이력서와 관련된 모든 궁금증을 마음껏 해결하세요
-            </CheckListItem>
           </div>
 
           <PriceSection
@@ -298,7 +366,10 @@ const CheckListItem = memo(function CheckListItem({
 }) {
   return (
     <div className="flex items-start gap-0.5">
-      <CheckIcon className="h-auto w-6" color="#27272D" />
+      <CheckIcon
+        className="h-auto w-6 -translate-y-0.5 md:translate-y-0"
+        color="#27272D"
+      />
       <span
         className={twMerge(
           'whitespace-pre-line text-xsmall14 font-medium text-neutral-0 md:text-small18',

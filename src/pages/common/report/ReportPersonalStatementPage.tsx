@@ -101,8 +101,12 @@ const ReportPersonalStatementPage = () => {
           <ResearchTeamSection colors={colors} />
 
           {/* 가격 및 플랜 */}
-          {priceDetail && (
-            <ReportPlanSection colors={colors} priceDetail={priceDetail} />
+          {priceDetail && report?.reportType && (
+            <ReportPlanSection
+              colors={colors}
+              priceDetail={priceDetail}
+              reportType={report?.reportType}
+            />
           )}
 
           {/* 프로그램 추천 */}
