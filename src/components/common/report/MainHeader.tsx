@@ -2,7 +2,7 @@ import { memo, ReactNode } from 'react';
 
 import { twMerge } from '@/lib/twMerge';
 
-function DetailHeading2({
+function MainHeader({
   children,
   className,
 }: {
@@ -21,4 +21,4 @@ function DetailHeading2({
   );
 }
 
-export default memo(DetailHeading2);
+export default memo(MainHeader);

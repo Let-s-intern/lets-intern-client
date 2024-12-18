@@ -1,7 +1,8 @@
-import { twMerge } from '@/lib/twMerge';
-import { CSSProperties, ReactNode } from 'react';
+import { CSSProperties, memo, ReactNode } from 'react';
 
-function SuperTitle({
+import { twMerge } from '@/lib/twMerge';
+
+function SectionHeader({
   children,
   className,
   style,
@@ -13,7 +14,7 @@ function SuperTitle({
   return (
     <span
       className={twMerge(
-        'block text-center text-xsmall16 font-bold md:text-small20',
+        'block text-center text-xsmall14 font-semibold text-neutral-45 md:text-small18',
         className,
       )}
       style={style}
@@ -23,4 +24,4 @@ function SuperTitle({
   );
 }
 
-export default SuperTitle;
+export default memo(SectionHeader);

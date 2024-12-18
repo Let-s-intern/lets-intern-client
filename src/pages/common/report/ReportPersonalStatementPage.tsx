@@ -5,12 +5,16 @@ import { ReportColors, ReportContent } from '@/types/interface';
 import { getBaseUrlFromServer, getReportLandingTitle } from '@/utils/url';
 import Header from '@components/common/program/program-detail/header/Header';
 import ReportBasicInfo from '@components/common/report/ReportBasicInfo';
+import ReportPlanSection from '@components/common/report/ReportPlanSection';
 import ReportProgramRecommendSlider from '@components/common/report/ReportProgramRecommendSlider';
 import ResearchTeamSection from '@components/common/report/ResearchTeamSection';
 import LoadingContainer from '@components/common/ui/loading/LoadingContainer';
 import { useEffect } from 'react';
 import { Helmet } from 'react-helmet';
-import { useGetActiveReports } from '../../../api/report';
+import {
+  useGetActiveReports,
+  useGetReportPriceDetail,
+} from '../../../api/report';
 import ReportApplyBottomSheet from '../../../components/common/report/ReportApplyBottomSheet';
 import ReportNavigation from './ReportNavigation';
 
@@ -51,6 +55,8 @@ const ReportPersonalStatementPage = () => {
   const personalStatementContent: ReportContent = JSON.parse(
     data?.personalStatementInfo?.contents ?? '{}',
   );
+
+  const { data: priceDetail } = useGetReportPriceDetail(report!.reportId);
 
   useEffect(() => {
     initReportApplication();
@@ -94,6 +100,11 @@ const ReportPersonalStatementPage = () => {
           {/* 취업 연구팀 소개 */}
           <ResearchTeamSection colors={colors} />
 
+          {/* 가격 및 플랜 */}
+          {priceDetail && (
+            <ReportPlanSection colors={colors} priceDetail={priceDetail} />
+          )}
+
           {/* 프로그램 추천 */}
           {personalStatementContent.reportProgramRecommend && (
             <section className="w-full">
@@ -108,7 +119,9 @@ const ReportPersonalStatementPage = () => {
         </div>
       )}
 
-      {report && <ReportApplyBottomSheet report={report} />}
+      {report && priceDetail && (
+        <ReportApplyBottomSheet report={report} priceDetail={priceDetail} />
+      )}
     </>
   );
 };

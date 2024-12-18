@@ -28,8 +28,6 @@ function ProgramRecommendSlider({
 }: ProgramRecommendSliderProps) {
   const { scrollRef, hasScroll } = useHasScroll();
 
-  console.log(buttonClassName);
-
   return (
     <div
       className={twMerge(

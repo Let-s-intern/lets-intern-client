@@ -4,8 +4,8 @@ import { useNavigate } from 'react-router-dom';
 import { useGetProgramRecommend } from '@/api/program';
 import { ReportColors, ReportProgramRecommend } from '@/types/interface';
 import ProgramRecommendSlider from '../ui/ProgramRecommendSlider';
-import DetailHeading2 from './DetailHeading2';
-import SuperTitle from './SuperTitle';
+import MainHeader from './MainHeader';
+import SubHeader from './SubHeader';
 
 const SUPER_TITLE = '서류 작성, 아직 고민이 남아있나요?';
 const HEADING = '합격률을 2배 올려주는\n맞춤형 챌린지를 추천해요';
@@ -19,7 +19,7 @@ const ReportProgramRecommendSlider = ({
   colors,
   reportProgramRecommend,
 }: ReportProgramRecommendSliderProps) => {
-  const superTitleStyle = {
+  const subHeaderStyle = {
     color: colors.primary.DEFAULT,
   };
 
@@ -182,10 +182,10 @@ const ReportProgramRecommendSlider = ({
 
   return (
     <div className="bg-neutral-95 px-5 py-16 md:py-24">
-      <SuperTitle className="mb-1 md:mb-3" style={superTitleStyle}>
+      <SubHeader className="mb-1 md:mb-3" style={subHeaderStyle}>
         {SUPER_TITLE}
-      </SuperTitle>
-      <DetailHeading2>{HEADING}</DetailHeading2>
+      </SubHeader>
+      <MainHeader>{HEADING}</MainHeader>
 
       <ProgramRecommendSlider
         className="-mx-5 mt-8 max-w-[1000px] px-5 md:mt-14 lg:mx-auto lg:px-0"
