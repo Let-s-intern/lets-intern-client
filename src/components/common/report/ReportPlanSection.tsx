@@ -27,6 +27,13 @@ const premiumPlan = [
   '공고별 적합 표현과 키워드로 합격 가능성 극대화',
 ];
 
+const feedbackEmployees = [
+  '컨설팅펌 현직자',
+  '삼성/SK 현직자',
+  '금융권 현직자',
+  '스타트업 마케팅 현직자',
+];
+
 interface ReportPlanSectionProps {
   colors: ReportColors;
   priceDetail: ReportPriceDetail;
@@ -43,6 +50,7 @@ const ReportPlanSection = ({ colors, priceDetail }: ReportPlanSectionProps) => {
   const premiumPriceInfo = priceDetail.reportPriceInfos?.find(
     (info) => info.reportPriceType === 'PREMIUM',
   );
+  const optionInfos = priceDetail.reportOptionInfos;
 
   console.log('가격 정보:', priceDetail);
 
@@ -78,6 +86,7 @@ const ReportPlanSection = ({ colors, priceDetail }: ReportPlanSectionProps) => {
           />
         </PlanBox>
 
+        {/* 프리미엄 플랜 */}
         <PlanBox
           bannerText="채용 공고 맞춤형 이력서를 원한다면,"
           bannerColor={colors.primary[400]}
@@ -102,6 +111,41 @@ const ReportPlanSection = ({ colors, priceDetail }: ReportPlanSectionProps) => {
             discountPrice={premiumPriceInfo?.discountPrice ?? 0}
           />
         </PlanBox>
+
+        <div className="border-t-2 border-dashed border-neutral-70" />
+
+        {optionInfos && (
+          <PlanBox>
+            <span className="text-xsmall16 font-medium text-neutral-45">
+              옵션
+            </span>
+            <span className="mb-2 mt-0.5 block text-xsmall16 font-semibold">
+              현직자 피드백
+            </span>
+            <CheckListItem content="현직자가 제공하는 심층 서류 피드백 및 작성 노하우" />
+            <div className="mb-1 mt-3 flex flex-col gap-1.5">
+              {feedbackEmployees.map((item, index) => (
+                <div
+                  key={index}
+                  className="rounded-xs bg-[#EEFAFF] py-2 text-center text-xxsmall12 font-semibold"
+                >
+                  {item}
+                </div>
+              ))}
+            </div>
+            <span className="mb-4 inline-block text-xxsmall12 text-neutral-35">
+              *피드백 받고 싶은 현직자 여러명 옵션 추가 가능
+            </span>
+
+            <PriceSection
+              originalPrice={optionInfos[0].price ?? 0}
+              discountPrice={optionInfos[0].discountPrice ?? 0}
+            />
+            <span className="text-xxsmall12 font-medium text-neutral-45">
+              현직자 택 1인 옵션 추가 금액
+            </span>
+          </PlanBox>
+        )}
       </main>
     </section>
   );
