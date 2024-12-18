@@ -19,7 +19,7 @@ const ReportExampleCard = ({
         className="flex h-[400px] flex-col gap-y-4 overflow-hidden rounded-t-[10px] px-5 pt-6 md:h-[513px]"
         style={{ backgroundColor: mainColor }}
       >
-        <h5 className="whitespace-pre-wrap break-keep text-center text-small18 font-bold text-neutral-0">
+        <h5 className="whitespace-pre-wrap break-keep text-center text-small18 font-bold text-neutral-0 md:whitespace-normal">
           {title}
         </h5>
         <div className="w-full flex-1 overflow-hidden px-2.5">
