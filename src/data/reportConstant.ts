@@ -24,6 +24,12 @@ export const REPORT_PROCESS: Record<string, string[]> = {
   ],
 };
 
+export type reportExampleContentType = {
+  title: string;
+  src: string;
+  description: string[];
+};
+
 export const REPORT_EXAMPLE: Record<
   ReportType,
   {
@@ -31,11 +37,7 @@ export const REPORT_EXAMPLE: Record<
     hopeJob: string;
     problem: string;
     header: string;
-    content: {
-      title: string;
-      src: string;
-      description: string[];
-    }[];
+    content: reportExampleContentType[];
   }
 > = {
   RESUME: {
@@ -46,8 +48,8 @@ export const REPORT_EXAMPLE: Record<
     header: '렛츠커리어가 제시하는 맞춤 이력서 솔루션!',
     content: [
       {
-        title: '6가지 핵심 기준을 바탕으로 진단한 총평과 형식 피드백',
-        src: 'images/report/report_example_1.png',
+        title: `6가지 핵심 기준을 바탕으로\n진단한 총평과 형식 피드백`,
+        src: '/images/report/report_example_1.png',
         description: [
           `6가지 핵심 기준 :\n가독성 / 구조 및 구성 / 직무 적합성 / 정확성 / 간결성 / 구체성`,
           `이력서의 강점과 약점을 분석하여 총평과 개선 방향을 제공합니다.`,
@@ -55,8 +57,8 @@ export const REPORT_EXAMPLE: Record<
         ],
       },
       {
-        title: '구체성과 설득력을 높이는 맞춤형 내용 피드백',
-        src: 'images/report/report_example_2.png',
+        title: `구체성과 설득력을 높이는\n맞춤형 내용 피드백`,
+        src: '/images/report/report_example_2.png',
         description: [
           `지원 직무와 연관된 경험과 역량을 효과적으로 표현할 수 있는 방향을 제시합니다.`,
           `불필요한 내용을 정리하고, 내용 전개의 방향을 제안하여 간결하면서도 설득력 있는 이력서 작성 방법을 제공합니다.`,
