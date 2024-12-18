@@ -44,7 +44,7 @@ const ReportExampleSection = ({ colors, type }: ReportExampleSectionProps) => {
           </div>
         </div>
         <div className="flex w-full flex-col gap-y-10 md:gap-y-[60px]">
-          <div className="flex w-full flex-col gap-x-3 gap-y-2 md:flex-row md:justify-center">
+          <div className="flex w-full flex-col items-center gap-x-3 gap-y-2 md:flex-row md:justify-center">
             <div
               className="h-9 w-9"
               style={{ backgroundColor: colors.primary.DEFAULT }}
