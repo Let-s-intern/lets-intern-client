@@ -7,6 +7,7 @@ import BubbleTail from '@/assets/icons/report-bubble-tail.svg?react';
 import { twMerge } from '@/lib/twMerge';
 import { ReportColors } from '@/types/interface';
 import { useMediaQuery } from '@mui/material';
+import clsx from 'clsx';
 import MainHeader from './MainHeader';
 import SectionHeader from './SectionHeader';
 import SubHeader from './SubHeader';
@@ -79,10 +80,11 @@ const ReportPlanSection = ({ colors, priceDetail }: ReportPlanSectionProps) => {
               <Dropdown
                 title="베이직 플랜"
                 initialOpenState={isMobile ? false : true}
+                showToggle={isMobile ? true : false}
               >
                 <div className="flex flex-col gap-3">
                   {basicPlan.map((item, index) => (
-                    <CheckListItem key={index}>{item} </CheckListItem>
+                    <CheckListItem key={index}>{item}</CheckListItem>
                   ))}
                 </div>
               </Dropdown>
@@ -105,6 +107,7 @@ const ReportPlanSection = ({ colors, priceDetail }: ReportPlanSectionProps) => {
             <Dropdown
               title="프리미엄 플랜"
               initialOpenState={isMobile ? false : true}
+              showToggle={isMobile ? true : false}
             >
               <div className="flex flex-col gap-3">
                 {premiumPlan.map((item, index) => (
@@ -250,24 +253,33 @@ const Dropdown = memo(function Dropdown({
   title,
   children,
   initialOpenState = true,
+  showToggle = true,
 }: {
   title: string;
   children?: ReactNode;
   initialOpenState?: boolean;
+  showToggle?: boolean;
 }) {
   const [isOpen, setIsOpen] = useState(initialOpenState);
 
   return (
     <>
       <div
-        className="flex cursor-pointer items-center justify-between rounded-md bg-black px-5 py-3 text-xsmall16 font-semibold text-white md:py-4 md:text-small20"
-        onClick={() => setIsOpen(!isOpen)}
+        className={clsx(
+          'flex items-center justify-between rounded-md bg-black px-5 py-3 text-xsmall16 font-semibold text-white md:py-4 md:text-small20',
+          { 'cursor-pointer': showToggle },
+        )}
+        onClick={() => showToggle && setIsOpen(!isOpen)}
       >
         {title}
-        {isOpen ? (
-          <HiChevronUp size={24} color="#7A7D84" />
-        ) : (
-          <HiChevronDown size={24} color="#7A7D84" />
+        {showToggle && (
+          <>
+            {isOpen ? (
+              <HiChevronUp size={24} color="#7A7D84" />
+            ) : (
+              <HiChevronDown size={24} color="#7A7D84" />
+            )}
+          </>
         )}
       </div>
       {isOpen && (
