@@ -1,8 +1,9 @@
-import { ReactNode, useState } from 'react';
+import { memo, ReactNode, useState } from 'react';
 import { HiChevronDown, HiChevronUp } from 'react-icons/hi2';
 
 import { ReportPriceDetail } from '@/api/report';
 import CheckIcon from '@/assets/icons/chevron-down.svg?react';
+import BubbleTail from '@/assets/icons/report-bubble-tail.svg?react';
 import { twMerge } from '@/lib/twMerge';
 import { ReportColors } from '@/types/interface';
 import { useMediaQuery } from '@mui/material';
@@ -58,8 +59,6 @@ const ReportPlanSection = ({ colors, priceDetail }: ReportPlanSectionProps) => {
   const optionInfos = priceDetail.reportOptionInfos;
   const feedbackInfo = priceDetail.feedbackPriceInfo;
 
-  console.log('가격 정보:', priceDetail);
-
   const isMobile = useMediaQuery('(max-width: 768px)');
 
   return (
@@ -100,6 +99,8 @@ const ReportPlanSection = ({ colors, priceDetail }: ReportPlanSectionProps) => {
           <PriceCard
             bannerText="채용 공고 맞춤형 이력서를 원한다면,"
             bannerColor={colors.primary[400]}
+            isFloatingBanner={isMobile ? false : true}
+            floatingBannerClassName="left-44 top-4"
           >
             <DropDown
               title="프리미엄 플랜"
@@ -164,6 +165,8 @@ const ReportPlanSection = ({ colors, priceDetail }: ReportPlanSectionProps) => {
         <PriceCard
           bannerText="저렴한 가격으로 무한 질문&심층 피드백을 받고 싶다면, "
           bannerColor={colors.primary[400]}
+          isFloatingBanner={isMobile ? false : true}
+          floatingBannerClassName="left-[4.5rem] top-8"
         >
           <CardSubHeader>옵션</CardSubHeader>
           <CardMainHeader>1:1 피드백</CardMainHeader>
@@ -190,30 +193,45 @@ const ReportPlanSection = ({ colors, priceDetail }: ReportPlanSectionProps) => {
 
 export default ReportPlanSection;
 
-function PriceCard({
+const PriceCard = memo(function PriceCard({
   bannerText,
   bannerColor,
   children,
   className,
+  isFloatingBanner = false,
+  floatingBannerClassName,
 }: {
   bannerText?: string;
   bannerColor?: string;
   children?: ReactNode;
   className?: string;
+  isFloatingBanner?: boolean;
+  floatingBannerClassName?: string;
 }) {
   const BANNER_STYLE = {
     backgroundColor: bannerColor,
   };
 
   return (
-    <div className="w-full overflow-hidden rounded-md">
+    <div className="relative w-full overflow-hidden rounded-md">
       {/* Banner */}
-      {bannerText && (
+      {bannerText && !isFloatingBanner && (
         <div
           style={BANNER_STYLE}
           className="bg-primary py-1 text-center text-xsmall14 font-semibold"
         >
           {bannerText}
+        </div>
+      )}
+      {bannerText && isFloatingBanner && (
+        <div className={twMerge('absolute', floatingBannerClassName)}>
+          <div
+            style={BANNER_STYLE}
+            className="rounded-md bg-primary px-3 py-1 text-center text-xsmall14 font-semibold"
+          >
+            {bannerText}
+          </div>
+          <BubbleTail className="translate-x-12" color={bannerColor} />
         </div>
       )}
       <div
@@ -226,7 +244,7 @@ function PriceCard({
       </div>
     </div>
   );
-}
+});
 
 function DropDown({
   title,
