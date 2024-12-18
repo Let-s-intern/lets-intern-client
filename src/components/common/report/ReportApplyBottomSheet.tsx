@@ -51,14 +51,14 @@ const RADIO_CONTROL_LABEL_STYLE = { opacity: 0.75 };
 
 interface ReportApplyBottomSheetProps {
   report: ActiveReport;
-  reportPriceDetail: ReportPriceDetail;
+  priceDetail: ReportPriceDetail;
   show?: boolean;
 }
 
 const ReportApplyBottomSheet = React.forwardRef<
   HTMLDivElement,
   ReportApplyBottomSheetProps
->(({ report, reportPriceDetail, show = true }, ref) => {
+>(({ report, priceDetail, show = true }, ref) => {
   const navigate = useNavigate();
 
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
@@ -96,13 +96,13 @@ const ReportApplyBottomSheet = React.forwardRef<
 
   // 이력서 진단 플랜 Radio 정보
   const reportDiagnosisPlan = useMemo(() => {
-    const reportBasicInfo = reportPriceDetail?.reportPriceInfos?.find(
+    const reportBasicInfo = priceDetail?.reportPriceInfos?.find(
       (info) => info.reportPriceType === BASIC,
     );
-    const reportPremiumInfo = reportPriceDetail?.reportPriceInfos?.find(
+    const reportPremiumInfo = priceDetail?.reportPriceInfos?.find(
       (info) => info.reportPriceType === PREMIUM,
     );
-    const feedbackInfo = reportPriceDetail?.feedbackPriceInfo;
+    const feedbackInfo = priceDetail?.feedbackPriceInfo;
 
     const basicLabel = `베이직 플랜${report.reportType === PERSONAL_STATEMENT ? '(1문항)' : ''}`;
     const premiumLabel = `프리미엄 플랜(${report.reportType === PERSONAL_STATEMENT ? '4문항+총평 페이지 추가' : '채용 공고 맞춤 진단 추가'})`;
@@ -139,7 +139,7 @@ const ReportApplyBottomSheet = React.forwardRef<
         discount: reportPremiumInfo?.discountPrice,
       },
     ];
-  }, [reportPriceDetail, report.reportType]);
+  }, [priceDetail, report.reportType]);
 
   const selectedReportPlan = useMemo(() => {
     if (!radioValue) return null;
@@ -203,7 +203,7 @@ const ReportApplyBottomSheet = React.forwardRef<
   const reportFinalPrice = useMemo(() => {
     let result = 0;
 
-    const reportPrice = reportPriceDetail?.reportPriceInfos?.find(
+    const reportPrice = priceDetail?.reportPriceInfos?.find(
       (item) => item.reportPriceType === reportApplication.reportPriceType,
     );
 
@@ -212,7 +212,7 @@ const ReportApplyBottomSheet = React.forwardRef<
     }
 
     result += reportApplication.optionIds.reduce((acc, optionId) => {
-      const option = reportPriceDetail?.reportOptionInfos?.find(
+      const option = priceDetail?.reportOptionInfos?.find(
         (option) => option.reportOptionId === optionId,
       );
 
@@ -225,15 +225,15 @@ const ReportApplyBottomSheet = React.forwardRef<
 
     return result;
   }, [
-    reportPriceDetail?.reportOptionInfos,
-    reportPriceDetail?.reportPriceInfos,
+    priceDetail?.reportOptionInfos,
+    priceDetail?.reportPriceInfos,
     reportApplication,
   ]);
 
   const reportFinalDiscountPrice = useMemo(() => {
     let result = 0;
 
-    const reportPrice = reportPriceDetail?.reportPriceInfos?.find(
+    const reportPrice = priceDetail?.reportPriceInfos?.find(
       (item) => item.reportPriceType === reportApplication.reportPriceType,
     );
 
@@ -242,7 +242,7 @@ const ReportApplyBottomSheet = React.forwardRef<
     }
 
     result += reportApplication.optionIds.reduce((acc, optionId) => {
-      const option = reportPriceDetail?.reportOptionInfos?.find(
+      const option = priceDetail?.reportOptionInfos?.find(
         (option) => option.reportOptionId === optionId,
       );
 
@@ -255,23 +255,22 @@ const ReportApplyBottomSheet = React.forwardRef<
 
     return result;
   }, [
-    reportPriceDetail?.reportOptionInfos,
-    reportPriceDetail?.reportPriceInfos,
+    priceDetail?.reportOptionInfos,
+    priceDetail?.reportPriceInfos,
     reportApplication,
   ]);
 
   const feedbackFinalPrice = isFeedbackApplied
-    ? (reportPriceDetail?.feedbackPriceInfo?.feedbackPrice ?? 0)
+    ? (priceDetail?.feedbackPriceInfo?.feedbackPrice ?? 0)
     : 0;
   const feedbackFinalDiscountPrice = isFeedbackApplied
-    ? (reportPriceDetail?.feedbackPriceInfo?.feedbackDiscountPrice ?? 0)
+    ? (priceDetail?.feedbackPriceInfo?.feedbackDiscountPrice ?? 0)
     : 0;
 
-  if (!reportPriceDetail || !report.reportType) return null;
+  if (!priceDetail || !report.reportType) return null;
 
   const optionsAvailable =
-    reportPriceDetail.reportOptionInfos &&
-    reportPriceDetail.reportOptionInfos.length > 0;
+    priceDetail.reportOptionInfos && priceDetail.reportOptionInfos.length > 0;
 
   return (
     <div
@@ -353,54 +352,50 @@ const ReportApplyBottomSheet = React.forwardRef<
                   initialOpenState={false}
                 >
                   <FormGroup aria-labelledby="option-group-label">
-                    {reportPriceDetail.reportOptionInfos?.map(
-                      (option, index) => {
-                        const price = option.price ?? 0;
-                        const discount = option.discountPrice ?? 0;
-                        const checked = Boolean(
-                          optionIds.find(
-                            (selectedOption) =>
-                              selectedOption === option.reportOptionId,
-                          ),
-                        );
+                    {priceDetail.reportOptionInfos?.map((option, index) => {
+                      const price = option.price ?? 0;
+                      const discount = option.discountPrice ?? 0;
+                      const checked = Boolean(
+                        optionIds.find(
+                          (selectedOption) =>
+                            selectedOption === option.reportOptionId,
+                        ),
+                      );
 
-                        return (
-                          <ReportFormCheckboxControlLabel
-                            key={option.reportOptionId}
-                            checked={checked}
-                            onChange={(e, checked) => {
-                              if (checked) {
-                                setSelectedOptionIds([
-                                  ...optionIds,
-                                  option.reportOptionId,
-                                ]);
-                              } else {
-                                setSelectedOptionIds(
-                                  optionIds.filter(
-                                    (selectedOption) =>
-                                      selectedOption !== option.reportOptionId,
-                                  ),
-                                );
-                              }
-                            }}
-                            wrapperClassName={generateControlLabelClassName(
-                              index ===
-                                (reportPriceDetail.reportOptionInfos?.length ??
-                                  0) -
-                                  1,
-                            )}
-                            label={option.title}
-                            labelStyle={RADIO_CONTROL_LABEL_STYLE}
-                            right={
-                              <ReportPriceView
-                                price={price}
-                                discount={discount}
-                              />
+                      return (
+                        <ReportFormCheckboxControlLabel
+                          key={option.reportOptionId}
+                          checked={checked}
+                          onChange={(e, checked) => {
+                            if (checked) {
+                              setSelectedOptionIds([
+                                ...optionIds,
+                                option.reportOptionId,
+                              ]);
+                            } else {
+                              setSelectedOptionIds(
+                                optionIds.filter(
+                                  (selectedOption) =>
+                                    selectedOption !== option.reportOptionId,
+                                ),
+                              );
                             }
-                          />
-                        );
-                      },
-                    )}
+                          }}
+                          wrapperClassName={generateControlLabelClassName(
+                            index ===
+                              (priceDetail.reportOptionInfos?.length ?? 0) - 1,
+                          )}
+                          label={option.title}
+                          labelStyle={RADIO_CONTROL_LABEL_STYLE}
+                          right={
+                            <ReportPriceView
+                              price={price}
+                              discount={discount}
+                            />
+                          }
+                        />
+                      );
+                    })}
                   </FormGroup>
                 </ReportDropdown>
               </FormControl>
@@ -432,7 +427,7 @@ const ReportApplyBottomSheet = React.forwardRef<
                       />
                     )}
                     {/* 선택한 옵션 (현직자 피드백) */}
-                    {reportPriceDetail.reportOptionInfos?.map((info) => {
+                    {priceDetail.reportOptionInfos?.map((info) => {
                       if (optionIds.includes(info.reportOptionId))
                         return (
                           <SelectedItemBox

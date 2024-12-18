@@ -7,6 +7,7 @@ import MainHeader from './MainHeader';
 import SectionHeader from './SectionHeader';
 import SubHeader from './SubHeader';
 
+import { ReportPriceDetail } from '@/api/report';
 import CheckIcon from '@/assets/icons/chevron-down.svg?react';
 import { twMerge } from '@/lib/twMerge';
 
@@ -20,14 +21,30 @@ const basicPlan = [
   '희망 직무/산업에 맞춘 합격자 예시 자료 제공',
 ];
 
+const premiumPlan = [
+  '베이직 리포트 + 채용 공고 맞춤 직무 역량 및 태도 분석',
+  '지원 공고 핵심 요구사항 맞춤 피드백 2페이지 추가',
+  '공고별 적합 표현과 키워드로 합격 가능성 극대화',
+];
+
 interface ReportPlanSectionProps {
   colors: ReportColors;
+  priceDetail: ReportPriceDetail;
 }
 
-const ReportPlanSection = ({ colors }: ReportPlanSectionProps) => {
+const ReportPlanSection = ({ colors, priceDetail }: ReportPlanSectionProps) => {
   const SUB_HEADER_STYLE = {
     color: colors.primary.DEFAULT,
   };
+
+  const basicPriceInfo = priceDetail.reportPriceInfos?.find(
+    (info) => info.reportPriceType === 'BASIC',
+  );
+  const premiumPriceInfo = priceDetail.reportPriceInfos?.find(
+    (info) => info.reportPriceType === 'PREMIUM',
+  );
+
+  console.log('가격 정보:', priceDetail);
 
   const isMobile = useMediaQuery('(max-width: 768px)');
 
@@ -41,7 +58,7 @@ const ReportPlanSection = ({ colors }: ReportPlanSectionProps) => {
         <MainHeader>{MAIN_HEADER}</MainHeader>
       </header>
 
-      <main>
+      <main className="mt-9 flex flex-col gap-4">
         {/* 베이직 플랜 */}
         <PlanBox>
           <DropDown
@@ -55,10 +72,36 @@ const ReportPlanSection = ({ colors }: ReportPlanSectionProps) => {
             </div>
           </DropDown>
           <hr className="mb-5 mt-4" />
-          <PriceSection originalPrice={20000} discountPrice={5000} />
+          <PriceSection
+            originalPrice={basicPriceInfo?.price ?? 0}
+            discountPrice={basicPriceInfo?.discountPrice ?? 0}
+          />
         </PlanBox>
 
-        <PlanBox bannerText="채용 공고 맞춤형 이력서를 원한다면,">test</PlanBox>
+        <PlanBox
+          bannerText="채용 공고 맞춤형 이력서를 원한다면,"
+          bannerColor={colors.primary[400]}
+        >
+          <DropDown
+            title="프리미엄 플랜"
+            initialOpenState={isMobile ? false : true}
+          >
+            <div className="flex flex-col gap-3">
+              {premiumPlan.map((item, index) => (
+                <CheckListItem
+                  key={index}
+                  content={item}
+                  className={index === 0 ? 'font-bold' : ''}
+                />
+              ))}
+            </div>
+          </DropDown>
+          <hr className="mb-5 mt-4" />
+          <PriceSection
+            originalPrice={premiumPriceInfo?.price ?? 0}
+            discountPrice={premiumPriceInfo?.discountPrice ?? 0}
+          />
+        </PlanBox>
       </main>
     </section>
   );
