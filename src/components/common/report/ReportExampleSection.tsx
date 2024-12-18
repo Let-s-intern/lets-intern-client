@@ -53,8 +53,8 @@ const ReportExampleSection = ({ colors, type }: ReportExampleSectionProps) => {
               {example.header}
             </h5>
           </div>
-          <div className="w-full overflow-x-auto">
-            <div className="flex w-fit items-stretch gap-x-3">
+          <div className="w-full overflow-x-hidden">
+            <div className="flex w-full items-stretch gap-x-3 overflow-auto">
               {example.content.map((content, index) => (
                 <ReportExampleCard
                   key={index}

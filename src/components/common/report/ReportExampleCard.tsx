@@ -14,7 +14,7 @@ const ReportExampleCard = ({
   subColor,
 }: ReportExampleCardProps) => {
   return (
-    <div className="flex min-h-full w-[320px] shrink-0 flex-col md:w-[calc(50%-6px)]">
+    <div className="flex min-h-full w-[90%] shrink-0 flex-col md:w-[calc(50%-6px)]">
       <div
         className="flex h-[400px] flex-col gap-y-4 overflow-hidden rounded-t-[10px] px-5 pt-6 md:h-[513px]"
         style={{ backgroundColor: mainColor }}
