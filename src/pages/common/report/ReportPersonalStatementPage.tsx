@@ -5,6 +5,7 @@ import { ReportColors, ReportContent } from '@/types/interface';
 import { getBaseUrlFromServer, getReportLandingTitle } from '@/utils/url';
 import Header from '@components/common/program/program-detail/header/Header';
 import ReportBasicInfo from '@components/common/report/ReportBasicInfo';
+import ReportPlanSection from '@components/common/report/ReportPlanSection';
 import ReportProgramRecommendSlider from '@components/common/report/ReportProgramRecommendSlider';
 import ResearchTeamSection from '@components/common/report/ResearchTeamSection';
 import LoadingContainer from '@components/common/ui/loading/LoadingContainer';
@@ -93,6 +94,9 @@ const ReportPersonalStatementPage = () => {
 
           {/* 취업 연구팀 소개 */}
           <ResearchTeamSection colors={colors} />
+
+          {/* 가격 및 플랜 */}
+          <ReportPlanSection colors={colors} />
 
           {/* 프로그램 추천 */}
           {personalStatementContent.reportProgramRecommend && (

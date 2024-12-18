@@ -20,7 +20,7 @@ const ResearchTeamSection = ({ colors }: ResearchTeamSectionProps) => {
   };
 
   return (
-    <div className="max-w-[1000px] px-5 py-14 md:pb-36 md:pt-32 lg:px-0">
+    <section className="max-w-[1000px] px-5 py-14 md:pb-36 md:pt-32 lg:px-0">
       <SubHeader className="mb-2 md:mb-3" style={subHeaderStyle}>
         {SUPER_TITLE}
       </SubHeader>
@@ -40,7 +40,7 @@ const ResearchTeamSection = ({ colors }: ResearchTeamSectionProps) => {
           alt="취업 연구팀이 속한 회사 목록"
         />
       </div>
-    </div>
+    </section>
   );
 };
 
