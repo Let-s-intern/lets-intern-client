@@ -14,7 +14,7 @@ const SECTION_HEADER = '가격 및 플랜';
 const SUB_HEADER = '자신있게 추천합니다!';
 const MAIN_HEADER = '취업 성공을 위한\n맞춤형 피드백 플랜, 그리고 옵션까지';
 
-const BASIC_PLAN = [
+const basicPlan = [
   '이력서 작성 고민을 해결하는 맞춤형 솔루션 제공',
   '총 6가지 기준을 바탕으로 이력서 형식 및 내용 피드백',
   '희망 직무/산업에 맞춘 합격자 예시 자료 제공',
@@ -40,19 +40,24 @@ const ReportPlanSection = ({ colors }: ReportPlanSectionProps) => {
         </SubHeader>
         <MainHeader>{MAIN_HEADER}</MainHeader>
       </header>
+
       <main>
+        {/* 베이직 플랜 */}
         <PlanBox>
           <DropDown
             title="베이직 플랜"
             initialOpenState={isMobile ? false : true}
           >
             <div className="flex flex-col gap-3">
-              {BASIC_PLAN.map((item, index) => (
+              {basicPlan.map((item, index) => (
                 <CheckListItem key={index} content={item} />
               ))}
             </div>
           </DropDown>
+          <hr className="mb-5 mt-4" />
+          <PriceSection originalPrice={20000} discountPrice={5000} />
         </PlanBox>
+
         <PlanBox bannerText="채용 공고 맞춤형 이력서를 원한다면,">test</PlanBox>
       </main>
     </section>
@@ -140,6 +145,33 @@ function CheckListItem({
         )}
       >
         {content}
+      </span>
+    </div>
+  );
+}
+
+function PriceSection({
+  originalPrice,
+  discountPrice,
+}: {
+  originalPrice: number;
+  discountPrice: number;
+}) {
+  const finalPrice = originalPrice - discountPrice;
+  const discountRate = ((finalPrice / originalPrice) * 100).toFixed(0);
+
+  return (
+    <div>
+      <div className="flex items-center gap-1">
+        <span className="text-small20 font-bold text-[#FC5555]">
+          {discountRate}%
+        </span>
+        <s className="text-small20 font-bold text-neutral-45">
+          {originalPrice.toLocaleString()}원
+        </s>
+      </div>
+      <span className="text-xlarge28 font-bold">
+        {finalPrice.toLocaleString()}원
       </span>
     </div>
   );
