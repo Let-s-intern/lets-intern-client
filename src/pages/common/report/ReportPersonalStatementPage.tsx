@@ -9,6 +9,7 @@ import ReportBasicInfo from '@components/common/report/ReportBasicInfo';
 import ReportPlanSection from '@components/common/report/ReportPlanSection';
 import ReportProgramRecommendSlider from '@components/common/report/ReportProgramRecommendSlider';
 import ResearchTeamSection from '@components/common/report/ResearchTeamSection';
+import ServiceProcessSection from '@components/common/report/ServiceProcessSection';
 import LoadingContainer from '@components/common/ui/loading/LoadingContainer';
 import { useEffect } from 'react';
 import { Helmet } from 'react-helmet';
@@ -112,6 +113,14 @@ const ReportPersonalStatementPage = () => {
           {/* 홍보 배너  */}
           {report?.reportType && (
             <PromoSection colors={colors} reportType={report.reportType} />
+          )}
+
+          {/* 서비스 이용 안내 */}
+          {report?.reportType && (
+            <ServiceProcessSection
+              colors={colors}
+              reportType={report.reportType}
+            />
           )}
 
           {/* 프로그램 추천 */}
