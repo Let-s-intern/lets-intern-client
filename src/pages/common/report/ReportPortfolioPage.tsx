@@ -32,6 +32,7 @@ const colors: ReportColors = {
   },
   highlight: {
     DEFAULT: '#14BCFF',
+    50: '#2CDDEA',
   },
 };
 
