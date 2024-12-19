@@ -13,6 +13,7 @@ import ReportBasicInfo from '@components/common/report/ReportBasicInfo';
 import ReportExampleSection from '@components/common/report/ReportExampleSection';
 import ReportProgramRecommendSlider from '@components/common/report/ReportProgramRecommendSlider';
 import ResearchTeamSection from '@components/common/report/ResearchTeamSection';
+import ServiceProcessSection from '@components/common/report/ServiceProcessSection';
 import LoadingContainer from '@components/common/ui/loading/LoadingContainer';
 import ReportNavigation from './ReportNavigation';
 
@@ -97,6 +98,13 @@ const ReportResumePage = () => {
           <div>후기</div>
           {/* 취업 연구팀 소개 */}
           <ResearchTeamSection colors={colors} />
+          {/* 서비스 이용 안내 */}
+          {report?.reportType && (
+            <ServiceProcessSection
+              colors={colors}
+              reportType={report.reportType}
+            />
+          )}
 
           {/* 프로그램 추천 */}
           {resumeContent.reportProgramRecommend && (
