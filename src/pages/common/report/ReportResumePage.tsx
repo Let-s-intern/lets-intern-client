@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { Helmet } from 'react-helmet';
 
-import { useGetActiveReports } from '@/api/report';
+import { useGetActiveReports, useGetReportPriceDetail } from '@/api/report';
 import ReportApplyBottomSheet from '@/components/common/report/ReportApplyBottomSheet';
 import { useServerActiveReports } from '@/context/ActiveReports';
 import { resumeReportDescription } from '@/data/description';
@@ -31,8 +31,6 @@ const colors: ReportColors = {
   },
   highlight: {
     DEFAULT: '#14BCFF',
-    50: '#EEF9FF',
-    100: '#DDF5FF',
   },
 };
 
@@ -48,6 +46,8 @@ const ReportResumePage = () => {
   const resumeContent: ReportContent = JSON.parse(
     data?.resumeInfo?.contents ?? '{}',
   );
+
+  const { data: priceDetail } = useGetReportPriceDetail(report!.reportId);
 
   const { initReportApplication } = useReportApplicationStore();
 
@@ -108,7 +108,9 @@ const ReportResumePage = () => {
           )}
         </div>
       )}
-      {report && <ReportApplyBottomSheet report={report} />}
+      {report && priceDetail && (
+        <ReportApplyBottomSheet report={report} priceDetail={priceDetail} />
+      )}
     </>
   );
 };

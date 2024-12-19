@@ -10,7 +10,10 @@ import ResearchTeamSection from '@components/common/report/ResearchTeamSection';
 import LoadingContainer from '@components/common/ui/loading/LoadingContainer';
 import { useEffect } from 'react';
 import { Helmet } from 'react-helmet';
-import { useGetActiveReports } from '../../../api/report';
+import {
+  useGetActiveReports,
+  useGetReportPriceDetail,
+} from '../../../api/report';
 import ReportApplyBottomSheet from '../../../components/common/report/ReportApplyBottomSheet';
 import ReportNavigation from './ReportNavigation';
 
@@ -29,8 +32,6 @@ const colors: ReportColors = {
   },
   highlight: {
     DEFAULT: '#14BCFF',
-    50: '#EEF9FF',
-    100: '#DDF5FF',
   },
 };
 
@@ -47,6 +48,8 @@ const ReportPortfolioPage = () => {
   const portfolioContent: ReportContent = JSON.parse(
     data?.portfolioInfo?.contents ?? '{}',
   );
+
+  const { data: priceDetail } = useGetReportPriceDetail(report!.reportId);
 
   const { initReportApplication } = useReportApplicationStore();
 
@@ -101,7 +104,9 @@ const ReportPortfolioPage = () => {
           )}
         </div>
       )}
-      {report ? <ReportApplyBottomSheet report={report} /> : null}
+      {report && priceDetail && (
+        <ReportApplyBottomSheet report={report} priceDetail={priceDetail} />
+      )}
     </>
   );
 };
