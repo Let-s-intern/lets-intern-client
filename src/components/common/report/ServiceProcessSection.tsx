@@ -145,6 +145,35 @@ const ServiceProcessSection = ({
             </ContentBox>
           </div>
         </ProcessCard>
+
+        {/* 3단계 */}
+        <ProcessCard style={BACKGROUND_COLOR_PRIMARY_400}>
+          <NumberedTitle numberStyle={BACKGROUND_COLOR_PRIMARY_100} number={3}>
+            피드백 REPORT 확인
+          </NumberedTitle>
+
+          <div className="mt-6 flex flex-col items-center gap-2">
+            <ContentBox>
+              <NumberedContent number="3-1">
+                진단 완료 시, 알림톡으로 완료 알림이 전달됩니다.
+              </NumberedContent>
+            </ContentBox>
+
+            <ContentBox>
+              <NumberedContent number="3-2">
+                취업 연구팀이 작성한 상세 피드백 <br className="md:hidden" />
+                REPORT를 확인합니다.
+              </NumberedContent>
+            </ContentBox>
+
+            <ContentBox className="flex flex-col gap-3">
+              <NumberedContent number="3-3">
+                발행된 리포트는 ‘MY 진단서 보기’ 탭에서 PDF로 다운로드
+                가능합니다.
+              </NumberedContent>
+            </ContentBox>
+          </div>
+        </ProcessCard>
       </main>
     </section>
   );
