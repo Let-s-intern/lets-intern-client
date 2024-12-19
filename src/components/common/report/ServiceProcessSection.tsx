@@ -1,9 +1,8 @@
-import { useMediaQuery } from '@mui/material';
+import { CSSProperties, memo, ReactNode } from 'react';
 
 import { convertReportTypeToDisplayName, ReportType } from '@/api/report';
 import { twMerge } from '@/lib/twMerge';
 import { ReportColors } from '@/types/interface';
-import { CSSProperties, memo, ReactNode } from 'react';
 import MainHeader from './MainHeader';
 import SectionHeader from './SectionHeader';
 import SubHeader from './SubHeader';
@@ -32,68 +31,71 @@ const ServiceProcessSection = ({
   const BACKGROUND_COLOR_HIGHLIGHT = {
     backgroundColor: colors.highlight.DEFAULT,
   };
-  const MAIN_HEADER = `진단 완료까지 단 이틀,\n${convertReportTypeToDisplayName(reportType)} 피드백 REPORT은\n이렇게 진행됩니다.`;
-
-  const isMobile = useMediaQuery('(max-width: 768px)');
 
   return (
-    <section className="w-full px-5 py-16 md:pb-36 md:pt-28 lg:px-0">
+    <section className="w-full px-5 py-16 md:py-28 lg:px-0">
       <header>
         <SectionHeader className="mb-6">{SECTION_HEADER}</SectionHeader>
         <SubHeader className="mb-1 md:mb-3" style={SUB_HEADER_STYLE}>
           {SUB_HEADER}
         </SubHeader>
-        <MainHeader>{MAIN_HEADER}</MainHeader>
+        <MainHeader>
+          진단 완료까지 단 이틀,
+          <br /> {convertReportTypeToDisplayName(reportType)} 피드백 REPORT은
+          <br className="md:hidden" /> 이렇게 진행됩니다.
+        </MainHeader>
       </header>
 
-      <main className="mt-10 flex flex-col items-center gap-5">
+      <main className="mx-auto mt-10 flex max-w-[690px] flex-col items-center gap-5 md:mt-11 md:gap-8">
         {/* 1단계 */}
         <ProcessCard style={BACKGROUND_COLOR_PRIMARY_400}>
           <NumberedTitle numberStyle={BACKGROUND_COLOR_PRIMARY_100} number={1}>
             서비스 신청 및 서류 업로드
           </NumberedTitle>
 
-          <div className="mt-6 flex flex-col items-center gap-2">
+          <div className="mt-6 flex flex-col items-center gap-2 md:gap-4">
             <ContentBox>
               <NumberedContent number="1-1">
                 원하는 플랜을 선택하고 결제를 완료합니다.
               </NumberedContent>
-              <div className="mt-3 flex items-start gap-2">
-                <Badge style={BACKGROUND_COLOR_HIGHLIGHT}>작성꿀팁</Badge>
-                <p className="text-xxsmall12 font-semibold">
-                  어떤 부분에서 어려움을 겪고 있는지,
-                  <br /> 무엇을 개선하고 싶은지 적어주시면,
-                  <br /> 전문가가 보다 정확한 피드백을
-                  <br /> 제공해드려요!
-                </p>
-              </div>
             </ContentBox>
 
             <ContentBox>
               <NumberedContent number="1-2">
                 지원 직무와 고민 사항을 작성해 주세요.
               </NumberedContent>
+              <div className="mt-3 flex items-start gap-2">
+                <Badge style={BACKGROUND_COLOR_HIGHLIGHT}>작성꿀팁</Badge>
+                <p className="text-xxsmall12 font-semibold md:text-xsmall16 md:font-medium">
+                  어떤 부분에서 어려움을 겪고 있는지,
+                  <br className="md:hidden" /> 무엇을 개선하고 싶은지
+                  적어주시면,
+                  <br /> 전문가가 보다 정확한 피드백을
+                  <br className="md:hidden" /> 제공해드려요!
+                </p>
+              </div>
             </ContentBox>
 
             <ContentBox className="flex flex-col gap-3">
               <NumberedContent number="1-3">
-                진단을 원하는 이력서는 결제 시<br /> 바로 업로드하거나,
+                진단을 원하는 이력서는 결제 시<br className="md:hidden" /> 바로
+                업로드하거나,
                 <br /> 이후 원하는 시점에 제출할 수 있습니다.
               </NumberedContent>
-              <div className="flex flex-col gap-1">
-                <ContentBox className="rounded-xxs bg-[#DDF5FF] py-1 text-center text-xxsmall12 font-semibold">
+              <div className="flex flex-col gap-1 md:flex-row md:gap-3">
+                <ContentBox className="rounded-xxs bg-[#DDF5FF] py-1 text-center text-xxsmall12 font-semibold md:rounded-xs md:py-2.5 md:text-xsmall16">
                   결제 시, 바로 제출
                 </ContentBox>
                 <ContentBox
-                  className="rounded-xxs py-1 text-center text-xxsmall12 font-semibold"
+                  className="rounded-xxs py-1 text-center text-xxsmall12 font-semibold md:rounded-xs md:py-2.5 md:text-xsmall16"
                   style={{ backgroundColor: colors.primary[50] }}
                 >
                   결제 후, 원하는 시점에 제출
                 </ContentBox>
               </div>
-              <span className="text-xxsmall12">
+              <span className="text-xxsmall12 text-neutral-35 md:text-xsmall14">
                 *시간이 필요하다면 서류 업로드 없이 먼저 신청하고,
-                <br /> 준비된 후 제출하셔도 괜찮습니다.
+                <br className="md:hidden" /> 준비된 후 제출하셔도 괜찮습니다.
               </span>
             </ContentBox>
           </div>
@@ -106,16 +108,16 @@ const ServiceProcessSection = ({
             <br className="md:hidden" /> 세심한 진단 및 분석
           </NumberedTitle>
 
-          <div className="mt-6 flex flex-col items-center gap-2">
+          <div className="mt-6 flex flex-col items-center gap-2 md:gap-4">
             <ContentBox>
               <NumberedContent number="2-1">
                 직무와 문항에 맞춘 맞춤형 진단이 진행됩니다.
               </NumberedContent>
-              <div className="mt-3">
+              <div className="mt-3 md:flex md:items-center md:gap-2">
                 <Badge className="mb-1 bg-neutral-30">
                   6가지 핵심 진단 기준
                 </Badge>
-                <p className="text-xxsmall12">
+                <p className="text-xxsmall12 md:text-xsmall16 md:font-medium">
                   가독성 / 구성 및 구조 / 직무 적합성 / 정확성 /
                   <br className="md:hidden" /> 간결성 / 구체성
                 </p>
@@ -126,8 +128,8 @@ const ServiceProcessSection = ({
               <NumberedContent number="2-2">
                 진단 완료까지 48시간 소요됩니다.
               </NumberedContent>
-              <ContentBox className="mt-3 bg-[#DDF5FF] text-xxsmall12 font-medium">
-                <p className="mb-3">
+              <ContentBox className="mt-3 bg-[#DDF5FF] text-xxsmall12 font-medium md:p-3 md:px-5 md:py-3 md:text-xsmall14">
+                <p className="mb-3 md:mb-1">
                   *다만, 신청자가 많을 경우 플랜에 따라 소요 시간이 달라질 수
                   있습니다.
                 </p>
@@ -147,7 +149,7 @@ const ServiceProcessSection = ({
             피드백 REPORT 확인
           </NumberedTitle>
 
-          <div className="mt-6 flex flex-col items-center gap-2">
+          <div className="mt-6 flex flex-col items-center gap-2 md:gap-4">
             <ContentBox>
               <NumberedContent number="3-1">
                 진단 완료 시, 알림톡으로 완료 알림이 전달됩니다.
@@ -173,13 +175,13 @@ const ServiceProcessSection = ({
         {/* 4단계 */}
         <ProcessCard style={BACKGROUND_COLOR_PRIMARY_400}>
           <NumberedTitle numberStyle={BACKGROUND_COLOR_PRIMARY_100} number={4}>
-            <span className="text-xsmall14 font-medium text-black/75">
+            <span className="text-xsmall14 font-medium text-black/75 md:text-xsmall16">
               별도구매시
-            </span>{' '}
+            </span>
             1:1 피드백 진행
           </NumberedTitle>
 
-          <div className="mt-6 flex flex-col items-center gap-2">
+          <div className="mt-6 flex flex-col items-center gap-2 md:gap-4">
             <ContentBox>
               <NumberedContent number="4-1">
                 피드백 리포트를 바탕으로 40분간의 1:1 맞춤형 피드백이
@@ -187,7 +189,7 @@ const ServiceProcessSection = ({
               </NumberedContent>
               <div className="mt-3 flex items-start gap-2">
                 <Badge style={BACKGROUND_COLOR_HIGHLIGHT}>진행 꿀팁</Badge>
-                <p className="text-xxsmall12 font-semibold">
+                <p className="text-xxsmall12 font-semibold md:text-xsmall16 md:font-medium">
                   리포트 확인 후 궁금한 점이나 추가 질문을 미리 준비하시면 더욱
                   알찬 시간을 보낼 수 있어요!
                 </p>
@@ -229,7 +231,7 @@ const ProcessCard = memo(function ProcessCard({
     <div
       style={style}
       className={twMerge(
-        'w-full rounded-md bg-primary-80 px-5 py-6',
+        'w-full rounded-md bg-primary-80 px-5 py-6 md:px-12 md:py-10',
         className,
       )}
     >
@@ -254,13 +256,15 @@ const NumberedTitle = memo(function NumberedTitle({
       <div
         style={numberStyle}
         className={twMerge(
-          'flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary-40 text-xsmall14 font-semibold',
+          'flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary-40 text-xsmall14 font-semibold md:h-7 md:w-7 md:text-small20',
           numberClassName,
         )}
       >
         {number ?? 1}
       </div>
-      <span className="block text-small18 font-bold">{children}</span>
+      <span className="flex items-center gap-2 text-small18 font-bold md:text-medium22">
+        {children}
+      </span>
     </div>
   );
 });
@@ -273,7 +277,7 @@ const NumberedContent = memo(function NumberedContent({
   children?: ReactNode;
 }) {
   return (
-    <div className="flex items-start gap-2 text-xsmall14 font-semibold">
+    <div className="flex items-start gap-2 text-xsmall14 font-semibold md:text-small20">
       <span className="shrink-0">{number ?? 1}</span>
       <span>{children}</span>
     </div>
@@ -292,7 +296,10 @@ const ContentBox = memo(function ContentBox({
   return (
     <div
       style={style}
-      className={twMerge('w-full rounded-sm bg-white p-3', className)}
+      className={twMerge(
+        'w-full rounded-sm bg-white p-3 md:px-8 md:py-4',
+        className,
+      )}
     >
       {children}
     </div>
@@ -311,7 +318,7 @@ const Badge = memo(function Badge({
   return (
     <div
       className={twMerge(
-        'w-fit shrink-0 rounded-xxs px-2 py-1 text-xxsmall12 font-semibold text-white',
+        'w-fit shrink-0 rounded-xxs px-2 py-1 text-xxsmall12 font-semibold text-white md:text-xsmall14',
         className,
       )}
       style={style}
