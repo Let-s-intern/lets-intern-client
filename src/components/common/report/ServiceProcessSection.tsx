@@ -47,7 +47,7 @@ const ServiceProcessSection = ({
       </header>
 
       <main className="mt-10 flex flex-col items-center gap-5">
-        {/* 1 단계 */}
+        {/* 1단계 */}
         <ProcessCard style={BACKGROUND_COLOR_PRIMARY_400}>
           <NumberedTitle numberStyle={BACKGROUND_COLOR_PRIMARY_100} number={1}>
             서비스 신청 및 서류 업로드
@@ -59,12 +59,7 @@ const ServiceProcessSection = ({
                 원하는 플랜을 선택하고 결제를 완료합니다.
               </NumberedContent>
               <div className="mt-3 flex items-start gap-2">
-                <div
-                  className="w-fit shrink-0 rounded-xxs px-2 py-1 text-xxsmall12 font-semibold text-white"
-                  style={BACKGROUND_COLOR_HIGHLIGHT}
-                >
-                  작성꿀팁
-                </div>
+                <Badge style={BACKGROUND_COLOR_HIGHLIGHT}>작성꿀팁</Badge>
                 <p className="text-xxsmall12 font-semibold">
                   어떤 부분에서 어려움을 겪고 있는지,
                   <br /> 무엇을 개선하고 싶은지 적어주시면,
@@ -104,7 +99,7 @@ const ServiceProcessSection = ({
           </div>
         </ProcessCard>
 
-        {/* 2 단계 */}
+        {/* 2단계 */}
         <ProcessCard className="bg-[#14BCFF]">
           <NumberedTitle numberClassName="bg-[#DDF5FF]" number={2}>
             렛츠커리어 취업 연구팀의
@@ -117,9 +112,9 @@ const ServiceProcessSection = ({
                 직무와 문항에 맞춘 맞춤형 진단이 진행됩니다.
               </NumberedContent>
               <div className="mt-3">
-                <div className="mb-1 w-fit rounded-xxs bg-neutral-30 px-2 py-1 text-xxsmall12 font-semibold text-white">
+                <Badge className="mb-1 bg-neutral-30">
                   6가지 핵심 진단 기준
-                </div>
+                </Badge>
                 <p className="text-xxsmall12">
                   가독성 / 구성 및 구조 / 직무 적합성 / 정확성 /
                   <br className="md:hidden" /> 간결성 / 구체성
@@ -170,6 +165,46 @@ const ServiceProcessSection = ({
               <NumberedContent number="3-3">
                 발행된 리포트는 ‘MY 진단서 보기’ 탭에서 PDF로 다운로드
                 가능합니다.
+              </NumberedContent>
+            </ContentBox>
+          </div>
+        </ProcessCard>
+
+        {/* 4단계 */}
+        <ProcessCard style={BACKGROUND_COLOR_PRIMARY_400}>
+          <NumberedTitle numberStyle={BACKGROUND_COLOR_PRIMARY_100} number={4}>
+            <span className="text-xsmall14 font-medium text-black/75">
+              별도구매시
+            </span>{' '}
+            1:1 피드백 진행
+          </NumberedTitle>
+
+          <div className="mt-6 flex flex-col items-center gap-2">
+            <ContentBox>
+              <NumberedContent number="4-1">
+                피드백 리포트를 바탕으로 40분간의 1:1 맞춤형 피드백이
+                진행됩니다.
+              </NumberedContent>
+              <div className="mt-3 flex items-start gap-2">
+                <Badge style={BACKGROUND_COLOR_HIGHLIGHT}>진행 꿀팁</Badge>
+                <p className="text-xxsmall12 font-semibold">
+                  리포트 확인 후 궁금한 점이나 추가 질문을 미리 준비하시면 더욱
+                  알찬 시간을 보낼 수 있어요!
+                </p>
+              </div>
+            </ContentBox>
+
+            <ContentBox>
+              <NumberedContent number="4-2">
+                1:1 피드백 시간 동안 무제한으로 질문이 가능하며, 실시간으로
+                이력서 첨삭도 진행됩니다.
+              </NumberedContent>
+            </ContentBox>
+
+            <ContentBox className="flex flex-col gap-3">
+              <NumberedContent number="4-3">
+                1:1 피드백을 미처 신청하지 못했다면, 별도 신청 가능합니다.
+                채팅으로 문의하시면 빠르게 도와드릴게요!
               </NumberedContent>
             </ContentBox>
           </div>
@@ -258,6 +293,28 @@ const ContentBox = memo(function ContentBox({
     <div
       style={style}
       className={twMerge('w-full rounded-sm bg-white p-3', className)}
+    >
+      {children}
+    </div>
+  );
+});
+
+const Badge = memo(function Badge({
+  children,
+  className,
+  style,
+}: {
+  children?: ReactNode;
+  className?: string;
+  style?: CSSProperties;
+}) {
+  return (
+    <div
+      className={twMerge(
+        'w-fit shrink-0 rounded-xxs px-2 py-1 text-xxsmall12 font-semibold text-white',
+        className,
+      )}
+      style={style}
     >
       {children}
     </div>
