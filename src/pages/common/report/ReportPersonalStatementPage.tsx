@@ -4,6 +4,7 @@ import useReportApplicationStore from '@/store/useReportApplicationStore';
 import { ReportColors, ReportContent } from '@/types/interface';
 import { getBaseUrlFromServer, getReportLandingTitle } from '@/utils/url';
 import Header from '@components/common/program/program-detail/header/Header';
+import PromoSection from '@components/common/report/PromoSection';
 import ReportBasicInfo from '@components/common/report/ReportBasicInfo';
 import ReportPlanSection from '@components/common/report/ReportPlanSection';
 import ReportProgramRecommendSlider from '@components/common/report/ReportProgramRecommendSlider';
@@ -33,8 +34,7 @@ const colors: ReportColors = {
   },
   highlight: {
     DEFAULT: '#14BCFF',
-    50: '#EEF9FF',
-    100: '#DDF5FF',
+    50: '#2CDDEA',
   },
 };
 
@@ -107,6 +107,11 @@ const ReportPersonalStatementPage = () => {
               priceDetail={priceDetail}
               reportType={report?.reportType}
             />
+          )}
+
+          {/* 홍보 배너  */}
+          {report?.reportType && (
+            <PromoSection colors={colors} reportType={report.reportType} />
           )}
 
           {/* 프로그램 추천 */}
