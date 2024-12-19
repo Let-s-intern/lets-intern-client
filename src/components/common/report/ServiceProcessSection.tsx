@@ -46,7 +46,7 @@ const ServiceProcessSection = ({
         <MainHeader>{MAIN_HEADER}</MainHeader>
       </header>
 
-      <main className="mt-10">
+      <main className="mt-10 flex flex-col items-center gap-5">
         {/* 1 단계 */}
         <ProcessCard style={BACKGROUND_COLOR_PRIMARY_400}>
           <NumberedTitle numberStyle={BACKGROUND_COLOR_PRIMARY_100} number={1}>
@@ -103,6 +103,48 @@ const ServiceProcessSection = ({
             </ContentBox>
           </div>
         </ProcessCard>
+
+        {/* 2 단계 */}
+        <ProcessCard className="bg-[#14BCFF]">
+          <NumberedTitle numberClassName="bg-[#DDF5FF]" number={2}>
+            렛츠커리어 취업 연구팀의
+            <br className="md:hidden" /> 세심한 진단 및 분석
+          </NumberedTitle>
+
+          <div className="mt-6 flex flex-col items-center gap-2">
+            <ContentBox>
+              <NumberedContent number="2-1">
+                직무와 문항에 맞춘 맞춤형 진단이 진행됩니다.
+              </NumberedContent>
+              <div className="mt-3">
+                <div className="mb-1 w-fit rounded-xxs bg-neutral-30 px-2 py-1 text-xxsmall12 font-semibold text-white">
+                  6가지 핵심 진단 기준
+                </div>
+                <p className="text-xxsmall12">
+                  가독성 / 구성 및 구조 / 직무 적합성 / 정확성 /
+                  <br className="md:hidden" /> 간결성 / 구체성
+                </p>
+              </div>
+            </ContentBox>
+
+            <ContentBox>
+              <NumberedContent number="2-2">
+                진단 완료까지 48시간 소요됩니다.
+              </NumberedContent>
+              <ContentBox className="mt-3 bg-[#DDF5FF] text-xxsmall12 font-medium">
+                <p className="mb-3">
+                  *다만, 신청자가 많을 경우 플랜에 따라 소요 시간이 달라질 수
+                  있습니다.
+                </p>
+                <ul className="list-disc pl-4">
+                  <li>베이직 플랜: 48시간 이내</li>
+                  <li>프리미엄 플랜: 72시간 이내</li>
+                  <li> 현직자 피드백 옵션: 최대 5일 이내</li>
+                </ul>
+              </ContentBox>
+            </ContentBox>
+          </div>
+        </ProcessCard>
       </main>
     </section>
   );
@@ -135,12 +177,12 @@ const ProcessCard = memo(function ProcessCard({
 const NumberedTitle = memo(function NumberedTitle({
   number,
   children,
-  className,
+  numberClassName,
   numberStyle,
 }: {
   number?: string | number;
   children?: ReactNode;
-  className?: string;
+  numberClassName?: string;
   numberStyle?: CSSProperties;
 }) {
   return (
@@ -149,13 +191,12 @@ const NumberedTitle = memo(function NumberedTitle({
         style={numberStyle}
         className={twMerge(
           'flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary-40 text-xsmall14 font-semibold',
+          numberClassName,
         )}
       >
         {number ?? 1}
       </div>
-      <span className={twMerge('block text-small18 font-bold', className)}>
-        {children}
-      </span>
+      <span className="block text-small18 font-bold">{children}</span>
     </div>
   );
 });
