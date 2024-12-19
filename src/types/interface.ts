@@ -159,8 +159,6 @@ export type ReportColors = {
   };
   highlight: {
     DEFAULT: string;
-    50: string;
-    100: string;
   };
 };
 
