@@ -5,7 +5,7 @@ import channelService from '@/ChannelService';
 /* LiveFaq에서 함께 사용 */
 function FaqDropdown() {
   return (
-    <div className="flex flex-col items-center gap-3 rounded-md bg-neutral-95 px-8 py-4 md:w-full md:max-w-[800px] md:flex-row md:items-center md:justify-between">
+    <div className="mx-auto flex flex-col items-center gap-3 rounded-md bg-neutral-95 px-8 py-4 md:w-full md:max-w-[800px] md:flex-row md:items-center md:justify-between">
       <span className="text-xsmall14 font-semibold text-neutral-35 md:text-small20">
         아직 궁금증이 풀리지 않았다면?
       </span>

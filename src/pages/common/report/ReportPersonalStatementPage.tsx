@@ -124,6 +124,11 @@ const ReportPersonalStatementPage = () => {
             />
           )}
 
+          {/* FAQ  */}
+          {report?.reportId && (
+            <ReportFaqSection colors={colors} reportId={report?.reportId} />
+          )}
+
           {/* 프로그램 추천 */}
           {personalStatementContent.reportProgramRecommend && (
             <ReportProgramRecommendSlider
@@ -133,9 +138,6 @@ const ReportPersonalStatementPage = () => {
               }
             />
           )}
-
-          {/* FAQ  */}
-          <ReportFaqSection colors={colors} />
         </div>
       )}
 
