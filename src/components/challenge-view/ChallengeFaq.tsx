@@ -3,9 +3,9 @@ import { ReactNode, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
 import { useGetChallengeFaq } from '@/api/challenge';
-import channelService from '@/ChannelService';
 import { ChallengeColor } from '@components/ChallengeView';
 import SuperTitle from '@components/common/program/program-detail/SuperTitle';
+import FaqChat from '@components/common/ui/FaqChat';
 import FaqDropdown from '@components/common/ui/FaqDropdown';
 import Heading2 from '@components/common/ui/Heading2';
 import { PROGRAM_FAQ_ID } from '@components/ProgramDetailNavigation';
@@ -65,18 +65,7 @@ function ChallengeFaq({ colors }: ChallengeFaqProps) {
             return <FaqDropdown key={faq.id} faq={faq} />;
         })}
       </div>
-
-      <div className="flex flex-col items-center gap-3 rounded-md bg-neutral-95 px-8 py-4 md:w-full md:max-w-[800px] md:flex-row md:items-center md:justify-between">
-        <span className="text-xsmall14 font-semibold text-neutral-35 md:text-small20">
-          아직 궁금증이 풀리지 않았다면?
-        </span>
-        <button
-          className="rounded-sm border border-neutral-70 bg-white px-5 py-3 text-xsmall14 font-medium md:px-6 md:text-small18"
-          onClick={() => channelService.showMessenger()}
-        >
-          1:1 채팅 문의하기
-        </button>
-      </div>
+      <FaqChat />
     </section>
   );
 }
