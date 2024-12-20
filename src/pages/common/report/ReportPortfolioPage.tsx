@@ -4,8 +4,10 @@ import useReportApplicationStore from '@/store/useReportApplicationStore';
 import { ReportColors, ReportContent } from '@/types/interface';
 import { getBaseUrlFromServer, getReportLandingTitle } from '@/utils/url';
 import Header from '@components/common/program/program-detail/header/Header';
+import PromoSection from '@components/common/report/PromoSection';
 import ReportBasicInfo from '@components/common/report/ReportBasicInfo';
 import ReportFaqSection from '@components/common/report/ReportFaqSection';
+import ReportPlanSection from '@components/common/report/ReportPlanSection';
 import ReportProgramRecommendSlider from '@components/common/report/ReportProgramRecommendSlider';
 import ResearchTeamSection from '@components/common/report/ResearchTeamSection';
 import ServiceProcessSection from '@components/common/report/ServiceProcessSection';
@@ -27,6 +29,7 @@ const colors: ReportColors = {
     200: '#A5FFCF',
     300: '#4FDA46',
     400: '#2CE282',
+    500: '#06B259',
   },
   secondary: {
     DEFAULT: '#D8E36C',
@@ -34,7 +37,8 @@ const colors: ReportColors = {
   },
   highlight: {
     DEFAULT: '#14BCFF',
-    50: '#2CDDEA',
+    50: '#EEFAFF',
+    100: '#2CDDEA',
   },
 };
 
@@ -95,7 +99,18 @@ const ReportPortfolioPage = () => {
 
           {/* 취업 연구팀 소개 */}
           <ResearchTeamSection colors={colors} />
-
+          {/* 가격 및 플랜 */}
+          {priceDetail && report?.reportType && (
+            <ReportPlanSection
+              colors={colors}
+              priceDetail={priceDetail}
+              reportType={report?.reportType}
+            />
+          )}
+          {/* 홍보 배너  */}
+          {report?.reportType && (
+            <PromoSection colors={colors} reportType={report.reportType} />
+          )}
           {/* 서비스 이용 안내 */}
           {report?.reportType && (
             <ServiceProcessSection
@@ -103,12 +118,10 @@ const ReportPortfolioPage = () => {
               reportType={report.reportType}
             />
           )}
-
           {/* FAQ  */}
           {report?.reportId && (
             <ReportFaqSection colors={colors} reportId={report?.reportId} />
           )}
-
           {/* 프로그램 추천 */}
           {portfolioContent.reportProgramRecommend && (
             <ReportProgramRecommendSlider

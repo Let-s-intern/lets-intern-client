@@ -3,6 +3,7 @@ import { CSSProperties, memo, ReactNode } from 'react';
 import { convertReportTypeToDisplayName, ReportType } from '@/api/report';
 import { twMerge } from '@/lib/twMerge';
 import { ReportColors } from '@/types/interface';
+import clsx from 'clsx';
 import MainHeader from './MainHeader';
 import SectionHeader from './SectionHeader';
 import SubHeader from './SubHeader';
@@ -49,7 +50,16 @@ const ServiceProcessSection = ({
       <main className="mx-auto mt-10 flex max-w-[690px] flex-col items-center gap-5 md:mt-11 md:gap-8">
         {/* 1단계 */}
         <ProcessCard style={BACKGROUND_COLOR_PRIMARY_400}>
-          <NumberedTitle numberStyle={BACKGROUND_COLOR_PRIMARY_100} number={1}>
+          <NumberedTitle
+            numberStyle={BACKGROUND_COLOR_PRIMARY_100}
+            numberClassName={clsx({
+              'text-[#CA60FF]': reportType === 'PERSONAL_STATEMENT',
+            })}
+            className={clsx({
+              'text-white': reportType === 'PERSONAL_STATEMENT',
+            })}
+            number={1}
+          >
             서비스 신청 및 서류 업로드
           </NumberedTitle>
 
@@ -145,7 +155,16 @@ const ServiceProcessSection = ({
 
         {/* 3단계 */}
         <ProcessCard style={BACKGROUND_COLOR_PRIMARY_400}>
-          <NumberedTitle numberStyle={BACKGROUND_COLOR_PRIMARY_100} number={3}>
+          <NumberedTitle
+            numberStyle={BACKGROUND_COLOR_PRIMARY_100}
+            number={3}
+            numberClassName={clsx({
+              'text-[#CA60FF]': reportType === 'PERSONAL_STATEMENT',
+            })}
+            className={clsx({
+              'text-white': reportType === 'PERSONAL_STATEMENT',
+            })}
+          >
             피드백 REPORT 확인
           </NumberedTitle>
 
@@ -174,8 +193,22 @@ const ServiceProcessSection = ({
 
         {/* 4단계 */}
         <ProcessCard style={BACKGROUND_COLOR_PRIMARY_400}>
-          <NumberedTitle numberStyle={BACKGROUND_COLOR_PRIMARY_100} number={4}>
-            <span className="text-xsmall14 font-medium text-black/75 md:text-xsmall16">
+          <NumberedTitle
+            numberStyle={BACKGROUND_COLOR_PRIMARY_100}
+            number={4}
+            numberClassName={clsx({
+              'text-[#CA60FF]': reportType === 'PERSONAL_STATEMENT',
+            })}
+            className={clsx({
+              'text-white': reportType === 'PERSONAL_STATEMENT',
+            })}
+          >
+            <span
+              className={clsx(
+                'text-xsmall14 font-medium opacity-75 md:text-xsmall16',
+                { 'text-white': reportType === 'PERSONAL_STATEMENT' },
+              )}
+            >
               별도구매시
             </span>
             1:1 피드백 진행
@@ -243,11 +276,13 @@ const ProcessCard = memo(function ProcessCard({
 const NumberedTitle = memo(function NumberedTitle({
   number,
   children,
+  className,
   numberClassName,
   numberStyle,
 }: {
   number?: string | number;
   children?: ReactNode;
+  className?: string;
   numberClassName?: string;
   numberStyle?: CSSProperties;
 }) {
@@ -262,7 +297,12 @@ const NumberedTitle = memo(function NumberedTitle({
       >
         {number ?? 1}
       </div>
-      <span className="flex items-center gap-2 text-small18 font-bold md:text-medium22">
+      <span
+        className={twMerge(
+          'flex items-center gap-2 text-small18 font-bold md:text-medium22',
+          className,
+        )}
+      >
         {children}
       </span>
     </div>

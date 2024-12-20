@@ -23,7 +23,7 @@ function PromoSection({ colors, reportType }: PromoSectionProps) {
     backgroundColor: colors.primary[50],
   };
   const BORDER_STYLE = {
-    backgroundImage: `linear-gradient(to right, ${colors.primary[400]}, ${colors.highlight[50]})`,
+    backgroundImage: `linear-gradient(to right, ${colors.primary[400]}, ${colors.highlight[100]})`,
   };
 
   const isMobile = useMediaQuery('(max-width:768px)');

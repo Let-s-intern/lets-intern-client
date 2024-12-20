@@ -3,11 +3,11 @@ import { HiChevronDown, HiChevronUp } from 'react-icons/hi2';
 
 import {
   convertReportTypeToDisplayName,
+  convertReportTypeToPathname,
   ReportPriceDetail,
   ReportType,
 } from '@/api/report';
 import CheckIcon from '@/assets/icons/chevron-down.svg?react';
-import BubbleTail from '@/assets/icons/report-bubble-tail.svg?react';
 import { twMerge } from '@/lib/twMerge';
 import { ReportColors } from '@/types/interface';
 import { useMediaQuery } from '@mui/material';
@@ -157,8 +157,12 @@ const ReportPlanSection = ({
 
           {/* 프리미엄 플랜 */}
           <PriceCard
+            reportType={reportType}
             bannerText={`채용 공고 맞춤형 ${convertReportTypeToDisplayName(reportType)}를 원한다면,`}
             bannerColor={colors.primary[400]}
+            bannerClassName={clsx({
+              'text-white': reportType === 'PERSONAL_STATEMENT',
+            })}
             isFloatingBanner={isMobile ? false : true}
             floatingBannerClassName="left-36 top-4"
           >
@@ -228,8 +232,12 @@ const ReportPlanSection = ({
 
         {/* 1:1 피드백 */}
         <PriceCard
+          reportType={reportType}
           bannerText="저렴한 가격으로 무한 질문&심층 피드백을 받고 싶다면, "
           bannerColor={colors.primary[400]}
+          bannerClassName={clsx({
+            'text-white': reportType === 'PERSONAL_STATEMENT',
+          })}
           isFloatingBanner={isMobile ? false : true}
           floatingBannerClassName="left-[4.5rem] top-8"
         >
@@ -267,13 +275,17 @@ export default ReportPlanSection;
 const PriceCard = memo(function PriceCard({
   bannerText,
   bannerColor,
+  bannerClassName,
   children,
+  reportType = 'RESUME',
   className,
   isFloatingBanner = false,
   floatingBannerClassName,
 }: {
+  reportType?: ReportType;
   bannerText?: string;
   bannerColor?: string;
+  bannerClassName?: string;
   children?: ReactNode;
   className?: string;
   isFloatingBanner?: boolean;
@@ -289,7 +301,10 @@ const PriceCard = memo(function PriceCard({
       {bannerText && !isFloatingBanner && (
         <div
           style={BANNER_STYLE}
-          className="bg-primary py-1 text-center text-xsmall14 font-semibold"
+          className={twMerge(
+            'bg-primary py-1 text-center text-xsmall14 font-semibold',
+            bannerClassName,
+          )}
         >
           {bannerText}
         </div>
@@ -298,11 +313,18 @@ const PriceCard = memo(function PriceCard({
         <div className={twMerge('absolute', floatingBannerClassName)}>
           <div
             style={BANNER_STYLE}
-            className="rounded-md bg-primary px-3 py-1 text-center text-xsmall14 font-semibold"
+            className={twMerge(
+              'rounded-md bg-primary px-3 py-1 text-center text-xsmall14 font-semibold',
+              bannerClassName,
+            )}
           >
             {bannerText}
           </div>
-          <BubbleTail className="translate-x-12" color={bannerColor} />
+          <img
+            className="h-auto w-auto translate-x-12"
+            src={`/icons/report-bubble-tail-${convertReportTypeToPathname(reportType)}.svg`}
+            alt="bubble tail"
+          />
         </div>
       )}
       <div
