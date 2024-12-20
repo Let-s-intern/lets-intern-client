@@ -26,6 +26,7 @@ const colors: ReportColors = {
     200: '#A5FFCF',
     300: '#4FDA46',
     400: '#2CE282',
+    500: '#06B259',
   },
   secondary: {
     DEFAULT: '#D8E36C',
@@ -33,7 +34,8 @@ const colors: ReportColors = {
   },
   highlight: {
     DEFAULT: '#14BCFF',
-    50: '#2CDDEA',
+    50: '#EEFAFF',
+    100: '#2CDDEA',
   },
 };
 
