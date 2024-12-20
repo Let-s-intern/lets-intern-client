@@ -4,7 +4,6 @@ import { IoIosArrowDown } from 'react-icons/io';
 import { twMerge } from '@/lib/twMerge';
 import { Faq } from '@/schema';
 
-/* LiveFaq에서 함께 사용 */
 function FaqDropdown({ faq }: { faq: Faq }) {
   const [isOpen, setIsOpen] = useState(true);
 

@@ -2,7 +2,6 @@ import { memo } from 'react';
 
 import channelService from '@/ChannelService';
 
-/* LiveFaq에서 함께 사용 */
 function FaqDropdown() {
   return (
     <div className="mx-auto flex flex-col items-center gap-3 rounded-md bg-neutral-95 px-8 py-4 md:w-full md:max-w-[800px] md:flex-row md:items-center md:justify-between">
