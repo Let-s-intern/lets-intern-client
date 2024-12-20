@@ -5,6 +5,7 @@ import { ReportColors, ReportContent } from '@/types/interface';
 import { getBaseUrlFromServer, getReportLandingTitle } from '@/utils/url';
 import Header from '@components/common/program/program-detail/header/Header';
 import ReportBasicInfo from '@components/common/report/ReportBasicInfo';
+import ReportFaqSection from '@components/common/report/ReportFaqSection';
 import ReportProgramRecommendSlider from '@components/common/report/ReportProgramRecommendSlider';
 import ResearchTeamSection from '@components/common/report/ResearchTeamSection';
 import ServiceProcessSection from '@components/common/report/ServiceProcessSection';
@@ -103,14 +104,17 @@ const ReportPortfolioPage = () => {
             />
           )}
 
+          {/* FAQ  */}
+          {report?.reportId && (
+            <ReportFaqSection colors={colors} reportId={report?.reportId} />
+          )}
+
           {/* 프로그램 추천 */}
           {portfolioContent.reportProgramRecommend && (
-            <section>
-              <ReportProgramRecommendSlider
-                colors={colors}
-                reportProgramRecommend={portfolioContent.reportProgramRecommend}
-              />
-            </section>
+            <ReportProgramRecommendSlider
+              colors={colors}
+              reportProgramRecommend={portfolioContent.reportProgramRecommend}
+            />
           )}
         </div>
       )}

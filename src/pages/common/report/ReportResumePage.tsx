@@ -11,6 +11,7 @@ import { getBaseUrlFromServer, getReportLandingTitle } from '@/utils/url';
 import Header from '@components/common/program/program-detail/header/Header';
 import ReportBasicInfo from '@components/common/report/ReportBasicInfo';
 import ReportExampleSection from '@components/common/report/ReportExampleSection';
+import ReportFaqSection from '@components/common/report/ReportFaqSection';
 import ReportProgramRecommendSlider from '@components/common/report/ReportProgramRecommendSlider';
 import ResearchTeamSection from '@components/common/report/ResearchTeamSection';
 import ServiceProcessSection from '@components/common/report/ServiceProcessSection';
@@ -89,6 +90,7 @@ const ReportResumePage = () => {
             <Header programTitle={title} />
             <ReportBasicInfo reportBasic={data?.resumeInfo} />
           </div>
+
           <ReportNavigation />
           {/* 서비스 소개 */}
           <div>서비스 소개</div>
@@ -105,15 +107,16 @@ const ReportResumePage = () => {
               reportType={report.reportType}
             />
           )}
-
+          {/* FAQ  */}
+          {report?.reportId && (
+            <ReportFaqSection colors={colors} reportId={report?.reportId} />
+          )}
           {/* 프로그램 추천 */}
           {resumeContent.reportProgramRecommend && (
-            <section>
-              <ReportProgramRecommendSlider
-                colors={colors}
-                reportProgramRecommend={resumeContent.reportProgramRecommend}
-              />
-            </section>
+            <ReportProgramRecommendSlider
+              colors={colors}
+              reportProgramRecommend={resumeContent.reportProgramRecommend}
+            />
           )}
         </div>
       )}

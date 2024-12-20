@@ -2,7 +2,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import dayjs from 'dayjs';
 import { z } from 'zod';
 
-import { reportTypeSchema } from '@/schema';
+import { faqSchema, reportTypeSchema } from '@/schema';
 import useAuthStore from '@/store/useAuthStore';
 import axios from '../utils/axios';
 import { tossInfoType } from './paymentSchema';
@@ -552,6 +552,19 @@ export const useGetMyReports = (reportType?: ReportType) => {
       });
 
       return getMyReportsSchema.parse(res.data.data);
+    },
+  });
+};
+
+// 유저 - 진단서 faq 목록 조회
+//  GET /api/v1/report/{reportId}/faqs
+export const useGetReportFaqs = (reportId: string | number) => {
+  return useQuery({
+    queryKey: ['useGetReportFaq', reportId],
+    queryFn: async () => {
+      const res = await axios.get(`/report/${reportId}/faqs`);
+
+      return faqSchema.parse(res.data.data);
     },
   });
 };
