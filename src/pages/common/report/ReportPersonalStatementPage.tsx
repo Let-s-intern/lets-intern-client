@@ -6,6 +6,7 @@ import { getBaseUrlFromServer, getReportLandingTitle } from '@/utils/url';
 import Header from '@components/common/program/program-detail/header/Header';
 import PromoSection from '@components/common/report/PromoSection';
 import ReportBasicInfo from '@components/common/report/ReportBasicInfo';
+import ReportFaqSection from '@components/common/report/ReportFaqSection';
 import ReportPlanSection from '@components/common/report/ReportPlanSection';
 import ReportProgramRecommendSlider from '@components/common/report/ReportProgramRecommendSlider';
 import ResearchTeamSection from '@components/common/report/ResearchTeamSection';
@@ -132,6 +133,9 @@ const ReportPersonalStatementPage = () => {
               }
             />
           )}
+
+          {/* FAQ  */}
+          <ReportFaqSection colors={colors} />
         </div>
       )}
 

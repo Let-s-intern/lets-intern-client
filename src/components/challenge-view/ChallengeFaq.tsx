@@ -1,13 +1,12 @@
 import { twMerge } from '@/lib/twMerge';
 import { ReactNode, useState } from 'react';
-import { IoIosArrowDown } from 'react-icons/io';
 import { useParams } from 'react-router-dom';
 
 import { useGetChallengeFaq } from '@/api/challenge';
 import channelService from '@/ChannelService';
-import { Faq } from '@/schema';
 import { ChallengeColor } from '@components/ChallengeView';
 import SuperTitle from '@components/common/program/program-detail/SuperTitle';
+import FaqDropdown from '@components/common/ui/FaqDropdown';
 import Heading2 from '@components/common/ui/Heading2';
 import { PROGRAM_FAQ_ID } from '@components/ProgramDetailNavigation';
 
@@ -63,7 +62,7 @@ function ChallengeFaq({ colors }: ChallengeFaqProps) {
       <div className="mb-10 flex flex-col gap-3 md:mb-24 md:w-full md:max-w-[800px]">
         {faqList.map((faq) => {
           if (faq.category === categoryList[selectedIndex])
-            return <FaqCard key={faq.id} faq={faq} />;
+            return <FaqDropdown key={faq.id} faq={faq} />;
         })}
       </div>
 
@@ -110,35 +109,6 @@ function FaqCategory({
       onClick={onClick}
     >
       {children}
-    </div>
-  );
-}
-
-/* LiveFaq에서 함께 사용 */
-export function FaqCard({ faq }: { faq: Faq }) {
-  const [isOpen, setIsOpen] = useState(true);
-
-  return (
-    <div
-      key={faq.id}
-      className="overflow-hidden rounded-xxs border border-neutral-80"
-    >
-      <div className="flex items-center justify-between bg-neutral-100 p-5">
-        <span className="text-xsmall14 font-semibold text-neutral-0 md:text-medium22">
-          {faq.question}
-        </span>
-        <IoIosArrowDown
-          className={twMerge('cursor-pointer', isOpen && 'rotate-180')}
-          size={24}
-          color="#7A7D84"
-          onClick={() => setIsOpen(!isOpen)}
-        />
-      </div>
-      {isOpen && (
-        <div className="border-t border-neutral-80 px-5 py-3 text-xxsmall12 text-neutral-35 md:text-small18">
-          {faq.answer}
-        </div>
-      )}
     </div>
   );
 }
