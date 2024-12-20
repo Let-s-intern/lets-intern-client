@@ -23,22 +23,22 @@ import ReportNavigation from './ReportNavigation';
 
 const colors: ReportColors = {
   primary: {
-    DEFAULT: '#11AC5C',
-    50: '#E8FDF2',
-    100: '#B1FFD6',
-    200: '#A5FFCF',
-    300: '#4FDA46',
-    400: '#2CE282',
-    500: '#06B259',
+    DEFAULT: '#C34AFF',
+    50: '#F9EEFF',
+    100: '#E6B3FF',
+    200: '#F9EEFF',
+    300: '#CA60FF',
+    400: '#CA60FF',
+    500: '#CA60FF',
   },
   secondary: {
-    DEFAULT: '#D8E36C',
-    50: '#F7FFAB',
+    DEFAULT: '#EB6CFF',
+    50: '#F3A2FF',
   },
   highlight: {
-    DEFAULT: '#14BCFF',
-    50: '#EEFAFF',
-    100: '#2CDDEA',
+    DEFAULT: '#CA60FF',
+    50: '#F9EEFF',
+    100: '#C34AFF',
   },
 };
 
