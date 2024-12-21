@@ -15,6 +15,7 @@ import ReportExampleSection from '@components/common/report/ReportExampleSection
 import ReportFaqSection from '@components/common/report/ReportFaqSection';
 import ReportPlanSection from '@components/common/report/ReportPlanSection';
 import ReportProgramRecommendSlider from '@components/common/report/ReportProgramRecommendSlider';
+import ReportReviewSection from '@components/common/report/ReportReviewSection';
 import ResearchTeamSection from '@components/common/report/ResearchTeamSection';
 import ServiceProcessSection from '@components/common/report/ServiceProcessSection';
 import LoadingContainer from '@components/common/ui/loading/LoadingContainer';
@@ -100,7 +101,11 @@ const ReportResumePage = () => {
           {/* 리포트 예시 */}
           <ReportExampleSection colors={colors} type="RESUME" />
           {/* 후기 */}
-          <div>후기</div>
+          <ReportReviewSection
+            colors={colors}
+            type="RESUME"
+            reportReview={resumeContent.review}
+          />
           {/* 취업 연구팀 소개 */}
           <ResearchTeamSection colors={colors} />
           {/* 가격 및 플랜 */}
@@ -108,7 +113,7 @@ const ReportResumePage = () => {
             <ReportPlanSection
               colors={colors}
               priceDetail={priceDetail}
-              reportType={report?.reportType}
+              reportType={'RESUME'}
             />
           )}
           {/* 홍보 배너  */}
