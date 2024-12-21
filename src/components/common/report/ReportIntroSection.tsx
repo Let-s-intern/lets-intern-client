@@ -5,6 +5,7 @@ import Profile3 from '@/assets/illust/report_profile_3.svg?react';
 import { REPORT_INTRO } from '@/data/reportConstant';
 import { ReportColors } from '@/types/interface';
 import { useMediaQuery } from '@mui/material';
+import { useEffect, useRef } from 'react';
 
 interface ReportIntroSectionProps {
   colors: ReportColors;
@@ -13,6 +14,53 @@ interface ReportIntroSectionProps {
 
 const ReportIntroSection = ({ colors, type }: ReportIntroSectionProps) => {
   const isDesktop = useMediaQuery('(min-width: 768px)');
+  const containerRef = useRef<HTMLDivElement>(null);
+  const beforeRef = useRef<HTMLDivElement>(null);
+  const afterRef = useRef<HTMLDivElement>(null);
+
+  const lastScrollY = useRef(0);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (!containerRef.current || !beforeRef.current || !afterRef.current)
+        return;
+      const currentScrollY = window.scrollY;
+      const clientRectWidth =
+        window.document.body.getBoundingClientRect().width;
+
+      const containerY = containerRef.current.getBoundingClientRect().y;
+      const beforeX = beforeRef.current.getBoundingClientRect().x;
+      const afterX = afterRef.current.getBoundingClientRect().x;
+
+      const isUp = currentScrollY < lastScrollY.current;
+      lastScrollY.current = currentScrollY;
+
+      if (containerY >= 200 && containerY <= 300 && afterX >= 200 && !isUp) {
+        // containerRef 에서 afterRef 보이게 스크롤
+        containerRef.current.scrollTo({
+          top: 0,
+          left: clientRectWidth,
+          behavior: 'smooth',
+        });
+      } else if (
+        containerY >= 200 &&
+        containerY <= 300 &&
+        beforeX < 200 &&
+        isUp
+      ) {
+        // containerRef 에서 beforeRef 보이게 스크롤
+        containerRef.current.scrollTo({
+          top: 0,
+          left: 0,
+          behavior: 'smooth',
+        });
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
   const reportIntro = REPORT_INTRO[type];
 
   const convertString = (str: string) => {
@@ -127,8 +175,14 @@ const ReportIntroSection = ({ colors, type }: ReportIntroSectionProps) => {
             </div>
           </div>
           <div className="w-full overflow-x-hidden">
-            <div className="flex w-full items-stretch gap-x-3 overflow-auto pt-8">
-              <div className="relative flex w-[90%] shrink-0 flex-col rounded-sm md:w-[calc(50%-6px)]">
+            <div
+              className="flex w-full items-stretch gap-x-3 overflow-auto pt-8"
+              ref={containerRef}
+            >
+              <div
+                className="relative flex w-[90%] shrink-0 flex-col rounded-sm md:w-[calc(50%-6px)]"
+                ref={beforeRef}
+              >
                 <div className="absolute left-0 right-0 top-0 z-10 mx-auto flex w-fit -translate-y-1/2 transform items-center justify-center rounded-full bg-neutral-40 px-5 py-3 text-xsmall16 font-semibold text-neutral-30 md:text-small18">
                   BEFORE
                 </div>
@@ -143,7 +197,10 @@ const ReportIntroSection = ({ colors, type }: ReportIntroSectionProps) => {
                   ))}
                 </div>
               </div>
-              <div className="relative flex w-[90%] shrink-0 flex-col rounded-sm md:w-[calc(50%-6px)]">
+              <div
+                className="relative flex w-[90%] shrink-0 flex-col rounded-sm md:w-[calc(50%-6px)]"
+                ref={afterRef}
+              >
                 <div
                   className="absolute left-0 right-0 top-0 z-10 mx-auto flex w-fit -translate-y-1/2 transform items-center justify-center rounded-full border-2 bg-white px-5 py-3 text-xsmall16 font-semibold text-neutral-0 md:text-small18"
                   style={{ borderColor: colors.secondary.DEFAULT }}
