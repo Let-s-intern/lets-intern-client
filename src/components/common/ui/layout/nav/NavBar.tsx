@@ -117,6 +117,7 @@ const NavBar = () => {
               블로그
             </NavItem>
             <NavItem
+              as="div"
               to={reportHoverItem[0].to}
               active={activeLink === 'REPORT'}
               hoverItem={reportHoverItem}
