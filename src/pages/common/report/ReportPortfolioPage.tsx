@@ -6,9 +6,11 @@ import { getBaseUrlFromServer, getReportLandingTitle } from '@/utils/url';
 import Header from '@components/common/program/program-detail/header/Header';
 import PromoSection from '@components/common/report/PromoSection';
 import ReportBasicInfo from '@components/common/report/ReportBasicInfo';
+import ReportExampleSection from '@components/common/report/ReportExampleSection';
 import ReportFaqSection from '@components/common/report/ReportFaqSection';
 import ReportPlanSection from '@components/common/report/ReportPlanSection';
 import ReportProgramRecommendSlider from '@components/common/report/ReportProgramRecommendSlider';
+import ReportReviewSection from '@components/common/report/ReportReviewSection';
 import ResearchTeamSection from '@components/common/report/ResearchTeamSection';
 import ServiceProcessSection from '@components/common/report/ServiceProcessSection';
 import LoadingContainer from '@components/common/ui/loading/LoadingContainer';
@@ -96,7 +98,16 @@ const ReportPortfolioPage = () => {
             <ReportBasicInfo reportBasic={data?.portfolioInfo} />
           </div>
           <ReportNavigation />
-
+          {/* 서비스 소개 */}
+          <div>서비스 소개</div>
+          {/* 리포트 예시 */}
+          <ReportExampleSection colors={colors} type="PORTFOLIO" />
+          {/* 후기 */}
+          <ReportReviewSection
+            colors={colors}
+            type="PORTFOLIO"
+            reportReview={portfolioContent.review}
+          />
           {/* 취업 연구팀 소개 */}
           <ResearchTeamSection colors={colors} />
           {/* 가격 및 플랜 */}

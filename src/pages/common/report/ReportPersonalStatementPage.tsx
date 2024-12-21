@@ -6,9 +6,11 @@ import { getBaseUrlFromServer, getReportLandingTitle } from '@/utils/url';
 import Header from '@components/common/program/program-detail/header/Header';
 import PromoSection from '@components/common/report/PromoSection';
 import ReportBasicInfo from '@components/common/report/ReportBasicInfo';
+import ReportExampleSection from '@components/common/report/ReportExampleSection';
 import ReportFaqSection from '@components/common/report/ReportFaqSection';
 import ReportPlanSection from '@components/common/report/ReportPlanSection';
 import ReportProgramRecommendSlider from '@components/common/report/ReportProgramRecommendSlider';
+import ReportReviewSection from '@components/common/report/ReportReviewSection';
 import ResearchTeamSection from '@components/common/report/ResearchTeamSection';
 import ServiceProcessSection from '@components/common/report/ServiceProcessSection';
 import LoadingContainer from '@components/common/ui/loading/LoadingContainer';
@@ -89,18 +91,25 @@ const ReportPersonalStatementPage = () => {
           <meta name="twitter:description" content={description} />
         ) : null}
       </Helmet>
-
       {isLoading ? (
         <LoadingContainer />
       ) : (
-        <div className="flex w-full flex-col items-center">
-          <div className="mb-6 flex w-full max-w-[1000px] flex-col px-5 md:mb-12 lg:px-0">
+        <div className="flex w-full flex-col items-center gap-y-12 md:gap-y-6">
+          <div className="flex w-full max-w-[1000px] flex-col px-5 lg:px-0">
             <Header programTitle={title} />
-
             <ReportBasicInfo reportBasic={data?.personalStatementInfo} />
           </div>
           <ReportNavigation />
-
+          {/* 서비스 소개 */}
+          <div>서비스 소개</div>
+          {/* 리포트 예시 */}
+          <ReportExampleSection colors={colors} type="PERSONAL_STATEMENT" />
+          {/* 후기 */}
+          <ReportReviewSection
+            colors={colors}
+            type="PERSONAL_STATEMENT"
+            reportReview={personalStatementContent.review}
+          />
           {/* 취업 연구팀 소개 */}
           <ResearchTeamSection colors={colors} />
 
