@@ -198,7 +198,7 @@ const ReportPlanSection = ({
         <div className="border-t-2 border-dashed border-neutral-70" />
 
         {/* 옵션 */}
-        {optionInfos && (
+        {optionInfos && optionInfos.length > 0 && (
           <PriceCard>
             <CardSubHeader>옵션</CardSubHeader>
             <CardMainHeader>현직자 피드백</CardMainHeader>
