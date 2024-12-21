@@ -112,16 +112,16 @@ const ReportIntroSection = ({ colors, type }: ReportIntroSectionProps) => {
       {/* section3 */}
       <div className="w-full bg-black">
         <div className="mx-auto flex w-full max-w-[1000px] flex-col items-center gap-y-5 px-5 py-[70px] md:gap-y-20 md:pb-[140px] md:pt-[120px] lg:px-0">
-          <div className="flex w-full flex-col gap-y-2">
+          <div className="flex w-full flex-col gap-y-2 md:gap-y-3">
             <h5
-              className="text-xsmall16 font-bold"
+              className="text-xsmall16 font-bold md:text-small20"
               style={{ color: colors.primary.DEFAULT }}
             >{`이제는 합격하는 ${convertReportTypeToDisplayName(type)}로!`}</h5>
-            <div className="flex w-full flex-col gap-y-5">
-              <p className="text-medium22 font-bold text-white">
+            <div className="flex w-full flex-col gap-y-5 md:gap-y-[30px]">
+              <p className="text-medium22 font-bold text-white md:text-xlarge30">
                 {convertString(reportIntro.section3.title)}
               </p>
-              <p className="text-xsmall14 text-neutral-70">
+              <p className="text-xsmall14 text-neutral-70 md:text-small20">
                 {convertString(reportIntro.section3.description)}
               </p>
             </div>
@@ -129,13 +129,13 @@ const ReportIntroSection = ({ colors, type }: ReportIntroSectionProps) => {
           <div className="w-full overflow-x-hidden">
             <div className="flex w-full items-stretch gap-x-3 overflow-auto pt-8">
               <div className="relative flex w-[90%] shrink-0 flex-col rounded-sm md:w-[calc(50%-6px)]">
-                <div className="absolute left-0 right-0 top-0 z-10 mx-auto flex w-fit -translate-y-1/2 transform items-center justify-center rounded-full bg-neutral-40 px-5 py-3 text-xsmall16 font-semibold">
+                <div className="absolute left-0 right-0 top-0 z-10 mx-auto flex w-fit -translate-y-1/2 transform items-center justify-center rounded-full bg-neutral-40 px-5 py-3 text-xsmall16 font-semibold text-neutral-30 md:text-small18">
                   BEFORE
                 </div>
-                <div className="flex w-full flex-col rounded-sm bg-neutral-40 px-8 py-5 text-small18 font-bold text-neutral-30">
+                <div className="flex w-full flex-col rounded-sm bg-neutral-40 px-8 py-5 text-small18 font-semibold text-neutral-20 md:text-medium22">
                   {reportIntro.section3.before.map((item, index) => (
                     <div key={`${type}-before-${index}`}>
-                      {index !== 0 && <hr className="border-neutral-40" />}
+                      {index !== 0 && <hr className="border-neutral-30" />}
                       <div className="flex w-full items-center justify-center py-4">
                         {convertString(item)}
                       </div>
@@ -145,13 +145,13 @@ const ReportIntroSection = ({ colors, type }: ReportIntroSectionProps) => {
               </div>
               <div className="relative flex w-[90%] shrink-0 flex-col rounded-sm md:w-[calc(50%-6px)]">
                 <div
-                  className="absolute left-0 right-0 top-0 z-10 mx-auto flex w-fit -translate-y-1/2 transform items-center justify-center rounded-full border-2 bg-white px-5 py-3 text-xsmall16 font-semibold"
+                  className="absolute left-0 right-0 top-0 z-10 mx-auto flex w-fit -translate-y-1/2 transform items-center justify-center rounded-full border-2 bg-white px-5 py-3 text-xsmall16 font-semibold text-neutral-0 md:text-small18"
                   style={{ borderColor: colors.secondary.DEFAULT }}
                 >
                   AFTER
                 </div>
                 <div
-                  className="flex w-full flex-col rounded-sm px-8 py-5 text-small18 font-bold text-neutral-0"
+                  className="flex w-full flex-col rounded-sm px-8 py-5 text-small18 font-semibold md:text-medium22"
                   style={{ backgroundColor: colors.secondary[50] }}
                 >
                   {reportIntro.section3.after.map((item, index) => (
