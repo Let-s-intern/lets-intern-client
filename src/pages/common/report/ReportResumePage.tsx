@@ -55,7 +55,7 @@ const ReportResumePage = () => {
     data?.resumeInfo?.contents ?? '{}',
   );
 
-  const { data: priceDetail } = useGetReportPriceDetail(report!.reportId);
+  const { data: priceDetail } = useGetReportPriceDetail(report?.reportId);
 
   const { initReportApplication } = useReportApplicationStore();
 

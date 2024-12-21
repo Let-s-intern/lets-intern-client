@@ -403,9 +403,10 @@ export type ReportPriceDetail = z.infer<typeof getReportPriceDetailSchema>;
 
 export const getReportPriceDetailQueryKey = 'getReportPriceDetail';
 
-export const useGetReportPriceDetail = (reportId: number) => {
+export const useGetReportPriceDetail = (reportId?: number) => {
   return useQuery({
     queryKey: [getReportPriceDetailQueryKey, reportId],
+    enabled: !!reportId,
     queryFn: async () => {
       const res = await axios.get(`/report/${reportId}/price`);
       return getReportPriceDetailSchema.parse(res.data.data);

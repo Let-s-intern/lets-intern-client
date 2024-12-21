@@ -58,7 +58,7 @@ const ReportPortfolioPage = () => {
     data?.portfolioInfo?.contents ?? '{}',
   );
 
-  const { data: priceDetail } = useGetReportPriceDetail(report!.reportId);
+  const { data: priceDetail } = useGetReportPriceDetail(report?.reportId);
 
   const { initReportApplication } = useReportApplicationStore();
 
