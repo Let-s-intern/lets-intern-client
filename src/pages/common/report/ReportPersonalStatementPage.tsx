@@ -8,6 +8,7 @@ import PromoSection from '@components/common/report/PromoSection';
 import ReportBasicInfo from '@components/common/report/ReportBasicInfo';
 import ReportExampleSection from '@components/common/report/ReportExampleSection';
 import ReportFaqSection from '@components/common/report/ReportFaqSection';
+import ReportIntroSection from '@components/common/report/ReportIntroSection';
 import ReportPlanSection from '@components/common/report/ReportPlanSection';
 import ReportProgramRecommendSlider from '@components/common/report/ReportProgramRecommendSlider';
 import ReportReviewSection from '@components/common/report/ReportReviewSection';
@@ -97,7 +98,7 @@ const ReportPersonalStatementPage = () => {
         <div className="flex w-full flex-col items-center">
           <div className="flex w-full flex-col bg-black pb-12 text-white md:pb-20">
             <div className="mx-auto flex w-full max-w-[1000px] flex-col px-5 lg:px-0">
-              <Header programTitle={title} />
+              <Header programTitle={'서류완성의 시작과 끝은 진단에서부터'} />
               <ReportBasicInfo
                 reportBasic={data?.personalStatementInfo}
                 color={colors.primary.DEFAULT}
@@ -107,7 +108,7 @@ const ReportPersonalStatementPage = () => {
           <ReportNavigation color={colors.primary.DEFAULT} isDark />
           <div className="flex w-full flex-col items-center gap-y-12 md:gap-y-6">
             {/* 서비스 소개 */}
-            <div>서비스 소개</div>
+            <ReportIntroSection colors={colors} type="PERSONAL_STATEMENT" />
             {/* 리포트 예시 */}
             <ReportExampleSection
               colors={colors}

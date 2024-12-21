@@ -103,7 +103,7 @@ const ReportBasicInfo = ({ reportBasic, color }: ReportBasicInfoProps) => {
         />
       </div>
       <span className="w-full text-small18 font-bold text-white md:text-center md:text-medium22">
-        {reportBasic.title}
+        {`${reportBasic.title} 피드백 REPORT`}
       </span>
       <div
         className="flex w-full flex-col gap-3 md:flex-row md:items-stretch"
