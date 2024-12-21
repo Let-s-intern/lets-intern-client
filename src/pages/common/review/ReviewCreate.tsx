@@ -21,9 +21,7 @@ const ReviewCreate = ({ isEdit }: { isEdit: boolean }) => {
     useState<boolean | null>(null);
   const [npsAns, setNpsAns] = useState('');
 
-  const [hasPassed, setHasPassed] = useState<boolean | null>(null);
   const [howHelpful, setHowHelpful] = useState<string>('');
-  const [passedWhere, setPassedWhere] = useState<string>('');
 
   const reviewId = params.reviewId;
   const applicationId = searchParams.get('application');
@@ -124,7 +122,7 @@ const ReviewCreate = ({ isEdit }: { isEdit: boolean }) => {
         tenScore === null ||
         hasRecommendationExperience === null ||
         !npsAns ||
-        (programType === 'report' && (hasPassed === null || howHelpful === ''))
+        (programType === 'report' && howHelpful === '')
       ) {
         alert('모든 항목을 입력해주세요.');
         return;
@@ -164,12 +162,8 @@ const ReviewCreate = ({ isEdit }: { isEdit: boolean }) => {
         ) : (
           <ReportReviewSection
             programTitle={programTitle}
-            hasPassed={hasPassed}
-            setHasPassed={setHasPassed}
             howHelpful={howHelpful}
             setHowHelpful={setHowHelpful}
-            passedWhere={passedWhere}
-            setPassedWhere={setPassedWhere}
           />
         )}
         <ConfirmSection
