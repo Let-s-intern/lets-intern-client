@@ -28,7 +28,7 @@ const ReportExampleStep = ({
   return (
     <div className="flex w-full items-center gap-x-2 font-medium text-neutral-0">
       <span
-        className="flex h-5 w-5 items-center justify-center rounded-full text-xxsmall12 md:text-xsmall14"
+        className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-xxsmall12 md:text-xsmall14"
         style={{ backgroundColor: color }}
       >
         {order}
@@ -69,7 +69,7 @@ const ReportExampleSection = ({ colors, type }: ReportExampleSectionProps) => {
         <div className="flex flex-col items-center bg-black px-5 pb-10 pt-[70px] md:pb-[60px] md:pt-[100px] lg:px-0">
           <div className="flex w-full max-w-[1000px] flex-col items-center gap-y-[30px] md:gap-y-[60px]">
             <div className="flex w-full flex-col items-center gap-y-5 md:gap-y-[50px]">
-              <h5 className="w-full text-center text-small18 font-semibold text-neutral-45">
+              <h5 className="w-full text-center text-xsmall14 font-semibold text-neutral-45 md:text-small18">
                 리포트 예시
               </h5>
               <div className="flex w-full flex-col items-center gap-y-2 md:gap-y-3">
