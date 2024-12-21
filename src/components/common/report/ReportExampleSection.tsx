@@ -7,13 +7,14 @@ import Pencil from '@/assets/icons/pencil.svg?react';
 import PrevButton from '@/assets/icons/prev-button.svg?react';
 import Profile from '@/assets/icons/profile.svg?react';
 import { REPORT_EXAMPLE } from '@/data/reportConstant';
-import { ReportColors } from '@/types/interface';
+import { ReportColors, ReportExample } from '@/types/interface';
 import { ReactNode, useRef } from 'react';
 import ReportExampleCard from './ReportExampleCard';
 
 interface ReportExampleSectionProps {
   colors: ReportColors;
   type: ReportType;
+  reportExample?: ReportExample | null;
 }
 
 const ReportExampleStep = ({
@@ -38,7 +39,11 @@ const ReportExampleStep = ({
   );
 };
 
-const ReportExampleSection = ({ colors, type }: ReportExampleSectionProps) => {
+const ReportExampleSection = ({
+  colors,
+  type,
+  reportExample,
+}: ReportExampleSectionProps) => {
   const scrollRef = useRef<HTMLDivElement>(null);
 
   const example = REPORT_EXAMPLE[type];
@@ -62,6 +67,8 @@ const ReportExampleSection = ({ colors, type }: ReportExampleSectionProps) => {
       );
     }
   };
+
+  if (!reportExample) return null;
 
   return (
     <section className="flex w-full flex-col items-center">
@@ -115,12 +122,13 @@ const ReportExampleSection = ({ colors, type }: ReportExampleSectionProps) => {
               </ReportExampleStep>
               <ReportExampleStep order={6} color={colors.primary.DEFAULT}>
                 <span className="font-bold">
-                  채용공고 기반 이력서 평가와 피드백
+                  채용공고 기반 {convertReportTypeToDisplayName(type)} 평가와
+                  피드백
                 </span>
                 (*프리미엄 플랜)
               </ReportExampleStep>
               <ReportExampleStep order={7} color={colors.primary.DEFAULT}>
-                이력서 작성{' '}
+                {convertReportTypeToDisplayName(type)} 작성{' '}
                 <span className="font-bold">고민에 대한 1:1 상담</span>
               </ReportExampleStep>
               <Pencil
@@ -189,10 +197,10 @@ const ReportExampleSection = ({ colors, type }: ReportExampleSectionProps) => {
                   className="flex w-full items-stretch gap-x-3 overflow-auto scroll-smooth"
                   ref={scrollRef}
                 >
-                  {example.content.map((content, index) => (
+                  {reportExample.list.map((example, index) => (
                     <ReportExampleCard
                       key={index}
-                      {...content}
+                      example={example}
                       mainColor={colors.primary.DEFAULT}
                       subColor={colors.primary[100]}
                     />

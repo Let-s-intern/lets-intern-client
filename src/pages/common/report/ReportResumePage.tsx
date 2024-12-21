@@ -99,7 +99,11 @@ const ReportResumePage = () => {
           {/* 서비스 소개 */}
           <div>서비스 소개</div>
           {/* 리포트 예시 */}
-          <ReportExampleSection colors={colors} type="RESUME" />
+          <ReportExampleSection
+            colors={colors}
+            type="RESUME"
+            reportExample={resumeContent.reportExample}
+          />
           {/* 후기 */}
           <ReportReviewSection
             colors={colors}

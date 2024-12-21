@@ -101,7 +101,11 @@ const ReportPortfolioPage = () => {
           {/* 서비스 소개 */}
           <div>서비스 소개</div>
           {/* 리포트 예시 */}
-          <ReportExampleSection colors={colors} type="PORTFOLIO" />
+          <ReportExampleSection
+            colors={colors}
+            type="PORTFOLIO"
+            reportExample={portfolioContent.reportExample}
+          />
           {/* 후기 */}
           <ReportReviewSection
             colors={colors}

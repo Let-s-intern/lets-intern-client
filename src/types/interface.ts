@@ -117,12 +117,14 @@ export type ReportReview = {
   list: ReportReviewItem[];
 };
 
+export type ReportExampleItem = {
+  id: string | number;
+  subTitle: string;
+  imgUrl: string;
+};
+
 export type ReportExample = {
-  list: {
-    id: string | number;
-    subTitle: string;
-    imgUrl: string;
-  }[];
+  list: ReportExampleItem[];
 };
 
 export type ReportProgramRecommendItem = {

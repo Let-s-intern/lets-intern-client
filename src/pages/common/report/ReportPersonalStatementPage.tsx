@@ -103,7 +103,11 @@ const ReportPersonalStatementPage = () => {
           {/* 서비스 소개 */}
           <div>서비스 소개</div>
           {/* 리포트 예시 */}
-          <ReportExampleSection colors={colors} type="PERSONAL_STATEMENT" />
+          <ReportExampleSection
+            colors={colors}
+            type="PERSONAL_STATEMENT"
+            reportExample={personalStatementContent.reportExample}
+          />
           {/* 후기 */}
           <ReportReviewSection
             colors={colors}
