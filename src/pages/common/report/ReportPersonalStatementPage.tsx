@@ -60,7 +60,7 @@ const ReportPersonalStatementPage = () => {
     data?.personalStatementInfo?.contents ?? '{}',
   );
 
-  const { data: priceDetail } = useGetReportPriceDetail(report!.reportId);
+  const { data: priceDetail } = useGetReportPriceDetail(report?.reportId);
 
   useEffect(() => {
     initReportApplication();
