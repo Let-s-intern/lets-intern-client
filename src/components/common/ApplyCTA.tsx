@@ -2,7 +2,7 @@ import GradientButton from '@components/common/program/program-detail/button/Gra
 import NotiButton from '@components/common/program/program-detail/button/NotiButton';
 import { Duration } from '@components/Duration';
 import dayjs, { Dayjs } from 'dayjs';
-import { useState } from 'react';
+import { memo, ReactNode, useState } from 'react';
 import PaymentErrorNotification from './PaymentErrorNotification';
 
 function DisabledButton() {
@@ -59,39 +59,64 @@ export function MobileApplyCTA({
   };
 
   return (
+    <MobileCTA
+      title={program?.title ?? ''}
+      banner={
+        showInstagramAlert ? (
+          <PaymentErrorNotification className="border-t" />
+        ) : (
+          <></>
+        )
+      }
+    >
+      {isOutOfDate ? (
+        <NotiButton text={'출시알림신청'} className="early_button" />
+      ) : isAlreadyApplied ? (
+        <DisabledButton />
+      ) : (
+        <>
+          <div>
+            <span className="mb-1 block text-xsmall14 font-medium">
+              {program?.deadline?.format('M월 D일 (dd)')} 마감까지 🚀
+            </span>
+            <div className="flex items-center gap-2">
+              <Duration
+                disabled={isAlreadyApplied || isOutOfDate}
+                deadline={program?.deadline ?? dayjs()}
+              />
+              <span className="text-xxsmall12 text-neutral-80">남음</span>
+            </div>
+          </div>
+          <GradientButton onClick={handleApplyClick} className="apply_button">
+            지금 바로 신청
+          </GradientButton>
+        </>
+      )}
+    </MobileCTA>
+  );
+}
+
+export const MobileCTA = memo(function MobileCTA({
+  title,
+  children,
+  banner,
+}: {
+  title: string;
+  children?: ReactNode;
+  banner?: JSX.Element;
+}) {
+  return (
     <div className="safe-area-bottom fixed left-0 right-0 z-40 flex w-full flex-col items-center overflow-hidden bg-neutral-0/65 text-xxsmall12 lg:hidden">
-      {showInstagramAlert && <PaymentErrorNotification className="border-t" />}
+      {banner}
       <div className="w-full bg-neutral-0/95 py-1.5 text-center font-bold text-static-100">
-        {program?.title}
+        {title}
       </div>
       <div className="flex w-full items-center justify-between px-5 pb-5 pt-3 text-neutral-80 backdrop-blur">
-        {isOutOfDate ? (
-          <NotiButton text={'출시알림신청'} className="early_button" />
-        ) : isAlreadyApplied ? (
-          <DisabledButton />
-        ) : (
-          <>
-            <div>
-              <span className="mb-1 block text-xsmall14 font-medium">
-                {program?.deadline?.format('M월 D일 (dd)')} 마감까지 🚀
-              </span>
-              <div className="flex items-center gap-2">
-                <Duration
-                  disabled={isAlreadyApplied || isOutOfDate}
-                  deadline={program?.deadline ?? dayjs()}
-                />
-                <span className="text-xxsmall12 text-neutral-80">남음</span>
-              </div>
-            </div>
-            <GradientButton onClick={handleApplyClick} className="apply_button">
-              지금 바로 신청
-            </GradientButton>
-          </>
-        )}
+        {children}
       </div>
     </div>
   );
-}
+});
 
 export function DesktopApplyCTA({
   program,
