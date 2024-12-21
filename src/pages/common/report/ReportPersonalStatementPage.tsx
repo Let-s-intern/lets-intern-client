@@ -6,9 +6,11 @@ import { getBaseUrlFromServer, getReportLandingTitle } from '@/utils/url';
 import Header from '@components/common/program/program-detail/header/Header';
 import PromoSection from '@components/common/report/PromoSection';
 import ReportBasicInfo from '@components/common/report/ReportBasicInfo';
+import ReportExampleSection from '@components/common/report/ReportExampleSection';
 import ReportFaqSection from '@components/common/report/ReportFaqSection';
 import ReportPlanSection from '@components/common/report/ReportPlanSection';
 import ReportProgramRecommendSlider from '@components/common/report/ReportProgramRecommendSlider';
+import ReportReviewSection from '@components/common/report/ReportReviewSection';
 import ResearchTeamSection from '@components/common/report/ResearchTeamSection';
 import ServiceProcessSection from '@components/common/report/ServiceProcessSection';
 import LoadingContainer from '@components/common/ui/loading/LoadingContainer';
@@ -89,57 +91,75 @@ const ReportPersonalStatementPage = () => {
           <meta name="twitter:description" content={description} />
         ) : null}
       </Helmet>
-
       {isLoading ? (
         <LoadingContainer />
       ) : (
         <div className="flex w-full flex-col items-center">
-          <div className="mb-6 flex w-full max-w-[1000px] flex-col px-5 md:mb-12 lg:px-0">
-            <Header programTitle={title} />
-
-            <ReportBasicInfo reportBasic={data?.personalStatementInfo} />
+          <div className="flex w-full flex-col bg-black pb-12 text-white md:pb-20">
+            <div className="mx-auto flex w-full max-w-[1000px] flex-col px-5 lg:px-0">
+              <Header programTitle={title} />
+              <ReportBasicInfo
+                reportBasic={data?.personalStatementInfo}
+                color={colors.primary.DEFAULT}
+              />
+            </div>
           </div>
-          <ReportNavigation />
-
-          {/* 취업 연구팀 소개 */}
-          <ResearchTeamSection colors={colors} />
-
-          {/* 가격 및 플랜 */}
-          {priceDetail && report?.reportType && (
-            <ReportPlanSection
+          <ReportNavigation color={colors.primary.DEFAULT} isDark />
+          <div className="flex w-full flex-col items-center gap-y-12 md:gap-y-6">
+            {/* 서비스 소개 */}
+            <div>서비스 소개</div>
+            {/* 리포트 예시 */}
+            <ReportExampleSection
               colors={colors}
-              priceDetail={priceDetail}
-              reportType={report?.reportType}
+              type="PERSONAL_STATEMENT"
+              reportExample={personalStatementContent.reportExample}
             />
-          )}
-
-          {/* 홍보 배너  */}
-          {report?.reportType && (
-            <PromoSection colors={colors} reportType={report.reportType} />
-          )}
-
-          {/* 서비스 이용 안내 */}
-          {report?.reportType && (
-            <ServiceProcessSection
+            {/* 후기 */}
+            <ReportReviewSection
               colors={colors}
-              reportType={report.reportType}
+              type="PERSONAL_STATEMENT"
+              reportReview={personalStatementContent.review}
             />
-          )}
+            {/* 취업 연구팀 소개 */}
+            <ResearchTeamSection colors={colors} />
 
-          {/* FAQ  */}
-          {report?.reportId && (
-            <ReportFaqSection colors={colors} reportId={report?.reportId} />
-          )}
+            {/* 가격 및 플랜 */}
+            {priceDetail && report?.reportType && (
+              <ReportPlanSection
+                colors={colors}
+                priceDetail={priceDetail}
+                reportType={report?.reportType}
+              />
+            )}
 
-          {/* 프로그램 추천 */}
-          {personalStatementContent.reportProgramRecommend && (
-            <ReportProgramRecommendSlider
-              colors={colors}
-              reportProgramRecommend={
-                personalStatementContent.reportProgramRecommend
-              }
-            />
-          )}
+            {/* 홍보 배너  */}
+            {report?.reportType && (
+              <PromoSection colors={colors} reportType={report.reportType} />
+            )}
+
+            {/* 서비스 이용 안내 */}
+            {report?.reportType && (
+              <ServiceProcessSection
+                colors={colors}
+                reportType={report.reportType}
+              />
+            )}
+
+            {/* FAQ  */}
+            {report?.reportId && (
+              <ReportFaqSection colors={colors} reportId={report?.reportId} />
+            )}
+
+            {/* 프로그램 추천 */}
+            {personalStatementContent.reportProgramRecommend && (
+              <ReportProgramRecommendSlider
+                colors={colors}
+                reportProgramRecommend={
+                  personalStatementContent.reportProgramRecommend
+                }
+              />
+            )}
+          </div>
         </div>
       )}
 

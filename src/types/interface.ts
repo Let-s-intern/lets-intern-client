@@ -103,20 +103,28 @@ export type LiveContent = {
   programRecommend?: ProgramRecommend;
 };
 
+export type ReportReviewItem = {
+  id: string | number;
+  name: string;
+  job: string;
+  reportName: string;
+  company: string;
+  isSuccessful: boolean;
+  content: string;
+};
+
 export type ReportReview = {
-  list: {
-    id: string | number;
-    title: string;
-    content: string;
-  }[];
+  list: ReportReviewItem[];
+};
+
+export type ReportExampleItem = {
+  id: string | number;
+  subTitle: string;
+  imgUrl: string;
 };
 
 export type ReportExample = {
-  list: {
-    id: string | number;
-    subTitle: string;
-    imgUrl: string;
-  }[];
+  list: ReportExampleItem[];
 };
 
 export type ReportProgramRecommendItem = {

@@ -1,4 +1,11 @@
-import { Button, IconButton } from '@mui/material';
+import {
+  Button,
+  FormControl,
+  IconButton,
+  InputLabel,
+  MenuItem,
+  Select,
+} from '@mui/material';
 import { MdDelete } from 'react-icons/md';
 
 import { ReportContent, ReportReview } from '@/types/interface';
@@ -13,7 +20,18 @@ interface ReportReviewEditorProps {
 function ReportReviewEditor({ review, setReview }: ReportReviewEditorProps) {
   const onClickAddButton = () => {
     setReview({
-      list: [...review.list, { id: Date.now(), title: '', content: '' }],
+      list: [
+        ...review.list,
+        {
+          id: Date.now(),
+          name: '',
+          job: '',
+          reportName: '',
+          company: '',
+          isSuccessful: false,
+          content: '',
+        },
+      ],
     });
   };
 
@@ -26,6 +44,24 @@ function ReportReviewEditor({ review, setReview }: ReportReviewEditorProps) {
     const newItem = {
       ...list[index],
       [e.target.name]: e.target.value,
+    };
+    const newList = [
+      ...list.slice(0, index),
+      newItem,
+      ...list.slice(index + 1),
+    ];
+
+    setReview({
+      list: newList,
+    });
+  };
+
+  const onChangeIsSuccessFul = (value: boolean, id: string | number) => {
+    const list = review.list;
+    const index = list.findIndex((ele) => ele.id === id);
+    const newItem = {
+      ...list[index],
+      ['isSuccessful']: value,
     };
     const newList = [
       ...list.slice(0, index),
@@ -51,12 +87,49 @@ function ReportReviewEditor({ review, setReview }: ReportReviewEditorProps) {
         {review.list.map((item) => (
           <div key={item.id} className="mb-5 flex w-full items-start gap-3">
             <Input
-              label="제목"
-              name="title"
-              placeholder="제목을 입력하세요"
-              defaultValue={item.title}
+              label="이름"
+              name="name"
+              placeholder="이름"
+              defaultValue={item.name}
               onChange={(e) => onChange(e, item.id)}
             />
+            <Input
+              label="직군"
+              name="job"
+              placeholder="직군"
+              defaultValue={item.job}
+              onChange={(e) => onChange(e, item.id)}
+            />
+            <Input
+              label="진단 서비스 명"
+              name="reportName"
+              placeholder="진단 서비스 명"
+              defaultValue={item.reportName}
+              onChange={(e) => onChange(e, item.id)}
+            />
+            <Input
+              label="지원회사"
+              name="company"
+              placeholder="지원회사"
+              defaultValue={item.company}
+              onChange={(e) => onChange(e, item.id)}
+            />
+            <FormControl size="medium" className="w-24 shrink-0">
+              <InputLabel>합격여부</InputLabel>
+              <Select
+                label="합격여부"
+                name="isSuccessful"
+                placeholder="합격여부"
+                defaultValue={item.isSuccessful ? 'true' : 'false'}
+                onChange={(e) => {
+                  const value = e.target.value === 'true';
+                  onChangeIsSuccessFul(value, item.id);
+                }}
+              >
+                <MenuItem value="true">합격</MenuItem>
+                <MenuItem value="false">불합격</MenuItem>
+              </Select>
+            </FormControl>
             <Input
               label="내용"
               name="content"

@@ -622,7 +622,7 @@ const AdminReportEditPage = () => {
               {/* 레포트 후기 */}
               <section>
                 <ReportReviewEditor
-                  review={content.review}
+                  review={content.review ?? { list: [] }}
                   setReview={(review) =>
                     setContent((prev) => ({ ...prev, review }))
                   }

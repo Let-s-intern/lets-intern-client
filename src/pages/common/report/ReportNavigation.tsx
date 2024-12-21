@@ -18,9 +18,15 @@ export const reportNavigateItems: NavItem[] = [
 
 interface ReportNavigationProps {
   className?: string;
+  isDark?: boolean;
+  color?: string;
 }
 
-const ReportNavigation = ({ className }: ReportNavigationProps) => {
+const ReportNavigation = ({
+  className,
+  isDark,
+  color,
+}: ReportNavigationProps) => {
   const [activeSection, setActiveSection] = useState<string>(
     reportNavigateItems[0].to,
   );
@@ -79,7 +85,8 @@ const ReportNavigation = ({ className }: ReportNavigationProps) => {
   return (
     <nav
       className={twMerge(
-        'report-navigation sticky top-[3.65rem] z-20 flex w-full justify-center gap-x-1 border-b-2 border-neutral-80 bg-white px-6 md:top-[4.275rem] md:gap-x-[100px] lg:top-[4.65rem]',
+        'report-navigation sticky top-[3.65rem] z-20 flex w-full justify-center gap-x-1 px-6 md:top-[4.275rem] md:gap-x-[100px] lg:top-[4.65rem]',
+        isDark ? 'bg-black/90' : 'border-b-2 border-neutral-80 bg-white',
         className,
       )}
     >
@@ -90,8 +97,11 @@ const ReportNavigation = ({ className }: ReportNavigationProps) => {
             className={`border-b-[2.4px] px-1.5 py-4 text-[10px] font-semibold xs:text-xsmall16 md:min-w-[100px]`}
             style={{
               borderBottomColor:
-                navItem.to === activeSection ? '#4d55f5' : 'transparent',
-              color: navItem.to === activeSection ? '#4d55f5' : '#989ba2',
+                navItem.to === activeSection && !isDark
+                  ? (color ?? '#4d55f5')
+                  : 'transparent',
+              color:
+                navItem.to === activeSection ? (color ?? '#4d55f5') : '#989ba2',
             }}
             onClick={() => handleScroll(navItem.to)}
           >

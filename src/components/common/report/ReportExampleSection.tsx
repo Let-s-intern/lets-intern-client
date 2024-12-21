@@ -7,13 +7,14 @@ import Pencil from '@/assets/icons/pencil.svg?react';
 import PrevButton from '@/assets/icons/prev-button.svg?react';
 import Profile from '@/assets/icons/profile.svg?react';
 import { REPORT_EXAMPLE } from '@/data/reportConstant';
-import { ReportColors } from '@/types/interface';
+import { ReportColors, ReportExample } from '@/types/interface';
 import { ReactNode, useRef } from 'react';
 import ReportExampleCard from './ReportExampleCard';
 
 interface ReportExampleSectionProps {
   colors: ReportColors;
   type: ReportType;
+  reportExample?: ReportExample | null;
 }
 
 const ReportExampleStep = ({
@@ -28,7 +29,7 @@ const ReportExampleStep = ({
   return (
     <div className="flex w-full items-center gap-x-2 font-medium text-neutral-0">
       <span
-        className="flex h-5 w-5 items-center justify-center rounded-full text-xxsmall12 md:text-xsmall14"
+        className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-xxsmall12 md:text-xsmall14"
         style={{ backgroundColor: color }}
       >
         {order}
@@ -38,7 +39,11 @@ const ReportExampleStep = ({
   );
 };
 
-const ReportExampleSection = ({ colors, type }: ReportExampleSectionProps) => {
+const ReportExampleSection = ({
+  colors,
+  type,
+  reportExample,
+}: ReportExampleSectionProps) => {
   const scrollRef = useRef<HTMLDivElement>(null);
 
   const example = REPORT_EXAMPLE[type];
@@ -63,13 +68,15 @@ const ReportExampleSection = ({ colors, type }: ReportExampleSectionProps) => {
     }
   };
 
+  if (!reportExample) return null;
+
   return (
     <section className="flex w-full flex-col items-center">
       <div className="flex w-full flex-col">
         <div className="flex flex-col items-center bg-black px-5 pb-10 pt-[70px] md:pb-[60px] md:pt-[100px] lg:px-0">
           <div className="flex w-full max-w-[1000px] flex-col items-center gap-y-[30px] md:gap-y-[60px]">
             <div className="flex w-full flex-col items-center gap-y-5 md:gap-y-[50px]">
-              <h5 className="w-full text-center text-small18 font-semibold text-neutral-45">
+              <h5 className="w-full text-center text-xsmall14 font-semibold text-neutral-45 md:text-small18">
                 리포트 예시
               </h5>
               <div className="flex w-full flex-col items-center gap-y-2 md:gap-y-3">
@@ -115,12 +122,13 @@ const ReportExampleSection = ({ colors, type }: ReportExampleSectionProps) => {
               </ReportExampleStep>
               <ReportExampleStep order={6} color={colors.primary.DEFAULT}>
                 <span className="font-bold">
-                  채용공고 기반 이력서 평가와 피드백
+                  채용공고 기반 {convertReportTypeToDisplayName(type)} 평가와
+                  피드백
                 </span>
                 (*프리미엄 플랜)
               </ReportExampleStep>
               <ReportExampleStep order={7} color={colors.primary.DEFAULT}>
-                이력서 작성{' '}
+                {convertReportTypeToDisplayName(type)} 작성{' '}
                 <span className="font-bold">고민에 대한 1:1 상담</span>
               </ReportExampleStep>
               <Pencil
@@ -189,10 +197,10 @@ const ReportExampleSection = ({ colors, type }: ReportExampleSectionProps) => {
                   className="flex w-full items-stretch gap-x-3 overflow-auto scroll-smooth"
                   ref={scrollRef}
                 >
-                  {example.content.map((content, index) => (
+                  {reportExample.list.map((example, index) => (
                     <ReportExampleCard
                       key={index}
-                      {...content}
+                      example={example}
                       mainColor={colors.primary.DEFAULT}
                       subColor={colors.primary[100]}
                     />

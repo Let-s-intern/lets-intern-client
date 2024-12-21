@@ -64,9 +64,10 @@ export const BASIC_INFO: Record<
 
 interface ReportBasicInfoProps {
   reportBasic: ReportDetail | null | undefined;
+  color?: string;
 }
 
-const ReportBasicInfo = ({ reportBasic }: ReportBasicInfoProps) => {
+const ReportBasicInfo = ({ reportBasic, color }: ReportBasicInfoProps) => {
   const thumbnail = () => {
     switch (reportBasic?.reportType) {
       case 'RESUME':
@@ -93,17 +94,23 @@ const ReportBasicInfo = ({ reportBasic }: ReportBasicInfoProps) => {
   }
 
   return (
-    <div className="flex w-full flex-col gap-y-6">
-      <div className="flex w-full items-center justify-center bg-neutral-70">
+    <div className="flex w-full flex-col gap-y-6 md:gap-y-4">
+      <div className="flex w-full items-center justify-center bg-[#E2E2E2] md:rounded-md">
         <img
           src={thumbnail()}
           alt="리포트 썸네일"
-          className="aspect-[4/3] h-auto w-full rounded-md object-contain md:w-3/5"
+          className="h-auto w-full object-contain md:w-3/5 md:rounded-md"
         />
       </div>
-      <div className="flex w-full flex-col gap-3 md:flex-row md:items-stretch">
+      <span className="w-full text-small18 font-bold text-white md:text-center md:text-medium22">
+        {reportBasic.title}
+      </span>
+      <div
+        className="flex w-full flex-col gap-3 md:flex-row md:items-stretch"
+        style={{ color: color ?? 'white' }}
+      >
         {basicInfo && (
-          <div className="flex w-full flex-col gap-y-5 rounded-md bg-neutral-95 px-4 py-5 md:flex-1">
+          <div className="flex w-full flex-col gap-y-5 rounded-md border border-white/10 bg-neutral-0/75 px-4 py-5 md:flex-1">
             {basicInfo.map((info, index) => (
               <ReportBasicRow
                 key={index}
@@ -114,8 +121,8 @@ const ReportBasicInfo = ({ reportBasic }: ReportBasicInfoProps) => {
           </div>
         )}
         {process && (
-          <div className="flex w-full flex-col gap-y-3 rounded-md bg-neutral-95 px-4 py-5 md:flex-1">
-            <span className="whitespace-pre-wrap break-words text-xsmall14 font-semibold text-primary md:text-xsmall16">{`진단 후, 서류 합격에 한걸음 더 가까워질 거예요.`}</span>
+          <div className="flex w-full flex-col gap-y-3 rounded-md border border-white/10 bg-neutral-0/75 px-4 py-5 md:flex-1">
+            <span className="whitespace-pre-wrap break-words text-xsmall14 font-semibold md:text-xsmall16">{`진단 후, 서류 합격에 한걸음 더 가까워질 거예요.`}</span>
             {process.map((process, index) => (
               <ReportProcessRow key={index} index={index} process={process} />
             ))}
@@ -137,10 +144,10 @@ const ReportBasicRow = ({
 }) => {
   return (
     <div className="flex w-full flex-col gap-y-2">
-      <span className="text-xsmall14 font-semibold text-primary md:text-xsmall16">
+      <span className="text-xsmall14 font-semibold md:text-xsmall16">
         {title}
       </span>
-      <div className="whitespace-pre-wrap break-words text-xsmall14 font-medium text-neutral-0 md:text-xsmall16">
+      <div className="whitespace-pre-wrap break-words text-xsmall14 font-medium text-white md:text-xsmall16">
         {content}
       </div>
     </div>
@@ -156,10 +163,10 @@ const ReportProcessRow = ({
 }) => {
   return (
     <div className="flex w-full items-center gap-x-2">
-      <span className="flex h-4 w-4 items-center justify-center rounded-full bg-primary text-xxsmall12 font-medium text-white">
+      <span className="flex h-4 w-4 items-center justify-center rounded-full bg-neutral-30 text-xxsmall12 font-medium text-white">
         {index + 1}
       </span>
-      <p className="whitespace-pre-wrap break-words text-xsmall14 font-medium text-neutral-0 md:text-xsmall16">
+      <p className="whitespace-pre-wrap break-words text-xsmall14 font-medium text-white md:text-xsmall16">
         {process}
       </p>
     </div>

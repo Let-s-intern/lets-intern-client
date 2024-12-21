@@ -1,18 +1,20 @@
 import CheckIcon from '@/assets/icons/chevron-down.svg?react';
-import { reportExampleContentType } from '@/data/reportConstant';
+import { REPORT_EXAMPLE } from '@/data/reportConstant';
+import { ReportExampleItem } from '@/types/interface';
 
-interface ReportExampleCardProps extends reportExampleContentType {
+interface ReportExampleCardProps {
+  example: ReportExampleItem;
   mainColor: string;
   subColor: string;
 }
 
 const ReportExampleCard = ({
-  title,
-  src,
-  description,
+  example,
   mainColor,
   subColor,
 }: ReportExampleCardProps) => {
+  const description = REPORT_EXAMPLE['RESUME'].content[0].description;
+
   return (
     <div className="flex min-h-full w-[90%] shrink-0 flex-col md:w-[calc(50%-6px)]">
       <div
@@ -20,12 +22,12 @@ const ReportExampleCard = ({
         style={{ backgroundColor: mainColor }}
       >
         <h5 className="whitespace-pre-wrap break-keep text-center text-small18 font-bold text-neutral-0 md:whitespace-normal">
-          {title}
+          {example.subTitle}
         </h5>
         <div className="w-full flex-1 overflow-hidden px-2.5">
           <img
-            src={src}
-            alt={title}
+            src={example.imgUrl}
+            alt={example.subTitle}
             className="h-full w-full object-cover object-top"
           />
         </div>
@@ -35,7 +37,7 @@ const ReportExampleCard = ({
         style={{ backgroundColor: subColor }}
       >
         {description.map((desc, index) => (
-          <div className="flex w-full gap-x-0.5" key={`${title}-${index}`}>
+          <div className="flex w-full gap-x-0.5" key={`${example.id}-${index}`}>
             <CheckIcon width={24} height={24} />
             <p className="flex-1 whitespace-pre-wrap text-xsmall14 font-semibold text-neutral-0">
               {desc}
