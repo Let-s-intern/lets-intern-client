@@ -1,4 +1,4 @@
-import { ReportType } from '@/api/report';
+import { convertReportTypeToDisplayName, ReportType } from '@/api/report';
 import Profile1 from '@/assets/illust/report_profile_1.svg?react';
 import Profile2 from '@/assets/illust/report_profile_2.svg?react';
 import Profile3 from '@/assets/illust/report_profile_3.svg?react';
@@ -16,7 +16,7 @@ const ReportIntroSection = ({ colors, type }: ReportIntroSectionProps) => {
   const reportIntro = REPORT_INTRO[type];
 
   const convertString = (str: string) => {
-    return isDesktop ? str.replace('\n\n', ' ') : str.replace('\n\n', '\n');
+    return isDesktop ? str.replace(/\n\n/g, ' ') : str.replace(/\n\n/g, '\n');
   };
 
   const userProfile = (index: number) => {
@@ -107,7 +107,66 @@ const ReportIntroSection = ({ colors, type }: ReportIntroSectionProps) => {
           />
         </div>
       </div>
-      <div>before after</div>
+      <div className="w-full bg-black">
+        <div className="mx-auto flex w-full max-w-[1000px] flex-col items-center gap-y-5 px-5 py-[70px] md:gap-y-20 md:pb-[140px] md:pt-[120px] lg:px-0">
+          <div className="flex w-full flex-col gap-y-2">
+            <h5
+              className="text-xsmall16 font-bold"
+              style={{ color: colors.primary.DEFAULT }}
+            >{`이제는 합격하는 ${convertReportTypeToDisplayName(type)}로!`}</h5>
+            <div className="flex w-full flex-col gap-y-5">
+              <p className="text-medium22 font-bold text-white">
+                {convertString(reportIntro.section3.title)}
+              </p>
+              <p className="text-xsmall14 text-neutral-70">
+                {convertString(reportIntro.section3.description)}
+              </p>
+            </div>
+          </div>
+          <div className="w-full overflow-x-hidden">
+            <div className="flex w-full items-stretch gap-x-3 overflow-auto pt-8">
+              <div className="relative flex w-[90%] shrink-0 flex-col rounded-sm md:w-[calc(50%-6px)]">
+                <div className="absolute left-0 right-0 top-0 z-10 mx-auto flex w-fit -translate-y-1/2 transform items-center justify-center rounded-full bg-neutral-40 px-5 py-3 text-xsmall16 font-semibold">
+                  BEFORE
+                </div>
+                <div className="flex w-full flex-col rounded-sm bg-neutral-40 px-8 py-5 text-small18 font-bold text-neutral-30">
+                  {reportIntro.section3.before.map((item, index) => (
+                    <div key={`${type}-before-${index}`}>
+                      {index !== 0 && <hr className="border-neutral-40" />}
+                      <div className="flex w-full items-center justify-center py-4">
+                        {convertString(item)}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <div className="relative flex w-[90%] shrink-0 flex-col rounded-sm md:w-[calc(50%-6px)]">
+                <div
+                  className="absolute left-0 right-0 top-0 z-10 mx-auto flex w-fit -translate-y-1/2 transform items-center justify-center rounded-full border-2 bg-white px-5 py-3 text-xsmall16 font-semibold"
+                  style={{ borderColor: colors.secondary.DEFAULT }}
+                >
+                  AFTER
+                </div>
+                <div
+                  className="flex w-full flex-col rounded-sm px-8 py-5 text-small18 font-bold text-neutral-0"
+                  style={{ backgroundColor: colors.secondary[50] }}
+                >
+                  {reportIntro.section3.after.map((item, index) => (
+                    <div key={`${type}-after-${index}`}>
+                      {index !== 0 && (
+                        <hr style={{ borderColor: colors.secondary.DEFAULT }} />
+                      )}
+                      <div className="flex w-full items-center justify-center py-4">
+                        {convertString(item)}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
       <div>추천</div>
     </section>
   );
