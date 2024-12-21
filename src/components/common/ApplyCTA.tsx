@@ -61,6 +61,7 @@ export function MobileApplyCTA({
 
   return (
     <MobileCTA
+      className="flex flex-col items-center lg:hidden"
       title={program?.title ?? ''}
       banner={
         showInstagramAlert ? (
@@ -101,13 +102,20 @@ export const MobileCTA = memo(function MobileCTA({
   title,
   children,
   banner,
+  className,
 }: {
   title: string;
   children?: ReactNode;
   banner?: JSX.Element;
+  className?: string;
 }) {
   return (
-    <div className="safe-area-bottom fixed left-0 right-0 z-40 flex w-full flex-col items-center overflow-hidden bg-neutral-0/65 text-xxsmall12 lg:hidden">
+    <div
+      className={twMerge(
+        'safe-area-bottom fixed left-0 right-0 z-40 w-full overflow-hidden bg-neutral-0/65 text-xxsmall12',
+        className,
+      )}
+    >
       {banner}
       <div className="w-full bg-neutral-0/95 py-1.5 text-center font-bold text-static-100">
         {title}
