@@ -33,7 +33,7 @@ const ReportIntroSection = ({ colors, type }: ReportIntroSectionProps) => {
   };
 
   return (
-    <section className="flex w-full flex-col items-center whitespace-pre-wrap break-keep text-center">
+    <section className="flex w-full flex-col items-center whitespace-pre-wrap break-keep text-center text-neutral-0">
       <div className="flex w-full max-w-[1000px] flex-col gap-y-10 px-5 py-[70px] md:gap-y-20 md:pb-[150px] md:pt-[110px] lg:px-0">
         <div className="flex w-full flex-col gap-y-6 md:gap-y-[50px]">
           <h5 className="w-full text-center text-xsmall14 font-semibold text-neutral-45 md:text-small18">
@@ -77,7 +77,36 @@ const ReportIntroSection = ({ colors, type }: ReportIntroSectionProps) => {
           ))}
         </div>
       </div>
-      <div>문제</div>
+      <div className="w-full bg-neutral-90">
+        <div className="mx-auto flex w-full max-w-[1000px] flex-col items-center gap-y-6 px-5 py-[70px] md:gap-y-[60px] md:py-[110px] md:pb-[130px] lg:px-0">
+          <div className="flex w-full flex-col gap-y-2 md:gap-y-3">
+            <h6
+              className="text-xsmall16 font-bold md:text-small20"
+              style={{ color: colors.primary.DEFAULT }}
+            >
+              대체 뭐가 문제일까?
+            </h6>
+            <div className="flex w-full flex-col gap-y-5 md:gap-y-[30px]">
+              <p className="text-medium22 font-bold md:text-xlarge30">
+                {convertString(reportIntro.section2.title)}
+              </p>
+              <div className="flex w-full flex-col text-neutral-30 md:gap-y-2">
+                <p className="text-xsmall16 font-semibold md:text-medium24">
+                  {convertString(reportIntro.section2.subTitle)}
+                </p>
+                <p className="text-xsmall14 md:text-small20">
+                  {convertString(reportIntro.section2.description)}
+                </p>
+              </div>
+            </div>
+          </div>
+          <img
+            src={reportIntro.section2.pointSrc}
+            alt="report_intro"
+            className="h-auto w-full md:w-[70%]"
+          />
+        </div>
+      </div>
       <div>before after</div>
       <div>추천</div>
     </section>

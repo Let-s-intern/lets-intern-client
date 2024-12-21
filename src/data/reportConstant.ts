@@ -317,9 +317,9 @@ export const REPORT_INTRO: Record<ReportType, reportIntroItemType> = {
       ],
     },
     section2: {
-      title: `매번 서류 전형에서 탈락하는 이유는\n나의 역량을 제대로 보여주지 못했기 때문일 수 있습니다.`,
+      title: `매번 서류 전형에서 탈락하는 이유는\n나의 역량을 제대로 보여주지\n\n못했기 때문일 수 있습니다.`,
       subTitle: '채용 담당자는 단 몇 초 만에 서류를 스캔합니다.',
-      description: `평가자의 시선을 사로잡는 구조, 직무와 딱 맞는 내용, 그리고 설득력 있는 표현을 갖춘다면,\n서류 전형 합격은 더 이상 나와 동떨어진 이야기가 아닙니다.`,
+      description: `평가자의 시선을 사로잡는 구조, 직무와 딱 맞는 내용,\n\n그리고 설득력 있는 표현을 갖춘다면,\n서류 전형 합격은 더 이상 나와 동떨어진 이야기가 아닙니다.`,
       pointSrc: '/images/report/report_intro_resume.png',
     },
     section3: {
