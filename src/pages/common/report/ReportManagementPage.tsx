@@ -22,7 +22,6 @@ import { download } from '@/lib/download';
 import { twMerge } from '@/lib/twMerge';
 import useAuthStore from '@/store/useAuthStore';
 import useReportApplicationStore from '@/store/useReportApplicationStore';
-import { ReportHeader } from '@components/common/report/ReportIntroSection';
 import Tooltip from '@components/common/report/Tooltip';
 import Badge from '@components/common/ui/Badge';
 
@@ -187,6 +186,19 @@ const ReportManagementPage = () => {
   const filterType = (searchParams.get('type') ??
     'all') as ReportFilter['type'];
 
+  const reportLink = () => {
+    switch (filterType) {
+      case 'resume':
+        return '/report/landing/resume';
+      case 'personal_statement':
+        return '/report/landing/personal-statement';
+      case 'portfolio':
+        return '/report/landing/portfolio';
+      default:
+        return '/report/landing/resume';
+    }
+  };
+
   const { data, status } = useGetMyReports();
 
   const filteredApplications = data?.myReportInfos.filter((report) => {
@@ -218,8 +230,7 @@ const ReportManagementPage = () => {
   }, [data?.myReportInfos.length, navigate, status]);
 
   return (
-    <div className="mx-auto max-w-5xl px-5 pb-10">
-      <ReportHeader />
+    <div className="mx-auto max-w-5xl px-5 pb-10 pt-8">
       <header className="my-3 flex items-center gap-2 text-xsmall16 font-bold">
         <h1>서류 진단서</h1>
         <Tooltip className="text-xxsmall12 font-normal">
@@ -474,7 +485,7 @@ const ReportManagementPage = () => {
       </div>
       <div className="my-3">
         <Link
-          to="/report/landing"
+          to={reportLink()}
           className="add_button_click flex h-12 w-full items-center justify-center rounded-md border-2 border-primary bg-neutral-100 font-medium text-primary-dark transition hover:border-primary-light hover:bg-white"
         >
           추가 신청하기
