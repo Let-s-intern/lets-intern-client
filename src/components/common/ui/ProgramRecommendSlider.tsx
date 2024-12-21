@@ -37,7 +37,7 @@ function ProgramRecommendSlider({
       )}
       ref={scrollRef}
     >
-      <div className="flex min-w-fit gap-4 md:gap-8">
+      <div className="flex min-w-fit gap-4 md:gap-7">
         {list.map((item) => (
           <div
             key={item.id}

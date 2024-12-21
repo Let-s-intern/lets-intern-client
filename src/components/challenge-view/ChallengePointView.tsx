@@ -70,10 +70,6 @@ const REWARD = {
 const { CAREER_START, PERSONAL_STATEMENT, PORTFOLIO } =
   challengeTypeSchema.enum;
 
-const textShadowStyle = {
-  textShadow: '0 0 8.4px rgba(33, 33, 37, 0.40)',
-};
-
 const ChallengePointView = ({
   point,
   startDate,

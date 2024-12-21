@@ -20,13 +20,16 @@ export default function useHasScroll() {
   const scrollRef = useRef<HTMLDivElement>(null);
   const [hasScroll, setHasScroll] = useState(true);
 
-  useEffect(() => {
-    const onResize = () => {
-      setHasScroll(
-        scrollRef.current?.scrollWidth !== scrollRef.current?.offsetWidth,
-      );
-    };
+  console.log('scrollWidth:', scrollRef.current?.scrollWidth);
+  console.log('offsetWidth:', scrollRef.current?.offsetWidth);
 
+  const onResize = () => {
+    setHasScroll(
+      scrollRef.current?.scrollWidth !== scrollRef.current?.offsetWidth,
+    );
+  };
+
+  useEffect(() => {
     onResize(); // 최초 실행
     window.addEventListener('resize', throttle(onResize, 250));
 
