@@ -1,3 +1,4 @@
+import { twMerge } from '@/lib/twMerge';
 import GradientButton from '@components/common/program/program-detail/button/GradientButton';
 import NotiButton from '@components/common/program/program-detail/button/NotiButton';
 import { Duration } from '@components/Duration';
@@ -129,7 +130,7 @@ export function DesktopApplyCTA({
       : false;
 
   return (
-    <div className="fixed bottom-4 left-0 right-0 z-40 mx-auto hidden w-full max-w-[1000px] items-center justify-between overflow-hidden rounded-sm bg-neutral-0/65 px-5 py-4 backdrop-blur lg:flex">
+    <DesktopCTA className="hidden items-center justify-between lg:flex">
       <div className="flex flex-col gap-1">
         <span className="font-bold text-neutral-100">{program?.title}</span>
         <span className="text-xsmall14 font-medium text-neutral-80">
@@ -156,6 +157,25 @@ export function DesktopApplyCTA({
           </>
         )}
       </div>
-    </div>
+    </DesktopCTA>
   );
 }
+
+export const DesktopCTA = memo(function DesktopCTA({
+  children,
+  className,
+}: {
+  children?: ReactNode;
+  className?: string;
+}) {
+  return (
+    <div
+      className={twMerge(
+        'fixed bottom-4 left-0 right-0 z-40 mx-auto w-full max-w-[1000px] overflow-hidden rounded-sm bg-neutral-0/65 px-5 py-4 backdrop-blur',
+        className,
+      )}
+    >
+      {children}
+    </div>
+  );
+});

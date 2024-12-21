@@ -23,6 +23,8 @@ import { twMerge } from '@/lib/twMerge';
 import { reportTypeSchema } from '@/schema';
 import useReportApplicationStore from '@/store/useReportApplicationStore';
 import clsx from 'clsx';
+import { MobileCTA } from '../ApplyCTA';
+import GradientButton from '../program/program-detail/button/GradientButton';
 import { default as BaseButton } from '../ui/button/BaseButton';
 import {
   ReportFormCheckboxControlLabel,
@@ -468,19 +470,16 @@ const ReportApplyBottomSheet = React.forwardRef<
           </div>
         ) : null}
 
-        {!isDrawerOpen ? (
-          <div className="bg-white pb-2">
-            <BaseButton
-              className="apply_button_click w-full text-small18"
+        {!isDrawerOpen && (
+          <MobileCTA title={`${report.title} 피드백 REPORT`}>
+            <GradientButton
+              className="w-full"
               onClick={() => setIsDrawerOpen(true)}
             >
-              {report.reportType
-                ? convertReportTypeToDisplayName(report.reportType ?? RESUME)
-                : ''}{' '}
-              서류 진단 신청하기
-            </BaseButton>
-          </div>
-        ) : null}
+              지금 바로 신청
+            </GradientButton>
+          </MobileCTA>
+        )}
 
         {isDrawerOpen ? (
           <div className="sticky bottom-2 flex items-center gap-2">
