@@ -119,3 +119,164 @@ export const REPORT_EXAMPLE: Record<
     ],
   },
 };
+
+export type reportInterviewType = {
+  title: string;
+  question: string;
+  answer: {
+    title: string;
+    content: string;
+  };
+  user: {
+    img: string;
+    reportName: string;
+    job: string;
+    name: string;
+  };
+};
+
+export const REPORT_INTERVIEW: Record<
+  ReportType,
+  {
+    interviewList: reportInterviewType[];
+  }
+> = {
+  RESUME: {
+    interviewList: [
+      {
+        title: 'A기업 합격',
+        question:
+          '이력서 피드백 REPORT를 이용하시면서 어떤 점이 가장 도움이 되었나요?',
+        answer: {
+          title: '구체적인 첨삭 제안과 합격자 예시가 큰 도움이 되었어요.',
+          content:
+            '10번 지원하면 10번 다 떨어지던 서류가 이제는 10번 지원하면 N번은 합격하는 서류로 바뀌었어요. 구체적인 첨삭 제안과 합격자 예시가 큰 도움이 되었습니다.',
+        },
+        user: {
+          img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQzCW8ayM9K_iNzX81NSjgpGcl30jDvsTSiIg&s',
+          reportName: '이력서 진단',
+          job: '프로덕트 디자이너',
+          name: '임호정',
+        },
+      },
+      {
+        title: 'B기업 합격',
+        question: 'Q. 서비스 이용 전, 가장 고민되던 부분은 무엇이었나요?',
+        answer: {
+          title: '탈락의 이유를 몰라서 답답했어요.',
+          content:
+            '항상 탈락의 이유를 경험 부족이라고 생각했는데, 이번 진단 리포트를 통해 제가 가진 경험과 역량을 제대로 표현하지 못한 게 문제라는 걸 알게 되었어요.',
+        },
+        user: {
+          img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQzCW8ayM9K_iNzX81NSjgpGcl30jDvsTSiIg&s',
+          reportName: '이력서 피드백',
+          job: '백엔드 개발자',
+          name: '임호정',
+        },
+      },
+      {
+        title: 'A기업 합격',
+        question:
+          '이력서 피드백 REPORT를 이용하시면서 어떤 점이 가장 도움이 되었나요?',
+        answer: {
+          title: '구체적인 첨삭 제안과 합격자 예시가 큰 도움이 되었어요.',
+          content:
+            '10번 지원하면 10번 다 떨어지던 서류가 이제는 10번 지원하면 N번은 합격하는 서류로 바뀌었어요. 구체적인 첨삭 제안과 합격자 예시가 큰 도움이 되었습니다.',
+        },
+        user: {
+          img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQzCW8ayM9K_iNzX81NSjgpGcl30jDvsTSiIg&s',
+          reportName: '이력서 진단',
+          job: '프로덕트 디자이너',
+          name: '임호정',
+        },
+      },
+      {
+        title: 'B기업 합격',
+        question: 'Q. 서비스 이용 전, 가장 고민되던 부분은 무엇이었나요?',
+        answer: {
+          title: '탈락의 이유를 몰라서 답답했어요.',
+          content:
+            '항상 탈락의 이유를 경험 부족이라고 생각했는데, 이번 진단 리포트를 통해 제가 가진 경험과 역량을 제대로 표현하지 못한 게 문제라는 걸 알게 되었어요.',
+        },
+        user: {
+          img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQzCW8ayM9K_iNzX81NSjgpGcl30jDvsTSiIg&s',
+          reportName: '이력서 피드백',
+          job: '백엔드 개발자',
+          name: '임호정',
+        },
+      },
+    ],
+  },
+
+  PERSONAL_STATEMENT: {
+    interviewList: [
+      {
+        title: 'A기업 합격',
+        question:
+          '이력서 피드백 REPORT를 이용하시면서 어떤 점이 가장 도움이 되었나요?',
+        answer: {
+          title: '구체적인 첨삭 제안과 합격자 예시가 큰 도움이 되었어요.',
+          content:
+            '10번 지원하면 10번 다 떨어지던 서류가 이제는 10번 지원하면 N번은 합격하는 서류로 바뀌었어요. 구체적인 첨삭 제안과 합격자 예시가 큰 도움이 되었습니다.',
+        },
+        user: {
+          img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQzCW8ayM9K_iNzX81NSjgpGcl30jDvsTSiIg&s',
+          reportName: '이력서 진단',
+          job: '프로덕트 디자이너',
+          name: '임호정',
+        },
+      },
+      {
+        title: 'B기업 합격',
+        question: 'Q. 서비스 이용 전, 가장 고민되던 부분은 무엇이었나요?',
+        answer: {
+          title: '탈락의 이유를 몰라서 답답했어요.',
+          content:
+            '항상 탈락의 이유를 경험 부족이라고 생각했는데, 이번 진단 리포트를 통해 제가 가진 경험과 역량을 제대로 표현하지 못한 게 문제라는 걸 알게 되었어요.',
+        },
+        user: {
+          img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQzCW8ayM9K_iNzX81NSjgpGcl30jDvsTSiIg&s',
+          reportName: '이력서 피드백',
+          job: '백엔드 개발자',
+          name: '임호정',
+        },
+      },
+    ],
+  },
+
+  PORTFOLIO: {
+    interviewList: [
+      {
+        title: 'A기업 합격',
+        question:
+          '이력서 피드백 REPORT를 이용하시면서 어떤 점이 가장 도움이 되었나요?',
+        answer: {
+          title: '구체적인 첨삭 제안과 합격자 예시가 큰 도움이 되었어요.',
+          content:
+            '10번 지원하면 10번 다 떨어지던 서류가 이제는 10번 지원하면 N번은 합격하는 서류로 바뀌었어요. 구체적인 첨삭 제안과 합격자 예시가 큰 도움이 되었습니다.',
+        },
+        user: {
+          img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQzCW8ayM9K_iNzX81NSjgpGcl30jDvsTSiIg&s',
+          reportName: '이력서 진단',
+          job: '프로덕트 디자이너',
+          name: '임호정',
+        },
+      },
+      {
+        title: 'B기업 합격',
+        question: 'Q. 서비스 이용 전, 가장 고민되던 부분은 무엇이었나요?',
+        answer: {
+          title: '탈락의 이유를 몰라서 답답했어요.',
+          content:
+            '항상 탈락의 이유를 경험 부족이라고 생각했는데, 이번 진단 리포트를 통해 제가 가진 경험과 역량을 제대로 표현하지 못한 게 문제라는 걸 알게 되었어요.',
+        },
+        user: {
+          img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQzCW8ayM9K_iNzX81NSjgpGcl30jDvsTSiIg&s',
+          reportName: '이력서 피드백',
+          job: '백엔드 개발자',
+          name: '임호정',
+        },
+      },
+    ],
+  },
+};
