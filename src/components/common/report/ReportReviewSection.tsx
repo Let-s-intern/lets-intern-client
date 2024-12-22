@@ -1,5 +1,6 @@
 import { convertReportTypeToDisplayName, ReportType } from '@/api/report';
 import { REPORT_INTERVIEW } from '@/data/reportConstant';
+import { personalStatementColors } from '@/pages/common/report/ReportPersonalStatementPage';
 import { resumeColors } from '@/pages/common/report/ReportResumePage';
 import { ReportReview } from '@/types/interface';
 import ReportInterviewCard from './ReportInterviewCard';
@@ -15,6 +16,20 @@ const ReportReviewSection = ({
   reportReview,
 }: ReportReviewSectionProps) => {
   const interview = REPORT_INTERVIEW[type];
+  const subHeaderStyle = {
+    color:
+      type === 'PERSONAL_STATEMENT'
+        ? personalStatementColors.C34AFF
+        : resumeColors._171918,
+  };
+  const mainColor =
+    type === 'PERSONAL_STATEMENT'
+      ? [personalStatementColors.CA60FF, personalStatementColors.F3A2FF]
+      : [resumeColors._14BCFF, resumeColors._2CE282];
+  const subColor =
+    type === 'PERSONAL_STATEMENT'
+      ? [personalStatementColors.F9EEFF, personalStatementColors.FCE9FF]
+      : [resumeColors.EEFAFF, resumeColors.E8FDF2];
 
   return (
     <div className="flex w-full flex-col bg-black">
@@ -26,7 +41,7 @@ const ReportReviewSection = ({
           <div className="flex w-full flex-col gap-y-2 whitespace-pre-wrap break-keep">
             <span
               className="w-full text-center text-xsmall16 font-bold md:text-small20"
-              style={{ color: resumeColors._171918 }}
+              style={subHeaderStyle}
             >{`${convertReportTypeToDisplayName(type)} 피드백 REPORT, 실제로 효과 있을까?`}</span>
             <p className="w-full text-center text-medium22 font-bold text-white md:text-xlarge30">
               실제 사용자와의 인터뷰를 통해{' '}
@@ -43,14 +58,8 @@ const ReportReviewSection = ({
                 <ReportInterviewCard
                   key={`report-interview-${index}`}
                   interview={item}
-                  mainColor={
-                    index % 2 === 0
-                      ? resumeColors._14BCFF
-                      : resumeColors._2CE282
-                  }
-                  subColor={
-                    index % 2 === 0 ? resumeColors.EEFAFF : resumeColors.E8FDF2
-                  }
+                  mainColor={index % 2 === 0 ? mainColor[0] : mainColor[1]}
+                  subColor={index % 2 === 0 ? subColor[0] : subColor[1]}
                 />
               ))}
             </div>
@@ -62,7 +71,11 @@ const ReportReviewSection = ({
                   <ReportReviewCard
                     key={`report-review-${index}`}
                     review={review}
-                    mainColor={resumeColors._2CE282}
+                    mainColor={
+                      type === 'PERSONAL_STATEMENT'
+                        ? personalStatementColors.C34AFF
+                        : resumeColors._2CE282
+                    }
                   />
                 ))}
               </div>

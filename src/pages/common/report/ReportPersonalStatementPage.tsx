@@ -30,6 +30,7 @@ export const personalStatementColors = {
   CA60FF: '#CA60FF',
   EB6CFF: '#EB6CFF',
   F3A2FF: '#F3A2FF',
+  FCE9FF: '#FCE9FF',
 };
 
 const ReportPersonalStatementPage = () => {
