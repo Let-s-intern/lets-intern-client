@@ -28,7 +28,7 @@ const ReportProgramRecommendSlider = ({
         ? personalStatementColors.C34AFF
         : resumeColors._171918,
   };
-  const BUTTON_STYLE = {
+  const buttonStyle = {
     color:
       reportType === 'PERSONAL_STATEMENT'
         ? personalStatementColors.C34AFF
@@ -204,7 +204,7 @@ const ReportProgramRecommendSlider = ({
         className="-mx-5 mt-8 max-w-[1000px] px-5 md:mt-14 lg:mx-auto lg:px-0"
         list={slideList}
         buttonClassName="bg-white font-semibold"
-        buttonStyle={BUTTON_STYLE}
+        buttonStyle={buttonStyle}
       />
     </section>
   );

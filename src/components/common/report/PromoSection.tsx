@@ -16,19 +16,19 @@ interface PromoSectionProps {
 }
 
 function PromoSection({ reportType }: PromoSectionProps) {
-  const SUB_HEADER_STYLE = {
+  const subHeaderStyle = {
     color:
       reportType === 'PERSONAL_STATEMENT'
         ? personalStatementColors.C34AFF
         : resumeColors._171918,
   };
-  const SECTION_STYLE = {
+  const sectionStyle = {
     backgroundColor:
       reportType === 'PERSONAL_STATEMENT'
         ? personalStatementColors.F9EEFF
         : resumeColors.E8FDF2,
   };
-  const BORDER_STYLE = {
+  const borderStyle = {
     backgroundImage: `linear-gradient(to right, ${reportType === 'PERSONAL_STATEMENT' ? personalStatementColors.F3A2FF : resumeColors._2CE282}, ${reportType === 'PERSONAL_STATEMENT' ? personalStatementColors.C34AFF : resumeColors._2CDDEA})`,
   };
 
@@ -63,10 +63,10 @@ function PromoSection({ reportType }: PromoSectionProps) {
   return (
     <section
       className="w-full px-5 py-16 md:pb-32 md:pt-28 lg:px-0"
-      style={SECTION_STYLE}
+      style={sectionStyle}
     >
       <header className="mb-10">
-        <SubHeader className="mb-2 md:mb-3" style={SUB_HEADER_STYLE}>
+        <SubHeader className="mb-2 md:mb-3" style={subHeaderStyle}>
           {SUB_HEADER}
         </SubHeader>
         <MainHeader>
@@ -77,7 +77,7 @@ function PromoSection({ reportType }: PromoSectionProps) {
       <main className="relative flex max-w-[800px] flex-col gap-5 bg-white px-5 py-7 text-center md:mx-auto md:gap-11 md:py-10">
         <div
           className="absolute left-0 top-0 h-[6px] w-full"
-          style={BORDER_STYLE}
+          style={borderStyle}
         />
         {contentList.map((item, index) => (
           <div key={index}>

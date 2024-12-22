@@ -30,7 +30,7 @@ const ReportPlanSection = ({
   priceDetail,
   reportType,
 }: ReportPlanSectionProps) => {
-  const SUB_HEADER_STYLE = {
+  const subHeaderStyle = {
     color:
       reportType === 'PERSONAL_STATEMENT'
         ? personalStatementColors.C34AFF
@@ -126,7 +126,7 @@ const ReportPlanSection = ({
     <section className="w-full bg-neutral-90 px-5 py-16 md:pb-36 md:pt-28">
       <header>
         <SectionHeader className="mb-6">{SECTION_HEADER}</SectionHeader>
-        <SubHeader className="mb-1 md:mb-3" style={SUB_HEADER_STYLE}>
+        <SubHeader className="mb-1 md:mb-3" style={subHeaderStyle}>
           {SUB_HEADER}
         </SubHeader>
         <MainHeader>{MAIN_HEADER}</MainHeader>

@@ -17,19 +17,19 @@ interface ServiceProcessSectionProps {
 }
 
 const ServiceProcessSection = ({ reportType }: ServiceProcessSectionProps) => {
-  const SUB_HEADER_STYLE = {
+  const subHeaderStyle = {
     color:
       reportType === 'PERSONAL_STATEMENT'
         ? personalStatementColors.C34AFF
         : resumeColors._171918,
   };
-  const MAIN_CARD_STYLE = {
+  const mainCardStyle = {
     backgroundColor:
       reportType === 'PERSONAL_STATEMENT'
         ? personalStatementColors.CA60FF
         : resumeColors._2CE282,
   };
-  const NUMBER_STYLE = {
+  const numberStyle = {
     backgroundColor:
       reportType === 'PERSONAL_STATEMENT'
         ? personalStatementColors.F9EEFF
@@ -39,11 +39,11 @@ const ServiceProcessSection = ({ reportType }: ServiceProcessSectionProps) => {
         ? personalStatementColors.CA60FF
         : 'black',
   };
-  const BADGE_STYLE = {
+  const badgeStyle = {
     backgroundColor:
       reportType === 'PERSONAL_STATEMENT' ? '#27272D' : resumeColors._14BCFF,
   };
-  const CONTENT_BOX_STYLE = {
+  const contentBoxStyle = {
     backgroundColor:
       reportType === 'PERSONAL_STATEMENT'
         ? personalStatementColors.F9EEFF
@@ -54,7 +54,7 @@ const ServiceProcessSection = ({ reportType }: ServiceProcessSectionProps) => {
     <section className="w-full px-5 py-16 md:py-28 lg:px-0">
       <header>
         <SectionHeader className="mb-6">{SECTION_HEADER}</SectionHeader>
-        <SubHeader className="mb-1 md:mb-3" style={SUB_HEADER_STYLE}>
+        <SubHeader className="mb-1 md:mb-3" style={subHeaderStyle}>
           {SUB_HEADER}
         </SubHeader>
         <MainHeader>
@@ -66,9 +66,9 @@ const ServiceProcessSection = ({ reportType }: ServiceProcessSectionProps) => {
 
       <main className="mx-auto mt-10 flex max-w-[690px] flex-col items-center gap-5 md:mt-11 md:gap-8">
         {/* 1단계 */}
-        <ProcessCard style={MAIN_CARD_STYLE}>
+        <ProcessCard style={mainCardStyle}>
           <NumberedTitle
-            numberStyle={NUMBER_STYLE}
+            numberStyle={numberStyle}
             className={clsx({
               'text-white': reportType === 'PERSONAL_STATEMENT',
             })}
@@ -89,7 +89,7 @@ const ServiceProcessSection = ({ reportType }: ServiceProcessSectionProps) => {
                 지원 직무와 고민 사항을 작성해 주세요.
               </NumberedContent>
               <div className="mt-3 flex items-start gap-2">
-                <Badge style={BADGE_STYLE}>작성꿀팁</Badge>
+                <Badge style={badgeStyle}>작성꿀팁</Badge>
                 <p className="text-xxsmall12 font-semibold md:text-xsmall16 md:font-medium">
                   어떤 부분에서 어려움을 겪고 있는지,
                   <br className="md:hidden" /> 무엇을 개선하고 싶은지
@@ -112,7 +112,7 @@ const ServiceProcessSection = ({ reportType }: ServiceProcessSectionProps) => {
                 </ContentBox>
                 <ContentBox
                   className="rounded-xxs py-1 text-center text-xxsmall12 font-semibold md:rounded-xs md:py-2.5 md:text-xsmall16"
-                  style={CONTENT_BOX_STYLE}
+                  style={contentBoxStyle}
                 >
                   결제 후, 원하는 시점에 제출
                 </ContentBox>
@@ -168,9 +168,9 @@ const ServiceProcessSection = ({ reportType }: ServiceProcessSectionProps) => {
         </ProcessCard>
 
         {/* 3단계 */}
-        <ProcessCard style={MAIN_CARD_STYLE}>
+        <ProcessCard style={mainCardStyle}>
           <NumberedTitle
-            numberStyle={NUMBER_STYLE}
+            numberStyle={numberStyle}
             number={3}
             className={clsx({
               'text-white': reportType === 'PERSONAL_STATEMENT',
@@ -203,9 +203,9 @@ const ServiceProcessSection = ({ reportType }: ServiceProcessSectionProps) => {
         </ProcessCard>
 
         {/* 4단계 */}
-        <ProcessCard style={MAIN_CARD_STYLE}>
+        <ProcessCard style={mainCardStyle}>
           <NumberedTitle
-            numberStyle={NUMBER_STYLE}
+            numberStyle={numberStyle}
             number={4}
             className={clsx({
               'text-white': reportType === 'PERSONAL_STATEMENT',
@@ -229,7 +229,7 @@ const ServiceProcessSection = ({ reportType }: ServiceProcessSectionProps) => {
                 진행됩니다.
               </NumberedContent>
               <div className="mt-3 flex items-start gap-2">
-                <Badge style={BADGE_STYLE}>진행 꿀팁</Badge>
+                <Badge style={badgeStyle}>진행 꿀팁</Badge>
                 <p className="text-xxsmall12 font-semibold md:text-xsmall16 md:font-medium">
                   리포트 확인 후 궁금한 점이나 추가 질문을 미리 준비하시면 더욱
                   알찬 시간을 보낼 수 있어요!

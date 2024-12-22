@@ -15,7 +15,7 @@ interface ReportFaqSectionProps {
 }
 
 const ReportFaqSection = ({ reportType, reportId }: ReportFaqSectionProps) => {
-  const SUB_HEADER_STYLE = {
+  const subHeaderStyle = {
     color:
       reportType === 'PERSONAL_STATEMENT'
         ? personalStatementColors.C34AFF
@@ -27,7 +27,7 @@ const ReportFaqSection = ({ reportType, reportId }: ReportFaqSectionProps) => {
   return (
     <section className="w-full px-5 pb-16 md:pb-32 md:pt-24 lg:px-0">
       <header>
-        <SubHeader className="mb-2 md:mb-3" style={SUB_HEADER_STYLE}>
+        <SubHeader className="mb-2 md:mb-3" style={subHeaderStyle}>
           {SUB_HEADER}
         </SubHeader>
         <MainHeader>{MAIN_HEADER}</MainHeader>
