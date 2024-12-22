@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { NavLink, Outlet, useNavigate, useParams } from 'react-router-dom';
 import { z } from 'zod';
 import { useAdminCurrentChallenge } from '../../../../context/CurrentAdminChallengeProvider';
-import { challenges } from '../../../../schema';
+import { challengeSchema } from '../../../../schema';
 import axios from '../../../../utils/axios';
 
 const getNavLinks = (programId?: string | number) => {
@@ -43,7 +43,7 @@ const ChallengeAdminLayout = () => {
     queryKey: ['admin', 'challenge'],
     queryFn: async () => {
       const res = await axios.get(`/challenge?size=1000`);
-      return res.data.data as z.infer<typeof challenges>;
+      return res.data.data as z.infer<typeof challengeSchema>;
     },
   });
 

@@ -24,7 +24,7 @@ import {
 import ReportApplyBottomSheet from '../../../components/common/report/ReportApplyBottomSheet';
 import ReportNavigation from './ReportNavigation';
 
-const colors: ReportColors = {
+export const portfolioColors: ReportColors = {
   primary: {
     DEFAULT: '#11AC5C',
     50: '#E8FDF2',
@@ -99,55 +99,61 @@ const ReportPortfolioPage = () => {
               <Header programTitle={'서류완성의 시작과 끝은 진단에서부터'} />
               <ReportBasicInfo
                 reportBasic={data?.portfolioInfo}
-                color={colors.primary.DEFAULT}
+                color={portfolioColors.primary.DEFAULT}
               />
             </div>
           </div>
-          <ReportNavigation color={colors.primary.DEFAULT} isDark />
+          <ReportNavigation color={portfolioColors.primary.DEFAULT} isDark />
           <div className="flex w-full flex-col items-center gap-y-12 md:gap-y-6">
             {/* 서비스 소개 */}
-            <ReportIntroSection colors={colors} type="PORTFOLIO" />
+            <ReportIntroSection colors={portfolioColors} type="PORTFOLIO" />
             {/* 리포트 예시 */}
             <ReportExampleSection
-              colors={colors}
+              colors={portfolioColors}
               type="PORTFOLIO"
               reportExample={portfolioContent.reportExample}
             />
             {/* 후기 */}
             <ReportReviewSection
-              colors={colors}
+              colors={portfolioColors}
               type="PORTFOLIO"
               reportReview={portfolioContent.review}
             />
             {/* 취업 연구팀 소개 */}
-            <ResearchTeamSection colors={colors} />
+            <ResearchTeamSection colors={portfolioColors} />
             {/* 가격 및 플랜 */}
             {priceDetail && report?.reportType && (
               <ReportPlanSection
-                colors={colors}
+                colors={portfolioColors}
                 priceDetail={priceDetail}
                 reportType={report?.reportType}
               />
             )}
             {/* 홍보 배너  */}
             {report?.reportType && (
-              <PromoSection colors={colors} reportType={report.reportType} />
+              <PromoSection
+                colors={portfolioColors}
+                reportType={report.reportType}
+              />
             )}
             {/* 서비스 이용 안내 */}
             {report?.reportType && (
               <ServiceProcessSection
-                colors={colors}
+                colors={portfolioColors}
                 reportType={report.reportType}
               />
             )}
             {/* FAQ  */}
             {report?.reportId && (
-              <ReportFaqSection colors={colors} reportId={report?.reportId} />
+              <ReportFaqSection
+                colors={portfolioColors}
+                reportId={report?.reportId}
+              />
             )}
             {/* 프로그램 추천 */}
             {portfolioContent.reportProgramRecommend && (
               <ReportProgramRecommendSlider
-                colors={colors}
+                colors={portfolioColors}
                 reportProgramRecommend={portfolioContent.reportProgramRecommend}
               />
             )}
