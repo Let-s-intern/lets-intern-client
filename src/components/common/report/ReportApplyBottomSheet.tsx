@@ -376,6 +376,9 @@ const ReportApplyBottomSheet = React.forwardRef<
                 </ReportDropdown>
               </FormControl>
 
+              {/* 자기소개서 문항 추가 */}
+              {report.reportType === 'PERSONAL_STATEMENT' && <></>}
+
               {/* 현직자 피드백 (옵션) */}
               {optionsAvailable ? (
                 <FormControl fullWidth>
