@@ -1,7 +1,7 @@
 import { useServerActiveReports } from '@/context/ActiveReports';
 import { portfolioReportDescription } from '@/data/description';
 import useReportApplicationStore from '@/store/useReportApplicationStore';
-import { ReportColors, ReportContent } from '@/types/interface';
+import { ReportContent } from '@/types/interface';
 import { getBaseUrlFromServer, getReportLandingTitle } from '@/utils/url';
 import Header from '@components/common/program/program-detail/header/Header';
 import PromoSection from '@components/common/report/PromoSection';
@@ -23,27 +23,7 @@ import {
 } from '../../../api/report';
 import ReportApplyBottomSheet from '../../../components/common/report/ReportApplyBottomSheet';
 import ReportNavigation from './ReportNavigation';
-
-export const portfolioColors: ReportColors = {
-  primary: {
-    DEFAULT: '#11AC5C',
-    50: '#E8FDF2',
-    100: '#B1FFD6',
-    200: '#A5FFCF',
-    300: '#4FDA46',
-    400: '#2CE282',
-    500: '#06B259',
-  },
-  secondary: {
-    DEFAULT: '#D8E36C',
-    50: '#F7FFAB',
-  },
-  highlight: {
-    DEFAULT: '#14BCFF',
-    50: '#EEFAFF',
-    100: '#2CDDEA',
-  },
-};
+import { resumeColors } from './ReportResumePage';
 
 const ReportPortfolioPage = () => {
   const activeReportsFromServer = useServerActiveReports();
@@ -99,61 +79,50 @@ const ReportPortfolioPage = () => {
               <Header programTitle={'서류완성의 시작과 끝은 진단에서부터'} />
               <ReportBasicInfo
                 reportBasic={data?.portfolioInfo}
-                color={portfolioColors.primary.DEFAULT}
+                color={resumeColors._2CE282}
               />
             </div>
           </div>
-          <ReportNavigation color={portfolioColors.primary.DEFAULT} isDark />
+          <ReportNavigation color={resumeColors._2CE282} isDark />
           <div className="flex w-full flex-col items-center gap-y-12 md:gap-y-6">
             {/* 서비스 소개 */}
-            <ReportIntroSection colors={portfolioColors} type="PORTFOLIO" />
+            <ReportIntroSection type="PORTFOLIO" />
             {/* 리포트 예시 */}
             <ReportExampleSection
-              colors={portfolioColors}
               type="PORTFOLIO"
               reportExample={portfolioContent.reportExample}
             />
             {/* 후기 */}
             <ReportReviewSection
-              colors={portfolioColors}
               type="PORTFOLIO"
               reportReview={portfolioContent.review}
             />
             {/* 취업 연구팀 소개 */}
-            <ResearchTeamSection colors={portfolioColors} />
+            <ResearchTeamSection reportType="PORTFOLIO" />
             {/* 가격 및 플랜 */}
             {priceDetail && report?.reportType && (
               <ReportPlanSection
-                colors={portfolioColors}
                 priceDetail={priceDetail}
-                reportType={report?.reportType}
+                reportType="PORTFOLIO"
               />
             )}
             {/* 홍보 배너  */}
-            {report?.reportType && (
-              <PromoSection
-                colors={portfolioColors}
-                reportType={report.reportType}
-              />
-            )}
+            {report?.reportType && <PromoSection reportType="PORTFOLIO" />}
             {/* 서비스 이용 안내 */}
             {report?.reportType && (
-              <ServiceProcessSection
-                colors={portfolioColors}
-                reportType={report.reportType}
-              />
+              <ServiceProcessSection reportType="PORTFOLIO" />
             )}
             {/* FAQ  */}
             {report?.reportId && (
               <ReportFaqSection
-                colors={portfolioColors}
+                reportType="PORTFOLIO"
                 reportId={report?.reportId}
               />
             )}
             {/* 프로그램 추천 */}
             {portfolioContent.reportProgramRecommend && (
               <ReportProgramRecommendSlider
-                colors={portfolioColors}
+                reportType="PORTFOLIO"
                 reportProgramRecommend={portfolioContent.reportProgramRecommend}
               />
             )}

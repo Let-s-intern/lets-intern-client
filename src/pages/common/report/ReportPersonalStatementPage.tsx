@@ -1,7 +1,7 @@
 import { useServerActiveReports } from '@/context/ActiveReports';
 import { personalStatementReportDescription } from '@/data/description';
 import useReportApplicationStore from '@/store/useReportApplicationStore';
-import { ReportColors, ReportContent } from '@/types/interface';
+import { ReportContent } from '@/types/interface';
 import { getBaseUrlFromServer, getReportLandingTitle } from '@/utils/url';
 import Header from '@components/common/program/program-detail/header/Header';
 import PromoSection from '@components/common/report/PromoSection';
@@ -24,25 +24,12 @@ import {
 import ReportApplyBottomSheet from '../../../components/common/report/ReportApplyBottomSheet';
 import ReportNavigation from './ReportNavigation';
 
-export const personalStatementColors: ReportColors = {
-  primary: {
-    DEFAULT: '#C34AFF',
-    50: '#F9EEFF',
-    100: '#E6B3FF',
-    200: '#F9EEFF',
-    300: '#CA60FF',
-    400: '#CA60FF',
-    500: '#CA60FF',
-  },
-  secondary: {
-    DEFAULT: '#EB6CFF',
-    50: '#F3A2FF',
-  },
-  highlight: {
-    DEFAULT: '#CA60FF',
-    50: '#F9EEFF',
-    100: '#C34AFF',
-  },
+export const personalStatementColors = {
+  C34AFF: '#C34AFF',
+  F9EEFF: '#F9EEFF',
+  CA60FF: '#CA60FF',
+  EB6CFF: '#EB6CFF',
+  F3A2FF: '#F3A2FF',
 };
 
 const ReportPersonalStatementPage = () => {
@@ -101,72 +88,57 @@ const ReportPersonalStatementPage = () => {
               <Header programTitle={'서류완성의 시작과 끝은 진단에서부터'} />
               <ReportBasicInfo
                 reportBasic={data?.personalStatementInfo}
-                color={personalStatementColors.primary.DEFAULT}
+                color={personalStatementColors.CA60FF}
               />
             </div>
           </div>
-          <ReportNavigation
-            color={personalStatementColors.primary.DEFAULT}
-            isDark
-          />
+          <ReportNavigation color={personalStatementColors.CA60FF} isDark />
           <div className="flex w-full flex-col items-center gap-y-12 md:gap-y-6">
             {/* 서비스 소개 */}
-            <ReportIntroSection
-              colors={personalStatementColors}
-              type="PERSONAL_STATEMENT"
-            />
+            <ReportIntroSection type="PERSONAL_STATEMENT" />
             {/* 리포트 예시 */}
             <ReportExampleSection
-              colors={personalStatementColors}
               type="PERSONAL_STATEMENT"
               reportExample={personalStatementContent.reportExample}
             />
             {/* 후기 */}
             <ReportReviewSection
-              colors={personalStatementColors}
               type="PERSONAL_STATEMENT"
               reportReview={personalStatementContent.review}
             />
             {/* 취업 연구팀 소개 */}
-            <ResearchTeamSection colors={personalStatementColors} />
+            <ResearchTeamSection reportType="PERSONAL_STATEMENT" />
 
             {/* 가격 및 플랜 */}
             {priceDetail && report?.reportType && (
               <ReportPlanSection
-                colors={personalStatementColors}
                 priceDetail={priceDetail}
-                reportType={report?.reportType}
+                reportType="PERSONAL_STATEMENT"
               />
             )}
 
             {/* 홍보 배너  */}
             {report?.reportType && (
-              <PromoSection
-                colors={personalStatementColors}
-                reportType={report.reportType}
-              />
+              <PromoSection reportType={report.reportType} />
             )}
 
             {/* 서비스 이용 안내 */}
             {report?.reportType && (
-              <ServiceProcessSection
-                colors={personalStatementColors}
-                reportType={report.reportType}
-              />
+              <ServiceProcessSection reportType={report.reportType} />
             )}
 
             {/* FAQ  */}
             {report?.reportId && (
               <ReportFaqSection
-                colors={personalStatementColors}
                 reportId={report?.reportId}
+                reportType="PERSONAL_STATEMENT"
               />
             )}
 
             {/* 프로그램 추천 */}
             {personalStatementContent.reportProgramRecommend && (
               <ReportProgramRecommendSlider
-                colors={personalStatementColors}
+                reportType="PERSONAL_STATEMENT"
                 reportProgramRecommend={
                   personalStatementContent.reportProgramRecommend
                 }
