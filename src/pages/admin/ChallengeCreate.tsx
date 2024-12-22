@@ -1,3 +1,4 @@
+import { useGetFaq } from '@/api/faq';
 import { fileType, uploadFile } from '@/api/file';
 import { usePostChallengeMutation } from '@/api/program';
 import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
@@ -28,6 +29,7 @@ import ProgramBestReview from '../../components/admin/program/ProgramBestReview'
 import ProgramBlogReviewEditor from '../../components/admin/program/ProgramBlogReviewEditor';
 import FaqSection from '../../components/FaqSection';
 import ProgramRecommendEditor from '../../components/ProgramRecommendEditor';
+import ChallengeFaqCategory from './program/ChallengeFaqCategory';
 import ProgramSchedule from './program/ProgramSchedule';
 
 /**
@@ -42,12 +44,18 @@ const ChallengeCreate: React.FC = () => {
     blogReview: { list: [] },
     challengeReview: [],
     initialized: true,
+    faqCategory: [],
     programRecommend: { list: [] },
   });
   const { snackbar } = useAdminSnackbar();
   const navigate = useNavigate();
 
   const { mutateAsync: postChallenge } = usePostChallengeMutation();
+  const { data: faqData } = useGetFaq('CHALLENGE');
+
+  const categoryList = [
+    ...new Set(faqData?.faqList.map((faq) => faq.category)),
+  ];
 
   const [input, setInput] = useState<Omit<CreateChallengeReq, 'desc'>>({
     beginning: dayjs().format('YYYY-MM-DDTHH:mm'),
@@ -269,6 +277,19 @@ const ChallengeCreate: React.FC = () => {
       />
 
       <section className="my-6">
+        <div className="mb-6">
+          <ChallengeFaqCategory
+            faqCategory={content.faqCategory}
+            onChange={(e) => {
+              setContent((prev) => ({
+                ...prev,
+                faqCategory: e.target.value
+                  .split(',')
+                  .map((item) => item.trim()),
+              }));
+            }}
+          />
+        </div>
         <FaqSection
           programType={ProgramTypeEnum.enum.CHALLENGE}
           faqInfo={input.faqInfo}

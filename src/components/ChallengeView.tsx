@@ -268,7 +268,10 @@ const ChallengeView: React.FC<{
               />
             )}
           </section>
-          <ChallengeFaq colors={colors} />
+          <ChallengeFaq
+            colors={colors}
+            faqCategory={receivedContent.faqCategory}
+          />
           <ChallengeInfoBottom challenge={challenge} colors={colors} />
         </div>
       </div>

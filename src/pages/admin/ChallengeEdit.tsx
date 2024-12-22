@@ -28,6 +28,7 @@ import ProgramBestReview from '../../components/admin/program/ProgramBestReview'
 import ProgramBlogReviewEditor from '../../components/admin/program/ProgramBlogReviewEditor';
 import FaqSection from '../../components/FaqSection';
 import ProgramRecommendEditor from '../../components/ProgramRecommendEditor';
+import ChallengeFaqCategory from './program/ChallengeFaqCategory';
 import ProgramSchedule from './program/ProgramSchedule';
 
 const ChallengeEdit: React.FC = () => {
@@ -40,6 +41,7 @@ const ChallengeEdit: React.FC = () => {
     },
     blogReview: { list: [] },
     challengeReview: [],
+    faqCategory: [],
   });
 
   const { mutateAsync: patchChallenge } = usePatchChallengeMutation();
@@ -270,7 +272,20 @@ const ChallengeEdit: React.FC = () => {
         }
       />
 
-      <section className="my-6">
+      <div className="my-6">
+        <div className="mb-6">
+          <ChallengeFaqCategory
+            faqCategory={content.faqCategory}
+            onChange={(e) => {
+              setContent((prev) => ({
+                ...prev,
+                faqCategory: e.target.value
+                  .split(',')
+                  .map((item) => item.trim()),
+              }));
+            }}
+          />
+        </div>
         <FaqSection
           programType={ProgramTypeEnum.enum.CHALLENGE}
           faqInfo={
@@ -281,7 +296,7 @@ const ChallengeEdit: React.FC = () => {
             setInput((prev) => ({ ...prev, faqInfo: faqInfo ?? [] }))
           }
         />
-      </section>
+      </div>
 
       <footer className="flex items-center justify-end gap-3">
         <ChallengePreviewButton

@@ -35,7 +35,7 @@ const MoreReviewButton = ({
   return (
     <>
       <div
-        className="flex w-full items-center justify-center px-5 md:px-0"
+        className="more_reviews flex w-full items-center justify-center px-5 md:px-0"
         onClick={handleOpen}
       >
         <div

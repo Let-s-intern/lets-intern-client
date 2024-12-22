@@ -68,6 +68,8 @@ export type ChallengeContent = {
   blogReview?: ProgramBlogReview;
   /**  후기 */
   challengeReview?: ContentReviewType[];
+  /** FAQ 카테고리 순서 */
+  faqCategory: string[];
   /** 프로그램 추천 리스트 */
   programRecommend?: ProgramRecommend;
 };

@@ -1,7 +1,7 @@
+import useCredit from '@/hooks/useCredit';
 import ReportCreditSubRow from '@components/common/mypage/credit/ReportCreditSubRow';
 import dayjs from 'dayjs';
 import { useNavigate, useParams } from 'react-router-dom';
-import { usePaymentDetailQuery } from '../../../api/payment';
 import { useUserQuery } from '../../../api/user';
 import MoreButton from '../../../components/common/mypage/ui/button/MoreButton';
 import PaymentInfoRow from '../../../components/common/program/paymentSuccess/PaymentInfoRow';
@@ -12,10 +12,6 @@ const convertDateFormat = (date: string) => {
   return dayjs(date).format('YYYY.MM.DD');
 };
 
-const calPercent = (price: number, discount: number) => {
-  return Math.floor((discount / price) * 100);
-};
-
 const CreditDetail = () => {
   const navigate = useNavigate();
   const { paymentId } = useParams<{ paymentId: string }>();
@@ -24,75 +20,22 @@ const CreditDetail = () => {
     data: paymentDetail,
     isLoading: paymentDetailIsLoading,
     isError: paymentDetailIsError,
-  } = usePaymentDetailQuery(paymentId);
+    isRefunded,
+    isCanceled,
+    isCancelable,
+    totalRefund,
+    isPayback,
+    productAmount,
+    partialRefundDeductionAmount,
+    couponDiscountAmount,
+    totalPayment,
+  } = useCredit(paymentId);
 
   const {
     data: userData,
     isLoading: userDataIsLoading,
     isError: userDataIsError,
   } = useUserQuery();
-
-  const isCancelable = () => {
-    if (
-      !paymentDetail ||
-      (paymentDetail.tossInfo && paymentDetail.tossInfo?.status !== 'DONE') ||
-      paymentDetail.programInfo.isCanceled
-    ) {
-      return false;
-    }
-
-    if (paymentDetail.programInfo.programType === 'CHALLENGE') {
-      const start = dayjs(paymentDetail.programInfo.startDate);
-      const end = dayjs(paymentDetail.programInfo.endDate);
-      const now = dayjs();
-
-      const duration = end.diff(start, 'day') + 1;
-      const mid = Math.ceil(duration / 2);
-
-      return now.isBefore(start.add(mid, 'day'));
-    } else {
-      return dayjs().isBefore(dayjs(paymentDetail.programInfo.startDate));
-    }
-  };
-
-  const isCanceled =
-    paymentDetail &&
-    ((paymentDetail.tossInfo && paymentDetail.tossInfo.status !== 'DONE') ||
-      paymentDetail.programInfo.isCanceled === true)
-      ? true
-      : false;
-
-  const isRefunded = paymentDetail && paymentDetail.paymentInfo.isRefunded;
-
-  const getTotalPayment = (): number => {
-    if (!paymentDetail) return 0;
-
-    return paymentDetail.tossInfo && paymentDetail.tossInfo.totalAmount
-      ? paymentDetail.tossInfo.totalAmount
-      : (paymentDetail.priceInfo.price ?? 0) -
-          (paymentDetail.priceInfo.discount ?? 0) -
-          (paymentDetail.paymentInfo?.couponDiscount === -1
-            ? (paymentDetail.priceInfo.price
-                ? paymentDetail.priceInfo.price
-                : 0) -
-              (paymentDetail.priceInfo.discount
-                ? paymentDetail.priceInfo.discount
-                : 0)
-            : paymentDetail.paymentInfo?.couponDiscount
-              ? paymentDetail.paymentInfo.couponDiscount
-              : 0);
-  };
-
-  const getTotalRefund = (): number => {
-    if (!paymentDetail) return 0;
-
-    return paymentDetail.tossInfo &&
-      typeof paymentDetail.tossInfo.totalAmount === 'number' &&
-      typeof paymentDetail.tossInfo.balanceAmount === 'number'
-      ? paymentDetail.tossInfo.totalAmount -
-          paymentDetail.tossInfo.balanceAmount
-      : 0;
-  };
 
   return (
     <section
@@ -233,49 +176,73 @@ const CreditDetail = () => {
                     typeof paymentDetail.tossInfo.totalAmount === 'number' &&
                     typeof paymentDetail.tossInfo.balanceAmount === 'number'
                       ? (isCanceled
-                          ? paymentDetail.tossInfo.totalAmount -
-                            paymentDetail.tossInfo.balanceAmount
+                          ? totalRefund
                           : paymentDetail.tossInfo.totalAmount
                         ).toLocaleString()
                       : paymentDetail.paymentInfo.finalPrice?.toLocaleString()}
                     원
                   </div>
                 </div>
+
                 <div className="flex w-full flex-col px-3">
-                  <ReportCreditSubRow
-                    title="결제금액"
-                    content={getTotalPayment().toLocaleString() + '원'}
-                  />
+                  {/* 결제 내역에서는 정가 표시 */}
+                  {!isCanceled && (
+                    <ReportCreditSubRow
+                      title="정가"
+                      content={productAmount.toLocaleString() + '원'}
+                    />
+                  )}
+
+                  {/* 환불 내역에서는 결제금액 표시 */}
                   {isCanceled && (
-                    <>
-                      <div className="flex w-full flex-col">
-                        <ReportCreditSubRow
-                          title={`환불 차감 금액${paymentDetail.tossInfo?.cancels && paymentDetail.tossInfo.cancels.find((cancel) => cancel.cancelReason === '챌린지 페이백') ? ' (페이백 포함)' : ''}`}
-                          content={
-                            '-' +
-                            (
-                              getTotalPayment() - getTotalRefund()
-                            ).toLocaleString() +
-                            '원'
-                          }
-                        />
-                      </div>
-                      <div className="py-2 text-xs font-medium text-primary-dark">
-                        *환불 규정은{' '}
-                        <a
-                          className="underline underline-offset-2"
-                          href="https://letscareer.oopy.io/5eb0ebdd-e10c-4aa1-b28a-8bd0964eca0b"
-                          target="_blank"
-                          rel="noreferrer"
-                        >
-                          자주 묻는 질문
-                        </a>
-                        을 참고해주세요
-                      </div>
-                    </>
+                    <ReportCreditSubRow
+                      title="결제금액"
+                      content={totalPayment.toLocaleString() + '원'}
+                    />
+                  )}
+                  {/* 환불 내역에서는 숨김 */}
+                  {!isCanceled && (
+                    <ReportCreditSubRow
+                      title="할인금액"
+                      content={`-${(
+                        paymentDetail.priceInfo.discount ?? 0
+                      ).toLocaleString()}원`}
+                    />
+                  )}
+                  {/* 환불 내역에서는 숨김 */}
+                  {!isCanceled && (
+                    <ReportCreditSubRow
+                      title="쿠폰 할인 금액"
+                      content={`-${(couponDiscountAmount ?? 0).toLocaleString()}원`}
+                    />
+                  )}
+                  {/* 환불된 내역이면 환불 차감 금액 표시 */}
+                  {isCanceled && (
+                    <ReportCreditSubRow
+                      title={isPayback ? '페이백 금액' : '환불 차감 금액'}
+                      content={`-${partialRefundDeductionAmount.toLocaleString()}원`}
+                    />
+                  )}
+
+                  {/* 환불된 내역이면 환불 규정 표시 */}
+                  {isCanceled && (
+                    <div className="py-2 text-xs font-medium text-primary-dark">
+                      *환불 규정은{' '}
+                      <a
+                        className="underline underline-offset-2"
+                        href="https://letscareer.oopy.io/5eb0ebdd-e10c-4aa1-b28a-8bd0964eca0b"
+                        target="_blank"
+                        rel="noreferrer"
+                      >
+                        자주 묻는 질문
+                      </a>
+                      을 참고해주세요
+                    </div>
                   )}
                 </div>
+
                 <hr className="w-full border-neutral-85" />
+
                 <div className="flex w-full flex-col">
                   <PaymentInfoRow
                     title={
@@ -327,7 +294,7 @@ const CreditDetail = () => {
                   )}
                 </div>
               </div>
-              {isCancelable() ? (
+              {isCancelable ? (
                 <button
                   className="flex w-full items-center justify-center rounded-sm bg-neutral-80 px-5 py-2.5 font-medium text-neutral-40"
                   onClick={() => {

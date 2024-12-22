@@ -348,16 +348,8 @@ const LexicalContent = ({ node }: { node: SerializedLexicalNode }) => {
       }
 
       return (
-        <span
-          className="image"
-          style={{
-            maxWidth: _node.width ? `${_node.width}px` : undefined,
-          }}
-        >
-          <div
-            className="inline-block"
-            style={{ maxWidth: _node.width ? `${_node.width}px` : undefined }}
-          >
+        <span className="image">
+          <div className="inline-block">
             <picture>
               {imageSources.map((source, index) => (
                 <source
@@ -371,7 +363,9 @@ const LexicalContent = ({ node }: { node: SerializedLexicalNode }) => {
                 src={_node.src}
                 alt={_node.altText}
                 draggable={false}
-                className="h-auto w-full"
+                className="h-auto"
+                // Lexical에서 이미지 크기를 조정하지 않으면 width가 0으로 넘어옴 --> 원본 크기대로 넣기
+                style={{ width: _node.width === 0 ? 'auto' : _node.width }}
               />
             </picture>
             {_node.showCaption ? (

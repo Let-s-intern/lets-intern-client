@@ -54,7 +54,9 @@ export default function BlogTable() {
       const reqBody: PatchBlogReqBody = {
         id: checkedBlog.id,
         isDisplayed: true,
-        displayDate: dayjs().format('YYYY-MM-DDTHH:mm'),
+        displayDate: checkedBlog.displayDate
+          ? checkedBlog.displayDate.format('YYYY-MM-DDTHH:mm')
+          : dayjs().format('YYYY-MM-DDTHH:mm'),
       };
       patchBlogMutation.mutate(reqBody);
     } else {

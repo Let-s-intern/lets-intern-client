@@ -3,6 +3,7 @@ import { ReactNode, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
 import { useGetChallengeFaq } from '@/api/challenge';
+import { ChallengeContent } from '@/types/interface';
 import { ChallengeColor } from '@components/ChallengeView';
 import SuperTitle from '@components/common/program/program-detail/SuperTitle';
 import FaqChat from '@components/common/ui/FaqChat';
@@ -15,9 +16,10 @@ const title = '궁금한 점이 있으신가요?';
 
 interface ChallengeFaqProps {
   colors: ChallengeColor;
+  faqCategory: ChallengeContent['faqCategory'];
 }
 
-function ChallengeFaq({ colors }: ChallengeFaqProps) {
+function ChallengeFaq({ colors, faqCategory }: ChallengeFaqProps) {
   const { id } = useParams();
 
   const [selectedIndex, setSelectedIndex] = useState(0);
@@ -25,9 +27,7 @@ function ChallengeFaq({ colors }: ChallengeFaqProps) {
   const { data } = useGetChallengeFaq(id ?? '');
 
   const faqList = data?.faqList;
-  const categoryList = [...new Set(faqList?.map((faq) => faq.category))];
-
-  if (!faqList) return <></>;
+  const categoryList = [...new Set(faqCategory)];
 
   return (
     <section
@@ -60,7 +60,7 @@ function ChallengeFaq({ colors }: ChallengeFaqProps) {
       </div>
 
       <div className="mb-10 flex flex-col gap-3 md:mb-24 md:w-full md:max-w-[800px]">
-        {faqList.map((faq) => {
+        {faqList?.map((faq) => {
           if (faq.category === categoryList[selectedIndex])
             return <FaqDropdown key={faq.id} faq={faq} />;
         })}

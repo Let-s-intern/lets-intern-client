@@ -280,7 +280,7 @@ export class ImageNode extends DecoratorNode<JSX.Element> {
 export function $createImageNode({
   altText,
   height,
-  maxWidth = 500,
+  maxWidth = 950,
   captionsEnabled,
   src,
   width,
