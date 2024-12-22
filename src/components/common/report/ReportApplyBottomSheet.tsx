@@ -207,6 +207,11 @@ const ReportApplyBottomSheet = React.forwardRef<
       'border-b border-neutral-80': !isLastChild,
     });
 
+  // 현직자 피드백 옵션
+  const employeeOptionInfos = priceDetail.reportOptionInfos?.filter(
+    (info) => !info.title?.startsWith('+'),
+  );
+
   // 자기소개서 문항 추가 옵션
   const questionOptionInfos = priceDetail.reportOptionInfos?.filter((info) =>
     info.title?.startsWith('+'),
@@ -228,8 +233,6 @@ const ReportApplyBottomSheet = React.forwardRef<
     }, 0);
     return { length, price, discount };
   }, [reportApplication, questionOptionInfos]);
-
-  console.log('선택한 문항:', selectedQuestionOptions);
 
   const reportFinalPrice = useMemo(() => {
     let result = 0;
@@ -495,54 +498,51 @@ const ReportApplyBottomSheet = React.forwardRef<
                     initialOpenState={false}
                   >
                     <FormGroup aria-labelledby="option-group-label">
-                      {priceDetail.reportOptionInfos
-                        ?.filter((info) => !info.title?.startsWith('+'))
-                        .map((option, index) => {
-                          const price = option.price ?? 0;
-                          const discount = option.discountPrice ?? 0;
-                          const checked = Boolean(
-                            optionIds.find(
-                              (selectedOption) =>
-                                selectedOption === option.reportOptionId,
-                            ),
-                          );
+                      {employeeOptionInfos?.map((option, index) => {
+                        const price = option.price ?? 0;
+                        const discount = option.discountPrice ?? 0;
+                        const checked = Boolean(
+                          optionIds.find(
+                            (selectedOption) =>
+                              selectedOption === option.reportOptionId,
+                          ),
+                        );
 
-                          return (
-                            <ReportFormCheckboxControlLabel
-                              key={option.reportOptionId}
-                              checked={checked}
-                              onChange={(_, checked) => {
-                                if (checked) {
-                                  setSelectedOptionIds([
-                                    ...optionIds,
-                                    option.reportOptionId,
-                                  ]);
-                                } else {
-                                  setSelectedOptionIds(
-                                    optionIds.filter(
-                                      (selectedOption) =>
-                                        selectedOption !==
-                                        option.reportOptionId,
-                                    ),
-                                  );
-                                }
-                              }}
-                              wrapperClassName={generateControlLabelClassName(
-                                index ===
-                                  (priceDetail.reportOptionInfos?.length ?? 0) -
-                                    1,
-                              )}
-                              label={option.title}
-                              labelStyle={RADIO_CONTROL_LABEL_STYLE}
-                              right={
-                                <ReportPriceView
-                                  price={price}
-                                  discount={discount}
-                                />
+                        return (
+                          <ReportFormCheckboxControlLabel
+                            key={option.reportOptionId}
+                            checked={checked}
+                            onChange={(_, checked) => {
+                              if (checked) {
+                                setSelectedOptionIds([
+                                  ...optionIds,
+                                  option.reportOptionId,
+                                ]);
+                              } else {
+                                setSelectedOptionIds(
+                                  optionIds.filter(
+                                    (selectedOption) =>
+                                      selectedOption !== option.reportOptionId,
+                                  ),
+                                );
                               }
-                            />
-                          );
-                        })}
+                            }}
+                            wrapperClassName={generateControlLabelClassName(
+                              index ===
+                                (priceDetail.reportOptionInfos?.length ?? 0) -
+                                  1,
+                            )}
+                            label={option.title}
+                            labelStyle={RADIO_CONTROL_LABEL_STYLE}
+                            right={
+                              <ReportPriceView
+                                price={price}
+                                discount={discount}
+                              />
+                            }
+                          />
+                        );
+                      })}
                     </FormGroup>
                   </ReportDropdown>
                 </FormControl>
@@ -573,8 +573,33 @@ const ReportApplyBottomSheet = React.forwardRef<
                           }
                         />
                       )}
+                      {/* 선택한 자소서 문항 추가 */}
+                      {selectedQuestionOptions.length > 0 && (
+                        <SelectedItemBox
+                          className="border-t border-neutral-80"
+                          title={`자기소개서 문항 추가 ${selectedQuestionOptions.length}개`}
+                          // 자소서 문항 추가 모두 삭제
+                          onClickDelete={() => {
+                            const questionOptionIds = questionOptionInfos?.map(
+                              (info) => info.reportOptionId,
+                            );
+                            setReportApplication({
+                              optionIds: reportApplication.optionIds.filter(
+                                (id) => !questionOptionIds?.includes(id),
+                              ),
+                            });
+                          }}
+                          rightElement={
+                            <ReportPriceView
+                              price={selectedQuestionOptions.price}
+                              discount={selectedQuestionOptions.discount}
+                            />
+                          }
+                        />
+                      )}
+
                       {/* 선택한 옵션 (현직자 피드백) */}
-                      {priceDetail.reportOptionInfos?.map((info) => {
+                      {employeeOptionInfos?.map((info) => {
                         if (optionIds.includes(info.reportOptionId))
                           return (
                             <SelectedItemBox
