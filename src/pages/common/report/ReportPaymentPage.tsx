@@ -255,9 +255,7 @@ const ReportPaymentSection = () => {
       [
         ...new Set(
           options.map((option) =>
-            option.title?.startsWith('+')
-              ? option.title.slice(1).trim()
-              : option.title,
+            option.title?.startsWith('+') ? '문항 추가' : option.title,
           ),
         ),
       ].join(', '),
