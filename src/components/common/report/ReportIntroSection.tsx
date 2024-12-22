@@ -90,7 +90,7 @@ const ReportIntroSection = ({ type }: ReportIntroSectionProps) => {
           <div className="flex w-full flex-col items-center gap-y-2 md:gap-y-3">
             <span
               className="text-xsmall16 font-bold md:text-small20"
-              style={{ color: resumeColors._171918 }}
+              style={{ color: resumeColors._11AC5C }}
             >
               쌓여가는 불합격 메일들...
             </span>
@@ -111,13 +111,13 @@ const ReportIntroSection = ({ type }: ReportIntroSectionProps) => {
               key={`${type}-question-${index}`}
               style={{
                 backgroundColor: resumeColors.E8FDF2,
-                borderColor: resumeColors._171918,
+                borderColor: resumeColors._4FDA46,
               }}
             >
               {convertString(question)}
               <div
                 className={`absolute z-10 ${index % 2 === 0 ? 'left-2.5' : 'right-0 translate-x-1/3 md:right-2.5'} ${index === 2 ? 'top-full md:top-0' : 'top-full'} h-[50px] w-[50px] -translate-y-2/3 transform md:h-[100px] md:w-[100px]`}
-                style={{ color: resumeColors._171918 }}
+                style={{ color: resumeColors._06B259 }}
               >
                 {userProfile(index)}
               </div>
@@ -131,7 +131,7 @@ const ReportIntroSection = ({ type }: ReportIntroSectionProps) => {
           <div className="flex w-full flex-col gap-y-2 md:gap-y-3">
             <h6
               className="text-xsmall16 font-bold md:text-small20"
-              style={{ color: resumeColors._171918 }}
+              style={{ color: resumeColors._11AC5C }}
             >
               대체 뭐가 문제일까?
             </h6>
@@ -162,7 +162,7 @@ const ReportIntroSection = ({ type }: ReportIntroSectionProps) => {
           <div className="flex w-full flex-col gap-y-2 md:gap-y-3">
             <h5
               className="text-xsmall16 font-bold md:text-small20"
-              style={{ color: resumeColors._171918 }}
+              style={{ color: resumeColors._2CE282 }}
             >{`이제는 합격하는 ${convertReportTypeToDisplayName(type)}로!`}</h5>
             <div className="flex w-full flex-col gap-y-5 md:gap-y-[30px]">
               <p className="text-medium22 font-bold text-white md:text-xlarge30">
@@ -232,7 +232,7 @@ const ReportIntroSection = ({ type }: ReportIntroSectionProps) => {
           <div className="flex w-full flex-col gap-y-2 md:gap-y-3">
             <h5
               className="text-xsmall16 font-bold md:text-small20"
-              style={{ color: resumeColors._171918 }}
+              style={{ color: resumeColors._11AC5C }}
             >{`${convertReportTypeToDisplayName(type)} 작성 현황 체크리스트`}</h5>
             <p className="text-medium22 font-bold md:text-xlarge30">
               {convertString(reportIntro.section4.title)}
@@ -246,7 +246,7 @@ const ReportIntroSection = ({ type }: ReportIntroSectionProps) => {
               >
                 <div
                   className="absolute left-4 top-0 flex -translate-y-2/3 -rotate-[10deg] items-center justify-center rounded-sm px-2.5 py-1 text-xsmall16 font-bold text-white md:py-1.5 md:text-small18"
-                  style={{ backgroundColor: resumeColors._171918 }}
+                  style={{ backgroundColor: resumeColors._14BCFF }}
                 >{`Check ${index + 1}`}</div>
                 <p className="text-small18 font-bold md:text-medium24">
                   {convertString(item)}

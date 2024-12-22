@@ -5,7 +5,6 @@ import { useGetActiveReports, useGetReportPriceDetail } from '@/api/report';
 import ReportApplyBottomSheet from '@/components/common/report/ReportApplyBottomSheet';
 import { useServerActiveReports } from '@/context/ActiveReports';
 import { resumeReportDescription } from '@/data/description';
-import { reportTypeSchema } from '@/schema';
 import useReportApplicationStore from '@/store/useReportApplicationStore';
 import { ReportContent } from '@/types/interface';
 import { getBaseUrlFromServer, getReportLandingTitle } from '@/utils/url';
@@ -36,9 +35,8 @@ export const resumeColors = {
   _14BCFF: '#14BCFF',
   EEFAFF: '#EEFAFF',
   _2CDDEA: '#2CDDEA',
+  _11AC5C: '#11AC5C',
 };
-
-const { RESUME } = reportTypeSchema.enum;
 
 const ReportResumePage = () => {
   const activeReportsFromServer = useServerActiveReports();
@@ -92,49 +90,54 @@ const ReportResumePage = () => {
           <div className="flex w-full flex-col bg-black pb-12 text-white md:pb-20">
             <div className="mx-auto flex w-full max-w-[1000px] flex-col px-5 lg:px-0">
               <Header programTitle={'서류완성의 시작과 끝은 진단에서부터'} />
-              <ReportBasicInfo reportBasic={data?.resumeInfo} />
+              <ReportBasicInfo
+                reportBasic={data?.resumeInfo}
+                color={resumeColors._2CE282}
+              />
             </div>
           </div>
-          <ReportNavigation color={resumeColors._171918} isDark />
+
+          <ReportNavigation color={resumeColors._2CE282} isDark />
+
           <div className="flex w-full flex-col items-center gap-y-12 md:gap-y-6">
             {/* 서비스 소개 */}
-            <ReportIntroSection type={RESUME} />
+            <ReportIntroSection type="RESUME" />
             {/* 리포트 예시 */}
             <ReportExampleSection
-              type={RESUME}
+              type="RESUME"
               reportExample={resumeContent.reportExample}
             />
             {/* 후기 */}
             <ReportReviewSection
-              type={RESUME}
+              type="RESUME"
               reportReview={resumeContent.review}
             />
             {/* 취업 연구팀 소개 */}
-            <ResearchTeamSection reportType={RESUME} />
+            <ResearchTeamSection reportType="RESUME" />
             {/* 가격 및 플랜 */}
             {priceDetail && (
               <ReportPlanSection
                 priceDetail={priceDetail}
-                reportType={RESUME}
+                reportType="RESUME"
               />
             )}
             {/* 홍보 배너  */}
-            <PromoSection reportType={RESUME} />
+            <PromoSection reportType="RESUME" />
 
             {/* 서비스 이용 안내 */}
-            <ServiceProcessSection reportType={RESUME} />
+            <ServiceProcessSection reportType="RESUME" />
 
             {/* FAQ  */}
             {report?.reportId && (
               <ReportFaqSection
-                reportType={RESUME}
+                reportType="RESUME"
                 reportId={report?.reportId}
               />
             )}
             {/* 프로그램 추천 */}
             {resumeContent.reportProgramRecommend && (
               <ReportProgramRecommendSlider
-                reportType={RESUME}
+                reportType="RESUME"
                 reportProgramRecommend={resumeContent.reportProgramRecommend}
               />
             )}

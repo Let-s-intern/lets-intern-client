@@ -45,13 +45,11 @@ const ReportReviewSection = ({
                   interview={item}
                   mainColor={
                     index % 2 === 0
-                      ? resumeColors._171918
-                      : resumeColors._06B259
+                      ? resumeColors._14BCFF
+                      : resumeColors._2CE282
                   }
                   subColor={
-                    index % 2 === 0
-                      ? resumeColors._2CE282
-                      : resumeColors._4FDA46
+                    index % 2 === 0 ? resumeColors.EEFAFF : resumeColors.E8FDF2
                   }
                 />
               ))}
@@ -64,7 +62,7 @@ const ReportReviewSection = ({
                   <ReportReviewCard
                     key={`report-review-${index}`}
                     review={review}
-                    mainColor={resumeColors._171918}
+                    mainColor={resumeColors._2CE282}
                   />
                 ))}
               </div>

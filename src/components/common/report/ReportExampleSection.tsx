@@ -81,7 +81,7 @@ const ReportExampleSection = ({
               <div className="flex w-full flex-col items-center gap-y-2 md:gap-y-3">
                 <h4
                   className="flex flex-col text-xsmall16 font-bold md:text-small20"
-                  style={{ color: resumeColors._171918 }}
+                  style={{ color: resumeColors._11AC5C }}
                 >
                   하나하나 성의있고, 꼼꼼한 피드백
                 </h4>
@@ -96,43 +96,43 @@ const ReportExampleSection = ({
             </div>
             <div
               className="relative flex w-fit flex-col gap-y-2 rounded-md px-4 py-5 md:gap-y-3 md:px-6"
-              style={{ backgroundColor: resumeColors.A5FFCF }}
+              style={{ backgroundColor: resumeColors.E8FDF2 }}
             >
-              <ReportExampleStep order={1} color={resumeColors._171918}>
+              <ReportExampleStep order={1} color={resumeColors._2CE282}>
                 핵심 기준을 바탕으로 진단한{' '}
                 <span className="font-bold">총평 & 형식 피드백</span>
               </ReportExampleStep>
-              <ReportExampleStep order={2} color={resumeColors._171918}>
+              <ReportExampleStep order={2} color={resumeColors._2CE282}>
                 구체적인 첨삭 제안으로{' '}
                 <span className="font-bold">명확한 개선 방향 제시</span>
               </ReportExampleStep>
-              <ReportExampleStep order={3} color={resumeColors._171918}>
+              <ReportExampleStep order={3} color={resumeColors._2CE282}>
                 구체성과 설득력을 높이는{' '}
                 <span className="font-bold">
                   {convertReportTypeToDisplayName(type)} 맞춤형 피드백
                 </span>
               </ReportExampleStep>
-              <ReportExampleStep order={4} color={resumeColors._171918}>
+              <ReportExampleStep order={4} color={resumeColors._2CE282}>
                 직무별 <span className="font-bold">합격자 사례 제공</span>
               </ReportExampleStep>
-              <ReportExampleStep order={5} color={resumeColors._171918}>
+              <ReportExampleStep order={5} color={resumeColors._2CE282}>
                 <span className="font-bold">채용공고 맞춤형 리포트</span>
                 (*프리미엄 플랜)
               </ReportExampleStep>
-              <ReportExampleStep order={6} color={resumeColors._171918}>
+              <ReportExampleStep order={6} color={resumeColors._2CE282}>
                 <span className="font-bold">
                   채용공고 기반 {convertReportTypeToDisplayName(type)} 평가와
                   피드백
                 </span>
                 (*프리미엄 플랜)
               </ReportExampleStep>
-              <ReportExampleStep order={7} color={resumeColors._171918}>
+              <ReportExampleStep order={7} color={resumeColors._2CE282}>
                 {convertReportTypeToDisplayName(type)} 작성{' '}
                 <span className="font-bold">고민에 대한 1:1 상담</span>
               </ReportExampleStep>
               <Pencil
                 className="absolute inset-x-0 top-0 mx-auto h-auto w-14 -translate-y-1/2 transform md:left-auto md:right-0 md:top-1/2 md:w-24 md:translate-x-1/2"
-                style={{ color: resumeColors._171918 }}
+                style={{ color: resumeColors._2CE282 }}
               />
             </div>
           </div>
@@ -143,12 +143,12 @@ const ReportExampleSection = ({
               실제 사례를 바탕으로 한 리포트 예시 보기
               <UnderLine
                 className="absolute left-1/2 right-1/2 top-full h-auto w-[calc(100%+20px)] -translate-x-1/2 -translate-y-1/2 transform"
-                style={{ color: resumeColors._171918 }}
+                style={{ color: resumeColors._2CE282 }}
               />
             </p>
             <GradientArrow
               className="h-auto w-[60px] md:w-[92px]"
-              style={{ color: resumeColors._171918 }}
+              style={{ color: resumeColors._2CE282 }}
             />
           </div>
         </div>
@@ -184,7 +184,7 @@ const ReportExampleSection = ({
             <div className="flex w-full flex-col items-center gap-x-3 gap-y-2 md:flex-row md:justify-center">
               <div
                 className="h-9 w-9"
-                style={{ backgroundColor: resumeColors._171918 }}
+                style={{ backgroundColor: resumeColors._2CE282 }}
               />
               <h5 className="text-medium22 font-bold text-neutral-0 md:text-3xl">
                 {example.header}
@@ -200,20 +200,20 @@ const ReportExampleSection = ({
                     <ReportExampleCard
                       key={index}
                       example={example}
-                      mainColor={resumeColors._171918}
-                      subColor={resumeColors.B1FFD6}
+                      mainColor={resumeColors._2CE282}
+                      subColor={resumeColors.E8FDF2}
                     />
                   ))}
                 </div>
               </div>
               <PrevButton
                 className="absolute left-0 top-1/2 z-10 hidden h-16 w-16 -translate-x-1/2 -translate-y-1/2 transform cursor-pointer md:block"
-                style={{ color: resumeColors._171918 }}
+                style={{ color: resumeColors._2CE282 }}
                 onClick={() => handleScroll('left')}
               />
               <NextButton
                 className="absolute right-0 top-1/2 hidden h-16 w-16 -translate-y-1/2 translate-x-1/2 transform cursor-pointer md:block"
-                style={{ color: resumeColors._171918 }}
+                style={{ color: resumeColors._2CE282 }}
                 onClick={() => handleScroll('right')}
               />
             </div>
