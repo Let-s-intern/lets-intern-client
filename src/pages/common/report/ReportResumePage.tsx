@@ -22,9 +22,9 @@ import ServiceProcessSection from '@components/common/report/ServiceProcessSecti
 import LoadingContainer from '@components/common/ui/loading/LoadingContainer';
 import ReportNavigation from './ReportNavigation';
 
-const colors: ReportColors = {
+export const resumeColors: ReportColors = {
   primary: {
-    DEFAULT: '#11AC5C',
+    DEFAULT: '#171918',
     50: '#E8FDF2',
     100: '#B1FFD6',
     200: '#A5FFCF',
@@ -95,57 +95,60 @@ const ReportResumePage = () => {
           <div className="flex w-full flex-col bg-black pb-12 text-white md:pb-20">
             <div className="mx-auto flex w-full max-w-[1000px] flex-col px-5 lg:px-0">
               <Header programTitle={'서류완성의 시작과 끝은 진단에서부터'} />
-              <ReportBasicInfo
-                reportBasic={data?.resumeInfo}
-                color={colors.primary.DEFAULT}
-              />
+              <ReportBasicInfo reportBasic={data?.resumeInfo} />
             </div>
           </div>
-          <ReportNavigation color={colors.primary.DEFAULT} isDark />
+          <ReportNavigation color={resumeColors.primary.DEFAULT} isDark />
           <div className="flex w-full flex-col items-center gap-y-12 md:gap-y-6">
             {/* 서비스 소개 */}
-            <ReportIntroSection colors={colors} type="RESUME" />
+            <ReportIntroSection colors={resumeColors} type="RESUME" />
             {/* 리포트 예시 */}
             <ReportExampleSection
-              colors={colors}
+              colors={resumeColors}
               type="RESUME"
               reportExample={resumeContent.reportExample}
             />
             {/* 후기 */}
             <ReportReviewSection
-              colors={colors}
+              colors={resumeColors}
               type="RESUME"
               reportReview={resumeContent.review}
             />
             {/* 취업 연구팀 소개 */}
-            <ResearchTeamSection colors={colors} />
+            <ResearchTeamSection colors={resumeColors} />
             {/* 가격 및 플랜 */}
             {priceDetail && report?.reportType && (
               <ReportPlanSection
-                colors={colors}
+                colors={resumeColors}
                 priceDetail={priceDetail}
                 reportType={'RESUME'}
               />
             )}
             {/* 홍보 배너  */}
             {report?.reportType && (
-              <PromoSection colors={colors} reportType={report.reportType} />
+              <PromoSection
+                colors={resumeColors}
+                reportType={report.reportType}
+              />
             )}
             {/* 서비스 이용 안내 */}
             {report?.reportType && (
               <ServiceProcessSection
-                colors={colors}
+                colors={resumeColors}
                 reportType={report.reportType}
               />
             )}
             {/* FAQ  */}
             {report?.reportId && (
-              <ReportFaqSection colors={colors} reportId={report?.reportId} />
+              <ReportFaqSection
+                colors={resumeColors}
+                reportId={report?.reportId}
+              />
             )}
             {/* 프로그램 추천 */}
             {resumeContent.reportProgramRecommend && (
               <ReportProgramRecommendSlider
-                colors={colors}
+                colors={resumeColors}
                 reportProgramRecommend={resumeContent.reportProgramRecommend}
               />
             )}

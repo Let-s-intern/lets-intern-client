@@ -24,7 +24,7 @@ import {
 import ReportApplyBottomSheet from '../../../components/common/report/ReportApplyBottomSheet';
 import ReportNavigation from './ReportNavigation';
 
-const colors: ReportColors = {
+export const personalStatementColors: ReportColors = {
   primary: {
     DEFAULT: '#C34AFF',
     50: '#F9EEFF',
@@ -101,33 +101,39 @@ const ReportPersonalStatementPage = () => {
               <Header programTitle={'서류완성의 시작과 끝은 진단에서부터'} />
               <ReportBasicInfo
                 reportBasic={data?.personalStatementInfo}
-                color={colors.primary.DEFAULT}
+                color={personalStatementColors.primary.DEFAULT}
               />
             </div>
           </div>
-          <ReportNavigation color={colors.primary.DEFAULT} isDark />
+          <ReportNavigation
+            color={personalStatementColors.primary.DEFAULT}
+            isDark
+          />
           <div className="flex w-full flex-col items-center gap-y-12 md:gap-y-6">
             {/* 서비스 소개 */}
-            <ReportIntroSection colors={colors} type="PERSONAL_STATEMENT" />
+            <ReportIntroSection
+              colors={personalStatementColors}
+              type="PERSONAL_STATEMENT"
+            />
             {/* 리포트 예시 */}
             <ReportExampleSection
-              colors={colors}
+              colors={personalStatementColors}
               type="PERSONAL_STATEMENT"
               reportExample={personalStatementContent.reportExample}
             />
             {/* 후기 */}
             <ReportReviewSection
-              colors={colors}
+              colors={personalStatementColors}
               type="PERSONAL_STATEMENT"
               reportReview={personalStatementContent.review}
             />
             {/* 취업 연구팀 소개 */}
-            <ResearchTeamSection colors={colors} />
+            <ResearchTeamSection colors={personalStatementColors} />
 
             {/* 가격 및 플랜 */}
             {priceDetail && report?.reportType && (
               <ReportPlanSection
-                colors={colors}
+                colors={personalStatementColors}
                 priceDetail={priceDetail}
                 reportType={report?.reportType}
               />
@@ -135,26 +141,32 @@ const ReportPersonalStatementPage = () => {
 
             {/* 홍보 배너  */}
             {report?.reportType && (
-              <PromoSection colors={colors} reportType={report.reportType} />
+              <PromoSection
+                colors={personalStatementColors}
+                reportType={report.reportType}
+              />
             )}
 
             {/* 서비스 이용 안내 */}
             {report?.reportType && (
               <ServiceProcessSection
-                colors={colors}
+                colors={personalStatementColors}
                 reportType={report.reportType}
               />
             )}
 
             {/* FAQ  */}
             {report?.reportId && (
-              <ReportFaqSection colors={colors} reportId={report?.reportId} />
+              <ReportFaqSection
+                colors={personalStatementColors}
+                reportId={report?.reportId}
+              />
             )}
 
             {/* 프로그램 추천 */}
             {personalStatementContent.reportProgramRecommend && (
               <ReportProgramRecommendSlider
-                colors={colors}
+                colors={personalStatementColors}
                 reportProgramRecommend={
                   personalStatementContent.reportProgramRecommend
                 }
