@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { FaArrowLeft } from 'react-icons/fa6';
 import { useNavigate } from 'react-router-dom';
 
@@ -26,11 +26,8 @@ import Input from '@components/common/ui/input/Input';
 const ReportPaymentPage = () => {
   const navigate = useNavigate();
 
-  const {
-    data: reportApplication,
-    setReportApplication,
-    validate,
-  } = useReportApplicationStore();
+  const { data: reportApplication, setReportApplication } =
+    useReportApplicationStore();
   const { data: reportDetail } = useGetReportDetailQuery(
     reportApplication.reportId!,
   );
@@ -247,12 +244,25 @@ const ReportPaymentSection = () => {
   }, [reportPriceDetail]);
 
   const showFeedback = reportApplication.isFeedbackApplied;
-  const optionTitle = options.map((option) => option.title).join(', ');
   const reportAndOptionsDiscount =
     payment.reportDiscount + payment.optionDiscount; // 진단서와 옵션 할인 금액
   const reportAndOptionsAmount =
     payment.report + payment.option - reportAndOptionsDiscount; // 진단서와 옵션 결제 금액
   const feedbackAmount = payment.feedback - payment.feedbackDiscount; // 1:1 피드백 결제 금액
+  const optionTitle = useMemo(
+    () =>
+      // 문항 추가는 한 번만 표시
+      [
+        ...new Set(
+          options.map((option) =>
+            option.title?.startsWith('+')
+              ? option.title.slice(1).trim()
+              : option.title,
+          ),
+        ),
+      ].join(', '),
+    [options],
+  );
 
   return (
     <section className="flex flex-col">
