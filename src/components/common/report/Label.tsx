@@ -1,3 +1,5 @@
+import { memo } from 'react';
+
 interface LabelProps {
   children: React.ReactNode;
   htmlFor?: string;
@@ -11,4 +13,4 @@ const Label = ({ children, htmlFor }: LabelProps) => {
   );
 };
 
-export default Label;
+export default memo(Label);

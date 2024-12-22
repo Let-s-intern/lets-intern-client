@@ -53,12 +53,12 @@ export const PROGRAM_STATUS_KEY = {
   PREV: 'PREV',
   PROCEEDING: 'PROCEEDING',
   POST: 'POST',
-};
+} as const;
 
 export const PROGRAM_QUERY_KEY = {
   TYPE: 'type',
   CLASSIFICATION: 'classification',
   STATUS: 'status',
-};
+} as const;
 
 export const REMINDER_LINK = 'https://forms.gle/u6ePSE2WoRYjxyGS6';

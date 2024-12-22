@@ -1,5 +1,5 @@
 import { isAxiosError } from 'axios';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 import { useGetReportPriceDetail } from '../api/report';
 import useReportApplicationStore from '../store/useReportApplicationStore';
@@ -39,7 +39,7 @@ export default function useReportPayment() {
     reportApplication.reportId!,
   );
 
-  const applyCoupon = async (code: string) => {
+  const applyCoupon = useCallback(async (code: string) => {
     try {
       const res = await axios.get(`/coupon`, {
         params: {
@@ -63,10 +63,17 @@ export default function useReportPayment() {
         console.error(error);
       }
     }
-  };
+  }, []);
 
-  const cancelCoupon = () =>
-    setReportApplication({ couponId: null, couponDiscount: 0, couponCode: '' });
+  const cancelCoupon = useCallback(
+    () =>
+      setReportApplication({
+        couponId: null,
+        couponDiscount: 0,
+        couponCode: '',
+      }),
+    [],
+  );
 
   useEffect(() => {
     if (reportPriceDetail === undefined) return;
@@ -80,6 +87,7 @@ export default function useReportPayment() {
     const reportPriceInfo = reportPriceInfos?.find(
       (info) => info.reportPriceType === reportPriceType,
     );
+
     const report = reportPriceInfo?.price ?? 0;
     let option = 0;
     const reportDiscount = reportPriceInfo?.discountPrice ?? 0;
@@ -94,6 +102,7 @@ export default function useReportPayment() {
       const optionInfo = reportOptionInfos?.find(
         (info) => info.reportOptionId === optionId,
       );
+
       if (optionInfo === undefined) continue;
       optionDiscount += optionInfo.discountPrice ?? 0;
       option += optionInfo.price ?? 0;

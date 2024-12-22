@@ -1,17 +1,3 @@
-import {
-  convertFeedbackStatusToBadgeStatus,
-  convertFeedbackStatusToDisplayName,
-  convertReportStatusToBadgeStatus,
-  convertReportStatusToUserDisplayName,
-  convertReportTypeToDisplayName,
-  useGetMyReports,
-} from '@/api/report';
-import { download } from '@/lib/download';
-import { twMerge } from '@/lib/twMerge';
-import useAuthStore from '@/store/useAuthStore';
-import { ReportHeader } from '@components/common/report/ReportIntroSection';
-import Tooltip from '@components/common/report/Tooltip';
-import Badge from '@components/common/ui/Badge';
 import dayjs from 'dayjs';
 import {
   ComponentPropsWithoutRef,
@@ -22,6 +8,22 @@ import {
   useRef,
 } from 'react';
 import { Link, NavLink, useNavigate, useSearchParams } from 'react-router-dom';
+
+import {
+  convertFeedbackStatusToBadgeStatus,
+  convertFeedbackStatusToDisplayName,
+  convertReportStatusToBadgeStatus,
+  convertReportStatusToUserDisplayName,
+  convertReportTypeToDisplayName,
+  convertReportTypeToPathname,
+  useGetMyReports,
+} from '@/api/report';
+import { download } from '@/lib/download';
+import { twMerge } from '@/lib/twMerge';
+import useAuthStore from '@/store/useAuthStore';
+import useReportApplicationStore from '@/store/useReportApplicationStore';
+import Tooltip from '@components/common/report/Tooltip';
+import Badge from '@components/common/ui/Badge';
 
 type ReportFilter = {
   status: 'all' | 'active' | 'inactive';
@@ -161,8 +163,11 @@ ReportManagementButton.displayName = 'ReportManagementButton';
 
 const ReportManagementPage = () => {
   const [searchParams] = useSearchParams();
-  const { isLoggedIn } = useAuthStore();
   const navigate = useNavigate();
+
+  const { isLoggedIn } = useAuthStore();
+  const { initReportApplication, setReportApplication } =
+    useReportApplicationStore();
 
   useEffect(() => {
     if (!isLoggedIn) {
@@ -173,12 +178,26 @@ const ReportManagementPage = () => {
         navigate('/login?' + searchParams.toString());
       }, 100);
     }
+    initReportApplication(); // 서류 진단 전역 상태 초기화
   }, [isLoggedIn, navigate]);
 
   const filterStatus = (searchParams.get('status') ??
     'all') as ReportFilter['status'];
   const filterType = (searchParams.get('type') ??
     'all') as ReportFilter['type'];
+
+  const reportLink = () => {
+    switch (filterType) {
+      case 'resume':
+        return '/report/landing/resume';
+      case 'personal_statement':
+        return '/report/landing/personal-statement';
+      case 'portfolio':
+        return '/report/landing/portfolio';
+      default:
+        return '/report/landing/resume';
+    }
+  };
 
   const { data, status } = useGetMyReports();
 
@@ -211,8 +230,7 @@ const ReportManagementPage = () => {
   }, [data?.myReportInfos.length, navigate, status]);
 
   return (
-    <div className="mx-auto max-w-5xl px-5 pb-10">
-      <ReportHeader />
+    <div className="mx-auto max-w-5xl px-5 pb-10 pt-8">
       <header className="my-3 flex items-center gap-2 text-xsmall16 font-bold">
         <h1>서류 진단서</h1>
         <Tooltip className="text-xxsmall12 font-normal">
@@ -258,10 +276,12 @@ const ReportManagementPage = () => {
                   <Badge
                     status={convertReportStatusToBadgeStatus(
                       item.applicationStatus,
+                      item.applyUrl !== '',
                     )}
                   >
                     {convertReportStatusToUserDisplayName(
                       item.applicationStatus,
+                      item.applyUrl !== '',
                     )}
                   </Badge>
                   <h2 className="text-xsmall14 font-medium">{item.title}</h2>
@@ -316,9 +336,28 @@ const ReportManagementPage = () => {
                       </Link>
                     ) : null}
                   </div>
-                  {item.applicationStatus === 'APPLIED' ||
-                  item.applicationStatus === 'REPORTING' ||
-                  item.applicationStatus === 'REPORTED' ? (
+                  {/* 서류를 제출하지 않았으면 */}
+                  {item.applyUrl === '' ? (
+                    <ReportManagementButton
+                      className="max-w-40 flex-1"
+                      onClick={() => {
+                        // 서류 제출 시 필요한 reportId, 피드백 신청 여부를 전역 상태에 저장하여 사용 (API에 없음)
+                        setReportApplication({
+                          reportId: item.reportId,
+                          isFeedbackApplied: item.feedbackStatus === 'APPLIED',
+                          reportPriceType: item.reportPriceType ?? 'BASIC',
+                        });
+                        navigate(
+                          `/report/${convertReportTypeToPathname(item.reportType)}/application/${item.applicationId}`,
+                        );
+                      }}
+                    >
+                      서류 제출하기
+                    </ReportManagementButton>
+                  ) : (item.applicationStatus === 'APPLIED' &&
+                      item.applyUrl !== '') ||
+                    item.applicationStatus === 'REPORTING' ||
+                    item.applicationStatus === 'REPORTED' ? (
                     <ReportManagementButton
                       className="max-w-40 flex-1"
                       disabled
@@ -351,12 +390,14 @@ const ReportManagementPage = () => {
                           now: dayjs(),
                           reportFeedback: item.confirmedTime,
                           status: item.feedbackStatus,
+                          isReportSubmitted: item.applyUrl !== '',
                         })}
                       >
                         {convertFeedbackStatusToDisplayName({
                           now: dayjs(),
                           reportFeedback: item.confirmedTime,
                           status: item.feedbackStatus,
+                          isReportSubmitted: item.applyUrl !== '',
                         })}
                       </Badge>
                       <h3 className="text-xsmall14 font-medium text-primary-dark">
@@ -373,6 +414,7 @@ const ReportManagementPage = () => {
                               희망일자
                             </td>
                             <td className="py-0.5 pl-4 text-xxsmall12 font-medium leading-5 text-neutral-50">
+                              {item.applyUrl === '' && '미정'}
                               {item.desiredDate1 ? (
                                 <p>
                                   (1순위){' '}
@@ -443,7 +485,7 @@ const ReportManagementPage = () => {
       </div>
       <div className="my-3">
         <Link
-          to="/report/landing"
+          to={reportLink()}
           className="add_button_click flex h-12 w-full items-center justify-center rounded-md border-2 border-primary bg-neutral-100 font-medium text-primary-dark transition hover:border-primary-light hover:bg-white"
         >
           추가 신청하기

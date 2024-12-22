@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import { ProgramType } from '@/types/common';
 import { ProgramBlogReview } from '@/types/interface';
 import Description from './common/program/program-detail/Description';
-import Heading2 from './common/program/program-detail/Heading2';
+import Heading2 from './common/ui/Heading2';
 
 /**
  * TODO: 파일 어디론가 옮기기.

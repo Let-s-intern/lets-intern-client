@@ -6,9 +6,9 @@ import { ChallengeIdSchema, challengeTypeSchema } from '@/schema';
 import { ChallengeColor } from '@components/ChallengeView';
 import Box from '@components/common/program/program-detail/Box';
 import Description from '@components/common/program/program-detail/Description';
-import Heading2 from '@components/common/program/program-detail/Heading2';
 import OutlinedBox from '@components/common/program/program-detail/OutlineBox';
 import SuperTitle from '@components/common/program/program-detail/SuperTitle';
+import Heading2 from '@components/common/ui/Heading2';
 import { josa } from 'es-hangul';
 
 const superTitle = '취업 준비 현황 체크리스트';

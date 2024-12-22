@@ -1,32 +1,31 @@
 import { Button, IconButton } from '@mui/material';
-import { DatePicker } from '@mui/x-date-pickers';
-import dayjs, { Dayjs } from 'dayjs';
 import { MdDelete } from 'react-icons/md';
 
-import { ChallengeContent, ChallengeCurriculum } from '@/types/interface';
+import { LiveContent } from '@/types/interface';
 import { generateRandomNumber } from '@/utils/random';
-import { Heading2 } from '@components/admin/ui/heading/Heading2';
+import OutlinedTextarea from '@components/admin/OutlinedTextarea';
+import Heading2 from '@components/admin/ui/heading/Heading2';
 import Input from '@components/ui/input/Input';
 
-interface ChallengeCurriculumProps {
-  curriculum: ChallengeContent['curriculum'];
-  setContent: React.Dispatch<React.SetStateAction<ChallengeContent>>;
+interface LiveCurriculumProps {
+  curriculumTitle: LiveContent['curriculumTitle'];
+  curriculum: LiveContent['curriculum'];
+  setContent: React.Dispatch<React.SetStateAction<LiveContent>>;
 }
 
-function ChallengeCurriculumEditor({
-  curriculum = [],
+function LiveCurriculum({
+  curriculum,
+  curriculumTitle,
   setContent,
-}: ChallengeCurriculumProps) {
+}: LiveCurriculumProps) {
   const onClickAdd = () => {
     setContent((prev) => ({
       ...prev,
       curriculum: [
-        ...(prev?.curriculum ?? []),
+        ...prev.curriculum,
         {
           id: generateRandomNumber(),
-          startDate: new Date().toString(),
-          endDate: new Date().toString(),
-          session: '',
+          time: '',
           title: '',
           content: '',
         },
@@ -34,26 +33,9 @@ function ChallengeCurriculumEditor({
     }));
   };
 
-  const onChangeDate = (
-    name: string,
-    target: ChallengeCurriculum,
-    value: Dayjs | null,
-  ) => {
-    const newCurr = [...curriculum];
-    const index = curriculum.findIndex((curr) => curr.id === target.id);
-
-    if (index === -1) return;
-
-    newCurr[index] = {
-      ...newCurr[index],
-      [name]: value?.format('YYYY-MM-DDTHH:mm') ?? '',
-    };
-    setContent((prev) => ({ ...prev, curriculum: newCurr }));
-  };
-
   const onChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-    target: ChallengeCurriculum,
+    target: LiveContent['curriculum'][0],
   ) => {
     const newCurr = [...curriculum];
     const index = curriculum.findIndex((curr) => curr.id === target.id);
@@ -74,37 +56,42 @@ function ChallengeCurriculumEditor({
           추가
         </Button>
       </div>
+
+      <div className="mb-3 max-w-[450px]">
+        <Input
+          label="커리큘럼 제목"
+          type="text"
+          name="curriculumTitle"
+          placeholder="커리큘럼 제목을 입력해주세요"
+          defaultValue={curriculumTitle}
+          size="small"
+          onChange={(e) =>
+            setContent((prev) => ({ ...prev, [e.target.name]: e.target.value }))
+          }
+        />
+      </div>
+
       <div>
         {curriculum.map((item) => (
           <div className="mb-3 flex items-center gap-2" key={item.id}>
-            <DatePicker
-              label="시작일자"
-              value={dayjs(item.startDate)}
-              onChange={(value) => onChangeDate('startDate', item, value)}
-            />
-            <DatePicker
-              label="종료일자"
-              value={dayjs(item.endDate)}
-              onChange={(value) => onChangeDate('endDate', item, value)}
-            />
             <div>
               <Input
-                label="회차"
-                name="session"
-                placeholder="회차를 입력하세요(예:2회차)"
-                value={item.session}
+                label="시간"
+                name="time"
+                placeholder="시간를 입력하세요(예:10분)"
+                value={item.time}
                 onChange={(e) => onChange(e, item)}
               />
             </div>
-            <textarea
-              className="h-[60px] rounded-sm border p-2"
+            <OutlinedTextarea
+              className="h-[60px] w-3/12"
               name="title"
               placeholder="제목을 입력하세요"
               value={item.title}
               onChange={(e) => onChange(e, item)}
             />
-            <textarea
-              className="h-[60px] flex-1 rounded-sm border p-2"
+            <OutlinedTextarea
+              className="h-[60px] flex-1"
               name="content"
               placeholder="내용을 입력하세요"
               value={item.content}
@@ -116,7 +103,7 @@ function ChallengeCurriculumEditor({
               onClick={() => {
                 setContent((prev) => ({
                   ...prev,
-                  curriculum: prev.curriculum?.filter(
+                  curriculum: prev.curriculum.filter(
                     (curr) => curr.id !== item.id,
                   ),
                 }));
@@ -131,4 +118,4 @@ function ChallengeCurriculumEditor({
   );
 }
 
-export default ChallengeCurriculumEditor;
+export default LiveCurriculum;

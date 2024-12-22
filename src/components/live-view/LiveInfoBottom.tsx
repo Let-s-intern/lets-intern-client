@@ -10,7 +10,7 @@ import {
   formatTime,
 } from '@/utils/formatDateString';
 import BasicInfoRow from '@components/common/program/program-detail/basicInfo/BasicInfoRow';
-import Heading2 from '@components/common/program/program-detail/Heading2';
+import Heading2 from '@components/common/ui/Heading2';
 
 export const getDiscountPercent = (
   originalPrice: number,

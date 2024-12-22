@@ -7,8 +7,8 @@ import { twMerge } from '@/lib/twMerge';
 import { ChallengeType, challengeTypeSchema } from '@/schema';
 import { ChallengeCurriculum as ChallengeCurriculumType } from '@/types/interface';
 import { ChallengeColor } from '@components/ChallengeView';
-import Heading2 from '@components/common/program/program-detail/Heading2';
 import SuperTitle from '@components/common/program/program-detail/SuperTitle';
+import Heading2 from '@components/common/ui/Heading2';
 
 const { PORTFOLIO, PERSONAL_STATEMENT, CAREER_START } =
   challengeTypeSchema.enum;

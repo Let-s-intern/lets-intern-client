@@ -3,29 +3,33 @@ import { fileType, uploadFile } from '@/api/file';
 import { usePostChallengeMutation } from '@/api/program';
 import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
 import { challengeToCreateInput } from '@/hooks/useDuplicateProgram';
-import { CreateChallengeReq, getChallengeIdSchema } from '@/schema';
+import {
+  CreateChallengeReq,
+  getChallengeIdSchema,
+  ProgramTypeEnum,
+} from '@/schema';
 import { ChallengeContent } from '@/types/interface';
 import ChallengePreviewButton from '@components/admin/ChallengePreviewButton';
 import EditorApp from '@components/admin/lexical/EditorApp';
 import ImageUpload from '@components/admin/program/ui/form/ImageUpload';
 import Header from '@components/admin/ui/header/Header';
 import Heading from '@components/admin/ui/heading/Heading';
-import { Heading2 } from '@components/admin/ui/heading/Heading2';
+import Heading2 from '@components/admin/ui/heading/Heading2';
 import Heading3 from '@components/admin/ui/heading/Heading3';
 import { Button, TextField } from '@mui/material';
 import dayjs from 'dayjs';
 import { useCallback, useState } from 'react';
 import { FaSave } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
-import ChallengeBasic from './program/ChallengeBasic';
-import ChallengeCurriculum from './program/ChallengeCurriculum';
+import ChallengeBasic from '../../components/admin/program/ChallengeBasic';
+import ChallengeCurriculum from '../../components/admin/program/ChallengeCurriculum';
+import ChallengePoint from '../../components/admin/program/ChallengePoint';
+import ChallengePrice from '../../components/admin/program/ChallengePrice';
+import ProgramBestReview from '../../components/admin/program/ProgramBestReview';
+import ProgramBlogReviewEditor from '../../components/admin/program/ProgramBlogReviewEditor';
+import FaqSection from '../../components/FaqSection';
+import ProgramRecommendEditor from '../../components/ProgramRecommendEditor';
 import ChallengeFaqCategory from './program/ChallengeFaqCategory';
-import ChallengePoint from './program/ChallengePoint';
-import ChallengePrice from './program/ChallengePrice';
-import FaqSection from './program/FaqSection';
-import ProgramBestReview from './program/ProgramBestReview';
-import ProgramBlogReviewEditor from './program/ProgramBlogReviewEditor';
-import ProgramRecommendEditor from './program/ProgramRecommendEditor';
 import ProgramSchedule from './program/ProgramSchedule';
 
 /**
@@ -243,12 +247,15 @@ const ChallengeCreate: React.FC = () => {
         ></EditorApp>
       </section>
 
-      <ProgramRecommendEditor
-        programRecommend={content.programRecommend ?? { list: [] }}
-        setProgramRecommend={(programRecommend) =>
-          setContent((prev) => ({ ...prev, programRecommend }))
-        }
-      />
+      {/* 프로그램 추천 */}
+      <section className="mb-6">
+        <ProgramRecommendEditor
+          programRecommend={content.programRecommend ?? { list: [] }}
+          setProgramRecommend={(programRecommend) =>
+            setContent((prev) => ({ ...prev, programRecommend }))
+          }
+        />
+      </section>
 
       <ChallengeCurriculum
         curriculum={content.curriculum}
@@ -284,9 +291,11 @@ const ChallengeCreate: React.FC = () => {
           />
         </div>
         <FaqSection
-          programType="CHALLENGE"
+          programType={ProgramTypeEnum.enum.CHALLENGE}
           faqInfo={input.faqInfo}
-          setInput={setInput}
+          setFaqInfo={(faqInfo) =>
+            setInput((prev) => ({ ...prev, faqInfo: faqInfo ?? [] }))
+          }
           isCreate
         />
       </section>

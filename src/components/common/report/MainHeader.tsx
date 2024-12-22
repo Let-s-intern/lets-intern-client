@@ -1,7 +1,8 @@
-import { twMerge } from '@/lib/twMerge';
-import { ReactNode } from 'react';
+import { memo, ReactNode } from 'react';
 
-function Heading2({
+import { twMerge } from '@/lib/twMerge';
+
+function MainHeader({
   children,
   className,
 }: {
@@ -11,7 +12,7 @@ function Heading2({
   return (
     <h2
       className={twMerge(
-        'md:text-xlarge30 whitespace-pre-line text-small20 font-bold text-neutral-0 md:text-center',
+        'whitespace-pre-line text-center text-small20 font-bold text-neutral-0 md:text-xlarge30',
         className,
       )}
     >
@@ -20,4 +21,4 @@ function Heading2({
   );
 }
 
-export default Heading2;
+export default memo(MainHeader);

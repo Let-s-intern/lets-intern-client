@@ -23,6 +23,7 @@ import PriceSection from '@components/common/program/program-detail/apply/sectio
 import UserInputSection from '@components/common/program/program-detail/apply/section/UserInputSection';
 import Header from '@components/common/program/program-detail/header/Header';
 import { Duration } from '@components/Duration';
+import HorizontalRule from '@components/ui/HorizontalRule';
 import OrderProgramInfo from './OrderProgramInfo';
 
 function calculateTotalPrice({
@@ -210,7 +211,7 @@ const PaymentInputPage = () => {
         programTitle="결제하기"
       />
 
-      <hr className="my-6 block h-2 border-none bg-neutral-95" />
+      <HorizontalRule className="my-6" />
 
       <div className="mx-5">
         <OrderProgramInfo

@@ -35,6 +35,7 @@ module.exports = {
           dark: '#4138A3',
           light: '#757BFF',
           xlight: '#A9C1FF',
+          5: '#F5F6FF',
           10: '#EDEEFE',
           20: '#DBDDFD',
           30: '#CACCFC',
@@ -61,6 +62,7 @@ module.exports = {
         tertiary: '#CB81F2',
         point: '#DAFF7C',
         challenge: '#00A8EB',
+        requirement: '#FC5555',
         system: {
           'positive-green': '#1BC47D',
           'positive-blue': '#5177FF',
@@ -121,6 +123,13 @@ module.exports = {
         ],
         button:
           '0px 16px 20px 0px rgba(0, 0, 0, 0.12), 0px 8px 16px 0px rgba(0, 0, 0, 0.08), 0px 0px 8px 0px rgba(0, 0, 0, 0.08)',
+      },
+      dropShadow: {
+        '05': [
+          '0px 16px 20px rgba(0, 0, 0, 0.12)',
+          '0px 8px 16px rgba(0, 0, 0, 0.08)',
+          '0px 0px 8px rgba(0, 0, 0, 0.08)',
+        ],
       },
       backgroundImage: {
         'gradient-start':

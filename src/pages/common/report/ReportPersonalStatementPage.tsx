@@ -1,78 +1,74 @@
 import { useServerActiveReports } from '@/context/ActiveReports';
 import { personalStatementReportDescription } from '@/data/description';
 import useReportApplicationStore from '@/store/useReportApplicationStore';
+import { ReportColors, ReportContent } from '@/types/interface';
 import { getBaseUrlFromServer, getReportLandingTitle } from '@/utils/url';
-import { useEffect, useRef, useState } from 'react';
+import Header from '@components/common/program/program-detail/header/Header';
+import PromoSection from '@components/common/report/PromoSection';
+import ReportBasicInfo from '@components/common/report/ReportBasicInfo';
+import ReportExampleSection from '@components/common/report/ReportExampleSection';
+import ReportFaqSection from '@components/common/report/ReportFaqSection';
+import ReportIntroSection from '@components/common/report/ReportIntroSection';
+import ReportPlanSection from '@components/common/report/ReportPlanSection';
+import ReportProgramRecommendSlider from '@components/common/report/ReportProgramRecommendSlider';
+import ReportReviewSection from '@components/common/report/ReportReviewSection';
+import ResearchTeamSection from '@components/common/report/ResearchTeamSection';
+import ServiceProcessSection from '@components/common/report/ServiceProcessSection';
+import LoadingContainer from '@components/common/ui/loading/LoadingContainer';
+import { useEffect } from 'react';
 import { Helmet } from 'react-helmet';
-import { useLocation } from 'react-router-dom';
-import { useGetActiveReports } from '../../../api/report';
-import LexicalContent from '../../../components/common/blog/LexicalContent';
-import ReportApplyBottomSheet from '../../../components/common/report/ReportApplyBottomSheet';
-import ReportContentContainer from '../../../components/common/report/ReportContentContainer';
 import {
-  ReportHeader,
-  ReportLandingIntroSection,
-} from '../../../components/common/report/ReportIntroSection';
-import ReportLandingNav from '../../../components/common/report/ReportLandingNav';
+  useGetActiveReports,
+  useGetReportPriceDetail,
+} from '../../../api/report';
+import ReportApplyBottomSheet from '../../../components/common/report/ReportApplyBottomSheet';
+import ReportNavigation from './ReportNavigation';
+
+const colors: ReportColors = {
+  primary: {
+    DEFAULT: '#C34AFF',
+    50: '#F9EEFF',
+    100: '#E6B3FF',
+    200: '#F9EEFF',
+    300: '#CA60FF',
+    400: '#CA60FF',
+    500: '#CA60FF',
+  },
+  secondary: {
+    DEFAULT: '#EB6CFF',
+    50: '#F3A2FF',
+  },
+  highlight: {
+    DEFAULT: '#CA60FF',
+    50: '#F9EEFF',
+    100: '#C34AFF',
+  },
+};
 
 const ReportPersonalStatementPage = () => {
-  const location = useLocation();
-
-  const url = `${typeof window !== 'undefined' ? window.location.origin : getBaseUrlFromServer()}/report/landing/personal-statement`;
-  const description = personalStatementReportDescription;
-  const activeReportsFromServer = useServerActiveReports();
-  const { data } = useGetActiveReports();
+  const { data, isLoading } = useGetActiveReports();
   const title = getReportLandingTitle(
     data?.personalStatementInfo?.title ?? '자기소개서',
   );
-  const activeReports = data || activeReportsFromServer;
-  const report = activeReports?.personalStatementInfo;
-
-  const root = JSON.parse(report?.contents || '{"root":{}}').root;
 
   const { initReportApplication } = useReportApplicationStore();
 
-  const contentRef = useRef<HTMLDivElement>(null);
-  // const bottomSheetRef = useRef<HTMLDivElement | null>(null);
-  const [showBottomSheet, setShowBottomSheet] = useState(false);
+  const activeReportsFromServer = useServerActiveReports();
+
+  const url = `${typeof window !== 'undefined' ? window.location.origin : getBaseUrlFromServer()}/report/landing/personal-statement`;
+  const description = personalStatementReportDescription;
+  const activeReports = data || activeReportsFromServer;
+  const report = activeReports?.personalStatementInfo;
+  const personalStatementContent: ReportContent = JSON.parse(
+    data?.personalStatementInfo?.contents ?? '{}',
+  );
+
+  const { data: priceDetail } = useGetReportPriceDetail(report?.reportId);
 
   useEffect(() => {
     initReportApplication();
-
-    if (contentRef.current) {
-      const observer = new IntersectionObserver(
-        (entries) => {
-          // entries.forEach((entry) => {
-          //   if (bottomSheetRef.current) {
-          //     bottomSheetRef.current.style.display = entry.isIntersecting
-          //       ? 'block'
-          //       : 'none';
-          //   }
-          // });
-          const entry = entries[0];
-          if (entry) {
-            setShowBottomSheet(entry.isIntersecting);
-          }
-        },
-        {
-          root: null,
-          rootMargin: '0px',
-          threshold: 0,
-        },
-      );
-      observer.observe(contentRef.current);
-      return () => {
-        observer.disconnect();
-      };
-    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  useEffect(() => {
-    const { hash } = location;
-
-    if (hash === '#content') contentRef.current?.scrollIntoView();
-  }, [contentRef.current]);
 
   return (
     <>
@@ -96,39 +92,81 @@ const ReportPersonalStatementPage = () => {
           <meta name="twitter:description" content={description} />
         ) : null}
       </Helmet>
-      <ReportLandingIntroSection header={<ReportHeader />} />
-      <div
-        id="content"
-        ref={contentRef}
-        // ref={(element) => {
-        //   contentRef.current = element;
-        //   if (element) {
-        //     const url = new URL(window.location.href);
+      {isLoading ? (
+        <LoadingContainer />
+      ) : (
+        <div className="flex w-full flex-col items-center">
+          <div className="flex w-full flex-col bg-black pb-12 text-white md:pb-20">
+            <div className="mx-auto flex w-full max-w-[1000px] flex-col px-5 lg:px-0">
+              <Header programTitle={'서류완성의 시작과 끝은 진단에서부터'} />
+              <ReportBasicInfo
+                reportBasic={data?.personalStatementInfo}
+                color={colors.primary.DEFAULT}
+              />
+            </div>
+          </div>
+          <ReportNavigation color={colors.primary.DEFAULT} isDark />
+          <div className="flex w-full flex-col items-center gap-y-12 md:gap-y-6">
+            {/* 서비스 소개 */}
+            <ReportIntroSection colors={colors} type="PERSONAL_STATEMENT" />
+            {/* 리포트 예시 */}
+            <ReportExampleSection
+              colors={colors}
+              type="PERSONAL_STATEMENT"
+              reportExample={personalStatementContent.reportExample}
+            />
+            {/* 후기 */}
+            <ReportReviewSection
+              colors={colors}
+              type="PERSONAL_STATEMENT"
+              reportReview={personalStatementContent.review}
+            />
+            {/* 취업 연구팀 소개 */}
+            <ResearchTeamSection colors={colors} />
 
-        //     const from = url.searchParams.get('from');
-        //     if (!from) {
-        //       return;
-        //     }
+            {/* 가격 및 플랜 */}
+            {priceDetail && report?.reportType && (
+              <ReportPlanSection
+                colors={colors}
+                priceDetail={priceDetail}
+                reportType={report?.reportType}
+              />
+            )}
 
-        //     if (from === 'nav') {
-        //       element.scrollIntoView();
-        //     }
-        //   }
-        // }}
-      >
-        <ReportLandingNav />
+            {/* 홍보 배너  */}
+            {report?.reportType && (
+              <PromoSection colors={colors} reportType={report.reportType} />
+            )}
 
-        {Object.keys(root).length !== 0 && (
-          <ReportContentContainer>
-            <LexicalContent node={root} />
-          </ReportContentContainer>
-        )}
-      </div>
+            {/* 서비스 이용 안내 */}
+            {report?.reportType && (
+              <ServiceProcessSection
+                colors={colors}
+                reportType={report.reportType}
+              />
+            )}
 
-      {report && showBottomSheet ? (
-        <ReportApplyBottomSheet report={report} />
-      ) : // <ReportApplyBottomSheet report={report} ref={bottomSheetRef} />
-      null}
+            {/* FAQ  */}
+            {report?.reportId && (
+              <ReportFaqSection colors={colors} reportId={report?.reportId} />
+            )}
+
+            {/* 프로그램 추천 */}
+            {personalStatementContent.reportProgramRecommend && (
+              <ReportProgramRecommendSlider
+                colors={colors}
+                reportProgramRecommend={
+                  personalStatementContent.reportProgramRecommend
+                }
+              />
+            )}
+          </div>
+        </div>
+      )}
+
+      {report && priceDetail && (
+        <ReportApplyBottomSheet report={report} priceDetail={priceDetail} />
+      )}
     </>
   );
 };

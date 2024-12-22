@@ -1,10 +1,11 @@
+import { ReportPriceType } from '@/api/report';
 import dayjs from 'dayjs';
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
 export interface ReportApplication {
   reportId: number | null;
-  reportPriceType: 'BASIC' | 'PREMIUM';
+  reportPriceType?: ReportPriceType;
   optionIds: number[];
   isFeedbackApplied: boolean;
   couponId: number | null;
@@ -39,7 +40,7 @@ const useReportApplicationStore = create(
     (set, get) => ({
       data: {
         reportId: null,
-        reportPriceType: 'BASIC' as const,
+        reportPriceType: undefined,
         optionIds: [],
         isFeedbackApplied: false,
         couponId: null,
@@ -59,12 +60,12 @@ const useReportApplicationStore = create(
         message: '',
         contactEmail: '',
       },
-      setReportApplication: (params) => {
+      setReportApplication: (newData) => {
         const currentData = get().data;
         set({
           data: {
             ...currentData,
-            ...params, // 전달된 값들만 업데이트
+            ...newData, // 전달된 값들만 업데이트
           },
         });
       },
@@ -72,7 +73,7 @@ const useReportApplicationStore = create(
         set({
           data: {
             reportId: null,
-            reportPriceType: 'BASIC',
+            reportPriceType: undefined,
             optionIds: [],
             isFeedbackApplied: false,
             couponId: null,
@@ -144,7 +145,7 @@ const useReportApplicationStore = create(
         if (currentData.isFeedbackApplied && isDuplicateDate(currentData))
           return {
             isValid: false,
-            message: '1:1 피드백 일정을 중복되지 않게 선택해주세요.',
+            message: '1:1 피드백 일정이 중복되지 않게 선택해주세요.',
           };
 
         if (isEmpty(currentData.wishJob))

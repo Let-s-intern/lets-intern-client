@@ -29,7 +29,15 @@ const ApplicationCard = ({
     paymentId: 0,
   });
 
-  const programLink = `/program/${application.programType?.toLowerCase()}/${application.programId}`;
+  const thumbnail =
+    application.programType === 'REPORT'
+      ? '/images/report-banner.jpg'
+      : (application.programThumbnail ?? '');
+
+  const programLink =
+    application.programType === 'REPORT'
+      ? '/report/management'
+      : `/program/${application.programType?.toLowerCase()}/${application.programId}`;
 
   return (
     <div
@@ -46,7 +54,7 @@ const ApplicationCard = ({
       >
         <Link to={programLink}>
           <img
-            src={application.programThumbnail ?? ''}
+            src={thumbnail}
             alt="프로그램 썸네일"
             className="h-[7.5rem] w-full bg-primary-light object-cover md:h-[9rem] md:w-[11rem] md:rounded-xs"
           />

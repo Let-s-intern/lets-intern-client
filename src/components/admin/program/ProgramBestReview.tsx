@@ -1,5 +1,5 @@
 import { ContentReviewType } from '@/types/interface';
-import { Heading2 } from '@components/admin/ui/heading/Heading2';
+import Heading2 from '@components/admin/ui/heading/Heading2';
 import Input from '@components/ui/input/Input';
 import { Button, IconButton } from '@mui/material';
 import { MdDelete } from 'react-icons/md';

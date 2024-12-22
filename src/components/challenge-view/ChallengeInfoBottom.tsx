@@ -13,7 +13,7 @@ import {
 import { ChallengeColor } from '@components/ChallengeView';
 import BasicInfoBottomRow from '@components/common/program/program-detail/basicInfo/BasicInfoBottomRow';
 import BasicInfoRow from '@components/common/program/program-detail/basicInfo/BasicInfoRow';
-import Heading2 from '@components/common/program/program-detail/Heading2';
+import Heading2 from '@components/common/ui/Heading2';
 import { useMediaQuery } from '@mui/material';
 
 const { PERSONAL_STATEMENT } = challengeTypeSchema.enum;

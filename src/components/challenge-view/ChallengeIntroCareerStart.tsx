@@ -4,8 +4,8 @@ import { twMerge } from '@/lib/twMerge';
 import { ChallengePoint } from '@/types/interface';
 import { ChallengeColor } from '@components/ChallengeView';
 import Description from '@components/common/program/program-detail/Description';
-import Heading2 from '@components/common/program/program-detail/Heading2';
 import CircularBox from '@components/common/ui/CircularBox';
+import Heading2 from '@components/common/ui/Heading2';
 
 const boxes = [
   `나의 경험을\n전략적으로\n서류에 녹일 수\n없을까?`,

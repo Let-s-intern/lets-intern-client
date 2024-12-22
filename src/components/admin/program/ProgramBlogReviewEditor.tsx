@@ -1,7 +1,7 @@
 import { useBlogListQuery } from '@/api/blog';
 import { ProgramBlogReview } from '@/types/interface';
 import { blogCategory } from '@/utils/convert';
-import { Heading2 } from '@components/admin/ui/heading/Heading2';
+import Heading2 from '@components/admin/ui/heading/Heading2';
 import { Box, Button, Modal, Typography } from '@mui/material';
 import dayjs from 'dayjs';
 import React, { useMemo, useState } from 'react';

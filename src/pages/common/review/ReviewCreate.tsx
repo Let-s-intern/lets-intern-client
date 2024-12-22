@@ -2,6 +2,7 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 
+import ReportReviewSection from '@components/common/review/section/ReportReviewSection';
 import ConfirmSection from '../../../components/common/review/section/ConfirmSection';
 import StarScoreSection from '../../../components/common/review/section/StarScoreSection';
 import TenScoreSection from '../../../components/common/review/section/TenScoreSection';
@@ -19,6 +20,10 @@ const ReviewCreate = ({ isEdit }: { isEdit: boolean }) => {
   const [hasRecommendationExperience, setHasRecommendationExperience] =
     useState<boolean | null>(null);
   const [npsAns, setNpsAns] = useState('');
+
+  const [hasPassed, setHasPassed] = useState<boolean | null>(null);
+  const [howHelpful, setHowHelpful] = useState<string>('');
+  const [passedWhere, setPassedWhere] = useState<string>('');
 
   const reviewId = params.reviewId;
   const applicationId = searchParams.get('application');
@@ -101,18 +106,36 @@ const ReviewCreate = ({ isEdit }: { isEdit: boolean }) => {
 
   const handleConfirm = () => {
     if (isEdit) {
-      if (!npsAns || content === '' || starScore === 0 || tenScore === null) {
+      if (
+        !npsAns ||
+        content === '' ||
+        hasRecommendationExperience === null ||
+        starScore === 0 ||
+        tenScore === null
+      ) {
         alert('모든 항목을 입력해주세요.');
         return;
       }
       editReview.mutate();
       return;
+    } else {
+      if (
+        starScore === 0 ||
+        tenScore === null ||
+        hasRecommendationExperience === null ||
+        !npsAns ||
+        (programType === 'report' && (hasPassed === null || howHelpful === ''))
+      ) {
+        alert('모든 항목을 입력해주세요.');
+        return;
+      }
+      addReview.mutate();
+      return;
     }
-    addReview.mutate();
   };
 
   return (
-    <div className="flex w-full flex-col items-center bg-neutral-0/50 md:fixed md:left-0 md:top-0 md:h-screen md:w-screen md:justify-center">
+    <div className="z-50 flex w-full flex-col items-center bg-neutral-0/50 md:fixed md:left-0 md:top-0 md:h-screen md:w-screen md:justify-center">
       <main className="flex w-full max-w-3xl flex-col gap-16 bg-white px-5 md:relative md:max-h-[45rem] md:w-[40rem] md:overflow-y-scroll md:rounded-xl md:px-14 md:pb-6 md:pt-12">
         <img
           src="/icons/menu_close_md.svg"
@@ -136,7 +159,19 @@ const ReviewCreate = ({ isEdit }: { isEdit: boolean }) => {
           npsAns={npsAns}
           setNpsAns={setNpsAns}
         />
-        <TextAreaSection content={content} setContent={setContent} />
+        {programType !== 'report' ? (
+          <TextAreaSection content={content} setContent={setContent} />
+        ) : (
+          <ReportReviewSection
+            programTitle={programTitle}
+            hasPassed={hasPassed}
+            setHasPassed={setHasPassed}
+            howHelpful={howHelpful}
+            setHowHelpful={setHowHelpful}
+            passedWhere={passedWhere}
+            setPassedWhere={setPassedWhere}
+          />
+        )}
         <ConfirmSection
           isEdit={isEdit}
           onConfirm={handleConfirm}

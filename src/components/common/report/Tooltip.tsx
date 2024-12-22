@@ -1,5 +1,5 @@
 import { twMerge } from '@/lib/twMerge';
-import { useState } from 'react';
+import { memo, useState } from 'react';
 
 interface TooltipProps {
   alt?: string;
@@ -38,4 +38,4 @@ const Tooltip = ({ alt = '툴팁', children, className }: TooltipProps) => {
   );
 };
 
-export default Tooltip;
+export default memo(Tooltip);

@@ -1,10 +1,3 @@
-import { usePatchUser } from '@/api/user';
-import useMinDate from '@/hooks/useMinDate';
-import useRunOnce from '@/hooks/useRunOnce';
-import useValidateUrl from '@/hooks/useValidateUrl';
-import { generateOrderId } from '@/lib/order';
-import { twMerge } from '@/lib/twMerge';
-import useAuthStore from '@/store/useAuthStore';
 import {
   FormControl,
   RadioGroup,
@@ -12,48 +5,51 @@ import {
   useMediaQuery,
 } from '@mui/material';
 import dayjs, { Dayjs } from 'dayjs';
-import React, { useEffect, useRef, useState } from 'react';
-import { FaSpinner } from 'react-icons/fa';
+import React, { memo, useEffect, useRef, useState } from 'react';
 import { FaArrowLeft } from 'react-icons/fa6';
 import { IoCloseOutline } from 'react-icons/io5';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useGetParticipationInfo } from '../../../api/application';
-import { uploadFile } from '../../../api/file';
+
+import { uploadFile } from '@/api/file';
 import {
   convertReportPriceType,
   convertReportTypeStatus,
   convertReportTypeToLandingPath,
   ReportOptionInfo,
   ReportType,
-  useGetReportDetailQuery,
   useGetReportPriceDetail,
-} from '../../../api/report';
-import Card from '../../../components/common/report/Card';
-import { ReportFormRadioControlLabel } from '../../../components/common/report/ControlLabel';
-import DateTimePicker from '../../../components/common/report/DateTimePicker';
-import FilledInput from '../../../components/common/report/FilledInput';
-import Heading1 from '../../../components/common/report/Heading1';
-import Heading2 from '../../../components/common/report/Heading2';
-import Label from '../../../components/common/report/Label';
-import Tooltip from '../../../components/common/report/Tooltip';
-import BottomSheet from '../../../components/common/ui/BottomSheeet';
-import Input from '../../../components/common/ui/input/Input';
-import useReportPayment from '../../../hooks/useReportPayment';
-import useReportProgramInfo from '../../../hooks/useReportProgramInfo';
-import useReportApplicationStore from '../../../store/useReportApplicationStore';
+} from '@/api/report';
+import useMinDate from '@/hooks/useMinDate';
+import useReportPayment from '@/hooks/useReportPayment';
+import useReportProgramInfo from '@/hooks/useReportProgramInfo';
+import useRunOnce from '@/hooks/useRunOnce';
+import useValidateUrl from '@/hooks/useValidateUrl';
+import { twMerge } from '@/lib/twMerge';
+import useAuthStore from '@/store/useAuthStore';
+import useReportApplicationStore from '@/store/useReportApplicationStore';
+import Card from '@components/common/report/Card';
+import { ReportFormRadioControlLabel } from '@components/common/report/ControlLabel';
+import DateTimePicker from '@components/common/report/DateTimePicker';
+import FilledInput from '@components/common/report/FilledInput';
+import Heading1 from '@components/common/report/Heading1';
+import Heading2 from '@components/common/report/Heading2';
+import Label from '@components/common/report/Label';
+import Tooltip from '@components/common/report/Tooltip';
+import BottomSheet from '@components/common/ui/BottomSheeet';
+import Input from '@components/common/ui/input/Input';
+import HorizontalRule from '@components/ui/HorizontalRule';
 
 const ReportApplyPage = () => {
-  const isUpTo1280 = useMediaQuery('(max-width: 1280px)');
   const navigate = useNavigate();
   const { reportType, reportId } = useParams();
+  const isMobile = useMediaQuery('(max-width: 991px)');
 
   const [applyFile, setApplyFile] = useState<File | null>(null);
   const [recruitmentFile, setRecruitmentFile] = useState<File | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isSubmitNow, setIsSubmitNow] = useState('true');
 
-  const { payment } = useReportPayment();
   const { isLoggedIn } = useAuthStore();
-  const patchUserMutation = usePatchUser();
+
   const {
     data: reportApplication,
     setReportApplication,
@@ -72,15 +68,15 @@ const ReportApplyPage = () => {
     }
   };
 
-  const isValidFile = () => {
+  // 파일 state 때문에 별도로 유효성 검사
+  const validateFile = () => {
     const { applyUrl, reportPriceType, recruitmentUrl } = reportApplication;
 
     const isEmpty = (value: string | File | null) =>
       value === '' || value === null;
 
     if (isEmpty(applyUrl) && isEmpty(applyFile)) {
-      alert('진단용 서류를 등록해주세요.');
-      return false;
+      return { message: '진단용 서류를 등록해주세요.', isValid: false };
     }
 
     if (
@@ -89,11 +85,9 @@ const ReportApplyPage = () => {
       isEmpty(recruitmentUrl) &&
       isEmpty(recruitmentFile)
     ) {
-      alert('채용공고를 등록해주세요.');
-      return false;
+      return { message: '채용공고를 등록해주세요.', isValid: false };
     }
-
-    return true;
+    return { message: '', isValid: true };
   };
 
   useRunOnce(() => {
@@ -109,25 +103,53 @@ const ReportApplyPage = () => {
       <div className="w-full">
         <header>
           <Heading1>진단서 신청하기</Heading1>
-          <CallOut />
         </header>
-        <main className="my-8 flex flex-col gap-10">
-          <ProgramInfoSection />
-          <DocumentSection file={applyFile} dispatch={setApplyFile} />
-          {reportApplication.reportPriceType === 'PREMIUM' &&
-            reportType?.toUpperCase() !== 'PERSONAL_STATEMENT' && (
-              <PremiumSection
-                file={recruitmentFile}
-                dispatch={setRecruitmentFile}
+
+        <HorizontalRule className="-mx-5 md:-mx-32 lg:mx-0" />
+
+        <main className="mb-8 mt-6 flex flex-col gap-10">
+          {/* 프로그램 정보 */}
+          <ProgramInfoSection
+            onChangeRadio={(event, value) => setIsSubmitNow(value)}
+          />
+
+          {/* '지금 제출할래요' 선택 시 표시 */}
+          {isSubmitNow === 'true' && (
+            <>
+              <HorizontalRule className="-mx-5 md:-mx-32 lg:mx-0" />
+              <CallOut
+                className="bg-neutral-100"
+                header="❗ 제출 전 꼭 읽어주세요"
+                body="이력서 파일/링크가 잘 열리는 지 확인 후 첨부해주세요!"
               />
-            )}
-          {reportApplication.isFeedbackApplied && <ScheduleSection />}
-          <AdditionalInfoSection />
+              {/* 진단용 서류 */}
+              <DocumentSection file={applyFile} dispatch={setApplyFile} />
+              {/* 프리미엄 채용공고 */}
+              {reportApplication.reportPriceType === 'PREMIUM' &&
+                reportType?.toUpperCase() !== 'PERSONAL_STATEMENT' && (
+                  <PremiumSection
+                    file={recruitmentFile}
+                    dispatch={setRecruitmentFile}
+                  />
+                )}
+              <HorizontalRule className="-mx-5 md:-mx-32 lg:mx-0" />
+              {/* 1:1 피드백 일정 */}
+              {reportApplication.isFeedbackApplied && (
+                <>
+                  <ScheduleSection />
+                  <HorizontalRule className="-mx-5 md:-mx-32 lg:mx-0" />
+                </>
+              )}
+
+              {/* 추가 정보 */}
+              <AdditionalInfoSection />
+            </>
+          )}
         </main>
       </div>
 
-      {isUpTo1280 ? (
-        <BottomSheet>
+      <BottomSheet className="xl:mx-48">
+        {isMobile && (
           <button
             onClick={() => {
               const to = `${convertReportTypeToLandingPath(reportType?.toUpperCase() as ReportType)}#content`;
@@ -137,93 +159,69 @@ const ReportApplyPage = () => {
           >
             <FaArrowLeft size={20} />
           </button>
-          <button
-            className="text-1.125-medium w-full rounded-md bg-primary py-3 text-center font-medium text-neutral-100"
-            onClick={async () => {
-              if (!isValidFile()) return;
+        )}
+        <button
+          className="text-1.125-medium w-full rounded-md bg-primary py-3 text-center font-medium text-neutral-100"
+          onClick={async () => {
+            // 지금 제출일 때만 파일 유효성 검사
+            if (isSubmitNow === 'true') {
+              const { isValid: isValidFile, message: fileValidationMessage } =
+                validateFile();
+
+              if (!isValidFile) {
+                alert(fileValidationMessage);
+                return;
+              }
 
               const { isValid, message } = validate();
               if (!isValid) {
                 alert(message);
                 return;
               }
+            }
 
-              setIsLoading(true);
-              await convertFile();
-              navigate(`/report/payment/${reportType}/${reportId}`);
-            }}
-          >
-            다음
-          </button>
-        </BottomSheet>
-      ) : (
-        <aside className="h-fit w-96 shrink-0 rounded-lg bg-static-100 px-5 pb-6 shadow-03">
-          <Heading1>결제하기</Heading1>
-          <div className="flex flex-col gap-10">
-            <UsereInfoSection />
-            <ReportPaymentSection />
-            <button
-              className="complete_button_click w-full rounded-md bg-primary py-3 text-center text-small18 font-medium text-neutral-100"
-              onClick={async () => {
-                if (!isValidFile()) return;
+            // 지금 제출일 때만 파일 업로드
+            if (isSubmitNow === 'true') await convertFile();
 
-                const { isValid, message } = validate();
-                if (!isValid) {
-                  alert(message);
-                  return;
-                }
-                if (reportApplication.contactEmail === '') {
-                  alert('정보 수신용 이메일을 입력해주세요.');
-                  return;
-                }
-
-                setIsLoading(true);
-                patchUserMutation.mutateAsync({
-                  contactEmail: reportApplication.contactEmail,
-                });
-                await convertFile();
-
-                if (payment.amount === 0) {
-                  navigate(`/report/order/result?orderId=${generateOrderId()}`);
-                  return;
-                }
-                // 토스 페이지에서 이전 버튼 누르면 서류 진단 페이지로 이동한다는 confrim 표시하면 좋을 거 같음
-                navigate(`/report/toss/payment`, { replace: true });
-              }}
-            >
-              결제하기
-            </button>
-            {isLoading && (
-              <div className="fixed left-0 top-0 flex h-screen w-screen flex-col items-center justify-center gap-y-5 bg-neutral-10/30 text-white">
-                <FaSpinner className="animate-spin" size={40} />
-                <div>진단서 접수 중...</div>
-              </div>
-            )}
-          </div>
-        </aside>
-      )}
+            navigate(`/report/payment/${reportType}/${reportId}`);
+          }}
+        >
+          다음
+        </button>
+      </BottomSheet>
     </div>
   );
 };
 
 export default ReportApplyPage;
 
-const CallOut = () => {
-  const { reportId } = useParams();
-
-  const { data } = useGetReportDetailQuery(Number(reportId));
-
+const CallOut = memo(function Callout({
+  header,
+  body,
+  className,
+}: {
+  header?: string;
+  body?: string;
+  className?: string;
+}) {
   return (
-    <div className="rounded-md bg-neutral-100 px-6 py-6">
+    <div className={twMerge('rounded-md bg-neutral-100 px-6 py-6', className)}>
       <span className="-ml-1 text-xsmall16 font-semibold text-primary">
-        ❗신청 전 꼭 읽어주세요
+        {header}
       </span>
-      <p className="mt-1 text-xsmall14 text-neutral-20">{data?.notice}</p>
+      <p className="mt-1 text-xsmall14 text-neutral-20">{body}</p>
     </div>
   );
-};
+});
 
-const ProgramInfoSection = () => {
+const ProgramInfoSection = ({
+  onChangeRadio,
+}: {
+  onChangeRadio?: (
+    event: React.ChangeEvent<HTMLInputElement>,
+    value: string,
+  ) => void;
+}) => {
   const { title, product, option } = useReportProgramInfo();
 
   return (
@@ -252,6 +250,32 @@ const ProgramInfoSection = () => {
           },
         ]}
       />
+      <div className="mt-10">
+        <CallOut
+          className="mb-6 bg-primary-5"
+          header="📄 진단을 위한 서류를 제출해주세요"
+          body="결제 후 7일 이내 서류 미제출 시 자동 환불 처리되니 이 점 꼭 유의해
+        주세요."
+        />
+        <FormControl fullWidth>
+          <RadioGroup
+            defaultValue="true"
+            name="radio-buttons-group"
+            onChange={onChangeRadio}
+          >
+            <div className="flex flex-col gap-1">
+              <ReportFormRadioControlLabel
+                label="지금 제출할래요."
+                value="true"
+              />
+              <ReportFormRadioControlLabel
+                label="결제 후 나중에 제출할래요."
+                value="false"
+              />
+            </div>
+          </RadioGroup>
+        </FormControl>
+      </div>
     </section>
   );
 };
@@ -271,8 +295,8 @@ const DocumentSection = ({
   const isValidUrl = useValidateUrl(data.applyUrl);
 
   return (
-    <section className="flex flex-col gap-3 lg:flex-row lg:items-start lg:gap-5">
-      <div className="flex w-[8.75rem] shrink-0 items-center lg:mt-2">
+    <section className="flex flex-col lg:flex-row lg:items-start lg:gap-5">
+      <div className="mb-3 flex w-[8.75rem] shrink-0 items-center">
         <Heading2>진단용 {convertReportTypeStatus(reportType!)}</Heading2>
         <RequiredStar />
       </div>
@@ -397,7 +421,7 @@ const PremiumSection = ({
 
 const ScheduleSection = () => {
   const { data, setReportApplication } = useReportApplicationStore();
-  const { minDate, timeOptions } = useMinDate(data);
+  const minDate = useMinDate(data);
 
   type Key = keyof typeof data;
 
@@ -412,6 +436,10 @@ const ScheduleSection = () => {
 
   const onChangeTime = (e: SelectChangeEvent<unknown>) => {
     const prev = data[e.target.name as Key];
+    if (prev === undefined) {
+      alert('날짜를 먼저 선택해주세요');
+      return;
+    }
 
     setReportApplication({
       [e.target.name]: dayjs(prev as dayjs.ConfigType)
@@ -441,13 +469,13 @@ const ScheduleSection = () => {
                 : dayjs(data.desiredDate1)
             }
             time={
-              data.desiredDate1 === undefined
+              data.desiredDate1 === undefined ||
+              dayjs(data.desiredDate1).hour() === 0
                 ? undefined
                 : dayjs(data.desiredDate1).hour()
             }
             name="desiredDate1"
             minDate={minDate}
-            timeOption={timeOptions.desiredDate1}
             onChangeDate={onChangeDate}
             onChangeTime={onChangeTime}
           />
@@ -462,7 +490,6 @@ const ScheduleSection = () => {
             }
             name="desiredDate2"
             minDate={minDate}
-            timeOption={timeOptions.desiredDate2}
             onChangeDate={onChangeDate}
             onChangeTime={onChangeTime}
           />
@@ -477,7 +504,6 @@ const ScheduleSection = () => {
             }
             name="desiredDate3"
             minDate={minDate}
-            timeOption={timeOptions.desiredDate3}
             onChangeDate={onChangeDate}
             onChangeTime={onChangeTime}
           />
@@ -528,107 +554,6 @@ const AdditionalInfoSection = () => {
   );
 };
 
-/* 모바일 전용 결제 페이지(ReportPaymentPage)에서 같이 사용 */
-export const UsereInfoSection = () => {
-  const [checked, setChecked] = useState(true);
-
-  const { data: participationInfo } = useGetParticipationInfo();
-  const { data: reportApplication, setReportApplication } =
-    useReportApplicationStore();
-
-  useEffect(() => {
-    // 가입한 이메일을 정보 수신용 이메일로 설정
-    setReportApplication({
-      contactEmail: participationInfo?.contactEmail || '',
-    });
-  }, [participationInfo]);
-
-  useEffect(() => {
-    // 정보 수신용 이메일과 가입한 이메일이 다르면 체크 해제
-    if (reportApplication.contactEmail !== participationInfo?.email)
-      setChecked(false);
-    else setChecked(true);
-  }, [reportApplication]);
-
-  return (
-    <section>
-      <Heading2>참여자 정보</Heading2>
-      <div className="mt-6 flex flex-col gap-3">
-        <div className="flex flex-col gap-1">
-          <Label>이름</Label>
-          <Input
-            disabled
-            readOnly
-            className="text-sm"
-            value={participationInfo?.name || ''}
-            name="name"
-          />
-        </div>
-        <div className="flex flex-col gap-1">
-          <Label>휴대폰 번호</Label>
-          <Input
-            disabled
-            readOnly
-            className="text-sm"
-            value={participationInfo?.phoneNumber || ''}
-            name="phoneNumber"
-          />
-        </div>
-        <div className="flex flex-col gap-1">
-          <label className="ml-3 text-xsmall14 font-semibold">
-            가입한 이메일
-          </label>
-          <Input
-            disabled
-            readOnly
-            className="text-sm"
-            value={participationInfo?.email || ''}
-            name="email"
-          />
-        </div>
-        <div className="flex flex-col gap-1">
-          <Label htmlFor="contactEmail">렛츠커리어 정보 수신용 이메일</Label>
-          <p className="text-[0.5625rem] font-light text-neutral-0 text-opacity-[52%]">
-            * 결제정보 및 프로그램 신청 관련 알림 수신을 위해,
-            <br />
-            &nbsp;&nbsp; 자주 사용하는 이메일 주소를 입력해주세요!
-          </p>
-          <label
-            onClick={() => {
-              setChecked(!checked);
-              if (checked) {
-                setReportApplication({
-                  contactEmail: '',
-                });
-              } else {
-                setReportApplication({
-                  contactEmail: participationInfo?.email || '',
-                });
-              }
-            }}
-            className="flex cursor-pointer items-center gap-1 text-xxsmall12 font-medium"
-          >
-            <img
-              className="h-auto w-5"
-              src={`/icons/${checked ? 'checkbox-fill.svg' : 'checkbox-unchecked.svg'}`}
-            />
-            가입한 이메일과 동일
-          </label>
-          <Input
-            name="contactEmail"
-            placeholder="example@example.com"
-            value={reportApplication.contactEmail}
-            onChange={(e) =>
-              setReportApplication({ contactEmail: e.target.value })
-            }
-          />
-        </div>
-      </div>
-    </section>
-  );
-};
-
-/* 모바일 전용 결제 페이지(ReportPaymentPage)에서 같이 사용 */
 export const ReportPaymentSection = () => {
   const [message, setMessage] = useState('');
   const [options, setOptions] = useState<ReportOptionInfo[]>([]);
@@ -843,14 +768,15 @@ const RequiredStar = () => {
   return <span className="text-[#7B61FF]">*</span>;
 };
 
-const FileUploadButton = ({
+const FileUploadButton = React.memo(function FileUploadButton({
   file,
   dispatch,
 }: {
   file: File | null;
   dispatch: React.Dispatch<React.SetStateAction<File | null>>;
-}) => {
+}) {
   const ref = useRef<HTMLInputElement>(null);
+
   useEffect(() => {
     if (file && file.size > 50 * 1024 * 1024) {
       // 파일 사이즈가 50MB 초과일 경우
@@ -858,6 +784,7 @@ const FileUploadButton = ({
       dispatch(null);
     }
   }, [file]);
+
   return (
     <>
       <button
@@ -891,4 +818,4 @@ const FileUploadButton = ({
       />
     </>
   );
-};
+});

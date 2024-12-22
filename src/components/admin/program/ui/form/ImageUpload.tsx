@@ -68,10 +68,15 @@ const ImageUpload = ({
           </span>
         )}
       </div>
+
       <div className="cursor-pointer" onClick={handleImageUpload}>
         {imageFile ? (
           <div className="flex cursor-pointer items-center justify-center">
-            <img src={imageFile} alt="업로드 이미지" />
+            <img
+              className="aspect-video h-auto w-full object-cover"
+              src={imageFile}
+              alt="업로드 이미지"
+            />
           </div>
         ) : (
           <div className="flex aspect-video w-full cursor-pointer items-center justify-center bg-neutral-75">
@@ -81,7 +86,7 @@ const ImageUpload = ({
           </div>
         )}
       </div>
-      {/* {imageFile && <img src={imageFile} alt="업로드 이미지" />} */}
+
       <input
         type="file"
         id={id}

@@ -4,9 +4,9 @@ import kakaoImg from '@/assets/live-kakao.jpg';
 import longImg from '@/assets/live-long.png';
 import tossbankImg from '@/assets/live-tossbank.jpg';
 import universityImg from '@/assets/live-university.jpg';
-import Heading2 from '@components/common/program/program-detail/Heading2';
 import SpeechBubble from '@components/common/program/program-detail/SpeechBubble';
 import SuperTitle from '@components/common/program/program-detail/SuperTitle';
+import Heading2 from '@components/common/ui/Heading2';
 
 const superTitle = [
   '점점 어려워지는 채용 시장',
@@ -125,7 +125,7 @@ function LiveIntro() {
         <SuperTitle className="mb-1 text-primary">{superTitle[2]}</SuperTitle>
         <Heading2>{title[2]}</Heading2>
         <div className="mt-8 w-full overflow-x-hidden md:mt-20">
-          <div className="animate-live-infinite-scroll-mobile md:animate-live-infinite-scroll-desktop flex w-fit gap-1.5">
+          <div className="flex w-fit animate-live-infinite-scroll-mobile gap-1.5 md:animate-live-infinite-scroll-desktop">
             <ImageGroup />
             <ImageGroup />
           </div>
