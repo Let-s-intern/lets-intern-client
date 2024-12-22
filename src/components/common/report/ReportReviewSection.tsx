@@ -1,17 +1,16 @@
 import { convertReportTypeToDisplayName, ReportType } from '@/api/report';
 import { REPORT_INTERVIEW } from '@/data/reportConstant';
-import { ReportColors, ReportReview } from '@/types/interface';
+import { resumeColors } from '@/pages/common/report/ReportResumePage';
+import { ReportReview } from '@/types/interface';
 import ReportInterviewCard from './ReportInterviewCard';
 import ReportReviewCard from './ReportReviewCard';
 
 interface ReportReviewSectionProps {
-  colors: ReportColors;
   type: ReportType;
   reportReview?: ReportReview;
 }
 
 const ReportReviewSection = ({
-  colors,
   type,
   reportReview,
 }: ReportReviewSectionProps) => {
@@ -27,7 +26,7 @@ const ReportReviewSection = ({
           <div className="flex w-full flex-col gap-y-2 whitespace-pre-wrap break-keep">
             <span
               className="w-full text-center text-xsmall16 font-bold md:text-small20"
-              style={{ color: colors.primary.DEFAULT }}
+              style={{ color: resumeColors._171918 }}
             >{`${convertReportTypeToDisplayName(type)} 피드백 REPORT, 실제로 효과 있을까?`}</span>
             <p className="w-full text-center text-medium22 font-bold text-white md:text-xlarge30">
               실제 사용자와의 인터뷰를 통해{' '}
@@ -46,11 +45,13 @@ const ReportReviewSection = ({
                   interview={item}
                   mainColor={
                     index % 2 === 0
-                      ? colors.primary.DEFAULT
-                      : colors.primary[500]
+                      ? resumeColors._171918
+                      : resumeColors._06B259
                   }
                   subColor={
-                    index % 2 === 0 ? colors.primary[400] : colors.primary[300]
+                    index % 2 === 0
+                      ? resumeColors._2CE282
+                      : resumeColors._4FDA46
                   }
                 />
               ))}
@@ -63,7 +64,7 @@ const ReportReviewSection = ({
                   <ReportReviewCard
                     key={`report-review-${index}`}
                     review={review}
-                    mainColor={colors.primary.DEFAULT}
+                    mainColor={resumeColors._171918}
                   />
                 ))}
               </div>

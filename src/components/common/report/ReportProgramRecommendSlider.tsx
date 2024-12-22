@@ -2,7 +2,10 @@ import { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { useGetProgramRecommend } from '@/api/program';
-import { ReportColors, ReportProgramRecommend } from '@/types/interface';
+import { ReportType } from '@/api/report';
+import { personalStatementColors } from '@/pages/common/report/ReportPersonalStatementPage';
+import { resumeColors } from '@/pages/common/report/ReportResumePage';
+import { ReportProgramRecommend } from '@/types/interface';
 import ProgramRecommendSlider from '../ui/ProgramRecommendSlider';
 import MainHeader from './MainHeader';
 import SubHeader from './SubHeader';
@@ -11,16 +14,26 @@ const SUPER_TITLE = '서류 작성, 아직 고민이 남아있나요?';
 const HEADING = '합격률을 2배 올려주는\n맞춤형 챌린지를 추천해요';
 
 interface ReportProgramRecommendSliderProps {
-  colors: ReportColors;
+  reportType: ReportType;
   reportProgramRecommend: ReportProgramRecommend;
 }
 
 const ReportProgramRecommendSlider = ({
-  colors,
+  reportType,
   reportProgramRecommend,
 }: ReportProgramRecommendSliderProps) => {
   const subHeaderStyle = {
-    color: colors.primary.DEFAULT,
+    color:
+      reportType === 'PERSONAL_STATEMENT'
+        ? personalStatementColors.C34AFF
+        : resumeColors._171918,
+  };
+  const BUTTON_STYLE = {
+    color:
+      reportType === 'PERSONAL_STATEMENT'
+        ? personalStatementColors.C34AFF
+        : resumeColors._171918,
+    border: `1px solid ${reportType === 'PERSONAL_STATEMENT' ? personalStatementColors.C34AFF : resumeColors._4FDA46}`,
   };
 
   const navigate = useNavigate();
@@ -191,10 +204,7 @@ const ReportProgramRecommendSlider = ({
         className="-mx-5 mt-8 max-w-[1000px] px-5 md:mt-14 lg:mx-auto lg:px-0"
         list={slideList}
         buttonClassName="bg-white font-semibold"
-        buttonStyle={{
-          color: colors.primary.DEFAULT,
-          border: `1px solid ${colors.primary[300]}`,
-        }}
+        buttonStyle={BUTTON_STYLE}
       />
     </section>
   );

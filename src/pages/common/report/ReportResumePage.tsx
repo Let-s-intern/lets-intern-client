@@ -5,8 +5,9 @@ import { useGetActiveReports, useGetReportPriceDetail } from '@/api/report';
 import ReportApplyBottomSheet from '@/components/common/report/ReportApplyBottomSheet';
 import { useServerActiveReports } from '@/context/ActiveReports';
 import { resumeReportDescription } from '@/data/description';
+import { reportTypeSchema } from '@/schema';
 import useReportApplicationStore from '@/store/useReportApplicationStore';
-import { ReportColors, ReportContent } from '@/types/interface';
+import { ReportContent } from '@/types/interface';
 import { getBaseUrlFromServer, getReportLandingTitle } from '@/utils/url';
 import Header from '@components/common/program/program-detail/header/Header';
 import PromoSection from '@components/common/report/PromoSection';
@@ -22,26 +23,22 @@ import ServiceProcessSection from '@components/common/report/ServiceProcessSecti
 import LoadingContainer from '@components/common/ui/loading/LoadingContainer';
 import ReportNavigation from './ReportNavigation';
 
-export const resumeColors: ReportColors = {
-  primary: {
-    DEFAULT: '#171918',
-    50: '#E8FDF2',
-    100: '#B1FFD6',
-    200: '#A5FFCF',
-    300: '#4FDA46',
-    400: '#2CE282',
-    500: '#06B259',
-  },
-  secondary: {
-    DEFAULT: '#D8E36C',
-    50: '#F7FFAB',
-  },
-  highlight: {
-    DEFAULT: '#14BCFF',
-    50: '#EEFAFF',
-    100: '#2CDDEA',
-  },
+export const resumeColors = {
+  _171918: '#171918',
+  E8FDF2: '#E8FDF2',
+  B1FFD6: '#B1FFD6',
+  A5FFCF: '#A5FFCF',
+  _4FDA46: '#4FDA46',
+  _2CE282: '#2CE282',
+  _06B259: '#06B259',
+  D8E36C: '#D8E36C',
+  F7FFAB: '#F7FFAB',
+  _14BCFF: '#14BCFF',
+  EEFAFF: '#EEFAFF',
+  _2CDDEA: '#2CDDEA',
 };
+
+const { RESUME } = reportTypeSchema.enum;
 
 const ReportResumePage = () => {
   const activeReportsFromServer = useServerActiveReports();
@@ -98,57 +95,46 @@ const ReportResumePage = () => {
               <ReportBasicInfo reportBasic={data?.resumeInfo} />
             </div>
           </div>
-          <ReportNavigation color={resumeColors.primary.DEFAULT} isDark />
+          <ReportNavigation color={resumeColors._171918} isDark />
           <div className="flex w-full flex-col items-center gap-y-12 md:gap-y-6">
             {/* 서비스 소개 */}
-            <ReportIntroSection colors={resumeColors} type="RESUME" />
+            <ReportIntroSection type={RESUME} />
             {/* 리포트 예시 */}
             <ReportExampleSection
-              colors={resumeColors}
-              type="RESUME"
+              type={RESUME}
               reportExample={resumeContent.reportExample}
             />
             {/* 후기 */}
             <ReportReviewSection
-              colors={resumeColors}
-              type="RESUME"
+              type={RESUME}
               reportReview={resumeContent.review}
             />
             {/* 취업 연구팀 소개 */}
-            <ResearchTeamSection colors={resumeColors} />
+            <ResearchTeamSection reportType={RESUME} />
             {/* 가격 및 플랜 */}
-            {priceDetail && report?.reportType && (
+            {priceDetail && (
               <ReportPlanSection
-                colors={resumeColors}
                 priceDetail={priceDetail}
-                reportType={'RESUME'}
+                reportType={RESUME}
               />
             )}
             {/* 홍보 배너  */}
-            {report?.reportType && (
-              <PromoSection
-                colors={resumeColors}
-                reportType={report.reportType}
-              />
-            )}
+            <PromoSection reportType={RESUME} />
+
             {/* 서비스 이용 안내 */}
-            {report?.reportType && (
-              <ServiceProcessSection
-                colors={resumeColors}
-                reportType={report.reportType}
-              />
-            )}
+            <ServiceProcessSection reportType={RESUME} />
+
             {/* FAQ  */}
             {report?.reportId && (
               <ReportFaqSection
-                colors={resumeColors}
+                reportType={RESUME}
                 reportId={report?.reportId}
               />
             )}
             {/* 프로그램 추천 */}
             {resumeContent.reportProgramRecommend && (
               <ReportProgramRecommendSlider
-                colors={resumeColors}
+                reportType={RESUME}
                 reportProgramRecommend={resumeContent.reportProgramRecommend}
               />
             )}

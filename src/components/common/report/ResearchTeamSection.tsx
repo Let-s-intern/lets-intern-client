@@ -1,6 +1,8 @@
 import { useMediaQuery } from '@mui/material';
 
-import { ReportColors } from '@/types/interface';
+import { ReportType } from '@/api/report';
+import { personalStatementColors } from '@/pages/common/report/ReportPersonalStatementPage';
+import { resumeColors } from '@/pages/common/report/ReportResumePage';
 import MainHeader from './MainHeader';
 import SubHeader from './SubHeader';
 
@@ -9,14 +11,17 @@ const HEADING =
   '당신을 합격의 길로 이끌,\n렛츠커리어 취업 연구팀을 소개합니다.';
 
 interface ResearchTeamSectionProps {
-  colors: ReportColors;
+  reportType: ReportType;
 }
 
-const ResearchTeamSection = ({ colors }: ResearchTeamSectionProps) => {
+const ResearchTeamSection = ({ reportType }: ResearchTeamSectionProps) => {
   const isMobile = useMediaQuery('(max-width:768px)');
 
   const subHeaderStyle = {
-    color: colors.primary.DEFAULT,
+    color:
+      reportType === 'PERSONAL_STATEMENT'
+        ? personalStatementColors.C34AFF
+        : resumeColors._171918,
   };
 
   return (

@@ -1,5 +1,6 @@
-import { useGetReportFaqs } from '@/api/report';
-import { ReportColors } from '@/types/interface';
+import { ReportType, useGetReportFaqs } from '@/api/report';
+import { personalStatementColors } from '@/pages/common/report/ReportPersonalStatementPage';
+import { resumeColors } from '@/pages/common/report/ReportResumePage';
 import FaqChat from '../ui/FaqChat';
 import FaqDropdown from '../ui/FaqDropdown';
 import MainHeader from './MainHeader';
@@ -9,13 +10,16 @@ const SUB_HEADER = '자주 묻는 질문';
 const MAIN_HEADER = '궁금한 점이 있으신가요?';
 
 interface ReportFaqSectionProps {
-  colors: ReportColors;
+  reportType: ReportType;
   reportId: number | string;
 }
 
-const ReportFaqSection = ({ colors, reportId }: ReportFaqSectionProps) => {
+const ReportFaqSection = ({ reportType, reportId }: ReportFaqSectionProps) => {
   const SUB_HEADER_STYLE = {
-    color: colors.primary.DEFAULT,
+    color:
+      reportType === 'PERSONAL_STATEMENT'
+        ? personalStatementColors.C34AFF
+        : resumeColors._171918,
   };
 
   const { data } = useGetReportFaqs(reportId);

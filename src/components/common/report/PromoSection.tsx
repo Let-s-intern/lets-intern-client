@@ -3,7 +3,8 @@ import { memo, ReactNode } from 'react';
 
 import { convertReportTypeToDisplayName, ReportType } from '@/api/report';
 import { twMerge } from '@/lib/twMerge';
-import { ReportColors } from '@/types/interface';
+import { personalStatementColors } from '@/pages/common/report/ReportPersonalStatementPage';
+import { resumeColors } from '@/pages/common/report/ReportResumePage';
 import MainHeader from './MainHeader';
 import SubHeader from './SubHeader';
 
@@ -11,19 +12,24 @@ const SUB_HEADER = '더 자세한 피드백이 궁금하다면?';
 const MAIN_HEADER = '합격을 향한 가장 확실한 방법\n1:1 피드백 서비스';
 
 interface PromoSectionProps {
-  colors: ReportColors;
   reportType: ReportType;
 }
 
-function PromoSection({ colors, reportType }: PromoSectionProps) {
+function PromoSection({ reportType }: PromoSectionProps) {
   const SUB_HEADER_STYLE = {
-    color: colors.primary.DEFAULT,
+    color:
+      reportType === 'PERSONAL_STATEMENT'
+        ? personalStatementColors.C34AFF
+        : resumeColors._171918,
   };
   const SECTION_STYLE = {
-    backgroundColor: colors.primary[50],
+    backgroundColor:
+      reportType === 'PERSONAL_STATEMENT'
+        ? personalStatementColors.F9EEFF
+        : resumeColors.E8FDF2,
   };
   const BORDER_STYLE = {
-    backgroundImage: `linear-gradient(to right, ${colors.primary[400]}, ${colors.highlight[100]})`,
+    backgroundImage: `linear-gradient(to right, ${reportType === 'PERSONAL_STATEMENT' ? personalStatementColors.F3A2FF : resumeColors._2CE282}, ${reportType === 'PERSONAL_STATEMENT' ? personalStatementColors.C34AFF : resumeColors._2CDDEA})`,
   };
 
   const isMobile = useMediaQuery('(max-width:768px)');

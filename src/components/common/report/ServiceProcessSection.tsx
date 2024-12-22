@@ -2,7 +2,8 @@ import { CSSProperties, memo, ReactNode } from 'react';
 
 import { convertReportTypeToDisplayName, ReportType } from '@/api/report';
 import { twMerge } from '@/lib/twMerge';
-import { ReportColors } from '@/types/interface';
+import { personalStatementColors } from '@/pages/common/report/ReportPersonalStatementPage';
+import { resumeColors } from '@/pages/common/report/ReportResumePage';
 import clsx from 'clsx';
 import MainHeader from './MainHeader';
 import SectionHeader from './SectionHeader';
@@ -12,25 +13,41 @@ const SECTION_HEADER = '서비스 이용 안내';
 const SUB_HEADER = '48시간 이내 진단 완료!';
 
 interface ServiceProcessSectionProps {
-  colors: ReportColors;
   reportType: ReportType;
 }
 
-const ServiceProcessSection = ({
-  colors,
-  reportType,
-}: ServiceProcessSectionProps) => {
+const ServiceProcessSection = ({ reportType }: ServiceProcessSectionProps) => {
   const SUB_HEADER_STYLE = {
-    color: colors.primary.DEFAULT,
+    color:
+      reportType === 'PERSONAL_STATEMENT'
+        ? personalStatementColors.C34AFF
+        : resumeColors._171918,
   };
-  const BACKGROUND_COLOR_PRIMARY_400 = {
-    backgroundColor: colors.primary[400],
+  const MAIN_CARD_STYLE = {
+    backgroundColor:
+      reportType === 'PERSONAL_STATEMENT'
+        ? personalStatementColors.CA60FF
+        : resumeColors._2CE282,
   };
-  const BACKGROUND_COLOR_PRIMARY_100 = {
-    backgroundColor: colors.primary[100],
+  const NUMBER_STYLE = {
+    backgroundColor:
+      reportType === 'PERSONAL_STATEMENT'
+        ? personalStatementColors.F9EEFF
+        : resumeColors.B1FFD6,
+    color:
+      reportType === 'PERSONAL_STATEMENT'
+        ? personalStatementColors.CA60FF
+        : 'black',
   };
-  const BACKGROUND_COLOR_HIGHLIGHT = {
-    backgroundColor: colors.highlight.DEFAULT,
+  const BADGE_STYLE = {
+    backgroundColor:
+      reportType === 'PERSONAL_STATEMENT' ? '#27272D' : resumeColors._14BCFF,
+  };
+  const CONTENT_BOX_STYLE = {
+    backgroundColor:
+      reportType === 'PERSONAL_STATEMENT'
+        ? personalStatementColors.F9EEFF
+        : resumeColors.E8FDF2,
   };
 
   return (
@@ -49,12 +66,9 @@ const ServiceProcessSection = ({
 
       <main className="mx-auto mt-10 flex max-w-[690px] flex-col items-center gap-5 md:mt-11 md:gap-8">
         {/* 1단계 */}
-        <ProcessCard style={BACKGROUND_COLOR_PRIMARY_400}>
+        <ProcessCard style={MAIN_CARD_STYLE}>
           <NumberedTitle
-            numberStyle={BACKGROUND_COLOR_PRIMARY_100}
-            numberClassName={clsx({
-              'text-[#CA60FF]': reportType === 'PERSONAL_STATEMENT',
-            })}
+            numberStyle={NUMBER_STYLE}
             className={clsx({
               'text-white': reportType === 'PERSONAL_STATEMENT',
             })}
@@ -75,7 +89,7 @@ const ServiceProcessSection = ({
                 지원 직무와 고민 사항을 작성해 주세요.
               </NumberedContent>
               <div className="mt-3 flex items-start gap-2">
-                <Badge style={BACKGROUND_COLOR_HIGHLIGHT}>작성꿀팁</Badge>
+                <Badge style={BADGE_STYLE}>작성꿀팁</Badge>
                 <p className="text-xxsmall12 font-semibold md:text-xsmall16 md:font-medium">
                   어떤 부분에서 어려움을 겪고 있는지,
                   <br className="md:hidden" /> 무엇을 개선하고 싶은지
@@ -98,7 +112,7 @@ const ServiceProcessSection = ({
                 </ContentBox>
                 <ContentBox
                   className="rounded-xxs py-1 text-center text-xxsmall12 font-semibold md:rounded-xs md:py-2.5 md:text-xsmall16"
-                  style={{ backgroundColor: colors.primary[50] }}
+                  style={CONTENT_BOX_STYLE}
                 >
                   결제 후, 원하는 시점에 제출
                 </ContentBox>
@@ -154,13 +168,10 @@ const ServiceProcessSection = ({
         </ProcessCard>
 
         {/* 3단계 */}
-        <ProcessCard style={BACKGROUND_COLOR_PRIMARY_400}>
+        <ProcessCard style={MAIN_CARD_STYLE}>
           <NumberedTitle
-            numberStyle={BACKGROUND_COLOR_PRIMARY_100}
+            numberStyle={NUMBER_STYLE}
             number={3}
-            numberClassName={clsx({
-              'text-[#CA60FF]': reportType === 'PERSONAL_STATEMENT',
-            })}
             className={clsx({
               'text-white': reportType === 'PERSONAL_STATEMENT',
             })}
@@ -192,13 +203,10 @@ const ServiceProcessSection = ({
         </ProcessCard>
 
         {/* 4단계 */}
-        <ProcessCard style={BACKGROUND_COLOR_PRIMARY_400}>
+        <ProcessCard style={MAIN_CARD_STYLE}>
           <NumberedTitle
-            numberStyle={BACKGROUND_COLOR_PRIMARY_100}
+            numberStyle={NUMBER_STYLE}
             number={4}
-            numberClassName={clsx({
-              'text-[#CA60FF]': reportType === 'PERSONAL_STATEMENT',
-            })}
             className={clsx({
               'text-white': reportType === 'PERSONAL_STATEMENT',
             })}
@@ -221,7 +229,7 @@ const ServiceProcessSection = ({
                 진행됩니다.
               </NumberedContent>
               <div className="mt-3 flex items-start gap-2">
-                <Badge style={BACKGROUND_COLOR_HIGHLIGHT}>진행 꿀팁</Badge>
+                <Badge style={BADGE_STYLE}>진행 꿀팁</Badge>
                 <p className="text-xxsmall12 font-semibold md:text-xsmall16 md:font-medium">
                   리포트 확인 후 궁금한 점이나 추가 질문을 미리 준비하시면 더욱
                   알찬 시간을 보낼 수 있어요!

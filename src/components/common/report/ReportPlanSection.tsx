@@ -1,3 +1,5 @@
+import { useMediaQuery } from '@mui/material';
+import clsx from 'clsx';
 import { memo, ReactNode, useMemo, useState } from 'react';
 import { HiChevronDown, HiChevronUp } from 'react-icons/hi2';
 
@@ -9,9 +11,8 @@ import {
 } from '@/api/report';
 import CheckIcon from '@/assets/icons/chevron-down.svg?react';
 import { twMerge } from '@/lib/twMerge';
-import { ReportColors } from '@/types/interface';
-import { useMediaQuery } from '@mui/material';
-import clsx from 'clsx';
+import { personalStatementColors } from '@/pages/common/report/ReportPersonalStatementPage';
+import { resumeColors } from '@/pages/common/report/ReportResumePage';
 import MainHeader from './MainHeader';
 import SectionHeader from './SectionHeader';
 import SubHeader from './SubHeader';
@@ -21,18 +22,19 @@ const SUB_HEADER = '자신있게 추천합니다!';
 const MAIN_HEADER = '취업 성공을 위한\n맞춤형 피드백 플랜, 그리고 옵션까지';
 
 interface ReportPlanSectionProps {
-  colors: ReportColors;
   priceDetail: ReportPriceDetail;
   reportType: ReportType;
 }
 
 const ReportPlanSection = ({
-  colors,
   priceDetail,
   reportType,
 }: ReportPlanSectionProps) => {
   const SUB_HEADER_STYLE = {
-    color: colors.primary.DEFAULT,
+    color:
+      reportType === 'PERSONAL_STATEMENT'
+        ? personalStatementColors.C34AFF
+        : resumeColors._171918,
   };
 
   const basicPlan = useMemo(() => {
@@ -159,7 +161,11 @@ const ReportPlanSection = ({
           <PriceCard
             reportType={reportType}
             bannerText={`채용 공고 맞춤형 ${convertReportTypeToDisplayName(reportType)}를 원한다면,`}
-            bannerColor={colors.primary[400]}
+            bannerColor={
+              reportType === 'PERSONAL_STATEMENT'
+                ? personalStatementColors.CA60FF
+                : resumeColors._2CE282
+            }
             bannerClassName={clsx({
               'text-white': reportType === 'PERSONAL_STATEMENT',
             })}
@@ -234,7 +240,11 @@ const ReportPlanSection = ({
         <PriceCard
           reportType={reportType}
           bannerText="저렴한 가격으로 무한 질문&심층 피드백을 받고 싶다면, "
-          bannerColor={colors.primary[400]}
+          bannerColor={
+            reportType === 'PERSONAL_STATEMENT'
+              ? personalStatementColors.CA60FF
+              : resumeColors._2CE282
+          }
           bannerClassName={clsx({
             'text-white': reportType === 'PERSONAL_STATEMENT',
           })}
