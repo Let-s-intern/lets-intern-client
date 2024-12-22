@@ -33,7 +33,7 @@ import {
 import ReportDropdown from './ReportDropdown';
 
 const { BASIC, PREMIUM } = reportPriceTypeEnum.enum;
-const { RESUME, PERSONAL_STATEMENT } = reportTypeSchema.enum;
+const { PERSONAL_STATEMENT } = reportTypeSchema.enum;
 
 const REPORT_RADIO_VALUES = {
   basicFeedback: 'basicFeedback',
@@ -56,6 +56,11 @@ interface ReportApplyBottomSheetProps {
   priceDetail: ReportPriceDetail;
   show?: boolean;
 }
+
+/** 자기소개서 문항 추가 옵션
+ * 옵션 제목이 '+'로 시작하는 옵션은 '자기소개서 문항 추가' 옵션이다. (그 외 옵션은 현직자 피드백에 표시한다)
+ * ADMIN에서 생성한 문항 추가 옵션 개수 = 사용자가 최대로 추가할 수 있는 문항 개수
+ */
 
 const ReportApplyBottomSheet = React.forwardRef<
   HTMLDivElement,
@@ -201,6 +206,30 @@ const ReportApplyBottomSheet = React.forwardRef<
       // 마지막 아이템은 border 제외
       'border-b border-neutral-80': !isLastChild,
     });
+
+  // 자기소개서 문항 추가 옵션
+  const questionOptionInfos = priceDetail.reportOptionInfos?.filter((info) =>
+    info.title?.startsWith('+'),
+  );
+  // 사용자가 추가한 문항 추가 옵션
+  const selectedQuestionOptions = useMemo(() => {
+    let length = 0;
+    const price = questionOptionInfos?.reduce((acc, curr) => {
+      if (reportApplication.optionIds.includes(curr.reportOptionId)) {
+        length++;
+        return acc + (curr.price ?? 0);
+      }
+      return acc;
+    }, 0);
+    const discount = questionOptionInfos?.reduce((acc, curr) => {
+      if (reportApplication.optionIds.includes(curr.reportOptionId))
+        return acc + (curr.discountPrice ?? 0);
+      return acc;
+    }, 0);
+    return { length, price, discount };
+  }, [reportApplication, questionOptionInfos]);
+
+  console.log('선택한 문항:', selectedQuestionOptions);
 
   const reportFinalPrice = useMemo(() => {
     let result = 0;
@@ -377,7 +406,83 @@ const ReportApplyBottomSheet = React.forwardRef<
               </FormControl>
 
               {/* 자기소개서 문항 추가 */}
-              {report.reportType === 'PERSONAL_STATEMENT' && <></>}
+              {report.reportType === 'PERSONAL_STATEMENT' &&
+                (questionOptionInfos ?? []).length > 0 && (
+                  <div className="flex items-start justify-between">
+                    <Heading2 className="mb-4">
+                      자기소개서 문항 추가 (선택)
+                    </Heading2>
+                    <div>
+                      <ReportPriceView
+                        price={selectedQuestionOptions.price}
+                        discount={selectedQuestionOptions.discount}
+                      />
+                      {/* Counter */}
+                      <div className="mt-3 flex items-center rounded-xs border border-[#D6D6D6]">
+                        <button
+                          className={twMerge(
+                            'flex h-7 w-7 items-center justify-center',
+                            selectedQuestionOptions.length === 0
+                              ? 'text-[#D6D6D6]'
+                              : 'text-[#121212]',
+                          )}
+                          onClick={() => {
+                            if (
+                              !questionOptionInfos ||
+                              selectedQuestionOptions.length === 0
+                            )
+                              return;
+
+                            //  selectedQuestionOptions.length - 1 인덱스에 해당하는 '자소서 문항 추가' 옵션 아이디 삭제
+                            setReportApplication({
+                              optionIds: optionIds.filter(
+                                (id) =>
+                                  id !==
+                                  questionOptionInfos[
+                                    selectedQuestionOptions.length - 1
+                                  ].reportOptionId,
+                              ),
+                            });
+                          }}
+                        >
+                          -
+                        </button>
+                        <div className="flex h-7 w-7 items-center justify-center text-xsmall14 text-[#121212]">
+                          {selectedQuestionOptions.length}
+                        </div>
+                        <button
+                          className={twMerge(
+                            'flex h-7 w-7 items-center justify-center text-[#121212]',
+                            selectedQuestionOptions.length ===
+                              (questionOptionInfos ?? [])?.length
+                              ? 'text-[#D6D6D6]'
+                              : 'text-[#121212]',
+                          )}
+                          onClick={() => {
+                            if (
+                              !questionOptionInfos ||
+                              selectedQuestionOptions.length ===
+                                (questionOptionInfos ?? [])?.length
+                            )
+                              return;
+
+                            //  selectedQuestionOptions.length 인덱스에 해당하는 '자소서 문항 추가' 옵션 아이디 추가
+                            setReportApplication({
+                              optionIds: [
+                                ...optionIds,
+                                questionOptionInfos[
+                                  selectedQuestionOptions.length
+                                ].reportOptionId,
+                              ],
+                            });
+                          }}
+                        >
+                          +
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                )}
 
               {/* 현직자 피드백 (옵션) */}
               {optionsAvailable ? (
@@ -390,51 +495,54 @@ const ReportApplyBottomSheet = React.forwardRef<
                     initialOpenState={false}
                   >
                     <FormGroup aria-labelledby="option-group-label">
-                      {priceDetail.reportOptionInfos?.map((option, index) => {
-                        const price = option.price ?? 0;
-                        const discount = option.discountPrice ?? 0;
-                        const checked = Boolean(
-                          optionIds.find(
-                            (selectedOption) =>
-                              selectedOption === option.reportOptionId,
-                          ),
-                        );
+                      {priceDetail.reportOptionInfos
+                        ?.filter((info) => !info.title?.startsWith('+'))
+                        .map((option, index) => {
+                          const price = option.price ?? 0;
+                          const discount = option.discountPrice ?? 0;
+                          const checked = Boolean(
+                            optionIds.find(
+                              (selectedOption) =>
+                                selectedOption === option.reportOptionId,
+                            ),
+                          );
 
-                        return (
-                          <ReportFormCheckboxControlLabel
-                            key={option.reportOptionId}
-                            checked={checked}
-                            onChange={(e, checked) => {
-                              if (checked) {
-                                setSelectedOptionIds([
-                                  ...optionIds,
-                                  option.reportOptionId,
-                                ]);
-                              } else {
-                                setSelectedOptionIds(
-                                  optionIds.filter(
-                                    (selectedOption) =>
-                                      selectedOption !== option.reportOptionId,
-                                  ),
-                                );
+                          return (
+                            <ReportFormCheckboxControlLabel
+                              key={option.reportOptionId}
+                              checked={checked}
+                              onChange={(_, checked) => {
+                                if (checked) {
+                                  setSelectedOptionIds([
+                                    ...optionIds,
+                                    option.reportOptionId,
+                                  ]);
+                                } else {
+                                  setSelectedOptionIds(
+                                    optionIds.filter(
+                                      (selectedOption) =>
+                                        selectedOption !==
+                                        option.reportOptionId,
+                                    ),
+                                  );
+                                }
+                              }}
+                              wrapperClassName={generateControlLabelClassName(
+                                index ===
+                                  (priceDetail.reportOptionInfos?.length ?? 0) -
+                                    1,
+                              )}
+                              label={option.title}
+                              labelStyle={RADIO_CONTROL_LABEL_STYLE}
+                              right={
+                                <ReportPriceView
+                                  price={price}
+                                  discount={discount}
+                                />
                               }
-                            }}
-                            wrapperClassName={generateControlLabelClassName(
-                              index ===
-                                (priceDetail.reportOptionInfos?.length ?? 0) -
-                                  1,
-                            )}
-                            label={option.title}
-                            labelStyle={RADIO_CONTROL_LABEL_STYLE}
-                            right={
-                              <ReportPriceView
-                                price={price}
-                                discount={discount}
-                              />
-                            }
-                          />
-                        );
-                      })}
+                            />
+                          );
+                        })}
                     </FormGroup>
                   </ReportDropdown>
                 </FormControl>
