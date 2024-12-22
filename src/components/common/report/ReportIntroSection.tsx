@@ -3,6 +3,7 @@ import Profile1 from '@/assets/illust/report_profile_1.svg?react';
 import Profile2 from '@/assets/illust/report_profile_2.svg?react';
 import Profile3 from '@/assets/illust/report_profile_3.svg?react';
 import { REPORT_INTRO } from '@/data/reportConstant';
+import { personalStatementColors } from '@/pages/common/report/ReportPersonalStatementPage';
 import { resumeColors } from '@/pages/common/report/ReportResumePage';
 import { useMediaQuery } from '@mui/material';
 import { useEffect, useRef } from 'react';
@@ -16,8 +17,52 @@ const ReportIntroSection = ({ type }: ReportIntroSectionProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const beforeRef = useRef<HTMLDivElement>(null);
   const afterRef = useRef<HTMLDivElement>(null);
-
   const lastScrollY = useRef(0);
+
+  const SUB_HEADER_STYLE = {
+    color:
+      type === 'PERSONAL_STATEMENT'
+        ? personalStatementColors.C34AFF
+        : resumeColors._11AC5C,
+  };
+  const BOX_STYLE = {
+    backgroundColor:
+      type === 'PERSONAL_STATEMENT'
+        ? personalStatementColors.F9EEFF
+        : resumeColors.E8FDF2,
+    borderColor:
+      type === 'PERSONAL_STATEMENT'
+        ? personalStatementColors.CA60FF
+        : resumeColors._4FDA46,
+  };
+  const ILLUST_STYLE = {
+    color:
+      type === 'PERSONAL_STATEMENT'
+        ? personalStatementColors.CA60FF
+        : resumeColors._06B259,
+  };
+  const DARK_SUB_HEADER_STYLE = {
+    color:
+      type === 'PERSONAL_STATEMENT'
+        ? personalStatementColors.C34AFF
+        : resumeColors._2CE282,
+  };
+  const AFTER_STYLE = {
+    borderColor:
+      type === 'PERSONAL_STATEMENT'
+        ? personalStatementColors.EB6CFF
+        : resumeColors.D8E36C,
+    backgroundColor:
+      type === 'PERSONAL_STATEMENT'
+        ? personalStatementColors.F3A2FF
+        : resumeColors.F7FFAB,
+  };
+  const BADEG_STYLE = {
+    backgroundColor:
+      type === 'PERSONAL_STATEMENT'
+        ? personalStatementColors.CA60FF
+        : resumeColors._14BCFF,
+  };
 
   useEffect(() => {
     const handleScroll = () => {
@@ -90,7 +135,7 @@ const ReportIntroSection = ({ type }: ReportIntroSectionProps) => {
           <div className="flex w-full flex-col items-center gap-y-2 md:gap-y-3">
             <span
               className="text-xsmall16 font-bold md:text-small20"
-              style={{ color: resumeColors._11AC5C }}
+              style={SUB_HEADER_STYLE}
             >
               쌓여가는 불합격 메일들...
             </span>
@@ -109,15 +154,12 @@ const ReportIntroSection = ({ type }: ReportIntroSectionProps) => {
             <div
               className="relative flex w-full items-center justify-center rounded-md border px-4 py-3 text-xsmall16 font-bold md:px-[60px] md:py-[30px] md:text-medium24"
               key={`${type}-question-${index}`}
-              style={{
-                backgroundColor: resumeColors.E8FDF2,
-                borderColor: resumeColors._4FDA46,
-              }}
+              style={BOX_STYLE}
             >
               {convertString(question)}
               <div
                 className={`absolute z-10 ${index % 2 === 0 ? 'left-2.5' : 'right-0 translate-x-1/3 md:right-2.5'} ${index === 2 ? 'top-full md:top-0' : 'top-full'} h-[50px] w-[50px] -translate-y-2/3 transform md:h-[100px] md:w-[100px]`}
-                style={{ color: resumeColors._06B259 }}
+                style={ILLUST_STYLE}
               >
                 {userProfile(index)}
               </div>
@@ -131,7 +173,7 @@ const ReportIntroSection = ({ type }: ReportIntroSectionProps) => {
           <div className="flex w-full flex-col gap-y-2 md:gap-y-3">
             <h6
               className="text-xsmall16 font-bold md:text-small20"
-              style={{ color: resumeColors._11AC5C }}
+              style={SUB_HEADER_STYLE}
             >
               대체 뭐가 문제일까?
             </h6>
@@ -162,7 +204,7 @@ const ReportIntroSection = ({ type }: ReportIntroSectionProps) => {
           <div className="flex w-full flex-col gap-y-2 md:gap-y-3">
             <h5
               className="text-xsmall16 font-bold md:text-small20"
-              style={{ color: resumeColors._2CE282 }}
+              style={DARK_SUB_HEADER_STYLE}
             >{`이제는 합격하는 ${convertReportTypeToDisplayName(type)}로!`}</h5>
             <div className="flex w-full flex-col gap-y-5 md:gap-y-[30px]">
               <p className="text-medium22 font-bold text-white md:text-xlarge30">
@@ -202,18 +244,18 @@ const ReportIntroSection = ({ type }: ReportIntroSectionProps) => {
               >
                 <div
                   className="absolute left-0 right-0 top-0 z-10 mx-auto flex w-fit -translate-y-1/2 transform items-center justify-center rounded-full border-2 bg-white px-5 py-3 text-xsmall16 font-semibold text-neutral-0 md:text-small18"
-                  style={{ borderColor: resumeColors.D8E36C }}
+                  style={{ borderColor: AFTER_STYLE.borderColor }}
                 >
                   AFTER
                 </div>
                 <div
                   className="flex w-full flex-col rounded-sm px-8 py-5 text-small18 font-semibold md:text-medium22"
-                  style={{ backgroundColor: resumeColors.F7FFAB }}
+                  style={{ backgroundColor: AFTER_STYLE.backgroundColor }}
                 >
                   {reportIntro.section3.after.map((item, index) => (
                     <div key={`${type}-after-${index}`}>
                       {index !== 0 && (
-                        <hr style={{ borderColor: resumeColors.D8E36C }} />
+                        <hr style={{ borderColor: AFTER_STYLE.borderColor }} />
                       )}
                       <div className="flex w-full items-center justify-center py-4">
                         {convertString(item)}
@@ -232,7 +274,7 @@ const ReportIntroSection = ({ type }: ReportIntroSectionProps) => {
           <div className="flex w-full flex-col gap-y-2 md:gap-y-3">
             <h5
               className="text-xsmall16 font-bold md:text-small20"
-              style={{ color: resumeColors._11AC5C }}
+              style={SUB_HEADER_STYLE}
             >{`${convertReportTypeToDisplayName(type)} 작성 현황 체크리스트`}</h5>
             <p className="text-medium22 font-bold md:text-xlarge30">
               {convertString(reportIntro.section4.title)}
@@ -246,7 +288,7 @@ const ReportIntroSection = ({ type }: ReportIntroSectionProps) => {
               >
                 <div
                   className="absolute left-4 top-0 flex -translate-y-2/3 -rotate-[10deg] items-center justify-center rounded-sm px-2.5 py-1 text-xsmall16 font-bold text-white md:py-1.5 md:text-small18"
-                  style={{ backgroundColor: resumeColors._14BCFF }}
+                  style={BADEG_STYLE}
                 >{`Check ${index + 1}`}</div>
                 <p className="text-small18 font-bold md:text-medium24">
                   {convertString(item)}
