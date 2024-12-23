@@ -8,7 +8,7 @@ import dayjs, { Dayjs } from 'dayjs';
 import React, { memo, useEffect, useRef, useState } from 'react';
 import { FaArrowLeft } from 'react-icons/fa6';
 import { IoCloseOutline } from 'react-icons/io5';
-import { useNavigate, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 
 import { uploadFile } from '@/api/file';
 import {
@@ -100,18 +100,16 @@ const ReportApplicationPage = () => {
   });
 
   return (
-    <div className="px-5 md:px-32 md:py-10 xl:flex xl:gap-16 xl:px-48">
+    <div className="px-5 md:px-32 md:pb-10 xl:flex xl:gap-16 xl:px-48">
       <div className="w-full">
-        <header>
-          <Heading1>진단서 신청하기</Heading1>
+        <header className="flex items-center gap-4">
+          <Link to="/report/management">
+            <img src="/icons/Arrow_Left_MD.svg" alt="이전 버튼" />
+          </Link>
+          <Heading1>제출하기</Heading1>
         </header>
 
-        <HorizontalRule className="-mx-5 md:-mx-32 lg:mx-0" />
-
-        <main className="mb-8 mt-6 flex flex-col gap-10">
-          {/* 프로그램 정보 */}
-          <ProgramInfoSection />
-          <HorizontalRule className="-mx-5 md:-mx-32 lg:mx-0" />
+        <main className="mb-8 flex flex-col gap-10">
           <CallOut
             className="bg-neutral-100"
             header="❗ 제출 전 꼭 읽어주세요"
