@@ -26,13 +26,13 @@ const ReportProgramRecommendSlider = ({
     color:
       reportType === 'PERSONAL_STATEMENT'
         ? personalStatementColors.C34AFF
-        : resumeColors._171918,
+        : resumeColors._11AC5C,
   };
   const buttonStyle = {
     color:
       reportType === 'PERSONAL_STATEMENT'
         ? personalStatementColors.C34AFF
-        : resumeColors._171918,
+        : resumeColors._11AC5C,
     border: `1px solid ${reportType === 'PERSONAL_STATEMENT' ? personalStatementColors.C34AFF : resumeColors._4FDA46}`,
   };
 

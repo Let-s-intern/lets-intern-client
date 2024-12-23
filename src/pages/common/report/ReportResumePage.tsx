@@ -23,7 +23,6 @@ import LoadingContainer from '@components/common/ui/loading/LoadingContainer';
 import ReportNavigation from './ReportNavigation';
 
 export const resumeColors = {
-  _171918: '#171918',
   E8FDF2: '#E8FDF2',
   B1FFD6: '#B1FFD6',
   A5FFCF: '#A5FFCF',
