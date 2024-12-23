@@ -1,31 +1,17 @@
-import {
-  FormControl,
-  RadioGroup,
-  SelectChangeEvent,
-  useMediaQuery,
-} from '@mui/material';
+import { FormControl, RadioGroup, SelectChangeEvent } from '@mui/material';
 import dayjs, { Dayjs } from 'dayjs';
 import React, { memo, useEffect, useRef, useState } from 'react';
 import { IoCloseOutline } from 'react-icons/io5';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 
 import { uploadFile } from '@/api/file';
-import {
-  convertReportPriceType,
-  convertReportTypeStatus,
-  ReportOptionInfo,
-  useGetReportPriceDetail,
-  usePatchMyApplication,
-} from '@/api/report';
+import { convertReportTypeStatus, usePatchMyApplication } from '@/api/report';
 import useMinDate from '@/hooks/useMinDate';
-import useReportPayment from '@/hooks/useReportPayment';
-import useReportProgramInfo from '@/hooks/useReportProgramInfo';
 import useRunOnce from '@/hooks/useRunOnce';
 import useValidateUrl from '@/hooks/useValidateUrl';
 import { twMerge } from '@/lib/twMerge';
 import useAuthStore from '@/store/useAuthStore';
 import useReportApplicationStore from '@/store/useReportApplicationStore';
-import Card from '@components/common/report/Card';
 import { ReportFormRadioControlLabel } from '@components/common/report/ControlLabel';
 import DateTimePicker from '@components/common/report/DateTimePicker';
 import FilledInput from '@components/common/report/FilledInput';
@@ -35,13 +21,11 @@ import Label from '@components/common/report/Label';
 import Tooltip from '@components/common/report/Tooltip';
 import BottomSheet from '@components/common/ui/BottomSheeet';
 import BaseButton from '@components/common/ui/button/BaseButton';
-import Input from '@components/common/ui/input/Input';
 import HorizontalRule from '@components/ui/HorizontalRule';
 
 const ReportApplicationPage = () => {
   const navigate = useNavigate();
   const { reportType, applicationId } = useParams();
-  const isMobile = useMediaQuery('(max-width: 991px)');
 
   const [applyFile, setApplyFile] = useState<File | null>(null);
   const [recruitmentFile, setRecruitmentFile] = useState<File | null>(null);
@@ -160,7 +144,7 @@ const ReportApplicationPage = () => {
             }
 
             const isSubmit = confirm(
-              '제출 후에는 수정이 어렵습니다.\n제출하시겠습니까?',
+              '제출 후에는 수정이 어렵습니다. 그래도 제출하시겠어요?',
             );
 
             if (isSubmit) {
@@ -208,39 +192,6 @@ const CallOut = memo(function Callout({
     </div>
   );
 });
-
-const ProgramInfoSection = () => {
-  const { title, product, option } = useReportProgramInfo();
-
-  return (
-    <section>
-      <div className="mb-6 flex items-center gap-1">
-        <Heading2>프로그램 정보</Heading2>
-        <Tooltip alt="프로그램 도움말 아이콘">
-          <span className="font-semibold">진단서 발급 예상 소요기간</span>
-          <li>서류 진단서 (베이직): 최대 2일</li>
-          <li>서류 진단서 (프리미엄) 최대 3일</li>
-          <li>옵션 (현직자 피드백): 최대 5일</li>
-        </Tooltip>
-      </div>
-      <Card
-        imgSrc="/images/report-thumbnail.png"
-        imgAlt="서류 진단서 프로그램 썸네일"
-        title={title ?? ''}
-        content={[
-          {
-            label: '상품',
-            text: product,
-          },
-          {
-            label: '옵션',
-            text: option,
-          },
-        ]}
-      />
-    </section>
-  );
-};
 
 const DocumentSection = ({
   file,
@@ -528,216 +479,6 @@ const AdditionalInfoSection = () => {
   );
 };
 
-export const ReportPaymentSection = () => {
-  const [message, setMessage] = useState('');
-  const [options, setOptions] = useState<ReportOptionInfo[]>([]);
-
-  const { data: reportApplication, setReportApplication } =
-    useReportApplicationStore();
-  const { payment, applyCoupon, cancelCoupon } = useReportPayment();
-  const { data: reportPriceDetail } = useGetReportPriceDetail(
-    reportApplication.reportId!,
-  );
-
-  // 기존에 입력한 쿠폰 코드 초기화
-  useEffect(() => {
-    setReportApplication({ couponId: null, couponCode: '' });
-    setMessage('');
-  }, []);
-
-  useEffect(() => {
-    if (reportPriceDetail === undefined) return;
-    // 옵션 타이틀 불러오기
-    const result = [];
-    for (const optionId of reportApplication.optionIds) {
-      const reportOptionInfo = reportPriceDetail.reportOptionInfos?.find(
-        (info) => info.reportOptionId === optionId,
-      );
-      if (reportOptionInfo === undefined) continue;
-      result.push(reportOptionInfo);
-    }
-
-    setOptions(result);
-  }, [reportPriceDetail]);
-
-  const showFeedback = reportApplication.isFeedbackApplied;
-  const optionTitle = options.map((option) => option.title).join(', ');
-  const reportAndOptionsDiscount =
-    payment.reportDiscount + payment.optionDiscount; // 진단서와 옵션 할인 금액
-  const reportAndOptionsAmount =
-    payment.report + payment.option - reportAndOptionsDiscount; // 진단서와 옵션 결제 금액
-  const feedbackAmount = payment.feedback - payment.feedbackDiscount; // 1:1 피드백 결제 금액
-
-  return (
-    <section className="flex flex-col">
-      <Heading2>결제 정보</Heading2>
-      <div className="mt-6">
-        <div className="flex gap-2.5">
-          <Input
-            className="w-full"
-            value={reportApplication.couponCode ?? ''}
-            type="text"
-            placeholder="쿠폰 번호를 입력해주세요."
-            disabled={reportApplication.couponId === null ? false : true}
-            onChange={(e) =>
-              setReportApplication({ couponCode: e.target.value })
-            }
-          />
-          <button
-            className={twMerge(
-              reportApplication.couponId === null
-                ? 'bg-primary text-neutral-100'
-                : 'border-2 border-primary bg-neutral-100 text-primary',
-              'shrink-0 rounded-sm px-4 py-1.5 text-xsmall14 font-medium',
-            )}
-            onClick={async () => {
-              if (reportApplication.couponCode === '') return;
-              // 쿠폰이 등록된 상태면 쿠폰 취소
-              if (
-                reportApplication.couponId !== null &&
-                reportApplication.couponCode !== ''
-              ) {
-                cancelCoupon();
-                setMessage('');
-                setReportApplication({ couponCode: '' });
-                return;
-              }
-
-              const data = await applyCoupon(reportApplication.couponCode);
-
-              if (data.status === 404 || data.status === 400)
-                setMessage(data.message);
-              else setMessage('쿠폰이 등록되었습니다.');
-            }}
-          >
-            {reportApplication.couponId === null ? '쿠폰 등록' : '쿠폰 취소'}
-          </button>
-        </div>
-        <span
-          className={twMerge(
-            reportApplication.couponId === null
-              ? 'text-system-error'
-              : 'text-system-positive-blue',
-            'h-3 text-xsmall14',
-          )}
-        >
-          {message}
-        </span>
-      </div>
-      <hr className="my-5" />
-      <div className="flex flex-col">
-        <PaymentRowMain>
-          <span>서류 진단서 결제금액</span>
-          <span>{reportAndOptionsAmount.toLocaleString()}원</span>
-        </PaymentRowMain>
-        <PaymentRowSub>
-          <span>
-            └ {convertReportPriceType(reportApplication.reportPriceType)}
-          </span>
-          <span>{`${payment.report.toLocaleString()}원`}</span>
-        </PaymentRowSub>
-        {options.length > 0 && (
-          <PaymentRowSub>
-            <span>└ {optionTitle}</span>
-            <span className="shrink-0">{`${payment.option.toLocaleString()}원`}</span>
-          </PaymentRowSub>
-        )}
-        <PaymentRowSub>
-          <span>
-            └{' '}
-            {Math.ceil(
-              (reportAndOptionsDiscount / (payment.report + payment.option)) *
-                100,
-            )}
-            % 할인
-          </span>
-          <span>
-            {reportAndOptionsDiscount === 0
-              ? '0원'
-              : `-${reportAndOptionsDiscount.toLocaleString()}원`}
-          </span>
-        </PaymentRowSub>
-        {showFeedback && (
-          <>
-            <PaymentRowMain>
-              <span>1:1 피드백 결제금액</span>
-              <span>{feedbackAmount.toLocaleString()}원</span>
-            </PaymentRowMain>
-            <PaymentRowSub>
-              <span>└ 정가</span>
-              <span>{`${payment.feedback.toLocaleString()}원`}</span>
-            </PaymentRowSub>
-            <PaymentRowSub>
-              <span>
-                └{' '}
-                {Math.ceil((payment.feedbackDiscount / payment.feedback) * 100)}
-                % 할인
-              </span>
-              <span>
-                {payment.feedbackDiscount === 0
-                  ? '0원'
-                  : `-${payment.feedbackDiscount.toLocaleString()}원`}
-              </span>
-            </PaymentRowSub>
-          </>
-        )}
-
-        <PaymentRowMain className="text-primary">
-          <span>쿠폰할인</span>
-          <span className="font-bold">
-            {payment.coupon === 0
-              ? '0원'
-              : `-${payment.coupon.toLocaleString()}원`}
-          </span>
-        </PaymentRowMain>
-        <hr className="my-5" />
-        <PaymentRowMain className="font-semibold">
-          <span>결제금액</span>
-          <span>{payment.amount.toLocaleString()}원</span>
-        </PaymentRowMain>
-      </div>
-    </section>
-  );
-};
-
-const PaymentRowMain = ({
-  children,
-  className,
-}: {
-  children?: React.ReactNode;
-  className?: string;
-}) => {
-  return (
-    <div
-      className={twMerge(
-        'flex h-10 items-center justify-between px-3 text-neutral-0',
-        className,
-      )}
-    >
-      {children}
-    </div>
-  );
-};
-
-const PaymentRowSub = ({
-  children,
-  className,
-}: {
-  children?: React.ReactNode;
-  className?: string;
-}) => {
-  return (
-    <div
-      className={twMerge(
-        'flex h-10 items-center justify-between gap-1 pl-6 pr-3 text-xsmall14 text-neutral-50',
-        className,
-      )}
-    >
-      {children}
-    </div>
-  );
-};
-
 const RequiredStar = () => {
   return <span className="text-[#7B61FF]">*</span>;
 };
@@ -757,7 +498,7 @@ const FileUploadButton = React.memo(function FileUploadButton({
       alert('50MB 이하의 파일만 업로드 가능합니다.');
       dispatch(null);
     }
-  }, [file]);
+  }, [file, dispatch]);
 
   return (
     <>
