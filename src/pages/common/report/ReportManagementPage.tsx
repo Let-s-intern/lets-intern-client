@@ -312,40 +312,43 @@ const ReportManagementPage = () => {
                   </tbody>
                 </table>
                 <div className="flex items-center justify-between gap-4">
-                  <div className="-ml-1 flex items-center gap-1">
-                    {item.applyUrl ? (
-                      <Link
-                        to={item.applyUrl}
-                        onClick={(e: MouseEvent<HTMLAnchorElement>) => {
-                          e.preventDefault();
-                          handleDownloadOrOpen(item.applyUrl);
-                        }}
-                        className="flex flex-col items-center gap-1 rounded-sm px-1 py-0.5 text-xxsmall12 text-neutral-40 transition hover:bg-neutral-0/5"
-                      >
-                        <DocIcon />
-                        <span>제출서류</span>
-                      </Link>
-                    ) : null}
+                  {(item.applyUrl || item.recruitmentUrl) && (
+                    <div className="-ml-1 flex items-center gap-1">
+                      {item.applyUrl ? (
+                        <Link
+                          to={item.applyUrl}
+                          onClick={(e: MouseEvent<HTMLAnchorElement>) => {
+                            e.preventDefault();
+                            handleDownloadOrOpen(item.applyUrl);
+                          }}
+                          className="flex flex-col items-center gap-1 rounded-sm px-1 py-0.5 text-xxsmall12 text-neutral-40 transition hover:bg-neutral-0/5"
+                        >
+                          <DocIcon />
+                          <span>제출서류</span>
+                        </Link>
+                      ) : null}
 
-                    {item.recruitmentUrl ? (
-                      <Link
-                        to={item.recruitmentUrl}
-                        onClick={(e: MouseEvent<HTMLAnchorElement>) => {
-                          e.preventDefault();
-                          handleDownloadOrOpen(item.applyUrl);
-                        }}
-                        className="flex flex-col items-center gap-1 rounded-sm px-1 py-0.5 text-xxsmall12 text-neutral-40 transition hover:bg-neutral-0/5"
-                      >
-                        <CompanyBagIcon />
-                        <span>채용공고</span>
-                      </Link>
-                    ) : null}
-                  </div>
+                      {item.recruitmentUrl ? (
+                        <Link
+                          to={item.recruitmentUrl}
+                          onClick={(e: MouseEvent<HTMLAnchorElement>) => {
+                            e.preventDefault();
+                            handleDownloadOrOpen(item.applyUrl);
+                          }}
+                          className="flex flex-col items-center gap-1 rounded-sm px-1 py-0.5 text-xxsmall12 text-neutral-40 transition hover:bg-neutral-0/5"
+                        >
+                          <CompanyBagIcon />
+                          <span>채용공고</span>
+                        </Link>
+                      ) : null}
+                    </div>
+                  )}
 
                   {/* 서류 제출 X AND 피드백 신청 X */}
                   {item.applyUrl === '' &&
                     item.feedbackStatus !== 'APPLIED' && (
                       <ReportManagementButton
+                        className="mt-5"
                         onClick={() => {
                           // 서류 제출 시 필요한 reportId, 피드백 신청 여부를 전역 상태에 저장하여 사용 (API에 없음)
                           setReportApplication({
@@ -390,6 +393,7 @@ const ReportManagementPage = () => {
                     ))}
                 </div>
               </div>
+
               {item.feedbackStatus && !item.feedbackIsCanceled ? (
                 <>
                   <hr className="my-4 border-dashed border-neutral-80" />
@@ -398,7 +402,7 @@ const ReportManagementPage = () => {
                       <h3 className="mb-3 text-xsmall14 font-medium text-primary-dark">
                         1:1 피드백 현황
                       </h3>
-                      <div className="mb-3 flex items-center gap-2">
+                      <div className="flex items-center gap-2">
                         <Badge
                           status={convertFeedbackStatusToBadgeStatus({
                             now: dayjs(),
@@ -422,7 +426,7 @@ const ReportManagementPage = () => {
 
                     {/* 일정을 선택했으면 일정 테이블 표시 */}
                     {item.applyUrl !== '' && (
-                      <table className="mb-5">
+                      <table className="mt-3">
                         <tbody>
                           {/* 확인중 단계 일정 확인 */}
                           {item.feedbackStatus === 'PENDING' ||
@@ -477,9 +481,11 @@ const ReportManagementPage = () => {
                         </tbody>
                       </table>
                     )}
-                    {/* 일정을 선택하지 않았으면  */}
+
+                    {/* 일정을 선택하지 않았으면 */}
                     {item.applyUrl === '' ? (
                       <ReportManagementButton
+                        className="mt-5"
                         onClick={() => {
                           // 서류 제출 시 필요한 reportId, 피드백 신청 여부를 전역 상태에 저장하여 사용 (API에 없음)
                           setReportApplication({
@@ -503,7 +509,7 @@ const ReportManagementPage = () => {
                         item.confirmedTime &&
                         dayjs().isAfter(item.confirmedTime.add(1, 'hour'))) ? (
                       <ReportManagementButton
-                        className="feedback_button_click"
+                        className="feedback_button_click mt-5"
                         disabled
                       >
                         피드백 참여하기
