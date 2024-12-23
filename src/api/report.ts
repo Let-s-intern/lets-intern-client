@@ -52,7 +52,7 @@ export function convertReportStatusToUserDisplayName(
   isSubmitted: boolean,
 ) {
   if (!status) return '';
-  if (!isSubmitted) return '제출필요';
+  if (!isSubmitted) return '제출 전';
 
   switch (status) {
     case 'APPLIED':
@@ -129,7 +129,7 @@ export function convertFeedbackStatusToDisplayName({
     return '';
   }
 
-  if (!isReportSubmitted) return '제출필요';
+  if (!isReportSubmitted) return '일정선택 전';
 
   switch (status) {
     case 'APPLIED':

@@ -340,6 +340,7 @@ const ReportManagementPage = () => {
                       </Link>
                     ) : null}
                   </div>
+
                   {/* 서류를 제출하지 않았으면 */}
                   {item.applyUrl === '' ? (
                     <ReportManagementButton
