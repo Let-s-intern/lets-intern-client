@@ -200,6 +200,7 @@ const ReportManagementPage = () => {
   };
 
   const { data, status } = useGetMyReports();
+  console.log('내 진단서:', data);
 
   const filteredApplications = data?.myReportInfos.filter((report) => {
     switch (filterType) {
@@ -290,7 +291,7 @@ const ReportManagementPage = () => {
                   </Badge>
                   <h2 className="text-xsmall14 font-medium">{item.title}</h2>
                 </header>
-                <table className="mb-5">
+                <table>
                   <tbody>
                     <tr>
                       <td className="py-0.5 text-xxsmall12 font-medium text-neutral-30">
@@ -341,129 +342,166 @@ const ReportManagementPage = () => {
                     ) : null}
                   </div>
 
-                  {/* 서류를 제출하지 않았으면 */}
-                  {item.applyUrl === '' ? (
-                    <ReportManagementButton
-                      className="max-w-40 flex-1"
-                      onClick={() => {
-                        // 서류 제출 시 필요한 reportId, 피드백 신청 여부를 전역 상태에 저장하여 사용 (API에 없음)
-                        setReportApplication({
-                          reportId: item.reportId,
-                          isFeedbackApplied: item.feedbackStatus === 'APPLIED',
-                          reportPriceType: item.reportPriceType ?? 'BASIC',
-                        });
-                        navigate(
-                          `/report/${convertReportTypeToPathname(item.reportType)}/application/${item.applicationId}`,
-                        );
-                      }}
-                    >
-                      서류 제출하기
-                    </ReportManagementButton>
-                  ) : (item.applicationStatus === 'APPLIED' &&
-                      item.applyUrl !== '') ||
+                  {/* 서류 제출 X AND 피드백 신청 X */}
+                  {item.applyUrl === '' &&
+                    item.feedbackStatus !== 'APPLIED' && (
+                      <ReportManagementButton
+                        onClick={() => {
+                          // 서류 제출 시 필요한 reportId, 피드백 신청 여부를 전역 상태에 저장하여 사용 (API에 없음)
+                          setReportApplication({
+                            reportId: item.reportId,
+                            isFeedbackApplied:
+                              item.feedbackStatus === 'APPLIED',
+                            reportPriceType: item.reportPriceType ?? 'BASIC',
+                          });
+                          navigate(
+                            `/report/${convertReportTypeToPathname(item.reportType)}/application/${item.applicationId}`,
+                          );
+                        }}
+                      >
+                        서류 제출하기
+                      </ReportManagementButton>
+                    )}
+
+                  {/* 서류를 제출했으면 */}
+                  {item.applyUrl !== '' &&
+                    (item.applicationStatus === 'APPLIED' ||
                     item.applicationStatus === 'REPORTING' ||
                     item.applicationStatus === 'REPORTED' ? (
-                    <ReportManagementButton
-                      className="max-w-40 flex-1"
-                      disabled
-                    >
-                      진단서 확인하기
-                    </ReportManagementButton>
-                  ) : (
-                    <ReportManagementButton
-                      as={Link}
-                      to={item.reportUrl || ''}
-                      onClick={(e: MouseEvent<HTMLAnchorElement>) => {
-                        e.preventDefault();
-                        handleDownloadOrOpen(item.reportUrl);
-                      }}
-                      download
-                      className="report_button_click max-w-40 flex-1"
-                    >
-                      진단서 확인하기
-                    </ReportManagementButton>
-                  )}
+                      <ReportManagementButton
+                        className="max-w-40 flex-1"
+                        disabled
+                      >
+                        진단서 확인하기
+                      </ReportManagementButton>
+                    ) : (
+                      <ReportManagementButton
+                        as={Link}
+                        to={item.reportUrl || ''}
+                        onClick={(e: MouseEvent<HTMLAnchorElement>) => {
+                          e.preventDefault();
+                          handleDownloadOrOpen(item.reportUrl);
+                        }}
+                        download
+                        className="report_button_click max-w-40 flex-1"
+                      >
+                        진단서 확인하기
+                      </ReportManagementButton>
+                    ))}
                 </div>
               </div>
               {item.feedbackStatus && !item.feedbackIsCanceled ? (
                 <>
                   <hr className="my-4 border-dashed border-neutral-80" />
                   <div>
-                    <header className="mb-3 flex items-center gap-2">
-                      <Badge
-                        status={convertFeedbackStatusToBadgeStatus({
-                          now: dayjs(),
-                          reportFeedback: item.confirmedTime,
-                          status: item.feedbackStatus,
-                          isReportSubmitted: item.applyUrl !== '',
-                        })}
-                      >
-                        {convertFeedbackStatusToDisplayName({
-                          now: dayjs(),
-                          reportFeedback: item.confirmedTime,
-                          status: item.feedbackStatus,
-                          isReportSubmitted: item.applyUrl !== '',
-                        })}
-                      </Badge>
-                      <h3 className="text-xsmall14 font-medium text-primary-dark">
+                    <header>
+                      <h3 className="mb-3 text-xsmall14 font-medium text-primary-dark">
                         1:1 피드백 현황
                       </h3>
+                      <div className="mb-3 flex items-center gap-2">
+                        <Badge
+                          status={convertFeedbackStatusToBadgeStatus({
+                            now: dayjs(),
+                            reportFeedback: item.confirmedTime,
+                            status: item.feedbackStatus,
+                            isReportSubmitted: item.applyUrl !== '',
+                          })}
+                        >
+                          {convertFeedbackStatusToDisplayName({
+                            now: dayjs(),
+                            reportFeedback: item.confirmedTime,
+                            status: item.feedbackStatus,
+                            isReportSubmitted: item.applyUrl !== '',
+                          })}
+                        </Badge>
+                        <span className="text-xsmall14 font-medium">
+                          {item.title}
+                        </span>
+                      </div>
                     </header>
-                    <table className="mb-5">
-                      <tbody>
-                        {/* 확인중 단계 일정 확인 */}
-                        {item.feedbackStatus === 'PENDING' ||
-                        item.feedbackStatus === 'APPLIED' ? (
-                          <tr>
-                            <td className="py-0.5 align-top text-xxsmall12 font-medium leading-5 text-neutral-30">
-                              희망일자
-                            </td>
-                            <td className="py-0.5 pl-4 text-xxsmall12 font-medium leading-5 text-neutral-50">
-                              {item.applyUrl === '' && '미정'}
-                              {item.desiredDate1 ? (
-                                <p>
-                                  (1순위){' '}
-                                  {item.desiredDate1.format('YYYY.MM.DD HH:mm')}
-                                </p>
-                              ) : null}
-                              {item.desiredDate2 ? (
-                                <p>
-                                  (2순위){' '}
-                                  {item.desiredDate2.format('YYYY.MM.DD HH:mm')}
-                                </p>
-                              ) : null}
 
-                              {item.desiredDate3 ? (
-                                <p>
-                                  (3순위){' '}
-                                  {item.desiredDate3.format('YYYY.MM.DD HH:mm')}
-                                </p>
-                              ) : null}
-                            </td>
-                          </tr>
-                        ) : null}
+                    {/* 일정을 선택했으면 일정 테이블 표시 */}
+                    {item.applyUrl !== '' && (
+                      <table className="mb-5">
+                        <tbody>
+                          {/* 확인중 단계 일정 확인 */}
+                          {item.feedbackStatus === 'PENDING' ||
+                          item.feedbackStatus === 'APPLIED' ? (
+                            <tr>
+                              <td className="py-0.5 align-top text-xxsmall12 font-medium leading-5 text-neutral-30">
+                                희망일자
+                              </td>
+                              <td className="py-0.5 pl-4 text-xxsmall12 font-medium leading-5 text-neutral-50">
+                                {item.desiredDate1 ? (
+                                  <p>
+                                    (1순위){' '}
+                                    {item.desiredDate1.format(
+                                      'YYYY.MM.DD HH:mm',
+                                    )}
+                                  </p>
+                                ) : null}
+                                {item.desiredDate2 ? (
+                                  <p>
+                                    (2순위){' '}
+                                    {item.desiredDate2.format(
+                                      'YYYY.MM.DD HH:mm',
+                                    )}
+                                  </p>
+                                ) : null}
 
-                        {item.feedbackStatus === 'CONFIRMED' ||
-                        item.feedbackStatus === 'COMPLETED' ? (
-                          <tr>
-                            <td className="py-0.5 align-top text-xxsmall12 font-medium leading-5 text-neutral-30">
-                              {item.feedbackStatus === 'CONFIRMED'
-                                ? '확정일자'
-                                : '완료일자'}
-                            </td>
-                            <td className="py-0.5 pl-4 text-xxsmall12 font-medium leading-5 text-primary">
-                              {item.confirmedTime?.format('YYYY.MM.DD HH:mm')}
-                            </td>
-                          </tr>
-                        ) : null}
-                      </tbody>
-                    </table>
-                    {item.feedbackStatus === 'APPLIED' ||
-                    item.feedbackStatus === 'PENDING' ||
-                    item.feedbackStatus === 'COMPLETED' ||
-                    (item.feedbackStatus === 'CONFIRMED' &&
-                      item.confirmedTime &&
-                      dayjs().isAfter(item.confirmedTime.add(1, 'hour'))) ? (
+                                {item.desiredDate3 ? (
+                                  <p>
+                                    (3순위){' '}
+                                    {item.desiredDate3.format(
+                                      'YYYY.MM.DD HH:mm',
+                                    )}
+                                  </p>
+                                ) : null}
+                              </td>
+                            </tr>
+                          ) : null}
+
+                          {item.feedbackStatus === 'CONFIRMED' ||
+                          item.feedbackStatus === 'COMPLETED' ? (
+                            <tr>
+                              <td className="py-0.5 align-top text-xxsmall12 font-medium leading-5 text-neutral-30">
+                                {item.feedbackStatus === 'CONFIRMED'
+                                  ? '확정일자'
+                                  : '완료일자'}
+                              </td>
+                              <td className="py-0.5 pl-4 text-xxsmall12 font-medium leading-5 text-primary">
+                                {item.confirmedTime?.format('YYYY.MM.DD HH:mm')}
+                              </td>
+                            </tr>
+                          ) : null}
+                        </tbody>
+                      </table>
+                    )}
+                    {/* 일정을 선택하지 않았으면  */}
+                    {item.applyUrl === '' ? (
+                      <ReportManagementButton
+                        onClick={() => {
+                          // 서류 제출 시 필요한 reportId, 피드백 신청 여부를 전역 상태에 저장하여 사용 (API에 없음)
+                          setReportApplication({
+                            reportId: item.reportId,
+                            isFeedbackApplied:
+                              item.feedbackStatus === 'APPLIED',
+                            reportPriceType: item.reportPriceType ?? 'BASIC',
+                          });
+                          navigate(
+                            `/report/${convertReportTypeToPathname(item.reportType)}/application/${item.applicationId}`,
+                          );
+                        }}
+                      >
+                        서류 제출 / 피드백 일정 선택하기
+                      </ReportManagementButton>
+                    ) : // 일정을 선택했으면
+                    item.feedbackStatus === 'APPLIED' ||
+                      item.feedbackStatus === 'PENDING' ||
+                      item.feedbackStatus === 'COMPLETED' ||
+                      (item.feedbackStatus === 'CONFIRMED' &&
+                        item.confirmedTime &&
+                        dayjs().isAfter(item.confirmedTime.add(1, 'hour'))) ? (
                       <ReportManagementButton
                         className="feedback_button_click"
                         disabled
