@@ -3,6 +3,7 @@ import { REPORT_INTERVIEW } from '@/data/reportConstant';
 import { personalStatementColors } from '@/pages/common/report/ReportPersonalStatementPage';
 import { resumeColors } from '@/pages/common/report/ReportResumePage';
 import { ReportReview } from '@/types/interface';
+import { useMediaQuery } from '@mui/material';
 import ReportInterviewCard from './ReportInterviewCard';
 import ReportReviewCard from './ReportReviewCard';
 
@@ -15,6 +16,7 @@ const ReportReviewSection = ({
   type,
   reportReview,
 }: ReportReviewSectionProps) => {
+  const isDesktop = useMediaQuery('(min-width: 768px)');
   const interview = REPORT_INTERVIEW[type];
   const subHeaderStyle = {
     color:
@@ -58,8 +60,24 @@ const ReportReviewSection = ({
                 <ReportInterviewCard
                   key={`report-interview-${index}`}
                   interview={item}
-                  mainColor={index % 2 === 0 ? mainColor[0] : mainColor[1]}
-                  subColor={index % 2 === 0 ? subColor[0] : subColor[1]}
+                  mainColor={
+                    isDesktop
+                      ? index % 4 === 1 || index % 4 === 2
+                        ? mainColor[1]
+                        : mainColor[0]
+                      : index % 2 === 0
+                        ? mainColor[0]
+                        : mainColor[1]
+                  }
+                  subColor={
+                    isDesktop
+                      ? index % 4 === 1 || index % 4 === 2
+                        ? subColor[1]
+                        : subColor[0]
+                      : index % 2 === 0
+                        ? subColor[0]
+                        : subColor[1]
+                  }
                 />
               ))}
             </div>

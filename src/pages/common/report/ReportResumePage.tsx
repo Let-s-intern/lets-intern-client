@@ -98,7 +98,7 @@ const ReportResumePage = () => {
 
           <ReportNavigation color={resumeColors._2CE282} isDark />
 
-          <div className="flex w-full flex-col items-center gap-y-12 md:gap-y-6">
+          <div className="flex w-full flex-col items-center">
             {/* 서비스 소개 */}
             <ReportIntroSection type="RESUME" />
             {/* 리포트 예시 */}
