@@ -3,17 +3,17 @@ import { useEffect, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 export const REPORT_INTRO_ID = 'report-intro';
-export const REPORT_EXAMPLE = 'report-example';
-export const REPORT_REVIEW = 'report-review';
-export const REPORT_PLAN = 'report-plan';
-export const REPORT_GUIDE = 'report-guide';
+export const REPORT_EXAMPLE_ID = 'report-example';
+export const REPORT_REVIEW_ID = 'report-review';
+export const REPORT_PLAN_ID = 'report-plan';
+export const REPORT_GUIDE_ID = 'report-guide';
 
 export const reportNavigateItems: NavItem[] = [
   { title: '서비스 소개', to: REPORT_INTRO_ID },
-  { title: '리포트 예시', to: REPORT_EXAMPLE },
-  { title: '후기', to: REPORT_REVIEW },
-  { title: '가격 및 플랜', to: REPORT_PLAN },
-  { title: '이용 방법', to: REPORT_GUIDE },
+  { title: '리포트 예시', to: REPORT_EXAMPLE_ID },
+  { title: '후기', to: REPORT_REVIEW_ID },
+  { title: '가격 및 플랜', to: REPORT_PLAN_ID },
+  { title: '이용 방법', to: REPORT_GUIDE_ID },
 ];
 
 interface ReportNavigationProps {

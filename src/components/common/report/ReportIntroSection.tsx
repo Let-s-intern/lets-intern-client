@@ -3,6 +3,7 @@ import Profile1 from '@/assets/illust/report_profile_1.svg?react';
 import Profile2 from '@/assets/illust/report_profile_2.svg?react';
 import Profile3 from '@/assets/illust/report_profile_3.svg?react';
 import { REPORT_INTRO } from '@/data/reportConstant';
+import { REPORT_INTRO_ID } from '@/pages/common/report/ReportNavigation';
 import { personalStatementColors } from '@/pages/common/report/ReportPersonalStatementPage';
 import { resumeColors } from '@/pages/common/report/ReportResumePage';
 import { useMediaQuery } from '@mui/material';
@@ -125,7 +126,10 @@ const ReportIntroSection = ({ type }: ReportIntroSectionProps) => {
   };
 
   return (
-    <section className="flex w-full flex-col items-center whitespace-pre-wrap break-keep text-center text-neutral-0">
+    <section
+      id={REPORT_INTRO_ID}
+      className="flex w-full flex-col items-center whitespace-pre-wrap break-keep text-center text-neutral-0"
+    >
       {/* section1 */}
       <div className="flex w-full max-w-[1000px] flex-col gap-y-10 px-5 py-[70px] md:gap-y-20 md:pb-[150px] md:pt-[110px] lg:px-0">
         <div className="flex w-full flex-col gap-y-6 md:gap-y-[50px]">
