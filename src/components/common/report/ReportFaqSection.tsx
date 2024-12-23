@@ -19,7 +19,7 @@ const ReportFaqSection = ({ reportType, reportId }: ReportFaqSectionProps) => {
     color:
       reportType === 'PERSONAL_STATEMENT'
         ? personalStatementColors.C34AFF
-        : resumeColors._171918,
+        : resumeColors._11AC5C,
   };
 
   const { data } = useGetReportFaqs(reportId);

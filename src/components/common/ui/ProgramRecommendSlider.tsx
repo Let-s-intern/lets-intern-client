@@ -1,6 +1,5 @@
 import { CSSProperties, memo, MouseEventHandler } from 'react';
 
-import useHasScroll from '@/hooks/useHasScroll';
 import { twMerge } from '@/lib/twMerge';
 
 interface ProgramRecommendSliderProps {
@@ -26,17 +25,8 @@ function ProgramRecommendSlider({
   className,
   buttonClassName,
 }: ProgramRecommendSliderProps) {
-  const { scrollRef, hasScroll } = useHasScroll();
-
   return (
-    <div
-      className={twMerge(
-        'custom-scrollbar overflow-x-auto',
-        !hasScroll && 'flex justify-center',
-        className,
-      )}
-      ref={scrollRef}
-    >
+    <div className={twMerge('custom-scrollbar overflow-x-auto', className)}>
       <div className="flex min-w-fit gap-4 md:gap-7">
         {list.map((item) => (
           <div

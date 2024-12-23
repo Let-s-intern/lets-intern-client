@@ -26,13 +26,13 @@ const ReportProgramRecommendSlider = ({
     color:
       reportType === 'PERSONAL_STATEMENT'
         ? personalStatementColors.C34AFF
-        : resumeColors._171918,
+        : resumeColors._11AC5C,
   };
   const buttonStyle = {
     color:
       reportType === 'PERSONAL_STATEMENT'
         ? personalStatementColors.C34AFF
-        : resumeColors._171918,
+        : resumeColors._11AC5C,
     border: `1px solid ${reportType === 'PERSONAL_STATEMENT' ? personalStatementColors.C34AFF : resumeColors._4FDA46}`,
   };
 
@@ -42,6 +42,7 @@ const ReportProgramRecommendSlider = ({
 
   const slideList = useMemo(() => {
     const list = [];
+    // 어드민에서 추천 제목을 입력했을 경우에만  표시
 
     /* 추천 챌린지 저장 */
     if ((recommendData?.challengeList ?? []).length > 0) {
@@ -49,14 +50,11 @@ const ReportProgramRecommendSlider = ({
         (item) => item.challengeType === 'CAREER_START',
       );
 
-      if (careerStart) {
+      if (careerStart && reportProgramRecommend.challengeCareerStart?.title) {
         list.push({
           id: 'CHALLENGE' + careerStart.id,
           backgroundImage: careerStart.thumbnail ?? '',
-          title:
-            reportProgramRecommend.challengeCareerStart?.title ??
-            careerStart.title ??
-            '챌린지 커리어 시작 프로그램',
+          title: reportProgramRecommend.challengeCareerStart?.title,
           cta: reportProgramRecommend.reportResume?.cta ?? '경험정리 하러 가기',
           onClickButton: () => navigate(`/program/challenge/${careerStart.id}`),
         });
@@ -66,14 +64,14 @@ const ReportProgramRecommendSlider = ({
         (item) => item.challengeType === 'PERSONAL_STATEMENT',
       );
 
-      if (personalStatement) {
+      if (
+        personalStatement &&
+        reportProgramRecommend.challengePersonalStatement?.title
+      ) {
         list.push({
           id: 'CHALLENGE' + personalStatement.id,
           backgroundImage: personalStatement.thumbnail ?? '',
-          title:
-            reportProgramRecommend.challengeCareerStart?.title ??
-            personalStatement.title ??
-            '챌린지 자기소개서 프로그램',
+          title: reportProgramRecommend.challengePersonalStatement?.title,
           cta:
             reportProgramRecommend.reportResume?.cta ?? '자소서 완성하러 가기',
           onClickButton: () =>
@@ -85,14 +83,11 @@ const ReportProgramRecommendSlider = ({
         (item) => item.challengeType === 'PORTFOLIO',
       );
 
-      if (portfolio) {
+      if (portfolio && reportProgramRecommend.challengePortfolio?.title) {
         list.push({
           id: 'CHALLENGE' + portfolio.id,
           backgroundImage: portfolio.thumbnail ?? '',
-          title:
-            reportProgramRecommend.challengeCareerStart?.title ??
-            portfolio.title ??
-            '챌린지 포트폴리오 프로그램',
+          title: reportProgramRecommend.challengePortfolio?.title,
           cta: reportProgramRecommend.reportResume?.cta ?? '포폴 완성하러 가기',
           onClickButton: () => navigate(`/program/challenge/${portfolio.id}`),
         });
@@ -102,29 +97,28 @@ const ReportProgramRecommendSlider = ({
     /* 추천 라이브 저장 */
     const live = recommendData?.live;
 
-    if (live) {
+    if (live && reportProgramRecommend.live?.title) {
       list.push({
         id: 'LIVE' + live?.id,
         backgroundImage: live?.thumbnail ?? '',
-        title:
-          reportProgramRecommend.live?.title ??
-          live?.title ??
-          '렛츠커리어 라이브',
+        title: reportProgramRecommend.live?.title,
         cta: reportProgramRecommend.live?.cta ?? '라이브 참여하러 가기',
         onClickButton: () => navigate(`/program/live/${live?.id}`),
       });
     }
 
     /* 추천 vod 저장 */
-    if ((recommendData?.vodList ?? []).length > 0) {
+    if (
+      (recommendData?.vodList ?? []).length > 0 &&
+      reportProgramRecommend.vod?.title
+    ) {
       // 최근에 개설한 vod 하나 가져오기
       const vod = recommendData?.vodList[recommendData?.vodList.length - 1];
 
       list.push({
         id: 'VOD' + vod?.id,
         backgroundImage: vod?.thumbnail ?? '',
-        title:
-          reportProgramRecommend.vod?.title ?? vod?.title ?? '렛츠커리어 VOD',
+        title: reportProgramRecommend.vod?.title,
         cta: reportProgramRecommend.vod?.cta ?? 'VOD 참여하러 가기',
         onClickButton: () => navigate(`/program/live/${vod?.link}`),
       });
@@ -138,14 +132,11 @@ const ReportProgramRecommendSlider = ({
       (item) => item.reportType === 'RESUME',
     );
 
-    if (resumeReport) {
+    if (resumeReport && reportProgramRecommend.reportResume?.title) {
       list.push({
         id: 'RESUME' + resumeReport.id,
         backgroundImage: '',
-        title:
-          reportProgramRecommend.reportResume?.title ??
-          resumeReport.title ??
-          '렛츠커리어 이력서 진단 프로그램',
+        title: reportProgramRecommend.reportResume?.title,
         cta:
           reportProgramRecommend.reportResume?.cta ?? '이력서 진단받으러 가기',
         onClickButton: () => navigate('/report/landing/resume'),
@@ -156,14 +147,14 @@ const ReportProgramRecommendSlider = ({
       (item) => item.reportType === 'PERSONAL_STATEMENT',
     );
 
-    if (personalStatementReport) {
+    if (
+      personalStatementReport &&
+      reportProgramRecommend.reportPersonalStatement?.title
+    ) {
       list.push({
         id: 'PERSONAL_STATEMENT' + personalStatementReport.id,
         backgroundImage: '',
-        title:
-          reportProgramRecommend.reportPersonalStatement?.title ??
-          personalStatementReport.title ??
-          '렛츠커리어 자기소개서 진단 프로그램',
+        title: reportProgramRecommend.reportPersonalStatement?.title,
         cta:
           reportProgramRecommend.reportPersonalStatement?.cta ??
           '자기소개서 진단받으러 가기',
@@ -175,14 +166,11 @@ const ReportProgramRecommendSlider = ({
       (item) => item.reportType === 'PORTFOLIO',
     );
 
-    if (portfolioReport) {
+    if (portfolioReport && reportProgramRecommend.reportPortfolio?.title) {
       list.push({
         id: 'PORTFOLIO' + portfolioReport.id,
         backgroundImage: '',
-        title:
-          reportProgramRecommend.reportPortfolio?.title ??
-          portfolioReport.title ??
-          '렛츠커리어 포트폴리오 진단 프로그램',
+        title: reportProgramRecommend.reportPortfolio?.title,
         cta:
           reportProgramRecommend.reportPortfolio?.cta ??
           '포트폴리오 진단받으러 가기',

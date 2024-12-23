@@ -20,7 +20,7 @@ const ReportReviewSection = ({
     color:
       type === 'PERSONAL_STATEMENT'
         ? personalStatementColors.C34AFF
-        : resumeColors._171918,
+        : resumeColors._2CE282,
   };
   const mainColor =
     type === 'PERSONAL_STATEMENT'
