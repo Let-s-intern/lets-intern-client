@@ -230,22 +230,26 @@ const ReportManagementPage = () => {
   }, [data?.myReportInfos.length, navigate, status]);
 
   return (
-    <div className="mx-auto max-w-5xl px-5 pb-10 pt-8">
-      <header className="my-3 flex items-center gap-2 text-xsmall16 font-bold">
-        <h1>서류 진단서</h1>
-        <Tooltip className="text-xxsmall12 font-normal">
-          <p className="mb-1">진단서 발급 예상 소요기간</p>
-          <ul className="mb-3 list-disc pl-4">
-            <li>서류 진단서 (베이직): 최대 2일</li>
-            <li>서류 진단서 (프리미엄) 최대 3일</li>
-            <li>옵션 (현직자 피드백): 최대 5일</li>
-          </ul>
-          <p>
-            *1:1 피드백은 진단서 발급 이후 진행됩니다. 일정확정 이후 변경이
-            필요하실 경우, 우측 아래 &lt;채팅문의&gt;로 연락 주시길 바랍니다.
-          </p>
-        </Tooltip>
+    <div className="mx-auto max-w-5xl px-5 pb-10 lg:px-0">
+      <header>
+        <h1 className="py-6 text-small20 font-semibold">MY 진단서 보기</h1>
+        <div className="mb-3 flex items-center gap-2 text-xsmall16 font-bold">
+          <h2>서류 피드백 REPORT</h2>
+          <Tooltip className="text-xxsmall12 font-normal">
+            <p className="mb-1">진단서 발급 예상 소요기간</p>
+            <ul className="mb-3 list-disc pl-4">
+              <li>서류 진단서 (베이직): 최대 2일</li>
+              <li>서류 진단서 (프리미엄) 최대 3일</li>
+              <li>옵션 (현직자 피드백): 최대 5일</li>
+            </ul>
+            <p>
+              *1:1 피드백은 진단서 발급 이후 진행됩니다. 일정확정 이후 변경이
+              필요하실 경우, 우측 아래 &lt;채팅문의&gt;로 연락 주시길 바랍니다.
+            </p>
+          </Tooltip>
+        </div>
       </header>
+
       <div className="my-3 -ml-2 flex gap-2">
         {filters.map((filter) => (
           <NavLink
