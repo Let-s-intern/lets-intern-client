@@ -16,7 +16,7 @@ export const Badge = forwardRef<HTMLSpanElement, IBadgeProps>(
           status === 'success' &&
             'border-secondary bg-secondary-10 text-secondary',
           status === 'warning' &&
-            'border-[#FF9C34] bg-[#FFF7EF] text-[#E77700]',
+            'border-[#FC5555] bg-[#FFEBEB] text-[#FC5555]',
           status === 'error' && '',
           status === 'info' && 'border-primary bg-primary-20 text-primary',
           className,
