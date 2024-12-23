@@ -126,6 +126,8 @@ export const faqSchema = z.object({ faqList: z.array(faq) });
 
 export const reviewSchema = z.object({
   id: z.number(),
+  applicationId: z.number().nullable().optional(),
+  userId: z.number().nullable().optional(),
   programTitle: z.string().nullable().optional(),
   programType: ProgramTypeEnum.optional(),
   name: z.string().nullable().optional(),

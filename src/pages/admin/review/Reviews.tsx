@@ -49,7 +49,7 @@ const Reviews = () => {
         ) : (
           <>
             <Table minWidth={1000}>
-              <TableHead filter={filter} setFilter={setFilter} />
+              <TableHead type={type} filter={filter} setFilter={setFilter} />
               <TableBody
                 type={type}
                 programTitle={filter.programTitle}
