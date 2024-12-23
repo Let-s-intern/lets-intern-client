@@ -6,7 +6,6 @@ import {
 } from '@mui/material';
 import dayjs, { Dayjs } from 'dayjs';
 import React, { memo, useEffect, useRef, useState } from 'react';
-import { FaArrowLeft } from 'react-icons/fa6';
 import { IoCloseOutline } from 'react-icons/io5';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 
@@ -143,16 +142,6 @@ const ReportApplicationPage = () => {
       </div>
 
       <BottomSheet className="xl:mx-48">
-        {isMobile && (
-          <button
-            onClick={() => {
-              navigate('/report/management');
-            }}
-            className="flex h-14 w-14 shrink-0 items-center justify-center rounded-md border-2 border-primary bg-neutral-100"
-          >
-            <FaArrowLeft size={20} />
-          </button>
-        )}
         <BaseButton
           className="w-full text-small18"
           onClick={async () => {
