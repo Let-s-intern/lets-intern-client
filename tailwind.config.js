@@ -124,6 +124,13 @@ module.exports = {
         button:
           '0px 16px 20px 0px rgba(0, 0, 0, 0.12), 0px 8px 16px 0px rgba(0, 0, 0, 0.08), 0px 0px 8px 0px rgba(0, 0, 0, 0.08)',
       },
+      dropShadow: {
+        '05': [
+          '0px 16px 20px rgba(0, 0, 0, 0.12)',
+          '0px 8px 16px rgba(0, 0, 0, 0.08)',
+          '0px 0px 8px rgba(0, 0, 0, 0.08)',
+        ],
+      },
       backgroundImage: {
         'gradient-start':
           'linear-gradient(165deg, #EDEEFE 10.2%, #D1D4FF 93.43%)',

@@ -1,8 +1,8 @@
 import { twMerge } from '@/lib/twMerge';
 import { LiveIdSchema } from '@/schema';
 import { LiveContent } from '@/types/interface';
-import Heading2 from '@components/common/program/program-detail/Heading2';
 import SuperTitle from '@components/common/program/program-detail/SuperTitle';
+import Heading2 from '@components/common/ui/Heading2';
 
 interface LiveMentorProps {
   mentor: Pick<

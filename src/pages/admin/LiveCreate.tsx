@@ -8,14 +8,14 @@ import { fileType, uploadFile } from '@/api/file';
 import { usePostLiveMutation } from '@/api/program';
 import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
 import { liveToCreateInput } from '@/hooks/useDuplicateProgram';
-import { CreateLiveReq, getLiveIdSchema } from '@/schema';
+import { CreateLiveReq, getLiveIdSchema, ProgramTypeEnum } from '@/schema';
 import { LiveContent } from '@/types/interface';
 import EditorApp from '@components/admin/lexical/EditorApp';
 import LivePreviewButton from '@components/admin/LivePreviewButton';
 import ImageUpload from '@components/admin/program/ui/form/ImageUpload';
 import Header from '@components/admin/ui/header/Header';
 import Heading from '@components/admin/ui/heading/Heading';
-import { Heading2 } from '@components/admin/ui/heading/Heading2';
+import Heading2 from '@components/admin/ui/heading/Heading2';
 import LiveBasic from '../../components/admin/program/LiveBasic';
 import LiveCurriculum from '../../components/admin/program/LiveCurriculum';
 import LiveInformation from '../../components/admin/program/LiveInformation';
@@ -237,12 +237,15 @@ const LiveCreate: React.FC = () => {
         setContent={setContent}
       />
 
-      <ProgramRecommendEditor
-        programRecommend={content.programRecommend ?? { list: [] }}
-        setProgramRecommend={(programRecommend) =>
-          setContent((prev) => ({ ...prev, programRecommend }))
-        }
-      />
+      {/* 프로그램 추천 */}
+      <section className="mb-6">
+        <ProgramRecommendEditor
+          programRecommend={content.programRecommend ?? { list: [] }}
+          setProgramRecommend={(programRecommend) =>
+            setContent((prev) => ({ ...prev, programRecommend }))
+          }
+        />
+      </section>
 
       <LiveCurriculum
         curriculum={content.curriculum}
@@ -273,9 +276,11 @@ const LiveCreate: React.FC = () => {
       />
       <div className="my-6">
         <FaqSection
-          programType="LIVE"
+          programType={ProgramTypeEnum.enum.LIVE}
           faqInfo={input.faqInfo}
-          setInput={setInput}
+          setFaqInfo={(faqInfo) =>
+            setInput((prev) => ({ ...prev, faqInfo: faqInfo ?? [] }))
+          }
           isCreate
         />
       </div>

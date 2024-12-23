@@ -5,7 +5,7 @@ import { useGetProgramAdminQuery } from '@/api/program';
 import { ProgramStatusEnum, ProgramTypeUpperCase } from '@/schema';
 import { ProgramRecommend } from '@/types/interface';
 import { newProgramTypeToText, programStatusToText } from '@/utils/convert';
-import { Heading2 } from '@components/admin/ui/heading/Heading2';
+import Heading2 from '@components/admin/ui/heading/Heading2';
 import Input from '@components/ui/input/Input';
 
 // 모달 스타일
@@ -100,7 +100,7 @@ const ProgramRecommendEditor = ({
   };
 
   return (
-    <section className="my-10">
+    <>
       <Heading2 className="mb-2">프로그램 추천</Heading2>
       <div className="mb-4">
         <Button variant="outlined" onClick={onOpen}>
@@ -294,7 +294,7 @@ const ProgramRecommendEditor = ({
           </Box>
         </Box>
       </Modal>
-    </section>
+    </>
   );
 };
 

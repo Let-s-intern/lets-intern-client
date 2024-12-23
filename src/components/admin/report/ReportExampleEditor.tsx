@@ -1,11 +1,11 @@
 import { Button, IconButton } from '@mui/material';
-import { MdDelete } from 'react-icons/md';
+import { IoMdCloseCircleOutline } from 'react-icons/io';
 
 import { fileType, uploadFile } from '@/api/file';
 import { ReportExample } from '@/types/interface';
 import Input from '@components/ui/input/Input';
 import ImageUpload from '../program/ui/form/ImageUpload';
-import { Heading2 } from '../ui/heading/Heading2';
+import Heading2 from '../ui/heading/Heading2';
 
 interface ReportExampleEditorProps {
   reportExample: ReportExample;
@@ -34,9 +34,21 @@ function ReportExampleEditor({
         </Button>
       </div>
 
-      <div>
+      <div className="grid grid-cols-4 gap-5">
         {reportExample.list.map((item) => (
-          <div key={item.id} className="mb-5 flex w-full items-start gap-3">
+          <div key={item.id} className="flex w-full flex-col items-end gap-3">
+            <IconButton
+              aria-label="delete"
+              color="error"
+              onClick={() => {
+                // 레포트 예시 삭제
+                setReportExample({
+                  list: reportExample.list.filter((ele) => ele.id !== item.id),
+                });
+              }}
+            >
+              <IoMdCloseCircleOutline />
+            </IconButton>
             <Input
               label="부제목"
               name="subTitle"
@@ -84,18 +96,6 @@ function ReportExampleEditor({
                 setReportExample({ list: newList });
               }}
             />
-            <IconButton
-              aria-label="delete"
-              color="error"
-              onClick={() => {
-                // 레포트 예시 삭제
-                setReportExample({
-                  list: reportExample.list.filter((ele) => ele.id !== item.id),
-                });
-              }}
-            >
-              <MdDelete />
-            </IconButton>
           </div>
         ))}
       </div>

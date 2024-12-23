@@ -12,9 +12,11 @@ interface HeaderProps {
 const Header = ({ programTitle, className, to, onClick }: HeaderProps) => {
   return (
     <header className={twMerge('my-5 flex items-center gap-3', className)}>
-      <Link to={to ?? '#'} className="text-[1.5rem]" onClick={onClick}>
-        <MdOutlineArrowBack />
-      </Link>
+      {to && (
+        <Link to={to} className="text-[1.5rem]" onClick={onClick}>
+          <MdOutlineArrowBack />
+        </Link>
+      )}
       <h1 className="text-lg font-medium">{programTitle}</h1>
     </header>
   );

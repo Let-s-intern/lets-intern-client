@@ -4,7 +4,7 @@ import { MdDelete } from 'react-icons/md';
 import { LiveContent } from '@/types/interface';
 import { generateRandomNumber } from '@/utils/random';
 import OutlinedTextarea from '@components/admin/OutlinedTextarea';
-import { Heading2 } from '@components/admin/ui/heading/Heading2';
+import Heading2 from '@components/admin/ui/heading/Heading2';
 import Input from '@components/ui/input/Input';
 
 interface LiveCurriculumProps {

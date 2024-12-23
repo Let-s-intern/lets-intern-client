@@ -11,7 +11,7 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { Dayjs } from 'dayjs';
 import 'dayjs/locale/ko';
 
-import './date-pickers-toolbar.scss';
+import '@/styles/date-pickers-toolbar.scss';
 
 const dateTimePickerSx = {
   width: '50%',

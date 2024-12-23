@@ -4,8 +4,8 @@ import { useMediaQuery } from '@mui/material';
 import { Fragment, ReactNode } from 'react';
 
 import Description from '@components/common/program/program-detail/Description';
-import Heading2 from '@components/common/program/program-detail/Heading2';
 import OutlinedBox from '@components/common/program/program-detail/OutlineBox';
+import Heading2 from '@components/common/ui/Heading2';
 
 const TITLE1 = [
   '인사담당자가 서류를 보는 시간,',

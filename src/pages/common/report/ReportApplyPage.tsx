@@ -10,18 +10,13 @@ import { FaArrowLeft } from 'react-icons/fa6';
 import { IoCloseOutline } from 'react-icons/io5';
 import { useNavigate, useParams } from 'react-router-dom';
 
-import { useGetParticipationInfo } from '@/api/application';
 import { uploadFile } from '@/api/file';
 import {
-  convertReportPriceType,
   convertReportTypeStatus,
   convertReportTypeToLandingPath,
-  ReportOptionInfo,
   ReportType,
-  useGetReportPriceDetail,
 } from '@/api/report';
 import useMinDate from '@/hooks/useMinDate';
-import useReportPayment from '@/hooks/useReportPayment';
 import useReportProgramInfo from '@/hooks/useReportProgramInfo';
 import useRunOnce from '@/hooks/useRunOnce';
 import useValidateUrl from '@/hooks/useValidateUrl';
@@ -37,7 +32,6 @@ import Heading2 from '@components/common/report/Heading2';
 import Label from '@components/common/report/Label';
 import Tooltip from '@components/common/report/Tooltip';
 import BottomSheet from '@components/common/ui/BottomSheeet';
-import Input from '@components/common/ui/input/Input';
 import HorizontalRule from '@components/ui/HorizontalRule';
 
 const ReportApplyPage = () => {
@@ -69,15 +63,15 @@ const ReportApplyPage = () => {
     }
   };
 
-  const isValidFile = () => {
+  // 파일 state 때문에 별도로 유효성 검사
+  const validateFile = () => {
     const { applyUrl, reportPriceType, recruitmentUrl } = reportApplication;
 
     const isEmpty = (value: string | File | null) =>
       value === '' || value === null;
 
     if (isEmpty(applyUrl) && isEmpty(applyFile)) {
-      alert('진단용 서류를 등록해주세요.');
-      return false;
+      return { message: '진단용 서류를 등록해주세요.', isValid: false };
     }
 
     if (
@@ -86,11 +80,9 @@ const ReportApplyPage = () => {
       isEmpty(recruitmentUrl) &&
       isEmpty(recruitmentFile)
     ) {
-      alert('채용공고를 등록해주세요.');
-      return false;
+      return { message: '채용공고를 등록해주세요.', isValid: false };
     }
-
-    return true;
+    return { message: '', isValid: true };
   };
 
   useRunOnce(() => {
@@ -107,6 +99,7 @@ const ReportApplyPage = () => {
         <header>
           <Heading1>진단서 신청하기</Heading1>
         </header>
+
         <HorizontalRule className="-mx-5 md:-mx-32 lg:mx-0" />
 
         <main className="mb-8 mt-6 flex flex-col gap-10">
@@ -114,16 +107,17 @@ const ReportApplyPage = () => {
           <ProgramInfoSection
             onChangeRadio={(event, value) => setIsSubmitNow(value)}
           />
-          <HorizontalRule className="-mx-5 md:-mx-32 lg:mx-0" />
 
-          {/* 진단용 서류 */}
+          {/* '지금 제출할래요' 선택 시 표시 */}
           {isSubmitNow === 'true' && (
             <>
+              <HorizontalRule className="-mx-5 md:-mx-32 lg:mx-0" />
               <CallOut
                 className="bg-neutral-100"
                 header="❗ 제출 전 꼭 읽어주세요"
                 body="이력서 파일/링크가 잘 열리는 지 확인 후 첨부해주세요!"
               />
+              {/* 진단용 서류 */}
               <DocumentSection file={applyFile} dispatch={setApplyFile} />
               {/* 프리미엄 채용공고 */}
               {reportApplication.reportPriceType === 'PREMIUM' &&
@@ -134,19 +128,22 @@ const ReportApplyPage = () => {
                   />
                 )}
               <HorizontalRule className="-mx-5 md:-mx-32 lg:mx-0" />
+              {/* 1:1 피드백 일정 */}
+              {reportApplication.isFeedbackApplied && (
+                <>
+                  <ScheduleSection />
+                  <HorizontalRule className="-mx-5 md:-mx-32 lg:mx-0" />
+                </>
+              )}
+
+              {/* 추가 정보 */}
+              <AdditionalInfoSection />
             </>
           )}
-
-          {/* 1:1 피드백 일정 */}
-          {reportApplication.isFeedbackApplied && <ScheduleSection />}
-          <HorizontalRule className="-mx-5 md:-mx-32 lg:mx-0" />
-
-          {/* 추가 정보 */}
-          <AdditionalInfoSection />
         </main>
       </div>
 
-      <BottomSheet>
+      <BottomSheet className="xl:mx-48">
         {isMobile && (
           <button
             onClick={() => {
@@ -162,16 +159,25 @@ const ReportApplyPage = () => {
           className="text-1.125-medium w-full rounded-md bg-primary py-3 text-center font-medium text-neutral-100"
           onClick={async () => {
             // 지금 제출일 때만 파일 유효성 검사
-            if (isSubmitNow === 'true' && !isValidFile()) return;
+            if (isSubmitNow === 'true') {
+              const { isValid: isValidFile, message: fileValidationMessage } =
+                validateFile();
 
-            const { isValid, message } = validate();
-            if (!isValid) {
-              alert(message);
-              return;
+              if (!isValidFile) {
+                alert(fileValidationMessage);
+                return;
+              }
+
+              const { isValid, message } = validate();
+              if (!isValid) {
+                alert(message);
+                return;
+              }
             }
 
             // 지금 제출일 때만 파일 업로드
             if (isSubmitNow === 'true') await convertFile();
+
             navigate(`/report/payment/${reportType}/${reportId}`);
           }}
         >
@@ -425,6 +431,10 @@ const ScheduleSection = () => {
 
   const onChangeTime = (e: SelectChangeEvent<unknown>) => {
     const prev = data[e.target.name as Key];
+    if (prev === undefined) {
+      alert('날짜를 먼저 선택해주세요');
+      return;
+    }
 
     setReportApplication({
       [e.target.name]: dayjs(prev as dayjs.ConfigType)
@@ -539,329 +549,19 @@ const AdditionalInfoSection = () => {
   );
 };
 
-/* 모바일 전용 결제 페이지(ReportPaymentPage)에서 같이 사용 */
-export const UsereInfoSection = () => {
-  const [checked, setChecked] = useState(true);
-
-  const { data: participationInfo } = useGetParticipationInfo();
-  const { data: reportApplication, setReportApplication } =
-    useReportApplicationStore();
-
-  useEffect(() => {
-    // 가입한 이메일을 정보 수신용 이메일로 설정
-    setReportApplication({
-      contactEmail: participationInfo?.contactEmail || '',
-    });
-  }, [participationInfo]);
-
-  useEffect(() => {
-    // 정보 수신용 이메일과 가입한 이메일이 다르면 체크 해제
-    if (reportApplication.contactEmail !== participationInfo?.email)
-      setChecked(false);
-    else setChecked(true);
-  }, [reportApplication]);
-
-  return (
-    <section>
-      <Heading2>참여자 정보</Heading2>
-      <div className="mt-6 flex flex-col gap-3">
-        <div className="flex flex-col gap-1">
-          <Label>이름</Label>
-          <Input
-            disabled
-            readOnly
-            className="text-sm"
-            value={participationInfo?.name || ''}
-            name="name"
-          />
-        </div>
-        <div className="flex flex-col gap-1">
-          <Label>휴대폰 번호</Label>
-          <Input
-            disabled
-            readOnly
-            className="text-sm"
-            value={participationInfo?.phoneNumber || ''}
-            name="phoneNumber"
-          />
-        </div>
-        <div className="flex flex-col gap-1">
-          <label className="ml-3 text-xsmall14 font-semibold">
-            가입한 이메일
-          </label>
-          <Input
-            disabled
-            readOnly
-            className="text-sm"
-            value={participationInfo?.email || ''}
-            name="email"
-          />
-        </div>
-        <div className="flex flex-col gap-1">
-          <Label htmlFor="contactEmail">렛츠커리어 정보 수신용 이메일</Label>
-          <p className="text-[0.5625rem] font-light text-neutral-0 text-opacity-[52%]">
-            * 결제정보 및 프로그램 신청 관련 알림 수신을 위해,
-            <br />
-            &nbsp;&nbsp; 자주 사용하는 이메일 주소를 입력해주세요!
-          </p>
-          <label
-            onClick={() => {
-              setChecked(!checked);
-              if (checked) {
-                setReportApplication({
-                  contactEmail: '',
-                });
-              } else {
-                setReportApplication({
-                  contactEmail: participationInfo?.email || '',
-                });
-              }
-            }}
-            className="flex cursor-pointer items-center gap-1 text-xxsmall12 font-medium"
-          >
-            <img
-              className="h-auto w-5"
-              src={`/icons/${checked ? 'checkbox-fill.svg' : 'checkbox-unchecked.svg'}`}
-            />
-            가입한 이메일과 동일
-          </label>
-          <Input
-            name="contactEmail"
-            placeholder="example@example.com"
-            value={reportApplication.contactEmail}
-            onChange={(e) =>
-              setReportApplication({ contactEmail: e.target.value })
-            }
-          />
-        </div>
-      </div>
-    </section>
-  );
-};
-
-/* 모바일 전용 결제 페이지(ReportPaymentPage)에서 같이 사용 */
-export const ReportPaymentSection = () => {
-  const [message, setMessage] = useState('');
-  const [options, setOptions] = useState<ReportOptionInfo[]>([]);
-
-  const { data: reportApplication, setReportApplication } =
-    useReportApplicationStore();
-  const { payment, applyCoupon, cancelCoupon } = useReportPayment();
-  const { data: reportPriceDetail } = useGetReportPriceDetail(
-    reportApplication.reportId!,
-  );
-
-  // 기존에 입력한 쿠폰 코드 초기화
-  useEffect(() => {
-    setReportApplication({ couponId: null, couponCode: '' });
-    setMessage('');
-  }, []);
-
-  useEffect(() => {
-    if (reportPriceDetail === undefined) return;
-    // 옵션 타이틀 불러오기
-    const result = [];
-    for (const optionId of reportApplication.optionIds) {
-      const reportOptionInfo = reportPriceDetail.reportOptionInfos?.find(
-        (info) => info.reportOptionId === optionId,
-      );
-      if (reportOptionInfo === undefined) continue;
-      result.push(reportOptionInfo);
-    }
-
-    setOptions(result);
-  }, [reportPriceDetail]);
-
-  const showFeedback = reportApplication.isFeedbackApplied;
-  const optionTitle = options.map((option) => option.title).join(', ');
-  const reportAndOptionsDiscount =
-    payment.reportDiscount + payment.optionDiscount; // 진단서와 옵션 할인 금액
-  const reportAndOptionsAmount =
-    payment.report + payment.option - reportAndOptionsDiscount; // 진단서와 옵션 결제 금액
-  const feedbackAmount = payment.feedback - payment.feedbackDiscount; // 1:1 피드백 결제 금액
-
-  return (
-    <section className="flex flex-col">
-      <Heading2>결제 정보</Heading2>
-      <div className="mt-6">
-        <div className="flex gap-2.5">
-          <Input
-            className="w-full"
-            value={reportApplication.couponCode ?? ''}
-            type="text"
-            placeholder="쿠폰 번호를 입력해주세요."
-            disabled={reportApplication.couponId === null ? false : true}
-            onChange={(e) =>
-              setReportApplication({ couponCode: e.target.value })
-            }
-          />
-          <button
-            className={twMerge(
-              reportApplication.couponId === null
-                ? 'bg-primary text-neutral-100'
-                : 'border-2 border-primary bg-neutral-100 text-primary',
-              'shrink-0 rounded-sm px-4 py-1.5 text-xsmall14 font-medium',
-            )}
-            onClick={async () => {
-              if (reportApplication.couponCode === '') return;
-              // 쿠폰이 등록된 상태면 쿠폰 취소
-              if (
-                reportApplication.couponId !== null &&
-                reportApplication.couponCode !== ''
-              ) {
-                cancelCoupon();
-                setMessage('');
-                setReportApplication({ couponCode: '' });
-                return;
-              }
-
-              const data = await applyCoupon(reportApplication.couponCode);
-
-              if (data.status === 404 || data.status === 400)
-                setMessage(data.message);
-              else setMessage('쿠폰이 등록되었습니다.');
-            }}
-          >
-            {reportApplication.couponId === null ? '쿠폰 등록' : '쿠폰 취소'}
-          </button>
-        </div>
-        <span
-          className={twMerge(
-            reportApplication.couponId === null
-              ? 'text-system-error'
-              : 'text-system-positive-blue',
-            'h-3 text-xsmall14',
-          )}
-        >
-          {message}
-        </span>
-      </div>
-      <hr className="my-5" />
-      <div className="flex flex-col">
-        <PaymentRowMain>
-          <span>서류 진단서 결제금액</span>
-          <span>{reportAndOptionsAmount.toLocaleString()}원</span>
-        </PaymentRowMain>
-        <PaymentRowSub>
-          <span>
-            └ {convertReportPriceType(reportApplication.reportPriceType)}
-          </span>
-          <span>{`${payment.report.toLocaleString()}원`}</span>
-        </PaymentRowSub>
-        {options.length > 0 && (
-          <PaymentRowSub>
-            <span>└ {optionTitle}</span>
-            <span className="shrink-0">{`${payment.option.toLocaleString()}원`}</span>
-          </PaymentRowSub>
-        )}
-        <PaymentRowSub>
-          <span>
-            └{' '}
-            {Math.ceil(
-              (reportAndOptionsDiscount / (payment.report + payment.option)) *
-                100,
-            )}
-            % 할인
-          </span>
-          <span>
-            {reportAndOptionsDiscount === 0
-              ? '0원'
-              : `-${reportAndOptionsDiscount.toLocaleString()}원`}
-          </span>
-        </PaymentRowSub>
-        {showFeedback && (
-          <>
-            <PaymentRowMain>
-              <span>1:1 피드백 결제금액</span>
-              <span>{feedbackAmount.toLocaleString()}원</span>
-            </PaymentRowMain>
-            <PaymentRowSub>
-              <span>└ 정가</span>
-              <span>{`${payment.feedback.toLocaleString()}원`}</span>
-            </PaymentRowSub>
-            <PaymentRowSub>
-              <span>
-                └{' '}
-                {Math.ceil((payment.feedbackDiscount / payment.feedback) * 100)}
-                % 할인
-              </span>
-              <span>
-                {payment.feedbackDiscount === 0
-                  ? '0원'
-                  : `-${payment.feedbackDiscount.toLocaleString()}원`}
-              </span>
-            </PaymentRowSub>
-          </>
-        )}
-
-        <PaymentRowMain className="text-primary">
-          <span>쿠폰할인</span>
-          <span className="font-bold">
-            {payment.coupon === 0
-              ? '0원'
-              : `-${payment.coupon.toLocaleString()}원`}
-          </span>
-        </PaymentRowMain>
-        <hr className="my-5" />
-        <PaymentRowMain className="font-semibold">
-          <span>결제금액</span>
-          <span>{payment.amount.toLocaleString()}원</span>
-        </PaymentRowMain>
-      </div>
-    </section>
-  );
-};
-
-const PaymentRowMain = ({
-  children,
-  className,
-}: {
-  children?: React.ReactNode;
-  className?: string;
-}) => {
-  return (
-    <div
-      className={twMerge(
-        'flex h-10 items-center justify-between px-3 text-neutral-0',
-        className,
-      )}
-    >
-      {children}
-    </div>
-  );
-};
-
-const PaymentRowSub = ({
-  children,
-  className,
-}: {
-  children?: React.ReactNode;
-  className?: string;
-}) => {
-  return (
-    <div
-      className={twMerge(
-        'flex h-10 items-center justify-between gap-1 pl-6 pr-3 text-xsmall14 text-neutral-50',
-        className,
-      )}
-    >
-      {children}
-    </div>
-  );
-};
-
 const RequiredStar = () => {
   return <span className="text-[#7B61FF]">*</span>;
 };
 
-const FileUploadButton = ({
+const FileUploadButton = React.memo(function FileUploadButton({
   file,
   dispatch,
 }: {
   file: File | null;
   dispatch: React.Dispatch<React.SetStateAction<File | null>>;
-}) => {
+}) {
   const ref = useRef<HTMLInputElement>(null);
+
   useEffect(() => {
     if (file && file.size > 50 * 1024 * 1024) {
       // 파일 사이즈가 50MB 초과일 경우
@@ -869,6 +569,7 @@ const FileUploadButton = ({
       dispatch(null);
     }
   }, [file]);
+
   return (
     <>
       <button
@@ -902,4 +603,4 @@ const FileUploadButton = ({
       />
     </>
   );
-};
+});

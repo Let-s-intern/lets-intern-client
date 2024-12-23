@@ -34,6 +34,7 @@ import PaymentInputPage from './pages/common/program/PaymentInputPage';
 import PaymentResult from './pages/common/program/PaymentResult';
 import ProgramDetailLegacy from './pages/common/program/ProgramDetailLegacy';
 import Programs from './pages/common/program/Programs';
+import ReportApplicationPage from './pages/common/report/ReportApplicationPage';
 import ReportApplyPage from './pages/common/report/ReportApplyPage';
 import ReportManagementPage from './pages/common/report/ReportManagementPage';
 import ReportPage from './pages/common/report/ReportPage';
@@ -191,14 +192,10 @@ const Router = () => {
                 path="report/landing/portfolio"
                 element={<ReportPortfolioPage />}
               />
-
-              {/* :reportType은 RESUME, PERSONAL_STATEMENT, PORTFOLIO (대문자) TODO: 소문자로 옮기기 */}
               <Route
                 path="report/apply/:reportType/:reportId"
                 element={<ReportApplyPage />}
               />
-
-              {/* :reportType은 RESUME, PERSONAL_STATEMENT, PORTFOLIO (대문자) TODO: 소문자로 옮기기 */}
               <Route
                 path="report/payment/:reportType/:reportId"
                 element={<ReportPaymentPage />}
@@ -213,6 +210,11 @@ const Router = () => {
               <Route
                 path="report/management"
                 element={<ReportManagementPage />}
+              />
+              {/* 서류 제출 페이지 */}
+              <Route
+                path="report/:reportType/application/:applicationId"
+                element={<ReportApplicationPage />}
               />
 
               {/* 비로그인 리뷰 작성 페이지 */}

@@ -1,6 +1,6 @@
 import { LiveContent } from '@/types/interface';
-import Heading2 from '@components/common/program/program-detail/Heading2';
 import SuperTitle from '@components/common/program/program-detail/SuperTitle';
+import Heading2 from '@components/common/ui/Heading2';
 
 const superTitle = '현직자 멘토가 들려주는 생생한 이야기';
 

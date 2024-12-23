@@ -1,0 +1,201 @@
+import { useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
+
+import { useGetProgramRecommend } from '@/api/program';
+import { ReportType } from '@/api/report';
+import { personalStatementColors } from '@/pages/common/report/ReportPersonalStatementPage';
+import { resumeColors } from '@/pages/common/report/ReportResumePage';
+import { ReportProgramRecommend } from '@/types/interface';
+import ProgramRecommendSlider from '../ui/ProgramRecommendSlider';
+import MainHeader from './MainHeader';
+import SubHeader from './SubHeader';
+
+const SUPER_TITLE = '서류 작성, 아직 고민이 남아있나요?';
+const HEADING = '합격률을 2배 올려주는\n맞춤형 챌린지를 추천해요';
+
+interface ReportProgramRecommendSliderProps {
+  reportType: ReportType;
+  reportProgramRecommend: ReportProgramRecommend;
+}
+
+const ReportProgramRecommendSlider = ({
+  reportType,
+  reportProgramRecommend,
+}: ReportProgramRecommendSliderProps) => {
+  const subHeaderStyle = {
+    color:
+      reportType === 'PERSONAL_STATEMENT'
+        ? personalStatementColors.C34AFF
+        : resumeColors._11AC5C,
+  };
+  const buttonStyle = {
+    color:
+      reportType === 'PERSONAL_STATEMENT'
+        ? personalStatementColors.C34AFF
+        : resumeColors._11AC5C,
+    border: `1px solid ${reportType === 'PERSONAL_STATEMENT' ? personalStatementColors.C34AFF : resumeColors._4FDA46}`,
+  };
+
+  const navigate = useNavigate();
+
+  const { data: recommendData } = useGetProgramRecommend();
+
+  const slideList = useMemo(() => {
+    const list = [];
+    // 어드민에서 추천 제목을 입력했을 경우에만  표시
+
+    /* 추천 챌린지 저장 */
+    if ((recommendData?.challengeList ?? []).length > 0) {
+      const careerStart = recommendData?.challengeList.find(
+        (item) => item.challengeType === 'CAREER_START',
+      );
+
+      if (careerStart && reportProgramRecommend.challengeCareerStart?.title) {
+        list.push({
+          id: 'CHALLENGE' + careerStart.id,
+          backgroundImage: careerStart.thumbnail ?? '',
+          title: reportProgramRecommend.challengeCareerStart?.title,
+          cta: reportProgramRecommend.reportResume?.cta ?? '경험정리 하러 가기',
+          onClickButton: () => navigate(`/program/challenge/${careerStart.id}`),
+        });
+      }
+
+      const personalStatement = recommendData?.challengeList.find(
+        (item) => item.challengeType === 'PERSONAL_STATEMENT',
+      );
+
+      if (
+        personalStatement &&
+        reportProgramRecommend.challengePersonalStatement?.title
+      ) {
+        list.push({
+          id: 'CHALLENGE' + personalStatement.id,
+          backgroundImage: personalStatement.thumbnail ?? '',
+          title: reportProgramRecommend.challengePersonalStatement?.title,
+          cta:
+            reportProgramRecommend.reportResume?.cta ?? '자소서 완성하러 가기',
+          onClickButton: () =>
+            navigate(`/program/challenge/${personalStatement.id}`),
+        });
+      }
+
+      const portfolio = recommendData?.challengeList.find(
+        (item) => item.challengeType === 'PORTFOLIO',
+      );
+
+      if (portfolio && reportProgramRecommend.challengePortfolio?.title) {
+        list.push({
+          id: 'CHALLENGE' + portfolio.id,
+          backgroundImage: portfolio.thumbnail ?? '',
+          title: reportProgramRecommend.challengePortfolio?.title,
+          cta: reportProgramRecommend.reportResume?.cta ?? '포폴 완성하러 가기',
+          onClickButton: () => navigate(`/program/challenge/${portfolio.id}`),
+        });
+      }
+    }
+
+    /* 추천 라이브 저장 */
+    const live = recommendData?.live;
+
+    if (live && reportProgramRecommend.live?.title) {
+      list.push({
+        id: 'LIVE' + live?.id,
+        backgroundImage: live?.thumbnail ?? '',
+        title: reportProgramRecommend.live?.title,
+        cta: reportProgramRecommend.live?.cta ?? '라이브 참여하러 가기',
+        onClickButton: () => navigate(`/program/live/${live?.id}`),
+      });
+    }
+
+    /* 추천 vod 저장 */
+    if (
+      (recommendData?.vodList ?? []).length > 0 &&
+      reportProgramRecommend.vod?.title
+    ) {
+      // 최근에 개설한 vod 하나 가져오기
+      const vod = recommendData?.vodList[recommendData?.vodList.length - 1];
+
+      list.push({
+        id: 'VOD' + vod?.id,
+        backgroundImage: vod?.thumbnail ?? '',
+        title: reportProgramRecommend.vod?.title,
+        cta: reportProgramRecommend.vod?.cta ?? 'VOD 참여하러 가기',
+        onClickButton: () => navigate(`/program/live/${vod?.link}`),
+      });
+    }
+
+    // 활성화된 서류 진단 없으면 종료
+    if ((recommendData?.reportList ?? []).length === 0) return list;
+
+    /* 추천 서류 진단 저장 */
+    const resumeReport = recommendData?.reportList.find(
+      (item) => item.reportType === 'RESUME',
+    );
+
+    if (resumeReport && reportProgramRecommend.reportResume?.title) {
+      list.push({
+        id: 'RESUME' + resumeReport.id,
+        backgroundImage: '',
+        title: reportProgramRecommend.reportResume?.title,
+        cta:
+          reportProgramRecommend.reportResume?.cta ?? '이력서 진단받으러 가기',
+        onClickButton: () => navigate('/report/landing/resume'),
+      });
+    }
+
+    const personalStatementReport = recommendData?.reportList.find(
+      (item) => item.reportType === 'PERSONAL_STATEMENT',
+    );
+
+    if (
+      personalStatementReport &&
+      reportProgramRecommend.reportPersonalStatement?.title
+    ) {
+      list.push({
+        id: 'PERSONAL_STATEMENT' + personalStatementReport.id,
+        backgroundImage: '',
+        title: reportProgramRecommend.reportPersonalStatement?.title,
+        cta:
+          reportProgramRecommend.reportPersonalStatement?.cta ??
+          '자기소개서 진단받으러 가기',
+        onClickButton: () => navigate('/report/landing/personal-statement'),
+      });
+    }
+
+    const portfolioReport = recommendData?.reportList.find(
+      (item) => item.reportType === 'PORTFOLIO',
+    );
+
+    if (portfolioReport && reportProgramRecommend.reportPortfolio?.title) {
+      list.push({
+        id: 'PORTFOLIO' + portfolioReport.id,
+        backgroundImage: '',
+        title: reportProgramRecommend.reportPortfolio?.title,
+        cta:
+          reportProgramRecommend.reportPortfolio?.cta ??
+          '포트폴리오 진단받으러 가기',
+        onClickButton: () => navigate('/report/landing/portfolio'),
+      });
+    }
+
+    return list;
+  }, [recommendData, navigate, reportProgramRecommend]);
+
+  return (
+    <section className="w-full bg-neutral-95 px-5 py-16 md:py-24 lg:px-0">
+      <SubHeader className="mb-1 md:mb-3" style={subHeaderStyle}>
+        {SUPER_TITLE}
+      </SubHeader>
+      <MainHeader>{HEADING}</MainHeader>
+
+      <ProgramRecommendSlider
+        className="-mx-5 mt-8 max-w-[1000px] px-5 md:mt-14 lg:mx-auto lg:px-0"
+        list={slideList}
+        buttonClassName="bg-white font-semibold"
+        buttonStyle={buttonStyle}
+      />
+    </section>
+  );
+};
+
+export default ReportProgramRecommendSlider;

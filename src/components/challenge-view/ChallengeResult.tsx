@@ -6,8 +6,8 @@ import { twMerge } from '@/lib/twMerge';
 import { ChallengeType, challengeTypeSchema } from '@/schema';
 import { ChallengeColor } from '@components/ChallengeView';
 import Box from '@components/common/program/program-detail/Box';
-import Heading2 from '@components/common/program/program-detail/Heading2';
 import SuperTitle from '@components/common/program/program-detail/SuperTitle';
+import Heading2 from '@components/common/ui/Heading2';
 
 const superTitle = '이 모든 고민을 한번에 해결!';
 

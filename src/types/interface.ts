@@ -68,6 +68,8 @@ export type ChallengeContent = {
   blogReview?: ProgramBlogReview;
   /**  후기 */
   challengeReview?: ContentReviewType[];
+  /** FAQ 카테고리 순서 */
+  faqCategory: string[];
   /** 프로그램 추천 리스트 */
   programRecommend?: ProgramRecommend;
 };
@@ -103,20 +105,44 @@ export type LiveContent = {
   programRecommend?: ProgramRecommend;
 };
 
+export type ReportReviewItem = {
+  id: string | number;
+  name: string;
+  job: string;
+  reportName: string;
+  company: string;
+  isSuccessful: boolean;
+  content: string;
+};
+
 export type ReportReview = {
-  list: {
-    id: string | number;
-    title: string;
-    content: string;
-  }[];
+  list: ReportReviewItem[];
+};
+
+export type ReportExampleItem = {
+  id: string | number;
+  subTitle: string;
+  imgUrl: string;
 };
 
 export type ReportExample = {
-  list: {
-    id: string | number;
-    subTitle: string;
-    imgUrl: string;
-  }[];
+  list: ReportExampleItem[];
+};
+
+export type ReportProgramRecommendItem = {
+  title: string;
+  cta: string;
+};
+
+export type ReportProgramRecommend = {
+  challengeCareerStart?: ReportProgramRecommendItem;
+  challengePortfolio?: ReportProgramRecommendItem;
+  challengePersonalStatement?: ReportProgramRecommendItem;
+  live?: ReportProgramRecommendItem;
+  vod?: ReportProgramRecommendItem;
+  reportResume?: ReportProgramRecommendItem;
+  reportPersonalStatement?: ReportProgramRecommendItem;
+  reportPortfolio?: ReportProgramRecommendItem;
 };
 
 export type ReportContent = {
@@ -124,8 +150,29 @@ export type ReportContent = {
   reportExample: ReportExample;
   /** 후기 */
   review: ReportReview;
-  /** 프로그램 추천 리스트 */
-  programRecommend: ProgramRecommend;
+  /** 프로그램 추천 */
+  reportProgramRecommend: ReportProgramRecommend;
+};
+
+export type ReportColors = {
+  primary: {
+    DEFAULT: string;
+    50: string;
+    100: string;
+    200: string;
+    300: string;
+    400: string;
+    500: string;
+  };
+  secondary: {
+    DEFAULT: string;
+    50: string;
+  };
+  highlight: {
+    DEFAULT: string;
+    50: string;
+    100: string;
+  };
 };
 
 export interface IPageable {

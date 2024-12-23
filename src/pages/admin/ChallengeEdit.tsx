@@ -6,14 +6,14 @@ import {
 } from '@/api/program';
 import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
 import { isDeprecatedProgram } from '@/lib/isDeprecatedProgram';
-import { UpdateChallengeReq } from '@/schema';
+import { ProgramTypeEnum, UpdateChallengeReq } from '@/schema';
 import { ChallengeContent } from '@/types/interface';
 import ChallengePreviewButton from '@components/admin/ChallengePreviewButton';
 import EditorApp from '@components/admin/lexical/EditorApp';
 import ImageUpload from '@components/admin/program/ui/form/ImageUpload';
 import Header from '@components/admin/ui/header/Header';
 import Heading from '@components/admin/ui/heading/Heading';
-import { Heading2 } from '@components/admin/ui/heading/Heading2';
+import Heading2 from '@components/admin/ui/heading/Heading2';
 import Heading3 from '@components/admin/ui/heading/Heading3';
 import { Button } from '@mui/material';
 import { useQueryClient } from '@tanstack/react-query';
@@ -28,6 +28,7 @@ import ProgramBestReview from '../../components/admin/program/ProgramBestReview'
 import ProgramBlogReviewEditor from '../../components/admin/program/ProgramBlogReviewEditor';
 import FaqSection from '../../components/FaqSection';
 import ProgramRecommendEditor from '../../components/ProgramRecommendEditor';
+import ChallengeFaqCategory from './program/ChallengeFaqCategory';
 import ProgramSchedule from './program/ProgramSchedule';
 
 const ChallengeEdit: React.FC = () => {
@@ -40,6 +41,7 @@ const ChallengeEdit: React.FC = () => {
     },
     blogReview: { list: [] },
     challengeReview: [],
+    faqCategory: [],
   });
 
   const { mutateAsync: patchChallenge } = usePatchChallengeMutation();
@@ -241,12 +243,15 @@ const ChallengeEdit: React.FC = () => {
         />
       </section>
 
-      <ProgramRecommendEditor
-        programRecommend={content.programRecommend ?? { list: [] }}
-        setProgramRecommend={(programRecommend) =>
-          setContent((prev) => ({ ...prev, programRecommend }))
-        }
-      />
+      {/* 프로그램 추천 */}
+      <section className="mb-6">
+        <ProgramRecommendEditor
+          programRecommend={content.programRecommend ?? { list: [] }}
+          setProgramRecommend={(programRecommend) =>
+            setContent((prev) => ({ ...prev, programRecommend }))
+          }
+        />
+      </section>
 
       <ChallengeCurriculumEditor
         curriculum={content.curriculum}
@@ -267,16 +272,31 @@ const ChallengeEdit: React.FC = () => {
         }
       />
 
-      <section className="my-6">
+      <div className="my-6">
+        <div className="mb-6">
+          <ChallengeFaqCategory
+            faqCategory={content.faqCategory}
+            onChange={(e) => {
+              setContent((prev) => ({
+                ...prev,
+                faqCategory: e.target.value
+                  .split(',')
+                  .map((item) => item.trim()),
+              }));
+            }}
+          />
+        </div>
         <FaqSection
-          programType="CHALLENGE"
+          programType={ProgramTypeEnum.enum.CHALLENGE}
           faqInfo={
             input.faqInfo ??
             challenge.faqInfo.map((info) => ({ faqId: info.id }))
           }
-          setInput={setInput}
+          setFaqInfo={(faqInfo) =>
+            setInput((prev) => ({ ...prev, faqInfo: faqInfo ?? [] }))
+          }
         />
-      </section>
+      </div>
 
       <footer className="flex items-center justify-end gap-3">
         <ChallengePreviewButton

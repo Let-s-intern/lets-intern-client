@@ -25,13 +25,15 @@ import {
   usePatchReportMutation,
 } from '@/api/report';
 import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
+import { ProgramTypeEnum } from '@/schema';
 import { ReportContent, ReportEditingPrice } from '@/types/interface';
 import EditorApp from '@components/admin/lexical/EditorApp';
 import AdminReportFeedback from '@components/admin/report/AdminReportFeedback';
 import ReportExampleEditor from '@components/admin/report/ReportExampleEditor';
+import ReportProgramRecommendEditor from '@components/admin/report/ReportProgramRecommendEditor';
 import ReportReviewEditor from '@components/admin/report/ReportReviewEditor';
-import { Heading2 } from '@components/admin/ui/heading/Heading2';
-import ProgramRecommendEditor from '../../../components/ProgramRecommendEditor';
+import Heading2 from '@components/admin/ui/heading/Heading2';
+import FaqSection from '@components/FaqSection';
 
 const initialReport: Omit<UpdateReportData, 'contents'> = {
   reportType: 'PERSONAL_STATEMENT',
@@ -44,12 +46,14 @@ const initialReport: Omit<UpdateReportData, 'contents'> = {
     discountPrice: 0,
   },
   visibleDate: undefined,
+  faqInfo: [],
 };
 
 const initialContent = {
   reportExample: { list: [] },
   review: { list: [] },
   programRecommend: { list: [] },
+  reportProgramRecommend: {},
 };
 
 type EditingOptions = Exclude<UpdateReportData['optionInfo'], undefined | null>;
@@ -93,11 +97,8 @@ const AdminReportEditPage = () => {
   }, [isLoadError, navigate]);
 
   useEffect(() => {
-    console.log('editingValue', editingValue);
-  }, [editingValue]);
-
-  useEffect(() => {
     if (reportDetail) {
+      console.log('GET 서류진단 상세 조회:', reportDetail);
       setEditingValue({
         // 기본값
         ...initialReport,
@@ -108,6 +109,9 @@ const AdminReportEditPage = () => {
           discountPrice:
             reportDetail.feedbackPriceInfo.feedbackDiscountPrice ?? 0,
         },
+        faqInfo: reportDetail.faqInfo
+          ? reportDetail.faqInfo.map((faq) => ({ faqId: faq.id }))
+          : [],
       });
 
       const premiumPrice = reportDetail.reportPriceInfos.find(
@@ -152,6 +156,7 @@ const AdminReportEditPage = () => {
       );
 
       const json = JSON.parse(reportDetail.contents);
+      console.log('GET 서류진단 contents:', json);
       setContent(json);
     }
   }, [reportDetail]);
@@ -205,6 +210,9 @@ const AdminReportEditPage = () => {
         ];
         break;
     }
+
+    console.log('서류진단 수정 요청 contents:', content);
+    console.log('서류진단 수정 요청 body:', body);
 
     await editReportMutation.mutateAsync({
       reportId: Number(reportId),
@@ -614,7 +622,7 @@ const AdminReportEditPage = () => {
               {/* 레포트 후기 */}
               <section>
                 <ReportReviewEditor
-                  review={content.review}
+                  review={content.review ?? { list: [] }}
                   setReview={(review) =>
                     setContent((prev) => ({ ...prev, review }))
                   }
@@ -622,15 +630,31 @@ const AdminReportEditPage = () => {
               </section>
 
               {/* 프로그램 추천 */}
-              <ProgramRecommendEditor
-                programRecommend={content.programRecommend}
-                setProgramRecommend={(programRecommend) =>
-                  setContent((prev) => ({ ...prev, programRecommend }))
-                }
-              />
+              <section className="mb-6">
+                <ReportProgramRecommendEditor
+                  // [주의] 속성이 중간에 추가되면서 타입과 달리 undefined일 수 있음
+                  reportProgramRecommend={content.reportProgramRecommend ?? {}}
+                  setReportProgramRecommend={(reportProgramRecommend) =>
+                    setContent((prev) => ({ ...prev, reportProgramRecommend }))
+                  }
+                />
+              </section>
+
+              <section>
+                <FaqSection
+                  programType={ProgramTypeEnum.enum.REPORT}
+                  faqInfo={editingValue.faqInfo ?? []}
+                  setFaqInfo={(faqInfo) =>
+                    setEditingValue((prev) => ({
+                      ...prev,
+                      faqInfo: faqInfo ?? [],
+                    }))
+                  }
+                />
+              </section>
             </>
           ) : (
-            // 구버전은 수정 안됨
+            // [서류진단 구버전] 수정 안됨
             <EditorApp initialEditorStateJsonString={reportDetail?.contents} />
           )}
 

@@ -1,7 +1,9 @@
-import useAuthStore from '@/store/useAuthStore';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import dayjs from 'dayjs';
 import { z } from 'zod';
+
+import { faqSchema, reportTypeSchema } from '@/schema';
+import useAuthStore from '@/store/useAuthStore';
 import axios from '../utils/axios';
 import { tossInfoType } from './paymentSchema';
 
@@ -13,16 +15,10 @@ const pageInfoSchema = z.object({
   pageSize: z.number(),
 });
 
-export const reportTypeSchema = z.enum([
-  'RESUME',
-  'PERSONAL_STATEMENT',
-  'PORTFOLIO',
-]);
-
 export type ReportType = z.infer<typeof reportTypeSchema>;
 
 export function convertReportTypeToDisplayName(
-  type: ReportType | null | undefined,
+  type?: ReportType | 'PERSONAL-STATEMENT' | null,
 ) {
   if (!type) {
     return '';
@@ -32,6 +28,8 @@ export function convertReportTypeToDisplayName(
     case 'RESUME':
       return '이력서';
     case 'PERSONAL_STATEMENT':
+      return '자기소개서';
+    case 'PERSONAL-STATEMENT':
       return '자기소개서';
     case 'PORTFOLIO':
       return '포트폴리오';
@@ -51,10 +49,10 @@ export function convertReportTypeToLandingPath(type: ReportType) {
 
 export function convertReportStatusToUserDisplayName(
   status: ReportApplicationStatus | null | undefined,
+  isSubmitted: boolean,
 ) {
-  if (!status) {
-    return '';
-  }
+  if (!status) return '';
+  if (!isSubmitted) return '제출 전';
 
   switch (status) {
     case 'APPLIED':
@@ -65,6 +63,17 @@ export function convertReportStatusToUserDisplayName(
       return '진단중'; // ADMIN: 진단서 업로드. 확정되지 않은 상태임
     case 'COMPLETED':
       return '진단완료';
+  }
+}
+
+export function convertReportTypeToPathname(reportType: ReportType) {
+  switch (reportType) {
+    case 'RESUME':
+      return 'resume';
+    case 'PERSONAL_STATEMENT':
+      return 'personal-statement';
+    case 'PORTFOLIO':
+      return 'portfolio';
   }
 }
 
@@ -85,10 +94,11 @@ export function convertReportPriceTypeToDisplayName(
 
 export function convertReportStatusToBadgeStatus(
   status: ReportApplicationStatus | null | undefined,
-): 'info' | 'success' {
-  if (!status) {
-    return 'info';
-  }
+  isSubmitted: boolean,
+): 'info' | 'success' | 'warning' {
+  if (!status) return 'info';
+  // 서류를 제출하지 않았으면
+  if (!isSubmitted) return 'warning';
 
   switch (status) {
     case 'APPLIED':
@@ -107,15 +117,19 @@ export function convertFeedbackStatusToDisplayName({
   reportFeedback,
   status,
   isAdmin = false,
+  isReportSubmitted,
 }: {
   status: ReportFeedbackStatus | null | undefined;
   reportFeedback: dayjs.Dayjs | null | undefined;
   now: dayjs.Dayjs;
   isAdmin?: boolean;
+  isReportSubmitted: boolean;
 }) {
   if (!status) {
     return '';
   }
+
+  if (!isReportSubmitted) return '일정선택 전';
 
   switch (status) {
     case 'APPLIED':
@@ -137,14 +151,18 @@ export function convertFeedbackStatusToBadgeStatus({
   now,
   reportFeedback,
   status,
+  isReportSubmitted,
 }: {
   status: ReportFeedbackStatus | null | undefined;
   reportFeedback: dayjs.Dayjs | null | undefined;
   now: dayjs.Dayjs;
-}): 'info' | 'success' {
+  isReportSubmitted: boolean;
+}): 'info' | 'success' | 'warning' {
   if (!status) {
     return 'info';
   }
+
+  if (!isReportSubmitted) return 'warning';
 
   switch (status) {
     case 'APPLIED':
@@ -162,11 +180,11 @@ export function convertFeedbackStatusToBadgeStatus({
   }
 }
 
-const reportPriceTypeSchema = z.enum(['BASIC', 'PREMIUM']);
+export const reportPriceTypeEnum = z.enum(['BASIC', 'PREMIUM']);
 
-export type ReportPriceType = z.infer<typeof reportPriceTypeSchema>;
+export type ReportPriceType = z.infer<typeof reportPriceTypeEnum>;
 
-export const convertReportPriceType = (type: ReportPriceType) => {
+export const convertReportPriceType = (type?: ReportPriceType) => {
   switch (type) {
     case 'BASIC':
       return '베이직';
@@ -288,7 +306,7 @@ const createReportSchema = z.object({
   notice: z.string(),
   priceInfo: z.array(
     z.object({
-      reportPriceType: reportPriceTypeSchema,
+      reportPriceType: reportPriceTypeEnum,
       price: z.number(),
       discountPrice: z.number(),
     }),
@@ -305,6 +323,13 @@ const createReportSchema = z.object({
     price: z.number(),
     discountPrice: z.number(),
   }),
+  faqInfo: z
+    .array(
+      z.object({
+        faqId: z.number(),
+      }),
+    )
+    .nullable(),
 });
 
 export type CreateReportData = z.infer<typeof createReportSchema>;
@@ -326,6 +351,8 @@ const getReportDetailSchema = z.object({
   contents: z.string().nullable().optional(),
   reportType: reportTypeSchema.nullable().optional(),
 });
+
+export type ReportDetail = z.infer<typeof getReportDetailSchema>;
 
 export const getReportDetailQueryKey = 'getReportDetail';
 
@@ -353,7 +380,7 @@ const getReportPriceDetailSchema = z.object({
   reportPriceInfos: z
     .array(
       z.object({
-        reportPriceType: reportPriceTypeSchema.nullable().optional(),
+        reportPriceType: reportPriceTypeEnum.nullable().optional(),
         price: z.number().nullable().optional(),
         discountPrice: z.number().nullable().optional(),
       }),
@@ -364,7 +391,7 @@ const getReportPriceDetailSchema = z.object({
   feedbackPriceInfo: z
     .object({
       reportFeedbackId: z.number(),
-      reportPriceType: reportPriceTypeSchema.nullable().optional(),
+      reportPriceType: reportPriceTypeEnum.nullable().optional(),
       feedbackPrice: z.number().nullable().optional(),
       feedbackDiscountPrice: z.number().nullable().optional(),
     })
@@ -372,11 +399,14 @@ const getReportPriceDetailSchema = z.object({
     .optional(),
 });
 
+export type ReportPriceDetail = z.infer<typeof getReportPriceDetailSchema>;
+
 export const getReportPriceDetailQueryKey = 'getReportPriceDetail';
 
-export const useGetReportPriceDetail = (reportId: number) => {
+export const useGetReportPriceDetail = (reportId?: number) => {
   return useQuery({
     queryKey: [getReportPriceDetailQueryKey, reportId],
+    enabled: !!reportId,
     queryFn: async () => {
       const res = await axios.get(`/report/${reportId}/price`);
       return getReportPriceDetailSchema.parse(res.data.data);
@@ -416,7 +446,7 @@ const getReportDetailForAdminSchema = z.object({
   notice: z.string(),
   reportPriceInfos: z.array(
     z.object({
-      reportPriceType: reportPriceTypeSchema,
+      reportPriceType: reportPriceTypeEnum,
       price: z.number(),
       discountPrice: z.number(),
     }),
@@ -432,11 +462,23 @@ const getReportDetailForAdminSchema = z.object({
   ),
   feedbackPriceInfo: z.object({
     reportFeedbackId: z.number(),
-    reportPriceType: reportPriceTypeSchema,
+    reportPriceType: reportPriceTypeEnum,
     feedbackPrice: z.number(),
     feedbackDiscountPrice: z.number(),
   }),
   visibleDate: z.string().nullable().optional(),
+  faqInfo: z
+    .array(
+      z.object({
+        id: z.number(),
+        question: z.string().nullable(),
+        answer: z.string().nullable(),
+        category: z.string().nullable(),
+        faqProgramType: z.string().nullable(),
+      }),
+    )
+    .nullable()
+    .optional(),
 });
 
 export type ReportDetailAdmin = z.infer<typeof getReportDetailForAdminSchema>;
@@ -462,6 +504,8 @@ const getMyReportsSchema = z
         applicationId: z.number(),
         title: z.string().nullable().optional(),
         reportType: reportTypeSchema,
+        reportPriceType: reportPriceTypeEnum.optional().nullable(),
+        reportFeedbackPriceType: reportPriceTypeEnum.optional().nullable(),
         applicationStatus: reportApplicationStatusSchema.nullable().optional(),
         feedbackStatus: reportFeedbackStatusSchema.nullable().optional(),
         reportUrl: z.string().nullable().optional(),
@@ -513,6 +557,19 @@ export const useGetMyReports = (reportType?: ReportType) => {
   });
 };
 
+// 유저 - 진단서 faq 목록 조회
+//  GET /api/v1/report/{reportId}/faqs
+export const useGetReportFaqs = (reportId: string | number) => {
+  return useQuery({
+    queryKey: ['useGetReportFaq', reportId],
+    queryFn: async () => {
+      const res = await axios.get(`/report/${reportId}/faqs`);
+
+      return faqSchema.parse(res.data.data);
+    },
+  });
+};
+
 const reportApplicationsForAdminInfoSchema = z.object({
   applicationId: z.number(),
   name: z.string(),
@@ -535,7 +592,7 @@ const reportApplicationsForAdminInfoSchema = z.object({
   createDate: z.string().nullable(),
   paymentId: z.number().nullable(),
   orderId: z.string().nullable(),
-  reportPriceType: reportPriceTypeSchema.nullable(),
+  reportPriceType: reportPriceTypeEnum.nullable(),
   couponTitle: z.string().nullable(),
   finalPrice: z.number().nullable(),
   isRefunded: z.boolean().nullable(),
@@ -685,6 +742,52 @@ export const usePatchApplicationDocument = ({
   });
 };
 
+// 진단서 신처 업데이트 /api/v1/report/application/{applicationId}/my
+export const usePatchMyApplication = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({
+      applicationId,
+      applyUrl,
+      recruitmentUrl,
+      desiredDate1,
+      desiredDate2,
+      desiredDate3,
+      wishJob,
+      message,
+    }: {
+      applicationId: number;
+      applyUrl: string;
+      recruitmentUrl: string;
+      desiredDate1: string;
+      desiredDate2: string;
+      desiredDate3: string;
+      wishJob: string;
+      message: string;
+    }) => {
+      const res = await axios.patch(`/report/application/${applicationId}/my`, {
+        applyUrl,
+        recruitmentUrl,
+        desiredDate1,
+        desiredDate2,
+        desiredDate3,
+        wishJob,
+        message,
+      });
+      return res.data.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: [getMyReportsQueryKey],
+      });
+    },
+    onError: (error: Error) => {
+      console.error(error);
+    },
+  });
+};
+
 export const usePatchApplicationStatus = ({
   successCallback,
   errorCallback,
@@ -775,7 +878,7 @@ export const usePatchReportApplicationSchedule = ({
 // POST /api/v1/report/application
 const createReportApplicationSchema = z.object({
   reportId: z.number(),
-  reportPriceType: reportPriceTypeSchema,
+  reportPriceType: reportPriceTypeEnum,
   optionIds: z.array(z.number()),
   isFeedbackApplied: z.boolean(),
   couponId: z.number().nullable(),
@@ -831,7 +934,7 @@ const updateReportSchema = z.object({
   priceInfo: z
     .array(
       z.object({
-        reportPriceType: reportPriceTypeSchema,
+        reportPriceType: reportPriceTypeEnum,
         price: z.number(),
         discountPrice: z.number(),
       }),
@@ -853,6 +956,13 @@ const updateReportSchema = z.object({
       discountPrice: z.number(),
     })
     .optional(),
+  faqInfo: z
+    .array(
+      z.object({
+        faqId: z.number(),
+      }),
+    )
+    .nullable(),
 });
 
 export type UpdateReportData = z.infer<typeof updateReportSchema>;
@@ -876,7 +986,7 @@ const reportApplicationInfoSchema = z.object({
   reportApplicationId: z.number(),
   reportFeedbackApplicationId: z.number().nullable(),
   title: z.string(),
-  reportPriceType: reportPriceTypeSchema,
+  reportPriceType: reportPriceTypeEnum,
   options: z.array(z.string()),
   isCanceled: z.boolean(),
   reportApplicationStatus: reportApplicationStatusSchema,
@@ -893,7 +1003,7 @@ const reportPaymentInfoSchema = z.object({
   reportRefundPrice: z.number().nullable(),
   feedbackRefundPrice: z.number().nullable(),
   reportPriceInfo: z.object({
-    reportPriceType: reportPriceTypeSchema,
+    reportPriceType: reportPriceTypeEnum,
     price: z.number().nullable(),
     discountPrice: z.number().nullable(),
   }),
@@ -911,7 +1021,7 @@ const reportPaymentInfoSchema = z.object({
   feedbackPriceInfo: z
     .object({
       reportFeedbackId: z.number().nullable().optional(),
-      reportPriceType: reportPriceTypeSchema.nullable().optional(),
+      reportPriceType: reportPriceTypeEnum.nullable().optional(),
       feedbackPrice: z.number().nullable().optional(),
       feedbackDiscountPrice: z.number().nullable().optional(),
     })

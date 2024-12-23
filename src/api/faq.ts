@@ -1,9 +1,9 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
-import { Faq, FaqProgramType, faqSchema } from '@/schema';
+import { Faq, ProgramTypeUpperCase, faqSchema } from '@/schema';
 import axios from '@/utils/axios';
 
-export const useGetFaq = (programType: FaqProgramType) => {
+export const useGetFaq = (programType: ProgramTypeUpperCase) => {
   return useQuery({
     queryKey: ['useGetFaq', programType],
     queryFn: async () => {
@@ -58,7 +58,7 @@ export const usePostFaq = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (programType: FaqProgramType) => {
+    mutationFn: async (programType: ProgramTypeUpperCase) => {
       const res = await axios.post('/faq', {
         question: '',
         answer: '',

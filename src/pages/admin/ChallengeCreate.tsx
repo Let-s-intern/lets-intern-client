@@ -1,15 +1,20 @@
+import { useGetFaq } from '@/api/faq';
 import { fileType, uploadFile } from '@/api/file';
 import { usePostChallengeMutation } from '@/api/program';
 import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
 import { challengeToCreateInput } from '@/hooks/useDuplicateProgram';
-import { CreateChallengeReq, getChallengeIdSchema } from '@/schema';
+import {
+  CreateChallengeReq,
+  getChallengeIdSchema,
+  ProgramTypeEnum,
+} from '@/schema';
 import { ChallengeContent } from '@/types/interface';
 import ChallengePreviewButton from '@components/admin/ChallengePreviewButton';
 import EditorApp from '@components/admin/lexical/EditorApp';
 import ImageUpload from '@components/admin/program/ui/form/ImageUpload';
 import Header from '@components/admin/ui/header/Header';
 import Heading from '@components/admin/ui/heading/Heading';
-import { Heading2 } from '@components/admin/ui/heading/Heading2';
+import Heading2 from '@components/admin/ui/heading/Heading2';
 import Heading3 from '@components/admin/ui/heading/Heading3';
 import { Button, TextField } from '@mui/material';
 import dayjs from 'dayjs';
@@ -24,6 +29,7 @@ import ProgramBestReview from '../../components/admin/program/ProgramBestReview'
 import ProgramBlogReviewEditor from '../../components/admin/program/ProgramBlogReviewEditor';
 import FaqSection from '../../components/FaqSection';
 import ProgramRecommendEditor from '../../components/ProgramRecommendEditor';
+import ChallengeFaqCategory from './program/ChallengeFaqCategory';
 import ProgramSchedule from './program/ProgramSchedule';
 
 /**
@@ -38,12 +44,18 @@ const ChallengeCreate: React.FC = () => {
     blogReview: { list: [] },
     challengeReview: [],
     initialized: true,
+    faqCategory: [],
     programRecommend: { list: [] },
   });
   const { snackbar } = useAdminSnackbar();
   const navigate = useNavigate();
 
   const { mutateAsync: postChallenge } = usePostChallengeMutation();
+  const { data: faqData } = useGetFaq('CHALLENGE');
+
+  const categoryList = [
+    ...new Set(faqData?.faqList.map((faq) => faq.category)),
+  ];
 
   const [input, setInput] = useState<Omit<CreateChallengeReq, 'desc'>>({
     beginning: dayjs().format('YYYY-MM-DDTHH:mm'),
@@ -235,12 +247,15 @@ const ChallengeCreate: React.FC = () => {
         ></EditorApp>
       </section>
 
-      <ProgramRecommendEditor
-        programRecommend={content.programRecommend ?? { list: [] }}
-        setProgramRecommend={(programRecommend) =>
-          setContent((prev) => ({ ...prev, programRecommend }))
-        }
-      />
+      {/* 프로그램 추천 */}
+      <section className="mb-6">
+        <ProgramRecommendEditor
+          programRecommend={content.programRecommend ?? { list: [] }}
+          setProgramRecommend={(programRecommend) =>
+            setContent((prev) => ({ ...prev, programRecommend }))
+          }
+        />
+      </section>
 
       <ChallengeCurriculum
         curriculum={content.curriculum}
@@ -262,10 +277,25 @@ const ChallengeCreate: React.FC = () => {
       />
 
       <section className="my-6">
+        <div className="mb-6">
+          <ChallengeFaqCategory
+            faqCategory={content.faqCategory}
+            onChange={(e) => {
+              setContent((prev) => ({
+                ...prev,
+                faqCategory: e.target.value
+                  .split(',')
+                  .map((item) => item.trim()),
+              }));
+            }}
+          />
+        </div>
         <FaqSection
-          programType="CHALLENGE"
+          programType={ProgramTypeEnum.enum.CHALLENGE}
           faqInfo={input.faqInfo}
-          setInput={setInput}
+          setFaqInfo={(faqInfo) =>
+            setInput((prev) => ({ ...prev, faqInfo: faqInfo ?? [] }))
+          }
           isCreate
         />
       </section>
