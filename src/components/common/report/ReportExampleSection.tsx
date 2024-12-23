@@ -7,6 +7,7 @@ import Pencil from '@/assets/icons/pencil.svg?react';
 import PrevButton from '@/assets/icons/prev-button.svg?react';
 import Profile from '@/assets/icons/profile.svg?react';
 import { REPORT_EXAMPLE } from '@/data/reportConstant';
+import { REPORT_EXAMPLE_ID } from '@/pages/common/report/ReportNavigation';
 import { personalStatementColors } from '@/pages/common/report/ReportPersonalStatementPage';
 import { resumeColors } from '@/pages/common/report/ReportResumePage';
 import { ReportExample } from '@/types/interface';
@@ -88,7 +89,10 @@ const ReportExampleSection = ({
   if (!reportExample) return null;
 
   return (
-    <section className="flex w-full flex-col items-center">
+    <section
+      id={REPORT_EXAMPLE_ID}
+      className="flex w-full flex-col items-center"
+    >
       <div className="flex w-full flex-col">
         <div className="flex flex-col items-center bg-black px-5 pb-10 pt-[70px] md:pb-[60px] md:pt-[100px] lg:px-0">
           <div className="flex w-full max-w-[1000px] flex-col items-center gap-y-[30px] md:gap-y-[60px]">

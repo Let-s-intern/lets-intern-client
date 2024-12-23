@@ -11,6 +11,7 @@ import {
 } from '@/api/report';
 import CheckIcon from '@/assets/icons/chevron-down.svg?react';
 import { twMerge } from '@/lib/twMerge';
+import { REPORT_PLAN_ID } from '@/pages/common/report/ReportNavigation';
 import { personalStatementColors } from '@/pages/common/report/ReportPersonalStatementPage';
 import { resumeColors } from '@/pages/common/report/ReportResumePage';
 import MainHeader from './MainHeader';
@@ -123,7 +124,10 @@ const ReportPlanSection = ({
   const isMobile = useMediaQuery('(max-width: 768px)');
 
   return (
-    <section className="w-full bg-neutral-90 px-5 py-16 md:pb-36 md:pt-28">
+    <section
+      id={REPORT_PLAN_ID}
+      className="w-full bg-neutral-90 px-5 py-16 md:pb-36 md:pt-28"
+    >
       <header>
         <SectionHeader className="mb-6">{SECTION_HEADER}</SectionHeader>
         <SubHeader className="mb-1 md:mb-3" style={subHeaderStyle}>

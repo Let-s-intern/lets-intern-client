@@ -1,5 +1,6 @@
 import { convertReportTypeToDisplayName, ReportType } from '@/api/report';
 import { REPORT_INTERVIEW } from '@/data/reportConstant';
+import { REPORT_REVIEW_ID } from '@/pages/common/report/ReportNavigation';
 import { personalStatementColors } from '@/pages/common/report/ReportPersonalStatementPage';
 import { resumeColors } from '@/pages/common/report/ReportResumePage';
 import { ReportReview } from '@/types/interface';
@@ -34,7 +35,7 @@ const ReportReviewSection = ({
       : [resumeColors.EEFAFF, resumeColors.E8FDF2];
 
   return (
-    <div className="flex w-full flex-col bg-black">
+    <section id={REPORT_REVIEW_ID} className="flex w-full flex-col bg-black">
       <div className="mx-auto flex w-full max-w-[1000px] flex-col gap-y-10 px-5 py-[60px] md:gap-y-20 md:py-[120px] lg:px-0">
         <div className="flex w-full flex-col gap-y-6 md:gap-y-[50px]">
           <h5 className="w-full text-center text-xsmall14 font-semibold text-neutral-45 md:text-small18">
@@ -101,7 +102,7 @@ const ReportReviewSection = ({
           )}
         </div>
       </div>
-    </div>
+    </section>
   );
 };
 
