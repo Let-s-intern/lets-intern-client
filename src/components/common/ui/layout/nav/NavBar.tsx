@@ -1,7 +1,8 @@
 import { useQuery } from '@tanstack/react-query';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 
+import useScrollStore from '@/store/useScrollStore';
 import useAuthStore from '../../../../../store/useAuthStore';
 import axios from '../../../../../utils/axios';
 import KakaoChannel from './KakaoChannel';
@@ -28,6 +29,12 @@ const reportHoverItem: NavSubItemProps[] = [
   },
 ];
 
+const scrollEventPage = [
+  '/report/landing',
+  '/program/challenge',
+  '/program/live',
+];
+
 const NavBar = () => {
   const navigate = useNavigate();
   const { isLoggedIn, logout } = useAuthStore();
@@ -38,6 +45,8 @@ const NavBar = () => {
   const [activeLink, setActiveLink] = useState<
     'HOME' | 'ABOUT' | 'PROGRAM' | 'ADMIN' | 'BLOG' | 'REPORT' | ''
   >('');
+  const { setScrollDirection, scrollDirection } = useScrollStore();
+  const lastScrollY = useRef(0);
 
   const toggleMenu = () => {
     setIsOpen(!isOpen);
@@ -93,10 +102,38 @@ const NavBar = () => {
     }
   }, [userData, isAdminData]);
 
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    const handleScroll = () => {
+      // 현재 경로가 scrollEventPage 중 하나로 시작되지 않을 때는 스크롤 이벤트를 무시
+      if (!scrollEventPage.some((page) => location.pathname.startsWith(page)))
+        return;
+
+      const currentScrollY = window.scrollY;
+
+      if (currentScrollY > lastScrollY.current) {
+        setScrollDirection('DOWN');
+      } else if (currentScrollY < lastScrollY.current) {
+        setScrollDirection('UP');
+      }
+
+      lastScrollY.current = currentScrollY;
+    };
+
+    window.addEventListener('scroll', handleScroll);
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, [location.pathname, setScrollDirection, scrollEventPage]);
+
   return (
     <>
       {/* 상단 네비게이션 바 */}
-      <div className="lg:p-30 fixed top-0 z-30 h-[3.75rem] w-screen border-b border-neutral-80 bg-static-100 px-5 sm:px-20 md:h-[4.375rem] lg:h-[4.75rem] lg:px-28">
+      <div
+        className={`lg:p-30 fixed top-0 z-30 h-[3.75rem] w-screen border-b border-neutral-80 bg-static-100 px-5 sm:px-20 md:h-[4.375rem] lg:h-[4.75rem] lg:px-28 ${scrollDirection === 'DOWN' ? '-translate-y-full' : 'translate-y-0'} transition-transform duration-300`}
+      >
         <div className="flex h-full items-center justify-between">
           <div className="flex h-full items-center gap-4 sm:gap-9">
             <Link to="/" className="h-[1.75rem] md:h-[2.2rem]">

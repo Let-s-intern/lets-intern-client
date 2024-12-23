@@ -1,4 +1,5 @@
 import { twMerge } from '@/lib/twMerge';
+import useScrollStore from '@/store/useScrollStore';
 import { ProgramType } from '@/types/common';
 import { useEffect, useState } from 'react';
 import { ChallengeColor } from './ChallengeView';
@@ -49,6 +50,7 @@ const ProgramDetailNavigation = ({
   programType,
   className,
 }: ProgramDetailNavigationProps) => {
+  const { scrollDirection } = useScrollStore();
   const isLive = programType === 'live';
   const [activeSection, setActiveSection] = useState<string>(
     isLive ? liveNavigateItems[0].to : challengeNavigateItems[0].to,
@@ -108,9 +110,10 @@ const ProgramDetailNavigation = ({
   return (
     <nav
       className={twMerge(
-        'sticky top-[3.65rem] z-20 flex w-full justify-center gap-x-1 border-b-2 border-neutral-80 bg-white px-6 md:top-[4.275rem] md:gap-x-[100px] lg:top-[4.65rem]',
+        'sticky top-[3.65rem] z-20 flex w-full justify-center gap-x-1 border-b-2 border-neutral-80 bg-white px-6 transition-all duration-300 md:top-[4.275rem] md:gap-x-[100px] lg:top-[4.65rem]',
         programType === 'challenge' && 'challenge_navigation',
         programType === 'live' && 'live_navigation',
+        scrollDirection === 'DOWN' && 'top-0 md:top-0 lg:top-0',
         className,
       )}
     >
