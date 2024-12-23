@@ -29,6 +29,12 @@ const reportHoverItem: NavSubItemProps[] = [
   },
 ];
 
+const scrollEventPage = [
+  '/report/landing',
+  '/program/challenge',
+  '/program/live',
+];
+
 const NavBar = () => {
   const navigate = useNavigate();
   const { isLoggedIn, logout } = useAuthStore();
@@ -100,6 +106,10 @@ const NavBar = () => {
     if (typeof window === 'undefined') return;
 
     const handleScroll = () => {
+      // 현재 경로가 scrollEventPage 중 하나로 시작되지 않을 때는 스크롤 이벤트를 무시
+      if (!scrollEventPage.some((page) => location.pathname.startsWith(page)))
+        return;
+
       const currentScrollY = window.scrollY;
 
       if (currentScrollY > lastScrollY.current) {
@@ -116,7 +126,7 @@ const NavBar = () => {
     return () => {
       window.removeEventListener('scroll', handleScroll);
     };
-  }, []);
+  }, [location.pathname, setScrollDirection, scrollEventPage]);
 
   return (
     <>

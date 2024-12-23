@@ -1,8 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { useEffect } from 'react';
 
-import useScrollStore from '@/store/useScrollStore';
-import { twMerge } from 'tailwind-merge';
 import { ILineBanner } from '../../../../../types/Banner.interface';
 import axios from '../../../../../utils/axios';
 
@@ -13,7 +11,6 @@ const TopBanner = ({
   isShow: boolean;
   setIsShow: (isShow: boolean) => void;
 }) => {
-  const { scrollDirection } = useScrollStore();
   const { data } = useQuery<ILineBanner>({
     queryKey: ['LineBanner'],
     queryFn: async () => {
@@ -45,10 +42,7 @@ const TopBanner = ({
 
   return isShow ? (
     <section
-      className={twMerge(
-        'band_banner fixed top-[3.75rem] z-10 w-screen cursor-pointer bg-neutral-0 py-3 transition-all duration-300 md:top-[4.375rem] md:px-5 lg:top-[4.75rem]',
-        scrollDirection === 'DOWN' && 'top-0 md:top-0 lg:top-0',
-      )}
+      className="band_banner fixed top-[3.75rem] z-10 w-screen cursor-pointer bg-neutral-0 py-3 md:top-[4.375rem] md:px-5 lg:top-[4.75rem]"
       style={{
         backgroundColor: data?.colorCode,
         color: data?.textColorCode,
