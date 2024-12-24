@@ -27,11 +27,11 @@ import Card from '@components/common/report/Card';
 import { ReportFormRadioControlLabel } from '@components/common/report/ControlLabel';
 import DateTimePicker from '@components/common/report/DateTimePicker';
 import FilledInput from '@components/common/report/FilledInput';
-import Heading1 from '@components/common/report/Heading1';
 import Heading2 from '@components/common/report/Heading2';
 import Label from '@components/common/report/Label';
 import Tooltip from '@components/common/report/Tooltip';
 import BottomSheet from '@components/common/ui/BottomSheeet';
+import Header from '@components/common/ui/Header';
 import HorizontalRule from '@components/ui/HorizontalRule';
 
 const ReportApplyPage = () => {
@@ -94,13 +94,9 @@ const ReportApplyPage = () => {
   });
 
   return (
-    <div className="px-5 md:px-32 md:py-10 xl:flex xl:gap-16 xl:px-48">
+    <div className="mx-auto max-w-[55rem] px-5 md:pb-10 md:pt-5 lg:px-0 xl:flex xl:gap-16">
       <div className="w-full">
-        <header>
-          <Heading1>진단서 신청하기</Heading1>
-        </header>
-
-        <HorizontalRule className="-mx-5 md:-mx-32 lg:mx-0" />
+        <Header to={`/report/landing/${reportType}`}>진단서 신청하기</Header>
 
         <main className="mb-8 mt-6 flex flex-col gap-10">
           {/* 프로그램 정보 */}
@@ -143,7 +139,7 @@ const ReportApplyPage = () => {
         </main>
       </div>
 
-      <BottomSheet className="xl:mx-48">
+      <BottomSheet className="mx-auto max-w-[55rem]">
         {isMobile && (
           <button
             onClick={() => {

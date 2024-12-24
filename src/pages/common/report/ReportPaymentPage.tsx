@@ -1,16 +1,10 @@
 import { useEffect, useMemo, useState } from 'react';
-import { FaArrowLeft } from 'react-icons/fa6';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 import { useGetParticipationInfo } from '@/api/application';
-import {
-  convertReportPriceType,
-  useGetReportDetailQuery,
-  useGetReportPriceDetail,
-} from '@/api/report';
+import { convertReportPriceType, useGetReportPriceDetail } from '@/api/report';
 import { usePatchUser } from '@/api/user';
 import Card from '@/components/common/report/Card';
-import Heading1 from '@/components/common/report/Heading1';
 import Heading2 from '@/components/common/report/Heading2';
 import BottomSheet from '@/components/common/ui/BottomSheeet';
 import useReportPayment from '@/hooks/useReportPayment';
@@ -20,24 +14,22 @@ import { twMerge } from '@/lib/twMerge';
 import useReportApplicationStore from '@/store/useReportApplicationStore';
 import Label from '@components/common/report/Label';
 import BaseButton from '@components/common/ui/button/BaseButton';
+import Header from '@components/common/ui/Header';
 import Input from '@components/common/ui/input/Input';
 
 const ReportPaymentPage = () => {
   const navigate = useNavigate();
+  const { reportType } = useParams();
 
-  const { data: reportApplication, setReportApplication } =
-    useReportApplicationStore();
-  const { data: reportDetail } = useGetReportDetailQuery(
-    reportApplication.reportId!,
-  );
+  const { data: reportApplication } = useReportApplicationStore();
   const { payment } = useReportPayment();
   const patchUserMutation = usePatchUser();
 
   return (
-    <div className="px-5 md:px-32">
-      <header>
-        <Heading1>결제하기</Heading1>
-      </header>
+    <div className="mx-auto max-w-[55rem] px-5 md:pt-5 lg:px-0">
+      <Header to={`/report/apply/${reportType}/${reportApplication.reportId}`}>
+        결제하기
+      </Header>
 
       <main className="mb-8 flex flex-col gap-10">
         <ProgramInfoSection />
@@ -45,19 +37,7 @@ const ReportPaymentPage = () => {
         <ReportPaymentSection />
       </main>
 
-      <BottomSheet className="md:mx-32">
-        <BaseButton
-          variant="outlined"
-          className="h-14 w-14 shrink-0"
-          onClick={() => {
-            setReportApplication({ applyUrl: '', recruitmentUrl: '' }); // url 초기화
-            navigate(
-              `/report/apply/${reportDetail?.reportType}/${reportApplication.reportId}`,
-            );
-          }}
-        >
-          <FaArrowLeft size={20} color="#000" />
-        </BaseButton>
+      <BottomSheet className="mx-auto max-w-[55rem]">
         <BaseButton
           className="complete_button_click w-full text-small18"
           onClick={() => {

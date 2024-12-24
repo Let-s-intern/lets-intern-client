@@ -86,7 +86,7 @@ const ReportApplicationPage = () => {
   });
 
   return (
-    <div className="px-5 md:px-32 md:pb-10 xl:flex xl:gap-16 xl:px-48">
+    <div className="max-w-[55rem] px-5 md:pb-10 md:pt-5 xl:flex xl:gap-16">
       <div className="w-full">
         <Header to="/report/management">제출하기</Header>
 

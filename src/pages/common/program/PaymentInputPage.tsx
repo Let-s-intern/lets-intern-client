@@ -23,7 +23,6 @@ import PriceSection from '@components/common/program/program-detail/apply/sectio
 import UserInputSection from '@components/common/program/program-detail/apply/section/UserInputSection';
 import Header from '@components/common/ui/Header';
 import { Duration } from '@components/Duration';
-import HorizontalRule from '@components/ui/HorizontalRule';
 import OrderProgramInfo from './OrderProgramInfo';
 
 function calculateTotalPrice({
@@ -202,14 +201,12 @@ const PaymentInputPage = () => {
 
   return (
     <div
-      className="mx-auto w-full max-w-5xl pb-6"
+      className="mx-auto w-full max-w-[55rem] pb-6 md:pt-5"
       data-program-text={program?.title}
     >
       <Header onClick={() => navigate(-1)} className="mx-5">
         결제하기
       </Header>
-
-      <HorizontalRule className="my-6" />
 
       <div className="mx-5">
         <OrderProgramInfo
@@ -220,7 +217,7 @@ const PaymentInputPage = () => {
           title={program?.title}
         />
 
-        <div className="-mx-5 mb-10 mt-8 flex items-center justify-center gap-2 bg-primary-10 px-2.5 py-5 text-xsmall14 lg:rounded-sm">
+        <div className="-mx-5 mb-10 mt-8 flex items-center justify-center gap-2 bg-primary-10 px-2.5 py-5 text-xsmall14 lg:mx-0 lg:rounded-sm">
           <span>마감까지</span>
           {program?.deadline ? (
             <Duration
