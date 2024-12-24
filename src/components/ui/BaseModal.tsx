@@ -1,3 +1,4 @@
+import { twMerge } from '@/lib/twMerge';
 import { useEffect } from 'react';
 import ModalOverlay from './ModalOverlay';
 import ModalPortal from './ModalPortal';
@@ -15,8 +16,14 @@ interface BaseModalProps {
   isOpen: boolean;
   onClose: () => void;
   children?: React.ReactNode;
+  className?: string;
 }
-const BaseModal = ({ isOpen, onClose, children }: BaseModalProps) => {
+const BaseModal = ({
+  isOpen,
+  onClose,
+  children,
+  className,
+}: BaseModalProps) => {
   // 스크롤 제어
   useEffect(() => {
     if (isOpen) {
@@ -37,7 +44,12 @@ const BaseModal = ({ isOpen, onClose, children }: BaseModalProps) => {
         aria-modal="true"
       >
         <ModalOverlay onClose={onClose} />
-        <div className="relative w-full max-w-[20rem] overflow-hidden rounded-[10px] bg-white md:max-w-[28rem]">
+        <div
+          className={twMerge(
+            'rounded-ms relative w-full overflow-hidden bg-white',
+            className,
+          )}
+        >
           {children}
         </div>
       </div>
