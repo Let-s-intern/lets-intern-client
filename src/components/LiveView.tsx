@@ -3,7 +3,7 @@ import { useMemo } from 'react';
 import { twMerge } from '@/lib/twMerge';
 import { LiveIdSchema } from '@/schema';
 import { LiveContent } from '@/types/interface';
-import Header from '@components/common/program/program-detail/header/Header';
+import Header from '@components/common/ui/Header';
 import LexicalContent from './common/blog/LexicalContent';
 import MoreReviewButton from './common/review/MoreReviewButton';
 import LiveBasicInfo from './live-view/LiveBasicInfo';

@@ -21,7 +21,7 @@ import CouponSection, {
 import MotiveAnswerSection from '@components/common/program/program-detail/apply/section/MotiveAnswerSection';
 import PriceSection from '@components/common/program/program-detail/apply/section/PriceSection';
 import UserInputSection from '@components/common/program/program-detail/apply/section/UserInputSection';
-import Header from '@components/common/program/program-detail/header/Header';
+import Header from '@components/common/ui/Header';
 import { Duration } from '@components/Duration';
 import HorizontalRule from '@components/ui/HorizontalRule';
 import OrderProgramInfo from './OrderProgramInfo';
