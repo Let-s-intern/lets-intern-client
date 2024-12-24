@@ -5,7 +5,6 @@ import { useNavigate } from 'react-router-dom';
 import { useGetParticipationInfo } from '@/api/application';
 import {
   convertReportPriceType,
-  ReportOptionInfo,
   useGetReportDetailQuery,
   useGetReportPriceDetail,
 } from '@/api/report';
@@ -124,7 +123,7 @@ const UsereInfoSection = () => {
     setReportApplication({
       contactEmail: participationInfo?.contactEmail || '',
     });
-  }, [participationInfo?.contactEmail]);
+  }, [participationInfo?.contactEmail, setReportApplication]);
 
   useEffect(() => {
     // 정보 수신용 이메일과 가입한 이메일이 다르면 체크 해제
@@ -213,7 +212,6 @@ const UsereInfoSection = () => {
 
 const ReportPaymentSection = () => {
   const [message, setMessage] = useState('');
-  const [options, setOptions] = useState<ReportOptionInfo[]>([]);
 
   const { data: reportApplication, setReportApplication } =
     useReportApplicationStore();
@@ -228,40 +226,42 @@ const ReportPaymentSection = () => {
     setMessage('');
   }, [setReportApplication]);
 
-  useEffect(() => {
-    if (reportPriceDetail === undefined) return;
-    // 옵션 타이틀 불러오기
-    const result = [];
-    for (const optionId of reportApplication.optionIds) {
-      const reportOptionInfo = reportPriceDetail.reportOptionInfos?.find(
-        (info) => info.reportOptionId === optionId,
-      );
-      if (reportOptionInfo === undefined) continue;
-      result.push(reportOptionInfo);
-    }
-
-    setOptions(result);
-  }, [reportPriceDetail]);
-
   const showFeedback = reportApplication.isFeedbackApplied;
   const reportAndOptionsDiscount =
     payment.reportDiscount + payment.optionDiscount; // 진단서와 옵션 할인 금액
   const reportAndOptionsAmount =
     payment.report + payment.option - reportAndOptionsDiscount; // 진단서와 옵션 결제 금액
   const feedbackAmount = payment.feedback - payment.feedbackDiscount; // 1:1 피드백 결제 금액
+
+  // 사용자가 선택한 옵션
+  const selectedOptions = useMemo(() => {
+    const result = [];
+
+    for (const optionId of reportApplication.optionIds) {
+      const reportOptionInfo = reportPriceDetail?.reportOptionInfos?.find(
+        (info) => info.reportOptionId === optionId,
+      );
+
+      if (reportOptionInfo === undefined) continue;
+
+      result.push(reportOptionInfo);
+    }
+    return result;
+  }, [reportPriceDetail?.reportOptionInfos, reportApplication.optionIds]);
+  // 선택한 옵션 제목
   const optionTitle = useMemo(
     () =>
       // 문항 추가는 한 번만 표시
       [
         ...new Set(
-          options.map((option) =>
+          selectedOptions.map((option) =>
             option.optionTitle?.startsWith('+')
               ? '문항 추가'
               : option.optionTitle,
           ),
         ),
       ].join(', '),
-    [options],
+    [selectedOptions],
   );
 
   return (
@@ -332,7 +332,7 @@ const ReportPaymentSection = () => {
           </span>
           <span>{`${payment.report.toLocaleString()}원`}</span>
         </PaymentRowSub>
-        {options.length > 0 && (
+        {selectedOptions.length > 0 && (
           <PaymentRowSub>
             <span>└ {optionTitle}</span>
             <span className="shrink-0">{`${payment.option.toLocaleString()}원`}</span>

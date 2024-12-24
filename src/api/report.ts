@@ -1013,7 +1013,7 @@ const reportPaymentInfoSchema = z.object({
         reportOptionId: z.number(),
         price: z.number(),
         discountPrice: z.number(),
-        title: z.string(),
+        optionTitle: z.string(),
       })
       .nullable()
       .optional(),

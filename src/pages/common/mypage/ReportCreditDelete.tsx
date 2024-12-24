@@ -5,11 +5,9 @@ import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 
 import {
   getCouponDiscountPrice,
-  getDiscountPercent,
   getFeedbackDiscountedPrice,
   getFeedbackRefundPercent,
   getReportDiscountedPrice,
-  getReportPrice,
   getReportRefundPercent,
   getTotalRefund,
   nearestTen,
@@ -58,32 +56,23 @@ const ReportCreditDelete = () => {
     },
   });
 
-  const getOptionTitleList = () => {
-    if (!reportPaymentDetail) return [];
-
-    if (
-      !reportPaymentDetail.reportPaymentInfo.reportOptionInfos ||
-      reportPaymentDetail.reportPaymentInfo.reportOptionInfos.length === 0
-    )
+  const optionTitle = useMemo(() => {
+    if (reportPaymentDetail?.reportPaymentInfo.reportOptionInfos.length === 0)
       return '없음';
 
-    return reportPaymentDetail.reportPaymentInfo.reportOptionInfos
-      .map((option) => option?.title)
-      .join(', ');
-  };
+    const titleList =
+      reportPaymentDetail?.reportPaymentInfo.reportOptionInfos.map((option) =>
+        option?.optionTitle.startsWith('+') ? '문항 추가' : option?.optionTitle,
+      );
+
+    // "문항 추가" 중복 제거
+    return [...new Set(titleList)].join(', ');
+  }, [reportPaymentDetail?.reportPaymentInfo.reportOptionInfos]);
 
   const paymentInfo = reportPaymentDetail?.reportPaymentInfo;
 
-  const reportPrice = useMemo(() => {
-    return getReportPrice(paymentInfo);
-  }, [paymentInfo]);
-
   const reportDiscountedPrice = useMemo(() => {
     return getReportDiscountedPrice(paymentInfo);
-  }, [paymentInfo]);
-
-  const discountPercent = useMemo(() => {
-    return getDiscountPercent(paymentInfo);
   }, [paymentInfo]);
 
   const couponDiscountPrice = useMemo(() => {
@@ -175,9 +164,7 @@ const ReportCreditDelete = () => {
                     </div>
                     <div className="flex w-full items-center justify-start gap-x-4 text-xs font-medium">
                       <div className="shrink-0 text-neutral-30">옵션</div>
-                      <div className="text-primary-dark">
-                        {getOptionTitleList()}
-                      </div>
+                      <div className="text-primary-dark">{optionTitle}</div>
                     </div>
                   </div>
                 </div>
