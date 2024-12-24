@@ -30,13 +30,13 @@ function createMockPaymentInfo({
           price: 22000,
           discountPrice: 2000,
           reportOptionId: 1,
-          title: '옵션1',
+          optionTitle: '옵션1',
         },
         {
           price: 33000,
           discountPrice: 3000,
           reportOptionId: 2,
-          title: '옵션2',
+          optionTitle: '옵션2',
         },
       ],
       feedbackPriceInfo: feedback
