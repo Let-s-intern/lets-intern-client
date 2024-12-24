@@ -33,12 +33,12 @@ const ReportSubmitModal = ({
           제출 후에는 수정이 어렵습니다. 그래도 제출하시겠어요?
         </p>
       </div>
-      <div className="flex items-center text-xsmall14 font-medium">
-        <ModalButton className="border-r border-neutral-80" onClick={onClose}>
+      <div className="flex items-center text-xsmall14 ">
+        <ModalButton className="border-r border-neutral-80 font-medium" onClick={onClose}>
           취소
         </ModalButton>
         <ModalButton
-          className={clsx('text-primary', { 'cursor-wait': isLoading })}
+          className={clsx('text-primary font-semibold', { 'cursor-wait': isLoading })}
           onClick={onClickConfirm}
         >
           제출하기
