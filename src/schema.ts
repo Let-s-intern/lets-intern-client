@@ -135,6 +135,7 @@ export const reviewSchema = z.object({
   npsAns: z.string().optional().nullable(),
   npsCheckAns: z.boolean().optional().nullable(),
   content: z.string().optional().nullable(),
+  programDetail: z.string().optional().nullable(),
   score: z.number(),
   isVisible: z.boolean(),
   createdDate: z.string(),

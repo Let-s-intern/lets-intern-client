@@ -28,7 +28,7 @@ const TableBody = ({
 }: ReviewTableBodyProps) => {
   const { mutate: editReviewVisible } = useEditReviewVisible();
   const [applicationId, setApplicationId] = useState<number | null>(null);
-  const [userId, setUserId] = useState<number | null | undefined>(null);
+  const [userId, setUserId] = useState<number | null | undefined>(undefined);
 
   const {
     data: paymentDetail,
@@ -45,7 +45,7 @@ const TableBody = ({
     isFetching: userDetailIsFetching,
   } = useUserDetailAdminQuery({
     userId: userId ?? 0,
-    enabled: userId !== null,
+    enabled: userId !== undefined,
   });
 
   const handleVisibleCheckboxClicked = (
@@ -64,7 +64,7 @@ const TableBody = ({
           {type === 'REPORT' && (
             <TD>
               <div
-                className="underline"
+                className="cursor-pointer underline"
                 onClick={() => setApplicationId(review.applicationId ?? null)}
               >
                 보기
@@ -73,8 +73,8 @@ const TableBody = ({
           )}
           <TD>
             <div
-              className="underline"
-              onClick={() => setUserId(review.userId ?? undefined)}
+              className="cursor-pointer underline"
+              onClick={() => setUserId(review.userId ?? null)}
             >
               {review.name ?? '-'}
             </div>
@@ -89,7 +89,9 @@ const TableBody = ({
           <TD>{review.score}</TD>
           <TD>
             <p className="mx-auto w-full max-w-60 whitespace-pre-wrap break-words text-center">
-              {review.content}
+              {type === 'REPORT'
+                ? (review.programDetail ?? '-')
+                : (review.content ?? '-')}
             </p>
           </TD>
           <TD>
@@ -109,7 +111,9 @@ const TableBody = ({
             {paymentDetailIsLoading || paymentDetailIsFetching ? (
               <LoadingContainer />
             ) : !paymentDetail ? (
-              <div>데이터가 없습니다.</div>
+              <div className="flex flex-1 items-center justify-center">
+                데이터가 없습니다.
+              </div>
             ) : (
               <div className="mt-5 flex w-full flex-col gap-y-3 text-xsmall14">
                 <div className="flex w-full gap-x-2">
@@ -185,7 +189,9 @@ const TableBody = ({
             {userDetailIsLoading || userDetailIsFetching ? (
               <LoadingContainer />
             ) : !userDetail ? (
-              <div>데이터가 없습니다.</div>
+              <div className="flex flex-1 items-center justify-center">
+                데이터가 없습니다.
+              </div>
             ) : (
               <div className="mt-5 flex w-full flex-col gap-y-3 text-xsmall14">
                 <div className="flex w-full gap-x-2">
@@ -236,7 +242,7 @@ const TableBody = ({
             )}
             <div className="mt-5 flex w-full items-center justify-end">
               <button
-                onClick={() => setApplicationId(null)}
+                onClick={() => setUserId(undefined)}
                 className="text-xxsmall12 text-neutral-40"
               >
                 닫기
