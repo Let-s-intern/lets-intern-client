@@ -52,6 +52,7 @@ const ReportPersonalStatementPage = () => {
   );
 
   const { data: priceDetail } = useGetReportPriceDetail(report?.reportId);
+  console.log('가격 상세:', priceDetail);
 
   useEffect(() => {
     initReportApplication();

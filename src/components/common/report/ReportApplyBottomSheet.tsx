@@ -209,12 +209,12 @@ const ReportApplyBottomSheet = React.forwardRef<
 
   // 현직자 피드백 옵션
   const employeeOptionInfos = priceDetail.reportOptionInfos?.filter(
-    (info) => !info.title?.startsWith('+'),
+    (info) => !info.optionTitle?.startsWith('+'),
   );
 
   // 자기소개서 문항 추가 옵션
   const questionOptionInfos = priceDetail.reportOptionInfos?.filter((info) =>
-    info.title?.startsWith('+'),
+    info.optionTitle?.startsWith('+'),
   );
   // 사용자가 추가한 문항 추가 옵션
   const selectedQuestionOptions = useMemo(() => {
@@ -532,7 +532,7 @@ const ReportApplyBottomSheet = React.forwardRef<
                                 (priceDetail.reportOptionInfos?.length ?? 0) -
                                   1,
                             )}
-                            label={option.title}
+                            label={option.optionTitle}
                             labelStyle={RADIO_CONTROL_LABEL_STYLE}
                             right={
                               <ReportPriceView
@@ -605,7 +605,7 @@ const ReportApplyBottomSheet = React.forwardRef<
                             <SelectedItemBox
                               key={info.reportOptionId}
                               className="border-t border-neutral-80"
-                              title={info.title ?? ''}
+                              title={info.optionTitle ?? ''}
                               onClickDelete={() =>
                                 setReportApplication({
                                   optionIds: reportApplication.optionIds.filter(

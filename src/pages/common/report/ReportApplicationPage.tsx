@@ -22,6 +22,7 @@ import Tooltip from '@components/common/report/Tooltip';
 import BottomSheet from '@components/common/ui/BottomSheeet';
 import BaseButton from '@components/common/ui/button/BaseButton';
 import HorizontalRule from '@components/ui/HorizontalRule';
+import ReportSubmitModal from '@components/ui/ReportSubmitModal';
 
 const ReportApplicationPage = () => {
   const navigate = useNavigate();
@@ -29,11 +30,13 @@ const ReportApplicationPage = () => {
 
   const [applyFile, setApplyFile] = useState<File | null>(null);
   const [recruitmentFile, setRecruitmentFile] = useState<File | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const { isLoggedIn } = useAuthStore();
-  const { mutateAsync: patchMyApplication } = usePatchMyApplication();
-
   const { data: reportApplication, validate } = useReportApplicationStore();
+
+  const { mutateAsync: patchMyApplication } = usePatchMyApplication();
 
   const convertFile = async () => {
     let applyUrl = '';
@@ -143,31 +146,36 @@ const ReportApplicationPage = () => {
               return;
             }
 
-            const isSubmit = confirm(
-              '제출 후에는 수정이 어렵습니다. 그래도 제출하시겠어요?',
-            );
-
-            if (isSubmit) {
-              const { applyUrl, recruitmentUrl } = await convertFile();
-
-              await patchMyApplication({
-                applicationId: Number(applicationId),
-                applyUrl,
-                recruitmentUrl,
-                desiredDate1: reportApplication.desiredDate1!,
-                desiredDate2: reportApplication.desiredDate2!,
-                desiredDate3: reportApplication.desiredDate3!,
-                wishJob: reportApplication.wishJob,
-                message: reportApplication.message,
-              });
-              alert('제출이 완료되었습니다.');
-              navigate('/report/management');
-            }
+            setIsModalOpen(true);
           }}
         >
           제출하기
         </BaseButton>
       </BottomSheet>
+
+      <ReportSubmitModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        isLoading={isLoading}
+        onClickConfirm={async () => {
+          setIsLoading(true);
+          const { applyUrl, recruitmentUrl } = await convertFile();
+
+          await patchMyApplication({
+            applicationId: Number(applicationId),
+            applyUrl,
+            recruitmentUrl,
+            desiredDate1: reportApplication.desiredDate1!,
+            desiredDate2: reportApplication.desiredDate2!,
+            desiredDate3: reportApplication.desiredDate3!,
+            wishJob: reportApplication.wishJob,
+            message: reportApplication.message,
+          });
+          alert('제출이 완료되었습니다.');
+          navigate('/report/management');
+          setIsLoading(false);
+        }}
+      />
     </div>
   );
 };

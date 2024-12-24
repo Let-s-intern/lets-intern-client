@@ -200,7 +200,6 @@ const ReportManagementPage = () => {
   };
 
   const { data, status } = useGetMyReports();
-  console.log('내 진단서:', data);
 
   const filteredApplications = data?.myReportInfos.filter((report) => {
     switch (filterType) {
@@ -313,7 +312,7 @@ const ReportManagementPage = () => {
                 </table>
                 <div className="flex items-center justify-between gap-4">
                   {(item.applyUrl || item.recruitmentUrl) && (
-                    <div className="-ml-1 flex items-center gap-1">
+                    <div className="-ml-1 mt-5 flex items-center gap-1">
                       {item.applyUrl ? (
                         <Link
                           to={item.applyUrl}
