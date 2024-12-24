@@ -26,10 +26,13 @@ const ReportSubmitModal = ({
         </p>
       </div>
       <div className="flex items-center text-xsmall14 font-medium">
-        <button className="flex-1 border-r border-neutral-80" onClick={onClose}>
+        <button
+          className="flex-1 border-r border-neutral-80 py-4"
+          onClick={onClose}
+        >
           취소
         </button>
-        <button className="flex-1 text-primary" onClick={onClickConfirm}>
+        <button className="flex-1 py-4 text-primary" onClick={onClickConfirm}>
           제출하기
         </button>
       </div>

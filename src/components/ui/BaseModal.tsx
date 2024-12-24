@@ -37,7 +37,7 @@ const BaseModal = ({ isOpen, onClose, children }: BaseModalProps) => {
         aria-modal="true"
       >
         <ModalOverlay onClose={onClose} />
-        <div className="relative w-full max-w-[28rem] overflow-hidden rounded-[10px]">
+        <div className="relative w-full max-w-[20rem] overflow-hidden rounded-[10px] bg-white md:max-w-[28rem]">
           {children}
         </div>
       </div>
