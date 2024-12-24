@@ -1,5 +1,7 @@
-import { twMerge } from '@/lib/twMerge';
+import { useMediaQuery } from '@mui/material';
 import { memo, useState } from 'react';
+
+import { twMerge } from '@/lib/twMerge';
 
 interface TooltipProps {
   alt?: string;
@@ -9,6 +11,8 @@ interface TooltipProps {
 
 /** TODO: **공통화** */
 const Tooltip = ({ alt = '툴팁', children, className }: TooltipProps) => {
+  const isMobile = useMediaQuery('(max-width: 768px)');
+
   const [isShow, setIsShow] = useState(false);
 
   return (
@@ -26,12 +30,18 @@ const Tooltip = ({ alt = '툴팁', children, className }: TooltipProps) => {
           id="helper"
           role="tooltip"
           className={twMerge(
-            'absolute -top-1 left-8 z-10 w-52 rounded-xs bg-neutral-95 px-4 py-3 text-xxsmall12 text-neutral-40 drop-shadow-[0_0_4px_rgba(0,0,0,0.32)]',
+            'absolute z-10 w-52 rounded-xs bg-neutral-95 px-4 py-3 text-xxsmall12 text-neutral-40 drop-shadow-[0_0_4px_rgba(0,0,0,0.32)]',
+            isMobile ? '-left-10 top-8' : '-top-1 left-8',
             className,
           )}
         >
           {children}
-          <div className="absolute -left-1 top-2 h-3 w-3 rotate-45 bg-neutral-95" />
+          <div
+            className={twMerge(
+              'absolute h-3 w-3 rotate-45 bg-neutral-95',
+              isMobile ? '-top-1 left-11' : '-left-1 top-2',
+            )}
+          />
         </div>
       )}
     </div>

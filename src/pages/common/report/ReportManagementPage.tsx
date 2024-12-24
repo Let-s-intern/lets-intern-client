@@ -179,7 +179,7 @@ const ReportManagementPage = () => {
       }, 100);
     }
     initReportApplication(); // 서류 진단 전역 상태 초기화
-  }, [isLoggedIn, navigate]);
+  }, [isLoggedIn, navigate, initReportApplication]);
 
   const filterStatus = (searchParams.get('status') ??
     'all') as ReportFilter['status'];
@@ -233,8 +233,8 @@ const ReportManagementPage = () => {
     <div className="mx-auto max-w-5xl px-5 pb-10 lg:px-0">
       <header>
         <h1 className="py-6 text-small20 font-semibold">MY 진단서 보기</h1>
-        <div className="mb-3 flex items-center gap-2 text-xsmall16 font-bold">
-          <h2>서류 피드백 REPORT</h2>
+        <div className="mb-3 flex items-center gap-2">
+          <h2 className="text-xsmall16 font-bold">서류 피드백 REPORT</h2>
           <Tooltip className="text-xxsmall12 font-normal">
             <p className="mb-1">진단서 발급 예상 소요기간</p>
             <ul className="mb-3 list-disc pl-4">

@@ -20,7 +20,11 @@ const ReportSubmitModal = ({
   onClickConfirm,
 }: ReportSubmitModalProps) => {
   return (
-    <BaseModal isOpen={isOpen} onClose={onClose}>
+    <BaseModal
+      isOpen={isOpen}
+      onClose={onClose}
+      className="max-w-[20rem] md:max-w-[28rem]"
+    >
       <div className="border-b border-neutral-80 px-6 py-5">
         <span className="mb-3 block text-xsmall16 font-semibold">
           제출 전, 확인해주세요.
