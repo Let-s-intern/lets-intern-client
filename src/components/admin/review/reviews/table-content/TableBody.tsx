@@ -71,7 +71,14 @@ const TableBody = ({
               </div>
             </TD>
           )}
-          <TD>{review.name ?? '-'}</TD>
+          <TD>
+            <div
+              className="underline"
+              onClick={() => setUserId(review.userId ?? undefined)}
+            >
+              {review.name ?? '-'}
+            </div>
+          </TD>
           <TD>{review.nps}</TD>
           <TD>
             <p className="mx-auto w-full max-w-60 whitespace-pre-wrap break-words text-center">
@@ -143,8 +150,7 @@ const TableBody = ({
                 <hr />
                 <div className="flex w-full gap-x-2">
                   <h2 className="w-20 text-neutral-40">쿠폰</h2>
-                  <p>-</p>
-                  {/* <p>{applicationModal.application.couponTitle ?? '없음'}</p> */}
+                  <p>{paymentDetail.reportPaymentInfo.couponName ?? '없음'}</p>
                 </div>
                 <div className="flex w-full gap-x-2">
                   <h2 className="w-20 text-neutral-40">결제금액</h2>
