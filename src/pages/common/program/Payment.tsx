@@ -17,11 +17,7 @@ const clientKey = import.meta.env.VITE_TOSS_CLIENT_KEY || '';
 
 const Payment = () => {
   const navigate = useNavigate();
-  const {
-    data: programApplicationData,
-    checkInvalidate,
-    initProgramApplicationForm,
-  } = useProgramStore();
+  const { data: programApplicationData, checkInvalidate } = useProgramStore();
 
   if (checkInvalidate()) {
     console.error(programApplicationData);
