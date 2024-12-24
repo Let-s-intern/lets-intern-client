@@ -11,10 +11,10 @@ import { useProgramApplicationQuery } from '../../../api/application';
 import { useProgramQuery } from '../../../api/program';
 import FilledButton from '../../../components/common/program/program-detail/button/FilledButton';
 import NotiButton from '../../../components/common/program/program-detail/button/NotiButton';
-import Header from '../../../components/common/program/program-detail/header/Header';
 import ApplySection from '../../../components/common/program/program-detail/section/ApplySection';
 import MobileApplySection from '../../../components/common/program/program-detail/section/MobileApplySection';
 import TabSection from '../../../components/common/program/program-detail/section/TabSection';
+import Header from '../../../components/common/ui/Header';
 import useRunOnce from '../../../hooks/useRunOnce';
 import drawerReducer from '../../../reducers/drawerReducer';
 import useAuthStore from '../../../store/useAuthStore';
@@ -149,7 +149,7 @@ const ProgramDetailLegacy = ({ programType }: ProgramDetailProps) => {
         </div>
       ) : (
         <div className="mx-auto max-w-5xl">
-          <Header to="/program" programTitle={programTitle} />
+          <Header to="/program">{programTitle}</Header>
           <div className="flex min-h-screen flex-col">
             {/* 프로그램 상세 */}
             <section className="flex items-start gap-10 md:mt-8">

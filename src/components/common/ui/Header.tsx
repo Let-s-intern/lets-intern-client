@@ -4,12 +4,12 @@ import { Link } from 'react-router-dom';
 
 interface HeaderProps {
   to?: string;
-  programTitle: string;
+  children?: React.ReactNode;
   className?: string;
   onClick?: () => void;
 }
 
-const Header = ({ programTitle, className, to, onClick }: HeaderProps) => {
+const Header = ({ children, className, to, onClick }: HeaderProps) => {
   return (
     <header className={twMerge('my-5 flex items-center gap-3', className)}>
       {to && (
@@ -17,7 +17,7 @@ const Header = ({ programTitle, className, to, onClick }: HeaderProps) => {
           <MdOutlineArrowBack />
         </Link>
       )}
-      <h1 className="text-lg font-medium">{programTitle}</h1>
+      <h1 className="text-lg font-medium">{children}</h1>
     </header>
   );
 };

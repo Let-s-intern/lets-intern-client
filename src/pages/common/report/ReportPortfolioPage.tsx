@@ -76,7 +76,7 @@ const ReportPortfolioPage = () => {
         <div className="flex w-full flex-col items-center">
           <div className="flex w-full flex-col bg-black pb-12 text-white md:pb-20">
             <div className="mx-auto flex w-full max-w-[1000px] flex-col px-5 lg:px-0">
-              <Header programTitle={'서류완성의 시작과 끝은 진단에서부터'} />
+              <Header>서류완성의 시작과 끝은 진단에서부터</Header>
               <ReportBasicInfo
                 reportBasic={data?.portfolioInfo}
                 color={resumeColors._2CE282}

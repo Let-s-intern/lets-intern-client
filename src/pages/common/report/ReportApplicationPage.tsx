@@ -2,7 +2,7 @@ import { FormControl, RadioGroup, SelectChangeEvent } from '@mui/material';
 import dayjs, { Dayjs } from 'dayjs';
 import React, { memo, useEffect, useRef, useState } from 'react';
 import { IoCloseOutline } from 'react-icons/io5';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 import { uploadFile } from '@/api/file';
 import { convertReportTypeStatus, usePatchMyApplication } from '@/api/report';
@@ -15,12 +15,12 @@ import useReportApplicationStore from '@/store/useReportApplicationStore';
 import { ReportFormRadioControlLabel } from '@components/common/report/ControlLabel';
 import DateTimePicker from '@components/common/report/DateTimePicker';
 import FilledInput from '@components/common/report/FilledInput';
-import Heading1 from '@components/common/report/Heading1';
 import Heading2 from '@components/common/report/Heading2';
 import Label from '@components/common/report/Label';
 import Tooltip from '@components/common/report/Tooltip';
 import BottomSheet from '@components/common/ui/BottomSheeet';
 import BaseButton from '@components/common/ui/button/BaseButton';
+import Header from '@components/common/ui/Header';
 import HorizontalRule from '@components/ui/HorizontalRule';
 import ReportSubmitModal from '@components/ui/ReportSubmitModal';
 
@@ -88,12 +88,7 @@ const ReportApplicationPage = () => {
   return (
     <div className="px-5 md:px-32 md:pb-10 xl:flex xl:gap-16 xl:px-48">
       <div className="w-full">
-        <header className="flex items-center gap-4">
-          <Link to="/report/management">
-            <img src="/icons/Arrow_Left_MD.svg" alt="이전 버튼" />
-          </Link>
-          <Heading1>제출하기</Heading1>
-        </header>
+        <Header to="/report/management">제출하기</Header>
 
         <main className="mb-8 flex flex-col gap-10">
           <CallOut

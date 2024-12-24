@@ -45,7 +45,7 @@ const LiveView: React.FC<{ live: LiveIdSchema; isPreview?: boolean }> = ({
     <div className="flex w-full flex-col">
       <div className="flex w-full flex-col items-center">
         <div className="flex w-full max-w-[1000px] flex-col px-5 md:px-10 lg:px-0">
-          <Header to="/program" programTitle={live.title ?? ''} />
+          <Header to="/program">{live.title ?? ''}</Header>
           {live.vod && <LiveVod />}
           <LiveBasicInfo live={live} />
         </div>
