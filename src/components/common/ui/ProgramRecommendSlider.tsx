@@ -53,7 +53,7 @@ function ProgramRecommendSlider({
 
             <button
               className={twMerge(
-                'mt-3 w-full rounded-xs bg-primary py-3 text-xsmall16 text-white md:mt-4 md:py-4 md:text-small18',
+                'program_recommend mt-3 w-full rounded-xs bg-primary py-3 text-xsmall16 text-white md:mt-4 md:py-4 md:text-small18',
                 buttonClassName,
               )}
               style={buttonStyle}
