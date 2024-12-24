@@ -200,7 +200,6 @@ const ReportManagementPage = () => {
   };
 
   const { data, status } = useGetMyReports();
-  console.log('내 진단서:', data);
 
   const filteredApplications = data?.myReportInfos.filter((report) => {
     switch (filterType) {

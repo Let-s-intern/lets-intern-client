@@ -370,7 +370,7 @@ const reportOptionInfo = z.object({
   reportOptionId: z.number(),
   price: z.number().nullable().optional(),
   discountPrice: z.number().nullable().optional(),
-  title: z.string().nullable().optional(),
+  optionTitle: z.string().nullable().optional(),
 });
 export type ReportOptionInfo = z.infer<typeof reportOptionInfo>;
 

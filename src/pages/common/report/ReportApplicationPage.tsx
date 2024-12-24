@@ -31,11 +31,12 @@ const ReportApplicationPage = () => {
   const [applyFile, setApplyFile] = useState<File | null>(null);
   const [recruitmentFile, setRecruitmentFile] = useState<File | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const { isLoggedIn } = useAuthStore();
-  const { mutateAsync: patchMyApplication } = usePatchMyApplication();
-
   const { data: reportApplication, validate } = useReportApplicationStore();
+
+  const { mutateAsync: patchMyApplication } = usePatchMyApplication();
 
   const convertFile = async () => {
     let applyUrl = '';
@@ -155,7 +156,9 @@ const ReportApplicationPage = () => {
       <ReportSubmitModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
+        isLoading={isLoading}
         onClickConfirm={async () => {
+          setIsLoading(true);
           const { applyUrl, recruitmentUrl } = await convertFile();
 
           await patchMyApplication({
@@ -170,6 +173,7 @@ const ReportApplicationPage = () => {
           });
           alert('제출이 완료되었습니다.');
           navigate('/report/management');
+          setIsLoading(false);
         }}
       />
     </div>

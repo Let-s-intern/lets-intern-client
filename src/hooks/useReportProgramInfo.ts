@@ -20,18 +20,29 @@ export default function useReportProgramInfo() {
 
   // optionIds로 옵션 제목 불러오기
   useEffect(() => {
-    setOptions(() => []); // 초기화
-
+    const optionTitleList = [];
     const optionIds = reportApplication.optionIds;
+
+    // 선택한 옵션이 없으면 종료
     if (optionIds.length === 0) return;
 
     for (const id of optionIds) {
       const optionInfo = reportPriceDetailData?.reportOptionInfos?.find(
         (info) => info.reportOptionId === id,
       );
+
       if (optionInfo === undefined) continue;
-      setOptions((prev) => [...prev, optionInfo?.title as string]);
+
+      // 선택한 옵션의 제목을 담은 배열 생성
+      optionTitleList.push(
+        optionInfo?.optionTitle?.startsWith('+')
+          ? '문항 추가'
+          : (optionInfo?.optionTitle as string),
+      );
     }
+
+    // "문항 추가" 증복 제거
+    setOptions([...new Set(optionTitleList)]);
   }, [reportPriceDetailData, reportApplication]);
 
   return {

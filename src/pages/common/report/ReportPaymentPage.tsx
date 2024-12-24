@@ -226,7 +226,7 @@ const ReportPaymentSection = () => {
   useEffect(() => {
     setReportApplication({ couponId: null, couponCode: '' });
     setMessage('');
-  }, []);
+  }, [setReportApplication]);
 
   useEffect(() => {
     if (reportPriceDetail === undefined) return;
@@ -255,7 +255,9 @@ const ReportPaymentSection = () => {
       [
         ...new Set(
           options.map((option) =>
-            option.title?.startsWith('+') ? '문항 추가' : option.title,
+            option.optionTitle?.startsWith('+')
+              ? '문항 추가'
+              : option.optionTitle,
           ),
         ),
       ].join(', '),

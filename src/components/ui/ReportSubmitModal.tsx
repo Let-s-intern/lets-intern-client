@@ -1,7 +1,10 @@
+import { twMerge } from '@/lib/twMerge';
+import clsx from 'clsx';
 import BaseModal from './BaseModal';
 
 interface ReportSubmitModalProps {
   isOpen: boolean;
+  isLoading?: boolean;
   onClose: () => void;
   onClickConfirm: () => void;
 }
@@ -12,6 +15,7 @@ interface ReportSubmitModalProps {
 
 const ReportSubmitModal = ({
   isOpen,
+  isLoading,
   onClose,
   onClickConfirm,
 }: ReportSubmitModalProps) => {
@@ -26,18 +30,34 @@ const ReportSubmitModal = ({
         </p>
       </div>
       <div className="flex items-center text-xsmall14 font-medium">
-        <button
-          className="flex-1 border-r border-neutral-80 py-4"
-          onClick={onClose}
-        >
+        <ModalButton className="border-r border-neutral-80" onClick={onClose}>
           취소
-        </button>
-        <button className="flex-1 py-4 text-primary" onClick={onClickConfirm}>
+        </ModalButton>
+        <ModalButton
+          className={clsx('text-primary', { 'cursor-wait': isLoading })}
+          onClick={onClickConfirm}
+        >
           제출하기
-        </button>
+        </ModalButton>
       </div>
     </BaseModal>
   );
 };
 
 export default ReportSubmitModal;
+
+function ModalButton({
+  className,
+  children,
+  onClick,
+}: {
+  className?: string;
+  children?: React.ReactNode;
+  onClick?: React.MouseEventHandler<HTMLButtonElement>;
+}) {
+  return (
+    <button className={twMerge('flex-1 py-4', className)} onClick={onClick}>
+      {children}
+    </button>
+  );
+}
