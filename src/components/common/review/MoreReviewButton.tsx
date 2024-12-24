@@ -62,7 +62,7 @@ const MoreReviewButton = ({
         className="flex items-center justify-center px-8 py-12 outline-none focus:outline-none"
       >
         <div
-          className="relative flex max-h-[80%] w-full max-w-3xl flex-col gap-y-5 overflow-hidden rounded-lg bg-white p-4 outline-none focus:outline-none md:p-14"
+          className="rounded-ms relative flex max-h-[80%] w-full max-w-3xl flex-col gap-y-5 overflow-hidden bg-white p-4 outline-none focus:outline-none md:p-14"
           onClick={(e) => e.stopPropagation()}
         >
           <Close
