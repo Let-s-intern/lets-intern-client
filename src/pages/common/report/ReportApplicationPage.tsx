@@ -110,7 +110,7 @@ const ReportApplicationPage = () => {
             )}
           <HorizontalRule className="-mx-5 md:-mx-32 lg:mx-0" />
 
-          {/* 1:1 피드백 일정 */}
+          {/* 1:1 온라인 상담 일정 */}
           {reportApplication.isFeedbackApplied && (
             <>
               <ScheduleSection />
@@ -367,14 +367,14 @@ const ScheduleSection = () => {
   return (
     <section className="flex flex-col gap-1 lg:flex-row lg:items-start lg:gap-5">
       <div className="flex w-[8.75rem] shrink-0 items-center gap-1">
-        <Heading2>1:1 피드백 일정</Heading2>
-        <Tooltip alt="1:1 피드백 일정 도움말">
-          1:1 피드백은 서류 진단서 발급 이후에 진행됩니다.
+        <Heading2>1:1 온라인 상담 일정</Heading2>
+        <Tooltip alt="1:1 온라인 상담 일정 도움말">
+          1:1 온라인 상담은 서류 진단서 발급 이후에 진행됩니다.
         </Tooltip>
       </div>
       <div className="flex w-full flex-col gap-5">
         <span className="text-xsmall14">
-          희망하시는 1:1 피드백(40분) 일정을 모두 선택해주세요.
+          희망하시는 1:1 온라인 상담(40분) 일정을 모두 선택해주세요.
         </span>
         <div>
           <Label>희망순위1*</Label>

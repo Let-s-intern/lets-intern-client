@@ -213,7 +213,7 @@ const ReportCreditDetail = () => {
                   <div className="flex w-full flex-col gap-y-1">
                     <div className="flex w-full items-center justify-start gap-x-4 text-xs font-medium">
                       <div className="shrink-0 text-neutral-30">상품</div>
-                      <div className="text-primary-dark">{`서류 진단서 (${convertReportPriceType(reportPaymentDetail.reportApplicationInfo.reportPriceType)}${reportPaymentDetail.reportApplicationInfo.reportFeedbackApplicationId ? ', 1:1 피드백' : ''})`}</div>
+                      <div className="text-primary-dark">{`서류 진단서 (${convertReportPriceType(reportPaymentDetail.reportApplicationInfo.reportPriceType)}${reportPaymentDetail.reportApplicationInfo.reportFeedbackApplicationId ? ', 1:1 온라인 상담' : ''})`}</div>
                     </div>
                     <div className="flex w-full items-center justify-start gap-x-4 text-xs font-medium">
                       <div className="shrink-0 text-neutral-30">옵션</div>
@@ -385,7 +385,7 @@ const ReportCreditDetail = () => {
                     .reportFeedbackApplicationId && (
                     <div className="flex w-full flex-col">
                       <ReportCreditRow
-                        title={`1:1 피드백 ${isCanceled ? '환불' : '결제'}금액`}
+                        title={`1:1 온라인 상담 ${isCanceled ? '환불' : '결제'}금액`}
                         content={`${
                           isCanceled
                             ? (

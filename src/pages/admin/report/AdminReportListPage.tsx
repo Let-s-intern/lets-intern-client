@@ -42,7 +42,9 @@ function createColumns({
         return (
           <div className="flex flex-col items-center justify-center">
             <p className="m-0">신청인원</p>
-            <p className="m-0 text-xs text-gray-500">서류진단/1:1피드백</p>
+            <p className="m-0 text-xs text-gray-500">
+              서류진단/1:1 온라인 상담
+            </p>
           </div>
         );
       },

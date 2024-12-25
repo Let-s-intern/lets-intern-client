@@ -32,10 +32,12 @@ const AdminReportFeedback = ({
   return (
     <div className="flex gap-4">
       <FormControl size="small" className="w-48">
-        <InputLabel id="feedback-price-type-label">1:1 피드백 설정</InputLabel>
+        <InputLabel id="feedback-price-type-label">
+          1:1 온라인 상담 설정
+        </InputLabel>
         <Select<'basic' | 'none'>
           className="w-48"
-          label="1:1 피드백 설정"
+          label="1:1 온라인 상담 설정"
           labelId="feedback-price-type-label"
           value={selectedValue}
           onChange={(e) => {

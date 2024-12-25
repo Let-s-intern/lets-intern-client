@@ -1,8 +1,8 @@
-import { reportInterviewType } from '@/data/reportConstant';
+import { ReportReviewItem } from '@/types/interface';
 import { maskingName } from '../program/program-detail/review/ProgramDetailReviewItem';
 
 interface ReportInterviewCardProps {
-  interview: reportInterviewType;
+  interview: ReportReviewItem;
   mainColor: string;
   subColor: string;
 }
@@ -27,24 +27,24 @@ const ReportInterviewCard = ({
         >
           <p className="font-semibold">{`Q. ${interview.question}`}</p>
           <div className="flex w-full flex-col gap-y-1">
-            <p className="font-bold">{`A. ${interview.answer.title}`}</p>
-            <p className="font-medium">{`"${interview.answer.content}"`}</p>
+            <p className="font-bold">{`A. ${interview.answer}`}</p>
+            <p className="font-medium">{`"${interview.detail}"`}</p>
           </div>
         </div>
         <div className="flex w-full items-center gap-x-3">
           <img
-            src={interview.user.img}
-            alt={maskingName(interview.user.name)}
+            src={
+              interview.profile ?? '/images/program/program_default_profile.png'
+            }
+            alt={maskingName(interview.name)}
             className="h-12 w-12 rounded-full object-cover"
           />
           <div className="flex flex-1 flex-col gap-y-1 text-xxsmall12 text-neutral-0 md:text-xsmall14">
             <p>
-              <span className="font-semibold">
-                {interview.user.reportName}{' '}
-              </span>
+              <span className="font-semibold">{interview.reportName} </span>
               서비스 이용
             </p>
-            <p>{`${interview.user.job} 직무 ${maskingName(interview.user.name)}`}</p>
+            <p>{`${interview.job} 직무 ${maskingName(interview.name)}`}</p>
           </div>
         </div>
       </div>

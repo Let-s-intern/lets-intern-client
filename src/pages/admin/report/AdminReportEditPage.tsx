@@ -29,7 +29,6 @@ import { ProgramTypeEnum } from '@/schema';
 import { ReportContent, ReportEditingPrice } from '@/types/interface';
 import EditorApp from '@components/admin/lexical/EditorApp';
 import AdminReportFeedback from '@components/admin/report/AdminReportFeedback';
-import ReportExampleEditor from '@components/admin/report/ReportExampleEditor';
 import ReportProgramRecommendEditor from '@components/admin/report/ReportProgramRecommendEditor';
 import ReportReviewEditor from '@components/admin/report/ReportReviewEditor';
 import Heading2 from '@components/admin/ui/heading/Heading2';
@@ -607,18 +606,8 @@ const AdminReportEditPage = () => {
             />
           ) : null}
 
-          {content.reportExample ? (
+          {content.review ? (
             <>
-              {/* 레포트 예시 */}
-              <section className="mb-6">
-                <ReportExampleEditor
-                  reportExample={content.reportExample}
-                  setReportExample={(reportExample) =>
-                    setContent((prev) => ({ ...prev, reportExample }))
-                  }
-                />
-              </section>
-
               {/* 레포트 후기 */}
               <section>
                 <ReportReviewEditor

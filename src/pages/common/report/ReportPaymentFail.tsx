@@ -120,7 +120,7 @@ const ReportPaymentFail = () => {
               {payment.isFeedbackApplied && (
                 <div className="flex w-full flex-col">
                   <ReportCreditRow
-                    title={`1:1 피드백`}
+                    title="1:1 온라인 상담"
                     content={
                       (
                         payment.feedback - payment.feedbackDiscount

@@ -48,7 +48,7 @@ export default function useReportProgramInfo() {
   return {
     title: reportDetailData?.title,
     product: reportApplication.isFeedbackApplied
-      ? `서류 진단서 (${convertReportPriceType(reportApplication.reportPriceType)}), 1:1 피드백`
+      ? `서류 진단서 (${convertReportPriceType(reportApplication.reportPriceType)}), 1:1 온라인 상담`
       : `서류 진단서 (${convertReportPriceType(reportApplication.reportPriceType)})`,
     option: options.length === 0 ? '없음' : options.join(', '),
   };

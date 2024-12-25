@@ -256,7 +256,7 @@ const ReportPlanSection = ({
           floatingBannerClassName="left-[4.5rem] top-8"
         >
           <CardSubHeader>옵션</CardSubHeader>
-          <CardMainHeader>1:1 피드백</CardMainHeader>
+          <CardMainHeader>1:1 온라인 상담</CardMainHeader>
           <div className="mb-4 flex flex-col gap-2 md:grid md:grid-cols-2 md:gap-3">
             {feedback.map((item, index) => (
               <CheckListItem key={index}>
