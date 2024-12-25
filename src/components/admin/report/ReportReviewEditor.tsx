@@ -29,6 +29,7 @@ function ReportReviewEditor({ review, setReview }: ReportReviewEditorProps) {
           reportName: '',
           company: '',
           isSuccessful: false,
+          content: '',
           question: '',
           answer: '',
           detail: '',
@@ -137,23 +138,30 @@ function ReportReviewEditor({ review, setReview }: ReportReviewEditorProps) {
               </div>
               <div className="flex flex-col gap-3">
                 <Input
+                  label="내용"
+                  name="content"
+                  placeholder="후기 내용을 입력하세요"
+                  defaultValue={item.content}
+                  onChange={(e) => onChange(e, item.id)}
+                />
+                <Input
                   label="질문"
                   name="question"
-                  placeholder="질문을 입력하세요"
+                  placeholder="인터뷰 질문을 입력하세요"
                   defaultValue={item.question}
                   onChange={(e) => onChange(e, item.id)}
                 />
                 <Input
                   label="답변"
                   name="answer"
-                  placeholder="답변을 입력하세요"
+                  placeholder="인터뷰 답변을 입력하세요"
                   defaultValue={item.answer}
                   onChange={(e) => onChange(e, item.id)}
                 />
                 <Input
                   label="답변 상세"
                   name="detail"
-                  placeholder="답변 상세를 입력하세요"
+                  placeholder="인터뷰 답변 상세를 입력하세요"
                   defaultValue={item.detail}
                   onChange={(e) => onChange(e, item.id)}
                 />

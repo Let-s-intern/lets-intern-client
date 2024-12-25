@@ -112,6 +112,7 @@ export type ReportReviewItem = {
   reportName: string;
   company: string;
   isSuccessful: boolean;
+  content: string;
   question: string;
   answer: string;
   detail: string; // 답변 상세
