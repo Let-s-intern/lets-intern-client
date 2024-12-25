@@ -94,7 +94,10 @@ const ReportBasicInfo = ({ reportBasic, color }: ReportBasicInfoProps) => {
   }
 
   return (
-    <div className="flex w-full flex-col gap-y-6 md:gap-y-4">
+    <div
+      data-section="overview"
+      className="flex w-full flex-col gap-y-6 md:gap-y-4"
+    >
       <div className="flex w-full items-center justify-center bg-[#E2E2E2] md:rounded-md">
         <img
           src={thumbnail()}

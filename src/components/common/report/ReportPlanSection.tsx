@@ -137,7 +137,10 @@ const ReportPlanSection = ({
       </header>
 
       <main className="mt-9 flex max-w-[832px] flex-col gap-4 md:mt-5 md:gap-5 lg:mx-auto lg:px-0">
-        <div className="flex flex-col gap-4 md:flex-row md:gap-3">
+        <div
+          data-section="price-1"
+          className="flex flex-col gap-4 md:flex-row md:gap-3"
+        >
           {/* 베이직 플랜 */}
           <PriceCard className="md:flex md:flex-col md:justify-between">
             <div>
@@ -207,78 +210,80 @@ const ReportPlanSection = ({
 
         <div className="border-t-2 border-dashed border-neutral-70" />
 
-        {/* 옵션 */}
-        {optionInfos && optionInfos.length > 0 && (
-          <PriceCard>
+        <div data-section="price-2" className="flex flex-col gap-4 md:gap-5">
+          {/* 옵션 */}
+          {optionInfos && optionInfos.length > 0 && (
+            <PriceCard>
+              <CardSubHeader>옵션</CardSubHeader>
+              <CardMainHeader>현직자 피드백</CardMainHeader>
+              <CheckListItem>{employeeFeedbackContent}</CheckListItem>
+              <div className="mb-1 mt-3 flex flex-col gap-1.5 md:grid md:grid-cols-2 md:gap-2">
+                {employees.map((item, index) => (
+                  <div
+                    key={index}
+                    className="rounded-xs bg-[#EEFAFF] py-2 text-center text-xxsmall12 font-semibold md:text-xsmall14"
+                  >
+                    {item}
+                  </div>
+                ))}
+              </div>
+              <span className="mb-4 inline-block text-xxsmall12 text-neutral-35 md:text-xsmall14">
+                *피드백 받고 싶은 현직자 여러명 옵션 추가 가능
+              </span>
+
+              <div className="md:flex md:items-end md:gap-1">
+                {/* 첫 번째 옵션 가격 표시 */}
+                <PriceSection
+                  originalPrice={optionInfos[0].price ?? 0}
+                  discountPrice={optionInfos[0].discountPrice ?? 0}
+                />
+                <span className="text-xxsmall12 font-medium text-neutral-45 md:text-xsmall16">
+                  현직자 택 1인 옵션 추가 금액
+                </span>
+              </div>
+            </PriceCard>
+          )}
+
+          {/* 1:1 피드백 */}
+          <PriceCard
+            reportType={reportType}
+            bannerText="저렴한 가격으로 무한 질문&심층 피드백을 받고 싶다면, "
+            bannerColor={
+              reportType === 'PERSONAL_STATEMENT'
+                ? personalStatementColors.CA60FF
+                : resumeColors._2CE282
+            }
+            bannerClassName={clsx({
+              'text-white': reportType === 'PERSONAL_STATEMENT',
+            })}
+            isFloatingBanner={isMobile ? false : true}
+            floatingBannerClassName="left-[4.5rem] top-8"
+          >
             <CardSubHeader>옵션</CardSubHeader>
-            <CardMainHeader>현직자 피드백</CardMainHeader>
-            <CheckListItem>{employeeFeedbackContent}</CheckListItem>
-            <div className="mb-1 mt-3 flex flex-col gap-1.5 md:grid md:grid-cols-2 md:gap-2">
-              {employees.map((item, index) => (
-                <div
-                  key={index}
-                  className="rounded-xs bg-[#EEFAFF] py-2 text-center text-xxsmall12 font-semibold md:text-xsmall14"
-                >
+            <CardMainHeader>1:1 온라인 상담</CardMainHeader>
+            <div className="mb-4 flex flex-col gap-2 md:grid md:grid-cols-2 md:gap-3">
+              {feedback.map((item, index) => (
+                <CheckListItem key={index}>
+                  {/* 예외 문항 */}
+                  {index === feedback.length - 1 && (
+                    <>
+                      <span className="font-bold">
+                        &quot;무한 질문&quot; 가능!
+                      </span>
+                      <br />
+                    </>
+                  )}
                   {item}
-                </div>
+                </CheckListItem>
               ))}
             </div>
-            <span className="mb-4 inline-block text-xxsmall12 text-neutral-35 md:text-xsmall14">
-              *피드백 받고 싶은 현직자 여러명 옵션 추가 가능
-            </span>
 
-            <div className="md:flex md:items-end md:gap-1">
-              {/* 첫 번째 옵션 가격 표시 */}
-              <PriceSection
-                originalPrice={optionInfos[0].price ?? 0}
-                discountPrice={optionInfos[0].discountPrice ?? 0}
-              />
-              <span className="text-xxsmall12 font-medium text-neutral-45 md:text-xsmall16">
-                현직자 택 1인 옵션 추가 금액
-              </span>
-            </div>
+            <PriceSection
+              originalPrice={feedbackInfo?.feedbackPrice ?? 0}
+              discountPrice={feedbackInfo?.feedbackDiscountPrice ?? 0}
+            />
           </PriceCard>
-        )}
-
-        {/* 1:1 피드백 */}
-        <PriceCard
-          reportType={reportType}
-          bannerText="저렴한 가격으로 무한 질문&심층 피드백을 받고 싶다면, "
-          bannerColor={
-            reportType === 'PERSONAL_STATEMENT'
-              ? personalStatementColors.CA60FF
-              : resumeColors._2CE282
-          }
-          bannerClassName={clsx({
-            'text-white': reportType === 'PERSONAL_STATEMENT',
-          })}
-          isFloatingBanner={isMobile ? false : true}
-          floatingBannerClassName="left-[4.5rem] top-8"
-        >
-          <CardSubHeader>옵션</CardSubHeader>
-          <CardMainHeader>1:1 온라인 상담</CardMainHeader>
-          <div className="mb-4 flex flex-col gap-2 md:grid md:grid-cols-2 md:gap-3">
-            {feedback.map((item, index) => (
-              <CheckListItem key={index}>
-                {/* 예외 문항 */}
-                {index === feedback.length - 1 && (
-                  <>
-                    <span className="font-bold">
-                      &quot;무한 질문&quot; 가능!
-                    </span>
-                    <br />
-                  </>
-                )}
-                {item}
-              </CheckListItem>
-            ))}
-          </div>
-
-          <PriceSection
-            originalPrice={feedbackInfo?.feedbackPrice ?? 0}
-            discountPrice={feedbackInfo?.feedbackDiscountPrice ?? 0}
-          />
-        </PriceCard>
+        </div>
       </main>
     </section>
   );

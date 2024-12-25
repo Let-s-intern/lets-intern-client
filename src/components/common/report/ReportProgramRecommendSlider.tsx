@@ -182,7 +182,10 @@ const ReportProgramRecommendSlider = ({
   }, [recommendData, navigate, reportProgramRecommend]);
 
   return (
-    <section className="w-full bg-neutral-95 px-5 py-16 md:py-24 lg:px-0">
+    <section
+      data-section="recommend"
+      className="w-full bg-neutral-95 px-5 py-16 md:py-24 lg:px-0"
+    >
       <SubHeader className="mb-1 md:mb-3" style={subHeaderStyle}>
         {SUPER_TITLE}
       </SubHeader>
