@@ -3,7 +3,7 @@ import { useMemo } from 'react';
 import { twMerge } from '@/lib/twMerge';
 import { LiveIdSchema } from '@/schema';
 import { LiveContent } from '@/types/interface';
-import Header from '@components/common/ui/Header';
+import BackHeader from '@components/common/ui/BackHeader';
 import LexicalContent from './common/blog/LexicalContent';
 import MoreReviewButton from './common/review/MoreReviewButton';
 import LiveBasicInfo from './live-view/LiveBasicInfo';
@@ -45,7 +45,7 @@ const LiveView: React.FC<{ live: LiveIdSchema; isPreview?: boolean }> = ({
     <div className="flex w-full flex-col">
       <div className="flex w-full flex-col items-center">
         <div className="flex w-full max-w-[1000px] flex-col px-5 md:px-10 lg:px-0">
-          <Header to="/program">{live.title ?? ''}</Header>
+          <BackHeader to="/program">{live.title ?? ''}</BackHeader>
           {live.vod && <LiveVod />}
           <LiveBasicInfo live={live} />
         </div>

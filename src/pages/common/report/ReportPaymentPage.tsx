@@ -13,8 +13,8 @@ import { generateOrderId } from '@/lib/order';
 import { twMerge } from '@/lib/twMerge';
 import useReportApplicationStore from '@/store/useReportApplicationStore';
 import Label from '@components/common/report/Label';
+import BackHeader from '@components/common/ui/BackHeader';
 import BaseButton from '@components/common/ui/button/BaseButton';
-import Header from '@components/common/ui/Header';
 import Input from '@components/common/ui/input/Input';
 
 const ReportPaymentPage = () => {
@@ -27,9 +27,11 @@ const ReportPaymentPage = () => {
 
   return (
     <div className="mx-auto max-w-[55rem] px-5 md:pt-5 lg:px-0">
-      <Header to={`/report/apply/${reportType}/${reportApplication.reportId}`}>
+      <BackHeader
+        to={`/report/apply/${reportType}/${reportApplication.reportId}`}
+      >
         결제하기
-      </Header>
+      </BackHeader>
 
       <main className="mb-8 flex flex-col gap-10">
         <ProgramInfoSection />

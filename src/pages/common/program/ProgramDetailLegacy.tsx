@@ -14,7 +14,7 @@ import NotiButton from '../../../components/common/program/program-detail/button
 import ApplySection from '../../../components/common/program/program-detail/section/ApplySection';
 import MobileApplySection from '../../../components/common/program/program-detail/section/MobileApplySection';
 import TabSection from '../../../components/common/program/program-detail/section/TabSection';
-import Header from '../../../components/common/ui/Header';
+import Header from '../../../components/common/ui/BackHeader';
 import useRunOnce from '../../../hooks/useRunOnce';
 import drawerReducer from '../../../reducers/drawerReducer';
 import useAuthStore from '../../../store/useAuthStore';

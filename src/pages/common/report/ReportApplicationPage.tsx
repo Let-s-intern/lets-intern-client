@@ -18,9 +18,9 @@ import FilledInput from '@components/common/report/FilledInput';
 import Heading2 from '@components/common/report/Heading2';
 import Label from '@components/common/report/Label';
 import Tooltip from '@components/common/report/Tooltip';
+import BackHeader from '@components/common/ui/BackHeader';
 import BottomSheet from '@components/common/ui/BottomSheeet';
 import BaseButton from '@components/common/ui/button/BaseButton';
-import Header from '@components/common/ui/Header';
 import HorizontalRule from '@components/ui/HorizontalRule';
 import ReportSubmitModal from '@components/ui/ReportSubmitModal';
 
@@ -88,7 +88,7 @@ const ReportApplicationPage = () => {
   return (
     <div className="max-w-[55rem] px-5 md:pb-10 md:pt-5 xl:flex xl:gap-16">
       <div className="w-full">
-        <Header to="/report/management">제출하기</Header>
+        <BackHeader to="/report/management">제출하기</BackHeader>
 
         <main className="mb-8 flex flex-col gap-10">
           <CallOut

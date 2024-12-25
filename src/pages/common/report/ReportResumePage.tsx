@@ -18,7 +18,7 @@ import ReportProgramRecommendSlider from '@components/common/report/ReportProgra
 import ReportReviewSection from '@components/common/report/ReportReviewSection';
 import ResearchTeamSection from '@components/common/report/ResearchTeamSection';
 import ServiceProcessSection from '@components/common/report/ServiceProcessSection';
-import Header from '@components/common/ui/Header';
+import BackHeader from '@components/common/ui/BackHeader';
 import LoadingContainer from '@components/common/ui/loading/LoadingContainer';
 import ReportNavigation from './ReportNavigation';
 
@@ -88,7 +88,7 @@ const ReportResumePage = () => {
         <div className="flex w-full flex-col items-center">
           <div className="flex w-full flex-col bg-black pb-12 text-white md:pb-20">
             <div className="mx-auto flex w-full max-w-[1000px] flex-col px-5 lg:px-0">
-              <Header>서류완성의 시작과 끝은 진단에서부터</Header>
+              <BackHeader>서류완성의 시작과 끝은 진단에서부터</BackHeader>
               <ReportBasicInfo
                 reportBasic={data?.resumeInfo}
                 color={resumeColors._2CE282}
@@ -98,7 +98,11 @@ const ReportResumePage = () => {
 
           <ReportNavigation color={resumeColors._2CE282} isDark />
 
-          <div id="content" data-page-type="resume" className="flex w-full flex-col items-center">
+          <div
+            id="content"
+            data-page-type="resume"
+            className="flex w-full flex-col items-center"
+          >
             {/* 서비스 소개 */}
             <ReportIntroSection type="RESUME" />
             {/* 리포트 예시 */}

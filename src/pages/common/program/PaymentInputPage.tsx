@@ -21,7 +21,7 @@ import CouponSection, {
 import MotiveAnswerSection from '@components/common/program/program-detail/apply/section/MotiveAnswerSection';
 import PriceSection from '@components/common/program/program-detail/apply/section/PriceSection';
 import UserInputSection from '@components/common/program/program-detail/apply/section/UserInputSection';
-import Header from '@components/common/ui/Header';
+import BackHeader from '@components/common/ui/BackHeader';
 import { Duration } from '@components/Duration';
 import OrderProgramInfo from './OrderProgramInfo';
 
@@ -204,9 +204,9 @@ const PaymentInputPage = () => {
       className="mx-auto w-full max-w-[55rem] pb-6 md:pt-5"
       data-program-text={program?.title}
     >
-      <Header onClick={() => navigate(-1)} className="mx-5">
+      <BackHeader onClick={() => navigate(-1)} className="mx-5">
         결제하기
-      </Header>
+      </BackHeader>
 
       <div className="mx-5">
         <OrderProgramInfo
