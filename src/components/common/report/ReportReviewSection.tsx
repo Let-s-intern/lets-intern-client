@@ -47,9 +47,7 @@ const ReportReviewSection = ({
               style={subHeaderStyle}
             >{`${convertReportTypeToDisplayName(type)} 피드백 REPORT, 실제로 효과 있을까?`}</span>
             <p className="w-full text-center text-medium22 font-bold text-white md:text-xlarge30">
-              실제 사용자와의 인터뷰를 통해{' '}
-              {/* <br className="hidden md:inline-block" /> */}
-              <br />
+              실제 사용자와의 인터뷰를 통해 <br />
               확인한 리얼 피드백
             </p>
           </div>

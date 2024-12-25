@@ -30,6 +30,9 @@ function ReportReviewEditor({ review, setReview }: ReportReviewEditorProps) {
           company: '',
           isSuccessful: false,
           content: '',
+          question: '',
+          answer: '',
+          detail: '',
         },
       ],
     });
@@ -86,57 +89,84 @@ function ReportReviewEditor({ review, setReview }: ReportReviewEditorProps) {
       <div>
         {review.list.map((item) => (
           <div key={item.id} className="mb-5 flex w-full items-start gap-3">
-            <Input
-              label="이름"
-              name="name"
-              placeholder="이름"
-              defaultValue={item.name}
-              onChange={(e) => onChange(e, item.id)}
-            />
-            <Input
-              label="직군"
-              name="job"
-              placeholder="직군"
-              defaultValue={item.job}
-              onChange={(e) => onChange(e, item.id)}
-            />
-            <Input
-              label="진단 서비스 명"
-              name="reportName"
-              placeholder="진단 서비스 명"
-              defaultValue={item.reportName}
-              onChange={(e) => onChange(e, item.id)}
-            />
-            <Input
-              label="지원회사"
-              name="company"
-              placeholder="지원회사"
-              defaultValue={item.company}
-              onChange={(e) => onChange(e, item.id)}
-            />
-            <FormControl size="medium" className="w-24 shrink-0">
-              <InputLabel>합격여부</InputLabel>
-              <Select
-                label="합격여부"
-                name="isSuccessful"
-                placeholder="합격여부"
-                defaultValue={item.isSuccessful ? 'true' : 'false'}
-                onChange={(e) => {
-                  const value = e.target.value === 'true';
-                  onChangeIsSuccessFul(value, item.id);
-                }}
-              >
-                <MenuItem value="true">합격</MenuItem>
-                <MenuItem value="false">불합격</MenuItem>
-              </Select>
-            </FormControl>
-            <Input
-              label="내용"
-              name="content"
-              placeholder="내용을 입력하세요"
-              defaultValue={item.content}
-              onChange={(e) => onChange(e, item.id)}
-            />
+            <div>
+              <div className="mb-3 flex items-center gap-3">
+                <Input
+                  label="이름"
+                  name="name"
+                  placeholder="이름"
+                  defaultValue={item.name}
+                  onChange={(e) => onChange(e, item.id)}
+                />
+                <Input
+                  label="직군"
+                  name="job"
+                  placeholder="직군"
+                  defaultValue={item.job}
+                  onChange={(e) => onChange(e, item.id)}
+                />
+                <Input
+                  label="진단 서비스 명"
+                  name="reportName"
+                  placeholder="진단 서비스 명"
+                  defaultValue={item.reportName}
+                  onChange={(e) => onChange(e, item.id)}
+                />
+                <Input
+                  label="지원회사"
+                  name="company"
+                  placeholder="지원회사"
+                  defaultValue={item.company}
+                  onChange={(e) => onChange(e, item.id)}
+                />
+                <FormControl size="medium" className="w-24 shrink-0">
+                  <InputLabel>합격여부</InputLabel>
+                  <Select
+                    label="합격여부"
+                    name="isSuccessful"
+                    placeholder="합격여부"
+                    defaultValue={item.isSuccessful ? 'true' : 'false'}
+                    onChange={(e) => {
+                      const value = e.target.value === 'true';
+                      onChangeIsSuccessFul(value, item.id);
+                    }}
+                  >
+                    <MenuItem value="true">합격</MenuItem>
+                    <MenuItem value="false">불합격</MenuItem>
+                  </Select>
+                </FormControl>
+              </div>
+              <div className="flex flex-col gap-3">
+                <Input
+                  label="내용"
+                  name="content"
+                  placeholder="후기 내용을 입력하세요"
+                  defaultValue={item.content}
+                  onChange={(e) => onChange(e, item.id)}
+                />
+                <Input
+                  label="질문"
+                  name="question"
+                  placeholder="인터뷰 질문을 입력하세요"
+                  defaultValue={item.question}
+                  onChange={(e) => onChange(e, item.id)}
+                />
+                <Input
+                  label="답변"
+                  name="answer"
+                  placeholder="인터뷰 답변을 입력하세요"
+                  defaultValue={item.answer}
+                  onChange={(e) => onChange(e, item.id)}
+                />
+                <Input
+                  label="답변 상세"
+                  name="detail"
+                  placeholder="인터뷰 답변 상세를 입력하세요"
+                  defaultValue={item.detail}
+                  onChange={(e) => onChange(e, item.id)}
+                />
+              </div>
+            </div>
 
             <IconButton
               aria-label="delete"
