@@ -1,12 +1,10 @@
 import { convertReportTypeToDisplayName, ReportType } from '@/api/report';
-import { REPORT_INTERVIEW } from '@/data/reportConstant';
 import { REPORT_REVIEW_ID } from '@/pages/common/report/ReportNavigation';
 import { personalStatementColors } from '@/pages/common/report/ReportPersonalStatementPage';
 import { resumeColors } from '@/pages/common/report/ReportResumePage';
 import { ReportReview } from '@/types/interface';
 import { useMediaQuery } from '@mui/material';
 import ReportInterviewCard from './ReportInterviewCard';
-import ReportReviewCard from './ReportReviewCard';
 
 interface ReportReviewSectionProps {
   type: ReportType;
@@ -18,7 +16,6 @@ const ReportReviewSection = ({
   reportReview,
 }: ReportReviewSectionProps) => {
   const isDesktop = useMediaQuery('(min-width: 768px)');
-  const interview = REPORT_INTERVIEW[type];
   const subHeaderStyle = {
     color:
       type === 'PERSONAL_STATEMENT'
@@ -53,45 +50,30 @@ const ReportReviewSection = ({
           </div>
         </div>
         <div className="flex w-full flex-col gap-y-[50px] text-white md:gap-y-20">
-          <div className="mx-auto max-w-full overflow-x-hidden">
-            <div className="flex w-full auto-rows-fr items-stretch gap-x-3 gap-y-5 overflow-x-auto scroll-smooth md:grid md:grid-cols-[1fr_1fr]">
-              {interview.interviewList.map((item, index) => (
-                <ReportInterviewCard
-                  key={`report-interview-${index}`}
-                  interview={item}
-                  mainColor={
-                    isDesktop
-                      ? index % 4 === 1 || index % 4 === 2
-                        ? mainColor[1]
-                        : mainColor[0]
-                      : index % 2 === 0
-                        ? mainColor[0]
-                        : mainColor[1]
-                  }
-                  subColor={
-                    isDesktop
-                      ? index % 4 === 1 || index % 4 === 2
-                        ? subColor[1]
-                        : subColor[0]
-                      : index % 2 === 0
-                        ? subColor[0]
-                        : subColor[1]
-                  }
-                />
-              ))}
-            </div>
-          </div>
           {reportReview && reportReview.list.length > 0 && (
             <div className="mx-auto max-w-full overflow-x-hidden">
-              <div className="flex w-full gap-x-3 overflow-x-auto scroll-smooth">
-                {reportReview.list.map((review, index) => (
-                  <ReportReviewCard
-                    key={`report-review-${index}`}
-                    review={review}
+              <div className="flex w-full auto-rows-fr items-stretch gap-x-3 gap-y-5 overflow-x-auto scroll-smooth md:grid md:grid-cols-[1fr_1fr]">
+                {reportReview.list.map((item, index) => (
+                  <ReportInterviewCard
+                    key={`report-interview-${index}`}
+                    interview={item}
                     mainColor={
-                      type === 'PERSONAL_STATEMENT'
-                        ? personalStatementColors.C34AFF
-                        : resumeColors._2CE282
+                      isDesktop
+                        ? index % 4 === 1 || index % 4 === 2
+                          ? mainColor[1]
+                          : mainColor[0]
+                        : index % 2 === 0
+                          ? mainColor[0]
+                          : mainColor[1]
+                    }
+                    subColor={
+                      isDesktop
+                        ? index % 4 === 1 || index % 4 === 2
+                          ? subColor[1]
+                          : subColor[0]
+                        : index % 2 === 0
+                          ? subColor[0]
+                          : subColor[1]
                     }
                   />
                 ))}
