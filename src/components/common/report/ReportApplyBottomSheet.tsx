@@ -117,7 +117,7 @@ const ReportApplyBottomSheet = React.forwardRef<
     return [
       {
         value: REPORT_RADIO_VALUES.basicFeedback,
-        label: '[추천] 베이직 + 1:1 피드백(40분) 패키지',
+        label: '[추천] 베이직 + 1:1 온라인 상담(40분) 패키지',
         price:
           (reportBasicInfo?.price ?? 0) + (feedbackInfo?.feedbackPrice ?? 0),
         discount:
@@ -126,7 +126,7 @@ const ReportApplyBottomSheet = React.forwardRef<
       },
       {
         value: REPORT_RADIO_VALUES.premiumFeedback,
-        label: '[추천] 프리미엄 + 1:1 피드백(40분) 패키지',
+        label: '[추천] 프리미엄 + 1:1 온라인 상담(40분) 패키지',
         price:
           (reportPremiumInfo?.price ?? 0) + (feedbackInfo?.feedbackPrice ?? 0),
         discount:

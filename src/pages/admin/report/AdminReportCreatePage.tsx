@@ -512,7 +512,7 @@ const AdminReportCreatePage = () => {
           <hr />
 
           <section>
-            <Heading2>1:1 피드백 설정</Heading2>
+            <Heading2>1:1 온라인 상담 설정</Heading2>
             <AdminReportFeedback
               initialValue={{
                 price: 0,

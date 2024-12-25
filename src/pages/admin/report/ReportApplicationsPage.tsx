@@ -229,12 +229,12 @@ const ReportApplicationsPage = () => {
                     서류진단
                   </TH>
                   <TH colspan={3} backgroundColor="#00ffff">
-                    1:1피드백
+                    1:1 온라인 상담
                   </TH>
                 </tr>
                 <tr>
                   <TH>주문번호</TH>
-                  {/* TODO: 환불여부를 서류진단과 1:1피드백 각각 표시 */}
+                  {/* TODO: 환불여부를 서류진단과 1:1 온라인 상담 각각 표시 */}
                   <TH>환불여부</TH>
                   <TH>ID</TH>
                   <TH>신청일시</TH>
@@ -249,7 +249,7 @@ const ReportApplicationsPage = () => {
                   {/* 서류진단 전용 */}
                   <TH backgroundColor="#ffff00">관리</TH>
                   <TH backgroundColor="#ffff00">상태</TH>
-                  {/* 1:1피드백 전용 */}
+                  {/* 1:1 온라인 상담 전용 */}
                   <TH backgroundColor="#00ffff">관리</TH>
                   <TH backgroundColor="#00ffff">상태</TH>
                   <TH backgroundColor="#00ffff">진행일시</TH>
@@ -550,7 +550,7 @@ const ReportApplicationsPage = () => {
                   </div>
                 </div>
                 <div className="flex w-full gap-x-2">
-                  <h2 className="w-20 text-neutral-40">1:1 피드백</h2>
+                  <h2 className="w-20 text-neutral-40">1:1 온라인 상담</h2>
                   <p>
                     {applicationModal.application.reportFeedbackStatus
                       ? 'O'

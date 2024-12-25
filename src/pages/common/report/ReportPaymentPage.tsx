@@ -211,7 +211,7 @@ const ReportPaymentSection = () => {
     payment.reportDiscount + payment.optionDiscount; // 진단서와 옵션 할인 금액
   const reportAndOptionsAmount =
     payment.report + payment.option - reportAndOptionsDiscount; // 진단서와 옵션 결제 금액
-  const feedbackAmount = payment.feedback - payment.feedbackDiscount; // 1:1 피드백 결제 금액
+  const feedbackAmount = payment.feedback - payment.feedbackDiscount; // 1:1 온라인 상담 결제 금액
 
   // 사용자가 선택한 옵션
   const selectedOptions = useMemo(() => {
@@ -336,7 +336,7 @@ const ReportPaymentSection = () => {
         {showFeedback && (
           <>
             <PaymentRowMain>
-              <span>1:1 피드백 결제금액</span>
+              <span>1:1 온라인 상담 결제금액</span>
               <span>{feedbackAmount.toLocaleString()}원</span>
             </PaymentRowMain>
             <PaymentRowSub>

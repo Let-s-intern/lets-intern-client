@@ -243,8 +243,9 @@ const ReportManagementPage = () => {
               <li>옵션 (현직자 피드백): 최대 5일</li>
             </ul>
             <p>
-              *1:1 피드백은 진단서 발급 이후 진행됩니다. 일정확정 이후 변경이
-              필요하실 경우, 우측 아래 &lt;채팅문의&gt;로 연락 주시길 바랍니다.
+              *1:1 온라인 상담은 진단서 발급 이후 진행됩니다. 일정확정 이후
+              변경이 필요하실 경우, 우측 아래 &lt;채팅문의&gt;로 연락 주시길
+              바랍니다.
             </p>
           </Tooltip>
         </div>
@@ -399,7 +400,7 @@ const ReportManagementPage = () => {
                   <div>
                     <header>
                       <h3 className="mb-3 text-xsmall14 font-medium text-primary-dark">
-                        1:1 피드백 현황
+                        1:1 온라인 상담 현황
                       </h3>
                       <div className="flex items-center gap-2">
                         <Badge
