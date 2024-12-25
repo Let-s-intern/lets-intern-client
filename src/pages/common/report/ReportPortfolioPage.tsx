@@ -84,7 +84,11 @@ const ReportPortfolioPage = () => {
             </div>
           </div>
           <ReportNavigation color={resumeColors._2CE282} isDark />
-          <div className="flex w-full flex-col items-center">
+          <div
+            id="content"
+            data-page-type="portfolio"
+            className="flex w-full flex-col items-center"
+          >
             {/* 서비스 소개 */}
             <ReportIntroSection type="PORTFOLIO" />
             {/* 리포트 예시 */}

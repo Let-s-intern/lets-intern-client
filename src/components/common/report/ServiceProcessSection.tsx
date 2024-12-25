@@ -70,7 +70,7 @@ const ServiceProcessSection = ({ reportType }: ServiceProcessSectionProps) => {
 
       <main className="mx-auto mt-10 flex max-w-[690px] flex-col items-center gap-5 md:mt-11 md:gap-8">
         {/* 1단계 */}
-        <ProcessCard style={mainCardStyle}>
+        <ProcessCard data-section="workflow-1" style={mainCardStyle}>
           <NumberedTitle
             numberStyle={numberStyle}
             className={clsx({
@@ -130,7 +130,7 @@ const ServiceProcessSection = ({ reportType }: ServiceProcessSectionProps) => {
         </ProcessCard>
 
         {/* 2단계 */}
-        <ProcessCard className="bg-[#14BCFF]">
+        <ProcessCard data-section="workflow-2" className="bg-[#14BCFF]">
           <NumberedTitle numberClassName="bg-[#DDF5FF]" number={2}>
             렛츠커리어 취업 연구팀의
             <br className="md:hidden" /> 세심한 진단 및 분석
@@ -172,7 +172,7 @@ const ServiceProcessSection = ({ reportType }: ServiceProcessSectionProps) => {
         </ProcessCard>
 
         {/* 3단계 */}
-        <ProcessCard style={mainCardStyle}>
+        <ProcessCard data-section="workflow-3" style={mainCardStyle}>
           <NumberedTitle
             numberStyle={numberStyle}
             number={3}
@@ -207,7 +207,7 @@ const ServiceProcessSection = ({ reportType }: ServiceProcessSectionProps) => {
         </ProcessCard>
 
         {/* 4단계 */}
-        <ProcessCard style={mainCardStyle}>
+        <ProcessCard data-section="workflow-4" style={mainCardStyle}>
           <NumberedTitle
             numberStyle={numberStyle}
             number={4}

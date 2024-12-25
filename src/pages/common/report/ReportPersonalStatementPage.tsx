@@ -95,7 +95,11 @@ const ReportPersonalStatementPage = () => {
             </div>
           </div>
           <ReportNavigation color={personalStatementColors.CA60FF} isDark />
-          <div className="flex w-full flex-col items-center">
+          <div
+            id="content"
+            data-page-type="personal-statement"
+            className="flex w-full flex-col items-center"
+          >
             {/* 서비스 소개 */}
             <ReportIntroSection type="PERSONAL_STATEMENT" />
             {/* 리포트 예시 */}

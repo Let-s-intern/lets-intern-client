@@ -62,6 +62,7 @@ function PromoSection({ reportType }: PromoSectionProps) {
 
   return (
     <section
+      data-section="price-3"
       className="w-full px-5 py-16 md:pb-32 md:pt-28 lg:px-0"
       style={sectionStyle}
     >
