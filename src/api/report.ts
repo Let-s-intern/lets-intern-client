@@ -1010,7 +1010,7 @@ const reportPaymentInfoSchema = z.object({
   paymentOrderId: z.string().nullable().optional(),
   finalPrice: z.number().nullable(),
   couponDiscount: z.number().nullable(),
-  couponName: z.string().nullable(),
+  couponName: z.string().nullable()?.optional(),
   programPrice: z.number().nullable(),
   programDiscount: z.number().nullable(),
   reportRefundPrice: z.number().nullable(),
