@@ -14,8 +14,6 @@ const WaitingSection = ({ applicationList }: WaitingSectionProps) => {
 
   const viewList = showMore ? applicationList : applicationList.slice(0, 3);
 
-  console.log(applicationList);
-
   return (
     <section className="flex flex-col gap-6">
       <h1 className="text-lg font-semibold">프로그램 후기를 작성해주세요.</h1>
