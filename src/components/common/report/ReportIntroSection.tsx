@@ -289,7 +289,7 @@ const ReportIntroSection = ({ type }: ReportIntroSectionProps) => {
       </div>
       {/* section1 */}
       <div data-section="intro-2" className="w-full bg-neutral-90">
-        <div className="flex w-full max-w-[1000px] flex-col gap-y-10 px-5 pb-[70px] pt-[50px] md:gap-y-20 md:pb-[120px] md:pt-[100px] lg:px-0">
+        <div className="mx-auto flex w-full max-w-[1000px] flex-col gap-y-10 px-5 pb-[70px] pt-[50px] md:gap-y-20 md:pb-[120px] md:pt-[100px] lg:px-0">
           <div className="flex w-full flex-col gap-y-6 md:gap-y-[50px]">
             <div className="flex w-full flex-col items-center gap-y-2 md:gap-y-3">
               <span
@@ -397,36 +397,6 @@ const ReportIntroSection = ({ type }: ReportIntroSectionProps) => {
                 </div>
               </div>
             </div>
-          </div>
-        </div>
-      </div>
-      {/* section4 */}
-      <div className="w-full bg-neutral-95">
-        <div className="mx-auto flex w-full max-w-[1000px] flex-col items-center gap-y-[50px] px-5 py-[70px] md:gap-y-10 md:pb-[90px] md:pt-20 lg:px-0">
-          <div className="flex w-full flex-col gap-y-2 md:gap-y-3">
-            <h5
-              className="text-xsmall16 font-bold md:text-small20"
-              style={subHeaderStyle}
-            >{`${convertReportTypeToDisplayName(type)} 작성 현황 체크리스트`}</h5>
-            <p className="text-medium22 font-bold md:text-xlarge30">
-              {convertString(reportIntro.section4.title)}
-            </p>
-          </div>
-          <div className="flex w-full flex-col gap-y-5 md:w-8/12 md:gap-y-6">
-            {reportIntro.section4.checkList.map((item, index) => (
-              <div
-                key={`${type}-checklist-${index}`}
-                className="relative flex w-full items-center justify-center rounded-[10px] bg-white px-4 py-6"
-              >
-                <div
-                  className="absolute left-4 top-0 flex -translate-y-2/3 -rotate-[10deg] items-center justify-center rounded-sm px-2.5 py-1 text-xsmall16 font-bold text-white md:py-1.5 md:text-small18"
-                  style={badgeStyle}
-                >{`Check ${index + 1}`}</div>
-                <p className="text-small18 font-bold md:text-medium24">
-                  {convertString(item)}
-                </p>
-              </div>
-            ))}
           </div>
         </div>
       </div>
