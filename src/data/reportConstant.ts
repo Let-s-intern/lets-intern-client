@@ -1,29 +1,5 @@
 import { ReportType } from '@/api/report';
 
-export const REPORT_PROCESS: Record<string, string[]> = {
-  RESUME: [
-    '분야별 진단으로 정확한 이력서 상태 파악',
-    '구체적인 첨삭 제안으로 명확한 개선 방향 제시',
-    '이력서 작성 고민에 대한 맞춤형 솔루션 제공',
-    '채용공고 맞춤형 피드백',
-    '현직자 피드백으로 전문가의 조언까지!',
-  ],
-  PERSONAL_STATEMENT: [
-    '자기소개서 제출',
-    '진단 완료',
-    '리포트 발송',
-    '리포트 확인',
-    '리포트 다운로드',
-  ],
-  PORTFOLIO: [
-    '포트폴리오 제출',
-    '진단 완료',
-    '리포트 발송',
-    '리포트 확인',
-    '리포트 다운로드',
-  ],
-};
-
 export type reportExampleContentType = {
   title: string;
   src: string;
