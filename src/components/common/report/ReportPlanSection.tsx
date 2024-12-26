@@ -19,6 +19,7 @@ import SubHeader from './SubHeader';
 const SECTION_HEADER = '가격 및 플랜';
 const SUB_HEADER = '합리적인 가격 구성';
 const MAIN_HEADER = '취업 성공을 위한\n맞춤형 피드백 플랜';
+const OPTION_HEADER = '더 깊이 있는 피드백을 원한다면,\n옵션 추가도 가능해요!';
 
 interface ReportPlanSectionProps {
   priceDetail: ReportPriceDetail;
@@ -92,11 +93,6 @@ const ReportPlanSection = ({
     }
   }, [reportType]);
 
-  const employeeFeedbackContent =
-    reportType === 'PERSONAL_STATEMENT'
-      ? '현직자의 서류 피드백 & 서류 작성 꿀팁'
-      : '현직자가 제공하는 심층 서류 피드백 및 작성 노하우';
-
   const feedback = useMemo(() => {
     switch (reportType) {
       case 'PERSONAL_STATEMENT':
@@ -138,16 +134,16 @@ const ReportPlanSection = ({
         <MainHeader>{MAIN_HEADER}</MainHeader>
       </header>
 
-      <main className="mt-10 flex max-w-[832px] flex-col gap-4 md:mt-12 md:gap-5 lg:mx-auto lg:px-0">
+      <main className="mt-10 max-w-[832px] md:mt-12 lg:mx-auto lg:px-0">
         {/* 좌우 슬라이드 */}
         <div
           data-section="price-1"
-          className="custom-scrollbar -mx-5 overflow-x-auto px-5 lg:mx-0 lg:px-0"
+          className="custom-scrollbar -mx-5 mb-14 overflow-x-auto px-5 lg:mx-0 lg:px-0"
         >
           <div className="flex w-fit gap-3">
             {/* 프리미엄 플랜 */}
             <PriceCard
-              className="flex min-w-[18rem] flex-col gap-3"
+              className="flex min-w-[18rem] flex-col gap-3 md:gap-5"
               reportType={reportType}
               bannerText={`채용 공고 맞춤형 ${convertReportTypeToDisplayName(reportType)}를 원한다면,`}
               bannerColor={
@@ -206,38 +202,38 @@ const ReportPlanSection = ({
           </div>
         </div>
 
-        <div className="border-t-2 border-dashed border-neutral-70" />
-
-        <div data-section="price-2" className="flex flex-col gap-4 md:gap-5">
+        <MainHeader>{OPTION_HEADER}</MainHeader>
+        <div data-section="price-2" className="mt-4 flex flex-col gap-5">
           {/* 옵션 */}
           {optionInfos && optionInfos.length > 0 && (
             <PriceCard>
-              <CardSubHeader>옵션</CardSubHeader>
-              <CardMainHeader>현직자 피드백</CardMainHeader>
-              <NumberedListItem>{employeeFeedbackContent}</NumberedListItem>
-              <div className="mb-1 mt-3 flex flex-col gap-1.5 md:grid md:grid-cols-2 md:gap-2">
+              <Badge className="mb-1">선택 옵션 1</Badge>
+              <CardMainHeader>현직자 서면 피드백</CardMainHeader>
+              <p className="mb-2 mt-1 text-xsmall14 font-medium text-neutral-0">
+                현직자가 제공하는 심층 서류 피드백 및 작성 노하우
+              </p>
+              <p className="mb-1.5 text-xxsmall12 text-neutral-35 md:text-xsmall14">
+                *피드백 받고 싶은 현직자 여러명 옵션 추가 가능
+              </p>
+              <div className="mb-5 mt-3 grid grid-cols-2 gap-x-1.5 gap-y-2">
                 {employees.map((item, index) => (
                   <div
                     key={index}
                     className="rounded-xs bg-[#EEFAFF] py-2 text-center text-xxsmall12 font-semibold md:text-xsmall14"
                   >
-                    {item}
+                    {item + (isMobile ? '' : ' 현직자')}
                   </div>
                 ))}
               </div>
-              <span className="mb-4 inline-block text-xxsmall12 text-neutral-35 md:text-xsmall14">
-                *피드백 받고 싶은 현직자 여러명 옵션 추가 가능
-              </span>
-
               <div className="md:flex md:items-end md:gap-1">
+                <span className="text-xxsmall12 font-medium text-neutral-45 md:text-xsmall16">
+                  현직자 택 1인 옵션 추가 금액
+                </span>
                 {/* 첫 번째 옵션 가격 표시 */}
                 <PriceSection
                   originalPrice={optionInfos[0].price ?? 0}
                   discountPrice={optionInfos[0].discountPrice ?? 0}
                 />
-                <span className="text-xxsmall12 font-medium text-neutral-45 md:text-xsmall16">
-                  현직자 택 1인 옵션 추가 금액
-                </span>
               </div>
             </PriceCard>
           )}
@@ -245,7 +241,7 @@ const ReportPlanSection = ({
           {/* 1:1 피드백 */}
           <PriceCard
             reportType={reportType}
-            bannerText="저렴한 가격으로 무한 질문&심층 피드백을 받고 싶다면, "
+            bannerText="무한 질문 & 심층 피드백을 받고 싶다면,"
             bannerColor={
               reportType === 'PERSONAL_STATEMENT'
                 ? personalStatementColors.CA60FF
@@ -255,10 +251,14 @@ const ReportPlanSection = ({
               'text-white': reportType === 'PERSONAL_STATEMENT',
             })}
             showBubbleTail={isMobile ? false : true}
-            floatingBannerClassName=" left-5 top-0 md:left-[4.5rem] md:top-8"
+            floatingBannerClassName=" left-5 -top-1 md:left-[4.5rem] md:top-8"
           >
-            <CardSubHeader>옵션</CardSubHeader>
-            <CardMainHeader>1:1 온라인 상담</CardMainHeader>
+            <Badge className="mb-1">선택 옵션 2</Badge>
+            <CardMainHeader>
+              무제한 질문으로 고민 해결,
+              <br />
+              1:1 온라인 상담
+            </CardMainHeader>
             <div className="mb-4 flex flex-col gap-2 md:grid md:grid-cols-2 md:gap-3">
               {feedback.map((item, index) => (
                 <NumberedListItem key={index}>
@@ -358,7 +358,7 @@ const PlanCard = memo(function PlanCard({
       <div className="flex items-center justify-between rounded-md bg-black px-5 py-3 text-xsmall16 font-semibold text-white md:py-4 md:text-small20">
         {title}
       </div>
-      <div className="mt-2 h-[14rem] rounded-xs bg-neutral-95 p-3 pr-4 md:mt-6">
+      <div className="mt-2 h-[14rem] rounded-xs bg-neutral-95 p-3 pr-4 md:mt-4 md:h-[19rem] md:px-6 md:py-5">
         {children}
       </div>
     </div>
@@ -383,7 +383,7 @@ const NumberedListItem = memo(function NumberedListItem({
       <div
         style={numberStyle}
         className={twMerge(
-          'mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-neutral-60 text-xxsmall12 font-medium text-white',
+          'mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-neutral-60 text-xxsmall12 font-medium text-white md:h-6 md:w-6 md:text-small18',
           numberClassName,
         )}
       >
@@ -417,29 +417,17 @@ const PriceSection = memo(function PriceSection({
   return (
     <div className={wrapperClassName}>
       <div className="flex items-center gap-1">
-        <span className="text-small20 font-bold text-[#FC5555] md:text-xsmall16">
+        <span className="text-small20 font-bold text-[#FC5555]">
           {discountRate}%
         </span>
-        <s className="text-small20 font-bold text-neutral-45 md:text-xsmall16">
+        <s className="text-small20 font-bold text-neutral-45">
           {originalPrice.toLocaleString()}원
         </s>
       </div>
-      <span className="text-xlarge28 font-bold md:text-medium24">
+      <span className="text-xlarge28 font-bold">
         {finalPrice.toLocaleString()}원
       </span>
     </div>
-  );
-});
-
-const CardSubHeader = memo(function CardSubHeader({
-  children,
-}: {
-  children?: ReactNode;
-}) {
-  return (
-    <span className="text-xsmall16 font-medium text-neutral-45 md:text-small18">
-      {children}
-    </span>
   );
 });
 
@@ -452,5 +440,24 @@ const CardMainHeader = memo(function CardMainHeader({
     <span className="mb-2 mt-0.5 block text-xsmall16 font-semibold md:mb-3 md:mt-2 md:text-small20">
       {children}
     </span>
+  );
+});
+
+const Badge = memo(function Badge({
+  children,
+  className,
+}: {
+  children?: React.ReactNode;
+  className?: string;
+}) {
+  return (
+    <div
+      className={twMerge(
+        'w-fit rounded-xxs bg-neutral-35 px-2 py-1 text-xxsmall12 font-semibold text-white',
+        className,
+      )}
+    >
+      {children}
+    </div>
   );
 });
