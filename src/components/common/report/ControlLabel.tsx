@@ -57,6 +57,7 @@ export const ReportFormRadioControlLabel: React.FC<
     >
       <div className="flex h-5 items-center">
         <FormControlLabel
+          className="shrink-0"
           sx={extendedSx}
           control={<Radio size="small" sx={RADIO_SX} />}
           {...restProps}

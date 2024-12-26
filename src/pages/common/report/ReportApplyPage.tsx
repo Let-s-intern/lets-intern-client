@@ -379,7 +379,7 @@ const PremiumSection = ({
                 value="file"
                 subText="(png, jpg, jpeg, pdf 형식 지원, 50MB 이하)"
               />
-              <span className="-mt-1 mb-2 block text-xxsmall12 text-neutral-45">
+              <span className="mb-2 mt-2 block text-xxsmall12 text-neutral-45 md:mt-0">
                 *업무, 지원자격, 우대사항이 보이게 채용공고를 캡처해주세요.
               </span>
               {value === 'file' && (
