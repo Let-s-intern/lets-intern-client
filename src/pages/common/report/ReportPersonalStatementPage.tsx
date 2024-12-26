@@ -1,8 +1,14 @@
+import { useEffect } from 'react';
+import { Helmet } from 'react-helmet';
+
+import { useGetActiveReports, useGetReportPriceDetail } from '@/api/report';
+import ReportApplyBottomSheet from '@/components/common/report/ReportApplyBottomSheet';
 import { useServerActiveReports } from '@/context/ActiveReports';
 import { personalStatementReportDescription } from '@/data/description';
 import useReportApplicationStore from '@/store/useReportApplicationStore';
 import { ReportContent } from '@/types/interface';
 import { getBaseUrlFromServer, getReportLandingTitle } from '@/utils/url';
+import Header from '@components/common/report/Header';
 import PromoSection from '@components/common/report/PromoSection';
 import ReportBasicInfo from '@components/common/report/ReportBasicInfo';
 import ReportExampleSection from '@components/common/report/ReportExampleSection';
@@ -13,15 +19,7 @@ import ReportProgramRecommendSlider from '@components/common/report/ReportProgra
 import ReportReviewSection from '@components/common/report/ReportReviewSection';
 import ResearchTeamSection from '@components/common/report/ResearchTeamSection';
 import ServiceProcessSection from '@components/common/report/ServiceProcessSection';
-import Header from '@components/common/ui/Header';
 import LoadingContainer from '@components/common/ui/loading/LoadingContainer';
-import { useEffect } from 'react';
-import { Helmet } from 'react-helmet';
-import {
-  useGetActiveReports,
-  useGetReportPriceDetail,
-} from '../../../api/report';
-import ReportApplyBottomSheet from '../../../components/common/report/ReportApplyBottomSheet';
 import ReportNavigation from './ReportNavigation';
 
 export const personalStatementColors = {
@@ -52,7 +50,6 @@ const ReportPersonalStatementPage = () => {
   );
 
   const { data: priceDetail } = useGetReportPriceDetail(report?.reportId);
-  console.log('가격 상세:', priceDetail);
 
   useEffect(() => {
     initReportApplication();
@@ -95,7 +92,11 @@ const ReportPersonalStatementPage = () => {
             </div>
           </div>
           <ReportNavigation color={personalStatementColors.CA60FF} isDark />
-          <div className="flex w-full flex-col items-center">
+          <div
+            id="content"
+            data-page-type="personal-statement"
+            className="flex w-full flex-col items-center"
+          >
             {/* 서비스 소개 */}
             <ReportIntroSection type="PERSONAL_STATEMENT" />
             {/* 리포트 예시 */}

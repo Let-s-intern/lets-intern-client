@@ -2,14 +2,14 @@ import { twMerge } from '@/lib/twMerge';
 import { MdOutlineArrowBack } from 'react-icons/md';
 import { Link } from 'react-router-dom';
 
-interface HeaderProps {
+interface BackHeaderProps {
   to?: string;
   children?: React.ReactNode;
   className?: string;
   onClick?: () => void;
 }
 
-const Header = ({ children, className, to, onClick }: HeaderProps) => {
+const BackHeader = ({ children, className, to, onClick }: BackHeaderProps) => {
   return (
     <header className={twMerge('my-6 flex items-center gap-3', className)}>
       <Link to={to ?? '#'} onClick={onClick}>
@@ -21,4 +21,4 @@ const Header = ({ children, className, to, onClick }: HeaderProps) => {
   );
 };
 
-export default Header;
+export default BackHeader;

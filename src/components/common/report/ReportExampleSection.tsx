@@ -91,6 +91,7 @@ const ReportExampleSection = ({
   return (
     <section
       id={REPORT_EXAMPLE_ID}
+      data-section="sample"
       className="flex w-full flex-col items-center"
     >
       <div className="flex w-full flex-col">

@@ -30,8 +30,8 @@ import FilledInput from '@components/common/report/FilledInput';
 import Heading2 from '@components/common/report/Heading2';
 import Label from '@components/common/report/Label';
 import Tooltip from '@components/common/report/Tooltip';
+import BackHeader from '@components/common/ui/BackHeader';
 import BottomSheet from '@components/common/ui/BottomSheeet';
-import Header from '@components/common/ui/Header';
 import HorizontalRule from '@components/ui/HorizontalRule';
 
 const ReportApplyPage = () => {
@@ -96,7 +96,9 @@ const ReportApplyPage = () => {
   return (
     <div className="mx-auto max-w-[55rem] px-5 md:pb-10 md:pt-5 lg:px-0 xl:flex xl:gap-16">
       <div className="w-full">
-        <Header to={`/report/landing/${reportType}`}>진단서 신청하기</Header>
+        <BackHeader to={`/report/landing/${reportType}`}>
+          진단서 신청하기
+        </BackHeader>
 
         <main className="mb-8 mt-6 flex flex-col gap-10">
           {/* 프로그램 정보 */}

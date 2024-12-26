@@ -8,6 +8,7 @@ import { resumeReportDescription } from '@/data/description';
 import useReportApplicationStore from '@/store/useReportApplicationStore';
 import { ReportContent } from '@/types/interface';
 import { getBaseUrlFromServer, getReportLandingTitle } from '@/utils/url';
+import Header from '@components/common/report/Header';
 import PromoSection from '@components/common/report/PromoSection';
 import ReportBasicInfo from '@components/common/report/ReportBasicInfo';
 import ReportExampleSection from '@components/common/report/ReportExampleSection';
@@ -18,7 +19,6 @@ import ReportProgramRecommendSlider from '@components/common/report/ReportProgra
 import ReportReviewSection from '@components/common/report/ReportReviewSection';
 import ResearchTeamSection from '@components/common/report/ResearchTeamSection';
 import ServiceProcessSection from '@components/common/report/ServiceProcessSection';
-import Header from '@components/common/ui/Header';
 import LoadingContainer from '@components/common/ui/loading/LoadingContainer';
 import ReportNavigation from './ReportNavigation';
 
@@ -98,7 +98,11 @@ const ReportResumePage = () => {
 
           <ReportNavigation color={resumeColors._2CE282} isDark />
 
-          <div className="flex w-full flex-col items-center">
+          <div
+            id="content"
+            data-page-type="resume"
+            className="flex w-full flex-col items-center"
+          >
             {/* 서비스 소개 */}
             <ReportIntroSection type="RESUME" />
             {/* 리포트 예시 */}
