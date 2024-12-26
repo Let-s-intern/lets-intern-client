@@ -4,8 +4,8 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { useGetParticipationInfo } from '@/api/application';
 import { convertReportPriceType, useGetReportPriceDetail } from '@/api/report';
 import { usePatchUser } from '@/api/user';
-import Card from '@/components/common/report/Card';
 import Heading2 from '@/components/common/report/Heading2';
+import ProgramCard from '@/components/common/report/ProgramCard';
 import BottomSheet from '@/components/common/ui/BottomSheeet';
 import useReportPayment from '@/hooks/useReportPayment';
 import useReportProgramInfo from '@/hooks/useReportProgramInfo';
@@ -74,7 +74,7 @@ const ProgramInfoSection = () => {
   return (
     <section className="flex flex-col gap-6">
       <Heading2>프로그램 정보</Heading2>
-      <Card
+      <ProgramCard
         imgSrc="/images/report-thumbnail.png"
         imgAlt="서류 진단서 프로그램 썸네일"
         title={title!}

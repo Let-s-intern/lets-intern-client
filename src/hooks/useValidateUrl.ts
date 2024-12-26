@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react';
 
-export default function useValidateUrl(url: string) {
-  const [isValid, setIsValid] = useState(true);
+export default function useValidateUrl(url?: string | null) {
+  const [isValid, setIsValid] = useState(false);
 
   useEffect(() => {
-    if (url === '') return;
+    if (!url || url === '') return;
+
     try {
       new URL(url);
       setIsValid(true);

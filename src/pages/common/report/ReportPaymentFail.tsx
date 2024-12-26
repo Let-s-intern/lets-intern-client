@@ -8,9 +8,9 @@ import {
   convertReportPriceType,
   useGetReportDetailQuery,
 } from '../../../api/report';
-import Card from '../../../components/common/report/Card';
 import Heading1 from '../../../components/common/report/Heading1';
 import Heading2 from '../../../components/common/report/Heading2';
+import Card from '../../../components/common/report/ProgramCard';
 import { paymentFailSearchParamsSchema } from '../../../data/getPaymentSearchParams';
 import useReportPayment from '../../../hooks/useReportPayment';
 import useReportProgramInfo from '../../../hooks/useReportProgramInfo';
