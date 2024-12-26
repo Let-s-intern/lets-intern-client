@@ -38,7 +38,7 @@ const ReportReviewSection = ({
       data-section="review"
       className="flex w-full flex-col bg-black"
     >
-      <div className="mx-auto flex w-full max-w-[1000px] flex-col gap-y-10 px-5 py-[60px] md:gap-y-20 md:py-[120px] lg:px-0">
+      <div className="mx-auto flex w-full max-w-[1000px] flex-col gap-y-10 px-5 py-[60px] md:gap-y-20 md:pb-[150px] md:pt-[120px] lg:px-0">
         <div className="flex w-full flex-col gap-y-6 md:gap-y-[50px]">
           <h5 className="w-full text-center text-xsmall14 font-semibold text-neutral-45 md:text-small18">
             후기
