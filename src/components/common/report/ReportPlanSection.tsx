@@ -124,7 +124,7 @@ const ReportPlanSection = ({
   return (
     <section
       id={REPORT_PLAN_ID}
-      className="w-full bg-neutral-90 px-5 py-16 md:pb-36 md:pt-28"
+      className="w-full bg-neutral-90 px-5 py-16 md:pb-36 md:pt-24"
     >
       <header>
         <SectionHeader className="mb-6">{SECTION_HEADER}</SectionHeader>
@@ -134,7 +134,7 @@ const ReportPlanSection = ({
         <MainHeader>{MAIN_HEADER}</MainHeader>
       </header>
 
-      <main className="mt-10 max-w-[832px] md:mt-12 lg:mx-auto lg:px-0">
+      <main className="mt-10 max-w-[840px] md:mt-12 lg:mx-auto lg:px-0">
         {/* 좌우 슬라이드 */}
         <div
           data-section="price-1"
@@ -203,7 +203,10 @@ const ReportPlanSection = ({
         </div>
 
         <MainHeader>{OPTION_HEADER}</MainHeader>
-        <div data-section="price-2" className="mt-4 flex flex-col gap-5">
+        <div
+          data-section="price-2"
+          className="mt-4 flex flex-col gap-5 md:mt-12 md:flex-row md:gap-3"
+        >
           {/* 옵션 */}
           {optionInfos && optionInfos.length > 0 && (
             <PriceCard>
@@ -215,7 +218,7 @@ const ReportPlanSection = ({
               <p className="mb-1.5 text-xxsmall12 text-neutral-35 md:text-xsmall14">
                 *피드백 받고 싶은 현직자 여러명 옵션 추가 가능
               </p>
-              <div className="mb-5 mt-3 grid grid-cols-2 gap-x-1.5 gap-y-2">
+              <div className="mb-5 mt-3 grid grid-cols-2 gap-x-1.5 gap-y-2 md:mb-6">
                 {employees.map((item, index) => (
                   <div
                     key={index}
@@ -225,8 +228,8 @@ const ReportPlanSection = ({
                   </div>
                 ))}
               </div>
-              <div className="md:flex md:items-end md:gap-1">
-                <span className="text-xxsmall12 font-medium text-neutral-45 md:text-xsmall16">
+              <div>
+                <span className="mb-1.5 block text-xxsmall12 font-medium text-neutral-45 md:text-xsmall16">
                   현직자 택 1인 옵션 추가 금액
                 </span>
                 {/* 첫 번째 옵션 가격 표시 */}
@@ -251,7 +254,7 @@ const ReportPlanSection = ({
               'text-white': reportType === 'PERSONAL_STATEMENT',
             })}
             showBubbleTail={isMobile ? false : true}
-            floatingBannerClassName=" left-5 -top-1 md:left-[4.5rem] md:top-8"
+            floatingBannerClassName="left-5 -top-1 md:left-auto md:right-2 md:-top-3"
           >
             <Badge className="mb-1">선택 옵션 2</Badge>
             <CardMainHeader>
@@ -259,23 +262,18 @@ const ReportPlanSection = ({
               <br />
               1:1 온라인 상담
             </CardMainHeader>
-            <div className="mb-4 flex flex-col gap-2 md:grid md:grid-cols-2 md:gap-3">
+            <div className="mb-5 flex flex-col gap-3 md:mb-16">
               {feedback.map((item, index) => (
-                <NumberedListItem key={index}>
+                <NumberedListItem key={index} number={index + 1}>
                   {/* 예외 문항 */}
-                  {index === feedback.length - 1 && (
-                    <>
-                      <span className="font-bold">
-                        &quot;무한 질문&quot; 가능!
-                      </span>
-                      <br />
-                    </>
+                  {index === 0 ? (
+                    <span className="font-bold">{item}</span>
+                  ) : (
+                    item
                   )}
-                  {item}
                 </NumberedListItem>
               ))}
             </div>
-
             <PriceSection
               originalPrice={feedbackInfo?.feedbackPrice ?? 0}
               discountPrice={feedbackInfo?.feedbackDiscountPrice ?? 0}
@@ -319,7 +317,7 @@ const PriceCard = memo(function PriceCard({
           <div
             style={BANNER_STYLE}
             className={twMerge(
-              'rounded-xs bg-primary px-3 py-1 text-center text-xxsmall12 font-medium md:rounded-md md:text-xsmall14 md:font-semibold',
+              'rounded-xs bg-primary px-3 py-1 text-center text-xxsmall12 font-medium md:rounded-ms md:text-xsmall14 md:font-semibold',
               bannerClassName,
             )}
           >
