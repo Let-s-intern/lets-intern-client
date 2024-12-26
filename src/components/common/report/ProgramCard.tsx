@@ -5,7 +5,7 @@ interface CardProps {
   content: { label: string; text: string }[];
 }
 
-const Card = ({ imgSrc, imgAlt, title, content }: CardProps) => {
+const ProgramCard = ({ imgSrc, imgAlt, title, content }: CardProps) => {
   return (
     <div className="flex items-start gap-4">
       <div className="h-20 w-28 rounded-sm bg-neutral-90">
@@ -30,4 +30,4 @@ const Card = ({ imgSrc, imgAlt, title, content }: CardProps) => {
   );
 };
 
-export default Card;
+export default ProgramCard;

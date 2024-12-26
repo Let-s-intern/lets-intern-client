@@ -23,12 +23,12 @@ import useValidateUrl from '@/hooks/useValidateUrl';
 import { twMerge } from '@/lib/twMerge';
 import useAuthStore from '@/store/useAuthStore';
 import useReportApplicationStore from '@/store/useReportApplicationStore';
-import Card from '@components/common/report/Card';
 import { ReportFormRadioControlLabel } from '@components/common/report/ControlLabel';
 import DateTimePicker from '@components/common/report/DateTimePicker';
 import FilledInput from '@components/common/report/FilledInput';
 import Heading2 from '@components/common/report/Heading2';
 import Label from '@components/common/report/Label';
+import ProgramCard from '@components/common/report/ProgramCard';
 import Tooltip from '@components/common/report/Tooltip';
 import BackHeader from '@components/common/ui/BackHeader';
 import BottomSheet from '@components/common/ui/BottomSheeet';
@@ -228,7 +228,7 @@ const ProgramInfoSection = ({
           <li>옵션 (현직자 피드백): 최대 5일</li>
         </Tooltip>
       </div>
-      <Card
+      <ProgramCard
         imgSrc="/images/report-thumbnail.png"
         imgAlt="서류 진단서 프로그램 썸네일"
         title={title ?? ''}

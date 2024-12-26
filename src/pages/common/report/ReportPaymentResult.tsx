@@ -11,9 +11,9 @@ import {
 } from '../../../api/report';
 import DescriptionBox from '../../../components/common/program/paymentSuccess/DescriptionBox';
 import PaymentInfoRow from '../../../components/common/program/paymentSuccess/PaymentInfoRow';
-import Card from '../../../components/common/report/Card';
 import Heading1 from '../../../components/common/report/Heading1';
 import Heading2 from '../../../components/common/report/Heading2';
+import Card from '../../../components/common/report/ProgramCard';
 import {
   getPaymentMethodLabel,
   paymentResultSearchParamsSchema,
