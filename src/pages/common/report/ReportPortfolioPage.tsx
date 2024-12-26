@@ -17,7 +17,6 @@ import ReportIntroSection from '@components/common/report/ReportIntroSection';
 import ReportPlanSection from '@components/common/report/ReportPlanSection';
 import ReportProgramRecommendSlider from '@components/common/report/ReportProgramRecommendSlider';
 import ReportReviewSection from '@components/common/report/ReportReviewSection';
-import ResearchTeamSection from '@components/common/report/ResearchTeamSection';
 import ServiceProcessSection from '@components/common/report/ServiceProcessSection';
 import LoadingContainer from '@components/common/ui/loading/LoadingContainer';
 import ReportNavigation from './ReportNavigation';
@@ -99,8 +98,6 @@ const ReportPortfolioPage = () => {
               type="PORTFOLIO"
               reportReview={portfolioContent.review}
             />
-            {/* 취업 연구팀 소개 */}
-            <ResearchTeamSection reportType="PORTFOLIO" />
             {/* 가격 및 플랜 */}
             {priceDetail && report?.reportType && (
               <ReportPlanSection

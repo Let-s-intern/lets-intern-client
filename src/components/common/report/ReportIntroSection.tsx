@@ -8,6 +8,7 @@ import { personalStatementColors } from '@/pages/common/report/ReportPersonalSta
 import { resumeColors } from '@/pages/common/report/ReportResumePage';
 import { useMediaQuery } from '@mui/material';
 import React, { ReactNode, useEffect, useRef } from 'react';
+import ResearchTeamSection from './ResearchTeamSection';
 
 interface ReportIntroSectionProps {
   type: ReportType;
@@ -288,7 +289,7 @@ const ReportIntroSection = ({ type }: ReportIntroSectionProps) => {
       </div>
       {/* section1 */}
       <div data-section="intro-2" className="w-full bg-neutral-90">
-        <div className="flex w-full max-w-[1000px] flex-col gap-y-10 px-5 py-[70px] md:gap-y-20 md:pb-[150px] md:pt-[110px] lg:px-0">
+        <div className="flex w-full max-w-[1000px] flex-col gap-y-10 px-5 pb-[70px] pt-[50px] md:gap-y-20 md:pb-[120px] md:pt-[100px] lg:px-0">
           <div className="flex w-full flex-col gap-y-6 md:gap-y-[50px]">
             <div className="flex w-full flex-col items-center gap-y-2 md:gap-y-3">
               <span
@@ -327,36 +328,8 @@ const ReportIntroSection = ({ type }: ReportIntroSectionProps) => {
         </div>
       </div>
       {/* section2 */}
-      <div data-section="intro-3" className="w-full bg-neutral-90">
-        <div className="mx-auto flex w-full max-w-[1000px] flex-col items-center gap-y-6 px-5 py-[70px] md:gap-y-[60px] md:py-[110px] md:pb-[130px] lg:px-0">
-          <div className="flex w-full flex-col gap-y-2 md:gap-y-3">
-            <h6
-              className="text-xsmall16 font-bold md:text-small20"
-              style={subHeaderStyle}
-            >
-              대체 뭐가 문제일까?
-            </h6>
-            <div className="flex w-full flex-col gap-y-5 md:gap-y-[30px]">
-              <p className="text-medium22 font-bold md:text-xlarge30">
-                {convertString(reportIntro.section2.title)}
-              </p>
-              <div className="flex w-full flex-col text-neutral-30 md:gap-y-2">
-                <p className="text-xsmall16 font-semibold md:text-medium24">
-                  {convertString(reportIntro.section2.subTitle)}
-                </p>
-                <p className="text-xsmall14 md:text-small20">
-                  {convertString(reportIntro.section2.description)}
-                </p>
-              </div>
-            </div>
-          </div>
-          <img
-            src={reportIntro.section2.pointSrc}
-            alt="report_intro"
-            className="h-auto w-full md:w-[70%]"
-          />
-        </div>
-      </div>
+      {/* 취업 연구팀 소개 */}
+      <ResearchTeamSection reportType={type} />
       {/* section3 */}
       <div data-section="intro-4" className="w-full bg-black">
         <div className="mx-auto flex w-full max-w-[1000px] flex-col items-center gap-y-5 px-5 py-[70px] md:gap-y-20 md:pb-[140px] md:pt-[120px] lg:px-0">

@@ -6,7 +6,7 @@ import { resumeColors } from '@/pages/common/report/ReportResumePage';
 import MainHeader from './MainHeader';
 import SubHeader from './SubHeader';
 
-const SUPER_TITLE = '믿고 맡겨도 될까? 더이상 걱정마세요.';
+const SUPER_TITLE = '전문가와 함께 해결하세요.';
 const HEADING =
   '당신을 합격의 길로 이끌,\n렛츠커리어 취업 연구팀을 소개합니다.';
 
