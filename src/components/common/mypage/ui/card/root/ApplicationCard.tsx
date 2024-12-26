@@ -75,9 +75,8 @@ const ApplicationCard = ({
               {application.programType === 'REPORT' ? '신청일자' : '진행기간'}
             </span>
             <span className="text-xs font-medium text-primary-dark">
-              {/* 서류 진단이면 신청 일자만 표시 */}
               {application.programType === 'REPORT'
-                ? application.programStartDate?.format('YY.MM.DD')
+                ? application.createDate?.format('YY.MM.DD')
                 : `${application.programStartDate?.format('YY.MM.DD')} ~ ${application.programEndDate?.format('YY.MM.DD')}`}
             </span>
           </div>

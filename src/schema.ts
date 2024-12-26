@@ -126,6 +126,8 @@ export const faqSchema = z.object({ faqList: z.array(faq) });
 
 export const reviewSchema = z.object({
   id: z.number(),
+  applicationId: z.number().nullable().optional(),
+  userId: z.number().nullable().optional(),
   programTitle: z.string().nullable().optional(),
   programType: ProgramTypeEnum.optional(),
   name: z.string().nullable().optional(),
@@ -133,6 +135,7 @@ export const reviewSchema = z.object({
   npsAns: z.string().optional().nullable(),
   npsCheckAns: z.boolean().optional().nullable(),
   content: z.string().optional().nullable(),
+  programDetail: z.string().optional().nullable(),
   score: z.number(),
   isVisible: z.boolean(),
   createdDate: z.string(),
