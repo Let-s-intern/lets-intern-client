@@ -86,7 +86,7 @@ const ReportResumePage = () => {
         <LoadingContainer />
       ) : (
         <div className="flex w-full flex-col items-center">
-          <div className="flex w-full flex-col bg-black pb-12 text-white md:pb-20">
+          <div className="flex w-full flex-col bg-black pb-10 text-white md:pb-[60px]">
             <div className="mx-auto flex w-full max-w-[1000px] flex-col px-5 lg:px-0">
               <Header>서류완성의 시작과 끝은 진단에서부터</Header>
               <ReportBasicInfo
