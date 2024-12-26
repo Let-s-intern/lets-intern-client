@@ -7,11 +7,99 @@ import { REPORT_INTRO_ID } from '@/pages/common/report/ReportNavigation';
 import { personalStatementColors } from '@/pages/common/report/ReportPersonalStatementPage';
 import { resumeColors } from '@/pages/common/report/ReportResumePage';
 import { useMediaQuery } from '@mui/material';
-import { useEffect, useRef } from 'react';
+import React, { ReactNode, useEffect, useRef } from 'react';
 
 interface ReportIntroSectionProps {
   type: ReportType;
 }
+
+const Section0: Record<
+  ReportType,
+  {
+    steps: ReactNode[];
+  }
+> = {
+  RESUME: {
+    steps: [
+      <React.Fragment key={0}>
+        <p>
+          6가지 핵심 기준으로 <strong>이력서의 강점과 약점</strong>을 분석한{' '}
+          <strong>솔직하고 객곽적인 피드백 & 총평 제공</strong>
+        </p>
+        <p className="text-xxsmall12 text-neutral-35 md:text-small18">
+          가독성/구조 및 구성/직무 적합성/정확성/간결성/구체성
+        </p>
+      </React.Fragment>,
+      <p key={1}>
+        두루뭉실한 피드백 X<br />
+        구체적인 피드백으로 <strong>명확한 개선 방향 제시</strong>
+      </p>,
+      <p key={2}>
+        직무별 <strong>합격자 사례 제공</strong>
+      </p>,
+      <p key={3}>
+        <strong>채용공고 맞춤형 피드백</strong> (*프리미엄 플랜)
+      </p>,
+      <p key={4}>
+        이력서 작성 <strong>고민에 대한 1:1 상담</strong>
+      </p>,
+    ],
+  },
+  PERSONAL_STATEMENT: {
+    steps: [
+      <React.Fragment key={0}>
+        <p>
+          5가지 핵심 기준으로 <strong>자소서의 강점과 약점</strong>을 분석한{' '}
+          <strong>솔직하고 객곽적인 피드백 & 총평 제공</strong>
+        </p>
+        <p className="text-xxsmall12 text-neutral-35 md:text-small18">
+          가독성/구조 및 구성/구체성/직무 적합성/완성도
+        </p>
+      </React.Fragment>,
+      <p key={1}>
+        두루뭉실한 피드백 X<br />
+        구체적인 피드백으로 <strong>명확한 개선 방향 제시</strong>
+      </p>,
+      <p key={2}>
+        직무별 <strong>합격 비결을 담은 자소서 예시 제공</strong>
+      </p>,
+      <p key={3}>
+        자소서의{' '}
+        <strong>{`전체 흐름과 강점을 한눈에 보여주는 '총평 페이지'`}</strong>로
+        스토리의 <strong>통일성과 설득력 강화</strong> (*프리미엄 플랜)
+      </p>,
+      <p key={4}>
+        자소서 작성 <strong>고민에 대한 1:1 상담</strong>
+      </p>,
+    ],
+  },
+  PORTFOLIO: {
+    steps: [
+      <React.Fragment key={0}>
+        <p>
+          6가지 핵심 기준으로 <strong>포트폴리오의 강점과 약점</strong>을 분석한{' '}
+          <strong>솔직하고 객곽적인 피드백 & 총평 제공</strong>
+        </p>
+        <p className="text-xxsmall12 text-neutral-35 md:text-small18">
+          가독성/구조 및 구성/직무 적합성/정확성/간결성/구체성
+        </p>
+      </React.Fragment>,
+      <p key={1}>
+        두루뭉실한 피드백 X<br />
+        구체적인 피드백으로 <strong>명확한 개선 방향 제시</strong>
+      </p>,
+      <p key={2}>
+        직무별 <strong>합격자 사례 제공</strong>
+      </p>,
+      <p key={3}>
+        <strong>채용공고 맞춤형 피드백</strong> (*프리미엄 플랜)
+      </p>,
+      <p key={4}>
+        포트폴리오 작성 <strong>고민에 대한 1:1 상담</strong>
+      </p>,
+    ],
+  },
+};
 
 const ReportIntroSection = ({ type }: ReportIntroSectionProps) => {
   const isDesktop = useMediaQuery('(min-width: 768px)');
@@ -25,6 +113,12 @@ const ReportIntroSection = ({ type }: ReportIntroSectionProps) => {
       type === 'PERSONAL_STATEMENT'
         ? personalStatementColors.C34AFF
         : resumeColors._11AC5C,
+  };
+  const stepStyle = {
+    backgroundColor:
+      type === 'PERSONAL_STATEMENT'
+        ? personalStatementColors.F9EEFF
+        : resumeColors._4FDA46,
   };
   const boxStyle = {
     backgroundColor:
@@ -107,6 +201,7 @@ const ReportIntroSection = ({ type }: ReportIntroSectionProps) => {
   }, []);
 
   const reportIntro = REPORT_INTRO[type];
+  const section0 = Section0[type];
 
   const convertString = (str: string) => {
     return isDesktop ? str.replace(/\n\n/g, ' ') : str.replace(/\n\n/g, '\n');
@@ -130,15 +225,73 @@ const ReportIntroSection = ({ type }: ReportIntroSectionProps) => {
       id={REPORT_INTRO_ID}
       className="flex w-full flex-col items-center whitespace-pre-wrap break-keep text-center text-neutral-0"
     >
+      {/* section0 */}
+      <div
+        data-section="intro-1"
+        className="flex w-full max-w-[1000px] flex-col gap-y-[30px] px-5 py-[60px] md:gap-y-[50px] md:pb-[120px] md:pt-[100px] lg:px-0"
+      >
+        <div className="flex w-full flex-col gap-y-6 md:gap-y-[50px]">
+          <h5 className="w-full text-center text-xsmall14 font-semibold text-neutral-45 md:text-small18">
+            서비스 소개
+          </h5>
+          <div className="flex w-full flex-col gap-y-2 md:gap-y-3">
+            <span
+              className="text-xsmall16 font-bold md:text-small20"
+              style={subHeaderStyle}
+            >
+              서류 합격에 한걸음 더 가까이
+            </span>
+            <div className="flex w-full flex-col items-center gap-y-5 md:gap-y-[30px]">
+              <p className="text-medium22 font-bold md:text-xlarge30">
+                {`${convertReportTypeToDisplayName(type)} 피드백 REPORT를 통해\n이런걸 얻어 가실거에요.`}
+              </p>
+            </div>
+          </div>
+        </div>
+        <div className="mx-auto flex w-full flex-col gap-y-2 md:w-[643px] md:gap-y-4">
+          {section0.steps.map((step, index) => (
+            <div
+              key={`step-${index}`}
+              className="mx-auto flex w-full gap-x-2 rounded-md border px-4 py-2.5 md:gap-x-3 md:px-20 md:py-5"
+              style={boxStyle}
+            >
+              <span
+                className="mt-1 flex h-4 w-4 shrink-0 items-center justify-center rounded-full text-xxsmall12 font-semibold text-black md:h-8 md:w-8 md:text-small20"
+                style={stepStyle}
+              >{`${index + 1}`}</span>
+              <div className="flex flex-1 flex-col items-start gap-y-1 text-start text-xsmall14 font-medium md:text-medium24">
+                {step}
+              </div>
+            </div>
+          ))}
+        </div>
+        <div className="mx-auto flex w-full flex-col gap-y-3 md:w-[643px] md:gap-y-4">
+          <h6 className="mx-auto text-xsmall14 font-semibold text-neutral-45 md:text-small18">
+            진행 방식
+          </h6>
+          <div className="flex w-full items-center gap-x-2 md:gap-x-6">
+            {reportIntro.section0.images.map((image, index) => (
+              <div
+                key={`step-img-${index}`}
+                className="flex flex-1 flex-col items-center gap-y-1 text-xxsmall12 font-medium text-neutral-20 md:gap-y-2 md:text-small18"
+              >
+                <img
+                  src={image.image}
+                  alt={`step-${index}`}
+                  className="aspect-square h-auto w-full"
+                />
+                <span>{image.desc}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
       {/* section1 */}
       <div
         data-section="intro-2"
         className="flex w-full max-w-[1000px] flex-col gap-y-10 px-5 py-[70px] md:gap-y-20 md:pb-[150px] md:pt-[110px] lg:px-0"
       >
         <div className="flex w-full flex-col gap-y-6 md:gap-y-[50px]">
-          <h5 className="w-full text-center text-xsmall14 font-semibold text-neutral-45 md:text-small18">
-            서비스 소개
-          </h5>
           <div className="flex w-full flex-col items-center gap-y-2 md:gap-y-3">
             <span
               className="text-xsmall16 font-bold md:text-small20"
