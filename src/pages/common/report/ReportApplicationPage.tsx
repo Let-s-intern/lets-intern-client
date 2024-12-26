@@ -86,7 +86,7 @@ const ReportApplicationPage = () => {
   });
 
   return (
-    <div className="max-w-[55rem] px-5 md:pb-10 md:pt-5 xl:flex xl:gap-16">
+    <div className="mx-auto max-w-[55rem] px-5 md:pb-10 md:pt-5 xl:flex xl:gap-16">
       <div className="w-full">
         <BackHeader to="/report/management">제출하기</BackHeader>
 
@@ -212,7 +212,7 @@ const DocumentSection = ({
 
   return (
     <section className="flex flex-col lg:flex-row lg:items-start lg:gap-5">
-      <div className="mb-3 flex w-[8.75rem] shrink-0 items-center">
+      <div className="mb-3 flex w-40 shrink-0 items-center">
         <Heading2>진단용 {convertReportTypeStatus(reportType!)}</Heading2>
         <RequiredStar />
       </div>
@@ -278,7 +278,7 @@ const PremiumSection = ({
   return (
     <section className="flex flex-col gap-1 lg:flex-row lg:items-start lg:gap-5">
       {
-        <div className="flex w-[8.75rem] shrink-0 items-center">
+        <div className="flex w-40 shrink-0 items-center">
           <Heading2>(프리미엄) 채용공고</Heading2>
           <RequiredStar />
         </div>
@@ -366,7 +366,7 @@ const ScheduleSection = () => {
 
   return (
     <section className="flex flex-col gap-1 lg:flex-row lg:items-start lg:gap-5">
-      <div className="flex w-[8.75rem] shrink-0 items-center gap-1">
+      <div className="flex w-40 shrink-0 items-center gap-1">
         <Heading2>1:1 온라인 상담 일정</Heading2>
         <Tooltip alt="1:1 온라인 상담 일정 도움말">
           1:1 온라인 상담은 서류 진단서 발급 이후에 진행됩니다.

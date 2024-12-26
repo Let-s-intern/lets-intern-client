@@ -266,7 +266,7 @@ const DocumentSection = ({
 
   return (
     <section className="flex flex-col lg:flex-row lg:items-start lg:gap-5">
-      <div className="mb-3 flex w-[8.75rem] shrink-0 items-center">
+      <div className="mb-3 flex w-40 shrink-0 items-center">
         <Heading2>진단용 {convertReportTypeStatus(reportType!)}</Heading2>
         <RequiredStar />
       </div>
@@ -332,7 +332,7 @@ const PremiumSection = ({
   return (
     <section className="flex flex-col gap-1 lg:flex-row lg:items-start lg:gap-5">
       {
-        <div className="flex w-[8.75rem] shrink-0 items-center">
+        <div className="flex w-40 shrink-0 items-center">
           <Heading2>(프리미엄) 채용공고</Heading2>
           <RequiredStar />
         </div>
@@ -391,7 +391,7 @@ const PremiumSection = ({
 
 const ScheduleSection = () => {
   const { data, setReportApplication } = useReportApplicationStore();
-  console.log(data);
+
   const minDate = useMinDate(data);
 
   type Key = keyof typeof data;
