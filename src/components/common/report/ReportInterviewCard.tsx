@@ -13,7 +13,7 @@ const ReportInterviewCard = ({
   subColor,
 }: ReportInterviewCardProps) => {
   return (
-    <div className="flex w-[90%] shrink-0 flex-col gap-y-3 rounded-[10px] bg-white p-5 pb-7 text-neutral-0 md:w-full">
+    <div className="flex w-[90%] shrink-0 flex-col gap-y-3 rounded-[10px] bg-white p-4 pb-7 text-neutral-0 md:w-full">
       <div
         className="flex w-full items-center justify-center rounded-[10px] p-2 text-xsmall16 font-semibold md:text-small18"
         style={{ backgroundColor: mainColor }}

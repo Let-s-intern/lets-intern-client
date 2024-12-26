@@ -36,6 +36,17 @@ export function convertReportTypeToDisplayName(
   }
 }
 
+export const convertReportTypeToShortName = (type: ReportType) => {
+  switch (type) {
+    case 'RESUME':
+      return '이력서';
+    case 'PERSONAL_STATEMENT':
+      return '자소서';
+    case 'PORTFOLIO':
+      return '포트폴리오';
+  }
+};
+
 export function convertReportTypeToLandingPath(type: ReportType) {
   switch (type) {
     case 'RESUME':
@@ -996,8 +1007,10 @@ const reportApplicationInfoSchema = z.object({
 
 const reportPaymentInfoSchema = z.object({
   paymentId: z.number(),
+  paymentOrderId: z.string().nullable().optional(),
   finalPrice: z.number().nullable(),
   couponDiscount: z.number().nullable(),
+  couponName: z.string().nullable(),
   programPrice: z.number().nullable(),
   programDiscount: z.number().nullable(),
   reportRefundPrice: z.number().nullable(),

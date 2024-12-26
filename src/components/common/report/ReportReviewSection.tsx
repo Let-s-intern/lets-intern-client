@@ -4,6 +4,7 @@ import { personalStatementColors } from '@/pages/common/report/ReportPersonalSta
 import { resumeColors } from '@/pages/common/report/ReportResumePage';
 import { ReportReview } from '@/types/interface';
 import { useMediaQuery } from '@mui/material';
+import MoreReviewButton from '../review/MoreReviewButton';
 import ReportInterviewCard from './ReportInterviewCard';
 
 interface ReportReviewSectionProps {
@@ -37,7 +38,7 @@ const ReportReviewSection = ({
       data-section="review"
       className="flex w-full flex-col bg-black"
     >
-      <div className="mx-auto flex w-full max-w-[1000px] flex-col gap-y-10 px-5 py-[60px] md:gap-y-20 md:py-[120px] lg:px-0">
+      <div className="mx-auto flex w-full max-w-[1000px] flex-col gap-y-10 px-5 py-[60px] md:gap-y-20 md:pb-[150px] md:pt-[120px] lg:px-0">
         <div className="flex w-full flex-col gap-y-6 md:gap-y-[50px]">
           <h5 className="w-full text-center text-xsmall14 font-semibold text-neutral-45 md:text-small18">
             후기
@@ -53,36 +54,47 @@ const ReportReviewSection = ({
             </p>
           </div>
         </div>
-        <div className="flex w-full flex-col gap-y-[50px] text-white md:gap-y-20">
+        <div className="flex w-full flex-col gap-y-[60px] text-white md:gap-y-20">
           {reportReview && reportReview.list.length > 0 && (
-            <div className="mx-auto max-w-full overflow-x-hidden">
-              <div className="flex w-full auto-rows-fr items-stretch gap-x-3 gap-y-5 overflow-x-auto scroll-smooth md:grid md:grid-cols-[1fr_1fr]">
-                {reportReview.list.map((item, index) => (
-                  <ReportInterviewCard
-                    key={`report-interview-${index}`}
-                    interview={item}
-                    mainColor={
-                      isDesktop
-                        ? index % 4 === 1 || index % 4 === 2
-                          ? mainColor[1]
-                          : mainColor[0]
-                        : index % 2 === 0
-                          ? mainColor[0]
-                          : mainColor[1]
-                    }
-                    subColor={
-                      isDesktop
-                        ? index % 4 === 1 || index % 4 === 2
-                          ? subColor[1]
-                          : subColor[0]
-                        : index % 2 === 0
-                          ? subColor[0]
-                          : subColor[1]
-                    }
-                  />
-                ))}
+            <>
+              <div className="mx-auto max-w-full overflow-x-hidden">
+                <div className="flex w-full auto-rows-fr items-stretch gap-x-3 gap-y-5 overflow-x-auto scroll-smooth md:grid md:grid-cols-[1fr_1fr]">
+                  {reportReview.list.map((item, index) => (
+                    <ReportInterviewCard
+                      key={`report-interview-${index}`}
+                      interview={item}
+                      mainColor={
+                        isDesktop
+                          ? index % 4 === 1 || index % 4 === 2
+                            ? mainColor[1]
+                            : mainColor[0]
+                          : index % 2 === 0
+                            ? mainColor[0]
+                            : mainColor[1]
+                      }
+                      subColor={
+                        isDesktop
+                          ? index % 4 === 1 || index % 4 === 2
+                            ? subColor[1]
+                            : subColor[0]
+                          : index % 2 === 0
+                            ? subColor[0]
+                            : subColor[1]
+                      }
+                    />
+                  ))}
+                </div>
               </div>
-            </div>
+              <MoreReviewButton
+                mainColor={'#3E4148'}
+                subColor={
+                  type === 'PERSONAL_STATEMENT'
+                    ? personalStatementColors.CA60FF
+                    : resumeColors._2CE282
+                }
+                type="REPORT"
+              />
+            </>
           )}
         </div>
       </div>

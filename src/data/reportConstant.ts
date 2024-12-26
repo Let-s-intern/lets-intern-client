@@ -1,126 +1,106 @@
 import { ReportType } from '@/api/report';
 
-export const REPORT_PROCESS: Record<string, string[]> = {
-  RESUME: [
-    '분야별 진단으로 정확한 이력서 상태 파악',
-    '구체적인 첨삭 제안으로 명확한 개선 방향 제시',
-    '이력서 작성 고민에 대한 맞춤형 솔루션 제공',
-    '채용공고 맞춤형 피드백',
-    '현직자 피드백으로 전문가의 조언까지!',
-  ],
-  PERSONAL_STATEMENT: [
-    '자기소개서 제출',
-    '진단 완료',
-    '리포트 발송',
-    '리포트 확인',
-    '리포트 다운로드',
-  ],
-  PORTFOLIO: [
-    '포트폴리오 제출',
-    '진단 완료',
-    '리포트 발송',
-    '리포트 확인',
-    '리포트 다운로드',
-  ],
-};
-
 export type reportExampleContentType = {
   title: string;
   src: string;
   description: string[];
 };
 
-export const REPORT_EXAMPLE: Record<
-  ReportType,
-  {
-    name: string;
-    hopeJob: string;
-    problem: string;
-    header: string;
-    content: reportExampleContentType[];
-  }
-> = {
-  RESUME: {
-    name: '임*정',
-    hopeJob: 'PM 직무 희망',
-    problem:
-      '지금까지 한 경험들을 직무 역량에 맞게 어떻게 정리해야할지 모르겠어요.',
-    header: '렛츠커리어가 제시하는 맞춤 이력서 솔루션!',
-    content: [
-      {
-        title: `6가지 핵심 기준을 바탕으로\n진단한 총평과 형식 피드백`,
-        src: '/images/report/report_example_1.png',
-        description: [
-          `6가지 핵심 기준 :\n가독성 / 구조 및 구성 / 직무 적합성 / 정확성 / 간결성 / 구체성`,
-          `이력서의 강점과 약점을 분석하여 총평과 개선 방향을 제공합니다.`,
-          `직무에 적합한 형식, 가독성 높은 구성 등 형식 개선에 대한 구체적인 피드백을 제안합니다`,
-        ],
-      },
-      {
-        title: `구체성과 설득력을 높이는\n맞춤형 내용 피드백`,
-        src: '/images/report/report_example_2.png',
-        description: [
-          `지원 직무와 연관된 경험과 역량을 효과적으로 표현할 수 있는 방향을 제시합니다.`,
-          `불필요한 내용을 정리하고, 내용 전개의 방향을 제안하여 간결하면서도 설득력 있는 이력서 작성 방법을 제공합니다.`,
-        ],
-      },
-    ],
-  },
-  PERSONAL_STATEMENT: {
-    name: '임*정',
-    hopeJob: 'PM 직무 희망',
-    problem:
-      '지금까지 한 경험들을 직무 역량에 맞게 어떻게 정리해야할지 모르겠어요.',
-    header: '렛츠커리어가 제시하는 맞춤 자소서 솔루션!',
-    content: [
-      {
-        title: '6가지 핵심 기준을 바탕으로 진단한 총평과 형식 피드백',
-        src: 'images/report/report_example_1.png',
-        description: [
-          `6가지 핵심 기준 :\n가독성 / 구조 및 구성 / 직무 적합성 / 정확성 / 간결성 / 구체성`,
-          `이력서의 강점과 약점을 분석하여 총평과 개선 방향을 제공합니다.`,
-          `직무에 적합한 형식, 가독성 높은 구성 등 형식 개선에 대한 구체적인 피드백을 제안합니다`,
-        ],
-      },
-      {
-        title: '구체성과 설득력을 높이는 맞춤형 내용 피드백',
-        src: 'images/report/report_example_2.png',
-        description: [
-          `지원 직무와 연관된 경험과 역량을 효과적으로 표현할 수 있는 방향을 제시합니다.`,
-          `불필요한 내용을 정리하고, 내용 전개의 방향을 제안하여 간결하면서도 설득력 있는 이력서 작성 방법을 제공합니다.`,
-        ],
-      },
-    ],
-  },
-  PORTFOLIO: {
-    name: '임*정',
-    hopeJob: 'PM 직무 희망',
-    problem:
-      '지금까지 한 경험들을 직무 역량에 맞게 어떻게 정리해야할지 모르겠어요.',
-    header: '렛츠커리어가 제시하는 맞춤 자소서 솔루션!',
-    content: [
-      {
-        title: '6가지 핵심 기준을 바탕으로 진단한 총평과 형식 피드백',
-        src: 'images/report/report_example_1.png',
-        description: [
-          `6가지 핵심 기준 :\n가독성 / 구조 및 구성 / 직무 적합성 / 정확성 / 간결성 / 구체성`,
-          `이력서의 강점과 약점을 분석하여 총평과 개선 방향을 제공합니다.`,
-          `직무에 적합한 형식, 가독성 높은 구성 등 형식 개선에 대한 구체적인 피드백을 제안합니다`,
-        ],
-      },
-      {
-        title: '구체성과 설득력을 높이는 맞춤형 내용 피드백',
-        src: 'images/report/report_example_2.png',
-        description: [
-          `지원 직무와 연관된 경험과 역량을 효과적으로 표현할 수 있는 방향을 제시합니다.`,
-          `불필요한 내용을 정리하고, 내용 전개의 방향을 제안하여 간결하면서도 설득력 있는 이력서 작성 방법을 제공합니다.`,
-        ],
-      },
-    ],
-  },
+export const REPORT_EXAMPLE: Record<ReportType, reportExampleContentType[]> = {
+  RESUME: [
+    {
+      title: `1. 6가지 핵심 기준을 바탕으로\n진단한 총평과 형식 피드백`,
+      src: '/images/report/report_example_resume_1.png',
+      description: [
+        `이력서의 강점과 약점을 분석`,
+        `직무에 적합한 형식, 가독성 높은 구성 등 형식 개선에 대한 구체적인 피드백을 제안`,
+      ],
+    },
+    {
+      title: `2. 구체성과 설득력을 높이는\n맞춤형 내용 피드백`,
+      src: '/images/report/report_example_resume_1.png',
+      description: [
+        `직무와 연관된 경험과 역량을 효과적으로 표현할 수 있는 방향을 제시`,
+        `설득력 있는 이력서 작성 방법 제공`,
+      ],
+    },
+    {
+      title: `3. 템플릿 기반의 구체적 첨삭\n및 작성 가이드`,
+      src: '/images/report/report_example_resume_1.png',
+      description: [
+        `첨삭 예시와 구체적인 수정 방향을 제안`,
+        `항목별 작성 팁과 사례를 통해 효과적인 이력서 작성 방식을 안내`,
+      ],
+    },
+    {
+      title: `4. 직무별\n합격자 사례 제공`,
+      src: '/images/report/report_example_resume_1.png',
+      description: [
+        `같은 직무의 합격자 사례로 이력서 작성 방향, 효과적인 성과 및 강점 작성 방법 제시`,
+      ],
+    },
+    {
+      title: `5. 채용공고 맞춤형 리포트\n(프리미엄 플랜)`,
+      src: '/images/report/report_example_resume_1.png',
+      description: [
+        `공고에 명시된 요구사항과 우대 조건을 기반으로, 이력서에 강조할 역량과 경험을 구체적으로 제안`,
+      ],
+    },
+    {
+      title: `6. 이력서 작성 고민에 대한\n1:1 상담`,
+      src: '/images/report/report_example_resume_1.png',
+      description: [
+        `신청 시 작성한 고민을 바탕으로, 이력서 작성 방향과 구체적인 조언을 제공`,
+      ],
+    },
+  ],
+  PERSONAL_STATEMENT: [
+    {
+      title: `6가지 핵심 기준을 바탕으로\n진단한 총평과 형식 피드백`,
+      src: '/images/report/report_example_1.png',
+      description: [
+        `6가지 핵심 기준 :\n가독성 / 구조 및 구성 / 직무 적합성 / 정확성 / 간결성 / 구체성`,
+        `이력서의 강점과 약점을 분석하여 총평과 개선 방향을 제공합니다.`,
+        `직무에 적합한 형식, 가독성 높은 구성 등 형식 개선에 대한 구체적인 피드백을 제안합니다`,
+      ],
+    },
+    {
+      title: `구체성과 설득력을 높이는\n맞춤형 내용 피드백`,
+      src: '/images/report/report_example_2.png',
+      description: [
+        `지원 직무와 연관된 경험과 역량을 효과적으로 표현할 수 있는 방향을 제시합니다.`,
+        `불필요한 내용을 정리하고, 내용 전개의 방향을 제안하여 간결하면서도 설득력 있는 이력서 작성 방법을 제공합니다.`,
+      ],
+    },
+  ],
+  PORTFOLIO: [
+    {
+      title: `6가지 핵심 기준을 바탕으로\n진단한 총평과 형식 피드백`,
+      src: '/images/report/report_example_1.png',
+      description: [
+        `6가지 핵심 기준 :\n가독성 / 구조 및 구성 / 직무 적합성 / 정확성 / 간결성 / 구체성`,
+        `이력서의 강점과 약점을 분석하여 총평과 개선 방향을 제공합니다.`,
+        `직무에 적합한 형식, 가독성 높은 구성 등 형식 개선에 대한 구체적인 피드백을 제안합니다`,
+      ],
+    },
+    {
+      title: `구체성과 설득력을 높이는\n맞춤형 내용 피드백`,
+      src: '/images/report/report_example_2.png',
+      description: [
+        `지원 직무와 연관된 경험과 역량을 효과적으로 표현할 수 있는 방향을 제시합니다.`,
+        `불필요한 내용을 정리하고, 내용 전개의 방향을 제안하여 간결하면서도 설득력 있는 이력서 작성 방법을 제공합니다.`,
+      ],
+    },
+  ],
 };
 
 export type reportIntroItemType = {
+  section0: {
+    images: {
+      image: string;
+      desc: string;
+    }[];
+  };
   section1: {
     title: string;
     description: string;
@@ -146,6 +126,22 @@ export type reportIntroItemType = {
 
 export const REPORT_INTRO: Record<ReportType, reportIntroItemType> = {
   RESUME: {
+    section0: {
+      images: [
+        {
+          image: '/images/report/report_intro_section0_resume_1.png',
+          desc: '온라인 제출 →',
+        },
+        {
+          image: '/images/report/report_intro_section0_resume_2.png',
+          desc: '72시간 이내 진단 →',
+        },
+        {
+          image: '/images/report/report_intro_section0_resume_3.png',
+          desc: '피드백 리포트 발송 →',
+        },
+      ],
+    },
     section1: {
       title: `혹시 반복되는 탈락에도\n매번 같은 이력서로\n\n지원하고 있지 않나요?`,
       description: `점점 높아져 가는 서류 통과의 허들,\n\n불합격만 N번째 반복 중이라면\n지금이 바로 제출 중인 이력서를 점검해 볼 때입니다.`,
@@ -188,6 +184,22 @@ export const REPORT_INTRO: Record<ReportType, reportIntroItemType> = {
     },
   },
   PERSONAL_STATEMENT: {
+    section0: {
+      images: [
+        {
+          image: '/images/report/report_intro_section0_personal_1.png',
+          desc: '온라인 제출 →',
+        },
+        {
+          image: '/images/report/report_intro_section0_personal_2.png',
+          desc: '48시간 이내 진단 →',
+        },
+        {
+          image: '/images/report/report_intro_section0_personal_3.png',
+          desc: '피드백 리포트 발송 →',
+        },
+      ],
+    },
     section1: {
       title: `혹시 마감에 급급해 충분히 다듬지 못한\n자소서를 그대로 제출하고 있지 않나요?`,
       description: `내 경험들이 자소서에 제대로 녹아들었는지 확인하지 못한 채 제출하고 있었다면,\n지금이야말로 자소서를 점검하고 더 완벽하게 다듬을 기회입니다.`,
@@ -230,6 +242,22 @@ export const REPORT_INTRO: Record<ReportType, reportIntroItemType> = {
     },
   },
   PORTFOLIO: {
+    section0: {
+      images: [
+        {
+          image: '/images/report/report_intro_section0_portfolio_1.png',
+          desc: '온라인 제출 →',
+        },
+        {
+          image: '/images/report/report_intro_section0_portfolio_2.png',
+          desc: '48시간 이내 진단 →',
+        },
+        {
+          image: '/images/report/report_intro_section0_portfolio_3.png',
+          desc: '피드백 리포트 발송 →',
+        },
+      ],
+    },
     section1: {
       title: `혹시 반복되는 탈락에도\n매번 같은 이력서로 지원하고 있지 않나요?`,
       description: `점점 높아져 가는 서류 통과의 허들, 불합격만 N번째 반복 중이라면\n지금이 바로 제출 중인 이력서를 점검해 볼 때입니다.`,

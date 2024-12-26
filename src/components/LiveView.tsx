@@ -98,11 +98,6 @@ const LiveView: React.FC<{ live: LiveIdSchema; isPreview?: boolean }> = ({
                 type="live"
               />
               <MoreReviewButton
-                title={live.title ?? '-'}
-                thumbnail={live.thumbnail ?? ''}
-                startDate={live.startDate?.format('YYYY.MM.DD') ?? ''}
-                endDate={live.endDate?.format('YYYY.MM.DD') ?? ''}
-                deadline={live.deadline?.format('YYYY.MM.DD') ?? ''}
                 type={'LIVE'}
                 mainColor={'#4D55F5'}
                 subColor={'#E45BFF'}

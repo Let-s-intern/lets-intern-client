@@ -251,11 +251,6 @@ const ChallengeView: React.FC<{
                 colors={colors}
               />
               <MoreReviewButton
-                title={challenge.title ?? '-'}
-                thumbnail={challenge.thumbnail ?? ''}
-                startDate={challenge.startDate?.format('YYYY.MM.DD') ?? ''}
-                endDate={challenge.endDate?.format('YYYY.MM.DD') ?? ''}
-                deadline={challenge.deadline?.format('YYYY.MM.DD') ?? ''}
                 type={'CHALLENGE'}
                 mainColor={colors.dark}
                 subColor={colors.secondary}

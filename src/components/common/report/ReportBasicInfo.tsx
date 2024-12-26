@@ -1,5 +1,4 @@
 import { ReportDetail } from '@/api/report';
-import { REPORT_PROCESS } from '@/data/reportConstant';
 import { ReactNode } from 'react';
 
 export const BASIC_INFO: Record<
@@ -23,6 +22,10 @@ export const BASIC_INFO: Record<
       title: '진행 방식',
       content: <p>{`온라인 제출 -> 48시간 이내 진단 -> 첨삭 리포트 발송`}</p>,
     },
+    {
+      title: '피드백 리포트',
+      content: <p>{`PDF 파일 제공(MY진단서 보기에서 확인 가능)`}</p>,
+    },
   ],
   PERSONAL_STATEMENT: [
     {
@@ -41,6 +44,10 @@ export const BASIC_INFO: Record<
       title: '진행 방식',
       content: <p>{`온라인 제출 -> 48시간 이내 진단 -> 첨삭 리포트 발송`}</p>,
     },
+    {
+      title: '피드백 리포트',
+      content: <p>{`PDF 파일 제공(MY진단서 보기에서 확인 가능)`}</p>,
+    },
   ],
   PORTFOLIO: [
     {
@@ -58,6 +65,10 @@ export const BASIC_INFO: Record<
     {
       title: '진행 방식',
       content: <p>{`온라인 제출 -> 48시간 이내 진단 -> 첨삭 리포트 발송`}</p>,
+    },
+    {
+      title: '피드백 리포트',
+      content: <p>{`PDF 파일 제공(MY진단서 보기에서 확인 가능)`}</p>,
     },
   ],
 };
@@ -85,10 +96,6 @@ const ReportBasicInfo = ({ reportBasic, color }: ReportBasicInfoProps) => {
     ? BASIC_INFO[reportBasic.reportType]
     : null;
 
-  const process = reportBasic?.reportType
-    ? REPORT_PROCESS[reportBasic.reportType]
-    : null;
-
   if (!reportBasic) {
     return <div>현재 개설된 진단 프로그램이 없습니다.</div>;
   }
@@ -113,22 +120,25 @@ const ReportBasicInfo = ({ reportBasic, color }: ReportBasicInfoProps) => {
         style={{ color: color ?? 'white' }}
       >
         {basicInfo && (
-          <div className="flex w-full flex-col gap-y-5 rounded-md border border-white/10 bg-neutral-0/75 px-4 py-5 md:flex-1">
-            {basicInfo.map((info, index) => (
-              <ReportBasicRow
-                key={index}
-                title={info.title}
-                content={info.content}
-              />
-            ))}
-          </div>
-        )}
-        {process && (
-          <div className="flex w-full flex-col gap-y-3 rounded-md border border-white/10 bg-neutral-0/75 px-4 py-5 md:flex-1">
-            <span className="whitespace-pre-wrap break-words text-xsmall14 font-semibold md:text-xsmall16">{`진단 후, 서류 합격에 한걸음 더 가까워질 거예요.`}</span>
-            {process.map((process, index) => (
-              <ReportProcessRow key={index} index={index} process={process} />
-            ))}
+          <div className="flex w-full flex-col gap-y-5 rounded-md border border-white/10 bg-neutral-0/75 px-4 py-5 md:flex-row md:gap-x-3 md:border-none md:bg-transparent md:p-0">
+            <div className="flex w-full flex-col gap-y-5 md:flex-1 md:rounded-md md:border md:border-white/10 md:bg-neutral-0/75 md:px-4 md:py-5">
+              {basicInfo.slice(0, 2).map((info, index) => (
+                <ReportBasicRow
+                  key={index}
+                  title={info.title}
+                  content={info.content}
+                />
+              ))}
+            </div>
+            <div className="flex w-full flex-col gap-y-5 md:flex-1 md:rounded-md md:border md:border-white/10 md:bg-neutral-0/75 md:px-4 md:py-5">
+              {basicInfo.slice(2).map((info, index) => (
+                <ReportBasicRow
+                  key={index}
+                  title={info.title}
+                  content={info.content}
+                />
+              ))}
+            </div>
           </div>
         )}
       </div>
@@ -153,25 +163,6 @@ const ReportBasicRow = ({
       <div className="whitespace-pre-wrap break-words text-xsmall14 font-medium text-white md:text-xsmall16">
         {content}
       </div>
-    </div>
-  );
-};
-
-const ReportProcessRow = ({
-  index,
-  process,
-}: {
-  index: number;
-  process: string;
-}) => {
-  return (
-    <div className="flex w-full items-center gap-x-2">
-      <span className="flex h-4 w-4 items-center justify-center rounded-full bg-neutral-30 text-xxsmall12 font-medium text-white">
-        {index + 1}
-      </span>
-      <p className="whitespace-pre-wrap break-words text-xsmall14 font-medium text-white md:text-xsmall16">
-        {process}
-      </p>
     </div>
   );
 };

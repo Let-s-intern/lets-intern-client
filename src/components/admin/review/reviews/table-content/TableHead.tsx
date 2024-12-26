@@ -1,6 +1,7 @@
 import TH, { THProps } from '../../../ui/table/regacy/TH';
 
 export interface ReviewsTableHeadProps {
+  type: string;
   filter: {
     programTitle: THProps['inOrder'];
     createdDate: THProps['inOrder'];
@@ -11,7 +12,11 @@ export interface ReviewsTableHeadProps {
   }) => void;
 }
 
-const ReviewsTableHead = ({ filter, setFilter }: ReviewsTableHeadProps) => {
+const ReviewsTableHead = ({
+  type,
+  filter,
+  setFilter,
+}: ReviewsTableHeadProps) => {
   const handleProgramTitleHeadClick = () => {
     if (filter.programTitle === 'ASCENDING') {
       setFilter({ ...filter, programTitle: 'DESCENDING' });
@@ -39,8 +44,9 @@ const ReviewsTableHead = ({ filter, setFilter }: ReviewsTableHeadProps) => {
           작성 일자
         </TH>
         <TH inOrder={filter.programTitle} onClick={handleProgramTitleHeadClick}>
-          프로그램 명
+          {type === 'REPORT' ? '서류 진단서 명' : '프로그램 명'}
         </TH>
+        {type === 'REPORT' && <TH>결제정보</TH>}
         <TH>이름</TH>
         <TH>NPS 점수</TH>
         <TH>NPS 이유</TH>
