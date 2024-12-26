@@ -120,14 +120,25 @@ const ReportBasicInfo = ({ reportBasic, color }: ReportBasicInfoProps) => {
         style={{ color: color ?? 'white' }}
       >
         {basicInfo && (
-          <div className="flex w-full flex-col gap-y-5 rounded-md border border-white/10 bg-neutral-0/75 px-4 py-5 md:flex-1">
-            {basicInfo.map((info, index) => (
-              <ReportBasicRow
-                key={index}
-                title={info.title}
-                content={info.content}
-              />
-            ))}
+          <div className="flex w-full flex-col gap-y-5 rounded-md border border-white/10 bg-neutral-0/75 px-4 py-5 md:flex-row md:gap-x-3 md:border-none md:bg-transparent md:p-0">
+            <div className="flex w-full flex-col gap-y-5 md:flex-1 md:rounded-md md:border md:border-white/10 md:bg-neutral-0/75 md:px-4 md:py-5">
+              {basicInfo.slice(0, 2).map((info, index) => (
+                <ReportBasicRow
+                  key={index}
+                  title={info.title}
+                  content={info.content}
+                />
+              ))}
+            </div>
+            <div className="flex w-full flex-col gap-y-5 md:flex-1 md:rounded-md md:border md:border-white/10 md:bg-neutral-0/75 md:px-4 md:py-5">
+              {basicInfo.slice(2).map((info, index) => (
+                <ReportBasicRow
+                  key={index}
+                  title={info.title}
+                  content={info.content}
+                />
+              ))}
+            </div>
           </div>
         )}
       </div>
