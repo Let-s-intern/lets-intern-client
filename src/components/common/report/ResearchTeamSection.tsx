@@ -6,7 +6,7 @@ import { resumeColors } from '@/pages/common/report/ReportResumePage';
 import MainHeader from './MainHeader';
 import SubHeader from './SubHeader';
 
-const SUPER_TITLE = '믿고 맡겨도 될까? 더이상 걱정마세요.';
+const SUPER_TITLE = '전문가와 함께 해결하세요.';
 const HEADING =
   '당신을 합격의 길로 이끌,\n렛츠커리어 취업 연구팀을 소개합니다.';
 
@@ -25,7 +25,7 @@ const ResearchTeamSection = ({ reportType }: ResearchTeamSectionProps) => {
   };
 
   return (
-    <section className="max-w-[1000px] px-5 py-14 md:pb-36 md:pt-32 lg:px-0">
+    <section className="max-w-[1000px] px-5 py-[60px] md:pb-[140px] md:pt-[120px] lg:px-0">
       <SubHeader className="mb-2 md:mb-3" style={subHeaderStyle}>
         {SUPER_TITLE}
       </SubHeader>
