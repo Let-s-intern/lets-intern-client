@@ -20,7 +20,7 @@ export default function useMinDate(data: ReportApplication) {
       setMinDate(dayjs().add(4, 'day'));
       return;
     }
-  }, []);
+  }, [data.optionIds, data.reportPriceType]);
 
   return minDate;
 }
