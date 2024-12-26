@@ -14,6 +14,7 @@ import { useNavigate } from 'react-router-dom';
 import {
   ActiveReport,
   convertReportTypeToDisplayName,
+  convertReportTypeToPathname,
   ReportPriceDetail,
   ReportPriceType,
   reportPriceTypeEnum,
@@ -191,7 +192,7 @@ const ReportApplyBottomSheet = React.forwardRef<
     });
 
     navigate(
-      `/report/apply/${report.reportType?.toLowerCase()}/${report.reportId}`,
+      `/report/apply/${convertReportTypeToPathname(report.reportType ?? 'RESUME')}/${report.reportId}`,
     );
   }, [
     navigate,
