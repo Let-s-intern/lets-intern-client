@@ -106,7 +106,7 @@ const TableBody = ({
       ))}
       {applicationId !== null && (
         <div className="fixed left-0 top-0 z-10 flex h-screen w-screen items-center justify-center bg-black/10">
-          <div className="flex min-h-64 min-w-96 flex-col justify-center rounded-sm bg-white px-8 py-6">
+          <div className="flex max-h-[90%] min-h-64 min-w-96 flex-col overflow-auto rounded-sm bg-white px-8 py-6">
             <h1 className="text-lg font-bold">결제정보</h1>
             {paymentDetailIsLoading || paymentDetailIsFetching ? (
               <LoadingContainer />
@@ -118,7 +118,7 @@ const TableBody = ({
               <div className="mt-5 flex w-full flex-col gap-y-3 text-xsmall14">
                 <div className="flex w-full gap-x-2">
                   <h2 className="w-20 text-neutral-40">주문번호</h2>
-                  <p>{paymentDetail.tossInfo?.orderId || '-'}</p>
+                  <p>{paymentDetail.reportPaymentInfo.paymentOrderId || '-'}</p>
                 </div>
                 <div className="flex w-full gap-x-2">
                   <h2 className="w-20 text-neutral-40">결제상품</h2>
@@ -137,8 +137,10 @@ const TableBody = ({
                       0
                       ? '없음'
                       : paymentDetail.reportPaymentInfo.reportOptionInfos.map(
-                          (option) => (
-                            <p key={option?.title}>{option?.title}</p>
+                          (option, idx) => (
+                            <p key={option?.optionTitle ?? '-' + idx}>
+                              {option?.optionTitle}
+                            </p>
                           ),
                         )}
                   </div>
@@ -184,7 +186,7 @@ const TableBody = ({
       )}
       {userId !== undefined && (
         <div className="fixed left-0 top-0 z-10 flex h-screen w-screen items-center justify-center bg-black/10">
-          <div className="flex min-h-64 min-w-96 flex-col justify-center rounded-sm bg-white px-8 py-6">
+          <div className="flex max-h-[95%] min-h-64 min-w-96 flex-col overflow-auto rounded-sm bg-white px-8 py-6">
             <h1 className="text-lg font-bold">회원정보</h1>
             {userDetailIsLoading || userDetailIsFetching ? (
               <LoadingContainer />
