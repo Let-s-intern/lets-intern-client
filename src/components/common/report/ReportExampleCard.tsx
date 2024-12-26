@@ -7,9 +7,9 @@ interface ReportExampleCardProps {
 
 const ReportExampleCard = ({ example }: ReportExampleCardProps) => {
   return (
-    <div className="flex w-[90%] shrink-0 flex-col whitespace-pre md:w-[calc(50%-6px)]">
+    <div className="flex w-full flex-col whitespace-pre">
       <div className="flex flex-col gap-y-3 overflow-hidden rounded-t-[10px] bg-neutral-10 px-5 pt-3 md:gap-y-2.5 md:px-8 md:pt-6">
-        <h5 className="break-keep text-center text-xsmall16 font-bold text-white md:text-small20">
+        <h5 className="whitespace-pre-line break-keep text-center text-xsmall16 font-bold text-white md:text-small20">
           {example.title}
         </h5>
         <div className="w-full px-2.5 md:px-8">

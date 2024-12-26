@@ -1,4 +1,5 @@
 import { convertReportTypeToShortName, ReportType } from '@/api/report';
+import CloseIcon from '@/assets/icons/close.svg?react';
 import NextButton from '@/assets/icons/next-button.svg?react';
 import PrevButton from '@/assets/icons/prev-button.svg?react';
 import { REPORT_EXAMPLE } from '@/data/reportConstant';
@@ -6,7 +7,7 @@ import { REPORT_EXAMPLE_ID } from '@/pages/common/report/ReportNavigation';
 import { personalStatementColors } from '@/pages/common/report/ReportPersonalStatementPage';
 import { resumeColors } from '@/pages/common/report/ReportResumePage';
 import { ReportExample } from '@/types/interface';
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import ReportExampleCard from './ReportExampleCard';
 
 interface ReportExampleSectionProps {
@@ -19,6 +20,9 @@ const ReportExampleSection = ({
   reportExample,
 }: ReportExampleSectionProps) => {
   const scrollRef = useRef<HTMLDivElement>(null);
+  const itemRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const [clickedExample, setClickedExample] = useState<number | null>(null);
+
   const subHeaderStyle = {
     color:
       type === 'PERSONAL_STATEMENT'
@@ -50,25 +54,24 @@ const ReportExampleSection = ({
       : resumeColors._2CE282;
 
   const example = REPORT_EXAMPLE[type];
-  // scrollRef의 첫 번째 child의 width를 가져옴
-  const scrollWidth = scrollRef.current?.firstElementChild?.clientWidth ?? 0;
 
   const handleScroll = (direction: 'left' | 'right') => {
-    if (!scrollRef.current) return;
+    if (!itemRefs.current.length) return;
 
-    const scrollLeft = scrollRef.current.scrollLeft;
-    const scrollMax =
-      scrollRef.current.scrollWidth - scrollRef.current.clientWidth;
-    const scrollAmount = scrollWidth + 12;
+    const currentIndex = itemRefs.current.findIndex(
+      (el) => el && el.getBoundingClientRect().left >= 0,
+    );
 
-    if (direction === 'left') {
-      scrollRef.current.scrollLeft = Math.max(scrollLeft - scrollAmount, 0);
-    } else {
-      scrollRef.current.scrollLeft = Math.min(
-        scrollLeft + scrollAmount,
-        scrollMax,
-      );
-    }
+    const targetIndex =
+      direction === 'left'
+        ? Math.max(currentIndex - 1, 0)
+        : Math.min(currentIndex + 1, itemRefs.current.length - 1);
+
+    itemRefs.current[targetIndex]?.scrollIntoView({
+      behavior: 'smooth',
+      block: 'nearest',
+      inline: 'start',
+    });
   };
 
   if (!reportExample) return null;
@@ -127,11 +130,18 @@ const ReportExampleSection = ({
         <div className="relative">
           <div className="w-full overflow-x-hidden">
             <div
-              className="flex w-full items-stretch gap-x-3 overflow-auto scroll-smooth md:overflow-hidden"
+              className="snap-align-start flex w-full snap-x snap-mandatory items-stretch gap-x-3 overflow-auto scroll-smooth md:overflow-hidden"
               ref={scrollRef}
             >
               {example.map((example, index) => (
-                <ReportExampleCard key={index} example={example} />
+                <div
+                  key={index}
+                  ref={(el) => (itemRefs.current[index] = el)}
+                  className="flex w-[90%] shrink-0 cursor-pointer snap-start flex-col md:w-[calc(50%-6px)]"
+                  onClick={() => setClickedExample(index)}
+                >
+                  <ReportExampleCard example={example} />
+                </div>
               ))}
             </div>
           </div>
@@ -147,6 +157,44 @@ const ReportExampleSection = ({
           />
         </div>
       </div>
+      {clickedExample !== null && (
+        <div className="fixed left-0 top-0 z-50 h-full w-full bg-black bg-opacity-50">
+          <div className="fixed left-1/2 top-1/2 max-h-[90%] w-[90%] max-w-[720px] -translate-x-1/2 -translate-y-1/2 transform overflow-auto rounded-md bg-white p-4 pb-9 md:p-14 md:pb-16">
+            <div className="flex w-full items-center justify-between">
+              <div className="flex h-5 w-5 items-center justify-center rounded-xxs bg-primary-light text-xsmall14 font-semibold text-white md:h-6 md:w-6 md:text-xsmall16">
+                {clickedExample + 1}
+              </div>
+              <CloseIcon
+                className="h-6 w-6 cursor-pointer"
+                onClick={() => setClickedExample(null)}
+              />
+            </div>
+            <div className="relative mt-2.5 md:mt-2">
+              <img
+                src={example[clickedExample].src}
+                alt={example[clickedExample].title}
+                className="h-auto w-full bg-white"
+              />
+              <PrevButton
+                className="absolute left-0 top-1/2 z-10 h-8 w-8 -translate-x-1/2 -translate-y-1/2 transform cursor-pointer text-neutral-20 md:hidden"
+                onClick={() =>
+                  setClickedExample(clickedExample > 0 ? clickedExample - 1 : 0)
+                }
+              />
+              <NextButton
+                className="absolute right-0 top-1/2 h-8 w-8 -translate-y-1/2 translate-x-1/2 transform cursor-pointer text-neutral-20 md:hidden"
+                onClick={() =>
+                  setClickedExample(
+                    clickedExample < example.length - 1
+                      ? clickedExample + 1
+                      : example.length - 1,
+                  )
+                }
+              />
+            </div>
+          </div>
+        </div>
+      )}
     </section>
   );
 };
