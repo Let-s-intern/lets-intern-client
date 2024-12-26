@@ -6,16 +6,11 @@ import {
 } from '@mui/material';
 import dayjs, { Dayjs } from 'dayjs';
 import React, { memo, useEffect, useRef, useState } from 'react';
-import { FaArrowLeft } from 'react-icons/fa6';
 import { IoCloseOutline } from 'react-icons/io5';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import { uploadFile } from '@/api/file';
-import {
-  convertReportTypeStatus,
-  convertReportTypeToLandingPath,
-  ReportType,
-} from '@/api/report';
+import { convertReportTypeStatus } from '@/api/report';
 import useMinDate from '@/hooks/useMinDate';
 import useReportProgramInfo from '@/hooks/useReportProgramInfo';
 import useRunOnce from '@/hooks/useRunOnce';
@@ -142,17 +137,6 @@ const ReportApplyPage = () => {
       </div>
 
       <BottomSheet className="mx-auto max-w-[55rem]">
-        {isMobile && (
-          <button
-            onClick={() => {
-              const to = `${convertReportTypeToLandingPath(reportType?.toUpperCase() as ReportType)}#content`;
-              navigate(to);
-            }}
-            className="flex h-14 w-14 shrink-0 items-center justify-center rounded-md border-2 border-primary bg-neutral-100"
-          >
-            <FaArrowLeft size={20} />
-          </button>
-        )}
         <button
           className="text-1.125-medium w-full rounded-md bg-primary py-3 text-center font-medium text-neutral-100"
           onClick={async () => {
@@ -442,7 +426,7 @@ const ScheduleSection = () => {
 
   return (
     <section className="flex flex-col gap-1 lg:flex-row lg:items-start lg:gap-5">
-      <div className="flex w-[8.75rem] shrink-0 items-center gap-1">
+      <div className="flex w-40 shrink-0 items-center gap-1">
         <Heading2>1:1 온라인 상담 일정</Heading2>
         <Tooltip alt="1:1 온라인 상담 일정 도움말">
           1:1 온라인 상담은 서류 진단서 발급 이후에 진행됩니다.
@@ -450,7 +434,7 @@ const ScheduleSection = () => {
       </div>
       <div className="flex w-full flex-col gap-5">
         <span className="text-xsmall14">
-          희망하시는 1:1 온라인 상담(40분) 일정을 모두 선택해주세요.
+          희망하시는 상담(40분) 일정을 모두 선택해주세요.
         </span>
         <div>
           <Label>희망순위1*</Label>
