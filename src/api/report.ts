@@ -36,6 +36,17 @@ export function convertReportTypeToDisplayName(
   }
 }
 
+export const convertReportTypeToShortName = (type: ReportType) => {
+  switch (type) {
+    case 'RESUME':
+      return '이력서';
+    case 'PERSONAL_STATEMENT':
+      return '자소서';
+    case 'PORTFOLIO':
+      return '포트폴리오';
+  }
+};
+
 export function convertReportTypeToLandingPath(type: ReportType) {
   switch (type) {
     case 'RESUME':

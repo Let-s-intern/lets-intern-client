@@ -1,45 +1,33 @@
 import CheckIcon from '@/assets/icons/chevron-down.svg?react';
-import { REPORT_EXAMPLE } from '@/data/reportConstant';
-import { ReportExampleItem } from '@/types/interface';
+import { reportExampleContentType } from '@/data/reportConstant';
 
 interface ReportExampleCardProps {
-  example: ReportExampleItem;
-  mainColor: string;
-  subColor: string;
+  example: reportExampleContentType;
 }
 
-const ReportExampleCard = ({
-  example,
-  mainColor,
-  subColor,
-}: ReportExampleCardProps) => {
-  const description = REPORT_EXAMPLE['RESUME'].content[0].description;
-
+const ReportExampleCard = ({ example }: ReportExampleCardProps) => {
   return (
-    <div className="flex min-h-full w-[90%] shrink-0 flex-col md:w-[calc(50%-6px)]">
-      <div
-        className="flex h-[400px] flex-col gap-y-4 overflow-hidden rounded-t-[10px] px-5 pt-6 md:h-[513px]"
-        style={{ backgroundColor: mainColor }}
-      >
-        <h5 className="whitespace-pre-wrap break-keep text-center text-small18 font-bold text-neutral-0 md:whitespace-normal">
-          {example.subTitle}
+    <div className="flex w-[90%] shrink-0 flex-col whitespace-pre md:w-[calc(50%-6px)]">
+      <div className="flex flex-col gap-y-3 overflow-hidden rounded-t-[10px] bg-neutral-10 px-5 pt-3 md:gap-y-2.5 md:px-8 md:pt-6">
+        <h5 className="break-keep text-center text-xsmall16 font-bold text-white md:text-small20">
+          {example.title}
         </h5>
-        <div className="w-full flex-1 overflow-hidden px-2.5">
+        <div className="w-full px-2.5 md:px-8">
           <img
-            src={example.imgUrl}
-            alt={example.subTitle}
-            className="h-full w-full object-cover object-top"
+            src={example.src}
+            alt={example.title}
+            className="h-auto w-full object-cover object-top"
           />
         </div>
       </div>
-      <div
-        className="flex flex-1 flex-col gap-y-3 rounded-b-[10px] py-6 pl-4 pr-5"
-        style={{ backgroundColor: subColor }}
-      >
-        {description.map((desc, index) => (
-          <div className="flex w-full gap-x-0.5" key={`${example.id}-${index}`}>
+      <div className="flex flex-1 flex-col gap-y-3 rounded-b-[10px] bg-white py-6 pl-4 pr-5">
+        {example.description.map((desc, index) => (
+          <div
+            className="flex w-full gap-x-0.5"
+            key={`${example.title}-${index}`}
+          >
             <CheckIcon width={24} height={24} />
-            <p className="flex-1 whitespace-pre-wrap text-xsmall14 font-semibold text-neutral-0">
+            <p className="flex-1 text-wrap text-xsmall14 font-semibold text-neutral-0 md:text-xsmall16">
               {desc}
             </p>
           </div>
