@@ -287,44 +287,43 @@ const ReportIntroSection = ({ type }: ReportIntroSectionProps) => {
         </div>
       </div>
       {/* section1 */}
-      <div
-        data-section="intro-2"
-        className="flex w-full max-w-[1000px] flex-col gap-y-10 px-5 py-[70px] md:gap-y-20 md:pb-[150px] md:pt-[110px] lg:px-0"
-      >
-        <div className="flex w-full flex-col gap-y-6 md:gap-y-[50px]">
-          <div className="flex w-full flex-col items-center gap-y-2 md:gap-y-3">
-            <span
-              className="text-xsmall16 font-bold md:text-small20"
-              style={subHeaderStyle}
-            >
-              쌓여가는 불합격 메일들...
-            </span>
-            <div className="flex w-full flex-col items-center gap-y-5 md:gap-y-[30px]">
-              <p className="text-medium22 font-bold md:text-xlarge30">
-                {convertString(reportIntro.section1.title)}
-              </p>
-              <p className="text-xsmall14 text-neutral-30 md:text-small20">
-                {convertString(reportIntro.section1.description)}
-              </p>
-            </div>
-          </div>
-        </div>
-        <div className="mx-auto flex w-full flex-col gap-y-5 md:w-3/5 md:gap-y-9">
-          {reportIntro.section1.questions.map((question, index) => (
-            <div
-              className="relative flex w-full items-center justify-center rounded-md border px-4 py-3 text-xsmall16 font-bold md:px-[60px] md:py-[30px] md:text-medium24"
-              key={`${type}-question-${index}`}
-              style={boxStyle}
-            >
-              {convertString(question)}
-              <div
-                className={`absolute z-10 ${index % 2 === 0 ? 'left-2.5' : 'right-0 translate-x-1/3 md:right-2.5'} ${index === 2 ? 'top-full md:top-0' : 'top-full'} h-[50px] w-[50px] -translate-y-2/3 transform md:h-[100px] md:w-[100px]`}
-                style={illustStyle}
+      <div data-section="intro-2" className="w-full bg-neutral-90">
+        <div className="flex w-full max-w-[1000px] flex-col gap-y-10 px-5 py-[70px] md:gap-y-20 md:pb-[150px] md:pt-[110px] lg:px-0">
+          <div className="flex w-full flex-col gap-y-6 md:gap-y-[50px]">
+            <div className="flex w-full flex-col items-center gap-y-2 md:gap-y-3">
+              <span
+                className="text-xsmall16 font-bold md:text-small20"
+                style={subHeaderStyle}
               >
-                {userProfile(index)}
+                쌓여가는 불합격 메일들...
+              </span>
+              <div className="flex w-full flex-col items-center gap-y-5 md:gap-y-[30px]">
+                <p className="text-medium22 font-bold md:text-xlarge30">
+                  {convertString(reportIntro.section1.title)}
+                </p>
+                <p className="text-xsmall14 text-neutral-30 md:text-small20">
+                  {convertString(reportIntro.section1.description)}
+                </p>
               </div>
             </div>
-          ))}
+          </div>
+          <div className="mx-auto flex w-full flex-col gap-y-5 md:w-3/5 md:gap-y-9">
+            {reportIntro.section1.questions.map((question, index) => (
+              <div
+                className="relative flex w-full items-center justify-center rounded-md border px-4 py-3 text-xsmall16 font-bold md:px-[60px] md:py-[30px] md:text-medium24"
+                key={`${type}-question-${index}`}
+                style={boxStyle}
+              >
+                {convertString(question)}
+                <div
+                  className={`absolute z-10 ${index % 2 === 0 ? 'left-2.5' : 'right-0 translate-x-1/3 md:right-2.5'} ${index === 2 ? 'top-full md:top-0' : 'top-full'} h-[50px] w-[50px] -translate-y-2/3 transform md:h-[100px] md:w-[100px]`}
+                  style={illustStyle}
+                >
+                  {userProfile(index)}
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
       {/* section2 */}
