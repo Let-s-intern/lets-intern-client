@@ -14,6 +14,7 @@ import { useNavigate } from 'react-router-dom';
 import {
   ActiveReport,
   convertReportTypeToDisplayName,
+  convertReportTypeToPathname,
   ReportPriceDetail,
   ReportPriceType,
   reportPriceTypeEnum,
@@ -185,13 +186,10 @@ const ReportApplyBottomSheet = React.forwardRef<
     setReportApplication({
       orderId: generateOrderId(),
       reportId: report.reportId,
-      // 파일만 초기화
-      applyUrl: '',
-      recruitmentUrl: '',
     });
 
     navigate(
-      `/report/apply/${report.reportType?.toLowerCase()}/${report.reportId}`,
+      `/report/apply/${convertReportTypeToPathname(report.reportType ?? 'RESUME')}/${report.reportId}`,
     );
   }, [
     navigate,

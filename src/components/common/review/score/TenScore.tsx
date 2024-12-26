@@ -1,5 +1,4 @@
 import clsx from 'clsx';
-import { useState } from 'react';
 
 interface TenScoreProps {
   tenScore: number | null;
@@ -21,7 +20,7 @@ const TenScore = ({ tenScore, setTenScore }: TenScoreProps) => {
         <div
           key={th}
           className={clsx(
-            'flex h-[2.5rem] w-[2.5rem] cursor-pointer items-center justify-center font-medium',
+            'flex h-7 w-7 cursor-pointer items-center justify-center font-medium md:h-[2.5rem] md:w-[2.5rem]',
             {
               'bg-primary text-white': th === tenScore,
               'border border-r-0 border-primary-xlight bg-white last:border-r':

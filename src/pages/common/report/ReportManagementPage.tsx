@@ -216,6 +216,9 @@ const ReportManagementPage = () => {
 
   const alerted = useRef(false);
 
+  const isReportSubmitted = (reportUrl?: string | null) =>
+    reportUrl !== null && reportUrl !== undefined;
+
   useEffect(() => {
     if (status === 'success' && data.myReportInfos.length === 0) {
       if (alerted.current) {
@@ -281,12 +284,12 @@ const ReportManagementPage = () => {
                   <Badge
                     status={convertReportStatusToBadgeStatus(
                       item.applicationStatus,
-                      item.applyUrl !== '',
+                      isReportSubmitted(item.applyUrl),
                     )}
                   >
                     {convertReportStatusToUserDisplayName(
                       item.applicationStatus,
-                      item.applyUrl !== '',
+                      isReportSubmitted(item.applyUrl),
                     )}
                   </Badge>
                   <h2 className="text-xsmall14 font-medium">{item.title}</h2>
@@ -345,7 +348,7 @@ const ReportManagementPage = () => {
                   )}
 
                   {/* 서류 제출 X AND 피드백 신청 X */}
-                  {item.applyUrl === '' &&
+                  {!isReportSubmitted(item.applyUrl) &&
                     item.feedbackStatus !== 'APPLIED' && (
                       <ReportManagementButton
                         className="mt-5"
@@ -367,7 +370,7 @@ const ReportManagementPage = () => {
                     )}
 
                   {/* 서류를 제출했으면 */}
-                  {item.applyUrl !== '' &&
+                  {isReportSubmitted(item.applyUrl) &&
                     (item.applicationStatus === 'APPLIED' ||
                     item.applicationStatus === 'REPORTING' ||
                     item.applicationStatus === 'REPORTED' ? (
@@ -408,14 +411,14 @@ const ReportManagementPage = () => {
                             now: dayjs(),
                             reportFeedback: item.confirmedTime,
                             status: item.feedbackStatus,
-                            isReportSubmitted: item.applyUrl !== '',
+                            isReportSubmitted: isReportSubmitted(item.applyUrl),
                           })}
                         >
                           {convertFeedbackStatusToDisplayName({
                             now: dayjs(),
                             reportFeedback: item.confirmedTime,
                             status: item.feedbackStatus,
-                            isReportSubmitted: item.applyUrl !== '',
+                            isReportSubmitted: isReportSubmitted(item.applyUrl),
                           })}
                         </Badge>
                         <span className="text-xsmall14 font-medium">
@@ -425,7 +428,7 @@ const ReportManagementPage = () => {
                     </header>
 
                     {/* 일정을 선택했으면 일정 테이블 표시 */}
-                    {item.applyUrl !== '' && (
+                    {isReportSubmitted(item.applyUrl) && (
                       <table className="mt-3">
                         <tbody>
                           {/* 확인중 단계 일정 확인 */}
@@ -483,7 +486,7 @@ const ReportManagementPage = () => {
                     )}
 
                     {/* 일정을 선택하지 않았으면 */}
-                    {item.applyUrl === '' ? (
+                    {!isReportSubmitted(item.applyUrl) ? (
                       <ReportManagementButton
                         className="mt-5"
                         onClick={() => {
