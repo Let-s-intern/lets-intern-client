@@ -7,11 +7,6 @@ import { useState } from 'react';
 import { maskingName } from '../program/program-detail/review/ProgramDetailReviewItem';
 
 interface MoreReviewButtonProps {
-  title: string;
-  thumbnail: string;
-  deadline: string;
-  startDate: string;
-  endDate: string;
   type: 'CHALLENGE' | 'LIVE' | 'VOD' | 'REPORT';
   mainColor: string;
   subColor: string;
@@ -20,14 +15,14 @@ interface MoreReviewButtonProps {
 const MoreReviewButton = ({
   mainColor,
   subColor,
-  ...props
+  type,
 }: MoreReviewButtonProps) => {
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
   const { data, isLoading: reviewIsLoading } = useGetTotalReview({
-    type: props.type,
+    type,
   });
 
   const reviews = data?.reviewList?.filter((review) => review.isVisible);
