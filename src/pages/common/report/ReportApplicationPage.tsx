@@ -59,8 +59,8 @@ const ReportApplicationPage = () => {
   const validateFile = () => {
     const { applyUrl, reportPriceType, recruitmentUrl } = reportApplication;
 
-    const isEmpty = (value: string | File | null) =>
-      value === '' || value === null;
+    const isEmpty = (value?: string | File | null) =>
+      value === '' || value === null || value === undefined;
 
     if (isEmpty(applyUrl) && isEmpty(applyFile)) {
       return { message: '진단용 서류를 등록해주세요.', isValid: false };

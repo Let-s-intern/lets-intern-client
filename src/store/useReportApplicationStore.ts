@@ -16,8 +16,8 @@ export interface ReportApplication {
   amount: number | null;
   programPrice: number | null;
   programDiscount: number | null;
-  applyUrl: string;
-  recruitmentUrl: string;
+  applyUrl?: string | null;
+  recruitmentUrl?: string | null;
   desiredDate1: string | undefined;
   desiredDate2: string | undefined;
   desiredDate3: string | undefined;
@@ -51,8 +51,6 @@ const useReportApplicationStore = create(
         amount: null,
         programPrice: null,
         programDiscount: null,
-        applyUrl: '',
-        recruitmentUrl: '',
         desiredDate1: undefined,
         desiredDate2: undefined,
         desiredDate3: undefined,
@@ -84,8 +82,6 @@ const useReportApplicationStore = create(
             amount: null,
             programPrice: null,
             programDiscount: null,
-            applyUrl: '',
-            recruitmentUrl: '',
             desiredDate1: undefined,
             desiredDate2: undefined,
             desiredDate3: undefined,
@@ -102,7 +98,7 @@ const useReportApplicationStore = create(
 
         if (!isEmpty(currentData.applyUrl)) {
           try {
-            new URL(currentData.applyUrl);
+            new URL(currentData.applyUrl ?? '');
           } catch (error) {
             return {
               isValid: false,
@@ -116,7 +112,7 @@ const useReportApplicationStore = create(
           !isEmpty(currentData.recruitmentUrl)
         ) {
           try {
-            new URL(currentData.recruitmentUrl);
+            new URL(currentData.recruitmentUrl ?? '');
           } catch (error) {
             return {
               isValid: false,

@@ -186,9 +186,6 @@ const ReportApplyBottomSheet = React.forwardRef<
     setReportApplication({
       orderId: generateOrderId(),
       reportId: report.reportId,
-      // 파일만 초기화
-      applyUrl: '',
-      recruitmentUrl: '',
     });
 
     navigate(

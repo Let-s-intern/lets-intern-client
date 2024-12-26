@@ -1,9 +1,4 @@
-import {
-  FormControl,
-  RadioGroup,
-  SelectChangeEvent,
-  useMediaQuery,
-} from '@mui/material';
+import { FormControl, RadioGroup, SelectChangeEvent } from '@mui/material';
 import dayjs, { Dayjs } from 'dayjs';
 import React, { memo, useEffect, useRef, useState } from 'react';
 import { IoCloseOutline } from 'react-icons/io5';
@@ -32,7 +27,6 @@ import HorizontalRule from '@components/ui/HorizontalRule';
 const ReportApplyPage = () => {
   const navigate = useNavigate();
   const { reportType, reportId } = useParams();
-  const isMobile = useMediaQuery('(max-width: 991px)');
 
   const [applyFile, setApplyFile] = useState<File | null>(null);
   const [recruitmentFile, setRecruitmentFile] = useState<File | null>(null);
@@ -45,6 +39,8 @@ const ReportApplyPage = () => {
     setReportApplication,
     validate,
   } = useReportApplicationStore();
+
+  console.log('신청서:', reportApplication);
 
   const convertFile = async () => {
     // 파일 변환
@@ -62,8 +58,8 @@ const ReportApplyPage = () => {
   const validateFile = () => {
     const { applyUrl, reportPriceType, recruitmentUrl } = reportApplication;
 
-    const isEmpty = (value: string | File | null) =>
-      value === '' || value === null;
+    const isEmpty = (value?: string | File | null) =>
+      value === '' || value === null || value === undefined;
 
     if (isEmpty(applyUrl) && isEmpty(applyFile)) {
       return { message: '진단용 서류를 등록해주세요.', isValid: false };
@@ -98,7 +94,7 @@ const ReportApplyPage = () => {
         <main className="mb-8 mt-6 flex flex-col gap-10">
           {/* 프로그램 정보 */}
           <ProgramInfoSection
-            onChangeRadio={(event, value) => setIsSubmitNow(value)}
+            onChangeRadio={(_, value) => setIsSubmitNow(value)}
           />
 
           {/* '지금 제출할래요' 선택 시 표시 */}
@@ -284,7 +280,7 @@ const DocumentSection = ({
           onChange={(e) => {
             setValue(e.target.value);
             if (e.target.value === 'url') dispatch(null);
-            else setReportApplication({ applyUrl: '' });
+            else setReportApplication({ applyUrl: null });
           }}
         >
           {/* 파일 첨부 */}
@@ -305,7 +301,7 @@ const DocumentSection = ({
               <FilledInput
                 name="applyUrl"
                 placeholder="https://"
-                value={data.applyUrl || ''}
+                value={data.applyUrl || undefined}
                 onChange={(e) =>
                   setReportApplication({ applyUrl: e.target.value })
                 }
@@ -353,7 +349,7 @@ const PremiumSection = ({
             onChange={(e) => {
               setValue(e.target.value);
               if (e.target.value === 'url') dispatch(null);
-              else setReportApplication({ recruitmentUrl: '' });
+              else setReportApplication({ recruitmentUrl: null });
             }}
             name="radio-buttons-group"
           >
@@ -376,7 +372,7 @@ const PremiumSection = ({
                 <FilledInput
                   name="recruitmentUrl"
                   placeholder="https://"
-                  value={data.recruitmentUrl || ''}
+                  value={data.recruitmentUrl ?? undefined}
                   onChange={(e) =>
                     setReportApplication({ recruitmentUrl: e.target.value })
                   }

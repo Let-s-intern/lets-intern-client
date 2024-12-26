@@ -24,6 +24,7 @@ const ReportPaymentPage = () => {
   const { data: reportApplication } = useReportApplicationStore();
   const { payment } = useReportPayment();
   const patchUserMutation = usePatchUser();
+  console.log('신청서:', reportApplication);
 
   return (
     <div className="mx-auto max-w-[55rem] px-5 md:pt-5 lg:px-0">
