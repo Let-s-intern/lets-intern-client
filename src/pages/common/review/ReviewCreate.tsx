@@ -134,8 +134,8 @@ const ReviewCreate = ({ isEdit }: { isEdit: boolean }) => {
   };
 
   return (
-    <div className="z-50 flex w-full flex-col items-center bg-neutral-0/50 md:fixed md:left-0 md:top-0 md:h-screen md:w-screen md:justify-center">
-      <main className="flex w-full max-w-3xl flex-col gap-16 bg-white px-5 md:relative md:max-h-[45rem] md:w-[40rem] md:overflow-y-scroll md:rounded-xl md:px-14 md:pb-6 md:pt-12">
+    <div className="bg-neutral-0/50 md:fixed md:inset-0 md:z-50 md:flex md:flex-col md:items-center md:justify-center">
+      <main className="relative flex w-full flex-col gap-16 bg-white px-5 md:relative md:max-h-[45rem] md:w-[40rem] md:overflow-y-scroll md:rounded-xl md:px-14 md:pb-6 md:pt-12">
         <img
           src="/icons/menu_close_md.svg"
           alt="close"

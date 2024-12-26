@@ -25,7 +25,10 @@ const ReportFaqSection = ({ reportType, reportId }: ReportFaqSectionProps) => {
   const { data } = useGetReportFaqs(reportId);
 
   return (
-    <section className="w-full px-5 pb-16 md:pb-32 md:pt-24 lg:px-0">
+    <section
+      data-section="faq"
+      className="w-full px-5 pb-16 md:pb-32 md:pt-24 lg:px-0"
+    >
       <header>
         <SubHeader className="mb-2 md:mb-3" style={subHeaderStyle}>
           {SUB_HEADER}

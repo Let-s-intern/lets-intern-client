@@ -19,7 +19,6 @@ import { useNavigate } from 'react-router-dom';
 import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
 import { ProgramTypeEnum } from '@/schema';
 import AdminReportFeedback from '@components/admin/report/AdminReportFeedback';
-import ReportExampleEditor from '@components/admin/report/ReportExampleEditor';
 import ReportProgramRecommendEditor from '@components/admin/report/ReportProgramRecommendEditor';
 import ReportReviewEditor from '@components/admin/report/ReportReviewEditor';
 import Heading2 from '@components/admin/ui/heading/Heading2';
@@ -512,7 +511,7 @@ const AdminReportCreatePage = () => {
           <hr />
 
           <section>
-            <Heading2>1:1 피드백 설정</Heading2>
+            <Heading2>1:1 온라인 상담 설정</Heading2>
             <AdminReportFeedback
               initialValue={{
                 price: 0,
@@ -529,18 +528,6 @@ const AdminReportCreatePage = () => {
                   };
                 });
               }}
-            />
-          </section>
-
-          <hr />
-
-          {/* 레포트 예시 */}
-          <section className="mb-6">
-            <ReportExampleEditor
-              reportExample={content.reportExample}
-              setReportExample={(reportExample) =>
-                setContent((prev) => ({ ...prev, reportExample }))
-              }
             />
           </section>
 

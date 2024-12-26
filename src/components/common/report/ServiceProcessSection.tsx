@@ -70,7 +70,7 @@ const ServiceProcessSection = ({ reportType }: ServiceProcessSectionProps) => {
 
       <main className="mx-auto mt-10 flex max-w-[690px] flex-col items-center gap-5 md:mt-11 md:gap-8">
         {/* 1단계 */}
-        <ProcessCard style={mainCardStyle}>
+        <ProcessCard data-section="workflow-1" style={mainCardStyle}>
           <NumberedTitle
             numberStyle={numberStyle}
             className={clsx({
@@ -130,7 +130,7 @@ const ServiceProcessSection = ({ reportType }: ServiceProcessSectionProps) => {
         </ProcessCard>
 
         {/* 2단계 */}
-        <ProcessCard className="bg-[#14BCFF]">
+        <ProcessCard data-section="workflow-2" className="bg-[#14BCFF]">
           <NumberedTitle numberClassName="bg-[#DDF5FF]" number={2}>
             렛츠커리어 취업 연구팀의
             <br className="md:hidden" /> 세심한 진단 및 분석
@@ -172,7 +172,7 @@ const ServiceProcessSection = ({ reportType }: ServiceProcessSectionProps) => {
         </ProcessCard>
 
         {/* 3단계 */}
-        <ProcessCard style={mainCardStyle}>
+        <ProcessCard data-section="workflow-3" style={mainCardStyle}>
           <NumberedTitle
             numberStyle={numberStyle}
             number={3}
@@ -207,7 +207,7 @@ const ServiceProcessSection = ({ reportType }: ServiceProcessSectionProps) => {
         </ProcessCard>
 
         {/* 4단계 */}
-        <ProcessCard style={mainCardStyle}>
+        <ProcessCard data-section="workflow-4" style={mainCardStyle}>
           <NumberedTitle
             numberStyle={numberStyle}
             number={4}
@@ -223,7 +223,7 @@ const ServiceProcessSection = ({ reportType }: ServiceProcessSectionProps) => {
             >
               별도구매시
             </span>
-            1:1 피드백 진행
+            1:1 온라인 상담 진행
           </NumberedTitle>
 
           <div className="mt-6 flex flex-col items-center gap-2 md:gap-4">
@@ -243,14 +243,14 @@ const ServiceProcessSection = ({ reportType }: ServiceProcessSectionProps) => {
 
             <ContentBox>
               <NumberedContent number="4-2">
-                1:1 피드백 시간 동안 무제한으로 질문이 가능하며, 실시간으로
+                1:1 온라인 상담 시간 동안 무제한으로 질문이 가능하며, 실시간으로
                 이력서 첨삭도 진행됩니다.
               </NumberedContent>
             </ContentBox>
 
             <ContentBox className="flex flex-col gap-3">
               <NumberedContent number="4-3">
-                1:1 피드백을 미처 신청하지 못했다면, 별도 신청 가능합니다.
+                1:1 온라인 상담을 미처 신청하지 못했다면, 별도 신청 가능합니다.
                 채팅으로 문의하시면 빠르게 도와드릴게요!
               </NumberedContent>
             </ContentBox>

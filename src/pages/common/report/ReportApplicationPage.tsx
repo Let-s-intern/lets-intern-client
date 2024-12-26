@@ -2,7 +2,7 @@ import { FormControl, RadioGroup, SelectChangeEvent } from '@mui/material';
 import dayjs, { Dayjs } from 'dayjs';
 import React, { memo, useEffect, useRef, useState } from 'react';
 import { IoCloseOutline } from 'react-icons/io5';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 import { uploadFile } from '@/api/file';
 import { convertReportTypeStatus, usePatchMyApplication } from '@/api/report';
@@ -15,13 +15,14 @@ import useReportApplicationStore from '@/store/useReportApplicationStore';
 import { ReportFormRadioControlLabel } from '@components/common/report/ControlLabel';
 import DateTimePicker from '@components/common/report/DateTimePicker';
 import FilledInput from '@components/common/report/FilledInput';
-import Heading1 from '@components/common/report/Heading1';
 import Heading2 from '@components/common/report/Heading2';
 import Label from '@components/common/report/Label';
 import Tooltip from '@components/common/report/Tooltip';
+import BackHeader from '@components/common/ui/BackHeader';
 import BottomSheet from '@components/common/ui/BottomSheeet';
 import BaseButton from '@components/common/ui/button/BaseButton';
 import HorizontalRule from '@components/ui/HorizontalRule';
+import ReportSubmitModal from '@components/ui/ReportSubmitModal';
 
 const ReportApplicationPage = () => {
   const navigate = useNavigate();
@@ -29,11 +30,13 @@ const ReportApplicationPage = () => {
 
   const [applyFile, setApplyFile] = useState<File | null>(null);
   const [recruitmentFile, setRecruitmentFile] = useState<File | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const { isLoggedIn } = useAuthStore();
-  const { mutateAsync: patchMyApplication } = usePatchMyApplication();
-
   const { data: reportApplication, validate } = useReportApplicationStore();
+
+  const { mutateAsync: patchMyApplication } = usePatchMyApplication();
 
   const convertFile = async () => {
     let applyUrl = '';
@@ -56,8 +59,8 @@ const ReportApplicationPage = () => {
   const validateFile = () => {
     const { applyUrl, reportPriceType, recruitmentUrl } = reportApplication;
 
-    const isEmpty = (value: string | File | null) =>
-      value === '' || value === null;
+    const isEmpty = (value?: string | File | null) =>
+      value === '' || value === null || value === undefined;
 
     if (isEmpty(applyUrl) && isEmpty(applyFile)) {
       return { message: '진단용 서류를 등록해주세요.', isValid: false };
@@ -83,14 +86,9 @@ const ReportApplicationPage = () => {
   });
 
   return (
-    <div className="px-5 md:px-32 md:pb-10 xl:flex xl:gap-16 xl:px-48">
+    <div className="mx-auto max-w-[55rem] px-5 md:pb-10 md:pt-5 xl:flex xl:gap-16">
       <div className="w-full">
-        <header className="flex items-center gap-4">
-          <Link to="/report/management">
-            <img src="/icons/Arrow_Left_MD.svg" alt="이전 버튼" />
-          </Link>
-          <Heading1>제출하기</Heading1>
-        </header>
+        <BackHeader to="/report/management">제출하기</BackHeader>
 
         <main className="mb-8 flex flex-col gap-10">
           <CallOut
@@ -112,7 +110,7 @@ const ReportApplicationPage = () => {
             )}
           <HorizontalRule className="-mx-5 md:-mx-32 lg:mx-0" />
 
-          {/* 1:1 피드백 일정 */}
+          {/* 1:1 온라인 상담 일정 */}
           {reportApplication.isFeedbackApplied && (
             <>
               <ScheduleSection />
@@ -143,31 +141,36 @@ const ReportApplicationPage = () => {
               return;
             }
 
-            const isSubmit = confirm(
-              '제출 후에는 수정이 어렵습니다. 그래도 제출하시겠어요?',
-            );
-
-            if (isSubmit) {
-              const { applyUrl, recruitmentUrl } = await convertFile();
-
-              await patchMyApplication({
-                applicationId: Number(applicationId),
-                applyUrl,
-                recruitmentUrl,
-                desiredDate1: reportApplication.desiredDate1!,
-                desiredDate2: reportApplication.desiredDate2!,
-                desiredDate3: reportApplication.desiredDate3!,
-                wishJob: reportApplication.wishJob,
-                message: reportApplication.message,
-              });
-              alert('제출이 완료되었습니다.');
-              navigate('/report/management');
-            }
+            setIsModalOpen(true);
           }}
         >
           제출하기
         </BaseButton>
       </BottomSheet>
+
+      <ReportSubmitModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        isLoading={isLoading}
+        onClickConfirm={async () => {
+          setIsLoading(true);
+          const { applyUrl, recruitmentUrl } = await convertFile();
+
+          await patchMyApplication({
+            applicationId: Number(applicationId),
+            applyUrl,
+            recruitmentUrl,
+            desiredDate1: reportApplication.desiredDate1!,
+            desiredDate2: reportApplication.desiredDate2!,
+            desiredDate3: reportApplication.desiredDate3!,
+            wishJob: reportApplication.wishJob,
+            message: reportApplication.message,
+          });
+          alert('제출이 완료되었습니다.');
+          navigate('/report/management');
+          setIsLoading(false);
+        }}
+      />
     </div>
   );
 };
@@ -209,7 +212,7 @@ const DocumentSection = ({
 
   return (
     <section className="flex flex-col lg:flex-row lg:items-start lg:gap-5">
-      <div className="mb-3 flex w-[8.75rem] shrink-0 items-center">
+      <div className="mb-3 flex w-40 shrink-0 items-center">
         <Heading2>진단용 {convertReportTypeStatus(reportType!)}</Heading2>
         <RequiredStar />
       </div>
@@ -275,7 +278,7 @@ const PremiumSection = ({
   return (
     <section className="flex flex-col gap-1 lg:flex-row lg:items-start lg:gap-5">
       {
-        <div className="flex w-[8.75rem] shrink-0 items-center">
+        <div className="flex w-40 shrink-0 items-center">
           <Heading2>(프리미엄) 채용공고</Heading2>
           <RequiredStar />
         </div>
@@ -363,15 +366,15 @@ const ScheduleSection = () => {
 
   return (
     <section className="flex flex-col gap-1 lg:flex-row lg:items-start lg:gap-5">
-      <div className="flex w-[8.75rem] shrink-0 items-center gap-1">
-        <Heading2>1:1 피드백 일정</Heading2>
-        <Tooltip alt="1:1 피드백 일정 도움말">
-          1:1 피드백은 서류 진단서 발급 이후에 진행됩니다.
+      <div className="flex w-40 shrink-0 items-center gap-1">
+        <Heading2>1:1 온라인 상담 일정</Heading2>
+        <Tooltip alt="1:1 온라인 상담 일정 도움말">
+          1:1 온라인 상담은 서류 진단서 발급 이후에 진행됩니다.
         </Tooltip>
       </div>
       <div className="flex w-full flex-col gap-5">
         <span className="text-xsmall14">
-          희망하시는 1:1 피드백(40분) 일정을 모두 선택해주세요.
+          희망하시는 1:1 온라인 상담(40분) 일정을 모두 선택해주세요.
         </span>
         <div>
           <Label>희망순위1*</Label>

@@ -107,12 +107,14 @@ export type LiveContent = {
 
 export type ReportReviewItem = {
   id: string | number;
-  name: string;
-  job: string;
+  title: string;
+  question: string;
+  answer: string;
+  detail: string;
+  profile: string;
   reportName: string;
-  company: string;
-  isSuccessful: boolean;
-  content: string;
+  job: string;
+  name: string;
 };
 
 export type ReportReview = {

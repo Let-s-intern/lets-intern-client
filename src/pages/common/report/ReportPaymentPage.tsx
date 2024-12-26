@@ -1,18 +1,11 @@
 import { useEffect, useMemo, useState } from 'react';
-import { FaArrowLeft } from 'react-icons/fa6';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 import { useGetParticipationInfo } from '@/api/application';
-import {
-  convertReportPriceType,
-  ReportOptionInfo,
-  useGetReportDetailQuery,
-  useGetReportPriceDetail,
-} from '@/api/report';
+import { convertReportPriceType, useGetReportPriceDetail } from '@/api/report';
 import { usePatchUser } from '@/api/user';
-import Card from '@/components/common/report/Card';
-import Heading1 from '@/components/common/report/Heading1';
 import Heading2 from '@/components/common/report/Heading2';
+import ProgramCard from '@/components/common/report/ProgramCard';
 import BottomSheet from '@/components/common/ui/BottomSheeet';
 import useReportPayment from '@/hooks/useReportPayment';
 import useReportProgramInfo from '@/hooks/useReportProgramInfo';
@@ -20,25 +13,25 @@ import { generateOrderId } from '@/lib/order';
 import { twMerge } from '@/lib/twMerge';
 import useReportApplicationStore from '@/store/useReportApplicationStore';
 import Label from '@components/common/report/Label';
+import BackHeader from '@components/common/ui/BackHeader';
 import BaseButton from '@components/common/ui/button/BaseButton';
 import Input from '@components/common/ui/input/Input';
 
 const ReportPaymentPage = () => {
   const navigate = useNavigate();
+  const { reportType } = useParams();
 
-  const { data: reportApplication, setReportApplication } =
-    useReportApplicationStore();
-  const { data: reportDetail } = useGetReportDetailQuery(
-    reportApplication.reportId!,
-  );
+  const { data: reportApplication } = useReportApplicationStore();
   const { payment } = useReportPayment();
   const patchUserMutation = usePatchUser();
 
   return (
-    <div className="px-5 md:px-32">
-      <header>
-        <Heading1>결제하기</Heading1>
-      </header>
+    <div className="mx-auto max-w-[55rem] px-5 md:pt-5 lg:px-0">
+      <BackHeader
+        to={`/report/apply/${reportType}/${reportApplication.reportId}`}
+      >
+        결제하기
+      </BackHeader>
 
       <main className="mb-8 flex flex-col gap-10">
         <ProgramInfoSection />
@@ -46,19 +39,7 @@ const ReportPaymentPage = () => {
         <ReportPaymentSection />
       </main>
 
-      <BottomSheet className="md:mx-32">
-        <BaseButton
-          variant="outlined"
-          className="h-14 w-14 shrink-0"
-          onClick={() => {
-            setReportApplication({ applyUrl: '', recruitmentUrl: '' }); // url 초기화
-            navigate(
-              `/report/apply/${reportDetail?.reportType}/${reportApplication.reportId}`,
-            );
-          }}
-        >
-          <FaArrowLeft size={20} color="#000" />
-        </BaseButton>
+      <BottomSheet className="mx-auto max-w-[55rem]">
         <BaseButton
           className="complete_button_click w-full text-small18"
           onClick={() => {
@@ -93,7 +74,7 @@ const ProgramInfoSection = () => {
   return (
     <section className="flex flex-col gap-6">
       <Heading2>프로그램 정보</Heading2>
-      <Card
+      <ProgramCard
         imgSrc="/images/report-thumbnail.png"
         imgAlt="서류 진단서 프로그램 썸네일"
         title={title!}
@@ -124,7 +105,7 @@ const UsereInfoSection = () => {
     setReportApplication({
       contactEmail: participationInfo?.contactEmail || '',
     });
-  }, [participationInfo?.contactEmail]);
+  }, [participationInfo?.contactEmail, setReportApplication]);
 
   useEffect(() => {
     // 정보 수신용 이메일과 가입한 이메일이 다르면 체크 해제
@@ -213,7 +194,6 @@ const UsereInfoSection = () => {
 
 const ReportPaymentSection = () => {
   const [message, setMessage] = useState('');
-  const [options, setOptions] = useState<ReportOptionInfo[]>([]);
 
   const { data: reportApplication, setReportApplication } =
     useReportApplicationStore();
@@ -226,40 +206,44 @@ const ReportPaymentSection = () => {
   useEffect(() => {
     setReportApplication({ couponId: null, couponCode: '' });
     setMessage('');
-  }, []);
-
-  useEffect(() => {
-    if (reportPriceDetail === undefined) return;
-    // 옵션 타이틀 불러오기
-    const result = [];
-    for (const optionId of reportApplication.optionIds) {
-      const reportOptionInfo = reportPriceDetail.reportOptionInfos?.find(
-        (info) => info.reportOptionId === optionId,
-      );
-      if (reportOptionInfo === undefined) continue;
-      result.push(reportOptionInfo);
-    }
-
-    setOptions(result);
-  }, [reportPriceDetail]);
+  }, [setReportApplication]);
 
   const showFeedback = reportApplication.isFeedbackApplied;
   const reportAndOptionsDiscount =
     payment.reportDiscount + payment.optionDiscount; // 진단서와 옵션 할인 금액
   const reportAndOptionsAmount =
     payment.report + payment.option - reportAndOptionsDiscount; // 진단서와 옵션 결제 금액
-  const feedbackAmount = payment.feedback - payment.feedbackDiscount; // 1:1 피드백 결제 금액
+  const feedbackAmount = payment.feedback - payment.feedbackDiscount; // 1:1 온라인 상담 결제 금액
+
+  // 사용자가 선택한 옵션
+  const selectedOptions = useMemo(() => {
+    const result = [];
+
+    for (const optionId of reportApplication.optionIds) {
+      const reportOptionInfo = reportPriceDetail?.reportOptionInfos?.find(
+        (info) => info.reportOptionId === optionId,
+      );
+
+      if (reportOptionInfo === undefined) continue;
+
+      result.push(reportOptionInfo);
+    }
+    return result;
+  }, [reportPriceDetail?.reportOptionInfos, reportApplication.optionIds]);
+  // 선택한 옵션 제목
   const optionTitle = useMemo(
     () =>
       // 문항 추가는 한 번만 표시
       [
         ...new Set(
-          options.map((option) =>
-            option.title?.startsWith('+') ? '문항 추가' : option.title,
+          selectedOptions.map((option) =>
+            option.optionTitle?.startsWith('+')
+              ? '문항 추가'
+              : option.optionTitle,
           ),
         ),
       ].join(', '),
-    [options],
+    [selectedOptions],
   );
 
   return (
@@ -330,7 +314,7 @@ const ReportPaymentSection = () => {
           </span>
           <span>{`${payment.report.toLocaleString()}원`}</span>
         </PaymentRowSub>
-        {options.length > 0 && (
+        {selectedOptions.length > 0 && (
           <PaymentRowSub>
             <span>└ {optionTitle}</span>
             <span className="shrink-0">{`${payment.option.toLocaleString()}원`}</span>
@@ -354,7 +338,7 @@ const ReportPaymentSection = () => {
         {showFeedback && (
           <>
             <PaymentRowMain>
-              <span>1:1 피드백 결제금액</span>
+              <span>1:1 온라인 상담 결제금액</span>
               <span>{feedbackAmount.toLocaleString()}원</span>
             </PaymentRowMain>
             <PaymentRowSub>

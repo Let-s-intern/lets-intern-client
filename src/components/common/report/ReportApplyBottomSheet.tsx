@@ -14,6 +14,7 @@ import { useNavigate } from 'react-router-dom';
 import {
   ActiveReport,
   convertReportTypeToDisplayName,
+  convertReportTypeToPathname,
   ReportPriceDetail,
   ReportPriceType,
   reportPriceTypeEnum,
@@ -117,7 +118,7 @@ const ReportApplyBottomSheet = React.forwardRef<
     return [
       {
         value: REPORT_RADIO_VALUES.basicFeedback,
-        label: '[추천] 베이직 + 1:1 피드백(40분) 패키지',
+        label: '[추천] 베이직 + 1:1 온라인 상담(40분) 패키지',
         price:
           (reportBasicInfo?.price ?? 0) + (feedbackInfo?.feedbackPrice ?? 0),
         discount:
@@ -126,7 +127,7 @@ const ReportApplyBottomSheet = React.forwardRef<
       },
       {
         value: REPORT_RADIO_VALUES.premiumFeedback,
-        label: '[추천] 프리미엄 + 1:1 피드백(40분) 패키지',
+        label: '[추천] 프리미엄 + 1:1 온라인 상담(40분) 패키지',
         price:
           (reportPremiumInfo?.price ?? 0) + (feedbackInfo?.feedbackPrice ?? 0),
         discount:
@@ -185,13 +186,10 @@ const ReportApplyBottomSheet = React.forwardRef<
     setReportApplication({
       orderId: generateOrderId(),
       reportId: report.reportId,
-      // 파일만 초기화
-      applyUrl: '',
-      recruitmentUrl: '',
     });
 
     navigate(
-      `/report/apply/${report.reportType?.toLowerCase()}/${report.reportId}`,
+      `/report/apply/${convertReportTypeToPathname(report.reportType ?? 'RESUME')}/${report.reportId}`,
     );
   }, [
     navigate,
@@ -209,12 +207,12 @@ const ReportApplyBottomSheet = React.forwardRef<
 
   // 현직자 피드백 옵션
   const employeeOptionInfos = priceDetail.reportOptionInfos?.filter(
-    (info) => !info.title?.startsWith('+'),
+    (info) => !info.optionTitle?.startsWith('+'),
   );
 
   // 자기소개서 문항 추가 옵션
   const questionOptionInfos = priceDetail.reportOptionInfos?.filter((info) =>
-    info.title?.startsWith('+'),
+    info.optionTitle?.startsWith('+'),
   );
   // 사용자가 추가한 문항 추가 옵션
   const selectedQuestionOptions = useMemo(() => {
@@ -532,7 +530,7 @@ const ReportApplyBottomSheet = React.forwardRef<
                                 (priceDetail.reportOptionInfos?.length ?? 0) -
                                   1,
                             )}
-                            label={option.title}
+                            label={option.optionTitle}
                             labelStyle={RADIO_CONTROL_LABEL_STYLE}
                             right={
                               <ReportPriceView
@@ -605,7 +603,7 @@ const ReportApplyBottomSheet = React.forwardRef<
                             <SelectedItemBox
                               key={info.reportOptionId}
                               className="border-t border-neutral-80"
-                              title={info.title ?? ''}
+                              title={info.optionTitle ?? ''}
                               onClickDelete={() =>
                                 setReportApplication({
                                   optionIds: reportApplication.optionIds.filter(

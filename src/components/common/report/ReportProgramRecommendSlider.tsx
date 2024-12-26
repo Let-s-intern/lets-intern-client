@@ -55,7 +55,9 @@ const ReportProgramRecommendSlider = ({
           id: 'CHALLENGE' + careerStart.id,
           backgroundImage: careerStart.thumbnail ?? '',
           title: reportProgramRecommend.challengeCareerStart?.title,
-          cta: reportProgramRecommend.reportResume?.cta ?? '경험정리 하러 가기',
+          cta:
+            reportProgramRecommend.challengeCareerStart?.cta ??
+            '경험정리 하러 가기',
           onClickButton: () => navigate(`/program/challenge/${careerStart.id}`),
         });
       }
@@ -73,7 +75,8 @@ const ReportProgramRecommendSlider = ({
           backgroundImage: personalStatement.thumbnail ?? '',
           title: reportProgramRecommend.challengePersonalStatement?.title,
           cta:
-            reportProgramRecommend.reportResume?.cta ?? '자소서 완성하러 가기',
+            reportProgramRecommend.challengePersonalStatement?.cta ??
+            '자소서 완성하러 가기',
           onClickButton: () =>
             navigate(`/program/challenge/${personalStatement.id}`),
         });
@@ -88,7 +91,9 @@ const ReportProgramRecommendSlider = ({
           id: 'CHALLENGE' + portfolio.id,
           backgroundImage: portfolio.thumbnail ?? '',
           title: reportProgramRecommend.challengePortfolio?.title,
-          cta: reportProgramRecommend.reportResume?.cta ?? '포폴 완성하러 가기',
+          cta:
+            reportProgramRecommend.challengePortfolio?.cta ??
+            '포폴 완성하러 가기',
           onClickButton: () => navigate(`/program/challenge/${portfolio.id}`),
         });
       }
@@ -182,7 +187,10 @@ const ReportProgramRecommendSlider = ({
   }, [recommendData, navigate, reportProgramRecommend]);
 
   return (
-    <section className="w-full bg-neutral-95 px-5 py-16 md:py-24 lg:px-0">
+    <section
+      data-section="recommend"
+      className="w-full bg-neutral-95 px-5 py-16 md:py-24 lg:px-0"
+    >
       <SubHeader className="mb-1 md:mb-3" style={subHeaderStyle}>
         {SUPER_TITLE}
       </SubHeader>

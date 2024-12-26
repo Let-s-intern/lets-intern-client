@@ -1,9 +1,14 @@
+import { useEffect } from 'react';
+import { Helmet } from 'react-helmet';
+
+import { useGetActiveReports, useGetReportPriceDetail } from '@/api/report';
+import ReportApplyBottomSheet from '@/components/common/report/ReportApplyBottomSheet';
 import { useServerActiveReports } from '@/context/ActiveReports';
 import { personalStatementReportDescription } from '@/data/description';
 import useReportApplicationStore from '@/store/useReportApplicationStore';
 import { ReportContent } from '@/types/interface';
 import { getBaseUrlFromServer, getReportLandingTitle } from '@/utils/url';
-import Header from '@components/common/program/program-detail/header/Header';
+import Header from '@components/common/report/Header';
 import PromoSection from '@components/common/report/PromoSection';
 import ReportBasicInfo from '@components/common/report/ReportBasicInfo';
 import ReportExampleSection from '@components/common/report/ReportExampleSection';
@@ -15,13 +20,6 @@ import ReportReviewSection from '@components/common/report/ReportReviewSection';
 import ResearchTeamSection from '@components/common/report/ResearchTeamSection';
 import ServiceProcessSection from '@components/common/report/ServiceProcessSection';
 import LoadingContainer from '@components/common/ui/loading/LoadingContainer';
-import { useEffect } from 'react';
-import { Helmet } from 'react-helmet';
-import {
-  useGetActiveReports,
-  useGetReportPriceDetail,
-} from '../../../api/report';
-import ReportApplyBottomSheet from '../../../components/common/report/ReportApplyBottomSheet';
 import ReportNavigation from './ReportNavigation';
 
 export const personalStatementColors = {
@@ -86,7 +84,7 @@ const ReportPersonalStatementPage = () => {
         <div className="flex w-full flex-col items-center">
           <div className="flex w-full flex-col bg-black pb-12 text-white md:pb-20">
             <div className="mx-auto flex w-full max-w-[1000px] flex-col px-5 lg:px-0">
-              <Header programTitle={'서류완성의 시작과 끝은 진단에서부터'} />
+              <Header>서류완성의 시작과 끝은 진단에서부터</Header>
               <ReportBasicInfo
                 reportBasic={data?.personalStatementInfo}
                 color={personalStatementColors.CA60FF}
@@ -94,7 +92,11 @@ const ReportPersonalStatementPage = () => {
             </div>
           </div>
           <ReportNavigation color={personalStatementColors.CA60FF} isDark />
-          <div className="flex w-full flex-col items-center">
+          <div
+            id="content"
+            data-page-type="personal-statement"
+            className="flex w-full flex-col items-center"
+          >
             {/* 서비스 소개 */}
             <ReportIntroSection type="PERSONAL_STATEMENT" />
             {/* 리포트 예시 */}

@@ -1,21 +1,11 @@
-import {
-  FormControl,
-  RadioGroup,
-  SelectChangeEvent,
-  useMediaQuery,
-} from '@mui/material';
+import { FormControl, RadioGroup, SelectChangeEvent } from '@mui/material';
 import dayjs, { Dayjs } from 'dayjs';
 import React, { memo, useEffect, useRef, useState } from 'react';
-import { FaArrowLeft } from 'react-icons/fa6';
 import { IoCloseOutline } from 'react-icons/io5';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import { uploadFile } from '@/api/file';
-import {
-  convertReportTypeStatus,
-  convertReportTypeToLandingPath,
-  ReportType,
-} from '@/api/report';
+import { convertReportTypeStatus } from '@/api/report';
 import useMinDate from '@/hooks/useMinDate';
 import useReportProgramInfo from '@/hooks/useReportProgramInfo';
 import useRunOnce from '@/hooks/useRunOnce';
@@ -23,21 +13,20 @@ import useValidateUrl from '@/hooks/useValidateUrl';
 import { twMerge } from '@/lib/twMerge';
 import useAuthStore from '@/store/useAuthStore';
 import useReportApplicationStore from '@/store/useReportApplicationStore';
-import Card from '@components/common/report/Card';
 import { ReportFormRadioControlLabel } from '@components/common/report/ControlLabel';
 import DateTimePicker from '@components/common/report/DateTimePicker';
 import FilledInput from '@components/common/report/FilledInput';
-import Heading1 from '@components/common/report/Heading1';
 import Heading2 from '@components/common/report/Heading2';
 import Label from '@components/common/report/Label';
+import ProgramCard from '@components/common/report/ProgramCard';
 import Tooltip from '@components/common/report/Tooltip';
+import BackHeader from '@components/common/ui/BackHeader';
 import BottomSheet from '@components/common/ui/BottomSheeet';
 import HorizontalRule from '@components/ui/HorizontalRule';
 
 const ReportApplyPage = () => {
   const navigate = useNavigate();
   const { reportType, reportId } = useParams();
-  const isMobile = useMediaQuery('(max-width: 991px)');
 
   const [applyFile, setApplyFile] = useState<File | null>(null);
   const [recruitmentFile, setRecruitmentFile] = useState<File | null>(null);
@@ -67,8 +56,8 @@ const ReportApplyPage = () => {
   const validateFile = () => {
     const { applyUrl, reportPriceType, recruitmentUrl } = reportApplication;
 
-    const isEmpty = (value: string | File | null) =>
-      value === '' || value === null;
+    const isEmpty = (value?: string | File | null) =>
+      value === '' || value === null || value === undefined;
 
     if (isEmpty(applyUrl) && isEmpty(applyFile)) {
       return { message: '진단용 서류를 등록해주세요.', isValid: false };
@@ -94,18 +83,16 @@ const ReportApplyPage = () => {
   });
 
   return (
-    <div className="px-5 md:px-32 md:py-10 xl:flex xl:gap-16 xl:px-48">
+    <div className="mx-auto max-w-[55rem] px-5 md:pb-10 md:pt-5 lg:px-0 xl:flex xl:gap-16">
       <div className="w-full">
-        <header>
-          <Heading1>진단서 신청하기</Heading1>
-        </header>
-
-        <HorizontalRule className="-mx-5 md:-mx-32 lg:mx-0" />
+        <BackHeader to={`/report/landing/${reportType}`}>
+          진단서 신청하기
+        </BackHeader>
 
         <main className="mb-8 mt-6 flex flex-col gap-10">
           {/* 프로그램 정보 */}
           <ProgramInfoSection
-            onChangeRadio={(event, value) => setIsSubmitNow(value)}
+            onChangeRadio={(_, value) => setIsSubmitNow(value)}
           />
 
           {/* '지금 제출할래요' 선택 시 표시 */}
@@ -128,7 +115,7 @@ const ReportApplyPage = () => {
                   />
                 )}
               <HorizontalRule className="-mx-5 md:-mx-32 lg:mx-0" />
-              {/* 1:1 피드백 일정 */}
+              {/* 1:1 온라인 상담 일정 */}
               {reportApplication.isFeedbackApplied && (
                 <>
                   <ScheduleSection />
@@ -143,18 +130,7 @@ const ReportApplyPage = () => {
         </main>
       </div>
 
-      <BottomSheet className="xl:mx-48">
-        {isMobile && (
-          <button
-            onClick={() => {
-              const to = `${convertReportTypeToLandingPath(reportType?.toUpperCase() as ReportType)}#content`;
-              navigate(to);
-            }}
-            className="flex h-14 w-14 shrink-0 items-center justify-center rounded-md border-2 border-primary bg-neutral-100"
-          >
-            <FaArrowLeft size={20} />
-          </button>
-        )}
+      <BottomSheet className="mx-auto max-w-[55rem]">
         <button
           className="text-1.125-medium w-full rounded-md bg-primary py-3 text-center font-medium text-neutral-100"
           onClick={async () => {
@@ -230,7 +206,7 @@ const ProgramInfoSection = ({
           <li>옵션 (현직자 피드백): 최대 5일</li>
         </Tooltip>
       </div>
-      <Card
+      <ProgramCard
         imgSrc="/images/report-thumbnail.png"
         imgAlt="서류 진단서 프로그램 썸네일"
         title={title ?? ''}
@@ -249,8 +225,7 @@ const ProgramInfoSection = ({
         <CallOut
           className="mb-6 bg-primary-5"
           header="📄 진단을 위한 서류를 제출해주세요"
-          body="결제 후 7일 이내 서류 미제출 시 자동 환불 처리되니 이 점 꼭 유의해
-        주세요."
+          body="서류 제출 순으로 진단이 시작됩니다. 빠른 진단을 원하신다면 제출을 서둘러주세요."
         />
         <FormControl fullWidth>
           <RadioGroup
@@ -291,7 +266,7 @@ const DocumentSection = ({
 
   return (
     <section className="flex flex-col lg:flex-row lg:items-start lg:gap-5">
-      <div className="mb-3 flex w-[8.75rem] shrink-0 items-center">
+      <div className="mb-3 flex w-40 shrink-0 items-center">
         <Heading2>진단용 {convertReportTypeStatus(reportType!)}</Heading2>
         <RequiredStar />
       </div>
@@ -303,7 +278,7 @@ const DocumentSection = ({
           onChange={(e) => {
             setValue(e.target.value);
             if (e.target.value === 'url') dispatch(null);
-            else setReportApplication({ applyUrl: '' });
+            else setReportApplication({ applyUrl: null });
           }}
         >
           {/* 파일 첨부 */}
@@ -324,7 +299,7 @@ const DocumentSection = ({
               <FilledInput
                 name="applyUrl"
                 placeholder="https://"
-                value={data.applyUrl || ''}
+                value={data.applyUrl || undefined}
                 onChange={(e) =>
                   setReportApplication({ applyUrl: e.target.value })
                 }
@@ -357,7 +332,7 @@ const PremiumSection = ({
   return (
     <section className="flex flex-col gap-1 lg:flex-row lg:items-start lg:gap-5">
       {
-        <div className="flex w-[8.75rem] shrink-0 items-center">
+        <div className="flex w-40 shrink-0 items-center">
           <Heading2>(프리미엄) 채용공고</Heading2>
           <RequiredStar />
         </div>
@@ -372,7 +347,7 @@ const PremiumSection = ({
             onChange={(e) => {
               setValue(e.target.value);
               if (e.target.value === 'url') dispatch(null);
-              else setReportApplication({ recruitmentUrl: '' });
+              else setReportApplication({ recruitmentUrl: null });
             }}
             name="radio-buttons-group"
           >
@@ -382,7 +357,7 @@ const PremiumSection = ({
                 value="file"
                 subText="(png, jpg, jpeg, pdf 형식 지원, 50MB 이하)"
               />
-              <span className="-mt-1 mb-2 block text-xxsmall12 text-neutral-45">
+              <span className="mb-2 mt-2 block text-xxsmall12 text-neutral-45 md:mt-0">
                 *업무, 지원자격, 우대사항이 보이게 채용공고를 캡처해주세요.
               </span>
               {value === 'file' && (
@@ -395,7 +370,7 @@ const PremiumSection = ({
                 <FilledInput
                   name="recruitmentUrl"
                   placeholder="https://"
-                  value={data.recruitmentUrl || ''}
+                  value={data.recruitmentUrl ?? undefined}
                   onChange={(e) =>
                     setReportApplication({ recruitmentUrl: e.target.value })
                   }
@@ -416,6 +391,7 @@ const PremiumSection = ({
 
 const ScheduleSection = () => {
   const { data, setReportApplication } = useReportApplicationStore();
+
   const minDate = useMinDate(data);
 
   type Key = keyof typeof data;
@@ -445,15 +421,15 @@ const ScheduleSection = () => {
 
   return (
     <section className="flex flex-col gap-1 lg:flex-row lg:items-start lg:gap-5">
-      <div className="flex w-[8.75rem] shrink-0 items-center gap-1">
-        <Heading2>1:1 피드백 일정</Heading2>
-        <Tooltip alt="1:1 피드백 일정 도움말">
-          1:1 피드백은 서류 진단서 발급 이후에 진행됩니다.
+      <div className="flex w-40 shrink-0 items-center gap-1">
+        <Heading2>1:1 온라인 상담 일정</Heading2>
+        <Tooltip alt="1:1 온라인 상담 일정 도움말">
+          1:1 온라인 상담은 서류 진단서 발급 이후에 진행됩니다.
         </Tooltip>
       </div>
       <div className="flex w-full flex-col gap-5">
         <span className="text-xsmall14">
-          희망하시는 1:1 피드백(40분) 일정을 모두 선택해주세요.
+          희망하시는 상담(40분) 일정을 모두 선택해주세요.
         </span>
         <div>
           <Label>희망순위1*</Label>
@@ -483,6 +459,12 @@ const ScheduleSection = () => {
                 ? undefined
                 : dayjs(data.desiredDate2)
             }
+            time={
+              data.desiredDate2 === undefined ||
+              dayjs(data.desiredDate2).hour() === 0
+                ? undefined
+                : dayjs(data.desiredDate2).hour()
+            }
             name="desiredDate2"
             minDate={minDate}
             onChangeDate={onChangeDate}
@@ -496,6 +478,12 @@ const ScheduleSection = () => {
               data.desiredDate3 === undefined
                 ? undefined
                 : dayjs(data.desiredDate3)
+            }
+            time={
+              data.desiredDate3 === undefined ||
+              dayjs(data.desiredDate3).hour() === 0
+                ? undefined
+                : dayjs(data.desiredDate3).hour()
             }
             name="desiredDate3"
             minDate={minDate}

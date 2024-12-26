@@ -131,7 +131,10 @@ const ReportIntroSection = ({ type }: ReportIntroSectionProps) => {
       className="flex w-full flex-col items-center whitespace-pre-wrap break-keep text-center text-neutral-0"
     >
       {/* section1 */}
-      <div className="flex w-full max-w-[1000px] flex-col gap-y-10 px-5 py-[70px] md:gap-y-20 md:pb-[150px] md:pt-[110px] lg:px-0">
+      <div
+        data-section="intro-2"
+        className="flex w-full max-w-[1000px] flex-col gap-y-10 px-5 py-[70px] md:gap-y-20 md:pb-[150px] md:pt-[110px] lg:px-0"
+      >
         <div className="flex w-full flex-col gap-y-6 md:gap-y-[50px]">
           <h5 className="w-full text-center text-xsmall14 font-semibold text-neutral-45 md:text-small18">
             서비스 소개
@@ -172,7 +175,7 @@ const ReportIntroSection = ({ type }: ReportIntroSectionProps) => {
         </div>
       </div>
       {/* section2 */}
-      <div className="w-full bg-neutral-90">
+      <div data-section="intro-3" className="w-full bg-neutral-90">
         <div className="mx-auto flex w-full max-w-[1000px] flex-col items-center gap-y-6 px-5 py-[70px] md:gap-y-[60px] md:py-[110px] md:pb-[130px] lg:px-0">
           <div className="flex w-full flex-col gap-y-2 md:gap-y-3">
             <h6
@@ -203,7 +206,7 @@ const ReportIntroSection = ({ type }: ReportIntroSectionProps) => {
         </div>
       </div>
       {/* section3 */}
-      <div className="w-full bg-black">
+      <div data-section="intro-4" className="w-full bg-black">
         <div className="mx-auto flex w-full max-w-[1000px] flex-col items-center gap-y-5 px-5 py-[70px] md:gap-y-20 md:pb-[140px] md:pt-[120px] lg:px-0">
           <div className="flex w-full flex-col gap-y-2 md:gap-y-3">
             <h5

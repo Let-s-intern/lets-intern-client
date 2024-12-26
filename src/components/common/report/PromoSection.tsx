@@ -9,7 +9,7 @@ import MainHeader from './MainHeader';
 import SubHeader from './SubHeader';
 
 const SUB_HEADER = '더 자세한 피드백이 궁금하다면?';
-const MAIN_HEADER = '합격을 향한 가장 확실한 방법\n1:1 피드백 서비스';
+const MAIN_HEADER = '합격을 향한 가장 확실한 방법\n1:1 온라인 상담 서비스';
 
 interface PromoSectionProps {
   reportType: ReportType;
@@ -62,6 +62,7 @@ function PromoSection({ reportType }: PromoSectionProps) {
 
   return (
     <section
+      data-section="price-3"
       className="w-full px-5 py-16 md:pb-32 md:pt-28 lg:px-0"
       style={sectionStyle}
     >

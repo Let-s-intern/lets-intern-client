@@ -179,7 +179,7 @@ const ReportManagementPage = () => {
       }, 100);
     }
     initReportApplication(); // 서류 진단 전역 상태 초기화
-  }, [isLoggedIn, navigate]);
+  }, [isLoggedIn, navigate, initReportApplication]);
 
   const filterStatus = (searchParams.get('status') ??
     'all') as ReportFilter['status'];
@@ -200,7 +200,6 @@ const ReportManagementPage = () => {
   };
 
   const { data, status } = useGetMyReports();
-  console.log('내 진단서:', data);
 
   const filteredApplications = data?.myReportInfos.filter((report) => {
     switch (filterType) {
@@ -216,6 +215,9 @@ const ReportManagementPage = () => {
   });
 
   const alerted = useRef(false);
+
+  const isReportSubmitted = (reportUrl?: string | null) =>
+    reportUrl !== null && reportUrl !== undefined;
 
   useEffect(() => {
     if (status === 'success' && data.myReportInfos.length === 0) {
@@ -234,8 +236,8 @@ const ReportManagementPage = () => {
     <div className="mx-auto max-w-5xl px-5 pb-10 lg:px-0">
       <header>
         <h1 className="py-6 text-small20 font-semibold">MY 진단서 보기</h1>
-        <div className="mb-3 flex items-center gap-2 text-xsmall16 font-bold">
-          <h2>서류 피드백 REPORT</h2>
+        <div className="mb-3 flex items-center gap-2">
+          <h2 className="text-xsmall16 font-bold">서류 피드백 REPORT</h2>
           <Tooltip className="text-xxsmall12 font-normal">
             <p className="mb-1">진단서 발급 예상 소요기간</p>
             <ul className="mb-3 list-disc pl-4">
@@ -244,8 +246,9 @@ const ReportManagementPage = () => {
               <li>옵션 (현직자 피드백): 최대 5일</li>
             </ul>
             <p>
-              *1:1 피드백은 진단서 발급 이후 진행됩니다. 일정확정 이후 변경이
-              필요하실 경우, 우측 아래 &lt;채팅문의&gt;로 연락 주시길 바랍니다.
+              *1:1 온라인 상담은 진단서 발급 이후 진행됩니다. 일정확정 이후
+              변경이 필요하실 경우, 우측 아래 &lt;채팅문의&gt;로 연락 주시길
+              바랍니다.
             </p>
           </Tooltip>
         </div>
@@ -281,12 +284,12 @@ const ReportManagementPage = () => {
                   <Badge
                     status={convertReportStatusToBadgeStatus(
                       item.applicationStatus,
-                      item.applyUrl !== '',
+                      isReportSubmitted(item.applyUrl),
                     )}
                   >
                     {convertReportStatusToUserDisplayName(
                       item.applicationStatus,
-                      item.applyUrl !== '',
+                      isReportSubmitted(item.applyUrl),
                     )}
                   </Badge>
                   <h2 className="text-xsmall14 font-medium">{item.title}</h2>
@@ -313,7 +316,7 @@ const ReportManagementPage = () => {
                 </table>
                 <div className="flex items-center justify-between gap-4">
                   {(item.applyUrl || item.recruitmentUrl) && (
-                    <div className="-ml-1 flex items-center gap-1">
+                    <div className="-ml-1 mt-5 flex items-center gap-1">
                       {item.applyUrl ? (
                         <Link
                           to={item.applyUrl}
@@ -345,7 +348,7 @@ const ReportManagementPage = () => {
                   )}
 
                   {/* 서류 제출 X AND 피드백 신청 X */}
-                  {item.applyUrl === '' &&
+                  {!isReportSubmitted(item.applyUrl) &&
                     item.feedbackStatus !== 'APPLIED' && (
                       <ReportManagementButton
                         className="mt-5"
@@ -367,7 +370,7 @@ const ReportManagementPage = () => {
                     )}
 
                   {/* 서류를 제출했으면 */}
-                  {item.applyUrl !== '' &&
+                  {isReportSubmitted(item.applyUrl) &&
                     (item.applicationStatus === 'APPLIED' ||
                     item.applicationStatus === 'REPORTING' ||
                     item.applicationStatus === 'REPORTED' ? (
@@ -400,7 +403,7 @@ const ReportManagementPage = () => {
                   <div>
                     <header>
                       <h3 className="mb-3 text-xsmall14 font-medium text-primary-dark">
-                        1:1 피드백 현황
+                        1:1 온라인 상담 현황
                       </h3>
                       <div className="flex items-center gap-2">
                         <Badge
@@ -408,14 +411,14 @@ const ReportManagementPage = () => {
                             now: dayjs(),
                             reportFeedback: item.confirmedTime,
                             status: item.feedbackStatus,
-                            isReportSubmitted: item.applyUrl !== '',
+                            isReportSubmitted: isReportSubmitted(item.applyUrl),
                           })}
                         >
                           {convertFeedbackStatusToDisplayName({
                             now: dayjs(),
                             reportFeedback: item.confirmedTime,
                             status: item.feedbackStatus,
-                            isReportSubmitted: item.applyUrl !== '',
+                            isReportSubmitted: isReportSubmitted(item.applyUrl),
                           })}
                         </Badge>
                         <span className="text-xsmall14 font-medium">
@@ -425,7 +428,7 @@ const ReportManagementPage = () => {
                     </header>
 
                     {/* 일정을 선택했으면 일정 테이블 표시 */}
-                    {item.applyUrl !== '' && (
+                    {isReportSubmitted(item.applyUrl) && (
                       <table className="mt-3">
                         <tbody>
                           {/* 확인중 단계 일정 확인 */}
@@ -483,7 +486,7 @@ const ReportManagementPage = () => {
                     )}
 
                     {/* 일정을 선택하지 않았으면 */}
-                    {item.applyUrl === '' ? (
+                    {!isReportSubmitted(item.applyUrl) ? (
                       <ReportManagementButton
                         className="mt-5"
                         onClick={() => {
