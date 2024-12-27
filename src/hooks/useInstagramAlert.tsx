@@ -9,5 +9,9 @@ export default function useInstagramAlert() {
 
   const [showInstagramAlert, setShowInstagramAlert] = useState(false);
 
-  return { isInstagram, showInstagramAlert, setShowInstagramAlert };
+  return {
+    isInstagram: isInstagram.current,
+    showInstagramAlert,
+    setShowInstagramAlert,
+  };
 }
