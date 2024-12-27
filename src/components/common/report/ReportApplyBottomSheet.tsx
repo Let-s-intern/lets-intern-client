@@ -19,6 +19,7 @@ import {
   ReportPriceType,
   reportPriceTypeEnum,
 } from '@/api/report';
+import useInstagramAlert from '@/hooks/useInstagramAlert';
 import { generateOrderId } from '@/lib/order';
 import { twMerge } from '@/lib/twMerge';
 import { reportTypeSchema } from '@/schema';
@@ -26,6 +27,7 @@ import useReportApplicationStore from '@/store/useReportApplicationStore';
 import RequiredStar from '@components/ui/RequiredStar';
 import clsx from 'clsx';
 import { DesktopCTA, MobileCTA } from '../ApplyCTA';
+import PaymentErrorNotification from '../PaymentErrorNotification';
 import GradientButton from '../program/program-detail/button/GradientButton';
 import { default as BaseButton } from '../ui/button/BaseButton';
 import {
@@ -74,6 +76,9 @@ const ReportApplyBottomSheet = React.forwardRef<
 
   const { data: reportApplication, setReportApplication } =
     useReportApplicationStore();
+
+  const { isInstagram, showInstagramAlert, setShowInstagramAlert } =
+    useInstagramAlert();
 
   const { optionIds, isFeedbackApplied } = reportApplication;
 
@@ -313,10 +318,23 @@ const ReportApplyBottomSheet = React.forwardRef<
           <MobileCTA
             className="lg:hidden"
             title={`${report.title} 피드백 REPORT`}
+            banner={
+              showInstagramAlert ? (
+                <PaymentErrorNotification className="border-t" />
+              ) : (
+                <></>
+              )
+            }
           >
             <GradientButton
               className="w-full"
-              onClick={() => setIsDrawerOpen(true)}
+              onClick={() => {
+                if (isInstagram && !showInstagramAlert) {
+                  setShowInstagramAlert(true);
+                  return;
+                }
+                setIsDrawerOpen(true);
+              }}
             >
               지금 바로 신청
             </GradientButton>
@@ -643,7 +661,10 @@ const ReportApplyBottomSheet = React.forwardRef<
               <BaseButton
                 className="flex-1"
                 variant="outlined"
-                onClick={() => setIsDrawerOpen(false)}
+                onClick={() => {
+                  setShowInstagramAlert(false);
+                  setIsDrawerOpen(false);
+                }}
               >
                 이전 단계로
               </BaseButton>
