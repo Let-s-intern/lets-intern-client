@@ -153,12 +153,6 @@ const ReportIntroSection = ({ type }: ReportIntroSectionProps) => {
         ? personalStatementColors.F3A2FF
         : resumeColors.F7FFAB,
   };
-  const badgeStyle = {
-    backgroundColor:
-      type === 'PERSONAL_STATEMENT'
-        ? personalStatementColors.CA60FF
-        : resumeColors._14BCFF,
-  };
 
   useEffect(() => {
     const handleScroll = () => {
