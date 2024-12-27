@@ -25,7 +25,10 @@ const ResearchTeamSection = ({ reportType }: ResearchTeamSectionProps) => {
   };
 
   return (
-    <section className="intro-3 max-w-[1000px] px-5 py-[60px] md:pb-[140px] md:pt-[120px] lg:px-0">
+    <section
+      className="max-w-[1000px] px-5 py-[60px] md:pb-[140px] md:pt-[120px] lg:px-0"
+      data-section="intro-3"
+    >
       <SubHeader className="mb-2 md:mb-3" style={subHeaderStyle}>
         {SUPER_TITLE}
       </SubHeader>

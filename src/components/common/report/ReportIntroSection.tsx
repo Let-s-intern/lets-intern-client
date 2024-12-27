@@ -218,7 +218,7 @@ const ReportIntroSection = ({ type }: ReportIntroSectionProps) => {
   return (
     <section
       id={REPORT_INTRO_ID}
-      className="intro-1 flex w-full flex-col items-center whitespace-pre-wrap break-keep text-center text-neutral-0"
+      className="flex w-full flex-col items-center whitespace-pre-wrap break-keep text-center text-neutral-0"
     >
       {/* section0 */}
       <div
