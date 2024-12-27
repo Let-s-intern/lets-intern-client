@@ -1,3 +1,4 @@
+import useSectionObserver from '@/hooks/useSectionObserver';
 import useScrollStore from '@/store/useScrollStore';
 import { NavItem } from '@components/ProgramDetailNavigation';
 import { useEffect, useState } from 'react';
@@ -32,7 +33,10 @@ const ReportNavigation = ({
   const [activeSection, setActiveSection] = useState<string>(
     reportNavigateItems[0].to,
   );
+
   const navItems = reportNavigateItems;
+
+  useSectionObserver();
 
   useEffect(() => {
     const observer = new IntersectionObserver(

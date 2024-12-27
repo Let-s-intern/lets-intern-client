@@ -1,9 +1,10 @@
+import useInstagramAlert from '@/hooks/useInstagramAlert';
 import { twMerge } from '@/lib/twMerge';
 import GradientButton from '@components/common/program/program-detail/button/GradientButton';
 import NotiButton from '@components/common/program/program-detail/button/NotiButton';
 import { Duration } from '@components/Duration';
 import dayjs, { Dayjs } from 'dayjs';
-import { memo, ReactNode, useState } from 'react';
+import { memo, ReactNode } from 'react';
 import PaymentErrorNotification from './PaymentErrorNotification';
 
 function DisabledButton() {
@@ -38,12 +39,8 @@ export function MobileApplyCTA({
       ? dayjs().isBefore(program.beginning) || dayjs().isAfter(program.deadline)
       : false;
 
-  const [showInstagramAlert, setShowInstagramAlert] = useState(false);
-
-  const isInstagram =
-    typeof window !== 'undefined'
-      ? window.navigator.userAgent.includes('Instagram')
-      : false;
+  const { isInstagram, showInstagramAlert, setShowInstagramAlert } =
+    useInstagramAlert();
 
   const handleApplyClick = () => {
     if (!isInstagram) {
