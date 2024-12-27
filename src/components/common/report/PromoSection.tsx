@@ -1,4 +1,3 @@
-import { useMediaQuery } from '@mui/material';
 import { memo, ReactNode } from 'react';
 
 import {
@@ -36,8 +35,6 @@ function PromoSection({ reportType }: PromoSectionProps) {
   const borderStyle = {
     backgroundImage: `linear-gradient(to right, ${reportType === 'PERSONAL_STATEMENT' ? personalStatementColors.F3A2FF : resumeColors._2CE282}, ${reportType === 'PERSONAL_STATEMENT' ? personalStatementColors.C34AFF : resumeColors._2CDDEA})`,
   };
-
-  const isMobile = useMediaQuery('(max-width:768px)');
 
   const reportDisplayName = convertReportTypeToDisplayName(reportType);
 

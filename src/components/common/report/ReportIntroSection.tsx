@@ -153,12 +153,6 @@ const ReportIntroSection = ({ type }: ReportIntroSectionProps) => {
         ? personalStatementColors.F3A2FF
         : resumeColors.F7FFAB,
   };
-  const badgeStyle = {
-    backgroundColor:
-      type === 'PERSONAL_STATEMENT'
-        ? personalStatementColors.CA60FF
-        : resumeColors._14BCFF,
-  };
 
   useEffect(() => {
     const handleScroll = () => {
@@ -224,7 +218,7 @@ const ReportIntroSection = ({ type }: ReportIntroSectionProps) => {
   return (
     <section
       id={REPORT_INTRO_ID}
-      className="flex w-full flex-col items-center whitespace-pre-wrap break-keep text-center text-neutral-0"
+      className="intro-1 flex w-full flex-col items-center whitespace-pre-wrap break-keep text-center text-neutral-0"
     >
       {/* section0 */}
       <div
