@@ -23,6 +23,7 @@ import Tooltip from '@components/common/report/Tooltip';
 import BackHeader from '@components/common/ui/BackHeader';
 import BottomSheet from '@components/common/ui/BottomSheeet';
 import HorizontalRule from '@components/ui/HorizontalRule';
+import RequiredStar from '@components/ui/RequiredStar';
 
 const ReportApplyPage = () => {
   const navigate = useNavigate();
@@ -166,7 +167,9 @@ const ReportApplyPage = () => {
 
 export default ReportApplyPage;
 
-const CallOut = memo(function Callout({
+/* 서류 제출 페이지(ReportApplicationPage)에서 공동으로 사용 */
+
+export const CallOut = memo(function Callout({
   header,
   body,
   className,
@@ -250,7 +253,7 @@ const ProgramInfoSection = ({
   );
 };
 
-const DocumentSection = ({
+export const DocumentSection = ({
   file,
   dispatch,
 }: {
@@ -317,7 +320,7 @@ const DocumentSection = ({
   );
 };
 
-const PremiumSection = ({
+export const PremiumSection = ({
   file,
   dispatch,
 }: {
@@ -389,7 +392,7 @@ const PremiumSection = ({
   );
 };
 
-const ScheduleSection = () => {
+export const ScheduleSection = () => {
   const { data, setReportApplication } = useReportApplicationStore();
 
   const minDate = useMinDate(data);
@@ -496,7 +499,7 @@ const ScheduleSection = () => {
   );
 };
 
-const AdditionalInfoSection = () => {
+export const AdditionalInfoSection = () => {
   const { data, setReportApplication } = useReportApplicationStore();
 
   const onChange = (
@@ -537,11 +540,7 @@ const AdditionalInfoSection = () => {
   );
 };
 
-const RequiredStar = () => {
-  return <span className="text-[#7B61FF]">*</span>;
-};
-
-const FileUploadButton = React.memo(function FileUploadButton({
+export const FileUploadButton = React.memo(function FileUploadButton({
   file,
   dispatch,
 }: {
@@ -556,7 +555,7 @@ const FileUploadButton = React.memo(function FileUploadButton({
       alert('50MB 이하의 파일만 업로드 가능합니다.');
       dispatch(null);
     }
-  }, [file]);
+  }, [file, dispatch]);
 
   return (
     <>

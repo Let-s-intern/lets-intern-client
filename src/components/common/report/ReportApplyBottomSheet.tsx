@@ -23,6 +23,7 @@ import { generateOrderId } from '@/lib/order';
 import { twMerge } from '@/lib/twMerge';
 import { reportTypeSchema } from '@/schema';
 import useReportApplicationStore from '@/store/useReportApplicationStore';
+import RequiredStar from '@components/ui/RequiredStar';
 import clsx from 'clsx';
 import { DesktopCTA, MobileCTA } from '../ApplyCTA';
 import GradientButton from '../program/program-detail/button/GradientButton';
@@ -362,7 +363,8 @@ const ReportApplyBottomSheet = React.forwardRef<
               {/* 서류 진단 플랜 */}
               <FormControl fullWidth>
                 <Heading2 className="mb-4">
-                  {reportDisplayName} 진단 플랜 선택 (필수)*
+                  {reportDisplayName} 진단 플랜 선택 (필수)
+                  <RequiredStar />
                 </Heading2>
                 <ReportDropdown
                   title={`합격을 이끄는 ${reportDisplayName} 진단 플랜`}
