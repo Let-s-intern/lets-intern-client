@@ -105,6 +105,8 @@ const NavBar = () => {
   useEffect(() => {
     if (typeof window === 'undefined') return;
 
+    setScrollDirection('UP');
+
     const handleScroll = () => {
       // 현재 경로가 scrollEventPage 중 하나로 시작되지 않을 때는 스크롤 이벤트를 무시
       if (!scrollEventPage.some((page) => location.pathname.startsWith(page)))
