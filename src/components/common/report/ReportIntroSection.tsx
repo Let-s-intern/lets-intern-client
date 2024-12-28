@@ -135,7 +135,7 @@ const ReportIntroSection = ({ type }: ReportIntroSectionProps) => {
     color:
       type === 'PERSONAL_STATEMENT'
         ? personalStatementColors.CA60FF
-        : resumeColors._06B259,
+        : resumeColors._2CE282,
   };
   const darkSubHeaderStyle = {
     color:
@@ -283,7 +283,7 @@ const ReportIntroSection = ({ type }: ReportIntroSectionProps) => {
       </div>
       {/* section1 */}
       <div data-section="intro-2" className="w-full bg-neutral-90">
-        <div className="mx-auto flex w-full max-w-[1000px] flex-col gap-y-10 px-5 pb-[70px] pt-[50px] md:gap-y-20 md:pb-[120px] md:pt-[100px] lg:px-0">
+        <div className="mx-auto flex w-full max-w-[1000px] flex-col gap-y-[30px] px-5 pb-[70px] pt-[50px] md:gap-y-[50px] md:pb-[120px] md:pt-[100px] lg:px-0">
           <div className="flex w-full flex-col gap-y-6 md:gap-y-[50px]">
             <div className="flex w-full flex-col items-center gap-y-2 md:gap-y-3">
               <span
