@@ -1,6 +1,6 @@
 import { useMediaQuery } from '@mui/material';
 import clsx from 'clsx';
-import { CSSProperties, memo, ReactNode, useMemo } from 'react';
+import { CSSProperties, memo, ReactElement, ReactNode, useMemo } from 'react';
 
 import {
   convertReportTypeToDisplayName,
@@ -68,7 +68,7 @@ const ReportPlanSection = ({
           '자소서 4문항 피드백 제공',
           '서류 작성 고민 상담 및 솔루션',
           '직무/산업별 합격자 예시 자료 제공',
-          '자소서 완성도를 높이는 ‘전체 총평 페이지’ 제공',
+          '자소서 완성도를 높이는\n‘전체 총평 페이지’ 제공',
           '문항별 연관성을 바탕으로 직무 적합성을 강화할 키워드 제안',
         ];
 
@@ -130,12 +130,12 @@ const ReportPlanSection = ({
         {/* 좌우 슬라이드 */}
         <div
           data-section="price-1"
-          className="custom-scrollbar -mx-5 mb-14 overflow-x-auto px-5 pt-1 lg:mx-0 lg:px-0"
+          className="custom-scrollbar -mx-5 mb-14 overflow-x-auto overflow-y-clip px-5 pt-1 lg:mx-0 lg:px-0"
         >
           <div className="flex w-fit gap-3">
             {/* 프리미엄 플랜 */}
             <PriceCard
-              className="flex min-w-[18rem] flex-col gap-3 px-5 py-4 md:gap-5 md:px-6 md:py-7"
+              className="min-w-[18rem] px-5 py-4 md:gap-5 md:px-6 md:py-7"
               reportType={reportType}
               bannerText={`채용 공고 맞춤형 ${convertReportTypeToDisplayName(reportType)}를 원한다면,`}
               bannerColor={
@@ -151,33 +151,55 @@ const ReportPlanSection = ({
             >
               <PlanCard title="프리미엄 플랜">
                 <div className="flex flex-col gap-3">
-                  {premiumPlan.map((item, index) => (
-                    <NumberedListItem
-                      key={index}
-                      number={index + 1}
-                      numberStyle={index >= 3 ? numberStyle : {}}
-                      numberClassName={clsx({
-                        'text-black': reportType === 'RESUME' && index >= 3,
-                      })}
-                    >
-                      {/* 예외 문항 */}
-                      {reportType === 'PERSONAL_STATEMENT' && index === 0 && (
-                        <s className="block">자소서 1문항 피드백 제공</s>
-                      )}
-                      {item}
-                    </NumberedListItem>
-                  ))}
+                  {premiumPlan.map((item, index) => {
+                    let element: ReactElement = <></>;
+
+                    // 예외 문항
+                    if (index === 3) {
+                      const splited = item.split('전체 총평 페이지');
+
+                      element = (
+                        <>
+                          {splited[0]}
+                          <span className="font-bold">전체 총평 페이지</span>
+                          {splited[1]}
+                        </>
+                      );
+                    }
+
+                    return (
+                      <NumberedListItem
+                        key={index}
+                        number={index + 1}
+                        numberStyle={index >= 3 ? numberStyle : {}}
+                        numberClassName={clsx({
+                          'text-black': reportType === 'RESUME' && index >= 3,
+                        })}
+                      >
+                        {/* 예외 문항 */}
+                        {reportType === 'PERSONAL_STATEMENT' && index === 0 && (
+                          <s className="block">자소서 1문항 피드백 제공</s>
+                        )}
+                        {index === 3 ? element : item}
+                      </NumberedListItem>
+                    );
+                  })}
                 </div>
               </PlanCard>
               <PriceSection
+                wrapperClassName="mt-3"
                 originalPrice={premiumPriceInfo?.price ?? 0}
                 discountPrice={premiumPriceInfo?.discountPrice ?? 0}
               />
             </PriceCard>
 
             {/* 베이직 플랜 */}
-            <PriceCard className="flex min-w-[18rem] flex-col justify-between px-5 py-4 md:gap-5 md:px-6 md:py-7">
-              <PlanCard title="베이직 플랜">
+            <PriceCard className="flex min-w-[18rem] flex-col justify-between px-5 py-4 md:px-6 md:py-7">
+              <PlanCard
+                title="베이직 플랜"
+                wrapperClassName="h-full flex flex-col"
+                childrenClassName="h-full"
+              >
                 <div className="flex flex-col gap-3">
                   {basicPlan.map((item, index) => (
                     <NumberedListItem key={index} number={index + 1}>
@@ -187,6 +209,7 @@ const ReportPlanSection = ({
                 </div>
               </PlanCard>
               <PriceSection
+                wrapperClassName="mt-3"
                 originalPrice={basicPriceInfo?.price ?? 0}
                 discountPrice={basicPriceInfo?.discountPrice ?? 0}
               />
@@ -204,7 +227,7 @@ const ReportPlanSection = ({
             <PriceCard>
               <Badge className="mb-1">선택 옵션 1</Badge>
               <CardMainHeader>현직자 서면 피드백</CardMainHeader>
-              <p className="mb-2 mt-1 text-xsmall14 text-neutral-0">
+              <p className="mb-2 mt-1 text-xsmall14 text-neutral-0 md:text-small18">
                 현직자가 제공하는 심층 서류 피드백 및 작성 노하우
               </p>
               <p className="mb-1.5 text-xxsmall12 font-light text-neutral-35 md:text-xsmall14">
@@ -336,16 +359,25 @@ const PriceCard = memo(function PriceCard({
 const PlanCard = memo(function PlanCard({
   title,
   children,
+  wrapperClassName,
+  childrenClassName,
 }: {
   title: string;
   children?: ReactNode;
+  wrapperClassName?: string;
+  childrenClassName?: string;
 }) {
   return (
-    <div>
-      <div className="flex items-center justify-between rounded-md bg-black px-5 py-3 text-xsmall16 font-semibold text-white md:py-4 md:text-small20">
+    <div className={wrapperClassName}>
+      <div className="rounded-md bg-black px-5 py-3 text-xsmall16 font-semibold text-white md:py-4 md:text-small20">
         {title}
       </div>
-      <div className="mt-2 h-[14rem] rounded-xs bg-neutral-95 p-3 pr-4 md:mt-4 md:h-[19rem] md:px-6 md:py-5">
+      <div
+        className={twMerge(
+          'mt-2 rounded-xs bg-neutral-95 p-3 pr-4 md:mt-4 md:px-6 md:py-5',
+          childrenClassName,
+        )}
+      >
         {children}
       </div>
     </div>
