@@ -16,6 +16,7 @@ import {
   convertReportStatusToUserDisplayName,
   convertReportTypeToDisplayName,
   convertReportTypeToPathname,
+  MyReportInfoType,
   useGetMyReports,
 } from '@/api/report';
 import { download } from '@/lib/download';
@@ -219,6 +220,27 @@ const ReportManagementPage = () => {
   const isReportSubmitted = (reportUrl?: string | null) =>
     reportUrl !== null && reportUrl !== undefined;
 
+  const onClickSubmit = (application: MyReportInfoType) => {
+    const {
+      reportId,
+      feedbackStatus,
+      reportPriceType,
+      optionIds,
+      reportType,
+      applicationId,
+    } = application;
+    // 서류 제출 시 필요한 reportId, 온라인 상담 신청 여부를 전역 상태에 저장하여 사용 (API에 없음)
+    setReportApplication({
+      reportId,
+      isFeedbackApplied: feedbackStatus === 'APPLIED',
+      reportPriceType: reportPriceType ?? 'BASIC',
+      optionIds,
+    });
+    navigate(
+      `/report/${convertReportTypeToPathname(reportType)}/application/${applicationId}`,
+    );
+  };
+
   useEffect(() => {
     if (status === 'success' && data.myReportInfos.length === 0) {
       if (alerted.current) {
@@ -352,18 +374,7 @@ const ReportManagementPage = () => {
                     item.feedbackStatus !== 'APPLIED' && (
                       <ReportManagementButton
                         className="mt-5"
-                        onClick={() => {
-                          // 서류 제출 시 필요한 reportId, 온라인 상담 신청 여부를 전역 상태에 저장하여 사용 (API에 없음)
-                          setReportApplication({
-                            reportId: item.reportId,
-                            isFeedbackApplied:
-                              item.feedbackStatus === 'APPLIED',
-                            reportPriceType: item.reportPriceType ?? 'BASIC',
-                          });
-                          navigate(
-                            `/report/${convertReportTypeToPathname(item.reportType)}/application/${item.applicationId}`,
-                          );
-                        }}
+                        onClick={() => onClickSubmit(item)}
                       >
                         서류 제출하기
                       </ReportManagementButton>
@@ -489,18 +500,7 @@ const ReportManagementPage = () => {
                     {!isReportSubmitted(item.applyUrl) ? (
                       <ReportManagementButton
                         className="mt-5"
-                        onClick={() => {
-                          // 서류 제출 시 필요한 reportId, 온라인 상담 신청 여부를 전역 상태에 저장하여 사용 (API에 없음)
-                          setReportApplication({
-                            reportId: item.reportId,
-                            isFeedbackApplied:
-                              item.feedbackStatus === 'APPLIED',
-                            reportPriceType: item.reportPriceType ?? 'BASIC',
-                          });
-                          navigate(
-                            `/report/${convertReportTypeToPathname(item.reportType)}/application/${item.applicationId}`,
-                          );
-                        }}
+                        onClick={() => onClickSubmit(item)}
                       >
                         서류 제출 / 상담 일정 선택하기
                       </ReportManagementButton>

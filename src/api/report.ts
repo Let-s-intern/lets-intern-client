@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import dayjs from 'dayjs';
-import { z } from 'zod';
+import { number, z } from 'zod';
 
 import { faqSchema, reportTypeSchema } from '@/schema';
 import useAuthStore from '@/store/useAuthStore';
@@ -544,6 +544,7 @@ const getMyReportsSchema = z
         confirmedTime: z.string().nullable().optional(),
         isCanceled: z.boolean().nullable().optional(),
         feedbackIsCanceled: z.boolean().nullable().optional(),
+        optionIds: z.array(number()),
       }),
     ),
     pageInfo: pageInfoSchema,
@@ -559,6 +560,10 @@ const getMyReportsSchema = z
       confirmedTime: report.confirmedTime ? dayjs(report.confirmedTime) : null,
     })),
   }));
+
+export type MyReportInfoType = z.infer<
+  typeof getMyReportsSchema
+>['myReportInfos'][0];
 
 export const getMyReportsQueryKey = 'getMyReports';
 
