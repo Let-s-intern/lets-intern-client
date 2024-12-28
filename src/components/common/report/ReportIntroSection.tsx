@@ -129,7 +129,7 @@ const ReportIntroSection = ({ type }: ReportIntroSectionProps) => {
     borderColor:
       type === 'PERSONAL_STATEMENT'
         ? personalStatementColors.CA60FF
-        : resumeColors._4FDA46,
+        : resumeColors._2CE282,
   };
   const illustStyle = {
     color:
