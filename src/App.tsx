@@ -22,7 +22,6 @@ import './index.css';
 import './styles/apply.scss';
 import './styles/card.scss';
 import './styles/github-markdown-light.css';
-import './styles/material-css.scss';
 import './styles/modal.scss';
 import './styles/mypage.scss';
 
