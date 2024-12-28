@@ -1,5 +1,4 @@
 import { convertReportTypeToShortName, ReportType } from '@/api/report';
-import CloseIcon from '@/assets/icons/close.svg?react';
 import NextButton from '@/assets/icons/next-button.svg?react';
 import PrevButton from '@/assets/icons/prev-button.svg?react';
 import { REPORT_EXAMPLE } from '@/data/reportConstant';
@@ -56,21 +55,29 @@ const ReportExampleSection = ({
   const example = REPORT_EXAMPLE[type];
 
   const handleScroll = (direction: 'left' | 'right') => {
-    if (!itemRefs.current.length) return;
+    const container = scrollRef.current;
 
-    const currentIndex = itemRefs.current.findIndex(
-      (el) => el && el.getBoundingClientRect().left >= 0,
-    );
+    if (!container || !itemRefs.current.length) return;
 
-    const targetIndex =
+    const containerWidth = container.offsetWidth;
+    const currentScrollLeft = container.scrollLeft;
+
+    // 한 아이템의 너비를 기준으로 스크롤 이동
+    const itemWidth = itemRefs.current[0]?.offsetWidth || 0;
+    const gap = 12; // 아이템 간 간격이 있다면 추가
+    const scrollAmount = itemWidth + gap;
+
+    const targetScrollLeft =
       direction === 'left'
-        ? Math.max(currentIndex - 1, 0)
-        : Math.min(currentIndex + 1, itemRefs.current.length - 1);
+        ? Math.max(currentScrollLeft - scrollAmount, 0)
+        : Math.min(
+            currentScrollLeft + scrollAmount,
+            container.scrollWidth - containerWidth,
+          );
 
-    itemRefs.current[targetIndex]?.scrollIntoView({
+    container.scrollTo({
+      left: targetScrollLeft,
       behavior: 'smooth',
-      block: 'nearest',
-      inline: 'start',
     });
   };
 
@@ -157,44 +164,6 @@ const ReportExampleSection = ({
           />
         </div>
       </div>
-      {clickedExample !== null && (
-        <div className="fixed left-0 top-0 z-50 h-full w-full bg-black bg-opacity-50">
-          <div className="fixed left-1/2 top-1/2 max-h-[90%] w-[90%] max-w-[720px] -translate-x-1/2 -translate-y-1/2 transform overflow-auto rounded-md bg-white p-4 pb-9 md:p-14 md:pb-16">
-            <div className="flex w-full items-center justify-between">
-              <div className="flex h-5 w-5 items-center justify-center rounded-xxs bg-primary-light text-xsmall14 font-semibold text-white md:h-6 md:w-6 md:text-xsmall16">
-                {clickedExample + 1}
-              </div>
-              <CloseIcon
-                className="h-6 w-6 cursor-pointer"
-                onClick={() => setClickedExample(null)}
-              />
-            </div>
-            <div className="relative mt-2.5 md:mt-2">
-              <img
-                src={example[clickedExample].src}
-                alt={example[clickedExample].title}
-                className="h-auto w-full bg-white"
-              />
-              <PrevButton
-                className="absolute left-0 top-1/2 z-10 h-8 w-8 -translate-x-1/2 -translate-y-1/2 transform cursor-pointer text-neutral-20 md:hidden"
-                onClick={() =>
-                  setClickedExample(clickedExample > 0 ? clickedExample - 1 : 0)
-                }
-              />
-              <NextButton
-                className="absolute right-0 top-1/2 h-8 w-8 -translate-y-1/2 translate-x-1/2 transform cursor-pointer text-neutral-20 md:hidden"
-                onClick={() =>
-                  setClickedExample(
-                    clickedExample < example.length - 1
-                      ? clickedExample + 1
-                      : example.length - 1,
-                  )
-                }
-              />
-            </div>
-          </div>
-        </div>
-      )}
     </section>
   );
 };
