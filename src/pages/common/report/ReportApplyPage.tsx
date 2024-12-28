@@ -5,7 +5,10 @@ import { IoCloseOutline } from 'react-icons/io5';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import { uploadFile } from '@/api/file';
-import { convertReportTypeStatus } from '@/api/report';
+import {
+  convertParamToReportType,
+  convertReportTypeStatus,
+} from '@/api/report';
 import useMinDate from '@/hooks/useMinDate';
 import useReportProgramInfo from '@/hooks/useReportProgramInfo';
 import useRunOnce from '@/hooks/useRunOnce';
@@ -418,9 +421,13 @@ export const PremiumSection = ({
 };
 
 export const ScheduleSection = () => {
+  const { reportType } = useParams();
   const { data, setReportApplication } = useReportApplicationStore();
 
-  const minDate = useMinDate(data);
+  const minDate = useMinDate({
+    application: data,
+    reportType: convertParamToReportType(reportType),
+  });
 
   type Key = keyof typeof data;
 
