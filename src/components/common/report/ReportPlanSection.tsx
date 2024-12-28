@@ -140,12 +140,12 @@ const ReportPlanSection = ({
         {/* 좌우 슬라이드 */}
         <div
           data-section="price-1"
-          className="custom-scrollbar -mx-5 mb-14 overflow-x-auto px-5 lg:mx-0 lg:px-0"
+          className="custom-scrollbar -mx-5 mb-14 overflow-x-auto px-5 pt-1 lg:mx-0 lg:px-0"
         >
           <div className="flex w-fit gap-3">
             {/* 프리미엄 플랜 */}
             <PriceCard
-              className="flex min-w-[18rem] flex-col gap-3 md:gap-5"
+              className="flex min-w-[18rem] flex-col gap-3 px-5 py-4 md:gap-5 md:px-6 md:py-7"
               reportType={reportType}
               bannerText={`채용 공고 맞춤형 ${convertReportTypeToDisplayName(reportType)}를 원한다면,`}
               bannerColor={
@@ -157,7 +157,7 @@ const ReportPlanSection = ({
                 'text-white': reportType === 'PERSONAL_STATEMENT',
               })}
               showBubbleTail={isMobile ? false : true}
-              floatingBannerClassName="left-5 top-0 md:left-36 md:top-4"
+              floatingBannerClassName="left-5 -top-1 md:left-36 md:top-4"
             >
               <PlanCard title="프리미엄 플랜">
                 <div className="flex flex-col gap-3">
@@ -214,24 +214,24 @@ const ReportPlanSection = ({
             <PriceCard>
               <Badge className="mb-1">선택 옵션 1</Badge>
               <CardMainHeader>현직자 서면 피드백</CardMainHeader>
-              <p className="mb-2 mt-1 text-xsmall14 font-medium text-neutral-0">
+              <p className="mb-2 mt-1 text-xsmall14 text-neutral-0">
                 현직자가 제공하는 심층 서류 피드백 및 작성 노하우
               </p>
-              <p className="mb-1.5 text-xxsmall12 text-neutral-35 md:text-xsmall14">
+              <p className="mb-1.5 text-xxsmall12 font-light text-neutral-35 md:text-xsmall14">
                 *피드백 받고 싶은 현직자 여러명 옵션 추가 가능
               </p>
               <div className="mb-5 mt-3 grid grid-cols-2 gap-x-1.5 gap-y-2 md:mb-6">
                 {employees.map((item, index) => (
                   <div
                     key={index}
-                    className="rounded-xs bg-[#EEFAFF] py-2 text-center text-xxsmall12 font-semibold md:text-xsmall14"
+                    className="rounded-xs bg-[#EEFAFF] py-2 text-center text-xxsmall12 font-medium md:text-xsmall14"
                   >
                     {item + (isMobile ? '' : ' 현직자')}
                   </div>
                 ))}
               </div>
               <div>
-                <span className="mb-1.5 block text-xxsmall12 font-medium text-neutral-45 md:text-xsmall16">
+                <span className="mb-1.5 block text-xxsmall12 text-neutral-45 md:text-xsmall16">
                   현직자 택 1인 옵션 추가 금액
                 </span>
                 {/* 첫 번째 옵션 가격 표시 */}
@@ -256,7 +256,7 @@ const ReportPlanSection = ({
               'text-white': reportType === 'PERSONAL_STATEMENT',
             })}
             showBubbleTail={isMobile ? false : true}
-            floatingBannerClassName="left-5 -top-1 md:left-auto md:right-2 md:-top-3"
+            floatingBannerClassName="left-5 -top-2 md:left-auto md:right-2 md:-top-3"
           >
             <Badge className="mb-1">선택 옵션 2</Badge>
             <CardMainHeader>
@@ -335,10 +335,7 @@ const PriceCard = memo(function PriceCard({
         </div>
       )}
       <div
-        className={twMerge(
-          'h-full rounded-md bg-white px-5 py-6 md:px-6 md:py-8',
-          className,
-        )}
+        className={twMerge('h-full rounded-md bg-white px-6 py-5', className)}
       >
         {children}
       </div>
@@ -437,7 +434,7 @@ const CardMainHeader = memo(function CardMainHeader({
   children?: ReactNode;
 }) {
   return (
-    <span className="mb-2 mt-0.5 block text-xsmall16 font-semibold md:mb-3 md:mt-2 md:text-small20">
+    <span className="mb-2 mt-0.5 block text-xsmall16 font-medium md:mb-3 md:mt-2 md:text-small20">
       {children}
     </span>
   );
@@ -453,7 +450,7 @@ const Badge = memo(function Badge({
   return (
     <div
       className={twMerge(
-        'w-fit rounded-xxs bg-neutral-35 px-2 py-1 text-xxsmall12 font-semibold text-white',
+        'w-fit rounded-xxs bg-neutral-35 px-2 py-1 text-xxsmall12 font-medium text-white md:font-normal',
         className,
       )}
     >
