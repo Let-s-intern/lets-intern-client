@@ -25,7 +25,7 @@ const Section0: Record<
       <React.Fragment key={0}>
         <p>
           6가지 핵심 기준으로 <strong>이력서의 강점과 약점</strong>을 분석한{' '}
-          <strong>솔직하고 객곽적인 피드백 & 총평 제공</strong>
+          <strong>솔직하고 객관적인 피드백 & 총평 제공</strong>
         </p>
         <p className="text-xxsmall12 text-neutral-35 md:text-small18">
           가독성/구조 및 구성/직무 적합성/정확성/간결성/구체성
@@ -51,7 +51,7 @@ const Section0: Record<
       <React.Fragment key={0}>
         <p>
           5가지 핵심 기준으로 <strong>자소서의 강점과 약점</strong>을 분석한{' '}
-          <strong>솔직하고 객곽적인 피드백 & 총평 제공</strong>
+          <strong>솔직하고 객관적인 피드백 & 총평 제공</strong>
         </p>
         <p className="text-xxsmall12 text-neutral-35 md:text-small18">
           가독성/구조 및 구성/구체성/직무 적합성/완성도
@@ -79,7 +79,7 @@ const Section0: Record<
       <React.Fragment key={0}>
         <p>
           6가지 핵심 기준으로 <strong>포트폴리오의 강점과 약점</strong>을 분석한{' '}
-          <strong>솔직하고 객곽적인 피드백 & 총평 제공</strong>
+          <strong>솔직하고 객관적인 피드백 & 총평 제공</strong>
         </p>
         <p className="text-xxsmall12 text-neutral-35 md:text-small18">
           가독성/구조 및 구성/직무 적합성/정확성/간결성/구체성
@@ -254,7 +254,7 @@ const ReportIntroSection = ({ type }: ReportIntroSectionProps) => {
                 className="mt-1 flex h-4 w-4 shrink-0 items-center justify-center rounded-full text-xxsmall12 font-semibold text-black md:h-8 md:w-8 md:text-small20"
                 style={stepStyle}
               >{`${index + 1}`}</span>
-              <div className="flex flex-1 flex-col items-start gap-y-1 text-start text-xsmall14 font-medium md:text-medium24">
+              <div className="flex flex-1 flex-col items-start gap-y-1 text-start text-xsmall14 font-medium md:text-small20">
                 {step}
               </div>
             </div>
