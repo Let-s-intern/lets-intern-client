@@ -410,7 +410,7 @@ const PriceSection = memo(function PriceSection({
   discountPrice: number;
 }) {
   const finalPrice = originalPrice - discountPrice;
-  const discountRate = ((finalPrice / originalPrice) * 100).toFixed(0);
+  const discountRate = ((discountPrice / originalPrice) * 100).toFixed(0);
 
   return (
     <div className={wrapperClassName}>
