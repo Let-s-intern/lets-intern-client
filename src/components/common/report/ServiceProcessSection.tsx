@@ -190,11 +190,12 @@ const ServiceProcessSection = ({ reportType }: ServiceProcessSectionProps) => {
 
             <ContentBox className="flex flex-col gap-2 md:gap-3">
               <NumberedContent number="3-2">
-                발행된 리포트는 ‘MY 진단서 보기’ 탭에서 PDF로
-                <br className="hidden md:block" /> 다운로드 가능합니다.
+                취업 연구팀이 작성한 상세 피드백
+                <br className="md:hidden" /> REPORT를 확인합니다.
               </NumberedContent>
               <span className="text-xxsmall12 text-neutral-0 md:text-xsmall14 md:text-neutral-35">
-                *발행된 리포트는 PDF로 다운로드 가능합니다.
+                *MY 진단서 보기에서 확인 가능 / 발행된 리포트는 PDF로 다운로드
+                가능합니다.
               </span>
             </ContentBox>
           </div>
@@ -229,7 +230,7 @@ const ServiceProcessSection = ({ reportType }: ServiceProcessSectionProps) => {
               <div className="mt-3 flex items-start gap-2">
                 <Badge style={badgeStyle}>진행 꿀팁</Badge>
                 <p className="text-xxsmall12 font-semibold md:text-xsmall16 md:font-medium">
-                  리포트 확인 후 궁금한 점이나 추가 질문을 미리 준비하시면 더욱
+                  리포트 확인 후, 궁금한 점이나 추가 질문을 미리 준비하시면 더욱
                   알찬 시간을 보낼 수 있어요!
                 </p>
               </div>
