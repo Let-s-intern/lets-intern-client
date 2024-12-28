@@ -19,9 +19,11 @@ const CreditListItem = ({ payment }: { payment: PaymentType }) => {
           payment.programInfo.isRefunded
             ? 'REFUNDED'
             : payment.tossInfo && payment.tossInfo.status
-              ? payment.tossInfo.status
+              ? payment.tossInfo.status === 'DONE'
+                ? 'DONE'
+                : 'CANCELED'
               : payment.programInfo.isCanceled
-                ? 'ZERO'
+                ? 'CANCELED'
                 : 'DONE'
         }
       />

@@ -6,9 +6,9 @@ const ReportCreditRow = ({
   content: string;
 }) => {
   return (
-    <div className="flex w-full items-center justify-between gap-x-3 py-2">
+    <div className="flex w-full items-start justify-between gap-x-3 py-2">
       <p>{title}</p>
-      <p>{content}</p>
+      <p className="shrink-0">{content}</p>
     </div>
   );
 };

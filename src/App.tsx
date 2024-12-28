@@ -38,16 +38,37 @@ declare global {
   }
 }
 
+const fontFamily = [
+  'Pretendard Variable',
+  '-apple-system',
+  'BlinkMacSystemFont',
+  'system-ui',
+  'Roboto',
+  'sans-serif',
+].join(',');
+
 const materialUiTheme = createTheme({
   typography: {
-    fontFamily: [
-      'Pretendard Variable',
-      '-apple-system',
-      'BlinkMacSystemFont',
-      'system-ui',
-      'Roboto',
-      'sans-serif',
-    ].join(','),
+    fontFamily,
+  },
+  components: {
+    MuiFormControl: {
+      styleOverrides: {
+        root: {
+          fontFamily,
+        },
+      },
+    },
+    MuiTypography: {
+      styleOverrides: {
+        root: {
+          fontFamily,
+        },
+        body1: {
+          fontFamily,
+        },
+      },
+    },
   },
 });
 

@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import dayjs from 'dayjs';
-import { z } from 'zod';
+import { number, z } from 'zod';
 
 import { faqSchema, reportTypeSchema } from '@/schema';
 import useAuthStore from '@/store/useAuthStore';
@@ -85,6 +85,19 @@ export function convertReportTypeToPathname(reportType: ReportType) {
       return 'personal-statement';
     case 'PORTFOLIO':
       return 'portfolio';
+  }
+}
+
+export function convertParamToReportType(param?: string) {
+  const { RESUME, PORTFOLIO, PERSONAL_STATEMENT } = reportTypeSchema.enum;
+
+  switch (param) {
+    case 'personal-statement':
+      return PERSONAL_STATEMENT;
+    case 'portfolio':
+      return PORTFOLIO;
+    default:
+      return RESUME;
   }
 }
 
@@ -531,6 +544,7 @@ const getMyReportsSchema = z
         confirmedTime: z.string().nullable().optional(),
         isCanceled: z.boolean().nullable().optional(),
         feedbackIsCanceled: z.boolean().nullable().optional(),
+        optionIds: z.array(number()),
       }),
     ),
     pageInfo: pageInfoSchema,
@@ -546,6 +560,10 @@ const getMyReportsSchema = z
       confirmedTime: report.confirmedTime ? dayjs(report.confirmedTime) : null,
     })),
   }));
+
+export type MyReportInfoType = z.infer<
+  typeof getMyReportsSchema
+>['myReportInfos'][0];
 
 export const getMyReportsQueryKey = 'getMyReports';
 
@@ -1003,7 +1021,10 @@ const reportApplicationInfoSchema = z.object({
   reportApplicationStatus: reportApplicationStatusSchema,
   reportFeedbackStatus: reportFeedbackStatusSchema.nullable(),
   reportFeedbackDesiredDate: z.string().nullable(),
+  applyUrlDate: z.string().nullable(),
 });
+
+export type ReportApplicationInfo = z.infer<typeof reportApplicationInfoSchema>;
 
 const reportPaymentInfoSchema = z.object({
   paymentId: z.number(),

@@ -8,7 +8,6 @@ import { resumeReportDescription } from '@/data/description';
 import useReportApplicationStore from '@/store/useReportApplicationStore';
 import { ReportContent } from '@/types/interface';
 import { getBaseUrlFromServer, getReportLandingTitle } from '@/utils/url';
-import Header from '@components/common/report/Header';
 import PromoSection from '@components/common/report/PromoSection';
 import ReportBasicInfo from '@components/common/report/ReportBasicInfo';
 import ReportExampleSection from '@components/common/report/ReportExampleSection';
@@ -49,7 +48,8 @@ const ReportResumePage = () => {
     data?.resumeInfo?.contents ?? '{}',
   );
 
-  const { data: priceDetail } = useGetReportPriceDetail(report?.reportId);
+  const { data: priceDetail, isLoading: priceIsLoading } =
+    useGetReportPriceDetail(report?.reportId);
 
   const { initReportApplication } = useReportApplicationStore();
 
@@ -81,13 +81,14 @@ const ReportResumePage = () => {
           <meta name="twitter:description" content={description} />
         ) : null}
       </Helmet>
+
       {isLoading ? (
         <LoadingContainer />
       ) : (
         <div className="flex w-full flex-col items-center">
           <div className="flex w-full flex-col bg-black pb-10 text-white md:pb-[60px]">
             <div className="mx-auto flex w-full max-w-[1000px] flex-col px-5 lg:px-0">
-              <Header>서류완성의 시작과 끝은 진단에서부터</Header>
+              <div className="h-[56px] md:h-[66px]" />
               <ReportBasicInfo
                 reportBasic={data?.resumeInfo}
                 color={resumeColors._2CE282}
@@ -95,7 +96,11 @@ const ReportResumePage = () => {
             </div>
           </div>
 
-          <ReportNavigation color={resumeColors._2CE282} isDark />
+          <ReportNavigation
+            color={resumeColors._2CE282}
+            isDark
+            isReady={!isLoading && !priceIsLoading}
+          />
 
           <div
             id="content"
@@ -123,10 +128,8 @@ const ReportResumePage = () => {
             )}
             {/* 홍보 배너  */}
             <PromoSection reportType="RESUME" />
-
             {/* 서비스 이용 안내 */}
             <ServiceProcessSection reportType="RESUME" />
-
             {/* FAQ  */}
             {report?.reportId && (
               <ReportFaqSection

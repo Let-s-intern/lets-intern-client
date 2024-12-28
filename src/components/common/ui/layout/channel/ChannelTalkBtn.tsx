@@ -2,8 +2,8 @@ import { useMediaQuery } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 
+import channelService from '@/ChannelService';
 import { twMerge } from '@/lib/twMerge';
-import channelService from '../../../../../ChannelService';
 
 const programDetailPathRegex = /^\/program\/(live|challenge|vod)\/\d+$/; // /program/live/:programId
 
@@ -24,6 +24,7 @@ const ChannelTalkBtn = () => {
         hideChannelButtonOnBoot: true,
       });
     }
+
     // 버튼 표시/숨김
     channelService.onShowMessenger(() => setIsHidden(true));
     channelService.onHideMessenger(() => setIsHidden(false));
@@ -32,6 +33,12 @@ const ChannelTalkBtn = () => {
       setAlert(alert);
     });
   }, []);
+
+  /** 특정 페이지에서 버튼 숨김 */
+  useEffect(() => {
+    // 결제 페이지
+    if (location.pathname.endsWith('payment')) setIsHidden(true);
+  }, [location.pathname]);
 
   return (
     <button

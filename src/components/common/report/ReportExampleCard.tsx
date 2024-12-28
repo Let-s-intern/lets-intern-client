@@ -7,7 +7,7 @@ interface ReportExampleCardProps {
 
 const ReportExampleCard = ({ example }: ReportExampleCardProps) => {
   return (
-    <div className="flex w-full flex-col whitespace-pre">
+    <div className="flex h-full w-full flex-col whitespace-pre">
       <div className="flex flex-col gap-y-3 overflow-hidden rounded-t-[10px] bg-neutral-10 px-5 pt-3 md:gap-y-2.5 md:px-8 md:pt-6">
         <h5 className="whitespace-pre-line break-keep text-center text-xsmall16 font-bold text-white md:text-small20">
           {example.title}
@@ -20,7 +20,7 @@ const ReportExampleCard = ({ example }: ReportExampleCardProps) => {
           />
         </div>
       </div>
-      <div className="flex flex-1 flex-col gap-y-3 rounded-b-[10px] bg-white py-6 pl-4 pr-5">
+      <div className="flex flex-1 flex-col gap-y-3 rounded-b-[10px] bg-white pb-6 pl-4 pr-5 pt-5 md:pt-6">
         {example.description.map((desc, index) => (
           <div
             className="flex w-full gap-x-0.5"

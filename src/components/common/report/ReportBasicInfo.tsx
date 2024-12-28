@@ -20,7 +20,7 @@ export const BASIC_INFO: Record<
     },
     {
       title: '진행 방식',
-      content: <p>{`온라인 제출 -> 48시간 이내 진단 -> 첨삭 리포트 발송`}</p>,
+      content: <p>{`온라인 제출 → 48시간 이내 진단 → 첨삭 리포트 발송`}</p>,
     },
     {
       title: '피드백 리포트',
@@ -42,7 +42,7 @@ export const BASIC_INFO: Record<
     },
     {
       title: '진행 방식',
-      content: <p>{`온라인 제출 -> 48시간 이내 진단 -> 첨삭 리포트 발송`}</p>,
+      content: <p>{`온라인 제출 → 48시간 이내 진단 → 첨삭 리포트 발송`}</p>,
     },
     {
       title: '피드백 리포트',
@@ -64,7 +64,7 @@ export const BASIC_INFO: Record<
     },
     {
       title: '진행 방식',
-      content: <p>{`온라인 제출 -> 48시간 이내 진단 -> 첨삭 리포트 발송`}</p>,
+      content: <p>{`온라인 제출 → 48시간 이내 진단 → 첨삭 리포트 발송`}</p>,
     },
     {
       title: '피드백 리포트',
@@ -82,9 +82,9 @@ const ReportBasicInfo = ({ reportBasic, color }: ReportBasicInfoProps) => {
   const thumbnail = () => {
     switch (reportBasic?.reportType) {
       case 'RESUME':
-        return '/images/report-thumbnail.png';
+        return '/images/report/thumbnail_resume.png';
       case 'PERSONAL_STATEMENT':
-        return '/images/report-thumbnail.png';
+        return '/images/report/thumbnail_personal.png';
       case 'PORTFOLIO':
         return '/images/report-thumbnail.png';
       default:
@@ -105,16 +105,13 @@ const ReportBasicInfo = ({ reportBasic, color }: ReportBasicInfoProps) => {
       data-section="overview"
       className="flex w-full flex-col gap-y-6 md:gap-y-4"
     >
-      <div className="flex w-full items-center justify-center bg-[#E2E2E2] md:rounded-md">
+      <div className="flex w-full items-center justify-center bg-black md:rounded-md">
         <img
           src={thumbnail()}
           alt="리포트 썸네일"
-          className="h-auto w-full object-contain md:w-3/5 md:rounded-md"
+          className="h-auto w-full object-cover md:w-3/5 md:rounded-md"
         />
       </div>
-      <span className="w-full text-small18 font-bold text-white md:text-center md:text-medium22">
-        {`${reportBasic.title} 피드백 REPORT`}
-      </span>
       <div
         className="flex w-full flex-col gap-3 md:flex-row md:items-stretch"
         style={{ color: color ?? 'white' }}
