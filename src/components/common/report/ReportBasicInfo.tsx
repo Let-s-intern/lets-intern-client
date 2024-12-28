@@ -20,7 +20,7 @@ export const BASIC_INFO: Record<
     },
     {
       title: '진행 방식',
-      content: <p>{`온라인 제출 -> 48시간 이내 진단 -> 첨삭 리포트 발송`}</p>,
+      content: <p>{`온라인 제출 → 48시간 이내 진단 → 첨삭 리포트 발송`}</p>,
     },
     {
       title: '피드백 리포트',
@@ -42,7 +42,7 @@ export const BASIC_INFO: Record<
     },
     {
       title: '진행 방식',
-      content: <p>{`온라인 제출 -> 48시간 이내 진단 -> 첨삭 리포트 발송`}</p>,
+      content: <p>{`온라인 제출 → 48시간 이내 진단 → 첨삭 리포트 발송`}</p>,
     },
     {
       title: '피드백 리포트',
@@ -64,7 +64,7 @@ export const BASIC_INFO: Record<
     },
     {
       title: '진행 방식',
-      content: <p>{`온라인 제출 -> 48시간 이내 진단 -> 첨삭 리포트 발송`}</p>,
+      content: <p>{`온라인 제출 → 48시간 이내 진단 → 첨삭 리포트 발송`}</p>,
     },
     {
       title: '피드백 리포트',
