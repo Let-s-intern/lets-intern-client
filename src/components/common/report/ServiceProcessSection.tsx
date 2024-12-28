@@ -10,7 +10,7 @@ import MainHeader from './MainHeader';
 import SectionHeader from './SectionHeader';
 import SubHeader from './SubHeader';
 
-const SECTION_HEADER = '서비스 이용 안내';
+const SECTION_HEADER = '서비스 이용 방법';
 const SUB_HEADER = '48시간 이내 진단 완료!';
 
 interface ServiceProcessSectionProps {
@@ -57,7 +57,9 @@ const ServiceProcessSection = ({ reportType }: ServiceProcessSectionProps) => {
       className="w-full px-5 py-16 md:py-28 lg:px-0"
     >
       <header>
-        <SectionHeader className="mb-6">{SECTION_HEADER}</SectionHeader>
+        <SectionHeader className="mb-6 md:mb-14">
+          {SECTION_HEADER}
+        </SectionHeader>
         <SubHeader className="mb-1 md:mb-3" style={subHeaderStyle}>
           {SUB_HEADER}
         </SubHeader>

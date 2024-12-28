@@ -127,7 +127,9 @@ const ReportPlanSection = ({
       className="w-full bg-neutral-90 px-5 py-16 md:pb-36 md:pt-24"
     >
       <header>
-        <SectionHeader className="mb-6">{SECTION_HEADER}</SectionHeader>
+        <SectionHeader className="mb-6 md:mb-14">
+          {SECTION_HEADER}
+        </SectionHeader>
         <SubHeader className="mb-1 md:mb-3" style={subHeaderStyle}>
           {SUB_HEADER}
         </SubHeader>
