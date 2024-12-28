@@ -206,6 +206,7 @@ export const REPORT_INTRO: Record<ReportType, reportIntroItemType> = {
       questions: [
         '왜 내 서류는 자꾸 탈락할까?',
         `채용공고에 나와 있는 직무필수역량을\n내 이야기로 설득력 있게 담아냈을까?`,
+        `성과, 이렇게 수치화해서\n\n적는 게 맞는 걸까?`,
       ],
     },
     section2: {
