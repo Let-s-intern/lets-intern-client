@@ -60,6 +60,108 @@ const ReportCreditDetail = () => {
 
   const paymentInfo = reportPaymentDetail?.reportPaymentInfo;
 
+  const isBasicCancelable = () => {
+    // 0. 서류 제출 후 3시간 이내
+    const isBefore3Hours =
+      dayjs().diff(
+        dayjs(reportPaymentDetail?.reportPaymentInfo.createDate),
+        'hour',
+      ) < 3;
+
+    // 1. 서류 제출 후 3시간이후 ~ 진단서 발급 완료
+    const isAfter3Hours =
+      dayjs().diff(
+        dayjs(reportPaymentDetail?.reportPaymentInfo.createDate),
+        'hour',
+      ) >= 3;
+
+    // 2. 진단서 발급 완료 후
+    const isAfterReportIssued =
+      reportPaymentDetail?.reportApplicationInfo.reportApplicationStatus ===
+        'REPORTED' ||
+      reportPaymentDetail?.reportApplicationInfo.reportApplicationStatus ===
+        'COMPLETED';
+
+    if (isAfterReportIssued) return false;
+    if (isBefore3Hours || isAfter3Hours) return true;
+    else return false;
+  };
+
+  const isFeedbackCancelable = () => {
+    // 0. 1:1피드백 결제하지 않은 경우
+    if (
+      !reportPaymentDetail?.reportApplicationInfo.reportFeedbackApplicationId
+    ) {
+      return true;
+    }
+
+    // 1. 일정 확정 이전
+    const isBeforeFeedbackConfirmed =
+      reportPaymentDetail?.reportApplicationInfo.reportFeedbackStatus ===
+        'APPLIED' ||
+      reportPaymentDetail?.reportApplicationInfo.reportFeedbackStatus ===
+        'PENDING';
+
+    // 2. 일정 확정 후 ~ 1:1 피드백 일정 24시간 이전
+    const isAfterFeedbackConfirmed =
+      reportPaymentDetail?.reportApplicationInfo.reportFeedbackStatus ===
+        'CONFIRMED' &&
+      reportPaymentDetail?.reportApplicationInfo.reportFeedbackDesiredDate &&
+      dayjs().isBefore(
+        dayjs(
+          reportPaymentDetail.reportApplicationInfo.reportFeedbackDesiredDate,
+        ).subtract(1, 'day'),
+      );
+
+    // 3. 1:1 피드백 일정 24시간 이전
+    const isBeforeFeedbackDate =
+      reportPaymentDetail?.reportApplicationInfo.reportFeedbackDesiredDate &&
+      (dayjs().isSame(
+        dayjs(
+          reportPaymentDetail?.reportApplicationInfo.reportFeedbackDesiredDate,
+        ).subtract(1, 'day'),
+      ) ||
+        (dayjs().isAfter(
+          dayjs(
+            reportPaymentDetail?.reportApplicationInfo
+              .reportFeedbackDesiredDate,
+          ).subtract(1, 'day'),
+        ) &&
+          dayjs().isBefore(
+            dayjs(
+              reportPaymentDetail?.reportApplicationInfo
+                .reportFeedbackDesiredDate,
+            ),
+          )));
+
+    // 4. 1:1 피드백 일정 이후
+    const isAfterFeedbackDate =
+      reportPaymentDetail?.reportApplicationInfo.reportFeedbackStatus ===
+        'COMPLETED' ||
+      (reportPaymentDetail?.reportApplicationInfo.reportFeedbackDesiredDate &&
+        (dayjs().isSame(
+          dayjs(
+            reportPaymentDetail?.reportApplicationInfo
+              .reportFeedbackDesiredDate,
+          ),
+        ) ||
+          dayjs().isAfter(
+            dayjs(
+              reportPaymentDetail?.reportApplicationInfo
+                .reportFeedbackDesiredDate,
+            ),
+          )));
+
+    if (isAfterFeedbackDate) return false;
+    if (
+      isBeforeFeedbackDate ||
+      isAfterFeedbackConfirmed ||
+      isBeforeFeedbackConfirmed
+    )
+      return true;
+    else return false;
+  };
+
   const isCancelable = () => {
     if (
       !reportPaymentDetail ||
@@ -70,26 +172,10 @@ const ReportCreditDetail = () => {
       return false;
     }
 
-    const now = dayjs();
-    const {
-      reportApplicationStatus,
-      reportFeedbackDesiredDate,
-      reportFeedbackStatus,
-    } = reportPaymentDetail.reportApplicationInfo;
+    const isBasicCancel = isBasicCancelable();
+    const isFeedbackCancel = isFeedbackCancelable();
 
-    // 진단서 수령 후 - 환불 불가
-    const isAfterReportIssued = reportApplicationStatus === 'COMPLETED';
-
-    // 1:1 첨삭 일정 확정 후 - 확정된 시간 이후 - 환불 불가
-    const isAfterFeedbackConfirmed =
-      reportFeedbackStatus === 'COMPLETED' ||
-      (reportFeedbackStatus === 'CONFIRMED' &&
-        reportFeedbackDesiredDate &&
-        (now.isAfter(reportFeedbackDesiredDate) ||
-          now.isSame(reportFeedbackDesiredDate)));
-
-    // 환불 가능한지 확인
-    return !isAfterReportIssued || !isAfterFeedbackConfirmed;
+    return isBasicCancel || isFeedbackCancel;
   };
 
   const isCanceled =
