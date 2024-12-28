@@ -2,9 +2,11 @@ import { useQuery } from '@tanstack/react-query';
 import { useEffect, useRef, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 
+import { useControlScroll } from '@/hooks/useControlScroll';
+import { twMerge } from '@/lib/twMerge';
+import useAuthStore from '@/store/useAuthStore';
 import useScrollStore from '@/store/useScrollStore';
-import useAuthStore from '../../../../../store/useAuthStore';
-import axios from '../../../../../utils/axios';
+import axios from '@/utils/axios';
 import KakaoChannel from './KakaoChannel';
 import NavItem from './NavItem';
 import { NavSubItemProps } from './NavSubItem';
@@ -37,16 +39,18 @@ const scrollEventPage = [
 
 const NavBar = () => {
   const navigate = useNavigate();
-  const { isLoggedIn, logout } = useAuthStore();
   const location = useLocation();
+  const lastScrollY = useRef(0);
+
   const [isOpen, setIsOpen] = useState(false);
   const [user, setUser] = useState<any>(null);
   const [isAdmin, setIsAdmin] = useState(false);
   const [activeLink, setActiveLink] = useState<
     'HOME' | 'ABOUT' | 'PROGRAM' | 'ADMIN' | 'BLOG' | 'REPORT' | ''
   >('');
+
+  const { isLoggedIn, logout } = useAuthStore();
   const { setScrollDirection, scrollDirection } = useScrollStore();
-  const lastScrollY = useRef(0);
 
   const toggleMenu = () => {
     setIsOpen(!isOpen);
@@ -75,6 +79,9 @@ const NavBar = () => {
     enabled: isLoggedIn,
     retry: 1,
   });
+
+  // 사이드바 열리면 스크롤 제한
+  useControlScroll(isOpen);
 
   useEffect(() => {
     if (location.pathname.startsWith('/about')) {
@@ -126,7 +133,7 @@ const NavBar = () => {
     return () => {
       window.removeEventListener('scroll', handleScroll);
     };
-  }, [location.pathname, setScrollDirection, scrollEventPage]);
+  }, [location.pathname, setScrollDirection]);
 
   return (
     <>
@@ -207,15 +214,16 @@ const NavBar = () => {
             : 'pointer-events-none opacity-0 ease-in'
         }`}
         onClick={toggleMenu}
-      ></div>
+      />
       {/* 사이드 네비게이션 바 */}
       <div
-        className={`fixed right-0 top-0 z-50 h-screen w-full bg-white shadow-md transition-all duration-300 sm:w-[22rem] ${
-          isOpen ? 'translate-x-0' : 'translate-x-full'
-        }`}
+        className={twMerge(
+          'fixed right-0 top-0 z-50 flex h-screen w-full flex-col bg-white shadow-md transition-all duration-300 sm:w-[22rem]',
+          isOpen ? 'translate-x-0' : 'translate-x-full',
+        )}
       >
         <div className="flex w-full items-center justify-between p-5">
-          <div className="h-[1.75rem]">
+          <div className="h-7">
             <img
               className="h-full w-auto"
               src="/logo/logo-gradient-text.svg"
@@ -232,7 +240,7 @@ const NavBar = () => {
         </div>
         <hr />
         <KakaoChannel />
-        <div className="flex flex-col gap-5 py-10">
+        <div className="flex flex-col gap-5 overflow-y-auto py-10">
           <div className="mx-5 flex justify-between">
             {isLoggedIn ? (
               <span className="flex w-full items-center justify-between gap-4 text-neutral-0 sm:p-0">
