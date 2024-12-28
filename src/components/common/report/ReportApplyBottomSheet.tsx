@@ -106,6 +106,8 @@ const ReportApplyBottomSheet = React.forwardRef<
     if (reportPriceType === BASIC) return REPORT_RADIO_VALUES.basic;
     // 프리미엄
     if (reportPriceType === PREMIUM) return REPORT_RADIO_VALUES.premium;
+
+    return null;
   }, [reportApplication]);
 
   // 이력서 진단 플랜 Radio 정보
@@ -645,7 +647,7 @@ const ReportApplyBottomSheet = React.forwardRef<
                   </>
                 )}
                 {/* 가격 */}
-                <span className="mt-3 block text-right text-small18 font-bold text-black/75">
+                <span className="mt-3 block text-right text-small18 font-bold text-neutral-10">
                   {(
                     reportFinalPrice +
                     feedbackFinalPrice -
@@ -717,7 +719,7 @@ const ReportPriceView = memo(function ReportPriceView(props: {
         </span>
       )}
 
-      <span className="text-xsmall14 font-bold text-black/75">
+      <span className="text-xsmall14 font-bold text-neutral-10">
         {discountedPrice.toLocaleString()}원
       </span>
     </div>
@@ -738,7 +740,9 @@ const SelectedItemBox = ({
   return (
     <div className={twMerge('bg-neutral-100 p-3', className)}>
       <div className="mb-2 flex items-center justify-between">
-        <span className="text-xsmall14 font-medium text-black/75">{title}</span>
+        <span className="text-xsmall14 font-medium text-neutral-10">
+          {title}
+        </span>
         <IoCloseCircle
           className="h-6 w-6 cursor-pointer"
           color="#D8D8D8"

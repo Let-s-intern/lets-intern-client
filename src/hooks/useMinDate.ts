@@ -1,26 +1,33 @@
 import dayjs, { Dayjs } from 'dayjs';
 import { useEffect, useState } from 'react';
 
+import { ReportType } from '@/api/report';
 import { ReportApplication } from '@/store/useReportApplicationStore';
 
-export default function useMinDate(data: ReportApplication) {
+export default function useMinDate({
+  application,
+  reportType,
+}: {
+  application: ReportApplication;
+  reportType: ReportType;
+}) {
   const [minDate, setMinDate] = useState<Dayjs>(dayjs());
 
   /* 최소 날짜 설정 */
   useEffect(() => {
-    if (data.optionIds.length !== 0) {
-      setMinDate(dayjs().add(6, 'day'));
+    if (application.optionIds.length !== 0) {
+      setMinDate(dayjs().add(reportType === 'RESUME' ? 6 : 8, 'day'));
       return;
     }
-    if (data.reportPriceType === 'BASIC') {
-      setMinDate(dayjs().add(3, 'day'));
+    if (application.reportPriceType === 'BASIC') {
+      setMinDate(dayjs().add(reportType === 'RESUME' ? 3 : 4, 'day'));
       return;
     }
-    if (data.reportPriceType === 'PREMIUM') {
-      setMinDate(dayjs().add(4, 'day'));
+    if (application.reportPriceType === 'PREMIUM') {
+      setMinDate(dayjs().add(reportType === 'RESUME' ? 4 : 6, 'day'));
       return;
     }
-  }, [data.optionIds, data.reportPriceType]);
+  }, [application.optionIds, application.reportPriceType, reportType]);
 
   return minDate;
 }

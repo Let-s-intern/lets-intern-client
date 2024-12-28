@@ -25,7 +25,7 @@ const DEFAULT_LABEL_SX = {
   '.MuiFormControlLabel-label': {
     fontSize: '0.875rem',
     fontWeight: 500,
-    color: '#4C4F56',
+    color: '#2A2D34',
   },
 };
 
@@ -50,14 +50,10 @@ export const ReportFormRadioControlLabel: React.FC<
 
   return (
     <div
-      className={twMerge(
-        'flex items-center justify-between py-2',
-        wrapperClassName,
-      )}
+      className={twMerge('flex items-center justify-between', wrapperClassName)}
     >
-      <div className="flex h-5 items-center">
+      <div className="flex items-center">
         <FormControlLabel
-          className="shrink-0"
           sx={extendedSx}
           control={<Radio size="small" sx={RADIO_SX} />}
           {...restProps}

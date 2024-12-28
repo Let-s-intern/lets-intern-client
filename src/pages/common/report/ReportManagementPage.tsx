@@ -237,13 +237,13 @@ const ReportManagementPage = () => {
       <header>
         <h1 className="py-6 text-small20 font-semibold">MY 진단서 보기</h1>
         <div className="mb-3 flex items-center gap-2">
-          <h2 className="text-xsmall16 font-bold">서류 피드백 REPORT</h2>
+          <h2 className="text-xsmall16 font-bold">서류 온라인 상담 REPORT</h2>
           <Tooltip className="text-xxsmall12 font-normal">
             <p className="mb-1">진단서 발급 예상 소요기간</p>
             <ul className="mb-3 list-disc pl-4">
               <li>서류 진단서 (베이직): 최대 2일</li>
               <li>서류 진단서 (프리미엄) 최대 3일</li>
-              <li>옵션 (현직자 피드백): 최대 5일</li>
+              <li>옵션 (현직자 온라인 상담): 최대 5일</li>
             </ul>
             <p>
               *1:1 온라인 상담은 진단서 발급 이후 진행됩니다. 일정확정 이후
@@ -347,13 +347,13 @@ const ReportManagementPage = () => {
                     </div>
                   )}
 
-                  {/* 서류 제출 X AND 피드백 신청 X */}
+                  {/* 서류 제출 X AND 온라인 상담 신청 X */}
                   {!isReportSubmitted(item.applyUrl) &&
                     item.feedbackStatus !== 'APPLIED' && (
                       <ReportManagementButton
                         className="mt-5"
                         onClick={() => {
-                          // 서류 제출 시 필요한 reportId, 피드백 신청 여부를 전역 상태에 저장하여 사용 (API에 없음)
+                          // 서류 제출 시 필요한 reportId, 온라인 상담 신청 여부를 전역 상태에 저장하여 사용 (API에 없음)
                           setReportApplication({
                             reportId: item.reportId,
                             isFeedbackApplied:
@@ -490,7 +490,7 @@ const ReportManagementPage = () => {
                       <ReportManagementButton
                         className="mt-5"
                         onClick={() => {
-                          // 서류 제출 시 필요한 reportId, 피드백 신청 여부를 전역 상태에 저장하여 사용 (API에 없음)
+                          // 서류 제출 시 필요한 reportId, 온라인 상담 신청 여부를 전역 상태에 저장하여 사용 (API에 없음)
                           setReportApplication({
                             reportId: item.reportId,
                             isFeedbackApplied:
@@ -502,7 +502,7 @@ const ReportManagementPage = () => {
                           );
                         }}
                       >
-                        서류 제출 / 피드백 일정 선택하기
+                        서류 제출 / 상담 일정 선택하기
                       </ReportManagementButton>
                     ) : // 일정을 선택했으면
                     item.feedbackStatus === 'APPLIED' ||
@@ -515,7 +515,7 @@ const ReportManagementPage = () => {
                         className="feedback_button_click mt-5"
                         disabled
                       >
-                        피드백 참여하기
+                        온라인 상담 참여하기
                       </ReportManagementButton>
                     ) : (
                       <ReportManagementButton
@@ -525,7 +525,7 @@ const ReportManagementPage = () => {
                         to={item.zoomLink || ''}
                         rel="noreferrer"
                       >
-                        피드백 참여하기
+                        온라인 상담 참여하기
                       </ReportManagementButton>
                     )}
                   </div>

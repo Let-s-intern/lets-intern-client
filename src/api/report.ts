@@ -88,6 +88,19 @@ export function convertReportTypeToPathname(reportType: ReportType) {
   }
 }
 
+export function convertParamToReportType(param?: string) {
+  const { RESUME, PORTFOLIO, PERSONAL_STATEMENT } = reportTypeSchema.enum;
+
+  switch (param) {
+    case 'personal-statement':
+      return PERSONAL_STATEMENT;
+    case 'portfolio':
+      return PORTFOLIO;
+    default:
+      return RESUME;
+  }
+}
+
 export function convertReportPriceTypeToDisplayName(
   type: ReportPriceType | null | undefined,
 ): string {

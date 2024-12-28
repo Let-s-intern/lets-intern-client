@@ -29,25 +29,24 @@ const ReportApplicationPage = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   const { isLoggedIn } = useAuthStore();
-  const { data: reportApplication, validate } = useReportApplicationStore();
+  const {
+    data: reportApplication,
+    setReportApplication,
+    validate,
+  } = useReportApplicationStore();
 
   const { mutateAsync: patchMyApplication } = usePatchMyApplication();
 
   const convertFile = async () => {
-    let applyUrl = '';
-    let recruitmentUrl = '';
-
     // 파일 변환
     if (applyFile) {
-      applyUrl = await uploadFile({ file: applyFile, type: 'REPORT' });
+      const url = await uploadFile({ file: applyFile, type: 'REPORT' });
+      setReportApplication({ applyUrl: url });
     }
     if (recruitmentFile) {
-      recruitmentUrl = await uploadFile({
-        file: recruitmentFile,
-        type: 'REPORT',
-      });
+      const url = await uploadFile({ file: recruitmentFile, type: 'REPORT' });
+      setReportApplication({ recruitmentUrl: url });
     }
-    return { applyUrl, recruitmentUrl };
   };
 
   // 파일 state 때문에 별도로 유효성 검사
@@ -115,10 +114,36 @@ const ReportApplicationPage = () => {
 
           {/* 추가 정보 */}
           <AdditionalInfoSection />
+
+          {/* 데스크탑 제출 버튼 */}
+          <BaseButton
+            className="hidden w-full max-w-[55rem] text-small18 md:block"
+            onClick={async () => {
+              const { isValid: isValidFile, message: fileValidationMessage } =
+                validateFile();
+
+              if (!isValidFile) {
+                alert(fileValidationMessage);
+                return;
+              }
+
+              const { isValid, message } = validate();
+
+              if (!isValid) {
+                alert(message);
+                return;
+              }
+
+              setIsModalOpen(true);
+            }}
+          >
+            제출하기
+          </BaseButton>
         </main>
       </div>
 
-      <BottomSheet className="xl:mx-48">
+      {/* 모바일 바텀시트 */}
+      <BottomSheet className="md:hidden">
         <BaseButton
           className="w-full text-small18"
           onClick={async () => {
@@ -131,6 +156,7 @@ const ReportApplicationPage = () => {
             }
 
             const { isValid, message } = validate();
+
             if (!isValid) {
               alert(message);
               return;
@@ -149,12 +175,11 @@ const ReportApplicationPage = () => {
         isLoading={isLoading}
         onClickConfirm={async () => {
           setIsLoading(true);
-          const { applyUrl, recruitmentUrl } = await convertFile();
-
+          await convertFile();
           await patchMyApplication({
             applicationId: Number(applicationId),
-            applyUrl,
-            recruitmentUrl,
+            applyUrl: reportApplication.applyUrl!,
+            recruitmentUrl: reportApplication.recruitmentUrl!,
             desiredDate1: reportApplication.desiredDate1!,
             desiredDate2: reportApplication.desiredDate2!,
             desiredDate3: reportApplication.desiredDate3!,

@@ -1,16 +1,25 @@
-import { FormControl, RadioGroup, SelectChangeEvent } from '@mui/material';
+import {
+  FormControl,
+  RadioGroup,
+  SelectChangeEvent,
+  useMediaQuery,
+} from '@mui/material';
 import dayjs, { Dayjs } from 'dayjs';
 import React, { memo, useEffect, useRef, useState } from 'react';
 import { IoCloseOutline } from 'react-icons/io5';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import { uploadFile } from '@/api/file';
-import { convertReportTypeStatus } from '@/api/report';
+import {
+  convertParamToReportType,
+  convertReportTypeStatus,
+} from '@/api/report';
 import useMinDate from '@/hooks/useMinDate';
 import useReportProgramInfo from '@/hooks/useReportProgramInfo';
 import useRunOnce from '@/hooks/useRunOnce';
 import useValidateUrl from '@/hooks/useValidateUrl';
 import { twMerge } from '@/lib/twMerge';
+import { reportTypeSchema } from '@/schema';
 import useAuthStore from '@/store/useAuthStore';
 import useReportApplicationStore from '@/store/useReportApplicationStore';
 import { ReportFormRadioControlLabel } from '@components/common/report/ControlLabel';
@@ -22,6 +31,7 @@ import ProgramCard from '@components/common/report/ProgramCard';
 import Tooltip from '@components/common/report/Tooltip';
 import BackHeader from '@components/common/ui/BackHeader';
 import BottomSheet from '@components/common/ui/BottomSheeet';
+import BaseButton from '@components/common/ui/button/BaseButton';
 import HorizontalRule from '@components/ui/HorizontalRule';
 import RequiredStar from '@components/ui/RequiredStar';
 
@@ -40,6 +50,8 @@ const ReportApplyPage = () => {
     setReportApplication,
     validate,
   } = useReportApplicationStore();
+
+  const isMobile = useMediaQuery('(max-width:768px)');
 
   const convertFile = async () => {
     // 파일 변환
@@ -99,7 +111,7 @@ const ReportApplyPage = () => {
           {/* '지금 제출할래요' 선택 시 표시 */}
           {isSubmitNow === 'true' && (
             <>
-              <HorizontalRule className="-mx-5 md:-mx-32 lg:mx-0" />
+              <HorizontalRule className="-mx-5 lg:mx-0" />
               <CallOut
                 className="bg-neutral-100"
                 header="❗ 제출 전 꼭 읽어주세요"
@@ -115,12 +127,12 @@ const ReportApplyPage = () => {
                     dispatch={setRecruitmentFile}
                   />
                 )}
-              <HorizontalRule className="-mx-5 md:-mx-32 lg:mx-0" />
+              <HorizontalRule className="-mx-5 lg:mx-0" />
               {/* 1:1 온라인 상담 일정 */}
               {reportApplication.isFeedbackApplied && (
                 <>
                   <ScheduleSection />
-                  <HorizontalRule className="-mx-5 md:-mx-32 lg:mx-0" />
+                  <HorizontalRule className="-mx-5 lg:mx-0" />
                 </>
               )}
 
@@ -128,12 +140,42 @@ const ReportApplyPage = () => {
               <AdditionalInfoSection />
             </>
           )}
+
+          {/* 데스크탑에서 표시 */}
+          <BaseButton
+            className="hidden w-full md:block"
+            onClick={async () => {
+              // 지금 제출일 때만 파일 유효성 검사
+              if (isSubmitNow === 'true') {
+                const { isValid: isValidFile, message: fileValidationMessage } =
+                  validateFile();
+
+                if (!isValidFile) {
+                  alert(fileValidationMessage);
+                  return;
+                }
+
+                const { isValid, message } = validate();
+                if (!isValid) {
+                  alert(message);
+                  return;
+                }
+              }
+
+              // 지금 제출일 때만 파일 업로드
+              if (isSubmitNow === 'true') await convertFile();
+
+              navigate(`/report/payment/${reportType}/${reportId}`);
+            }}
+          >
+            다음
+          </BaseButton>
         </main>
       </div>
 
-      <BottomSheet className="mx-auto max-w-[55rem]">
-        <button
-          className="text-1.125-medium w-full rounded-md bg-primary py-3 text-center font-medium text-neutral-100"
+      <BottomSheet className="mx-auto max-w-[55rem] md:hidden">
+        <BaseButton
+          className="w-full"
           onClick={async () => {
             // 지금 제출일 때만 파일 유효성 검사
             if (isSubmitNow === 'true') {
@@ -159,7 +201,7 @@ const ReportApplyPage = () => {
           }}
         >
           다음
-        </button>
+        </BaseButton>
       </BottomSheet>
     </div>
   );
@@ -196,17 +238,38 @@ const ProgramInfoSection = ({
     value: string,
   ) => void;
 }) => {
-  const { title, product, option } = useReportProgramInfo();
+  const { title, product, option, reportType } = useReportProgramInfo();
+
+  const isResume = reportType === reportTypeSchema.enum.RESUME;
+
+  const tooltipContent = {
+    description: `진단 완료까지 ${isResume ? 48 : 72}시간 소요됩니다.\n다만, 신청자가 많을 경우 플랜에 따라 소요 시간이 달라질 수 있습니다.`,
+    list: [
+      `베이직 플랜: ${isResume ? 2 : 3}일 이내`,
+      `프리미엄 플랜: ${isResume ? 3 : 5}일 이내`,
+      `현직자 피드백 옵션: 최대 ${isResume ? 5 : 7}일 이내`,
+    ],
+  };
 
   return (
     <section>
       <div className="mb-6 flex items-center gap-1">
         <Heading2>프로그램 정보</Heading2>
         <Tooltip alt="프로그램 도움말 아이콘">
-          <span className="font-semibold">진단서 발급 예상 소요기간</span>
-          <li>서류 진단서 (베이직): 최대 2일</li>
-          <li>서류 진단서 (프리미엄) 최대 3일</li>
-          <li>옵션 (현직자 피드백): 최대 5일</li>
+          <p className="whitespace-pre-line">{tooltipContent.description}</p>
+          <br />
+          <ul className="list-disc pl-4">
+            {tooltipContent.list.map((item) => {
+              const label = item.split(':')[0];
+              const value = ': ' + item.split(':')[1];
+              return (
+                <li key={label}>
+                  <span className="font-semibold">{label}</span>
+                  {value}
+                </li>
+              );
+            })}
+          </ul>
         </Tooltip>
       </div>
       <ProgramCard
@@ -356,6 +419,7 @@ export const PremiumSection = ({
           >
             <div className="mb-4">
               <ReportFormRadioControlLabel
+                sx={{ flexShrink: 0 }}
                 label="파일 첨부"
                 value="file"
                 subText="(png, jpg, jpeg, pdf 형식 지원, 50MB 이하)"
@@ -393,9 +457,13 @@ export const PremiumSection = ({
 };
 
 export const ScheduleSection = () => {
+  const { reportType } = useParams();
   const { data, setReportApplication } = useReportApplicationStore();
 
-  const minDate = useMinDate(data);
+  const minDate = useMinDate({
+    application: data,
+    reportType: convertParamToReportType(reportType),
+  });
 
   type Key = keyof typeof data;
 

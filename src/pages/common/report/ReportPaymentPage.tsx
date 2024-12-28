@@ -32,14 +32,37 @@ const ReportPaymentPage = () => {
       >
         결제하기
       </BackHeader>
-
       <main className="mb-8 flex flex-col gap-10">
         <ProgramInfoSection />
         <UsereInfoSection />
         <ReportPaymentSection />
+
+        {/* 데스크탑 결제 버튼 */}
+        <BaseButton
+          className="complete_button_click hidden w-full text-small18 md:block"
+          onClick={() => {
+            if (reportApplication.contactEmail === '') {
+              alert('정보 수신용 이메일을 입력해주세요.');
+              return;
+            }
+
+            patchUserMutation.mutateAsync({
+              contactEmail: reportApplication.contactEmail,
+            });
+
+            if (payment.amount === 0) {
+              navigate(`/report/order/result?orderId=${generateOrderId()}`);
+              return;
+            }
+            navigate(`/report/toss/payment`);
+          }}
+        >
+          결제하기
+        </BaseButton>
       </main>
 
-      <BottomSheet className="mx-auto max-w-[55rem]">
+      {/* 모바일 바텀시트 */}
+      <BottomSheet className="mx-auto md:hidden">
         <BaseButton
           className="complete_button_click w-full text-small18"
           onClick={() => {

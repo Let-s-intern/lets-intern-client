@@ -10,7 +10,7 @@ import MainHeader from './MainHeader';
 import SectionHeader from './SectionHeader';
 import SubHeader from './SubHeader';
 
-const SECTION_HEADER = '서비스 이용 안내';
+const SECTION_HEADER = '서비스 이용 방법';
 const SUB_HEADER = '48시간 이내 진단 완료!';
 
 interface ServiceProcessSectionProps {
@@ -57,7 +57,9 @@ const ServiceProcessSection = ({ reportType }: ServiceProcessSectionProps) => {
       className="w-full px-5 py-16 md:py-28 lg:px-0"
     >
       <header>
-        <SectionHeader className="mb-6">{SECTION_HEADER}</SectionHeader>
+        <SectionHeader className="mb-6 md:mb-14">
+          {SECTION_HEADER}
+        </SectionHeader>
         <SubHeader className="mb-1 md:mb-3" style={subHeaderStyle}>
           {SUB_HEADER}
         </SubHeader>
@@ -110,7 +112,7 @@ const ServiceProcessSection = ({ reportType }: ServiceProcessSectionProps) => {
                 업로드하거나,
                 <br /> 이후 원하는 시점에 제출할 수 있습니다.
               </NumberedContent>
-              <div className="flex flex-col gap-1 md:flex-row md:gap-3">
+              <div className="md:flew-row flex flex-col gap-1 md:flex-row md:gap-3">
                 <ContentBox className="rounded-xxs bg-[#DDF5FF] py-1 text-center text-xxsmall12 font-semibold md:rounded-xs md:py-2.5 md:text-xsmall16">
                   결제 시, 바로 제출
                 </ContentBox>
@@ -121,10 +123,6 @@ const ServiceProcessSection = ({ reportType }: ServiceProcessSectionProps) => {
                   결제 후, 원하는 시점에 제출
                 </ContentBox>
               </div>
-              <span className="text-xxsmall12 text-neutral-35 md:text-xsmall14">
-                *시간이 필요하다면 서류 업로드 없이 먼저 신청하고,
-                <br className="md:hidden" /> 준비된 후 제출하셔도 괜찮습니다.
-              </span>
             </ContentBox>
           </div>
         </ProcessCard>
@@ -141,20 +139,13 @@ const ServiceProcessSection = ({ reportType }: ServiceProcessSectionProps) => {
               <NumberedContent number="2-1">
                 직무와 문항에 맞춘 맞춤형 진단이 진행됩니다.
               </NumberedContent>
-              <div className="mt-3 md:flex md:items-center md:gap-2">
-                <Badge className="mb-1 bg-neutral-30">
-                  6가지 핵심 진단 기준
-                </Badge>
-                <p className="text-xxsmall12 md:text-xsmall16 md:font-medium">
-                  가독성 / 구성 및 구조 / 직무 적합성 / 정확성 /
-                  <br className="md:hidden" /> 간결성 / 구체성
-                </p>
-              </div>
             </ContentBox>
 
+            {/* 자소서 시간 반영 */}
             <ContentBox>
               <NumberedContent number="2-2">
-                진단 완료까지 48시간 소요됩니다.
+                진단 완료까지 {reportType === 'RESUME' ? 48 : 72}시간
+                소요됩니다.
               </NumberedContent>
               <ContentBox className="mt-3 bg-[#DDF5FF] text-xxsmall12 font-medium md:p-3 md:px-5 md:py-3 md:text-xsmall14">
                 <p className="mb-3 md:mb-1">
@@ -162,9 +153,16 @@ const ServiceProcessSection = ({ reportType }: ServiceProcessSectionProps) => {
                   있습니다.
                 </p>
                 <ul className="list-disc pl-4">
-                  <li>베이직 플랜: 48시간 이내</li>
-                  <li>프리미엄 플랜: 72시간 이내</li>
-                  <li> 현직자 피드백 옵션: 최대 5일 이내</li>
+                  <li>
+                    베이직 플랜: {reportType === 'RESUME' ? 48 : 72}시간 이내
+                  </li>
+                  <li>
+                    프리미엄 플랜: {reportType === 'RESUME' ? 3 : 5}일 이내
+                  </li>
+                  <li>
+                    현직자 피드백 옵션: 최대 {reportType === 'RESUME' ? 5 : 7}일
+                    이내
+                  </li>
                 </ul>
               </ContentBox>
             </ContentBox>
@@ -190,18 +188,15 @@ const ServiceProcessSection = ({ reportType }: ServiceProcessSectionProps) => {
               </NumberedContent>
             </ContentBox>
 
-            <ContentBox>
+            <ContentBox className="flex flex-col gap-2 md:gap-3">
               <NumberedContent number="3-2">
-                취업 연구팀이 작성한 상세 피드백 <br className="md:hidden" />
-                REPORT를 확인합니다.
+                취업 연구팀이 작성한 상세 피드백
+                <br className="md:hidden" /> REPORT를 확인합니다.
               </NumberedContent>
-            </ContentBox>
-
-            <ContentBox className="flex flex-col gap-3">
-              <NumberedContent number="3-3">
-                발행된 리포트는 ‘MY 진단서 보기’ 탭에서 PDF로 다운로드
+              <span className="text-xxsmall12 text-neutral-0 md:text-xsmall14 md:text-neutral-35">
+                *MY 진단서 보기에서 확인 가능 / 발행된 리포트는 PDF로 다운로드
                 가능합니다.
-              </NumberedContent>
+              </span>
             </ContentBox>
           </div>
         </ProcessCard>
@@ -235,7 +230,7 @@ const ServiceProcessSection = ({ reportType }: ServiceProcessSectionProps) => {
               <div className="mt-3 flex items-start gap-2">
                 <Badge style={badgeStyle}>진행 꿀팁</Badge>
                 <p className="text-xxsmall12 font-semibold md:text-xsmall16 md:font-medium">
-                  리포트 확인 후 궁금한 점이나 추가 질문을 미리 준비하시면 더욱
+                  리포트 확인 후, 궁금한 점이나 추가 질문을 미리 준비하시면 더욱
                   알찬 시간을 보낼 수 있어요!
                 </p>
               </div>
@@ -250,8 +245,8 @@ const ServiceProcessSection = ({ reportType }: ServiceProcessSectionProps) => {
 
             <ContentBox className="flex flex-col gap-3">
               <NumberedContent number="4-3">
-                1:1 온라인 상담을 미처 신청하지 못했다면, 별도 신청 가능합니다.
-                채팅으로 문의하시면 빠르게 도와드릴게요!
+                1:1 온라인 상담을 미처 신청하지 못하셨다면, 별도 신청이
+                가능합니다.
               </NumberedContent>
             </ContentBox>
           </div>
