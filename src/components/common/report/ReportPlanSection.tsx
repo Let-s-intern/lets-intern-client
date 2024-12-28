@@ -157,7 +157,7 @@ const ReportPlanSection = ({
                 'text-white': reportType === 'PERSONAL_STATEMENT',
               })}
               showBubbleTail={isMobile ? false : true}
-              floatingBannerClassName="left-5 -top-1 md:left-36 md:top-4"
+              floatingBannerClassName="left-5 -top-1 md:left-auto md:right-4 md:top-4"
             >
               <PlanCard title="프리미엄 플랜">
                 <div className="flex flex-col gap-3">
@@ -376,7 +376,7 @@ const NumberedListItem = memo(function NumberedListItem({
   numberStyle?: CSSProperties;
 }) {
   return (
-    <div className="flex items-start gap-1.5">
+    <div className="flex items-start gap-1.5 md:gap-2">
       <div
         style={numberStyle}
         className={twMerge(
