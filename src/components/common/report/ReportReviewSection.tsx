@@ -4,7 +4,6 @@ import { personalStatementColors } from '@/pages/common/report/ReportPersonalSta
 import { resumeColors } from '@/pages/common/report/ReportResumePage';
 import { ReportReview } from '@/types/interface';
 import { useMediaQuery } from '@mui/material';
-import MoreReviewButton from '../review/MoreReviewButton';
 import ReportInterviewCard from './ReportInterviewCard';
 
 interface ReportReviewSectionProps {
@@ -85,7 +84,7 @@ const ReportReviewSection = ({
                   ))}
                 </div>
               </div>
-              <MoreReviewButton
+              {/* <MoreReviewButton
                 mainColor={'#3E4148'}
                 subColor={
                   type === 'PERSONAL_STATEMENT'
@@ -93,7 +92,7 @@ const ReportReviewSection = ({
                     : resumeColors._2CE282
                 }
                 type="REPORT"
-              />
+              /> */}
             </>
           )}
         </div>
