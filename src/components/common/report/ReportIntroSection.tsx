@@ -25,7 +25,7 @@ const Section0: Record<
       <React.Fragment key={0}>
         <p>
           6가지 핵심 기준으로 <strong>이력서의 강점과 약점</strong>을 분석한{' '}
-          <strong>솔직하고 객곽적인 피드백 & 총평 제공</strong>
+          <strong>솔직하고 객관적인 피드백 & 총평 제공</strong>
         </p>
         <p className="text-xxsmall12 text-neutral-35 md:text-small18">
           가독성/구조 및 구성/직무 적합성/정확성/간결성/구체성
@@ -51,7 +51,7 @@ const Section0: Record<
       <React.Fragment key={0}>
         <p>
           5가지 핵심 기준으로 <strong>자소서의 강점과 약점</strong>을 분석한{' '}
-          <strong>솔직하고 객곽적인 피드백 & 총평 제공</strong>
+          <strong>솔직하고 객관적인 피드백 & 총평 제공</strong>
         </p>
         <p className="text-xxsmall12 text-neutral-35 md:text-small18">
           가독성/구조 및 구성/구체성/직무 적합성/완성도
@@ -79,7 +79,7 @@ const Section0: Record<
       <React.Fragment key={0}>
         <p>
           6가지 핵심 기준으로 <strong>포트폴리오의 강점과 약점</strong>을 분석한{' '}
-          <strong>솔직하고 객곽적인 피드백 & 총평 제공</strong>
+          <strong>솔직하고 객관적인 피드백 & 총평 제공</strong>
         </p>
         <p className="text-xxsmall12 text-neutral-35 md:text-small18">
           가독성/구조 및 구성/직무 적합성/정확성/간결성/구체성
@@ -118,8 +118,9 @@ const ReportIntroSection = ({ type }: ReportIntroSectionProps) => {
   const stepStyle = {
     backgroundColor:
       type === 'PERSONAL_STATEMENT'
-        ? personalStatementColors.F9EEFF
+        ? personalStatementColors.CA60FF
         : resumeColors._4FDA46,
+    color: type === 'PERSONAL_STATEMENT' ? 'white' : 'black',
   };
   const boxStyle = {
     backgroundColor:
@@ -129,13 +130,13 @@ const ReportIntroSection = ({ type }: ReportIntroSectionProps) => {
     borderColor:
       type === 'PERSONAL_STATEMENT'
         ? personalStatementColors.CA60FF
-        : resumeColors._4FDA46,
+        : resumeColors._2CE282,
   };
   const illustStyle = {
     color:
       type === 'PERSONAL_STATEMENT'
         ? personalStatementColors.CA60FF
-        : resumeColors._06B259,
+        : resumeColors._2CE282,
   };
   const darkSubHeaderStyle = {
     color:
@@ -251,10 +252,10 @@ const ReportIntroSection = ({ type }: ReportIntroSectionProps) => {
               style={boxStyle}
             >
               <span
-                className="mt-1 flex h-4 w-4 shrink-0 items-center justify-center rounded-full text-xxsmall12 font-semibold text-black md:h-8 md:w-8 md:text-small20"
+                className="mt-1 flex h-4 w-4 shrink-0 items-center justify-center rounded-full text-xxsmall12 font-semibold md:h-[30px] md:w-[30px] md:text-small20"
                 style={stepStyle}
               >{`${index + 1}`}</span>
-              <div className="flex flex-1 flex-col items-start gap-y-1 text-start text-xsmall14 font-medium md:text-medium24">
+              <div className="flex flex-1 flex-col items-start gap-y-1 text-start text-xsmall14 font-medium md:text-small20">
                 {step}
               </div>
             </div>
@@ -283,7 +284,7 @@ const ReportIntroSection = ({ type }: ReportIntroSectionProps) => {
       </div>
       {/* section1 */}
       <div data-section="intro-2" className="w-full bg-neutral-90">
-        <div className="mx-auto flex w-full max-w-[1000px] flex-col gap-y-10 px-5 pb-[70px] pt-[50px] md:gap-y-20 md:pb-[120px] md:pt-[100px] lg:px-0">
+        <div className="mx-auto flex w-full max-w-[1000px] flex-col gap-y-[30px] px-5 pb-[70px] pt-[50px] md:gap-y-[50px] md:pb-[120px] md:pt-[100px] lg:px-0">
           <div className="flex w-full flex-col gap-y-6 md:gap-y-[50px]">
             <div className="flex w-full flex-col items-center gap-y-2 md:gap-y-3">
               <span
@@ -295,9 +296,6 @@ const ReportIntroSection = ({ type }: ReportIntroSectionProps) => {
               <div className="flex w-full flex-col items-center gap-y-5 md:gap-y-[30px]">
                 <p className="text-medium22 font-bold md:text-xlarge30">
                   {convertString(reportIntro.section1.title)}
-                </p>
-                <p className="text-xsmall14 text-neutral-30 md:text-small20">
-                  {convertString(reportIntro.section1.description)}
                 </p>
               </div>
             </div>
@@ -341,7 +339,7 @@ const ReportIntroSection = ({ type }: ReportIntroSectionProps) => {
               </p>
             </div>
           </div>
-          <div className="w-full overflow-x-hidden">
+          <div className="w-full overflow-x-hidden md:px-24">
             <div
               className="flex w-full items-stretch gap-x-3 overflow-auto pt-8"
               ref={containerRef}
@@ -353,11 +351,11 @@ const ReportIntroSection = ({ type }: ReportIntroSectionProps) => {
                 <div className="absolute left-0 right-0 top-0 z-10 mx-auto flex w-fit -translate-y-1/2 transform items-center justify-center rounded-full bg-neutral-40 px-5 py-3 text-xsmall16 font-semibold text-neutral-30 md:text-small18">
                   BEFORE
                 </div>
-                <div className="flex w-full flex-col rounded-sm bg-neutral-40 px-8 py-5 text-small18 font-semibold text-neutral-20 md:text-medium22">
+                <div className="flex w-full flex-col rounded-sm bg-neutral-40 px-6 py-5 text-small18 font-semibold text-neutral-20 md:px-12 md:text-medium22">
                   {reportIntro.section3.before.map((item, index) => (
                     <div key={`${type}-before-${index}`}>
                       {index !== 0 && <hr className="border-neutral-30" />}
-                      <div className="flex w-full items-center justify-center py-4">
+                      <div className="flex w-full items-center justify-center py-4 md:py-6">
                         {convertString(item)}
                       </div>
                     </div>
@@ -375,7 +373,7 @@ const ReportIntroSection = ({ type }: ReportIntroSectionProps) => {
                   AFTER
                 </div>
                 <div
-                  className="flex w-full flex-col rounded-sm px-8 py-5 text-small18 font-semibold md:text-medium22"
+                  className="flex w-full flex-col rounded-sm px-6 py-5 text-small18 font-semibold md:px-12 md:text-medium22"
                   style={{ backgroundColor: afterStyle.backgroundColor }}
                 >
                   {reportIntro.section3.after.map((item, index) => (
@@ -383,7 +381,7 @@ const ReportIntroSection = ({ type }: ReportIntroSectionProps) => {
                       {index !== 0 && (
                         <hr style={{ borderColor: afterStyle.borderColor }} />
                       )}
-                      <div className="flex w-full items-center justify-center py-4">
+                      <div className="flex w-full items-center justify-center py-4 md:py-6">
                         {convertString(item)}
                       </div>
                     </div>

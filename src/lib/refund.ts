@@ -1,4 +1,5 @@
 import {
+  ReportApplicationInfo,
   ReportApplicationStatus,
   ReportFeedbackStatus,
   ReportPaymentInfo,
@@ -100,21 +101,23 @@ export const getCouponDiscountPrice = (
 
 export const getReportRefundPercent = ({
   now,
+  applicationInfo,
   paymentInfo,
   reportApplicationStatus,
 }: {
+  applicationInfo?: ReportApplicationInfo | null | undefined;
   paymentInfo?: ReportPaymentInfo | null | undefined;
   now: dayjs.Dayjs;
   reportApplicationStatus: ReportApplicationStatus;
 }) => {
-  if (!paymentInfo) {
+  if (!paymentInfo || !applicationInfo) {
     return 0;
   }
 
   // 상태가 "신청완료"일 때 결제 후 3시간 이내 : 100% 환불
   if (
     reportApplicationStatus === 'APPLIED' &&
-    now.diff(dayjs(paymentInfo.createDate), 'hour') < 3
+    now.diff(dayjs(applicationInfo.applyUrlDate), 'hour') < 3
   ) {
     return 1;
   }
@@ -128,7 +131,7 @@ export const getReportRefundPercent = ({
    */
   if (
     (reportApplicationStatus === 'APPLIED' &&
-      now.diff(dayjs(paymentInfo.createDate), 'hour') >= 3) ||
+      now.diff(dayjs(applicationInfo.applyUrlDate), 'hour') >= 3) ||
     reportApplicationStatus === 'REPORTING' ||
     reportApplicationStatus === 'REPORTED'
   ) {
@@ -197,12 +200,14 @@ export const getFeedbackRefundPercent = ({
 };
 
 export const getTotalRefund = ({
+  applicationInfo,
   paymentInfo,
   reportApplicationStatus,
   reportFeedbackStatus,
   now,
   reportFeedbackDesiredDate,
 }: {
+  applicationInfo?: ReportApplicationInfo | null | undefined;
   paymentInfo?: ReportPaymentInfo | null | undefined;
   reportApplicationStatus: ReportApplicationStatus;
   now: dayjs.Dayjs;
@@ -217,7 +222,12 @@ export const getTotalRefund = ({
 
   const refundReportPrice =
     getReportDiscountedPrice(paymentInfo) *
-    getReportRefundPercent({ now, paymentInfo, reportApplicationStatus });
+    getReportRefundPercent({
+      now,
+      applicationInfo,
+      paymentInfo,
+      reportApplicationStatus,
+    });
 
   const refundFeedbackPrice =
     getFeedbackDiscountedPrice(paymentInfo) *

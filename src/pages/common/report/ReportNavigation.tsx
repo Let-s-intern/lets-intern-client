@@ -22,12 +22,14 @@ interface ReportNavigationProps {
   className?: string;
   isDark?: boolean;
   color?: string;
+  isReady: boolean;
 }
 
 const ReportNavigation = ({
   className,
   isDark,
   color,
+  isReady,
 }: ReportNavigationProps) => {
   const { scrollDirection } = useScrollStore();
   const [activeSection, setActiveSection] = useState<string>(
@@ -39,32 +41,32 @@ const ReportNavigation = ({
   useSectionObserver();
 
   useEffect(() => {
+    if (!isReady || typeof window === 'undefined') return;
+
+    console.log('isReady', isReady);
+
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
-            // 얼마나 보여지는지 콘솔
-            // console.log(entry.target.id);
-            // console.log(entry.intersectionRatio);
             setActiveSection(entry.target.id);
           }
         });
       },
       {
-        // 뷰포트 상단 10%부터 시작해서 뷰포트 하단 10%까지 보여지면 콜백
-        rootMargin: '0px 0px 0px 0px',
-        threshold: 0.05,
+        root: null,
+        rootMargin: '-50% 0px -50% 0px',
+        threshold: 0, // 1픽셀이라도 걸치면 true
       },
     );
 
-    setTimeout(() => {
-      navItems.forEach((navItem) => {
-        const target = document.getElementById(navItem.to);
-        if (target) {
-          observer.observe(target);
-        }
-      });
-    }, 1000);
+    navItems.forEach((navItem) => {
+      const target = document.getElementById(navItem.to);
+      console.log('target:', target);
+      if (target) {
+        observer.observe(target);
+      }
+    });
 
     return () => {
       navItems.forEach((navItem) => {
@@ -74,7 +76,21 @@ const ReportNavigation = ({
         }
       });
     };
-  }, [navItems]);
+  }, [navItems, isReady]);
+
+  useEffect(() => {
+    if (!isReady) {
+      console.log('isReady is not ready');
+      return;
+    }
+
+    if (typeof window === 'undefined') {
+      console.log('window is undefined');
+      return;
+    }
+
+    console.log('isReady:', isReady);
+  }, [isReady]);
 
   const handleScroll = (id: string) => {
     const target = document.getElementById(id);
@@ -101,7 +117,7 @@ const ReportNavigation = ({
         {navItems.map((navItem) => (
           <button
             key={navItem.title}
-            className={`border-b-[2.4px] px-1.5 py-4 text-[10px] font-semibold xs:text-xsmall16 md:min-w-[100px]`}
+            className={`border-b-[2.4px] px-1.5 py-4 text-[8px] font-semibold xs:text-xsmall16 md:min-w-[100px]`}
             style={{
               borderBottomColor:
                 navItem.to === activeSection

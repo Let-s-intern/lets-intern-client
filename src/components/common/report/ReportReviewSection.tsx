@@ -4,7 +4,6 @@ import { personalStatementColors } from '@/pages/common/report/ReportPersonalSta
 import { resumeColors } from '@/pages/common/report/ReportResumePage';
 import { ReportReview } from '@/types/interface';
 import { useMediaQuery } from '@mui/material';
-import MoreReviewButton from '../review/MoreReviewButton';
 import ReportInterviewCard from './ReportInterviewCard';
 
 interface ReportReviewSectionProps {
@@ -21,7 +20,7 @@ const ReportReviewSection = ({
     color:
       type === 'PERSONAL_STATEMENT'
         ? personalStatementColors.C34AFF
-        : resumeColors._2CE282,
+        : resumeColors._11AC5C,
   };
   const mainColor =
     type === 'PERSONAL_STATEMENT'
@@ -38,7 +37,7 @@ const ReportReviewSection = ({
       data-section="review"
       className="flex w-full flex-col bg-black"
     >
-      <div className="mx-auto flex w-full max-w-[1000px] flex-col gap-y-10 px-5 py-[60px] md:gap-y-20 md:pb-[150px] md:pt-[120px] lg:px-0">
+      <div className="mx-auto flex w-full max-w-[800px] flex-col gap-y-10 px-5 py-[60px] md:gap-y-20 md:pb-[150px] md:pt-[120px] lg:px-0">
         <div className="flex w-full flex-col gap-y-6 md:gap-y-[50px]">
           <h5 className="w-full text-center text-xsmall14 font-semibold text-neutral-45 md:text-small18">
             후기
@@ -85,7 +84,7 @@ const ReportReviewSection = ({
                   ))}
                 </div>
               </div>
-              <MoreReviewButton
+              {/* <MoreReviewButton
                 mainColor={'#3E4148'}
                 subColor={
                   type === 'PERSONAL_STATEMENT'
@@ -93,7 +92,7 @@ const ReportReviewSection = ({
                     : resumeColors._2CE282
                 }
                 type="REPORT"
-              />
+              /> */}
             </>
           )}
         </div>

@@ -69,6 +69,7 @@ const ReportCreditDelete = () => {
     return [...new Set(titleList)].join(', ');
   }, [reportPaymentDetail?.reportPaymentInfo.reportOptionInfos]);
 
+  const applicationInfo = reportPaymentDetail?.reportApplicationInfo;
   const paymentInfo = reportPaymentDetail?.reportPaymentInfo;
 
   const reportDiscountedPrice = useMemo(() => {
@@ -120,11 +121,12 @@ const ReportCreditDelete = () => {
 
     return getReportRefundPercent({
       now: dayjs(),
+      applicationInfo,
       paymentInfo,
       reportApplicationStatus:
         reportPaymentDetail.reportApplicationInfo.reportApplicationStatus,
     });
-  }, [paymentInfo, reportPaymentDetail]);
+  }, [paymentInfo, reportPaymentDetail, applicationInfo]);
 
   return (
     <section
