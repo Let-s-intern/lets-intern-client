@@ -245,15 +245,15 @@ export const REPORT_INTRO: Record<ReportType, reportIntroItemType> = {
     section0: {
       images: [
         {
-          image: '/images/report/report_intro_section0_portfolio_1.png',
+          image: '/images/report/report_intro_section0_resume_1.png',
           desc: '온라인 제출 →',
         },
         {
-          image: '/images/report/report_intro_section0_portfolio_2.png',
+          image: '/images/report/report_intro_section0_resume_2.png',
           desc: '48시간 이내 진단 →',
         },
         {
-          image: '/images/report/report_intro_section0_portfolio_3.png',
+          image: '/images/report/report_intro_section0_resume_3.png',
           desc: '피드백 리포트 발송 →',
         },
       ],
