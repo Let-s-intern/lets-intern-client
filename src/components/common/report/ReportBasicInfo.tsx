@@ -112,9 +112,6 @@ const ReportBasicInfo = ({ reportBasic, color }: ReportBasicInfoProps) => {
           className="h-auto w-full object-contain md:w-3/5 md:rounded-md"
         />
       </div>
-      <span className="w-full text-small18 font-bold text-white md:text-center md:text-medium22">
-        {`${reportBasic.title} 피드백 REPORT`}
-      </span>
       <div
         className="flex w-full flex-col gap-3 md:flex-row md:items-stretch"
         style={{ color: color ?? 'white' }}
