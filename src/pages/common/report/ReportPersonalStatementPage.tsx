@@ -48,7 +48,8 @@ const ReportPersonalStatementPage = () => {
     data?.personalStatementInfo?.contents ?? '{}',
   );
 
-  const { data: priceDetail } = useGetReportPriceDetail(report?.reportId);
+  const { data: priceDetail, isLoading: priceIsLoading } =
+    useGetReportPriceDetail(report?.reportId);
 
   useEffect(() => {
     initReportApplication();
@@ -90,7 +91,11 @@ const ReportPersonalStatementPage = () => {
               />
             </div>
           </div>
-          <ReportNavigation color={personalStatementColors.CA60FF} isDark />
+          <ReportNavigation
+            color={personalStatementColors.CA60FF}
+            isDark
+            isReady={!isLoading && !priceIsLoading}
+          />
           <div
             id="content"
             data-page-type="personal-statement"

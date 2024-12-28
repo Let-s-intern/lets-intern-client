@@ -49,7 +49,8 @@ const ReportResumePage = () => {
     data?.resumeInfo?.contents ?? '{}',
   );
 
-  const { data: priceDetail } = useGetReportPriceDetail(report?.reportId);
+  const { data: priceDetail, isLoading: priceIsLoading } =
+    useGetReportPriceDetail(report?.reportId);
 
   const { initReportApplication } = useReportApplicationStore();
 
@@ -96,7 +97,11 @@ const ReportResumePage = () => {
             </div>
           </div>
 
-          <ReportNavigation color={resumeColors._2CE282} isDark />
+          <ReportNavigation
+            color={resumeColors._2CE282}
+            isDark
+            isReady={!isLoading && !priceIsLoading}
+          />
 
           <div
             id="content"
