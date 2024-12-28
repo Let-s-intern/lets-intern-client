@@ -34,7 +34,7 @@ const ReportExampleSection = ({
       type === 'PERSONAL_STATEMENT'
         ? personalStatementColors.CA60FF
         : resumeColors._2CE282,
-    color: type === 'PERSONAL_STATEMENT' ? 'FFFFFF' : '000000',
+    color: type === 'PERSONAL_STATEMENT' ? '#FAFAFA' : '#27272D',
   };
   const textDecorationStyle = {
     textDecorationColor:
@@ -130,7 +130,9 @@ const ReportExampleSection = ({
             style={infoBoxStyle}
           >
             {`${convertReportTypeToShortName(type)} 진단 후, 평가 내용을 전달 받는 리포트 예시 입니다.`}
-            <span className="font-normal text-neutral-30">
+            <span
+              className={`font-normal ${type === 'PERSONAL_STATEMENT' ? 'text-neutral-80' : 'text-neutral-30'}`}
+            >
               *리포트를 클릭하여 더 자세히 살펴보세요!
             </span>
           </div>
