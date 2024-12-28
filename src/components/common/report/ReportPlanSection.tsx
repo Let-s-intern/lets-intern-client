@@ -83,16 +83,6 @@ const ReportPlanSection = ({
     }
   }, [reportType]);
 
-  const employees = useMemo(() => {
-    switch (reportType) {
-      case 'PERSONAL_STATEMENT':
-        return ['삼성계열사 현직자', '컨설팅펌 현직자'];
-
-      default:
-        return ['컨설팅펌', '삼성/SK ', '금융권 ', '스타트업 마케팅 '];
-    }
-  }, [reportType]);
-
   const feedback = useMemo(() => {
     switch (reportType) {
       case 'PERSONAL_STATEMENT':
@@ -186,7 +176,7 @@ const ReportPlanSection = ({
             </PriceCard>
 
             {/* 베이직 플랜 */}
-            <PriceCard className="flex min-w-[18rem] flex-col justify-between">
+            <PriceCard className="flex min-w-[18rem] flex-col justify-between px-5 py-4 md:gap-5 md:px-6 md:py-7">
               <PlanCard title="베이직 플랜">
                 <div className="flex flex-col gap-3">
                   {basicPlan.map((item, index) => (
@@ -221,12 +211,12 @@ const ReportPlanSection = ({
                 *피드백 받고 싶은 현직자 여러명 옵션 추가 가능
               </p>
               <div className="mb-5 mt-3 grid grid-cols-2 gap-x-1.5 gap-y-2 md:mb-6">
-                {employees.map((item, index) => (
+                {optionInfos.map((item, index) => (
                   <div
                     key={index}
                     className="rounded-xs bg-[#EEFAFF] py-2 text-center text-xxsmall12 font-medium md:text-xsmall14"
                   >
-                    {item + (isMobile ? '' : ' 현직자')}
+                    {item.optionTitle}
                   </div>
                 ))}
               </div>
