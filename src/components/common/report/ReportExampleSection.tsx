@@ -190,13 +190,13 @@ const ReportExampleSection = ({
                 className="h-auto w-full bg-white"
               />
               <PrevButton
-                className="absolute left-0 top-1/2 z-10 h-8 w-8 -translate-x-1/2 -translate-y-1/2 transform cursor-pointer text-neutral-20 md:hidden"
+                className="absolute left-0 top-1/2 z-10 h-8 w-8 -translate-x-1/2 -translate-y-1/2 transform cursor-pointer text-neutral-20 md:h-16 md:w-16"
                 onClick={() =>
                   setClickedExample(clickedExample > 0 ? clickedExample - 1 : 0)
                 }
               />
               <NextButton
-                className="absolute right-0 top-1/2 h-8 w-8 -translate-y-1/2 translate-x-1/2 transform cursor-pointer text-neutral-20 md:hidden"
+                className="absolute right-0 top-1/2 h-8 w-8 -translate-y-1/2 translate-x-1/2 transform cursor-pointer text-neutral-20 md:h-16 md:w-16"
                 onClick={() =>
                   setClickedExample(
                     clickedExample < example.length - 1
