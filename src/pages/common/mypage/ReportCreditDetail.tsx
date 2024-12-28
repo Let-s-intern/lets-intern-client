@@ -64,14 +64,14 @@ const ReportCreditDetail = () => {
     // 0. 서류 제출 후 3시간 이내
     const isBefore3Hours =
       dayjs().diff(
-        dayjs(reportPaymentDetail?.reportPaymentInfo.createDate),
+        dayjs(reportPaymentDetail?.reportApplicationInfo.applyUrlDate),
         'hour',
       ) < 3;
 
     // 1. 서류 제출 후 3시간이후 ~ 진단서 발급 완료
     const isAfter3Hours =
       dayjs().diff(
-        dayjs(reportPaymentDetail?.reportPaymentInfo.createDate),
+        dayjs(reportPaymentDetail?.reportApplicationInfo.applyUrlDate),
         'hour',
       ) >= 3;
 

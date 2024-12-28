@@ -1021,7 +1021,10 @@ const reportApplicationInfoSchema = z.object({
   reportApplicationStatus: reportApplicationStatusSchema,
   reportFeedbackStatus: reportFeedbackStatusSchema.nullable(),
   reportFeedbackDesiredDate: z.string().nullable(),
+  applyUrlDate: z.string().nullable(),
 });
+
+export type ReportApplicationInfo = z.infer<typeof reportApplicationInfoSchema>;
 
 const reportPaymentInfoSchema = z.object({
   paymentId: z.number(),
