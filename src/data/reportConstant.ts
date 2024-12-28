@@ -203,7 +203,7 @@ export const REPORT_INTRO: Record<ReportType, reportIntroItemType> = {
     },
     section3: {
       title: `렛츠커리어의\n\n이력서 피드백 REPORT는\n평가자의 시선을 사로잡는\n\n서류로 합격의 가능성을 높여드립니다.`,
-      description: `취업 성공은\n\n내 가능성을 정확히 전달하는 서류에서 시작됩니다.\n나의 강점과 직무에 적합한 역량을\n\n명확히 전달하는 서류, 이것이 바로 합격의 시작입니다.`,
+      description: `나의 강점과 직무에 적합한 역량을\n\n명확히 전달하는 서류,\n이것이 바로 합격의 시작입니다.`,
       before: [
         '중구난방인 구조와 낮은 가독성',
         '뾰족히 정리되지 않은 강점',
@@ -262,7 +262,7 @@ export const REPORT_INTRO: Record<ReportType, reportIntroItemType> = {
     },
     section3: {
       title: `렛츠커리어의 자기소개서 피드백 REPORT는\n평가자의 시선을 사로잡는 자소서로 합격의 가능성을 높여드립니다.`,
-      description: `취업 성공은 내 가능성을 정확히 전달하는 자소서에서 시작됩니다.\n나의 강점과 직무에 적합한 역량을 명확히 전달하는 자소서, 이것이 바로 합격의 시작입니다.`,
+      description: `나의 강점과 직무에 적합한 역량을\n\n명확히 전달하는 자소서,\n이것이 바로 합격의 시작입니다.`,
       before: [
         '불분명한 지원동기',
         '두루뭉실한 경험 서술',
@@ -321,7 +321,7 @@ export const REPORT_INTRO: Record<ReportType, reportIntroItemType> = {
     },
     section3: {
       title: `렛츠커리어의 이력서 피드백 REPORT는\n평가자의 시선을 사로잡는 서류로 합격의 가능성을 높여드립니다.`,
-      description: `취업 성공은 내 가능성을 정확히 전달하는 서류에서 시작됩니다.\n나의 강점과 직무에 적합한 역량을 명확히 전달하는 서류, 이것이 바로 합격의 시작입니다.`,
+      description: `나의 강점과 직무에 적합한 역량을\n\n명확히 전달하는 서류,\n이것이 바로 합격의 시작입니다.`,
       before: [
         '중구난방인 구조와 낮은 가독성',
         '뾰족히 정리되지 않은 강점',
