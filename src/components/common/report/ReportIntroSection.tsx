@@ -297,9 +297,6 @@ const ReportIntroSection = ({ type }: ReportIntroSectionProps) => {
                 <p className="text-medium22 font-bold md:text-xlarge30">
                   {convertString(reportIntro.section1.title)}
                 </p>
-                <p className="text-xsmall14 text-neutral-30 md:text-small20">
-                  {convertString(reportIntro.section1.description)}
-                </p>
               </div>
             </div>
           </div>

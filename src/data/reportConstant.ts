@@ -147,7 +147,6 @@ export type reportIntroItemType = {
   };
   section1: {
     title: string;
-    description: string;
     questions: string[];
   };
   section2: {
@@ -188,7 +187,6 @@ export const REPORT_INTRO: Record<ReportType, reportIntroItemType> = {
     },
     section1: {
       title: `혹시 반복되는 탈락에도\n매번 같은 이력서로\n\n지원하고 있지 않나요?`,
-      description: `점점 높아져 가는 서류 통과의 허들,\n\n불합격만 N번째 반복 중이라면\n지금이 바로 제출 중인 이력서를 점검해 볼 때입니다.`,
       questions: [
         '왜 내 서류는 자꾸 탈락할까?',
         `채용공고에 나와 있는 직무필수역량을\n내 이력서에 제대로 담아냈을까?`,
@@ -246,7 +244,6 @@ export const REPORT_INTRO: Record<ReportType, reportIntroItemType> = {
     },
     section1: {
       title: `혹시 마감에 급급해 충분히 다듬지 못한\n자소서를 그대로 제출하고 있지 않나요?`,
-      description: `내 경험들이 자소서에 제대로 녹아들었는지 확인하지 못한 채 제출하고 있었다면,\n지금이야말로 자소서를 점검하고 더 완벽하게 다듬을 기회입니다.`,
       questions: [
         '왜 내 서류는 자꾸 탈락할까?',
         `채용공고에 나와 있는 직무필수역량을\n내 이야기로 설득력 있게 담아냈을까?`,
@@ -305,7 +302,6 @@ export const REPORT_INTRO: Record<ReportType, reportIntroItemType> = {
     },
     section1: {
       title: `혹시 반복되는 탈락에도\n매번 같은 이력서로 지원하고 있지 않나요?`,
-      description: `점점 높아져 가는 서류 통과의 허들, 불합격만 N번째 반복 중이라면\n지금이 바로 제출 중인 이력서를 점검해 볼 때입니다.`,
       questions: [
         '왜 내 서류는 자꾸 탈락할까?',
         '채용공고에 나와 있는 직무필수역량을 내 이력서에 제대로 담아냈을까?',
