@@ -108,6 +108,15 @@ const ReportPlanSection = ({
   );
   const optionInfos = priceDetail.reportOptionInfos;
   const feedbackInfo = priceDetail.feedbackPriceInfo;
+  const optionTitles = [
+    ...new Set(
+      optionInfos?.map((item) =>
+        item.optionTitle?.startsWith('+')
+          ? item.optionTitle.slice(1).trim()
+          : item.optionTitle,
+      ),
+    ),
+  ];
 
   const isMobile = useMediaQuery('(max-width: 768px)');
 
@@ -233,13 +242,21 @@ const ReportPlanSection = ({
               <p className="mb-1.5 text-xxsmall12 font-light text-neutral-35 md:text-xsmall14">
                 *피드백 받고 싶은 현직자 여러명 옵션 추가 가능
               </p>
-              <div className="mb-5 mt-3 grid grid-cols-2 gap-x-1.5 gap-y-2 md:mb-6">
-                {optionInfos.map((item, index) => (
+              <div
+                className={twMerge(
+                  'mb-5 mt-3 md:mb-6',
+                  // 자소서 옵션은 flex, 그 외는 grid
+                  reportType === 'PERSONAL_STATEMENT'
+                    ? 'flex flex-col gap-1.5 md:gap-2'
+                    : 'grid grid-cols-2 gap-x-1.5 gap-y-2 md:gap-2',
+                )}
+              >
+                {optionTitles.map((title, index) => (
                   <div
                     key={index}
                     className="rounded-xs bg-[#EEFAFF] py-2 text-center text-xxsmall12 font-medium md:text-xsmall14"
                   >
-                    {item.optionTitle}
+                    {title}
                   </div>
                 ))}
               </div>
@@ -374,7 +391,7 @@ const PlanCard = memo(function PlanCard({
       </div>
       <div
         className={twMerge(
-          'mt-2 rounded-xs bg-neutral-95 p-3 pr-4 md:mt-4 md:px-6 md:py-5',
+          'mt-2 rounded-xs bg-neutral-95 p-3 pr-4 md:mt-4 md:px-4 md:py-5',
           childrenClassName,
         )}
       >
@@ -402,7 +419,7 @@ const NumberedListItem = memo(function NumberedListItem({
       <div
         style={numberStyle}
         className={twMerge(
-          'mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-neutral-60 text-xxsmall12 font-medium text-white md:h-6 md:w-6 md:text-small18',
+          'flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-neutral-60 pt-0.5 text-xxsmall12 font-medium text-white md:h-6 md:w-6 md:text-small18',
           numberClassName,
         )}
       >
