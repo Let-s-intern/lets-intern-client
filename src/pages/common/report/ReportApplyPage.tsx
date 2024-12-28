@@ -1,4 +1,9 @@
-import { FormControl, RadioGroup, SelectChangeEvent } from '@mui/material';
+import {
+  FormControl,
+  RadioGroup,
+  SelectChangeEvent,
+  useMediaQuery,
+} from '@mui/material';
 import dayjs, { Dayjs } from 'dayjs';
 import React, { memo, useEffect, useRef, useState } from 'react';
 import { IoCloseOutline } from 'react-icons/io5';
@@ -26,6 +31,7 @@ import ProgramCard from '@components/common/report/ProgramCard';
 import Tooltip from '@components/common/report/Tooltip';
 import BackHeader from '@components/common/ui/BackHeader';
 import BottomSheet from '@components/common/ui/BottomSheeet';
+import BaseButton from '@components/common/ui/button/BaseButton';
 import HorizontalRule from '@components/ui/HorizontalRule';
 import RequiredStar from '@components/ui/RequiredStar';
 
@@ -45,7 +51,7 @@ const ReportApplyPage = () => {
     validate,
   } = useReportApplicationStore();
 
-  const isResume = reportType === reportTypeSchema.enum.RESUME.toLowerCase();
+  const isMobile = useMediaQuery('(max-width:768px)');
 
   const convertFile = async () => {
     // 파일 변환
@@ -105,7 +111,7 @@ const ReportApplyPage = () => {
           {/* '지금 제출할래요' 선택 시 표시 */}
           {isSubmitNow === 'true' && (
             <>
-              <HorizontalRule className="-mx-5 md:-mx-32 lg:mx-0" />
+              <HorizontalRule className="-mx-5 lg:mx-0" />
               <CallOut
                 className="bg-neutral-100"
                 header="❗ 제출 전 꼭 읽어주세요"
@@ -121,12 +127,12 @@ const ReportApplyPage = () => {
                     dispatch={setRecruitmentFile}
                   />
                 )}
-              <HorizontalRule className="-mx-5 md:-mx-32 lg:mx-0" />
+              <HorizontalRule className="-mx-5 lg:mx-0" />
               {/* 1:1 온라인 상담 일정 */}
               {reportApplication.isFeedbackApplied && (
                 <>
                   <ScheduleSection />
-                  <HorizontalRule className="-mx-5 md:-mx-32 lg:mx-0" />
+                  <HorizontalRule className="-mx-5 lg:mx-0" />
                 </>
               )}
 
@@ -134,12 +140,42 @@ const ReportApplyPage = () => {
               <AdditionalInfoSection />
             </>
           )}
+
+          {/* 데스크탑에서 표시 */}
+          <BaseButton
+            className="hidden w-full md:block"
+            onClick={async () => {
+              // 지금 제출일 때만 파일 유효성 검사
+              if (isSubmitNow === 'true') {
+                const { isValid: isValidFile, message: fileValidationMessage } =
+                  validateFile();
+
+                if (!isValidFile) {
+                  alert(fileValidationMessage);
+                  return;
+                }
+
+                const { isValid, message } = validate();
+                if (!isValid) {
+                  alert(message);
+                  return;
+                }
+              }
+
+              // 지금 제출일 때만 파일 업로드
+              if (isSubmitNow === 'true') await convertFile();
+
+              navigate(`/report/payment/${reportType}/${reportId}`);
+            }}
+          >
+            다음
+          </BaseButton>
         </main>
       </div>
 
-      <BottomSheet className="mx-auto max-w-[55rem]">
-        <button
-          className="text-1.125-medium w-full rounded-md bg-primary py-3 text-center font-medium text-neutral-100"
+      <BottomSheet className="mx-auto max-w-[55rem] md:hidden">
+        <BaseButton
+          className="w-full"
           onClick={async () => {
             // 지금 제출일 때만 파일 유효성 검사
             if (isSubmitNow === 'true') {
@@ -165,7 +201,7 @@ const ReportApplyPage = () => {
           }}
         >
           다음
-        </button>
+        </BaseButton>
       </BottomSheet>
     </div>
   );

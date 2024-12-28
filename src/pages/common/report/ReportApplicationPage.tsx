@@ -114,10 +114,36 @@ const ReportApplicationPage = () => {
 
           {/* 추가 정보 */}
           <AdditionalInfoSection />
+
+          {/* 데스크탑 제출 버튼 */}
+          <BaseButton
+            className="hidden w-full max-w-[55rem] text-small18 md:block"
+            onClick={async () => {
+              const { isValid: isValidFile, message: fileValidationMessage } =
+                validateFile();
+
+              if (!isValidFile) {
+                alert(fileValidationMessage);
+                return;
+              }
+
+              const { isValid, message } = validate();
+
+              if (!isValid) {
+                alert(message);
+                return;
+              }
+
+              setIsModalOpen(true);
+            }}
+          >
+            제출하기
+          </BaseButton>
         </main>
       </div>
 
-      <BottomSheet className="xl:mx-48">
+      {/* 모바일 바텀시트 */}
+      <BottomSheet className="md:hidden">
         <BaseButton
           className="w-full text-small18"
           onClick={async () => {
