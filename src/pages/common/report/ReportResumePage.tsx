@@ -81,6 +81,7 @@ const ReportResumePage = () => {
           <meta name="twitter:description" content={description} />
         ) : null}
       </Helmet>
+
       {isLoading ? (
         <LoadingContainer />
       ) : (
@@ -123,10 +124,8 @@ const ReportResumePage = () => {
             )}
             {/* 홍보 배너  */}
             <PromoSection reportType="RESUME" />
-
             {/* 서비스 이용 안내 */}
             <ServiceProcessSection reportType="RESUME" />
-
             {/* FAQ  */}
             {report?.reportId && (
               <ReportFaqSection
