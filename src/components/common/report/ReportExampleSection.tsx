@@ -145,7 +145,7 @@ const ReportExampleSection = ({
                 <div
                   key={index}
                   ref={(el) => (itemRefs.current[index] = el)}
-                  className="flex w-[90%] shrink-0 cursor-pointer snap-start flex-col md:w-[calc(50%-6px)]"
+                  className="flex min-h-full w-[90%] shrink-0 cursor-pointer snap-start flex-col md:w-[calc(50%-6px)]"
                   onClick={() => setClickedExample(index)}
                 >
                   <ReportExampleCard example={example} />
