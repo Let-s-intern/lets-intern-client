@@ -106,6 +106,8 @@ const ReportApplyBottomSheet = React.forwardRef<
     if (reportPriceType === BASIC) return REPORT_RADIO_VALUES.basic;
     // 프리미엄
     if (reportPriceType === PREMIUM) return REPORT_RADIO_VALUES.premium;
+
+    return null;
   }, [reportApplication]);
 
   // 이력서 진단 플랜 Radio 정보
