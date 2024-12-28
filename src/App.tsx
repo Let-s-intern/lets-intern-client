@@ -22,6 +22,7 @@ import './index.css';
 import './styles/apply.scss';
 import './styles/card.scss';
 import './styles/github-markdown-light.css';
+import './styles/material-css.scss';
 import './styles/modal.scss';
 import './styles/mypage.scss';
 
@@ -38,16 +39,37 @@ declare global {
   }
 }
 
+const fontFamily = [
+  'Pretendard Variable',
+  '-apple-system',
+  'BlinkMacSystemFont',
+  'system-ui',
+  'Roboto',
+  'sans-serif',
+].join(',');
+
 const materialUiTheme = createTheme({
   typography: {
-    fontFamily: [
-      'Pretendard Variable',
-      '-apple-system',
-      'BlinkMacSystemFont',
-      'system-ui',
-      'Roboto',
-      'sans-serif',
-    ].join(','),
+    fontFamily,
+  },
+  components: {
+    MuiFormControl: {
+      styleOverrides: {
+        root: {
+          fontFamily,
+        },
+      },
+    },
+    MuiTypography: {
+      styleOverrides: {
+        root: {
+          fontFamily,
+        },
+        body1: {
+          fontFamily,
+        },
+      },
+    },
   },
 });
 
