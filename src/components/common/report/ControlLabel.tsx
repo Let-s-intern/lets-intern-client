@@ -25,7 +25,7 @@ const DEFAULT_LABEL_SX = {
   '.MuiFormControlLabel-label': {
     fontSize: '0.875rem',
     fontWeight: 500,
-    color: '#4C4F56',
+    color: '#2A2D34',
   },
 };
 
