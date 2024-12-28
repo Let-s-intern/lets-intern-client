@@ -356,6 +356,7 @@ export const PremiumSection = ({
           >
             <div className="mb-4">
               <ReportFormRadioControlLabel
+                sx={{ flexShrink: 0 }}
                 label="파일 첨부"
                 value="file"
                 subText="(png, jpg, jpeg, pdf 형식 지원, 50MB 이하)"
