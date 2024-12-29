@@ -2,6 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useEffect, useRef, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 
+import { useGetActiveReports } from '@/api/report';
 import { useControlScroll } from '@/hooks/useControlScroll';
 import { twMerge } from '@/lib/twMerge';
 import useAuthStore from '@/store/useAuthStore';
@@ -45,6 +46,7 @@ const NavBar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [user, setUser] = useState<any>(null);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [reportItems, setReportItems] = useState<NavSubItemProps[]>([]);
   const [activeLink, setActiveLink] = useState<
     'HOME' | 'ABOUT' | 'PROGRAM' | 'ADMIN' | 'BLOG' | 'REPORT' | ''
   >('');
@@ -79,6 +81,30 @@ const NavBar = () => {
     enabled: isLoggedIn,
     retry: 1,
   });
+
+  const { data, isLoading } = useGetActiveReports();
+
+  useEffect(() => {
+    if (data) {
+      const navItems: NavSubItemProps[] = [];
+
+      if (data?.resumeInfo) {
+        navItems.push(reportHoverItem[0]);
+      }
+      if (data?.personalStatementInfo) {
+        navItems.push(reportHoverItem[1]);
+      }
+      if (data?.portfolioInfo) {
+        navItems.push(reportHoverItem[2]);
+      }
+
+      navItems.push(reportHoverItem[3]);
+
+      setReportItems(navItems);
+    } else {
+      setReportItems([reportHoverItem[3]]);
+    }
+  }, [data]);
 
   // 사이드바 열리면 스크롤 제한
   useControlScroll(isOpen);
@@ -166,7 +192,8 @@ const NavBar = () => {
               as="div"
               to={reportHoverItem[0].to}
               active={activeLink === 'REPORT'}
-              hoverItem={reportHoverItem}
+              hoverItem={reportItems}
+              isItemLoaded={!isLoading && !!data}
             >
               🔥 서류 진단받고 합격하기
             </NavItem>
