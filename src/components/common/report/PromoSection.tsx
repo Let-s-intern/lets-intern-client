@@ -90,8 +90,9 @@ function PromoSection({ reportType }: PromoSectionProps) {
             >
               3,000+명
             </span>
-            의 프로그램 참여자와 합격 서류 및 노하우를 보유한 렛츠커리어의
-            취업연구팀이 제공하는
+            의 프로그램 참여자와 합격 서류 및 노하우를 보유한
+            <br className="hidden md:block" /> 렛츠커리어의 취업연구팀이
+            제공하는
             <br /> 실시간 첨삭제안과 맞춤 취업 전략 상담을
             <br className="sm:hidden" /> 한번에 받아보세요.
           </CardContent>
