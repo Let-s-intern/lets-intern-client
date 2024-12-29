@@ -32,7 +32,7 @@ const Section0: Record<
         </p>
       </React.Fragment>,
       <p key={1}>
-        두루뭉실한 피드백 X<br />
+        두루뭉술한 피드백 X<br />
         구체적인 피드백으로 <strong>명확한 개선 방향 제시</strong>
       </p>,
       <p key={2}>
@@ -58,7 +58,7 @@ const Section0: Record<
         </p>
       </React.Fragment>,
       <p key={1}>
-        두루뭉실한 피드백 X<br />
+        두루뭉술한 피드백 X<br />
         구체적인 피드백으로 <strong>명확한 개선 방향 제시</strong>
       </p>,
       <p key={2}>
@@ -86,7 +86,7 @@ const Section0: Record<
         </p>
       </React.Fragment>,
       <p key={1}>
-        두루뭉실한 피드백 X<br />
+        두루뭉술한 피드백 X<br />
         구체적인 피드백으로 <strong>명확한 개선 방향 제시</strong>
       </p>,
       <p key={2}>
@@ -239,7 +239,7 @@ const ReportIntroSection = ({ type }: ReportIntroSectionProps) => {
             </span>
             <div className="flex w-full flex-col items-center gap-y-5 md:gap-y-[30px]">
               <p className="text-medium22 font-bold md:text-xlarge30">
-                {`${convertReportTypeToDisplayName(type)} 피드백 REPORT를 통해\n이런걸 얻어 가실거에요.`}
+                {`${convertReportTypeToDisplayName(type)} 피드백 REPORT를 통해\n이런 걸 얻어 가실거에요.`}
               </p>
             </div>
           </div>

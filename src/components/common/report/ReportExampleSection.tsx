@@ -102,7 +102,7 @@ const ReportExampleSection = ({
                 className="break-keep text-center text-xsmall16 font-bold md:text-small20"
                 style={subHeaderStyle}
               >
-                진단 후 전송해드리는 피드백 리포트
+                진단 후 전송해 드리는 피드백 리포트
               </span>
               <p className="underline-thickness-2 break-keep text-center text-medium22 font-bold text-neutral-0 md:text-xlarge30">
                 {`${convertReportTypeToShortName(type)}의 `}
@@ -129,7 +129,7 @@ const ReportExampleSection = ({
             className="mx-auto flex w-full flex-col items-center gap-y-1 rounded-xs px-4 py-2 text-center text-xxsmall12 font-semibold md:w-[540px] md:py-3 md:text-xsmall14"
             style={infoBoxStyle}
           >
-            {`${convertReportTypeToShortName(type)} 진단 후, 평가 내용을 전달 받는 리포트 예시 입니다.`}
+            {`${convertReportTypeToShortName(type)} 진단 후, 평가 내용을 전달받는 리포트 예시입니다.`}
             <span
               className={`font-normal ${type === 'PERSONAL_STATEMENT' ? 'text-neutral-80' : 'text-neutral-30'}`}
             >

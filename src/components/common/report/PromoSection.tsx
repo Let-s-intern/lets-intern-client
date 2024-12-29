@@ -89,7 +89,7 @@ function PromoSection({ reportType }: PromoSectionProps) {
             </span>
             의 데이터를 보유한 전문가가 제공하는
             <br /> 실시간 첨삭과 맞춤 취업 전략 상담을
-            <br className="md:hidden" /> 한번에 받아보세요.
+            <br className="md:hidden" /> 한 번에 받아보세요.
           </CardContent>
         </div>
         <div>
