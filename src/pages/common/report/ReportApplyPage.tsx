@@ -1,9 +1,4 @@
-import {
-  FormControl,
-  RadioGroup,
-  SelectChangeEvent,
-  useMediaQuery,
-} from '@mui/material';
+import { FormControl, RadioGroup, SelectChangeEvent } from '@mui/material';
 import dayjs, { Dayjs } from 'dayjs';
 import React, { memo, useEffect, useRef, useState } from 'react';
 import { IoCloseOutline } from 'react-icons/io5';
@@ -50,8 +45,6 @@ const ReportApplyPage = () => {
     setReportApplication,
     validate,
   } = useReportApplicationStore();
-
-  const isMobile = useMediaQuery('(max-width:768px)');
 
   const convertFile = async () => {
     // 파일 변환
@@ -120,8 +113,8 @@ const ReportApplyPage = () => {
               {/* 진단용 서류 */}
               <DocumentSection file={applyFile} dispatch={setApplyFile} />
               {/* 프리미엄 채용공고 */}
-              {reportApplication.reportPriceType === 'PREMIUM' &&
-                reportType?.toUpperCase() !== 'PERSONAL_STATEMENT' && (
+              {reportType !== 'personal-statement' &&
+                reportApplication.reportPriceType === 'PREMIUM' && (
                   <PremiumSection
                     file={recruitmentFile}
                     dispatch={setRecruitmentFile}
