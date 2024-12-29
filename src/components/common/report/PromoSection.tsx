@@ -8,6 +8,7 @@ import {
 import { twMerge } from '@/lib/twMerge';
 import { personalStatementColors } from '@/pages/common/report/ReportPersonalStatementPage';
 import { resumeColors } from '@/pages/common/report/ReportResumePage';
+import clsx from 'clsx';
 import MainHeader from './MainHeader';
 import SubHeader from './SubHeader';
 
@@ -32,12 +33,6 @@ function PromoSection({ reportType }: PromoSectionProps) {
         ? personalStatementColors.F9EEFF
         : resumeColors.E8FDF2,
   };
-  const decorationStyle = {
-    textDecorationColor:
-      reportType === 'PERSONAL_STATEMENT'
-        ? personalStatementColors.C34AFF
-        : resumeColors._11AC5C,
-  };
   const borderStyle = {
     backgroundImage: `linear-gradient(to right, ${reportType === 'PERSONAL_STATEMENT' ? personalStatementColors.F3A2FF : resumeColors._2CE282}, ${reportType === 'PERSONAL_STATEMENT' ? personalStatementColors.C34AFF : resumeColors._2CDDEA})`,
   };
@@ -46,7 +41,7 @@ function PromoSection({ reportType }: PromoSectionProps) {
 
   const contentList = [
     {
-      title: '전문가와의 1:1 상담',
+      title: '렛츠커리어 취업연구팀과 1:1 상담',
     },
     {
       title: '무제한 질문 가능',
@@ -82,14 +77,22 @@ function PromoSection({ reportType }: PromoSectionProps) {
           <CardTitle>{contentList[0].title}</CardTitle>
           <CardContent>
             <span
-              className="underline underline-offset-4"
-              style={decorationStyle}
+              className={clsx(
+                {
+                  'after:bg-text-decoration-line-resume':
+                    reportType === 'RESUME',
+                  'after:bg-text-decoration-line-personal-statement':
+                    reportType === 'PERSONAL_STATEMENT',
+                },
+                'relative after:absolute after:-bottom-1.5 after:-left-1 after:h-2 after:w-[68px] after:bg-contain after:bg-no-repeat after:md:w-[82px]',
+              )}
             >
-              3,000명 이상
+              3,000+명
             </span>
-            의 데이터를 보유한 전문가가 제공하는
-            <br /> 실시간 첨삭과 맞춤 취업 전략 상담을
-            <br className="md:hidden" /> 한번에 받아보세요.
+            의 프로그램 참여자와 합격 서류 및 노하우를 보유한 렛츠커리어의
+            취업연구팀이 제공하는
+            <br /> 실시간 첨삭제안과 맞춤 취업 전략 상담을
+            <br className="sm:hidden" /> 한번에 받아보세요.
           </CardContent>
         </div>
         <div>
@@ -132,7 +135,7 @@ const CardContent = memo(function CardContent({
   return (
     <p
       className={twMerge(
-        'whitespace-pre-line text-xxsmall12 font-medium md:text-small18',
+        'whitespace-pre-line text-xsmall14 font-medium md:text-small18',
         className,
       )}
     >

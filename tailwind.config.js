@@ -145,6 +145,10 @@ module.exports = {
         'blog-banner-md': 'url("/images/blog_banner_bg_md.png")',
         'blog-banner-lg': 'url("/images/blog_banner_bg_lg.png")',
         'certificate-bg': 'url("/images/certificate_bg.png")',
+        'text-decoration-line-resume':
+          'url(/images/report/report-text-decoration-line-resume.svg)',
+        'text-decoration-line-personal-statement':
+          'url(/images/report/report-text-decoration-line-personal-statement.svg)',
       },
       keyframes: {
         'live-infinite-scroll-desktop': {
