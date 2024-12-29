@@ -99,8 +99,7 @@ const ServiceProcessSection = ({ reportType }: ServiceProcessSectionProps) => {
                 <p className="text-xxsmall12 font-semibold md:text-xsmall16 md:font-medium">
                   어떤 부분에서 어려움을 겪고 있는지,
                   <br className="md:hidden" /> 무엇을 개선하고 싶은지
-                  적어주시면,
-                  <br /> 전문가가 보다 정확한 피드백을
+                  적어주시면, 전문가가 보다 정확한 피드백을
                   <br className="md:hidden" /> 제공해 드려요!
                 </p>
               </div>
