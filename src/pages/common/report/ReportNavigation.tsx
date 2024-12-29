@@ -110,7 +110,7 @@ const ReportNavigation = ({
         {navItems.map((navItem) => (
           <button
             key={navItem.title}
-            className={`border-b-[2.4px] px-1.5 py-4 text-[8px] font-semibold xs:text-xxsmall12 md:min-w-[100px] md:text-xsmall16`}
+            className={`break-keep border-b-[2.4px] px-1.5 py-4 text-[8px] font-semibold xs:text-xxsmall12 md:min-w-[100px] md:text-xsmall16`}
             style={{
               borderBottomColor:
                 navItem.to === activeSection
