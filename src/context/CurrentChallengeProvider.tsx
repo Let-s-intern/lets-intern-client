@@ -91,7 +91,6 @@ export const CurrentChallengeProvider = ({
       const res = await axios.get(
         `/challenge/${params.programId}/my/daily-mission`,
       );
-      console.log(res);
       return myDailyMissionSchema.parse(res.data.data);
     },
   });

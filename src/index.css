@@ -11,6 +11,7 @@
       system-ui,
       Roboto,
       sans-serif;
+    box-sizing: border-box;
   }
 
   .text-2\.25-bold {
