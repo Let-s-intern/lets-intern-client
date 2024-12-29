@@ -28,7 +28,7 @@ const ReportInterviewCard = ({
           <p className="font-semibold">{`Q. ${interview.question}`}</p>
           <div className="flex w-full flex-1 flex-col gap-y-1 text-wrap">
             <p className="font-bold">{`A. ${interview.answer}`}</p>
-            <p className="w-full flex-1 text-wrap break-keep font-medium">{`"${interview.detail}"`}</p>
+            <p className="w-full flex-1 text-wrap font-medium">{`"${interview.detail}"`}</p>
           </div>
         </div>
         <div className="flex w-full items-center gap-x-3">
