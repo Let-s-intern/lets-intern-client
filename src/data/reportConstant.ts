@@ -56,7 +56,7 @@ export const REPORT_EXAMPLE: Record<ReportType, reportExampleContentType[]> = {
   ],
   PERSONAL_STATEMENT: [
     {
-      title: `1. 5가지 핵심 기준으로 진단한 총평과 문항 분석`,
+      title: `1. 5가지 핵심 기준으로\n진단한 총평과 문항 분석`,
       src: '/images/report/report_example_1.png',
       description: [
         `5가지 기준으로 분석한 총평 제공`,

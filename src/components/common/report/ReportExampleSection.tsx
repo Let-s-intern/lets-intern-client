@@ -107,7 +107,7 @@ const ReportExampleSection = ({
               <p className="underline-thickness-2 break-keep text-center text-medium22 font-bold text-neutral-0 md:text-xlarge30">
                 {`${convertReportTypeToShortName(type)}의 `}
                 <span
-                  className="underline decoration-wavy underline-offset-4"
+                  className="underline underline-offset-4"
                   style={textDecorationStyle}
                 >
                   강점과 약점
@@ -116,7 +116,7 @@ const ReportExampleSection = ({
                 <br />
                 명확한{' '}
                 <span
-                  className="underline decoration-wavy underline-offset-4"
+                  className="underline underline-offset-4"
                   style={textDecorationStyle}
                 >
                   수정 방향
@@ -147,7 +147,7 @@ const ReportExampleSection = ({
                 <div
                   key={index}
                   ref={(el) => (itemRefs.current[index] = el)}
-                  className="flex min-h-full w-[90%] shrink-0 cursor-pointer snap-start flex-col md:w-[calc(50%-6px)]"
+                  className="flex min-h-[455px] w-[90%] shrink-0 cursor-pointer snap-start flex-col md:min-h-[673px] md:w-[calc(50%-6px)]"
                   onClick={() => setClickedExample(index)}
                 >
                   <ReportExampleCard example={example} />
