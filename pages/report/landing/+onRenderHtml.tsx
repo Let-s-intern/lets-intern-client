@@ -47,7 +47,7 @@ const onRenderHtml: OnRenderHtmlAsync = async (pageContext) => {
     pageHtml,
     title: '서류 진단 - 렛츠커리어',
     description: reportDescription,
-    image: `${getBaseUrlFromServer()}/images/report-banner.jpg`,
+    image: `${getBaseUrlFromServer()}/images/report/open-graph-resume.png`,
     url: `${getBaseUrlFromServer()}/report/landing`,
   });
 };
