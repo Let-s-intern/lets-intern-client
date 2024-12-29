@@ -181,7 +181,7 @@ export const REPORT_INTRO: Record<ReportType, reportIntroItemType> = {
         },
         {
           image: '/images/report/report_intro_section0_resume_3.png',
-          desc: '피드백 리포트 발송 →',
+          desc: '피드백 리포트 발송',
         },
       ],
     },
@@ -238,7 +238,7 @@ export const REPORT_INTRO: Record<ReportType, reportIntroItemType> = {
         },
         {
           image: '/images/report/report_intro_section0_personal_3.png',
-          desc: '피드백 리포트 발송 →',
+          desc: '피드백 리포트 발송',
         },
       ],
     },
@@ -296,7 +296,7 @@ export const REPORT_INTRO: Record<ReportType, reportIntroItemType> = {
         },
         {
           image: '/images/report/report_intro_section0_resume_3.png',
-          desc: '피드백 리포트 발송 →',
+          desc: '피드백 리포트 발송',
         },
       ],
     },

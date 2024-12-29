@@ -10,9 +10,17 @@ interface NavItemProps {
   as?: keyof JSX.IntrinsicElements;
   children: React.ReactNode;
   hoverItem?: NavSubItemProps[];
+  isItemLoaded?: boolean;
 }
 
-const NavItem = ({ to, active, as, children, hoverItem }: NavItemProps) => {
+const NavItem = ({
+  to,
+  active,
+  as,
+  children,
+  hoverItem,
+  isItemLoaded = true,
+}: NavItemProps) => {
   const [hover, setHover] = useState(false);
   const Wrapper = as || Link;
   const style = {
@@ -35,16 +43,20 @@ const NavItem = ({ to, active, as, children, hoverItem }: NavItemProps) => {
         onMouseLeave={() => setHover(false)}
       >
         {hover && hoverItem && (
-          <div className="drop-shadow-05 flex w-full flex-col items-center">
+          <div className="flex w-full flex-col items-center drop-shadow-05">
             <Polygon className="absolute top-0 z-10 mx-auto h-[14px] w-5 text-white" />
             <div className="mt-[13px] flex w-full flex-col rounded-xs bg-white py-1">
-              {hoverItem.map((item, idx) => (
-                <NavSubItem
-                  key={item.to}
-                  isLast={idx === hoverItem.length - 1}
-                  {...item}
-                />
-              ))}
+              {!isItemLoaded ? (
+                <div>Loading...</div>
+              ) : (
+                hoverItem.map((item, idx) => (
+                  <NavSubItem
+                    key={item.to}
+                    isLast={idx === hoverItem.length - 1}
+                    {...item}
+                  />
+                ))
+              )}
             </div>
           </div>
         )}
