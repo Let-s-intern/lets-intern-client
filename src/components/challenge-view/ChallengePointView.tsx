@@ -247,6 +247,7 @@ const ChallengePointView = ({
                 backgroundImage: item.programInfo.thumbnail ?? '',
                 title: item.recommendTitle ?? '',
                 cta: item.recommendCTA ?? '',
+                to: '',
                 onClickButton: async () => {
                   if (
                     item.programInfo.programType === ProgramTypeEnum.enum.VOD
