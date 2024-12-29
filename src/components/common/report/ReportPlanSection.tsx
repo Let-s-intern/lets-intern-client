@@ -108,13 +108,9 @@ const ReportPlanSection = ({
   );
   const optionInfos = priceDetail.reportOptionInfos;
   const feedbackInfo = priceDetail.feedbackPriceInfo;
-  const optionTitles = [
-    ...new Set(
-      optionInfos?.map((item) =>
-        item.optionTitle?.startsWith('+') ? '문항 추가' : item.optionTitle,
-      ),
-    ),
-  ];
+  const optionTitles = optionInfos
+    ?.map((item) => item.optionTitle)
+    .filter((title) => !title?.startsWith('+'));
 
   const isMobile = useMediaQuery('(max-width: 768px)');
 
