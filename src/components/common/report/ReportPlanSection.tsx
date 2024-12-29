@@ -417,25 +417,27 @@ const NumberedListItem = memo(function NumberedListItem({
   numberStyle?: CSSProperties;
 }) {
   return (
-    <div className="flex items-start gap-1.5 md:gap-2">
-      <div
-        style={numberStyle}
-        className={twMerge(
-          'flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-neutral-60 pt-0.5 text-xxsmall12 font-medium text-white md:h-6 md:w-6 md:text-small18',
-          numberClassName,
-        )}
-      >
-        {number}
+    <div className="flex items-stretch gap-1.5 md:gap-2">
+      <div className="py-1">
+        <div
+          style={numberStyle}
+          className={twMerge(
+            'flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-neutral-60 pt-0.5 text-xxsmall12 font-medium text-white md:h-6 md:w-6 md:text-small18',
+            numberClassName,
+          )}
+        >
+          {number}
+        </div>
       </div>
 
-      <span
+      <div
         className={twMerge(
-          'whitespace-pre-line text-xsmall14 font-medium text-neutral-0 md:text-small18',
+          'flex items-center whitespace-pre-line text-xsmall14 font-medium text-neutral-0 md:text-small18',
           childrenClassName,
         )}
       >
         {children}
-      </span>
+      </div>
     </div>
   );
 });
