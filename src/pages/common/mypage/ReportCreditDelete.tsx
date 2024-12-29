@@ -103,6 +103,7 @@ const ReportCreditDelete = () => {
 
     return getTotalRefund({
       now: dayjs(),
+      applicationInfo,
       paymentInfo,
       reportApplicationStatus:
         reportPaymentDetail.reportApplicationInfo.reportApplicationStatus,
