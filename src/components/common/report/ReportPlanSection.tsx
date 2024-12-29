@@ -111,9 +111,7 @@ const ReportPlanSection = ({
   const optionTitles = [
     ...new Set(
       optionInfos?.map((item) =>
-        item.optionTitle?.startsWith('+')
-          ? item.optionTitle.slice(1).trim()
-          : item.optionTitle,
+        item.optionTitle?.startsWith('+') ? '문항 추가' : item.optionTitle,
       ),
     ),
   ];
