@@ -69,7 +69,7 @@ const ReportPlanSection = ({
           '서류 작성 고민 상담 및 솔루션',
           '직무/산업별 합격자 예시 자료 제공',
           '자소서 완성도를 높이는\n‘전체 총평 페이지’ 제공',
-          '문항별 연관성을 바탕으로 직무 적합성을 강화할 키워드 제안',
+          '문항별 연관성을 바탕으로 직무적합성을 강화할 키워드 제안',
         ];
 
       default:
@@ -87,13 +87,13 @@ const ReportPlanSection = ({
     switch (reportType) {
       case 'PERSONAL_STATEMENT':
         return [
-          '40분동안 무한 질문 가능!',
+          '40분 동안 무한 질문 가능!',
           '실시간 자소서 첨삭',
           '자소서부터 취업 전략까지 한 번에 해결',
         ];
       default:
         return [
-          '40분동안 무한 질문 가능!',
+          '40분 동안 무한 질문 가능!',
           '실시간 이력서 첨삭',
           '이력서부터 취업 전략까지 한 번에 해결',
         ];
@@ -240,7 +240,7 @@ const ReportPlanSection = ({
                 현직자가 제공하는 심층 서류 피드백 및 작성 노하우
               </p>
               <p className="mb-1.5 text-xxsmall12 font-light text-neutral-35 md:text-xsmall14">
-                *피드백 받고 싶은 현직자 여러명 옵션 추가 가능
+                *피드백 받고 싶은 현직자 여러 명 옵션 추가 가능
               </p>
               <div
                 className={twMerge(
