@@ -8,6 +8,7 @@ interface ProgramRecommendSliderProps {
     backgroundImage: string;
     title: string;
     cta: string;
+    to: string;
     onClickButton?: MouseEventHandler<HTMLButtonElement>;
   }[];
   buttonStyle?: CSSProperties;
@@ -15,7 +16,7 @@ interface ProgramRecommendSliderProps {
   buttonClassName?: string;
 }
 
-const textShadowStyle = {
+const TEXT_SHADOW_STYLE = {
   textShadow: '0 0 8.4px rgba(33, 33, 37, 0.40)',
 };
 
@@ -44,7 +45,7 @@ function ProgramRecommendSlider({
               <div className="h-2/3 w-full bg-gradient-to-b from-[#161E31]/40 to-[#161E31]/0 px-5 pt-3">
                 <span
                   className="block w-fit text-xsmall16 font-semibold text-white md:text-small18"
-                  style={textShadowStyle}
+                  style={TEXT_SHADOW_STYLE}
                 >
                   {item.title}
                 </span>
@@ -56,6 +57,7 @@ function ProgramRecommendSlider({
                 'program_recommend mt-3 w-full rounded-xs bg-primary py-3 text-xsmall16 text-white md:mt-4 md:py-4 md:text-small18',
                 buttonClassName,
               )}
+              data-url={item.to}
               style={buttonStyle}
               onClick={item.onClickButton}
             >

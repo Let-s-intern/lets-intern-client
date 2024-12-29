@@ -271,7 +271,7 @@ const ProcessCard = memo(function ProcessCard({
     <div
       style={style}
       className={twMerge(
-        'w-full rounded-md bg-primary-80 px-5 py-6 md:px-12 md:py-10',
+        'w-full rounded-md bg-primary-80 px-5 py-6 text-neutral-0 md:px-12 md:py-10',
         className,
       )}
     >
