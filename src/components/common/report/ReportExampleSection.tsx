@@ -156,12 +156,12 @@ const ReportExampleSection = ({
             </div>
           </div>
           <PrevButton
-            className="absolute left-0 top-1/2 z-10 hidden h-16 w-16 -translate-x-1/2 -translate-y-1/2 transform cursor-pointer md:block"
+            className="absolute left-0 top-1/2 z-10 hidden h-16 w-16 -translate-x-1/2 -translate-y-1/2 transform cursor-pointer transition-all duration-300 ease-in-out hover:scale-110 md:block"
             style={{ color: baseColor }}
             onClick={() => handleScroll('left')}
           />
           <NextButton
-            className="absolute right-0 top-1/2 hidden h-16 w-16 -translate-y-1/2 translate-x-1/2 transform cursor-pointer md:block"
+            className="absolute right-0 top-1/2 hidden h-16 w-16 -translate-y-1/2 translate-x-1/2 transform cursor-pointer transition-all duration-300 ease-in-out hover:scale-110 md:block"
             style={{ color: baseColor }}
             onClick={() => handleScroll('right')}
           />
@@ -192,13 +192,13 @@ const ReportExampleSection = ({
                 className="h-auto w-full bg-white"
               />
               <PrevButton
-                className="absolute left-0 top-1/2 z-10 h-8 w-8 -translate-x-1/2 -translate-y-1/2 transform cursor-pointer text-neutral-20 md:h-16 md:w-16"
+                className="absolute left-0 top-1/2 z-10 h-8 w-8 -translate-x-1/2 -translate-y-1/2 transform cursor-pointer text-neutral-20 transition-all duration-300 ease-in-out hover:scale-110 md:h-16 md:w-16"
                 onClick={() =>
                   setClickedExample(clickedExample > 0 ? clickedExample - 1 : 0)
                 }
               />
               <NextButton
-                className="absolute right-0 top-1/2 h-8 w-8 -translate-y-1/2 translate-x-1/2 transform cursor-pointer text-neutral-20 md:h-16 md:w-16"
+                className="absolute right-0 top-1/2 h-8 w-8 -translate-y-1/2 translate-x-1/2 transform cursor-pointer text-neutral-20 transition-all duration-300 ease-in-out hover:scale-110 md:h-16 md:w-16"
                 onClick={() =>
                   setClickedExample(
                     clickedExample < example.length - 1
