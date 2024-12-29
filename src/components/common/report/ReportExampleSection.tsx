@@ -148,7 +148,7 @@ const ReportExampleSection = ({
                   <div
                     key={index}
                     ref={(el) => (itemRefs.current[index] = el)}
-                    className="flex min-h-[455px] w-[90%] shrink-0 cursor-pointer snap-start flex-col md:min-h-[673px] md:w-[calc(50%-6px)]"
+                    className="flex w-[90%] shrink-0 cursor-pointer snap-start flex-col md:w-[calc(50%-6px)]"
                     onClick={() => setClickedExample(index)}
                   >
                     <ReportExampleCard example={example} />
@@ -157,12 +157,12 @@ const ReportExampleSection = ({
               </div>
             </div>
             <PrevButton
-              className="absolute left-0 top-1/2 z-10 hidden h-16 w-16 -translate-x-1/2 -translate-y-1/2 transform cursor-pointer transition-all duration-300 ease-in-out hover:scale-110 md:block"
+              className="absolute left-2 top-1/2 z-10 hidden h-16 w-16 -translate-y-1/2 transform cursor-pointer transition-all duration-300 ease-in-out hover:scale-110 md:block"
               style={{ color: baseColor }}
               onClick={() => handleScroll('left')}
             />
             <NextButton
-              className="absolute right-0 top-1/2 hidden h-16 w-16 -translate-y-1/2 translate-x-1/2 transform cursor-pointer transition-all duration-300 ease-in-out hover:scale-110 md:block"
+              className="absolute right-2 top-1/2 hidden h-16 w-16 -translate-y-1/2 transform cursor-pointer transition-all duration-300 ease-in-out hover:scale-110 md:block"
               style={{ color: baseColor }}
               onClick={() => handleScroll('right')}
             />
@@ -189,7 +189,7 @@ const ReportExampleSection = ({
             </div>
             <div className="relative mt-2.5 md:mt-2">
               <img
-                src={example[clickedExample].src}
+                src={example[clickedExample].modalSrc}
                 alt={example[clickedExample].title}
                 className="h-auto w-full bg-white"
               />

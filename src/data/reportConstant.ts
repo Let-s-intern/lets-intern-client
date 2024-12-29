@@ -3,14 +3,19 @@ import { ReportType } from '@/api/report';
 export type reportExampleContentType = {
   title: string;
   src: string;
+  modalSrc: string;
   description: string[];
 };
+
+const defaultRoute = '/images/report/report_example/default/';
+const modalRoute = '/images/report/report_example/modal/';
 
 export const REPORT_EXAMPLE: Record<ReportType, reportExampleContentType[]> = {
   RESUME: [
     {
       title: `1. 6가지 핵심 기준을 바탕으로\n진단한 총평과 형식 피드백`,
-      src: '/images/report/report_example_resume_1.png',
+      src: `${defaultRoute}report_1.png`,
+      modalSrc: `${modalRoute}report_1.png`,
       description: [
         `이력서의 강점과 약점을 분석`,
         `직무에 적합한 형식, 가독성 높은 구성 등 형식 개선에 대한 구체적인 피드백을 제안`,
@@ -18,7 +23,8 @@ export const REPORT_EXAMPLE: Record<ReportType, reportExampleContentType[]> = {
     },
     {
       title: `2. 구체성과 설득력을 높이는\n맞춤형 내용 피드백`,
-      src: '/images/report/report_example_resume_1.png',
+      src: `${defaultRoute}report_2.png`,
+      modalSrc: `${modalRoute}report_2.png`,
       description: [
         `직무와 연관된 경험과 역량을 효과적으로 표현할 수 있는 방향을 제시`,
         `설득력 있는 이력서 작성 방법 제공`,
@@ -26,7 +32,8 @@ export const REPORT_EXAMPLE: Record<ReportType, reportExampleContentType[]> = {
     },
     {
       title: `3. 템플릿 기반의 구체적 첨삭\n및 작성 가이드`,
-      src: '/images/report/report_example_resume_1.png',
+      src: `${defaultRoute}report_3.png`,
+      modalSrc: `${modalRoute}report_3.png`,
       description: [
         `첨삭 예시와 구체적인 수정 방향을 제안`,
         `항목별 작성 팁과 사례를 통해 효과적인 이력서 작성 방식을 안내`,
@@ -34,21 +41,24 @@ export const REPORT_EXAMPLE: Record<ReportType, reportExampleContentType[]> = {
     },
     {
       title: `4. 직무별\n합격자 사례 제공`,
-      src: '/images/report/report_example_resume_1.png',
+      src: `${defaultRoute}report_4.png`,
+      modalSrc: `${modalRoute}report_4.png`,
       description: [
         `같은 직무의 합격자 사례로 이력서 작성 방향, 효과적인 성과 및 강점 작성 방법 제시`,
       ],
     },
     {
       title: `5. 채용공고 맞춤형 리포트\n(프리미엄 플랜)`,
-      src: '/images/report/report_example_resume_1.png',
+      src: `${defaultRoute}report_5.png`,
+      modalSrc: `${modalRoute}report_5.png`,
       description: [
         `공고에 명시된 요구사항과 우대 조건을 기반으로, 이력서에 강조할 역량과 경험을 구체적으로 제안`,
       ],
     },
     {
       title: `6. 이력서 작성 고민에 대한\n1:1 상담`,
-      src: '/images/report/report_example_resume_1.png',
+      src: `${defaultRoute}report_6.png`,
+      modalSrc: `${modalRoute}report_6.png`,
       description: [
         `신청 시 작성한 고민을 바탕으로, 이력서 작성 방향과 구체적인 조언을 제공`,
       ],
@@ -57,7 +67,8 @@ export const REPORT_EXAMPLE: Record<ReportType, reportExampleContentType[]> = {
   PERSONAL_STATEMENT: [
     {
       title: `1. 5가지 핵심 기준으로\n진단한 총평과 문항 분석`,
-      src: '/images/report/report_example_1.png',
+      src: `${defaultRoute}personal_1.png`,
+      modalSrc: `${modalRoute}personal_1.png`,
       description: [
         `5가지 기준으로 분석한 총평 제공`,
         `문항 분석을 통한 효과적인 작성 방향 제안`,
@@ -65,7 +76,8 @@ export const REPORT_EXAMPLE: Record<ReportType, reportExampleContentType[]> = {
     },
     {
       title: `2. 가독성,  구조 및 구성 중심의\n강점과 약점 진단`,
-      src: '/images/report/report_example_2.png',
+      src: `${defaultRoute}personal_2.png`,
+      modalSrc: `${modalRoute}personal_2.png`,
       description: [
         `가독성 및 구조 중심으로 자소서 표현력 진단`,
         `보완이 필요한 영역과 효과적으로 작성된 영역에 대한 구체적인 진단 리포트 제공`,
@@ -73,7 +85,8 @@ export const REPORT_EXAMPLE: Record<ReportType, reportExampleContentType[]> = {
     },
     {
       title: `3. 구체성과 직무 연관성을\n바탕으로 한 강점과 약점 진단`,
-      src: '/images/report/report_example_1.png',
+      src: `${defaultRoute}personal_3.png`,
+      modalSrc: `${modalRoute}personal_3.png`,
       description: [
         `첨삭 예시와 구체적인 수정 방향을 제안`,
         `항목별 작성 팁과 사례를 통해 효과적인 이력서 작성 방식을 안내`,
@@ -81,7 +94,8 @@ export const REPORT_EXAMPLE: Record<ReportType, reportExampleContentType[]> = {
     },
     {
       title: `4. 자소서 핵심 키워드 설정과\n스토리 전개 방향 제안`,
-      src: '/images/report/report_example_2.png',
+      src: `${defaultRoute}personal_4.png`,
+      modalSrc: `${modalRoute}personal_4.png`,
       description: [
         `직무 연관성과 구체성 중심의 자소서 진단`,
         `전문성과 신뢰성을 높일 수 있는 영역과 개선이 필요한 요소에 대한 구체적인 리포트 제공`,
@@ -89,7 +103,8 @@ export const REPORT_EXAMPLE: Record<ReportType, reportExampleContentType[]> = {
     },
     {
       title: `5. 자소서 내용에 대한\n구체적 질문과 방향성 제안`,
-      src: '/images/report/report_example_1.png',
+      src: `${defaultRoute}personal_5.png`,
+      modalSrc: `${modalRoute}personal_5.png`,
       description: [
         `경험과 성과를 바탕으로 핵심 키워드 설정`,
         `직무와의 연관성을 효과적으로 전달할 수 있는 수정 방향을 제안`,
@@ -97,21 +112,24 @@ export const REPORT_EXAMPLE: Record<ReportType, reportExampleContentType[]> = {
     },
     {
       title: `6. 현직자의 시선으로 보는\n자소서 피드백`,
-      src: '/images/report/report_example_2.png',
+      src: `${defaultRoute}personal_6.png`,
+      modalSrc: `${modalRoute}personal_6.png`,
       description: [
         `제출된 자소서 기반 구체적인 질문을 통해 부족한 부분을 진단하고 방향성을 제시`,
       ],
     },
     {
       title: `7. 직무별 합격 비결을 담은\n자소서 예시 제공`,
-      src: '/images/report/report_example_1.png',
+      src: `${defaultRoute}personal_7.png`,
+      modalSrc: `${modalRoute}personal_7.png`,
       description: [
         `지원 직무와 유사한 합격자 사례를 참고하여, 직무적합성과 설득력을 높이는 자소서 작성 방향을 제안`,
       ],
     },
     {
       title: `8. 현직자의 시선으로 보는\n자소서 피드백`,
-      src: '/images/report/report_example_2.png',
+      src: `${defaultRoute}personal_8.png`,
+      modalSrc: `${modalRoute}personal_8.png`,
       description: [
         `현직자의 경험과 직무 이해를 바탕으로 작성한 자소서를 심층적으로 피드백`,
       ],
@@ -120,7 +138,8 @@ export const REPORT_EXAMPLE: Record<ReportType, reportExampleContentType[]> = {
   PORTFOLIO: [
     {
       title: `6가지 핵심 기준을 바탕으로\n진단한 총평과 형식 피드백`,
-      src: '/images/report/report_example_1.png',
+      src: `${defaultRoute}report_1.png`,
+      modalSrc: `${modalRoute}report_1.png`,
       description: [
         `6가지 핵심 기준 :\n가독성 / 구조 및 구성 / 직무 적합성 / 정확성 / 간결성 / 구체성`,
         `이력서의 강점과 약점을 분석하여 총평과 개선 방향을 제공합니다.`,
@@ -129,7 +148,8 @@ export const REPORT_EXAMPLE: Record<ReportType, reportExampleContentType[]> = {
     },
     {
       title: `구체성과 설득력을 높이는\n맞춤형 내용 피드백`,
-      src: '/images/report/report_example_2.png',
+      src: `${defaultRoute}report_2.png`,
+      modalSrc: `${modalRoute}report_2.png`,
       description: [
         `지원 직무와 연관된 경험과 역량을 효과적으로 표현할 수 있는 방향을 제시합니다.`,
         `불필요한 내용을 정리하고, 내용 전개의 방향을 제안하여 간결하면서도 설득력 있는 이력서 작성 방법을 제공합니다.`,
