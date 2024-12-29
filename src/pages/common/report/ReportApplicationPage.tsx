@@ -38,15 +38,19 @@ const ReportApplicationPage = () => {
   const { mutateAsync: patchMyApplication } = usePatchMyApplication();
 
   const convertFile = async () => {
+    let applyFileUrl: string | null = null;
+    let recruitmentFileUrl: string | null = null;
     // 파일 변환
     if (applyFile) {
-      const url = await uploadFile({ file: applyFile, type: 'REPORT' });
-      setReportApplication({ applyUrl: url });
+      applyFileUrl = await uploadFile({ file: applyFile, type: 'REPORT' });
     }
     if (recruitmentFile) {
-      const url = await uploadFile({ file: recruitmentFile, type: 'REPORT' });
-      setReportApplication({ recruitmentUrl: url });
+      recruitmentFileUrl = await uploadFile({
+        file: recruitmentFile,
+        type: 'REPORT',
+      });
     }
+    return { applyFileUrl, recruitmentFileUrl };
   };
 
   // 파일 state 때문에 별도로 유효성 검사
@@ -175,11 +179,12 @@ const ReportApplicationPage = () => {
         isLoading={isLoading}
         onClickConfirm={async () => {
           setIsLoading(true);
-          await convertFile();
+          const { applyFileUrl, recruitmentFileUrl } = await convertFile();
           await patchMyApplication({
             applicationId: Number(applicationId),
-            applyUrl: reportApplication.applyUrl!,
-            recruitmentUrl: reportApplication.recruitmentUrl!,
+            applyUrl: reportApplication.applyUrl ?? applyFileUrl!,
+            recruitmentUrl:
+              reportApplication.recruitmentUrl ?? recruitmentFileUrl!,
             desiredDate1: reportApplication.desiredDate1!,
             desiredDate2: reportApplication.desiredDate2!,
             desiredDate3: reportApplication.desiredDate3!,
