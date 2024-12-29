@@ -187,11 +187,14 @@ const ReportPlanSection = ({
                           'text-black': reportType === 'RESUME' && index >= 3,
                         })}
                       >
-                        {/* 예외 문항 */}
-                        {reportType === 'PERSONAL_STATEMENT' && index === 0 && (
-                          <s className="block">자소서 1문항 피드백 제공</s>
-                        )}
-                        {isPersonalStatement && index === 3 ? element : item}
+                        <p>
+                          {/* 예외 문항 */}
+                          {reportType === 'PERSONAL_STATEMENT' &&
+                            index === 0 && (
+                              <s className="block">자소서 1문항 피드백 제공</s>
+                            )}
+                          {isPersonalStatement && index === 3 ? element : item}
+                        </p>
                       </NumberedListItem>
                     );
                   })}
