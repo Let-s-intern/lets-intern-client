@@ -26,7 +26,7 @@ const DEFAULT_LABEL_SX = {
     fontSize: '0.875rem',
     fontWeight: 500,
     color: '#2A2D34',
-    fontFamily: 'Pretendard',
+    fontFamily: 'Pretendard Variable',
   },
 };
 
