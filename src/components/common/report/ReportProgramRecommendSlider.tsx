@@ -58,6 +58,7 @@ const ReportProgramRecommendSlider = ({
           cta:
             reportProgramRecommend.challengeCareerStart?.cta ??
             '경험정리 하러 가기',
+          to: `/program/challenge/${careerStart.id}`,
           onClickButton: () => navigate(`/program/challenge/${careerStart.id}`),
         });
       }
@@ -77,6 +78,7 @@ const ReportProgramRecommendSlider = ({
           cta:
             reportProgramRecommend.challengePersonalStatement?.cta ??
             '자소서 완성하러 가기',
+          to: `/program/challenge/${personalStatement.id}`,
           onClickButton: () =>
             navigate(`/program/challenge/${personalStatement.id}`),
         });
@@ -94,6 +96,7 @@ const ReportProgramRecommendSlider = ({
           cta:
             reportProgramRecommend.challengePortfolio?.cta ??
             '포폴 완성하러 가기',
+          to: `/program/challenge/${portfolio.id}`,
           onClickButton: () => navigate(`/program/challenge/${portfolio.id}`),
         });
       }
@@ -108,6 +111,7 @@ const ReportProgramRecommendSlider = ({
         backgroundImage: live?.thumbnail ?? '',
         title: reportProgramRecommend.live?.title,
         cta: reportProgramRecommend.live?.cta ?? '라이브 참여하러 가기',
+        to: `/program/live/${live?.id}`,
         onClickButton: () => navigate(`/program/live/${live?.id}`),
       });
     }
@@ -125,6 +129,7 @@ const ReportProgramRecommendSlider = ({
         backgroundImage: vod?.thumbnail ?? '',
         title: reportProgramRecommend.vod?.title,
         cta: reportProgramRecommend.vod?.cta ?? 'VOD 참여하러 가기',
+        to: `/program/live/${vod?.link}`,
         onClickButton: () => navigate(`/program/live/${vod?.link}`),
       });
     }
@@ -144,6 +149,7 @@ const ReportProgramRecommendSlider = ({
         title: reportProgramRecommend.reportResume?.title,
         cta:
           reportProgramRecommend.reportResume?.cta ?? '이력서 진단받으러 가기',
+        to: '/report/landing/resume',
         onClickButton: () => navigate('/report/landing/resume'),
       });
     }
@@ -163,6 +169,7 @@ const ReportProgramRecommendSlider = ({
         cta:
           reportProgramRecommend.reportPersonalStatement?.cta ??
           '자기소개서 진단받으러 가기',
+        to: '/report/landing/personal-statement',
         onClickButton: () => navigate('/report/landing/personal-statement'),
       });
     }
@@ -179,6 +186,7 @@ const ReportProgramRecommendSlider = ({
         cta:
           reportProgramRecommend.reportPortfolio?.cta ??
           '포트폴리오 진단받으러 가기',
+        to: '/report/landing/portfolio',
         onClickButton: () => navigate('/report/landing/portfolio'),
       });
     }
