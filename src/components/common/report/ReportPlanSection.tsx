@@ -250,7 +250,7 @@ const ReportPlanSection = ({
                     : 'grid grid-cols-2 gap-x-1.5 gap-y-2 md:gap-2',
                 )}
               >
-                {optionTitles.map((title, index) => (
+                {(optionTitles ?? []).map((title, index) => (
                   <div
                     key={index}
                     className="rounded-xs bg-[#EEFAFF] py-2 text-center text-xxsmall12 font-medium md:text-xsmall14"
