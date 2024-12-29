@@ -32,13 +32,13 @@ const ReportInterviewCard = ({
           </div>
         </div>
         <div className="flex w-full items-center gap-x-3">
-          <img
+          {/* <img
             src={
               interview.profile ?? '/images/program/program_default_profile.png'
             }
             alt={maskingName(interview.name)}
             className="h-12 w-12 rounded-full object-cover"
-          />
+          /> */}
           <div className="flex flex-1 flex-col gap-y-1 text-xxsmall12 text-neutral-0 md:text-xsmall14">
             <p>
               <span className="font-semibold">{interview.reportName} </span>

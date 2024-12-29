@@ -247,10 +247,7 @@ const ReportManagementPage = () => {
         return;
       }
       alerted.current = true;
-      window.alert(
-        '서류 진단서 신청내역이 없습니다. 서류 진단서 신청페이지로 이동합니다.',
-      );
-      navigate('/report/landing');
+      window.alert('서류 진단서 신청내역이 없습니다.');
     }
   }, [data?.myReportInfos.length, navigate, status]);
 
