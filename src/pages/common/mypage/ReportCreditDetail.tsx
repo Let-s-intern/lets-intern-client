@@ -88,7 +88,7 @@ const ReportCreditDetail = () => {
   };
 
   const isFeedbackCancelable = () => {
-    // 0. 1:1피드백 결제하지 않은 경우
+    // 0. 1:1피드백 결제하지 않은 경우 false
     if (
       !reportPaymentDetail?.reportApplicationInfo.reportFeedbackApplicationId
     ) {
