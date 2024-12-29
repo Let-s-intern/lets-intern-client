@@ -119,7 +119,7 @@ const ReportIntroSection = ({ type }: ReportIntroSectionProps) => {
     backgroundColor:
       type === 'PERSONAL_STATEMENT'
         ? personalStatementColors.CA60FF
-        : resumeColors._4FDA46,
+        : resumeColors._2CE282,
     color: type === 'PERSONAL_STATEMENT' ? 'white' : 'black',
   };
   const boxStyle = {
@@ -252,7 +252,7 @@ const ReportIntroSection = ({ type }: ReportIntroSectionProps) => {
               style={boxStyle}
             >
               <span
-                className="mt-1 flex h-4 w-4 shrink-0 items-center justify-center rounded-full text-xxsmall12 font-semibold md:h-[30px] md:w-[30px] md:text-small20"
+                className="flex h-4 w-4 shrink-0 items-center justify-center rounded-full text-xxsmall12 font-semibold md:h-[30px] md:w-[30px] md:text-small20"
                 style={stepStyle}
               >{`${index + 1}`}</span>
               <div className="flex flex-1 flex-col items-start gap-y-1 text-start text-xsmall14 font-medium md:text-small20">
