@@ -123,12 +123,12 @@ const ReportPersonalStatementPage = () => {
 
             {/* 홍보 배너  */}
             {report?.reportType && (
-              <PromoSection reportType={report.reportType} />
+              <PromoSection reportType="PERSONAL_STATEMENT" />
             )}
 
             {/* 서비스 이용 안내 */}
             {report?.reportType && (
-              <ServiceProcessSection reportType={report.reportType} />
+              <ServiceProcessSection reportType="PERSONAL_STATEMENT" />
             )}
 
             {/* FAQ  */}

@@ -397,7 +397,7 @@ const Programs = () => {
                   </span>
                 </span>
               </p>
-              <section className="grid w-full grid-cols-2 gap-x-4 gap-y-5 md:grid-cols-3 md:gap-4">
+              <section className="grid grid-cols-2 gap-x-4 gap-y-5 md:grid-cols-3 md:gap-4">
                 <EmptyCardList />
               </section>
             </>

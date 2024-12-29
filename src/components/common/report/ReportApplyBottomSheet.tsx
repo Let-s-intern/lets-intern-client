@@ -19,6 +19,7 @@ import {
   ReportPriceType,
   reportPriceTypeEnum,
 } from '@/api/report';
+import { useControlScroll } from '@/hooks/useControlScroll';
 import useInstagramAlert from '@/hooks/useInstagramAlert';
 import { generateOrderId } from '@/lib/order';
 import { twMerge } from '@/lib/twMerge';
@@ -308,10 +309,10 @@ const ReportApplyBottomSheet = React.forwardRef<
     ? (priceDetail?.feedbackPriceInfo?.feedbackDiscountPrice ?? 0)
     : 0;
 
-  if (!priceDetail || !report.reportType) return null;
-
   const optionsAvailable =
     priceDetail.reportOptionInfos && priceDetail.reportOptionInfos.length > 0;
+
+  useControlScroll(isDrawerOpen);
 
   return (
     <>
@@ -374,301 +375,308 @@ const ReportApplyBottomSheet = React.forwardRef<
         <div
           ref={ref}
           className={twMerge(
-            'fixed bottom-0 left-1/2 z-40 mx-auto w-full max-w-[1000px] -translate-x-1/2 rounded-t-xl border-t border-neutral-0/5 bg-white shadow-lg transition',
+            'fixed bottom-0 left-1/2 z-40 mx-auto h-[calc(100vh-7rem)] w-full max-w-[1000px] -translate-x-1/2 rounded-t-xl border-t border-neutral-0/5 bg-white shadow-lg transition',
             !show && 'hidden',
           )}
         >
-          <div className="relative max-h-[calc(100vh-60px)] overflow-y-auto px-5">
-            {/* 상단 닫기 버튼 */}
-            <div className="sticky top-0 z-10 w-full bg-white py-2">
-              <div
-                className="mx-auto h-[5px] w-16 cursor-pointer rounded-full bg-neutral-80"
-                onClick={() => setIsDrawerOpen(false)}
-              />
-            </div>
+          <div className="relative flex h-full flex-col justify-between overflow-y-scroll px-5">
+            <div>
+              {/* 상단 닫기 버튼 */}
+              <div className="sticky top-0 z-10 w-full bg-white py-2">
+                <div
+                  className="mx-auto h-[5px] w-16 cursor-pointer rounded-full bg-neutral-80"
+                  onClick={() => setIsDrawerOpen(false)}
+                />
+              </div>
 
-            {/* 본문 */}
-            <div className="mb-5 mt-2 flex flex-col gap-8">
-              {/* 서류 진단 플랜 */}
-              <FormControl fullWidth>
-                <Heading2 className="mb-4">
-                  {reportDisplayName} 진단 플랜 선택 (필수)
-                  <RequiredStar />
-                </Heading2>
-                <ReportDropdown
-                  title={`합격을 이끄는 ${reportDisplayName} 진단 플랜`}
-                  labelId="report-diagnosis-plan-group-label"
-                >
-                  <RadioGroup
-                    aria-labelledby="report-diagnosis-plan-group-label"
-                    value={radioValue}
-                    onChange={(e) => {
-                      {
-                        const isFeedbackApplied = e.target.value.endsWith(
-                          'Feedback',
-                        )
-                          ? true
-                          : false;
-                        // 서류진단 가격 유형 설정 (BASIC, PREMIUM)
-                        setPriceType(priceTypeByPlan[e.target.value]);
-                        // 피드백 신청 여부
-                        setFeedbackService(isFeedbackApplied);
-                      }
-                    }}
-                  >
-                    {reportDiagnosisPlan.map((item, index) => (
-                      <ReportFormRadioControlLabel
-                        key={item.label}
-                        label={item.label}
-                        value={item.value}
-                        wrapperClassName={generateControlLabelClassName(
-                          index === reportDiagnosisPlan.length - 1,
-                        )}
-                        labelStyle={RADIO_CONTROL_LABEL_STYLE}
-                        right={
-                          <ReportPriceView
-                            price={item.price}
-                            discount={item.discount}
-                          />
-                        }
-                      />
-                    ))}
-                  </RadioGroup>
-                </ReportDropdown>
-              </FormControl>
-
-              {/* 자기소개서 문항 추가 */}
-              {report.reportType === 'PERSONAL_STATEMENT' &&
-                (questionOptionInfos ?? []).length > 0 && (
-                  <div className="flex items-start justify-between">
-                    <Heading2 className="mb-4">
-                      자기소개서 문항 추가 (선택)
-                    </Heading2>
-                    <div>
-                      <ReportPriceView
-                        price={(questionOptionInfos ?? [])[0].price}
-                        discount={(questionOptionInfos ?? [])[0].discountPrice}
-                      />
-                      {/* Counter */}
-                      <div className="mt-3 flex items-center rounded-xs border border-[#D6D6D6]">
-                        <button
-                          className={twMerge(
-                            'flex h-7 w-7 items-center justify-center',
-                            selectedQuestionOptions.length === 0
-                              ? 'text-[#D6D6D6]'
-                              : 'text-[#121212]',
-                          )}
-                          onClick={() => {
-                            if (
-                              !questionOptionInfos ||
-                              selectedQuestionOptions.length === 0
-                            )
-                              return;
-
-                            //  selectedQuestionOptions.length - 1 인덱스에 해당하는 '자소서 문항 추가' 옵션 아이디 삭제
-                            setReportApplication({
-                              optionIds: optionIds.filter(
-                                (id) =>
-                                  id !==
-                                  questionOptionInfos[
-                                    selectedQuestionOptions.length - 1
-                                  ].reportOptionId,
-                              ),
-                            });
-                          }}
-                        >
-                          -
-                        </button>
-                        <div className="flex h-7 w-7 items-center justify-center text-xsmall14 text-[#121212]">
-                          {selectedQuestionOptions.length}
-                        </div>
-                        <button
-                          className={twMerge(
-                            'flex h-7 w-7 items-center justify-center text-[#121212]',
-                            selectedQuestionOptions.length ===
-                              (questionOptionInfos ?? [])?.length
-                              ? 'text-[#D6D6D6]'
-                              : 'text-[#121212]',
-                          )}
-                          onClick={() => {
-                            if (
-                              !questionOptionInfos ||
-                              selectedQuestionOptions.length ===
-                                (questionOptionInfos ?? [])?.length
-                            )
-                              return;
-
-                            //  selectedQuestionOptions.length 인덱스에 해당하는 '자소서 문항 추가' 옵션 아이디 추가
-                            setReportApplication({
-                              optionIds: [
-                                ...optionIds,
-                                questionOptionInfos[
-                                  selectedQuestionOptions.length
-                                ].reportOptionId,
-                              ],
-                            });
-                          }}
-                        >
-                          +
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-              {/* 현직자 피드백 (옵션) */}
-              {optionsAvailable ? (
+              {/* 본문 */}
+              <div className="mb-5 mt-2 flex flex-col gap-8">
+                {/* 서류 진단 플랜 */}
                 <FormControl fullWidth>
-                  <Heading2 className="mb-4">현직자 피드백 (선택)</Heading2>
-
+                  <Heading2 className="mb-4">
+                    {reportDisplayName} 진단 플랜 선택 (필수)
+                    <RequiredStar />
+                  </Heading2>
                   <ReportDropdown
-                    title="현직자가 알려주는 합격의 디테일"
-                    labelId="option-group-label"
-                    initialOpenState={false}
+                    title={`합격을 이끄는 ${reportDisplayName} 진단 플랜`}
+                    labelId="report-diagnosis-plan-group-label"
                   >
-                    <FormGroup aria-labelledby="option-group-label">
-                      {employeeOptionInfos?.map((option, index) => {
-                        const price = option.price ?? 0;
-                        const discount = option.discountPrice ?? 0;
-                        const checked = Boolean(
-                          optionIds.find(
-                            (selectedOption) =>
-                              selectedOption === option.reportOptionId,
-                          ),
-                        );
-
-                        return (
-                          <ReportFormCheckboxControlLabel
-                            key={option.reportOptionId}
-                            checked={checked}
-                            onChange={(_, checked) => {
-                              if (checked) {
-                                setSelectedOptionIds([
-                                  ...optionIds,
-                                  option.reportOptionId,
-                                ]);
-                              } else {
-                                setSelectedOptionIds(
-                                  optionIds.filter(
-                                    (selectedOption) =>
-                                      selectedOption !== option.reportOptionId,
-                                  ),
-                                );
-                              }
-                            }}
-                            wrapperClassName={generateControlLabelClassName(
-                              index ===
-                                (priceDetail.reportOptionInfos?.length ?? 0) -
-                                  1,
-                            )}
-                            label={option.optionTitle}
-                            labelStyle={RADIO_CONTROL_LABEL_STYLE}
-                            right={
-                              <ReportPriceView
-                                price={price}
-                                discount={discount}
-                              />
-                            }
-                          />
-                        );
-                      })}
-                    </FormGroup>
+                    <RadioGroup
+                      aria-labelledby="report-diagnosis-plan-group-label"
+                      value={radioValue}
+                      onChange={(e) => {
+                        {
+                          const isFeedbackApplied = e.target.value.endsWith(
+                            'Feedback',
+                          )
+                            ? true
+                            : false;
+                          // 서류진단 가격 유형 설정 (BASIC, PREMIUM)
+                          setPriceType(priceTypeByPlan[e.target.value]);
+                          // 피드백 신청 여부
+                          setFeedbackService(isFeedbackApplied);
+                        }
+                      }}
+                    >
+                      {reportDiagnosisPlan.map((item, index) => (
+                        <ReportFormRadioControlLabel
+                          key={item.label}
+                          label={item.label}
+                          value={item.value}
+                          wrapperClassName={generateControlLabelClassName(
+                            index === reportDiagnosisPlan.length - 1,
+                          )}
+                          labelStyle={RADIO_CONTROL_LABEL_STYLE}
+                          right={
+                            <ReportPriceView
+                              price={item.price}
+                              discount={item.discount}
+                            />
+                          }
+                        />
+                      ))}
+                    </RadioGroup>
                   </ReportDropdown>
                 </FormControl>
-              ) : null}
 
-              {/* 총 결제 금액 */}
-              <div>
-                <Heading2>총 결제 금액</Heading2>
-                {/* 선택한 상품 */}
-                {(selectedReportPlan || optionIds.length > 0) && (
-                  <>
-                    <div className="mt-3 overflow-hidden rounded-xs border border-neutral-80">
-                      {/*  선택한 서류 진단 플랜 */}
-                      {selectedReportPlan && (
-                        <SelectedItemBox
-                          title={selectedReportPlan.label}
-                          onClickDelete={() =>
-                            setReportApplication({
-                              reportPriceType: undefined,
-                              isFeedbackApplied: false,
-                            })
-                          }
-                          rightElement={
-                            <ReportPriceView
-                              price={selectedReportPlan.price}
-                              discount={selectedReportPlan.discount}
-                            />
+                {/* 자기소개서 문항 추가 */}
+                {report.reportType === 'PERSONAL_STATEMENT' &&
+                  (questionOptionInfos ?? []).length > 0 && (
+                    <div className="flex items-start justify-between">
+                      <Heading2 className="mb-4">
+                        자기소개서 문항 추가 (선택)
+                      </Heading2>
+                      <div>
+                        <ReportPriceView
+                          price={(questionOptionInfos ?? [])[0].price}
+                          discount={
+                            (questionOptionInfos ?? [])[0].discountPrice
                           }
                         />
-                      )}
-                      {/* 선택한 자소서 문항 추가 */}
-                      {selectedQuestionOptions.length > 0 && (
-                        <SelectedItemBox
-                          className="border-t border-neutral-80"
-                          title={`자기소개서 문항 추가 ${selectedQuestionOptions.length}개`}
-                          // 자소서 문항 추가 모두 삭제
-                          onClickDelete={() => {
-                            const questionOptionIds = questionOptionInfos?.map(
-                              (info) => info.reportOptionId,
-                            );
-                            setReportApplication({
-                              optionIds: reportApplication.optionIds.filter(
-                                (id) => !questionOptionIds?.includes(id),
-                              ),
-                            });
-                          }}
-                          rightElement={
-                            <ReportPriceView
-                              price={selectedQuestionOptions.price}
-                              discount={selectedQuestionOptions.discount}
-                            />
-                          }
-                        />
-                      )}
+                        {/* Counter */}
+                        <div className="mt-3 flex items-center rounded-xs border border-[#D6D6D6]">
+                          <button
+                            className={twMerge(
+                              'flex h-7 w-7 items-center justify-center',
+                              selectedQuestionOptions.length === 0
+                                ? 'text-[#D6D6D6]'
+                                : 'text-[#121212]',
+                            )}
+                            onClick={() => {
+                              if (
+                                !questionOptionInfos ||
+                                selectedQuestionOptions.length === 0
+                              )
+                                return;
 
-                      {/* 선택한 옵션 (현직자 피드백) */}
-                      {employeeOptionInfos?.map((info) => {
-                        if (optionIds.includes(info.reportOptionId))
+                              //  selectedQuestionOptions.length - 1 인덱스에 해당하는 '자소서 문항 추가' 옵션 아이디 삭제
+                              setReportApplication({
+                                optionIds: optionIds.filter(
+                                  (id) =>
+                                    id !==
+                                    questionOptionInfos[
+                                      selectedQuestionOptions.length - 1
+                                    ].reportOptionId,
+                                ),
+                              });
+                            }}
+                          >
+                            -
+                          </button>
+                          <div className="flex h-7 w-7 items-center justify-center text-xsmall14 text-[#121212]">
+                            {selectedQuestionOptions.length}
+                          </div>
+                          <button
+                            className={twMerge(
+                              'flex h-7 w-7 items-center justify-center text-[#121212]',
+                              selectedQuestionOptions.length ===
+                                (questionOptionInfos ?? [])?.length
+                                ? 'text-[#D6D6D6]'
+                                : 'text-[#121212]',
+                            )}
+                            onClick={() => {
+                              if (
+                                !questionOptionInfos ||
+                                selectedQuestionOptions.length ===
+                                  (questionOptionInfos ?? [])?.length
+                              )
+                                return;
+
+                              //  selectedQuestionOptions.length 인덱스에 해당하는 '자소서 문항 추가' 옵션 아이디 추가
+                              setReportApplication({
+                                optionIds: [
+                                  ...optionIds,
+                                  questionOptionInfos[
+                                    selectedQuestionOptions.length
+                                  ].reportOptionId,
+                                ],
+                              });
+                            }}
+                          >
+                            +
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                {/* 현직자 피드백 (옵션) */}
+                {optionsAvailable ? (
+                  <FormControl fullWidth>
+                    <Heading2 className="mb-4">현직자 피드백 (선택)</Heading2>
+
+                    <ReportDropdown
+                      title="현직자가 알려주는 합격의 디테일"
+                      labelId="option-group-label"
+                      initialOpenState={false}
+                    >
+                      <FormGroup aria-labelledby="option-group-label">
+                        {employeeOptionInfos?.map((option, index) => {
+                          const price = option.price ?? 0;
+                          const discount = option.discountPrice ?? 0;
+                          const checked = Boolean(
+                            optionIds.find(
+                              (selectedOption) =>
+                                selectedOption === option.reportOptionId,
+                            ),
+                          );
+
                           return (
-                            <SelectedItemBox
-                              key={info.reportOptionId}
-                              className="border-t border-neutral-80"
-                              title={info.optionTitle ?? ''}
-                              onClickDelete={() =>
-                                setReportApplication({
-                                  optionIds: reportApplication.optionIds.filter(
-                                    (id) => id !== info.reportOptionId,
-                                  ),
-                                })
-                              }
-                              rightElement={
+                            <ReportFormCheckboxControlLabel
+                              key={option.reportOptionId}
+                              checked={checked}
+                              onChange={(_, checked) => {
+                                if (checked) {
+                                  setSelectedOptionIds([
+                                    ...optionIds,
+                                    option.reportOptionId,
+                                  ]);
+                                } else {
+                                  setSelectedOptionIds(
+                                    optionIds.filter(
+                                      (selectedOption) =>
+                                        selectedOption !==
+                                        option.reportOptionId,
+                                    ),
+                                  );
+                                }
+                              }}
+                              wrapperClassName={generateControlLabelClassName(
+                                index ===
+                                  (priceDetail.reportOptionInfos?.length ?? 0) -
+                                    1,
+                              )}
+                              label={option.optionTitle}
+                              labelStyle={RADIO_CONTROL_LABEL_STYLE}
+                              right={
                                 <ReportPriceView
-                                  price={info.price}
-                                  discount={info.discountPrice}
+                                  price={price}
+                                  discount={discount}
                                 />
                               }
                             />
                           );
-                      })}
-                    </div>
-                    <hr className="mt-3 border-neutral-0/5" />
-                  </>
-                )}
-                {/* 가격 */}
-                <span className="mt-3 block text-right text-small18 font-bold text-neutral-10">
-                  {(
-                    reportFinalPrice +
-                    feedbackFinalPrice -
-                    reportFinalDiscountPrice -
-                    feedbackFinalDiscountPrice
-                  ).toLocaleString()}
-                  원
-                </span>
+                        })}
+                      </FormGroup>
+                    </ReportDropdown>
+                  </FormControl>
+                ) : null}
+
+                {/* 총 결제 금액 */}
+                <div>
+                  <Heading2>총 결제 금액</Heading2>
+                  {/* 선택한 상품 */}
+                  {(selectedReportPlan || optionIds.length > 0) && (
+                    <>
+                      <div className="mt-3 overflow-hidden rounded-xs border border-neutral-80">
+                        {/*  선택한 서류 진단 플랜 */}
+                        {selectedReportPlan && (
+                          <SelectedItemBox
+                            title={selectedReportPlan.label}
+                            onClickDelete={() =>
+                              setReportApplication({
+                                reportPriceType: undefined,
+                                isFeedbackApplied: false,
+                              })
+                            }
+                            rightElement={
+                              <ReportPriceView
+                                price={selectedReportPlan.price}
+                                discount={selectedReportPlan.discount}
+                              />
+                            }
+                          />
+                        )}
+                        {/* 선택한 자소서 문항 추가 */}
+                        {selectedQuestionOptions.length > 0 && (
+                          <SelectedItemBox
+                            className="border-t border-neutral-80"
+                            title={`자기소개서 문항 추가 ${selectedQuestionOptions.length}개`}
+                            // 자소서 문항 추가 모두 삭제
+                            onClickDelete={() => {
+                              const questionOptionIds =
+                                questionOptionInfos?.map(
+                                  (info) => info.reportOptionId,
+                                );
+                              setReportApplication({
+                                optionIds: reportApplication.optionIds.filter(
+                                  (id) => !questionOptionIds?.includes(id),
+                                ),
+                              });
+                            }}
+                            rightElement={
+                              <ReportPriceView
+                                price={selectedQuestionOptions.price}
+                                discount={selectedQuestionOptions.discount}
+                              />
+                            }
+                          />
+                        )}
+
+                        {/* 선택한 옵션 (현직자 피드백) */}
+                        {employeeOptionInfos?.map((info) => {
+                          if (optionIds.includes(info.reportOptionId))
+                            return (
+                              <SelectedItemBox
+                                key={info.reportOptionId}
+                                className="border-t border-neutral-80"
+                                title={info.optionTitle ?? ''}
+                                onClickDelete={() =>
+                                  setReportApplication({
+                                    optionIds:
+                                      reportApplication.optionIds.filter(
+                                        (id) => id !== info.reportOptionId,
+                                      ),
+                                  })
+                                }
+                                rightElement={
+                                  <ReportPriceView
+                                    price={info.price}
+                                    discount={info.discountPrice}
+                                  />
+                                }
+                              />
+                            );
+                        })}
+                      </div>
+                      <hr className="mt-3 border-neutral-0/5" />
+                    </>
+                  )}
+                  {/* 가격 */}
+                  <span className="mt-3 block text-right text-small18 font-bold text-neutral-10">
+                    {(
+                      reportFinalPrice +
+                      feedbackFinalPrice -
+                      reportFinalDiscountPrice -
+                      feedbackFinalDiscountPrice
+                    ).toLocaleString()}
+                    원
+                  </span>
+                </div>
               </div>
             </div>
 
-            <div className="sticky bottom-2 flex items-center gap-2">
+            <div className="sticky bottom-0 flex items-center gap-2 bg-white pb-2">
               <BaseButton
                 className="flex-1"
                 variant="outlined"

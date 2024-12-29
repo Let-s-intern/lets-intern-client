@@ -248,7 +248,7 @@ const ReportIntroSection = ({ type }: ReportIntroSectionProps) => {
           {section0.steps.map((step, index) => (
             <div
               key={`step-${index}`}
-              className="mx-auto flex w-full gap-x-2 rounded-md border px-4 py-2.5 md:gap-x-3 md:px-20 md:py-5"
+              className="mx-auto mt-1 flex w-full gap-x-2 rounded-md border px-4 py-2.5 md:gap-x-3 md:px-20 md:py-5"
               style={boxStyle}
             >
               <span

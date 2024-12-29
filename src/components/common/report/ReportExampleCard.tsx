@@ -8,15 +8,15 @@ interface ReportExampleCardProps {
 const ReportExampleCard = ({ example }: ReportExampleCardProps) => {
   return (
     <div className="w-full flex-1 flex-col whitespace-pre">
-      <div className="flex h-[341px] flex-col justify-between gap-y-3 overflow-hidden rounded-t-[10px] bg-neutral-10 px-5 pt-3 md:h-[541px] md:gap-y-2.5 md:px-8 md:pt-6">
+      <div className="flex flex-col justify-between gap-y-3 overflow-hidden rounded-t-[10px] bg-neutral-10 px-5 pt-3 md:gap-y-2.5 md:px-8 md:pt-6">
         <h5 className="whitespace-pre-line break-keep text-center text-xsmall16 font-bold text-white md:text-small20">
           {example.title}
         </h5>
-        <div className="h-[269px] w-full px-2.5 md:h-[445px] md:px-8">
+        <div className="w-full px-2.5 md:px-8">
           <img
             src={example.src}
             alt={example.title}
-            className="h-full w-full object-cover object-top"
+            className="h-auto w-full object-cover object-top shadow-none"
           />
         </div>
       </div>

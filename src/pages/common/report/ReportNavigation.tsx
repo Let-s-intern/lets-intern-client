@@ -38,7 +38,7 @@ const ReportNavigation = ({
 
   const navItems = reportNavigateItems;
 
-  useSectionObserver();
+  useSectionObserver(); // GA 스크롤 데이터 전송
 
   useEffect(() => {
     if (!isReady || typeof window === 'undefined') return;

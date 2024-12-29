@@ -37,11 +37,13 @@ const EmptyCardList = () => {
           className="early_button flex max-w-72 cursor-pointer flex-col overflow-hidden rounded-xs md:gap-4 md:rounded-md md:border md:border-neutral-85 md:p-2.5"
           onClick={() => window.open(program.link, '_blank')}
         >
-          <img
-            className="h-32 object-cover md:h-36 md:rounded-xs lg:h-48"
-            src={program.thumbnail}
-            alt="프로그램 썸네일 배경"
-          />
+          <div className="aspect-[4/3] w-full overflow-hidden rounded-xs">
+            <img
+              className="h-full w-auto object-cover"
+              src={program.thumbnail}
+              alt="프로그램 썸네일 배경"
+            />
+          </div>
           <div className="flex flex-col gap-2 py-2">
             <h2 className="text-1-semibold">{program.title}</h2>
             <p className="text-0.875 line-clamp-2 h-11 text-neutral-30">
