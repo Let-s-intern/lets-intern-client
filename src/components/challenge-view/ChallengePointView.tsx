@@ -124,6 +124,43 @@ const ChallengePointView = ({
     }
   }, [challengeType]);
 
+  const slideList = useMemo(() => {
+    const list = [];
+
+    for (const item of programRecommend?.list ?? []) {
+      let to = '';
+      if (item.programInfo.programType === ProgramTypeEnum.enum.VOD) {
+        getVod(item.programInfo.id).then((data) => {
+          to = data.vodInfo.link ?? '';
+        });
+      } else {
+        to = `/program/${item.programInfo.programType.toLowerCase()}/${item.programInfo.id}`;
+      }
+
+      list.push({
+        id: item.programInfo.id,
+        backgroundImage: item.programInfo.thumbnail ?? '',
+        title: item.recommendTitle ?? '',
+        cta: item.recommendCTA ?? '',
+        to,
+        onClickButton: async () => {
+          if (item.programInfo.programType === ProgramTypeEnum.enum.VOD) {
+            // VOD 링크로 이동
+            const data = await getVod(item.programInfo.id);
+            window.open(data.vodInfo.link ?? '');
+            return;
+          }
+
+          navigate(
+            `/program/${item.programInfo.programType.toLowerCase()}/${item.programInfo.id}`,
+          );
+        },
+      });
+    }
+
+    return list;
+  }, []);
+
   return (
     <div className="flex w-full flex-col items-center">
       {/* 프로그램 소개 */}
@@ -242,27 +279,7 @@ const ChallengePointView = ({
             </Heading2>
             <ProgramRecommendSlider
               className="-mx-5 mt-8 max-w-[1000px] px-5 md:mx-auto md:mt-16 lg:px-0"
-              list={programRecommend.list.map((item) => ({
-                id: item.programInfo.id,
-                backgroundImage: item.programInfo.thumbnail ?? '',
-                title: item.recommendTitle ?? '',
-                cta: item.recommendCTA ?? '',
-                to: '',
-                onClickButton: async () => {
-                  if (
-                    item.programInfo.programType === ProgramTypeEnum.enum.VOD
-                  ) {
-                    // VOD 링크로 이동
-                    const data = await getVod(item.programInfo.id);
-                    window.open(data.vodInfo.link ?? '');
-                    return;
-                  }
-
-                  navigate(
-                    `/program/${item.programInfo.programType.toLowerCase()}/${item.programInfo.id}`,
-                  );
-                },
-              }))}
+              list={slideList}
             />
           </div>
         </div>
