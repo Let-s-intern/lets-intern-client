@@ -44,7 +44,7 @@ const SideNavItem = ({
       </Wrapper>
       {hoverItem && (
         <div
-          className={`flex ${open ? 'max-h-screen' : 'max-h-0'} w-full transform flex-col overflow-hidden duration-150`}
+          className={`flex ${open ? 'max-h-screen' : 'max-h-0'} w-full transform flex-col gap-y-1.5 overflow-hidden duration-150`}
         >
           <div className="h-[7px]" />
           {hoverItem.map((item) => (
@@ -52,7 +52,7 @@ const SideNavItem = ({
               key={item.to}
               to={item.to}
               onClick={onClick}
-              className="flex w-full px-8 py-2 text-xsmall16 font-semibold"
+              className="flex w-full px-8 py-2 text-xsmall16 font-semibold text-neutral-20"
             >
               {item.text}
             </Link>

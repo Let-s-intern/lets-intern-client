@@ -112,6 +112,8 @@ const NavBar = () => {
   useEffect(() => {
     if (typeof window === 'undefined') return;
 
+    setScrollDirection('UP');
+
     const handleScroll = () => {
       // 현재 경로가 scrollEventPage 중 하나로 시작되지 않을 때는 스크롤 이벤트를 무시
       if (!scrollEventPage.some((page) => location.pathname.startsWith(page)))
@@ -275,7 +277,7 @@ const NavBar = () => {
               </div>
             )}
           </div>
-          <div className="flex flex-col gap-2">
+          <div className="flex h-full flex-col gap-2">
             <SideNavItem to="/mypage/application" onClick={closeMenu}>
               마이페이지
             </SideNavItem>

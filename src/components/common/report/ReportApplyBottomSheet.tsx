@@ -24,6 +24,7 @@ import { generateOrderId } from '@/lib/order';
 import { twMerge } from '@/lib/twMerge';
 import { reportTypeSchema } from '@/schema';
 import useReportApplicationStore from '@/store/useReportApplicationStore';
+import ModalOverlay from '@components/ui/ModalOverlay';
 import RequiredStar from '@components/ui/RequiredStar';
 import clsx from 'clsx';
 import { DesktopCTA, MobileCTA } from '../ApplyCTA';
@@ -314,6 +315,14 @@ const ReportApplyBottomSheet = React.forwardRef<
 
   return (
     <>
+      {/* 배경 */}
+      {isDrawerOpen && (
+        <ModalOverlay
+          className="bg-transparent"
+          onClose={() => setIsDrawerOpen(false)}
+        />
+      )}
+
       {!isDrawerOpen && (
         <>
           {/* 모바일에서만 표시 */}
@@ -437,8 +446,8 @@ const ReportApplyBottomSheet = React.forwardRef<
                     </Heading2>
                     <div>
                       <ReportPriceView
-                        price={selectedQuestionOptions.price}
-                        discount={selectedQuestionOptions.discount}
+                        price={(questionOptionInfos ?? [])[0].price}
+                        discount={(questionOptionInfos ?? [])[0].discountPrice}
                       />
                       {/* Counter */}
                       <div className="mt-3 flex items-center rounded-xs border border-[#D6D6D6]">
