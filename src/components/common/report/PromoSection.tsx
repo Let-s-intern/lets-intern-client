@@ -32,6 +32,12 @@ function PromoSection({ reportType }: PromoSectionProps) {
         ? personalStatementColors.F9EEFF
         : resumeColors.E8FDF2,
   };
+  const decorationStyle = {
+    textDecorationColor:
+      reportType === 'PERSONAL_STATEMENT'
+        ? personalStatementColors.C34AFF
+        : resumeColors._11AC5C,
+  };
   const borderStyle = {
     backgroundImage: `linear-gradient(to right, ${reportType === 'PERSONAL_STATEMENT' ? personalStatementColors.F3A2FF : resumeColors._2CE282}, ${reportType === 'PERSONAL_STATEMENT' ? personalStatementColors.C34AFF : resumeColors._2CDDEA})`,
   };
@@ -75,7 +81,13 @@ function PromoSection({ reportType }: PromoSectionProps) {
         <div>
           <CardTitle>{contentList[0].title}</CardTitle>
           <CardContent>
-            3,000명 이상의 데이터를 보유한 전문가가 제공하는
+            <span
+              className="underline underline-offset-4"
+              style={decorationStyle}
+            >
+              3,000명 이상
+            </span>
+            의 데이터를 보유한 전문가가 제공하는
             <br /> 실시간 첨삭과 맞춤 취업 전략 상담을
             <br className="md:hidden" /> 한번에 받아보세요.
           </CardContent>
