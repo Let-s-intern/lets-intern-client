@@ -53,7 +53,7 @@ const onRenderHtml: OnRenderHtmlAsync = async (pageContext) => {
       data.personalStatementInfo?.title || '자기소개서',
     ),
     description: personalStatementReportDescription,
-    image: `${getBaseUrlFromServer()}/images/report-banner.jpg`,
+    image: `${getBaseUrlFromServer()}/images/report/open-graph-personal-statement.svg`,
     url: `${getBaseUrlFromServer()}/report/landing/personal-statement`,
   });
 };
