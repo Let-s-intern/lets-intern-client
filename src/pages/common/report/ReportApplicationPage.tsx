@@ -182,6 +182,7 @@ const ReportApplicationPage = () => {
           const { applyFileUrl, recruitmentFileUrl } = await convertFile();
           await patchMyApplication({
             applicationId: Number(applicationId),
+            // url 없으면 파일 url 제출
             applyUrl: reportApplication.applyUrl ?? applyFileUrl!,
             recruitmentUrl:
               reportApplication.recruitmentUrl ?? recruitmentFileUrl!,
