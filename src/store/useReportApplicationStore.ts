@@ -1,10 +1,11 @@
+import { ReportPriceType } from '@/api/report';
 import dayjs from 'dayjs';
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
 export interface ReportApplication {
   reportId: number | null;
-  reportPriceType: 'BASIC' | 'PREMIUM';
+  reportPriceType?: ReportPriceType;
   optionIds: number[];
   isFeedbackApplied: boolean;
   couponId: number | null;
@@ -15,8 +16,8 @@ export interface ReportApplication {
   amount: number | null;
   programPrice: number | null;
   programDiscount: number | null;
-  applyUrl: string;
-  recruitmentUrl: string;
+  applyUrl?: string | null;
+  recruitmentUrl?: string | null;
   desiredDate1: string | undefined;
   desiredDate2: string | undefined;
   desiredDate3: string | undefined;
@@ -39,7 +40,7 @@ const useReportApplicationStore = create(
     (set, get) => ({
       data: {
         reportId: null,
-        reportPriceType: 'BASIC' as const,
+        reportPriceType: undefined,
         optionIds: [],
         isFeedbackApplied: false,
         couponId: null,
@@ -50,8 +51,6 @@ const useReportApplicationStore = create(
         amount: null,
         programPrice: null,
         programDiscount: null,
-        applyUrl: '',
-        recruitmentUrl: '',
         desiredDate1: undefined,
         desiredDate2: undefined,
         desiredDate3: undefined,
@@ -59,12 +58,12 @@ const useReportApplicationStore = create(
         message: '',
         contactEmail: '',
       },
-      setReportApplication: (params) => {
+      setReportApplication: (newData) => {
         const currentData = get().data;
         set({
           data: {
             ...currentData,
-            ...params, // 전달된 값들만 업데이트
+            ...newData, // 전달된 값들만 업데이트
           },
         });
       },
@@ -72,7 +71,7 @@ const useReportApplicationStore = create(
         set({
           data: {
             reportId: null,
-            reportPriceType: 'BASIC',
+            reportPriceType: undefined,
             optionIds: [],
             isFeedbackApplied: false,
             couponId: null,
@@ -83,8 +82,6 @@ const useReportApplicationStore = create(
             amount: null,
             programPrice: null,
             programDiscount: null,
-            applyUrl: '',
-            recruitmentUrl: '',
             desiredDate1: undefined,
             desiredDate2: undefined,
             desiredDate3: undefined,
@@ -101,7 +98,7 @@ const useReportApplicationStore = create(
 
         if (!isEmpty(currentData.applyUrl)) {
           try {
-            new URL(currentData.applyUrl);
+            new URL(currentData.applyUrl ?? '');
           } catch (error) {
             return {
               isValid: false,
@@ -115,7 +112,7 @@ const useReportApplicationStore = create(
           !isEmpty(currentData.recruitmentUrl)
         ) {
           try {
-            new URL(currentData.recruitmentUrl);
+            new URL(currentData.recruitmentUrl ?? '');
           } catch (error) {
             return {
               isValid: false,
@@ -132,7 +129,7 @@ const useReportApplicationStore = create(
         )
           return {
             isValid: false,
-            message: '1:1 피드백 일정을 모두 선택해주세요.',
+            message: '1:1 온라인 상담 일정을 모두 선택해주세요.',
           };
 
         if (currentData.isFeedbackApplied && notSelectTime(currentData))
@@ -144,7 +141,7 @@ const useReportApplicationStore = create(
         if (currentData.isFeedbackApplied && isDuplicateDate(currentData))
           return {
             isValid: false,
-            message: '1:1 피드백 일정을 중복되지 않게 선택해주세요.',
+            message: '1:1 온라인 상담 일정이 중복되지 않게 선택해주세요.',
           };
 
         if (isEmpty(currentData.wishJob))

@@ -1,4 +1,4 @@
-import { useSearchParams } from 'react-router-dom';
+import { useLocation, useSearchParams } from 'react-router-dom';
 
 import styles from './SocialLogin.module.scss';
 
@@ -8,13 +8,11 @@ interface SocialLoginProps {
 
 const SocialLogin = ({ type }: SocialLoginProps) => {
   const [searchParams] = useSearchParams();
+  const { state } = useLocation();
+  const redirect = searchParams.get('redirect') || state?.prevPath || '/';
 
   const getSocialLink = (socialType: 'KAKAO' | 'NAVER') => {
-    const redirectPath = `${window.location.origin}/${type === 'LOGIN' ? 'login' : 'signup'}${
-      searchParams.get('redirect')
-        ? `?redirect=${searchParams.get('redirect')}`
-        : ''
-    }`;
+    const redirectPath = `${window.location.origin}/${type === 'LOGIN' ? 'login' : 'signup'}${`?redirect=${redirect}`}`;
     const basePath =
       import.meta.env.VITE_API_BASE_PATH || 'https://letscareer.store';
     const path = `${basePath}/oauth2/authorize/${

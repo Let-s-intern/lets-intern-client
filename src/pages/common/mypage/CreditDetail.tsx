@@ -130,7 +130,6 @@ const CreditDetail = () => {
                       name="name"
                       placeholder="김렛츠"
                       value={userData.name || ''}
-                      onChange={() => {}}
                       readOnly
                     />
                   </div>
@@ -143,7 +142,6 @@ const CreditDetail = () => {
                       name="phoneNum"
                       placeholder="010-0000-0000"
                       value={userData.phoneNum || ''}
-                      onChange={() => {}}
                       readOnly
                     />
                   </div>
@@ -156,7 +154,6 @@ const CreditDetail = () => {
                       name="email"
                       placeholder="example@example.com"
                       value={userData.email || ''}
-                      onChange={() => {}}
                       disabled
                       readOnly
                     />

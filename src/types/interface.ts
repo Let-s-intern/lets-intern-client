@@ -105,6 +105,78 @@ export type LiveContent = {
   programRecommend?: ProgramRecommend;
 };
 
+export type ReportReviewItem = {
+  id: string | number;
+  title: string;
+  question: string;
+  answer: string;
+  detail: string;
+  profile: string;
+  reportName: string;
+  job: string;
+  name: string;
+};
+
+export type ReportReview = {
+  list: ReportReviewItem[];
+};
+
+export type ReportExampleItem = {
+  id: string | number;
+  subTitle: string;
+  imgUrl: string;
+};
+
+export type ReportExample = {
+  list: ReportExampleItem[];
+};
+
+export type ReportProgramRecommendItem = {
+  title: string;
+  cta: string;
+};
+
+export type ReportProgramRecommend = {
+  challengeCareerStart?: ReportProgramRecommendItem;
+  challengePortfolio?: ReportProgramRecommendItem;
+  challengePersonalStatement?: ReportProgramRecommendItem;
+  live?: ReportProgramRecommendItem;
+  vod?: ReportProgramRecommendItem;
+  reportResume?: ReportProgramRecommendItem;
+  reportPersonalStatement?: ReportProgramRecommendItem;
+  reportPortfolio?: ReportProgramRecommendItem;
+};
+
+export type ReportContent = {
+  /** 레포트 예시 */
+  reportExample: ReportExample;
+  /** 후기 */
+  review: ReportReview;
+  /** 프로그램 추천 */
+  reportProgramRecommend: ReportProgramRecommend;
+};
+
+export type ReportColors = {
+  primary: {
+    DEFAULT: string;
+    50: string;
+    100: string;
+    200: string;
+    300: string;
+    400: string;
+    500: string;
+  };
+  secondary: {
+    DEFAULT: string;
+    50: string;
+  };
+  highlight: {
+    DEFAULT: string;
+    50: string;
+    100: string;
+  };
+};
+
 export interface IPageable {
   page: number;
   size: number;

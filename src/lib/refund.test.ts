@@ -1,4 +1,5 @@
 import {
+  ReportApplicationInfo,
   ReportApplicationStatus,
   ReportFeedbackStatus,
   ReportPaymentInfo,
@@ -14,10 +15,23 @@ function createMockPaymentInfo({
   coupon: boolean;
   feedback: boolean;
 }): {
+  reportApplicationInfo: ReportApplicationInfo;
   reportPaymentInfo: ReportPaymentInfo;
   reportFeedbackDesiredDate: dayjs.Dayjs | null | undefined;
 } {
   return {
+    reportApplicationInfo: {
+      applyUrlDate: '2024-09-07T10:00:00Z',
+      reportApplicationId: 1,
+      reportApplicationStatus: 'APPLIED',
+      reportFeedbackStatus: null,
+      reportFeedbackApplicationId: null,
+      reportPriceType: 'BASIC',
+      reportFeedbackDesiredDate: null,
+      title: '진단서 신청',
+      isCanceled: false,
+      options: ['option1', 'option2'],
+    },
     reportFeedbackDesiredDate: feedback ? dayjs('2024-09-09T10:00:00Z') : null,
     reportPaymentInfo: {
       reportPriceInfo: {
@@ -30,13 +44,13 @@ function createMockPaymentInfo({
           price: 22000,
           discountPrice: 2000,
           reportOptionId: 1,
-          title: '옵션1',
+          optionTitle: '옵션1',
         },
         {
           price: 33000,
           discountPrice: 3000,
           reportOptionId: 2,
-          title: '옵션2',
+          optionTitle: '옵션2',
         },
       ],
       feedbackPriceInfo: feedback
@@ -218,14 +232,18 @@ const createTest = (
       // Arrange
       const { coupon, feedback } = couponAndFeedback;
       const { time, reportApplicationStatus, reportFeedbackStatus } = now;
-      const { reportPaymentInfo, reportFeedbackDesiredDate } =
-        createMockPaymentInfo({
-          coupon,
-          feedback,
-        });
+      const {
+        reportApplicationInfo,
+        reportPaymentInfo,
+        reportFeedbackDesiredDate,
+      } = createMockPaymentInfo({
+        coupon,
+        feedback,
+      });
 
       // Act
       const result = getTotalRefund({
+        applicationInfo: reportApplicationInfo,
         paymentInfo: reportPaymentInfo,
         reportApplicationStatus,
         reportFeedbackStatus,

@@ -29,7 +29,15 @@ const ApplicationCard = ({
     paymentId: 0,
   });
 
-  const programLink = `/program/${application.programType?.toLowerCase()}/${application.programId}`;
+  const thumbnail =
+    application.programType === 'REPORT'
+      ? '/images/report-banner.jpg'
+      : (application.programThumbnail ?? '');
+
+  const programLink =
+    application.programType === 'REPORT'
+      ? '/report/management'
+      : `/program/${application.programType?.toLowerCase()}/${application.programId}`;
 
   return (
     <div
@@ -46,7 +54,7 @@ const ApplicationCard = ({
       >
         <Link to={programLink}>
           <img
-            src={application.programThumbnail ?? ''}
+            src={thumbnail}
             alt="프로그램 썸네일"
             className="h-[7.5rem] w-full bg-primary-light object-cover md:h-[9rem] md:w-[11rem] md:rounded-xs"
           />
@@ -63,10 +71,13 @@ const ApplicationCard = ({
             </p>
           </div>
           <div className="flex items-center gap-1.5 md:justify-start">
-            <span className="text-xs text-neutral-0">진행기간</span>
+            <span className="text-xs text-neutral-0">
+              {application.programType === 'REPORT' ? '신청일자' : '진행기간'}
+            </span>
             <span className="text-xs font-medium text-primary-dark">
-              {application.programStartDate?.format('YY.MM.DD')} ~{' '}
-              {application.programEndDate?.format('YY.MM.DD')}
+              {application.programType === 'REPORT'
+                ? application.createDate?.format('YY.MM.DD')
+                : `${application.programStartDate?.format('YY.MM.DD')} ~ ${application.programEndDate?.format('YY.MM.DD')}`}
             </span>
           </div>
         </div>

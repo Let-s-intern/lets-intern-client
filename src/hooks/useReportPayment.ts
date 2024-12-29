@@ -1,5 +1,5 @@
 import { isAxiosError } from 'axios';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 import { useGetReportPriceDetail } from '../api/report';
 import useReportApplicationStore from '../store/useReportApplicationStore';
@@ -18,14 +18,16 @@ export interface ReportPriceInfo {
 }
 
 const initialPayment = {
+  // 정가
   report: 0,
   option: 0,
   feedback: 0,
+  // 할인 금액
   reportDiscount: 0,
   optionDiscount: 0,
   feedbackDiscount: 0,
   coupon: 0,
-  amount: 0,
+  amount: 0, // 결제 금액
   isFeedbackApplied: false,
 };
 
@@ -39,34 +41,43 @@ export default function useReportPayment() {
     reportApplication.reportId!,
   );
 
-  const applyCoupon = async (code: string) => {
-    try {
-      const res = await axios.get(`/coupon`, {
-        params: {
-          code,
-          programType: 'REPORT',
-        },
-      });
-      const data = res.data.data;
-      setReportApplication({
-        couponId: data.couponId,
-        couponDiscount: data.discount,
-      });
-      return data;
-    } catch (error) {
-      if (
-        isAxiosError(error) &&
-        (error.response?.status === 404 || error.response?.status === 400)
-      ) {
-        return error.response?.data;
-      } else {
+  const applyCoupon = useCallback(
+    async (code: string) => {
+      try {
+        const res = await axios.get(`/coupon`, {
+          params: {
+            code,
+            programType: 'REPORT',
+          },
+        });
+        const data = res.data.data;
+        setReportApplication({
+          couponId: data.couponId,
+          couponDiscount: data.discount,
+        });
+        return data;
+      } catch (error) {
+        if (
+          isAxiosError(error) &&
+          (error.response?.status === 404 || error.response?.status === 400)
+        ) {
+          return error.response?.data;
+        }
         console.error(error);
       }
-    }
-  };
+    },
+    [setReportApplication],
+  );
 
-  const cancelCoupon = () =>
-    setReportApplication({ couponId: null, couponDiscount: 0, couponCode: '' });
+  const cancelCoupon = useCallback(
+    () =>
+      setReportApplication({
+        couponId: null,
+        couponDiscount: 0,
+        couponCode: '',
+      }),
+    [setReportApplication],
+  );
 
   useEffect(() => {
     if (reportPriceDetail === undefined) return;
@@ -80,6 +91,7 @@ export default function useReportPayment() {
     const reportPriceInfo = reportPriceInfos?.find(
       (info) => info.reportPriceType === reportPriceType,
     );
+
     const report = reportPriceInfo?.price ?? 0;
     let option = 0;
     const reportDiscount = reportPriceInfo?.discountPrice ?? 0;
@@ -94,6 +106,7 @@ export default function useReportPayment() {
       const optionInfo = reportOptionInfos?.find(
         (info) => info.reportOptionId === optionId,
       );
+
       if (optionInfo === undefined) continue;
       optionDiscount += optionInfo.discountPrice ?? 0;
       option += optionInfo.price ?? 0;
@@ -139,13 +152,13 @@ export default function useReportPayment() {
     // 진단서 정보 업데이트
     setReportApplication({
       amount: payment.amount,
-      programPrice: payment.report + payment.feedback,
+      programPrice: payment.report + payment.feedback + payment.option,
       programDiscount:
         payment.reportDiscount +
         payment.feedbackDiscount +
         payment.optionDiscount,
     });
-  }, [payment]);
+  }, [payment, setReportApplication]);
 
   return { payment, applyCoupon, cancelCoupon };
 }

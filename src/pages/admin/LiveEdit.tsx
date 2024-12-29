@@ -11,24 +11,26 @@ import {
 } from '@/api/program';
 import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
 import { isDeprecatedProgram } from '@/lib/isDeprecatedProgram';
-import { UpdateLiveReq } from '@/schema';
+import { ProgramTypeEnum, UpdateLiveReq } from '@/schema';
 import { LiveContent } from '@/types/interface';
 import EditorApp from '@components/admin/lexical/EditorApp';
 import LivePreviewButton from '@components/admin/LivePreviewButton';
 import ImageUpload from '@components/admin/program/ui/form/ImageUpload';
 import Header from '@components/admin/ui/header/Header';
 import Heading from '@components/admin/ui/heading/Heading';
-import { Heading2 } from '@components/admin/ui/heading/Heading2';
+import Heading2 from '@components/admin/ui/heading/Heading2';
 import { useQueryClient } from '@tanstack/react-query';
-import FaqSection from './program/FaqSection';
-import LiveBasic from './program/LiveBasic';
-import LiveCurriculum from './program/LiveCurriculum';
-import LiveInformation from './program/LiveInformation';
-import LiveMentor from './program/LiveMentor';
-import LivePrice, { initialLivePrice } from './program/LivePrice';
-import ProgramBestReview from './program/ProgramBestReview';
-import ProgramBlogReviewEditor from './program/ProgramBlogReviewEditor';
-import ProgramRecommendEditor from './program/ProgramRecommendEditor';
+import LiveBasic from '../../components/admin/program/LiveBasic';
+import LiveCurriculum from '../../components/admin/program/LiveCurriculum';
+import LiveInformation from '../../components/admin/program/LiveInformation';
+import LiveMentor from '../../components/admin/program/LiveMentor';
+import LivePrice, {
+  initialLivePrice,
+} from '../../components/admin/program/LivePrice';
+import ProgramBestReview from '../../components/admin/program/ProgramBestReview';
+import ProgramBlogReviewEditor from '../../components/admin/program/ProgramBlogReviewEditor';
+import FaqSection from '../../components/FaqSection';
+import ProgramRecommendEditor from '../../components/ProgramRecommendEditor';
 import ProgramSchedule from './program/ProgramSchedule';
 
 const LiveEdit: React.FC = () => {
@@ -203,18 +205,22 @@ const LiveEdit: React.FC = () => {
           </div>
         </div>
       </section>
+
       <LiveInformation
         recommendFields={content.recommend || ['']}
         reasonFields={content.reason || [{ title: '', content: '' }]}
         setContent={setContent}
       />
 
-      <ProgramRecommendEditor
-        programRecommend={content.programRecommend ?? { list: [] }}
-        setProgramRecommend={(programRecommend) =>
-          setContent((prev) => ({ ...prev, programRecommend }))
-        }
-      />
+      {/* 프로그램 추천 */}
+      <section className="mb-6">
+        <ProgramRecommendEditor
+          programRecommend={content.programRecommend ?? { list: [] }}
+          setProgramRecommend={(programRecommend) =>
+            setContent((prev) => ({ ...prev, programRecommend }))
+          }
+        />
+      </section>
 
       <LiveCurriculum
         curriculum={content.curriculum}
@@ -249,11 +255,11 @@ const LiveEdit: React.FC = () => {
 
       <div className="my-6">
         <FaqSection
-          programType="LIVE"
-          faqInfo={
-            input.faqInfo ?? live.faqInfo.map((info) => ({ faqId: info.id }))
+          programType={ProgramTypeEnum.enum.LIVE}
+          faqInfo={input.faqInfo}
+          setFaqInfo={(faqInfo) =>
+            setInput((prev) => ({ ...prev, faqInfo: faqInfo ?? [] }))
           }
-          setInput={setInput}
         />
       </div>
 

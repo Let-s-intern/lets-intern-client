@@ -3,7 +3,7 @@ import { useMemo } from 'react';
 import { twMerge } from '@/lib/twMerge';
 import { LiveIdSchema } from '@/schema';
 import { LiveContent } from '@/types/interface';
-import Header from '@components/common/program/program-detail/header/Header';
+import BackHeader from '@components/common/ui/BackHeader';
 import LexicalContent from './common/blog/LexicalContent';
 import MoreReviewButton from './common/review/MoreReviewButton';
 import LiveBasicInfo from './live-view/LiveBasicInfo';
@@ -45,7 +45,7 @@ const LiveView: React.FC<{ live: LiveIdSchema; isPreview?: boolean }> = ({
     <div className="flex w-full flex-col">
       <div className="flex w-full flex-col items-center">
         <div className="flex w-full max-w-[1000px] flex-col px-5 md:px-10 lg:px-0">
-          <Header to="/program" programTitle={live.title ?? ''} />
+          <BackHeader to="/program">{live.title ?? ''}</BackHeader>
           {live.vod && <LiveVod />}
           <LiveBasicInfo live={live} />
         </div>
@@ -98,11 +98,6 @@ const LiveView: React.FC<{ live: LiveIdSchema; isPreview?: boolean }> = ({
                 type="live"
               />
               <MoreReviewButton
-                title={live.title ?? '-'}
-                thumbnail={live.thumbnail ?? ''}
-                startDate={live.startDate?.format('YYYY.MM.DD') ?? ''}
-                endDate={live.endDate?.format('YYYY.MM.DD') ?? ''}
-                deadline={live.deadline?.format('YYYY.MM.DD') ?? ''}
                 type={'LIVE'}
                 mainColor={'#4D55F5'}
                 subColor={'#E45BFF'}

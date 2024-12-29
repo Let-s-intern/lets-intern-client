@@ -7,11 +7,6 @@ import { useState } from 'react';
 import { maskingName } from '../program/program-detail/review/ProgramDetailReviewItem';
 
 interface MoreReviewButtonProps {
-  title: string;
-  thumbnail: string;
-  deadline: string;
-  startDate: string;
-  endDate: string;
   type: 'CHALLENGE' | 'LIVE' | 'VOD' | 'REPORT';
   mainColor: string;
   subColor: string;
@@ -20,14 +15,14 @@ interface MoreReviewButtonProps {
 const MoreReviewButton = ({
   mainColor,
   subColor,
-  ...props
+  type,
 }: MoreReviewButtonProps) => {
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
   const { data, isLoading: reviewIsLoading } = useGetTotalReview({
-    type: props.type,
+    type,
   });
 
   const reviews = data?.reviewList?.filter((review) => review.isVisible);
@@ -62,7 +57,7 @@ const MoreReviewButton = ({
         className="flex items-center justify-center px-8 py-12 outline-none focus:outline-none"
       >
         <div
-          className="relative flex max-h-[80%] w-full max-w-3xl flex-col gap-y-5 overflow-hidden rounded-lg bg-white p-4 outline-none focus:outline-none md:p-14"
+          className="rounded-ms relative flex max-h-[80%] w-full max-w-3xl flex-col gap-y-5 overflow-hidden bg-white p-4 outline-none focus:outline-none md:p-14"
           onClick={(e) => e.stopPropagation()}
         >
           <Close

@@ -1,23 +1,58 @@
 import { useQuery } from '@tanstack/react-query';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 
-import useAuthStore from '../../../../../store/useAuthStore';
-import axios from '../../../../../utils/axios';
+import { useGetActiveReports } from '@/api/report';
+import { useControlScroll } from '@/hooks/useControlScroll';
+import { twMerge } from '@/lib/twMerge';
+import useAuthStore from '@/store/useAuthStore';
+import useScrollStore from '@/store/useScrollStore';
+import axios from '@/utils/axios';
 import KakaoChannel from './KakaoChannel';
 import NavItem from './NavItem';
+import { NavSubItemProps } from './NavSubItem';
 import SideNavItem from './SideNavItem';
+
+const reportHoverItem: NavSubItemProps[] = [
+  {
+    text: '이력서 진단 받기',
+    to: 'report/landing/resume',
+  },
+  {
+    text: '자기소개서 진단 받기',
+    to: 'report/landing/personal-statement',
+  },
+  {
+    text: '포트폴리오 진단 받기',
+    to: 'report/landing/portfolio',
+  },
+  {
+    text: 'MY 진단서 보기',
+    to: 'report/management',
+  },
+];
+
+const scrollEventPage = [
+  '/report/landing',
+  '/program/challenge',
+  '/program/live',
+];
 
 const NavBar = () => {
   const navigate = useNavigate();
-  const { isLoggedIn, logout } = useAuthStore();
   const location = useLocation();
+  const lastScrollY = useRef(0);
+
   const [isOpen, setIsOpen] = useState(false);
   const [user, setUser] = useState<any>(null);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [reportItems, setReportItems] = useState<NavSubItemProps[]>([]);
   const [activeLink, setActiveLink] = useState<
     'HOME' | 'ABOUT' | 'PROGRAM' | 'ADMIN' | 'BLOG' | 'REPORT' | ''
   >('');
+
+  const { isLoggedIn, logout } = useAuthStore();
+  const { setScrollDirection, scrollDirection } = useScrollStore();
 
   const toggleMenu = () => {
     setIsOpen(!isOpen);
@@ -47,6 +82,33 @@ const NavBar = () => {
     retry: 1,
   });
 
+  const { data, isLoading } = useGetActiveReports();
+
+  useEffect(() => {
+    if (data) {
+      const navItems: NavSubItemProps[] = [];
+
+      if (data?.resumeInfo) {
+        navItems.push(reportHoverItem[0]);
+      }
+      if (data?.personalStatementInfo) {
+        navItems.push(reportHoverItem[1]);
+      }
+      if (data?.portfolioInfo) {
+        navItems.push(reportHoverItem[2]);
+      }
+
+      navItems.push(reportHoverItem[3]);
+
+      setReportItems(navItems);
+    } else {
+      setReportItems([reportHoverItem[3]]);
+    }
+  }, [data]);
+
+  // 사이드바 열리면 스크롤 제한
+  useControlScroll(isOpen);
+
   useEffect(() => {
     if (location.pathname.startsWith('/about')) {
       setActiveLink('ABOUT');
@@ -73,12 +135,42 @@ const NavBar = () => {
     }
   }, [userData, isAdminData]);
 
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    setScrollDirection('UP');
+
+    const handleScroll = () => {
+      // 현재 경로가 scrollEventPage 중 하나로 시작되지 않을 때는 스크롤 이벤트를 무시
+      if (!scrollEventPage.some((page) => location.pathname.startsWith(page)))
+        return;
+
+      const currentScrollY = window.scrollY;
+
+      if (currentScrollY > lastScrollY.current) {
+        setScrollDirection('DOWN');
+      } else if (currentScrollY < lastScrollY.current) {
+        setScrollDirection('UP');
+      }
+
+      lastScrollY.current = currentScrollY;
+    };
+
+    window.addEventListener('scroll', handleScroll);
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, [location.pathname, setScrollDirection]);
+
   return (
     <>
       {/* 상단 네비게이션 바 */}
-      <div className="lg:p-30 fixed top-0 z-30 h-[3.75rem] w-screen border-b border-neutral-80 bg-static-100 px-5 sm:px-20 md:h-[4.375rem] lg:h-[4.75rem] lg:px-28">
+      <div
+        className={`lg:p-30 fixed top-0 z-30 h-[3.75rem] w-screen border-b border-neutral-80 bg-static-100 px-5 sm:px-20 md:h-[4.375rem] lg:h-[4.75rem] lg:px-28 ${scrollDirection === 'DOWN' ? '-translate-y-full' : 'translate-y-0'} transition-transform duration-300`}
+      >
         <div className="flex h-full items-center justify-between">
-          <div className="flex items-center gap-4 sm:gap-9">
+          <div className="flex h-full items-center gap-4 sm:gap-9">
             <Link to="/" className="h-[1.75rem] md:h-[2.2rem]">
               <img
                 src="/logo/logo-gradient-text.svg"
@@ -96,7 +188,13 @@ const NavBar = () => {
             <NavItem to="/blog/list" active={activeLink === 'BLOG'}>
               블로그
             </NavItem>
-            <NavItem to="/report/landing" active={activeLink === 'REPORT'}>
+            <NavItem
+              as="div"
+              to={reportHoverItem[0].to}
+              active={activeLink === 'REPORT'}
+              hoverItem={reportItems}
+              isItemLoaded={!isLoading && !!data}
+            >
               🔥 서류 진단받고 합격하기
             </NavItem>
           </div>
@@ -117,6 +215,7 @@ const NavBar = () => {
               <div className="hidden items-center gap-2 sm:flex">
                 <Link
                   to="/login"
+                  state={{ prevPath: location.pathname }}
                   className="text-0.75 rounded-xxs bg-primary px-3 py-1 text-static-100"
                 >
                   로그인
@@ -144,15 +243,16 @@ const NavBar = () => {
             : 'pointer-events-none opacity-0 ease-in'
         }`}
         onClick={toggleMenu}
-      ></div>
+      />
       {/* 사이드 네비게이션 바 */}
       <div
-        className={`fixed right-0 top-0 z-50 h-screen w-full bg-white shadow-md transition-all duration-300 sm:w-[22rem] ${
-          isOpen ? 'translate-x-0' : 'translate-x-full'
-        }`}
+        className={twMerge(
+          'fixed right-0 top-0 z-50 flex h-screen w-full flex-col bg-white shadow-md transition-all duration-300 sm:w-[22rem]',
+          isOpen ? 'translate-x-0' : 'translate-x-full',
+        )}
       >
         <div className="flex w-full items-center justify-between p-5">
-          <div className="h-[1.75rem]">
+          <div className="h-7">
             <img
               className="h-full w-auto"
               src="/logo/logo-gradient-text.svg"
@@ -169,7 +269,7 @@ const NavBar = () => {
         </div>
         <hr />
         <KakaoChannel />
-        <div className="flex flex-col gap-5 py-10">
+        <div className="flex flex-col gap-5 overflow-y-auto py-10">
           <div className="mx-5 flex justify-between">
             {isLoggedIn ? (
               <span className="flex w-full items-center justify-between gap-4 text-neutral-0 sm:p-0">
@@ -190,7 +290,12 @@ const NavBar = () => {
               </span>
             ) : (
               <div className="text-0.875 flex gap-6">
-                <Link className="text-primary" to="/login" onClick={closeMenu}>
+                <Link
+                  className="text-primary"
+                  to="/login"
+                  onClick={closeMenu}
+                  state={{ prevPath: location.pathname }}
+                >
                   로그인
                 </Link>
                 <Link to="/signup" onClick={closeMenu}>
@@ -199,7 +304,7 @@ const NavBar = () => {
               </div>
             )}
           </div>
-          <div className="flex flex-col gap-2">
+          <div className="flex h-full flex-col gap-2">
             <SideNavItem to="/mypage/application" onClick={closeMenu}>
               마이페이지
             </SideNavItem>
@@ -213,7 +318,11 @@ const NavBar = () => {
             <SideNavItem to="/blog/list" onClick={closeMenu}>
               블로그
             </SideNavItem>
-            <SideNavItem to="/report/landing" onClick={closeMenu}>
+            <SideNavItem
+              to="/report/landing"
+              onClick={closeMenu}
+              hoverItem={reportHoverItem}
+            >
               🔥 서류 진단받고 합격하기
             </SideNavItem>
             <hr className="h-1 bg-neutral-80" />

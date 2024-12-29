@@ -162,11 +162,12 @@ const applicationStatus = z.union([
   z.literal('DONE'),
 ]);
 
-const mypageApplicationsSchema = z
+export const mypageApplicationsSchema = z
   .object({
     applicationList: z.array(
       z.object({
         id: z.number().nullable().optional(),
+        createDate: z.string().nullable().optional(),
         status: applicationStatus.nullable().optional(),
         programId: z.number().nullable().optional(),
         programType: ProgramTypeEnum.nullable().optional(),
@@ -190,6 +191,9 @@ const mypageApplicationsSchema = z
           : null,
         programEndDate: application.programEndDate
           ? dayjs(application.programEndDate)
+          : null,
+        createDate: application.createDate
+          ? dayjs(application.createDate)
           : null,
       })),
     };

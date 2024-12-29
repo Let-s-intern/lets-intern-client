@@ -5,27 +5,28 @@ import {
   FormControlLabelProps,
   Radio,
 } from '@mui/material';
-import React from 'react';
+import React, { CSSProperties } from 'react';
 
-const radioSx = {
+const RADIO_SX = {
   color: '#E7E7E7',
   '&.Mui-checked': {
     color: '#5177FF',
   },
 };
 
-const checkboxSx = {
+const CHECKBOX_SX = {
   color: '#E7E7E7',
   '&.Mui-checked': {
     color: '#5177FF',
   },
 };
 
-const labelSx = {
+const DEFAULT_LABEL_SX = {
   '.MuiFormControlLabel-label': {
     fontSize: '0.875rem',
     fontWeight: 500,
-    color: '#4C4F56',
+    color: '#2A2D34',
+    fontFamily: 'Pretendard Variable',
   },
 };
 
@@ -34,22 +35,28 @@ interface ExtendedControlLabelProps
   subText?: string;
   right?: React.ReactNode;
   wrapperClassName?: string;
+  labelStyle?: CSSProperties;
 }
 
 export const ReportFormRadioControlLabel: React.FC<
   ExtendedControlLabelProps
-> = ({ subText, sx, right, wrapperClassName, ...restProps }) => {
+> = ({ subText, labelStyle, sx, right, wrapperClassName, ...restProps }) => {
+  const extendedSx = {
+    ...sx,
+    '.MuiFormControlLabel-label': {
+      ...DEFAULT_LABEL_SX['.MuiFormControlLabel-label'],
+      ...labelStyle,
+    },
+  };
+
   return (
     <div
-      className={twMerge(
-        'flex items-center justify-between py-2',
-        wrapperClassName,
-      )}
+      className={twMerge('flex items-center justify-between', wrapperClassName)}
     >
-      <div className="flex h-5 items-center">
+      <div className="flex items-center">
         <FormControlLabel
-          sx={{ ...labelSx, ...sx }}
-          control={<Radio size="small" sx={radioSx} />}
+          sx={extendedSx}
+          control={<Radio size="small" sx={RADIO_SX} />}
           {...restProps}
         />
         {subText && (
@@ -65,7 +72,15 @@ export const ReportFormRadioControlLabel: React.FC<
 
 export const ReportFormCheckboxControlLabel: React.FC<
   ExtendedControlLabelProps
-> = ({ subText, sx, right, wrapperClassName, ...restProps }) => {
+> = ({ subText, sx, right, labelStyle, wrapperClassName, ...restProps }) => {
+  const extendedSx = {
+    ...sx,
+    '.MuiFormControlLabel-label': {
+      ...DEFAULT_LABEL_SX['.MuiFormControlLabel-label'],
+      ...labelStyle,
+    },
+  };
+
   return (
     <div
       className={twMerge(
@@ -75,8 +90,8 @@ export const ReportFormCheckboxControlLabel: React.FC<
     >
       <div className="flex h-5 items-center">
         <FormControlLabel
-          sx={{ ...labelSx, ...sx }}
-          control={<Checkbox size="small" sx={checkboxSx} />}
+          sx={extendedSx}
+          control={<Checkbox size="small" sx={CHECKBOX_SX} />}
           {...restProps}
         />
         {subText && (

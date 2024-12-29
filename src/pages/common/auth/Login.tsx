@@ -1,5 +1,10 @@
 import { useEffect, useState } from 'react';
-import { Link, useNavigate, useSearchParams } from 'react-router-dom';
+import {
+  Link,
+  useLocation,
+  useNavigate,
+  useSearchParams,
+} from 'react-router-dom';
 // import axios from 'axios';
 import { AxiosError } from 'axios';
 import axios from '../../../utils/axios';
@@ -33,12 +38,14 @@ const TextLink = ({ to, dark, className, children }: TextLinkProps) => {
 const Login = () => {
   const { isLoggedIn, login } = useAuthStore();
   const navigate = useNavigate();
+  const { state } = useLocation();
   const [searchParams, setSearchParams] = useSearchParams();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [buttonDisabled, setButtonDisabled] = useState(false);
-  const redirect = searchParams.get('redirect');
+  const redirect: string =
+    searchParams.get('redirect') || state?.prevPath || '/';
 
   const fetchLogin = useMutation({
     mutationFn: async () => {
@@ -50,7 +57,7 @@ const Login = () => {
     },
     onSuccess: (data) => {
       login(data.data.accessToken, data.data.refreshToken);
-      navigate(searchParams.get('redirect') || '/');
+      navigate(redirect);
     },
     onError: (error) => {
       const axiosError = error as AxiosError;
@@ -105,13 +112,11 @@ const Login = () => {
 
   const handleLoginSuccess = (token: any) => {
     if (token.isNew) {
-      navigate(
-        `/signup?result=${JSON.stringify(token)}&redirect=${searchParams.get('redirect')}`,
-      );
+      navigate(`/signup?result=${JSON.stringify(token)}&redirect=${redirect}`);
       return;
     }
     login(token.accessToken, token.refreshToken);
-    navigate(searchParams.get('redirect') || '/');
+    navigate(redirect);
   };
 
   const handleLogin = (e: React.FormEvent<HTMLFormElement>) => {
@@ -151,9 +156,7 @@ const Login = () => {
       </form>
       <SocialLogin type="LOGIN" />
       <div className="mt-8 flex justify-center gap-8">
-        <TextLink to={redirect ? `/signup?redirect=${redirect}` : '/signup'}>
-          회원가입
-        </TextLink>
+        <TextLink to={`/signup?redirect=${redirect}`}>회원가입</TextLink>
         <TextLink to="/find-password" dark>
           비밀번호 찾기
         </TextLink>

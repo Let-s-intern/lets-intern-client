@@ -1,8 +1,10 @@
+import useInstagramAlert from '@/hooks/useInstagramAlert';
+import { twMerge } from '@/lib/twMerge';
 import GradientButton from '@components/common/program/program-detail/button/GradientButton';
 import NotiButton from '@components/common/program/program-detail/button/NotiButton';
 import { Duration } from '@components/Duration';
 import dayjs, { Dayjs } from 'dayjs';
-import { useState } from 'react';
+import { memo, ReactNode } from 'react';
 import PaymentErrorNotification from './PaymentErrorNotification';
 
 function DisabledButton() {
@@ -37,12 +39,8 @@ export function MobileApplyCTA({
       ? dayjs().isBefore(program.beginning) || dayjs().isAfter(program.deadline)
       : false;
 
-  const [showInstagramAlert, setShowInstagramAlert] = useState(false);
-
-  const isInstagram =
-    typeof window !== 'undefined'
-      ? window.navigator.userAgent.includes('Instagram')
-      : false;
+  const { isInstagram, showInstagramAlert, setShowInstagramAlert } =
+    useInstagramAlert();
 
   const handleApplyClick = () => {
     if (!isInstagram) {
@@ -59,39 +57,72 @@ export function MobileApplyCTA({
   };
 
   return (
-    <div className="safe-area-bottom fixed left-0 right-0 z-40 flex w-full flex-col items-center overflow-hidden bg-neutral-0/65 text-xxsmall12 lg:hidden">
-      {showInstagramAlert && <PaymentErrorNotification className="border-t" />}
-      <div className="w-full bg-neutral-0/95 py-1.5 text-center font-bold text-static-100">
-        {program?.title}
-      </div>
-      <div className="flex w-full items-center justify-between px-5 pb-5 pt-3 text-neutral-80 backdrop-blur">
-        {isOutOfDate ? (
-          <NotiButton text={'출시알림신청'} className="early_button" />
-        ) : isAlreadyApplied ? (
-          <DisabledButton />
-        ) : (
-          <>
-            <div>
-              <span className="mb-1 block text-xsmall14 font-medium">
-                {program?.deadline?.format('M월 D일 (dd)')} 마감까지 🚀
-              </span>
-              <div className="flex items-center gap-2">
-                <Duration
-                  disabled={isAlreadyApplied || isOutOfDate}
-                  deadline={program?.deadline ?? dayjs()}
-                />
-                <span className="text-xxsmall12 text-neutral-80">남음</span>
-              </div>
+    <MobileCTA
+      className="flex flex-col items-center lg:hidden"
+      title={program?.title ?? ''}
+      banner={
+        showInstagramAlert ? (
+          <PaymentErrorNotification className="border-t" />
+        ) : undefined
+      }
+    >
+      {isOutOfDate ? (
+        <NotiButton text={'출시알림신청'} className="early_button" />
+      ) : isAlreadyApplied ? (
+        <DisabledButton />
+      ) : (
+        <>
+          <div>
+            <span className="mb-1 block text-xsmall14 font-medium">
+              {program?.deadline?.format('M월 D일 (dd)')} 마감까지 🚀
+            </span>
+            <div className="flex items-center gap-2">
+              <Duration
+                disabled={isAlreadyApplied || isOutOfDate}
+                deadline={program?.deadline ?? dayjs()}
+              />
+              <span className="text-xxsmall12 text-neutral-80">남음</span>
             </div>
-            <GradientButton onClick={handleApplyClick} className="apply_button">
-              지금 바로 신청
-            </GradientButton>
-          </>
-        )}
+          </div>
+          <GradientButton onClick={handleApplyClick} className="apply_button">
+            지금 바로 신청
+          </GradientButton>
+        </>
+      )}
+    </MobileCTA>
+  );
+}
+
+export const MobileCTA = memo(function MobileCTA({
+  title,
+  children,
+  banner,
+  className,
+}: {
+  title: string;
+  children?: ReactNode;
+  banner?: JSX.Element;
+  className?: string;
+}) {
+  return (
+    <div
+      className={twMerge(
+        'safe-area-bottom fixed left-0 right-0 z-40 w-full overflow-hidden bg-neutral-0/65 text-xxsmall12',
+        className,
+      )}
+    >
+      {banner}
+      {!banner && (
+        <div className="w-full bg-neutral-0/95 py-1.5 text-center font-bold text-static-100">
+          {title}
+        </div>
+      )}
+      <div className="flex w-full items-center justify-between px-5 pb-5 pt-3 text-neutral-80 backdrop-blur">
+        {children}
       </div>
     </div>
   );
-}
+});
 
 export function DesktopApplyCTA({
   program,
@@ -104,7 +135,7 @@ export function DesktopApplyCTA({
       : false;
 
   return (
-    <div className="fixed bottom-4 left-0 right-0 z-40 mx-auto hidden w-full max-w-[1000px] items-center justify-between overflow-hidden rounded-sm bg-neutral-0/65 px-5 py-4 backdrop-blur lg:flex">
+    <DesktopCTA className="hidden items-center justify-between lg:flex">
       <div className="flex flex-col gap-1">
         <span className="font-bold text-neutral-100">{program?.title}</span>
         <span className="text-xsmall14 font-medium text-neutral-80">
@@ -131,6 +162,25 @@ export function DesktopApplyCTA({
           </>
         )}
       </div>
-    </div>
+    </DesktopCTA>
   );
 }
+
+export const DesktopCTA = memo(function DesktopCTA({
+  children,
+  className,
+}: {
+  children?: ReactNode;
+  className?: string;
+}) {
+  return (
+    <div
+      className={twMerge(
+        'fixed bottom-4 left-0 right-0 z-40 mx-auto w-full max-w-[1000px] overflow-hidden rounded-sm bg-neutral-0/65 px-5 py-4 backdrop-blur',
+        className,
+      )}
+    >
+      {children}
+    </div>
+  );
+});

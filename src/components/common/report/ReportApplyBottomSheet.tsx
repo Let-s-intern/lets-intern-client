@@ -1,70 +1,169 @@
+import { FormControl, FormGroup, RadioGroup } from '@mui/material';
+import React, {
+  memo,
+  MouseEventHandler,
+  ReactNode,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
+import { IoCloseCircle } from 'react-icons/io5';
+import { useNavigate } from 'react-router-dom';
+
 import {
   ActiveReport,
-  convertReportPriceTypeToDisplayName,
   convertReportTypeToDisplayName,
+  convertReportTypeToPathname,
+  ReportPriceDetail,
   ReportPriceType,
-  useGetReportPriceDetail,
+  reportPriceTypeEnum,
 } from '@/api/report';
+import { useControlScroll } from '@/hooks/useControlScroll';
+import useInstagramAlert from '@/hooks/useInstagramAlert';
 import { generateOrderId } from '@/lib/order';
 import { twMerge } from '@/lib/twMerge';
+import { reportTypeSchema } from '@/schema';
 import useReportApplicationStore from '@/store/useReportApplicationStore';
-import { FormControl, RadioGroup } from '@mui/material';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import ModalOverlay from '@components/ui/ModalOverlay';
+import RequiredStar from '@components/ui/RequiredStar';
+import clsx from 'clsx';
+import { DesktopCTA, MobileCTA } from '../ApplyCTA';
+import PaymentErrorNotification from '../PaymentErrorNotification';
+import GradientButton from '../program/program-detail/button/GradientButton';
+import { default as BaseButton } from '../ui/button/BaseButton';
 import {
   ReportFormCheckboxControlLabel,
   ReportFormRadioControlLabel,
 } from './ControlLabel';
+import ReportDropdown from './ReportDropdown';
 
-const ReportPriceView = (props: {
-  price?: number | null | undefined;
-  discount?: number | null | undefined;
-}) => {
-  const price = props.price ?? 0;
-  const discount = props.discount ?? 0;
-  const percent = ((discount / price) * 100).toFixed(0);
-  const discountedPrice = price - discount;
-  const hasDiscount = discount > 0;
+const { BASIC, PREMIUM } = reportPriceTypeEnum.enum;
+const { PERSONAL_STATEMENT } = reportTypeSchema.enum;
 
-  return (
-    <div className="flex flex-col items-end">
-      {hasDiscount ? (
-        <span className="inline-flex gap-1 text-xxsmall12 font-medium leading-none">
-          <span className="text-system-error/90">{percent}%</span>
-          <span className="text-neutral-50 line-through">
-            {price.toLocaleString()}원
-          </span>
-        </span>
-      ) : null}
-      <span className="text-xsmall14 font-bold text-black/75">
-        {discountedPrice.toLocaleString()}원
-      </span>
-    </div>
-  );
-};
+const REPORT_RADIO_VALUES = {
+  basicFeedback: 'basicFeedback',
+  premiumFeedback: 'premiumFeedback',
+  basic: 'basic',
+  premium: 'premium',
+} as const;
 
-interface IReportApplyBottomSheetProps {
+const priceTypeByPlan = {
+  [REPORT_RADIO_VALUES.basicFeedback]: BASIC,
+  [REPORT_RADIO_VALUES.premiumFeedback]: PREMIUM,
+  [REPORT_RADIO_VALUES.basic]: BASIC,
+  [REPORT_RADIO_VALUES.premium]: PREMIUM,
+} as Record<string, ReportPriceType>;
+
+const RADIO_CONTROL_LABEL_STYLE = { opacity: 0.75 };
+
+interface ReportApplyBottomSheetProps {
   report: ActiveReport;
+  priceDetail: ReportPriceDetail;
   show?: boolean;
 }
 
+/** 자기소개서 문항 추가 옵션
+ * 옵션 제목이 '+'로 시작하는 옵션은 '자기소개서 문항 추가' 옵션이다. (그 외 옵션은 현직자 피드백에 표시한다)
+ * ADMIN에서 생성한 문항 추가 옵션 개수 = 사용자가 최대로 추가할 수 있는 문항 개수
+ */
+
 const ReportApplyBottomSheet = React.forwardRef<
   HTMLDivElement,
-  IReportApplyBottomSheetProps
->(({ report, show = true }, ref) => {
+  ReportApplyBottomSheetProps
+>(({ report, priceDetail, show = true }, ref) => {
+  const navigate = useNavigate();
+
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
-  const { data: priceInfo } = useGetReportPriceDetail(report.reportId);
   const { data: reportApplication, setReportApplication } =
     useReportApplicationStore();
 
+  const { isInstagram, showInstagramAlert, setShowInstagramAlert } =
+    useInstagramAlert();
+
+  const { optionIds, isFeedbackApplied } = reportApplication;
+
   useEffect(() => {
+    // 드롭다운 열면 reportId 설정
     if (isDrawerOpen) {
       setReportApplication({ reportId: report.reportId });
     }
   }, [isDrawerOpen, report.reportId, setReportApplication]);
 
-  const { reportPriceType, optionIds, isFeedbackApplied } = reportApplication;
+  const reportDisplayName = convertReportTypeToDisplayName(report.reportType); // 자기소개서, 이력서, 포트폴리오
+
+  const radioValue = useMemo(() => {
+    const { reportPriceType, isFeedbackApplied } = reportApplication;
+
+    // 베이직 + 1:1 피드백
+    if (reportPriceType === BASIC && isFeedbackApplied) {
+      return REPORT_RADIO_VALUES.basicFeedback;
+    }
+    // 프리미엄 + 1:1 피드백
+    if (reportPriceType === PREMIUM && isFeedbackApplied) {
+      return REPORT_RADIO_VALUES.premiumFeedback;
+    }
+    // 베이직
+    if (reportPriceType === BASIC) return REPORT_RADIO_VALUES.basic;
+    // 프리미엄
+    if (reportPriceType === PREMIUM) return REPORT_RADIO_VALUES.premium;
+
+    return null;
+  }, [reportApplication]);
+
+  // 이력서 진단 플랜 Radio 정보
+  const reportDiagnosisPlan = useMemo(() => {
+    const reportBasicInfo = priceDetail?.reportPriceInfos?.find(
+      (info) => info.reportPriceType === BASIC,
+    );
+    const reportPremiumInfo = priceDetail?.reportPriceInfos?.find(
+      (info) => info.reportPriceType === PREMIUM,
+    );
+    const feedbackInfo = priceDetail?.feedbackPriceInfo;
+
+    const basicLabel = `베이직 플랜${report.reportType === PERSONAL_STATEMENT ? '(1문항)' : ''}`;
+    const premiumLabel = `프리미엄 플랜(${report.reportType === PERSONAL_STATEMENT ? '4문항+총평 페이지 추가' : '채용 공고 맞춤 진단 추가'})`;
+
+    return [
+      {
+        value: REPORT_RADIO_VALUES.basicFeedback,
+        label: '[추천] 베이직 + 1:1 온라인 상담(40분) 패키지',
+        price:
+          (reportBasicInfo?.price ?? 0) + (feedbackInfo?.feedbackPrice ?? 0),
+        discount:
+          (reportBasicInfo?.discountPrice ?? 0) +
+          (feedbackInfo?.feedbackDiscountPrice ?? 0),
+      },
+      {
+        value: REPORT_RADIO_VALUES.premiumFeedback,
+        label: '[추천] 프리미엄 + 1:1 온라인 상담(40분) 패키지',
+        price:
+          (reportPremiumInfo?.price ?? 0) + (feedbackInfo?.feedbackPrice ?? 0),
+        discount:
+          (reportPremiumInfo?.discountPrice ?? 0) +
+          (feedbackInfo?.feedbackDiscountPrice ?? 0),
+      },
+      {
+        value: REPORT_RADIO_VALUES.basic,
+        label: basicLabel,
+        price: reportBasicInfo?.price,
+        discount: reportBasicInfo?.discountPrice,
+      },
+      {
+        value: REPORT_RADIO_VALUES.premium,
+        label: premiumLabel,
+        price: reportPremiumInfo?.price,
+        discount: reportPremiumInfo?.discountPrice,
+      },
+    ];
+  }, [priceDetail, report.reportType]);
+
+  const selectedReportPlan = useMemo(() => {
+    if (!radioValue) return null;
+
+    return reportDiagnosisPlan.find((item) => item.value === radioValue);
+  }, [radioValue, reportDiagnosisPlan]);
 
   const setSelectedOptionIds = useCallback(
     (optionIds: number[]) => {
@@ -80,33 +179,73 @@ const ReportApplyBottomSheet = React.forwardRef<
     [setReportApplication],
   );
 
-  const setDoFeedbackService = useCallback(
+  const setFeedbackService = useCallback(
     (isFeedbackApplied: boolean) => {
       setReportApplication({ isFeedbackApplied });
     },
     [setReportApplication],
   );
 
-  const navigate = useNavigate();
+  const onClickApply = useCallback(() => {
+    // 선택한 서류 진단 플랜이 없으면 신청 불가
+    if (!radioValue) {
+      alert('서류 진단 플랜을 선택해주세요');
+      return;
+    }
 
-  const handleApply = useCallback(() => {
     setReportApplication({
       orderId: generateOrderId(),
       reportId: report.reportId,
-      // 파일만 초기화
-      applyUrl: '',
-      recruitmentUrl: '',
     });
 
     navigate(
-      `/report/apply/${report.reportType?.toLowerCase()}/${report.reportId}`,
+      `/report/apply/${convertReportTypeToPathname(report.reportType ?? 'RESUME')}/${report.reportId}`,
     );
-  }, [navigate, report.reportId, report.reportType, setReportApplication]);
+  }, [
+    navigate,
+    radioValue,
+    report.reportId,
+    report.reportType,
+    setReportApplication,
+  ]);
+
+  const generateControlLabelClassName = (isLastChild: boolean) =>
+    clsx('py-3 pl-2 pr-3', {
+      // 마지막 아이템은 border 제외
+      'border-b border-neutral-80': !isLastChild,
+    });
+
+  // 현직자 피드백 옵션
+  const employeeOptionInfos = priceDetail.reportOptionInfos?.filter(
+    (info) => !info.optionTitle?.startsWith('+'),
+  );
+
+  // 자기소개서 문항 추가 옵션
+  const questionOptionInfos = priceDetail.reportOptionInfos?.filter((info) =>
+    info.optionTitle?.startsWith('+'),
+  );
+  // 사용자가 추가한 문항 추가 옵션
+  const selectedQuestionOptions = useMemo(() => {
+    let length = 0;
+    const price = questionOptionInfos?.reduce((acc, curr) => {
+      if (reportApplication.optionIds.includes(curr.reportOptionId)) {
+        length++;
+        return acc + (curr.price ?? 0);
+      }
+      return acc;
+    }, 0);
+    const discount = questionOptionInfos?.reduce((acc, curr) => {
+      if (reportApplication.optionIds.includes(curr.reportOptionId))
+        return acc + (curr.discountPrice ?? 0);
+      return acc;
+    }, 0);
+    return { length, price, discount };
+  }, [reportApplication, questionOptionInfos]);
 
   const reportFinalPrice = useMemo(() => {
     let result = 0;
 
-    const reportPrice = priceInfo?.reportPriceInfos?.find(
+    const reportPrice = priceDetail?.reportPriceInfos?.find(
       (item) => item.reportPriceType === reportApplication.reportPriceType,
     );
 
@@ -115,7 +254,7 @@ const ReportApplyBottomSheet = React.forwardRef<
     }
 
     result += reportApplication.optionIds.reduce((acc, optionId) => {
-      const option = priceInfo?.reportOptionInfos?.find(
+      const option = priceDetail?.reportOptionInfos?.find(
         (option) => option.reportOptionId === optionId,
       );
 
@@ -128,15 +267,15 @@ const ReportApplyBottomSheet = React.forwardRef<
 
     return result;
   }, [
-    priceInfo?.reportOptionInfos,
-    priceInfo?.reportPriceInfos,
+    priceDetail?.reportOptionInfos,
+    priceDetail?.reportPriceInfos,
     reportApplication,
   ]);
 
   const reportFinalDiscountPrice = useMemo(() => {
     let result = 0;
 
-    const reportPrice = priceInfo?.reportPriceInfos?.find(
+    const reportPrice = priceDetail?.reportPriceInfos?.find(
       (item) => item.reportPriceType === reportApplication.reportPriceType,
     );
 
@@ -145,7 +284,7 @@ const ReportApplyBottomSheet = React.forwardRef<
     }
 
     result += reportApplication.optionIds.reduce((acc, optionId) => {
-      const option = priceInfo?.reportOptionInfos?.find(
+      const option = priceDetail?.reportOptionInfos?.find(
         (option) => option.reportOptionId === optionId,
       );
 
@@ -158,259 +297,477 @@ const ReportApplyBottomSheet = React.forwardRef<
 
     return result;
   }, [
-    priceInfo?.reportOptionInfos,
-    priceInfo?.reportPriceInfos,
+    priceDetail?.reportOptionInfos,
+    priceDetail?.reportPriceInfos,
     reportApplication,
   ]);
 
   const feedbackFinalPrice = isFeedbackApplied
-    ? (priceInfo?.feedbackPriceInfo?.feedbackPrice ?? 0)
+    ? (priceDetail?.feedbackPriceInfo?.feedbackPrice ?? 0)
     : 0;
   const feedbackFinalDiscountPrice = isFeedbackApplied
-    ? (priceInfo?.feedbackPriceInfo?.feedbackDiscountPrice ?? 0)
+    ? (priceDetail?.feedbackPriceInfo?.feedbackDiscountPrice ?? 0)
     : 0;
 
-  if (!priceInfo || !report.reportType) {
-    return null;
-  }
-
   const optionsAvailable =
-    priceInfo.reportOptionInfos && priceInfo.reportOptionInfos.length > 0;
+    priceDetail.reportOptionInfos && priceDetail.reportOptionInfos.length > 0;
 
-  const feedbackAvailable =
-    !priceInfo.feedbackPriceInfo ||
-    priceInfo.feedbackPriceInfo.feedbackPrice !== -1;
-
-  const reportType = window.location.pathname.split('/')[3];
+  useControlScroll(isDrawerOpen);
 
   return (
-    <div
-      ref={ref}
-      className={twMerge(
-        'fixed bottom-0 left-1/2 z-40 mx-auto w-full max-w-3xl -translate-x-1/2 rounded-t-xl border-t border-neutral-0/5 bg-white shadow-lg transition',
-        !show && 'hidden',
+    <>
+      {/* 배경 */}
+      {isDrawerOpen && (
+        <ModalOverlay
+          className="bg-transparent"
+          onClose={() => setIsDrawerOpen(false)}
+        />
       )}
-    >
-      <div className="max-h-[calc(100vh-60px)] overflow-y-auto px-5 py-2">
-        {isDrawerOpen ? (
-          <div
-            className="sticky top-2 z-10 mx-auto mb-2.5 h-[5px] w-16 rounded-full bg-neutral-80"
-            onClick={() => {
-              setIsDrawerOpen(false);
-            }}
-          ></div>
-        ) : null}
 
-        {/* 본문 */}
-        {isDrawerOpen ? (
-          <div className="mb-5 flex flex-col gap-6">
-            {/* 기본 서비스 */}
-            <FormControl fullWidth>
-              <h2 className="mb-2 text-xsmall14 font-semibold text-static-0">
-                기본 서비스
-              </h2>
-              {reportType !== 'personal-statement' && (
-                <p className="mb-2 text-xxsmall12 text-neutral-45">
-                  *프리미엄 선택시, 희망하는 채용공고에 맞춤화된 진단을 추가로
-                  받아볼 수 있어요.
-                </p>
-              )}
-              <RadioGroup
-                defaultValue="BASIC"
-                value={reportPriceType}
-                className="mb-2"
-                onChange={(e) => {
-                  setPriceType(e.target.value as ReportPriceType);
-                }}
-              >
-                {priceInfo.reportPriceInfos?.map((item) => {
-                  if (!item.reportPriceType) {
-                    return null;
-                  }
+      {!isDrawerOpen && (
+        <>
+          {/* 모바일에서만 표시 */}
+          <MobileCTA
+            className="lg:hidden"
+            title={`${report.title} 피드백 REPORT`}
+            banner={
+              showInstagramAlert ? (
+                <PaymentErrorNotification className="border-t" />
+              ) : undefined
+            }
+          >
+            <GradientButton
+              className="w-full"
+              onClick={() => {
+                if (isInstagram && !showInstagramAlert) {
+                  setShowInstagramAlert(true);
+                  return;
+                }
+                setIsDrawerOpen(true);
+              }}
+            >
+              지금 바로 신청
+            </GradientButton>
+          </MobileCTA>
+          {/* 데스크탑에서만 표시 */}
+          <DesktopCTA className="hidden items-center justify-between lg:flex">
+            <div className="flex flex-col items-start gap-0.5">
+              <span className="text-xsmall16 font-bold text-neutral-100">
+                {report.title} 피드백 REPORT
+              </span>
+              <span className="text-xsmall14 font-medium text-neutral-80">
+                서류 합격에 한걸음 더 가까워지고 싶다면?
+              </span>
+            </div>
+            <GradientButton
+              className="w-36"
+              onClick={() => setIsDrawerOpen(true)}
+            >
+              지금 바로 신청
+            </GradientButton>
+          </DesktopCTA>
+        </>
+      )}
 
-                  const price = item.price ?? 0;
-                  const discount = item.discountPrice ?? 0;
-
-                  return (
-                    <ReportFormRadioControlLabel
-                      key={item.reportPriceType}
-                      label={`서류 진단서 (${convertReportPriceTypeToDisplayName(item.reportPriceType)})`}
-                      value={item.reportPriceType}
-                      wrapperClassName="items-end py-2"
-                      right={
-                        <ReportPriceView price={price} discount={discount} />
-                      }
-                    />
-                  );
-                })}
-              </RadioGroup>
-            </FormControl>
-
-            {/* 기본 서비스 옵션 */}
-            {optionsAvailable ? (
-              <FormControl fullWidth>
-                <h2 className="mb-2 text-xsmall14 font-semibold text-static-0">
-                  기본 서비스 옵션 (
-                  {reportType !== 'personal-statement'
-                    ? '현직자 피드백'
-                    : '문항 추가'}
-                  )
-                </h2>
-                {reportType !== 'personal-statement' && (
-                  <p className="mb-2 text-xxsmall12 text-neutral-45">
-                    *현직자 피드백 선택시, 현직자 멘토에게 쏠쏠한 서류 작성
-                    꿀팁을 듣거나 앞으로의 커리어 조언까지 얻어갈 수 있어요.
-                  </p>
-                )}
-                <div className="mb-2 flex flex-col">
-                  {priceInfo.reportOptionInfos?.map((option) => {
-                    const price = option.price ?? 0;
-                    const discount = option.discountPrice ?? 0;
-                    const checked = Boolean(
-                      optionIds.find(
-                        (selectedOption) =>
-                          selectedOption === option.reportOptionId,
-                      ),
-                    );
-
-                    return (
-                      <ReportFormCheckboxControlLabel
-                        key={option.reportOptionId}
-                        checked={checked}
-                        onChange={(e, checked) => {
-                          if (checked) {
-                            setSelectedOptionIds([
-                              ...optionIds,
-                              option.reportOptionId,
-                            ]);
-                          } else {
-                            setSelectedOptionIds(
-                              optionIds.filter(
-                                (selectedOption) =>
-                                  selectedOption !== option.reportOptionId,
-                              ),
-                            );
-                          }
-                        }}
-                        wrapperClassName="items-end py-2"
-                        label={option.title}
-                        right={
-                          <ReportPriceView price={price} discount={discount} />
-                        }
-                      />
-                    );
-                  })}
-                </div>
-              </FormControl>
-            ) : null}
-
-            {/* 1:1 피드백 서비스 */}
-            {feedbackAvailable ? (
-              <FormControl fullWidth>
-                <h2 className="mb-2 text-xsmall14 font-semibold text-static-0">
-                  1:1 피드백 서비스
-                </h2>
-                <p className="text-xxsmall12 text-neutral-45">
-                  *1:1 피드백 선택시, 발급된 진단서를 바탕으로 온라인 미팅에서
-                  커리어 전문가와 함께 나만의 맞춤형 서류를 완성할 수 있어요.
-                </p>
-                <ReportFormCheckboxControlLabel
-                  checked={isFeedbackApplied}
-                  onChange={(e, checked) => {
-                    setDoFeedbackService(checked);
-                  }}
-                  wrapperClassName="items-end py-2"
-                  label="1:1 피드백 (40분)"
-                  right={
-                    <ReportPriceView
-                      price={priceInfo.feedbackPriceInfo?.feedbackPrice}
-                      discount={
-                        priceInfo.feedbackPriceInfo?.feedbackDiscountPrice
-                      }
-                    />
-                  }
-                />
-              </FormControl>
-            ) : null}
-
+      {isDrawerOpen && (
+        <div
+          ref={ref}
+          className={twMerge(
+            'fixed bottom-0 left-1/2 z-40 mx-auto h-[calc(100vh-7rem)] w-full max-w-[1000px] -translate-x-1/2 rounded-t-xl border-t border-neutral-0/5 bg-white shadow-lg transition',
+            !show && 'hidden',
+          )}
+        >
+          <div className="relative flex h-full flex-col justify-between overflow-y-scroll px-5">
             <div>
-              <h2 className="mb-2 text-xsmall14 font-semibold text-static-0">
-                총 결제 금액
-              </h2>
-              <div className="flex items-end justify-between py-2">
-                <span className="text-xsmall14 font-medium text-neutral-0/75">
-                  서류 진단서
-                </span>
-                <ReportPriceView
-                  price={reportFinalPrice}
-                  discount={reportFinalDiscountPrice}
+              {/* 상단 닫기 버튼 */}
+              <div className="sticky top-0 z-10 w-full bg-white py-2">
+                <div
+                  className="mx-auto h-[5px] w-16 cursor-pointer rounded-full bg-neutral-80"
+                  onClick={() => setIsDrawerOpen(false)}
                 />
               </div>
 
-              {feedbackAvailable ? (
-                <div className="flex items-end justify-between py-2">
-                  <span className="text-xsmall14 font-medium text-neutral-0/75">
-                    1:1 피드백
-                  </span>
-                  <ReportPriceView
-                    price={feedbackFinalPrice}
-                    discount={feedbackFinalDiscountPrice}
-                  />
-                </div>
-              ) : null}
+              {/* 본문 */}
+              <div className="mb-5 mt-2 flex flex-col gap-8">
+                {/* 서류 진단 플랜 */}
+                <FormControl fullWidth>
+                  <Heading2 className="mb-4">
+                    {reportDisplayName} 진단 플랜 선택 (필수)
+                    <RequiredStar />
+                  </Heading2>
+                  <ReportDropdown
+                    title={`합격을 이끄는 ${reportDisplayName} 진단 플랜`}
+                    labelId="report-diagnosis-plan-group-label"
+                  >
+                    <RadioGroup
+                      aria-labelledby="report-diagnosis-plan-group-label"
+                      value={radioValue}
+                      onChange={(e) => {
+                        {
+                          const isFeedbackApplied = e.target.value.endsWith(
+                            'Feedback',
+                          )
+                            ? true
+                            : false;
+                          // 서류진단 가격 유형 설정 (BASIC, PREMIUM)
+                          setPriceType(priceTypeByPlan[e.target.value]);
+                          // 피드백 신청 여부
+                          setFeedbackService(isFeedbackApplied);
+                        }
+                      }}
+                    >
+                      {reportDiagnosisPlan.map((item, index) => (
+                        <ReportFormRadioControlLabel
+                          key={item.label}
+                          label={item.label}
+                          value={item.value}
+                          wrapperClassName={generateControlLabelClassName(
+                            index === reportDiagnosisPlan.length - 1,
+                          )}
+                          labelStyle={RADIO_CONTROL_LABEL_STYLE}
+                          right={
+                            <ReportPriceView
+                              price={item.price}
+                              discount={item.discount}
+                            />
+                          }
+                        />
+                      ))}
+                    </RadioGroup>
+                  </ReportDropdown>
+                </FormControl>
 
-              <hr className="my-4 border-neutral-0/5" />
-              <div className="flex items-end justify-between py-2">
-                <span></span>
-                <span className="text-xsmall14 font-bold text-black/75">
-                  {(
-                    reportFinalPrice +
-                    feedbackFinalPrice -
-                    reportFinalDiscountPrice -
-                    feedbackFinalDiscountPrice
-                  ).toLocaleString()}
-                  원
-                </span>
+                {/* 자기소개서 문항 추가 */}
+                {report.reportType === 'PERSONAL_STATEMENT' &&
+                  (questionOptionInfos ?? []).length > 0 && (
+                    <div className="flex items-start justify-between">
+                      <Heading2 className="mb-4">
+                        자기소개서 문항 추가 (선택)
+                      </Heading2>
+                      <div>
+                        <ReportPriceView
+                          price={(questionOptionInfos ?? [])[0].price}
+                          discount={
+                            (questionOptionInfos ?? [])[0].discountPrice
+                          }
+                        />
+                        {/* Counter */}
+                        <div className="mt-3 flex items-center rounded-xs border border-[#D6D6D6]">
+                          <button
+                            className={twMerge(
+                              'flex h-7 w-7 items-center justify-center',
+                              selectedQuestionOptions.length === 0
+                                ? 'text-[#D6D6D6]'
+                                : 'text-[#121212]',
+                            )}
+                            onClick={() => {
+                              if (
+                                !questionOptionInfos ||
+                                selectedQuestionOptions.length === 0
+                              )
+                                return;
+
+                              //  selectedQuestionOptions.length - 1 인덱스에 해당하는 '자소서 문항 추가' 옵션 아이디 삭제
+                              setReportApplication({
+                                optionIds: optionIds.filter(
+                                  (id) =>
+                                    id !==
+                                    questionOptionInfos[
+                                      selectedQuestionOptions.length - 1
+                                    ].reportOptionId,
+                                ),
+                              });
+                            }}
+                          >
+                            -
+                          </button>
+                          <div className="flex h-7 w-7 items-center justify-center text-xsmall14 text-[#121212]">
+                            {selectedQuestionOptions.length}
+                          </div>
+                          <button
+                            className={twMerge(
+                              'flex h-7 w-7 items-center justify-center text-[#121212]',
+                              selectedQuestionOptions.length ===
+                                (questionOptionInfos ?? [])?.length
+                                ? 'text-[#D6D6D6]'
+                                : 'text-[#121212]',
+                            )}
+                            onClick={() => {
+                              if (
+                                !questionOptionInfos ||
+                                selectedQuestionOptions.length ===
+                                  (questionOptionInfos ?? [])?.length
+                              )
+                                return;
+
+                              //  selectedQuestionOptions.length 인덱스에 해당하는 '자소서 문항 추가' 옵션 아이디 추가
+                              setReportApplication({
+                                optionIds: [
+                                  ...optionIds,
+                                  questionOptionInfos[
+                                    selectedQuestionOptions.length
+                                  ].reportOptionId,
+                                ],
+                              });
+                            }}
+                          >
+                            +
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                {/* 현직자 피드백 (옵션) */}
+                {optionsAvailable ? (
+                  <FormControl fullWidth>
+                    <Heading2 className="mb-4">현직자 피드백 (선택)</Heading2>
+
+                    <ReportDropdown
+                      title="현직자가 알려주는 합격의 디테일"
+                      labelId="option-group-label"
+                      initialOpenState={false}
+                    >
+                      <FormGroup aria-labelledby="option-group-label">
+                        {employeeOptionInfos?.map((option, index) => {
+                          const price = option.price ?? 0;
+                          const discount = option.discountPrice ?? 0;
+                          const checked = Boolean(
+                            optionIds.find(
+                              (selectedOption) =>
+                                selectedOption === option.reportOptionId,
+                            ),
+                          );
+
+                          return (
+                            <ReportFormCheckboxControlLabel
+                              key={option.reportOptionId}
+                              checked={checked}
+                              onChange={(_, checked) => {
+                                if (checked) {
+                                  setSelectedOptionIds([
+                                    ...optionIds,
+                                    option.reportOptionId,
+                                  ]);
+                                } else {
+                                  setSelectedOptionIds(
+                                    optionIds.filter(
+                                      (selectedOption) =>
+                                        selectedOption !==
+                                        option.reportOptionId,
+                                    ),
+                                  );
+                                }
+                              }}
+                              wrapperClassName={generateControlLabelClassName(
+                                index ===
+                                  (priceDetail.reportOptionInfos?.length ?? 0) -
+                                    1,
+                              )}
+                              label={option.optionTitle}
+                              labelStyle={RADIO_CONTROL_LABEL_STYLE}
+                              right={
+                                <ReportPriceView
+                                  price={price}
+                                  discount={discount}
+                                />
+                              }
+                            />
+                          );
+                        })}
+                      </FormGroup>
+                    </ReportDropdown>
+                  </FormControl>
+                ) : null}
+
+                {/* 총 결제 금액 */}
+                <div>
+                  <Heading2>총 결제 금액</Heading2>
+                  {/* 선택한 상품 */}
+                  {(selectedReportPlan || optionIds.length > 0) && (
+                    <>
+                      <div className="mt-3 overflow-hidden rounded-xs border border-neutral-80">
+                        {/*  선택한 서류 진단 플랜 */}
+                        {selectedReportPlan && (
+                          <SelectedItemBox
+                            title={selectedReportPlan.label}
+                            onClickDelete={() =>
+                              setReportApplication({
+                                reportPriceType: undefined,
+                                isFeedbackApplied: false,
+                              })
+                            }
+                            rightElement={
+                              <ReportPriceView
+                                price={selectedReportPlan.price}
+                                discount={selectedReportPlan.discount}
+                              />
+                            }
+                          />
+                        )}
+                        {/* 선택한 자소서 문항 추가 */}
+                        {selectedQuestionOptions.length > 0 && (
+                          <SelectedItemBox
+                            className="border-t border-neutral-80"
+                            title={`자기소개서 문항 추가 ${selectedQuestionOptions.length}개`}
+                            // 자소서 문항 추가 모두 삭제
+                            onClickDelete={() => {
+                              const questionOptionIds =
+                                questionOptionInfos?.map(
+                                  (info) => info.reportOptionId,
+                                );
+                              setReportApplication({
+                                optionIds: reportApplication.optionIds.filter(
+                                  (id) => !questionOptionIds?.includes(id),
+                                ),
+                              });
+                            }}
+                            rightElement={
+                              <ReportPriceView
+                                price={selectedQuestionOptions.price}
+                                discount={selectedQuestionOptions.discount}
+                              />
+                            }
+                          />
+                        )}
+
+                        {/* 선택한 옵션 (현직자 피드백) */}
+                        {employeeOptionInfos?.map((info) => {
+                          if (optionIds.includes(info.reportOptionId))
+                            return (
+                              <SelectedItemBox
+                                key={info.reportOptionId}
+                                className="border-t border-neutral-80"
+                                title={info.optionTitle ?? ''}
+                                onClickDelete={() =>
+                                  setReportApplication({
+                                    optionIds:
+                                      reportApplication.optionIds.filter(
+                                        (id) => id !== info.reportOptionId,
+                                      ),
+                                  })
+                                }
+                                rightElement={
+                                  <ReportPriceView
+                                    price={info.price}
+                                    discount={info.discountPrice}
+                                  />
+                                }
+                              />
+                            );
+                        })}
+                      </div>
+                      <hr className="mt-3 border-neutral-0/5" />
+                    </>
+                  )}
+                  {/* 가격 */}
+                  <span className="mt-3 block text-right text-small18 font-bold text-neutral-10">
+                    {(
+                      reportFinalPrice +
+                      feedbackFinalPrice -
+                      reportFinalDiscountPrice -
+                      feedbackFinalDiscountPrice
+                    ).toLocaleString()}
+                    원
+                  </span>
+                </div>
               </div>
             </div>
-          </div>
-        ) : null}
 
-        {!isDrawerOpen ? (
-          <button
-            type="button"
-            className="apply_button_click flex w-full flex-1 justify-center rounded-md border-2 border-primary bg-primary px-6 py-3 text-lg font-medium text-neutral-100 transition hover:bg-primary-light disabled:border-neutral-70 disabled:bg-neutral-70"
-            onClick={() => setIsDrawerOpen(true)}
-          >
-            {report.reportType
-              ? convertReportTypeToDisplayName(report.reportType || 'RESUME')
-              : ''}{' '}
-            서류 진단 신청하기
-          </button>
-        ) : null}
-
-        {isDrawerOpen ? (
-          <div className="sticky bottom-2 flex items-center gap-2">
-            <button
-              type="button"
-              className="flex w-full flex-1 justify-center rounded-md border-2 border-primary bg-neutral-100 px-6 py-3 text-lg font-medium text-primary-dark transition hover:border-primary-light disabled:border-neutral-70 disabled:bg-neutral-70 disabled:text-white"
-              onClick={() => setIsDrawerOpen(false)}
-            >
-              이전 단계로
-            </button>
-            <button
-              type="button"
-              onClick={handleApply}
-              className="next_button_click flex w-full flex-1 justify-center rounded-md border-2 border-primary bg-primary px-6 py-3 text-lg font-medium text-neutral-100 transition hover:bg-primary-light disabled:border-neutral-70 disabled:bg-neutral-70"
-            >
-              결제하기
-            </button>
+            <div className="sticky bottom-0 flex items-center gap-2 bg-white pb-2">
+              <BaseButton
+                className="flex-1"
+                variant="outlined"
+                onClick={() => {
+                  setShowInstagramAlert(false);
+                  setIsDrawerOpen(false);
+                }}
+              >
+                이전 단계로
+              </BaseButton>
+              <BaseButton
+                className="next_button_click flex-1"
+                onClick={onClickApply}
+              >
+                신청하기
+              </BaseButton>
+            </div>
           </div>
-        ) : null}
-      </div>
+        </div>
+      )}
+    </>
+  );
+});
+
+const Heading2 = ({
+  children,
+  className,
+}: {
+  children?: ReactNode;
+  className?: string;
+}) => (
+  <h2
+    className={twMerge('text-xsmall14 font-semibold text-static-0', className)}
+  >
+    {children}
+  </h2>
+);
+
+const ReportPriceView = memo(function ReportPriceView(props: {
+  price?: number | null;
+  discount?: number | null;
+}) {
+  const price = props.price ?? 0;
+  const discount = props.discount ?? 0;
+  const percent = ((discount / price) * 100).toFixed(0);
+  const discountedPrice = price - discount;
+  const hasDiscount = discount > 0;
+
+  return (
+    <div className="flex shrink-0 flex-col items-end">
+      {hasDiscount && (
+        <span className="inline-flex gap-1 text-xxsmall12 font-medium leading-none">
+          <span className="text-system-error/90">{percent}%</span>
+          <span className="text-neutral-50 line-through">
+            {price.toLocaleString()}원
+          </span>
+        </span>
+      )}
+
+      <span className="text-xsmall14 font-bold text-neutral-10">
+        {discountedPrice.toLocaleString()}원
+      </span>
     </div>
   );
 });
+
+const SelectedItemBox = ({
+  title,
+  rightElement,
+  className,
+  onClickDelete,
+}: {
+  title: string;
+  rightElement?: ReactNode;
+  className?: string;
+  onClickDelete?: MouseEventHandler<SVGElement>;
+}) => {
+  return (
+    <div className={twMerge('bg-neutral-100 p-3', className)}>
+      <div className="mb-2 flex items-center justify-between">
+        <span className="text-xsmall14 font-medium text-neutral-10">
+          {title}
+        </span>
+        <IoCloseCircle
+          className="h-6 w-6 cursor-pointer"
+          color="#D8D8D8"
+          onClick={onClickDelete}
+        />
+      </div>
+      <div>{rightElement}</div>
+    </div>
+  );
+};
 
 ReportApplyBottomSheet.displayName = 'ReportApplyBottomSheet';
 

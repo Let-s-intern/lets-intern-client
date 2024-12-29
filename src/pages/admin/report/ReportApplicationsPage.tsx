@@ -1,11 +1,10 @@
-import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
-import { generateRandomString } from '@/utils/random';
 import { Button, MenuItem, Select } from '@mui/material';
 import { DatePicker, TimePicker } from '@mui/x-date-pickers';
 import dayjs from 'dayjs';
 import { useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { uploadFile } from '../../../api/file';
+
+import { uploadFile } from '@/api/file';
 import {
   convertFeedbackStatusToDisplayName,
   convertReportApplicationsStatus,
@@ -19,16 +18,18 @@ import {
   usePatchApplicationDocument,
   usePatchApplicationStatus,
   usePatchReportApplicationSchedule,
-} from '../../../api/report';
-import DragDropModule from '../../../components/admin/report/DragDropModule';
-import ActionButton from '../../../components/admin/ui/button/ActionButton';
-import Header from '../../../components/admin/ui/header/Header';
-import Heading from '../../../components/admin/ui/heading/Heading';
-import AdminPagination from '../../../components/admin/ui/pagination/AdminPagination';
-import Table from '../../../components/admin/ui/table/regacy/Table';
-import TD from '../../../components/admin/ui/table/regacy/TD';
-import TH from '../../../components/admin/ui/table/regacy/TH';
-import CheckBox from '../../../components/common/auth/ui/CheckBox';
+} from '@/api/report';
+import DragDropModule from '@/components/admin/report/DragDropModule';
+import ActionButton from '@/components/admin/ui/button/ActionButton';
+import Header from '@/components/admin/ui/header/Header';
+import Heading from '@/components/admin/ui/heading/Heading';
+import AdminPagination from '@/components/admin/ui/pagination/AdminPagination';
+import Table from '@/components/admin/ui/table/regacy/Table';
+import TD from '@/components/admin/ui/table/regacy/TD';
+import TH from '@/components/admin/ui/table/regacy/TH';
+import CheckBox from '@/components/common/auth/ui/CheckBox';
+import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
+import { generateRandomString } from '@/utils/random';
 
 const totalDateConverter = (date: string) => {
   return dayjs(date).format('YYYY.MM.DD (dd) A hh:mm');
@@ -89,7 +90,7 @@ const reportApplicatoinsStatusList: {
 ];
 
 const ReportApplicationsPage = () => {
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchParams] = useSearchParams();
   const { snackbar: setSnackbar } = useAdminSnackbar();
 
   const reportId = searchParams.get('reportId');
@@ -120,6 +121,9 @@ const ReportApplicationsPage = () => {
   });
 
   const { data: reportDetail } = useGetReportDetailAdminQuery(Number(reportId));
+
+  console.log('서류 진단 상세:', reportDetail);
+  console.log('ADMIN 서류 신청:', data);
 
   const { mutate: patchDocument } = usePatchApplicationDocument({
     successCallback: () => {
@@ -221,17 +225,17 @@ const ReportApplicationsPage = () => {
             <Table>
               <thead>
                 <tr>
-                  <TH colspan={12}>공통</TH>
+                  <TH colspan={13}>공통</TH>
                   <TH colspan={2} backgroundColor="#ffff00">
                     서류진단
                   </TH>
                   <TH colspan={3} backgroundColor="#00ffff">
-                    1:1피드백
+                    1:1 온라인 상담
                   </TH>
                 </tr>
                 <tr>
                   <TH>주문번호</TH>
-                  {/* TODO: 환불여부를 서류진단과 1:1피드백 각각 표시 */}
+                  {/* TODO: 환불여부를 서류진단과 1:1 온라인 상담 각각 표시 */}
                   <TH>환불여부</TH>
                   <TH>ID</TH>
                   <TH>신청일시</TH>
@@ -243,10 +247,11 @@ const ReportApplicationsPage = () => {
                   <TH>서류</TH>
                   <TH>채용공고</TH>
                   <TH>결제정보</TH>
+                  <TH>결제케이스</TH>
                   {/* 서류진단 전용 */}
                   <TH backgroundColor="#ffff00">관리</TH>
                   <TH backgroundColor="#ffff00">상태</TH>
-                  {/* 1:1피드백 전용 */}
+                  {/* 1:1 온라인 상담 전용 */}
                   <TH backgroundColor="#00ffff">관리</TH>
                   <TH backgroundColor="#00ffff">상태</TH>
                   <TH backgroundColor="#00ffff">진행일시</TH>
@@ -345,10 +350,13 @@ const ReportApplicationsPage = () => {
                         보기
                       </Button>
                     </TD>
+                    <TD> {application.applyFileUrl ? '동시제출' : '후제출'}</TD>
                     <TD>
                       <div className="flex gap-2">
                         <ActionButton
                           bgColor="green"
+                          // 선결제 후제출
+                          disabled={!application.applyFileUrl}
                           onClick={() =>
                             setApplicationModal({
                               application,
@@ -419,6 +427,8 @@ const ReportApplicationsPage = () => {
                         <div className="flex justify-center gap-2">
                           <ActionButton
                             bgColor="green"
+                            // 선결제 후제출
+                            disabled={!application.applyFileUrl}
                             onClick={() => {
                               setApplicationModal({
                                 application,
@@ -457,6 +467,7 @@ const ReportApplicationsPage = () => {
                       )}
                     </TD>
                     <TD>
+                      {/* TODO: 어드민 서류 제출 상태 반영하여 status 표시 */}
                       {application.reportFeedbackStatus
                         ? convertFeedbackStatusToDisplayName({
                             status: application.reportFeedbackStatus,
@@ -464,6 +475,7 @@ const ReportApplicationsPage = () => {
                             // TODO: reportApplicationsForAdminInfos에 reportDesiredDate 추가
                             reportFeedback: null,
                             isAdmin: true,
+                            isReportSubmitted: application.applyFileUrl !== '',
                           })
                         : null}
                       {application.reportFeedbackStatus ? (
@@ -508,11 +520,11 @@ const ReportApplicationsPage = () => {
               <h1 className="text-lg font-bold">결제정보</h1>
               <div className="mt-5 flex w-full flex-col gap-y-3 text-xsmall14">
                 <div className="flex w-full gap-x-2">
-                  <h2 className="w-20 text-neutral-40">주문번호</h2>
+                  <h2 className="w-24 text-neutral-40">주문번호</h2>
                   <p>{applicationModal.application.orderId || '-'}</p>
                 </div>
                 <div className="flex w-full gap-x-2">
-                  <h2 className="w-20 text-neutral-40">결제상품</h2>
+                  <h2 className="w-24 text-neutral-40">결제상품</h2>
                   <p>
                     {convertReportPriceType(
                       (applicationModal.application
@@ -521,7 +533,7 @@ const ReportApplicationsPage = () => {
                   </p>
                 </div>
                 <div className="flex w-full gap-x-2">
-                  <h2 className="w-20 text-neutral-40">옵션</h2>
+                  <h2 className="w-24 text-neutral-40">옵션</h2>
                   <div>
                     {optionsDataIsLoading
                       ? '로딩 중...'
@@ -541,7 +553,7 @@ const ReportApplicationsPage = () => {
                   </div>
                 </div>
                 <div className="flex w-full gap-x-2">
-                  <h2 className="w-20 text-neutral-40">1:1 피드백</h2>
+                  <h2 className="w-24 text-neutral-40">1:1 온라인 상담</h2>
                   <p>
                     {applicationModal.application.reportFeedbackStatus
                       ? 'O'
@@ -550,18 +562,18 @@ const ReportApplicationsPage = () => {
                 </div>
                 <hr />
                 <div className="flex w-full gap-x-2">
-                  <h2 className="w-20 text-neutral-40">쿠폰</h2>
+                  <h2 className="w-24 text-neutral-40">쿠폰</h2>
                   <p>{applicationModal.application.couponTitle ?? '없음'}</p>
                 </div>
                 <div className="flex w-full gap-x-2">
-                  <h2 className="w-20 text-neutral-40">결제금액</h2>
+                  <h2 className="w-24 text-neutral-40">결제금액</h2>
                   <p>
                     {applicationModal.application.finalPrice?.toLocaleString() ||
                       '-'}
                   </p>
                 </div>
                 <div className="flex w-full gap-x-2">
-                  <h2 className="w-20 text-neutral-40">환불여부</h2>
+                  <h2 className="w-24 text-neutral-40">환불여부</h2>
                   <p>{applicationModal.application.isRefunded ? 'O' : 'X'}</p>
                 </div>
               </div>

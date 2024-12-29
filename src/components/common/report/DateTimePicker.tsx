@@ -11,10 +11,10 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { Dayjs } from 'dayjs';
 import 'dayjs/locale/ko';
 
-import './date-pickers-toolbar.scss';
+import '@/styles/date-pickers-toolbar.scss';
 
-const dateTimePickerSx = {
-  width: '50%',
+const DATE_TIME_PICKER_SX = {
+  width: '100%',
   label: {
     fontSize: '0.875rem',
     color: '#4C4F56',
@@ -27,12 +27,13 @@ const dateTimePickerSx = {
   },
 };
 
+const timeOption = [9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21];
+
 interface DateTimePickerProps {
   name?: string;
-  date?: Dayjs | null | undefined;
-  time?: number | null | undefined;
+  date?: Dayjs;
+  time?: number;
   minDate?: Dayjs;
-  timeOption: number[];
   onChangeDate?: (date: Dayjs | null, name?: string) => void;
   onChangeTime?: (e: SelectChangeEvent<unknown>) => void;
 }
@@ -42,33 +43,35 @@ const DateTimePicker = ({
   date,
   time,
   minDate,
-  timeOption,
   onChangeDate,
   onChangeTime,
 }: DateTimePickerProps) => {
   return (
     <div className="mt-3 flex items-center gap-4">
+      {/* 날짜 */}
       <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="ko">
         <DatePicker
-          sx={dateTimePickerSx}
+          sx={DATE_TIME_PICKER_SX}
           format="YY년 M월 D일(dd)"
           label="날짜 선택"
           name={name}
-          value={date}
+          value={date ?? null}
           onChange={(date) => onChangeDate && onChangeDate(date, name)}
           minDate={minDate}
         />
       </LocalizationProvider>
-      <FormControl sx={dateTimePickerSx}>
+      {/* 시간 */}
+      <FormControl sx={DATE_TIME_PICKER_SX}>
         <InputLabel id="time-select-label">시간 선택</InputLabel>
         <Select
           labelId="time-select-label"
+          id="time-select"
           label="시간 선택"
           name={name}
-          value={time}
+          value={time ?? ''}
           onChange={onChangeTime}
         >
-          {timeOption.map((option) => (
+          {timeOption?.map((option) => (
             <MenuItem key={option} value={option}>
               {`${option < 12 ? '오전' : '오후'} ${option < 13 ? option : option - 12}:00`}
             </MenuItem>

@@ -1,5 +1,3 @@
-import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
-import AdminReportFeedback from '@components/admin/report/AdminReportFeedback';
 import {
   Button,
   FormControl,
@@ -17,6 +15,7 @@ import 'dayjs/locale/ko';
 import { ChangeEvent, useEffect, useState } from 'react';
 import { FaTrashCan } from 'react-icons/fa6';
 import { useNavigate, useParams } from 'react-router-dom';
+
 import {
   getReportDetailForAdminQueryKey,
   getReportsForAdminQueryKey,
@@ -24,14 +23,20 @@ import {
   UpdateReportData,
   useGetReportDetailAdminQuery,
   usePatchReportMutation,
-} from '../../../api/report';
-import EditorApp from '../../../components/admin/lexical/EditorApp';
-import { ReportEditingPrice } from '../../../types/interface';
+} from '@/api/report';
+import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
+import { ProgramTypeEnum } from '@/schema';
+import { ReportContent, ReportEditingPrice } from '@/types/interface';
+import EditorApp from '@components/admin/lexical/EditorApp';
+import AdminReportFeedback from '@components/admin/report/AdminReportFeedback';
+import ReportProgramRecommendEditor from '@components/admin/report/ReportProgramRecommendEditor';
+import ReportReviewEditor from '@components/admin/report/ReportReviewEditor';
+import Heading2 from '@components/admin/ui/heading/Heading2';
+import FaqSection from '@components/FaqSection';
 
-const initialReport: UpdateReportData = {
+const initialReport: Omit<UpdateReportData, 'contents'> = {
   reportType: 'PERSONAL_STATEMENT',
   title: '',
-  contents: '',
   notice: '',
   priceInfo: [],
   optionInfo: [],
@@ -40,22 +45,35 @@ const initialReport: UpdateReportData = {
     discountPrice: 0,
   },
   visibleDate: undefined,
+  faqInfo: [],
+};
+
+const initialContent = {
+  reportExample: { list: [] },
+  review: { list: [] },
+  programRecommend: { list: [] },
+  reportProgramRecommend: {},
 };
 
 type EditingOptions = Exclude<UpdateReportData['optionInfo'], undefined | null>;
 
 const AdminReportEditPage = () => {
   const params = useParams();
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
+
   const reportId = params.id;
   if (!reportId) {
     throw new Error('reportId is required');
   }
 
-  const navgiate = useNavigate();
+  const editReportMutation = usePatchReportMutation();
+  const { data: reportDetail, isError: isLoadError } =
+    useGetReportDetailAdminQuery(Number(reportId));
 
   const [editingValue, setEditingValue] =
     useState<UpdateReportData>(initialReport);
-  const { snackbar: setSnackbar } = useAdminSnackbar();
+  const [content, setContent] = useState<ReportContent>(initialContent);
 
   const [editingPrice, setEditingPrice] = useState<ReportEditingPrice>({
     type: 'all',
@@ -65,37 +83,24 @@ const AdminReportEditPage = () => {
     premiumDiscount: 0,
   });
 
-  const queryClient = useQueryClient();
-
   const [editingOptions, setEditingOptions] = useState<EditingOptions>([]);
 
-  const editReportMutation = usePatchReportMutation();
-
-  const { data: reportDetail, isError: isLoadError } =
-    useGetReportDetailAdminQuery(Number(reportId));
+  const { snackbar: setSnackbar } = useAdminSnackbar();
 
   useEffect(() => {
     if (isLoadError) {
       const s = new URLSearchParams();
       s.set('message', '해당 서류 진단이 존재하지 않습니다.');
-      navgiate(`/admin/report/list?${s.toString()}`);
+      navigate(`/admin/report/list?${s.toString()}`);
     }
-  }, [isLoadError, navgiate]);
-
-  useEffect(() => {
-    console.log('editingOptions', editingOptions);
-  }, [editingOptions]);
-
-  useEffect(() => {
-    console.log('editingValue', editingValue);
-  }, [editingValue]);
+  }, [isLoadError, navigate]);
 
   useEffect(() => {
     if (reportDetail) {
+      console.log('GET 서류진단 상세 조회:', reportDetail);
       setEditingValue({
         // 기본값
         ...initialReport,
-
         ...reportDetail,
 
         feedbackInfo: {
@@ -103,6 +108,9 @@ const AdminReportEditPage = () => {
           discountPrice:
             reportDetail.feedbackPriceInfo.feedbackDiscountPrice ?? 0,
         },
+        faqInfo: reportDetail.faqInfo
+          ? reportDetail.faqInfo.map((faq) => ({ faqId: faq.id }))
+          : [],
       });
 
       const premiumPrice = reportDetail.reportPriceInfos.find(
@@ -145,6 +153,10 @@ const AdminReportEditPage = () => {
           };
         }),
       );
+
+      const json = JSON.parse(reportDetail.contents);
+      console.log('GET 서류진단 contents:', json);
+      setContent(json);
     }
   }, [reportDetail]);
 
@@ -157,6 +169,7 @@ const AdminReportEditPage = () => {
 
     const body = {
       ...editingValue,
+      contents: JSON.stringify(content),
     };
 
     body.optionInfo = [...editingOptions];
@@ -197,6 +210,9 @@ const AdminReportEditPage = () => {
         break;
     }
 
+    console.log('서류진단 수정 요청 contents:', content);
+    console.log('서류진단 수정 요청 body:', body);
+
     await editReportMutation.mutateAsync({
       reportId: Number(reportId),
       data: body,
@@ -217,10 +233,6 @@ const AdminReportEditPage = () => {
       ...editingValue,
       [event.target.name]: event.target.value,
     });
-  };
-
-  const onChangeEditor = (jsonString: string) => {
-    setEditingValue((prev) => ({ ...prev, contents: jsonString }));
   };
 
   return (
@@ -437,9 +449,9 @@ const AdminReportEditPage = () => {
               ) : null}
             </div>
           </div>
-          <hr></hr>
+          <hr />
           <header className="mb-2 flex items-center justify-between">
-            <h2>옵션 설정</h2>
+            <Heading2>옵션 설정</Heading2>
             <Button
               variant="outlined"
               onClick={() => {
@@ -573,7 +585,7 @@ const AdminReportEditPage = () => {
             })}
           </div>
 
-          <hr></hr>
+          <hr />
           {reportDetail?.feedbackPriceInfo ? (
             <AdminReportFeedback
               initialValue={{
@@ -594,26 +606,46 @@ const AdminReportEditPage = () => {
             />
           ) : null}
 
-          <h2 className="mt-10">콘텐츠 편집</h2>
-          {reportDetail ? (
-            <EditorApp
-              initialEditorStateJsonString={reportDetail.contents}
-              onChange={onChangeEditor}
-            />
-          ) : null}
-          <TextField
-            value={editingValue.notice}
-            onChange={onChange}
-            variant="outlined"
-            name="notice"
-            size="small"
-            label="필독사항"
-            placeholder="필독사항을 입력하세요"
-            InputLabelProps={{
-              shrink: true,
-              style: { fontSize: '14px' },
-            }}
-          />
+          {content.review ? (
+            <>
+              {/* 레포트 후기 */}
+              <section>
+                <ReportReviewEditor
+                  review={content.review ?? { list: [] }}
+                  setReview={(review) =>
+                    setContent((prev) => ({ ...prev, review }))
+                  }
+                />
+              </section>
+
+              {/* 프로그램 추천 */}
+              <section className="mb-6">
+                <ReportProgramRecommendEditor
+                  // [주의] 속성이 중간에 추가되면서 타입과 달리 undefined일 수 있음
+                  reportProgramRecommend={content.reportProgramRecommend ?? {}}
+                  setReportProgramRecommend={(reportProgramRecommend) =>
+                    setContent((prev) => ({ ...prev, reportProgramRecommend }))
+                  }
+                />
+              </section>
+
+              <section>
+                <FaqSection
+                  programType={ProgramTypeEnum.enum.REPORT}
+                  faqInfo={editingValue.faqInfo ?? []}
+                  setFaqInfo={(faqInfo) =>
+                    setEditingValue((prev) => ({
+                      ...prev,
+                      faqInfo: faqInfo ?? [],
+                    }))
+                  }
+                />
+              </section>
+            </>
+          ) : (
+            // [서류진단 구버전] 수정 안됨
+            <EditorApp initialEditorStateJsonString={reportDetail?.contents} />
+          )}
 
           <div className="text-right">
             <div className="mb-1 flex items-center justify-end gap-4">
@@ -621,7 +653,7 @@ const AdminReportEditPage = () => {
                 variant="outlined"
                 type="button"
                 onClick={() => {
-                  navgiate('/admin/report/list');
+                  navigate('/admin/report/list');
                 }}
               >
                 취소 (리스트로 돌아가기)

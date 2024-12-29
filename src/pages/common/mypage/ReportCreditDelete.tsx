@@ -5,11 +5,9 @@ import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 
 import {
   getCouponDiscountPrice,
-  getDiscountPercent,
   getFeedbackDiscountedPrice,
   getFeedbackRefundPercent,
   getReportDiscountedPrice,
-  getReportPrice,
   getReportRefundPercent,
   getTotalRefund,
   nearestTen,
@@ -58,32 +56,24 @@ const ReportCreditDelete = () => {
     },
   });
 
-  const getOptionTitleList = () => {
-    if (!reportPaymentDetail) return [];
-
-    if (
-      !reportPaymentDetail.reportPaymentInfo.reportOptionInfos ||
-      reportPaymentDetail.reportPaymentInfo.reportOptionInfos.length === 0
-    )
+  const optionTitle = useMemo(() => {
+    if (reportPaymentDetail?.reportPaymentInfo.reportOptionInfos.length === 0)
       return '없음';
 
-    return reportPaymentDetail.reportPaymentInfo.reportOptionInfos
-      .map((option) => option?.title)
-      .join(', ');
-  };
+    const titleList =
+      reportPaymentDetail?.reportPaymentInfo.reportOptionInfos.map((option) =>
+        option?.optionTitle.startsWith('+') ? '문항 추가' : option?.optionTitle,
+      );
 
+    // "문항 추가" 중복 제거
+    return [...new Set(titleList)].join(', ');
+  }, [reportPaymentDetail?.reportPaymentInfo.reportOptionInfos]);
+
+  const applicationInfo = reportPaymentDetail?.reportApplicationInfo;
   const paymentInfo = reportPaymentDetail?.reportPaymentInfo;
-
-  const reportPrice = useMemo(() => {
-    return getReportPrice(paymentInfo);
-  }, [paymentInfo]);
 
   const reportDiscountedPrice = useMemo(() => {
     return getReportDiscountedPrice(paymentInfo);
-  }, [paymentInfo]);
-
-  const discountPercent = useMemo(() => {
-    return getDiscountPercent(paymentInfo);
   }, [paymentInfo]);
 
   const couponDiscountPrice = useMemo(() => {
@@ -113,6 +103,7 @@ const ReportCreditDelete = () => {
 
     return getTotalRefund({
       now: dayjs(),
+      applicationInfo,
       paymentInfo,
       reportApplicationStatus:
         reportPaymentDetail.reportApplicationInfo.reportApplicationStatus,
@@ -131,11 +122,12 @@ const ReportCreditDelete = () => {
 
     return getReportRefundPercent({
       now: dayjs(),
+      applicationInfo,
       paymentInfo,
       reportApplicationStatus:
         reportPaymentDetail.reportApplicationInfo.reportApplicationStatus,
     });
-  }, [paymentInfo, reportPaymentDetail]);
+  }, [paymentInfo, reportPaymentDetail, applicationInfo]);
 
   return (
     <section
@@ -171,13 +163,11 @@ const ReportCreditDelete = () => {
                   <div className="flex w-full flex-col gap-y-1">
                     <div className="flex w-full items-center justify-start gap-x-4 text-xs font-medium">
                       <div className="shrink-0 text-neutral-30">상품</div>
-                      <div className="text-primary-dark">{`서류 진단서 (${convertReportPriceType(reportPaymentDetail.reportApplicationInfo.reportPriceType)}${reportPaymentDetail.reportApplicationInfo.reportFeedbackApplicationId ? ', 1:1 피드백' : ''})`}</div>
+                      <div className="text-primary-dark">{`서류 진단서 (${convertReportPriceType(reportPaymentDetail.reportApplicationInfo.reportPriceType)}${reportPaymentDetail.reportApplicationInfo.reportFeedbackApplicationId ? ', 1:1 온라인 상담' : ''})`}</div>
                     </div>
                     <div className="flex w-full items-center justify-start gap-x-4 text-xs font-medium">
                       <div className="shrink-0 text-neutral-30">옵션</div>
-                      <div className="text-primary-dark">
-                        {getOptionTitleList()}
-                      </div>
+                      <div className="text-primary-dark">{optionTitle}</div>
                     </div>
                   </div>
                 </div>
@@ -233,7 +223,7 @@ const ReportCreditDelete = () => {
                     .reportFeedbackApplicationId && (
                     <div className="flex w-full flex-col">
                       <ReportCreditRow
-                        title={`1:1 피드백 예정 환불 금액`}
+                        title={`1:1 온라인 상담 예정 환불 금액`}
                         content={
                           nearestTen(
                             feedbackDiscountPrice * feedbackRefundPercent,

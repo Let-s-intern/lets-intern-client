@@ -35,6 +35,7 @@ module.exports = {
           dark: '#4138A3',
           light: '#757BFF',
           xlight: '#A9C1FF',
+          5: '#F5F6FF',
           10: '#EDEEFE',
           20: '#DBDDFD',
           30: '#CACCFC',
@@ -61,6 +62,7 @@ module.exports = {
         tertiary: '#CB81F2',
         point: '#DAFF7C',
         challenge: '#00A8EB',
+        requirement: '#FC5555',
         system: {
           'positive-green': '#1BC47D',
           'positive-blue': '#5177FF',
@@ -122,6 +124,13 @@ module.exports = {
         button:
           '0px 16px 20px 0px rgba(0, 0, 0, 0.12), 0px 8px 16px 0px rgba(0, 0, 0, 0.08), 0px 0px 8px 0px rgba(0, 0, 0, 0.08)',
       },
+      dropShadow: {
+        '05': [
+          '0px 16px 20px rgba(0, 0, 0, 0.12)',
+          '0px 8px 16px rgba(0, 0, 0, 0.08)',
+          '0px 0px 8px rgba(0, 0, 0, 0.08)',
+        ],
+      },
       backgroundImage: {
         'gradient-start':
           'linear-gradient(165deg, #EDEEFE 10.2%, #D1D4FF 93.43%)',
@@ -132,10 +141,14 @@ module.exports = {
           'linear-gradient(165deg, #667FFF 10.2%, #4D55F5 80.95%)',
         'gradient-desc':
           'linear-gradient(180deg, rgba(77, 85, 245, 0.00) 0%, rgba(77, 85, 245, 0.70) 100%)',
-        'blog-banner-sm': 'url("../public/images/blog_banner_bg_sm.png")',
-        'blog-banner-md': 'url("../public/images/blog_banner_bg_md.png")',
-        'blog-banner-lg': 'url("../public/images/blog_banner_bg_lg.png")',
+        'blog-banner-sm': 'url("/images/blog_banner_bg_sm.png")',
+        'blog-banner-md': 'url("/images/blog_banner_bg_md.png")',
+        'blog-banner-lg': 'url("/images/blog_banner_bg_lg.png")',
         'certificate-bg': 'url("/images/certificate_bg.png")',
+        'text-decoration-line-resume':
+          'url(/images/report/report-text-decoration-line-resume.svg)',
+        'text-decoration-line-personal-statement':
+          'url(/images/report/report-text-decoration-line-personal-statement.svg)',
       },
       keyframes: {
         'live-infinite-scroll-desktop': {
@@ -159,6 +172,7 @@ module.exports = {
       xxs: '0.25rem',
       xs: '0.375rem',
       sm: '0.5rem',
+      ms: '0.625rem',
       md: '0.75rem',
       lg: '1rem',
       xl: '1.25rem',
