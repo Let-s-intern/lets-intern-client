@@ -63,9 +63,7 @@ export function MobileApplyCTA({
       banner={
         showInstagramAlert ? (
           <PaymentErrorNotification className="border-t" />
-        ) : (
-          <></>
-        )
+        ) : undefined
       }
     >
       {isOutOfDate ? (
@@ -114,9 +112,11 @@ export const MobileCTA = memo(function MobileCTA({
       )}
     >
       {banner}
-      <div className="w-full bg-neutral-0/95 py-1.5 text-center font-bold text-static-100">
-        {title}
-      </div>
+      {!banner && (
+        <div className="w-full bg-neutral-0/95 py-1.5 text-center font-bold text-static-100">
+          {title}
+        </div>
+      )}
       <div className="flex w-full items-center justify-between px-5 pb-5 pt-3 text-neutral-80 backdrop-blur">
         {children}
       </div>
