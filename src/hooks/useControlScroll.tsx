@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 
-export default function useControlScroll(isOpen: boolean) {
-  // 사이드바/모달이 열리면 스크롤 제한
+/** 모달, 사이드바 등이 열리면 스크롤 제한 */
+export function useControlScroll(isOpen: boolean) {
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = 'hidden';

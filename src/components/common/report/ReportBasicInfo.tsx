@@ -20,11 +20,11 @@ export const BASIC_INFO: Record<
     },
     {
       title: '진행 방식',
-      content: <p>{`온라인 제출 → 48시간 이내 진단 → 첨삭 리포트 발송`}</p>,
+      content: <p>{`온라인 제출 → 48시간 이내 진단 → 피드백 리포트 발송`}</p>,
     },
     {
       title: '피드백 리포트',
-      content: <p>{`PDF 파일 제공(MY진단서 보기에서 확인 가능)`}</p>,
+      content: <p>{`PDF 파일 제공(MY 진단서 보기에서 확인 가능)`}</p>,
     },
   ],
   PERSONAL_STATEMENT: [
@@ -42,11 +42,11 @@ export const BASIC_INFO: Record<
     },
     {
       title: '진행 방식',
-      content: <p>{`온라인 제출 → 48시간 이내 진단 → 첨삭 리포트 발송`}</p>,
+      content: <p>{`온라인 제출 → 48시간 이내 진단 → 피드백 리포트 발송`}</p>,
     },
     {
       title: '피드백 리포트',
-      content: <p>{`PDF 파일 제공(MY진단서 보기에서 확인 가능)`}</p>,
+      content: <p>{`PDF 파일 제공(MY 진단서 보기에서 확인 가능)`}</p>,
     },
   ],
   PORTFOLIO: [
@@ -64,11 +64,11 @@ export const BASIC_INFO: Record<
     },
     {
       title: '진행 방식',
-      content: <p>{`온라인 제출 → 48시간 이내 진단 → 첨삭 리포트 발송`}</p>,
+      content: <p>{`온라인 제출 → 48시간 이내 진단 → 피드백 리포트 발송`}</p>,
     },
     {
       title: '피드백 리포트',
-      content: <p>{`PDF 파일 제공(MY진단서 보기에서 확인 가능)`}</p>,
+      content: <p>{`PDF 파일 제공(MY 진단서 보기에서 확인 가능)`}</p>,
     },
   ],
 };

@@ -9,10 +9,7 @@ interface ModalOverlayProps {
 const ModalOverlay = ({ onClose, className }: ModalOverlayProps) => {
   return (
     <div
-      className={twMerge(
-        'fixed inset-0 bg-black/75 backdrop-blur-sm',
-        className,
-      )}
+      className={twMerge('fixed inset-0 bg-black/75', className)}
       onClick={onClose}
       aria-hidden="true"
     />

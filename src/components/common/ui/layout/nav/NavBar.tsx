@@ -2,10 +2,12 @@ import { useQuery } from '@tanstack/react-query';
 import { useEffect, useRef, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 
-import useControlScroll from '@/hooks/useControlScroll';
+import { useGetActiveReports } from '@/api/report';
+import { useControlScroll } from '@/hooks/useControlScroll';
+import { twMerge } from '@/lib/twMerge';
+import useAuthStore from '@/store/useAuthStore';
 import useScrollStore from '@/store/useScrollStore';
-import useAuthStore from '../../../../../store/useAuthStore';
-import axios from '../../../../../utils/axios';
+import axios from '@/utils/axios';
 import KakaoChannel from './KakaoChannel';
 import NavItem from './NavItem';
 import { NavSubItemProps } from './NavSubItem';
@@ -38,16 +40,19 @@ const scrollEventPage = [
 
 const NavBar = () => {
   const navigate = useNavigate();
-  const { isLoggedIn, logout } = useAuthStore();
   const location = useLocation();
+  const lastScrollY = useRef(0);
+
   const [isOpen, setIsOpen] = useState(false);
   const [user, setUser] = useState<any>(null);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [reportItems, setReportItems] = useState<NavSubItemProps[]>([]);
   const [activeLink, setActiveLink] = useState<
     'HOME' | 'ABOUT' | 'PROGRAM' | 'ADMIN' | 'BLOG' | 'REPORT' | ''
   >('');
+
+  const { isLoggedIn, logout } = useAuthStore();
   const { setScrollDirection, scrollDirection } = useScrollStore();
-  const lastScrollY = useRef(0);
 
   const toggleMenu = () => {
     setIsOpen(!isOpen);
@@ -77,6 +82,31 @@ const NavBar = () => {
     retry: 1,
   });
 
+  const { data, isLoading } = useGetActiveReports();
+
+  useEffect(() => {
+    if (data) {
+      const navItems: NavSubItemProps[] = [];
+
+      if (data?.resumeInfo) {
+        navItems.push(reportHoverItem[0]);
+      }
+      if (data?.personalStatementInfo) {
+        navItems.push(reportHoverItem[1]);
+      }
+      if (data?.portfolioInfo) {
+        navItems.push(reportHoverItem[2]);
+      }
+
+      navItems.push(reportHoverItem[3]);
+
+      setReportItems(navItems);
+    } else {
+      setReportItems([reportHoverItem[3]]);
+    }
+  }, [data]);
+
+  // 사이드바 열리면 스크롤 제한
   useControlScroll(isOpen);
 
   useEffect(() => {
@@ -131,7 +161,7 @@ const NavBar = () => {
     return () => {
       window.removeEventListener('scroll', handleScroll);
     };
-  }, [location.pathname, setScrollDirection, scrollEventPage]);
+  }, [location.pathname, setScrollDirection]);
 
   return (
     <>
@@ -162,7 +192,8 @@ const NavBar = () => {
               as="div"
               to={reportHoverItem[0].to}
               active={activeLink === 'REPORT'}
-              hoverItem={reportHoverItem}
+              hoverItem={reportItems}
+              isItemLoaded={!isLoading && !!data}
             >
               🔥 서류 진단받고 합격하기
             </NavItem>
@@ -212,12 +243,13 @@ const NavBar = () => {
             : 'pointer-events-none opacity-0 ease-in'
         }`}
         onClick={toggleMenu}
-      ></div>
+      />
       {/* 사이드 네비게이션 바 */}
       <div
-        className={`fixed right-0 top-0 z-50 flex h-screen w-full flex-col bg-white shadow-md transition-all duration-300 sm:w-[22rem] ${
-          isOpen ? 'translate-x-0' : 'translate-x-full'
-        }`}
+        className={twMerge(
+          'fixed right-0 top-0 z-50 flex h-screen w-full flex-col bg-white shadow-md transition-all duration-300 sm:w-[22rem]',
+          isOpen ? 'translate-x-0' : 'translate-x-full',
+        )}
       >
         <div className="flex w-full items-center justify-between p-5">
           <div className="h-7">

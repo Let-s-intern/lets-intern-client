@@ -137,34 +137,36 @@ const ReportExampleSection = ({
             </span>
           </div>
         </div>
-        <div className="relative">
-          <div className="w-full overflow-x-hidden">
-            <div
-              className="snap-align-start flex w-full snap-x snap-mandatory items-stretch gap-x-3 overflow-auto scroll-smooth md:overflow-hidden"
-              ref={scrollRef}
-            >
-              {example.map((example, index) => (
-                <div
-                  key={index}
-                  ref={(el) => (itemRefs.current[index] = el)}
-                  className="flex min-h-[455px] w-[90%] shrink-0 cursor-pointer snap-start flex-col md:min-h-[673px] md:w-[calc(50%-6px)]"
-                  onClick={() => setClickedExample(index)}
-                >
-                  <ReportExampleCard example={example} />
-                </div>
-              ))}
+        <div className="w-full">
+          <div className="relative">
+            <div className="w-full overflow-x-hidden">
+              <div
+                className="snap-align-start flex w-full snap-x snap-mandatory items-stretch gap-x-3 overflow-auto scroll-smooth md:overflow-hidden"
+                ref={scrollRef}
+              >
+                {example.map((example, index) => (
+                  <div
+                    key={index}
+                    ref={(el) => (itemRefs.current[index] = el)}
+                    className="flex min-h-[455px] w-[90%] shrink-0 cursor-pointer snap-start flex-col md:min-h-[673px] md:w-[calc(50%-6px)]"
+                    onClick={() => setClickedExample(index)}
+                  >
+                    <ReportExampleCard example={example} />
+                  </div>
+                ))}
+              </div>
             </div>
+            <PrevButton
+              className="absolute left-0 top-1/2 z-10 hidden h-16 w-16 -translate-x-1/2 -translate-y-1/2 transform cursor-pointer transition-all duration-300 ease-in-out hover:scale-110 md:block"
+              style={{ color: baseColor }}
+              onClick={() => handleScroll('left')}
+            />
+            <NextButton
+              className="absolute right-0 top-1/2 hidden h-16 w-16 -translate-y-1/2 translate-x-1/2 transform cursor-pointer transition-all duration-300 ease-in-out hover:scale-110 md:block"
+              style={{ color: baseColor }}
+              onClick={() => handleScroll('right')}
+            />
           </div>
-          <PrevButton
-            className="absolute left-0 top-1/2 z-10 hidden h-16 w-16 -translate-x-1/2 -translate-y-1/2 transform cursor-pointer md:block"
-            style={{ color: baseColor }}
-            onClick={() => handleScroll('left')}
-          />
-          <NextButton
-            className="absolute right-0 top-1/2 hidden h-16 w-16 -translate-y-1/2 translate-x-1/2 transform cursor-pointer md:block"
-            style={{ color: baseColor }}
-            onClick={() => handleScroll('right')}
-          />
         </div>
       </div>
       {clickedExample !== null && (
@@ -192,13 +194,13 @@ const ReportExampleSection = ({
                 className="h-auto w-full bg-white"
               />
               <PrevButton
-                className="absolute left-0 top-1/2 z-10 h-8 w-8 -translate-x-1/2 -translate-y-1/2 transform cursor-pointer text-neutral-20 md:h-16 md:w-16"
+                className="absolute left-0 top-1/2 z-10 h-8 w-8 -translate-x-1/2 -translate-y-1/2 transform cursor-pointer text-neutral-20 transition-all duration-300 ease-in-out hover:scale-110 md:h-16 md:w-16"
                 onClick={() =>
                   setClickedExample(clickedExample > 0 ? clickedExample - 1 : 0)
                 }
               />
               <NextButton
-                className="absolute right-0 top-1/2 h-8 w-8 -translate-y-1/2 translate-x-1/2 transform cursor-pointer text-neutral-20 md:h-16 md:w-16"
+                className="absolute right-0 top-1/2 h-8 w-8 -translate-y-1/2 translate-x-1/2 transform cursor-pointer text-neutral-20 transition-all duration-300 ease-in-out hover:scale-110 md:h-16 md:w-16"
                 onClick={() =>
                   setClickedExample(
                     clickedExample < example.length - 1

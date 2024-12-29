@@ -56,8 +56,8 @@ const ReportReviewSection = ({
         <div className="flex w-full flex-col gap-y-[60px] text-white md:gap-y-20">
           {reportReview && reportReview.list.length > 0 && (
             <>
-              <div className="mx-auto max-w-full overflow-x-hidden">
-                <div className="flex w-full auto-rows-fr items-stretch gap-x-3 gap-y-5 overflow-x-auto scroll-smooth md:grid md:grid-cols-[1fr_1fr]">
+              <div className="w-full overflow-x-hidden">
+                <div className="grid grid-rows-1 items-stretch gap-x-3 gap-y-5 overflow-x-auto scroll-smooth md:w-full md:auto-rows-fr md:grid-cols-[1fr_1fr] md:grid-rows-none">
                   {reportReview.list.map((item, index) => (
                     <ReportInterviewCard
                       key={`report-interview-${index}`}

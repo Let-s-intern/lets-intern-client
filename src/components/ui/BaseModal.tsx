@@ -1,4 +1,4 @@
-import useControlScroll from '@/hooks/useControlScroll';
+import { useControlScroll } from '@/hooks/useControlScroll';
 import { twMerge } from '@/lib/twMerge';
 import ModalOverlay from './ModalOverlay';
 import ModalPortal from './ModalPortal';
