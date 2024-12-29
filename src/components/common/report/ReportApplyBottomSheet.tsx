@@ -333,9 +333,7 @@ const ReportApplyBottomSheet = React.forwardRef<
             banner={
               showInstagramAlert ? (
                 <PaymentErrorNotification className="border-t" />
-              ) : (
-                <></>
-              )
+              ) : undefined
             }
           >
             <GradientButton
