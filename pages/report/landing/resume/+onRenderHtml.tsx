@@ -51,7 +51,7 @@ const onRenderHtml: OnRenderHtmlAsync = async (pageContext) => {
     pageHtml,
     title: getReportLandingTitle(data.resumeInfo?.title || '이력서'),
     description: resumeReportDescription,
-    image: `${getBaseUrlFromServer()}/images/report/open-graph-resume.svg`,
+    image: `${getBaseUrlFromServer()}/images/report/open-graph-resume.png`,
     url: `${getBaseUrlFromServer()}/report/landing/resume`,
   });
 };
