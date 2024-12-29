@@ -77,7 +77,7 @@ const ReportPlanSection = ({
           '6가지 핵심 기준 기반 이력서 진단 및 피드백',
           '서류 작성 고민 상담 및 솔루션',
           '직무/산업별 합격자 예시 자료 제공',
-          '채용공고 기반 직무 역량 분석 및 맞춤 피드백 제공',
+          '채용공고 기반 직무 역량 분석 및\n맞춤 피드백 제공',
           '공고 요구사항 반영 여부 및 적합 키워드 제안',
         ];
     }
@@ -162,9 +162,11 @@ const ReportPlanSection = ({
                 <div className="flex flex-col gap-3">
                   {premiumPlan.map((item, index) => {
                     let element: ReactElement = <></>;
+                    const isPersonalStatement =
+                      reportType === 'PERSONAL_STATEMENT';
 
                     // 예외 문항
-                    if (index === 3) {
+                    if (isPersonalStatement && index === 3) {
                       const splited = item.split('전체 총평 페이지');
 
                       element = (
@@ -189,7 +191,7 @@ const ReportPlanSection = ({
                         {reportType === 'PERSONAL_STATEMENT' && index === 0 && (
                           <s className="block">자소서 1문항 피드백 제공</s>
                         )}
-                        {index === 3 ? element : item}
+                        {isPersonalStatement && index === 3 ? element : item}
                       </NumberedListItem>
                     );
                   })}
