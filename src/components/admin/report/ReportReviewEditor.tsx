@@ -12,8 +12,7 @@ interface ReportReviewEditorProps {
 
 function ReportReviewEditor({ review, setReview }: ReportReviewEditorProps) {
   const onClickAddButton = () => {
-    console.log('onClickAddButton');
-    console.log(review);
+    console.log('리뷰:', review);
     if (review.list.length > 0 && review.list.some((ele) => !ele.profile)) {
       // profile 없는 review 모두 제거
       setReview({
