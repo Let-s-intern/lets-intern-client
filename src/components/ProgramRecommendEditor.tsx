@@ -2,7 +2,7 @@ import { Box, Button, Modal, Typography } from '@mui/material';
 import { useState } from 'react';
 
 import { useGetProgramAdminQuery } from '@/api/program';
-import { ProgramStatusEnum, ProgramTypeUpperCase } from '@/schema';
+import { ProgramTypeUpperCase } from '@/schema';
 import { ProgramRecommend } from '@/types/interface';
 import { newProgramTypeToText, programStatusToText } from '@/utils/convert';
 import Heading2 from '@components/admin/ui/heading/Heading2';
@@ -62,7 +62,6 @@ const ProgramRecommendEditor = ({
   const programAdminRes = useGetProgramAdminQuery({
     page: 1,
     size: 10000,
-    status: ProgramStatusEnum.enum.PROCEEDING,
   });
 
   const onClose = () => setSelectModalOpen(false);
@@ -207,6 +206,7 @@ const ProgramRecommendEditor = ({
                         key={item.programInfo.id}
                         className="divide-x divide-y"
                       >
+                        {/* 체크박스 */}
                         <td className="text-center">
                           <input
                             className="h-4 w-4"
@@ -247,6 +247,7 @@ const ProgramRecommendEditor = ({
                             }}
                           />
                         </td>
+                        {/* 순서 */}
                         <td className="px-2 py-1">
                           <div className="flex items-center justify-center">
                             <span className="whitespace-nowrap text-xsmall14">
@@ -254,6 +255,7 @@ const ProgramRecommendEditor = ({
                             </span>
                           </div>
                         </td>
+                        {/* 프로그램 분류 */}
                         <td className="p-1">
                           <div className="flex items-center justify-center">
                             <span className="whitespace-nowrap text-xsmall14">
@@ -265,9 +267,11 @@ const ProgramRecommendEditor = ({
                             </span>
                           </div>
                         </td>
+                        {/* 제목 */}
                         <td className="whitespace-nowrap p-1 text-xsmall14">
                           {item.programInfo.title}
                         </td>
+                        {/* 모집 상태 */}
                         <td className="whitespace-nowrap text-center text-xsmall14">
                           {
                             programStatusToText[
@@ -275,6 +279,7 @@ const ProgramRecommendEditor = ({
                             ]
                           }
                         </td>
+                        {/* 노출 여부 */}
                         <td className="whitespace-nowrap text-center text-xsmall14">
                           {item.programInfo.isVisible ? '✅' : '❌'}
                         </td>
