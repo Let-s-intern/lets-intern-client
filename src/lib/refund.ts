@@ -118,8 +118,9 @@ export const getReportRefundPercent = ({
 
   // 상태가 "신청완료"일 때 결제 후 3시간 이내 : 100% 환불
   if (
-    reportApplicationStatus === 'APPLIED' &&
-    now.diff(dayjs(applicationInfo.applyUrlDate), 'hour') < 3
+    !applicationInfo.applyUrlDate ||
+    (reportApplicationStatus === 'APPLIED' &&
+      now.diff(dayjs(applicationInfo.applyUrlDate), 'hour') < 3)
   ) {
     return 1;
   }
