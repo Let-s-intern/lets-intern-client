@@ -145,7 +145,7 @@ const ReportProgramRecommendSlider = ({
     if (resumeReport && reportProgramRecommend.reportResume?.title) {
       list.push({
         id: 'RESUME' + resumeReport.id,
-        backgroundImage: '',
+        backgroundImage: '/images/report/thumbnail_resume.png',
         title: reportProgramRecommend.reportResume?.title,
         cta:
           reportProgramRecommend.reportResume?.cta ?? '이력서 진단받으러 가기',
@@ -164,7 +164,7 @@ const ReportProgramRecommendSlider = ({
     ) {
       list.push({
         id: 'PERSONAL_STATEMENT' + personalStatementReport.id,
-        backgroundImage: '',
+        backgroundImage: '/images/report/thumbnail_personal.png',
         title: reportProgramRecommend.reportPersonalStatement?.title,
         cta:
           reportProgramRecommend.reportPersonalStatement?.cta ??

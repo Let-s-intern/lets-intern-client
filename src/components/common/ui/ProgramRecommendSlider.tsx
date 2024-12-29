@@ -35,7 +35,7 @@ function ProgramRecommendSlider({
             className="flex w-[262px] flex-col items-center md:w-[312px]"
           >
             <div
-              className="aspect-[4/3] h-[199px] w-auto overflow-hidden rounded-sm bg-neutral-50 md:h-[235px]"
+              className="aspect-[4/3] h-[12rem] w-full overflow-hidden rounded-sm bg-neutral-50 md:h-[15rem]"
               style={{
                 backgroundImage: `url(${item.backgroundImage})`,
                 backgroundSize: 'cover',
