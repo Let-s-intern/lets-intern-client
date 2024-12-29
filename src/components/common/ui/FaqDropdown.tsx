@@ -5,7 +5,7 @@ import { twMerge } from '@/lib/twMerge';
 import { Faq } from '@/schema';
 
 function FaqDropdown({ faq }: { faq: Faq }) {
-  const [isOpen, setIsOpen] = useState(true);
+  const [isOpen, setIsOpen] = useState(false);
 
   return (
     <div
