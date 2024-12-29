@@ -148,7 +148,7 @@ const ReportExampleSection = ({
                   <div
                     key={index}
                     ref={(el) => (itemRefs.current[index] = el)}
-                    className="flex min-h-[455px] w-[90%] shrink-0 cursor-pointer snap-start flex-col md:min-h-[673px] md:w-[calc(50%-6px)]"
+                    className="flex w-[90%] shrink-0 cursor-pointer snap-start flex-col md:w-[calc(50%-6px)]"
                     onClick={() => setClickedExample(index)}
                   >
                     <ReportExampleCard example={example} />
@@ -189,7 +189,7 @@ const ReportExampleSection = ({
             </div>
             <div className="relative mt-2.5 md:mt-2">
               <img
-                src={example[clickedExample].src}
+                src={example[clickedExample].modalSrc}
                 alt={example[clickedExample].title}
                 className="h-auto w-full bg-white"
               />
