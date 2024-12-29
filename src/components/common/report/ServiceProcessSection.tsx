@@ -11,13 +11,13 @@ import SectionHeader from './SectionHeader';
 import SubHeader from './SubHeader';
 
 const SECTION_HEADER = '서비스 이용 방법';
-const SUB_HEADER = '48시간 이내 진단 완료!';
 
 interface ServiceProcessSectionProps {
   reportType: ReportType;
 }
 
 const ServiceProcessSection = ({ reportType }: ServiceProcessSectionProps) => {
+  const subHeader = `${reportType === 'PERSONAL_STATEMENT' ? 72 : 48}시간 이내 진단 완료!`;
   const subHeaderStyle = {
     color:
       reportType === 'PERSONAL_STATEMENT'
@@ -61,7 +61,7 @@ const ServiceProcessSection = ({ reportType }: ServiceProcessSectionProps) => {
           {SECTION_HEADER}
         </SectionHeader>
         <SubHeader className="mb-1 md:mb-3" style={subHeaderStyle}>
-          {SUB_HEADER}
+          {subHeader}
         </SubHeader>
         <MainHeader>
           진단 완료까지 단 이틀,
@@ -99,8 +99,7 @@ const ServiceProcessSection = ({ reportType }: ServiceProcessSectionProps) => {
                 <p className="text-xxsmall12 font-semibold md:text-xsmall16 md:font-medium">
                   어떤 부분에서 어려움을 겪고 있는지,
                   <br className="md:hidden" /> 무엇을 개선하고 싶은지
-                  적어주시면,
-                  <br /> 전문가가 보다 정확한 피드백을
+                  적어주시면, 전문가가 보다 정확한 피드백을
                   <br className="md:hidden" /> 제공해 드려요!
                 </p>
               </div>
