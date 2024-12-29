@@ -43,8 +43,6 @@ const ReportNavigation = ({
   useEffect(() => {
     if (!isReady || typeof window === 'undefined') return;
 
-    console.log('isReady', isReady);
-
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
@@ -62,7 +60,6 @@ const ReportNavigation = ({
 
     navItems.forEach((navItem) => {
       const target = document.getElementById(navItem.to);
-      console.log('target:', target);
       if (target) {
         observer.observe(target);
       }
@@ -80,16 +77,12 @@ const ReportNavigation = ({
 
   useEffect(() => {
     if (!isReady) {
-      console.log('isReady is not ready');
       return;
     }
 
     if (typeof window === 'undefined') {
-      console.log('window is undefined');
       return;
     }
-
-    console.log('isReady:', isReady);
   }, [isReady]);
 
   const handleScroll = (id: string) => {

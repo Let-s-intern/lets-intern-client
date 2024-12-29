@@ -2,6 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useEffect, useRef, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 
+import useControlScroll from '@/hooks/useControlScroll';
 import useScrollStore from '@/store/useScrollStore';
 import useAuthStore from '../../../../../store/useAuthStore';
 import axios from '../../../../../utils/axios';
@@ -75,6 +76,8 @@ const NavBar = () => {
     enabled: isLoggedIn,
     retry: 1,
   });
+
+  useControlScroll(isOpen);
 
   useEffect(() => {
     if (location.pathname.startsWith('/about')) {
@@ -212,12 +215,12 @@ const NavBar = () => {
       ></div>
       {/* 사이드 네비게이션 바 */}
       <div
-        className={`fixed right-0 top-0 z-50 h-screen w-full bg-white shadow-md transition-all duration-300 sm:w-[22rem] ${
+        className={`fixed right-0 top-0 z-50 flex h-screen w-full flex-col bg-white shadow-md transition-all duration-300 sm:w-[22rem] ${
           isOpen ? 'translate-x-0' : 'translate-x-full'
         }`}
       >
         <div className="flex w-full items-center justify-between p-5">
-          <div className="h-[1.75rem]">
+          <div className="h-7">
             <img
               className="h-full w-auto"
               src="/logo/logo-gradient-text.svg"
@@ -234,7 +237,7 @@ const NavBar = () => {
         </div>
         <hr />
         <KakaoChannel />
-        <div className="flex flex-col gap-5 py-10">
+        <div className="flex flex-col gap-5 overflow-y-auto py-10">
           <div className="mx-5 flex justify-between">
             {isLoggedIn ? (
               <span className="flex w-full items-center justify-between gap-4 text-neutral-0 sm:p-0">
@@ -269,7 +272,7 @@ const NavBar = () => {
               </div>
             )}
           </div>
-          <div className="flex flex-col gap-2">
+          <div className="flex h-full flex-col gap-2">
             <SideNavItem to="/mypage/application" onClick={closeMenu}>
               마이페이지
             </SideNavItem>

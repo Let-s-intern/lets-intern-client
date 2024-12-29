@@ -1,5 +1,5 @@
+import useControlScroll from '@/hooks/useControlScroll';
 import { twMerge } from '@/lib/twMerge';
-import { useEffect } from 'react';
 import ModalOverlay from './ModalOverlay';
 import ModalPortal from './ModalPortal';
 
@@ -25,14 +25,7 @@ const BaseModal = ({
   className,
 }: BaseModalProps) => {
   // 스크롤 제어
-  useEffect(() => {
-    if (isOpen) {
-      document.body.style.overflow = 'hidden';
-      return () => {
-        document.body.style.overflow = 'unset';
-      };
-    }
-  }, [isOpen]);
+  useControlScroll(isOpen);
 
   if (!isOpen) return null;
 
@@ -46,7 +39,7 @@ const BaseModal = ({
         <ModalOverlay onClose={onClose} />
         <div
           className={twMerge(
-            'rounded-ms relative w-full overflow-hidden bg-white',
+            'relative w-full overflow-hidden rounded-ms bg-white',
             className,
           )}
         >
