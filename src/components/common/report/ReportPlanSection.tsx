@@ -140,7 +140,11 @@ const ReportPlanSection = ({
             <PriceCard
               className="min-w-[18rem] px-5 py-4 md:gap-5 md:px-6 md:py-7"
               reportType={reportType}
-              bannerText={`채용 공고 맞춤형 ${convertReportTypeToDisplayName(reportType)}를 원한다면,`}
+              bannerText={
+                reportType === 'PERSONAL_STATEMENT'
+                  ? '저렴한 가격에 전체 피드백을 받고 싶다면'
+                  : `채용 공고 맞춤형 ${convertReportTypeToDisplayName(reportType)}를 원한다면,`
+              }
               bannerColor={
                 reportType === 'PERSONAL_STATEMENT'
                   ? personalStatementColors.CA60FF
