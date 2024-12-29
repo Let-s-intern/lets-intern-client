@@ -197,7 +197,7 @@ export const REPORT_INTRO: Record<ReportType, reportIntroItemType> = {
         },
         {
           image: '/images/report/report_intro_section0_resume_2.png',
-          desc: '72시간 이내 진단 →',
+          desc: '48시간 이내 진단 →',
         },
         {
           image: '/images/report/report_intro_section0_resume_3.png',
@@ -254,7 +254,7 @@ export const REPORT_INTRO: Record<ReportType, reportIntroItemType> = {
         },
         {
           image: '/images/report/report_intro_section0_personal_2.png',
-          desc: '48시간 이내 진단 →',
+          desc: '72시간 이내 진단 →',
         },
         {
           image: '/images/report/report_intro_section0_personal_3.png',
