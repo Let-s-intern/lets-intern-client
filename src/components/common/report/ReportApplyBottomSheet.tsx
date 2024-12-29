@@ -437,8 +437,8 @@ const ReportApplyBottomSheet = React.forwardRef<
                     </Heading2>
                     <div>
                       <ReportPriceView
-                        price={selectedQuestionOptions.price}
-                        discount={selectedQuestionOptions.discount}
+                        price={(questionOptionInfos ?? [])[0].price}
+                        discount={(questionOptionInfos ?? [])[0].discountPrice}
                       />
                       {/* Counter */}
                       <div className="mt-3 flex items-center rounded-xs border border-[#D6D6D6]">
