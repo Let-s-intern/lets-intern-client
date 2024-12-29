@@ -92,7 +92,7 @@ const ReportCreditDetail = () => {
     if (
       !reportPaymentDetail?.reportApplicationInfo.reportFeedbackApplicationId
     ) {
-      return true;
+      return false;
     }
 
     // 1. 일정 확정 이전
