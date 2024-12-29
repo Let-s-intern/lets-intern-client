@@ -106,7 +106,7 @@ export const REPORT_EXAMPLE: Record<ReportType, reportExampleContentType[]> = {
       title: `7. 직무별 합격 비결을 담은\n자소서 예시 제공`,
       src: '/images/report/report_example_1.png',
       description: [
-        `지원 직무와 유사한 합격자 사례를 참고하여, 직무 적합성과 설득력을 높이는 자소서 작성 방향을 제안`,
+        `지원 직무와 유사한 합격자 사례를 참고하여, 직무적합성과 설득력을 높이는 자소서 작성 방향을 제안`,
       ],
     },
     {
@@ -181,7 +181,7 @@ export const REPORT_INTRO: Record<ReportType, reportIntroItemType> = {
         },
         {
           image: '/images/report/report_intro_section0_resume_3.png',
-          desc: '피드백 리포트 발송 →',
+          desc: '피드백 리포트 발송',
         },
       ],
     },
@@ -189,7 +189,7 @@ export const REPORT_INTRO: Record<ReportType, reportIntroItemType> = {
       title: `혹시 반복되는 탈락에도\n매번 같은 이력서로\n\n지원하고 있지 않나요?`,
       questions: [
         '왜 내 서류는 자꾸 탈락할까?',
-        `채용공고에 나와 있는 직무필수역량을\n내 이력서에 제대로 담아냈을까?`,
+        `채용공고에 나와 있는 직무 필수 역량을\n내 이력서에 제대로 담아냈을까?`,
         `성과, 이렇게 수치화해서\n\n적는 게 맞는 걸까?`,
       ],
     },
@@ -204,7 +204,7 @@ export const REPORT_INTRO: Record<ReportType, reportIntroItemType> = {
       description: `나의 강점과 직무에 적합한 역량을\n\n명확히 전달하는 서류,\n이것이 바로 합격의 시작입니다.`,
       before: [
         '중구난방인 구조와 낮은 가독성',
-        '뾰족히 정리되지 않은 강점',
+        '뾰족이 정리되지 않은 강점',
         '직무와 무관해 보이는 경험',
         '수치화가 안된 임팩트 없는 성과',
       ],
@@ -238,7 +238,7 @@ export const REPORT_INTRO: Record<ReportType, reportIntroItemType> = {
         },
         {
           image: '/images/report/report_intro_section0_personal_3.png',
-          desc: '피드백 리포트 발송 →',
+          desc: '피드백 리포트 발송',
         },
       ],
     },
@@ -246,7 +246,7 @@ export const REPORT_INTRO: Record<ReportType, reportIntroItemType> = {
       title: `혹시 마감에 급급해 충분히 다듬지 못한\n자소서를 그대로 제출하고 있지 않나요?`,
       questions: [
         '왜 내 서류는 자꾸 탈락할까?',
-        `채용공고에 나와 있는 직무필수역량을\n내 이야기로 설득력 있게 담아냈을까?`,
+        `채용공고에 나와 있는 직무 필수 역량을\n내 이야기로 설득력 있게 담아냈을까?`,
         `성과, 이렇게 수치화해서\n\n적는 게 맞는 걸까?`,
       ],
     },
@@ -261,13 +261,13 @@ export const REPORT_INTRO: Record<ReportType, reportIntroItemType> = {
       title: `렛츠커리어의 자기소개서 피드백 REPORT는\n평가자의 시선을 사로잡는 자소서로 합격의 가능성을 높여드립니다.`,
       description: `나의 강점과 직무에 적합한 역량을\n\n명확히 전달하는 자소서,\n이것이 바로 합격의 시작입니다.`,
       before: [
-        '불분명한 지원동기',
-        '두루뭉실한 경험 서술',
-        '뾰족히 정리되지 않은 강점',
+        '불분명한 지원 동기',
+        '두루뭉술한 경험 서술',
+        '뾰족이 정리되지 않은 강점',
         '뚝뚝 끊기는 이야기 전개',
       ],
       after: [
-        '직무와 연관된 확실한 지원동기',
+        '직무와 연관된 확실한 지원 동기',
         '구체적인 경험 서술',
         '명확하게 정리된 나의 강점',
         '매끄러운 스토리텔링',
@@ -296,7 +296,7 @@ export const REPORT_INTRO: Record<ReportType, reportIntroItemType> = {
         },
         {
           image: '/images/report/report_intro_section0_resume_3.png',
-          desc: '피드백 리포트 발송 →',
+          desc: '피드백 리포트 발송',
         },
       ],
     },
@@ -304,7 +304,7 @@ export const REPORT_INTRO: Record<ReportType, reportIntroItemType> = {
       title: `혹시 반복되는 탈락에도\n매번 같은 이력서로 지원하고 있지 않나요?`,
       questions: [
         '왜 내 서류는 자꾸 탈락할까?',
-        '채용공고에 나와 있는 직무필수역량을 내 이력서에 제대로 담아냈을까?',
+        '채용공고에 나와 있는 직무 필수 역량을 내 이력서에 제대로 담아냈을까?',
         '성과, 이렇게 수치화해서 적는 게 맞는 걸까?',
       ],
     },
@@ -320,7 +320,7 @@ export const REPORT_INTRO: Record<ReportType, reportIntroItemType> = {
       description: `나의 강점과 직무에 적합한 역량을\n\n명확히 전달하는 서류,\n이것이 바로 합격의 시작입니다.`,
       before: [
         '중구난방인 구조와 낮은 가독성',
-        '뾰족히 정리되지 않은 강점',
+        '뾰족이 정리되지 않은 강점',
         '직무와 무관해 보이는 경험',
         '수치화가 안된 임팩트 없는 성과',
       ],

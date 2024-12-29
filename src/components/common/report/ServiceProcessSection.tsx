@@ -95,13 +95,13 @@ const ServiceProcessSection = ({ reportType }: ServiceProcessSectionProps) => {
                 지원 직무와 고민 사항을 작성해 주세요.
               </NumberedContent>
               <div className="mt-3 flex items-start gap-2">
-                <Badge style={badgeStyle}>작성꿀팁</Badge>
+                <Badge style={badgeStyle}>작성 꿀팁</Badge>
                 <p className="text-xxsmall12 font-semibold md:text-xsmall16 md:font-medium">
                   어떤 부분에서 어려움을 겪고 있는지,
                   <br className="md:hidden" /> 무엇을 개선하고 싶은지
                   적어주시면,
                   <br /> 전문가가 보다 정확한 피드백을
-                  <br className="md:hidden" /> 제공해드려요!
+                  <br className="md:hidden" /> 제공해 드려요!
                 </p>
               </div>
             </ContentBox>
@@ -194,8 +194,8 @@ const ServiceProcessSection = ({ reportType }: ServiceProcessSectionProps) => {
                 <br className="md:hidden" /> REPORT를 확인합니다.
               </NumberedContent>
               <span className="text-xxsmall12 text-neutral-0 md:text-xsmall14 md:text-neutral-35">
-                *MY 진단서 보기에서 확인 가능 / 발행된 리포트는 PDF로 다운로드
-                가능합니다.
+                *MY 진단서 보기에서 확인할 수 있고, 발행된 리포트는 PDF로
+                다운로드 가능합니다.
               </span>
             </ContentBox>
           </div>
@@ -216,7 +216,7 @@ const ServiceProcessSection = ({ reportType }: ServiceProcessSectionProps) => {
                 { 'text-white': reportType === 'PERSONAL_STATEMENT' },
               )}
             >
-              별도구매시
+              별도 구매 시
             </span>
             1:1 온라인 상담 진행
           </NumberedTitle>
