@@ -232,32 +232,34 @@ const ReportPlanSection = ({
         >
           {/* 옵션 */}
           {optionInfos && optionInfos.length > 0 && (
-            <PriceCard>
-              <Badge className="mb-1">선택 옵션 1</Badge>
-              <CardMainHeader>현직자 서면 피드백</CardMainHeader>
-              <p className="mb-2 mt-1 text-xsmall14 text-neutral-0 md:text-small18">
-                현직자가 제공하는 심층 서류 피드백 및 작성 노하우
-              </p>
-              <p className="mb-1.5 text-xxsmall12 font-light text-neutral-35 md:text-xsmall14">
-                *피드백 받고 싶은 현직자 여러 명 옵션 추가 가능
-              </p>
-              <div
-                className={twMerge(
-                  'mb-5 mt-3 md:mb-6',
-                  // 자소서 옵션은 flex, 그 외는 grid
-                  reportType === 'PERSONAL_STATEMENT'
-                    ? 'flex flex-col gap-1.5 md:gap-2'
-                    : 'grid grid-cols-2 gap-x-1.5 gap-y-2 md:gap-2',
-                )}
-              >
-                {(optionTitles ?? []).map((title, index) => (
-                  <div
-                    key={index}
-                    className="rounded-xs bg-[#EEFAFF] py-2 text-center text-xxsmall12 font-medium md:text-xsmall14"
-                  >
-                    {title}
-                  </div>
-                ))}
+            <PriceCard className="flex flex-col md:justify-between">
+              <div className="mb-5 md:mb-6">
+                <Badge className="mb-1">선택 옵션 1</Badge>
+                <CardMainHeader>현직자 서면 피드백</CardMainHeader>
+                <p className="mb-2 mt-1 text-xsmall14 text-neutral-0 md:text-small18">
+                  현직자가 제공하는 심층 서류 피드백 및 작성 노하우
+                </p>
+                <p className="mb-1.5 text-xxsmall12 font-light text-neutral-35 md:text-xsmall14">
+                  *피드백 받고 싶은 현직자 여러 명 옵션 추가 가능
+                </p>
+                <div
+                  className={twMerge(
+                    'mt-3',
+                    // 자소서 옵션은 flex, 그 외는 grid
+                    reportType === 'PERSONAL_STATEMENT'
+                      ? 'flex flex-col gap-1.5 md:gap-2'
+                      : 'grid grid-cols-2 gap-x-1.5 gap-y-2 md:gap-2',
+                  )}
+                >
+                  {(optionTitles ?? []).map((title, index) => (
+                    <div
+                      key={index}
+                      className="rounded-xs bg-[#EEFAFF] py-2 text-center text-xxsmall12 font-medium md:text-xsmall14"
+                    >
+                      {title}
+                    </div>
+                  ))}
+                </div>
               </div>
               <div>
                 <span className="mb-1.5 block text-xxsmall12 text-neutral-45 md:text-xsmall16">
@@ -274,6 +276,7 @@ const ReportPlanSection = ({
 
           {/* 1:1 피드백 */}
           <PriceCard
+            className="flex flex-col md:justify-between"
             reportType={reportType}
             bannerText="무한 질문 & 심층 피드백을 받고 싶다면,"
             bannerColor={
@@ -287,23 +290,25 @@ const ReportPlanSection = ({
             showBubbleTail={isMobile ? false : true}
             floatingBannerClassName="left-5 -top-2 md:left-auto md:right-2 md:-top-3"
           >
-            <Badge className="mb-1">선택 옵션 2</Badge>
-            <CardMainHeader>
-              무제한 질문으로 고민 해결,
-              <br />
-              1:1 온라인 상담
-            </CardMainHeader>
-            <div className="mb-5 flex flex-col gap-3 md:mb-16">
-              {feedback.map((item, index) => (
-                <NumberedListItem key={index} number={index + 1}>
-                  {/* 예외 문항 */}
-                  {index === 0 ? (
-                    <span className="font-bold">{item}</span>
-                  ) : (
-                    item
-                  )}
-                </NumberedListItem>
-              ))}
+            <div className="mb-5 md:mb-6">
+              <Badge className="mb-1">선택 옵션 2</Badge>
+              <CardMainHeader>
+                무제한 질문으로 고민 해결,
+                <br />
+                1:1 온라인 상담
+              </CardMainHeader>
+              <div className="flex flex-col gap-3">
+                {feedback.map((item, index) => (
+                  <NumberedListItem key={index} number={index + 1}>
+                    {/* 예외 문항 */}
+                    {index === 0 ? (
+                      <span className="font-bold">{item}</span>
+                    ) : (
+                      item
+                    )}
+                  </NumberedListItem>
+                ))}
+              </div>
             </div>
             <PriceSection
               originalPrice={feedbackInfo?.feedbackPrice ?? 0}
