@@ -111,6 +111,8 @@ export const getReportRefundPercent = ({
   reportApplicationStatus: ReportApplicationStatus;
 }) => {
   if (!paymentInfo || !applicationInfo) {
+    console.log('paymentInfo', paymentInfo);
+    console.log('applicationInfo', applicationInfo);
     return 0;
   }
 
@@ -229,6 +231,16 @@ export const getTotalRefund = ({
       reportApplicationStatus,
     });
 
+  console.log(
+    getReportDiscountedPrice(paymentInfo),
+    getReportRefundPercent({
+      now,
+      applicationInfo,
+      paymentInfo,
+      reportApplicationStatus,
+    }),
+  );
+
   const refundFeedbackPrice =
     getFeedbackDiscountedPrice(paymentInfo) *
     getFeedbackRefundPercent({
@@ -237,6 +249,10 @@ export const getTotalRefund = ({
       reportFeedbackStatus,
       reportFeedbackDesiredDate,
     });
+
+  console.log(refundReportPrice, refundFeedbackPrice);
+  console.log(nearestTen(refundReportPrice), refundFeedbackPrice);
+  console.log(couponPrice);
 
   const refundPrice =
     Math.max(0, nearestTen(refundReportPrice) - couponPrice) +
