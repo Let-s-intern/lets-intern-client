@@ -157,12 +157,12 @@ const ReportExampleSection = ({
               </div>
             </div>
             <PrevButton
-              className="absolute left-0 top-1/2 z-10 hidden h-16 w-16 -translate-x-1/2 -translate-y-1/2 transform cursor-pointer transition-all duration-300 ease-in-out hover:scale-110 md:block"
+              className="absolute left-2 top-1/2 z-10 hidden h-16 w-16 -translate-y-1/2 transform cursor-pointer transition-all duration-300 ease-in-out hover:scale-110 md:block"
               style={{ color: baseColor }}
               onClick={() => handleScroll('left')}
             />
             <NextButton
-              className="absolute right-0 top-1/2 hidden h-16 w-16 -translate-y-1/2 translate-x-1/2 transform cursor-pointer transition-all duration-300 ease-in-out hover:scale-110 md:block"
+              className="absolute right-2 top-1/2 hidden h-16 w-16 -translate-y-1/2 transform cursor-pointer transition-all duration-300 ease-in-out hover:scale-110 md:block"
               style={{ color: baseColor }}
               onClick={() => handleScroll('right')}
             />
