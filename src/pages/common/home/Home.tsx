@@ -1,12 +1,13 @@
 import { useState } from 'react';
-import AdvantageSection from '../../../components/common/home/new/advantage/AdvantageSection';
-import Banner from '../../../components/common/home/new/banner/Banner';
-import TopBanner from '../../../components/common/home/new/banner/TopBanner';
-import ProgramOverviewSection from '../../../components/common/home/new/overview/ProgramOverviewSection';
-import PassReviewSection from '../../../components/common/home/new/pass-review/PassReviewSection';
-import ProgramSection from '../../../components/common/home/new/program/ProgramSection';
-import ReviewSection from '../../../components/common/home/new/review/ReviewSection';
-import Popup from '../../../components/common/home/new/ui/Popup';
+
+import AdvantageSection from '@/components/common/home/new/advantage/AdvantageSection';
+import Banner from '@/components/common/home/new/banner/Banner';
+import TopBanner from '@/components/common/home/new/banner/TopBanner';
+import ProgramOverviewSection from '@/components/common/home/new/overview/ProgramOverviewSection';
+import PassReviewSection from '@/components/common/home/new/pass-review/PassReviewSection';
+import ProgramSection from '@/components/common/home/new/program/ProgramSection';
+import ReviewSection from '@/components/common/home/new/review/ReviewSection';
+import Popup from '@/components/common/home/new/ui/Popup';
 
 const Home = () => {
   const [isShow, setIsShow] = useState(false);
