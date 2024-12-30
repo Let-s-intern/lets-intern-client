@@ -269,7 +269,7 @@ const NavBar = () => {
         </div>
         <hr />
         <KakaoChannel />
-        <div className="flex flex-col gap-5 overflow-y-auto py-10">
+        <div className="flex h-full flex-col gap-5 overflow-y-auto py-10">
           <div className="mx-5 flex justify-between">
             {isLoggedIn ? (
               <span className="flex w-full items-center justify-between gap-4 text-neutral-0 sm:p-0">
@@ -304,7 +304,7 @@ const NavBar = () => {
               </div>
             )}
           </div>
-          <div className="flex h-full flex-col gap-2">
+          <div className="flex flex-1 flex-col gap-2">
             <SideNavItem to="/mypage/application" onClick={closeMenu}>
               마이페이지
             </SideNavItem>
@@ -321,7 +321,7 @@ const NavBar = () => {
             <SideNavItem
               to="/report/landing"
               onClick={closeMenu}
-              hoverItem={reportHoverItem}
+              hoverItem={reportItems}
             >
               🔥 서류 진단받고 합격하기
             </SideNavItem>
@@ -353,7 +353,7 @@ const NavBar = () => {
         </div>
       </div>
       {/* 네비게이션 바 공간 차지 */}
-      <div className="h-[3.75rem] md:h-[4.375rem] lg:h-[4.75rem]"></div>
+      {/* <div className="h-[3.75rem] md:h-[4.375rem] lg:h-[4.75rem]"></div> */}
     </>
   );
 };
