@@ -239,7 +239,7 @@ const ReportIntroSection = ({ type }: ReportIntroSectionProps) => {
             </span>
             <div className="flex w-full flex-col items-center gap-y-5 md:gap-y-[30px]">
               <p className="text-medium22 font-bold md:text-xlarge30">
-                {`${convertReportTypeToDisplayName(type)} 피드백 REPORT를 통해\n이런 걸 얻어 가실거에요.`}
+                {`${convertReportTypeToDisplayName(type)} 피드백 REPORT를 통해\n이런 걸 얻어 가실 거예요.`}
               </p>
             </div>
           </div>
