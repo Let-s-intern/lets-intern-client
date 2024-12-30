@@ -353,7 +353,7 @@ const NavBar = () => {
         </div>
       </div>
       {/* 네비게이션 바 공간 차지 */}
-      {/* <div className="h-[3.75rem] md:h-[4.375rem] lg:h-[4.75rem]"></div> */}
+      <div className="h-[3.75rem] md:h-[4.375rem] lg:h-[4.75rem]" />
     </>
   );
 };
