@@ -269,7 +269,7 @@ const NavBar = () => {
         </div>
         <hr />
         <KakaoChannel />
-        <div className="flex flex-col gap-5 overflow-y-auto py-10">
+        <div className="flex h-full flex-col gap-5 overflow-y-auto py-10">
           <div className="mx-5 flex justify-between">
             {isLoggedIn ? (
               <span className="flex w-full items-center justify-between gap-4 text-neutral-0 sm:p-0">
@@ -321,7 +321,7 @@ const NavBar = () => {
             <SideNavItem
               to="/report/landing"
               onClick={closeMenu}
-              hoverItem={reportHoverItem}
+              hoverItem={reportItems}
             >
               🔥 서류 진단받고 합격하기
             </SideNavItem>
