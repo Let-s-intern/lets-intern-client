@@ -33,7 +33,7 @@ function ProgramRecommendSlider({
 
     // GA 데이터 전송
     window.dataLayer?.push({
-      event: 'page_section_visibility',
+      event: 'program_recommend_click',
       click_url: item.to,
       page_url: location.pathname,
       page_title: pageTitle,
