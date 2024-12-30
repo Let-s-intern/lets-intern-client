@@ -2,15 +2,17 @@ import { CSSProperties, memo, MouseEventHandler } from 'react';
 
 import { twMerge } from '@/lib/twMerge';
 
+interface SlideItem {
+  id?: number | string;
+  backgroundImage: string;
+  title: string;
+  cta: string;
+  to: string;
+  onClickButton?: MouseEventHandler<HTMLButtonElement>;
+}
+
 interface ProgramRecommendSliderProps {
-  list: {
-    id?: number | string;
-    backgroundImage: string;
-    title: string;
-    cta: string;
-    to: string;
-    onClickButton?: MouseEventHandler<HTMLButtonElement>;
-  }[];
+  list: SlideItem[];
   buttonStyle?: CSSProperties;
   className?: string;
   buttonClassName?: string;
@@ -26,6 +28,18 @@ function ProgramRecommendSlider({
   className,
   buttonClassName,
 }: ProgramRecommendSliderProps) {
+  const pushDataLayer = (item: SlideItem) => {
+    const pageTitle = document.querySelector('title')?.textContent ?? '';
+
+    // GA 데이터 전송
+    window.dataLayer?.push({
+      event: 'page_section_visibility',
+      click_url: item.to,
+      page_url: location.pathname,
+      page_title: pageTitle,
+    });
+  };
+
   return (
     <div className={twMerge('custom-scrollbar overflow-x-auto', className)}>
       <div className="flex min-w-fit gap-4 md:gap-7">
@@ -59,7 +73,10 @@ function ProgramRecommendSlider({
               )}
               data-url={item.to}
               style={buttonStyle}
-              onClick={item.onClickButton}
+              onClick={(e) => {
+                item.onClickButton && item.onClickButton(e);
+                pushDataLayer(item); // GA 데이터 전송
+              }}
             >
               {item.cta}
             </button>
