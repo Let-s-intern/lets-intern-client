@@ -26,7 +26,7 @@ const TopBanner = ({
 
   useEffect(() => {
     data && setIsShow(true);
-  }, [data]);
+  }, [data, setIsShow]);
 
   const clickBanner = () => {
     const target = data?.link.includes(window.location.origin)
@@ -42,7 +42,7 @@ const TopBanner = ({
 
   return isShow ? (
     <section
-      className="band_banner fixed top-[3.75rem] z-10 w-screen cursor-pointer bg-neutral-0 py-3 md:top-[4.375rem] md:px-5 lg:top-[4.75rem]"
+      className="band_banner fixed top-[3.75rem] z-20 w-screen cursor-pointer bg-neutral-0 py-3 md:top-[4.375rem] md:px-5 lg:top-[4.75rem]"
       style={{
         backgroundColor: data?.colorCode,
         color: data?.textColorCode,

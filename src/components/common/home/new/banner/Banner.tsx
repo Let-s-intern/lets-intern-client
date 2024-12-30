@@ -1,9 +1,9 @@
 import { useQuery } from '@tanstack/react-query';
 import { Fragment, useEffect, useState } from 'react';
-import BannerPlay from './BannerPlay';
 
-import { IBanner } from '../../../../../types/Banner.interface';
-import axios from '../../../../../utils/axios';
+import { IBanner } from '@/types/Banner.interface';
+import axios from '@/utils/axios';
+import BannerPlay from './BannerPlay';
 
 const bannerSidePadding = 20;
 const sectionStyle = {
