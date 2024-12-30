@@ -304,7 +304,7 @@ const NavBar = () => {
               </div>
             )}
           </div>
-          <div className="flex h-full flex-col gap-2">
+          <div className="flex flex-1 flex-col gap-2">
             <SideNavItem to="/mypage/application" onClick={closeMenu}>
               마이페이지
             </SideNavItem>
@@ -353,7 +353,7 @@ const NavBar = () => {
         </div>
       </div>
       {/* 네비게이션 바 공간 차지 */}
-      <div className="h-[3.75rem] md:h-[4.375rem] lg:h-[4.75rem]"></div>
+      {/* <div className="h-[3.75rem] md:h-[4.375rem] lg:h-[4.75rem]"></div> */}
     </>
   );
 };
