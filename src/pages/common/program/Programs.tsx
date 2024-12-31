@@ -378,7 +378,7 @@ const Programs = () => {
           </div>
         </section>
         {isError ? (
-          <p>{ERROR_MESSAGE}</p>
+          <p className="whitespace-pre-line text-center">{ERROR_MESSAGE}</p>
         ) : loading || isLoading || isFetching ? (
           <LoadingContainer text="프로그램 조회 중" />
         ) : (
