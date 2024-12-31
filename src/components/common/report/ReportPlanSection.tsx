@@ -1,6 +1,6 @@
 import { useMediaQuery } from '@mui/material';
 import clsx from 'clsx';
-import { CSSProperties, memo, ReactElement, ReactNode, useMemo } from 'react';
+import { CSSProperties, memo, ReactNode, useMemo } from 'react';
 
 import {
   convertReportTypeToDisplayName,
@@ -12,6 +12,7 @@ import { twMerge } from '@/lib/twMerge';
 import { REPORT_PLAN_ID } from '@/pages/common/report/ReportNavigation';
 import { personalStatementColors } from '@/pages/common/report/ReportPersonalStatementPage';
 import { resumeColors } from '@/pages/common/report/ReportResumePage';
+import { uuid } from '@components/admin/lexical/plugins/AutocompletePlugin';
 import MainHeader from './MainHeader';
 import SectionHeader from './SectionHeader';
 import SubHeader from './SubHeader';
@@ -65,11 +66,21 @@ const ReportPlanSection = ({
     switch (reportType) {
       case 'PERSONAL_STATEMENT':
         return [
-          '자소서 4문항 피드백 제공',
-          '서류 작성 고민 상담 및 솔루션',
-          '직무/산업별 합격자 예시 자료 제공',
-          '자소서 완성도를 높이는\n‘전체 총평 페이지’ 제공',
-          '문항별 연관성을 바탕으로 직무적합성을 강화할 키워드 제안',
+          <p key={uuid}>
+            <s className="block">자소서 1문항 피드백 제공</s>
+            자소서 4문항 피드백 제공
+          </p>,
+          <p key={uuid}>서류 작성 고민 상담 및 솔루션</p>,
+          <p key={uuid}>직무/산업별 합격자 예시 자료 제공</p>,
+          <p key={uuid}>
+            자소서 완성도를 높이는
+            <br />
+            <strong>‘전체 총평 페이지’</strong> 제공
+          </p>,
+          <p key={uuid}>
+            문항별 연관성을 바탕으로 직무적합성을
+            <br className="hidden md:block" /> 강화할 키워드 제안
+          </p>,
         ];
 
       default:
@@ -129,13 +140,13 @@ const ReportPlanSection = ({
         <MainHeader>{MAIN_HEADER}</MainHeader>
       </header>
 
-      <main className="mt-10 max-w-[840px] md:mt-12 lg:mx-auto lg:px-0">
+      <main className="mt-10 max-w-[840px] md:mx-auto md:mt-12 lg:px-0">
         {/* 좌우 슬라이드 */}
         <div
           data-section="price-1"
           className="custom-scrollbar -mx-5 mb-14 overflow-x-auto overflow-y-clip px-5 pt-1 lg:mx-0 lg:px-0"
         >
-          <div className="flex w-fit gap-3">
+          <div className="mx-auto flex min-w-fit gap-3">
             {/* 프리미엄 플랜 */}
             <PriceCard
               className="min-w-[18rem] px-5 py-4 md:gap-5 md:px-6 md:py-7"
@@ -159,23 +170,6 @@ const ReportPlanSection = ({
               <PlanCard title="프리미엄 플랜">
                 <div className="flex flex-col gap-3">
                   {premiumPlan.map((item, index) => {
-                    let element: ReactElement = <></>;
-                    const isPersonalStatement =
-                      reportType === 'PERSONAL_STATEMENT';
-
-                    // 예외 문항
-                    if (isPersonalStatement && index === 3) {
-                      const splited = item.split('전체 총평 페이지');
-
-                      element = (
-                        <>
-                          {splited[0]}
-                          <span className="font-bold">전체 총평 페이지</span>
-                          {splited[1]}
-                        </>
-                      );
-                    }
-
                     return (
                       <NumberedListItem
                         key={index}
@@ -185,14 +179,7 @@ const ReportPlanSection = ({
                           'text-black': reportType === 'RESUME' && index >= 3,
                         })}
                       >
-                        <p>
-                          {/* 예외 문항 */}
-                          {reportType === 'PERSONAL_STATEMENT' &&
-                            index === 0 && (
-                              <s className="block">자소서 1문항 피드백 제공</s>
-                            )}
-                          {isPersonalStatement && index === 3 ? element : item}
-                        </p>
+                        {item}
                       </NumberedListItem>
                     );
                   })}
