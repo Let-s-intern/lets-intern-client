@@ -66,8 +66,10 @@ const Section0: Record<
       </p>,
       <p key={3}>
         자소서의{' '}
-        <strong>{`전체 흐름과 강점을 한눈에 보여주는 '총평 페이지'`}</strong>로
-        스토리의 <strong>통일성과 설득력 강화</strong> (*프리미엄 플랜)
+        <strong>{`전체 흐름과 강점을 한눈에 보여주는\n'총평 페이지'`}</strong>로
+        스토리의 <strong>통일성과 설득력 강화</strong>
+        <br />
+        (*프리미엄 플랜)
       </p>,
       <p key={4}>
         자소서 작성 <strong>고민에 대한 1:1 상담</strong>
@@ -239,7 +241,7 @@ const ReportIntroSection = ({ type }: ReportIntroSectionProps) => {
             </span>
             <div className="flex w-full flex-col items-center gap-y-5 md:gap-y-[30px]">
               <p className="text-medium22 font-bold md:text-xlarge30">
-                {`${convertReportTypeToDisplayName(type)} 피드백 REPORT를 통해\n이런 걸 얻어 가실거에요.`}
+                {`${convertReportTypeToDisplayName(type)} 피드백 REPORT를 통해\n이런 걸 얻어 가실 거예요.`}
               </p>
             </div>
           </div>

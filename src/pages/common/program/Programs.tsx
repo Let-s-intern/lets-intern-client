@@ -3,14 +3,14 @@ import { useCallback, useEffect, useReducer, useState } from 'react';
 import { Helmet } from 'react-helmet';
 import { useSearchParams } from 'react-router-dom';
 
-import { useUserProgramQuery } from '../../../api/program';
-import Banner from '../../../components/common/program/banner/Banner';
-import FilterItem from '../../../components/common/program/filter/FilterItem';
-import FilterSideBar from '../../../components/common/program/filter/FilterSideBar';
-import MuiPagination from '../../../components/common/program/pagination/MuiPagination';
-import EmptyCardList from '../../../components/common/program/programs/card/EmptyCardList';
-import ProgramCard from '../../../components/common/program/programs/card/ProgramCard';
-import LoadingContainer from '../../../components/common/ui/loading/LoadingContainer';
+import { useUserProgramQuery } from '@/api/program';
+import Banner from '@/components/common/program/banner/Banner';
+import FilterItem from '@/components/common/program/filter/FilterItem';
+import FilterSideBar from '@/components/common/program/filter/FilterSideBar';
+import MuiPagination from '@/components/common/program/pagination/MuiPagination';
+import EmptyCardList from '@/components/common/program/programs/card/EmptyCardList';
+import ProgramCard from '@/components/common/program/programs/card/ProgramCard';
+import LoadingContainer from '@/components/common/ui/loading/LoadingContainer';
 import {
   filterClassificationReducer,
   filterStatusReducer,
@@ -18,19 +18,19 @@ import {
   initialFilterClassification,
   initialFilterStatus,
   initialFilterType,
-} from '../../../reducers/filterReducer';
+} from '@/reducers/filterReducer';
 import {
   filterClassificationkey,
   filterStatuskey,
   filterTypekey,
-} from '../../../types/interface';
-import { getKeyByValue } from '../../../utils/convert';
+} from '@/types/interface';
+import { getKeyByValue } from '@/utils/convert';
 import {
   PROGRAM_FILTER_CLASSIFICATION,
   PROGRAM_FILTER_STATUS,
   PROGRAM_FILTER_TYPE,
   PROGRAM_QUERY_KEY,
-} from '../../../utils/programConst';
+} from '@/utils/programConst';
 
 const initialPageable = { page: 1, size: 12 };
 const initialPageInfo = {
@@ -244,7 +244,7 @@ const Programs = () => {
   useEffect(() => {
     if (isLoading || isFetching) setLoading(true);
     setPageInfo(programData?.pageInfo || initialPageInfo);
-  }, [isLoading, isFetching]);
+  }, [isLoading, isFetching, setLoading, setPageInfo, programData?.pageInfo]);
 
   useEffect(() => {
     if (loading) {
@@ -252,10 +252,6 @@ const Programs = () => {
       return () => clearTimeout(timer);
     }
   }, [loading]);
-
-  useEffect(() => {
-    if (isError) alert(ERROR_MESSAGE);
-  }, [isError]);
 
   return (
     <div className={clsx('flex', { 'overflow-hidden': isOpen })}>
@@ -381,7 +377,9 @@ const Programs = () => {
             ))}
           </div>
         </section>
-        {loading || isLoading || isFetching ? (
+        {isError ? (
+          <p className="whitespace-pre-line text-center">{ERROR_MESSAGE}</p>
+        ) : loading || isLoading || isFetching ? (
           <LoadingContainer text="프로그램 조회 중" />
         ) : (
           isSuccess &&
