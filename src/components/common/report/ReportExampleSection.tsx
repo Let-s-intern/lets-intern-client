@@ -181,7 +181,7 @@ const ReportExampleSection = ({
             className="fixed left-1/2 top-1/2 flex max-h-[90%] w-[90%] max-w-[720px] -translate-x-1/2 -translate-y-1/2 transform overflow-hidden rounded-md bg-white"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="flex flex-col overflow-y-auto p-4 pb-9 md:p-14 md:pb-16">
+            <div className="flex flex-col gap-y-2 overflow-y-auto p-4 pb-9 md:gap-y-3 md:p-14 md:pb-16">
               <div className="flex w-full items-center justify-between">
                 <div className="flex h-5 w-5 items-center justify-center rounded-xxs bg-primary-light text-xsmall14 font-semibold text-white md:h-6 md:w-6 md:text-xsmall16">
                   {clickedExample + 1}
@@ -191,11 +191,14 @@ const ReportExampleSection = ({
                   onClick={() => setClickedExample(null)}
                 />
               </div>
+              <div className="w-full text-wrap break-keep text-center text-xxsmall12 font-semibold md:text-small20">
+                {example[clickedExample].title.slice(3)}
+              </div>
               <div className="relative mt-2.5 md:mt-2">
                 <img
                   src={example[clickedExample].modalSrc}
                   alt={example[clickedExample].title}
-                  className="h-auto w-full bg-white"
+                  className="h-auto w-full rounded-xxs bg-white"
                 />
                 <PrevButton
                   className="absolute left-0 top-1/2 z-10 h-8 w-8 -translate-x-1/2 -translate-y-1/2 transform cursor-pointer text-neutral-20 transition-all duration-300 ease-in-out hover:scale-110 md:h-16 md:w-16"
