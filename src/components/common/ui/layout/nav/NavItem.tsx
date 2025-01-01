@@ -47,7 +47,9 @@ const NavItem = ({
             <Polygon className="absolute top-0 z-10 mx-auto h-[14px] w-5 text-white" />
             <div className="mt-[13px] flex w-full flex-col rounded-xs bg-white py-1">
               {!isItemLoaded ? (
-                <div>Loading...</div>
+                <div className="mx-auto text-xsmall16 font-normal text-neutral-35">
+                  Loading...
+                </div>
               ) : (
                 hoverItem.map((item, idx) => (
                   <NavSubItem
