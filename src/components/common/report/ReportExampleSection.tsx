@@ -181,9 +181,9 @@ const ReportExampleSection = ({
             className="fixed left-1/2 top-1/2 flex max-h-[90%] w-[90%] max-w-[720px] -translate-x-1/2 -translate-y-1/2 transform overflow-hidden rounded-md bg-white"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="flex flex-col gap-y-2 overflow-y-auto p-4 pb-9 md:gap-y-3 md:p-14 md:pb-16">
+            <div className="flex w-full flex-col gap-y-2 overflow-y-auto p-4 pb-9 sm:gap-y-3 sm:p-14 sm:pb-16">
               <div className="flex w-full items-center justify-between">
-                <div className="flex h-5 w-5 items-center justify-center rounded-xxs bg-primary-light text-xsmall14 font-semibold text-white md:h-6 md:w-6 md:text-xsmall16">
+                <div className="flex h-5 w-5 items-center justify-center rounded-xxs bg-primary-light text-xsmall14 font-semibold text-white sm:h-6 sm:w-6 sm:text-xsmall16">
                   {clickedExample + 1}
                 </div>
                 <CloseIcon
@@ -191,17 +191,17 @@ const ReportExampleSection = ({
                   onClick={() => setClickedExample(null)}
                 />
               </div>
-              <div className="w-full text-wrap break-keep text-center text-xxsmall12 font-semibold md:text-small20">
+              <div className="w-full text-wrap break-keep text-center text-xxsmall12 font-semibold sm:text-small20">
                 {example[clickedExample].title.slice(3)}
               </div>
-              <div className="relative mt-2.5 md:mt-2">
+              <div className="relative mt-2.5 w-full md:mt-2">
                 <img
                   src={example[clickedExample].modalSrc}
                   alt={example[clickedExample].title}
-                  className="h-auto w-full rounded-xxs bg-white"
+                  className="h-auto min-h-52 w-full rounded-xxs bg-neutral-95 sm:min-h-[500px]"
                 />
                 <PrevButton
-                  className="absolute left-0 top-1/2 z-10 h-8 w-8 -translate-x-1/2 -translate-y-1/2 transform cursor-pointer text-neutral-20 transition-all duration-300 ease-in-out hover:scale-110 md:h-16 md:w-16"
+                  className="absolute left-0 top-1/2 z-10 h-8 w-8 -translate-x-1/2 -translate-y-1/2 transform cursor-pointer text-neutral-20 transition-all duration-300 ease-in-out hover:scale-110 sm:h-16 sm:w-16"
                   onClick={() =>
                     setClickedExample(
                       clickedExample > 0 ? clickedExample - 1 : 0,
@@ -209,7 +209,7 @@ const ReportExampleSection = ({
                   }
                 />
                 <NextButton
-                  className="absolute right-0 top-1/2 h-8 w-8 -translate-y-1/2 translate-x-1/2 transform cursor-pointer text-neutral-20 transition-all duration-300 ease-in-out hover:scale-110 md:h-16 md:w-16"
+                  className="absolute right-0 top-1/2 h-8 w-8 -translate-y-1/2 translate-x-1/2 transform cursor-pointer text-neutral-20 transition-all duration-300 ease-in-out hover:scale-110 sm:h-16 sm:w-16"
                   onClick={() =>
                     setClickedExample(
                       clickedExample < example.length - 1
