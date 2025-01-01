@@ -1,4 +1,11 @@
-import { Button, IconButton } from '@mui/material';
+import {
+  Button,
+  FormControl,
+  IconButton,
+  InputLabel,
+  MenuItem,
+  Select,
+} from '@mui/material';
 import { MdDelete } from 'react-icons/md';
 
 import { ReportContent, ReportReview } from '@/types/interface';
@@ -12,7 +19,6 @@ interface ReportReviewEditorProps {
 
 function ReportReviewEditor({ review, setReview }: ReportReviewEditorProps) {
   const onClickAddButton = () => {
-    console.log('리뷰:', review);
     if (review.list.length > 0 && review.list.some((ele) => !ele.profile)) {
       // profile 없는 review 모두 제거
       setReview({
@@ -30,7 +36,7 @@ function ReportReviewEditor({ review, setReview }: ReportReviewEditorProps) {
           question: '',
           answer: '',
           detail: '',
-          profile: '/images/program/program_default_profile.png',
+          profile: '/images/report/reviewProfile/female_1.png',
           reportName: '',
           job: '',
           name: '',
@@ -60,6 +66,24 @@ function ReportReviewEditor({ review, setReview }: ReportReviewEditorProps) {
     });
   };
 
+  const onChangeProfile = (profile: string, id: string | number) => {
+    const list = review.list;
+    const index = list.findIndex((ele) => ele.id === id);
+    const newItem = {
+      ...list[index],
+      profile,
+    };
+    const newList = [
+      ...list.slice(0, index),
+      newItem,
+      ...list.slice(index + 1),
+    ];
+
+    setReview({
+      list: newList,
+    });
+  };
+
   return (
     <>
       <div className="mb-5 flex items-center justify-between">
@@ -75,8 +99,41 @@ function ReportReviewEditor({ review, setReview }: ReportReviewEditorProps) {
           review.list[0].profile &&
           review.list.map((item) => (
             <div key={item.id} className="mb-5 flex w-full items-start gap-3">
-              <div>
+              <div className="flex flex-1 flex-col">
                 <div className="mb-3 flex items-center gap-3">
+                  <FormControl size="medium" className="w-24 shrink-0">
+                    <InputLabel>프로필</InputLabel>
+                    <Select<string>
+                      label="프로필"
+                      value={item.profile}
+                      onChange={(e) =>
+                        onChangeProfile(e.target.value as string, item.id)
+                      }
+                      name="profile"
+                    >
+                      <MenuItem value="/images/report/reviewProfile/female_1.png">
+                        여성 1
+                      </MenuItem>
+                      <MenuItem value="/images/report/reviewProfile/female_2.png">
+                        여성 2
+                      </MenuItem>
+                      <MenuItem value="/images/report/reviewProfile/female_3.png">
+                        여성 3
+                      </MenuItem>
+                      <MenuItem value="/images/report/reviewProfile/female_4.png">
+                        여성 4
+                      </MenuItem>
+                      <MenuItem value="/images/report/reviewProfile/male_1.png">
+                        남성 1
+                      </MenuItem>
+                      <MenuItem value="/images/report/reviewProfile/male_2.png">
+                        남성 2
+                      </MenuItem>
+                      <MenuItem value="/images/report/reviewProfile/male_3.png">
+                        남성 3
+                      </MenuItem>
+                    </Select>
+                  </FormControl>
                   <Input
                     label="이름"
                     name="name"

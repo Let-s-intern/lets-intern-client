@@ -79,6 +79,7 @@ const AdminReportCreatePage = () => {
     e.preventDefault();
     const form = e.currentTarget;
     if (!form.checkValidity()) {
+      alert('입력값을 확인해주세요.');
       return;
     }
 
