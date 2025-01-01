@@ -16,7 +16,7 @@ const ReportExampleCard = ({ example }: ReportExampleCardProps) => {
           <img
             src={example.src}
             alt={example.title}
-            className="h-auto w-full object-cover object-top shadow-none"
+            className="h-auto w-full rounded-t-xxs object-cover object-top shadow-none"
           />
         </div>
       </div>

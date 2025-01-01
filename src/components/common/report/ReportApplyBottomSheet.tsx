@@ -373,7 +373,7 @@ const ReportApplyBottomSheet = React.forwardRef<
         <div
           ref={ref}
           className={twMerge(
-            'fixed bottom-0 left-1/2 z-40 mx-auto h-[36rem] w-full max-w-[1000px] -translate-x-1/2 rounded-t-xl border-t border-neutral-0/5 bg-white shadow-lg transition md:h-[50rem]',
+            'fixed bottom-0 left-1/2 z-40 mx-auto h-[36rem] w-full max-w-[1000px] -translate-x-1/2 overflow-hidden rounded-t-xl border-t border-neutral-0/5 bg-white shadow-lg transition md:h-[50rem]',
             !show && 'hidden',
           )}
         >
@@ -674,7 +674,7 @@ const ReportApplyBottomSheet = React.forwardRef<
               </div>
             </div>
 
-            <div className="sticky bottom-0 flex items-center gap-2 bg-white pb-2">
+            <div className="sticky bottom-0 flex items-center gap-2 rounded-md bg-white pb-2">
               <BaseButton
                 className="flex-1"
                 variant="outlined"
