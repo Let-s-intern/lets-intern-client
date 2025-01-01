@@ -3,6 +3,7 @@ import CloseIcon from '@/assets/icons/close.svg?react';
 import NextButton from '@/assets/icons/next-button.svg?react';
 import PrevButton from '@/assets/icons/prev-button.svg?react';
 import { REPORT_EXAMPLE } from '@/data/reportConstant';
+import { useControlScroll } from '@/hooks/useControlScroll';
 import { REPORT_EXAMPLE_ID } from '@/pages/common/report/ReportNavigation';
 import { personalStatementColors } from '@/pages/common/report/ReportPersonalStatementPage';
 import { resumeColors } from '@/pages/common/report/ReportResumePage';
@@ -22,6 +23,8 @@ const ReportExampleSection = ({
   const scrollRef = useRef<HTMLDivElement>(null);
   const itemRefs = useRef<(HTMLDivElement | null)[]>([]);
   const [clickedExample, setClickedExample] = useState<number | null>(null);
+
+  useControlScroll(clickedExample !== null);
 
   const subHeaderStyle = {
     color:
@@ -175,40 +178,44 @@ const ReportExampleSection = ({
           onClick={() => setClickedExample(null)}
         >
           <div
-            className="fixed left-1/2 top-1/2 max-h-[90%] w-[90%] max-w-[720px] -translate-x-1/2 -translate-y-1/2 transform overflow-auto rounded-md bg-white p-4 pb-9 md:p-14 md:pb-16"
+            className="fixed left-1/2 top-1/2 flex max-h-[90%] w-[90%] max-w-[720px] -translate-x-1/2 -translate-y-1/2 transform overflow-hidden rounded-md bg-white"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="flex w-full items-center justify-between">
-              <div className="flex h-5 w-5 items-center justify-center rounded-xxs bg-primary-light text-xsmall14 font-semibold text-white md:h-6 md:w-6 md:text-xsmall16">
-                {clickedExample + 1}
+            <div className="flex flex-col overflow-y-auto p-4 pb-9 md:p-14 md:pb-16">
+              <div className="flex w-full items-center justify-between">
+                <div className="flex h-5 w-5 items-center justify-center rounded-xxs bg-primary-light text-xsmall14 font-semibold text-white md:h-6 md:w-6 md:text-xsmall16">
+                  {clickedExample + 1}
+                </div>
+                <CloseIcon
+                  className="h-6 w-6 cursor-pointer"
+                  onClick={() => setClickedExample(null)}
+                />
               </div>
-              <CloseIcon
-                className="h-6 w-6 cursor-pointer"
-                onClick={() => setClickedExample(null)}
-              />
-            </div>
-            <div className="relative mt-2.5 md:mt-2">
-              <img
-                src={example[clickedExample].modalSrc}
-                alt={example[clickedExample].title}
-                className="h-auto w-full bg-white"
-              />
-              <PrevButton
-                className="absolute left-0 top-1/2 z-10 h-8 w-8 -translate-x-1/2 -translate-y-1/2 transform cursor-pointer text-neutral-20 transition-all duration-300 ease-in-out hover:scale-110 md:h-16 md:w-16"
-                onClick={() =>
-                  setClickedExample(clickedExample > 0 ? clickedExample - 1 : 0)
-                }
-              />
-              <NextButton
-                className="absolute right-0 top-1/2 h-8 w-8 -translate-y-1/2 translate-x-1/2 transform cursor-pointer text-neutral-20 transition-all duration-300 ease-in-out hover:scale-110 md:h-16 md:w-16"
-                onClick={() =>
-                  setClickedExample(
-                    clickedExample < example.length - 1
-                      ? clickedExample + 1
-                      : example.length - 1,
-                  )
-                }
-              />
+              <div className="relative mt-2.5 md:mt-2">
+                <img
+                  src={example[clickedExample].modalSrc}
+                  alt={example[clickedExample].title}
+                  className="h-auto w-full bg-white"
+                />
+                <PrevButton
+                  className="absolute left-0 top-1/2 z-10 h-8 w-8 -translate-x-1/2 -translate-y-1/2 transform cursor-pointer text-neutral-20 transition-all duration-300 ease-in-out hover:scale-110 md:h-16 md:w-16"
+                  onClick={() =>
+                    setClickedExample(
+                      clickedExample > 0 ? clickedExample - 1 : 0,
+                    )
+                  }
+                />
+                <NextButton
+                  className="absolute right-0 top-1/2 h-8 w-8 -translate-y-1/2 translate-x-1/2 transform cursor-pointer text-neutral-20 transition-all duration-300 ease-in-out hover:scale-110 md:h-16 md:w-16"
+                  onClick={() =>
+                    setClickedExample(
+                      clickedExample < example.length - 1
+                        ? clickedExample + 1
+                        : example.length - 1,
+                    )
+                  }
+                />
+              </div>
             </div>
           </div>
         </div>
