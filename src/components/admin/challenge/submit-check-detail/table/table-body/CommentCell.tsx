@@ -1,10 +1,11 @@
-import clsx from 'clsx';
-import { useState } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import clsx from 'clsx';
+import { useEffect, useRef, useState } from 'react';
 
-import { challengeSubmitDetailCellWidthList } from '../../../../../../utils/tableCellWidthList';
-import axios from '../../../../../../utils/axios';
-import { Attendance, UpdateAttendanceReq } from '../../../../../../schema';
+import { useControlScroll } from '@/hooks/useControlScroll';
+import { Attendance, UpdateAttendanceReq } from '@/schema';
+import axios from '@/utils/axios';
+import { challengeSubmitDetailCellWidthList } from '@/utils/tableCellWidthList';
 
 interface Props {
   attendance: Attendance;
@@ -12,12 +13,15 @@ interface Props {
 }
 
 const CommentCell = ({ attendance, cellWidthListIndex }: Props) => {
+  const cursorPositionRef = useRef<number>();
   const queryClient = useQueryClient();
 
   const [modalShown, setModalShown] = useState(false);
   const [editingComment, setEditingComment] = useState(
     attendance.comments || '',
   );
+
+  useControlScroll(modalShown);
 
   const cellWidthList = challengeSubmitDetailCellWidthList;
 
@@ -38,6 +42,18 @@ const CommentCell = ({ attendance, cellWidthListIndex }: Props) => {
     });
   };
 
+  /** 링크 삽입 후 커서가 맨 마지막으로 이동하는 것을 방지 */
+  useEffect(() => {
+    if (!cursorPositionRef.current) return;
+
+    const textarea = document.activeElement; // focused element
+    (textarea as HTMLTextAreaElement).setSelectionRange(
+      cursorPositionRef.current,
+      cursorPositionRef.current,
+    );
+    cursorPositionRef.current = undefined;
+  }, [editingComment]);
+
   return (
     <>
       <div
@@ -53,7 +69,7 @@ const CommentCell = ({ attendance, cellWidthListIndex }: Props) => {
         <div className="fixed left-0 top-0 z-[100] flex h-full w-full items-center justify-end bg-[rgb(0,0,0,0.5)]">
           <div className="flex w-[calc(100%-16rem)] items-center justify-center">
             <form
-              className="w-[40rem] rounded-xl bg-white px-12 py-10"
+              className="w-full max-w-[80rem] rounded-xl bg-white px-12 py-10"
               onSubmit={handleCommentEdit}
             >
               <h2 className="text-xl font-semibold">코멘트 등록</h2>
@@ -73,13 +89,44 @@ const CommentCell = ({ attendance, cellWidthListIndex }: Props) => {
                   <textarea
                     className="flex-1 resize-none rounded-md border border-neutral-400 px-4 py-2 text-sm outline-none"
                     name="comments"
-                    rows={3}
+                    maxLength={1000}
+                    rows={12}
                     value={editingComment || ''}
                     placeholder="코멘트를 입력해주세요."
-                    onChange={(e) => setEditingComment(e.target.value)}
+                    onChange={(e) => {
+                      try {
+                        const input = (e.nativeEvent as InputEvent).data;
+
+                        new URL(input ?? '');
+
+                        // URL이면 링크 삽입
+                        const inputLength = input?.length ?? 0;
+                        const link = `<a>${input}</a>`;
+                        const cursorPosition =
+                          e.currentTarget.selectionStart - inputLength;
+
+                        setEditingComment(
+                          (prev) =>
+                            prev.substring(0, cursorPosition) +
+                            link +
+                            prev.substring(cursorPosition),
+                        );
+
+                        // 커서 위치 되돌리기
+                        cursorPositionRef.current =
+                          cursorPosition + inputLength + 7;
+                      } catch (error) {
+                        // URL이 아니면
+                        setEditingComment(e.target.value);
+                      }
+                    }}
                     autoComplete="off"
                   />
                 </div>
+                <span className="text-right text-xsmall14 text-neutral-40">
+                  {editingComment.length <= 1000 ? editingComment.length : 1000}
+                  / 1000자
+                </span>
               </div>
               <div className="mt-12 flex justify-end gap-2">
                 <button className="rounded bg-neutral-700 px-5 py-[2px] text-sm text-white">
