@@ -81,8 +81,6 @@ const AbsentMissionSubmitMenu = ({ missionDetail }: Props) => {
     handleMissionLinkChanged({ target: { value } });
   }, [value]);
 
-  console.log(currentSchedule?.attendanceInfo.comments);
-
   return (
     <form onSubmit={handleMissionLinkSubmit} className="px-3">
       <h3 className="text-lg font-semibold">

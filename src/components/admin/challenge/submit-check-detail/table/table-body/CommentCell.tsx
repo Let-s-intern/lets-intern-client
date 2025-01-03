@@ -2,9 +2,10 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import clsx from 'clsx';
 import { useState } from 'react';
 
-import { Attendance, UpdateAttendanceReq } from '../../../../../../schema';
-import axios from '../../../../../../utils/axios';
-import { challengeSubmitDetailCellWidthList } from '../../../../../../utils/tableCellWidthList';
+import { useControlScroll } from '@/hooks/useControlScroll';
+import { Attendance, UpdateAttendanceReq } from '@/schema';
+import axios from '@/utils/axios';
+import { challengeSubmitDetailCellWidthList } from '@/utils/tableCellWidthList';
 
 interface Props {
   attendance: Attendance;
@@ -18,6 +19,8 @@ const CommentCell = ({ attendance, cellWidthListIndex }: Props) => {
   const [editingComment, setEditingComment] = useState(
     attendance.comments || '',
   );
+
+  useControlScroll(modalShown);
 
   const cellWidthList = challengeSubmitDetailCellWidthList;
 
@@ -53,7 +56,7 @@ const CommentCell = ({ attendance, cellWidthListIndex }: Props) => {
         <div className="fixed left-0 top-0 z-[100] flex h-full w-full items-center justify-end bg-[rgb(0,0,0,0.5)]">
           <div className="flex w-[calc(100%-16rem)] items-center justify-center">
             <form
-              className="w-[40rem] rounded-xl bg-white px-12 py-10"
+              className="w-full max-w-[80rem] rounded-xl bg-white px-12 py-10"
               onSubmit={handleCommentEdit}
             >
               <h2 className="text-xl font-semibold">코멘트 등록</h2>
@@ -73,7 +76,7 @@ const CommentCell = ({ attendance, cellWidthListIndex }: Props) => {
                   <textarea
                     className="flex-1 resize-none rounded-md border border-neutral-400 px-4 py-2 text-sm outline-none"
                     name="comments"
-                    rows={10}
+                    rows={12}
                     value={editingComment || ''}
                     placeholder="코멘트를 입력해주세요."
                     onChange={(e) => setEditingComment(e.target.value)}
