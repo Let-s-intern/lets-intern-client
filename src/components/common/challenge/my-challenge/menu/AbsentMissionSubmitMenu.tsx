@@ -80,28 +80,31 @@ const AbsentMissionSubmitMenu = ({ missionDetail }: Props) => {
     submitMissionLink.mutate();
   };
 
-  /** a 태그로 감싼 텍스트는 링크로 변경 */
+  /** 링크는 Link element로 변경 */
   const parseLink = (text: string) => {
-    const regex = /<a>|<\/a>/;
-    const splited = text.split(regex);
+    const regex = /\((.*?)\)\[(.*?)\]/g;
+    let startIndex = 0;
+    const result = [];
 
-    return splited.map((item) => {
-      try {
-        new URL(item);
-        return (
-          <Link
-            to={item}
-            className="text-primary underline"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            {item}
-          </Link>
-        );
-      } catch (error) {
-        return item;
-      }
+    text.replace(regex, (match, caption, url, offset, string) => {
+      const element = (
+        <Link
+          to={url}
+          className="text-primary underline"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          {caption}
+        </Link>
+      );
+
+      result.push(string.substring(startIndex, offset), element);
+      startIndex = offset + match.length;
+      return '';
     });
+    result.push(text.substring(startIndex));
+
+    return result;
   };
 
   useEffect(() => {
