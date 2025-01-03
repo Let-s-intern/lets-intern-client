@@ -2,9 +2,37 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import clsx from 'clsx';
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { useCurrentChallenge } from '../../../../../context/CurrentChallengeProvider';
-import { UserChallengeMissionDetail } from '../../../../../schema';
-import axios from '../../../../../utils/axios';
+
+import { useCurrentChallenge } from '@/context/CurrentChallengeProvider';
+import { UserChallengeMissionDetail } from '@/schema';
+import axios from '@/utils/axios';
+
+/** 링크는 Link element로 변경 */
+export const parseLink = (text: string) => {
+  const regex = /\((.*?)\)\[(.*?)\]/g;
+  let startIndex = 0;
+  const result = [];
+
+  text.replace(regex, (match, caption, url, offset, string) => {
+    const element = (
+      <Link
+        to={url}
+        className="text-primary underline"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        {caption}
+      </Link>
+    );
+
+    result.push(string.substring(startIndex, offset), element);
+    startIndex = offset + match.length;
+    return '';
+  });
+  result.push(text.substring(startIndex));
+
+  return result;
+};
 
 interface Props {
   missionDetail: UserChallengeMissionDetail;
@@ -78,33 +106,6 @@ const AbsentMissionSubmitMenu = ({ missionDetail }: Props) => {
   const handleMissionLinkSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     submitMissionLink.mutate();
-  };
-
-  /** 링크는 Link element로 변경 */
-  const parseLink = (text: string) => {
-    const regex = /\((.*?)\)\[(.*?)\]/g;
-    let startIndex = 0;
-    const result = [];
-
-    text.replace(regex, (match, caption, url, offset, string) => {
-      const element = (
-        <Link
-          to={url}
-          className="text-primary underline"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          {caption}
-        </Link>
-      );
-
-      result.push(string.substring(startIndex, offset), element);
-      startIndex = offset + match.length;
-      return '';
-    });
-    result.push(text.substring(startIndex));
-
-    return result;
   };
 
   useEffect(() => {
