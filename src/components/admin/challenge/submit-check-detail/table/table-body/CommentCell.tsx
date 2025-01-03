@@ -1,10 +1,10 @@
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import clsx from 'clsx';
 import { useState } from 'react';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
 
-import { challengeSubmitDetailCellWidthList } from '../../../../../../utils/tableCellWidthList';
-import axios from '../../../../../../utils/axios';
 import { Attendance, UpdateAttendanceReq } from '../../../../../../schema';
+import axios from '../../../../../../utils/axios';
+import { challengeSubmitDetailCellWidthList } from '../../../../../../utils/tableCellWidthList';
 
 interface Props {
   attendance: Attendance;
@@ -73,7 +73,7 @@ const CommentCell = ({ attendance, cellWidthListIndex }: Props) => {
                   <textarea
                     className="flex-1 resize-none rounded-md border border-neutral-400 px-4 py-2 text-sm outline-none"
                     name="comments"
-                    rows={3}
+                    rows={10}
                     value={editingComment || ''}
                     placeholder="코멘트를 입력해주세요."
                     onChange={(e) => setEditingComment(e.target.value)}

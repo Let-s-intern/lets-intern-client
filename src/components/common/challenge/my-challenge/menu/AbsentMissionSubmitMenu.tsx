@@ -81,6 +81,8 @@ const AbsentMissionSubmitMenu = ({ missionDetail }: Props) => {
     handleMissionLinkChanged({ target: { value } });
   }, [value]);
 
+  console.log(currentSchedule?.attendanceInfo.comments);
+
   return (
     <form onSubmit={handleMissionLinkSubmit} className="px-3">
       <h3 className="text-lg font-semibold">
@@ -101,7 +103,7 @@ const AbsentMissionSubmitMenu = ({ missionDetail }: Props) => {
       )}
       {currentSchedule?.attendanceInfo.comments && (
         <div className="mt-4">
-          <div className="rounded-md bg-[#F2F2F2] px-8 py-6 text-sm">
+          <div className="whitespace-pre-line rounded-md bg-[#F2F2F2] px-8 py-6 text-sm">
             {currentSchedule?.attendanceInfo.comments}
           </div>
         </div>
