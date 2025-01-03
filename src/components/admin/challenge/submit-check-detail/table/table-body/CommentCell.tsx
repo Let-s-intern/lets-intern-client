@@ -125,7 +125,7 @@ const CommentCell = ({ attendance, cellWidthListIndex }: Props) => {
                 </div>
                 <span className="text-right text-xsmall14 text-neutral-40">
                   {editingComment.length <= 1200 ? editingComment.length : 1200}
-                  / 1000자
+                  / 1200자
                 </span>
               </div>
               <div className="mt-12 flex justify-end gap-2">
