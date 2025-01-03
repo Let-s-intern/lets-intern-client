@@ -14,6 +14,7 @@ interface Props {
 
 const CommentCell = ({ attendance, cellWidthListIndex }: Props) => {
   const cursorPositionRef = useRef<number>();
+  const selectionRef = useRef<string>();
   const queryClient = useQueryClient();
 
   const [modalShown, setModalShown] = useState(false);
@@ -65,6 +66,7 @@ const CommentCell = ({ attendance, cellWidthListIndex }: Props) => {
       >
         {attendance.comments || ''}
       </div>
+
       {modalShown && (
         <div className="fixed left-0 top-0 z-[100] flex h-full w-full items-center justify-end bg-[rgb(0,0,0,0.5)]">
           <div className="flex w-[calc(100%-16rem)] items-center justify-center">
@@ -93,28 +95,49 @@ const CommentCell = ({ attendance, cellWidthListIndex }: Props) => {
                     rows={12}
                     value={editingComment || ''}
                     placeholder="코멘트를 입력해주세요."
+                    onSelect={() => {
+                      // 사용자가 선택한 텍스트 저장
+                      const selected = window.getSelection()?.toString();
+
+                      if (selected) selectionRef.current = selected;
+                      if (selected?.trim() === '') {
+                        selectionRef.current = undefined;
+                      }
+                    }}
                     onChange={(e) => {
                       try {
                         const input = (e.nativeEvent as InputEvent).data;
-
                         new URL(input ?? '');
 
                         // URL이면 링크 삽입
                         const inputLength = input?.length ?? 0;
-                        const link = `<a>${input}</a>`;
                         const cursorPosition =
                           e.currentTarget.selectionStart - inputLength;
+                        let link = '';
+
+                        if (selectionRef.current) {
+                          link = `(${selectionRef.current})[${input}]`;
+                          // 이전 커서 위치 저장
+                          cursorPositionRef.current =
+                            cursorPosition +
+                            inputLength +
+                            selectionRef.current.length +
+                            4;
+                        } else {
+                          link = `(${input})[${input}]`;
+                          cursorPositionRef.current =
+                            cursorPosition + inputLength * 2 + 4;
+                        }
 
                         setEditingComment(
                           (prev) =>
                             prev.substring(0, cursorPosition) +
                             link +
-                            prev.substring(cursorPosition),
+                            prev.substring(
+                              cursorPosition +
+                                (selectionRef.current?.length ?? 0),
+                            ),
                         );
-
-                        // 커서 위치 되돌리기
-                        cursorPositionRef.current =
-                          cursorPosition + inputLength + 7;
                       } catch (error) {
                         // URL이 아니면
                         setEditingComment(e.target.value);
