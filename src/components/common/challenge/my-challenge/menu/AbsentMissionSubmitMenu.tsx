@@ -1,6 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import clsx from 'clsx';
 import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { useCurrentChallenge } from '../../../../../context/CurrentChallengeProvider';
 import { UserChallengeMissionDetail } from '../../../../../schema';
 import axios from '../../../../../utils/axios';
@@ -60,10 +61,12 @@ const AbsentMissionSubmitMenu = ({ missionDetail }: Props) => {
       setIsStartedHttp(false);
       setIsLinkChecked(false);
     }
+
     const expression =
       // eslint-disable-next-line no-useless-escape
       /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/;
     const regex = new RegExp(expression);
+
     if (regex.test(e.target.value)) {
       setIsValidLinkValue(true);
     } else {
@@ -75,6 +78,30 @@ const AbsentMissionSubmitMenu = ({ missionDetail }: Props) => {
   const handleMissionLinkSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     submitMissionLink.mutate();
+  };
+
+  /** a 태그로 감싼 텍스트는 링크로 변경 */
+  const parseLink = (text: string) => {
+    const regex = /<a>|<\/a>/;
+    const splited = text.split(regex);
+
+    return splited.map((item) => {
+      try {
+        new URL(item);
+        return (
+          <Link
+            to={item}
+            className="text-primary underline"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            {item}
+          </Link>
+        );
+      } catch (error) {
+        return item;
+      }
+    });
   };
 
   useEffect(() => {
@@ -102,7 +129,7 @@ const AbsentMissionSubmitMenu = ({ missionDetail }: Props) => {
       {currentSchedule?.attendanceInfo.comments && (
         <div className="mt-4">
           <div className="whitespace-pre-line rounded-md bg-[#F2F2F2] px-8 py-6 text-sm">
-            {currentSchedule?.attendanceInfo.comments}
+            {parseLink(currentSchedule?.attendanceInfo.comments)}
           </div>
         </div>
       )}

@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import clsx from 'clsx';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import { useControlScroll } from '@/hooks/useControlScroll';
 import { Attendance, UpdateAttendanceReq } from '@/schema';
@@ -13,6 +13,7 @@ interface Props {
 }
 
 const CommentCell = ({ attendance, cellWidthListIndex }: Props) => {
+  const cursorPositionRef = useRef<number>();
   const queryClient = useQueryClient();
 
   const [modalShown, setModalShown] = useState(false);
@@ -40,6 +41,18 @@ const CommentCell = ({ attendance, cellWidthListIndex }: Props) => {
       comments: editingComment,
     });
   };
+
+  /** 링크 삽입 후 커서가 맨 마지막으로 이동하는 것을 방지 */
+  useEffect(() => {
+    if (!cursorPositionRef.current) return;
+
+    const textarea = document.activeElement; // focused element
+    (textarea as HTMLTextAreaElement).setSelectionRange(
+      cursorPositionRef.current,
+      cursorPositionRef.current,
+    );
+    cursorPositionRef.current = undefined;
+  }, [editingComment]);
 
   return (
     <>
@@ -80,7 +93,33 @@ const CommentCell = ({ attendance, cellWidthListIndex }: Props) => {
                     rows={12}
                     value={editingComment || ''}
                     placeholder="코멘트를 입력해주세요."
-                    onChange={(e) => setEditingComment(e.target.value)}
+                    onChange={(e) => {
+                      try {
+                        const input = (e.nativeEvent as InputEvent).data;
+
+                        new URL(input ?? '');
+
+                        // URL이면 링크 삽입
+                        const inputLength = input?.length ?? 0;
+                        const link = `<a>${input}</a>`;
+                        const cursorPosition =
+                          e.currentTarget.selectionStart - inputLength;
+
+                        setEditingComment(
+                          (prev) =>
+                            prev.substring(0, cursorPosition) +
+                            link +
+                            prev.substring(cursorPosition),
+                        );
+
+                        // 커서 위치 되돌리기
+                        cursorPositionRef.current =
+                          cursorPosition + inputLength + 7;
+                      } catch (error) {
+                        // URL이 아니면
+                        setEditingComment(e.target.value);
+                      }
+                    }}
                     autoComplete="off"
                   />
                 </div>
