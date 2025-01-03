@@ -89,7 +89,7 @@ const CommentCell = ({ attendance, cellWidthListIndex }: Props) => {
                   <textarea
                     className="flex-1 resize-none rounded-md border border-neutral-400 px-4 py-2 text-sm outline-none"
                     name="comments"
-                    maxLength={1000}
+                    maxLength={1200}
                     rows={12}
                     value={editingComment || ''}
                     placeholder="코멘트를 입력해주세요."
@@ -124,7 +124,7 @@ const CommentCell = ({ attendance, cellWidthListIndex }: Props) => {
                   />
                 </div>
                 <span className="text-right text-xsmall14 text-neutral-40">
-                  {editingComment.length <= 1000 ? editingComment.length : 1000}
+                  {editingComment.length <= 1200 ? editingComment.length : 1200}
                   / 1000자
                 </span>
               </div>
