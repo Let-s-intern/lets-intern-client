@@ -6,6 +6,7 @@ import {
   UserChallengeMissionDetail,
 } from '../../../../../schema';
 import MenuContentsDropdown from '../dropdown/MenuContentsDropdown';
+import { parseLink } from '../menu/AbsentMissionSubmitMenu';
 interface Props {
   missionDetail: UserChallengeMissionDetail;
   // dailyMission: DailyMission;
@@ -56,8 +57,8 @@ const DoneMissionDetailMenu = ({
         </div>
         {schedule.attendanceInfo.comments && (
           <div className="mt-4">
-            <div className="rounded-md bg-[#F2F2F2] px-8 py-6 text-sm">
-              {schedule.attendanceInfo.comments}
+            <div className="whitespace-pre-line rounded-md bg-[#F2F2F2] px-8 py-6 text-sm">
+              {parseLink(schedule.attendanceInfo.comments)}
             </div>
           </div>
         )}
