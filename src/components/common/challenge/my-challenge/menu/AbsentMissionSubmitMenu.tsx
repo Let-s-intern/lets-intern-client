@@ -1,38 +1,11 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import clsx from 'clsx';
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
 
 import { useCurrentChallenge } from '@/context/CurrentChallengeProvider';
 import { UserChallengeMissionDetail } from '@/schema';
 import axios from '@/utils/axios';
-
-/** 링크는 Link element로 변경 */
-export const parseLink = (text: string) => {
-  const regex = /\((.*?)\)\[(.*?)\]/g;
-  let startIndex = 0;
-  const result = [];
-
-  text.replace(regex, (match, caption, url, offset, string) => {
-    const element = (
-      <Link
-        to={url}
-        className="text-primary underline"
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        {caption}
-      </Link>
-    );
-
-    result.push(string.substring(startIndex, offset), element);
-    startIndex = offset + match.length;
-    return '';
-  });
-  result.push(text.substring(startIndex));
-
-  return result;
-};
+import ParsedCommentBox from '../ParsedCommentBox';
 
 interface Props {
   missionDetail: UserChallengeMissionDetail;
@@ -132,9 +105,10 @@ const AbsentMissionSubmitMenu = ({ missionDetail }: Props) => {
       )}
       {currentSchedule?.attendanceInfo.comments && (
         <div className="mt-4">
-          <div className="whitespace-pre-line rounded-md bg-[#F2F2F2] px-8 py-6 text-sm">
-            {parseLink(currentSchedule?.attendanceInfo.comments)}
-          </div>
+          <ParsedCommentBox
+            className="rounded-md bg-[#F2F2F2] px-8 py-6 text-sm"
+            comment={currentSchedule?.attendanceInfo.comments}
+          />
         </div>
       )}
       {!(
