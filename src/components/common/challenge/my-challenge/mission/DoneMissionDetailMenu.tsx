@@ -1,15 +1,14 @@
 import { Link } from 'react-router-dom';
-// import RewardContentsLink from '../link/RewardContentsLink';
+
 import {
   MyChallengeMissionByType,
   Schedule,
   UserChallengeMissionDetail,
-} from '../../../../../schema';
+} from '@/schema';
 import MenuContentsDropdown from '../dropdown/MenuContentsDropdown';
-import { parseLink } from '../menu/AbsentMissionSubmitMenu';
+import ParsedCommentBox from '../ParsedCommentBox';
 interface Props {
   missionDetail: UserChallengeMissionDetail;
-  // dailyMission: DailyMission;
   missionByType: MyChallengeMissionByType;
   schedule: Schedule;
 }
@@ -57,9 +56,10 @@ const DoneMissionDetailMenu = ({
         </div>
         {schedule.attendanceInfo.comments && (
           <div className="mt-4">
-            <div className="whitespace-pre-line rounded-md bg-[#F2F2F2] px-8 py-6 text-sm">
-              {parseLink(schedule.attendanceInfo.comments)}
-            </div>
+            <ParsedCommentBox
+              className="rounded-md bg-[#F2F2F2] px-8 py-6 text-sm"
+              comment={schedule.attendanceInfo.comments}
+            />
           </div>
         )}
       </div>
