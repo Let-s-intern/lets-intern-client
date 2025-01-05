@@ -337,7 +337,7 @@ const ReportApplyBottomSheet = React.forwardRef<
             }
           >
             <GradientButton
-              className="w-full"
+              className="apply_button w-full"
               onClick={() => {
                 if (isInstagram && !showInstagramAlert) {
                   setShowInstagramAlert(true);
@@ -360,7 +360,7 @@ const ReportApplyBottomSheet = React.forwardRef<
               </span>
             </div>
             <GradientButton
-              className="w-36"
+              className="apply_button w-36"
               onClick={() => setIsDrawerOpen(true)}
             >
               지금 바로 신청
