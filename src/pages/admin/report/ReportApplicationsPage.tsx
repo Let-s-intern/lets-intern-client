@@ -350,7 +350,11 @@ const ReportApplicationsPage = () => {
                         보기
                       </Button>
                     </TD>
-                    <TD> {application.applyFileUrl ? '동시제출' : '후제출'}</TD>
+                    <TD>
+                      {application.submitType === 'LATE'
+                        ? '후제출'
+                        : '동시제출'}
+                    </TD>
                     <TD>
                       <div className="flex gap-2">
                         <ActionButton
