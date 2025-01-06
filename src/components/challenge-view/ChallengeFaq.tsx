@@ -1,8 +1,7 @@
 import { twMerge } from '@/lib/twMerge';
 import { ReactNode, useState } from 'react';
-import { useParams } from 'react-router-dom';
 
-import { useGetChallengeFaq } from '@/api/challenge';
+import { faqSchemaType } from '@/schema';
 import { ChallengeContent } from '@/types/interface';
 import { ChallengeColor } from '@components/ChallengeView';
 import SuperTitle from '@components/common/program/program-detail/SuperTitle';
@@ -15,19 +14,18 @@ const superTitle = '자주 묻는 질문';
 const title = '궁금한 점이 있으신가요?';
 
 interface ChallengeFaqProps {
+  faqData?: faqSchemaType;
   colors: ChallengeColor;
   faqCategory: ChallengeContent['faqCategory'];
 }
 
-function ChallengeFaq({ colors, faqCategory }: ChallengeFaqProps) {
-  const { id } = useParams();
-
+function ChallengeFaq({ faqData, colors, faqCategory }: ChallengeFaqProps) {
   const [selectedIndex, setSelectedIndex] = useState(0);
 
-  const { data } = useGetChallengeFaq(id ?? '');
-
-  const faqList = data?.faqList;
+  const faqList = faqData?.faqList;
   const categoryList = [...new Set(faqCategory)];
+
+  if (!faqList) return <></>;
 
   return (
     <section

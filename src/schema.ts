@@ -124,6 +124,8 @@ export type Faq = z.infer<typeof faq>;
 
 export const faqSchema = z.object({ faqList: z.array(faq) });
 
+export type faqSchemaType = z.infer<typeof faqSchema>;
+
 export const reviewSchema = z.object({
   id: z.number(),
   applicationId: z.number().nullable().optional(),

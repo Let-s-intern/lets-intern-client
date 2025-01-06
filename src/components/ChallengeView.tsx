@@ -1,6 +1,7 @@
 import dayjs from 'dayjs';
 import { useMemo } from 'react';
 
+import { useGetChallengeFaq } from '@/api/challenge';
 import { twMerge } from '@/lib/twMerge';
 import { ChallengeIdSchema, challengeTypeSchema } from '@/schema';
 import { ChallengeContent } from '@/types/interface';
@@ -8,6 +9,7 @@ import ChallengeCheckList from '@components/challenge-view/ChallengeCheckList';
 import ChallengeCurriculum from '@components/challenge-view/ChallengeCurriculum';
 import ChallengeFaq from '@components/challenge-view/ChallengeFaq';
 import ChallengeResult from '@components/challenge-view/ChallengeResult';
+import { useParams } from 'react-router-dom';
 import ChallengeBasicInfo from './challenge-view/ChallengeBasicInfo';
 import ChallengeBrand from './challenge-view/ChallengeBrand';
 import ChallengeDifferent from './challenge-view/ChallengeDifferent';
@@ -50,6 +52,12 @@ const ChallengeView: React.FC<{
   challenge: ChallengeIdSchema;
   isPreview?: boolean;
 }> = ({ challenge, isPreview }) => {
+  const { id } = useParams();
+
+  const { data: faqData, isLoading: faqIsLoading } = useGetChallengeFaq(
+    id ?? '',
+  );
+
   const receivedContent = useMemo<ChallengeContent>(() => {
     if (!challenge?.desc) {
       return { initialized: false };
@@ -159,6 +167,7 @@ const ChallengeView: React.FC<{
           color={colors}
           programType="challenge"
           className={twMerge(isPreview && 'top-0 md:top-0 lg:top-0')}
+          isReady={!faqIsLoading}
         />
 
         <div className="flex w-full flex-col items-center overflow-x-hidden">
@@ -264,6 +273,7 @@ const ChallengeView: React.FC<{
             )}
           </section>
           <ChallengeFaq
+            faqData={faqData}
             colors={colors}
             faqCategory={receivedContent.faqCategory}
           />

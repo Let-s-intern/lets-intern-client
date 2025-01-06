@@ -1,9 +1,11 @@
 import { useMemo } from 'react';
 
+import { useGetLiveFaq } from '@/api/program';
 import { twMerge } from '@/lib/twMerge';
 import { LiveIdSchema } from '@/schema';
 import { LiveContent } from '@/types/interface';
 import BackHeader from '@components/common/ui/BackHeader';
+import { useParams } from 'react-router-dom';
 import LexicalContent from './common/blog/LexicalContent';
 import MoreReviewButton from './common/review/MoreReviewButton';
 import LiveBasicInfo from './live-view/LiveBasicInfo';
@@ -27,6 +29,8 @@ const LiveView: React.FC<{ live: LiveIdSchema; isPreview?: boolean }> = ({
   live,
   isPreview,
 }) => {
+  const { id } = useParams();
+
   const mentor = {
     mentorName: live.mentorName,
     mentorImg: live.mentorImg,
@@ -41,6 +45,8 @@ const LiveView: React.FC<{ live: LiveIdSchema; isPreview?: boolean }> = ({
     [live.desc],
   );
 
+  const { data: faqData, isLoading: faqIsLoading } = useGetLiveFaq(id ?? '');
+
   return (
     <div className="flex w-full flex-col">
       <div className="flex w-full flex-col items-center">
@@ -53,6 +59,7 @@ const LiveView: React.FC<{ live: LiveIdSchema; isPreview?: boolean }> = ({
         <ProgramDetailNavigation
           programType="live"
           className={twMerge(isPreview && 'top-0 md:top-0 lg:top-0')}
+          isReady={!faqIsLoading}
         />
 
         <div className="flex w-full flex-col items-center overflow-x-hidden">
@@ -110,7 +117,7 @@ const LiveView: React.FC<{ live: LiveIdSchema; isPreview?: boolean }> = ({
               />
             )}
           </section>
-          <LiveFaq />
+          <LiveFaq faqData={faqData} />
           <LiveInfoBottom live={live} />
         </div>
       </div>

@@ -13,6 +13,7 @@ interface ProgramDetailNavigationProps {
   color?: ChallengeColor;
   programType: ProgramType;
   className?: string;
+  isReady?: boolean;
 }
 
 // TODO: GA에 맞게 수정해야 함.
@@ -49,6 +50,7 @@ const ProgramDetailNavigation = ({
   color,
   programType,
   className,
+  isReady,
 }: ProgramDetailNavigationProps) => {
   const { scrollDirection } = useScrollStore();
   const isLive = programType === 'live';
@@ -58,32 +60,29 @@ const ProgramDetailNavigation = ({
   const navItems = isLive ? liveNavigateItems : challengeNavigateItems;
 
   useEffect(() => {
+    if (!isReady || typeof window === 'undefined') return;
+
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
-            // 얼마나 보여지는지 콘솔
-            // console.log(entry.target.id);
-            // console.log(entry.intersectionRatio);
             setActiveSection(entry.target.id);
           }
         });
       },
       {
-        // 뷰포트 상단 10%부터 시작해서 뷰포트 하단 10%까지 보여지면 콜백
-        rootMargin: '0px 0px 0px 0px',
-        threshold: 0.05,
+        root: null,
+        rootMargin: '-50% 0px -50% 0px',
+        threshold: 0,
       },
     );
 
-    setTimeout(() => {
-      navItems.forEach((navItem) => {
-        const target = document.getElementById(navItem.to);
-        if (target) {
-          observer.observe(target);
-        }
-      });
-    }, 1000);
+    navItems.forEach((navItem) => {
+      const target = document.getElementById(navItem.to);
+      if (target) {
+        observer.observe(target);
+      }
+    });
 
     return () => {
       navItems.forEach((navItem) => {
@@ -93,7 +92,7 @@ const ProgramDetailNavigation = ({
         }
       });
     };
-  }, [navItems]);
+  }, [navItems, isReady]);
 
   const handleScroll = (id: string) => {
     const target = document.getElementById(id);
