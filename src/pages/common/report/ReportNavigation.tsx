@@ -75,16 +75,6 @@ const ReportNavigation = ({
     };
   }, [navItems, isReady]);
 
-  useEffect(() => {
-    if (!isReady) {
-      return;
-    }
-
-    if (typeof window === 'undefined') {
-      return;
-    }
-  }, [isReady]);
-
   const handleScroll = (id: string) => {
     const target = document.getElementById(id);
     if (target) {

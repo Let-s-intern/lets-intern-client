@@ -1,6 +1,4 @@
-import { useParams } from 'react-router-dom';
-
-import { useGetLiveFaq } from '@/api/program';
+import { faqSchemaType } from '@/schema';
 import SuperTitle from '@components/common/program/program-detail/SuperTitle';
 import FaqDropdown from '@components/common/ui/FaqDropdown';
 import Heading2 from '@components/common/ui/Heading2';
@@ -9,12 +7,12 @@ import { LIVE_FAQ_ID } from '@components/ProgramDetailNavigation';
 const superTitle = '자주 묻는 질문';
 const title = '궁금한 점이 있으신가요?';
 
-function LiveFaq() {
-  const { id } = useParams();
+interface LiveFaqProps {
+  faqData?: faqSchemaType;
+}
 
-  const { data } = useGetLiveFaq(id ?? '');
-
-  const faqList = data?.faqList;
+function LiveFaq({ faqData }: LiveFaqProps) {
+  const faqList = faqData?.faqList;
 
   if (!faqList) return <></>;
 
