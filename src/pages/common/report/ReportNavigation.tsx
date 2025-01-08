@@ -79,7 +79,7 @@ const ReportNavigation = ({
     const target = document.getElementById(id);
     if (target) {
       const elementPosition = target.getBoundingClientRect().top;
-      const offsetPosition = elementPosition - 70;
+      const offsetPosition = elementPosition;
       window.scrollBy({
         top: offsetPosition,
         behavior: 'smooth',
