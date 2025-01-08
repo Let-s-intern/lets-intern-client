@@ -7,7 +7,9 @@ import fetch from 'node-fetch';
 
 async function data() {
   try {
-    const res = await fetch(`${import.meta.env.VITE_SERVER_API}/report/active`);
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_SERVER_API}/report/active`,
+    );
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const data = (await res.json()) as any;
     return getActiveReportsSchema.parse(data.data);

@@ -14,7 +14,7 @@ const SocialLogin = ({ type }: SocialLoginProps) => {
   const getSocialLink = (socialType: 'KAKAO' | 'NAVER') => {
     const redirectPath = `${window.location.origin}/${type === 'LOGIN' ? 'login' : 'signup'}${`?redirect=${redirect}`}`;
     const basePath =
-      import.meta.env.VITE_API_BASE_PATH || 'https://letscareer.store';
+      process.env.NEXT_PUBLIC_API_BASE_PATH || 'https://letscareer.store';
     const path = `${basePath}/oauth2/authorize/${
       socialType === 'KAKAO' ? 'kakao' : 'naver'
     }?redirect_uri=${redirectPath}`;

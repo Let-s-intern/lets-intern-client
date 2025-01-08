@@ -2,7 +2,6 @@
   "name": "lets-intern-client",
   "version": "0.1.0",
   "private": true,
-  "type": "module",
   "dependencies": {
     "@emotion/react": "^11.11.4",
     "@emotion/styled": "^11.11.5",
@@ -42,6 +41,7 @@
     "lexical": "^0.16.1",
     "lodash-es": "^4.17.21",
     "nanoid": "^5.0.7",
+    "next": "^15.1.4",
     "node-fetch": "^3.3.2",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
@@ -64,10 +64,10 @@
     "zustand": "^4.5.4"
   },
   "scripts": {
-    "dev": "vite",
-    "build": "tsc -b && vite build",
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
     "typecheck": "tsc --noEmit",
-    "start": "vite",
     "test": "vitest",
     "lint": "eslint ."
   },

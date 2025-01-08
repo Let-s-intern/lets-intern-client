@@ -8,7 +8,7 @@ import fetch from 'node-fetch';
 async function data() {
   try {
     const res = await fetch(
-      `${import.meta.env.VITE_SERVER_API}/report/active`,
+      `${process.env.NEXT_PUBLIC_SERVER_API}/report/active`,
       {
         headers: {
           Accept: 'application/json',

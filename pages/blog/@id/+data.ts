@@ -10,7 +10,7 @@ async function data(pageContext: PageContextServer) {
   const { id } = pageContext.routeParams;
 
   try {
-    const res = await fetch(`${import.meta.env.VITE_SERVER_API}/blog/${id}`);
+    const res = await fetch(`${process.env.NEXT_PUBLIC_SERVER_API}/blog/${id}`);
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const data = (await res.json()) as any;
     return blogSchema.parse(data.data);

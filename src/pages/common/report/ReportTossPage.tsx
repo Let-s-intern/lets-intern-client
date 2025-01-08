@@ -14,7 +14,7 @@ type TossPaymentsWidgets = ReturnType<
   Awaited<ReturnType<typeof loadTossPayments>>['widgets']
 >;
 
-const clientKey = import.meta.env.VITE_TOSS_CLIENT_KEY || '';
+const clientKey = process.env.NEXT_PUBLIC_TOSS_CLIENT_KEY || '';
 
 const ReportTossPage = () => {
   const tossInitialized = useRef(false);

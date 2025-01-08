@@ -3,7 +3,7 @@ import { Dayjs } from 'dayjs';
 import { josa } from 'es-hangul';
 import { ReactNode, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { clientOnly } from 'vike-react/clientOnly';
+// import { clientOnly } from 'vike-react/clientOnly';
 
 import { getVod } from '@/api/program';
 import Check from '@/assets/icons/chevron-down.svg?react';
@@ -15,7 +15,10 @@ import SuperTitle from '@components/common/program/program-detail/SuperTitle';
 import Heading2 from '@components/common/ui/Heading2';
 import ProgramRecommendSlider from '@components/common/ui/ProgramRecommendSlider';
 
-const Balancer = clientOnly(() => import('react-wrap-balancer'));
+// const Balancer = clientOnly(() => import('react-wrap-balancer'));
+import dynamic from 'next/dynamic';
+
+const Balancer = dynamic(() => import('react-wrap-balancer'), { ssr: false });
 
 type ProgressItemType = {
   index: number;

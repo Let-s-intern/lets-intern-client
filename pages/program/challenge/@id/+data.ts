@@ -11,7 +11,7 @@ async function data(pageContext: PageContextServer) {
 
   try {
     const res = await fetch(
-      `${import.meta.env.VITE_SERVER_API}/challenge/${id}`,
+      `${process.env.NEXT_PUBLIC_SERVER_API}/challenge/${id}`,
     );
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const data = (await res.json()) as any;
