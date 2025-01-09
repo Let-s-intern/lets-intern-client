@@ -31,7 +31,6 @@ export default function KeywordsPlugin(): JSX.Element | null {
   }, []);
 
   const getKeywordMatch = useCallback((text: string) => {
-    try {
       const matchArr = KEYWORDS_REGEX.exec(text);
 
       if (matchArr === null) {
@@ -45,9 +44,6 @@ export default function KeywordsPlugin(): JSX.Element | null {
         end: endOffset,
         start: startOffset,
       };
-    } catch (e) {
-      return null;
-    }
   }, []);
 
   useLexicalTextEntity<KeywordNode>(
