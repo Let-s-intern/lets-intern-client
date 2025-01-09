@@ -83,7 +83,7 @@ const ReportBasicInfo = ({ reportBasic, color }: ReportBasicInfoProps) => {
       case 'PERSONAL_STATEMENT':
         return '/images/report/thumbnail_personal.png';
       case 'PORTFOLIO':
-        return '/images/report-thumbnail.png';
+        return '/images/report/thumbnail_portfolio.png';
       default:
         return '/images/report-thumbnail.png';
     }
