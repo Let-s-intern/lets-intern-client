@@ -94,9 +94,9 @@ const NavBar = () => {
       if (data?.personalStatementInfo) {
         navItems.push(reportHoverItem[1]);
       }
-      if (data?.portfolioInfo) {
-        navItems.push(reportHoverItem[2]);
-      }
+      // if (data?.portfolioInfo) {
+      //   navItems.push(reportHoverItem[2]);
+      // }
 
       navItems.push(reportHoverItem[3]);
 
