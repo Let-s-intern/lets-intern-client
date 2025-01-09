@@ -127,15 +127,6 @@ const ReportApplyBottomSheet = React.forwardRef<
 
     return [
       {
-        value: REPORT_RADIO_VALUES.basicFeedback,
-        label: '[추천] 베이직 + 1:1 온라인 상담(40분) 패키지',
-        price:
-          (reportBasicInfo?.price ?? 0) + (feedbackInfo?.feedbackPrice ?? 0),
-        discount:
-          (reportBasicInfo?.discountPrice ?? 0) +
-          (feedbackInfo?.feedbackDiscountPrice ?? 0),
-      },
-      {
         value: REPORT_RADIO_VALUES.premiumFeedback,
         label: '[추천] 프리미엄 + 1:1 온라인 상담(40분) 패키지',
         price:
@@ -145,16 +136,25 @@ const ReportApplyBottomSheet = React.forwardRef<
           (feedbackInfo?.feedbackDiscountPrice ?? 0),
       },
       {
-        value: REPORT_RADIO_VALUES.basic,
-        label: basicLabel,
-        price: reportBasicInfo?.price,
-        discount: reportBasicInfo?.discountPrice,
+        value: REPORT_RADIO_VALUES.basicFeedback,
+        label: '[추천] 베이직 + 1:1 온라인 상담(40분) 패키지',
+        price:
+          (reportBasicInfo?.price ?? 0) + (feedbackInfo?.feedbackPrice ?? 0),
+        discount:
+          (reportBasicInfo?.discountPrice ?? 0) +
+          (feedbackInfo?.feedbackDiscountPrice ?? 0),
       },
       {
         value: REPORT_RADIO_VALUES.premium,
         label: premiumLabel,
         price: reportPremiumInfo?.price,
         discount: reportPremiumInfo?.discountPrice,
+      },
+      {
+        value: REPORT_RADIO_VALUES.basic,
+        label: basicLabel,
+        price: reportBasicInfo?.price,
+        discount: reportBasicInfo?.discountPrice,
       },
     ];
   }, [priceDetail, report.reportType]);
