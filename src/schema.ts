@@ -303,7 +303,7 @@ export const getLiveIdSchema = z
     mentorCareer: z.string().optional().nullable(),
     mentorIntroduction: z.string().optional().nullable(),
     job: z.string().optional(),
-    place: z.string().optional(),
+    place: z.string().optional().nullable(),
     startDate: z.string().optional(),
     endDate: z.string().optional(),
     beginning: z.string().optional(),
