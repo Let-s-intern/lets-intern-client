@@ -51,7 +51,7 @@ const onRenderHtml: OnRenderHtmlAsync = async (pageContext) => {
     pageHtml,
     title: getReportLandingTitle(data.portfolioInfo?.title || '포트폴리오'),
     description: portfolioReportDescription,
-    image: `${getBaseUrlFromServer()}/images/report-banner.jpg`,
+    image: `${getBaseUrlFromServer()}/images/report/open-graph-portfolio.png`,
     url: `${getBaseUrlFromServer()}/report/landing/portfolio`,
   });
 };
