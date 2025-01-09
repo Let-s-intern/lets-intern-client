@@ -1,3 +1,6 @@
+import { useCallback, useEffect } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+
 import { useProgramApplicationQuery } from '@/api/application';
 import { useGetLiveQuery } from '@/api/program';
 import { useServerLive } from '@/context/ServerLive';
@@ -13,8 +16,6 @@ import {
 import { DesktopApplyCTA, MobileApplyCTA } from '@components/common/ApplyCTA';
 import CommonHelmet from '@components/common/CommonHelmet';
 import LiveView from '@components/LiveView';
-import { useCallback, useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
 
 const LiveDetailSSRPage = () => {
   const navigate = useNavigate();
