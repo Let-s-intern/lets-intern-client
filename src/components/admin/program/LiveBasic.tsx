@@ -120,7 +120,7 @@ export default function LiveBasic<T extends CreateLiveReq | UpdateLiveReq>({
         type="text"
         name="place"
         size="small"
-        defaultValue={defaultValue?.place}
+        defaultValue={defaultValue?.place ?? ''}
         placeholder="장소를 입력해주세요"
         onChange={onChange}
       />
