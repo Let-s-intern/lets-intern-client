@@ -1,4 +1,5 @@
 import { Button, Checkbox, FormControlLabel } from '@mui/material';
+import { useQueryClient } from '@tanstack/react-query';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { FaSave } from 'react-icons/fa';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -9,6 +10,17 @@ import {
   useGetLiveQueryKey,
   usePatchLiveMutation,
 } from '@/api/program';
+import LiveBasic from '@/components/admin/program/LiveBasic';
+import LiveCurriculum from '@/components/admin/program/LiveCurriculum';
+import LiveInformation from '@/components/admin/program/LiveInformation';
+import LiveMentor from '@/components/admin/program/LiveMentor';
+import LivePrice, {
+  initialLivePrice,
+} from '@/components/admin/program/LivePrice';
+import ProgramBestReview from '@/components/admin/program/ProgramBestReview';
+import ProgramBlogReviewEditor from '@/components/admin/program/ProgramBlogReviewEditor';
+import FaqSection from '@/components/FaqSection';
+import ProgramRecommendEditor from '@/components/ProgramRecommendEditor';
 import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
 import { isDeprecatedProgram } from '@/lib/isDeprecatedProgram';
 import { ProgramTypeEnum, UpdateLiveReq } from '@/schema';
@@ -19,18 +31,6 @@ import ImageUpload from '@components/admin/program/ui/form/ImageUpload';
 import Header from '@components/admin/ui/header/Header';
 import Heading from '@components/admin/ui/heading/Heading';
 import Heading2 from '@components/admin/ui/heading/Heading2';
-import { useQueryClient } from '@tanstack/react-query';
-import LiveBasic from '../../components/admin/program/LiveBasic';
-import LiveCurriculum from '../../components/admin/program/LiveCurriculum';
-import LiveInformation from '../../components/admin/program/LiveInformation';
-import LiveMentor from '../../components/admin/program/LiveMentor';
-import LivePrice, {
-  initialLivePrice,
-} from '../../components/admin/program/LivePrice';
-import ProgramBestReview from '../../components/admin/program/ProgramBestReview';
-import ProgramBlogReviewEditor from '../../components/admin/program/ProgramBlogReviewEditor';
-import FaqSection from '../../components/FaqSection';
-import ProgramRecommendEditor from '../../components/ProgramRecommendEditor';
 import ProgramSchedule from './program/ProgramSchedule';
 
 const LiveEdit: React.FC = () => {
@@ -155,7 +155,7 @@ const LiveEdit: React.FC = () => {
             label="라이브 썸네일 이미지 업로드"
             id="thumbnail"
             name="thumbnail"
-            image={input.thumbnail ?? live.thumbnail}
+            image={input.thumbnail ?? live.thumbnail ?? undefined}
             onChange={onChangeImage}
           />
         </div>
