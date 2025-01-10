@@ -23,7 +23,7 @@ const LiveBasicInfo = ({ live }: { live: LiveIdSchema }) => {
   return (
     <section className="flex flex-col gap-6 pb-10 pt-8 md:flex-row md:pb-20 md:pt-[50px]">
       <img
-        src={live.thumbnail}
+        src={live.thumbnail ?? undefined}
         alt="챌린지 썸네일"
         className="w-full rounded-md bg-primary-10 object-contain md:w-3/5"
       />
