@@ -50,7 +50,9 @@ const onRenderHtml: OnRenderHtmlAsync = async (pageContext) => {
   return getServerHtml({
     pageHtml,
     title: getReportLandingTitle(
-      data.personalStatementInfo?.title || '자기소개서',
+      data.personalStatementInfoList.length > 0
+        ? (data.personalStatementInfoList[0].title ?? '자기소개서')
+        : '자기소개서',
     ),
     description: personalStatementReportDescription,
     image: `${getBaseUrlFromServer()}/images/report/open-graph-personal-statement.png`,
