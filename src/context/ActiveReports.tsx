@@ -2,9 +2,9 @@ import { ActiveReports } from '@/api/report';
 import { createContext, useContext } from 'react';
 
 export const mockActiveReports: ActiveReports = {
-  personalStatementInfo: undefined,
-  portfolioInfo: undefined,
-  resumeInfo: undefined,
+  personalStatementInfoList: [],
+  portfolioInfoList: [],
+  resumeInfoList: [],
 };
 
 const context = createContext({
