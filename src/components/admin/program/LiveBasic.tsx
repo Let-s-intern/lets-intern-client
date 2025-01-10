@@ -131,7 +131,7 @@ export default function LiveBasic<T extends CreateLiveReq | UpdateLiveReq>({
           id="job"
           label="직무"
           name="job"
-          defaultValue={defaultValue?.job}
+          defaultValue={defaultValue?.job ?? ''}
           onChange={onChange}
         >
           {Object.keys(liveAndVodJob.enum).map((key) => (
@@ -155,7 +155,7 @@ export default function LiveBasic<T extends CreateLiveReq | UpdateLiveReq>({
         type="text"
         name="shortDesc"
         size="small"
-        defaultValue={defaultValue?.shortDesc}
+        defaultValue={defaultValue?.shortDesc ?? ''}
         placeholder="한 줄 설명을 입력해주세요"
         onChange={onChange}
       />
