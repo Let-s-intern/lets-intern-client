@@ -1,6 +1,8 @@
 import {
   Button,
+  Checkbox,
   FormControl,
+  FormControlLabel,
   InputLabel,
   MenuItem,
   Select,
@@ -237,8 +239,24 @@ const AdminReportCreatePage = () => {
                 });
               }}
             >
-              비공개 처리
+              노출일시 삭제
             </Button>
+            <FormControlLabel
+              className="pl-4 text-neutral-40"
+              control={
+                <Checkbox
+                  checked={false}
+                  // 클릭 시 ALERT
+                  onChange={() => {
+                    alert(
+                      '서류진단 생성 시 비공개 처리됩니다. 공개 설정은 수정을 통해 진행해주세요.',
+                    );
+                  }}
+                  color="primary"
+                />
+              }
+              label="유저단 공개"
+            />
           </section>
 
           <hr />
