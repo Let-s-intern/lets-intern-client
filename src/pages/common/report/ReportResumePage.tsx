@@ -18,6 +18,7 @@ import ReportProgramRecommendSlider from '@components/common/report/ReportProgra
 import ReportReviewSection from '@components/common/report/ReportReviewSection';
 import ServiceProcessSection from '@components/common/report/ServiceProcessSection';
 import LoadingContainer from '@components/common/ui/loading/LoadingContainer';
+import { useParams } from 'react-router-dom';
 import ReportNavigation from './ReportNavigation';
 
 export const resumeColors = {
@@ -36,17 +37,23 @@ export const resumeColors = {
 };
 
 const ReportResumePage = () => {
+  const { reportId } = useParams();
   const activeReportsFromServer = useServerActiveReports();
   const { data, isLoading } = useGetActiveReports();
-  const title = getReportLandingTitle(data?.resumeInfo?.title ?? '이력서');
 
   const url = `${typeof window !== 'undefined' ? window.location.origin : getBaseUrlFromServer()}/report/landing/resume`;
   const description = resumeReportDescription;
   const activeReports = data || activeReportsFromServer;
-  const report = activeReports?.resumeInfo;
-  const resumeContent: ReportContent = JSON.parse(
-    data?.resumeInfo?.contents ?? '{}',
-  );
+  const report =
+    activeReports.resumeInfoList.length > 0
+      ? reportId === undefined || isNaN(Number(reportId))
+        ? activeReports?.resumeInfoList[0]
+        : activeReports?.resumeInfoList.find(
+            (item) => item.reportId === Number(reportId),
+          )
+      : undefined;
+  const title = getReportLandingTitle(report?.title ?? '이력서');
+  const resumeContent: ReportContent = JSON.parse(report?.contents ?? '{}');
 
   const { data: priceDetail, isLoading: priceIsLoading } =
     useGetReportPriceDetail(report?.reportId);
@@ -90,7 +97,7 @@ const ReportResumePage = () => {
             <div className="mx-auto flex w-full max-w-[1000px] flex-col px-5 lg:px-0">
               <div className="h-[56px] md:h-[66px]" />
               <ReportBasicInfo
-                reportBasic={data?.resumeInfo}
+                reportBasic={report}
                 color={resumeColors._2CE282}
               />
             </div>

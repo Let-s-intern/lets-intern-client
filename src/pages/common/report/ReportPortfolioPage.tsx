@@ -18,22 +18,28 @@ import ReportProgramRecommendSlider from '@components/common/report/ReportProgra
 import ReportReviewSection from '@components/common/report/ReportReviewSection';
 import ServiceProcessSection from '@components/common/report/ServiceProcessSection';
 import LoadingContainer from '@components/common/ui/loading/LoadingContainer';
+import { useParams } from 'react-router-dom';
 import ReportNavigation from './ReportNavigation';
 import { resumeColors } from './ReportResumePage';
 
 const ReportPortfolioPage = () => {
+  const { reportId } = useParams();
   const activeReportsFromServer = useServerActiveReports();
   const { data, isLoading } = useGetActiveReports();
-  const title = getReportLandingTitle(
-    data?.portfolioInfo?.title ?? '포트폴리오',
-  );
+
   const url = `${typeof window !== 'undefined' ? window.location.origin : getBaseUrlFromServer()}/report/landing/portfolio`;
   const description = portfolioReportDescription;
   const activeReports = data || activeReportsFromServer;
-  const report = activeReports?.portfolioInfo;
-  const portfolioContent: ReportContent = JSON.parse(
-    data?.portfolioInfo?.contents ?? '{}',
-  );
+  const report =
+    activeReports.portfolioInfoList.length > 0
+      ? reportId === undefined || isNaN(Number(reportId))
+        ? activeReports?.portfolioInfoList[0]
+        : activeReports?.portfolioInfoList.find(
+            (item) => item.reportId === Number(reportId),
+          )
+      : undefined;
+  const title = getReportLandingTitle(report?.title ?? '포트폴리오');
+  const portfolioContent: ReportContent = JSON.parse(report?.contents ?? '{}');
 
   const { data: priceDetail, isLoading: priceIsLoading } =
     useGetReportPriceDetail(report?.reportId);
@@ -75,7 +81,7 @@ const ReportPortfolioPage = () => {
             <div className="mx-auto flex w-full max-w-[1000px] flex-col px-5 lg:px-0">
               <div className="h-[56px] md:h-[66px]" />
               <ReportBasicInfo
-                reportBasic={data?.portfolioInfo}
+                reportBasic={report}
                 color={resumeColors._2CE282}
               />
             </div>
