@@ -1,8 +1,8 @@
 import { useEffect } from 'react';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
-// import { ReactComponent as User } from '../../../../public/icons/user-user-circle.svg';
-import NavItem from '../../../components/common/mypage/ui/nav/NavItem';
-import useAuthStore from '../../../store/useAuthStore';
+
+import NavItem from '@/components/common/mypage/ui/nav/NavItem';
+import useAuthStore from '@/store/useAuthStore';
 
 const MyPage = () => {
   const { isLoggedIn } = useAuthStore();
@@ -83,7 +83,6 @@ const MyPage = () => {
         </nav>
         <div className="flex w-full grow flex-col items-start justify-center pb-8 md:w-auto">
           <div className="flex w-full flex-col items-start justify-center gap-y-8 lg:mx-auto lg:max-w-[37.5rem]">
-            {/* <ReviewBanner cnt={3} /> */}
             <Outlet />
           </div>
         </div>
