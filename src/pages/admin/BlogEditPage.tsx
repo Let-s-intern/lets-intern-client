@@ -13,21 +13,21 @@ import dayjs, { Dayjs } from 'dayjs';
 import { ChangeEvent, FormEvent, MouseEvent, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
-import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
 import {
   useBlogQuery,
   useBlogTagQuery,
   useDeleteBlogTagMutation,
   usePatchBlogMutation,
   usePostBlogTagMutation,
-} from '../../api/blog';
-import { PostTag, postTagSchema, TagDetail } from '../../api/blogSchema';
-import { uploadFile } from '../../api/file';
-import TagSelector from '../../components/admin/blog/TagSelector';
-import TextFieldLimit from '../../components/admin/blog/TextFieldLimit';
-import EditorApp from '../../components/admin/lexical/EditorApp';
-import ImageUpload from '../../components/admin/program/ui/form/ImageUpload';
-import { blogCategory } from '../../utils/convert';
+} from '@/api/blog';
+import { PostTag, postTagSchema, TagDetail } from '@/api/blogSchema';
+import { uploadFile } from '@/api/file';
+import TagSelector from '@/components/admin/blog/TagSelector';
+import TextFieldLimit from '@/components/admin/blog/TextFieldLimit';
+import EditorApp from '@/components/admin/lexical/EditorApp';
+import ImageUpload from '@/components/admin/program/ui/form/ImageUpload';
+import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
+import { blogCategory } from '@/utils/convert';
 
 const maxCtaTextLength = 23;
 const maxTitleLength = 49;
@@ -79,6 +79,11 @@ const BlogEditPage = () => {
       }
     },
   });
+
+  const initialEditorStateJsonString =
+    !blogData?.blogDetailInfo.content || blogData?.blogDetailInfo.content === ''
+      ? undefined
+      : blogData?.blogDetailInfo.content;
 
   const onChange = (event: ChangeEvent<HTMLInputElement>) => {
     setEditingValue({
@@ -310,7 +315,7 @@ const BlogEditPage = () => {
 
             <h2 className="mt-10">콘텐츠 편집</h2>
             <EditorApp
-              initialEditorStateJsonString={blogData.blogDetailInfo.content!}
+              initialEditorStateJsonString={initialEditorStateJsonString}
               onChange={onChangeEditor}
             />
             <div className="text-right">

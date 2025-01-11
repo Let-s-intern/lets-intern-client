@@ -2,29 +2,22 @@ import dayjs from 'dayjs';
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
-import CommonHelmet from '@components/common/CommonHelmet';
 import {
   useBlogListTypeQuery,
   useBlogQuery,
   usePostBlogRatingMutation,
-} from '../../../api/blog';
-import BlogHashtag from '../../../components/common/blog/BlogHashtag';
-import LexicalContent from '../../../components/common/blog/LexicalContent';
-import RecommendBlogCard from '../../../components/common/blog/RecommendBlogCard';
-import LoadingContainer from '../../../components/common/ui/loading/LoadingContainer';
-import { useBlog } from '../../../context/Post';
-import { programSchema } from '../../../schema';
-import axios from '../../../utils/axios';
-import { blogCategory } from '../../../utils/convert';
-import {
-  PROGRAM_STATUS_KEY,
-  PROGRAM_TYPE_KEY,
-} from '../../../utils/programConst';
-import {
-  getBlogPathname,
-  getBlogTitle,
-  getUniversalLink,
-} from '../../../utils/url';
+} from '@/api/blog';
+import BlogHashtag from '@/components/common/blog/BlogHashtag';
+import LexicalContent from '@/components/common/blog/LexicalContent';
+import RecommendBlogCard from '@/components/common/blog/RecommendBlogCard';
+import LoadingContainer from '@/components/common/ui/loading/LoadingContainer';
+import { useBlog } from '@/context/Post';
+import { programSchema } from '@/schema';
+import axios from '@/utils/axios';
+import { blogCategory } from '@/utils/convert';
+import { PROGRAM_STATUS_KEY, PROGRAM_TYPE_KEY } from '@/utils/programConst';
+import { getBlogPathname, getBlogTitle, getUniversalLink } from '@/utils/url';
+import CommonHelmet from '@components/common/CommonHelmet';
 
 const findProgramIncludingKeyword = async (keyword: string) => {
   const res = await axios.get('/program', {
@@ -223,9 +216,11 @@ const BlogDetailSSRPage = () => {
             </div>
           </div>
           <div className="w-full break-all text-xsmall16" ref={contentRef}>
-            <LexicalContent
-              node={JSON.parse(blog.blogDetailInfo?.content || '{}')?.root}
-            />
+            {blog.blogDetailInfo?.content && (
+              <LexicalContent
+                node={JSON.parse(blog.blogDetailInfo?.content).root}
+              />
+            )}
           </div>
           <div className="flex w-full items-center justify-center gap-x-3 py-10">
             <div className="flex items-center justify-center rounded-full border border-primary-20 p-[9px]">

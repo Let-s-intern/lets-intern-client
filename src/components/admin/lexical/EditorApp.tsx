@@ -34,7 +34,7 @@ import TypingPerfPlugin from './plugins/TypingPerfPlugin';
 import setupEnv from './setupEnv';
 import PlaygroundEditorTheme from './themes/PlaygroundEditorTheme';
 
-const emptyEditorState = JSON.stringify({
+export const emptyEditorState = JSON.stringify({
   root: {
     children: [
       {
