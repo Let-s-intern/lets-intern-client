@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+import Link from 'next/link';
 
 interface DocumentLinkProps {
   to: string;
@@ -8,7 +8,7 @@ interface DocumentLinkProps {
 const DocumentLink = ({ to, children }: DocumentLinkProps) => {
   return (
     <Link
-      to={to}
+      href={to}
       className="text-0.75-medium lg:text-0.875-medium"
       rel="noopener noreferrer"
       target="_blank"

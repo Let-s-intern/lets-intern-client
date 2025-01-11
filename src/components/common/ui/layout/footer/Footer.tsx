@@ -1,5 +1,5 @@
+import Link from 'next/link';
 import { useEffect } from 'react';
-import { Link } from 'react-router-dom';
 import DocumentLink from './DocumentLink';
 import Icon from './Icon';
 import MenuLink from './MenuLink';
@@ -94,7 +94,7 @@ const Footer = () => {
 
           <div className="text-0.75-medium flex flex-col gap-5 text-neutral-45">
             {/* 로고 */}
-            <Link to="/" className="w-[7.5rem]">
+            <Link href="/" className="w-[7.5rem]">
               <img className="h-auto w-full" src="/logo/logo.svg" alt="Logo" />
             </Link>
             {/* 사업자 정보 */}

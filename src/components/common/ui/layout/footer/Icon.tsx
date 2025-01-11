@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+import Link from 'next/link';
 
 interface IconProps {
   src: string;
@@ -10,7 +10,7 @@ interface IconProps {
 const Icon = ({ src, alt, to = '#', className }: IconProps) => {
   return (
     <Link
-      to={to}
+      href={to}
       {...(to !== '#' && { target: '_blank', rel: 'noopener noreferrer' })}
       className={className}
     >
