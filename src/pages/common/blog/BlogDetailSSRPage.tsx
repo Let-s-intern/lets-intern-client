@@ -77,7 +77,7 @@ const BlogDetailSSRPage = () => {
 
   useEffect(() => {
     const showCTA = () => {
-      if (window.scrollY > window.innerHeight) {
+      if (window.scrollY > window.innerHeight / 2) {
         setShowCTA(true);
       } else {
         setShowCTA(false);
@@ -144,7 +144,7 @@ const BlogDetailSSRPage = () => {
     }
   };
 
-  const clickCtaButton = () => {
+  const onClickCtaButton = () => {
     let ctaLink = blog.blogDetailInfo.ctaLink;
     // [이슈] iOS에서 비동기 함수 내의 window.open() 차단 이슈로 open() 함수를 미리 선언
     const open = window.open('', '_self');
@@ -398,7 +398,7 @@ const BlogDetailSSRPage = () => {
             <div className="flex w-full flex-col items-center md:px-[100px]">
               <button
                 className="blog_cta w-full rounded-md bg-primary px-6 py-3 text-small18 font-medium text-neutral-100"
-                onClick={clickCtaButton}
+                onClick={onClickCtaButton}
               >
                 {blog.blogDetailInfo.ctaText}
               </button>
