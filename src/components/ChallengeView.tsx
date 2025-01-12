@@ -1,7 +1,7 @@
 import dayjs from 'dayjs';
 import { useMemo } from 'react';
 
-import { useGetChallengeFaq } from '@/api/challenge';
+import { useGetActiveChallenge, useGetChallengeFaq } from '@/api/challenge';
 import { twMerge } from '@/lib/twMerge';
 import { ChallengeIdSchema, challengeTypeSchema } from '@/schema';
 import { ChallengeContent } from '@/types/interface';
@@ -53,6 +53,10 @@ const ChallengeView: React.FC<{
   isPreview?: boolean;
 }> = ({ challenge, isPreview }) => {
   const { id } = useParams();
+
+  const { data: activeChallengeList } = useGetActiveChallenge(
+    challenge.challengeType,
+  );
 
   const { data: faqData, isLoading: faqIsLoading } = useGetChallengeFaq(
     id ?? '',
@@ -160,7 +164,12 @@ const ChallengeView: React.FC<{
       <div className="flex w-full flex-col items-center">
         <div className="flex w-full max-w-[1000px] flex-col px-5 md:px-10 lg:px-0">
           <Header to="/program">{challenge.title ?? ''}</Header>
-          <ChallengeBasicInfo colors={colors} challenge={challenge} />
+          <ChallengeBasicInfo
+            colors={colors}
+            challengeId={id}
+            challenge={challenge}
+            activeChallengeList={activeChallengeList?.challengeList}
+          />
         </div>
 
         <ProgramDetailNavigation
