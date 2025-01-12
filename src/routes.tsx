@@ -3,12 +3,12 @@ import { RouteObject } from 'react-router-dom';
 import ChallengeLayout from './components/common/challenge/ui/layout/ChallengeLayout';
 import Layout from './components/common/ui/layout/Layout';
 import { CurrentChallengeProvider } from './context/CurrentChallengeProvider';
-import { adminRoute } from './NewAdminRoutes';
+// import { adminRoute } from './NewAdminRoutes';
 import About from './pages/common/about/About';
 import FindPassword from './pages/common/auth/FindPassword';
 import Login from './pages/common/auth/Login';
 import SignUp from './pages/common/auth/SignUp';
-import BlogDetailSSRPage from './pages/common/blog/BlogDetailSSRPage';
+// import BlogDetailSSRPage from './pages/common/blog/BlogDetailSSRPage';
 import BlogHashtagListPage from './pages/common/blog/BlogHashtagListPage';
 import BlogListPage from './pages/common/blog/BlogListPage';
 import ChallengeDashboard from './pages/common/challenge/ChallengeDashboard';
@@ -83,7 +83,7 @@ export const routes: RouteObject[] = [
       },
       { path: 'blog', element: <BlogListPage /> },
       { path: 'blog/hashtag', element: <BlogHashtagListPage /> },
-      { path: 'blog/:id/:title?', element: <BlogDetailSSRPage /> },
+      // { path: 'blog/:id/:title?', element: <BlogDetailSSRPage /> },
       {
         path: 'mypage',
         element: <MyPage />,
@@ -158,5 +158,5 @@ export const routes: RouteObject[] = [
       { path: '*', element: <NotFound /> },
     ],
   },
-  adminRoute,
+  // adminRoute,
 ];
