@@ -92,9 +92,6 @@ const BlogDetailPage = async ({
     pageable: { page: 0, size: 4 },
   });
 
-  console.log('Blog data:', blog);
-  console.log('Recommend data:', recommendData);
-
   return (
     <div className="flex flex-col items-center flex-1 w-full mx-auto">
       <div className="flex w-full max-w-[1200px] flex-col items-center px-5 md:px-10 md:pt-10">
