@@ -21,7 +21,7 @@ const blogQueryKey = 'BlogQueryKey';
 const blogTagQueryKey = 'BlogTagQueryKey';
 const blogRatingQueryKey = 'blogRatingQueryKey';
 
-interface BlogQueryParams {
+export interface BlogQueryParams {
   pageable: IPageable;
   type?: string | null;
   tagId?: number | null;

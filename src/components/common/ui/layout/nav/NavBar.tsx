@@ -1,6 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
 import { useEffect, useRef, useState } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
 
 import { useGetActiveReports } from '@/api/report';
 import { useControlScroll } from '@/hooks/useControlScroll';
@@ -8,6 +7,8 @@ import { twMerge } from '@/lib/twMerge';
 import useAuthStore from '@/store/useAuthStore';
 import useScrollStore from '@/store/useScrollStore';
 import axios from '@/utils/axios';
+import Link from 'next/link';
+import { usePathname, useRouter } from 'next/navigation';
 import KakaoChannel from './KakaoChannel';
 import NavItem from './NavItem';
 import { NavSubItemProps } from './NavSubItem';
@@ -39,8 +40,8 @@ const scrollEventPage = [
 ];
 
 const NavBar = () => {
-  const navigate = useNavigate();
-  const location = useLocation();
+  const router = useRouter();
+  const pathname = usePathname() ?? '';
   const lastScrollY = useRef(0);
 
   const [isOpen, setIsOpen] = useState(false);
@@ -110,20 +111,20 @@ const NavBar = () => {
   useControlScroll(isOpen);
 
   useEffect(() => {
-    if (location.pathname.startsWith('/about')) {
+    if (pathname.startsWith('/about')) {
       setActiveLink('ABOUT');
-    } else if (location.pathname.startsWith('/program')) {
+    } else if (pathname.startsWith('/program')) {
       setActiveLink('PROGRAM');
-    } else if (location.pathname.startsWith('/admin')) {
+    } else if (pathname.startsWith('/admin')) {
       setActiveLink('ADMIN');
-    } else if (location.pathname.startsWith('/blog')) {
+    } else if (pathname.startsWith('/blog')) {
       setActiveLink('BLOG');
-    } else if (location.pathname.startsWith('/report')) {
+    } else if (pathname.startsWith('/report')) {
       setActiveLink('REPORT');
-    } else if (location.pathname.startsWith('/')) {
+    } else if (pathname.startsWith('/')) {
       setActiveLink('HOME');
     }
-  }, [location.pathname]);
+  }, [pathname]);
 
   useEffect(() => {
     if (userData) {
@@ -142,8 +143,7 @@ const NavBar = () => {
 
     const handleScroll = () => {
       // 현재 경로가 scrollEventPage 중 하나로 시작되지 않을 때는 스크롤 이벤트를 무시
-      if (!scrollEventPage.some((page) => location.pathname.startsWith(page)))
-        return;
+      if (!scrollEventPage.some((page) => pathname.startsWith(page))) return;
 
       const currentScrollY = window.scrollY;
 
@@ -161,7 +161,7 @@ const NavBar = () => {
     return () => {
       window.removeEventListener('scroll', handleScroll);
     };
-  }, [location.pathname, setScrollDirection]);
+  }, [pathname, setScrollDirection]);
 
   return (
     <>
@@ -171,7 +171,7 @@ const NavBar = () => {
       >
         <div className="flex h-full items-center justify-between">
           <div className="flex h-full items-center gap-4 sm:gap-9">
-            <Link to="/" className="h-[1.75rem] md:h-[2.2rem]">
+            <Link href={'/'} className="h-[1.75rem] md:h-[2.2rem]">
               <img
                 src="/logo/logo-gradient-text.svg"
                 alt="렛츠커리어 로고"
@@ -202,7 +202,7 @@ const NavBar = () => {
             {isLoggedIn ? (
               <div
                 className="hidden cursor-pointer gap-2 sm:flex"
-                onClick={() => navigate('/mypage/application')}
+                onClick={() => router.push('/mypage/application')}
               >
                 <span className="text-1.125-medium block">{user?.name} 님</span>
                 <img
@@ -214,13 +214,15 @@ const NavBar = () => {
             ) : (
               <div className="hidden items-center gap-2 sm:flex">
                 <Link
-                  to="/login"
-                  state={{ prevPath: location.pathname }}
+                  href={{
+                    pathname: '/login',
+                    query: { prevPath: pathname },
+                  }}
                   className="text-0.75 rounded-xxs bg-primary px-3 py-1 text-static-100"
                 >
                   로그인
                 </Link>
-                <Link to="/signup" className="text-0.75 text-primary">
+                <Link href="/signup" className="text-0.75 text-primary">
                   회원가입
                 </Link>
               </div>
@@ -281,7 +283,7 @@ const NavBar = () => {
                   className="text-primary"
                   onClick={() => {
                     logout();
-                    navigate('/');
+                    router.push('/');
                     closeMenu();
                   }}
                 >
@@ -292,13 +294,15 @@ const NavBar = () => {
               <div className="text-0.875 flex gap-6">
                 <Link
                   className="text-primary"
-                  to="/login"
+                  href={{
+                    pathname: '/login',
+                    query: { prevPath: pathname },
+                  }}
                   onClick={closeMenu}
-                  state={{ prevPath: location.pathname }}
                 >
                   로그인
                 </Link>
-                <Link to="/signup" onClick={closeMenu}>
+                <Link href="/signup" onClick={closeMenu}>
                   회원가입
                 </Link>
               </div>

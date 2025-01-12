@@ -37,6 +37,8 @@ const parseStyle = (styleString: string) =>
     }, {});
 
 const LexicalContent = ({ node }: { node: SerializedLexicalNode }) => {
+  if (!node) return null;
+
   switch (node.type) {
     case 'root': {
       const _node = node as SerializedRootNode;

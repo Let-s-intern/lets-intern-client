@@ -1,7 +1,7 @@
-import Polygon from '@/assets/icons/polygon.svg?react';
+import Polygon from '@/assets/icons/polygon.svg';
 import clsx from 'clsx';
+import Link from 'next/link';
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
 import NavSubItem, { NavSubItemProps } from './NavSubItem';
 
 interface NavItemProps {
@@ -30,7 +30,7 @@ const NavItem = ({
 
   return (
     <Wrapper
-      to={to || '#'}
+      href={to || '#'}
       className={clsx(
         style,
         'relative hidden h-full cursor-pointer items-center xl:flex',

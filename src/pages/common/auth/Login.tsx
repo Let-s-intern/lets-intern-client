@@ -1,15 +1,11 @@
 import { useEffect, useState } from 'react';
-import {
-  Link,
-  useLocation,
-  useNavigate,
-  useSearchParams,
-} from 'react-router-dom';
+import { Link } from 'react-router-dom';
 // import axios from 'axios';
 import { AxiosError } from 'axios';
 import axios from '../../../utils/axios';
 
 import { useMutation } from '@tanstack/react-query';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import SocialLogin from '../../../components/common/auth/ui/SocialLogin';
 import Button from '../../../components/common/ui/button/Button';
 import Input from '../../../components/ui/input/Input';
@@ -37,15 +33,16 @@ const TextLink = ({ to, dark, className, children }: TextLinkProps) => {
 
 const Login = () => {
   const { isLoggedIn, login } = useAuthStore();
-  const navigate = useNavigate();
-  const { state } = useLocation();
-  const [searchParams, setSearchParams] = useSearchParams();
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const redirectPath = searchParams?.get('redirect') || '/';
+  const prevPath = searchParams?.get('prevPath') || '/';
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [buttonDisabled, setButtonDisabled] = useState(false);
-  const redirect: string =
-    searchParams.get('redirect') || state?.prevPath || '/';
+  const redirect: string = redirectPath || prevPath;
 
   const fetchLogin = useMutation({
     mutationFn: async () => {
@@ -57,7 +54,7 @@ const Login = () => {
     },
     onSuccess: (data) => {
       login(data.data.accessToken, data.data.refreshToken);
-      navigate(redirect);
+      router.push(redirect);
     },
     onError: (error) => {
       const axiosError = error as AxiosError;
@@ -80,22 +77,24 @@ const Login = () => {
   }, [email, password]);
 
   useEffect(() => {
-    if (searchParams.get('error')) {
+    if (searchParams?.get('error')) {
       setErrorMessage('이미 가입된 휴대폰 번호입니다.');
       return;
     }
 
-    if (searchParams.get('result')) {
+    if (searchParams?.get('result')) {
       const parsedToken = JSON.parse(searchParams.get('result') || '');
-      const newSearchParams = new URLSearchParams(searchParams);
+      const newSearchParams = new URLSearchParams(searchParams.toString());
       newSearchParams.delete('result');
-      setSearchParams(newSearchParams);
+
+      router.replace(`${pathname}?${newSearchParams.toString()}`);
+
       handleLoginSuccess(parsedToken);
       return;
     }
 
     if (isLoggedIn) {
-      navigate('/');
+      router.push('/');
       return;
     }
     // } else if (searchParams.get('error')) {
@@ -108,15 +107,17 @@ const Login = () => {
     //   }
     // }
     // eslint-disable-next-line
-  }, [searchParams, setSearchParams]);
+  }, [searchParams]);
 
   const handleLoginSuccess = (token: any) => {
     if (token.isNew) {
-      navigate(`/signup?result=${JSON.stringify(token)}&redirect=${redirect}`);
+      router.push(
+        `/signup?result=${JSON.stringify(token)}&redirect=${redirect}`,
+      );
       return;
     }
     login(token.accessToken, token.refreshToken);
-    navigate(redirect);
+    router.push(redirect);
   };
 
   const handleLogin = (e: React.FormEvent<HTMLFormElement>) => {

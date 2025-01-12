@@ -49,7 +49,7 @@ export default function RootLayout({
           crossOrigin="anonymous"
         ></script>
         {/* <!-- Kakao Javascript End --> */}
-        <link rel="icon" type="image/svg+xml" href="/icon.svg" />
+        <link rel="icon" type="image/svg+xml" href="/favicon.ico" />
       </head>
       <body>
         <div id="root">{children}</div>

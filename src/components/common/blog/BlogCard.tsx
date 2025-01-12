@@ -1,5 +1,4 @@
-import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
-
+import { useRouter } from 'next/navigation';
 import { BlogInfoSchema } from '../../../api/blogSchema';
 import { blogCategory } from '../../../utils/convert';
 import { getBlogPathname } from '../../../utils/url';
@@ -10,15 +9,13 @@ interface BlogCardProps {
 }
 
 const BlogCard = ({ blogInfo }: BlogCardProps) => {
-  const navigate = useNavigate();
-  const location = useLocation();
-  const [searchParams, setSearchParams] = useSearchParams();
+  const router = useRouter();
 
   return (
     <div
       className="flex w-full cursor-pointer flex-col gap-y-2 py-3"
       onClick={() => {
-        navigate(getBlogPathname(blogInfo.blogThumbnailInfo));
+        router.push(getBlogPathname(blogInfo.blogThumbnailInfo));
       }}
     >
       <span className="w-full text-xsmall16 font-bold text-primary">
@@ -52,23 +49,7 @@ const BlogCard = ({ blogInfo }: BlogCardProps) => {
         </div>
         <div className="flex flex-wrap items-center gap-1.5">
           {blogInfo.tagDetailInfos.map((tag) => (
-            <BlogHashtag
-              key={tag.id}
-              text={tag.title || ''}
-              onClick={(e) => {
-                e.stopPropagation();
-
-                if (location.pathname === '/blog/hashtag') {
-                  searchParams.set('tagId', tag.id.toString());
-                  setSearchParams(searchParams);
-                  return;
-                }
-
-                const params = new URLSearchParams();
-                params.set('tagId', tag.id.toString());
-                navigate(`/blog/hashtag?${params.toString()}`);
-              }}
-            />
+            <BlogHashtag key={tag.id} text={tag.title || ''} tagId={tag.id} />
           ))}
         </div>
       </div>
