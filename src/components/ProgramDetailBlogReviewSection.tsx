@@ -26,6 +26,7 @@ const ProgramDetailBlogReviewSection = ({
           </Heading2>
           <Link
             to="/blog/list"
+            reloadDocument
             target="_blank"
             className="mt-1 flex items-center whitespace-nowrap text-xsmall14 font-medium text-neutral-35 md:absolute md:right-0 md:top-0"
           >

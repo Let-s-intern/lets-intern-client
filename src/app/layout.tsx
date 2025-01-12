@@ -1,3 +1,6 @@
+/* eslint-disable @next/next/no-sync-scripts */
+/* eslint-disable @next/next/next-script-for-ga */
+
 import type { Metadata } from 'next';
 import '../index.css';
 import '../styles/apply.scss';

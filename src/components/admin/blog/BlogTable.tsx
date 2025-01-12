@@ -154,6 +154,7 @@ export default function BlogTable() {
                 <div className="flex items-center gap-4">
                   <Link
                     to={`/admin/blog/edit/${blogInfo.blogThumbnailInfo.id}`}
+                    reloadDocument
                   >
                     <i>
                       <img src="/icons/edit-icon.svg" alt="수정 아이콘" />

@@ -1,5 +1,5 @@
 import clsx from 'clsx';
-import { Link } from 'react-router-dom';
+import Link from 'next/link';
 
 interface MenuLinkProps {
   to: string;
@@ -12,8 +12,7 @@ interface MenuLinkProps {
 const MenuLink = ({ to, children, target, rel, className }: MenuLinkProps) => {
   return (
     <Link
-      to={to}
-      reloadDocument
+      href={to}
       className={clsx('text-0.875-medium w-fit', className)}
       target={target}
       rel={rel}

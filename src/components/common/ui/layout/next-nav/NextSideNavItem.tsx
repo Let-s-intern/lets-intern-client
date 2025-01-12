@@ -1,7 +1,9 @@
+'use client';
+
 import clsx from 'clsx';
+import Link from 'next/link';
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { NavSubItemProps } from './NavSubItem';
+import { NavSubItemProps } from '../nav/NavSubItem';
 
 interface SideNavItemProps {
   to: string;
@@ -28,7 +30,7 @@ const SideNavItem = ({
   return (
     <div className="flex w-full flex-col px-5">
       <Wrapper
-        to={to}
+        href={to}
         className={clsx(
           'flex w-full cursor-pointer justify-between rounded-xs px-2.5 py-3 text-neutral-30',
           hoverItem && open && 'bg-primary-5',
@@ -43,7 +45,6 @@ const SideNavItem = ({
         }}
         target={target}
         rel={rel}
-        reloadDocument
       >
         <span className="text-1.125-bold">{children}</span>
       </Wrapper>
@@ -55,10 +56,9 @@ const SideNavItem = ({
           {hoverItem.map((item) => (
             <Link
               key={item.to}
-              to={item.to}
+              href={item.to}
               onClick={onClick}
               className="flex w-full px-8 py-2 text-xsmall16 font-semibold text-neutral-20"
-              reloadDocument
             >
               {item.text}
             </Link>
