@@ -9,9 +9,9 @@ import {
   ReportType,
 } from '@/api/report';
 import { twMerge } from '@/lib/twMerge';
-import { REPORT_PLAN_ID } from '@/pages/common/report/ReportNavigation';
-import { personalStatementColors } from '@/pages/common/report/ReportPersonalStatementPage';
-import { resumeColors } from '@/pages/common/report/ReportResumePage';
+import { REPORT_PLAN_ID } from '@/router-pages/common/report/ReportNavigation';
+import { personalStatementColors } from '@/router-pages/common/report/ReportPersonalStatementPage';
+import { resumeColors } from '@/router-pages/common/report/ReportResumePage';
 import { uuid } from '@components/admin/lexical/plugins/AutocompletePlugin';
 import MainHeader from './MainHeader';
 import SectionHeader from './SectionHeader';

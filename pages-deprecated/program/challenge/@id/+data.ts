@@ -3,7 +3,6 @@
 export { data };
 
 import { getChallengeIdSchema } from '@/schema';
-import fetch from 'node-fetch';
 import { PageContextServer } from 'vike/types';
 
 async function data(pageContext: PageContextServer) {

@@ -3,7 +3,6 @@
 export { data };
 
 import { getActiveReportsSchema } from '@/api/report';
-import fetch from 'node-fetch';
 
 async function data() {
   try {

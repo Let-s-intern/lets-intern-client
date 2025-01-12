@@ -1,8 +1,3 @@
-// @ts-nocheck
-
-// import pluginJs from '@eslint/js';
-// import pluginReactConfig from 'eslint-plugin-react/configs/recommended.js';
-
 import { FlatCompat } from '@eslint/eslintrc';
 import { dirname } from 'path';
 import { fileURLToPath } from 'url';
@@ -28,7 +23,7 @@ const eslintConfig = [
       'react/prop-types': 'off',
 
       // switch
-      '@typescript-eslint/switch-exhaustiveness-check': 'warn',
+      // '@typescript-eslint/switch-exhaustiveness-check': 'warn',
 
       // lexical
       '@typescript-eslint/ban-ts-comment': 'warn',

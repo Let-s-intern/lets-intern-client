@@ -228,7 +228,7 @@ const PaymentInputPage = () => {
           <span>남았어요!</span>
         </div>
 
-        <p className="my-3 text-xsmall16 font-semibold text-neutral-0">
+        <p className="my-3 font-semibold text-xsmall16 text-neutral-0">
           신청 폼을 모두 입력해주세요.
         </p>
         <div className="flex flex-col gap-2.5">
@@ -249,10 +249,10 @@ const PaymentInputPage = () => {
         </div>
       </div>
 
-      <hr className="my-10 block h-2 border-none bg-neutral-95" />
+      <hr className="block h-2 my-10 border-none bg-neutral-95" />
 
       {!programApplicationData.isFree && (
-        <div className="mx-5 mb-10 flex flex-col gap-y-6">
+        <div className="flex flex-col mx-5 mb-10 gap-y-6">
           <div className="font-semibold text-neutral-0">결제 정보</div>
           <div className="flex flex-col gap-y-5">
             <CouponSection
@@ -265,8 +265,8 @@ const PaymentInputPage = () => {
             {programApplicationData.programType === 'challenge' &&
               !isLoading && (
                 <div className="flex items-start gap-2.5 px-3 text-primary">
-                  <CreditCardIcon className="h-auto w-5" />
-                  <p className="text-xsmall14 font-medium">
+                  <CreditCardIcon className="w-5 h-auto" />
+                  <p className="font-medium text-xsmall14">
                     {banks.join(', ')}카드로 결제하면{' '}
                     <span className="font-bold">{months}개월 무이자</span> 혜택
                   </p>
@@ -286,7 +286,7 @@ const PaymentInputPage = () => {
               }}
             />
             <hr className="bg-neutral-85" />
-            <div className="flex h-10 items-center justify-between px-3 font-semibold text-neutral-0">
+            <div className="flex items-center justify-between h-10 px-3 font-semibold text-neutral-0">
               <span>결제금액</span>
               <span>{totalPrice.toLocaleString()}원</span>
             </div>
@@ -300,8 +300,8 @@ const PaymentInputPage = () => {
                 해드려요!
               </p>
               <img
-                className="absolute bottom-0 right-0 h-full w-auto"
-                src={paybackImg}
+                className="absolute bottom-0 right-0 w-auto h-full"
+                src={paybackImg.src}
                 alt="3만원 페이백"
               />
             </div>
@@ -311,7 +311,7 @@ const PaymentInputPage = () => {
 
       <div className="fixed bottom-0 left-0 right-0 block rounded-t-lg bg-white px-5 pb-[calc(env(safe-area-inset-bottom)+10px);] pt-3 shadow-05 md:hidden">
         <button
-          className="next_button flex w-full flex-1 justify-center rounded-md border-2 border-primary bg-primary px-6 py-3 text-lg font-medium text-neutral-100 transition hover:opacity-90 disabled:border-neutral-70 disabled:bg-neutral-70 hover:disabled:opacity-100"
+          className="flex justify-center flex-1 w-full px-6 py-3 text-lg font-medium transition border-2 rounded-md next_button border-primary bg-primary text-neutral-100 hover:opacity-90 disabled:border-neutral-70 disabled:bg-neutral-70 hover:disabled:opacity-100"
           onClick={onPaymentClick}
           disabled={
             !userInfo.initialized || !isValidEmail(userInfo.contactEmail)
@@ -321,9 +321,9 @@ const PaymentInputPage = () => {
         </button>
       </div>
 
-      <div className="mx-5 hidden md:block">
+      <div className="hidden mx-5 md:block">
         <button
-          className="next_button block w-full justify-center rounded-md border-2 border-primary bg-primary px-6 py-3 text-lg font-medium text-neutral-100 transition hover:opacity-90 disabled:border-neutral-70 disabled:bg-neutral-70 hover:disabled:opacity-100"
+          className="justify-center block w-full px-6 py-3 text-lg font-medium transition border-2 rounded-md next_button border-primary bg-primary text-neutral-100 hover:opacity-90 disabled:border-neutral-70 disabled:bg-neutral-70 hover:disabled:opacity-100"
           onClick={onPaymentClick}
           disabled={
             !userInfo.initialized || !isValidEmail(userInfo.contactEmail)

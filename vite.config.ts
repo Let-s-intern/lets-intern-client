@@ -57,7 +57,6 @@ export default defineConfig({
       '@': path.resolve(__dirname, './src'),
       '@components': path.resolve(__dirname, './src/components'),
       '@renderer': path.resolve(__dirname, './renderer'),
-      '@pages': path.resolve(__dirname, './pages'),
     },
   },
 });

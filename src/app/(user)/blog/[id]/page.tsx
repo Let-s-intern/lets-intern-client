@@ -12,7 +12,7 @@ import BlogShareSection from '@components/common/blog/BlogShareSection';
 import dayjs from 'dayjs';
 import { Metadata } from 'next';
 
-export const mockBlog: BlogSchema = {
+const mockBlog: BlogSchema = {
   blogDetailInfo: {
     id: 0,
     title: '로딩중...',
@@ -24,33 +24,6 @@ export const mockBlog: BlogSchema = {
     thumbnail: '',
   },
   tagDetailInfos: [],
-};
-
-export const generateStaticParams = async () => {
-  try {
-    const res = await fetch(
-      `${process.env.NEXT_PUBLIC_SERVER_API}/blog?size=1000&page=1`,
-    );
-
-    if (!res.ok) {
-      throw new Error(`Failed to fetch blog data: ${res.statusText}`);
-    }
-
-    const data = await res.json();
-
-    const blogList = blogListSchema.parse(data.data);
-
-    const result = blogList.blogInfos.map((blog) => ({
-      id: blog.blogThumbnailInfo.id.toString(), // "id" key는 Next.js에서 필수
-    }));
-
-    console.log('Generated static params:', result);
-
-    return result;
-  } catch (error) {
-    console.error('Error fetching blog data:', error);
-    throw new Error('Failed to generate static params'); // 빌드 실패 처리
-  }
 };
 
 // Fetching 블로그 데이터
@@ -84,9 +57,10 @@ const fetchRecommendBlogData = async ({ pageable, type }: BlogQueryParams) => {
 export async function generateMetadata({
   params,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }): Promise<Metadata> {
-  const blog = await fetchBlogData(params.id);
+  const { id } = await params;
+  const blog = await fetchBlogData(id);
 
   return {
     title: getBlogTitle(blog.blogDetailInfo),
@@ -106,9 +80,13 @@ export async function generateMetadata({
   };
 }
 
-const BlogDetailPage = async ({ params }: { params: { id: string } }) => {
-  const blog =
-    (await fetchBlogData(params.id).catch(() => mockBlog)) || mockBlog;
+const BlogDetailPage = async ({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) => {
+  const { id } = await params;
+  const blog = (await fetchBlogData(id).catch(() => mockBlog)) || mockBlog;
   const recommendData = await fetchRecommendBlogData({
     type: blog?.blogDetailInfo.category,
     pageable: { page: 0, size: 4 },
@@ -118,16 +96,16 @@ const BlogDetailPage = async ({ params }: { params: { id: string } }) => {
   console.log('Recommend data:', recommendData);
 
   return (
-    <div className="mx-auto flex w-full flex-1 flex-col items-center">
+    <div className="flex flex-col items-center flex-1 w-full mx-auto">
       <div className="flex w-full max-w-[1200px] flex-col items-center px-5 md:px-10 md:pt-10">
         <div className="flex w-full flex-col items-center gap-y-8 pt-8 md:px-[100px] md:pt-8">
-          <div className="flex w-full flex-col gap-y-3 py-3">
+          <div className="flex flex-col w-full py-3 gap-y-3">
             <h2 className="w-full text-xl font-bold text-primary">
               {blogCategory[blog.blogDetailInfo.category || '']}
             </h2>
-            <div className="flex w-full flex-col gap-y-5">
-              <div className="flex w-full flex-col gap-y-4">
-                <h1 className="line-clamp-4 text-xlarge28 font-bold text-neutral-0">
+            <div className="flex flex-col w-full gap-y-5">
+              <div className="flex flex-col w-full gap-y-4">
+                <h1 className="font-bold line-clamp-4 text-xlarge28 text-neutral-0">
                   {blog.blogDetailInfo.title}{' '}
                   {!blog.blogDetailInfo.isDisplayed && (
                     <span className="text-xsmall14 text-system-error">
@@ -155,7 +133,7 @@ const BlogDetailPage = async ({ params }: { params: { id: string } }) => {
               node={JSON.parse(blog.blogDetailInfo?.content || '{}')?.root}
             />
           </div>
-          <div className="flex w-full items-center justify-center gap-x-3 py-10">
+          <div className="flex items-center justify-center w-full py-10 gap-x-3">
             <div className="flex items-center justify-center rounded-full border border-primary-20 p-[9px]">
               <img
                 className="h-[36px] w-[36px]"
@@ -163,18 +141,18 @@ const BlogDetailPage = async ({ params }: { params: { id: string } }) => {
                 alt="author"
               />
             </div>
-            <div className="flex flex-1 flex-col text-neutral-0">
-              <h3 className="text-small18 font-bold">렛츠커리어</h3>
+            <div className="flex flex-col flex-1 text-neutral-0">
+              <h3 className="font-bold text-small18">렛츠커리어</h3>
               <p className="text-xsmall16">커리어의 첫걸음을 함께 해요</p>
             </div>
           </div>
           <BlogRating blogId={blog.blogDetailInfo.id} />
-          <div className="flex w-full flex-wrap items-center gap-1 py-3">
+          <div className="flex flex-wrap items-center w-full gap-1 py-3">
             {blog.tagDetailInfos.map((tag) => (
               <BlogHashtag key={tag.id} text={tag.title || ''} tagId={tag.id} />
             ))}
           </div>
-          <div className="flex w-full items-center py-5">
+          <div className="flex items-center w-full py-5">
             <hr className="w-full bg-neutral-60" />
           </div>
           <BlogShareSection
@@ -191,9 +169,9 @@ const BlogDetailPage = async ({ params }: { params: { id: string } }) => {
       <div className="mt-8 flex w-full flex-col items-center bg-neutral-100 py-10 md:py-[60px] md:pb-10">
         <div className="flex w-full max-w-[1200px] flex-col px-5 md:px-10">
           <div className="flex w-full flex-col items-center md:px-[100px]">
-            <div className="flex w-full flex-col gap-y-5">
+            <div className="flex flex-col w-full gap-y-5">
               <h3 className="text-xl font-semibold">함께 읽어보면 좋아요</h3>
-              <div className="blog_recommend flex w-full flex-col gap-y-5">
+              <div className="flex flex-col w-full blog_recommend gap-y-5">
                 {!recommendData ? (
                   <div className="w-full text-center">
                     추천 글을 찾을 수 없습니다.

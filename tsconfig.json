@@ -13,6 +13,8 @@
     "isolatedModules": true,
     "jsx": "preserve",
     "incremental": true,
+    // TODO: 추가
+    // "noFallthroughCasesInSwitch": true,
     "plugins": [
       {
         "name": "next"
@@ -21,8 +23,7 @@
     "paths": {
       "@components/*": ["./src/components/*"],
       "@/*": ["./src/*"],
-      "@renderer/*": ["./renderer/*"],
-      "@pages/*": ["./pages/*"]
+      "@renderer/*": ["./renderer/*"]
     }
   },
   "include": [

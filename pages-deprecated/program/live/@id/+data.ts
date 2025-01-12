@@ -3,7 +3,6 @@
 export { data };
 
 import { getLiveIdSchema } from '@/schema';
-import fetch from 'node-fetch';
 import { PageContextServer } from 'vike/types';
 
 async function data(pageContext: PageContextServer) {

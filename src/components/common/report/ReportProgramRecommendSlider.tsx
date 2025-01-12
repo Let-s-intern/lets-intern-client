@@ -3,8 +3,8 @@ import { useNavigate } from 'react-router-dom';
 
 import { useGetProgramRecommend } from '@/api/program';
 import { ReportType } from '@/api/report';
-import { personalStatementColors } from '@/pages/common/report/ReportPersonalStatementPage';
-import { resumeColors } from '@/pages/common/report/ReportResumePage';
+import { personalStatementColors } from '@/router-pages/common/report/ReportPersonalStatementPage';
+import { resumeColors } from '@/router-pages/common/report/ReportResumePage';
 import { ReportProgramRecommend } from '@/types/interface';
 import ProgramRecommendSlider from '../ui/ProgramRecommendSlider';
 import MainHeader from './MainHeader';
