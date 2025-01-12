@@ -599,6 +599,8 @@ export const useGetReportFaqs = (reportId: string | number) => {
   });
 };
 
+const SubmitTypeEnum = z.enum(['NORMAL', 'LATE']);
+
 const reportApplicationsForAdminInfoSchema = z.object({
   applicationId: z.number(),
   name: z.string(),
@@ -607,6 +609,7 @@ const reportApplicationsForAdminInfoSchema = z.object({
   wishJob: z.string().nullable(),
   message: z.string().nullable(),
   reportApplicationStatus: reportApplicationStatusSchema,
+  submitType: SubmitTypeEnum.nullable(),
   applyFileUrl: z.string().nullable(),
   reportFileUrl: z.string().nullable(),
   recruitmentFileUrl: z.string().nullable(),
