@@ -285,6 +285,7 @@ const getReportsForAdminSchema = z
         applicationCount: z.number().nullable().optional(),
         feedbackApplicationCount: z.number().nullable().optional(),
         visibleDate: z.string().nullable().optional(),
+        isVisible: z.boolean().nullable().optional(),
         createDateTime: z.string().nullable().optional(),
       }),
     ),
@@ -440,9 +441,9 @@ export const useGetReportPriceDetail = (reportId?: number) => {
 
 // GET /api/v1/report/active
 export const getActiveReportsSchema = z.object({
-  resumeInfo: getReportDetailSchema.nullable().optional(),
-  personalStatementInfo: getReportDetailSchema.nullable().optional(),
-  portfolioInfo: getReportDetailSchema.nullable().optional(),
+  resumeInfoList: z.array(getReportDetailSchema),
+  personalStatementInfoList: z.array(getReportDetailSchema),
+  portfolioInfoList: z.array(getReportDetailSchema),
 });
 
 export type ActiveReports = z.infer<typeof getActiveReportsSchema>;
@@ -490,6 +491,7 @@ const getReportDetailForAdminSchema = z.object({
     feedbackPrice: z.number(),
     feedbackDiscountPrice: z.number(),
   }),
+  isVisible: z.boolean().nullable(),
   visibleDate: z.string().nullable().optional(),
   faqInfo: z
     .array(
@@ -959,6 +961,7 @@ export const useDeleteReport = () => {
 // PATCH /api/v1/report/{reportId}
 const updateReportSchema = z.object({
   reportType: reportTypeSchema.optional(),
+  isVisible: z.boolean().nullable().optional(),
   visibleDate: z.string().optional().nullable(),
   title: z.string().optional(),
   contents: z.string().optional(),

@@ -67,6 +67,12 @@ function createColumns({
         row.visibleDate?.format('YYYY.MM.DD(ddd) HH:mm') ?? '비공개',
     },
     {
+      field: 'isVisible',
+      headerName: '노출 여부',
+      width: 100,
+      valueFormatter: (_, row) => (row.isVisible ? '노출' : '비노출'),
+    },
+    {
       field: 'actions',
       headerName: '액션',
       width: 250,

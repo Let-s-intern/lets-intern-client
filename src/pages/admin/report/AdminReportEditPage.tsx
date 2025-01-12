@@ -1,6 +1,8 @@
 import {
   Button,
+  Checkbox,
   FormControl,
+  FormControlLabel,
   InputLabel,
   MenuItem,
   Select,
@@ -17,6 +19,7 @@ import { FaTrashCan } from 'react-icons/fa6';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import {
+  convertReportTypeToLandingPath,
   getReportDetailForAdminQueryKey,
   getReportsForAdminQueryKey,
   ReportType,
@@ -44,6 +47,7 @@ const initialReport: Omit<UpdateReportData, 'contents'> = {
     price: 0,
     discountPrice: 0,
   },
+  isVisible: false,
   visibleDate: undefined,
   faqInfo: [],
 };
@@ -274,7 +278,7 @@ const AdminReportEditPage = () => {
               required
               label="제목"
               placeholder="서류 진단 제목을 입력하세요"
-              className="w-96"
+              className="w-80"
               InputLabelProps={{
                 shrink: true,
                 style: { fontSize: '14px' },
@@ -293,6 +297,7 @@ const AdminReportEditPage = () => {
                     setEditingValue({
                       ...editingValue,
                       visibleDate: value?.format('YYYY-MM-DDTHH:mm:ss'),
+                      isVisible: true,
                     });
                 }}
                 ampm={false}
@@ -300,7 +305,7 @@ const AdminReportEditPage = () => {
                 slotProps={{
                   textField: {
                     variant: 'outlined',
-                    className: 'w-72',
+                    className: 'w-60',
                     size: 'small',
                   },
                 }}
@@ -313,13 +318,58 @@ const AdminReportEditPage = () => {
               onClick={() => {
                 setEditingValue((prev) => {
                   if (prev.visibleDate) {
-                    return { ...prev, visibleDate: null };
+                    return { ...prev, visibleDate: null, isVisible: false };
                   }
                   return prev;
                 });
               }}
             >
-              비공개 처리
+              노출일시 삭제
+            </Button>
+            <FormControlLabel
+              className="pl-4 text-neutral-40"
+              control={
+                <Checkbox
+                  checked={
+                    editingValue.isVisible === undefined ||
+                    editingValue.isVisible === null
+                      ? false
+                      : editingValue.isVisible
+                  }
+                  // 클릭 시 ALERT
+                  onChange={(e) => {
+                    setEditingValue((prev) => {
+                      return {
+                        ...prev,
+                        isVisible: e.target.checked,
+                      };
+                    });
+                  }}
+                  color="primary"
+                />
+              }
+              label="노출 여부"
+            />
+            {/* 링크 복사 아이콘 : 호버 시 문구 표시 */}
+            <Button
+              variant="outlined"
+              onClick={() => {
+                const type = editingValue.reportType;
+                if (!type) {
+                  alert('서류 진단 타입을 먼저 선택해주세요.');
+                  return;
+                }
+
+                navigator.clipboard.writeText(
+                  `${window.location.origin}${convertReportTypeToLandingPath(type)}/${reportId}`,
+                );
+                setSnackbar(
+                  '링크가 복사되었습니다. 해당 링크는 노출일시 이후에 접속 가능합니다.',
+                );
+              }}
+              disabled={!editingValue?.isVisible || !editingValue?.visibleDate}
+            >
+              링크 복사
             </Button>
           </div>
           <hr></hr>

@@ -321,10 +321,10 @@ export const REPORT_INTRO: Record<ReportType, reportIntroItemType> = {
       ],
     },
     section1: {
-      title: `혹시 반복되는 탈락에도\n매번 같은 이력서로 지원하고 있지 않나요?`,
+      title: `혹시 반복되는 탈락에도\n매번 같은 포트폴리오로 지원하고 있지 않나요?`,
       questions: [
         '왜 내 서류는 자꾸 탈락할까?',
-        '채용공고에 나와 있는 직무 필수 역량을 내 이력서에 제대로 담아냈을까?',
+        '채용공고에 나와 있는 직무 필수 역량을 내 포트폴리오에 제대로 담아냈을까?',
         '성과, 이렇게 수치화해서 적는 게 맞는 걸까?',
       ],
     },
@@ -336,7 +336,7 @@ export const REPORT_INTRO: Record<ReportType, reportIntroItemType> = {
       pointSrc: '/images/report/report_intro_portfolio.png',
     },
     section3: {
-      title: `렛츠커리어의 이력서 피드백 REPORT는\n평가자의 시선을 사로잡는 서류로 합격의 가능성을 높여드립니다.`,
+      title: `렛츠커리어의 포트폴리오 피드백 REPORT는\n평가자의 시선을 사로잡는 서류로 합격의 가능성을 높여드립니다.`,
       description: `나의 강점과 직무에 적합한 역량을\n\n명확히 전달하는 서류,\n이것이 바로 합격의 시작입니다.`,
       before: [
         '중구난방인 구조와 낮은 가독성',
