@@ -34,7 +34,7 @@ const findProgramIncludingKeyword = async (keyword: string) => {
 const BlogCTA = ({ ctaText, ctaLink }: BlogCTAProps) => {
   const [showCTA, setShowCTA] = useState(false);
 
-  const clickCtaButton = () => {
+  const handleCtaButtonClick = () => {
     // [이슈] iOS에서 비동기 함수 내의 window.open() 차단 이슈로 open() 함수를 미리 선언
     const open = window.open('', '_self');
 
@@ -59,7 +59,7 @@ const BlogCTA = ({ ctaText, ctaLink }: BlogCTAProps) => {
 
   useEffect(() => {
     const handleScroll = () => {
-      setShowCTA(window.scrollY > window.innerHeight);
+      setShowCTA(window.scrollY > window.innerHeight / 2);
     };
 
     window.addEventListener('scroll', handleScroll);
@@ -73,8 +73,8 @@ const BlogCTA = ({ ctaText, ctaLink }: BlogCTAProps) => {
       <div className="flex w-full max-w-[1200px] flex-col items-center px-5 md:px-10">
         <div className="flex w-full flex-col items-center md:px-[100px]">
           <button
-            className="blog_cta w-full rounded-md bg-primary px-6 py-3 text-small18 font-medium text-neutral-100"
-            onClick={clickCtaButton}
+            className="w-full px-6 py-3 font-medium rounded-md blog_cta bg-primary text-small18 text-neutral-100"
+            onClick={handleCtaButtonClick}
           >
             {ctaText}
           </button>

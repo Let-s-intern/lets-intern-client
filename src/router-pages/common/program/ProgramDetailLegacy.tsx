@@ -1,25 +1,26 @@
-import { isNewProgram } from '@/lib/isDeprecatedProgram';
-import { twMerge } from '@/lib/twMerge';
-import PaymentErrorNotification from '@components/common/PaymentErrorNotification';
 import { useMediaQuery } from '@mui/material';
 import { useQuery } from '@tanstack/react-query';
 import dayjs from 'dayjs';
 import { useEffect, useReducer, useState } from 'react';
 import { Helmet } from 'react-helmet';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useProgramApplicationQuery } from '../../../api/application';
-import { useProgramQuery } from '../../../api/program';
-import FilledButton from '../../../components/common/program/program-detail/button/FilledButton';
-import NotiButton from '../../../components/common/program/program-detail/button/NotiButton';
-import ApplySection from '../../../components/common/program/program-detail/section/ApplySection';
-import MobileApplySection from '../../../components/common/program/program-detail/section/MobileApplySection';
-import TabSection from '../../../components/common/program/program-detail/section/TabSection';
-import Header from '../../../components/common/ui/BackHeader';
-import useRunOnce from '../../../hooks/useRunOnce';
-import drawerReducer from '../../../reducers/drawerReducer';
-import useAuthStore from '../../../store/useAuthStore';
-import { ProgramType } from '../../../types/common';
-import axios from '../../../utils/axios';
+
+import { useProgramApplicationQuery } from '@/api/application';
+import { useProgramQuery } from '@/api/program';
+import FilledButton from '@/components/common/program/program-detail/button/FilledButton';
+import NotiButton from '@/components/common/program/program-detail/button/NotiButton';
+import ApplySection from '@/components/common/program/program-detail/section/ApplySection';
+import MobileApplySection from '@/components/common/program/program-detail/section/MobileApplySection';
+import TabSection from '@/components/common/program/program-detail/section/TabSection';
+import Header from '@/components/common/ui/BackHeader';
+import useRunOnce from '@/hooks/useRunOnce';
+import { isNewProgram } from '@/lib/isDeprecatedProgram';
+import { twMerge } from '@/lib/twMerge';
+import drawerReducer from '@/reducers/drawerReducer';
+import useAuthStore from '@/store/useAuthStore';
+import { ProgramType } from '@/types/common';
+import axios from '@/utils/axios';
+import PaymentErrorNotification from '@components/common/PaymentErrorNotification';
 
 interface ProgramDetailProps {
   programType: ProgramType;

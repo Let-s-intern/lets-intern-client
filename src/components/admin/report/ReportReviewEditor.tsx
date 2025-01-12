@@ -123,6 +123,9 @@ function ReportReviewEditor({ review, setReview }: ReportReviewEditorProps) {
                       <MenuItem value="/images/report/reviewProfile/female_4.png">
                         여성 4
                       </MenuItem>
+                      <MenuItem value="/images/report/reviewProfile/female_5.png">
+                        여성 5
+                      </MenuItem>
                       <MenuItem value="/images/report/reviewProfile/male_1.png">
                         남성 1
                       </MenuItem>

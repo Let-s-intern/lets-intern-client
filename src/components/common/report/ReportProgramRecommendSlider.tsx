@@ -6,6 +6,7 @@ import { ReportType } from '@/api/report';
 import { personalStatementColors } from '@/router-pages/common/report/ReportPersonalStatementPage';
 import { resumeColors } from '@/router-pages/common/report/ReportResumePage';
 import { ReportProgramRecommend } from '@/types/interface';
+import dayjs from 'dayjs';
 import ProgramRecommendSlider from '../ui/ProgramRecommendSlider';
 import MainHeader from './MainHeader';
 import SubHeader from './SubHeader';
@@ -134,11 +135,20 @@ const ReportProgramRecommendSlider = ({
       });
     }
 
+    const totalReportList =
+      recommendData?.reportList.filter(
+        (item) =>
+          item.isVisible === true &&
+          item.visibleDate !== null &&
+          (dayjs(item.visibleDate).isSame() ||
+            dayjs(item.visibleDate).isBefore(dayjs())),
+      ) ?? [];
+
     // 활성화된 서류 진단 없으면 종료
-    if ((recommendData?.reportList ?? []).length === 0) return list;
+    if (totalReportList.length === 0) return list;
 
     /* 추천 서류 진단 저장 */
-    const resumeReport = recommendData?.reportList.find(
+    const resumeReport = totalReportList.find(
       (item) => item.reportType === 'RESUME',
     );
 
@@ -154,7 +164,7 @@ const ReportProgramRecommendSlider = ({
       });
     }
 
-    const personalStatementReport = recommendData?.reportList.find(
+    const personalStatementReport = totalReportList.find(
       (item) => item.reportType === 'PERSONAL_STATEMENT',
     );
 
@@ -174,14 +184,14 @@ const ReportProgramRecommendSlider = ({
       });
     }
 
-    const portfolioReport = recommendData?.reportList.find(
+    const portfolioReport = totalReportList.find(
       (item) => item.reportType === 'PORTFOLIO',
     );
 
     if (portfolioReport && reportProgramRecommend.reportPortfolio?.title) {
       list.push({
         id: 'PORTFOLIO' + portfolioReport.id,
-        backgroundImage: '',
+        backgroundImage: '/images/report/thumbnail-portfolio.svg',
         title: reportProgramRecommend.reportPortfolio?.title,
         cta:
           reportProgramRecommend.reportPortfolio?.cta ??

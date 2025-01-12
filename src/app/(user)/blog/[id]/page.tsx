@@ -126,9 +126,11 @@ const BlogDetailPage = async ({
             </div>
           </div>
           <div className="w-full break-all text-xsmall16">
-            <LexicalContent
-              node={JSON.parse(blog.blogDetailInfo?.content || '{}')?.root}
-            />
+            {blog.blogDetailInfo?.content ? (
+              <LexicalContent
+                node={JSON.parse(blog.blogDetailInfo?.content || '{}')?.root}
+              />
+            ) : null}
           </div>
           <div className="flex items-center justify-center w-full py-10 gap-x-3">
             <div className="flex items-center justify-center rounded-full border border-primary-20 p-[9px]">

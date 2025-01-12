@@ -25,7 +25,7 @@ const ReportInterviewCard = ({
           className="flex w-full grow flex-col gap-y-5 rounded-[10px] px-5 py-3"
           style={{ backgroundColor: subColor }}
         >
-          <p className="font-semibold">{`Q. ${interview.question}`}</p>
+          <p className="font-semibold text-neutral-30">{`Q. ${interview.question}`}</p>
           <div className="flex w-full flex-1 flex-col gap-y-1 text-wrap">
             <p className="font-bold">{`A. ${interview.answer}`}</p>
             <p className="w-full flex-1 text-wrap font-medium">{`"${interview.detail}"`}</p>

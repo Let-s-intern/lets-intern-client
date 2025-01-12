@@ -1,6 +1,8 @@
 import {
   Button,
+  Checkbox,
   FormControl,
+  FormControlLabel,
   InputLabel,
   MenuItem,
   Select,
@@ -192,7 +194,7 @@ const AdminReportCreatePage = () => {
               required
               label="제목"
               placeholder="서류 진단 제목을 입력하세요"
-              className="w-96"
+              className="w-80"
               InputLabelProps={{
                 shrink: true,
                 style: { fontSize: '14px' },
@@ -218,7 +220,7 @@ const AdminReportCreatePage = () => {
                 slotProps={{
                   textField: {
                     variant: 'outlined',
-                    className: 'w-72',
+                    className: 'w-60',
                     size: 'small',
                   },
                 }}
@@ -237,8 +239,24 @@ const AdminReportCreatePage = () => {
                 });
               }}
             >
-              비공개 처리
+              노출일시 삭제
             </Button>
+            <FormControlLabel
+              className="pl-4 text-neutral-40"
+              control={
+                <Checkbox
+                  checked={false}
+                  // 클릭 시 ALERT
+                  onChange={() => {
+                    alert(
+                      '서류진단 생성 시 비노출 처리됩니다. 노출 설정은 수정을 통해 진행해주세요.',
+                    );
+                  }}
+                  color="primary"
+                />
+              }
+              label="노출 여부"
+            />
           </section>
 
           <hr />

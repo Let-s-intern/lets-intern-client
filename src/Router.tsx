@@ -185,11 +185,23 @@ const Router = () => {
                 element={<ReportResumePage />}
               />
               <Route
+                path="report/landing/resume/:reportId"
+                element={<ReportResumePage />}
+              />
+              <Route
                 path="report/landing/personal-statement"
                 element={<ReportPersonalStatementPage />}
               />
               <Route
+                path="report/landing/personal-statement/:reportId"
+                element={<ReportPersonalStatementPage />}
+              />
+              <Route
                 path="report/landing/portfolio"
+                element={<ReportPortfolioPage />}
+              />
+              <Route
+                path="report/landing/portfolio/:reportId"
                 element={<ReportPortfolioPage />}
               />
               <Route

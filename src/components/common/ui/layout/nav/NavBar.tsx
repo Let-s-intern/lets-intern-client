@@ -87,13 +87,13 @@ const NavBar = () => {
     if (data) {
       const navItems: NavSubItemProps[] = [];
 
-      if (data?.resumeInfo) {
+      if (data?.resumeInfoList.length > 0) {
         navItems.push(reportHoverItem[0]);
       }
-      if (data?.personalStatementInfo) {
+      if (data?.personalStatementInfoList.length > 0) {
         navItems.push(reportHoverItem[1]);
       }
-      if (data?.portfolioInfo) {
+      if (data?.portfolioInfoList.length > 0) {
         navItems.push(reportHoverItem[2]);
       }
 

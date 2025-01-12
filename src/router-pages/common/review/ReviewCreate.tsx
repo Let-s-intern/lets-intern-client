@@ -2,12 +2,13 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 
+import ConfirmSection from '@/components/common/review/section/ConfirmSection';
+import StarScoreSection from '@/components/common/review/section/StarScoreSection';
+import TenScoreSection from '@/components/common/review/section/TenScoreSection';
+import TextAreaSection from '@/components/common/review/section/TextAreaSection';
+import { useControlScroll } from '@/hooks/useControlScroll';
+import axios from '@/utils/axios';
 import ReportReviewSection from '@components/common/review/section/ReportReviewSection';
-import ConfirmSection from '../../../components/common/review/section/ConfirmSection';
-import StarScoreSection from '../../../components/common/review/section/StarScoreSection';
-import TenScoreSection from '../../../components/common/review/section/TenScoreSection';
-import TextAreaSection from '../../../components/common/review/section/TextAreaSection';
-import axios from '../../../utils/axios';
 
 const ReviewCreate = ({ isEdit }: { isEdit: boolean }) => {
   const params = useParams();
@@ -20,13 +21,14 @@ const ReviewCreate = ({ isEdit }: { isEdit: boolean }) => {
   const [hasRecommendationExperience, setHasRecommendationExperience] =
     useState<boolean | null>(null);
   const [npsAns, setNpsAns] = useState('');
-
   const [howHelpful, setHowHelpful] = useState<string>('');
 
   const reviewId = params.reviewId;
   const applicationId = searchParams.get('application');
   const programId = params.programId;
   const programType = params.programType?.toLowerCase();
+
+  useControlScroll(true);
 
   const { data: reviewDetailData } = useQuery({
     queryKey: ['review', applicationId],
@@ -134,50 +136,52 @@ const ReviewCreate = ({ isEdit }: { isEdit: boolean }) => {
   };
 
   return (
-    <div className="bg-neutral-0/50 md:fixed md:inset-0 md:z-50 md:flex md:flex-col md:items-center md:justify-center">
-      <main className="relative flex w-full flex-col gap-16 bg-white px-5 md:relative md:max-h-[45rem] md:w-[40rem] md:overflow-y-scroll md:rounded-xl md:px-14 md:pb-6 md:pt-12">
-        <img
-          src="/icons/menu_close_md.svg"
-          alt="close"
-          className="absolute right-6 top-6 hidden cursor-pointer md:block"
-          onClick={() => {
-            navigate(-1);
-          }}
-        />
-        <StarScoreSection
-          starScore={starScore}
-          setStarScore={setStarScore}
-          title={programTitle}
-        />
-        <TenScoreSection
-          programTitle={programTitle}
-          tenScore={tenScore}
-          setTenScore={setTenScore}
-          hasRecommendationExperience={hasRecommendationExperience}
-          setHasRecommendationExperience={setHasRecommendationExperience}
-          npsAns={npsAns}
-          setNpsAns={setNpsAns}
-        />
-        {programType !== 'report' ? (
-          <TextAreaSection content={content} setContent={setContent} />
-        ) : (
-          <ReportReviewSection
-            programTitle={programTitle}
-            howHelpful={howHelpful}
-            setHowHelpful={setHowHelpful}
+    <div className="mx-auto bg-neutral-0/50 md:fixed md:inset-0 md:z-50 md:flex md:flex-col md:items-center md:justify-center">
+      <main className="relative md:overflow-hidden md:rounded-xl">
+        <div className="flex w-full flex-col gap-16 bg-white px-5 md:max-h-[45rem] md:w-[40rem] md:overflow-y-scroll md:rounded-xl md:px-14 md:pb-6 md:pt-12">
+          <img
+            src="/icons/menu_close_md.svg"
+            alt="close"
+            className="absolute right-6 top-6 hidden cursor-pointer md:block"
+            onClick={() => {
+              navigate(-1);
+            }}
           />
-        )}
-        <ConfirmSection
-          isEdit={isEdit}
-          onConfirm={handleConfirm}
-          isDisabled={
-            starScore === 0 ||
-            tenScore === null ||
-            tenScore === 0 ||
-            !npsAns ||
-            (programType === 'report' && howHelpful === '')
-          }
-        />
+          <StarScoreSection
+            starScore={starScore}
+            setStarScore={setStarScore}
+            title={programTitle}
+          />
+          <TenScoreSection
+            programTitle={programTitle}
+            tenScore={tenScore}
+            setTenScore={setTenScore}
+            hasRecommendationExperience={hasRecommendationExperience}
+            setHasRecommendationExperience={setHasRecommendationExperience}
+            npsAns={npsAns}
+            setNpsAns={setNpsAns}
+          />
+          {programType !== 'report' ? (
+            <TextAreaSection content={content} setContent={setContent} />
+          ) : (
+            <ReportReviewSection
+              programTitle={programTitle}
+              howHelpful={howHelpful}
+              setHowHelpful={setHowHelpful}
+            />
+          )}
+          <ConfirmSection
+            isEdit={isEdit}
+            onConfirm={handleConfirm}
+            isDisabled={
+              starScore === 0 ||
+              tenScore === null ||
+              tenScore === 0 ||
+              !npsAns ||
+              (programType === 'report' && howHelpful === '')
+            }
+          />
+        </div>
       </main>
     </div>
   );

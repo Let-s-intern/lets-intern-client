@@ -1,3 +1,5 @@
+import { Fragment } from 'react/jsx-runtime';
+
 import twentynineCmImg from '@/assets/live-29cm.jpg';
 import baeminImg from '@/assets/live-baemin.jpg';
 import kakaoImg from '@/assets/live-kakao.jpg';
@@ -11,12 +13,16 @@ import Heading2 from '@components/common/ui/Heading2';
 const superTitle = [
   '점점 어려워지는 채용 시장',
   '혼자서 막막했던 취업 준비',
-  '원하는 직무로의 취업 준비',
+  '다양한 멘토들이 들려주는 현업 이야기',
 ];
 const title = [
   '막막하고 어렵게 느껴지는 취업 여정\n혼자서 준비하기 막막하셨나요?',
   '렛츠커리어 LIVE 클래스에서\n모두 해결 가능해요!',
-  '렛츠커리어 LIVE 클래스에서\n모두 해결 가능해요!',
+  <Fragment key="mentor">
+    렛츠커리어 LIVE 클래스에선
+    <br /> 원하는 직무의 멘토에게
+    <br className="md:hidden" /> 직접 물어볼 수 있어요
+  </Fragment>,
 ];
 const bubbles = [
   '아는 것도 없는데, 혼자 하는 취준 너무 막막해..',

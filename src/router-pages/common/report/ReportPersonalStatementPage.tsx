@@ -18,6 +18,7 @@ import ReportProgramRecommendSlider from '@components/common/report/ReportProgra
 import ReportReviewSection from '@components/common/report/ReportReviewSection';
 import ServiceProcessSection from '@components/common/report/ServiceProcessSection';
 import LoadingContainer from '@components/common/ui/loading/LoadingContainer';
+import { useParams } from 'react-router-dom';
 import ReportNavigation from './ReportNavigation';
 
 export const personalStatementColors = {
@@ -30,10 +31,8 @@ export const personalStatementColors = {
 };
 
 const ReportPersonalStatementPage = () => {
+  const { reportId } = useParams();
   const { data, isLoading } = useGetActiveReports();
-  const title = getReportLandingTitle(
-    data?.personalStatementInfo?.title ?? '자기소개서',
-  );
 
   const { initReportApplication } = useReportApplicationStore();
 
@@ -42,9 +41,17 @@ const ReportPersonalStatementPage = () => {
   const url = `${typeof window !== 'undefined' ? window.location.origin : getBaseUrlFromServer()}/report/landing/personal-statement`;
   const description = personalStatementReportDescription;
   const activeReports = data || activeReportsFromServer;
-  const report = activeReports?.personalStatementInfo;
+  const report =
+    activeReports.personalStatementInfoList.length > 0
+      ? reportId === undefined || isNaN(Number(reportId))
+        ? activeReports?.personalStatementInfoList[0]
+        : activeReports?.personalStatementInfoList.find(
+            (item) => item.reportId === Number(reportId),
+          )
+      : undefined;
+  const title = getReportLandingTitle(report?.title ?? '자기소개서');
   const personalStatementContent: ReportContent = JSON.parse(
-    data?.personalStatementInfo?.contents ?? '{}',
+    report?.contents ?? '{}',
   );
 
   const { data: priceDetail, isLoading: priceIsLoading } =
@@ -85,7 +92,7 @@ const ReportPersonalStatementPage = () => {
             <div className="mx-auto flex w-full max-w-[1000px] flex-col px-5 lg:px-0">
               <div className="h-[56px] md:h-[66px]" />
               <ReportBasicInfo
-                reportBasic={data?.personalStatementInfo}
+                reportBasic={report}
                 color={personalStatementColors.CA60FF}
               />
             </div>

@@ -201,7 +201,7 @@ const ReportIntroSection = ({ type }: ReportIntroSectionProps) => {
   const reportIntro = REPORT_INTRO[type];
   const section0 = Section0[type];
 
-  const convertString = (str: string) => {
+  const convertString = (str: string): string => {
     return isDesktop ? str.replace(/\n\n/g, ' ') : str.replace(/\n\n/g, '\n');
   };
 
