@@ -100,7 +100,7 @@ const ChallengeBasicInfo = ({
       : formatFullDateTime(challenge.endDate);
 
   return (
-    <div className="flex w-full flex-col gap-y-6 md:gap-y-5">
+    <div className="flex w-full flex-col gap-y-6 pb-10 md:gap-y-5 md:pb-20">
       <div className="flex w-full gap-x-4">
         <div
           className="flex flex-1 items-center justify-center overflow-hidden rounded-ms"
@@ -340,112 +340,6 @@ const ChallengeBasicInfo = ({
         </div>
       </div>
     </div>
-    // <div className="flex flex-col gap-6 pb-10 md:flex-row md:pb-20">
-    // <img
-    //   src={challenge.thumbnail}
-    //   alt="챌린지 썸네일"
-    //   className="aspect-[4/3] h-auto w-full rounded-md object-contain md:w-3/5"
-    //   style={{ backgroundColor: colors.thumbnailBg }}
-    // />
-    //   <div className="flex w-full flex-col gap-y-3 md:w-2/5">
-    //     <div className="flex w-full items-center justify-center rounded-md bg-neutral-95 px-6 py-5">
-    //       <div
-    //         className="flex w-full flex-col gap-y-5"
-    //         style={{ color: colors.primary }}
-    //       >
-    //         <BasicInfoRow
-    //           icon={<Announcement />}
-    //           title="진행 기간"
-    //           content={`${startDate}\n- ${endDate}`}
-    //         />
-    //         <BasicInfoRow
-    //           icon={<ClockIcon />}
-    //           title="모집 마감"
-    //           content={`${formatFullDateTime(challenge.deadline, true)}`}
-    //         />
-    //         <BasicInfoRow
-    //           icon={<LuCalendarDays size={20} />}
-    //           title="OT 일자"
-    //           content={`${formatFullDateTime(challenge.startDate, true)}`}
-    //         />
-    //       </div>
-    //     </div>
-    //     <div className="flex w-full flex-col items-center justify-center gap-y-5 rounded-md bg-neutral-95 px-6 pb-9 pt-5">
-    //       <div className="flex w-full flex-col gap-y-6">
-    //         <div className="flex w-full flex-col gap-y-[14px]">
-    //           <p className="text-small18 font-bold">{challenge.title}</p>
-    //           <div className="flex w-full flex-col gap-y-0.5 text-xsmall14">
-    //             {priceReason.map((reason, index) => (
-    //               <div key={index} className="flex w-full gap-x-0.5">
-    //                 <ChevronDown
-    //                   className="-mt-0.5 shrink-0 text-neutral-0"
-    //                   width={24}
-    //                   height={24}
-    //                 />
-    //                 <p className="grow whitespace-pre text-wrap break-keep text-black">
-    //                   {reason}
-    //                 </p>
-    //               </div>
-    //             ))}
-    //           </div>
-    //         </div>
-    //         {priceInfo && (
-    //           <div className="flex w-full flex-col gap-y-2.5 border-b border-neutral-80 pb-[14px] pt-2.5 text-neutral-0">
-    //             <div className="flex w-full items-center justify-between gap-x-4 text-xsmall16">
-    //               <span className="font-medium">정가</span>
-    //               <span>{regularPrice?.toLocaleString()}원</span>
-    //             </div>
-    //             <div className="flex w-full items-center justify-between gap-x-4 text-xsmall16">
-    //               <span className="font-bold" style={{ color: colors.primary }}>
-    //                 {getDiscountPercent(
-    //                   regularPrice || 0,
-    //                   priceInfo.discount || 0,
-    //                 )}
-    //                 % 할인
-    //               </span>
-    //               <span>-{priceInfo.discount?.toLocaleString()}원</span>
-    //             </div>
-    //             {priceInfo.challengePriceType === 'REFUND' && (
-    //               <div className="flex w-full items-center justify-between gap-x-4 text-xsmall16">
-    //                 <span className="font-bold text-black">
-    //                   미션 모두 수행시, 환급
-    //                 </span>
-    //                 <span>-{priceInfo.refund?.toLocaleString()}원</span>
-    //               </div>
-    //             )}
-    //           </div>
-    //         )}
-    //       </div>
-    //       {priceInfo && (
-    //         <div className="flex w-full flex-col gap-y-4">
-    //           <div className="flex w-full items-center justify-between text-small20 font-medium text-neutral-0">
-    //             <p>할인 적용가</p>
-    //             <p className="text-small20 font-medium text-neutral-0">
-    //               {totalPrice.toLocaleString()}원
-    //             </p>
-    //           </div>
-    //           {showMonthlyPrice && (
-    //             <div className="flex w-full flex-col items-end gap-y-2">
-    //               <div style={{ color: colors.primary }}>
-    //                 <span className="mr-1 text-medium22 font-semibold">월</span>
-    //                 <span className="text-xxlarge32 font-bold">
-    //                   {monthlyPrice
-    //                     ? `${monthlyPrice.toLocaleString()}원`
-    //                     : '계산 중'}
-    //                 </span>
-    //               </div>
-    //               <p className="text-xsmall14 text-neutral-30">
-    //                 {isLoading
-    //                   ? '무이자 할부 시'
-    //                   : `${banks.join(', ')} ${installmentMonths}개월 무이자 할부 시`}
-    //               </p>
-    //             </div>
-    //           )}
-    //         </div>
-    //       )}
-    //     </div>
-    //   </div>
-    // </div>
   );
 };
 
