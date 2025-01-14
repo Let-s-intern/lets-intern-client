@@ -25,8 +25,6 @@ import Privacy from './router-pages/common/mypage/Privacy';
 import ReportCreditDelete from './router-pages/common/mypage/ReportCreditDelete';
 import ReportCreditDetail from './router-pages/common/mypage/ReportCreditDetail';
 import Review from './router-pages/common/mypage/Review';
-import ChallengeDetailSSRPage from './router-pages/common/program/ChallengeDetailSSRPage';
-import LiveDetailSSRPage from './router-pages/common/program/LiveDetailSSRPage';
 import Payment from './router-pages/common/program/Payment';
 import PaymentFail from './router-pages/common/program/PaymentFail';
 import PaymentInputPage from './router-pages/common/program/PaymentInputPage';
@@ -78,10 +76,10 @@ const Router = () => {
               />
 
               {/* 챌린지 상세 페이지 */}
-              <Route
+              {/* <Route
                 path="program/challenge/:id/:title?"
                 element={<ChallengeDetailSSRPage />}
-              />
+              /> */}
 
               {/* LIVE 클래스 상세 페이지 (Deprecated) */}
               <Route
@@ -90,10 +88,10 @@ const Router = () => {
               />
 
               {/* LIVE 클래스 상세 페이지 */}
-              <Route
+              {/* <Route
                 path="program/live/:id/:title?"
                 element={<LiveDetailSSRPage />}
-              />
+              /> */}
 
               {/* 프로그램 결제 페이지 */}
               <Route path="payment-input" element={<PaymentInputPage />} />

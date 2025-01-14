@@ -4,13 +4,14 @@ import Announcement from '@/assets/icons/announcement.svg?react';
 import ChevronDown from '@/assets/icons/chevron-down.svg?react';
 import ClockIcon from '@/assets/icons/clock.svg?react';
 import { useInstallmentPayment } from '@/hooks/useInstallmentPayment';
-import { ChallengeIdSchema, challengeTypeSchema } from '@/schema';
+import { ChallengeIdPrimitive, challengeTypeSchema } from '@/schema';
 import {
   formatFullDateTime,
   formatFullDateTimeWithOutYear,
 } from '@/utils/formatDateString';
 import { ChallengeColor } from '@components/ChallengeView';
 import BasicInfoRow from '@components/common/program/program-detail/basicInfo/BasicInfoRow';
+import dayjs from 'dayjs';
 
 const { PERSONAL_STATEMENT } = challengeTypeSchema.enum;
 
@@ -26,7 +27,7 @@ const ChallengeBasicInfo = ({
   challenge,
   colors,
 }: {
-  challenge: ChallengeIdSchema;
+  challenge: ChallengeIdPrimitive;
   colors: ChallengeColor;
 }) => {
   const {
@@ -73,11 +74,19 @@ const ChallengeBasicInfo = ({
     }
   })();
 
-  const startDate = formatFullDateTime(challenge.startDate, true);
+  const challengeStartDate = challenge.startDate
+    ? dayjs(challenge.startDate)
+    : null;
+  const challengeEndDate = challenge.endDate ? dayjs(challenge.endDate) : null;
+  const challengeDeadline = challenge.deadline
+    ? dayjs(challenge.deadline)
+    : null;
+
+  const startDate = formatFullDateTime(challengeStartDate, true);
   const endDate =
-    challenge.startDate?.year() === challenge.endDate?.year()
-      ? formatFullDateTimeWithOutYear(challenge.endDate, true)
-      : formatFullDateTime(challenge.endDate, true);
+    challengeStartDate?.year() === challengeEndDate?.year()
+      ? formatFullDateTimeWithOutYear(challengeEndDate, true)
+      : formatFullDateTime(challengeEndDate, true);
 
   return (
     <div className="flex flex-col gap-6 pb-10 md:flex-row md:pb-20">
@@ -87,10 +96,10 @@ const ChallengeBasicInfo = ({
         className="aspect-[4/3] h-auto w-full rounded-md object-contain md:w-3/5"
         style={{ backgroundColor: colors.thumbnailBg }}
       />
-      <div className="flex w-full flex-col gap-y-3 md:w-2/5">
-        <div className="flex w-full items-center justify-center rounded-md bg-neutral-95 px-6 py-5">
+      <div className="flex flex-col w-full gap-y-3 md:w-2/5">
+        <div className="flex items-center justify-center w-full px-6 py-5 rounded-md bg-neutral-95">
           <div
-            className="flex w-full flex-col gap-y-5"
+            className="flex flex-col w-full gap-y-5"
             style={{ color: colors.primary }}
           >
             <BasicInfoRow
@@ -101,19 +110,19 @@ const ChallengeBasicInfo = ({
             <BasicInfoRow
               icon={<ClockIcon />}
               title="모집 마감"
-              content={`${formatFullDateTime(challenge.deadline, true)}`}
+              content={`${formatFullDateTime(challengeDeadline, true)}`}
             />
             <BasicInfoRow
               icon={<LuCalendarDays size={20} />}
               title="OT 일자"
-              content={`${formatFullDateTime(challenge.startDate, true)}`}
+              content={`${formatFullDateTime(challengeStartDate, true)}`}
             />
           </div>
         </div>
-        <div className="flex w-full flex-col items-center justify-center gap-y-5 rounded-md bg-neutral-95 px-6 pb-9 pt-5">
-          <div className="flex w-full flex-col gap-y-6">
+        <div className="flex flex-col items-center justify-center w-full px-6 pt-5 rounded-md gap-y-5 bg-neutral-95 pb-9">
+          <div className="flex flex-col w-full gap-y-6">
             <div className="flex w-full flex-col gap-y-[14px]">
-              <p className="text-small18 font-bold">{challenge.title}</p>
+              <p className="font-bold text-small18">{challenge.title}</p>
               <div className="flex w-full flex-col gap-y-0.5 text-xsmall14">
                 {priceReason.map((reason, index) => (
                   <div key={index} className="flex w-full gap-x-0.5">
@@ -122,7 +131,7 @@ const ChallengeBasicInfo = ({
                       width={24}
                       height={24}
                     />
-                    <p className="grow whitespace-pre text-wrap break-keep text-black">
+                    <p className="text-black whitespace-pre grow text-wrap break-keep">
                       {reason}
                     </p>
                   </div>
@@ -131,11 +140,11 @@ const ChallengeBasicInfo = ({
             </div>
             {priceInfo && (
               <div className="flex w-full flex-col gap-y-2.5 border-b border-neutral-80 pb-[14px] pt-2.5 text-neutral-0">
-                <div className="flex w-full items-center justify-between gap-x-4 text-xsmall16">
+                <div className="flex items-center justify-between w-full gap-x-4 text-xsmall16">
                   <span className="font-medium">정가</span>
                   <span>{regularPrice?.toLocaleString()}원</span>
                 </div>
-                <div className="flex w-full items-center justify-between gap-x-4 text-xsmall16">
+                <div className="flex items-center justify-between w-full gap-x-4 text-xsmall16">
                   <span className="font-bold" style={{ color: colors.primary }}>
                     {getDiscountPercent(
                       regularPrice || 0,
@@ -146,7 +155,7 @@ const ChallengeBasicInfo = ({
                   <span>-{priceInfo.discount?.toLocaleString()}원</span>
                 </div>
                 {priceInfo.challengePriceType === 'REFUND' && (
-                  <div className="flex w-full items-center justify-between gap-x-4 text-xsmall16">
+                  <div className="flex items-center justify-between w-full gap-x-4 text-xsmall16">
                     <span className="font-bold text-black">
                       미션 모두 수행시, 환급
                     </span>
@@ -157,18 +166,18 @@ const ChallengeBasicInfo = ({
             )}
           </div>
           {priceInfo && (
-            <div className="flex w-full flex-col gap-y-4">
-              <div className="flex w-full items-center justify-between text-small20 font-medium text-neutral-0">
+            <div className="flex flex-col w-full gap-y-4">
+              <div className="flex items-center justify-between w-full font-medium text-small20 text-neutral-0">
                 <p>할인 적용가</p>
-                <p className="text-small20 font-medium text-neutral-0">
+                <p className="font-medium text-small20 text-neutral-0">
                   {totalPrice.toLocaleString()}원
                 </p>
               </div>
               {showMonthlyPrice && (
-                <div className="flex w-full flex-col items-end gap-y-2">
+                <div className="flex flex-col items-end w-full gap-y-2">
                   <div style={{ color: colors.primary }}>
-                    <span className="mr-1 text-medium22 font-semibold">월</span>
-                    <span className="text-xxlarge32 font-bold">
+                    <span className="mr-1 font-semibold text-medium22">월</span>
+                    <span className="font-bold text-xxlarge32">
                       {monthlyPrice
                         ? `${monthlyPrice.toLocaleString()}원`
                         : '계산 중'}

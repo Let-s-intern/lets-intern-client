@@ -3,7 +3,7 @@ export { onRenderHtml };
 
 import { renderToString } from 'react-dom/server';
 // import { dangerouslySkipEscape, escapeInject } from 'vike/server';
-import { ServerChallengeProvider } from '@/context/ServerChallenge';
+// import { ServerChallengeProvider } from '@/context/ServerChallenge';
 import Provider from '@/Provider';
 import { routes } from '@/routes';
 import {
@@ -46,15 +46,15 @@ const onRenderHtml: OnRenderHtmlAsync = async (pageContext) => {
   const pageHtml = dangerouslySkipEscape(
     renderToString(
       <React.StrictMode>
-        <ServerChallengeProvider challenge={data}>
-          <Provider>
-            <StaticRouterProvider
-              router={router}
-              hydrate={true}
-              context={context}
-            />
-          </Provider>
-        </ServerChallengeProvider>
+        {/* <ServerChallengeProvider challenge={data}> */}
+        <Provider>
+          <StaticRouterProvider
+            router={router}
+            hydrate={true}
+            context={context}
+          />
+        </Provider>
+        {/* </ServerChallengeProvider> */}
       </React.StrictMode>,
     ),
   );

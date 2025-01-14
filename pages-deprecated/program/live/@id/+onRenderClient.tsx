@@ -1,7 +1,7 @@
 // https://vike.dev/onRenderClient
 export { onRenderClient };
 
-import { ServerLiveProvider } from '@/context/ServerLive';
+// import { ServerLiveProvider } from '@/context/ServerLive';
 import Provider from '@/Provider';
 import Router from '@/Router';
 import dayjs from 'dayjs';
@@ -23,11 +23,11 @@ async function onRenderClient(pageContext: PageContextClient) {
 
   const page = (
     <React.StrictMode>
-      <ServerLiveProvider live={data}>
-        <Provider>
-          <Router />
-        </Provider>
-      </ServerLiveProvider>
+      {/* <ServerLiveProvider live={data}> */}
+      <Provider>
+        <Router />
+      </Provider>
+      {/* </ServerLiveProvider> */}
     </React.StrictMode>
   );
   const container = document.getElementById('root')!;

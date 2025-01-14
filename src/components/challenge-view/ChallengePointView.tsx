@@ -1,22 +1,20 @@
-import { twMerge } from '@/lib/twMerge';
-import { Dayjs } from 'dayjs';
-import { josa } from 'es-hangul';
-import { ReactNode, useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
-// import { clientOnly } from 'vike-react/clientOnly';
-
 import { getVod } from '@/api/program';
 import Check from '@/assets/icons/chevron-down.svg?react';
 import HoleIcon from '@/assets/icons/hole.svg?react';
+import { twMerge } from '@/lib/twMerge';
 import { ChallengeType, challengeTypeSchema, ProgramTypeEnum } from '@/schema';
 import { ChallengePoint, ProgramRecommend } from '@/types/interface';
 import { ChallengeColor } from '@components/ChallengeView';
 import SuperTitle from '@components/common/program/program-detail/SuperTitle';
 import Heading2 from '@components/common/ui/Heading2';
 import ProgramRecommendSlider from '@components/common/ui/ProgramRecommendSlider';
+import { Dayjs } from 'dayjs';
+import { josa } from 'es-hangul';
+import { ReactNode, useMemo } from 'react';
 
 // const Balancer = clientOnly(() => import('react-wrap-balancer'));
 import dynamic from 'next/dynamic';
+import { useRouter } from 'next/navigation';
 
 const Balancer = dynamic(() => import('react-wrap-balancer'), { ssr: false });
 
@@ -90,7 +88,7 @@ const ChallengePointView = ({
   challengeTitle: string;
   programRecommend?: ProgramRecommend;
 }) => {
-  const navigate = useNavigate();
+  const router = useRouter();
 
   const programSchedule = [
     {
@@ -154,7 +152,7 @@ const ChallengePointView = ({
             return;
           }
 
-          navigate(
+          router.push(
             `/program/${item.programInfo.programType.toLowerCase()}/${item.programInfo.id}`,
           );
         },
@@ -165,7 +163,7 @@ const ChallengePointView = ({
   }, []);
 
   return (
-    <div className="flex w-full flex-col items-center">
+    <div className="flex flex-col items-center w-full">
       {/* 프로그램 소개 */}
       {point && (
         <div className="flex w-full max-w-[1000px] flex-col px-5 md:items-center md:px-10">
@@ -207,7 +205,7 @@ const ChallengePointView = ({
               ))}
             </ul>
             {challengeType === CAREER_START && (
-              <p className="text-xsmall14 font-semibold text-neutral-40 md:text-center md:text-xsmall16">
+              <p className="font-semibold text-xsmall14 text-neutral-40 md:text-center md:text-xsmall16">
                 본 프로그램은 취업의 기초가 되는
                 <br className="md:hidden" />{' '}
                 <span className="font-bold">
@@ -220,7 +218,7 @@ const ChallengePointView = ({
               </p>
             )}
             {challengeType === PERSONAL_STATEMENT && (
-              <p className="text-xsmall14 font-semibold text-neutral-40 md:text-center md:text-xsmall16">
+              <p className="font-semibold text-xsmall14 text-neutral-40 md:text-center md:text-xsmall16">
                 본 프로그램은 취업의 기초가 되는
                 <br className="md:hidden" />{' '}
                 <span className="font-bold">자기소개서 작성</span>을 다룹니다.
@@ -229,7 +227,7 @@ const ChallengePointView = ({
               </p>
             )}
             {challengeType === PORTFOLIO && (
-              <p className="text-xsmall14 font-semibold text-neutral-40 md:text-center md:text-xsmall16">
+              <p className="font-semibold text-xsmall14 text-neutral-40 md:text-center md:text-xsmall16">
                 본 프로그램은 나만의 필살기를 만들 수 있는
                 <br className="md:hidden" />{' '}
                 <span className="font-bold">포트폴리오 제작 방법</span>을
@@ -248,25 +246,25 @@ const ChallengePointView = ({
           className="relative w-full overflow-hidden"
           style={{ backgroundColor: colors.recommendBg }}
         >
-          <div className="relative z-10 mx-7 flex justify-between">
-            <HoleIcon className="h-auto w-4 md:w-5" />
-            <HoleIcon className="h-auto w-4 md:w-5" />
-            <HoleIcon className="h-auto w-4 md:w-5" />
-            <HoleIcon className="h-auto w-4 md:w-5" />
-            <HoleIcon className="h-auto w-4 md:w-5" />
-            <HoleIcon className="h-auto w-4 md:w-5" />
+          <div className="relative z-10 flex justify-between mx-7">
+            <HoleIcon className="w-4 h-auto md:w-5" />
+            <HoleIcon className="w-4 h-auto md:w-5" />
+            <HoleIcon className="w-4 h-auto md:w-5" />
+            <HoleIcon className="w-4 h-auto md:w-5" />
+            <HoleIcon className="w-4 h-auto md:w-5" />
+            <HoleIcon className="w-4 h-auto md:w-5" />
             {/* Desktop */}
-            <HoleIcon className="hidden h-auto w-4 md:block md:w-5" />
-            <HoleIcon className="hidden h-auto w-4 md:block md:w-5" />
-            <HoleIcon className="hidden h-auto w-4 md:block md:w-5" />
-            <HoleIcon className="hidden h-auto w-4 md:block md:w-5" />
-            <HoleIcon className="hidden h-auto w-4 md:block md:w-5" />
-            <HoleIcon className="hidden h-auto w-4 md:block md:w-5" />
-            <HoleIcon className="hidden h-auto w-4 md:block md:w-5" />
-            <HoleIcon className="hidden h-auto w-4 md:block md:w-5" />
-            <HoleIcon className="hidden h-auto w-4 md:block md:w-5" />
-            <HoleIcon className="hidden h-auto w-4 md:block md:w-5" />
-            <HoleIcon className="hidden h-auto w-4 md:block md:w-5" />
+            <HoleIcon className="hidden w-4 h-auto md:block md:w-5" />
+            <HoleIcon className="hidden w-4 h-auto md:block md:w-5" />
+            <HoleIcon className="hidden w-4 h-auto md:block md:w-5" />
+            <HoleIcon className="hidden w-4 h-auto md:block md:w-5" />
+            <HoleIcon className="hidden w-4 h-auto md:block md:w-5" />
+            <HoleIcon className="hidden w-4 h-auto md:block md:w-5" />
+            <HoleIcon className="hidden w-4 h-auto md:block md:w-5" />
+            <HoleIcon className="hidden w-4 h-auto md:block md:w-5" />
+            <HoleIcon className="hidden w-4 h-auto md:block md:w-5" />
+            <HoleIcon className="hidden w-4 h-auto md:block md:w-5" />
+            <HoleIcon className="hidden w-4 h-auto md:block md:w-5" />
           </div>
           <img
             className="absolute -right-14 top-8 h-auto w-[362px] md:-top-12 md:w-[838px] lg:right-48"
@@ -291,15 +289,15 @@ const ChallengePointView = ({
       {/* 진행 방식 */}
       {point && (
         <div
-          className="flex w-full flex-col items-center"
+          className="flex flex-col items-center w-full"
           style={{
             backgroundColor: colors.dark,
           }}
         >
           <div className="flex w-full max-w-[1000px] flex-col px-5 py-[60px] md:px-10 md:py-[120px] lg:px-0">
-            <div className="flex w-full flex-col md:items-center">
+            <div className="flex flex-col w-full md:items-center">
               <p
-                className="text-xsmall16 font-bold md:text-small20"
+                className="font-bold text-xsmall16 md:text-small20"
                 style={{ color: colors.primary }}
               >
                 진행 방식
@@ -387,10 +385,10 @@ function PointList({
   return (
     <li
       key={item.id}
-      className="mx-auto flex w-full flex-col items-center gap-5 self-stretch rounded-md p-8 md:pb-10"
+      className="flex flex-col items-center self-stretch w-full gap-5 p-8 mx-auto rounded-md md:pb-10"
       style={{ backgroundColor: colors.primaryLight }}
     >
-      <div className="break-keep text-center">
+      <div className="text-center break-keep">
         <span
           className="rounded-md px-3.5 py-1.5 text-xsmall14 font-semibold text-white md:text-small18"
           style={{ backgroundColor: colors.primary }}
@@ -399,10 +397,10 @@ function PointList({
         </span>
       </div>
       <div>
-        <h3 className="mb-2 break-keep text-center text-small20 font-bold text-neutral-0">
+        <h3 className="mb-2 font-bold text-center break-keep text-small20 text-neutral-0">
           <Balancer fallback={<span>{item.title}</span>}>{item.title}</Balancer>
         </h3>
-        <p className="break-keep text-center text-xsmall16 font-medium text-neutral-40">
+        <p className="font-medium text-center break-keep text-xsmall16 text-neutral-40">
           <Balancer fallback={<span>{item.subtitle}</span>}>
             {item.subtitle}
           </Balancer>
@@ -428,7 +426,7 @@ function ProgressItem({
         {item.index}
       </div>
       <div className="flex flex-col gap-0.5">
-        <span className="whitespace-pre-line text-xsmall16 font-bold text-neutral-0">
+        <span className="font-bold whitespace-pre-line text-xsmall16 text-neutral-0">
           {item.title}
         </span>
         {item.subTitle && (
@@ -469,7 +467,7 @@ function BoxItem({
 }) {
   return (
     <div className="flex flex-col gap-2 text-xsmall16 text-neutral-0">
-      <span className="whitespace-pre-line font-bold">{title}</span>
+      <span className="font-bold whitespace-pre-line">{title}</span>
       <span className="whitespace-pre-line break-keep">{children}</span>
     </div>
   );

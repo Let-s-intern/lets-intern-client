@@ -155,46 +155,51 @@ const missionStatusType = z.union([
   z.literal('REFUND_DONE'),
 ]);
 
+export const getChallengeIdPrimitiveSchema = z.object({
+  title: z.string().optional(),
+  shortDesc: z.string().optional(),
+  desc: z.string().optional(),
+  criticalNotice: z.string().nullable().optional(),
+  participationCount: z.number().optional(),
+  thumbnail: z.string().optional(),
+  startDate: z.string().optional(),
+  endDate: z.string().optional(),
+  beginning: z.string().optional(),
+  deadline: z.string().optional(),
+  chatLink: z.string().optional(),
+  chatPassword: z.string().optional(),
+  challengeType: challengeTypeSchema,
+  classificationInfo: z.array(
+    z.object({
+      programClassification: ProgramClassificationEnum,
+    }),
+  ),
+  priceInfo: z.array(
+    z.object({
+      priceId: z.number(),
+      price: z.number().optional().nullable(),
+      refund: z.number().optional().nullable(),
+      discount: z.number().optional().nullable(),
+      accountNumber: z.string().optional().nullable(),
+      deadline: z.string().optional().nullable(),
+      accountType: accountType.optional().nullable(),
+      challengePriceType: challengePriceType.optional().nullable(),
+      challengeUserType: challengeUserType.optional().nullable(),
+      challengeParticipationType: challengeParticipationType
+        .optional()
+        .nullable(),
+    }),
+  ),
+  faqInfo: z.array(faq),
+});
+
+export type ChallengeIdPrimitive = z.infer<
+  typeof getChallengeIdPrimitiveSchema
+>;
+
 /** GET /api/v1/challenge/{id} 챌린지 상세 조회 (어드민, 유저 겸용) */
-export const getChallengeIdSchema = z
-  .object({
-    title: z.string().optional(),
-    shortDesc: z.string().optional(),
-    desc: z.string().optional(),
-    criticalNotice: z.string().nullable().optional(),
-    participationCount: z.number().optional(),
-    thumbnail: z.string().optional(),
-    startDate: z.string().optional(),
-    endDate: z.string().optional(),
-    beginning: z.string().optional(),
-    deadline: z.string().optional(),
-    chatLink: z.string().optional(),
-    chatPassword: z.string().optional(),
-    challengeType: challengeTypeSchema,
-    classificationInfo: z.array(
-      z.object({
-        programClassification: ProgramClassificationEnum,
-      }),
-    ),
-    priceInfo: z.array(
-      z.object({
-        priceId: z.number(),
-        price: z.number().optional().nullable(),
-        refund: z.number().optional().nullable(),
-        discount: z.number().optional().nullable(),
-        accountNumber: z.string().optional().nullable(),
-        deadline: z.string().optional().nullable(),
-        accountType: accountType.optional().nullable(),
-        challengePriceType: challengePriceType.optional().nullable(),
-        challengeUserType: challengeUserType.optional().nullable(),
-        challengeParticipationType: challengeParticipationType
-          .optional()
-          .nullable(),
-      }),
-    ),
-    faqInfo: z.array(faq),
-  })
-  .transform((data) => {
+export const getChallengeIdSchema = getChallengeIdPrimitiveSchema.transform(
+  (data) => {
     return {
       ...data,
       startDate: data.startDate ? dayjs(data.startDate) : null,
@@ -206,7 +211,8 @@ export const getChallengeIdSchema = z
         deadline: price.deadline ? dayjs(price.deadline) : null,
       })),
     };
-  });
+  },
+);
 
 export type ChallengeIdSchema = z.infer<typeof getChallengeIdSchema>;
 

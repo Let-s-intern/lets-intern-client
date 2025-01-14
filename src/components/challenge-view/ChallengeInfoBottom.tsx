@@ -5,7 +5,7 @@ import ChevronDown from '@/assets/icons/chevron-down.svg?react';
 import ClockIcon from '@/assets/icons/clock.svg?react';
 import LaptopIcon from '@/assets/icons/laptop.svg?react';
 import { useInstallmentPayment } from '@/hooks/useInstallmentPayment';
-import { ChallengeIdSchema, challengeTypeSchema } from '@/schema';
+import { ChallengeIdPrimitive, challengeTypeSchema } from '@/schema';
 import {
   formatFullDateTime,
   formatFullDateTimeWithOutYear,
@@ -15,6 +15,7 @@ import BasicInfoBottomRow from '@components/common/program/program-detail/basicI
 import BasicInfoRow from '@components/common/program/program-detail/basicInfo/BasicInfoRow';
 import Heading2 from '@components/common/ui/Heading2';
 import { useMediaQuery } from '@mui/material';
+import dayjs from 'dayjs';
 
 const { PERSONAL_STATEMENT } = challengeTypeSchema.enum;
 
@@ -30,7 +31,7 @@ const ChallengeInfoBottom = ({
   challenge,
   colors,
 }: {
-  challenge: ChallengeIdSchema;
+  challenge: ChallengeIdPrimitive;
   colors: ChallengeColor;
 }) => {
   const isMobile = useMediaQuery('(max-width: 768px)');
@@ -77,22 +78,30 @@ const ChallengeInfoBottom = ({
     }
   })();
 
-  const startDate = formatFullDateTime(challenge.startDate, true);
+  const challengeStartDate = challenge.startDate
+    ? dayjs(challenge.startDate)
+    : null;
+  const challengeEndDate = challenge.endDate ? dayjs(challenge.endDate) : null;
+  const challengeDeadline = challenge.deadline
+    ? dayjs(challenge.deadline)
+    : null;
+
+  const startDate = formatFullDateTime(challengeStartDate, true);
   const endDate =
-    challenge.startDate?.year() === challenge.endDate?.year()
-      ? formatFullDateTimeWithOutYear(challenge.endDate, true)
-      : formatFullDateTime(challenge.endDate, true);
+    challengeStartDate?.year() === challengeEndDate?.year()
+      ? formatFullDateTimeWithOutYear(challengeEndDate, true)
+      : formatFullDateTime(challengeEndDate, true);
 
   return (
     <section className="flex w-full max-w-[1000px] flex-col gap-y-8 px-5 pb-8 md:gap-y-[70px] md:px-10 md:pb-[130px] lg:px-0">
       <Heading2>모집개요</Heading2>
       <div
-        className="flex w-full flex-col gap-3 md:flex-row"
+        className="flex flex-col w-full gap-3 md:flex-row"
         style={{ color: colors.primary }}
       >
         {isMobile ? (
-          <div className="flex w-full flex-1 items-center justify-center rounded-md bg-neutral-95 px-6 py-5">
-            <div className="flex w-full flex-col gap-y-5">
+          <div className="flex items-center justify-center flex-1 w-full px-6 py-5 rounded-md bg-neutral-95">
+            <div className="flex flex-col w-full gap-y-5">
               <BasicInfoRow
                 icon={<Announcement />}
                 title="진행 기간"
@@ -106,18 +115,18 @@ const ChallengeInfoBottom = ({
               <BasicInfoRow
                 icon={<ClockIcon />}
                 title="모집 마감"
-                content={`${formatFullDateTime(challenge.deadline, true)}`}
+                content={`${formatFullDateTime(challengeDeadline, true)}`}
               />
               <BasicInfoRow
                 icon={<LuCalendarDays size={20} />}
                 title="OT 일자"
-                content={`${formatFullDateTime(challenge.startDate, true)}`}
+                content={`${formatFullDateTime(challengeStartDate, true)}`}
               />
             </div>
           </div>
         ) : (
           <div
-            className="flex w-full flex-1 flex-col gap-y-4"
+            className="flex flex-col flex-1 w-full gap-y-4"
             style={{ color: colors.primary }}
           >
             <BasicInfoBottomRow
@@ -133,19 +142,19 @@ const ChallengeInfoBottom = ({
             <BasicInfoBottomRow
               icon={<ClockIcon />}
               title="모집 마감"
-              content={`${formatFullDateTime(challenge.deadline, true)}`}
+              content={`${formatFullDateTime(challengeDeadline, true)}`}
             />
             <BasicInfoBottomRow
               icon={<LuCalendarDays size={20} />}
               title="OT 일자"
-              content={`${formatFullDateTime(challenge.startDate, true)}`}
+              content={`${formatFullDateTime(challengeStartDate, true)}`}
             />
           </div>
         )}
-        <div className="flex w-full flex-1 flex-col items-center justify-center gap-y-5 rounded-md bg-neutral-95 px-6 pb-9 pt-5">
-          <div className="flex w-full flex-col gap-y-6">
+        <div className="flex flex-col items-center justify-center flex-1 w-full px-6 pt-5 rounded-md gap-y-5 bg-neutral-95 pb-9">
+          <div className="flex flex-col w-full gap-y-6">
             <div className="flex w-full flex-col gap-y-[14px]">
-              <p className="text-small18 font-bold text-black">
+              <p className="font-bold text-black text-small18">
                 {challenge.title}
               </p>
               <div className="flex w-full flex-col gap-y-0.5 text-xsmall14">
@@ -156,7 +165,7 @@ const ChallengeInfoBottom = ({
                       height={24}
                       className="shrink-0 text-neutral-0"
                     />
-                    <p className="grow whitespace-pre text-wrap break-keep text-black">
+                    <p className="text-black whitespace-pre grow text-wrap break-keep">
                       {reason}
                     </p>
                   </div>
@@ -165,11 +174,11 @@ const ChallengeInfoBottom = ({
             </div>
             {priceInfo && (
               <div className="flex w-full flex-col gap-y-2.5 border-b border-neutral-80 pb-[14px] pt-2.5 text-neutral-0">
-                <div className="flex w-full items-center justify-between gap-x-4 text-xsmall16">
+                <div className="flex items-center justify-between w-full gap-x-4 text-xsmall16">
                   <span className="font-medium">정가</span>
                   <span>{regularPrice?.toLocaleString()}원</span>
                 </div>
-                <div className="flex w-full items-center justify-between gap-x-4 text-xsmall16">
+                <div className="flex items-center justify-between w-full gap-x-4 text-xsmall16">
                   <span className="font-bold" style={{ color: colors.primary }}>
                     {getDiscountPercent(
                       regularPrice || 0,
@@ -179,7 +188,7 @@ const ChallengeInfoBottom = ({
                   </span>
                   <span>-{priceInfo.discount?.toLocaleString()}원</span>
                 </div>
-                <div className="flex w-full items-center justify-between gap-x-4 text-xsmall16">
+                <div className="flex items-center justify-between w-full gap-x-4 text-xsmall16">
                   <span className="font-bold text-black">
                     미션 모두 수행시, 환급
                   </span>
@@ -189,18 +198,18 @@ const ChallengeInfoBottom = ({
             )}
           </div>
           {priceInfo && (
-            <div className="flex w-full flex-col gap-y-4">
-              <div className="flex w-full items-center justify-between text-small20 font-medium text-neutral-0">
+            <div className="flex flex-col w-full gap-y-4">
+              <div className="flex items-center justify-between w-full font-medium text-small20 text-neutral-0">
                 <p>할인 적용가</p>
-                <p className="text-small20 font-medium text-neutral-0">
+                <p className="font-medium text-small20 text-neutral-0">
                   {totalPrice.toLocaleString()}원
                 </p>
               </div>
               {showMonthlyPrice && (
-                <div className="flex w-full flex-col items-end gap-y-2">
+                <div className="flex flex-col items-end w-full gap-y-2">
                   <div style={{ color: colors.primary }}>
-                    <span className="mr-1 text-medium22 font-semibold">월</span>
-                    <span className="text-xxlarge32 font-bold">
+                    <span className="mr-1 font-semibold text-medium22">월</span>
+                    <span className="font-bold text-xxlarge32">
                       {monthlyPrice
                         ? `${monthlyPrice.toLocaleString()}원`
                         : '계산 중'}

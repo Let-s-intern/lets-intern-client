@@ -1,5 +1,6 @@
 import { generateOrderId, getPayInfo, UserInfo } from '@/lib/order';
 import { twMerge } from '@/lib/twMerge';
+import dayjs from 'dayjs';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useProgramApplicationQuery } from '../../../../../api/application';
@@ -162,10 +163,18 @@ const MobileApplySection = ({
   const programDate =
     program && program.query.data
       ? {
-          beginning: program.query.data.beginning,
-          deadline: program.query.data.deadline,
-          startDate: program.query.data.startDate,
-          endDate: program.query.data.endDate,
+          beginning: program.query.data.beginning
+            ? dayjs(program.query.data.beginning)
+            : null,
+          deadline: program.query.data.deadline
+            ? dayjs(program.query.data.deadline)
+            : null,
+          startDate: program.query.data.startDate
+            ? dayjs(program.query.data.startDate)
+            : null,
+          endDate: program.query.data.endDate
+            ? dayjs(program.query.data.endDate)
+            : null,
         }
       : null;
 
@@ -230,7 +239,7 @@ const MobileApplySection = ({
         'fixed bottom-0 left-0 right-0 z-30 flex max-h-[80%] w-screen flex-col items-center overflow-hidden rounded-t-lg bg-static-100 shadow-05 scrollbar-hide',
       )}
     >
-      <div className="sticky top-0 flex w-full justify-center bg-static-100 py-3">
+      <div className="sticky top-0 flex justify-center w-full py-3 bg-static-100">
         <div
           onClick={() =>
             drawerDispatch({

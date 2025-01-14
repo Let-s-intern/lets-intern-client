@@ -1,65 +1,28 @@
-import { useCallback, useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+'use client';
 
-import { useProgramApplicationQuery } from '@/api/application';
-import { useChallengeQuery } from '@/api/challenge';
-// import { useServerChallenge } from '@/context/ServerChallenge';
-import { isDeprecatedProgram } from '@/lib/isDeprecatedProgram';
+import { ProgramApplicationFormInfo } from '@/api/application';
 import { generateOrderId, getPayInfo, UserInfo } from '@/lib/order';
+import { ChallengeIdPrimitive } from '@/schema';
 import useAuthStore from '@/store/useAuthStore';
 import useProgramStore from '@/store/useProgramStore';
-import { getProgramPathname } from '@/utils/url';
-import { DesktopApplyCTA, MobileApplyCTA } from '@components/common/ApplyCTA';
-// import CommonHelmet from '@components/common/CommonHelmet';
+import dayjs from 'dayjs';
+import { useRouter } from 'next/navigation';
+import { useCallback } from 'react';
+import { DesktopApplyCTA, MobileApplyCTA } from './common/ApplyCTA';
 
-const ChallengeDetailSSRPage = () => {
-  const navigate = useNavigate();
-  const { id, title: titleFromUrl } = useParams<{
-    id: string;
-    title?: string;
-  }>();
-
+const ChallengeCTAButtons = ({
+  application,
+  challenge,
+  challengeId,
+}: {
+  application: ProgramApplicationFormInfo;
+  challenge: ChallengeIdPrimitive;
+  challengeId: string;
+}) => {
   const { isLoggedIn } = useAuthStore();
+  const router = useRouter();
 
-  // const challengeFromServer = useServerChallenge();
-  const { data } = useChallengeQuery({ challengeId: Number(id || '') });
-
-  const { initProgramApplicationForm, setProgramApplicationForm } =
-    useProgramStore();
-
-  const challenge = data!;
-  const isLoading = challenge.title === '로딩중...';
-  const isDeprecated = isDeprecatedProgram(challenge);
-
-  useEffect(() => {
-    if (isDeprecated) {
-      navigate(`/program/old/challenge/${id}`, { replace: true });
-    }
-  }, [id, isDeprecated]);
-
-  // 이 페이지 방문 시 프로그램 신청 폼 초기화
-  useEffect(() => {
-    initProgramApplicationForm();
-  }, [initProgramApplicationForm]);
-
-  useEffect(() => {
-    if (!titleFromUrl && !isLoading && !isDeprecated) {
-      window.history.replaceState(
-        {},
-        '',
-        getProgramPathname({
-          programType: 'challenge',
-          title: challenge.title,
-          id,
-        }),
-      );
-    }
-  }, [challenge.title, id, isDeprecated, isLoading, titleFromUrl]);
-
-  const { data: application } = useProgramApplicationQuery(
-    'challenge',
-    Number(id),
-  );
+  const { setProgramApplicationForm } = useProgramStore();
 
   /** 이미 신청했는지 체크하는 정보 */
   const isAlreadyApplied = application?.applied ?? false;
@@ -71,7 +34,9 @@ const ChallengeDetailSSRPage = () => {
       const redirectPath = isServerRendered
         ? parts.slice(0, -1).join('/')
         : window.location.pathname;
-      navigate(`/login?redirect=${redirectPath}`);
+      const href = `/login?redirect=${encodeURIComponent(redirectPath)}`;
+      router.push(href);
+      // navigate(`/login?redirect=${redirectPath}`);
       return;
     }
 
@@ -121,37 +86,40 @@ const ChallengeDetailSSRPage = () => {
       programTitle: challenge.title,
       programType: 'challenge',
       progressType,
-      programId: Number(id),
+      programId: Number(challengeId),
       programOrderId: orderId,
       isFree,
     });
 
-    navigate(`/payment-input`);
+    router.push(`/payment-input`);
+    // navigate(`/payment-input`);
   }, [
     application,
     challenge.title,
-    id,
+    challengeId,
     isLoggedIn,
-    navigate,
+    router,
     setProgramApplicationForm,
   ]);
 
-  if (isDeprecated || isLoading) {
-    return <></>;
-  }
-
   return (
     <>
-      {/* <ChallengeView challenge={challenge} /> */}
-
       <DesktopApplyCTA
-        program={challenge}
+        program={{
+          ...challenge,
+          beginning: challenge.startDate ? dayjs(challenge.startDate) : null,
+          deadline: challenge.endDate ? dayjs(challenge.endDate) : null,
+        }}
         onApplyClick={onApplyClick}
         isAlreadyApplied={isAlreadyApplied}
       />
 
       <MobileApplyCTA
-        program={challenge}
+        program={{
+          ...challenge,
+          beginning: challenge.startDate ? dayjs(challenge.startDate) : null,
+          deadline: challenge.endDate ? dayjs(challenge.endDate) : null,
+        }}
         onApplyClick={onApplyClick}
         isAlreadyApplied={isAlreadyApplied}
       />
@@ -159,4 +127,4 @@ const ChallengeDetailSSRPage = () => {
   );
 };
 
-export default ChallengeDetailSSRPage;
+export default ChallengeCTAButtons;

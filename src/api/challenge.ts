@@ -1,7 +1,9 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
+  ChallengeIdPrimitive,
   challengeTitleSchema,
   faqSchema,
+  getChallengeIdPrimitiveSchema,
   getChallengeIdSchema,
   reviewTotalSchema,
 } from '../schema';
@@ -24,6 +26,21 @@ export const useChallengeQuery = ({
       return getChallengeIdSchema.parse(res.data.data);
     },
   });
+};
+
+export const fetchChallengeData = async (
+  challengeId: string,
+): Promise<ChallengeIdPrimitive> => {
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_SERVER_API}/challenge/${challengeId}`,
+  );
+
+  if (!res.ok) {
+    throw new Error('Failed to fetch challenge data');
+  }
+
+  const data = await res.json();
+  return getChallengeIdPrimitiveSchema.parse(data.data);
 };
 
 export const usePatchChallengePayback = ({

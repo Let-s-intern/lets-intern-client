@@ -1,15 +1,18 @@
+'use client';
+
 import dayjs from 'dayjs';
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 
 import { useGetChallengeFaq } from '@/api/challenge';
 import { twMerge } from '@/lib/twMerge';
-import { ChallengeIdSchema, challengeTypeSchema } from '@/schema';
+import { ChallengeIdPrimitive, challengeTypeSchema } from '@/schema';
+import useProgramStore from '@/store/useProgramStore';
 import { ChallengeContent } from '@/types/interface';
 import ChallengeCheckList from '@components/challenge-view/ChallengeCheckList';
 import ChallengeCurriculum from '@components/challenge-view/ChallengeCurriculum';
 import ChallengeFaq from '@components/challenge-view/ChallengeFaq';
 import ChallengeResult from '@components/challenge-view/ChallengeResult';
-import { useParams } from 'react-router-dom';
+import { useParams } from 'next/navigation';
 import ChallengeBasicInfo from './challenge-view/ChallengeBasicInfo';
 import ChallengeBrand from './challenge-view/ChallengeBrand';
 import ChallengeDifferent from './challenge-view/ChallengeDifferent';
@@ -20,7 +23,7 @@ import ChallengeIntroPortfolio from './challenge-view/ChallengeIntroPortfolio';
 import ChallengePointView from './challenge-view/ChallengePointView';
 import LexicalContent from './common/blog/LexicalContent';
 import MoreReviewButton from './common/review/MoreReviewButton';
-import Header from './common/ui/BackHeader';
+import NextBackHeader from './common/ui/NextBackHeader';
 import ProgramBestReviewSection from './ProgramBestReviewSection';
 import ProgramDetailBlogReviewSection from './ProgramDetailBlogReviewSection';
 import ProgramDetailNavigation, {
@@ -49,10 +52,16 @@ export type ChallengeColor = {
 };
 
 const ChallengeView: React.FC<{
-  challenge: ChallengeIdSchema;
+  challenge: ChallengeIdPrimitive;
   isPreview?: boolean;
 }> = ({ challenge, isPreview }) => {
-  const { id } = useParams();
+  const { id } = useParams<{ id: string }>();
+
+  const { initProgramApplicationForm } = useProgramStore();
+
+  useEffect(() => {
+    initProgramApplicationForm();
+  }, [initProgramApplicationForm]);
 
   const { data: faqData, isLoading: faqIsLoading } = useGetChallengeFaq(
     id ?? '',
@@ -156,10 +165,10 @@ const ChallengeView: React.FC<{
   }, [challenge.challengeType]);
 
   return (
-    <div className="flex w-full flex-col">
-      <div className="flex w-full flex-col items-center">
+    <div className="flex flex-col w-full">
+      <div className="flex flex-col items-center w-full">
         <div className="flex w-full max-w-[1000px] flex-col px-5 md:px-10 lg:px-0">
-          <Header to="/program">{challenge.title ?? ''}</Header>
+          <NextBackHeader to="/program">{challenge.title ?? ''}</NextBackHeader>
           <ChallengeBasicInfo colors={colors} challenge={challenge} />
         </div>
 
@@ -170,18 +179,18 @@ const ChallengeView: React.FC<{
           isReady={!faqIsLoading}
         />
 
-        <div className="flex w-full flex-col items-center overflow-x-hidden">
+        <div className="flex flex-col items-center w-full overflow-x-hidden">
           <div
             id={PROGRAM_INTRO_ID}
-            className="challenge_program flex w-full flex-col items-center"
+            className="flex flex-col items-center w-full challenge_program"
           >
             <section className="flex w-full flex-col items-center pt-[70px] md:pt-40">
               <ChallengePointView
                 colors={colors}
                 challengeType={challenge.challengeType}
                 point={receivedContent.challengePoint}
-                startDate={challenge.startDate ?? dayjs()}
-                endDate={challenge.endDate ?? dayjs()}
+                startDate={dayjs(challenge.startDate)}
+                endDate={dayjs(challenge.endDate)}
                 challengeTitle={challenge.title ?? ''}
                 programRecommend={receivedContent.programRecommend}
               />
@@ -194,7 +203,7 @@ const ChallengeView: React.FC<{
               </section>
             )}
 
-            <section className="flex w-full flex-col md:items-center">
+            <section className="flex flex-col w-full md:items-center">
               {challenge.challengeType === PERSONAL_STATEMENT ? (
                 <ChallengeIntroPersonalStatement />
               ) : challenge.challengeType === PORTFOLIO ? (
@@ -225,7 +234,7 @@ const ChallengeView: React.FC<{
             receivedContent.curriculum.length > 0 && (
               <section
                 id={PROGRAM_CURRICULUM_ID}
-                className="challenge_curriculum flex w-full flex-col items-center"
+                className="flex flex-col items-center w-full challenge_curriculum"
                 style={{ backgroundColor: colors.curriculumBg }}
               >
                 <ChallengeCurriculum

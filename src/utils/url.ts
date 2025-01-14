@@ -20,7 +20,7 @@ const SUPPORTED_URL_PROTOCOLS = new Set([
 export function sanitizeUrl(url: string): string {
   try {
     const parsedUrl = new URL(url);
-    // eslint-disable-next-line no-script-url
+
     if (!SUPPORTED_URL_PROTOCOLS.has(parsedUrl.protocol)) {
       return 'about:blank';
     }
@@ -47,8 +47,7 @@ export function getBlogPathname({
   id?: string | number | null;
   title?: string | null;
 }): string {
-  // return `/blog/${id}/${title?.replace(/[ /]/g, '-')}`;
-  return `/blog/${id}`;
+  return `/blog/${id}/${encodeURIComponent(title?.replace(/[ /]/g, '-') || '')}`;
 }
 
 export function getProgramPathname({
@@ -60,7 +59,7 @@ export function getProgramPathname({
   title?: string | null;
   id?: string | number | null;
 }) {
-  return `/program/${programType}/${id}/${title?.replace(/ /g, '-')}`;
+  return `/program/${programType}/${id}/${encodeURIComponent(title?.replace(/[ /]/g, '-') || '')}`;
 }
 
 export function getBlogTitle({

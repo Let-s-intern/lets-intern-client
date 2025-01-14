@@ -1,7 +1,7 @@
 // https://vike.dev/onRenderClient
 export { onRenderClient };
 
-import { ServerChallengeProvider } from '@/context/ServerChallenge';
+// import { ServerChallengeProvider } from '@/context/ServerChallenge';
 import Provider from '@/Provider';
 import Router from '@/Router';
 import dayjs from 'dayjs';
@@ -24,11 +24,11 @@ async function onRenderClient(pageContext: PageContextClient) {
 
   const page = (
     <React.StrictMode>
-      <ServerChallengeProvider challenge={data}>
-        <Provider>
-          <Router />
-        </Provider>
-      </ServerChallengeProvider>
+      {/* <ServerChallengeProvider challenge={data}> */}
+      <Provider>
+        <Router />
+      </Provider>
+      {/* </ServerChallengeProvider> */}
     </React.StrictMode>
   );
   const container = document.getElementById('root')!;

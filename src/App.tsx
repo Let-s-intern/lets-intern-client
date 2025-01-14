@@ -13,9 +13,9 @@ import timezone from 'dayjs/plugin/timezone';
 import utc from 'dayjs/plugin/utc';
 import { useState } from 'react';
 import { Root } from 'react-dom/client';
-import { Helmet } from 'react-helmet';
 import { ZodError } from 'zod';
 
+import { Helmet } from 'react-helmet';
 import Router from './Router';
 import './fonts/font.css';
 import './index.css';
