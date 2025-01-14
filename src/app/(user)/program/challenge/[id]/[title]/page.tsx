@@ -16,8 +16,6 @@ const Page = async ({
     fetchProgramApplication(id),
   ]);
 
-  console.log({ challenge, application });
-
   const isDeprecated = isDeprecatedProgram(challenge);
 
   if (isDeprecated) {
