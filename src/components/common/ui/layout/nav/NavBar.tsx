@@ -200,7 +200,6 @@ const NavBar = () => {
             >
               🔥 서류 진단받고 합격하기
             </NavItem>
-            <span onClick={() => navigate('/')}>홈으로...</span>
           </div>
           <div className="flex items-center gap-4">
             {isLoggedIn ? (
