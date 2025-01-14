@@ -365,7 +365,7 @@ const AdminReportEditPage = () => {
                 );
                 setSnackbar('서류 진단 페이지 링크가 복사되었습니다.');
               }}
-              disabled={!editingValue?.isVisible || !editingValue?.visibleDate}
+              disabled={!editingValue?.visibleDate}
             >
               링크 복사
             </Button>
