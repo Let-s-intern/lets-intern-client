@@ -115,6 +115,8 @@ export const blogListSchema = z.object({
   pageInfo,
 });
 
+export type BlogList = z.infer<typeof blogListSchema>;
+
 export const blogTagSchema = z.object({
   tagDetailInfos,
 });

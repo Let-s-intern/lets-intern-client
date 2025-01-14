@@ -7,8 +7,10 @@ import {
 import { IPageable } from '../types/interface';
 import axios from '../utils/axios';
 import {
+  BlogList,
   blogListSchema,
   blogRatingListSchema,
+  BlogSchema,
   blogSchema,
   blogTagSchema,
   PatchBlogReqBody,
@@ -102,7 +104,9 @@ export const usePostBlogMutation = (onErrorCallback?: () => void) => {
     },
     onError: (error) => {
       console.error(error);
-      onErrorCallback && onErrorCallback();
+      if (onErrorCallback) {
+        onErrorCallback();
+      }
     },
   });
 };
@@ -119,7 +123,9 @@ export const useDeleteBlogMutation = (onErrorCallback?: () => void) => {
     },
     onError: (error) => {
       console.error(error);
-      onErrorCallback && onErrorCallback();
+      if (onErrorCallback) {
+        onErrorCallback();
+      }
     },
   });
 };
@@ -141,7 +147,9 @@ export const usePatchBlogMutation = (onErrorCallback?: () => void) => {
     },
     onError: (error) => {
       console.error(error);
-      onErrorCallback && onErrorCallback();
+      if (onErrorCallback) {
+        onErrorCallback();
+      }
     },
   });
 };
@@ -170,7 +178,9 @@ export const usePostBlogTagMutation = (onErrorCallback?: () => void) => {
     },
     onError: (error) => {
       console.error(error);
-      onErrorCallback && onErrorCallback();
+      if (onErrorCallback) {
+        onErrorCallback();
+      }
     },
   });
 };
@@ -187,7 +197,9 @@ export const useDeleteBlogTagMutation = ({
       try {
         return await axios.delete(`/blog-tag/${blogId}`);
       } catch (error) {
-        onError && onError(error as Error);
+        if (onError) {
+          onError(error as Error);
+        }
       }
     },
     onSuccess: async () => {
@@ -232,10 +244,41 @@ export const usePostBlogRatingMutation = ({
     },
     onSuccess: async () => {
       client.invalidateQueries({ queryKey: [blogRatingQueryKey] });
-      successCallback && successCallback();
+      if (successCallback) {
+        successCallback();
+      }
     },
     onError: (error) => {
       console.error(error);
     },
   });
+};
+
+export const fetchBlogData = async (id: string): Promise<BlogSchema> => {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_SERVER_API}/blog/${id}`);
+
+  if (!res.ok) {
+    throw new Error('Failed to fetch blog data');
+  }
+
+  const data = await res.json();
+  return blogSchema.parse(data.data);
+};
+
+// Fetching 추천 블로그 데이터
+export const fetchRecommendBlogData = async ({
+  pageable,
+  type,
+}: BlogQueryParams): Promise<BlogList> => {
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_SERVER_API}/blog?type=${type}&page=${pageable.page}&size=${pageable.size}`,
+  );
+
+  if (!res.ok) {
+    throw new Error('Failed to fetch recommend blog data');
+  }
+
+  const data = await res.json();
+
+  return blogListSchema.parse(data.data);
 };
