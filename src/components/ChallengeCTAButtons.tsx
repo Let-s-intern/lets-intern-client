@@ -1,11 +1,11 @@
 'use client';
 
 import { ProgramApplicationFormInfo } from '@/api/application';
+import dayjs from '@/lib/dayjs';
 import { generateOrderId, getPayInfo, UserInfo } from '@/lib/order';
 import { ChallengeIdPrimitive } from '@/schema';
 import useAuthStore from '@/store/useAuthStore';
 import useProgramStore from '@/store/useProgramStore';
-import dayjs from 'dayjs';
 import { useRouter } from 'next/navigation';
 import { useCallback } from 'react';
 import { DesktopApplyCTA, MobileApplyCTA } from './common/ApplyCTA';

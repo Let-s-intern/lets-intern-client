@@ -4,6 +4,7 @@ import Announcement from '@/assets/icons/announcement.svg?react';
 import ChevronDown from '@/assets/icons/chevron-down.svg?react';
 import ClockIcon from '@/assets/icons/clock.svg?react';
 import { useInstallmentPayment } from '@/hooks/useInstallmentPayment';
+import dayjs from '@/lib/dayjs';
 import { ChallengeIdPrimitive, challengeTypeSchema } from '@/schema';
 import {
   formatFullDateTime,
@@ -11,7 +12,6 @@ import {
 } from '@/utils/formatDateString';
 import { ChallengeColor } from '@components/ChallengeView';
 import BasicInfoRow from '@components/common/program/program-detail/basicInfo/BasicInfoRow';
-import dayjs from 'dayjs';
 
 const { PERSONAL_STATEMENT } = challengeTypeSchema.enum;
 
