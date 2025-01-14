@@ -1,4 +1,5 @@
 import dayjs, { Dayjs } from 'dayjs';
+import 'dayjs/locale/ko';
 
 const formatDateString = (
   dateString: string,
@@ -70,7 +71,7 @@ export const formatMissionDateString = (dateString: string) => {
 
 // yyyy년 mm월 dd일 (요일) hh시 mm분
 export const formatFullDateTime = (date: Dayjs | null, breakTime?: boolean) => {
-  const onlyDate = dayjs(date).format('YYYY년 MM월 DD일 (ddd)');
+  const onlyDate = dayjs(date).locale('ko').format('YYYY년 MM월 DD일 (ddd)');
   const onlyTime = dayjs(date).format('HH시 mm분');
   return breakTime ? `${onlyDate}\n${onlyTime}` : `${onlyDate} ${onlyTime}`;
 };
@@ -79,7 +80,7 @@ export const formatFullDateTimeWithOutYear = (
   date: Dayjs | null,
   breakTime?: boolean,
 ) => {
-  const onlyDate = dayjs(date).format('MM월 DD일 (ddd)');
+  const onlyDate = dayjs(date).locale('ko').format('MM월 DD일 (ddd)');
   const onlyTime = dayjs(date).format('HH시 mm분');
   return breakTime ? `${onlyDate}\n${onlyTime}` : `${onlyDate} ${onlyTime}`;
 };
