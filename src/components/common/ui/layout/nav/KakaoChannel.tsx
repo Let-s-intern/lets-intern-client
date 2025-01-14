@@ -4,7 +4,7 @@ import { useEffect } from 'react';
 
 const KakaoChannel = () => {
   useEffect(() => {
-    if (!window.Kakao.isInitialized()) {
+    if (!window.Kakao?.isInitialized()) {
       window.Kakao.init('fe2307dd60e05ff8cbb06d777a13e31c');
     }
   }, []);
@@ -25,7 +25,7 @@ const KakaoChannel = () => {
       onClick={onClickAddChannel}
     >
       <img src="/images/kakao_channel.png" alt="카카오 채널 추가" />
-      <p className="break-keep font-medium">
+      <p className="font-medium break-keep">
         채널 추가하고, 프로그램 모집 알림 받기
       </p>
     </button>
