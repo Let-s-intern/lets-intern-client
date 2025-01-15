@@ -124,10 +124,22 @@ export const routes: RouteObject[] = [
       { path: 'report/landing', element: <ReportPage /> },
       { path: 'report/landing/resume', element: <ReportResumePage /> },
       {
+        path: 'report/landing/resume/:reportId',
+        element: <ReportResumePage />,
+      },
+      {
         path: 'report/landing/personal-statement',
         element: <ReportPersonalStatementPage />,
       },
+      {
+        path: 'report/landing/personal-statement/:reportId',
+        element: <ReportPersonalStatementPage />,
+      },
       { path: 'report/landing/portfolio', element: <ReportPortfolioPage /> },
+      {
+        path: 'report/landing/portfolio/:reportId',
+        element: <ReportPortfolioPage />,
+      },
       // {/* :reportType은 RESUME, PERSONAL_STATEMENT, PORTFOLIO (대문자) TODO: 소문자로 옮기기 */}
       {
         path: 'report/apply/:reportType/:reportId',

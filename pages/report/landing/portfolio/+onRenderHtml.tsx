@@ -25,6 +25,17 @@ const onRenderHtml: OnRenderHtmlAsync = async (pageContext) => {
   const data = pageContext.data as Data;
 
   const { query, dataRoutes } = createStaticHandler(routes);
+
+  const urlParts = pageContext.urlOriginal.split('/');
+  const portfolioId =
+    typeof urlParts[urlParts.length - 1] === 'number'
+      ? Number(urlParts[urlParts.length - 1])
+      : undefined;
+
+  const activeReport = data.portfolioInfoList.filter(
+    (item) => item.isVisible === true,
+  );
+
   // TODO: 임시로 처리
   const mockRequest = new Request(
     `https://localhost:3000${pageContext.urlOriginal}`,
@@ -50,12 +61,18 @@ const onRenderHtml: OnRenderHtmlAsync = async (pageContext) => {
   return getServerHtml({
     pageHtml,
     title: getReportLandingTitle(
-      data.portfolioInfoList.length > 0
-        ? (data.portfolioInfoList[0].title ?? '포트폴리오')
-        : '포트폴리오',
+      portfolioId === undefined
+        ? activeReport.length > 0
+          ? (activeReport[0].title ?? '포트폴리오')
+          : '포트폴리오'
+        : data.portfolioInfoList.length > 0
+          ? (data.portfolioInfoList.find(
+              (item) => item.reportId === portfolioId,
+            )?.title ?? '포트폴리오')
+          : '포트폴리오',
     ),
     description: portfolioReportDescription,
     image: `${getBaseUrlFromServer()}/images/report/open-graph-portfolio.png`,
-    url: `${getBaseUrlFromServer()}/report/landing/portfolio`,
+    url: `${getBaseUrlFromServer()}/report/landing/portfolio${portfolioId ? `/${portfolioId}` : ''}`,
   });
 };
