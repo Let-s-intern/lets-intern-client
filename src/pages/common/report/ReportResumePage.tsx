@@ -44,14 +44,22 @@ const ReportResumePage = () => {
   const url = `${typeof window !== 'undefined' ? window.location.origin : getBaseUrlFromServer()}/report/landing/resume`;
   const description = resumeReportDescription;
   const activeReports = data || activeReportsFromServer;
+  const visibleReports = activeReports.resumeInfoList.filter(
+    (item) =>
+      item.isVisible === true &&
+      item.visibleDate &&
+      new Date(item.visibleDate) <= new Date(),
+  );
+
   const report =
-    activeReports.resumeInfoList.length > 0
-      ? reportId === undefined || isNaN(Number(reportId))
-        ? activeReports?.resumeInfoList[0]
-        : activeReports?.resumeInfoList.find(
-            (item) => item.reportId === Number(reportId),
-          )
-      : undefined;
+    reportId === undefined || isNaN(Number(reportId))
+      ? visibleReports.length > 0
+        ? visibleReports[0]
+        : undefined
+      : activeReports.resumeInfoList.find(
+          (item) => item.reportId === Number(reportId),
+        );
+
   const title = getReportLandingTitle(report?.title ?? '이력서');
   const resumeContent: ReportContent = JSON.parse(report?.contents ?? '{}');
 

@@ -41,14 +41,21 @@ const ReportPersonalStatementPage = () => {
   const url = `${typeof window !== 'undefined' ? window.location.origin : getBaseUrlFromServer()}/report/landing/personal-statement`;
   const description = personalStatementReportDescription;
   const activeReports = data || activeReportsFromServer;
+  const visibleReports = activeReports.personalStatementInfoList.filter(
+    (item) =>
+      item.isVisible === true &&
+      item.visibleDate &&
+      new Date(item.visibleDate) <= new Date(),
+  );
   const report =
-    activeReports.personalStatementInfoList.length > 0
-      ? reportId === undefined || isNaN(Number(reportId))
-        ? activeReports?.personalStatementInfoList[0]
-        : activeReports?.personalStatementInfoList.find(
-            (item) => item.reportId === Number(reportId),
-          )
-      : undefined;
+    reportId === undefined || isNaN(Number(reportId))
+      ? visibleReports.length > 0
+        ? visibleReports[0]
+        : undefined
+      : activeReports.personalStatementInfoList.find(
+          (item) => item.reportId === Number(reportId),
+        );
+
   const title = getReportLandingTitle(report?.title ?? '자기소개서');
   const personalStatementContent: ReportContent = JSON.parse(
     report?.contents ?? '{}',

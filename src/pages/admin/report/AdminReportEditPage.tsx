@@ -363,11 +363,9 @@ const AdminReportEditPage = () => {
                 navigator.clipboard.writeText(
                   `${window.location.origin}${convertReportTypeToLandingPath(type)}/${reportId}`,
                 );
-                setSnackbar(
-                  '링크가 복사되었습니다. 해당 링크는 노출일시 이후에 접속 가능합니다.',
-                );
+                setSnackbar('서류 진단 페이지 링크가 복사되었습니다.');
               }}
-              disabled={!editingValue?.isVisible || !editingValue?.visibleDate}
+              disabled={!editingValue?.visibleDate}
             >
               링크 복사
             </Button>

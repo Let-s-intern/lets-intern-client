@@ -375,6 +375,8 @@ const getReportDetailSchema = z.object({
   notice: z.string().nullable().optional(),
   contents: z.string().nullable().optional(),
   reportType: reportTypeSchema.nullable().optional(),
+  isVisible: z.boolean().nullable().optional(),
+  visibleDate: z.string().nullable().optional(),
 });
 
 export type ReportDetail = z.infer<typeof getReportDetailSchema>;

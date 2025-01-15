@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useEffect, useRef, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 
-import { useGetActiveReports } from '@/api/report';
+import { ReportDetail, useGetActiveReports } from '@/api/report';
 import { useControlScroll } from '@/hooks/useControlScroll';
 import { twMerge } from '@/lib/twMerge';
 import useAuthStore from '@/store/useAuthStore';
@@ -84,17 +84,32 @@ const NavBar = () => {
 
   const { data, isLoading } = useGetActiveReports();
 
+  const hasActiveReport = (list: ReportDetail[]) => {
+    return (
+      list.filter(
+        (item) =>
+          item.isVisible === true &&
+          item.visibleDate &&
+          new Date(item.visibleDate) <= new Date(),
+      ).length > 0
+    );
+  };
+
   useEffect(() => {
     if (data) {
       const navItems: NavSubItemProps[] = [];
 
-      if (data?.resumeInfoList.length > 0) {
+      const resumeInfoList = data?.resumeInfoList;
+      const personalStatementInfoList = data?.personalStatementInfoList;
+      const portfolioInfoList = data?.portfolioInfoList;
+
+      if (hasActiveReport(resumeInfoList)) {
         navItems.push(reportHoverItem[0]);
       }
-      if (data?.personalStatementInfoList.length > 0) {
+      if (hasActiveReport(personalStatementInfoList)) {
         navItems.push(reportHoverItem[1]);
       }
-      if (data?.portfolioInfoList.length > 0) {
+      if (hasActiveReport(portfolioInfoList)) {
         navItems.push(reportHoverItem[2]);
       }
 

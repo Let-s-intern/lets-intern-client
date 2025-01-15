@@ -30,14 +30,22 @@ const ReportPortfolioPage = () => {
   const url = `${typeof window !== 'undefined' ? window.location.origin : getBaseUrlFromServer()}/report/landing/portfolio`;
   const description = portfolioReportDescription;
   const activeReports = data || activeReportsFromServer;
+  const visibleReports = activeReports.portfolioInfoList.filter(
+    (item) =>
+      item.isVisible === true &&
+      item.visibleDate &&
+      new Date(item.visibleDate) <= new Date(),
+  );
+
   const report =
-    activeReports.portfolioInfoList.length > 0
-      ? reportId === undefined || isNaN(Number(reportId))
-        ? activeReports?.portfolioInfoList[0]
-        : activeReports?.portfolioInfoList.find(
-            (item) => item.reportId === Number(reportId),
-          )
-      : undefined;
+    reportId === undefined || isNaN(Number(reportId))
+      ? visibleReports.length > 0
+        ? visibleReports[0]
+        : undefined
+      : activeReports.portfolioInfoList.find(
+          (item) => item.reportId === Number(reportId),
+        );
+
   const title = getReportLandingTitle(report?.title ?? '포트폴리오');
   const portfolioContent: ReportContent = JSON.parse(report?.contents ?? '{}');
 
