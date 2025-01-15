@@ -175,7 +175,7 @@ module.exports = {
           'live-infinite-scroll-desktop 16s linear infinite',
         'live-infinite-scroll-mobile':
           'live-infinite-scroll-mobile 12s linear infinite',
-        'bounce-x': 'bounce-x 1s infinite',
+        'bounce-x': 'bounce-x 0.7s infinite',
       },
     },
     borderRadius: {
