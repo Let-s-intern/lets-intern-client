@@ -27,7 +27,7 @@ const ReportPortfolioPage = () => {
   const activeReportsFromServer = useServerActiveReports();
   const { data, isLoading } = useGetActiveReports();
 
-  const url = `${typeof window !== 'undefined' ? window.location.origin : getBaseUrlFromServer()}/report/landing/portfolio`;
+  const url = `${typeof window !== 'undefined' ? window.location.origin : getBaseUrlFromServer()}/report/landing/portfolio${reportId ? `/${reportId}` : ''}`;
   const description = portfolioReportDescription;
   const activeReports = data || activeReportsFromServer;
   const visibleReports = activeReports.portfolioInfoList.filter(

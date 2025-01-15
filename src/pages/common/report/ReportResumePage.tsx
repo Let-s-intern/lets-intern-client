@@ -41,7 +41,7 @@ const ReportResumePage = () => {
   const activeReportsFromServer = useServerActiveReports();
   const { data, isLoading } = useGetActiveReports();
 
-  const url = `${typeof window !== 'undefined' ? window.location.origin : getBaseUrlFromServer()}/report/landing/resume`;
+  const url = `${typeof window !== 'undefined' ? window.location.origin : getBaseUrlFromServer()}/report/landing/resume${reportId ? `/${reportId}` : ''}`;
   const description = resumeReportDescription;
   const activeReports = data || activeReportsFromServer;
   const visibleReports = activeReports.resumeInfoList.filter(
