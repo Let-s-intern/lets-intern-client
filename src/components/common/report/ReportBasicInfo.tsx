@@ -33,13 +33,13 @@ const BASIC_INFO: Record<string, { title: string; content: ReactNode }[]> = {
       title: '진단 소요 시간',
       content: (
         <p>
-          <span>72시간</span> 이내 진단 완료
+          <span>48시간</span> 이내 진단 완료
         </p>
       ),
     },
     {
       title: '진행 방식',
-      content: <p>{`온라인 제출 → 72시간 이내 진단 → 피드백 리포트 발송`}</p>,
+      content: <p>{`온라인 제출 → 48시간 이내 진단 → 피드백 리포트 발송`}</p>,
     },
     {
       title: '피드백 리포트',
