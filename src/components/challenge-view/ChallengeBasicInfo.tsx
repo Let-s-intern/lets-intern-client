@@ -207,7 +207,7 @@ const ChallengeBasicInfo = ({
                   height={8}
                 />
                 <span
-                  className="rounded-xxs px-2 py-1 text-xxsmall12 font-medium text-white"
+                  className="rounded-xxs px-2 py-[5px] text-xxsmall12 font-normal text-white"
                   style={{ backgroundColor: colors.primary }}
                 >
                   참여 가능한 일자를 선택해주세요!
