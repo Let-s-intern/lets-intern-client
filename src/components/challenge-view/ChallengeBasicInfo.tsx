@@ -201,13 +201,13 @@ const ChallengeBasicInfo = ({
               </p>
               <div className="relative ml-3 animate-bounce-x">
                 <Polygon
-                  className="absolute left-0 top-1/2 -translate-x-[8px] -translate-y-1/2 transform"
+                  className="absolute left-0 top-1/2 -translate-x-[8px] -translate-y-[3px] transform"
                   style={{ color: colors.primary }}
                   width={10}
                   height={8}
                 />
                 <span
-                  className="rounded-xxs px-2 py-1 text-xxsmall12 font-medium text-white"
+                  className="rounded-xxs px-2 py-1 text-xxsmall12 font-normal text-white"
                   style={{ backgroundColor: colors.primary }}
                 >
                   참여 가능한 일자를 선택해주세요!
