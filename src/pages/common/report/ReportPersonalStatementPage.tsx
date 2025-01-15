@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { Helmet } from 'react-helmet';
+import { useParams } from 'react-router-dom';
 
 import { useGetActiveReports, useGetReportPriceDetail } from '@/api/report';
 import ReportApplyBottomSheet from '@/components/common/report/ReportApplyBottomSheet';
@@ -18,7 +19,6 @@ import ReportProgramRecommendSlider from '@components/common/report/ReportProgra
 import ReportReviewSection from '@components/common/report/ReportReviewSection';
 import ServiceProcessSection from '@components/common/report/ServiceProcessSection';
 import LoadingContainer from '@components/common/ui/loading/LoadingContainer';
-import { useParams } from 'react-router-dom';
 import ReportNavigation from './ReportNavigation';
 
 export const personalStatementColors = {
