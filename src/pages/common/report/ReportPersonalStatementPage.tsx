@@ -38,7 +38,7 @@ const ReportPersonalStatementPage = () => {
 
   const activeReportsFromServer = useServerActiveReports();
 
-  const url = `${typeof window !== 'undefined' ? window.location.origin : getBaseUrlFromServer()}/report/landing/personal-statement`;
+  const url = `${typeof window !== 'undefined' ? window.location.origin : getBaseUrlFromServer()}/report/landing/personal-statement${reportId ? `/${reportId}` : ''}`;
   const description = personalStatementReportDescription;
   const activeReports = data || activeReportsFromServer;
   const visibleReports = activeReports.personalStatementInfoList.filter(
