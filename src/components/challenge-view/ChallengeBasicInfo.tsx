@@ -199,7 +199,7 @@ const ChallengeBasicInfo = ({
               <p className="text-xsmall16 font-semibold text-neutral-0">
                 시작 일자
               </p>
-              <div className="animate-bounce-x relative ml-3">
+              <div className="relative ml-3 animate-bounce-x">
                 <Polygon
                   className="absolute left-0 top-1/2 -translate-x-[8px] -translate-y-1/2 transform"
                   style={{ color: colors.primary }}
@@ -218,15 +218,19 @@ const ChallengeBasicInfo = ({
               {challengeId !== undefined &&
                 activeChallengeList !== undefined &&
                 activeChallengeList.length > 0 &&
-                activeChallengeList.map((activeChallenge, index) => (
-                  <RadioButton
-                    key={index}
-                    color={colors.primary}
-                    checked={activeChallenge.id === Number(challengeId)}
-                    label={formatFullDate(dayjs(activeChallenge.startDate))}
-                    onClick={() => onClickActiveChallenge(activeChallenge.id)}
-                  />
-                ))}
+                activeChallengeList
+                  .sort((a, b) =>
+                    dayjs(a.startDate).isAfter(b.startDate) ? 1 : -1,
+                  )
+                  .map((activeChallenge, index) => (
+                    <RadioButton
+                      key={index}
+                      color={colors.primary}
+                      checked={activeChallenge.id === Number(challengeId)}
+                      label={formatFullDate(dayjs(activeChallenge.startDate))}
+                      onClick={() => onClickActiveChallenge(activeChallenge.id)}
+                    />
+                  ))}
             </div>
           </div>
         )}
