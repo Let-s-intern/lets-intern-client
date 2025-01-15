@@ -1,5 +1,6 @@
 import RadioChecked from '@/assets/icons/radio-checked.svg?react';
 import RadioEmpty from '@/assets/icons/radio-empty.svg?react';
+import { twMerge } from 'tailwind-merge';
 
 interface RadioButtonProps {
   color: string;
@@ -20,7 +21,15 @@ const RadioButton = ({ color, checked, label, onClick }: RadioButtonProps) => {
       ) : (
         <RadioEmpty width={24} height={24} />
       )}
-      <span className="text-xsmall16 text-neutral-0">{label}</span>
+      <span
+        className={twMerge(
+          `text-xsmall16`,
+          !checked && 'text-neutral-0',
+          checked && 'font-semibold',
+        )}
+      >
+        {label}
+      </span>
     </div>
   );
 };

@@ -2,6 +2,7 @@ import Announcement from '@/assets/icons/announcement.svg?react';
 import ChevronDown from '@/assets/icons/chevron-down.svg?react';
 import ClockIcon from '@/assets/icons/clock.svg?react';
 import Pin from '@/assets/icons/pin.svg?react';
+import Polygon from '@/assets/icons/polygon-sharp.svg?react';
 import { useInstallmentPayment } from '@/hooks/useInstallmentPayment';
 import {
   ActiveChallengeType,
@@ -198,6 +199,20 @@ const ChallengeBasicInfo = ({
               <p className="text-xsmall16 font-semibold text-neutral-0">
                 시작 일자
               </p>
+              <div className="animate-bounce-x relative ml-3">
+                <Polygon
+                  className="absolute left-0 top-1/2 -translate-x-[8px] -translate-y-1/2 transform"
+                  style={{ color: colors.primary }}
+                  width={10}
+                  height={8}
+                />
+                <span
+                  className="rounded-xxs px-2 py-1 text-xxsmall12 font-medium text-white"
+                  style={{ backgroundColor: colors.primary }}
+                >
+                  참여 가능한 일자를 선택해주세요!
+                </span>
+              </div>
             </div>
             <div className="flex w-full flex-col gap-y-2">
               {challengeId !== undefined &&
