@@ -1,6 +1,6 @@
 'use client';
 
-import { useGetActiveReports } from '@/api/report';
+import { ReportDetail, useGetActiveReports } from '@/api/report';
 import { useControlScroll } from '@/hooks/useControlScroll';
 import { twMerge } from '@/lib/twMerge';
 import useAuthStore from '@/store/useAuthStore';
@@ -13,7 +13,7 @@ import { useEffect, useRef, useState } from 'react';
 import KakaoChannel from '../nav/KakaoChannel';
 import NavItem from './NavItem';
 import { NavSubItemProps } from './NavSubItem';
-import SideNavItem from './NextSideNavItem';
+import SideNavItem from './SideNavItem';
 
 const reportHoverItem: NavSubItemProps[] = [
   {
@@ -86,17 +86,32 @@ const NavBar = () => {
 
   const { data, isLoading } = useGetActiveReports();
 
+  const hasActiveReport = (list: ReportDetail[]) => {
+    return (
+      list.filter(
+        (item) =>
+          item.isVisible === true &&
+          item.visibleDate &&
+          new Date(item.visibleDate) <= new Date(),
+      ).length > 0
+    );
+  };
+
   useEffect(() => {
     if (data) {
       const navItems: NavSubItemProps[] = [];
 
-      if (data?.resumeInfoList.length > 0) {
+      const resumeInfoList = data?.resumeInfoList;
+      const personalStatementInfoList = data?.personalStatementInfoList;
+      const portfolioInfoList = data?.portfolioInfoList;
+
+      if (hasActiveReport(resumeInfoList)) {
         navItems.push(reportHoverItem[0]);
       }
-      if (data?.personalStatementInfoList.length > 0) {
+      if (hasActiveReport(personalStatementInfoList)) {
         navItems.push(reportHoverItem[1]);
       }
-      if (data?.portfolioInfoList.length > 0) {
+      if (hasActiveReport(portfolioInfoList)) {
         navItems.push(reportHoverItem[2]);
       }
 
@@ -144,7 +159,9 @@ const NavBar = () => {
 
     const handleScroll = () => {
       // 현재 경로가 scrollEventPage 중 하나로 시작되지 않을 때는 스크롤 이벤트를 무시
-      if (!scrollEventPage.some((page) => pathname.startsWith(page))) return;
+      if (!scrollEventPage.some((page) => location.pathname.startsWith(page))) {
+        return;
+      }
 
       const currentScrollY = window.scrollY;
 
@@ -300,6 +317,7 @@ const NavBar = () => {
                     query: { prevPath: pathname },
                   }}
                   onClick={closeMenu}
+                  // state={{ prevPath: pathname }}
                 >
                   로그인
                 </Link>
