@@ -1,9 +1,7 @@
-import { ReactNode } from 'react';
-
 export interface BasicInfoRowProps {
-  icon: ReactNode;
+  icon: React.ReactNode;
   title: string;
-  content: string;
+  content: React.ReactNode;
 }
 
 const BasicInfoRow = ({ icon, title, content }: BasicInfoRowProps) => {

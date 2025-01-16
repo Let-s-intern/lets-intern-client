@@ -96,7 +96,17 @@ const ChallengePointView = ({
     },
     {
       title: 'OT 일자',
-      content: `${startDate.format('YYYY년 M월 D일(dd) HH시 mm분')}\n*실시간 참여`,
+      content: (
+        <>
+          {startDate.format('YYYY년 M월 D일(dd) HH시 mm분')}
+          <br />
+          *실시간 참여 권장
+          <br />
+          <span className="text-xsmall14 text-neutral-35">
+            (불참시 챌린지 시작 전 OT 녹화본 제공)
+          </span>
+        </>
+      ),
     },
     {
       title: '진행 방식',

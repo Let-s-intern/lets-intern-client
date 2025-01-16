@@ -1,5 +1,6 @@
 import dayjs from 'dayjs';
 import { useMemo } from 'react';
+import { useParams } from 'react-router-dom';
 
 import { useGetActiveChallenge, useGetChallengeFaq } from '@/api/challenge';
 import { twMerge } from '@/lib/twMerge';
@@ -9,7 +10,6 @@ import ChallengeCheckList from '@components/challenge-view/ChallengeCheckList';
 import ChallengeCurriculum from '@components/challenge-view/ChallengeCurriculum';
 import ChallengeFaq from '@components/challenge-view/ChallengeFaq';
 import ChallengeResult from '@components/challenge-view/ChallengeResult';
-import { useParams } from 'react-router-dom';
 import ChallengeBasicInfo from './challenge-view/ChallengeBasicInfo';
 import ChallengeBrand from './challenge-view/ChallengeBrand';
 import ChallengeDifferent from './challenge-view/ChallengeDifferent';
