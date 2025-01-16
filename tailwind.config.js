@@ -1,7 +1,7 @@
 // @ts-nocheck
 
 /** @type {import('tailwindcss').Config} */
-module.exports = {
+export default {
   content: [
     './{pages,renderer,layouts,components,src}/**/*.{html,js,jsx,ts,tsx,vue}',
   ],
