@@ -116,7 +116,7 @@ const ChallengeInfoBottom = ({
                     {formatFullDateTime(challenge.startDate, true)}
                     <br />
                     <span className="text-xxsmall12 text-neutral-35 md:text-xsmall14">
-                      *실시간 참여 권장(불참시 OT 녹화본 제공)
+                      *실시간 참여 권장 (불참시 녹화본 제공 가능)
                     </span>
                   </>
                 }
@@ -151,7 +151,7 @@ const ChallengeInfoBottom = ({
                   {formatFullDateTime(challenge.startDate, true)}
                   <br />
                   <span className="text-xxsmall12 text-neutral-35 md:text-xsmall14">
-                    *실시간 참여 권장(불참시 OT 녹화본 제공)
+                    *실시간 참여 권장 (불참시 녹화본 제공 가능)
                   </span>
                 </>
               }

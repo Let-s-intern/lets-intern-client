@@ -99,11 +99,15 @@ const ChallengePointView = ({
       content: (
         <>
           {startDate.format('YYYY년 M월 D일(dd) HH시 mm분')}
+          <br className="hidden md:block" />{' '}
+          <span className="text-xxsmall12 text-neutral-35 md:text-xsmall14">
+            (*40분 소요)
+          </span>
           <br />
           *실시간 참여 권장
-          <br />
-          <span className="text-xsmall14 text-neutral-35">
-            (불참시 챌린지 시작 전 OT 녹화본 제공)
+          <br className="hidden md:block" />{' '}
+          <span className="text-xxsmall12 text-neutral-35 md:text-xsmall14">
+            (불참시 녹화본 제공 가능)
           </span>
         </>
       ),
