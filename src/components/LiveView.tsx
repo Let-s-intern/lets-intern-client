@@ -1,13 +1,16 @@
+'use client';
+
 import { useMemo } from 'react';
 
 import { useGetLiveFaq } from '@/api/program';
+import dayjs from '@/lib/dayjs';
 import { twMerge } from '@/lib/twMerge';
-import { LiveIdSchema } from '@/schema';
+import { LiveIdPrimitive, LiveIdSchema } from '@/schema';
 import { LiveContent } from '@/types/interface';
-import BackHeader from '@components/common/ui/BackHeader';
-import { useParams } from 'react-router-dom';
+import { useParams } from 'next/navigation';
 import LexicalContent from './common/blog/LexicalContent';
 import MoreReviewButton from './common/review/MoreReviewButton';
+import NextBackHeader from './common/ui/NextBackHeader';
 import LiveBasicInfo from './live-view/LiveBasicInfo';
 import LiveCurriculum from './live-view/LiveCurriculum';
 import LiveFaq from './live-view/LiveFaq';
@@ -25,11 +28,11 @@ import ProgramDetailNavigation, {
   LIVE_REVIEW_ID,
 } from './ProgramDetailNavigation';
 
-const LiveView: React.FC<{ live: LiveIdSchema; isPreview?: boolean }> = ({
+const LiveView: React.FC<{ live: LiveIdPrimitive; isPreview?: boolean }> = ({
   live,
   isPreview,
 }) => {
-  const { id } = useParams();
+  const { id } = useParams<{ id: string }>();
 
   const mentor = {
     mentorName: live.mentorName,
@@ -47,13 +50,29 @@ const LiveView: React.FC<{ live: LiveIdSchema; isPreview?: boolean }> = ({
 
   const { data: faqData, isLoading: faqIsLoading } = useGetLiveFaq(id ?? '');
 
+  const liveTransformed = useMemo<LiveIdSchema>(() => {
+    return {
+      ...live,
+      startDate: live.startDate ? dayjs(live.startDate) : null,
+      endDate: live.endDate ? dayjs(live.endDate) : null,
+      beginning: live.beginning ? dayjs(live.beginning) : null,
+      deadline: live.deadline ? dayjs(live.deadline) : null,
+      priceInfo: {
+        ...live.priceInfo,
+        deadline: live.priceInfo.deadline
+          ? dayjs(live.priceInfo.deadline)
+          : null,
+      },
+    };
+  }, [live]);
+
   return (
-    <div className="flex w-full flex-col">
-      <div className="flex w-full flex-col items-center">
+    <div className="flex flex-col w-full">
+      <div className="flex flex-col items-center w-full">
         <div className="flex w-full max-w-[1000px] flex-col px-5 md:px-10 lg:px-0">
-          <BackHeader to="/program">{live.title ?? ''}</BackHeader>
+          <NextBackHeader to="/program">{live.title ?? ''}</NextBackHeader>
           {live.vod && <LiveVod />}
-          <LiveBasicInfo live={live} />
+          <LiveBasicInfo live={liveTransformed} />
         </div>
 
         <ProgramDetailNavigation
@@ -62,7 +81,7 @@ const LiveView: React.FC<{ live: LiveIdSchema; isPreview?: boolean }> = ({
           isReady={!faqIsLoading}
         />
 
-        <div className="flex w-full flex-col items-center overflow-x-hidden">
+        <div className="flex flex-col items-center w-full overflow-x-hidden">
           <LiveMentor
             id={LIVE_MENTOR_INTRO_ID}
             mentor={mentor}
@@ -118,7 +137,7 @@ const LiveView: React.FC<{ live: LiveIdSchema; isPreview?: boolean }> = ({
             )}
           </section>
           <LiveFaq faqData={faqData} />
-          <LiveInfoBottom live={live} />
+          <LiveInfoBottom live={liveTransformed} />
         </div>
       </div>
     </div>

@@ -7,8 +7,10 @@ import {
   CreateVodReq,
   faqSchema,
   getChallengeIdSchema,
+  getLiveIdPrimitiveSchema,
   getLiveIdSchema,
   getVodIdSchema,
+  LiveIdPrimitive,
   liveTitleSchema,
   programAdminSchema,
   programBannerAdminDetailSchema,
@@ -226,6 +228,19 @@ export const useGetLiveQuery = ({
     },
   });
 };
+
+export const fetchLiveData = async (liveId: string): Promise<LiveIdPrimitive> => {
+   const res = await fetch(
+      `${process.env.NEXT_PUBLIC_SERVER_API}/live/${liveId}`,
+    );
+  
+    if (!res.ok) {
+      throw new Error('Failed to fetch live data');
+    }
+  
+    const data = await res.json();
+    return getLiveIdPrimitiveSchema.parse(data.data);
+}
 
 /** 1회용으로 사용하기 위한 함수 */
 export const getLive = async (liveId: number) => {

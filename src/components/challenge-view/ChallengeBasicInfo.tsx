@@ -5,7 +5,11 @@ import Pin from '@/assets/icons/pin.svg?react';
 import Polygon from '@/assets/icons/polygon-sharp.svg?react';
 import { useInstallmentPayment } from '@/hooks/useInstallmentPayment';
 import dayjs from '@/lib/dayjs';
-import { ActiveChallengeType, ChallengeIdPrimitive, challengeTypeSchema } from '@/schema';
+import {
+  ActiveChallengeType,
+  ChallengeIdSchema,
+  challengeTypeSchema,
+} from '@/schema';
 import {
   formatFullDate,
   formatFullDateTime,
@@ -33,7 +37,7 @@ const ChallengeBasicInfo = ({
   activeChallengeList,
   colors,
 }: {
-  challenge: ChallengeIdPrimitive;
+  challenge: ChallengeIdSchema;
   challengeId: string | undefined;
   activeChallengeList: ActiveChallengeType[] | undefined;
   colors: ChallengeColor;
@@ -90,15 +94,11 @@ const ChallengeBasicInfo = ({
     }
   })();
 
-  const challengeStartDate = challenge.startDate ? dayjs(challenge.startDate) : null;
-  const challengeEndDate = challenge.endDate ? dayjs(challenge.endDate) : null;
-  const challengeDeadline = challenge.deadline ? dayjs(challenge.deadline) : null;  
-
-  const startDate = formatFullDateTime(challengeStartDate);
+  const startDate = formatFullDateTime(challenge.startDate);
   const endDate =
-    challengeStartDate?.year() === challengeEndDate?.year()
-      ? formatFullDateTimeWithOutYear(challengeEndDate)
-      : formatFullDateTime(challengeEndDate);
+    challenge.startDate?.year() === challenge.endDate?.year()
+      ? formatFullDateTimeWithOutYear(challenge.endDate)
+      : formatFullDateTime(challenge.endDate);
 
   return (
     <div className="flex flex-col w-full pb-10 gap-y-6 md:gap-y-5 md:pb-20">
@@ -245,7 +245,7 @@ const ChallengeBasicInfo = ({
                   </p>
                 </div>
                 <p className="text-xsmall16 text-neutral-0">
-                  {formatFullDate(challengeStartDate)}
+                  {formatFullDate(challenge.startDate)}
                 </p>
               </div>
               <BasicInfoRow
@@ -273,14 +273,14 @@ const ChallengeBasicInfo = ({
           <BasicInfoRow
             icon={<ClockIcon />}
             title="모집 마감"
-            content={`${formatFullDateTime(challengeDeadline)}`}
+            content={`${formatFullDateTime(challenge.deadline)}`}
           />
           <BasicInfoRow
             icon={<LuCalendarDays size={20} />}
             title="OT 일자"
             content={
               <>
-                {formatFullDateTime(challengeStartDate)}
+                {formatFullDateTime(challenge.startDate)}
                 <br />
                 <span className="text-xxsmall12 text-neutral-35 md:text-xsmall14">
                   *실시간 참여 권장 (불참시 녹화본 제공 가능)

@@ -6,7 +6,11 @@ import { useParams } from 'react-router-dom';
 
 import { useGetActiveChallenge, useGetChallengeFaq } from '@/api/challenge';
 import { twMerge } from '@/lib/twMerge';
-import { ChallengeIdPrimitive, challengeTypeSchema } from '@/schema';
+import {
+  ChallengeIdPrimitive,
+  ChallengeIdSchema,
+  challengeTypeSchema,
+} from '@/schema';
 import useProgramStore from '@/store/useProgramStore';
 import { ChallengeContent } from '@/types/interface';
 import ChallengeCheckList from '@components/challenge-view/ChallengeCheckList';
@@ -168,6 +172,20 @@ const ChallengeView: React.FC<{
     };
   }, [challenge.challengeType]);
 
+  const challengeTransformed = useMemo<ChallengeIdSchema>(() => {
+    return {
+      ...challenge,
+      startDate: challenge.startDate ? dayjs(challenge.startDate) : null,
+      endDate: challenge.endDate ? dayjs(challenge.endDate) : null,
+      beginning: challenge.beginning ? dayjs(challenge.beginning) : null,
+      deadline: challenge.deadline ? dayjs(challenge.deadline) : null,
+      priceInfo: challenge.priceInfo.map((price) => ({
+        ...price,
+        deadline: price.deadline ? dayjs(price.deadline) : null,
+      })),
+    };
+  }, [challenge]);
+
   return (
     <div className="flex flex-col w-full">
       <div className="flex flex-col items-center w-full">
@@ -176,7 +194,7 @@ const ChallengeView: React.FC<{
           <ChallengeBasicInfo
             colors={colors}
             challengeId={id}
-            challenge={challenge}
+            challenge={challengeTransformed}
             activeChallengeList={activeChallengeList?.challengeList}
           />
         </div>
@@ -295,7 +313,10 @@ const ChallengeView: React.FC<{
             colors={colors}
             faqCategory={receivedContent.faqCategory}
           />
-          <ChallengeInfoBottom challenge={challenge} colors={colors} />
+          <ChallengeInfoBottom
+            challenge={challengeTransformed}
+            colors={colors}
+          />
         </div>
       </div>
     </div>

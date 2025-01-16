@@ -1,3 +1,4 @@
+// TODO: 이제 사용되지 않아서 삭제해야 함.
 import { useCallback, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 

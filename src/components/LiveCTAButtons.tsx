@@ -3,21 +3,21 @@
 import { ProgramApplicationFormInfo } from '@/api/application';
 import dayjs from '@/lib/dayjs';
 import { generateOrderId, getPayInfo, UserInfo } from '@/lib/order';
-import { ChallengeIdPrimitive } from '@/schema';
+import { LiveIdPrimitive } from '@/schema';
 import useAuthStore from '@/store/useAuthStore';
 import useProgramStore from '@/store/useProgramStore';
 import { useRouter } from 'next/navigation';
 import { useCallback } from 'react';
 import { DesktopApplyCTA, MobileApplyCTA } from './common/ApplyCTA';
 
-const ChallengeCTAButtons = ({
+const LiveCTAButtons = ({
   application,
-  challenge,
-  challengeId,
+  live,
+  liveId,
 }: {
   application: ProgramApplicationFormInfo;
-  challenge: ChallengeIdPrimitive;
-  challengeId: string;
+  live: LiveIdPrimitive;
+  liveId: string;
 }) => {
   const { isLoggedIn } = useAuthStore();
   const router = useRouter();
@@ -47,7 +47,6 @@ const ChallengeCTAButtons = ({
     }
 
     // TODO: 라이브는 직접 받아와야 함. 챌린지는 none임.
-
     const progressType: 'none' | 'ALL' | 'ONLINE' | 'OFFLINE' = 'none';
 
     const userInfo: UserInfo = {
@@ -66,7 +65,7 @@ const ChallengeCTAButtons = ({
     const totalPrice = Math.max(payInfo.price - payInfo.discount, 0);
 
     const isFree =
-      payInfo.challengePriceType === 'FREE' ||
+      payInfo.livePriceType === 'FREE' ||
       payInfo.livePriceType === 'FREE' ||
       payInfo.price === 0 ||
       totalPrice === 0;
@@ -83,10 +82,10 @@ const ChallengeCTAButtons = ({
       email: userInfo.email,
       phone: userInfo.phoneNumber,
       name: userInfo.name,
-      programTitle: challenge.title,
-      programType: 'challenge',
+      programTitle: live.title,
+      programType: 'live',
       progressType,
-      programId: Number(challengeId),
+      programId: Number(liveId),
       programOrderId: orderId,
       isFree,
     });
@@ -95,8 +94,8 @@ const ChallengeCTAButtons = ({
     // navigate(`/payment-input`);
   }, [
     application,
-    challenge.title,
-    challengeId,
+    live.title,
+    liveId,
     isLoggedIn,
     router,
     setProgramApplicationForm,
@@ -106,9 +105,9 @@ const ChallengeCTAButtons = ({
     <>
       <DesktopApplyCTA
         program={{
-          ...challenge,
-          beginning: challenge.startDate ? dayjs(challenge.startDate) : null,
-          deadline: challenge.endDate ? dayjs(challenge.endDate) : null,
+          ...live,
+          beginning: live.startDate ? dayjs(live.startDate) : null,
+          deadline: live.endDate ? dayjs(live.endDate) : null,
         }}
         onApplyClick={onApplyClick}
         isAlreadyApplied={isAlreadyApplied}
@@ -116,9 +115,9 @@ const ChallengeCTAButtons = ({
 
       <MobileApplyCTA
         program={{
-          ...challenge,
-          beginning: challenge.startDate ? dayjs(challenge.startDate) : null,
-          deadline: challenge.endDate ? dayjs(challenge.endDate) : null,
+          ...live,
+          beginning: live.startDate ? dayjs(live.startDate) : null,
+          deadline: live.endDate ? dayjs(live.endDate) : null,
         }}
         onApplyClick={onApplyClick}
         isAlreadyApplied={isAlreadyApplied}
@@ -127,4 +126,4 @@ const ChallengeCTAButtons = ({
   );
 };
 
-export default ChallengeCTAButtons;
+export default LiveCTAButtons;

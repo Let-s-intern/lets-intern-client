@@ -5,7 +5,7 @@ import ChevronDown from '@/assets/icons/chevron-down.svg?react';
 import ClockIcon from '@/assets/icons/clock.svg?react';
 import LaptopIcon from '@/assets/icons/laptop.svg?react';
 import { useInstallmentPayment } from '@/hooks/useInstallmentPayment';
-import { ChallengeIdPrimitive, challengeTypeSchema } from '@/schema';
+import { ChallengeIdSchema, challengeTypeSchema } from '@/schema';
 import {
   formatFullDateTime,
   formatFullDateTimeWithOutYear,
@@ -15,7 +15,6 @@ import BasicInfoBottomRow from '@components/common/program/program-detail/basicI
 import BasicInfoRow from '@components/common/program/program-detail/basicInfo/BasicInfoRow';
 import Heading2 from '@components/common/ui/Heading2';
 import { useMediaQuery } from '@mui/material';
-import dayjs from 'dayjs';
 
 const { PERSONAL_STATEMENT } = challengeTypeSchema.enum;
 
@@ -31,7 +30,7 @@ const ChallengeInfoBottom = ({
   challenge,
   colors,
 }: {
-  challenge: ChallengeIdPrimitive;
+  challenge: ChallengeIdSchema;
   colors: ChallengeColor;
 }) => {
   const isMobile = useMediaQuery('(max-width: 768px)');
@@ -78,19 +77,11 @@ const ChallengeInfoBottom = ({
     }
   })();
 
-  const challengeStartDate = challenge.startDate
-    ? dayjs(challenge.startDate)
-    : null;
-  const challengeEndDate = challenge.endDate ? dayjs(challenge.endDate) : null;
-  const challengeDeadline = challenge.deadline
-    ? dayjs(challenge.deadline)
-    : null;
-
-  const startDate = formatFullDateTime(challengeStartDate, true);
+  const startDate = formatFullDateTime(challenge.startDate, true);
   const endDate =
-    challengeStartDate?.year() === challengeEndDate?.year()
-      ? formatFullDateTimeWithOutYear(challengeEndDate, true)
-      : formatFullDateTime(challengeEndDate, true);
+    challenge.startDate?.year() === challenge.endDate?.year()
+      ? formatFullDateTimeWithOutYear(challenge.endDate, true)
+      : formatFullDateTime(challenge.endDate, true);
 
   return (
     <section className="flex w-full max-w-[1000px] flex-col gap-y-8 px-5 pb-8 md:gap-y-[70px] md:px-10 md:pb-[130px] lg:px-0">
@@ -115,14 +106,14 @@ const ChallengeInfoBottom = ({
               <BasicInfoRow
                 icon={<ClockIcon />}
                 title="모집 마감"
-                content={`${formatFullDateTime(challengeDeadline, true)}`}
+                content={`${formatFullDateTime(challenge.deadline, true)}`}
               />
               <BasicInfoRow
                 icon={<LuCalendarDays size={20} />}
                 title="OT 일자"
                 content={
                   <>
-                    {formatFullDateTime(challengeStartDate, true)}
+                    {formatFullDateTime(challenge.startDate, true)}
                     <br />
                     <span className="text-xxsmall12 text-neutral-35 md:text-xsmall14">
                       *실시간 참여 권장 (불참시 녹화본 제공 가능)
@@ -150,14 +141,14 @@ const ChallengeInfoBottom = ({
             <BasicInfoBottomRow
               icon={<ClockIcon />}
               title="모집 마감"
-              content={`${formatFullDateTime(challengeDeadline, true)}`}
+              content={`${formatFullDateTime(challenge.deadline, true)}`}
             />
             <BasicInfoBottomRow
               icon={<LuCalendarDays size={20} />}
               title="OT 일자"
               content={
                 <>
-                  {formatFullDateTime(challengeStartDate, true)}
+                  {formatFullDateTime(challenge.startDate, true)}
                   <br />
                   <span className="text-xxsmall12 text-neutral-35 md:text-xsmall14">
                     *실시간 참여 권장 (불참시 녹화본 제공 가능)

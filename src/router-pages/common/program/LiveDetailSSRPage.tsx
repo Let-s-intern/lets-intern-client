@@ -1,3 +1,4 @@
+// TODO: 이제 사용되지 않아서 삭제해야 함.
 import { useCallback, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
@@ -9,9 +10,7 @@ import { generateOrderId, getPayInfo, UserInfo } from '@/lib/order';
 import useAuthStore from '@/store/useAuthStore';
 import useProgramStore from '@/store/useProgramStore';
 import { getProgramPathname } from '@/utils/url';
-import { DesktopApplyCTA, MobileApplyCTA } from '@components/common/ApplyCTA';
-
-import LiveView from '@components/LiveView';
+import { MobileApplyCTA } from '@components/common/ApplyCTA';
 
 const LiveDetailSSRPage = () => {
   const navigate = useNavigate();
@@ -139,13 +138,7 @@ const LiveDetailSSRPage = () => {
 
   return (
     <>
-      <LiveView live={live} />
-
-      <DesktopApplyCTA
-        program={live}
-        onApplyClick={onApplyClick}
-        isAlreadyApplied={isAlreadyApplied}
-      />
+      {/* <LiveView live={live} /> */}
 
       <MobileApplyCTA
         program={live}
