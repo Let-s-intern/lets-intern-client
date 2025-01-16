@@ -111,7 +111,15 @@ const ChallengeInfoBottom = ({
               <BasicInfoRow
                 icon={<LuCalendarDays size={20} />}
                 title="OT 일자"
-                content={`${formatFullDateTime(challenge.startDate, true)}`}
+                content={
+                  <>
+                    {formatFullDateTime(challenge.startDate, true)}
+                    <br />
+                    <span className="text-xxsmall12 text-neutral-35 md:text-xsmall14">
+                      *실시간 참여 권장 (불참시 녹화본 제공 가능)
+                    </span>
+                  </>
+                }
               />
             </div>
           </div>
@@ -138,7 +146,15 @@ const ChallengeInfoBottom = ({
             <BasicInfoBottomRow
               icon={<LuCalendarDays size={20} />}
               title="OT 일자"
-              content={`${formatFullDateTime(challenge.startDate, true)}`}
+              content={
+                <>
+                  {formatFullDateTime(challenge.startDate, true)}
+                  <br />
+                  <span className="text-xxsmall12 text-neutral-35 md:text-xsmall14">
+                    *실시간 참여 권장 (불참시 녹화본 제공 가능)
+                  </span>
+                </>
+              }
             />
           </div>
         )}

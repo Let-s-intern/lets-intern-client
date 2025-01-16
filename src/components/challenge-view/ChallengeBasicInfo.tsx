@@ -278,7 +278,15 @@ const ChallengeBasicInfo = ({
           <BasicInfoRow
             icon={<LuCalendarDays size={20} />}
             title="OT 일자"
-            content={`${formatFullDateTime(challenge.startDate)}`}
+            content={
+              <>
+                {formatFullDateTime(challenge.startDate)}
+                <br />
+                <span className="text-xxsmall12 text-neutral-35 md:text-xsmall14">
+                  *실시간 참여 권장 (불참시 녹화본 제공 가능)
+                </span>
+              </>
+            }
           />
         </div>
         <div className="flex w-full flex-col items-center justify-center gap-y-3 rounded-ms bg-neutral-95 px-4 pb-6 pt-5 md:hidden">
