@@ -57,6 +57,21 @@ export const challengeTypeSchema = z.enum([
 
 export type ChallengeType = z.infer<typeof challengeTypeSchema>;
 
+export const activeChallengeSchema = z.object({
+  id: z.number(),
+  title: z.string(),
+  beginning: z.string(),
+  deadline: z.string(),
+  startDate: z.string(),
+  endDate: z.string(),
+});
+
+export type ActiveChallengeType = z.infer<typeof activeChallengeSchema>;
+
+export const activeChallengeResponse = z.object({
+  challengeList: z.array(activeChallengeSchema),
+});
+
 export const ProgramClassificationEnum = z.enum([
   'CAREER_SEARCH',
   'DOCUMENT_PREPARATION',
@@ -1223,6 +1238,7 @@ export const challengeApplicationsSchema = z
         finalPrice: z.number().nullable().optional(),
         programDiscount: z.number().nullable().optional(),
         programPrice: z.number().nullable().optional(),
+        refundPrice: z.number().nullable().optional(),
       }),
     ),
   })

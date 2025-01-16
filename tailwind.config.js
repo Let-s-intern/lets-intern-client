@@ -1,7 +1,7 @@
 // @ts-nocheck
 
 /** @type {import('tailwindcss').Config} */
-module.exports = {
+export default {
   content: [
     './{pages,renderer,layouts,components,src}/**/*.{html,js,jsx,ts,tsx,vue}',
   ],
@@ -159,12 +159,23 @@ module.exports = {
           '0%': { transform: 'translateX(0)' },
           '100%': { transform: 'translateX(-1380px)' },
         },
+        'bounce-x': {
+          '0%, 100%': {
+            transform: 'translateX(-5%)',
+            animationTimingFunction: 'cubic-bezier(0.8, 0, 1, 1)',
+          },
+          '50%': {
+            transform: 'translateX(0)',
+            animationTimingFunction: 'cubic-bezier(0, 0, 0.2, 1)',
+          },
+        },
       },
       animation: {
         'live-infinite-scroll-desktop':
           'live-infinite-scroll-desktop 16s linear infinite',
         'live-infinite-scroll-mobile':
           'live-infinite-scroll-mobile 12s linear infinite',
+        'bounce-x': 'bounce-x 0.7s infinite',
       },
     },
     borderRadius: {

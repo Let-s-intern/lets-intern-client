@@ -12,6 +12,7 @@ export const parseLink = (text: string) => {
   text.replace(regex, (match, caption, url, offset, string) => {
     const element = (
       <Link
+        key={offset}
         to={url}
         className="text-primary underline"
         target="_blank"

@@ -14,7 +14,6 @@ import useReportProgramInfo from '@/hooks/useReportProgramInfo';
 import useRunOnce from '@/hooks/useRunOnce';
 import useValidateUrl from '@/hooks/useValidateUrl';
 import { twMerge } from '@/lib/twMerge';
-import { reportTypeSchema } from '@/schema';
 import useAuthStore from '@/store/useAuthStore';
 import useReportApplicationStore from '@/store/useReportApplicationStore';
 import { ReportFormRadioControlLabel } from '@components/common/report/ControlLabel';
@@ -231,16 +230,15 @@ const ProgramInfoSection = ({
     value: string,
   ) => void;
 }) => {
-  const { title, product, option, reportType } = useReportProgramInfo();
-
-  const isResume = reportType === reportTypeSchema.enum.RESUME;
+  const { title, product, option } = useReportProgramInfo();
 
   const tooltipContent = {
-    description: `진단 완료까지 ${isResume ? 48 : 72}시간 소요됩니다.\n다만, 신청자가 많을 경우 플랜에 따라 소요 시간이 달라질 수 있습니다.`,
+    description:
+      '진단 완료까지 48시간 소요됩니다.\n다만, 신청자가 많을 경우 플랜에 따라 소요 시간이 달라질 수 있습니다.',
     list: [
-      `베이직 플랜: ${isResume ? 2 : 3}일 이내`,
-      `프리미엄 플랜: ${isResume ? 3 : 5}일 이내`,
-      `현직자 피드백 옵션: 최대 ${isResume ? 5 : 7}일 이내`,
+      '베이직 플랜: 2일 이내',
+      '프리미엄 플랜: 3일 이내',
+      '현직자 피드백 옵션: 최대 5일 이내',
     ],
   };
 

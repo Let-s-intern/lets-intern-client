@@ -1,7 +1,9 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
+  activeChallengeResponse,
   ChallengeIdPrimitive,
   challengeTitleSchema,
+  ChallengeType,
   faqSchema,
   getChallengeIdPrimitiveSchema,
   getChallengeIdSchema,
@@ -193,6 +195,20 @@ export const useEditReviewVisible = () => {
           data.createDate,
         ),
       });
+    },
+  });
+};
+
+export const useGetActiveChallenge = (type: ChallengeType) => {
+  return useQuery({
+    queryKey: ['useGetSameTypeChallenge', type],
+    queryFn: async () => {
+      const res = await axios.get('/challenge/active', {
+        params: {
+          type,
+        },
+      });
+      return activeChallengeResponse.parse(res.data.data);
     },
   });
 };

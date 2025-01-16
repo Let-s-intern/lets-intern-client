@@ -76,6 +76,11 @@ export const formatFullDateTime = (date: Dayjs | null, breakTime?: boolean) => {
   return breakTime ? `${onlyDate}\n${onlyTime}` : `${onlyDate} ${onlyTime}`;
 };
 
+// yyyy년 mm월 dd일 (요일)
+export const formatFullDate = (date: Dayjs | null) => {
+  return dayjs(date).format('YYYY년 MM월 DD일 (ddd)');
+};
+
 export const formatFullDateTimeWithOutYear = (
   date: Dayjs | null,
   breakTime?: boolean,

@@ -17,7 +17,7 @@ interface ServiceProcessSectionProps {
 }
 
 const ServiceProcessSection = ({ reportType }: ServiceProcessSectionProps) => {
-  const subHeader = `${reportType === 'PERSONAL_STATEMENT' ? 72 : 48}시간 이내 진단 완료!`;
+  const subHeader = '48시간 이내 진단 완료!';
   const subHeaderStyle = {
     color:
       reportType === 'PERSONAL_STATEMENT'
@@ -143,8 +143,7 @@ const ServiceProcessSection = ({ reportType }: ServiceProcessSectionProps) => {
             {/* 자소서 시간 반영 */}
             <ContentBox>
               <NumberedContent number="2-2">
-                진단 완료까지 {reportType === 'RESUME' ? 48 : 72}시간
-                소요됩니다.
+                진단 완료까지 48시간 소요됩니다.
               </NumberedContent>
               <ContentBox className="mt-3 bg-[#DDF5FF] text-xxsmall12 font-medium md:p-3 md:px-5 md:py-3 md:text-xsmall14">
                 <p className="mb-3 md:mb-1">

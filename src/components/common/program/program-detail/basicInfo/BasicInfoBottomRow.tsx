@@ -3,7 +3,7 @@ import { ReactNode } from 'react';
 export interface BasicInfoBottomRowProps {
   icon: ReactNode;
   title: string;
-  content: string;
+  content: React.ReactNode;
 }
 
 const BasicInfoBottomRow = ({

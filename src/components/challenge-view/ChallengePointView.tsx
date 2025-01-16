@@ -97,7 +97,20 @@ const ChallengePointView = ({
     },
     {
       title: 'OT 일자',
-      content: `${startDate.format('YYYY년 M월 D일(dd) HH시 mm분')}\n*실시간 참여`,
+      content: (
+        <>
+          {startDate.format('YYYY년 M월 D일(dd) HH시 mm분')}{' '}
+          <span className="text-xxsmall12 text-neutral-35 md:text-xsmall14">
+            (*40분 소요)
+          </span>
+          <br />
+          *실시간 참여 권장
+          <br className="hidden md:block" />{' '}
+          <span className="text-xxsmall12 text-neutral-35 md:text-xsmall14">
+            (불참시 녹화본 제공 가능)
+          </span>
+        </>
+      ),
     },
     {
       title: '진행 방식',

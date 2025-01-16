@@ -2,8 +2,9 @@
 
 import dayjs from 'dayjs';
 import { useEffect, useMemo } from 'react';
+import { useParams } from 'react-router-dom';
 
-import { useGetChallengeFaq } from '@/api/challenge';
+import { useGetActiveChallenge, useGetChallengeFaq } from '@/api/challenge';
 import { twMerge } from '@/lib/twMerge';
 import { ChallengeIdPrimitive, challengeTypeSchema } from '@/schema';
 import useProgramStore from '@/store/useProgramStore';
@@ -12,7 +13,6 @@ import ChallengeCheckList from '@components/challenge-view/ChallengeCheckList';
 import ChallengeCurriculum from '@components/challenge-view/ChallengeCurriculum';
 import ChallengeFaq from '@components/challenge-view/ChallengeFaq';
 import ChallengeResult from '@components/challenge-view/ChallengeResult';
-import { useParams } from 'next/navigation';
 import ChallengeBasicInfo from './challenge-view/ChallengeBasicInfo';
 import ChallengeBrand from './challenge-view/ChallengeBrand';
 import ChallengeDifferent from './challenge-view/ChallengeDifferent';
@@ -62,6 +62,10 @@ const ChallengeView: React.FC<{
   useEffect(() => {
     initProgramApplicationForm();
   }, [initProgramApplicationForm]);
+
+  const { data: activeChallengeList } = useGetActiveChallenge(
+    challenge.challengeType,
+  );
 
   const { data: faqData, isLoading: faqIsLoading } = useGetChallengeFaq(
     id ?? '',
@@ -169,7 +173,12 @@ const ChallengeView: React.FC<{
       <div className="flex flex-col items-center w-full">
         <div className="flex w-full max-w-[1000px] flex-col px-5 md:px-10 lg:px-0">
           <NextBackHeader to="/program">{challenge.title ?? ''}</NextBackHeader>
-          <ChallengeBasicInfo colors={colors} challenge={challenge} />
+          <ChallengeBasicInfo
+            colors={colors}
+            challengeId={id}
+            challenge={challenge}
+            activeChallengeList={activeChallengeList?.challengeList}
+          />
         </div>
 
         <ProgramDetailNavigation

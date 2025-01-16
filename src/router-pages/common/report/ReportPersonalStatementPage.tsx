@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { Helmet } from 'react-helmet';
+import { useParams } from 'react-router-dom';
 
 import { useGetActiveReports, useGetReportPriceDetail } from '@/api/report';
 import ReportApplyBottomSheet from '@/components/common/report/ReportApplyBottomSheet';
@@ -18,7 +19,6 @@ import ReportProgramRecommendSlider from '@components/common/report/ReportProgra
 import ReportReviewSection from '@components/common/report/ReportReviewSection';
 import ServiceProcessSection from '@components/common/report/ServiceProcessSection';
 import LoadingContainer from '@components/common/ui/loading/LoadingContainer';
-import { useParams } from 'react-router-dom';
 import ReportNavigation from './ReportNavigation';
 
 export const personalStatementColors = {
@@ -38,17 +38,24 @@ const ReportPersonalStatementPage = () => {
 
   const activeReportsFromServer = useServerActiveReports();
 
-  const url = `${typeof window !== 'undefined' ? window.location.origin : getBaseUrlFromServer()}/report/landing/personal-statement`;
+  const url = `${typeof window !== 'undefined' ? window.location.origin : getBaseUrlFromServer()}/report/landing/personal-statement${reportId ? `/${reportId}` : ''}`;
   const description = personalStatementReportDescription;
   const activeReports = data || activeReportsFromServer;
+  const visibleReports = activeReports.personalStatementInfoList.filter(
+    (item) =>
+      item.isVisible === true &&
+      item.visibleDate &&
+      new Date(item.visibleDate) <= new Date(),
+  );
   const report =
-    activeReports.personalStatementInfoList.length > 0
-      ? reportId === undefined || isNaN(Number(reportId))
-        ? activeReports?.personalStatementInfoList[0]
-        : activeReports?.personalStatementInfoList.find(
-            (item) => item.reportId === Number(reportId),
-          )
-      : undefined;
+    reportId === undefined || isNaN(Number(reportId))
+      ? visibleReports.length > 0
+        ? visibleReports[0]
+        : undefined
+      : activeReports.personalStatementInfoList.find(
+          (item) => item.reportId === Number(reportId),
+        );
+
   const title = getReportLandingTitle(report?.title ?? '자기소개서');
   const personalStatementContent: ReportContent = JSON.parse(
     report?.contents ?? '{}',

@@ -1,17 +1,21 @@
-import { LuCalendarDays } from 'react-icons/lu';
-
 import Announcement from '@/assets/icons/announcement.svg?react';
 import ChevronDown from '@/assets/icons/chevron-down.svg?react';
 import ClockIcon from '@/assets/icons/clock.svg?react';
+import Pin from '@/assets/icons/pin.svg?react';
+import Polygon from '@/assets/icons/polygon-sharp.svg?react';
 import { useInstallmentPayment } from '@/hooks/useInstallmentPayment';
 import dayjs from '@/lib/dayjs';
-import { ChallengeIdPrimitive, challengeTypeSchema } from '@/schema';
+import { ActiveChallengeType, ChallengeIdPrimitive, challengeTypeSchema } from '@/schema';
 import {
+  formatFullDate,
   formatFullDateTime,
   formatFullDateTimeWithOutYear,
 } from '@/utils/formatDateString';
 import { ChallengeColor } from '@components/ChallengeView';
 import BasicInfoRow from '@components/common/program/program-detail/basicInfo/BasicInfoRow';
+import { LuCalendarDays } from 'react-icons/lu';
+import { useNavigate } from 'react-router-dom';
+import RadioButton from './RadioButton';
 
 const { PERSONAL_STATEMENT } = challengeTypeSchema.enum;
 
@@ -25,9 +29,13 @@ export const getDiscountPercent = (
 
 const ChallengeBasicInfo = ({
   challenge,
+  challengeId,
+  activeChallengeList,
   colors,
 }: {
   challenge: ChallengeIdPrimitive;
+  challengeId: string | undefined;
+  activeChallengeList: ActiveChallengeType[] | undefined;
   colors: ChallengeColor;
 }) => {
   const {
@@ -35,6 +43,14 @@ const ChallengeBasicInfo = ({
     months: installmentMonths,
     banks,
   } = useInstallmentPayment();
+  const navigate = useNavigate();
+
+  const onClickActiveChallenge = (challengeId: number) => {
+    navigate(`/program/challenge/${challengeId}`);
+  };
+
+  const activeOnly =
+    activeChallengeList === undefined || activeChallengeList.length <= 1;
 
   const priceInfo = challenge.priceInfo[0];
   const monthlyPrice =
@@ -74,56 +90,34 @@ const ChallengeBasicInfo = ({
     }
   })();
 
-  const challengeStartDate = challenge.startDate
-    ? dayjs(challenge.startDate)
-    : null;
+  const challengeStartDate = challenge.startDate ? dayjs(challenge.startDate) : null;
   const challengeEndDate = challenge.endDate ? dayjs(challenge.endDate) : null;
-  const challengeDeadline = challenge.deadline
-    ? dayjs(challenge.deadline)
-    : null;
+  const challengeDeadline = challenge.deadline ? dayjs(challenge.deadline) : null;  
 
-  const startDate = formatFullDateTime(challengeStartDate, true);
+  const startDate = formatFullDateTime(challengeStartDate);
   const endDate =
     challengeStartDate?.year() === challengeEndDate?.year()
-      ? formatFullDateTimeWithOutYear(challengeEndDate, true)
-      : formatFullDateTime(challengeEndDate, true);
+      ? formatFullDateTimeWithOutYear(challengeEndDate)
+      : formatFullDateTime(challengeEndDate);
 
   return (
-    <div className="flex flex-col gap-6 pb-10 md:flex-row md:pb-20">
-      <img
-        src={challenge.thumbnail}
-        alt="챌린지 썸네일"
-        className="aspect-[4/3] h-auto w-full rounded-md object-contain md:w-3/5"
-        style={{ backgroundColor: colors.thumbnailBg }}
-      />
-      <div className="flex flex-col w-full gap-y-3 md:w-2/5">
-        <div className="flex items-center justify-center w-full px-6 py-5 rounded-md bg-neutral-95">
-          <div
-            className="flex flex-col w-full gap-y-5"
-            style={{ color: colors.primary }}
-          >
-            <BasicInfoRow
-              icon={<Announcement />}
-              title="진행 기간"
-              content={`${startDate}\n- ${endDate}`}
-            />
-            <BasicInfoRow
-              icon={<ClockIcon />}
-              title="모집 마감"
-              content={`${formatFullDateTime(challengeDeadline, true)}`}
-            />
-            <BasicInfoRow
-              icon={<LuCalendarDays size={20} />}
-              title="OT 일자"
-              content={`${formatFullDateTime(challengeStartDate, true)}`}
-            />
-          </div>
+    <div className="flex flex-col w-full pb-10 gap-y-6 md:gap-y-5 md:pb-20">
+      <div className="flex w-full gap-x-4">
+        <div
+          className="flex items-center justify-center flex-1 overflow-hidden rounded-ms"
+          style={{ backgroundColor: colors.thumbnailBg }}
+        >
+          <img
+            src={challenge.thumbnail}
+            alt="챌린지 썸네일"
+            className="aspect-[4/3] h-auto w-full max-w-[546px] object-contain"
+          />
         </div>
-        <div className="flex flex-col items-center justify-center w-full px-6 pt-5 rounded-md gap-y-5 bg-neutral-95 pb-9">
-          <div className="flex flex-col w-full gap-y-6">
-            <div className="flex w-full flex-col gap-y-[14px]">
-              <p className="font-bold text-small18">{challenge.title}</p>
-              <div className="flex w-full flex-col gap-y-0.5 text-xsmall14">
+        <div className="hidden w-[354px] shrink-0 flex-col items-center justify-center gap-y-3 rounded-ms bg-neutral-95 p-5 pb-6 md:flex">
+          <div className="flex flex-col justify-between flex-1 w-full gap-y-4">
+            <div className="flex flex-col w-full gap-y-2">
+              <p className="font-bold text-small20">{challenge.title}</p>
+              <div className="flex w-full flex-col gap-y-0.5 text-xsmall14 font-medium text-neutral-0">
                 {priceReason.map((reason, index) => (
                   <div key={index} className="flex w-full gap-x-0.5">
                     <ChevronDown
@@ -131,7 +125,7 @@ const ChallengeBasicInfo = ({
                       width={24}
                       height={24}
                     />
-                    <p className="text-black whitespace-pre grow text-wrap break-keep">
+                    <p className="whitespace-pre grow text-wrap break-keep">
                       {reason}
                     </p>
                   </div>
@@ -139,7 +133,185 @@ const ChallengeBasicInfo = ({
               </div>
             </div>
             {priceInfo && (
-              <div className="flex w-full flex-col gap-y-2.5 border-b border-neutral-80 pb-[14px] pt-2.5 text-neutral-0">
+              <div className="flex flex-col w-full pb-2 border-b gap-y-1 border-neutral-80 text-neutral-0">
+                <div className="flex items-center justify-between w-full gap-x-4 text-xsmall16">
+                  <span className="font-medium">정가</span>
+                  <span>{regularPrice?.toLocaleString()}원</span>
+                </div>
+                <div className="flex items-center justify-between w-full gap-x-4 text-xsmall16">
+                  <span className="font-bold" style={{ color: colors.primary }}>
+                    {getDiscountPercent(
+                      regularPrice || 0,
+                      priceInfo.discount || 0,
+                    )}
+                    % 할인
+                  </span>
+                  <span>-{priceInfo.discount?.toLocaleString()}원</span>
+                </div>
+                {priceInfo.challengePriceType === 'REFUND' && (
+                  <div className="flex items-center justify-between w-full gap-x-4 text-xsmall16">
+                    <span className="font-bold text-black">
+                      미션 모두 수행시, 환급
+                    </span>
+                    <span>-{priceInfo.refund?.toLocaleString()}원</span>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+          {priceInfo && (
+            <div className="flex flex-col w-full gap-y-2">
+              <div className="flex items-center justify-between w-full font-semibold text-xsmall16 text-neutral-0">
+                <p>할인 적용가</p>
+                <p className="text-small18 text-neutral-0">
+                  {totalPrice.toLocaleString()}원
+                </p>
+              </div>
+              {showMonthlyPrice && (
+                <div className="flex flex-col items-end w-full">
+                  <div style={{ color: colors.primary }}>
+                    <span className="mr-1 font-semibold text-medium22">월</span>
+                    <span className="font-bold text-xlarge28">
+                      {monthlyPrice
+                        ? `${monthlyPrice.toLocaleString()}원`
+                        : '계산 중'}
+                    </span>
+                  </div>
+                  <p className="text-xsmall14 text-neutral-30">
+                    {isLoading
+                      ? '무이자 할부 시'
+                      : `${banks.join(', ')} ${installmentMonths}개월 무이자 할부 시`}
+                  </p>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+      </div>
+      <div
+        className="flex flex-col w-full gap-3 md:flex-row"
+        style={{ color: colors.primary }}
+      >
+        {!activeOnly && (
+          <div className="flex flex-col w-full px-4 pt-3 pb-5 gap-y-2 rounded-ms bg-neutral-95 md:flex-1 md:p-5 md:pt-4">
+            <div className="flex items-center w-full gap-x-2">
+              <Pin className="shrink-0" width={20} height={20} />
+              <p className="font-semibold text-xsmall16 text-neutral-0">
+                시작 일자
+              </p>
+              <div className="relative ml-3 animate-bounce-x">
+                <Polygon
+                  className="absolute left-0 top-1/2 -translate-x-[8px] -translate-y-[3px] transform"
+                  style={{ color: colors.primary }}
+                  width={10}
+                  height={8}
+                />
+                <span
+                  className="px-2 py-1 font-normal text-white rounded-xxs text-xxsmall12"
+                  style={{ backgroundColor: colors.primary }}
+                >
+                  참여 가능한 일자를 선택해주세요!
+                </span>
+              </div>
+            </div>
+            <div className="flex flex-col w-full gap-y-2">
+              {challengeId !== undefined &&
+                activeChallengeList !== undefined &&
+                activeChallengeList.length > 0 &&
+                activeChallengeList
+                  .sort((a, b) =>
+                    dayjs(a.startDate).isAfter(b.startDate) ? 1 : -1,
+                  )
+                  .map((activeChallenge, index) => (
+                    <RadioButton
+                      key={index}
+                      color={colors.primary}
+                      checked={activeChallenge.id === Number(challengeId)}
+                      label={formatFullDate(dayjs(activeChallenge.startDate))}
+                      onClick={() => onClickActiveChallenge(activeChallenge.id)}
+                    />
+                  ))}
+            </div>
+          </div>
+        )}
+        <div className="flex-col hidden w-full px-4 pt-3 pb-5 gap-y-3 rounded-ms bg-neutral-95 md:flex md:flex-1 md:p-5 md:pt-4">
+          {activeOnly ? (
+            <>
+              <div className="flex flex-col w-full gap-y-2">
+                <div className="flex items-center w-full gap-x-2">
+                  <Pin className="shrink-0" width={20} height={20} />
+                  <p className="font-semibold text-xsmall16 text-neutral-0">
+                    시작 일자
+                  </p>
+                </div>
+                <p className="text-xsmall16 text-neutral-0">
+                  {formatFullDate(challengeStartDate)}
+                </p>
+              </div>
+              <BasicInfoRow
+                icon={<Announcement />}
+                title="진행 기간"
+                content={`${startDate} - ${endDate}`}
+              />
+            </>
+          ) : (
+            <BasicInfoRow
+              icon={<Announcement />}
+              title="진행 기간"
+              content={`${startDate}-\n${endDate}`}
+            />
+          )}
+        </div>
+        <div className="flex flex-col w-full px-4 pt-3 pb-5 gap-y-3 rounded-ms bg-neutral-95 md:flex-1 md:p-5 md:pt-4">
+          <div className="w-full md:hidden">
+            <BasicInfoRow
+              icon={<Announcement />}
+              title="진행 기간"
+              content={`${startDate}-\n${endDate}`}
+            />
+          </div>
+          <BasicInfoRow
+            icon={<ClockIcon />}
+            title="모집 마감"
+            content={`${formatFullDateTime(challengeDeadline)}`}
+          />
+          <BasicInfoRow
+            icon={<LuCalendarDays size={20} />}
+            title="OT 일자"
+            content={
+              <>
+                {formatFullDateTime(challengeStartDate)}
+                <br />
+                <span className="text-xxsmall12 text-neutral-35 md:text-xsmall14">
+                  *실시간 참여 권장 (불참시 녹화본 제공 가능)
+                </span>
+              </>
+            }
+          />
+        </div>
+        <div className="flex flex-col items-center justify-center w-full px-4 pt-5 pb-6 gap-y-3 rounded-ms bg-neutral-95 md:hidden">
+          <div className="flex flex-col w-full gap-y-4">
+            <div className="flex flex-col w-full gap-y-2">
+              <p className="font-bold text-small18 text-neutral-0">
+                {challenge.title}
+              </p>
+              <div className="flex flex-col w-full gap-y-1 text-xsmall14 text-neutral-0">
+                {priceReason.map((reason, index) => (
+                  <div key={index} className="flex w-full gap-x-0.5">
+                    <ChevronDown
+                      className="-mt-0.5 shrink-0 text-neutral-0"
+                      width={24}
+                      height={24}
+                    />
+                    <p className="whitespace-pre grow text-wrap break-keep">
+                      {reason}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </div>
+            {priceInfo && (
+              <div className="flex flex-col w-full pb-2 border-b gap-y-2 border-neutral-80 text-neutral-0">
                 <div className="flex items-center justify-between w-full gap-x-4 text-xsmall16">
                   <span className="font-medium">정가</span>
                   <span>{regularPrice?.toLocaleString()}원</span>
@@ -167,9 +339,9 @@ const ChallengeBasicInfo = ({
           </div>
           {priceInfo && (
             <div className="flex flex-col w-full gap-y-4">
-              <div className="flex items-center justify-between w-full font-medium text-small20 text-neutral-0">
+              <div className="flex items-center justify-between w-full font-medium text-xsmall16 text-neutral-0">
                 <p>할인 적용가</p>
-                <p className="font-medium text-small20 text-neutral-0">
+                <p className="font-medium text-small18 text-neutral-0">
                   {totalPrice.toLocaleString()}원
                 </p>
               </div>
@@ -177,7 +349,7 @@ const ChallengeBasicInfo = ({
                 <div className="flex flex-col items-end w-full gap-y-2">
                   <div style={{ color: colors.primary }}>
                     <span className="mr-1 font-semibold text-medium22">월</span>
-                    <span className="font-bold text-xxlarge32">
+                    <span className="font-bold text-xlarge28">
                       {monthlyPrice
                         ? `${monthlyPrice.toLocaleString()}원`
                         : '계산 중'}
