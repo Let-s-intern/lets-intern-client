@@ -1232,6 +1232,7 @@ export const challengeApplicationsSchema = z
         finalPrice: z.number().nullable().optional(),
         programDiscount: z.number().nullable().optional(),
         programPrice: z.number().nullable().optional(),
+        refundPrice: z.number().nullable().optional(),
       }),
     ),
   })

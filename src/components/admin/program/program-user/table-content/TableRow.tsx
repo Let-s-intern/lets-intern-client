@@ -1,6 +1,5 @@
-import { ChallengeApplication, LiveApplication } from '../../../../../schema';
-
-import { gradeToText } from '../../../../../utils/convert';
+import { ChallengeApplication, LiveApplication } from '@/schema';
+import { gradeToText } from '@/utils/convert';
 import TD from '../../../ui/table/regacy/TD';
 
 interface Props {
@@ -18,26 +17,19 @@ const TableRow = ({ application, programType }: Props) => {
     application.couponDiscount === -1
       ? 0
       : application.isCanceled
-        ? (application.programPrice ?? 0) -
+        ? // 보증금 금액 포함해야 함
+          (application.programPrice ?? 0) +
+          ((application as ChallengeApplication).refundPrice ?? 0) -
           (application.programDiscount ?? 0) -
           (application.finalPrice ?? 0) -
           (application.couponDiscount ?? 0)
-        : application.finalPrice ?? 0;
+        : (application.finalPrice ?? 0);
 
   return (
     <tr>
       <TD>{application.orderId}</TD>
       <TD>
-        {/* {application.optionalInfo ? (
-          <Link
-            to={`/admin/users/${application.optionalInfo.userId}`}
-            className="text-neutral-grey cursor-pointer underline"
-          >
-            {application.name}
-          </Link>
-        ) : ( */}
         <span>{application.name}</span>
-        {/* )} */}
       </TD>
       <TD>{application.email}</TD>
       <TD>{application.phoneNum}</TD>
