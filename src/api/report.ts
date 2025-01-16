@@ -464,6 +464,55 @@ export const useGetActiveReports = () => {
   });
 };
 
+/**
+ * 진단서 데이터 조회
+ * TODO: 구조 더 깔끔하게 정리하기. 현재 하나의 id라도 전체 Active Reports를 가져오는 구조
+ */
+export const fetchReport = async ({
+  type,
+  id,
+}: {
+  type: ReportType;
+  id?: number;
+}): Promise<ReportDetail | null> => {
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_SERVER_API}/report/active`,
+  );
+
+  if (!res.ok) {
+    throw new Error('Failed to fetch report data');
+  }
+
+  const data = await res.json();
+  const activeReports = getActiveReportsSchema.parse(data.data);
+  const visibleReports = activeReports.resumeInfoList.filter(
+    (item) =>
+      item.isVisible === true &&
+      item.visibleDate &&
+      new Date(item.visibleDate) <= new Date(),
+  );
+
+  let list: ReportDetail[];
+
+  if (type === 'PERSONAL_STATEMENT') {
+    list = activeReports.personalStatementInfoList;
+  } else if (type === 'PORTFOLIO') {
+    list = activeReports.portfolioInfoList;
+  } else if (type === 'RESUME') {
+    list = activeReports.resumeInfoList;
+  } else {
+    throw new Error('Invalid report type');
+  }
+
+  const report = !id
+    ? visibleReports.length > 0
+      ? visibleReports[0]
+      : undefined
+    : list.find((item) => item.reportId === id);
+
+  return report ?? null;
+};
+
 // GET /api/v1/report/{reportId}/admin
 const getReportDetailForAdminSchema = z.object({
   reportId: z.number(),
@@ -770,10 +819,14 @@ export const usePatchApplicationDocument = ({
       queryClient.invalidateQueries({
         queryKey: [useGetReportApplicationsForAdminQueryKey],
       });
-      successCallback && successCallback();
+      if (successCallback) {
+        successCallback();
+      }
     },
     onError: (error: Error) => {
-      errorCallback && errorCallback(error);
+      if (errorCallback) {
+        errorCallback(error);
+      }
     },
   });
 };
@@ -903,10 +956,14 @@ export const usePatchReportApplicationSchedule = ({
       queryClient.invalidateQueries({
         queryKey: [useGetReportApplicationsForAdminQueryKey],
       });
-      successCallback && successCallback();
+      if (successCallback) {
+        successCallback();
+      }
     },
     onError: (error: Error) => {
-      errorCallback && errorCallback(error);
+      if (errorCallback) {
+        errorCallback(error);
+      }
     },
   });
 };
@@ -1124,10 +1181,14 @@ export const useDeleteReportApplication = ({
       queryClient.invalidateQueries({
         queryKey: [useGetReportPaymentDetailQueryKey],
       });
-      successCallback && successCallback();
+      if (successCallback) {
+        successCallback();
+      }
     },
     onError: (error: Error) => {
-      errorCallback && errorCallback(error);
+      if (errorCallback) {
+        errorCallback(error);
+      }
     },
   });
 };
