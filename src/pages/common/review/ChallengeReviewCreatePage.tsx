@@ -63,7 +63,7 @@ const ChallengeReviewCreatePage = () => {
             <TenScore tenScore={satisfaction} setTenScore={setSatisfaction} />
           </section>
 
-          {/* 추천 */}
+          {/* 추천 정도*/}
           <section>
             <ReviewQuestion required>
               2. {josa(programTitle ?? '', '을/를')} 주변에 얼마나 추천하고
@@ -72,6 +72,7 @@ const ChallengeReviewCreatePage = () => {
             <ReviewInstruction>
               {programTitle}의 만족도를 0~10점 사이로 평가해주세요!
             </ReviewInstruction>
+            {/* 몇 점을 선택하냐에 따라 질문이 증식함 */}
             <RecommendReviewField
               programTitle={programTitle}
               tenScore={tenScore}
