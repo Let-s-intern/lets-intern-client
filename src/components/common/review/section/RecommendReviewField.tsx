@@ -1,7 +1,7 @@
 import { josa } from 'es-hangul';
 import { useEffect } from 'react';
-import TextArea from '../../ui/input/TextArea';
 import ReviewInstruction from '../ReviewInstruction';
+import ReviewTextarea from '../ReviewTextarea';
 import TenScore from '../score/TenScore';
 import YesNoScore from '../score/YesNoScore';
 
@@ -88,8 +88,7 @@ const RecommendReviewField = ({
                   <ReviewInstruction required>
                     친구/지인에게 어떤 부분을 이야기 하면서 추천하셨나요?
                   </ReviewInstruction>
-                  <TextArea
-                    rows={3}
+                  <ReviewTextarea
                     placeholder="친구/지인에게 이야기한다고 생각하며 편하게 작성해주세요!"
                     value={npsAns}
                     onChange={(e) => setNpsAns(e.target.value)}
@@ -101,8 +100,7 @@ const RecommendReviewField = ({
                     만약 {josa(programTitle ?? '', '을/를')} 친구/지인에게
                     추천한다면 어떤 부분을 이야기 하면서 추천하실 것 같나요?
                   </ReviewInstruction>
-                  <TextArea
-                    rows={3}
+                  <ReviewTextarea
                     placeholder="친구/지인에게 이야기한다고 생각하며 편하게 작성해주세요!"
                     value={npsAns}
                     onChange={(e) => setNpsAns(e.target.value)}
@@ -115,8 +113,7 @@ const RecommendReviewField = ({
             <ReviewInstruction required>
               해당 점수를 선택한 이유는 무엇인가요?
             </ReviewInstruction>
-            <TextArea
-              rows={3}
+            <ReviewTextarea
               placeholder="이유를 자세히 설명해주세요"
               value={npsAns}
               onChange={(e) => setNpsAns(e.target.value)}
