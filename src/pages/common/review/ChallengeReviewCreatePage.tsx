@@ -5,6 +5,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 
 import RecommendReviewField from '@/components/common/review/section/RecommendReviewField';
 import axios from '@/utils/axios';
+import ReviewInstruction from '@components/common/review/ReviewInstruction';
 import ReviewQuestion from '@components/common/review/ReviewQuestion';
 import TenScore from '@components/common/review/score/TenScore';
 import BackHeader from '@components/common/ui/BackHeader';
@@ -35,9 +36,10 @@ const ChallengeReviewCreatePage = () => {
   return (
     <div className="mx-auto bg-neutral-0/50 md:fixed md:inset-0 md:z-50 md:flex md:flex-col md:items-center md:justify-center">
       {/* 모바일 전용 헤더 */}
-      <BackHeader to="/mypage/review" className="bg-white px-5">
+      <BackHeader to="/mypage/review" className="bg-white px-5 md:hidden">
         후기 작성
       </BackHeader>
+
       <main className="relative md:overflow-hidden md:rounded-xl">
         <div className="flex w-full flex-col gap-16 bg-white px-5 md:max-h-[45rem] md:w-[40rem] md:overflow-y-scroll md:rounded-xl md:px-14 md:pb-6 md:pt-12">
           {/* 데스크탑 전용 닫기 버튼 */}
@@ -53,18 +55,23 @@ const ChallengeReviewCreatePage = () => {
           {/* 만족도 평가 */}
           <section>
             <ReviewQuestion required>
-              {josa(programTitle ?? '', '은/는')} 어떠셨나요?
+              1. {josa(programTitle ?? '', '은/는')} 어떠셨나요?
             </ReviewQuestion>
-            <p>{programTitle}의 만족도를 0~10점 사이로 평가해주세요!</p>
+            <ReviewInstruction>
+              {programTitle}의 만족도를 0~10점 사이로 평가해주세요!
+            </ReviewInstruction>
             <TenScore tenScore={satisfaction} setTenScore={setSatisfaction} />
           </section>
 
           {/* 추천 */}
           <section>
             <ReviewQuestion required>
-              {josa(programTitle ?? '', '을/를')} 주변에 얼마나 추천하고
+              2. {josa(programTitle ?? '', '을/를')} 주변에 얼마나 추천하고
               싶으신가요?
             </ReviewQuestion>
+            <ReviewInstruction>
+              {programTitle}의 만족도를 0~10점 사이로 평가해주세요!
+            </ReviewInstruction>
             <RecommendReviewField
               programTitle={programTitle}
               tenScore={tenScore}
@@ -79,7 +86,7 @@ const ChallengeReviewCreatePage = () => {
           {/* 목표 달성 */}
           <section>
             <ReviewQuestion required>
-              {josa(programTitle ?? '', '을/를')} 참여하기 전의 목표를 어떻게
+              3. {josa(programTitle ?? '', '을/를')} 참여하기 전의 목표를 어떻게
               달성하셨나요?
             </ReviewQuestion>
             <div>
@@ -97,8 +104,8 @@ const ChallengeReviewCreatePage = () => {
           {/* 만족했던 점 */}
           <section>
             <ReviewQuestion required>
-              {josa(programTitle ?? '', '을/를')} 참여하면서 가장 만족했던 점을
-              남겨주세요!
+              4. {josa(programTitle ?? '', '을/를')} 참여하면서 가장 만족했던
+              점을 남겨주세요!
             </ReviewQuestion>
             <TextArea
               rows={3}
@@ -109,8 +116,8 @@ const ChallengeReviewCreatePage = () => {
           {/* 아쉬웠던 점 */}
           <section>
             <ReviewQuestion required>
-              {josa(programTitle ?? '', '을/를')} 참여하면서 가장 아쉬웠던 점을
-              남겨주세요!
+              5. {josa(programTitle ?? '', '을/를')} 참여하면서 가장 아쉬웠던
+              점을 남겨주세요!
             </ReviewQuestion>
             <TextArea
               rows={3}

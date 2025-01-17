@@ -1,6 +1,7 @@
 import { josa } from 'es-hangul';
 import { useEffect } from 'react';
 import TextArea from '../../ui/input/TextArea';
+import ReviewInstruction from '../ReviewInstruction';
 import TenScore from '../score/TenScore';
 import YesNoScore from '../score/YesNoScore';
 
@@ -52,28 +53,26 @@ const RecommendReviewField = ({
 
   return (
     <div className="flex flex-col gap-6">
-      <div className="flex flex-col gap-6">
-        <TenScore
-          tenScore={tenScore}
-          setTenScore={(value) => {
-            const prevMode = getMode(tenScore, hasRecommendationExperience);
-            const nextMode = getMode(value, hasRecommendationExperience);
-            if (prevMode !== nextMode) {
-              setNpsAns('');
-            }
-            setTenScore(value);
-          }}
-        />
-      </div>
+      <TenScore
+        tenScore={tenScore}
+        setTenScore={(value) => {
+          const prevMode = getMode(tenScore, hasRecommendationExperience);
+          const nextMode = getMode(value, hasRecommendationExperience);
+          if (prevMode !== nextMode) {
+            setNpsAns('');
+          }
+          setTenScore(value);
+        }}
+      />
+
       {tenScore !== null &&
         (tenScore > 6 ? (
           <>
             <div className="flex flex-col gap-3">
-              <p>
+              <ReviewInstruction required>
                 실제로 {josa(programTitle ?? '', '을/를')} 친구/지인에게
                 추천해보신 경험이 있으신가요?
-                <span className="ml-1 text-requirement">*</span>
-              </p>
+              </ReviewInstruction>
               <YesNoScore
                 hasRecommendationExperience={hasRecommendationExperience}
                 setHasRecommendationExperience={(value) => {
@@ -82,13 +81,13 @@ const RecommendReviewField = ({
                 }}
               />
             </div>
+
             {hasRecommendationExperience !== null &&
               (hasRecommendationExperience ? (
                 <div className="flex flex-col gap-2">
-                  <p className="px-2.5">
+                  <ReviewInstruction required>
                     친구/지인에게 어떤 부분을 이야기 하면서 추천하셨나요?
-                    <span className="ml-1 text-requirement">*</span>
-                  </p>
+                  </ReviewInstruction>
                   <TextArea
                     rows={3}
                     placeholder="친구/지인에게 이야기한다고 생각하며 편하게 작성해주세요!"
@@ -98,11 +97,10 @@ const RecommendReviewField = ({
                 </div>
               ) : (
                 <div className="flex flex-col gap-2">
-                  <p className="px-2.5">
+                  <ReviewInstruction required>
                     만약 {josa(programTitle ?? '', '을/를')} 친구/지인에게
                     추천한다면 어떤 부분을 이야기 하면서 추천하실 것 같나요?
-                    <span className="ml-1 text-requirement">*</span>
-                  </p>
+                  </ReviewInstruction>
                   <TextArea
                     rows={3}
                     placeholder="친구/지인에게 이야기한다고 생각하며 편하게 작성해주세요!"
@@ -114,10 +112,9 @@ const RecommendReviewField = ({
           </>
         ) : (
           <div className="flex flex-col gap-2">
-            <p className="px-2.5">
+            <ReviewInstruction required>
               해당 점수를 선택한 이유는 무엇인가요?
-              <span className="ml-1 text-requirement">*</span>
-            </p>
+            </ReviewInstruction>
             <TextArea
               rows={3}
               placeholder="이유를 자세히 설명해주세요"
