@@ -34,6 +34,7 @@ const ChallengeReviewCreatePage = () => {
   });
 
   return (
+    // 바탕
     <div className="mx-auto bg-neutral-0/50 md:fixed md:inset-0 md:z-50 md:flex md:flex-col md:items-center md:justify-center">
       {/* 모바일 전용 헤더 */}
       <BackHeader to="/mypage/review" className="bg-white px-5 md:hidden">
@@ -41,7 +42,7 @@ const ChallengeReviewCreatePage = () => {
       </BackHeader>
 
       <main className="relative md:overflow-hidden md:rounded-xl">
-        <div className="flex w-full flex-col gap-16 bg-white px-5 md:max-h-[45rem] md:w-[40rem] md:overflow-y-scroll md:rounded-xl md:px-14 md:pb-6 md:pt-12">
+        <div className="flex w-full flex-col gap-16 bg-white px-5 pb-8 pt-2 md:max-h-[45rem] md:w-[40rem] md:overflow-y-scroll md:rounded-xl md:px-12 md:pb-8 md:pt-14">
           {/* 데스크탑 전용 닫기 버튼 */}
           <img
             src="/icons/menu_close_md.svg"
