@@ -45,6 +45,7 @@ import ReportPersonalStatementPage from './pages/common/report/ReportPersonalSta
 import ReportPortfolioPage from './pages/common/report/ReportPortfolioPage';
 import ReportResumePage from './pages/common/report/ReportResumePage';
 import ReportTossPage from './pages/common/report/ReportTossPage';
+import ChallengeReviewCreatePage from './pages/common/review/ChallengeReviewCreatePage';
 import ReviewCreate from './pages/common/review/ReviewCreate';
 import ReviewDetail from './pages/common/review/ReviewDetail';
 import Maintenance from './pages/maintenance/Maintenance';
@@ -130,7 +131,22 @@ const Router = () => {
                 <Route path="application" element={<Application />} />
                 {/* /mypage/review */}
                 <Route path="review" element={<Review />} />
-                {/* /mypage/review/new/program/:programId */}
+                {/* /mypage/review/new/challenge/:programId */}
+                <Route
+                  path="review/new/challenge/:programId"
+                  element={<ChallengeReviewCreatePage />}
+                />
+                {/* /mypage/review/new/live/:programId */}
+                <Route
+                  path="review/new/live/:programId"
+                  element={<ReviewCreate isEdit={false} />}
+                />
+                {/* /mypage/review/new/report/:programId */}
+                <Route
+                  path="review/new/report/:reportId"
+                  element={<ReviewCreate isEdit={false} />}
+                />
+                {/* /mypage/review/old/program/:programId */}
                 <Route
                   path="review/new/program/:programType/:programId"
                   element={<ReviewCreate isEdit={false} />}

@@ -1,13 +1,16 @@
+/** @deprecated */
+
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 
 import ConfirmSection from '@/components/common/review/section/ConfirmSection';
-import StarScoreSection from '@/components/common/review/section/StarScoreSection';
-import TenScoreSection from '@/components/common/review/section/TenScoreSection';
+import RecommendReviewSection from '@/components/common/review/section/RecommendReviewSection';
 import TextAreaSection from '@/components/common/review/section/TextAreaSection';
 import axios from '@/utils/axios';
+import TenScore from '@components/common/review/score/TenScore';
 import ReportReviewSection from '@components/common/review/section/ReportReviewSection';
+import { josa } from 'es-hangul';
 
 const ReviewCreate = ({ isEdit }: { isEdit: boolean }) => {
   const params = useParams();
@@ -15,6 +18,7 @@ const ReviewCreate = ({ isEdit }: { isEdit: boolean }) => {
   const navigate = useNavigate();
 
   const [starScore, setStarScore] = useState<number>(0);
+  const [satisfaction, setSatisfaction] = useState<number | null>(null);
   const [tenScore, setTenScore] = useState<number | null>(null);
   const [content, setContent] = useState<string>('');
   const [hasRecommendationExperience, setHasRecommendationExperience] =
@@ -144,12 +148,18 @@ const ReviewCreate = ({ isEdit }: { isEdit: boolean }) => {
               navigate(-1);
             }}
           />
-          <StarScoreSection
-            starScore={starScore}
-            setStarScore={setStarScore}
-            title={programTitle}
-          />
-          <TenScoreSection
+          {/* 만족도 평가 */}
+          <div>
+            <h1 className="text-lg font-semibold">
+              {josa(programTitle ?? '', '은/는')} 어떠셨나요?
+              <span className="ml-1 text-requirement">*</span>
+            </h1>
+            <p>{programTitle}의 만족도를 0~10점 사이로 평가해주세요!</p>
+            <TenScore tenScore={satisfaction} setTenScore={setSatisfaction} />
+          </div>
+
+          {/* 추천 */}
+          <RecommendReviewSection
             programTitle={programTitle}
             tenScore={tenScore}
             setTenScore={setTenScore}
@@ -158,6 +168,8 @@ const ReviewCreate = ({ isEdit }: { isEdit: boolean }) => {
             npsAns={npsAns}
             setNpsAns={setNpsAns}
           />
+
+          {/* 서류 진단 */}
           {programType !== 'report' ? (
             <TextAreaSection content={content} setContent={setContent} />
           ) : (
@@ -167,6 +179,7 @@ const ReviewCreate = ({ isEdit }: { isEdit: boolean }) => {
               setHowHelpful={setHowHelpful}
             />
           )}
+
           <ConfirmSection
             isEdit={isEdit}
             onConfirm={handleConfirm}

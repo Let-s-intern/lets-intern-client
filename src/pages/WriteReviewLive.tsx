@@ -2,8 +2,8 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import ConfirmSection from '../components/common/review/section/ConfirmSection';
+import RecommendReviewSection from '../components/common/review/section/RecommendReviewSection';
 import StarScoreSection from '../components/common/review/section/StarScoreSection';
-import TenScoreSection from '../components/common/review/section/TenScoreSection';
 import TextAreaSection from '../components/common/review/section/TextAreaSection';
 import {
   CreateReviewByLinkProgramType,
@@ -77,7 +77,7 @@ const WriteReviewLive = () => {
         setStarScore={setStarScore}
         title={live?.title ?? '라이브 타이틀'}
       />
-      <TenScoreSection
+      <RecommendReviewSection
         programTitle={live?.title ?? '라이브 타이틀'}
         tenScore={tenScore}
         setTenScore={setTenScore}
