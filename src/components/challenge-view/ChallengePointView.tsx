@@ -70,6 +70,9 @@ const REWARD = {
 const { CAREER_START, PERSONAL_STATEMENT, PORTFOLIO } =
   challengeTypeSchema.enum;
 
+const DATE_FORMAT = 'YYYY년 M월 D일(dd) HH시 mm분';
+const DATE_FORMAT_WITHOUT_MINUTE = 'YYYY년 M월 D일(dd) HH시';
+
 const ChallengePointView = ({
   point,
   startDate,
@@ -92,16 +95,17 @@ const ChallengePointView = ({
   const programSchedule = [
     {
       title: '진행 기간',
-      content: `${startDate.format('YYYY년 M월 D일(dd) HH시 mm분')}\n~ ${endDate.format('YYYY년 M월 D일(dd) HH시 mm분')}`,
+      content: `${startDate.format(DATE_FORMAT)}\n~ ${endDate.format(DATE_FORMAT)}`,
     },
     {
       title: 'OT 일자',
       content: (
         <>
-          {startDate.format('YYYY년 M월 D일(dd) HH시 mm분')}{' '}
-          <span className="text-xxsmall12 text-neutral-35 md:text-xsmall14">
-            (*40분 소요)
-          </span>
+          {/* 정각이면 'mm분' 생략 */}
+          {startDate.get('minute') === 0
+            ? startDate.format(DATE_FORMAT_WITHOUT_MINUTE)
+            : startDate.format(DATE_FORMAT)}{' '}
+          ~ {startDate.add(40, 'minute').format('HH시 mm분')}
           <br />
           *실시간 참여 권장
           <br className="hidden md:block" />{' '}
