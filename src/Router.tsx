@@ -146,7 +146,7 @@ const Router = () => {
                   path="review/new/report/:reportId"
                   element={<ReviewCreate isEdit={false} />}
                 />
-                {/* /mypage/review/old/program/:programId */}
+                {/* [deprecated] /mypage/review/new/program/:programId */}
                 <Route
                   path="review/new/program/:programType/:programId"
                   element={<ReviewCreate isEdit={false} />}
