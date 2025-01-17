@@ -1,9 +1,9 @@
+import clsx from 'clsx';
 import { useEffect } from 'react';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 
 import NavItem from '@/components/common/mypage/ui/nav/NavItem';
 import useAuthStore from '@/store/useAuthStore';
-import clsx from 'clsx';
 
 const MyPage = () => {
   const { isLoggedIn } = useAuthStore();

@@ -3,8 +3,9 @@ import { josa } from 'es-hangul';
 import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
-import RecommendReviewSection from '@/components/common/review/section/RecommendReviewSection';
+import RecommendReviewField from '@/components/common/review/section/RecommendReviewField';
 import axios from '@/utils/axios';
+import ReviewQuestion from '@components/common/review/ReviewQuestion';
 import TenScore from '@components/common/review/score/TenScore';
 import BackHeader from '@components/common/ui/BackHeader';
 import BaseButton from '@components/common/ui/button/BaseButton';
@@ -51,32 +52,36 @@ const ChallengeReviewCreatePage = () => {
 
           {/* 만족도 평가 */}
           <section>
-            <h1 className="text-lg font-semibold">
+            <ReviewQuestion required>
               {josa(programTitle ?? '', '은/는')} 어떠셨나요?
-              <span className="ml-1 text-requirement">*</span>
-            </h1>
+            </ReviewQuestion>
             <p>{programTitle}의 만족도를 0~10점 사이로 평가해주세요!</p>
             <TenScore tenScore={satisfaction} setTenScore={setSatisfaction} />
           </section>
 
           {/* 추천 */}
-          <RecommendReviewSection
-            programTitle={programTitle}
-            tenScore={tenScore}
-            setTenScore={setTenScore}
-            hasRecommendationExperience={hasRecommendationExperience}
-            setHasRecommendationExperience={setHasRecommendationExperience}
-            npsAns={npsAns}
-            setNpsAns={setNpsAns}
-          />
+          <section>
+            <ReviewQuestion required>
+              {josa(programTitle ?? '', '을/를')} 주변에 얼마나 추천하고
+              싶으신가요?
+            </ReviewQuestion>
+            <RecommendReviewField
+              programTitle={programTitle}
+              tenScore={tenScore}
+              setTenScore={setTenScore}
+              hasRecommendationExperience={hasRecommendationExperience}
+              setHasRecommendationExperience={setHasRecommendationExperience}
+              npsAns={npsAns}
+              setNpsAns={setNpsAns}
+            />
+          </section>
 
           {/* 목표 달성 */}
           <section>
-            <h1 className="text-lg font-semibold">
+            <ReviewQuestion required>
               {josa(programTitle ?? '', '을/를')} 참여하기 전의 목표를 어떻게
-              달성하셨나요?*
-              <span className="ml-1 text-requirement">*</span>
-            </h1>
+              달성하셨나요?
+            </ReviewQuestion>
             <div>
               <span>oo님이 작성하신 챌린지 시작 전 목표 🎯</span>
               <br />
@@ -91,11 +96,10 @@ const ChallengeReviewCreatePage = () => {
 
           {/* 만족했던 점 */}
           <section>
-            <h1 className="text-lg font-semibold">
+            <ReviewQuestion required>
               {josa(programTitle ?? '', '을/를')} 참여하면서 가장 만족했던 점을
               남겨주세요!
-              <span className="ml-1 text-requirement">*</span>
-            </h1>
+            </ReviewQuestion>
             <TextArea
               rows={3}
               placeholder="가장 도움이 되었던 미션이나, 학습 콘텐츠와 같이 참여하면서 가장 만족했던 점을 자유롭게 작성해주세요."
@@ -104,11 +108,10 @@ const ChallengeReviewCreatePage = () => {
 
           {/* 아쉬웠던 점 */}
           <section>
-            <h1 className="text-lg font-semibold">
+            <ReviewQuestion required>
               {josa(programTitle ?? '', '을/를')} 참여하면서 가장 아쉬웠던 점을
-              남겨주세요!*
-              <span className="ml-1 text-requirement">*</span>
-            </h1>
+              남겨주세요!
+            </ReviewQuestion>
             <TextArea
               rows={3}
               placeholder="참여하면서 아쉬웠던 점이나 추가되었으면 좋겠는 내용이 있다면 자유롭게 작성해주세요."

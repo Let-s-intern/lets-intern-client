@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 
 import ConfirmSection from '@/components/common/review/section/ConfirmSection';
-import RecommendReviewSection from '@/components/common/review/section/RecommendReviewSection';
+import RecommendReviewField from '@/components/common/review/section/RecommendReviewField';
 import TextAreaSection from '@/components/common/review/section/TextAreaSection';
 import axios from '@/utils/axios';
 import TenScore from '@components/common/review/score/TenScore';
@@ -159,7 +159,7 @@ const ReviewCreate = ({ isEdit }: { isEdit: boolean }) => {
           </div>
 
           {/* 추천 */}
-          <RecommendReviewSection
+          <RecommendReviewField
             programTitle={programTitle}
             tenScore={tenScore}
             setTenScore={setTenScore}

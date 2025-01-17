@@ -2,7 +2,7 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import ConfirmSection from '../components/common/review/section/ConfirmSection';
-import RecommendReviewSection from '../components/common/review/section/RecommendReviewSection';
+import RecommendReviewSection from '../components/common/review/section/RecommendReviewField';
 import StarScoreSection from '../components/common/review/section/StarScoreSection';
 import TextAreaSection from '../components/common/review/section/TextAreaSection';
 import {

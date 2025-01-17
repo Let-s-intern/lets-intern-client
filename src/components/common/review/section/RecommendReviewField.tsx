@@ -35,7 +35,7 @@ const getMode = (
     : 'nps_no_recommendation';
 };
 
-const RecommendReviewSection = ({
+const RecommendReviewField = ({
   programTitle,
   tenScore,
   setTenScore,
@@ -51,15 +51,8 @@ const RecommendReviewSection = ({
   }, [tenScore, setHasRecommendationExperience, setNpsAns]);
 
   return (
-    <section className="flex flex-col gap-6">
+    <div className="flex flex-col gap-6">
       <div className="flex flex-col gap-6">
-        <div className="flex flex-col gap-2">
-          <h1 className="text-lg font-semibold">
-            {josa(programTitle ?? '', '을/를')} 주변에 얼마나 추천하고
-            싶으신가요?<span className="ml-1 text-requirement">*</span>
-          </h1>
-          <p>{programTitle}의 만족도를 0~10점 사이로 평가해주세요!</p>
-        </div>
         <TenScore
           tenScore={tenScore}
           setTenScore={(value) => {
@@ -133,8 +126,8 @@ const RecommendReviewSection = ({
             />
           </div>
         ))}
-    </section>
+    </div>
   );
 };
 
-export default RecommendReviewSection;
+export default RecommendReviewField;
