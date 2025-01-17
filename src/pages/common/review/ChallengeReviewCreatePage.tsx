@@ -6,7 +6,9 @@ import { useNavigate, useParams } from 'react-router-dom';
 import RecommendReviewSection from '@/components/common/review/section/RecommendReviewSection';
 import axios from '@/utils/axios';
 import TenScore from '@components/common/review/score/TenScore';
+import BackHeader from '@components/common/ui/BackHeader';
 import BaseButton from '@components/common/ui/button/BaseButton';
+import TextArea from '@components/common/ui/input/TextArea';
 
 const ChallengeReviewCreatePage = () => {
   const params = useParams();
@@ -31,6 +33,10 @@ const ChallengeReviewCreatePage = () => {
 
   return (
     <div className="mx-auto bg-neutral-0/50 md:fixed md:inset-0 md:z-50 md:flex md:flex-col md:items-center md:justify-center">
+      {/* 모바일 전용 헤더 */}
+      <BackHeader to="/mypage/review" className="bg-white px-5">
+        후기 작성
+      </BackHeader>
       <main className="relative md:overflow-hidden md:rounded-xl">
         <div className="flex w-full flex-col gap-16 bg-white px-5 md:max-h-[45rem] md:w-[40rem] md:overflow-y-scroll md:rounded-xl md:px-14 md:pb-6 md:pt-12">
           {/* 데스크탑 전용 닫기 버튼 */}
@@ -44,14 +50,14 @@ const ChallengeReviewCreatePage = () => {
           />
 
           {/* 만족도 평가 */}
-          <div>
+          <section>
             <h1 className="text-lg font-semibold">
               {josa(programTitle ?? '', '은/는')} 어떠셨나요?
               <span className="ml-1 text-requirement">*</span>
             </h1>
             <p>{programTitle}의 만족도를 0~10점 사이로 평가해주세요!</p>
             <TenScore tenScore={satisfaction} setTenScore={setSatisfaction} />
-          </div>
+          </section>
 
           {/* 추천 */}
           <RecommendReviewSection
@@ -63,6 +69,51 @@ const ChallengeReviewCreatePage = () => {
             npsAns={npsAns}
             setNpsAns={setNpsAns}
           />
+
+          {/* 목표 달성 */}
+          <section>
+            <h1 className="text-lg font-semibold">
+              {josa(programTitle ?? '', '을/를')} 참여하기 전의 목표를 어떻게
+              달성하셨나요?*
+              <span className="ml-1 text-requirement">*</span>
+            </h1>
+            <div>
+              <span>oo님이 작성하신 챌린지 시작 전 목표 🎯</span>
+              <br />
+              {/* TODO: 사용자가 설정한 목표가 들어가야 함 */}
+              <p>“이번에는 꼭 서류 합격률 50%가 넘는 이력서를 만들어보자!”</p>
+            </div>
+            <TextArea
+              rows={3}
+              placeholder="챌린지 참여 전의 목표를 어느 정도 달성하셨는지, 그 과정에서 챌린지가 어떤 도움을 주었는지 작성해주세요."
+            />
+          </section>
+
+          {/* 만족했던 점 */}
+          <section>
+            <h1 className="text-lg font-semibold">
+              {josa(programTitle ?? '', '을/를')} 참여하면서 가장 만족했던 점을
+              남겨주세요!
+              <span className="ml-1 text-requirement">*</span>
+            </h1>
+            <TextArea
+              rows={3}
+              placeholder="가장 도움이 되었던 미션이나, 학습 콘텐츠와 같이 참여하면서 가장 만족했던 점을 자유롭게 작성해주세요."
+            />
+          </section>
+
+          {/* 아쉬웠던 점 */}
+          <section>
+            <h1 className="text-lg font-semibold">
+              {josa(programTitle ?? '', '을/를')} 참여하면서 가장 아쉬웠던 점을
+              남겨주세요!*
+              <span className="ml-1 text-requirement">*</span>
+            </h1>
+            <TextArea
+              rows={3}
+              placeholder="참여하면서 아쉬웠던 점이나 추가되었으면 좋겠는 내용이 있다면 자유롭게 작성해주세요."
+            />
+          </section>
 
           <BaseButton>등록하기</BaseButton>
         </div>

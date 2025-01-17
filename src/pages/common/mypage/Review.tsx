@@ -1,7 +1,8 @@
-import { useGetAllApplicationsForReviewQuery } from '@/api/review';
 import { useMemo } from 'react';
-import DoneSection from '../../../components/common/mypage/review/section/DoneSection';
-import WaitingSection from '../../../components/common/mypage/review/section/WaitingSection';
+
+import { useGetAllApplicationsForReviewQuery } from '@/api/review';
+import DoneSection from '@/components/common/mypage/review/section/DoneSection';
+import WaitingSection from '@/components/common/mypage/review/section/WaitingSection';
 
 const Review = () => {
   const { data: applications } = useGetAllApplicationsForReviewQuery();
