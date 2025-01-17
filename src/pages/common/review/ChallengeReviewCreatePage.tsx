@@ -7,10 +7,10 @@ import RecommendReviewField from '@/components/common/review/section/RecommendRe
 import axios from '@/utils/axios';
 import ReviewInstruction from '@components/common/review/ReviewInstruction';
 import ReviewQuestion from '@components/common/review/ReviewQuestion';
+import ReviewTextarea from '@components/common/review/ReviewTextarea';
 import TenScore from '@components/common/review/score/TenScore';
 import BackHeader from '@components/common/ui/BackHeader';
 import BaseButton from '@components/common/ui/button/BaseButton';
-import TextArea from '@components/common/ui/input/TextArea';
 
 const ChallengeReviewCreatePage = () => {
   const params = useParams();
@@ -72,7 +72,7 @@ const ChallengeReviewCreatePage = () => {
             <ReviewInstruction>
               {programTitle}의 만족도를 0~10점 사이로 평가해주세요!
             </ReviewInstruction>
-            {/* 몇 점을 선택하냐에 따라 질문이 증식함 */}
+            {/* [참고] 몇 점을 선택하냐에 따라 질문이 증식함 */}
             <RecommendReviewField
               programTitle={programTitle}
               tenScore={tenScore}
@@ -90,16 +90,18 @@ const ChallengeReviewCreatePage = () => {
               3. {josa(programTitle ?? '', '을/를')} 참여하기 전의 목표를 어떻게
               달성하셨나요?
             </ReviewQuestion>
-            <div>
-              <span>oo님이 작성하신 챌린지 시작 전 목표 🎯</span>
+            <div className="rounded-md bg-point px-5 py-3 text-center text-neutral-0">
+              <span className="text-xsmall14">
+                {/* TODO: 사용자 이름 넣어야 함 */}
+                🎯 <b>김렛츠</b>님이 작성하신 챌린지 시작 전 목표
+              </span>
               <br />
               {/* TODO: 사용자가 설정한 목표가 들어가야 함 */}
-              <p>“이번에는 꼭 서류 합격률 50%가 넘는 이력서를 만들어보자!”</p>
+              <p className="text-xsmall16 font-bold">
+                “이번에는 꼭 서류 합격률 50%가 넘는 이력서를 만들어보자!”
+              </p>
             </div>
-            <TextArea
-              rows={3}
-              placeholder="챌린지 참여 전의 목표를 어느 정도 달성하셨는지, 그 과정에서 챌린지가 어떤 도움을 주었는지 작성해주세요."
-            />
+            <ReviewTextarea placeholder="챌린지 참여 전의 목표를 어느 정도 달성하셨는지, 그 과정에서 챌린지가 어떤 도움을 주었는지 작성해주세요." />
           </section>
 
           {/* 만족했던 점 */}
@@ -108,10 +110,7 @@ const ChallengeReviewCreatePage = () => {
               4. {josa(programTitle ?? '', '을/를')} 참여하면서 가장 만족했던
               점을 남겨주세요!
             </ReviewQuestion>
-            <TextArea
-              rows={3}
-              placeholder="가장 도움이 되었던 미션이나, 학습 콘텐츠와 같이 참여하면서 가장 만족했던 점을 자유롭게 작성해주세요."
-            />
+            <ReviewTextarea placeholder="가장 도움이 되었던 미션이나, 학습 콘텐츠와 같이 참여하면서 가장 만족했던 점을 자유롭게 작성해주세요." />
           </section>
 
           {/* 아쉬웠던 점 */}
@@ -120,10 +119,7 @@ const ChallengeReviewCreatePage = () => {
               5. {josa(programTitle ?? '', '을/를')} 참여하면서 가장 아쉬웠던
               점을 남겨주세요!
             </ReviewQuestion>
-            <TextArea
-              rows={3}
-              placeholder="참여하면서 아쉬웠던 점이나 추가되었으면 좋겠는 내용이 있다면 자유롭게 작성해주세요."
-            />
+            <ReviewTextarea placeholder="참여하면서 아쉬웠던 점이나 추가되었으면 좋겠는 내용이 있다면 자유롭게 작성해주세요." />
           </section>
 
           <BaseButton>등록하기</BaseButton>

@@ -1,7 +1,8 @@
-import { twMerge } from '@/lib/twMerge';
 import { useEffect, useState } from 'react';
 
-interface TextAreaProps
+import { twMerge } from '@/lib/twMerge';
+
+export interface TextAreaProps
   extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
   maxLength?: number;
 }
