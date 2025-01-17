@@ -1,7 +1,8 @@
+import { useCurrentChallenge } from '@/context/CurrentChallengeProvider';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import clsx from 'clsx';
 import { useEffect, useState } from 'react';
-import { MyDailyMission } from '../../../../../schema';
+import { MyDailyMission, Schedule } from '../../../../../schema';
 import axios from '../../../../../utils/axios';
 import AlertModal from '../../../../ui/alert/AlertModal';
 
@@ -11,6 +12,21 @@ interface Props {
 
 const DailyMissionSubmitSection = ({ myDailyMission }: Props) => {
   const queryClient = useQueryClient();
+
+  const { schedules } = useCurrentChallenge();
+
+  const lastMission = schedules.reduce((acc: Schedule | null, schedule) => {
+    if (acc === null) return schedule;
+
+    return schedule.missionInfo.th &&
+      acc.missionInfo.th &&
+      schedule.missionInfo.th > acc.missionInfo.th
+      ? schedule
+      : acc;
+  }, null);
+
+  const isLastMission =
+    lastMission?.missionInfo.th === myDailyMission.dailyMission?.th;
 
   const attendanceLink = myDailyMission.attendanceInfo?.link;
   const attendanceReview = '';
@@ -100,6 +116,14 @@ const DailyMissionSubmitSection = ({ myDailyMission }: Props) => {
 
   const handleMissionLinkSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (isLastMission) {
+      alert(
+        '마지막 미션입니다. 미션 제출 후 미션 소감을 카톡으로 공유해주세요.',
+      );
+      return;
+    }
+
     // 미션 소감 제출 반영해야 함
     submitMissionLink.mutate(value as string);
     setIsEditing(false);
