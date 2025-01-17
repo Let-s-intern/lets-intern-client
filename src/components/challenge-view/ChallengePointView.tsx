@@ -8,6 +8,10 @@ import { clientOnly } from 'vike-react/clientOnly';
 import { getVod } from '@/api/program';
 import Check from '@/assets/icons/chevron-down.svg?react';
 import HoleIcon from '@/assets/icons/hole.svg?react';
+import {
+  LOCALIZED_YYYY_MDdd_HH,
+  LOCALIZED_YYYY_MDdd_HHmm,
+} from '@/data/dayjsFormat';
 import { ChallengeType, challengeTypeSchema, ProgramTypeEnum } from '@/schema';
 import { ChallengePoint, ProgramRecommend } from '@/types/interface';
 import { ChallengeColor } from '@components/ChallengeView';
@@ -70,9 +74,6 @@ const REWARD = {
 const { CAREER_START, PERSONAL_STATEMENT, PORTFOLIO } =
   challengeTypeSchema.enum;
 
-const DATE_FORMAT = 'YYYY년 M월 D일(dd) HH시 mm분';
-const DATE_FORMAT_WITHOUT_MINUTE = 'YYYY년 M월 D일(dd) HH시';
-
 const ChallengePointView = ({
   point,
   startDate,
@@ -95,7 +96,7 @@ const ChallengePointView = ({
   const programSchedule = [
     {
       title: '진행 기간',
-      content: `${startDate.format(DATE_FORMAT)}\n~ ${endDate.format(DATE_FORMAT)}`,
+      content: `${startDate.format(LOCALIZED_YYYY_MDdd_HHmm)}\n~ ${endDate.format(LOCALIZED_YYYY_MDdd_HHmm)}`,
     },
     {
       title: 'OT 일자',
@@ -103,8 +104,8 @@ const ChallengePointView = ({
         <>
           {/* 정각이면 'mm분' 생략 */}
           {startDate.get('minute') === 0
-            ? startDate.format(DATE_FORMAT_WITHOUT_MINUTE)
-            : startDate.format(DATE_FORMAT)}{' '}
+            ? startDate.format(LOCALIZED_YYYY_MDdd_HH)
+            : startDate.format(LOCALIZED_YYYY_MDdd_HHmm)}{' '}
           ~ {startDate.add(40, 'minute').format('HH시 mm분')}
           <br />
           *실시간 참여 권장
