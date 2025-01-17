@@ -1,3 +1,4 @@
+import clsx from 'clsx';
 import { useEffect } from 'react';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 
@@ -8,6 +9,8 @@ const MyPage = () => {
   const { isLoggedIn } = useAuthStore();
   const location = useLocation();
   const navigate = useNavigate();
+
+  const isReviewCreatePage = location.pathname.startsWith('/mypage/review/new');
 
   useEffect(() => {
     if (!isLoggedIn) {
@@ -21,7 +24,13 @@ const MyPage = () => {
   return (
     <div className="flex w-full flex-col items-center justify-start lg:px-[7.5rem]">
       <div className="flex w-full flex-col items-start justify-center gap-x-20 md:flex-row md:p-10 lg:px-5 lg:py-[3.75rem]">
-        <nav className="flex w-full items-center justify-center md:w-auto">
+        <nav
+          className={clsx(
+            'flex w-full items-center justify-center md:w-auto',
+            // 후기 작성 화면에서는 네비 바 숨김
+            { hidden: isReviewCreatePage },
+          )}
+        >
           <div className="flex w-full items-center justify-center py-8 md:w-[12.5rem] md:p-0">
             <div className="flex w-full flex-row items-center gap-x-2 gap-y-[0.0625rem] md:flex-col md:p-2">
               <NavItem

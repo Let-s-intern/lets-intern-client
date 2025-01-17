@@ -8,6 +8,10 @@ import { clientOnly } from 'vike-react/clientOnly';
 import { getVod } from '@/api/program';
 import Check from '@/assets/icons/chevron-down.svg?react';
 import HoleIcon from '@/assets/icons/hole.svg?react';
+import {
+  LOCALIZED_YYYY_MDdd_HH,
+  LOCALIZED_YYYY_MDdd_HHmm,
+} from '@/data/dayjsFormat';
 import { ChallengeType, challengeTypeSchema, ProgramTypeEnum } from '@/schema';
 import { ChallengePoint, ProgramRecommend } from '@/types/interface';
 import { ChallengeColor } from '@components/ChallengeView';
@@ -92,16 +96,17 @@ const ChallengePointView = ({
   const programSchedule = [
     {
       title: '진행 기간',
-      content: `${startDate.format('YYYY년 M월 D일(dd) HH시 mm분')}\n~ ${endDate.format('YYYY년 M월 D일(dd) HH시 mm분')}`,
+      content: `${startDate.format(LOCALIZED_YYYY_MDdd_HHmm)}\n~ ${endDate.format(LOCALIZED_YYYY_MDdd_HHmm)}`,
     },
     {
       title: 'OT 일자',
       content: (
         <>
-          {startDate.format('YYYY년 M월 D일(dd) HH시 mm분')}{' '}
-          <span className="text-xxsmall12 text-neutral-35 md:text-xsmall14">
-            (*40분 소요)
-          </span>
+          {/* 정각이면 'mm분' 생략 */}
+          {startDate.get('minute') === 0
+            ? startDate.format(LOCALIZED_YYYY_MDdd_HH)
+            : startDate.format(LOCALIZED_YYYY_MDdd_HHmm)}{' '}
+          ~ {startDate.add(40, 'minute').format('HH시 mm분')}
           <br />
           *실시간 참여 권장
           <br className="hidden md:block" />{' '}

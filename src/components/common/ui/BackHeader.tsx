@@ -11,7 +11,7 @@ interface BackHeaderProps {
 
 const BackHeader = ({ children, className, to, onClick }: BackHeaderProps) => {
   return (
-    <header className={twMerge('my-6 flex items-center gap-3', className)}>
+    <header className={twMerge('flex items-center gap-3 py-6', className)}>
       <Link to={to ?? '#'} onClick={onClick}>
         <MdOutlineArrowBack size={'1.5rem'} />
       </Link>

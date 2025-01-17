@@ -97,7 +97,7 @@ const ApplicationCard = ({
         <LinkButton
           to={`/mypage/review/${
             reviewType === 'CREATE' ? 'new' : 'edit'
-          }/program/${application.programType}/${application.programId}${
+          }${reviewType === 'CREATE' ? '' : '/program'}/${application.programType?.toLowerCase()}/${application.programId}${
             application.reviewId
               ? `/${application.reviewId}`
               : `?application=${application.id}`
