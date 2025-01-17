@@ -6,7 +6,6 @@ import ConfirmSection from '@/components/common/review/section/ConfirmSection';
 import StarScoreSection from '@/components/common/review/section/StarScoreSection';
 import TenScoreSection from '@/components/common/review/section/TenScoreSection';
 import TextAreaSection from '@/components/common/review/section/TextAreaSection';
-import { useControlScroll } from '@/hooks/useControlScroll';
 import axios from '@/utils/axios';
 import ReportReviewSection from '@components/common/review/section/ReportReviewSection';
 
@@ -27,8 +26,6 @@ const ReviewCreate = ({ isEdit }: { isEdit: boolean }) => {
   const applicationId = searchParams.get('application');
   const programId = params.programId;
   const programType = params.programType?.toLowerCase();
-
-  useControlScroll(true);
 
   const { data: reviewDetailData } = useQuery({
     queryKey: ['review', applicationId],
