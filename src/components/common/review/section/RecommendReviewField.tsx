@@ -52,7 +52,7 @@ const RecommendReviewField = ({
   }, [tenScore, setHasRecommendationExperience, setNpsAns]);
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-5">
       <TenScore
         tenScore={tenScore}
         setTenScore={(value) => {
@@ -68,7 +68,7 @@ const RecommendReviewField = ({
       {tenScore !== null &&
         (tenScore > 6 ? (
           <>
-            <div className="flex flex-col gap-3">
+            <div className="flex flex-col gap-5">
               <ReviewInstruction required>
                 실제로 {josa(programTitle ?? '', '을/를')} 친구/지인에게
                 추천해보신 경험이 있으신가요?
@@ -84,7 +84,7 @@ const RecommendReviewField = ({
 
             {hasRecommendationExperience !== null &&
               (hasRecommendationExperience ? (
-                <div className="flex flex-col gap-2">
+                <div className="flex flex-col gap-5">
                   <ReviewInstruction required>
                     친구/지인에게 어떤 부분을 이야기 하면서 추천하셨나요?
                   </ReviewInstruction>
@@ -95,7 +95,7 @@ const RecommendReviewField = ({
                   />
                 </div>
               ) : (
-                <div className="flex flex-col gap-2">
+                <div className="flex flex-col gap-5">
                   <ReviewInstruction required>
                     만약 {josa(programTitle ?? '', '을/를')} 친구/지인에게
                     추천한다면 어떤 부분을 이야기 하면서 추천하실 것 같나요?

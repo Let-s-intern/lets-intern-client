@@ -42,7 +42,7 @@ const ChallengeReviewCreatePage = () => {
       </BackHeader>
 
       <main className="relative md:overflow-hidden md:rounded-xl">
-        <div className="flex w-full flex-col gap-16 bg-white px-5 pb-8 pt-2 md:max-h-[45rem] md:w-[40rem] md:overflow-y-scroll md:rounded-xl md:px-12 md:pb-8 md:pt-14">
+        <div className="flex w-full flex-col gap-16 bg-white px-5 pb-8 pt-2 md:max-h-[45rem] md:w-[40rem] md:gap-8 md:overflow-y-scroll md:rounded-xl md:px-12 md:pb-8 md:pt-14">
           {/* 데스크탑 전용 닫기 버튼 */}
           <img
             src="/icons/menu_close_md.svg"
@@ -55,10 +55,10 @@ const ChallengeReviewCreatePage = () => {
 
           {/* 만족도 평가 */}
           <section>
-            <ReviewQuestion required>
+            <ReviewQuestion required className="mb-1">
               1. {josa(programTitle ?? '', '은/는')} 어떠셨나요?
             </ReviewQuestion>
-            <ReviewInstruction>
+            <ReviewInstruction className="mb-5">
               {programTitle}의 만족도를 0~10점 사이로 평가해주세요!
             </ReviewInstruction>
             <TenScore tenScore={satisfaction} setTenScore={setSatisfaction} />
@@ -66,11 +66,11 @@ const ChallengeReviewCreatePage = () => {
 
           {/* 추천 정도*/}
           <section>
-            <ReviewQuestion required>
+            <ReviewQuestion required className="mb-1">
               2. {josa(programTitle ?? '', '을/를')} 주변에 얼마나 추천하고
               싶으신가요?
             </ReviewQuestion>
-            <ReviewInstruction>
+            <ReviewInstruction className="mb-5">
               {programTitle}의 만족도를 0~10점 사이로 평가해주세요!
             </ReviewInstruction>
             {/* [참고] 몇 점을 선택하냐에 따라 질문이 증식함 */}
@@ -87,11 +87,12 @@ const ChallengeReviewCreatePage = () => {
 
           {/* 목표 달성 */}
           <section>
-            <ReviewQuestion required>
+            <ReviewQuestion required className="mb-5">
               3. {josa(programTitle ?? '', '을/를')} 참여하기 전의 목표를 어떻게
               달성하셨나요?
             </ReviewQuestion>
-            <div className="rounded-md bg-point px-5 py-3 text-center text-neutral-0">
+            {/* 목표 박스 */}
+            <div className="mb-3 rounded-md bg-point px-5 py-3 text-center text-neutral-0">
               <span className="text-xsmall14">
                 {/* TODO: 사용자 이름 넣어야 함 */}
                 🎯 <b>김렛츠</b>님이 작성하신 챌린지 시작 전 목표
@@ -107,7 +108,7 @@ const ChallengeReviewCreatePage = () => {
 
           {/* 만족했던 점 */}
           <section>
-            <ReviewQuestion required>
+            <ReviewQuestion required className="mb-5">
               4. {josa(programTitle ?? '', '을/를')} 참여하면서 가장 만족했던
               점을 남겨주세요!
             </ReviewQuestion>
@@ -116,7 +117,7 @@ const ChallengeReviewCreatePage = () => {
 
           {/* 아쉬웠던 점 */}
           <section>
-            <ReviewQuestion required>
+            <ReviewQuestion required className="mb-5">
               5. {josa(programTitle ?? '', '을/를')} 참여하면서 가장 아쉬웠던
               점을 남겨주세요!
             </ReviewQuestion>
