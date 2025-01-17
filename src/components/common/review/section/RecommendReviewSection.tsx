@@ -35,7 +35,7 @@ const getMode = (
     : 'nps_no_recommendation';
 };
 
-const TenScoreSection = ({
+const RecommendReviewSection = ({
   programTitle,
   tenScore,
   setTenScore,
@@ -56,7 +56,7 @@ const TenScoreSection = ({
         <div className="flex flex-col gap-2">
           <h1 className="text-lg font-semibold">
             {josa(programTitle ?? '', '을/를')} 주변에 얼마나 추천하고
-            싶으신가요?<span className="text-requirement ml-1">*</span>
+            싶으신가요?<span className="ml-1 text-requirement">*</span>
           </h1>
           <p>0~10점 사이로 선택해주세요.</p>
         </div>
@@ -79,7 +79,7 @@ const TenScoreSection = ({
               <p>
                 실제로 {josa(programTitle ?? '', '을/를')} 친구/지인에게
                 추천해보신 경험이 있으신가요?
-                <span className="text-requirement ml-1">*</span>
+                <span className="ml-1 text-requirement">*</span>
               </p>
               <YesNoScore
                 hasRecommendationExperience={hasRecommendationExperience}
@@ -94,7 +94,7 @@ const TenScoreSection = ({
                 <div className="flex flex-col gap-2">
                   <p className="px-2.5">
                     친구/지인에게 어떤 부분을 이야기 하면서 추천하셨나요?
-                    <span className="text-requirement ml-1">*</span>
+                    <span className="ml-1 text-requirement">*</span>
                   </p>
                   <TextArea
                     rows={3}
@@ -108,7 +108,7 @@ const TenScoreSection = ({
                   <p className="px-2.5">
                     만약 {josa(programTitle ?? '', '을/를')} 친구/지인에게
                     추천한다면 어떤 부분을 이야기 하면서 추천하실 것 같나요?
-                    <span className="text-requirement ml-1">*</span>
+                    <span className="ml-1 text-requirement">*</span>
                   </p>
                   <TextArea
                     rows={3}
@@ -123,7 +123,7 @@ const TenScoreSection = ({
           <div className="flex flex-col gap-2">
             <p className="px-2.5">
               해당 점수를 선택한 이유는 무엇인가요?
-              <span className="text-requirement ml-1">*</span>
+              <span className="ml-1 text-requirement">*</span>
             </p>
             <TextArea
               rows={3}
@@ -137,4 +137,4 @@ const TenScoreSection = ({
   );
 };
 
-export default TenScoreSection;
+export default RecommendReviewSection;
