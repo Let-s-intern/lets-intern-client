@@ -12,7 +12,7 @@ function GoalOrConcernsBox({ children, className }: Props) {
   return (
     <div
       className={twMerge(
-        'rounded-md bg-point px-5 py-3 text-neutral-0',
+        'overflow-hidden rounded-md bg-point text-neutral-0',
         className,
       )}
     >
