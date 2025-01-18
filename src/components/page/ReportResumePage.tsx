@@ -33,7 +33,7 @@ export const resumeColors = {
   _11AC5C: '#11AC5C',
 };
 
-const ReportResumePage = ({ report }: { report: ReportDetail }) => {
+const ReportResumePage = ({ report }: { report: ReportDetail | null }) => {
   const description = resumeReportDescription;
 
   const title = getReportLandingTitle(report?.title ?? '이력서');

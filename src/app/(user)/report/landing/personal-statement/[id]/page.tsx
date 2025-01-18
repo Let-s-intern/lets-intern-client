@@ -1,5 +1,5 @@
 import { fetchReport } from '@/api/report';
-import ReportResumePage from '@components/page/ReportResumePage';
+import ReportPersonalStatementPage from '@components/page/ReportPersonalStatementPage';
 import { z } from 'zod';
 
 const paramsSchema = z.object({
@@ -10,11 +10,11 @@ const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
   const { id } = paramsSchema.parse(await params);
 
   const report = await fetchReport({
-    type: 'RESUME',
+    type: 'PERSONAL_STATEMENT',
     id,
   });
 
-  return <ReportResumePage report={report} />;
+  return <ReportPersonalStatementPage report={report} />;
 };
 
 export default Page;
