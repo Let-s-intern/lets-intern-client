@@ -7,7 +7,7 @@ interface Props extends TextAreaProps {}
 function ReviewTextarea(props: Props) {
   return (
     <TextArea
-      wrapperClassName="h-[5.625rem] "
+      wrapperClassName="h-28"
       maxLength={500}
       placeholder={props.placeholder}
     />
