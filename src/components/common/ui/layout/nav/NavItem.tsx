@@ -46,13 +46,13 @@ const NavItem = ({
         onMouseLeave={() => setHover(false)}
       >
         {hover && hoverItem && (
-          <div className="relative flex w-full flex-col items-center drop-shadow-05">
+          <div className="relative flex flex-col items-center w-full drop-shadow-05">
             <div className="absolute top-0 z-10 mx-auto h-[13px] w-[20px] overflow-hidden text-white">
               <Polygon />
             </div>
             <div className="mt-[13px] flex w-full flex-col rounded-xs bg-white py-1">
               {!isItemLoaded ? (
-                <div className="mx-auto text-xsmall16 font-normal text-neutral-35">
+                <div className="mx-auto font-normal text-xsmall16 text-neutral-35">
                   Loading...
                 </div>
               ) : (

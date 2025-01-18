@@ -213,6 +213,7 @@ const NavBar = () => {
               active={activeLink === 'REPORT'}
               hoverItem={reportItems}
               isItemLoaded={!isLoading && !!data}
+              reloadDocument
             >
               🔥 서류 진단받고 합격하기
             </NavItem>
@@ -332,13 +333,14 @@ const NavBar = () => {
             <SideNavItem to="/program" onClick={closeMenu}>
               프로그램
             </SideNavItem>
-            <SideNavItem to="/blog/list" onClick={closeMenu}>
+            <SideNavItem to="/blog/list" onClick={closeMenu} reloadDocument>
               블로그
             </SideNavItem>
             <SideNavItem
               to="/report/landing"
               onClick={closeMenu}
               hoverItem={reportItems}
+              reloadDocument
             >
               🔥 서류 진단받고 합격하기
             </SideNavItem>

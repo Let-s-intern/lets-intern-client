@@ -29,14 +29,7 @@ const ChallengeCTAButtons = ({
 
   const onApplyClick = useCallback(() => {
     if (!isLoggedIn) {
-      const parts = window.location.pathname.split('/');
-      const isServerRendered = isNaN(Number(parts[parts.length - 1]));
-      const redirectPath = isServerRendered
-        ? parts.slice(0, -1).join('/')
-        : window.location.pathname;
-      const href = `/login?redirect=${encodeURIComponent(redirectPath)}`;
-      router.push(href);
-      // navigate(`/login?redirect=${redirectPath}`);
+      window.location.href = `/login?redirect=${encodeURIComponent(`/program/challenge/${challengeId}`)}`;
       return;
     }
 

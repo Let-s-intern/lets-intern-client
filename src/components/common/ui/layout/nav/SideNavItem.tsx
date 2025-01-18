@@ -11,6 +11,7 @@ interface SideNavItemProps {
   rel?: string;
   className?: string;
   hoverItem?: NavSubItemProps[];
+  reloadDocument?: boolean;
 }
 
 const SideNavItem = ({
@@ -21,12 +22,13 @@ const SideNavItem = ({
   rel,
   className,
   hoverItem,
+  reloadDocument,
 }: SideNavItemProps) => {
   const Wrapper = hoverItem ? 'div' : Link;
   const [open, setOpen] = useState(false);
 
   return (
-    <div className="flex w-full flex-col px-5">
+    <div className="flex flex-col w-full px-5">
       <Wrapper
         to={to}
         className={clsx(
@@ -43,7 +45,7 @@ const SideNavItem = ({
         }}
         target={target}
         rel={rel}
-        reloadDocument
+        reloadDocument={reloadDocument}
       >
         <span className="text-1.125-bold">{children}</span>
       </Wrapper>
@@ -57,8 +59,8 @@ const SideNavItem = ({
               key={item.to}
               to={item.to}
               onClick={onClick}
-              className="flex w-full px-8 py-2 text-xsmall16 font-semibold text-neutral-20"
-              reloadDocument
+              className="flex w-full px-8 py-2 font-semibold text-xsmall16 text-neutral-20"
+              reloadDocument={reloadDocument}
             >
               {item.text}
             </Link>
