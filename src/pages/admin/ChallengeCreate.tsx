@@ -9,7 +9,6 @@ import {
   ProgramTypeEnum,
 } from '@/schema';
 import { ChallengeContent } from '@/types/interface';
-import ChallengePreviewButton from '@components/admin/ChallengePreviewButton';
 import EditorApp from '@components/admin/lexical/EditorApp';
 import ImageUpload from '@components/admin/program/ui/form/ImageUpload';
 import Header from '@components/admin/ui/header/Header';
@@ -121,7 +120,7 @@ const ChallengeCreate: React.FC = () => {
   }
 
   return (
-    <div className="mx-3 mb-40 mt-3">
+    <div className="mx-3 mt-3 mb-40">
       <Header>
         <Heading>챌린지 생성</Heading>
         <div className="flex items-center gap-3">
@@ -158,8 +157,8 @@ const ChallengeCreate: React.FC = () => {
       </Header>
 
       <Heading2>기본 정보</Heading2>
-      <section className="mb-6 mt-3">
-        <div className="mb-6 grid w-full grid-cols-2 gap-3">
+      <section className="mt-3 mb-6">
+        <div className="grid w-full grid-cols-2 gap-3 mb-6">
           <ChallengeBasic
             defaultValue={{
               ...input,
@@ -301,11 +300,6 @@ const ChallengeCreate: React.FC = () => {
       </section>
 
       <footer className="flex items-center justify-end gap-3">
-        <ChallengePreviewButton
-          input={input}
-          content={content}
-          existing={null}
-        />
         <Button
           variant="contained"
           color="primary"

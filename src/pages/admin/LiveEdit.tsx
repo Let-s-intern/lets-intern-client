@@ -26,7 +26,6 @@ import { isDeprecatedProgram } from '@/lib/isDeprecatedProgram';
 import { ProgramTypeEnum, UpdateLiveReq } from '@/schema';
 import { LiveContent } from '@/types/interface';
 import EditorApp from '@components/admin/lexical/EditorApp';
-import LivePreviewButton from '@components/admin/LivePreviewButton';
 import ImageUpload from '@components/admin/program/ui/form/ImageUpload';
 import Header from '@components/admin/ui/header/Header';
 import Heading from '@components/admin/ui/heading/Heading';
@@ -131,7 +130,7 @@ const LiveEdit: React.FC = () => {
   }
 
   return (
-    <div className="mx-3 mb-40 mt-3">
+    <div className="mx-3 mt-3 mb-40">
       <Header>
         <Heading>라이브 수정</Heading>
         <div className="flex items-center gap-3">
@@ -148,8 +147,8 @@ const LiveEdit: React.FC = () => {
       </Header>
 
       <Heading2>기본 정보</Heading2>
-      <section className="mb-6 mt-3">
-        <div className="mb-6 grid w-full grid-cols-2 gap-3">
+      <section className="mt-3 mb-6">
+        <div className="grid w-full grid-cols-2 gap-3 mb-6">
           <LiveBasic defaultValue={live} setInput={setInput} />
           <ImageUpload
             label="라이브 썸네일 이미지 업로드"
@@ -264,7 +263,6 @@ const LiveEdit: React.FC = () => {
       </div>
 
       <footer className="flex items-center justify-end gap-3">
-        <LivePreviewButton input={input} existing={live} content={content} />
         <Button
           variant="contained"
           color="primary"

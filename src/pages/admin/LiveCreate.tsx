@@ -11,7 +11,6 @@ import { liveToCreateInput } from '@/hooks/useDuplicateProgram';
 import { CreateLiveReq, getLiveIdSchema, ProgramTypeEnum } from '@/schema';
 import { LiveContent } from '@/types/interface';
 import EditorApp from '@components/admin/lexical/EditorApp';
-import LivePreviewButton from '@components/admin/LivePreviewButton';
 import ImageUpload from '@components/admin/program/ui/form/ImageUpload';
 import Header from '@components/admin/ui/header/Header';
 import Heading from '@components/admin/ui/heading/Heading';
@@ -111,7 +110,7 @@ const LiveCreate: React.FC = () => {
   }
 
   return (
-    <div className="mx-3 mb-40 mt-3">
+    <div className="mx-3 mt-3 mb-40">
       <Header>
         <Heading>라이브 생성</Heading>
         <div className="flex items-center gap-3">
@@ -148,8 +147,8 @@ const LiveCreate: React.FC = () => {
       </Header>
 
       <Heading2>기본 정보</Heading2>
-      <section className="mb-6 mt-3">
-        <div className="mb-6 grid w-full grid-cols-2 gap-3">
+      <section className="mt-3 mb-6">
+        <div className="grid w-full grid-cols-2 gap-3 mb-6">
           <LiveBasic
             defaultValue={{
               ...input,
@@ -286,7 +285,6 @@ const LiveCreate: React.FC = () => {
       </div>
 
       <footer className="flex items-center justify-end gap-3">
-        <LivePreviewButton input={input} existing={null} content={content} />
         <Button
           variant="contained"
           color="primary"
