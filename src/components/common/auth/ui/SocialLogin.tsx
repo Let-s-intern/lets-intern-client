@@ -1,4 +1,4 @@
-import { useLocation, useSearchParams } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
 
 import styles from './SocialLogin.module.scss';
 
@@ -8,8 +8,7 @@ interface SocialLoginProps {
 
 const SocialLogin = ({ type }: SocialLoginProps) => {
   const [searchParams] = useSearchParams();
-  const { state } = useLocation();
-  const redirect = searchParams.get('redirect') || state?.prevPath || '/';
+  const redirect = searchParams.get('redirect') || '/';
 
   const getSocialLink = (socialType: 'KAKAO' | 'NAVER') => {
     const redirectPath = `${window.location.origin}/${type === 'LOGIN' ? 'login' : 'signup'}${`?redirect=${redirect}`}`;
@@ -35,7 +34,7 @@ const SocialLogin = ({ type }: SocialLoginProps) => {
           >
             <div className="w-[20px]">
               <img
-                className="h-full w-full"
+                className="w-full h-full"
                 src="/icons/kakao-icon.svg"
                 alt="카카오톡 아이콘"
               />
@@ -46,9 +45,9 @@ const SocialLogin = ({ type }: SocialLoginProps) => {
             href={getSocialLink('NAVER')}
             rel="noopener noreferrer"
           >
-            <div className="h-4 w-4">
+            <div className="w-4 h-4">
               <img
-                className="h-full w-full"
+                className="w-full h-full"
                 src="/icons/naver-icon.svg"
                 alt="네이버 아이콘"
               />

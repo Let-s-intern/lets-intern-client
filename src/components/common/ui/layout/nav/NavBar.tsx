@@ -233,8 +233,7 @@ const NavBar = () => {
             ) : (
               <div className="items-center hidden gap-2 sm:flex">
                 <Link
-                  to="/login"
-                  state={{ prevPath: location.pathname }}
+                  to={`/login?redirect=${encodeURIComponent(location.pathname)}`}
                   className="text-0.75 rounded-xxs bg-primary px-3 py-1 text-static-100"
                 >
                   로그인
@@ -311,9 +310,8 @@ const NavBar = () => {
               <div className="text-0.875 flex gap-6">
                 <Link
                   className="text-primary"
-                  to="/login"
+                  to={`/login?redirect=${encodeURIComponent(location.pathname)}`}
                   onClick={closeMenu}
-                  state={{ prevPath: location.pathname }}
                 >
                   로그인
                 </Link>

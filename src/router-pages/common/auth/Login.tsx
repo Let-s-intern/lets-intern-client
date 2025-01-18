@@ -1,11 +1,10 @@
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 // import axios from 'axios';
 import { AxiosError } from 'axios';
 import axios from '../../../utils/axios';
 
 import { useMutation } from '@tanstack/react-query';
-import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import SocialLogin from '../../../components/common/auth/ui/SocialLogin';
 import Button from '../../../components/common/ui/button/Button';
 import Input from '../../../components/ui/input/Input';
@@ -31,18 +30,20 @@ const TextLink = ({ to, dark, className, children }: TextLinkProps) => {
   );
 };
 
+/**
+ *
+ * Next.js 페이지로 가려면 강제 리다이렉트를 해야 하므로 window.location.href를 사용합니다.
+ * TODO: 모든 페이지가 Next.js로 이동되면 window.location.href 대신 router.push 하거나 서버 단계에서 리다이렉트 하기
+ */
 const Login = () => {
   const { isLoggedIn, login } = useAuthStore();
-  const router = useRouter();
-  const pathname = usePathname();
-  const searchParams = useSearchParams();
-  const redirectPath = searchParams?.get('redirect') || '/';
-  const prevPath = searchParams?.get('prevPath') || '/';
+  const [searchParams, setSearchParams] = useSearchParams();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [buttonDisabled, setButtonDisabled] = useState(false);
-  const redirect: string = redirectPath || prevPath;
+  const redirect: string = searchParams.get('redirect') || '/';
+  const navigate = useNavigate();
 
   const fetchLogin = useMutation({
     mutationFn: async () => {
@@ -54,7 +55,11 @@ const Login = () => {
     },
     onSuccess: (data) => {
       login(data.data.accessToken, data.data.refreshToken);
-      router.push(redirect);
+      if (!redirect) {
+        return;
+      }
+
+      window.location.href = redirect;
     },
     onError: (error) => {
       const axiosError = error as AxiosError;
@@ -77,24 +82,22 @@ const Login = () => {
   }, [email, password]);
 
   useEffect(() => {
-    if (searchParams?.get('error')) {
+    if (searchParams.get('error')) {
       setErrorMessage('이미 가입된 휴대폰 번호입니다.');
       return;
     }
 
-    if (searchParams?.get('result')) {
+    if (searchParams.get('result')) {
       const parsedToken = JSON.parse(searchParams.get('result') || '');
-      const newSearchParams = new URLSearchParams(searchParams.toString());
+      const newSearchParams = new URLSearchParams(searchParams);
       newSearchParams.delete('result');
-
-      router.replace(`${pathname}?${newSearchParams.toString()}`);
-
+      setSearchParams(newSearchParams);
       handleLoginSuccess(parsedToken);
       return;
     }
 
     if (isLoggedIn) {
-      router.push('/');
+      window.location.href = redirect;
       return;
     }
     // } else if (searchParams.get('error')) {
@@ -107,17 +110,15 @@ const Login = () => {
     //   }
     // }
     // eslint-disable-next-line
-  }, [searchParams]);
+  }, [searchParams, setSearchParams]);
 
   const handleLoginSuccess = (token: any) => {
     if (token.isNew) {
-      router.push(
-        `/signup?result=${JSON.stringify(token)}&redirect=${redirect}`,
-      );
-      return;
+      navigate(`/signup?result=${JSON.stringify(token)}&redirect=${redirect}`);
+    } else {
+      login(token.accessToken, token.refreshToken);
+      window.location.href = redirect;
     }
-    login(token.accessToken, token.refreshToken);
-    router.push(redirect);
   };
 
   const handleLogin = (e: React.FormEvent<HTMLFormElement>) => {
@@ -127,9 +128,9 @@ const Login = () => {
   };
 
   return (
-    <main className="mx-auto min-h-screen px-4 sm:max-w-md">
+    <main className="min-h-screen px-4 mx-auto sm:max-w-md">
       <header>
-        <h1 className="mb-8 mt-12 text-center text-xl font-semibold">
+        <h1 className="mt-12 mb-8 text-xl font-semibold text-center">
           반갑습니다!
         </h1>
       </header>
@@ -147,7 +148,7 @@ const Login = () => {
           onChange={(e: any) => setPassword(e.target.value)}
         />
         {errorMessage && (
-          <span className="text-center text-sm font-medium text-red-600">
+          <span className="text-sm font-medium text-center text-red-600">
             {errorMessage}
           </span>
         )}
@@ -156,7 +157,7 @@ const Login = () => {
         </Button>
       </form>
       <SocialLogin type="LOGIN" />
-      <div className="mt-8 flex justify-center gap-8">
+      <div className="flex justify-center gap-8 mt-8">
         <TextLink to={`/signup?redirect=${redirect}`}>회원가입</TextLink>
         <TextLink to="/find-password" dark>
           비밀번호 찾기

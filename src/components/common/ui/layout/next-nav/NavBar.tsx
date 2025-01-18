@@ -234,7 +234,7 @@ const NavBar = () => {
                 <Link
                   href={{
                     pathname: '/login',
-                    query: { prevPath: pathname },
+                    query: { redirect: pathname },
                   }}
                   className="text-0.75 rounded-xxs bg-primary px-3 py-1 text-static-100"
                 >
@@ -314,10 +314,9 @@ const NavBar = () => {
                   className="text-primary"
                   href={{
                     pathname: '/login',
-                    query: { prevPath: pathname },
+                    query: { redirect: pathname },
                   }}
                   onClick={closeMenu}
-                  // state={{ prevPath: pathname }}
                 >
                   로그인
                 </Link>

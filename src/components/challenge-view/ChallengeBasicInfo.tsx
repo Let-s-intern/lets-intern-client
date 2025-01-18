@@ -19,10 +19,11 @@ import {
   formatFullDateTime,
   formatFullDateTimeWithOutYear,
 } from '@/utils/formatDateString';
+import { getProgramPathname } from '@/utils/url';
 import { ChallengeColor } from '@components/ChallengeView';
 import BasicInfoRow from '@components/common/program/program-detail/basicInfo/BasicInfoRow';
+import { useRouter } from 'next/navigation';
 import { LuCalendarDays } from 'react-icons/lu';
-import { useNavigate } from 'react-router-dom';
 import RadioButton from './RadioButton';
 
 const { PERSONAL_STATEMENT } = challengeTypeSchema.enum;
@@ -51,10 +52,18 @@ const ChallengeBasicInfo = ({
     months: installmentMonths,
     banks,
   } = useInstallmentPayment();
-  const navigate = useNavigate();
+  const router = useRouter();
 
-  const onClickActiveChallenge = (challengeId: number) => {
-    navigate(`/program/challenge/${challengeId}`);
+  const handleClickActiveChallenge = (challenge: {
+    id: number;
+    title: string;
+  }) => {
+    const href = getProgramPathname({
+      programType: 'challenge',
+      ...challenge,
+    });
+
+    router.push(href);
   };
 
   const activeOnly =
@@ -232,7 +241,9 @@ const ChallengeBasicInfo = ({
                       color={colors.primary}
                       checked={activeChallenge.id === Number(challengeId)}
                       label={formatFullDate(dayjs(activeChallenge.startDate))}
-                      onClick={() => onClickActiveChallenge(activeChallenge.id)}
+                      onClick={() =>
+                        handleClickActiveChallenge(activeChallenge)
+                      }
                     />
                   ))}
             </div>
