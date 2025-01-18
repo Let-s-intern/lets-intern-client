@@ -29,7 +29,7 @@ const LiveCTAButtons = ({
 
   const onApplyClick = useCallback(() => {
     if (!isLoggedIn) {
-      window.location.href = `/login?redirect=${encodeURIComponent(`/program/live/1/${liveId}`)}`;
+      window.location.href = `/login?redirect=${encodeURIComponent(`/program/live/${liveId}`)}`;
       return;
     }
 
