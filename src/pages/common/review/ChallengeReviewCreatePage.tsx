@@ -51,18 +51,18 @@ const ChallengeReviewCreatePage = () => {
         후기 작성
       </BackHeader>
 
-      <main className="relative md:overflow-hidden md:rounded-ms">
-        <div className="flex w-full flex-col gap-16 bg-white px-5 pb-8 pt-2 md:relative md:h-full md:w-[40rem] md:gap-8 md:overflow-y-scroll md:px-12 md:pb-32 md:pt-14">
-          {/* 데스크탑 전용 닫기 버튼 */}
-          <img
-            src="/icons/menu_close_md.svg"
-            alt="close"
-            className="absolute right-6 top-6 hidden cursor-pointer md:block"
-            onClick={() => {
-              navigate(-1);
-            }}
-          />
+      <main className="relative bg-white md:overflow-hidden md:rounded-ms">
+        {/* 데스크탑 전용 닫기 버튼 */}
+        <img
+          src="/icons/menu_close_md.svg"
+          alt="close"
+          className="absolute right-6 top-6 z-10 hidden h-6 w-6 cursor-pointer md:block"
+          onClick={() => {
+            navigate('/mypage/review');
+          }}
+        />
 
+        <div className="flex w-full flex-col gap-16 px-5 pb-8 pt-2 md:relative md:h-full md:w-[40rem] md:gap-8 md:overflow-y-auto md:px-12 md:pb-32 md:pt-14">
           {/* 만족도 평가 */}
           <section>
             <ReviewQuestion required className="mb-1">

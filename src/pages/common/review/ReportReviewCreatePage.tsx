@@ -52,17 +52,17 @@ const ReportReviewCreatePage = () => {
       </BackHeader>
 
       <main className="relative md:overflow-hidden md:rounded-ms">
-        <div className="flex w-full flex-col gap-16 bg-white px-5 pb-8 pt-2 md:relative md:h-full md:w-[40rem] md:gap-8 md:overflow-y-scroll md:px-12 md:pb-32 md:pt-14">
-          {/* 데스크탑 전용 닫기 버튼 */}
-          <img
-            src="/icons/menu_close_md.svg"
-            alt="close"
-            className="absolute right-6 top-6 hidden cursor-pointer md:block"
-            onClick={() => {
-              navigate(-1);
-            }}
-          />
+        {/* 데스크탑 전용 닫기 버튼 */}
+        <img
+          src="/icons/menu_close_md.svg"
+          alt="close"
+          className="absolute right-6 top-6 z-10 hidden h-6 w-6 cursor-pointer md:block"
+          onClick={() => {
+            navigate('/mypage/review');
+          }}
+        />
 
+        <div className="flex w-full flex-col gap-16 bg-white px-5 pb-8 pt-2 md:relative md:h-full md:w-[40rem] md:gap-8 md:overflow-y-scroll md:px-12 md:pb-32 md:pt-14">
           {/* 만족도 평가 */}
           <section>
             <ReviewQuestion required className="mb-1">
@@ -98,7 +98,7 @@ const ReportReviewCreatePage = () => {
           {/* 서류 작성 고민 */}
           <section>
             <ReviewQuestion required className="mb-5">
-              3. {reportTitle} 이용 후에 서류 작성 고민이 해결되셨나요?*
+              3. {reportTitle} 이용 후에 서류 작성 고민이 해결되셨나요?
             </ReviewQuestion>
             <GoalOrConcernsBox className="mb-3">
               <div className="max-h-64 overflow-y-auto px-5 py-3 md:max-h-[9.5rem]">
