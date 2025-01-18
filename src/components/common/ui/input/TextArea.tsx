@@ -27,18 +27,18 @@ const TextArea = (props: TextAreaProps) => {
   }, [props.value]);
 
   return (
-    <div className="rounded-md bg-neutral-95 p-3">
+    <div className="flex gap-2 rounded-md bg-neutral-95 p-3">
       <textarea
         {...props}
         className={twMerge(
-          'text-1-medium w-full resize-none bg-neutral-95 outline-none',
+          'w-full resize-none bg-neutral-95 text-xsmall14 font-medium outline-none placeholder:font-normal placeholder:text-black/35',
           props.className,
         )}
         onChange={handleTextAreaChange}
       />
       {props.maxLength && (
-        <div className="text-right">
-          <span className="text-sm font-light text-neutral-0 text-opacity-[36%]">
+        <div className="flex items-end text-right">
+          <span className="text-xxsmall12 text-black/35">
             {textLength}/{props.maxLength}
           </span>
         </div>
