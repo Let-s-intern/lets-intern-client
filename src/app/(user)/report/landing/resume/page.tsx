@@ -1,5 +1,6 @@
 import { fetchReport } from '@/api/report';
-import { notFound, redirect } from 'next/navigation';
+import ReportResumePage from '@components/page/ReportResumePage';
+import { notFound } from 'next/navigation';
 
 const Page = async () => {
   const report = await fetchReport({
@@ -10,7 +11,7 @@ const Page = async () => {
     notFound();
   }
 
-  redirect(`/report/landing/resume/${report.reportId}`);
+  return <ReportResumePage report={report} />;
 };
 
 export default Page;
