@@ -8,6 +8,8 @@ import { useNavigate, useParams } from 'react-router-dom';
 
 import RecommendReviewField from '@/components/common/review/section/RecommendReviewField';
 import { useControlScroll } from '@/hooks/useControlScroll';
+import useHasScroll from '@/hooks/useHasScroll';
+import { twMerge } from '@/lib/twMerge';
 import axios from '@/utils/axios';
 import GoalOrConcernsBox from '@components/common/review/GoalOrConcernsBox';
 import ReviewInstruction from '@components/common/review/ReviewInstruction';
@@ -41,13 +43,21 @@ const ChallengeReviewCreatePage = () => {
     retry: 1,
   });
 
+  const { scrollRef, hasScroll } = useHasScroll();
   useControlScroll(isDesktop); // 데스크탑(모달)에서는 body 스크롤 제어
 
   return (
     // 바탕
     <div className="mx-auto bg-neutral-0/50 md:fixed md:inset-0 md:z-50 md:flex md:flex-col md:items-center md:justify-center md:py-24">
       <main className="relative bg-white md:overflow-hidden md:rounded-ms">
-        <div className="w-full px-5 pb-8 md:h-full md:w-[40rem] md:overflow-y-auto md:px-12 md:pb-32 md:pt-6">
+        <div
+          ref={scrollRef}
+          className={twMerge(
+            'w-full px-5 pb-8 md:h-full md:w-[45rem] md:overflow-y-auto md:pb-32 md:pl-12 md:pt-6',
+            // 스크롤 너비를 padding에서 제외 (치우침 방지)
+            hasScroll ? 'pr-8' : 'pr-12',
+          )}
+        >
           <div className="flex items-center justify-between">
             <BackHeader hideBack={isDesktop}>후기 작성하기</BackHeader>
             {/* 데스크탑 전용 닫기 버튼 */}
@@ -55,9 +65,7 @@ const ChallengeReviewCreatePage = () => {
               src="/icons/menu_close_md.svg"
               alt="close"
               className="hidden h-6 w-6 cursor-pointer md:block"
-              onClick={() => {
-                navigate('/mypage/review');
-              }}
+              onClick={() => navigate('/mypage/review')}
             />
           </div>
 
