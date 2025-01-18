@@ -46,6 +46,7 @@ import ReportPortfolioPage from './pages/common/report/ReportPortfolioPage';
 import ReportResumePage from './pages/common/report/ReportResumePage';
 import ReportTossPage from './pages/common/report/ReportTossPage';
 import ChallengeReviewCreatePage from './pages/common/review/ChallengeReviewCreatePage';
+import LiveReviewCreatePage from './pages/common/review/LiveReviewCreatePage';
 import ReviewCreate from './pages/common/review/ReviewCreate';
 import ReviewDetail from './pages/common/review/ReviewDetail';
 import Maintenance from './pages/maintenance/Maintenance';
@@ -139,7 +140,7 @@ const Router = () => {
                 {/* /mypage/review/new/live/:programId */}
                 <Route
                   path="review/new/live/:programId"
-                  element={<ReviewCreate isEdit={false} />}
+                  element={<LiveReviewCreatePage />}
                 />
                 {/* /mypage/review/new/report/:programId */}
                 <Route
