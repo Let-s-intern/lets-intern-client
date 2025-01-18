@@ -1,11 +1,12 @@
-import { useGetTotalReview } from '@/api/challenge';
 import { MenuItem, Select } from '@mui/material';
 import { useState } from 'react';
-import TableBody from '../../../components/admin/review/reviews/table-content/TableBody';
+
+import { useGetTotalReview } from '@/api/challenge';
+import TableBody from '@/components/admin/review/reviews/table-content/TableBody';
 import TableHead, {
   ReviewsTableHeadProps,
-} from '../../../components/admin/review/reviews/table-content/TableHead';
-import Table from '../../../components/admin/ui/table/regacy/Table';
+} from '@/components/admin/review/reviews/table-content/TableHead';
+import Table from '@/components/admin/ui/table/regacy/Table';
 
 const Reviews = () => {
   const [type, setType] = useState<'CHALLENGE' | 'LIVE' | 'REPORT' | 'VOD'>(
