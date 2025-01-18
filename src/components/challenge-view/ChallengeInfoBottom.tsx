@@ -4,6 +4,10 @@ import Announcement from '@/assets/icons/announcement.svg?react';
 import ChevronDown from '@/assets/icons/chevron-down.svg?react';
 import ClockIcon from '@/assets/icons/clock.svg?react';
 import LaptopIcon from '@/assets/icons/laptop.svg?react';
+import {
+  LOCALIZED_YYYY_MDdd_HH,
+  LOCALIZED_YYYY_MDdd_HHmm,
+} from '@/data/dayjsFormat';
 import { useInstallmentPayment } from '@/hooks/useInstallmentPayment';
 import { ChallengeIdSchema, challengeTypeSchema } from '@/schema';
 import {
@@ -113,7 +117,13 @@ const ChallengeInfoBottom = ({
                 title="OT 일자"
                 content={
                   <>
-                    {formatFullDateTime(challenge.startDate, true)}
+                    {challenge.startDate?.get('minute') === 0
+                      ? challenge.startDate?.format(LOCALIZED_YYYY_MDdd_HH)
+                      : challenge.startDate?.format(
+                          LOCALIZED_YYYY_MDdd_HHmm,
+                        )}{' '}
+                    ~{' '}
+                    {challenge.startDate?.add(40, 'minute').format('HH시 mm분')}
                     <br />
                     <span className="text-xxsmall12 text-neutral-35 md:text-xsmall14">
                       *실시간 참여 권장 (불참시 녹화본 제공 가능)
@@ -148,7 +158,12 @@ const ChallengeInfoBottom = ({
               title="OT 일자"
               content={
                 <>
-                  {formatFullDateTime(challenge.startDate, true)}
+                  {challenge.startDate?.get('minute') === 0
+                    ? challenge.startDate?.format(LOCALIZED_YYYY_MDdd_HH)
+                    : challenge.startDate?.format(
+                        LOCALIZED_YYYY_MDdd_HHmm,
+                      )}{' '}
+                  ~ {challenge.startDate?.add(40, 'minute').format('HH시 mm분')}
                   <br />
                   <span className="text-xxsmall12 text-neutral-35 md:text-xsmall14">
                     *실시간 참여 권장 (불참시 녹화본 제공 가능)
