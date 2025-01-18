@@ -5,6 +5,7 @@ import { twMerge } from '@/lib/twMerge';
 export interface TextAreaProps
   extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
   maxLength?: number;
+  wrapperClassName?: string;
 }
 
 const TextArea = (props: TextAreaProps) => {
@@ -27,7 +28,12 @@ const TextArea = (props: TextAreaProps) => {
   }, [props.value]);
 
   return (
-    <div className="flex gap-2 rounded-md bg-neutral-95 p-3">
+    <div
+      className={twMerge(
+        'flex gap-2 rounded-md bg-neutral-95 p-3',
+        props.wrapperClassName,
+      )}
+    >
       <textarea
         {...props}
         className={twMerge(

@@ -102,15 +102,17 @@ const ChallengeReviewCreatePage = () => {
               달성하셨나요?
             </ReviewQuestion>
             <GoalOrConcernsBox className="mb-3">
-              <span className="text-xsmall14">
-                {/* TODO: 사용자 이름 넣어야 함 */}
-                🎯 <b>김렛츠</b>님이 작성하신 챌린지 시작 전 목표
-              </span>
-              <br />
-              {/* TODO: 사용자가 설정한 목표가 들어가야 함 */}
-              <p className="text-xsmall16 font-bold">
-                “이번에는 꼭 서류 합격률 50%가 넘는 이력서를 만들어보자!”
-              </p>
+              <div className="max-h-64 overflow-y-auto px-5 py-3 md:max-h-[9.5rem]">
+                <span className="text-xsmall14">
+                  {/* TODO: 사용자 이름 넣어야 함 */}
+                  🎯 <b>김렛츠</b>님이 작성하신 챌린지 시작 전 목표
+                </span>
+                <br />
+                {/* TODO: 사용자가 설정한 목표가 들어가야 함 */}
+                <p className="text-xsmall16 font-bold">
+                  “이번에는 꼭 서류 합격률 50%가 넘는 이력서를 만들어보자!”
+                </p>
+              </div>
             </GoalOrConcernsBox>
             <ReviewTextarea placeholder="챌린지 참여 전의 목표를 어느 정도 달성하셨는지, 그 과정에서 챌린지가 어떤 도움을 주었는지 작성해주세요." />
           </section>

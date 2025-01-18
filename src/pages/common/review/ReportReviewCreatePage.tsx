@@ -101,15 +101,17 @@ const ReportReviewCreatePage = () => {
               3. {reportTitle} 이용 후에 서류 작성 고민이 해결되셨나요?*
             </ReviewQuestion>
             <GoalOrConcernsBox className="mb-3">
-              <span className="text-xsmall14">
-                {/* TODO: 사용자 이름 넣어야 함 */}
-                🤔 <b>김렛츠</b>님이 작성하신 서류 고민
-              </span>
-              <br />
-              {/* TODO: 사용자가 설정한 고민이 들어가야 함 */}
-              <p className="text-xsmall16 font-bold">
-                내 서류는 완벽한데 도대체 왜 떨어지는지 모르겠어요!!
-              </p>
+              <div className="max-h-64 overflow-y-auto px-5 py-3 md:max-h-[9.5rem]">
+                <span className="text-xsmall14">
+                  {/* TODO: 사용자 이름 넣어야 함 */}
+                  🤔 <b>김렛츠</b>님이 작성하신 서류 고민
+                </span>
+                <br />
+                {/* TODO: 사용자가 설정한 고민이 들어가야 함 */}
+                <p className="text-xsmall16 font-bold">
+                  내 서류는 완벽한데 도대체 왜 떨어지는지 모르겠어요!!
+                </p>
+              </div>
             </GoalOrConcernsBox>
             <ReviewTextarea
               placeholder={`${reportTitle} 이용 전의 고민을 어느 정도 해결하셨는지, 그 과정에서 ${reportTitle}가 어떤 도움을 주었는지 작성해주세요.`}
