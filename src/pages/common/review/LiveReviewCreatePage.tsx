@@ -16,7 +16,7 @@ import TenScore from '@components/common/review/score/TenScore';
 import BackHeader from '@components/common/ui/BackHeader';
 import BaseButton from '@components/common/ui/button/BaseButton';
 
-const ChallengeReviewCreatePage = () => {
+const LiveReviewCreatePage = () => {
   const params = useParams();
   const navigate = useNavigate();
   const isDesktop = useMediaQuery('(min-width:768px)');
@@ -34,7 +34,7 @@ const ChallengeReviewCreatePage = () => {
   const { data: programTitle } = useQuery({
     queryKey: ['program', programId],
     queryFn: async () => {
-      const res = await axios.get(`/challenge/${programId}/title`);
+      const res = await axios.get(`/live/${programId}/title`);
       return res.data.data.title;
     },
     retry: 1,
@@ -94,43 +94,28 @@ const ChallengeReviewCreatePage = () => {
             />
           </section>
 
-          {/* 목표 달성 */}
+          {/* 참여 이유 */}
           <section>
             <ReviewQuestion required className="mb-5">
-              3. {josa(programTitle ?? '', '을/를')} 참여하기 전의 목표를 어떻게
-              달성하셨나요?
+              3. {programTitle}에 참여하게 된 이유가 무엇인가요?
             </ReviewQuestion>
-            {/* 목표 박스 */}
-            <div className="mb-3 rounded-md bg-point px-5 py-3 text-center text-neutral-0">
-              <span className="text-xsmall14">
-                {/* TODO: 사용자 이름 넣어야 함 */}
-                🎯 <b>김렛츠</b>님이 작성하신 챌린지 시작 전 목표
-              </span>
-              <br />
-              {/* TODO: 사용자가 설정한 목표가 들어가야 함 */}
-              <p className="text-xsmall16 font-bold">
-                “이번에는 꼭 서류 합격률 50%가 넘는 이력서를 만들어보자!”
-              </p>
-            </div>
-            <ReviewTextarea placeholder="챌린지 참여 전의 목표를 어느 정도 달성하셨는지, 그 과정에서 챌린지가 어떤 도움을 주었는지 작성해주세요." />
+            <ReviewTextarea placeholder="LIVE 클래스를 통해 어떤 어려움을 해결하고 싶으셨는지, 알려주세요." />
           </section>
 
-          {/* 만족했던 점 */}
+          {/* 어려움 */}
           <section>
             <ReviewQuestion required className="mb-5">
-              4. {josa(programTitle ?? '', '을/를')} 참여하면서 가장 만족했던
-              점을 남겨주세요!
+              4. {programTitle}에 참여 후 위에 작성해주신 어려움이 해결되셨나요?
             </ReviewQuestion>
-            <ReviewTextarea placeholder="가장 도움이 되었던 미션이나, 학습 콘텐츠와 같이 참여하면서 가장 만족했던 점을 자유롭게 작성해주세요." />
+            <ReviewTextarea placeholder="어려움을 해결하는 과정에서 LIVE 클래스가 어떤 도움을 주었는지 작성해주세요." />
           </section>
 
-          {/* 아쉬웠던 점 */}
+          {/* 전반적인 후기 */}
           <section>
             <ReviewQuestion required className="mb-5">
-              5. {josa(programTitle ?? '', '을/를')} 참여하면서 가장 아쉬웠던
-              점을 남겨주세요!
+              5. 렛츠커리어에게 하고 싶은 말이나, 전반적인 후기를 남겨주세요!*
             </ReviewQuestion>
-            <ReviewTextarea placeholder="참여하면서 아쉬웠던 점이나 추가되었으면 좋겠는 내용이 있다면 자유롭게 작성해주세요." />
+            <ReviewTextarea placeholder="참여하면서 아쉬웠던 점이나 신청을 고민할 취준생분들을 위해 추천 이유를 자유롭게 작성해주세요." />
           </section>
 
           {/* 모바일 버튼 */}
@@ -145,4 +130,4 @@ const ChallengeReviewCreatePage = () => {
   );
 };
 
-export default ChallengeReviewCreatePage;
+export default LiveReviewCreatePage;
