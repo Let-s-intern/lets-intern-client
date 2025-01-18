@@ -30,7 +30,7 @@ const BUSINESS_INFORMATION = {
 const Footer = () => {
   useEffect(() => {
     if (!window.Kakao?.isInitialized()) {
-      window.Kakao.init('fe2307dd60e05ff8cbb06d777a13e31c');
+      window.Kakao?.init('fe2307dd60e05ff8cbb06d777a13e31c');
     }
   }, []);
 
