@@ -114,7 +114,7 @@ const ReportReviewCreatePage = () => {
               </div>
             </GoalOrConcernsBox>
             <ReviewTextarea
-              placeholder={`${reportTitle} 이용 전의 고민을 어느 정도 해결하셨는지, 그 과정에서 ${reportTitle}가 어떤 도움을 주었는지 작성해주세요.`}
+              placeholder={`${reportTitle} 이용 전의 고민을 어느 정도 해결하셨는지, ${isDesktop ? '\n' : ''}그 과정에서 ${reportTitle}가 어떤 도움을 주었는지 작성해주세요.`}
             />
           </section>
 
@@ -124,7 +124,9 @@ const ReportReviewCreatePage = () => {
               4. {josa(reportTitle ?? '', '을/를')} 참여하면서 가장 만족했던
               점을 남겨주세요!
             </ReviewQuestion>
-            <ReviewTextarea placeholder="가장 도움이 되었던 미션이나, 학습 콘텐츠와 같이 참여하면서 가장 만족했던 점을 자유롭게 작성해주세요." />
+            <ReviewTextarea
+              placeholder={`${reportTitle}에서 가장 도움이 되었던 내용이나 ${isDesktop ? '\n' : ''}이용하면서 가장 만족했던 점을 자유롭게 작성해주세요.`}
+            />
           </section>
 
           {/* 아쉬웠던 점 */}
@@ -133,7 +135,9 @@ const ReportReviewCreatePage = () => {
               5. {josa(reportTitle ?? '', '을/를')} 참여하면서 가장 아쉬웠던
               점을 남겨주세요!
             </ReviewQuestion>
-            <ReviewTextarea placeholder="참여하면서 아쉬웠던 점이나 추가되었으면 좋겠는 내용이 있다면 자유롭게 작성해주세요." />
+            <ReviewTextarea
+              placeholder={`참여하면서 아쉬웠던 점이나 추가되었으면 좋겠는 내용이 있다면 ${isDesktop ? '\n' : ''}자유롭게 작성해주세요.`}
+            />
           </section>
 
           {/* 모바일 버튼 */}

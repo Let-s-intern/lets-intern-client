@@ -114,7 +114,9 @@ const ChallengeReviewCreatePage = () => {
                 </p>
               </div>
             </GoalOrConcernsBox>
-            <ReviewTextarea placeholder="챌린지 참여 전의 목표를 어느 정도 달성하셨는지, 그 과정에서 챌린지가 어떤 도움을 주었는지 작성해주세요." />
+            <ReviewTextarea
+              placeholder={`챌린지 참여 전의 목표를 어느 정도 달성하셨는지, ${isDesktop ? '\n' : ''}그 과정에서 챌린지가 어떤 도움을 주었는지 작성해주세요.`}
+            />
           </section>
 
           {/* 만족했던 점 */}
@@ -123,7 +125,7 @@ const ChallengeReviewCreatePage = () => {
               4. {josa(programTitle ?? '', '을/를')} 참여하면서 가장 만족했던
               점을 남겨주세요!
             </ReviewQuestion>
-            <ReviewTextarea placeholder="가장 도움이 되었던 미션이나, 학습 콘텐츠와 같이 참여하면서 가장 만족했던 점을 자유롭게 작성해주세요." />
+            <ReviewTextarea placeholder="가장 도움이 되었던 미션이나 학습 콘텐츠와 같이 참여하면서 가장 만족했던 점을 자유롭게 작성해주세요." />
           </section>
 
           {/* 아쉬웠던 점 */}
