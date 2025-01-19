@@ -50,7 +50,7 @@ const NavBar = () => {
   const [isAdmin, setIsAdmin] = useState(false);
   const [reportItems, setReportItems] = useState<NavSubItemProps[]>([]);
   const [activeLink, setActiveLink] = useState<
-    'HOME' | 'ABOUT' | 'PROGRAM' | 'ADMIN' | 'BLOG' | 'REPORT' | ''
+    'HOME' | 'ABOUT' | 'PROGRAM' | 'ADMIN' | 'BLOG' | 'REPORT' | 'REVIEW' | ''
   >('');
 
   const { isLoggedIn, logout } = useAuthStore();
@@ -137,6 +137,8 @@ const NavBar = () => {
       setActiveLink('BLOG');
     } else if (pathname.startsWith('/report')) {
       setActiveLink('REPORT');
+    } else if (pathname.startsWith('/review')) {
+      setActiveLink('REVIEW');
     } else if (pathname.startsWith('/')) {
       setActiveLink('HOME');
     }
@@ -202,6 +204,9 @@ const NavBar = () => {
             </NavItem>
             <NavItem to="/program" active={activeLink === 'PROGRAM'}>
               프로그램
+            </NavItem>
+            <NavItem to="/review" active={activeLink === 'REVIEW'}>
+              100% 솔직 후기
             </NavItem>
             <NavItem to="/blog/list" active={activeLink === 'BLOG'}>
               블로그
@@ -336,6 +341,9 @@ const NavBar = () => {
             </SideNavItem>
             <SideNavItem to="/program" onClick={closeMenu}>
               프로그램
+            </SideNavItem>
+            <SideNavItem to="/review" onClick={closeMenu}>
+              100% 솔직 후기
             </SideNavItem>
             <SideNavItem to="/blog/list" onClick={closeMenu}>
               블로그

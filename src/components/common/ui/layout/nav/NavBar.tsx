@@ -46,8 +46,9 @@ const NavBar = () => {
   const [user, setUser] = useState<any>(null);
   const [isAdmin, setIsAdmin] = useState(false);
   const [reportItems, setReportItems] = useState<NavSubItemProps[]>([]);
+  /** TODO: Next.js 스럽게 수정하기 */
   const [activeLink, setActiveLink] = useState<
-    'HOME' | 'ABOUT' | 'PROGRAM' | 'ADMIN' | 'BLOG' | 'REPORT' | ''
+    'HOME' | 'ABOUT' | 'PROGRAM' | 'ADMIN' | 'BLOG' | 'REPORT' | 'REVIEW' | ''
   >('');
 
   const { isLoggedIn, logout } = useAuthStore();
@@ -134,6 +135,8 @@ const NavBar = () => {
       setActiveLink('BLOG');
     } else if (location.pathname.startsWith('/report')) {
       setActiveLink('REPORT');
+    } else if (location.pathname.startsWith('/review')) {
+      setActiveLink('REVIEW');
     } else if (location.pathname.startsWith('/')) {
       setActiveLink('HOME');
     }
@@ -199,6 +202,13 @@ const NavBar = () => {
             </NavItem>
             <NavItem to="/program" active={activeLink === 'PROGRAM'}>
               프로그램
+            </NavItem>
+            <NavItem
+              to="/review"
+              active={activeLink === 'REVIEW'}
+              reloadDocument
+            >
+              100% 솔직 후기
             </NavItem>
             <NavItem
               to="/blog/list"
@@ -332,6 +342,9 @@ const NavBar = () => {
             </SideNavItem>
             <SideNavItem to="/program" onClick={closeMenu}>
               프로그램
+            </SideNavItem>
+            <SideNavItem to="/review" onClick={closeMenu} reloadDocument>
+              100% 솔직 후기
             </SideNavItem>
             <SideNavItem to="/blog/list" onClick={closeMenu} reloadDocument>
               블로그
