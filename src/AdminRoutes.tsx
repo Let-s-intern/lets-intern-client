@@ -50,7 +50,10 @@ import AdminReportCreatePage from './router-pages/admin/report/AdminReportCreate
 import AdminReportEditPage from './router-pages/admin/report/AdminReportEditPage';
 import AdminReportListPage from './router-pages/admin/report/AdminReportListPage';
 import ReportApplicationsPage from './router-pages/admin/report/ReportApplicationsPage';
-import AdminReviews from './router-pages/admin/review/Reviews';
+import AdminBlogReviewListPage from './router-pages/admin/review/AdminBlogReviewListPage';
+import AdminChallengeReviewListPage from './router-pages/admin/review/AdminChallengeReviewListPage';
+import AdminLiveReviewListPage from './router-pages/admin/review/AdminLiveReviewListPage';
+import AdminReportReviewListPage from './router-pages/admin/review/AdminReportReviewListPage';
 import AdminReviewsDetail from './router-pages/admin/review/ReviewsDetail';
 import UserCreate from './router-pages/admin/user/UserCreate';
 import UserDetail from './router-pages/admin/user/UserDetail';
@@ -67,12 +70,20 @@ export const getAdminRoutes = () => {
       {/* /admin */}
       <Route path="" element={<AdminHome />} />
 
-      <Route path="reviews">
-        {/* /admin/reviews */}
-        <Route path="" element={<AdminReviews />} />
-        {/* /admin/reviews/1 */}
-        <Route path=":programId" element={<AdminReviewsDetail />} />
-      </Route>
+      {/* <Route path="reviews"> */}
+      {/* /admin/reviews */}
+      {/* <Route path="" element={<AdminReviews />} /> */}
+      {/* /admin/reviews/1 */}
+      <Route path="review/:programId" element={<AdminReviewsDetail />} />
+      {/* </Route> */}
+      <Route
+        path="review/challenge"
+        element={<AdminChallengeReviewListPage />}
+      />
+      <Route path="review/live" element={<AdminLiveReviewListPage />} />
+      <Route path="review/blog" element={<AdminBlogReviewListPage />} />
+      <Route path="review/report" element={<AdminReportReviewListPage />} />
+
       <Route path="users">
         {/* /admin/users */}
         <Route path="" element={<Users />} />
