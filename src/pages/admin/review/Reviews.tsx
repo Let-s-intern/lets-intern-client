@@ -8,7 +8,6 @@ import TableHead, {
 } from '@/components/admin/review/reviews/table-content/TableHead';
 import Table from '@/components/admin/ui/table/regacy/Table';
 import { ProgramTypeUpperCase } from '@/schema';
-import ChallengeReviewTable from '@components/admin/review/reviews/ChallengeReviewTable';
 
 const Reviews = () => {
   const [type, setType] = useState<ProgramTypeUpperCase>('CHALLENGE');
@@ -45,12 +44,7 @@ const Reviews = () => {
           <div className="py-4 text-center">에러 발생</div>
         ) : !data || data.reviewList?.length === 0 ? (
           <div className="py-4 text-center">후기가 없습니다.</div>
-        ) : type === 'CHALLENGE' ? (
-          <ChallengeReviewTable
-            type={type}
-            reviewList={data.reviewList ?? []}
-          />
-        ) : (
+        ) :  (
           <Table minWidth={1000}>
             <TableHead type={type} filter={filter} setFilter={setFilter} />
             <TableBody
