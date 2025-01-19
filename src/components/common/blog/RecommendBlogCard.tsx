@@ -1,15 +1,17 @@
-import { useNavigate } from 'react-router-dom';
+'use client';
+
+import { useRouter } from 'next/navigation';
 import { BlogInfoSchema } from '../../../api/blogSchema';
 import { blogCategory } from '../../../utils/convert';
 import BlogHashtag from './BlogHashtag';
 
 const RecommendBlogCard = (blogInfo: BlogInfoSchema) => {
-  const navigate = useNavigate();
+  const router = useRouter();
   return (
     <div
       className="flex w-full cursor-pointer flex-col gap-y-2 py-3"
       onClick={() => {
-        navigate(`/blog/${blogInfo.blogThumbnailInfo.id}`);
+        router.push(`/blog/${blogInfo.blogThumbnailInfo.id}`);
       }}
     >
       <span className="w-full text-xsmall16 font-bold text-primary">
@@ -36,14 +38,7 @@ const RecommendBlogCard = (blogInfo: BlogInfoSchema) => {
         {blogInfo.tagDetailInfos.length > 0 && (
           <div className="flex flex-wrap items-center gap-1.5">
             {blogInfo.tagDetailInfos.map((tag) => (
-              <BlogHashtag
-                key={tag.id}
-                text={tag.title || ''}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  navigate(`/blog/hashtag`, { state: tag });
-                }}
-              />
+              <BlogHashtag key={tag.id} text={tag.title || ''} tagId={tag.id} />
             ))}
           </div>
         )}

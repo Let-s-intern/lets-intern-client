@@ -1,7 +1,6 @@
 import clsx from 'clsx';
 import dayjs from 'dayjs';
 import { memo, useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 
 import { ProgramInfo } from '../../../../../schema';
 import { ProgramClassificationKey } from '../../../../../types/interface';
@@ -20,7 +19,6 @@ interface ProgramCardProps {
 }
 
 const ProgramCard = ({ program }: ProgramCardProps) => {
-  const navigate = useNavigate();
   const [link, setLink] = useState(
     `/program/${program.programInfo.programType.toLowerCase()}/${
       program.programInfo.id
@@ -50,9 +48,12 @@ const ProgramCard = ({ program }: ProgramCardProps) => {
   return (
     <div
       onClick={() => {
-        program.programInfo.programType === PROGRAM_TYPE.VOD
-          ? window.open(link)
-          : navigate(link);
+        if (program.programInfo.programType === PROGRAM_TYPE.VOD) {
+          window.open(link);
+        } else {
+          window.location.href = link;
+          // navigate(link);
+        }
       }}
       className="program_card flex w-full cursor-pointer flex-col overflow-hidden rounded-xs md:gap-4 md:rounded-md md:border md:border-neutral-85 md:p-2.5"
       data-program-text={program.programInfo.title}

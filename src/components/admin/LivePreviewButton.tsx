@@ -1,12 +1,10 @@
 import { useGetFaq } from '@/api/faq';
 import { CreateLiveReq, LiveIdSchema, UpdateLiveReq } from '@/schema';
 import { LiveContent } from '@/types/interface';
-import LiveView from '@components/LiveView';
 import { Button } from '@mui/material';
 import dayjs from 'dayjs';
 import { useMemo, useState } from 'react';
 import { FaDesktop } from 'react-icons/fa6';
-import PreviewModal from './PreviewModal';
 
 // TODO: 검증 필요. 필요 시 CREATE / UPDATE 분리.
 const LivePreviewButton: React.FC<{
@@ -118,9 +116,9 @@ const LivePreviewButton: React.FC<{
       >
         미리보기 (작업중)
       </Button>
-      <PreviewModal open={open} onClose={handleClose}>
-        <LiveView live={live} isPreview />
-      </PreviewModal>
+      {/* <PreviewModal open={open} onClose={handleClose}> */}
+      {/* <LiveView live={live} isPreview /> */}
+      {/* </PreviewModal> */}
     </>
   );
 };

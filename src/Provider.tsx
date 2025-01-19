@@ -1,3 +1,4 @@
+/** TODO: Vike에서 사용하는 Provider. Next.js 이전 후 삭제해도 됨. */
 import {
   QueryCache,
   QueryClient,
@@ -5,10 +6,9 @@ import {
 } from '@tanstack/react-query';
 import dayjs from 'dayjs';
 import 'dayjs/locale/ko';
+import { useState } from 'react';
 import { Helmet } from 'react-helmet';
 import { ZodError } from 'zod';
-
-import { useState } from 'react';
 import './fonts/font.css';
 import './index.css';
 import './styles/apply.scss';

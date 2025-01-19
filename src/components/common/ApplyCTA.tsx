@@ -1,9 +1,12 @@
+'use client';
+
 import useInstagramAlert from '@/hooks/useInstagramAlert';
+import dayjs from '@/lib/dayjs';
 import { twMerge } from '@/lib/twMerge';
 import GradientButton from '@components/common/program/program-detail/button/GradientButton';
 import NotiButton from '@components/common/program/program-detail/button/NotiButton';
 import { Duration } from '@components/Duration';
-import dayjs, { Dayjs } from 'dayjs';
+import { Dayjs } from 'dayjs';
 import { memo, ReactNode } from 'react';
 import PaymentErrorNotification from './PaymentErrorNotification';
 
@@ -11,7 +14,7 @@ function DisabledButton() {
   return (
     <button
       disabled
-      className="w-full rounded-sm bg-neutral-80 px-6 py-3 text-xsmall14 font-medium text-neutral-40"
+      className="w-full px-6 py-3 font-medium rounded-sm bg-neutral-80 text-xsmall14 text-neutral-40"
     >
       이미 신청이 완료되었습니다
     </button>
@@ -73,7 +76,7 @@ export function MobileApplyCTA({
       ) : (
         <>
           <div>
-            <span className="mb-1 block text-xsmall14 font-medium">
+            <span className="block mb-1 font-medium text-xsmall14">
               {program?.deadline?.format('M월 D일 (dd)')} 마감까지 🚀
             </span>
             <div className="flex items-center gap-2">
@@ -117,7 +120,7 @@ export const MobileCTA = memo(function MobileCTA({
           {title}
         </div>
       )}
-      <div className="flex w-full items-center justify-between px-5 pb-5 pt-3 text-neutral-80 backdrop-blur">
+      <div className="flex items-center justify-between w-full px-5 pt-3 pb-5 text-neutral-80 backdrop-blur">
         {children}
       </div>
     </div>
@@ -135,10 +138,10 @@ export function DesktopApplyCTA({
       : false;
 
   return (
-    <DesktopCTA className="hidden items-center justify-between lg:flex">
+    <DesktopCTA className="items-center justify-between hidden lg:flex">
       <div className="flex flex-col gap-1">
         <span className="font-bold text-neutral-100">{program?.title}</span>
-        <span className="text-xsmall14 font-medium text-neutral-80">
+        <span className="font-medium text-xsmall14 text-neutral-80">
           {program?.deadline?.format?.('M월 D일 (dd)')} 마감까지 🚀
         </span>
       </div>

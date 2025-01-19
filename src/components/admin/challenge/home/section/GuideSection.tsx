@@ -150,7 +150,7 @@ const GuideSection = ({ className }: { className?: string }) => {
         </div>
 
         {/* <div className="flex items-center justify-center">
-          <div className="mt-10 flex items-center gap-3 justify-self-center rounded-full border px-3 py-1 text-sm">
+          <div className="flex items-center gap-3 px-3 py-1 mt-10 text-sm border rounded-full justify-self-center">
             {pageInfo &&
               Array.from(
                 { length: pageInfo.totalPages },

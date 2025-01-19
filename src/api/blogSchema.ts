@@ -102,6 +102,8 @@ export const blogSchema = z.object({
   tagDetailInfos,
 });
 
+export type BlogSchema = z.infer<typeof blogSchema>;
+
 export const blogInfoSchema = z.object({
   blogThumbnailInfo,
   tagDetailInfos,
@@ -112,6 +114,8 @@ export const blogListSchema = z.object({
   blogInfos: z.array(blogInfoSchema),
   pageInfo,
 });
+
+export type BlogList = z.infer<typeof blogListSchema>;
 
 export const blogTagSchema = z.object({
   tagDetailInfos,

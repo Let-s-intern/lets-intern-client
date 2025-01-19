@@ -1,27 +1,37 @@
 {
   "compilerOptions": {
-    "strict": true,
+    "target": "ES2017",
+    "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
-    "checkJs": true,
-    "esModuleInterop": true,
-    "forceConsistentCasingInFileNames": true,
-    "resolveJsonModule": true,
     "skipLibCheck": true,
-    "sourceMap": true,
-    "module": "ESNext",
+    "strict": true,
     "noEmit": true,
-    "moduleResolution": "Bundler",
-    "target": "ES2022",
-    "lib": ["DOM", "DOM.Iterable", "ESNext"],
+    "esModuleInterop": true,
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
     "jsx": "preserve",
-    "jsxImportSource": "react",
-    "noFallthroughCasesInSwitch": true,
+    "incremental": true,
+    // TODO: 추가
+    // "noFallthroughCasesInSwitch": true,
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ],
     "paths": {
       "@components/*": ["./src/components/*"],
       "@/*": ["./src/*"],
-      "@renderer/*": ["./renderer/*"],
-      "@pages/*": ["./pages/*"]
+      "@renderer/*": ["./renderer/*"]
     }
   },
-  "exclude": ["build", "dist"]
+  "include": [
+    "**/*.ts",
+    "**/*.tsx",
+    ".next/types/**/*.ts",
+    "next-env.d.ts",
+    "./dist/types/**/*.ts"
+  ],
+  "exclude": ["node_modules"]
 }

@@ -130,7 +130,7 @@ function getDynamicOptions(editor: LexicalEditor, queryString: string) {
       ...colOptions.map(
         (columns) =>
           new ComponentPickerOption(`${rows}x${columns} Table`, {
-            icon: <i className="icon table" />,
+            icon: <i className="table icon" />,
             keywords: ['table'],
             onSelect: () =>
               editor.dispatchCommand(INSERT_TABLE_COMMAND, { columns, rows }),
@@ -172,7 +172,7 @@ function getBaseOptions(editor: LexicalEditor, showModal: ShowModal) {
         }),
     ),
     new ComponentPickerOption('Table', {
-      icon: <i className="icon table" />,
+      icon: <i className="table icon" />,
       keywords: ['table', 'grid', 'spreadsheet', 'rows', 'columns'],
       onSelect: () =>
         showModal('Insert Table', (onClose) => (
@@ -276,7 +276,7 @@ function getBaseOptions(editor: LexicalEditor, showModal: ShowModal) {
       onSelect: () =>
         editor.dispatchCommand(INSERT_IMAGE_COMMAND, {
           altText: 'Cat typing on a laptop',
-          src: catTypingGif,
+          src: catTypingGif.src,
         }),
     }),
     new ComponentPickerOption('Image', {
