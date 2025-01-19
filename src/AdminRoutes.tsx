@@ -53,6 +53,7 @@ import ReportApplicationsPage from './router-pages/admin/report/ReportApplicatio
 import AdminBlogReviewListPage from './router-pages/admin/review/AdminBlogReviewListPage';
 import AdminChallengeReviewListPage from './router-pages/admin/review/AdminChallengeReviewListPage';
 import AdminLiveReviewListPage from './router-pages/admin/review/AdminLiveReviewListPage';
+import AdminMissionReviewListPage from './router-pages/admin/review/AdminMissionReviewListPage';
 import AdminReportReviewListPage from './router-pages/admin/review/AdminReportReviewListPage';
 import AdminReviewsDetail from './router-pages/admin/review/ReviewsDetail';
 import UserCreate from './router-pages/admin/user/UserCreate';
@@ -76,6 +77,7 @@ export const getAdminRoutes = () => {
       {/* /admin/reviews/1 */}
       <Route path="review/:programId" element={<AdminReviewsDetail />} />
       {/* </Route> */}
+      <Route path="review/mission" element={<AdminMissionReviewListPage />} />
       <Route
         path="review/challenge"
         element={<AdminChallengeReviewListPage />}

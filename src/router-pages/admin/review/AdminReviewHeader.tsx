@@ -17,6 +17,11 @@ export default function AdminReviewHeader() {
       <nav>
         <ul className="flex">
           <li>
+            <NavLink to="/admin/review/mission" className={getNavLinkClassName}>
+              미션
+            </NavLink>
+          </li>
+          <li>
             <NavLink
               to="/admin/review/challenge"
               className={getNavLinkClassName}
