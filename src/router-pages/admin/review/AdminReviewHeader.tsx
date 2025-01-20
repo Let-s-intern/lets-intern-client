@@ -15,7 +15,7 @@ export default function AdminReviewHeader() {
     <header className="mx-2 my-1">
       <h1 className="mb-2 font-bold text-medium22">후기 관리</h1>
       <nav>
-        <ul className="flex">
+        <ul className="flex py-5">
           <li>
             <NavLink to="/admin/review/mission" className={getNavLinkClassName}>
               미션
