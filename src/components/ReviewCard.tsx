@@ -24,67 +24,80 @@ export const getTitle = (review: GetReview) => {
 const ReviewCard = ({
   review,
   missionTitleClamp = 1,
+  reviewItemLineClamp = 3,
   expandable = false,
+  showThumbnail = false,
 }: {
   review: GetReview;
   missionTitleClamp?: 1 | 2;
+  reviewItemLineClamp?: 1 | 2 | 3 | 4;
   expandable?: boolean;
+  showThumbnail?: boolean;
 }) => {
   return (
-    <div className="flex flex-col p-4 border rounded-sm border-neutral-80">
-      <div className="mb-2">
-        <ReviewBadge reviewType={review.reviewInfo.type} />
-      </div>
-      <h3 className="mb-2 font-bold truncate text-xsmall16 text-neutral-0">
-        {review.reviewInfo.programTitle}
-      </h3>
-      {review.reviewInfo.type === 'MISSION_REVIEW' ? (
-        <div className="flex items-center gap-2 mb-3 text-xxsmall12">
+    <div className="flex flex-col gap-4 p-4 border rounded-sm sm:flex-row border-neutral-80 sm:gap-10">
+      <div className="flex flex-col max-w-full mr-auto">
+        <div className="mb-2">
+          <ReviewBadge reviewType={review.reviewInfo.type} />
+        </div>
+        <h3 className="mb-2 font-bold truncate text-xsmall16 text-neutral-0">
+          {review.reviewInfo.programTitle}
+        </h3>
+        {review.reviewInfo.type === 'MISSION_REVIEW' ? (
+          <div className="flex items-center gap-2 mb-3 text-xxsmall12">
+            <span className="whitespace-pre text-neutral-20">
+              {review.reviewInfo.missionTh}회차
+            </span>
+            <span className="text-neutral-70">|</span>
+            <p
+              className={twMerge(
+                ' font-medium text-neutral-20',
+                missionTitleClamp === 1
+                  ? 'line-clamp-1'
+                  : missionTitleClamp === 2
+                    ? 'line-clamp-2'
+                    : null,
+              )}
+            >
+              {review.reviewInfo.missionTitle}
+            </p>
+          </div>
+        ) : null}
+        <div className="mb-4 space-y-2.5 ">
+          {review.reviewItemList?.map((reviewItem, index) => (
+            <ReviewItemBlock
+              key={index}
+              reviewItem={reviewItem}
+              lineClamp={reviewItemLineClamp}
+              expandable={expandable}
+            />
+          ))}
+        </div>
+
+        <div className="flex items-center gap-2 mt-auto mb-2 text-xxsmall12">
           <span className="whitespace-pre text-neutral-20">
-            {review.reviewInfo.missionTh}회차
+            {review.reviewInfo.name?.[0]}**
           </span>
           <span className="text-neutral-70">|</span>
-          <p
-            className={twMerge(
-              ' font-medium text-neutral-20',
-              missionTitleClamp === 1
-                ? 'line-clamp-1'
-                : missionTitleClamp === 2
-                  ? 'line-clamp-2'
-                  : null,
-            )}
-          >
-            {review.reviewInfo.missionTitle}
-          </p>
+          <span className="text-neutral-20 ">
+            희망직무 {review.reviewInfo.wishJob} · 희망산업{' '}
+            {review.reviewInfo.wishCompany}
+          </span>
         </div>
+        <div className="text-neutral-40 text-xxsmall12">
+          {review.reviewInfo.createDate
+            ? dayjs(review.reviewInfo.createDate).format('YYYY.MM.DD')
+            : ''}{' '}
+          작성
+        </div>
+      </div>
+      {showThumbnail && review.reviewInfo.programThumbnail ? (
+        <img
+          src={review.reviewInfo.programThumbnail ?? ''}
+          alt={review.reviewInfo.programTitle ?? ''}
+          className="block object-cover w-[120px] h-[90px] sm:w-[180px] sm:h-[135px] rounded-sm sm:mt-10"
+        />
       ) : null}
-      <div className="mb-4 space-y-2.5 ">
-        {review.reviewItemList?.map((reviewItem, index) => (
-          <ReviewItemBlock
-            key={index}
-            reviewItem={reviewItem}
-            lineClamp={3}
-            expandable={expandable}
-          />
-        ))}
-      </div>
-
-      <div className="flex items-center gap-2 mt-auto mb-2 text-xxsmall12">
-        <span className="whitespace-pre text-neutral-20">
-          {review.reviewInfo.name?.[0]}**
-        </span>
-        <span className="text-neutral-70">|</span>
-        <span className="text-neutral-20 ">
-          희망직무 {review.reviewInfo.wishJob} · 희망산업{' '}
-          {review.reviewInfo.wishCompany}
-        </span>
-      </div>
-      <div className="text-neutral-40 text-xxsmall12">
-        {review.reviewInfo.createDate
-          ? dayjs(review.reviewInfo.createDate).format('YYYY.MM.DD')
-          : ''}{' '}
-        작성
-      </div>
     </div>
   );
 };

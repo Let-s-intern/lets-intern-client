@@ -14,7 +14,7 @@ const mock1: GetReview = {
     missionTitle:
       '미션명 미션명 미션명 미션명 미션명 미션명 미션명 미션명미션명',
     name: '임호정',
-    programThumbnail: 'https://via.placeholder.com/150',
+    programThumbnail: 'https://placehold.co/600x400',
     wishCompany: 'PM',
     wishJob: 'IT',
   },
@@ -41,7 +41,7 @@ const mock2: GetReview = {
     missionTitle:
       '미션명 미션명 미션명 미션명 미션명 미션명 미션명 미션명미션명',
     name: '임호정',
-    programThumbnail: 'https://via.placeholder.com/150',
+    programThumbnail: 'https://placehold.co/600x400',
     wishCompany: 'PM',
     wishJob: 'IT',
   },
@@ -69,7 +69,7 @@ const mock3: GetReview = {
     missionTitle:
       '미션명 미션명 미션명 미션명 미션명 미션명 미션명 미션명미션명',
     name: '임호정',
-    programThumbnail: 'https://via.placeholder.com/150',
+    programThumbnail: 'https://placehold.co/600x400',
     wishCompany: 'PM',
     wishJob: 'IT',
   },
@@ -96,9 +96,9 @@ const mock4: GetReview = {
     missionTitle:
       '미션명 미션명 미션명 미션명 미션명 미션명 미션명 미션명미션명',
     name: '임호정',
-    programThumbnail: 'https://via.placeholder.com/150',
-    wishCompany: 'PM',
-    wishJob: 'IT',
+    programThumbnail: 'https://placehold.co/600x400',
+    wishCompany: 'IT',
+    wishJob: 'PM',
   },
   reviewItemList: [
     {
@@ -112,12 +112,21 @@ const mock4: GetReview = {
 
 const Page = () => {
   return (
-    <div className="flex">
+    <div>
       <div className="grid grid-cols-4 gap-5">
         <ReviewCard review={mock1} missionTitleClamp={1} />
         <ReviewCard review={mock2} missionTitleClamp={1} />
-        {/* <ReviewCard expandable review={mock3} missionTitleClamp={1} /> */}
+        <ReviewCard expandable review={mock3} missionTitleClamp={1} />
         <ReviewCard expandable review={mock4} missionTitleClamp={1} />
+      </div>
+      <div>
+        <ReviewCard
+          expandable
+          review={mock4}
+          missionTitleClamp={1}
+          reviewItemLineClamp={2}
+          showThumbnail
+        />
       </div>
     </div>
   );
