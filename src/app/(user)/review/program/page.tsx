@@ -104,7 +104,7 @@ const mock4: GetReview = {
     {
       reviewItemId: 1,
       answer:
-        '진짜 너무 미친 퀄리티 너무 좋았다. 내인생에 이런 챌린지는 없다 최고다 렛츠커리어 짱이다 진짜 너무 미친 퀄리티 너무 좋았다. 내인생에 이런 챌린지는 없다 최고다 렛츠커리어 짱이다 내인생에 이런 챌린지는 없다 내인생에 이런 챌린지는 없다',
+        '진짜 너무 미친 퀄리티 너무 좋았다. 내인생에 이런 챌린지는 없다 최고다 렛츠커리어 짱이다 진짜 너무 미친 퀄리티 너무 좋았다. 내인생에 이런 챌린지는 없다 최고다 렛',
       questionType: 'WORRY',
     },
   ],
@@ -116,7 +116,7 @@ const Page = () => {
       <div className="grid grid-cols-4 gap-5">
         <ReviewCard review={mock1} missionTitleClamp={1} />
         <ReviewCard review={mock2} missionTitleClamp={1} />
-        <ReviewCard expandable review={mock3} missionTitleClamp={1} />
+        {/* <ReviewCard expandable review={mock3} missionTitleClamp={1} /> */}
         <ReviewCard expandable review={mock4} missionTitleClamp={1} />
       </div>
     </div>

@@ -1,7 +1,7 @@
 'use client';
 
 import { twMerge } from '@/lib/twMerge';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 const ExpandableParagraph = ({
   content,
@@ -17,34 +17,32 @@ const ExpandableParagraph = ({
   const pRef = useRef<HTMLParagraphElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
   const [clientHeight, setClientHeight] = useState<number | null>(null);
-
+  const [scrollHeight, setScrollHeight] = useState<number | null>(null);
+  const [lineHeight, setLineHeight] = useState<number | null>(null);
   const [expanding, setExpanding] = useState(false);
 
-  const buttonMarginTop = useMemo(() => {
-    if (!buttonRef.current || !clientHeight) {
-      return 0;
-    }
-
-    return clientHeight - buttonRef.current.clientHeight;
-  }, [clientHeight]);
-
   useEffect(() => {
-    if (!pRef.current) {
-      return;
-    }
-
     const observer = new ResizeObserver(() => {
       if (!pRef.current) {
         return;
       }
       setClientHeight(pRef.current.clientHeight);
+      setScrollHeight(pRef.current.scrollHeight);
+      setLineHeight(parseFloat(getComputedStyle(pRef.current).lineHeight));
     });
-    observer.observe(pRef.current);
+    if (pRef.current) {
+      observer.observe(pRef.current);
+    }
 
     return () => {
       observer.disconnect();
     };
   }, []);
+
+  const isOverflown =
+    scrollHeight && clientHeight && scrollHeight > clientHeight;
+
+  const buttonMarginTop = (lineHeight ?? 0) * (lineClamp - 1);
 
   return (
     <div
@@ -68,8 +66,9 @@ const ExpandableParagraph = ({
       <button
         className={twMerge(
           'float-right text-primary hover:underline [shape-outside:border-box]',
+          expanding && 'hidden',
+          !isOverflown && 'hidden',
           buttonClassName,
-          expanding ? 'hidden' : '',
         )}
         onClick={() => setExpanding((prev) => !prev)}
         style={{
@@ -82,7 +81,6 @@ const ExpandableParagraph = ({
 
       <p ref={pRef}>
         {content}
-
         {expanding ? (
           <button
             className={twMerge(
