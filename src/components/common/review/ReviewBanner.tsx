@@ -10,9 +10,6 @@ const heading = {
   interview: '프로그램 참여자 인터뷰',
 };
 
-const DESCRIPTION =
-  '렛츠커리어만의 취업 노하우가 잔뜩 담긴 프로그램을 참여한 참여자들의 100% 솔직 후기를 가감 없이 그대로 보여드립니다.';
-
 type HeadingKey = keyof typeof heading;
 
 function ReviewBanner() {
@@ -21,14 +18,16 @@ function ReviewBanner() {
   return (
     <div className="relative flex bg-secondary px-5 md:justify-center py-10 h-[11.125rem] md:h-[10.75rem]">
       {/* 본문 */}
-      <div className="flex flex-col z-10 gap-1 w-full max-w-[1100px]">
-        <h1 className="text-white text-small20 font-bold">
+      <div className="flex flex-col z-10 gap-1 w-full md:gap-2 max-w-[1100px]">
+        <h1 className="text-white md:text-medium24 text-small20 font-bold">
           {pathname === '/review'
             ? heading.all
             : heading[pathname.slice(8) as HeadingKey]}
         </h1>
-        <p className="text-neutral-90 text-xsmall14 text-justify">
-          {DESCRIPTION}
+        <p className="text-neutral-90 md:text-xsmall16 text-xsmall14 text-justify md:text-left">
+          렛츠커리어만의 취업 노하우가 잔뜩 담긴 프로그램을 참여한{' '}
+          <br className="hidden md:block" />
+          참여자들의 100% 솔직 후기를 가감 없이 그대로 보여드립니다.
         </p>
       </div>
 
