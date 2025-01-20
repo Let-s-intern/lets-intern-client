@@ -1,6 +1,6 @@
 'use client';
 
-import { GetReview, ReviewItem } from '@/api/review';
+import { GetReview, QuestionType } from '@/api/review';
 import dayjs from '@/lib/dayjs';
 import { twMerge } from '@/lib/twMerge';
 import { questionTypeToText } from '@/utils/convert';
@@ -27,12 +27,14 @@ const ReviewCard = ({
   reviewItemLineClamp = 3,
   expandable = false,
   showThumbnail = false,
+  showGoodAndBadPoint = false,
 }: {
   review: GetReview;
   missionTitleClamp?: 1 | 2;
   reviewItemLineClamp?: 1 | 2 | 3 | 4;
   expandable?: boolean;
   showThumbnail?: boolean;
+  showGoodAndBadPoint?: boolean;
 }) => {
   return (
     <div className="flex flex-col gap-4 p-4 border rounded-sm sm:flex-row border-neutral-80 sm:gap-10">
@@ -67,11 +69,28 @@ const ReviewCard = ({
           {review.reviewItemList?.map((reviewItem, index) => (
             <ReviewItemBlock
               key={index}
-              reviewItem={reviewItem}
+              {...reviewItem}
               lineClamp={reviewItemLineClamp}
               expandable={expandable}
             />
           ))}
+          {showGoodAndBadPoint && review.reviewInfo.goodPoint ? (
+            <ReviewItemBlock
+              lineClamp={reviewItemLineClamp}
+              expandable={expandable}
+              questionText="좋았던 점"
+              answer={review.reviewInfo.goodPoint}
+            />
+          ) : null}
+
+          {showGoodAndBadPoint && review.reviewInfo.badPoint ? (
+            <ReviewItemBlock
+              lineClamp={reviewItemLineClamp}
+              expandable={expandable}
+              questionText="아쉬웠던 점"
+              answer={review.reviewInfo.badPoint}
+            />
+          ) : null}
         </div>
 
         <div className="flex items-center gap-2 mt-auto mb-2 text-xxsmall12">
@@ -103,7 +122,8 @@ const ReviewCard = ({
 };
 
 const ReviewItemBlock = (props: {
-  reviewItem: ReviewItem;
+  answer?: string | null;
+  questionType?: QuestionType | null;
   lineClamp?: 1 | 2 | 3 | 4;
   /** 이게 있을 경우 우선함. */
   questionText?: string;
@@ -111,9 +131,7 @@ const ReviewItemBlock = (props: {
 }) => {
   const questionText =
     props.questionText ||
-    (props.reviewItem.questionType
-      ? questionTypeToText[props.reviewItem.questionType]
-      : '');
+    (props.questionType ? questionTypeToText[props.questionType] : '');
 
   return (
     <div>
@@ -122,13 +140,13 @@ const ReviewItemBlock = (props: {
       </h4>
       {props.expandable ? (
         <ExpandableParagraph
-          content={props.reviewItem.answer ?? ''}
+          content={props.answer ?? ''}
           lineClamp={props.lineClamp}
           className={twMerge('text-xxsmall12 font-normal text-neutral-10')}
         />
       ) : (
         <p className={twMerge('text-xxsmall12 font-normal text-neutral-10')}>
-          {props.reviewItem.answer}
+          {props.answer}
         </p>
       )}
     </div>

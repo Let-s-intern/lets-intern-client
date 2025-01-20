@@ -131,6 +131,7 @@ const Page = () => {
           missionTitleClamp={1}
           reviewItemLineClamp={2}
           showThumbnail
+          showGoodAndBadPoint
         />
       </div>
     </div>
