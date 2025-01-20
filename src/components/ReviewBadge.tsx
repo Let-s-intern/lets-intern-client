@@ -14,7 +14,7 @@ const ReviewBadge = ({
         // TODO: 색상 토크나이징
         <span
           className={twMerge(
-            'rounded-xxs inline-flex items-center h-8 gap-1 px-2 font-bold text-xsmall14 bg-[#FFF2E4] text-[#FF9C34]',
+            'whitespace-pre rounded-xxs inline-flex items-center h-8 gap-1 px-2 font-bold text-xsmall14 bg-[#FFF2E4] text-[#FF9C34]',
             className,
           )}
         >
@@ -37,7 +37,7 @@ const ReviewBadge = ({
       return (
         <span
           className={twMerge(
-            'rounded-xxs inline-flex items-center h-8 gap-1 px-2 font-bold text-xsmall14 bg-[#F9EEFF] text-tertiary',
+            'whitespace-pre rounded-xxs inline-flex items-center h-8 gap-1 px-2 font-bold text-xsmall14 bg-[#F9EEFF] text-tertiary',
             className,
           )}
         >
@@ -64,7 +64,7 @@ const ReviewBadge = ({
       return (
         <span
           className={twMerge(
-            'rounded-xxs inline-flex items-center h-8 gap-1 px-2 font-bold text-xsmall14',
+            'whitespace-pre rounded-xxs inline-flex items-center h-8 gap-1 px-2 font-bold text-xsmall14',
             className,
           )}
         >
@@ -89,7 +89,7 @@ const ReviewBadge = ({
       return (
         <span
           className={twMerge(
-            'rounded-xxs inline-flex items-center h-8 gap-1 px-2 font-bold text-xsmall14 text-secondary bg-secondary-10',
+            'whitespace-pre rounded-xxs inline-flex items-center h-8 gap-1 px-2 font-bold text-xsmall14 text-secondary bg-secondary-10',
             className,
           )}
         >
@@ -116,7 +116,7 @@ const ReviewBadge = ({
       return (
         <span
           className={twMerge(
-            'rounded-xxs inline-flex items-center h-8 gap-1 px-2 font-bold text-xsmall14 bg-primary-10 text-primary',
+            'whitespace-pre rounded-xxs inline-flex items-center h-8 gap-1 px-2 font-bold text-xsmall14 bg-primary-10 text-primary',
             className,
           )}
         >
