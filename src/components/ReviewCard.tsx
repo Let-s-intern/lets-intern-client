@@ -1,7 +1,10 @@
+'use client';
+
 import { GetReview, ReviewItem } from '@/api/review';
 import dayjs from '@/lib/dayjs';
 import { twMerge } from '@/lib/twMerge';
 import { questionTypeToText } from '@/utils/convert';
+import ExpandableParagraph from './ExpandableParagraph';
 import ReviewBadge from './ReviewBadge';
 
 export const getTitle = (review: GetReview) => {
@@ -21,16 +24,18 @@ export const getTitle = (review: GetReview) => {
 const ReviewCard = ({
   review,
   missionTitleClamp = 1,
+  expandable = false,
 }: {
   review: GetReview;
   missionTitleClamp?: 1 | 2;
+  expandable?: boolean;
 }) => {
   return (
     <div className="flex flex-col p-4 border rounded-sm border-neutral-80">
       <div className="mb-2">
         <ReviewBadge reviewType={review.reviewInfo.type} />
       </div>
-      <h3 className="mb-2 font-bold text-xsmall16 text-neutral-0">
+      <h3 className="mb-2 font-bold truncate text-xsmall16 text-neutral-0">
         {review.reviewInfo.programTitle}
       </h3>
       {review.reviewInfo.type === 'MISSION_REVIEW' ? (
@@ -55,12 +60,17 @@ const ReviewCard = ({
       ) : null}
       <div className="mb-4 space-y-2.5 ">
         {review.reviewItemList?.map((reviewItem, index) => (
-          <ReviewItemBlock key={index} reviewItem={reviewItem} lineClamp={3} />
+          <ReviewItemBlock
+            key={index}
+            reviewItem={reviewItem}
+            lineClamp={3}
+            expandable={expandable}
+          />
         ))}
       </div>
 
       <div className="flex items-center gap-2 mt-auto mb-2 text-xxsmall12">
-        <span className="text-neutral-20 ">
+        <span className="whitespace-pre text-neutral-20">
           {review.reviewInfo.name?.[0]}**
         </span>
         <span className="text-neutral-70">|</span>
@@ -84,6 +94,7 @@ const ReviewItemBlock = (props: {
   lineClamp?: 1 | 2 | 3 | 4;
   /** 이게 있을 경우 우선함. */
   questionText?: string;
+  expandable?: boolean;
 }) => {
   const questionText =
     props.questionText ||
@@ -96,9 +107,17 @@ const ReviewItemBlock = (props: {
       <h4 className="mb-1 font-semibold text-xxsmall12 text-neutral-10">
         {questionText}
       </h4>
-      <p className={twMerge('text-xxsmall12 font-normal text-neutral-10')}>
-        {props.reviewItem.answer}
-      </p>
+      {props.expandable ? (
+        <ExpandableParagraph
+          content={props.reviewItem.answer ?? ''}
+          lineClamp={props.lineClamp}
+          className={twMerge('text-xxsmall12 font-normal text-neutral-10')}
+        />
+      ) : (
+        <p className={twMerge('text-xxsmall12 font-normal text-neutral-10')}>
+          {props.reviewItem.answer}
+        </p>
+      )}
     </div>
   );
 };

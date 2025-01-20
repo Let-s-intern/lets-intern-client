@@ -59,7 +59,8 @@ const mock3: GetReview = {
   reviewInfo: {
     reviewId: 1,
     type: 'LIVE_REVIEW',
-    programTitle: '기필코 챌린지',
+    programTitle:
+      '기필코 챌린지 aksd fasdf kalsdfk lsf akldf asldf jaksldfj laksd fk',
     badPoint: 'Bad Point',
     challengeType: 'DOCUMENT_PREPARATION',
     createDate: '2021-09-01',
@@ -112,11 +113,11 @@ const mock4: GetReview = {
 const Page = () => {
   return (
     <div className="flex">
-      <div className="grid grid-cols-4 gap-4">
+      <div className="grid grid-cols-4 gap-5">
         <ReviewCard review={mock1} missionTitleClamp={1} />
         <ReviewCard review={mock2} missionTitleClamp={1} />
-        <ReviewCard review={mock3} missionTitleClamp={1} />
-        <ReviewCard review={mock4} missionTitleClamp={1} />
+        <ReviewCard expandable review={mock3} missionTitleClamp={1} />
+        <ReviewCard expandable review={mock4} missionTitleClamp={1} />
       </div>
     </div>
   );
