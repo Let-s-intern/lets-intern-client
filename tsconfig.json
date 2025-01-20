@@ -13,8 +13,7 @@
     "isolatedModules": true,
     "jsx": "preserve",
     "incremental": true,
-    // TODO: 추가
-    // "noFallthroughCasesInSwitch": true,
+    "noFallthroughCasesInSwitch": true,
     "plugins": [
       {
         "name": "next"

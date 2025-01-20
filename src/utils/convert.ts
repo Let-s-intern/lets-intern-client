@@ -1,3 +1,4 @@
+import { QuestionType } from '@/api/review';
 import {
   AttendanceResult,
   AttendanceStatus,
@@ -25,6 +26,13 @@ export const newProgramTypeDetailToText: Record<string, string> = {
   DOCUMENT_PREPARATION: '서류 준비',
   MEETING_PREPARATION: '면접 준비',
   PASS: '합격 후 성장',
+};
+
+export const questionTypeToText: Record<QuestionType, string> = {
+  GOAL: '프로그램 참여 전 목표',
+  GOAL_RESULT: '목표 달성 여부',
+  WORRY: '서류 작성 고민', // report
+  WORRY_RESULT: '고민 해결 여부', // report
 };
 
 export const programClassificationToText: Record<
