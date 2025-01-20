@@ -1,3 +1,5 @@
+/** @deprecated 후기 관리 */
+
 import { MenuItem, Select } from '@mui/material';
 import { useState } from 'react';
 
