@@ -117,7 +117,7 @@ const mock4: GetReview = {
 
 const Page = () => {
   return (
-    <div className="max-w-[844px]">
+    <div className="max-w-[844px] mx-auto my-20">
       <div className="grid grid-cols-3 gap-5">
         <ReviewCard review={mock1} missionTitleClamp={1} />
         {/* <ReviewCard review={mock2} missionTitleClamp={1} /> */}
