@@ -1,5 +1,6 @@
 import { Button, Checkbox } from '@mui/material';
 import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
+import { Trash2 } from 'lucide-react';
 import { memo, useState } from 'react';
 
 import AdminReviewHeader from './AdminReviewHeader';
@@ -59,6 +60,16 @@ export default function AdminBlogReviewListPage() {
       renderCell: (params: GridRenderCellParams<Row, boolean>) => {
         return <CellCheckbox defaultValue={params.value ?? true} />;
       },
+    },
+    {
+      field: 'actions',
+      headerName: '삭제',
+      width: 100,
+      renderCell: () => (
+        <div className="flex h-full items-center ">
+          <Trash2 color="red" size={24} />
+        </div>
+      ),
     },
   ];
 
@@ -145,7 +156,8 @@ const CellCheckbox = memo(function CellCheckbox({
 
 const GridToolbar = memo(function GridToolbar() {
   return (
-    <div className="text-right p-2">
+    <div className="flex items-center justify-between p-2">
+      <span className="text-requirement">더블 클릭하여 수정하세요</span>
       <Button
         variant="outlined"
         onClick={() => console.log('Add blog review.')}
