@@ -1,8 +1,19 @@
-import { Checkbox } from '@mui/material';
+import { Button, Checkbox } from '@mui/material';
 import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
+import { Trash2 } from 'lucide-react';
 import { memo, useState } from 'react';
 
 import AdminReviewHeader from './AdminReviewHeader';
+
+type Row = {
+  createdDate: string;
+  programType: string;
+  programTitle: string;
+  username: string;
+  title: string;
+  url: string;
+  isVisible: boolean;
+} & { id: number | string };
 
 export default function AdminBlogReviewListPage() {
   const columns: GridColDef<(typeof rows)[number]>[] = [
@@ -46,9 +57,19 @@ export default function AdminBlogReviewListPage() {
       headerName: '노출여부',
       sortable: false,
       width: 80,
-      renderCell: (params: GridRenderCellParams<any, boolean>) => {
+      renderCell: (params: GridRenderCellParams<Row, boolean>) => {
         return <CellCheckbox defaultValue={params.value ?? true} />;
       },
+    },
+    {
+      field: 'actions',
+      headerName: '삭제',
+      width: 100,
+      renderCell: () => (
+        <div className="flex h-full items-center ">
+          <Trash2 color="red" size={24} />
+        </div>
+      ),
     },
   ];
 
@@ -113,6 +134,7 @@ export default function AdminBlogReviewListPage() {
       <DataGrid
         rows={rows}
         columns={columns}
+        slots={{ toolbar: GridToolbar }}
         disableRowSelectionOnClick
         hideFooter
       />
@@ -129,5 +151,19 @@ const CellCheckbox = memo(function CellCheckbox({
 
   return (
     <Checkbox checked={checked} onChange={() => setChecked((prev) => !prev)} />
+  );
+});
+
+const GridToolbar = memo(function GridToolbar() {
+  return (
+    <div className="flex items-center justify-between p-2">
+      <span className="text-requirement">더블 클릭하여 수정하세요</span>
+      <Button
+        variant="outlined"
+        onClick={() => console.log('Add blog review.')}
+      >
+        등록
+      </Button>
+    </div>
   );
 });
