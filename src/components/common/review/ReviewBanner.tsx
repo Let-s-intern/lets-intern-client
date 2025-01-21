@@ -25,7 +25,7 @@ function ReviewBanner() {
             : heading[pathname.slice(8) as HeadingKey]}
         </h1>
         <p className="text-neutral-90 md:text-xsmall16 text-xsmall14 text-justify md:text-left">
-          렛츠커리어만의 취업 노하우가 잔뜩 담긴 프로그램을 참여한{' '}
+          렛츠커리어만의 취업 노하우가 잔뜩 담긴 프로그램에 참여한{' '}
           <br className="hidden md:block" />
           참여자들의 100% 솔직 후기를 가감 없이 그대로 보여드립니다.
         </p>
