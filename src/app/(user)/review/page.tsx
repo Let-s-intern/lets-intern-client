@@ -1,23 +1,34 @@
-import Link from 'next/link';
+import MoreHeader from '@components/common/ui/MoreHeader';
 
 const Page = () => {
   return (
     // TODO: 레이아웃 파일로 만들어보기
-    <div className="flex">
-      <nav>
+    <div className="flex w-full">
+      <nav className="w-full">
         <ul>
           <li>
-            <Link href="/review/blog">Blog</Link>
+            <MoreHeader
+              title="프로그램 참여 후기"
+              subtitle="NN개"
+              href="/review/program"
+            />
           </li>
           <li>
-            <Link href="/review/interview">Interview</Link>
+            <MoreHeader
+              title="블로그 후기"
+              subtitle="NN개"
+              href="/review/blog"
+            />
           </li>
           <li>
-            <Link href="/review/program">Program</Link>
+            <MoreHeader
+              title="프로그램 참여자 인터뷰"
+              subtitle="NN개"
+              href="/review/interview"
+            />
           </li>
         </ul>
       </nav>
-      <div>Review</div>
     </div>
   );
 };
