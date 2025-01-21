@@ -2,6 +2,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
+import TextArea from '@components/common/ui/input/TextArea';
 import GradeDropdown from '../../../components/common/mypage/privacy/form-control/GradeDropdown';
 import Input from '../../../components/common/ui/input/Input';
 import axios from '../../../utils/axios';
@@ -17,6 +18,7 @@ const ChallengeUserInfo = () => {
     major: '',
     wishJob: '',
     wishCompany: '',
+    goal: '',
   });
   const [buttonDisabled, setButtonDisabled] = useState(false);
 
@@ -30,6 +32,7 @@ const ChallengeUserInfo = () => {
         major: res.data.data.major,
         wishJob: res.data.data.wishJob,
         wishCompany: res.data.data.wishCompany,
+        goal: '',
       });
       return res.data;
     },
@@ -87,6 +90,10 @@ const ChallengeUserInfo = () => {
     setValue({ ...value, [e.target.name]: e.target.value });
   };
 
+  const handleGoalChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setValue({ ...value, goal: e.target.value });
+  };
+
   const handleGradeChange = (grade: string) => {
     setValue({ ...value, grade });
   };
@@ -101,7 +108,8 @@ const ChallengeUserInfo = () => {
         !value.grade ||
         !value.major ||
         !value.wishJob ||
-        !value.wishCompany,
+        !value.wishCompany ||
+        !value.goal,
     );
   }, [value]);
 
@@ -133,7 +141,7 @@ const ChallengeUserInfo = () => {
           <div className="flex flex-col gap-3">
             <div className="flex flex-col gap-1">
               <label htmlFor="university" className="text-1-medium">
-                학교
+                학교<span className="text-requirement">*</span>
               </label>
               <Input
                 id="university"
@@ -145,7 +153,7 @@ const ChallengeUserInfo = () => {
             </div>
             <div className="flex flex-col gap-1">
               <label htmlFor="grade" className="text-1-medium">
-                학년
+                학년<span className="text-requirement">*</span>
               </label>
               <GradeDropdown
                 value={value.grade}
@@ -155,7 +163,7 @@ const ChallengeUserInfo = () => {
             </div>
             <div className="flex flex-col gap-1">
               <label htmlFor="major" className="text-1-medium">
-                전공
+                전공<span className="text-requirement">*</span>
               </label>
               <Input
                 id="major"
@@ -167,7 +175,7 @@ const ChallengeUserInfo = () => {
             </div>
             <div className="flex flex-col gap-1">
               <label htmlFor="wishJob" className="text-1-medium">
-                희망 직무
+                희망 직무<span className="text-requirement">*</span>
               </label>
               <Input
                 id="wishJob"
@@ -179,7 +187,7 @@ const ChallengeUserInfo = () => {
             </div>
             <div className="flex flex-col gap-1">
               <label htmlFor="wishCompany" className="text-1-medium">
-                희망 기업
+                희망 기업<span className="text-requirement">*</span>
               </label>
               <Input
                 id="wishCompany"
@@ -187,6 +195,19 @@ const ChallengeUserInfo = () => {
                 placeholder="희망 기업을 입력해주세요."
                 value={value.wishCompany}
                 onChange={handleInputChange}
+              />
+            </div>
+            <div className="flex flex-col gap-1">
+              <label htmlFor="wishCompany" className="text-1-medium">
+                챌린지 목표<span className="text-requirement">*</span>
+              </label>
+              <TextArea
+                id="wishCompany"
+                name="wishCompany"
+                placeholder={`챌린지를 신청한 목적과 계기,\n또는 챌린지 참여를 통해 이루고 싶은 목표를 자유롭게 작성해주세요.`}
+                className="text-xsmall14 font-normal"
+                value={value.goal}
+                onChange={handleGoalChange}
               />
             </div>
           </div>
