@@ -1,4 +1,5 @@
 import { GetReview } from '@/api/review';
+import MoreHeader from '@components/common/ui/MoreHeader';
 import ReviewCard from '@components/ReviewCard';
 import { Metadata } from 'next';
 
@@ -134,6 +135,11 @@ const Page = () => {
           showGoodAndBadPoint
         />
       </div>
+      <MoreHeader
+        title="프로그램 참여 후기"
+        subtitle="4개"
+        href="/review/program"
+      />
     </div>
   );
 };
