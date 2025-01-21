@@ -1,6 +1,7 @@
 'use client';
 
 import { GetReview, QuestionType } from '@/api/review';
+import { YYYY_MM_DD } from '@/data/dayjsFormat';
 import dayjs from '@/lib/dayjs';
 import { twMerge } from '@/lib/twMerge';
 import { questionTypeToText } from '@/utils/convert';
@@ -105,7 +106,7 @@ const ReviewCard = ({
         </div>
         <div className="text-neutral-40 text-xxsmall12">
           {review.reviewInfo.createDate
-            ? dayjs(review.reviewInfo.createDate).format('YYYY.MM.DD')
+            ? dayjs(review.reviewInfo.createDate).format(YYYY_MM_DD)
             : ''}{' '}
           작성
         </div>

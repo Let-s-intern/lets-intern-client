@@ -68,3 +68,22 @@ export const reviewListSchema = z.object({
   reviewList: z.array(getReviewSchema),
   pageInfo,
 });
+
+const blogReviewSchema = z.object({
+  blogReviewId: z.number(),
+  postDate: z.string().nullable().optional(),
+  programType: z.string().nullable().optional(),
+  programTitle: z.string().nullable().optional(),
+  name: z.string().nullable().optional(),
+  title: z.string().nullable().optional(),
+  url: z.string().nullable().optional(),
+  thumbnail: z.string().nullable().optional(),
+  description: z.string().nullable().optional(),
+});
+
+export const blogReveiwListSchema = z.object({
+  reviewList: z.array(blogReviewSchema),
+  pageInfo,
+});
+
+export type BlogReview = z.infer<typeof blogReviewSchema>;
