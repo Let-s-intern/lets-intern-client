@@ -1,7 +1,8 @@
+import { useCurrentChallenge } from '@/context/CurrentChallengeProvider';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import clsx from 'clsx';
 import { useEffect, useState } from 'react';
-import { MyDailyMission } from '../../../../../schema';
+import { MyDailyMission, Schedule } from '../../../../../schema';
 import axios from '../../../../../utils/axios';
 import AlertModal from '../../../../ui/alert/AlertModal';
 
@@ -12,11 +13,28 @@ interface Props {
 const DailyMissionSubmitSection = ({ myDailyMission }: Props) => {
   const queryClient = useQueryClient();
 
+  const { schedules } = useCurrentChallenge();
+
+  const lastMission = schedules.reduce((acc: Schedule | null, schedule) => {
+    if (acc === null) return schedule;
+
+    return schedule.missionInfo.th &&
+      acc.missionInfo.th &&
+      schedule.missionInfo.th > acc.missionInfo.th
+      ? schedule
+      : acc;
+  }, null);
+
+  const isLastMission =
+    lastMission?.missionInfo.th === myDailyMission.dailyMission?.th;
+
   const attendanceLink = myDailyMission.attendanceInfo?.link;
+  const attendanceReview = '';
   const attended = myDailyMission.attendanceInfo?.submitted;
   const attendanceId = myDailyMission.attendanceInfo?.id;
 
   const [value, setValue] = useState(attendanceLink ?? '');
+  const [review, setReview] = useState(attendanceReview ?? '');
   const [isLinkChecked, setIsLinkChecked] = useState(false);
   const [isValidLinkValue, setIsValidLinkValue] = useState(attended);
   const [isStartedHttp, setIsStartedHttp] = useState(false);
@@ -90,8 +108,23 @@ const DailyMissionSubmitSection = ({ myDailyMission }: Props) => {
     }
   };
 
+  const handleMissionReviewChanged = (
+    e: React.ChangeEvent<HTMLTextAreaElement>,
+  ) => {
+    setReview(e.target.value);
+  };
+
   const handleMissionLinkSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (isLastMission) {
+      alert(
+        '마지막 미션입니다. 미션 제출 후 미션 소감을 카톡으로 공유해주세요.',
+      );
+      return;
+    }
+
+    // 미션 소감 제출 반영해야 함
     submitMissionLink.mutate(value as string);
     setIsEditing(false);
   };
@@ -108,7 +141,7 @@ const DailyMissionSubmitSection = ({ myDailyMission }: Props) => {
       <h3 className="text-1-semibold">미션 제출하기</h3>
       <p className="text-0.875 mt-1">
         {isEditing
-          ? '링크를 제대로 확인해 주세요. 카톡으로 공유해야 미션 제출이 인정됩니다.'
+          ? '미션 링크가 잘 열리는지 확인해 주세요. 제출 후 미션과 소감을 카톡으로 공유해야 미션 제출이 인정됩니다.'
           : '미션 제출이 완료되었습니다.'}
       </p>
       <div className="mt-4 flex items-stretch gap-4">
@@ -158,8 +191,8 @@ const DailyMissionSubmitSection = ({ myDailyMission }: Props) => {
         isEditing &&
         (isLinkChecked ? (
           <div className="text-0.75-medium ml-12 mt-1 text-primary">
-            링크 확인을 완료하셨습니다. 링크가 올바르다면 제출 버튼을
-            눌러주세요.
+            링크 확인을 완료하셨습니다. 링크가 올바르다면 미션 소감 작성 후 제출
+            버튼을 눌러주세요.
           </div>
         ) : !isValidLinkValue ? (
           <div className="text-0.75-medium ml-12 mt-1 text-red-500">
@@ -171,7 +204,16 @@ const DailyMissionSubmitSection = ({ myDailyMission }: Props) => {
             URL을 올바르게 입력하셨습니다. 링크 확인을 진행해주세요.
           </div>
         ))}
-
+      <div className="mt-6 flex w-full flex-col gap-y-2.5">
+        <h3 className="text-xsmall16 font-bold text-neutral-0">미션 소감</h3>
+        <textarea
+          className="rounded-md border border-neutral-50 bg-neutral-95 p-3 text-xsmall16 outline-none"
+          placeholder={`오늘의 미션은 어떠셨나요?\n새롭게 배운 점, 어려운 부분, 궁금증 등 떠오르는 생각을 남겨 주세요.`}
+          value={review}
+          onChange={handleMissionReviewChanged}
+          disabled={!isEditing || attendanceReview !== ''}
+        />
+      </div>
       <div className="mt-6 text-right">
         {attendanceLink && (
           <button
@@ -192,7 +234,7 @@ const DailyMissionSubmitSection = ({ myDailyMission }: Props) => {
         <button
           type="submit"
           className="text-1-semibold rounded-xxs border border-neutral-75 bg-static-100 px-5 py-2 text-center disabled:bg-gray-50 disabled:text-gray-600"
-          disabled={!isEditing || !value || !isLinkChecked}
+          disabled={!isEditing || !value || !review || !isLinkChecked}
         >
           {isEditing ? '제출' : '제출 완료'}
         </button>
