@@ -7,7 +7,6 @@ import { twMerge } from '@/lib/twMerge';
 import { questionTypeToText } from '@/utils/convert';
 import ExpandableParagraph from './ExpandableParagraph';
 import ReviewBadge from './ReviewBadge';
-import ReviewCardContainer from './ReviewCardContainer';
 
 export const getTitle = (review: GetReview) => {
   switch (review.reviewInfo.type) {
@@ -39,7 +38,7 @@ const ReviewCard = ({
   showGoodAndBadPoint?: boolean;
 }) => {
   return (
-    <ReviewCardContainer>
+    <div className="flex flex-col gap-4 p-4 border rounded-sm sm:flex-row border-neutral-80 sm:gap-10">
       <div className="flex flex-col max-w-full mr-auto">
         <div className="mb-2">
           <ReviewBadge reviewType={review.reviewInfo.type} />
@@ -119,7 +118,7 @@ const ReviewCard = ({
           className="block object-cover w-[120px] h-[90px] sm:w-[180px] sm:h-[135px] rounded-sm sm:mt-10"
         />
       ) : null}
-    </ReviewCardContainer>
+    </div>
   );
 };
 

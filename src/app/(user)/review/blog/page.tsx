@@ -93,7 +93,7 @@ const blogReviewMockList = [
 
 const Page = () => {
   return (
-    <div className="px-5">
+    <div className="px-5 md:px-0 max-w-[884px] w-full">
       <section className="flex flex-col gap-6">
         {blogReviewMockList.map((data) => (
           <BlogReviewCard key={data.blogReviewId} blogReview={data} />

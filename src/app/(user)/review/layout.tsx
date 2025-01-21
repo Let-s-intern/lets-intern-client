@@ -9,7 +9,7 @@ export default function ReviewLayout({
   return (
     <>
       <ReviewBanner />
-      <div className="flex flex-col md:flex-row">
+      <div className="flex flex-col md:justify-center md:flex-row">
         <ReviewNavBar />
         {children}
       </div>
