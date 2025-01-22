@@ -1,6 +1,6 @@
 'use client';
 
-import { ProgramApplicationFormInfo } from '@/api/application';
+import { useProgramApplicationQuery } from '@/api/application';
 import dayjs from '@/lib/dayjs';
 import { generateOrderId, getPayInfo, UserInfo } from '@/lib/order';
 import { ChallengeIdPrimitive } from '@/schema';
@@ -11,16 +11,19 @@ import { useCallback } from 'react';
 import { DesktopApplyCTA, MobileApplyCTA } from './common/ApplyCTA';
 
 const ChallengeCTAButtons = ({
-  application,
   challenge,
   challengeId,
 }: {
-  application: ProgramApplicationFormInfo;
   challenge: ChallengeIdPrimitive;
   challengeId: string;
 }) => {
   const { isLoggedIn } = useAuthStore();
   const router = useRouter();
+
+  const { data: application } = useProgramApplicationQuery(
+    'challenge',
+    Number(challengeId),
+  );
 
   const { setProgramApplicationForm } = useProgramStore();
 

@@ -1,4 +1,3 @@
-import { fetchProgramApplication } from '@/api/application';
 import { fetchChallengeData } from '@/api/challenge';
 import { isDeprecatedProgram } from '@/lib/isDeprecatedProgram';
 import ChallengeCTAButtons from '@components/ChallengeCTAButtons';
@@ -11,10 +10,7 @@ const Page = async ({
 }) => {
   const { id, title } = await params;
 
-  const [challenge, application] = await Promise.all([
-    fetchChallengeData(id),
-    fetchProgramApplication(id),
-  ]);
+  const [challenge] = await Promise.all([fetchChallengeData(id)]);
 
   const isDeprecated = isDeprecatedProgram(challenge);
 
@@ -26,11 +22,7 @@ const Page = async ({
     <>
       <ChallengeView challenge={challenge} />
 
-      <ChallengeCTAButtons
-        application={application}
-        challenge={challenge}
-        challengeId={id}
-      />
+      <ChallengeCTAButtons challenge={challenge} challengeId={id} />
     </>
   );
 };
