@@ -34,7 +34,7 @@ function ReviewBanner() {
   const pathname = usePathname();
 
   return (
-    <div className="relative flex bg-secondary px-5 md:justify-center py-10 h-[11.125rem] md:h-[10.75rem]">
+    <header className="relative flex bg-secondary px-5 md:justify-center py-10 h-[11.125rem] md:h-[10.75rem]">
       {/* 본문 */}
       <div className="flex flex-col z-10 gap-1 w-full md:gap-2 max-w-[1100px]">
         {/* pathname에 따라 제목 불러오기 */}
@@ -59,7 +59,7 @@ function ReviewBanner() {
         {/* 이미지 위에 올라가는 Gradient 배경 */}
         <div className="absolute w-full bottom-0 md:top-0 md:left-auto left-0 right-0 h-full bg-gradient-to-t md:bg-gradient-to-l from-secondary/0 to-secondary" />
       </div>
-    </div>
+    </header>
   );
 }
 
