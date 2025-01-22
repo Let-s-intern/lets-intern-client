@@ -1,11 +1,7 @@
-import { AxiosError } from 'axios';
-import { useCallback, useEffect, useMemo, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-
 import { useProgramQuery } from '@/api/program';
 import { usePatchUser } from '@/api/user';
 import CreditCardIcon from '@/assets/icons/credit-card.svg?react';
-import paybackImg from '@/assets/payback.png';
+import PaybackImage from '@/assets/payback.png';
 import { useInstallmentPayment } from '@/hooks/useInstallmentPayment';
 import { UserInfo } from '@/lib/order';
 import useAuthStore from '@/store/useAuthStore';
@@ -22,7 +18,11 @@ import MotiveAnswerSection from '@components/common/program/program-detail/apply
 import PriceSection from '@components/common/program/program-detail/apply/section/PriceSection';
 import UserInputSection from '@components/common/program/program-detail/apply/section/UserInputSection';
 import BackHeader from '@components/common/ui/BackHeader';
+import LoadingContainer from '@components/common/ui/loading/LoadingContainer';
 import { Duration } from '@components/Duration';
+import { AxiosError } from 'axios';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import OrderProgramInfo from './OrderProgramInfo';
 
 function calculateTotalPrice({
@@ -55,7 +55,7 @@ const PaymentInputPage = () => {
   }, [isLoggedIn, navigate]);
 
   const {
-    query: { data: program },
+    query: { data: program, isLoading: programLoading },
   } = useProgramQuery({
     programId: programApplicationData.programId ?? 0,
     type: programApplicationData.programType ?? 'live',
@@ -199,6 +199,10 @@ const PaymentInputPage = () => {
     ? '0원 결제하기'
     : '결제하기';
 
+  if (programLoading || !program) {
+    return <LoadingContainer />;
+  }
+
   return (
     <div
       className="mx-auto w-full max-w-[55rem] pb-6 md:pt-5"
@@ -301,7 +305,7 @@ const PaymentInputPage = () => {
               </p>
               <img
                 className="absolute bottom-0 right-0 w-auto h-full"
-                src={paybackImg.src}
+                src={PaybackImage.src}
                 alt="3만원 페이백"
               />
             </div>
