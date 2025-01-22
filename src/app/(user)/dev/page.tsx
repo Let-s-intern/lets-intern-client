@@ -165,6 +165,12 @@ const Page = () => {
         list={reviewFilterList}
         defaultValue={reviewFilterList[0].value}
       />
+      <ReviewFilter
+        label="나는 필터야"
+        list={reviewFilterList}
+        defaultValue={reviewFilterList[0].value}
+        multiSelect
+      />
     </div>
   );
 };
