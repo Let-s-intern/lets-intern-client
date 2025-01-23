@@ -30,10 +30,10 @@ function ChallengeCurriculum({
     switch (challengeType) {
       case PORTFOLIO:
         return 'folder-icon-portfolio.svg';
-      case PERSONAL_STATEMENT:
-        return 'folder-icon-personal-statement.svg';
-      default:
+      case CAREER_START:
         return 'folder-icon-career-start.svg';
+      default:
+        return 'folder-icon-personal-statement.svg';
     }
   }, [challengeType]);
 

@@ -20,7 +20,7 @@ import BasicInfoRow from '@components/common/program/program-detail/basicInfo/Ba
 import Heading2 from '@components/common/ui/Heading2';
 import { useMediaQuery } from '@mui/material';
 
-const { PERSONAL_STATEMENT } = challengeTypeSchema.enum;
+const { PERSONAL_STATEMENT, PERSONAL_STATEMENT_LARGE_CORP } = challengeTypeSchema.enum;
 
 export const getDiscountPercent = (
   originalPrice: number,
@@ -70,7 +70,13 @@ const ChallengeInfoBottom = ({
           `PDF 총 30페이지 분량 추가 자료`,
           `렛츠커리어 공식 커뮤니티 참여`,
         ];
-
+      case PERSONAL_STATEMENT_LARGE_CORP:
+        return [
+          `자기소개서 최다 빈출 문항 작성 가이드\n(무제한 업데이트)`,
+          `기업별 합격 자기소개서 예시 및 패턴 분석`,
+          `PDF 총 30페이지 분량 추가 자료`,
+          `렛츠커리어 공식 커뮤니티 참여`,
+        ];
       default:
         return [
           `단계별 취업 준비 교육 자료 및 템플릿\n(무제한 업데이트)`,

@@ -11,7 +11,7 @@ import DifferentCard, {
 } from '@components/common/program/program-detail/different/DifferentCard';
 import SuperTitle from '@components/common/program/program-detail/SuperTitle';
 
-const { PERSONAL_STATEMENT, PORTFOLIO } = challengeTypeSchema.enum;
+const { PERSONAL_STATEMENT, PORTFOLIO, CAREER_START } = challengeTypeSchema.enum;
 
 export const tripleBenefits = [
   {
@@ -95,10 +95,10 @@ const ChallengeDifferent = ({
     switch (challengeType) {
       case PORTFOLIO:
         return '/images/payback-portfolio.png';
-      case PERSONAL_STATEMENT:
-        return '/images/payback-personal-statement.png';
-      default:
+      case CAREER_START:
         return '/images/payback-career-start.png';
+      default:
+        return '/images/payback-personal-statement.png';
     }
   })();
 
@@ -106,10 +106,10 @@ const ChallengeDifferent = ({
     switch (challengeType) {
       case PORTFOLIO:
         return 'different-icon-portfolio.svg';
-      case PERSONAL_STATEMENT:
-        return 'different-icon-personal-statement.svg';
-      default:
+      case CAREER_START:
         return 'different-icon-career-start.svg';
+      default:
+        return 'different-icon-personal-statement.svg';
     }
   }, [challengeType]);
 
