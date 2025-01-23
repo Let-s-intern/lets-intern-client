@@ -136,12 +136,16 @@ export const useGetChallengeQueryKey = 'useGetChallengeQueryKey';
 export const useGetChallengeQuery = ({
   challengeId,
   enabled,
+  refetchOnWindowFocus = true,
+
 }: {
   challengeId: number;
   enabled?: boolean;
+  refetchOnWindowFocus?: boolean 
 }) => {
   return useQuery({
     enabled,
+    refetchOnWindowFocus,
     queryKey: [useGetChallengeQueryKey, challengeId],
     queryFn: async () => {
       const res = await axios.get(`/challenge/${challengeId}`);
