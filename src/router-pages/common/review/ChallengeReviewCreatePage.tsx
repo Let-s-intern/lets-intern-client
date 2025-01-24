@@ -106,19 +106,21 @@ const ChallengeReviewCreatePage = () => {
           3. {josa(programTitle?.title ?? '', '을/를')} 참여하기 전의 목표를
           어떻게 달성하셨나요?
         </ReviewQuestion>
-        <GoalOrConcernsBox className="mb-3">
-          <div className="max-h-64 overflow-y-auto px-5 py-3 md:max-h-[9.5rem]">
-            <span className="text-xsmall14">
-              {/* TODO: 사용자 이름 넣어야 함 */}
-              🎯 <b>{user?.name}</b>님이 작성하신 챌린지 시작 전 목표
-            </span>
-            <br />
-            {/* TODO: 사용자가 설정한 목표가 들어가야 함 */}
-            <p className="text-xsmall16 font-bold">
-              {challengeGoal?.goal ?? '-'}
-            </p>
-          </div>
-        </GoalOrConcernsBox>
+        {challengeGoal?.goal && (
+          <GoalOrConcernsBox className="mb-3">
+            <div className="max-h-64 overflow-y-auto px-5 py-3 md:max-h-[9.5rem]">
+              <span className="text-xsmall14">
+                {/* TODO: 사용자 이름 넣어야 함 */}
+                🎯 <b>{user?.name}</b>님이 작성하신 챌린지 시작 전 목표
+              </span>
+              <br />
+              {/* TODO: 사용자가 설정한 목표가 들어가야 함 */}
+              <p className="text-xsmall16 font-bold">
+                {challengeGoal?.goal ?? '-'}
+              </p>
+            </div>
+          </GoalOrConcernsBox>
+        )}
         <ReviewTextarea
           value={goalResult}
           onChange={(e) => setGoalResult(e.target.value)}
