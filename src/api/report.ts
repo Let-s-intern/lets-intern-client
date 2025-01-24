@@ -1193,30 +1193,16 @@ export const useDeleteReportApplication = ({
   });
 };
 
-// Utility function to generate mock data (for demonstration purposes)
-// const generateMockData = <T extends z.ZodType>(schema: T): z.infer<T> => {
-//   const shape = schema._def.shape();
-//   const mockData: any = {};
+export const reportTitleSchema = z.object({
+  title: z.string().optional().nullable(),
+});
 
-//   for (const [key, value] of Object.entries(shape)) {
-//     if (value instanceof z.ZodString) {
-//       mockData[key] = 'mock string';
-//     } else if (value instanceof z.ZodNumber) {
-//       mockData[key] = 123;
-//     } else if (value instanceof z.ZodBoolean) {
-//       mockData[key] = true;
-//     } else if (value instanceof z.ZodArray) {
-//       mockData[key] = [generateMockData(value.element)];
-//     } else if (value instanceof z.ZodObject) {
-//       mockData[key] = generateMockData(value);
-//     } else if (value instanceof z.ZodEnum) {
-//       mockData[key] = value.options[0];
-//     } else if (value instanceof z.ZodNullable) {
-//       mockData[key] = null;
-//     } else {
-//       mockData[key] = undefined;
-//     }
-//   }
-
-//   return schema.parse(mockData);
-// };
+export const useGetReportTitle = (reportId: number) => {
+  return useQuery({
+    queryKey: ['useGetReportTitle', reportId],
+    queryFn: async () => {
+      const res = await axios.get(`/report/${reportId}/title`);
+      return reportTitleSchema.parse(res.data.data);
+    },
+  });
+};
