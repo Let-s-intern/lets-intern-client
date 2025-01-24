@@ -1169,6 +1169,7 @@ export const myDailyMission = z
         submitted: z.boolean(),
         id: z.number().nullable(),
         link: z.string().nullable(),
+        review: z.string().nullable().optional(),
         comments: z.string().nullable(),
         status: attendanceStatus.nullable(),
         result: attendanceResult.nullable(),
