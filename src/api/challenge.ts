@@ -10,6 +10,7 @@ import {
   reviewTotalSchema,
 } from '../schema';
 import axios from '../utils/axios';
+import { challengeGoalSchema } from './challengeSchema';
 
 const useChallengeQueryKey = 'useChallengeQueryKey';
 
@@ -209,6 +210,20 @@ export const useGetActiveChallenge = (type: ChallengeType) => {
         },
       });
       return activeChallengeResponse.parse(res.data.data);
+    },
+  });
+};
+
+export const getChallengeGoalQueryKey = (challengeId: number) => {
+  return ['useGetChallengeGoal', challengeId];
+};
+
+export const useGetChallengeGoal = (challengeId: number) => {
+  return useQuery({
+    queryKey: getChallengeGoalQueryKey(challengeId),
+    queryFn: async () => {
+      const res = await axios.get(`/challenge/${challengeId}/goal`);
+      return challengeGoalSchema.parse(res.data.data);
     },
   });
 };
