@@ -21,6 +21,10 @@ const ProgramReviewContentSection = () => {
   const challengeType = searchParams.get('CHALLENGE');
   const reviewType = searchParams.get('REVIEW');
 
+  const challengeTypeList = challengeType
+    ?.split(',')
+    .map((value) => value as ChallengeType);
+
   const onlyMissionReview = reviewType === 'MISSION_REVIEW';
 
   const handlePageChange = (page: number) => {
@@ -42,9 +46,7 @@ const ProgramReviewContentSection = () => {
           : ['CHALLENGE_REVIEW', 'MISSION_REVIEW']
         : [programType as ReviewType]
       : undefined,
-    challengeTypes: challengeType
-      ? challengeType.split(',').map((value) => value as ChallengeType)
-      : undefined,
+    challengeTypes: challengeTypeList,
     page: currentPage,
     size: 10,
   };
