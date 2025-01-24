@@ -59,7 +59,7 @@ const ProgramReviewContentSection = () => {
   }, [reviewData, pageInfo]);
 
   return (
-    <div className="w-full px-5 flex flex-col gap-y-6 md:pr-5 md:pl-0 lg:p-0">
+    <div className="w-full px-5 flex flex-col gap-y-6 md:pr-5 md:pl-0 lg:px-0 pb-12 md:pb-8">
       {reviewDataIsLoading ? (
         <LoadingContainer />
       ) : (
