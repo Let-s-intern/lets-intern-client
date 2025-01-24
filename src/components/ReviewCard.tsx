@@ -8,6 +8,15 @@ import { questionTypeToText } from '@/utils/convert';
 import ExpandableParagraph from './ExpandableParagraph';
 import ReviewBadge from './ReviewBadge';
 
+import Bubble from '@/assets/graphic/bubble.svg?react';
+import Heart from '@/assets/graphic/heart.svg?react';
+import Lightbulb from '@/assets/graphic/lightbulb.svg?react';
+import Pen from '@/assets/graphic/pen.svg?react';
+import PinBlue from '@/assets/graphic/pin_blue.svg?react';
+import PinRed from '@/assets/graphic/pin_red.svg?react';
+import Trophy from '@/assets/graphic/trophy.svg?react';
+import { ReactNode } from 'react';
+
 export const getTitle = (review: GetReview) => {
   switch (review.reviewInfo.type) {
     case 'CHALLENGE_REVIEW':
@@ -19,6 +28,25 @@ export const getTitle = (review: GetReview) => {
       return review.reviewInfo.programTitle;
     case 'MISSION_REVIEW':
       return review.reviewInfo.missionTitle;
+  }
+};
+
+const questionIcon = (questionType: QuestionType | null | 'GOOD' | 'BAD') => {
+  switch (questionType) {
+    case 'WORRY':
+      return <PinBlue width={18} height={18} />;
+    case 'WORRY_RESULT':
+      return <Lightbulb width={18} height={18} />;
+    case 'GOAL':
+      return <PinRed width={18} height={18} />;
+    case 'GOAL_RESULT':
+      return <Trophy width={18} height={18} />;
+    case 'GOOD':
+      return <Heart width={18} height={18} />;
+    case 'BAD':
+      return <Pen width={18} height={18} />;
+    default:
+      return <Bubble width={18} height={18} />;
   }
 };
 
@@ -72,6 +100,7 @@ const ReviewCard = ({
               key={index}
               {...reviewItem}
               lineClamp={reviewItemLineClamp}
+              icon={questionIcon(reviewItem.questionType ?? null)}
               expandable={expandable}
             />
           ))}
@@ -80,6 +109,7 @@ const ReviewCard = ({
               lineClamp={reviewItemLineClamp}
               expandable={expandable}
               questionText="좋았던 점"
+              icon={questionIcon('GOOD')}
               answer={review.reviewInfo.goodPoint}
             />
           ) : null}
@@ -89,6 +119,7 @@ const ReviewCard = ({
               lineClamp={reviewItemLineClamp}
               expandable={expandable}
               questionText="아쉬웠던 점"
+              icon={questionIcon('BAD')}
               answer={review.reviewInfo.badPoint}
             />
           ) : null}
@@ -129,6 +160,7 @@ const ReviewItemBlock = (props: {
   /** 이게 있을 경우 우선함. */
   questionText?: string;
   expandable?: boolean;
+  icon?: ReactNode;
 }) => {
   const questionText =
     props.questionText ||
@@ -136,9 +168,12 @@ const ReviewItemBlock = (props: {
 
   return (
     <div>
-      <h4 className="mb-1 font-semibold text-xxsmall12 text-neutral-10">
-        {questionText}
-      </h4>
+      <div className="flex w-fit mb-0.5 items-center gap-1">
+        {props.icon && props.icon}
+        <span className="text-xxsmall12 font-semibold text-neutral-10">
+          {questionText}
+        </span>
+      </div>
       {props.expandable ? (
         <ExpandableParagraph
           content={props.answer ?? ''}
