@@ -1,3 +1,4 @@
+import ProgramReviewSection from '@components/common/review/programReview/ProgramReviewSection';
 import MoreHeader from '@components/common/ui/MoreHeader';
 
 const Page = () => {
@@ -7,11 +8,7 @@ const Page = () => {
       <nav className="w-full">
         <ul>
           <li>
-            <MoreHeader
-              title="프로그램 참여 후기"
-              subtitle="NN개"
-              href="/review/program"
-            />
+            <ProgramReviewSection />
           </li>
           <li>
             <MoreHeader
