@@ -123,7 +123,7 @@ const DailyMissionSubmitSection = ({ myDailyMission }: Props) => {
       }
       setIsEditing(false);
 
-      if (isLastMission) {
+      if (isLastMission && !attended) {
         setLastMissionModal(true);
       }
     } catch (error) {
@@ -223,11 +223,11 @@ const DailyMissionSubmitSection = ({ myDailyMission }: Props) => {
             disabled={!isEditing || !!attendanceReview}
           />
         </div>
-        <div className="mt-6 text-right">
+        <div className="mt-6 flex gap-x-6">
           {attendanceLink && (
             <button
               type="button"
-              className="text-1-semibold mr-3 rounded-xxs border border-neutral-75 bg-static-100 px-5 py-2 text-center disabled:bg-gray-50 disabled:text-gray-600"
+              className="text-small18 flex-1 h-12 rounded-md bg-white border border-gray-50 px-6 py-3 text-center disabled:bg-gray-50 disabled:text-gray-600 font-medium"
               onClick={() => {
                 if (isEditing) {
                   cancelMisiionLinkChange();
@@ -242,7 +242,7 @@ const DailyMissionSubmitSection = ({ myDailyMission }: Props) => {
           )}
           <button
             type="submit"
-            className="text-1-semibold rounded-xxs border border-neutral-75 bg-static-100 px-5 py-2 text-center disabled:bg-gray-50 disabled:text-gray-600"
+            className="text-small18 flex-1 h-12 rounded-md bg-primary text-white px-6 py-3 text-center disabled:bg-gray-300 disabled:text-gray-500 font-medium"
             disabled={!isEditing || !value || !review || !isLinkChecked}
           >
             {isEditing ? '제출' : '제출 완료'}
