@@ -11,7 +11,7 @@ export default function ReviewLayout({
       <ReviewBanner />
       <div className="flex flex-col max-w-[1100px] w-full mx-auto md:flex-row">
         <ReviewNavBar />
-        {children}
+        <main className="w-full">{children}</main>
       </div>
     </>
   );

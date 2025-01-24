@@ -1,4 +1,5 @@
 import { GetReview } from '@/api/review';
+import ReviewFilter from '@components/common/review/ReviewFilter';
 import MoreHeader from '@components/common/ui/MoreHeader';
 import ReviewCard from '@components/ReviewCard';
 import { Metadata } from 'next';
@@ -116,6 +117,25 @@ const mock4: GetReview = {
   ],
 };
 
+const reviewFilterList = [
+  {
+    caption: '모든 리뷰',
+    value: 'all',
+  },
+  {
+    caption: '긍정적 리뷰',
+    value: 'positive',
+  },
+  {
+    caption: '부정적 리뷰',
+    value: 'negative',
+  },
+  {
+    caption: '일부 리뷰',
+    value: 'some',
+  },
+];
+
 const Page = () => {
   return (
     <div className="max-w-[844px] mx-auto my-20">
@@ -139,6 +159,17 @@ const Page = () => {
         title="프로그램 참여 후기"
         subtitle="4개"
         href="/review/program"
+      />
+      <ReviewFilter
+        label="나는 필터야"
+        list={reviewFilterList}
+        defaultValue={reviewFilterList[0].value}
+      />
+      <ReviewFilter
+        label="나는 필터야"
+        list={reviewFilterList}
+        defaultValue={reviewFilterList[0].value}
+        multiSelect
       />
     </div>
   );
