@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
 import { IoIosLink } from 'react-icons/io';
+import { Link } from 'react-router-dom';
 import { UserChallengeMissionDetail } from '../../../../../schema';
 
 interface Props {
@@ -16,7 +16,7 @@ const ContentsDropdown = ({ missionDetail }: Props) => {
   return (
     <div className="relative flex-1">
       <div
-        className="rounded cursor-pointer border border-[#DCDCDC] bg-primary px-4 py-2 text-center font-semibold text-white shadow"
+        className="rounded-sm cursor-pointer bg-primary-20 p-3 text-center font-medium text-xsmall16 text-primary"
         onClick={() => setIsMenuShown(!isMenuShown)}
       >
         학습 콘텐츠
