@@ -136,9 +136,9 @@ export type programReviewParam = {
 
 export const reviewInfoSchema = z.object({});
 
-const getProgramReviewQueryKey = [
+const getProgramReviewQueryKey = (param?: programReviewParam) => [
   'programReview',
-  { types: [], challengeType: [], page: 0, size: 10 },
+  param?.types,
 ];
 
 export const useGetProgramReview = ({
@@ -148,7 +148,7 @@ export const useGetProgramReview = ({
   size = 10,
 }: programReviewParam) => {
   return useQuery({
-    queryKey: getProgramReviewQueryKey,
+    queryKey: getProgramReviewQueryKey({ types, challengeTypes, page, size }),
     queryFn: async () => {
       const res = await axiosV2.get('/review', {
         params: {
