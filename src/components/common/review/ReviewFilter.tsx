@@ -3,16 +3,18 @@
 import { useMediaQuery } from '@mui/material';
 import clsx from 'clsx';
 import { Check, ChevronDown, SquareCheck } from 'lucide-react';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { memo, useState } from 'react';
 
-interface FilterItem {
+export interface FilterItem {
   caption: string;
   value: string;
 }
 
 interface Props {
   label: string;
-  defaultValue: string;
+  labelValue?: string;
+  defaultValue?: string;
   list: FilterItem[];
   multiSelect?: boolean;
   onSelect?: (value: string) => void;
@@ -20,17 +22,23 @@ interface Props {
 
 function ReviewFilter({
   label,
+  labelValue,
   defaultValue,
   list,
   multiSelect = false,
   onSelect,
 }: Props) {
-  const findItem = (value: string) =>
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const findItem = (value: string | undefined): FilterItem | undefined => {
+    if (value === undefined) return undefined;
     list.find((item) => item.value === value) as FilterItem | undefined;
+  };
 
   const [isOpen, setIsOpen] = useState(false);
   // 단일 선택
-  const [selectedItem, setSelectedItem] = useState(() =>
+  const [selectedItem, setSelectedItem] = useState<FilterItem | undefined>(() =>
     findItem(defaultValue),
   );
   // 중복 선택
@@ -41,6 +49,36 @@ function ReviewFilter({
   const isDesktop = useMediaQuery('(min-width: 768px)');
 
   const handleClickItem = (item: FilterItem) => {
+    // 쿼리 스트링으로 선택된 아이템 추가
+    if (labelValue) {
+      const params = new URLSearchParams(searchParams.toString());
+
+      if (multiSelect) {
+        const alreadyIncluded = checkedList.some(
+          (ele: FilterItem) => ele.value === item.value,
+        );
+        if (alreadyIncluded) {
+          const filtered = checkedList.filter(
+            (ele) => ele.value !== item.value,
+          );
+          if (filtered.length === 0) {
+            params.delete(labelValue);
+          } else {
+            params.set(labelValue, filtered.map((ele) => ele.value).join(','));
+          }
+        } else {
+          params.set(
+            labelValue,
+            [...checkedList, item].map((ele) => ele.value).join(','),
+          );
+        }
+      } else {
+        params.set(labelValue, item.value);
+      }
+
+      router.replace(`${pathname}?${params.toString()}`);
+    }
+
     if (onSelect) onSelect(item.value);
 
     // 중복 선택
@@ -69,11 +107,12 @@ function ReviewFilter({
         <span className="font-medium text-neutral-20">{label}</span>
         <span className="font-bold text-primary">
           {multiSelect
-            ? checkedList.length > 0 &&
-              (checkedList.length > 1
-                ? `${checkedList[0].caption}외 ${checkedList.length - 1}개`
-                : checkedList[0].caption)
-            : selectedItem?.caption}
+            ? checkedList.length > 1
+              ? `${checkedList[0].caption} 외 ${checkedList.length - 1}개`
+              : checkedList.length > 0
+                ? checkedList[0].caption
+                : '전체'
+            : (selectedItem?.caption ?? '전체')}
         </span>
         <ChevronDown size={20} />
       </div>
