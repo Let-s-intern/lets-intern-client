@@ -133,7 +133,7 @@ export const useGetChallengeListQuery = ({
   });
 };
 
-export const useGetChallengeQueryKey = 'useGetChallengeQueryKey';
+export const useGetChallengeQueryKey = 'challenge';
 
 export const useGetChallengeQuery = ({
   challengeId,
