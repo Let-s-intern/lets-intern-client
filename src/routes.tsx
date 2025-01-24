@@ -41,12 +41,8 @@ import ReportPersonalStatementPage from './router-pages/common/report/ReportPers
 import ReportPortfolioPage from './router-pages/common/report/ReportPortfolioPage';
 import ReportResumePage from './router-pages/common/report/ReportResumePage';
 import ReportTossPage from './router-pages/common/report/ReportTossPage';
-import ReviewCreate from './router-pages/common/review/ReviewCreate';
-import ReviewDetail from './router-pages/common/review/ReviewDetail';
 import Maintenance from './router-pages/maintenance/Maintenance';
 import NotFound from './router-pages/NotFound';
-import WriteReviewChallenge from './router-pages/WriteReviewChallenge';
-import WriteReviewLive from './router-pages/WriteReviewLive';
 
 export const routes: RouteObject[] = [
   {
@@ -73,14 +69,6 @@ export const routes: RouteObject[] = [
       { path: 'order/result', element: <PaymentResult /> },
       { path: 'order/fail', element: <PaymentFail /> },
       { path: 'program', element: <Programs /> },
-      {
-        path: 'program/:programId/review/new',
-        element: <ReviewCreate isEdit={false} />,
-      },
-      {
-        path: 'program/:programId/review/:reviewId',
-        element: <ReviewDetail />,
-      },
       { path: 'blog', element: <BlogListPage /> },
       { path: 'blog/hashtag', element: <BlogHashtagListPage /> },
       // { path: 'blog/:id/:title?', element: <BlogDetailSSRPage /> },
@@ -90,14 +78,6 @@ export const routes: RouteObject[] = [
         children: [
           { path: 'application', element: <Application /> },
           { path: 'review', element: <Review /> },
-          {
-            path: 'review/new/program/:programType/:programId',
-            element: <ReviewCreate isEdit={false} />,
-          },
-          {
-            path: 'review/edit/program/:programType/:programId/:reviewId',
-            element: <ReviewCreate isEdit={true} />,
-          },
           { path: 'credit', element: <Credit /> },
           { path: 'credit/:paymentId', element: <CreditDetail /> },
           { path: 'credit/:paymentId/delete', element: <CreditDelete /> },
@@ -143,9 +123,6 @@ export const routes: RouteObject[] = [
       { path: 'report/order/result', element: <ReportPaymentResult /> },
       { path: 'report/order/fail', element: <ReportPaymentFail /> },
       { path: 'report/management', element: <ReportManagementPage /> },
-
-      { path: 'write-review/challenge/:id', element: <WriteReviewChallenge /> },
-      { path: 'write-review/live/:id', element: <WriteReviewLive /> },
       {
         path: 'live/:id/mentor/notification/before',
         element: <MentorNotificationBefore />,

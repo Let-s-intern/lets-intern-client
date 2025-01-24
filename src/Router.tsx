@@ -43,12 +43,8 @@ import ReportTossPage from './router-pages/common/report/ReportTossPage';
 import ChallengeReviewCreatePage from './router-pages/common/review/ChallengeReviewCreatePage';
 import LiveReviewCreatePage from './router-pages/common/review/LiveReviewCreatePage';
 import ReportReviewCreatePage from './router-pages/common/review/ReportReviewCreatePage';
-import ReviewCreate from './router-pages/common/review/ReviewCreate';
-import ReviewDetail from './router-pages/common/review/ReviewDetail';
 import Maintenance from './router-pages/maintenance/Maintenance';
 import NotFound from './router-pages/NotFound';
-import WriteReviewChallenge from './router-pages/WriteReviewChallenge';
-import WriteReviewLive from './router-pages/WriteReviewLive';
 
 const isMaintenance = false;
 
@@ -102,17 +98,6 @@ const Router = () => {
               <Route path="order/result" element={<PaymentResult />} />
               <Route path="order/fail" element={<PaymentFail />} />
 
-              {/* /program/:programId/review/new */}
-              <Route
-                path="program/:programId/review/new"
-                element={<ReviewCreate isEdit={false} />}
-              />
-              {/* /program/:programId/review/:reviewId */}
-              <Route
-                path="program/:programId/review/:reviewId"
-                element={<ReviewDetail />}
-              />
-
               {/* 블로그 */}
               {/* /blog?category=:category */}
               {/* <Route path="blog/list" element={<BlogListPage />} /> */}
@@ -143,16 +128,6 @@ const Router = () => {
                 <Route
                   path="review/new/report/:reportId"
                   element={<ReportReviewCreatePage />}
-                />
-                {/* [deprecated] /mypage/review/new/program/:programId */}
-                <Route
-                  path="review/new/program/:programType/:programId"
-                  element={<ReviewCreate isEdit={false} />}
-                />
-                {/* /mypage/review/edit/program/:programId */}
-                <Route
-                  path="review/edit/program/:programType/:programId/:reviewId"
-                  element={<ReviewCreate isEdit={true} />}
                 />
                 <Route path="credit" element={<Credit />} />
                 <Route path="credit/:paymentId" element={<CreditDetail />} />
@@ -241,16 +216,6 @@ const Router = () => {
               <Route
                 path="report/:reportType/application/:applicationId"
                 element={<ReportApplicationPage />}
-              />
-
-              {/* 비로그인 리뷰 작성 페이지 */}
-              <Route
-                path="write-review/challenge/:id"
-                element={<WriteReviewChallenge />}
-              />
-              <Route
-                path="write-review/live/:id"
-                element={<WriteReviewLive />}
               />
 
               {/* LIVE 클래스 멘토 사전 전달 사항 */}

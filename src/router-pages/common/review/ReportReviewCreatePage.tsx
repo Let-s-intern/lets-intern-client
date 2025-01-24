@@ -6,7 +6,6 @@ import { josa } from 'es-hangul';
 import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 
-import RecommendReviewField from '@/components/common/review/section/RecommendReviewField';
 import axios from '@/utils/axios';
 import GoalOrConcernsBox from '@components/common/review/GoalOrConcernsBox';
 import ReviewInstruction from '@components/common/review/ReviewInstruction';
@@ -19,9 +18,8 @@ const ReportReviewCreatePage = () => {
   const params = useParams();
   const isDesktop = useMediaQuery('(min-width:768px)');
 
-  const [satisfaction, setSatisfaction] = useState<number | null>(null); // 만족도
-  // 추천 리뷰(RecommendReviewField)에서 사용
-  const [tenScore, setTenScore] = useState<number | null>(null);
+  const [score, setScore] = useState<number | null>(null);
+  const [npsScore, setNpsScore] = useState<number | null>(null);
   const [hasRecommendationExperience, setHasRecommendationExperience] =
     useState<boolean | null>(null);
   const [npsAns, setNpsAns] = useState('');
@@ -48,7 +46,7 @@ const ReportReviewCreatePage = () => {
         <ReviewInstruction className="mb-5">
           {reportTitle}의 만족도를 0~10점 사이로 평가해주세요!
         </ReviewInstruction>
-        <TenScore tenScore={satisfaction} setTenScore={setSatisfaction} />
+        <TenScore tenScore={score} setTenScore={setScore} />
       </section>
 
       {/* 추천 정도*/}
@@ -60,16 +58,7 @@ const ReportReviewCreatePage = () => {
         <ReviewInstruction className="mb-5">
           {reportTitle}의 만족도를 0~10점 사이로 평가해주세요!
         </ReviewInstruction>
-        {/* [참고] 몇 점을 선택하냐에 따라 질문이 증식함 */}
-        <RecommendReviewField
-          programTitle={reportTitle}
-          tenScore={tenScore}
-          setTenScore={setTenScore}
-          hasRecommendationExperience={hasRecommendationExperience}
-          setHasRecommendationExperience={setHasRecommendationExperience}
-          npsAns={npsAns}
-          setNpsAns={setNpsAns}
-        />
+        <TenScore tenScore={npsScore} setTenScore={setNpsScore} />
       </section>
 
       {/* 서류 작성 고민 */}

@@ -52,16 +52,14 @@ export const useDeleteUserMutation = (
       await axios.delete(`/user/admin?number=${phoneNumber}`);
     },
     onSuccess: () => {
-      client
-        .invalidateQueries({
-          queryKey: [UseUserAdminQueryKey],
-        })
-        .then(() => {
-          successCallback && successCallback();
-        });
+      client.invalidateQueries({
+        queryKey: [UseUserAdminQueryKey],
+      });
+
+      return successCallback && successCallback();
     },
     onError: (error: Error) => {
-      errorCallback && errorCallback(error);
+      return errorCallback && errorCallback(error);
     },
   });
 };
@@ -117,10 +115,10 @@ export const usePatchUserAdminMutation = ({
       client.invalidateQueries({
         queryKey: [UseUserAdminQueryKey, UseUserDetailAdminQueryKey, userId],
       });
-      successCallback && successCallback();
+      return successCallback && successCallback();
     },
     onError: (error: Error) => {
-      errorCallback && errorCallback(error);
+      return errorCallback && errorCallback(error);
     },
   });
 };

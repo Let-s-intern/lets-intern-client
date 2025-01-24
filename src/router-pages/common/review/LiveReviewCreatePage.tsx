@@ -5,7 +5,6 @@ import { josa } from 'es-hangul';
 import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 
-import RecommendReviewField from '@/components/common/review/section/RecommendReviewField';
 import axios from '@/utils/axios';
 import ReviewInstruction from '@components/common/review/ReviewInstruction';
 import ReviewModal from '@components/common/review/ReviewModal';
@@ -16,13 +15,8 @@ import TenScore from '@components/common/review/score/TenScore';
 const LiveReviewCreatePage = () => {
   const params = useParams();
 
-  const [satisfaction, setSatisfaction] = useState<number | null>(null); // 만족도
-  // 추천 리뷰(RecommendReviewField)에서 사용
-  const [tenScore, setTenScore] = useState<number | null>(null);
-  const [hasRecommendationExperience, setHasRecommendationExperience] =
-    useState<boolean | null>(null);
-  const [npsAns, setNpsAns] = useState('');
-  ////
+  const [score, setScore] = useState<number | null>(null); // 만족도
+  const [npsScore, setNpsScore] = useState<number | null>(null);
 
   const programId = params.programId;
 
@@ -45,7 +39,7 @@ const LiveReviewCreatePage = () => {
         <ReviewInstruction className="mb-5">
           {programTitle}의 만족도를 0~10점 사이로 평가해주세요!
         </ReviewInstruction>
-        <TenScore tenScore={satisfaction} setTenScore={setSatisfaction} />
+        <TenScore tenScore={score} setTenScore={setScore} />
       </section>
 
       {/* 추천 정도*/}
@@ -57,16 +51,7 @@ const LiveReviewCreatePage = () => {
         <ReviewInstruction className="mb-5">
           {programTitle}의 만족도를 0~10점 사이로 평가해주세요!
         </ReviewInstruction>
-        {/* [참고] 몇 점을 선택하냐에 따라 질문이 증식함 */}
-        <RecommendReviewField
-          programTitle={programTitle}
-          tenScore={tenScore}
-          setTenScore={setTenScore}
-          hasRecommendationExperience={hasRecommendationExperience}
-          setHasRecommendationExperience={setHasRecommendationExperience}
-          npsAns={npsAns}
-          setNpsAns={setNpsAns}
-        />
+        <TenScore tenScore={npsScore} setTenScore={setNpsScore} />
       </section>
 
       {/* 참여 이유 */}
