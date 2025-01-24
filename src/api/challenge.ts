@@ -1,6 +1,8 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   activeChallengeResponse,
+  AttendanceResult,
+  AttendanceStatus,
   ChallengeIdPrimitive,
   challengeTitleSchema,
   ChallengeType,
@@ -274,5 +276,86 @@ export const useGetChallengeValideUser = (challengeId: string | undefined) => {
       return challengeValidUserSchema.parse(res.data.data);
     },
     enabled: !!challengeId,
+  });
+};
+
+export const usePostChallengeAttendance = ({
+  successCallback,
+  errorCallback,
+}: {
+  successCallback?: () => void;
+  errorCallback?: () => void;
+}) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({
+      missionId,
+      link,
+      review,
+    }: {
+      missionId: number;
+      link: string;
+      review: string;
+    }) => {
+      const res = await axios.post(`/attendance/${missionId}`, {
+        link,
+        review,
+      });
+      return res.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ['challenge'],
+      });
+      return successCallback && successCallback();
+    },
+    onError: () => {
+      return errorCallback && errorCallback();
+    },
+  });
+};
+
+export const usePatchChallengeAttendance = ({
+  successCallback,
+  errorCallback,
+}: {
+  successCallback?: () => void;
+  errorCallback?: () => void;
+}) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({
+      attendanceId,
+      link,
+      status,
+      result,
+      comments,
+      reviewIsVisible,
+    }: {
+      attendanceId: number;
+      link?: string;
+      status?: AttendanceStatus | null;
+      result?: AttendanceResult | null;
+      comments?: string;
+      reviewIsVisible?: boolean;
+    }) => {
+      const res = await axios.patch(`/attendance/${attendanceId}`, {
+        link,
+        status,
+        result,
+        comments,
+        reviewIsVisible,
+      });
+      return res.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ['challenge'],
+      });
+      return successCallback && successCallback();
+    },
+    onError: () => {
+      return errorCallback && errorCallback();
+    },
   });
 };
