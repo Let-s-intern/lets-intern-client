@@ -1,4 +1,4 @@
-import { challengeTypeSchema, pageInfo } from '@/schema';
+import { ChallengeType, challengeTypeSchema, pageInfo } from '@/schema';
 import axios from '@/utils/axios';
 import axiosV2 from '@/utils/axiosV2';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
@@ -123,6 +123,42 @@ export const usePostReviewMutation = ({
     },
     onError: (error: Error) => {
       return errorCallback && errorCallback(error);
+    },
+  });
+};
+
+export type programReviewParam = {
+  types?: ReviewType[];
+  challengeTypes?: ChallengeType[];
+  page?: number;
+  size?: number;
+};
+
+export const reviewInfoSchema = z.object({});
+
+const getProgramReviewQueryKey = [
+  'programReview',
+  { types: [], challengeType: [], page: 0, size: 10 },
+];
+
+export const useGetProgramReview = ({
+  types,
+  challengeTypes,
+  page = 0,
+  size = 10,
+}: programReviewParam) => {
+  return useQuery({
+    queryKey: getProgramReviewQueryKey,
+    queryFn: async () => {
+      const res = await axiosV2.get('/review', {
+        params: {
+          type: types ? types.join(',') : undefined,
+          challengeType: challengeTypes ? challengeTypes.join(',') : undefined,
+          page,
+          size,
+        },
+      });
+      return reviewListSchema.parse(res.data.data);
     },
   });
 };
