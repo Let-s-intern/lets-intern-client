@@ -21,7 +21,7 @@ const ProgramReviewSection = () => {
           <LoadingContainer />
         </div>
       ) : (
-        <div className="grid grid-cols-3 gap-5">
+        <div className="grid grid-rows-3 grid-cols-1 md:grid-rows-1 md:grid-cols-3 gap-5">
           {reviewData?.reviewList?.map((review) => (
             <ReviewCard
               key={review.reviewInfo.reviewId}

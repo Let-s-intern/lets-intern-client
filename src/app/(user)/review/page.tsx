@@ -4,7 +4,7 @@ import MoreHeader from '@components/common/ui/MoreHeader';
 const Page = () => {
   return (
     // TODO: 레이아웃 파일로 만들어보기
-    <div className="flex w-full">
+    <div className="flex w-full py-6 px-5 md:py-0 lg:p-0 md:pr-5">
       <nav className="w-full">
         <ul>
           <li>
