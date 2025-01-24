@@ -1,4 +1,3 @@
-import { useQueryClient } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
@@ -8,13 +7,14 @@ import {
   useGetUserChallengeInfo,
   usePostChallengeGoal,
 } from '@/api/challenge';
+import { useGetChallengeQuery } from '@/api/program';
 import { usePatchUser, useUserQuery } from '@/api/user';
+import { GOAL_DATE } from '@components/common/challenge/ui/layout/ChallengeLayout';
 import TextArea from '@components/common/ui/input/TextArea';
 import GradeDropdown from '../../../components/common/mypage/privacy/form-control/GradeDropdown';
 import Input from '../../../components/common/ui/input/Input';
 
 const ChallengeUserInfo = () => {
-  const queryClient = useQueryClient();
   const params = useParams();
   const programId = params.programId;
   const navigate = useNavigate();
@@ -28,6 +28,12 @@ const ChallengeUserInfo = () => {
     goal: '',
   });
   const [buttonDisabled, setButtonDisabled] = useState(false);
+
+  const { data: challenge, isLoading: challengeIsLoading } =
+    useGetChallengeQuery({
+      challengeId: Number(programId),
+      enabled: !!programId && !isNaN(Number(programId)),
+    });
 
   const { data: userData, isLoading: userDataIsLoading } = useUserQuery();
 
@@ -53,16 +59,19 @@ const ChallengeUserInfo = () => {
     }
   }, [userData, challengeGoal]);
 
-  const isValidUserInfo = isValidUserInfoData?.pass;
   const programTitle = programTitleData?.title;
   const username = userData?.name;
-  const hasChallengeGoal = challengeGoal?.goal;
 
+  const isValidUserInfo = isValidUserInfoData?.pass;
+  const hasChallengeGoal = challengeGoal?.goal;
   const isLoading =
     isValidUserInfoLoading ||
     programTitleDataIsLoading ||
     userDataIsLoading ||
-    challengeGoalIsLoading;
+    challengeGoalIsLoading ||
+    challengeIsLoading;
+  const isStartAfterGoal =
+    challenge?.startDate && GOAL_DATE.isBefore(challenge.startDate);
 
   const { mutateAsync: tryPatchUser, isPending: patchUserIsPending } =
     usePatchUser({});
@@ -119,9 +128,23 @@ const ChallengeUserInfo = () => {
 
   useEffect(() => {
     if (isLoading) return;
-    if (isValidUserInfo && hasChallengeGoal)
+    if (isStartAfterGoal) {
+      if (isValidUserInfo && hasChallengeGoal) {
+        navigate(`/challenge/${programId}`);
+        return;
+      }
+    } else if (isValidUserInfo) {
       navigate(`/challenge/${programId}`);
-  }, [isValidUserInfo, isLoading, navigate, hasChallengeGoal, programId]);
+      return;
+    }
+  }, [
+    isValidUserInfo,
+    isLoading,
+    navigate,
+    hasChallengeGoal,
+    programId,
+    isStartAfterGoal,
+  ]);
 
   return (
     <main className="mx-auto flex max-w-3xl flex-col gap-6 pb-24 pt-12">
@@ -207,8 +230,9 @@ const ChallengeUserInfo = () => {
                 챌린지 목표<span className="text-requirement">*</span>
               </label>
               <TextArea
-                id="wishCompany"
-                name="wishCompany"
+                id="goal"
+                name="goal"
+                wrapperClassName="h-28"
                 placeholder={`챌린지를 신청한 목적과 계기,\n또는 챌린지 참여를 통해 이루고 싶은 목표를 자유롭게 작성해주세요.`}
                 className="text-xsmall14 font-normal"
                 value={value.goal}
