@@ -1,3 +1,5 @@
+'use client';
+
 import { GetReview } from '@/api/review';
 import ProgramReviewContentSection from '@components/common/review/programReview/ProgramReviewContentSection';
 import ProgramReviewFilterSection from '@components/common/review/programReview/ProgramReviewFilterSection';
