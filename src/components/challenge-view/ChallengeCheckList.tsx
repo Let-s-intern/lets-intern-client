@@ -188,14 +188,14 @@ function ChallengeCheckList({
   ];
 
   const checkList = useMemo(() => {
-    const { PERSONAL_STATEMENT, PORTFOLIO } = challengeTypeSchema.enum;
+    const { PORTFOLIO, CAREER_START } = challengeTypeSchema.enum;
     switch (challengeType) {
-      case PERSONAL_STATEMENT:
-        return PERSONAL_STATEMENT_CHECK_LIST;
+      case CAREER_START:
+        return CAREER_START_CHECK_LIST;
       case PORTFOLIO:
         return PORTFOLIO_CHECK_LIST;
       default:
-        return CAREER_START_CHECK_LIST;
+        return PERSONAL_STATEMENT_CHECK_LIST;
     }
   }, [challengeType]);
 
