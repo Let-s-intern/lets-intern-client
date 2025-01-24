@@ -25,6 +25,7 @@ const AbsentMissionSubmitMenu = ({ missionDetail }: Props) => {
   const [value, setValue] = useState(
     currentSchedule?.attendanceInfo?.link || '',
   );
+  const review = currentSchedule?.attendanceInfo?.review || '';
   const [isLinkChecked, setIsLinkChecked] = useState(false);
   const [isValidLinkValue, setIsValidLinkValue] = useState(isAttended);
   const [isStartedHttp, setIsStartedHttp] = useState(false);
@@ -64,7 +65,6 @@ const AbsentMissionSubmitMenu = ({ missionDetail }: Props) => {
     }
 
     const expression =
-      // eslint-disable-next-line no-useless-escape
       /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/;
     const regex = new RegExp(expression);
 
@@ -178,6 +178,17 @@ const AbsentMissionSubmitMenu = ({ missionDetail }: Props) => {
                 URL을 올바르게 입력하셨습니다. 링크 확인을 진행해주세요.
               </div>
             ))}
+          <div className="mt-6 flex w-full flex-col gap-y-5">
+            <h3 className="text-xsmall16 font-semibold text-neutral-0">
+              미션 소감
+            </h3>
+            <textarea
+              className="rounded-md p-3 h-20 text-xsmall14 outline-none resize-none"
+              placeholder={`오늘의 미션은 어떠셨나요?\n새롭게 배운 점, 어려운 부분, 궁금증 등 떠오르는 생각을 남겨 주세요.`}
+              value={review}
+              disabled={true}
+            />
+          </div>
           <div className="mt-6 text-right">
             <button
               type="submit"

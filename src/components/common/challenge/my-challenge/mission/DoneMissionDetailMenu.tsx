@@ -64,9 +64,8 @@ const DoneMissionDetailMenu = ({
         )}
         <div className="mt-10 flex w-full flex-col gap-y-2.5">
           <h4 className="text-xsmall16 font-bold">미션 소감</h4>
-          <p className="rounded-md border border-neutral-50 bg-neutral-95 p-3 text-xsmall16 text-neutral-0">
-            {/* 미션 소감 연결 필요 */}
-            미션 소감
+          <p className="rounded-md p-3 h-20 bg-neutral-95 text-xsmall14">
+            {schedule.attendanceInfo.review ?? '-'}
           </p>
         </div>
       </div>
