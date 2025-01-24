@@ -14,6 +14,8 @@ export const pageInfo = z.object({
   totalPages: z.number().gte(0),
 });
 
+export type PageInfo = z.infer<typeof pageInfo>;
+
 /** GET /api/v1/challenge */
 export const challengeSchema = z
   .object({
@@ -53,7 +55,7 @@ export const challengeTypeSchema = z.enum([
   'ETC',
   'PERSONAL_STATEMENT',
   'PORTFOLIO',
-  "PERSONAL_STATEMENT_LARGE_CORP"
+  'PERSONAL_STATEMENT_LARGE_CORP',
 ]);
 
 export type ChallengeType = z.infer<typeof challengeTypeSchema>;
