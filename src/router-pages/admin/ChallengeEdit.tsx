@@ -51,6 +51,7 @@ const ChallengeEdit: React.FC = () => {
   const { data: challenge } = useGetChallengeQuery({
     challengeId: Number(challengeIdString),
     enabled: Boolean(challengeIdString),
+    refetchOnWindowFocus: false
   });
 
   useEffect(() => {

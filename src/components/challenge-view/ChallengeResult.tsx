@@ -82,10 +82,10 @@ function ChallengeResult({
     switch (challengeType) {
       case PORTFOLIO:
         return PORTFOLIO_CONTENT;
-      case PERSONAL_STATEMENT:
-        return PERSONAL_STATEMENT_CONTENT;
-      default:
+      case CAREER_START:
         return CAREER_START_CONTENT;
+      default:
+        return PERSONAL_STATEMENT_CONTENT;
     }
   }, [challengeType]);
 
@@ -93,10 +93,10 @@ function ChallengeResult({
     switch (challengeType) {
       case PORTFOLIO:
         return 'result-arrow-icon-portfolio.svg';
-      case PERSONAL_STATEMENT:
-        return 'result-arrow-icon-personal-statement.svg';
-      default:
+      case CAREER_START:
         return 'result-arrow-icon-career-start.svg';
+      default:
+        return 'result-arrow-icon-personal-statement.svg';
     }
   })();
 

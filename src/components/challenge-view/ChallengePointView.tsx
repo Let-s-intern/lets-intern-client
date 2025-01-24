@@ -72,8 +72,12 @@ const REWARD = {
   content: '챌린지 참여 점수 80점 이상시,\n3만원 페이백 및 수료증 발급',
 };
 
-const { CAREER_START, PERSONAL_STATEMENT, PORTFOLIO } =
-  challengeTypeSchema.enum;
+const {
+  CAREER_START,
+  PERSONAL_STATEMENT,
+  PORTFOLIO,
+  PERSONAL_STATEMENT_LARGE_CORP,
+} = challengeTypeSchema.enum;
 
 const ChallengePointView = ({
   point,
@@ -130,15 +134,15 @@ const ChallengePointView = ({
           '/images/payback-portfolio.png',
           '/icons/bg-logo-portfolio.svg',
         ];
-      case PERSONAL_STATEMENT:
-        return [
-          '/images/payback-personal-statement.png',
-          '/icons/bg-logo-personal-statement.svg',
-        ];
-      default:
+      case CAREER_START:
         return [
           '/images/payback-career-start.png',
           '/icons/bg-logo-career-start.svg',
+        ];
+      default:
+        return [
+          '/images/payback-personal-statement.png',
+          '/icons/bg-logo-personal-statement.svg',
         ];
     }
   }, [challengeType]);
@@ -235,15 +239,16 @@ const ChallengePointView = ({
                 <br className="md:hidden" /> 별도로 준비되어 있습니다.
               </p>
             )}
-            {challengeType === PERSONAL_STATEMENT && (
-              <p className="font-semibold text-xsmall14 text-neutral-40 md:text-center md:text-xsmall16">
-                본 프로그램은 취업의 기초가 되는
-                <br className="md:hidden" />{' '}
-                <span className="font-bold">자기소개서 작성</span>을 다룹니다.
-                <br /> 서류 기초 완성 및 포트폴리오 완성 프로그램은
-                <br className="md:hidden" /> 별도로 준비되어 있습니다.
-              </p>
-            )}
+            {challengeType === PERSONAL_STATEMENT ||
+              (challengeType === PERSONAL_STATEMENT_LARGE_CORP && (
+                <p className="text-xsmall14 font-semibold text-neutral-40 md:text-center md:text-xsmall16">
+                  본 프로그램은 취업의 기초가 되는
+                  <br className="md:hidden" />{' '}
+                  <span className="font-bold">자기소개서 작성</span>을 다룹니다.
+                  <br /> 서류 기초 완성 및 포트폴리오 완성 프로그램은
+                  <br className="md:hidden" /> 별도로 준비되어 있습니다.
+                </p>
+              ))}
             {challengeType === PORTFOLIO && (
               <p className="font-semibold text-xsmall14 text-neutral-40 md:text-center md:text-xsmall16">
                 본 프로그램은 나만의 필살기를 만들 수 있는
