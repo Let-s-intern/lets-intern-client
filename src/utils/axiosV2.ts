@@ -12,7 +12,7 @@ const reissuer = Axios.create({
 });
 
 const axiosV2 = Axios.create({
-  baseURL: process.env.NEXT_PUBLIC_SERVER_API,
+  baseURL: `${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/v2`,
   headers: {
     'Content-Type': 'application/json',
   },
