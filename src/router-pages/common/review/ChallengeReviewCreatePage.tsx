@@ -21,7 +21,7 @@ const ChallengeReviewCreatePage = () => {
 
   const { data: user } = useUserQuery({ enabled: true });
 
-  const { data: challengeGoal } = useGetChallengeGoal(Number(programId));
+  const { data: challengeGoal } = useGetChallengeGoal(programId);
 
   const { data: programTitle } = useGetChallengeTitle(Number(programId));
 

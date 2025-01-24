@@ -10,7 +10,11 @@ import {
   reviewTotalSchema,
 } from '../schema';
 import axios from '../utils/axios';
-import { challengeGoalSchema } from './challengeSchema';
+import {
+  challengeGoalSchema,
+  challengeUserInfoSchema,
+  challengeValidUserSchema,
+} from './challengeSchema';
 
 const useChallengeQueryKey = 'useChallengeQueryKey';
 
@@ -214,16 +218,61 @@ export const useGetActiveChallenge = (type: ChallengeType) => {
   });
 };
 
-export const getChallengeGoalQueryKey = (challengeId: number) => {
+export const getChallengeGoalQueryKey = (challengeId: string | undefined) => {
   return ['useGetChallengeGoal', challengeId];
 };
 
-export const useGetChallengeGoal = (challengeId: number) => {
+export const useGetChallengeGoal = (challengeId: string | undefined) => {
   return useQuery({
     queryKey: getChallengeGoalQueryKey(challengeId),
     queryFn: async () => {
       const res = await axios.get(`/challenge/${challengeId}/goal`);
       return challengeGoalSchema.parse(res.data.data);
     },
+    enabled: !!challengeId,
+  });
+};
+
+export const usePostChallengeGoal = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({
+      challengeId,
+      goal,
+    }: {
+      challengeId: string;
+      goal: string;
+    }) => {
+      const res = await axios.patch(`/challenge/${challengeId}/goal`, {
+        goal,
+      });
+      return { data: res.data, challengeId };
+    },
+    onSuccess: async (data) => {
+      await queryClient.invalidateQueries({
+        queryKey: getChallengeGoalQueryKey(data.challengeId),
+      });
+    },
+  });
+};
+
+export const useGetUserChallengeInfo = () => {
+  return useQuery({
+    queryKey: ['user', 'challenge-info'],
+    queryFn: async () => {
+      const res = await axios.get('/user/challenge-info');
+      return challengeUserInfoSchema.parse(res.data.data);
+    },
+  });
+};
+
+export const useGetChallengeValideUser = (challengeId: string | undefined) => {
+  return useQuery({
+    queryKey: ['challenge', challengeId, 'access'],
+    queryFn: async () => {
+      const res = await axios.get(`/challenge/${challengeId}/access`);
+      return challengeValidUserSchema.parse(res.data.data);
+    },
+    enabled: !!challengeId,
   });
 };

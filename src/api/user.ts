@@ -151,6 +151,7 @@ export const useUserQuery = ({ enabled }: { enabled?: boolean } = {}) => {
       const res = await axios.get(`/user`);
       return userSchema.parse(res.data.data);
     },
+    refetchOnWindowFocus: false,
   });
 };
 
@@ -168,10 +169,24 @@ export type PatchUserBody = {
   marketingAgree?: boolean;
 };
 
-export const usePatchUser = () => {
+export const usePatchUser = ({
+  successCallback,
+  errorCallback,
+}: {
+  successCallback?: () => void;
+  errorCallback?: (error: Error) => void;
+}) => {
+  const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (body: PatchUserBody) => {
       return await axios.patch('/user', body);
+    },
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: [useUserQueryKey] });
+      return successCallback && successCallback();
+    },
+    onError: (error: Error) => {
+      return errorCallback && errorCallback(error);
     },
   });
 };
