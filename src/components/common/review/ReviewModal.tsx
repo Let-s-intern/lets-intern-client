@@ -9,12 +9,13 @@ import BaseButton from '../ui/button/BaseButton';
 
 interface Props {
   children: React.ReactNode;
+  disabled?: boolean;
   onSubmit?: () => void; // 리뷰 등록하기
 }
 
 /** 마이페이지 후기 작성(생성) 모달
  * [주의] 모바일에서는 모달처럼 안 보임 */
-function ReviewModal({ children }: Props) {
+function ReviewModal({ children, disabled, onSubmit }: Props) {
   const navigate = useNavigate();
 
   const isDesktop = useMediaQuery('(min-width:768px)');
@@ -50,12 +51,20 @@ function ReviewModal({ children }: Props) {
             {children}
 
             {/* 모바일 버튼 */}
-            <BaseButton className="md:hidden">등록하기</BaseButton>
+            <BaseButton
+              className="md:hidden"
+              onClick={onSubmit}
+              disabled={disabled}
+            >
+              등록하기
+            </BaseButton>
           </div>
         </div>
         {/* 데스크탑 버튼 (아래 고정) */}
         <div className="sticky inset-x-0 bottom-0 hidden bg-white px-14 pb-8 pt-6 drop-shadow-[0_-3px_6px_0_rgba(0,0,0,0.04)] md:block">
-          <BaseButton className="w-full">등록하기</BaseButton>
+          <BaseButton className="w-full" onClick={onSubmit} disabled={disabled}>
+            등록하기
+          </BaseButton>
         </div>
       </main>
     </div>
