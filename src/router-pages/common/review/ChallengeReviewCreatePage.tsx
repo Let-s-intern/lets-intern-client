@@ -1,9 +1,10 @@
 import { useMediaQuery } from '@mui/material';
 import { josa } from 'es-hangul';
 import { useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 import { useGetChallengeGoal, useGetChallengeTitle } from '@/api/challenge';
+import { usePostReviewMutation } from '@/api/review';
 import { useUserQuery } from '@/api/user';
 import GoalOrConcernsBox from '@components/common/review/GoalOrConcernsBox';
 import ReviewInstruction from '@components/common/review/ReviewInstruction';
@@ -14,6 +15,7 @@ import TenScore from '@components/common/review/score/TenScore';
 
 const ChallengeReviewCreatePage = () => {
   const params = useParams();
+  const navigate = useNavigate();
   const isDesktop = useMediaQuery('(min-width:768px)');
   const programId = params.programId;
 
@@ -23,16 +25,58 @@ const ChallengeReviewCreatePage = () => {
 
   const { data: programTitle } = useGetChallengeTitle(Number(programId));
 
+  const { mutateAsync: tryPostReview, isPending: postReviewwIsPending } =
+    usePostReviewMutation({
+      successCallback: () => {
+        navigate('/mypage/review', { replace: true });
+      },
+      errorCallback: (error) => {
+        console.error('error', error);
+      },
+    });
+
   const [score, setScore] = useState<number | null>(null); // 만족도
   const [npsScore, setNpsScore] = useState<number | null>(null);
   const [goodPoint, setGoodPoint] = useState<string>('');
   const [badPoint, setBadPoint] = useState<string>('');
   const [goalResult, setGoalResult] = useState<string>('');
-  const [hasRecommendationExperience, setHasRecommendationExperience] =
-    useState<boolean | null>(null);
+
+  const isDisabled =
+    !score || !npsScore || !goodPoint || !badPoint || !goalResult;
+
+  const onClickSubmit = async () => {
+    if (postReviewwIsPending) return;
+
+    if (isDisabled) {
+      alert('모든 항목을 입력해주세요.');
+      return;
+    }
+
+    try {
+      await tryPostReview({
+        type: 'CHALLENGE_REVIEW',
+        score,
+        npsScore,
+        goodPoint,
+        badPoint,
+        reviewItemList: [
+          {
+            questionType: 'GOAL_RESULT',
+            answer: goalResult,
+          },
+        ],
+      });
+    } catch (error) {
+      console.error(error);
+      alert('리뷰 작성에 실패했습니다. 다시 시도해주세요.');
+    }
+  };
 
   return (
-    <ReviewModal>
+    <ReviewModal
+      disabled={postReviewwIsPending || isDisabled}
+      onSubmit={onClickSubmit}
+    >
       {/* 만족도 평가 */}
       <section>
         <ReviewQuestion required className="mb-1">
