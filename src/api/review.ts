@@ -113,7 +113,7 @@ export const usePostReviewMutation = ({
 
   return useMutation({
     mutationFn: async (reviewForm: PostReviewParams) => {
-      await axiosV2.post('/user/review', reviewForm);
+      await axiosV2.post('/review', reviewForm);
     },
     onSuccess: () => {
       client.invalidateQueries({
