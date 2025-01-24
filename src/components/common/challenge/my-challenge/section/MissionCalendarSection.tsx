@@ -1,6 +1,6 @@
-import MissionCalendar from '../mission-calendar/MissionCalendar';
-import MissionTooltipQuestion from '../../ui/tooltip-question/MissionTooltipQuestion';
 import { Schedule } from '../../../../../schema';
+import MissionTooltipQuestion from '../../ui/tooltip-question/MissionTooltipQuestion';
+import MissionCalendar from '../mission-calendar/MissionCalendar';
 
 interface Props {
   schedules: Schedule[];
