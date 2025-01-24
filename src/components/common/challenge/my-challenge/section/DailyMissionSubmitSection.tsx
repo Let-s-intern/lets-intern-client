@@ -1,18 +1,19 @@
+import {
+  usePatchChallengeAttendance,
+  usePostChallengeAttendance,
+} from '@/api/challenge';
 import { useCurrentChallenge } from '@/context/CurrentChallengeProvider';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import BaseModal from '@components/ui/BaseModal';
+import ModalButton from '@components/ui/ModalButton';
 import clsx from 'clsx';
 import { useEffect, useState } from 'react';
 import { MyDailyMission, Schedule } from '../../../../../schema';
-import axios from '../../../../../utils/axios';
-import AlertModal from '../../../../ui/alert/AlertModal';
 
 interface Props {
   myDailyMission: MyDailyMission;
 }
 
 const DailyMissionSubmitSection = ({ myDailyMission }: Props) => {
-  const queryClient = useQueryClient();
-
   const { schedules } = useCurrentChallenge();
 
   const lastMission = schedules.reduce((acc: Schedule | null, schedule) => {
@@ -29,7 +30,7 @@ const DailyMissionSubmitSection = ({ myDailyMission }: Props) => {
     lastMission?.missionInfo.th === myDailyMission.dailyMission?.th;
 
   const attendanceLink = myDailyMission.attendanceInfo?.link;
-  const attendanceReview = '';
+  const attendanceReview = myDailyMission.attendanceInfo?.review;
   const attended = myDailyMission.attendanceInfo?.submitted;
   const attendanceId = myDailyMission.attendanceInfo?.id;
 
@@ -42,6 +43,10 @@ const DailyMissionSubmitSection = ({ myDailyMission }: Props) => {
     !myDailyMission.attendanceInfo?.submitted,
   );
   const [isAlertShown, setIsAlertShown] = useState(false);
+
+  const { mutate: tryPostAttendance } = usePostChallengeAttendance({});
+
+  const { mutate: tryPatchAttendance } = usePatchChallengeAttendance({});
 
   useEffect(() => {
     const handleBeforeunload = (e: BeforeUnloadEvent) => {
@@ -62,31 +67,6 @@ const DailyMissionSubmitSection = ({ myDailyMission }: Props) => {
     setIsEditing(false);
   };
 
-  const submitMissionLink = useMutation({
-    mutationFn: async (linkValue: string) => {
-      // 출석 링크 수정
-      if (attended) {
-        const res = await axios.patch(`/attendance/${attendanceId}`, {
-          link: linkValue,
-        });
-        const data = res.data;
-        return data;
-      }
-
-      const res = await axios.post(
-        `/attendance/${myDailyMission.dailyMission?.id}`,
-        {
-          link: linkValue,
-        },
-      );
-      const data = res.data;
-      return data;
-    },
-    onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: ['challenge'] });
-    },
-  });
-
   const handleMissionLinkChanged = (e: React.ChangeEvent<HTMLInputElement>) => {
     const inputValue = e.target.value;
     setValue(inputValue);
@@ -97,7 +77,6 @@ const DailyMissionSubmitSection = ({ myDailyMission }: Props) => {
       setIsLinkChecked(false);
     }
     const expression =
-      // eslint-disable-next-line no-useless-escape
       /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/;
     const regex = new RegExp(expression);
     if (regex.test(e.target.value)) {
@@ -124,8 +103,27 @@ const DailyMissionSubmitSection = ({ myDailyMission }: Props) => {
       return;
     }
 
-    // 미션 소감 제출 반영해야 함
-    submitMissionLink.mutate(value as string);
+    if (!isValidLinkValue || !isLinkChecked || !value) {
+      alert('올바른 URL을 입력해주세요.');
+      return;
+    }
+
+    if (attended && attendanceId !== undefined && attendanceId !== null) {
+      tryPatchAttendance({
+        attendanceId,
+        link: value,
+      });
+    } else {
+      if (myDailyMission.dailyMission?.id === undefined) {
+        alert('미션 정보를 불러오지 못했습니다. 다시 시도해주세요.');
+        return;
+      }
+      tryPostAttendance({
+        missionId: myDailyMission.dailyMission.id,
+        link: value,
+        review,
+      });
+    }
     setIsEditing(false);
   };
 
@@ -138,23 +136,23 @@ const DailyMissionSubmitSection = ({ myDailyMission }: Props) => {
 
   return (
     <form onSubmit={handleMissionLinkSubmit}>
-      <h3 className="text-1-semibold">미션 제출하기</h3>
-      <p className="text-0.875 mt-1">
+      <h3 className="text-xsmall16 mb-6 font-semibold">미션 제출하기</h3>
+      <label
+        htmlFor="link"
+        className="text-xsmall14 font-semibold text-neutral-0"
+      >
+        링크
+      </label>
+      <p className="text-xsmall14 mt-1">
         {isEditing
           ? '미션 링크가 잘 열리는지 확인해 주세요. 제출 후 미션과 소감을 카톡으로 공유해야 미션 제출이 인정됩니다.'
           : '미션 제출이 완료되었습니다.'}
       </p>
-      <div className="mt-4 flex items-stretch gap-4">
-        <label
-          htmlFor="link"
-          className="text-0.875-semibold flex items-center text-neutral-35"
-        >
-          링크
-        </label>
+      <div className="mt-3 flex items-stretch gap-4">
         <input
           type="text"
           className={clsx(
-            'text-0.875 flex-1 cursor-text rounded-xxs border border-neutral-50 bg-neutral-95 px-3 py-2 outline-none',
+            'text-xsmall14 flex-1 cursor-text rounded-sm p-3 outline-none',
             {
               'text-neutral-400': !isEditing,
               'border-red-500': !isValidLinkValue && value && isEditing,
@@ -171,7 +169,7 @@ const DailyMissionSubmitSection = ({ myDailyMission }: Props) => {
         />
         <button
           type="button"
-          className="rounded-xxs bg-primary px-5 font-medium text-static-100 disabled:bg-neutral-70"
+          className="rounded-sm bg-primary px-5 font-medium text-static-100 disabled:bg-neutral-70"
           onClick={() => {
             if (value) {
               Object.assign(document.createElement('a'), {
@@ -190,28 +188,30 @@ const DailyMissionSubmitSection = ({ myDailyMission }: Props) => {
       {value &&
         isEditing &&
         (isLinkChecked ? (
-          <div className="text-0.75-medium ml-12 mt-1 text-primary">
+          <div className="text-0.75-medium mt-1 text-primary">
             링크 확인을 완료하셨습니다. 링크가 올바르다면 미션 소감 작성 후 제출
             버튼을 눌러주세요.
           </div>
         ) : !isValidLinkValue ? (
-          <div className="text-0.75-medium ml-12 mt-1 text-red-500">
+          <div className="text-0.75-medium mt-1 text-red-500">
             URL 형식이 올바르지 않습니다.
             {!isStartedHttp && <> (https:// 또는 http://로 시작해야 합니다.)</>}
           </div>
         ) : (
-          <div className="text-0.75-medium ml-12 mt-1 text-primary">
+          <div className="text-0.75-medium mt-1 text-primary">
             URL을 올바르게 입력하셨습니다. 링크 확인을 진행해주세요.
           </div>
         ))}
-      <div className="mt-6 flex w-full flex-col gap-y-2.5">
-        <h3 className="text-xsmall16 font-bold text-neutral-0">미션 소감</h3>
+      <div className="mt-6 flex w-full flex-col gap-y-5">
+        <h3 className="text-xsmall16 font-semibold text-neutral-0">
+          미션 소감
+        </h3>
         <textarea
-          className="rounded-md border border-neutral-50 bg-neutral-95 p-3 text-xsmall16 outline-none"
+          className="rounded-md p-3 h-20 text-xsmall14 outline-none resize-none"
           placeholder={`오늘의 미션은 어떠셨나요?\n새롭게 배운 점, 어려운 부분, 궁금증 등 떠오르는 생각을 남겨 주세요.`}
           value={review}
           onChange={handleMissionReviewChanged}
-          disabled={!isEditing || attendanceReview !== ''}
+          disabled={!isEditing || !!attendanceReview}
         />
       </div>
       <div className="mt-6 text-right">
@@ -241,19 +241,35 @@ const DailyMissionSubmitSection = ({ myDailyMission }: Props) => {
       </div>
 
       {isAlertShown && (
-        <AlertModal
-          onConfirm={() => {
-            onConfirm();
-            setIsAlertShown(false);
-          }}
-          title="링크 변경을 취소하시겠어요?"
-          onCancel={() => setIsAlertShown(false)}
-          highlight="confirm"
-          confirmText="링크 변경 취소"
-          cancelText="수정 계속하기"
+        <BaseModal
+          isOpen={isAlertShown}
+          onClose={() => setIsAlertShown(false)}
+          className="max-w-[20rem] md:max-w-[28rem]"
         >
-          지금 취소하시면 수정사항이 삭제됩니다.
-        </AlertModal>
+          <div className="border-b border-neutral-80 px-6 py-5">
+            <span className="mb-3 block text-xsmall16 font-semibold">
+              지금 취소하시면 수정사항이 삭제됩니다.
+            </span>
+            <p className="text-xsmall14">링크 변경을 취소하시겠어요?</p>
+          </div>
+          <div className="flex items-center text-xsmall14 ">
+            <ModalButton
+              className="border-r border-neutral-80 font-medium"
+              onClick={() => setIsAlertShown(false)}
+            >
+              수정 계속하기
+            </ModalButton>
+            <ModalButton
+              className={clsx('text-primary font-semibold')}
+              onClick={() => {
+                onConfirm();
+                setIsAlertShown(false);
+              }}
+            >
+              링크 변경 취소
+            </ModalButton>
+          </div>
+        </BaseModal>
       )}
     </form>
   );
