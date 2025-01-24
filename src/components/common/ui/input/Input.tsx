@@ -1,8 +1,6 @@
 import { twMerge } from '@/lib/twMerge';
 
-interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {}
-
-const Input = (props: InputProps) => {
+const Input = (props: React.InputHTMLAttributes<HTMLInputElement>) => {
   const { className, ...newProps } = props;
 
   return (
