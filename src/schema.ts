@@ -198,6 +198,11 @@ export const getChallengeIdSchema = z
         programClassification: ProgramClassificationEnum,
       }),
     ),
+    adminClassificationInfo: z.array(
+      z.object({
+        programAdminClassification: ProgramAdminClassificationEnum,
+      }),
+    ),
     priceInfo: z.array(
       z.object({
         priceId: z.number(),
@@ -247,11 +252,13 @@ export type CreateChallengeReq = {
   chatLink: string;
   chatPassword: string;
   challengeType: ChallengeType;
+  // 프로그램 분류
   programTypeInfo: {
     classificationInfo: {
       programClassification: ProgramClassification;
     };
   }[];
+  // B2 타입
   adminProgramTypeInfo: {
     classificationInfo: {
       programAdminClassification: ProgramAdminClassification;
@@ -284,6 +291,7 @@ export type UpdateChallengeReq = {
       programClassification: ProgramClassification;
     };
   }[];
+  // B2 타입
   adminProgramTypeInfo?: {
     classificationInfo: {
       programAdminClassification: ProgramAdminClassification;
@@ -403,6 +411,10 @@ export type CreateLiveReq = {
       programClassification: ProgramClassification;
     };
   }[];
+  // B2 타입
+  // B2 타입
+  // B2 타입
+  // B2 타입
   adminProgramTypeInfo: {
     classificationInfo: {
       programAdminClassification: ProgramAdminClassification;
@@ -451,6 +463,9 @@ export type UpdateLiveReq = {
       programClassification: ProgramClassification;
     };
   }[];
+  // B2 타입
+  // B2 타입
+  // B2 타입
   adminProgramTypeInfo?: {
     classificationInfo: {
       programAdminClassification: ProgramAdminClassification;
@@ -525,6 +540,8 @@ export type CreateVodReq = {
       programClassification: ProgramClassification;
     };
   }[];
+  // B2 타입
+  // B2 타입
   adminProgramTypeInfo: {
     classificationInfo: {
       programAdminClassification: ProgramAdminClassification;
@@ -545,6 +562,7 @@ export type UpdateVodReq = {
       programClassification: ProgramClassification;
     };
   }[];
+  // B2 타입
   adminProgramTypeInfo?: {
     classificationInfo: {
       programAdminClassification: ProgramAdminClassification;

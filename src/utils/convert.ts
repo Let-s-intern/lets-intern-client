@@ -44,7 +44,7 @@ export const challengeTypeToText: Record<ChallengeType, string> = {
   ETC: '기타',
   PERSONAL_STATEMENT: '자기소개서',
   PORTFOLIO: '포트폴리오',
-  PERSONAL_STATEMENT_LARGE_CORP:"대기업 자소서"
+  PERSONAL_STATEMENT_LARGE_CORP: '대기업 자소서',
 };
 
 export const challengeTypes: ChallengeType[] = [
@@ -54,7 +54,7 @@ export const challengeTypes: ChallengeType[] = [
   'ETC',
   'PERSONAL_STATEMENT',
   'PORTFOLIO',
-  "PERSONAL_STATEMENT_LARGE_CORP"
+  'PERSONAL_STATEMENT_LARGE_CORP',
 ];
 
 export const programStatusToText: Record<string, string> = {

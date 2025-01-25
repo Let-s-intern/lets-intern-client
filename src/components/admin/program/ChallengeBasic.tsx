@@ -2,6 +2,8 @@ import {
   ChallengeIdSchema,
   ChallengeParticipationType,
   CreateChallengeReq,
+  ProgramAdminClassification,
+  ProgramAdminClassificationEnum,
   ProgramClassification,
   UpdateChallengeReq,
 } from '@/schema';
@@ -28,6 +30,7 @@ interface ChallengeBasicProps<
 > {
   defaultValue?: Pick<
     ChallengeIdSchema,
+    | 'adminClassificationInfo'
     | 'classificationInfo'
     | 'challengeType'
     | 'priceInfo'
@@ -98,6 +101,57 @@ const ChallengeBasic = React.memo(
             {Object.keys(programClassificationToText).map((type) => (
               <MenuItem key={type} value={type}>
                 {programClassificationToText[type as ProgramClassification]}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+
+        <FormControl size="small">
+          <InputLabel id="adminProgramTypeInfo">B2 타입</InputLabel>
+          <Select
+            labelId="adminProgramTypeInfo"
+            label="B2 타입"
+            id="adminProgramTypeInfo"
+            name="adminProgramTypeInfo"
+            multiple
+            defaultValue={
+              defaultValue?.adminClassificationInfo
+                ? defaultValue.adminClassificationInfo.map(
+                    (info) => info.programAdminClassification,
+                  )
+                : []
+            }
+            onChange={(e) =>
+              setInput((prev) => ({
+                ...prev,
+                adminProgramTypeInfo: (
+                  e.target.value as ProgramAdminClassification[]
+                ).map((item) => ({
+                  classificationInfo: {
+                    programAdminClassification: item,
+                  },
+                })),
+              }))
+            }
+            input={<OutlinedInput label="프로그램 분류" />}
+            renderValue={(selectedList) => (
+              <div className="flex flex-wrap gap-2">
+                {selectedList.map((selected) => (
+                  <Chip
+                    key={selected}
+                    label={
+                      ProgramAdminClassificationEnum.enum[
+                        selected as ProgramAdminClassification
+                      ]
+                    }
+                  />
+                ))}
+              </div>
+            )}
+          >
+            {Object.values(ProgramAdminClassificationEnum.enum).map((value) => (
+              <MenuItem key={value} value={value}>
+                {value}
               </MenuItem>
             ))}
           </Select>

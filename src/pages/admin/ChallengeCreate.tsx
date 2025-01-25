@@ -162,6 +162,12 @@ const ChallengeCreate: React.FC = () => {
                 programClassification:
                   info.classificationInfo.programClassification,
               })),
+              adminClassificationInfo: input.adminProgramTypeInfo.map(
+                (info) => ({
+                  programAdminClassification:
+                    info.classificationInfo.programAdminClassification,
+                }),
+              ),
               priceInfo: input.priceInfo.map((info) => ({
                 ...info,
                 deadline: info.priceInfo.deadline
