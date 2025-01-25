@@ -31,8 +31,8 @@ function ReviewNavBar() {
       </div>
 
       {/* 데스크탑 네비 바 */}
-      <nav className="md:block hidden mr-8">
-        <ul className="flex flex-col w-[11.5rem] items-stretch">
+      <nav className="md:block hidden mr-8 relative">
+        <ul className="flex flex-col sticky top-20 w-[11.5rem] items-stretch">
           <DesktopNavItem href="/review/program">
             프로그램 참여 후기
           </DesktopNavItem>
