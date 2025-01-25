@@ -136,7 +136,7 @@ export const singleReviewFilterList = [
   },
 ];
 
-const reviewFilterList = [
+export const duplicateReviewFilterList = [
   {
     caption: '긍정적 리뷰',
     value: 'positive',
@@ -182,8 +182,8 @@ const Page = () => {
       />
       <ReviewFilter
         label="나는 필터야"
-        list={reviewFilterList}
-        defaultValue={reviewFilterList[0].value}
+        list={duplicateReviewFilterList}
+        defaultValue={duplicateReviewFilterList[0].value}
         multiSelect
       />
     </div>
