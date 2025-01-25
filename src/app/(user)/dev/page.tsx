@@ -117,7 +117,7 @@ const mock4: GetReview = {
   ],
 };
 
-const singleReviewFilterList = [
+export const singleReviewFilterList = [
   {
     caption: '전체',
     value: 'all',

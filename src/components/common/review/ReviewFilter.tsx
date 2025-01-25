@@ -7,6 +7,7 @@ import { memo, useState } from 'react';
 
 import CheckboxActive from '@/assets/icons/checkbox-active.svg?react';
 import CheckboxInActive from '@/assets/icons/checkbox-inactive.svg?react';
+import BaseBottomSheet from '@components/ui/BaseBottomSheet';
 
 interface FilterItem {
   caption: string;
@@ -84,6 +85,14 @@ function ReviewFilter({
         </span>
         <ChevronDown size={20} />
       </div>
+
+      {/* 모바일 바텀 시트 */}
+      {!isDesktop && isOpen && (
+        <BaseBottomSheet
+          isOpen={isOpen}
+          onClose={() => setIsOpen(false)}
+        ></BaseBottomSheet>
+      )}
 
       {/* 데스크탑 드롭다운 */}
       {isOpen && isDesktop && (
