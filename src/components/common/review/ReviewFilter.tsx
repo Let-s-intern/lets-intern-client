@@ -15,7 +15,7 @@ interface FilterItem {
 
 interface Props {
   label: string;
-  defaultValue: string;
+  defaultValue?: string;
   list: FilterItem[];
   multiSelect?: boolean;
   onSelect?: (value: string) => void;
@@ -28,9 +28,6 @@ function ReviewFilter({
   multiSelect = false,
   onSelect,
 }: Props) {
-  const findItem = (value: string) =>
-    list.find((item) => item.value === value) as FilterItem | undefined;
-
   const [isOpen, setIsOpen] = useState(false);
   // 단일 선택
   const [selectedItem, setSelectedItem] = useState(() =>
@@ -42,6 +39,18 @@ function ReviewFilter({
   );
 
   const isDesktop = useMediaQuery('(min-width: 768px)');
+
+  // 전체 or caption or caption외 N개
+  const multiSelectCaption =
+    checkedList.length > 0
+      ? checkedList.length > 1
+        ? `${checkedList[0].caption}외 ${checkedList.length - 1}개`
+        : checkedList[0].caption
+      : '전체';
+
+  function findItem(value?: string) {
+    return list.find((item) => item.value === value);
+  }
 
   const handleClickItem = (item: FilterItem) => {
     if (onSelect) onSelect(item.value);
@@ -71,12 +80,7 @@ function ReviewFilter({
       >
         <span className="font-medium text-neutral-20">{label}</span>
         <span className="font-bold text-primary">
-          {multiSelect
-            ? checkedList.length > 0 &&
-              (checkedList.length > 1
-                ? `${checkedList[0].caption}외 ${checkedList.length - 1}개`
-                : checkedList[0].caption)
-            : selectedItem?.caption}
+          {multiSelect ? multiSelectCaption : selectedItem?.caption}
         </span>
         <ChevronDown size={20} />
       </div>

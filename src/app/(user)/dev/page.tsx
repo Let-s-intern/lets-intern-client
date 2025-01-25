@@ -117,11 +117,26 @@ const mock4: GetReview = {
   ],
 };
 
-const reviewFilterList = [
+const singleReviewFilterList = [
   {
-    caption: '모든 리뷰',
+    caption: '전체',
     value: 'all',
   },
+  {
+    caption: '긍정적 리뷰',
+    value: 'positive',
+  },
+  {
+    caption: '부정적 리뷰',
+    value: 'negative',
+  },
+  {
+    caption: '일부 리뷰',
+    value: 'some',
+  },
+];
+
+const reviewFilterList = [
   {
     caption: '긍정적 리뷰',
     value: 'positive',
@@ -162,8 +177,8 @@ const Page = () => {
       />
       <ReviewFilter
         label="나는 필터야"
-        list={reviewFilterList}
-        defaultValue={reviewFilterList[0].value}
+        list={singleReviewFilterList}
+        defaultValue={singleReviewFilterList[0].value}
       />
       <ReviewFilter
         label="나는 필터야"
