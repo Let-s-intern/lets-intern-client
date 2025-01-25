@@ -417,9 +417,6 @@ export type CreateLiveReq = {
     };
   }[];
   // B2 타입
-  // B2 타입
-  // B2 타입
-  // B2 타입
   adminProgramTypeInfo: {
     classificationInfo: {
       programAdminClassification: ProgramAdminClassification;
@@ -468,8 +465,6 @@ export type UpdateLiveReq = {
       programClassification: ProgramClassification;
     };
   }[];
-  // B2 타입
-  // B2 타입
   // B2 타입
   adminProgramTypeInfo?: {
     classificationInfo: {
