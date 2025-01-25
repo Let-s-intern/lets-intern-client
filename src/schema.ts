@@ -53,7 +53,7 @@ export const challengeTypeSchema = z.enum([
   'ETC',
   'PERSONAL_STATEMENT',
   'PORTFOLIO',
-  "PERSONAL_STATEMENT_LARGE_CORP"
+  'PERSONAL_STATEMENT_LARGE_CORP',
 ]);
 
 export type ChallengeType = z.infer<typeof challengeTypeSchema>;
@@ -81,6 +81,12 @@ export const ProgramClassificationEnum = z.enum([
 ]);
 
 export type ProgramClassification = z.infer<typeof ProgramClassificationEnum>;
+
+export const ProgramAdminClassificationEnum = z.enum(['B2B', 'B2C']);
+
+export type ProgramAdminClassification = z.infer<
+  typeof ProgramAdminClassificationEnum
+>;
 
 export const challengePriceType = z.union([
   z.literal('CHARGE'),
@@ -246,6 +252,11 @@ export type CreateChallengeReq = {
       programClassification: ProgramClassification;
     };
   }[];
+  adminProgramTypeInfo: {
+    classificationInfo: {
+      programAdminClassification: ProgramAdminClassification;
+    };
+  }[];
   priceInfo: ChallengePriceReq[];
   faqInfo: {
     faqId: number;
@@ -271,6 +282,11 @@ export type UpdateChallengeReq = {
   programTypeInfo?: {
     classificationInfo: {
       programClassification: ProgramClassification;
+    };
+  }[];
+  adminProgramTypeInfo?: {
+    classificationInfo: {
+      programAdminClassification: ProgramAdminClassification;
     };
   }[];
   priceInfo?: ChallengePriceReq[];
