@@ -122,7 +122,7 @@ const LiveCreate: React.FC = () => {
             variant="outlined"
             value={importJsonString}
             onChange={(e) => setImportJsonString(e.target.value)}
-          ></TextField>
+          />
           <Button
             variant="outlined"
             onClick={() => {
@@ -155,6 +155,9 @@ const LiveCreate: React.FC = () => {
             defaultValue={{
               ...input,
               classificationInfo: input.programTypeInfo.map(
+                (info) => info.classificationInfo,
+              ),
+              adminClassificationInfo: input.adminProgramTypeInfo.map(
                 (info) => info.classificationInfo,
               ),
             }}

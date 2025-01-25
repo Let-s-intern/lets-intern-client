@@ -354,6 +354,11 @@ export const getLiveIdSchema = z
         programClassification: ProgramClassificationEnum,
       }),
     ),
+    adminClassificationInfo: z.array(
+      z.object({
+        programAdminClassification: ProgramAdminClassificationEnum,
+      }),
+    ),
     priceInfo: z.object({
       priceId: z.number(),
       price: z.number().optional().nullable(),
@@ -524,6 +529,11 @@ export const getVodIdSchema = z.object({
     )
     .nullable()
     .optional(),
+  adminProgramTypeInfo: z.array(
+    z.object({
+      programAdminClassification: ProgramAdminClassificationEnum,
+    }),
+  ),
 });
 
 export type VodIdSchema = z.infer<typeof getVodIdSchema>;
@@ -540,7 +550,6 @@ export type CreateVodReq = {
       programClassification: ProgramClassification;
     };
   }[];
-  // B2 타입
   // B2 타입
   adminProgramTypeInfo: {
     classificationInfo: {
