@@ -1536,6 +1536,11 @@ export const programAdminSchema = z
           thumbnail: z.string().nullable().optional(),
         }),
         classificationList: z.array(classificationSchema),
+        adminClassificationList: z.array(
+          z.object({
+            programAdminClassification: ProgramAdminClassificationEnum,
+          }),
+        ),
       }),
     ),
     pageInfo,

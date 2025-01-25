@@ -6,6 +6,7 @@ export const mockChallenge: ChallengeIdSchema = {
   beginning: dayjs(),
   challengeType: 'CAREER_START',
   classificationInfo: [],
+  adminClassificationInfo: [],
   deadline: dayjs(),
   endDate: dayjs(),
   faqInfo: [],

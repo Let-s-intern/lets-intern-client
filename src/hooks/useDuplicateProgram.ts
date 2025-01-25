@@ -49,6 +49,11 @@ export const challengeToCreateInput = (
         programClassification: value.programClassification ?? 'PASS',
       },
     })),
+    adminProgramTypeInfo: challenge.adminClassificationInfo.map((value) => ({
+      classificationInfo: {
+        programAdminClassification: value.programAdminClassification,
+      },
+    })),
     shortDesc: challenge.shortDesc ?? '',
     startDate: challenge.startDate?.format('YYYY-MM-DDTHH:mm:ss') ?? '',
     deadline: challenge.deadline?.format('YYYY-MM-DDTHH:mm:ss') ?? '',
@@ -75,6 +80,11 @@ export const liveToCreateInput = (live: LiveIdSchema): CreateLiveReq => {
     programTypeInfo: live.classificationInfo.map((value) => ({
       classificationInfo: {
         programClassification: value.programClassification ?? 'PASS',
+      },
+    })),
+    adminProgramTypeInfo: live.adminClassificationInfo.map((value) => ({
+      classificationInfo: {
+        programAdminClassification: value.programAdminClassification,
       },
     })),
     shortDesc: live.shortDesc ?? '',
@@ -120,6 +130,7 @@ export const useDuplicateProgram = ({
     async ({
       programInfo: { programType, id },
       classificationList,
+      adminClassificationList,
     }: ProgramAdminListItem) => {
       switch (programType) {
         case 'CHALLENGE': {
@@ -142,6 +153,11 @@ export const useDuplicateProgram = ({
             programTypeInfo: classificationList.map((value) => ({
               classificationInfo: {
                 programClassification: value.programClassification ?? 'PASS',
+              },
+            })),
+            adminProgramTypeInfo: adminClassificationList.map((value) => ({
+              classificationInfo: {
+                programAdminClassification: value.programAdminClassification,
               },
             })),
             thumbnail: vod.vodInfo.thumbnail ?? '',
