@@ -6,6 +6,15 @@ import { useNavigate } from 'react-router-dom';
 
 import { fileType, uploadFile } from '@/api/file';
 import { usePostLiveMutation } from '@/api/program';
+import LiveBasic from '@/components/admin/program/LiveBasic';
+import LiveCurriculum from '@/components/admin/program/LiveCurriculum';
+import LiveInformation from '@/components/admin/program/LiveInformation';
+import LiveMentor from '@/components/admin/program/LiveMentor';
+import LivePrice from '@/components/admin/program/LivePrice';
+import ProgramBestReview from '@/components/admin/program/ProgramBestReview';
+import ProgramBlogReviewEditor from '@/components/admin/program/ProgramBlogReviewEditor';
+import FaqSection from '@/components/FaqSection';
+import ProgramRecommendEditor from '@/components/ProgramRecommendEditor';
 import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
 import { liveToCreateInput } from '@/hooks/useDuplicateProgram';
 import { CreateLiveReq, getLiveIdSchema, ProgramTypeEnum } from '@/schema';
@@ -16,15 +25,6 @@ import ImageUpload from '@components/admin/program/ui/form/ImageUpload';
 import Header from '@components/admin/ui/header/Header';
 import Heading from '@components/admin/ui/heading/Heading';
 import Heading2 from '@components/admin/ui/heading/Heading2';
-import LiveBasic from '../../components/admin/program/LiveBasic';
-import LiveCurriculum from '../../components/admin/program/LiveCurriculum';
-import LiveInformation from '../../components/admin/program/LiveInformation';
-import LiveMentor from '../../components/admin/program/LiveMentor';
-import LivePrice from '../../components/admin/program/LivePrice';
-import ProgramBestReview from '../../components/admin/program/ProgramBestReview';
-import ProgramBlogReviewEditor from '../../components/admin/program/ProgramBlogReviewEditor';
-import FaqSection from '../../components/FaqSection';
-import ProgramRecommendEditor from '../../components/ProgramRecommendEditor';
 import ProgramSchedule from './program/ProgramSchedule';
 const LiveCreate: React.FC = () => {
   const navigate = useNavigate();
@@ -60,6 +60,7 @@ const LiveCreate: React.FC = () => {
     deadline: dayjs().format('YYYY-MM-DDTHH:mm'),
     progressType: 'ALL',
     programTypeInfo: [],
+    adminProgramTypeInfo: [],
     priceInfo: {
       priceInfo: {
         price: 0,

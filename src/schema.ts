@@ -403,6 +403,11 @@ export type CreateLiveReq = {
       programClassification: ProgramClassification;
     };
   }[];
+  adminProgramTypeInfo: {
+    classificationInfo: {
+      programAdminClassification: ProgramAdminClassification;
+    };
+  }[];
   priceInfo: {
     priceInfo: {
       price: number;
@@ -444,6 +449,11 @@ export type UpdateLiveReq = {
   programTypeInfo?: {
     classificationInfo: {
       programClassification: ProgramClassification;
+    };
+  }[];
+  adminProgramTypeInfo?: {
+    classificationInfo: {
+      programAdminClassification: ProgramAdminClassification;
     };
   }[];
   priceInfo?: {
@@ -515,6 +525,11 @@ export type CreateVodReq = {
       programClassification: ProgramClassification;
     };
   }[];
+  adminProgramTypeInfo: {
+    classificationInfo: {
+      programAdminClassification: ProgramAdminClassification;
+    };
+  }[];
 };
 
 /** PATCH /api/v1/vod VOD 수정 */
@@ -528,6 +543,11 @@ export type UpdateVodReq = {
   programTypeInfo?: {
     classificationInfo: {
       programClassification: ProgramClassification;
+    };
+  }[];
+  adminProgramTypeInfo?: {
+    classificationInfo: {
+      programAdminClassification: ProgramAdminClassification;
     };
   }[];
 };
