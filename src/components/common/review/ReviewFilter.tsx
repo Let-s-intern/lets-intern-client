@@ -2,8 +2,11 @@
 
 import { useMediaQuery } from '@mui/material';
 import clsx from 'clsx';
-import { Check, ChevronDown, SquareCheck } from 'lucide-react';
+import { Check, ChevronDown } from 'lucide-react';
 import { memo, useState } from 'react';
+
+import CheckboxActive from '@/assets/icons/checkbox-active.svg?react';
+import CheckboxInActive from '@/assets/icons/checkbox-inactive.svg?react';
 
 interface FilterItem {
   caption: string;
@@ -95,20 +98,16 @@ function ReviewFilter({
               onClick={() => handleClickItem(item)}
             >
               <div className="flex items-center gap-2">
-                {multiSelect && (
-                  <SquareCheck
-                    color="#CFCFCF"
-                    fill={
-                      // 체크 여부
-                      checkedList.some((ele) => ele.value === item.value)
-                        ? '#5F66F6'
-                        : 'white'
-                    }
-                  />
-                )}
+                {multiSelect &&
+                  // 체크박스 체크 여부
+                  (checkedList.some((ele) => ele.value === item.value) ? (
+                    <CheckboxActive className="w-6 h-6" />
+                  ) : (
+                    <CheckboxInActive className="w-6 h-6" />
+                  ))}
                 {item.caption}
               </div>
-              {/* 선택된 아이템에 체크 표시 */}
+              {/* [단일 선택] 선택된 아이템에 체크 표시 */}
               {!multiSelect && item.value === selectedItem?.value && (
                 <Check size={20} color="#4D55F5" />
               )}
