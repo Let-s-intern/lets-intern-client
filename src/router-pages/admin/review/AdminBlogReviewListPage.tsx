@@ -91,9 +91,10 @@ export default function AdminBlogReviewListPage() {
       headerName: '노출여부',
       sortable: false,
       width: 80,
-      renderCell: (params: GridRenderCellParams<Row, boolean>) => {
-        return <CellCheckbox defaultValue={params.value ?? true} />;
-      },
+      editable: true,
+      type: 'boolean',
+      renderCell: (params: GridRenderCellParams<Row, boolean>) =>
+        params.value ? '✅' : '❌',
     },
     {
       field: 'actions',
@@ -195,15 +196,22 @@ export default function AdminBlogReviewListPage() {
   };
 
   const processRowUpdate = async (newRow: GridRowModel<Row>) => {
-    const { blogReviewId, programType, programTitle, name, url, postDate } =
-      newRow;
+    const {
+      blogReviewId,
+      programType,
+      isVisible,
+      programTitle,
+      name,
+      url,
+      postDate,
+    } = newRow;
     const updatedRow = { ...newRow, isNew: false };
     const target = rows.find((row) => row.id === newRow.id);
 
     setRows(rows.map((row) => (row.id === newRow.id ? updatedRow : row)));
 
     if (target?.isNew) {
-      // 생성
+      // API 생성
       await postReview.mutateAsync({
         programType: programType ?? ProgramTypeEnum.enum.CHALLENGE,
         programTitle,
@@ -212,13 +220,14 @@ export default function AdminBlogReviewListPage() {
         postDate: dayjs(postDate).format(YYYY_MMDD_THHmmss),
       });
     } else {
-      // 수정
+      // API 수정
       await patchReview.mutateAsync({
         blogReviewId,
         programType: programType ?? ProgramTypeEnum.enum.CHALLENGE,
         programTitle,
         name,
         url,
+        isVisible: isVisible ?? false,
         postDate: dayjs(postDate).format(YYYY_MMDD_THHmmss),
       });
     }

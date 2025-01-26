@@ -198,6 +198,7 @@ interface AdminBlogReviewPatchReq {
   name?: string | null;
   url?: string | null;
   postDate?: string | null;
+  isVisible: boolean;
 }
 
 export const usePatchAdminBlogReview = () => {
