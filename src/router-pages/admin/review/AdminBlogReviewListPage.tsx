@@ -119,12 +119,12 @@ export default function AdminBlogReviewListPage() {
             key={'edit' + id}
             icon={<Pencil size={20} />}
             label="Edit"
+            onClick={handleEditClick(id)}
           />,
           <GridActionsCellItem
             key={'delete' + id}
             icon={<Trash color="red" size={20} />}
             label="Delete"
-            color="inherit"
           />,
         ];
       },
@@ -177,6 +177,10 @@ export default function AdminBlogReviewListPage() {
     }
   };
 
+  const handleEditClick = (id: GridRowId) => () => {
+    setRowModesModel({ ...rowModesModel, [id]: { mode: GridRowModes.Edit } });
+  };
+
   const processRowUpdate = async (newRow: GridRowModel<Row>) => {
     const { blogReviewId, programType, programTitle, name, url, postDate } =
       newRow;
@@ -223,8 +227,7 @@ export default function AdminBlogReviewListPage() {
   return (
     <div className="p-5">
       <AdminReviewHeader />
-      <div className="flex items-center justify-between p-2">
-        <span className="text-requirement">더블 클릭하여 수정하세요</span>
+      <div className="flex  justify-end pb-2">
         <Button variant="outlined" onClick={handleAddRow}>
           등록
         </Button>
