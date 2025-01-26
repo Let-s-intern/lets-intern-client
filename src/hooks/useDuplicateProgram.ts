@@ -157,7 +157,7 @@ export const useDuplicateProgram = ({
             })),
             adminProgramTypeInfo: adminClassificationList ? adminClassificationList.map((value) => ({
               classificationInfo: {
-                programAdminClassification: value?.programAdminClassification ?? "B2C" ,
+                programAdminClassification: value.programAdminClassification ,
               },
             })):[],
             thumbnail: vod.vodInfo.thumbnail ?? '',
