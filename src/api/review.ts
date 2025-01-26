@@ -1,4 +1,9 @@
-import { challengeTypeSchema, pageInfo } from '@/schema';
+import {
+  challengeTypeSchema,
+  pageInfo,
+  ProgramTypeEnum,
+  ProgramTypeUpperCase,
+} from '@/schema';
 import axios from '@/utils/axios';
 import axiosV2 from '@/utils/axiosV2';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
@@ -88,6 +93,7 @@ export const blogReveiwListSchema = z.object({
 });
 
 export type BlogReview = z.infer<typeof blogReviewSchema>;
+
 export type PostReviewItemType = {
   questionType: QuestionType;
   answer: string;
@@ -123,6 +129,58 @@ export const usePostReviewMutation = ({
     },
     onError: (error: Error) => {
       return errorCallback && errorCallback(error);
+    },
+  });
+};
+
+export const adminBlogReviewSchema = z
+  .object({
+    blogReviewId: z.number(),
+    postDate: z.string().optional().nullable(),
+    programType: ProgramTypeEnum.optional().nullable(),
+    programTitle: z.string().optional().nullable(),
+    name: z.string().optional().nullable(),
+    title: z.string().optional().nullable(),
+    url: z.string().optional().nullable(),
+    thumbnail: z.string().optional().nullable(),
+    isVisible: z.boolean().optional().nullable(),
+  })
+  .transform((data) => ({ ...data, postDate: new Date(data.postDate ?? '') }));
+
+export type AdminBlogReview = z.infer<typeof adminBlogReviewSchema>;
+
+export const adminBlogReviewListSchema = z.object({
+  reviewList: z.array(adminBlogReviewSchema),
+});
+
+// [어드민] 블로그 후기 전체 조회
+const adminBlogReviewListQueryKey = 'useGetAdminBlogReviewList';
+
+export const useGetAdminBlogReviewList = () => {
+  return useQuery({
+    queryKey: [adminBlogReviewListQueryKey],
+    queryFn: async () => {
+      const res = await axiosV2.get('/admin/review/blog');
+      return adminBlogReviewListSchema.parse(res.data.data).reviewList;
+    },
+    refetchOnWindowFocus: false,
+  });
+};
+
+// [어드민] 블로그 후기 생성
+interface AdminBlogReviewReq {
+  programType: ProgramTypeUpperCase;
+  programTitle?: string | null;
+  name?: string | null;
+  url?: string | null;
+  postDate?: string | null;
+}
+
+export const usePostAdminBlogReview = () => {
+  return useMutation({
+    mutationFn: async (newAdminBlogReview: AdminBlogReviewReq) => {
+      const res = await axiosV2.post('/admin/review/blog', newAdminBlogReview);
+      return res;
     },
   });
 };
