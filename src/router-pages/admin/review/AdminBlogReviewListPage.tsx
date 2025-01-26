@@ -1,6 +1,6 @@
 'use client';
 
-import { Button, Checkbox } from '@mui/material';
+import { Button } from '@mui/material';
 import {
   DataGrid,
   GridActionsCellItem,
@@ -15,7 +15,7 @@ import {
   GridRowParams,
 } from '@mui/x-data-grid';
 import { Check, Pencil, Trash, X } from 'lucide-react';
-import { memo, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import {
   AdminBlogReview,
@@ -117,6 +117,7 @@ export default function AdminBlogReviewListPage() {
               key={'cancel' + id}
               icon={<X size={20} />}
               label="Cancel"
+              onClick={handleCancelClick(id)}
             />,
           ];
         }
@@ -195,6 +196,18 @@ export default function AdminBlogReviewListPage() {
     if (isDelete) await deleteReview.mutateAsync(id);
   };
 
+  const handleCancelClick = (id: GridRowId) => () => {
+    setRowModesModel({
+      ...rowModesModel,
+      [id]: { mode: GridRowModes.View, ignoreModifications: true },
+    });
+
+    const editedRow = rows.find((row) => row.id === id);
+    if (editedRow!.isNew) {
+      setRows(rows.filter((row) => row.id !== id));
+    }
+  };
+
   const processRowUpdate = async (newRow: GridRowModel<Row>) => {
     const {
       blogReviewId,
@@ -270,15 +283,3 @@ export default function AdminBlogReviewListPage() {
     </div>
   );
 }
-
-const CellCheckbox = memo(function CellCheckbox({
-  defaultValue,
-}: {
-  defaultValue: boolean;
-}) {
-  const [checked, setChecked] = useState(defaultValue);
-
-  return (
-    <Checkbox checked={checked} onChange={() => setChecked((prev) => !prev)} />
-  );
-});
