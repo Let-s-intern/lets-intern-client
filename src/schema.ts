@@ -1539,8 +1539,8 @@ export const programAdminSchema = z
         adminClassificationList: z.array(
           z.object({
             programAdminClassification: ProgramAdminClassificationEnum,
-          }).nullable().optional(),
-        ),
+          }),
+        ).nullable().optional(),
       }),
     ),
     pageInfo,
