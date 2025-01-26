@@ -232,12 +232,12 @@ const ProgramRecommendEditor = ({
                                             ele.programClassification,
                                         })),
                                       adminClassificationList:
-                                        item.adminClassificationList.map(
+                                      item.adminClassificationList? item.adminClassificationList.map(
                                           (ele) => ({
                                             programAdminClassification:
-                                              ele.programAdminClassification,
+                                              ele?.programAdminClassification ?? "B2C",
                                           }),
-                                        ),
+                                        ) : [],
                                     },
                                   ],
                                 });
