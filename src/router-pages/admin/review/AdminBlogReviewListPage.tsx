@@ -20,6 +20,7 @@ import { memo, useEffect, useState } from 'react';
 import {
   AdminBlogReview,
   useGetAdminBlogReviewList,
+  usePatchAdminBlogReview,
   usePostAdminBlogReview,
 } from '@/api/review';
 import { YYYY_MMDD_THHmmss } from '@/data/dayjsFormat';
@@ -33,6 +34,7 @@ type Row = AdminBlogReview & { id: number | string; isNew: boolean };
 export default function AdminBlogReviewListPage() {
   const { data } = useGetAdminBlogReviewList();
   const postReview = usePostAdminBlogReview();
+  const patchReview = usePatchAdminBlogReview();
 
   const columns: GridColDef<Row>[] = [
     {
@@ -176,20 +178,31 @@ export default function AdminBlogReviewListPage() {
   };
 
   const processRowUpdate = async (newRow: GridRowModel<Row>) => {
+    const { blogReviewId, programType, programTitle, name, url, postDate } =
+      newRow;
     const updatedRow = { ...newRow, isNew: false };
     const target = rows.find((row) => row.id === newRow.id);
     setRows(rows.map((row) => (row.id === newRow.id ? updatedRow : row)));
 
     if (target?.isNew) {
+      // 생성
       await postReview.mutateAsync({
-        programType: newRow.programType ?? ProgramTypeEnum.enum.CHALLENGE,
-        programTitle: newRow.programTitle,
-        name: newRow.name,
-        url: newRow.url,
-        postDate: dayjs(newRow.postDate).format(YYYY_MMDD_THHmmss),
+        programType: programType ?? ProgramTypeEnum.enum.CHALLENGE,
+        programTitle,
+        name,
+        url,
+        postDate: dayjs(postDate).format(YYYY_MMDD_THHmmss),
       });
     } else {
-      // Patch
+      // 수정
+      await patchReview.mutateAsync({
+        blogReviewId,
+        programType: programType ?? ProgramTypeEnum.enum.CHALLENGE,
+        programTitle,
+        name,
+        url,
+        postDate: dayjs(postDate).format(YYYY_MMDD_THHmmss),
+      });
     }
 
     return updatedRow;

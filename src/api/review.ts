@@ -168,7 +168,7 @@ export const useGetAdminBlogReviewList = () => {
 };
 
 // [어드민] 블로그 후기 생성
-interface AdminBlogReviewReq {
+interface AdminBlogReviewPostReq {
   programType: ProgramTypeUpperCase;
   programTitle?: string | null;
   name?: string | null;
@@ -178,8 +178,29 @@ interface AdminBlogReviewReq {
 
 export const usePostAdminBlogReview = () => {
   return useMutation({
-    mutationFn: async (newAdminBlogReview: AdminBlogReviewReq) => {
-      const res = await axiosV2.post('/admin/review/blog', newAdminBlogReview);
+    mutationFn: async (newReview: AdminBlogReviewPostReq) => {
+      const res = await axiosV2.post('/admin/review/blog', newReview);
+      return res;
+    },
+  });
+};
+
+interface AdminBlogReviewPatchReq {
+  blogReviewId: number | string;
+  programType: ProgramTypeUpperCase;
+  programTitle?: string | null;
+  name?: string | null;
+  url?: string | null;
+  postDate?: string | null;
+}
+
+export const usePatchAdminBlogReview = () => {
+  return useMutation({
+    mutationFn: async (updatedReview: AdminBlogReviewPatchReq) => {
+      const res = await axiosV2.patch(
+        `/admin/review/blog/${updatedReview.blogReviewId}`,
+        updatedReview,
+      );
       return res;
     },
   });
