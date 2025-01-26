@@ -202,7 +202,7 @@ export const getChallengeIdSchema = z
       z.object({
         programAdminClassification: ProgramAdminClassificationEnum,
       }),
-    ),
+    ).nullable().optional(),
     priceInfo: z.array(
       z.object({
         priceId: z.number(),
@@ -358,7 +358,7 @@ export const getLiveIdSchema = z
       z.object({
         programAdminClassification: ProgramAdminClassificationEnum,
       }),
-    ),
+    ).nullable().optional(),
     priceInfo: z.object({
       priceId: z.number(),
       price: z.number().optional().nullable(),
@@ -528,7 +528,7 @@ export const getVodIdSchema = z.object({
     z.object({
       programAdminClassification: ProgramAdminClassificationEnum,
     }),
-  ),
+  ).nullable().optional(),
 });
 
 export type VodIdSchema = z.infer<typeof getVodIdSchema>;
@@ -1539,7 +1539,7 @@ export const programAdminSchema = z
         adminClassificationList: z.array(
           z.object({
             programAdminClassification: ProgramAdminClassificationEnum,
-          }),
+          }).nullable().optional(),
         ),
       }),
     ),
