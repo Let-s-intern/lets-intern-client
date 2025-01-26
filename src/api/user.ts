@@ -169,13 +169,10 @@ export type PatchUserBody = {
   marketingAgree?: boolean;
 };
 
-export const usePatchUser = ({
-  successCallback,
-  errorCallback,
-}: {
-  successCallback?: () => void;
-  errorCallback?: (error: Error) => void;
-}) => {
+export const usePatchUser = (
+  successCallback?: () => void,
+  errorCallback?: (error: Error) => void,
+) => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (body: PatchUserBody) => {
