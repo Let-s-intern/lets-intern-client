@@ -528,7 +528,7 @@ export const getVodIdSchema = z.object({
     z.object({
       programAdminClassification: ProgramAdminClassificationEnum,
     }),
-  ),
+  ).nullable().optional(),
 });
 
 export type VodIdSchema = z.infer<typeof getVodIdSchema>;
