@@ -19,6 +19,7 @@ import { memo, useEffect, useState } from 'react';
 
 import {
   AdminBlogReview,
+  useDeleteAdminBlogReview,
   useGetAdminBlogReviewList,
   usePatchAdminBlogReview,
   usePostAdminBlogReview,
@@ -29,12 +30,17 @@ import { ProgramTypeEnum } from '@/schema';
 import { generateUuid } from '@/utils/random';
 import AdminReviewHeader from './AdminReviewHeader';
 
-type Row = AdminBlogReview & { id: number | string; isNew: boolean };
+type Row = AdminBlogReview & {
+  id: number | string;
+  isNew: boolean;
+  isDelete: boolean;
+};
 
 export default function AdminBlogReviewListPage() {
   const { data } = useGetAdminBlogReviewList();
   const postReview = usePostAdminBlogReview();
   const patchReview = usePatchAdminBlogReview();
+  const deleteReview = useDeleteAdminBlogReview();
 
   const columns: GridColDef<Row>[] = [
     {
@@ -104,7 +110,7 @@ export default function AdminBlogReviewListPage() {
               key={'save' + id}
               icon={<Check color="#4D55F5" size={20} />}
               label="Save"
-              onClick={() => handleSaveClick(id)}
+              onClick={handleSaveClick(id)}
             />,
             <GridActionsCellItem
               key={'cancel' + id}
@@ -125,6 +131,7 @@ export default function AdminBlogReviewListPage() {
             key={'delete' + id}
             icon={<Trash color="red" size={20} />}
             label="Delete"
+            onClick={handleDeleteClick(id)}
           />,
         ];
       },
@@ -134,7 +141,7 @@ export default function AdminBlogReviewListPage() {
   const [rows, setRows] = useState<Row[]>([]);
   const [rowModesModel, setRowModesModel] = useState<GridRowModesModel>({});
 
-  const handleSaveClick = (id: GridRowId) => {
+  const handleSaveClick = (id: GridRowId) => () => {
     setRowModesModel({
       ...rowModesModel,
       [id]: { mode: GridRowModes.View },
@@ -162,6 +169,7 @@ export default function AdminBlogReviewListPage() {
     thumbnail: undefined,
     isVisible: false,
     isNew: true,
+    isDelete: false,
   });
 
   const handleRowModesModelChange = (newRowModesModel: GridRowModesModel) => {
@@ -181,11 +189,17 @@ export default function AdminBlogReviewListPage() {
     setRowModesModel({ ...rowModesModel, [id]: { mode: GridRowModes.Edit } });
   };
 
+  const handleDeleteClick = (id: GridRowId) => async () => {
+    const isDelete = confirm('삭제하시겠습니까?');
+    if (isDelete) await deleteReview.mutateAsync(id);
+  };
+
   const processRowUpdate = async (newRow: GridRowModel<Row>) => {
     const { blogReviewId, programType, programTitle, name, url, postDate } =
       newRow;
     const updatedRow = { ...newRow, isNew: false };
     const target = rows.find((row) => row.id === newRow.id);
+
     setRows(rows.map((row) => (row.id === newRow.id ? updatedRow : row)));
 
     if (target?.isNew) {
@@ -219,6 +233,7 @@ export default function AdminBlogReviewListPage() {
         ...review,
         id: review.blogReviewId,
         isNew: false,
+        isDelete: false,
       })) ?? [];
 
     setRows(initialRows);

@@ -177,14 +177,20 @@ interface AdminBlogReviewPostReq {
 }
 
 export const usePostAdminBlogReview = () => {
+  const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (newReview: AdminBlogReviewPostReq) => {
       const res = await axiosV2.post('/admin/review/blog', newReview);
       return res;
     },
+    onSuccess: async () =>
+      await queryClient.invalidateQueries({
+        queryKey: [adminBlogReviewListQueryKey],
+      }),
   });
 };
 
+// [어드민] 블로그 후기 업데이트
 interface AdminBlogReviewPatchReq {
   blogReviewId: number | string;
   programType: ProgramTypeUpperCase;
@@ -203,5 +209,21 @@ export const usePatchAdminBlogReview = () => {
       );
       return res;
     },
+  });
+};
+
+// [어드민] 블로그 후기 삭제
+export const useDeleteAdminBlogReview = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (blogReviewId: number | string) => {
+      const res = await axiosV2.delete(`/admin/review/blog/${blogReviewId}`);
+      return res;
+    },
+    onSuccess: async () =>
+      await queryClient.invalidateQueries({
+        queryKey: [adminBlogReviewListQueryKey],
+      }),
   });
 };
