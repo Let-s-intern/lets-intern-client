@@ -33,6 +33,7 @@ const ChallengePreviewButton: React.FC<{
         beginning: dayjs(input.beginning) ?? existing.beginning,
         challengeType: input.challengeType ?? existing.challengeType,
         classificationInfo: existing.classificationInfo, // TODO: 수정 필요
+        adminClassificationInfo: existing.adminClassificationInfo, // TODO: 수정 필요
         deadline: input.deadline ? dayjs(input.deadline) : existing.deadline,
         endDate: input.endDate ? dayjs(input.endDate) : existing.endDate,
         faqInfo:
@@ -73,6 +74,7 @@ const ChallengePreviewButton: React.FC<{
       beginning: dayjs(input.beginning),
       challengeType: input.challengeType ?? 'CAREER_START', // TODO: 수정 필요
       classificationInfo: [{ programClassification: 'CAREER_SEARCH' }], // TODO: 수정 필요
+      adminClassificationInfo: [{ programAdminClassification: 'B2C' }], // TODO: 수정 필요
       deadline: input.deadline ? dayjs(input.deadline) : null,
       endDate: input.endDate ? dayjs(input.endDate) : null,
       faqInfo: faq?.faqList.filter((faq) => inputFaqIdSet.has(faq.id)) ?? [],

@@ -13,6 +13,8 @@ import {
   liveAndVodJob,
   LiveIdSchema,
   LiveProgressType,
+  ProgramAdminClassification,
+  ProgramAdminClassificationEnum,
   ProgramClassification,
   UpdateLiveReq,
 } from '@/schema';
@@ -21,10 +23,12 @@ import {
   programClassificationToText,
 } from '@/utils/convert';
 import Input from '@components/ui/input/Input';
+import SelectFormControl from './SelectFormControl';
 
 interface LiveBasicProps<T extends CreateLiveReq | UpdateLiveReq> {
   defaultValue?: Pick<
     LiveIdSchema,
+    | 'adminClassificationInfo'
     | 'classificationInfo'
     | 'job'
     | 'title'
@@ -98,6 +102,52 @@ export default function LiveBasic<T extends CreateLiveReq | UpdateLiveReq>({
           ))}
         </Select>
       </FormControl>
+
+      {/* B2 타입 */}
+      <SelectFormControl
+        labelId="adminProgramTypeInfo"
+        label="B2 타입"
+        defaultValue={
+          defaultValue?.adminClassificationInfo
+            ? defaultValue.adminClassificationInfo.map(
+                (info) => info.programAdminClassification,
+              )
+            : []
+        }
+        onChange={(e) =>
+          setInput((prev) => ({
+            ...prev,
+            adminProgramTypeInfo: (
+              e.target.value as ProgramAdminClassification[]
+            ).map((item) => ({
+              classificationInfo: {
+                programAdminClassification: item,
+              },
+            })),
+          }))
+        }
+        renderValue={(selectedList) => (
+          <div className="flex flex-wrap gap-2">
+            {selectedList.map((selected) => (
+              <Chip
+                key={selected}
+                label={
+                  ProgramAdminClassificationEnum.enum[
+                    selected as ProgramAdminClassification
+                  ]
+                }
+              />
+            ))}
+          </div>
+        )}
+      >
+        {Object.values(ProgramAdminClassificationEnum.enum).map((value) => (
+          <MenuItem key={value} value={value}>
+            {value}
+          </MenuItem>
+        ))}
+      </SelectFormControl>
+
       <FormControl size="small">
         <InputLabel id="progressType">온/오프라인 여부</InputLabel>
         <Select

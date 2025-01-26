@@ -5,6 +5,7 @@ import { LiveIdSchema } from '../schema';
 export const mockLive: LiveIdSchema = {
   beginning: dayjs(),
   classificationInfo: [],
+  adminClassificationInfo: [],
   deadline: dayjs(),
   endDate: dayjs(),
   faqInfo: [],

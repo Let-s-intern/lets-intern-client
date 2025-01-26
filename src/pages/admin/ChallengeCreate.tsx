@@ -1,6 +1,13 @@
-import { useGetFaq } from '@/api/faq';
 import { fileType, uploadFile } from '@/api/file';
 import { usePostChallengeMutation } from '@/api/program';
+import ChallengeBasic from '@/components/admin/program/ChallengeBasic';
+import ChallengeCurriculum from '@/components/admin/program/ChallengeCurriculum';
+import ChallengePoint from '@/components/admin/program/ChallengePoint';
+import ChallengePrice from '@/components/admin/program/ChallengePrice';
+import ProgramBestReview from '@/components/admin/program/ProgramBestReview';
+import ProgramBlogReviewEditor from '@/components/admin/program/ProgramBlogReviewEditor';
+import FaqSection from '@/components/FaqSection';
+import ProgramRecommendEditor from '@/components/ProgramRecommendEditor';
 import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
 import { challengeToCreateInput } from '@/hooks/useDuplicateProgram';
 import {
@@ -21,14 +28,6 @@ import dayjs from 'dayjs';
 import { useCallback, useState } from 'react';
 import { FaSave } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
-import ChallengeBasic from '../../components/admin/program/ChallengeBasic';
-import ChallengeCurriculum from '../../components/admin/program/ChallengeCurriculum';
-import ChallengePoint from '../../components/admin/program/ChallengePoint';
-import ChallengePrice from '../../components/admin/program/ChallengePrice';
-import ProgramBestReview from '../../components/admin/program/ProgramBestReview';
-import ProgramBlogReviewEditor from '../../components/admin/program/ProgramBlogReviewEditor';
-import FaqSection from '../../components/FaqSection';
-import ProgramRecommendEditor from '../../components/ProgramRecommendEditor';
 import ChallengeFaqCategory from './program/ChallengeFaqCategory';
 import ProgramSchedule from './program/ProgramSchedule';
 
@@ -51,11 +50,6 @@ const ChallengeCreate: React.FC = () => {
   const navigate = useNavigate();
 
   const { mutateAsync: postChallenge } = usePostChallengeMutation();
-  const { data: faqData } = useGetFaq('CHALLENGE');
-
-  const categoryList = [
-    ...new Set(faqData?.faqList.map((faq) => faq.category)),
-  ];
 
   const [input, setInput] = useState<Omit<CreateChallengeReq, 'desc'>>({
     beginning: dayjs().format('YYYY-MM-DDTHH:mm'),
@@ -68,6 +62,7 @@ const ChallengeCreate: React.FC = () => {
     faqInfo: [],
     participationCount: 0,
     programTypeInfo: [],
+    adminProgramTypeInfo: [],
     priceInfo: [
       {
         priceInfo: {
@@ -167,6 +162,12 @@ const ChallengeCreate: React.FC = () => {
                 programClassification:
                   info.classificationInfo.programClassification,
               })),
+              adminClassificationInfo: input.adminProgramTypeInfo.map(
+                (info) => ({
+                  programAdminClassification:
+                    info.classificationInfo.programAdminClassification,
+                }),
+              ),
               priceInfo: input.priceInfo.map((info) => ({
                 ...info,
                 deadline: info.priceInfo.deadline
