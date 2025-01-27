@@ -16,14 +16,16 @@ function BlogReviewListSection({ types = [] }: Props) {
   });
 
   if (isLoading) return <p className="text-center text-xsmall14">로딩 중...</p>;
-  if (data?.length === 0)
+  if (data?.reviewList.length === 0)
     return <p className="text-center text-xsmall14">작성된 후기가 없습니다</p>;
 
   return (
-    <section className="flex flex-col gap-6">
-      {data?.map((review) => (
-        <BlogReviewCard key={review.blogReviewId} blogReview={review} />
-      ))}
+    <section>
+      <div className="flex flex-col gap-6">
+        {data?.reviewList.map((review) => (
+          <BlogReviewCard key={review.blogReviewId} blogReview={review} />
+        ))}
+      </div>
     </section>
   );
 }

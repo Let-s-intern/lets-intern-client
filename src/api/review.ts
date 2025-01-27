@@ -112,7 +112,7 @@ export const useGetBlogReviewList = ({
       const queryString = `page=${page}&size=${size}${types.map((type) => `&type=${type}`).join('')}`;
       const res = await axiosV2.get(`/review/blog?${queryString}`);
 
-      return blogReviewListSchema.parse(res.data.data).reviewList;
+      return blogReviewListSchema.parse(res.data.data);
     },
   });
 };
