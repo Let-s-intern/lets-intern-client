@@ -105,8 +105,8 @@ export default async function Page() {
         multiSelect
       />
       <section className="flex flex-col gap-6">
-        {blogReviewMockList.map((data) => (
-          <BlogReviewCard key={data.blogReviewId} blogReview={data} />
+        {data.reviewList.map((review) => (
+          <BlogReviewCard key={review.blogReviewId} blogReview={review} />
         ))}
       </section>
     </div>
