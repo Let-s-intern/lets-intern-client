@@ -1,9 +1,7 @@
+import { getBlogReviewList } from '@/api/review';
 import BlogReviewCard from '@components/common/review/BlogReviewCard';
 import ReviewFilter from '@components/common/review/ReviewFilter';
-import {
-  duplicateReviewFilterList,
-  singleReviewFilterList,
-} from '../../dev/page';
+import { multiReveiwFilterList } from '../../dev/page';
 
 const blogReviewMockList = [
   {
@@ -96,17 +94,14 @@ const blogReviewMockList = [
   },
 ];
 
-const Page = () => {
+export default async function Page() {
+  const data = await getBlogReviewList();
+
   return (
     <div className="px-5 md:px-0 w-full">
       <ReviewFilter
         label="나는 필터야"
-        list={singleReviewFilterList}
-        defaultValue={singleReviewFilterList[0].value}
-      />
-      <ReviewFilter
-        label="나는 필터야"
-        list={duplicateReviewFilterList}
+        list={multiReveiwFilterList}
         multiSelect
       />
       <section className="flex flex-col gap-6">
@@ -116,6 +111,4 @@ const Page = () => {
       </section>
     </div>
   );
-};
-
-export default Page;
+}
