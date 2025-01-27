@@ -6,7 +6,6 @@ import {
 } from '@/schema';
 import axios from '@/utils/axios';
 import axiosV2 from '@/utils/axiosV2';
-import { client } from '@/utils/client';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { z } from 'zod';
 import { mypageApplicationsSchema } from './application';
@@ -79,7 +78,7 @@ export const reviewListSchema = z.object({
 const blogReviewSchema = z.object({
   blogReviewId: z.number(),
   postDate: z.string().nullable().optional(),
-  programType: z.string().nullable().optional(),
+  programType: ProgramTypeEnum,
   programTitle: z.string().nullable().optional(),
   name: z.string().nullable().optional(),
   title: z.string().nullable().optional(),
@@ -88,12 +87,35 @@ const blogReviewSchema = z.object({
   description: z.string().nullable().optional(),
 });
 
-export const blogReveiwListSchema = z.object({
+export const blogReviewListSchema = z.object({
   reviewList: z.array(blogReviewSchema),
   pageInfo,
 });
 
 export type BlogReview = z.infer<typeof blogReviewSchema>;
+export type BlogReviewList = z.infer<typeof blogReviewListSchema>;
+
+// 블로그 후기 전체 조회
+
+export const useGetBlogReviewList = ({
+  page,
+  size,
+  types = [],
+}: {
+  page: number;
+  size: number;
+  types?: ProgramTypeUpperCase[];
+}) => {
+  return useQuery({
+    queryKey: ['useGetBlogReviewList', ...types, page, size],
+    queryFn: async () => {
+      const queryString = `page=${page}&size=${size}${types.map((type) => `&type=${type}`).join('')}`;
+      const res = await axiosV2.get(`/review/blog?${queryString}`);
+
+      return blogReviewListSchema.parse(res.data.data).reviewList;
+    },
+  });
+};
 
 export type PostReviewItemType = {
   questionType: QuestionType;
@@ -228,32 +250,4 @@ export const useDeleteAdminBlogReview = () => {
         queryKey: [adminBlogReviewListQueryKey],
       }),
   });
-};
-
-// 블로그 후기 전체 조회
-const blogReviewListSchema = z.object({
-  reviewList: z.array(
-    z.object({
-      blogReviewId: z.number(),
-      postDate: z.string().optional().nullable(),
-      programType: z.string().optional().nullable(),
-      programTitle: z.string().optional().nullable(),
-      name: z.string().optional().nullable(),
-      title: z.string().optional().nullable(),
-      description: z.string().optional().nullable(),
-      url: z.string().optional().nullable(),
-      thumbnail: z.string().optional().nullable(),
-    }),
-  ),
-  pageInfo,
-});
-
-export type BlogReviewList = z.infer<typeof blogReviewListSchema>;
-
-export const getBlogReviewList = async () => {
-  const data = await client<BlogReviewList>(`/v2/review/blog`, {
-    method: 'GET',
-  });
-
-  return blogReviewListSchema.parse(data);
 };

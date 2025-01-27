@@ -1,26 +1,40 @@
 'use client';
 
 import Image from 'next/image';
+import Link from 'next/link';
 
-import { BlogReview } from '@/api/review';
+import { BlogReview, ReviewType } from '@/api/review';
 import { YYYY_MM_DD } from '@/data/dayjsFormat';
 import dayjs from '@/lib/dayjs';
-import Link from 'next/link';
+import ReviewBadge from '@components/ReviewBadge';
+import clsx from 'clsx';
 
 interface Props {
   blogReview: BlogReview;
 }
 
-const BlogReviewCard = ({ blogReview }: Props) => {
+function BlogReviewCard({ blogReview }: Props) {
   return (
     <Link
       href={blogReview.url ?? ''}
-      className="p-4 border rounded-sm gap-4 md:gap-0 flex md:justify-between flex-col md:flex-row border-neutral-80"
+      className="p-4 border rounded-sm gap-4 md:gap-11 flex md:justify-between flex-col md:flex-row border-neutral-80"
+      target="_blank"
+      rel="noreferrer noopener"
     >
       <div>
-        <span className="text-xsmall14 font-bold text-primary mb-2">
-          {blogReview.programTitle}
-        </span>
+        <div className="mb-2 flex flex-col md:flex-row gap-1 md:items-center md:gap-2">
+          <ReviewBadge
+            reviewType={`${blogReview.programType}_REVIEW` as ReviewType}
+            className={clsx('w-fit', {
+              'bg-primary-10 text-primary':
+                blogReview.programType === 'CHALLENGE',
+            })}
+            fill={blogReview.programType === 'CHALLENGE' ? '#4D55F5' : ''}
+          />
+          <span className="text-xsmall14 font-bold text-primary truncate block ">
+            {blogReview.programTitle}
+          </span>
+        </div>
         <h3 className="mb-2 font-bold text-xsmall16 overflow-hidden line-clamp-2 text-neutral-0 text-ellipsis">
           {blogReview.title}
         </h3>
@@ -37,15 +51,15 @@ const BlogReviewCard = ({ blogReview }: Props) => {
 
       <div className="w-40 h-[5.625rem] relative overflow-hidden md:w-60 md:h-[8.5rem] bg-neutral-85 rounded-sm">
         <Image
-          // 이미지 주소 교체해야 함
-          src="/images/community2.png"
+          className="object-cover"
+          src={blogReview.thumbnail ?? ''}
           alt={blogReview.title + ' 블로그 썸네일'}
           fill
-          objectFit="cover"
+          sizes="(min-width:768px) 15rem , 10rem"
         />
       </div>
     </Link>
   );
-};
+}
 
 export default BlogReviewCard;
