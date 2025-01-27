@@ -1,6 +1,11 @@
 import dayjs from 'dayjs';
 import { z } from 'zod';
 
+export interface Pageable {
+  page: number;
+  size: number;
+}
+
 export const reportTypeSchema = z.enum([
   'RESUME',
   'PERSONAL_STATEMENT',

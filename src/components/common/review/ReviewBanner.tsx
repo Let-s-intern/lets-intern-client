@@ -51,10 +51,12 @@ function ReviewBanner() {
       {/* 이미지 */}
       <div className="w-full md:w-[36rem] md:h-full bg-light absolute bottom-0 md:top-0 md:left-auto left-0 right-0 h-[6.75rem]">
         <Image
+          className="object-cover"
           src="/images/review-banner.png"
           alt="렛츠커리어 행사 사진"
           fill
-          objectFit="cover"
+          sizes="(min-width: 768px) 36rem, 100vw"
+          priority
         />
         {/* 이미지 위에 올라가는 Gradient 배경 */}
         <div className="absolute w-full bottom-0 md:top-0 md:left-auto left-0 right-0 h-full bg-gradient-to-t md:bg-gradient-to-l from-secondary/0 to-secondary" />

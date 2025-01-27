@@ -74,7 +74,7 @@ const ChallengeUserInfo = () => {
     challenge?.startDate && GOAL_DATE.isBefore(challenge.startDate);
 
   const { mutateAsync: tryPatchUser, isPending: patchUserIsPending } =
-    usePatchUser({});
+    usePatchUser();
 
   const { mutateAsync: tryPostGoal, isPending: postGoalIsPending } =
     usePostChallengeGoal();

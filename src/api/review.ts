@@ -1,4 +1,11 @@
-import { ChallengeType, challengeTypeSchema, pageInfo } from '@/schema';
+
+import {
+  ChallengeType,
+  challengeTypeSchema,
+  pageInfo,
+  ProgramTypeEnum,
+  ProgramTypeUpperCase,
+} from '@/schema;
 import axios from '@/utils/axios';
 import axiosV2 from '@/utils/axiosV2';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
@@ -73,7 +80,7 @@ export const reviewListSchema = z.object({
 const blogReviewSchema = z.object({
   blogReviewId: z.number(),
   postDate: z.string().nullable().optional(),
-  programType: z.string().nullable().optional(),
+  programType: ProgramTypeEnum,
   programTitle: z.string().nullable().optional(),
   name: z.string().nullable().optional(),
   title: z.string().nullable().optional(),
@@ -82,12 +89,36 @@ const blogReviewSchema = z.object({
   description: z.string().nullable().optional(),
 });
 
-export const blogReveiwListSchema = z.object({
+export const blogReviewListSchema = z.object({
   reviewList: z.array(blogReviewSchema),
   pageInfo,
 });
 
 export type BlogReview = z.infer<typeof blogReviewSchema>;
+export type BlogReviewList = z.infer<typeof blogReviewListSchema>;
+
+// 블로그 후기 전체 조회
+
+export const useGetBlogReviewList = ({
+  page,
+  size,
+  types = [],
+}: {
+  page: number;
+  size: number;
+  types?: ProgramTypeUpperCase[];
+}) => {
+  return useQuery({
+    queryKey: ['useGetBlogReviewList', ...types, page, size],
+    queryFn: async () => {
+      const queryString = `page=${page}&size=${size}${types.map((type) => `&type=${type}`).join('')}`;
+      const res = await axiosV2.get(`/review/blog?${queryString}`);
+
+      return blogReviewListSchema.parse(res.data.data).reviewList;
+    },
+  });
+};
+
 export type PostReviewItemType = {
   questionType: QuestionType;
   answer: string;
@@ -160,5 +191,99 @@ export const useGetProgramReview = ({
       });
       return reviewListSchema.parse(res.data.data);
     },
+
+export const adminBlogReviewSchema = z
+  .object({
+    blogReviewId: z.number(),
+    postDate: z.string().optional().nullable(),
+    programType: ProgramTypeEnum.optional().nullable(),
+    programTitle: z.string().optional().nullable(),
+    name: z.string().optional().nullable(),
+    title: z.string().optional().nullable(),
+    url: z.string().optional().nullable(),
+    thumbnail: z.string().optional().nullable(),
+    isVisible: z.boolean().optional().nullable(),
+  })
+  .transform((data) => ({ ...data, postDate: new Date(data.postDate ?? '') }));
+
+export type AdminBlogReview = z.infer<typeof adminBlogReviewSchema>;
+
+export const adminBlogReviewListSchema = z.object({
+  reviewList: z.array(adminBlogReviewSchema),
+});
+
+// [어드민] 블로그 후기 전체 조회
+const adminBlogReviewListQueryKey = 'useGetAdminBlogReviewList';
+
+export const useGetAdminBlogReviewList = () => {
+  return useQuery({
+    queryKey: [adminBlogReviewListQueryKey],
+    queryFn: async () => {
+      const res = await axiosV2.get('/admin/review/blog');
+      return adminBlogReviewListSchema.parse(res.data.data).reviewList;
+    },
+    refetchOnWindowFocus: false,
+  });
+};
+
+// [어드민] 블로그 후기 생성
+interface AdminBlogReviewPostReq {
+  programType: ProgramTypeUpperCase;
+  programTitle?: string | null;
+  name?: string | null;
+  url?: string | null;
+  postDate?: string | null;
+}
+
+export const usePostAdminBlogReview = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (newReview: AdminBlogReviewPostReq) => {
+      const res = await axiosV2.post('/admin/review/blog', newReview);
+      return res;
+    },
+    onSuccess: async () =>
+      await queryClient.invalidateQueries({
+        queryKey: [adminBlogReviewListQueryKey],
+      }),
+  });
+};
+
+// [어드민] 블로그 후기 업데이트
+interface AdminBlogReviewPatchReq {
+  blogReviewId: number | string;
+  programType: ProgramTypeUpperCase;
+  programTitle?: string | null;
+  name?: string | null;
+  url?: string | null;
+  postDate?: string | null;
+  isVisible: boolean;
+}
+
+export const usePatchAdminBlogReview = () => {
+  return useMutation({
+    mutationFn: async (updatedReview: AdminBlogReviewPatchReq) => {
+      const res = await axiosV2.patch(
+        `/admin/review/blog/${updatedReview.blogReviewId}`,
+        updatedReview,
+      );
+      return res;
+    },
+  });
+};
+
+// [어드민] 블로그 후기 삭제
+export const useDeleteAdminBlogReview = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (blogReviewId: number | string) => {
+      const res = await axiosV2.delete(`/admin/review/blog/${blogReviewId}`);
+      return res;
+    },
+    onSuccess: async () =>
+      await queryClient.invalidateQueries({
+        queryKey: [adminBlogReviewListQueryKey],
+      }),
   });
 };
