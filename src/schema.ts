@@ -19,6 +19,8 @@ export const pageInfo = z.object({
   totalPages: z.number().gte(0),
 });
 
+export type PageInfo = z.infer<typeof pageInfo>;
+
 /** GET /api/v1/challenge */
 export const challengeSchema = z
   .object({
