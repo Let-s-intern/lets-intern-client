@@ -18,6 +18,8 @@ const BlogReviewCard = ({ blogReview }: Props) => {
     <Link
       href={blogReview.url ?? ''}
       className="p-4 border rounded-sm gap-4 md:gap-11 flex md:justify-between flex-col md:flex-row border-neutral-80"
+      target="_blank"
+      rel="noreferrer noopener"
     >
       <div>
         <div className="mb-2 flex flex-col md:flex-row gap-1 md:items-center md:gap-2">
