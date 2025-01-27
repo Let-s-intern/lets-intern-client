@@ -79,7 +79,7 @@ export const reviewListSchema = z.object({
 const blogReviewSchema = z.object({
   blogReviewId: z.number(),
   postDate: z.string().nullable().optional(),
-  programType: z.string().nullable().optional(),
+  programType: ProgramTypeEnum,
   programTitle: z.string().nullable().optional(),
   name: z.string().nullable().optional(),
   title: z.string().nullable().optional(),
@@ -88,12 +88,22 @@ const blogReviewSchema = z.object({
   description: z.string().nullable().optional(),
 });
 
-export const blogReveiwListSchema = z.object({
+export const blogReviewListSchema = z.object({
   reviewList: z.array(blogReviewSchema),
   pageInfo,
 });
 
 export type BlogReview = z.infer<typeof blogReviewSchema>;
+export type BlogReviewList = z.infer<typeof blogReviewListSchema>;
+
+// 블로그 후기 전체 조회
+export const getBlogReviewList = async () => {
+  const data = await client<BlogReviewList>(`/v2/review/blog`, {
+    method: 'GET',
+  });
+
+  return blogReviewListSchema.parse(data);
+};
 
 export type PostReviewItemType = {
   questionType: QuestionType;
@@ -228,32 +238,4 @@ export const useDeleteAdminBlogReview = () => {
         queryKey: [adminBlogReviewListQueryKey],
       }),
   });
-};
-
-// 블로그 후기 전체 조회
-const blogReviewListSchema = z.object({
-  reviewList: z.array(
-    z.object({
-      blogReviewId: z.number(),
-      postDate: z.string().optional().nullable(),
-      programType: z.string().optional().nullable(),
-      programTitle: z.string().optional().nullable(),
-      name: z.string().optional().nullable(),
-      title: z.string().optional().nullable(),
-      description: z.string().optional().nullable(),
-      url: z.string().optional().nullable(),
-      thumbnail: z.string().optional().nullable(),
-    }),
-  ),
-  pageInfo,
-});
-
-export type BlogReviewList = z.infer<typeof blogReviewListSchema>;
-
-export const getBlogReviewList = async () => {
-  const data = await client<BlogReviewList>(`/v2/review/blog`, {
-    method: 'GET',
-  });
-
-  return blogReviewListSchema.parse(data);
 };

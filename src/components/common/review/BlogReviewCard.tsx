@@ -3,9 +3,11 @@
 import Image from 'next/image';
 import Link from 'next/link';
 
-import { BlogReview } from '@/api/review';
+import { BlogReview, ReviewType } from '@/api/review';
 import { YYYY_MM_DD } from '@/data/dayjsFormat';
 import dayjs from '@/lib/dayjs';
+import ReviewBadge from '@components/ReviewBadge';
+import clsx from 'clsx';
 
 interface Props {
   blogReview: BlogReview;
@@ -18,9 +20,19 @@ const BlogReviewCard = ({ blogReview }: Props) => {
       className="p-4 border rounded-sm gap-4 md:gap-11 flex md:justify-between flex-col md:flex-row border-neutral-80"
     >
       <div>
-        <span className="text-xsmall14 font-bold text-primary mb-2 truncate block">
-          {blogReview.programTitle}
-        </span>
+        <div className="mb-2 flex flex-col md:flex-row gap-1 md:items-center md:gap-2">
+          <ReviewBadge
+            reviewType={`${blogReview.programType}_REVIEW` as ReviewType}
+            className={clsx('w-fit', {
+              'bg-primary-10 text-primary':
+                blogReview.programType === 'CHALLENGE',
+            })}
+            fill={blogReview.programType === 'CHALLENGE' ? '#4D55F5' : ''}
+          />
+          <span className="text-xsmall14 font-bold text-primary truncate block ">
+            {blogReview.programTitle}
+          </span>
+        </div>
         <h3 className="mb-2 font-bold text-xsmall16 overflow-hidden line-clamp-2 text-neutral-0 text-ellipsis">
           {blogReview.title}
         </h3>
