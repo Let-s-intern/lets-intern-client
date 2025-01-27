@@ -6,7 +6,6 @@ import {
 } from '@/schema';
 import axios from '@/utils/axios';
 import axiosV2 from '@/utils/axiosV2';
-import { client } from '@/utils/client';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { z } from 'zod';
 import { mypageApplicationsSchema } from './application';
@@ -97,12 +96,25 @@ export type BlogReview = z.infer<typeof blogReviewSchema>;
 export type BlogReviewList = z.infer<typeof blogReviewListSchema>;
 
 // 블로그 후기 전체 조회
-export const getBlogReviewList = async () => {
-  const data = await client<BlogReviewList>(`/v2/review/blog`, {
-    method: 'GET',
-  });
 
-  return blogReviewListSchema.parse(data);
+export const useGetBlogReviewList = ({
+  page,
+  size,
+  types = [],
+}: {
+  page: number;
+  size: number;
+  types?: ProgramTypeUpperCase[];
+}) => {
+  return useQuery({
+    queryKey: ['useGetBlogReviewList', ...types, page, size],
+    queryFn: async () => {
+      const queryString = `page=${page}&size=${size}${types.map((type) => `&type=${type}`).join('')}`;
+      const res = await axiosV2.get(`/review/blog?${queryString}`);
+
+      return blogReviewListSchema.parse(res.data.data).reviewList;
+    },
+  });
 };
 
 export type PostReviewItemType = {

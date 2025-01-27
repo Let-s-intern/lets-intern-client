@@ -13,7 +13,7 @@ interface Props {
   blogReview: BlogReview;
 }
 
-const BlogReviewCard = ({ blogReview }: Props) => {
+function BlogReviewCard({ blogReview }: Props) {
   return (
     <Link
       href={blogReview.url ?? ''}
@@ -60,6 +60,6 @@ const BlogReviewCard = ({ blogReview }: Props) => {
       </div>
     </Link>
   );
-};
+}
 
 export default BlogReviewCard;
