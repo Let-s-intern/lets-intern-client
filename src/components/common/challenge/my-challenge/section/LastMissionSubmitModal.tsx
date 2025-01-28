@@ -88,6 +88,7 @@ const LastMissionSubmitModal = ({
       onSubmit={onClickSubmit}
       isLastMission
       onClose={onClose}
+      programTitle={title}
     >
       {/* 만족도 평가 */}
       <section>

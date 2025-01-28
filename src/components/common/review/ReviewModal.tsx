@@ -5,6 +5,7 @@ import useHasScroll from '@/hooks/useHasScroll';
 import { twMerge } from '@/lib/twMerge';
 import { useMediaQuery } from '@mui/material';
 import clsx from 'clsx';
+import { josa } from 'es-hangul';
 import { useState } from 'react';
 import BackHeader from '../ui/BackHeader';
 import BaseButton from '../ui/button/BaseButton';
@@ -18,6 +19,7 @@ interface Props {
   isLastMission?: boolean;
   onClose?: () => void;
   readOnly?: boolean;
+  programTitle?: string;
 }
 
 /** 마이페이지 후기 작성(생성) 모달
@@ -30,6 +32,7 @@ function ReviewModal({
   isLastMission,
   onClose,
   readOnly,
+  programTitle,
 }: Props) {
   const navigate = useNavigate();
   const [isExitOpen, setIsExitOpen] = useState(false);
@@ -92,6 +95,12 @@ function ReviewModal({
                 />
               )}
             </div>
+            {isLastMission && programTitle && (
+              <p className="text-xsmall16 font-medium mb-8 text-neutral-20">
+                참여한 {josa(programTitle, '을/를')} 회고하고, 나 자신이 얼마나
+                성장했는지 확인해보세요!
+              </p>
+            )}
 
             <div className="flex flex-col gap-16 md:gap-8">
               {children}
