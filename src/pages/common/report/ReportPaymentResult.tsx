@@ -2,28 +2,28 @@ import dayjs from 'dayjs';
 import { useEffect, useMemo, useState } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 
-import ReportCreditRow from '@components/common/mypage/credit/ReportCreditRow';
-import ReportCreditSubRow from '@components/common/mypage/credit/ReportCreditSubRow';
-import { ApplicationResult } from '../../../api/paymentSchema';
+import { ApplicationResult } from '@/api/paymentSchema';
 import {
   convertReportPriceType,
   useGetReportDetailQuery,
-} from '../../../api/report';
-import DescriptionBox from '../../../components/common/program/paymentSuccess/DescriptionBox';
-import PaymentInfoRow from '../../../components/common/program/paymentSuccess/PaymentInfoRow';
-import Heading1 from '../../../components/common/report/Heading1';
-import Heading2 from '../../../components/common/report/Heading2';
-import Card from '../../../components/common/report/ProgramCard';
+} from '@/api/report';
+import DescriptionBox from '@/components/common/program/paymentSuccess/DescriptionBox';
+import PaymentInfoRow from '@/components/common/program/paymentSuccess/PaymentInfoRow';
+import Heading1 from '@/components/common/report/Heading1';
+import Heading2 from '@/components/common/report/Heading2';
+import Card from '@/components/common/report/ProgramCard';
 import {
   getPaymentMethodLabel,
   paymentResultSearchParamsSchema,
-} from '../../../data/getPaymentSearchParams';
-import useReportPayment from '../../../hooks/useReportPayment';
-import useReportProgramInfo from '../../../hooks/useReportProgramInfo';
-import useRunOnce from '../../../hooks/useRunOnce';
-import useReportApplicationStore from '../../../store/useReportApplicationStore';
-import axios from '../../../utils/axios';
-import { searchParamsToObject } from '../../../utils/network';
+} from '@/data/getPaymentSearchParams';
+import useReportPayment from '@/hooks/useReportPayment';
+import useReportProgramInfo from '@/hooks/useReportProgramInfo';
+import useRunOnce from '@/hooks/useRunOnce';
+import useReportApplicationStore from '@/store/useReportApplicationStore';
+import axios from '@/utils/axios';
+import { searchParamsToObject } from '@/utils/network';
+import ReportCreditRow from '@components/common/mypage/credit/ReportCreditRow';
+import ReportCreditSubRow from '@components/common/mypage/credit/ReportCreditSubRow';
 
 const ReportPaymentResult = () => {
   const navigate = useNavigate();
@@ -275,9 +275,9 @@ const ReportPaymentResult = () => {
                       to="/report/management"
                       className="myreport_button_click flex w-full flex-1 justify-center rounded-md border-2 border-primary bg-primary px-6 py-3 text-lg font-medium text-neutral-100"
                     >
-                      {reportApplication.applyUrl === ''
-                        ? '서류 제출하러 가기'
-                        : '서류 진단서 확인하기'}
+                      {reportApplication.applyUrl
+                        ? '서류 진단서 확인하기'
+                        : '서류 제출하러 가기'}
                     </Link>
                   )}
                   {!isSuccess && (
