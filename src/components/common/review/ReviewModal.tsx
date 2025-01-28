@@ -74,7 +74,7 @@ function ReviewModal({
           >
             <div className="flex items-center justify-between">
               <BackHeader to="/mypage/review" hideBack={isDesktop}>
-                {title ?? `${readOnly ? '후기' : '후기 작성하기'}`}
+                {title ?? `${readOnly ? '후기 확인하기' : '후기 작성하기'}`}
               </BackHeader>
               {/* 데스크탑 전용 닫기 버튼 */}
               {!isLastMission && (
