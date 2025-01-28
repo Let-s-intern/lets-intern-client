@@ -3,11 +3,13 @@ import { Fragment } from 'react/jsx-runtime';
 
 interface TenScoreProps {
   tenScore: number | null;
-  setTenScore: (tenScore: number | null) => void;
+  setTenScore?: (tenScore: number | null) => void;
 }
 
 const TenScore = ({ tenScore, setTenScore }: TenScoreProps) => {
   const handleTenScoreClick = (th: number) => {
+    if (!setTenScore) return;
+
     if (tenScore === th) {
       setTenScore(null);
     } else {

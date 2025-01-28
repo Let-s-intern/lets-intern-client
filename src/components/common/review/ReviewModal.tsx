@@ -4,6 +4,7 @@ import { useControlScroll } from '@/hooks/useControlScroll';
 import useHasScroll from '@/hooks/useHasScroll';
 import { twMerge } from '@/lib/twMerge';
 import { useMediaQuery } from '@mui/material';
+import clsx from 'clsx';
 import { useState } from 'react';
 import BackHeader from '../ui/BackHeader';
 import BaseButton from '../ui/button/BaseButton';
@@ -16,6 +17,7 @@ interface Props {
   title?: string;
   isLastMission?: boolean;
   onClose?: () => void;
+  readOnly?: boolean;
 }
 
 /** 마이페이지 후기 작성(생성) 모달
@@ -27,6 +29,7 @@ function ReviewModal({
   title,
   isLastMission,
   onClose,
+  readOnly,
 }: Props) {
   const navigate = useNavigate();
   const [isExitOpen, setIsExitOpen] = useState(false);
@@ -66,11 +69,12 @@ function ReviewModal({
               // 스크롤 너비를 padding에서 제외 (치우침 방지)
               hasScroll ? 'pr-8' : 'pr-12',
               isLastMission ? 'md:pb-40' : 'md:pb-32',
+              readOnly && 'md:pb-8',
             )}
           >
             <div className="flex items-center justify-between">
               <BackHeader to="/mypage/review" hideBack={isDesktop}>
-                {title ?? '후기 작성하기'}
+                {title ?? `${readOnly ? '후기' : '후기 작성하기'}`}
               </BackHeader>
               {/* 데스크탑 전용 닫기 버튼 */}
               {!isLastMission && (
@@ -78,7 +82,13 @@ function ReviewModal({
                   src="/icons/menu_close_md.svg"
                   alt="close"
                   className="hidden h-6 w-6 cursor-pointer md:block"
-                  onClick={() => setIsExitOpen(true)}
+                  onClick={() => {
+                    if (readOnly) {
+                      navigate('/mypage/review', { replace: true });
+                    } else {
+                      setIsExitOpen(true);
+                    }
+                  }}
                 />
               )}
             </div>
@@ -88,7 +98,7 @@ function ReviewModal({
 
               {/* 모바일 버튼 */}
               <BaseButton
-                className="md:hidden"
+                className={`md:hidden ${readOnly ? 'hidden' : ''}`}
                 onClick={onSubmit}
                 disabled={disabled}
               >
@@ -97,7 +107,12 @@ function ReviewModal({
             </div>
           </div>
           {/* 데스크탑 버튼 (아래 고정) */}
-          <div className="sticky inset-x-0 bottom-0 hidden gap-y-4 bg-white px-14 pb-8 pt-6 drop-shadow-[0_-3px_6px_0_rgba(0,0,0,0.04)] md:flex flex-col items-center">
+          <div
+            className={clsx(
+              'sticky inset-x-0 bottom-0 hidden gap-y-4 bg-white px-14 pb-8 pt-6 drop-shadow-[0_-3px_6px_0_rgba(0,0,0,0.04)] md:flex flex-col items-center',
+              { 'md:hidden': readOnly },
+            )}
+          >
             <BaseButton
               className="w-full text-small18 font-medium"
               onClick={onSubmit}

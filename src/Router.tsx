@@ -41,6 +41,7 @@ import ReportPortfolioPage from './router-pages/common/report/ReportPortfolioPag
 import ReportResumePage from './router-pages/common/report/ReportResumePage';
 import ReportTossPage from './router-pages/common/report/ReportTossPage';
 import ChallengeReviewCreatePage from './router-pages/common/review/ChallengeReviewCreatePage';
+import ChallengeReviewPage from './router-pages/common/review/ChallengeReviewPage';
 import LiveReviewCreatePage from './router-pages/common/review/LiveReviewCreatePage';
 import ReportReviewCreatePage from './router-pages/common/review/ReportReviewCreatePage';
 import Maintenance from './router-pages/maintenance/Maintenance';
@@ -118,6 +119,10 @@ const Router = () => {
                 <Route
                   path="review/new/challenge/:programId"
                   element={<ChallengeReviewCreatePage />}
+                />
+                <Route
+                  path="review/challenge/:programId"
+                  element={<ChallengeReviewPage />}
                 />
                 {/* /mypage/review/new/live/:programId */}
                 <Route

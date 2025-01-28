@@ -96,15 +96,15 @@ const ApplicationCard = ({
       {hasReviewButton && (
         <LinkButton
           to={`/mypage/review/${
-            reviewType === 'CREATE' ? 'new' : 'edit'
-          }${reviewType === 'CREATE' ? '' : '/program'}/${application.programType?.toLowerCase()}/${application.programId}${
+            reviewType === 'CREATE' ? 'new/' : ''
+          }${application.programType?.toLowerCase()}/${application.programId}${
             application.reviewId
-              ? `/${application.reviewId}`
+              ? `?reviewId=${application.reviewId}`
               : `?application=${application.id}`
           }`}
           className={clsx(reviewType === 'CREATE' && 'review_button')}
         >
-          {reviewType === 'CREATE' ? '후기 작성하기' : '수정하기'}
+          {reviewType === 'CREATE' ? '후기 작성하기' : '후기 확인하기'}
         </LinkButton>
       )}
       {isPriceInfoOpen.isOpen && (
