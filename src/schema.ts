@@ -7,6 +7,14 @@ export const reportTypeSchema = z.enum([
   'PORTFOLIO',
 ]);
 
+export const ReportTypePathnameEnum = z.enum([
+  'resume',
+  'personal-statement',
+  'portfolio',
+]);
+
+export type ReportTypePathname = z.infer<typeof ReportTypePathnameEnum>
+
 export const pageInfo = z.object({
   pageNum: z.number().gte(0),
   pageSize: z.number().gte(0),
