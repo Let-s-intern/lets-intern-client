@@ -4,6 +4,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { uploadFile } from '@/api/file';
 import { usePatchMyApplication } from '@/api/report';
 import useRunOnce from '@/hooks/useRunOnce';
+import { ReportTypePathnameEnum } from '@/schema';
 import useAuthStore from '@/store/useAuthStore';
 import useReportApplicationStore from '@/store/useReportApplicationStore';
 import BackHeader from '@components/common/ui/BackHeader';
@@ -66,7 +67,7 @@ const ReportApplicationPage = () => {
 
     if (
       reportPriceType === 'PREMIUM' &&
-      reportType?.toUpperCase() !== 'PERSONAL_STATEMENT' &&
+      reportType !== ReportTypePathnameEnum.enum['personal-statement'] &&
       isEmpty(recruitmentUrl) &&
       isEmpty(recruitmentFile)
     ) {
@@ -100,7 +101,7 @@ const ReportApplicationPage = () => {
 
           {/* 프리미엄 채용공고 */}
           {reportApplication.reportPriceType === 'PREMIUM' &&
-            reportType?.toUpperCase() !== 'PERSONAL_STATEMENT' && (
+            reportType !== ReportTypePathnameEnum.enum['personal-statement']  && (
               <PremiumSection
                 file={recruitmentFile}
                 dispatch={setRecruitmentFile}
