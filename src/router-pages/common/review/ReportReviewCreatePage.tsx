@@ -3,9 +3,9 @@
 import { useMediaQuery } from '@mui/material';
 import { josa } from 'es-hangul';
 import { useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 
-import { useGetReportTitle } from '@/api/report';
+import { useGetReportMessage, useGetReportTitle } from '@/api/report';
 import { usePostReviewMutation } from '@/api/review';
 import { useUserQuery } from '@/api/user';
 import GoalOrConcernsBox from '@components/common/review/GoalOrConcernsBox';
@@ -20,8 +20,12 @@ const ReportReviewCreatePage = () => {
   const params = useParams();
   const isDesktop = useMediaQuery('(min-width:768px)');
   const reportId = params.reportId;
+  const [searchParams] = useSearchParams();
+  const applicationId = searchParams.get('application');
 
   const { data: user } = useUserQuery({ enabled: true });
+
+  const { data: reportMessage } = useGetReportMessage(Number(applicationId));
 
   const { data: programTitle } = useGetReportTitle(Number(reportId));
 
@@ -54,17 +58,20 @@ const ReportReviewCreatePage = () => {
 
     try {
       await tryPostReview({
-        type: 'REPORT_REVIEW',
-        score,
-        npsScore,
-        goodPoint,
-        badPoint,
-        reviewItemList: [
-          {
-            questionType: 'WORRY_RESULT',
-            answer: worryResult,
-          },
-        ],
+        applicationId: applicationId ?? '',
+        reviewForm: {
+          type: 'REPORT_REVIEW',
+          score,
+          npsScore,
+          goodPoint,
+          badPoint,
+          reviewItemList: [
+            {
+              questionType: 'WORRY_RESULT',
+              answer: worryResult,
+            },
+          ],
+        },
       });
     } catch (error) {
       console.error(error);
@@ -114,7 +121,7 @@ const ReportReviewCreatePage = () => {
             <br />
             {/* TODO: 사용자가 설정한 고민이 들어가야 함 */}
             <p className="text-xsmall16 font-bold">
-              내 서류는 완벽한데 도대체 왜 떨어지는지 모르겠어요!!
+              {reportMessage?.message ?? '-'}
             </p>
           </div>
         </GoalOrConcernsBox>

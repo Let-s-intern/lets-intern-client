@@ -2,7 +2,7 @@
 
 import { josa } from 'es-hangul';
 import { useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 
 import { useGetLiveTitle } from '@/api/program';
 import { usePostReviewMutation } from '@/api/review';
@@ -16,6 +16,8 @@ const LiveReviewCreatePage = () => {
   const navigate = useNavigate();
   const params = useParams();
   const programId = params.programId;
+  const [searchParams] = useSearchParams();
+  const applicationId = searchParams.get('application');
 
   const { data: programTitle } = useGetLiveTitle(Number(programId));
 
@@ -49,15 +51,18 @@ const LiveReviewCreatePage = () => {
 
     try {
       await tryPostReview({
-        type: 'LIVE_REVIEW',
-        score,
-        npsScore,
-        goodPoint,
-        badPoint,
-        reviewItemList: [
-          { questionType: 'GOAL', answer: goal },
-          { questionType: 'GOAL_RESULT', answer: goalResult },
-        ],
+        applicationId: applicationId ?? '',
+        reviewForm: {
+          type: 'LIVE_REVIEW',
+          score,
+          npsScore,
+          goodPoint,
+          badPoint,
+          reviewItemList: [
+            { questionType: 'GOAL', answer: goal },
+            { questionType: 'GOAL_RESULT', answer: goalResult },
+          ],
+        },
       });
     } catch (error) {
       console.error(error);
