@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import { uploadFile } from '@/api/file';
-import { usePatchMyApplication } from '@/api/report';
+import { convertReportTypeToDisplayName, ReportType, usePatchMyApplication } from '@/api/report';
 import useRunOnce from '@/hooks/useRunOnce';
 import { ReportTypePathnameEnum } from '@/schema';
 import useAuthStore from '@/store/useAuthStore';
@@ -93,7 +93,7 @@ const ReportApplicationPage = () => {
           <CallOut
             className="bg-neutral-100"
             header="❗ 제출 전 꼭 읽어주세요"
-            body="이력서 파일/링크가 잘 열리는 지 확인 후 첨부해주세요!"
+            body={`${convertReportTypeToDisplayName(reportType?.toUpperCase() as ReportType | 'PERSONAL-STATEMENT')} 파일/링크가 잘 열리는 지 확인 후 첨부해주세요!`}
           />
 
           {/* 진단용 서류 */}
