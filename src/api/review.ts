@@ -142,8 +142,14 @@ export const usePostReviewMutation = ({
   const client = useQueryClient();
 
   return useMutation({
-    mutationFn: async (reviewForm: PostReviewParams) => {
-      await axiosV2.post('/review', reviewForm);
+    mutationFn: async ({
+      applicationId,
+      reviewForm,
+    }: {
+      applicationId: string;
+      reviewForm: PostReviewParams;
+    }) => {
+      await axiosV2.post(`/review?applicationId=${applicationId}`, reviewForm);
     },
     onSuccess: () => {
       client.invalidateQueries({

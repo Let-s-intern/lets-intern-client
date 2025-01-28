@@ -1,7 +1,7 @@
 import { useMediaQuery } from '@mui/material';
 import { josa } from 'es-hangul';
 import { useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 
 import { useGetChallengeGoal, useGetChallengeTitle } from '@/api/challenge';
 import { usePostReviewMutation } from '@/api/review';
@@ -15,9 +15,11 @@ import TenScore from '@components/common/review/score/TenScore';
 
 const ChallengeReviewCreatePage = () => {
   const params = useParams();
+  const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const isDesktop = useMediaQuery('(min-width:768px)');
   const programId = params.programId;
+  const applicationId = searchParams.get('application');
 
   const { data: user } = useUserQuery({ enabled: true });
 
@@ -54,17 +56,20 @@ const ChallengeReviewCreatePage = () => {
 
     try {
       await tryPostReview({
-        type: 'CHALLENGE_REVIEW',
-        score,
-        npsScore,
-        goodPoint,
-        badPoint,
-        reviewItemList: [
-          {
-            questionType: 'GOAL_RESULT',
-            answer: goalResult,
-          },
-        ],
+        applicationId: applicationId ?? '',
+        reviewForm: {
+          type: 'CHALLENGE_REVIEW',
+          score,
+          npsScore,
+          goodPoint,
+          badPoint,
+          reviewItemList: [
+            {
+              questionType: 'GOAL_RESULT',
+              answer: goalResult,
+            },
+          ],
+        },
       });
     } catch (error) {
       console.error(error);
