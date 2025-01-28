@@ -2,20 +2,22 @@
 
 import { challengeTypes, challengeTypeToText } from '@/utils/convert';
 import { useSearchParams } from 'next/navigation';
-import ReviewFilter, { FilterItem } from '../ReviewFilter';
+import ReviewFilter, { ReviewFilterItem } from '../ReviewFilter';
 
-const programTypeFilterList: FilterItem[] = [
+const programTypeFilterList: ReviewFilterItem[] = [
   { caption: '챌린지', value: 'CHALLENGE_REVIEW' },
   { caption: 'LIVE 클래스', value: 'LIVE_REVIEW' },
   { caption: '서류 피드백 REPORT', value: 'REPORT_REVIEW' },
 ];
 
-const challengeTypeFilterList: FilterItem[] = challengeTypes.map((item) => ({
-  caption: challengeTypeToText[item] + ' 챌린지',
-  value: item,
-}));
+const challengeTypeFilterList: ReviewFilterItem[] = challengeTypes.map(
+  (item) => ({
+    caption: challengeTypeToText[item] + ' 챌린지',
+    value: item,
+  }),
+);
 
-const reviewTypeFilterList: FilterItem[] = [
+const reviewTypeFilterList: ReviewFilterItem[] = [
   { caption: '미션 수행 후기', value: 'MISSION_REVIEW' },
   { caption: '프로그램 참여 후기', value: 'CHALLENGE_REVIEW' },
 ];

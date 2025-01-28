@@ -1,11 +1,10 @@
-
 import {
   ChallengeType,
   challengeTypeSchema,
   pageInfo,
   ProgramTypeEnum,
   ProgramTypeUpperCase,
-} from '@/schema;
+} from '@/schema';
 import axios from '@/utils/axios';
 import axiosV2 from '@/utils/axiosV2';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
@@ -191,6 +190,8 @@ export const useGetProgramReview = ({
       });
       return reviewListSchema.parse(res.data.data);
     },
+  });
+};
 
 export const adminBlogReviewSchema = z
   .object({
