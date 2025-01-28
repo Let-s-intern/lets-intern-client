@@ -172,7 +172,7 @@ const Router = () => {
 
               {/* 챌린지 대시보드 */}
               <Route
-                path="challenge/:programId"
+                path="challenge/:applicationId/:programId"
                 element={
                   <CurrentChallengeProvider>
                     <ChallengeLayout />

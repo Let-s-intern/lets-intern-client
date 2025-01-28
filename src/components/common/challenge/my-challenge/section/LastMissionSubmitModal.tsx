@@ -10,6 +10,7 @@ import TenScore from '@components/common/review/score/TenScore';
 import { useMediaQuery } from '@mui/material';
 import { josa } from 'es-hangul';
 import { useState } from 'react';
+import { useParams } from 'react-router-dom';
 
 interface LastMissionSubmitModalProps {
   onClose: () => void;
@@ -22,6 +23,8 @@ const LastMissionSubmitModal = ({
   title,
   challengeId,
 }: LastMissionSubmitModalProps) => {
+  const params = useParams();
+  const applicationId = params.applicationId;
   const isDesktop = useMediaQuery('(min-width:768px)');
 
   const [score, setScore] = useState<number | null>(null); // 만족도
@@ -54,17 +57,20 @@ const LastMissionSubmitModal = ({
 
     try {
       await tryPostReview({
-        type: 'CHALLENGE_REVIEW',
-        score,
-        npsScore,
-        goodPoint,
-        badPoint,
-        reviewItemList: [
-          {
-            questionType: 'GOAL_RESULT',
-            answer: goalResult,
-          },
-        ],
+        applicationId: applicationId ?? '',
+        reviewForm: {
+          type: 'CHALLENGE_REVIEW',
+          score,
+          npsScore,
+          goodPoint,
+          badPoint,
+          reviewItemList: [
+            {
+              questionType: 'GOAL_RESULT',
+              answer: goalResult,
+            },
+          ],
+        },
       });
     } catch (error) {
       console.error(error);
