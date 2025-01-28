@@ -53,7 +53,9 @@ export type ReviewItem = z.infer<typeof reviewItemSchema>;
 export const getReviewSchema = z.object({
   reviewInfo: z.object({
     reviewId: z.number(),
-    type: reviewTypeSchema,
+    score: z.number().nullable().optional(),
+    npsScore: z.number().nullable().optional(),
+    type: reviewTypeSchema.nullable().optional(),
     createDate: z.string().nullable().optional(),
     goodPoint: z.string().nullable().optional(),
     badPoint: z.string().nullable().optional(),
@@ -74,6 +76,10 @@ export type GetReview = z.infer<typeof getReviewSchema>;
 export const reviewListSchema = z.object({
   reviewList: z.array(getReviewSchema),
   pageInfo,
+});
+
+export const reviewDetailSchema = z.object({
+  reviewInfo: getReviewSchema,
 });
 
 const blogReviewSchema = z.object({
@@ -170,8 +176,6 @@ export type programReviewParam = {
   size?: number;
 };
 
-export const reviewInfoSchema = z.object({});
-
 const getProgramReviewQueryKey = (param?: programReviewParam) => [
   'programReview',
   param?.types,
@@ -195,6 +199,24 @@ export const useGetProgramReview = ({
         },
       });
       return reviewListSchema.parse(res.data.data);
+    },
+  });
+};
+
+export const getProgramReviewDetailQueryKey = (
+  type: string,
+  reviewId: number,
+) => ['programReviewDetail', type, reviewId];
+
+export const useGetProgramReviewDetail = (
+  type: ReviewType,
+  reviewId: number,
+) => {
+  return useQuery({
+    queryKey: getProgramReviewDetailQueryKey(type, reviewId),
+    queryFn: async () => {
+      const res = await axiosV2.get(`/review/${type}/${reviewId}`);
+      return reviewDetailSchema.parse(res.data.data);
     },
   });
 };
