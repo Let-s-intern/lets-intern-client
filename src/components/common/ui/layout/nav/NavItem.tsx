@@ -11,6 +11,8 @@ interface NavItemProps {
   children: React.ReactNode;
   hoverItem?: NavSubItemProps[];
   isItemLoaded?: boolean;
+  rel?: string;
+  target?: string;
 }
 
 const NavItem = ({
@@ -20,6 +22,8 @@ const NavItem = ({
   children,
   hoverItem,
   isItemLoaded = true,
+  rel,
+  target
 }: NavItemProps) => {
   const [hover, setHover] = useState(false);
   const Wrapper = as || Link;
@@ -35,6 +39,8 @@ const NavItem = ({
         style,
         'relative hidden h-full cursor-pointer items-center xl:flex',
       )}
+      target={target}
+      rel={rel}
     >
       {children}
       <div
