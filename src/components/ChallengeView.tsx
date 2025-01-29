@@ -30,7 +30,8 @@ import ProgramDetailNavigation, {
   PROGRAM_REVIEW_ID,
 } from './ProgramDetailNavigation';
 
-const { CAREER_START, PORTFOLIO } = challengeTypeSchema.enum;
+const { CAREER_START, PORTFOLIO, PERSONAL_STATEMENT_LARGE_CORP } =
+  challengeTypeSchema.enum;
 
 export type ChallengeColor = {
   primary: string;
@@ -91,7 +92,7 @@ const ChallengeView: React.FC<{
     let thumbnailBg = ''; // 썸네일 배경색
 
     switch (challenge.challengeType) {
-      case CAREER_START: 
+      case CAREER_START:
         primary = '#4D55F5';
         secondary = '#E45BFF';
         primaryLight = '#F3F4FF';
@@ -124,6 +125,23 @@ const ChallengeView: React.FC<{
         recommendBg = '#F0F4FF';
         recommendLogo = '#DEE7FF';
         thumbnailBg = '#FFF4DB';
+        break;
+      case PERSONAL_STATEMENT_LARGE_CORP:
+        primary = '#32B750';
+        secondary = '#FF9C34';
+        primaryLight = '#E6F9DE';
+        secondaryLight = '#FFF7EF';
+        gradient = '#32B750';
+        dark = '#20304F';
+
+        subTitle = '#FF9C34';
+        subBg = '#FFF7EF';
+        gradientBg =
+          'linear-gradient(180deg,#222A7E 0%,#111449 50%,#111449 100%)'; // ??
+        curriculumBg = '#EFF4F7';
+        recommendBg = '#F1FBFF';
+        recommendLogo = '#E6F9DE';
+        thumbnailBg = '#E6F9DE';
         break;
       default:
         primary = '#14BCFF';
@@ -204,15 +222,17 @@ const ChallengeView: React.FC<{
             )}
 
             <section className="flex w-full flex-col md:items-center">
-              { challenge.challengeType === PORTFOLIO ? (
+              {challenge.challengeType === PORTFOLIO ? (
                 <ChallengeIntroPortfolio />
-              ) : challenge.challengeType === CAREER_START ?(
+              ) : challenge.challengeType === CAREER_START ? (
                 <ChallengeIntroCareerStart
                   colors={colors}
                   challengeTitle={challenge.title ?? ''}
                   weekText={receivedContent.challengePoint.weekText}
                 />
-              ) : <ChallengeIntroPersonalStatement />}
+              ) : (
+                <ChallengeIntroPersonalStatement />
+              )}
             </section>
 
             <ChallengeCheckList
