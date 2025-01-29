@@ -35,7 +35,7 @@ const Programs = () => {
   const [pageNum, setPageNum] = useState<number>(1);
   const navigate = useNavigate();
 
-  const sizePerPage = 10;
+  const sizePerPage = 20;
 
   const { data, isLoading, error } = useGetProgramAdminQuery({
     page: pageNum,
