@@ -143,7 +143,10 @@ const ChallengeBasicInfo = ({
                   <span>{regularPrice?.toLocaleString()}원</span>
                 </div>
                 <div className="flex w-full items-center justify-between gap-x-4 text-xsmall16">
-                  <span className="font-bold" style={{ color: colors.primary }}>
+                  <span
+                    className="font-bold"
+                    style={{ color: colors.basicInfoPrimary ?? colors.primary }}
+                  >
                     {getDiscountPercent(
                       regularPrice || 0,
                       priceInfo.discount || 0,
@@ -173,7 +176,9 @@ const ChallengeBasicInfo = ({
               </div>
               {showMonthlyPrice && (
                 <div className="flex w-full flex-col items-end">
-                  <div style={{ color: colors.primary }}>
+                  <div
+                    style={{ color: colors.basicInfoPrimary ?? colors.primary }}
+                  >
                     <span className="mr-1 text-medium22 font-semibold">월</span>
                     <span className="text-xlarge28 font-bold">
                       {monthlyPrice
@@ -194,7 +199,7 @@ const ChallengeBasicInfo = ({
       </div>
       <div
         className="flex w-full flex-col gap-3 md:flex-row"
-        style={{ color: colors.primary }}
+        style={{ color: colors.basicInfoPrimary ?? colors.primary }}
       >
         {!activeOnly && (
           <div className="flex w-full flex-col gap-y-2 rounded-ms bg-neutral-95 px-4 pb-5 pt-3 md:flex-1 md:p-5 md:pt-4">
@@ -206,13 +211,15 @@ const ChallengeBasicInfo = ({
               <div className="relative ml-3 animate-bounce-x">
                 <Polygon
                   className="absolute left-0 top-1/2 -translate-x-[8px] -translate-y-[3px] transform"
-                  style={{ color: colors.primary }}
+                  style={{ color: colors.basicInfoPrimary ?? colors.primary }}
                   width={10}
                   height={8}
                 />
                 <span
                   className="rounded-xxs px-2 py-1 text-xxsmall12 font-normal text-white"
-                  style={{ backgroundColor: colors.primary }}
+                  style={{
+                    backgroundColor: colors.basicInfoPrimary ?? colors.primary,
+                  }}
                 >
                   참여 가능한 일자를 선택해주세요!
                 </span>
@@ -229,7 +236,7 @@ const ChallengeBasicInfo = ({
                   .map((activeChallenge, index) => (
                     <RadioButton
                       key={index}
-                      color={colors.primary}
+                      color={colors.basicInfoPrimary ?? colors.primary}
                       checked={activeChallenge.id === Number(challengeId)}
                       label={formatFullDate(dayjs(activeChallenge.startDate))}
                       onClick={() => onClickActiveChallenge(activeChallenge.id)}
@@ -324,7 +331,10 @@ const ChallengeBasicInfo = ({
                   <span>{regularPrice?.toLocaleString()}원</span>
                 </div>
                 <div className="flex w-full items-center justify-between gap-x-4 text-xsmall16">
-                  <span className="font-bold" style={{ color: colors.primary }}>
+                  <span
+                    className="font-bold"
+                    style={{ color: colors.basicInfoPrimary ?? colors.primary }}
+                  >
                     {getDiscountPercent(
                       regularPrice || 0,
                       priceInfo.discount || 0,
@@ -354,7 +364,9 @@ const ChallengeBasicInfo = ({
               </div>
               {showMonthlyPrice && (
                 <div className="flex w-full flex-col items-end gap-y-2">
-                  <div style={{ color: colors.primary }}>
+                  <div
+                    style={{ color: colors.basicInfoPrimary ?? colors.primary }}
+                  >
                     <span className="mr-1 text-medium22 font-semibold">월</span>
                     <span className="text-xlarge28 font-bold">
                       {monthlyPrice
