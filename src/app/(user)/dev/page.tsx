@@ -117,7 +117,7 @@ const mock4: GetReview = {
   ],
 };
 
-export const singleReviewFilterList = [
+const singleReviewFilterList = [
   {
     caption: '전체',
     value: 'all',
@@ -136,7 +136,7 @@ export const singleReviewFilterList = [
   },
 ];
 
-export const multiReveiwFilterList = [
+const multiReveiwFilterList = [
   {
     caption: '긍정적 리뷰',
     value: 'positive',
