@@ -69,7 +69,9 @@ const ReviewCard = ({
     <div className="flex flex-col gap-4 p-4 border rounded-sm sm:flex-row border-neutral-80 sm:gap-10">
       <div className="flex flex-col max-w-full mr-auto">
         <div className="mb-2">
-          <ReviewBadge reviewType={review.reviewInfo.type} />
+          <ReviewBadge
+            reviewType={review.reviewInfo.type ?? 'CHALLENGE_REVIEW'}
+          />
         </div>
         <h3 className="mb-2 font-bold truncate text-xsmall16 text-neutral-0">
           {review.reviewInfo.programTitle}
