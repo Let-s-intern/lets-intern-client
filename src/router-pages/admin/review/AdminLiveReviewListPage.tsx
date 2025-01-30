@@ -176,7 +176,8 @@ const AdminLiveReviewListPage = () => {
 
   const { data, isLoading } = useGetAdminProgramReview({ type: 'LIVE_REVIEW' });
 
-  const handleRowClick = (row: Row) => {
+  const handleRowClick = (e: React.MouseEvent, row: Row) => {
+    if ((e.target as HTMLElement).closest('.ignore-click')) return;
     setSelectedRow(row);
   };
 
@@ -215,7 +216,9 @@ const AdminLiveReviewListPage = () => {
               id: review.reviewInfo.reviewId,
             })) ?? []
           }
-          onRowClick={(params) => handleRowClick(params.row as Row)}
+          onRowClick={(params, event) =>
+            handleRowClick(event, params.row as Row)
+          }
           columns={columns}
           columnGroupingModel={columnGroupingModel}
           columnHeaderHeight={36}
