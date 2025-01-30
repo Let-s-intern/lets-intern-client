@@ -6,6 +6,7 @@ import { useGetBlogReviewList } from '@/api/review';
 import { ProgramTypeUpperCase } from '@/schema';
 import MuiPagination from '@components/common/program/pagination/MuiPagination';
 import BlogReviewCard from '@components/common/review/BlogReviewCard';
+import LoadingContainer from '../ui/loading/LoadingContainer';
 
 const PAGE_SIZE = 10;
 
@@ -22,7 +23,7 @@ function BlogReviewListSection({ types = [] }: Props) {
     types,
   });
 
-  if (isLoading) return <p className="text-center text-xsmall14">로딩 중...</p>;
+  if (isLoading) return <LoadingContainer className="h-[50vh]" />;
   if (data?.reviewList.length === 0)
     return <p className="text-center text-xsmall14">작성된 후기가 없습니다</p>;
 
