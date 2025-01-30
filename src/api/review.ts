@@ -395,3 +395,45 @@ export const useUpdateAdminProgramReview = ({
     },
   });
 };
+
+/**
+ * @description : ADMIN 프로그램 리뷰 아이템 노출여부 업데이트
+ * @param param : type, reviewItemId, isVisible
+ * @returns : ADMIN 프로그램 리뷰 아이템 노출여부 업데이트
+ */
+export const useUpdateAdminProgramReviewItem = ({
+  successCallback,
+  errorCallback,
+}: {
+  successCallback?: () => void;
+  errorCallback?: (error: Error) => void;
+}) => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({
+      type,
+      reviewItemId,
+      isVisible,
+    }: {
+      type: ReviewType;
+      reviewItemId: number;
+      isVisible: boolean;
+    }) => {
+      await axiosV2.patch(`/admin/review/item/${reviewItemId}`, {
+        isVisible,
+      });
+
+      return { type, reviewItemId, isVisible };
+    },
+    onSuccess: async (data) => {
+      await queryClient.invalidateQueries({
+        queryKey: getAdminProgramReviewQueryKey(data.type),
+      });
+      return successCallback && successCallback();
+    },
+    onError: (error: Error) => {
+      return errorCallback && errorCallback(error);
+    },
+  });
+};
