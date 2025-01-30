@@ -4,11 +4,15 @@ import { Box, Button, Modal, Typography } from '@mui/material';
 interface ReviewDetailModalProps {
   onClose: () => void;
   selectedRow: Row | null;
+  goal?: boolean;
+  worry?: boolean;
 }
 
 const ReviewDetailModal = ({
   onClose,
   selectedRow,
+  goal,
+  worry,
 }: ReviewDetailModalProps) => {
   return (
     <Modal open={selectedRow !== null} onClose={onClose}>
@@ -53,18 +57,38 @@ const ReviewDetailModal = ({
             <Typography variant="body1">
               <strong>NPS 점수:</strong> {selectedRow.reviewInfo.npsScore}
             </Typography>
-            <Typography variant="body1">
-              <strong>목표:</strong>{' '}
-              {selectedRow.reviewItemList?.find(
-                (item) => item.questionType === 'GOAL',
-              )?.answer || '-'}
-            </Typography>
-            <Typography variant="body1">
-              <strong>목표 달성 여부:</strong>{' '}
-              {selectedRow.reviewItemList?.find(
-                (item) => item.questionType === 'GOAL_RESULT',
-              )?.answer || '-'}
-            </Typography>
+            {goal && (
+              <>
+                <Typography variant="body1">
+                  <strong>목표:</strong>{' '}
+                  {selectedRow.reviewItemList?.find(
+                    (item) => item.questionType === 'GOAL',
+                  )?.answer || '-'}
+                </Typography>
+                <Typography variant="body1">
+                  <strong>목표 달성 여부:</strong>{' '}
+                  {selectedRow.reviewItemList?.find(
+                    (item) => item.questionType === 'GOAL_RESULT',
+                  )?.answer || '-'}
+                </Typography>
+              </>
+            )}
+            {worry && (
+              <>
+                <Typography variant="body1">
+                  <strong>고민:</strong>{' '}
+                  {selectedRow.reviewItemList?.find(
+                    (item) => item.questionType === 'WORRY',
+                  )?.answer || '-'}
+                </Typography>
+                <Typography variant="body1">
+                  <strong>고민 해결 여부:</strong>{' '}
+                  {selectedRow.reviewItemList?.find(
+                    (item) => item.questionType === 'WORRY_RESULT',
+                  )?.answer || '-'}
+                </Typography>
+              </>
+            )}
             <Typography variant="body1">
               <strong>좋았던 점:</strong>{' '}
               {selectedRow.reviewItemList?.find(
