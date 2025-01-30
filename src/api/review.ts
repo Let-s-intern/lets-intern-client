@@ -328,16 +328,39 @@ export const useDeleteAdminBlogReview = () => {
   });
 };
 
+export const adminReviewItemSchema = z.object({
+  reviewItemId: z.number(),
+  questionType: questionTypeSchema.nullable().optional(),
+  answer: z.string().nullable().optional(),
+  isVisible: z.boolean().nullable().optional(),
+});
+
+export const adminProgramReviewSchema = z.object({
+  reviewInfo: z.object({
+    reviewId: z.number(),
+    createDate: z.string().nullable().optional(),
+    challengeType: challengeTypeSchema.nullable().optional(),
+    title: z.string().nullable().optional(),
+    name: z.string().nullable().optional(), // 이름
+    score: z.number().nullable().optional(),
+    npsScore: z.number().nullable().optional(),
+    isVisible: z.boolean().nullable().optional(),
+  }),
+  reviewItemList: z.array(adminReviewItemSchema).nullable().optional(),
+});
+
+export type AdminProgramReview = z.infer<typeof adminProgramReviewSchema>;
+
+export const adminProgramReviewListSchema = z.object({
+  reviewList: z.array(adminProgramReviewSchema),
+});
+
 // ADMIN 프로그램 리뷰 리스트 조회
 export const getAdminProgramReviewQueryKey = (type: ReviewType) => [
   'admin',
   'review',
   type,
 ];
-
-export const adminProgramReviewListSchema = z.object({
-  reviewList: z.array(getReviewSchema),
-});
 
 /**
  * @description : ADMIN 프로그램 리뷰 리스트 조회
