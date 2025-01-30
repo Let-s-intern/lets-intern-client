@@ -55,7 +55,6 @@ import AdminChallengeReviewListPage from './router-pages/admin/review/AdminChall
 import AdminLiveReviewListPage from './router-pages/admin/review/AdminLiveReviewListPage';
 import AdminMissionReviewListPage from './router-pages/admin/review/AdminMissionReviewListPage';
 import AdminReportReviewListPage from './router-pages/admin/review/AdminReportReviewListPage';
-import AdminReviewsDetail from './router-pages/admin/review/ReviewsDetail';
 import UserCreate from './router-pages/admin/user/UserCreate';
 import UserDetail from './router-pages/admin/user/UserDetail';
 import UserEdit from './router-pages/admin/user/UserEdit';
@@ -75,7 +74,7 @@ export const getAdminRoutes = () => {
       {/* /admin/reviews */}
       {/* <Route path="" element={<AdminReviews />} /> */}
       {/* /admin/reviews/1 */}
-      <Route path="review/:programId" element={<AdminReviewsDetail />} />
+      {/* <Route path="review/:programId" element={<AdminReviewsDetail />} /> */}
       {/* </Route> */}
       <Route path="review/mission" element={<AdminMissionReviewListPage />} />
       <Route
