@@ -10,7 +10,7 @@ const ProgramReviewSection = () => {
     useGetProgramReview({ size: 3 });
 
   return (
-    <section className="w-full flex flex-col gap-y-6">
+    <section className="w-full flex pt-6 pb-9 md:p-0 flex-col gap-y-6">
       <MoreHeader
         title="프로그램 참여 후기"
         subtitle={`${reviewData?.pageInfo.totalElements ?? 'NN'}개`}
