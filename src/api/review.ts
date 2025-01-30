@@ -4,6 +4,7 @@ import {
   pageInfo,
   ProgramTypeEnum,
   ProgramTypeUpperCase,
+  reportTypeSchema,
 } from '@/schema';
 import axios from '@/utils/axios';
 import axiosV2 from '@/utils/axiosV2';
@@ -340,6 +341,7 @@ export const adminProgramReviewSchema = z.object({
     reviewId: z.number(),
     createDate: z.string().nullable().optional(),
     challengeType: challengeTypeSchema.nullable().optional(),
+    reportType: reportTypeSchema.nullable().optional(),
     title: z.string().nullable().optional(),
     name: z.string().nullable().optional(), // 이름
     score: z.number().nullable().optional(),
