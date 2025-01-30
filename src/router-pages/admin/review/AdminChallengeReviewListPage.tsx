@@ -1,23 +1,17 @@
-import {
-  AdminProgramReview,
-  useGetAdminProgramReview,
-  useUpdateAdminProgramReview,
-  useUpdateAdminProgramReviewItem,
-} from '@/api/review';
+import { AdminProgramReview, useGetAdminProgramReview } from '@/api/review';
 import dayjs from '@/lib/dayjs';
 import { ChallengeType } from '@/schema';
 import { challengeTypes, challengeTypeToDisplay } from '@/utils/convert';
+import ReviewDetailModal from '@components/admin/review/ReviewDetailModal';
+import ReviewItemVisibilityToggle from '@components/admin/review/ReviewItemVisibilityToggle';
+import VisibilityToggle from '@components/admin/review/VisibilityToggle';
 import {
-  Box,
   Button,
   Checkbox,
   FormControl,
   FormControlLabel,
   FormGroup,
-  Modal,
   Popover,
-  Switch,
-  Typography,
 } from '@mui/material';
 import {
   DataGrid,
@@ -29,7 +23,7 @@ import {
 import { useRef, useState } from 'react';
 import AdminReviewHeader from './AdminReviewHeader';
 
-type Row = AdminProgramReview & {
+export type Row = AdminProgramReview & {
   id: number | string;
 };
 
@@ -287,64 +281,6 @@ const columnGroupingModel: GridColumnGroupingModel = [
   },
 ];
 
-const VisibilityToggle = ({ row }: { row: Row }) => {
-  const { mutate } = useUpdateAdminProgramReview({
-    errorCallback: (error) => {
-      alert(error);
-    },
-  });
-
-  const handleToggle = () => {
-    mutate({
-      type: 'CHALLENGE_REVIEW',
-      reviewId: row.reviewInfo.reviewId,
-      isVisible: !row.reviewInfo.isVisible,
-    });
-  };
-
-  return (
-    <Switch
-      checked={row.reviewInfo.isVisible ?? false}
-      onChange={handleToggle}
-    />
-  );
-};
-
-const ReviewItemVisibilityToggle = ({
-  row,
-  questionType,
-}: {
-  row: Row;
-  questionType: string;
-}) => {
-  const { mutate } = useUpdateAdminProgramReviewItem({
-    errorCallback: (error) => {
-      alert(error);
-    },
-  });
-
-  const reviewItem = row.reviewItemList?.find(
-    (item) => item.questionType === questionType,
-  );
-  if (!reviewItem) return '-';
-
-  const handleToggle = () => {
-    mutate({
-      type: 'CHALLENGE_REVIEW',
-      reviewItemId: reviewItem.reviewItemId,
-      isVisible: !reviewItem.isVisible,
-    });
-  };
-
-  return (
-    <Switch
-      checked={reviewItem.isVisible ?? false}
-      onChange={handleToggle}
-      disabled={!row.reviewInfo.isVisible} // 부모 리뷰가 노출될 때만 토글 활성화
-    />
-  );
-};
-
 const AdminChallengeReviewListPage = () => {
   const [selectedRow, setSelectedRow] = useState<Row | null>(null);
 
@@ -396,72 +332,7 @@ const AdminChallengeReviewListPage = () => {
         disableDensitySelector
         hideFooter
       />
-      <Modal open={selectedRow !== null} onClose={handleClose}>
-        <Box
-          sx={{
-            position: 'absolute',
-            top: '50%',
-            left: '50%',
-            transform: 'translate(-50%, -50%)',
-            width: 800,
-            maxHeight: '80vh',
-            overflowY: 'auto',
-            bgcolor: 'white',
-            boxShadow: 24,
-            p: 4,
-            borderRadius: 2,
-            display: 'flex',
-            flexDirection: 'column',
-            gap: 4,
-          }}
-        >
-          <Typography variant="h6" gutterBottom>
-            리뷰 상세 정보
-          </Typography>
-          {selectedRow ? (
-            <Box
-              sx={{
-                display: 'flex',
-                flexDirection: 'column',
-                gap: 2,
-              }}
-            >
-              <Typography variant="body1">
-                <strong>이름:</strong> {selectedRow.reviewInfo.name}
-              </Typography>
-              <Typography variant="body1">
-                <strong>프로그램 명:</strong> {selectedRow.reviewInfo.title}
-              </Typography>
-              <Typography variant="body1">
-                <strong>만족도 점수:</strong> {selectedRow.reviewInfo.score}
-              </Typography>
-              <Typography variant="body1">
-                <strong>목표:</strong>{' '}
-                {selectedRow.reviewItemList?.find(
-                  (item) => item.questionType === 'GOAL',
-                )?.answer || '-'}
-              </Typography>
-              <Typography variant="body1">
-                <strong>좋았던 점:</strong>{' '}
-                {selectedRow.reviewItemList?.find(
-                  (item) => item.questionType === 'GOOD_POINT',
-                )?.answer || '-'}
-              </Typography>
-              <Typography variant="body1">
-                <strong>아쉬웠던 점:</strong>{' '}
-                {selectedRow.reviewItemList?.find(
-                  (item) => item.questionType === 'BAD_POINT',
-                )?.answer || '-'}
-              </Typography>
-            </Box>
-          ) : (
-            <Typography>데이터를 불러오는 중...</Typography>
-          )}
-          <Button onClick={handleClose} sx={{ mt: 2 }} variant="contained">
-            닫기
-          </Button>
-        </Box>
-      </Modal>
+      <ReviewDetailModal onClose={handleClose} selectedRow={selectedRow} />
     </div>
   );
 };
