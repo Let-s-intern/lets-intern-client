@@ -29,6 +29,8 @@ export const newProgramTypeDetailToText: Record<string, string> = {
 };
 
 export const questionTypeToText: Record<QuestionType, string> = {
+  GOOD_POINT: '좋았던 점',
+  BAD_POINT: '아쉬웠던 점',
   GOAL: '프로그램 참여 전 목표',
   GOAL_RESULT: '목표 달성 여부',
   WORRY: '서류 작성 고민', // report
@@ -52,7 +54,17 @@ export const challengeTypeToText: Record<ChallengeType, string> = {
   ETC: '기타',
   PERSONAL_STATEMENT: '자기소개서',
   PORTFOLIO: '포트폴리오',
-  PERSONAL_STATEMENT_LARGE_CORP:"대기업 자소서"
+  PERSONAL_STATEMENT_LARGE_CORP: '대기업 자소서',
+};
+
+export const challengeTypeToDisplay: Record<ChallengeType, string> = {
+  CAREER_START: '취준 기필코',
+  DOCUMENT_PREPARATION: '서류 준비',
+  MEETING_PREPARATION: '면접 준비',
+  ETC: '기타',
+  PERSONAL_STATEMENT: '자기소개서 완성',
+  PORTFOLIO: '포트폴리오 완성',
+  PERSONAL_STATEMENT_LARGE_CORP: '대기업 자소서',
 };
 
 export const challengeTypes: ChallengeType[] = [
@@ -62,7 +74,7 @@ export const challengeTypes: ChallengeType[] = [
   'ETC',
   'PERSONAL_STATEMENT',
   'PORTFOLIO',
-  "PERSONAL_STATEMENT_LARGE_CORP"
+  'PERSONAL_STATEMENT_LARGE_CORP',
 ];
 
 export const programStatusToText: Record<string, string> = {
