@@ -27,8 +27,8 @@ function BlogReviewListSection({ types = [] }: Props) {
     return <p className="text-center text-xsmall14">작성된 후기가 없습니다</p>;
 
   return (
-    <section className="mb-12">
-      <div className="flex flex-col gap-6 mb-8">
+    <section className="mb-12 md:mb-20">
+      <div className="flex flex-col gap-6 mb-8 md:mb-12">
         {data?.reviewList.map((review) => (
           <BlogReviewCard key={review.blogReviewId} blogReview={review} />
         ))}
