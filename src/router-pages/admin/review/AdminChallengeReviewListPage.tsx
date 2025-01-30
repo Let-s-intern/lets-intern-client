@@ -5,6 +5,7 @@ import { challengeTypes, challengeTypeToDisplay } from '@/utils/convert';
 import ReviewDetailModal from '@components/admin/review/ReviewDetailModal';
 import ReviewItemVisibilityToggle from '@components/admin/review/ReviewItemVisibilityToggle';
 import VisibilityToggle from '@components/admin/review/VisibilityToggle';
+import LoadingContainer from '@components/common/ui/loading/LoadingContainer';
 import {
   Button,
   Checkbox,
@@ -187,7 +188,11 @@ const columns: GridColDef<Row>[] = [
     headerName: '노출여부',
     width: 100,
     renderCell: ({ row }) => (
-      <ReviewItemVisibilityToggle row={row} questionType="GOAL" />
+      <ReviewItemVisibilityToggle
+        type="CHALLENGE_REVIEW"
+        row={row}
+        questionType="GOAL"
+      />
     ),
   },
   // 목표 달성 여부 (내용 + 노출여부)
@@ -204,7 +209,11 @@ const columns: GridColDef<Row>[] = [
     headerName: '노출여부',
     width: 100,
     renderCell: ({ row }) => (
-      <ReviewItemVisibilityToggle row={row} questionType="GOAL_RESULT" />
+      <ReviewItemVisibilityToggle
+        type="CHALLENGE_REVIEW"
+        row={row}
+        questionType="GOAL_RESULT"
+      />
     ),
   },
   // 좋았던 점 (내용 + 노출여부)
@@ -221,7 +230,11 @@ const columns: GridColDef<Row>[] = [
     headerName: '노출여부',
     width: 100,
     renderCell: ({ row }) => (
-      <ReviewItemVisibilityToggle row={row} questionType="GOOD_POINT" />
+      <ReviewItemVisibilityToggle
+        type="CHALLENGE_REVIEW"
+        row={row}
+        questionType="GOOD_POINT"
+      />
     ),
   },
   // 아쉬웠던 점 (내용 + 노출여부)
@@ -238,7 +251,11 @@ const columns: GridColDef<Row>[] = [
     headerName: '노출여부',
     width: 100,
     renderCell: ({ row }) => (
-      <ReviewItemVisibilityToggle row={row} questionType="BAD_POINT" />
+      <ReviewItemVisibilityToggle
+        type="CHALLENGE_REVIEW"
+        row={row}
+        questionType="BAD_POINT"
+      />
     ),
   },
   // 전체 리뷰의 노출 여부
@@ -247,7 +264,9 @@ const columns: GridColDef<Row>[] = [
     headerName: '노출여부',
     width: 150,
     type: 'boolean',
-    renderCell: ({ row }) => <VisibilityToggle row={row} />,
+    renderCell: ({ row }) => (
+      <VisibilityToggle type="CHALLENGE_REVIEW" row={row} />
+    ),
   },
 ];
 
@@ -284,7 +303,9 @@ const columnGroupingModel: GridColumnGroupingModel = [
 const AdminChallengeReviewListPage = () => {
   const [selectedRow, setSelectedRow] = useState<Row | null>(null);
 
-  const { data } = useGetAdminProgramReview({ type: 'CHALLENGE_REVIEW' });
+  const { data, isLoading } = useGetAdminProgramReview({
+    type: 'CHALLENGE_REVIEW',
+  });
 
   const handleRowClick = (row: Row) => {
     setSelectedRow(row);
@@ -297,15 +318,18 @@ const AdminChallengeReviewListPage = () => {
   return (
     <div className="p-5">
       <AdminReviewHeader />
-      <DataGrid
-        sx={{
-          // '& .MuiDataGrid-columnHeader:focus, & .MuiDataGrid-cell:focus': {
-          //   outline: 'none', // outline 제거
-          // },
-          '& .MuiDataGrid-columnHeaderTitle': {
-            fontWeight: 'bold', // 헤더 폰트 굵게
-          },
-          '& .MuiDataGrid-columnHeader[data-field="goal_content"], \
+      {isLoading ? (
+        <LoadingContainer />
+      ) : (
+        <DataGrid
+          sx={{
+            // '& .MuiDataGrid-columnHeader:focus, & .MuiDataGrid-cell:focus': {
+            //   outline: 'none', // outline 제거
+            // },
+            '& .MuiDataGrid-columnHeaderTitle': {
+              fontWeight: 'bold', // 헤더 폰트 굵게
+            },
+            '& .MuiDataGrid-columnHeader[data-field="goal_content"], \
             .MuiDataGrid-columnHeader[data-field="goal_visible"], \
             .MuiDataGrid-columnHeader[data-field="goal_result_content"], \
             .MuiDataGrid-columnHeader[data-field="goal_result_visible"], \
@@ -313,26 +337,27 @@ const AdminChallengeReviewListPage = () => {
             .MuiDataGrid-columnHeader[data-field="good_point_visible"], \
             .MuiDataGrid-columnHeader[data-field="bad_point_content"], \
             .MuiDataGrid-columnHeader[data-field="bad_point_visible"]': {
-            color: 'gray',
-          },
-        }}
-        rows={
-          data?.reviewList.map((review) => ({
-            ...review,
-            id: review.reviewInfo.reviewId,
-          })) ?? []
-        }
-        onRowClick={(params) => handleRowClick(params.row as Row)}
-        columns={columns}
-        columnGroupingModel={columnGroupingModel}
-        columnHeaderHeight={36}
-        columnGroupHeaderHeight={36}
-        disableRowSelectionOnClick
-        disableColumnSelector
-        disableDensitySelector
-        hideFooter
-      />
-      <ReviewDetailModal onClose={handleClose} selectedRow={selectedRow} />
+              color: 'gray',
+            },
+          }}
+          rows={
+            data?.reviewList.map((review) => ({
+              ...review,
+              id: review.reviewInfo.reviewId,
+            })) ?? []
+          }
+          onRowClick={(params) => handleRowClick(params.row as Row)}
+          columns={columns}
+          columnGroupingModel={columnGroupingModel}
+          columnHeaderHeight={36}
+          columnGroupHeaderHeight={36}
+          disableRowSelectionOnClick
+          disableColumnSelector
+          disableDensitySelector
+          hideFooter
+        />
+      )}
+      <ReviewDetailModal onClose={handleClose} selectedRow={selectedRow} goal />
     </div>
   );
 };

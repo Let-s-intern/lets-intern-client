@@ -1,11 +1,13 @@
-import { useUpdateAdminProgramReviewItem } from '@/api/review';
+import { ReviewType, useUpdateAdminProgramReviewItem } from '@/api/review';
 import { Row } from '@/router-pages/admin/review/AdminChallengeReviewListPage';
 import { Switch } from '@mui/material';
 
 const ReviewItemVisibilityToggle = ({
+  type,
   row,
   questionType,
 }: {
+  type: ReviewType;
   row: Row;
   questionType: string;
 }) => {
@@ -22,7 +24,7 @@ const ReviewItemVisibilityToggle = ({
 
   const handleToggle = () => {
     mutate({
-      type: 'CHALLENGE_REVIEW',
+      type,
       reviewItemId: reviewItem.reviewItemId,
       isVisible: !reviewItem.isVisible,
     });
@@ -30,6 +32,7 @@ const ReviewItemVisibilityToggle = ({
 
   return (
     <Switch
+      className="ignore-click"
       checked={reviewItem.isVisible ?? false}
       onChange={handleToggle}
       disabled={!row.reviewInfo.isVisible} // 부모 리뷰가 노출될 때만 토글 활성화
