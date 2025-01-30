@@ -32,6 +32,8 @@ export const reviewTypeSchema = z.enum([
 ]);
 
 export const questionTypeSchema = z.enum([
+  'GOOD_POINT',
+  'BAD_POINT',
   'GOAL',
   'GOAL_RESULT',
   'WORRY',
@@ -57,8 +59,6 @@ export const getReviewSchema = z.object({
     npsScore: z.number().nullable().optional(),
     type: reviewTypeSchema.nullable().optional(),
     createDate: z.string().nullable().optional(),
-    goodPoint: z.string().nullable().optional(),
-    badPoint: z.string().nullable().optional(),
     programTitle: z.string().nullable().optional(),
     programThumbnail: z.string().nullable().optional(),
     challengeType: challengeTypeSchema.nullable().optional(),
@@ -138,6 +138,11 @@ export type PostReviewParams = {
   reviewItemList: PostReviewItemType[];
 };
 
+/**
+ * @description : USER 프로그램 리뷰 등록
+ * @param param: errorCallback, successCallback
+ * @returns : 프로그램 리뷰 등록
+ */
 export const usePostReviewMutation = ({
   errorCallback,
   successCallback,
@@ -176,11 +181,17 @@ export type programReviewParam = {
   size?: number;
 };
 
+// USER 프로그램 리뷰 리스트 조회 쿼리 키
 const getProgramReviewQueryKey = (param?: programReviewParam) => [
   'programReview',
   param?.types,
 ];
 
+/**
+ * @description : USER 프로그램 리뷰 리스트 조회
+ * @param param : types, challengeTypes, page, size
+ * @returns : 프로그램 리뷰 리스트
+ */
 export const useGetProgramReview = ({
   types,
   challengeTypes,
@@ -314,5 +325,25 @@ export const useDeleteAdminBlogReview = () => {
       await queryClient.invalidateQueries({
         queryKey: [adminBlogReviewListQueryKey],
       }),
+  });
+};
+
+export const getAdminProgramReviewQueryKey = (type: ReviewType) => [
+  'admin',
+  'review',
+  type,
+];
+
+export const adminProgramReviewListSchema = z.object({
+  reviewList: z.array(getReviewSchema),
+});
+
+export const useGetAdminProgramReview = ({ type }: { type: ReviewType }) => {
+  return useQuery({
+    queryKey: getAdminProgramReviewQueryKey(type),
+    queryFn: async () => {
+      const res = await axiosV2.get(`/admin/review/${type}`);
+      return adminProgramReviewListSchema.parse(res.data.data);
+    },
   });
 };
