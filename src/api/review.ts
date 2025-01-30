@@ -4,6 +4,7 @@ import {
   pageInfo,
   ProgramTypeEnum,
   ProgramTypeUpperCase,
+  reportTypeSchema,
 } from '@/schema';
 import axios from '@/utils/axios';
 import axiosV2 from '@/utils/axiosV2';
@@ -337,14 +338,25 @@ export const adminReviewItemSchema = z.object({
 
 export const adminProgramReviewSchema = z.object({
   reviewInfo: z.object({
-    reviewId: z.number(),
+    reviewId: z
+      .number()
+      .nullable()
+      .optional()
+      .transform((data) => data ?? 0),
+    attendanceId: z.number().nullable().optional(),
     createDate: z.string().nullable().optional(),
     challengeType: challengeTypeSchema.nullable().optional(),
+    challengeTitle: z.string().nullable().optional(),
+    missionTh: z.number().nullable().optional(),
+    missionTitle: z.string().nullable().optional(),
+    reportType: reportTypeSchema.nullable().optional(),
     title: z.string().nullable().optional(),
-    name: z.string().nullable().optional(), // 이름
+    name: z.string().nullable().optional(),
+    review: z.string().nullable().optional(),
     score: z.number().nullable().optional(),
     npsScore: z.number().nullable().optional(),
     isVisible: z.boolean().nullable().optional(),
+    reviewIsVisible: z.boolean().nullable().optional(),
   }),
   reviewItemList: z.array(adminReviewItemSchema).nullable().optional(),
 });
