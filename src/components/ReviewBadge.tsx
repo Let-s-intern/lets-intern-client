@@ -5,10 +5,12 @@ const ReviewBadge = ({
   reviewType,
   className,
   fill,
+  hideSubText = false,
 }: {
   reviewType: ReviewType;
   className?: string;
   fill?: string;
+  hideSubText?: boolean;
 }) => {
   switch (reviewType) {
     case 'CHALLENGE_REVIEW':
@@ -33,9 +35,11 @@ const ReviewBadge = ({
             />
           </svg>
           <span>챌린지</span>
-          <span className="font-semibold text-xxsmall12">
-            프로그램 참여 후기
-          </span>
+          {!hideSubText && (
+            <span className="font-semibold text-xxsmall12">
+              프로그램 참여 후기
+            </span>
+          )}
         </span>
       );
     case 'LIVE_REVIEW':
