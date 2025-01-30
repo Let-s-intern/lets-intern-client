@@ -142,7 +142,9 @@ const ReviewBadge = ({
             />
           </svg>
           <span>챌린지</span>
-          <span className="font-semibold text-xxsmall12">미션 수행 후기</span>
+          {!hideSubText && (
+            <span className="font-semibold text-xxsmall12">미션 수행 후기</span>
+          )}
         </span>
       );
   }
