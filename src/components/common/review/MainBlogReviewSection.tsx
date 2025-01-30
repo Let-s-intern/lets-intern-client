@@ -14,11 +14,11 @@ function MainBlogReviewSection() {
     <section className="py-9 md:p-0">
       <MoreHeader
         title="블로그 후기"
-        subtitle={`${data?.reviewList.length}개`}
+        subtitle={data ? `${data?.reviewList.length}개` : ''}
         href="/review/blog"
       />
       {isLoading ? (
-        <LoadingContainer className="h-[45.4rem]" />
+        <LoadingContainer className="h-[45rem] md:h-[24rem]" />
       ) : (
         <div className="grid mt-6 grid-cols-2 md:gap-5 md:grid-cols-4 gap-x-5 gap-y-6">
           {data?.reviewList.map((review) => (
