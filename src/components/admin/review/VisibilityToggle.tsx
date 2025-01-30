@@ -12,15 +12,25 @@ const VisibilityToggle = ({ type, row }: { type: ReviewType; row: Row }) => {
   const handleToggle = () => {
     mutate({
       type,
-      reviewId: row.reviewInfo.reviewId,
-      isVisible: !row.reviewInfo.isVisible,
+      reviewId:
+        type !== 'MISSION_REVIEW'
+          ? (row.reviewInfo.reviewId ?? 0)
+          : (row.reviewInfo.attendanceId ?? 0),
+      isVisible:
+        type !== 'MISSION_REVIEW'
+          ? !row.reviewInfo.isVisible
+          : !row.reviewInfo.reviewIsVisible,
     });
   };
 
   return (
     <Switch
       className="ignore-click"
-      checked={row.reviewInfo.isVisible ?? false}
+      checked={
+        type !== 'MISSION_REVIEW'
+          ? (row.reviewInfo.isVisible ?? false)
+          : (row.reviewInfo.reviewIsVisible ?? false)
+      }
       onChange={handleToggle}
     />
   );
