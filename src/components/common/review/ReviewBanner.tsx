@@ -36,7 +36,7 @@ function ReviewBanner() {
   return (
     <header className="relative flex bg-secondary px-5 md:justify-center py-10 h-[11.125rem] md:h-[10.75rem]">
       {/* 본문 */}
-      <div className="flex flex-col z-10 gap-1 w-full md:gap-2 max-w-[1100px]">
+      <div className="flex flex-col z-10 gap-1 w-full md:pl-3 md:gap-2 max-w-[1100px]">
         {/* pathname에 따라 제목 불러오기 */}
         <h1 className="text-white md:text-medium24 text-small20 font-bold">
           {pathname === '/review'
