@@ -1,4 +1,4 @@
-import { AdminProgramReview, useGetAdminProgramReview } from '@/api/review';
+import { useGetAdminProgramReview } from '@/api/review';
 import dayjs from '@/lib/dayjs';
 import ReviewDetailModal from '@components/admin/review/ReviewDetailModal';
 import ReviewItemVisibilityToggle from '@components/admin/review/ReviewItemVisibilityToggle';
@@ -9,11 +9,8 @@ import {
   GridColumnGroupingModel,
 } from '@mui/x-data-grid';
 import { useState } from 'react';
+import { Row } from './AdminChallengeReviewListPage';
 import AdminReviewHeader from './AdminReviewHeader';
-
-type Row = AdminProgramReview & {
-  id: number | string;
-};
 
 const columns: GridColDef<Row>[] = [
   {
