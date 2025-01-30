@@ -32,6 +32,8 @@ export const reviewTypeSchema = z.enum([
 ]);
 
 export const questionTypeSchema = z.enum([
+  'GOOD_POINT',
+  'BAD_POINT',
   'GOAL',
   'GOAL_RESULT',
   'WORRY',
@@ -57,8 +59,6 @@ export const getReviewSchema = z.object({
     npsScore: z.number().nullable().optional(),
     type: reviewTypeSchema.nullable().optional(),
     createDate: z.string().nullable().optional(),
-    goodPoint: z.string().nullable().optional(),
-    badPoint: z.string().nullable().optional(),
     programTitle: z.string().nullable().optional(),
     programThumbnail: z.string().nullable().optional(),
     challengeType: challengeTypeSchema.nullable().optional(),
@@ -138,6 +138,11 @@ export type PostReviewParams = {
   reviewItemList: PostReviewItemType[];
 };
 
+/**
+ * @description : USER 프로그램 리뷰 등록
+ * @param param: errorCallback, successCallback
+ * @returns : 프로그램 리뷰 등록
+ */
 export const usePostReviewMutation = ({
   errorCallback,
   successCallback,
@@ -176,11 +181,17 @@ export type programReviewParam = {
   size?: number;
 };
 
+// USER 프로그램 리뷰 리스트 조회 쿼리 키
 const getProgramReviewQueryKey = (param?: programReviewParam) => [
   'programReview',
   param?.types,
 ];
 
+/**
+ * @description : USER 프로그램 리뷰 리스트 조회
+ * @param param : types, challengeTypes, page, size
+ * @returns : 프로그램 리뷰 리스트
+ */
 export const useGetProgramReview = ({
   types,
   challengeTypes,
@@ -314,5 +325,138 @@ export const useDeleteAdminBlogReview = () => {
       await queryClient.invalidateQueries({
         queryKey: [adminBlogReviewListQueryKey],
       }),
+  });
+};
+
+export const adminReviewItemSchema = z.object({
+  reviewItemId: z.number(),
+  questionType: questionTypeSchema.nullable().optional(),
+  answer: z.string().nullable().optional(),
+  isVisible: z.boolean().nullable().optional(),
+});
+
+export const adminProgramReviewSchema = z.object({
+  reviewInfo: z.object({
+    reviewId: z.number(),
+    createDate: z.string().nullable().optional(),
+    challengeType: challengeTypeSchema.nullable().optional(),
+    title: z.string().nullable().optional(),
+    name: z.string().nullable().optional(), // 이름
+    score: z.number().nullable().optional(),
+    npsScore: z.number().nullable().optional(),
+    isVisible: z.boolean().nullable().optional(),
+  }),
+  reviewItemList: z.array(adminReviewItemSchema).nullable().optional(),
+});
+
+export type AdminProgramReview = z.infer<typeof adminProgramReviewSchema>;
+
+export const adminProgramReviewListSchema = z.object({
+  reviewList: z.array(adminProgramReviewSchema),
+});
+
+// ADMIN 프로그램 리뷰 리스트 조회
+export const getAdminProgramReviewQueryKey = (type: ReviewType) => [
+  'admin',
+  'review',
+  type,
+];
+
+/**
+ * @description : ADMIN 프로그램 리뷰 리스트 조회
+ * @param param : type
+ * @returns : ADMIN 프로그램 리뷰 리스트 조회
+ */
+export const useGetAdminProgramReview = ({ type }: { type: ReviewType }) => {
+  return useQuery({
+    queryKey: getAdminProgramReviewQueryKey(type),
+    queryFn: async () => {
+      const res = await axiosV2.get(`/admin/review/${type}`);
+      return adminProgramReviewListSchema.parse(res.data.data);
+    },
+  });
+};
+
+/**
+ * @description : ADMIN 프로그램 리뷰 노출여부 변경
+ * @param param : type, reviewId, isVisible
+ * @returns : ADMIN 프로그램 리뷰 노출여부 변경
+ */
+export const useUpdateAdminProgramReview = ({
+  successCallback,
+  errorCallback,
+}: {
+  successCallback?: () => void;
+  errorCallback?: (error: Error) => void;
+}) => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({
+      type,
+      reviewId,
+      isVisible,
+    }: {
+      type: ReviewType;
+      reviewId: number;
+      isVisible: boolean;
+    }) => {
+      await axiosV2.patch(`/admin/review/${type}/${reviewId}`, {
+        isVisible,
+      });
+
+      return { type, reviewId, isVisible };
+    },
+    onSuccess: async (data) => {
+      await queryClient.invalidateQueries({
+        queryKey: getAdminProgramReviewQueryKey(data.type),
+      });
+      return successCallback && successCallback();
+    },
+    onError: (error: Error) => {
+      return errorCallback && errorCallback(error);
+    },
+  });
+};
+
+/**
+ * @description : ADMIN 프로그램 리뷰 아이템 노출여부 업데이트
+ * @param param : type, reviewItemId, isVisible
+ * @returns : ADMIN 프로그램 리뷰 아이템 노출여부 업데이트
+ */
+export const useUpdateAdminProgramReviewItem = ({
+  successCallback,
+  errorCallback,
+}: {
+  successCallback?: () => void;
+  errorCallback?: (error: Error) => void;
+}) => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({
+      type,
+      reviewItemId,
+      isVisible,
+    }: {
+      type: ReviewType;
+      reviewItemId: number;
+      isVisible: boolean;
+    }) => {
+      await axiosV2.patch(`/admin/review/item/${reviewItemId}`, {
+        isVisible,
+      });
+
+      return { type, reviewItemId, isVisible };
+    },
+    onSuccess: async (data) => {
+      await queryClient.invalidateQueries({
+        queryKey: getAdminProgramReviewQueryKey(data.type),
+      });
+      return successCallback && successCallback();
+    },
+    onError: (error: Error) => {
+      return errorCallback && errorCallback(error);
+    },
   });
 };
