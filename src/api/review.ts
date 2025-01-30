@@ -328,6 +328,7 @@ export const useDeleteAdminBlogReview = () => {
   });
 };
 
+// ADMIN 프로그램 리뷰 리스트 조회
 export const getAdminProgramReviewQueryKey = (type: ReviewType) => [
   'admin',
   'review',
@@ -338,12 +339,59 @@ export const adminProgramReviewListSchema = z.object({
   reviewList: z.array(getReviewSchema),
 });
 
+/**
+ * @description : ADMIN 프로그램 리뷰 리스트 조회
+ * @param param : type
+ * @returns : ADMIN 프로그램 리뷰 리스트 조회
+ */
 export const useGetAdminProgramReview = ({ type }: { type: ReviewType }) => {
   return useQuery({
     queryKey: getAdminProgramReviewQueryKey(type),
     queryFn: async () => {
       const res = await axiosV2.get(`/admin/review/${type}`);
       return adminProgramReviewListSchema.parse(res.data.data);
+    },
+  });
+};
+
+/**
+ * @description : ADMIN 프로그램 리뷰 노출여부 변경
+ * @param param : type, reviewId, isVisible
+ * @returns : ADMIN 프로그램 리뷰 노출여부 변경
+ */
+export const useUpdateAdminProgramReview = ({
+  successCallback,
+  errorCallback,
+}: {
+  successCallback?: () => void;
+  errorCallback?: (error: Error) => void;
+}) => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({
+      type,
+      reviewId,
+      isVisible,
+    }: {
+      type: ReviewType;
+      reviewId: number;
+      isVisible: boolean;
+    }) => {
+      await axiosV2.patch(`/admin/review/${type}/${reviewId}`, {
+        isVisible,
+      });
+
+      return { type, reviewId, isVisible };
+    },
+    onSuccess: async (data) => {
+      await queryClient.invalidateQueries({
+        queryKey: getAdminProgramReviewQueryKey(data.type),
+      });
+      return successCallback && successCallback();
+    },
+    onError: (error: Error) => {
+      return errorCallback && errorCallback(error);
     },
   });
 };
