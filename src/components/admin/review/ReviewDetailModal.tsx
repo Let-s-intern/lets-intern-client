@@ -6,6 +6,7 @@ interface ReviewDetailModalProps {
   selectedRow: Row | null;
   goal?: boolean;
   worry?: boolean;
+  mission?: boolean;
 }
 
 const ReviewDetailModal = ({
@@ -13,6 +14,7 @@ const ReviewDetailModal = ({
   selectedRow,
   goal,
   worry,
+  mission,
 }: ReviewDetailModalProps) => {
   return (
     <Modal open={selectedRow !== null} onClose={onClose}>
@@ -22,7 +24,7 @@ const ReviewDetailModal = ({
           top: '50%',
           left: '50%',
           transform: 'translate(-50%, -50%)',
-          width: 800,
+          width: 600,
           maxHeight: '80vh',
           overflowY: 'auto',
           bgcolor: 'white',
@@ -48,15 +50,37 @@ const ReviewDetailModal = ({
             <Typography variant="body1">
               <strong>이름:</strong> {selectedRow.reviewInfo.name}
             </Typography>
-            <Typography variant="body1">
-              <strong>프로그램 명:</strong> {selectedRow.reviewInfo.title}
-            </Typography>
-            <Typography variant="body1">
-              <strong>만족도 점수:</strong> {selectedRow.reviewInfo.score}
-            </Typography>
-            <Typography variant="body1">
-              <strong>NPS 점수:</strong> {selectedRow.reviewInfo.npsScore}
-            </Typography>
+            {mission ? (
+              <>
+                <Typography variant="body1">
+                  <strong>챌린지 명:</strong>{' '}
+                  {selectedRow.reviewInfo.challengeTitle}
+                </Typography>
+                <Typography variant="body1">
+                  <strong>미션 회차:</strong> {selectedRow.reviewInfo.missionTh}
+                  회차
+                </Typography>
+                <Typography variant="body1">
+                  <strong>미션 명:</strong>{' '}
+                  {selectedRow.reviewInfo.missionTitle}
+                </Typography>
+                <Typography variant="body1">
+                  <strong>미션 소감:</strong> {selectedRow.reviewInfo.review}
+                </Typography>
+              </>
+            ) : (
+              <>
+                <Typography variant="body1">
+                  <strong>프로그램 명:</strong> {selectedRow.reviewInfo.title}
+                </Typography>
+                <Typography variant="body1">
+                  <strong>만족도 점수:</strong> {selectedRow.reviewInfo.score}
+                </Typography>
+                <Typography variant="body1">
+                  <strong>NPS 점수:</strong> {selectedRow.reviewInfo.npsScore}
+                </Typography>
+              </>
+            )}
             {goal && (
               <>
                 <Typography variant="body1">
@@ -89,18 +113,22 @@ const ReviewDetailModal = ({
                 </Typography>
               </>
             )}
-            <Typography variant="body1">
-              <strong>좋았던 점:</strong>{' '}
-              {selectedRow.reviewItemList?.find(
-                (item) => item.questionType === 'GOOD_POINT',
-              )?.answer || '-'}
-            </Typography>
-            <Typography variant="body1">
-              <strong>아쉬웠던 점:</strong>{' '}
-              {selectedRow.reviewItemList?.find(
-                (item) => item.questionType === 'BAD_POINT',
-              )?.answer || '-'}
-            </Typography>
+            {!mission && (
+              <>
+                <Typography variant="body1">
+                  <strong>좋았던 점:</strong>{' '}
+                  {selectedRow.reviewItemList?.find(
+                    (item) => item.questionType === 'GOOD_POINT',
+                  )?.answer || '-'}
+                </Typography>
+                <Typography variant="body1">
+                  <strong>아쉬웠던 점:</strong>{' '}
+                  {selectedRow.reviewItemList?.find(
+                    (item) => item.questionType === 'BAD_POINT',
+                  )?.answer || '-'}
+                </Typography>
+              </>
+            )}
           </Box>
         ) : (
           <Typography>데이터를 불러오는 중...</Typography>
