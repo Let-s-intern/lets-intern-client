@@ -1,5 +1,8 @@
+'use client';
+
 import { GetReview } from '@/api/review';
-import ReviewCard from '@components/ReviewCard';
+import ProgramReviewContentSection from '@components/common/review/programReview/ProgramReviewContentSection';
+import ProgramReviewFilterSection from '@components/common/review/programReview/ProgramReviewFilterSection';
 
 const mock1: GetReview = {
   reviewInfo: {
@@ -112,22 +115,9 @@ const mock4: GetReview = {
 
 const Page = () => {
   return (
-    <div>
-      <div className="grid grid-cols-4 gap-5">
-        <ReviewCard review={mock1} missionTitleClamp={1} />
-        <ReviewCard review={mock2} missionTitleClamp={1} />
-        <ReviewCard expandable review={mock3} missionTitleClamp={1} />
-        <ReviewCard expandable review={mock4} missionTitleClamp={1} />
-      </div>
-      <div>
-        <ReviewCard
-          expandable
-          review={mock4}
-          missionTitleClamp={1}
-          reviewItemLineClamp={2}
-          showThumbnail
-        />
-      </div>
+    <div className="flex w-full flex-col md:gap-y-6 md:pr-5 lg:pr-0">
+      <ProgramReviewFilterSection />
+      <ProgramReviewContentSection />
     </div>
   );
 };

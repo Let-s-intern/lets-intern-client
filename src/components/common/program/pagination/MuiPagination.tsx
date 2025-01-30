@@ -12,13 +12,14 @@ interface MuiPaginationProps {
 const MuiPagination = ({ pageInfo, onChange, page }: MuiPaginationProps) => {
   const matches = useMediaQuery('(min-width:640px)');
 
-  return pageInfo.totalPages > 1 ? (
+  return pageInfo.totalPages > 0 ? (
     <ThemeProvider theme={theme}>
       <Pagination
         page={page}
         onChange={onChange}
         count={pageInfo.totalPages}
         color="primary"
+        shape="rounded"
         showFirstButton
         showLastButton
         size={matches ? 'medium' : 'small'}

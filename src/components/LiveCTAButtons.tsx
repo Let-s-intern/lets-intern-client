@@ -1,6 +1,6 @@
 'use client';
 
-import { ProgramApplicationFormInfo } from '@/api/application';
+import { useProgramApplicationQuery } from '@/api/application';
 import dayjs from '@/lib/dayjs';
 import { generateOrderId, getPayInfo, UserInfo } from '@/lib/order';
 import { LiveIdPrimitive } from '@/schema';
@@ -11,16 +11,19 @@ import { useCallback } from 'react';
 import { DesktopApplyCTA, MobileApplyCTA } from './common/ApplyCTA';
 
 const LiveCTAButtons = ({
-  application,
   live,
   liveId,
 }: {
-  application: ProgramApplicationFormInfo;
   live: LiveIdPrimitive;
   liveId: string;
 }) => {
   const { isLoggedIn } = useAuthStore();
   const router = useRouter();
+
+  const { data: application } = useProgramApplicationQuery(
+    'live',
+    Number(liveId),
+  );
 
   const { setProgramApplicationForm } = useProgramStore();
 
@@ -99,8 +102,8 @@ const LiveCTAButtons = ({
       <DesktopApplyCTA
         program={{
           ...live,
-          beginning: live.startDate ? dayjs(live.startDate) : null,
-          deadline: live.endDate ? dayjs(live.endDate) : null,
+          beginning: live.startDate ? dayjs(live.beginning) : null,
+          deadline: live.endDate ? dayjs(live.deadline) : null,
         }}
         onApplyClick={onApplyClick}
         isAlreadyApplied={isAlreadyApplied}
@@ -109,8 +112,8 @@ const LiveCTAButtons = ({
       <MobileApplyCTA
         program={{
           ...live,
-          beginning: live.startDate ? dayjs(live.startDate) : null,
-          deadline: live.endDate ? dayjs(live.endDate) : null,
+          beginning: live.startDate ? dayjs(live.beginning) : null,
+          deadline: live.endDate ? dayjs(live.deadline) : null,
         }}
         onApplyClick={onApplyClick}
         isAlreadyApplied={isAlreadyApplied}

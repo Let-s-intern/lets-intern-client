@@ -1206,3 +1206,25 @@ export const useGetReportTitle = (reportId: number) => {
     },
   });
 };
+
+// 서류 진단 고민 조회
+export const getReportMessageQueryKey = (applicationId: number) => [
+  'getReportMessage',
+  applicationId,
+];
+
+export const reportMessageSchema = z.object({
+  message: z.string(),
+});
+
+export const useGetReportMessage = (applicationId: number) => {
+  return useQuery({
+    queryKey: getReportMessageQueryKey(applicationId),
+    queryFn: async () => {
+      const res = await axios.get(
+        `/report/application/${applicationId}/message`,
+      );
+      return reportMessageSchema.parse(res.data.data);
+    },
+  });
+};

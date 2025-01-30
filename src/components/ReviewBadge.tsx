@@ -32,7 +32,10 @@ const ReviewBadge = ({
               fill={fill ?? '#FF9C34'}
             />
           </svg>
-          챌린지
+          <span>챌린지</span>
+          <span className="font-semibold text-xxsmall12">
+            프로그램 참여 후기
+          </span>
         </span>
       );
     case 'LIVE_REVIEW':
@@ -135,7 +138,7 @@ const ReviewBadge = ({
             />
           </svg>
           <span>챌린지</span>
-          <span className="font-medium text-xxsmall12">미션 수행 후기</span>
+          <span className="font-semibold text-xxsmall12">미션 수행 후기</span>
         </span>
       );
   }

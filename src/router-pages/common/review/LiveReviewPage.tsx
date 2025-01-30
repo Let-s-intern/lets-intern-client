@@ -1,79 +1,36 @@
-// TODO: 질문 enum으로 관리
-
 import { josa } from 'es-hangul';
-import { useState } from 'react';
-import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
+import { useParams, useSearchParams } from 'react-router-dom';
 
-import { useGetLiveTitle } from '@/api/program';
-import { usePostReviewMutation } from '@/api/review';
+import { useGetChallengeTitle } from '@/api/challenge';
+import { useGetProgramReviewDetail } from '@/api/review';
 import ReviewInstruction from '@components/common/review/ReviewInstruction';
 import ReviewModal from '@components/common/review/ReviewModal';
 import ReviewQuestion from '@components/common/review/ReviewQuestion';
 import ReviewTextarea from '@components/common/review/ReviewTextarea';
 import TenScore from '@components/common/review/score/TenScore';
 
-const LiveReviewCreatePage = () => {
-  const navigate = useNavigate();
+const LiveReviewPage = () => {
   const params = useParams();
-  const programId = params.programId;
   const [searchParams] = useSearchParams();
-  const applicationId = searchParams.get('application');
+  const programId = params.programId;
+  const reviewId = searchParams.get('reviewId');
 
-  const { data: programTitle } = useGetLiveTitle(Number(programId));
+  const { data: programTitle } = useGetChallengeTitle(Number(programId));
 
-  const { mutateAsync: tryPostReview, isPending: postReviewwIsPending } =
-    usePostReviewMutation({
-      successCallback: () => {
-        navigate('/mypage/review', { replace: true });
-      },
-      errorCallback: (error) => {
-        console.error('error', error);
-      },
-    });
-
-  const [score, setScore] = useState<number | null>(null); // 만족도
-  const [npsScore, setNpsScore] = useState<number | null>(null);
-  const [goodPoint, setGoodPoint] = useState<string>('');
-  const [badPoint, setBadPoint] = useState<string>('');
-  const [goal, setGoal] = useState<string>('');
-  const [goalResult, setGoalResult] = useState<string>('');
-
-  const isDisabled =
-    !score || !npsScore || !goodPoint || !badPoint || !goal || !goalResult;
-
-  const onClickSubmit = async () => {
-    if (postReviewwIsPending) return;
-
-    if (isDisabled) {
-      alert('모든 항목을 입력해주세요.');
-      return;
-    }
-
-    try {
-      await tryPostReview({
-        applicationId: applicationId ?? '',
-        reviewForm: {
-          type: 'LIVE_REVIEW',
-          score,
-          npsScore,
-          goodPoint,
-          badPoint,
-          reviewItemList: [
-            { questionType: 'GOAL', answer: goal },
-            { questionType: 'GOAL_RESULT', answer: goalResult },
-          ],
-        },
-      });
-    } catch (error) {
-      console.error(error);
-    }
-  };
+  const { data: reviewData } = useGetProgramReviewDetail(
+    'LIVE_REVIEW',
+    Number(reviewId),
+  );
+  const review = reviewData?.reviewInfo;
+  const goal = review?.reviewItemList?.find(
+    (r) => r.questionType === 'GOAL',
+  )?.answer;
+  const goalResult = review?.reviewItemList?.find(
+    (r) => r.questionType === 'GOAL_RESULT',
+  )?.answer;
 
   return (
-    <ReviewModal
-      onSubmit={onClickSubmit}
-      disabled={postReviewwIsPending || isDisabled}
-    >
+    <ReviewModal readOnly>
       {/* 만족도 평가 */}
       <section>
         <ReviewQuestion required className="mb-1">
@@ -82,7 +39,7 @@ const LiveReviewCreatePage = () => {
         <ReviewInstruction className="mb-5">
           {programTitle?.title}의 만족도를 0~10점 사이로 평가해주세요!
         </ReviewInstruction>
-        <TenScore tenScore={score} setTenScore={setScore} />
+        <TenScore tenScore={review?.reviewInfo.score ?? 0} />
       </section>
 
       {/* 추천 정도*/}
@@ -94,7 +51,7 @@ const LiveReviewCreatePage = () => {
         <ReviewInstruction className="mb-5">
           {programTitle?.title}의 만족도를 0~10점 사이로 평가해주세요!
         </ReviewInstruction>
-        <TenScore tenScore={npsScore} setTenScore={setNpsScore} />
+        <TenScore tenScore={review?.reviewInfo.npsScore ?? 0} />
       </section>
 
       {/* 참여 이유 */}
@@ -104,8 +61,8 @@ const LiveReviewCreatePage = () => {
         </ReviewQuestion>
         <ReviewTextarea
           placeholder="LIVE 클래스를 통해 어떤 어려움을 해결하고 싶으셨는지, 알려주세요."
-          value={goal}
-          onChange={(e) => setGoal(e.target.value)}
+          value={goal ?? ''}
+          readOnly
         />
       </section>
 
@@ -117,8 +74,8 @@ const LiveReviewCreatePage = () => {
         </ReviewQuestion>
         <ReviewTextarea
           placeholder="어려움을 해결하는 과정에서 LIVE 클래스가 어떤 도움을 주었는지 작성해주세요."
-          value={goalResult}
-          onChange={(e) => setGoalResult(e.target.value)}
+          value={goalResult ?? ''}
+          readOnly
         />
       </section>
       {/* 만족했던 점 */}
@@ -128,8 +85,8 @@ const LiveReviewCreatePage = () => {
           점을 남겨주세요!
         </ReviewQuestion>
         <ReviewTextarea
-          value={goodPoint}
-          onChange={(e) => setGoodPoint(e.target.value)}
+          value={review?.reviewInfo.goodPoint ?? ''}
+          readOnly
           placeholder="가장 도움이 되었던 미션이나 학습 콘텐츠와 같이 참여하면서 가장 만족했던 점을 자유롭게 작성해주세요."
         />
       </section>
@@ -141,8 +98,8 @@ const LiveReviewCreatePage = () => {
           점을 남겨주세요!
         </ReviewQuestion>
         <ReviewTextarea
-          value={badPoint}
-          onChange={(e) => setBadPoint(e.target.value)}
+          value={review?.reviewInfo.badPoint ?? ''}
+          readOnly
           placeholder="참여하면서 아쉬웠던 점이나 추가되었으면 좋겠는 내용이 있다면 자유롭게 작성해주세요."
         />
       </section>
@@ -150,4 +107,4 @@ const LiveReviewCreatePage = () => {
   );
 };
 
-export default LiveReviewCreatePage;
+export default LiveReviewPage;

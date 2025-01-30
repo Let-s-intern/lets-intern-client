@@ -3,6 +3,7 @@ import ReviewFilter from '@components/common/review/ReviewFilter';
 import MoreHeader from '@components/common/ui/MoreHeader';
 import ReviewCard from '@components/ReviewCard';
 import { Metadata } from 'next';
+import { Suspense } from 'react';
 
 export const metadata: Metadata = {
   robots: 'noindex, nofollow',
@@ -117,7 +118,7 @@ const mock4: GetReview = {
   ],
 };
 
-export const singleReviewFilterList = [
+const singleReviewFilterList = [
   {
     caption: '전체',
     value: 'all',
@@ -136,7 +137,7 @@ export const singleReviewFilterList = [
   },
 ];
 
-export const multiReveiwFilterList = [
+const multiReveiwFilterList = [
   {
     caption: '긍정적 리뷰',
     value: 'positive',
@@ -175,17 +176,19 @@ const Page = () => {
         subtitle="4개"
         href="/review/program"
       />
-      <ReviewFilter
-        label="나는 필터야"
-        list={singleReviewFilterList}
-        defaultValue={singleReviewFilterList[0].value}
-      />
-      <ReviewFilter
-        label="나는 필터야"
-        list={multiReveiwFilterList}
-        defaultValue={multiReveiwFilterList[0].value}
-        multiSelect
-      />
+      <Suspense>
+        <ReviewFilter
+          label="나는 필터야"
+          list={singleReviewFilterList}
+          defaultValue={singleReviewFilterList[0].value}
+        />
+        <ReviewFilter
+          label="나는 필터야"
+          list={multiReveiwFilterList}
+          defaultValue={multiReveiwFilterList[0].value}
+          multiSelect
+        />
+      </Suspense>
     </div>
   );
 };

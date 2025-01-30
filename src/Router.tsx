@@ -41,8 +41,11 @@ import ReportPortfolioPage from './router-pages/common/report/ReportPortfolioPag
 import ReportResumePage from './router-pages/common/report/ReportResumePage';
 import ReportTossPage from './router-pages/common/report/ReportTossPage';
 import ChallengeReviewCreatePage from './router-pages/common/review/ChallengeReviewCreatePage';
+import ChallengeReviewPage from './router-pages/common/review/ChallengeReviewPage';
 import LiveReviewCreatePage from './router-pages/common/review/LiveReviewCreatePage';
+import LiveReviewPage from './router-pages/common/review/LiveReviewPage';
 import ReportReviewCreatePage from './router-pages/common/review/ReportReviewCreatePage';
+import ReportReviewPage from './router-pages/common/review/ReportReviewPage';
 import Maintenance from './router-pages/maintenance/Maintenance';
 import NotFound from './router-pages/NotFound';
 
@@ -119,15 +122,30 @@ const Router = () => {
                   path="review/new/challenge/:programId"
                   element={<ChallengeReviewCreatePage />}
                 />
+                {/* /mypage/review/challenge */}
+                <Route
+                  path="review/challenge/:programId"
+                  element={<ChallengeReviewPage />}
+                />
                 {/* /mypage/review/new/live/:programId */}
                 <Route
                   path="review/new/live/:programId"
                   element={<LiveReviewCreatePage />}
                 />
+                {/* /mypage/review/live */}
+                <Route
+                  path="review/live/:programId"
+                  element={<LiveReviewPage />}
+                />
                 {/* /mypage/review/new/report/:reportId */}
                 <Route
                   path="review/new/report/:reportId"
                   element={<ReportReviewCreatePage />}
+                />
+                {/* /mypage/review/report */}
+                <Route
+                  path="review/report/:reportId"
+                  element={<ReportReviewPage />}
                 />
                 <Route path="credit" element={<Credit />} />
                 <Route path="credit/:paymentId" element={<CreditDetail />} />
@@ -154,7 +172,7 @@ const Router = () => {
 
               {/* 챌린지 대시보드 */}
               <Route
-                path="challenge/:programId"
+                path="challenge/:applicationId/:programId"
                 element={
                   <CurrentChallengeProvider>
                     <ChallengeLayout />

@@ -1,4 +1,3 @@
-import { fetchProgramApplication } from '@/api/application';
 import { fetchLiveData } from '@/api/program';
 import { isDeprecatedProgram } from '@/lib/isDeprecatedProgram';
 import LiveCTAButtons from '@components/LiveCTAButtons';
@@ -11,10 +10,7 @@ const Page = async ({
 }) => {
   const { id, title } = await params;
 
-  const [live, application] = await Promise.all([
-    fetchLiveData(id),
-    fetchProgramApplication(id),
-  ]);
+  const [live] = await Promise.all([fetchLiveData(id)]);
 
   const isDeprecated = isDeprecatedProgram(live);
 
@@ -26,7 +22,7 @@ const Page = async ({
     <>
       <LiveView live={live} />
 
-      <LiveCTAButtons application={application} live={live} liveId={id} />
+      <LiveCTAButtons live={live} liveId={id} />
     </>
   );
 };

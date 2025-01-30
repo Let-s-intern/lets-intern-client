@@ -1,4 +1,5 @@
 import {
+  ChallengeType,
   challengeTypeSchema,
   pageInfo,
   ProgramTypeEnum,
@@ -52,7 +53,9 @@ export type ReviewItem = z.infer<typeof reviewItemSchema>;
 export const getReviewSchema = z.object({
   reviewInfo: z.object({
     reviewId: z.number(),
-    type: reviewTypeSchema,
+    score: z.number().nullable().optional(),
+    npsScore: z.number().nullable().optional(),
+    type: reviewTypeSchema.nullable().optional(),
     createDate: z.string().nullable().optional(),
     goodPoint: z.string().nullable().optional(),
     badPoint: z.string().nullable().optional(),
@@ -73,6 +76,10 @@ export type GetReview = z.infer<typeof getReviewSchema>;
 export const reviewListSchema = z.object({
   reviewList: z.array(getReviewSchema),
   pageInfo,
+});
+
+export const reviewDetailSchema = z.object({
+  reviewInfo: getReviewSchema,
 });
 
 const blogReviewSchema = z.object({
@@ -141,8 +148,14 @@ export const usePostReviewMutation = ({
   const client = useQueryClient();
 
   return useMutation({
-    mutationFn: async (reviewForm: PostReviewParams) => {
-      await axiosV2.post('/review', reviewForm);
+    mutationFn: async ({
+      applicationId,
+      reviewForm,
+    }: {
+      applicationId: string;
+      reviewForm: PostReviewParams;
+    }) => {
+      await axiosV2.post(`/review?applicationId=${applicationId}`, reviewForm);
     },
     onSuccess: () => {
       client.invalidateQueries({
@@ -152,6 +165,58 @@ export const usePostReviewMutation = ({
     },
     onError: (error: Error) => {
       return errorCallback && errorCallback(error);
+    },
+  });
+};
+
+export type programReviewParam = {
+  types?: ReviewType[];
+  challengeTypes?: ChallengeType[];
+  page?: number;
+  size?: number;
+};
+
+const getProgramReviewQueryKey = (param?: programReviewParam) => [
+  'programReview',
+  param?.types,
+];
+
+export const useGetProgramReview = ({
+  types,
+  challengeTypes,
+  page = 0,
+  size = 10,
+}: programReviewParam) => {
+  return useQuery({
+    queryKey: getProgramReviewQueryKey({ types, challengeTypes, page, size }),
+    queryFn: async () => {
+      const res = await axiosV2.get('/review', {
+        params: {
+          type: types ? types.join(',') : undefined,
+          challengeType: challengeTypes ? challengeTypes.join(',') : undefined,
+          page,
+          size,
+        },
+      });
+      return reviewListSchema.parse(res.data.data);
+    },
+  });
+};
+
+export const getProgramReviewDetailQueryKey = (
+  type: string,
+  reviewId: number,
+) => ['programReviewDetail', type, reviewId];
+
+export const useGetProgramReviewDetail = (
+  type: ReviewType,
+  reviewId: number,
+) => {
+  return useQuery({
+    queryKey: getProgramReviewDetailQueryKey(type, reviewId),
+    queryFn: async () => {
+      const res = await axiosV2.get(`/review/${type}/${reviewId}`);
+      return reviewDetailSchema.parse(res.data.data);
     },
   });
 };

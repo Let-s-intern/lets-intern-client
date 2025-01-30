@@ -1,13 +1,13 @@
 'use client';
 
-import { useMediaQuery } from '@mui/material';
-import { Check, ChevronDown } from 'lucide-react';
-import { memo, ReactNode, useState } from 'react';
-
 import CheckboxActive from '@/assets/icons/checkbox-active.svg?react';
 import CheckboxInActive from '@/assets/icons/checkbox-inactive.svg?react';
 import { twMerge } from '@/lib/twMerge';
 import BaseBottomSheet from '@components/ui/BaseBottomSheet';
+import { useMediaQuery } from '@mui/material';
+import { Check, ChevronDown } from 'lucide-react';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { memo, ReactNode, useState } from 'react';
 
 export interface ReviewFilterItem {
   caption: string;
@@ -16,6 +16,7 @@ export interface ReviewFilterItem {
 
 interface Props {
   label: string;
+  labelValue?: string;
   defaultValue?: string;
   list: ReviewFilterItem[];
   multiSelect?: boolean;
@@ -24,16 +25,28 @@ interface Props {
 
 function ReviewFilter({
   label,
+  labelValue,
   defaultValue,
   list,
   multiSelect = false,
   onSelect,
 }: Props) {
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+
+  const findItem = (
+    value: string | undefined,
+  ): ReviewFilterItem | undefined => {
+    if (value === undefined) return undefined;
+    list.find((item) => item.value === value) as ReviewFilterItem | undefined;
+  };
+
   const [isOpen, setIsOpen] = useState(false);
   // 단일 선택
-  const [selectedItem, setSelectedItem] = useState(() =>
-    findItem(defaultValue),
-  );
+  const [selectedItem, setSelectedItem] = useState<
+    ReviewFilterItem | undefined
+  >(() => findItem(defaultValue));
   // 중복 선택
   const [checkedList, setCheckedList] = useState<ReviewFilterItem[]>(() =>
     findItem(defaultValue) ? [findItem(defaultValue)!] : [],
@@ -41,17 +54,44 @@ function ReviewFilter({
 
   const isDesktop = useMediaQuery('(min-width: 768px)');
 
-  // 전체 or caption or caption외 N개
+  const handleQueryParams = (item: ReviewFilterItem) => {
+    // 쿼리 스트링으로 선택된 아이템 추가
+    if (labelValue) {
+      const params = new URLSearchParams(searchParams.toString());
+
+      if (multiSelect) {
+        const alreadyIncluded = checkedList.some(
+          (ele: ReviewFilterItem) => ele.value === item.value,
+        );
+        if (alreadyIncluded) {
+          const filtered = checkedList.filter(
+            (ele) => ele.value !== item.value,
+          );
+          if (filtered.length === 0) {
+            params.delete(labelValue);
+          } else {
+            params.set(labelValue, filtered.map((ele) => ele.value).join(','));
+          }
+        } else {
+          params.set(
+            labelValue,
+            [...checkedList, item].map((ele) => ele.value).join(','),
+          );
+        }
+      } else {
+        params.set(labelValue, item.value);
+      }
+
+      router.replace(`${pathname}?${params.toString()}`);
+    }
+  };
+
   const multiSelectCaption =
     checkedList.length > 0
       ? checkedList.length > 1
         ? `${checkedList[0].caption}외 ${checkedList.length - 1}개`
         : checkedList[0].caption
       : '전체';
-
-  function findItem(value?: string) {
-    return list.find((item) => item.value === value);
-  }
 
   const handleClickItem = (item: ReviewFilterItem) => {
     if (onSelect) onSelect(item.value);
@@ -71,6 +111,8 @@ function ReviewFilter({
       setIsOpen(false);
       setSelectedItem(item);
     }
+
+    if (labelValue) handleQueryParams(item);
   };
 
   return (

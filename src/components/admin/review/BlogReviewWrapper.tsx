@@ -2,7 +2,7 @@
 
 import { ProgramTypeEnum, ProgramTypeUpperCase } from '@/schema';
 import ReviewFilter from '@components/common/review/ReviewFilter';
-import { useState } from 'react';
+import { Suspense, useState } from 'react';
 import BlogReviewListSection from './BlogReviewListSection';
 
 const { CHALLENGE, LIVE, REPORT } = ProgramTypeEnum.enum;
@@ -35,12 +35,14 @@ function BlogReviewWrapper() {
   return (
     <>
       <div className="py-6">
-        <ReviewFilter
-          label="프로그램 후기"
-          list={filterList}
-          multiSelect
-          onSelect={handleSelect}
-        />
+        <Suspense>
+          <ReviewFilter
+            label="프로그램 후기"
+            list={filterList}
+            multiSelect
+            onSelect={handleSelect}
+          />
+        </Suspense>
       </div>
       <BlogReviewListSection types={types as ProgramTypeUpperCase[]} />
     </>

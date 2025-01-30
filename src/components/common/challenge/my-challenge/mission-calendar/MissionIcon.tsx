@@ -24,7 +24,7 @@ const MissionIcon = ({ className, schedule, isDone }: Props) => {
       <Link
         to={
           !isDone
-            ? `/challenge/${params.programId}/me?scroll_to_mission=${mission.id}`
+            ? `/challenge/${params.applicationId}/${params.programId}/me?scroll_to_mission=${mission.id}`
             : '#'
         }
         replace
