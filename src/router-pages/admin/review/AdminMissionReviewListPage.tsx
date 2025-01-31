@@ -38,7 +38,7 @@ const columns: GridColDef<Row>[] = [
   {
     field: 'missionTh',
     headerName: '미션 회차',
-    width: 200,
+    width: 100,
     valueGetter: (_, row) => row.reviewInfo.missionTh,
   },
   {
