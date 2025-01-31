@@ -75,14 +75,12 @@ const ReviewCard = ({
   reviewItemLineClamp = 3,
   expandable = false,
   showThumbnail = false,
-  showGoodAndBadPoint = false,
 }: {
   review: GetReview;
   missionTitleClamp?: 1 | 2;
   reviewItemLineClamp?: 1 | 2 | 3 | 4;
   expandable?: boolean;
   showThumbnail?: boolean;
-  showGoodAndBadPoint?: boolean;
 }) => {
   return (
     <div className="flex flex-col gap-4 p-4 border rounded-sm sm:flex-row border-neutral-80 sm:gap-10">
@@ -134,13 +132,15 @@ const ReviewCard = ({
         </div>
 
         <div className="flex items-center gap-2 mt-auto mb-2 text-xxsmall12">
-          <span className="whitespace-pre text-neutral-20">
+          <span className="whitespace-pre text-neutral-20 font-medium">
             {review.reviewInfo.name?.[0]}**
           </span>
           <span className="text-neutral-70">|</span>
           <span className="text-neutral-20 ">
-            희망직무 {review.reviewInfo.wishJob} · 희망산업{' '}
-            {review.reviewInfo.wishCompany}
+            희망직무{' '}
+            <span className="font-medium">{review.reviewInfo.wishJob}</span> ·
+            희망산업{' '}
+            <span className="font-medium">{review.reviewInfo.wishCompany}</span>
           </span>
         </div>
         <div className="text-neutral-40 text-xxsmall12">
@@ -186,10 +186,10 @@ const ReviewItemBlock = (props: {
         <ExpandableParagraph
           content={props.answer ?? ''}
           lineClamp={props.lineClamp}
-          className={twMerge('text-xxsmall12 font-normal text-neutral-10')}
+          className={twMerge('text-xsmall14 font-normal text-neutral-10')}
         />
       ) : (
-        <p className={twMerge('text-xxsmall12 font-normal text-neutral-10')}>
+        <p className={twMerge('text-xsmall14 font-normal text-neutral-10')}>
           {props.answer}
         </p>
       )}
