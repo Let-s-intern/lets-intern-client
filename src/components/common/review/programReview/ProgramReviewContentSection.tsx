@@ -64,7 +64,12 @@ const ProgramReviewContentSection = () => {
         </div>
       ) : (
         reviewData.reviewList.map((review) => (
-          <ReviewCard key={review.reviewInfo.reviewId} review={review} />
+          <ReviewCard
+            key={review.reviewInfo.reviewId}
+            review={review}
+            showThumbnail
+            expandable
+          />
         ))
       )}
       {pageInfo && pageInfo.totalPages > 0 && (
