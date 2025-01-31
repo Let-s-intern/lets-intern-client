@@ -17,6 +17,7 @@ import {
   challengeUserInfoSchema,
   challengeValidUserSchema,
 } from './challengeSchema';
+import { getAdminProgramReviewQueryKey } from './review';
 
 const useChallengeQueryKey = 'useChallengeQueryKey';
 
@@ -320,7 +321,7 @@ export const usePatchChallengeAttendance = ({
   errorCallback,
 }: {
   successCallback?: () => void;
-  errorCallback?: () => void;
+  errorCallback?: (error: Error) => void;
 }) => {
   const queryClient = useQueryClient();
   return useMutation({
@@ -352,10 +353,13 @@ export const usePatchChallengeAttendance = ({
       queryClient.invalidateQueries({
         queryKey: ['challenge'],
       });
+      queryClient.invalidateQueries({
+        queryKey: getAdminProgramReviewQueryKey('MISSION_REVIEW'),
+      });
       return successCallback && successCallback();
     },
-    onError: () => {
-      return errorCallback && errorCallback();
+    onError: (e) => {
+      return errorCallback && errorCallback(e);
     },
   });
 };
