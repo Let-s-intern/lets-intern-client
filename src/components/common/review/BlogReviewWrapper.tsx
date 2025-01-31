@@ -1,8 +1,8 @@
 'use client';
 
-import { ProgramTypeEnum, ProgramTypeUpperCase } from '@/schema';
+import { ProgramTypeEnum } from '@/schema';
 import ReviewFilter from '@components/common/review/ReviewFilter';
-import { Suspense, useState } from 'react';
+import { Suspense } from 'react';
 import BlogReviewListSection from './BlogReviewListSection';
 
 const { CHALLENGE, LIVE, REPORT } = ProgramTypeEnum.enum;
@@ -23,28 +23,19 @@ const filterList = [
 ];
 
 function BlogReviewWrapper() {
-  const [types, setTypes] = useState<string[]>([]);
-
-  const handleSelect = (value: string) => {
-    const checked = !types.some((type) => type === value);
-
-    if (checked) setTypes((prev) => [...prev, value]);
-    else setTypes((prev) => prev.filter((type) => type !== value));
-  };
-
   return (
     <>
       <div className="py-6">
         <Suspense>
           <ReviewFilter
             label="프로그램 후기"
+            labelValue="type"
             list={filterList}
             multiSelect
-            onSelect={handleSelect}
           />
         </Suspense>
       </div>
-      <BlogReviewListSection types={types as ProgramTypeUpperCase[]} />
+      <BlogReviewListSection />
     </>
   );
 }

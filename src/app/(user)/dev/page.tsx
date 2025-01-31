@@ -179,13 +179,13 @@ const Page = () => {
       <Suspense>
         <ReviewFilter
           label="나는 필터야"
+          labelValue="filter"
           list={singleReviewFilterList}
-          defaultValue={singleReviewFilterList[0].value}
         />
         <ReviewFilter
           label="나는 필터야"
+          labelValue="filter"
           list={multiReveiwFilterList}
-          defaultValue={multiReveiwFilterList[0].value}
           multiSelect
         />
       </Suspense>

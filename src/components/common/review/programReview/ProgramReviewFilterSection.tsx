@@ -1,6 +1,6 @@
 'use client';
 
-import { challengeTypes, challengeTypeToText } from '@/utils/convert';
+import { challengeTypes, challengeTypeToDisplay } from '@/utils/convert';
 import { useSearchParams } from 'next/navigation';
 import ReviewFilter, { ReviewFilterItem } from '../ReviewFilter';
 
@@ -10,47 +10,48 @@ const programTypeFilterList: ReviewFilterItem[] = [
   { caption: '서류 피드백 REPORT', value: 'REPORT_REVIEW' },
 ];
 
-const challengeTypeFilterList: ReviewFilterItem[] = challengeTypes.map(
-  (item) => ({
-    caption: challengeTypeToText[item] + ' 챌린지',
+const challengeTypeFilterList: ReviewFilterItem[] = challengeTypes
+  .filter((type) => type !== 'ETC')
+  .map((item) => ({
+    caption: challengeTypeToDisplay[item],
     value: item,
-  }),
-);
+  }));
 
-const reviewTypeFilterList: ReviewFilterItem[] = [
-  { caption: '미션 수행 후기', value: 'MISSION_REVIEW' },
-  { caption: '프로그램 참여 후기', value: 'CHALLENGE_REVIEW' },
-];
+// const reviewTypeFilterList: ReviewFilterItem[] = [
+//   { caption: '미션 수행 후기', value: 'MISSION_REVIEW' },
+//   { caption: '프로그램 참여 후기', value: 'CHALLENGE_REVIEW' },
+// ];
 
 const ProgramReviewFilterSection = () => {
   const searchParams = useSearchParams();
 
-  const programType = searchParams.get('PROGRAM');
-  const challengeType = searchParams.get('CHALLENGE');
-  const reviewType = searchParams.get('REVIEW');
+  const programType = searchParams.get('program');
+  // const challengeType = searchParams.get('CHALLENGE');
+  // const reviewType = searchParams.get('REVIEW');
 
   return (
     <section className="w-full flex gap-x-3 md:gap-x-2 px-5 py-6 md:p-0">
       <ReviewFilter
         label="프로그램 후기"
-        labelValue="PROGRAM"
+        labelValue="program"
+        childLabelValue={['challenge']}
         list={programTypeFilterList}
       />
-      {programType === 'CHALLENGE_REVIEW' && (
-          <ReviewFilter
-            label="챌린지 구분"
-            labelValue="CHALLENGE"
-            list={challengeTypeFilterList}
-            multiSelect
-          />
+      {programType === 'CHALLENGE_REVIEW'.toLowerCase() && (
+        <ReviewFilter
+          label="챌린지 구분"
+          labelValue="challenge"
+          list={challengeTypeFilterList}
+          multiSelect
+        />
       )}
-      {programType === 'CHALLENGE_REVIEW' && (
+      {/* {programType === 'CHALLENGE_REVIEW' && (
           <ReviewFilter
             label="후기 유형"
             labelValue="REVIEW"
             list={reviewTypeFilterList}
           />
-      )}
+      )} */}
     </section>
   );
 };
