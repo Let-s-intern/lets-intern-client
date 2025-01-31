@@ -61,8 +61,8 @@ export const getReviewSchema = z.object({
     type: reviewTypeSchema.nullable().optional(),
     createDate: z.string().nullable().optional(),
     programTitle: z.string().nullable().optional(),
-    badPoint:z.string().nullable().optional(),
-    goodPoint:z.string().nullable().optional(),
+    badPoint: z.string().nullable().optional(),
+    goodPoint: z.string().nullable().optional(),
     programThumbnail: z.string().nullable().optional(),
     challengeType: challengeTypeSchema.nullable().optional(),
     missionTitle: z.string().nullable().optional(),
@@ -187,7 +187,7 @@ export type programReviewParam = {
 // USER 프로그램 리뷰 리스트 조회 쿼리 키
 const getProgramReviewQueryKey = (param?: programReviewParam) => [
   'programReview',
-  param?.types,
+  { ...param },
 ];
 
 /**
