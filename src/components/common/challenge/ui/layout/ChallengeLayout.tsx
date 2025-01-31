@@ -19,6 +19,7 @@ const ChallengeLayout = () => {
   const params = useParams();
   const { isLoggedIn } = useAuthStore();
   const programId = params.programId;
+  const applicationId = params.applicationId;
 
   const { data: challenge, isLoading: challengeIsLoading } =
     useGetChallengeQuery({
@@ -63,7 +64,7 @@ const ChallengeLayout = () => {
     }
 
     if (!isValidUserInfo || (isStartAfterGoal && !hasChallengeGoal)) {
-      navigate(`/challenge/${programId}/user/info`);
+      navigate(`/challenge/${applicationId}/${programId}/user/info`);
       return;
     }
   }, [
@@ -72,6 +73,7 @@ const ChallengeLayout = () => {
     isValidUserInfo,
     navigate,
     programId,
+    applicationId,
     accessibleData,
     hasChallengeGoal,
     isStartAfterGoal,

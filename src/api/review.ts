@@ -61,12 +61,11 @@ export const getReviewSchema = z.object({
     type: reviewTypeSchema.nullable().optional(),
     createDate: z.string().nullable().optional(),
     programTitle: z.string().nullable().optional(),
-    badPoint:z.string().nullable().optional(),
-    goodPoint:z.string().nullable().optional(),
     programThumbnail: z.string().nullable().optional(),
     challengeType: challengeTypeSchema.nullable().optional(),
     missionTitle: z.string().nullable().optional(),
     missionTh: z.number().nullable().optional(),
+    attendanceReview: z.string().nullable().optional(), // 미션 수행 후기
     name: z.string().nullable().optional(), // 이름
     wishJob: z.string().nullable().optional(), // 희망직무
     wishCompany: z.string().nullable().optional(), // 희망산업
@@ -136,8 +135,6 @@ export type PostReviewParams = {
   type: ReviewType;
   score: number;
   npsScore: number;
-  goodPoint: string;
-  badPoint: string;
   reviewItemList: PostReviewItemType[];
 };
 
@@ -187,7 +184,7 @@ export type programReviewParam = {
 // USER 프로그램 리뷰 리스트 조회 쿼리 키
 const getProgramReviewQueryKey = (param?: programReviewParam) => [
   'programReview',
-  param?.types,
+  { ...param },
 ];
 
 /**

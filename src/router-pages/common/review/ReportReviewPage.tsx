@@ -36,6 +36,12 @@ const ReportReviewPage = () => {
   const worryResult = review?.reviewItemList?.find(
     (r) => r.questionType === 'WORRY_RESULT',
   )?.answer;
+  const goodPoint = review?.reviewItemList?.find(
+    (r) => r.questionType === 'GOOD_POINT',
+  )?.answer;
+  const badPoint = review?.reviewItemList?.find(
+    (r) => r.questionType === 'BAD_POINT',
+  )?.answer;
 
   return (
     <ReviewModal readOnly>
@@ -93,7 +99,7 @@ const ReportReviewPage = () => {
         </ReviewQuestion>
         <ReviewTextarea
           placeholder={`${programTitle?.title}에서 가장 도움이 되었던 내용이나 ${isDesktop ? '\n' : ''}이용하면서 가장 만족했던 점을 자유롭게 작성해주세요.`}
-          value={review?.reviewInfo.goodPoint ?? '-'}
+          value={goodPoint ?? '-'}
           readOnly
         />
       </section>
@@ -106,7 +112,7 @@ const ReportReviewPage = () => {
         </ReviewQuestion>
         <ReviewTextarea
           placeholder={`참여하면서 아쉬웠던 점이나 추가되었으면 좋겠는 내용이 있다면 ${isDesktop ? '\n' : ''}자유롭게 작성해주세요.`}
-          value={review?.reviewInfo.badPoint ?? '-'}
+          value={badPoint ?? '-'}
           readOnly
         />
       </section>

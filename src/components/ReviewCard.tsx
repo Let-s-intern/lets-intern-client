@@ -31,7 +31,7 @@ export const getTitle = (review: GetReview) => {
   }
 };
 
-const questionIcon = (questionType: QuestionType | null | 'GOOD' | 'BAD') => {
+const questionIcon = (questionType: QuestionType | null) => {
   switch (questionType) {
     case 'WORRY':
       return <PinBlue width={18} height={18} />;
@@ -41,12 +41,31 @@ const questionIcon = (questionType: QuestionType | null | 'GOOD' | 'BAD') => {
       return <PinRed width={18} height={18} />;
     case 'GOAL_RESULT':
       return <Trophy width={18} height={18} />;
-    case 'GOOD':
+    case 'GOOD_POINT':
       return <Heart width={18} height={18} />;
-    case 'BAD':
+    case 'BAD_POINT':
       return <Pen width={18} height={18} />;
     default:
       return <Bubble width={18} height={18} />;
+  }
+};
+
+const questionPriority = (questionType: QuestionType | null) => {
+  switch (questionType) {
+    case 'GOAL':
+      return 1;
+    case 'GOAL_RESULT':
+      return 2;
+    case 'WORRY':
+      return 3;
+    case 'WORRY_RESULT':
+      return 4;
+    case 'GOOD_POINT':
+      return 5;
+    case 'BAD_POINT':
+      return 6;
+    default:
+      return 7;
   }
 };
 
@@ -56,14 +75,12 @@ const ReviewCard = ({
   reviewItemLineClamp = 3,
   expandable = false,
   showThumbnail = false,
-  showGoodAndBadPoint = false,
 }: {
   review: GetReview;
   missionTitleClamp?: 1 | 2;
   reviewItemLineClamp?: 1 | 2 | 3 | 4;
   expandable?: boolean;
   showThumbnail?: boolean;
-  showGoodAndBadPoint?: boolean;
 }) => {
   return (
     <div className="flex flex-col gap-4 p-4 border rounded-sm sm:flex-row border-neutral-80 sm:gap-10">
@@ -97,44 +114,33 @@ const ReviewCard = ({
           </div>
         ) : null}
         <div className="mb-4 space-y-2.5 ">
-          {review.reviewItemList?.map((reviewItem, index) => (
-            <ReviewItemBlock
-              key={index}
-              {...reviewItem}
-              lineClamp={reviewItemLineClamp}
-              icon={questionIcon(reviewItem.questionType ?? null)}
-              expandable={expandable}
-            />
-          ))}
-          {showGoodAndBadPoint && review.reviewInfo.goodPoint ? (
-            <ReviewItemBlock
-              lineClamp={reviewItemLineClamp}
-              expandable={expandable}
-              questionText="좋았던 점"
-              icon={questionIcon('GOOD')}
-              answer={review.reviewInfo.goodPoint}
-            />
-          ) : null}
-
-          {showGoodAndBadPoint && review.reviewInfo.badPoint ? (
-            <ReviewItemBlock
-              lineClamp={reviewItemLineClamp}
-              expandable={expandable}
-              questionText="아쉬웠던 점"
-              icon={questionIcon('BAD')}
-              answer={review.reviewInfo.badPoint}
-            />
-          ) : null}
+          {review.reviewItemList
+            ?.sort(
+              (a, b) =>
+                questionPriority(a.questionType ?? null) -
+                questionPriority(b.questionType ?? null),
+            )
+            .map((reviewItem, index) => (
+              <ReviewItemBlock
+                key={index}
+                {...reviewItem}
+                lineClamp={reviewItemLineClamp}
+                icon={questionIcon(reviewItem.questionType ?? null)}
+                expandable={expandable}
+              />
+            ))}
         </div>
 
         <div className="flex items-center gap-2 mt-auto mb-2 text-xxsmall12">
-          <span className="whitespace-pre text-neutral-20">
+          <span className="whitespace-pre text-neutral-20 font-medium">
             {review.reviewInfo.name?.[0]}**
           </span>
           <span className="text-neutral-70">|</span>
           <span className="text-neutral-20 ">
-            희망직무 {review.reviewInfo.wishJob} · 희망산업{' '}
-            {review.reviewInfo.wishCompany}
+            희망직무{' '}
+            <span className="font-medium">{review.reviewInfo.wishJob}</span> ·
+            희망산업{' '}
+            <span className="font-medium">{review.reviewInfo.wishCompany}</span>
           </span>
         </div>
         <div className="text-neutral-40 text-xxsmall12">
@@ -180,10 +186,10 @@ const ReviewItemBlock = (props: {
         <ExpandableParagraph
           content={props.answer ?? ''}
           lineClamp={props.lineClamp}
-          className={twMerge('text-xxsmall12 font-normal text-neutral-10')}
+          className={twMerge('text-xsmall14 font-normal text-neutral-10')}
         />
       ) : (
-        <p className={twMerge('text-xxsmall12 font-normal text-neutral-10')}>
+        <p className={twMerge('text-xsmall14 font-normal text-neutral-10')}>
           {props.answer}
         </p>
       )}

@@ -6,21 +6,24 @@ import { useGetBlogReviewList } from '@/api/review';
 import { ProgramTypeUpperCase } from '@/schema';
 import MuiPagination from '@components/common/program/pagination/MuiPagination';
 import BlogReviewCard from '@components/common/review/BlogReviewCard';
+import { useSearchParams } from 'next/navigation';
 import LoadingContainer from '../ui/loading/LoadingContainer';
 
 const PAGE_SIZE = 10;
 
-interface Props {
-  types?: ProgramTypeUpperCase[];
-}
-
-function BlogReviewListSection({ types = [] }: Props) {
+function BlogReviewListSection() {
   const [page, setPage] = useState(1);
+  const searchParams = useSearchParams();
+  const types = searchParams
+    .get('type')
+    ?.toUpperCase()
+    .split(',')
+    .map((type) => type as ProgramTypeUpperCase);
 
   const { data, isLoading } = useGetBlogReviewList({
     page,
     size: PAGE_SIZE,
-    types,
+    types: types ?? ['CHALLENGE', 'LIVE', 'REPORT'],
   });
 
   if (isLoading) return <LoadingContainer className="h-[50vh]" />;
