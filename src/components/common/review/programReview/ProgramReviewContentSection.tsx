@@ -14,7 +14,7 @@ import { useEffect, useState } from 'react';
 
 const ProgramReviewContentSection = () => {
   const searchParams = useSearchParams();
-  const [currentPage, setCurrentPage] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
   const [pageInfo, setPageInfo] = useState<PageInfo | null>(null);
 
   const programType = searchParams.get('program')?.toUpperCase();
@@ -28,10 +28,7 @@ const ProgramReviewContentSection = () => {
   // const onlyMissionReview = reviewType === 'MISSION_REVIEW';
 
   const handlePageChange = (page: number) => {
-    setCurrentPage(page - 1);
-    if (pageInfo) {
-      setPageInfo({ ...pageInfo, pageNum: page - 1 });
-    }
+    setCurrentPage(page);
 
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -49,7 +46,7 @@ const ProgramReviewContentSection = () => {
     useGetProgramReview(getProgramParams);
 
   useEffect(() => {
-    if (reviewData && !pageInfo) {
+    if (reviewData) {
       setPageInfo(reviewData.pageInfo);
     }
   }, [reviewData, pageInfo]);
@@ -74,7 +71,7 @@ const ProgramReviewContentSection = () => {
       )}
       {pageInfo && pageInfo.totalPages > 0 && (
         <MuiPagination
-          page={currentPage + 1}
+          page={currentPage}
           pageInfo={pageInfo}
           onChange={(event, page) => {
             handlePageChange(page);
