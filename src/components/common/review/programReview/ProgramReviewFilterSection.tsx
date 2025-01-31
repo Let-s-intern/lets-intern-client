@@ -2,7 +2,6 @@
 
 import { challengeTypes, challengeTypeToText } from '@/utils/convert';
 import { useSearchParams } from 'next/navigation';
-import { Suspense } from 'react';
 import ReviewFilter, { ReviewFilterItem } from '../ReviewFilter';
 
 const programTypeFilterList: ReviewFilterItem[] = [
@@ -32,28 +31,26 @@ const ProgramReviewFilterSection = () => {
 
   return (
     <section className="w-full flex gap-x-3 md:gap-x-2 px-5 py-6 md:p-0">
-      <Suspense>
-        <ReviewFilter
-          label="프로그램 후기"
-          labelValue="PROGRAM"
-          list={programTypeFilterList}
-        />
-        {programType === 'CHALLENGE_REVIEW' && (
+      <ReviewFilter
+        label="프로그램 후기"
+        labelValue="PROGRAM"
+        list={programTypeFilterList}
+      />
+      {programType === 'CHALLENGE_REVIEW' && (
           <ReviewFilter
             label="챌린지 구분"
             labelValue="CHALLENGE"
             list={challengeTypeFilterList}
             multiSelect
           />
-        )}
-        {programType === 'CHALLENGE_REVIEW' && (
+      )}
+      {programType === 'CHALLENGE_REVIEW' && (
           <ReviewFilter
             label="후기 유형"
             labelValue="REVIEW"
             list={reviewTypeFilterList}
           />
-        )}
-      </Suspense>
+      )}
     </section>
   );
 };

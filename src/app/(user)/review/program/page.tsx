@@ -1,4 +1,4 @@
-'use client';
+import { Suspense } from 'react';
 
 import { GetReview } from '@/api/review';
 import ProgramReviewContentSection from '@components/common/review/programReview/ProgramReviewContentSection';
@@ -116,8 +116,10 @@ const mock4: GetReview = {
 const Page = () => {
   return (
     <div className="flex w-full flex-col md:gap-y-6 md:pr-5 lg:pr-0">
-      <ProgramReviewFilterSection />
-      <ProgramReviewContentSection />
+      <Suspense>
+        <ProgramReviewFilterSection />
+        <ProgramReviewContentSection />
+      </Suspense>
     </div>
   );
 };
