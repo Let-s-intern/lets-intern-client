@@ -108,7 +108,7 @@ const ChallengeUserInfo = () => {
         goal: value.goal,
       });
 
-      navigate(`/challenge/${params.programId}`);
+      navigate(`/challenge/${params.applicationId}/${params.programId}`);
     } catch (error) {
       console.error(error);
       alert('입력에 실패했습니다. 다시 시도해주세요.');
