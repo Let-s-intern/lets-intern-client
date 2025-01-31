@@ -14,10 +14,8 @@ const mock1: GetReview = {
     reviewId: 1,
     type: 'MISSION_REVIEW',
     programTitle: '기필코 챌린지',
-    badPoint: 'Bad Point',
     challengeType: 'DOCUMENT_PREPARATION',
     createDate: '2021-09-01',
-    goodPoint: 'Good Point',
     missionTh: 1,
     missionTitle:
       '미션명 미션명 미션명 미션명 미션명 미션명 미션명 미션명미션명',
@@ -41,10 +39,8 @@ const mock2: GetReview = {
     reviewId: 1,
     type: 'CHALLENGE_REVIEW',
     programTitle: '기필코 챌린지',
-    badPoint: 'Bad Point',
     challengeType: 'DOCUMENT_PREPARATION',
     createDate: '2021-09-01',
-    goodPoint: 'Good Point',
     missionTh: 1,
     missionTitle:
       '미션명 미션명 미션명 미션명 미션명 미션명 미션명 미션명미션명',
@@ -69,10 +65,8 @@ const mock3: GetReview = {
     type: 'LIVE_REVIEW',
     programTitle:
       '기필코 챌린지 aksd fasdf kalsdfk lsf akldf asldf jaksldfj laksd fk',
-    badPoint: 'Bad Point',
     challengeType: 'DOCUMENT_PREPARATION',
     createDate: '2021-09-01',
-    goodPoint: 'Good Point',
     missionTh: 1,
     missionTitle:
       '미션명 미션명 미션명 미션명 미션명 미션명 미션명 미션명미션명',
@@ -96,10 +90,8 @@ const mock4: GetReview = {
     reviewId: 1,
     type: 'REPORT_REVIEW',
     programTitle: '기필코 챌린지',
-    badPoint: 'Bad Point',
     challengeType: 'DOCUMENT_PREPARATION',
     createDate: '2021-09-01',
-    goodPoint: 'Good Point',
     missionTh: 1,
     missionTitle:
       '미션명 미션명 미션명 미션명 미션명 미션명 미션명 미션명미션명',
@@ -168,7 +160,6 @@ const Page = () => {
           missionTitleClamp={1}
           reviewItemLineClamp={2}
           showThumbnail
-          showGoodAndBadPoint
         />
       </div>
       <MoreHeader
