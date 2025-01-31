@@ -63,9 +63,15 @@ const ReportReviewCreatePage = () => {
           type: 'REPORT_REVIEW',
           score,
           npsScore,
-          goodPoint,
-          badPoint,
           reviewItemList: [
+            {
+              questionType: 'GOOD_POINT',
+              answer: goodPoint,
+            },
+            {
+              questionType: 'BAD_POINT',
+              answer: badPoint,
+            },
             {
               questionType: 'WORRY_RESULT',
               answer: worryResult,

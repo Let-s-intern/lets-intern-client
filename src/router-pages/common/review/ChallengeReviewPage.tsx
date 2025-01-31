@@ -34,6 +34,12 @@ const ChallengeReviewPage = () => {
   const goalResult = review?.reviewItemList?.find(
     (r) => r.questionType === 'GOAL_RESULT',
   )?.answer;
+  const goodPoint = review?.reviewItemList?.find(
+    (r) => r.questionType === 'GOOD_POINT',
+  )?.answer;
+  const badPoint = review?.reviewItemList?.find(
+    (r) => r.questionType === 'BAD_POINT',
+  )?.answer;
 
   return (
     <ReviewModal readOnly>
@@ -93,7 +99,7 @@ const ChallengeReviewPage = () => {
           점을 남겨주세요!
         </ReviewQuestion>
         <ReviewTextarea
-          value={review?.reviewInfo.goodPoint ?? '-'}
+          value={goodPoint ?? '-'}
           readOnly
           placeholder="가장 도움이 되었던 미션이나 학습 콘텐츠와 같이 참여하면서 가장 만족했던 점을 자유롭게 작성해주세요."
         />
@@ -106,7 +112,7 @@ const ChallengeReviewPage = () => {
           점을 남겨주세요!
         </ReviewQuestion>
         <ReviewTextarea
-          value={review?.reviewInfo.badPoint ?? '-'}
+          value={badPoint ?? '-'}
           readOnly
           placeholder="참여하면서 아쉬웠던 점이나 추가되었으면 좋겠는 내용이 있다면 자유롭게 작성해주세요."
         />

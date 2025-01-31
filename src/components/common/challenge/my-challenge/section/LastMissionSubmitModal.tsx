@@ -62,9 +62,15 @@ const LastMissionSubmitModal = ({
           type: 'CHALLENGE_REVIEW',
           score,
           npsScore,
-          goodPoint,
-          badPoint,
           reviewItemList: [
+            {
+              questionType: 'GOOD_POINT',
+              answer: goodPoint,
+            },
+            {
+              questionType: 'BAD_POINT',
+              answer: badPoint,
+            },
             {
               questionType: 'GOAL_RESULT',
               answer: goalResult,
