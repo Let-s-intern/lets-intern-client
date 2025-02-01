@@ -103,24 +103,34 @@ const ReviewCard = ({
           {review.reviewInfo.programTitle}
         </h3>
         {review.reviewInfo.type === 'MISSION_REVIEW' ? (
-          <div className="flex items-center gap-2 mb-3 text-xxsmall12">
-            <span className="whitespace-pre text-neutral-20">
-              {review.reviewInfo.missionTh}회차
-            </span>
-            <span className="text-neutral-70">|</span>
-            <p
-              className={twMerge(
-                ' font-medium text-neutral-20',
-                missionTitleClamp === 1
-                  ? 'line-clamp-1'
-                  : missionTitleClamp === 2
-                    ? 'line-clamp-2'
-                    : null,
-              )}
-            >
-              {review.reviewInfo.missionTitle}
-            </p>
-          </div>
+          <>
+            <div className="flex items-center gap-2 mb-3 text-xxsmall12">
+              <span className="whitespace-pre text-neutral-20">
+                {review.reviewInfo.missionTh}회차
+              </span>
+              <span className="text-neutral-70">|</span>
+              <p
+                className={twMerge(
+                  ' font-medium text-neutral-20',
+                  missionTitleClamp === 1
+                    ? 'line-clamp-1'
+                    : missionTitleClamp === 2
+                      ? 'line-clamp-2'
+                      : null,
+                )}
+              >
+                {review.reviewInfo.missionTitle}
+              </p>
+            </div>
+            <ReviewItemBlock
+              questionText="미션 수행 후기"
+              questionType={null}
+              answer={review.reviewInfo.attendanceReview}
+              lineClamp={reviewItemLineClamp}
+              icon={questionIcon(null)}
+              expandable={expandable}
+            />
+          </>
         ) : null}
         <div className="mb-4 space-y-2.5 ">
           {reviewItems?.map((reviewItem, index) => (
