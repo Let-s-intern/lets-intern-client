@@ -484,13 +484,8 @@ export const fetchReport = async ({
   }
 
   const data = await res.json();
+
   const activeReports = getActiveReportsSchema.parse(data.data);
-  const visibleReports = activeReports.resumeInfoList.filter(
-    (item) =>
-      item.isVisible === true &&
-      item.visibleDate &&
-      new Date(item.visibleDate) <= new Date(),
-  );
 
   let list: ReportDetail[];
 
@@ -503,10 +498,16 @@ export const fetchReport = async ({
   } else {
     throw new Error('Invalid report type');
   }
+  const visibleList = list.filter(
+    (item) =>
+      item.isVisible === true &&
+      item.visibleDate &&
+      new Date(item.visibleDate) <= new Date(),
+  );
 
   const report = !id
-    ? visibleReports.length > 0
-      ? visibleReports[0]
+    ? visibleList.length > 0
+      ? visibleList[0]
       : undefined
     : list.find((item) => item.reportId === id);
 
