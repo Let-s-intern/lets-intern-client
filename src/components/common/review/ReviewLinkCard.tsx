@@ -11,7 +11,6 @@ import ReviewBadge, {
 } from '@components/ReviewBadge';
 
 interface IReviewLinkCardProps {
-  // blogReview: BlogReview;
   url?: string | null;
   thumbnail?: string | null;
   title?: string | null;
@@ -51,14 +50,16 @@ function ReviewLinkCard({
         />
       </div>
       <div>
-        {badgeType && programTitle ? (
-          <div className="flex flex-col items-start gap-1 mb-2 md:flex-row md:items-center md:gap-2">
-            <ReviewBadge type={badgeType} />
+        <div className="flex flex-col items-start gap-1 mb-2">
+          {badgeType ? <ReviewBadge type={badgeType} /> : null}
+
+          {programTitle ? (
             <span className="block font-bold truncate text-xsmall14 text-primary">
               {programTitle}
             </span>
-          </div>
-        ) : null}
+          ) : null}
+        </div>
+
         <h3 className="h-12 mb-2 overflow-hidden font-bold text-xsmall16 line-clamp-2 text-neutral-0 text-ellipsis">
           <Link
             href={url ?? ''}
@@ -75,7 +76,7 @@ function ReviewLinkCard({
             <span className="absolute inset-0 transition rounded-md "></span>
           </Link>
         </h3>
-        <p className="mb-4 overflow-hidden text-neutral-20 md:h-11 text-xsmall14 line-clamp-2 text-ellipsis">
+        <p className="mb-4 overflow-hidden text-neutral-20 text-xsmall14 line-clamp-2 text-ellipsis">
           {description}
         </p>
         {externalLink || favicon ? (
