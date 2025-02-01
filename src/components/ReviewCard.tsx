@@ -75,13 +75,22 @@ const ReviewCard = ({
   reviewItemLineClamp = 3,
   expandable = false,
   showThumbnail = false,
+  reviewItemNums,
 }: {
   review: GetReview;
   missionTitleClamp?: 1 | 2;
   reviewItemLineClamp?: 1 | 2 | 3 | 4;
   expandable?: boolean;
   showThumbnail?: boolean;
+  reviewItemNums?: number;
 }) => {
+  const reviewItems = review.reviewItemList
+    ?.sort(
+      (a, b) =>
+        questionPriority(a.questionType ?? null) -
+        questionPriority(b.questionType ?? null),
+    )
+    .slice(0, reviewItemNums);
   return (
     <div className="flex flex-col gap-4 p-4 border rounded-sm sm:flex-row border-neutral-80 sm:gap-10">
       <div className="flex flex-col max-w-full mr-auto">
@@ -114,21 +123,15 @@ const ReviewCard = ({
           </div>
         ) : null}
         <div className="mb-4 space-y-2.5 ">
-          {review.reviewItemList
-            ?.sort(
-              (a, b) =>
-                questionPriority(a.questionType ?? null) -
-                questionPriority(b.questionType ?? null),
-            )
-            .map((reviewItem, index) => (
-              <ReviewItemBlock
-                key={index}
-                {...reviewItem}
-                lineClamp={reviewItemLineClamp}
-                icon={questionIcon(reviewItem.questionType ?? null)}
-                expandable={expandable}
-              />
-            ))}
+          {reviewItems?.map((reviewItem, index) => (
+            <ReviewItemBlock
+              key={index}
+              {...reviewItem}
+              lineClamp={reviewItemLineClamp}
+              icon={questionIcon(reviewItem.questionType ?? null)}
+              expandable={expandable}
+            />
+          ))}
         </div>
 
         <div className="flex items-center gap-2 mt-auto mb-2 text-xxsmall12">

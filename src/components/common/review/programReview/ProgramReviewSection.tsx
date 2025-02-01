@@ -54,6 +54,8 @@ const ProgramReviewSection = () => {
               key={review.reviewInfo.reviewId}
               review={review}
               missionTitleClamp={1}
+              expandable
+              reviewItemNums={2}
             />
           ))}
         </div>
