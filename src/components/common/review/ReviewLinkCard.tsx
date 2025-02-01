@@ -37,17 +37,13 @@ function ReviewLinkCard({
   const badgeType = programType
     ? getBadgeTypeFromProgramType(programType)
     : null;
+  const isInternal = url?.startsWith('/');
 
   return (
-    <Link
-      href={url ?? ''}
-      className="flex flex-col gap-3"
-      target="_blank"
-      rel="noreferrer noopener"
-    >
-      <div className="w-full h-[7rem] relative overflow-hidden bg-neutral-85 rounded-sm">
+    <div className="relative flex flex-col gap-3 group">
+      <div className="w-full h-[7rem] relative overflow-hidden">
         <Image
-          className="object-cover"
+          className="object-cover border rounded-sm group-has-[a:hover]:opacity-80 transition"
           src={thumbnail ?? ''}
           alt={title + ' 블로그 썸네일'}
           fill
@@ -64,7 +60,20 @@ function ReviewLinkCard({
           </div>
         ) : null}
         <h3 className="h-12 mb-2 overflow-hidden font-bold text-xsmall16 line-clamp-2 text-neutral-0 text-ellipsis">
-          {title}
+          <Link
+            href={url ?? ''}
+            {...(!isInternal
+              ? {
+                  target: '_blank',
+                  rel: 'noreferrer noopener',
+                }
+              : {})}
+            className="transition hover:text-neutral-30"
+          >
+            {title}
+            {/* ring-1 ring-inset ring-gray-200 hover:ring-gray-400 */}
+            <span className="absolute inset-0 transition rounded-md "></span>
+          </Link>
         </h3>
         <p className="mb-4 overflow-hidden text-neutral-20 md:h-11 text-xsmall14 line-clamp-2 text-ellipsis">
           {description}
@@ -86,7 +95,7 @@ function ReviewLinkCard({
           </span>
         ) : null}
       </div>
-    </Link>
+    </div>
   );
 }
 
