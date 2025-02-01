@@ -165,7 +165,7 @@ const NavBar = () => {
         return;
       }
 
-      const currentScrollY = window.scrollY;
+      const currentScrollY = Math.max(0, window.scrollY);
 
       if (currentScrollY > lastScrollY.current) {
         setScrollDirection('DOWN');
