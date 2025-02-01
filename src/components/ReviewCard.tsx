@@ -15,6 +15,8 @@ import Pen from '@/assets/graphic/pen.svg?react';
 import PinBlue from '@/assets/graphic/pin_blue.svg?react';
 import PinRed from '@/assets/graphic/pin_red.svg?react';
 import Trophy from '@/assets/graphic/trophy.svg?react';
+import clsx from 'clsx';
+import { useRouter } from 'next/navigation';
 import { ReactNode } from 'react';
 
 export const getTitle = (review: GetReview) => {
@@ -76,6 +78,7 @@ const ReviewCard = ({
   expandable = false,
   showThumbnail = false,
   reviewItemNums,
+  href,
 }: {
   review: GetReview;
   missionTitleClamp?: 1 | 2;
@@ -83,7 +86,9 @@ const ReviewCard = ({
   expandable?: boolean;
   showThumbnail?: boolean;
   reviewItemNums?: number;
+  href?: string;
 }) => {
+  const router = useRouter();
   const reviewItems = review.reviewItemList
     ?.sort(
       (a, b) =>
@@ -92,7 +97,17 @@ const ReviewCard = ({
     )
     .slice(0, reviewItemNums);
   return (
-    <div className="flex flex-col gap-4 p-4 border rounded-sm sm:flex-row border-neutral-80 sm:gap-10">
+    <div
+      className={clsx(
+        'flex flex-col gap-4 p-4 border rounded-sm sm:flex-row border-neutral-80 sm:gap-10',
+        { 'cursor-pointer': !!href },
+      )}
+      onClick={() => {
+        if (href) {
+          router.push(href);
+        }
+      }}
+    >
       <div className="flex flex-col max-w-full mr-auto">
         <div className="mb-2">
           <ReviewBadge
