@@ -95,9 +95,7 @@ const ReviewCard = ({
     <div className="flex flex-col gap-4 p-4 border rounded-sm sm:flex-row border-neutral-80 sm:gap-10">
       <div className="flex flex-col max-w-full mr-auto">
         <div className="mb-2">
-          <ReviewBadge
-            reviewType={review.reviewInfo.type ?? 'CHALLENGE_REVIEW'}
-          />
+          <ReviewBadge type={review.reviewInfo.type ?? 'CHALLENGE_REVIEW'} />
         </div>
         <h3 className="mb-2 font-bold truncate text-xsmall16 text-neutral-0">
           {review.reviewInfo.programTitle}
@@ -135,7 +133,7 @@ const ReviewCard = ({
         </div>
 
         <div className="flex items-center gap-2 mt-auto mb-2 text-xxsmall12">
-          <span className="whitespace-pre text-neutral-20 font-medium">
+          <span className="font-medium whitespace-pre text-neutral-20">
             {review.reviewInfo.name?.[0]}**
           </span>
           <span className="text-neutral-70">|</span>
@@ -181,7 +179,7 @@ const ReviewItemBlock = (props: {
     <div>
       <div className="flex w-fit mb-0.5 items-center gap-1">
         {props.icon && props.icon}
-        <span className="text-xxsmall12 font-semibold text-neutral-10">
+        <span className="font-semibold text-xxsmall12 text-neutral-10">
           {questionText}
         </span>
       </div>

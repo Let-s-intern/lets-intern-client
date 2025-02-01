@@ -3,7 +3,7 @@
 import { useGetBlogReviewList } from '@/api/review';
 import LoadingContainer from '../ui/loading/LoadingContainer';
 import MoreHeader from '../ui/MoreHeader';
-import MainBlogReviewCard from './MainBlogReviewCard';
+import ReviewLinkCard from './ReviewLinkCard';
 
 function MainBlogReviewSection() {
   const { data, isLoading } = useGetBlogReviewList({
@@ -22,7 +22,7 @@ function MainBlogReviewSection() {
       ) : (
         <div className="grid mt-6 grid-cols-2 md:gap-5 md:grid-cols-4 gap-x-5 gap-y-6">
           {data?.reviewList.map((review) => (
-            <MainBlogReviewCard key={review.blogReviewId} blogReview={review} />
+            <ReviewLinkCard key={review.blogReviewId} blogReview={review} />
           ))}
         </div>
       )}

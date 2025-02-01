@@ -1,18 +1,58 @@
 import { ReviewType } from '@/api/review';
 import { twMerge } from '@/lib/twMerge';
+import { ProgramTypeUpperCase } from '@/schema';
+
+export type ReviewBadgeType = ReviewType | 'CHALLENGE_SIMPLE';
+
+export const getBadgeTypeFromProgramType = (
+  programType: ProgramTypeUpperCase,
+): ReviewBadgeType => {
+  switch (programType) {
+    case 'CHALLENGE':
+      return 'CHALLENGE_SIMPLE';
+    case 'LIVE':
+      return 'LIVE_REVIEW';
+    case 'VOD':
+      return 'VOD_REVIEW';
+    case 'REPORT':
+      return 'REPORT_REVIEW';
+  }
+};
 
 const ReviewBadge = ({
-  reviewType,
+  type: type,
   className,
   fill,
-  hideSubText = false,
 }: {
-  reviewType: ReviewType;
+  type: ReviewBadgeType;
   className?: string;
   fill?: string;
-  hideSubText?: boolean;
 }) => {
-  switch (reviewType) {
+  switch (type) {
+    case 'CHALLENGE_SIMPLE':
+      return (
+        <span
+          className={twMerge(
+            'whitespace-pre rounded-xxs inline-flex items-center h-8 gap-1 px-2 font-bold text-xsmall14 bg-primary-10 text-primary',
+            className,
+          )}
+        >
+          <svg
+            width="20"
+            height="20"
+            viewBox="0 0 20 20"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M17.2302 16.8747C16.1264 17.4939 14.1081 16.2277 12.155 13.8848C12.7735 15.7755 12.7516 17.2842 11.9646 17.7256C11.0776 18.2232 9.46794 17.225 7.92112 15.3718C8.16276 16.5508 7.98533 17.5049 7.35513 17.8584C6.30932 18.445 4.41266 17.1555 3.11882 14.9782C1.82497 12.8009 1.62389 10.5602 2.6697 9.97357C3.29989 9.62006 4.23904 9.94782 5.16907 10.7406C4.29057 8.51238 4.20563 6.65881 5.09266 6.16123C5.87962 5.71978 7.23539 6.45569 8.61143 7.92148C7.49963 5.10677 7.38023 2.77552 8.48409 2.15631C9.97809 1.31826 13.1471 3.93369 15.5623 7.99805C17.9775 12.0624 18.7242 16.0366 17.2302 16.8747Z"
+              fill={fill ?? '#4D55F5'}
+            />
+          </svg>
+          <span>챌린지</span>
+        </span>
+      );
+
     case 'CHALLENGE_REVIEW':
       return (
         // TODO: 색상 토크나이징
@@ -35,11 +75,9 @@ const ReviewBadge = ({
             />
           </svg>
           <span>챌린지</span>
-          {!hideSubText && (
-            <span className="font-semibold text-xxsmall12">
-              프로그램 참여 후기
-            </span>
-          )}
+          <span className="font-semibold text-xxsmall12">
+            프로그램 참여 후기
+          </span>
         </span>
       );
     case 'LIVE_REVIEW':
@@ -142,9 +180,7 @@ const ReviewBadge = ({
             />
           </svg>
           <span>챌린지</span>
-          {!hideSubText && (
-            <span className="font-semibold text-xxsmall12">미션 수행 후기</span>
-          )}
+          <span className="font-semibold text-xxsmall12">미션 수행 후기</span>
         </span>
       );
   }
