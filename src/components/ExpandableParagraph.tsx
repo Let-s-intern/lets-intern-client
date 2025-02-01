@@ -70,7 +70,10 @@ const ExpandableParagraph = ({
           !isOverflown && 'hidden',
           buttonClassName,
         )}
-        onClick={() => setExpanding((prev) => !prev)}
+        onClick={(e) => {
+          e.stopPropagation();
+          setExpanding((prev) => !prev);
+        }}
         style={{
           marginTop: `${buttonMarginTop}px`,
         }}
@@ -87,7 +90,10 @@ const ExpandableParagraph = ({
               ' text-primary ml-0.5 hover:underline',
               buttonClassName,
             )}
-            onClick={() => setExpanding((prev) => !prev)}
+            onClick={(e) => {
+              e.stopPropagation();
+              setExpanding((prev) => !prev);
+            }}
           >
             접기
           </button>
