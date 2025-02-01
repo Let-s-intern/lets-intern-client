@@ -1,10 +1,6 @@
 'use client';
 
-import {
-  programReviewParam,
-  ReviewType,
-  useGetProgramReview,
-} from '@/api/review';
+import { programReviewParam, useGetProgramReview } from '@/api/review';
 import { ChallengeType, PageInfo } from '@/schema';
 import MuiPagination from '@components/common/program/pagination/MuiPagination';
 import LoadingContainer from '@components/common/ui/loading/LoadingContainer';
@@ -12,20 +8,16 @@ import ReviewCard from '@components/ReviewCard';
 import { useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
-const ProgramReviewContentSection = () => {
+const MissionReviewContentSection = () => {
   const searchParams = useSearchParams();
   const [currentPage, setCurrentPage] = useState(1);
   const [pageInfo, setPageInfo] = useState<PageInfo | null>(null);
 
-  const programType = searchParams.get('program')?.toUpperCase();
   const challengeType = searchParams.get('challenge')?.toUpperCase();
-  // const reviewType = searchParams.get('REVIEW');
 
   const challengeTypeList = challengeType
     ?.split(',')
     .map((value) => value as ChallengeType);
-
-  // const onlyMissionReview = reviewType === 'MISSION_REVIEW';
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
@@ -34,9 +26,7 @@ const ProgramReviewContentSection = () => {
   };
 
   const getProgramParams: programReviewParam = {
-    types: programType
-      ? [programType as ReviewType]
-      : ['CHALLENGE_REVIEW', 'LIVE_REVIEW', 'REPORT_REVIEW'],
+    types: ['MISSION_REVIEW'],
     challengeTypes: challengeTypeList,
     page: currentPage,
     size: 10,
@@ -82,4 +72,4 @@ const ProgramReviewContentSection = () => {
   );
 };
 
-export default ProgramReviewContentSection;
+export default MissionReviewContentSection;
