@@ -20,6 +20,7 @@ const MoreReviewButton = ({
       <Link
         className="more_reviews flex w-full items-center justify-center px-5 md:px-0"
         href={`/review/program?program=${type.toLowerCase()}_review${challengeType ? `&challenge=${challengeType.toLowerCase()}` : ''}`}
+        scroll
       >
         <div
           className="relative mt-12 flex w-full cursor-pointer items-center justify-center gap-x-2 rounded-sm px-5 py-4 text-white md:mx-0 md:mt-20 md:w-fit"
