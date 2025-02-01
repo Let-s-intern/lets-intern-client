@@ -20,24 +20,24 @@ function ReviewNavBar() {
               후기
             </MobileNavItem>
             <MobileNavItem href="/review/blog">블로그 후기</MobileNavItem>
-            <MobileNavItem href="/review/interview">
+            <MobileNavItem href="/blog/list?category=PROGRAM_REVIEWS">
               프로그램
               <br />
               참여자 인터뷰
             </MobileNavItem>
           </ul>
         </nav>
-        <HorizontalRule className="h-3 w-full" />
+        <HorizontalRule className="w-full h-3" />
       </div>
 
       {/* 데스크탑 네비 바 */}
-      <nav className="md:block hidden mr-8 relative">
+      <nav className="relative hidden mr-8 md:block">
         <ul className="flex flex-col sticky top-20 w-[11.5rem] items-stretch">
           <DesktopNavItem href="/review/program">
             프로그램 참여 후기
           </DesktopNavItem>
           <DesktopNavItem href="/review/blog">블로그 후기</DesktopNavItem>
-          <DesktopNavItem href="/review/interview">
+          <DesktopNavItem href="/blog/list?category=PROGRAM_REVIEWS">
             프로그램 참여자 인터뷰
           </DesktopNavItem>
         </ul>
@@ -86,7 +86,7 @@ function DesktopNavItem({
   const pathname = usePathname();
   const active = pathname === href;
   return (
-    <li className="py-2 px-3">
+    <li className="px-3 py-2">
       <Link
         className={`text-xsmall16 ${active ? 'text-primary font-semibold' : 'text-neutral-35'}`}
         href={href}
