@@ -30,7 +30,9 @@ function BlogReviewCard({ blogReview }: Props) {
               'bg-primary-10 text-primary':
                 blogReview.programType === 'CHALLENGE',
             })}
-            fill={blogReview.programType === 'CHALLENGE' ? '#4D55F5' : ''}
+            fill={
+              blogReview.programType === 'CHALLENGE' ? '#4D55F5' : undefined
+            }
           />
           <span className="text-xsmall14 font-bold text-primary truncate block ">
             {blogReview.programTitle}
