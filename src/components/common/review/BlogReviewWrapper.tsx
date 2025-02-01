@@ -24,19 +24,17 @@ const filterList = [
 
 function BlogReviewWrapper() {
   return (
-    <>
+    <Suspense>
       <div className="py-6">
-        <Suspense>
-          <ReviewFilter
-            label="프로그램 후기"
-            labelValue="type"
-            list={filterList}
-            multiSelect
-          />
-        </Suspense>
+        <ReviewFilter
+          label="프로그램 후기"
+          labelValue="type"
+          list={filterList}
+          multiSelect
+        />
       </div>
       <BlogReviewListSection />
-    </>
+    </Suspense>
   );
 }
 
