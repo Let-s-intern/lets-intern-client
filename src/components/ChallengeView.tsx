@@ -323,6 +323,7 @@ const ChallengeView: React.FC<{
               />
               <MoreReviewButton
                 type={'CHALLENGE'}
+                challengeType={challenge.challengeType}
                 mainColor={colors.dark}
                 subColor={colors.secondary}
               />
