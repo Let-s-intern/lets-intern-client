@@ -25,7 +25,7 @@ const LiveBasicInfo = ({ live }: { live: LiveIdSchema }) => {
       <img
         src={live.thumbnail ?? undefined}
         alt="챌린지 썸네일"
-        className="w-full rounded-md bg-primary-10 object-contain md:w-3/5"
+        className="w-full rounded-md bg-neutral-95 object-contain md:w-3/5"
       />
       <div className="flex w-full flex-col gap-y-3 md:w-2/5">
         <div className="flex w-full items-center justify-center rounded-md bg-neutral-95 px-6 py-5">

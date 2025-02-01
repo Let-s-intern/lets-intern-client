@@ -2,8 +2,9 @@ import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import { uploadFile } from '@/api/file';
-import { usePatchMyApplication } from '@/api/report';
+import { convertReportTypeToDisplayName, ReportType, usePatchMyApplication } from '@/api/report';
 import useRunOnce from '@/hooks/useRunOnce';
+import { ReportTypePathnameEnum } from '@/schema';
 import useAuthStore from '@/store/useAuthStore';
 import useReportApplicationStore from '@/store/useReportApplicationStore';
 import BackHeader from '@components/common/ui/BackHeader';
@@ -66,7 +67,7 @@ const ReportApplicationPage = () => {
 
     if (
       reportPriceType === 'PREMIUM' &&
-      reportType?.toUpperCase() !== 'PERSONAL_STATEMENT' &&
+      reportType !== ReportTypePathnameEnum.enum['personal-statement'] &&
       isEmpty(recruitmentUrl) &&
       isEmpty(recruitmentFile)
     ) {
@@ -92,7 +93,7 @@ const ReportApplicationPage = () => {
           <CallOut
             className="bg-neutral-100"
             header="❗ 제출 전 꼭 읽어주세요"
-            body="이력서 파일/링크가 잘 열리는 지 확인 후 첨부해주세요!"
+            body={`${convertReportTypeToDisplayName(reportType?.toUpperCase() as ReportType | 'PERSONAL-STATEMENT')} 파일/링크가 잘 열리는 지 확인 후 첨부해주세요!`}
           />
 
           {/* 진단용 서류 */}
@@ -100,7 +101,7 @@ const ReportApplicationPage = () => {
 
           {/* 프리미엄 채용공고 */}
           {reportApplication.reportPriceType === 'PREMIUM' &&
-            reportType?.toUpperCase() !== 'PERSONAL_STATEMENT' && (
+            reportType !== ReportTypePathnameEnum.enum['personal-statement']  && (
               <PremiumSection
                 file={recruitmentFile}
                 dispatch={setRecruitmentFile}

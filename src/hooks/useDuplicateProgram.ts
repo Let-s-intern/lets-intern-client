@@ -11,7 +11,7 @@ import {
   CreateChallengeReq,
   CreateLiveReq,
   LiveIdSchema,
-  ProgramAdminListItem,
+  ProgramAdminListItem
 } from '@/schema';
 import { useCallback } from 'react';
 
@@ -49,6 +49,11 @@ export const challengeToCreateInput = (
         programClassification: value.programClassification ?? 'PASS',
       },
     })),
+    adminProgramTypeInfo: challenge.adminClassificationInfo ?  challenge.adminClassificationInfo.map((value) => ({
+      classificationInfo: {
+        programAdminClassification: value.programAdminClassification,
+      },
+    })) : [],
     shortDesc: challenge.shortDesc ?? '',
     startDate: challenge.startDate?.format('YYYY-MM-DDTHH:mm:ss') ?? '',
     deadline: challenge.deadline?.format('YYYY-MM-DDTHH:mm:ss') ?? '',
@@ -77,6 +82,11 @@ export const liveToCreateInput = (live: LiveIdSchema): CreateLiveReq => {
         programClassification: value.programClassification ?? 'PASS',
       },
     })),
+    adminProgramTypeInfo: live.adminClassificationInfo? live.adminClassificationInfo.map((value) => ({
+      classificationInfo: {
+        programAdminClassification: value.programAdminClassification,
+      },
+    })):[],
     shortDesc: live.shortDesc ?? '',
     startDate: live.startDate?.format('YYYY-MM-DDTHH:mm:ss') ?? '',
     deadline: live.deadline?.format('YYYY-MM-DDTHH:mm:ss') ?? '',
@@ -120,6 +130,7 @@ export const useDuplicateProgram = ({
     async ({
       programInfo: { programType, id },
       classificationList,
+      adminClassificationList,
     }: ProgramAdminListItem) => {
       switch (programType) {
         case 'CHALLENGE': {
@@ -144,6 +155,11 @@ export const useDuplicateProgram = ({
                 programClassification: value.programClassification ?? 'PASS',
               },
             })),
+            adminProgramTypeInfo: adminClassificationList ? adminClassificationList.map((value) => ({
+              classificationInfo: {
+                programAdminClassification: value.programAdminClassification ,
+              },
+            })):[],
             thumbnail: vod.vodInfo.thumbnail ?? '',
             shortDesc: vod.vodInfo.shortDesc ?? '',
           });

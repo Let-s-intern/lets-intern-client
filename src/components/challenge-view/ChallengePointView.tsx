@@ -29,34 +29,6 @@ type ProgressItemType = {
 };
 
 const description = '*더 자세한 내용은 상단 메뉴에서 커리큘럼을 클릭해주세요.';
-const progress = [
-  {
-    index: 1,
-    title: '신청 완료',
-  },
-  {
-    index: 2,
-    title: '챌린지 대시보드 및\n오픈채팅방 초대',
-  },
-  {
-    index: 3,
-    title: 'OT',
-    subTitle: '*실시간 진행',
-  },
-  {
-    index: 4,
-    title: '회차별 챌린지 가이드북\n및 미션 템플릿 제공',
-  },
-  {
-    index: 5,
-    title: '회차별 미션 수행',
-  },
-  {
-    index: 6,
-    title: '챌린지 종료 및 평가',
-    subTitle: '*총 챌린지 참여 점수 80점 이상시,\n3만원 페이백 및 수료증 발급',
-  },
-];
 
 const MISSION = {
   title: '미션 수행 방법',
@@ -67,10 +39,7 @@ const MISSION = {
   ],
 };
 
-const REWARD = {
-  title: '챌린지에 성공해 뿌듯함과\n리워드까지 가져가세요!',
-  content: '챌린지 참여 점수 80점 이상시,\n3만원 페이백 및 수료증 발급',
-};
+
 
 const {
   CAREER_START,
@@ -97,6 +66,40 @@ const ChallengePointView = ({
   programRecommend?: ProgramRecommend;
 }) => {
   const router = useRouter();
+
+  const progress = [
+    {
+      index: 1,
+      title: '신청 완료',
+    },
+    {
+      index: 2,
+      title: '챌린지 대시보드 및\n오픈채팅방 초대',
+    },
+    {
+      index: 3,
+      title: 'OT',
+      subTitle: '*실시간 진행',
+    },
+    {
+      index: 4,
+      title: '회차별 챌린지 가이드북\n및 미션 템플릿 제공',
+    },
+    {
+      index: 5,
+      title: '회차별 미션 수행',
+    },
+    {
+      index: 6,
+      title: '챌린지 종료 및 평가',
+      subTitle: '*총 챌린지 참여 점수 80점 이상시,\n' + (challengeType === PERSONAL_STATEMENT_LARGE_CORP ? "수료증 발급" : "3만원 페이백 및 수료증 발급"),
+    },
+  ];
+
+  const reward = {
+    title: '챌린지에 성공해 뿌듯함과\n리워드까지 가져가세요!',
+    content: '챌린지 참여 점수 80점 이상시,\n' + (challengeType === PERSONAL_STATEMENT_LARGE_CORP ? "수료증 발급" : "3만원 페이백 및 수료증 발급"),
+  };
 
   const programSchedule = [
     {
@@ -377,12 +380,12 @@ const ChallengePointView = ({
                 </BoxItem>
               </Box>
               <Box className="relative overflow-hidden md:flex-1">
-                <BoxItem title={REWARD.title}>{REWARD.content}</BoxItem>
-                <img
+                <BoxItem title={reward.title}>{reward.content}</BoxItem>
+                {challengeType !== PERSONAL_STATEMENT_LARGE_CORP && <img
                   className="absolute bottom-0 right-0 h-auto w-44 md:w-48"
                   src={paypackImgSrc}
                   alt="페이백 3만원"
-                />
+                />}
               </Box>
             </div>
           </div>

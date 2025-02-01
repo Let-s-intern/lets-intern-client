@@ -231,6 +231,13 @@ const ProgramRecommendEditor = ({
                                           programClassification:
                                             ele.programClassification,
                                         })),
+                                      adminClassificationList:
+                                      item.adminClassificationList ? item.adminClassificationList.map(
+                                          (ele) => ({
+                                            programAdminClassification:
+                                              ele.programAdminClassification,
+                                          }),
+                                        ) : [],
                                     },
                                   ],
                                 });

@@ -2,11 +2,14 @@ import { fileType, uploadFile } from '@/api/file';
 import {
   CreateVodReq,
   liveAndVodJob,
+  ProgramAdminClassification,
+  ProgramAdminClassificationEnum,
   ProgramClassification,
   UpdateVodReq,
   VodIdSchema,
 } from '@/schema';
 import { programClassificationToText } from '@/utils/convert';
+import SelectFormControl from '@components/admin/program/SelectFormControl';
 import ImageUpload from '@components/admin/program/ui/form/ImageUpload';
 import Input from '@components/ui/input/Input';
 import {
@@ -103,6 +106,52 @@ export default function VodEditor<T extends CreateVodReq | UpdateVodReq>({
           ))}
         </Select>
       </FormControl>
+
+      {/* B2 타입 */}
+      <SelectFormControl
+        labelId="adminProgramTypeInfo"
+        label="B2 타입"
+        defaultValue={
+          defaultValue?.adminProgramTypeInfo
+            ? defaultValue.adminProgramTypeInfo.map(
+                (info) => info.programAdminClassification,
+              )
+            : []
+        }
+        onChange={(e) =>
+          setInput((prev) => ({
+            ...prev,
+            adminProgramTypeInfo: (
+              e.target.value as ProgramAdminClassification[]
+            ).map((item) => ({
+              classificationInfo: {
+                programAdminClassification: item,
+              },
+            })),
+          }))
+        }
+        renderValue={(selectedList) => (
+          <div className="flex flex-wrap gap-2">
+            {selectedList.map((selected) => (
+              <Chip
+                key={selected}
+                label={
+                  ProgramAdminClassificationEnum.enum[
+                    selected as ProgramAdminClassification
+                  ]
+                }
+              />
+            ))}
+          </div>
+        )}
+      >
+        {Object.values(ProgramAdminClassificationEnum.enum).map((value) => (
+          <MenuItem key={value} value={value}>
+            {value}
+          </MenuItem>
+        ))}
+      </SelectFormControl>
+
       <FormControl size="small">
         <InputLabel id="job">직무</InputLabel>
         <Select

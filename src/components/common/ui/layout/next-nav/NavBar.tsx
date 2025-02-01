@@ -220,6 +220,13 @@ const NavBar = () => {
             >
               🔥 서류 진단받고 합격하기
             </NavItem>
+            <NavItem
+              to="https://letscareer.framer.website"
+              target="_blank"
+              rel="noopenner noreferrer"
+            >
+              🔎 모의 면접하고 합격하기
+            </NavItem>
           </div>
           <div className="flex items-center gap-4">
             {isLoggedIn ? (
@@ -354,6 +361,14 @@ const NavBar = () => {
               hoverItem={reportItems}
             >
               🔥 서류 진단받고 합격하기
+            </SideNavItem>
+            <SideNavItem
+              to="https://letscareer.framer.website"
+              target="_blank"
+              rel="noopenner noreferrer"
+              onClick={closeMenu}
+            >
+              🔎 모의 면접하고 합격하기
             </SideNavItem>
             <hr className="h-1 bg-neutral-80" />
             {isAdmin && (

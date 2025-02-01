@@ -46,6 +46,7 @@ const {
 
 export type ChallengeColor = {
   primary: string;
+  basicInfoPrimary?: string | null;
   primaryLight: string;
   secondary: string;
   secondaryLight: string;
@@ -92,13 +93,14 @@ const ChallengeView: React.FC<{
     }
   }, [challenge.desc]);
 
-  const colors = useMemo(() => {
+  const colors = useMemo<ChallengeColor>(() => {
     let primary = '';
     let primaryLight = '';
     let secondary = '';
     let secondaryLight = '';
     let gradient = ''; // After 배지 배경색에 사용
     let dark = ''; // 진행방식,결과물 배경색
+    let basicInfoPrimary = null; // 기본정보 기본색
 
     let subTitle = '';
     let subBg = '';
@@ -143,6 +145,24 @@ const ChallengeView: React.FC<{
         recommendLogo = '#DEE7FF';
         thumbnailBg = '#FFF4DB';
         break;
+      case PERSONAL_STATEMENT_LARGE_CORP:
+        primary = '#14BCFF';
+        basicInfoPrimary = '#32B750';
+        secondary = '#FF9C34';
+        primaryLight = '#EEFAFF';
+        secondaryLight = '#FFF7EF';
+        gradient = '#39DEFF';
+        dark = '#20304F';
+
+        subTitle = '#FF9C34';
+        subBg = '#FFF7EF';
+        gradientBg =
+          'linear-gradient(180deg,#222A7E 0%,#111449 50%,#111449 100%)'; // ??
+        curriculumBg = '#EFF4F7';
+        recommendBg = '#F1FBFF';
+        recommendLogo = '#DDF5FF';
+        thumbnailBg = '#E6F9DE';
+        break;
       default:
         primary = '#14BCFF';
         secondary = '#FF9C34';
@@ -162,6 +182,7 @@ const ChallengeView: React.FC<{
     }
     return {
       primary,
+      basicInfoPrimary,
       primaryLight,
       secondary,
       secondaryLight,
@@ -235,7 +256,7 @@ const ChallengeView: React.FC<{
               </section>
             )}
 
-            <section className="flex w-full flex-col md:items-center">
+            <section className="flex flex-col w-full md:items-center">
               {challenge.challengeType === PORTFOLIO ? (
                 <ChallengeIntroPortfolio />
               ) : challenge.challengeType === CAREER_START ? (

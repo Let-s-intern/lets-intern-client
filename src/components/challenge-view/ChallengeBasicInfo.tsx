@@ -152,7 +152,10 @@ const ChallengeBasicInfo = ({
                   <span>{regularPrice?.toLocaleString()}원</span>
                 </div>
                 <div className="flex items-center justify-between w-full gap-x-4 text-xsmall16">
-                  <span className="font-bold" style={{ color: colors.primary }}>
+                  <span
+                    className="font-bold"
+                    style={{ color: colors.basicInfoPrimary ?? colors.primary }}
+                  >
                     {getDiscountPercent(
                       regularPrice || 0,
                       priceInfo.discount || 0,
@@ -182,7 +185,9 @@ const ChallengeBasicInfo = ({
               </div>
               {showMonthlyPrice && (
                 <div className="flex flex-col items-end w-full">
-                  <div style={{ color: colors.primary }}>
+                  <div
+                    style={{ color: colors.basicInfoPrimary ?? colors.primary }}
+                  >
                     <span className="mr-1 font-semibold text-medium22">월</span>
                     <span className="font-bold text-xlarge28">
                       {monthlyPrice
@@ -203,7 +208,7 @@ const ChallengeBasicInfo = ({
       </div>
       <div
         className="flex flex-col w-full gap-3 md:flex-row"
-        style={{ color: colors.primary }}
+        style={{ color: colors.basicInfoPrimary ?? colors.primary }}
       >
         {!activeOnly && (
           <div className="flex flex-col w-full px-4 pt-3 pb-5 gap-y-2 rounded-ms bg-neutral-95 md:flex-1 md:p-5 md:pt-4">
@@ -215,13 +220,15 @@ const ChallengeBasicInfo = ({
               <div className="relative ml-3 animate-bounce-x">
                 <Polygon
                   className="absolute left-0 top-1/2 -translate-x-[8px] -translate-y-[3px] transform"
-                  style={{ color: colors.primary }}
+                  style={{ color: colors.basicInfoPrimary ?? colors.primary }}
                   width={10}
                   height={8}
                 />
                 <span
                   className="px-2 py-1 font-normal text-white rounded-xxs text-xxsmall12"
-                  style={{ backgroundColor: colors.primary }}
+                  style={{
+                    backgroundColor: colors.basicInfoPrimary ?? colors.primary,
+                  }}
                 >
                   참여 가능한 일자를 선택해주세요!
                 </span>
@@ -238,7 +245,7 @@ const ChallengeBasicInfo = ({
                   .map((activeChallenge, index) => (
                     <RadioButton
                       key={index}
-                      color={colors.primary}
+                      color={colors.basicInfoPrimary ?? colors.primary}
                       checked={activeChallenge.id === Number(challengeId)}
                       label={formatFullDate(dayjs(activeChallenge.startDate))}
                       onClick={() =>
@@ -335,7 +342,10 @@ const ChallengeBasicInfo = ({
                   <span>{regularPrice?.toLocaleString()}원</span>
                 </div>
                 <div className="flex items-center justify-between w-full gap-x-4 text-xsmall16">
-                  <span className="font-bold" style={{ color: colors.primary }}>
+                  <span
+                    className="font-bold"
+                    style={{ color: colors.basicInfoPrimary ?? colors.primary }}
+                  >
                     {getDiscountPercent(
                       regularPrice || 0,
                       priceInfo.discount || 0,
@@ -365,7 +375,9 @@ const ChallengeBasicInfo = ({
               </div>
               {showMonthlyPrice && (
                 <div className="flex flex-col items-end w-full gap-y-2">
-                  <div style={{ color: colors.primary }}>
+                  <div
+                    style={{ color: colors.basicInfoPrimary ?? colors.primary }}
+                  >
                     <span className="mr-1 font-semibold text-medium22">월</span>
                     <span className="font-bold text-xlarge28">
                       {monthlyPrice

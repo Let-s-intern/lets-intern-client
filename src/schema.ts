@@ -12,6 +12,14 @@ export const reportTypeSchema = z.enum([
   'PORTFOLIO',
 ]);
 
+export const ReportTypePathnameEnum = z.enum([
+  'resume',
+  'personal-statement',
+  'portfolio',
+]);
+
+export type ReportTypePathname = z.infer<typeof ReportTypePathnameEnum>;
+
 export const pageInfo = z.object({
   pageNum: z.number().gte(0),
   pageSize: z.number().gte(0),
@@ -88,6 +96,12 @@ export const ProgramClassificationEnum = z.enum([
 ]);
 
 export type ProgramClassification = z.infer<typeof ProgramClassificationEnum>;
+
+export const ProgramAdminClassificationEnum = z.enum(['B2B', 'B2C']);
+
+export type ProgramAdminClassification = z.infer<
+  typeof ProgramAdminClassificationEnum
+>;
 
 export const challengePriceType = z.union([
   z.literal('CHARGE'),
@@ -197,6 +211,14 @@ export const getChallengeIdPrimitiveSchema = z.object({
       programClassification: ProgramClassificationEnum,
     }),
   ),
+  adminClassificationInfo: z
+    .array(
+      z.object({
+        programAdminClassification: ProgramAdminClassificationEnum,
+      }),
+    )
+    .nullable()
+    .optional(),
   priceInfo: z.array(
     z.object({
       priceId: z.number(),
@@ -254,9 +276,16 @@ export type CreateChallengeReq = {
   chatLink: string;
   chatPassword: string;
   challengeType: ChallengeType;
+  // 프로그램 분류
   programTypeInfo: {
     classificationInfo: {
       programClassification: ProgramClassification;
+    };
+  }[];
+  // B2 타입
+  adminProgramTypeInfo: {
+    classificationInfo: {
+      programAdminClassification: ProgramAdminClassification;
     };
   }[];
   priceInfo: ChallengePriceReq[];
@@ -284,6 +313,12 @@ export type UpdateChallengeReq = {
   programTypeInfo?: {
     classificationInfo: {
       programClassification: ProgramClassification;
+    };
+  }[];
+  // B2 타입
+  adminProgramTypeInfo?: {
+    classificationInfo: {
+      programAdminClassification: ProgramAdminClassification;
     };
   }[];
   priceInfo?: ChallengePriceReq[];
@@ -341,6 +376,14 @@ export const getLiveIdPrimitiveSchema = z.object({
       programClassification: ProgramClassificationEnum,
     }),
   ),
+  adminClassificationInfo: z
+    .array(
+      z.object({
+        programAdminClassification: ProgramAdminClassificationEnum,
+      }),
+    )
+    .nullable()
+    .optional(),
   priceInfo: z.object({
     priceId: z.number(),
     price: z.number().optional().nullable(),
@@ -400,6 +443,12 @@ export type CreateLiveReq = {
       programClassification: ProgramClassification;
     };
   }[];
+  // B2 타입
+  adminProgramTypeInfo: {
+    classificationInfo: {
+      programAdminClassification: ProgramAdminClassification;
+    };
+  }[];
   priceInfo: {
     priceInfo: {
       price: number;
@@ -441,6 +490,12 @@ export type UpdateLiveReq = {
   programTypeInfo?: {
     classificationInfo: {
       programClassification: ProgramClassification;
+    };
+  }[];
+  // B2 타입
+  adminProgramTypeInfo?: {
+    classificationInfo: {
+      programAdminClassification: ProgramAdminClassification;
     };
   }[];
   priceInfo?: {
@@ -496,6 +551,14 @@ export const getVodIdSchema = z.object({
     )
     .nullable()
     .optional(),
+  adminProgramTypeInfo: z
+    .array(
+      z.object({
+        programAdminClassification: ProgramAdminClassificationEnum,
+      }),
+    )
+    .nullable()
+    .optional(),
 });
 
 export type VodIdSchema = z.infer<typeof getVodIdSchema>;
@@ -512,6 +575,12 @@ export type CreateVodReq = {
       programClassification: ProgramClassification;
     };
   }[];
+  // B2 타입
+  adminProgramTypeInfo: {
+    classificationInfo: {
+      programAdminClassification: ProgramAdminClassification;
+    };
+  }[];
 };
 
 /** PATCH /api/v1/vod VOD 수정 */
@@ -525,6 +594,12 @@ export type UpdateVodReq = {
   programTypeInfo?: {
     classificationInfo: {
       programClassification: ProgramClassification;
+    };
+  }[];
+  // B2 타입
+  adminProgramTypeInfo?: {
+    classificationInfo: {
+      programAdminClassification: ProgramAdminClassification;
     };
   }[];
 };
@@ -1493,6 +1568,14 @@ export const programAdminSchema = z
           thumbnail: z.string().nullable().optional(),
         }),
         classificationList: z.array(classificationSchema),
+        adminClassificationList: z
+          .array(
+            z.object({
+              programAdminClassification: ProgramAdminClassificationEnum,
+            }),
+          )
+          .nullable()
+          .optional(),
       }),
     ),
     pageInfo,

@@ -36,6 +36,7 @@ const LivePreviewButton: React.FC<{
         place: input.place ?? existing.place,
         progressType: input.progressType ?? existing.progressType,
         classificationInfo: existing.classificationInfo, // TODO: 수정 필요
+        adminClassificationInfo: existing.adminClassificationInfo, // TODO: 수정 필요
         deadline: input.deadline ? dayjs(input.deadline) : existing.deadline,
         endDate: input.endDate ? dayjs(input.endDate) : existing.endDate,
         faqInfo:
@@ -82,6 +83,7 @@ const LivePreviewButton: React.FC<{
       mentorIntroduction: input.mentorIntroduction,
       mentorJob: input.mentorJob,
       classificationInfo: [{ programClassification: 'CAREER_SEARCH' }], // TODO: 수정 필요
+      adminClassificationInfo: [{ programAdminClassification: 'B2C' }], // TODO: 수정 필요
       deadline: input.deadline ? dayjs(input.deadline) : null,
       endDate: input.endDate ? dayjs(input.endDate) : null,
       faqInfo: faq?.faqList.filter((faq) => inputFaqIdSet.has(faq.id)) ?? [],

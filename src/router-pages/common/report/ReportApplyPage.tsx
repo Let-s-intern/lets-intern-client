@@ -14,6 +14,7 @@ import useReportProgramInfo from '@/hooks/useReportProgramInfo';
 import useRunOnce from '@/hooks/useRunOnce';
 import useValidateUrl from '@/hooks/useValidateUrl';
 import { twMerge } from '@/lib/twMerge';
+import { ReportTypePathnameEnum } from '@/schema';
 import useAuthStore from '@/store/useAuthStore';
 import useReportApplicationStore from '@/store/useReportApplicationStore';
 import { ReportFormRadioControlLabel } from '@components/common/report/ControlLabel';
@@ -70,7 +71,7 @@ const ReportApplyPage = () => {
 
     if (
       reportPriceType === 'PREMIUM' &&
-      reportType?.toUpperCase() !== 'PERSONAL_STATEMENT' &&
+      reportType !== ReportTypePathnameEnum.enum['personal-statement'] &&
       isEmpty(recruitmentUrl) &&
       isEmpty(recruitmentFile)
     ) {

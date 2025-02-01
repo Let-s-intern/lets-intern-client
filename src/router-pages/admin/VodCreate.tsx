@@ -17,6 +17,7 @@ const VodCreate: React.FC = () => {
     link: '',
     thumbnail: '',
     programTypeInfo: [],
+    adminProgramTypeInfo: [],
     shortDesc: '',
   });
 

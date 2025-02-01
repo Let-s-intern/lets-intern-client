@@ -2,11 +2,20 @@ import {
   useGetProgramAdminQuery,
   useGetProgramAdminQueryKey,
 } from '@/api/program';
+import Header from '@/components/admin/ui/header/Header';
+import Heading from '@/components/admin/ui/heading/Heading';
+import AdminPagination from '@/components/admin/ui/pagination/AdminPagination';
+import Table from '@/components/admin/ui/table/regacy/Table';
 import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
 import { useDeleteProgram } from '@/hooks/useDeleteProgram';
 import { useDuplicateProgram } from '@/hooks/useDuplicateProgram';
 import { usePatchVisibleProgram } from '@/hooks/usePatchVisibleProgram';
 import { ProgramAdminListItem } from '@/schema';
+import {
+  newProgramTypeToText,
+  programClassificationToText,
+  programStatusToText,
+} from '@/utils/convert';
 import TD from '@components/admin/ui/table/regacy/TD';
 import TH from '@components/admin/ui/table/regacy/TH';
 import { Button, Switch } from '@mui/material';
@@ -21,21 +30,12 @@ import {
   FaTrashCan,
 } from 'react-icons/fa6';
 import { Link, useNavigate } from 'react-router-dom';
-import Header from '../../../components/admin/ui/header/Header';
-import Heading from '../../../components/admin/ui/heading/Heading';
-import AdminPagination from '../../../components/admin/ui/pagination/AdminPagination';
-import Table from '../../../components/admin/ui/table/regacy/Table';
-import {
-  newProgramTypeToText,
-  programClassificationToText,
-  programStatusToText,
-} from '../../../utils/convert';
 
 const Programs = () => {
   const [pageNum, setPageNum] = useState<number>(1);
   const navigate = useNavigate();
 
-  const sizePerPage = 10;
+  const sizePerPage = 20;
 
   const { data, isLoading, error } = useGetProgramAdminQuery({
     page: pageNum,

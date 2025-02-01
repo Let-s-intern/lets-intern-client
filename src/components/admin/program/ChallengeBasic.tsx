@@ -2,6 +2,8 @@ import {
   ChallengeIdSchema,
   ChallengeParticipationType,
   CreateChallengeReq,
+  ProgramAdminClassification,
+  ProgramAdminClassificationEnum,
   ProgramClassification,
   UpdateChallengeReq,
 } from '@/schema';
@@ -22,12 +24,14 @@ import {
   SelectChangeEvent,
 } from '@mui/material';
 import React from 'react';
+import SelectFormControl from './SelectFormControl';
 
 interface ChallengeBasicProps<
   T extends CreateChallengeReq | UpdateChallengeReq,
 > {
   defaultValue?: Pick<
     ChallengeIdSchema,
+    | 'adminClassificationInfo'
     | 'classificationInfo'
     | 'challengeType'
     | 'priceInfo'
@@ -102,6 +106,52 @@ const ChallengeBasic = React.memo(
             ))}
           </Select>
         </FormControl>
+
+        {/* B2 타입 */}
+        <SelectFormControl
+          labelId="adminProgramTypeInfo"
+          label="B2 타입"
+          defaultValue={
+            defaultValue?.adminClassificationInfo
+              ? defaultValue.adminClassificationInfo.map(
+                  (info) => info.programAdminClassification,
+                )
+              : []
+          }
+          onChange={(e) =>
+            setInput((prev) => ({
+              ...prev,
+              adminProgramTypeInfo: (
+                e.target.value as ProgramAdminClassification[]
+              ).map((item) => ({
+                classificationInfo: {
+                  programAdminClassification: item,
+                },
+              })),
+            }))
+          }
+          renderValue={(selectedList) => (
+            <div className="flex flex-wrap gap-2">
+              {selectedList.map((selected) => (
+                <Chip
+                  key={selected}
+                  label={
+                    ProgramAdminClassificationEnum.enum[
+                      selected as ProgramAdminClassification
+                    ]
+                  }
+                />
+              ))}
+            </div>
+          )}
+        >
+          {Object.values(ProgramAdminClassificationEnum.enum).map((value) => (
+            <MenuItem key={value} value={value}>
+              {value}
+            </MenuItem>
+          ))}
+        </SelectFormControl>
+
         <FormControl size="small">
           <InputLabel>챌린지 구분</InputLabel>
           <Select
