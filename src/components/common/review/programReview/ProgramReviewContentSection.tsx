@@ -54,7 +54,7 @@ const ProgramReviewContentSection = () => {
   return (
     <div className="w-full px-5 flex flex-col gap-y-6 md:pr-5 md:pl-0 lg:px-0 pb-12 md:pb-8">
       {reviewDataIsLoading ? (
-        <LoadingContainer />
+        <LoadingContainer className="h-64" />
       ) : !reviewData || reviewData.reviewList.length < 1 ? (
         <div className="flex justify-center bg-neutral-95 rounded-ms text-xsmall14 text-neutral-40 items-center h-60">
           등록된 후기가 없습니다.
