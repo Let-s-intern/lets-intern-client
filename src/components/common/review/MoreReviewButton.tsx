@@ -1,37 +1,26 @@
-import { useGetTotalReview } from '@/api/challenge';
 import ArrowCircle from '@/assets/icons/arrow-circle.svg?react';
-import Close from '@/assets/icons/close.svg?react';
-import StarIcon from '@/assets/icons/star.svg?react';
-import { Modal } from '@mui/material';
-import { useState } from 'react';
-import { maskingName } from '../program/program-detail/review/ProgramDetailReviewItem';
+import { ChallengeType } from '@/schema';
+import Link from 'next/link';
 
 interface MoreReviewButtonProps {
   type: 'CHALLENGE' | 'LIVE' | 'VOD' | 'REPORT';
   mainColor: string;
   subColor: string;
+  challengeType?: ChallengeType;
 }
 
 const MoreReviewButton = ({
   mainColor,
   subColor,
   type,
+  challengeType,
 }: MoreReviewButtonProps) => {
-  const [open, setOpen] = useState(false);
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
-
-  const { data, isLoading: reviewIsLoading } = useGetTotalReview({
-    type,
-  });
-
-  const reviews = data?.reviewList?.filter((review) => review.isVisible);
-
   return (
     <>
-      <div
+      <Link
         className="more_reviews flex w-full items-center justify-center px-5 md:px-0"
-        onClick={handleOpen}
+        href={`/review/program?program=${type.toLowerCase()}_review${challengeType ? `&challenge=${challengeType.toLowerCase()}` : ''}`}
+        scroll
       >
         <div
           className="relative mt-12 flex w-full cursor-pointer items-center justify-center gap-x-2 rounded-sm px-5 py-4 text-white md:mx-0 md:mt-20 md:w-fit"
@@ -48,81 +37,7 @@ const MoreReviewButton = ({
             자세한 수강생들의 후기가 궁금하다면?
           </div>
         </div>
-      </div>
-      <Modal
-        open={open}
-        onClose={handleClose}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
-        className="flex items-center justify-center px-8 py-12 outline-none focus:outline-none"
-      >
-        <div
-          className="rounded-ms relative flex max-h-[80%] w-full max-w-3xl flex-col gap-y-5 overflow-hidden bg-white p-4 outline-none focus:outline-none md:p-14"
-          onClick={(e) => e.stopPropagation()}
-        >
-          <Close
-            className="absolute right-4 top-4 h-6 w-6 cursor-pointer md:right-14 md:top-14 md:h-7 md:w-7"
-            onClick={handleClose}
-          />
-          <div className="flex h-full w-full flex-col gap-y-5 overflow-hidden">
-            <div className="flex items-center gap-x-2 text-xsmall16 font-semibold">
-              후기{' '}
-              <span className="text-xsmall14 font-medium text-primary">
-                {reviews?.length ?? 0}개
-              </span>
-            </div>
-            <div className="flex w-full flex-1 overflow-auto">
-              <div className="flex h-full min-h-20 w-full flex-col gap-y-3 overflow-auto">
-                {reviewIsLoading ? (
-                  <div className="m-auto">로딩 중...</div>
-                ) : !reviews || reviews.length === 0 ? (
-                  <div className="m-auto">후기가 없습니다.</div>
-                ) : (
-                  reviews.map((review, index) => (
-                    <div
-                      key={index}
-                      className="flex w-full flex-col gap-y-2 rounded-[10px] bg-neutral-95 px-4 py-5"
-                    >
-                      <p className="flex items-center gap-x-2 text-xsmall14 font-semibold">
-                        {review.programTitle ?? '프로그램 없음'}
-                        <span className="text-primary">
-                          {maskingName(review.name ?? '-')}
-                        </span>
-                      </p>
-                      <p className="w-full whitespace-pre-wrap break-words text-xsmall14 font-medium">
-                        {review.content}
-                      </p>
-                      <div className={`flex w-fit items-center`}>
-                        {/* review.score만큼 별, 그리고 5-score만큼 빈 별 */}
-                        {Array(review.score)
-                          .fill(0)
-                          .map((_, index) => (
-                            <StarIcon
-                              key={index}
-                              width={18}
-                              height={18}
-                              className="text-primary"
-                            />
-                          ))}
-                        {Array(5 - review.score)
-                          .fill(0)
-                          .map((_, index) => (
-                            <StarIcon
-                              key={index}
-                              width={18}
-                              height={18}
-                              className="text-neutral-75"
-                            />
-                          ))}
-                      </div>
-                    </div>
-                  ))
-                )}
-              </div>
-            </div>
-          </div>
-        </div>
-      </Modal>
+      </Link>
     </>
   );
 };
