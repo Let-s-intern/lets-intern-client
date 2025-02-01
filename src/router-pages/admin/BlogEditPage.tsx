@@ -1,3 +1,4 @@
+import dayjs from '@/lib/dayjs';
 import {
   Button,
   FormControl,
@@ -9,7 +10,6 @@ import {
 } from '@mui/material';
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 import { isAxiosError } from 'axios';
-import dayjs, { Dayjs } from 'dayjs';
 import { ChangeEvent, FormEvent, MouseEvent, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
@@ -28,6 +28,7 @@ import EditorApp from '@/components/admin/lexical/EditorApp';
 import ImageUpload from '@/components/admin/program/ui/form/ImageUpload';
 import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
 import { blogCategory } from '@/utils/convert';
+import { Dayjs } from 'dayjs';
 
 const maxCtaTextLength = 23;
 const maxTitleLength = 49;
@@ -148,6 +149,9 @@ const BlogEditPage = () => {
 
   useEffect(() => {
     if (isLoading || !blogData) return;
+    const displayDate = blogData.blogDetailInfo.displayDate
+      ? dayjs(blogData.blogDetailInfo.displayDate)
+      : null;
     setEditingValue({
       title: blogData.blogDetailInfo.title!,
       category: blogData.blogDetailInfo.category!,
@@ -156,14 +160,14 @@ const BlogEditPage = () => {
       content: blogData.blogDetailInfo.content || '',
       ctaLink: blogData.blogDetailInfo.ctaLink || '',
       ctaText: blogData.blogDetailInfo.ctaText || '',
-      displayDate: blogData.blogDetailInfo.displayDate || null,
+      displayDate: displayDate,
       tagList: blogData.tagDetailInfos,
     });
-    setDateTime(blogData.blogDetailInfo.displayDate);
+    setDateTime(displayDate);
   }, [isLoading, blogData]);
 
   return (
-    <div className="mx-3 mb-40 mt-3">
+    <div className="mx-3 mt-3 mb-40">
       <header>
         <h1 className="text-2xl font-semibold">블로그 수정</h1>
       </header>
@@ -171,8 +175,8 @@ const BlogEditPage = () => {
         <span>로딩 중...</span>
       ) : blogData ? (
         <main className="max-w-screen-xl">
-          <div className="mt-4 flex flex-col gap-4">
-            <div className="flex-no-wrap flex items-center gap-4">
+          <div className="flex flex-col gap-4 mt-4">
+            <div className="flex flex-no-wrap items-center gap-4">
               <FormControl size="small" required>
                 <InputLabel id="category-label">카테고리</InputLabel>
                 <Select
@@ -280,7 +284,7 @@ const BlogEditPage = () => {
               </div>
             </div>
 
-            <div className="border px-6 py-10">
+            <div className="px-6 py-10 border">
               <h2 className="mb-4">태그 설정</h2>
               <TagSelector
                 selectedTagList={editingValue.tagList}
@@ -304,7 +308,7 @@ const BlogEditPage = () => {
               />
             </div>
 
-            <div className="border px-6 py-10">
+            <div className="px-6 py-10 border">
               <h2 className="mb-2">게시 일자</h2>
               <DateTimePicker
                 label="게시 일자"
@@ -319,7 +323,7 @@ const BlogEditPage = () => {
               onChange={onChangeEditor}
             />
             <div className="text-right">
-              <div className="mb-1 flex items-center justify-end gap-4">
+              <div className="flex items-center justify-end gap-4 mb-1">
                 <Button
                   variant="outlined"
                   type="button"

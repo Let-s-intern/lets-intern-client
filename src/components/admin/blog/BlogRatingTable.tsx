@@ -1,6 +1,7 @@
 import clsx from 'clsx';
 import { useCallback, useState } from 'react';
 
+import dayjs from '@/lib/dayjs';
 import { useBlogRatingListQuery } from '../../../api/blog';
 import { blogCategory } from '../../../utils/convert';
 import MuiPagination from '../../common/program/pagination/MuiPagination';
@@ -55,7 +56,7 @@ export default function BlogRatingTable() {
       </div>
 
       {/* TableBody */}
-      <div className="mb-16 mt-3 flex flex-col gap-2">
+      <div className="flex flex-col gap-2 mt-3 mb-16">
         {isLoading ? (
           <></>
         ) : data?.ratingInfos.length === 0 ? (
@@ -64,10 +65,12 @@ export default function BlogRatingTable() {
           data?.ratingInfos.map((rating) => (
             <div
               key={rating.id}
-              className="flex rounded-md border border-neutral-200"
+              className="flex border rounded-md border-neutral-200"
             >
               <TableBodyCell widthClassName={ratingColumnWidth.createdDate}>
-                {rating.createDate?.format('YYYY년 M월 D일')}
+                {rating.createDate
+                  ? dayjs(rating.createDate).format('YYYY년 M월 D일')
+                  : null}
               </TableBodyCell>
               <TableBodyCell widthClassName={ratingColumnWidth.category}>
                 {blogCategory[rating.category!]}

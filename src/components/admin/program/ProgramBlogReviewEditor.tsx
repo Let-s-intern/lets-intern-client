@@ -57,24 +57,19 @@ const ProgramBlogReviewEditor: React.FC<{
 
   const list = useMemo(() => {
     const l = [...(res.data?.blogInfos ?? [])];
-    l.sort(
-      (a, b) =>
-        b.blogThumbnailInfo.createDate?.diff(
-          a.blogThumbnailInfo.createDate ?? dayjs(),
-        ) ?? 0,
-    );
+    l.sort((a, b) => {
+      if (!a.blogThumbnailInfo.createDate) {
+        return -1;
+      }
+      if (!b.blogThumbnailInfo.createDate) {
+        return 1;
+      }
+      const aCreateDate = dayjs(a.blogThumbnailInfo.createDate);
+      const bCreateDate = dayjs(b.blogThumbnailInfo.createDate);
+      return bCreateDate.diff(aCreateDate);
+    });
     return l;
   }, [res.data?.blogInfos]);
-
-  //       displayDate: Dayjs | null;
-  //       createDate: Dayjs | null;
-  //       lastModifiedDate: Dayjs | null;
-  //       id: number;
-  //       title?: string | null | undefined;
-  //       category?: string | ... 1 more ... | undefined;
-  //       thumbnail?: string | ... 1 more ... | undefined;
-  //       description?: string | ... 1 more ... | undefined;
-  //       isDisplayed?: boolean | ... 1 more ... | undefi
 
   const onClose = () => setSelectModalOpen(false);
   const onOpen = () => setSelectModalOpen(true);
@@ -92,14 +87,14 @@ const ProgramBlogReviewEditor: React.FC<{
           {blogReview.list.map((item) => (
             <div
               key={item.id}
-              className="h-28 w-32 flex-none rounded-xs border"
+              className="flex-none w-32 border h-28 rounded-xs"
               style={{
                 backgroundImage: `url(${item.thumbnail})`,
                 backgroundSize: 'cover',
                 backgroundPosition: 'center',
               }}
             >
-              <div className="flex h-full items-center justify-center bg-black bg-opacity-30 p-2 text-xxsmall12">
+              <div className="flex items-center justify-center h-full p-2 bg-black bg-opacity-30 text-xxsmall12">
                 <span className="text-white">{item.title}</span>
               </div>
             </div>
@@ -151,7 +146,7 @@ const ProgramBlogReviewEditor: React.FC<{
                       >
                         <td className="px-2 py-1">
                           <input
-                            className="h-4 w-4"
+                            className="w-4 h-4"
                             type="checkbox"
                             checked={blogReview.list.some(
                               (v) => v.id === item.blogThumbnailInfo.id,
@@ -197,10 +192,12 @@ const ProgramBlogReviewEditor: React.FC<{
                             </span>
                           </div>
                         </td>
-                        <td className="whitespace-nowrap p-1 text-xsmall14">
-                          {item.blogThumbnailInfo.createDate?.format(
-                            'YYYY.MM.DD',
-                          )}
+                        <td className="p-1 whitespace-nowrap text-xsmall14">
+                          {item.blogThumbnailInfo.createDate
+                            ? dayjs(item.blogThumbnailInfo.createDate).format(
+                                'YYYY.MM.DD',
+                              )
+                            : null}
                         </td>
                         <td className="whitespace-nowrap">
                           {item.blogThumbnailInfo.title}

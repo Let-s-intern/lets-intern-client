@@ -1,3 +1,4 @@
+import dayjs from '@/lib/dayjs';
 import { z } from 'zod';
 import { pageInfo } from '../schema';
 
@@ -32,7 +33,7 @@ export type PostTag = z.infer<typeof postTagSchema>;
 export type BlogThumbnail = z.infer<typeof blogThumbnailInfo>;
 export type BlogRating = z.infer<typeof blogRatingSchema>['ratingInfos'][0];
 
-export const blogThumbnailInfo = z.object({
+export const blogThumbnailInfoPrimitive = z.object({
   id: z.number(),
   title: z.string().nullable().optional(),
   category: z.string().nullable().optional(),
@@ -44,7 +45,20 @@ export const blogThumbnailInfo = z.object({
   lastModifiedDate: z.string().nullable().optional(),
 });
 
-export const blogDetailInfo = z.object({
+export const blogThumbnailInfo = blogThumbnailInfoPrimitive.transform(
+  (data) => {
+    return {
+      ...data,
+      displayDate: data.displayDate ? dayjs(data.displayDate) : null,
+      createDate: data.createDate ? dayjs(data.createDate) : null,
+      lastModifiedDate: data.lastModifiedDate
+        ? dayjs(data.lastModifiedDate)
+        : null,
+    };
+  },
+);
+
+export const blogDetailInfoPrimitive = z.object({
   id: z.number(),
   title: z.string().nullable().optional(),
   category: z.string().nullable().optional(),
@@ -57,6 +71,17 @@ export const blogDetailInfo = z.object({
   displayDate: z.string().nullable().optional(),
   createDate: z.string().nullable().optional(),
   lastModifiedDate: z.string().nullable().optional(),
+});
+
+export const blogDetailInfo = blogDetailInfoPrimitive.transform((data) => {
+  return {
+    ...data,
+    createDate: data.createDate ? dayjs(data.createDate) : null,
+    lastModifiedDate: data.lastModifiedDate
+      ? dayjs(data.lastModifiedDate)
+      : null,
+    displayDate: data.displayDate ? dayjs(data.displayDate) : null,
+  };
 });
 
 export const tagSchema = z.object({
@@ -81,11 +106,23 @@ export const blogSchema = z.object({
 
 export type BlogSchema = z.infer<typeof blogSchema>;
 
+export const blogPrimitiveSchema = z.object({
+  blogDetailInfo: blogDetailInfoPrimitive,
+  tagDetailInfos,
+});
+
+export type BlogPrimitive = z.infer<typeof blogPrimitiveSchema>;
+
 export const blogInfoSchema = z.object({
   blogThumbnailInfo,
   tagDetailInfos,
 });
 export type BlogInfoSchema = z.infer<typeof blogInfoSchema>;
+
+export const blogInfoPrimitiveSchema = z.object({
+  blogThumbnailInfo: blogThumbnailInfoPrimitive,
+  tagDetailInfos,
+});
 
 export const blogListSchema = z.object({
   blogInfos: z.array(blogInfoSchema),
@@ -93,6 +130,11 @@ export const blogListSchema = z.object({
 });
 
 export type BlogList = z.infer<typeof blogListSchema>;
+
+export const blogListPrimitiveSchema = z.object({
+  blogInfos: z.array(blogThumbnailInfoPrimitive),
+  pageInfo,
+});
 
 export const blogTagSchema = z.object({
   tagDetailInfos,
@@ -107,13 +149,37 @@ export const ratingSchema = z.object({
   lastModifiedDate: z.string().nullable().optional(),
 });
 
-export const blogRatingSchema = z.object({
+export const blogRatingPrimitiveSchema = z.object({
   ratingInfos: z.array(ratingSchema),
 });
 
-export const blogRatingListSchema = z.object({
+export const blogRatingSchema = blogRatingPrimitiveSchema.transform((data) => {
+  return {
+    ratingInfos: data.ratingInfos.map((ratingInfo) => ({
+      ...ratingInfo,
+      createDate: ratingInfo.createDate ? dayjs(ratingInfo.createDate) : null,
+      lastModifiedDate: ratingInfo.lastModifiedDate
+        ? dayjs(ratingInfo.lastModifiedDate)
+        : null,
+    })),
+  };
+});
+
+export const blogRatingListPrimitiveSchema = z.object({
   ratingInfos: z.array(
     ratingSchema.extend({ category: z.string().nullable().optional() }),
   ),
   pageInfo,
 });
+
+export const blogRatingListSchema = blogRatingListPrimitiveSchema.transform(
+  (data) => {
+    return {
+      ratingInfos: data.ratingInfos.map((ratingInfo) => ({
+        ...ratingInfo,
+        createDate: ratingInfo.createDate ? dayjs(ratingInfo.createDate) : null,
+      })),
+      pageInfo: data.pageInfo,
+    };
+  },
+);

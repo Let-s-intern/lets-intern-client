@@ -55,7 +55,7 @@ export default function BlogTable() {
         id: checkedBlog.id,
         isDisplayed: true,
         displayDate: checkedBlog.displayDate
-          ? checkedBlog.displayDate.format('YYYY-MM-DDTHH:mm')
+          ? dayjs(checkedBlog.displayDate).format('YYYY-MM-DDTHH:mm')
           : dayjs().format('YYYY-MM-DDTHH:mm'),
       };
       patchBlogMutation.mutate(reqBody);
@@ -109,11 +109,11 @@ export default function BlogTable() {
       ) : data?.blogInfos.length === 0 ? (
         <div className="py-6 text-center">개설된 블로그가 없습니다.</div>
       ) : (
-        <div className="mb-16 mt-3 flex flex-col gap-2">
+        <div className="flex flex-col gap-2 mt-3 mb-16">
           {data?.blogInfos.map((blogInfo) => (
             <div
               key={blogInfo.blogThumbnailInfo.id}
-              className="flex rounded-md border border-neutral-200"
+              className="flex border rounded-md border-neutral-200"
             >
               <TableBodyCell widthClassName={blogColumnWidth.id}>
                 <Link
@@ -124,9 +124,11 @@ export default function BlogTable() {
                 </Link>
               </TableBodyCell>
               <TableBodyCell widthClassName={blogColumnWidth.displayDate}>
-                {blogInfo.blogThumbnailInfo.displayDate?.format(
-                  'YYYY년 M월 D일',
-                )}
+                {blogInfo.blogThumbnailInfo.displayDate
+                  ? dayjs(blogInfo.blogThumbnailInfo.displayDate).format(
+                      'YYYY년 M월 D일',
+                    )
+                  : null}
               </TableBodyCell>
               <TableBodyCell widthClassName={blogColumnWidth.category}>
                 {blogCategory[blogInfo.blogThumbnailInfo.category!]}
