@@ -55,7 +55,7 @@ function ReviewFilter({
   const multiSelectCaption =
     checkedList.length > 0
       ? checkedList.length > 1
-        ? `${checkedList[0].caption}외 ${checkedList.length - 1}개`
+        ? `${checkedList[0].caption} 외 ${checkedList.length - 1}개`
         : checkedList[0].caption
       : '전체';
 

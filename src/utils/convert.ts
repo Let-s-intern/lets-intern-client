@@ -58,13 +58,13 @@ export const challengeTypeToText: Record<ChallengeType, string> = {
 };
 
 export const challengeTypeToDisplay: Record<ChallengeType, string> = {
-  CAREER_START: '취준 기필코',
-  DOCUMENT_PREPARATION: '서류 준비',
-  MEETING_PREPARATION: '면접 준비',
+  CAREER_START: '취준 기필코 시작 챌린지',
+  DOCUMENT_PREPARATION: '서류 완성 챌린지',
+  MEETING_PREPARATION: '면접 완성 챌린지',
   ETC: '기타',
-  PERSONAL_STATEMENT: '자기소개서 완성',
-  PORTFOLIO: '포트폴리오 완성',
-  PERSONAL_STATEMENT_LARGE_CORP: '대기업 자소서',
+  PERSONAL_STATEMENT: '자기소개서 완성 챌린지',
+  PORTFOLIO: '포트폴리오 완성 챌린지',
+  PERSONAL_STATEMENT_LARGE_CORP: '대기업 공채 자소서 완성 챌린지',
 };
 
 export const challengeTypes: ChallengeType[] = [
