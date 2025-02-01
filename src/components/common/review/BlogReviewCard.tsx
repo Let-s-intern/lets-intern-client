@@ -42,7 +42,7 @@ function BlogReviewCard({ blogReview }: Props) {
         <p className="mb-4 text-neutral-20 md:h-11 text-xsmall14 overflow-hidden line-clamp-2 text-ellipsis">
           {blogReview.description}
         </p>
-        <div className="mb-2 text-xsmall14 text-neutral-35 truncate">
+        <div className="mb-2 text-xsmall14 md:max-w-[22rem] text-neutral-35 truncate">
           {blogReview.url}
         </div>
         <span className="text-neutral-40 text-xxsmall12">
