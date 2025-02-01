@@ -65,7 +65,7 @@
     "zustand": "^4.5.4"
   },
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
     "typecheck": "tsc --noEmit",

@@ -10,7 +10,7 @@
   color: #000;
   position: relative;
   line-height: 1.7;
-  @apply my-5 block font-normal;
+  @apply block my-5 font-normal;
 }
 
 .editor-shell .editor-container {
@@ -1167,10 +1167,11 @@ i.page-break,
   background-color: rgba(150, 150, 150, 0.4);
 }
 
+/** 에러로 인해 주석처리
 .emoji-inner::moz-selection {
   color: transparent;
   background-color: rgba(150, 150, 150, 0.4);
-}
+} */
 
 .emoji.happysmile {
   background-image: url(images/emoji/1F642.png);

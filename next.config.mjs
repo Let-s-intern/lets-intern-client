@@ -5,21 +5,32 @@ const nextConfig = {
     // your project has ESLint errors.
     ignoreDuringBuilds: true,
   },
-  webpack(config) {
-    config.module.rules.push({
-      test: /\.svg$/,
-      issuer: /\.(js|ts)x?$/,
-      use: [
-        {
-          loader: '@svgr/webpack',
-          options: {
-            svgo: false,
-          },
+  experimental: {
+    turbo: {
+      rules: {
+        '*.svg': {
+          loaders: ['@svgr/webpack'],
+          as: '*.js',
         },
-      ],
-    });
-    return config;
+      },
+    },
   },
+
+  // webpack(config) {
+  //   config.module.rules.push({
+  //     test: /\.svg$/,
+  //     issuer: /\.(js|ts)x?$/,
+  //     use: [
+  //       {
+  //         loader: '@svgr/webpack',
+  //         options: {
+  //           svgo: false,
+  //         },
+  //       },
+  //     ],
+  //   });
+  //   return config;
+  // },
   images: {
     remotePatterns: [
       {
