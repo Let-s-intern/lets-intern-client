@@ -159,7 +159,7 @@ const DailyMissionSubmitSection = ({ myDailyMission }: Props) => {
           <input
             type="text"
             className={clsx(
-              'text-xsmall14 flex-1 cursor-text rounded-sm p-3 outline-none',
+              'text-xsmall14 flex-1 cursor-text rounded-sm p-3 outline-none disabled:bg-neutral-95',
               {
                 'text-neutral-400': !isEditing,
                 'border-red-500': !isValidLinkValue && value && isEditing,
@@ -215,13 +215,24 @@ const DailyMissionSubmitSection = ({ myDailyMission }: Props) => {
           <h3 className="text-xsmall16 font-semibold text-neutral-0">
             미션 소감
           </h3>
-          <textarea
-            className="rounded-md p-3 h-20 text-xsmall14 outline-none resize-none"
-            placeholder={`오늘의 미션은 어떠셨나요?\n새롭게 배운 점, 어려운 부분, 궁금증 등 떠오르는 생각을 남겨 주세요.`}
-            value={review}
-            onChange={handleMissionReviewChanged}
-            disabled={!isEditing || !!attendanceReview}
-          />
+          <div
+            className={clsx('flex rounded-md p-3 flex-col gap-y-2', {
+              'bg-neutral-95': !isEditing || !!attendanceReview,
+              'bg-white': isEditing && !attendanceReview,
+            })}
+          >
+            <textarea
+              className="flex-1 text-xsmall14 h-20 outline-none disabled:bg-neutral-95 resize-none"
+              placeholder={`오늘의 미션은 어떠셨나요?\n새롭게 배운 점, 어려운 부분, 궁금증 등 떠오르는 생각을 남겨 주세요.`}
+              value={review}
+              onChange={handleMissionReviewChanged}
+              disabled={!isEditing || !!attendanceReview}
+              maxLength={500}
+            />
+            <span className="text-xxsmall12 w-full text-right text-neutral-0/35">
+              {review.length}/500
+            </span>
+          </div>
         </div>
         <div className="mt-6 flex gap-x-6">
           {attendanceLink && (
@@ -242,10 +253,10 @@ const DailyMissionSubmitSection = ({ myDailyMission }: Props) => {
           )}
           <button
             type="submit"
-            className="text-small18 flex-1 h-12 rounded-md bg-primary text-white px-6 py-3 text-center disabled:bg-gray-300 disabled:text-gray-500 font-medium"
+            className="text-small18 flex-1 h-12 rounded-md bg-primary text-white px-6 py-3 text-center disabled:bg-neutral-70 disabled:text-white font-medium"
             disabled={!isEditing || !value || !review || !isLinkChecked}
           >
-            {isEditing ? '제출' : '제출 완료'}
+            {isEditing ? '미션 제출' : '제출 완료'}
           </button>
         </div>
 

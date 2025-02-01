@@ -56,6 +56,7 @@ const ProgramReviewSection = () => {
               missionTitleClamp={1}
               expandable
               reviewItemNums={2}
+              href={`/review/${review.reviewInfo.type === 'MISSION_REVIEW' ? 'mission' : 'program'}${review.reviewInfo.type !== 'MISSION_REVIEW' ? `?program=${review.reviewInfo.type?.toLowerCase()}` : ''}`}
             />
           ))}
         </div>

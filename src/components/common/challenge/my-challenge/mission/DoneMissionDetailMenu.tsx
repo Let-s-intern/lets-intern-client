@@ -64,7 +64,7 @@ const DoneMissionDetailMenu = ({
         )}
         <div className="mt-10 flex w-full flex-col gap-y-2.5">
           <h4 className="text-xsmall16 font-bold">미션 소감</h4>
-          <p className="rounded-md p-3 h-20 bg-neutral-95 text-xsmall14">
+          <p className="rounded-md p-3 h-20 bg-neutral-95 overflow-auto text-xsmall14">
             {schedule.attendanceInfo.review ?? '-'}
           </p>
         </div>
