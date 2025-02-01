@@ -42,7 +42,7 @@ function ReviewLinkCard({
     <div className="relative flex flex-col gap-3 group">
       <div className="w-full h-[7rem] relative overflow-hidden">
         <Image
-          className="object-cover border rounded-sm group-has-[a:hover]:opacity-80 transition"
+          className="object-cover rounded-sm group-has-[a:hover]:opacity-80 transition"
           src={thumbnail ?? ''}
           alt={title + ' 블로그 썸네일'}
           fill
