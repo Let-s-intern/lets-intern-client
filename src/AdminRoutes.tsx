@@ -35,27 +35,17 @@ import CouponEdit from './pages/admin/coupon/CouponEdit';
 import Coupons from './pages/admin/coupon/Coupons';
 import LiveCreate from './pages/admin/LiveCreate';
 import LiveEdit from './pages/admin/LiveEdit';
-import OnlineContents from './pages/admin/online-contents/OnlineContents';
-import OnlineContentsCreate from './pages/admin/online-contents/OnlineContentsCreate';
-import OnlineContentsEdit from './pages/admin/online-contents/OnlineContentsEdit';
 import ProgramCreate from './pages/admin/program/ProgramCreate';
 import ProgramEdit from './pages/admin/program/ProgramEdit';
 import AdminPrograms from './pages/admin/program/Programs';
 import ProgramUsers from './pages/admin/program/ProgramUsers';
-import Reminders from './pages/admin/reminder/Reminders';
-import RemindersBootcamp from './pages/admin/reminder/RemindersBootcamp';
-import RemindersChallenge from './pages/admin/reminder/RemindersChallenge';
-import RemindersLetsChat from './pages/admin/reminder/RemindersLetsChat';
 import AdminReportCreatePage from './pages/admin/report/AdminReportCreatePage';
 import AdminReportEditPage from './pages/admin/report/AdminReportEditPage';
 import AdminReportListPage from './pages/admin/report/AdminReportListPage';
 import ReportApplicationsPage from './pages/admin/report/ReportApplicationsPage';
 import AdminReviews from './pages/admin/review/Reviews';
-import AdminReviewsDetail from './pages/admin/review/ReviewsDetail';
-import UserCreate from './pages/admin/user/UserCreate';
 import UserDetail from './pages/admin/user/UserDetail';
 import UserEdit from './pages/admin/user/UserEdit';
-import UserMemo from './pages/admin/user/UserMemo';
 import Users from './pages/admin/user/Users';
 import VodCreate from './pages/admin/VodCreate';
 import VodEdit from './pages/admin/VodEdit';
@@ -70,19 +60,13 @@ export const getAdminRoutes = () => {
       <Route path="reviews">
         {/* /admin/reviews */}
         <Route path="" element={<AdminReviews />} />
-        {/* /admin/reviews/1 */}
-        <Route path=":programId" element={<AdminReviewsDetail />} />
       </Route>
       <Route path="users">
         {/* /admin/users */}
         <Route path="" element={<Users />} />
-        {/* /admin/users/create */}
-        <Route path="create" element={<UserCreate />} />
         <Route path=":userId">
           {/* /admin/users/1 */}
           <Route path="" element={<UserDetail />} />
-          {/* /admin/users/1/memo */}
-          <Route path="memo" element={<UserMemo />} />
           {/* /admin/users/1/edit */}
           <Route path="edit" element={<UserEdit />} />
         </Route>
@@ -117,17 +101,6 @@ export const getAdminRoutes = () => {
           <Route path="new" element={<ProgramBannerCreate />} />
           <Route path=":bannerId/edit" element={<ProgramBannerEdit />} />
         </Route>
-      </Route>
-      <Route path="online-contents">
-        <Route path="" element={<OnlineContents />} />
-        <Route path="new" element={<OnlineContentsCreate />} />
-        <Route path=":bannerId/edit" element={<OnlineContentsEdit />} />
-      </Route>
-      <Route path="reminders">
-        <Route path="" element={<Reminders />} />
-        <Route path="challenge" element={<RemindersChallenge />} />
-        <Route path="bootcamp" element={<RemindersBootcamp />} />
-        <Route path="lets-chat" element={<RemindersLetsChat />} />
       </Route>
       {/* /admin/challenge/operation */}
       <Route

@@ -1,6 +1,5 @@
 /** 사용하지 않습니다. react-query 이슈로 사용하기 어려움 */
 import { RouteObject } from 'react-router-dom';
-
 import { clientOnly } from 'vike-react/clientOnly';
 
 const ChallengeOperationAdminLayout = clientOnly(
@@ -87,16 +86,6 @@ const CouponCreate = clientOnly(
 );
 const CouponEdit = clientOnly(() => import('./pages/admin/coupon/CouponEdit'));
 const Coupons = clientOnly(() => import('./pages/admin/coupon/Coupons'));
-const OnlineContents = clientOnly(
-  () => import('./pages/admin/online-contents/OnlineContents'),
-);
-const OnlineContentsCreate = clientOnly(
-  () => import('./pages/admin/online-contents/OnlineContentsCreate'),
-);
-const OnlineContentsEdit = clientOnly(
-  () => import('./pages/admin/online-contents/OnlineContentsEdit'),
-);
-
 const ProgramCreate = clientOnly(
   () => import('./pages/admin/program/ProgramCreate'),
 );
@@ -109,24 +98,8 @@ const AdminPrograms = clientOnly(
 const ProgramUsers = clientOnly(
   () => import('./pages/admin/program/ProgramUsers'),
 );
-const Reminders = clientOnly(() => import('./pages/admin/reminder/Reminders'));
-const RemindersBootcamp = clientOnly(
-  () => import('./pages/admin/reminder/RemindersBootcamp'),
-);
-const RemindersChallenge = clientOnly(
-  () => import('./pages/admin/reminder/RemindersChallenge'),
-);
-const RemindersLetsChat = clientOnly(
-  () => import('./pages/admin/reminder/RemindersLetsChat'),
-);
-const AdminReviews = clientOnly(() => import('./pages/admin/review/Reviews'));
-const AdminReviewsDetail = clientOnly(
-  () => import('./pages/admin/review/ReviewsDetail'),
-);
-const UserCreate = clientOnly(() => import('./pages/admin/user/UserCreate'));
 const UserDetail = clientOnly(() => import('./pages/admin/user/UserDetail'));
 const UserEdit = clientOnly(() => import('./pages/admin/user/UserEdit'));
-const UserMemo = clientOnly(() => import('./pages/admin/user/UserMemo'));
 const Users = clientOnly(() => import('./pages/admin/user/Users'));
 
 export const adminRoute: RouteObject = {
@@ -149,22 +122,13 @@ export const adminRoute: RouteObject = {
       ],
     },
     {
-      path: 'reviews',
-      children: [
-        { index: true, element: <AdminReviews /> },
-        { path: ':programId', element: <AdminReviewsDetail /> },
-      ],
-    },
-    {
       path: 'users',
       children: [
         { index: true, element: <Users /> },
-        { path: 'create', element: <UserCreate /> },
         {
           path: ':userId',
           children: [
             { index: true, element: <UserDetail /> },
-            { path: 'memo', element: <UserMemo /> },
             { path: 'edit', element: <UserEdit /> },
           ],
         },
@@ -213,23 +177,6 @@ export const adminRoute: RouteObject = {
             { path: ':bannerId/edit', element: <ProgramBannerEdit /> },
           ],
         },
-      ],
-    },
-    {
-      path: 'online-contents',
-      children: [
-        { index: true, element: <OnlineContents /> },
-        { path: 'new', element: <OnlineContentsCreate /> },
-        { path: ':bannerId/edit', element: <OnlineContentsEdit /> },
-      ],
-    },
-    {
-      path: 'reminders',
-      children: [
-        { index: true, element: <Reminders /> },
-        { path: 'challenge', element: <RemindersChallenge /> },
-        { path: 'bootcamp', element: <RemindersBootcamp /> },
-        { path: 'lets-chat', element: <RemindersLetsChat /> },
       ],
     },
     {
