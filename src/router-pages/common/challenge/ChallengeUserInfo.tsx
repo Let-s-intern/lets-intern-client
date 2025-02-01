@@ -237,6 +237,7 @@ const ChallengeUserInfo = () => {
                 className="text-xsmall14 font-normal"
                 value={value.goal}
                 onChange={handleGoalChange}
+                maxLength={200}
               />
             </div>
           </div>
