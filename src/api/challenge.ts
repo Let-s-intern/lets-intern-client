@@ -207,6 +207,7 @@ export const useEditReviewVisible = () => {
   });
 };
 
+// 모집 중인 챌린지 조회
 export const useGetActiveChallenge = (type: ChallengeType) => {
   return useQuery({
     queryKey: ['useGetSameTypeChallenge', type],
