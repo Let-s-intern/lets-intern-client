@@ -1,4 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { z } from 'zod';
 import {
   activeChallengeResponse,
   AttendanceResult,
@@ -365,5 +366,23 @@ export const usePatchChallengeAttendance = ({
     onError: (e) => {
       return errorCallback && errorCallback(e);
     },
+  });
+};
+
+const reviewStatusSchema = z.object({
+  isCompleted: z.boolean(),
+});
+
+// 챌린지 리뷰 작성 여부 조회
+export const useGetChallengeReviewStatus = (
+  challengeId: number | undefined,
+) => {
+  return useQuery({
+    queryKey: ['challenge', challengeId, 'review-status'],
+    queryFn: async () => {
+      const res = await axios.get(`/challenge/${challengeId}/my/review-status`);
+      return reviewStatusSchema.parse(res.data.data);
+    },
+    enabled: !!challengeId,
   });
 };
