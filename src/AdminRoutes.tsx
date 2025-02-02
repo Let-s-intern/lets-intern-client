@@ -35,17 +35,10 @@ import CouponEdit from './router-pages/admin/coupon/CouponEdit';
 import Coupons from './router-pages/admin/coupon/Coupons';
 import LiveCreate from './router-pages/admin/LiveCreate';
 import LiveEdit from './router-pages/admin/LiveEdit';
-import OnlineContents from './router-pages/admin/online-contents/OnlineContents';
-import OnlineContentsCreate from './router-pages/admin/online-contents/OnlineContentsCreate';
-import OnlineContentsEdit from './router-pages/admin/online-contents/OnlineContentsEdit';
 import ProgramCreate from './router-pages/admin/program/ProgramCreate';
 import ProgramEdit from './router-pages/admin/program/ProgramEdit';
 import AdminPrograms from './router-pages/admin/program/Programs';
 import ProgramUsers from './router-pages/admin/program/ProgramUsers';
-import Reminders from './router-pages/admin/reminder/Reminders';
-import RemindersBootcamp from './router-pages/admin/reminder/RemindersBootcamp';
-import RemindersChallenge from './router-pages/admin/reminder/RemindersChallenge';
-import RemindersLetsChat from './router-pages/admin/reminder/RemindersLetsChat';
 import AdminReportCreatePage from './router-pages/admin/report/AdminReportCreatePage';
 import AdminReportEditPage from './router-pages/admin/report/AdminReportEditPage';
 import AdminReportListPage from './router-pages/admin/report/AdminReportListPage';
@@ -55,10 +48,8 @@ import AdminChallengeReviewListPage from './router-pages/admin/review/AdminChall
 import AdminLiveReviewListPage from './router-pages/admin/review/AdminLiveReviewListPage';
 import AdminMissionReviewListPage from './router-pages/admin/review/AdminMissionReviewListPage';
 import AdminReportReviewListPage from './router-pages/admin/review/AdminReportReviewListPage';
-import UserCreate from './router-pages/admin/user/UserCreate';
 import UserDetail from './router-pages/admin/user/UserDetail';
 import UserEdit from './router-pages/admin/user/UserEdit';
-import UserMemo from './router-pages/admin/user/UserMemo';
 import Users from './router-pages/admin/user/Users';
 import VodCreate from './router-pages/admin/VodCreate';
 import VodEdit from './router-pages/admin/VodEdit';
@@ -69,13 +60,6 @@ export const getAdminRoutes = () => {
     <Route path="/admin" element={<AdminLayout />}>
       {/* /admin */}
       <Route path="" element={<AdminHome />} />
-
-      {/* <Route path="reviews"> */}
-      {/* /admin/reviews */}
-      {/* <Route path="" element={<AdminReviews />} /> */}
-      {/* /admin/reviews/1 */}
-      {/* <Route path="review/:programId" element={<AdminReviewsDetail />} /> */}
-      {/* </Route> */}
       <Route path="review/mission" element={<AdminMissionReviewListPage />} />
       <Route
         path="review/challenge"
@@ -88,13 +72,9 @@ export const getAdminRoutes = () => {
       <Route path="users">
         {/* /admin/users */}
         <Route path="" element={<Users />} />
-        {/* /admin/users/create */}
-        <Route path="create" element={<UserCreate />} />
         <Route path=":userId">
           {/* /admin/users/1 */}
           <Route path="" element={<UserDetail />} />
-          {/* /admin/users/1/memo */}
-          <Route path="memo" element={<UserMemo />} />
           {/* /admin/users/1/edit */}
           <Route path="edit" element={<UserEdit />} />
         </Route>
@@ -129,17 +109,6 @@ export const getAdminRoutes = () => {
           <Route path="new" element={<ProgramBannerCreate />} />
           <Route path=":bannerId/edit" element={<ProgramBannerEdit />} />
         </Route>
-      </Route>
-      <Route path="online-contents">
-        <Route path="" element={<OnlineContents />} />
-        <Route path="new" element={<OnlineContentsCreate />} />
-        <Route path=":bannerId/edit" element={<OnlineContentsEdit />} />
-      </Route>
-      <Route path="reminders">
-        <Route path="" element={<Reminders />} />
-        <Route path="challenge" element={<RemindersChallenge />} />
-        <Route path="bootcamp" element={<RemindersBootcamp />} />
-        <Route path="lets-chat" element={<RemindersLetsChat />} />
       </Route>
       {/* /admin/challenge/operation */}
       <Route
