@@ -36,20 +36,28 @@ const MissionReviewContentSection = () => {
   const { data: reviewData, isLoading: reviewDataIsLoading } =
     useGetProgramReview(getProgramParams);
 
-  const { data: careerStartChallenge } = useGetActiveChallenge('CAREER_START');
-  const { data: documentPreparationChallenge } = useGetActiveChallenge(
-    'DOCUMENT_PREPARATION',
-  );
-  const { data: meetingPreparationChallenge } = useGetActiveChallenge(
-    'MEETING_PREPARATION',
-  );
-  const { data: etcChallenge } = useGetActiveChallenge('ETC');
-  const { data: personalStatementChallenge } =
-    useGetActiveChallenge('PERSONAL_STATEMENT');
-  const { data: portfolioChallenge } = useGetActiveChallenge('PORTFOLIO');
-  const { data: largeCorpChallenge } = useGetActiveChallenge(
-    'PERSONAL_STATEMENT_LARGE_CORP',
-  );
+  const {
+    data: careerStartChallenge,
+    isLoading: careerStartChallengeIsLoading,
+  } = useGetActiveChallenge('CAREER_START');
+  const {
+    data: documentPreparationChallenge,
+    isLoading: documentPreparationChallengeIsLoading,
+  } = useGetActiveChallenge('DOCUMENT_PREPARATION');
+  const {
+    data: meetingPreparationChallenge,
+    isLoading: meetingPreparationChallengeIsLoading,
+  } = useGetActiveChallenge('MEETING_PREPARATION');
+  const { data: etcChallenge, isLoading: etcChallengeIsLoading } =
+    useGetActiveChallenge('ETC');
+  const {
+    data: personalStatementChallenge,
+    isLoading: personalStatementChallengeIsLoading,
+  } = useGetActiveChallenge('PERSONAL_STATEMENT');
+  const { data: portfolioChallenge, isLoading: portfolioChallengeIsLoading } =
+    useGetActiveChallenge('PORTFOLIO');
+  const { data: largeCorpChallenge, isLoading: largeCorpChallengeIsLoading } =
+    useGetActiveChallenge('PERSONAL_STATEMENT_LARGE_CORP');
 
   const getActiveChallenge = (list: ActiveChallengeType[] | undefined) => {
     if (!list || list.length < 1) {
@@ -79,6 +87,16 @@ const MissionReviewContentSection = () => {
     }
   };
 
+  const isLoading =
+    reviewDataIsLoading ||
+    careerStartChallengeIsLoading ||
+    documentPreparationChallengeIsLoading ||
+    meetingPreparationChallengeIsLoading ||
+    etcChallengeIsLoading ||
+    personalStatementChallengeIsLoading ||
+    portfolioChallengeIsLoading ||
+    largeCorpChallengeIsLoading;
+
   useEffect(() => {
     if (reviewData) {
       setPageInfo(reviewData.pageInfo);
@@ -87,7 +105,7 @@ const MissionReviewContentSection = () => {
 
   return (
     <div className="flex flex-col w-full px-5 pb-12 gap-y-6 md:pr-5 md:pl-0 lg:px-0 md:pb-8">
-      {reviewDataIsLoading ? (
+      {isLoading ? (
         <LoadingContainer className="h-64" />
       ) : !reviewData || reviewData.reviewList.length < 1 ? (
         <div className="flex items-center justify-center bg-neutral-95 rounded-ms text-xsmall14 text-neutral-40 h-60">
