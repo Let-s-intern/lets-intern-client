@@ -13,6 +13,8 @@ interface SideNavItemProps {
   rel?: string;
   className?: string;
   hoverItem?: NavSubItemProps[];
+  /** React Router 때문에 강제 리프레시 수행. */
+  force?: boolean;
 }
 
 const SideNavItem = ({
@@ -23,6 +25,7 @@ const SideNavItem = ({
   rel,
   className,
   hoverItem,
+  force,
 }: SideNavItemProps) => {
   const Wrapper = hoverItem ? 'div' : Link;
   const [open, setOpen] = useState(false);
@@ -36,11 +39,16 @@ const SideNavItem = ({
           hoverItem && open && 'bg-primary-5',
           className,
         )}
-        onClick={() => {
+        onClick={(e) => {
           if (hoverItem) {
             setOpen(!open);
           } else if (onClick) {
             onClick();
+          }
+
+          if (force) {
+            e.preventDefault();
+            window.location.href = to;
           }
         }}
         target={target}

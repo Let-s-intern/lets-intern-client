@@ -339,14 +339,14 @@ const NavBar = () => {
             )}
           </div>
           <div className="flex flex-col flex-1 gap-2">
-            <SideNavItem to="/mypage/application" onClick={closeMenu}>
+            <SideNavItem to="/mypage/application" onClick={closeMenu} force>
               마이페이지
             </SideNavItem>
             <hr className="h-1 bg-neutral-80" />
-            <SideNavItem to="/about" onClick={closeMenu}>
+            <SideNavItem to="/about" onClick={closeMenu} force>
               렛츠커리어 스토리
             </SideNavItem>
-            <SideNavItem to="/program" onClick={closeMenu}>
+            <SideNavItem to="/program" onClick={closeMenu} force>
               프로그램
             </SideNavItem>
             <SideNavItem to="/review" onClick={closeMenu}>

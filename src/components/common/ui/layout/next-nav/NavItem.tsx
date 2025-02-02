@@ -15,11 +15,13 @@ interface NavItemProps {
   isItemLoaded?: boolean;
   rel?: string;
   target?: string;
+  force?: boolean;
 }
 
 const NavItem = ({
   to,
   active,
+  force,
   as,
   children,
   hoverItem,
@@ -41,6 +43,12 @@ const NavItem = ({
         style,
         'relative hidden h-full cursor-pointer items-center xl:flex',
       )}
+      onClick={(e) => {
+        if (force) {
+          e.preventDefault();
+          window.location.href = to || '#';
+        }
+      }}
       target={target}
       rel={rel}
     >

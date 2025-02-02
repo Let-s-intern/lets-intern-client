@@ -1,6 +1,5 @@
 import axios from '@/utils/axios';
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { IProgram } from '../../../../../types/Program.interface';
 import {
   PROGRAM_STATUS,
@@ -9,7 +8,6 @@ import {
 import ProgramStatusTag from '../../../program/programs/card/ProgramStatusTag';
 
 const ProgramListItemContainer = ({ program }: { program: IProgram }) => {
-  const navigate = useNavigate();
   const [link, setLink] = useState(
     `/program/${program.programInfo.programType.toLowerCase()}/${
       program.programInfo.id

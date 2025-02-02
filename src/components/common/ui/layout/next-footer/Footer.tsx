@@ -50,10 +50,18 @@ const Footer = () => {
           <div className="flex flex-col gap-[3.25rem] lg:flex-row lg:items-start lg:gap-[6.25rem]">
             {/* 사이트맵 */}
             <div className="flex flex-col gap-3">
-              <MenuLink to="/about">렛츠커리어 스토리</MenuLink>
-              <MenuLink to="/program">프로그램</MenuLink>
-              <MenuLink to="/blog/list">블로그</MenuLink>
-              <MenuLink to="/report/landing">서류 진단 서비스</MenuLink>
+              <MenuLink to="/about" force>
+                렛츠커리어 스토리
+              </MenuLink>
+              <MenuLink to="/program" force>
+                프로그램
+              </MenuLink>
+              <MenuLink to="/blog/list" force>
+                블로그
+              </MenuLink>
+              <MenuLink to="/report/landing" force>
+                서류 진단 서비스
+              </MenuLink>
             </div>
 
             {/* 기타 */}

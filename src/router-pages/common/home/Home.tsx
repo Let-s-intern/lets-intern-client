@@ -1,3 +1,5 @@
+'use client';
+
 import { useState } from 'react';
 
 import AdvantageSection from '@/components/common/home/new/advantage/AdvantageSection';
@@ -14,7 +16,7 @@ const Home = () => {
   return (
     <>
       <TopBanner isShow={isShow} setIsShow={setIsShow} />
-      {isShow && <div className="h-20 w-full md:h-10" />}
+      {isShow && <div className="w-full h-20 md:h-10" />}
       <div className="flex justify-center py-5">
         <div className="mb-6 flex w-full max-w-[1080px] flex-col gap-16 lg:gap-20">
           <Banner />

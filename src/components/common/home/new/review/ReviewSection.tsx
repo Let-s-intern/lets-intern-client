@@ -1,8 +1,7 @@
-import { GoArrowRight } from 'react-icons/go';
-import { Link } from 'react-router-dom';
-
 import { useBlogListQuery } from '@/api/blog';
 import { getBlogPathname } from '@/utils/url';
+import Link from 'next/link';
+import { GoArrowRight } from 'react-icons/go';
 import Heading from '../ui/Heading';
 
 const ReviewSection = () => {
@@ -32,17 +31,17 @@ const ReviewSection = () => {
       <div className="flex items-center justify-between">
         <Heading>생생한 참여 후기</Heading>
         <Link
-          className="flex cursor-pointer items-center gap-1 text-neutral-40"
-          to="/blog/list"
+          className="flex items-center gap-1 cursor-pointer text-neutral-40"
+          href="/blog/list"
         >
           <span>더보기</span>
           <GoArrowRight size={20} />
         </Link>
       </div>
-      <div className="custom-scrollbar mt-6 flex items-center gap-4 overflow-x-auto">
+      <div className="flex items-center gap-4 mt-6 overflow-x-auto custom-scrollbar">
         {data.slice(0, 5).map(({ blogThumbnailInfo }) => (
           <Link
-            to={getBlogPathname(blogThumbnailInfo)}
+            href={getBlogPathname(blogThumbnailInfo)}
             key={blogThumbnailInfo.id}
             className="review_card shrink-0"
           >
