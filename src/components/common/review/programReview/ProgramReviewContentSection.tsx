@@ -1,18 +1,20 @@
 'use client';
 
+import { useGetActiveChallenge } from '@/api/challenge';
 import {
   programReviewParam,
   ReviewType,
   useGetProgramReview,
 } from '@/api/review';
-import { ChallengeType, PageInfo } from '@/schema';
+import { ActiveChallengeType, ChallengeType, PageInfo } from '@/schema';
 import MuiPagination from '@components/common/program/pagination/MuiPagination';
 import LoadingContainer from '@components/common/ui/loading/LoadingContainer';
 import ReviewCard from '@components/ReviewCard';
-import { useSearchParams } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
 const ProgramReviewContentSection = () => {
+  const router = useRouter();
   const searchParams = useSearchParams();
   const [currentPage, setCurrentPage] = useState(1);
   const [pageInfo, setPageInfo] = useState<PageInfo | null>(null);
@@ -45,6 +47,49 @@ const ProgramReviewContentSection = () => {
   const { data: reviewData, isLoading: reviewDataIsLoading } =
     useGetProgramReview(getProgramParams);
 
+  const { data: careerStartChallenge } = useGetActiveChallenge('CAREER_START');
+  const { data: documentPreparationChallenge } = useGetActiveChallenge(
+    'DOCUMENT_PREPARATION',
+  );
+  const { data: meetingPreparationChallenge } = useGetActiveChallenge(
+    'MEETING_PREPARATION',
+  );
+  const { data: etcChallenge } = useGetActiveChallenge('ETC');
+  const { data: personalStatementChallenge } =
+    useGetActiveChallenge('PERSONAL_STATEMENT');
+  const { data: portfolioChallenge } = useGetActiveChallenge('PORTFOLIO');
+  const { data: largeCorpChallenge } = useGetActiveChallenge(
+    'PERSONAL_STATEMENT_LARGE_CORP',
+  );
+
+  const getActiveChallenge = (list: ActiveChallengeType[] | undefined) => {
+    if (!list || list.length < 1) {
+      return undefined;
+    }
+    return `/program/challenge/${list[0].id}`;
+  };
+
+  const getChallengeLink = (challengeType: ChallengeType | null) => {
+    switch (challengeType) {
+      case 'CAREER_START':
+        return getActiveChallenge(careerStartChallenge?.challengeList);
+      case 'DOCUMENT_PREPARATION':
+        return getActiveChallenge(documentPreparationChallenge?.challengeList);
+      case 'MEETING_PREPARATION':
+        return getActiveChallenge(meetingPreparationChallenge?.challengeList);
+      case 'ETC':
+        return getActiveChallenge(etcChallenge?.challengeList);
+      case 'PERSONAL_STATEMENT':
+        return getActiveChallenge(personalStatementChallenge?.challengeList);
+      case 'PORTFOLIO':
+        return getActiveChallenge(portfolioChallenge?.challengeList);
+      case 'PERSONAL_STATEMENT_LARGE_CORP':
+        return getActiveChallenge(largeCorpChallenge?.challengeList);
+      default:
+        return undefined;
+    }
+  };
+
   useEffect(() => {
     if (reviewData) {
       setPageInfo(reviewData.pageInfo);
@@ -52,11 +97,11 @@ const ProgramReviewContentSection = () => {
   }, [reviewData, pageInfo]);
 
   return (
-    <div className="w-full px-5 flex flex-col gap-y-6 md:pr-5 md:pl-0 lg:px-0 pb-12 md:pb-8">
+    <div className="flex flex-col w-full px-5 pb-12 gap-y-6 md:pr-5 md:pl-0 lg:px-0 md:pb-8">
       {reviewDataIsLoading ? (
         <LoadingContainer className="h-64" />
       ) : !reviewData || reviewData.reviewList.length < 1 ? (
-        <div className="flex justify-center bg-neutral-95 rounded-ms text-xsmall14 text-neutral-40 items-center h-60">
+        <div className="flex items-center justify-center bg-neutral-95 rounded-ms text-xsmall14 text-neutral-40 h-60">
           등록된 후기가 없습니다.
         </div>
       ) : (
@@ -65,6 +110,9 @@ const ProgramReviewContentSection = () => {
             key={review.reviewInfo.reviewId}
             review={review}
             showThumbnail
+            thumbnailLink={getChallengeLink(
+              review.reviewInfo.challengeType ?? null,
+            )}
             expandable
           />
         ))
