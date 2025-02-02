@@ -77,6 +77,7 @@ const ReviewCard = ({
   reviewItemLineClamp = 3,
   expandable = false,
   showThumbnail = false,
+  thumbnailLink,
   reviewItemNums,
   href,
 }: {
@@ -85,6 +86,7 @@ const ReviewCard = ({
   reviewItemLineClamp?: 1 | 2 | 3 | 4;
   expandable?: boolean;
   showThumbnail?: boolean;
+  thumbnailLink?: string;
   reviewItemNums?: number;
   href?: string;
 }) => {
@@ -180,7 +182,17 @@ const ReviewCard = ({
         <img
           src={review.reviewInfo.programThumbnail ?? ''}
           alt={review.reviewInfo.programTitle ?? ''}
-          className="block object-cover w-[120px] h-[90px] sm:w-[180px] sm:h-[135px] rounded-sm sm:mt-10"
+          className={clsx(
+            'block object-cover w-[120px] h-[90px] sm:w-[180px] sm:h-[135px] rounded-sm sm:mt-10',
+            {
+              'cursor-pointer': !!thumbnailLink,
+            },
+          )}
+          onClick={() => {
+            if (thumbnailLink) {
+              router.push(thumbnailLink);
+            }
+          }}
         />
       ) : null}
     </div>
