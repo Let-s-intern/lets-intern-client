@@ -18,6 +18,17 @@ export default function RootLayout({
     <html lang="ko">
       <head>
         <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              '@context': 'https://schema.org',
+              '@type': 'WebSite',
+              name: '렛츠커리어',
+              url: 'https://www.letscareer.co.kr/',
+            }),
+          }}
+        />
+        <script
           dangerouslySetInnerHTML={{
             __html: ` (function (w, d, s, l, i) {
          w[l] = w[l] || [];
