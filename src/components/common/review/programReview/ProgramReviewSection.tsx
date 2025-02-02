@@ -41,7 +41,6 @@ const ProgramReviewSection = () => {
       <MoreHeader
         title="프로그램 참여 후기"
         subtitle={`${totalReview?.pageInfo.totalElements ?? '-'}개`}
-        href="/review/program"
       />
       {isLoading || !reviewData ? (
         <div className="flex justify-center items-center h-40">
