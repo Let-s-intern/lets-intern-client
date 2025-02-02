@@ -13,7 +13,8 @@ const MyPage = () => {
   const isReviewCreatePage = location.pathname.startsWith('/mypage/review/new');
 
   useEffect(() => {
-    if (!isLoggedIn) {
+    // login 페이지로 넘어간 이후 이 useEffect가 한번 더 실행되는 케이스가 있어서 방어로직 추가
+    if (!isLoggedIn && window.location.pathname.startsWith('/mypage')) {
       const newUrl = new URL(window.location.href);
       const searchParams = new URLSearchParams();
       searchParams.set('redirect', `${newUrl.pathname}?${newUrl.search}`);
@@ -90,7 +91,7 @@ const MyPage = () => {
             </div>
           </div>
         </nav>
-        <div className="flex w-full grow flex-col items-start justify-center pb-8 md:w-auto">
+        <div className="flex flex-col items-start justify-center w-full pb-8 grow md:w-auto">
           <div className="flex w-full flex-col items-start justify-center gap-y-8 lg:mx-auto lg:max-w-[37.5rem]">
             <Outlet />
           </div>

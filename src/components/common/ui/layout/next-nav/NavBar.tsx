@@ -31,6 +31,7 @@ const reportHoverItem: NavSubItemProps[] = [
   {
     text: 'MY 진단서 보기',
     to: '/report/management',
+    force: true,
   },
 ];
 
@@ -232,7 +233,9 @@ const NavBar = () => {
             {isLoggedIn ? (
               <div
                 className="hidden gap-2 cursor-pointer sm:flex"
-                onClick={() => router.push('/mypage/application')}
+                onClick={() => {
+                  window.location.href = '/mypage/application';
+                }}
               >
                 <span className="text-1.125-medium block">{user?.name} 님</span>
                 <img
@@ -249,10 +252,21 @@ const NavBar = () => {
                     query: { redirect: pathname },
                   }}
                   className="text-0.75 rounded-xxs bg-primary px-3 py-1 text-static-100"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    window.location.href = `/login?redirect=${encodeURIComponent(pathname)}`;
+                  }}
                 >
                   로그인
                 </Link>
-                <Link href="/signup" className="text-0.75 text-primary">
+                <Link
+                  href="/signup"
+                  className="text-0.75 text-primary"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    window.location.href = '/signup';
+                  }}
+                >
                   회원가입
                 </Link>
               </div>
@@ -328,11 +342,22 @@ const NavBar = () => {
                     pathname: '/login',
                     query: { redirect: pathname },
                   }}
-                  onClick={closeMenu}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    window.location.href = `/login?redirect=${encodeURIComponent(pathname)}`;
+                    closeMenu();
+                  }}
                 >
                   로그인
                 </Link>
-                <Link href="/signup" onClick={closeMenu}>
+                <Link
+                  href="/signup"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    window.location.href = '/signup';
+                    closeMenu();
+                  }}
+                >
                   회원가입
                 </Link>
               </div>

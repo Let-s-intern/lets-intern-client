@@ -65,7 +65,13 @@ const SideNavItem = ({
             <Link
               key={item.to}
               href={item.to}
-              onClick={onClick}
+              onClick={(e) => {
+                onClick?.();
+                if (force) {
+                  e.preventDefault();
+                  window.location.href = item.to;
+                }
+              }}
               className="flex w-full px-8 py-2 font-semibold text-xsmall16 text-neutral-20"
             >
               {item.text}
