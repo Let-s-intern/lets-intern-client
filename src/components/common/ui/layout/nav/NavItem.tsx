@@ -37,13 +37,17 @@ const NavItem = ({
   return (
     <Wrapper
       to={to || '#'}
-      reloadDocument={reloadDocument}
+      {...(Wrapper === Link
+        ? {
+            reloadDocument,
+            target,
+            rel,
+          }
+        : {})}
       className={clsx(
         style,
         'relative hidden h-full cursor-pointer items-center xl:flex',
       )}
-      target={target}
-      rel={rel}
     >
       {children}
       <div

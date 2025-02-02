@@ -43,9 +43,13 @@ const SideNavItem = ({
             onClick();
           }
         }}
-        target={target}
-        rel={rel}
-        reloadDocument={reloadDocument}
+        {...(Wrapper === Link
+          ? {
+              reloadDocument,
+              target,
+              rel,
+            }
+          : {})}
       >
         <span className="text-1.125-bold">{children}</span>
       </Wrapper>
