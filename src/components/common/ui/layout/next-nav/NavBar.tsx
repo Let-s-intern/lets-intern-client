@@ -198,6 +198,7 @@ const NavBar = () => {
                 alt="렛츠커리어 로고"
                 className="w-auto h-full"
               />
+              <h1 className="sr-only">렛츠커리어</h1>
             </Link>
             {/* 메뉴 아이템 */}
             <NavItem to="/about" active={activeLink === 'ABOUT'}>
