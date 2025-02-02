@@ -223,16 +223,21 @@ const DailyMissionSubmitSection = ({ myDailyMission }: Props) => {
           </h3>
           <div
             className={clsx('flex rounded-md p-3 flex-col gap-y-2', {
-              'bg-neutral-95': !isEditing || !!attendanceReview,
-              'bg-white': isEditing && !attendanceReview,
+              'bg-neutral-95': !isEditing,
+              'bg-white': isEditing,
             })}
           >
             <textarea
-              className="flex-1 h-20 outline-none resize-none text-xsmall14 disabled:bg-neutral-95"
+              className={clsx(
+                'flex-1 h-20 outline-none resize-none text-xsmall14 disabled:bg-neutral-95',
+                {
+                  'text-neutral-400': !isEditing,
+                },
+              )}
               placeholder={`오늘의 미션은 어떠셨나요?\n새롭게 배운 점, 어려운 부분, 궁금증 등 떠오르는 생각을 남겨 주세요.`}
               value={review}
               onChange={handleMissionReviewChanged}
-              disabled={!isEditing || !!attendanceReview}
+              disabled={!isEditing}
               maxLength={500}
             />
             <span className="w-full text-right text-xxsmall12 text-neutral-0/35">
